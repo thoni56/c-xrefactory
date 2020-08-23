@@ -44,96 +44,96 @@ static int oldCppPass;
 static Options s_tmpOptions;
 
 static void usage(char *s) {
-    fprintf(stdout,"usage: \t\t%s <option>+ ",s);
-    fprintf(stdout,"<input files>");
-    fprintf(stdout,"\n");
-    fprintf(stdout,"options:\n");
-    fprintf(stdout,"\t-r                        - recursively descend directories (default, --r to negate)\n");
-    fprintf(stdout,"\t-html                     - convert sources to html format\n");
-    fprintf(stdout,"\t-htmlroot=<dir>           - specifies root dir. for html output\n");
-    fprintf(stdout,"\t-htmltab=<n>              - set tabulator to <n> in htmls\n");
-    fprintf(stdout,"\t-htmlgxlist               - generate xref-lists for global symbols\n");
-    fprintf(stdout,"\t-htmllxlist               - generate xref-lists for local symbols\n");
-    fprintf(stdout,"\t-htmldirectx              - link first character to cross references\n");
-    fprintf(stdout,"\t-htmlfunseparate          - separate functions by a bar\n");
-    fprintf(stdout,"\t-htmlzip=<command>        - zip command, use '!' for the file name\n");
-    fprintf(stdout,"\t-htmllinksuffix=<suf>     - add this suffix to file links\n");
-    fprintf(stdout,"\t-htmllinenums             - generate line numbers in HTML\n");
-    fprintf(stdout,"\t-htmlnocolors             - do not generate colors in HTML\n");
-    fprintf(stdout,"\t-htmlnounderline          - do not underline HTML links\n");
-    fprintf(stdout,"\t-htmlcutpath=<path>       - cut path in generated html\n");
-    fprintf(stdout,"\t-htmlcutcwd               - cut current dir in html\n");
-    fprintf(stdout,"\t-htmlcutsourcepaths       - cut source paths in html\n");
-    fprintf(stdout,"\t-htmlcutsuffix            - cut language suffix in html\n");
-    fprintf(stdout,"\t-htmllinkcolor=<color>    - color of HTML links\n");
-    fprintf(stdout,"\t-htmllinenumcolor=<color> - color of line numbers in HTML links\n");
-    fprintf(stdout,"\t-htmlgenjavadoclinks      - generate links to Java API docs if no definition\n");
-    fprintf(stdout,"\t                            only for packages from -htmljavadocavailable\n");
-    fprintf(stdout,"\t-javadocurl=<http>        - url to existing Java API docs\n");
-    fprintf(stdout,"\t-javadocpath=<path>       - paths to existing Java API docs\n");
-    fprintf(stdout,"\t-javadocavailable=<packs> - packages for which javadoc is available\n");
-    fprintf(stdout,"\t-p <project>              - read options from <project> section\n");
-    fprintf(stdout,"\t-I <dir>                  - search for includes in <dir>\n");
-    fprintf(stdout,"\t-D<macro>[=<body>]        - define macro <macro> with body <body>\n");
-    fprintf(stdout,"\t-packages                 - allow packages as input files\n");
-    fprintf(stdout,"\t-sourcepath <path>        - set java sources paths\n");
-    fprintf(stdout,"\t-classpath <path>         - set java class path\n");
-    fprintf(stdout,"\t-filescasesensitive       - file names are case sensitive\n");
-    fprintf(stdout,"\t-filescaseunsensitive     - file names are case unsensitive\n");
-    fprintf(stdout,"\t-csuffixes=<suffixes>     - list of C files suffixes separated by : (or ;)\n");
-    fprintf(stdout,"\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by : (or ;)\n");
-    fprintf(stdout,"\t-stdoptions <file>        - read options from <file> instead of ~/.c-xrefrc\n");
-    fprintf(stdout,"\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file \n");
+    fprintf(stdout, "usage: \t\t%s <option>+ ",s);
+    fprintf(stdout, "<input files>");
+    fprintf(stdout, "\n");
+    fprintf(stdout, "options:\n");
+    fprintf(stdout, "\t-r                        - recursively descend directories (default, --r to negate)\n");
+    fprintf(stdout, "\t-html                     - convert sources to html format\n");
+    fprintf(stdout, "\t-htmlroot=<dir>           - specifies root dir. for html output\n");
+    fprintf(stdout, "\t-htmltab=<n>              - set tabulator to <n> in htmls\n");
+    fprintf(stdout, "\t-htmlgxlist               - generate xref-lists for global symbols\n");
+    fprintf(stdout, "\t-htmllxlist               - generate xref-lists for local symbols\n");
+    fprintf(stdout, "\t-htmldirectx              - link first character to cross references\n");
+    fprintf(stdout, "\t-htmlfunseparate          - separate functions by a bar\n");
+    fprintf(stdout, "\t-htmlzip=<command>        - zip command, use '!' for the file name\n");
+    fprintf(stdout, "\t-htmllinksuffix=<suf>     - add this suffix to file links\n");
+    fprintf(stdout, "\t-htmllinenums             - generate line numbers in HTML\n");
+    fprintf(stdout, "\t-htmlnocolors             - do not generate colors in HTML\n");
+    fprintf(stdout, "\t-htmlnounderline          - do not underline HTML links\n");
+    fprintf(stdout, "\t-htmlcutpath=<path>       - cut path in generated html\n");
+    fprintf(stdout, "\t-htmlcutcwd               - cut current dir in html\n");
+    fprintf(stdout, "\t-htmlcutsourcepaths       - cut source paths in html\n");
+    fprintf(stdout, "\t-htmlcutsuffix            - cut language suffix in html\n");
+    fprintf(stdout, "\t-htmllinkcolor=<color>    - color of HTML links\n");
+    fprintf(stdout, "\t-htmllinenumcolor=<color> - color of line numbers in HTML links\n");
+    fprintf(stdout, "\t-htmlgenjavadoclinks      - generate links to Java API docs if no definition\n");
+    fprintf(stdout, "\t                            only for packages from -htmljavadocavailable\n");
+    fprintf(stdout, "\t-javadocurl=<http>        - url to existing Java API docs\n");
+    fprintf(stdout, "\t-javadocpath=<path>       - paths to existing Java API docs\n");
+    fprintf(stdout, "\t-javadocavailable=<packs> - packages for which javadoc is available\n");
+    fprintf(stdout, "\t-p <project>              - read options from <project> section\n");
+    fprintf(stdout, "\t-I <dir>                  - search for includes in <dir>\n");
+    fprintf(stdout, "\t-D<macro>[=<body>]        - define macro <macro> with body <body>\n");
+    fprintf(stdout, "\t-packages                 - allow packages as input files\n");
+    fprintf(stdout, "\t-sourcepath <path>        - set java sources paths\n");
+    fprintf(stdout, "\t-classpath <path>         - set java class path\n");
+    fprintf(stdout, "\t-filescasesensitive       - file names are case sensitive\n");
+    fprintf(stdout, "\t-filescaseunsensitive     - file names are case unsensitive\n");
+    fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by : (or ;)\n");
+    fprintf(stdout, "\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by : (or ;)\n");
+    fprintf(stdout, "\t-stdoptions <file>        - read options from <file> instead of ~/.c-xrefrc\n");
+    fprintf(stdout, "\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file \n");
 #if 0
-    fprintf(stdout,"\t-olinelen=<n>             - length of lines for on-line output\n");
-    fprintf(stdout,"\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
-    fprintf(stdout,"\t-olcxsearch               - search info about identifier\n");
-    fprintf(stdout,"\t-olcxpush                 - generate and push on-line cxrefs \n");
-    fprintf(stdout,"\t-olcxrename               - generate and push xrfs for rename\n");
-    fprintf(stdout,"\t-olcxlist                 - generate, push and list on-line cxrefs \n");
-    fprintf(stdout,"\t-olcxpop                  - pop on-line cxrefs\n");
-    fprintf(stdout,"\t-olcxnext                 - next on-line reference\n");
-    fprintf(stdout,"\t-olcxprevious                - previous on-line reference\n");
-    fprintf(stdout,"\t-olcxgoto<n>              - go to the n-th on-line reference\n");
-    fprintf(stdout,"\t-user                     - user logname for olcx\n");
-    fprintf(stdout,"\t-o <file>                 - write output to <file>\n");
-    fprintf(stdout,"\t-file <file>              - name of the file given to stdin\n");
+    fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
+    fprintf(stdout, "\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
+    fprintf(stdout, "\t-olcxsearch               - search info about identifier\n");
+    fprintf(stdout, "\t-olcxpush                 - generate and push on-line cxrefs \n");
+    fprintf(stdout, "\t-olcxrename               - generate and push xrfs for rename\n");
+    fprintf(stdout, "\t-olcxlist                 - generate, push and list on-line cxrefs \n");
+    fprintf(stdout, "\t-olcxpop                  - pop on-line cxrefs\n");
+    fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
+    fprintf(stdout, "\t-olcxprevious                - previous on-line reference\n");
+    fprintf(stdout, "\t-olcxgoto<n>              - go to the n-th on-line reference\n");
+    fprintf(stdout, "\t-user                     - user logname for olcx\n");
+    fprintf(stdout, "\t-o <file>                 - write output to <file>\n");
+    fprintf(stdout, "\t-file <file>              - name of the file given to stdin\n");
 #endif
-    fprintf(stdout,"\t-refs <file>              - name of file with cxrefs\n");
-    fprintf(stdout,"\t-refnum=<n>               - number of cxref files\n");
-    fprintf(stdout,"\t-refalphahash             - split references alphabetically (-refnum=28)\n");
-    fprintf(stdout,"\t-refalpha2hash            - split references alphabetically (-refnum=28*28)\n");
-    fprintf(stdout,"\t-exactpositionresolve     - resolve symbols by def. position\n");
-    fprintf(stdout,"\t-mf<n>                    - factor increasing cxMemory\n");
+    fprintf(stdout, "\t-refs <file>              - name of file with cxrefs\n");
+    fprintf(stdout, "\t-refnum=<n>               - number of cxref files\n");
+    fprintf(stdout, "\t-refalphahash             - split references alphabetically (-refnum=28)\n");
+    fprintf(stdout, "\t-refalpha2hash            - split references alphabetically (-refnum=28*28)\n");
+    fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
+    fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
 #   ifdef DEBUG
-    fprintf(stdout,"\t-debug                    - produce debug output of the execution\n");
-    fprintf(stdout,"\t-trace                    - produce trace output of the execution\n");
+    fprintf(stdout, "\t-debug                    - produce debug output of the execution\n");
+    fprintf(stdout, "\t-trace                    - produce trace output of the execution\n");
 #   endif
-    fprintf(stdout,"\t-log=<file>               - log to <file>\n");
-    fprintf(stdout,"\t-no-classfiles            - Don't collect references from class files\n");
-    fprintf(stdout,"\t-no-cppcomments           - C++ like comments '//' not allowed\n");
-    fprintf(stdout,"\t-no-enums                 - don't cross reference enumeration constants\n");
-    fprintf(stdout,"\t-no-macros                - don't cross reference macros\n");
-    fprintf(stdout,"\t-no-types                 - don't cross reference type names\n");
-    fprintf(stdout,"\t-no-structs               - don't cross reference str. records\n");
-    fprintf(stdout,"\t-no-locals                - don't cross reference local vars\n");
-    fprintf(stdout,"\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
-    fprintf(stdout,"\t-update                   - update old 'refs' reference file\n");
-    fprintf(stdout,"\t-fastupdate               - fast update (modified files only)\n");
-    fprintf(stdout,"\t-fullupdate               - full update (all files)\n");
-    fprintf(stdout,"\t-errors                   - report all error messages\n");
-    fprintf(stdout,"\t-version                  - print version information\n");
+    fprintf(stdout, "\t-log=<file>               - log to <file>\n");
+    fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
+    fprintf(stdout, "\t-no-cppcomments           - C++ like comments '//' not allowed\n");
+    fprintf(stdout, "\t-no-enums                 - don't cross reference enumeration constants\n");
+    fprintf(stdout, "\t-no-macros                - don't cross reference macros\n");
+    fprintf(stdout, "\t-no-types                 - don't cross reference type names\n");
+    fprintf(stdout, "\t-no-structs               - don't cross reference str. records\n");
+    fprintf(stdout, "\t-no-locals                - don't cross reference local vars\n");
+    fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
+    fprintf(stdout, "\t-update                   - update old 'refs' reference file\n");
+    fprintf(stdout, "\t-fastupdate               - fast update (modified files only)\n");
+    fprintf(stdout, "\t-fullupdate               - full update (all files)\n");
+    fprintf(stdout, "\t-errors                   - report all error messages\n");
+    fprintf(stdout, "\t-version                  - print version information\n");
 }
 
 static void aboutMessage(void) {
     char output[REFACTORING_TMP_STRING_SIZE];
-    sprintf(output,"This is C-xrefactory version %s (%s).\n", C_XREF_VERSION_NUMBER, __DATE__);
-    sprintf(output+strlen(output),"(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
-    sprintf(output+strlen(output),"Released into GPL 2009 by Marian Vittek (SourceForge)\n");
-    sprintf(output+strlen(output),"Work resurrected and continued by Thomas Nilefalk 2015-\n");
-    sprintf(output+strlen(output),"(http://github.com/thoni56/c-xrefactory)\n");
+    sprintf(output, "This is C-xrefactory version %s (%s).\n", C_XREF_VERSION_NUMBER, __DATE__);
+    sprintf(output+strlen(output), "(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
+    sprintf(output+strlen(output), "Released into GPL 2009 by Marian Vittek (SourceForge)\n");
+    sprintf(output+strlen(output), "Work resurrected and continued by Thomas Nilefalk 2015-\n");
+    sprintf(output+strlen(output), "(http://github.com/thoni56/c-xrefactory)\n");
     if (options.exit) {
-        sprintf(output+strlen(output),"Exiting!");
+        sprintf(output+strlen(output), "Exiting!");
     }
     if (options.xref2) {
         ppcGenRecord(PPC_INFORMATION, output);
@@ -147,7 +147,7 @@ static void aboutMessage(void) {
     char tmpBuff[TMP_BUFF_SIZE];                                        \
     i++;                                                                \
     if (i >= argc) {                                                    \
-        sprintf(tmpBuff,"file name expected after %s",argv[i-1]);     \
+        sprintf(tmpBuff, "file name expected after %s",argv[i-1]);     \
         errorMessage(ERR_ST,tmpBuff);                                   \
         usage(argv[0]);                                                 \
         exit(1);                                                        \
@@ -158,7 +158,7 @@ static void aboutMessage(void) {
     char tmpBuff[TMP_BUFF_SIZE];                                        \
     i++;                                                                \
     if (i >= argc) {                                                    \
-        sprintf(tmpBuff,"further argument(s) expected after %s",argv[i-1]); \
+        sprintf(tmpBuff, "further argument(s) expected after %s",argv[i-1]); \
         errorMessage(ERR_ST,tmpBuff);                                   \
         usage(argv[0]);                                                 \
         exit(1);                                                        \
@@ -202,10 +202,10 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
 
     dir = a1; fname = file; recurseFlag = a4; topCallFlag = *a5;
     if (topCallFlag == 0) {
-        if (strcmp(fname,".")==0) return;
-        if (strcmp(fname,"..")==0) return;
+        if (strcmp(fname, ".")==0) return;
+        if (strcmp(fname, "..")==0) return;
         if (fileNameShouldBePruned(fname)) return;
-        sprintf(fn,"%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
+        sprintf(fn, "%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
         strcpy(fn, normalizeFileName(fn, s_cwd));
         if (fileNameShouldBePruned(fn)) return;
     } else {
@@ -229,7 +229,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
                                         fn, NULL, NULL, nrecurseFlag, &topCallFlag);
         } else {
             // no error, let it be
-            //& sprintf(tmpBuff,"omitting directory %s, missing '-r' option ?",fn);
+            //& sprintf(tmpBuff, "omitting directory %s, missing '-r' option ?",fn);
             //& warningMessage(ERR_ST,tmpBuff);
         }
     } else if (stt==0) {
@@ -238,7 +238,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         if (topCallFlag==0
             &&  (! fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes))
             &&  (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
-            &&  compareFileNames(suff,".y")!=0
+            &&  compareFileNames(suff, ".y")!=0
         ) {
             return;
         }
@@ -253,7 +253,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         expandWildcardsInOnePath(fn, wcPaths, MAX_OPTION_LEN);
         //&fprintf(dumpOut, "wildcard path %s expanded to %s\n", fn, wcPaths);
         JavaMapOnPaths(wcPaths,{
-                dirInputFile(currentPath,"",NULL,NULL,recurseFlag,&topCallFlag);
+                dirInputFile(currentPath, "",NULL,NULL,recurseFlag,&topCallFlag);
             });
     } else if (topCallFlag
                && ((!options.allowPackagesOnCommandLine)
@@ -326,9 +326,9 @@ static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
     localOffset = ((char*)lld) - ((char*)src);
     dlld = ((char**) (((char*)dest) + localOffset));
     // dlld is dest equivalent of *lld from src
-    //&fprintf(dumpOut,"shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(Options));
+    //&fprintf(dumpOut, "shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(Options));
     if (*dlld != *lld) {
-        fprintf(dumpOut,"problem %s\n", *lld);
+        fprintf(dumpOut, "problem %s\n", *lld);
     }
     assert(*dlld == *lld);
     *dlld = *lld + offset;
@@ -342,7 +342,7 @@ void copyOptions(Options *dest, Options *src) {
         copyOptionShiftPointer(((char**)&(*ll)->destination), dest, src);
         copyOptionShiftPointer(((char**)ll), dest, src);
     }
-    //&fprintf(dumpOut,"options copied\n");
+    //&fprintf(dumpOut, "options copied\n");
 }
 
 void xrefSetenv(char *name, char *val) {
@@ -367,7 +367,7 @@ void xrefSetenv(char *name, char *val) {
     if (j==n || strcmp(sge->value[j], val)!=0) {
         createOptionString(&(sge->value[j]), val);
     }
-    //&fprintf(dumpOut,"setting '%s' to '%s'\n", name, val);
+    //&fprintf(dumpOut, "setting '%s' to '%s'\n", name, val);
     if (j==n)
         sge->num ++;
 }
@@ -390,7 +390,7 @@ static int mainHandleIncludeOption(int argc, char **argv, int i) {
     char **nargv;
     NEXT_FILE_ARG();
     options.stdopFlag = 1;
-    readOptionFile(argv[i],&nargc,&nargv,"",NULL);
+    readOptionFile(argv[i],&nargc,&nargv, "",NULL);
     processOptions(nargc, nargv, INFILES_DISABLED);
     options.stdopFlag = 0;
     return(i);
@@ -403,7 +403,7 @@ int addHtmlCutPath(char *ss) {
     ss = htmlNormalizedPath(ss);
     ln = strlen(ss);
     if (ln>=1 && ss[ln-1] == FILE_PATH_SEPARATOR) {
-        warningMessage(ERR_ST,"slash at the end of -htmlcutpath path, ignoring it");
+        warningMessage(ERR_ST, "slash at the end of -htmlcutpath path, ignoring it");
         return(res);
     }
     for(i=0; i<options.htmlCut.pathsNum; i++) {
@@ -413,7 +413,7 @@ int addHtmlCutPath(char *ss) {
     createOptionString(&(options.htmlCut.path[options.htmlCut.pathsNum]), ss);
     ss = options.htmlCut.path[options.htmlCut.pathsNum];
     options.htmlCut.plen[options.htmlCut.pathsNum] = ln;
-    //&fprintf(dumpOut,"adding cutpath %d %s\n",options.htmlCut.pathsNum,ss);
+    //&fprintf(dumpOut, "adding cutpath %d %s\n",options.htmlCut.pathsNum,ss);
     for(i=0; i<options.htmlCut.pathsNum; i++) {
         // a more specialized path after a more general, exchange them
         len = options.htmlCut.plen[i];
@@ -431,7 +431,7 @@ int addHtmlCutPath(char *ss) {
         }
     }
     if (options.htmlCut.pathsNum+2 >= MAX_HTML_CUT_PATHES) {
-        errorMessage(ERR_ST,"# of htmlcutpaths overflow over MAX_HTML_CUT_PATHES");
+        errorMessage(ERR_ST, "# of htmlcutpaths overflow over MAX_HTML_CUT_PATHES");
     } else {
         options.htmlCut.pathsNum++;
     }
@@ -444,7 +444,7 @@ int addHtmlCutPath(char *ss) {
 static bool processNegativeOption(int *ii, int argc, char **argv, int infilesFlag) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"--r")==0) {
+    else if (strcmp(argv[i], "--r")==0) {
         if (infilesFlag == INFILES_ENABLED) options.recurseDirectories = false;
     }
     else return false;
@@ -455,10 +455,10 @@ static bool processNegativeOption(int *ii, int argc, char **argv, int infilesFla
 static bool processAOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strncmp(argv[i],"-addimportdefault=",18)==0) {
+    else if (strncmp(argv[i], "-addimportdefault=",18)==0) {
         sscanf(argv[i]+18, "%d", &options.defaultAddImportStrategy);
     }
-    else if (strcmp(argv[i],"-version")==0 || strcmp(argv[i],"-about")==0){
+    else if (strcmp(argv[i], "-version")==0 || strcmp(argv[i], "-about")==0){
         options.server_operation = OLO_ABOUT;
     }
     else return false;
@@ -469,8 +469,8 @@ static bool processAOption(int *ii, int argc, char **argv) {
 static bool processBOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-briefoutput")==0)     options.briefoutput = true;
-    else if (strncmp(argv[i],"-browsedsym=",12)==0)     {
+    else if (strcmp(argv[i], "-briefoutput")==0)     options.briefoutput = true;
+    else if (strncmp(argv[i], "-browsedsym=",12)==0)     {
         createOptionString(&options.browsedSymName, argv[i]+12);
     }
     else return false;
@@ -481,35 +481,35 @@ static bool processBOption(int *ii, int argc, char **argv) {
 static bool processCOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-cacheincludes")==0)   options.cacheIncludes=1;
-    else if (strcmp(argv[i],"-crlfconversion")==0)  options.eolConversion|=CR_LF_EOL_CONVERSION;
-    else if (strcmp(argv[i],"-crconversion")==0)    options.eolConversion|=CR_EOL_CONVERSION;
-    else if (strcmp(argv[i],"-completioncasesensitive")==0) options.completionCaseSensitive=1;
-    else if (strcmp(argv[i],"-completeparenthesis")==0) options.completeParenthesis=1;
-    else if (strncmp(argv[i],"-completionoverloadwizdeep=",27)==0)  {
+    else if (strcmp(argv[i], "-cacheincludes")==0)   options.cacheIncludes=1;
+    else if (strcmp(argv[i], "-crlfconversion")==0)  options.eolConversion|=CR_LF_EOL_CONVERSION;
+    else if (strcmp(argv[i], "-crconversion")==0)    options.eolConversion|=CR_EOL_CONVERSION;
+    else if (strcmp(argv[i], "-completioncasesensitive")==0) options.completionCaseSensitive=1;
+    else if (strcmp(argv[i], "-completeparenthesis")==0) options.completeParenthesis=1;
+    else if (strncmp(argv[i], "-completionoverloadwizdeep=",27)==0)  {
         sscanf(argv[i]+27, "%d", &options.completionOverloadWizardDeep);
     }
-    else if (strncmp(argv[i],"-commentmovinglevel=",20)==0) {
+    else if (strncmp(argv[i], "-commentmovinglevel=",20)==0) {
         sscanf(argv[i]+20, "%d", &options.commentMovingLevel);
     }
-    else if (strcmp(argv[i],"-continuerefactoring")==0) {
+    else if (strcmp(argv[i], "-continuerefactoring")==0) {
         options.continueRefactoring=RC_CONTINUE;
     }
-    else if (strcmp(argv[i],"-continuerefactoring=importSingle")==0)    {
+    else if (strcmp(argv[i], "-continuerefactoring=importSingle")==0)    {
         options.continueRefactoring = RC_IMPORT_SINGLE_TYPE;
     }
-    else if (strcmp(argv[i],"-continuerefactoring=importOnDemand")==0)  {
+    else if (strcmp(argv[i], "-continuerefactoring=importOnDemand")==0)  {
         options.continueRefactoring = RC_IMPORT_ON_DEMAND;
     }
-    else if (strcmp(argv[i],"-classpath")==0) {
+    else if (strcmp(argv[i], "-classpath")==0) {
         NEXT_FILE_ARG();
-            createOptionString(&options.classpath, argv[i]);
+        createOptionString(&options.classpath, argv[i]);
     }
-    else if (strncmp(argv[i],"-csuffixes=",11)==0) {
+    else if (strncmp(argv[i], "-csuffixes=",11)==0) {
         createOptionString(&options.cFilesSuffixes, argv[i]+11);
     }
-    else if (strcmp(argv[i],"-create")==0) options.create = 1;
-    else if (strncmp(argv[i],"-compiler=", 10)==0) {
+    else if (strcmp(argv[i], "-create")==0) options.create = 1;
+    else if (strncmp(argv[i], "-compiler=", 10)==0) {
         options.compiler = &argv[i][10];
     } else return false;
     *ii = i;
@@ -528,18 +528,18 @@ static bool processDOption(int *ii, int argc, char **argv) {
         NEXT_FILE_ARG();
         ln=strlen(argv[i]);
         if (ln>1 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
-            warningMessage(ERR_ST,"slash at the end of -d path");
+            warningMessage(ERR_ST, "slash at the end of -d path");
         }
         if (! isAbsolutePath(argv[i])) {
-            warningMessage(ERR_ST,"'-d' option should be followed by an ABSOLUTE path");
+            warningMessage(ERR_ST, "'-d' option should be followed by an ABSOLUTE path");
         }
         createOptionString(&options.htmlRoot, argv[i]);
     }
     // TODO, do this macro allocation differently!!!!!!!!!!!!!
     // just store macros in options and later add them into pp_memory
-    else if (strncmp(argv[i],"-D",2)==0)
+    else if (strncmp(argv[i], "-D",2)==0)
         addMacroDefinedByOption(argv[i]+2);
-    else if (strcmp(argv[i],"-displaynestedwithouters")==0) {
+    else if (strcmp(argv[i], "-displaynestedwithouters")==0) {
         options.nestedClassDisplaying = NO_OUTERS_CUT;
     }
     else return false;
@@ -552,48 +552,48 @@ static bool processEOption(int *ii, int argc, char **argv) {
     char ttt[TMP_STRING_SIZE];
 
     if (0) {}
-    else if (strcmp(argv[i],"-errors")==0) {
+    else if (strcmp(argv[i], "-errors")==0) {
         options.show_errors = true;
-    } else if (strcmp(argv[i],"-exit")==0) {
+    } else if (strcmp(argv[i], "-exit")==0) {
         log_debug("Exiting");
         exit(XREF_EXIT_BASE);
     }
-    else if (strcmp(argv[i],"-editor=emacs")==0) {
+    else if (strcmp(argv[i], "-editor=emacs")==0) {
         options.editor = EDITOR_EMACS;
     }
-    else if (strcmp(argv[i],"-editor=jedit")==0) {
+    else if (strcmp(argv[i], "-editor=jedit")==0) {
         options.editor = EDITOR_JEDIT;
     }
-    else if (strncmp(argv[i],"-extractAddrParPrefix=",22)==0) {
+    else if (strncmp(argv[i], "-extractAddrParPrefix=",22)==0) {
         sprintf(ttt, "*%s", argv[i]+22);
         createOptionString(&options.olExtractAddrParPrefix, ttt);
     }
-    else if (strcmp(argv[i],"-exactpositionresolve")==0) {
+    else if (strcmp(argv[i], "-exactpositionresolve")==0) {
         options.exactPositionResolve = 1;
     }
-    else if (strncmp(argv[i],"-encoding=", 10)==0) {
+    else if (strncmp(argv[i], "-encoding=", 10)==0) {
         if (options.fileEncoding == MULE_DEFAULT) {
-            if (strcmp(argv[i],"-encoding=default")==0) {
+            if (strcmp(argv[i], "-encoding=default")==0) {
                 options.fileEncoding = MULE_DEFAULT;
-            } else if (strcmp(argv[i],"-encoding=european")==0) {
+            } else if (strcmp(argv[i], "-encoding=european")==0) {
                 options.fileEncoding = MULE_EUROPEAN;
-            } else if (strcmp(argv[i],"-encoding=euc")==0) {
+            } else if (strcmp(argv[i], "-encoding=euc")==0) {
                 options.fileEncoding = MULE_EUC;
-            } else if (strcmp(argv[i],"-encoding=sjis")==0) {
+            } else if (strcmp(argv[i], "-encoding=sjis")==0) {
                 options.fileEncoding = MULE_SJIS;
-            } else if (strcmp(argv[i],"-encoding=utf")==0) {
+            } else if (strcmp(argv[i], "-encoding=utf")==0) {
                 options.fileEncoding = MULE_UTF;
-            } else if (strcmp(argv[i],"-encoding=utf-8")==0) {
+            } else if (strcmp(argv[i], "-encoding=utf-8")==0) {
                 options.fileEncoding = MULE_UTF_8;
-            } else if (strcmp(argv[i],"-encoding=utf-16")==0) {
+            } else if (strcmp(argv[i], "-encoding=utf-16")==0) {
                 options.fileEncoding = MULE_UTF_16;
-            } else if (strcmp(argv[i],"-encoding=utf-16le")==0) {
+            } else if (strcmp(argv[i], "-encoding=utf-16le")==0) {
                 options.fileEncoding = MULE_UTF_16LE;
-            } else if (strcmp(argv[i],"-encoding=utf-16be")==0) {
+            } else if (strcmp(argv[i], "-encoding=utf-16be")==0) {
                 options.fileEncoding = MULE_UTF_16BE;
             } else {
                 char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff,"unsupported encoding, available values are 'default', 'european', 'euc', 'sjis', 'utf', 'utf-8', 'utf-16', 'utf-16le' and 'utf-16be'.");
+                sprintf(tmpBuff, "unsupported encoding, available values are 'default', 'european', 'euc', 'sjis', 'utf', 'utf-8', 'utf-16', 'utf-16le' and 'utf-16be'.");
                 formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
                 errorMessage(ERR_ST, tmpBuff);
             }
@@ -607,17 +607,17 @@ static bool processEOption(int *ii, int argc, char **argv) {
 static bool processFOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-filescasesensitive")==0) {
+    else if (strcmp(argv[i], "-filescasesensitive")==0) {
         options.fileNamesCaseSensitive = 1;
     }
-    else if (strcmp(argv[i],"-filescaseunsensitive")==0) {
+    else if (strcmp(argv[i], "-filescaseunsensitive")==0) {
         options.fileNamesCaseSensitive = 0;
     }
-    else if (strcmp(argv[i],"-fastupdate")==0)  {
+    else if (strcmp(argv[i], "-fastupdate")==0)  {
         options.update = UP_FAST_UPDATE;
         options.updateOnlyModifiedFiles = true;
     }
-    else if (strcmp(argv[i],"-fullupdate")==0) {
+    else if (strcmp(argv[i], "-fullupdate")==0) {
         options.update = UP_FULL_UPDATE;
         options.updateOnlyModifiedFiles = false;
     }
@@ -629,10 +629,10 @@ static bool processFOption(int *ii, int argc, char **argv) {
 static bool processGOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-getlastimportline")==0) {
+    else if (strcmp(argv[i], "-getlastimportline")==0) {
         options.trivialPreCheckCode = TPC_GET_LAST_IMPORT_LINE;
     }
-    else if (strcmp(argv[i],"-get")==0) {
+    else if (strcmp(argv[i], "-get")==0) {
         NEXT_ARG();
         createOptionString(&options.getValue, argv[i]);
         options.server_operation = OLO_GET_ENV_VALUE;
@@ -644,73 +644,73 @@ static bool processGOption(int *ii, int argc, char **argv) {
 
 static bool processHOption(int *ii, int argc, char **argv) {
     int i = * ii;
-    if (strncmp(argv[i],"-htmltab=",9)==0)  {
-        sscanf(argv[i]+9,"%d",&options.tabulator);
+    if (strncmp(argv[i], "-htmltab=",9)==0)  {
+        sscanf(argv[i]+9, "%d",&options.tabulator);
     }
-    else if (strcmp(argv[i],"-htmllinenums")==0) options.htmlLineNums = 1;
-    else if (strcmp(argv[i],"-htmlnocolors")==0) options.htmlNoColors = true;
-    else if (strcmp(argv[i],"-htmlgxlist")==0) options.htmlglobalx = true;
-    else if (strcmp(argv[i],"-htmllxlist")==0) options.htmllocalx = true;
-    else if (strcmp(argv[i],"-htmlfunseparate")==0)options.htmlFunSeparate=true;
-    else if (strcmp(argv[i],"-html")==0) {
+    else if (strcmp(argv[i], "-htmllinenums")==0) options.htmlLineNums = 1;
+    else if (strcmp(argv[i], "-htmlnocolors")==0) options.htmlNoColors = true;
+    else if (strcmp(argv[i], "-htmlgxlist")==0) options.htmlglobalx = true;
+    else if (strcmp(argv[i], "-htmllxlist")==0) options.htmllocalx = true;
+    else if (strcmp(argv[i], "-htmlfunseparate")==0)options.htmlFunSeparate=true;
+    else if (strcmp(argv[i], "-html")==0) {
         options.taskRegime = RegimeHtmlGenerate;
         options.fileEncoding = MULE_EUROPEAN; // no multibyte encodings
         options.multiHeadRefsCare = 0;    // JUST TEMPORARY !!!!!!!
     }
-    else if (strncmp(argv[i],"-htmlroot=",10)==0)   {
+    else if (strncmp(argv[i], "-htmlroot=",10)==0)   {
         int ln;
         ln=strlen(argv[i]);
         if (ln>11 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
-            warningMessage(ERR_ST,"slash at the end of -htmlroot path");
+            warningMessage(ERR_ST, "slash at the end of -htmlroot path");
         }
         createOptionString(&options.htmlRoot, argv[i]+10);
     }
-    else if (strcmp(argv[i],"-htmlgenjavadoclinks")==0) {
+    else if (strcmp(argv[i], "-htmlgenjavadoclinks")==0) {
         options.htmlGenJdkDocLinks = 1;
     }
-    else if (strncmp(argv[i],"-htmljavadocavailable=",22)==0) {
+    else if (strncmp(argv[i], "-htmljavadocavailable=",22)==0) {
         createOptionString(&options.htmlJdkDocAvailable, argv[i]+22);
     }
-    else if (strncmp(argv[i],"-htmljavadocpath=",17)==0)    {
+    else if (strncmp(argv[i], "-htmljavadocpath=",17)==0)    {
         createOptionString(&options.htmlJdkDocUrl, argv[i]+17);
     }
-    else if (strncmp(argv[i],"-htmlcutpath=",13)==0)    {
+    else if (strncmp(argv[i], "-htmlcutpath=",13)==0)    {
         addHtmlCutPath(argv[i]+13);
     }
-    else if (strcmp(argv[i],"-htmlcutcwd")==0)  {
+    else if (strcmp(argv[i], "-htmlcutcwd")==0)  {
         addHtmlCutPath(s_cwd);
     }
-    else if (strcmp(argv[i],"-htmlcutsourcepaths")==0)  {
+    else if (strcmp(argv[i], "-htmlcutsourcepaths")==0)  {
         addSourcePathsCut();
     }
-    else if (strcmp(argv[i],"-htmlcutsuffix")==0)   {
+    else if (strcmp(argv[i], "-htmlcutsuffix")==0)   {
         options.htmlCutSuffix = 1;
     }
-    else if (strncmp(argv[i],"-htmllinenumlabel=", 18)==0)  {
+    else if (strncmp(argv[i], "-htmllinenumlabel=", 18)==0)  {
         createOptionString(&options.htmlLineNumLabel, argv[i]+18);
     }
-    else if (strcmp(argv[i],"-htmlnounderline")==0) {
+    else if (strcmp(argv[i], "-htmlnounderline")==0) {
         options.htmlNoUnderline = true;
     }
-    else if (strcmp(argv[i],"-htmldirectx")==0) {
+    else if (strcmp(argv[i], "-htmldirectx")==0) {
         options.htmlDirectX = true;
     }
-    else if (strncmp(argv[i],"-htmllinkcolor=",15)==0)  {
+    else if (strncmp(argv[i], "-htmllinkcolor=",15)==0)  {
         createOptionString(&options.htmlLinkColor, argv[i]+15);
     }
-    else if (strncmp(argv[i],"-htmllinenumcolor=",18)==0)   {
+    else if (strncmp(argv[i], "-htmllinenumcolor=",18)==0)   {
         createOptionString(&options.htmlLineNumColor, argv[i]+18);
     }
-    else if (strncmp(argv[i],"-htmlcxlinelen=",15)==0)  {
+    else if (strncmp(argv[i], "-htmlcxlinelen=",15)==0)  {
         sscanf(argv[i]+15, "%d", &options.htmlCxLineLen);
     }
-    else if (strncmp(argv[i],"-htmlzip=",9)==0) {
+    else if (strncmp(argv[i], "-htmlzip=",9)==0) {
         createOptionString(&options.htmlZipCommand, argv[i]+9);
     }
-    else if (strncmp(argv[i],"-htmllinksuffix=",16)==0) {
+    else if (strncmp(argv[i], "-htmllinksuffix=",16)==0) {
         createOptionString(&options.htmlLinkSuffix, argv[i]+16);
     }
-    else if (strcmp(argv[i],"-help")==0) {
+    else if (strcmp(argv[i], "-help")==0) {
         usage(argv[0]);
         exit(0);
     }
@@ -734,22 +734,22 @@ static bool processIOption(int *ii, int argc, char **argv) {
     int i = * ii;
 
     if (0) {}
-    else if (strcmp(argv[i],"-I")==0) {
+    else if (strcmp(argv[i], "-I")==0) {
         /* include dir */
         i++;
         if (i >= argc) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff,"directory name expected after -I");
+            sprintf(tmpBuff, "directory name expected after -I");
             errorMessage(ERR_ST,tmpBuff);
             usage(argv[0]);
         }
         mainAddStringListOption(&options.includeDirs, argv[i]);
     }
-    else if (strncmp(argv[i],"-I", 2)==0 && argv[i][2]!=0) {
+    else if (strncmp(argv[i], "-I", 2)==0 && argv[i][2]!=0) {
         mainAddStringListOption(&options.includeDirs, argv[i]+2);
     }
-    else if (strcmp(argv[i],"-include")==0) {
-        warningMessage(ERR_ST,"-include option is deprecated, use -optinclude instead");
+    else if (strcmp(argv[i], "-include")==0) {
+        warningMessage(ERR_ST, "-include option is deprecated, use -optinclude instead");
         i = mainHandleIncludeOption(argc, argv, i);
     }
     else return false;
@@ -760,37 +760,37 @@ static bool processIOption(int *ii, int argc, char **argv) {
 static bool processJOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-javadoc")==0)     options.javaDoc = true;
-    else if (strcmp(argv[i],"-java1.4")==0)     {
+    else if (strcmp(argv[i], "-javadoc")==0)     options.javaDoc = true;
+    else if (strcmp(argv[i], "-java1.4")==0)     {
         createOptionString(&options.javaVersion, JAVA_VERSION_1_4);
     }
-    else if (strncmp(argv[i],"-jdoctmpdir=",12)==0) {
+    else if (strncmp(argv[i], "-jdoctmpdir=",12)==0) {
         int ln;
         ln=strlen(argv[i]);
         if (ln>13 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
-            warningMessage(ERR_ST,"slash at the end of -jdoctmpdir path");
+            warningMessage(ERR_ST, "slash at the end of -jdoctmpdir path");
         }
         createOptionString(&options.jdocTmpDir, argv[i]+12);
     }
-    else if (strncmp(argv[i],"-javadocavailable=",18)==0)   {
+    else if (strncmp(argv[i], "-javadocavailable=",18)==0)   {
         createOptionString(&options.htmlJdkDocAvailable, argv[i]+18);
     }
-    else if (strncmp(argv[i],"-javadocurl=",12)==0) {
+    else if (strncmp(argv[i], "-javadocurl=",12)==0) {
         createOptionString(&options.htmlJdkDocUrl, argv[i]+12);
     }
-    else if (strncmp(argv[i],"-javadocpath=",13)==0)    {
+    else if (strncmp(argv[i], "-javadocpath=",13)==0)    {
         createOptionString(&options.javaDocPath, argv[i]+13);
-    } else if (strcmp(argv[i],"-javadocpath")==0)   {
+    } else if (strcmp(argv[i], "-javadocpath")==0)   {
         NEXT_FILE_ARG();
         createOptionString(&options.javaDocPath, argv[i]);
     }
-    else if (strncmp(argv[i],"-javasuffixes=",14)==0) {
+    else if (strncmp(argv[i], "-javasuffixes=",14)==0) {
         createOptionString(&options.javaFilesSuffixes, argv[i]+14);
     }
-    else if (strcmp(argv[i],"-javafilesonly")==0) {
+    else if (strcmp(argv[i], "-javafilesonly")==0) {
         options.javaFilesOnly = 1;
     }
-    else if (strcmp(argv[i],"-jdkclasspath")==0 || strcmp(argv[i],"-javaruntime")==0) {
+    else if (strcmp(argv[i], "-jdkclasspath")==0 || strcmp(argv[i], "-javaruntime")==0) {
         NEXT_FILE_ARG();
         createOptionString(&options.jdkClassPath, argv[i]);
     }
@@ -813,7 +813,7 @@ static bool processLOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i], "-log=", 5)==0) {
         ;                       /* Already handled in initLogging() */
     }
-    else if (strncmp(argv[i],"-last_message=",14)==0) {
+    else if (strncmp(argv[i], "-last_message=",14)==0) {
         createOptionString(&options.last_message, argv[i]+14);
     }
     else return false;
@@ -824,7 +824,7 @@ static bool processLOption(int *ii, int argc, char **argv) {
 static bool processMOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strncmp(argv[i],"-mf=", 4)==0) {
+    else if (strncmp(argv[i], "-mf=", 4)==0) {
         int mf;
         sscanf(argv[i]+4, "%d", &mf);
         if (mf<0 || mf>=255) {
@@ -832,13 +832,13 @@ static bool processMOption(int *ii, int argc, char **argv) {
         }
         options.cxMemoryFactor = mf;
     }
-    else if (strncmp(argv[i],"-maxCompls=",11)==0 || strncmp(argv[i],"-maxcompls=",11)==0)  {
+    else if (strncmp(argv[i], "-maxCompls=",11)==0 || strncmp(argv[i], "-maxcompls=",11)==0)  {
         sscanf(argv[i]+11, "%d", &options.maxCompletions);
     }
-    else if (strncmp(argv[i],"-movetargetclass=",17)==0) {
+    else if (strncmp(argv[i], "-movetargetclass=",17)==0) {
         createOptionString(&options.moveTargetClass, argv[i]+17);
     }
-    else if (strncmp(argv[i],"-movetargetfile=",16)==0) {
+    else if (strncmp(argv[i], "-movetargetfile=",16)==0) {
         createOptionString(&options.moveTargetFile, argv[i]+16);
     }
     else return false;
@@ -849,19 +849,19 @@ static bool processMOption(int *ii, int argc, char **argv) {
 static bool processNOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-no-includerefs")==0) options.noIncludeRefs = true;
-    else if (strcmp(argv[i],"-no-includerefresh")==0) options.noIncludeRefs=true;
-    else if (strcmp(argv[i],"-no-cxfile")==0) options.noCxFile = 1;
-    else if (strcmp(argv[i],"-no-cppcomments")==0) options.cpp_comments = false;
-    else if (strcmp(argv[i],"-no-enums")==0) options.no_ref_enumerator = true;
-    else if (strcmp(argv[i],"-no-macros")==0) options.no_ref_macro = true;
-    else if (strcmp(argv[i],"-no-types")==0) options.no_ref_typedef = true;
-    else if (strcmp(argv[i],"-no-structs")==0) options.no_ref_records = true;
-    else if (strcmp(argv[i],"-no-locals")==0) options.no_ref_locals = true;
-    else if (strcmp(argv[i],"-no-classfiles")==0) options.allowClassFileRefs = false;
-    else if (strcmp(argv[i],"-no-stdoptions")==0) options.no_stdop = true;
-    else if (strcmp(argv[i],"-no-autoupdatefromsrc")==0) options.javaSlAllowed = 0;
-    else if (strcmp(argv[i],"-no-errors")==0) options.noErrors=1;
+    else if (strcmp(argv[i], "-no-includerefs")==0) options.noIncludeRefs = true;
+    else if (strcmp(argv[i], "-no-includerefresh")==0) options.noIncludeRefs=true;
+    else if (strcmp(argv[i], "-no-cxfile")==0) options.noCxFile = 1;
+    else if (strcmp(argv[i], "-no-cppcomments")==0) options.cpp_comments = false;
+    else if (strcmp(argv[i], "-no-enums")==0) options.no_ref_enumerator = true;
+    else if (strcmp(argv[i], "-no-macros")==0) options.no_ref_macro = true;
+    else if (strcmp(argv[i], "-no-types")==0) options.no_ref_typedef = true;
+    else if (strcmp(argv[i], "-no-structs")==0) options.no_ref_records = true;
+    else if (strcmp(argv[i], "-no-locals")==0) options.no_ref_locals = true;
+    else if (strcmp(argv[i], "-no-classfiles")==0) options.allowClassFileRefs = false;
+    else if (strcmp(argv[i], "-no-stdoptions")==0) options.no_stdop = true;
+    else if (strcmp(argv[i], "-no-autoupdatefromsrc")==0) options.javaSlAllowed = 0;
+    else if (strcmp(argv[i], "-no-errors")==0) options.noErrors=1;
     else return false;
     *ii = i;
     return true;
@@ -870,290 +870,290 @@ static bool processNOption(int *ii, int argc, char **argv) {
 static bool processOOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strncmp(argv[i],"-oocheckbits=",13)==0)    {
-        sscanf(argv[i]+13,"%o",&options.ooChecksBits);
+    else if (strncmp(argv[i], "-oocheckbits=",13)==0)    {
+        sscanf(argv[i]+13, "%o",&options.ooChecksBits);
     }
-    else if (strncmp(argv[i],"-olinelen=",10)==0) {
-        sscanf(argv[i]+10,"%d",&options.olineLen);
+    else if (strncmp(argv[i], "-olinelen=",10)==0) {
+        sscanf(argv[i]+10, "%d",&options.olineLen);
         if (options.olineLen == 0) options.olineLen =79;
         else options.olineLen--;
     }
-    else if (strncmp(argv[i],"-olcursor=",10)==0) {
-        sscanf(argv[i]+10,"%d",&options.olCursorPos);
+    else if (strncmp(argv[i], "-olcursor=",10)==0) {
+        sscanf(argv[i]+10, "%d",&options.olCursorPos);
     }
-    else if (strncmp(argv[i],"-olmark=",8)==0) {
-        sscanf(argv[i]+8,"%d",&options.olMarkPos);
+    else if (strncmp(argv[i], "-olmark=",8)==0) {
+        sscanf(argv[i]+8, "%d",&options.olMarkPos);
     }
-    else if (strncmp(argv[i],"-olcheckversion=",16)==0) {
+    else if (strncmp(argv[i], "-olcheckversion=",16)==0) {
         createOptionString(&options.checkVersion, argv[i]+16);
         options.server_operation = OLO_CHECK_VERSION;
     }
-    else if (strncmp(argv[i],"-olcxrefsuffix=",15)==0)  {
+    else if (strncmp(argv[i], "-olcxrefsuffix=",15)==0)  {
         createOptionString(&options.olcxRefSuffix, argv[i]+15);
     }
-    else if (strncmp(argv[i],"-olcxresetrefsuffix=",20)==0)     {
+    else if (strncmp(argv[i], "-olcxresetrefsuffix=",20)==0)     {
         options.server_operation = OLO_RESET_REF_SUFFIX;
         createOptionString(&options.olcxRefSuffix, argv[i]+20);
     }
-    else if (strcmp(argv[i],"-olcxextract")==0) {
+    else if (strcmp(argv[i], "-olcxextract")==0) {
         options.server_operation = OLO_EXTRACT;
     }
-    else if (strcmp(argv[i],"-olcxtrivialprecheck")==0) {
+    else if (strcmp(argv[i], "-olcxtrivialprecheck")==0) {
         options.server_operation = OLO_TRIVIAL_PRECHECK;
     }
-    else if (strcmp(argv[i],"-olmanualresolve")==0) {
+    else if (strcmp(argv[i], "-olmanualresolve")==0) {
         options.manualResolve = RESOLVE_DIALOG_ALLWAYS;
     }
-    else if (strcmp(argv[i],"-olnodialog")==0) {
+    else if (strcmp(argv[i], "-olnodialog")==0) {
         options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
-    else if (strcmp(argv[i],"-olexaddress")==0) {
+    else if (strcmp(argv[i], "-olexaddress")==0) {
         options.extractMode = EXTRACT_FUNCTION_ADDRESS_ARGS;
     }
-    else if (strcmp(argv[i],"-olchecklinkage")==0) {
+    else if (strcmp(argv[i], "-olchecklinkage")==0) {
         options.ooChecksBits |= OOC_LINKAGE_CHECK;
     }
-    else if (strcmp(argv[i],"-olcheckaccess")==0) {
+    else if (strcmp(argv[i], "-olcheckaccess")==0) {
         options.ooChecksBits |= OOC_ACCESS_CHECK;
     }
-    else if (strcmp(argv[i],"-olnocheckaccess")==0) {
+    else if (strcmp(argv[i], "-olnocheckaccess")==0) {
         options.ooChecksBits &= ~OOC_ACCESS_CHECK;
     }
-    else if (strcmp(argv[i],"-olallchecks")==0) {
+    else if (strcmp(argv[i], "-olallchecks")==0) {
         options.ooChecksBits |= OOC_ALL_CHECKS;
     }
-    else if (strncmp(argv[i],"-olfqtcompletionslevel=",23)==0) {
+    else if (strncmp(argv[i], "-olfqtcompletionslevel=",23)==0) {
         options.fqtNameToCompletions = 1;
         sscanf(argv[i]+23, "%d",&options.fqtNameToCompletions);
     }
-    else if (strcmp(argv[i],"-olexmacro")==0) options.extractMode=EXTRACT_MACRO;
-    else if (strcmp(argv[i],"-olcxunmodified")==0)  {
+    else if (strcmp(argv[i], "-olexmacro")==0) options.extractMode=EXTRACT_MACRO;
+    else if (strcmp(argv[i], "-olcxunmodified")==0)  {
         options.modifiedFlag = false;
     }
-    else if (strcmp(argv[i],"-olcxmodified")==0)    {
+    else if (strcmp(argv[i], "-olcxmodified")==0)    {
         options.modifiedFlag = true;
     }
-    else if (strcmp(argv[i],"-olcxrename")==0)  options.server_operation = OLO_RENAME;
-    else if (strcmp(argv[i],"-olcxencapsulate")==0) options.server_operation = OLO_ENCAPSULATE;
-    else if (strcmp(argv[i],"-olcxargmanip")==0)    options.server_operation = OLO_ARG_MANIP;
-    else if (strcmp(argv[i],"-olcxdynamictostatic1")==0)    options.server_operation = OLO_VIRTUAL2STATIC_PUSH;
-    else if (strcmp(argv[i],"-olcxsafetycheckinit")==0) options.server_operation = OLO_SAFETY_CHECK_INIT;
-    else if (strcmp(argv[i],"-olcxsafetycheck1")==0) options.server_operation = OLO_SAFETY_CHECK1;
-    else if (strcmp(argv[i],"-olcxsafetycheck2")==0) options.server_operation = OLO_SAFETY_CHECK2;
-    else if (strcmp(argv[i],"-olcxintersection")==0) options.server_operation = OLO_INTERSECTION;
-    else if (strcmp(argv[i],"-olcxsafetycheckmovedfile")==0
-             || strcmp(argv[i],"-olcxsafetycheckmoved")==0  /* backward compatibility */
+    else if (strcmp(argv[i], "-olcxrename")==0)  options.server_operation = OLO_RENAME;
+    else if (strcmp(argv[i], "-olcxencapsulate")==0) options.server_operation = OLO_ENCAPSULATE;
+    else if (strcmp(argv[i], "-olcxargmanip")==0)    options.server_operation = OLO_ARG_MANIP;
+    else if (strcmp(argv[i], "-olcxdynamictostatic1")==0)    options.server_operation = OLO_VIRTUAL2STATIC_PUSH;
+    else if (strcmp(argv[i], "-olcxsafetycheckinit")==0) options.server_operation = OLO_SAFETY_CHECK_INIT;
+    else if (strcmp(argv[i], "-olcxsafetycheck1")==0) options.server_operation = OLO_SAFETY_CHECK1;
+    else if (strcmp(argv[i], "-olcxsafetycheck2")==0) options.server_operation = OLO_SAFETY_CHECK2;
+    else if (strcmp(argv[i], "-olcxintersection")==0) options.server_operation = OLO_INTERSECTION;
+    else if (strcmp(argv[i], "-olcxsafetycheckmovedfile")==0
+             || strcmp(argv[i], "-olcxsafetycheckmoved")==0  /* backward compatibility */
              ) {
         NEXT_ARG();
         createOptionString(&options.checkFileMovedFrom, argv[i]);
         NEXT_ARG();
         createOptionString(&options.checkFileMovedTo, argv[i]);
     }
-    else if (strcmp(argv[i],"-olcxwindel")==0) {
+    else if (strcmp(argv[i], "-olcxwindel")==0) {
         options.server_operation = OLO_REMOVE_WIN;
     }
-    else if (strcmp(argv[i],"-olcxwindelfile")==0) {
+    else if (strcmp(argv[i], "-olcxwindelfile")==0) {
         NEXT_ARG();
         createOptionString(&options.olcxWinDelFile, argv[i]);
     }
-    else if (strncmp(argv[i],"-olcxwindelwin=",15)==0) {
+    else if (strncmp(argv[i], "-olcxwindelwin=",15)==0) {
         options.olcxWinDelFromLine = options.olcxWinDelToLine = 0;
         options.olcxWinDelFromCol = options.olcxWinDelToCol = 0;
-        sscanf(argv[i]+15,"%d:%dx%d:%d",
+        sscanf(argv[i]+15, "%d:%dx%d:%d",
                &options.olcxWinDelFromLine, &options.olcxWinDelFromCol,
                &options.olcxWinDelToLine, &options.olcxWinDelToCol);
-        //&fprintf(dumpOut,"; delete refs %d:%d-%d:%d\n", options.olcxWinDelFromLine, options.olcxWinDelFromCol, options.olcxWinDelToLine, options.olcxWinDelToCol);
+        //&fprintf(dumpOut, "; delete refs %d:%d-%d:%d\n", options.olcxWinDelFromLine, options.olcxWinDelFromCol, options.olcxWinDelToLine, options.olcxWinDelToCol);
     }
-    else if (strncmp(argv[i],"-olcxsafetycheckmovedblock=",27)==0) {
+    else if (strncmp(argv[i], "-olcxsafetycheckmovedblock=",27)==0) {
         sscanf(argv[i]+27, "%d:%d:%d", &options.checkFirstMovedLine,
                &options.checkLinesMoved, &options.checkNewLineNumber);
-        //&fprintf(dumpOut,"safety check block moved == %d:%d:%d\n", options.checkFirstMovedLine,options.checkLinesMoved, options.checkNewLineNumber);
+        //&fprintf(dumpOut, "safety check block moved == %d:%d:%d\n", options.checkFirstMovedLine,options.checkLinesMoved, options.checkNewLineNumber);
     }
-    else if (strcmp(argv[i],"-olcxgotodef")==0) options.server_operation = OLO_GOTO_DEF;
-    else if (strcmp(argv[i],"-olcxgotocaller")==0) options.server_operation = OLO_GOTO_CALLER;
-    else if (strcmp(argv[i],"-olcxgotocurrent")==0) options.server_operation = OLO_GOTO_CURRENT;
-    else if (strcmp(argv[i],"-olcxgetcurrentrefn")==0)options.server_operation=OLO_GET_CURRENT_REFNUM;
-    else if (strncmp(argv[i],"-olcxgotoparname",16)==0) {
+    else if (strcmp(argv[i], "-olcxgotodef")==0) options.server_operation = OLO_GOTO_DEF;
+    else if (strcmp(argv[i], "-olcxgotocaller")==0) options.server_operation = OLO_GOTO_CALLER;
+    else if (strcmp(argv[i], "-olcxgotocurrent")==0) options.server_operation = OLO_GOTO_CURRENT;
+    else if (strcmp(argv[i], "-olcxgetcurrentrefn")==0)options.server_operation=OLO_GET_CURRENT_REFNUM;
+    else if (strncmp(argv[i], "-olcxgotoparname",16)==0) {
         options.server_operation = OLO_GOTO_PARAM_NAME;
         options.olcxGotoVal = 0;
         sscanf(argv[i]+16, "%d", &options.olcxGotoVal);
     }
-    else if (strncmp(argv[i],"-olcxgetparamcoord",18)==0) {
+    else if (strncmp(argv[i], "-olcxgetparamcoord",18)==0) {
         options.server_operation = OLO_GET_PARAM_COORDINATES;
         options.olcxGotoVal = 0;
         sscanf(argv[i]+18, "%d", &options.olcxGotoVal);
     }
-    else if (strncmp(argv[i],"-olcxparnum=",12)==0) {
+    else if (strncmp(argv[i], "-olcxparnum=",12)==0) {
         options.olcxGotoVal = 0;
         sscanf(argv[i]+12, "%d", &options.olcxGotoVal);
     }
-    else if (strncmp(argv[i],"-olcxparnum2=",13)==0) {
+    else if (strncmp(argv[i], "-olcxparnum2=",13)==0) {
         options.parnum2 = 0;
         sscanf(argv[i]+13, "%d", &options.parnum2);
     }
-    else if (strcmp(argv[i],"-olcxtops")==0) options.server_operation = OLO_SHOW_TOP;
-    else if (strcmp(argv[i],"-olcxtoptype")==0) options.server_operation = OLO_SHOW_TOP_TYPE;
-    else if (strcmp(argv[i],"-olcxtopapplcl")==0) options.server_operation = OLO_SHOW_TOP_APPL_CLASS;
-    else if (strcmp(argv[i],"-olcxshowctree")==0) options.server_operation = OLO_SHOW_CLASS_TREE;
-    else if (strcmp(argv[i],"-olcxedittop")==0) options.server_operation = OLO_TOP_SYMBOL_RES;
-    else if (strcmp(argv[i],"-olcxclasstree")==0) options.server_operation = OLO_CLASS_TREE;
-    else if (strcmp(argv[i],"-olcxsyntaxpass")==0) options.server_operation = OLO_SYNTAX_PASS_ONLY;
-    else if (strcmp(argv[i],"-olcxprimarystart")==0) {
+    else if (strcmp(argv[i], "-olcxtops")==0) options.server_operation = OLO_SHOW_TOP;
+    else if (strcmp(argv[i], "-olcxtoptype")==0) options.server_operation = OLO_SHOW_TOP_TYPE;
+    else if (strcmp(argv[i], "-olcxtopapplcl")==0) options.server_operation = OLO_SHOW_TOP_APPL_CLASS;
+    else if (strcmp(argv[i], "-olcxshowctree")==0) options.server_operation = OLO_SHOW_CLASS_TREE;
+    else if (strcmp(argv[i], "-olcxedittop")==0) options.server_operation = OLO_TOP_SYMBOL_RES;
+    else if (strcmp(argv[i], "-olcxclasstree")==0) options.server_operation = OLO_CLASS_TREE;
+    else if (strcmp(argv[i], "-olcxsyntaxpass")==0) options.server_operation = OLO_SYNTAX_PASS_ONLY;
+    else if (strcmp(argv[i], "-olcxprimarystart")==0) {
         options.server_operation = OLO_GET_PRIMARY_START;
     }
-    else if (strcmp(argv[i],"-olcxuselesslongnames")==0) options.server_operation = OLO_USELESS_LONG_NAME;
-    else if (strcmp(argv[i],"-olcxuselesslongnamesinclass")==0) options.server_operation = OLO_USELESS_LONG_NAME_IN_CLASS;
-    else if (strcmp(argv[i],"-olcxmaybethis")==0) options.server_operation = OLO_MAYBE_THIS;
-    else if (strcmp(argv[i],"-olcxnotfqt")==0) options.server_operation = OLO_NOT_FQT_REFS;
-    else if (strcmp(argv[i],"-olcxnotfqtinclass")==0) options.server_operation = OLO_NOT_FQT_REFS_IN_CLASS;
-    else if (strcmp(argv[i],"-olcxgetrefactorings")==0)     {
+    else if (strcmp(argv[i], "-olcxuselesslongnames")==0) options.server_operation = OLO_USELESS_LONG_NAME;
+    else if (strcmp(argv[i], "-olcxuselesslongnamesinclass")==0) options.server_operation = OLO_USELESS_LONG_NAME_IN_CLASS;
+    else if (strcmp(argv[i], "-olcxmaybethis")==0) options.server_operation = OLO_MAYBE_THIS;
+    else if (strcmp(argv[i], "-olcxnotfqt")==0) options.server_operation = OLO_NOT_FQT_REFS;
+    else if (strcmp(argv[i], "-olcxnotfqtinclass")==0) options.server_operation = OLO_NOT_FQT_REFS_IN_CLASS;
+    else if (strcmp(argv[i], "-olcxgetrefactorings")==0)     {
         options.server_operation = OLO_GET_AVAILABLE_REFACTORINGS;
     }
-    else if (strcmp(argv[i],"-olcxpush")==0)    options.server_operation = OLO_PUSH;
-    else if (strcmp(argv[i],"-olcxrepush")==0)  options.server_operation = OLO_REPUSH;
-    else if (strcmp(argv[i],"-olcxpushonly")==0) options.server_operation = OLO_PUSH_ONLY;
-    else if (strcmp(argv[i],"-olcxpushandcallmacro")==0) options.server_operation = OLO_PUSH_AND_CALL_MACRO;
-    else if (strcmp(argv[i],"-olcxencapsulatesc1")==0) options.server_operation = OLO_PUSH_ENCAPSULATE_SAFETY_CHECK;
-    else if (strcmp(argv[i],"-olcxencapsulatesc2")==0) options.server_operation = OLO_ENCAPSULATE_SAFETY_CHECK;
-    else if (strcmp(argv[i],"-olcxpushallinmethod")==0) options.server_operation = OLO_PUSH_ALL_IN_METHOD;
-    else if (strcmp(argv[i],"-olcxmmprecheck")==0) options.server_operation = OLO_MM_PRE_CHECK;
-    else if (strcmp(argv[i],"-olcxppprecheck")==0) options.server_operation = OLO_PP_PRE_CHECK;
-    else if (strcmp(argv[i],"-olcxpushforlm")==0) {
+    else if (strcmp(argv[i], "-olcxpush")==0)    options.server_operation = OLO_PUSH;
+    else if (strcmp(argv[i], "-olcxrepush")==0)  options.server_operation = OLO_REPUSH;
+    else if (strcmp(argv[i], "-olcxpushonly")==0) options.server_operation = OLO_PUSH_ONLY;
+    else if (strcmp(argv[i], "-olcxpushandcallmacro")==0) options.server_operation = OLO_PUSH_AND_CALL_MACRO;
+    else if (strcmp(argv[i], "-olcxencapsulatesc1")==0) options.server_operation = OLO_PUSH_ENCAPSULATE_SAFETY_CHECK;
+    else if (strcmp(argv[i], "-olcxencapsulatesc2")==0) options.server_operation = OLO_ENCAPSULATE_SAFETY_CHECK;
+    else if (strcmp(argv[i], "-olcxpushallinmethod")==0) options.server_operation = OLO_PUSH_ALL_IN_METHOD;
+    else if (strcmp(argv[i], "-olcxmmprecheck")==0) options.server_operation = OLO_MM_PRE_CHECK;
+    else if (strcmp(argv[i], "-olcxppprecheck")==0) options.server_operation = OLO_PP_PRE_CHECK;
+    else if (strcmp(argv[i], "-olcxpushforlm")==0) {
         options.server_operation = OLO_PUSH_FOR_LOCALM;
         options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
-    else if (strcmp(argv[i],"-olcxpushglobalunused")==0)    options.server_operation = OLO_GLOBAL_UNUSED;
-    else if (strcmp(argv[i],"-olcxpushfileunused")==0)  options.server_operation = OLO_LOCAL_UNUSED;
-    else if (strcmp(argv[i],"-olcxlist")==0)    options.server_operation = OLO_LIST;
-    else if (strcmp(argv[i],"-olcxlisttop")==0) options.server_operation=OLO_LIST_TOP;
-    else if (strcmp(argv[i],"-olcxpop")==0)     options.server_operation = OLO_POP;
-    else if (strcmp(argv[i],"-olcxpoponly")==0) options.server_operation =OLO_POP_ONLY;
-    else if (strcmp(argv[i],"-olcxnext")==0)    options.server_operation = OLO_NEXT;
-    else if (strcmp(argv[i],"-olcxprevious")==0)   options.server_operation = OLO_PREVIOUS;
-    else if (strcmp(argv[i],"-olcxsearch")==0)  options.server_operation = OLO_SEARCH;
-    else if (strcmp(argv[i],"-olcxcomplet")==0)options.server_operation=OLO_COMPLETION;
-    else if (strcmp(argv[i],"-olcxtarget")==0)  options.server_operation=OLO_SET_MOVE_TARGET;
-    else if (strcmp(argv[i],"-olcxmctarget")==0)    options.server_operation=OLO_SET_MOVE_CLASS_TARGET;
-    else if (strcmp(argv[i],"-olcxmmtarget")==0)    options.server_operation=OLO_SET_MOVE_METHOD_TARGET;
-    else if (strcmp(argv[i],"-olcxcurrentclass")==0)    options.server_operation=OLO_GET_CURRENT_CLASS;
-    else if (strcmp(argv[i],"-olcxcurrentsuperclass")==0)   options.server_operation=OLO_GET_CURRENT_SUPER_CLASS;
-    else if (strcmp(argv[i],"-olcxmethodlines")==0) options.server_operation=OLO_GET_METHOD_COORD;
-    else if (strcmp(argv[i],"-olcxclasslines")==0)  options.server_operation=OLO_GET_CLASS_COORD;
-    else if (strcmp(argv[i],"-olcxgetsymboltype")==0) options.server_operation=OLO_GET_SYMBOL_TYPE;
-    else if (strcmp(argv[i],"-olcxgetprojectname")==0) {
+    else if (strcmp(argv[i], "-olcxpushglobalunused")==0)    options.server_operation = OLO_GLOBAL_UNUSED;
+    else if (strcmp(argv[i], "-olcxpushfileunused")==0)  options.server_operation = OLO_LOCAL_UNUSED;
+    else if (strcmp(argv[i], "-olcxlist")==0)    options.server_operation = OLO_LIST;
+    else if (strcmp(argv[i], "-olcxlisttop")==0) options.server_operation=OLO_LIST_TOP;
+    else if (strcmp(argv[i], "-olcxpop")==0)     options.server_operation = OLO_POP;
+    else if (strcmp(argv[i], "-olcxpoponly")==0) options.server_operation =OLO_POP_ONLY;
+    else if (strcmp(argv[i], "-olcxnext")==0)    options.server_operation = OLO_NEXT;
+    else if (strcmp(argv[i], "-olcxprevious")==0)   options.server_operation = OLO_PREVIOUS;
+    else if (strcmp(argv[i], "-olcxsearch")==0)  options.server_operation = OLO_SEARCH;
+    else if (strcmp(argv[i], "-olcxcomplet")==0)options.server_operation=OLO_COMPLETION;
+    else if (strcmp(argv[i], "-olcxtarget")==0)  options.server_operation=OLO_SET_MOVE_TARGET;
+    else if (strcmp(argv[i], "-olcxmctarget")==0)    options.server_operation=OLO_SET_MOVE_CLASS_TARGET;
+    else if (strcmp(argv[i], "-olcxmmtarget")==0)    options.server_operation=OLO_SET_MOVE_METHOD_TARGET;
+    else if (strcmp(argv[i], "-olcxcurrentclass")==0)    options.server_operation=OLO_GET_CURRENT_CLASS;
+    else if (strcmp(argv[i], "-olcxcurrentsuperclass")==0)   options.server_operation=OLO_GET_CURRENT_SUPER_CLASS;
+    else if (strcmp(argv[i], "-olcxmethodlines")==0) options.server_operation=OLO_GET_METHOD_COORD;
+    else if (strcmp(argv[i], "-olcxclasslines")==0)  options.server_operation=OLO_GET_CLASS_COORD;
+    else if (strcmp(argv[i], "-olcxgetsymboltype")==0) options.server_operation=OLO_GET_SYMBOL_TYPE;
+    else if (strcmp(argv[i], "-olcxgetprojectname")==0) {
         options.server_operation=OLO_ACTIVE_PROJECT;
     }
-    else if (strcmp(argv[i],"-olcxgetjavahome")==0) {
+    else if (strcmp(argv[i], "-olcxgetjavahome")==0) {
         options.server_operation=OLO_JAVA_HOME;
     }
-    else if (strncmp(argv[i],"-olcxlccursor=",14)==0) {
+    else if (strncmp(argv[i], "-olcxlccursor=",14)==0) {
         // position of the cursor in line:column format
         createOptionString(&options.olcxlccursor, argv[i]+14);
     }
-    else if (strncmp(argv[i],"-olcxcplsearch=",15)==0) {
+    else if (strncmp(argv[i], "-olcxcplsearch=",15)==0) {
         options.server_operation=OLO_SEARCH;
         createOptionString(&options.olcxSearchString, argv[i]+15);
     }
-    else if (strncmp(argv[i],"-olcxtagsearch=",15)==0) {
+    else if (strncmp(argv[i], "-olcxtagsearch=",15)==0) {
         options.server_operation=OLO_TAG_SEARCH;
         createOptionString(&options.olcxSearchString, argv[i]+15);
     }
-    else if (strcmp(argv[i],"-olcxtagsearchforward")==0) {
+    else if (strcmp(argv[i], "-olcxtagsearchforward")==0) {
         options.server_operation=OLO_TAG_SEARCH_FORWARD;
     }
-    else if (strcmp(argv[i],"-olcxtagsearchback")==0) {
+    else if (strcmp(argv[i], "-olcxtagsearchback")==0) {
         options.server_operation=OLO_TAG_SEARCH_BACK;
     }
-    else if (strncmp(argv[i],"-olcxpushname=",14)==0)   {
+    else if (strncmp(argv[i], "-olcxpushname=",14)==0)   {
         options.server_operation = OLO_PUSH_NAME;
         createOptionString(&options.pushName, argv[i]+14);
     }
-    else if (strncmp(argv[i],"-olcxpushspecialname=",21)==0)    {
+    else if (strncmp(argv[i], "-olcxpushspecialname=",21)==0)    {
         options.server_operation = OLO_PUSH_SPECIAL_NAME;
         createOptionString(&options.pushName, argv[i]+21);
     }
-    else if (strncmp(argv[i],"-olcomplselect",14)==0) {
+    else if (strncmp(argv[i], "-olcomplselect",14)==0) {
         options.server_operation=OLO_CSELECT;
         options.olcxGotoVal = 0;
-        sscanf(argv[i]+14,"%d",&options.olcxGotoVal);
+        sscanf(argv[i]+14, "%d",&options.olcxGotoVal);
     }
-    else if (strcmp(argv[i],"-olcomplback")==0) {
+    else if (strcmp(argv[i], "-olcomplback")==0) {
         options.server_operation=OLO_COMPLETION_BACK;
     }
-    else if (strcmp(argv[i],"-olcomplforward")==0) {
+    else if (strcmp(argv[i], "-olcomplforward")==0) {
         options.server_operation=OLO_COMPLETION_FORWARD;
     }
-    else if (strncmp(argv[i],"-olcxcgoto",10)==0) {
+    else if (strncmp(argv[i], "-olcxcgoto",10)==0) {
         options.server_operation = OLO_CGOTO;
         options.olcxGotoVal = 0;
-        sscanf(argv[i]+10,"%d",&options.olcxGotoVal);
+        sscanf(argv[i]+10, "%d",&options.olcxGotoVal);
     }
-    else if (strncmp(argv[i],"-olcxtaggoto",12)==0) {
+    else if (strncmp(argv[i], "-olcxtaggoto",12)==0) {
         options.server_operation = OLO_TAGGOTO;
         options.olcxGotoVal = 0;
-        sscanf(argv[i]+12,"%d",&options.olcxGotoVal);
+        sscanf(argv[i]+12, "%d",&options.olcxGotoVal);
     }
-    else if (strncmp(argv[i],"-olcxtagselect",14)==0) {
+    else if (strncmp(argv[i], "-olcxtagselect",14)==0) {
         options.server_operation = OLO_TAGSELECT;
         options.olcxGotoVal = 0;
-        sscanf(argv[i]+14,"%d",&options.olcxGotoVal);
+        sscanf(argv[i]+14, "%d",&options.olcxGotoVal);
     }
-    else if (strncmp(argv[i],"-olcxcbrowse",12)==0) {
+    else if (strncmp(argv[i], "-olcxcbrowse",12)==0) {
         options.server_operation = OLO_CBROWSE;
         options.olcxGotoVal = 0;
-        sscanf(argv[i]+12,"%d",&options.olcxGotoVal);
+        sscanf(argv[i]+12, "%d",&options.olcxGotoVal);
     }
-    else if (strncmp(argv[i],"-olcxgoto",9)==0) {
+    else if (strncmp(argv[i], "-olcxgoto",9)==0) {
         options.server_operation = OLO_GOTO;
         options.olcxGotoVal = 0;
-        sscanf(argv[i]+9,"%d",&options.olcxGotoVal);
+        sscanf(argv[i]+9, "%d",&options.olcxGotoVal);
     }
-    else if (strncmp(argv[i],"-olcxfilter=",12)==0) {
+    else if (strncmp(argv[i], "-olcxfilter=",12)==0) {
         options.server_operation = OLO_REF_FILTER_SET;
-        sscanf(argv[i]+12,"%d",&options.filterValue);
+        sscanf(argv[i]+12, "%d",&options.filterValue);
     }
     else if (strncmp(argv[i], "-olcxmenusingleselect",21)==0) {
         options.server_operation = OLO_MENU_SELECT_ONLY;
         options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+21,"%d",&options.olcxMenuSelectLineNum);
+        sscanf(argv[i]+21, "%d",&options.olcxMenuSelectLineNum);
     }
-    else if (strncmp(argv[i],"-olcxmenuselect",15)==0) {
+    else if (strncmp(argv[i], "-olcxmenuselect",15)==0) {
         options.server_operation = OLO_MENU_SELECT;
         options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+15,"%d",&options.olcxMenuSelectLineNum);
+        sscanf(argv[i]+15, "%d",&options.olcxMenuSelectLineNum);
     }
-    else if (strncmp(argv[i],"-olcxmenuinspectdef",19)==0) {
+    else if (strncmp(argv[i], "-olcxmenuinspectdef",19)==0) {
         options.server_operation = OLO_MENU_INSPECT_DEF;
         options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+19,"%d",&options.olcxMenuSelectLineNum);
+        sscanf(argv[i]+19, "%d",&options.olcxMenuSelectLineNum);
     }
-    else if (strncmp(argv[i],"-olcxmenuinspectclass",21)==0) {
+    else if (strncmp(argv[i], "-olcxmenuinspectclass",21)==0) {
         options.server_operation = OLO_MENU_INSPECT_CLASS;
         options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+21,"%d",&options.olcxMenuSelectLineNum);
+        sscanf(argv[i]+21, "%d",&options.olcxMenuSelectLineNum);
     }
-    else if (strncmp(argv[i],"-olcxctinspectdef",17)==0) {
+    else if (strncmp(argv[i], "-olcxctinspectdef",17)==0) {
         options.server_operation = OLO_CT_INSPECT_DEF;
         options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+17,"%d",&options.olcxMenuSelectLineNum);
+        sscanf(argv[i]+17, "%d",&options.olcxMenuSelectLineNum);
     }
-    else if (strcmp(argv[i],"-olcxmenuall")==0) {
+    else if (strcmp(argv[i], "-olcxmenuall")==0) {
         options.server_operation = OLO_MENU_SELECT_ALL;
     }
-    else if (strcmp(argv[i],"-olcxmenunone")==0) {
+    else if (strcmp(argv[i], "-olcxmenunone")==0) {
         options.server_operation = OLO_MENU_SELECT_NONE;
     }
-    else if (strcmp(argv[i],"-olcxmenugo")==0) {
+    else if (strcmp(argv[i], "-olcxmenugo")==0) {
         options.server_operation = OLO_MENU_GO;
     }
-    else if (strncmp(argv[i],"-olcxmenufilter=",16)==0) {
+    else if (strncmp(argv[i], "-olcxmenufilter=",16)==0) {
         options.server_operation = OLO_MENU_FILTER_SET;
-        sscanf(argv[i]+16,"%d",&options.filterValue);
+        sscanf(argv[i]+16, "%d",&options.filterValue);
     }
-    else if (strcmp(argv[i],"-optinclude")==0) {
+    else if (strcmp(argv[i], "-optinclude")==0) {
         i = mainHandleIncludeOption(argc, argv, i);
     }
-    else if (strcmp(argv[i],"-o")==0) {
+    else if (strcmp(argv[i], "-o")==0) {
         NEXT_FILE_ARG();
         createOptionString(&options.outputFileName, argv[i]);
     }
@@ -1166,23 +1166,23 @@ static bool processPOption(int *ii, int argc, char **argv) {
     char    ttt[MAX_FILE_NAME_SIZE];
     int     i = * ii;
     if (0) {}
-    else if (strncmp(argv[i],"-pause",5)==0) {
+    else if (strncmp(argv[i], "-pause",5)==0) {
         /* Pause to be able to attach with debugger... */
         NEXT_ARG();
         sleep(atoi(argv[i]));
     }
-    else if (strncmp(argv[i],"-pass",5)==0) {
-        errorMessage(ERR_ST,"'-pass' option can't be entered from command line");
+    else if (strncmp(argv[i], "-pass",5)==0) {
+        errorMessage(ERR_ST, "'-pass' option can't be entered from command line");
     }
-    else if (strcmp(argv[i],"-packages")==0) {
+    else if (strcmp(argv[i], "-packages")==0) {
         options.allowPackagesOnCommandLine = 1;
     }
-    else if (strcmp(argv[i],"-p")==0) {
+    else if (strcmp(argv[i], "-p")==0) {
         NEXT_FILE_ARG();
-        //fprintf(dumpOut,"current project '%s'\n", argv[i]);
+        //fprintf(dumpOut, "current project '%s'\n", argv[i]);
         createOptionString(&options.project, argv[i]);
     }
-    else if (strcmp(argv[i],"-preload")==0) {
+    else if (strcmp(argv[i], "-preload")==0) {
         char *file, *fromFile;
         NEXT_FILE_ARG();
         file = argv[i];
@@ -1191,10 +1191,10 @@ static bool processPOption(int *ii, int argc, char **argv) {
         fromFile = argv[i];
         // TODO, maybe do this also through allocated list of options
         // and serve them later ?
-        //&sprintf(tmpBuff,"-preload %s %s\n", ttt, fromFile); ppcGenRecord(PPC_IGNORE, tmpBuff);
+        //&sprintf(tmpBuff, "-preload %s %s\n", ttt, fromFile); ppcGenRecord(PPC_IGNORE, tmpBuff);
         editorOpenBufferNoFileLoad(ttt, fromFile);
     }
-    else if (strcmp(argv[i],"-prune")==0) {
+    else if (strcmp(argv[i], "-prune")==0) {
         NEXT_ARG();
         mainAddStringListOption(&options.pruneNames, argv[i]);
     }
@@ -1217,7 +1217,7 @@ static void setXrefsFile(char *argvi) {
     if (options.taskRegime==RegimeXref && message==0 && ! isAbsolutePath(argvi)) {
         char tmpBuff[TMP_BUFF_SIZE];
         message = 1;
-        sprintf(tmpBuff,"'%s' is not an absolute path, correct -refs option",argvi);
+        sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option",argvi);
         warningMessage(ERR_ST, tmpBuff);
     }
     createOptionString(&options.cxrefFileName, normalizeFileName(argvi, s_cwd));
@@ -1226,126 +1226,126 @@ static void setXrefsFile(char *argvi) {
 static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
     int i = * ii;
     if (0) {}
-    else if (strncmp(argv[i],"-refnum=",8)==0)  {
+    else if (strncmp(argv[i], "-refnum=",8)==0)  {
         sscanf(argv[i]+8, "%d", &options.referenceFileCount);
     }
-    else if (strcmp(argv[i],"-refalphahash")==0
-             || strcmp(argv[i],"-refalpha1hash")==0)    {
+    else if (strcmp(argv[i], "-refalphahash")==0
+             || strcmp(argv[i], "-refalpha1hash")==0)    {
         int check;
         options.xfileHashingMethod = XFILE_HASH_ALPHA1;
         check = changeRefNumOption(XFILE_HASH_ALPHA1_REFNUM);
         if (check == 0) {
             assert(options.taskRegime);
-            fatalError(ERR_ST,"'-refalphahash' conflicts with '-refnum' option", XREF_EXIT_ERR);
+            fatalError(ERR_ST, "'-refalphahash' conflicts with '-refnum' option", XREF_EXIT_ERR);
         }
     }
-    else if (strcmp(argv[i],"-refalpha2hash")==0)   {
+    else if (strcmp(argv[i], "-refalpha2hash")==0)   {
         int check;
         options.xfileHashingMethod = XFILE_HASH_ALPHA2;
         check = changeRefNumOption(XFILE_HASH_ALPHA2_REFNUM);
         if (check == 0) {
             assert(options.taskRegime);
-            fatalError(ERR_ST,"'-refalpha2hash' conflicts with '-refnum' option", XREF_EXIT_ERR);
+            fatalError(ERR_ST, "'-refalpha2hash' conflicts with '-refnum' option", XREF_EXIT_ERR);
         }
     }
-    else if (strcmp(argv[i],"-r")==0) {
+    else if (strcmp(argv[i], "-r")==0) {
         if (infilesFlag == INFILES_ENABLED) options.recurseDirectories = true;
     }
-    else if (strncmp(argv[i],"-renameto=", 10)==0) {
+    else if (strncmp(argv[i], "-renameto=", 10)==0) {
         createOptionString(&options.renameTo, argv[i]+10);
     }
-    else if (strcmp(argv[i],"-resetIncludeDirs")==0) {
+    else if (strcmp(argv[i], "-resetIncludeDirs")==0) {
         options.includeDirs = NULL;
     }
-    else if (strcmp(argv[i],"-refs")==0)    {
+    else if (strcmp(argv[i], "-refs")==0)    {
         NEXT_FILE_ARG();
         setXrefsFile(argv[i]);
     }
-    else if (strncmp(argv[i],"-refs=",6)==0)    {
+    else if (strncmp(argv[i], "-refs=",6)==0)    {
         setXrefsFile(argv[i]+6);
     }
-    else if (strcmp(argv[i],"-rlistwithoutsrc")==0) {
+    else if (strcmp(argv[i], "-rlistwithoutsrc")==0) {
         options.referenceListWithoutSource = 1;
     }
-    else if (strcmp(argv[i],"-refactory")==0)   {
+    else if (strcmp(argv[i], "-refactory")==0)   {
         options.refactoringRegime = RegimeRefactory;
     }
-    else if (strcmp(argv[i],"-rfct-rename")==0) {
+    else if (strcmp(argv[i], "-rfct-rename")==0) {
         options.theRefactoring = AVR_RENAME_SYMBOL;
     }
-    else if (strcmp(argv[i],"-rfct-rename-class")==0)   {
+    else if (strcmp(argv[i], "-rfct-rename-class")==0)   {
         options.theRefactoring = AVR_RENAME_CLASS;
     }
-    else if (strcmp(argv[i],"-rfct-rename-package")==0) {
+    else if (strcmp(argv[i], "-rfct-rename-package")==0) {
         options.theRefactoring = AVR_RENAME_PACKAGE;
     }
-    else if (strcmp(argv[i],"-rfct-expand")==0) {
+    else if (strcmp(argv[i], "-rfct-expand")==0) {
         options.theRefactoring = AVR_EXPAND_NAMES;
     }
-    else if (strcmp(argv[i],"-rfct-reduce")==0) {
+    else if (strcmp(argv[i], "-rfct-reduce")==0) {
         options.theRefactoring = AVR_REDUCE_NAMES;
     }
-    else if (strcmp(argv[i],"-rfct-add-param")==0)  {
+    else if (strcmp(argv[i], "-rfct-add-param")==0)  {
         options.theRefactoring = AVR_ADD_PARAMETER;
     }
-    else if (strcmp(argv[i],"-rfct-del-param")==0)  {
+    else if (strcmp(argv[i], "-rfct-del-param")==0)  {
         options.theRefactoring = AVR_DEL_PARAMETER;
     }
-    else if (strcmp(argv[i],"-rfct-move-param")==0) {
+    else if (strcmp(argv[i], "-rfct-move-param")==0) {
         options.theRefactoring = AVR_MOVE_PARAMETER;
     }
-    else if (strcmp(argv[i],"-rfct-move-field")==0) {
+    else if (strcmp(argv[i], "-rfct-move-field")==0) {
         options.theRefactoring = AVR_MOVE_FIELD;
     }
-    else if (strcmp(argv[i],"-rfct-move-static-field")==0)  {
+    else if (strcmp(argv[i], "-rfct-move-static-field")==0)  {
         options.theRefactoring = AVR_MOVE_STATIC_FIELD;
     }
-    else if (strcmp(argv[i],"-rfct-move-static-method")==0) {
+    else if (strcmp(argv[i], "-rfct-move-static-method")==0) {
         options.theRefactoring = AVR_MOVE_STATIC_METHOD;
     }
-    else if (strcmp(argv[i],"-rfct-move-class")==0) {
+    else if (strcmp(argv[i], "-rfct-move-class")==0) {
         options.theRefactoring = AVR_MOVE_CLASS;
     }
-    else if (strcmp(argv[i],"-rfct-move-class-to-new-file")==0) {
+    else if (strcmp(argv[i], "-rfct-move-class-to-new-file")==0) {
         options.theRefactoring = AVR_MOVE_CLASS_TO_NEW_FILE;
     }
-    else if (strcmp(argv[i],"-rfct-move-all-classes-to-new-file")==0)   {
+    else if (strcmp(argv[i], "-rfct-move-all-classes-to-new-file")==0)   {
         options.theRefactoring = AVR_MOVE_ALL_CLASSES_TO_NEW_FILE;
     }
-    else if (strcmp(argv[i],"-rfct-static-to-dynamic")==0)  {
+    else if (strcmp(argv[i], "-rfct-static-to-dynamic")==0)  {
         options.theRefactoring = AVR_TURN_STATIC_METHOD_TO_DYNAMIC;
     }
-    else if (strcmp(argv[i],"-rfct-dynamic-to-static")==0)  {
+    else if (strcmp(argv[i], "-rfct-dynamic-to-static")==0)  {
         options.theRefactoring = AVR_TURN_DYNAMIC_METHOD_TO_STATIC;
     }
-    else if (strcmp(argv[i],"-rfct-extract-method")==0) {
+    else if (strcmp(argv[i], "-rfct-extract-method")==0) {
         options.theRefactoring = AVR_EXTRACT_METHOD;
     }
-    else if (strcmp(argv[i],"-rfct-extract-macro")==0)  {
+    else if (strcmp(argv[i], "-rfct-extract-macro")==0)  {
         options.theRefactoring = AVR_EXTRACT_MACRO;
     }
-    else if (strcmp(argv[i],"-rfct-reduce-long-names-in-the-file")==0)  {
+    else if (strcmp(argv[i], "-rfct-reduce-long-names-in-the-file")==0)  {
         options.theRefactoring = AVR_ADD_ALL_POSSIBLE_IMPORTS;
     }
-    else if (strcmp(argv[i],"-rfct-add-to-imports")==0) {
+    else if (strcmp(argv[i], "-rfct-add-to-imports")==0) {
         options.theRefactoring = AVR_ADD_TO_IMPORT;
     }
-    else if (strcmp(argv[i],"-rfct-self-encapsulate-field")==0) {
+    else if (strcmp(argv[i], "-rfct-self-encapsulate-field")==0) {
         options.theRefactoring = AVR_SELF_ENCAPSULATE_FIELD;
     }
-    else if (strcmp(argv[i],"-rfct-encapsulate-field")==0)  {
+    else if (strcmp(argv[i], "-rfct-encapsulate-field")==0)  {
         options.theRefactoring = AVR_ENCAPSULATE_FIELD;
     }
-    else if (strcmp(argv[i],"-rfct-push-down-field")==0)    {
+    else if (strcmp(argv[i], "-rfct-push-down-field")==0)    {
         options.theRefactoring = AVR_PUSH_DOWN_FIELD;
     }
-    else if (strcmp(argv[i],"-rfct-push-down-method")==0)   {
+    else if (strcmp(argv[i], "-rfct-push-down-method")==0)   {
         options.theRefactoring = AVR_PUSH_DOWN_METHOD;
     }
-    else if (strcmp(argv[i],"-rfct-pull-up-field")==0)  {
+    else if (strcmp(argv[i], "-rfct-pull-up-field")==0)  {
         options.theRefactoring = AVR_PULL_UP_FIELD;
     }
-    else if (strcmp(argv[i],"-rfct-pull-up-method")==0) {
+    else if (strcmp(argv[i], "-rfct-pull-up-method")==0) {
         options.theRefactoring = AVR_PULL_UP_METHOD;
     }
     else if (strncmp(argv[i], "-rfct-param1=", 13)==0)  {
@@ -1364,43 +1364,43 @@ static bool processSOption(int *ii, int argc, char **argv) {
     char *name, *val;
 
     if (0) {}
-    else if (strcmp(argv[i],"-strict")==0)      options.strictAnsi = true;
-    else if (strcmp(argv[i],"-stderr")==0)          errOut = stdout;
-    else if (strcmp(argv[i],"-source")==0)  {
+    else if (strcmp(argv[i], "-strict")==0)      options.strictAnsi = true;
+    else if (strcmp(argv[i], "-stderr")==0)          errOut = stdout;
+    else if (strcmp(argv[i], "-source")==0)  {
         char tmpBuff[TMP_BUFF_SIZE];
         NEXT_ARG();
         if (strcmp(argv[i], JAVA_VERSION_1_3)!=0 && strcmp(argv[i], JAVA_VERSION_1_4)!=0) {
-            sprintf(tmpBuff,"wrong -javaversion=<value>, available values are %s, %s",
+            sprintf(tmpBuff, "wrong -javaversion=<value>, available values are %s, %s",
                     JAVA_VERSION_1_3, JAVA_VERSION_1_4);
             errorMessage(ERR_ST, tmpBuff);
         } else {
             createOptionString(&options.javaVersion, argv[i]);
         }
     }
-    else if (strcmp(argv[i],"-sourcepath")==0) {
+    else if (strcmp(argv[i], "-sourcepath")==0) {
         NEXT_FILE_ARG();
         createOptionString(&options.sourcePath, argv[i]);
         xrefSetenv("-sourcepath", options.sourcePath);
     }
-    else if (strcmp(argv[i],"-stdop")==0) {
+    else if (strcmp(argv[i], "-stdop")==0) {
         i = mainHandleIncludeOption(argc, argv, i);
     }
-    else if (strcmp(argv[i],"-set")==0) {
+    else if (strcmp(argv[i], "-set")==0) {
         i = mainHandleSetOption(argc, argv, i);
     }
-    else if (strncmp(argv[i],"-set",4)==0) {
+    else if (strncmp(argv[i], "-set",4)==0) {
         name = argv[i]+4;
         NEXT_ARG();
         val = argv[i];
         xrefSetenv(name, val);
     }
-    else if (strcmp(argv[i],"-searchdef")==0) {
+    else if (strcmp(argv[i], "-searchdef")==0) {
         options.tagSearchSpecif = TSS_SEARCH_DEFS_ONLY;
     }
-    else if (strcmp(argv[i],"-searchshortlist")==0) {
+    else if (strcmp(argv[i], "-searchshortlist")==0) {
         options.tagSearchSpecif = TSS_FULL_SEARCH_SHORT;
     }
-    else if (strcmp(argv[i],"-searchdefshortlist")==0) {
+    else if (strcmp(argv[i], "-searchdefshortlist")==0) {
         options.tagSearchSpecif = TSS_SEARCH_DEFS_ONLY_SHORT;
     }
     else return false;
@@ -1412,54 +1412,54 @@ static bool processTOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
 #ifdef DEBUG
-    else if (strcmp(argv[i],"-trace")==0) {
+    else if (strcmp(argv[i], "-trace")==0) {
         options.trace = true;
     }
 #endif
-    else if (strcmp(argv[i],"-task_regime_server")==0) {
+    else if (strcmp(argv[i], "-task_regime_server")==0) {
         options.taskRegime = RegimeEditServer;
     }
-    else if (strcmp(argv[i],"-thread")==0) {
+    else if (strcmp(argv[i], "-thread")==0) {
         NEXT_FILE_ARG();
         createOptionString(&options.user, argv[i]);
     }
-    else if (strcmp(argv[i],"-tpchrenamepackage")==0) {
+    else if (strcmp(argv[i], "-tpchrenamepackage")==0) {
         options.trivialPreCheckCode = TPC_RENAME_PACKAGE;
     }
-    else if (strcmp(argv[i],"-tpchrenameclass")==0) {
+    else if (strcmp(argv[i], "-tpchrenameclass")==0) {
         options.trivialPreCheckCode = TPC_RENAME_CLASS;
     }
-    else if (strcmp(argv[i],"-tpchmoveclass")==0) {
+    else if (strcmp(argv[i], "-tpchmoveclass")==0) {
         options.trivialPreCheckCode = TPC_MOVE_CLASS;
     }
-    else if (strcmp(argv[i],"-tpchmovefield")==0) {
+    else if (strcmp(argv[i], "-tpchmovefield")==0) {
         options.trivialPreCheckCode = TPC_MOVE_FIELD;
     }
-    else if (strcmp(argv[i],"-tpchmovestaticfield")==0) {
+    else if (strcmp(argv[i], "-tpchmovestaticfield")==0) {
         options.trivialPreCheckCode = TPC_MOVE_STATIC_FIELD;
     }
-    else if (strcmp(argv[i],"-tpchmovestaticmethod")==0) {
+    else if (strcmp(argv[i], "-tpchmovestaticmethod")==0) {
         options.trivialPreCheckCode = TPC_MOVE_STATIC_METHOD;
     }
-    else if (strcmp(argv[i],"-tpchturndyntostatic")==0) {
+    else if (strcmp(argv[i], "-tpchturndyntostatic")==0) {
         options.trivialPreCheckCode = TPC_TURN_DYN_METHOD_TO_STATIC;
     }
-    else if (strcmp(argv[i],"-tpchturnstatictodyn")==0) {
+    else if (strcmp(argv[i], "-tpchturnstatictodyn")==0) {
         options.trivialPreCheckCode = TPC_TURN_STATIC_METHOD_TO_DYN;
     }
-    else if (strcmp(argv[i],"-tpchpullupmethod")==0) {
+    else if (strcmp(argv[i], "-tpchpullupmethod")==0) {
         options.trivialPreCheckCode = TPC_PULL_UP_METHOD;
     }
-    else if (strcmp(argv[i],"-tpchpushdownmethod")==0) {
+    else if (strcmp(argv[i], "-tpchpushdownmethod")==0) {
         options.trivialPreCheckCode = TPC_PUSH_DOWN_METHOD;
     }
-    else if (strcmp(argv[i],"-tpchpushdownmethodpostcheck")==0) {
+    else if (strcmp(argv[i], "-tpchpushdownmethodpostcheck")==0) {
         options.trivialPreCheckCode = TPC_PUSH_DOWN_METHOD_POST_CHECK;
     }
-    else if (strcmp(argv[i],"-tpchpullupfield")==0) {
+    else if (strcmp(argv[i], "-tpchpullupfield")==0) {
         options.trivialPreCheckCode = TPC_PULL_UP_FIELD;
     }
-    else if (strcmp(argv[i],"-tpchpushdownfield")==0) {
+    else if (strcmp(argv[i], "-tpchpushdownfield")==0) {
         options.trivialPreCheckCode = TPC_PUSH_DOWN_FIELD;
     }
     else return false;
@@ -1470,17 +1470,17 @@ static bool processTOption(int *ii, int argc, char **argv) {
 static bool processUOption(int *argIndexP, int argc, char **argv) {
     int i = *argIndexP;
     if (0) {}
-    else if (strcmp(argv[i],"-urlmanualredirect")==0)   {
+    else if (strcmp(argv[i], "-urlmanualredirect")==0)   {
         options.urlAutoRedirect = 0;
     }
-    else if (strcmp(argv[i],"-urldirect")==0)   {
+    else if (strcmp(argv[i], "-urldirect")==0)   {
         options.urlGenTemporaryFile = false;
     }
-    else if (strcmp(argv[i],"-user")==0) {
+    else if (strcmp(argv[i], "-user")==0) {
         NEXT_ARG();
         createOptionString(&options.user, argv[i]);
     }
-    else if (strcmp(argv[i],"-update")==0)  {
+    else if (strcmp(argv[i], "-update")==0)  {
         options.update = UP_FULL_UPDATE;
         options.updateOnlyModifiedFiles = true;
     }
@@ -1493,7 +1493,7 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
 static bool processVOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-version")==0||strcmp(argv[i],"-about")==0){
+    else if (strcmp(argv[i], "-version")==0||strcmp(argv[i], "-about")==0){
         options.server_operation = OLO_ABOUT;
     }
     else return false;
@@ -1512,13 +1512,13 @@ static bool processWOption(int *ii, int argc, char **argv) {
 static bool processXOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-xrefactory-II") == 0){
+    else if (strcmp(argv[i], "-xrefactory-II") == 0){
         options.xref2 = 1;
     }
-    else if (strncmp(argv[i],"-xrefrc=",8) == 0) {
+    else if (strncmp(argv[i], "-xrefrc=",8) == 0) {
         createOptionString(&options.xrefrc, argv[i]+8);
     }
-    else if (strcmp(argv[i],"-xrefrc") == 0) {
+    else if (strcmp(argv[i], "-xrefrc") == 0) {
         NEXT_FILE_ARG();
         createOptionString(&options.xrefrc, argv[i]);
     }
@@ -1531,7 +1531,7 @@ static bool processYOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
 #ifdef YYDEBUG
-    else if (strcmp(argv[i],"-yydebug") == 0){
+    else if (strcmp(argv[i], "-yydebug") == 0){
         c_yydebug = 1;
         yacc_yydebug = 1;
         java_yydebug = 1;
@@ -1557,7 +1557,7 @@ static void mainScheduleInputFileOptionToFileTable(char *infile) {
     topCallFlag = 1;
     recursFlag = &topCallFlag;
     JavaMapOnPaths(infile, {
-            dirInputFile(currentPath,"",NULL,NULL,recursFlag,&topCallFlag);
+            dirInputFile(currentPath, "",NULL,NULL,recursFlag,&topCallFlag);
         });
 }
 
@@ -1588,7 +1588,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
 
     for (i=1; i<argc; i++) {
         if (options.taskRegime==RegimeEditServer &&
-            strncmp(argv[i],"-last_message=",14)==0) {
+            strncmp(argv[i], "-last_message=",14)==0) {
             // because of emacs-debug
             log_trace("processing argument '-lastmessage=...'");
         } else {
@@ -1662,7 +1662,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
         }
         if (! processed) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff,"unknown option %s, (try xref -help)\n",argv[i]);
+            sprintf(tmpBuff, "unknown option %s, (try xref -help)\n",argv[i]);
             if (options.taskRegime==RegimeXref
                 ||  options.taskRegime==RegimeHtmlGenerate) {
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
@@ -1733,14 +1733,14 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
 
     if (p == fileTable.tab[noFileIndex]) return;
     //& if (options.update==UP_FAST_UPDATE && !p->b.commandLineEntered) return;
-    //&fprintf(dumpOut,"checking %s for update\n",p->name); fflush(dumpOut);
+    //&fprintf(dumpOut, "checking %s for update\n",p->name); fflush(dumpOut);
     if (statb(p->name, &fstat)) {
         // removed file, remove it from watched updates, load no reference
         if (p->b.commandLineEntered) {
             // no messages during refactorings
             if (refactoringOptions.refactoringRegime != RegimeRefactory) {
                 char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff,"file %s not accessible",   p->name);
+                sprintf(tmpBuff, "file %s not accessible",   p->name);
                 warningMessage(ERR_ST, tmpBuff);
             }
         }
@@ -1754,7 +1754,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
             p->b.cxLoading = true;     /* Hack, to remove references from file */
         }
     } else if (options.taskRegime == RegimeHtmlGenerate) {
-        concatPaths(sss,MAX_FILE_NAME_SIZE,options.htmlRoot,p->name,".html");
+        concatPaths(sss,MAX_FILE_NAME_SIZE,options.htmlRoot,p->name, ".html");
         strcat(sss, options.htmlLinkSuffix);
         assert(strlen(sss) < MAX_FILE_NAME_SIZE-2);
         if (statb(sss, &hstat) || fstat.st_mtime >= hstat.st_mtime) {
@@ -1772,7 +1772,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
             //&         p->lastUpdateMtime = fstat.st_mtime;
         }
     }
-    //&if (p->b.scheduledToUpdate) {fprintf(dumpOut,"scheduling %s to update\n", p->name); fflush(dumpOut);}
+    //&if (p->b.scheduledToUpdate) {fprintf(dumpOut, "scheduling %s to update\n", p->name); fflush(dumpOut);}
 }
 
 void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
@@ -1825,7 +1825,7 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect ) 
     if (options.refactoringRegime==RegimeRefactory) return;
     if (outFName[0]==0) {
         if (options.project!=NULL) {
-            sprintf(tmpBuff,"'%s' project options not found",
+            sprintf(tmpBuff, "'%s' project options not found",
                     options.project);
             if (options.taskRegime == RegimeEditServer) {
                 errorMessage(ERR_ST, tmpBuff);
@@ -1835,15 +1835,15 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect ) 
         } else if (options.xref2) {
             ppcGenRecord(PPC_NO_PROJECT,file);
         } else {
-            sprintf(tmpBuff,"no project name covers '%s'",file);
+            sprintf(tmpBuff, "no project name covers '%s'",file);
             warningMessage(ERR_ST, tmpBuff);
         }
     } else if (options.taskRegime==RegimeXref) {
         if (options.xref2) {
-            sprintf(tmpBuff,"C-xrefactory project: %s", outSect);
+            sprintf(tmpBuff, "C-xrefactory project: %s", outSect);
             ppcGenRecord(PPC_INFORMATION, tmpBuff);
         } else {
-            fprintf(dumpOut,"[C-xref] active project: '%s'\n", outSect);
+            fprintf(dumpOut, "[C-xref] active project: '%s'\n", outSect);
             fflush(dumpOut);
         }
     }
@@ -1866,7 +1866,7 @@ static void handlePathologicProjectCases(char *file,char *outFName,char *outSect
             }
         } else {
             if (outFName[0]==0 || outSect[0]==0) {
-                warningMessage(ERR_ST,"no project name covers this file");
+                warningMessage(ERR_ST, "no project name covers this file");
             }
             if (outFName[0]==0 && outSect[0]==0) {
                 strcpy(outSect, oldStdopSection);
@@ -1880,7 +1880,7 @@ static void handlePathologicProjectCases(char *file,char *outFName,char *outSect
                     sprintf(tmpBuff, "[Xref] new project: '%s'", outSect);
                     ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 } else {
-                    fprintf(dumpOut,"[Xref] new project: '%s'\n", outSect);
+                    fprintf(dumpOut, "[Xref] new project: '%s'\n", outSect);
                 }
             }
         }
@@ -1916,9 +1916,9 @@ static int computeAndOpenInputFile(void) {
         inputBuff = editorFindFile(s_input_file_name);
         if (inputBuff == NULL) {
 #if defined (__WIN32__)
-            inputIn = openFile(s_input_file_name,"rb");
+            inputIn = openFile(s_input_file_name, "rb");
 #else
-            inputIn = openFile(s_input_file_name,"r");
+            inputIn = openFile(s_input_file_name, "r");
 #endif
             if (inputIn == NULL) {
                 errorMessage(ERR_CANT_OPEN, s_input_file_name);
@@ -1998,11 +1998,11 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
         typeEnumName[TypeStruct] = "class";
     } else {
         suff = getFileSuffix(inFileName);
-        if (compareFileNames(suff,".zip")==0 || compareFileNames(suff,".jar")==0) {
+        if (compareFileNames(suff, ".zip")==0 || compareFileNames(suff, ".jar")==0) {
             *outLanguage = LANG_JAR;
-        } else if (compareFileNames(suff,".class")==0) {
+        } else if (compareFileNames(suff, ".class")==0) {
             *outLanguage = LANG_CLASS;
-        } else if (compareFileNames(suff,".y")==0) {
+        } else if (compareFileNames(suff, ".y")==0) {
             *outLanguage = LANG_YACC;
             typeEnumName[TypeStruct] = "struct";
         } else {
@@ -2062,7 +2062,7 @@ static void discoverBuiltinIncludePaths(void) {
     tempfile = openFile(tempfile_name, "r");
     if (tempfile==NULL) return;
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
-        if (strncmp(line,"#include <...> search starts here:",34)==0) {
+        if (strncmp(line, "#include <...> search starts here:",34)==0) {
             found = true;
             break;
         }
@@ -2146,7 +2146,7 @@ static void checkExactPositionUpdate(int message) {
     if (options.update == UP_FAST_UPDATE && options.exactPositionResolve) {
         options.update = UP_FULL_UPDATE;
         if (message) {
-            warningMessage(ERR_ST,"-exactpositionresolve implies full update");
+            warningMessage(ERR_ST, "-exactpositionresolve implies full update");
         }
     }
 }
@@ -2173,10 +2173,10 @@ static void writeProgressInformation(int progress) {
         ) {
         if (! dialogDisplayed) {
             // display progress bar
-            fprintf(stdout,"<%s>0 \n", PPC_PROGRESS);
+            fprintf(stdout, "<%s>0 \n", PPC_PROGRESS);
             dialogDisplayed = 1;
         }
-        fprintf(stdout,"<%s>%d \n", PPC_PROGRESS, progress);
+        fprintf(stdout, "<%s>%d \n", PPC_PROGRESS, progress);
         fflush(stdout);
         lastprogress = progress;
     }
@@ -2206,8 +2206,8 @@ static void mainFileProcessingInitialisations(
     initAllInputs();
     if (dffname[0] != 0 ) stat(dffname, &dffstat);
     else dffstat.st_mtime = oldStdopTime;               // !!! just for now
-    //&fprintf(dumpOut,"checking oldcp==%s\n",oldOnLineClassPath);
-    //&fprintf(dumpOut,"checking newcp==%s\n",options.classpath);
+    //&fprintf(dumpOut, "checking oldcp==%s\n",oldOnLineClassPath);
+    //&fprintf(dumpOut, "checking newcp==%s\n",options.classpath);
     if (*firstPass
         || oldCppPass != s_currCppPass
         || strcmp(oldStdopFile,dffname)
@@ -2455,7 +2455,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         if (ss!=tt && ss[-1] == FILE_PATH_SEPARATOR) ss[-1]=0;
         assert(strlen(tt)+1<MAX_FILE_NAME_SIZE);
         s_input_file_name=tt;
-        //&fprintf(dumpOut,"here we are '%s'\n",tt);fflush(dumpOut);
+        //&fprintf(dumpOut, "here we are '%s'\n",tt);fflush(dumpOut);
     } else {
         strcpy(tt, s_input_file_name);
     }
@@ -2480,7 +2480,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         // there is a problem with INFILES_ENABLED (update for safetycheck),
         // It should first load cxref file, in order to protect file numbers.
         if (inmode==INFILES_ENABLED && options.update && !options.create) {
-            //&fprintf(dumpOut,"PREREADING !!!!!!!!!!!!!!!!\n");
+            //&fprintf(dumpOut, "PREREADING !!!!!!!!!!!!!!!!\n");
             // this makes a problem: I need to preread cxref file before
             // reading input files in order to preserve hash numbers, but
             // I need to read options first in order to have the name
@@ -2520,7 +2520,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         }
     }
     if (options.cxrefFileName == NULL) {
-        fatalError(ERR_ST,"sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
+        fatalError(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
     for(i=0; i<includeStackPointer; i++) {
         log_trace("inspecting include %d, fileNumber: %d", i, includeStack[i].lexBuffer.buffer.fileNumber);
@@ -2543,7 +2543,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     if (options.taskRegime==RegimeHtmlGenerate) {
         if (options.noCxFile) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff,"cross-references overflowed, use -mf<n> option");
+            sprintf(tmpBuff, "cross-references overflowed, use -mf<n> option");
             fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
         }
         generateHtml();
@@ -2570,7 +2570,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     }
     if (savingFlag==0 && mess!=LONGJMP_REASON_FILE_ABORT) {
         /* references overflowed, but no whole file readed */
-        fatalError(ERR_NO_MEMORY,"cxMemory", XREF_EXIT_ERR);
+        fatalError(ERR_NO_MEMORY, "cxMemory", XREF_EXIT_ERR);
     }
     LEAVE();
 }
@@ -2655,12 +2655,12 @@ static void scheduleModifiedFilesToUpdate(void) {
         filestab = options.cxrefFileName;
     } else {
         suffix = REFERENCE_FILENAME_FILES;
-        sprintf(ttt,"%s%s", options.cxrefFileName, suffix);
+        sprintf(ttt, "%s%s", options.cxrefFileName, suffix);
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         filestab = ttt;
     }
     if (statb(filestab, &refStat)) refStat.st_mtime = 0;
-    scanReferenceFile(options.cxrefFileName, suffix,"", normalScanFunctionSequence);
+    scanReferenceFile(options.cxrefFileName, suffix, "", normalScanFunctionSequence);
     fileTableMap2(&fileTable, schedulingToUpdate, &refStat);
     if (options.update==UP_FULL_UPDATE /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
@@ -2672,12 +2672,12 @@ static void scheduleModifiedFilesToUpdate(void) {
 void mainOpenOutputFile(char *ofile) {
     closeMainOutputFile();
     if (ofile!=NULL) {
-        //&fprintf(dumpOut,"OPENING OUTPUT FILE %s\n", options.outputFileName);
+        //&fprintf(dumpOut, "OPENING OUTPUT FILE %s\n", options.outputFileName);
 #if defined (__WIN32__)
         // open it as binary file, so that record lengths will be correct
-        communicationChannel = openFile(ofile,"wb");
+        communicationChannel = openFile(ofile, "wb");
 #else
-        communicationChannel = openFile(ofile,"w");
+        communicationChannel = openFile(ofile, "w");
 #endif
     } else {
         communicationChannel = stdout;
@@ -2717,13 +2717,13 @@ static int scheduleFileUsingTheMacro(void) {
     oldMenu = s_olcxCurrentUser->browserStack.top->menuSym;
     s_olcxCurrentUser->browserStack.top->menuSym = &mm;
     s_olMacro2PassFile = noFileIndex;
-    //&fprintf(dumpOut,":here I am, looking for usage of %s\n",memb->name);
+    //&fprintf(dumpOut, ":here I am, looking for usage of %s\n",memb->name);
     readOneAppropReferenceFile(s_olstringInMbody,secondPassMacroUsageFunctionSequence);
     s_olcxCurrentUser->browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
-    //&fprintf(dumpOut,":scheduling file %s\n", fileTable.tab[s_olMacro2PassFile]->name); fflush(dumpOut);
+    //&fprintf(dumpOut, ":scheduling file %s\n", fileTable.tab[s_olMacro2PassFile]->name); fflush(dumpOut);
     if (s_olMacro2PassFile == noFileIndex) return(noFileIndex);
     return(s_olMacro2PassFile);
 }
@@ -2744,13 +2744,13 @@ static void mainCloseInputFile(int inputIn ) {
 }
 
 static void mainEditSrvParseInputFile(int *firstPassing, int inputIn ) {
-    //&fprintf(dumpOut,":here I am %s\n",fileTable.tab[s_input_file_number]->name);
+    //&fprintf(dumpOut, ":here I am %s\n",fileTable.tab[s_input_file_number]->name);
     if (inputIn) {
-        //&fprintf(dumpOut,"parse start\n");fflush(dumpOut);
+        //&fprintf(dumpOut, "parse start\n");fflush(dumpOut);
         if (options.server_operation!=OLO_TAG_SEARCH && options.server_operation!=OLO_PUSH_NAME) {
             recoverFromCache();
             mainParseInputFile();
-            //&fprintf(dumpOut,"parse stop\n");fflush(dumpOut);
+            //&fprintf(dumpOut, "parse stop\n");fflush(dumpOut);
             *firstPassing = 0;
         }
         currentFile.lexBuffer.buffer.isAtEOF = false;
@@ -2785,7 +2785,7 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
 
     // if references are not updated do not search it here
     // there were fullUpdate time? why?
-    //&fprintf(dumpOut,"checking that lastmodif %d, == %d\n", fileTable.tab[fnum]->lastModified, fileTable.tab[fnum]->lastUpdateMtime);
+    //&fprintf(dumpOut, "checking that lastmodif %d, == %d\n", fileTable.tab[fnum]->lastModified, fileTable.tab[fnum]->lastUpdateMtime);
     if (fileTable.tab[fnum]->lastModified!=fileTable.tab[fnum]->lastUpdateMtime)
         return false;
 
@@ -2955,7 +2955,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
             atLeastOneProcessed=1;
         } else {
             errorMessage(ERR_CANT_OPEN,s_input_file_name);
-            fprintf(dumpOut,"\tmaybe forgotten -p option?\n");
+            fprintf(dumpOut, "\tmaybe forgotten -p option?\n");
         }
         // no multiple passes for java programs
         firstPassing = 0;
@@ -3120,7 +3120,7 @@ void mainCallXref(int argc, char **argv) {
         aboutMessage();
     } else if (! options.update)  {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff,"no input file");
+        sprintf(tmpBuff, "no input file");
         errorMessage(ERR_ST, tmpBuff);
     }
     if (options.xref2) {
@@ -3141,10 +3141,10 @@ static void mainXref(int argc, char **argv) {
     }
     if (options.last_message!=NULL) {
         fflush(dumpOut);
-        fprintf(dumpOut,"%s\n\n", options.last_message); fflush(dumpOut);
+        fprintf(dumpOut, "%s\n\n", options.last_message); fflush(dumpOut);
         fflush(dumpOut);
     }
-    //& fprintf(dumpOut,"\n\nDUMP\n\n"); fflush(dumpOut);
+    //& fprintf(dumpOut, "\n\nDUMP\n\n"); fflush(dumpOut);
     //& refTabMap(&referenceTable, symbolRefItemDump);
     LEAVE();
 }
@@ -3222,11 +3222,11 @@ static void mainEditServer(int argc, char **argv) {
         if (options.server_operation == OLO_EXTRACT)
             s_cache.cpi = 2; // !!!! no cache
         if (options.last_message != NULL) {
-            fprintf(communicationChannel,"%s",options.last_message);
+            fprintf(communicationChannel, "%s",options.last_message);
             fflush(communicationChannel);
         }
         if (options.xref2) ppcGenSynchroRecord();
-        /*fprintf(dumpOut,"request answered\n\n");fflush(dumpOut);*/
+        /*fprintf(dumpOut, "request answered\n\n");fflush(dumpOut);*/
     }
     LEAVE();
 }
@@ -3296,7 +3296,7 @@ int main(int argc, char **argv) {
        start processing for real ... Allocating initial memory? */
     setjmp(memoryResizeJumpTarget);
     if (s_cxResizingBlocked) {
-        fatalError(ERR_ST,"cx_memory resizing required, see file TROUBLES",
+        fatalError(ERR_ST, "cx_memory resizing required, see file TROUBLES",
                    XREF_EXIT_ERR);
     }
 
@@ -3307,7 +3307,7 @@ int main(int argc, char **argv) {
     setupLogging();
     //&editorTest();
 
-    // Ok, so there are these five main operating modes
+    // Ok, so there are these five, now four, main operating modes
     /* TODO: Is there an underlying reason for not doing this as a switch()? */
     /* And why s_opt.refactoringRegime and not s_opt.taskRegime == RegimeRefactory? */
     if (options.refactoringRegime == RegimeRefactory) mainRefactory(argc, argv);
