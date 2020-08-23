@@ -657,17 +657,19 @@ static char *defaultPossibleJavaBinPaths[] = {
 };
 
 static char *getJdkClassPath(void) {
-    char *res;
+    char *foundPath;
     int i;
 
-    res = getJdkClassPathQuickly();
-    if (res!=NULL && *res!=0) return(res);
+    foundPath = getJdkClassPathQuickly();
+    if (foundPath != NULL && *foundPath != 0)
+        return(foundPath);
     // Can't determine it with quick method, try other methods
     for(i=0; defaultPossibleJavaBinPaths[i]!=NULL; i++) {
-        res = canItBeJavaBinPath(defaultPossibleJavaBinPaths[i]);
-        if (res!=NULL && *res!=0) return(res);
+        foundPath = canItBeJavaBinPath(defaultPossibleJavaBinPaths[i]);
+        if (foundPath != NULL && *foundPath != 0)
+            return(foundPath);
     }
-    return(NULL);
+    return NULL;
 }
 
 char *getJavaHome(void) {
