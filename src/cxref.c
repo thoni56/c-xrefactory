@@ -544,100 +544,100 @@ static void setOlSymbolTypeForPrint(Symbol *p) {
 typedef struct availableRefactoring {
     bool available;
     char *option;
-} S_availableRefactoring;
+} AvailableRefactoring;
 
 
-static S_availableRefactoring s_availableRefactorings[MAX_AVAILABLE_REFACTORINGS];
+static AvailableRefactoring availableRefactorings[MAX_AVAILABLE_REFACTORINGS];
 
 void initAvailableRefactorings(void) {
     int i;
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
-        s_availableRefactorings[i].available = false;
-        s_availableRefactorings[i].option = "";
+        availableRefactorings[i].available = false;
+        availableRefactorings[i].option = "";
     }
 }
 
 static void setOlAvailableRefactorings(Symbol *p, S_olSymbolsMenu *mmi, int usage) {
     char *opt;
     if (strcmp(p->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
-        s_availableRefactorings[PPC_AVR_ADD_TO_IMPORT].available = 1;
+        availableRefactorings[PPC_AVR_ADD_TO_IMPORT].available = 1;
         return;
     }
     switch (p->bits.symType) {
     case TypePackage:
-        s_availableRefactorings[PPC_AVR_RENAME_PACKAGE].available = true;
+        availableRefactorings[PPC_AVR_RENAME_PACKAGE].available = true;
         CX_ALLOCC(opt, strlen(mmi->s.name)+1, char);
         strcpy(opt, mmi->s.name);
         javaDotifyFileName(opt);
-        s_availableRefactorings[PPC_AVR_RENAME_PACKAGE].option = opt;
+        availableRefactorings[PPC_AVR_RENAME_PACKAGE].option = opt;
         break;
     case TypeStruct:
         if (LANGUAGE(LANG_JAVA)) {
             if (IS_DEFINITION_USAGE(usage)) {
-                s_availableRefactorings[PPC_AVR_RENAME_CLASS].available = true;
-                s_availableRefactorings[PPC_AVR_MOVE_CLASS].available = true;
-                s_availableRefactorings[PPC_AVR_MOVE_CLASS_TO_NEW_FILE].available = true;
-                //& s_availableRefactorings[PPC_AVR_MOVE_ALL_CLASSES_TO_NEW_FILE].available = true;
-                s_availableRefactorings[PPC_AVR_EXPAND_NAMES].available = true;
-                s_availableRefactorings[PPC_AVR_REDUCE_NAMES].available = true;
+                availableRefactorings[PPC_AVR_RENAME_CLASS].available = true;
+                availableRefactorings[PPC_AVR_MOVE_CLASS].available = true;
+                availableRefactorings[PPC_AVR_MOVE_CLASS_TO_NEW_FILE].available = true;
+                //& availableRefactorings[PPC_AVR_MOVE_ALL_CLASSES_TO_NEW_FILE].available = true;
+                availableRefactorings[PPC_AVR_EXPAND_NAMES].available = true;
+                availableRefactorings[PPC_AVR_REDUCE_NAMES].available = true;
             }
         } else {
-            s_availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
+            availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
         }
         break;
     case TypeMacroArg:
-        s_availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
+        availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
         break;
     case TypeLabel:
-        s_availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
+        availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
         break;
     case TypeMacro:
-        s_availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
-        s_availableRefactorings[PPC_AVR_ADD_PARAMETER].available = true;
-        s_availableRefactorings[PPC_AVR_ADD_PARAMETER].option = "macro";
-        s_availableRefactorings[PPC_AVR_DEL_PARAMETER].available = true;
-        s_availableRefactorings[PPC_AVR_DEL_PARAMETER].option = "macro";
-        s_availableRefactorings[PPC_AVR_MOVE_PARAMETER].available = true;
-        s_availableRefactorings[PPC_AVR_MOVE_PARAMETER].option = "macro";
+        availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
+        availableRefactorings[PPC_AVR_ADD_PARAMETER].available = true;
+        availableRefactorings[PPC_AVR_ADD_PARAMETER].option = "macro";
+        availableRefactorings[PPC_AVR_DEL_PARAMETER].available = true;
+        availableRefactorings[PPC_AVR_DEL_PARAMETER].option = "macro";
+        availableRefactorings[PPC_AVR_MOVE_PARAMETER].available = true;
+        availableRefactorings[PPC_AVR_MOVE_PARAMETER].option = "macro";
         break;
     default:
         if (p->bits.storage != StorageConstructor) {
-            s_availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
+            availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
         }
         if (p->u.type->kind == TypeFunction || p->u.type->kind == TypeMacro) {
-            s_availableRefactorings[PPC_AVR_ADD_PARAMETER].available = true;
-            s_availableRefactorings[PPC_AVR_DEL_PARAMETER].available = true;
-            s_availableRefactorings[PPC_AVR_MOVE_PARAMETER].available = true;
+            availableRefactorings[PPC_AVR_ADD_PARAMETER].available = true;
+            availableRefactorings[PPC_AVR_DEL_PARAMETER].available = true;
+            availableRefactorings[PPC_AVR_MOVE_PARAMETER].available = true;
         }
         if (p->bits.storage == StorageField) {
             if (IS_DEFINITION_USAGE(usage)) {
                 if (p->bits.access & AccessStatic) {
-                    s_availableRefactorings[PPC_AVR_MOVE_STATIC_FIELD].available = true;
+                    availableRefactorings[PPC_AVR_MOVE_STATIC_FIELD].available = true;
                 } else {
                     //& TODO! restrict this better
-                    s_availableRefactorings[PPC_AVR_PULL_UP_FIELD].available = true;
-                    s_availableRefactorings[PPC_AVR_PUSH_DOWN_FIELD].available = true;
+                    availableRefactorings[PPC_AVR_PULL_UP_FIELD].available = true;
+                    availableRefactorings[PPC_AVR_PUSH_DOWN_FIELD].available = true;
                 }
-                s_availableRefactorings[PPC_AVR_MOVE_FIELD].available = true;
-                s_availableRefactorings[PPC_AVR_ENCAPSULATE_FIELD].available = true;
-                s_availableRefactorings[PPC_AVR_SELF_ENCAPSULATE_FIELD].available = true;
+                availableRefactorings[PPC_AVR_MOVE_FIELD].available = true;
+                availableRefactorings[PPC_AVR_ENCAPSULATE_FIELD].available = true;
+                availableRefactorings[PPC_AVR_SELF_ENCAPSULATE_FIELD].available = true;
             }
         }
         if (p->bits.storage == StorageMethod || p->bits.storage == StorageConstructor) {
             if (IS_DEFINITION_USAGE(usage)) {
-                //&s_availableRefactorings[PPC_AVR_EXPAND_NAMES].available = true;
-                //&s_availableRefactorings[PPC_AVR_REDUCE_NAMES].available = true;
+                //&availableRefactorings[PPC_AVR_EXPAND_NAMES].available = true;
+                //&availableRefactorings[PPC_AVR_REDUCE_NAMES].available = true;
                 if (p->bits.access & AccessStatic) {
-                    s_availableRefactorings[PPC_AVR_MOVE_STATIC_METHOD].available = true;
+                    availableRefactorings[PPC_AVR_MOVE_STATIC_METHOD].available = true;
                     if (p->bits.storage == StorageMethod) {
-                        s_availableRefactorings[PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC].available = true;
+                        availableRefactorings[PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC].available = true;
                     }
                 } else {
                     if (p->bits.storage == StorageMethod) {
                         // TODO! some restrictions
-                        s_availableRefactorings[PPC_AVR_PULL_UP_METHOD].available = true;
-                        s_availableRefactorings[PPC_AVR_PUSH_DOWN_METHOD].available = true;
-                        s_availableRefactorings[PPC_AVR_TURN_DYNAMIC_METHOD_TO_STATIC].available = true;
+                        availableRefactorings[PPC_AVR_PULL_UP_METHOD].available = true;
+                        availableRefactorings[PPC_AVR_PUSH_DOWN_METHOD].available = true;
+                        availableRefactorings[PPC_AVR_TURN_DYNAMIC_METHOD_TO_STATIC].available = true;
                     }
                 }
             }
@@ -656,11 +656,11 @@ static void olGetAvailableRefactorings(void) {
 
     count = 0;
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
-        count += (s_availableRefactorings[i].available);
+        count += (availableRefactorings[i].available);
     }
-    if (count==0) s_availableRefactorings[PPC_AVR_SET_MOVE_TARGET].available = true;
+    if (count==0) availableRefactorings[PPC_AVR_SET_MOVE_TARGET].available = true;
     if (options.editor == EDITOR_EMACS) {
-        s_availableRefactorings[PPC_AVR_UNDO].available = true;
+        availableRefactorings[PPC_AVR_UNDO].available = true;
 #if ZERO
         if (LANGUAGE(LANG_JAVA)) {
             s_availableRefactorings[PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS].available = true;
@@ -670,18 +670,18 @@ static void olGetAvailableRefactorings(void) {
     if (options.olCursorPos != options.olMarkPos) {
         // region selected, TODO!!! some more prechecks for extract method
         if (LANGUAGE(LANG_JAVA)) {
-            s_availableRefactorings[PPC_AVR_EXTRACT_METHOD].available = true;
+            availableRefactorings[PPC_AVR_EXTRACT_METHOD].available = true;
         } else {
-            s_availableRefactorings[PPC_AVR_EXTRACT_FUNCTION].available = true;
+            availableRefactorings[PPC_AVR_EXTRACT_FUNCTION].available = true;
         }
         if (! LANGUAGE(LANG_JAVA)) {
-            s_availableRefactorings[PPC_AVR_EXTRACT_MACRO].available = true;
+            availableRefactorings[PPC_AVR_EXTRACT_MACRO].available = true;
         }
     }
     ppcGenRecordBegin(PPC_AVAILABLE_REFACTORINGS);
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
-        if (s_availableRefactorings[i].available) {
-            ppcGenNumericRecord(PPC_INT_VALUE, i, s_availableRefactorings[i].option);
+        if (availableRefactorings[i].available) {
+            ppcGenNumericRecord(PPC_INT_VALUE, i, availableRefactorings[i].option);
         }
     }
     ppcGenRecordEnd(PPC_AVAILABLE_REFACTORINGS);
