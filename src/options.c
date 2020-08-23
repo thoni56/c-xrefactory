@@ -725,9 +725,7 @@ void getJavaClassAndSourcePath(void) {
             processClassPathString( jdkcp);
         }
 
-        if (LANGUAGE(LANG_JAVA)
-            && options.taskRegime != RegimeEditServer
-            ) {
+        if (LANGUAGE(LANG_JAVA) && options.taskRegime != RegimeEditServer) {
             static bool messageFlag=false;
             if (messageFlag && ! options.briefoutput) {
                 if (options.xref2) {

@@ -2500,7 +2500,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     recoverCachePointZero();
 
     options.stdopFlag = 0;
-    //& getJavaClassAndSourcePath();
     initCaching();
 
     log_debug("Leaving all task initialisations.");
