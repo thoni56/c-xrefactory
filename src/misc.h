@@ -37,7 +37,7 @@ typedef unsigned bitArray;
 
 
 extern void ppcGenSynchroRecord(void);
-extern void ppcIndentOffset(void);
+extern void ppcIndent(void);
 extern void ppcGenGotoOffsetPosition(char *fname, int offset);
 extern void ppcGenRecordBegin(char *kind);
 extern void ppcGenRecordWithAttributeBegin(char *kind, char *attr, char *val);

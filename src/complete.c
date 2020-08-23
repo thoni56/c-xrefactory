@@ -1208,7 +1208,6 @@ void completeUpFunProfile(Completions* c) {
         dd = newSymbolAsType("    ", "    ", s_noPos, s_upLevelFunctionCompletionType);
 
         fillCompletionLine(&c->alternatives[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
-        // assert(0 && "Comments indicate that COMPL_UP_FUN_PROFILE is not used but this indicates that it is!");
         c->fullMatchFlag = true;
         c->comPrefix[0]=0;
         c->alternativeIndex++;

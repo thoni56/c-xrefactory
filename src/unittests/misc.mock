@@ -6,7 +6,7 @@ void ppcGenSynchroRecord(void) {
   mock();
 }
 
-void ppcIndentOffset(void) {
+void ppcIndent(void) {
   mock();
 }
 

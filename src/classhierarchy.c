@@ -258,7 +258,7 @@ static void olcxMenuGenNonVirtualGlobSymList( FILE *ff, S_olSymbolsMenu *ss) {
     ss->outOnLine = s_symbolListOutputCurrentLine;
     s_symbolListOutputCurrentLine ++ ;
     if (options.xref2) {
-        ppcIndentOffset();
+        ppcIndent();
         fprintf(ff,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, ss->outOnLine+SYMBOL_MENU_FIRST_LINE);
         if (ss->s.b.symType!=TypeDefault) {
             fprintf(ff," %s=%s", PPCA_TYPE, typeEnumName[ss->s.b.symType]);
@@ -287,7 +287,7 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
 
     yetProcesed = THEBIT(tmpChProcessed,fInd);
     if (options.xref2) {
-        ppcIndentOffset();
+        ppcIndent();
         fprintf(ff, "<%s %s=%d", PPC_CLASS, PPCA_LINE,
                 itt->outOnLine+SYMBOL_MENU_FIRST_LINE);
     }

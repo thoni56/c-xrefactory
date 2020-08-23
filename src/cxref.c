@@ -1749,7 +1749,7 @@ static void linePosProcess(FILE *off,
         if (! options.xref2) passSourcePutChar('\n',off);
     }
     if (options.xref2 && s_crefListLinei!=0) {
-        ppcIndentOffset();
+        ppcIndent();
         fprintf(off, "<%s %s=%d %s=%ld>%s</%s>\n",
                 PPC_SRC_LINE, PPCA_REFN, linerefn,
                 PPCA_LEN, (unsigned long)strlen(s_crefListLine),
