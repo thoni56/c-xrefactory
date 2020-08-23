@@ -2,7 +2,7 @@
 #include "classfilereader.h"
 #include <cgreen/mocks.h>
 
-ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
+ZipFileTableItem zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 void convertLinkNameToClassFileName(char *classFileName, char linkName[]) {
     mock(classFileName, linkName);

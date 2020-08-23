@@ -19,7 +19,7 @@ typedef struct zipFileTableItem {
     struct zipArchiveDir	*dir;
 } ZipFileTableItem;
 
-extern ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
+extern ZipFileTableItem zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 
 extern void convertLinkNameToClassFileName(char classFileName[], char *linkName);

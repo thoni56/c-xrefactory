@@ -85,7 +85,7 @@ typedef union constantPoolUnion {
     struct CONSTANT_Dynamic_info dynamic;
 } ConstantPoolUnion;
 
-ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
+ZipFileTableItem zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 typedef enum exception {
     NO_EXCEPTION,
@@ -511,14 +511,14 @@ int zipIndexArchive(char *name) {
     buffer = &s_zipTmpBuff;
     namelen = strlen(name);
     for(archiveIndex=0;
-        archiveIndex<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[archiveIndex].fn[0]!=0;
+        archiveIndex<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[archiveIndex].fn[0]!=0;
         archiveIndex++) {
-        if (strncmp(s_zipArchiveTable[archiveIndex].fn,name,namelen)==0
-            && s_zipArchiveTable[archiveIndex].fn[namelen]==ZIP_SEPARATOR_CHAR) {
+        if (strncmp(zipArchiveTable[archiveIndex].fn,name,namelen)==0
+            && zipArchiveTable[archiveIndex].fn[namelen]==ZIP_SEPARATOR_CHAR) {
             break;
         }
     }
-    if (archiveIndex<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[archiveIndex].fn[0] == 0) {
+    if (archiveIndex<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[archiveIndex].fn[0] == 0) {
         // new file into the table
         log_debug("adding %s into index ",name);
         if (stat(name ,&fst)!=0) {
@@ -544,11 +544,11 @@ int zipIndexArchive(char *name) {
         }
         initCharacterBuffer(buffer, zipFile);
         assert(namelen+2 < MAX_FILE_NAME_SIZE);
-        strcpy(s_zipArchiveTable[archiveIndex].fn, name);
-        s_zipArchiveTable[archiveIndex].fn[namelen] = ZIP_SEPARATOR_CHAR;
-        s_zipArchiveTable[archiveIndex].fn[namelen+1] = 0;
-        fillZipFileTableItem(&s_zipArchiveTable[archiveIndex], fst, NULL);
-        zipArchiveScan(buffer,&s_zipArchiveTable[archiveIndex], fst.st_size);
+        strcpy(zipArchiveTable[archiveIndex].fn, name);
+        zipArchiveTable[archiveIndex].fn[namelen] = ZIP_SEPARATOR_CHAR;
+        zipArchiveTable[archiveIndex].fn[namelen+1] = 0;
+        fillZipFileTableItem(&zipArchiveTable[archiveIndex], fst, NULL);
+        zipArchiveScan(buffer,&zipArchiveTable[archiveIndex], fst.st_size);
         closeFile(zipFile);
     }
     return(archiveIndex);
@@ -567,23 +567,23 @@ static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
         return false;
     *separatorPosition = 0;
     nameLength = strlen(name);
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[i].fn[0]!=0; i++) {
-        if (strncmp(s_zipArchiveTable[i].fn, name, nameLength) == 0
-            && s_zipArchiveTable[i].fn[nameLength] == ZIP_SEPARATOR_CHAR) {
+    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
+        if (strncmp(zipArchiveTable[i].fn, name, nameLength) == 0
+            && zipArchiveTable[i].fn[nameLength] == ZIP_SEPARATOR_CHAR) {
             break;
         }
     }
     *separatorPosition = ZIP_SEPARATOR_CHAR;
-    if (i>=MAX_JAVA_ZIP_ARCHIVES || s_zipArchiveTable[i].fn[0]==0) {
+    if (i>=MAX_JAVA_ZIP_ARCHIVES || zipArchiveTable[i].fn[0]==0) {
         errorMessage(ERR_INTERNAL, "archive not indexed");
         return false;
     }
-    if (!fsIsMember(&s_zipArchiveTable[i].dir, separatorPosition+1,0, ADD_NO, &place))
+    if (!fsIsMember(&zipArchiveTable[i].dir, separatorPosition+1,0, ADD_NO, &place))
         return false;
     seekToPosition(cb, place->u.offset);
 
     if (!zipReadLocalFileInfo(cb, fn, &fsize,
-                                &lastSig, s_zipArchiveTable[i].fn))
+                                &lastSig, zipArchiveTable[i].fn))
         return false;
     assert(lastSig == LOCAL_FILE_HEADER_SIGNATURE);
     assert(strcmp(fn,separatorPosition+1)==0);

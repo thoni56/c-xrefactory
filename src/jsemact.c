@@ -321,8 +321,8 @@ bool javaTypeFileExist(IdList *name) {
     }
     // databazes
     fname=javaCreateComposedName(NULL,&tname,'/',"class",tmpMemory,SIZE_TMP_MEM);
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[i].fn[0]!=0; i++) {
-        if (fsIsMember(&s_zipArchiveTable[i].dir,fname,0,ADD_NO,NULL))
+    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
+        if (fsIsMember(&zipArchiveTable[i].dir,fname,0,ADD_NO,NULL))
             return true;
     }
     // auto-inferred source-path
@@ -347,10 +347,10 @@ static int javaFindClassFile(char *name, char **resName, struct stat *stt) {
         if (javaFindFile0( cp->d,"/",name, ".class", resName, stt)) return(1);
     }
     // finally look into databazes
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[i].fn[0]!=0; i++) {
-//&fprintf(dumpOut,"looking in %s\n", s_zipArchiveTable[i].fn);fflush(dumpOut);
-        if (zipFindFile(name,resName,&s_zipArchiveTable[i])) {
-            *stt = s_zipArchiveTable[i].st;
+    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
+//&fprintf(dumpOut,"looking in %s\n", zipArchiveTable[i].fn);fflush(dumpOut);
+        if (zipFindFile(name,resName,&zipArchiveTable[i])) {
+            *stt = zipArchiveTable[i].st;
             return(1);
         }
     }

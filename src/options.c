@@ -695,8 +695,8 @@ void getJavaClassAndSourcePath(void) {
     int i;
 
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {
-        if (s_zipArchiveTable[i].fn[0] == 0) break;
-        s_zipArchiveTable[i].fn[0]=0;
+        if (zipArchiveTable[i].fn[0] == 0) break;
+        zipArchiveTable[i].fn[0]=0;
     }
 
     // Keeping this comment as a historical artefact:
