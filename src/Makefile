@@ -22,9 +22,9 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 # On Darwin we want to use gcc-10 if available
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
- ifneq (, $(shell which gcc-10))
-  CC=gcc-10
- endif
+	ifneq (, $(shell which gcc-10))
+		CC=gcc-10
+	endif
 endif
 
 # We need to use compatible gcov (Darwin/Brew now have GCC v10)
@@ -185,21 +185,29 @@ clean-coverage:
 		rm ../tests/*.info ; \
 	fi
 
-# NOTE: lcov < 1.14 don't have --exclude
 coverage-report:
 	@echo Doing the coverage reporting in the background...
 	$(MAKE) the-actual-coverage-report &
 
+LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
+# NOTE: lcov < 1.14 don't have --exclude, need to use separate --remove step for compatibility
+ifeq ($(findstring 1.13, $(shell lcov -v)), 1.13)
+LCOV_EXCLUDES = `echo $(LCOV_IGNORE_COVERAGE_FOR) | xargs printf -- '--exclude %s\n'`
+endif
+
 the-actual-coverage-report:
 	@# If running in parallel each test has created its own .info file in ../test, combine them
 	ls ../tests/coverage/*.info | xargs printf -- '-a %s\n' | xargs lcov -q -o ../tests/total.info
-	@# Add the unittest coverage info
-	-lcov -a ../tests/total.info -a unittests/unittests.info -o ../coverage/total.info
+	@# Add the unittest coverage info and exclude modules we want to ignore (lcov >= 1.14)
+	lcov -a ../tests/total.info -a unittests/unittests.info $(LCOV_EXCLUDES) -o ../coverage/total.info
 	@# Re-create collated gcov files from total.info for Emacs gcov-mode
 	if command -v info2gcov > /dev/null 2>&1 ; then \
 		info2gcov -q ../coverage/total.info ; \
 	fi
 	@printf "\\r"
+ifeq (, $(LCOV_EXCLUDES))
+	lcov --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+endif
 	genhtml -q -o ../coverage ../coverage/total.info
 	@echo Coverage done
 
