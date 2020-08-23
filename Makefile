@@ -12,7 +12,7 @@ endif
 
 all:
 	make -C src prod
-	make -C env/emacs
+	make -C editors/emacs
 
 test: all
 	make -C tests all
