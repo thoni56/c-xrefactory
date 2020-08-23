@@ -1,0 +1,4 @@
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server
+-olcxgetjavahome
+<sync>
+<exit>
