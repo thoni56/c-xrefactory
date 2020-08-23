@@ -1,0 +1,37 @@
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server -o server-buffer
+-olcxclasstree -olinelen=174 -olcursor=496 -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 CURDIR/jexercise/Index.java
+end-of-options
+
+<sync>
+<display-class-tree>
+ <class line=2 base=1 indent=0 deps="" len=<n>>Object</class>
+ <class line=3 base=0 indent=1 deps="  +- " len=<n>>MoveMethod</class>
+ <class line=4 base=0 indent=0 deps="" len=<n>>Person</class>
+ <class line=5 base=0 indent=0 deps="" len=<n>>Project</class>
+ <class line=6 base=0 indent=0 deps="" len=<n>>PullUpMethod</class>
+ <class line=7 base=0 indent=1 deps="  +- " len=<n>>InferClass</class>
+ <class line=2 base=1 indent=1 deps="  +- " up=1 len=<n>>Object</class>
+ <class line=9 base=0 indent=0 deps="" len=<n>>RenameSymbol</class>
+ <class line=10 base=0 indent=0 deps="" len=<n>>Source</class>
+ <class line=11 base=0 indent=0 deps="" len=<n>>Super</class>
+ <class line=12 base=0 indent=1 deps="  +- " len=<n>>Infer</class>
+ <class line=13 base=0 indent=0 deps="" len=<n>>Super</class>
+ <class line=14 base=0 indent=1 deps="  +- " len=<n>>Infer</class>
+ <class line=2 base=1 indent=1 deps="  +- " up=1 len=<n>>Object</class>
+ <class line=16 base=0 indent=0 deps="" len=<n>>Target</class>
+ <class line=17 base=0 indent=0 deps="" len=<n>>AddRemoveParameter</class>
+ <class line=18 base=0 indent=0 deps="" len=<n>>Browsing</class>
+ <class line=19 base=0 indent=0 deps="" len=<n>>EncapsulateField</class>
+ <class line=20 base=0 indent=1 deps="  +- " len=<n>>AnotherClass</class>
+ <class line=2 base=1 indent=1 deps="  +- " up=1 len=<n>>Object</class>
+ <class line=22 base=0 indent=0 deps="" len=<n>>ExtractMethod</class>
+ <class line=23 base=0 indent=0 deps="" len=<n>>IdeCompileRun</class>
+ <class line=24 base=0 indent=0 deps="" len=<n>>Index</class>
+ <class line=25 base=0 indent=0 deps="" len=<n>>Index</class>
+ <class line=26 base=0 indent=0 deps="" len=<n>>MoveStaticMethod</class>
+ <class line=27 base=0 indent=0 deps="" len=<n>>NestedSuperClass</class>
+ <class line=28 base=0 indent=1 deps="  +- " len=<n>>Nested</class>
+</display-class-tree>
+-exit
+end-of-options
+
