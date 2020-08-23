@@ -2738,7 +2738,7 @@ static void addRuleLocalVariable(Id *name, int order) {
 
     if (l_yaccUnion!=NULL) {
         p = name->symbol;
-        if (p != NULL && p->bits.symType == TypeDefault) {
+        if (p != NULL && p->bits.symbolType == TypeDefault) {
             nn = stackMemoryAlloc(10*sizeof(char));
             assert(order>=0 && order < 10000);
             sprintf(nn,"$%d",order);
@@ -3119,7 +3119,7 @@ case 192:
         Symbol *p;
         Symbol *dd;
         p = yyvsp[0].ast_id.d->symbol;
-        if (p != NULL && p->bits.symType == TypeDefault) {
+        if (p != NULL && p->bits.symbolType == TypeDefault) {
             assert(p && p);
             dd = p;
             assert(dd->bits.storage != StorageTypedef);
@@ -3938,9 +3938,9 @@ break;
 case 359:
 #line 1091 "yacc_parser.y"
 {
-        if (yyvsp[-1].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.symType==TypeError) {
+        if (yyvsp[-1].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.symbolType==TypeError) {
             yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
-        } else if (yyvsp[0].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.symType==TypeError)  {
+        } else if (yyvsp[0].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.symbolType==TypeError)  {
             yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
         } else {
             yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
@@ -4855,7 +4855,7 @@ case 528:
         s_cp.function = yyvsp[0].ast_symbol.d;
         generateInternalLabelReference(-1, UsageDefined);
         for(p=yyvsp[0].ast_symbol.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
-            if (p->bits.symType == TypeElipsis) continue;
+            if (p->bits.symbolType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
             addFunctionParameterToSymTable(yyvsp[0].ast_symbol.d, p, i, s_symbolTable);
         }

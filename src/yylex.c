@@ -1915,7 +1915,7 @@ static char charText[2]={0,0};
 static char constant[50];
 
 #define CHECK_ID_FOR_KEYWORD(sd,idposa) {\
-    if (sd->bits.symType == TypeKeyword) {\
+    if (sd->bits.symbolType == TypeKeyword) {\
         SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);\
         if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) {\
             char ttt[TMP_STRING_SIZE];\
@@ -1935,10 +1935,10 @@ static int processCIdent(unsigned hashval, char *id, Position *idposa) {
         if (strcmp(sd->name, id) == 0) {
             if (memb == NULL) memb = sd;
             CHECK_ID_FOR_KEYWORD(sd, idposa);
-            if (sd->bits.symType == TypeDefinedOp && s_ifEvaluation) {
+            if (sd->bits.symbolType == TypeDefinedOp && s_ifEvaluation) {
                 return(CPP_DEFINED_OP);
             }
-            if (sd->bits.symType == TypeDefault) {
+            if (sd->bits.symbolType == TypeDefault) {
                 SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);
                 if (sd->bits.storage == StorageTypedef) {
                     return(TYPE_NAME);
@@ -1963,7 +1963,7 @@ static int processJavaIdent(unsigned hashval, char *id, Position *idposa) {
         if (strcmp(sd->name, id) == 0) {
             if (memb == NULL) memb = sd;
             CHECK_ID_FOR_KEYWORD(sd, idposa);
-            if (sd->bits.symType == TypeDefault) {
+            if (sd->bits.symbolType == TypeDefault) {
                 SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);
                 return(IDENTIFIER);
             }

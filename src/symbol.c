@@ -6,7 +6,7 @@
 void fillSymbolBits(S_symbolBits *bits, Access access, Type symType, Storage storage) {
     memset(bits, 0, sizeof(S_symbolBits));
     bits->access = access;
-    bits->symType = symType;
+    bits->symbolType = symType;
     bits->storage = storage;
 }
 

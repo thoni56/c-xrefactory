@@ -234,7 +234,7 @@ primary_expr
         Symbol *p;
         Symbol *dd;
         p = $1.d->symbol;
-        if (p != NULL && p->bits.symType == TypeDefault) {
+        if (p != NULL && p->bits.symbolType == TypeDefault) {
             assert(p && p);
             dd = p;
             assert(dd->bits.storage != StorageTypedef);
@@ -867,9 +867,9 @@ struct_or_union
 struct_declaration_list
     : struct_declaration                                /*& { $$.d = $1.d; } &*/
     | struct_declaration_list struct_declaration        {
-        if ($1.d == &s_errorSymbol || $1.d->bits.symType==TypeError) {
+        if ($1.d == &s_errorSymbol || $1.d->bits.symbolType==TypeError) {
             $$.d = $2.d;
-        } else if ($2.d == &s_errorSymbol || $1.d->bits.symType==TypeError)  {
+        } else if ($2.d == &s_errorSymbol || $1.d->bits.symbolType==TypeError)  {
             $$.d = $1.d;
         } else {
             $$.d = $1.d;
@@ -1640,7 +1640,7 @@ external_definition
         s_cp.function = $2.d;
         generateInternalLabelReference(-1, UsageDefined);
         for(p=$2.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
-            if (p->bits.symType == TypeElipsis) continue;
+            if (p->bits.symbolType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
             addFunctionParameterToSymTable($2.d, p, i, s_symbolTable);
         }

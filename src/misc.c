@@ -325,10 +325,10 @@ void typeSPrint(char *buff, int *size, TypeModifier *t,
                 j += jj;
             } else {
                 for(dd=t->u.f.args; dd!=NULL; dd=dd->next) {
-                    if (dd->bits.symType == TypeElipsis) ttm = "...";
+                    if (dd->bits.symbolType == TypeElipsis) ttm = "...";
                     else if (dd->name == NULL) ttm = "";
                     else ttm = dd->name;
-                    if (dd->bits.symType == TypeDefault && dd->u.type!=NULL) {
+                    if (dd->bits.symbolType == TypeDefault && dd->u.type!=NULL) {
                         /* TODO ALL, for string overflow */
                         jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
                         typeSPrint(post+j,&jj,dd->u.type,ttm,' ',maxDeep-1,1,longOrShortName, NULL);

@@ -112,7 +112,7 @@ TypeModifier *jslPrependComposedType(TypeModifier *d, Type type) {
 void jslCompleteDeclarator(Symbol *t, Symbol *d) {
     assert(t && d);
     if (t == &s_errorSymbol || d == &s_errorSymbol
-        || t->bits.symType==TypeError || d->bits.symType==TypeError) return;
+        || t->bits.symbolType==TypeError || d->bits.symbolType==TypeError) return;
     LIST_APPEND(TypeModifier, d->u.type, t->u.type);
     d->bits.storage = t->bits.storage;
 }
@@ -386,7 +386,7 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
                               int accessFlags) {
     int n;
 
-    assert(outer && outer->bits.symType==TypeStruct && outer->u.s);
+    assert(outer && outer->bits.symbolType==TypeStruct && outer->u.s);
     n = outer->u.s->nestedCount;
     log_debug("adding nested %s of %s(at %lx)[%d] --> %s to %s", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
     if (n == 0) {
@@ -468,7 +468,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     IdList oclassid;
     int i;
 
-    assert(str && str->bits.symType==TypeStruct);
+    assert(str && str->bits.symbolType==TypeStruct);
     ss = str->u.s;
     assert(ss);
     log_debug("appending %d nested classes of %s", ss->nestedCount, str->linkName);
@@ -551,7 +551,7 @@ void jslNewClassDefinitionBegin(Id *name,
                 // I am putting in comment just by prudence, but you can
                 // freely uncoment it
                 assert(s_jsl->classStat->thisClass && s_jsl->classStat->thisClass->u.s);
-                assert(s_jsl->classStat->thisClass->bits.symType==TypeStruct);
+                assert(s_jsl->classStat->thisClass->bits.symbolType==TypeStruct);
                 fileTable.tab[cn]->directEnclosingInstance = s_jsl->classStat->thisClass->u.s->classFile;
                 log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.s->classFile,
                           fileTable.tab[cn]->name, noFileIndex);

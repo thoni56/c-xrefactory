@@ -793,15 +793,15 @@ static void completeFun(Symbol *s, void *c) {
     CompletionLine compLine;
     cc = (S_completionSymInfo *) c;
     assert(s && cc);
-    if (s->bits.symType != cc->symType) return;
+    if (s->bits.symbolType != cc->symType) return;
     /*&fprintf(dumpOut,"testing %s\n",s->linkName);fflush(dumpOut);&*/
-    if (s->bits.symType != TypeMacro) {
-        fillCompletionLine(&compLine, s->name, s, s->bits.symType,0, 0, NULL,NULL);
+    if (s->bits.symbolType != TypeMacro) {
+        fillCompletionLine(&compLine, s->name, s, s->bits.symbolType,0, 0, NULL,NULL);
     } else {
         if (s->u.mbody==NULL) {
             fillCompletionLine(&compLine, s->name, s, TypeUndefMacro,0, 0, NULL,NULL);
         } else {
-            fillCompletionLine(&compLine, s->name, s, s->bits.symType,0, s->u.mbody->argn, s->u.mbody->args,NULL);
+            fillCompletionLine(&compLine, s->name, s, s->bits.symbolType,0, s->u.mbody->argn, s->u.mbody->args,NULL);
         }
     }
     processName(s->name, &compLine, 1, cc->res);
@@ -855,16 +855,16 @@ static void completeSymFun(Symbol *s, void *c) {
     char    *completionName;
     cc = (S_completionSymFunInfo *) c;
     assert(s);
-    if (s->bits.symType != TypeDefault) return;
+    if (s->bits.symbolType != TypeDefault) return;
     assert(s);
     if (cc->storage==StorageTypedef && s->bits.storage!=StorageTypedef) return;
     completionName = s->name;
     CONST_CONSTRUCT_NAME(cc->storage,s->bits.storage,completionName);
     if (completionName!=NULL) {
-        if (s->bits.symType == TypeDefault && s->u.type!=NULL && s->u.type->kind == TypeFunction) {
+        if (s->bits.symbolType == TypeDefault && s->u.type!=NULL && s->u.type->kind == TypeFunction) {
             completeFunctionOrMethodName(cc->res, 1, 0, s, NULL);
         } else {
-            fillCompletionLine(&compLine, completionName, s, s->bits.symType,0, 0, NULL,NULL);
+            fillCompletionLine(&compLine, completionName, s, s->bits.symbolType,0, 0, NULL,NULL);
             processName(completionName, &compLine, 1, cc->res);
         }
     }
@@ -962,7 +962,7 @@ static void completeRecordsNames(
         //&fprintf(dumpOut,"record %s\n", cname);
         if (    cname!=NULL
                 && *cname != 0
-                && r->bits.symType != TypeError
+                && r->bits.symbolType != TypeError
                 // Hmm. I hope it will not filter out something important
                 && (! symbolNameShouldBeHiddenFromReports(r->linkName))
                 //  I do not know whether to check linkability or not
@@ -970,7 +970,7 @@ static void completeRecordsNames(
                 && javaLinkable(r->bits.access)) {
             //&fprintf(dumpOut,"passed\n", cname);
             assert(rfs.currClass && rfs.currClass->u.s);
-            assert(r->bits.symType == TypeDefault);
+            assert(r->bits.symbolType == TypeDefault);
             vFunCl = rfs.currClass;
             if (vFunCl->u.s->classFile == -1) {
                 vFunCl = NULL;
@@ -1137,7 +1137,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
         CONST_CONSTRUCT_NAME(StorageDefault,r->bits.storage,cname);
         if (cname!=NULL && javaLinkable(r->bits.access)){
             assert(rfs.currClass && rfs.currClass->u.s);
-            assert(r->bits.symType == TypeDefault);
+            assert(r->bits.symbolType == TypeDefault);
             if (isEqualType(r->u.type, tok->typeModifier)) {
                 // there is a record of the same type
                 if (res == NULL) res = cname;
@@ -1240,7 +1240,7 @@ static void completeConstructorsFromFile(Completions *c, char *fname) {
 }
 
 static void completeJavaConstructors(Symbol *s, void *c) {
-    if (s->bits.symType != TypeStruct) return;
+    if (s->bits.symbolType != TypeStruct) return;
     completeConstructorsFromFile((Completions *)c, s->linkName);
 }
 
@@ -1759,7 +1759,7 @@ void javaCompleteStrRecordPrimary(Completions*c) {
 void javaCompleteStrRecordSuper(Completions*c) {
     Symbol *memb;
     memb = javaCurrentSuperClass();
-    if (memb == &s_errorSymbol || memb->bits.symType==TypeError) return;
+    if (memb == &s_errorSymbol || memb->bits.symbolType==TypeError) return;
     assert(memb);
     javaLoadClassSymbolsFromFile(memb);
     completeRecordsNames(c, memb, s_javaStat->methodModifiers,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
@@ -1777,7 +1777,7 @@ void javaCompleteStrRecordQualifiedSuper(Completions*c) {
     if (ttype != TypeStruct) return;
     javaLoadClassSymbolsFromFile(str);
     str = javaGetSuperClass(str);
-    if (str == &s_errorSymbol || str->bits.symType==TypeError) return;
+    if (str == &s_errorSymbol || str->bits.symbolType==TypeError) return;
     assert(str);
     completeRecordsNames(c, str, s_javaStat->methodModifiers,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
 }

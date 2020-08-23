@@ -966,7 +966,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             // if constructor, put there type name as constructor name
             // instead of <init>
             log_trace("constructor '%s' of '%s'", name, memb->name);
-            assert(memb && memb->bits.symType==TypeStruct && memb->u.s);
+            assert(memb && memb->bits.symbolType==TypeStruct && memb->u.s);
             name = memb->name;
             storage = StorageConstructor;
             if (fileTable.tab[memb->u.s->classFile]->directEnclosingInstance != noFileIndex) {
@@ -1269,7 +1269,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
                 fill_nestedSpec(& symbol->u.s->nest[rinners], inners, membFlag, modifs);
-                assert(inners && inners->bits.symType==TypeStruct && inners->u.s);
+                assert(inners && inners->bits.symbolType==TypeStruct && inners->u.s);
                 cn = inners->u.s->classFile;
                 if (membFlag && ! (modifs & AccessStatic)) {
                     // note that non-static direct enclosing class exists

@@ -520,7 +520,7 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
     int cf1;
     SymbolList *sups;
 
-    if (ss->bits.symType != TypeStruct) return;
+    if (ss->bits.symbolType != TypeStruct) return;
     /*fprintf(dumpOut,"testing %s\n",ss->name);*/
     assert(ss->bits.javaFileIsLoaded);
     if (!ss->bits.javaFileIsLoaded)
@@ -529,7 +529,7 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
     /*fprintf(dumpOut,"loaded: #sups == %d\n",ns);*/
     for(sups=ss->u.s->super; sups!=NULL; sups=sups->next) {
-        assert(sups->d && sups->d->bits.symType == TypeStruct);
+        assert(sups->d && sups->d->bits.symbolType == TypeStruct);
         addSubClassItemToFileTab( sups->d->u.s->classFile, cf1, origin);
     }
 }

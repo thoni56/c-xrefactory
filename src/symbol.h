@@ -19,7 +19,7 @@ typedef struct symbolBits {
     bool			javaSourceIsLoaded	: 1;  /* is jsl source file loaded ? */
     bool			javaFileIsLoaded	: 1;  /* is class file loaded ? */
 
-    enum type		symType				: SYMTYPES_LN;
+    enum type		symbolType			: SYMTYPES_LN;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
     enum storage	storage				: STORAGES_LN;
     unsigned		npointers			: 4; /*tmp. stored #of dcl. ptrs*/
