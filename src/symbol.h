@@ -36,9 +36,9 @@ typedef struct symbol {
         struct typeModifier		*type;		/* if symType == TypeDefault */
         struct symStructSpec	*s;			/* if symType == Struct/Union */
         struct symbolList		*enums;		/* if symType == Enum */
-        struct macroBody		*mbody;     /* if symType == Macro ! can be NULL! */
+        struct macroBody		*mbody;     /* if symType == Macro, can be NULL! */
         int						labelIndex;	/* break/continue label index */
-        int						keyWordVal; /* if symType == Keyword */
+        int						keyword;    /* if symType == Keyword */
     } u;
     struct symbol               *next;      /* next table item with the same hash */
 } Symbol;

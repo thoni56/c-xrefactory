@@ -1923,7 +1923,7 @@ static char constant[50];
             addTrivialCxReference(ttt, TypeKeyword,StorageDefault, idposa, UsageUsed);\
             /*&addCxReference(sd, idposa, UsageUsed, noFileIndex, noFileIndex);&*/\
         }\
-        return(sd->u.keyWordVal);\
+        return(sd->u.keyword);\
     }\
 }
 

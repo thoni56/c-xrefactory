@@ -51,7 +51,7 @@ Symbol *newSymbolAsCopyOf(Symbol *original) {
 
 Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos, int keyWordVal) {
     Symbol *s = newSymbol(name, linkName, pos);
-    s->u.keyWordVal = keyWordVal;
+    s->u.keyword = keyWordVal;
     return s;
 }
 
