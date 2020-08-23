@@ -60,7 +60,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-htmllinksuffix=<suf>     - add this suffix to file links\n");
     fprintf(stdout,"\t-htmllinenums             - generate line numbers in HTML\n");
     fprintf(stdout,"\t-htmlnocolors             - do not generate colors in HTML\n");
-    fprintf(stdout,"\t-htmlnounderline          - not underlined HTML links\n");
+    fprintf(stdout,"\t-htmlnounderline          - do not underline HTML links\n");
     fprintf(stdout,"\t-htmlcutpath=<path>       - cut path in generated html\n");
     fprintf(stdout,"\t-htmlcutcwd               - cut current dir in html\n");
     fprintf(stdout,"\t-htmlcutsourcepaths       - cut source paths in html\n");
@@ -80,9 +80,10 @@ static void usage(char *s) {
     fprintf(stdout,"\t-classpath <path>         - set java class path\n");
     fprintf(stdout,"\t-filescasesensitive       - file names are case sensitive\n");
     fprintf(stdout,"\t-filescaseunsensitive     - file names are case unsensitive\n");
-    fprintf(stdout,"\t-csuffixes=<paths>        - list of C files suffixes separated by : (or ;)\n");
+    fprintf(stdout,"\t-csuffixes=<suffixes>     - list of C files suffixes separated by : (or ;)\n");
     fprintf(stdout,"\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by : (or ;)\n");
-    fprintf(stdout,"\t-stdoptions <file>        - read options from <file>\n");
+    fprintf(stdout,"\t-stdoptions <file>        - read options from <file> instead of ~/.c-xrefrc\n");
+    fprintf(stdout,"\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file \n");
 #if 0
     fprintf(stdout,"\t-olinelen=<n>             - length of lines for on-line output\n");
     fprintf(stdout,"\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
@@ -116,9 +117,8 @@ static void usage(char *s) {
     fprintf(stdout,"\t-no-types                 - don't cross reference type names\n");
     fprintf(stdout,"\t-no-structs               - don't cross reference str. records\n");
     fprintf(stdout,"\t-no-locals                - don't cross reference local vars\n");
-    fprintf(stdout,"\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file \n");
-    fprintf(stdout,"\t-update                   - update old 'refs' reference file\n");
     fprintf(stdout,"\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
+    fprintf(stdout,"\t-update                   - update old 'refs' reference file\n");
     fprintf(stdout,"\t-fastupdate               - fast update (modified files only)\n");
     fprintf(stdout,"\t-fullupdate               - full update (all files)\n");
     fprintf(stdout,"\t-errors                   - report all error messages\n");

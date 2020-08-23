@@ -12,7 +12,7 @@ options:
 	-htmllinksuffix=<suf>     - add this suffix to file links
 	-htmllinenums             - generate line numbers in HTML
 	-htmlnocolors             - do not generate colors in HTML
-	-htmlnounderline          - not underlined HTML links
+	-htmlnounderline          - do not underline HTML links
 	-htmlcutpath=<path>       - cut path in generated html
 	-htmlcutcwd               - cut current dir in html
 	-htmlcutsourcepaths       - cut source paths in html
@@ -32,9 +32,10 @@ options:
 	-classpath <path>         - set java class path
 	-filescasesensitive       - file names are case sensitive
 	-filescaseunsensitive     - file names are case unsensitive
-	-csuffixes=<paths>        - list of C files suffixes separated by : (or ;)
+	-csuffixes=<suffixes>     - list of C files suffixes separated by : (or ;)
 	-javasuffixes=<suffixes>  - list of Java files suffixes separated by : (or ;)
-	-stdoptions <file>        - read options from <file>
+	-stdoptions <file>        - read options from <file> instead of ~/.c-xrefrc
+	-no-stdoptions            - don't read the '~/.c-xrefrc' option file 
 	-refs <file>              - name of file with cxrefs
 	-refnum=<n>               - number of cxref files
 	-refalphahash             - split references alphabetically (-refnum=28)
@@ -49,9 +50,8 @@ options:
 	-no-types                 - don't cross reference type names
 	-no-structs               - don't cross reference str. records
 	-no-locals                - don't cross reference local vars
-	-no-stdoptions            - don't read the '~/.c-xrefrc' option file 
-	-update                   - update old 'refs' reference file
 	-compiler=<path>          - path to compiler to use for autodiscovered includes and defines
+	-update                   - update old 'refs' reference file
 	-fastupdate               - fast update (modified files only)
 	-fullupdate               - full update (all files)
 	-errors                   - report all error messages
