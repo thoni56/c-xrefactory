@@ -1,6 +1,6 @@
 usage: 		../../src/c-xref <option>+ <input files>
 options:
-	-r                        - recursively descend directories
+	-r                        - recursively descend directories (default, --r to negate)
 	-html                     - convert sources to html format
 	-htmlroot=<dir>           - specifies root dir. for html output
 	-htmltab=<n>              - set tabulator to <n> in htmls

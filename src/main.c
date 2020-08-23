@@ -48,7 +48,7 @@ static void usage(char *s) {
     fprintf(stdout,"<input files>");
     fprintf(stdout,"\n");
     fprintf(stdout,"options:\n");
-    fprintf(stdout,"\t-r                        - recursively descend directories\n");
+    fprintf(stdout,"\t-r                        - recursively descend directories (default, --r to negate)\n");
     fprintf(stdout,"\t-html                     - convert sources to html format\n");
     fprintf(stdout,"\t-htmlroot=<dir>           - specifies root dir. for html output\n");
     fprintf(stdout,"\t-htmltab=<n>              - set tabulator to <n> in htmls\n");
