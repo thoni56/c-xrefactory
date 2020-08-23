@@ -14,22 +14,32 @@ UNITTESTS = $(patsubst %.c,%.$(EXT),$(wildcard *_tests.c))
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
-EXT=dylib
+	EXT=dylib
 else
-EXT=so
+	EXT=so
 endif
 
 # Assuming make (>3.something, not Apple!) can use vpath to locate Cgreen library
 CGREEN = -lcgreen
 
-LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
+# We need to use compatible gcov (Darwin/Brew now have GCC v10)
+ifeq ("$(CC)", "gcc-10")
+	LCOV = lcov --gcov-tool gcov-10
+else
+	LCOV = lcov
+endif
+
+# NOTE: lcov >= 1.14 does not have --exclude
+LCOV_EXCLUDES = --exclude 'log.c' --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
+LCOV_IGNORE_MODULES = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
 
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount > 0 ] ; then \
-		$(LCOV) $$LCOV_OPTIONS -q -t unittests -d . -c -o unittests.info ; \
+		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
+		$(LCOV) -q --remove unittests.info $(LCOV_IGNORE_MODULES) -o unittests.info ; \
 	fi
 
 clean:

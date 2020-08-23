@@ -29,7 +29,9 @@ endif
 
 # We need to use compatible gcov (Darwin/Brew now have GCC v10)
 ifeq ("$(CC)", "gcc-10")
-	LCOV_OPTIONS = --gcov-tool gcov-10
+	LCOV = lcov --gcov-tool gcov-10
+else
+	LCOV = lcov
 endif
 
 #########################################################################
@@ -69,6 +71,7 @@ chcheck:
 		chcheck $$m ; \
 	done
 
+.SILENT:
 #########################################################################
 include sources.mk
 
@@ -79,7 +82,7 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 #########################################################################
 test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
-	$(MAKE) -C ../tests LCOV_OPTIONS="$(LCOV_OPTIONS)" quick
+	$(MAKE) -C ../tests LCOV="$(LCOV)" quick
 
 unit:
 	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) -C unittests
@@ -181,7 +184,6 @@ clean-coverage:
 	fi
 
 # NOTE: lcov < 1.14 don't have --exclude
-LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 coverage-report:
 	@echo Doing the coverage reporting in the background...
 	$(MAKE) the-actual-coverage-report &
