@@ -22,6 +22,7 @@ list:
 clean:
 	rm -rf *.info */.coverage coverage
 
+# Be silent unless VERBOSE is set to something (VERBOSE=1)
 $(VERBOSE).SILENT:
 
 ifndef VERBOSE

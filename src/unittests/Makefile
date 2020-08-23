@@ -50,7 +50,8 @@ cleaner: clean
 
 .objs/*.o: Makefile
 
-.SILENT:
+# Be silent unless VERBOSE is set to something (VERBOSE=1)
+$(VERBOSE).SILENT:
 
 # Macro for unittests that link the SUT and a small number of dependent .o
 define UNITTEST
