@@ -313,7 +313,7 @@ bool javaTypeFileExist(IdList *name) {
         if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
     });
-    for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
+    for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         fname = javaCreateComposedName(cp->d,&tname,FILE_PATH_SEPARATOR,"class",tmpMemory,SIZE_TMP_MEM);
         // hmm. do not need to check statb for .class files
         if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
@@ -343,7 +343,7 @@ static int javaFindClassFile(char *name, char **resName, struct stat *stt) {
                           resName, stt)) return(1);
     }
     // now other classpaths
-    for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
+    for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         if (javaFindFile0( cp->d,"/",name, ".class", resName, stt)) return(1);
     }
     // finally look into databazes
@@ -370,7 +370,7 @@ static int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
         if (javaFindFile0(currentPath,"/",name,".java",resName,stt)) return(1);
     });
     // now other classpaths
-    for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
+    for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         if (javaFindFile0( cp->d,"/",name, ".java", resName, stt)) return(1);
     }
     // auto-inferred source-path
@@ -2676,7 +2676,7 @@ void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
     char tmpBuff[TMP_BUFF_SIZE];
 
     if (options.taskRegime == RegimeEditServer) return;
-    for(pp=s_javaClassPaths; pp!=NULL; pp=pp->next) {
+    for(pp=javaClassPaths; pp!=NULL; pp=pp->next) {
         if (compareFileNames(dir, pp->d)==0) return;
     }
     JavaMapOnPaths(javaSourcePaths, {

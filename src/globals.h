@@ -61,10 +61,10 @@ extern Id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
 extern int s_yyIdentBufi;
 
 extern char *s_cppVarArgsName;
-extern char s_defaultClassPath[];
+extern char defaultClassPath[];
 extern Id s_javaAnonymousClassName;
 extern Id s_javaConstructorName;
-extern S_stringList *s_javaClassPaths;
+extern S_stringList *javaClassPaths;
 extern char *javaSourcePaths;
 extern IdList *s_javaDefaultPackageName;
 extern IdList *s_javaLangName;

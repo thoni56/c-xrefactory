@@ -36,13 +36,13 @@ LCOV_IGNORE_COVERAGE = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
-	if command -v info2gcov > /dev/null 2>&1 ; then \
-		info2gcov -q unittests.info ; \
-	fi
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount > 0 ] ; then \
 		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
 		$(LCOV) -q --remove unittests.info $(LCOV_IGNORE_COVERAGE) -o unittests.info ; \
+	fi
+	if command -v info2gcov > /dev/null 2>&1 ; then \
+		info2gcov -q unittests.info ; \
 	fi
 
 clean:

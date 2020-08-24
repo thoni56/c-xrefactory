@@ -30,8 +30,8 @@
 static char optMemory[SIZE_optMemory];
 static int optMemoryIndex;
 
-static char s_javaSourcePathStatic[MAX_OPTION_LEN];
-static char s_javaClassPathStatic[MAX_OPTION_LEN];
+static char javaSourcePathExpanded[MAX_OPTION_LEN];
+static char javaClassPathExpanded[MAX_OPTION_LEN];
 
 /*
   Here we define the things that are needed and which are defined by
@@ -460,7 +460,7 @@ static char *getClassPath(bool defaultCpAllowed) {
     cp = options.classpath;
     if (cp == NULL || *cp==0) cp = getenv("CLASSPATH");
     if (cp == NULL || *cp==0) {
-        if (defaultCpAllowed) cp = s_defaultClassPath;
+        if (defaultCpAllowed) cp = defaultClassPath;
         else cp = NULL;
     }
     return(cp);
@@ -474,8 +474,8 @@ void javaSetSourcePath(int defaultCpAllowed) {
     if (cp == NULL) {
         javaSourcePaths = NULL;
     } else {
-        expandWildcardsInPaths(cp, s_javaSourcePathStatic, MAX_OPTION_LEN);
-        javaSourcePaths = s_javaSourcePathStatic;
+        expandWildcardsInPaths(cp, javaSourcePathExpanded, MAX_OPTION_LEN);
+        javaSourcePaths = javaSourcePathExpanded;
     }
 }
 
@@ -486,7 +486,7 @@ static void processClassPathString(char *cp) {
     S_stringList    **ll;
     int             ind, nlen;
 
-    for (ll = &s_javaClassPaths; *ll != NULL; ll = &(*ll)->next) ;
+    for (ll = &javaClassPaths; *ll != NULL; ll = &(*ll)->next) ;
 
     while (*cp!=0) {
         for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
@@ -583,7 +583,7 @@ bool packageOnCommandLine(char *packageName) {
 
 void addSourcePathsCut(void) {
     javaSetSourcePath(1);
-    JavaMapOnPaths(javaSourcePaths,{
+    JavaMapOnPaths(javaSourcePaths, {
             addHtmlCutPath(currentPath);
         });
 }
@@ -726,21 +726,21 @@ void getJavaClassAndSourcePath(void) {
 
     // Keeping this comment as a historical artefact:
     // optimize wild char expand and getenv [5.2.2003]
-    s_javaClassPaths = NULL;
+    javaClassPaths = NULL;
 
     if (LANGUAGE(LANG_JAVA)) {
         javaSetSourcePath(0);
 
         if (javaSourcePaths==NULL) {
             if (LANGUAGE(LANG_JAVA)) {
-                errorMessage(ERR_ST,"no classpath or sourcepath specified");
+                errorMessage(ERR_ST, "no classpath or sourcepath specified");
             }
-            javaSourcePaths = s_defaultClassPath;
+            javaSourcePaths = defaultClassPath;
         }
 
         cp = getClassPath(true);
-        expandWildcardsInPaths(cp, s_javaClassPathStatic, MAX_OPTION_LEN);
-        cp = s_javaClassPathStatic;
+        expandWildcardsInPaths(cp, javaClassPathExpanded, MAX_OPTION_LEN);
+        cp = javaClassPathExpanded;
 
         createOptionString(&options.classpath, cp);  //??? why is this, only optimisation of getenv?
         processClassPathString(cp);

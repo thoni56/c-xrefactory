@@ -15,6 +15,6 @@ extern bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv,
 extern void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project);
 extern void readOptionPipe(char *command, int *nargc, char ***nargv, char *sectionFile);
 extern void javaSetSourcePath(int defaultCpAllowed);
-extern int changeRefNumOption(int newRefNum);
+extern bool checkReferenceFileCountOption(int newRefNum);
 
 #endif
