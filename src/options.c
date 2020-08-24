@@ -540,9 +540,8 @@ bool packageOnCommandLine(char *fn) {
         }
         strcpy(ttt+i, ppp);
         assert(strlen(ttt)<MAX_FILE_NAME_SIZE-1);
-        //&fprintf(dumpOut,"checking '%s'\n", ttt);
-        stt = statb(ttt, &st);
-        if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
+
+        if (dirExists(ttt)) {
             // it is a package name, process all source files
             //&fprintf(dumpOut,"it is a package\n");
             packageFound = true;
