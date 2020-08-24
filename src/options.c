@@ -63,7 +63,7 @@ static char javaClassPathExpanded[MAX_OPTION_LEN];
 #define ENV_DEFAULT_VAR_SUPER_CLASS     "${__super}"
 
 
-char *expandSpecialFilePredefinedVariables_st(char *tt) {
+char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
     static char     res[MAX_OPTION_LEN];
     int             i,j,len,flen,plen,nlen,slen,tlen,suplen;
     char            *fvv, *suffix;

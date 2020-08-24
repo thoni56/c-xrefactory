@@ -3950,9 +3950,9 @@ static void olcxProcessGetRequest(void) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
         if (options.xref2) {
-            ppcGenRecord(PPC_SET_INFO, expandSpecialFilePredefinedVariables_st(val));
+            ppcGenRecord(PPC_SET_INFO, expandSpecialFilePredefinedVariables_st(val, inputFilename));
         } else {
-            fprintf(communicationChannel,"*%s", expandSpecialFilePredefinedVariables_st(val));
+            fprintf(communicationChannel,"*%s", expandSpecialFilePredefinedVariables_st(val, inputFilename));
         }
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
