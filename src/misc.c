@@ -1105,42 +1105,46 @@ void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen) {
     if (opaths != oop) *(opaths-1) = 0;
 }
 
-/* ***************************************************************** */
+/* *****************************************************************
+   TODO: Is this really necessary? For non-win32 it returns the input
+   string, and that seemed to work perfectly. Why does win32 require
+   this complicated code?
+*/
 
-char * getRealFileNameStatic(char *fn) {
-    static char         ttt[MAX_FILE_NAME_SIZE];
+char *getRealFileNameStatic(char *fn) {
+    static char         realFilename[MAX_FILE_NAME_SIZE];
 #if defined (__WIN32__)
     WIN32_FIND_DATA     fdata;
     HANDLE              han;
     int                 si,di,bdi;
     // there is only drive name before the first slash, copy it.
-    for(si=0,di=0; fn[si]&&fn[si]!=FILE_PATH_SEPARATOR; si++,di++) ttt[di]=fn[si];
-    if (fn[si]) ttt[di++]=fn[si++];
+    for(si=0,di=0; fn[si]&&fn[si]!=FILE_PATH_SEPARATOR; si++,di++) realFilename[di]=fn[si];
+    if (fn[si]) realFilename[di++]=fn[si++];
     while (fn[si] && fn[si]!=ZIP_SEPARATOR_CHAR) {
         bdi = di;
         while (fn[si] && fn[si]!=FILE_PATH_SEPARATOR && fn[si]!=ZIP_SEPARATOR_CHAR)  {
-            ttt[di] = fn[si];
+            realFilename[di] = fn[si];
             si++; di++;
         }
-        ttt[di] = 0;
+        realFilename[di] = 0;
         //fprintf(ccOut,"translating %s\n",ttt);
-        han = FindFirstFile(ttt, &fdata);
+        han = FindFirstFile(realFilename, &fdata);
         if (han == INVALID_HANDLE_VALUE) goto bbreak;
-        strcpy(ttt+bdi, fdata.cFileName);
-        di = bdi + strlen(ttt+bdi);
+        strcpy(realFilename+bdi, fdata.cFileName);
+        di = bdi + strlen(realFilename+bdi);
         FindClose(han);
         assert(di < MAX_FILE_NAME_SIZE-1);
-        ttt[di] = fn[si];
+        realFilename[di] = fn[si];
         //fprintf(ccOut,"res %s\n",ttt);
         if (fn[si]) { di++; si++; }
     }
  bbreak:
-    strcpy(ttt+di, fn+si);
-    return(ttt);
+    strcpy(realFilename+di, fn+si);
+    return realFilename;
 #else
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
-    strcpy(ttt,fn);
-    return(fn);
+    strcpy(realFilename, fn);
+    return fn;
 #endif
 }
 
