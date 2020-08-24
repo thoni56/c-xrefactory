@@ -1144,7 +1144,7 @@ char *getRealFileNameStatic(char *fn) {
 #else
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     strcpy(realFilename, fn);
-    return fn;
+    return realFilename;
 #endif
 }
 
