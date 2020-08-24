@@ -4998,7 +4998,7 @@ void mainAnswerEditAction(void) {
     } // switch
 
     fflush(communicationChannel);
-    s_input_file_name = NULL;
+    inputFilename = NULL;
     //&RLM_FREE_COUNT(olcxMemory);
 }
 

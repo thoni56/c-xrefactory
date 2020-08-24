@@ -1901,10 +1901,10 @@ static int computeAndOpenInputFile(void) {
     //!!!! hack for .jar files !!!
     if (LANGUAGE(LANG_JAR) || LANGUAGE(LANG_CLASS))
         return(0);
-    if (s_input_file_name == NULL) {
+    if (inputFilename == NULL) {
         assert(0);
         inputIn = stdin;
-        s_input_file_name = "__none__";
+        inputFilename = "__none__";
         //& } else if (options.server_operation == OLO_GET_ENV_VALUE) {
         // hack for getenv
         // not anymore, parse input for getenv ${__class}, ... settings
@@ -1912,20 +1912,20 @@ static int computeAndOpenInputFile(void) {
         //&     return(0);
     } else {
         inputIn = NULL;
-        //& inputBuff = editorGetOpenedAndLoadedBuffer(s_input_file_name);
-        inputBuff = editorFindFile(s_input_file_name);
+        //& inputBuff = editorGetOpenedAndLoadedBuffer(inputFilename);
+        inputBuff = editorFindFile(inputFilename);
         if (inputBuff == NULL) {
 #if defined (__WIN32__)
-            inputIn = openFile(s_input_file_name, "rb");
+            inputIn = openFile(inputFilename, "rb");
 #else
-            inputIn = openFile(s_input_file_name, "r");
+            inputIn = openFile(inputFilename, "r");
 #endif
             if (inputIn == NULL) {
-                errorMessage(ERR_CANT_OPEN, s_input_file_name);
+                errorMessage(ERR_CANT_OPEN, inputFilename);
             }
         }
     }
-    initInput(inputIn, inputBuff, "\n", s_input_file_name);
+    initInput(inputIn, inputBuff, "\n", inputFilename);
     if (inputIn==NULL && inputBuff==NULL) {
         return(0);
     } else {
@@ -2200,7 +2200,7 @@ static void mainFileProcessingInitialisations(
     char            *fileName;
     S_stringList    *tmpIncludeDirs;
 
-    fileName = s_input_file_name;
+    fileName = inputFilename;
     mainSetLanguage(fileName, outLanguage);
     getOptionsFile(fileName, dffname, dffsect,DEFAULT_VALUE);
     initAllInputs();
@@ -2251,7 +2251,7 @@ static void mainFileProcessingInitialisations(
         discoverBuiltinIncludePaths();
 
         LIST_APPEND(S_stringList, options.includeDirs, tmpIncludeDirs);
-        if (options.taskRegime != RegimeEditServer && s_input_file_name == NULL) {
+        if (options.taskRegime != RegimeEditServer && inputFilename == NULL) {
             *outInputIn = 0;
             goto fini;
         }
@@ -2285,9 +2285,9 @@ static void mainFileProcessingInitialisations(
              || options.taskRegime==RegimeHtmlGenerate)
             && (! s_javaPreScanOnly)) {
         if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION, getRealFileNameStatic(s_input_file_name));
+            ppcGenRecord(PPC_INFORMATION, getRealFileNameStatic(inputFilename));
         } else {
-            log_info("Processing '%s'", getRealFileNameStatic(s_input_file_name));
+            log_info("Processing '%s'", getRealFileNameStatic(inputFilename));
         }
     }
  fini:
@@ -2449,15 +2449,15 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initCaching();
     // enclosed in cache point, because of persistent #define in XrefEdit
     argcount = 0;
-    s_input_file_name = cmdlnInputFile = getCommandLineFile(&argcount);
-    if (s_input_file_name==NULL) {
+    inputFilename = cmdlnInputFile = getCommandLineFile(&argcount);
+    if (inputFilename==NULL) {
         ss = strmcpy(tt, s_cwd);
         if (ss!=tt && ss[-1] == FILE_PATH_SEPARATOR) ss[-1]=0;
         assert(strlen(tt)+1<MAX_FILE_NAME_SIZE);
-        s_input_file_name=tt;
+        inputFilename=tt;
         //&fprintf(dumpOut, "here we are '%s'\n",tt);fflush(dumpOut);
     } else {
-        strcpy(tt, s_input_file_name);
+        strcpy(tt, inputFilename);
     }
     getOptionsFile(tt, dffname, dffsect, NO_ERROR_MESSAGE);
     reInitCwd(dffname, dffsect);
@@ -2842,7 +2842,7 @@ static void mainEditSrvFileSingleCppPass(int argc, char **argv,
         // on-line action with cursor in an un-used macro body ???
         ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=noFileIndex) {
-            s_input_file_name = fileTable.tab[ol2procfile]->name;
+            inputFilename = fileTable.tab[ol2procfile]->name;
             inputIn = 0;
             s_olStringSecondProcessing=1;
             mainFileProcessingInitialisations(firstPass, argc, argv,
@@ -2861,8 +2861,8 @@ static void mainEditServerProcessFile(int argc, char **argv,
     s_cppPassMax = 1;           /* WTF? */
     s_currCppPass = 1;
     for(s_currCppPass=1; s_currCppPass<=s_cppPassMax; s_currCppPass++) {
-        s_input_file_name = fileTable.tab[s_olOriginalComFileNumber]->name;
-        assert(s_input_file_name!=NULL);
+        inputFilename = fileTable.tab[s_olOriginalComFileNumber]->name;
+        assert(inputFilename!=NULL);
         mainEditSrvFileSingleCppPass(argc, argv, nargc, nargv, firstPass);
         if (options.server_operation==OLO_EXTRACT
             || (s_olstringServed && ! creatingOlcxRefs()))
@@ -2885,7 +2885,7 @@ static char *presetEditServerFileDependingStatics(void) {
     s_staticPrefixStartPosition = s_noPos;
     // THIS is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an eror
-    fArgCount = 0; s_input_file_name = getInputFile(&fArgCount);
+    fArgCount = 0; inputFilename = getInputFile(&fArgCount);
     if (fArgCount>=fileTable.size) {
         // conservative message, probably macro invoked on nonsaved file
         s_olOriginalComFileNumber = noFileIndex;
@@ -2898,7 +2898,7 @@ static char *presetEditServerFileDependingStatics(void) {
         }
     }
     s_olOriginalComFileNumber = fArgCount;
-    fileName = s_input_file_name;
+    fileName = inputFilename;
     mainSetLanguage(fileName,  &s_language);
     // O.K. just to be sure, there is no other input file
     return(fileName);
@@ -2948,13 +2948,13 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
             currentFile.lexBuffer.buffer.file = stdin;
             atLeastOneProcessed=1;
         } else if (LANGUAGE(LANG_JAR)) {
-            jarFileParse(s_input_file_name);
+            jarFileParse(inputFilename);
             atLeastOneProcessed=1;
         } else if (LANGUAGE(LANG_CLASS)) {
             classFileParse();
             atLeastOneProcessed=1;
         } else {
-            errorMessage(ERR_CANT_OPEN,s_input_file_name);
+            errorMessage(ERR_CANT_OPEN,inputFilename);
             fprintf(dumpOut, "\tmaybe forgotten -p option?\n");
         }
         // no multiple passes for java programs
@@ -2973,7 +2973,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
                                            FileItem *ff,
                                            int *firstPassing, int *atLeastOneProcessed) {
     int         inputIn;
-    s_input_file_name = ff->name;
+    inputFilename = ff->name;
     s_fileProcessStartTime = time(NULL);
     // O.K. but this is missing all header files
     ff->lastUpdateMtime = ff->lastModified;
@@ -2986,7 +2986,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very carefull about this!!!
     if (refactoringOptions.refactoringRegime!=RegimeRefactory) {
-        editorCloseBufferIfClosable(s_input_file_name);
+        editorCloseBufferIfClosable(inputFilename);
         if (! options.cacheIncludes) editorCloseAllBuffersIfClosable();
     }
 }
@@ -3182,7 +3182,7 @@ void mainCallEditServer(int argc, char **argv,
         if (presetEditServerFileDependingStatics() != NULL) {
             fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
             // added [26.12.2002] because of loading options without input file
-            s_input_file_name = NULL;
+            inputFilename = NULL;
         }
     }
     LEAVE();

@@ -93,7 +93,7 @@ Position s_cxRefPos;
 int s_cxRefFlag=0;
 
 int s_input_file_number;
-char *s_input_file_name;
+char *inputFilename;
 time_t s_fileProcessStartTime;
 
 char s_cwd[MAX_FILE_NAME_SIZE];

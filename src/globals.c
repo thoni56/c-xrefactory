@@ -68,7 +68,7 @@ TypeModifier *s_javaCompletionLastPrimary;
 struct yyGlobalState *s_yygstate;
 struct yyGlobalState *s_initYygstate;
 
-char *s_input_file_name="";
+char *inputFilename="";
 Completions s_completions;
 
 char ppmMemory[SIZE_ppmMemory];

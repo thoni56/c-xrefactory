@@ -62,6 +62,7 @@ static char javaClassPathExpanded[MAX_OPTION_LEN];
 #define ENV_DEFAULT_VAR_THIS_CLASS      "${__this}"
 #define ENV_DEFAULT_VAR_SUPER_CLASS     "${__super}"
 
+
 char *expandSpecialFilePredefinedVariables_st(char *tt) {
     static char     res[MAX_OPTION_LEN];
     int             i,j,len,flen,plen,nlen,slen,tlen,suplen;
@@ -71,7 +72,8 @@ char *expandSpecialFilePredefinedVariables_st(char *tt) {
     char            name[MAX_FILE_NAME_SIZE];
     char            thisclass[MAX_FILE_NAME_SIZE];
     char            superclass[MAX_FILE_NAME_SIZE];
-    fvv = getRealFileNameStatic(s_input_file_name);
+
+    fvv = getRealFileNameStatic(inputFilename);
     strcpy(file, fvv);
     assert(strlen(file) < MAX_FILE_NAME_SIZE-1);
     strcpy(path, directoryName_st(file));

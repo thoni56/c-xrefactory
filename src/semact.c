@@ -536,7 +536,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     if (usage==UsageDefined && ! options.exactPositionResolve) {
         basefname=fileTable.tab[p->pos.file]->name;
     } else {
-        basefname=s_input_file_name;
+        basefname=inputFilename;
     }
     sprintf(ttt,"%s!%s", simpleFileName(basefname), p->name);
     len = strlen(ttt);

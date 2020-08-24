@@ -156,7 +156,7 @@ extern int olcxMemoryAllocatedBytes;
 
 extern jmp_buf cxmemOverflow;
 
-extern char *s_input_file_name;
+extern char *inputFilename;
 
 extern time_t s_fileProcessStartTime;
 
