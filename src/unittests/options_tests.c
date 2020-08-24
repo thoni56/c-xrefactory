@@ -1,5 +1,7 @@
 #include <cgreen/cgreen.h>
 
+#include "options.h"
+
 #include "globals.mock"
 #include "classfilereader.mock"
 #include "commons.mock"
@@ -15,5 +17,6 @@ BeforeEach(Options) {}
 AfterEach(Options) {}
 
 
-Ensure(Options, can_run_a_test) {
+Ensure(Options, will_return_false_if_package_structure_does_not_exist) {
+    assert_that(!packageOnCommandLine("org.nonexistant"));
 }
