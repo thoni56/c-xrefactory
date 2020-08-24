@@ -792,23 +792,23 @@ bool checkReferenceFileCountOption(int newReferenceFileCount) {
 
 void getXrefrcFileName(char *filename) {
     int hlen;
-    char *hh;
+    char *home;
 
     if (options.xrefrc!=NULL) {
         sprintf(filename, "%s", normalizeFileName(options.xrefrc, s_cwd));
         return;
     }
-    hh = getenv("HOME");
+    home = getenv("HOME");
 #ifdef __WIN32__
-    if (hh == NULL) hh = "c:\\";
+    if (home == NULL) home = "c:\\";
 #else
-    if (hh == NULL) hh = "";
+    if (home == NULL) home = "";
 #endif
-    hlen = strlen(hh);
-    if (hlen>0 && (hh[hlen-1]=='/' || hh[hlen-1]=='\\')) {
-        sprintf(filename, "%s%cc-xrefrc", hh, FILE_BEGIN_DOT);
+    hlen = strlen(home);
+    if (hlen>0 && (home[hlen-1]=='/' || home[hlen-1]=='\\')) {
+        sprintf(filename, "%s%cc-xrefrc", home, FILE_BEGIN_DOT);
     } else {
-        sprintf(filename, "%s%c%cc-xrefrc", hh, FILE_PATH_SEPARATOR, FILE_BEGIN_DOT);
+        sprintf(filename, "%s%c%cc-xrefrc", home, FILE_PATH_SEPARATOR, FILE_BEGIN_DOT);
     }
     assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
 }
