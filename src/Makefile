@@ -72,7 +72,7 @@ chcheck:
 	done
 
 # Be silent unless VERBOSE is set to something (VERBOSE=1)
-$(VERBOSE).SILENT:
+#$(VERBOSE).SILENT:
 
 #########################################################################
 include sources.mk

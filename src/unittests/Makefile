@@ -36,6 +36,9 @@ LCOV_IGNORE_COVERAGE = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
+	if command -v info2gcov > /dev/null 2>&1 ; then \
+		info2gcov -q unittests.info ; \
+	fi
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount > 0 ] ; then \
 		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
@@ -45,13 +48,11 @@ all: $(UNITTESTS)
 clean:
 	-rm $(OBJDIR)/*.[od] *.$(EXT) $(OBJDIR)/*.gc*
 
-cleaner: clean
-	-rm -rf $(OBJDIR)
-
 .objs/*.o: Makefile
 
+
 # Be silent unless VERBOSE is set to something (VERBOSE=1)
-$(VERBOSE).SILENT:
+#$(VERBOSE).SILENT:
 
 # Macro for unittests that link the SUT and a small number of dependent .o
 define UNITTEST
