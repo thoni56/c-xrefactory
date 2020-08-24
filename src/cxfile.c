@@ -1285,7 +1285,7 @@ static void cxrfRefNum(int fileRefNum,
                        ) {
     int check;
 
-    check = changeRefNumOption(fileRefNum);
+    check = checkReferenceFileCountOption(fileRefNum);
     if (check == 0) {
         assert(options.taskRegime);
         fatalError(ERR_ST,"Tag file was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);

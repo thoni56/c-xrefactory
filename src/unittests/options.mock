@@ -42,6 +42,6 @@ void javaSetSourcePath(int defaultCpAllowed) {
   mock(defaultCpAllowed);
 }
 
-int changeRefNumOption(int newRefNum) {
+bool checkReferenceFileCountOption(int newRefNum) {
   return (int) mock(newRefNum);
 }

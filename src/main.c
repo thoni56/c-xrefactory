@@ -1233,7 +1233,7 @@ static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
              || strcmp(argv[i], "-refalpha1hash")==0)    {
         int check;
         options.xfileHashingMethod = XFILE_HASH_ALPHA1;
-        check = changeRefNumOption(XFILE_HASH_ALPHA1_REFNUM);
+        check = checkReferenceFileCountOption(XFILE_HASH_ALPHA1_REFNUM);
         if (check == 0) {
             assert(options.taskRegime);
             fatalError(ERR_ST, "'-refalphahash' conflicts with '-refnum' option", XREF_EXIT_ERR);
@@ -1242,7 +1242,7 @@ static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
     else if (strcmp(argv[i], "-refalpha2hash")==0)   {
         int check;
         options.xfileHashingMethod = XFILE_HASH_ALPHA2;
-        check = changeRefNumOption(XFILE_HASH_ALPHA2_REFNUM);
+        check = checkReferenceFileCountOption(XFILE_HASH_ALPHA2_REFNUM);
         if (check == 0) {
             assert(options.taskRegime);
             fatalError(ERR_ST, "'-refalpha2hash' conflicts with '-refnum' option", XREF_EXIT_ERR);

@@ -777,13 +777,17 @@ void getJavaClassAndSourcePath(void) {
     }
 }
 
-int changeRefNumOption(int newRefNum) {
-    int check;
-    if (options.referenceFileCount == 0) check=1;
-    else if (options.referenceFileCount == 1) check = (newRefNum <= 1);
-    else check = (newRefNum == options.referenceFileCount);
-    options.referenceFileCount = newRefNum;
-    return(check);
+bool checkReferenceFileCountOption(int newReferenceFileCount) {
+    bool check;
+
+    if (options.referenceFileCount == 0)
+        check = true;
+    else if (options.referenceFileCount == 1)
+        check = (newReferenceFileCount <= 1);
+    else
+        check = (newReferenceFileCount == options.referenceFileCount);
+    options.referenceFileCount = newReferenceFileCount;
+    return check;
 }
 
 void getXrefrcFileName(char *filename) {
