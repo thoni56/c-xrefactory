@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=533" "-olcursor=606" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=3 "-olmark=533" "-olcursor=606" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
