@@ -513,23 +513,34 @@ static void processClassPathString(char *cp) {
     }
 }
 
-bool packageOnCommandLine(char *fn) {
-    char *cp,*ss,*dd;
-    char ttt[MAX_FILE_NAME_SIZE];
-    char ppp[MAX_FILE_NAME_SIZE];
-    struct stat st;
-    int i, ind, stt, topCallFlag;
-    bool packageFound = false;
-    void *recurseFlag;
 
-    for(dd=ppp,ss=fn; *ss; dd++,ss++) {
-        if (*ss == '.') *dd = FILE_PATH_SEPARATOR;
-        else *dd = *ss;
+static void convertPackageNameToPath(char *name, char *path) {
+    char *np, *pp;
+
+    for(pp=path,np=name; *np; pp++,np++) {
+        if (*np == '.') *pp = FILE_PATH_SEPARATOR;
+        else *pp = *np;
     }
-    *dd = 0;
-    assert(strlen(ppp)<MAX_FILE_NAME_SIZE-1);
+    *pp = 0;
+}
+
+
+bool packageOnCommandLine(char *packageName) {
+    char *cp;
+    char ttt[MAX_FILE_NAME_SIZE];
+    char path[MAX_FILE_NAME_SIZE];
+    int topCallFlag;
+    void *recurseFlag;
+    bool packageFound = false;
+
+    assert(strlen(packageName)<MAX_FILE_NAME_SIZE-1);
+    convertPackageNameToPath(packageName, path);
+
     cp = javaSourcePaths;
     while (cp!=NULL && *cp!=0) {
+        int ind;
+        int i;
+
         for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
             ttt[ind]=cp[ind];
         }
@@ -538,7 +549,7 @@ bool packageOnCommandLine(char *fn) {
         if (i==0 || ttt[i-1]!=FILE_PATH_SEPARATOR) {
             ttt[i++] = FILE_PATH_SEPARATOR;
         }
-        strcpy(ttt+i, ppp);
+        strcpy(ttt+i, path);
         assert(strlen(ttt)<MAX_FILE_NAME_SIZE-1);
 
         if (dirExists(ttt)) {
