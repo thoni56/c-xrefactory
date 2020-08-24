@@ -67,18 +67,18 @@ char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
     static char     res[MAX_OPTION_LEN];
     int             i,j,len,flen,plen,nlen,slen,tlen,suplen;
     char            *fvv, *suffix;
-    char            file[MAX_FILE_NAME_SIZE];
+    char            filename[MAX_FILE_NAME_SIZE];
     char            path[MAX_FILE_NAME_SIZE];
     char            name[MAX_FILE_NAME_SIZE];
     char            thisclass[MAX_FILE_NAME_SIZE];
     char            superclass[MAX_FILE_NAME_SIZE];
 
     fvv = getRealFileNameStatic(inputFilename);
-    strcpy(file, fvv);
-    assert(strlen(file) < MAX_FILE_NAME_SIZE-1);
-    strcpy(path, directoryName_st(file));
-    strcpy(name, simpleFileNameWithoutSuffix_st(file));
-    suffix = lastOccurenceInString(file, '.');
+    strcpy(filename, fvv);
+    assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
+    strcpy(path, directoryName_st(filename));
+    strcpy(name, simpleFileNameWithoutSuffix_st(filename));
+    suffix = lastOccurenceInString(filename, '.');
     if (suffix==NULL) suffix="";
     else suffix++;
     strcpy(thisclass, s_cps.currentClassAnswer);
@@ -97,7 +97,7 @@ char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
     //& fprintf(dumpOut,"path, name, suff == %s %s %s\n", path, name, suffix);
     while (i<len) {
         if (strncmp(&tt[i], ENV_DEFAULT_VAR_FILE, flen)==0) {
-            sprintf(&res[j], "%s", file);
+            sprintf(&res[j], "%s", filename);
             i += flen;
             j += strlen(&res[j]);
         } else if (strncmp(&tt[i], ENV_DEFAULT_VAR_PATH, plen)==0) {
