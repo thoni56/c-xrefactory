@@ -65,7 +65,7 @@ extern char s_defaultClassPath[];
 extern Id s_javaAnonymousClassName;
 extern Id s_javaConstructorName;
 extern S_stringList *s_javaClassPaths;
-extern char *s_javaSourcePaths;
+extern char *javaSourcePaths;
 extern IdList *s_javaDefaultPackageName;
 extern IdList *s_javaLangName;
 extern IdList *s_javaLangStringName;

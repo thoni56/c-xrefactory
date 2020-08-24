@@ -307,7 +307,7 @@ bool javaTypeFileExist(IdList *name) {
         //&fname = javaCreateComposedName(NULL,&tname,FILE_PATH_SEPARATOR,"class",tmpMemory,SIZE_TMP_MEM);
         //&if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return true;
     }
-    JavaMapOnPaths(s_javaSourcePaths, {
+    JavaMapOnPaths(javaSourcePaths, {
         fname = javaCreateComposedName(currentPath,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
         log_trace("testing existence of file '%s'", fname);
         if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
@@ -366,7 +366,7 @@ static int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
                           resName, stt)) return(1);
     }
     // sourcepaths
-    JavaMapOnPaths(s_javaSourcePaths, {
+    JavaMapOnPaths(javaSourcePaths, {
         if (javaFindFile0(currentPath,"/",name,".java",resName,stt)) return(1);
     });
     // now other classpaths
@@ -2679,7 +2679,7 @@ void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
     for(pp=s_javaClassPaths; pp!=NULL; pp=pp->next) {
         if (compareFileNames(dir, pp->d)==0) return;
     }
-    JavaMapOnPaths(s_javaSourcePaths, {
+    JavaMapOnPaths(javaSourcePaths, {
         if (compareFileNames(dir, currentPath)==0) return;
     });
     sprintf(tmpBuff, "Directory %s is not listed in paths", dir);

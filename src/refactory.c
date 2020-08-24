@@ -1547,7 +1547,7 @@ static void refactorySimplePackageRenaming(
     for(ll=occs; ll!=NULL; ll=ll->next) {
         if (ll->next == NULL || ll->next->d->buffer!=ll->d->buffer) {
             // O.K. verify whether I should move the file
-            JavaMapOnPaths(s_javaSourcePaths, {
+            JavaMapOnPaths(javaSourcePaths, {
                     mvfile = refactoryRenamePackageFileMove(currentPath, ll, symLinkName,
                                                             slnlen, rpundo);
                     if (mvfile) goto moved;

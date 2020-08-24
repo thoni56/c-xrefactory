@@ -110,7 +110,7 @@ int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL] = {
 char *s_cppVarArgsName = "__VA_ARGS__";
 char s_defaultClassPath[] = ".";
 S_stringList *s_javaClassPaths;
-char *s_javaSourcePaths;
+char *javaSourcePaths;
 
 Id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
 Id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};

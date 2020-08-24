@@ -531,7 +531,7 @@ char *javaCutSourcePathFromFileName(char *fname) {
     res = fname;
     ss = strchr(fname, ZIP_SEPARATOR_CHAR);
     if (ss!=NULL) return(ss+1);         // .zip archive symbol
-    JavaMapOnPaths(s_javaSourcePaths, {
+    JavaMapOnPaths(javaSourcePaths, {
             len = strlen(currentPath);
             if (fnnCmp(currentPath, fname, len) == 0) {
                 res = fname+len;
@@ -1368,14 +1368,14 @@ void javaMapDirectoryFiles1(
         packageFilename = "";
 
     // source paths
-    JavaMapOnPaths(s_javaSourcePaths, {
+    JavaMapOnPaths(javaSourcePaths, {
             fname = concatFNameInTmpMemory(currentPath, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,currentPath,packageFilename,a1,a2,a3);
         });
     // class paths
     for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
         // avoid double mappings
-        if ((! pathsStringContainsPath(s_javaSourcePaths, cp->d))) {
+        if ((! pathsStringContainsPath(javaSourcePaths, cp->d))) {
             assert(strlen(cp->d)+strlen(packageFilename)+2 < SIZE_TMP_MEM);
             fname = concatFNameInTmpMemory(cp->d, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->d,packageFilename,a1,a2,a3);
@@ -1388,7 +1388,7 @@ void javaMapDirectoryFiles1(
     }
     // auto-inferred source path
     if (s_javaStat->namedPackagePath != NULL) {
-        if ((! pathsStringContainsPath(s_javaSourcePaths, s_javaStat->namedPackagePath))
+        if ((! pathsStringContainsPath(javaSourcePaths, s_javaStat->namedPackagePath))
             && (! classPathContainsPath(s_javaStat->namedPackagePath))) {
             fname = concatFNameInTmpMemory(s_javaStat->namedPackagePath, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,s_javaStat->namedPackagePath,packageFilename,a1,a2,a3);

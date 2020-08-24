@@ -472,10 +472,10 @@ void javaSetSourcePath(int defaultCpAllowed) {
     if (cp == NULL || *cp==0) cp = getenv("SOURCEPATH");
     if (cp == NULL || *cp==0) cp = getClassPath(defaultCpAllowed);
     if (cp == NULL) {
-        s_javaSourcePaths = NULL;
+        javaSourcePaths = NULL;
     } else {
         expandWildcardsInPaths(cp, s_javaSourcePathStatic, MAX_OPTION_LEN);
-        s_javaSourcePaths = s_javaSourcePathStatic;
+        javaSourcePaths = s_javaSourcePathStatic;
     }
 }
 
@@ -528,7 +528,7 @@ bool packageOnCommandLine(char *fn) {
     }
     *dd = 0;
     assert(strlen(ppp)<MAX_FILE_NAME_SIZE-1);
-    cp = s_javaSourcePaths;
+    cp = javaSourcePaths;
     while (cp!=NULL && *cp!=0) {
         for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
             ttt[ind]=cp[ind];
@@ -561,7 +561,7 @@ bool packageOnCommandLine(char *fn) {
 
 void addSourcePathsCut(void) {
     javaSetSourcePath(1);
-    JavaMapOnPaths(s_javaSourcePaths,{
+    JavaMapOnPaths(javaSourcePaths,{
             addHtmlCutPath(currentPath);
         });
 }
@@ -709,11 +709,11 @@ void getJavaClassAndSourcePath(void) {
     if (LANGUAGE(LANG_JAVA)) {
         javaSetSourcePath(0);
 
-        if (s_javaSourcePaths==NULL) {
+        if (javaSourcePaths==NULL) {
             if (LANGUAGE(LANG_JAVA)) {
                 errorMessage(ERR_ST,"no classpath or sourcepath specified");
             }
-            s_javaSourcePaths = s_defaultClassPath;
+            javaSourcePaths = s_defaultClassPath;
         }
 
         cp = getClassPath(true);
@@ -739,14 +739,14 @@ void getJavaClassAndSourcePath(void) {
                     }
                     sprintf(tmpBuff,"classpath == %s", cp);
                     ppcGenRecord(PPC_INFORMATION, tmpBuff);
-                    sprintf(tmpBuff,"sourcepath == %s", s_javaSourcePaths);
+                    sprintf(tmpBuff,"sourcepath == %s", javaSourcePaths);
                     ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 } else {
                     if (jdkcp!=NULL && *jdkcp!=0) {
                         fprintf(dumpOut,"java runtime == %s\n", jdkcp);
                     }
                     fprintf(dumpOut,"classpath == %s\n", cp);
-                    fprintf(dumpOut,"sourcepath == %s\n", s_javaSourcePaths);
+                    fprintf(dumpOut,"sourcepath == %s\n", javaSourcePaths);
                     fflush(dumpOut);
                 }
                 messageFlag = true;
