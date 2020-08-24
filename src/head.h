@@ -393,7 +393,7 @@ typedef enum language {
 
 /* *********************************************************************** */
 
-#define MAP_FUN_SIGNATURE char *file, char *a1,char *a2,Completions *a3,void *a4,int *a5
+#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
 
 /* *********************************************************************** */
 
