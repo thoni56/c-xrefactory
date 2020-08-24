@@ -1602,24 +1602,32 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
     S_stringList            *pp;
 
     fillCompletionFqtMapInfo(&cfmi, c, completionType);
-    if (options.fqtNameToCompletions == 0) return;
+    if (options.fqtNameToCompletions == 0)
+        return;
+
     // fqt from .jars
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
         fsRecMapOnFiles(zipArchiveTable[i].dir, zipArchiveTable[i].fn,
                         "", completeFqtClassFileFromZipArchiv, &cfmi);
     }
-    if (options.fqtNameToCompletions <= 1) return;
+    if (options.fqtNameToCompletions <= 1)
+        return;
+
     // fqt from filetab
     for(i=0; i<fileTable.size; i++) {
         if (fileTable.tab[i]!=NULL) completeFqtClassFileFromFileTab(fileTable.tab[i], &cfmi);
     }
-    if (options.fqtNameToCompletions <= 2) return;
+    if (options.fqtNameToCompletions <= 2)
+        return;
+
     // fqt from classpath
     for(pp=s_javaClassPaths; pp!=NULL; pp=pp->next) {
         mapDirectoryFiles(pp->d, completeRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
                           pp->d,pp->d,NULL,&cfmi,NULL);
     }
-    if (options.fqtNameToCompletions <= 3) return;
+    if (options.fqtNameToCompletions <= 3)
+        return;
+
     // fqt from sourcepath
     JavaMapOnPaths(s_javaSourcePaths, {
             mapDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,

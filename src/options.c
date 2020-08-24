@@ -514,13 +514,14 @@ static void processClassPathString(char *cp) {
 }
 
 int packageOnCommandLine(char *fn) {
-    char    *cp,*ss,*dd;
-    char    ttt[MAX_FILE_NAME_SIZE];
-    char    ppp[MAX_FILE_NAME_SIZE];
-    struct stat     st;
-    int             i, ind, stt, topCallFlag, res;
-    void            *recurseFlag;
-    res = 0;
+    char *cp,*ss,*dd;
+    char ttt[MAX_FILE_NAME_SIZE];
+    char ppp[MAX_FILE_NAME_SIZE];
+    struct stat st;
+    int i, ind, stt, topCallFlag;
+    bool packageFound = false;
+    void *recurseFlag;
+
     for(dd=ppp,ss=fn; *ss; dd++,ss++) {
         if (*ss == '.') *dd = FILE_PATH_SEPARATOR;
         else *dd = *ss;
@@ -546,9 +547,11 @@ int packageOnCommandLine(char *fn) {
             //&fprintf(dumpOut,"it is a package\n");
             res = 1;
             topCallFlag = 1;
-            if (options.recurseDirectories) recurseFlag = &topCallFlag;
-            else recurseFlag = NULL;
-            dirInputFile(ttt,"",NULL,NULL,recurseFlag,&topCallFlag);
+            if (options.recurseDirectories)
+                recurseFlag = &topCallFlag;
+            else
+                recurseFlag = NULL;
+            dirInputFile(ttt, "", NULL, NULL, recurseFlag, &topCallFlag);
         }
         cp += ind;
         if (*cp == CLASS_PATH_SEPARATOR) cp++;

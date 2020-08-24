@@ -223,7 +223,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
             topCallFlag = 0;
             if (options.recurseDirectories) nrecurseFlag = &topCallFlag;
             else nrecurseFlag = NULL;
-            mapDirectoryFiles(fn, dirInputFile,DO_NOT_ALLOW_EDITOR_FILES,
+            mapDirectoryFiles(fn, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
                               fn, NULL, NULL, nrecurseFlag, &topCallFlag);
             editorMapOnNonexistantFiles(fn, dirInputFile, DEPTH_ANY,
                                         fn, NULL, NULL, nrecurseFlag, &topCallFlag);
@@ -252,12 +252,12 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     } else if (containsWildcard(fn)) {
         expandWildcardsInOnePath(fn, wcPaths, MAX_OPTION_LEN);
         //&fprintf(dumpOut, "wildcard path %s expanded to %s\n", fn, wcPaths);
-        JavaMapOnPaths(wcPaths,{
-                dirInputFile(currentPath, "",NULL,NULL,recurseFlag,&topCallFlag);
+        JavaMapOnPaths(wcPaths, {
+                dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag);
             });
     } else if (topCallFlag
                && ((!options.allowPackagesOnCommandLine)
-                   || packageOnCommandLine(fname)==0)) {
+                   || !packageOnCommandLine(fname))) {
         if (options.taskRegime!=RegimeEditServer) {
             errorMessage(ERR_CANT_OPEN, fn);
         } else {
@@ -1557,7 +1557,7 @@ static void mainScheduleInputFileOptionToFileTable(char *infile) {
     topCallFlag = 1;
     recursFlag = &topCallFlag;
     JavaMapOnPaths(infile, {
-            dirInputFile(currentPath, "",NULL,NULL,recursFlag,&topCallFlag);
+            dirInputFile(currentPath, "", NULL, NULL, recursFlag, &topCallFlag);
         });
 }
 
@@ -3305,7 +3305,6 @@ int main(int argc, char **argv) {
     mainTaskEntryInitialisations(argc, argv);
 
     setupLogging();
-    //&editorTest();
 
     // Ok, so there are these five, now four, main operating modes
     /* TODO: Is there an underlying reason for not doing this as a switch()? */
