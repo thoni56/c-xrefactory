@@ -513,7 +513,7 @@ static void processClassPathString(char *cp) {
     }
 }
 
-int packageOnCommandLine(char *fn) {
+bool packageOnCommandLine(char *fn) {
     char *cp,*ss,*dd;
     char ttt[MAX_FILE_NAME_SIZE];
     char ppp[MAX_FILE_NAME_SIZE];
@@ -545,7 +545,7 @@ int packageOnCommandLine(char *fn) {
         if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
             // it is a package name, process all source files
             //&fprintf(dumpOut,"it is a package\n");
-            res = 1;
+            packageFound = true;
             topCallFlag = 1;
             if (options.recurseDirectories)
                 recurseFlag = &topCallFlag;
@@ -556,7 +556,7 @@ int packageOnCommandLine(char *fn) {
         cp += ind;
         if (*cp == CLASS_PATH_SEPARATOR) cp++;
     }
-    return(res);
+    return packageFound;
 }
 
 void addSourcePathsCut(void) {

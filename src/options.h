@@ -8,7 +8,7 @@ extern void addSourcePathsCut(void);
 extern void getXrefrcFileName(char *ttt);
 extern char *getJavaHome(void);
 extern void getJavaClassAndSourcePath(void);
-extern int packageOnCommandLine(char *fn);
+extern bool packageOnCommandLine(char *fn);
 extern char *expandSpecialFilePredefinedVariables_st(char *tt);
 extern bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv,
                                int memFl, char *sectionFile, char *project, char *resSection);

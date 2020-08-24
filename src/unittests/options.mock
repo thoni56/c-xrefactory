@@ -18,8 +18,8 @@ void getJavaClassAndSourcePath(void) {
   mock();
 }
 
-int packageOnCommandLine(char *fn) {
-  return (int) mock(fn);
+bool packageOnCommandLine(char *fn) {
+  return (bool) mock(fn);
 }
 
 char *expandSpecialFilePredefinedVariables_st(char *tt) {
