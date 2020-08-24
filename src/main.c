@@ -44,7 +44,7 @@ static int oldCppPass;
 static Options s_tmpOptions;
 
 static void usage(char *s) {
-    fprintf(stdout, "usage: \t\t%s <option>+ ",s);
+    fprintf(stdout, "usage:\t\t%s <option>+ ",s);
     fprintf(stdout, "<input files>");
     fprintf(stdout, "\n");
     fprintf(stdout, "options:\n");
@@ -80,17 +80,17 @@ static void usage(char *s) {
     fprintf(stdout, "\t-classpath <path>         - set java class path\n");
     fprintf(stdout, "\t-filescasesensitive       - file names are case sensitive\n");
     fprintf(stdout, "\t-filescaseunsensitive     - file names are case unsensitive\n");
-    fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by : (or ;)\n");
-    fprintf(stdout, "\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by : (or ;)\n");
+    fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')\n");
+    fprintf(stdout, "\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by ':' (or ';')\n");
     fprintf(stdout, "\t-stdoptions <file>        - read options from <file> instead of ~/.c-xrefrc\n");
-    fprintf(stdout, "\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file \n");
+    fprintf(stdout, "\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file\n");
 #if 0
     fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
     fprintf(stdout, "\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
     fprintf(stdout, "\t-olcxsearch               - search info about identifier\n");
-    fprintf(stdout, "\t-olcxpush                 - generate and push on-line cxrefs \n");
+    fprintf(stdout, "\t-olcxpush                 - generate and push on-line cxrefs\n");
     fprintf(stdout, "\t-olcxrename               - generate and push xrfs for rename\n");
-    fprintf(stdout, "\t-olcxlist                 - generate, push and list on-line cxrefs \n");
+    fprintf(stdout, "\t-olcxlist                 - generate, push and list on-line cxrefs\n");
     fprintf(stdout, "\t-olcxpop                  - pop on-line cxrefs\n");
     fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
     fprintf(stdout, "\t-olcxprevious                - previous on-line reference\n");
