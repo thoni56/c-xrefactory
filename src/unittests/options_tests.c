@@ -29,3 +29,14 @@ Ensure(Options, will_return_true_if_package_structure_exists) {
 
     assert_that(packageOnCommandLine("org.existant"));
 }
+
+Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
+    javaSourcePaths = "not/this/path:but/this/path";
+    expect(dirExists, when(fullPath, is_equal_to_string("not/this/path/org/existant")),
+           will_return(false));
+    expect(dirExists, when(fullPath, is_equal_to_string("but/this/path/org/existant")),
+           will_return(true));
+    expect(dirInputFile);
+
+    assert_that(packageOnCommandLine("org.existant"));
+}

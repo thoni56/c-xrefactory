@@ -525,34 +525,46 @@ static void convertPackageNameToPath(char *name, char *path) {
 }
 
 
+static int copyPathSegment(char *cp, char path[]) {
+    int ind;
+    for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
+        path[ind]=cp[ind];
+    }
+    path[ind] = 0;
+
+    return ind;
+}
+
+
+static void pathConcat(char path[], char packagePath[]) {
+    int len = strlen(path);
+    if (len==0 || path[len-1]!=FILE_PATH_SEPARATOR) {
+        path[len++] = FILE_PATH_SEPARATOR;
+        path[len] = '\0';
+    }
+    strcat(path, packagePath);
+}
+
+
 bool packageOnCommandLine(char *packageName) {
     char *cp;
-    char ttt[MAX_FILE_NAME_SIZE];
     char path[MAX_FILE_NAME_SIZE];
+    char packagePath[MAX_FILE_NAME_SIZE];
     int topCallFlag;
     void *recurseFlag;
     bool packageFound = false;
 
     assert(strlen(packageName)<MAX_FILE_NAME_SIZE-1);
-    convertPackageNameToPath(packageName, path);
+    convertPackageNameToPath(packageName, packagePath);
 
     cp = javaSourcePaths;
     while (cp!=NULL && *cp!=0) {
-        int ind;
-        int i;
+        int len = copyPathSegment(cp, path);
 
-        for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
-            ttt[ind]=cp[ind];
-        }
-        ttt[ind] = 0;
-        i = ind;
-        if (i==0 || ttt[i-1]!=FILE_PATH_SEPARATOR) {
-            ttt[i++] = FILE_PATH_SEPARATOR;
-        }
-        strcpy(ttt+i, path);
-        assert(strlen(ttt)<MAX_FILE_NAME_SIZE-1);
+        pathConcat(path, packagePath);
+        assert(strlen(path)<MAX_FILE_NAME_SIZE-1);
 
-        if (dirExists(ttt)) {
+        if (dirExists(path)) {
             // it is a package name, process all source files
             //&fprintf(dumpOut,"it is a package\n");
             packageFound = true;
@@ -561,9 +573,9 @@ bool packageOnCommandLine(char *packageName) {
                 recurseFlag = &topCallFlag;
             else
                 recurseFlag = NULL;
-            dirInputFile(ttt, "", NULL, NULL, recurseFlag, &topCallFlag);
+            dirInputFile(path, "", NULL, NULL, recurseFlag, &topCallFlag);
         }
-        cp += ind;
+        cp += len;
         if (*cp == CLASS_PATH_SEPARATOR) cp++;
     }
     return packageFound;
