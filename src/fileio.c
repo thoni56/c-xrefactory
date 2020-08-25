@@ -15,14 +15,6 @@ int closeFile(FILE *file) {
     return fclose(file);
 }
 
-size_t readFile(void *buffer, size_t size, size_t count, FILE *file) {
-    return fread(buffer, size, count, file);
-}
-
-size_t writeFile(void *buffer, size_t size, size_t count, FILE *file) {
-    return fwrite(buffer, size, count, file);
-}
-
 void createDir(char *dirname) {
 #ifdef __WIN32__
     mkdir(dirname);
@@ -50,4 +42,16 @@ bool fileExists(char *fullPath) {
 
     statResult = stat(fullPath, &st);
     return statResult==0 && S_ISREG(st.st_mode);
+}
+
+size_t readFile(void *buffer, size_t size, size_t count, FILE *file) {
+    return fread(buffer, size, count, file);
+}
+
+size_t writeFile(void *buffer, size_t size, size_t count, FILE *file) {
+    return fwrite(buffer, size, count, file);
+}
+
+int readChar(FILE *file) {
+    return getc(file);
 }

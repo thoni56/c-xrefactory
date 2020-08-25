@@ -182,18 +182,22 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
     //&fprintf(dumpOut, "result '%s'\n", tt);
 }
 
-static int getOptionFromFile(FILE *file, char *text, int *chars_read) {
+/* Not official API, public for unittesting */
+int getOptionFromFile(FILE *file, char *text, int *chars_read) {
     int i, c;
-    int comment, res, quotamess;
+    int res;
+    bool comment;
+    bool quoteInOption;
 
-    c = getc(file);
+    c = readChar(file);
     do {
-        quotamess = 0;
-        *chars_read = i = comment = 0;
+        quoteInOption = false;
+        *chars_read = i = 0;
+        comment = false;
 
         /* Skip all white space? */
         while ((c>=0 && c<=' ') || c=='\n' || c=='\t')
-            c=getc(file);
+            c=readChar(file);
 
         if (c==EOF) {
             res = EOF;
@@ -202,24 +206,24 @@ static int getOptionFromFile(FILE *file, char *text, int *chars_read) {
 
         if (c=='\"') {
             /* Read a double quoted string */
-            c=getc(file);
+            c=readChar(file);
             // Escaping the double quote (\") is not allowed, it creates problems
             // when someone finished a section name by \ reverse slash
             while (c!=EOF && c!='\"') {
                 if (i < MAX_OPTION_LEN-1)
                     text[i++]=c;
-                c=getc(file);
+                c=readChar(file);
             }
             if (c!='\"' && options.taskRegime!=RegimeEditServer) {
                 fatalError(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
             }
         } else if (c=='`') {
             text[i++]=c;
-            c=getc(file);
+            c=readChar(file);
             while (c!=EOF && c!='\n' && c!='`') {
                 if (i < MAX_OPTION_LEN-1)
                     text[i++]=c;
-                c=getc(file);
+                c=readChar(file);
             }
             if (i < MAX_OPTION_LEN-1)
                 text[i++]=c;
@@ -228,29 +232,29 @@ static int getOptionFromFile(FILE *file, char *text, int *chars_read) {
             }
         } else if (c=='[') {
             text[i++] = c;
-            c=getc(file);
-            while (c!=EOF && c!='\n' && (c!=']' /*|| lc=='\\'*/ )) {
+            c=readChar(file);
+            while (c!=EOF && c!='\n' && c!=']') {
                 if (i < MAX_OPTION_LEN-1)
                     text[i++]=c;
-                c=getc(file);
+                c=readChar(file);
             }
             if (c==']')
                 text[i++]=c;
         } else {
             while (c!=EOF && c>' ') {
                 if (c=='\"')
-                    quotamess = 1;
+                    quoteInOption = true;
                 if (i < MAX_OPTION_LEN-1)
                     text[i++]=c;
-                c=getc(file);
+                c=readChar(file);
             }
         }
         text[i]=0;
-        if (quotamess && options.taskRegime!=RegimeEditServer) {
-            static int messageWritten=0;
+        if (quoteInOption && options.taskRegime!=RegimeEditServer) {
+            static bool messageWritten = false;
             if (! messageWritten) {
                 char tmpBuff[TMP_BUFF_SIZE];
-                messageWritten = 1;
+                messageWritten = true;
                 sprintf(tmpBuff,"option '%s' contains quotes.", text);
                 warningMessage(ERR_ST, tmpBuff);
             }
@@ -258,8 +262,8 @@ static int getOptionFromFile(FILE *file, char *text, int *chars_read) {
         /* because QNX paths can start with // */
         if (i>=2 && text[0]=='/' && text[1]=='/') {
             while (c!=EOF && c!='\n')
-                c=getc(file);
-            comment = 1;
+                c=readChar(file);
+            comment = true;
         }
     } while (comment);
     if (strcmp(text, END_OF_OPTIONS_STRING)==0) {

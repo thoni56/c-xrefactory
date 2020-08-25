@@ -10,14 +10,6 @@ int closeFile(FILE *file) {
     return fclose(file);
 }
 
-size_t readFile(void *buffer, size_t size, size_t count, FILE *file) {
-    return (size_t)mock(buffer, size, count, file);
-}
-
-size_t writeFile(void *buffer, size_t size, size_t count, FILE *file) {
-    return (size_t)mock(buffer, size, count, file);
-}
-
 void createDir(char *dirName) {
     mock(dirName);
 }
@@ -27,9 +19,21 @@ void removeFile(char *fileName) {
 }
 
 bool dirExists(char *fullPath) {
-    return mock(fullPath);
+    return (bool)mock(fullPath);
 }
 
 bool fileExists(char *fullPath) {
-    return mock(fullPath);
+    return (bool)mock(fullPath);
+}
+
+size_t readFile(void *buffer, size_t size, size_t count, FILE *file) {
+    return (size_t)mock(buffer, size, count, file);
+}
+
+size_t writeFile(void *buffer, size_t size, size_t count, FILE *file) {
+    return (size_t)mock(buffer, size, count, file);
+}
+
+int readChar(FILE *file) {
+    return mock(file);
 }
