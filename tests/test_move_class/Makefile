@@ -1,26 +1,12 @@
-# Test for moving a class
-#
-# TODO it does not really do the move, but it prints an error message and
-# exercises a lot of code, so let's keep this
-
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
 EDIT_SERVER_DRIVER_COMMAND=$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)"
 
 $(TEST): CXrefs
-	@$(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
-	@$(NORMALIZE) output.tmp > output
-	@diff output expected > /dev/null ; \
-	if [ $$? -ne 0 ] ; then \
-		$(FAIL) ; \
-		echo "diff output expected" ; \
-		diff output expected ; \
-		exit 1 ; \
-	else \
-		$(OK) ; \
-		exit 0 ; \
-	fi
+	$(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
+	$(NORMALIZE) output.tmp > output
+	$(VERIFY)
 
 CXrefs: .c-xrefrc
 	@../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc test_sources -sourcepath $(CURDIR)/test_sources -o CXrefs.output

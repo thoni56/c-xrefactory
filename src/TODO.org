@@ -16,7 +16,6 @@ Should really be sent synchronously so that the editor can display it.
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
 * TODO Better options handling
 ** TODO If an option requires a value ('-<option>=..'), print an error message for '-<option>'
-* TODO Fix the move_class test
 * TODO MISSING TEST CASES:
 ** TODO Test case for Move Method
 ** TODO Test case for dead symbol detection
@@ -111,6 +110,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Fix the move_class test
 * DONE Remove option brief_cxref - completely unnecessary
 * DONE Current script for autodiscovered test_<case> does not abort when the test fails
 * DONE Make all tests runable without debug build (-trace e.g.)
