@@ -185,8 +185,6 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
 static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_read) {
     int i, c;
     int comment, res, quotamess;
-    int previous_char;
-    UNUSED previous_char;
 
     c = getc(file);
     do {
@@ -204,24 +202,24 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
 
         if (c=='\"') {
             /* Read a double quoted string */
-            previous_char=c; c=getc(file);
+            c=getc(file);
             // Escaping the double quote (\") is not allowed, it creates problems
             // when someone finished a section name by \ reverse slash
             while (c!=EOF && c!='\"') {
                 if (i < text_size-1)
                     text[i++]=c;
-                previous_char=c; c=getc(file);
+                c=getc(file);
             }
             if (c!='\"' && options.taskRegime!=RegimeEditServer) {
                 fatalError(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
             }
         } else if (c=='`') {
             text[i++]=c;
-            previous_char=c; c=getc(file);
+            c=getc(file);
             while (c!=EOF && c!='\n' && c!='`') {
                 if (i < text_size-1)
                     text[i++]=c;
-                previous_char=c; c=getc(file);
+                c=getc(file);
             }
             if (i < text_size-1)
                 text[i++]=c;
@@ -230,11 +228,11 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             }
         } else if (c=='[') {
             text[i++] = c;
-            previous_char=c; c=getc(file);
+            c=getc(file);
             while (c!=EOF && c!='\n' && (c!=']' /*|| lc=='\\'*/ )) {
                 if (i < text_size-1)
                     text[i++]=c;
-                previous_char=c; c=getc(file);
+                c=getc(file);
             }
             if (c==']')
                 text[i++]=c;
