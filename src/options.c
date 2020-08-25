@@ -182,7 +182,7 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
     //&fprintf(dumpOut, "result '%s'\n", tt);
 }
 
-static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_read) {
+static int getOptionFromFile(FILE *file, char *text, int *chars_read) {
     int i, c;
     int comment, res, quotamess;
 
@@ -206,7 +206,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             // Escaping the double quote (\") is not allowed, it creates problems
             // when someone finished a section name by \ reverse slash
             while (c!=EOF && c!='\"') {
-                if (i < text_size-1)
+                if (i < MAX_OPTION_LEN-1)
                     text[i++]=c;
                 c=getc(file);
             }
@@ -217,11 +217,11 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             text[i++]=c;
             c=getc(file);
             while (c!=EOF && c!='\n' && c!='`') {
-                if (i < text_size-1)
+                if (i < MAX_OPTION_LEN-1)
                     text[i++]=c;
                 c=getc(file);
             }
-            if (i < text_size-1)
+            if (i < MAX_OPTION_LEN-1)
                 text[i++]=c;
             if (c!='`'  && options.taskRegime!=RegimeEditServer) {
                 errorMessage(ERR_ST, "option string through end of line");
@@ -230,7 +230,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             text[i++] = c;
             c=getc(file);
             while (c!=EOF && c!='\n' && (c!=']' /*|| lc=='\\'*/ )) {
-                if (i < text_size-1)
+                if (i < MAX_OPTION_LEN-1)
                     text[i++]=c;
                 c=getc(file);
             }
@@ -240,7 +240,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             while (c!=EOF && c>' ') {
                 if (c=='\"')
                     quotamess = 1;
-                if (i < text_size-1)
+                if (i < MAX_OPTION_LEN-1)
                     text[i++]=c;
                 c=getc(file);
             }
@@ -386,7 +386,7 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
     if (memFl==MEM_ALLOC_ON_SM) SM_INIT(optMemory);
     c = 'a';
     while (c!=EOF) {
-        c = getOptionFromFile(file, text, MAX_OPTION_LEN, &len);
+        c = getOptionFromFile(file, text, &len);
         if (c==EOF) {
             log_trace("got option from file (@EOF): '%s'", text);
         } else {
@@ -410,10 +410,10 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             // pre-evaluation of -set
             found = true;
             ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
-            c = getOptionFromFile(file,text,MAX_OPTION_LEN,&len);
+            c = getOptionFromFile(file,text,&len);
             expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
             ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
-            c = getOptionFromFile(file,text,MAX_OPTION_LEN,&len);
+            c = getOptionFromFile(file,text,&len);
             expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
             ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
             if (argc < MAX_STD_ARGS) {
