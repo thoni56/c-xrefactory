@@ -3,4 +3,5 @@
 pycparser
 .objs
 coverage.info
+unittests.info
 coverage
