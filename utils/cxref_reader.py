@@ -13,6 +13,7 @@ from collections import namedtuple
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
+
 def vprint(*args, **kwargs):
     if verbose:
         print(*args, **kwargs)
@@ -70,8 +71,11 @@ def unpack_references(string):
         # Usage marker
         (usage, string) = read_marker('u', string)
 
-        # Accessibility marker
+        # Required Access marker
         (accessibility, string) = read_marker('A', string)
+
+        # Symbol Index marker
+        #(symbol_index, string) = read_marker('s', string)
 
         # File marker
         (fileid, string) = read_marker('f', string)
@@ -85,7 +89,7 @@ def unpack_references(string):
         if string[0] == 'r':
             reference = True
         else:
-            eprint("Unknown marker(?): '%s'" % string)
+            eprint("Expected 'r' marker: '%s'" % string)
 
         string = string[1:]  # For now, skip 'r' - reference?
 
@@ -143,23 +147,15 @@ def unpack_symbols(lines, cxfilename):
     for line in lines:
         if line != "":
             segments = line.split('\t')
-            if line[0] != '\t':
-                # If there is a marker, dechiffer it, else use the previously found one
-                marker = re.match(r"(\d*)\D", line).group()
-            if marker[-1] == 't':
-                # Symbol type
-                symbolname = segments[1].split('/', 1)[-1]
-                symbols.append(
-                    Symbol(symbolname, unpack_references(segments[2]), marker))
-            elif marker[-1] == 'g':
-                # Storage
-                segments = line.split('\t')
-                symbolname = segments[1].split('/', 1)[-1]
-                symbols.append(
-                    Symbol(symbolname, unpack_references(segments[2]), marker))
-            else:
-                eprint("Unknown marker '%s' in Xrefs file '%s': '%s'" %
-                       (marker[-1], cxfilename, line))
+            classification = segments[0]
+            (t, classification) = read_marker('t', classification)
+            (d, classification) = read_marker('d', classification)
+            (h, classification) = read_marker('h', classification)
+            (a, classification) = read_marker('a', classification)
+            (g, classification) = read_marker('g', classification)
+            symbolname = segments[1].split('/', 1)[-1]
+            symbols.append(
+                Symbol(symbolname, unpack_references(segments[2]), marker))
     return symbols
 
 
@@ -187,9 +183,12 @@ def verify_directory(directory_name):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Read the CXrefs of c-xrefactory and present them in readable format.')
-    parser.add_argument('-v', '--verbose', help='verbose output', action='store_true')
-    parser.add_argument('directory', help='the directory to scan, default is CXrefs', nargs='?', default='CXrefs')
+    parser = argparse.ArgumentParser(
+        description='Read the CXrefs of c-xrefactory and present them in readable format.')
+    parser.add_argument('-v', '--verbose',
+                        help='verbose output', action='store_true')
+    parser.add_argument(
+        'directory', help='the directory to scan, default is CXrefs', nargs='?', default='CXrefs')
 
     args = parser.parse_args()
 
