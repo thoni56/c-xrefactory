@@ -25,11 +25,11 @@
 #define CXFI_FILE_FUMTIME   'm'     /* last full update mtime for file item */
 #define CXFI_FILE_UMTIME    'p'     /* last update mtime for file item */
 #define CXFI_SOURCE_INDEX   'o'     /* source index for java classes */
-#define CXFI_SYM_INDEX      's'
 #define CXFI_INPUT_FROM_COMMAND_LINE  'i'     /* file was introduced from command line */
 
 #define CXFI_USAGE          'u'
 #define CXFI_REQUIRED_ACCESS     'A'     /* java reference required accessibility index */
+#define CXFI_SYMBOL_INDEX   's'
 #define CXFI_FILE_INDEX     'f'
 #define CXFI_LINE_INDEX     'l'
 #define CXFI_COLUMN_INDEX   'c'
@@ -65,7 +65,7 @@ static int generatedFieldMarkersList[] = {
     CXFI_USAGE,
     CXFI_LINE_INDEX,
     CXFI_COLUMN_INDEX,
-    CXFI_SYM_INDEX,
+    CXFI_SYMBOL_INDEX,
     CXFI_REFERENCE,
     CXFI_SUPERCLASS,
     CXFI_SUBCLASS,
@@ -401,7 +401,7 @@ static void writeSymbolItem(int symbolIndex) {
     SymbolReferenceItem *d;
 
     /* First the symbol info, if not done already */
-    writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolIndex, "");
+    writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, symbolIndex, "");
 
     /* Then the reference info */
     d = lastOutgoingInfo.symbolTab[symbolIndex];
@@ -422,17 +422,17 @@ static void writeSymbolItemIfNotWritten(int symbolIndex) {
     }
 }
 
-static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess, int file, int line, int col) {
-    writeSymbolItemIfNotWritten(symbolNum);
+static void writeCxReferenceBase(int symbolIndex, Usage usage, int requiredAccess, int file, int line, int col) {
+    writeSymbolItemIfNotWritten(symbolIndex);
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */
-        assert(symbolNum>=0 && symbolNum<MAX_CX_SYMBOL_TAB);
-        if (lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolNum]) return;
-        lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolNum] = 1;
+        assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
+        if (lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex]) return;
+        lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex] = 1;
     }
     writeOptionalCompactRecord(CXFI_USAGE, usage, "");
     writeOptionalCompactRecord(CXFI_REQUIRED_ACCESS, requiredAccess, "");
-    writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolNum, "");
+    writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, symbolIndex, "");
     writeOptionalCompactRecord(CXFI_FILE_INDEX, file, "");
     writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");
     writeOptionalCompactRecord(CXFI_COLUMN_INDEX, col, "");
@@ -975,7 +975,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     assert(marker == CXFI_SYM_NAME);
     accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
     storage = lastIncomingInfo.values[CXFI_STORAGE];
-    si = lastIncomingInfo.values[CXFI_SYM_INDEX];
+    si = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = lastIncomingInfo.cachedSymbolName[si];
     len = scanSymNameString(size, cb, id);
@@ -1055,7 +1055,7 @@ static void cxrfSymbolName(int size,
     }
     accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
     storage = lastIncomingInfo.values[CXFI_STORAGE];
-    si = lastIncomingInfo.values[CXFI_SYM_INDEX];
+    si = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = lastIncomingInfo.cachedSymbolName[si];
     len = scanSymNameString( size, cb, id);
@@ -1140,7 +1140,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     usage = lastIncomingInfo.values[CXFI_USAGE];
     reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
     fillUsageBits(&usageBits, usage, reqAcc);
-    sym = lastIncomingInfo.values[CXFI_SYM_INDEX];
+    sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
     assert(fileTable.tab[file]!=NULL);
@@ -1150,7 +1150,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     log_trace("%d %d->%d %d", usage, file, s_decodeFilesNum[file], line);
     fillPosition(&pos,file,line,col);
     if (lastIncomingInfo.onLineReferencedSym ==
-        lastIncomingInfo.values[CXFI_SYM_INDEX]) {
+        lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
         addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
                      &usageBits,&pos,CategoryGlobal);
     }
@@ -1170,7 +1170,7 @@ static void cxrfReference(int size,
     assert(marker == CXFI_REFERENCE);
     usage = lastIncomingInfo.values[CXFI_USAGE];
     reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
-    sym = lastIncomingInfo.values[CXFI_SYM_INDEX];
+    sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
     assert(fileTable.tab[file]!=NULL);
@@ -1225,7 +1225,7 @@ static void cxrfReference(int size,
             }
         } else if (additionalArg == OL_LOOKING_2_PASS_MACRO_USAGE) {
             if (    lastIncomingInfo.onLineReferencedSym ==
-                    lastIncomingInfo.values[CXFI_SYM_INDEX]
+                    lastIncomingInfo.values[CXFI_SYMBOL_INDEX]
                     &&  rr.usage.base == UsageMacroBaseFileUsage) {
                 s_olMacro2PassFile = rr.p.file;
             }
@@ -1240,13 +1240,13 @@ static void cxrfReference(int size,
                 }
             } else if (options.server_operation == OLO_SAFETY_CHECK1) {
                 if (    lastIncomingInfo.onLineReferencedSym !=
-                        lastIncomingInfo.values[CXFI_SYM_INDEX]) {
+                        lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     olcxCheck1CxFileReference(lastIncomingInfo.symbolTab[sym],
                                               &rr);
                 }
             } else {
                 if (    lastIncomingInfo.onLineReferencedSym ==
-                        lastIncomingInfo.values[CXFI_SYM_INDEX]) {
+                        lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     if (additionalArg == CX_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
                         if (file!=s_olOriginalFileNumber
