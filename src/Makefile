@@ -196,6 +196,7 @@ LCOV_EXCLUDES = `echo $(LCOV_IGNORE_COVERAGE_FOR) | xargs printf -- '--exclude %
 endif
 
 the-actual-coverage-report:
+	@mkdir -p ../coverage
 	@# If running in parallel each test has created its own .info file in ../test, combine them
 	ls ../tests/coverage/*.info | xargs printf -- '-a %s\n' | xargs lcov -q -o ../tests/total.info
 	@# Add the unittest coverage info and exclude modules we want to ignore (lcov >= 1.14)
