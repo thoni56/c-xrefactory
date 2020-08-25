@@ -40,3 +40,7 @@ Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
 
     assert_that(packageOnCommandLine("org.existant"));
 }
+
+Ensure(Options, can_get_java_class_and_source_paths) {
+    getJavaClassAndSourcePath();
+}
