@@ -35,18 +35,18 @@
 #define CXFI_COLUMN_INDEX   'c'
 #define CXFI_REFERENCE      'r'     /* using 'fsulc' */
 
+#define CXFI_SYMBOL_TYPE    't'
+
+#define CXFI_SUBCLASS       'd'     /* dole = down in slovac */
+#define CXFI_SUPERCLASS     'h'     /* hore = up in slovac */
+#define CXFI_CLASS_EXT      'e'     /* using 'fhd' */
+
 #define CXFI_ACCESS_BITS    'a'     /* java access bit */
 #define CXFI_STORAGE        'g'     /* storaGe field */
 
-#define CXFI_SYM_TYPE       't'
-
-#define CXFI_SUPERCLASS     'h'     /* hore = up in slovac */
-#define CXFI_SUBCLASS       'd'     /* dole = down in slovac */
-#define CXFI_CLASS_EXT      'e'     /* using 'fhd' */
-
 #define CXFI_MACRO_BASE_FILE 'b'    /* ref to a file invoking macro */
 
-#define CXFI_SYM_NAME       '/'     /* using 'atdhg' -> 's'             */
+#define CXFI_SYMBOL_NAME    '/'     /* using 'atdhg' -> 's'             */
 #define CXFI_CLASS_NAME     '+'     /*               -> 'h' info    */
 #define CXFI_FILE_NAME      ':'     /*               -> 'ifm' info  */
 
@@ -61,7 +61,7 @@ static int generatedFieldMarkersList[] = {
     CXFI_FILE_UMTIME,
     CXFI_FILE_INDEX,
     CXFI_SOURCE_INDEX,
-    CXFI_SYM_TYPE,
+    CXFI_SYMBOL_TYPE,
     CXFI_USAGE,
     CXFI_LINE_INDEX,
     CXFI_COLUMN_INDEX,
@@ -405,14 +405,14 @@ static void writeSymbolItem(int symbolIndex) {
 
     /* Then the reference info */
     d = lastOutgoingInfo.symbolTab[symbolIndex];
-    writeOptionalCompactRecord(CXFI_SYM_TYPE, d->b.symType, "\n"); /* Why newline in the middle of all this? */
+    writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, d->b.symType, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_SUBCLASS, d->vApplClass, "");
     writeOptionalCompactRecord(CXFI_SUPERCLASS, d->vFunClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->b.accessFlags, "");
     writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
     lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex] = 0;
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = true;
-    writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
+    writeStringRecord(CXFI_SYMBOL_NAME, d->name, "\t");
     fputc('\t', cxOut);
 }
 
@@ -947,7 +947,7 @@ static int scanSymNameString(int size,
 static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
                                  int *_vFunClass) {
     int symType, vApplClass, vFunClass;
-    symType = lastIncomingInfo.values[CXFI_SYM_TYPE];
+    symType = lastIncomingInfo.values[CXFI_SYMBOL_TYPE];
     vApplClass = lastIncomingInfo.values[CXFI_SUBCLASS];
     vApplClass = s_decodeFilesNum[vApplClass];
     assert(fileTable.tab[vApplClass] != NULL);
@@ -972,7 +972,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     char *id;
     char *ss;
 
-    assert(marker == CXFI_SYM_NAME);
+    assert(marker == CXFI_SYMBOL_NAME);
     accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
     storage = lastIncomingInfo.values[CXFI_STORAGE];
     si = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
@@ -1048,7 +1048,7 @@ static void cxrfSymbolName(int size,
     char *id;
     char *ss;
 
-    assert(marker == CXFI_SYM_NAME);
+    assert(marker == CXFI_SYMBOL_NAME);
     if (options.taskRegime==RegimeEditServer && additionalArg==DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
@@ -1540,7 +1540,7 @@ ScanFileFunctionStep fullScanFunctionSequence[]={
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_GENERATE_OUTPUT},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_GENERATE_OUTPUT},
-    {CXFI_SYM_NAME, cxrfSymbolName, DEFAULT_VALUE},
+    {CXFI_SYMBOL_NAME, cxrfSymbolName, DEFAULT_VALUE},
     {CXFI_REFERENCE, cxrfReference, CX_HTML_FIRST_PASS},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_GENERATE_OUTPUT},
     {CXFI_REFNUM, cxrfRefNum, 0},
@@ -1552,7 +1552,7 @@ ScanFileFunctionStep byPassFunctionSequence[]={
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME, cxrfSymbolName, CX_BY_PASS},
+    {CXFI_SYMBOL_NAME, cxrfSymbolName, CX_BY_PASS},
     {CXFI_REFERENCE, cxrfReference, CX_BY_PASS},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
     {CXFI_REFNUM, cxrfRefNum, 0},
@@ -1565,7 +1565,7 @@ ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME, cxrfSymbolName, DEFAULT_VALUE},
+    {CXFI_SYMBOL_NAME, cxrfSymbolName, DEFAULT_VALUE},
     {CXFI_REFERENCE, cxrfReference, CX_MENU_CREATION},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
     {CXFI_REFNUM, cxrfRefNum, 0},
@@ -1578,7 +1578,7 @@ ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME, cxrfSymbolName, CX_MENU_CREATION},
+    {CXFI_SYMBOL_NAME, cxrfSymbolName, CX_MENU_CREATION},
     {CXFI_REFERENCE, cxrfReference, CX_MENU_CREATION},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
     {CXFI_REFNUM, cxrfRefNum, 0},
@@ -1591,7 +1591,7 @@ ScanFileFunctionStep fullUpdateFunctionSequence[]={
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME, cxrfSymbolNameForFullUpdateSchedule, DEFAULT_VALUE},
+    {CXFI_SYMBOL_NAME, cxrfSymbolNameForFullUpdateSchedule, DEFAULT_VALUE},
     {CXFI_REFERENCE, cxrfReferenceForFullUpdateSchedule, DEFAULT_VALUE},
     {CXFI_REFNUM, cxrfRefNum, 0},
     {-1,NULL, 0},
@@ -1601,7 +1601,7 @@ ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, DEFAULT_VALUE},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME, cxrfSymbolName, OL_LOOKING_2_PASS_MACRO_USAGE},
+    {CXFI_SYMBOL_NAME, cxrfSymbolName, OL_LOOKING_2_PASS_MACRO_USAGE},
     {CXFI_REFERENCE, cxrfReference, OL_LOOKING_2_PASS_MACRO_USAGE},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
     {CXFI_REFNUM, cxrfRefNum, DEFAULT_VALUE},
@@ -1621,7 +1621,7 @@ ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[]={
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
-    {CXFI_SYM_NAME, cxrfSymbolName, CX_HTML_SECOND_PASS},
+    {CXFI_SYMBOL_NAME, cxrfSymbolName, CX_HTML_SECOND_PASS},
     {CXFI_REFERENCE, cxrfReference, CX_HTML_SECOND_PASS},
     {CXFI_REFNUM, cxrfRefNum, 0},
     {-1,NULL, 0},
@@ -1632,7 +1632,7 @@ ScanFileFunctionStep symbolSearchFunctionSequence[]={
     {CXFI_REFNUM, cxrfRefNum, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME, cxrfSymbolName, SEARCH_SYMBOL},
+    {CXFI_SYMBOL_NAME, cxrfSymbolName, SEARCH_SYMBOL},
     {CXFI_REFERENCE, cxrfReference, CX_HTML_FIRST_PASS},
     {-1,NULL, 0},
 };
@@ -1642,7 +1642,7 @@ ScanFileFunctionStep deadCodeDetectionFunctionSequence[]={
     {CXFI_REFNUM, cxrfRefNum, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME, cxrfSymbolName, DEAD_CODE_DETECTION},
+    {CXFI_SYMBOL_NAME, cxrfSymbolName, DEAD_CODE_DETECTION},
     {CXFI_REFERENCE, cxrfReference, DEAD_CODE_DETECTION},
     {-1,NULL, 0},
 };
