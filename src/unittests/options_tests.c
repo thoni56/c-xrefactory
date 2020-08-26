@@ -48,33 +48,60 @@ Ensure(Options, can_get_java_class_and_source_paths) {
 
 extern int getOptionFromFile(FILE *file, char *text, int *chars_read);
 
-Ensure(Options, can_read_double_quoted_option_string) {
+Ensure(Options, can_read_a_normal_option_string) {
+    char option_string[] = "this is a double quoted option";
+    char expected_option_value[] = "this";
     char option_string_read[MAX_OPTION_LEN];
     int len;
 
-    /* Prepare to read "aaa" */
-    expect(readChar, will_return('"'));
-    expect(readChar, will_return('a'), times(3));
-    expect(readChar, will_return('"'));
+    for (int i = 0; i<=4; i++)
+        expect(readChar, will_return(option_string[i]));
 
     getOptionFromFile(NULL, option_string_read, &len);
 
-    assert_that(len, is_equal_to(3));
-    assert_that(option_string_read, is_equal_to_string("aaa"));
+    assert_that(len, is_equal_to(strlen(expected_option_value)));
+    assert_that(option_string_read, is_equal_to_string(expected_option_value));
+}
+
+Ensure(Options, can_read_double_quoted_option_string) {
+    char option_string[] = "\"this is a double quoted option\"";
+    char expected_option_value[] = "this is a double quoted option";
+    char option_string_read[MAX_OPTION_LEN];
+    int len;
+
+    for (int i = 0; i<=strlen(option_string)-1; i++)
+        expect(readChar, will_return(option_string[i]));
+
+    getOptionFromFile(NULL, option_string_read, &len);
+
+    assert_that(len, is_equal_to(strlen(expected_option_value)));
+    assert_that(option_string_read, is_equal_to_string(expected_option_value));
 }
 
 Ensure(Options, can_read_backquoted_option_string) {
+    char expected_option_value[] = "`this is a backtick quoted option`";
     char option_string_read[MAX_OPTION_LEN];
     int len;
 
-    /* Prepare to read "aaa" */
-    expect(readChar, will_return('`'));
-    expect(readChar, will_return('n'), times(2));
-    expect(readChar, will_return('l'), times(2));
-    expect(readChar, will_return('`'));
+    for (int i = 0; i<=strlen(expected_option_value)-1; i++)
+        expect(readChar, will_return(expected_option_value[i]));
 
     getOptionFromFile(NULL, option_string_read, &len);
 
-    assert_that(len, is_equal_to(6));
-    assert_that(option_string_read, is_equal_to_string("`nnll`"));
+    assert_that(len, is_equal_to(strlen(expected_option_value)));
+    assert_that(option_string_read, is_equal_to_string(expected_option_value));
+}
+
+Ensure(Options, can_read_square_bracketed_option_strings) {
+    char expected_option_value[] = "[this is an option]";
+    char option_string_read[MAX_OPTION_LEN];
+    int len;
+
+    for (int i = 0; i<=strlen(expected_option_value)-1; i++)
+        expect(readChar, will_return(expected_option_value[i]));
+
+    getOptionFromFile(NULL, option_string_read, &len);
+
+    assert_that(len, is_equal_to(strlen(expected_option_value)));
+    assert_that(option_string_read, is_equal_to_string(expected_option_value));
 }
