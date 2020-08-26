@@ -1,0 +1,22 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-extract-method" "-olmark=403" "-olcursor=374" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/ExtractMethod.java" -o server-buffer
+<sync>
+<extraction-dialog type=newClass_> <str len=<n>>		NewClass_ newClass_ = new NewClass_(x, y);
+		newClass_.perform();
+		x=newClass_.x; y=newClass_.y; 
+		newClass_ = null;
+</str>
+ <str len=<n>>	static class NewClass_ {
+		int x;
+		int y;
+		NewClass_(int x, int y) {
+			this.x = x; this.y = y; 
+		}
+		void perform() {
+			int t;
+</str>
+ <str len=<n>>		}
+	}
+
+</str>
+  <int val=9 len=<n>></int>
+</extraction-dialog>
