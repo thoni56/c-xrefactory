@@ -1171,7 +1171,7 @@ static bool extractJavaIsNewClassNecessary(ProgramGraphNode *program) {
 
 static void makeExtraction(void) {
     ProgramGraphNode *program;
-    int newClassExt;
+    bool needToExtractNewClass = false;
 
     if (s_cp.cxMemoryIndexAtFunctionBegin > s_cps.cxMemoryIndexAtBlockBegin
         || s_cps.cxMemoryIndexAtBlockBegin > s_cps.cxMemoryIndexAtBlockEnd
@@ -1180,7 +1180,7 @@ static void makeExtraction(void) {
         errorMessage(ERR_ST, "Region / program structure mismatch");
         return;
     }
-    //&fprintf(dumpOut,"!cxMemories: funBeg, blockBeb, blockEnd, funEnd: %x, %x, %x, %x\n", s_cp.cxMemoryIndexAtFunctionBegin, s_cps.cxMemoryIndexAtBlockBegin, s_cps.cxMemoryIndexAtBlockEnd, s_cp.cxMemoryIndexAtFunctionEnd);
+    log_trace("!cxMemories: funBeg, blockBeb, blockEnd, funEnd: %x, %x, %x, %x", s_cp.cxMemoryIndexAtFunctionBegin, s_cps.cxMemoryIndexAtBlockBegin, s_cps.cxMemoryIndexAtBlockEnd, s_cp.cxMemoryIndexAtFunctionEnd);
     assert(s_cp.cxMemoryIndexAtFunctionBegin);
     assert(s_cps.cxMemoryIndexAtBlockBegin);
     assert(s_cps.cxMemoryIndexAtBlockEnd);
@@ -1197,11 +1197,10 @@ static void makeExtraction(void) {
     extClassifyLocalVariables(program);
     extReClassifyIOVars(program);
 
-    newClassExt = 0;
-    if (LANGUAGE(LANG_JAVA)) newClassExt =  extractJavaIsNewClassNecessary(program);
+    if (LANGUAGE(LANG_JAVA)) needToExtractNewClass =  extractJavaIsNewClassNecessary(program);
 
     if (LANGUAGE(LANG_JAVA)) {
-        if (newClassExt) s_extractionName = "newClass_";
+        if (needToExtractNewClass) s_extractionName = "newClass_";
         else s_extractionName = "newMethod_";
     } else {
         if (options.extractMode==EXTRACT_MACRO) s_extractionName = "NEW_MACRO_";
@@ -1216,21 +1215,21 @@ static void makeExtraction(void) {
                 "%%!\n------------------------ The Invocation ------------------------\n!\n");
     }
     if (options.extractMode==EXTRACT_MACRO) generateNewMacroCall(program);
-    else if (newClassExt) extJavaGenNewClassCall(program);
+    else if (needToExtractNewClass) extJavaGenNewClassCall(program);
     else generateNewFunctionCall(program);
     if (! options.xref2) {
         fprintf(communicationChannel,
                 "!\n--------------------------- The Head ---------------------------\n!\n");
     }
     if (options.extractMode==EXTRACT_MACRO) extGenNewMacroHead(program);
-    else if (newClassExt) extJavaGenNewClassHead(program);
+    else if (needToExtractNewClass) extJavaGenNewClassHead(program);
     else generateNewFunctionHead(program);
     if (! options.xref2) {
         fprintf(communicationChannel,
                 "!\n--------------------------- The Tail ---------------------------\n!\n");
     }
     if (options.extractMode==EXTRACT_MACRO) generateNewMacroTail(program);
-    else if (newClassExt) extJavaGenNewClassTail(program);
+    else if (needToExtractNewClass) extJavaGenNewClassTail(program);
     else generateNewFunctionTail(program);
 
     if (options.xref2) {
