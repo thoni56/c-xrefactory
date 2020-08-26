@@ -4,5 +4,5 @@ include ../Makefile.boilerplate
 
 $(TEST):
 	../../src/c-xref -about > output.tmp
-	grep -v debug output.tmp | grep -v trace > output
+	grep -v debug output.tmp | grep -v "This is" > output
 	$(VERIFY)
