@@ -266,8 +266,8 @@ void javaMapDirectoryFiles2(IdList *packid, void (*fun)(char *file, char *a1, ch
   mock(packid, fun, a1, a2, a3);
 }
 
-char *lastOccurenceInString(char *ss, int ch) {
-  return (char *) mock(ss, ch);
+char *lastOccurenceInString(char *string, int ch) {
+  return (char *) mock(string, ch);
 }
 
 char *lastOccurenceOfSlashOrBackslash(char *string) {

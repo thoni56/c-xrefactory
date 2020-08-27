@@ -770,19 +770,19 @@ char *strmcpy(char *dest, char *src) {
     return(p1);
 }
 
-char *lastOccurenceInString(char *ss, int ch) {
+char *lastOccurenceInString(char *string, int ch) {
     char *s,*res;
     res = NULL;
-    for(s=ss; *s; s++) {
+    for(s=string; *s; s++) {
         if (*s == ch) res=s;
     }
-    return(res);
+    return res;
 }
 
 char *lastOccurenceOfSlashOrBackslash(char *string) {
     char *s,*res;
     res = NULL;
-    for(s=ss; *s; s++) {
+    for(s=string; *s; s++) {
         if (*s == '/' || *s == '\\') res=s;
     }
     return(res);
