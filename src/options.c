@@ -42,8 +42,8 @@ static char javaClassPathExpanded[MAX_OPTION_LEN];
 #define ENV_DEFAULT_VAR_SUPER_CLASS     "${__super}"
 
 
-char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
-    static char     res[MAX_OPTION_LEN];
+char *expandSpecialFilePredefinedVariables_st(char *variable, char *inputFilename) {
+    static char     expanded[MAX_OPTION_LEN];
     int             i,j,len,flen,plen,nlen,slen,tlen,suplen;
     char            *fvv, *suffix;
     char            filename[MAX_FILE_NAME_SIZE];
@@ -65,7 +65,7 @@ char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
     javaDotifyFileName(thisclass);
     javaDotifyFileName(superclass);
 
-    len = strlen(tt);
+    len = strlen(variable);
     flen = strlen(ENV_DEFAULT_VAR_FILE);
     plen = strlen(ENV_DEFAULT_VAR_PATH);
     nlen = strlen(ENV_DEFAULT_VAR_NAME);
@@ -75,37 +75,37 @@ char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
     i = j = 0;
     //& fprintf(dumpOut,"path, name, suff == %s %s %s\n", path, name, suffix);
     while (i<len) {
-        if (strncmp(&tt[i], ENV_DEFAULT_VAR_FILE, flen)==0) {
-            sprintf(&res[j], "%s", filename);
+        if (strncmp(&variable[i], ENV_DEFAULT_VAR_FILE, flen)==0) {
+            sprintf(&expanded[j], "%s", filename);
             i += flen;
-            j += strlen(&res[j]);
-        } else if (strncmp(&tt[i], ENV_DEFAULT_VAR_PATH, plen)==0) {
-            sprintf(&res[j], "%s", path);
+            j += strlen(&expanded[j]);
+        } else if (strncmp(&variable[i], ENV_DEFAULT_VAR_PATH, plen)==0) {
+            sprintf(&expanded[j], "%s", path);
             i += plen;
-            j += strlen(&res[j]);
-        } else if (strncmp(&tt[i], ENV_DEFAULT_VAR_NAME, nlen)==0) {
-            sprintf(&res[j], "%s", name);
+            j += strlen(&expanded[j]);
+        } else if (strncmp(&variable[i], ENV_DEFAULT_VAR_NAME, nlen)==0) {
+            sprintf(&expanded[j], "%s", name);
             i += nlen;
-            j += strlen(&res[j]);
-        } else if (strncmp(&tt[i], ENV_DEFAULT_VAR_SUFFIX, slen)==0) {
-            sprintf(&res[j], "%s", suffix);
+            j += strlen(&expanded[j]);
+        } else if (strncmp(&variable[i], ENV_DEFAULT_VAR_SUFFIX, slen)==0) {
+            sprintf(&expanded[j], "%s", suffix);
             i += slen;
-            j += strlen(&res[j]);
-        } else if (strncmp(&tt[i], ENV_DEFAULT_VAR_THIS_CLASS, tlen)==0) {
-            sprintf(&res[j], "%s", thisclass);
+            j += strlen(&expanded[j]);
+        } else if (strncmp(&variable[i], ENV_DEFAULT_VAR_THIS_CLASS, tlen)==0) {
+            sprintf(&expanded[j], "%s", thisclass);
             i += tlen;
-            j += strlen(&res[j]);
-        } else if (strncmp(&tt[i], ENV_DEFAULT_VAR_SUPER_CLASS, suplen)==0) {
-            sprintf(&res[j], "%s", superclass);
+            j += strlen(&expanded[j]);
+        } else if (strncmp(&variable[i], ENV_DEFAULT_VAR_SUPER_CLASS, suplen)==0) {
+            sprintf(&expanded[j], "%s", superclass);
             i += suplen;
-            j += strlen(&res[j]);
+            j += strlen(&expanded[j]);
         } else {
-            res[j++] = tt[i++];
+            expanded[j++] = variable[i++];
         }
         assert(j<MAX_OPTION_LEN);
     }
-    res[j]=0;
-    return(res);
+    expanded[j]=0;
+    return(expanded);
 }
 
 static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
