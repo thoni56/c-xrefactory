@@ -182,7 +182,7 @@ clean:
 clean-coverage:
 	-if command -v lcov > /dev/null 2>&1 ; then \
 		lcov -q -z -d .. ; \
-		rm ../tests/*.info ; \
+		rm -r ../tests/.coverage ; \
 	fi
 
 coverage-report:
