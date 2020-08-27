@@ -2280,7 +2280,7 @@ tries to delete C-xrefactory windows first.
                (cons "" nil)))
     (set-process-filter (car (eval proc)) filter)
     (setq process-connection-type oldpct)
-    (process-kill-without-query (car (eval proc)))
+    (set-process-query-on-exit-flag (car (eval proc)) nil)
 ))
 
 (defvar c-xref-interrupt-dialog-map (make-sparse-keymap "C-xref interrupt dialog"))
