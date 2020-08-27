@@ -1582,7 +1582,7 @@ static void refactorySimpleRenaming(EditorMarkerList *occs, EditorMarker *point,
             if (strcmp(simpleFileNameWithoutSuffix_st(point->buffer->name), symname)==0) {
                 // O.K. file name equals to class name, rename file
                 strcpy(nfile, point->buffer->name);
-                ss = lastOccurenceOfSlashOrAntiSlash(nfile);
+                ss = lastOccurenceOfSlashOrBackslash(nfile);
                 if (ss==NULL) ss=nfile;
                 else ss++;
                 sprintf(ss, "%s.java", refactoringOptions.renameTo);
@@ -3126,7 +3126,7 @@ static void refactoryGetPackageNameFromMarkerFileName(EditorMarker *target, char
     strcpy(tclass, javaCutSourcePathFromFileName(target->buffer->name));
     dd = lastOccurenceInString(tclass, '.');
     if (dd!=NULL) *dd=0;
-    dd = lastOccurenceOfSlashOrAntiSlash(tclass);
+    dd = lastOccurenceOfSlashOrBackslash(tclass);
     if (dd!=NULL) {
         *dd=0;
         javaDotifyFileName(tclass);

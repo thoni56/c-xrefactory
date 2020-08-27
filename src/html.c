@@ -158,7 +158,7 @@ static char *htmlAuxFileNameStatic(int fnum, char *subdir,
     fn = fileTable.tab[fnum]->name;
     fn = getRealFileNameStatic(fn);
     fn = cutHtmlPath(fn);
-    fd = lastOccurenceOfSlashOrAntiSlash(fn);
+    fd = lastOccurenceOfSlashOrBackslash(fn);
     n = fd - fn;
     strncpy(res, fn, n);
     sprintf(res+n,"%c%s%s%s%s",FILE_PATH_SEPARATOR,subdir,fd,suff1,suff2);

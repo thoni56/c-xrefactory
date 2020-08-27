@@ -270,8 +270,8 @@ char *lastOccurenceInString(char *ss, int ch) {
   return (char *) mock(ss, ch);
 }
 
-char *lastOccurenceOfSlashOrAntiSlash(char *ss) {
-  return (char *) mock(ss);
+char *lastOccurenceOfSlashOrBackslash(char *string) {
+  return (char *) mock(string);
 }
 
 char *getFileSuffix(char *fn) {

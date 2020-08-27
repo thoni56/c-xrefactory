@@ -779,7 +779,7 @@ char *lastOccurenceInString(char *ss, int ch) {
     return(res);
 }
 
-char *lastOccurenceOfSlashOrAntiSlash(char *ss) {
+char *lastOccurenceOfSlashOrBackslash(char *string) {
     char *s,*res;
     res = NULL;
     for(s=ss; *s; s++) {

@@ -129,7 +129,7 @@ extern void javaMapDirectoryFiles2(
         int *a3
     );
 extern char *lastOccurenceInString(char *ss, int ch);
-extern char *lastOccurenceOfSlashOrAntiSlash(char *ss);
+extern char *lastOccurenceOfSlashOrBackslash(char *ss);
 extern char *getFileSuffix(char *fn);
 extern char *javaCutClassPathFromFileName(char *fname);
 extern char *javaCutSourcePathFromFileName(char *fname);

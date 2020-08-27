@@ -1515,7 +1515,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
         suff = lastOccurenceInString(ttt, '.');
         assert(suff);
         *suff = 0;
-        sname = lastOccurenceOfSlashOrAntiSlash(ttt);
+        sname = lastOccurenceOfSlashOrBackslash(ttt);
         if (sname == NULL) sname = ttt;
         else sname ++;
         if (pathncmp(c->idToProcess, sname, c->idToProcessLen, options.completionCaseSensitive)==0
