@@ -33,27 +33,6 @@ static int optMemoryIndex;
 static char javaSourcePathExpanded[MAX_OPTION_LEN];
 static char javaClassPathExpanded[MAX_OPTION_LEN];
 
-/*
-  Here we define the things that are needed and which are defined by
-  the compiler as builtins.  Examples are pre-defined include paths,
-  various macros, some of which are kind of typedef's.
-
-  NOTE1: that they need not translate to something real, just
-  something that parses right.
-
-  NOTE2: there is also an attempt at figuring out pre-defined include
-  paths in main.c:getAndProcessGccOptions()
-
-  NOTE3: perhaps it's possible to figure out what the compiler defines
-  as builtin's automatically, perhaps using.
-
-      echo | gcc -E -dM - > compiler_definitions.h
-
-  NOTE4: note3 is implemented now, so do we need this now?
-
- */
-
-/* All standard options have been removed... */
 
 #define ENV_DEFAULT_VAR_FILE            "${__file}"
 #define ENV_DEFAULT_VAR_PATH            "${__path}"
