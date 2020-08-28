@@ -182,7 +182,7 @@ int containsWildcard(char *ss) {
   return (int) mock(ss);
 }
 
-int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive) {
+int shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
   return (int) mock(string, stringLen, pattern, caseSensitive);
 }
 
@@ -278,7 +278,7 @@ char *javaCutSourcePathFromFileName(char *fname) {
   return (char *) mock(fname);
 }
 
-int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
+int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive) {
   return (int) mock(ss1, ss2, n, caseSensitive);
 }
 

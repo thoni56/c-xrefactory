@@ -603,9 +603,7 @@ char *javaGetNudePreTypeName_st( char *inn, int cutMode) {
     if (cut==NULL) cut = inn;
     else cut ++;
     res = res2 = cut;
-    // it was until '(' too, I do not know why, it makes problems
-    // when displaing the "...$(anonymous)" class name
-    for(i=0; cut[i] /*& && cut[i]!='(' &*/; i++) {
+    for(i=0; cut[i]; i++) {
         if (cut[i]=='.' || cut[i]=='/' || cut[i]=='\\'
             || cut[i] == ZIP_SEPARATOR_CHAR
             || (cut[i]=='$' && cutMode==CUT_OUTERS)) {
@@ -679,7 +677,6 @@ void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
     int tlen;
     char *tt;
 
-    //& tt = javaLinkName;
     tt = strchr(javaLinkName, LINK_NAME_SEPARATOR);
     if (tt==NULL) tt = javaLinkName;
     else tt ++;
@@ -692,7 +689,6 @@ void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
     if (*tt == '(') {
         tlen = maxlen + TYPE_STR_RESERVE;
         if (tlen <= TYPE_STR_RESERVE) goto fini;
-        //& if (tlen > TMP_STRING_SIZE) tlen = TMP_STRING_SIZE;
         *ff ++ = '('; tlen--;
         javaSignatureSPrint(ff, &tlen, tt, argsStyle);
         ff += tlen;
@@ -703,9 +699,7 @@ void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
 }
 
 char *simpleFileNameFromFileNum(int fnum) {
-    return(
-           simpleFileName(getRealFileNameStatic(fileTable.tab[fnum]->name))
-           );
+    return(simpleFileName(getRealFileNameStatic(fileTable.tab[fnum]->name)));
 }
 
 char *getShortClassNameFromClassNum_st(int fnum) {
@@ -816,7 +810,7 @@ char *directoryName_st(char *fullFileName) {
     return res;
 }
 
-int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
+int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive) {
     char *s1,*s2;
     int i;
     int res;
@@ -891,7 +885,7 @@ static void shellMatchDeleteState(IntegerList **s) {
     OLCX_FREE(p, sizeof(IntegerList));
 }
 
-static int shellMatchParseBracketPattern(char *pattern, int pi, int caseSensitive, char *asciiMap) {
+static int shellMatchParseBracketPattern(char *pattern, int pi, bool caseSensitive, char *asciiMap) {
     int        i,j,m;
     int     setval = 1;
     i = pi;
@@ -935,7 +929,7 @@ static int shellMatchParseBracketPattern(char *pattern, int pi, int caseSensitiv
     return(i);
 }
 
-int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive) {
+int shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
     int             si, pi, slen, plen, res;
     IntegerList       *states, **p, *f;
     char            asciiMap[MAX_ASCII_CHAR];

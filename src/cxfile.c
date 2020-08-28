@@ -234,7 +234,7 @@ static int searchStringNonWildcardFitness(char *cxtag, int len) {
 }
 
 int searchStringFitness(char *cxtag, int len) {
-    if (s_wildcardSearch) return(shellMatch(cxtag, len, options.olcxSearchString, 0));
+    if (s_wildcardSearch) return(shellMatch(cxtag, len, options.olcxSearchString, false));
     else return(searchStringNonWildcardFitness(cxtag, len));
 }
 
