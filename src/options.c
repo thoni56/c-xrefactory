@@ -44,16 +44,15 @@ static char javaClassPathExpanded[MAX_OPTION_LEN];
 
 char *expandSpecialFilePredefinedVariables_st(char *variable, char *inputFilename) {
     static char     expanded[MAX_OPTION_LEN];
-    int             i,j,len,flen,plen,nlen,slen,tlen,suplen;
-    char            *fvv, *suffix;
-    char            filename[MAX_FILE_NAME_SIZE];
-    char            path[MAX_FILE_NAME_SIZE];
-    char            name[MAX_FILE_NAME_SIZE];
-    char            thisclass[MAX_FILE_NAME_SIZE];
-    char            superclass[MAX_FILE_NAME_SIZE];
+    int i,j,len,flen,plen,nlen,slen,tlen,suplen;
+    char *suffix;
+    char filename[MAX_FILE_NAME_SIZE];
+    char path[MAX_FILE_NAME_SIZE];
+    char name[MAX_FILE_NAME_SIZE];
+    char thisclass[MAX_FILE_NAME_SIZE];
+    char superclass[MAX_FILE_NAME_SIZE];
 
-    fvv = getRealFileNameStatic(inputFilename);
-    strcpy(filename, fvv);
+    strcpy(filename, getRealFileNameStatic(inputFilename));
     assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
     strcpy(path, directoryName_st(filename));
     strcpy(name, simpleFileNameWithoutSuffix_st(filename));
