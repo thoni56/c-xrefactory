@@ -106,7 +106,7 @@ Ensure(Options, can_read_square_bracketed_option_strings) {
     assert_that(option_string_read, is_equal_to_string(expected_option_value));
 }
 
-Ensure(Options, can_expand_special_file_variables) {
+Ensure(Options, will_not_expand_special_file_variable_when_no_value) {
     expect(getRealFileNameStatic, when(fn, is_equal_to_string("options.c")),
            will_return("/some/path/to/options.c"));
     expect(directoryName_st, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
@@ -118,4 +118,20 @@ Ensure(Options, can_expand_special_file_variables) {
     expect(javaDotifyFileName, times(2));
 
     char *expanded = expandSpecialFilePredefinedVariables_st("cp", "options.c");
+    assert_that(expanded, is_equal_to_string("cp"));
+}
+
+Ensure(Options, can_expand_special_variable_file) {
+    expect(getRealFileNameStatic, when(fn, is_equal_to_string("options.c")),
+           will_return("/some/path/to/options.c"));
+    expect(directoryName_st, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
+           will_return("/some/path/to"));
+    expect(simpleFileNameWithoutSuffix_st, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
+           will_return("options"));
+    expect(lastOccurenceInString, when(string, is_equal_to_string("/some/path/to/options.c")),
+           will_return(".c"));
+    expect(javaDotifyFileName, times(2));
+
+    char *expanded = expandSpecialFilePredefinedVariables_st("${__file}", "options.c");
+    assert_that(expanded, is_equal_to_string("/some/path/to/options.c"));
 }
