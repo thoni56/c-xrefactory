@@ -445,7 +445,8 @@ static bool processNegativeOption(int *ii, int argc, char **argv, int infilesFla
     int i = * ii;
     if (0) {}
     else if (strcmp(argv[i], "--r")==0) {
-        if (infilesFlag == INFILES_ENABLED) options.recurseDirectories = false;
+        if (infilesFlag == INFILES_ENABLED)
+            options.recurseDirectories = false;
     }
     else return false;
     *ii = i;
@@ -469,7 +470,8 @@ static bool processAOption(int *ii, int argc, char **argv) {
 static bool processBOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i], "-briefoutput")==0)     options.briefoutput = true;
+    else if (strcmp(argv[i], "-briefoutput")==0)
+        options.briefoutput = true;
     else if (strncmp(argv[i], "-browsedsym=",12)==0)     {
         createOptionString(&options.browsedSymName, argv[i]+12);
     }
@@ -481,11 +483,16 @@ static bool processBOption(int *ii, int argc, char **argv) {
 static bool processCOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i], "-cacheincludes")==0)   options.cacheIncludes=1;
-    else if (strcmp(argv[i], "-crlfconversion")==0)  options.eolConversion|=CR_LF_EOL_CONVERSION;
-    else if (strcmp(argv[i], "-crconversion")==0)    options.eolConversion|=CR_EOL_CONVERSION;
-    else if (strcmp(argv[i], "-completioncasesensitive")==0) options.completionCaseSensitive=1;
-    else if (strcmp(argv[i], "-completeparenthesis")==0) options.completeParenthesis=1;
+    else if (strcmp(argv[i], "-cacheincludes")==0)
+        options.cacheIncludes=1;
+    else if (strcmp(argv[i], "-crlfconversion")==0)
+        options.eolConversion|=CR_LF_EOL_CONVERSION;
+    else if (strcmp(argv[i], "-crconversion")==0)
+        options.eolConversion|=CR_EOL_CONVERSION;
+    else if (strcmp(argv[i], "-completioncasesensitive")==0)
+        options.completionCaseSensitive=1;
+    else if (strcmp(argv[i], "-completeparenthesis")==0)
+        options.completeParenthesis=1;
     else if (strncmp(argv[i], "-completionoverloadwizdeep=",27)==0)  {
         sscanf(argv[i]+27, "%d", &options.completionOverloadWizardDeep);
     }
@@ -508,7 +515,8 @@ static bool processCOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i], "-csuffixes=",11)==0) {
         createOptionString(&options.cFilesSuffixes, argv[i]+11);
     }
-    else if (strcmp(argv[i], "-create")==0) options.create = 1;
+    else if (strcmp(argv[i], "-create")==0)
+        options.create = 1;
     else if (strncmp(argv[i], "-compiler=", 10)==0) {
         options.compiler = &argv[i][10];
     } else return false;
@@ -647,11 +655,16 @@ static bool processHOption(int *ii, int argc, char **argv) {
     if (strncmp(argv[i], "-htmltab=",9)==0)  {
         sscanf(argv[i]+9, "%d",&options.tabulator);
     }
-    else if (strcmp(argv[i], "-htmllinenums")==0) options.htmlLineNums = 1;
-    else if (strcmp(argv[i], "-htmlnocolors")==0) options.htmlNoColors = true;
-    else if (strcmp(argv[i], "-htmlgxlist")==0) options.htmlglobalx = true;
-    else if (strcmp(argv[i], "-htmllxlist")==0) options.htmllocalx = true;
-    else if (strcmp(argv[i], "-htmlfunseparate")==0)options.htmlFunSeparate=true;
+    else if (strcmp(argv[i], "-htmllinenums")==0)
+        options.htmlLineNums = 1;
+    else if (strcmp(argv[i], "-htmlnocolors")==0)
+        options.htmlNoColors = true;
+    else if (strcmp(argv[i], "-htmlgxlist")==0)
+        options.htmlglobalx = true;
+    else if (strcmp(argv[i], "-htmllxlist")==0)
+        options.htmllocalx = true;
+    else if (strcmp(argv[i], "-htmlfunseparate")==0)
+        options.htmlFunSeparate=true;
     else if (strcmp(argv[i], "-html")==0) {
         options.taskRegime = RegimeHtmlGenerate;
         options.fileEncoding = MULE_EUROPEAN; // no multibyte encodings
@@ -760,7 +773,8 @@ static bool processIOption(int *ii, int argc, char **argv) {
 static bool processJOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i], "-javadoc")==0)     options.javaDoc = true;
+    else if (strcmp(argv[i], "-javadoc")==0)
+        options.javaDoc = true;
     else if (strcmp(argv[i], "-java1.4")==0)     {
         createOptionString(&options.javaVersion, JAVA_VERSION_1_4);
     }
@@ -849,19 +863,32 @@ static bool processMOption(int *ii, int argc, char **argv) {
 static bool processNOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i], "-no-includerefs")==0) options.noIncludeRefs = true;
-    else if (strcmp(argv[i], "-no-includerefresh")==0) options.noIncludeRefs=true;
-    else if (strcmp(argv[i], "-no-cxfile")==0) options.noCxFile = 1;
-    else if (strcmp(argv[i], "-no-cppcomments")==0) options.cpp_comments = false;
-    else if (strcmp(argv[i], "-no-enums")==0) options.no_ref_enumerator = true;
-    else if (strcmp(argv[i], "-no-macros")==0) options.no_ref_macro = true;
-    else if (strcmp(argv[i], "-no-types")==0) options.no_ref_typedef = true;
-    else if (strcmp(argv[i], "-no-structs")==0) options.no_ref_records = true;
-    else if (strcmp(argv[i], "-no-locals")==0) options.no_ref_locals = true;
-    else if (strcmp(argv[i], "-no-classfiles")==0) options.allowClassFileRefs = false;
-    else if (strcmp(argv[i], "-no-stdoptions")==0) options.no_stdop = true;
-    else if (strcmp(argv[i], "-no-autoupdatefromsrc")==0) options.javaSlAllowed = 0;
-    else if (strcmp(argv[i], "-no-errors")==0) options.noErrors=1;
+    else if (strcmp(argv[i], "-no-includerefs")==0)
+        options.noIncludeRefs = true;
+    else if (strcmp(argv[i], "-no-includerefresh")==0)
+        options.noIncludeRefs=true;
+    else if (strcmp(argv[i], "-no-cxfile")==0)
+        options.noCxFile = 1;
+    else if (strcmp(argv[i], "-no-cppcomments")==0)
+        options.cpp_comments = false;
+    else if (strcmp(argv[i], "-no-enums")==0)
+        options.no_ref_enumerator = true;
+    else if (strcmp(argv[i], "-no-macros")==0)
+        options.no_ref_macro = true;
+    else if (strcmp(argv[i], "-no-types")==0)
+        options.no_ref_typedef = true;
+    else if (strcmp(argv[i], "-no-structs")==0)
+        options.no_ref_records = true;
+    else if (strcmp(argv[i], "-no-locals")==0)
+        options.no_ref_locals = true;
+    else if (strcmp(argv[i], "-no-classfiles")==0)
+        options.allowClassFileRefs = false;
+    else if (strcmp(argv[i], "-no-stdoptions")==0)
+        options.no_stdop = true;
+    else if (strcmp(argv[i], "-no-autoupdatefromsrc")==0)
+        options.javaSlAllowed = 0;
+    else if (strcmp(argv[i], "-no-errors")==0)
+        options.noErrors=1;
     else return false;
     *ii = i;
     return true;
@@ -875,7 +902,8 @@ static bool processOOption(int *ii, int argc, char **argv) {
     }
     else if (strncmp(argv[i], "-olinelen=",10)==0) {
         sscanf(argv[i]+10, "%d",&options.olineLen);
-        if (options.olineLen == 0) options.olineLen =79;
+        if (options.olineLen == 0)
+            options.olineLen = 79;
         else options.olineLen--;
     }
     else if (strncmp(argv[i], "-olcursor=",10)==0) {
@@ -926,21 +954,30 @@ static bool processOOption(int *ii, int argc, char **argv) {
         options.fqtNameToCompletions = 1;
         sscanf(argv[i]+23, "%d",&options.fqtNameToCompletions);
     }
-    else if (strcmp(argv[i], "-olexmacro")==0) options.extractMode=EXTRACT_MACRO;
+    else if (strcmp(argv[i], "-olexmacro")==0)
+        options.extractMode=EXTRACT_MACRO;
     else if (strcmp(argv[i], "-olcxunmodified")==0)  {
         options.modifiedFlag = false;
     }
     else if (strcmp(argv[i], "-olcxmodified")==0)    {
         options.modifiedFlag = true;
     }
-    else if (strcmp(argv[i], "-olcxrename")==0)  options.server_operation = OLO_RENAME;
-    else if (strcmp(argv[i], "-olcxencapsulate")==0) options.server_operation = OLO_ENCAPSULATE;
-    else if (strcmp(argv[i], "-olcxargmanip")==0)    options.server_operation = OLO_ARG_MANIP;
-    else if (strcmp(argv[i], "-olcxdynamictostatic1")==0)    options.server_operation = OLO_VIRTUAL2STATIC_PUSH;
-    else if (strcmp(argv[i], "-olcxsafetycheckinit")==0) options.server_operation = OLO_SAFETY_CHECK_INIT;
-    else if (strcmp(argv[i], "-olcxsafetycheck1")==0) options.server_operation = OLO_SAFETY_CHECK1;
-    else if (strcmp(argv[i], "-olcxsafetycheck2")==0) options.server_operation = OLO_SAFETY_CHECK2;
-    else if (strcmp(argv[i], "-olcxintersection")==0) options.server_operation = OLO_INTERSECTION;
+    else if (strcmp(argv[i], "-olcxrename")==0)
+        options.server_operation = OLO_RENAME;
+    else if (strcmp(argv[i], "-olcxencapsulate")==0)
+        options.server_operation = OLO_ENCAPSULATE;
+    else if (strcmp(argv[i], "-olcxargmanip")==0)
+        options.server_operation = OLO_ARG_MANIP;
+    else if (strcmp(argv[i], "-olcxdynamictostatic1")==0)
+        options.server_operation = OLO_VIRTUAL2STATIC_PUSH;
+    else if (strcmp(argv[i], "-olcxsafetycheckinit")==0)
+        options.server_operation = OLO_SAFETY_CHECK_INIT;
+    else if (strcmp(argv[i], "-olcxsafetycheck1")==0)
+        options.server_operation = OLO_SAFETY_CHECK1;
+    else if (strcmp(argv[i], "-olcxsafetycheck2")==0)
+        options.server_operation = OLO_SAFETY_CHECK2;
+    else if (strcmp(argv[i], "-olcxintersection")==0)
+        options.server_operation = OLO_INTERSECTION;
     else if (strcmp(argv[i], "-olcxsafetycheckmovedfile")==0
              || strcmp(argv[i], "-olcxsafetycheckmoved")==0  /* backward compatibility */
              ) {
@@ -969,10 +1006,14 @@ static bool processOOption(int *ii, int argc, char **argv) {
                &options.checkLinesMoved, &options.checkNewLineNumber);
         //&fprintf(dumpOut, "safety check block moved == %d:%d:%d\n", options.checkFirstMovedLine,options.checkLinesMoved, options.checkNewLineNumber);
     }
-    else if (strcmp(argv[i], "-olcxgotodef")==0) options.server_operation = OLO_GOTO_DEF;
-    else if (strcmp(argv[i], "-olcxgotocaller")==0) options.server_operation = OLO_GOTO_CALLER;
-    else if (strcmp(argv[i], "-olcxgotocurrent")==0) options.server_operation = OLO_GOTO_CURRENT;
-    else if (strcmp(argv[i], "-olcxgetcurrentrefn")==0)options.server_operation=OLO_GET_CURRENT_REFNUM;
+    else if (strcmp(argv[i], "-olcxgotodef")==0)
+        options.server_operation = OLO_GOTO_DEF;
+    else if (strcmp(argv[i], "-olcxgotocaller")==0)
+        options.server_operation = OLO_GOTO_CALLER;
+    else if (strcmp(argv[i], "-olcxgotocurrent")==0)
+        options.server_operation = OLO_GOTO_CURRENT;
+    else if (strcmp(argv[i], "-olcxgetcurrentrefn")==0)
+        options.server_operation=OLO_GET_CURRENT_REFNUM;
     else if (strncmp(argv[i], "-olcxgotoparname",16)==0) {
         options.server_operation = OLO_GOTO_PARAM_NAME;
         options.olcxGotoVal = 0;
@@ -991,55 +1032,91 @@ static bool processOOption(int *ii, int argc, char **argv) {
         options.parnum2 = 0;
         sscanf(argv[i]+13, "%d", &options.parnum2);
     }
-    else if (strcmp(argv[i], "-olcxtops")==0) options.server_operation = OLO_SHOW_TOP;
-    else if (strcmp(argv[i], "-olcxtoptype")==0) options.server_operation = OLO_SHOW_TOP_TYPE;
-    else if (strcmp(argv[i], "-olcxtopapplcl")==0) options.server_operation = OLO_SHOW_TOP_APPL_CLASS;
-    else if (strcmp(argv[i], "-olcxshowctree")==0) options.server_operation = OLO_SHOW_CLASS_TREE;
-    else if (strcmp(argv[i], "-olcxedittop")==0) options.server_operation = OLO_TOP_SYMBOL_RES;
-    else if (strcmp(argv[i], "-olcxclasstree")==0) options.server_operation = OLO_CLASS_TREE;
-    else if (strcmp(argv[i], "-olcxsyntaxpass")==0) options.server_operation = OLO_SYNTAX_PASS_ONLY;
+    else if (strcmp(argv[i], "-olcxtops")==0)
+        options.server_operation = OLO_SHOW_TOP;
+    else if (strcmp(argv[i], "-olcxtoptype")==0)
+        options.server_operation = OLO_SHOW_TOP_TYPE;
+    else if (strcmp(argv[i], "-olcxtopapplcl")==0)
+        options.server_operation = OLO_SHOW_TOP_APPL_CLASS;
+    else if (strcmp(argv[i], "-olcxshowctree")==0)
+        options.server_operation = OLO_SHOW_CLASS_TREE;
+    else if (strcmp(argv[i], "-olcxedittop")==0)
+        options.server_operation = OLO_TOP_SYMBOL_RES;
+    else if (strcmp(argv[i], "-olcxclasstree")==0)
+        options.server_operation = OLO_CLASS_TREE;
+    else if (strcmp(argv[i], "-olcxsyntaxpass")==0)
+        options.server_operation = OLO_SYNTAX_PASS_ONLY;
     else if (strcmp(argv[i], "-olcxprimarystart")==0) {
         options.server_operation = OLO_GET_PRIMARY_START;
     }
-    else if (strcmp(argv[i], "-olcxuselesslongnames")==0) options.server_operation = OLO_USELESS_LONG_NAME;
-    else if (strcmp(argv[i], "-olcxuselesslongnamesinclass")==0) options.server_operation = OLO_USELESS_LONG_NAME_IN_CLASS;
-    else if (strcmp(argv[i], "-olcxmaybethis")==0) options.server_operation = OLO_MAYBE_THIS;
-    else if (strcmp(argv[i], "-olcxnotfqt")==0) options.server_operation = OLO_NOT_FQT_REFS;
-    else if (strcmp(argv[i], "-olcxnotfqtinclass")==0) options.server_operation = OLO_NOT_FQT_REFS_IN_CLASS;
+    else if (strcmp(argv[i], "-olcxuselesslongnames")==0)
+        options.server_operation = OLO_USELESS_LONG_NAME;
+    else if (strcmp(argv[i], "-olcxuselesslongnamesinclass")==0)
+        options.server_operation = OLO_USELESS_LONG_NAME_IN_CLASS;
+    else if (strcmp(argv[i], "-olcxmaybethis")==0)
+        options.server_operation = OLO_MAYBE_THIS;
+    else if (strcmp(argv[i], "-olcxnotfqt")==0)
+        options.server_operation = OLO_NOT_FQT_REFS;
+    else if (strcmp(argv[i], "-olcxnotfqtinclass")==0)
+        options.server_operation = OLO_NOT_FQT_REFS_IN_CLASS;
     else if (strcmp(argv[i], "-olcxgetrefactorings")==0)     {
         options.server_operation = OLO_GET_AVAILABLE_REFACTORINGS;
     }
-    else if (strcmp(argv[i], "-olcxpush")==0)    options.server_operation = OLO_PUSH;
-    else if (strcmp(argv[i], "-olcxrepush")==0)  options.server_operation = OLO_REPUSH;
-    else if (strcmp(argv[i], "-olcxpushonly")==0) options.server_operation = OLO_PUSH_ONLY;
-    else if (strcmp(argv[i], "-olcxpushandcallmacro")==0) options.server_operation = OLO_PUSH_AND_CALL_MACRO;
-    else if (strcmp(argv[i], "-olcxencapsulatesc1")==0) options.server_operation = OLO_PUSH_ENCAPSULATE_SAFETY_CHECK;
-    else if (strcmp(argv[i], "-olcxencapsulatesc2")==0) options.server_operation = OLO_ENCAPSULATE_SAFETY_CHECK;
-    else if (strcmp(argv[i], "-olcxpushallinmethod")==0) options.server_operation = OLO_PUSH_ALL_IN_METHOD;
-    else if (strcmp(argv[i], "-olcxmmprecheck")==0) options.server_operation = OLO_MM_PRE_CHECK;
-    else if (strcmp(argv[i], "-olcxppprecheck")==0) options.server_operation = OLO_PP_PRE_CHECK;
+    else if (strcmp(argv[i], "-olcxpush")==0)
+        options.server_operation = OLO_PUSH;
+    else if (strcmp(argv[i], "-olcxrepush")==0)
+        options.server_operation = OLO_REPUSH;
+    else if (strcmp(argv[i], "-olcxpushonly")==0)
+        options.server_operation = OLO_PUSH_ONLY;
+    else if (strcmp(argv[i], "-olcxpushandcallmacro")==0)
+        options.server_operation = OLO_PUSH_AND_CALL_MACRO;
+    else if (strcmp(argv[i], "-olcxencapsulatesc1")==0)
+        options.server_operation = OLO_PUSH_ENCAPSULATE_SAFETY_CHECK;
+    else if (strcmp(argv[i], "-olcxencapsulatesc2")==0)
+        options.server_operation = OLO_ENCAPSULATE_SAFETY_CHECK;
+    else if (strcmp(argv[i], "-olcxpushallinmethod")==0)
+        options.server_operation = OLO_PUSH_ALL_IN_METHOD;
+    else if (strcmp(argv[i], "-olcxmmprecheck")==0)
+        options.server_operation = OLO_MM_PRE_CHECK;
+    else if (strcmp(argv[i], "-olcxppprecheck")==0)
+        options.server_operation = OLO_PP_PRE_CHECK;
     else if (strcmp(argv[i], "-olcxpushforlm")==0) {
         options.server_operation = OLO_PUSH_FOR_LOCALM;
         options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
-    else if (strcmp(argv[i], "-olcxpushglobalunused")==0)    options.server_operation = OLO_GLOBAL_UNUSED;
-    else if (strcmp(argv[i], "-olcxpushfileunused")==0)  options.server_operation = OLO_LOCAL_UNUSED;
-    else if (strcmp(argv[i], "-olcxlist")==0)    options.server_operation = OLO_LIST;
-    else if (strcmp(argv[i], "-olcxlisttop")==0) options.server_operation=OLO_LIST_TOP;
-    else if (strcmp(argv[i], "-olcxpop")==0)     options.server_operation = OLO_POP;
-    else if (strcmp(argv[i], "-olcxpoponly")==0) options.server_operation =OLO_POP_ONLY;
-    else if (strcmp(argv[i], "-olcxnext")==0)    options.server_operation = OLO_NEXT;
-    else if (strcmp(argv[i], "-olcxprevious")==0)   options.server_operation = OLO_PREVIOUS;
-    else if (strcmp(argv[i], "-olcxsearch")==0)  options.server_operation = OLO_SEARCH;
+    else if (strcmp(argv[i], "-olcxpushglobalunused")==0)
+        options.server_operation = OLO_GLOBAL_UNUSED;
+    else if (strcmp(argv[i], "-olcxpushfileunused")==0)
+        options.server_operation = OLO_LOCAL_UNUSED;
+    else if (strcmp(argv[i], "-olcxlist")==0)
+        options.server_operation = OLO_LIST;
+    else if (strcmp(argv[i], "-olcxlisttop")==0)
+        options.server_operation=OLO_LIST_TOP;
+    else if (strcmp(argv[i], "-olcxpop")==0)
+        options.server_operation = OLO_POP;
+    else if (strcmp(argv[i], "-olcxpoponly")==0)
+        options.server_operation =OLO_POP_ONLY;
+    else if (strcmp(argv[i], "-olcxnext")==0)
+        options.server_operation = OLO_NEXT;
+    else if (strcmp(argv[i], "-olcxprevious")==0)
+        options.server_operation = OLO_PREVIOUS;
     else if (strcmp(argv[i], "-olcxcomplet")==0)options.server_operation=OLO_COMPLETION;
-    else if (strcmp(argv[i], "-olcxtarget")==0)  options.server_operation=OLO_SET_MOVE_TARGET;
-    else if (strcmp(argv[i], "-olcxmctarget")==0)    options.server_operation=OLO_SET_MOVE_CLASS_TARGET;
-    else if (strcmp(argv[i], "-olcxmmtarget")==0)    options.server_operation=OLO_SET_MOVE_METHOD_TARGET;
-    else if (strcmp(argv[i], "-olcxcurrentclass")==0)    options.server_operation=OLO_GET_CURRENT_CLASS;
-    else if (strcmp(argv[i], "-olcxcurrentsuperclass")==0)   options.server_operation=OLO_GET_CURRENT_SUPER_CLASS;
-    else if (strcmp(argv[i], "-olcxmethodlines")==0) options.server_operation=OLO_GET_METHOD_COORD;
-    else if (strcmp(argv[i], "-olcxclasslines")==0)  options.server_operation=OLO_GET_CLASS_COORD;
-    else if (strcmp(argv[i], "-olcxgetsymboltype")==0) options.server_operation=OLO_GET_SYMBOL_TYPE;
+    else if (strcmp(argv[i], "-olcxtarget")==0)
+        options.server_operation=OLO_SET_MOVE_TARGET;
+    else if (strcmp(argv[i], "-olcxmctarget")==0)
+        options.server_operation=OLO_SET_MOVE_CLASS_TARGET;
+    else if (strcmp(argv[i], "-olcxmmtarget")==0)
+        options.server_operation=OLO_SET_MOVE_METHOD_TARGET;
+    else if (strcmp(argv[i], "-olcxcurrentclass")==0)
+        options.server_operation=OLO_GET_CURRENT_CLASS;
+    else if (strcmp(argv[i], "-olcxcurrentsuperclass")==0)
+        options.server_operation=OLO_GET_CURRENT_SUPER_CLASS;
+    else if (strcmp(argv[i], "-olcxmethodlines")==0)
+        options.server_operation=OLO_GET_METHOD_COORD;
+    else if (strcmp(argv[i], "-olcxclasslines")==0)
+        options.server_operation=OLO_GET_CLASS_COORD;
+    else if (strcmp(argv[i], "-olcxgetsymboltype")==0)
+        options.server_operation=OLO_GET_SYMBOL_TYPE;
     else if (strcmp(argv[i], "-olcxgetprojectname")==0) {
         options.server_operation=OLO_ACTIVE_PROJECT;
     }
@@ -1050,6 +1127,8 @@ static bool processOOption(int *ii, int argc, char **argv) {
         // position of the cursor in line:column format
         createOptionString(&options.olcxlccursor, argv[i]+14);
     }
+    else if (strcmp(argv[i], "-olcxsearch")==0)
+        options.server_operation = OLO_SEARCH;
     else if (strncmp(argv[i], "-olcxcplsearch=",15)==0) {
         options.server_operation=OLO_SEARCH;
         createOptionString(&options.olcxSearchString, argv[i]+15);
@@ -1249,7 +1328,8 @@ static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
         }
     }
     else if (strcmp(argv[i], "-r")==0) {
-        if (infilesFlag == INFILES_ENABLED) options.recurseDirectories = true;
+        if (infilesFlag == INFILES_ENABLED)
+            options.recurseDirectories = true;
     }
     else if (strncmp(argv[i], "-renameto=", 10)==0) {
         createOptionString(&options.renameTo, argv[i]+10);
@@ -1364,7 +1444,8 @@ static bool processSOption(int *ii, int argc, char **argv) {
     char *name, *val;
 
     if (0) {}
-    else if (strcmp(argv[i], "-strict")==0)      options.strictAnsi = true;
+    else if (strcmp(argv[i], "-strict")==0)
+        options.strictAnsi = true;
     else if (strcmp(argv[i], "-stderr")==0)          errOut = stdout;
     else if (strcmp(argv[i], "-source")==0)  {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -3171,7 +3252,8 @@ void mainCallEditServer(int argc, char **argv,
     ENTER();
     editorLoadAllOpenedBufferFiles();
     olcxSetCurrentUser(options.user);
-    if (creatingOlcxRefs()) olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
+    if (creatingOlcxRefs())
+        olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
     if (needToProcessInputFile()) {
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");
