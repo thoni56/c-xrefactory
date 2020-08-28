@@ -75,6 +75,20 @@ static char *s_refactoryXrefInitOptions[] = {
 
 static char *s_refactoryUpdateOption = "-fastupdate";
 
+static void javaDotifyClassName(char *ss) {
+    char *s;
+    for (s=ss; *s; s++) {
+        if (*s == '/' || *s == '\\' || *s=='$') *s = '.';
+    }
+}
+
+static void javaSlashifyDotName(char *ss) {
+    char *s;
+    for (s=ss; *s; s++) {
+        if (*s == '.') *s = FILE_PATH_SEPARATOR;
+    }
+}
+
 static int argument_count(char **margv) {
     int res;
 

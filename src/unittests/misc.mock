@@ -218,14 +218,6 @@ void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify) {
   mock(nn, tmpOut, dotify);
 }
 
-void javaSlashifyDotName(char *ss) {
-  mock(ss);
-}
-
-void javaDotifyClassName(char *ss) {
-  mock(ss);
-}
-
 void javaDotifyFileName(char *ss) {
   mock(ss);
 }

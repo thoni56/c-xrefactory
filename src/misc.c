@@ -558,20 +558,6 @@ void javaDotifyFileName(char *ss) {
     }
 }
 
-void javaDotifyClassName(char *ss) {
-    char *s;
-    for (s=ss; *s; s++) {
-        if (*s == '/' || *s == '\\' || *s=='$') *s = '.';
-    }
-}
-
-void javaSlashifyDotName(char *ss) {
-    char *s;
-    for (s=ss; *s; s++) {
-        if (*s == '.') *s = FILE_PATH_SEPARATOR;
-    }
-}
-
 // file num is not neccessary a class item !
 static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
     char *dd, *ss;

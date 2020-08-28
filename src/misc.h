@@ -95,8 +95,6 @@ extern int substringIndexWithLimit(char *s, int limit, char *subs);
 extern int stringContainsSubstring(char *s, char *subs);
 extern void javaGetPackageNameFromSourceFileName(char *src, char *opack);
 extern void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify);
-extern void javaSlashifyDotName(char *ss);
-extern void javaDotifyClassName(char *ss);
 extern void javaDotifyFileName( char *ss);
 extern char *javaGetNudePreTypeName_st( char *inn, int cutMode);
 extern char *javaGetShortClassName(char *inn);
