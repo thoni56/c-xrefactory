@@ -32,6 +32,7 @@ Should really be sent synchronously so that the editor can display it.
 ** TODO New refactoring: change return type of function
 ** TODO New refactoring: Extract variable
 ** TODO Extract function can't extract a boolean function inside an if()
+** TODO Inline intermediat variable ("a=f(); b(a);" => "b(f());")
 * TODO Remove FULL/FAST update, we always want correct info?
   There are a number of update modes available from the command line, 'fupdate',
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
