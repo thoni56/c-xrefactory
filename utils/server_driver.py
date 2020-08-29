@@ -85,6 +85,7 @@ def read_output(filename):
             if line == '</update-report>':
                 print(line)
                 in_update_report = False
+    open(filename, 'w').close()                 # Erase content
 
 
 if __name__ == "__main__":
