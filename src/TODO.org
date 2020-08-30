@@ -10,6 +10,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 and you can also get java.class.version=55 => java version without decoding directory names
 * TODO Unify the two documentation sets (html+txt) into Markdown
 * TODO Don't do any default operation (currently complete) if none given on command line
+* TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
 * TODO Strange that <update-report> is put in the -o file since that is synchronous
 Should really be sent synchronously so that the editor can display it.
 * TODO Make C-xref->Misc->About show commit-id

@@ -252,7 +252,8 @@ typedef enum taskRegimes {
 /* ************** on-line (browsing) operations for c-xref server  ********** */
 
 enum olcxOptions {
-    OLO_COMPLETION = 0,             /* must be zero, TODO: why? */
+    OLO_NOOP = 0,
+    OLO_COMPLETION,
     OLO_SEARCH,
     OLO_TAG_SEARCH,
     OLO_RENAME,        /* same as push, just another ordering */

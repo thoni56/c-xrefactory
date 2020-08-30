@@ -96,7 +96,7 @@ int s_input_file_number;
 char *inputFilename;
 time_t s_fileProcessStartTime;
 
-char s_cwd[MAX_FILE_NAME_SIZE];
+char cwd[MAX_FILE_NAME_SIZE];
 
 S_currentlyParsedStatics s_cps;
 TypeModifier *s_upLevelFunctionCompletionType;

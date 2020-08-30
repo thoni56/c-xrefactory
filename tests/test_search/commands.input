@@ -1,4 +1,6 @@
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-task_regime_server"
 "-olcxtagsearch=*comp*" -olinelen=174 -olcxlccursor=1:0  "-olcursor=0" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 "CURDIR/jexercise/Index.java"
 <sync>
+"-olcxcplsearch=*comp*" -olinelen=174 -olcxlccursor=1:0  "-olcursor=0" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 "CURDIR/jexercise/Index.java"
+<sync>
 <exit>

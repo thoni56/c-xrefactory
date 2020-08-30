@@ -439,7 +439,10 @@ void printCompletions(Completions* c) {
     olCompletionListInit(&c->idToProcessPos);
     if (c->alternativeIndex == 0) {
         if (options.xref2) {
-            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
+            if (options.server_operation == OLO_SEARCH)
+                ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No matches **");
+            else
+                ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
         } else {
             fprintf(communicationChannel,"-");
         }

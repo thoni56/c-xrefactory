@@ -9,6 +9,11 @@ end-of-options
  <str len=<n>>component                :Browsing.java      :CURDIR/jexercise/com/xrefactory/Browsing.java</str>
  <str len=<n>>getComponentAt(int, int) :Browsing.java      :CURDIR/jexercise/com/xrefactory/Browsing.java</str>
 </symbol-list>
+"-olcxcplsearch=*comp*" -olinelen=174 -olcxlccursor=1:0  "-olcursor=0" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 "CURDIR/jexercise/Index.java"
+end-of-options
+
+<sync>
+<bottom-information beep=0 len=<n>>** No matches **</bottom-information>
 -exit
 end-of-options
 
