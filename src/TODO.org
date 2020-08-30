@@ -9,6 +9,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
 * TODO Unify the two documentation sets (html+txt) into Markdown
+* TODO Don't do any default operation (currently complete) if none given on command line
 * TODO Strange that <update-report> is put in the -o file since that is synchronous
 Should really be sent synchronously so that the editor can display it.
 * TODO Make C-xref->Misc->About show commit-id
@@ -32,7 +33,7 @@ Should really be sent synchronously so that the editor can display it.
 ** TODO New refactoring: move function for C
 ** TODO New refactoring: change return type of function
 ** TODO New refactoring: Extract variable
-** TODO Extract function can't extract a boolean function inside an if()
+** TODO Extract function should extract a boolean function inside an if() correctly
 ** TODO Inline intermediat variable ("a=f(); b(a);" => "b(f());")
 * TODO Remove FULL/FAST update, we always want correct info?
   There are a number of update modes available from the command line, 'fupdate',
