@@ -3584,9 +3584,9 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     bi = pp->offset + 3 + plen;
     editorReplaceString(pp->buffer, pp->offset, 0, testi, strlen(testi), &s_editorUndo);
     pp->offset = bi;
-    refactoryEditServerParseBuffer( refactoringOptions.project, pp->buffer,
-                                    pp,NULL, "-olcxgetsymboltype","-noerrors");
-    // -noerrors is basically very dangerous in this context, recover it in s_opt
+    refactoryEditServerParseBuffer(refactoringOptions.project, pp->buffer,
+                                   pp, NULL, "-olcxgetsymboltype", "-no-errors");
+    // -no-errors is basically very dangerous in this context, recover it in s_opt
     options.noErrors = 0;
     if (! s_olstringServed) {
         errorMessage(ERR_ST, "Can't infer type for parameter/field");
