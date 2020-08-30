@@ -1747,7 +1747,8 @@ void processOptions(int argc, char **argv, int infilesFlag) {
             if (options.taskRegime==RegimeXref
                 ||  options.taskRegime==RegimeHtmlGenerate) {
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
-            }
+            } else
+                errorMessage(ERR_ST, tmpBuff);
         }
     }
 }
