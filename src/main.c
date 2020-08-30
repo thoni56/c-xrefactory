@@ -206,10 +206,10 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         if (strcmp(fname, "..")==0) return;
         if (fileNameShouldBePruned(fname)) return;
         sprintf(fn, "%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
-        strcpy(fn, normalizeFileName(fn, s_cwd));
+        strcpy(fn, normalizeFileName(fn, cwd));
         if (fileNameShouldBePruned(fn)) return;
     } else {
-        strcpy(fn, normalizeFileName(fname, s_cwd));
+        strcpy(fn, normalizeFileName(fname, cwd));
     }
     if (strlen(fn) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -691,7 +691,7 @@ static bool processHOption(int *ii, int argc, char **argv) {
         addHtmlCutPath(argv[i]+13);
     }
     else if (strcmp(argv[i], "-htmlcutcwd")==0)  {
-        addHtmlCutPath(s_cwd);
+        addHtmlCutPath(cwd);
     }
     else if (strcmp(argv[i], "-htmlcutsourcepaths")==0)  {
         addSourcePathsCut();
@@ -1265,7 +1265,7 @@ static bool processPOption(int *ii, int argc, char **argv) {
         char *file, *fromFile;
         NEXT_FILE_ARG();
         file = argv[i];
-        strcpy(ttt, normalizeFileName(file, s_cwd));
+        strcpy(ttt, normalizeFileName(file, cwd));
         NEXT_FILE_ARG();
         fromFile = argv[i];
         // TODO, maybe do this also through allocated list of options
@@ -1299,7 +1299,7 @@ static void setXrefsFile(char *argvi) {
         sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option",argvi);
         warningMessage(ERR_ST, tmpBuff);
     }
-    createOptionString(&options.cxrefFileName, normalizeFileName(argvi, s_cwd));
+    createOptionString(&options.cxrefFileName, normalizeFileName(argvi, cwd));
 }
 
 static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
@@ -2025,11 +2025,11 @@ static void initDefaultCxrefFileName(char *inputfile) {
     int pathLength;
     static char defaultCxrefFileName[MAX_FILE_NAME_SIZE];
 
-    pathLength = extractPathInto(normalizeFileName(inputfile, s_cwd), defaultCxrefFileName);
+    pathLength = extractPathInto(normalizeFileName(inputfile, cwd), defaultCxrefFileName);
     assert(pathLength < MAX_FILE_NAME_SIZE);
     strcpy(&defaultCxrefFileName[pathLength], DEFAULT_CXREF_FILE);
     assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
-    strcpy(defaultCxrefFileName, getRealFileNameStatic(normalizeFileName(defaultCxrefFileName, s_cwd)));
+    strcpy(defaultCxrefFileName, getRealFileNameStatic(normalizeFileName(defaultCxrefFileName, cwd)));
     assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
     options.cxrefFileName = defaultCxrefFileName;
 }
@@ -2533,7 +2533,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     argcount = 0;
     inputFilename = cmdlnInputFile = getCommandLineFile(&argcount);
     if (inputFilename==NULL) {
-        ss = strmcpy(tt, s_cwd);
+        ss = strmcpy(tt, cwd);
         if (ss!=tt && ss[-1] == FILE_PATH_SEPARATOR) ss[-1]=0;
         assert(strlen(tt)+1<MAX_FILE_NAME_SIZE);
         inputFilename=tt;

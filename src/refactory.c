@@ -2844,7 +2844,7 @@ static EditorMarker *getTargetFromOptions(void) {
     EditorMarker  *target;
     EditorBuffer  *tb;
     int             tline;
-    tb = editorFindFileCreate(normalizeFileName(refactoringOptions.moveTargetFile, s_cwd));
+    tb = editorFindFileCreate(normalizeFileName(refactoringOptions.moveTargetFile, cwd));
     target = editorCrNewMarker(tb, 0);
     sscanf(refactoringOptions.refpar1, "%d", &tline);
     editorMoveMarkerToLineCol(target, tline, 0);

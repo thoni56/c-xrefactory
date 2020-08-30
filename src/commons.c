@@ -24,39 +24,39 @@ void closeMainOutputFile(void) {
 }
 
 void initCwd(void) {
-    char *rr;
+    char *returnedCwd;
 
-    rr = getcwd(s_cwd, MAX_FILE_NAME_SIZE);
-    if (rr==NULL) {
-        // try also with getenv, on some linuxes the statically linked
-        // getcwd does not work.
-        rr = getenv("PWD");
-        if (rr==NULL) {
+    returnedCwd = getcwd(cwd, MAX_FILE_NAME_SIZE);
+    if (returnedCwd==NULL) {
+        // Then try with getenv, on some linuxes the statically linked
+        // getcwd does not work. TODO: Probably not nowadays
+        returnedCwd = getenv("PWD");
+        if (returnedCwd==NULL) {
             errorMessage(ERR_ST, "can't get current working directory");
-            sprintf(s_cwd, ".");
+            sprintf(cwd, ".");
         } else {
-            assert(strlen(rr) < MAX_FILE_NAME_SIZE);
-            strcpy(s_cwd, rr);
+            assert(strlen(returnedCwd) < MAX_FILE_NAME_SIZE);
+            strcpy(cwd, returnedCwd);
         }
     }
 #if defined (__WIN32__)
-    if (strlen(s_cwd)<=2 || s_cwd[1]!=':') {
+    if (strlen(cwd)<=2 || cwd[1]!=':') {
         // starts with drive specification
         sprintf(nid,"%c:",tolower('c'));
-        if (strlen(nid)+strlen(s_cwd) < MAX_FILE_NAME_SIZE-1) {
-            strcpy(nid+strlen(nid),s_cwd);
-            strcpy(s_cwd,nid);
+        if (strlen(nid)+strlen(cwd) < MAX_FILE_NAME_SIZE-1) {
+            strcpy(nid+strlen(nid),cwd);
+            strcpy(cwd,nid);
         }
     }
-    strcpy(s_cwd, normalizeFileName(s_cwd, "c:\\"));
+    strcpy(cwd, normalizeFileName(cwd, "c:\\"));
 #else
-    strcpy(s_cwd, normalizeFileName(s_cwd, "/"));
+    strcpy(cwd, normalizeFileName(cwd, "/"));
 #endif
 }
 
 void reInitCwd(char *dffname, char *dffsect) {
     if (dffname[0]!=0) {
-        extractPathInto(dffname, s_cwd);
+        extractPathInto(dffname, cwd);
     }
     if (dffsect[0]!=0
 #if defined (__WIN32__)
@@ -65,7 +65,7 @@ void reInitCwd(char *dffname, char *dffsect) {
         && dffsect[0]==FILE_PATH_SEPARATOR
 #endif
         ) {
-        strcpy(s_cwd, dffsect);
+        strcpy(cwd, dffsect);
     }
 }
 
@@ -75,7 +75,7 @@ char *normalizeFileName(char *name, char *relativeto) {
     int l1,l2,i,j,s1,inzip=0;
     char *ss;
 
-    log_trace("normalizing %s relative to %s (cwd=%s)", name, relativeto, s_cwd);
+    log_trace("normalizing %s relative to %s (cwd=%s)", name, relativeto, cwd);
     l1 = strlen(relativeto);
     l2 = strlen(name);
     s1 = 0;
@@ -152,7 +152,7 @@ char *create_temporary_filename(void) {
         strcpy(temporary_name, temp_dir);
     } else {
         sprintf(temporary_name,"%s\\xrefu%d.tmp", temp_dir, count++);
-        strcpy(temporary_name, normalizeFileName(temporary_name, s_cwd));
+        strcpy(temporary_name, normalizeFileName(temporary_name, cwd));
     }
     assert(strlen(temporary_name)+1 < MAX_FILE_NAME_SIZE);
 #else

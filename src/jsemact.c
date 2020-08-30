@@ -233,7 +233,7 @@ static int javaFindFile0(char *classPath, char *slash, char *name,
     strcat(fname, suffix);
     assert(strlen(fname)+1 < MAX_FILE_NAME_SIZE);
 
-    ffn = normalizeFileName(fname,s_cwd);
+    ffn = normalizeFileName(fname,cwd);
     log_trace("looking for file %s", ffn);
     if (statb(ffn, stt) == 0) {
         log_trace("found in buffer file %s", ffn);

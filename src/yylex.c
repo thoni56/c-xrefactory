@@ -119,7 +119,7 @@ char *placeIdent(void) {
     int s;
     if (currentFile.fileName!=NULL) {
         if (options.xref2 && options.taskRegime!=RegimeEditServer) {
-            strcpy(fn, getRealFileNameStatic(normalizeFileName(currentFile.fileName, s_cwd)));
+            strcpy(fn, getRealFileNameStatic(normalizeFileName(currentFile.fileName, cwd)));
             assert(strlen(fn) < MAX_FILE_NAME_SIZE);
             sprintf(mm, "%s:%d", simpleFileName(fn),currentFile.lineNumber);
             assert(strlen(mm) < MAX_HTML_REF_LEN);
@@ -159,7 +159,7 @@ int addFileTabItem(char *name) {
     struct fileItem *createdFileItem;
 
     /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
-    normalizedFileName = normalizeFileName(name,s_cwd);
+    normalizedFileName = normalizeFileName(name,cwd);
 
     /* Does it already exist? */
     if (fileTableExists(&fileTable, normalizedFileName))
@@ -520,7 +520,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
     }
     if (er==NULL && r==NULL) return(NULL);
  found:
-    nnn = normalizeFileName(nn, s_cwd);
+    nnn = normalizeFileName(nn, cwd);
     strcpy(nn,nnn);
     log_trace("file '%s' opened, checking to %s", nn, fileTable.tab[s_olOriginalFileNumber]->name);
     pushNewInclude(r, er, nn, "\n");

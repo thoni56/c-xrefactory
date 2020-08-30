@@ -318,8 +318,8 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
         xrefSetenv("__BASE", s_base);
         strcpy(resSection, firstPath);
         // completely wrong, what about file names from command line ?
-        //&strncpy(s_cwd, resSection, MAX_FILE_NAME_SIZE-1);
-        //&s_cwd[MAX_FILE_NAME_SIZE-1] = 0;
+        //&strncpy(cwd, resSection, MAX_FILE_NAME_SIZE-1);
+        //&cwd[MAX_FILE_NAME_SIZE-1] = 0;
     }
 }
 
@@ -468,7 +468,7 @@ static void processClassPathString(char *cp) {
             ttt[ind]=cp[ind];
         }
         ttt[ind]=0;
-        np = normalizeFileName(ttt,s_cwd);
+        np = normalizeFileName(ttt,cwd);
         nlen = strlen(np); sfp = np+nlen-4;
         if (nlen>=4 && (strcmp(sfp,".zip")==0 || strcmp(sfp,".jar")==0)){
             // probably zip archive
@@ -569,7 +569,7 @@ static char *canItBeJavaBinPath(char *possibleBinPath) {
     char *path;
     int len;
 
-    path = normalizeFileName(possibleBinPath, s_cwd);
+    path = normalizeFileName(possibleBinPath, cwd);
     len = strlen(path);
 #if defined (__WIN32__)
     sprintf(filename, "%s%cjava.exe", path, FILE_PATH_SEPARATOR);
@@ -770,7 +770,7 @@ void getXrefrcFileName(char *filename) {
     char *home;
 
     if (options.xrefrc!=NULL) {
-        sprintf(filename, "%s", normalizeFileName(options.xrefrc, s_cwd));
+        sprintf(filename, "%s", normalizeFileName(options.xrefrc, cwd));
         return;
     }
     home = getenv("HOME");

@@ -3099,7 +3099,7 @@ int getFileNumberFromName(char *name) {
     char *normalizedName;
     int fileIndex;
 
-    normalizedName = normalizeFileName(name, s_cwd);
+    normalizedName = normalizeFileName(name, cwd);
     if ((fileIndex = fileTableLookup(&fileTable, normalizedName)) != -1) {
         return fileIndex;
     } else {

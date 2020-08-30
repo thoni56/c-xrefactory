@@ -219,7 +219,7 @@ TypeModifier s_javaStringModifier;
 TypeModifier s_javaClassModifier;
 TypeModifier s_javaObjectModifier;
 
-char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
+char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 char s_base[MAX_FILE_NAME_SIZE];
 
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];

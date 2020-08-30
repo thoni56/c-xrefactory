@@ -449,7 +449,7 @@ static char * getDefaultCxFileStatic(void) {
         sprintf(tt,"%s.html", options.cxrefFileName);
     } else {
         sprintf(tt,"%s%s%04d.html",
-                normalizeFileName(options.cxrefFileName,s_cwd),
+                normalizeFileName(options.cxrefFileName,cwd),
                 REFERENCE_FILENAME_PREFIX, 0);
     }
     ss = cutHtmlPath(tt);
@@ -722,10 +722,10 @@ static void htmlCrGlobalXrefsFileName(SymbolReferenceItem *cri, int usage,
                                       char *fout, char *lout) {
     char *s;
     if (options.referenceFileCount > 1) {
-        sprintf(fout,"%s%s%04d", normalizeFileName(options.cxrefFileName,s_cwd),
+        sprintf(fout,"%s%s%04d", normalizeFileName(options.cxrefFileName,cwd),
                 REFERENCE_FILENAME_PREFIX, cxFileHashNumber(cri->name));
     } else {
-        sprintf(fout,"%s", normalizeFileName(options.cxrefFileName,s_cwd));
+        sprintf(fout,"%s", normalizeFileName(options.cxrefFileName,cwd));
     }
     assert(strlen(fout) + 10 < MAX_HTML_REF_LEN);
     strcpy(lout, htmlStSymbolCode(cri,usage));
@@ -1319,7 +1319,7 @@ static void htmlScanCxFileAndGenRefLists(char *name1, char *name2,
     char *ffn;
     FILE *ff;
 
-    sprintf(fn, "%s%s", getRealFileNameStatic(normalizeFileName(name1, s_cwd)), name2);
+    sprintf(fn, "%s%s", getRealFileNameStatic(normalizeFileName(name1, cwd)), name2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     if (! options.noCxFile) {
         inputFile = openFile(fn, "r");

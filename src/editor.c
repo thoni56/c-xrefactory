@@ -547,10 +547,10 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
     EditorBuffer *buffer;
     EditorBufferList *bufferList;
 
-    normalizedName = normalizeFileName(name, s_cwd);
+    normalizedName = normalizeFileName(name, cwd);
     ED_ALLOCC(allocatedName, strlen(normalizedName)+1, char);
     strcpy(allocatedName, normalizedName);
-    normalizedFileName = normalizeFileName(fileName, s_cwd);
+    normalizedFileName = normalizeFileName(fileName, cwd);
     if (strcmp(normalizedFileName, allocatedName)==0) {
         afname = allocatedName;
     } else {
@@ -652,7 +652,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     EditorBufferList ddl, *memb, *memb2;
     char *oldName;
 
-    strcpy(newName, normalizeFileName(nName, s_cwd));
+    strcpy(newName, normalizeFileName(nName, cwd));
     //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warningMessage(ERR_INTERNAL, tmpBuff);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
     ddl = (EditorBufferList){.f = &dd, .next = NULL};
