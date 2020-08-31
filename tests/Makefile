@@ -9,12 +9,27 @@
 # build. e.g) which means we cannot run tests in parallel
 GCOV_OPTIONS = GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`
 
+OS := $(shell uname)
+ifeq ($(OS),Darwin)
+	ifneq (, $(shell which gcc-10))
+		CC=gcc-10
+		LCOV=lcov --gcov-tool=gcov-10
+	endif
+endif
+
 void:
 	@echo "'make quick' for only fast tests"
 	@echo "'make slow' for only slow tests"
 	@echo "'make all' for both fast and slow tests"
 
 all: quick slow
+
+quick: autodiscovered_tests
+
+slow:
+	$(MAKE) -C c-xref
+	$(MAKE) -C ffmpeg
+	$(MAKE) -C systemd
 
 list:
 	echo $(TESTS)
@@ -49,12 +64,3 @@ endef
 
 # Loop over all test_ directories to create a rule for each
 $(foreach _t,$(TESTS),$(eval $(call RULE,$(_t))))
-
-#--------------------------------------------------------------------
-
-quick: autodiscovered_tests
-
-slow:
-	$(MAKE) -C c-xref
-	$(MAKE) -C ffmpeg
-	$(MAKE) -C systemd
