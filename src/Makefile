@@ -39,7 +39,7 @@ endif
 # The heavy lifting is here
 
 debug: CFLAGS+=-DDEBUG -O0
-devel: COVERAGE=--coverage
+coverage devel: COVERAGE=--coverage
 yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 
 prod debug yydebug: $(ZLIB) c-xref
@@ -50,6 +50,8 @@ devel:
 	$(MAKE) COVERAGE=$(COVERAGE) debug
 	$(MAKE) test
 	$(MAKE) coverage-report
+
+coverage: debug
 
 ci ci-unit ci-build ci-test: COVERAGE=--coverage
 ci:
@@ -84,7 +86,7 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 #########################################################################
 test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
-	$(MAKE) -C ../tests LCOV="$(LCOV)" quick
+	$(MAKE) -C ../tests quick
 
 unit:
 	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) -C unittests
