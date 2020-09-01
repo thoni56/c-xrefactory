@@ -15,6 +15,8 @@ ifeq ($(OS),Darwin)
 		CC=gcc-10
 		LCOV=lcov --gcov-tool=gcov-10
 	endif
+else
+	LCOV=lcov
 endif
 
 void:
