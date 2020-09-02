@@ -199,10 +199,14 @@ endif
 
 the-actual-coverage-report:
 	@mkdir -p ../coverage
+ifeq "$(findstring -j,$(MAKEFLAGS))" "-j"
 	@# If running in parallel each test has created its own .info file in ../test, combine them
-	ls ../tests/coverage/*.info | xargs printf -- '-a %s\n' | xargs lcov -q -o ../tests/total.info
+	ls ../tests/coverage/*.info | xargs printf -- '-a %s\n' | xargs lcov -q -o ../tests/tests.info
 	@# Add the unittest coverage info and exclude modules we want to ignore (lcov >= 1.14)
-	lcov -a ../tests/total.info -a unittests/unittests.info $(LCOV_EXCLUDES) -o ../coverage/total.info
+	lcov -a ../tests/tests.info -a unittests/unittests.info $(LCOV_EXCLUDES) -o ../coverage/total.info
+else
+	$(LCOV) -q -c -d . -o ../coverage/total.info
+endif
 	@# Re-create collated gcov files from total.info for Emacs gcov-mode
 	if command -v info2gcov > /dev/null 2>&1 ; then \
 		info2gcov -q ../coverage/total.info ; \

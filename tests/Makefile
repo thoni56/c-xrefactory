@@ -1,13 +1,5 @@
 # Run all tests
 #
-# NOTE: sandboxed_emacs is not a test...
-
-# Create GCOV settings so that tests can be run in parallel by
-# directing all coverage to a separate directory under src/.objects
-# for each autodiscovered test. If GCOV_OPTIONS="" then coverage is
-# written to the original object directory (required by Travis
-# build. e.g) which means we cannot run tests in parallel
-GCOV_OPTIONS = GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
@@ -55,13 +47,23 @@ endif
 TESTS = $(patsubst %/.,%,$(wildcard test_*/.))
 autodiscovered_tests: $(TESTS)
 
+# To make it possible to run tests in parallel we use GCOV settings so
+# that all coverage is directed to a separate directory for each
+# autodiscovered test. If not running in parallel then GCOV_OPTIONS
+# can be empty to make coverage written to the original object
+# directory (required by Travis build. e.g)
+
 # Define a macro to generate a RULE for a test(directory)
 # In case we run the tests with -j all tests need to store
 # coverage data in their own directories as per above
 define RULE
 .PHONY: $(1)
 $(1):
-	$(GCOV_OPTIONS) LCOV="$(LCOV)" ./run_test $(1)
+ifeq "$(findstring -j,$(MAKEFLAGS))" "-j"
+	GCOV_OPTIONS="GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`" LCOV="$(LCOV)" ./run_test $(1)
+else
+	GCOV_OPTIONS= LCOV="$(LCOV)" ./run_test $(1)
+endif
 endef
 
 # Loop over all test_ directories to create a rule for each
