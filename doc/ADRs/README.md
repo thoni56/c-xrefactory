@@ -19,18 +19,18 @@ pattern:
 - <state> - One letter describing Pending, Current, Revoked, Overriden
 - <name> should be a a present tense imperative verb phrase,
   e.g. "choose_database" or "manage_password" because this will match
-  what the reader want to do when coming here
-  
+  what the reader want to know when coming here
+
 The ADR should at least contain a
 [Y-statement|https://www.infoq.com/articles/sustainable-architectural-design-decisions/]
 following this pattern:
 
     In the context of <use case/user story u>,
     facing <concern c>
-    we decided for <option o> and neglected <other options>, 
-    to achieve <system qualities/desired consequences>, 
-    accepting <downside d/undesired consequences>, 
-    because <additional rationale>.
-  
+    we decided for <option o> and neglected <other options>,
+    to achieve <system qualities/desired consequences>,
+    accepting <downside/undesired consequences>,
+    because <reason for accepting downside>.
+
 NOTE: As the whole c-xrefactory project is a hobby project where I'm
 constantly trying out and learning things, this is also a WIP.
