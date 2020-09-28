@@ -179,32 +179,35 @@ int addFileTabItem(char *name) {
     return fileIndex;
 }
 
-static int getOrCreateFileNumberFor(char *fileName) {
-    int fileNumber, cxloading;
+static void setCurrentFileInfoFor(char *fileName) {
+    char *name;
+    int number, cxloading;
     bool existed = false;
 
     if (fileName==NULL) {
-        fileNumber = noFileIndex;
+        number = noFileIndex;
+        name = fileTable.tab[number]->name;
     } else {
         existed = fileTableExists(&fileTable, fileName);
-        fileNumber = addFileTabItem(fileName);
-        checkFileModifiedTime(fileNumber);
-        cxloading = fileTable.tab[fileNumber]->b.cxLoading;
+        number = addFileTabItem(fileName);
+        name = fileTable.tab[number]->name;
+        checkFileModifiedTime(number);
+        cxloading = fileTable.tab[number]->b.cxLoading;
         if (!existed) {
             cxloading = 1;
         } else if (options.update==UP_FAST_UPDATE) {
-            if (fileTable.tab[fileNumber]->b.scheduledToProcess) {
+            if (fileTable.tab[number]->b.scheduledToProcess) {
                 // references from headers are not loaded on fast update !
                 cxloading = 1;
             }
         } else if (options.update==UP_FULL_UPDATE) {
-            if (fileTable.tab[fileNumber]->b.scheduledToUpdate) {
+            if (fileTable.tab[number]->b.scheduledToUpdate) {
                 cxloading = 1;
             }
         } else {
             cxloading = 1;
         }
-        if (fileTable.tab[fileNumber]->b.cxSaved==1 && ! options.multiHeadRefsCare) {
+        if (fileTable.tab[number]->b.cxSaved==1 && ! options.multiHeadRefsCare) {
             /* if multihead references care, load include refs each time */
             cxloading = 0;
         }
@@ -212,12 +215,13 @@ static int getOrCreateFileNumberFor(char *fileName) {
             if (s_jsl!=NULL || s_javaPreScanOnly) {
                 // do not load (and save) references from jsl loaded files
                 // nor during prescanning
-                cxloading = fileTable.tab[fileNumber]->b.cxLoading;
+                cxloading = fileTable.tab[number]->b.cxLoading;
             }
         }
-        fileTable.tab[fileNumber]->b.cxLoading = cxloading;
+        fileTable.tab[number]->b.cxLoading = cxloading;
     }
-    return fileNumber;
+    currentFile.lexBuffer.buffer.fileNumber = number;
+    currentFile.fileName = name;
 }
 
 /* ***************************************************************** */
@@ -254,7 +258,7 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
         offset = 0;
     }
     fillFileDescriptor(&currentFile, fileName, bufferStart, bufferSize, file, offset);
-    currentFile.lexBuffer.buffer.fileNumber = getOrCreateFileNumberFor(fileName);
+    setCurrentFileInfoFor(fileName);
     setCInputConsistency();
     s_ifEvaluation = false;				/* TODO: WTF??? */
 }
