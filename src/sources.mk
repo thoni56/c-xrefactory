@@ -36,11 +36,15 @@ CFLAGS += -DHAVE_ZLIB
 
 # else you can either
 
+# 0) install zlib dev package using your pacakge manager, like:
+#
+# $ sudo apt install zlib1g-dev
+
 # 1) build a local version of zlib
 # see http://zlib.net and https://github.com/madler/zlib and
 # set:
-# OPTIONAL_ZLIB_LIB=<path-to-libz>
-# INCLUDES += -I<path-to-libz>
+# OPTIONAL_ZLIB_LIB=<path-to-zlib>
+# INCLUDES += -I<path-to-zlib>
 
 # 2) compile c-xrefactory without support for compressed jars by
 # commenting out the above LIBS and CFLAGS definitions
