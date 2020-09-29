@@ -2,7 +2,7 @@
 
 #include "yylex.h"
 /* Declare semi-private function */
-void processDefine(bool argFlag);
+void processDefine(bool hasArguments);
 
 #include "filedescriptor.h"
 #include "filetable.h"

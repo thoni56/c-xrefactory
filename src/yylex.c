@@ -677,7 +677,7 @@ static S_macroBody *newMacroBody(int msize, int argi, char *name, char *body, ch
 }
 
 /* Make public only for unittesting */
-void processDefine(bool argFlag) {
+void processDefine(bool hasArguments) {
     Lexem lexem;
     bool bodyReadingFlag = false;
     int sizei, foundIndex, msize, argCount, ellipsis;
@@ -722,7 +722,7 @@ void processDefine(bool argFlag) {
     /* process arguments */
     macroArgumentTableNoAllocInit(&s_macroArgumentTable, s_macroArgumentTable.size);
     argCount = -1;
-    if (argFlag) {
+    if (hasArguments) {
         GetNonBlankMaybeLexem(lexem, l, v, pos, len);
         PassLex(cInput.currentLexem, lexem, l, v, *parpos2, len, 1);
         *parpos1 = *parpos2;
