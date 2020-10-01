@@ -6,6 +6,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * DOING Move XX_ALLOCC and friends to "memory" module
+* DOING Implement non-standard #include_next since both gcc and clang is using it in system headers
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
 * TODO Unify the two documentation sets (html+txt) into Markdown
@@ -35,7 +36,7 @@ Should really be sent synchronously so that the editor can display it.
 ** TODO New refactoring: change return type of function
 ** TODO New refactoring: Extract variable
 ** TODO Extract function should extract a boolean function inside an if() correctly
-** TODO Inline intermediat variable ("a=f(); b(a);" => "b(f());")
+** TODO New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
 * TODO Remove FULL/FAST update, we always want correct info?
   There are a number of update modes available from the command line, 'fupdate',
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
