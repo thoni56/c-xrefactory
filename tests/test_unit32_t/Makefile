@@ -12,9 +12,9 @@ include ../Makefile.boilerplate
 CXREF = ../../src/c-xref
 
 $(TEST): .c-xrefrc
-	$(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -log=log -trace source_not_working.c -o output.tmp -trace
+	$(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -log=log -trace source_not_working.c source_working.c -o output.tmp -trace
 	@$(NORMALIZE) output.tmp > output
-	@$(VERIFY)
+	grep "error len" output
 
 clean:
 	rm -rf .c-xrefrc CXrefs output.log output.tmp
