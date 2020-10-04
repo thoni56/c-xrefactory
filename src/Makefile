@@ -79,9 +79,12 @@ chcheck:
 #########################################################################
 include sources.mk
 
-c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
+c-xref: check-tokens # check that token sections in parsers are identical before compiling
+	@$(MAKE) c-xref-proper
+
+.PHONY: c-xref-proper
+c-xref-proper: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
-	$(MAKE) check-tokens			# check that token sections in parsers are identical
 
 #########################################################################
 test:
