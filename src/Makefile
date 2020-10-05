@@ -38,7 +38,7 @@ endif
 #
 # The heavy lifting is here
 
-debug: CFLAGS+=-DDEBUG -O0
+debug: CFLAGS+=-DDEBUG -Og
 coverage devel: COVERAGE=--coverage
 yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 
@@ -82,6 +82,7 @@ include sources.mk
 c-xref: check-tokens # check that token sections in parsers are identical before compiling
 	@$(MAKE) c-xref-proper
 
+c-xref-proper: CFLAGS+=-DDEBUG -Og
 .PHONY: c-xref-proper
 c-xref-proper: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
