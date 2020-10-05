@@ -2,25 +2,13 @@
 #
 # - Names the test from directory name
 # - Generates a specific, simple, c-xrefrc from a template
+# - Can verify output to expected with colours
 #
 # In the test Makefiles you just need to include this and define the
 # $(TEST) target where the execution of the test should go.
 #
 
-# Colours:
-BLACK = 0
-RED   = 1
-GREEN = 2
-YELLOW = 3
-BLUE  = 4
-MAGENTA = 5
-CYAN  = 6
-WHITE = 7
-
-# OK and FAIL messages (with colour)
-OK = echo "Tests in '$(TEST)': $(shell tput setaf $(GREEN))Ok$(shell tput sgr0)"
-FAIL = echo "Tests in '$(TEST)': $(shell tput setaf $(RED))Failed$(shell tput sgr0)"
-NO_TESTS =	@echo "Tests in '$(TEST)': $(shell tput setaf $(YELLOW))No tests, just executing$(shell tput sgr0)"
+include ../Makefile.messages
 
 TEST = $(shell basename '$(CURDIR)')
 
