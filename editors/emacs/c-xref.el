@@ -5100,7 +5100,7 @@ part belonging to this project.
             (equal planguage "b") (equal planguage "B"))
         (progn
           ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Java project specifics
-          (setq javahome (c-xref-compute-simple-information "-olcxgetjavahome -noerrors"))
+          (setq javahome (c-xref-compute-simple-information "-olcxgetjavahome -no-errors"))
           (setq javahome (c-xref-read-jpath-from-minibuffer
                           "Java home directory (containing jre, lib, bin...): " javahome))
           (if (not (equal javahome ""))
@@ -5580,7 +5580,7 @@ This  function actually calls `next-error' with argument 1. See also
           (if (and (c-xref-buffer-has-one-of-suffixes (buffer-file-name) c-xref-java-suffixes)
                (or (equal name c-xref-run-this-option) (equal name c-xref-run-option)))
               (setq command (format rc (c-xref-compute-simple-information
-                                        "-olcxcurrentclass -noerrors")))
+                                        "-olcxcurrentclass -no-errors")))
             (setq command rc)
             )
           (setq bfile (c-xref-create-batch-file bdir command))
