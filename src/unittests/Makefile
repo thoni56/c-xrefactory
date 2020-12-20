@@ -3,6 +3,8 @@ vpath %.dll.a /usr/local:/usr/local/lib
 vpath %.so /usr/lib:/usr/local/lib
 vpath %.dylib /usr/lib:/usr/local/lib
 
+# Set COVERAGE to enable coverage, duh!
+# E.g. COVERAGE=--coverage
 
 WARNINGS = -Wall -Wno-char-subscripts
 CFLAGS = -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. -I/usr/include -I/usr/local/include $(COVERAGE) -DHAVE_ZLIB
@@ -19,8 +21,11 @@ else
 	EXT=so
 endif
 
-# Assuming make (>3.something, not Apple!) can use vpath to locate Cgreen library
-CGREEN = -lcgreen
+# If you have a make >3.something (MacOS don't!) you can use vpath to locate Cgreen library
+# as a dependency which will automatically be linked
+# CGREEN = -lcgreen
+# else you have to add explicit linkage directives
+CGREEN_LINK = -L/usr/local/lib -lcgreen
 
 # We need to use compatible gcov (Darwin/Brew now have GCC v10)
 ifeq ("$(CC)", "gcc-10")
@@ -37,12 +42,12 @@ all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
-	if [ $$filecount > 0 ] ; then \
+	if [ $$filecount -gt 0 ] ; then \
 		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
 		$(LCOV) -q --remove unittests.info $(LCOV_IGNORE_COVERAGE) -o unittests.info ; \
-	fi
-	if command -v info2gcov > /dev/null 2>&1 ; then \
-		info2gcov -q unittests.info ; \
+		if command -v info2gcov > /dev/null 2>&1 ; then \
+			info2gcov -q unittests.info ; \
+		fi ; \
 	fi
 
 clean:
@@ -55,11 +60,12 @@ clean:
 #$(VERBOSE).SILENT:
 
 # Macro for unittests that link the SUT and a small number of dependent .o
+# Parameters: <module>, <dependent modules ...>
 define UNITTEST
 $(1)_DEPENDENCIES = $(2)
 $(1)_DEPS = $$(patsubst %,$(OBJDIR)/%.o,$$($(1)_DEPENDENCIES))
 $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS) $$(CGREEN)
-	$(CC) -shared -o $$@ $$^ $$(COVERAGE)
+	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LINK)
 endef
 
 $(eval $(call UNITTEST,options,protocol log position))
@@ -83,17 +89,17 @@ $(eval $(call UNITTEST,id))
 LEXER_DEPENDENCIES = log position lexembuffer characterreader
 LEXER_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEXER_DEPENDENCIES))
 lexer_tests.$(EXT): $(OBJDIR)/lexer_tests.o $(LEXER_DEPS) $(CGREEN)
-	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE)
+	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN_LINK)
 
 CXFILE_DEPENDENCIES = protocol log position type usage
 CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
 cxfile_tests.$(EXT): $(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS) $(CGREEN)
-	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE)
+	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN_LINK)
 
 EXTRACT_DEPENDENCIES = protocol log position memory id
 EXTRACT_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(EXTRACT_DEPENDENCIES))
 extract_tests.$(EXT): $(OBJDIR)/extract_tests.o $(EXTRACT_DEPS) $(CGREEN)
-	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE)
+	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN_LINK)
 
 
 
