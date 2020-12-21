@@ -28,10 +28,9 @@ script:
     - make GCOV_OPTIONS= ci                # = unit, build & test
     # Run the slow tests too
     - cd ../tests
-    #- cd ffmpeg ; make init ; cd ..
-    #- cd systemd ; make init ; cd ..
-    #- make GCOV_OPTIONS= slow
-    - make GCOV_OPTIONS= quick
+    - cd ffmpeg ; make init ; cd ..
+    - cd systemd ; make init ; cd ..
+    - make GCOV_OPTIONS= slow
     - cd ..
 
 branches:
