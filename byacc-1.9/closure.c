@@ -1,4 +1,7 @@
+#include "closure.h"
+
 #include "defs.h"
+#include "warshall.h"
 
 short *itemset;
 short *itemsetend;
@@ -6,7 +9,6 @@ unsigned *ruleset;
 
 static unsigned *first_derives;
 static unsigned *EFF;
-
 
 void set_EFF(void)
 {
@@ -164,7 +166,6 @@ void closure(short *nucleus, int n)
     print_closure(n);
 #endif
 }
-
 
 
 void finalize_closure(void)

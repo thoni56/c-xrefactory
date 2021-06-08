@@ -1,4 +1,10 @@
+#include "reader.h"
+
 #include "defs.h"
+#include "error.h"
+#include "skeleton.h"
+#include "symtab.h"
+
 
 /*  The line size must be a positive integer.  One hundred was chosen	*/
 /*  because few lines in Yacc input grammars exceed 100 characters.	*/
@@ -136,7 +142,7 @@ void skip_comment(void)
     {
         get_line();
         if (line == 0)
-        unterminated_comment(st_lineno, st_line, st_cptr);
+            unterminated_comment(st_lineno, st_line, st_cptr);
         s = cptr;
     }
     else

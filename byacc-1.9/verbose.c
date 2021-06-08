@@ -1,4 +1,8 @@
+#include "verbose.h"
+
 #include "defs.h"
+#include "error.h"
+
 
 static short *null_rules;
 

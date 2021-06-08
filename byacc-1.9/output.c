@@ -1,6 +1,11 @@
-#include "defs.h"
+#include "output.h"
 
 #include <string.h>
+
+#include "defs.h"
+#include "mkpar.h"
+#include "skeleton.h"
+#include "error.h"
 
 static int nvectors;
 static int nentries;
@@ -456,52 +461,6 @@ void sort_actions(void)
 }
 
 
-void pack_table(void)
-{
-    register int i;
-    register int place;
-    register int state;
-
-    base = NEW2(nvectors, short);
-    pos = NEW2(nentries, short);
-
-    maxtable = 1000;
-    table = NEW2(maxtable, short);
-    check = NEW2(maxtable, short);
-
-    lowzero = 0;
-    high = 0;
-
-    for (i = 0; i < maxtable; i++)
-    check[i] = -1;
-
-    for (i = 0; i < nentries; i++)
-    {
-    state = matching_vector(i);
-
-    if (state < 0)
-        place = pack_vector(i);
-    else
-        place = base[state];
-
-    pos[i] = place;
-    base[order[i]] = place;
-    }
-
-    for (i = 0; i < nvectors; i++)
-    {
-    if (froms[i])
-        FREE(froms[i]);
-    if (tos[i])
-        FREE(tos[i]);
-    }
-
-    FREE(froms);
-    FREE(tos);
-    FREE(pos);
-}
-
-
 /*  The function matching_vector determines if the vector specified by	*/
 /*  the input parameter matches a previously considered	vector.  The	*/
 /*  test at the start of the function checks if the vector represents	*/
@@ -631,6 +590,52 @@ int pack_vector(int vector)
     }
 }
 
+
+
+void pack_table(void)
+{
+    register int i;
+    register int place;
+    register int state;
+
+    base = NEW2(nvectors, short);
+    pos = NEW2(nentries, short);
+
+    maxtable = 1000;
+    table = NEW2(maxtable, short);
+    check = NEW2(maxtable, short);
+
+    lowzero = 0;
+    high = 0;
+
+    for (i = 0; i < maxtable; i++)
+    check[i] = -1;
+
+    for (i = 0; i < nentries; i++)
+    {
+    state = matching_vector(i);
+
+    if (state < 0)
+        place = pack_vector(i);
+    else
+        place = base[state];
+
+    pos[i] = place;
+    base[order[i]] = place;
+    }
+
+    for (i = 0; i < nvectors; i++)
+    {
+    if (froms[i])
+        FREE(froms[i]);
+    if (tos[i])
+        FREE(tos[i]);
+    }
+
+    FREE(froms);
+    FREE(tos);
+    FREE(pos);
+}
 
 
 void output_base(void)

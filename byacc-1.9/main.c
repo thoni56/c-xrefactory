@@ -1,6 +1,17 @@
+#include "main.h"
+
+#include <unistd.h>
 #include <signal.h>
 
 #include "defs.h"
+
+#include "error.h"
+#include "reader.h"
+#include "lr0.h"
+#include "lalr.h"
+#include "mkpar.h"
+#include "verbose.h"
+#include "output.h"
 
 char dflag;
 char lflag;

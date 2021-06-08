@@ -1,4 +1,8 @@
+#include "mkpar.h"
+
 #include "defs.h"
+#include "error.h"
+
 
 action **parser;
 int SRtotal;

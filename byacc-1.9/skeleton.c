@@ -1,3 +1,5 @@
+#include "skeleton.h"
+
 #include "defs.h"
 
 /*  The definition of yysccsid in the banner should be replaced with	*/

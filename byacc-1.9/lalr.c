@@ -1,4 +1,8 @@
+#include "lalr.h"
+
 #include "defs.h"
+#include "error.h"
+
 
 typedef
   struct shorts

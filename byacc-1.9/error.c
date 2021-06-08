@@ -1,6 +1,9 @@
+#include "error.h"
+
 /* routines for printing error messages  */
 
 #include "defs.h"
+#include "main.h"
 
 
 void fatal(char *msg)

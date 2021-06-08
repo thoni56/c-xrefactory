@@ -1,3 +1,5 @@
+#include "warshall.h"
+
 #include "defs.h"
 
 void transitive_closure(unsigned *R, int n)

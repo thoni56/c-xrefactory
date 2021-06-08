@@ -1,4 +1,7 @@
+#include "symtab.h"
+
 #include "defs.h"
+#include "error.h"
 
 
 /* TABLE_SIZE is the number of entries in the symbol table. */
