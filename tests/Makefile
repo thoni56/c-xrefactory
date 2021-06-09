@@ -60,9 +60,9 @@ define RULE
 .PHONY: $(1)
 $(1):
 ifeq "$(findstring -j,$(MAKEFLAGS))" "-j"
-	GCOV_OPTIONS="GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`" LCOV="$(LCOV)" ./run_test $(1)
+	GCOV_OPTIONS="GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`" LCOV="$(LCOV)" COVERAGE="$(COVERAGE)" ./run_test $(1)
 else
-	GCOV_OPTIONS= LCOV="$(LCOV)" ./run_test $(1)
+	GCOV_OPTIONS= LCOV="$(LCOV)" COVERAGE="$(COVERAGE)" ./run_test $(1)
 endif
 endef
 

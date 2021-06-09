@@ -66,7 +66,7 @@ ci-build:
 	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) debug
 
 ci-test:
-	$(MAKE) test
+	$(MAKE) COVERAGE=$(COVERAGE) test
 
 chcheck:
 	for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
@@ -86,7 +86,7 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 #########################################################################
 test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
-	$(MAKE) -C ../tests quick
+	$(MAKE) COVERAGE=$(COVERAGE) -C ../tests quick
 
 unit:
 	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) -C unittests
