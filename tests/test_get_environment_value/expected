@@ -1,0 +1,9 @@
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server . -o server-buffer
+-get cp -xrefrc ".c-xrefrc" -p "CURDIR"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+-exit
+end-of-options
+
