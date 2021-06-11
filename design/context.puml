@@ -10,12 +10,14 @@ Person(developer, "Developer", "Edits source code using an editor")
 System(editor, "Editor", "Allows Developer to modify source code and perform refactoring operations", $sprite="emacs")
 SystemDb(sourceCode, "Source Code")
 System_Boundary(cxref, "c-xrefactory Browser") {
-  Container(editorExtension, "Editor Extension", "Extends the Editor with c-xref operations and interfaces to the c-xrefactory API")
-  Container(cxrefCore, "c-xref", "C Langauge program", "Refactoring Browser core")
-  Container(settingsStore, "settings", "Non-standard format", "Configuration file for project settings")
-  ContainerDb(tagsDB, "tagsDB", "Source Code information storage", "Stores all information about the source code in the project which is updated by scanning all of it on demand.")
+  Container(editorExtension, "Editor Extension", "Plugin", "Extends the Editor with c-xref operations and interfaces to the c-xrefactory API")
+  Container(cxrefCore, "c-xref", "C Language program", "Refactoring Browser core")
+  Container(settingsStore, "settings", "Non-standard format settings file", "Configuration file for project settings")
+  ContainerDb(tagsDB, "tagsDB", "Source Code information storage", "Stores all information about the source code in the project which is updated by scanning all or parts of it when required.")
 }
 
+Rel(cxrefCore, settingsStore, "read")
+Rel(editorExtension, settingsStore, "writes", "new project wizard")
 Rel(editorExtension, cxrefCore, "API", "To request information and get modified code")
 Rel(developer, editor, "GUI", "Usual editor/IDE operations")
 Rel(editor, editorExtension, "Extends", "Editors extension protocol")
