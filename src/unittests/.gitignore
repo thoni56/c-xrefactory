@@ -5,3 +5,4 @@ pycparser
 coverage.info
 unittests.info
 coverage
+.cgreen-debug-commands
