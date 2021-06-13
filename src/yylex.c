@@ -91,7 +91,7 @@ void initAllInputs(void) {
 }
 
 
-static void fillMacroArgTabElem(S_macroArgumentTableElement *macroArgTabElem, char *name, char *linkName,
+static void fillMacroArgTabElem(MacroArgumentTableElement *macroArgTabElem, char *name, char *linkName,
                                 int order) {
     macroArgTabElem->name = name;
     macroArgTabElem->linkName = linkName;
@@ -235,7 +235,7 @@ static void setCurrentFileInfoFor(char *fileName) {
 /* ***************************************************************** */
 
 void ppMemInit(void) {
-    PP_ALLOCC(s_macroArgumentTable.tab, MAX_MACRO_ARGS, S_macroArgumentTableElement *);
+    PP_ALLOCC(s_macroArgumentTable.tab, MAX_MACRO_ARGS, MacroArgumentTableElement *);
     macroArgumentTableNoAllocInit(&s_macroArgumentTable, MAX_MACRO_ARGS);
     ppMemoryIndex = 0;
 }
@@ -402,7 +402,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
 
 /* ********************************** #LINE *********************** */
 
-static void processLine(void) {
+static void processLineDirective(void) {
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
     Position pos; UNUSED pos;
@@ -563,7 +563,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
 }
 
 
-static void processInclude(Position *ipos) {
+static void processIncludeDirective(Position *ipos) {
     char *currentLexem, *previousLexem;
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
@@ -634,7 +634,7 @@ static void addMacroToTabs(Symbol *pp, char *name) {
     symbolTableSet(s_symbolTable, pp, index);
 }
 
-static void setMacroArgumentName(S_macroArgumentTableElement *arg, void *at) {
+static void setMacroArgumentName(MacroArgumentTableElement *arg, void *at) {
     char ** argTab;
     argTab = (char**)at;
     assert(arg->order>=0);
@@ -682,10 +682,10 @@ static void handleMacroUsageParameterPositions(int argi, Position *macpos,
     }
 }
 
-static S_macroBody *newMacroBody(int msize, int argi, char *name, char *body, char **argNames) {
-    S_macroBody *macroBody;
+static MacroBody *newMacroBody(int msize, int argi, char *name, char *body, char **argNames) {
+    MacroBody *macroBody;
 
-    PP_ALLOC(macroBody, S_macroBody);
+    PP_ALLOC(macroBody, MacroBody);
     macroBody->argn = argi;
     macroBody->size = msize;
     macroBody->name = name;
@@ -696,13 +696,13 @@ static S_macroBody *newMacroBody(int msize, int argi, char *name, char *body, ch
 }
 
 /* Make public only for unittesting */
-void processDefine(bool hasArguments) {
+void processDefineDirective(bool hasArguments) {
     Lexem lexem;
     bool isReadingBody = false;
     int macroSize, foundIndex, allocatedSize, argumentCount, ellipsis;
     Symbol *symbol;
-    S_macroArgumentTableElement *maca, mmaca;
-    S_macroBody *macroBody;
+    MacroArgumentTableElement *maca, mmaca;
+    MacroBody *macroBody;
     Position pos, macroPosition, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
     char *currentLexemStart, *macroName, *argumentName;
     char *body, *mm;
@@ -820,10 +820,10 @@ void processDefine(bool hasArguments) {
                         LINK_NAME_SEPARATOR, argumentName);
                 PP_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
-                SM_ALLOC(ppMemory, maca, S_macroArgumentTableElement);
+                SM_ALLOC(ppMemory, maca, MacroArgumentTableElement);
                 fillMacroArgTabElem(maca, mm, argLinkName, argumentCount);
                 foundIndex = macroArgumentTableAdd(&s_macroArgumentTable, maca);
-                argumentCount ++;
+                argumentCount++;
                 //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
                 {
                     //& GetLex(lexem);
@@ -1069,12 +1069,12 @@ void addMacroDefinedByOption(char *opt) {
     }
     initInput(NULL, NULL, nopt, NULL);
     currentFile.lineNumber = 1;
-    processDefine(args);
+    processDefineDirective(args);
 }
 
 /* ****************************** #UNDEF ************************* */
 
-static void processUnDefine(void) {
+static void processUndefineDirective(void) {
     Lexem lexem;
     char *cc;
     Position pos;
@@ -1124,7 +1124,7 @@ endOfFile:;
 
 /* ********************************* #IFDEF ********************** */
 
-static void processIf();
+static void processIfDirective();
 
 enum deleteUntilReturn {
     UNTIL_NOTHING,
@@ -1203,11 +1203,11 @@ static void execCppIf(int deleteSource) {
         if (onElse==UNTIL_ELSE) {
             /* #if #else */
             currentFile.ifDepth ++;
-        } else if (onElse==UNTIL_ELIF) processIf();
+        } else if (onElse==UNTIL_ELIF) processIfDirective();
     }
 }
 
-static void processIfdef(bool isIfdef) {
+static void processIfdefDirective(bool isIfdef) {
     Lexem lexem;
     int mm;
     Symbol pp, *memb;
@@ -1392,7 +1392,7 @@ endOfFile:;
     return(0);
 }
 
-static void processIf(void) {
+static void processIfDirective(void) {
     int res=1,lex;
     s_ifEvaluation = 1;
     log_debug(": #if");
@@ -1402,7 +1402,7 @@ static void processIf(void) {
     execCppIf(! res);
 }
 
-static void processPragma(void) {
+static void processPragmaDirective(void) {
     Lexem lexem;
     int l,ii;
     char *mname, *fname;
@@ -1461,31 +1461,31 @@ static bool processPreprocessorConstruct(Lexem lexem) {
     log_debug("processing cpp-construct '%s' ", s_tokenName[lexem]);
     switch (lexem) {
     case CPP_INCLUDE:
-        processInclude(&pos);
+        processIncludeDirective(&pos);
         break;
     case CPP_DEFINE0:
         AddHtmlCppReference(pos);
-        processDefine(0);
+        processDefineDirective(0);
         break;
     case CPP_DEFINE:
         AddHtmlCppReference(pos);
-        processDefine(1);
+        processDefineDirective(1);
         break;
     case CPP_UNDEF:
         AddHtmlCppReference(pos);
-        processUnDefine();
+        processUndefineDirective();
         break;
     case CPP_IFDEF:
         genCppIfElseReference(1, &pos, UsageDefined);
-        processIfdef(true);
+        processIfdefDirective(true);
         break;
     case CPP_IFNDEF:
         genCppIfElseReference(1, &pos, UsageDefined);
-        processIfdef(false);
+        processIfdefDirective(false);
         break;
     case CPP_IF:
         genCppIfElseReference(1, &pos, UsageDefined);
-        processIf();
+        processIfDirective();
         break;
     case CPP_ELIF:
         log_debug("#elif");
@@ -1519,7 +1519,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
     case CPP_PRAGMA:
         log_debug("#pragma");
         AddHtmlCppReference(pos);
-        processPragma();
+        processPragmaDirective();
         break;
     case CPP_LINE: {
         jmp_buf exceptionHandler;
@@ -1532,7 +1532,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         }
 
         AddHtmlCppReference(pos);
-        processLine();
+        processLineDirective();
 
         lexem = getLex();
         while (lexem != '\n') {
@@ -1572,7 +1572,7 @@ endOfFile:
 
 /* *********************************************************** */
 
-static int cyclicCall(S_macroBody *mb) {
+static int cyclicCall(MacroBody *mb) {
     struct lexInput *ll;
     char *name;
     int i;
@@ -1803,8 +1803,8 @@ static void macArgsToString(char *res, struct lexInput *lb) {
 /* ********************* macro body replacement ***************** */
 /* ************************************************************** */
 
-static void createMacroBody(LexInput *macBody,
-                            S_macroBody *mb,
+static void createMacroBody(LexInput *macroBody,
+                            MacroBody *mb,
                             struct lexInput *actArgs,
                             int actArgn
 ) {
@@ -1884,7 +1884,7 @@ static void createMacroBody(LexInput *macBody,
     }
     MB_REALLOCC(buf2,bcc-buf2,char,bsize+MAX_LEXEM_SIZE);
 
-    fillLexInput(macBody,buf2,bcc,buf2,mb->name,INPUT_MACRO);
+    fillLexInput(macroBody,buf2,bcc,buf2,mb->name,INPUT_MACRO);
 
 }
 
@@ -1913,7 +1913,7 @@ static void getActMacroArgument(
     Position **parpos1,
     Position **parpos2,
     LexInput *actArg,
-    S_macroBody *mb,
+    MacroBody *mb,
     int actArgi
 ) {
     char *buf,*bcc;
@@ -1967,7 +1967,7 @@ endOfMacroArgument:;
     return;
 }
 
-static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
+static struct lexInput *getActualMacroArguments(MacroBody *mb, Position *mpos,
                                                 Position *lparpos) {
     char *previousLexem;
     Lexem lexem;
@@ -2049,8 +2049,8 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
     int line;
     char *previousLexem,*freeBase;
     Position lparpos;
-    LexInput *actArgs, macroBody;
-    S_macroBody *mb;
+    LexInput *actualArguments, macroBody;
+    MacroBody *mb;
     Position pos; UNUSED pos;
     int val,len; UNUSED len; UNUSED val;
 
@@ -2072,16 +2072,16 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
         }
         PassLex(currentInput.currentLexem, lexem, line, val, lparpos, len,
                            macroStackIndex == 0);
-        actArgs = getActualMacroArguments(mb, mpos, &lparpos);
+        actualArguments = getActualMacroArguments(mb, mpos, &lparpos);
     } else {
-        actArgs = NULL;
+        actualArguments = NULL;
     }
     assert(options.taskRegime);
     addCxReference(mdef, mpos, UsageUsed, noFileIndex, noFileIndex);
     if (options.taskRegime == RegimeXref)
         addMacroBaseUsageRef(mdef);
     log_trace("create macro body '%s'", mb->name);
-    createMacroBody(&macroBody,mb,actArgs,mb->argn);
+    createMacroBody(&macroBody,mb,actualArguments,mb->argn);
     prependMacroInput(&macroBody);
     log_trace("expanding macro '%s'", mb->name);
     PP_FREE_UNTIL(freeBase);

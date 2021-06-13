@@ -11,13 +11,13 @@ typedef struct macroBody {
     char *name;			/* the name of the macro */
     char **args;		/* names of arguments */
     char *body;
-} S_macroBody;
+} MacroBody;
 
 typedef struct macroArgTabElem {
     char *name;
     char *linkName;
     int order;
-} S_macroArgumentTableElement;
+} MacroArgumentTableElement;
 
 typedef struct lexInput {
     char *currentLexem;

@@ -2,7 +2,7 @@
 
 #include "yylex.h"
 /* Declare semi-private function */
-void processDefine(bool hasArguments);
+void processDefineDirective(bool hasArguments);
 
 #include "filedescriptor.h"
 #include "filetable.h"
@@ -75,5 +75,5 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     /* If the define does not have a body, add the value of "1" */
     initInput(NULL, NULL, "__x86_64__ 1", NULL);
     currentFile.lineNumber = 1;
-    processDefine(false);
+    processDefineDirective(false);
 }

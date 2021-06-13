@@ -7,7 +7,7 @@
 
 #define HASH_TAB_NAME macroArgumentTable
 #define HASH_TAB_TYPE MacroArgumentTable
-#define HASH_ELEM_TYPE S_macroArgumentTableElement
+#define HASH_ELEM_TYPE MacroArgumentTableElement
 
 #include "hashtab.th"
 
