@@ -22,32 +22,32 @@ AfterEach(Lex) {}
 
 
 Ensure(Lex, will_signal_false_for_empty_lexbuffer) {
-    LexemBuffer lexBuffer;
+    LexemBuffer lexemBuffer;
 
     s_cache.activeCache = false; /* ?? */
 
-    lexBuffer.next = NULL;
-    lexBuffer.end = NULL;
-    lexBuffer.index = 0;
+    lexemBuffer.next = NULL;
+    lexemBuffer.end = NULL;
+    lexemBuffer.index = 0;
 
-    initCharacterBuffer(&lexBuffer.buffer, NULL);
+    initCharacterBuffer(&lexemBuffer.buffer, NULL);
 
-    assert_that(getLexem(&lexBuffer), is_false);
+    assert_that(getLexem(&lexemBuffer), is_false);
 }
 
 Ensure(Lex, can_scan_a_floating_point_number) {
-    LexemBuffer lexBuffer;
-    char *lexemPointer = lexBuffer.lexemStream;
-    CharacterBuffer *charBuffer = &lexBuffer.buffer;
+    LexemBuffer lexemBuffer;
+    char *lexemPointer = lexemBuffer.lexemStream;
+    CharacterBuffer *charBuffer = &lexemBuffer.buffer;
     char *inputString = "4.3f";
 
     s_cache.activeCache = false; /* ?? */
 
-    initLexemBuffer(&lexBuffer, NULL);
+    initLexemBuffer(&lexemBuffer, NULL);
     charBuffer->fileNumber = 0;
 
-    initCharacterBufferFromString(&lexBuffer.buffer, inputString);
+    initCharacterBufferFromString(&lexemBuffer.buffer, inputString);
 
-    assert_that(getLexem(&lexBuffer), is_true);
+    assert_that(getLexem(&lexemBuffer), is_true);
     assert_that(getLexToken(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
 }
