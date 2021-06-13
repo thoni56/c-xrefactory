@@ -1,9 +1,6 @@
-# Automated tests for C exercise : completions()
+# Automated tests for C exercise : browsing
 
 include ../Makefile.boilerplate
-
-CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
-COMMAND = $(CXREF)
 
 $(TEST): CXrefs
 	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) > output.tmp
@@ -13,11 +10,18 @@ $(TEST): CXrefs
 trace: CXREF+=-trace
 trace: $(TEST)
 
+CXREF = ../../src/c-xref
+COMMAND = $(CXREF) -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -create
+
 CXrefs: .c-xrefrc
 	@# Sources in subdir
 	@sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
 	@mv .c-xrefrc.tmp .c-xrefrc
-	@$(CXREF) -create -o $(TEST).log
+	@$(COMMAND) -o $(TEST).log
 
 clean:
 	rm -rf CXrefs .c-xrefrc
+
+DEBUGGER = gdb
+debug:
+	$(DEBUGGER) --args $(COMMAND)
