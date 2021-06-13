@@ -22,8 +22,7 @@ typedef struct lexemBuffer {
 } LexemBuffer;
 
 
-/* Lexer macros for passing compressed tokens to the parser */
-/* In the process of being turned into testable/debuggable functions */
+/* Lexer functions for passing compressed tokens to the parser */
 
 extern void putLexChar(char ch, char **writePointer);
 extern void putLexShort(int shortValue, char **writePointer);
@@ -41,14 +40,14 @@ extern int getLexCompacted(char **readPointer);
 extern Lexem nextLexToken(char **readPointer);
 
 /* NORMAL compacted tokens, HUGE mode also existed originally. NORMAL
- can only store file, line, column < 22 bits which should be
- sufficient for any reasonable case. */
+   can only store file, line, column < 22 bits which should be
+   sufficient for any reasonable case. */
 
 extern void putLexPosition(int file, int line, int col, char **writePointer);
 extern Position getLexPosition(char **readPointer);
 
 
-/* TODO: cannot replace NextLexPosition yet, as the only call has "bcc+1" as dd */
+/* TODO: cannot replace NextLexPosition yet, as the only call has "bcc+1" as tmpcc */
 extern Position nextLexPosition(char **readPointer);
 
 #define NextLexPosition(pos,tmpcc) {            \

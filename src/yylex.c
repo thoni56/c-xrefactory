@@ -720,13 +720,16 @@ void processDefineDirective(bool hasArguments) {
     parpos2 = &ppb2;
 
     lexem = getLex(NULL);
-    if (lexem == -1) goto endOfMacroArgument;
-    if (lexem == -2) goto endOfFile;
+    if (lexem == -1)
+        goto endOfMacroArgument;
+    if (lexem == -2)
+        goto endOfFile;
 
     currentLexemStart = currentInput.currentLexem;
 
-    /* TODO: WTF there are some "symbols" in the lexBuffer, like "\275\001".
-     * Those are compacted converted lexem codes. See lexmac.h for explanation.
+    /* There are "symbols" in the lexBuffer, like "\275\001".  Those
+     * are compacted converted lexem codes. See lexembuffer.h for
+     * explanation and functions.
      */
     PassLex(currentInput.currentLexem, lexem, l, v, macroPosition, len, 1);
 
