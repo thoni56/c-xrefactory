@@ -29,7 +29,7 @@ typedef struct lexInput {
 
 extern char *yytext;
 extern int macroStackIndex;
-extern LexInput cInput;
+extern LexInput currentInput;
 
 
 extern void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,

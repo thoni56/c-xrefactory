@@ -299,10 +299,10 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     currentFile.lineNumber = cp->lineNumber;
     currentFile.ifDepth = cp->ifDepth;
     currentFile.ifStack = cp->ifStack;
-    fillLexInput(&cInput, cp->lbcc, readUntil, s_cache.lb, NULL, INPUT_CACHE);
+    fillLexInput(&currentInput, cp->lbcc, readUntil, s_cache.lb, NULL, INPUT_CACHE);
     fillCaching(&s_cache,
                 activeCaching, i+1, cp->ibi, cp->lbcc,
-                cInput.currentLexem, cInput.currentLexem, cInput.endOfBuffer);
+                currentInput.currentLexem, currentInput.currentLexem, currentInput.endOfBuffer);
     log_trace("finished recovering");
 }
 
@@ -350,17 +350,17 @@ void cacheInput(void) {
     ENTER();
     if (s_cache.activeCache == 0) return;
     if (includeStackPointer != 0 || macroStackIndex != 0) return;
-    size = cInput.currentLexem - s_cache.lexcc;
+    size = currentInput.currentLexem - s_cache.lexcc;
     if (s_cache.lbcc - s_cache.lb + size >= LEX_BUF_CACHE_SIZE) {
         s_cache.activeCache = 0;
         LEAVE();
         return;
     }
     /* if from cache, don't copy on the same place */
-    if (cInput.inputType != INPUT_CACHE)
+    if (currentInput.inputType != INPUT_CACHE)
         memcpy(s_cache.lbcc, s_cache.lexcc, size);
     s_cache.lbcc += size;
-    s_cache.lexcc = cInput.currentLexem;
+    s_cache.lexcc = currentInput.currentLexem;
     LEAVE();
 }
 

@@ -246,6 +246,7 @@ static bool zipReadLocalFileInfo(CharacterBuffer *cb,
     ZipFileInfo info;
     jmp_buf exception;
 
+    /* GetChar() Exception handling setup */
     switch (setjmp(exception)) {
     case END_OF_FILE_EXCEPTION:
         goto endOfFile;
