@@ -12,7 +12,7 @@ Technical Story: [description | ticket/issue URL] <!-- optional -->
 two to three sentences. You may want to articulate the problem in form
 of a question.]
 
-_In the context of_ <use case/user story u>,
+_In the context of_ <use case/user story/project/challenge u>,
 _facing_ <concern c>
 _we decided for_ <option o>
 _and neglected_ <other options>, 

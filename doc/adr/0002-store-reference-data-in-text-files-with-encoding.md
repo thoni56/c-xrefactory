@@ -1,8 +1,12 @@
-# Where to store reference data in an effective and compact format
+---
+title: "2. Store Reference Data in Text Files with compacting encoding"
+---
 
-* Status: Current
+* Status: accepted
 * Deciders: probably Marián and others
 * Date: somewhen in c-xrefactory early history
+
+# Where to store reference data in an effective and compact format
 
 ## Y-Statement
 
@@ -17,10 +21,12 @@ _because_ it seemed right at the time.
 ## Decision Drivers
 
 * Previous format seems to have been a more clear text version and the concern was (maybe) space on disk
+* Compacting the clear text format by encoding data, avoiding duplicate information due to space considerations?
 
 ## Considered Options
 
-* Compacting the clear text format by encoding data, avoiding duplicate information?
+* Unknown
 
 ## Decision Outcome
 
+Current intricately encoded text format...

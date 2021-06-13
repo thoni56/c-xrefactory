@@ -5,10 +5,13 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Move XX_ALLOCC and friends to "memory" module
 * DOING Implement non-standard #include_next since both gcc and clang is using it in system headers
-* TODO Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
+* DOING Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
+* DOING Move XX_ALLOCC and friends to "memory" module
 * TODO Unify the two documentation sets (html+txt) into Markdown
+* TODO Turn lexembuffer functions into methods on the buffer
+  get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
+  When do we point to something not a lexembuffer?
 * TODO Add menu for running the tutorial (in C or Java)
 ** TODO Elisp function to copy cexercise to /tmp and visit it
 ** TODO Elisp function to copy jexercise to /tmp and visit it
@@ -38,9 +41,6 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO Test case for Push Down Method
 ** TODO Test case for corruptionError() and compressionError()
 ** TODO Create jar reading test for unexpected end of file
-* TODO Turn lexembuffer functions into methods on the buffer
-  get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
-  When do we point to something not a lexembuffer?
 * TODO NEW FEATURES:
 ** TODO New refactoring: move function for C
 ** TODO New refactoring: change return type of function
