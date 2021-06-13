@@ -315,7 +315,7 @@ void recoverFromCache(void) {
     char *readUntil;
 
     assert(s_cache.cpi >= 1);
-    s_cache.activeCache = 0;
+    s_cache.activeCache = false;
     /*  s_cache.recoveringFromCache = 1;*/
     log_debug("reading from cache");
     readUntil = s_cache.cp[0].lbcc;
@@ -337,7 +337,7 @@ void setupCaching(void) {
 void initCaching(void) {
     fillCaching(&s_cache, 1, 0, 0, s_cache.lb, currentFile.lexBuffer.next, NULL,NULL);
     placeCachePoint(false);
-    s_cache.activeCache = 0;
+    s_cache.activeCache = false;
 }
 
 /* ****************************************************************** */
@@ -348,11 +348,11 @@ void cacheInput(void) {
     int size;
 
     ENTER();
-    if (s_cache.activeCache == 0) return;
+    if (!s_cache.activeCache) return;
     if (includeStackPointer != 0 || macroStackIndex != 0) return;
     size = currentInput.currentLexem - s_cache.lexcc;
     if (s_cache.lbcc - s_cache.lb + size >= LEX_BUF_CACHE_SIZE) {
-        s_cache.activeCache = 0;
+        s_cache.activeCache = false;
         LEAVE();
         return;
     }
@@ -365,7 +365,7 @@ void cacheInput(void) {
 }
 
 void cacheInclude(int fileNum) {
-    if (s_cache.activeCache == 0)
+    if (!s_cache.activeCache)
         return;
     log_debug("caching include of file %d: %s",
               s_cache.ibi, fileTable.tab[fileNum]->name);
@@ -373,7 +373,8 @@ void cacheInclude(int fileNum) {
     assert(s_cache.ibi < INCLUDE_CACHE_SIZE);
     s_cache.ib[s_cache.ibi] = fileNum;
     s_cache.ibi ++;
-    if (s_cache.ibi >= INCLUDE_CACHE_SIZE) s_cache.activeCache = 0;
+    if (s_cache.ibi >= INCLUDE_CACHE_SIZE)
+        s_cache.activeCache = false;
 }
 
 static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock, int ppmMemoryIndex,
@@ -396,17 +397,17 @@ static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock, int ppm
 
 void placeCachePoint(bool inputCaching) {
     CachePoint *pp;
-    if (s_cache.activeCache == 0)
+    if (!s_cache.activeCache)
         return;
     if (includeStackPointer != 0 || macroStackIndex != 0)
         return;
     if (s_cache.cpi >= MAX_CACHE_POINTS) {
-        s_cache.activeCache = 0;
+        s_cache.activeCache = false;
         return;
     }
     if (inputCaching)
         cacheInput();
-    if (s_cache.activeCache == 0)
+    if (!s_cache.activeCache)
         return;
     if (tmpWorkMemoryIndex != 0)
         return; /* something in non-cached tmp memory */

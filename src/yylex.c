@@ -380,7 +380,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (lexem==IDENT_TO_COMPLETE) {
-            s_cache.activeCache = 0;
+            s_cache.activeCache = false;
             s_olstringServed = 1;
             if (s_language == LANG_JAVA) {
                 makeJavaCompletions(idd, strlen(idd), pos);
@@ -973,7 +973,7 @@ void processDefine(bool hasArguments) {
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(pos, s_cxRefPos))) {
-                    s_cache.activeCache = 0;
+                    s_cache.activeCache = false;
                     s_olstringFound = 1; s_olstringInMbody = symbol->linkName;
                 }
                 destination = body+macroSize;

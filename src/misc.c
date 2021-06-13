@@ -1406,10 +1406,10 @@ static void scanClassFile(char *zip, char *file, void *arg) {
     suff = getFileSuffix(file);
     if (compareFileNames(suff, ".class")==0) {
         cpi = s_cache.cpi;
-        s_cache.activeCache = 1;
+        s_cache.activeCache = true;
         log_trace("firstFreeIndex = %d", s_topBlock->firstFreeIndex);
         placeCachePoint(false);
-        s_cache.activeCache = 0;
+        s_cache.activeCache = false;
         memb = javaGetFieldClass(file, &tt);
         fileInd = javaCreateClassFileItem(memb);
         if (! fileTable.tab[fileInd]->b.cxSaved) {

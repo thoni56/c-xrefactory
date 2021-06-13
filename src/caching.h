@@ -21,7 +21,7 @@ typedef struct cachePoint {
 } CachePoint;
 
 typedef struct caching {
-    char				activeCache;		/* whether putting input to cache */
+    bool activeCache;		/* whether putting input to cache */
     int					cpi;
     struct cachePoint	cp[MAX_CACHE_POINTS];
     int					ibi;

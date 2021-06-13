@@ -15,7 +15,7 @@
 
 void gotOnLineCxRefs(Position *ps ) {
     if (creatingOlcxRefs()) {
-        s_cache.activeCache = 0;
+        s_cache.activeCache = false;
         s_cxRefPos = *ps;
     }
 }
@@ -132,10 +132,10 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
                 dd--; /* delete the C */                                \
                 ch = getChar(cb);                                       \
                 if (ch == CC_COMPLETION) {                              \
-                    putLexToken(IDENT_TO_COMPLETE, &ddd);                \
+                    putLexToken(IDENT_TO_COMPLETE, &ddd);               \
                     ch = getChar(cb);                                   \
                 } else if (ch == CC_CXREF) {                            \
-                    s_cache.activeCache = 0;                            \
+                    s_cache.activeCache = false;                        \
                     fillPosition(&s_cxRefPos, cb->fileNumber, cb->lineNumber, idcoll); \
                     goto identCont##labelSuffix;                        \
                 } else errorMessage(ERR_INTERNAL, "unknown communication char"); \
