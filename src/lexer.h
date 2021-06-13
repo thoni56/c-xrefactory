@@ -6,7 +6,7 @@
 #include "lexembuffer.h"
 
 
-extern bool getLexem(LexemBuffer *lb);
+extern bool getLexemFromLexer(LexemBuffer *lb);
 extern void gotOnLineCxRefs(Position *position);
 
 #endif

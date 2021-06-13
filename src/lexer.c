@@ -198,7 +198,7 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
     }
 
 
-bool getLexem(LexemBuffer *lb) {
+bool getLexemFromLexer(LexemBuffer *lb) {
     int ch;
     CharacterBuffer *cb;
     char *cc, *lmax, *lexStartDd;

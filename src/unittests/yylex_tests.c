@@ -3,6 +3,7 @@
 #include "yylex.h"
 /* Declare semi-private function */
 void processDefineDirective(bool hasArguments);
+void processLineDirective(void);
 
 #include "filedescriptor.h"
 #include "filetable.h"
@@ -42,10 +43,11 @@ BeforeEach(Yylex) {
 }
 AfterEach(Yylex) {}
 
-static void setup_lexBuffer_for_reading(void *data) {
+static void setup_lexBuffer_for_reading_identifier(void *data) {
     /* Need to insert lexem-codes first ? */
-    currentFile.lexBuffer.lexemStream[0] = '\275';
-    currentFile.lexBuffer.lexemStream[1] = '\001';
+    /* These two are coded using getLexShort() etc. in lexembuffer.c */
+    currentFile.lexBuffer.lexemStream[0] = '\275'; // = 189
+    currentFile.lexBuffer.lexemStream[1] = '\x01'; // + 1*256 = 445 = IDENTIFER
     /* TODO: WTF This is mostly guesswork, no idea if this is how they are connected... */
     strcpy(&currentFile.lexBuffer.lexemStream[2], currentFile.lexBuffer.buffer.chars);
     *strchr(&currentFile.lexBuffer.lexemStream[2], ' ') = '\0';
@@ -59,12 +61,12 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     char *definition = (char *)malloc(strlen(DEFINE)+1);
     strcpy(definition, DEFINE);
 
-    expect(getLexem, when(buffer, is_equal_to(&currentFile.lexBuffer)),
-           will_return(1), with_side_effect(setup_lexBuffer_for_reading, NULL));
+    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexBuffer)),
+           will_return(true), with_side_effect(setup_lexBuffer_for_reading_identifier, NULL));
     expect(setGlobalFileDepNames, when(iname, is_equal_to_string(definition)),
            will_set_contents_of_parameter(pp_name, &definition, sizeof(char *)));
-    expect(getLexem, when(buffer, is_equal_to(&currentFile.lexBuffer)),
-           will_return(0));
+    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexBuffer)),
+           will_return(false));
 
     /* This is the confirmation that there is a symbol p with a
      * field with name equal to DEFINE
@@ -76,4 +78,14 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     initInput(NULL, NULL, "__x86_64__ 1", NULL);
     currentFile.lineNumber = 1;
     processDefineDirective(false);
+}
+
+Ensure(Yylex, can_handle_a_line_directive_without_number) {
+    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexBuffer)),
+           will_return(false));
+
+    initInput(NULL, NULL, "", NULL);
+    currentFile.lineNumber = 1;
+    processLineDirective();
+    /* No asserts, only for execution of END_OF_FILE_EXCEPTION in #line directive */
 }

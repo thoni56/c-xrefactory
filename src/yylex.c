@@ -332,7 +332,7 @@ static Lexem getLexemSavePrevious(char **previousLexem, jmp_buf exceptionHandler
             currentInput = macroStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCFileConsistency();
-            if (!getLexem(&currentFile.lexBuffer)) {
+            if (!getLexemFromLexer(&currentFile.lexBuffer)) {
                 if (exceptionHandler != NULL)
                     longjmp(exceptionHandler, END_OF_FILE_EXCEPTION);
                 else
@@ -352,6 +352,7 @@ static Lexem getLexemSavePrevious(char **previousLexem, jmp_buf exceptionHandler
     return lexem;
 }
 
+/* All occurences are expanded
 #define GetLex(lexem) {                                             \
     char *previousLexem;                                            \
     UNUSED previousLexem;                                           \
@@ -359,12 +360,13 @@ static Lexem getLexemSavePrevious(char **previousLexem, jmp_buf exceptionHandler
     if (lexem == -1) goto endOfMacroArgument;                       \
     if (lexem == -2) goto endOfFile;                                \
 }
+*/
 
 /* Attempt to re-create a function that does what GetLex() macro does: */
-static int getLex(void) {
+static int getLex(jmp_buf exceptionHandler) {
     char *previousLexem;
     UNUSED previousLexem;
-    Lexem lexem = getLexemSavePrevious(&previousLexem, NULL);
+    Lexem lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
     return lexem; // -1 if endOfMacroArgument, -2 if endOfFile
 }
 
@@ -401,8 +403,8 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
 
 
 /* ********************************** #LINE *********************** */
-
-static void processLineDirective(void) {
+/* non-static only for unittesting */
+void processLineDirective(void) {
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
     Position pos; UNUSED pos;
@@ -415,13 +417,13 @@ static void processLineDirective(void) {
         goto endOfMacroArgument;
     }
 
-    lexem = getLex();
+    lexem = getLex(exceptionHandler);
 
     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
     if (lexem != CONSTANT)
         return;
 
-    lexem = getLex();
+    lexem = getLex(exceptionHandler);
 
     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
     return;
@@ -717,7 +719,7 @@ void processDefineDirective(bool hasArguments) {
     parpos1 = &ppb1;
     parpos2 = &ppb2;
 
-    lexem = getLex();
+    lexem = getLex(NULL);
     if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
@@ -1083,7 +1085,7 @@ static void processUndefineDirective(void) {
     UNUSED len; UNUSED v; UNUSED l;
 
     //& GetLex(lexem); // Expanded
-    lexem = getLex();
+    lexem = getLex(NULL);
     if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
@@ -1111,7 +1113,7 @@ static void processUndefineDirective(void) {
     }
     while (lexem != '\n') {
         //& GetLex(lexem); // Expanded
-        lexem = getLex();
+        lexem = getLex(NULL);
         if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
@@ -1160,7 +1162,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
     depth = 1;
     while (depth > 0) {
         //& GetLex(lexem); // Expanded
-        lexem = getLex();
+        lexem = getLex(NULL);
         if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
 
@@ -1218,7 +1220,7 @@ static void processIfdefDirective(bool isIfdef) {
     UNUSED len; UNUSED v; UNUSED l;
 
     //& GetLex(lexem); // Expanded
-    lexem = getLex();
+    lexem = getLex(NULL);
     if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
@@ -1411,7 +1413,7 @@ static void processPragmaDirective(void) {
     int v, len; UNUSED len; UNUSED v;
 
     //& GetLex(lexem); // Expanded
-    lexem = getLex();
+    lexem = getLex(NULL);
     if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
@@ -1432,7 +1434,7 @@ static void processPragmaDirective(void) {
     while (lexem != '\n') {
         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
         //& GetLex(lexem); // Expanded
-        lexem = getLex();
+        lexem = getLex(NULL);
         if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
     }
@@ -1534,10 +1536,10 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         AddHtmlCppReference(pos);
         processLineDirective();
 
-        lexem = getLex();
+        lexem = getLex(NULL);
         while (lexem != '\n') {
             PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
-            lexem = getLex();
+            lexem = getLex(NULL);
         }
         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
         break;
@@ -2355,7 +2357,7 @@ int yylex(void) {
                                    macroStackIndex == 0);
                 for(;;) {
                     //& GetLex(lexem); // Expanded
-                    lexem = getLex();
+                    lexem = getLex(NULL);
                     if (lexem == -1) goto endOfMacroArgument;
                     if (lexem == -2) goto endOfFile;
 

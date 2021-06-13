@@ -32,7 +32,7 @@ Ensure(Lex, will_signal_false_for_empty_lexbuffer) {
 
     initCharacterBuffer(&lexemBuffer.buffer, NULL);
 
-    assert_that(getLexem(&lexemBuffer), is_false);
+    assert_that(getLexemFromLexer(&lexemBuffer), is_false);
 }
 
 Ensure(Lex, can_scan_a_floating_point_number) {
@@ -48,6 +48,6 @@ Ensure(Lex, can_scan_a_floating_point_number) {
 
     initCharacterBufferFromString(&lexemBuffer.buffer, inputString);
 
-    assert_that(getLexem(&lexemBuffer), is_true);
+    assert_that(getLexemFromLexer(&lexemBuffer), is_true);
     assert_that(getLexToken(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
 }
