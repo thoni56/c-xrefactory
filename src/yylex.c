@@ -401,7 +401,7 @@ static void processLine(void) {
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
     Position pos; UNUSED pos;
 
-    //& GetLex(lexem);
+    //& GetLex(lexem); // Expanded
     lexem = getLex();
     if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
@@ -409,7 +409,7 @@ static void processLine(void) {
     PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
     if (lexem != CONSTANT) return;
 
-    //& GetLex(lexem);
+    //& GetLex(lexem); // Expanded
     lexem = getLex();
     if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
@@ -882,7 +882,7 @@ static void processUnDefine(void) {
     int ii;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
 
-    //& GetLex(lexem);
+    //& GetLex(lexem); // Expanded
     lexem = getLex();
     if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
@@ -910,7 +910,7 @@ static void processUnDefine(void) {
         }
     }
     while (lexem != '\n') {
-        //& GetLex(lexem);
+        //& GetLex(lexem); // Expanded
         lexem = getLex();
         if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
@@ -959,7 +959,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
 
     depth = 1;
     while (depth > 0) {
-        //& GetLex(lexem);
+        //& GetLex(lexem); // Expanded
         lexem = getLex();
         if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
@@ -1016,7 +1016,7 @@ static void processIfdef(bool isIfdef) {
     int deleteSrc;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
 
-    //& GetLex(lexem);
+    //& GetLex(lexem); // Expanded
     lexem = getLex();
     if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
@@ -1133,7 +1133,7 @@ static void processPragma(void) {
     Symbol *pp;
     int v, len; UNUSED len; UNUSED v;
 
-    //& GetLex(lexem);
+    //& GetLex(lexem); // Expanded
     lexem = getLex();
     if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
@@ -1154,7 +1154,7 @@ static void processPragma(void) {
     }
     while (lexem != '\n') {
         PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
-        //& GetLex(lexem);
+        //& GetLex(lexem); // Expanded
         lexem = getLex();
         if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
@@ -1248,7 +1248,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         AddHtmlCppReference(pos);
         processLine();
 
-        //& GetLex(lexem);
+        //& GetLex(lexem); // Expanded
         lexem = getLex();
         if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
@@ -1256,7 +1256,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         while (lexem != '\n') {
             PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
 
-            //& GetLex(lexem);
+            //& GetLex(lexem); // Expanded
             lexem = getLex();
             if (lexem == -1) goto endOfMacroArgument;
             if (lexem == -2) goto endOfFile;
@@ -2074,7 +2074,7 @@ int yylex(void) {
                 PassLex(cInput.currentLexem, lexem, line, val, pos, len,
                                    macroStackIndex == 0);
                 for(;;) {
-                    //& GetLex(lexem);
+                    //& GetLex(lexem); // Expanded
                     lexem = getLex();
                     if (lexem == -1) goto endOfMacroArgument;
                     if (lexem == -2) goto endOfFile;
