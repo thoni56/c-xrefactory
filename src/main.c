@@ -2139,7 +2139,8 @@ static void discoverBuiltinIncludePaths(void) {
     /* Ensure output is in C locale */
     sprintf(command, "LANG=C %s -v -x %s -o /dev/null /dev/null >%s 2>&1", options.compiler, "c", tempfile_name);
 
-    (void)system(command);
+    int rc = system(command);
+    (void)rc;                   /* UNUSED */
 
     tempfile = openFile(tempfile_name, "r");
     if (tempfile==NULL) return;
