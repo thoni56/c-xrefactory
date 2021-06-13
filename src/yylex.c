@@ -325,7 +325,7 @@ static Lexem getLexA(char **previousLexem) {
         inputType = cInput.inputType;
         if (macroStackIndex > 0) {
             if (inputType == INPUT_MACRO_ARGUMENT)
-                return -1; //goto endOfMacArg; TODO: replace with setjmp()/longjmp()
+                return -1; //goto endOfMacroArgument; TODO: replace with setjmp()/longjmp()
             MB_FREE_UNTIL(cInput.beginningOfBuffer);
             cInput = macroStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
@@ -351,7 +351,7 @@ static Lexem getLexA(char **previousLexem) {
     char *previousLexem;                                            \
     UNUSED previousLexem;                                           \
     lexem = getLexA(&previousLexem);                                \
-    if (lexem == -1) goto endOfMacArg;                              \
+    if (lexem == -1) goto endOfMacroArgument;                              \
     if (lexem == -2) goto endOfFile;                                \
 }
 
@@ -403,7 +403,7 @@ static void processLine(void) {
 
     //& GetLex(lexem);
     lexem = getLex();
-    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
     PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
@@ -411,12 +411,12 @@ static void processLine(void) {
 
     //& GetLex(lexem);
     lexem = getLex();
-    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
     PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
     return;
-endOfMacArg:	assert(0);
+endOfMacroArgument:	assert(0);
 endOfFile:;
 }
 
@@ -562,7 +562,7 @@ static void processInclude(Position *ipos) {
 
     //& GetLexA(lexem, previousLexem);
     lexem = getLexA(&previousLexem);
-    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
     currentLexem = cInput.currentLexem;
@@ -589,7 +589,7 @@ assert(0);
         //do lex = yylex(); while (lex != '\n');
     }
     return;
- endOfMacArg:	assert(0);
+ endOfMacroArgument:	assert(0);
  endOfFile:;
 }
 
@@ -698,7 +698,7 @@ void processDefine(bool hasArguments) {
     parpos2 = &ppb2;
 
     lexem = getLex();
-    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
     cc = cInput.currentLexem;
@@ -836,7 +836,7 @@ endOfBody:
     addCxReference(pp, &macpos, UsageDefined, noFileIndex, noFileIndex);
     return;
 
-endOfMacArg:
+endOfMacroArgument:
     assert(0);
 
 endOfFile:
@@ -884,7 +884,7 @@ static void processUnDefine(void) {
 
     //& GetLex(lexem);
     lexem = getLex();
-    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
     cc = cInput.currentLexem;
@@ -912,12 +912,12 @@ static void processUnDefine(void) {
     while (lexem != '\n') {
         //& GetLex(lexem);
         lexem = getLex();
-        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
         PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
     }
     return;
-endOfMacArg:	assert(0);
+endOfMacroArgument:	assert(0);
 endOfFile:;
     return;
 }
@@ -961,7 +961,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
     while (depth > 0) {
         //& GetLex(lexem);
         lexem = getLex();
-        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
 
         PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
@@ -987,7 +987,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
     }
     log_debug("#endif");
     return(UNTIL_ENDIF);
-endOfMacArg:	assert(0);
+endOfMacroArgument:	assert(0);
 endOfFile:;
     if (options.taskRegime!=RegimeEditServer) {
         warningMessage(ERR_ST,"end of file in cpp conditional");
@@ -1018,7 +1018,7 @@ static void processIfdef(bool isIfdef) {
 
     //& GetLex(lexem);
     lexem = getLex();
-    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
     cc = cInput.currentLexem;
@@ -1053,7 +1053,7 @@ static void processIfdef(bool isIfdef) {
     }
     execCppIf(deleteSrc);
     return;
-endOfMacArg:	assert(0);
+endOfMacroArgument:	assert(0);
 endOfFile:;
 }
 
@@ -1110,7 +1110,7 @@ int cexp_yylex(void) {
         lexem = cexpTranslateToken(lexem, uniyylval->ast_integer.d);
     }
     return(lexem);
-endOfMacArg:	assert(0);
+endOfMacroArgument:	assert(0);
 endOfFile:;
     return(0);
 }
@@ -1135,7 +1135,7 @@ static void processPragma(void) {
 
     //& GetLex(lexem);
     lexem = getLex();
-    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
     if (lexem == IDENTIFIER && strcmp(cInput.currentLexem, "once")==0) {
@@ -1156,12 +1156,12 @@ static void processPragma(void) {
         PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
         //& GetLex(lexem);
         lexem = getLex();
-        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
     }
     PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
     return;
-endOfMacArg:	assert(0);
+endOfMacroArgument:	assert(0);
 endOfFile:;
 }
 
@@ -1250,7 +1250,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
 
         //& GetLex(lexem);
         lexem = getLex();
-        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
 
         while (lexem != '\n') {
@@ -1258,7 +1258,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
 
             //& GetLex(lexem);
             lexem = getLex();
-            if (lexem == -1) goto endOfMacArg;
+            if (lexem == -1) goto endOfMacroArgument;
             if (lexem == -2) goto endOfFile;
         }
         PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
@@ -1267,7 +1267,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
     }
     return true;
 
-endOfMacArg: assert(0);
+endOfMacroArgument: assert(0);
 endOfFile:
     return false;
 }
@@ -1336,7 +1336,7 @@ static void expandMacroArgument(LexInput *argb) {
     nextLexem:
         //& GetLexA(lexem, previousLexem);
         lexem = getLexA(&previousLexem);
-        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
 
         currentLexem = cInput.currentLexem;
@@ -1366,7 +1366,7 @@ static void expandMacroArgument(LexInput *argb) {
         bcc += length;
         TestPPBufOverflow(bcc, buf, bsize);
     }
-endOfMacArg:
+endOfMacroArgument:
     cInput = macroStack[--macroStackIndex];
     PP_REALLOCC(buf, bcc-buf, char, bsize+MAX_LEXEM_SIZE);
     fillLexInput(argb, buf, bcc, buf, NULL, INPUT_NORMAL);
@@ -1610,14 +1610,14 @@ static void createMacroBody(LexInput *macBody,
 #define GetLexASkippingLines(lexem, previousLexem)                      \
     {                                                                   \
         lexem = getLexA(&previousLexem);                                \
-        if (lexem == -1) goto endOfMacArg;                              \
+        if (lexem == -1) goto endOfMacroArgument;                              \
         if (lexem == -2) goto endOfFile;                                \
                                                                         \
         while (lexem == LINE_TOK || lexem == '\n') {                    \
             PassLex(cInput.currentLexem, lexem, line, val, pos, len, \
                                macroStackIndex == 0);                   \
             lexem = getLexA(&previousLexem);                            \
-            if (lexem == -1) goto endOfMacArg;                          \
+            if (lexem == -1) goto endOfMacroArgument;                          \
             if (lexem == -2) goto endOfFile;                            \
         }                                                               \
     }
@@ -1673,7 +1673,7 @@ static void getActMacroArgument(
                 if (lexem == -2) goto end;
             }
         end:
-            if (lexem == -1) goto endOfMacArg;
+            if (lexem == -1) goto endOfMacroArgument;
             if (lexem == -2) goto endOfFile;
         }
 
@@ -1687,7 +1687,7 @@ static void getActMacroArgument(
     }
     if (0) {  /* skip the error message when finished normally */
 endOfFile:;
-endOfMacArg:;
+endOfMacroArgument:;
         assert(options.taskRegime);
         if (options.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_ST,"[getActMacroArgument] unterminated macro call");
@@ -1738,7 +1738,7 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
         fillLexInput(&actArgs[actArgi], NULL, NULL, NULL, NULL,INPUT_NORMAL);
     }
     return(actArgs);
-endOfMacArg:	assert(0);
+endOfMacroArgument:	assert(0);
 endOfFile:
     assert(options.taskRegime);
     if (options.taskRegime!=RegimeEditServer) {
@@ -1817,7 +1817,7 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
     log_trace("expanding macro '%s'", mb->name);
     PP_FREE_UNTIL(freeBase);
     return(1);
-endOfMacArg:
+endOfMacroArgument:
     /* unterminated macro call in argument */
     /* TODO unread readed argument */
     cInput.currentLexem = previousLexem;
@@ -1882,7 +1882,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
     while (ccc < cto) {
         //& GetLexA(lexem, previousLexem);
         lexem = getLexA(&previousLexem);
-        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -1) goto endOfMacroArgument;
         if (lexem == -2) goto endOfFile;
 
         PassLex(cInput.currentLexem, lexem, line, val, pos, len, 1);
@@ -1906,7 +1906,7 @@ endOfFile:
     setCFileConsistency();
     *cfrom = ccc;
     return(res);
-endOfMacArg:
+endOfMacroArgument:
     assert(0);
     return -1;                  /* The assert should protect this from executing */
 }
@@ -2062,7 +2062,7 @@ int yylex(void) {
  nextYylex:
     //& GetLexA(lexem, previousLexem); /* Expand and extract into: */
     lexem = getLexA(&previousLexem);
-    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -1) goto endOfMacroArgument;
     if (lexem == -2) goto endOfFile;
 
  contYylex:
@@ -2076,7 +2076,7 @@ int yylex(void) {
                 for(;;) {
                     //& GetLex(lexem);
                     lexem = getLex();
-                    if (lexem == -1) goto endOfMacArg;
+                    if (lexem == -1) goto endOfMacroArgument;
                     if (lexem == -2) goto endOfFile;
 
                     if (!isPreprocessorToken(lexem))
@@ -2189,7 +2189,7 @@ int yylex(void) {
     s_lastReturnedLexem = lexem;
     return(lexem);
 
- endOfMacArg:
+ endOfMacroArgument:
     assert(0);
 
  endOfFile:
