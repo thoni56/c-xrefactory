@@ -44,12 +44,10 @@ BeforeEach(Yylex) {
 AfterEach(Yylex) {}
 
 static void setup_lexBuffer_for_reading_identifier(void *data) {
-    /* Need to insert lexem-codes first ? */
-    /* These two are coded using getLexShort() etc. in lexembuffer.c */
-    currentFile.lexBuffer.lexemStream[0] = '\275'; // = 189
-    currentFile.lexBuffer.lexemStream[1] = '\x01'; // + 1*256 = 445 = IDENTIFER
+    char *lexemStreamP = currentFile.lexBuffer.lexemStream;
+    putLexToken(IDENTIFIER, &lexemStreamP);
+    strcpy(lexemStreamP, currentFile.lexBuffer.buffer.chars);
     /* TODO: WTF This is mostly guesswork, no idea if this is how they are connected... */
-    strcpy(&currentFile.lexBuffer.lexemStream[2], currentFile.lexBuffer.buffer.chars);
     *strchr(&currentFile.lexBuffer.lexemStream[2], ' ') = '\0';
     currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
     currentFile.lexBuffer.end = strchr(currentFile.lexBuffer.lexemStream, '\0');
