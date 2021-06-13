@@ -1,5 +1,7 @@
 include ../Makefile.boilerplate
 
+COMMAND = ../../src/c-xref initializer_parsing.c -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o output
+
 $(TEST):
 	@../../src/c-xref initializer_parsing.c -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o output
 	@# Check in the xrefs for 'E0' - which means?
@@ -13,3 +15,7 @@ $(TEST):
 
 clean:
 	@rm -rf $@.log CXrefs .c-xrefrc *output
+
+DEBUGGER=gdb
+debug:
+	$(DEBUGGER) --args $(COMMAND)
