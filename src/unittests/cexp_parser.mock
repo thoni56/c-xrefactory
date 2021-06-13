@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "cexp_parser.x"
+#include "cexp_parser.h"
 #include <cgreen/mocks.h>
 
 int cexp_yyparse() {

@@ -12,7 +12,7 @@
 
 #define c_yylex yylex
 
-#include "c_parser.x"
+#include "c_parser.h"
 
 #include "caching.h"
 #include "commons.h"

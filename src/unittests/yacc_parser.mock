@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "yacc_parser.x"
+#include "yacc_parser.h"
 #include <cgreen/mocks.h>
 
 int yacc_yyparse() {

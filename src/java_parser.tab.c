@@ -36,7 +36,7 @@
 
 #define java_yylex yylex
 
-#include "java_parser.x"
+#include "java_parser.h"
 
 #include "globals.h"
 #include "jslsemact.h"

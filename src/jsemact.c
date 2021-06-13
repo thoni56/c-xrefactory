@@ -17,7 +17,7 @@
 #include "list.h"
 #include "fileio.h"
 
-#include "java_parser.x"
+#include "java_parser.h"
 
 #include "parsers.h"
 #include "recyacc.h"

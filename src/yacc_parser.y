@@ -11,7 +11,7 @@
 
 #define yacc_yylex yylex
 
-#include "yacc_parser.x"
+#include "yacc_parser.h"
 
 #include "caching.h"
 #include "commons.h"

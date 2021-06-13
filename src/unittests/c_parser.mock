@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "c_parser.x"
+#include "c_parser.h"
 #include <cgreen/mocks.h>
 
 int cyyparse() {

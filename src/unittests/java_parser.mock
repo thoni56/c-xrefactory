@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "java_parser.x"
+#include "java_parser.h"
 #include <cgreen/mocks.h>
 
 void makeJavaCompletions(char *s, int len, Position *pos) {

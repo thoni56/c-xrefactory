@@ -33,7 +33,7 @@
 #line 2 "cexp_parser.y"
 
 
-#include "cexp_parser.x"
+#include "cexp_parser.h"
 
 #include "yylex.h"
 #include "semact.h"

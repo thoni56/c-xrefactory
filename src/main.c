@@ -17,9 +17,9 @@
 #include "jsemact.h"
 #include "fileio.h"
 
-#include "c_parser.x"
-#include "yacc_parser.x"
-#include "java_parser.x"
+#include "c_parser.h"
+#include "yacc_parser.h"
+#include "java_parser.h"
 #include "parsers.h"
 
 #include "characterreader.h"

@@ -13,10 +13,10 @@
 #include "reftab.h"
 #include "jsemact.h"            /* For s_javaStat */
 
-#include "c_parser.x"
-#include "cexp_parser.x"
-#include "yacc_parser.x"
-#include "java_parser.x"
+#include "c_parser.h"
+#include "cexp_parser.h"
+#include "yacc_parser.h"
+#include "java_parser.h"
 
 #include "parsers.h"
 #include "protocol.h"
