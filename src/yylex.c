@@ -453,7 +453,7 @@ static void addIncludeReferences(int filenum, Position *pos) {
     addThisFileDefineIncludeReference(filenum);
 }
 
-void pushNewInclude(FILE *f, EditorBuffer *buffer, char *name, char *prepend) {
+void pushInclude(FILE *f, EditorBuffer *buffer, char *name, char *prepend) {
     if (cInput.inputType == INPUT_CACHE) {
         setCacheConsistency();
     } else {
@@ -527,7 +527,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
     nnn = normalizeFileName(nn, cwd);
     strcpy(nn,nnn);
     log_trace("file '%s' opened, checking to %s", nn, fileTable.tab[s_olOriginalFileNumber]->name);
-    pushNewInclude(r, er, nn, "\n");
+    pushInclude(r, er, nn, "\n");
     return(stdin);  // NOT NULL
 }
 

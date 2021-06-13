@@ -712,7 +712,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     // ?? is this really necessary?
     // memset(s_yygstate, sizeof(struct yyGlobalState), 0);
     uniyylval = & s_yygstate->gyylval;
-    pushNewInclude(ff, bb, asfname, "\n");
+    pushInclude(ff, bb, asfname, "\n");
     cfilenum = currentFile.lexBuffer.buffer.fileNumber;
     s_jsl->pass = 1;
     java_yyparse();
@@ -729,7 +729,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
             goto fini;
         }
     }
-    pushNewInclude(ff, bb, asfname, "\n");
+    pushInclude(ff, bb, asfname, "\n");
     cfilenum = currentFile.lexBuffer.buffer.fileNumber;
     s_jsl->pass = 2;
     java_yyparse();

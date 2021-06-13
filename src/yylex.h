@@ -39,7 +39,7 @@ extern void initAllInputs(void);
 extern void initInput(FILE *file, EditorBuffer *buffer, char *prepend, char *name);
 extern void addIncludeReference(int filenum, Position *pos);
 extern void addThisFileDefineIncludeReference(int filenum);
-extern void pushNewInclude(FILE *f, EditorBuffer *buff, char *name, char *prepend);
+extern void pushInclude(FILE *f, EditorBuffer *buff, char *name, char *prepend);
 extern void popInclude(void);
 extern int addFileTabItem(char *name);
 extern void addMacroDefinedByOption(char *opt);

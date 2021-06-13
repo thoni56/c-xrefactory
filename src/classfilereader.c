@@ -1164,7 +1164,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                    noFileIndex, noFileIndex);
     addCfClassTreeHierarchyRef(fileIndex, UsageClassFileDefinition);
     log_trace("fileitem=='%s'", fileTable.tab[fileIndex]->name);
-    pushNewInclude(zipFile, NULL, fileTable.tab[fileIndex]->name, "");
+    pushInclude(zipFile, NULL, fileTable.tab[fileIndex]->name, "");
 
     log_debug("reading file '%s'", className);
 
