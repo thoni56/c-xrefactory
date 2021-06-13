@@ -1893,28 +1893,28 @@ static void createMacroBody(LexInput *macroBody,
 /* *************************************************************** */
 #define GetLexASkippingLines(lexem, previousLexem, line, val, pos, len) \
     {                                                                   \
-        lexem = getLexemSavePrevious(&previousLexem, NULL);                                \
+        lexem = getLexemSavePrevious(&previousLexem, NULL);             \
         if (lexem == -1) goto endOfMacroArgument;                       \
         if (lexem == -2) goto endOfFile;                                \
                                                                         \
         while (lexem == LINE_TOK || lexem == '\n') {                    \
             PassLex(currentInput.currentLexem, lexem, line, val, pos, len, \
                     macroStackIndex == 0);                              \
-            lexem = getLexemSavePrevious(&previousLexem, NULL);                            \
+            lexem = getLexemSavePrevious(&previousLexem, NULL);         \
             if (lexem == -1) goto endOfMacroArgument;                   \
             if (lexem == -2) goto endOfFile;                            \
         }                                                               \
     }
 
-static void getActMacroArgument(
+static void getActualMacroArgument(
     char *previousLexem,
     Lexem *out_lexem,
     Position *mpos,
     Position **parpos1,
     Position **parpos2,
     LexInput *actArg,
-    MacroBody *mb,
-    int actArgi
+    MacroBody *macroBody,
+    int actualArgumentIndex
 ) {
     char *buf,*bcc;
     int line,poffset;
@@ -1930,7 +1930,7 @@ static void getActMacroArgument(
     bcc = buf;
     /* if lastArgument, collect everything there */
     poffset = 0;
-    while (((lexem != ',' || actArgi+1==mb->argn) && lexem != ')') || depth > 0) {
+    while (((lexem != ',' || actualArgumentIndex+1==macroBody->argn) && lexem != ')') || depth > 0) {
         // The following should be equivalent to the loop condition:
         //& if (lexem == ')' && depth <= 0) break;
         //& if (lexem == ',' && depth <= 0 && ! lastArgument) break;
@@ -1949,7 +1949,7 @@ static void getActMacroArgument(
                 macroStackIndex == 0);
         if ((lexem == ',' || lexem == ')') && depth == 0) {
             poffset ++;
-            handleMacroUsageParameterPositions(actArgi+poffset, mpos, *parpos1, *parpos2, 0);
+            handleMacroUsageParameterPositions(actualArgumentIndex+poffset, mpos, *parpos1, *parpos2, 0);
             **parpos1= **parpos2;
         }
     }
@@ -1989,7 +1989,7 @@ static struct lexInput *getActualMacroArguments(MacroBody *mb, Position *mpos,
         handleMacroUsageParameterPositions(0, mpos, parpos1, parpos2, 1);
     } else {
         for(;;) {
-            getActMacroArgument(previousLexem,&lexem, mpos, &parpos1, &parpos2,
+            getActualMacroArgument(previousLexem,&lexem, mpos, &parpos1, &parpos2,
                                 &actArgs[actArgi], mb, actArgi);
             actArgi ++ ;
             if (lexem != ',' || actArgi >= mb->argn) break;
