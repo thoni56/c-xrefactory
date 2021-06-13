@@ -630,8 +630,8 @@ Symbol *addNewDeclaration(
 }
 
 void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTable *tab) {
-    Symbol    *pp, *pa, *ppp;
-    int         ii;
+    Symbol *pp, *pa, *ppp;
+
     if (p->name != NULL && p->bits.symbolType!=TypeError) {
         assert(s_javaStat->locals!=NULL);
         pa = newSymbolAsCopyOf(p);
@@ -644,7 +644,7 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTa
             }
         }
         if (pp!=NULL && pp!=p) {
-            if (symbolTableIsMember(tab, pa, &ii, &ppp)) {
+            if (symbolTableIsMember(tab, pa, NULL, &ppp)) {
                 addCxReference(ppp, &p->pos, UsageUsed, noFileIndex, noFileIndex);
             }
         } else {
@@ -878,7 +878,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
                                       Usage usage
 ) {
     Symbol p,*pp;
-    int ii,type;
+    int type;
 
     log_trace("new struct %s", id->name);
     assert(typeName && typeName->symbol && typeName->symbol->bits.symbolType == TypeKeyword);
@@ -892,7 +892,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     fillSymbol(&p, id->name, id->name, id->p);
     fillSymbolBits(&p.bits, AccessDefault, type, StorageNone);
 
-    if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
+    if (!symbolTableIsMember(s_symbolTable, &p, NULL, &pp)
         || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         pp = StackMemoryAlloc(Symbol);
@@ -915,10 +915,11 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
-    char            *mname, *fname;
-    char            tmp[MACRO_NAME_SIZE];
-    Symbol        *memb;
-    int             ii,rr,filen, order, len, len2;
+    char *mname, *fname;
+    char tmp[MACRO_NAME_SIZE];
+    Symbol *memb;
+    int rr,filen, order, len, len2;
+
     if (iname == NULL) iname="";
     assert(pp);
     if (options.exactPositionResolve) {
@@ -932,7 +933,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
         filen = pp->pos.file;
         pp->name=iname; pp->linkName=iname;
         order = 0;
-        rr = symbolTableIsMember(s_symbolTable, pp, &ii, &memb);
+        rr = symbolTableIsMember(s_symbolTable, pp, NULL, &memb);
         while (rr) {
             if (memb->pos.file==filen) order++;
             rr = symbolTableNextMember(pp, &memb);
@@ -1013,12 +1014,11 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
 
 TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
     Symbol p,*pp;
-    int ii;
 
     fillSymbol(&p, id->name, id->name, id->p);
     fillSymbolBits(&p.bits, AccessDefault, TypeEnum, StorageNone);
 
-    if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
+    if (! symbolTableIsMember(s_symbolTable, &p, NULL, &pp)
         || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemoryAlloc(Symbol);
         *pp = p;

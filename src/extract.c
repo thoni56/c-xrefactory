@@ -84,15 +84,14 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 
 
 void deleteContinueBreakLabelSymbol(char *name) {
-    Symbol    ss,*memb;
-    int         ii;
+    Symbol ss,*memb;
 
     if (options.server_operation != OLO_EXTRACT)
         return;
 
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
-    if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
+    if (symbolTableIsMember(s_symbolTable, &ss, NULL, &memb)) {
         deleteContinueBreakSymbol(memb);
     } else {
         assert(0);
@@ -100,8 +99,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
 }
 
 void genContinueBreakReference(char *name) {
-    Symbol    ss,*memb;
-    int         ii;
+    Symbol ss,*memb;
 
     if (options.server_operation != OLO_EXTRACT)
         return;
@@ -109,21 +107,20 @@ void genContinueBreakReference(char *name) {
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
 
-    if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
+    if (symbolTableIsMember(s_symbolTable, &ss, NULL, &memb)) {
         generateInternalLabelReference(memb->u.labelIndex, UsageUsed);
     }
 }
 
 void generateSwitchCaseFork(bool isLast) {
     Symbol symbol, *found_member_pointer;
-    int not_used_int;
 
     if (options.server_operation != OLO_EXTRACT)
         return;
 
     fillSymbolWithLabel(&symbol, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
     fillSymbolBits(&symbol.bits, AccessDefault, TypeLabel, StorageAuto);
-    if (symbolTableIsMember(s_symbolTable, &symbol, &not_used_int, &found_member_pointer)) {
+    if (symbolTableIsMember(s_symbolTable, &symbol, NULL, &found_member_pointer)) {
         generateInternalLabelReference(found_member_pointer->u.labelIndex, UsageDefined);
         if (!isLast) {
             found_member_pointer->u.labelIndex++;

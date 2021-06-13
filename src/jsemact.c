@@ -612,11 +612,9 @@ Symbol *javaTypeSymbolDefinition(IdList *tname,
     return(typeSymbol);
 }
 
-Symbol *javaTypeSymbolUsage(IdList *tname,
-                                   int accessFlags){
-    Symbol                pp,*memb;
-    int                     ii;
-    char                    fqtName[MAX_FILE_NAME_SIZE];
+Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
+    Symbol pp,*memb;
+    char fqtName[MAX_FILE_NAME_SIZE];
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
@@ -624,7 +622,7 @@ Symbol *javaTypeSymbolUsage(IdList *tname,
     fillSymbol(&pp, tname->id.name, tname->id.name, s_noPos);
     fillSymbolBits(&pp.bits, accessFlags, TypeStruct, StorageNone);
 
-    if (tname->next==NULL && symbolTableIsMember(s_symbolTable, &pp, &ii, &memb)) {
+    if (tname->next==NULL && symbolTableIsMember(s_symbolTable, &pp, NULL, &memb)) {
         // get canonical copy
         memb = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
         return(memb);
@@ -846,9 +844,9 @@ static int findTopLevelNameInternal(char *name,
                                     int visibilityCheck,
                                     S_javaStat **rscope
                                     ) {
-    int				ii,res;
-    Symbol        sd;
-    S_javaStat		*cscope;
+    int res;
+    Symbol sd;
+    S_javaStat *cscope;
 
     assert((!LANGUAGE(LANG_JAVA)) ||
         (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD));
@@ -864,7 +862,7 @@ static int findTopLevelNameInternal(char *name,
         cscope=cscope->next
         ) {
         assert(cscope->thisClass);
-        if (classif!=CLASS_TO_METHOD && symbolTableIsMember(cscope->locals, &sd, &ii, resMemb)) {
+        if (classif!=CLASS_TO_METHOD && symbolTableIsMember(cscope->locals, &sd, NULL, resMemb)) {
             /* it is an argument or local variable */
             /* this is tricky */
             /* I guess, you cannot have an overloaded function here, so ... */
@@ -1007,7 +1005,6 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                             int cxrefFlag
     ){
     Symbol sd, *mm, *memb, *nextmemb;
-    int unused;
     bool haveit;
     Position *ipos;
 
@@ -1015,7 +1012,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
     fillSymbolBits(&sd.bits, AccessDefault, TypeStruct, StorageNone);
 
     haveit = false;
-    if (symbolTableIsMember(s_symbolTable, &sd, &unused, &memb)) {
+    if (symbolTableIsMember(s_symbolTable, &sd, NULL, &memb)) {
         /* a type */
         assert(memb);
         // O.K. I have to load the class in order to check its access flags
@@ -2019,7 +2016,7 @@ static int javaExistWideningConversion(char **t1, char **t2) {
         if (sym1 == sym2) {res &= 1; goto finish;}
         javaLoadClassSymbolsFromFile(sym1);
 /*fprintf(dumpOut,"test cctmembership of %s to %s\n",sym1->linkName, sym2->linkName);*/
-        res &= cctIsMember(& sym1->u.s->casts, sym2, 1);
+        res &= cctIsMember(&sym1->u.s->casts, sym2, 1);
         goto finish;
     } else {
         c1 = *s1++; c2 = *s2++;
@@ -2420,9 +2417,9 @@ lastRecursionLabel:
     return(1);
 }
 
-static int javaTypeConvertible(	TypeModifier *t1,
-                                TypeModifier *t2
-                            ) {
+static int javaTypeConvertible(TypeModifier *t1,
+                               TypeModifier *t2
+) {
     Symbol    *s1,*s2;
     int         res;
 lastRecLabel:

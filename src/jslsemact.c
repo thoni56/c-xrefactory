@@ -132,11 +132,11 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
                                 AddYesNo add, int order, bool isExplicitlyImported) {
     char fqtName[MAX_FILE_NAME_SIZE];
     IdList dd2;
-    int ii;
+    int index;
     Symbol *smemb;
     JslSymbolList ss, *xss, *memb;
     Position *importPos;
-    int mm; UNUSED mm;
+    bool isMember; UNUSED isMember; /* Because log_trace() might not generate any code... */
 
     jslCreateTypeSymbolInList(&ss, ttt2);
     fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
@@ -149,15 +149,15 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
         xss = StackMemoryAlloc(JslSymbolList); // CF_ALLOC ???
         fillJslSymbolList(xss, smemb, *importPos, isExplicitlyImported);
         /* TODO: Why are we using isMember() and not looking at the result? Side-effect? */
-        mm = jslTypeTabIsMember(s_jsl->typeTab, xss, &ii, &memb);
-        log_trace("[jsl] jslTypeTabIsMember() returned %s", mm?"true":"false");
+        isMember = jslTypeTabIsMember(s_jsl->typeTab, xss, &index, &memb);
+        log_trace("[jsl] jslTypeTabIsMember() returned %s", isMember?"true":"false");
         if (order == ORDER_PREPEND) {
             log_debug("[jsl] prepending class %s to jsltab", smemb->name);
-            jslTypeTabSet(s_jsl->typeTab, xss, ii);
+            jslTypeTabSet(s_jsl->typeTab, xss, index);
             addToTrail(jslRemoveNestedClass, xss);
         } else {
             log_debug("[jsl] appending class %s to jsltab", smemb->name);
-            jslTypeTabSetLast(s_jsl->typeTab, xss, ii);
+            jslTypeTabSetLast(s_jsl->typeTab, xss, index);
             addToTrail(jslRemoveNestedClass, xss);
         }
     }
@@ -167,12 +167,11 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
 static Symbol *jslTypeSymbolUsage(char *ttt2, IdList *packid) {
     char fqtName[MAX_FILE_NAME_SIZE];
     IdList dd2;
-    int ii;
     Symbol *smemb;
     JslSymbolList ss, *memb;
 
     jslCreateTypeSymbolInList(&ss, ttt2);
-    if (packid==NULL && jslTypeTabIsMember(s_jsl->typeTab, &ss, &ii, &memb)) {
+    if (packid==NULL && jslTypeTabIsMember(s_jsl->typeTab, &ss, NULL, &memb)) {
         smemb = memb->d;
         return(smemb);
     }
@@ -201,11 +200,11 @@ static int jslClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                                   Symbol **str
                                                   ){
     JslSymbolList ss, *memb, *nextmemb;
-    int ii, haveit;
+    int haveit;
 
     jslCreateTypeSymbolInList(&ss, name->id.name);
     log_trace("looking for '%s'", name->id.name);
-    if (jslTypeTabIsMember(s_jsl->typeTab, &ss, &ii, &memb)) {
+    if (jslTypeTabIsMember(s_jsl->typeTab, &ss, NULL, &memb)) {
         /* a type */
         log_trace("found '%s'", memb->d->linkName);
         assert(memb);

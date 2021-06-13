@@ -1043,7 +1043,7 @@ static void cxrfSymbolName(int size,
                            ) {
     SymbolReferenceItem *ddd, *memb;
     S_olSymbolsMenu *cms;
-    int not_used1, not_used2;
+    int not_used2;
     int si, symType, len, rr, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;
     char *ss;
@@ -1068,7 +1068,7 @@ static void cxrfSymbolName(int size,
                                 vApplClass, vFunClass);
     fillSymbolRefItemBits(&ddd->b,symType, storage, ScopeGlobal, accessFlags,
                            CategoryGlobal, 0);
-    rr = refTabIsMember(&referenceTable, ddd, &not_used1,&memb);
+    rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
     while (rr && memb->b.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeHtmlGenerate) {

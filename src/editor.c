@@ -582,11 +582,10 @@ static void editorSetBufferModifiedFlag(EditorBuffer *buff) {
 EditorBuffer *editorGetOpenedBuffer(char *name) {
     EditorBuffer editorBuffer;
     EditorBufferList editorBufferList, *element;
-    int i;
 
     fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
     editorBufferList = (EditorBufferList){.f = &editorBuffer, .next = NULL};
-    if (editorBufferTabIsMember(&s_editorBufferTab, &editorBufferList, &i, &element)) {
+    if (editorBufferTabIsMember(&s_editorBufferTab, &editorBufferList, NULL, &element)) {
         return element->f;
     }
     return NULL;
@@ -647,7 +646,7 @@ static S_editorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, un
 
 void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
-    int fileIndex, ii, mem, deleted;
+    int fileIndex, not_used, mem, deleted;
     EditorBuffer dd, *removed;
     EditorBufferList ddl, *memb, *memb2;
     char *oldName;
@@ -656,7 +655,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warningMessage(ERR_INTERNAL, tmpBuff);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
     ddl = (EditorBufferList){.f = &dd, .next = NULL};
-    mem = editorBufferTabIsMember(&s_editorBufferTab, &ddl, &ii, &memb);
+    mem = editorBufferTabIsMember(&s_editorBufferTab, &ddl, NULL, &memb);
     if (! mem) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
@@ -675,11 +674,11 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     buff->ftnum = fileIndex;
 
     *memb = (EditorBufferList){.f = buff, .next = NULL};
-    if (editorBufferTabIsMember(&s_editorBufferTab, memb, &ii, &memb2)) {
+    if (editorBufferTabIsMember(&s_editorBufferTab, memb, NULL, &memb2)) {
         editorBufferTabDeleteExact(&s_editorBufferTab, memb2);
         editorFreeBuffer(memb2);
     }
-    editorBufferTabAdd(&s_editorBufferTab, memb, &ii);
+    editorBufferTabAdd(&s_editorBufferTab, memb, &not_used);
 
     // note undo operation
     if (undo!=NULL) {
@@ -1532,10 +1531,10 @@ int editorMapOnNonexistantFiles(
     return(res);
 }
 
-static void editorCloseBuffer(EditorBufferList *memb, int ii) {
+static void editorCloseBuffer(EditorBufferList *memb, int index) {
     EditorBufferList **ll;
     //&sprintf(tmpBuff,"closing buffer %s %s\n", memb->f->name, memb->f->fileName);ppcGenRecord(PPC_IGNORE, tmpBuff);
-    for(ll= &s_editorBufferTab.tab[ii]; (*ll)!=NULL; ll = &(*ll)->next) {
+    for (ll = &s_editorBufferTab.tab[index]; (*ll)!=NULL; ll = &(*ll)->next) {
         if (*ll == memb) break;
     }
     if (*ll == memb) {
@@ -1557,13 +1556,13 @@ static void editorCloseBuffer(EditorBufferList *memb, int ii) {
 void editorCloseBufferIfClosable(char *name) {
     EditorBuffer dd;
     EditorBufferList ddl, *memb;
-    int ii;
+    int index;
 
     fillEmptyEditorBuffer(&dd, name, 0, name);
     ddl = (EditorBufferList){.f = &dd, .next = NULL};
-    if (editorBufferTabIsMember(&s_editorBufferTab, &ddl, &ii, &memb)) {
+    if (editorBufferTabIsMember(&s_editorBufferTab, &ddl, &index, &memb)) {
         if (BUFFER_IS_CLOSABLE(memb->f)) {
-            editorCloseBuffer(memb, ii);
+            editorCloseBuffer(memb, index);
         }
     }
 }

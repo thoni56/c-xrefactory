@@ -2689,10 +2689,10 @@ static void fillIncludeRefItem( SymbolReferenceItem *ddd , int fnum) {
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
     char                *cxFreeBase;
-    int                 i,ii,fileAddedFlag, isJavaFileFlag;
-    FileItem          *fi,*includer;
-    SymbolReferenceItem     ddd,*memb;
-    Reference         *rr;
+    int                 i, fileAddedFlag, isJavaFileFlag;
+    FileItem            *fi,*includer;
+    SymbolReferenceItem ddd,*memb;
+    Reference           *rr;
     CX_ALLOCC(cxFreeBase,0,char);
     readOneAppropReferenceFile(LINK_NAME_INCLUDE_REFS,
                                fullUpdateFunctionSequence); // get include refs
@@ -2707,7 +2707,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                 fi->b.fullUpdateIncludesProcessed = true;
                 isJavaFileFlag = fileNameHasOneOfSuffixes(fi->name, options.javaFilesSuffixes);
                 fillIncludeRefItem( &ddd, i);
-                if (refTabIsMember(&referenceTable, &ddd, &ii,&memb)) {
+                if (refTabIsMember(&referenceTable, &ddd, NULL, &memb)) {
                     for(rr=memb->refs; rr!=NULL; rr=rr->next) {
                         includer = fileTable.tab[rr->p.file];
                         assert(includer);

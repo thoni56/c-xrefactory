@@ -702,7 +702,7 @@ static int olcxOnlyParseNoPushing(int opt) {
 /*                                                                       */
 Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                                 int vFunCl, int vApplCl) {
-    int ii,mm,category,scope,storage,defusage;
+    int index,mm,category,scope,storage,defusage;
     char *linkName;
     Reference rr, **place;
     Position *defpos;
@@ -781,9 +781,9 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
         searchSymbolCheckReference(&ppp, &rr);
         return NULL;
     }
-    mm = refTabIsMember(reftab, &ppp, &ii, &memb);
+    mm = refTabIsMember(reftab, &ppp, &index, &memb);
     // Was:
-    //& if (newRefTabItem(reftab,&memb,usage,storage,scope,category,p,vApplCl,vFunCl,&ii));
+    //& if (newRefTabItem(reftab,&memb,usage,storage,scope,category,p,vApplCl,vFunCl,&index));
     if (mm==0) {
         log_trace("allocating '%s'", p->linkName);
         CX_ALLOC(pp, SymbolReferenceItem);
@@ -793,7 +793,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                                     vApplCl, vFunCl);
         fillSymbolRefItemBits(&pp->b, p->bits.symbolType, storage, scope,
                                p->bits.access, category, 0);
-        refTabSet(reftab, pp, ii);
+        refTabSet(reftab, pp, index);
         memb = pp;
     } else {
         // at least reset some maybe new informations

@@ -38,7 +38,8 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
 
     posid = HASH_FUN(element);
     posid = posid % table->size;
-    *position = posid;
+    if (position)
+        *position = posid;
     assert(table->tab != NULL);
     for (pp=table->tab[posid]; pp!=NULL; pp=pp->next) {
         if (HASH_ELEM_EQUAL(pp, element)) {

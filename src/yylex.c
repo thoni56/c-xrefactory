@@ -539,7 +539,6 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
     char *fname;
     FILE *nyyin;
     Symbol ss,*memb;
-    int ii;
     char tmpBuff[TMP_BUFF_SIZE];
 
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
@@ -547,7 +546,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
     fillSymbol(&ss, tmpBuff, tmpBuff, s_noPos);
     fillSymbolBits(&ss.bits, AccessDefault, TypeMacro, StorageNone);
 
-    if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) return;
+    if (symbolTableIsMember(s_symbolTable, &ss, NULL, &memb)) return;
     nyyin = openInclude(pchar, iname, &fname);
     if (nyyin == NULL) {
         assert(options.taskRegime);
@@ -610,15 +609,16 @@ assert(0);
 }
 
 static void addMacroToTabs(Symbol *pp, char *name) {
-    int ii,mm;
+    int index, mm;
     Symbol *memb;
-    mm = symbolTableIsMember(s_symbolTable,pp,&ii,&memb);
+
+    mm = symbolTableIsMember(s_symbolTable, pp, &index, &memb);
     if (mm) {
-        log_trace(": masking macro %s",name);
+        log_trace(": masking macro %s", name);
     } else {
-        log_trace(": adding macro %s",name);
+        log_trace(": adding macro %s", name);
     }
-    symbolTableSet(s_symbolTable,pp,ii);
+    symbolTableSet(s_symbolTable, pp, index);
 }
 
 static void setMacroArgumentName(S_macroArgumentTableElement *arg, void *at) {
@@ -884,9 +884,9 @@ static void processUnDefine(void) {
     Lexem lexem;
     char *cc;
     Position pos;
-    Symbol dd,*pp,*memb;
-    int ii;
-    int l, v, len; UNUSED len; UNUSED v; UNUSED l;
+    Symbol dd, *pp, *memb;
+    int l, v, len;
+    UNUSED len; UNUSED v; UNUSED l;
 
     //& GetLex(lexem); // Expanded
     lexem = getLex();
@@ -905,7 +905,7 @@ static void processUnDefine(void) {
         assert(options.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
-        if (symbolTableIsMember(s_symbolTable, &dd, &ii, &memb)) {
+        if (symbolTableIsMember(s_symbolTable, &dd, NULL, &memb)) {
             addCxReference(memb, &pos, UsageUndefinedMacro, noFileIndex, noFileIndex);
 
             PP_ALLOC(pp, Symbol);
@@ -1015,12 +1015,13 @@ static void execCppIf(int deleteSource) {
 
 static void processIfdef(bool isIfdef) {
     Lexem lexem;
-    int ii,mm;
-    Symbol pp,*memb;
+    int mm;
+    Symbol pp, *memb;
     char *cc;
     Position pos;
     int deleteSrc;
-    int l, v, len; UNUSED len; UNUSED v; UNUSED l;
+    int l, v, len;
+    UNUSED len; UNUSED v; UNUSED l;
 
     //& GetLex(lexem); // Expanded
     lexem = getLex();
@@ -1037,7 +1038,7 @@ static void processIfdef(bool isIfdef) {
     fillSymbolBits(&pp.bits, AccessDefault, TypeMacro, StorageNone);
 
     assert(options.taskRegime);
-    mm = symbolTableIsMember(s_symbolTable,&pp,&ii,&memb);
+    mm = symbolTableIsMember(s_symbolTable, &pp, NULL, &memb);
     if (mm && memb->u.mbody==NULL) mm = 0;	// undefined macro
     if (mm) {
         addCxReference(memb, &pos, UsageUsed, noFileIndex, noFileIndex);
@@ -1066,12 +1067,13 @@ endOfFile:;
 /* ********************************* #IF ************************** */
 
 int cexp_yylex(void) {
-    int l,par,ii,res,mm;
+    int l, par, res, mm;
     Lexem lexem;
     char *cc;
-    Symbol dd,*memb;
+    Symbol dd, *memb;
     Position pos;
-    int v, len; UNUSED len; UNUSED v;
+    int v, len;
+    UNUSED len; UNUSED v;
 
     lexem = yylex();
     if (isIdentifierLexem(lexem)) {
@@ -1097,7 +1099,7 @@ int cexp_yylex(void) {
 
         log_debug("(%s)", dd.name);
 
-        mm = symbolTableIsMember(s_symbolTable,&dd,&ii,&memb);
+        mm = symbolTableIsMember(s_symbolTable, &dd, NULL, &memb);
         if (mm && memb->u.mbody == NULL) mm = 0;   // undefined macro
         assert(options.taskRegime);
         if (mm) addCxReference(&dd, &pos, UsageUsed, noFileIndex, noFileIndex);
@@ -1325,12 +1327,13 @@ static void prependMacroInput(LexInput *argb) {
 
 
 static void expandMacroArgument(LexInput *argb) {
-    Symbol sd,*memb;
-    char *buf,*previousLexem,*currentLexem,*bcc, *tbcc;
-    int length,ii,line,bsize,failedMacroExpansion;
+    Symbol sd, *memb;
+    char *buf, *previousLexem, *currentLexem, *bcc, *tbcc;
+    int length, line, bsize, failedMacroExpansion;
     Lexem lexem;
     Position pos;
-    int len, val; UNUSED val; UNUSED len;
+    int len, val;
+    UNUSED val; UNUSED len;
 
     prependMacroInput(argb);
 
@@ -1357,7 +1360,7 @@ static void expandMacroArgument(LexInput *argb) {
         if (lexem == IDENTIFIER) {
             fillSymbol(&sd, currentLexem, currentLexem, s_noPos);
             fillSymbolBits(&sd.bits, AccessDefault, TypeMacro, StorageNone);
-            if (symbolTableIsMember(s_symbolTable, &sd, &ii, &memb)) {
+            if (symbolTableIsMember(s_symbolTable, &sd, NULL, &memb)) {
                 /* it is a macro, provide macro expansion */
                 if (expandMacroCall(memb,&pos)) goto nextLexem;
                 else failedMacroExpansion = 1;
@@ -1756,17 +1759,18 @@ endOfFile:
 /* **************************************************************** */
 
 static void addMacroBaseUsageRef(Symbol *mdef) {
-    int                 ii,rr;
-    SymbolReferenceItem     ppp,*memb;
-    Reference			*r;
-    Position          basePos;
+    int rr;
+    SymbolReferenceItem ppp, *memb;
+    Reference *r;
+    Position basePos;
+
     fillPosition(&basePos, s_input_file_number, 0, 0);
     fillSymbolRefItem(&ppp, mdef->linkName,
                                 cxFileHashNumber(mdef->linkName), // useless, put 0
                                 noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&ppp.b,TypeMacro, StorageDefault, ScopeGlobal,
                            mdef->bits.access, CategoryGlobal, 0);
-    rr = refTabIsMember(&referenceTable, &ppp, &ii, &memb);
+    rr = refTabIsMember(&referenceTable, &ppp, NULL, &memb);
     r = NULL;
     if (rr) {
         // this is optimization to avoid multiple base references
@@ -2103,7 +2107,6 @@ int yylex(void) {
     if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
         char *id;
         unsigned hash;
-        int ii;
         Symbol symbol, *memberP;
 
         id = yytext = currentInput.currentLexem;
@@ -2119,7 +2122,7 @@ int yylex(void) {
 
         if ((!LANGUAGE(LANG_JAVA))
             && lexem!=IDENT_NO_CPP_EXPAND
-            && symbolTableIsMember(s_symbolTable,&symbol,&ii,&memberP)) {
+            && symbolTableIsMember(s_symbolTable, &symbol, NULL, &memberP)) {
             // following is because the macro check can read new lexBuf,
             // so id would be destroyed
             //&assert(strcmp(id,memberP->name)==0);

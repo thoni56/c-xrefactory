@@ -98,7 +98,8 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
         }
         posid=(posid+HASH_SHIFT) % table->size;
     }
-    *position = posid;
+    if (position)
+        *position = posid;
     log_trace("not found, returning %d", posid);
     return false;
 }
