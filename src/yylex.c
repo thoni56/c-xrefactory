@@ -50,6 +50,10 @@
 #define MB_FREE_UNTIL(p)        {SM_FREE_UNTIL(mbMemory,p);}
 
 
+/* Exceptions: */
+#define END_OF_MACRO_ARGUMENT_EXCEPTION -1
+#define END_OF_FILE_EXCEPTION -2
+
 LexInput currentInput;
 int macroStackIndex=0;
 
@@ -311,30 +315,29 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
         }                                                               \
     }
 
-/* getLexA() - a functional facsimile to the old, now removed, macro GetLexA()
- * Returns either of:
- * the found lexem
- * -1 for end of macro argument
- * -2 for end of file
-
- TODO: convert to use longjmp() exception handling instead of magic return values
- as done in classfilereader.c
-*/
-static Lexem getLexA(char **previousLexem) {
+static Lexem getLexA(char **previousLexem, jmp_buf exceptionHandler) {
     Lexem lexem;
 
     while (currentInput.currentLexem >= currentInput.endOfBuffer) {
         InputType inputType;
         inputType = currentInput.inputType;
         if (macroStackIndex > 0) {
-            if (inputType == INPUT_MACRO_ARGUMENT)
-                return -1; //goto endOfMacroArgument; TODO: replace with setjmp()/longjmp()
+            if (inputType == INPUT_MACRO_ARGUMENT) {
+                if (exceptionHandler != NULL)
+                    longjmp(exceptionHandler, END_OF_MACRO_ARGUMENT_EXCEPTION);
+                else
+                    return -1; //goto endOfMacroArgument; TODO: replace with setjmp()/longjmp()
+            }
             MB_FREE_UNTIL(currentInput.beginningOfBuffer);
             currentInput = macroStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCFileConsistency();
-            if (!getLexem(&currentFile.lexBuffer))
-                return -2; //goto endOfFile; TODO: replace with setjmp()/longjmp()
+            if (!getLexem(&currentFile.lexBuffer)) {
+                if (exceptionHandler != NULL)
+                    longjmp(exceptionHandler, END_OF_FILE_EXCEPTION);
+                else
+                    return -2; //goto endOfFile; TODO: replace with setjmp()/longjmp()
+            }
             setCInputConsistency();
         } else {
             s_cache.cc = s_cache.cfin = NULL;
@@ -353,7 +356,7 @@ static Lexem getLexA(char **previousLexem) {
 #define GetLex(lexem) {                                             \
     char *previousLexem;                                            \
     UNUSED previousLexem;                                           \
-    lexem = getLexA(&previousLexem);                                \
+    lexem = getLexA(&previousLexem, NULL);                                \
     if (lexem == -1) goto endOfMacroArgument;                       \
     if (lexem == -2) goto endOfFile;                                \
 }
@@ -362,7 +365,7 @@ static Lexem getLexA(char **previousLexem) {
 static int getLex(void) {
     char *previousLexem;
     UNUSED previousLexem;
-    Lexem lexem = getLexA(&previousLexem);
+    Lexem lexem = getLexA(&previousLexem, NULL);
     return lexem; // -1 if endOfMacroArgument, -2 if endOfFile
 }
 
@@ -404,22 +407,27 @@ static void processLine(void) {
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
     Position pos; UNUSED pos;
+    jmp_buf exceptionHandler;
 
-    //& GetLex(lexem); // Expanded
+    /* getLex() exception handling setup */
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
     lexem = getLex();
-    if (lexem == -1) goto endOfMacroArgument;
-    if (lexem == -2) goto endOfFile;
 
     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
-    if (lexem != CONSTANT) return;
+    if (lexem != CONSTANT)
+        return;
 
-    //& GetLex(lexem); // Expanded
     lexem = getLex();
-    if (lexem == -1) goto endOfMacroArgument;
-    if (lexem == -2) goto endOfFile;
 
     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
     return;
+
 endOfMacroArgument:	assert(0);
 endOfFile:;
 }
@@ -562,13 +570,17 @@ static void processInclude(Position *ipos) {
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
     Position pos; UNUSED pos;
+    jmp_buf exceptionHandler;
 
-    //& GetLexA(lexem, previousLexem);
-    lexem = getLexA(&previousLexem);
-    if (lexem == -1)
-        goto endOfMacroArgument;
-    if (lexem == -2)
+    /* getLexA() exception handler setup */
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
         goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
+    lexem = getLexA(&previousLexem, exceptionHandler);
 
     currentLexem = currentInput.currentLexem;
     if (lexem == STRING_LITERAL) {
@@ -594,6 +606,7 @@ assert(0);
         //do lex = yylex(); while (lex != '\n');
     }
     return;
+
  endOfMacroArgument:	assert(0);
  endOfFile:;
 }
@@ -1252,25 +1265,28 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         AddHtmlCppReference(pos);
         processPragma();
         break;
-    case CPP_LINE:
+    case CPP_LINE: {
+        jmp_buf exceptionHandler;
+
+        /* getLex() exception handler setup */
+        switch(setjmp(exceptionHandler)) {
+        case END_OF_FILE_EXCEPTION:
+            goto endOfFile;
+        case END_OF_MACRO_ARGUMENT_EXCEPTION:
+            goto endOfMacroArgument;
+        }
+
         AddHtmlCppReference(pos);
         processLine();
 
-        //& GetLex(lexem); // Expanded
         lexem = getLex();
-        if (lexem == -1) goto endOfMacroArgument;
-        if (lexem == -2) goto endOfFile;
-
         while (lexem != '\n') {
             PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
-
-            //& GetLex(lexem); // Expanded
             lexem = getLex();
-            if (lexem == -1) goto endOfMacroArgument;
-            if (lexem == -2) goto endOfFile;
         }
         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
         break;
+    }
     default: assert(0);
     }
     return true;
@@ -1329,24 +1345,31 @@ static void prependMacroInput(LexInput *argb) {
 static void expandMacroArgument(LexInput *argb) {
     Symbol sd, *memb;
     char *buf, *previousLexem, *currentLexem, *bcc, *tbcc;
-    int length, line, bsize, failedMacroExpansion;
+    int length, line, failedMacroExpansion;
     Lexem lexem;
     Position pos;
     int len, val;
     UNUSED val; UNUSED len;
+    int bsize = MACRO_UNIT_SIZE;
 
     prependMacroInput(argb);
 
     currentInput.inputType = INPUT_MACRO_ARGUMENT;
-    bsize = MACRO_UNIT_SIZE;
     PP_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
     bcc = buf;
+
+    /* getLexA() exception handler setup */
+    jmp_buf exceptionHandler;
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
     for(;;) {
     nextLexem:
-        //& GetLexA(lexem, previousLexem);
-        lexem = getLexA(&previousLexem);
-        if (lexem == -1) goto endOfMacroArgument;
-        if (lexem == -2) goto endOfFile;
+        lexem = getLexA(&previousLexem, exceptionHandler);
 
         currentLexem = currentInput.currentLexem;
         PassLex(currentInput.currentLexem, lexem, line, val, pos, len, macroStackIndex == 0);
@@ -1614,18 +1637,16 @@ static void createMacroBody(LexInput *macBody,
 /* *************************************************************** */
 /* ******************* MACRO CALL PROCESS ************************ */
 /* *************************************************************** */
-/* TODO: another macro that forces invocation context to have
-   particular variables. Introduce them as arguments */
-#define GetLexASkippingLines(lexem, previousLexem)                      \
+#define GetLexASkippingLines(lexem, previousLexem, line, val, pos, len) \
     {                                                                   \
-        lexem = getLexA(&previousLexem);                                \
+        lexem = getLexA(&previousLexem, NULL);                                \
         if (lexem == -1) goto endOfMacroArgument;                       \
         if (lexem == -2) goto endOfFile;                                \
                                                                         \
         while (lexem == LINE_TOK || lexem == '\n') {                    \
             PassLex(currentInput.currentLexem, lexem, line, val, pos, len, \
-                               macroStackIndex == 0);                   \
-            lexem = getLexA(&previousLexem);                            \
+                    macroStackIndex == 0);                              \
+            lexem = getLexA(&previousLexem, NULL);                            \
             if (lexem == -1) goto endOfMacroArgument;                   \
             if (lexem == -2) goto endOfFile;                            \
         }                                                               \
@@ -1668,23 +1689,7 @@ static void getActMacroArgument(
             PP_REALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char,
                     bufsize+MAX_LEXEM_SIZE-MACRO_ARG_UNIT_SIZE);
         }
-        //& GetLexASkippingLines(lexem, previousLexem);
-        {
-            lexem = getLexA(&previousLexem);
-            if (lexem == -1) goto end;
-            if (lexem == -2) goto end;
-
-            while (lexem == LINE_TOK || lexem == '\n') {
-                PassLex(currentInput.currentLexem, lexem, line, val, pos, len,
-                        macroStackIndex == 0);
-                lexem = getLexA(&previousLexem);
-                if (lexem == -1) goto end;
-                if (lexem == -2) goto end;
-            }
-        end:
-            if (lexem == -1) goto endOfMacroArgument;
-            if (lexem == -2) goto endOfFile;
-        }
+        GetLexASkippingLines(lexem, previousLexem, line, val, pos, len);
 
         PassLex(currentInput.currentLexem, lexem, line, val, (**parpos2), len,
                 macroStackIndex == 0);
@@ -1723,7 +1728,7 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
     parpos1 = &ppb1;
     parpos2 = &ppb2;
     PP_ALLOCC(actArgs,mb->argn,struct lexInput);
-    GetLexASkippingLines(lexem, previousLexem);
+    GetLexASkippingLines(lexem, previousLexem, line, val, pos, len);
     PassLex(currentInput.currentLexem, lexem, line, val, pos, len, macroStackIndex == 0);
     if (lexem == ')') {
         *parpos2 = pos;
@@ -1734,7 +1739,7 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
                                 &actArgs[actArgi], mb, actArgi);
             actArgi ++ ;
             if (lexem != ',' || actArgi >= mb->argn) break;
-            GetLexASkippingLines(lexem, previousLexem);
+            GetLexASkippingLines(lexem, previousLexem, line, val, pos, len);
             PassLex(currentInput.currentLexem, lexem, line, val, pos, len,
                     macroStackIndex == 0);
         }
@@ -1806,7 +1811,7 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
         return(0);
     PP_ALLOCC(freeBase,0,char);
     if (mb->argn >= 0) {
-        GetLexASkippingLines(lexem, previousLexem);
+        GetLexASkippingLines(lexem, previousLexem, line, val, pos, len);
         if (lexem != '(') {
             currentInput.currentLexem = previousLexem;		/* unget lexem */
             return(0);
@@ -1889,12 +1894,19 @@ int cachedInputPass(int cpoint, char **cfrom) {
     cto = s_cache.cp[cpoint].lbcc;
     ccc = *cfrom;
     res = 1;
-    while (ccc < cto) {
-        //& GetLexA(lexem, previousLexem);
-        lexem = getLexA(&previousLexem);
-        if (lexem == -1) goto endOfMacroArgument;
-        if (lexem == -2) goto endOfFile;
 
+    /* getLexA() exception handler setup */
+    jmp_buf exceptionHandler;
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
+
+    while (ccc < cto) {
+        lexem = getLexA(&previousLexem, exceptionHandler);
         PassLex(currentInput.currentLexem, lexem, line, val, pos, len, 1);
         lexemLength = currentInput.currentLexem-previousLexem;
         assert(lexemLength >= 0);
@@ -2064,16 +2076,22 @@ static void actionOnBlockMarker(void) {
 
 int yylex(void) {
     Lexem lexem;
-    int line, val, len;
     Position pos, idpos;
     char *previousLexem;
+    int line, val;
+    int len = 0;
 
-    len = 0;
+    /* getLexA() exception handler setup */
+    jmp_buf exceptionHandler;
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
  nextYylex:
-    //& GetLexA(lexem, previousLexem); /* Expand and extract into: */
-    lexem = getLexA(&previousLexem);
-    if (lexem == -1) goto endOfMacroArgument;
-    if (lexem == -2) goto endOfFile;
+    lexem = getLexA(&previousLexem, exceptionHandler);
 
  contYylex:
     if (lexem < 256) {

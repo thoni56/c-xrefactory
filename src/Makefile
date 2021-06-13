@@ -217,7 +217,7 @@ endif
 	fi
 	@printf "\\r"
 ifeq (, $(LCOV_EXCLUDES))
-	lcov --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+	lcov -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 endif
 	genhtml -q -o ../coverage ../coverage/total.info
 	@echo Coverage done
