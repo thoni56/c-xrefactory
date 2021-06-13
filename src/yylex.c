@@ -610,6 +610,7 @@ assert(0);
 
 /* ********************************* #DEFINE ********************** */
 
+/* All occurences expanded away
 #define GetNonBlankMaybeLexem(lexem, l, v, pos, len) {   \
     GetLex(lexem);\
     while (lexem == LINE_TOK) {\
@@ -617,6 +618,8 @@ assert(0);
         GetLex(lexem);\
     }\
 }
+
+*/
 
 static void addMacroToTabs(Symbol *pp, char *name) {
     int index, mm;
@@ -700,7 +703,7 @@ void processDefine(bool hasArguments) {
     Symbol *pp;
     S_macroArgumentTableElement *maca, mmaca;
     S_macroBody *macroBody;
-    Position pos, macpos, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
+    Position pos, macroPosition, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
     char *cc, *mname, *aname, *body, *mm, *ddd;
     char **argNames, *argLinkName;
     int l, v, len; UNUSED l; UNUSED v; UNUSED len;
@@ -722,14 +725,14 @@ void processDefine(bool hasArguments) {
     /* TODO: WTF there are some "symbols" in the lexBuffer, like "\275\001".
      * Those are compacted converted lexem codes. See lexmac.h for explanation.
      */
-    PassLex(currentInput.currentLexem, lexem, l, v, macpos, len, 1);
+    PassLex(currentInput.currentLexem, lexem, l, v, macroPosition, len, 1);
 
-    testCxrefCompletionId(&lexem, cc, &macpos);    /* for cross-referencing */
+    testCxrefCompletionId(&lexem, cc, &macroPosition);    /* for cross-referencing */
     if (lexem != IDENTIFIER)
         return;
 
     PP_ALLOC(pp, Symbol);
-    fillSymbol(pp, NULL, NULL, macpos);
+    fillSymbol(pp, NULL, NULL, macroPosition);
     fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
 
     /* TODO: only call to setGlobalFileDepNames() that doesn't do it in XX memory, why? */
@@ -739,12 +742,62 @@ void processDefine(bool hasArguments) {
     macroArgumentTableNoAllocInit(&s_macroArgumentTable, s_macroArgumentTable.size);
     argCount = -1;
     if (hasArguments) {
-        GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+        {
+            //& GetLex(lexem);
+            {
+                char *previousLexem;
+                UNUSED previousLexem;
+                lexem = getLexemSavePrevious(&previousLexem, NULL);
+                if (lexem == -1)
+                    goto endOfMacroArgument;
+                if (lexem == -2)
+                    goto endOfFile;
+            }
+            while (lexem == LINE_TOK) {
+                PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+                //& GetLex(lexem);
+                {
+                    char *previousLexem;
+                    UNUSED previousLexem;
+                    lexem = getLexemSavePrevious(&previousLexem, NULL);
+                    if (lexem == -1)
+                        goto endOfMacroArgument;
+                    if (lexem == -2)
+                        goto endOfFile;
+                }
+            }
+        }
         PassLex(currentInput.currentLexem, lexem, l, v, *parpos2, len, 1);
         *parpos1 = *parpos2;
         if (lexem != '(') goto errorlab;
         argCount ++;
-        GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+        {
+            //& GetLex(lexem);
+            {
+                char *previousLexem;
+                UNUSED previousLexem;
+                lexem = getLexemSavePrevious(&previousLexem, NULL);
+                if (lexem == -1)
+                    goto endOfMacroArgument;
+                if (lexem == -2)
+                    goto endOfFile;
+            }
+            while (lexem == LINE_TOK) {
+                PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+                //& GetLex(lexem);
+                {
+                    char *previousLexem;
+                    UNUSED previousLexem;
+                    lexem = getLexemSavePrevious(&previousLexem, NULL);
+                    if (lexem == -1)
+                        goto endOfMacroArgument;
+                    if (lexem == -2)
+                        goto endOfFile;
+                }
+            }
+        }
         if (lexem != ')') {
             for(;;) {
                 char tmpBuff[TMP_BUFF_SIZE];
@@ -755,7 +808,7 @@ void processDefine(bool hasArguments) {
                     aname = cc;
                 } else if (lexem == ELIPSIS) {
                     aname = s_cppVarArgsName;
-                    pos = macpos;					// hack !!!
+                    pos = macroPosition;					// hack !!!
                     ellipsis = 1;
                 } else goto errorlab;
                 PP_ALLOCC(mm, strlen(aname)+1, char);
@@ -768,27 +821,103 @@ void processDefine(bool hasArguments) {
                 fillMacroArgTabElem(maca, mm, argLinkName, argCount);
                 foundIndex = macroArgumentTableAdd(&s_macroArgumentTable, maca);
                 argCount ++;
-                GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+                //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+                {
+                    //& GetLex(lexem);
+                    {
+                        char *previousLexem;
+                        UNUSED previousLexem;
+                        lexem = getLexemSavePrevious(&previousLexem, NULL);
+                        if (lexem == -1)
+                            goto endOfMacroArgument;
+                        if (lexem == -2)
+                            goto endOfFile;
+                    }
+                    while (lexem == LINE_TOK) {
+                        PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+                        //& GetLex(lexem);
+                        {
+                            char *previousLexem;
+                            UNUSED previousLexem;
+                            lexem = getLexemSavePrevious(&previousLexem, NULL);
+                            if (lexem == -1)
+                                goto endOfMacroArgument;
+                            if (lexem == -2)
+                                goto endOfFile;
+                        }
+                    }
+                }
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
                 PassLex(currentInput.currentLexem, lexem, l, v, *parpos2, len, 1);
                 if (! ellipsis) {
                     addTrivialCxReference(s_macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                           &pos, UsageDefined);
-                    handleMacroDefinitionParameterPositions(argCount, &macpos, parpos1, &pos, parpos2, 0);
+                    handleMacroDefinitionParameterPositions(argCount, &macroPosition, parpos1, &pos, parpos2, 0);
                 }
                 if (lexem == ELIPSIS) {
                     // GNU ELLIPSIS ?????
-                    GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+                    //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+                    {
+                        //& GetLex(lexem);
+                        {
+                            char *previousLexem;
+                            UNUSED previousLexem;
+                            lexem = getLexemSavePrevious(&previousLexem, NULL);
+                            if (lexem == -1)
+                                goto endOfMacroArgument;
+                            if (lexem == -2)
+                                goto endOfFile;
+                        }
+                        while (lexem == LINE_TOK) {
+                            PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+                            //& GetLex(lexem);
+                            {
+                                char *previousLexem;
+                                UNUSED previousLexem;
+                                lexem = getLexemSavePrevious(&previousLexem, NULL);
+                                if (lexem == -1)
+                                    goto endOfMacroArgument;
+                                if (lexem == -2)
+                                    goto endOfFile;
+                            }
+                        }
+                    }
                     PassLex(currentInput.currentLexem, lexem, l, v, *parpos2, len, 1);
                 }
                 if (lexem == ')') break;
                 if (lexem != ',') break;
-                GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+
+                //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+                {
+                    //& GetLex(lexem);
+                    {
+                        char *previousLexem;
+                        UNUSED previousLexem;
+                        lexem = getLexemSavePrevious(&previousLexem, NULL);
+                        if (lexem == -1)
+                            goto endOfMacroArgument;
+                        if (lexem == -2)
+                            goto endOfFile;
+                    }
+                    while (lexem == LINE_TOK) {
+                        PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+                        //& GetLex(lexem);
+                        {
+                            char *previousLexem;
+                            UNUSED previousLexem;
+                            lexem = getLexemSavePrevious(&previousLexem, NULL);
+                            if (lexem == -1)
+                                goto endOfMacroArgument;
+                            if (lexem == -2)
+                                goto endOfFile;
+                        }
+                    }
+                }
             }
-            handleMacroDefinitionParameterPositions(argCount, &macpos, parpos1, &s_noPos, parpos2, 1);
+            handleMacroDefinitionParameterPositions(argCount, &macroPosition, parpos1, &s_noPos, parpos2, 1);
         } else {
             PassLex(currentInput.currentLexem, lexem, l, v, *parpos2, len, 1);
-            handleMacroDefinitionParameterPositions(argCount, &macpos, parpos1, &s_noPos, parpos2, 1);
+            handleMacroDefinitionParameterPositions(argCount, &macroPosition, parpos1, &s_noPos, parpos2, 1);
         }
     }
     /* process macro body */
@@ -796,7 +925,33 @@ void processDefine(bool hasArguments) {
     sizei = 0;
     PP_ALLOCC(body, msize+MAX_LEXEM_SIZE, char);
     bodyReadingFlag = true;
-    GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+
+    //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+    {
+        //& GetLex(lexem);
+        {
+            char *previousLexem;
+            UNUSED previousLexem;
+            lexem = getLexemSavePrevious(&previousLexem, NULL);
+            if (lexem == -1)
+                goto endOfMacroArgument;
+            if (lexem == -2)
+                goto endOfFile;
+        }
+        while (lexem == LINE_TOK) {
+            PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+            //& GetLex(lexem);
+            {
+                char *previousLexem;
+                UNUSED previousLexem;
+                lexem = getLexemSavePrevious(&previousLexem, NULL);
+                if (lexem == -1)
+                    goto endOfMacroArgument;
+                if (lexem == -2)
+                    goto endOfFile;
+            }
+        }
+    }
     cc = currentInput.currentLexem;
     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
     while (lexem != '\n') {
@@ -823,7 +978,32 @@ void processDefine(bool hasArguments) {
                 for(; cc<currentInput.currentLexem; ddd++,cc++)*ddd= *cc;
                 sizei = ddd - body;
             }
-            GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+            {
+                //& GetLex(lexem);
+                {
+                    char *previousLexem;
+                    UNUSED previousLexem;
+                    lexem = getLexemSavePrevious(&previousLexem, NULL);
+                    if (lexem == -1)
+                        goto endOfMacroArgument;
+                    if (lexem == -2)
+                        goto endOfFile;
+                }
+                while (lexem == LINE_TOK) {
+                    PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+                    //& GetLex(lexem);
+                    {
+                        char *previousLexem;
+                        UNUSED previousLexem;
+                        lexem = getLexemSavePrevious(&previousLexem, NULL);
+                        if (lexem == -1)
+                            goto endOfMacroArgument;
+                        if (lexem == -2)
+                            goto endOfFile;
+                    }
+                }
+            }
             cc = currentInput.currentLexem;
             PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
         }
@@ -849,7 +1029,7 @@ endOfBody:
 
     addMacroToTabs(pp,mname);
     assert(options.taskRegime);
-    addCxReference(pp, &macpos, UsageDefined, noFileIndex, noFileIndex);
+    addCxReference(pp, &macroPosition, UsageDefined, noFileIndex, noFileIndex);
     return;
 
 endOfMacroArgument:
@@ -1090,12 +1270,62 @@ int cexp_yylex(void) {
         // this is useless, as it would be set to 0 anyway
         lexem = cexpTranslateToken(CONSTANT, 0);
     } else if (lexem == CPP_DEFINED_OP) {
-        GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+        {
+            //& GetLex(lexem);
+            {
+                char *previousLexem;
+                UNUSED previousLexem;
+                lexem = getLexemSavePrevious(&previousLexem, NULL);
+                if (lexem == -1)
+                    goto endOfMacroArgument;
+                if (lexem == -2)
+                    goto endOfFile;
+            }
+            while (lexem == LINE_TOK) {
+                PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+                //& GetLex(lexem);
+                {
+                    char *previousLexem;
+                    UNUSED previousLexem;
+                    lexem = getLexemSavePrevious(&previousLexem, NULL);
+                    if (lexem == -1)
+                        goto endOfMacroArgument;
+                    if (lexem == -2)
+                        goto endOfFile;
+                }
+            }
+        }
         cc = currentInput.currentLexem;
         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
         if (lexem == '(') {
             par = 1;
-            GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+            {
+                //& GetLex(lexem);
+                {
+                    char *previousLexem;
+                    UNUSED previousLexem;
+                    lexem = getLexemSavePrevious(&previousLexem, NULL);
+                    if (lexem == -1)
+                        goto endOfMacroArgument;
+                    if (lexem == -2)
+                        goto endOfFile;
+                }
+                while (lexem == LINE_TOK) {
+                    PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+                    //& GetLex(lexem);
+                    {
+                        char *previousLexem;
+                        UNUSED previousLexem;
+                        lexem = getLexemSavePrevious(&previousLexem, NULL);
+                        if (lexem == -1)
+                            goto endOfMacroArgument;
+                        if (lexem == -2)
+                            goto endOfFile;
+                    }
+                }
+            }
             cc = currentInput.currentLexem;
             PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
         } else {
@@ -1117,7 +1347,32 @@ int cexp_yylex(void) {
         /* following call sets uniyylval */
         res = cexpTranslateToken(CONSTANT, mm);
         if (par) {
-            GetNonBlankMaybeLexem(lexem, l, v, pos, len);
+            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
+            {
+                //& GetLex(lexem);
+                {
+                    char *previousLexem;
+                    UNUSED previousLexem;
+                    lexem = getLexemSavePrevious(&previousLexem, NULL);
+                    if (lexem == -1)
+                        goto endOfMacroArgument;
+                    if (lexem == -2)
+                        goto endOfFile;
+                }
+                while (lexem == LINE_TOK) {
+                    PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
+                    //& GetLex(lexem);
+                    {
+                        char *previousLexem;
+                        UNUSED previousLexem;
+                        lexem = getLexemSavePrevious(&previousLexem, NULL);
+                        if (lexem == -1)
+                            goto endOfMacroArgument;
+                        if (lexem == -2)
+                            goto endOfFile;
+                    }
+                }
+            }
             PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
             if (lexem != ')' && options.taskRegime!=RegimeEditServer) {
                 warningMessage(ERR_ST,"missing ')' after defined( ");
