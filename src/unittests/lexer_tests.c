@@ -71,4 +71,6 @@ Ensure(Lex, can_scan_include_next) {
     getLexToken(&lexemPointer);
     getLexPosition(&lexemPointer);
     assert_that(getLexToken(&lexemPointer), is_equal_to(CPP_INCLUDE_NEXT));
+    getLexPosition(&lexemPointer);
+    assert_that(getLexToken(&lexemPointer), is_equal_to(STRING_LITERAL));
 }
