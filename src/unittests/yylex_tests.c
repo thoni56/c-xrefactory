@@ -4,6 +4,7 @@
 /* Declare semi-private function */
 void processDefineDirective(bool hasArguments);
 void processLineDirective(void);
+void processIncludeDirective(Position *ipos);
 
 #include "filedescriptor.h"
 #include "filetable.h"
@@ -86,4 +87,17 @@ Ensure(Yylex, can_handle_a_line_directive_without_number) {
     currentFile.lineNumber = 1;
     processLineDirective();
     /* No asserts, only for execution of END_OF_FILE_EXCEPTION in #line directive */
+}
+
+xEnsure(Yylex, can_process_include_directive) {
+    Position ipos = (Position){1,2,3};
+    char *lexem_stream = "\303\001\"include.h\0";
+    char *newline = "\n";
+
+    initInput(NULL, NULL, "", NULL);
+    expect(getLexemFromLexer, will_return(true));
+    expect(getLexemFromLexer, will_return(true));
+    expect(getLexemFromLexer, will_return(true));
+
+    processIncludeDirective(&ipos);
 }

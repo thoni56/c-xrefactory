@@ -564,14 +564,14 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
     }
 }
 
-
-static void processIncludeDirective(Position *ipos) {
+/* Public only for unittests */
+void processIncludeDirective(Position *ipos) {
     char *currentLexem, *previousLexem;
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
     Position pos; UNUSED pos;
-    jmp_buf exceptionHandler;
 
+    jmp_buf exceptionHandler;
     switch(setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         goto endOfFile;
