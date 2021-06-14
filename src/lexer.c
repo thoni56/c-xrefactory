@@ -732,12 +732,12 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     //&        HandleCppToken(ch, cb, dd, cb->next, cb->fileNumber, cb->lineNumber, cb->lineBegin);
                     // #define HandleCppToken(ch, cb, dd, cb->next, cb->fileNumber, cb->lineNumber, cb->lineBegin) {
                     {
-                        char *ddd, tt[10];
+                        char *ddd, tt[30];
                         int i, lcoll, scol;
                         lcoll = columnPosition(cb);
                         ch = getChar(cb);
                         ch = skipBlanks(cb, ch);
-                        for(i=0; i<9 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) {
+                        for(i=0; i<sizeof(tt)-1 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) {
                             tt[i] = ch;
                             ch = getChar(cb);
                         }
@@ -763,9 +763,12 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         } else if (strcmp(tt,"endif") == 0) {
                             putLexToken(CPP_ENDIF, &dd);
                             putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd); \
-                        } else if (strcmp(tt,"include") == 0) {
+                        } else if (strcmp(tt,"include") == 0 || strcmp(tt, "include_next") == 0) {
                             char endCh;
-                            putLexToken(CPP_INCLUDE, &dd);
+                            if (strcmp(tt, "include") == 0)
+                                putLexToken(CPP_INCLUDE, &dd);
+                            else
+                                putLexToken(CPP_INCLUDE_NEXT, &dd);
                             putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
                             ch = skipBlanks(cb, ch);
                             if (ch == '\"' || ch == '<') {

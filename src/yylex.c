@@ -1547,7 +1547,8 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
         break;
     }
-    default: assert(0);
+    default:
+        log_fatal("Unknown lexem encountered");
     }
     return true;
 

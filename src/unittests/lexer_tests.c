@@ -17,7 +17,9 @@
 
 
 Describe(Lex);
-BeforeEach(Lex) {}
+BeforeEach(Lex) {
+    s_language = LANG_C;
+}
 AfterEach(Lex) {}
 
 
@@ -50,4 +52,23 @@ Ensure(Lex, can_scan_a_floating_point_number) {
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_true);
     assert_that(getLexToken(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
+}
+
+Ensure(Lex, can_scan_include_next) {
+    LexemBuffer lexemBuffer;
+    char *lexemPointer = lexemBuffer.lexemStream;
+    CharacterBuffer *charBuffer = &lexemBuffer.buffer;
+    char *inputString = "\n#include_next \"file\""; /* Directives must follow \n to be in column 1 */
+
+    s_cache.activeCache = false; /* ?? */
+
+    initLexemBuffer(&lexemBuffer, NULL);
+    charBuffer->fileNumber = 0;
+
+    initCharacterBufferFromString(&lexemBuffer.buffer, inputString);
+
+    assert_that(getLexemFromLexer(&lexemBuffer), is_true);
+    getLexToken(&lexemPointer);
+    getLexPosition(&lexemPointer);
+    assert_that(getLexToken(&lexemPointer), is_equal_to(CPP_INCLUDE_NEXT));
 }

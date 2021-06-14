@@ -145,7 +145,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 /* ************************** CPP-TOKENS ****************************** */
 /* c-only */
 %token CPP_TOKENS_START
-%token CPP_INCLUDE CPP_DEFINE CPP_IFDEF CPP_IFNDEF CPP_IF CPP_ELSE CPP_ENDIF
+%token CPP_INCLUDE CPP_INCLUDE_NEXT CPP_DEFINE CPP_IFDEF CPP_IFNDEF CPP_IF CPP_ELSE CPP_ENDIF
 %token CPP_ELIF CPP_UNDEF
 %token CPP_PRAGMA CPP_LINE
 %token CPP_DEFINE0       /* macro with no argument */
