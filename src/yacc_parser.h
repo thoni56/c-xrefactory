@@ -1,5 +1,5 @@
-#ifndef _YACC_PARSER_H_
-#define _YACC_PARSER_H_
+#ifndef YACC_PARSER_H_INCLUDED
+#define YACC_PARSER_H_INCLUDED
 
 #include "proto.h"
 

@@ -1,5 +1,5 @@
-#ifndef _PARSERS__H
-#define _PARSERS__H
+#ifndef PARSERS_H_INCLUDED
+#define PARSERS_H_INCLUDED
 
 #ifdef __WIN32__
 

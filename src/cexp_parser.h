@@ -1,5 +1,5 @@
-#ifndef _CEXP_H_
-#define _CEXP_H_
+#ifndef CEXP_H_INCLUDED
+#define CEXP_H_INCLUDED
 
 extern int cexp_yyparse();
 extern int cexpTranslateToken(int tok, int val);

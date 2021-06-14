@@ -1,5 +1,5 @@
-#ifndef _HEAD__H
-#define _HEAD__H
+#ifndef HEAD_H_INCLUDED
+#define HEAD_H_INCLUDED
 
 #include "constants.h"
 

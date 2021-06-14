@@ -1,5 +1,5 @@
-#ifndef _REFACTORINGS_H_
-#define _REFACTORINGS_H_
+#ifndef REFACTORINGS_H_INCLUDED
+#define REFACTORINGS_H_INCLUDED
 
 typedef enum availableRefactorings {
     AVR_NO_REFACTORING = 0,

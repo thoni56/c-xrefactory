@@ -1,5 +1,5 @@
-#ifndef _POSITION_H_
-#define _POSITION_H_
+#ifndef POSITION_H_INCLUDED
+#define POSITION_H_INCLUDED
 
 #include <stdbool.h>
 

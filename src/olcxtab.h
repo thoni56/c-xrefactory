@@ -1,5 +1,5 @@
-#ifndef _OLCXTAB_H_
-#define _OLCXTAB_H_
+#ifndef OLCXTAB_H_INCLUDED
+#define OLCXTAB_H_INCLUDED
 
 /* olcxTab - an instance of hashlist */
 
@@ -20,7 +20,7 @@ typedef struct userOlcxData {
 
 #include "hashlist.th"
 
-#ifndef _IN_OLCXTAB_C_
+#ifndef IN_OLCXTAB_C
 #undef HASH_TAB_NAME
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE

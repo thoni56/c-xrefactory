@@ -1,4 +1,4 @@
-#define _IN_FILETAB_C_
+#define IN_FILETAB_C
 #include "filetable.h"
 
 #include "commons.h"            /* For fatalError() */

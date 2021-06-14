@@ -1,5 +1,5 @@
-#ifndef _TYPES_H_
-#define _TYPES_H_
+#ifndef TYPES_H_INCLUDED
+#define TYPES_H_INCLUDED
 
 /*
   Because of the macro magic we can't have the comments close to the

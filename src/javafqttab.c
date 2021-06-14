@@ -1,4 +1,4 @@
-#define _IN_JAVAFQTTAB_C_
+#define IN_JAVAFQTTAB_C
 #include "javafqttab.h"
 
 #include "hash.h"

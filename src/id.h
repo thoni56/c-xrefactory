@@ -1,5 +1,5 @@
-#ifndef _ID_H_
-#define _ID_H_
+#ifndef ID_H_INCLUDED
+#define ID_H_INCLUDED
 
 #include "type.h"
 #include "symbol.h"

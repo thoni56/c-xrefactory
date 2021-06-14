@@ -1,5 +1,5 @@
-#ifndef _STORAGE_H_
-#define _STORAGE_H_
+#ifndef STORAGE_H_INCLUDED
+#define STORAGE_H_INCLUDED
 
 /* Because of the macro magic we can't comment near the actual values
    so here are some descriptions of some of the Usage values

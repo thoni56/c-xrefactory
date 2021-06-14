@@ -1,5 +1,5 @@
-#ifndef _JAVAFQTTAB_H_
-#define _JAVAFQTTAB_H_
+#ifndef JAVAFQTTAB_H_INCLUDED
+#define JAVAFQTTAB_H_INCLUDED
 
 #include "proto.h"
 #include "symbol.h"
@@ -10,7 +10,7 @@
 
 #include "hashlist.th"
 
-#ifndef _IN_JAVAFQTTAB_C_
+#ifndef IN_JAVAFQTTAB_C
 #undef HASH_TAB_NAME
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE

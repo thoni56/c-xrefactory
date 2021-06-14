@@ -1,5 +1,5 @@
-#ifndef _LEXEMBUFFER_H_
-#define _LEXEMBUFFER_H_
+#ifndef LEXEMBUFFER_H_INCLUDED
+#define LEXEMBUFFER_H_INCLUDED
 
 #include "lexem.h"
 #include "characterreader.h"

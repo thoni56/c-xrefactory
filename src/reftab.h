@@ -1,5 +1,5 @@
-#ifndef _REFTAB_H_
-#define _REFTAB_H_
+#ifndef REFTAB_H_INCLUDED
+#define REFTAB_H_INCLUDED
 
 #include "proto.h"
 
@@ -12,7 +12,7 @@
 
 extern ReferenceTable referenceTable;
 
-#ifndef _IN_REFTAB_C_
+#ifndef IN_REFTAB_C
 #undef HASH_TAB_NAME
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE

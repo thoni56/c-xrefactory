@@ -1,4 +1,4 @@
-#define _IN_OLCXTAB_C_
+#define IN_OLCXTAB_C
 #include "olcxtab.h"
 
 #include "hash.h"

@@ -1,5 +1,5 @@
-#ifndef _CHARACTERBUFFER_H_
-#define _CHARACTERBUFFER_H_
+#ifndef CHARACTERBUFFER_H_INCLUDED
+#define CHARACTERBUFFER_H_INCLUDED
 
 #include <zlib.h>
 #include <stdio.h>

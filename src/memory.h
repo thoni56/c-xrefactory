@@ -1,5 +1,5 @@
-#ifndef _MEMMAC__H
-#define _MEMMAC__H
+#ifndef MEMMAC_H_INCLUDED
+#define MEMMAC_H_INCLUDED
 
 #include "stdinc.h"
 

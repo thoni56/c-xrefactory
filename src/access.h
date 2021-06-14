@@ -1,5 +1,5 @@
-#ifndef _ACCESS_H_
-#define _ACCESS_H_
+#ifndef ACCESS_H_INCLUDED
+#define ACCESS_H_INCLUDED
 
 /* *********************************************************************** */
 /*                       JAVA Access Attribute                             */

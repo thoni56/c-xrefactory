@@ -1,5 +1,5 @@
-#ifndef _JSLTYPETAB_H_
-#define _JSLTYPETAB_H_
+#ifndef JSLTYPETAB_H_INCLUDED
+#define JSLTYPETAB_H_INCLUDED
 
 #include "proto.h"
 
@@ -9,7 +9,7 @@
 
 #include "hashlist.th"
 
-#ifndef _IN_JSLTYPETAB_C_
+#ifndef IN_JSLTYPETAB_C
 #undef HASH_TAB_NAME
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE

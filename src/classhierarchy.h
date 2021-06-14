@@ -1,5 +1,5 @@
-#ifndef _CLASSHIERARCHY_H_
-#define _CLASSHIERARCHY_H_
+#ifndef CLASSHIERARCHY_H_INCLUDED
+#define CLASSHIERARCHY_H_INCLUDED
 
 #include "proto.h"
 

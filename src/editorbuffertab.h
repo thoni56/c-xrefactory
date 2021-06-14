@@ -1,5 +1,5 @@
-#ifndef _EDITORBUFFERTAB_H_
-#define _EDITORBUFFERTAB_H_
+#ifndef EDITORBUFFERTAB_H_INCLUDED
+#define EDITORBUFFERTAB_H_INCLUDED
 
 #include "editor.h"
 
@@ -9,7 +9,7 @@
 
 #include "hashlist.th"
 
-#ifndef _IN_EDITORBUFFERTAB_C_
+#ifndef IN_EDITORBUFFERTAB_C
 #undef HASH_TAB_NAME
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE

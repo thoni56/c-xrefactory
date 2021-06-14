@@ -1,5 +1,5 @@
-#ifndef _CACHING_H_
-#define _CACHING_H_
+#ifndef CACHING_H_INCLUDED
+#define CACHING_H_INCLUDED
 
 #include "globals.h"              /* For Counters */
 #include "memory.h"

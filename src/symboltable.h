@@ -1,5 +1,5 @@
-#ifndef _SYMTAB_H_
-#define _SYMTAB_H_
+#ifndef SYMTAB_H_INCLUDED
+#define SYMTAB_H_INCLUDED
 
 /* symTab - an instance of hashlist */
 

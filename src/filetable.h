@@ -1,5 +1,5 @@
-#ifndef _FILETAB_H_
-#define _FILETAB_H_
+#ifndef FILETAB_H_INCLUDED
+#define FILETAB_H_INCLUDED
 
 #include "proto.h"
 
@@ -38,7 +38,7 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
 
 #include "hashtab.th"
 
-#ifndef _IN_FILETAB_C_
+#ifndef IN_FILETAB_C
 #undef HASH_TAB_NAME
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE

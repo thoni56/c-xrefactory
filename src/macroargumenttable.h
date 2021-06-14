@@ -1,5 +1,5 @@
-#ifndef _MACROARGUMENTTABLE_H_
-#define _MACROARGUMENTTABLE_H_
+#ifndef MACROARGUMENTTABLE_H_INCLUDED
+#define MACROARGUMENTTABLE_H_INCLUDED
 
 /* Macro argument table - instance of hashtable */
 

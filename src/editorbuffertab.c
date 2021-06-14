@@ -1,4 +1,4 @@
-#define _IN_EDITORBUFFERTAB_C_
+#define IN_EDITORBUFFERTAB_C
 #include "editorbuffertab.h"
 
 #include "hash.h"

@@ -1,4 +1,4 @@
-#define _IN_JSLTYPETAB_C_
+#define IN_JSLTYPETAB_C
 #include "jsltypetab.h"
 
 #define HASH_FUN(elemp) hashFun(elemp->d->name)

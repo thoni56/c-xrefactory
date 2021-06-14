@@ -1,5 +1,5 @@
-#ifndef _JAVA_PARSER_H_
-#define _JAVA_PARSER_H_
+#ifndef JAVA_PARSER_H_INCLUDED
+#define JAVA_PARSER_H_INCLUDED
 
 #include "proto.h"
 

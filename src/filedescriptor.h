@@ -1,5 +1,5 @@
-#ifndef _FILEDESCRIPTOR_H_
-#define _FILEDESCRIPTOR_H_
+#ifndef FILEDESCRIPTOR_H_INCLUDED
+#define FILEDESCRIPTOR_H_INCLUDED
 
 #include "proto.h"
 #include "lexembuffer.h"

@@ -4,8 +4,8 @@
 
 */
 
-#ifndef _C_PARSER_H_
-#define _C_PARSER_H_
+#ifndef C_PARSER_H_INCLUDED
+#define C_PARSER_H_INCLUDED
 
 #include "proto.h"
 

@@ -1,5 +1,5 @@
-#ifndef _USAGE_H_
-#define _USAGE_H_
+#ifndef USAGE_H_INCLUDED
+#define USAGE_H_INCLUDED
 
 /* Because of the macro magic we can't comment near the actual values
    so here are some descriptions of some of the Usage values
