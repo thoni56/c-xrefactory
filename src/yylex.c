@@ -1089,8 +1089,10 @@ static void processUndefineDirective(void) {
 
     //& GetLex(lexem); // Expanded
     lexem = getLex(NULL);
-    if (lexem == -1) goto endOfMacroArgument;
-    if (lexem == -2) goto endOfFile;
+    if (lexem == -1)
+        goto endOfMacroArgument;
+    if (lexem == -2)
+        goto endOfFile;
 
     cc = currentInput.currentLexem;
     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
@@ -1117,8 +1119,10 @@ static void processUndefineDirective(void) {
     while (lexem != '\n') {
         //& GetLex(lexem); // Expanded
         lexem = getLex(NULL);
-        if (lexem == -1) goto endOfMacroArgument;
-        if (lexem == -2) goto endOfFile;
+        if (lexem == -1)
+            goto endOfMacroArgument;
+        if (lexem == -2)
+            goto endOfFile;
         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
     }
     return;
@@ -1166,8 +1170,10 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
     while (depth > 0) {
         //& GetLex(lexem); // Expanded
         lexem = getLex(NULL);
-        if (lexem == -1) goto endOfMacroArgument;
-        if (lexem == -2) goto endOfFile;
+        if (lexem == -1)
+            goto endOfMacroArgument;
+        if (lexem == -2)
+            goto endOfFile;
 
         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
         if (lexem==CPP_IF || lexem==CPP_IFDEF || lexem==CPP_IFNDEF) {
@@ -1224,8 +1230,10 @@ static void processIfdefDirective(bool isIfdef) {
 
     //& GetLex(lexem); // Expanded
     lexem = getLex(NULL);
-    if (lexem == -1) goto endOfMacroArgument;
-    if (lexem == -2) goto endOfFile;
+    if (lexem == -1)
+        goto endOfMacroArgument;
+    if (lexem == -2)
+        goto endOfFile;
 
     cc = currentInput.currentLexem;
     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
@@ -1417,8 +1425,10 @@ static void processPragmaDirective(void) {
 
     //& GetLex(lexem); // Expanded
     lexem = getLex(NULL);
-    if (lexem == -1) goto endOfMacroArgument;
-    if (lexem == -2) goto endOfFile;
+    if (lexem == -1)
+        goto endOfMacroArgument;
+    if (lexem == -2)
+        goto endOfFile;
 
     if (lexem == IDENTIFIER && strcmp(currentInput.currentLexem, "once")==0) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -1438,8 +1448,10 @@ static void processPragmaDirective(void) {
         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
         //& GetLex(lexem); // Expanded
         lexem = getLex(NULL);
-        if (lexem == -1) goto endOfMacroArgument;
-        if (lexem == -2) goto endOfFile;
+        if (lexem == -1)
+            goto endOfMacroArgument;
+        if (lexem == -2)
+            goto endOfFile;
     }
     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
     return;
@@ -1900,15 +1912,18 @@ static void createMacroBody(LexInput *macroBody,
 #define GetLexASkippingLines(lexem, previousLexem, line, val, pos, len) \
     {                                                                   \
         lexem = getLexemSavePrevious(&previousLexem, NULL);             \
-        if (lexem == -1) goto endOfMacroArgument;                       \
-        if (lexem == -2) goto endOfFile;                                \
-                                                                        \
-        while (lexem == LINE_TOKEN || lexem == '\n') {                    \
+        if (lexem == -1)                                                \
+            goto endOfMacroArgument;                                    \
+        if (lexem == -2)                                                \
+            goto endOfFile;                                             \
+        while (lexem == LINE_TOKEN || lexem == '\n') {                  \
             PassLex(currentInput.currentLexem, lexem, line, val, pos, len, \
                     macroStackIndex == 0);                              \
             lexem = getLexemSavePrevious(&previousLexem, NULL);         \
-            if (lexem == -1) goto endOfMacroArgument;                   \
-            if (lexem == -2) goto endOfFile;                            \
+            if (lexem == -1)                                            \
+                goto endOfMacroArgument;                                \
+            if (lexem == -2)                                            \
+                goto endOfFile;                                         \
         }                                                               \
     }
 
@@ -2362,8 +2377,10 @@ int yylex(void) {
                 for(;;) {
                     //& GetLex(lexem); // Expanded
                     lexem = getLex(NULL);
-                    if (lexem == -1) goto endOfMacroArgument;
-                    if (lexem == -2) goto endOfFile;
+                    if (lexem == -1)
+                        goto endOfMacroArgument;
+                    if (lexem == -2)
+                        goto endOfFile;
 
                     if (!isPreprocessorToken(lexem))
                         goto contYylex;
