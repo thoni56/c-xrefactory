@@ -13,5 +13,6 @@ $(TEST): .c-xrefrc
 clean:
 	rm -rf CXrefs c-xref.log out .c-xrefrc
 
-gdb:
-	gdb --args ../../src/c-xref -create -xrefrc .c-xrefrc -p $(CURDIR)
+DEBUGGER = gdb
+debug:
+	$(DEBUGGER) --args ../../src/c-xref -create -xrefrc .c-xrefrc -p $(CURDIR)
