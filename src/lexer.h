@@ -1,5 +1,5 @@
-#ifndef _LEXER_H_
-#define _LEXER_H_
+#ifndef LEXER_H_INCLUDED
+#define LEXER_H_INCLUDED
 
 #include <stdbool.h>
 

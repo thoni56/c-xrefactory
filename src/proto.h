@@ -1,5 +1,5 @@
-#ifndef _PROTO_H_
-#define _PROTO_H_
+#ifndef PROTO_H_INCLUDED
+#define PROTO_H_INCLUDED
 
 #include "stdinc.h"
 #include <stdbool.h>

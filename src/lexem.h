@@ -1,5 +1,5 @@
-#ifndef _LEXEM_H_
-#define _LEXEM_H_
+#ifndef LEXEM_H_INCLUDED
+#define LEXEM_H_INCLUDED
 
 /**** DO NOT EDIT - generated from c_parser.tab.h by Makefile ****/
 
