@@ -283,7 +283,7 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
             } else if (lexem == STRING_LITERAL) {                       \
                 input = strchr(input, '\0')+1;                          \
                 (pos) = getLexPosition(&input);                         \
-            } else if (lexem == LINE_TOK) {                             \
+            } else if (lexem == LINE_TOKEN) {                             \
                 lineval = getLexToken(&input);                          \
                 if (linecount) {                                        \
                     traceNewline(lineval);                              \
@@ -761,7 +761,7 @@ void processDefineDirective(bool hasArguments) {
                 if (lexem == -2)
                     goto endOfFile;
             }
-            while (lexem == LINE_TOK) {
+            while (lexem == LINE_TOKEN) {
                 PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
                 //& GetLex(lexem);
                 {
@@ -791,7 +791,7 @@ void processDefineDirective(bool hasArguments) {
                 if (lexem == -2)
                     goto endOfFile;
             }
-            while (lexem == LINE_TOK) {
+            while (lexem == LINE_TOKEN) {
                 PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
                 //& GetLex(lexem);
                 {
@@ -841,7 +841,7 @@ void processDefineDirective(bool hasArguments) {
                         if (lexem == -2)
                             goto endOfFile;
                     }
-                    while (lexem == LINE_TOK) {
+                    while (lexem == LINE_TOKEN) {
                         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
                         //& GetLex(lexem);
                         {
@@ -876,7 +876,7 @@ void processDefineDirective(bool hasArguments) {
                             if (lexem == -2)
                                 goto endOfFile;
                         }
-                        while (lexem == LINE_TOK) {
+                        while (lexem == LINE_TOKEN) {
                             PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
                             //& GetLex(lexem);
                             {
@@ -907,7 +907,7 @@ void processDefineDirective(bool hasArguments) {
                         if (lexem == -2)
                             goto endOfFile;
                     }
-                    while (lexem == LINE_TOK) {
+                    while (lexem == LINE_TOKEN) {
                         PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
                         //& GetLex(lexem);
                         {
@@ -946,7 +946,7 @@ void processDefineDirective(bool hasArguments) {
             if (lexem == -2)
                 goto endOfFile;
         }
-        while (lexem == LINE_TOK) {
+        while (lexem == LINE_TOKEN) {
             PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
             //& GetLex(lexem);
             {
@@ -999,7 +999,7 @@ void processDefineDirective(bool hasArguments) {
                     if (lexem == -2)
                         goto endOfFile;
                 }
-                while (lexem == LINE_TOK) {
+                while (lexem == LINE_TOKEN) {
                     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
                     //& GetLex(lexem);
                     {
@@ -1291,7 +1291,7 @@ int cexp_yylex(void) {
                 if (lexem == -2)
                     goto endOfFile;
             }
-            while (lexem == LINE_TOK) {
+            while (lexem == LINE_TOKEN) {
                 PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
                 //& GetLex(lexem);
                 {
@@ -1321,7 +1321,7 @@ int cexp_yylex(void) {
                     if (lexem == -2)
                         goto endOfFile;
                 }
-                while (lexem == LINE_TOK) {
+                while (lexem == LINE_TOKEN) {
                     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
                     //& GetLex(lexem);
                     {
@@ -1368,7 +1368,7 @@ int cexp_yylex(void) {
                     if (lexem == -2)
                         goto endOfFile;
                 }
-                while (lexem == LINE_TOK) {
+                while (lexem == LINE_TOKEN) {
                     PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);
                     //& GetLex(lexem);
                     {
@@ -1903,7 +1903,7 @@ static void createMacroBody(LexInput *macroBody,
         if (lexem == -1) goto endOfMacroArgument;                       \
         if (lexem == -2) goto endOfFile;                                \
                                                                         \
-        while (lexem == LINE_TOK || lexem == '\n') {                    \
+        while (lexem == LINE_TOKEN || lexem == '\n') {                    \
             PassLex(currentInput.currentLexem, lexem, line, val, pos, len, \
                     macroStackIndex == 0);                              \
             lexem = getLexemSavePrevious(&previousLexem, NULL);         \
@@ -2423,7 +2423,7 @@ int yylex(void) {
         SET_POSITION_YYLVAL(pos, s_tokenLength[lexem]);
         goto finish;
     }
-    if (lexem == LINE_TOK) {
+    if (lexem == LINE_TOKEN) {
         PassLex(currentInput.currentLexem, lexem, line, val, pos, len, macroStackIndex == 0);
         goto nextYylex;
     }

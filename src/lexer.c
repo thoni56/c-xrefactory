@@ -925,7 +925,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                                 PUT_EMPTY_COMPLETION_ID(cb, dd,
                                                         apos-options.olCursorPos);
                             }
-                        } else if ((lastlex == LINE_TOK || lastlex == STRING_LITERAL)
+                        } else if ((lastlex == LINE_TOKEN || lastlex == STRING_LITERAL)
                                    && (apos-options.olCursorPos != 0)) {
                             // completion inside special lexems, do
                             // NO COMPLETION

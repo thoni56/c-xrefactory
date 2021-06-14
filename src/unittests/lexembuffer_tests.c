@@ -139,7 +139,7 @@ Ensure(LexemBuffer, can_put_and_get_lines) {
 
     lexemPointer = lexems;
 
-    assert_that(getLexToken(&lexemPointer), is_equal_to(LINE_TOK));
+    assert_that(getLexToken(&lexemPointer), is_equal_to(LINE_TOKEN));
     assert_that(getLexToken(&lexemPointer), is_equal_to(13));
     assert_that(lexemPointer, is_equal_to(pointer_after_put));
 }

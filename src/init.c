@@ -179,7 +179,7 @@ static TokenNameInitTable tokenNameInitTable1[] = {
     {"'STRING_LITERAL'",  STRING_LITERAL,	LANG_C},
 #ifdef DEBUG
     {"'IDENTIFIER'",      IDENTIFIER,		LANG_C},
-    {"'LINE_TOK'",        LINE_TOK,			LANG_C},
+    {"'LINE_TOK'",        LINE_TOKEN,		LANG_C},
     {"'BLOCK_MARKER'",    OL_MARKER_TOKEN,	LANG_C},
     {"#INCLUDE",          CPP_INCLUDE,		LANG_C},
     {"#DEFINE0",          CPP_DEFINE0,		LANG_C},

@@ -124,7 +124,7 @@ int getLexCompacted(char **readPointer) {
 
 /* Lines */
 void putLexLines(int lines, char **writePointer) {
-    putLexToken(LINE_TOK, writePointer);
+    putLexToken(LINE_TOKEN, writePointer);
     putLexToken(lines, writePointer);
 }
 
