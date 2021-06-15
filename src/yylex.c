@@ -701,7 +701,8 @@ static MacroBody *newMacroBody(int msize, int argi, char *name, char *body, char
 void processDefineDirective(bool hasArguments) {
     Lexem lexem;
     bool isReadingBody = false;
-    int macroSize, foundIndex, allocatedSize, argumentCount, ellipsis;
+    int foundIndex;
+    int argumentCount, ellipsis;
     Symbol *symbol;
     MacroArgumentTableElement *maca, mmaca;
     MacroBody *macroBody;
@@ -710,6 +711,10 @@ void processDefineDirective(bool hasArguments) {
     char *body, *mm;
     char **argumentNames, *argLinkName;
     int l, v, len; UNUSED l; UNUSED v; UNUSED len;
+
+    /* These need to be static to survive longjmp */
+    static int macroSize;
+    static int allocatedSize;
 
     macroSize= -1;
     allocatedSize=0;argumentCount=0;symbol=NULL;macroBody=NULL;macroName=body=NULL; // to calm compiler
@@ -997,6 +1002,7 @@ void processDefineDirective(bool hasArguments) {
     }
 
 endOfBody:
+    /* We might get here by a longjmp from getLex... so anything that is needed here needs to be static */
     assert(macroSize>=0);
     PP_REALLOCC(body, macroSize, char, allocatedSize+MAX_LEXEM_SIZE);
     allocatedSize = macroSize;
