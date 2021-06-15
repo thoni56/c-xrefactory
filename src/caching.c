@@ -302,7 +302,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     fillLexInput(&currentInput, cp->lbcc, readUntil, s_cache.lb, NULL, INPUT_CACHE);
     fillCaching(&s_cache,
                 activeCaching, i+1, cp->ibi, cp->lbcc,
-                currentInput.currentLexem, currentInput.currentLexem, currentInput.endOfBuffer);
+                currentInput.currentLexemP, currentInput.currentLexemP, currentInput.endOfBuffer);
     log_trace("finished recovering");
 }
 
@@ -350,7 +350,7 @@ void cacheInput(void) {
     ENTER();
     if (!s_cache.activeCache) return;
     if (includeStackPointer != 0 || macroStackIndex != 0) return;
-    size = currentInput.currentLexem - s_cache.lexcc;
+    size = currentInput.currentLexemP - s_cache.lexcc;
     if (s_cache.lbcc - s_cache.lb + size >= LEX_BUF_CACHE_SIZE) {
         s_cache.activeCache = false;
         LEAVE();
@@ -360,7 +360,7 @@ void cacheInput(void) {
     if (currentInput.inputType != INPUT_CACHE)
         memcpy(s_cache.lbcc, s_cache.lexcc, size);
     s_cache.lbcc += size;
-    s_cache.lexcc = currentInput.currentLexem;
+    s_cache.lexcc = currentInput.currentLexemP;
     LEAVE();
 }
 
