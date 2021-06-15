@@ -793,7 +793,7 @@ void processDefineDirective(bool hasArguments) {
             for(;;) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 currentLexemStart = argumentName = currentInput.currentLexemP;
-                PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
+                PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
                 ellipsis = 0;
                 if (lexem == IDENTIFIER ) {
                     argumentName = currentLexemStart;
@@ -813,26 +813,11 @@ void processDefineDirective(bool hasArguments) {
                 fillMacroArgTabElem(maca, mm, argLinkName, argumentCount);
                 foundIndex = macroArgumentTableAdd(&s_macroArgumentTable, maca);
                 argumentCount++;
-                //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-                {
-                    //& GetLex(lexem);
-                    {
-                        char *previousLexem;
-                        UNUSED previousLexem;
-                        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                    }
-                    while (lexem == LINE_TOKEN) {
-                        PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-                        //& GetLex(lexem);
-                        {
-                            char *previousLexem;
-                            UNUSED previousLexem;
-                            lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                        }
-                    }
-                }
+                //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+                lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
+
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
-                PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, 1);
+                PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, true);
                 if (! ellipsis) {
                     addTrivialCxReference(s_macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                           &pos, UsageDefined);
@@ -840,47 +825,17 @@ void processDefineDirective(bool hasArguments) {
                 }
                 if (lexem == ELIPSIS) {
                     // GNU ELLIPSIS ?????
-                    //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-                    {
-                        //& GetLex(lexem);
-                        {
-                            char *previousLexem;
-                            UNUSED previousLexem;
-                            lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                        }
-                        while (lexem == LINE_TOKEN) {
-                            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-                            //& GetLex(lexem);
-                            {
-                                char *previousLexem;
-                                UNUSED previousLexem;
-                                lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                            }
-                        }
-                    }
-                    PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, 1);
+                    //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+                    lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
+                    PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, true);
                 }
-                if (lexem == ')') break;
-                if (lexem != ',') break;
+                if (lexem == ')')
+                    break;
+                if (lexem != ',')
+                    break;
 
-                //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-                {
-                    //& GetLex(lexem);
-                    {
-                        char *previousLexem;
-                        UNUSED previousLexem;
-                        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                    }
-                    while (lexem == LINE_TOKEN) {
-                        PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-                        //& GetLex(lexem);
-                        {
-                            char *previousLexem;
-                            UNUSED previousLexem;
-                            lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                        }
-                    }
-                }
+                //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+                lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
             }
             handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &s_noPos, parpos2, 1);
         } else {
@@ -894,26 +849,10 @@ void processDefineDirective(bool hasArguments) {
     PP_ALLOCC(body, allocatedSize+MAX_LEXEM_SIZE, char);
     isReadingBody = true;
 
-    //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-    {
-        //& GetLex(lexem);
-        {
-            char *previousLexem;
-            UNUSED previousLexem;
-            lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-        }
-        while (lexem == LINE_TOKEN) {
-            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-            //& GetLex(lexem);
-            {
-                char *previousLexem;
-                UNUSED previousLexem;
-                lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-            }
-        }
-    }
+    //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+    lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
     currentLexemStart = currentInput.currentLexemP;
-    PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
+    PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
     while (lexem != '\n') {
         while(macroSize<allocatedSize && lexem != '\n') {
             char *destination;
@@ -939,26 +878,10 @@ void processDefineDirective(bool hasArguments) {
                     *destination = *currentLexemStart;
                 macroSize = destination - body;
             }
-            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-            {
-                //& GetLex(lexem);
-                {
-                    char *previousLexem;
-                    UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                }
-                while (lexem == LINE_TOKEN) {
-                    PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-                    //& GetLex(lexem);
-                    {
-                        char *previousLexem;
-                        UNUSED previousLexem;
-                        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                    }
-                }
-            }
+            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+            lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
             currentLexemStart = currentInput.currentLexemP;
-            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
+            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
         }
         if (lexem != '\n') {
             allocatedSize += MACRO_UNIT_SIZE;
@@ -1248,48 +1171,16 @@ int cexp_yylex(void) {
         // this is useless, as it would be set to 0 anyway
         lexem = cexpTranslateToken(CONSTANT, 0);
     } else if (lexem == CPP_DEFINED_OP) {
-        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-        {
-            //& GetLex(lexem);
-            {
-                char *previousLexem;
-                UNUSED previousLexem;
-                lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-            }
-            while (lexem == LINE_TOKEN) {
-                PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-                //& GetLex(lexem);
-                {
-                    char *previousLexem;
-                    UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                }
-            }
-        }
+        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+        lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
         cc = currentInput.currentLexemP;
-        PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
+        PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
         if (lexem == '(') {
             par = 1;
-            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-            {
-                //& GetLex(lexem);
-                {
-                    char *previousLexem;
-                    UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                }
-                while (lexem == LINE_TOKEN) {
-                    PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-                    //& GetLex(lexem);
-                    {
-                        char *previousLexem;
-                        UNUSED previousLexem;
-                        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                    }
-                }
-            }
+            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+            lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
             cc = currentInput.currentLexemP;
-            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
+            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
         } else {
             par = 0;
         }
@@ -1309,25 +1200,9 @@ int cexp_yylex(void) {
         /* following call sets uniyylval */
         res = cexpTranslateToken(CONSTANT, mm);
         if (par) {
-            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-            {
-                //& GetLex(lexem);
-                {
-                    char *previousLexem;
-                    UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                }
-                while (lexem == LINE_TOKEN) {
-                    PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-                    //& GetLex(lexem);
-                    {
-                        char *previousLexem;
-                        UNUSED previousLexem;
-                        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                    }
-                }
-            }
-            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
+            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+            lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
+            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
             if (lexem != ')' && options.taskRegime!=RegimeEditServer) {
                 warningMessage(ERR_ST,"missing ')' after defined( ");
             }
