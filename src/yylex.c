@@ -748,6 +748,15 @@ void processDefineDirective(bool hasArguments) {
     /* process arguments */
     macroArgumentTableNoAllocInit(&s_macroArgumentTable, s_macroArgumentTable.size);
     argumentCount = -1;
+
+    jmp_buf exceptionHandler;
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
     if (hasArguments) {
         //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
         {
@@ -755,11 +764,7 @@ void processDefineDirective(bool hasArguments) {
             {
                 char *previousLexem;
                 UNUSED previousLexem;
-                lexem = getLexemSavePrevious(&previousLexem, NULL);
-                if (lexem == -1)
-                    goto endOfMacroArgument;
-                if (lexem == -2)
-                    goto endOfFile;
+                lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
             }
             while (lexem == LINE_TOKEN) {
                 PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
