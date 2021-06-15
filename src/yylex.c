@@ -1598,17 +1598,13 @@ static void expandMacroArgument(LexInput *argb) {
     PP_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
     bcc = buf;
 
-    jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
-    case END_OF_FILE_EXCEPTION:
-        goto endOfFile;
-    case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        goto endOfMacroArgument;
-    }
-
     for(;;) {
     nextLexem:
-        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
+        lexem = getLexemSavePrevious(&previousLexem, NULL);
+        if (lexem == -1)
+            goto endOfMacroArgument;
+        if (lexem == -2)
+            goto endOfFile;
 
         currentLexem = currentInput.currentLexemP;
         PassLexem(currentInput.currentLexemP, lexem, line, val, pos, len, macroStackIndex == 0);
