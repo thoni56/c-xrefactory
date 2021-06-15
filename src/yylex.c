@@ -760,23 +760,12 @@ void processDefineDirective(bool hasArguments) {
 
     if (hasArguments) {
         //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-        {
-            //& GetLex(lexem);
-            {
-                char *previousLexem;
-                UNUSED previousLexem;
-                lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-            }
-            while (lexem == LINE_TOKEN) {
-                PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-                //& GetLex(lexem);
-                {
-                    char *previousLexem;
-                    UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                }
-            }
+        lexem = getLex(exceptionHandler);
+        while (lexem == LINE_TOKEN) {
+            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
+            lexem = getLex(exceptionHandler);
         }
+
         PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, 1);
         *parpos1 = *parpos2;
         if (lexem != '(') goto errorlab;
