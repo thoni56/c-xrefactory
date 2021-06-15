@@ -14,7 +14,7 @@ typedef struct int2StringTable {
 typedef struct stringList {
     char *d;
     struct stringList *next;
-} S_stringList;
+} StringList;
 
 /* ***************** unique counters  *********************** */
 typedef struct counters {
@@ -64,7 +64,7 @@ extern char *s_cppVarArgsName;
 extern char defaultClassPath[];
 extern Id s_javaAnonymousClassName;
 extern Id s_javaConstructorName;
-extern S_stringList *javaClassPaths;
+extern StringList *javaClassPaths;
 extern char *javaSourcePaths;
 extern IdList *s_javaDefaultPackageName;
 extern IdList *s_javaLangName;

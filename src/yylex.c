@@ -499,7 +499,7 @@ void popInclude(void) {
 static FILE *openInclude(char includeType, char *name, char **fileName) {
     EditorBuffer *er;
     FILE *r;
-    S_stringList *ll;
+    StringList *ll;
     char wcp[MAX_OPTION_LEN];
     char nn[MAX_FILE_NAME_SIZE];
     char rdir[MAX_FILE_NAME_SIZE];

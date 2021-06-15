@@ -276,7 +276,7 @@ static int specialFileNameCasesCheck(char *fname) {
 bool javaTypeFileExist(IdList *name) {
     char            *fname;
     struct stat		stt;
-    S_stringList	*cp;
+    StringList	*cp;
     int				i;
     IdList	tname;
 
@@ -335,7 +335,7 @@ bool javaTypeFileExist(IdList *name) {
 }
 
 static int javaFindClassFile(char *name, char **resName, struct stat *stt) {
-    S_stringList *cp;
+    StringList *cp;
     int i;
 
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
@@ -358,7 +358,7 @@ static int javaFindClassFile(char *name, char **resName, struct stat *stt) {
 }
 
 static int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
-    S_stringList	*cp;
+    StringList	*cp;
 
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
 /*fprintf(dumpOut,"searching for %s %s\n",s_javaStat->thisFileDir,name);fflush(dumpOut);*/
@@ -2669,7 +2669,7 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
 
 
 void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
-    S_stringList	*pp;
+    StringList	*pp;
     char tmpBuff[TMP_BUFF_SIZE];
 
     if (options.taskRegime == RegimeEditServer) return;

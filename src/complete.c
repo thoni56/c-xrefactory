@@ -1602,7 +1602,7 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
 static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType) {
     S_completionFqtMapInfo  cfmi;
     int                     i;
-    S_stringList            *pp;
+    StringList            *pp;
 
     fillCompletionFqtMapInfo(&cfmi, c, completionType);
     if (options.fqtNameToCompletions == 0)

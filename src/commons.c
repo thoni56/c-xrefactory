@@ -8,8 +8,9 @@
 #include "yylex.h"              /* placeIdent() */
 #include "protocol.h"
 #include "semact.h"             /* displayingErrorMessages() */
-#include "fileio.h"
 
+/* These are ok to be dependent on */
+#include "fileio.h"
 #include "log.h"
 
 

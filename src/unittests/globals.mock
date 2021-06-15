@@ -111,7 +111,7 @@ int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 char *s_javaThisPackageName = "";
 int s_javaPreScanOnly;
 char *javaSourcePaths;
-S_stringList *javaClassPaths;
+StringList *javaClassPaths;
 Symbol *s_javaObjectSymbol;
 int s_javaCharCodeBaseTypes[MAX_CHARS];
 

@@ -166,7 +166,7 @@ static void aboutMessage(void) {
 }
 
 static bool fileNameShouldBePruned(char *fn) {
-    S_stringList    *pp;
+    StringList    *pp;
     for(pp=options.pruneNames; pp!=NULL; pp=pp->next) {
         JavaMapOnPaths(pp->d, {
                 if (compareFileNames(currentPath, fn)==0) return true;
@@ -732,13 +732,13 @@ static bool processHOption(int *ii, int argc, char **argv) {
     return true;
 }
 
-static void mainAddStringListOption(S_stringList **optlist, char *argvi) {
-    S_stringList **ll;
+static void mainAddStringListOption(StringList **optlist, char *argvi) {
+    StringList **ll;
     for(ll=optlist; *ll!=NULL; ll= &(*ll)->next)
         ;
 
     /* TODO refactor out to newOptionString()? */
-    allocOptionSpace((void**)ll, sizeof(S_stringList));
+    allocOptionSpace((void**)ll, sizeof(StringList));
     createOptionString(&(*ll)->d, argvi);
     (*ll)->next = NULL;
 }
@@ -1754,7 +1754,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
 }
 
 static void mainScheduleInputFilesFromOptionsToFileTable(void) {
-    S_stringList *ll;
+    StringList *ll;
     for(ll=options.inputFiles; ll!=NULL; ll=ll->next) {
         mainProcessInFileOption(ll->d);
     }
@@ -2281,7 +2281,7 @@ static void mainFileProcessingInitialisations(
     char            dffsect[MAX_FILE_NAME_SIZE];
     struct stat     dffstat;
     char            *fileName;
-    S_stringList    *tmpIncludeDirs;
+    StringList    *tmpIncludeDirs;
 
     fileName = inputFilename;
     mainSetLanguage(fileName, outLanguage);
@@ -2333,7 +2333,7 @@ static void mainFileProcessingInitialisations(
         discoverStandardDefines();
         discoverBuiltinIncludePaths();
 
-        LIST_APPEND(S_stringList, options.includeDirs, tmpIncludeDirs);
+        LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
         if (options.taskRegime != RegimeEditServer && inputFilename == NULL) {
             *outInputIn = 0;
             goto fini;

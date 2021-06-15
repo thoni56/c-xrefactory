@@ -190,7 +190,7 @@ static void trailDeleteOutOfMemory(void) {
 }
 
 static void includeListDeleteOutOfMemory(void) {
-    S_stringList **pp;
+    StringList **pp;
     pp = & options.includeDirs;
     while (*pp!=NULL) {
         if (SM_FREED_POINTER(ppmMemory,*pp)) {

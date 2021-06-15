@@ -458,7 +458,7 @@ void javaSetSourcePath(int defaultCpAllowed) {
 static void processClassPathString(char *cp) {
     char            *nn, *np, *sfp;
     char            ttt[MAX_FILE_NAME_SIZE];
-    S_stringList    **ll;
+    StringList    **ll;
     int             ind, nlen;
 
     for (ll = &javaClassPaths; *ll != NULL; ll = &(*ll)->next) ;
@@ -479,8 +479,8 @@ static void processClassPathString(char *cp) {
             // just path
             PP_ALLOCC(nn, strlen(np)+1, char);
             strcpy(nn,np);
-            PP_ALLOC(*ll, S_stringList);
-            **ll = (S_stringList){.d = nn, .next = NULL};
+            PP_ALLOC(*ll, StringList);
+            **ll = (StringList){.d = nn, .next = NULL};
             ll = &(*ll)->next;
         }
         cp += ind;

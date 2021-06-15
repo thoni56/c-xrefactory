@@ -504,7 +504,7 @@ char * string3ConcatInStackMem(char *str1, char *str2, char *str3) {
 /* ******************************************************************* */
 
 char *javaCutClassPathFromFileName(char *fname) {
-    S_stringList    *cp;
+    StringList    *cp;
     int             len;
     char            *res,*ss;
     res = fname;
@@ -1257,7 +1257,7 @@ static int pathsStringContainsPath(char *paths, char *path) {
 }
 
 static int classPathContainsPath(char *path) {
-    S_stringList    *cp;
+    StringList    *cp;
     for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         //&fprintf(dumpOut,"[cp]checking %s<->%s\n", cp->d, path);
         if (compareFileNames(cp->d, path)==0) {
@@ -1339,7 +1339,7 @@ void javaMapDirectoryFiles1(
                             void *a2,
                             int *a3
                             ){
-    S_stringList    *cp;
+    StringList    *cp;
     char            *fname;
     int             i;
     // avoiding recursivity?
