@@ -836,11 +836,7 @@ void processDefineDirective(bool hasArguments) {
                         {
                             char *previousLexem;
                             UNUSED previousLexem;
-                            lexem = getLexemSavePrevious(&previousLexem, NULL);
-                            if (lexem == -1)
-                                goto endOfMacroArgument;
-                            if (lexem == -2)
-                                goto endOfFile;
+                            lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                         }
                     }
                 }
