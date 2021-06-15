@@ -497,14 +497,14 @@ void popInclude(void) {
 }
 
 static FILE *openInclude(char includeType, char *name, char **fileName) {
-    EditorBuffer  *er;
-    FILE			*r;
-    S_stringList    *ll;
-    char            wcp[MAX_OPTION_LEN];
-    char            nn[MAX_FILE_NAME_SIZE];
-    char            rdir[MAX_FILE_NAME_SIZE];
-    char            *nnn;
-    int             nnlen,dlen,nmlen;
+    EditorBuffer *er;
+    FILE *r;
+    S_stringList *ll;
+    char wcp[MAX_OPTION_LEN];
+    char nn[MAX_FILE_NAME_SIZE];
+    char rdir[MAX_FILE_NAME_SIZE];
+    char *nnn;
+    int nnlen, dlen, nmlen;
 
     er = NULL; r = NULL;
     nmlen = strlen(name);
@@ -534,7 +534,8 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
             if (er!=NULL || r!=NULL) goto found;
         });
     }
-    if (er==NULL && r==NULL) return(NULL);
+    if (er==NULL && r==NULL)
+        return(NULL);
  found:
     nnn = normalizeFileName(nn, cwd);
     strcpy(nn,nnn);
@@ -1797,7 +1798,7 @@ static struct lexInput *getActualMacroArguments(MacroBody *mb, Position *mpos,
         handleMacroUsageParameterPositions(0, mpos, parpos1, parpos2, 1);
     } else {
         for(;;) {
-            getActualMacroArgument(previousLexem,&lexem, mpos, &parpos1, &parpos2,
+            getActualMacroArgument(previousLexem, &lexem, mpos, &parpos1, &parpos2,
                                 &actArgs[actArgi], mb, actArgi);
             actArgi ++ ;
             if (lexem != ',' || actArgi >= mb->argn) break;
