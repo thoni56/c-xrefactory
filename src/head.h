@@ -256,34 +256,34 @@ typedef enum language {
     len = _ss_ - start;\
 }
 
-#define JAVA_STATICALLY_LINKED(storage, accessFlags) (\
-    (storage==StorageField\
-    || ((storage==StorageMethod || storage==StorageConstructor)\
-        && (accessFlags & AccessStatic)))\
-)
+#define JAVA_STATICALLY_LINKED(storage, accessFlags) (                  \
+        (storage==StorageField                                          \
+         || ((storage==StorageMethod || storage==StorageConstructor)    \
+             && (accessFlags & AccessStatic)))                          \
+    )
 
-#define JavaMapOnPaths(thePaths, COMMAND ) {\
-    char *currentPath, *jmop_pp, *jmop_ecp;\
-    int jmop_i, jmop_ind;\
-    /* following was static, but I need to call this recursively */\
-    char sourcepaths[MAX_SOURCE_PATH_SIZE];\
-    assert(thePaths!=NULL);\
-    jmop_pp = thePaths;\
-    strcpy(sourcepaths, jmop_pp);\
-    currentPath = sourcepaths;\
-    jmop_ecp = currentPath+strlen(currentPath);\
-    while (currentPath<jmop_ecp) {\
-        for(jmop_ind=0; \
-            currentPath[jmop_ind]!=0 && currentPath[jmop_ind]!=CLASS_PATH_SEPARATOR; \
-            jmop_ind++) ;\
-        currentPath[jmop_ind] = 0;\
-        jmop_i = jmop_ind;\
-        if (jmop_i>0 && currentPath[jmop_i-1]==FILE_PATH_SEPARATOR) currentPath[--jmop_i] = 0;\
-        COMMAND;\
-        currentPath += jmop_ind;\
-        currentPath++;\
-    }\
-}
+#define JavaMapOnPaths(thePaths, COMMAND) {                             \
+        char *currentPath, *jmop_pp, *jmop_ecp;                         \
+        int jmop_i, jmop_ind;                                           \
+        /* following was static, but I need to call this recursively */ \
+        char sourcepaths[MAX_SOURCE_PATH_SIZE];                         \
+        assert(thePaths!=NULL);                                         \
+        jmop_pp = thePaths;                                             \
+        strcpy(sourcepaths, jmop_pp);                                   \
+        currentPath = sourcepaths;                                      \
+        jmop_ecp = currentPath+strlen(currentPath);                     \
+        while (currentPath<jmop_ecp) {                                  \
+            for(jmop_ind=0;                                             \
+                currentPath[jmop_ind]!=0 && currentPath[jmop_ind]!=CLASS_PATH_SEPARATOR; \
+                jmop_ind++) ;                                           \
+            currentPath[jmop_ind] = 0;                                  \
+            jmop_i = jmop_ind;                                          \
+            if (jmop_i>0 && currentPath[jmop_i-1]==FILE_PATH_SEPARATOR) currentPath[--jmop_i] = 0; \
+            COMMAND;                                                    \
+            currentPath += jmop_ind;                                    \
+            currentPath++;                                              \
+        }                                                               \
+    }
 
 #define SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs,pbflag) {\
     assert(s_olcxCurrentUser);\
