@@ -860,11 +860,7 @@ void processDefineDirective(bool hasArguments) {
                         {
                             char *previousLexem;
                             UNUSED previousLexem;
-                            lexem = getLexemSavePrevious(&previousLexem, NULL);
-                            if (lexem == -1)
-                                goto endOfMacroArgument;
-                            if (lexem == -2)
-                                goto endOfFile;
+                            lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                         }
                         while (lexem == LINE_TOKEN) {
                             PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
@@ -872,11 +868,7 @@ void processDefineDirective(bool hasArguments) {
                             {
                                 char *previousLexem;
                                 UNUSED previousLexem;
-                                lexem = getLexemSavePrevious(&previousLexem, NULL);
-                                if (lexem == -1)
-                                    goto endOfMacroArgument;
-                                if (lexem == -2)
-                                    goto endOfFile;
+                                lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                             }
                         }
                     }
@@ -930,11 +922,7 @@ void processDefineDirective(bool hasArguments) {
             {
                 char *previousLexem;
                 UNUSED previousLexem;
-                lexem = getLexemSavePrevious(&previousLexem, NULL);
-                if (lexem == -1)
-                    goto endOfMacroArgument;
-                if (lexem == -2)
-                    goto endOfFile;
+                lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
             }
         }
     }
