@@ -610,19 +610,6 @@ assert(0);
  endOfFile:;
 }
 
-/* ********************************* #DEFINE ********************** */
-
-/* All occurences expanded away
-#define GetNonBlankMaybeLexem(lexem, l, v, pos, len) {   \
-    GetLex(lexem);\
-    while (lexem == LINE_TOK) {\
-        PassLex(currentInput.currentLexem, lexem, l, v, pos, len, 1);\
-        GetLex(lexem);\
-    }\
-}
-
-*/
-
 static void addMacroToTabs(Symbol *pp, char *name) {
     int index, mm;
     Symbol *memb;
@@ -779,14 +766,12 @@ void processDefineDirective(bool hasArguments) {
 
 
     if (hasArguments) {
-        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
         lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
         PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, true);
         *parpos1 = *parpos2;
         if (lexem != '(')
             goto errorlab;
         argumentCount++;
-        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
         lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
 
         if (lexem != ')') {
@@ -813,7 +798,6 @@ void processDefineDirective(bool hasArguments) {
                 fillMacroArgTabElem(maca, mm, argLinkName, argumentCount);
                 foundIndex = macroArgumentTableAdd(&s_macroArgumentTable, maca);
                 argumentCount++;
-                //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
                 lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
 
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
@@ -825,7 +809,6 @@ void processDefineDirective(bool hasArguments) {
                 }
                 if (lexem == ELIPSIS) {
                     // GNU ELLIPSIS ?????
-                    //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
                     lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
                     PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, true);
                 }
@@ -834,7 +817,6 @@ void processDefineDirective(bool hasArguments) {
                 if (lexem != ',')
                     break;
 
-                //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
                 lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
             }
             handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &s_noPos, parpos2, 1);
@@ -849,7 +831,6 @@ void processDefineDirective(bool hasArguments) {
     PP_ALLOCC(body, allocatedSize+MAX_LEXEM_SIZE, char);
     isReadingBody = true;
 
-    //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
     lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
     currentLexemStart = currentInput.currentLexemP;
     PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
@@ -878,7 +859,6 @@ void processDefineDirective(bool hasArguments) {
                     *destination = *currentLexemStart;
                 macroSize = destination - body;
             }
-            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
             lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
             currentLexemStart = currentInput.currentLexemP;
             PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
@@ -1171,13 +1151,11 @@ int cexp_yylex(void) {
         // this is useless, as it would be set to 0 anyway
         lexem = cexpTranslateToken(CONSTANT, 0);
     } else if (lexem == CPP_DEFINED_OP) {
-        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
         lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
         cc = currentInput.currentLexemP;
         PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
         if (lexem == '(') {
             par = 1;
-            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
             lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
             cc = currentInput.currentLexemP;
             PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
@@ -1185,7 +1163,8 @@ int cexp_yylex(void) {
             par = 0;
         }
 
-        if (! isIdentifierLexem(lexem)) return(0);
+        if (!isIdentifierLexem(lexem))
+            return(0);
 
         fillSymbol(&dd, cc, cc, s_noPos);
         fillSymbolBits(&dd.bits, AccessDefault, TypeMacro, StorageNone);
@@ -1193,14 +1172,15 @@ int cexp_yylex(void) {
         log_debug("(%s)", dd.name);
 
         mm = symbolTableIsMember(s_symbolTable, &dd, NULL, &memb);
-        if (mm && memb->u.mbody == NULL) mm = 0;   // undefined macro
+        if (mm && memb->u.mbody == NULL)
+            mm = 0;   // undefined macro
         assert(options.taskRegime);
-        if (mm) addCxReference(&dd, &pos, UsageUsed, noFileIndex, noFileIndex);
+        if (mm)
+            addCxReference(&dd, &pos, UsageUsed, noFileIndex, noFileIndex);
 
         /* following call sets uniyylval */
         res = cexpTranslateToken(CONSTANT, mm);
         if (par) {
-            //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
             lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
             PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
             if (lexem != ')' && options.taskRegime!=RegimeEditServer) {
