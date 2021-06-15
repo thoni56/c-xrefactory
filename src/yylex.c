@@ -959,11 +959,7 @@ void processDefineDirective(bool hasArguments) {
                 {
                     char *previousLexem;
                     UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, NULL);
-                    if (lexem == -1)
-                        goto endOfMacroArgument;
-                    if (lexem == -2)
-                        goto endOfFile;
+                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                 }
                 while (lexem == LINE_TOKEN) {
                     PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
@@ -971,11 +967,7 @@ void processDefineDirective(bool hasArguments) {
                     {
                         char *previousLexem;
                         UNUSED previousLexem;
-                        lexem = getLexemSavePrevious(&previousLexem, NULL);
-                        if (lexem == -1)
-                            goto endOfMacroArgument;
-                        if (lexem == -2)
-                            goto endOfFile;
+                        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                     }
                 }
             }
@@ -1249,6 +1241,14 @@ int cexp_yylex(void) {
     int v, len;
     UNUSED len; UNUSED v;
 
+    jmp_buf exceptionHandler;
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
     lexem = yylex();
     if (isIdentifierLexem(lexem)) {
         // this is useless, as it would be set to 0 anyway
@@ -1260,11 +1260,7 @@ int cexp_yylex(void) {
             {
                 char *previousLexem;
                 UNUSED previousLexem;
-                lexem = getLexemSavePrevious(&previousLexem, NULL);
-                if (lexem == -1)
-                    goto endOfMacroArgument;
-                if (lexem == -2)
-                    goto endOfFile;
+                lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
             }
             while (lexem == LINE_TOKEN) {
                 PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
@@ -1272,11 +1268,7 @@ int cexp_yylex(void) {
                 {
                     char *previousLexem;
                     UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, NULL);
-                    if (lexem == -1)
-                        goto endOfMacroArgument;
-                    if (lexem == -2)
-                        goto endOfFile;
+                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                 }
             }
         }
@@ -1290,11 +1282,7 @@ int cexp_yylex(void) {
                 {
                     char *previousLexem;
                     UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, NULL);
-                    if (lexem == -1)
-                        goto endOfMacroArgument;
-                    if (lexem == -2)
-                        goto endOfFile;
+                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                 }
                 while (lexem == LINE_TOKEN) {
                     PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
@@ -1302,11 +1290,7 @@ int cexp_yylex(void) {
                     {
                         char *previousLexem;
                         UNUSED previousLexem;
-                        lexem = getLexemSavePrevious(&previousLexem, NULL);
-                        if (lexem == -1)
-                            goto endOfMacroArgument;
-                        if (lexem == -2)
-                            goto endOfFile;
+                        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                     }
                 }
             }
@@ -1337,11 +1321,7 @@ int cexp_yylex(void) {
                 {
                     char *previousLexem;
                     UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, NULL);
-                    if (lexem == -1)
-                        goto endOfMacroArgument;
-                    if (lexem == -2)
-                        goto endOfFile;
+                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                 }
                 while (lexem == LINE_TOKEN) {
                     PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
@@ -1349,11 +1329,7 @@ int cexp_yylex(void) {
                     {
                         char *previousLexem;
                         UNUSED previousLexem;
-                        lexem = getLexemSavePrevious(&previousLexem, NULL);
-                        if (lexem == -1)
-                            goto endOfMacroArgument;
-                        if (lexem == -2)
-                            goto endOfFile;
+                        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
                     }
                 }
             }
