@@ -1,3 +1,5 @@
-*.coverage
-*.info
-old_emacs_c_exercise
+.c-xrefrc
+CXrefs
+log
+output
+output.tmp
