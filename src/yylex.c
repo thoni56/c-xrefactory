@@ -697,6 +697,26 @@ static MacroBody *newMacroBody(int msize, int argi, char *name, char *body, char
     return macroBody;
 }
 
+
+static Lexem getNonBlankLexem(jmp_buf exceptionHandler, Position *_pos, int *_l, int *_v, int *_len) {
+    Lexem lexem;
+    Position pos = *_pos;
+    int l = *_l, v = *_v, len = *_len;
+
+    lexem = getLex(exceptionHandler);
+    while (lexem == LINE_TOKEN) {
+        PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
+        lexem = getLex(exceptionHandler);
+    }
+    *_pos = pos;
+    *_l = l;
+    *_v = v;
+    *_len = len;
+
+    return lexem;
+}
+
+
 /* Make public only for unittesting */
 void processDefineDirective(bool hasArguments) {
     Lexem lexem;
@@ -759,35 +779,16 @@ void processDefineDirective(bool hasArguments) {
 
 
     if (hasArguments) {
-        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-        lexem = getLex(exceptionHandler);
-        while (lexem == LINE_TOKEN) {
-            PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-            lexem = getLex(exceptionHandler);
-        }
-
-        PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, 1);
+        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+        lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
+        PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, true);
         *parpos1 = *parpos2;
-        if (lexem != '(') goto errorlab;
-        argumentCount ++;
-        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded
-        {
-            //& GetLex(lexem);
-            {
-                char *previousLexem;
-                UNUSED previousLexem;
-                lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-            }
-            while (lexem == LINE_TOKEN) {
-                PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, 1);
-                //& GetLex(lexem);
-                {
-                    char *previousLexem;
-                    UNUSED previousLexem;
-                    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-                }
-            }
-        }
+        if (lexem != '(')
+            goto errorlab;
+        argumentCount++;
+        //& GetNonBlankMaybeLexem(lexem, l, v, pos, len); // Expanded & contracted
+        lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
+
         if (lexem != ')') {
             for(;;) {
                 char tmpBuff[TMP_BUFF_SIZE];
