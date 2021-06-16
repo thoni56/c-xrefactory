@@ -19,17 +19,17 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 # If there is no ZLIB on the system you can build it yourself, see sources.mk
 
-# On Darwin we want to use gcc-10 if available
+# On Darwin we want to use gcc-11 if available
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
-	ifneq (, $(shell which gcc-10))
-		CC=gcc-10
+	ifneq (, $(shell which gcc-11))
+		CC=gcc-11
 	endif
 endif
 
 # We need to use compatible gcov (Darwin/Brew now have GCC v10)
-ifeq ("$(CC)", "gcc-10")
-	LCOV = lcov --gcov-tool gcov-10
+ifeq ("$(CC)", "gcc-11")
+	LCOV = lcov --gcov-tool gcov-11
 else
 	LCOV = lcov
 endif

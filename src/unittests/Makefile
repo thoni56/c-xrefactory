@@ -27,9 +27,9 @@ endif
 # else you have to add explicit linkage directives
 CGREEN_LINK = -L/usr/local/lib -lcgreen
 
-# We need to use compatible gcov (Darwin/Brew now have GCC v10)
-ifeq ("$(CC)", "gcc-10")
-	LCOV = lcov --gcov-tool gcov-10
+# We need to use compatible gcov (Darwin/Brew now have GCC v11)
+ifeq ("$(CC)", "gcc-11")
+	LCOV = lcov --gcov-tool gcov-11
 else
 	LCOV = lcov
 endif

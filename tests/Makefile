@@ -3,9 +3,9 @@
 
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
-	ifneq (, $(shell which gcc-10))
-		CC=gcc-10
-		LCOV=lcov --gcov-tool=gcov-10
+	ifneq (, $(shell which gcc-11))
+		CC=gcc-11
+		LCOV=lcov --gcov-tool=gcov-11
 	endif
 else
 	LCOV=lcov
