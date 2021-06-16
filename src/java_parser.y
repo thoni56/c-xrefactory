@@ -239,7 +239,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 %token IDENTIFIER CONSTANT LONG_CONSTANT
 %token FLOAT_CONSTANT DOUBLE_CONSTANT
 %token STRING_LITERAL
-%token LINE_TOK
+%token LINE_TOKEN
 %token IDENT_TO_COMPLETE        /* identifier under cursor */
 
 /* c-only */

@@ -176,7 +176,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %token IDENTIFIER CONSTANT LONG_CONSTANT
 %token FLOAT_CONSTANT DOUBLE_CONSTANT
 %token STRING_LITERAL
-%token LINE_TOK
+%token LINE_TOKEN
 %token IDENT_TO_COMPLETE        /* identifier under cursor */
 
 /* c-only */
