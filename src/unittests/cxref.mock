@@ -135,13 +135,13 @@ Reference *duplicateReference(Reference *r) {
     return (Reference *) mock(r);
 }
 
-Reference *addCxReferenceNew(Symbol *p, Position *pos, UsageBits *ub, int vFunCl, int vApplCl) {
-    return (Reference *) mock(p, pos, ub, vFunCl, vApplCl);
+Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *ub, int vFunClass, int vApplClass) {
+    return (Reference *) mock(symbol, pos, ub, vFunClass, vApplClass);
 }
 
-Reference *addCxReference(Symbol *p, Position *pos, Usage usage, int vFunClass, int vApplClass) {
-    char *p_name = p->name;
-    return (Reference *) mock(p, p_name, pos, usage, vFunClass, vApplClass);
+Reference *addCxReference(Symbol *symbol, Position *pos, Usage usage, int vFunClass, int vApplClass) {
+    char *symbol_name = symbol->name; /* "meta" parameter to be able to access field */
+    return (Reference *) mock(symbol, symbol_name, pos, usage, vFunClass, vApplClass);
 }
 
 Reference *addSpecialFieldReference(char *name, int storage, int fnum, Position *p, int usage) {

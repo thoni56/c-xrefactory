@@ -867,10 +867,10 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     return *place;
 }
 
-Reference * addCxReference(Symbol *p, Position *pos, Usage usage, int vFunCl, int vApplCl) {
+Reference * addCxReference(Symbol *symbol, Position *pos, Usage usage, int vFunClass, int vApplClass) {
     UsageBits ub;
     fillUsageBits(&ub, usage, MIN_REQUIRED_ACCESS);
-    return addCxReferenceNew(p, pos, &ub, vFunCl, vApplCl);
+    return addCxReferenceNew(symbol, pos, &ub, vFunClass, vApplClass);
 }
 
 void addTrivialCxReference(char *name,int symType,int storage,Position *pos,int usage) {
