@@ -46,6 +46,6 @@ extern void cacheInclude(int fileNum);
 extern void placeCachePoint(bool inputCache);
 extern void recoverCachePointZero(void);
 extern void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
-extern int checkFileModifiedTime(int ii);
+extern bool checkFileModifiedTime(int fileIndex);
 
 #endif

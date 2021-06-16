@@ -16,32 +16,27 @@
 S_caching s_cache;
 
 
-int checkFileModifiedTime(int fileIndex) {
+bool checkFileModifiedTime(int fileIndex) {
     struct stat fst;
-    int res;
     time_t t0;
 
     assert(fileTable.tab[fileIndex] != NULL);
     t0 = time(NULL);
     if (fileTable.tab[fileIndex]->lastInspected >= s_fileProcessStartTime
         && fileTable.tab[fileIndex]->lastInspected <= t0) {
-        /* not supposing files can change during one execution */
-        res = 1;
-        goto end;
+        /* Assuming that files cannot change during one execution */
+        return true;
     }
     if (statb(fileTable.tab[fileIndex]->name, &fst)) {
-        res = 0;
-        goto end;
+        return true;
     }
     fileTable.tab[fileIndex]->lastInspected = t0;
     if (fst.st_mtime == fileTable.tab[fileIndex]->lastModified) {
-        res = 1;
+        return true;
     } else {
         fileTable.tab[fileIndex]->lastModified = fst.st_mtime;
-        res = 0;
+        return false;
     }
- end:
-    return(res);
 }
 
 

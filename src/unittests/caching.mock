@@ -4,8 +4,8 @@
 
 S_caching s_cache;
 
-int checkFileModifiedTime(int ii) {
-  return (int) mock(ii);
+bool checkFileModifiedTime(int fileIndex) {
+  return (bool) mock(fileIndex);
 }
 
 void initCaching(void) {
