@@ -1743,7 +1743,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
         }
         if (! processed) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "unknown option %s, (try xref -help)\n",argv[i]);
+            sprintf(tmpBuff, "unknown option %s, (try c-xref -help)\n",argv[i]);
             if (options.taskRegime==RegimeXref
                 ||  options.taskRegime==RegimeHtmlGenerate) {
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
