@@ -35,8 +35,8 @@ char *create_temporary_filename() {
     return (char *) mock();
 }
 
-char *normalizeFileName(char *name, char *relativeto) {
-    return (char *) mock(name, relativeto);
+char *normalizeFileName(char *name, char *relative_to) {
+    return (char *) mock(name, relative_to);
 }
 
 void copyFileFromTo(char *src, char *dest) {

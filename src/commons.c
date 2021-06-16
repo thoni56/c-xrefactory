@@ -71,13 +71,13 @@ void reInitCwd(char *dffname, char *dffsect) {
 }
 
 /* this is the the number 1 of program hacking */
-char *normalizeFileName(char *name, char *relativeto) {
+char *normalizeFileName(char *name, char *relative_to) {
     static char normalizedFileName[MAX_FILE_NAME_SIZE];
     int l1,l2,i,j,s1,inzip=0;
     char *ss;
 
-    log_trace("normalizing %s relative to %s (cwd=%s)", name, relativeto, cwd);
-    l1 = strlen(relativeto);
+    log_trace("normalizing %s relative to %s (cwd=%s)", name, relative_to, cwd);
+    l1 = strlen(relative_to);
     l2 = strlen(name);
     s1 = 0;
     if (name[0] == ZIP_SEPARATOR_CHAR) {
@@ -86,7 +86,7 @@ char *normalizeFileName(char *name, char *relativeto) {
         inzip = 1;
 #if defined (__WIN32__)
     } else if (name[0]=='\\' || name[0]=='/') {
-        normalizedFileName[0] = relativeto[0]; normalizedFileName[1] = ':';
+        normalizedFileName[0] = relative_to[0]; normalizedFileName[1] = ':';
         l1 = 1;
     } else if (name[0]!=0 && name[1]==':') {
         normalizedFileName[0] = tolower(name[0]);      // normalize drive name
@@ -101,7 +101,7 @@ char *normalizeFileName(char *name, char *relativeto) {
         if (l1+l2+2 >= MAX_FILE_NAME_SIZE) {
             l1 = -1;
         } else {
-            strcpy(normalizedFileName,relativeto);
+            strcpy(normalizedFileName,relative_to);
             if (! options.fileNamesCaseSensitive) {
                 for(ss=normalizedFileName; *ss; ss++) *ss = tolower(*ss);
             }
