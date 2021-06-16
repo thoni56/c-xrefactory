@@ -446,15 +446,15 @@ static void fillIncludeSymbolItem(Symbol *ss, int filenum, Position *pos){
 
 void addThisFileDefineIncludeReference(int filenum) {
     Position dpos;
-    Symbol        ss;
+    Symbol ss;
     fillPosition(&dpos, filenum, 1, 0);
-    fillIncludeSymbolItem( &ss,filenum, &dpos);
+    fillIncludeSymbolItem(&ss,filenum, &dpos);
 //&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, fileTable.tab[filenum]->name);
     addCxReference(&ss, &dpos, UsageDefined, filenum, filenum);
 }
 
 void addIncludeReference(int filenum, Position *pos) {
-    Symbol        ss;
+    Symbol ss;
 //&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, fileTable.tab[filenum]->name);
     fillIncludeSymbolItem( &ss, filenum, pos);
     addCxReference(&ss, pos, UsageUsed, filenum, filenum);
