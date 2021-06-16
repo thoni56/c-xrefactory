@@ -38,18 +38,17 @@ endif
 #
 # The heavy lifting is here
 
-debug: CFLAGS+=-DDEBUG -Og
+debug: CFLAGS += -DDEBUG -Og
 coverage devel: COVERAGE=--coverage
-yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
+yydebug: CFLAGS += -DDEBUG -DYYDEBUG -Og
 
 prod debug yydebug: $(ZLIB) c-xref
-devel:
-	$(MAKE) clean-coverage
-	$(MAKE) -C ../editors/emacs
-	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) unit
-	$(MAKE) COVERAGE=$(COVERAGE) debug
-	$(MAKE) test
+devel: clean-coverage
+	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) devel-proper
+
+devel-proper: unit debug test
 	$(MAKE) coverage-report
+	$(MAKE) -C ../editors/emacs
 
 coverage: debug
 
@@ -88,11 +87,11 @@ c-xref-proper: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
 #########################################################################
-test:
+test: c-xref
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) COVERAGE=$(COVERAGE) -C ../tests quick
 
-unit:
+unit: $(OBJS)
 	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) -C unittests
 
 #########################################################################
