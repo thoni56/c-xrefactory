@@ -37,6 +37,7 @@ void processIncludeDirective(Position *ipos);
 
 Describe(Yylex);
 BeforeEach(Yylex) {
+    options.taskRegime = RegimeEditServer;
     ppMemInit();
     initFileTable(&fileTable);
     s_symbolTable = StackMemoryAlloc(SymbolTable);
@@ -70,9 +71,8 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     /* This is the confirmation that there is a symbol p with a
      * field with name equal to DEFINE
      */
-    expect(addCxReference, when(p_name, is_equal_to_string(DEFINE)));
+    expect(addCxReference, when(symbol_name, is_equal_to_string(DEFINE)));
 
-    options.taskRegime = RegimeXref;
     /* If the define does not have a body, add the value of "1" */
     initInput(NULL, NULL, "__x86_64__ 1", NULL);
     currentFile.lineNumber = 1;
@@ -89,15 +89,33 @@ Ensure(Yylex, can_handle_a_line_directive_without_number) {
     /* No asserts, only for execution of END_OF_FILE_EXCEPTION in #line directive */
 }
 
-xEnsure(Yylex, can_process_include_directive) {
+Ensure(Yylex, can_process_include_directive) {
     Position ipos = (Position){1,2,3};
-    char *lexem_stream = "\303\001\"include.h\0";
-    char *newline = "\n";
+    char *lexem_stream = "\303\001\"include.h";
+    FILE file;
+
+    strcpy(cwd, "cwd");
+
+    strcpy(currentFile.lexBuffer.lexemStream, lexem_stream);
+    currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
+    currentFile.lexBuffer.end = currentFile.lexBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
-    expect(getLexemFromLexer, will_return(true));
-    expect(getLexemFromLexer, will_return(true));
-    expect(getLexemFromLexer, will_return(true));
+    currentInput.endOfBuffer = currentInput.beginningOfBuffer + strlen(lexem_stream);
+
+    expect(extractPathInto, will_set_contents_of_parameter(dest, "some/path", 10));
+    always_expect(normalizeFileName,
+                  will_return("some/path/include.h"));
+    expect(editorFindFile, will_return(NULL));
+    expect(openFile, when(fileName, is_equal_to_string("some/path/include.h")), will_return(&file));
+
+    /* Always  */
+    always_expect(checkFileModifiedTime);
+    always_expect(cacheInclude);
+
+    /* Finally ensure that the include file is added as a reference */
+    expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)));
+    expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)));
 
     processIncludeDirective(&ipos);
 }
