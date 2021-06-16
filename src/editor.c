@@ -709,28 +709,28 @@ EditorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName) {
 }
 
 EditorBuffer *editorFindFile(char *name) {
-    int                 size;
-    struct stat         st;
-    EditorBuffer      *res;
+    int size;
+    struct stat st;
+    EditorBuffer *editorBuffer;
 
-    res = editorGetOpenedAndLoadedBuffer(name);
-    if (res==NULL) {
-        res = editorGetOpenedBuffer(name);
-        if (res == NULL) {
+    editorBuffer = editorGetOpenedAndLoadedBuffer(name);
+    if (editorBuffer==NULL) {
+        editorBuffer = editorGetOpenedBuffer(name);
+        if (editorBuffer == NULL) {
             if (stat(name, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
-                res = editorCreateNewBuffer(name, name, &st);
+                editorBuffer = editorCreateNewBuffer(name, name, &st);
             }
         }
-        if (res != NULL && stat(res->fileName, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
+        if (editorBuffer != NULL && stat(editorBuffer->fileName, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
             // O.K. supposing that I have a regular file
             size = st.st_size;
-            allocNewEditorBufferTextSpace(res, size);
-            editorLoadFileIntoBufferText(res, &st);
+            allocNewEditorBufferTextSpace(editorBuffer, size);
+            editorLoadFileIntoBufferText(editorBuffer, &st);
         } else {
-            return(NULL);
+            return NULL;
         }
     }
-    return(res);
+    return editorBuffer;
 }
 
 EditorBuffer *editorFindFileCreate(char *name) {
