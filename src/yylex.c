@@ -165,7 +165,7 @@ int addFileTabItem(char *name) {
     struct fileItem *createdFileItem;
 
     /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
-    normalizedFileName = normalizeFileName(name,cwd);
+    normalizedFileName = normalizeFileName(name, cwd);
 
     /* Does it already exist? */
     if (fileTableExists(&fileTable, normalizedFileName))
@@ -497,51 +497,52 @@ void popInclude(void) {
 }
 
 static FILE *openInclude(char includeType, char *name, char **fileName) {
-    EditorBuffer *er;
-    FILE *r;
+    EditorBuffer *editorBuffer;
+    FILE *file;
     StringList *ll;
     char wcp[MAX_OPTION_LEN];
-    char nn[MAX_FILE_NAME_SIZE];
+    char normalizedName[MAX_FILE_NAME_SIZE];
     char rdir[MAX_FILE_NAME_SIZE];
-    char *nnn;
     int nnlen, dlen, nmlen;
 
-    er = NULL; r = NULL;
+    editorBuffer = NULL; file = NULL;
     nmlen = strlen(name);
     extractPathInto(currentFile.fileName, rdir);
     if (includeType!='<') {
-        strcpy(nn, normalizeFileName(name, rdir));
-        log_trace("try to open %s", nn);
-        er = editorFindFile(nn);
-        if (er==NULL) r = openFile(nn,"r");
+        strcpy(normalizedName, normalizeFileName(name, rdir));
+        log_trace("try to open %s", normalizedName);
+        editorBuffer = editorFindFile(normalizedName);
+        if (editorBuffer == NULL)
+            file = openFile(normalizedName,"r");
     }
-    for (ll=options.includeDirs; ll!=NULL && er==NULL && r==NULL; ll=ll->next) {
-        strcpy(nn, normalizeFileName(ll->d, rdir));
-        expandWildcardsInOnePath(nn, wcp, MAX_OPTION_LEN);
+    for (ll=options.includeDirs; ll!=NULL && editorBuffer==NULL && file==NULL; ll=ll->next) {
+        strcpy(normalizedName, normalizeFileName(ll->d, rdir));
+        expandWildcardsInOnePath(normalizedName, wcp, MAX_OPTION_LEN);
         JavaMapOnPaths(wcp, {
-            strcpy(nn, currentPath);
-            dlen = strlen(nn);
-            if (dlen>0 && nn[dlen-1]!=FILE_PATH_SEPARATOR) {
-                nn[dlen] = FILE_PATH_SEPARATOR;
+            strcpy(normalizedName, currentPath);
+            dlen = strlen(normalizedName);
+            if (dlen>0 && normalizedName[dlen-1]!=FILE_PATH_SEPARATOR) {
+                normalizedName[dlen] = FILE_PATH_SEPARATOR;
                 dlen++;
             }
-            strcpy(nn+dlen, name);
+            strcpy(normalizedName+dlen, name);
             nnlen = dlen+nmlen;
-            nn[nnlen]=0;
-            log_trace("try to open <%s>", nn);
-            er = editorFindFile(nn);
-            if (er==NULL) r = openFile(nn,"r");
-            if (er!=NULL || r!=NULL) goto found;
+            normalizedName[nnlen]=0;
+            log_trace("try to open <%s>", normalizedName);
+            editorBuffer = editorFindFile(normalizedName);
+            if (editorBuffer==NULL)
+                file = openFile(normalizedName,"r");
+            if (editorBuffer!=NULL || file!=NULL)
+                goto found;
         });
     }
-    if (er==NULL && r==NULL)
-        return(NULL);
+    if (editorBuffer==NULL && file==NULL)
+        return NULL;
  found:
-    nnn = normalizeFileName(nn, cwd);
-    strcpy(nn,nnn);
-    log_trace("file '%s' opened, checking to %s", nn, fileTable.tab[s_olOriginalFileNumber]->name);
-    pushInclude(r, er, nn, "\n");
-    return(stdin);  // NOT NULL
+    strcpy(normalizedName, normalizeFileName(normalizedName, cwd));
+    log_trace("file '%s' opened, checking to %s", normalizedName, fileTable.tab[s_olOriginalFileNumber]->name);
+    pushInclude(file, editorBuffer, normalizedName, "\n");
+    return stdin;  // NOT NULL
 }
 
 static void processInclude2(Position *ipos, char pchar, char *iname) {
@@ -555,11 +556,13 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
     fillSymbol(&ss, tmpBuff, tmpBuff, s_noPos);
     fillSymbolBits(&ss.bits, AccessDefault, TypeMacro, StorageNone);
 
-    if (symbolTableIsMember(s_symbolTable, &ss, NULL, &memb)) return;
+    if (symbolTableIsMember(s_symbolTable, &ss, NULL, &memb))
+        return;
     nyyin = openInclude(pchar, iname, &fname);
     if (nyyin == NULL) {
         assert(options.taskRegime);
-        if (options.taskRegime!=RegimeEditServer) warningMessage(ERR_CANT_OPEN, iname);
+        if (options.taskRegime!=RegimeEditServer)
+            warningMessage(ERR_CANT_OPEN, iname);
     } else {
         addIncludeReferences(currentFile.lexBuffer.buffer.fileNumber, ipos);
     }
@@ -567,7 +570,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
 
 /* Public only for unittests */
 void processIncludeDirective(Position *ipos) {
-    char *currentLexem, *previousLexem;
+    char *currentLexemP, *previousLexemP;
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
     Position pos; UNUSED pos;
@@ -580,9 +583,9 @@ void processIncludeDirective(Position *ipos) {
         goto endOfMacroArgument;
     }
 
-    lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
+    lexem = getLexemSavePrevious(&previousLexemP, exceptionHandler);
 
-    currentLexem = currentInput.currentLexemP;
+    currentLexemP = currentInput.currentLexemP;
     if (lexem == STRING_LITERAL) {
         PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
         if (macroStackIndex != 0) {
@@ -591,9 +594,9 @@ assert(0);
             currentInput = macroStack[0];
             macroStackIndex = 0;
         }
-        processInclude2(ipos, *currentLexem, currentLexem+1);
+        processInclude2(ipos, *currentLexemP, currentLexemP+1);
     } else {
-        currentInput.currentLexemP = previousLexem;		/* unget lexem */
+        currentInput.currentLexemP = previousLexemP;		/* unget lexem */
         lexem = yylex();
         if (lexem == STRING_LITERAL) {
             currentInput = macroStack[0];		// hack, cut everything pending
