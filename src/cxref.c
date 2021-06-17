@@ -743,9 +743,9 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     getSymbolCxrefCategories( symbol, &category, &scope, &storage);
     if (scope == ScopeAuto && options.no_ref_locals) return NULL;
 
-    log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", p->linkName,
+    log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
               vFunCl,vApplCl, pos->file, pos->line,pos->col, category==CategoryGlobal?"Global":"Local",
-              usageEnumName[usage], storageEnumName[p->bits.storage]);
+              usageEnumName[usage_base], storageEnumName[symbol->bits.storage]);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (options.server_operation == OLO_EXTRACT) {
@@ -771,7 +771,7 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
             &&symbol->bits.symbolType==TypeCppIfElse) return NULL;
     }
     reftab = &referenceTable;
-    fillSymbolRefItem(&ppp, symbol->linkName, 0, // cxFileHashNumber(p->linkName),
+    fillSymbolRefItem(&ppp, symbol->linkName, 0, // cxFileHashNumber(symbol->linkName),
                                 vApplCl, vFunCl);
     fillSymbolRefItemBits(&ppp.b, symbol->bits.symbolType, storage, scope,
                            symbol->bits.access, category, 0);
@@ -785,7 +785,7 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     // Was:
     //& if (newRefTabItem(reftab,&memb,usage_base,storage,scope,category,symbol,vApplCl,vFunCl,&index));
     if (mm==0) {
-        log_trace("allocating '%s'", p->linkName);
+        log_trace("allocating '%s'", symbol->linkName);
         CX_ALLOC(pp, SymbolReferenceItem);
         CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);
         strcpy(linkName, symbol->linkName);
@@ -829,7 +829,7 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
                 defusage = UsageDefined;
             }
             if (defpos->file!=noFileIndex)
-                log_trace("getting definition position of %s at line %d", p->name, defpos->line);
+                log_trace("getting definition position of %s at line %d", symbol->name, defpos->line);
             if (! olcxOnlyParseNoPushing(options.server_operation)) {
                 mmi = olAddBrowsedSymbol(memb,&s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                                          1,1,0,usage_base,0, defpos, defusage);

@@ -3,3 +3,4 @@ CXrefs
 log
 output
 output.tmp
+*.coverage
