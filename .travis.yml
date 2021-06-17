@@ -9,7 +9,7 @@ addons:
     - lcov
 
 before_install:
-    - wget https://github.com/cgreen-devs/cgreen/releases/latest/download/cgreen_1.3.0_amd64.deb
+    - wget https://github.com/cgreen-devs/cgreen/releases/download/1.3.0/cgreen_1.3.0_amd64.deb
     - sudo apt-get install ./cgreen_1.3.0_amd64.deb
     - sudo apt install openjdk-8-jre
     - lcov --version
