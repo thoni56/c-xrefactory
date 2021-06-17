@@ -570,7 +570,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
 }
 
 /* Public only for unittests */
-void processIncludeDirective(Position *ipos) {
+void processIncludeDirective(Position *includePosition) {
     char *currentLexemP, *previousLexemP;
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
@@ -595,14 +595,62 @@ assert(0);
             currentInput = macroStack[0];
             macroStackIndex = 0;
         }
-        processInclude2(ipos, *currentLexemP, currentLexemP+1);
+        processInclude2(includePosition, *currentLexemP, currentLexemP+1);
     } else {
         currentInput.currentLexemP = previousLexemP;		/* unget lexem */
         lexem = yylex();
         if (lexem == STRING_LITERAL) {
             currentInput = macroStack[0];		// hack, cut everything pending
             macroStackIndex = 0;
-            processInclude2(ipos, '\"', yytext);
+            processInclude2(includePosition, '\"', yytext);
+        } else if (lexem == '<') {
+            // TODO!!!!
+            warningMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
+        }
+        //do lex = yylex(); while (lex != '\n');
+    }
+    return;
+
+ endOfMacroArgument:	assert(0);
+ endOfFile:;
+}
+
+
+/* TODO: This is a copy of processIncludeDirective() above to be unified once #include_next works */
+/* Public only for unittests */
+void processIncludeNextDirective(Position *includePosition) {
+    char *currentLexemP, *previousLexemP;
+    Lexem lexem;
+    int l, v, len; UNUSED len; UNUSED v; UNUSED l;
+    Position pos; UNUSED pos;
+
+    jmp_buf exceptionHandler;
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
+    lexem = getLexemSavePrevious(&previousLexemP, exceptionHandler);
+
+    currentLexemP = currentInput.currentLexemP;
+    if (lexem == STRING_LITERAL) {
+        PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
+        if (macroStackIndex != 0) {
+            errorMessage(ERR_INTERNAL,"include directive in macro body?");
+assert(0);
+            currentInput = macroStack[0];
+            macroStackIndex = 0;
+        }
+        processInclude2(includePosition, *currentLexemP, currentLexemP+1);
+    } else {
+        currentInput.currentLexemP = previousLexemP;		/* unget lexem */
+        lexem = yylex();
+        if (lexem == STRING_LITERAL) {
+            currentInput = macroStack[0];		// hack, cut everything pending
+            macroStackIndex = 0;
+            processInclude2(includePosition, '\"', yytext);
         } else if (lexem == '<') {
             // TODO!!!!
             warningMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");

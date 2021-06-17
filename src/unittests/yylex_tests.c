@@ -4,7 +4,8 @@
 /* Declare semi-private function */
 void processDefineDirective(bool hasArguments);
 void processLineDirective(void);
-void processIncludeDirective(Position *ipos);
+void processIncludeDirective(Position *includePosition);
+void processIncludeNextDirective(Position *includePosition);
 
 #include "filedescriptor.h"
 #include "filetable.h"
@@ -130,12 +131,10 @@ static Constraint *create_capture_parameter_constraint(const char *parameter_nam
 
 
 Ensure(Yylex, can_process_include_directive) {
-    Position ipos = (Position){1,2,3};
+    Position position = (Position){1,2,3};
     char *lexem_stream = "\303\001\"include.h";
     FILE file;
     int fileNumber;
-
-    strcpy(cwd, "cwd");
 
     strcpy(currentFile.lexBuffer.lexemStream, lexem_stream);
     currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
@@ -157,10 +156,27 @@ Ensure(Yylex, can_process_include_directive) {
     always_expect(cacheInclude, will_capture_parameter(fileNum, fileNumber));
 
     /* Finally ensure that the include file is added as a reference */
-    expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)));
-    expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)));
+    expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
+           times(2));           /* Don't know why two times... */
 
-    processIncludeDirective(&ipos);
+    processIncludeDirective(&position);
+
+    assert_that(fileTable.tab[fileNumber]->name, is_equal_to_string("some/path/include.h"));
+}
+
+xEnsure(Yylex, can_process_include_next_directive) {
+    Position position = (Position){1,2,3};
+    char *lexem_stream = "\303\001\"include.h";
+    int fileNumber = 0;
+
+    strcpy(currentFile.lexBuffer.lexemStream, lexem_stream);
+    currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
+    currentFile.lexBuffer.end = currentFile.lexBuffer.lexemStream + strlen(lexem_stream);
+
+    initInput(NULL, NULL, "", NULL);
+    currentInput.endOfBuffer = currentInput.beginningOfBuffer + strlen(lexem_stream);
+
+    processIncludeNextDirective(&position);
 
     assert_that(fileTable.tab[fileNumber]->name, is_equal_to_string("some/path/include.h"));
 }
