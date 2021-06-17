@@ -513,7 +513,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
         log_trace("try to open %s", normalizedName);
         editorBuffer = editorFindFile(normalizedName);
         if (editorBuffer == NULL)
-            file = openFile(normalizedName,"r");
+            file = openFile(normalizedName, "r");
     }
     for (ll=options.includeDirs; ll!=NULL && editorBuffer==NULL && file==NULL; ll=ll->next) {
         strcpy(normalizedName, normalizeFileName(ll->d, rdir));
@@ -531,7 +531,8 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
             log_trace("try to open <%s>", normalizedName);
             editorBuffer = editorFindFile(normalizedName);
             if (editorBuffer==NULL)
-                file = openFile(normalizedName,"r");
+                file =
+                    openFile(normalizedName, "r");
             if (editorBuffer!=NULL || file!=NULL)
                 goto found;
         });

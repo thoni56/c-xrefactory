@@ -135,8 +135,8 @@ Reference *duplicateReference(Reference *r) {
     return (Reference *) mock(r);
 }
 
-Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *ub, int vFunClass, int vApplClass) {
-    return (Reference *) mock(symbol, pos, ub, vFunClass, vApplClass);
+Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage, int vFunClass, int vApplClass) {
+    return (Reference *) mock(symbol, pos, usage, vFunClass, vApplClass);
 }
 
 Reference *addCxReference(Symbol *symbol, Position *pos, Usage usage, int vFunClass, int vApplClass) {

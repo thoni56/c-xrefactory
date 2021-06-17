@@ -54,9 +54,9 @@ extern char *getLocalJavaDocFile_st(char *fileUrl);
 extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
 extern int htmlJdkDocAvailableForUrl(char *ss);
 extern Reference *duplicateReference(Reference *r);
-extern Reference * addCxReferenceNew(Symbol *p, Position *pos,
-                                     UsageBits *ub, int vFunCl, int vApplCl);
-extern Reference * addCxReference(Symbol *p, Position *pos, Usage usage,
+extern Reference * addCxReferenceNew(Symbol *symbol, Position *pos,
+                                     UsageBits *usage, int vFunClass, int vApplClass);
+extern Reference * addCxReference(Symbol *symbol, Position *pos, Usage usage,
                                   int vFunClass,int vApplClass);
 extern Reference *addSpecialFieldReference(char *name, int storage,
                                            int fnum, Position *p, int usage);

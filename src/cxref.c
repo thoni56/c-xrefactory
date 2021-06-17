@@ -700,7 +700,7 @@ static int olcxOnlyParseNoPushing(int opt) {
 /* ********************************************************************* */
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
 /*                                                                       */
-Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
+Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
                                 int vFunCl, int vApplCl) {
     int index,mm,category,scope,storage,defusage;
     char *linkName;
@@ -709,38 +709,38 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     SymbolReferenceItem *pp,*memb, ppp;
     S_olSymbolsMenu *mmi;
     ReferenceTable *reftab;
-    int usage;
+    int usage_base;
 
-    usage = usageb->base;
+    usage_base = usage->base;
     // do not record references on prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
     if (s_javaPreScanOnly) return NULL;
-    if (p->linkName == NULL) return NULL;
-    if (* p->linkName == 0) return NULL;
-    if (p == &s_errorSymbol || p->bits.symbolType==TypeError) return NULL;
+    if (symbol->linkName == NULL) return NULL;
+    if (* symbol->linkName == 0) return NULL;
+    if (symbol == &s_errorSymbol || symbol->bits.symbolType==TypeError) return NULL;
     if (pos->file == noFileIndex) return NULL;
     assert(pos->file<MAX_FILES);
     assert(fileTable.tab[pos->file]);
-    if (p->bits.symbolType==TypeDefault && p->bits.storage==StorageConstant) {
+    if (symbol->bits.symbolType==TypeDefault && symbol->bits.storage==StorageConstant) {
         if (options.no_ref_enumerator) return NULL;
     }
     /* typedefs */
-    if (p->bits.symbolType==TypeDefault && p->bits.storage==StorageTypedef) {
+    if (symbol->bits.symbolType==TypeDefault && symbol->bits.storage==StorageTypedef) {
         if (options.no_ref_typedef) return NULL;
     }
     /* struct, union, enum */
-    if ((p->bits.symbolType==TypeStruct||p->bits.symbolType==TypeUnion||p->bits.symbolType==TypeEnum)){
+    if ((symbol->bits.symbolType==TypeStruct||symbol->bits.symbolType==TypeUnion||symbol->bits.symbolType==TypeEnum)){
         if (options.no_ref_typedef) return NULL;
     }
     /* macros */
-    if (p->bits.symbolType == TypeMacro) {
+    if (symbol->bits.symbolType == TypeMacro) {
         if (options.no_ref_macro) return NULL;
     }
-    if (p->bits.symbolType==TypeDefault) {
-        if (p->bits.isRecord && options.no_ref_records) return NULL;
+    if (symbol->bits.symbolType==TypeDefault) {
+        if (symbol->bits.isRecord && options.no_ref_records) return NULL;
     }
 
-    getSymbolCxrefCategories( p, &category, &scope, &storage);
+    getSymbolCxrefCategories( symbol, &category, &scope, &storage);
     if (scope == ScopeAuto && options.no_ref_locals) return NULL;
 
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", p->linkName,
@@ -751,7 +751,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
         if (options.server_operation == OLO_EXTRACT) {
             if (s_input_file_number != currentFile.lexBuffer.buffer.fileNumber) return NULL;
         } else {
-            if (category==CategoryGlobal && p->bits.symbolType!=TypeCppInclude && options.server_operation!=OLO_TAG_SEARCH) {
+            if (category==CategoryGlobal && symbol->bits.symbolType!=TypeCppInclude && options.server_operation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
                 if (s_olOriginalFileNumber!=pos->file
                     && options.noIncludeRefs) return NULL;
@@ -768,86 +768,86 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     if (options.taskRegime == RegimeHtmlGenerate) {
         if (!fileTable.tab[pos->file]->b.cxLoading && category==CategoryGlobal) return NULL;
         if (fileTable.tab[pos->file]->b.cxLoaded
-            &&p->bits.symbolType==TypeCppIfElse) return NULL;
+            &&symbol->bits.symbolType==TypeCppIfElse) return NULL;
     }
     reftab = &referenceTable;
-    fillSymbolRefItem(&ppp, p->linkName, 0, // cxFileHashNumber(p->linkName),
+    fillSymbolRefItem(&ppp, symbol->linkName, 0, // cxFileHashNumber(p->linkName),
                                 vApplCl, vFunCl);
-    fillSymbolRefItemBits(&ppp.b, p->bits.symbolType, storage, scope,
-                           p->bits.access, category, 0);
+    fillSymbolRefItemBits(&ppp.b, symbol->bits.symbolType, storage, scope,
+                           symbol->bits.access, category, 0);
     if (options.taskRegime==RegimeEditServer && options.server_operation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
-        fillUsageBits(&rr.usage, usage, 0);
+        fillUsageBits(&rr.usage, usage_base, 0);
         fill_reference(&rr, rr.usage, *pos, NULL);
         searchSymbolCheckReference(&ppp, &rr);
         return NULL;
     }
     mm = refTabIsMember(reftab, &ppp, &index, &memb);
     // Was:
-    //& if (newRefTabItem(reftab,&memb,usage,storage,scope,category,p,vApplCl,vFunCl,&index));
+    //& if (newRefTabItem(reftab,&memb,usage_base,storage,scope,category,symbol,vApplCl,vFunCl,&index));
     if (mm==0) {
         log_trace("allocating '%s'", p->linkName);
         CX_ALLOC(pp, SymbolReferenceItem);
-        CX_ALLOCC(linkName, strlen(p->linkName)+1, char);
-        strcpy(linkName, p->linkName);
+        CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);
+        strcpy(linkName, symbol->linkName);
         fillSymbolRefItem(pp, linkName, cxFileHashNumber(linkName),
                                     vApplCl, vFunCl);
-        fillSymbolRefItemBits(&pp->b, p->bits.symbolType, storage, scope,
-                               p->bits.access, category, 0);
+        fillSymbolRefItemBits(&pp->b, symbol->bits.symbolType, storage, scope,
+                               symbol->bits.access, category, 0);
         refTabSet(reftab, pp, index);
         memb = pp;
     } else {
         // at least reset some maybe new informations
         // sometimes classes were added from directory listing,
         // without knowing if it is an interface or not
-        memb->b.accessFlags |= p->bits.access;
+        memb->b.accessFlags |= symbol->bits.access;
     }
     /*  category = reftab->category; */
-    place = addToRefList(&memb->refs,usageb,pos,category);
-    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", fileTable.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, fileTable.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), positionsAreEqual(s_cxRefPos, *pos), usage, p->linkName);
+    place = addToRefList(&memb->refs,usage,pos,category);
+    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", fileTable.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, fileTable.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), positionsAreEqual(s_cxRefPos, *pos), usage_base, symbol->linkName);
 
     if (options.taskRegime == RegimeEditServer
         && positionsAreEqual(s_cxRefPos, *pos)
-        && usage<UsageMaxOLUsages) {
-        if (p->linkName[0] == ' ') {  // special symbols for internal use!
-            if (strcmp(p->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
+        && usage_base<UsageMaxOLUsages) {
+        if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
+            if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
                 if (options.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setOlAvailableRefactorings(p, NULL, usage);
+                    setOlAvailableRefactorings(symbol, NULL, usage_base);
                 }
             }
         } else {
             /* an on - line cxref action ?*/
             //&fprintf(dumpOut,"!got it %s !!!!!!!\n", memb->name);
             s_olstringServed = 1;       /* olstring will be served */
-            s_olstringUsage = usage;
+            s_olstringUsage = usage_base;
             assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
             olSetCallerPosition(pos);
             defpos = &s_noPos;
             defusage = s_noUsage.base;
-            if (p->bits.symbolType==TypeMacro && ! options.exactPositionResolve) {
+            if (symbol->bits.symbolType==TypeMacro && ! options.exactPositionResolve) {
                 // a hack for macros
-                defpos = &p->pos;
+                defpos = &symbol->pos;
                 defusage = UsageDefined;
             }
             if (defpos->file!=noFileIndex)
                 log_trace("getting definition position of %s at line %d", p->name, defpos->line);
             if (! olcxOnlyParseNoPushing(options.server_operation)) {
                 mmi = olAddBrowsedSymbol(memb,&s_olcxCurrentUser->browserStack.top->hkSelectedSym,
-                                         1,1,0,usage,0, defpos, defusage);
+                                         1,1,0,usage_base,0, defpos, defusage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
-                if (IS_DEFINITION_USAGE(usage)) {
+                if (IS_DEFINITION_USAGE(usage_base)) {
                     mmi->defpos = *pos;
-                    mmi->defUsage = usage;
+                    mmi->defUsage = usage_base;
                 }
                 if (options.server_operation == OLO_CLASS_TREE
                     && LANGUAGE(LANG_JAVA)) {
-                    setClassTreeBaseType(&s_olcxCurrentUser->classTree, p);
+                    setClassTreeBaseType(&s_olcxCurrentUser->classTree, symbol);
                 }
                 if (options.server_operation == OLO_GET_SYMBOL_TYPE) {
-                    setOlSymbolTypeForPrint(p);
+                    setOlSymbolTypeForPrint(symbol);
                 }
                 if (options.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setOlAvailableRefactorings(p, mmi, usage);
+                    setOlAvailableRefactorings(symbol, mmi, usage_base);
                 }
             }
         }
