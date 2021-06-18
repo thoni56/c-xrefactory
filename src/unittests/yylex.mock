@@ -13,8 +13,8 @@ void initAllInputs(void) {
   mock();
 }
 
-void initInput(FILE *ff, EditorBuffer *buffer, char *prepend, char *name) {
-  mock(ff, buffer, prepend, name);
+void initInput(FILE *file, EditorBuffer *buffer, char *prefix, char *fileName) {
+  mock(file, buffer, prefix, fileName);
 }
 
 void addIncludeReference(int filenum, Position *pos) {

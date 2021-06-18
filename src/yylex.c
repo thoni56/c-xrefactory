@@ -245,7 +245,7 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
     int     prefixLength, bufferSize, offset;
     char	*bufferStart;
 
-    /* TODO: perhaps this polymorphism should be handled some other way... */
+    /* This can be called from various context where one or both are NULL, or we don't know which... */
     prefixLength = strlen(prefix);
     if (editorBuffer != NULL) {
         // read buffer
