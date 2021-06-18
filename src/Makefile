@@ -84,10 +84,10 @@ c-xref: check-tokens # check that token sections in parsers are identical before
 c-xref-proper: CFLAGS+=-DDEBUG -Og
 .PHONY: c-xref-proper
 c-xref-proper: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
-	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) $(COVERAGE) -o c-xref $(OBJS) $(LIBS)
 
 #########################################################################
-test: c-xref
+test: c-xref-proper
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) COVERAGE=$(COVERAGE) -C ../tests quick
 
