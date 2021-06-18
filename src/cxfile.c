@@ -561,7 +561,7 @@ static void genRefItem0(SymbolReferenceItem *d, bool force) {
     for(reference = d->refs; reference!=NULL; reference=reference->next) {
         log_trace("checking ref: loading=%d --< %s:%d", fileTable.tab[reference->p.file]->b.cxLoading,
                   fileTable.tab[reference->p.file]->name, reference->p.line);
-        if (options.update==UP_CREATE || fileTable.tab[reference->p.file]->b.cxLoading) {
+        if (options.update==UPDATE_CREATE || fileTable.tab[reference->p.file]->b.cxLoading) {
             writeCxReference(reference, symbolIndex);
         } else {
             log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",

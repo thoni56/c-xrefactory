@@ -418,9 +418,9 @@ typedef enum inputType {
 } InputType;
 
 typedef enum updateType {
-    UP_CREATE = 0,              // must be zero ! TODO: Why?
-    UP_FAST_UPDATE,
-    UP_FULL_UPDATE,
+    UPDATE_CREATE = 0,              // must be zero ! TODO: Why?
+    UPDATE_FAST,
+    UPDATE_FULL,
 } UpdateType;
 
 enum syntaxPassParsedImportantPosition {

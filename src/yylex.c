@@ -201,12 +201,12 @@ static void setCurrentFileInfoFor(char *fileName) {
         cxloading = fileTable.tab[number]->b.cxLoading;
         if (!existed) {
             cxloading = 1;
-        } else if (options.update==UP_FAST_UPDATE) {
+        } else if (options.update==UPDATE_FAST) {
             if (fileTable.tab[number]->b.scheduledToProcess) {
                 // references from headers are not loaded on fast update !
                 cxloading = 1;
             }
-        } else if (options.update==UP_FULL_UPDATE) {
+        } else if (options.update==UPDATE_FULL) {
             if (fileTable.tab[number]->b.scheduledToUpdate) {
                 cxloading = 1;
             }

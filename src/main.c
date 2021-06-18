@@ -622,11 +622,11 @@ static bool processFOption(int *ii, int argc, char **argv) {
         options.fileNamesCaseSensitive = 0;
     }
     else if (strcmp(argv[i], "-fastupdate")==0)  {
-        options.update = UP_FAST_UPDATE;
+        options.update = UPDATE_FAST;
         options.updateOnlyModifiedFiles = true;
     }
     else if (strcmp(argv[i], "-fullupdate")==0) {
-        options.update = UP_FULL_UPDATE;
+        options.update = UPDATE_FULL;
         options.updateOnlyModifiedFiles = false;
     }
     else return false;
@@ -1562,7 +1562,7 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
         createOptionString(&options.user, argv[i]);
     }
     else if (strcmp(argv[i], "-update")==0)  {
-        options.update = UP_FULL_UPDATE;
+        options.update = UPDATE_FULL;
         options.updateOnlyModifiedFiles = true;
     }
     else
@@ -1795,7 +1795,7 @@ static void mainGenerateReferenceFile(void) {
 
     if (options.cxrefFileName == NULL)
         return;
-    if (!updateFlag && options.update == UP_CREATE) {
+    if (!updateFlag && options.update == UPDATE_CREATE) {
         genReferenceFile(false, options.cxrefFileName);
         updateFlag = true;
     } else {
@@ -1814,7 +1814,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
     char sss[MAX_FILE_NAME_SIZE];
 
     if (p == fileTable.tab[noFileIndex]) return;
-    //& if (options.update==UP_FAST_UPDATE && !p->b.commandLineEntered) return;
+    //& if (options.update==UPDATE_FAST && !p->b.commandLineEntered) return;
     //&fprintf(dumpOut, "checking %s for update\n",p->name); fflush(dumpOut);
     if (statb(p->name, &fstat)) {
         // removed file, remove it from watched updates, load no reference
@@ -1842,7 +1842,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
         if (statb(sss, &hstat) || fstat.st_mtime >= hstat.st_mtime) {
             p->b.scheduledToUpdate = true;
         }
-    } else if (options.update == UP_FULL_UPDATE) {
+    } else if (options.update == UPDATE_FULL) {
         if (fstat.st_mtime != p->lastFullUpdateMtime) {
             p->b.scheduledToUpdate = true;
             //&         p->lastFullUpdateMtime = fstat.st_mtime;
@@ -2226,8 +2226,8 @@ static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *projec
 }
 
 static void checkExactPositionUpdate(int message) {
-    if (options.update == UP_FAST_UPDATE && options.exactPositionResolve) {
-        options.update = UP_FULL_UPDATE;
+    if (options.update == UPDATE_FAST && options.exactPositionResolve) {
+        options.update = UPDATE_FULL;
         if (message) {
             warningMessage(ERR_ST, "-exactpositionresolve implies full update");
         }
@@ -2550,7 +2550,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             inmode = INFILES_DISABLED;
         } else if (options.taskRegime==RegimeEditServer) {
             inmode = INFILES_DISABLED;
-        } else if (options.create || options.project!=NULL || options.update != UP_CREATE) {
+        } else if (options.create || options.project!=NULL || options.update != UPDATE_CREATE) {
             inmode = INFILES_ENABLED;
         } else {
             inmode = INFILES_DISABLED;
@@ -2745,7 +2745,7 @@ static void scheduleModifiedFilesToUpdate(void) {
     if (statb(filestab, &refStat)) refStat.st_mtime = 0;
     scanReferenceFile(options.cxrefFileName, suffix, "", normalScanFunctionSequence);
     fileTableMap2(&fileTable, schedulingToUpdate, &refStat);
-    if (options.update==UP_FULL_UPDATE /*& && !LANGUAGE(LANG_JAVA) &*/) {
+    if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
     }
     fileTableMap(&fileTable, schedulingUpdateToProcess);
@@ -3060,7 +3060,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
     s_fileProcessStartTime = time(NULL);
     // O.K. but this is missing all header files
     ff->lastUpdateMtime = ff->lastModified;
-    if (options.update == UP_FULL_UPDATE || options.create) {
+    if (options.update == UPDATE_FULL || options.create) {
         ff->lastFullUpdateMtime = ff->lastModified;
     }
     mainXrefProcessInputFile(argc, argv, &inputIn,
@@ -3187,7 +3187,7 @@ void mainCallXref(int argc, char **argv) {
             //& if (options.htmlglobalx || options.htmllocalx) htmlGenEmptyRefsFile();
         }
         if (options.taskRegime==RegimeXref) {
-            if (options.update==0 || options.update==UP_FULL_UPDATE) {
+            if (options.update==0 || options.update==UPDATE_FULL) {
                 fileTableMap(&fileTable, setFullUpdateMtimesInFileTab);
             }
             if (options.xref2) {
