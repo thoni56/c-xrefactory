@@ -1,5 +1,5 @@
-#ifndef JSLSEMACT_H
-#define JSLSEMACT_H
+#ifndef JSLSEMACT_H_INCLUDED
+#define JSLSEMACT_H_INCLUDED
 
 /* JSL = Java Simple Load file... ? */
 

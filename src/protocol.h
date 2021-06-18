@@ -1,5 +1,5 @@
-#ifndef PROTOCOL_H
-#define PROTOCOL_H
+#ifndef PROTOCOL_H_INCLUDED
+#define PROTOCOL_H_INCLUDED
 
 #include "refactorings.h"
 

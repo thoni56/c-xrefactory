@@ -1,5 +1,5 @@
-#ifndef CXFILE_H
-#define CXFILE_H
+#ifndef CXFILE_H_INCLUDED
+#define CXFILE_H_INCLUDED
 
 #include "proto.h"              /* for SymbolReferenceItem */
 #include "symbol.h"

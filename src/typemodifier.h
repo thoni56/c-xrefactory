@@ -1,5 +1,5 @@
-#ifndef _TYPEMODIFIER_H_
-#define _TYPEMODIFIER_H_
+#ifndef TYPEMODIFIER_H_INCLUDED
+#define TYPEMODIFIER_H_INCLUDED
 
 #include "type.h"
 #include "symbol.h"
@@ -49,4 +49,4 @@ extern void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symb
 
 extern TypeModifier *prependTypeModifierWith(TypeModifier *this, Type kind);
 
-#endif /* _TYPEMODIFIER_H_ */
+#endif

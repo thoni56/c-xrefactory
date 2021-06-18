@@ -1,5 +1,5 @@
-#ifndef CXREF_H
-#define CXREF_H
+#ifndef CXREF_H_INCLUDED
+#define CXREF_H_INCLUDED
 
 #include "proto.h"
 #include "usage.h"

@@ -1,5 +1,5 @@
-#ifndef JSEMACT_H
-#define JSEMACT_H
+#ifndef JSEMACT_H_INCLUDED
+#define JSEMACT_H_INCLUDED
 
 #include "jsltypetab.h"
 #include "symbol.h"

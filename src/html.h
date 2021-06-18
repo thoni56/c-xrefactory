@@ -1,5 +1,5 @@
-#ifndef HTML_H
-#define HTML_H
+#ifndef HTML_H_INCLUDED
+#define HTML_H_INCLUDED
 
 #include "proto.h"
 #include "symbol.h"

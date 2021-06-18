@@ -1,5 +1,5 @@
-#ifndef HASH_H
-#define HASH_H
+#ifndef HASH_H_INCLUDED
+#define HASH_H_INCLUDED
 
 #define SYMTAB_HASH_FUN_INC(oldval, charcode) {\
     oldval+=charcode; oldval+=(oldval<<10); oldval^=(oldval>>6);\

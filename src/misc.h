@@ -1,5 +1,5 @@
-#ifndef MISC_H
-#define MISC_H
+#ifndef MISC_H_INCLUDED
+#define MISC_H_INCLUDED
 
 #include "proto.h"
 #include "symbol.h"

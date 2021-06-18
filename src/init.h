@@ -1,5 +1,5 @@
-#ifndef INIT_H
-#define INIT_H
+#ifndef INIT_H_INCLUDED
+#define INIT_H_INCLUDED
 
 extern void initTokenNameTab(void);
 extern void initJavaTypePCTIConvertIniTab(void);

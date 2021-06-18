@@ -1,5 +1,5 @@
-#ifndef EDITOR_H
-#define EDITOR_H
+#ifndef EDITOR_H_INCLUDED
+#define EDITOR_H_INCLUDED
 
 #include "proto.h"
 

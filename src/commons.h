@@ -1,5 +1,5 @@
-#ifndef COMMONS_H
-#define COMMONS_H
+#ifndef COMMONS_H_INCLUDED
+#define COMMONS_H_INCLUDED
 
 #define InternalCheck(expr) {\
     if (!(expr)) internalCheckFail(#expr, __FILE__, __LINE__);\

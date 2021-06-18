@@ -1,5 +1,5 @@
-#ifndef CFREAD_H
-#define CFREAD_H
+#ifndef CLASSFILEREADER_H_INCLUDED
+#define CLASSFILEREADER_H_INCLUDED
 
 #include "proto.h"
 #include "symbol.h"

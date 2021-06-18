@@ -1,5 +1,5 @@
-#ifndef RECYACC_H
-#define RECYACC_H
+#ifndef RECYACC_H_INCLUDED
+#define RECYACC_H_INCLUDED
 
 typedef struct yyGlobalState {
     int gyydebug;

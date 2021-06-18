@@ -1,5 +1,5 @@
-#ifndef REFACTORY_H
-#define REFACTORY_H
+#ifndef REFACTORY_H_INCLUDED
+#define REFACTORY_H_INCLUDED
 
 #include "proto.h"
 #include "editor.h"

@@ -1,5 +1,5 @@
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef GLOBALS_H_INCLUDED
+#define GLOBALS_H_INCLUDED
 
 #include "constants.h"
 #include "symboltable.h"

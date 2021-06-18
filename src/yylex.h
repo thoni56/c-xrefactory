@@ -1,5 +1,5 @@
-#ifndef YYLEX_H
-#define YYLEX_H
+#ifndef YYLEX_H_INCLUDED
+#define YYLEX_H_INCLUDED
 
 #include "proto.h"
 #include "editor.h"

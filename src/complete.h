@@ -1,5 +1,5 @@
-#ifndef COMPLETE_H
-#define COMPLETE_H
+#ifndef COMPLETE_H_INCLUDED
+#define COMPLETE_H_INCLUDED
 
 #include "proto.h"
 

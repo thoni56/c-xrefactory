@@ -1,5 +1,5 @@
-#ifndef EXTRACT_H
-#define EXTRACT_H
+#ifndef EXTRACT_H_INCLUDED
+#define EXTRACT_H_INCLUDED
 
 #include "proto.h"
 #include "symbol.h"

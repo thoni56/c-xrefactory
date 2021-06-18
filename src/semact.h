@@ -1,5 +1,5 @@
-#ifndef SEMACT_H
-#define SEMACT_H
+#ifndef SEMACT_H_INCLUDED
+#define SEMACT_H_INCLUDED
 
 #include "symbol.h"
 #include "symboltable.h"

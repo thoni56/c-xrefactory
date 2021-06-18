@@ -1016,4 +1016,4 @@ typedef struct options {
     char					pendingFreeSpace[SIZE_opiMemory];
 } Options;
 
-#endif	/* ifndef _PROTO__H */
+#endif
