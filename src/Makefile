@@ -1,10 +1,10 @@
-ifndef VERBOSE
-MAKEFLAGS+=--no-print-directory
-endif
-
 #########################################################################
+# Always export following variables to environment of sub-makes (to use you need "-e")
 
-CC = gcc
+export CC = gcc
+export COVERAGE =
+
+# Other variables
 
 WARNINGS = -Wall -Wno-char-subscripts
 
@@ -38,34 +38,37 @@ endif
 #
 # The heavy lifting is here
 
-debug: CFLAGS += -DDEBUG -Og
-coverage devel: COVERAGE=--coverage
 yydebug: CFLAGS += -DDEBUG -DYYDEBUG -Og
 
+debug: CFLAGS += -DDEBUG -Og
+
 prod debug yydebug: $(ZLIB) c-xref
+
+devel: COVERAGE=--coverage
 devel: clean-coverage
-	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) devel-proper
+	$(MAKE) -e devel-proper
 
 devel-proper: unit debug test
 	$(MAKE) coverage-report
 	$(MAKE) -C ../editors/emacs
 
-coverage: debug
+coverage: COVERAGE=--coverage
+coverage: ci
 
 ci ci-unit ci-build ci-test: COVERAGE=--coverage
 ci:
-	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) unit
-	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) debug
-	$(MAKE) test
+	$(MAKE) -e unit
+	$(MAKE) -e debug
+	$(MAKE) -e test
 
 ci-unit:
-	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) unit
+	$(MAKE) -e unit
 
 ci-build:
-	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) debug
+	$(MAKE) -e debug
 
 ci-test:
-	$(MAKE) COVERAGE=$(COVERAGE) test
+	$(MAKE) -e test
 
 chcheck:
 	for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
@@ -79,20 +82,20 @@ chcheck:
 include sources.mk
 
 c-xref: check-tokens # check that token sections in parsers are identical before compiling
-	@$(MAKE) c-xref-proper
+	@$(MAKE) -e c-xref-proper
 
 c-xref-proper: CFLAGS+=-DDEBUG -Og
 .PHONY: c-xref-proper
 c-xref-proper: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
-	$(CC) $(LDFLAGS) $(COVERAGE) -o c-xref $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
 #########################################################################
 test: c-xref-proper
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
-	$(MAKE) COVERAGE=$(COVERAGE) -C ../tests quick
+	$(MAKE) -e -C ../tests quick
 
 unit: $(OBJS)
-	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) -C unittests
+	$(MAKE) -e -C unittests
 
 #########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
@@ -185,6 +188,7 @@ clean:
 
 .PHONY: clean-coverage
 clean-coverage:
+	echo coverage=$(COVERAGE)
 	-if command -v lcov > /dev/null 2>&1 ; then \
 		lcov -q -z -d .. ; \
 		rm -r ../tests/.coverage ; \
