@@ -445,23 +445,25 @@ static void fillIncludeSymbolItem(Symbol *ss, int filenum, Position *pos){
 
 
 void addThisFileDefineIncludeReference(int filenum) {
-    Position dpos;
-    Symbol ss;
-    fillPosition(&dpos, filenum, 1, 0);
-    fillIncludeSymbolItem(&ss,filenum, &dpos);
-//&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, fileTable.tab[filenum]->name);
-    addCxReference(&ss, &dpos, UsageDefined, filenum, filenum);
+    Position position;
+    Symbol symbol;
+
+    fillPosition(&position, filenum, 1, 0);
+    fillIncludeSymbolItem(&symbol,filenum, &position);
+    log_trace("adding reference on file %d==%s", filenum, fileTable.tab[filenum]->name);
+    addCxReference(&symbol, &position, UsageDefined, filenum, filenum);
 }
 
-void addIncludeReference(int filenum, Position *pos) {
-    Symbol ss;
-//&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, fileTable.tab[filenum]->name);
-    fillIncludeSymbolItem( &ss, filenum, pos);
-    addCxReference(&ss, pos, UsageUsed, filenum, filenum);
+void addIncludeReference(int filenum, Position *position) {
+    Symbol symbol;
+
+    log_trace("adding reference on file %d==%s", filenum, fileTable.tab[filenum]->name);
+    fillIncludeSymbolItem( &symbol, filenum, position);
+    addCxReference(&symbol, position, UsageUsed, filenum, filenum);
 }
 
-static void addIncludeReferences(int filenum, Position *pos) {
-    addIncludeReference(filenum, pos);
+static void addIncludeReferences(int filenum, Position *position) {
+    addIncludeReference(filenum, position);
     addThisFileDefineIncludeReference(filenum);
 }
 
@@ -2306,7 +2308,8 @@ int yylex(void) {
         PassLexem(currentInput.currentLexemP, lexem, line, val, pos, len, macroStackIndex == 0);
         if (lexem == IDENT_TO_COMPLETE) {
             testCxrefCompletionId(&lexem,yytext,&pos);
-            while (includeStackPointer != 0) popInclude();
+            while (includeStackPointer != 0)
+                popInclude();
             /* while (getLexBuf(&cFile.lb)) cFile.lb.cc = cFile.lb.fin;*/
             goto endOfFile;
         }
