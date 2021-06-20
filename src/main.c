@@ -309,13 +309,13 @@ static void optionAddToAllocatedList(char **destination) {
 static void allocOptionSpace(void **optAddress, int size) {
     char **res;
     res = (char**)optAddress;
-    OPT_ALLOCC((*res), size, char);
+    OPT_ALLOCC((*res), size, char); /* TODO: WTF what side effects does this have?! */
     optionAddToAllocatedList(res);
 }
 
+/* TODO: Memory management is a mystery, e.g. this can't be turned into a function returning the address... */
 void createOptionString(char **optAddress, char *text) {
-    int alen = strlen(text)+1;
-    allocOptionSpace((void**)optAddress, alen);
+    allocOptionSpace((void**)optAddress, strlen(text)+1);
     strcpy(*optAddress, text);
 }
 

@@ -12,8 +12,8 @@ void symbolTableNoAllocInit(SymbolTable *table, int size) {
   mock(table, size);
 }
 
-bool symbolTableIsMember(SymbolTable *table, Symbol *element, int *position, Symbol **origin) {
-  return (int) mock(table, element, position, origin);
+bool symbolTableIsMember(SymbolTable *table, Symbol *element, int *position, Symbol **foundMemberPointer) {
+  return (int) mock(table, element, position, foundMemberPointer);
 }
 
 int symbolTableMembEqual(Symbol *e1, Symbol *e2) {

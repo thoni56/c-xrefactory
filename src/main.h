@@ -8,7 +8,7 @@ extern void xrefSetenv(char *name, char *val);
 
 extern int addHtmlCutPath(char *ss);
 
-extern void createOptionString(char **dest, char *text);
+extern void createOptionString(char **optAddress, char *text);
 extern void copyOptions(Options *dest, Options *src);
 extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);
 extern void processOptions(int argc, char **argv, int infilesFlag);
