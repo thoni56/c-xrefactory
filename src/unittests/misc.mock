@@ -186,16 +186,16 @@ int shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
   return (int) mock(string, stringLen, pattern, caseSensitive);
 }
 
-void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *freeolen) {
-  mock(fn, outpaths, freeolen);
+void expandWildcardsInOnePathRecursiveMaybe(char *filename, char **outpaths, int *availableSpace) {
+  mock(filename, outpaths, availableSpace);
 }
 
-void expandWildcardsInOnePath(char *fn, char *outpaths, int olen) {
-  mock(fn, outpaths, olen);
+void expandWildcardsInOnePath(char *filename, char *outpaths, int availableSpace) {
+  mock(filename, outpaths, availableSpace);
 }
 
-void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen) {
-  mock(paths, outpaths, freeolen);
+void expandWildcardsInPaths(char *paths, char *outpaths, int availableSpace) {
+  mock(paths, outpaths, availableSpace);
 }
 
 char *getRealFileNameStatic(char *fn) {

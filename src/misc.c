@@ -1019,7 +1019,7 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
 
 // Dont use this function!!!! what you need is: expandWildcardsInOnePath
 /* TODO: WTF, why? we *are* using it... */
-void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *freeolen) {
+void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *availableSpace) {
     char                ttt[MAX_FILE_NAME_SIZE];
     int                 i, si,di, ldi, len;
     struct stat         st;
@@ -1039,7 +1039,7 @@ void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *free
                 ttt[ldi]=0;
                 //&fprintf(dumpOut,"mapdirectoryfiles(%s, %s, %s)\n", ttt, ttt+ldi+1, fn+si);fflush(dumpOut);
                 mapDirectoryFiles(ttt, expandWildcardsMapFun, 0, ttt, ttt+ldi+1,
-                                  (Completions*)(fn+si), outpaths, freeolen);
+                                  (Completions*)(fn+si), outpaths, availableSpace);
             } else {
                 ttt[di] = fn[si];
                 if (fn[si]) { di++; si++; }
@@ -1050,34 +1050,34 @@ void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *free
         strcpy(*outpaths, fn);
         //&fprintf(dumpOut,"adding expandedpath==%s\n", fn);fflush(dumpOut);
         *outpaths += len;
-        *freeolen -= len;
+        *availableSpace -= len;
         *((*outpaths)++) = CLASS_PATH_SEPARATOR;
         *(*outpaths) = 0;
-        *freeolen -= 1;
-        if (*freeolen <= 0) {
+        *availableSpace -= 1;
+        if (*availableSpace <= 0) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "expanded option %s overflows over MAX_OPTION_LEN",
-                    *outpaths-(MAX_OPTION_LEN-*freeolen));
+                    *outpaths-(MAX_OPTION_LEN-*availableSpace));
             fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
         }
     }
 }
 
-void expandWildcardsInOnePath(char *fn, char *outpaths, int freeolen) {
+void expandWildcardsInOnePath(char *filename, char *outpaths, int availableSpace) {
     char    *oop, *opaths;
     int     olen;
-    assert(freeolen == MAX_OPTION_LEN);
-    oop = opaths = outpaths; olen = freeolen;
-    expandWildcardsInOnePathRecursiveMaybe(fn, &opaths, &olen);
+    assert(availableSpace == MAX_OPTION_LEN);
+    oop = opaths = outpaths; olen = availableSpace;
+    expandWildcardsInOnePathRecursiveMaybe(filename, &opaths, &olen);
     *opaths = 0;
     if (opaths != oop) *(opaths-1) = 0;
 }
 
-void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen) {
+void expandWildcardsInPaths(char *paths, char *outpaths, int availableSpace) {
     char    *oop, *opaths;
     int     olen;
-    assert(freeolen == MAX_OPTION_LEN);
-    oop = opaths = outpaths; olen = freeolen;
+    assert(availableSpace == MAX_OPTION_LEN);
+    oop = opaths = outpaths; olen = availableSpace;
     JavaMapOnPaths(paths, {
             expandWildcardsInOnePathRecursiveMaybe(currentPath, &opaths, &olen);
         });

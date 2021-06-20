@@ -500,42 +500,42 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
     EditorBuffer *editorBuffer;
     FILE *file;
     StringList *ll;
-    char wcp[MAX_OPTION_LEN];
+    char wildcardExpandedPaths[MAX_OPTION_LEN];
     char normalizedName[MAX_FILE_NAME_SIZE];
-    char rdir[MAX_FILE_NAME_SIZE];
-    int nnlen, dlen, nmlen;
+    char path[MAX_FILE_NAME_SIZE];
+    int nnlen, nmlen;
 
     editorBuffer = NULL; file = NULL;
     nmlen = strlen(name);
-    extractPathInto(currentFile.fileName, rdir);
-    if (includeType!='<') {
-        strcpy(normalizedName, normalizeFileName(name, rdir));
+    extractPathInto(currentFile.fileName, path);
+    if (includeType != '<') {
+        strcpy(normalizedName, normalizeFileName(name, path));
         log_trace("try to open %s", normalizedName);
         editorBuffer = editorFindFile(normalizedName);
         if (editorBuffer == NULL)
             file = openFile(normalizedName, "r");
     }
-    for (ll=options.includeDirs; ll!=NULL && editorBuffer==NULL && file==NULL; ll=ll->next) {
-        strcpy(normalizedName, normalizeFileName(ll->d, rdir));
-        expandWildcardsInOnePath(normalizedName, wcp, MAX_OPTION_LEN);
-        JavaMapOnPaths(wcp, {
-            strcpy(normalizedName, currentPath);
-            dlen = strlen(normalizedName);
-            if (dlen>0 && normalizedName[dlen-1]!=FILE_PATH_SEPARATOR) {
-                normalizedName[dlen] = FILE_PATH_SEPARATOR;
-                dlen++;
-            }
-            strcpy(normalizedName+dlen, name);
-            nnlen = dlen+nmlen;
-            normalizedName[nnlen]=0;
-            log_trace("try to open <%s>", normalizedName);
-            editorBuffer = editorFindFile(normalizedName);
-            if (editorBuffer==NULL)
-                file =
-                    openFile(normalizedName, "r");
-            if (editorBuffer!=NULL || file!=NULL)
-                goto found;
-        });
+    for (ll = options.includeDirs; ll != NULL && editorBuffer == NULL && file == NULL; ll = ll->next) {
+        strcpy(normalizedName, normalizeFileName(ll->d, path));
+        expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
+        JavaMapOnPaths(wildcardExpandedPaths, {
+                int length;
+                strcpy(normalizedName, currentPath);
+                length = strlen(normalizedName);
+                if (length > 0 && normalizedName[length-1] != FILE_PATH_SEPARATOR) {
+                    normalizedName[length] = FILE_PATH_SEPARATOR;
+                    length++;
+                }
+                strcpy(normalizedName+length, name);
+                nnlen = length+nmlen;
+                normalizedName[nnlen]=0;
+                log_trace("try to open <%s>", normalizedName);
+                editorBuffer = editorFindFile(normalizedName);
+                if (editorBuffer == NULL)
+                    file = openFile(normalizedName, "r");
+                if (editorBuffer != NULL || file != NULL)
+                    goto found;
+            });
     }
     if (editorBuffer==NULL && file==NULL)
         return NULL;
@@ -543,7 +543,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
     strcpy(normalizedName, normalizeFileName(normalizedName, cwd));
     log_trace("file '%s' opened, checking to %s", normalizedName, fileTable.tab[s_olOriginalFileNumber]->name);
     pushInclude(file, editorBuffer, normalizedName, "\n");
-    return stdin;  // NOT NULL
+    return stdin;               // NOT NULL TODO: WTF?!?!? Why not bool? Check return value usage at call sites...
 }
 
 static void processInclude2(Position *ipos, char pchar, char *iname) {
@@ -571,54 +571,6 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
 
 /* Public only for unittests */
 void processIncludeDirective(Position *includePosition) {
-    char *currentLexemP, *previousLexemP;
-    Lexem lexem;
-    int l, v, len; UNUSED len; UNUSED v; UNUSED l;
-    Position pos; UNUSED pos;
-
-    jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
-    case END_OF_FILE_EXCEPTION:
-        goto endOfFile;
-    case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        goto endOfMacroArgument;
-    }
-
-    lexem = getLexemSavePrevious(&previousLexemP, exceptionHandler);
-
-    currentLexemP = currentInput.currentLexemP;
-    if (lexem == STRING_LITERAL) {
-        PassLexem(currentInput.currentLexemP, lexem, l, v, pos, len, true);
-        if (macroStackIndex != 0) {
-            errorMessage(ERR_INTERNAL,"include directive in macro body?");
-assert(0);
-            currentInput = macroStack[0];
-            macroStackIndex = 0;
-        }
-        processInclude2(includePosition, *currentLexemP, currentLexemP+1);
-    } else {
-        currentInput.currentLexemP = previousLexemP;		/* unget lexem */
-        lexem = yylex();
-        if (lexem == STRING_LITERAL) {
-            currentInput = macroStack[0];		// hack, cut everything pending
-            macroStackIndex = 0;
-            processInclude2(includePosition, '\"', yytext);
-        } else if (lexem == '<') {
-            // TODO!!!!
-            warningMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
-        }
-        //do lex = yylex(); while (lex != '\n');
-    }
-    return;
-
- endOfMacroArgument:	assert(0);
- endOfFile:;
-}
-
-
-/* TODO: This is a copy of processIncludeDirective() above to be unified once #include_next works */
-/* Public only for unittests */
-void processIncludeNextDirective(Position *includePosition) {
     char *currentLexemP, *previousLexemP;
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
