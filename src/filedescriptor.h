@@ -3,14 +3,16 @@
 
 #include "proto.h"
 #include "lexembuffer.h"
+#include "stringlist.h"
 
 
 typedef struct fileDescriptor {
     char *fileName ;
     int lineNumber ;
-    int ifDepth;                  /* depth of #ifs (C only)*/
-    struct cppIfStack *ifStack; /* #if stack (C only) */
+    int ifDepth;                  /* Depth of #ifs (C only)*/
+    struct cppIfStack *ifStack;   /* #if stack (C only) */
     LexemBuffer lexBuffer;
+    StringList *includeDirsPosition;
 } FileDescriptor;
 
 

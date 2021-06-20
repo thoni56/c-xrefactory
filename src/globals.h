@@ -4,17 +4,13 @@
 #include "constants.h"
 #include "symboltable.h"
 #include "filetable.h"
+#include "stringlist.h"
 
 
 typedef struct int2StringTable {
     int     i;
     char    *string;
 } Int2StringTable;
-
-typedef struct stringList {
-    char *d;
-    struct stringList *next;
-} StringList;
 
 /* ***************** unique counters  *********************** */
 typedef struct counters {

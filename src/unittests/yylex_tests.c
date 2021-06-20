@@ -1,7 +1,7 @@
 #include <cgreen/cgreen.h>
 
 #include "yylex.h"
-/* Declare semi-private function */
+/* Declare semi-private functions */
 void processDefineDirective(bool hasArguments);
 void processLineDirective(void);
 void processIncludeDirective(Position *includePosition);
@@ -168,6 +168,9 @@ xEnsure(Yylex, can_process_include_next_directive) {
     Position position = (Position){1,2,3};
     char *lexem_stream = "\303\001\"include.h";
     int fileNumber = 0;
+
+    /* Setup include paths */
+    options.includeDirs = newStringList("include1", newStringList("include2", NULL));
 
     strcpy(currentFile.lexBuffer.lexemStream, lexem_stream);
     currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
