@@ -26,7 +26,7 @@ comments starting by two slashes
 followed by at least one blank character and ending by end of the line.
 
 C-xrefrc file can also contain specification of input source files via
-execution of an extern command. A command enclosed inside two `` signs is
+execution of an external command. A command enclosed inside two `` signs is
 executed and the result of execution (from command's standard output)
 is interpreted as a blank separated list of input files. For example,
 if you wish to process  all files
@@ -34,29 +34,28 @@ with .java suffix (not those with .c suffix) under a given
 directory (say /usr/src/myproject), you can specify (under a Unix system)
 input files as: `find /usr/src/myproject -name \\*.java -print`
 
-C-xrefrc file can also refer environment variables by enclosing variable name
+The c-xrefrc file can also refer to environment variables by enclosing variable name
 into ${ and } signs (or between two % % signs). For example, you can specify
 the position of a file 'toto' in your home directory by the
-string "${HOME}/toto". The variable can be either internal c-xref variable (which
+string "${HOME}/toto". The variable can either be an internal c-xref variable (which
 must be set by the '-set <name> <value>' option), or any regular
 (shell) environment variable, such as USER, HOME, CLASSPATH, etc. Also
-following predefined variables can be used in order to introduce problematic
+the following predefined variables can be used in order to introduce problematic
 characters into options: 'pc' for percent; 'dl' for dollar, 'dq' for
 double-quotes and 'nl' for newline (even if newline is not really problematic as
-it can be inside an option enclosed in double-quotas).
+it can be inside an option enclosed in double-quotes).
 A predefined variable __BASE
 is referring to current project name.
 
 In  order  to  handle multiple projects, '.c-xrefrc'
 file  is  composed  from  separate
 sections. Each section starts with a  section  marker  stating  the
-project  name.  Options defined inside a section are taken into account
-if 'c-xref' is invoked with the '-p'
+project  name.  Options defined inside a section are read when 'c-xref' is invoked with the '-p'
 option followed by the name of the section.
 In order to pass '-p' option to c-xref from Emacs/XEmacs
 editors, you have to set current project name with
 the 'M-x c-xref-project-set-active' function or by selecting it through
-the 'C-xref->Project->Set Active" menu item.
+the 'C-xref->Project->Set Active' menu item.
 
 There can be options before the first section marker. Those options
 (not belonging to any project) are common to all projects and are
@@ -94,56 +93,50 @@ Lets take for example the '.c-xrefrc' file defining two projects
 
 ---------------------------------------------------------
 
-Invocation via the 'c-xref -p solver' command will cause that
+Invocation via the 'c-xref -p solver' command will make c-xref read
 (recursively) all source files from the '/home/marian/solver'
-and '/home/marian/commons' directories will be cross-referenced.
-Also the 'TARGET' macro will be defined having the value 'linux'. The
-resulting cross-references will be stored into the '/home/marian/XSrefs'
+and '/home/marian/commons' directories.  Also the 'TARGET' macro will
+be defined having the value 'linux'. The resulting cross-references
+will be stored into the '/home/marian/XSrefs' file.
+
+An invocation with the 'c-xref -p player' command will make c-xref
+read the source files from the '/home/marian/player' directory with
+the classpath set to '/usr/share/jdk/classes.zip:/java' and the
+resulting cross-references will be stored in the '/home/marian/Xplay'
 file.
 
-An invocation with the 'c-xref -p player' command will cause
-that source files from the '/home/marian/player' directory will
-be processed with the classpath set to '/usr/share/jdk/classes.zip:/java'
-and the resulting
-cross-references will be stored in the '/home/marian/Xplay'
-file.
-
-An invocation with the 'c-xref -html -p player'
-command causes that all files from the '/home/marian/player'
-directory will be processed
-with the classpath set to '/usr/share/jdk/classes.zip:/java',
-the input files will be
-converted to the HTML format and the resulting HTML files
-will be stored in a file hierarchy under the '/home/marian/HTML'
-directory.
+An invocation with the 'c-xref -html -p player' will process all files
+from the '/home/marian/player' directory with the classpath set
+to '/usr/share/jdk/classes.zip:/java', the input files will be
+converted to HTML format and the resulting HTML files will be stored
+in a file hierarchy under the '/home/marian/HTML' directory.
 
 NOTE: If the '.c-xrefrc' file contains input file names, they are
 processed only when invoked with '-p' or '-create' options on
 the command line.
 
-NOTE2:  It  is  strongly  recommended  to use all file names within
+NOTE2: It is strongly recommended to use all file names within
 the '.c-xrefrc' file with their full absolute paths.
 
 
 .I AUTOMATIC PROJECT DETECTION
 
-C-xrefactory contains support for automatic project detection.
-If you select  under (X)Emacs 'C-xref->Project->Set Active' and then you chose
-"++ Automatic (directory dependent) ++" item, then
-C-xrefactory tries to detect active project automatically inferring
-it from the place where currently edited file is stored, i.e. from
-its absolute path.
+C-xrefactory contains support for automatic project detection.  If you
+select under (X)Emacs 'C-xref->Project->Set Active' and then you chose
+"++ Automatic (directory dependent) ++" item, then C-xrefactory tries
+to detect active project automatically inferring it from the place
+where the currently edited file is stored, i.e. from its absolute path.
 
-Automatic project detection interprets
-project names as directories and a project is activated if
-its name is a directory containing (directly or in several
-subdirectory levels) the currently edited file (i.e. if project name
-is a prefix of the absolute path of the currently edited file).
-In case that project names overlap, then the most specific one (but still
-covering input file) is selected. In case that no project can be activated
-for currently editing file, then the last auto-detected project remains active.
+Automatic project detection interprets project names as directories
+and a project is activated if its name is a directory containing
+(directly or in several subdirectory levels) the currently edited file
+(i.e. if project name is a prefix of the absolute path of the
+currently edited file).  In case that project names overlap, then the
+most specific one (but still covering input file) is selected. In case
+that no project can be activated for currently editing file, then the
+last auto-detected project remains active.
 
-For example, let's take the .c-xrefrc file:
+For example, let's consider the followin .c-xrefrc file:
 
 ---------------------------------------------------------
 
@@ -174,39 +167,32 @@ For example, let's take the .c-xrefrc file:
 
 ---------------------------------------------------------
 
-The first part of the file is triggered for all source files
-with full path name starting by
-/home/marian/solver
-directory, the second part is triggered for  all
-files under '/home/marian/c-xref' directory.
-For example if c-xref is invoked for
-a  file,  saying
-/home/marian/c-xref/src/main.c
-this  file  will  be
-processed with options read from the second part.
+The first part of the file is triggered for all source files with full
+path name starting by /home/marian/solver directory, the second part
+is triggered for all files under '/home/marian/c-xref' directory.  For
+example if c-xref is invoked for a file, saying
+/home/marian/c-xref/src/main.c this file will be processed with
+options read from the second part.
 
-When creating cross references 'c-xref' is not able to
-switch between different sections
-in one single run, continuing our example, if you type the
-command 'c-xref -r /home/marian' then all files will be
-processed with options from one section of the '.c-xrefrc' file,
-it is not defined which section will be taken.
+When creating cross references 'c-xref' is not able to switch between
+different sections in one single run, continuing our example, if you
+type the command 'c-xref -r /home/marian' then all files will be
+processed with options from one section of the '.c-xrefrc' file, it is
+not defined which section will be taken.
 
 
 .I SHARING SAME OPTIONS IN DIFFERENT PROJECTS
 
-It is possible to define multiple projects sharing same options.
-You can put several project names separated by ':' (';' under
-MS-Windows) inside section marker, i.e. between [] brackets.
-Options following such section marker belong to all
-mentioned projects. Autodetection of project works also for
-projects sharing same options. Sharing of options is supposed
-to be used mainly if your project directory
-is accessible also through symbolic links. In this case
-you can define original directory together with it its
-name through symbolic link to share same options.
-For example, if /dir2 is a symbolic link to /dir1, then you will
-put your options into a project:
+It is possible to define multiple projects sharing same options.  You
+can put several project names separated by ':' (';' under MS-Windows)
+inside section marker, i.e. between [] brackets.  Options following
+such section marker belong to all mentioned projects. Autodetection of
+project works also for projects sharing same options. Sharing of
+options is supposed to be used mainly if your project directory is
+accessible also through symbolic links. In this case you can define
+original directory together with it its name through symbolic link to
+share same options.  For example, if /dir2 is a symbolic link to
+/dir1, then you will put your options into a project:
 
 [/dir1:/dir2]
 .br
@@ -217,25 +203,24 @@ put your options into a project:
 .SH MULTIPLE PRE-PROCESSOR PASSES
 
 
-In the C language the same sources are often compiled multiple
-times with only different initial macro settings. Usually the initial
-macro setting is used to remove or to insert parts
-of source code enclosed in #if-#else-#endif directives.
-In such case the '#if part' of code
+In the C language the same sources are often compiled multiple times
+with only different initial macro settings. Usually the initial macro
+setting is used to remove or to insert parts of source code enclosed
+in #if-#else-#endif directives.  In such case the '#if part' of code
 is never compiled together with the '#else part' of the code. However,
-for the purpose of cross referencing and (especially) for manipulations
-like renaming, it is essential to put cross-references
-from both parts together. For this reason
-c-xref permits to define multiple passes through source code
-collecting all references from those passes. Usually
-one pass corresponds to one possible compilation of sources (for example for one possible
-platform). Multiple
-passes are specified at '.c-xrefrc' file level by using special
-options '-pass<n>', where <n> is the pass number. If such an option
-occurs it causes that all following options (except other '-pass'
-option) are taken into account only when making the <n>-th pass through
-source code. By default c-xref makes as many passes through source code
-as is the greatest <n> used in '-pass' options. For example:
+for the purpose of cross referencing and (especially) for
+manipulations like renaming, it is essential to put cross-references
+from both parts together. For this reason c-xref allows defining
+multiple passes through source code collecting all references from
+those passes. Usually one pass corresponds to one possible compilation
+of sources (for example for one possible platform, one set of
+#defines). Multiple passes are specified at '.c-xrefrc' file level by
+using special options '-pass<n>', where <n> is the pass number. If
+such an option exists it makes all following options (except
+other '-pass' option) are only considerd when making the <n>-th pass
+through source code. By default c-xref makes as many passes through
+source code as is the greatest <n> used in '-pass' options. For
+example:
 
 
 ---------------------------------------------------------
@@ -256,9 +241,8 @@ as is the greatest <n> used in '-pass' options. For example:
 
 ---------------------------------------------------------
 
-This .c-xrefrc file causes that all source files
-from the '/home/marian/solve' directory will be processed twice
-first time with options:
+This .c-xrefrc file causes makes c-xref process all source files from
+the '/home/marian/solve' directory twice, the first time with options:
 
 .br
 -r /home/marian/solve
@@ -268,7 +252,7 @@ first time with options:
 -DTARGET=linux
 .br
 
-and second time with options:
+and the second time with options:
 
 .br
 -r /home/marian/solve
@@ -281,9 +265,8 @@ References from both passes will be collected and inserted into
 the '/home/marian/XSrefs' file.
 
 .I NOTE:
-Multiple passes through sources will increase
-the time of file processing and can
-considerably slowdown on-line editing actions.
+Multiple passes through sources will increase the time of file
+processing and can considerably slowdown on-line editing actions.
 
 .SH "MORE INFO"
 .RB http://github.com/thoni56/c-xrefactory
