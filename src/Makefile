@@ -40,7 +40,7 @@ endif
 
 yydebug: CFLAGS += -DDEBUG -DYYDEBUG -Og
 
-debug: CFLAGS += -DDEBUG -Og
+debug devel: CFLAGS += -DDEBUG -Og
 
 prod debug yydebug: $(ZLIB) c-xref
 
