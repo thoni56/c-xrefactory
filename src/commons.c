@@ -87,7 +87,8 @@ char *normalizeFileName(char *name, char *relative_to) {
         inzip = 1;
 #if defined (__WIN32__)
     } else if (name[0]=='\\' || name[0]=='/') {
-        normalizedFileName[0] = relative_to[0]; normalizedFileName[1] = ':';
+        normalizedFileName[0] = relative_to[0];
+        normalizedFileName[1] = ':';
         l1 = 1;
     } else if (name[0]!=0 && name[1]==':') {
         normalizedFileName[0] = tolower(name[0]);      // normalize drive name
@@ -104,33 +105,42 @@ char *normalizeFileName(char *name, char *relative_to) {
         } else {
             strcpy(normalizedFileName,relative_to);
             if (! options.fileNamesCaseSensitive) {
-                for(ss=normalizedFileName; *ss; ss++) *ss = tolower(*ss);
+                for(ss=normalizedFileName; *ss; ss++)
+                    *ss = tolower(*ss);
             }
             if (l1>0 && normalizedFileName[l1-1] == FILE_PATH_SEPARATOR) l1--;
             else normalizedFileName[l1]=FILE_PATH_SEPARATOR;
         }
     }
     for(i=s1, j=l1+1; i<l2+1; ) {
-        if (name[i]=='.' && (name[i+1]==FILE_PATH_SEPARATOR||name[i+1]=='/')) {i+=2;
+        if (name[i]=='.' && (name[i+1]==FILE_PATH_SEPARATOR||name[i+1]=='/')) {
+            i+=2;
         } else if (name[i]=='.' && name[i+1]=='.' && (name[i+2]==FILE_PATH_SEPARATOR||name[i+2]=='/')) {
-            for(j-=2; j>=0 && normalizedFileName[j]!=FILE_PATH_SEPARATOR && normalizedFileName[j]!='/'; j--) ;
-            i+=3; j++;
-            if (j==0) j++;
+            for(j-=2; j>=0 && normalizedFileName[j]!=FILE_PATH_SEPARATOR && normalizedFileName[j]!='/'; j--)
+                ;
+            i+=3;
+            j++;
+            if (j==0)
+                j++;
         } else {
             for(; name[i]!=0 && name[i]!=FILE_PATH_SEPARATOR && name[i]!='/'; i++,j++) {
                 normalizedFileName[j]=name[i];
-                if (normalizedFileName[j]==ZIP_SEPARATOR_CHAR) inzip=1;
+                if (normalizedFileName[j]==ZIP_SEPARATOR_CHAR)
+                    inzip=1;
                 if ((!inzip) && ! options.fileNamesCaseSensitive) {
                     normalizedFileName[j]=tolower(normalizedFileName[j]);
                 }
             }
             normalizedFileName[j]=name[i];
-            if (normalizedFileName[j]=='/' && !inzip) normalizedFileName[j]=FILE_PATH_SEPARATOR;
-            i++; j++;
-            if (i<l2+1 && (name[i]=='/' || name[i]==FILE_PATH_SEPARATOR) && !inzip) i++;
+            if (normalizedFileName[j]=='/' && !inzip)
+                normalizedFileName[j]=FILE_PATH_SEPARATOR;
+            i++;
+            j++;
+            if (i<l2+1 && (name[i]=='/' || name[i]==FILE_PATH_SEPARATOR) && !inzip)
+                i++;
         }
     }
-    log_trace("returning %s",normalizedFileName);
+    log_trace("returning %s", normalizedFileName);
     if (j>=2 && normalizedFileName[j-2]==FILE_PATH_SEPARATOR && !inzip)
         normalizedFileName[j-2]=0;
     if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
