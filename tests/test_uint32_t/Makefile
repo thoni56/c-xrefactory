@@ -10,11 +10,25 @@ include ../Makefile.boilerplate
 # gcc -E source.c
 
 CXREF = ../../src/c-xref
+COMMAND = $(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -D__INT_LEAST8_TYPE__=int -p $(CURDIR) -log=log $(TRACE) source_not_working.c source_working.c -o output.tmp
 
 $(TEST): .c-xrefrc
-	$(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -log=log source_not_working.c source_working.c -o output.tmp
+	$(COMMAND)
 	@$(NORMALIZE) output.tmp > output
-	grep "error len" output
+	grep "error len" output ; \
+	if [ $$? -eq 0 ] ; then \
+		$(FAIL) ; \
+	else \
+		$(OK) ; \
+	fi
+
+trace: TRACE=-trace
+trace: $(TEST)
 
 clean:
 	rm -rf .c-xrefrc CXrefs output.log output.tmp
+
+DEBUGGER = gdb
+debug: TRACE = -trace
+debug:
+	$(DEBUGGER) --args $(COMMAND)
