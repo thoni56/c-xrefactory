@@ -1907,7 +1907,7 @@ static int getCurrentRefPosition(S_olcxReferences *refs) {
         }
     }
     if (rr==NULL) actn = 0;
-    return(actn);
+    return actn;
 }
 
 static void symbolHighlighNameSprint(char *output, S_olSymbolsMenu *ss) {
@@ -2033,7 +2033,7 @@ static S_olCompletion *olCompletionNthLineRef(S_olCompletion *cpls, int refn) {
         i += rrr->lineCount;
         rr = rrr;
     }
-    return(rr);
+    return rr;
 }
 
 static void olcxPopUser(void) {
@@ -2050,7 +2050,7 @@ static S_olcxReferences *olcxPushUserOnPhysicalTopOfStack(void) {
     oldtop = s_olcxCurrentUser->browserStack.top;
     s_olcxCurrentUser->browserStack.top = s_olcxCurrentUser->browserStack.root;
     olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
-    return(oldtop);
+    return oldtop;
 }
 
 static void olcxPopAndFreeAndPopsUntil(S_olcxReferences *oldtop) {
@@ -2302,7 +2302,7 @@ static void olcxShowTopSymbol(void) {
 }
 
 static int referenceLess(Reference *r1, Reference *r2) {
-    return(positionIsLessThan(r1->p, r2->p));
+    return positionIsLessThan(r1->p, r2->p);
 }
 
 static S_olSymbolsMenu *findSymbolCorrespondingToReference(
@@ -2314,7 +2314,7 @@ static S_olSymbolsMenu *findSymbolCorrespondingToReference(
     for(ss=menu; ss!=NULL; ss=ss->next) {
         SORTED_LIST_FIND3(rr, Reference, ref, ss->s.refs, referenceLess);
         if (rr!=NULL && positionsAreEqual(rr->p, ref->p)) {
-            return(ss);
+            return ss;
         }
     }
     return NULL;
@@ -2364,7 +2364,7 @@ S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &s_noPos, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
-    return(res);
+    return res;
 }
 
 static void olcxTopSymbolResolution(void) {
@@ -2381,16 +2381,27 @@ static void olcxTopSymbolResolution(void) {
     olcxPrintSelectionMenu(ss);
 }
 
+/* NOTE: may return! */
 #define CHECK_ATTRIBUTES(p1,p2) {                                       \
-        if (p1 == p2) return(1);                                        \
-        if (p1->b.category != p2->b.category) return(0);                \
-        if (p1->b.symType!=TypeCppCollate && p2->b.symType!=TypeCppCollate && p1->b.symType!=p2->b.symType) return(0); \
-        if (p1->b.storage!=p2->b.storage) return(0);                    \
+        if (p1 == p2) return true;                                      \
+        if (p1->b.category != p2->b.category) return false;             \
+        if (p1->b.symType!=TypeCppCollate && p2->b.symType!=TypeCppCollate && p1->b.symType!=p2->b.symType) return false; \
+        if (p1->b.storage!=p2->b.storage) return false;                 \
     }
 
 bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    CHECK_ATTRIBUTES(p1,p2);
-    if (strcmp(p1->name,p2->name)) return false;
+    /* Expansion of CHECK_ATTRIBUTES() macro to be explicit about returns... */
+    if (p1 == p2)
+        return true;                                          
+    if (p1->b.category != p2->b.category)
+        return false;                 
+    if (p1->b.symType!=TypeCppCollate && p2->b.symType!=TypeCppCollate && p1->b.symType!=p2->b.symType)
+        return false; 
+    if (p1->b.storage!=p2->b.storage)
+        return false;
+    
+    if (strcmp(p1->name, p2->name) != 0)
+        return false;
     return true;
 }
 
