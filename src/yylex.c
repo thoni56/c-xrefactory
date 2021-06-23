@@ -135,9 +135,9 @@ char *placeIdent(void) {
         }
         s = strlen(tt);
         assert(s<MAX_HTML_REF_LEN);
-        return(tt);
+        return tt;
     }
-    return("");
+    return "";
 }
 
 static bool isPreprocessorToken(Lexem lexem) {
@@ -496,27 +496,51 @@ void popInclude(void) {
     }
 }
 
-static FILE *openInclude(char includeType, char *name, char **fileName) {
-    EditorBuffer *editorBuffer;
-    FILE *file;
-    StringList *ll;
+static FILE *openInclude(char includeType, char *name, char **fileName, bool is_include_next) {
+    EditorBuffer *editorBuffer = NULL;
+    FILE *file = NULL;
+    StringList *includeDirP;
     char wildcardExpandedPaths[MAX_OPTION_LEN];
     char normalizedName[MAX_FILE_NAME_SIZE];
     char path[MAX_FILE_NAME_SIZE];
     int nnlen, nmlen;
 
-    editorBuffer = NULL; file = NULL;
     nmlen = strlen(name);
     extractPathInto(currentFile.fileName, path);
+
+    StringList *start = options.includeDirs;
+
+    if (is_include_next) {
+        /* #include_next, so find the include path which matches this */
+        for (StringList *p = options.includeDirs; p != NULL; p = p->next) {
+            char normalizedIncludePath[MAX_FILE_NAME_SIZE];
+            strcpy(normalizedIncludePath, normalizeFileName(p->d, cwd));
+            int len = strlen(normalizedIncludePath);
+            if (normalizedIncludePath[len-1] != FILE_PATH_SEPARATOR) {
+                normalizedIncludePath[len] = FILE_PATH_SEPARATOR;
+                normalizedIncludePath[len+1] = '\0';
+            }
+            if (strcmp(normalizedIncludePath, path) == 0) {
+                /* And start search from the next */
+                start = p->next;
+                goto search;
+            }
+        }
+    }
+
+    /* If not an angle bracketed include, look first in the current directory */
     if (includeType != '<') {
-        strcpy(normalizedName, normalizeFileName(name, path));
-        log_trace("try to open %s", normalizedName);
+        strcpy(normalizedName, normalizeFileName(name, cwd));
+        log_trace("trying to open %s", normalizedName);
         editorBuffer = editorFindFile(normalizedName);
         if (editorBuffer == NULL)
             file = openFile(normalizedName, "r");
     }
-    for (ll = options.includeDirs; ll != NULL && editorBuffer == NULL && file == NULL; ll = ll->next) {
-        strcpy(normalizedName, normalizeFileName(ll->d, path));
+
+    /* If not found we need to walk the include paths... */
+ search:
+    for (includeDirP = start; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
+        strcpy(normalizedName, normalizeFileName(includeDirP->d, cwd));
         expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
         JavaMapOnPaths(wildcardExpandedPaths, {
                 int length;
@@ -529,7 +553,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
                 strcpy(normalizedName+length, name);
                 nnlen = length+nmlen;
                 normalizedName[nnlen]=0;
-                log_trace("try to open <%s>", normalizedName);
+                log_trace("trying to open <%s>", normalizedName);
                 editorBuffer = editorFindFile(normalizedName);
                 if (editorBuffer == NULL)
                     file = openFile(normalizedName, "r");
@@ -546,7 +570,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
     return stdin;               // NOT NULL TODO: WTF?!?!? Why not bool? Check return value usage at call sites...
 }
 
-static void processInclude2(Position *ipos, char pchar, char *iname) {
+static void processInclude2(Position *ipos, char pchar, char *iname, bool is_include_next) {
     char *fname;
     FILE *nyyin;
     Symbol ss,*memb;
@@ -559,7 +583,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
 
     if (symbolTableIsMember(s_symbolTable, &ss, NULL, &memb))
         return;
-    nyyin = openInclude(pchar, iname, &fname);
+    nyyin = openInclude(pchar, iname, &fname, is_include_next);
     if (nyyin == NULL) {
         assert(options.taskRegime);
         if (options.taskRegime!=RegimeEditServer)
@@ -570,7 +594,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
 }
 
 /* Public only for unittests */
-void processIncludeDirective(Position *includePosition) {
+void processIncludeDirective(Position *includePosition, bool is_include_next) {
     char *currentLexemP, *previousLexemP;
     Lexem lexem;
     int l, v, len; UNUSED len; UNUSED v; UNUSED l;
@@ -595,14 +619,14 @@ assert(0);
             currentInput = macroStack[0];
             macroStackIndex = 0;
         }
-        processInclude2(includePosition, *currentLexemP, currentLexemP+1);
+        processInclude2(includePosition, *currentLexemP, currentLexemP+1, is_include_next);
     } else {
         currentInput.currentLexemP = previousLexemP;		/* unget lexem */
         lexem = yylex();
         if (lexem == STRING_LITERAL) {
             currentInput = macroStack[0];		// hack, cut everything pending
             macroStackIndex = 0;
-            processInclude2(includePosition, '\"', yytext);
+            processInclude2(includePosition, '\"', yytext, is_include_next);
         } else if (lexem == '<') {
             // TODO!!!!
             warningMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
@@ -1043,24 +1067,24 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
             genCppIfElseReference(0, &pos, UsageUsed);
             if (depth == 1 && !untilEnd) {
                 log_debug("#elif ");
-                return(UNTIL_ELIF);
+                return UNTIL_ELIF;
             }
         } else if (lexem == CPP_ELSE) {
             genCppIfElseReference(0, &pos, UsageUsed);
             if (depth == 1 && !untilEnd) {
                 log_debug("#else");
-                return(UNTIL_ELSE);
+                return UNTIL_ELSE;
             }
         }
     }
     log_debug("#endif");
-    return(UNTIL_ENDIF);
+    return UNTIL_ENDIF;
 endOfMacroArgument:	assert(0);
 endOfFile:;
     if (options.taskRegime!=RegimeEditServer) {
         warningMessage(ERR_ST,"end of file in cpp conditional");
     }
-    return(UNTIL_ENDIF);
+    return UNTIL_ENDIF;
 }
 
 static void execCppIf(int deleteSource) {
@@ -1169,7 +1193,7 @@ int cexp_yylex(void) {
         }
 
         if (!isIdentifierLexem(lexem))
-            return(0);
+            return 0;
 
         fillSymbol(&dd, cc, cc, s_noPos);
         fillSymbolBits(&dd.bits, AccessDefault, TypeMacro, StorageNone);
@@ -1196,10 +1220,10 @@ int cexp_yylex(void) {
     } else {
         lexem = cexpTranslateToken(lexem, uniyylval->ast_integer.d);
     }
-    return(lexem);
+    return lexem;
 endOfMacroArgument:	assert(0);
 endOfFile:;
-    return(0);
+    return 0;
 }
 
 static void processIfDirective(void) {
@@ -1274,7 +1298,10 @@ static bool processPreprocessorConstruct(Lexem lexem) {
     log_debug("processing cpp-construct '%s' ", s_tokenName[lexem]);
     switch (lexem) {
     case CPP_INCLUDE:
-        processIncludeDirective(&pos);
+        processIncludeDirective(&pos, false);
+        break;
+    case CPP_INCLUDE_NEXT:
+        processIncludeDirective(&pos, true);
         break;
     case CPP_DEFINE0:
         AddHtmlCppReference(pos);
@@ -1389,16 +1416,18 @@ endOfFile:
 static int cyclicCall(MacroBody *mb) {
     struct lexInput *ll;
     char *name;
-    int i;
+
     name = mb->name;
 /*fprintf(dumpOut,"testing '%s' against curr '%s'\n",name,cInput.macname);*/
-    if (currentInput.macroName != NULL && strcmp(name,currentInput.macroName)==0) return(1);
-    for(i=0; i<macroStackIndex; i++) {
+    if (currentInput.macroName != NULL && strcmp(name,currentInput.macroName)==0)
+        return 1;
+    for(int i=0; i<macroStackIndex; i++) {
         ll = &macroStack[i];
 /*fprintf(dumpOut,"testing '%s' against '%s'\n",name,ll->macname);*/
-        if (ll->macroName != NULL && strcmp(name,ll->macroName)==0) return(1);
+        if (ll->macroName != NULL && strcmp(name,ll->macroName)==0)
+            return 1;
     }
-    return(0);
+    return 0;
 }
 
 
@@ -1818,14 +1847,14 @@ static struct lexInput *getActualMacroArguments(MacroBody *mb, Position *mpos,
     for(;actArgi < mb->argn; actArgi++) {
         fillLexInput(&actArgs[actArgi], NULL, NULL, NULL, NULL,INPUT_NORMAL);
     }
-    return(actArgs);
+    return actArgs;
 endOfMacroArgument:	assert(0);
 endOfFile:
     assert(options.taskRegime);
     if (options.taskRegime!=RegimeEditServer) {
         warningMessage(ERR_ST,"[getActualMacroArguments] unterminated macro call");
     }
-    return(NULL);
+    return NULL;
 }
 
 /* **************************************************************** */
@@ -1869,19 +1898,20 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
 
     previousLexem = currentInput.currentLexemP;
     mb = mdef->u.mbody;
-    if (mb == NULL) return(0);	/* !!!!!         tricky,  undefined macro */
+    if (mb == NULL)
+        return 0;	/* !!!!!         tricky,  undefined macro */
     if (macroStackIndex == 0) { /* call from source, init mem */
         MB_INIT();
     }
-    log_trace("try to expand macro '%s'", mb->name);
+    log_trace("trying to expand macro '%s'", mb->name);
     if (cyclicCall(mb))
-        return(0);
+        return 0;
     PP_ALLOCC(freeBase,0,char);
     if (mb->argn >= 0) {
         GetLexASkippingLines(lexem, previousLexem, line, val, pos, len);
         if (lexem != '(') {
             currentInput.currentLexemP = previousLexem;		/* unget lexem */
-            return(0);
+            return 0;
         }
         PassLexem(currentInput.currentLexemP, lexem, line, val, lparpos, len,
                            macroStackIndex == 0);
@@ -1898,13 +1928,13 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
     prependMacroInput(&macroBody);
     log_trace("expanding macro '%s'", mb->name);
     PP_FREE_UNTIL(freeBase);
-    return(1);
+    return 1;
 endOfMacroArgument:
     /* unterminated macro call in argument */
     /* TODO unread readed argument */
     currentInput.currentLexemP = previousLexem;
     PP_FREE_UNTIL(freeBase);
-    return(0);
+    return 0;
 endOfFile:
     assert(options.taskRegime);
     if (options.taskRegime!=RegimeEditServer) {
@@ -1912,7 +1942,7 @@ endOfFile:
     }
     currentInput.currentLexemP = previousLexem;
     PP_FREE_UNTIL(freeBase);
-    return(0);
+    return 0;
 }
 
 #ifdef DEBUG
@@ -1942,7 +1972,7 @@ int lexBufDump(LexemBuffer *lb) {
         PassLexem(cc, lexem, lv, v, pos, len, c);
     }
     fprintf(dumpOut,"lexbufdump [stop]\n");fflush(dumpOut);
-    return(0);
+    return 0;
 }
 #endif
 
@@ -1993,7 +2023,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
 endOfFile:
     setCFileConsistency();
     *cfrom = ccc;
-    return(res);
+    return res;
 endOfMacroArgument:
     assert(0);
     return -1;                  /* The assert should protect this from executing */
@@ -2006,36 +2036,39 @@ endOfMacroArgument:
 static char charText[2]={0,0};
 static char constant[50];
 
-#define CHECK_ID_FOR_KEYWORD(sd,idposa) {\
-    if (sd->bits.symbolType == TypeKeyword) {\
-        SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);\
-        if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) {\
-            char ttt[TMP_STRING_SIZE];\
-            sprintf(ttt,"%s-%x", sd->name, idposa->file);\
-            addTrivialCxReference(ttt, TypeKeyword,StorageDefault, idposa, UsageUsed);\
-            /*&addCxReference(sd, idposa, UsageUsed, noFileIndex, noFileIndex);&*/\
-        }\
-        return(sd->u.keyword);\
-    }\
-}
+/* WTF! Return inside macro!!! */
+#define CHECK_ID_FOR_KEYWORD(symbol, idposa) {                          \
+        if (symbol->bits.symbolType == TypeKeyword) {                   \
+            SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *idposa);       \
+            if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) { \
+                char ttt[TMP_STRING_SIZE];                              \
+                sprintf(ttt, "%s-%x", symbol->name, idposa->file);      \
+                addTrivialCxReference(ttt, TypeKeyword, StorageDefault, idposa, UsageUsed); \
+                /*&addCxReference(symbol, idposa, UsageUsed, noFileIndex, noFileIndex);&*/ \
+            }                                                           \
+            return symbol->u.keyword;                                   \
+        }                                                               \
+    }
 
 static int processCIdent(unsigned hashval, char *id, Position *idposa) {
-    Symbol *sd,*memb;
-    memb = NULL;
-/*fprintf(dumpOut,"looking for %s in %d\n",id,s_symTab);*/
-    for(sd=s_symbolTable->tab[hashval]; sd!=NULL; sd=sd->next) {
-        if (strcmp(sd->name, id) == 0) {
-            if (memb == NULL) memb = sd;
-            CHECK_ID_FOR_KEYWORD(sd, idposa);
-            if (sd->bits.symbolType == TypeDefinedOp && s_ifEvaluation) {
-                return(CPP_DEFINED_OP);
+    Symbol *symbol;
+    Symbol *memb = NULL;
+
+    log_trace("looking for %s in %d", id, s_symbolTable);
+    for(symbol=s_symbolTable->tab[hashval]; symbol!=NULL; symbol=symbol->next) {
+        if (strcmp(symbol->name, id) == 0) {
+            if (memb == NULL)
+                memb = symbol;
+            CHECK_ID_FOR_KEYWORD(symbol, idposa); /* NOTE! might return!!!! */
+            if (symbol->bits.symbolType == TypeDefinedOp && s_ifEvaluation) {
+                return CPP_DEFINED_OP;
             }
-            if (sd->bits.symbolType == TypeDefault) {
-                SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);
-                if (sd->bits.storage == StorageTypedef) {
-                    return(TYPE_NAME);
+            if (symbol->bits.symbolType == TypeDefault) {
+                SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *idposa);
+                if (symbol->bits.storage == StorageTypedef) {
+                    return TYPE_NAME;
                 } else {
-                    return(IDENTIFIER);
+                    return IDENTIFIER;
                 }
             }
         }
@@ -2043,28 +2076,32 @@ static int processCIdent(unsigned hashval, char *id, Position *idposa) {
     if (memb == NULL) id = stackMemoryPushString(id);
     else id = memb->name;
     SET_IDENTIFIER_YYLVAL(id, memb, *idposa);
-    return(IDENTIFIER);
+    return IDENTIFIER;
 }
 
 
 static int processJavaIdent(unsigned hashval, char *id, Position *idposa) {
-    Symbol *sd,*memb;
-    memb = NULL;
-/*fprintf(dumpOut,"looking for %s in %d\n",id,s_symTab);*/
-    for(sd=s_symbolTable->tab[hashval]; sd!=NULL; sd=sd->next) {
-        if (strcmp(sd->name, id) == 0) {
-            if (memb == NULL) memb = sd;
-            CHECK_ID_FOR_KEYWORD(sd, idposa);
-            if (sd->bits.symbolType == TypeDefault) {
-                SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);
-                return(IDENTIFIER);
+    Symbol *symbol;
+    Symbol *memb = NULL;
+
+    log_trace("looking for %s in %d", id, s_symbolTable);
+    for(symbol=s_symbolTable->tab[hashval]; symbol!=NULL; symbol=symbol->next) {
+        if (strcmp(symbol->name, id) == 0) {
+            if (memb == NULL)
+                memb = symbol;
+            CHECK_ID_FOR_KEYWORD(symbol, idposa); /* NOTE: Might return!!!! */
+            if (symbol->bits.symbolType == TypeDefault) {
+                SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *idposa);
+                return IDENTIFIER;
             }
         }
     }
-    if (memb == NULL) id = stackMemoryPushString(id);
-    else id = memb->name;
+    if (memb == NULL)
+        id = stackMemoryPushString(id);
+    else
+        id = memb->name;
     SET_IDENTIFIER_YYLVAL(id, memb, *idposa);
-    return(IDENTIFIER);
+    return IDENTIFIER;
 }
 
 
@@ -2211,9 +2248,12 @@ int yylex(void) {
             if (expandMacroCall(memberP,&idpos)) goto nextYylex;
         }
         hash = hashFun(id) % s_symbolTable->size;
-        if(LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)) lexem=processCIdent(hash,id,&idpos);
-        else if (LANGUAGE(LANG_JAVA)) lexem = processJavaIdent(hash, id, &idpos);
-        else assert(0);
+        if (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC))
+            lexem=processCIdent(hash,id,&idpos);
+        else if (LANGUAGE(LANG_JAVA))
+            lexem = processJavaIdent(hash, id, &idpos);
+        else
+            assert(0);
         pos = idpos;            /* To simplify debug - pos is always current at finish: */
         goto finish;
     }
@@ -2277,7 +2317,7 @@ int yylex(void) {
  finish:
     log_trace("!'%s'(%d)", yytext, cxMemory->index);
     s_lastReturnedLexem = lexem;
-    return(lexem);
+    return lexem;
 
  endOfMacroArgument:
     assert(0);
@@ -2289,5 +2329,5 @@ int yylex(void) {
         goto nextYylex;
     }
     /* add the test whether in COMPLETION, communication string found */
-    return(0);
+    return 0;
 }	/* end of yylex() */

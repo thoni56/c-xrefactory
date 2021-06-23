@@ -71,6 +71,7 @@ void reInitCwd(char *dffname, char *dffsect) {
 }
 
 /* this is the the number 1 of program hacking */
+/* Returns: a pointer to a static area! */
 char *normalizeFileName(char *name, char *relative_to) {
     static char normalizedFileName[MAX_FILE_NAME_SIZE];
     int l1,l2,i,j,s1,inzip=0;
@@ -130,7 +131,8 @@ char *normalizeFileName(char *name, char *relative_to) {
         }
     }
     log_trace("returning %s",normalizedFileName);
-    if (j>=2 && normalizedFileName[j-2]==FILE_PATH_SEPARATOR && !inzip) normalizedFileName[j-2]=0;
+    if (j>=2 && normalizedFileName[j-2]==FILE_PATH_SEPARATOR && !inzip)
+        normalizedFileName[j-2]=0;
     if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file name %s is too long", normalizedFileName);
@@ -217,7 +219,8 @@ int extractPathInto(char *source, char *dest) {
 
     for(i=0; source[i]!=0; i++) {
         dest[i] = source[i];
-        if (source[i]=='/' || source[i]=='\\') l = i+1;
+        if (source[i]=='/' || source[i]=='\\')
+            l = i+1;
     }
     dest[l] = 0;
 

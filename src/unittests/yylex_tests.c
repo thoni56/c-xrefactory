@@ -4,7 +4,7 @@
 /* Declare semi-private functions */
 void processDefineDirective(bool hasArguments);
 void processLineDirective(void);
-void processIncludeDirective(Position *includePosition);
+void processIncludeDirective(Position *includePosition, bool include_next);
 void processIncludeNextDirective(Position *includePosition);
 
 #include "filedescriptor.h"
@@ -162,7 +162,7 @@ Ensure(Yylex, can_process_include_directive) {
     expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2));           /* Don't know why two times... */
 
-    processIncludeDirective(&position);
+    processIncludeDirective(&position, false);
 
     assert_that(fileTable.tab[fileNumber]->name, is_equal_to_string("some/path/include.h"));
 }
@@ -190,11 +190,12 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     expect(extractPathInto,
            when(source, is_equal_to_string("path1/include.h")),
            will_set_contents_of_parameter(dest, "path1", sizeof(char*)));
+
+    /* First look in current directory since it's not an angle bracketed include */
     expect(normalizeFileName,
            when(name, is_equal_to_string("include.h")),
-           when(relative_to, is_equal_to_string("path1")),
+           when(relative_to, is_equal_to_string("cwd")),
            will_return("path1/include.h"));
-
     /* Editor should not have any file open... */
     always_expect(editorFindFile, will_return(NULL));
     /* ... and it should not exist in cwd either... */
@@ -230,7 +231,79 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
            times(2));           /* Don't know why two times... */
 
-    processIncludeDirective(&position);
+    processIncludeDirective(&position, false);
 
     assert_that(fileTable.tab[fileNumber]->name, is_equal_to_string("path2/include.h"));
+}
+
+
+Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
+    Position position = (Position){1,2,3};
+    char *lexem_stream = "\303\001\"include.h";
+    int fileNumber = 0;
+    FILE file;
+
+    strcpy(cwd, "cwd");
+
+    strcpy(currentFile.lexBuffer.lexemStream, lexem_stream);
+    currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
+    currentFile.lexBuffer.end = currentFile.lexBuffer.lexemStream + strlen(lexem_stream);
+
+    initInput(NULL, NULL, "", NULL);
+    currentInput.endOfBuffer = currentInput.beginningOfBuffer + strlen(lexem_stream);
+
+    /* Setup include paths */
+    options.includeDirs = newStringList("path1", newStringList("path2", newStringList("path3", NULL)));
+
+    /* Setup so that we are reading file "path2/include.h" */
+    currentFile.fileName = "path2/include.h";
+    expect(extractPathInto,
+           when(source, is_equal_to_string("path2/include.h")),
+           will_set_contents_of_parameter(dest, "path2/", sizeof(char*)));
+
+    /* First find which include path the current file was found at... */
+    expect(normalizeFileName,
+           when(name, is_equal_to_string("path1")),
+           when(relative_to, is_equal_to_string("cwd")),
+           will_return("path1"));
+    expect(normalizeFileName,
+           when(name, is_equal_to_string("path2")),
+           when(relative_to, is_equal_to_string("cwd")),
+           will_return("path2"));
+
+    /* So now we search through include paths (options.includeDirs) starting at the one after path2... */
+    expect(normalizeFileName,
+           when(name, is_equal_to_string("path3")),
+           when(relative_to, is_equal_to_string("cwd")),
+           will_return("path3/include.h"));
+    /* And it might contain wildcards, so ... */
+    expect(expandWildcardsInOnePath,
+           when(filename, is_equal_to_string("path3/include.h")),
+           will_set_contents_of_parameter(outpaths, "path3", sizeof(char*)));
+    /* Editor should not have any file open... */
+    always_expect(editorFindFile, will_return(NULL));
+    /* ... but opening it works */
+    expect(openFile, when(fileName, is_equal_to_string("path3/include.h")), will_return(&file));
+
+    /* found: */
+    expect(normalizeFileName,
+           when(name, is_equal_to_string("path3/include.h")),
+           when(relative_to, is_equal_to_string("cwd")),
+           will_return("path3/include.h"));
+
+    /* Yet another normalization in addFileTabItem()... */
+    expect(normalizeFileName, when(name, is_equal_to_string("path3/include.h")), will_return("path3/include.h"));
+
+
+    /* Always  */
+    always_expect(checkFileModifiedTime);
+    always_expect(cacheInclude, will_capture_parameter(fileNum, fileNumber));
+
+    /* Finally ensure that the include file is added as a reference */
+    expect(addCxReference, when(symbol_name, is_equal_to_string(LINK_NAME_INCLUDE_REFS)),
+           times(2));           /* Don't know why two times... */
+
+    processIncludeDirective(&position, true);
+
+    assert_that(fileTable.tab[fileNumber]->name, is_equal_to_string("path3/include.h"));
 }
