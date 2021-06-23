@@ -7,7 +7,7 @@ $(TEST): .c-xrefrc
 	@sed 's/=10/=1/' .c-xrefrc.tmp > .c-xrefrc
 	@printf "  -I../../src" >> .c-xrefrc
 	@../run-c-xref -p $(CURDIR) -o c-xref.log
-	@$(OK)
+	@$(NO_TESTS)
 	@exit 0
 
 clean:
