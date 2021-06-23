@@ -14,7 +14,7 @@ void htmlGenGlobRefsForVirtMethod(FILE *ff, char *fn, S_olSymbolsMenu *rrr) {
     mock(ff, fn, rrr);
 }
 
-int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
+bool htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
     return (int) mock(ss1, ss2);
 }
 

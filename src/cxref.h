@@ -109,7 +109,7 @@ extern int safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);
 extern void olcxPushEmptyStackItem(S_olcxReferencesStack *stack);
 extern void olcxPrintSelectionMenu(S_olSymbolsMenu *sss);
-extern int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
+extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void olcxPrintClassTree(S_olSymbolsMenu *sss);
 extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
                                Reference **diff);
@@ -122,11 +122,11 @@ extern int isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
 extern void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                          Symbol *cclass);
 extern void olcxPushSpecialCheckMenuSym(int command, char *symname);
-extern int refOccursInRefs(Reference *r, Reference *list);
+extern bool refOccursInRefs(Reference *r, Reference *list);
 extern void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r);
 extern void olcxPushSpecial(char *fieldName, int command);
-extern int isPushAllMethodsValidRefItem(SymbolReferenceItem *ri);
-extern int symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym, S_olSymbolsMenu *nsym,
+extern bool isPushAllMethodsValidRefItem(SymbolReferenceItem *ri);
+extern bool symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym, S_olSymbolsMenu *nsym,
                                       int command);
 extern void olcxPrintPushingAction(int opt, int afterMenu);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);

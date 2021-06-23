@@ -300,7 +300,7 @@ typedef enum language {
 }
 
 #define MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri,dd) {\
-    if (! isPushAllMethodsValidRefItem(ri)) return;\
+    if (!isPushAllMethodsValidRefItem(ri)) return;\
     /* this is too strong, but check only fields and methods */\
     if (ri->b.storage!=StorageField\
         && ri->b.storage!=StorageMethod\

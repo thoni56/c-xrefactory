@@ -26,7 +26,7 @@ void genClassHierarchies(FILE *ff, S_olSymbolsMenu *rrr, int virtFlag, int pass)
   mock(ff, rrr, virtFlag, pass);
 }
 
-int classHierarchyClassNameLess(int c1, int c2) {
+bool classHierarchyClassNameLess(int c1, int c2) {
   return (int) mock(c1, c2);
 }
 

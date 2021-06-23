@@ -1087,7 +1087,7 @@ static void htmlGenGlobRefList(FILE *ff, char *fname,
 /* ******************************************************************** */
 
 
-int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
+bool htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
     SymbolReferenceItem *s1, *s2;
     int r;
     char *n1, *n2;
@@ -1100,11 +1100,12 @@ int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
     GET_BARE_NAME(s1->name, n1, len1);
     GET_BARE_NAME(s2->name, n2, len2);
     r = strcmp(n1, n2);
-    if (r!=0) return(r<0);
+    if (r!=0)
+        return r<0;
     r = strcmp(s1->name, s2->name);
-    if (r!=0) return(r<0);
-    r = classHierarchyClassNameLess(ss1->s.vApplClass,ss2->s.vApplClass);
-    return(r);
+    if (r!=0)
+        return r<0;
+    return classHierarchyClassNameLess(ss1->s.vApplClass,ss2->s.vApplClass);
 }
 
 static int isThereSomethingPrintable(S_olSymbolsMenu *itt) {
@@ -1341,7 +1342,7 @@ static void htmlScanCxFileAndGenRefLists(char *name1, char *name2,
             s_htmlCurrentCxlist = NULL;
             refTabMap32(&referenceTable, htmlCreateGlobSymList, ff, ffn, &fi);
             LIST_MERGE_SORT(S_olSymbolsMenu,
-                            s_htmlCurrentCxlist,htmlRefItemsOrderLess);
+                            s_htmlCurrentCxlist, htmlRefItemsOrderLess);
             htmlMarkVisibleAllClassesHavingReferences(s_htmlCurrentCxlist);
             htmlGenerateGlobalReferenceLists(s_htmlCurrentCxlist, ff, ffn);
             htmlGenRefListTail(ff);

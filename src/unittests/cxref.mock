@@ -31,7 +31,7 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
 }
 
 bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2) {
-    return (int) mock(s1, s2);
+    return (bool) mock(s1, s2);
 }
 
 void tagSearchCompactShortResults(void) {
@@ -47,19 +47,19 @@ S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, int storage) 
 }
 
 bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    return (int) mock(p1, p2);
+    return (bool) mock(p1, p2);
 }
 
 bool isSameCxSymbolIncludingFunctionClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    return (int) mock(p1, p2);
+    return (bool) mock(p1, p2);
 }
 
 bool isSameCxSymbolIncludingApplicationClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    return (int) mock(p1, p2);
+    return (bool) mock(p1, p2);
 }
 
 bool olcxIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    return (int) mock(p1, p2);
+    return (bool) mock(p1, p2);
 }
 
 void olcxRecomputeSelRefs(S_olcxReferences *refs) {
@@ -104,7 +104,7 @@ void olcxFreeReferences(Reference *r) {
 }
 
 bool isSmallerOrEqClass(int inf, int sup) {
-    return (int) mock(inf, sup);
+    return (bool) mock(inf, sup);
 }
 
 int olcxPushLessFunction(Reference *r1, Reference *r2) {
@@ -198,7 +198,7 @@ Reference **addToRefList(Reference **list, UsageBits *pusage, Position *pos, Ref
 }
 
 bool isInRefList(Reference *list, UsageBits *pusage, Position *pos, int category) {
-    return (int) mock(list, pusage, pos, category);
+    return (bool) mock(list, pusage, pos, category);
 }
 
 char *getXrefEnvironmentValue(char *name) {
@@ -266,8 +266,8 @@ void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
     mock(sss);
 }
 
-int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
-    return (int) mock(oo1, oo2);
+bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
+    return (bool) mock(oo1, oo2);
 }
 
 void olcxPrintClassTree(S_olSymbolsMenu *sss) {
@@ -306,8 +306,8 @@ void olcxPushSpecialCheckMenuSym(int command, char *symname) {
     mock(command, symname);
 }
 
-int refOccursInRefs(Reference *r, Reference *list) {
-    return (int) mock(r, list);
+bool refOccursInRefs(Reference *r, Reference *list) {
+    return (bool) mock(r, list);
 }
 
 void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r) {
@@ -318,12 +318,12 @@ void olcxPushSpecial(char *fieldName, int command) {
     mock(fieldName, command);
 }
 
-int isPushAllMethodsValidRefItem(SymbolReferenceItem *ri) {
-    return (int) mock(ri);
+bool isPushAllMethodsValidRefItem(SymbolReferenceItem *ri) {
+    return (bool) mock(ri);
 }
 
-int symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym, S_olSymbolsMenu *nsym, int command) {
-    return (int) mock(osym, nsym, command);
+bool symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym, S_olSymbolsMenu *nsym, int command) {
+    return (bool) mock(osym, nsym, command);
 }
 
 void olcxPrintPushingAction(int opt, int afterMenu) {

@@ -53,7 +53,7 @@ ClassHierarchyReference *newClassHierarchyReference(int origin, int superClass, 
 }
 
 
-int classHierarchyClassNameLess(int c1, int c2) {
+bool classHierarchyClassNameLess(int c1, int c2) {
     char *nn;
     FileItem *fi1, *fi2;
     int ccc;
@@ -63,21 +63,25 @@ int classHierarchyClassNameLess(int c1, int c2) {
     fi2 = fileTable.tab[c2];
     assert(fi1 && fi2);
     // SMART, put interface largest, so they will be at the end
-    if (fi2->b.isInterface && ! fi1->b.isInterface) return(1);
-    if (fi1->b.isInterface && ! fi2->b.isInterface) return(0);
+    if (fi2->b.isInterface && ! fi1->b.isInterface)
+        return true;
+    if (fi1->b.isInterface && ! fi2->b.isInterface)
+        return false;
     nn = fi1->name;
     nn = javaGetNudePreTypeName_st(getRealFileNameStatic(nn),options.nestedClassDisplaying);
     strcpy(ttt,nn);
     nn = fi2->name;
     nn = javaGetNudePreTypeName_st(getRealFileNameStatic(nn),options.nestedClassDisplaying);
     ccc = strcmp(ttt,nn);
-    if (ccc!=0) return(ccc<0);
+    if (ccc!=0)
+        return ccc<0;
     ccc = strcmp(fi1->name, fi2->name);
-    return(ccc<0);
+
+    return ccc<0;
 }
 
 int classHierarchySupClassNameLess(ClassHierarchyReference *c1, ClassHierarchyReference *c2) {
-    return(classHierarchyClassNameLess(c1->superClass, c2->superClass));
+    return classHierarchyClassNameLess(c1->superClass, c2->superClass);
 }
 
 static int markTransitiveRelevantSubsRec(int cind, int pass) {
@@ -85,7 +89,8 @@ static int markTransitiveRelevantSubsRec(int cind, int pass) {
     ClassHierarchyReference   *s;
 
     fi = fileTable.tab[cind];
-    if (THEBIT(tmpChMarkProcessed,cind)) return(THEBIT(tmpChRelevant,cind));
+    if (THEBIT(tmpChMarkProcessed,cind))
+        return THEBIT(tmpChRelevant,cind);
     SETBIT(tmpChMarkProcessed, cind);
     for(s=fi->inferiorClasses; s!=NULL; s=s->next) {
         tt = fileTable.tab[s->superClass];
@@ -387,7 +392,7 @@ static void descendTheClassHierarchy(FILE *ff,
     }
 }
 
-static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
+static bool genThisClassHierarchy(int vApplCl, int oldvFunCl,
                                  FILE *ff,
                                  S_olSymbolsMenu   *rrr,
                                  int virtFlag,
@@ -396,20 +401,25 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
     ClassHierarchyReference *s;
 
     fi = fileTable.tab[vApplCl];
-    if (fi==NULL) return(0);
-    if (THEBIT(tmpChProcessed,vApplCl)) return(0);
-    if (THEBIT(tmpChRelevant,vApplCl)==0) return(0);
+    if (fi==NULL)
+        return false;
+    if (THEBIT(tmpChProcessed,vApplCl))
+        return false;
+    if (THEBIT(tmpChRelevant,vApplCl)==0)
+        return false;
     // check if you are at the top of a sub-hierarchy
     for(s=fi->superClasses; s!=NULL; s=s->next) {
         tt = fileTable.tab[s->superClass];
         assert(tt);
-        if (THEBIT(tmpChRelevant,s->superClass) && THEBIT(tmpChProcessed,s->superClass)==0) return(0);
+        if (THEBIT(tmpChRelevant,s->superClass) && THEBIT(tmpChProcessed,s->superClass)==0)
+            return false;
     }
     //&fprintf(dumpOut,"getting %s %s\n",top->b.isInterface?"interface":"class",top->name);fflush(dumpOut);
     // yes I am on the top, recursively descent and print all subclasses
-    if (pass==FIRST_PASS && fi->b.isInterface) return(0);
+    if (pass==FIRST_PASS && fi->b.isInterface)
+        return false;
     descendTheClassHierarchy(ff, vApplCl, oldvFunCl, rrr, 0, NULL, virtFlag, pass);
-    return(1);
+    return true;
 }
 
 void genClassHierarchies(FILE *file, S_olSymbolsMenu *menuList,
