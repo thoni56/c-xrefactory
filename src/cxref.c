@@ -2392,14 +2392,14 @@ static void olcxTopSymbolResolution(void) {
 bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     /* Expansion of CHECK_ATTRIBUTES() macro to be explicit about returns... */
     if (p1 == p2)
-        return true;                                          
+        return true;
     if (p1->b.category != p2->b.category)
-        return false;                 
+        return false;
     if (p1->b.symType!=TypeCppCollate && p2->b.symType!=TypeCppCollate && p1->b.symType!=p2->b.symType)
-        return false; 
+        return false;
     if (p1->b.storage!=p2->b.storage)
         return false;
-    
+
     if (strcmp(p1->name, p2->name) != 0)
         return false;
     return true;
@@ -3815,7 +3815,7 @@ static void olcxMMPreCheck(void) {
     S_olcxReferences    *diffrefs, *origrefs, *newrefs;
     SymbolReferenceItem     dri;
     bool precheck;
-    
+
     olcxSetCurrentUser(options.user);
     olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
