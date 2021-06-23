@@ -21,12 +21,17 @@ include ../Makefile.boilerplate
 # directory we want to include that one using "#include_next stdint.h".
 
 CXREF = ../../src/c-xref
-CXREF_COMMAND = $(CXREF) -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -I next -log=log source.c -errors -o output.tmp
+CXREF_COMMAND = $(CXREF) -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -I path1 -I path2 -log=log source.c -errors -o output.tmp
 
 $(TEST): .c-xrefrc
 	$(CXREF_COMMAND)
 	@$(NORMALIZE) output.tmp > output
-	grep "error len" output
+	grep "error len" output ; \
+	if [ $$? -eq 0 ] ; then \
+		$(FAIL) ; \
+	else \
+		$(OK) ; \
+	fi
 
 clean:
 	rm -rf .c-xrefrc CXrefs output.log output.tmp
