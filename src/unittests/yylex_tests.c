@@ -117,6 +117,7 @@ static bool compare_true() { return true; }
 static Constraint *create_capture_parameter_constraint(const char *parameter_name, void *capture_to, size_t size_to_capture) {
     Constraint* constraint = create_constraint();
 
+    constraint->type = CGREEN_VALUE_COMPARER_CONSTRAINT;
     constraint->compare = &compare_true;
     constraint->execute = &capture_parameter;
     constraint->name = "capture parameter";
