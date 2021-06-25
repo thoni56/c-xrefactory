@@ -78,15 +78,15 @@
 #define MAX_OPTION_LEN         10000
 #define MAX_NESTED_ERR_ZONES     100
 #define MAX_COMPLETIONS        10002	/* max items in completion list */
-#define MAX_NESTED_DEPTH          500	/* depth of nested structure defs. */
+#define MAX_NESTED_DEPTH         500	/* depth of nested structure defs. */
 #define MAX_NESTED_CPP_IF        100	/* depth of nested #if directives */
-#define MAX_INNERS_CLASSES       200	/* max number of inners classes */
-#define MAX_HTML_CUT_PATHES       50
+#define MAX_INNER_CLASSES        200	/* max number of inner classes */
+#define MAX_HTML_CUT_PATHS        50
 
 #define MAX_OLCX_SUFF_SIZE		MAX_FUN_NAME_SIZE
 #define MAX_SOURCE_PATH_SIZE	MAX_OPTION_LEN
 
-/* if there is too much on-line references, they are not ordered
+/* if there are too many on-line references, they are not ordered
    alphabetically according file name. It takes too much time.
 */
 #define MAX_OL_REFERENCES_TO_SORT	500

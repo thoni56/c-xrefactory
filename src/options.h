@@ -21,8 +21,8 @@ typedef enum taskRegimes {
 
 typedef struct htmlCutPathsOpts {
     int pathsNum;
-    char *path[MAX_HTML_CUT_PATHES];
-    int plen[MAX_HTML_CUT_PATHES];
+    char *path[MAX_HTML_CUT_PATHS];
+    int plen[MAX_HTML_CUT_PATHS];
 } S_htmlCutPathsOpts;
 
 typedef struct setGetEnv {

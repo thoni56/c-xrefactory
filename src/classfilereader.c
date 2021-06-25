@@ -1237,14 +1237,14 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
             GetU2(inum, cb, exception);
             symbol->u.s->nestedCount = inum;
             // TODO: replace the inner tab by inner list
-            if (inum >= MAX_INNERS_CLASSES) {
+            if (inum >= MAX_INNER_CLASSES) {
                 fatalError(ERR_ST,"number of nested classes overflowed over MAX_INNERS_CLASSES", XREF_EXIT_ERR);
             }
             symbol->u.s->nest = NULL;
             if (inum > 0) {
                 // I think this should be optimized, not all mentioned here
                 // are my inners classes
-                //&             CF_ALLOCC(symbol->u.s->nest, MAX_INNERS_CLASSES, S_nestedSpec);
+                //&             CF_ALLOCC(symbol->u.s->nest, MAX_INNER_CLASSES, S_nestedSpec);
                 CF_ALLOCC(symbol->u.s->nest, inum, S_nestedSpec);
             }
             for(rinners=0; rinners<inum; rinners++) {

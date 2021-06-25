@@ -428,7 +428,7 @@ int addHtmlCutPath(char *ss) {
             options.htmlCut.plen[i] = ln;
         }
     }
-    if (options.htmlCut.pathsNum+2 >= MAX_HTML_CUT_PATHES) {
+    if (options.htmlCut.pathsNum+2 >= MAX_HTML_CUT_PATHS) {
         errorMessage(ERR_ST, "# of htmlcutpaths overflow over MAX_HTML_CUT_PATHES");
     } else {
         options.htmlCut.pathsNum++;
