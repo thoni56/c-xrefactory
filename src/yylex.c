@@ -510,7 +510,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName, bool is_
         /* #include_next, so find the include path which matches this */
         for (StringList *p = options.includeDirs; p != NULL; p = p->next) {
             char normalizedIncludePath[MAX_FILE_NAME_SIZE];
-            strcpy(normalizedIncludePath, normalizeFileName(p->d, cwd));
+            strcpy(normalizedIncludePath, normalizeFileName(p->string, cwd));
             int len = strlen(normalizedIncludePath);
             if (normalizedIncludePath[len-1] != FILE_PATH_SEPARATOR) {
                 normalizedIncludePath[len] = FILE_PATH_SEPARATOR;
@@ -536,7 +536,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName, bool is_
     /* If not found we need to walk the include paths... */
  search:
     for (includeDirP = start; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
-        strcpy(normalizedName, normalizeFileName(includeDirP->d, cwd));
+        strcpy(normalizedName, normalizeFileName(includeDirP->string, cwd));
         expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
         JavaMapOnPaths(wildcardExpandedPaths, {
                 int length;

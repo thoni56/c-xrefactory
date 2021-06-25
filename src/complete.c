@@ -1626,8 +1626,8 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
 
     // fqt from classpath
     for(pp=javaClassPaths; pp!=NULL; pp=pp->next) {
-        mapDirectoryFiles(pp->d, completeRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
-                          pp->d,pp->d,NULL,&cfmi,NULL);
+        mapDirectoryFiles(pp->string, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
+                          pp->string, pp->string, NULL, &cfmi, NULL);
     }
     if (options.fqtNameToCompletions <= 3)
         return;

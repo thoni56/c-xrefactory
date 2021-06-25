@@ -166,7 +166,7 @@ static void aboutMessage(void) {
 static bool fileNameShouldBePruned(char *fn) {
     StringList    *pp;
     for(pp=options.pruneNames; pp!=NULL; pp=pp->next) {
-        JavaMapOnPaths(pp->d, {
+        JavaMapOnPaths(pp->string, {
                 if (compareFileNames(currentPath, fn)==0) return true;
             });
     }
@@ -1675,7 +1675,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
 static void mainScheduleInputFilesFromOptionsToFileTable(void) {
     StringList *ll;
     for(ll=options.inputFiles; ll!=NULL; ll=ll->next) {
-        mainProcessInFileOption(ll->d);
+        mainProcessInFileOption(ll->string);
     }
 }
 

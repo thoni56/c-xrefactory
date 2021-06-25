@@ -2,7 +2,7 @@
 #define STRINGLIST_H_INCLUDED
 
 typedef struct stringList {
-    char *d;
+    char *string;
     struct stringList *next;
 } StringList;
 

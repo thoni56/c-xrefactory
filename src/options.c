@@ -278,7 +278,7 @@ void addStringListOption(StringList **optlist, char *string) {
 
     /* TODO refactor out to newOptionString()? */
     allocOptionSpace((void**)list, sizeof(StringList));
-    createOptionString(&(*list)->d, string);
+    createOptionString(&(*list)->string, string);
     (*list)->next = NULL;
 }
 
@@ -720,7 +720,7 @@ static void processClassPathString(char *cp) {
             PP_ALLOCC(nn, strlen(np)+1, char);
             strcpy(nn,np);
             PP_ALLOC(*ll, StringList);
-            **ll = (StringList){.d = nn, .next = NULL};
+            **ll = (StringList){.string = nn, .next = NULL};
             ll = &(*ll)->next;
         }
         cp += ind;

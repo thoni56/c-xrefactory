@@ -515,8 +515,8 @@ char *javaCutClassPathFromFileName(char *fname) {
         goto fini;
     }
     for(cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        len = strlen(cp->d);
-        if (fnnCmp(cp->d, fname, len) == 0) {
+        len = strlen(cp->string);
+        if (fnnCmp(cp->string, fname, len) == 0) {
             res = fname+len;
             goto fini;
         }
@@ -1260,8 +1260,8 @@ static int pathsStringContainsPath(char *paths, char *path) {
 static int classPathContainsPath(char *path) {
     StringList    *cp;
     for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        //&fprintf(dumpOut,"[cp]checking %s<->%s\n", cp->d, path);
-        if (compareFileNames(cp->d, path)==0) {
+        //&fprintf(dumpOut,"[cp]checking %s<->%s\n", cp->string, path);
+        if (compareFileNames(cp->string, path)==0) {
             //&fprintf(dumpOut,"[cp] saving of mapping %s\n", path);
             return(1);
         }
@@ -1360,10 +1360,10 @@ void javaMapDirectoryFiles1(
     // class paths
     for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         // avoid double mappings
-        if ((! pathsStringContainsPath(javaSourcePaths, cp->d))) {
-            assert(strlen(cp->d)+strlen(packageFilename)+2 < SIZE_TMP_MEM);
-            fname = concatFNameInTmpMemory(cp->d, packageFilename);
-            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->d,packageFilename,a1,a2,a3);
+        if ((! pathsStringContainsPath(javaSourcePaths, cp->string))) {
+            assert(strlen(cp->string)+strlen(packageFilename)+2 < SIZE_TMP_MEM);
+            fname = concatFNameInTmpMemory(cp->string, packageFilename);
+            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->string,packageFilename,a1,a2,a3);
         }
     }
     // databazes
