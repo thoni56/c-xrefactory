@@ -21,6 +21,10 @@ void addSourcePathsCut(void) {
   mock();
 }
 
+int addHtmlCutPath(char *ss) {
+  return (int) mock(ss);
+}
+
 void getXrefrcFileName(char *ttt) {
   mock(ttt);
 }

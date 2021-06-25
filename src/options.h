@@ -300,6 +300,7 @@ extern Options s_initOpt;
 extern void xrefSetenv(char *name, char *val);
 
 extern void addSourcePathsCut(void);
+extern int addHtmlCutPath(char *ss);
 extern void getXrefrcFileName(char *ttt);
 extern void addStringListOption(StringList **optlist, char *argvi);
 extern char *getJavaHome(void);

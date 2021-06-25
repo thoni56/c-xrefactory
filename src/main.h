@@ -7,8 +7,6 @@
 
 extern void dirInputFile(MAP_FUN_SIGNATURE);
 
-extern int addHtmlCutPath(char *ss);
-
 extern void createOptionString(char **optAddress, char *text);
 extern void copyOptions(Options *dest, Options *src);
 extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);

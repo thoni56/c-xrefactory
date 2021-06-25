@@ -10,7 +10,6 @@
 #include "fileio.h"
 
 /* The following are currently needed from main:
-   xrefSetenv -> common?
    mainHandleSetOption
    dirInputFile
    addHtmlCutPath
@@ -308,6 +307,48 @@ void addStringListOption(StringList **optlist, char *string) {
     allocOptionSpace((void**)list, sizeof(StringList));
     createOptionString(&(*list)->string, string);
     (*list)->next = NULL;
+}
+
+int addHtmlCutPath(char *ss) {
+    int i,ln,len, res;
+
+    res = 0;
+    ss = htmlNormalizedPath(ss);
+    ln = strlen(ss);
+    if (ln>=1 && ss[ln-1] == FILE_PATH_SEPARATOR) {
+        warningMessage(ERR_ST, "slash at the end of -htmlcutpath path, ignoring it");
+        return(res);
+    }
+    for(i=0; i<options.htmlCut.pathsNum; i++) {
+        // if yet in cutpaths, do nothing
+        if (strcmp(options.htmlCut.path[i], ss)==0) return(res);
+    }
+    createOptionString(&(options.htmlCut.path[options.htmlCut.pathsNum]), ss);
+    ss = options.htmlCut.path[options.htmlCut.pathsNum];
+    options.htmlCut.plen[options.htmlCut.pathsNum] = ln;
+    //&fprintf(dumpOut, "adding cutpath %d %s\n",options.htmlCut.pathsNum,ss);
+    for(i=0; i<options.htmlCut.pathsNum; i++) {
+        // a more specialized path after a more general, exchange them
+        len = options.htmlCut.plen[i];
+        if (fnnCmp(options.htmlCut.path[i], ss, len)==0) {
+            char tmpBuff[TMP_BUFF_SIZE];
+            sprintf(tmpBuff,
+                    "htmlcutpath: '%s' supersede \n\t\t'%s', exchanging them",
+                    options.htmlCut.path[i], ss);
+            warningMessage(ERR_ST, tmpBuff);
+            res = 1;
+            options.htmlCut.path[options.htmlCut.pathsNum]=options.htmlCut.path[i];
+            options.htmlCut.plen[options.htmlCut.pathsNum]=options.htmlCut.plen[i];
+            options.htmlCut.path[i] = ss;
+            options.htmlCut.plen[i] = ln;
+        }
+    }
+    if (options.htmlCut.pathsNum+2 >= MAX_HTML_CUT_PATHS) {
+        errorMessage(ERR_ST, "# of htmlcutpaths overflow over MAX_HTML_CUT_PATHES");
+    } else {
+        options.htmlCut.pathsNum++;
+    }
+    return(res);
 }
 
 char *expandSpecialFilePredefinedVariables_st(char *variable, char *inputFilename) {
