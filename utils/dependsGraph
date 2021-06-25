@@ -1,4 +1,3 @@
 echo digraph { > depends.dot
-for f in *.c ; do ../utils/dependsFrom `basename $f .c` | xargs echo `basename $f .c` "->"  ; done >> depends.dot
-for f in *.y ; do ../utils/dependsFrom `basename $f .y` | xargs echo `basename $f .y` "->" ; done >> depends.dot
+for f in *.c ; do ../utils/dependsFrom `basename $f .c` | xargs dependsFrom | xargs echo `basename $f .c` "->"  ; done >> depends.dot
 echo } >> depends.dot
