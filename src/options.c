@@ -207,6 +207,34 @@ static char javaClassPathExpanded[MAX_OPTION_LEN];
 #define ENV_DEFAULT_VAR_SUPER_CLASS     "${__super}"
 
 
+void xrefSetenv(char *name, char *val) {
+    S_setGetEnv *sge;
+    int j, n;
+
+    sge = &options.setGetEnv;
+    n = sge->num;
+    if (n+1>=MAX_SET_GET_OPTIONS) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff, "maximum of %d -set options reached", MAX_SET_GET_OPTIONS);
+        errorMessage(ERR_ST, tmpBuff);
+        sge->num--; n--;
+    }
+
+    for(j=0; j<n; j++) {
+        assert(sge->name[j]);
+        if (strcmp(sge->name[j], name)==0)
+            break;
+    }
+    if (j==n) createOptionString(&(sge->name[j]), name);
+    if (j==n || strcmp(sge->value[j], val)!=0) {
+        createOptionString(&(sge->value[j]), val);
+    }
+    //&fprintf(dumpOut, "setting '%s' to '%s'\n", name, val);
+    if (j==n)
+        sge->num ++;
+}
+
+
 typedef struct stringPointerList {
     char **destination;
     struct stringPointerList *next;

@@ -5,6 +5,10 @@
 Options options;
 Options refactoringOptions;
 
+void xrefSetenv(char *name, char *val) {
+  mock(name, val);
+}
+
 void copyOptions(Options *dest, Options *src) {
   mock(dest, src);
 }
