@@ -68,7 +68,7 @@ $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS) $$(CGRE
 	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LINK)
 endef
 
-$(eval $(call UNITTEST,options,protocol log position))
+$(eval $(call UNITTEST,options,protocol log position memory))
 $(eval $(call UNITTEST,symboltable,hash))
 $(eval $(call UNITTEST,jslsemact,symbol log id))
 $(eval $(call UNITTEST,olcxtab,hash))

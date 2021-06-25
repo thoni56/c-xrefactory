@@ -14,14 +14,6 @@ int addHtmlCutPath(char *ss) {
   return (int) mock(ss);
 }
 
-void createOptionString(char **dest, char *text) {
-  mock(dest, text);
-}
-
-void copyOptions(Options *dest, Options *src) {
-  mock(dest, src);
-}
-
 void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
   mock(filename, options_filename, section);
 }

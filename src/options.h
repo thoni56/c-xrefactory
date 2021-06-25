@@ -6,6 +6,7 @@
 
 #include "constants.h"
 #include "memory.h"
+#include "stringlist.h"
 
 #include "refactorings.h"
 
@@ -298,6 +299,7 @@ extern Options s_initOpt;
 
 extern void addSourcePathsCut(void);
 extern void getXrefrcFileName(char *ttt);
+extern void addStringListOption(StringList **optlist, char *argvi);
 extern char *getJavaHome(void);
 extern void getJavaClassAndSourcePath(void);
 extern bool packageOnCommandLine(char *packageName);

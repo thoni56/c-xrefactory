@@ -14,8 +14,6 @@
    mainHandleSetOption
    dirInputFile
    addHtmlCutPath
-   createOptionsString -> here?
-
  */
 #include "main.h"
 
@@ -208,6 +206,81 @@ static char javaClassPathExpanded[MAX_OPTION_LEN];
 #define ENV_DEFAULT_VAR_THIS_CLASS      "${__this}"
 #define ENV_DEFAULT_VAR_SUPER_CLASS     "${__super}"
 
+
+typedef struct stringPointerList {
+    char **destination;
+    struct stringPointerList *next;
+} StringPointerList;
+
+static StringPointerList *newStringPointerList(char **destination, StringPointerList *next) {
+    StringPointerList *list;
+    OPT_ALLOC(list, StringPointerList);
+    list->destination = destination;
+    list->next = next;
+    return list;
+}
+
+static void optionAddToAllocatedList(char **destination) {
+    StringPointerList *ll;
+    for(ll=options.allAllocatedStrings; ll!=NULL; ll=ll->next) {
+        // reassignement, do not keep two copies
+        if (ll->destination == destination) break;
+    }
+    if (ll==NULL) {
+        ll = newStringPointerList(destination, options.allAllocatedStrings);
+        options.allAllocatedStrings = ll;
+    }
+}
+
+static void allocOptionSpace(void **optAddress, int size) {
+    char **res;
+    res = (char**)optAddress;
+    OPT_ALLOCC((*res), size, char); /* TODO: WTF what side effects does this have?! */
+    optionAddToAllocatedList(res);
+}
+
+/* TODO: Memory management is a mystery, e.g. this can't be turned into a function returning the address... */
+void createOptionString(char **optAddress, char *text) {
+    allocOptionSpace((void**)optAddress, strlen(text)+1);
+    strcpy(*optAddress, text);
+}
+
+static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
+    char    **dlld;
+    int     offset, localOffset;
+    offset = ((char*)dest) - ((char*)src);
+    localOffset = ((char*)lld) - ((char*)src);
+    dlld = ((char**) (((char*)dest) + localOffset));
+    // dlld is dest equivalent of *lld from src
+    //&fprintf(dumpOut, "shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(Options));
+    if (*dlld != *lld) {
+        fprintf(dumpOut, "problem %s\n", *lld);
+    }
+    assert(*dlld == *lld);
+    *dlld = *lld + offset;
+}
+
+void copyOptions(Options *dest, Options *src) {
+    StringPointerList    **ll;
+    memcpy(dest, src, sizeof(Options));
+    for(ll= &src->allAllocatedStrings; *ll!=NULL; ll = &(*ll)->next) {
+        copyOptionShiftPointer((*ll)->destination, dest, src);
+        copyOptionShiftPointer(((char**)&(*ll)->destination), dest, src);
+        copyOptionShiftPointer(((char**)ll), dest, src);
+    }
+    //&fprintf(dumpOut, "options copied\n");
+}
+
+void addStringListOption(StringList **optlist, char *string) {
+    StringList **list;
+    for(list=optlist; *list!=NULL; list= &(*list)->next)
+        ;
+
+    /* TODO refactor out to newOptionString()? */
+    allocOptionSpace((void**)list, sizeof(StringList));
+    createOptionString(&(*list)->d, string);
+    (*list)->next = NULL;
+}
 
 char *expandSpecialFilePredefinedVariables_st(char *variable, char *inputFilename) {
     static char expanded[MAX_OPTION_LEN];

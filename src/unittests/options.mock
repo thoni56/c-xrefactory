@@ -5,6 +5,14 @@
 Options options;
 Options refactoringOptions;
 
+void copyOptions(Options *dest, Options *src) {
+  mock(dest, src);
+}
+
+void createOptionString(char **dest, char *text) {
+  mock(dest, text);
+}
+
 void addSourcePathsCut(void) {
   mock();
 }

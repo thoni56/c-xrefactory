@@ -279,70 +279,6 @@ static int isAbsolutePath(char *p) {
 #endif
 
 
-typedef struct stringPointerList {
-    char **destination;
-    struct stringPointerList *next;
-} StringPointerList;
-
-static StringPointerList *newStringPointerList(char **destination, StringPointerList *next) {
-    StringPointerList *list;
-    OPT_ALLOC(list, StringPointerList);
-    list->destination = destination;
-    list->next = next;
-    return list;
-}
-
-static void optionAddToAllocatedList(char **destination) {
-    StringPointerList *ll;
-    for(ll=options.allAllocatedStrings; ll!=NULL; ll=ll->next) {
-        // reassignement, do not keep two copies
-        if (ll->destination == destination) break;
-    }
-    if (ll==NULL) {
-        ll = newStringPointerList(destination, options.allAllocatedStrings);
-        options.allAllocatedStrings = ll;
-    }
-}
-
-static void allocOptionSpace(void **optAddress, int size) {
-    char **res;
-    res = (char**)optAddress;
-    OPT_ALLOCC((*res), size, char); /* TODO: WTF what side effects does this have?! */
-    optionAddToAllocatedList(res);
-}
-
-/* TODO: Memory management is a mystery, e.g. this can't be turned into a function returning the address... */
-void createOptionString(char **optAddress, char *text) {
-    allocOptionSpace((void**)optAddress, strlen(text)+1);
-    strcpy(*optAddress, text);
-}
-
-static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
-    char    **dlld;
-    int     offset, localOffset;
-    offset = ((char*)dest) - ((char*)src);
-    localOffset = ((char*)lld) - ((char*)src);
-    dlld = ((char**) (((char*)dest) + localOffset));
-    // dlld is dest equivalent of *lld from src
-    //&fprintf(dumpOut, "shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(Options));
-    if (*dlld != *lld) {
-        fprintf(dumpOut, "problem %s\n", *lld);
-    }
-    assert(*dlld == *lld);
-    *dlld = *lld + offset;
-}
-
-void copyOptions(Options *dest, Options *src) {
-    StringPointerList    **ll;
-    memcpy(dest, src, sizeof(Options));
-    for(ll= &src->allAllocatedStrings; *ll!=NULL; ll = &(*ll)->next) {
-        copyOptionShiftPointer((*ll)->destination, dest, src);
-        copyOptionShiftPointer(((char**)&(*ll)->destination), dest, src);
-        copyOptionShiftPointer(((char**)ll), dest, src);
-    }
-    //&fprintf(dumpOut, "options copied\n");
-}
-
 void xrefSetenv(char *name, char *val) {
     S_setGetEnv *sge;
     int j, n;
@@ -728,17 +664,6 @@ static bool processHOption(int *ii, int argc, char **argv) {
     return true;
 }
 
-static void mainAddStringListOption(StringList **optlist, char *argvi) {
-    StringList **ll;
-    for(ll=optlist; *ll!=NULL; ll= &(*ll)->next)
-        ;
-
-    /* TODO refactor out to newOptionString()? */
-    allocOptionSpace((void**)ll, sizeof(StringList));
-    createOptionString(&(*ll)->d, argvi);
-    (*ll)->next = NULL;
-}
-
 static bool processIOption(int *ii, int argc, char **argv) {
     int i = * ii;
 
@@ -752,10 +677,10 @@ static bool processIOption(int *ii, int argc, char **argv) {
             errorMessage(ERR_ST,tmpBuff);
             usage(argv[0]);
         }
-        mainAddStringListOption(&options.includeDirs, argv[i]);
+        addStringListOption(&options.includeDirs, argv[i]);
     }
     else if (strncmp(argv[i], "-I", 2)==0 && argv[i][2]!=0) {
-        mainAddStringListOption(&options.includeDirs, argv[i]+2);
+        addStringListOption(&options.includeDirs, argv[i]+2);
     }
     else if (strcmp(argv[i], "-include")==0) {
         warningMessage(ERR_ST, "-include option is deprecated, use -optinclude instead");
@@ -1271,7 +1196,7 @@ static bool processPOption(int *ii, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-prune")==0) {
         NEXT_ARG();
-        mainAddStringListOption(&options.pruneNames, argv[i]);
+        addStringListOption(&options.pruneNames, argv[i]);
     }
     else return false;
     *ii = i;
@@ -1732,7 +1657,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
             /* input file */
             processed = 1;
             if (infilesFlag == INFILES_ENABLED) {
-                mainAddStringListOption(&options.inputFiles, argv[i]);
+                addStringListOption(&options.inputFiles, argv[i]);
             }
         }
         if (! processed) {
@@ -2150,7 +2075,7 @@ static void discoverBuiltinIncludePaths(void) {
                 break;
             if (statb(line,&stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR) {
                 log_trace("Add include '%s'", line);
-                mainAddStringListOption(&options.includeDirs, line);
+                addStringListOption(&options.includeDirs, line);
             }
         } while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF);
 
