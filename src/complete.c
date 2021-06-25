@@ -1,6 +1,7 @@
 #include "complete.h"
 
 #include "globals.h"
+#include "options.h"
 #include "misc.h"
 #include "parsers.h"
 #include "protocol.h"

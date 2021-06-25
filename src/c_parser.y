@@ -14,13 +14,14 @@
 
 #include "c_parser.h"
 
+#include "globals.h"
+#include "options.h"
 #include "caching.h"
 #include "commons.h"
 #include "complete.h"
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"
-#include "globals.h"
 #include "html.h"
 #include "id.h"
 #include "list.h"

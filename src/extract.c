@@ -1,8 +1,9 @@
 #include "extract.h"
 
-#include "misc.h"
 #include "commons.h"
 #include "globals.h"
+#include "options.h"
+#include "misc.h"
 #include "protocol.h"
 #include "semact.h"
 #include "cxref.h"

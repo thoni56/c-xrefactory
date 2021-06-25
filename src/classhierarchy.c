@@ -1,8 +1,9 @@
 #include "classhierarchy.h"
 
-#include "misc.h"
 #include "commons.h"
 #include "globals.h"
+#include "options.h"
+#include "misc.h"
 #include "html.h"
 #include "cxref.h"
 #include "list.h"
@@ -68,10 +69,10 @@ bool classHierarchyClassNameLess(int c1, int c2) {
     if (fi1->b.isInterface && ! fi2->b.isInterface)
         return false;
     nn = fi1->name;
-    nn = javaGetNudePreTypeName_st(getRealFileNameStatic(nn),options.nestedClassDisplaying);
+    nn = javaGetNudePreTypeName_st(getRealFileNameStatic(nn), options.nestedClassDisplaying);
     strcpy(ttt,nn);
     nn = fi2->name;
-    nn = javaGetNudePreTypeName_st(getRealFileNameStatic(nn),options.nestedClassDisplaying);
+    nn = javaGetNudePreTypeName_st(getRealFileNameStatic(nn), options.nestedClassDisplaying);
     ccc = strcmp(ttt,nn);
     if (ccc!=0)
         return ccc<0;

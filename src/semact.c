@@ -2,6 +2,7 @@
 
 #include "commons.h"
 #include "globals.h"
+#include "options.h"
 #include "parsers.h"
 #include "misc.h"
 #include "classcaster.h"

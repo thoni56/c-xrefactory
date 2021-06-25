@@ -14,6 +14,7 @@ void processIncludeNextDirective(Position *includePosition);
 #include "symbol.h"
 
 #include "globals.mock"
+#include "options.mock"
 #include "caching.mock"
 #include "parsers.mock"
 #include "cexp_parser.mock"

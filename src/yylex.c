@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "lexer.h"
 #include "globals.h"
+#include "options.h"
 #include "caching.h"
 #include "extract.h"
 #include "misc.h"

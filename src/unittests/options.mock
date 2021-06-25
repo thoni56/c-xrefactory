@@ -2,6 +2,9 @@
 #include "options.h"
 #include <cgreen/mocks.h>
 
+Options options;
+Options refactoringOptions;
+
 void addSourcePathsCut(void) {
   mock();
 }

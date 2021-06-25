@@ -4,6 +4,7 @@
 #include "misc.h"
 
 #include "globals.mock"
+#include "options.mock"
 #include "caching.mock"
 #include "filetable.mock"
 #include "jsemact.mock"

@@ -4,6 +4,7 @@
 
 #include "commons.h"
 #include "globals.h"
+#include "options.h"
 #include "lexer.h"
 #include "yylex.h"
 #include "classcaster.h"

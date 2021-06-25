@@ -1,6 +1,7 @@
 #include "utils.h"
 
 #include "globals.h"
+#include "options.h"
 
 
 int creatingOlcxRefs(void) {

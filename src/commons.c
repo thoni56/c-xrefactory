@@ -4,6 +4,7 @@
 #include <errno.h>
 
 #include "globals.h"
+#include "options.h"
 #include "misc.h"               /* ppcGenRecord() & ppcGenSynchroRecord() - extract ppc module? */
 #include "yylex.h"              /* placeIdent() */
 #include "protocol.h"

@@ -1,9 +1,10 @@
 #include "html.h"
 
 #include "commons.h"
+#include "globals.h"
+#include "options.h"
 #include "classhierarchy.h"
 #include "misc.h"
-#include "globals.h"
 #include "caching.h"
 #include "protocol.h"
 #include "yylex.h"

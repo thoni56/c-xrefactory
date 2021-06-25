@@ -2,6 +2,7 @@
 
 #include "commons.h"
 #include "globals.h"
+#include "options.h"
 #include "yylex.h"
 #include "misc.h"
 #include "cxref.h"

@@ -1,8 +1,9 @@
 #include "jslsemact.h"
 
-#include "misc.h"
 #include "commons.h"
 #include "globals.h"
+#include "options.h"
+#include "misc.h"
 #include "parsers.h"
 #include "classcaster.h"
 #include "semact.h"

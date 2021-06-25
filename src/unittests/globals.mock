@@ -74,8 +74,6 @@ UsageBits s_noUsage;
 Position s_noPos = {-1, 0, 0};
 
 Language s_language;
-Options options;
-Options refactoringOptions;
 
 TypeModifier *s_structRecordCompletionType;
 Completions s_completions;

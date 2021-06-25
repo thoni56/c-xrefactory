@@ -13,13 +13,14 @@
 
 #include "yacc_parser.h"
 
-#include "caching.h"
 #include "commons.h"
+#include "globals.h"
+#include "options.h"
+#include "caching.h"
 #include "complete.h"
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"
-#include "globals.h"
 #include "html.h"
 #include "list.h"
 #include "misc.h"

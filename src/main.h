@@ -2,6 +2,8 @@
 #define MAIN_H_INCLUDED
 
 #include "proto.h"
+#include "options.h"
+
 
 extern void dirInputFile(MAP_FUN_SIGNATURE);
 extern void xrefSetenv(char *name, char *val);

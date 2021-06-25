@@ -5,6 +5,7 @@
 #include "proto.h"
 #include "parsers.h"
 #include "usage.h"
+#include "options.h"
 
 #include "protocol.h"
 
@@ -174,11 +175,6 @@ int s_olMacro2PassFile;
 /* ******************* yytext for yacc ****************** */
 char *yytext;
 
-/* ******************* options ************************** */
-
-Options options;        // current options
-Options refactoringOptions;       // xref -refactory command line options
-
 char *s_javaThisPackageName = "";
 
 /* ************************************************************* */
@@ -237,168 +233,6 @@ int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
     AccessProtected,
     AccessDefault,
     AccessPrivate,
-};
-
-Options s_initOpt = {
-                                /* GENERAL */
-    0,                          // exit
-    "gcc",                      // path to compiler to use for auto-discovering compiler and defines
-    MULE_DEFAULT,               // encoding
-    0,                          // completeParenthesis
-    NID_IMPORT_ON_DEMAND,       // defaultAddImportStrategy
-    0,                          // referenceListWithoutSource
-    1,                          // completionOverloadWizardDeep
-    0,                          // comment moving level
-    NULL,                       // prune name
-    NULL,                       // input files
-    RC_NONE,                    // continue refactoring
-    0,                          // completion case sensitive
-    NULL,                       // xrefrc
-    NO_EOL_CONVERSION,          // crlfConversion
-    NULL,                       // checkVersion
-    CUT_OUTERS,                 // nestedClassDisplaying
-    NULL,                       // pushName
-    0,                          // parnum2
-    "",                         // refactoring parameter 1
-    "",                         // refactoring parameter 2
-    AVR_NO_REFACTORING,         // refactoring
-    false,                      // briefoutput
-    0,                          // cacheIncludes
-    0,                          // stdopFlag
-    NULL,                       // renameTo
-    RegimeUndefined,            // refactoringRegime
-    0,                          // xrefactory-II
-    NULL,                       // moveTargetFile
-#if defined (__WIN32__)
-    "c;C",                      // cFilesSuffixes
-    "java;JAV",                 // javaFilesSuffixes
-    "C;cpp;CC;cc",              // c++FilesSuffixes
-#else
-    "c:C",                      // cFilesSuffixes
-    "java",                     // javaFilesSuffixes
-    "C:cpp:CC:cc",              // c++FilesSuffixes
-#endif
-    1,                      // fileNamesCaseSensitive
-    TSS_FULL_SEARCH,        // search Tag file specifics
-    JAVA_VERSION_AUTO,      // java version
-    "",                     // windel file
-    0,                      // following is windel line:col x line-col
-    0,
-    0,
-    0,
-    "nouser",                   // moveToUser
-    0,                          // noerrors
-    0,                          // fqtNameToCompletions
-    NULL,                       // moveTargetClass
-    0,                          // TPC_NON, trivial pre-check
-    1,                          // urlGenTemporaryFile
-    1,                          // urlautoredirect
-    0,                          // javafilesonly
-    0,                          // exact position
-    NULL,                       // -o outputFileName
-    NULL,                       // -line lineFileName
-    NULL,                       // -I include dirs
-    DEFAULT_CXREF_FILE,         // -refs
-
-    NULL,                       // file move for safety check
-    NULL,
-    0,                          // first moved line
-    MAXIMAL_INT,                // safety check number of lines moved
-    0,                          // new line number of the first line
-
-    "",                         // getValue
-    1,                          // javaSlAllowed (autoUpdateFromSrc)
-    XFILE_HASH_DEFAULT,
-
-    /* HTML */
-    "",                         // htmlroot
-    NULL,                       // htmlLineNumColor
-    80,                         // htmlcxlinelen
-    "java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming",     // -htmljavadocavailable
-    ":",                        // htmlLineNumLabel
-    0,                          // html cut suffix
-    0,                          // htmlGenJdkDocLinks
-    NULL,                       // htmlJdkDocUrl - "http://java.sun.com/j2se/1.3/docs/api",
-    false,                      // htmlDirectX
-    "",                         // htmlLinkSuffix
-    false,                      // htmlNoUnderline
-    "navy",                     // htmlLinkColor
-    "",                         // htmlCutPath
-    0,                          // htmlCutPathLen
-    0,                          /* htmlLineNums */
-    false,                      /* htmlNoColors */
-    NULL,                       /* htmlZipCommand */
-    false,                      /* htmlFunSeparate */
-    false,                      /* htmlglobalx */
-    false,                      /* htmllocalx */
-    {0, },                      // -cutpaths
-
-    /* JAVA: */
-    "",                         // javaDocPath
-    0,                          // allowPackagesOnCl
-    NULL,                       // sourcepath
-    "/tmp",                     // jdocTmpDir
-
-    /* MIXED THINGS... */
-    0,                          // noCxFile
-    false,                      // javaDoc
-    false,                      // noIncludeRefs
-    true,                       // allowClassFileRefs
-    0,
-    "",
-    DEFAULT_VALUE,              // manual symbol resolution
-    NULL,                       // browsed symbol name
-    true,                       // modifiedFlag
-    0,
-    (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_PROFILE_APPLICABLE), // ooChecksBits
-    1,                          // cxMemoryFactor
-    1,
-    0,
-    NULL,
-    "0:3",                      // olcxlccursor
-    "",                         /* olcxSearchString */
-    79,                         /* olineLen */
-    "*_",                       /* olExtractAddrParPrefix */
-    0,                          // extractMode, must be zero
-    MAX_COMPLETIONS,
-    0,
-    0,
-    "",
-    true,                       // recurse directories
-    "",                         // default classpath
-    8,                          /* tabulator */
-    -1,
-    -1,
-    RegimeXref,
-    "nouser",                   // -user
-    false,                      /* debug */
-    false,                      /* trace */
-    true,                       /* cpp_comment allowed? */
-    0,
-    0,
-    "",
-
-    false,                      /* no locals */
-    false,                      /* no structs/records */
-    false,                      /* no enums */
-    false,                      /* no typedefs */
-    false,                      /* no macros */
-    false,                      /* no stdoptions */
-
-    /* CXREF options  */
-    0,                          /* show err */
-    UPDATE_CREATE,              /* create, update */
-    false,                      // updateOnlyModifiedFiles
-    NULL,                       /* last_message */
-    0,                          /* refnum */
-
-    // all the rest is initialized to zeros
-    {0, },                      // get/set end
-
-    // pending memory for string values
-    NULL,                       /* allAllocatedStrings */
-    {0, },                      /* pendingMemory */
-    {0, },                      /* pendingFreeSpace[] */
 };
 
 char *s_editCommunicationString = "C@$./@mVeDitznAC";

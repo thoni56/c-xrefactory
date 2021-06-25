@@ -4,6 +4,7 @@
 #include "commons.h"
 
 #include "globals.mock"
+#include "options.mock"
 #include "semact.mock"
 #include "fileio.mock"
 #include "misc.mock"

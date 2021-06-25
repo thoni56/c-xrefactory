@@ -2,6 +2,7 @@
 
 #include "commons.h"
 #include "globals.h"
+#include "options.h"
 #include "parsers.h"
 #include "protocol.h"
 #include "misc.h"
@@ -278,7 +279,7 @@ void initTokenNameTab(void) {
     Symbol *pp;
     static int messageWritten=0;
 
-    if (! options.strictAnsi) {
+    if (!options.strictAnsi) {
         initTokensFromTab(tokenNameInitTable2);
     }
     jv = options.javaVersion;

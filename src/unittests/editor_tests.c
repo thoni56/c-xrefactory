@@ -3,6 +3,7 @@
 #include "../editor.h"
 
 #include "yylex.mock"
+#include "options.mock"
 #include "misc.mock"
 #include "globals.mock"
 #include "editorbuffertab.mock"

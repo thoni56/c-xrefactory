@@ -4,6 +4,7 @@
 #include "lexer.c"
 
 #include "globals.mock"
+#include "options.mock"
 #include "commons.mock"
 #include "caching.mock"
 #include "cxref.mock"
