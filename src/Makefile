@@ -174,9 +174,6 @@ lexem.h: c_parser.tab.h
 	echo >> lexem.h
 	echo "#endif" >> lexem.h
 
-.c-xrefrc: c-xrefrc.tpl
-	sed -e "s+CURDIR+$(CURDIR)+g" c-xrefrc.tpl > .c-xrefrc
-
 #########################################################################
 
 clean:
