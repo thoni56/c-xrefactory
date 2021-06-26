@@ -151,6 +151,7 @@ static void traceNewline(int lines) {
     }
 }
 
+/* TODO: Shouldn't this be in <filetab>? */
 /* *********************************************************** */
 /* Always return the found index                               */
 int addFileTabItem(char *name) {

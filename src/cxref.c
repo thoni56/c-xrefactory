@@ -1093,7 +1093,8 @@ UserOlcxData *olcxSetCurrentUser(char *user) {
         // I have changed it to FT, so it never invokes freeing of OLCX
         FT_ALLOC(memb, UserOlcxData);
         sz = strlen(user)+1;
-        if (sz < sizeof(void*)) sz = sizeof(void*);
+        if (sz < sizeof(void*))
+            sz = sizeof(void*);
         FT_ALLOCC(nn, sz, char); // why this is in ftMem ?, some pb with free
         strcpy(nn, user);
         initUserOlcx(memb, nn);

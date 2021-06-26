@@ -10,7 +10,9 @@
 #include "html.mock"
 #include "main.mock"
 #include "editor.mock"
+#include "filetable.mock"
 #include "fileio.mock"
+#include "yylex.mock"
 
 
 Describe(Options);
@@ -23,10 +25,17 @@ Ensure(Options, will_return_false_if_package_structure_does_not_exist) {
 }
 
 Ensure(Options, will_return_true_if_package_structure_exists) {
+
     javaSourcePaths = ".";
     expect(dirExists, when(fullPath, is_equal_to_string("./org/existant")),
            will_return(true));
-    expect(dirInputFile);
+    expect(normalizeFileName, when(name, is_equal_to_string("./org/existant")), will_return("./org/existant"));
+    expect(getFileSuffix, will_return(""));
+    expect(statb, will_return(0));
+
+    FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
+    FT_ALLOC(fileTable.tab[42], struct fileItem);
+    expect(addFileTabItem, will_return(42));
 
     assert_that(packageOnCommandLine("org.existant"));
 }
@@ -37,7 +46,14 @@ Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
            will_return(false));
     expect(dirExists, when(fullPath, is_equal_to_string("but/this/path/org/existant")),
            will_return(true));
-    expect(dirInputFile);
+    expect(normalizeFileName, when(name, is_equal_to_string("but/this/path/org/existant")),
+           will_return("but/this/path/org/existant"));
+    expect(getFileSuffix, will_return(""));
+    expect(statb);
+
+    FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
+    FT_ALLOC(fileTable.tab[42], struct fileItem);
+    expect(addFileTabItem, will_return(42));
 
     assert_that(packageOnCommandLine("org.existant"));
 }

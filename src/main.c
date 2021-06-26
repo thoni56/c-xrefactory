@@ -163,109 +163,6 @@ static void aboutMessage(void) {
     }                                                                   \
 }
 
-static bool fileNameShouldBePruned(char *fn) {
-    StringList    *pp;
-    for(pp=options.pruneNames; pp!=NULL; pp=pp->next) {
-        JavaMapOnPaths(pp->string, {
-                if (compareFileNames(currentPath, fn)==0) return true;
-            });
-    }
-    return false;
-}
-
-static void scheduleCommandLineEnteredFileToProcess(char *fn) {
-    int fileIndex;
-
-    ENTER();
-    fileIndex = addFileTabItem(fn);
-    if (options.taskRegime!=RegimeEditServer) {
-        // yes in edit server you process also headers, etc.
-        fileTable.tab[fileIndex]->b.commandLineEntered = true;
-    }
-    log_trace("recursively process command line argument file #%d '%s'", fileIndex, fileTable.tab[fileIndex]->name);
-    if (!options.updateOnlyModifiedFiles) {
-        fileTable.tab[fileIndex]->b.scheduledToProcess = true;
-    }
-    LEAVE();
-}
-
-void dirInputFile(MAP_FUN_SIGNATURE) {
-    char            *dir,*fname, *suff;
-    void            *recurseFlag;
-    void            *nrecurseFlag;
-    struct stat     st;
-    char            fn[MAX_FILE_NAME_SIZE];
-    char            wcPaths[MAX_OPTION_LEN];
-    int             topCallFlag, stt;
-
-    dir = a1; fname = file; recurseFlag = a4; topCallFlag = *a5;
-    if (topCallFlag == 0) {
-        if (strcmp(fname, ".")==0) return;
-        if (strcmp(fname, "..")==0) return;
-        if (fileNameShouldBePruned(fname)) return;
-        sprintf(fn, "%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
-        strcpy(fn, normalizeFileName(fn, cwd));
-        if (fileNameShouldBePruned(fn)) return;
-    } else {
-        strcpy(fn, normalizeFileName(fname, cwd));
-    }
-    if (strlen(fn) >= MAX_FILE_NAME_SIZE) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "file name %s is too long", fn);
-        fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
-    }
-    suff = getFileSuffix(fname);
-    stt = statb(fn, &st);
-    if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
-        if (recurseFlag!=NULL) {
-            topCallFlag = 0;
-            if (options.recurseDirectories) nrecurseFlag = &topCallFlag;
-            else nrecurseFlag = NULL;
-            mapDirectoryFiles(fn, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
-                              fn, NULL, NULL, nrecurseFlag, &topCallFlag);
-            editorMapOnNonexistantFiles(fn, dirInputFile, DEPTH_ANY,
-                                        fn, NULL, NULL, nrecurseFlag, &topCallFlag);
-        } else {
-            // no error, let it be
-            //& sprintf(tmpBuff, "omitting directory %s, missing '-r' option ?",fn);
-            //& warningMessage(ERR_ST,tmpBuff);
-        }
-    } else if (stt==0) {
-        // .class can be inside a jar archive, but this makes problem on
-        // recursive read of a directory, it attempts to read .class
-        if (topCallFlag==0
-            &&  (! fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes))
-            &&  (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
-            &&  compareFileNames(suff, ".y")!=0
-        ) {
-            return;
-        }
-        if (options.javaFilesOnly && options.taskRegime != RegimeEditServer
-            && (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
-            && (! fileNameHasOneOfSuffixes(fname, "jar:class"))
-        ) {
-            return;
-        }
-        scheduleCommandLineEnteredFileToProcess(fn);
-    } else if (containsWildcard(fn)) {
-        expandWildcardsInOnePath(fn, wcPaths, MAX_OPTION_LEN);
-        //&fprintf(dumpOut, "wildcard path %s expanded to %s\n", fn, wcPaths);
-        JavaMapOnPaths(wcPaths, {
-                dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag);
-            });
-    } else if (topCallFlag
-               && ((!options.allowPackagesOnCommandLine)
-                   || !packageOnCommandLine(fname))) {
-        if (options.taskRegime!=RegimeEditServer) {
-            errorMessage(ERR_CANT_OPEN, fn);
-        } else {
-            // hacked 16.4.2003 in order to can complete in buffers
-            // without existing file
-            scheduleCommandLineEnteredFileToProcess(fn);
-        }
-    }
-}
-
 #if defined(__WIN32__)
 static int isAbsolutePath(char *p) {
     if (p[0]!=0 && p[1]==':' && p[2]==FILE_PATH_SEPARATOR) return(1);
@@ -2281,13 +2178,17 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     memset(&counters, 0, sizeof(Counters));
     options.includeDirs = NULL;
     SM_INIT(ftMemory);
+
+    /* TODO: This could be done inside initFileTable()... */
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
     initFileTable(&fileTable);
+
     fillPosition(&s_noPos, noFileIndex, 0, 0);
     fillUsageBits(&s_noUsage, UsageNone, 0);
     fill_reference(&s_noRef, s_noUsage, s_noPos, NULL);
     s_input_file_number = noFileIndex;
     s_javaAnonymousClassName.p = s_noPos;
+
     olcxInit();
     editorInit();
 }

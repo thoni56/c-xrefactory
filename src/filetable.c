@@ -26,6 +26,7 @@ FileTable fileTable;
 int noFileIndex = -1;
 
 
+/* TODO: Always called (2 locations) with FT memory allocated space, so newFileItem() is possible */
 void fillFileItem(FileItem *item, char *name, bool fromCommandLine) {
     memset(item, 0, sizeof(FileItem));
     item->name = name;

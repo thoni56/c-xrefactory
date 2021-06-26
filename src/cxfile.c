@@ -646,6 +646,7 @@ static void closeReferenceFile(char *fname) {
     cxOut = stdout;
 }
 
+/* TODO: Move to fileio */
 static void createDirIfNotExists(char *dirname) {
     struct stat st;
 

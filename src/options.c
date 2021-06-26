@@ -5,14 +5,13 @@
 #include "misc.h"
 #include "cxref.h"
 #include "html.h"
+#include "yylex.h"
 #include "classfilereader.h"
 #include "editor.h"
 #include "fileio.h"
 
 /* The following are currently needed from main:
    mainHandleSetOption
-   dirInputFile
-   addHtmlCutPath
  */
 #include "main.h"
 
@@ -349,6 +348,109 @@ int addHtmlCutPath(char *ss) {
         options.htmlCut.pathsNum++;
     }
     return(res);
+}
+
+static void scheduleCommandLineEnteredFileToProcess(char *fn) {
+    int fileIndex;
+
+    ENTER();
+    fileIndex = addFileTabItem(fn);
+    if (options.taskRegime!=RegimeEditServer) {
+        // yes in edit server you process also headers, etc.
+        fileTable.tab[fileIndex]->b.commandLineEntered = true;
+    }
+    log_trace("recursively process command line argument file #%d '%s'", fileIndex, fileTable.tab[fileIndex]->name);
+    if (!options.updateOnlyModifiedFiles) {
+        fileTable.tab[fileIndex]->b.scheduledToProcess = true;
+    }
+    LEAVE();
+}
+
+static bool fileNameShouldBePruned(char *fn) {
+    StringList    *pp;
+    for(pp=options.pruneNames; pp!=NULL; pp=pp->next) {
+        JavaMapOnPaths(pp->string, {
+                if (compareFileNames(currentPath, fn)==0) return true;
+            });
+    }
+    return false;
+}
+
+void dirInputFile(MAP_FUN_SIGNATURE) {
+    char            *dir,*fname, *suff;
+    void            *recurseFlag;
+    void            *nrecurseFlag;
+    struct stat     st;
+    char            fn[MAX_FILE_NAME_SIZE];
+    char            wcPaths[MAX_OPTION_LEN];
+    int             topCallFlag, stt;
+
+    dir = a1; fname = file; recurseFlag = a4; topCallFlag = *a5;
+    if (topCallFlag == 0) {
+        if (strcmp(fname, ".")==0) return;
+        if (strcmp(fname, "..")==0) return;
+        if (fileNameShouldBePruned(fname)) return;
+        sprintf(fn, "%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
+        strcpy(fn, normalizeFileName(fn, cwd));
+        if (fileNameShouldBePruned(fn)) return;
+    } else {
+        strcpy(fn, normalizeFileName(fname, cwd));
+    }
+    if (strlen(fn) >= MAX_FILE_NAME_SIZE) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff, "file name %s is too long", fn);
+        fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+    }
+    suff = getFileSuffix(fname);
+    stt = statb(fn, &st);
+    if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
+        if (recurseFlag!=NULL) {
+            topCallFlag = 0;
+            if (options.recurseDirectories) nrecurseFlag = &topCallFlag;
+            else nrecurseFlag = NULL;
+            mapDirectoryFiles(fn, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
+                              fn, NULL, NULL, nrecurseFlag, &topCallFlag);
+            editorMapOnNonexistantFiles(fn, dirInputFile, DEPTH_ANY,
+                                        fn, NULL, NULL, nrecurseFlag, &topCallFlag);
+        } else {
+            // no error, let it be
+            //& sprintf(tmpBuff, "omitting directory %s, missing '-r' option ?",fn);
+            //& warningMessage(ERR_ST,tmpBuff);
+        }
+    } else if (stt==0) {
+        // .class can be inside a jar archive, but this makes problem on
+        // recursive read of a directory, it attempts to read .class
+        if (topCallFlag==0
+            &&  (! fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes))
+            &&  (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
+            &&  compareFileNames(suff, ".y")!=0
+        ) {
+            return;
+        }
+        if (options.javaFilesOnly && options.taskRegime != RegimeEditServer
+            && (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
+            && (! fileNameHasOneOfSuffixes(fname, "jar:class"))
+        ) {
+            return;
+        }
+        scheduleCommandLineEnteredFileToProcess(fn);
+    } else if (containsWildcard(fn)) {
+        expandWildcardsInOnePath(fn, wcPaths, MAX_OPTION_LEN);
+        //&fprintf(dumpOut, "wildcard path %s expanded to %s\n", fn, wcPaths);
+        JavaMapOnPaths(wcPaths, {
+                dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag);
+            });
+    } else if (topCallFlag
+               && ((!options.allowPackagesOnCommandLine)
+                   || !packageOnCommandLine(fname))) {
+        if (options.taskRegime!=RegimeEditServer) {
+            errorMessage(ERR_CANT_OPEN, fn);
+        } else {
+            // hacked 16.4.2003 in order to can complete in buffers
+            // without existing file
+            scheduleCommandLineEnteredFileToProcess(fn);
+        }
+    }
 }
 
 char *expandSpecialFilePredefinedVariables_st(char *variable, char *inputFilename) {
