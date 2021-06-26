@@ -11,23 +11,29 @@ else
 	LCOV=lcov
 endif
 
+.PHONY: void
 void:
 	@echo "'make quick' for only fast tests"
 	@echo "'make slow' for only slow tests"
 	@echo "'make all' for both fast and slow tests"
 
+.PHONY: all
 all: quick slow
 
+.PHONY:quick
 quick: autodiscovered_tests
 
+.PHONY: slow
 slow:
 	$(MAKE) -C c-xref
 	$(MAKE) -C ffmpeg
 	$(MAKE) -C systemd
 
+.PHONY: list
 list:
 	echo $(TESTS)
 
+.PHONY: clean
 clean:
 	rm -rf *.info */.coverage coverage
 
@@ -45,6 +51,7 @@ endif
 
 # Discover all test directories and a target rule to run all we found
 TESTS = $(patsubst %/.,%,$(wildcard test_*/.))
+.PHONY: autodiscovered_tests
 autodiscovered_tests: $(TESTS)
 
 # To make it possible to run tests in parallel we use GCOV settings so
