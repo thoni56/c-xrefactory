@@ -164,14 +164,16 @@ static void aboutMessage(void) {
 }
 
 #if defined(__WIN32__)
-static int isAbsolutePath(char *p) {
-    if (p[0]!=0 && p[1]==':' && p[2]==FILE_PATH_SEPARATOR) return(1);
-    if (p[0]==FILE_PATH_SEPARATOR) return(1);
-    return(0);
+static bool isAbsolutePath(char *p) {
+    if (p[0]!=0 && p[1]==':' && p[2]==FILE_PATH_SEPARATOR)
+        return true;
+    if (p[0]==FILE_PATH_SEPARATOR)
+        return true;
+    return false;
 }
 #else
-static int isAbsolutePath(char *p) {
-    return(p[0]==FILE_PATH_SEPARATOR);
+static bool isAbsolutePath(char *p) {
+    return p[0] == FILE_PATH_SEPARATOR;
 }
 #endif
 
@@ -185,7 +187,7 @@ int mainHandleSetOption( int argc, char **argv, int i ) {
     NEXT_ARG();
     val = argv[i];
     xrefSetenv(name, val);
-    return(i);
+    return i;
 }
 
 static int mainHandleIncludeOption(int argc, char **argv, int i) {
@@ -196,7 +198,7 @@ static int mainHandleIncludeOption(int argc, char **argv, int i) {
     readOptionFile(argv[i],&nargc,&nargv, "",NULL);
     processOptions(nargc, nargv, INFILES_DISABLED);
     options.stdopFlag = 0;
-    return(i);
+    return i;
 }
 
 
@@ -1313,7 +1315,7 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
         options.updateOnlyModifiedFiles = true;
     }
     else
-        return(false);
+        return false;
     *argIndexP = i;
     return true;
 }
@@ -1521,16 +1523,18 @@ static char * getInputFileFromFtab(int *fArgCount, int flag) {
         }
     }
     *fArgCount = i;
-    if (i<fileTable.size) return(fileTable.tab[i]->name);
-    else return(NULL);
+    if (i<fileTable.size)
+        return fileTable.tab[i]->name;
+    else
+        return NULL;
 }
 
 char * getInputFile(int *fArgCount) {
-    return(getInputFileFromFtab(fArgCount,FF_SCHEDULED_TO_PROCESS));
+    return getInputFileFromFtab(fArgCount,FF_SCHEDULED_TO_PROCESS);
 }
 
 static char * getCommandLineFile(int *fArgCount) {
-    return(getInputFileFromFtab(fArgCount,FF_COMMAND_LINE_ENTERED));
+    return getInputFileFromFtab(fArgCount,FF_COMMAND_LINE_ENTERED);
 }
 
 static void mainGenerateReferenceFile(void) {
@@ -1722,14 +1726,15 @@ static void getOptionsFile(char *file, char *outFName, char *outSect,int errMess
     return;
 }
 
-static int computeAndOpenInputFile(void) {
-    FILE            *inputIn;
-    EditorBuffer  *inputBuff;
+static bool computeAndOpenInputFile(void) {
+    FILE *inputIn;
+    EditorBuffer *inputBuff;
+
     assert(s_language);
     inputBuff = NULL;
     //!!!! hack for .jar files !!!
     if (LANGUAGE(LANG_JAR) || LANGUAGE(LANG_CLASS))
-        return(0);
+        return false;
     if (inputFilename == NULL) {
         assert(0);
         inputIn = stdin;
@@ -1738,7 +1743,7 @@ static int computeAndOpenInputFile(void) {
         // hack for getenv
         // not anymore, parse input for getenv ${__class}, ... settings
         // also if yes, then move this to 'mainEditSrvParseInputFile' !
-        //&     return(0);
+        //&     return false;
     } else {
         inputIn = NULL;
         //& inputBuff = editorGetOpenedAndLoadedBuffer(inputFilename);
@@ -1756,9 +1761,9 @@ static int computeAndOpenInputFile(void) {
     }
     initInput(inputIn, inputBuff, "\n", inputFilename);
     if (inputIn==NULL && inputBuff==NULL) {
-        return(0);
+        return false;
     } else {
-        return(1);
+        return true;
     }
 }
 
@@ -2017,13 +2022,12 @@ void writeRelativeProgress(int val) {
     if (val==100) s_progressOffset++;
 }
 
-static void mainFileProcessingInitialisations(
-                                              int *firstPass,
+static void mainFileProcessingInitialisations(int *firstPass,
                                               int argc, char **argv,      // command-line options
                                               int nargc, char **nargv,    // piped options
-                                              int *outInputIn,
+                                              bool *outInputIn,
                                               Language *outLanguage
-                                              ) {
+) {
     char            dffname[MAX_FILE_NAME_SIZE];
     char            dffsect[MAX_FILE_NAME_SIZE];
     struct stat     dffstat;
@@ -2082,7 +2086,7 @@ static void mainFileProcessingInitialisations(
 
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
         if (options.taskRegime != RegimeEditServer && inputFilename == NULL) {
-            *outInputIn = 0;
+            *outInputIn = false;
             goto fini;
         }
         copyOptions(&s_cachedOptions, &options);  // before getJavaClassPath, it modifies ???
@@ -2132,12 +2136,12 @@ static void mainFileProcessingInitialisations(
 static int power(int x, int y) {
     int i,res = 1;
     for(i=0; i<y; i++) res *= x;
-    return(res);
+    return res;
 }
 
 static bool optionsOverflowHandler(int n) {
     fatalError(ERR_NO_MEMORY, "opiMemory", XREF_EXIT_ERR);
-    return(1);
+    return true;
 }
 
 static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
@@ -2538,7 +2542,7 @@ static int scheduleFileUsingTheMacro(void) {
 
     //& rr = refTabIsMember(&referenceTable, &ddd, &ii, &memb);
     //& assert(rr);
-    //& if (rr==0) return(noFileIndex);
+    //& if (rr==0) return noFileIndex;
 
     fill_olSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
     if (s_olcxCurrentUser==NULL || s_olcxCurrentUser->browserStack.top==NULL) {
@@ -2558,8 +2562,8 @@ static int scheduleFileUsingTheMacro(void) {
         olStackDeleteSymbol(tmpc);
     }
     //&fprintf(dumpOut, ":scheduling file %s\n", fileTable.tab[s_olMacro2PassFile]->name); fflush(dumpOut);
-    if (s_olMacro2PassFile == noFileIndex) return(noFileIndex);
-    return(s_olMacro2PassFile);
+    if (s_olMacro2PassFile == noFileIndex) return noFileIndex;
+    return s_olMacro2PassFile;
 }
 
 // this is necessary to put new mtimies for header files
@@ -2569,7 +2573,7 @@ static void setFullUpdateMtimesInFileTab(FileItem *fi) {
     }
 }
 
-static void mainCloseInputFile(int inputIn ) {
+static void mainCloseInputFile(bool inputIn) {
     if (inputIn) {
         if (currentFile.lexBuffer.buffer.file!=stdin) {
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
@@ -2577,14 +2581,13 @@ static void mainCloseInputFile(int inputIn ) {
     }
 }
 
-static void mainEditSrvParseInputFile(int *firstPassing, int inputIn ) {
-    //&fprintf(dumpOut, ":here I am %s\n",fileTable.tab[s_input_file_number]->name);
+static void mainEditSrvParseInputFile(int *firstPassing, bool inputIn) {
     if (inputIn) {
-        //&fprintf(dumpOut, "parse start\n");fflush(dumpOut);
         if (options.server_operation!=OLO_TAG_SEARCH && options.server_operation!=OLO_PUSH_NAME) {
+            log_trace("parse start");
             recoverFromCache();
             mainParseInputFile();
-            //&fprintf(dumpOut, "parse stop\n");fflush(dumpOut);
+            log_trace("parse end");
             *firstPassing = 0;
         }
         currentFile.lexBuffer.buffer.isAtEOF = false;
@@ -2599,9 +2602,9 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     // the .c-xrefrc file. so for the moment this will not work.
     // which problem ??????
     // seems that those options are somewhere in ppmMemory overwritten?
-    //&return(0);
-    if (!creatingOlcxRefs()) return(0);
-    if (options.browsedSymName == NULL) return(0);
+    //&return 0;
+    if (!creatingOlcxRefs()) return false;
+    if (options.browsedSymName == NULL) return false;
     log_trace("looking for sym %s on %s",options.browsedSymName,options.olcxlccursor);
     // modified file, can't identify the reference
     log_trace(":modif flag == %d", options.modifiedFlag);
@@ -2649,10 +2652,9 @@ static void mainEditSrvFileSingleCppPass(int argc, char **argv,
                                          int nargc, char **nargv,
                                          int *firstPass
 ) {
-    int inputIn;
+    bool inputIn = false;
     int ol2procfile;
 
-    inputIn = 0;
     s_olStringSecondProcessing = 0;
     mainFileProcessingInitialisations(firstPass, argc, argv,
                                       nargc, nargv, &inputIn, &s_language);
@@ -2677,11 +2679,11 @@ static void mainEditSrvFileSingleCppPass(int argc, char **argv,
         ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=noFileIndex) {
             inputFilename = fileTable.tab[ol2procfile]->name;
-            inputIn = 0;
+            inputIn = false;
             s_olStringSecondProcessing=1;
             mainFileProcessingInitialisations(firstPass, argc, argv,
                                               nargc, nargv, &inputIn, &s_language);
-            mainEditSrvParseInputFile( firstPass, inputIn);
+            mainEditSrvParseInputFile(firstPass, inputIn);
         }
     }
 }
@@ -2723,7 +2725,7 @@ static char *presetEditServerFileDependingStatics(void) {
     if (fArgCount>=fileTable.size) {
         // conservative message, probably macro invoked on nonsaved file
         s_olOriginalComFileNumber = noFileIndex;
-        return(NULL);
+        return NULL;
     }
     assert(fArgCount>=0 && fArgCount<fileTable.size && fileTable.tab[fArgCount]->b.scheduledToProcess);
     for(i=fArgCount+1; i<fileTable.size; i++) {
@@ -2735,13 +2737,12 @@ static char *presetEditServerFileDependingStatics(void) {
     fileName = inputFilename;
     mainSetLanguage(fileName,  &s_language);
     // O.K. just to be sure, there is no other input file
-    return(fileName);
+    return fileName;
 }
 
 
 static int needToProcessInputFile(void) {
-    return(
-           options.server_operation==OLO_COMPLETION
+    return options.server_operation==OLO_COMPLETION
            || options.server_operation==OLO_SEARCH
            || options.server_operation==OLO_EXTRACT
            || options.server_operation==OLO_TAG_SEARCH
@@ -2754,7 +2755,7 @@ static int needToProcessInputFile(void) {
            || options.server_operation==OLO_GET_CLASS_COORD
            || options.server_operation==OLO_GET_ENV_VALUE
            || creatingOlcxRefs()
-           );
+        ;
 }
 
 
@@ -2762,9 +2763,10 @@ static int needToProcessInputFile(void) {
 /*                          Xref regime                            */
 /* *************************************************************** */
 static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *_firstPassing, int *_atLeastOneProcessed ) {
-    int inputIn = *_inputIn;
+    bool inputIn = *_inputIn;
     int firstPassing = *_firstPassing;
     int atLeastOneProcessed = *_atLeastOneProcessed;
+
     s_cppPassMax = 1;
     for(s_currCppPass=1; s_currCppPass<=s_cppPassMax; s_currCppPass++) {
         if (! firstPassing) copyOptions(&options, &s_cachedOptions);
@@ -2863,7 +2865,7 @@ static FileItem *mainCreateListOfInputFiles(void) {
         res = fileTable.tab[n];
     }
     LIST_MERGE_SORT(FileItem, res, inputFileItemLess);
-    return(res);
+    return res;
 }
 
 void mainCallXref(int argc, char **argv) {
@@ -3133,7 +3135,7 @@ int main(int argc, char **argv) {
 
     setupLogging();
 
-    // Ok, so there are these five, now four, main operating modes
+    // Ok, so there were these five, now four, main operating modes
     /* TODO: Is there an underlying reason for not doing this as a switch()? */
     /* And why s_opt.refactoringRegime and not s_opt.taskRegime == RegimeRefactory? */
     if (options.refactoringRegime == RegimeRefactory) mainRefactory(argc, argv);
@@ -3142,5 +3144,5 @@ int main(int argc, char **argv) {
     if (options.taskRegime == RegimeEditServer) mainEditServer(argc, argv);
 
     LEAVE();
-    return(0);
+    return 0;
 }
