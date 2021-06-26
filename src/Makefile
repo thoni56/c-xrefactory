@@ -81,16 +81,16 @@ chcheck:
 #########################################################################
 include sources.mk
 
-c-xref: check-tokens # check that token sections in parsers are identical before compiling
-	@$(MAKE) -e c-xref-proper
+build: check-tokens # check that token sections in parsers are identical before compiling
+	@$(MAKE) -e c-xref
 
-c-xref-proper: CFLAGS+= -Og
-.PHONY: c-xref-proper
-c-xref-proper: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
+c-xref: CFLAGS+=-Og
+.PHONY: c-xref
+c-xref: $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
 #########################################################################
-test: c-xref-proper
+test: c-xref
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) -e -C ../tests quick
 
