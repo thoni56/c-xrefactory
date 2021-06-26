@@ -1,1 +1,19 @@
-cinclude2dot --merge module --quotetypes quote| grep -v mock | grep -v _test | dot -Tps
+#!/bin/bash
+if [ -z "$1" ]
+then
+    format="pdf"
+else
+    format=$1
+fi
+if [ -z "$2" ]
+then
+    layouter="dot"
+else
+    layouter=$2
+fi
+if [ "$#" == 0 ]
+then
+    cinclude2dot --merge module --quotetypes quote| grep -v mock | grep -v _test | sed -e 's/\.tab//g'
+else
+    cinclude2dot --merge module --quotetypes quote| grep -v mock | grep -v _test | sed -e 's/\.tab//g' | $layouter -T$format > depends.$format
+fi
