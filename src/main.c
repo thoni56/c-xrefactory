@@ -289,8 +289,9 @@ static bool processCOption(int *ii, int argc, char **argv) {
 }
 
 static bool processDOption(int *ii, int argc, char **argv) {
-    int i = * ii;
-    if (0) {}
+    int i = *ii;
+
+    if (0) {}                   /* For copy/paste/re-order convenience, all tests can start with "else if.." */
     else if (strcmp(argv[i], "-debug")==0)
         options.debug = true;
     else if (strcmp(argv[i], "-d")==0)   {
@@ -313,6 +314,7 @@ static bool processDOption(int *ii, int argc, char **argv) {
         options.nestedClassDisplaying = NO_OUTERS_CUT;
     }
     else return false;
+
     *ii = i;
     return true;
 }

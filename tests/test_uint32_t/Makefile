@@ -10,7 +10,7 @@ include ../Makefile.boilerplate
 # gcc -E source.c
 
 CXREF = ../../src/c-xref
-COMMAND = $(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -D__INT_LEAST8_TYPE__=int -p $(CURDIR) -log=log $(TRACE) source_not_working.c source_working.c -o output.tmp
+COMMAND = $(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -DMYDEFINE=mydefine -p $(CURDIR) $(TRACE) source_not_working.c source_working.c -o output.tmp
 
 $(TEST): .c-xrefrc
 	$(COMMAND)
@@ -22,6 +22,7 @@ $(TEST): .c-xrefrc
 		$(OK) ; \
 	fi
 
+.PHONY: trace
 trace: TRACE=-trace
 trace: $(TEST)
 

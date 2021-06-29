@@ -714,34 +714,45 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     usage_base = usage->base;
     // do not record references on prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
-    if (s_javaPreScanOnly) return NULL;
-    if (symbol->linkName == NULL) return NULL;
-    if (* symbol->linkName == 0) return NULL;
-    if (symbol == &s_errorSymbol || symbol->bits.symbolType==TypeError) return NULL;
-    if (pos->file == noFileIndex) return NULL;
+    if (s_javaPreScanOnly)
+        return NULL;
+    if (symbol->linkName == NULL)
+        return NULL;
+    if (* symbol->linkName == 0)
+        return NULL;
+    if (symbol == &s_errorSymbol || symbol->bits.symbolType==TypeError)
+        return NULL;
+    if (pos->file == noFileIndex)
+        return NULL;
     assert(pos->file<MAX_FILES);
     assert(fileTable.tab[pos->file]);
     if (symbol->bits.symbolType==TypeDefault && symbol->bits.storage==StorageConstant) {
-        if (options.no_ref_enumerator) return NULL;
+        if (options.no_ref_enumerator)
+            return NULL;
     }
     /* typedefs */
     if (symbol->bits.symbolType==TypeDefault && symbol->bits.storage==StorageTypedef) {
-        if (options.no_ref_typedef) return NULL;
+        if (options.no_ref_typedef)
+            return NULL;
     }
     /* struct, union, enum */
     if ((symbol->bits.symbolType==TypeStruct||symbol->bits.symbolType==TypeUnion||symbol->bits.symbolType==TypeEnum)){
-        if (options.no_ref_typedef) return NULL;
+        if (options.no_ref_typedef)
+            return NULL;
     }
     /* macros */
     if (symbol->bits.symbolType == TypeMacro) {
-        if (options.no_ref_macro) return NULL;
+        if (options.no_ref_macro)
+            return NULL;
     }
     if (symbol->bits.symbolType==TypeDefault) {
-        if (symbol->bits.isRecord && options.no_ref_records) return NULL;
+        if (symbol->bits.isRecord && options.no_ref_records)
+            return NULL;
     }
 
     getSymbolCxrefCategories( symbol, &category, &scope, &storage);
-    if (scope == ScopeAuto && options.no_ref_locals) return NULL;
+    if (scope == ScopeAuto && options.no_ref_locals)
+        return NULL;
 
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
               vFunCl,vApplCl, pos->file, pos->line,pos->col, category==CategoryGlobal?"Global":"Local",
@@ -749,12 +760,14 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (options.server_operation == OLO_EXTRACT) {
-            if (s_input_file_number != currentFile.lexBuffer.buffer.fileNumber) return NULL;
+            if (s_input_file_number != currentFile.lexBuffer.buffer.fileNumber)
+                return NULL;
         } else {
             if (category==CategoryGlobal && symbol->bits.symbolType!=TypeCppInclude && options.server_operation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
                 if (s_olOriginalFileNumber!=pos->file
-                    && options.noIncludeRefs) return NULL;
+                    && options.noIncludeRefs)
+                    return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
                 //&fprintf(dumpOut,"%s comm %d\n", fileTable.tab[pos->file]->name, fileTable.tab[pos->file]->b.commandLineEntered);
@@ -762,13 +775,17 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         }
     }
     if (options.taskRegime == RegimeXref) {
-        if (category == CategoryLocal) return NULL; /* dont cxref local symbols */
-        if (!fileTable.tab[pos->file]->b.cxLoading) return NULL;
+        if (category == CategoryLocal)
+            return NULL; /* dont cxref local symbols */
+        if (!fileTable.tab[pos->file]->b.cxLoading)
+            return NULL;
     }
     if (options.taskRegime == RegimeHtmlGenerate) {
-        if (!fileTable.tab[pos->file]->b.cxLoading && category==CategoryGlobal) return NULL;
+        if (!fileTable.tab[pos->file]->b.cxLoading && category==CategoryGlobal)
+            return NULL;
         if (fileTable.tab[pos->file]->b.cxLoaded
-            &&symbol->bits.symbolType==TypeCppIfElse) return NULL;
+            &&symbol->bits.symbolType==TypeCppIfElse)
+            return NULL;
     }
     reftab = &referenceTable;
     fillSymbolRefItem(&ppp, symbol->linkName, 0, // cxFileHashNumber(symbol->linkName),
@@ -873,12 +890,12 @@ Reference * addCxReference(Symbol *symbol, Position *pos, Usage usage, int vFunC
     return addCxReferenceNew(symbol, pos, &ub, vFunClass, vApplClass);
 }
 
-void addTrivialCxReference(char *name,int symType,int storage,Position *pos,int usage) {
-    Symbol ss;
+void addTrivialCxReference(char *name, int symType, int storage, Position *pos, int usage) {
+    Symbol symbol;
 
-    fillSymbol(&ss, name, name, *pos);
-    fillSymbolBits(&ss.bits, AccessDefault, symType, storage);
-    addCxReference(&ss, pos, usage, noFileIndex, noFileIndex);
+    fillSymbol(&symbol, name, name, *pos);
+    fillSymbolBits(&symbol.bits, AccessDefault, symType, storage);
+    addCxReference(&symbol, pos, usage, noFileIndex, noFileIndex);
 }
 
 void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {
@@ -899,23 +916,24 @@ static int isSmallerOrEqClassR(int inf, int sup, int level) {
     int         smallerLevel;
     assert(level>0);
     //&fprintf(dumpOut,"testing hierarchy of %s\n<\t%s\n",fileTable.tab[inf]->name,fileTable.tab[sup]->name);
-    if (inf == sup) return(level);
+    if (inf == sup)
+        return level;
     assert(fileTable.tab[inf]);
     for(p=fileTable.tab[inf]->superClasses; p!=NULL; p=p->next) {
         if (p->superClass == sup) {
             //&fprintf(dumpOut,"return 1\n");
-            return(level+1);
+            return level+1;
         }
     }
     for(p=fileTable.tab[inf]->superClasses; p!=NULL; p=p->next) {
         smallerLevel = isSmallerOrEqClassR(p->superClass, sup, level+1);
         if (smallerLevel) {
             //&fprintf(dumpOut,"return 1\n");
-            return(smallerLevel);
+            return smallerLevel;
         }
     }
     //&fprintf(dumpOut,"return 0\n");
-    return(0);
+    return 0;
 }
 
 bool isSmallerOrEqClass(int inf, int sup) {
@@ -969,7 +987,7 @@ S_olSymbolsMenu *olcxFreeSymbolMenuItem(S_olSymbolsMenu *ll) {
     tt = ll->next;
     OLCX_FREE(ll, sizeof(*ll));
     ll = tt;
-    return(ll);
+    return ll;
 }
 
 

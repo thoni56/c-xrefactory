@@ -235,10 +235,10 @@ static TokenNameInitTable tokenNameInitTable3[] = {
 
 static void initTokensFromTab(TokenNameInitTable *tokenTabIni) {
     char *name;
-    int token, not_used, i, languages;
+    int token, not_used, languages;
     Symbol *symbol;
 
-    for(i=0; tokenTabIni[i].name!=NULL; i++) {
+    for(int i=0; tokenTabIni[i].name!=NULL; i++) {
         name = tokenTabIni[i].name;
         token = tokenTabIni[i].token;
         languages = tokenTabIni[i].languages;
