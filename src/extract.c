@@ -30,8 +30,8 @@ static unsigned s_javaExtractFromFunctionMods=AccessDefault;
 static char *rb;
 static char *s_extractionName;
 
-#if DEBUG
-static void dumpProgram(ProgramGraphNode *program) {
+/* Public only to avoid "unused" warning */
+void dumpProgram(ProgramGraphNode *program) {
     ProgramGraphNode *p;
 
     log_trace("[ProgramDump begin]");
@@ -46,7 +46,6 @@ static void dumpProgram(ProgramGraphNode *program) {
     }
     log_trace("[ProgramDump end]");
 }
-#endif
 
 
 void generateInternalLabelReference(int counter, int usage) {
@@ -205,9 +204,7 @@ static ProgramGraphNode * extMakeProgramGraph(void) {
     program = NULL;
     refTabMap5(&referenceTable, extractFunGraphRef, ((void *) &program));
     LIST_SORT(ProgramGraphNode, program, linearOrder);
-#ifdef DEBUG
     dumpProgram(program);
-#endif
     for(p=program; p!=NULL; p=p->next) {
         if (p->symRef->b.symType==TypeLabel && p->ref->usage.base!=UsageDefined) {
             // resolve the jump

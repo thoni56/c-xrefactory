@@ -144,18 +144,11 @@ static bool isPreprocessorToken(Lexem lexem) {
     return lexem>CPP_TOKENS_START && lexem<CPP_TOKENS_END;
 }
 
-#ifdef DEBUG
 static void traceNewline(int lines) {
-    int i;
-    if (options.trace) {
-        for(i=1; i<=lines; i++) {
-            log_trace("%s:%d", currentFile.fileName, currentFile.lineNumber+i);
-        }
+    for (int i=1; i<=lines; i++) {
+        log_trace("%s:%d", currentFile.fileName, currentFile.lineNumber+i);
     }
 }
-#else
-#define traceNewline(line) {}
-#endif
 
 /* *********************************************************** */
 /* Always return the found index                               */
@@ -1947,7 +1940,6 @@ endOfFile:
     return 0;
 }
 
-#ifdef DEBUG
 int lexBufDump(LexemBuffer *lb) {
     char *cc;
     int c,lv;
@@ -1976,7 +1968,6 @@ int lexBufDump(LexemBuffer *lb) {
     fprintf(dumpOut,"lexbufdump [stop]\n");fflush(dumpOut);
     return 0;
 }
-#endif
 
 /* ************************************************************** */
 /*                   caching of input                             */

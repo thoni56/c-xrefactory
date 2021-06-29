@@ -1477,11 +1477,9 @@ static void htmlPosProcess( FILE **fff,
                 || cri->b.symType==TypeCppInclude//include is now a link
                 || cri->b.symType==TypeCppAny
                 ) {
-#ifdef DEBUG
             if (ch != '#') {
-                fprintf(dumpOut,"cpp ref on '%c' not at #: %s,%d,%d\n",ch,fileTable.tab[rr->reference->p.file]->name,rr->reference->p.line,rr->reference->p.col);fflush(dumpOut);
+                log_trace("cpp ref on '%c' not at #: %s,%d,%d",ch,fileTable.tab[rr->reference->p.file]->name,rr->reference->p.line,rr->reference->p.col);fflush(dumpOut);
             }
-#endif
             htmlPutCharLF(communicationChannel, ch, cp);
             GetFileChar(ch, ff, cp);
             while (ch==' '||ch=='\t') {

@@ -177,7 +177,6 @@ static TokenNameInitTable tokenNameInitTable1[] = {
     {"'CONSTANT'",        FLOAT_CONSTANT,	LANG_C},
     {"'CONSTANT'",        DOUBLE_CONSTANT,	LANG_C},
     {"'STRING_LITERAL'",  STRING_LITERAL,	LANG_C},
-#ifdef DEBUG
     {"'IDENTIFIER'",      IDENTIFIER,		LANG_C},
     {"'LINE_TOKEN'",      LINE_TOKEN,		LANG_C},
     {"'BLOCK_MARKER'",    OL_MARKER_TOKEN,	LANG_C},
@@ -192,9 +191,7 @@ static TokenNameInitTable tokenNameInitTable1[] = {
     {"#PRAGMA",           CPP_PRAGMA,		LANG_C},
     {"#LINE",             CPP_LINE,			LANG_C},
     {"##",                CPP_COLLATION,	LANG_C},
-#endif
-
-    {NULL,      0,				LANG_C}         /* sentinel*/
+    {NULL,                0,                LANG_C}         /* sentinel*/
 };
 
 static TokenNameInitTable tokenNameInitTable2[] = {

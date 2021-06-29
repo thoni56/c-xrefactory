@@ -34,7 +34,7 @@ static struct {
     FILE *fp;
     int console_level;          /* Level to print to console/stderr */
     int file_level;             /* Level to print to file */
-} L;
+} L = {NULL, NULL, NULL, LOG_WARN, LOG_WARN};
 
 
 static const char *level_names[] = {

@@ -105,10 +105,8 @@ static void usage(char *s) {
     fprintf(stdout, "\t-refalpha2hash            - split references alphabetically (-refnum=28*28)\n");
     fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
     fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
-#   ifdef DEBUG
     fprintf(stdout, "\t-debug                    - produce debug output of the execution\n");
     fprintf(stdout, "\t-trace                    - produce trace output of the execution\n");
-#   endif
     fprintf(stdout, "\t-log=<file>               - log to <file>\n");
     fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
     fprintf(stdout, "\t-no-cppcomments           - C++ like comments '//' not allowed\n");
@@ -527,10 +525,8 @@ static bool processCOption(int *ii, int argc, char **argv) {
 static bool processDOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-#   ifdef DEBUG
     else if (strcmp(argv[i], "-debug")==0)
         options.debug = true;
-#   endif
     else if (strcmp(argv[i], "-d")==0)   {
         int ln;
         NEXT_FILE_ARG();
@@ -1492,11 +1488,9 @@ static bool processSOption(int *ii, int argc, char **argv) {
 static bool processTOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-#ifdef DEBUG
     else if (strcmp(argv[i], "-trace")==0) {
         options.trace = true;
     }
-#endif
     else if (strcmp(argv[i], "-task_regime_server")==0) {
         options.taskRegime = RegimeEditServer;
     }
@@ -3319,20 +3313,16 @@ static void mainEditServer(int argc, char **argv) {
 /* initLogging() is called as the first thing in main() so we look for log filename */
 static void initLogging(int argc, char *argv[]) {
     char fileName[MAX_FILE_NAME_SIZE+1] = "";
-#ifdef DEBUG
     bool debug = false;
     bool trace = false;
-#endif
 
     for (int i=0; i<argc; i++) {
         if (strncmp(argv[i], "-log=", 5)==0)
             strcpy(fileName, &argv[i][5]);
-#ifdef DEBUG
         if (strcmp(argv[i], "-debug") == 0)
             debug = true;
         if (strcmp(argv[i], "-trace") == 0)
             trace = true;
-#endif
     }
     if (fileName[0] != '\0') {
         FILE *tempFile = openFile(fileName, "w");
@@ -3340,13 +3330,11 @@ static void initLogging(int argc, char *argv[]) {
             log_set_fp(tempFile);
     }
 
-#ifdef DEBUG
     if (trace)
         log_set_file_level(LOG_TRACE);
     else if (debug)
         log_set_file_level(LOG_DEBUG);
     else
-#endif
         log_set_file_level(LOG_INFO);
 
     /* Always log errors and above to console */
@@ -3355,13 +3343,11 @@ static void initLogging(int argc, char *argv[]) {
 
 /* setupLogging() is called as part of the normal argument handling so can only change level */
 static void setupLogging(void) {
-#ifdef DEBUG
     if (options.trace)
         log_set_file_level(LOG_TRACE);
     else if (options.debug)
         log_set_file_level(LOG_DEBUG);
     else
-#endif
         log_set_file_level(LOG_INFO);
 }
 

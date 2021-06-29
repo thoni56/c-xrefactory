@@ -38,9 +38,9 @@ endif
 #
 # The heavy lifting is here
 
-yydebug: CFLAGS += -DDEBUG -DYYDEBUG -Og
+yydebug: CFLAGS += -DYYDEBUG -Og
 
-debug devel: CFLAGS += -DDEBUG -Og
+debug devel: CFLAGS += -Og
 
 prod debug yydebug: $(ZLIB) c-xref
 
@@ -84,7 +84,7 @@ include sources.mk
 c-xref: check-tokens # check that token sections in parsers are identical before compiling
 	@$(MAKE) -e c-xref-proper
 
-c-xref-proper: CFLAGS+=-DDEBUG -Og
+c-xref-proper: CFLAGS+= -Og
 .PHONY: c-xref-proper
 c-xref-proper: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
