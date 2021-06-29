@@ -2,7 +2,7 @@
 #define OPTIONS_H_INCLUDED
 
 #include "stdinc.h"
-#include "stdbool.h"
+#include <stdbool.h>
 
 extern void addSourcePathsCut(void);
 extern void getXrefrcFileName(char *ttt);

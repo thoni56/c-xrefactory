@@ -4,8 +4,9 @@
 #include "stdinc.h"
 #include <stdbool.h>
 
-#include "head.h"
 #include "zlib.h"
+
+#include "head.h"
 
 
 typedef unsigned char uchar;
