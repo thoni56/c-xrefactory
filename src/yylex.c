@@ -562,7 +562,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName, bool is_
         return NULL;
  found:
     strcpy(normalizedName, normalizeFileName(normalizedName, cwd));
-    log_trace("file '%s' opened, checking to %s", normalizedName, fileTable.tab[s_olOriginalFileNumber]->name);
+    log_trace("file '%s' opened", normalizedName);
     pushInclude(file, editorBuffer, normalizedName, "\n");
     return stdin;               // NOT NULL TODO: WTF?!?!? Why not bool? Check return value usage at call sites...
 }
