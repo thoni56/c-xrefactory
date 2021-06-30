@@ -95,7 +95,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %token TYPEDEF EXTERN AUTO REGISTER SIGNED UNSIGNED STRUCT UNION ENUM
 %token SIZEOF RESTRICT _ATOMIC _BOOL _THREADLOCAL _NORETURN
 /* hmm */
-%token ANONYME_MOD
+%token ANONYMOUS_MODIFIER
 
 /* java-special */
 %token ABSTRACT BOOLEAN BYTE CATCH CLASS EXTENDS FINAL FINALLY
@@ -181,7 +181,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %token IDENT_TO_COMPLETE        /* identifier under cursor */
 
 /* c-only */
-%token CPP_MAC_ARG IDENT_NO_CPP_EXPAND
+%token CPP_MACRO_ARGUMENT IDENT_NO_CPP_EXPAND
 
 /* java-only */
 %token CHAR_LITERAL
@@ -425,7 +425,7 @@ any_token_not_perc_par
     | SWITCH | VOID | VOLATILE | WHILE
     | TYPEDEF | EXTERN | AUTO | REGISTER | SIGNED | UNSIGNED | STRUCT | UNION
     | ENUM | SIZEOF
-    | ANONYME_MOD | TOKEN
+    | ANONYMOUS_MODIFIER | TOKEN
     | ABSTRACT | BOOLEAN | BYTE | CATCH | CLASS | EXTENDS | FINAL | FINALLY
     | IMPLEMENTS | IMPORT | INSTANCEOF | INTERFACE | NATIVE | NEW
     | PACKAGE | PRIVATE | PROTECTED | PUBLIC | SUPER
@@ -1019,7 +1019,7 @@ type_modality_specifier
     | RESTRICT      { $$.d = TypeDefault; }
     | VOLATILE      { $$.d = TypeDefault; }
     | _ATOMIC       { $$.d = TypeDefault; }
-    | ANONYME_MOD   { $$.d = TypeDefault; }
+    | ANONYMOUS_MODIFIER   { $$.d = TypeDefault; }
     ;
 
 type_modality_specifier_opt

@@ -291,7 +291,7 @@ static void passLexem(char **input, Lexem lexem, int *lineNumberP, int *valueP, 
         } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) {
             *positionP = getLexPosition(input);
             *lengthP = getLexInt(input);
-        } else if (lexem == CPP_MAC_ARG) {
+        } else if (lexem == CPP_MACRO_ARGUMENT) {
             *valueP = getLexInt(input);
             *positionP = getLexPosition(input);
         } else if (lexem == CHAR_LITERAL) {
@@ -867,7 +867,7 @@ void processDefineDirective(bool hasArguments) {
                 addTrivialCxReference(s_macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                       &position, UsageUsed);
                 destination = body+macroSize;
-                putLexToken(CPP_MAC_ARG, &destination);
+                putLexToken(CPP_MACRO_ARGUMENT, &destination);
                 putLexInt(s_macroArgumentTable.tab[foundIndex]->order, &destination);
                 putLexPosition(position.file, position.line,position.col, &destination);
                 macroSize = destination - body;
@@ -1528,10 +1528,10 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     bcc = *abcc;
     bsize = *absize;
     value=0; // compiler
-    if (nextLexToken(&lbcc) == CPP_MAC_ARG) {
+    if (nextLexToken(&lbcc) == CPP_MACRO_ARGUMENT) {
         bcc = lbcc;
         lexem = getLexToken(&lbcc);
-        assert(lexem==CPP_MAC_ARG);
+        assert(lexem==CPP_MACRO_ARGUMENT);
         passLexem(&lbcc, lexem, &lineNumber, &value, &respos, &length, false);
         cc = actArgs[value].beginningOfBuffer; ccfin = actArgs[value].endOfBuffer;
         lbcc = NULL;
@@ -1546,7 +1546,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
             TestPPBufOverflow(bcc,buf,bsize);
         }
     }
-    if (nextLexToken(&ncc) == CPP_MAC_ARG) {
+    if (nextLexToken(&ncc) == CPP_MACRO_ARGUMENT) {
         lexem = getLexToken(&ncc);
         passLexem(&ncc, lexem, &lineNumber, &value, &position, &length, false);
         cc = actArgs[value].beginningOfBuffer; ccfin = actArgs[value].endOfBuffer;
@@ -1695,15 +1695,15 @@ static void createMacroBody(LexInput *macroBody,
         cc0 = cc;
         lexem = getLexToken(&cc);
         passLexem(&cc, lexem, &lineNumber, &value, &hpos, &length, false);
-        if (lexem == CPP_MAC_ARG) {
+        if (lexem == CPP_MACRO_ARGUMENT) {
             len = actArgs[value].endOfBuffer - actArgs[value].beginningOfBuffer;
             TestMBBufOverflow(bcc,len,buf2,bsize);
             memcpy(bcc, actArgs[value].beginningOfBuffer, len);
             bcc += len;
-        } else if (lexem=='#' && cc<cfin && nextLexToken(&cc)==CPP_MAC_ARG) {
+        } else if (lexem=='#' && cc<cfin && nextLexToken(&cc)==CPP_MACRO_ARGUMENT) {
             lexem = getLexToken(&cc);
             passLexem(&cc, lexem, &lineNumber, &value, &position, &length, false);
-            assert(lexem == CPP_MAC_ARG);
+            assert(lexem == CPP_MACRO_ARGUMENT);
             putLexToken(STRING_LITERAL, &bcc);
             TestMBBufOverflow(bcc,MACRO_UNIT_SIZE,buf2,bsize);
             macArgsToString(bcc, &actArgs[value]);

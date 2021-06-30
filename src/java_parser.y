@@ -158,7 +158,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 %token TYPEDEF EXTERN AUTO REGISTER SIGNED UNSIGNED STRUCT UNION ENUM
 %token SIZEOF RESTRICT _ATOMIC _BOOL _THREADLOCAL _NORETURN
 /* hmm */
-%token ANONYME_MOD
+%token ANONYMOUS_MODIFIER
 
 /* java-special */
 %token ABSTRACT BOOLEAN BYTE CATCH CLASS EXTENDS FINAL FINALLY
@@ -244,7 +244,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 %token IDENT_TO_COMPLETE        /* identifier under cursor */
 
 /* c-only */
-%token CPP_MAC_ARG IDENT_NO_CPP_EXPAND
+%token CPP_MACRO_ARGUMENT IDENT_NO_CPP_EXPAND
 
 /* java-only */
 %token CHAR_LITERAL
