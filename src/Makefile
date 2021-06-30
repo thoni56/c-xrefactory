@@ -38,17 +38,15 @@ endif
 #
 # The heavy lifting is here
 
-yydebug: CFLAGS += -DYYDEBUG -Og
+yydebug: CFLAGS += -DYYDEBUG
 
-debug devel: CFLAGS += -Og
-
-prod debug yydebug: $(ZLIB) c-xref
+prod yydebug: c-xref
 
 devel: COVERAGE=--coverage
 devel: clean-coverage check-tokens
 	$(MAKE) -e devel-proper
 
-devel-proper: unit debug test
+devel-proper: unit c-xref test
 	$(MAKE) coverage-report
 	$(MAKE) -C ../editors/emacs
 
