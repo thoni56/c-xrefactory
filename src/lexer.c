@@ -290,7 +290,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     ch = getChar(cb);
                     if (ch == '.') {
                         ch = getChar(cb);
-                        putLexToken(ELIPSIS, &dd);
+                        putLexToken(ELLIPSIS, &dd);
                         putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
                         goto nextLexem;
                     } else {

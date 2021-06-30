@@ -45,7 +45,7 @@ debug devel: CFLAGS += -Og
 prod debug yydebug: $(ZLIB) c-xref
 
 devel: COVERAGE=--coverage
-devel: clean-coverage
+devel: clean-coverage check-tokens
 	$(MAKE) -e devel-proper
 
 devel-proper: unit debug test

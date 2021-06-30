@@ -75,7 +75,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %token XOR_ASSIGN OR_ASSIGN
 
 /* c-only */
-%token PTR_OP ELIPSIS
+%token PTR_OP ELLIPSIS
 
 /* java -only */
 %token URIGHT_OP URIGHT_ASSIGN

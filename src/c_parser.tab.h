@@ -24,7 +24,7 @@
 #define XOR_ASSIGN 280
 #define OR_ASSIGN 281
 #define PTR_OP 282
-#define ELIPSIS 283
+#define ELLIPSIS 283
 #define URIGHT_OP 284
 #define URIGHT_ASSIGN 285
 #define YACC_PERC 286
@@ -199,6 +199,7 @@
 #define IDENT_NO_CPP_EXPAND 455
 #define CHAR_LITERAL 456
 #define LAST_TOKEN 457
+#define ELIPSIS 458
 typedef union {
 #include "yystype.h"
 } YYSTYPE;

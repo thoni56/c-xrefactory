@@ -122,7 +122,7 @@ static TokenNameInitTable tokenNameInitTable1[] = {
 
     {">>>=",        URIGHT_ASSIGN,	LANG_JAVA},
     {">>>",         URIGHT_OP,		LANG_JAVA},
-    {"...",         ELIPSIS,		LANG_C},
+    {"...",         ELLIPSIS,		LANG_C},
     {">>=",         RIGHT_ASSIGN,	LANG_C},
     {"<<=",         LEFT_ASSIGN,	LANG_C},
     {"+=",      ADD_ASSIGN,			LANG_C},

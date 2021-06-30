@@ -783,7 +783,7 @@ void processDefineDirective(bool hasArguments) {
     fillSymbolBits(&symbol->bits, AccessDefault, TypeMacro, StorageNone);
 
     /* TODO: this is the only call to setGlobalFileDepNames() that doesn't do it in XX memory, why?
-       PreProcessor? */
+       PP == PreProcessor? */
     setGlobalFileDepNames(currentLexemStart, symbol, MEMORY_PP);
     macroName = symbol->name;
     /* process arguments */
@@ -808,7 +808,7 @@ void processDefineDirective(bool hasArguments) {
                 ellipsis = 0;
                 if (lexem == IDENTIFIER ) {
                     argumentName = currentLexemStart;
-                } else if (lexem == ELIPSIS) {
+                } else if (lexem == ELLIPSIS) {
                     argumentName = s_cppVarArgsName;
                     pos = macroPosition;					// hack !!!
                     ellipsis = 1;
@@ -833,7 +833,7 @@ void processDefineDirective(bool hasArguments) {
                                           &pos, UsageDefined);
                     handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &pos, parpos2, 0);
                 }
-                if (lexem == ELIPSIS) {
+                if (lexem == ELLIPSIS) {
                     // GNU ELLIPSIS ?????
                     lexem = getNonBlankLexem(exceptionHandler, &pos, &l, &v, &len);
                     PassLexem(currentInput.currentLexemP, lexem, l, v, *parpos2, len, true);
