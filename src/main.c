@@ -3089,7 +3089,8 @@ static void initLogging(int argc, char *argv[]) {
         FILE *tempFile = openFile(fileName, "w");
         if (tempFile != NULL)
             log_set_fp(tempFile);
-    }
+    } else
+        log_set_fp(stderr);
 
     if (trace)
         log_set_file_level(LOG_TRACE);

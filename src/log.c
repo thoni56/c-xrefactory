@@ -32,8 +32,8 @@ static struct {
     void *udata;
     log_LockFn lock;
     FILE *fp;
-    int console_level;          /* Level to print to console/stderr */
-    int file_level;             /* Level to print to file */
+    LogLevel console_level;          /* Level to print to console/stderr */
+    LogLevel file_level;             /* Level to print to file */
 } L = {NULL, NULL, NULL, LOG_WARN, LOG_WARN};
 
 
@@ -45,6 +45,10 @@ static const char *level_names[] = {
 #ifdef LOG_USE_COLOR
 static const char *level_colors[] = {
   "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"
+};
+#else
+static const char *level_colors[] = { /* No color strings if not using colour... */
+  "", "", "", "", "", ""
 };
 #endif
 
@@ -78,7 +82,7 @@ void log_set_fp(FILE *fp) {
 }
 
 
-void log_set_file_level(int level) {
+void log_set_file_level(LogLevel level) {
   L.file_level = level;
 }
 
@@ -88,7 +92,7 @@ LogLevel log_get_file_level(void) {
 }
 
 
-void log_set_console_level(int level) {
+void log_set_console_level(LogLevel level) {
   L.console_level = level;
 }
 
@@ -113,13 +117,8 @@ void log_log(LogLevel level, const char *file, int line, const char *fmt, ...) {
     char buf[16];
 
     buf[strftime(buf, sizeof(buf), "%H:%M:%S", lt)] = '\0';
-#ifdef LOG_USE_COLOR
-    /* TODO: Only use colors if color capable */
     fprintf(stderr, "%s %s%-5s %s%s:%d : ",
             buf, level_colors[level], level_names[level], RESET_COLOR,
-#else
-    fprintf(stderr, "%s %-5s %s:%d: ", buf, level_names[level],
-#endif
             file, line);
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
