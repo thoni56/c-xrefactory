@@ -222,8 +222,6 @@ char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
 jmp_buf cxmemOverflow;
 
-Options s_cachedOptions;
-
 /* ********************************************************************** */
 /*                            real constants                              */
 /* ********************************************************************** */
