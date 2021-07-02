@@ -115,7 +115,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead. Just watchout for
   datatypes that need to be in proto.h because of the strFill et. al
-  generation. Not all does, though...
+  generation. (Gone now!) Not all does, though...
 
 * TODO Modules. Better use of modules (Clean Code/Architecture)
   The hash tables and lists are such candidates. If we do that it would be much

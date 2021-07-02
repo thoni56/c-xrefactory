@@ -23,17 +23,15 @@ else
     fi
     if [ "$COVERAGE" != "" ] ; then
         if command -v lcov > /dev/null 2>&1 ; then
-            if [ ! -z "$GCOV_PREFIX" ] ; then
-                # Then coverage is stored in separate directory for each test to be able to run tests in parallel
-                filecount=`ls -1 $1/.coverage/*.gcda 2>/dev/null | wc -l`
-                if [ $filecount -gt 0 ] ; then
-                    # If there was any .gcda files...
-                    cd ../src
-                    # Copy the .gcno files to the coverage directory, because they are needed there by lcov
-                    cp .objects/*.gcno ../tests/$1/.coverage
-                    mkdir -p ../tests/coverage
-                    $LCOV -q -t $1 -d ../tests/$1/.coverage -c -o ../tests/coverage/$1.info -b .
-                fi
+            # Coverage is stored in separate directory for each test to be able to run tests in parallel
+            filecount=`ls -1 $1/.coverage/*.gcda 2>/dev/null | wc -l`
+            if [ $filecount -gt 0 ] ; then
+                # If there was any .gcda files...
+                cd ../src
+                # Copy the .gcno files to the coverage directory, because they are needed there by lcov
+                cp .objects/*.gcno ../tests/$1/.coverage
+                mkdir -p ../tests/coverage
+                $LCOV -q -t $1 -d ../tests/$1/.coverage -c -o ../tests/coverage/$1.info -b .
             fi
         fi
     fi
