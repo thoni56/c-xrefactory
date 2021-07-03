@@ -221,7 +221,7 @@ static void refactoryUpdateReferences(char *project) {
     }
     nargv[nargc++] = s_refactoryUpdateOption;
 
-    s_currCppPass = ANY_CPP_PASS;
+    currentCppPass = ANY_CPP_PASS;
     mainTaskEntryInitialisations(nargc, nargv);
     //copyOptions(&s_cachedOptions, &s_opt);
 
@@ -249,7 +249,7 @@ static void refactoryEditServerParseBuffer(char *project,
     char *nargv[MAX_NARGV_OPTIONS_NUM];
     int nargc;
 
-    s_currCppPass = ANY_CPP_PASS;
+    currentCppPass = ANY_CPP_PASS;
     // this probably creates a memory leak in options
     // is it necessary? Try to put it in comment [2/8/2003]
     //& copyOptions(&s_cachedOptions, &options);

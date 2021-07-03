@@ -20,7 +20,7 @@ S_currentlyParsedCl s_cp;
 S_currentlyParsedCl s_cpInit;
 S_currentlyParsedStatics s_cps;
 S_currentlyParsedStatics s_cpsInit;
-int s_currCppPass;
+int currentCppPass;
 int s_cppPassMax;
 char defaultClassPath[] = ".";
 char s_base[MAX_FILE_NAME_SIZE];
@@ -53,7 +53,7 @@ char *tokenNamesTable[LAST_TOKEN];
 int tokenNameLengthsTable[LAST_TOKEN];
 
 char *s_cppVarArgsName = "__VA_ARGS__";
-int s_currCppPass;
+int currentCppPass;
 
 char s_olstring[MAX_FUN_NAME_SIZE];
 int s_olstringFound = 0;

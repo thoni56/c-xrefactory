@@ -785,7 +785,7 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             processSectionMarker(text,len+1,project,sectionFile,&isActiveSection,resSection);
         } else if (isActiveSection && strncmp(text,"-pass", 5) == 0) {
             sscanf(text+5, "%d", &passn);
-            if (passn==s_currCppPass || s_currCppPass==ANY_CPP_PASS) {
+            if (passn==currentCppPass || currentCppPass==ANY_CPP_PASS) {
                 isActivePass = 1;
             } else {
                 isActivePass = 0;

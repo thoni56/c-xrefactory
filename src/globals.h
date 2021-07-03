@@ -157,7 +157,7 @@ extern char *inputFilename;
 extern time_t s_fileProcessStartTime;
 
 extern Language s_language;
-extern int s_currCppPass;
+extern int currentCppPass;
 extern int s_cppPassMax;
 
 extern Completions s_completions;

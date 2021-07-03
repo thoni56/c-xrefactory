@@ -274,7 +274,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     counters = cp->counters;
     trailDeleteOutOfMemory();
     assert(options.taskRegime);
-    if (options.taskRegime==RegimeEditServer && s_currCppPass==1) {
+    if (options.taskRegime==RegimeEditServer && currentCppPass==1) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
         cxMemory->index = cp->cxMemoryIndex;

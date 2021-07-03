@@ -2045,7 +2045,7 @@ static void mainFileProcessingInitialisations(int *firstPass,
     //&fprintf(dumpOut, "checking oldcp==%s\n",oldOnLineClassPath);
     //&fprintf(dumpOut, "checking newcp==%s\n",options.classpath);
     if (*firstPass
-        || oldCppPass != s_currCppPass
+        || oldCppPass != currentCppPass
         || strcmp(oldStdopFile,dffname)
         || strcmp(oldStdopSection,dffsect)
         || oldStdopTime != dffstat.st_mtime
@@ -2099,7 +2099,7 @@ static void mainFileProcessingInitialisations(int *firstPass,
         strcpy(oldStdopSection,dffsect);
         oldStdopTime = dffstat.st_mtime;
         oldLanguage = *outLanguage;
-        oldCppPass = s_currCppPass;
+        oldCppPass = currentCppPass;
 
         // this was before 'getAndProcessXrefrcOptions(df...' I hope it will not cause
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
@@ -2699,8 +2699,8 @@ static void mainEditServerProcessFile(int argc, char **argv,
 ) {
     assert(fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
     s_cppPassMax = 1;           /* WTF? */
-    s_currCppPass = 1;
-    for(s_currCppPass=1; s_currCppPass<=s_cppPassMax; s_currCppPass++) {
+    currentCppPass = 1;
+    for(currentCppPass=1; currentCppPass<=s_cppPassMax; currentCppPass++) {
         inputFilename = fileTable.tab[s_olOriginalComFileNumber]->name;
         assert(inputFilename!=NULL);
         mainEditSrvFileSingleCppPass(argc, argv, nargc, nargv, firstPass);
@@ -2772,7 +2772,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
     int atLeastOneProcessed = *_atLeastOneProcessed;
 
     s_cppPassMax = 1;
-    for(s_currCppPass=1; s_currCppPass<=s_cppPassMax; s_currCppPass++) {
+    for(currentCppPass=1; currentCppPass<=s_cppPassMax; currentCppPass++) {
         if (! firstPassing) copyOptions(&options, &s_cachedOptions);
         mainFileProcessingInitialisations(&firstPassing,
                                           argc, argv, 0, NULL, &inputIn,
@@ -2880,7 +2880,7 @@ void mainCallXref(int argc, char **argv) {
     static int numberOfInputs, inputCounter, pinputCounter;
     LongjmpReason reason = LONGJMP_REASON_NONE;
 
-    s_currCppPass = ANY_CPP_PASS;
+    currentCppPass = ANY_CPP_PASS;
     CX_ALLOCC(cxFreeBase0,0,char);
     if (options.taskRegime == RegimeHtmlGenerate && ! options.noCxFile) {
         htmlGetDefinitionReferences();
@@ -2893,7 +2893,7 @@ void mainCallXref(int argc, char **argv) {
     inputCounter = pinputCounter = 0;
     LIST_LEN(numberOfInputs, FileItem, ffc);
     for(;;) {
-        s_currCppPass = ANY_CPP_PASS;
+        currentCppPass = ANY_CPP_PASS;
         firstPassing = 1;
         if ((reason=setjmp(cxmemOverflow))!=0) {
             mainReferencesOverflowed(cxFreeBase,reason);
@@ -3038,7 +3038,7 @@ static void mainEditServer(int argc, char **argv) {
     firstPassing = 1;
     copyOptions(&s_cachedOptions, &options);
     for(;;) {
-        s_currCppPass = ANY_CPP_PASS;
+        currentCppPass = ANY_CPP_PASS;
         copyOptions(&options, &s_cachedOptions);
         getPipedOptions(&nargc, &nargv);
         // O.K. -o option given on command line should catch also file not found
@@ -3134,7 +3134,7 @@ int main(int argc, char **argv) {
                    XREF_EXIT_ERR);
     }
 
-    s_currCppPass = ANY_CPP_PASS;
+    currentCppPass = ANY_CPP_PASS;
     mainTotalTaskEntryInitialisations(argc, argv);
     mainTaskEntryInitialisations(argc, argv);
 
