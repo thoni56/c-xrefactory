@@ -1037,6 +1037,19 @@ static int symbolIsReportableAsDead(SymbolReferenceItem *ss) {
     return(1);
 }
 
+static bool canBypassAcceptableSymbol(SymbolReferenceItem *symbol) {
+    int nlen,len;
+    char *nn, *nnn;
+
+    GET_BARE_NAME(symbol->name, nn, len);
+    GET_BARE_NAME(options.browsedSymName, nnn, nlen);
+    if (len != nlen)
+        return false;
+    if (strncmp(nn, nnn, len))
+        return false;
+    return true;
+}
+
 static void cxrfSymbolName(int size,
                            int marker,
                            CharacterBuffer *cb,
@@ -1113,7 +1126,7 @@ static void cxrfSymbolName(int size,
                 ols=itIsSymbolToPushOlRefences(ddd,s_olcxCurrentUser->browserStack.top,&cms,DEFAULT_VALUE);
             }
             lastIncomingInfo.onLineRefMenuItem = cms;
-            if (ols || (additionalArg==CX_BY_PASS&&byPassAcceptableSymbol(ddd))
+            if (ols || (additionalArg==CX_BY_PASS && canBypassAcceptableSymbol(ddd))
                 ) {
                 lastIncomingInfo.onLineReferencedSym = si;
                 lastIncomingInfo.onLineRefIsBestMatchFlag = (ols == 2);

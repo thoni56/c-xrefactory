@@ -91,8 +91,7 @@ extern bool isInRefList(Reference *list,
                         UsageBits *pusage,
                         Position *pos,
                         int category);
-extern char *getXrefEnvironmentValue(char *name );
-extern int byPassAcceptableSymbol(SymbolReferenceItem *p);
+extern char *getXrefEnvironmentValue(char *name);
 extern int itIsSymbolToPushOlRefences(SymbolReferenceItem *p, S_olcxReferences *rstack,
                                       S_olSymbolsMenu **rss, int checkSelFlag);
 extern void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu  *cms, Reference *rr,
@@ -102,6 +101,7 @@ extern void genOnLineReferences(S_olcxReferences *rstack, S_olSymbolsMenu *cms);
 extern S_olSymbolsMenu *createSelectionMenu(SymbolReferenceItem *dd);
 extern void mapCreateSelectionMenu(SymbolReferenceItem *dd);
 extern int olcxFreeOldCompletionItems(S_olcxReferencesStack *stack);
+
 extern void olcxInit(void);
 extern UserOlcxData *olcxSetCurrentUser(char *user);
 extern Reference * getDefinitionRef(Reference *rr);

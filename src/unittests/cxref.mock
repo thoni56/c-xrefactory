@@ -205,10 +205,6 @@ char *getXrefEnvironmentValue(char *name) {
     return (char *) mock(name);
 }
 
-int byPassAcceptableSymbol(SymbolReferenceItem *p) {
-    return (int) mock(p);
-}
-
 int itIsSymbolToPushOlRefences(SymbolReferenceItem *p, S_olcxReferences *rstack, S_olSymbolsMenu **rss,
                                int checkSelFlag) {
     return (int) mock(p, rstack, rss, checkSelFlag);
