@@ -4742,7 +4742,7 @@ void mainAnswerEditAction(void) {
                 searchDefaultOptionsFile(ifname, dffname, dffsect);
                 if (dffname[0]==0 || dffsect[0]==0) {
                     if (options.noErrors) {
-                        if (! options.xref2)
+                        if (!options.xref2)
                             fprintf(communicationChannel,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
                     } else {
                         if (options.xref2) {

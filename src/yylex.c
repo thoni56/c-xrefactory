@@ -318,20 +318,14 @@ static Lexem getLexemSavePrevious(char **previousLexem, jmp_buf exceptionHandler
         inputType = currentInput.inputType;
         if (macroStackIndex > 0) {
             if (inputType == INPUT_MACRO_ARGUMENT) {
-                if (exceptionHandler != NULL)
-                    longjmp(exceptionHandler, END_OF_MACRO_ARGUMENT_EXCEPTION);
-                else
-                    return -1; //goto endOfMacroArgument; TODO: replace with setjmp()/longjmp()
+                longjmp(exceptionHandler, END_OF_MACRO_ARGUMENT_EXCEPTION);
             }
             MB_FREE_UNTIL(currentInput.beginningOfBuffer);
             currentInput = macroStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCFileConsistency();
             if (!getLexemFromLexer(&currentFile.lexBuffer)) {
-                if (exceptionHandler != NULL)
-                    longjmp(exceptionHandler, END_OF_FILE_EXCEPTION);
-                else
-                    return -2; //goto endOfFile; TODO: replace with setjmp()/longjmp()
+                longjmp(exceptionHandler, END_OF_FILE_EXCEPTION);
             }
             setCInputConsistency();
         } else {
@@ -362,7 +356,7 @@ static int getLex(jmp_buf exceptionHandler) {
     char *previousLexem;
     UNUSED previousLexem;
     Lexem lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
-    return lexem; // -1 if endOfMacroArgument, -2 if endOfFile
+    return lexem;
 }
 
 
@@ -1456,13 +1450,18 @@ static void expandMacroArgument(LexInput *argb) {
     PP_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
     bcc = buf;
 
+    /* Exceptions from getLexem... */
+    jmp_buf exceptionHandler;
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
     for(;;) {
     nextLexem:
-        lexem = getLexemSavePrevious(&previousLexem, NULL);
-        if (lexem == -1)
-            goto endOfMacroArgument;
-        if (lexem == -2)
-            goto endOfFile;
+        lexem = getLexemSavePrevious(&previousLexem, exceptionHandler);
 
         currentLexem = currentInput.currentLexemP;
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
