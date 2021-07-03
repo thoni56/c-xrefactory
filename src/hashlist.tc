@@ -79,15 +79,15 @@ int CONCAT(HASH_FUN_PREFIX,MembEqual)(
 
 
 int CONCAT(HASH_FUN_PREFIX,Delete)(
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 ) {
     unsigned posid;
     HASH_ELEM_TYPE **pp;
     posid = HASH_FUN(element);
-    posid = posid % t->size;
-    assert(t->tab!=NULL);
-    for (pp= &(t->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
+    posid = posid % table->size;
+    assert(table->tab!=NULL);
+    for (pp= &(table->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
         if (HASH_ELEM_EQUAL((*pp), element)) {
             *pp = (*pp)->next;
             return(1);
@@ -98,15 +98,15 @@ int CONCAT(HASH_FUN_PREFIX,Delete)(
 
 
 int CONCAT(HASH_FUN_PREFIX,DeleteExact)(
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 ) {
     unsigned posid;
     HASH_ELEM_TYPE **pp;
     posid = HASH_FUN(element);
-    posid = posid % t->size;
-    assert(t->tab!=NULL);
-    for (pp= &(t->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
+    posid = posid % table->size;
+    assert(table->tab!=NULL);
+    for (pp= &(table->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
         if ((*pp) == element) {
             *pp = (*pp)->next;
             return(1);
@@ -117,22 +117,22 @@ int CONCAT(HASH_FUN_PREFIX,DeleteExact)(
 
 
 void CONCAT(HASH_FUN_PREFIX,Set) (
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element,
     int position
 ) {
-    element->next = t->tab[position];
-    t->tab[position] = element;
+    element->next = table->tab[position];
+    table->tab[position] = element;
 }
 
 
 void CONCAT(HASH_FUN_PREFIX,SetLast) (
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element,
     int position
 ) {
     HASH_ELEM_TYPE **pp;
-    for (pp= &(t->tab[position]); *pp!=NULL; pp= &((*pp)->next))
+    for (pp= &(table->tab[position]); *pp!=NULL; pp= &((*pp)->next))
         ;
     *pp = element;
     element->next = NULL;
@@ -140,96 +140,96 @@ void CONCAT(HASH_FUN_PREFIX,SetLast) (
 
 
 void CONCAT(HASH_FUN_PREFIX,Add) (
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element,
     int *position
 ) {
     HASH_ELEM_TYPE *origin;
-    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(t,element,position,&origin)) {
-        CONCAT(HASH_FUN_PREFIX,Set) (t,element,*position);
+    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,position,&origin)) {
+        CONCAT(HASH_FUN_PREFIX,Set) (table,element,*position);
     }
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *t) {
-    StackMemoryFree(t->tab);
+void CONCAT(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *table) {
+    StackMemoryFree(table->tab);
 }
 
 
 void CONCAT(HASH_FUN_PREFIX,Map)(
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     void (*fun)(HASH_ELEM_TYPE *)
 ) {
     HASH_ELEM_TYPE *pp;
-    for (int i=0; i<t->size; i++) {
-        for(pp=t->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp);
+    for (int i=0; i<table->size; i++) {
+        for(pp=table->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp);
     }
 }
 
 
 void CONCAT(HASH_FUN_PREFIX,Map2)(
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     void (*fun)(HASH_ELEM_TYPE *, void *),
     void *a
 ) {
     HASH_ELEM_TYPE *pp;
-    for (int i=0; i<t->size; i++) {
-        for(pp=t->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, a);
+    for (int i=0; i<table->size; i++) {
+        for(pp=table->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, a);
     }
 }
 
 
 void CONCAT(HASH_FUN_PREFIX,Map3)(
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     void (*fun)(int)
 ) {
-    for (int i=0; i<t->size; i++) {
-        if (t->tab[i] != NULL) (*fun)(i);
+    for (int i=0; i<table->size; i++) {
+        if (table->tab[i] != NULL) (*fun)(i);
     }
 }
 
 
 void CONCAT(HASH_FUN_PREFIX,Map31)(
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     void (*fun)(int, void *, void *),
     void *arg1, void *arg2
 ) {
-    for (int i=0; i<t->size; i++) {
-        if (t->tab[i] != NULL) (*fun)(i,arg1,arg2);
+    for (int i=0; i<table->size; i++) {
+        if (table->tab[i] != NULL) (*fun)(i,arg1,arg2);
     }
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map32)(
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     void (*fun)(int, void *, void *, void *),
     void *arg1, void *arg2, void *arg3
 ) {
-    for (int i=0; i<t->size; i++) {
-        if (t->tab[i] != NULL) (*fun)(i,arg1,arg2,arg3);
+    for (int i=0; i<table->size; i++) {
+        if (table->tab[i] != NULL) (*fun)(i,arg1,arg2,arg3);
     }
 }
 
 
 void CONCAT(HASH_FUN_PREFIX,Map4)(
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     void (*fun)(HASH_ELEM_TYPE *, int),
     int a
 ) {
     HASH_ELEM_TYPE *pp;
-    for (int i=0; i<t->size; i++) {
-        for(pp=t->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, a);
+    for (int i=0; i<table->size; i++) {
+        for(pp=table->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, a);
     }
 }
 
 
 void CONCAT(HASH_FUN_PREFIX,Map5)(
-    HASH_TAB_TYPE *t,
+    HASH_TAB_TYPE *table,
     void (*fun)(HASH_ELEM_TYPE *, void *),
     void *arg
 ) {
     HASH_ELEM_TYPE *pp;
-    for (int i=0; i<t->size; i++) {
-        for(pp=t->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, arg);
+    for (int i=0; i<table->size; i++) {
+        for(pp=table->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, arg);
     }
 }
 
