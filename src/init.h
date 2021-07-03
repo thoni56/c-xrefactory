@@ -1,7 +1,7 @@
 #ifndef INIT_H_INCLUDED
 #define INIT_H_INCLUDED
 
-extern void initTokenNameTab(void);
+extern void initTokenNamesTables(void);
 extern void initJavaTypePCTIConvertIniTab(void);
 extern void initTypeCharCodeTab(void);
 extern void initArchaicTypes(void);

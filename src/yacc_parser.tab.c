@@ -2820,9 +2820,9 @@ void makeYaccCompletions(char *s, int len, Position *pos) {
     initCompletions(&s_completions, len, *pos);
 
     for (i=0; (token=completionsTab[i].token) != 0; i++) {
-        log_trace("trying token %d", s_tokenName[token]);
+        log_trace("trying token %d", tokenNamesTable[token]);
         if (exists_valid_parser_action_on(token)) {
-            log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
+            log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
@@ -2834,14 +2834,14 @@ void makeYaccCompletions(char *s, int len, Position *pos) {
         if (token == IDENTIFIER)
             continue;
         if (exists_valid_parser_action_on(token)) {
-                if (s_tokenName[token] != NULL) {
-                    if (isalpha(*s_tokenName[token]) || *s_tokenName[token]=='_') {
-                        fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
+                if (tokenNamesTable[token] != NULL) {
+                    if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
+                        fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
                     } else {
-                        fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken, 0, 0, NULL, NULL);
+                        fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeToken, 0, 0, NULL, NULL);
                     }
-                    log_trace("completing %d==%s(%s) in state %d", token, s_tokenName[token], s_tokenName[token], lastyystate);
-                    processName(s_tokenName[token], &compLine, 0, &s_completions);
+                    log_trace("completing %d==%s(%s) in state %d", token, tokenNamesTable[token], tokenNamesTable[token], lastyystate);
+                    processName(tokenNamesTable[token], &compLine, 0, &s_completions);
                 }
         }
     }

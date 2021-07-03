@@ -256,8 +256,11 @@ char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
     {0,     0,    0,   0,  0,   0,    1},   /* Double, */
 };
 
-char *s_tokenName[LAST_TOKEN];
-int s_tokenLength[LAST_TOKEN];
+/* These should go together in a struct. Also the lengths are not just
+ * the lengths of the names, some slots do not have names, so they are
+ * NULL and the length is zero. */
+char *tokenNamesTable[LAST_TOKEN];
+int tokenNameLengthsTable[LAST_TOKEN];
 
 TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 TypeModifier * s_preCrPtr1TypesTab[MAX_TYPE];

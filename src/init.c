@@ -19,9 +19,9 @@ typedef struct tokenNameIni {
     char        *name;
     int         token;
     unsigned    languages;
-} TokenNameInitTable;
+} TokenNamesInitTable;
 
-static TokenNameInitTable tokenNameInitTable1[] = {
+static TokenNamesInitTable tokenNameInitTable1[] = {
     {"asm",         ASM_KEYWORD,	LANG_C | LANG_YACC},
     {"auto",        AUTO,			LANG_C | LANG_YACC},
     {"enum",        ENUM,			LANG_C | LANG_YACC},
@@ -195,7 +195,7 @@ static TokenNameInitTable tokenNameInitTable1[] = {
     {NULL,                0,                LANG_C}         /* sentinel*/
 };
 
-static TokenNameInitTable tokenNameInitTable2[] = {
+static TokenNamesInitTable tokenNameInitTable2[] = {
     {"__const",         CONST,				LANG_C | LANG_YACC},
     {"__const__",       CONST,				LANG_C | LANG_YACC},
     {"__signed",        SIGNED,				LANG_C | LANG_YACC},
@@ -227,33 +227,11 @@ static TokenNameInitTable tokenNameInitTable2[] = {
     {NULL,              0,					LANG_C}         /* sentinel*/
 };
 
-static TokenNameInitTable tokenNameInitTable3[] = {
+static TokenNamesInitTable tokenNameInitTable3[] = {
     {"assert",          ASSERT,				LANG_JAVA},
     {NULL,              0,					LANG_C}         /* sentinel*/
 };
 
-
-static void initTokensFromTab(TokenNameInitTable *tokenTabIni) {
-    char *name;
-    int token, not_used, languages;
-    Symbol *symbol;
-
-    for(int i=0; tokenTabIni[i].name!=NULL; i++) {
-        name = tokenTabIni[i].name;
-        token = tokenTabIni[i].token;
-        languages = tokenTabIni[i].languages;
-        s_tokenName[token] = name;
-        s_tokenLength[token] = strlen(name);
-        if ((isalpha(*name) || *name=='_') && (languages & s_language)) {
-            /* looks like a keyword */
-            symbol = newSymbolAsKeyword(name, name, s_noPos, token);
-            fillSymbolBits(&symbol->bits, AccessDefault, TypeKeyword, StorageNone);
-
-            log_trace("adding keyword '%s' to symbol table", name);
-            symbolTableAdd(s_symbolTable, symbol, &not_used);
-        }
-    }
-}
 
 static char *autoDetectJavaVersion(void) {
     int i;
@@ -273,37 +251,67 @@ static char *autoDetectJavaVersion(void) {
     return res;
 }
 
-void initTokenNameTab(void) {
-    char *jv;
-    int not_used;
-    Symbol *pp;
-    static int messageWritten=0;
+static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
+    char *name;
+    int token, languages;
+    Symbol *symbol;
+
+    for(int i=0; tokenNamesInitTable[i].name!=NULL; i++) {
+        name = tokenNamesInitTable[i].name;
+        token = tokenNamesInitTable[i].token;
+        languages = tokenNamesInitTable[i].languages;
+        tokenNamesTable[token] = name;
+        /* NOTE only tokens that are actually are initialized have a
+         * length, the rest have zero, so we can't replace this
+         * strlen() with strlen()s of the tokenNamesTable entry */
+        tokenNameLengthsTable[token] = strlen(name);
+        if ((isalpha(*name) || *name=='_') && (languages & s_language)) {
+            int not_used_symbol_index;
+            /* looks like a keyword */
+            log_trace("adding keyword '%s' to symbol table", name);
+            symbol = newSymbolAsKeyword(name, name, s_noPos, token);
+            fillSymbolBits(&symbol->bits, AccessDefault, TypeKeyword, StorageNone);
+            symbolTableAdd(s_symbolTable, symbol, &not_used_symbol_index);
+        }
+    }
+}
+
+void initTokenNamesTables(void) {
+    char *javaVersion;
+    int not_used_symbol_index;
+    Symbol *symbolP;
+    static bool messageWritten = false;
 
     if (!options.strictAnsi) {
-        initTokensFromTab(tokenNameInitTable2);
+        initTokensFromTable(tokenNameInitTable2);
     }
-    jv = options.javaVersion;
-    if (strcmp(jv, JAVA_VERSION_AUTO)==0) jv = autoDetectJavaVersion();
+    javaVersion = options.javaVersion;
+    if (strcmp(javaVersion, JAVA_VERSION_AUTO)==0)
+        javaVersion = autoDetectJavaVersion();
+
     if (options.taskRegime!=RegimeEditServer
-        && messageWritten==0) {
+        && !messageWritten) {
         if (options.xref2) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff,"java version == %s", jv);
+            sprintf(tmpBuff,"java version == %s", javaVersion);
             ppcGenRecord(PPC_INFORMATION, tmpBuff);
         } else {
-            fprintf(dumpOut,"java version == %s\n", jv);
+            fprintf(dumpOut,"java version == %s\n", javaVersion);
         }
-        messageWritten=1;
+        messageWritten = true;
     }
-    if (strcmp(jv, JAVA_VERSION_1_4)==0) {
-        initTokensFromTab(tokenNameInitTable3);
+
+    if (strcmp(javaVersion, JAVA_VERSION_1_4)==0) {
+        initTokensFromTable(tokenNameInitTable3);
     }
+
     /* regular tokentab at last, because we wish to have correct names */
-    initTokensFromTab(tokenNameInitTable1);
+    initTokensFromTable(tokenNameInitTable1);
+
     /* and add the 'defined' keyword for #if */
-    pp = newSymbol("defined", "defined", s_noPos);
-    fillSymbolBits(&pp->bits, AccessDefault, TypeDefinedOp, StorageNone);
-    symbolTableAdd(s_symbolTable, pp, &not_used);
+    symbolP = newSymbol("defined", "defined", s_noPos);
+    fillSymbolBits(&symbolP->bits, AccessDefault, TypeDefinedOp, StorageNone);
+    symbolTableAdd(s_symbolTable, symbolP, &not_used_symbol_index);
 }
 
 void initJavaTypePCTIConvertIniTab(void) {

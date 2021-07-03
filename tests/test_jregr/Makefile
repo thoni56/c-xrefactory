@@ -8,5 +8,6 @@ $(TEST):
 	$(NO_TESTS)
 	exit 0
 
-gdb:
-	gdb --args $(COMMAND)
+debug: DEBUGGER=gdb
+debug:
+	$(DEBUGGER) --args $(COMMAND)

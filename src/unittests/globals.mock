@@ -49,8 +49,8 @@ TypeModifier s_errorModifier;
 
 bool s_ifEvaluation = false;     /* flag for yylex, to not filter '\n' */
 
-char *s_tokenName[LAST_TOKEN];
-int s_tokenLength[LAST_TOKEN];
+char *tokenNamesTable[LAST_TOKEN];
+int tokenNameLengthsTable[LAST_TOKEN];
 
 char *s_cppVarArgsName = "__VA_ARGS__";
 int s_currCppPass;

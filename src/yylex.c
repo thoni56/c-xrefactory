@@ -1295,7 +1295,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
     int value, length; UNUSED length; UNUSED value;
 
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
-    log_debug("processing cpp-construct '%s' ", s_tokenName[lexem]);
+    log_debug("processing cpp-construct '%s' ", tokenNamesTable[lexem]);
     switch (lexem) {
     case CPP_INCLUDE:
         processIncludeDirective(&position, false);
@@ -1964,10 +1964,10 @@ int dumpLexemBuffer(LexemBuffer *lb) {
             fprintf(dumpOut,"!%s! ",cc);
         } else if (lexem < 256) {
             fprintf(dumpOut,"%c ",lexem);fflush(dumpOut);
-        } else if (s_tokenName[lexem]==NULL){
+        } else if (tokenNamesTable[lexem]==NULL){
             fprintf(dumpOut,"?%d? ",lexem);fflush(dumpOut);
         } else {
-            fprintf(dumpOut,"%s ",s_tokenName[lexem]);fflush(dumpOut);
+            fprintf(dumpOut,"%s ",tokenNamesTable[lexem]);fflush(dumpOut);
         }
         passLexem(&cc, lexem, &lineNumber, &value, &position, &length, false);
     }
@@ -2162,19 +2162,19 @@ static void actionOnBlockMarker(void) {
 }
 
 
-#define SET_POSITION_YYLVAL(pos, len) {\
-    uniyylval->ast_position.d = pos;\
-    uniyylval->ast_position.b = pos;\
-    uniyylval->ast_position.e = pos;\
-    uniyylval->ast_position.e.col += len;\
+#define SET_POSITION_YYLVAL(pos, len) {         \
+        uniyylval->ast_position.d = pos;        \
+        uniyylval->ast_position.b = pos;        \
+        uniyylval->ast_position.e = pos;        \
+        uniyylval->ast_position.e.col += len;   \
 }
 
-#define SET_INTEGER_YYLVAL(val, pos, len) {\
-        uniyylval->ast_integer.d = val;\
-        uniyylval->ast_integer.b = pos;\
-        uniyylval->ast_integer.e = pos;\
-        uniyylval->ast_integer.e.col += len;\
-}
+#define SET_INTEGER_YYLVAL(val, pos, len) {     \
+        uniyylval->ast_integer.d = val;         \
+        uniyylval->ast_integer.b = pos;         \
+        uniyylval->ast_integer.e = pos;         \
+        uniyylval->ast_integer.e.col += len;    \
+    }
 
 int yylex(void) {
     Lexem lexem;
@@ -2215,7 +2215,7 @@ int yylex(void) {
         } else {
             passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length,
                                macroStackIndex == 0);
-            SET_POSITION_YYLVAL(position, s_tokenLength[lexem]);
+            SET_POSITION_YYLVAL(position, tokenNameLengthsTable[lexem]);
         }
         yytext = charText;
         charText[0] = lexem;
@@ -2262,9 +2262,9 @@ int yylex(void) {
         goto nextYylex;
     }
     if (lexem < MULTI_TOKENS_START) {
-        yytext = s_tokenName[lexem];
+        yytext = tokenNamesTable[lexem];
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
-        SET_POSITION_YYLVAL(position, s_tokenLength[lexem]);
+        SET_POSITION_YYLVAL(position, tokenNameLengthsTable[lexem]);
         goto finish;
     }
     if (lexem == LINE_TOKEN) {

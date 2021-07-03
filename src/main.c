@@ -2100,9 +2100,11 @@ static void mainFileProcessingInitialisations(int *firstPass,
         oldStdopTime = dffstat.st_mtime;
         oldLanguage = *outLanguage;
         oldCppPass = s_currCppPass;
+
         // this was before 'getAndProcessXrefrcOptions(df...' I hope it will not cause
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
-        initTokenNameTab();
+        initTokenNamesTables();
+
         s_cache.activeCache = true;
         placeCachePoint(false);
         s_cache.activeCache = false;

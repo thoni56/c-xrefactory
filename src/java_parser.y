@@ -4423,7 +4423,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     /* special wizard completions */
     for (i=0;(token=spCompletionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
-            log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
+            log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
             (*spCompletionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
@@ -4434,7 +4434,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     if (s_completions.alternativeIndex != 0 && options.server_operation != OLO_SEARCH) return;
     for (i=0;(token=completionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
-            log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
+            log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
@@ -4445,12 +4445,12 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     for (token=0; token<LAST_TOKEN; token++) {
         if (token==IDENTIFIER) continue;
         if (exists_valid_parser_action_on(token)) {
-            if (s_tokenName[token]!= NULL) {
-                if (isalpha(*s_tokenName[token]) || *s_tokenName[token]=='_') {
-                    fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeKeyword,0, 0, NULL,NULL);
-                    processName(s_tokenName[token], &compLine, 0, &s_completions);
+            if (tokenNamesTable[token]!= NULL) {
+                if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
+                    fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeKeyword,0, 0, NULL,NULL);
+                    processName(tokenNamesTable[token], &compLine, 0, &s_completions);
                 } else {
-                    /*& fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL); &*/
+                    /*& fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeToken,0, 0, NULL,NULL); &*/
                 }
             }
         }
