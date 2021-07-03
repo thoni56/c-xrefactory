@@ -197,8 +197,7 @@ static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
 static void refactoryUpdateReferences(char *project) {
     int i, nargc, refactoryXrefInitOptionsNum;
     char *nargv[MAX_NARGV_OPTIONS_NUM];
-    // following woud be too long to be allocated on stack
-    //static S_options  savedCachedOptions;
+    // following would be too long to be allocated on stack
     static Options    savedOptions;
 
     if (s_refactoryUpdateOption==NULL || *s_refactoryUpdateOption==0) {
@@ -899,7 +898,7 @@ void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpa
 
 }
 
-int tpCheckMoveClassAccessibilities(void) {
+bool tpCheckMoveClassAccessibilities(void) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss;
     S_tpCheckMoveClassData dd;
@@ -923,7 +922,7 @@ int tpCheckMoveClassAccessibilities(void) {
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
             refactoryAskForReallyContinueConfirmation();
         }
-        return(0);
+        return false;
     }
     olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
     // O.K. now check symbols defined inside the class
@@ -940,13 +939,13 @@ int tpCheckMoveClassAccessibilities(void) {
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
             refactoryAskForReallyContinueConfirmation();
         }
-        return(0);
+        return false;
     }
     olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
-    return(1);
+    return true;
 }
 
-int tpCheckSourceIsNotInnerClass(void) {
+bool tpCheckSourceIsNotInnerClass(void) {
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
     int                 thisclassi,deii;
@@ -967,9 +966,9 @@ int tpCheckSourceIsNotInnerClass(void) {
         sprintf(tmpBuff, "This is an inner class. Current version of C-xrefactory can only move top level classes and nested classes that are declared 'static'. If the class does not depend on its enclosing instances, you should declare it 'static' and then move it.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
-    return(1);
+    return true;
 }
 
 static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri,
@@ -982,7 +981,8 @@ static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri,
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     // todo make supermethod symbol special type
     //&fprintf(dumpOut,"! checking %s\n", ri->name);
-    if (strcmp(ri->name, dd->symbolToTest)!=0) return;
+    if (strcmp(ri->name, dd->symbolToTest)!=0)
+        return;
     //&fprintf(dumpOut,"comparing %d <-> %d; %s <-> %s\n", ri->vFunClass, scl,  fileTable.tab[ri->vFunClass]->name, fileTable.tab[scl]->name);
     for(rr=ri->refs; rr!=NULL; rr=rr->next) {
         if (DM_IS_BETWEEN(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi) ){
@@ -1041,19 +1041,22 @@ static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr)
     return true;
 }
 
-int tpCheckSuperMethodReferencesForPullUp(void) {
+bool tpCheckSuperMethodReferencesForPullUp(void) {
     S_tpCheckSpecialReferencesData      rr;
     S_olcxReferences                    *rstack;
     S_olSymbolsMenu                     *ss;
     int                                 tmp;
     char                                tt[TMP_STRING_SIZE];
     char                                ttt[MAX_CX_SYMBOL_SIZE];
+
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss);
     tmp = tpCheckSuperMethodReferencesInit(&rr);
-    if (! tmp) return(0);
+    if (!tmp)
+        return false;
+
     // synthetize an answer
     if (rr.foundRefToTestedClass!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -1062,24 +1065,24 @@ int tpCheckSuperMethodReferencesForPullUp(void) {
         sprintf(tmpBuff,"'%s' invokes another method using the keyword \"super\" and this invocation is refering to class '%s', i.e. to the class where '%s' will be moved. In consequence, it is not possible to ensure behaviour preseving pulling-up of this method.", ttt, tt, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
-    return(1);
+    return true;
 }
 
-int tpCheckSuperMethodReferencesAfterPushDown(void) {
+bool tpCheckSuperMethodReferencesAfterPushDown(void) {
     S_tpCheckSpecialReferencesData rr;
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss;
-    int tmp;
     char ttt[MAX_CX_SYMBOL_SIZE];
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss);
-    tmp = tpCheckSuperMethodReferencesInit(&rr);
-    if (! tmp) return(0);
+    if (!tpCheckSuperMethodReferencesInit(&rr))
+        return false;
+
     // synthetize an answer
     if (rr.foundRefToTestedClass!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -1088,16 +1091,17 @@ int tpCheckSuperMethodReferencesAfterPushDown(void) {
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         fprintf(communicationChannel,":[warning] %s", tmpBuff);
         //&errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
-    return(1);
+    return true;
 }
 
-int tpCheckSuperMethodReferencesForDynToSt(void) {
-    S_tpCheckSpecialReferencesData      rr;
-    int                                 tmp;
-    tmp = tpCheckSuperMethodReferencesInit(&rr);
-    if (! tmp) return(0);
+bool tpCheckSuperMethodReferencesForDynToSt(void) {
+    S_tpCheckSpecialReferencesData rr;
+
+    if (!tpCheckSuperMethodReferencesInit(&rr))
+        return false;
+
     // synthetize an answer
     if (rr.foundSpecialRefItem!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -1105,15 +1109,16 @@ int tpCheckSuperMethodReferencesForDynToSt(void) {
         sprintf(tmpBuff,"This method invokes another method using the keyword \"super\". Current version of C-xrefactory does not know how to make it static.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
-    return(1);
+    return true;
 }
 
-int tpCheckOuterScopeUsagesForDynToSt(void) {
+bool tpCheckOuterScopeUsagesForDynToSt(void) {
     S_tpCheckSpecialReferencesData  rr;
     S_olSymbolsMenu                     *ss;
     S_olcxReferences                    *rstack;
+
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
@@ -1134,12 +1139,12 @@ int tpCheckOuterScopeUsagesForDynToSt(void) {
             fprintf(communicationChannel, ":[warning] %s", tmpBuff);
         }
         //& errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
-    return(1);
+    return true;
 }
 
-int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
+bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     // is there an application to original class or some of super types?
     // you should not consider any call from within the method,
     // when the method is invoked as single name, am I right?
@@ -1175,25 +1180,24 @@ int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
                         sprintf(tmpBuff,"%s is defined also in superclass and there are invocations syntactically refering to one of superclasses. Under some circumstances this may cause that pulling up of this method will not be behaviour preserving.", ttt);
                         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
                         warningMessage(ERR_ST, tmpBuff);
-                        return(0);
+                        return false;
                     }
                 }
             }
         }
     }
-    return(1);
+    return true;
 }
 
-int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
+bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss;
     char ttt[TMP_STRING_SIZE];
     char tt[TMP_STRING_SIZE];
     ClassHierarchyReference *cl;
     Symbol *target;
-    int res;
+    bool found = false;
 
-    res = 0;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
@@ -1201,7 +1205,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     target = getMoveTargetClass();
     if (target==NULL) {
         errorMessage(ERR_ST, "moving to NULL target class?");
-        return(0);
+        return false;
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
     assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
@@ -1210,21 +1214,23 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     for(; cl!=NULL; cl=cl->next) {
         //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, fileTable.tab[cl->superClass]->name, target->u.s->classFile, fileTable.tab[target->u.s->classFile]->name);ppcGenTmpBuff();
         if (cl->superClass == target->u.s->classFile) {
-            res = 1;
+            found = true;
             break;
         }
     }
-    if (res) return(res);
+    if (found)
+        return true;
+
     javaGetClassNameFromFileNum(target->u.s->classFile, tt, DOTIFY_NAME);
     javaGetClassNameFromFileNum(ss->s.vApplClass, ttt, DOTIFY_NAME);
     char tmpBuff[TMP_BUFF_SIZE];
     sprintf(tmpBuff,"Class %s is not direct %s of %s. This refactoring provides moving to direct %ses only.", tt, subOrSuper, ttt, subOrSuper);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
     errorMessage(ERR_ST,tmpBuff);
-    return(0);
+    return false;
 }
 
-int tpPullUpFieldLastPreconditions(void) {
+bool tpPullUpFieldLastPreconditions(void) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss,*mm;
     char ttt[TMP_STRING_SIZE];
@@ -1263,16 +1269,17 @@ int tpPullUpFieldLastPreconditions(void) {
     return(0);
 }
 
-int tpPushDownFieldLastPreconditions(void) {
+bool tpPushDownFieldLastPreconditions(void) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss,*mm, *sourcesm, *targetsm;
     char ttt[TMP_STRING_SIZE];
     Reference *rr;
     Symbol *target;
-    int thisclassi, res;
+    int thisclassi;
+    bool res;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    res = 1;
+    res = true;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
@@ -1296,7 +1303,7 @@ int tpPushDownFieldLastPreconditions(void) {
                     targetsm->s.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             errorMessage(ERR_ST, tmpBuff);
-            return(0);
+            return false;
         }
     }
     if (sourcesm != NULL) {
@@ -1306,10 +1313,10 @@ int tpPushDownFieldLastPreconditions(void) {
             sprintf(tmpBuff, "There are several references of %s syntactically applied on %s. This may cause that the refactoring will not be behaviour preserving!", sourcesm->s.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             warningMessage(ERR_ST, tmpBuff);
-            res = 0;
+            res = false;
         }
     }
-    return(res);
+    return res;
 }
 
 // ---------------------------------------------------------------------------------
@@ -4287,25 +4294,25 @@ static void refactoryPushDownPullUp(EditorMarker *point, PushPullDirection direc
     if (limitIndex == SPP_METHOD_DECLARATION_BEGIN_POSITION) {
         // method
         if (direction == PULLING_UP) {
-            if (! (tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS, "superclass")
+            if (! (tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUPERCLASS, "superclass")
                    && tpCheckSuperMethodReferencesForPullUp()
                    && tpCheckMethodReferencesWithApplOnSuperClassForPullUp())) {
                 fatalError(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
             }
         } else {
-            if (! (tpCheckTargetToBeDirectSubOrSupClass(REQ_SUBCLASS, "subclass"))) {
+            if (! (tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUBCLASS, "subclass"))) {
                 fatalError(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
             }
         }
     } else {
         // field
         if (direction == PULLING_UP) {
-            if (! (tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS, "superclass")
+            if (! (tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUPERCLASS, "superclass")
                    && tpPullUpFieldLastPreconditions())) {
                 fatalError(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
             }
         } else {
-            if (! (tpCheckTargetToBeDirectSubOrSupClass(REQ_SUBCLASS, "subclass")
+            if (! (tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUBCLASS, "subclass")
                    && tpPushDownFieldLastPreconditions())) {
                 fatalError(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
             }

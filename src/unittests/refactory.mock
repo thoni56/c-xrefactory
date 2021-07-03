@@ -22,46 +22,46 @@ void mainRefactory(int argc, char **argv) {
   mock(argc, argv);
 }
 
-int tpCheckSourceIsNotInnerClass(void) {
-  return (int) mock();
+bool tpCheckSourceIsNotInnerClass(void) {
+  return (bool) mock();
 }
 
-int tpCheckMoveClassAccessibilities(void) {
-  return (int) mock();
+bool tpCheckMoveClassAccessibilities(void) {
+  return (bool) mock();
 }
 
-int tpCheckSuperMethodReferencesForDynToSt(void) {
-  return (int) mock();
+bool tpCheckSuperMethodReferencesForDynToSt(void) {
+  return (bool) mock();
 }
 
-int tpCheckOuterScopeUsagesForDynToSt(void) {
-  return (int) mock();
+bool tpCheckOuterScopeUsagesForDynToSt(void) {
+  return (bool) mock();
 }
 
-int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
-  return (int) mock();
+bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
+  return (bool) mock();
 }
 
-int tpCheckSuperMethodReferencesForPullUp(void) {
-  return (int) mock();
+bool tpCheckSuperMethodReferencesForPullUp(void) {
+  return (bool) mock();
 }
 
-int tpCheckSuperMethodReferencesAfterPushDown(void) {
-  return (int) mock();
+bool tpCheckSuperMethodReferencesAfterPushDown(void) {
+  return (bool) mock();
 }
 
 void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack) {
   mock(dd, spack, tpack);
 }
 
-int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
-  return (int) mock(flag, subOrSuper);
+bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
+  return (bool) mock(flag, subOrSuper);
 }
 
-int tpPullUpFieldLastPreconditions(void) {
-  return (int) mock();
+bool tpPullUpFieldLastPreconditions(void) {
+  return (bool) mock();
 }
 
-int tpPushDownFieldLastPreconditions(void) {
-  return (int) mock();
+bool tpPushDownFieldLastPreconditions(void) {
+  return (bool) mock();
 }

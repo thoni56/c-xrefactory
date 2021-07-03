@@ -4215,9 +4215,9 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     //&olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->menuSym);
 }
 
-static bool tpCheckUniquityOfSymbol(char *fieldOrMethod) { /* TODO: bool ? */
-    S_olcxReferences    *rstack;
-    S_olSymbolsMenu     *ss;
+static bool tpCheckUniquityOfSymbol(char *fieldOrMethod) {
+    S_olcxReferences *rstack;
+    S_olSymbolsMenu *ss;
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
@@ -4235,8 +4235,8 @@ static bool tpCheckUniquityOfSymbol(char *fieldOrMethod) { /* TODO: bool ? */
     return true;
 }
 
-static int tpCheckThatCurrentReferenceIsDefinition(char *fieldOrMethod) { /* TODO: bool? */
-    S_olcxReferences    *rstack;
+static bool tpCheckThatCurrentReferenceIsDefinition(char *fieldOrMethod) {
+    S_olcxReferences *rstack;
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
@@ -4246,14 +4246,14 @@ static int tpCheckThatCurrentReferenceIsDefinition(char *fieldOrMethod) { /* TOD
         sprintf(tmpBuff,"This refactoring requires cursor (point) to be positioned at the definition of a %s (on its name). Please move to the definition first.", fieldOrMethod);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
-    return(1);
+    return true;
 }
 
-static int tpCheckItIsAFieldOrMethod(int require, char *fieldOrMethod) { /* TODO: bool? */
-    S_olcxReferences    *rstack;
-    S_olSymbolsMenu     *ss;
+static bool tpCheckItIsAFieldOrMethod(int require, char *fieldOrMethod) {
+    S_olcxReferences *rstack;
+    S_olSymbolsMenu *ss;
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
@@ -4266,12 +4266,12 @@ static int tpCheckItIsAFieldOrMethod(int require, char *fieldOrMethod) { /* TODO
                 fieldOrMethod, fieldOrMethod);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
-    return(1);
+    return true;
 }
 
-static int tpCheckStaticity(int require,char *fieldOrMethod) { /* TODO: bool? */
+static bool tpCheckStaticity(int require,char *fieldOrMethod) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss;
     char ttt[MAX_CX_SYMBOL_SIZE];
@@ -4286,29 +4286,28 @@ static int tpCheckStaticity(int require,char *fieldOrMethod) { /* TODO: bool? */
         sprintf(tmpBuff,"%c%s %s is not static, this refactoring requires a static %s.",
                 toupper(*fieldOrMethod), fieldOrMethod+1, ttt, fieldOrMethod);
         errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     } else if (require==REQ_NONSTATIC && (ss->s.b.accessFlags & AccessStatic)) {
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         sprintf(tmpBuff,"%c%s %s is declared static, this refactoring requires a non static %s.",
                 toupper(*fieldOrMethod), fieldOrMethod+1, ttt, fieldOrMethod);
         errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
-    return(1);
+    return true;
 }
 
 static Symbol *javaGetClassSymbolFromClassDotName(char *fqName) {
-    Symbol    *res;
-    char        *dd, *sn;
-    char        ttt[MAX_CX_SYMBOL_SIZE];
+    char *dd, *sn;
+    char ttt[MAX_CX_SYMBOL_SIZE];
+
     strcpy(ttt, fqName);
     dd = sn = ttt;
     while ((dd=strchr(dd,'.'))!=NULL) {
         *dd = '/';
         sn = dd+1;
     }
-    res = javaFQTypeSymbolDefinition(sn, ttt);
-    return(res);
+    return javaFQTypeSymbolDefinition(sn, ttt);
 }
 
 Symbol *getMoveTargetClass(void) {
@@ -4316,10 +4315,10 @@ Symbol *getMoveTargetClass(void) {
         errorMessage(ERR_INTERNAL,"pull up/push down pre-check without setting target class");
         return NULL;
     }
-    return(javaGetClassSymbolFromClassDotName(options.moveTargetClass));
+    return javaGetClassSymbolFromClassDotName(options.moveTargetClass);
 }
 
-static int tpCheckItIsAPackage(int req, char *classOrPack) { /* TODO: bool? */
+static bool tpCheckItIsAPackage(int req, char *classOrPack) {
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
 
@@ -4332,12 +4331,12 @@ static int tpCheckItIsAPackage(int req, char *classOrPack) { /* TODO: bool? */
         sprintf(tmpBuff, "This does not look like a %s name, please position the cursor on a %s name before invoking this refactoring.", classOrPack, classOrPack);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
-    return(1);
+    return true;
 }
 
-static int tpCheckPrintClassMovingType(void) {
+static bool tpCheckPrintClassMovingType(void) {
     S_olcxReferences        *rstack;
     S_olSymbolsMenu         *ss;
     S_tpCheckMoveClassData  dd;
@@ -4357,18 +4356,19 @@ static int tpCheckPrintClassMovingType(void) {
     if (dd.transPackageMove) {
         fprintf(communicationChannel, ";transpackage");
     }
-    return(1);
+    return true;
 }
 
-static int tpCheckPrintSelectedSymbol(void) {
+static bool tpCheckPrintSelectedSymbol(void) {
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
+
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     fprintf(communicationChannel,"*");
     printSymbolLinkName(communicationChannel, ss);
-    return(1);
+    return true;
 }
 
 int javaGetSuperClassNumFromClassNum(int cn) {
@@ -4390,10 +4390,11 @@ int javaIsSuperClass(int superclas, int clas) {
     return(0);
 }
 
-static int tpCheckPrintPushingDownMethodType(void) {
+static tpCheckPrintPushingDownMethodType(void) {
     fprintf(communicationChannel, "*** push_down_method trivial precheck passed.");
-    return(1);
+    return true;
 #if ZERO
+    /* WTF? What is all this? it only returns true... Is that why it's commented out? */
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
@@ -4410,7 +4411,7 @@ static int tpCheckPrintPushingDownMethodType(void) {
                 // rafn also avoids the original definition
                 if (mm->refn!=0 && ! isSmallerOrEqClass(mm->s.vApplClass, targetcn)) {
                     fprintf(ccOut,"* multiCopyPushDown");
-                    return(1);
+                    return true;
                 }
             }
             // is there an application to original class or some of super types?
@@ -4425,7 +4426,7 @@ static int tpCheckPrintPushingDownMethodType(void) {
         }
     }
     fprintf(ccOut, "* singleDeletingPushDown");
-    return(1);
+    return true;
 #endif
 }
 
@@ -4477,7 +4478,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
                 tpCheckThatCurrentReferenceIsDefinition("method") &&
                 tpCheckStaticity(REQ_NONSTATIC,"method") &&
-                tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS,"superclass") &&
+                tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUPERCLASS,"superclass") &&
                 tpCheckSuperMethodReferencesForPullUp() &&
                 tpCheckMethodReferencesWithApplOnSuperClassForPullUp() &&
                 fprintf(communicationChannel,"*** pull_up_method trivial precheck passed."));
@@ -4487,7 +4488,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
                 tpCheckThatCurrentReferenceIsDefinition("method") &&
                 tpCheckStaticity(REQ_NONSTATIC,"method") &&
-                tpCheckTargetToBeDirectSubOrSupClass(REQ_SUBCLASS, "subclass") &&
+                tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUBCLASS, "subclass") &&
                 tpCheckPrintPushingDownMethodType());
                 break;
     case TPC_PUSH_DOWN_METHOD_POST_CHECK:
@@ -4499,7 +4500,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
                 tpCheckThatCurrentReferenceIsDefinition("field") &&
                 tpCheckStaticity(REQ_NONSTATIC,"field") &&
-                tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS,"superclass") &&
+                tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUPERCLASS,"superclass") &&
                 tpPullUpFieldLastPreconditions() &&
                 fprintf(communicationChannel,"*** pull_up_field trivial precheck passed."));
         break;
@@ -4508,7 +4509,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
                 tpCheckThatCurrentReferenceIsDefinition("field") &&
                 tpCheckStaticity(REQ_NONSTATIC,"field") &&
-                tpCheckTargetToBeDirectSubOrSupClass(REQ_SUBCLASS, "subclass") &&
+                tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUBCLASS, "subclass") &&
                 tpPushDownFieldLastPreconditions() &&
                 fprintf(communicationChannel,"*** push_down_field trivial precheck passed."));
         break;
@@ -5041,16 +5042,6 @@ void mainAnswerEditAction(void) {
     fflush(communicationChannel);
     inputFilename = NULL;
     //&RLM_FREE_COUNT(olcxMemory);
-}
-
-int byPassAcceptableSymbol(SymbolReferenceItem *p) {
-    int nlen,len;
-    char *nn, *nnn;
-    GET_BARE_NAME(p->name, nn, len);
-    GET_BARE_NAME(options.browsedSymName, nnn, nlen);
-    if (len != nlen) return(0);
-    if (strncmp(nn, nnn, len)) return(0);
-    return(1);
 }
 
 int itIsSymbolToPushOlRefences(SymbolReferenceItem *p,

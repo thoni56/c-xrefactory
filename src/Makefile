@@ -186,7 +186,6 @@ clean-coverage:
 	echo coverage=$(COVERAGE)
 	-if command -v lcov > /dev/null 2>&1 ; then \
 		lcov -q -z -d .. ; \
-		rm -r ../tests/.coverage ; \
 	fi
 
 coverage-report:

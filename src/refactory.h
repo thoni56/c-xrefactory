@@ -37,16 +37,16 @@ extern void refactoryDisplayResolutionDialog(char *message,int messageType, int 
 extern void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until, S_editorUndo **undoundo, int gen);
 extern void editorUndoUntil(S_editorUndo *until, S_editorUndo **undoUndo);
 extern void mainRefactory(int argc, char **argv);
-extern int tpCheckSourceIsNotInnerClass(void);
-extern int tpCheckMoveClassAccessibilities(void);
-extern int tpCheckSuperMethodReferencesForDynToSt(void);
-extern int tpCheckOuterScopeUsagesForDynToSt(void);
-extern int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void);
-extern int tpCheckSuperMethodReferencesForPullUp(void);
-extern int tpCheckSuperMethodReferencesAfterPushDown(void);
+extern bool tpCheckSourceIsNotInnerClass(void);
+extern bool tpCheckMoveClassAccessibilities(void);
+extern bool tpCheckSuperMethodReferencesForDynToSt(void);
+extern bool tpCheckOuterScopeUsagesForDynToSt(void);
+extern bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void);
+extern bool tpCheckSuperMethodReferencesForPullUp(void);
+extern bool tpCheckSuperMethodReferencesAfterPushDown(void);
 extern void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack);
-extern int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper);
-extern int tpPullUpFieldLastPreconditions(void);
-extern int tpPushDownFieldLastPreconditions(void);
+extern bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper);
+extern bool tpPullUpFieldLastPreconditions(void);
+extern bool tpPushDownFieldLastPreconditions(void);
 
 #endif
