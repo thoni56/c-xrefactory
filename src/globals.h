@@ -137,8 +137,8 @@ extern int s_olOriginalFileNumber;      /* original file name */
 extern int s_olOriginalComFileNumber;	/* original communication file */
 
 extern Int2StringTable typeNamesInitTable[];
-extern char *s_extractStorageName[MAX_STORAGE];
-extern Int2StringTable s_extractStoragesNamesInitTab[];
+extern char *storageNamesTable[MAX_STORAGE_NAMES];
+extern Int2StringTable storageNamesInitTable[];
 
 extern char *s_editCommunicationString;
 

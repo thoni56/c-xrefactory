@@ -97,7 +97,7 @@ void addSymbol(Symbol *pp, SymbolTable *tab) {
         one. All this story is about storing information in trail. It should
         containt, both table and pointer !!!!
     */
-    log_debug("adding symbol %s: %s %s",pp->name, typeEnumName[pp->bits.symbolType], storageEnumName[pp->bits.storage]);
+    log_debug("adding symbol %s: %s %s",pp->name, typeNamesTable[pp->bits.symbolType], storageEnumName[pp->bits.storage]);
     assert(pp->bits.npointers==0);
     AddSymbolNoTrail(pp,tab);
     addToTrail(deleteSymDef, pp  /* AND ALSO!!! , tab */ );
@@ -495,7 +495,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         //&     && (p->u.type->kind == TypeUnion || p->u.type->kind == TypeStruct)) {
         //&     ttt[0] = LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
         //& }
-        sprintf(ttt+1,"%s", s_extractStorageName[p->bits.storage]);
+        sprintf(ttt+1,"%s", storageNamesTable[p->bits.storage]);
         tti = strlen(ttt);
         len = TMP_STRING_SIZE - tti;
         typeSPrint(ttt+tti, &len, p->u.type, nnn, LINK_NAME_SEPARATOR, 0,1,SHORT_NAME, NULL);
@@ -670,11 +670,11 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
     assert(type>=0 && type<MAX_TYPE);
     if (s_preCreatedTypesTable[type] == NULL) {
         log_trace("creating simple type %d (='%s'), *not* found in pre-created types", type,
-                  typeEnumName[type]);
+                  typeNamesTable[type]);
         p = newSimpleTypeModifier(type);
     } else {
         log_trace("creating simple type %d (='%s'), found in pre-created types", type,
-                  typeEnumName[type]);
+                  typeNamesTable[type]);
         p = s_preCreatedTypesTable[type];
     }
     assert(p->kind == type);

@@ -289,9 +289,9 @@ S_javaTypePCTIConvertIni s_javaTypePCTIConvertIniTab[] = {
     {-1,			-1},
 };
 
-char *s_extractStorageName[MAX_STORAGE];
+char *storageNamesTable[MAX_STORAGE_NAMES];
 
-Int2StringTable s_extractStoragesNamesInitTab[] = {
+Int2StringTable storageNamesInitTable[] = {
     {StorageExtern,     "extern "},
     {StorageStatic,     "static "},
     {StorageRegister,   "register "},

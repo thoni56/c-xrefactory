@@ -2364,7 +2364,7 @@ static void olcxShowTopType(void) {
     if (mms==NULL) {
         olcxGenNoReferenceSignal();
     } else {
-        fprintf(communicationChannel, "*%s",typeEnumName[mms->s.b.symType]);
+        fprintf(communicationChannel, "*%s",typeNamesTable[mms->s.b.symType]);
     }
 }
 
@@ -3552,7 +3552,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
         if (ss->next->s.b.symType == TypeStruct) ss = ss->next;
     }
     if (ss != NULL) {
-        //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typeEnumName[ss->s.b.symType]);
+        //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typeNamesTable[ss->s.b.symType]);
         if (ss->s.b.symType == TypeStruct) {
             clii = getClassNumFromClassLinkName(ss->s.name, clii);
         } else {

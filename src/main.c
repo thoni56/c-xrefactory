@@ -1831,7 +1831,7 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
         || (fnnCmp(simpleFileName(inFileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
         ) {
         *outLanguage = LANG_JAVA;
-        typeEnumName[TypeStruct] = "class";
+        typeNamesTable[TypeStruct] = "class";
     } else {
         suff = getFileSuffix(inFileName);
         if (compareFileNames(suff, ".zip")==0 || compareFileNames(suff, ".jar")==0) {
@@ -1840,10 +1840,10 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
             *outLanguage = LANG_CLASS;
         } else if (compareFileNames(suff, ".y")==0) {
             *outLanguage = LANG_YACC;
-            typeEnumName[TypeStruct] = "struct";
+            typeNamesTable[TypeStruct] = "struct";
         } else {
             *outLanguage = LANG_C;
-            typeEnumName[TypeStruct] = "struct";
+            typeNamesTable[TypeStruct] = "struct";
         }
     }
 }
@@ -2158,7 +2158,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     if (options.taskRegime == RegimeEditServer) errOut = stdout;
 
     assert(MAX_TYPE < power(2,SYMTYPES_LN));
-    assert(MAX_STORAGE < power(2,STORAGES_LN));
+    assert(MAX_STORAGE_NAMES < power(2,STORAGES_LN));
     assert(MAX_SCOPES < power(2,SCOPES_LN));
     assert(MAX_REQUIRED_ACCESS < power(2, MAX_REQUIRED_ACCESS_LN));
 
@@ -2259,8 +2259,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initTypeCharCodeTab();
     //initTypeModifiersTabs();
     initJavaTypePCTIConvertIniTab();
-    initTypesNamesTab();
-    initExtractStoragesNameTab();
+    initTypeNames();
+    initStorageNames();
     setupCaching();
     initArchaicTypes();
     oldStdopFile[0] = oldStdopSection[0] = 0;

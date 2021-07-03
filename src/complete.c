@@ -258,15 +258,15 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
         }
     } else if (c->alternatives[ii].symbolType == TypeInheritedFullMethod) {
         if (c->alternatives[ii].vFunClass!=NULL) {
-            sprintf(tt,"%s \t:%s", c->alternatives[ii].vFunClass->name, typeEnumName[c->alternatives[ii].symbolType]);
+            sprintf(tt,"%s \t:%s", c->alternatives[ii].vFunClass->name, typeNamesTable[c->alternatives[ii].symbolType]);
             vFunCl = c->alternatives[ii].vFunClass->u.s->classFile;
             if (vFunCl == -1) vFunCl = noFileIndex;
         } else {
-            sprintf(tt,"%s", typeEnumName[c->alternatives[ii].symbolType]);
+            sprintf(tt,"%s", typeNamesTable[c->alternatives[ii].symbolType]);
         }
     } else {
         assert(c->alternatives[ii].symbolType>=0 && c->alternatives[ii].symbolType<MAX_TYPE);
-        sprintf(tt,"%s", typeEnumName[c->alternatives[ii].symbolType]);
+        sprintf(tt,"%s", typeNamesTable[c->alternatives[ii].symbolType]);
     }
     formatFullCompletions(tt, indent+FULL_COMPLETION_INDENT_CHARS+2, cindent);
     for(i=0; tt[i]; i++) {
@@ -1363,7 +1363,7 @@ static void javaCompleteComposedName(Completions *c,
                                          &expr,&orr,NULL, USELESS_FQT_REFS_ALLOWED,classif,UsageUsed);
     /*&
       fprintf(dumpOut,"compl %s %s\n",s_javaStat->lastParsedName->id.name,
-      typeEnumName[nameType]);fflush(dumpOut);
+      typeNamesTable[nameType]);fflush(dumpOut);
       &*/
     if (innerConstruct && nameType != TypeExpression) return;
     if (nameType == TypeExpression) {

@@ -317,9 +317,9 @@ void initJavaTypePCTIConvertIniTab(void) {
 }
 
 void initTypeCharCodeTab(void) {
-    int                 i;
-    S_typeCharCodeIni   *s;
-    for (i=0; s_baseTypeCharCodesIniTab[i].symType != -1; i++) {
+    S_typeCharCodeIni *s;
+
+    for (int i=0; s_baseTypeCharCodesIniTab[i].symType != -1; i++) {
         s = &s_baseTypeCharCodesIniTab[i];
         assert(s->symType >= 0 && s->symType < MAX_TYPE);
         s_javaBaseTypeCharCodes[s->symType] = s->code;
@@ -328,24 +328,25 @@ void initTypeCharCodeTab(void) {
     }
 }
 
-void initTypesNamesTab(void) {
-    int                 i;
-    Int2StringTable      *s;
-    for (i=0; typeNamesInitTable[i].i != -1; i++) {
+void initTypeNames(void) {
+    Int2StringTable *s;
+
+    for (int i=0; typeNamesInitTable[i].i != -1; i++) {
         s = &typeNamesInitTable[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
-        typeEnumName[s->i] = s->string;
+        typeNamesTable[s->i] = s->string;
     }
 }
 
-void initExtractStoragesNameTab(void) {
-    int                 i;
+void initStorageNames(void) {
     Int2StringTable      *s;
-    for(i=0; i<MAX_STORAGE; i++) s_extractStorageName[i]="";
-    for (i=0; s_extractStoragesNamesInitTab[i].i != -1; i++) {
-        s = &s_extractStoragesNamesInitTab[i];
+
+    for (int i=0; i<MAX_STORAGE_NAMES; i++)
+        storageNamesTable[i]="";
+    for (int i=0; storageNamesInitTable[i].i != -1; i++) {
+        s = &storageNamesInitTable[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
-        s_extractStorageName[s->i] = s->string;
+        storageNamesTable[s->i] = s->string;
     }
 }
 

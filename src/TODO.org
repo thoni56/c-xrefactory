@@ -83,7 +83,6 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   are a small as possible. This is why IWYU exists!! It means "Include
   What You Use" and is a Clang related project at
   https://github.com/include-what-you-use/include-what-you-use)
-* TODO Rename int2StringTabs, should not have Init in them
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
   If so, make xref2 the way c-xref talks if in server mode. But this should also
   apply for refactory mode, right?
@@ -121,6 +120,8 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Rename int2StringTabs, should not have Init in them
+Yes, they should since they are the init data for some tables used at run-time. 
 * DONE Unify the two documentation sets (html+txt) into Markdown
 * DONE Fix the move_class test
 * DONE Remove option brief_cxref - completely unnecessary

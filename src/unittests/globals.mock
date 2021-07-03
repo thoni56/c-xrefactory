@@ -78,7 +78,7 @@ Language s_language;
 TypeModifier *s_structRecordCompletionType;
 Completions s_completions;
 
-char *s_extractStorageName[MAX_STORAGE];
+char *storageNamesTable[MAX_STORAGE_NAMES];
 
 Counters counters;
 unsigned s_recFindCl = 1;

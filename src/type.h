@@ -131,6 +131,6 @@ typedef enum type {
 } Type;
 
 
-extern const char *typeEnumName[];
+extern const char *typeNamesTable[];
 
 #endif /* _TYPES_H_ */

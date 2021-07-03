@@ -2469,7 +2469,7 @@ void javaTypeDump(TypeModifier *tt) {
     } else if (tt->kind == TypeStruct) {
         fprintf(dumpOut,"%s",tt->u.t->linkName);
     } else {
-        fprintf(dumpOut,"%s",typeEnumName[tt->kind]);
+        fprintf(dumpOut,"%s",typeNamesTable[tt->kind]);
     }
 }
 
