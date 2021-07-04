@@ -1577,7 +1577,7 @@ void editorCloseBufferIfClosable(char *name) {
 void editorCloseAllBuffersIfClosable(void) {
     EditorBufferList *list, *next;
 
-    for(int i=0; i<editorBufferTables.size; i++) {
+    for (int i=0; i<editorBufferTables.size; i++) {
         for(list=editorBufferTables.tab[i]; list!=NULL;) {
             next = list->next;
             //& fprintf(dumpOut, "closable %d for %s(%d) %s(%d)\n", BUFFER_IS_CLOSABLE(list->buffer), list->buffer->name, list->buffer->name, list->buffer->fileName, list->buffer->fileName);fflush(dumpOut);

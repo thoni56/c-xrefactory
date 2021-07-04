@@ -755,7 +755,7 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         return NULL;
 
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
-              vFunCl,vApplCl, pos->file, pos->line,pos->col, category==CategoryGlobal?"Global":"Local",
+              vFunCl,vApplCl, pos->file, pos->line, pos->col, category==CategoryGlobal?"Global":"Local",
               usageEnumName[usage_base], storageEnumName[symbol->bits.storage]);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {

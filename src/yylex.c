@@ -2075,7 +2075,7 @@ static int processCIdent(unsigned hashval, char *id, Position *idposa) {
     Symbol *symbol;
     Symbol *memb = NULL;
 
-    log_trace("looking for %s in %d", id, s_symbolTable);
+    log_trace("looking for C id '%s' in symbol table %p", id, s_symbolTable);
     for(symbol=s_symbolTable->tab[hashval]; symbol!=NULL; symbol=symbol->next) {
         if (strcmp(symbol->name, id) == 0) {
             if (memb == NULL)
@@ -2105,7 +2105,7 @@ static int processJavaIdent(unsigned hashval, char *id, Position *idposa) {
     Symbol *symbol;
     Symbol *memb = NULL;
 
-    log_trace("looking for %s in %d", id, s_symbolTable);
+    log_trace("looking for Java id '%s' in symbol table %p", id, s_symbolTable);
     for(symbol=s_symbolTable->tab[hashval]; symbol!=NULL; symbol=symbol->next) {
         if (strcmp(symbol->name, id) == 0) {
             if (memb == NULL)
@@ -2254,7 +2254,7 @@ int yylex(void) {
 //			???????????? isn't this useless
             testCxrefCompletionId(&lexem,yytext,&idpos);
         }
-        log_trace("id %s position %d %d %d",yytext,idpos.file,idpos.line,idpos.col);
+        log_trace("id '%s' position %d, %d, %d", yytext, idpos.file, idpos.line, idpos.col);
         fillSymbol(&symbol, yytext, yytext, s_noPos);
         fillSymbolBits(&symbol.bits, AccessDefault, TypeMacro, StorageNone);
 
@@ -2332,7 +2332,7 @@ int yylex(void) {
             goto endOfFile;
         }
     }
-/*fprintf(stderr,"unknown lexem %d\n",lex);*/
+    log_trace("unknown lexem %d", lexem);
     goto endOfFile;
 
  finish:
