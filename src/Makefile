@@ -113,6 +113,7 @@ yacc_parser.y: c_parser.y
 	sed '/NOW FOLLOWS THE COMPLETE C GRAMMAR/q' yacc_parser.y > yacc_parser.head
 	sed '1,/^%%$$/d' yacc_parser.y | sed -n '/^%%$$/,$$p' > yacc_parser.tail
 	cat yacc_parser.head c_rules.txt yacc_parser.tail > yacc_parser.y
+	rm  yacc_parser.head c_rules.txt yacc_parser.tail
 
 cexp_parser.tab.c: cexp_parser.y $(YACC)
 	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y

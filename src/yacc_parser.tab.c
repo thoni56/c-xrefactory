@@ -4895,7 +4895,7 @@ break;
 case 529:
 #line 1871 "yacc_parser.y"
 {
-        stackMemoryBlockFree();
+        stackMemoryBlockEnd();
         s_cp.function = NULL;
         if (options.taskRegime == RegimeHtmlGenerate) {
             htmlAddFunctionSeparatorReference();
@@ -5036,7 +5036,7 @@ case 549:
 break;
 case 550:
 #line 1974 "yacc_parser.y"
-{ stackMemoryBlockFree(); }
+{ stackMemoryBlockEnd(); }
 break;
 #line 5042 "yacc_parser.tab.c"
     }

@@ -4553,7 +4553,7 @@ case 177:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                     if (options.taskRegime == RegimeHtmlGenerate) {
                         htmlAddFunctionSeparatorReference();
                     } else {
@@ -5465,7 +5465,7 @@ case 313:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
@@ -5477,7 +5477,7 @@ case 314:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 } else {
                     SetNullBoundariesFor(yyval.ast_position);
                 }
@@ -5489,7 +5489,7 @@ case 315:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
@@ -5501,7 +5501,7 @@ case 316:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 } else {
                     SetNullBoundariesFor(yyval.ast_position);
                 }
@@ -7216,7 +7216,7 @@ case 484:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 }
             }
         }

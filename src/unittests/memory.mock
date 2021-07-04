@@ -46,7 +46,7 @@ void stackMemoryBlockStart(void) {
   mock();
 }
 
-void stackMemoryBlockFree(void) {
+void stackMemoryBlockEnd(void) {
   mock();
 }
 

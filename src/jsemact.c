@@ -754,7 +754,7 @@ void javaReadSymbolsFromSourceFile(char *fname) {
     jslTypeTabInit(typeTab, MAX_JSL_SYMBOLS);
     javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
     // there may be several unbalanced blocks
-    while (memBalance < s_topBlock->firstFreeIndex) stackMemoryBlockFree();
+    while (memBalance < s_topBlock->firstFreeIndex) stackMemoryBlockEnd();
     javaReadSymbolFromSourceFileEnd();
 }
 

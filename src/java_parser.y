@@ -1937,7 +1937,7 @@ ConstructorDeclaration
          Start_block ConstructorBody Stop_block {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                     if (options.taskRegime == RegimeHtmlGenerate) {
                         htmlAddFunctionSeparatorReference();
                     } else {
@@ -2733,7 +2733,7 @@ ForStatement
     :   ForKeyword ForStatementBody {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2742,7 +2742,7 @@ ForStatement
     |	ForKeyword error {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 } else {
                     SetNullBoundariesFor($$);
                 }
@@ -2754,7 +2754,7 @@ ForStatementNoShortIf
     :   ForKeyword ForStatementNoShortIfBody {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2763,7 +2763,7 @@ ForStatementNoShortIf
     |	ForKeyword error {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 } else {
                     SetNullBoundariesFor($$);
                 }
@@ -4316,7 +4316,7 @@ Start_block:	{
 Stop_block:		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockFree();
+                    stackMemoryBlockEnd();
                 }
             }
         }

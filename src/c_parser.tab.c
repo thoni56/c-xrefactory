@@ -4031,7 +4031,7 @@ break;
 case 338:
 #line 1649 "c_parser.y"
 {
-        stackMemoryBlockFree();
+        stackMemoryBlockEnd();
         s_cp.function = NULL;
         if (options.taskRegime == RegimeHtmlGenerate) {
             htmlAddFunctionSeparatorReference();
@@ -4172,7 +4172,7 @@ case 358:
 break;
 case 359:
 #line 1752 "c_parser.y"
-{ stackMemoryBlockFree(); }
+{ stackMemoryBlockEnd(); }
 break;
 #line 4178 "c_parser.tab.c"
     }

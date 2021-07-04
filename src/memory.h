@@ -214,7 +214,7 @@ extern void *stackMemoryAlloc(int size);
 extern void *stackMemoryPush(void *p, int size);
 extern char *stackMemoryPushString(char *s);
 extern void stackMemoryBlockStart(void);
-extern void stackMemoryBlockFree(void);
+extern void stackMemoryBlockEnd(void);
 extern int nestingLevel(void);
 
 extern bool memoryFromPreviousBlock(void *ppp);

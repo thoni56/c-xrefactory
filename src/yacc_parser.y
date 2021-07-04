@@ -1869,7 +1869,7 @@ external_definition
             addFunctionParameterToSymTable($2.d, p, i, s_symbolTable);
         }
     } compound_statement {
-        stackMemoryBlockFree();
+        stackMemoryBlockEnd();
         s_cp.function = NULL;
         if (options.taskRegime == RegimeHtmlGenerate) {
             htmlAddFunctionSeparatorReference();
@@ -1971,7 +1971,7 @@ function_head_declaration
 Start_block:    { stackMemoryBlockStart(); }
     ;
 
-Stop_block:     { stackMemoryBlockFree(); }
+Stop_block:     { stackMemoryBlockEnd(); }
     ;
 
 identifier

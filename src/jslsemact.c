@@ -628,7 +628,7 @@ void jslNewClassDefinitionEnd(void) {
     }
 
     s_jsl->classStat = s_jsl->classStat->next;
-    stackMemoryBlockFree();
+    stackMemoryBlockEnd();
 }
 
 void jslAddDefaultConstructor(Symbol *cl) {

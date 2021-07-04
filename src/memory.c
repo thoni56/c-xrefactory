@@ -175,7 +175,7 @@ void stackMemoryBlockStart(void) {
     fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryIndex, s_topBlock->trail, p);
 }
 
-void stackMemoryBlockFree(void) {
+void stackMemoryBlockEnd(void) {
     log_trace("finish block");
     //&removeFromTrailUntil(NULL);
     assert(s_topBlock && s_topBlock->previousTopBlock);
