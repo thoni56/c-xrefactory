@@ -4,7 +4,13 @@
   %expect 24
   %expect-rr 34
 
-../../../byacc-1.9/yacc: 24 shift/reduce conflicts, 34 reduce/reduce conflicts.
+  ../../../byacc-1.9/yacc: 24 shift/reduce conflicts, 34 reduce/reduce conflicts.
+
+  NOTE: Don't edit the C-rules in this file, they are overwritten by
+  Makefile magic that extracts the rules from the C parser and inserts
+  them at the marker
+
+  NOW FOLLOWS THE COMPLETE C GRAMMAR
 
 */
 %{
