@@ -9,7 +9,7 @@ static bool memoryTrace = false;
 
 
 Memory *cxMemory=NULL;
-S_topBlock *s_topBlock;
+TopBlock *s_topBlock;
 
 jmp_buf memoryResizeJumpTarget;
 
@@ -90,7 +90,7 @@ bool cxMemoryOverflowHandler(int n) {
 /* ***************************************************************** */
 
 static void trailDump(void) {
-    S_freeTrail *t;
+    FreeTrail *t;
     log_trace("*** start trailDump");
     for(t=s_topBlock->trail; t!=NULL; t=t->next)
         log_trace("%p ", t);
@@ -99,11 +99,11 @@ static void trailDump(void) {
 
 
 void addToTrail(void (*a)(void*), void *p) {
-    S_freeTrail *t;
+    FreeTrail *t;
     /* no trail at level 0 in C*/
     if ((nestingLevel() == 0) && (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)))
         return;
-    t = StackMemoryAlloc(S_freeTrail);
+    t = StackMemoryAlloc(FreeTrail);
     t->action = a;
     t->p = (void **) p;
     t->next = s_topBlock->trail;
@@ -111,8 +111,8 @@ void addToTrail(void (*a)(void*), void *p) {
     if (memoryTrace) trailDump();
 }
 
-void removeFromTrailUntil(S_freeTrail *untilP) {
-    S_freeTrail *p;
+void removeFromTrailUntil(FreeTrail *untilP) {
+    FreeTrail *p;
     for(p=s_topBlock->trail; untilP<p; p=p->next) {
         assert(p!=NULL);
         (*(p->action))(p->p);
@@ -124,7 +124,7 @@ void removeFromTrailUntil(S_freeTrail *untilP) {
     if (memoryTrace) trailDump();
 }
 
-static void fillTopBlock(S_topBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, S_freeTrail *trail, S_topBlock *previousTopBlock) {
+static void fillTopBlock(TopBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, FreeTrail *trail, TopBlock *previousTopBlock) {
     topBlock->firstFreeIndex = firstFreeIndex;
     topBlock->tmpMemoryBasei = tmpMemoryBasei;
     topBlock->trail = trail;
@@ -132,8 +132,8 @@ static void fillTopBlock(S_topBlock *topBlock, int firstFreeIndex, int tmpMemory
 }
 
 void stackMemoryInit(void) {
-    s_topBlock = (S_topBlock *) memory;
-    fillTopBlock(s_topBlock, sizeof(S_topBlock), 0, NULL, NULL);
+    s_topBlock = (TopBlock *) memory;
+    fillTopBlock(s_topBlock, sizeof(TopBlock), 0, NULL, NULL);
 }
 
 void *stackMemoryAlloc(int size) {
@@ -165,13 +165,12 @@ char *stackMemoryPushString(char *s) {
 }
 
 void stackMemoryBlockStart(void) {
-    S_topBlock *p,top;
+    TopBlock *p,top;
     log_trace("start block");
     top = *s_topBlock;
-    p = stackMemoryPush(&top, sizeof(S_topBlock));
+    p = stackMemoryPush(&top, sizeof(TopBlock));
     // trail can't be reset to NULL, because in case of syntax errors
     // this would avoid balancing of } at the end of class
-    /*& fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryIndex, NULL, p); &*/
     fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryIndex, s_topBlock->trail, p);
 }
 
@@ -193,7 +192,7 @@ void stackMemoryBlockEnd(void) {
 
 int nestingLevel(void) {
     int level = 0;
-    S_topBlock *block = s_topBlock;
+    TopBlock *block = s_topBlock;
     while (block->previousTopBlock != NULL) {
         block = block->previousTopBlock;
         level++;

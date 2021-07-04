@@ -168,7 +168,7 @@ typedef struct freeTrail {
     void             (*action)(void*);
     void             *p;
     struct freeTrail *next;
-} S_freeTrail;
+} FreeTrail;
 
 typedef struct memory {
     bool	(*overflowHandler)(int n);
@@ -182,11 +182,11 @@ typedef struct topBlock {
     int              tmpMemoryBasei;
     struct freeTrail *trail;
     struct topBlock  *previousTopBlock;
-} S_topBlock;
+} TopBlock;
 
 
 extern Memory *cxMemory;
-extern S_topBlock *s_topBlock;
+extern TopBlock *s_topBlock;
 
 extern jmp_buf memoryResizeJumpTarget;
 
@@ -207,7 +207,7 @@ extern void memoryResize(void);
 extern bool cxMemoryOverflowHandler(int n);
 
 extern void addToTrail (void (*action)(void*),  void *p);
-extern void removeFromTrailUntil(S_freeTrail *untilP);
+extern void removeFromTrailUntil(FreeTrail *untilP);
 
 extern void stackMemoryInit(void);
 extern void *stackMemoryAlloc(int size);

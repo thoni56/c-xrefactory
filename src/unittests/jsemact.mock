@@ -326,7 +326,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name, Access access, Symbol *anony
     return (struct freeTrail *) mock(name, access, anonymousInterface);
 }
 
-void newClassDefinitionEnd(S_freeTrail *trail) {
+void newClassDefinitionEnd(FreeTrail *trail) {
     mock(trail);
 }
 

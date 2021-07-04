@@ -2515,7 +2515,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
                                           Symbol *anonymousInterface) {
     IdList   *p;
     Symbol        *dd,*ddd;
-    S_freeTrail     *res;
+    FreeTrail     *res;
     S_javaStat      *oldStat;
     int             nnest,noff,classf;
     S_nestedSpec	*nst,*nn;
@@ -2587,7 +2587,7 @@ struct freeTrail *newAnonClassDefinitionBegin(Id *interfName) {
     return(res);
 }
 
-void newClassDefinitionEnd(S_freeTrail *trail) {
+void newClassDefinitionEnd(FreeTrail *trail) {
     assert(s_javaStat && s_javaStat->next);
     removeFromTrailUntil(trail);
     /* TODO: WTF?!??! */

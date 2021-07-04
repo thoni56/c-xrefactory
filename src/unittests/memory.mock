@@ -3,7 +3,7 @@
 #include <cgreen/mocks.h>
 
 Memory *cxMemory = NULL;
-S_topBlock *s_topBlock;
+TopBlock *s_topBlock;
 
 char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryIndex = 0;
@@ -30,7 +30,7 @@ void addToTrail(void (*action)(void *), void *p) {
   mock(action, p);
 }
 
-void removeFromTrailUntil(S_freeTrail *untilP) {
+void removeFromTrailUntil(FreeTrail *untilP) {
   mock(untilP);
 }
 

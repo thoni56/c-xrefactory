@@ -168,7 +168,7 @@ extern void javaAddJslReadedTopLevelClasses(JslTypeTab  *typeTab);
 extern struct freeTrail * newAnonClassDefinitionBegin(Id *interfName);
 extern void javaAddSuperNestedClassToSymbolTab( Symbol *cc);
 extern struct freeTrail *newClassDefinitionBegin(Id *name, Access access, Symbol *anonInterf);
-extern void newClassDefinitionEnd(S_freeTrail *trail);
+extern void newClassDefinitionEnd(FreeTrail *trail);
 extern void javaInitArrayObject(void);
 extern void javaParsedSuperClass(Symbol *s);
 extern void javaSetClassSourceInformation(char *package, Id *cl);
