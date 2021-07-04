@@ -5,8 +5,8 @@
 
 #include "memory.h"               /* For XX_ALLOCC */
 
-#define HASH_FUN(elemp) hashFun(elemp->f->name)
-#define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->f->name,e2->f->name)==0)
+#define HASH_FUN(elemp) hashFun(elemp->buffer->name)
+#define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->buffer->name,e2->buffer->name)==0)
 
 #include "hashlist.tc"
 

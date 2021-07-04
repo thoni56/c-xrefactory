@@ -244,12 +244,12 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
     prefixLength = strlen(prefix);
     if (editorBuffer != NULL) {
         // read buffer
-        assert(prefixLength < editorBuffer->a.allocatedFreePrefixSize);
-        strncpy(editorBuffer->a.text-prefixLength, prefix, prefixLength);
-        bufferStart = editorBuffer->a.text-prefixLength;
-        bufferSize = editorBuffer->a.bufferSize+prefixLength;
-        offset = editorBuffer->a.bufferSize;
-        assert(bufferStart > editorBuffer->a.allocatedBlock);
+        assert(prefixLength < editorBuffer->allocation.allocatedFreePrefixSize);
+        strncpy(editorBuffer->allocation.text-prefixLength, prefix, prefixLength);
+        bufferStart = editorBuffer->allocation.text-prefixLength;
+        bufferSize = editorBuffer->allocation.bufferSize+prefixLength;
+        offset = editorBuffer->allocation.bufferSize;
+        assert(bufferStart > editorBuffer->allocation.allocatedBlock);
     } else {
         // read file
         assert(prefixLength < CHAR_BUFF_SIZE);
@@ -1842,7 +1842,7 @@ static struct lexInput *getActualMacroArguments(MacroBody *mb, Position *mpos,
     } else {
         for(;;) {
             getActualMacroArgument(previousLexem, &lexem, mpos, &parpos1, &parpos2,
-                                &actArgs[actArgi], mb, actArgi);
+                                   &actArgs[actArgi], mb, actArgi);
             actArgi ++ ;
             if (lexem != ',' || actArgi >= mb->argn)
                 break;

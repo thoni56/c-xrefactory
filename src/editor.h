@@ -38,12 +38,12 @@ typedef struct editorBuffer {
     char				*fileName;
     struct stat			stat;
     struct editorMarker	*markers;
-    struct editorBufferAllocationData a;
-    struct editorBufferBits b;
+    struct editorBufferAllocationData allocation;
+    struct editorBufferBits bits;
 } EditorBuffer;
 
 typedef struct editorBufferList {
-    struct editorBuffer     *f;
+    struct editorBuffer     *buffer;
     struct editorBufferList	*next;
 } EditorBufferList;
 
@@ -55,14 +55,14 @@ typedef struct editorMarker {
 } EditorMarker;
 
 typedef struct editorMarkerList {
-    struct editorMarker		*d;
+    struct editorMarker		*marker;
     struct usageBits		usage;
     struct editorMarkerList	*next;
 } EditorMarkerList;
 
 typedef struct editorRegion {
-    struct editorMarker		*b;
-    struct editorMarker		*e;
+    struct editorMarker		*begin;
+    struct editorMarker		*end;
 } S_editorRegion;
 
 typedef struct editorRegionList {

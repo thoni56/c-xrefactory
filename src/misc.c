@@ -184,7 +184,7 @@ void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldLen, char
 void ppcGenPreCheckRecord(EditorMarker *pos, int oldLen) {
     int     i;
     char    *bufferedText;
-    bufferedText = pos->buffer->a.text + pos->offset;
+    bufferedText = pos->buffer->allocation.text + pos->offset;
     ppcGenGotoMarkerRecord(pos);
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%d>", PPC_REFACTORING_PRECHECK, PPCA_LEN, oldLen);

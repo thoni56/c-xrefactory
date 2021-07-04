@@ -332,9 +332,9 @@ typedef enum language {
 #define MAX_ASCII_CHAR 256
 
 
-#define MARKER_TO_POINTER(marker) (marker->buffer->a.text+marker->offset)
-#define POINTER_AFTER_MARKER(marker) (marker->buffer->a.text+marker->offset+1)
-#define POINTER_BEFORE_MARKER(marker) (marker->buffer->a.text+marker->offset-1)
+#define MARKER_TO_POINTER(marker) (marker->buffer->allocation.text+marker->offset)
+#define POINTER_AFTER_MARKER(marker) (marker->buffer->allocation.text+marker->offset+1)
+#define POINTER_BEFORE_MARKER(marker) (marker->buffer->allocation.text+marker->offset-1)
 #define CHAR_BEFORE_MARKER(marker) (*POINTER_BEFORE_MARKER(marker))
 #define CHAR_ON_MARKER(marker) (*MARKER_TO_POINTER(marker))
 #define CHAR_AFTER_MARKER(marker) (*POINTER_AFTER_MARKER(marker))

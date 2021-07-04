@@ -35,12 +35,12 @@ S_editorMemoryBlock *s_editorMemory[MAX_EDITOR_MEMORY_BLOCK];
 #define EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, command) {  \
         unsigned char *s, *d, *maxs;                          \
         unsigned char *space;                                 \
-        space = (unsigned char *)buff->a.text;                \
-        maxs = space + buff->a.bufferSize;                    \
+        space = (unsigned char *)buff->allocation.text;                \
+        maxs = space + buff->allocation.bufferSize;                    \
         for(s=d=space; s<maxs; s++) {                         \
             command                                           \
         }                                                     \
-        buff->a.bufferSize = d - space;                       \
+        buff->allocation.bufferSize = d - space;                       \
     }
 #define EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)    \
     if (*s == '\r') {                               \
@@ -195,8 +195,8 @@ static void editorApplyUtf16Conversion(EditorBuffer *buff) {
     int little_endian;
     unsigned char *space;
 
-    space = (unsigned char *)buff->a.text;
-    maxs = space + buff->a.bufferSize;
+    space = (unsigned char *)buff->allocation.text;
+    maxs = space + buff->allocation.bufferSize;
     s = space;
     // determine endian first
     cb = (*s << 8) + *(s+1);
@@ -231,19 +231,20 @@ static void editorApplyUtf16Conversion(EditorBuffer *buff) {
             }
         }
     }
-    buff->a.bufferSize = d - space;
+    buff->allocation.bufferSize = d - space;
 }
 
-static int editorBufferStartsWithUtf16Bom(EditorBuffer *buff) {
-    unsigned char      *s;
-    unsigned           cb;
+static bool editorBufferStartsWithUtf16Bom(EditorBuffer *buff) {
+    unsigned char *s;
+    unsigned cb;
 
-    s = (unsigned char *)buff->a.text;
-    if (buff->a.bufferSize >= 2) {
+    s = (unsigned char *)buff->allocation.text;
+    if (buff->allocation.bufferSize >= 2) {
         cb = (*s << 8) + *(s+1);
-        if (cb == 0xfeff || cb == 0xfffe) return(1);
+        if (cb == 0xfeff || cb == 0xfffe)
+            return true;
     }
-    return(0);
+    return false;
 }
 
 static void editorPerformSimpleLineFeedConversion(EditorBuffer *buff) {
@@ -324,8 +325,8 @@ S_editorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, 
     S_editorRegionList *regionList;
 
     ED_ALLOC(regionList, S_editorRegionList);
-    regionList->r.b = begin;
-    regionList->r.e = end;
+    regionList->r.begin = begin;
+    regionList->r.end = end;
     regionList->next = next;
 
     return regionList;
@@ -380,48 +381,51 @@ bool editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
 }
 
 bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2) {
-    return(editorMarkerLess(l1->d, l2->d));
+    return(editorMarkerLess(l1->marker, l2->marker));
 }
 
 bool editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2) {
-    if (editorMarkerLess(l1->r.b, l2->r.b)) return true;
-    if (editorMarkerLess(l2->r.b, l1->r.b)) return false;
-    // region begins are equal, check end
-    if (editorMarkerLess(l1->r.e, l2->r.e)) return true;
-    if (editorMarkerLess(l2->r.e, l1->r.e)) return false;
+    if (editorMarkerLess(l1->r.begin, l2->r.begin)) return true;
+    if (editorMarkerLess(l2->r.begin, l1->r.begin)) return false;
+    // region beginnings are equal, check end
+    if (editorMarkerLess(l1->r.end, l2->r.end)) return true;
+    if (editorMarkerLess(l2->r.end, l1->r.end)) return false;
     return false;
 }
 
-static void editorAffectMarkerToBuffer(EditorBuffer *buff, EditorMarker *marker) {
-    marker->buffer = buff;
-    marker->next = buff->markers;
-    buff->markers = marker;
+static void editorAffectMarkerToBuffer(EditorBuffer *buffer, EditorMarker *marker) {
+    marker->buffer = buffer;
+    marker->next = buffer->markers;
+    buffer->markers = marker;
     marker->previous = NULL;
-    if (marker->next!=NULL) marker->next->previous = marker;
+    if (marker->next!=NULL)
+        marker->next->previous = marker;
 }
 
-EditorMarker *editorCrNewMarker(EditorBuffer *buff, int offset) {
-    EditorMarker *m;
-    ED_ALLOC(m, EditorMarker);
-    *m = (EditorMarker){.buffer = NULL, .offset = offset, .previous = NULL, .next = NULL};
-    editorAffectMarkerToBuffer(buff, m);
-    return(m);
+EditorMarker *editorCrNewMarker(EditorBuffer *buffer, int offset) {
+    EditorMarker *marker;
+
+    ED_ALLOC(marker, EditorMarker);
+    *marker = (EditorMarker){.buffer = NULL, .offset = offset, .previous = NULL, .next = NULL};
+    editorAffectMarkerToBuffer(buffer, marker);
+    return marker;
 }
 
-EditorMarker *editorCrNewMarkerForPosition(Position *pos) {
-    EditorBuffer  *buf;
-    EditorMarker  *mm;
-    if (pos->file==noFileIndex || pos->file<0) {
+EditorMarker *editorCrNewMarkerForPosition(Position *position) {
+    EditorBuffer *buffer;
+    EditorMarker *marker;
+
+    if (position->file==noFileIndex || position->file<0) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for nonexistant position");
     }
-    buf = editorFindFile(fileTable.tab[pos->file]->name);
-    mm = editorCrNewMarker(buf, 0);
-    editorMoveMarkerToLineCol(mm, pos->line, pos->col);
-    return(mm);
+    buffer = editorFindFile(fileTable.tab[position->file]->name);
+    marker = editorCrNewMarker(buffer, 0);
+    editorMoveMarkerToLineCol(marker, position->line, position->col);
+    return marker;
 }
 
-EditorMarker *editorDuplicateMarker(EditorMarker *mm) {
-    return(editorCrNewMarker(mm->buffer, mm->offset));
+EditorMarker *editorDuplicateMarker(EditorMarker *marker) {
+    return(editorCrNewMarker(marker->buffer, marker->offset));
 }
 
 static void editorRemoveMarkerFromBufferNoFreeing(EditorMarker *marker) {
@@ -447,66 +451,66 @@ static void editorFreeTextSpace(char *space, int index) {
     s_editorMemory[index] = sp;
 }
 
-static void editorFreeBuffer(EditorBufferList *ll) {
+static void editorFreeBuffer(EditorBufferList *list) {
     EditorMarker *m, *mm;
-    //&fprintf(stderr,"freeing buffer %s==%s\n", ll->f->name, ll->f->fileName);
-    if (ll->f->fileName != ll->f->name) {
-        ED_FREE(ll->f->fileName, strlen(ll->f->fileName)+1);
+    //&fprintf(stderr,"freeing buffer %s==%s\n", list->buffer->name, list->buffer->fileName);
+    if (list->buffer->fileName != list->buffer->name) {
+        ED_FREE(list->buffer->fileName, strlen(list->buffer->fileName)+1);
     }
-    ED_FREE(ll->f->name, strlen(ll->f->name)+1);
-    for(m=ll->f->markers; m!=NULL;) {
+    ED_FREE(list->buffer->name, strlen(list->buffer->name)+1);
+    for(m=list->buffer->markers; m!=NULL;) {
         mm = m->next;
         ED_FREE(m, sizeof(EditorMarker));
         m = mm;
     }
-    if (ll->f->b.textLoaded) {
-        //&fprintf(dumpOut,"freeing %d of size %d\n",ll->f->a.allocatedBlock,ll->f->a.allocatedSize);
+    if (list->buffer->bits.textLoaded) {
+        //&fprintf(dumpOut,"freeing %d of size %d\n",list->buffer->allocation.allocatedBlock,list->buffer->allocation.allocatedSize);
         // check for magic
-        assert(ll->f->a.allocatedBlock[ll->f->a.allocatedSize] == 0x3b);
-        editorFreeTextSpace(ll->f->a.allocatedBlock,ll->f->a.allocatedIndex);
+        assert(list->buffer->allocation.allocatedBlock[list->buffer->allocation.allocatedSize] == 0x3b);
+        editorFreeTextSpace(list->buffer->allocation.allocatedBlock,list->buffer->allocation.allocatedIndex);
     }
-    ED_FREE(ll->f, sizeof(EditorBuffer));
-    ED_FREE(ll, sizeof(EditorBufferList));
+    ED_FREE(list->buffer, sizeof(EditorBuffer));
+    ED_FREE(list, sizeof(EditorBufferList));
 }
 
-static void editorLoadFileIntoBufferText(EditorBuffer *buff, struct stat *st) {
+static void editorLoadFileIntoBufferText(EditorBuffer *buffer, struct stat *stat) {
     char *space, *fname;
-    FILE *ff;
+    FILE *file;
     char *bb;
     int n, ss, size;
 
-    fname = buff->fileName;
-    space = buff->a.text;
-    size = buff->a.bufferSize;
+    fname = buffer->fileName;
+    space = buffer->allocation.text;
+    size = buffer->allocation.bufferSize;
 #if defined (__WIN32__)
-    ff = openFile(fname, "r");         // was rb, but did not work
+    file = openFile(fname, "r");         // was rb, but did not work
 #else
-    ff = openFile(fname, "r");
+    file = openFile(fname, "r");
 #endif
-    //&fprintf(dumpOut,":loading file %s==%s size %d\n", fname, buff->name, size);
-    if (ff == NULL) {
+    //&fprintf(dumpOut,":loading file %s==%s size %d\n", fname, buffer->name, size);
+    if (file == NULL) {
         fatalError(ERR_CANT_OPEN, fname, XREF_EXIT_ERR);
     }
     bb = space; ss = size;
     assert(bb != NULL);
     do {
-        n = readFile(bb, 1, ss, ff);
+        n = readFile(bb, 1, ss, file);
         bb = bb + n;
         ss = ss - n;
     } while (n>0);
-    closeFile(ff);
+    closeFile(file);
     if (ss!=0) {
         // this is possible, due to <CR><LF> conversion under MS-DOS
-        buff->a.bufferSize -= ss;
+        buffer->allocation.bufferSize -= ss;
         if (ss < 0) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"File %s: readed %d chars of %d", fname, size-ss, size);
             editorError(ERR_INTERNAL, tmpBuff);
         }
     }
-    editorPerformEncodingAdjustemets(buff);
-    buff->stat = *st;
-    buff->b.textLoaded = true;
+    editorPerformEncodingAdjustemets(buffer);
+    buffer->stat = *stat;
+    buffer->bits.textLoaded = true;
 }
 
 static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
@@ -527,7 +531,7 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
     } else {
         s_editorMemory[allocIndex] = s_editorMemory[allocIndex]->next;
     }
-    ff->a = (S_editorBufferAllocationData){.bufferSize = size, .text = space+EDITOR_FREE_PREFIX_SIZE,
+    ff->allocation = (S_editorBufferAllocationData){.bufferSize = size, .text = space+EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedFreePrefixSize = EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedBlock = space, .allocatedIndex = allocIndex,
                                            .allocatedSize = allocSize};
@@ -535,11 +539,11 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
 
 static void fillEmptyEditorBuffer(EditorBuffer *ff, char *aname, int ftnum,
                                   char*afname) {
-    ff->b = (S_editorBufferBits){.textLoaded = 0, .modified = 0, .modifiedSinceLastQuasiSave = 0};
-    ff->a = (S_editorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
+    ff->bits = (S_editorBufferBits){.textLoaded = 0, .modified = 0, .modifiedSinceLastQuasiSave = 0};
+    ff->allocation = (S_editorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                            .allocatedBlock = NULL, .allocatedIndex = 0, .allocatedSize = 0};
     *ff = (EditorBuffer){.name = aname, .ftnum = ftnum, .fileName = afname, .stat = s_noStat, .markers = NULL,
-                           .a = ff->a, .b = ff->b};
+                           .allocation = ff->allocation, .bits = ff->bits};
 }
 
 static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {
@@ -563,7 +567,7 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
     buffer->stat = *st;
 
     ED_ALLOC(bufferList, EditorBufferList);
-    *bufferList = (EditorBufferList){.f = buffer, .next = NULL};
+    *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
     log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
 
     editorBufferTabAdd(&s_editorBufferTab, bufferList, &not_used);
@@ -576,8 +580,8 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
 }
 
 static void editorSetBufferModifiedFlag(EditorBuffer *buff) {
-    buff->b.modified = true;
-    buff->b.modifiedSinceLastQuasiSave = true;
+    buff->bits.modified = true;
+    buff->bits.modifiedSinceLastQuasiSave = true;
 }
 
 EditorBuffer *editorGetOpenedBuffer(char *name) {
@@ -585,9 +589,9 @@ EditorBuffer *editorGetOpenedBuffer(char *name) {
     EditorBufferList editorBufferList, *element;
 
     fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
-    editorBufferList = (EditorBufferList){.f = &editorBuffer, .next = NULL};
+    editorBufferList = (EditorBufferList){.buffer = &editorBuffer, .next = NULL};
     if (editorBufferTabIsMember(&s_editorBufferTab, &editorBufferList, NULL, &element)) {
-        return element->f;
+        return element->buffer;
     }
     return NULL;
 }
@@ -595,7 +599,7 @@ EditorBuffer *editorGetOpenedBuffer(char *name) {
 EditorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
     EditorBuffer *res;
     res = editorGetOpenedBuffer(name);
-    if (res!=NULL && res->b.textLoaded) return(res);
+    if (res!=NULL && res->bits.textLoaded) return(res);
     return(NULL);
 }
 
@@ -655,7 +659,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     strcpy(newName, normalizeFileName(nName, cwd));
     //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warningMessage(ERR_INTERNAL, tmpBuff);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
-    ddl = (EditorBufferList){.f = &dd, .next = NULL};
+    ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
     mem = editorBufferTabIsMember(&s_editorBufferTab, &ddl, NULL, &memb);
     if (! mem) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -663,7 +667,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
         errorMessage(ERR_INTERNAL, tmpBuff);
         return;
     }
-    assert(memb->f == buff);
+    assert(memb->buffer == buff);
     deleted = editorBufferTabDeleteExact(&s_editorBufferTab, memb);
     assert(deleted);
     oldName = buff->name;
@@ -674,7 +678,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     fileTable.tab[fileIndex]->b.commandLineEntered = fileTable.tab[buff->ftnum]->b.commandLineEntered;
     buff->ftnum = fileIndex;
 
-    *memb = (EditorBufferList){.f = buff, .next = NULL};
+    *memb = (EditorBufferList){.buffer = buff, .next = NULL};
     if (editorBufferTabIsMember(&s_editorBufferTab, memb, NULL, &memb2)) {
         editorBufferTabDeleteExact(&s_editorBufferTab, memb2);
         editorFreeBuffer(memb2);
@@ -693,7 +697,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     // of moving a package into an existing package).
     removed = editorCreateNewBuffer(oldName, oldName, &buff->stat);
     allocNewEditorBufferTextSpace(removed, 0);
-    removed->b.textLoaded = true;
+    removed->bits.textLoaded = true;
     editorSetBufferModifiedFlag(removed);
 }
 
@@ -746,7 +750,7 @@ EditorBuffer *editorFindFileCreate(char *name) {
         res = editorCreateNewBuffer(name, name, &st);
         assert(res!=NULL);
         allocNewEditorBufferTextSpace(res, 0);
-        res->b.textLoaded = true;
+        res->bits.textLoaded = true;
     }
     return(res);
 }
@@ -758,10 +762,10 @@ void editorReplaceString(EditorBuffer *buff, int position, int delsize,
     EditorMarker *m;
     S_editorUndo *uu;
 
-    assert(position >=0 && position <= buff->a.bufferSize);
+    assert(position >=0 && position <= buff->allocation.bufferSize);
     assert(delsize >= 0);
     assert(strlength >= 0);
-    oldsize = buff->a.bufferSize;
+    oldsize = buff->allocation.bufferSize;
     if (delsize+position > oldsize) {
         // deleting over end of buffer,
         // delete only until end of buffer
@@ -771,34 +775,34 @@ void editorReplaceString(EditorBuffer *buff, int position, int delsize,
     //&fprintf(dumpOut,"replacing string in buffer %d (%s)\n", buff, buff->name);
     nsize = oldsize + strlength - delsize;
     // prepare operation
-    if (nsize >= buff->a.allocatedSize - buff->a.allocatedFreePrefixSize) {
+    if (nsize >= buff->allocation.allocatedSize - buff->allocation.allocatedFreePrefixSize) {
         // resize buffer
-        //&sprintf(tmpBuff,"resizing %s from %d(%d) to %d\n", buff->name, buff->a.bufferSize, buff->a.allocatedSize, nsize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(communicationChannel);
-        text = buff->a.text;
-        space = buff->a.allocatedBlock; index = buff->a.allocatedIndex;
+        //&sprintf(tmpBuff,"resizing %s from %d(%d) to %d\n", buff->name, buff->allocation.bufferSize, buff->allocation.allocatedSize, nsize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(communicationChannel);
+        text = buff->allocation.text;
+        space = buff->allocation.allocatedBlock; index = buff->allocation.allocatedIndex;
         allocNewEditorBufferTextSpace(buff, nsize);
-        memcpy(buff->a.text, text, oldsize);
-        buff->a.bufferSize = oldsize;
+        memcpy(buff->allocation.text, text, oldsize);
+        buff->allocation.bufferSize = oldsize;
         editorFreeTextSpace(space, index);
     }
-    assert(nsize < buff->a.allocatedSize - buff->a.allocatedFreePrefixSize);
+    assert(nsize < buff->allocation.allocatedSize - buff->allocation.allocatedFreePrefixSize);
     if (undo!=NULL) {
         // note undo information
         undosize = strlength;
         assert(delsize >= 0);
         // O.K. allocate also 0 at the end
         ED_ALLOCC(undotext, delsize+1, char);
-        memcpy(undotext, buff->a.text+position, delsize);
+        memcpy(undotext, buff->allocation.text+position, delsize);
         undotext[delsize]=0;
         uu = newEditorUndoReplace(buff, position, undosize, delsize, undotext, *undo);
         *undo = uu;
     }
     // edit text
-    memmove(buff->a.text+position+strlength, buff->a.text+position+delsize,
-            buff->a.bufferSize - position - delsize);
-    memcpy(buff->a.text+position, str, strlength);
-    buff->a.bufferSize = buff->a.bufferSize - delsize + strlength;
-    //&sprintf(tmpBuff,"setting buffersize of  %s to %d\n", buff->name, buff->a.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(communicationChannel);
+    memmove(buff->allocation.text+position+strlength, buff->allocation.text+position+delsize,
+            buff->allocation.bufferSize - position - delsize);
+    memcpy(buff->allocation.text+position, str, strlength);
+    buff->allocation.bufferSize = buff->allocation.bufferSize - delsize + strlength;
+    //&sprintf(tmpBuff,"setting buffersize of  %s to %d\n", buff->name, buff->allocation.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(communicationChannel);
     // update markers
     if (delsize > strlength) {
         if (strlength > 0) pattractor = position + strlength - 1;
@@ -844,11 +848,11 @@ void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size,
     assert(off1 <= off2);
     // do it at two steps for the case if source buffer equals target buffer
     // first just allocate space
-    editorReplaceString(db, offd, 0, sb->a.text+off1, off2-off1, NULL);
+    editorReplaceString(db, offd, 0, sb->allocation.text+off1, off2-off1, NULL);
     // now copy text
     off1 = src->offset;
     off2 = off1+size;
-    editorReplaceString(db, offd, off2-off1, sb->a.text+off1, off2-off1, NULL);
+    editorReplaceString(db, offd, off2-off1, sb->allocation.text+off1, off2-off1, NULL);
     // save target for undo;
     undodoffset = src->offset;
     // move all markers from moved block
@@ -865,7 +869,7 @@ void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size,
         mm = tmp;
     }
     // remove the source block
-    editorReplaceString(sb, off1, off2-off1, sb->a.text+off1, 0, NULL);
+    editorReplaceString(sb, off1, off2-off1, sb->allocation.text+off1, 0, NULL);
     //
     editorSetBufferModifiedFlag(sb);
     editorSetBufferModifiedFlag(db);
@@ -877,8 +881,8 @@ void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size,
 
 void editorDumpBuffer(EditorBuffer *buff) {
     int i;
-    for(i=0; i<buff->a.bufferSize; i++) {
-        putc(buff->a.text[i], dumpOut);
+    for(i=0; i<buff->allocation.bufferSize; i++) {
+        putc(buff->allocation.text[i], dumpOut);
     }
 }
 
@@ -888,15 +892,15 @@ void editorDumpBuffers(void) {
     fprintf(dumpOut,"[editorDumpBuffers] start\n");
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
-            fprintf(dumpOut,"%d : %s==%s, %d\n", i, ll->f->name, ll->f->fileName,
-                    ll->f->b.textLoaded);
+            fprintf(dumpOut,"%d : %s==%s, %d\n", i, ll->buffer->name, ll->buffer->fileName,
+                    ll->buffer->bits.textLoaded);
         }
     }
     fprintf(dumpOut,"[editorDumpBuffers] end\n");
 }
 
 static void editorQuasiSaveBuffer(EditorBuffer *buffer) {
-    buffer->b.modifiedSinceLastQuasiSave = false;
+    buffer->bits.modifiedSinceLastQuasiSave = false;
     buffer->stat.st_mtime = time(NULL);  //? why it does not work with 1;
     assert(fileTable.tab[buffer->ftnum]);
     fileTable.tab[buffer->ftnum]->lastModified = buffer->stat.st_mtime;
@@ -910,7 +914,7 @@ void editorQuasiSaveModifiedBuffers(void) {
     saving = 0;
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
-            if (ll->f->b.modifiedSinceLastQuasiSave) {
+            if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
                 saving = 1;
                 goto cont;
             }
@@ -930,8 +934,8 @@ void editorQuasiSaveModifiedBuffers(void) {
     }
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
-            if (ll->f->b.modifiedSinceLastQuasiSave) {
-                editorQuasiSaveBuffer(ll->f);
+            if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
+                editorQuasiSaveBuffer(ll->buffer);
             }
         }
     }
@@ -945,12 +949,12 @@ void editorLoadAllOpenedBufferFiles(void) {
 
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
-            if (!ll->f->b.textLoaded) {
-                if (stat(ll->f->fileName, &st)==0) {
+            if (!ll->buffer->bits.textLoaded) {
+                if (stat(ll->buffer->fileName, &st)==0) {
                     size = st.st_size;
-                    allocNewEditorBufferTextSpace(ll->f, size);
-                    editorLoadFileIntoBufferText(ll->f, &st);
-                    //&sprintf(tmpBuff,"preloading %s into %s\n", ll->f->fileName, ll->f->name); ppcGenRecord(PPC_IGNORE, tmpBuff);
+                    allocNewEditorBufferTextSpace(ll->buffer, size);
+                    editorLoadFileIntoBufferText(ll->buffer, &st);
+                    //&sprintf(tmpBuff,"preloading %s into %s\n", ll->buffer->fileName, ll->buffer->name); ppcGenRecord(PPC_IGNORE, tmpBuff);
                 }
             }
         }
@@ -962,8 +966,8 @@ int editorRunWithMarkerUntil(EditorMarker *m, int (*until)(int), int step) {
     char    *text;
     assert(step==-1 || step==1);
     offset = m->offset;
-    max = m->buffer->a.bufferSize;
-    text = m->buffer->a.text;
+    max = m->buffer->allocation.bufferSize;
+    text = m->buffer->allocation.text;
     while (offset>=0 && offset<max && (*until)(text[offset])==0) offset += step;
     m->offset = offset;
     if (offset<0) {
@@ -984,7 +988,7 @@ int editorCountLinesBetweenMarkers(EditorMarker *m1, EditorMarker *m2) {
     if (m1 == NULL || m2==NULL) return(0);
     assert(m1->buffer == m2->buffer);
     assert(m1->offset <= m2->offset);
-    text = m1->buffer->a.text;
+    text = m1->buffer->allocation.text;
     max = m2->offset;
     count = 0;
     for(i=m1->offset; i<max; i++) {
@@ -1044,8 +1048,8 @@ void editorMoveMarkerToLineCol(EditorMarker *m, int line, int col) {
 
     assert(m);
     buff = m->buffer;
-    s = buff->a.text;
-    smax = s + buff->a.bufferSize;
+    s = buff->allocation.text;
+    smax = s + buff->allocation.bufferSize;
     ln = 1;
     if (line > 1) {
         for(; s<smax; s++) {
@@ -1060,8 +1064,8 @@ void editorMoveMarkerToLineCol(EditorMarker *m, int line, int col) {
     for(; s<smax && c<col; s++,c++) {
         if (*s == '\n') break;
     }
-    m->offset = s - buff->a.text;
-    assert(m->offset>=0 && m->offset<=buff->a.bufferSize);
+    m->offset = s - buff->allocation.text;
+    assert(m->offset>=0 && m->offset<=buff->allocation.bufferSize);
 }
 
 EditorMarkerList *editorReferencesToMarkers(Reference *refs,
@@ -1088,16 +1092,16 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
                 errorMessage(ERR_CANT_OPEN, fileTable.tab[file]->name);
                 while (r!=NULL && file == r->p.file) r = r->next;
             } else {
-                s = buff->a.text;
-                smax = s + buff->a.bufferSize;
-                maxoffset = buff->a.bufferSize - 1;
+                s = buff->allocation.text;
+                smax = s + buff->allocation.bufferSize;
+                maxoffset = buff->allocation.bufferSize - 1;
                 if (maxoffset < 0) maxoffset = 0;
                 ln = 1; c = 0;
                 for(; s<smax; s++, c++) {
                     if (ln==line && c==col) {
-                        m = editorCrNewMarker(buff, s - buff->a.text);
+                        m = editorCrNewMarker(buff, s - buff->allocation.text);
                         ED_ALLOC(rrr, EditorMarkerList);
-                        *rrr = (EditorMarkerList){.d = m, .usage = r->usage, .next = res};
+                        *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
                         res = rrr;
                         r = r->next;
                         while (r!=NULL && ! filter(r,filterParam)) r = r->next;
@@ -1111,7 +1115,7 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
                 while (r!=NULL && file == r->p.file) {
                     m = editorCrNewMarker(buff, maxoffset);
                     ED_ALLOC(rrr, EditorMarkerList);
-                    *rrr = (EditorMarkerList){.d = m, .usage = r->usage, .next = res};
+                    *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
                     res = rrr;
                     r = r->next;
                     while (r!=NULL && ! filter(r,filterParam)) r = r->next;
@@ -1135,10 +1139,10 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
     res = NULL;
     mm = *mms;
     while (mm!=NULL) {
-        buf = mm->d->buffer;
-        s = buf->a.text;
-        smax = s + buf->a.bufferSize;
-        off = buf->a.text + mm->d->offset;
+        buf = mm->marker->buffer;
+        s = buf->allocation.text;
+        smax = s + buf->allocation.bufferSize;
+        off = buf->allocation.text + mm->marker->offset;
         ln = 1; c = 0;
         for( ; s<smax; s++, c++) {
             if (s == off) {
@@ -1147,12 +1151,12 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
                 fill_reference(rr, mm->usage, rr->p, res);
                 res = rr;
                 mm = mm->next;
-                if (mm==NULL || mm->d->buffer != buf) break;
-                off = buf->a.text + mm->d->offset;
+                if (mm==NULL || mm->marker->buffer != buf) break;
+                off = buf->allocation.text + mm->marker->offset;
             }
             if (*s=='\n') {ln++; c = -1;}
         }
-        while (mm!=NULL && mm->d->buffer==buf) {
+        while (mm!=NULL && mm->marker->buffer==buf) {
             OLCX_ALLOC(rr, Reference);
             fillPosition(&rr->p, buf->ftnum, ln, 0);
             fill_reference(rr, mm->usage, rr->p, res);
@@ -1177,8 +1181,8 @@ void editorFreeMarkersAndRegionList(S_editorRegionList *occs) {
     S_editorRegionList  *o, *next;
     for(o=occs; o!=NULL; ) {
         next = o->next;
-        editorFreeMarker(o->r.b);
-        editorFreeMarker(o->r.e);
+        editorFreeMarker(o->r.begin);
+        editorFreeMarker(o->r.end);
         ED_FREE(o, sizeof(S_editorRegionList));
         o = next;
     }
@@ -1197,7 +1201,7 @@ void editorFreeMarkersAndMarkerList(EditorMarkerList *occs) {
     EditorMarkerList  *o, *next;
     for(o=occs; o!=NULL; ) {
         next = o->next;
-        editorFreeMarker(o->d);
+        editorFreeMarker(o->marker);
         ED_FREE(o, sizeof(EditorMarkerList));
         o = next;
     }
@@ -1215,10 +1219,10 @@ void editorDumpMarkerList(EditorMarkerList *mml) {
 
     sprintf(tmpBuff, "------------------[[dumping editor markers]]");ppcGenTmpBuff();
     for(mm=mml; mm!=NULL; mm=mm->next) {
-        if (mm->d == NULL) {
+        if (mm->marker == NULL) {
             sprintf(tmpBuff, "[null]");ppcGenTmpBuff();
         } else {
-            sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->d->buffer->name), mm->d->offset, CHAR_ON_MARKER(mm->d)); ppcGenTmpBuff();
+            sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->marker->buffer->name), mm->marker->offset, CHAR_ON_MARKER(mm->marker)); ppcGenTmpBuff();
         }
     }
     sprintf(tmpBuff, "------------------[[dumpend]]\n");ppcGenTmpBuff();
@@ -1232,14 +1236,14 @@ void editorDumpRegionList(S_editorRegionList *mml) {
     fprintf(dumpOut,"%s\n",tmpBuff);
     //ppcGenTmpBuff();
     for(mm=mml; mm!=NULL; mm=mm->next) {
-        if (mm->r.b == NULL || mm->r.e == NULL) {
+        if (mm->r.begin == NULL || mm->r.end == NULL) {
             sprintf(tmpBuff,"%ld: [null]", (unsigned long)mm);
             fprintf(dumpOut,"%s\n",tmpBuff);
             //ppcGenTmpBuff();
         } else {
             sprintf(tmpBuff, "%ld: [%s: %d - %d] --> %c - %c", (unsigned long)mm,
-                    simpleFileName(mm->r.b->buffer->name), mm->r.b->offset,
-                    mm->r.e->offset, CHAR_ON_MARKER(mm->r.b), CHAR_ON_MARKER(mm->r.e));
+                    simpleFileName(mm->r.begin->buffer->name), mm->r.begin->offset,
+                    mm->r.end->offset, CHAR_ON_MARKER(mm->r.begin), CHAR_ON_MARKER(mm->r.end));
             fprintf(dumpOut,"%s\n",tmpBuff);
             //ppcGenTmpBuff();
         }
@@ -1290,15 +1294,15 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
     *diff1 = *diff2 = NULL;
     for(l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
         if (editorMarkerListLess(l1, l2)) {
-            m = editorCrNewMarker(l1->d->buffer, l1->d->offset);
+            m = editorCrNewMarker(l1->marker->buffer, l1->marker->offset);
             ED_ALLOC(ll, EditorMarkerList);
-            *ll = (EditorMarkerList){.d = m, .usage = l1->usage, .next = *diff1};
+            *ll = (EditorMarkerList){.marker = m, .usage = l1->usage, .next = *diff1};
             *diff1 = ll;
             l1 = l1->next;
         } else if (editorMarkerListLess(l2, l1)) {
-            m = editorCrNewMarker(l2->d->buffer, l2->d->offset);
+            m = editorCrNewMarker(l2->marker->buffer, l2->marker->offset);
             ED_ALLOC(ll, EditorMarkerList);
-            *ll = (EditorMarkerList){.d = m, .usage = l2->usage, .next = *diff2};
+            *ll = (EditorMarkerList){.marker = m, .usage = l2->usage, .next = *diff2};
             *diff2 = ll;
             l2 = l2->next;
         } else {
@@ -1306,16 +1310,16 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
         }
     }
     while (l1 != NULL) {
-        m = editorCrNewMarker(l1->d->buffer, l1->d->offset);
+        m = editorCrNewMarker(l1->marker->buffer, l1->marker->offset);
         ED_ALLOC(ll, EditorMarkerList);
-        *ll = (EditorMarkerList){.d = m, .usage = l1->usage, .next = *diff1};
+        *ll = (EditorMarkerList){.marker = m, .usage = l1->usage, .next = *diff1};
         *diff1 = ll;
         l1 = l1->next;
     }
     while (l2 != NULL) {
-        m = editorCrNewMarker(l2->d->buffer, l2->d->offset);
+        m = editorCrNewMarker(l2->marker->buffer, l2->marker->offset);
         ED_ALLOC(ll, EditorMarkerList);
-        *ll = (EditorMarkerList){.d = m, .usage = l2->usage, .next = *diff2};
+        *ll = (EditorMarkerList){.marker = m, .usage = l2->usage, .next = *diff2};
         *diff2 = ll;
         l2 = l2->next;
     }
@@ -1328,24 +1332,24 @@ void editorSortRegionsAndRemoveOverlaps(S_editorRegionList **regions) {
     for(rr= *regions; rr!=NULL; rr=rr->next) {
     contin:
         rrr = rr->next;
-        if (rrr!=NULL && rr->r.b->buffer==rrr->r.b->buffer) {
-            assert(rr->r.b->buffer == rr->r.e->buffer);  // region consistency check
-            assert(rrr->r.b->buffer == rrr->r.e->buffer);  // region consistency check
-            assert(rr->r.b->offset <= rrr->r.b->offset);
+        if (rrr!=NULL && rr->r.begin->buffer==rrr->r.begin->buffer) {
+            assert(rr->r.begin->buffer == rr->r.end->buffer);  // region consistency check
+            assert(rrr->r.begin->buffer == rrr->r.end->buffer);  // region consistency check
+            assert(rr->r.begin->offset <= rrr->r.begin->offset);
             newend = NULL;
-            if (rrr->r.e->offset <= rr->r.e->offset) {
+            if (rrr->r.end->offset <= rr->r.end->offset) {
                 // second inside first
-                newend = rr->r.e;
-                editorFreeMarker(rrr->r.b);
-                editorFreeMarker(rrr->r.e);
-            } else if (rrr->r.b->offset <= rr->r.e->offset) {
+                newend = rr->r.end;
+                editorFreeMarker(rrr->r.begin);
+                editorFreeMarker(rrr->r.end);
+            } else if (rrr->r.begin->offset <= rr->r.end->offset) {
                 // they have common part
-                newend = rrr->r.e;
-                editorFreeMarker(rrr->r.b);
-                editorFreeMarker(rr->r.e);
+                newend = rrr->r.end;
+                editorFreeMarker(rrr->r.begin);
+                editorFreeMarker(rr->r.end);
             }
             if (newend!=NULL) {
-                rr->r.e = newend;
+                rr->r.end = newend;
                 rr->next = rrr->next;
                 ED_FREE(rrr, sizeof(S_editorRegionList));
                 rrr = NULL;
@@ -1380,8 +1384,8 @@ void editorSplitMarkersWithRespectToRegions(
     mm= *inMarkers;
     while (mm!=NULL) {
         nn = mm->next;
-        while (rr!=NULL && editorMarkerGreater(rr->r.b, mm->d)) rr = rr->next;
-        if (rr!=NULL && editorMarkerGreater(rr->r.e, mm->d)) {
+        while (rr!=NULL && editorMarkerGreater(rr->r.begin, mm->marker)) rr = rr->next;
+        if (rr!=NULL && editorMarkerGreater(rr->r.end, mm->marker)) {
             // is inside
             mm->next = *outInsiders;
             *outInsiders = mm;
@@ -1413,7 +1417,7 @@ EditorMarker *editorCrMarkerForBufferBegin(EditorBuffer *buffer) {
 }
 
 EditorMarker *editorCrMarkerForBufferEnd(EditorBuffer *buffer) {
-    return(editorCrNewMarker(buffer,buffer->a.bufferSize));
+    return(editorCrNewMarker(buffer,buffer->allocation.bufferSize));
 }
 
 S_editorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {
@@ -1423,7 +1427,7 @@ S_editorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {
 
     bufferBegin = editorCrMarkerForBufferBegin(buffer);
     bufferEnd = editorCrMarkerForBufferEnd(buffer);
-    theBufferRegion = (S_editorRegion){.b = bufferBegin, .e = bufferEnd};
+    theBufferRegion = (S_editorRegion){.begin = bufferBegin, .end = bufferEnd};
     ED_ALLOC(theBufferRegionList, S_editorRegionList);
     *theBufferRegionList = (S_editorRegionList){.r = theBufferRegion, .next = NULL};
 
@@ -1437,7 +1441,7 @@ static EditorBufferList *editorComputeAllBuffersList(void) {
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
             ED_ALLOC(rr, EditorBufferList);
-            *rr = (EditorBufferList){.f = ll->f, .next = res};
+            *rr = (EditorBufferList){.buffer = ll->buffer, .next = res};
             res = rr;
         }
     }
@@ -1455,7 +1459,7 @@ static void editorFreeBufferListButNotBuffers(EditorBufferList *list) {
 }
 
 static int editorBufferNameLess(EditorBufferList*l1,EditorBufferList*l2) {
-    return(strcmp(l1->f->name, l2->f->name));
+    return(strcmp(l1->buffer->name, l2->buffer->name));
 }
 
 // TODO, do all this stuff better!
@@ -1487,37 +1491,37 @@ int editorMapOnNonexistantFiles(
     ll = bl;
     //&sprintf(tmpBuff, "ENTER!!!"); ppcGenRecord(PPC_IGNORE,tmpBuff);
     while(ll!=NULL) {
-        if (fnnCmp(ll->f->name, dirname, dlen)==0
-            && (ll->f->name[dlen]=='/' || ll->f->name[dlen]=='\\')) {
+        if (fnnCmp(ll->buffer->name, dirname, dlen)==0
+            && (ll->buffer->name[dlen]=='/' || ll->buffer->name[dlen]=='\\')) {
             if (depth == DEPTH_ONE) {
-                ss = strchr(ll->f->name+dlen+1, '/');
-                if (ss==NULL) ss = strchr(ll->f->name+dlen+1, '\\');
+                ss = strchr(ll->buffer->name+dlen+1, '/');
+                if (ss==NULL) ss = strchr(ll->buffer->name+dlen+1, '\\');
                 if (ss==NULL) {
-                    strcpy(fname, ll->f->name+dlen+1);
+                    strcpy(fname, ll->buffer->name+dlen+1);
                     fnlen = strlen(fname);
                 } else {
-                    fnlen = ss-(ll->f->name+dlen+1);
-                    strncpy(fname, ll->f->name+dlen+1, fnlen);
+                    fnlen = ss-(ll->buffer->name+dlen+1);
+                    strncpy(fname, ll->buffer->name+dlen+1, fnlen);
                     fname[fnlen]=0;
                 }
             } else {
-                strcpy(fname, ll->f->name+dlen+1);
+                strcpy(fname, ll->buffer->name+dlen+1);
                 fnlen = strlen(fname);
             }
             // check if file exists, map only nonexistant
-            if (stat(ll->f->name, &st)!=0) {
+            if (stat(ll->buffer->name, &st)!=0) {
                 // get file name
-                //&sprintf(tmpBuff, "MAPPING %s as %s in %s", ll->f->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuff);
+                //&sprintf(tmpBuff, "MAPPING %s as %s in %s", ll->buffer->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuff);
                 (*fun)(fname, a1, a2, a3, a4, a5);
                 res = 1;
                 // skip all files in the same directory
-                lastMapped = ll->f->name;
+                lastMapped = ll->buffer->name;
                 lastMappedLen = dlen+1+fnlen;
                 ll = ll->next;
                 while (ll!=NULL
-                       && fnnCmp(ll->f->name, lastMapped, lastMappedLen)==0
-                       && (ll->f->name[lastMappedLen]=='/' || ll->f->name[lastMappedLen]=='\\')) {
-                    //&sprintf(tmpBuff, "SKIPPING %s", ll->f->name); ppcGenRecord(PPC_IGNORE,tmpBuff);
+                       && fnnCmp(ll->buffer->name, lastMapped, lastMappedLen)==0
+                       && (ll->buffer->name[lastMappedLen]=='/' || ll->buffer->name[lastMappedLen]=='\\')) {
+                    //&sprintf(tmpBuff, "SKIPPING %s", ll->buffer->name); ppcGenRecord(PPC_IGNORE,tmpBuff);
                     ll = ll->next;
                 }
             } else {
@@ -1534,7 +1538,7 @@ int editorMapOnNonexistantFiles(
 
 static void editorCloseBuffer(EditorBufferList *memb, int index) {
     EditorBufferList **ll;
-    //&sprintf(tmpBuff,"closing buffer %s %s\n", memb->f->name, memb->f->fileName);ppcGenRecord(PPC_IGNORE, tmpBuff);
+    //&sprintf(tmpBuff,"closing buffer %s %s\n", memb->buffer->name, memb->buffer->fileName);ppcGenRecord(PPC_IGNORE, tmpBuff);
     for (ll = &s_editorBufferTab.tab[index]; (*ll)!=NULL; ll = &(*ll)->next) {
         if (*ll == memb) break;
     }
@@ -1546,10 +1550,10 @@ static void editorCloseBuffer(EditorBufferList *memb, int index) {
 }
 
 #define BUFFER_IS_CLOSABLE(buffer) (                                    \
-                                    buffer->b.textLoaded                \
+                                    buffer->bits.textLoaded                \
                                     && buffer->markers==NULL            \
                                     && buffer->name==buffer->fileName  /* not -preloaded */ \
-                                    && ! buffer->b.modified             \
+                                    && ! buffer->bits.modified             \
                                     )
 
 // be very carefull when using this function, because of interpretation
@@ -1560,9 +1564,9 @@ void editorCloseBufferIfClosable(char *name) {
     int index;
 
     fillEmptyEditorBuffer(&dd, name, 0, name);
-    ddl = (EditorBufferList){.f = &dd, .next = NULL};
+    ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
     if (editorBufferTabIsMember(&s_editorBufferTab, &ddl, &index, &memb)) {
-        if (BUFFER_IS_CLOSABLE(memb->f)) {
+        if (BUFFER_IS_CLOSABLE(memb->buffer)) {
             editorCloseBuffer(memb, index);
         }
     }
@@ -1575,8 +1579,8 @@ void editorCloseAllBuffersIfClosable(void) {
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL;) {
             nn = ll->next;
-            //& fprintf(dumpOut, "closable %d for %s(%d) %s(%d)\n", BUFFER_IS_CLOSABLE(ll->f), ll->f->name, ll->f->name, ll->f->fileName, ll->f->fileName);fflush(dumpOut);
-            if (BUFFER_IS_CLOSABLE(ll->f)) editorCloseBuffer(ll, i);
+            //& fprintf(dumpOut, "closable %d for %s(%d) %s(%d)\n", BUFFER_IS_CLOSABLE(ll->buffer), ll->buffer->name, ll->buffer->name, ll->buffer->fileName, ll->buffer->fileName);fflush(dumpOut);
+            if (BUFFER_IS_CLOSABLE(ll->buffer)) editorCloseBuffer(ll, i);
             ll = nn;
         }
     }

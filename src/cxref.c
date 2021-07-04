@@ -1825,7 +1825,7 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
     if (ebuf==NULL) {
         cxfBuf.isAtEOF = true;
     } else {
-        fillCharacterBuffer(&cxfBuf, ebuf->a.text, ebuf->a.text+ebuf->a.bufferSize, NULL, ebuf->a.bufferSize, noFileIndex, ebuf->a.text);
+        fillCharacterBuffer(&cxfBuf, ebuf->allocation.text, ebuf->allocation.text+ebuf->allocation.bufferSize, NULL, ebuf->allocation.bufferSize, noFileIndex, ebuf->allocation.text);
         GetFileChar(ch, &cp, &cxfBuf);
     }
     fillPosition(&cp, references->p.file, 1, 0);
