@@ -18,6 +18,6 @@
 #define EDITOR_BUFF_TAB_SIZE 100
 
 extern EditorBufferList *s_staticEditorBufferTabTab[];
-extern EditorBufferTab s_editorBufferTab;
+extern EditorBufferTab editorBufferTable;
 
 #endif

@@ -21,7 +21,7 @@
 
 (autoload 'c-xref-refactoring-documentation "c-xrefdoc" "Not documented" t)
 
-(defvar c-xref-debug-mode nil)
+(defvar c-xref-debug-mode nil)          ;; Set to t to debug communication
 (defvar c-xref-debug-preserve-tmp-files nil)
 
 ;;(toggle-debug-on-error)

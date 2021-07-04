@@ -2217,7 +2217,7 @@ static void refactoryParameterManipulation(EditorBuffer *buf, EditorMarker *poin
 }
 
 static int createMarkersForAllReferencesInRegions(
-                                                  S_olSymbolsMenu *menu, S_editorRegionList **regions
+                                                  S_olSymbolsMenu *menu, EditorRegionList **regions
                                                   ) {
     S_olSymbolsMenu *mm;
     int res, n;
@@ -2323,7 +2323,7 @@ static EditorMarker *refactoryReplaceStaticPrefix(EditorMarker *d, char *npref) 
 
 static void refactoryReduceLongReferencesInRegions(
                                                    EditorMarker      *point,
-                                                   S_editorRegionList  **regions
+                                                   EditorRegionList  **regions
                                                    ) {
     EditorMarkerList *rli, *ri, *ro, *rr;
     EditorMarker *pp;
@@ -2372,7 +2372,7 @@ static int refactoryIsTheImportUsed(EditorMarker *point, int line, int coll) {
     return(res);
 }
 
-static int refactoryPushFileUnimportedFqts(EditorMarker *point, S_editorRegionList **regions) {
+static int refactoryPushFileUnimportedFqts(EditorMarker *point, EditorRegionList **regions) {
     char                pushOpt[TMP_STRING_SIZE];
     int                 lastImportLine;
     sprintf(pushOpt, "-olcxpushspecialname=%s", LINK_NAME_UNIMPORTED_QUALIFIED_ITEM);
@@ -2383,7 +2383,7 @@ static int refactoryPushFileUnimportedFqts(EditorMarker *point, S_editorRegionLi
     return(lastImportLine);
 }
 
-static int refactoryImportNeeded(EditorMarker *point, S_editorRegionList **regions, int vApplCl) {
+static int refactoryImportNeeded(EditorMarker *point, EditorRegionList **regions, int vApplCl) {
     S_olSymbolsMenu     *mm;
     int                 res;
 
@@ -2401,7 +2401,7 @@ static int refactoryImportNeeded(EditorMarker *point, S_editorRegionList **regio
     return(res);
 }
 
-static int refactoryAddImport(EditorMarker *point, S_editorRegionList **regions,
+static int refactoryAddImport(EditorMarker *point, EditorRegionList **regions,
                               char *iname, int line, int vApplCl, int interactive) {
     char                istat[MAX_CX_SYMBOL_SIZE];
     char                icoll;
@@ -2409,7 +2409,7 @@ static int refactoryAddImport(EditorMarker *point, S_editorRegionList **regions,
     EditorMarker      *mm;
     int                 res;
     S_editorUndo        *undoBase;
-    S_editorRegionList  *wholeBuffer;
+    EditorRegionList  *wholeBuffer;
 
     undoBase = s_editorUndo;
     sprintf(istat, "import %s;\n", iname);
@@ -2510,11 +2510,11 @@ static S_disabledList *newDisabledList(S_olSymbolsMenu *mm, int cfile, S_disable
 
 
 static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
-                                                                 EditorMarker *point, S_editorRegionList **regions, int interactive
+                                                                 EditorMarker *point, EditorRegionList **regions, int interactive
                                                                  ) {
     S_olSymbolsMenu *mm;
     EditorMarkerList *ppp;
-    S_editorRegionList *rl;
+    EditorRegionList *rl;
     EditorBuffer *b;
     int action, keepAdding, lastImportLine;
     int defaultAction, cfile;
@@ -2525,9 +2525,9 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
 
     // just verify that all references are from single file
     if (regions!=NULL && *regions!=NULL) {
-        b = (*regions)->r.begin->buffer;
+        b = (*regions)->region.begin->buffer;
         for(rl= *regions; rl!=NULL; rl=rl->next) {
-            if (rl->r.begin->buffer != b || rl->r.end->buffer != b) {
+            if (rl->region.begin->buffer != b || rl->region.end->buffer != b) {
                 assert(0 && "[refactoryPerformAddImportsInSingleFile] region list contains multiple buffers!");
                 break;
             }
@@ -2590,20 +2590,20 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
     }
 }
 
-static void refactoryPerformReduceNamesAndAddImports(S_editorRegionList **regions, int interactive) {
+static void refactoryPerformReduceNamesAndAddImports(EditorRegionList **regions, int interactive) {
     EditorBuffer *cb;
-    S_editorRegionList **cr, **cl, *ncr;
+    EditorRegionList **cr, **cl, *ncr;
 
-    LIST_MERGE_SORT(S_editorRegionList, *regions, editorRegionListLess);
+    LIST_MERGE_SORT(EditorRegionList, *regions, editorRegionListLess);
     cr = regions;
     // split regions per files and add imports
     while (*cr!=NULL) {
         cl = cr;
-        cb = (*cr)->r.begin->buffer;
-        while (*cr!=NULL && (*cr)->r.begin->buffer == cb) cr = &(*cr)->next;
+        cb = (*cr)->region.begin->buffer;
+        while (*cr!=NULL && (*cr)->region.begin->buffer == cb) cr = &(*cr)->next;
         ncr = *cr;
         *cr = NULL;
-        refactoryPerformReduceNamesAndAddImportsInSingleFile((*cl)->r.begin, cl, interactive);
+        refactoryPerformReduceNamesAndAddImportsInSingleFile((*cl)->region.begin, cl, interactive);
         // following line this was big bug, regions may be sortes, some may even be
         // even removed due to overlaps
         //& *cr = ncr;
@@ -2617,7 +2617,7 @@ static void refactoryPerformReduceNamesAndAddImports(S_editorRegionList **region
 
 // this is reduction of all names within file
 static void refactoryReduceLongNamesInTheFile(EditorBuffer *buf, EditorMarker *point) {
-    S_editorRegionList *wholeBuffer;
+    EditorRegionList *wholeBuffer;
     wholeBuffer = editorWholeBufferRegion(buf);
     // don't be interactive, I am too lazy to write jEdit interface
     // for <add-import-dialog>
@@ -2630,7 +2630,7 @@ static void refactoryReduceLongNamesInTheFile(EditorBuffer *buf, EditorMarker *p
 // this is reduction of a single fqt, problem is with detection of applicable context
 static void refactoryAddToImports(EditorBuffer *buf, EditorMarker *point) {
     EditorMarker          *begin, *end;
-    S_editorRegionList      *regionList;
+    EditorRegionList      *regionList;
 
     begin = editorDuplicateMarker(point);
     end = editorDuplicateMarker(point);
@@ -2771,7 +2771,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     S_olSymbolsMenu *mm1, *mm2;
     EditorMarker *pp, *ppp, *movedEnd;
     EditorMarkerList *occs, *ll;
-    S_editorRegionList *regions;
+    EditorRegionList *regions;
     SymbolReferenceItem *theMethod;
     int progressi, progressn;
 
@@ -2946,7 +2946,7 @@ static void refactoryMoveField(EditorMarker *point) {
     EditorMarker *target, *mstart, *mend, *movedEnd;
     EditorMarkerList *occs, *ll;
     EditorMarker *pp, *ppp;
-    S_editorRegionList *regions;
+    EditorRegionList *regions;
     S_editorUndo *undoStartPoint, *redoTrack;
     int progressi, progressn;
 
@@ -3240,7 +3240,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     EditorMarker *pp, *ppp, *nparamdefpos;
     EditorMarkerList *ll, *occs, *allrefs;
     EditorMarkerList *npoccs, *npadded, *diff1, *diff2;
-    S_editorRegionList *regions, **reglast, *lll;
+    EditorRegionList *regions, **reglast, *lll;
     S_olSymbolsMenu *csym, *mm;
     S_editorUndo *undoStartPoint;
     UsageBits defusage;
@@ -3757,7 +3757,7 @@ static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *
 }
 
 static void refactoryAddMethodToForbiddenRegions(Reference *methodRef,
-                                                 S_editorRegionList **forbiddenRegions
+                                                 EditorRegionList **forbiddenRegions
                                                  ) {
     EditorMarker *mm, *mb, *me;
 
@@ -3770,7 +3770,7 @@ static void refactoryAddMethodToForbiddenRegions(Reference *methodRef,
 }
 
 static void refactoryPerformEncapsulateField(EditorMarker *point,
-                                             S_editorRegionList **forbiddenRegions
+                                             EditorRegionList **forbiddenRegions
                                              ) {
     char nameOnPoint[TMP_STRING_SIZE];
     char upcasedName[TMP_STRING_SIZE];
@@ -3945,14 +3945,14 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
 }
 
 static void refactorySelfEncapsulateField(EditorMarker *point) {
-    S_editorRegionList  *forbiddenRegions;
+    EditorRegionList  *forbiddenRegions;
     forbiddenRegions = NULL;
     refactoryUpdateReferences(refactoringOptions.project);
     refactoryPerformEncapsulateField(point, &forbiddenRegions);
 }
 
 static void refactoryEncapsulateField(EditorMarker *point) {
-    S_editorRegionList  *forbiddenRegions;
+    EditorRegionList  *forbiddenRegions;
     EditorMarker      *cb, *ce;
 
     refactoryUpdateReferences(refactoringOptions.project);
@@ -4005,7 +4005,7 @@ static int refactoryIsMethodPartRedundantWrtPullUpPushDown(
     S_olSymbolsMenu *mm1, *mm2;
     EditorMarkerList *rr1;
     int res;
-    S_editorRegionList *regions;
+    EditorRegionList *regions;
     EditorBuffer *buf;
 
     assert(m1->buffer == m2->buffer);
@@ -4203,7 +4203,7 @@ static int refactoryIsThereACastOfThis(EditorMarker *mm) {
 }
 
 static void refactoryReduceRedundantCastedThissInMethod(
-                                                        EditorMarker *point, S_editorRegionList **methodreg
+                                                        EditorMarker *point, EditorRegionList **methodreg
                                                         ) {
     EditorMarkerList *ll;
     S_olSymbolsMenu *mm;
@@ -4233,7 +4233,7 @@ static void refactoryReduceRedundantCastedThissInMethod(
 
 static void refactoryExpandThissToCastedThisInTheMethod(EditorMarker *point,
                                                         char *thiscFqtName, char *supercFqtName,
-                                                        S_editorRegionList *methodreg
+                                                        EditorRegionList *methodreg
                                                         ) {
     char                thisCast[MAX_FILE_NAME_SIZE];
     char                superCast[MAX_FILE_NAME_SIZE];
@@ -4272,7 +4272,7 @@ static void refactoryPushDownPullUp(EditorMarker *point, PushPullDirection direc
     char superFqtName[MAX_FILE_NAME_SIZE];
     char targetFqtName[MAX_FILE_NAME_SIZE];
     EditorMarker *target, *movedStart, *mend, *movedEnd, *startMarker, *endMarker;
-    S_editorRegionList *methodreg;
+    EditorRegionList *methodreg;
     S_olSymbolsMenu *mm1, *mm2;
     SymbolReferenceItem *theMethod;
     int size;

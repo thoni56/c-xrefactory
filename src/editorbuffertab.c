@@ -11,4 +11,4 @@
 #include "hashlist.tc"
 
 EditorBufferList *s_staticEditorBufferTabTab[EDITOR_BUFF_TAB_SIZE];
-EditorBufferTab s_editorBufferTab;
+EditorBufferTab editorBufferTable;

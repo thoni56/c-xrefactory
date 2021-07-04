@@ -321,12 +321,12 @@ EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarke
     return editorMarker;
 }
 
-S_editorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, S_editorRegionList *next) {
-    S_editorRegionList *regionList;
+EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
+    EditorRegionList *regionList;
 
-    ED_ALLOC(regionList, S_editorRegionList);
-    regionList->r.begin = begin;
-    regionList->r.end = end;
+    ED_ALLOC(regionList, EditorRegionList);
+    regionList->region.begin = begin;
+    regionList->region.end = end;
     regionList->next = next;
 
     return regionList;
@@ -336,8 +336,8 @@ S_editorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, 
 //////////////////////////////////////////////////////////////////////////////
 
 void editorInit(void) {
-    s_editorBufferTab.tab = s_staticEditorBufferTabTab;
-    editorBufferTabNoAllocInit(&s_editorBufferTab, EDITOR_BUFF_TAB_SIZE);
+    editorBufferTable.tab = s_staticEditorBufferTabTab;
+    editorBufferTabNoAllocInit(&editorBufferTable, EDITOR_BUFF_TAB_SIZE);
 }
 
 int statb(char *path, struct stat *statbuf) {
@@ -384,12 +384,12 @@ bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2) {
     return(editorMarkerLess(l1->marker, l2->marker));
 }
 
-bool editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2) {
-    if (editorMarkerLess(l1->r.begin, l2->r.begin)) return true;
-    if (editorMarkerLess(l2->r.begin, l1->r.begin)) return false;
+bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2) {
+    if (editorMarkerLess(l1->region.begin, l2->region.begin)) return true;
+    if (editorMarkerLess(l2->region.begin, l1->region.begin)) return false;
     // region beginnings are equal, check end
-    if (editorMarkerLess(l1->r.end, l2->r.end)) return true;
-    if (editorMarkerLess(l2->r.end, l1->r.end)) return false;
+    if (editorMarkerLess(l1->region.end, l2->region.end)) return true;
+    if (editorMarkerLess(l2->region.end, l1->region.end)) return false;
     return false;
 }
 
@@ -570,7 +570,7 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
     log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
 
-    editorBufferTabAdd(&s_editorBufferTab, bufferList, &not_used);
+    editorBufferTabAdd(&editorBufferTable, bufferList, &not_used);
 
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
@@ -590,7 +590,7 @@ EditorBuffer *editorGetOpenedBuffer(char *name) {
 
     fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
     editorBufferList = (EditorBufferList){.buffer = &editorBuffer, .next = NULL};
-    if (editorBufferTabIsMember(&s_editorBufferTab, &editorBufferList, NULL, &element)) {
+    if (editorBufferTabIsMember(&editorBufferTable, &editorBufferList, NULL, &element)) {
         return element->buffer;
     }
     return NULL;
@@ -660,7 +660,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warningMessage(ERR_INTERNAL, tmpBuff);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    mem = editorBufferTabIsMember(&s_editorBufferTab, &ddl, NULL, &memb);
+    mem = editorBufferTabIsMember(&editorBufferTable, &ddl, NULL, &memb);
     if (! mem) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
@@ -668,7 +668,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
         return;
     }
     assert(memb->buffer == buff);
-    deleted = editorBufferTabDeleteExact(&s_editorBufferTab, memb);
+    deleted = editorBufferTabDeleteExact(&editorBufferTable, memb);
     assert(deleted);
     oldName = buff->name;
     ED_ALLOCC(buff->name, strlen(newName)+1, char);
@@ -679,11 +679,11 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     buff->ftnum = fileIndex;
 
     *memb = (EditorBufferList){.buffer = buff, .next = NULL};
-    if (editorBufferTabIsMember(&s_editorBufferTab, memb, NULL, &memb2)) {
-        editorBufferTabDeleteExact(&s_editorBufferTab, memb2);
+    if (editorBufferTabIsMember(&editorBufferTable, memb, NULL, &memb2)) {
+        editorBufferTabDeleteExact(&editorBufferTable, memb2);
         editorFreeBuffer(memb2);
     }
-    editorBufferTabAdd(&s_editorBufferTab, memb, &not_used);
+    editorBufferTabAdd(&editorBufferTable, memb, &not_used);
 
     // note undo operation
     if (undo!=NULL) {
@@ -890,8 +890,8 @@ void editorDumpBuffers(void) {
     int                     i;
     EditorBufferList      *ll;
     fprintf(dumpOut,"[editorDumpBuffers] start\n");
-    for(i=0; i<s_editorBufferTab.size; i++) {
-        for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
+    for(i=0; i<editorBufferTable.size; i++) {
+        for(ll=editorBufferTable.tab[i]; ll!=NULL; ll=ll->next) {
             fprintf(dumpOut,"%d : %s==%s, %d\n", i, ll->buffer->name, ll->buffer->fileName,
                     ll->buffer->bits.textLoaded);
         }
@@ -912,8 +912,8 @@ void editorQuasiSaveModifiedBuffers(void) {
     time_t                  timeNull;
     EditorBufferList      *ll;
     saving = 0;
-    for(i=0; i<s_editorBufferTab.size; i++) {
-        for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
+    for(i=0; i<editorBufferTable.size; i++) {
+        for(ll=editorBufferTable.tab[i]; ll!=NULL; ll=ll->next) {
             if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
                 saving = 1;
                 goto cont;
@@ -932,8 +932,8 @@ void editorQuasiSaveModifiedBuffers(void) {
             //&         ppcGenRecord(PPC_INFORMATION,"slept");
         }
     }
-    for(i=0; i<s_editorBufferTab.size; i++) {
-        for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
+    for(i=0; i<editorBufferTable.size; i++) {
+        for(ll=editorBufferTable.tab[i]; ll!=NULL; ll=ll->next) {
             if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
                 editorQuasiSaveBuffer(ll->buffer);
             }
@@ -947,8 +947,8 @@ void editorLoadAllOpenedBufferFiles(void) {
     EditorBufferList *ll;
     struct stat st;
 
-    for(i=0; i<s_editorBufferTab.size; i++) {
-        for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
+    for(i=0; i<editorBufferTable.size; i++) {
+        for(ll=editorBufferTable.tab[i]; ll!=NULL; ll=ll->next) {
             if (!ll->buffer->bits.textLoaded) {
                 if (stat(ll->buffer->fileName, &st)==0) {
                     size = st.st_size;
@@ -1168,22 +1168,22 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
     return(res);
 }
 
-void editorFreeRegionListNotMarkers(S_editorRegionList *occs) {
-    S_editorRegionList  *o, *next;
+void editorFreeRegionListNotMarkers(EditorRegionList *occs) {
+    EditorRegionList  *o, *next;
     for(o=occs; o!=NULL; ) {
         next = o->next;
-        ED_FREE(o, sizeof(S_editorRegionList));
+        ED_FREE(o, sizeof(EditorRegionList));
         o = next;
     }
 }
 
-void editorFreeMarkersAndRegionList(S_editorRegionList *occs) {
-    S_editorRegionList  *o, *next;
+void editorFreeMarkersAndRegionList(EditorRegionList *occs) {
+    EditorRegionList  *o, *next;
     for(o=occs; o!=NULL; ) {
         next = o->next;
-        editorFreeMarker(o->r.begin);
-        editorFreeMarker(o->r.end);
-        ED_FREE(o, sizeof(S_editorRegionList));
+        editorFreeMarker(o->region.begin);
+        editorFreeMarker(o->region.end);
+        ED_FREE(o, sizeof(EditorRegionList));
         o = next;
     }
 }
@@ -1228,22 +1228,22 @@ void editorDumpMarkerList(EditorMarkerList *mml) {
     sprintf(tmpBuff, "------------------[[dumpend]]\n");ppcGenTmpBuff();
 }
 
-void editorDumpRegionList(S_editorRegionList *mml) {
-    S_editorRegionList *mm;
+void editorDumpRegionList(EditorRegionList *mml) {
+    EditorRegionList *mm;
     char tmpBuff[TMP_BUFF_SIZE];
 
     sprintf(tmpBuff,"-------------------[[dumping editor regions]]\n");
     fprintf(dumpOut,"%s\n",tmpBuff);
     //ppcGenTmpBuff();
     for(mm=mml; mm!=NULL; mm=mm->next) {
-        if (mm->r.begin == NULL || mm->r.end == NULL) {
+        if (mm->region.begin == NULL || mm->region.end == NULL) {
             sprintf(tmpBuff,"%ld: [null]", (unsigned long)mm);
             fprintf(dumpOut,"%s\n",tmpBuff);
             //ppcGenTmpBuff();
         } else {
             sprintf(tmpBuff, "%ld: [%s: %d - %d] --> %c - %c", (unsigned long)mm,
-                    simpleFileName(mm->r.begin->buffer->name), mm->r.begin->offset,
-                    mm->r.end->offset, CHAR_ON_MARKER(mm->r.begin), CHAR_ON_MARKER(mm->r.end));
+                    simpleFileName(mm->region.begin->buffer->name), mm->region.begin->offset,
+                    mm->region.end->offset, CHAR_ON_MARKER(mm->region.begin), CHAR_ON_MARKER(mm->region.end));
             fprintf(dumpOut,"%s\n",tmpBuff);
             //ppcGenTmpBuff();
         }
@@ -1325,33 +1325,33 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
     }
 }
 
-void editorSortRegionsAndRemoveOverlaps(S_editorRegionList **regions) {
-    S_editorRegionList  *rr, *rrr;
+void editorSortRegionsAndRemoveOverlaps(EditorRegionList **regions) {
+    EditorRegionList  *rr, *rrr;
     EditorMarker      *newend;
-    LIST_MERGE_SORT(S_editorRegionList, *regions, editorRegionListLess);
+    LIST_MERGE_SORT(EditorRegionList, *regions, editorRegionListLess);
     for(rr= *regions; rr!=NULL; rr=rr->next) {
     contin:
         rrr = rr->next;
-        if (rrr!=NULL && rr->r.begin->buffer==rrr->r.begin->buffer) {
-            assert(rr->r.begin->buffer == rr->r.end->buffer);  // region consistency check
-            assert(rrr->r.begin->buffer == rrr->r.end->buffer);  // region consistency check
-            assert(rr->r.begin->offset <= rrr->r.begin->offset);
+        if (rrr!=NULL && rr->region.begin->buffer==rrr->region.begin->buffer) {
+            assert(rr->region.begin->buffer == rr->region.end->buffer);  // region consistency check
+            assert(rrr->region.begin->buffer == rrr->region.end->buffer);  // region consistency check
+            assert(rr->region.begin->offset <= rrr->region.begin->offset);
             newend = NULL;
-            if (rrr->r.end->offset <= rr->r.end->offset) {
+            if (rrr->region.end->offset <= rr->region.end->offset) {
                 // second inside first
-                newend = rr->r.end;
-                editorFreeMarker(rrr->r.begin);
-                editorFreeMarker(rrr->r.end);
-            } else if (rrr->r.begin->offset <= rr->r.end->offset) {
+                newend = rr->region.end;
+                editorFreeMarker(rrr->region.begin);
+                editorFreeMarker(rrr->region.end);
+            } else if (rrr->region.begin->offset <= rr->region.end->offset) {
                 // they have common part
-                newend = rrr->r.end;
-                editorFreeMarker(rrr->r.begin);
-                editorFreeMarker(rr->r.end);
+                newend = rrr->region.end;
+                editorFreeMarker(rrr->region.begin);
+                editorFreeMarker(rr->region.end);
             }
             if (newend!=NULL) {
-                rr->r.end = newend;
+                rr->region.end = newend;
                 rr->next = rrr->next;
-                ED_FREE(rrr, sizeof(S_editorRegionList));
+                ED_FREE(rrr, sizeof(EditorRegionList));
                 rrr = NULL;
                 goto contin;
             }
@@ -1361,12 +1361,12 @@ void editorSortRegionsAndRemoveOverlaps(S_editorRegionList **regions) {
 
 void editorSplitMarkersWithRespectToRegions(
                                             EditorMarkerList  **inMarkers,
-                                            S_editorRegionList  **inRegions,
+                                            EditorRegionList  **inRegions,
                                             EditorMarkerList  **outInsiders,
                                             EditorMarkerList  **outOutsiders
                                             ) {
     EditorMarkerList *mm, *nn;
-    S_editorRegionList *rr;
+    EditorRegionList *rr;
 
     *outInsiders = NULL;
     *outOutsiders = NULL;
@@ -1374,7 +1374,7 @@ void editorSplitMarkersWithRespectToRegions(
     LIST_MERGE_SORT(EditorMarkerList, *inMarkers, editorMarkerListLess);
     editorSortRegionsAndRemoveOverlaps(inRegions);
 
-    LIST_REVERSE(S_editorRegionList, *inRegions);
+    LIST_REVERSE(EditorRegionList, *inRegions);
     LIST_REVERSE(EditorMarkerList, *inMarkers);
 
     //&editorDumpRegionList(*inRegions);
@@ -1384,8 +1384,8 @@ void editorSplitMarkersWithRespectToRegions(
     mm= *inMarkers;
     while (mm!=NULL) {
         nn = mm->next;
-        while (rr!=NULL && editorMarkerGreater(rr->r.begin, mm->marker)) rr = rr->next;
-        if (rr!=NULL && editorMarkerGreater(rr->r.end, mm->marker)) {
+        while (rr!=NULL && editorMarkerGreater(rr->region.begin, mm->marker)) rr = rr->next;
+        if (rr!=NULL && editorMarkerGreater(rr->region.end, mm->marker)) {
             // is inside
             mm->next = *outInsiders;
             *outInsiders = mm;
@@ -1398,14 +1398,14 @@ void editorSplitMarkersWithRespectToRegions(
     }
 
     *inMarkers = NULL;
-    LIST_REVERSE(S_editorRegionList, *inRegions);
+    LIST_REVERSE(EditorRegionList, *inRegions);
     LIST_REVERSE(EditorMarkerList, *outInsiders);
     LIST_REVERSE(EditorMarkerList, *outOutsiders);
     //&editorDumpMarkerList(*outInsiders);
     //&editorDumpMarkerList(*outOutsiders);
 }
 
-void editorRestrictMarkersToRegions(EditorMarkerList **mm, S_editorRegionList **regions) {
+void editorRestrictMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions) {
     EditorMarkerList *ins, *outs;
     editorSplitMarkersWithRespectToRegions(mm, regions, &ins, &outs);
     *mm = ins;
@@ -1420,41 +1420,42 @@ EditorMarker *editorCrMarkerForBufferEnd(EditorBuffer *buffer) {
     return(editorCrNewMarker(buffer,buffer->allocation.bufferSize));
 }
 
-S_editorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {
+EditorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {
     EditorMarker *bufferBegin, *bufferEnd;
-    S_editorRegion theBufferRegion;
-    S_editorRegionList *theBufferRegionList;
+    EditorRegion theBufferRegion;
+    EditorRegionList *theBufferRegionList;
 
     bufferBegin = editorCrMarkerForBufferBegin(buffer);
     bufferEnd = editorCrMarkerForBufferEnd(buffer);
-    theBufferRegion = (S_editorRegion){.begin = bufferBegin, .end = bufferEnd};
-    ED_ALLOC(theBufferRegionList, S_editorRegionList);
-    *theBufferRegionList = (S_editorRegionList){.r = theBufferRegion, .next = NULL};
+    theBufferRegion = (EditorRegion){.begin = bufferBegin, .end = bufferEnd};
+    ED_ALLOC(theBufferRegionList, EditorRegionList);
+    *theBufferRegionList = (EditorRegionList){.region = theBufferRegion, .next = NULL};
 
     return theBufferRegionList;
 }
 
 static EditorBufferList *editorComputeAllBuffersList(void) {
-    int                 i;
-    EditorBufferList  *ll, *rr, *res;
+    EditorBufferList  *l, *rr, *res;
+
     res = NULL;
-    for(i=0; i<s_editorBufferTab.size; i++) {
-        for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
+    for (int i=0; i<editorBufferTable.size; i++) {
+        for (l=editorBufferTable.tab[i]; l!=NULL; l=l->next) {
             ED_ALLOC(rr, EditorBufferList);
-            *rr = (EditorBufferList){.buffer = ll->buffer, .next = res};
+            *rr = (EditorBufferList){.buffer = l->buffer, .next = res};
             res = rr;
         }
     }
-    return(res);
+    return res;
 }
 
 static void editorFreeBufferListButNotBuffers(EditorBufferList *list) {
-    EditorBufferList *ll, *nn;
-    ll=list;
-    while (ll!=NULL) {
-        nn = ll->next;
-        ED_FREE(ll, sizeof(EditorBufferList));
-        ll = nn;
+    EditorBufferList *l, *n;
+
+    l=list;
+    while (l!=NULL) {
+        n = l->next;
+        ED_FREE(l, sizeof(EditorBufferList));
+        l = n;
     }
 }
 
@@ -1539,7 +1540,7 @@ int editorMapOnNonexistantFiles(
 static void editorCloseBuffer(EditorBufferList *memb, int index) {
     EditorBufferList **ll;
     //&sprintf(tmpBuff,"closing buffer %s %s\n", memb->buffer->name, memb->buffer->fileName);ppcGenRecord(PPC_IGNORE, tmpBuff);
-    for (ll = &s_editorBufferTab.tab[index]; (*ll)!=NULL; ll = &(*ll)->next) {
+    for (ll = &editorBufferTable.tab[index]; (*ll)!=NULL; ll = &(*ll)->next) {
         if (*ll == memb) break;
     }
     if (*ll == memb) {
@@ -1565,7 +1566,7 @@ void editorCloseBufferIfClosable(char *name) {
 
     fillEmptyEditorBuffer(&dd, name, 0, name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    if (editorBufferTabIsMember(&s_editorBufferTab, &ddl, &index, &memb)) {
+    if (editorBufferTabIsMember(&editorBufferTable, &ddl, &index, &memb)) {
         if (BUFFER_IS_CLOSABLE(memb->buffer)) {
             editorCloseBuffer(memb, index);
         }
@@ -1573,15 +1574,14 @@ void editorCloseBufferIfClosable(char *name) {
 }
 
 void editorCloseAllBuffersIfClosable(void) {
-    int                     i;
-    EditorBufferList      *ll,*nn;
+    EditorBufferList *list, *next;
 
-    for(i=0; i<s_editorBufferTab.size; i++) {
-        for(ll=s_editorBufferTab.tab[i]; ll!=NULL;) {
-            nn = ll->next;
-            //& fprintf(dumpOut, "closable %d for %s(%d) %s(%d)\n", BUFFER_IS_CLOSABLE(ll->buffer), ll->buffer->name, ll->buffer->name, ll->buffer->fileName, ll->buffer->fileName);fflush(dumpOut);
-            if (BUFFER_IS_CLOSABLE(ll->buffer)) editorCloseBuffer(ll, i);
-            ll = nn;
+    for(int i=0; i<editorBufferTable.size; i++) {
+        for(list=editorBufferTable.tab[i]; list!=NULL;) {
+            next = list->next;
+            //& fprintf(dumpOut, "closable %d for %s(%d) %s(%d)\n", BUFFER_IS_CLOSABLE(list->buffer), list->buffer->name, list->buffer->name, list->buffer->fileName, list->buffer->fileName);fflush(dumpOut);
+            if (BUFFER_IS_CLOSABLE(list->buffer)) editorCloseBuffer(list, i);
+            list = next;
         }
     }
 }
@@ -1590,12 +1590,12 @@ void editorCloseAllBuffers(void) {
     int i;
     EditorBufferList *ll,*nn;
 
-    for(i=0; i<s_editorBufferTab.size; i++) {
-        for(ll=s_editorBufferTab.tab[i]; ll!=NULL;) {
+    for(i=0; i<editorBufferTable.size; i++) {
+        for(ll=editorBufferTable.tab[i]; ll!=NULL;) {
             nn = ll->next;
             editorFreeBuffer(ll);
             ll = nn;
         }
-        s_editorBufferTab.tab[i] = NULL;
+        editorBufferTable.tab[i] = NULL;
     }
 }

@@ -30,7 +30,7 @@ bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2) {
   return (int) mock(l1, l2);
 }
 
-bool editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2) {
+bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2) {
   return (int) mock(l1, l2);
 }
 
@@ -94,7 +94,7 @@ void editorDumpMarkerList(EditorMarkerList *mml) {
   mock(mml);
 }
 
-void editorDumpRegionList(S_editorRegionList *mml) {
+void editorDumpRegionList(EditorRegionList *mml) {
   mock(mml);
 }
 
@@ -162,23 +162,23 @@ void editorFreeMarkerListNotMarkers(EditorMarkerList *occs) {
   mock(occs);
 }
 
-void editorFreeMarkersAndRegionList(S_editorRegionList *occs) {
+void editorFreeMarkersAndRegionList(EditorRegionList *occs) {
   mock(occs);
 }
 
-void editorFreeRegionListNotMarkers(S_editorRegionList *occs) {
+void editorFreeRegionListNotMarkers(EditorRegionList *occs) {
   mock(occs);
 }
 
-void editorSortRegionsAndRemoveOverlaps(S_editorRegionList **regions) {
+void editorSortRegionsAndRemoveOverlaps(EditorRegionList **regions) {
   mock(regions);
 }
 
-void editorSplitMarkersWithRespectToRegions(EditorMarkerList **inMarkers, S_editorRegionList **inRegions, EditorMarkerList **outInsiders, EditorMarkerList **outOutsiders) {
+void editorSplitMarkersWithRespectToRegions(EditorMarkerList **inMarkers, EditorRegionList **inRegions, EditorMarkerList **outInsiders, EditorMarkerList **outOutsiders) {
   mock(inMarkers, inRegions, outInsiders, outOutsiders);
 }
 
-void editorRestrictMarkersToRegions(EditorMarkerList **mm, S_editorRegionList **regions) {
+void editorRestrictMarkersToRegions(EditorMarkerList **mm, EditorRegionList **regions) {
   mock(mm, regions);
 }
 
@@ -190,8 +190,8 @@ EditorMarker *editorCrMarkerForBufferEnd(EditorBuffer *buffer) {
   return (EditorMarker *) mock(buffer);
 }
 
-S_editorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {
-  return (S_editorRegionList *) mock(buffer);
+EditorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {
+  return (EditorRegionList *) mock(buffer);
 }
 
 void editorFreeMarkersAndMarkerList(EditorMarkerList *occs) {
