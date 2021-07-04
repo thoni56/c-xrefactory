@@ -2,8 +2,7 @@
 #include <cgreen/mocks.h>
 #include "editorbuffertab.h"
 
-EditorBufferList *s_staticEditorBufferTabTab[EDITOR_BUFF_TAB_SIZE];
-EditorBufferTab editorBufferTable;
+EditorBufferTab editorBufferTables;
 
 void editorBufferTabInit(struct editorBufferTab *table, int size) {
   mock(table, size);
