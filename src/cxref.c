@@ -4390,7 +4390,7 @@ int javaIsSuperClass(int superclas, int clas) {
     return(0);
 }
 
-static tpCheckPrintPushingDownMethodType(void) {
+static bool tpCheckPrintPushingDownMethodType(void) {
     fprintf(communicationChannel, "*** push_down_method trivial precheck passed.");
     return true;
 #if ZERO

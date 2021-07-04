@@ -34,8 +34,8 @@ typedef struct tpCheckMoveClassData {
 
 extern void refactoryAskForReallyContinueConfirmation(void);
 extern void refactoryDisplayResolutionDialog(char *message,int messageType, int continuation);
-extern void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until, S_editorUndo **undoundo, int gen);
-extern void editorUndoUntil(S_editorUndo *until, S_editorUndo **undoUndo);
+extern void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **undoundo, int gen);
+extern void editorUndoUntil(EditorUndo *until, EditorUndo **undoUndo);
 extern void mainRefactory(int argc, char **argv);
 extern bool tpCheckSourceIsNotInnerClass(void);
 extern bool tpCheckMoveClassAccessibilities(void);

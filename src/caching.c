@@ -28,7 +28,7 @@ bool checkFileModifiedTime(int fileIndex) {
         /* Assuming that files cannot change during one execution */
         return true;
     }
-    if (statb(fileTable.tab[fileIndex]->name, &fst)) {
+    if (editorFileStatus(fileTable.tab[fileIndex]->name, &fst)) {
         return true;
     }
     fileTable.tab[fileIndex]->lastInspected = t0;

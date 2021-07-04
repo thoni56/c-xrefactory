@@ -16,7 +16,7 @@ typedef struct editorMemoryBlock {
     struct editorMemoryBlock *next;
 } S_editorMemoryBlock;
 
-S_editorUndo *s_editorUndo = NULL;
+EditorUndo *s_editorUndo = NULL;
 
 #define MIN_EDITOR_MEMORY_BLOCK 11
 #define MAX_EDITOR_MEMORY_BLOCK 32
@@ -340,8 +340,8 @@ void editorInit(void) {
     editorBufferTabNoAllocInit(&editorBufferTable, EDITOR_BUFF_TAB_SIZE);
 }
 
-int statb(char *path, struct stat *statbuf) {
-    EditorBuffer      *buffer;
+int editorFileStatus(char *path, struct stat *statbuf) {
+    EditorBuffer *buffer;
 
     buffer = editorGetOpenedBuffer(path);
     if (buffer != NULL) {
@@ -531,7 +531,7 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
     } else {
         s_editorMemory[allocIndex] = s_editorMemory[allocIndex]->next;
     }
-    ff->allocation = (S_editorBufferAllocationData){.bufferSize = size, .text = space+EDITOR_FREE_PREFIX_SIZE,
+    ff->allocation = (EditorBufferAllocationData){.bufferSize = size, .text = space+EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedFreePrefixSize = EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedBlock = space, .allocatedIndex = allocIndex,
                                            .allocatedSize = allocSize};
@@ -539,8 +539,8 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
 
 static void fillEmptyEditorBuffer(EditorBuffer *ff, char *aname, int ftnum,
                                   char*afname) {
-    ff->bits = (S_editorBufferBits){.textLoaded = 0, .modified = 0, .modifiedSinceLastQuasiSave = 0};
-    ff->allocation = (S_editorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
+    ff->bits = (EditorBufferBits){.textLoaded = 0, .modified = 0, .modifiedSinceLastQuasiSave = 0};
+    ff->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                            .allocatedBlock = NULL, .allocatedIndex = 0, .allocatedSize = 0};
     *ff = (EditorBuffer){.name = aname, .ftnum = ftnum, .fileName = afname, .stat = s_noStat, .markers = NULL,
                            .allocation = ff->allocation, .bits = ff->bits};
@@ -603,11 +603,11 @@ EditorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
     return(NULL);
 }
 
-static S_editorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
+static EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
                                           unsigned length, char *str, struct editorUndo *next) {
-    S_editorUndo *undo;
+    EditorUndo *undo;
 
-    ED_ALLOC(undo, S_editorUndo);
+    ED_ALLOC(undo, EditorUndo);
     undo->buffer = buffer;
     undo->operation = UNDO_REPLACE_STRING;
     undo->u.replace.offset = offset;
@@ -619,11 +619,11 @@ static S_editorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset,
     return undo;
 }
 
-static S_editorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
+static EditorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
                                          struct editorUndo *next) {
-    S_editorUndo *undo;
+    EditorUndo *undo;
 
-    ED_ALLOC(undo, S_editorUndo);
+    ED_ALLOC(undo, EditorUndo);
     undo->buffer = buffer;
     undo->operation = UNDO_RENAME_BUFFER;
     undo->u.rename.name = name;
@@ -632,12 +632,12 @@ static S_editorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
     return undo;
 }
 
-static S_editorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsigned size,
+static EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsigned size,
                                        EditorBuffer *dbuffer, unsigned doffset,
                                        struct editorUndo *next) {
-    S_editorUndo *undo;
+    EditorUndo *undo;
 
-    ED_ALLOC(undo, S_editorUndo);
+    ED_ALLOC(undo, EditorUndo);
     undo->buffer = buffer;
     undo->operation = UNDO_MOVE_BLOCK;
     undo->u.moveBlock.offset = offset;
@@ -649,7 +649,7 @@ static S_editorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, un
     return undo;
 }
 
-void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
+void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
     int fileIndex, not_used, mem, deleted;
     EditorBuffer dd, *removed;
@@ -756,11 +756,11 @@ EditorBuffer *editorFindFileCreate(char *name) {
 }
 
 void editorReplaceString(EditorBuffer *buff, int position, int delsize,
-                         char *str, int strlength, S_editorUndo **undo) {
+                         char *str, int strlength, EditorUndo **undo) {
     int nsize, oldsize, index, undosize, pattractor;
     char *text, *space, *undotext;
     EditorMarker *m;
-    S_editorUndo *uu;
+    EditorUndo *uu;
 
     assert(position >=0 && position <= buff->allocation.bufferSize);
     assert(delsize >= 0);
@@ -827,7 +827,7 @@ void editorReplaceString(EditorBuffer *buff, int position, int delsize,
 }
 
 void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size,
-                     S_editorUndo **undo) {
+                     EditorUndo **undo) {
     EditorMarker *tmp, *mm;
     EditorBuffer *sb, *db;
     int off1, off2, offd, undodoffset;
@@ -1017,7 +1017,7 @@ int editorMoveMarkerBeyondIdentifier(EditorMarker *m, int direction) {
     return(editorRunWithMarkerUntil(m, isNotIdentPart, direction));
 }
 
-void editorRemoveBlanks(EditorMarker *mm, int direction, S_editorUndo **undo) {
+void editorRemoveBlanks(EditorMarker *mm, int direction, EditorUndo **undo) {
     int moffset;
 
     moffset = mm->offset;
@@ -1253,7 +1253,7 @@ void editorDumpRegionList(EditorRegionList *mml) {
     //ppcGenTmpBuff();
 }
 
-void editorDumpUndoList(S_editorUndo *uu) {
+void editorDumpUndoList(EditorUndo *uu) {
     char tmpBuff[TMP_BUFF_SIZE];
 
     fprintf(dumpOut,"\n\n[undodump] begin\n");

@@ -1010,7 +1010,7 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
     if (dir2[0] == FILE_PATH_SEPARATOR) {
         // small optimisation, restrict search to directories
         sprintf(ttt, "%s%s", dir1, file);
-        if (statb(ttt, &st)!=0 || (st.st_mode & S_IFMT) != S_IFDIR) return;
+        if (editorFileStatus(ttt, &st)!=0 || (st.st_mode & S_IFMT) != S_IFDIR) return;
     }
     if (shellMatch(file, strlen(file), pattern, options.fileNamesCaseSensitive)) {
         sprintf(ttt, "%s%s%s", dir1, file, dir2);
@@ -1046,7 +1046,7 @@ void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *avai
                 if (fn[si]) { di++; si++; }
             }
         }
-    } else if (statb(fn, &st) == 0) {
+    } else if (editorFileStatus(fn, &st) == 0) {
         len = strlen(fn);
         strcpy(*outpaths, fn);
         //&fprintf(dumpOut,"adding expandedpath==%s\n", fn);fflush(dumpOut);
@@ -1206,7 +1206,7 @@ int mapDirectoryFiles(
     DIR             *fd;
     struct dirent   *dirbuf;
 
-    if (  statb(dirname,&stt) == 0
+    if (  editorFileStatus(dirname,&stt) == 0
           && (stt.st_mode & S_IFMT) == S_IFDIR
           && (fd = opendir(dirname)) != NULL) {
         while ((dirbuf=readdir(fd)) != NULL) {

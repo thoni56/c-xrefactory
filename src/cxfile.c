@@ -1486,7 +1486,7 @@ int smartReadFileTabFile(void) {
     } else {
         sprintf(tt, "%s%s", options.cxrefFileName, REFERENCE_FILENAME_FILES);
     }
-    if (statb(tt, &st)==0) {
+    if (editorFileStatus(tt, &st)==0) {
         if (fileModificationTime != st.st_mtime
             ||  fileSize != st.st_size
             ||  strcmp(previouslyReadFileName, tt) != 0)

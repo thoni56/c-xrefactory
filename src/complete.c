@@ -1585,7 +1585,7 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
     // do not descent too deep
     if (strlen(dir)+strlen(fname) >= MAX_FILE_NAME_SIZE-50) return;
     sprintf(fn,"%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
-    stt = statb(fn, &st);
+    stt = editorFileStatus(fn, &st);
     if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
         mapDirectoryFiles(fn, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
                           fn, path, NULL, a4, NULL);

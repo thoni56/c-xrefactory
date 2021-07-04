@@ -31,7 +31,7 @@ Ensure(Options, will_return_true_if_package_structure_exists) {
            will_return(true));
     expect(normalizeFileName, when(name, is_equal_to_string("./org/existant")), will_return("./org/existant"));
     expect(getFileSuffix, will_return(""));
-    expect(statb, will_return(0));
+    expect(editorFileStatus, will_return(0));
 
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
     FT_ALLOC(fileTable.tab[42], struct fileItem);
@@ -49,7 +49,7 @@ Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
     expect(normalizeFileName, when(name, is_equal_to_string("but/this/path/org/existant")),
            will_return("but/this/path/org/existant"));
     expect(getFileSuffix, will_return(""));
-    expect(statb);
+    expect(editorFileStatus);
 
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
     FT_ALLOC(fileTable.tab[42], struct fileItem);

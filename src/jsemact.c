@@ -236,7 +236,7 @@ static int javaFindFile0(char *classPath, char *slash, char *name,
 
     ffn = normalizeFileName(fname,cwd);
     log_trace("looking for file %s", ffn);
-    if (statb(ffn, stt) == 0) {
+    if (editorFileStatus(ffn, stt) == 0) {
         log_trace("found in buffer file %s", ffn);
         res = 1;
     }
@@ -303,21 +303,21 @@ bool javaTypeFileExist(IdList *name) {
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
         fname = javaCreateComposedName(NULL,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
         log_trace("testing existence of file '%s'", fname);
-        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
+        if (editorFileStatus(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
         //&fname = javaCreateComposedName(NULL,&tname,FILE_PATH_SEPARATOR,"class",tmpMemory,SIZE_TMP_MEM);
-        //&if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return true;
+        //&if (editorFileStatus(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return true;
     }
     JavaMapOnPaths(javaSourcePaths, {
         fname = javaCreateComposedName(currentPath,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
         log_trace("testing existence of file '%s'", fname);
-        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
+        if (editorFileStatus(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
     });
     for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         fname = javaCreateComposedName(cp->string, &tname, FILE_PATH_SEPARATOR, "class", tmpMemory, SIZE_TMP_MEM);
         // hmm. do not need to check statb for .class files
-        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
+        if (editorFileStatus(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
     }
     // databazes
@@ -329,7 +329,7 @@ bool javaTypeFileExist(IdList *name) {
     // auto-inferred source-path
     if (s_javaStat->namedPackagePath != NULL) {
         fname = javaCreateComposedName(s_javaStat->namedPackagePath,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
-        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
+        if (editorFileStatus(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
     }
     return false;

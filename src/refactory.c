@@ -54,7 +54,7 @@ typedef struct disabledList {
     struct disabledList  *next;
 } S_disabledList;
 
-static S_editorUndo *s_refactoringStartPoint;
+static EditorUndo *s_refactoringStartPoint;
 
 static int refactoryXrefEditServerSubTaskFirstPass = 1;
 
@@ -395,7 +395,7 @@ static void refactoryCheckedReplaceString(EditorMarker *pos, int len,
 
 // -------------------------- Undos
 
-static void editorFreeSingleUndo(S_editorUndo *uu) {
+static void editorFreeSingleUndo(EditorUndo *uu) {
     if (uu->u.replace.str!=NULL && uu->u.replace.strlen!=0) {
         switch (uu->operation) {
         case UNDO_REPLACE_STRING:
@@ -410,12 +410,12 @@ static void editorFreeSingleUndo(S_editorUndo *uu) {
             errorMessage(ERR_INTERNAL,"Unknown operation to undo");
         }
     }
-    ED_FREE(uu, sizeof(S_editorUndo));
+    ED_FREE(uu, sizeof(EditorUndo));
 }
 
-void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until,
-                      S_editorUndo **undoundo, int gen) {
-    S_editorUndo *uu, *next;
+void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
+                      EditorUndo **undoundo, int gen) {
+    EditorUndo *uu, *next;
     EditorMarker *m1, *m2;
     uu = undos;
     while (uu!=until && uu!=NULL) {
@@ -462,20 +462,20 @@ void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until,
     assert(uu==until);
 }
 
-void editorUndoUntil(S_editorUndo *until, S_editorUndo **undoundo) {
+void editorUndoUntil(EditorUndo *until, EditorUndo **undoundo) {
     editorApplyUndos(s_editorUndo, until, undoundo, GEN_NO_OUTPUT);
     s_editorUndo = until;
 }
 
 static void refactoryApplyWholeRefactoringFromUndo(void) {
-    S_editorUndo        *redoTrack;
+    EditorUndo        *redoTrack;
     redoTrack = NULL;
     editorUndoUntil(s_refactoringStartPoint, &redoTrack);
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 }
 
 static void refactoryFatalErrorOnPosition(EditorMarker *p, int errType, char *message) {
-    S_editorUndo *redo;
+    EditorUndo *redo;
     redo = NULL;
     editorUndoUntil(s_refactoringStartPoint, &redo);
     ppcGenGotoMarkerRecord(p);
@@ -1362,8 +1362,8 @@ static bool refactoryHandleSafetyCheckDifferenceLists(
 
 static bool refactoryMakeSafetyCheckAndUndo(
     EditorBuffer *buf, EditorMarker *point,
-    EditorMarkerList **occs, S_editorUndo *startPoint,
-    S_editorUndo **redoTrack
+    EditorMarkerList **occs, EditorUndo *startPoint,
+    EditorUndo **redoTrack
 ) {
     bool result;
     EditorMarkerList *chks;
@@ -1477,10 +1477,10 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int
 
 
 static void refactoryCheckedRenameBuffer(
-                                         EditorBuffer *buff, char *newName, S_editorUndo **undo
+                                         EditorBuffer *buff, char *newName, EditorUndo **undo
                                          ) {
     struct stat st;
-    if (statb(newName, &st)==0) {
+    if (editorFileStatus(newName, &st)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buff->name);
         ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
@@ -1489,7 +1489,7 @@ static void refactoryCheckedRenameBuffer(
 }
 
 static void refactoryMoveFileAndDirForPackageRename(
-                                                    char *currentPath, S_editorUndo *undoBase, EditorMarker *lld,
+                                                    char *currentPath, EditorUndo *undoBase, EditorMarker *lld,
                                                     char *symLinkName
                                                     ) {
     char newfile[2*MAX_FILE_NAME_SIZE];
@@ -1513,7 +1513,7 @@ static void refactoryMoveFileAndDirForPackageRename(
 
 static int refactoryRenamePackageFileMove(char *currentPath, EditorMarkerList *ll,
                                           char *symLinkName, int slnlen,
-                                          S_editorUndo *rpundo) {
+                                          EditorUndo *rpundo) {
     int                 res, plen;
     res = 0;
     plen = strlen(currentPath);
@@ -1539,7 +1539,7 @@ static void refactorySimplePackageRenaming(
     int                 snlen, slnlen, mvfile;
     EditorMarkerList  *ll;
     EditorMarker      *pp;
-    S_editorUndo        *rpundo;
+    EditorUndo        *rpundo;
     // get original and new directory, but how?
     snlen = strlen(symname);
     slnlen = strlen(symLinkName);
@@ -1806,7 +1806,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     bool check;
     Type symtype;
     EditorMarkerList *occs;
-    S_editorUndo *undoStartPoint, *redoTrack;
+    EditorUndo *undoStartPoint, *redoTrack;
     S_olSymbolsMenu *csym;
 
     if (refactoringOptions.renameTo == NULL) {
@@ -2181,7 +2181,7 @@ static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker 
     char nameOnPoint[TMP_STRING_SIZE];
     int check;
     EditorMarkerList *occs;
-    S_editorUndo *startPoint, *redoTrack;
+    EditorUndo *startPoint, *redoTrack;
 
     refactoryUpdateReferences(refactoringOptions.project);
 
@@ -2408,7 +2408,7 @@ static int refactoryAddImport(EditorMarker *point, EditorRegionList **regions,
     char                *ld1, *ld2, *ss;
     EditorMarker      *mm;
     int                 res;
-    S_editorUndo        *undoBase;
+    EditorUndo        *undoBase;
     EditorRegionList  *wholeBuffer;
 
     undoBase = s_editorUndo;
@@ -2665,7 +2665,7 @@ static void moveFirstElementOfMarkerList(EditorMarkerList **l1, EditorMarkerList
 }
 
 static void refactoryShowSafetyCheckFailingDialog(EditorMarkerList **totalDiff, char *message) {
-    S_editorUndo *redo;
+    EditorUndo *redo;
     redo = NULL;
     editorUndoUntil(s_refactoringStartPoint, &redo);
     olcxPushSpecialCheckMenuSym(OLO_SAFETY_CHECK_INIT, LINK_NAME_SAFETY_CHECK_MISSED);
@@ -2947,7 +2947,7 @@ static void refactoryMoveField(EditorMarker *point) {
     EditorMarkerList *occs, *ll;
     EditorMarker *pp, *ppp;
     EditorRegionList *regions;
-    S_editorUndo *undoStartPoint, *redoTrack;
+    EditorUndo *undoStartPoint, *redoTrack;
     int progressi, progressn;
 
     target = getTargetFromOptions();
@@ -3242,7 +3242,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     EditorMarkerList *npoccs, *npadded, *diff1, *diff2;
     EditorRegionList *regions, **reglast, *lll;
     S_olSymbolsMenu *csym, *mm;
-    S_editorUndo *undoStartPoint;
+    EditorUndo *undoStartPoint;
     UsageBits defusage;
 
     nparamdefpos = NULL;
@@ -3439,7 +3439,7 @@ static void refactoryPushMethodSymbolsPlusThoseWithClearedRegion(
                                                                  EditorMarker *m1, EditorMarker *m2
                                                                  ) {
     char                spaces[REFACTORING_TMP_STRING_SIZE];
-    S_editorUndo *undoMark;
+    EditorUndo *undoMark;
     int slen;
     assert(m1->buffer == m2->buffer);
     undoMark = s_editorUndo;
@@ -3542,7 +3542,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     int                 progressi, progressn;
     EditorMarker      *mm, *m1, *m2, *pp;
     EditorMarkerList  *ll, *occs, *poccs;
-    S_editorUndo        *checkPoint;
+    EditorUndo        *checkPoint;
 
     refactoryUpdateReferences(refactoringOptions.project);
 
@@ -3787,7 +3787,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     EditorMarkerList  *ll, *occs, *insiders, *outsiders;
     EditorMarker *dte, *dtb, *de;
     EditorMarker *getterm, *setterm, *tbeg, *tend;
-    S_editorUndo *beforeInsertionUndo;
+    EditorUndo *beforeInsertionUndo;
     EditorMarker *eqm, *ee, *db;
     UNUSED db;
 

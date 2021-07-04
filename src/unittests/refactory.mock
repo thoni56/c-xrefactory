@@ -10,11 +10,11 @@ void refactoryDisplayResolutionDialog(char *message, int messageType, int contin
   mock(message, messageType, continuation);
 }
 
-void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until, S_editorUndo **undoundo, int gen) {
+void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **undoundo, int gen) {
   mock(undos, until, undoundo, gen);
 }
 
-void editorUndoUntil(S_editorUndo *until, S_editorUndo **undoUndo) {
+void editorUndoUntil(EditorUndo *until, EditorUndo **undoUndo) {
   mock(until, undoUndo);
 }
 

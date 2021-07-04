@@ -3368,13 +3368,13 @@ case 64:
                     if (options.taskRegime == RegimeEditServer
                         && refactoringOptions.refactoringRegime!=RegimeRefactory) {
                         /* this must be before reading 's_olOriginalComFile' !!!*/
-                        if (statb(fname, &st)==0) {
+                        if (editorFileStatus(fname, &st)==0) {
                             javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
                         }
                     }
 
                     /* this must be last reading of this class before parsing*/
-                    if (statb(fileTable.tab[s_olOriginalComFileNumber]->name, &st)==0) {
+                    if (editorFileStatus(fileTable.tab[s_olOriginalComFileNumber]->name, &st)==0) {
                         javaReadSymbolsFromSourceFileNoFreeing(
                             fileTable.tab[s_olOriginalComFileNumber]->name, fname);
                     }

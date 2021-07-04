@@ -402,7 +402,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
     }
     suff = getFileSuffix(fname);
-    stt = statb(fn, &st);
+    stt = editorFileStatus(fn, &st);
     if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
         if (recurseFlag!=NULL) {
             topCallFlag = 0;

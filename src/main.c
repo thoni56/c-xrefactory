@@ -1569,7 +1569,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
     if (p == fileTable.tab[noFileIndex]) return;
     //& if (options.update==UPDATE_FAST && !p->b.commandLineEntered) return;
     //&fprintf(dumpOut, "checking %s for update\n",p->name); fflush(dumpOut);
-    if (statb(p->name, &fstat)) {
+    if (editorFileStatus(p->name, &fstat)) {
         // removed file, remove it from watched updates, load no reference
         if (p->b.commandLineEntered) {
             // no messages during refactorings
@@ -1592,7 +1592,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
         concatPaths(sss,MAX_FILE_NAME_SIZE,options.htmlRoot,p->name, ".html");
         strcat(sss, options.htmlLinkSuffix);
         assert(strlen(sss) < MAX_FILE_NAME_SIZE-2);
-        if (statb(sss, &hstat) || fstat.st_mtime >= hstat.st_mtime) {
+        if (editorFileStatus(sss, &hstat) || fstat.st_mtime >= hstat.st_mtime) {
             p->b.scheduledToUpdate = true;
         }
     } else if (options.update == UPDATE_FULL) {
@@ -1908,7 +1908,7 @@ static void discoverBuiltinIncludePaths(void) {
         do {
             if (strncmp(line, "End of search list.", 19) == 0)
                 break;
-            if (statb(line,&stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR) {
+            if (editorFileStatus(line,&stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR) {
                 log_trace("Add include '%s'", line);
                 addStringListOption(&options.includeDirs, line);
             }
@@ -2501,7 +2501,7 @@ static void scheduleModifiedFilesToUpdate(void) {
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         filestab = ttt;
     }
-    if (statb(filestab, &refStat)) refStat.st_mtime = 0;
+    if (editorFileStatus(filestab, &refStat)) refStat.st_mtime = 0;
     scanReferenceFile(options.cxrefFileName, suffix, "", normalScanFunctionSequence);
     fileTableMap2(&fileTable, schedulingToUpdate, &refStat);
     if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {

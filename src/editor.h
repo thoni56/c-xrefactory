@@ -5,32 +5,32 @@
 
 /* ***************** editor structures ********************** */
 
-enum editorUndoOperations {
+typedef enum editorUndoOperations {
     UNDO_REPLACE_STRING,
     UNDO_RENAME_BUFFER,
     UNDO_MOVE_BLOCK,
-};
+} EditorUndoOperations;
 
-enum editors {
+typedef enum editors {
     EDITOR_UNKNOWN,
     EDITOR_EMACS,
     EDITOR_JEDIT,
-};
+} Editors;
 
-typedef     struct editorBufferAllocationData {
+typedef struct editorBufferAllocationData {
     int     bufferSize;
     char	*text;
     int		allocatedFreePrefixSize;
     char	*allocatedBlock;
     int		allocatedIndex;
     int		allocatedSize;
-} S_editorBufferAllocationData;
+} EditorBufferAllocationData;
 
 typedef struct editorBufferBits {
     bool textLoaded:1;
     bool modified:1;
     bool modifiedSinceLastQuasiSave:1;
-} S_editorBufferBits;
+} EditorBufferBits;
 
 typedef struct editorBuffer {
     char                *name;
@@ -91,16 +91,16 @@ typedef struct editorUndo {
         } moveBlock;
     } u;
     struct editorUndo     *next;
-} S_editorUndo;
+} EditorUndo;
 
 
-extern S_editorUndo *s_editorUndo;
+extern EditorUndo *s_editorUndo;
 
 
 extern void editorInit(void);
 extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous, EditorMarker *next);
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
-extern int statb(char *path, struct stat  *statbuf);
+extern int editorFileStatus(char *path, struct stat *statbuf);
 extern bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2);
@@ -116,9 +116,9 @@ extern EditorBuffer *editorFindFileCreate(char *name);
 extern EditorMarker *editorCrNewMarkerForPosition(Position *pos);
 extern EditorMarkerList *editorReferencesToMarkers(Reference *refs, int (*filter)(Reference *, void *), void *filterParam);
 extern Reference *editorMarkersToReferences(EditorMarkerList **mms);
-extern void editorRenameBuffer(EditorBuffer *buff, char *newName, S_editorUndo **undo);
-extern void editorReplaceString(EditorBuffer *buff, int position, int delsize, char *str, int strlength, S_editorUndo **undo);
-extern void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size, S_editorUndo **undo);
+extern void editorRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
+extern void editorReplaceString(EditorBuffer *buff, int position, int delsize, char *str, int strlength, EditorUndo **undo);
+extern void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size, EditorUndo **undo);
 extern void editorDumpBuffer(EditorBuffer *buff);
 extern void editorDumpBuffers(void);
 extern void editorDumpMarker(EditorMarker *mm);
@@ -134,8 +134,8 @@ extern int editorMoveMarkerToNewline(EditorMarker *m, int direction);
 extern int editorMoveMarkerToNonBlank(EditorMarker *m, int direction);
 extern int editorMoveMarkerBeyondIdentifier(EditorMarker *m, int direction);
 extern int editorMoveMarkerToNonBlankOrNewline(EditorMarker *m, int direction);
-extern void editorRemoveBlanks(EditorMarker *mm, int direction, S_editorUndo **undo);
-extern void editorDumpUndoList(S_editorUndo *uu);
+extern void editorRemoveBlanks(EditorMarker *mm, int direction, EditorUndo **undo);
+extern void editorDumpUndoList(EditorUndo *uu);
 extern void editorMoveMarkerToLineCol(EditorMarker *m, int line, int col);
 extern void editorMarkersDifferences(
                                      EditorMarkerList **list1, EditorMarkerList **list2,
