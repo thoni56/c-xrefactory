@@ -421,7 +421,7 @@ any_token_not_perc_par
     | AND_OP | OR_OP | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | ADD_ASSIGN
     | SUB_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN | AND_ASSIGN
     | XOR_ASSIGN | OR_ASSIGN
-    | PTR_OP | ELIPSIS
+    | PTR_OP | ELLIPSIS
     | URIGHT_OP | URIGHT_ASSIGN
     | DPOINT | POINTM_OP | PTRM_OP
     | STATIC | BREAK | CASE | CHAR | CONST | CONTINUE | DEFAULT | DO
@@ -1367,7 +1367,7 @@ type_specifier_list0
 
 parameter_identifier_list
     : identifier_list                           /*& { $$.d = $1.d; } &*/
-    | identifier_list ',' ELIPSIS               {
+    | identifier_list ',' ELLIPSIS               {
         Symbol *symbol;
         Position pos;
         fillPosition(&pos, -1, 0, 0);
@@ -1400,7 +1400,7 @@ identifier_list
 
 parameter_type_list
     : parameter_list                    /*& { $$.d = $1.d; } &*/
-    | parameter_list ',' ELIPSIS                {
+    | parameter_list ',' ELLIPSIS                {
         Symbol *symbol;
         Position position;
         fillPosition(&position, -1, 0, 0);
@@ -1606,7 +1606,7 @@ label
     |   CASE constant_expr ':' {
             generateSwitchCaseFork(false);
     }
-    |   CASE constant_expr ELIPSIS constant_expr ':' {
+    |   CASE constant_expr ELLIPSIS constant_expr ':' {
             generateSwitchCaseFork(false);
     }
     |   DEFAULT ':' {
