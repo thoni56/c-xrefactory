@@ -1665,7 +1665,7 @@ MethodDeclaration
                     }
                 }
             }
-        MethodBody Stop_block
+        MethodBody End_block
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -1934,7 +1934,7 @@ ConstructorDeclaration
                                     StorageConstructor, $3.d);
                 }
             }
-         Start_block ConstructorBody Stop_block {
+         Start_block ConstructorBody End_block {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockEnd();
@@ -1999,13 +1999,13 @@ ConstructorDeclarator
     ;
 
 ConstructorBody
-    :   '{' Start_block ExplicitConstructorInvocation BlockStatements Stop_block '}'	{
+    :   '{' Start_block ExplicitConstructorInvocation BlockStatements End_block '}'	{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
         }
-    |	'{' Start_block ExplicitConstructorInvocation Stop_block '}'					{
+    |	'{' Start_block ExplicitConstructorInvocation End_block '}'					{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
-    |	'{' Start_block BlockStatements Stop_block '}'									{
+    |	'{' Start_block BlockStatements End_block '}'									{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     |	'{' '}'																			{
@@ -2227,7 +2227,7 @@ AbstractMethodDeclaration
                     }
                 }
             }
-        ';' Stop_block
+        ';' End_block
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -2260,7 +2260,7 @@ VariableInitializers
 /* *********************** Blocks and Statements ***************** */
 
 Block
-    :   '{' Start_block BlockStatements Stop_block '}'		{
+    :   '{' Start_block BlockStatements End_block '}'		{
             $$.d = $5.d;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
@@ -2520,13 +2520,13 @@ SwitchStatement
     ;
 
 SwitchBlock
-    :   '{' Start_block SwitchBlockStatementGroups SwitchLabels Stop_block '}'	{
+    :   '{' Start_block SwitchBlockStatementGroups SwitchLabels End_block '}'	{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
         }
-    |	'{' Start_block SwitchBlockStatementGroups Stop_block '}'				{
+    |	'{' Start_block SwitchBlockStatementGroups End_block '}'				{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
-    |	'{' Start_block SwitchLabels Stop_block '}'								{
+    |	'{' Start_block SwitchLabels End_block '}'								{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     |	'{' '}'																	{
@@ -2928,7 +2928,7 @@ CatchClause
                     }
                 }
             }
-        Block Stop_block
+        Block End_block
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4313,7 +4313,7 @@ Start_block:	{
         }
     ;
 
-Stop_block:		{
+End_block:		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockEnd();

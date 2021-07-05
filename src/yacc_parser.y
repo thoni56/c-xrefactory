@@ -336,12 +336,12 @@ rules
             addYaccSymbolReference($2.d, UsageDefined);
             addRuleLocalVariable($2.d, 0);
         }
-        rule_bodies Stop_block ';'
+        rule_bodies End_block ';'
     |   rules Start_block IDENTIFIER ':'                    {
             addYaccSymbolReference($3.d, UsageDefined);
             addRuleLocalVariable($3.d, 0);
         }
-        rule_bodies Stop_block ';'
+        rule_bodies End_block ';'
     | COMPL_YACC_LEXEM_NAME             { assert(0); /* token never used */ }
     | rules COMPL_YACC_LEXEM_NAME       { assert(0); /* token never used */ }
     ;
@@ -354,7 +354,7 @@ rule_bodies
 
 rule_body_opt
     :
-    |   Start_block rule_body Stop_block
+    |   Start_block rule_body End_block
     ;
 
 rule_body
@@ -1534,11 +1534,11 @@ initializer
     ;
 
 initializer_list
-    : Sv_tmp designation_opt Start_block initializer Stop_block {
+    : Sv_tmp designation_opt Start_block initializer End_block {
         $$.d = $2.d;
         tmpWorkMemoryIndex = $1.d;
     }
-    | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block {
+    | initializer_list ',' Sv_tmp designation_opt Start_block initializer End_block {
         LIST_APPEND(IdList, $1.d, $4.d);
         tmpWorkMemoryIndex = $3.d;
     }
@@ -1634,10 +1634,10 @@ label_name
 
 compound_statement
     : '{' '}'
-    | '{' Start_block label_decls_opt statement_list Stop_block '}'
+    | '{' Start_block label_decls_opt statement_list End_block '}'
 /*&
-    | '{' Start_block label_decls_opt declaration_list Stop_block '}'
-    | '{' Start_block label_decls_opt declaration_list statement_list Stop_block '}'
+    | '{' Start_block label_decls_opt declaration_list End_block '}'
+    | '{' Start_block label_decls_opt declaration_list statement_list End_block '}'
 &*/
     ;
 
@@ -1996,7 +1996,7 @@ function_head_declaration
 Start_block:    { stackMemoryBlockStart(); }
     ;
 
-Stop_block:     { stackMemoryBlockEnd(); }
+End_block:     { stackMemoryBlockEnd(); }
     ;
 
 identifier

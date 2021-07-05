@@ -1308,11 +1308,11 @@ initializer
     ;
 
 initializer_list
-    : Sv_tmp designation_opt Start_block initializer Stop_block {
+    : Sv_tmp designation_opt Start_block initializer End_block {
         $$.d = $2.d;
         tmpWorkMemoryIndex = $1.d;
     }
-    | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block {
+    | initializer_list ',' Sv_tmp designation_opt Start_block initializer End_block {
         LIST_APPEND(IdList, $1.d, $4.d);
         tmpWorkMemoryIndex = $3.d;
     }
@@ -1408,10 +1408,10 @@ label_name
 
 compound_statement
     : '{' '}'
-    | '{' Start_block label_decls_opt statement_list Stop_block '}'
+    | '{' Start_block label_decls_opt statement_list End_block '}'
 /*&
-    | '{' Start_block label_decls_opt declaration_list Stop_block '}'
-    | '{' Start_block label_decls_opt declaration_list statement_list Stop_block '}'
+    | '{' Start_block label_decls_opt declaration_list End_block '}'
+    | '{' Start_block label_decls_opt declaration_list statement_list End_block '}'
 &*/
     ;
 
@@ -1770,7 +1770,7 @@ function_head_declaration
 Start_block:    { stackMemoryBlockStart(); }
     ;
 
-Stop_block:     { stackMemoryBlockEnd(); }
+End_block:     { stackMemoryBlockEnd(); }
     ;
 
 identifier
