@@ -100,7 +100,12 @@ unit: $(OBJS)
 # Note the file prefix (-b) and symbol prefix (-p)
 # Also create .rules files with only the rules in it
 
-c_parser.tab.c c_parser.tab.h : c_parser.y $(YACC)
+# Makefile magic to make two targets with one recepie, thanks to
+# https://stackoverflow.com/a/10609434/204658
+
+.INTERMEDIATE: c_parser.tab.intermediate
+c_parser.tab.c c_parser.tab.h : c_parser.tab.intermediate ;
+c_parser.tab.intermediate : c_parser.y $(YACC)
 	$(YACC) -v -d -b c_parser -p c_yy c_parser.y
 	sed -E '/^$$/q' c_parser.output > c_parser.rules
 	awk '{$$1=""; print}' c_parser.rules > c_parser.tmp
@@ -115,17 +120,23 @@ yacc_parser.y: c_parser.y
 	cat yacc_parser.head c_rules.txt yacc_parser.tail > yacc_parser.y
 	rm  yacc_parser.head c_rules.txt yacc_parser.tail
 
-cexp_parser.tab.c: cexp_parser.y $(YACC)
+.INTERMEDIATE: cexp_parser.tab.intermediate
+cexp_parser.tab.c cexp_parser.tab.h : cexp_parser.tab.intermediate ;
+cexp_parser.tab.intermediate : cexp_parser.y $(YACC)
 	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y
 	sed -E '/^$$/q' cexp_parser.output > cexp_parser.rules
 
-yacc_parser.tab.c: yacc_parser.y $(YACC)
+.INTERMEDIATE: yacc_parser.tab.intermediate
+yacc_parser.tab.c yacc_parser.tab.h : yacc_parser.tab.intermediate ;
+yacc_parser.tab.intermediate : yacc_parser.y $(YACC)
 	$(YACC) -v -b yacc_parser -p yacc_yy yacc_parser.y
 	sed -E '/^$$/q' yacc_parser.output > yacc_parser.rules
 	awk '{$$1=""; print}' yacc_parser.rules > yacc_parser.tmp
 	sed -n '/primary_expr/,$$p' yacc_parser.tmp > c_rules_from_yacc_parser.txt
 
-java_parser.tab.c: java_parser.y $(YACC)
+.INTERMEDIATE: java_parser.tab.intermediate
+java_parser.tab.c java_parser.tab.h : java_parser.tab.intermediate ;
+java_parser.tab.intermediate : java_parser.y $(YACC)
 	$(YACC) -v -b java_parser -p java_yy java_parser.y
 	sed -E '/^$$/q' java_parser.output > java_parser.rules
 
