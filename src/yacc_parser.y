@@ -8,9 +8,7 @@
 
   NOTE: Don't edit the C-rules in this file, they are overwritten by
   Makefile magic that extracts the rules from the C parser and inserts
-  them at the marker
-
-  NOW FOLLOWS THE COMPLETE C GRAMMAR
+  them at the marker below.
 
 */
 %{
@@ -1769,8 +1767,29 @@ iteration_statement
         generateInternalLabelReference($9.d, UsageUsed);
         generateInternalLabelReference($12.d, UsageDefined);
         }
+    | FOR '(' init_declarations ';'
+            /*5*/ _nlabel_  maybe_expr ';'  /*8*/_ngoto_
+            /*9*/ _nlabel_  maybe_expr ')' /*12*/ _nfork_
+        { /*13*/
+        generateInternalLabelReference($5.d, UsageUsed);
+        generateInternalLabelReference($8.d, UsageDefined);
+        $<symbol>$ = addContinueBreakLabelSymbol($9.d, CONTINUE_LABEL_NAME);
+        }
+        { /*14*/
+            $<symbol>$ = addContinueBreakLabelSymbol($12.d, BREAK_LABEL_NAME);
+        }
+            statement
+        {
+        deleteContinueBreakSymbol($<symbol>14);
+        deleteContinueBreakSymbol($<symbol>13);
+        generateInternalLabelReference($9.d, UsageUsed);
+        generateInternalLabelReference($12.d, UsageDefined);
+        }
+
     | FOR '(' for1maybe_expr ';' COMPL_FOR_SPECIAL1
     | FOR '(' for1maybe_expr ';' _nlabel_  maybe_expr ';' COMPL_FOR_SPECIAL2
+    | FOR '(' init_declarations ';' COMPL_FOR_SPECIAL1
+    | FOR '(' init_declarations ';' _nlabel_  maybe_expr ';' COMPL_FOR_SPECIAL2
     ;
 
 jump_statement
