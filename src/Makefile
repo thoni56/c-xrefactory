@@ -162,16 +162,21 @@ check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
 # Create an enum of the %token define's in c_parser.tab.h so that
 # we don't need to use c_parser.tab.h to define tokens
 lexem.h: c_parser.tab.h
-	echo "#ifndef LEXEM_H_INCLUDED" > lexem.h
-	echo "#define LEXEM_H_INCLUDED" >> lexem.h
-	echo >> lexem.h
-	echo "/**** DO NOT EDIT - generated from c_parser.tab.h by Makefile ****/" >> lexem.h
-	echo >> lexem.h
-	echo "typedef enum lexem {" >> lexem.h
-	grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" >> lexem.h
-	echo "} Lexem;" >> lexem.h
-	echo >> lexem.h
-	echo "#endif" >> lexem.h
+	echo "#ifndef LEXEM_H_INCLUDED" > lexem.h.tmp
+	echo "#define LEXEM_H_INCLUDED" >> lexem.h.tmp
+	echo >> lexem.h.tmp
+	echo "/**** DO NOT EDIT - generated from c_parser.tab.h by Makefile ****/" >> lexem.h.tmp
+	echo >> lexem.h.tmp
+	echo "typedef enum lexem {" >> lexem.h.tmp
+	grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" >> lexem.h.tmp
+	echo "} Lexem;" >> lexem.h.tmp
+	echo >> lexem.h.tmp
+	echo "#endif" >> lexem.h.tmp
+	# Sanity check for content, otherwise yacc errored out probably
+	if grep " = " lexem.h.tmp > /dev/null ; then \
+		cp lexem.h.tmp lexem.h ; \
+	fi
+
 
 #########################################################################
 
