@@ -3958,34 +3958,33 @@ case 305:
 break;
 case 306:
 #line 1528 "c_parser.y"
-{
-        /*13*/
-        generateInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
-        generateInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.d, CONTINUE_LABEL_NAME);
+{ /*13*/
+            generateInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
+            generateInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
+            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.d, CONTINUE_LABEL_NAME);
         }
 break;
 case 307:
-#line 1534 "c_parser.y"
-{/*14*/
+#line 1533 "c_parser.y"
+{ /*14*/
             yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.d, BREAK_LABEL_NAME);
         }
 break;
 case 308:
-#line 1538 "c_parser.y"
+#line 1537 "c_parser.y"
 {
-        deleteContinueBreakSymbol(yyvsp[-1].symbol);
-        deleteContinueBreakSymbol(yyvsp[-2].symbol);
-        generateInternalLabelReference(yyvsp[-6].ast_integer.d, UsageUsed);
-        generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
+            deleteContinueBreakSymbol(yyvsp[-1].symbol);
+            deleteContinueBreakSymbol(yyvsp[-2].symbol);
+            generateInternalLabelReference(yyvsp[-6].ast_integer.d, UsageUsed);
+            generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
         }
 break;
 case 309:
 #line 1547 "c_parser.y"
 { /*13*/
-        generateInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
-        generateInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.d, CONTINUE_LABEL_NAME);
+            generateInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
+            generateInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
+            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.d, CONTINUE_LABEL_NAME);
         }
 break;
 case 310:
@@ -3997,10 +3996,10 @@ break;
 case 311:
 #line 1556 "c_parser.y"
 {
-        deleteContinueBreakSymbol(yyvsp[-1].symbol);
-        deleteContinueBreakSymbol(yyvsp[-2].symbol);
-        generateInternalLabelReference(yyvsp[-6].ast_integer.d, UsageUsed);
-        generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
+            deleteContinueBreakSymbol(yyvsp[-1].symbol);
+            deleteContinueBreakSymbol(yyvsp[-2].symbol);
+            generateInternalLabelReference(yyvsp[-6].ast_integer.d, UsageUsed);
+            generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
         }
 break;
 case 317:
@@ -4232,7 +4231,7 @@ case 364:
 #line 1773 "c_parser.y"
 { stackMemoryBlockEnd(); }
 break;
-#line 4236 "c_parser.tab.c"
+#line 4235 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
