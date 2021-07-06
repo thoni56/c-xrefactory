@@ -6,7 +6,7 @@ COMMAND = $(CXREF)  -xrefrc $(CURDIR)/.c-xrefrc -fullupdate -p $(CURDIR)
 $(TEST): CXrefs
 	$(COMMAND) > output.tmp
 	$(NORMALIZE) output.tmp > output
-	$(VERIFY)
+	$(NO_TESTS)
 
 trace: CXREF+=-trace
 trace: $(TEST)
