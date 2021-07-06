@@ -46,7 +46,7 @@ devel: COVERAGE=--coverage
 devel: clean-coverage check-tokens
 	$(MAKE) -e devel-proper
 
-devel-proper: unit c-xref test
+devel-proper: unit build test
 	$(MAKE) coverage-report
 	$(MAKE) -C ../editors/emacs
 
@@ -57,7 +57,7 @@ ci: COVERAGE=--coverage
 ci:
 	$(MAKE) -e unit
 	$(MAKE) -e build
-	$(MAKE) -e test
+	$(MAKE) -e -C test all
 
 chcheck:
 	for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
@@ -83,7 +83,7 @@ test: c-xref
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) -e -C ../tests quick
 
-unit: $(OBJS)
+unit: check-tokens $(OBJS)
 	$(MAKE) -e -C unittests
 
 #########################################################################
