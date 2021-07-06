@@ -18,9 +18,9 @@ before_install:
 
 script:
     - cd src
-    - make ci-unit
     # Separate coverage for unittest to Codecov
     - cd unittests
+    - make COVERAGE=--coverage
     - bash <(curl -s https://codecov.io/bash) -X gcovout
     - cd ..
     # Now reset coverage and run everything
