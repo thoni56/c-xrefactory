@@ -53,19 +53,10 @@ devel-proper: unit c-xref test
 coverage: COVERAGE=--coverage
 coverage: ci
 
-ci ci-unit ci-build ci-test: COVERAGE=--coverage
+ci: COVERAGE=--coverage
 ci:
 	$(MAKE) -e unit
-	$(MAKE) -e debug
-	$(MAKE) -e test
-
-ci-unit:
-	$(MAKE) -e unit
-
-ci-build:
-	$(MAKE) -e debug
-
-ci-test:
+	$(MAKE) -e build
 	$(MAKE) -e test
 
 chcheck:
