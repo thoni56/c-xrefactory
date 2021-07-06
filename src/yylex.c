@@ -1909,16 +1909,6 @@ static bool expandMacroCall(Symbol *mdef, Position *mpos) {
     Position pos; UNUSED pos;
     int value,length; UNUSED length; UNUSED value;
 
-    /* Exceptions from getLexem... */
-    jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
-    case END_OF_FILE_EXCEPTION:
-        goto endOfFile;
-    case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        goto endOfMacroArgument;
-    }
-
-    previousLexem = currentInput.currentLexemP;
     mb = mdef->u.mbody;
     if (mb == NULL)
         return false;	/* !!!!!         tricky,  undefined macro */
@@ -1928,7 +1918,21 @@ static bool expandMacroCall(Symbol *mdef, Position *mpos) {
     log_trace("trying to expand macro '%s'", mb->name);
     if (cyclicCall(mb))
         return false;
+
+    /* Make sure these are initialized */
+    /* TODO: might not survive long_jmp?!?! */
+    previousLexem = currentInput.currentLexemP;
     PP_ALLOCC(freeBase,0,char);
+
+    /* Exceptions from getLexem... */
+    jmp_buf exceptionHandler;
+    switch(setjmp(exceptionHandler)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    case END_OF_MACRO_ARGUMENT_EXCEPTION:
+        goto endOfMacroArgument;
+    }
+
     if (mb->argn >= 0) {
         lexem = getLexSkippingLines(&previousLexem, &lineNumber, &value, &pos, &length, exceptionHandler);
         if (lexem != '(') {
