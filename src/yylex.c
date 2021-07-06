@@ -691,14 +691,14 @@ static void handleMacroUsageParameterPositions(int argi, Position *macpos,
     }
 }
 
-static MacroBody *newMacroBody(int msize, int argi, char *name, char *body, char **argNames) {
+static MacroBody *newMacroBody(int macroSize, int argCount, char *name, char *body, char **argumentNames) {
     MacroBody *macroBody;
 
     PP_ALLOC(macroBody, MacroBody);
-    macroBody->argn = argi;
-    macroBody->size = msize;
+    macroBody->argCount = argCount;
+    macroBody->size = macroSize;
     macroBody->name = name;
-    macroBody->args = argNames;
+    macroBody->argumentNames = argumentNames;
     macroBody->body = body;
 
     return macroBody;
@@ -1773,7 +1773,7 @@ static void getActualMacroArgument(
     bcc = buf;
     /* if lastArgument, collect everything there */
     poffset = 0;
-    while (((lexem != ',' || actualArgumentIndex+1==macroBody->argn) && lexem != ')') || depth > 0) {
+    while (((lexem != ',' || actualArgumentIndex+1==macroBody->argCount) && lexem != ')') || depth > 0) {
         // The following should be equivalent to the loop condition:
         //& if (lexem == ')' && depth <= 0) break;
         //& if (lexem == ',' && depth <= 0 && ! lastArgument) break;
@@ -1816,8 +1816,8 @@ static struct lexInput *getActualMacroArguments(MacroBody *macroBody, Position *
     Lexem lexem;
     int lineNumber;
     Position position, ppb1, ppb2, *parpos1, *parpos2;
-    int actArgi = 0;
-    struct lexInput *actArgs;
+    int argumentIndex = 0;
+    struct lexInput *actualArgs;
     int value,length; UNUSED length; UNUSED value;
 
     /* Exceptions from getLexem... */
@@ -1833,7 +1833,7 @@ static struct lexInput *getActualMacroArguments(MacroBody *macroBody, Position *
     ppb2 = lparPosition;
     parpos1 = &ppb1;
     parpos2 = &ppb2;
-    PP_ALLOCC(actArgs,macroBody->argn,struct lexInput);
+    PP_ALLOCC(actualArgs, macroBody->argCount, struct lexInput);
     lexem = getLexSkippingLines(&previousLexem, &lineNumber, &value, &position, &length, exceptionHandler);
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
     if (lexem == ')') {
@@ -1842,23 +1842,23 @@ static struct lexInput *getActualMacroArguments(MacroBody *macroBody, Position *
     } else {
         for(;;) {
             getActualMacroArgument(previousLexem, &lexem, macroPosition, &parpos1, &parpos2,
-                                   &actArgs[actArgi], macroBody, actArgi);
-            actArgi ++ ;
-            if (lexem != ',' || actArgi >= macroBody->argn)
+                                   &actualArgs[argumentIndex], macroBody, argumentIndex);
+            argumentIndex ++ ;
+            if (lexem != ',' || argumentIndex >= macroBody->argCount)
                 break;
             lexem = getLexSkippingLines(&previousLexem, &lineNumber, &value, &position, &length, exceptionHandler);
             passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length,
                     macroStackIndex == 0);
         }
     }
-    if (actArgi!=0) {
-        handleMacroUsageParameterPositions(actArgi, macroPosition, parpos1, parpos2, 1);
+    if (argumentIndex!=0) {
+        handleMacroUsageParameterPositions(argumentIndex, macroPosition, parpos1, parpos2, 1);
     }
     /* fill mising arguments */
-    for(;actArgi < macroBody->argn; actArgi++) {
-        fillLexInput(&actArgs[actArgi], NULL, NULL, NULL, NULL,INPUT_NORMAL);
+    for(;argumentIndex < macroBody->argCount; argumentIndex++) {
+        fillLexInput(&actualArgs[argumentIndex], NULL, NULL, NULL, NULL,INPUT_NORMAL);
     }
-    return actArgs;
+    return actualArgs;
 
 endOfMacroArgument:
     assert(0);
@@ -1899,24 +1899,24 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
 }
 
 
-static bool expandMacroCall(Symbol *mdef, Position *mpos) {
+static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     Lexem lexem;
     int lineNumber;
-    char *previousLexem,*freeBase;
-    Position lparpos;
-    LexInput *actualArguments, macroBody;
-    MacroBody *mb;
+    char *previousLexem, *freeBase;
+    Position lparPosition;
+    LexInput *actualArgumentsInput, macroBodyInput;
+    MacroBody *macroBody;
     Position pos; UNUSED pos;
     int value,length; UNUSED length; UNUSED value;
 
-    mb = mdef->u.mbody;
-    if (mb == NULL)
+    macroBody = macroSymbol->u.mbody;
+    if (macroBody == NULL)
         return false;	/* !!!!!         tricky,  undefined macro */
     if (macroStackIndex == 0) { /* call from source, init mem */
         MB_INIT();
     }
-    log_trace("trying to expand macro '%s'", mb->name);
-    if (cyclicCall(mb))
+    log_trace("trying to expand macro '%s'", macroBody->name);
+    if (cyclicCall(macroBody))
         return false;
 
     /* Make sure these are initialized */
@@ -1933,26 +1933,26 @@ static bool expandMacroCall(Symbol *mdef, Position *mpos) {
         goto endOfMacroArgument;
     }
 
-    if (mb->argn >= 0) {
+    if (macroBody->argCount >= 0) {
         lexem = getLexSkippingLines(&previousLexem, &lineNumber, &value, &pos, &length, exceptionHandler);
         if (lexem != '(') {
             currentInput.currentLexemP = previousLexem;		/* unget lexem */
             return false;
         }
-        passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &lparpos, &length,
+        passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &lparPosition, &length,
                            macroStackIndex == 0);
-        actualArguments = getActualMacroArguments(mb, mpos, lparpos);
+        actualArgumentsInput = getActualMacroArguments(macroBody, macroPosition, lparPosition);
     } else {
-        actualArguments = NULL;
+        actualArgumentsInput = NULL;
     }
     assert(options.taskRegime);
-    addCxReference(mdef, mpos, UsageUsed, noFileIndex, noFileIndex);
+    addCxReference(macroSymbol, macroPosition, UsageUsed, noFileIndex, noFileIndex);
     if (options.taskRegime == RegimeXref)
-        addMacroBaseUsageRef(mdef);
-    log_trace("create macro body '%s'", mb->name);
-    createMacroBody(&macroBody,mb,actualArguments,mb->argn);
-    prependMacroInput(&macroBody);
-    log_trace("expanding macro '%s'", mb->name);
+        addMacroBaseUsageRef(macroSymbol);
+    log_trace("create macro body '%s'", macroBody->name);
+    createMacroBody(&macroBodyInput,macroBody,actualArgumentsInput,macroBody->argCount);
+    prependMacroInput(&macroBodyInput);
+    log_trace("expanding macro '%s'", macroBody->name);
     PP_FREE_UNTIL(freeBase);
     return true;
 

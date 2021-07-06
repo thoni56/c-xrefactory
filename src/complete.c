@@ -805,7 +805,7 @@ static void completeFun(Symbol *s, void *c) {
         if (s->u.mbody==NULL) {
             fillCompletionLine(&compLine, s->name, s, TypeUndefMacro,0, 0, NULL,NULL);
         } else {
-            fillCompletionLine(&compLine, s->name, s, s->bits.symbolType,0, s->u.mbody->argn, s->u.mbody->args,NULL);
+            fillCompletionLine(&compLine, s->name, s, s->bits.symbolType,0, s->u.mbody->argCount, s->u.mbody->argumentNames,NULL);
         }
     }
     processName(s->name, &compLine, 1, cc->res);

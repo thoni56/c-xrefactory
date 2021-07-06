@@ -6,10 +6,10 @@
 
 
 typedef struct macroBody {
-    short int argn;
+    short int argCount;
     int size;
-    char *name;			/* the name of the macro */
-    char **args;		/* names of arguments */
+    char *name;                 /* the name of the macro */
+    char **argumentNames;       /* names of arguments */
     char *body;
 } MacroBody;
 
