@@ -1810,8 +1810,8 @@ endOfMacroArgument:;
     return;
 }
 
-static struct lexInput *getActualMacroArguments(MacroBody *mb, Position *mpos,
-                                                Position *lparpos) {
+static struct lexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPosition,
+                                                Position lparPosition) {
     char *previousLexem;
     Lexem lexem;
     int lineNumber;
@@ -1829,22 +1829,22 @@ static struct lexInput *getActualMacroArguments(MacroBody *mb, Position *mpos,
         goto endOfMacroArgument;
     }
 
-    ppb1 = *lparpos;
-    ppb2 = *lparpos;
+    ppb1 = lparPosition;
+    ppb2 = lparPosition;
     parpos1 = &ppb1;
     parpos2 = &ppb2;
-    PP_ALLOCC(actArgs,mb->argn,struct lexInput);
+    PP_ALLOCC(actArgs,macroBody->argn,struct lexInput);
     lexem = getLexSkippingLines(&previousLexem, &lineNumber, &value, &position, &length, exceptionHandler);
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
     if (lexem == ')') {
         *parpos2 = position;
-        handleMacroUsageParameterPositions(0, mpos, parpos1, parpos2, 1);
+        handleMacroUsageParameterPositions(0, macroPosition, parpos1, parpos2, 1);
     } else {
         for(;;) {
-            getActualMacroArgument(previousLexem, &lexem, mpos, &parpos1, &parpos2,
-                                   &actArgs[actArgi], mb, actArgi);
+            getActualMacroArgument(previousLexem, &lexem, macroPosition, &parpos1, &parpos2,
+                                   &actArgs[actArgi], macroBody, actArgi);
             actArgi ++ ;
-            if (lexem != ',' || actArgi >= mb->argn)
+            if (lexem != ',' || actArgi >= macroBody->argn)
                 break;
             lexem = getLexSkippingLines(&previousLexem, &lineNumber, &value, &position, &length, exceptionHandler);
             passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length,
@@ -1852,10 +1852,10 @@ static struct lexInput *getActualMacroArguments(MacroBody *mb, Position *mpos,
         }
     }
     if (actArgi!=0) {
-        handleMacroUsageParameterPositions(actArgi, mpos, parpos1, parpos2, 1);
+        handleMacroUsageParameterPositions(actArgi, macroPosition, parpos1, parpos2, 1);
     }
     /* fill mising arguments */
-    for(;actArgi < mb->argn; actArgi++) {
+    for(;actArgi < macroBody->argn; actArgi++) {
         fillLexInput(&actArgs[actArgi], NULL, NULL, NULL, NULL,INPUT_NORMAL);
     }
     return actArgs;
@@ -1941,7 +1941,7 @@ static bool expandMacroCall(Symbol *mdef, Position *mpos) {
         }
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &lparpos, &length,
                            macroStackIndex == 0);
-        actualArguments = getActualMacroArguments(mb, mpos, &lparpos);
+        actualArguments = getActualMacroArguments(mb, mpos, lparpos);
     } else {
         actualArguments = NULL;
     }
