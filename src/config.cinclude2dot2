@@ -1,0 +1,27 @@
+{
+    "rankdir": "TB",
+
+    "$cluster_boost" : {
+        "name" : "Boost",
+        "regex" : "boost/.*",
+        "color" : "orange"
+    },
+
+    "$node_std" : {
+        "regex" : "(.*?)(?<!(\\.h))$",
+        "color" : "red",
+        "font"  : "fixed"
+    },
+
+    "$node_Eval" : {
+        "regex" : "Eval.*\\.h",
+        "color" : "blue",
+        "font"  : "fixed"
+    },
+
+    "$node_stdexcept" : {
+        "regex" : "stdexcept",
+        "color" : "green",
+        "font" : "fixed"
+    }
+}

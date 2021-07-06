@@ -1,0 +1,7 @@
+#!/bin/bash
+echo > sourcelinehistory
+while true; do
+    cloc `ls *.[chy] ../env/emacs/*.el | grep -v .tab.\[ch\] | grep -v gram.\[ch\] | grep -v cexp.\[ch\] | grep -v .g. | grep -v .bs.` | grep -v c-xrefprotocol.el >> sourcelinehistory
+    git reset -q --hard HEAD^
+    git rev-parse HEAD
+done

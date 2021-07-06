@@ -57,7 +57,7 @@ ci: COVERAGE=--coverage
 ci:
 	$(MAKE) -e unit
 	$(MAKE) -e build
-	$(MAKE) -e -C test all
+	$(MAKE) -e -C ../tests all
 
 chcheck:
 	for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
