@@ -57,6 +57,8 @@ ci: COVERAGE=--coverage
 ci:
 	$(MAKE) -e unit
 	$(MAKE) -e build
+	$(MAKE) -C ../tests/systemd init
+	$(MAKE) -C ../tests/ffmpeg init
 	$(MAKE) -e -C ../tests all
 
 chcheck:

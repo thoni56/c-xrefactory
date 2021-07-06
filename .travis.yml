@@ -26,13 +26,7 @@ script:
     # Now reset coverage and run everything
     - lcov -q -z -d .
     - touch ../tests/test_uint32_t/.suspended # Suspend one test
-    - make GCOV_OPTIONS= ci                   # = unit, build & test
-    # Run the slow tests too
-    - cd ../tests
-    - cd ffmpeg ; make init ; cd ..
-    - cd systemd ; make init ; cd ..
-    - make GCOV_OPTIONS= slow
-    - cd ..
+    - make GCOV_OPTIONS= ci                   # = unit, build & test (even slow)
 
 branches:
     except:
