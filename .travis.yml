@@ -1,6 +1,6 @@
 language: c
 os: linux
-dist: bionic
+dist: focal
 if: NOT tag = stable
 
 addons:
