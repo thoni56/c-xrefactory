@@ -11,7 +11,7 @@
 
 #include "hashtab.th"
 
-extern MacroArgumentTable s_macroArgumentTable;
+extern MacroArgumentTable macroArgumentTable;
 
 #ifndef _MACROARGUMENTTABLE_
 #undef HASH_TAB_NAME

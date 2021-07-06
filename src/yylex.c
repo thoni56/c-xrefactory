@@ -81,7 +81,7 @@ void initAllInputs(void) {
     macroStackIndex=0;
     s_ifEvaluation = 0;
     s_cxRefFlag = 0;
-    macroArgumentTableNoAllocInit(&s_macroArgumentTable, MAX_MACRO_ARGS);
+    macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
     ppMemoryIndex=0;
     s_olstring[0]=0;
     s_olstringFound = 0;
@@ -230,8 +230,8 @@ static void setCurrentFileInfoFor(char *fileName) {
 /* ***************************************************************** */
 
 void ppMemInit(void) {
-    PP_ALLOCC(s_macroArgumentTable.tab, MAX_MACRO_ARGS, MacroArgumentTableElement *);
-    macroArgumentTableNoAllocInit(&s_macroArgumentTable, MAX_MACRO_ARGS);
+    PP_ALLOCC(macroArgumentTable.tab, MAX_MACRO_ARGS, MacroArgumentTableElement *);
+    macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
     ppMemoryIndex = 0;
 }
 
@@ -781,7 +781,7 @@ void processDefineDirective(bool hasArguments) {
     setGlobalFileDepNames(currentLexemStart, symbol, MEMORY_PP);
     macroName = symbol->name;
     /* process arguments */
-    macroArgumentTableNoAllocInit(&s_macroArgumentTable, s_macroArgumentTable.size);
+    macroArgumentTableNoAllocInit(&macroArgumentTable, macroArgumentTable.size);
     argumentCount = -1;
 
     if (hasArguments) {
@@ -815,14 +815,14 @@ void processDefineDirective(bool hasArguments) {
                 strcpy(argLinkName, tmpBuff);
                 SM_ALLOC(ppMemory, maca, MacroArgumentTableElement);
                 fillMacroArgTabElem(maca, mm, argLinkName, argumentCount);
-                foundIndex = macroArgumentTableAdd(&s_macroArgumentTable, maca);
+                foundIndex = macroArgumentTableAdd(&macroArgumentTable, maca);
                 argumentCount++;
                 lexem = getNonBlankLexem(exceptionHandler, &position, &lineNumber, &value, &length);
 
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
                 passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, parpos2, &length, true);
                 if (!ellipsis) {
-                    addTrivialCxReference(s_macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
+                    addTrivialCxReference(macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                           &position, UsageDefined);
                     handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &position, parpos2, 0);
                 }
@@ -856,13 +856,13 @@ void processDefineDirective(bool hasArguments) {
         while(macroSize<allocatedSize && lexem != '\n') {
             char *destination;
             fillMacroArgTabElem(&mmaca,currentLexemStart,NULL,0);
-            if (lexem==IDENTIFIER && macroArgumentTableIsMember(&s_macroArgumentTable,&mmaca,&foundIndex)){
+            if (lexem==IDENTIFIER && macroArgumentTableIsMember(&macroArgumentTable,&mmaca,&foundIndex)){
                 /* macro argument */
-                addTrivialCxReference(s_macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
+                addTrivialCxReference(macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                       &position, UsageUsed);
                 destination = body+macroSize;
                 putLexToken(CPP_MACRO_ARGUMENT, &destination);
-                putLexInt(s_macroArgumentTable.tab[foundIndex]->order, &destination);
+                putLexInt(macroArgumentTable.tab[foundIndex]->order, &destination);
                 putLexPosition(position.file, position.line,position.col, &destination);
                 macroSize = destination - body;
             } else {
@@ -896,7 +896,7 @@ endOfBody:
     if (argumentCount > 0) {
         PP_ALLOCC(argumentNames, argumentCount, char*);
         memset(argumentNames, 0, argumentCount*sizeof(char*));
-        macroArgumentTableMap2(&s_macroArgumentTable, setMacroArgumentName, argumentNames);
+        macroArgumentTableMap2(&macroArgumentTable, setMacroArgumentName, argumentNames);
     } else
         argumentNames = NULL;
     macroBody = newMacroBody(allocatedSize, argumentCount, macroName, body, argumentNames);
