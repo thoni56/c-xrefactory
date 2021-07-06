@@ -1902,7 +1902,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
 static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     Lexem lexem;
     int lineNumber;
-    char *previousLexem, *freeBase;
+    char *previousLexemP, *freeBase;
     Position lparPosition;
     LexInput *actualArgumentsInput, macroBodyInput;
     MacroBody *macroBody;
@@ -1921,8 +1921,8 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
 
     /* Make sure these are initialized */
     /* TODO: might not survive long_jmp?!?! */
-    previousLexem = currentInput.currentLexemP;
-    PP_ALLOCC(freeBase,0,char);
+    previousLexemP = currentInput.currentLexemP;
+    PP_ALLOCC(freeBase, 0, char);
 
     /* Exceptions from getLexem... */
     jmp_buf exceptionHandler;
@@ -1934,9 +1934,9 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     }
 
     if (macroBody->argCount >= 0) {
-        lexem = getLexSkippingLines(&previousLexem, &lineNumber, &value, &pos, &length, exceptionHandler);
+        lexem = getLexSkippingLines(&previousLexemP, &lineNumber, &value, &pos, &length, exceptionHandler);
         if (lexem != '(') {
-            currentInput.currentLexemP = previousLexem;		/* unget lexem */
+            currentInput.currentLexemP = previousLexemP;		/* unget lexem */
             return false;
         }
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &lparPosition, &length,
@@ -1959,7 +1959,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
 endOfMacroArgument:
     /* unterminated macro call in argument */
     /* TODO unread readed argument */
-    currentInput.currentLexemP = previousLexem;
+    currentInput.currentLexemP = previousLexemP;
     PP_FREE_UNTIL(freeBase);
     return false;
 
@@ -1968,7 +1968,7 @@ endOfMacroArgument:
     if (options.taskRegime!=RegimeEditServer) {
         warningMessage(ERR_ST,"[macroCallExpand] unterminated macro call");
     }
-    currentInput.currentLexemP = previousLexem;
+    currentInput.currentLexemP = previousLexemP;
     PP_FREE_UNTIL(freeBase);
     return false;
 }
