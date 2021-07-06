@@ -25,7 +25,8 @@ script:
     - cd ..
     # Now reset coverage and run everything
     - lcov -q -z -d .
-    - make GCOV_OPTIONS= ci                # = unit, build & test
+    - touch ../tests/test_uint32_t/.suspended # Suspend one test
+    - make GCOV_OPTIONS= ci                   # = unit, build & test
     # Run the slow tests too
     - cd ../tests
     - cd ffmpeg ; make init ; cd ..
