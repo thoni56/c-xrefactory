@@ -40,6 +40,20 @@
     uniyylval->ast_id.e.col += strlen(yytext);\
 }
 
+#define SET_POSITION_YYLVAL(pos, len) {         \
+        uniyylval->ast_position.d = pos;        \
+        uniyylval->ast_position.b = pos;        \
+        uniyylval->ast_position.e = pos;        \
+        uniyylval->ast_position.e.col += len;   \
+}
+
+static void setYylvalsForInteger(int val, Position position, int length) {
+    uniyylval->ast_integer.d = val;
+    uniyylval->ast_integer.b = position;
+    uniyylval->ast_integer.e = position;
+    uniyylval->ast_integer.e.col += length;
+}
+
 
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
 
@@ -2193,20 +2207,6 @@ static void actionOnBlockMarker(void) {
 }
 
 
-#define SET_POSITION_YYLVAL(pos, len) {         \
-        uniyylval->ast_position.d = pos;        \
-        uniyylval->ast_position.b = pos;        \
-        uniyylval->ast_position.e = pos;        \
-        uniyylval->ast_position.e.col += len;   \
-}
-
-#define SET_INTEGER_YYLVAL(val, pos, len) {     \
-        uniyylval->ast_integer.d = val;         \
-        uniyylval->ast_integer.b = pos;         \
-        uniyylval->ast_integer.e = pos;         \
-        uniyylval->ast_integer.e.col += len;    \
-    }
-
 int yylex(void) {
     Lexem lexem;
     Position position, idpos;
@@ -2303,7 +2303,7 @@ int yylex(void) {
         value=0;//compiler
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
         sprintf(constant,"%d",value);
-        SET_INTEGER_YYLVAL(value, position, length);
+        setYylvalsForInteger(value, position, length);
         yytext = constant;
         goto finish;
     }
@@ -2323,7 +2323,7 @@ int yylex(void) {
         value=0;//compiler
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
         sprintf(constant,"'%c'",value);
-        SET_INTEGER_YYLVAL(value, position, length);
+        setYylvalsForInteger(value, position, length);
         yytext = constant;
         goto finish;
     }
