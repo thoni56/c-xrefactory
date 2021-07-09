@@ -1141,7 +1141,7 @@ type_specifier_list0
 
 parameter_identifier_list
     : identifier_list                           /*& { $$.d = $1.d; } &*/
-    | identifier_list ',' ELIPSIS               {
+    | identifier_list ',' ELLIPSIS               {
         Symbol *symbol;
         Position pos;
         fillPosition(&pos, -1, 0, 0);
@@ -1174,7 +1174,7 @@ identifier_list
 
 parameter_type_list
     : parameter_list                    /*& { $$.d = $1.d; } &*/
-    | parameter_list ',' ELIPSIS                {
+    | parameter_list ',' ELLIPSIS                {
         Symbol *symbol;
         Position position;
         fillPosition(&position, -1, 0, 0);
@@ -1380,7 +1380,7 @@ label
     |   CASE constant_expr ':' {
             generateSwitchCaseFork(false);
     }
-    |   CASE constant_expr ELIPSIS constant_expr ':' {
+    |   CASE constant_expr ELLIPSIS constant_expr ':' {
             generateSwitchCaseFork(false);
     }
     |   DEFAULT ':' {

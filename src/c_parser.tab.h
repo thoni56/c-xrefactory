@@ -199,7 +199,6 @@
 #define IDENT_NO_CPP_EXPAND 455
 #define CHAR_LITERAL 456
 #define LAST_TOKEN 457
-#define ELIPSIS 458
 typedef union {
 #include "yystype.h"
 } YYSTYPE;
