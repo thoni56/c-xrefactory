@@ -81,7 +81,7 @@ $(eval $(call UNITTEST,editor,position log))
 $(eval $(call UNITTEST,cxref,protocol log hash position type storage usage))
 $(eval $(call UNITTEST,yylex,protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))
 $(eval $(call UNITTEST,lexembuffer,characterreader position log))
-$(eval $(call UNITTEST,memory,memory log))
+$(eval $(call UNITTEST,memory,log))
 $(eval $(call UNITTEST,position,log))
 $(eval $(call UNITTEST,id))
 

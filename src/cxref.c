@@ -2736,10 +2736,10 @@ static void setDefaultSelectedVisibleItems(S_olSymbolsMenu *menu,
 }
 
 static bool isSpecialConstructorOnlySelectionCase(int command) {
-    if (command == OLO_PUSH) return(1);
-    if (command == OLO_PUSH_ONLY) return(1);
-    if (command == OLO_PUSH_AND_CALL_MACRO) return(1);
-    if (command == OLO_ARG_MANIP) return(1);
+    if (command == OLO_PUSH) return true;
+    if (command == OLO_PUSH_ONLY) return true;
+    if (command == OLO_PUSH_AND_CALL_MACRO) return true;
+    if (command == OLO_ARG_MANIP) return true;
     if (command == OLO_SAFETY_CHECK2) {
         // here check if origin was an argument manipulation
         S_olcxReferences *refs, *origrefs, *newrefs, *diffrefs;
@@ -2755,9 +2755,7 @@ static bool isSpecialConstructorOnlySelectionCase(int command) {
     return false;
 }
 
-static void handleConstructorSpecialsInSelectingSymbolInMenu(
-                                                             S_olSymbolsMenu *menu, int command
-                                                             ) {
+static void handleConstructorSpecialsInSelectingSymbolInMenu(S_olSymbolsMenu *menu, int command) {
     S_olSymbolsMenu *s1, *s2, *ss;
     int ccc, sss, lll, vn;
     if (!LANGUAGE(LANG_JAVA)) return;
@@ -3333,7 +3331,7 @@ static int olcxCheckSymbolExists(void) {
         ) {
         return(0);
     }
-    return(1);
+    return true;
 }
 
 static S_olSymbolsMenu *firstVisibleSymbol(S_olSymbolsMenu *first) {
@@ -3352,35 +3350,35 @@ static int staticallyLinkedSymbolMenu(S_olSymbolsMenu *menu) {
     S_olSymbolsMenu *fv;
     fv = firstVisibleSymbol(menu);
     if (JAVA_STATICALLY_LINKED(fv->s.b.storage,fv->s.b.accessFlags)) {
-        return(1);
+        return true;
     } else {
         return(0);
     }
 }
 
-int olcxShowSelectionMenu(void) {
+bool olcxShowSelectionMenu(void) {
     S_olSymbolsMenu *ss, *first, *fvisible;
 
     // decide whether to show manual resolution menu
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     if (options.server_operation == OLO_PUSH_FOR_LOCALM) {
         // never ask for resolution for local motion symbols
-        return(0);
+        return false;
     }
     if (options.server_operation == OLO_SAFETY_CHECK2) {
         // safety check showing of menu is resolved by safetyCheck2ShouldWarn
-        return(0);
+        return false;
     }
     // first if just zero or one symbol, no resolution
     first = s_olcxCurrentUser->browserStack.top->menuSym;
     if (first == NULL) {
         //&fprintf(dumpOut,"no resolve, no symbol\n"); fflush(dumpOut);
-        return(0); // no symbol
+        return false; // no symbol
     }
     fvisible = firstVisibleSymbol(first);
     if (fvisible==NULL) {
         //&fprintf(dumpOut,"no resolve, no visible\n"); fflush(dumpOut);
-        return(0); // no visible
+        return false; // no visible
     }
     first = NULL;
     if (options.server_operation==OLO_PUSH
@@ -3398,7 +3396,7 @@ int olcxShowSelectionMenu(void) {
                     first = ss;
                 } else if ((! isSameCxSymbol(&first->s, &ss->s))
                            || first->s.vFunClass!=ss->s.vFunClass) {
-                    return(1);
+                    return true;
                 }
             }
         }
@@ -3406,14 +3404,14 @@ int olcxShowSelectionMenu(void) {
         for(ss=s_olcxCurrentUser->browserStack.top->menuSym; ss!=NULL; ss=ss->next) {
             if (ss->visible) {
                 if (first!=NULL) {
-                    return(1);
+                    return true;
                 }
                 first = ss;
             }
         }
     }
     //&fprintf(dumpOut,"no resolve, default value\n"); fflush(dumpOut);
-    return(0);
+    return false;
 }
 
 static int countSelectedItems(S_olSymbolsMenu *menu) {

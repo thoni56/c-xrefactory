@@ -274,7 +274,7 @@ void olcxReferencesDiff(Reference **anr1, Reference **aor2, Reference **diff) {
     mock(anr1, aor2, diff);
 }
 
-int olcxShowSelectionMenu(void) {
+bool olcxShowSelectionMenu(void) {
     return (int) mock();
 }
 

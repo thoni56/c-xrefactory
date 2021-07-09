@@ -113,7 +113,7 @@ extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void olcxPrintClassTree(S_olSymbolsMenu *sss);
 extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
                                Reference **diff);
-extern int olcxShowSelectionMenu(void);
+extern bool olcxShowSelectionMenu(void);
 extern int getClassNumFromClassLinkName(char *name, int defaultResult);
 extern void getLineColCursorPositionFromCommandLineOption( int *l, int *c );
 extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
