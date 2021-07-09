@@ -2061,21 +2061,22 @@ endOfMacroArgument:
 static char charText[2]={0,0};
 static char constant[50];
 
-/* WTF! Return inside macro!!! */
-#define CHECK_ID_FOR_KEYWORD(symbol, idposa) {                          \
-        if (symbol->bits.symbolType == TypeKeyword) {                   \
-            SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *idposa);       \
-            if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) { \
-                char ttt[TMP_STRING_SIZE];                              \
-                sprintf(ttt, "%s-%x", symbol->name, idposa->file);      \
-                addTrivialCxReference(ttt, TypeKeyword, StorageDefault, idposa, UsageUsed); \
-                /*&addCxReference(symbol, idposa, UsageUsed, noFileIndex, noFileIndex);&*/ \
-            }                                                           \
-            return symbol->u.keyword;                                   \
-        }                                                               \
+static bool isIdAKeyword(Symbol *symbol, Position *position) {
+    if (symbol->bits.symbolType == TypeKeyword) {
+        SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *position);
+        if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) {
+            char ttt[TMP_STRING_SIZE];
+            sprintf(ttt, "%s-%x", symbol->name, position->file);
+            addTrivialCxReference(ttt, TypeKeyword, StorageDefault, position, UsageUsed);
+            /*&addCxReference(symbol, position, UsageUsed, noFileIndex, noFileIndex);&*/
+        }
+        //return symbol->u.keyword;
+        return true;
     }
+    return false;
+}
 
-static int processCIdent(unsigned hashval, char *id, Position *idposa) {
+static int processCIdent(unsigned hashval, char *id, Position *position) {
     Symbol *symbol;
     Symbol *memb = NULL;
 
@@ -2084,12 +2085,13 @@ static int processCIdent(unsigned hashval, char *id, Position *idposa) {
         if (strcmp(symbol->name, id) == 0) {
             if (memb == NULL)
                 memb = symbol;
-            CHECK_ID_FOR_KEYWORD(symbol, idposa); /* NOTE! might return!!!! */
+            if (isIdAKeyword(symbol, position))
+                return symbol->u.keyword;
             if (symbol->bits.symbolType == TypeDefinedOp && s_ifEvaluation) {
                 return CPP_DEFINED_OP;
             }
             if (symbol->bits.symbolType == TypeDefault) {
-                SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *idposa);
+                SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *position);
                 if (symbol->bits.storage == StorageTypedef) {
                     return TYPE_NAME;
                 } else {
@@ -2100,7 +2102,7 @@ static int processCIdent(unsigned hashval, char *id, Position *idposa) {
     }
     if (memb == NULL) id = stackMemoryPushString(id);
     else id = memb->name;
-    SET_IDENTIFIER_YYLVAL(id, memb, *idposa);
+    SET_IDENTIFIER_YYLVAL(id, memb, *position);
     return IDENTIFIER;
 }
 
@@ -2114,7 +2116,8 @@ static int processJavaIdent(unsigned hashval, char *id, Position *idposa) {
         if (strcmp(symbol->name, id) == 0) {
             if (memb == NULL)
                 memb = symbol;
-            CHECK_ID_FOR_KEYWORD(symbol, idposa); /* NOTE: Might return!!!! */
+            if (isIdAKeyword(symbol, idposa))
+                return symbol->u.keyword;
             if (symbol->bits.symbolType == TypeDefault) {
                 SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *idposa);
                 return IDENTIFIER;
