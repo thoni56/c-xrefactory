@@ -2076,12 +2076,13 @@ static bool isIdAKeyword(Symbol *symbol, Position *position) {
     return false;
 }
 
-static int processCIdent(unsigned hashval, char *id, Position *position) {
+static int lookupCIdentifier(char *id, Position *position) {
     Symbol *symbol;
     Symbol *memb = NULL;
+    unsigned hash = hashFun(id) % s_symbolTable->size;
 
     log_trace("looking for C id '%s' in symbol table %p", id, s_symbolTable);
-    for(symbol=s_symbolTable->tab[hashval]; symbol!=NULL; symbol=symbol->next) {
+    for(symbol=s_symbolTable->tab[hash]; symbol!=NULL; symbol=symbol->next) {
         if (strcmp(symbol->name, id) == 0) {
             if (memb == NULL)
                 memb = symbol;
@@ -2107,12 +2108,13 @@ static int processCIdent(unsigned hashval, char *id, Position *position) {
 }
 
 
-static int processJavaIdent(unsigned hashval, char *id, Position *idposa) {
+static int lookupJavaIdentifier(char *id, Position *idposa) {
     Symbol *symbol;
     Symbol *memb = NULL;
+    unsigned hash = hashFun(id) % s_symbolTable->size;
 
     log_trace("looking for Java id '%s' in symbol table %p", id, s_symbolTable);
-    for(symbol=s_symbolTable->tab[hashval]; symbol!=NULL; symbol=symbol->next) {
+    for(symbol=s_symbolTable->tab[hash]; symbol!=NULL; symbol=symbol->next) {
         if (strcmp(symbol->name, id) == 0) {
             if (memb == NULL)
                 memb = symbol;
@@ -2251,7 +2253,6 @@ int yylex(void) {
     }
     if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
         char *id;
-        unsigned hash;
         Symbol symbol, *memberP;
 
         id = yytext = currentInput.currentLexemP;
@@ -2274,11 +2275,10 @@ int yylex(void) {
             id = memberP->name;
             if (expandMacroCall(memberP,&idpos)) goto nextYylex;
         }
-        hash = hashFun(id) % s_symbolTable->size;
         if (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC))
-            lexem=processCIdent(hash,id,&idpos);
+            lexem=lookupCIdentifier(id,&idpos);
         else if (LANGUAGE(LANG_JAVA))
-            lexem = processJavaIdent(hash, id, &idpos);
+            lexem = lookupJavaIdentifier(id, &idpos);
         else
             assert(0);
         position = idpos;            /* To simplify debug - pos is always current at finish: */
