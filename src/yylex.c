@@ -40,11 +40,11 @@
     uniyylval->ast_id.e.col += strlen(yytext);\
 }
 
-#define SET_POSITION_YYLVAL(pos, len) {         \
-        uniyylval->ast_position.d = pos;        \
-        uniyylval->ast_position.b = pos;        \
-        uniyylval->ast_position.e = pos;        \
-        uniyylval->ast_position.e.col += len;   \
+static void setYylvalsForPosition(Position position, int length) {
+        uniyylval->ast_position.d = position;
+        uniyylval->ast_position.b = position;
+        uniyylval->ast_position.e = position;
+        uniyylval->ast_position.e.col += length;
 }
 
 static void setYylvalsForInteger(int val, Position position, int length) {
@@ -2245,7 +2245,7 @@ int yylex(void) {
         } else {
             passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length,
                                macroStackIndex == 0);
-            SET_POSITION_YYLVAL(position, tokenNameLengthsTable[lexem]);
+            setYylvalsForPosition(position, tokenNameLengthsTable[lexem]);
         }
         yytext = charText;
         charText[0] = lexem;
@@ -2292,7 +2292,7 @@ int yylex(void) {
     if (lexem < MULTI_TOKENS_START) {
         yytext = tokenNamesTable[lexem];
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
-        SET_POSITION_YYLVAL(position, tokenNameLengthsTable[lexem]);
+        setYylvalsForPosition(position, tokenNameLengthsTable[lexem]);
         goto finish;
     }
     if (lexem == LINE_TOKEN) {
@@ -2310,13 +2310,13 @@ int yylex(void) {
     if (lexem == FLOAT_CONSTANT || lexem == DOUBLE_CONSTANT) {
         yytext = "'fltp constant'";
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
-        SET_POSITION_YYLVAL(position, length);
+        setYylvalsForPosition(position, length);
         goto finish;
     }
     if (lexem == STRING_LITERAL) {
         yytext = currentInput.currentLexemP;
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
-        SET_POSITION_YYLVAL(position, strlen(yytext));
+        setYylvalsForPosition(position, strlen(yytext));
         goto finish;
     }
     if (lexem == CHAR_LITERAL) {
