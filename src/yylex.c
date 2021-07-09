@@ -30,14 +30,14 @@
 #include "log.h"
 
 
-#define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\
-    uniyylval->ast_id.d = &s_yyIdentBuf[s_yyIdentBufi];\
-    s_yyIdentBufi ++; s_yyIdentBufi %= (YYBUFFERED_ID_INDEX);\
-    fillId(uniyylval->ast_id.d, name, symb, pos);\
-    yytext = name;\
-    uniyylval->ast_id.b = pos;\
-    uniyylval->ast_id.e = pos;\
-    uniyylval->ast_id.e.col += strlen(yytext);\
+static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position position) {
+    uniyylval->ast_id.d = &s_yyIdentBuf[s_yyIdentBufi];
+    s_yyIdentBufi ++; s_yyIdentBufi %= (YYBUFFERED_ID_INDEX);
+    fillId(uniyylval->ast_id.d, name, symbol, position);
+    yytext = name;
+    uniyylval->ast_id.b = position;
+    uniyylval->ast_id.e = position;
+    uniyylval->ast_id.e.col += strlen(yytext);
 }
 
 static void setYylvalsForPosition(Position position, int length) {
@@ -2077,7 +2077,8 @@ static char constant[50];
 
 static bool isIdAKeyword(Symbol *symbol, Position *position) {
     if (symbol->bits.symbolType == TypeKeyword) {
-        SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *position);
+        //SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *position);
+        setYylvalsForIdentifier(symbol->name, symbol, *position);
         if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) {
             char ttt[TMP_STRING_SIZE];
             sprintf(ttt, "%s-%x", symbol->name, position->file);
@@ -2106,7 +2107,8 @@ static int lookupCIdentifier(char *id, Position *position) {
                 return CPP_DEFINED_OP;
             }
             if (symbol->bits.symbolType == TypeDefault) {
-                SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *position);
+                //SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *position);
+                setYylvalsForIdentifier(symbol->name, symbol, *position);
                 if (symbol->bits.storage == StorageTypedef) {
                     return TYPE_NAME;
                 } else {
@@ -2117,7 +2119,7 @@ static int lookupCIdentifier(char *id, Position *position) {
     }
     if (memb == NULL) id = stackMemoryPushString(id);
     else id = memb->name;
-    SET_IDENTIFIER_YYLVAL(id, memb, *position);
+    setYylvalsForIdentifier(id, memb, *position);
     return IDENTIFIER;
 }
 
@@ -2135,7 +2137,7 @@ static int lookupJavaIdentifier(char *id, Position *idposa) {
             if (isIdAKeyword(symbol, idposa))
                 return symbol->u.keyword;
             if (symbol->bits.symbolType == TypeDefault) {
-                SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *idposa);
+                setYylvalsForIdentifier(symbol->name, symbol, *idposa);
                 return IDENTIFIER;
             }
         }
@@ -2144,7 +2146,7 @@ static int lookupJavaIdentifier(char *id, Position *idposa) {
         id = stackMemoryPushString(id);
     else
         id = memb->name;
-    SET_IDENTIFIER_YYLVAL(id, memb, *idposa);
+    setYylvalsForIdentifier(id, memb, *idposa);
     return IDENTIFIER;
 }
 
