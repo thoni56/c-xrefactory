@@ -38,9 +38,11 @@ endif
 #
 # The heavy lifting is here
 
-yydebug: CFLAGS += -DYYDEBUG
+# For production - no smartness just compile
+prod: c-xref
 
-prod yydebug: c-xref
+yydebug: CFLAGS += -DYYDEBUG
+yydebug: build
 
 devel: COVERAGE=--coverage
 devel: clean-coverage check-tokens
@@ -72,6 +74,7 @@ chcheck:
 #########################################################################
 include sources.mk
 
+.PHONY: build
 build: check-tokens # check that token sections in parsers are identical before compiling
 	@$(MAKE) -e c-xref
 

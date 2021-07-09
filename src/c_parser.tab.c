@@ -2088,7 +2088,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #include "recyacc.h"
 #endif
 #define yystacksize YYSTACKSIZE
-#line 1782 "c_parser.y"
+#line 1783 "c_parser.y"
 
 static CompletionFunctionsTable spCompletionsTab[]  = {
     {COMPL_FOR_SPECIAL1,    completeForSpecial1},
@@ -3980,7 +3980,7 @@ case 308:
         }
 break;
 case 309:
-#line 1547 "c_parser.y"
+#line 1548 "c_parser.y"
 { /*13*/
             generateInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
             generateInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
@@ -3988,13 +3988,13 @@ case 309:
         }
 break;
 case 310:
-#line 1552 "c_parser.y"
+#line 1553 "c_parser.y"
 { /*14*/
             yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.d, BREAK_LABEL_NAME);
         }
 break;
 case 311:
-#line 1556 "c_parser.y"
+#line 1557 "c_parser.y"
 {
             deleteContinueBreakSymbol(yyvsp[-1].symbol);
             deleteContinueBreakSymbol(yyvsp[-2].symbol);
@@ -4003,37 +4003,37 @@ case 311:
         }
 break;
 case 317:
-#line 1571 "c_parser.y"
+#line 1572 "c_parser.y"
 {
         genContinueBreakReference(CONTINUE_LABEL_NAME);
     }
 break;
 case 318:
-#line 1574 "c_parser.y"
+#line 1575 "c_parser.y"
 {
         genContinueBreakReference(BREAK_LABEL_NAME);
     }
 break;
 case 319:
-#line 1577 "c_parser.y"
+#line 1578 "c_parser.y"
 {
         generateInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 320:
-#line 1580 "c_parser.y"
+#line 1581 "c_parser.y"
 {
         generateInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 321:
-#line 1585 "c_parser.y"
+#line 1586 "c_parser.y"
 {
         actionsBeforeAfterExternalDefinition();
     }
 break;
 case 337:
-#line 1629 "c_parser.y"
+#line 1630 "c_parser.y"
 {
         if (includeStackPointer == 0) {
             placeCachePoint(true);
@@ -4041,7 +4041,7 @@ case 337:
     }
 break;
 case 338:
-#line 1634 "c_parser.y"
+#line 1635 "c_parser.y"
 {
         if (includeStackPointer == 0) {
             placeCachePoint(true);
@@ -4049,19 +4049,19 @@ case 338:
     }
 break;
 case 340:
-#line 1643 "c_parser.y"
+#line 1644 "c_parser.y"
 {
         tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d;
     }
 break;
 case 341:
-#line 1646 "c_parser.y"
+#line 1647 "c_parser.y"
 {
         tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d;
     }
 break;
 case 342:
-#line 1649 "c_parser.y"
+#line 1650 "c_parser.y"
 {
         Symbol *p;
         int i;
@@ -4086,7 +4086,7 @@ case 342:
     }
 break;
 case 343:
-#line 1670 "c_parser.y"
+#line 1671 "c_parser.y"
 {
         stackMemoryBlockEnd();
         s_cp.function = NULL;
@@ -4096,71 +4096,71 @@ case 343:
     }
 break;
 case 344:
-#line 1677 "c_parser.y"
+#line 1678 "c_parser.y"
 {
         tmpWorkMemoryIndex = yyvsp[-3].ast_unsigned.d;
     }
 break;
 case 345:
-#line 1680 "c_parser.y"
+#line 1681 "c_parser.y"
 {
         tmpWorkMemoryIndex = yyvsp[-5].ast_unsigned.d;
     }
 break;
 case 346:
-#line 1683 "c_parser.y"
+#line 1684 "c_parser.y"
 {
         tmpWorkMemoryIndex = yyvsp[-5].ast_unsigned.d;
     }
 break;
 case 347:
-#line 1686 "c_parser.y"
+#line 1687 "c_parser.y"
 {
         tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d;
     }
 break;
 case 348:
-#line 1689 "c_parser.y"
+#line 1690 "c_parser.y"
 {
         tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 349:
-#line 1692 "c_parser.y"
+#line 1693 "c_parser.y"
 {  /* empty external definition */
         tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 350:
-#line 1698 "c_parser.y"
+#line 1699 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
         addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,s_symbolTable);
     }
 break;
 case 351:
-#line 1702 "c_parser.y"
+#line 1703 "c_parser.y"
 {
         yyval.ast_symbol.d = & s_defaultIntDefinition;
         addNewDeclaration(yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,s_symbolTable);
     }
 break;
 case 352:
-#line 1706 "c_parser.y"
+#line 1707 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,s_symbolTable);
     }
 break;
 case 353:
-#line 1710 "c_parser.y"
+#line 1711 "c_parser.y"
 {
         /* $$.d = &s_errorSymbol; */
         yyval.ast_symbol.d = typeSpecifier2(&s_errorModifier);
     }
 break;
 case 355:
-#line 1718 "c_parser.y"
+#line 1719 "c_parser.y"
 {
         int r;
         assert(yyvsp[-1].ast_symbol.d->u.type && yyvsp[-1].ast_symbol.d->u.type->kind == TypeFunction);
@@ -4170,13 +4170,13 @@ case 355:
     }
 break;
 case 356:
-#line 1728 "c_parser.y"
+#line 1729 "c_parser.y"
 {
         yyval.ast_symbol.d = NULL;
     }
 break;
 case 357:
-#line 1731 "c_parser.y"
+#line 1732 "c_parser.y"
 {
         Symbol *p;
         assert(yyvsp[-2].ast_symbol.d && yyvsp[-1].ast_symbol.d);
@@ -4187,26 +4187,26 @@ case 357:
     }
 break;
 case 358:
-#line 1742 "c_parser.y"
+#line 1743 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
     }
 break;
 case 359:
-#line 1745 "c_parser.y"
+#line 1746 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         LIST_APPEND(Symbol, yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d);
     }
 break;
 case 360:
-#line 1749 "c_parser.y"
+#line 1750 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
     }
 break;
 case 361:
-#line 1755 "c_parser.y"
+#line 1756 "c_parser.y"
 {
         completeDeclarator(&s_defaultIntDefinition, yyvsp[0].ast_symbol.d);
         assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->u.type);
@@ -4215,7 +4215,7 @@ case 361:
     }
 break;
 case 362:
-#line 1761 "c_parser.y"
+#line 1762 "c_parser.y"
 {
         completeDeclarator(yyvsp[-1].ast_symbol.d, yyvsp[0].ast_symbol.d);
         assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->u.type);
@@ -4224,11 +4224,11 @@ case 362:
     }
 break;
 case 363:
-#line 1770 "c_parser.y"
+#line 1771 "c_parser.y"
 { stackMemoryBlockStart(); }
 break;
 case 364:
-#line 1773 "c_parser.y"
+#line 1774 "c_parser.y"
 { stackMemoryBlockEnd(); }
 break;
 #line 4235 "c_parser.tab.c"

@@ -5,9 +5,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Implement non-standard #include_next since both gcc and clang is using it in system headers
-* DOING Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
 * DOING Move XX_ALLOCC and friends to "memory" module
+* DOING Handle for-loops with declarations ("for (int i = 0;...")
+** DONE Grammar changes for C and Yacc
+** TODO Scope rules for loop variable, don't really understand how that works...
 * TODO Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
@@ -65,8 +66,6 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
 * TODO Separate the options into sections and move HTML (at least) to separate structure
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
-* TODO Handle for-loops with declarations ("for (int i = 0;...")
-  This requires grammar changes for C and Yacc
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
 ** DONE Make commons.c independent on main
@@ -123,6 +122,8 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
+* DONE Implement non-standard #include_next since both gcc and clang is using it in system headers
 * DONE Rename int2StringTabs, should not have Init in them
 Yes, they should since they are the init data for some tables used at run-time. 
 * DONE Unify the two documentation sets (html+txt) into Markdown
