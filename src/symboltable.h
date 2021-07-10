@@ -13,7 +13,7 @@
 #include "hashlist.th"
 
 
-extern SymbolTable *s_symbolTable;
+extern SymbolTable *symbolTable;
 
 #ifndef _SYMTAB_
 #undef HASH_TAB_NAME

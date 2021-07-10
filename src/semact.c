@@ -76,7 +76,7 @@ void deleteSymDef(void *p) {
     pp = (Symbol *) p;
     log_debug("deleting %s %s", pp->name, pp->linkName);
     if (symbolTableDelete(s_javaStat->locals,pp)) return;
-    if (symbolTableDelete(s_symbolTable,pp)==0) {
+    if (symbolTableDelete(symbolTable,pp)==0) {
         assert(options.taskRegime);
         if (options.taskRegime != RegimeEditServer) {
             errorMessage(ERR_INTERNAL,"symbol on deletion not found");
@@ -529,7 +529,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     int         len;
     char        *ss,*basefname;
 
-    //& if (! symbolTableIsMember(s_symbolTable, p, &ii, &memb)) {
+    //& if (! symbolTableIsMember(symbolTable, p, &ii, &memb)) {
     // follwing unifies static symbols taken from the same header files.
     // Static symbols can be used only after being defined, so it is sufficient
     // to do this on definition usage?
@@ -894,7 +894,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     fillSymbol(&p, id->name, id->name, id->p);
     fillSymbolBits(&p.bits, AccessDefault, type, StorageNone);
 
-    if (!symbolTableIsMember(s_symbolTable, &p, NULL, &pp)
+    if (!symbolTableIsMember(symbolTable, &p, NULL, &pp)
         || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         pp = StackMemoryAlloc(Symbol);
@@ -910,7 +910,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         initTypeModifierAsPointer(sptrtype, &pp->u.s->stype);
 
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
-        addSymbol(pp, s_symbolTable);
+        addSymbol(pp, symbolTable);
     }
     addCxReference(pp, &id->p, usage,noFileIndex, noFileIndex);
     return(&pp->u.s->stype);
@@ -935,7 +935,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
         filen = pp->pos.file;
         pp->name=iname; pp->linkName=iname;
         order = 0;
-        rr = symbolTableIsMember(s_symbolTable, pp, NULL, &memb);
+        rr = symbolTableIsMember(symbolTable, pp, NULL, &memb);
         while (rr) {
             if (memb->pos.file==filen) order++;
             rr = symbolTableNextMember(pp, &memb);
@@ -993,7 +993,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     TypeModifier *sptrtype = &pp->u.s->sptrtype;
     initTypeModifierAsPointer(sptrtype, &pp->u.s->stype);
 
-    addSymbol(pp, s_symbolTable);
+    addSymbol(pp, symbolTable);
 
     return(&pp->u.s->stype);
 }
@@ -1020,12 +1020,12 @@ TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
     fillSymbol(&p, id->name, id->name, id->p);
     fillSymbolBits(&p.bits, AccessDefault, TypeEnum, StorageNone);
 
-    if (! symbolTableIsMember(s_symbolTable, &p, NULL, &pp)
+    if (! symbolTableIsMember(symbolTable, &p, NULL, &pp)
         || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemoryAlloc(Symbol);
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
-        addSymbol(pp, s_symbolTable);
+        addSymbol(pp, symbolTable);
     }
     addCxReference(pp, &id->p, usage,noFileIndex, noFileIndex);
     return(createSimpleEnumType(pp));

@@ -2294,7 +2294,7 @@ case 1:
             d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
-            dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
+            dd = addNewSymbolDef(d, StorageExtern, symbolTable, UsageUsed);
             yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->p, UsageUsed, noFileIndex, noFileIndex);
         }
     }
@@ -2783,14 +2783,14 @@ case 101:
 #line 651 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
-        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageAuto, s_symbolTable);
+        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageAuto, symbolTable);
     }
 break;
 case 102:
 #line 655 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
-        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageAuto, s_symbolTable);
+        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageAuto, symbolTable);
     }
 break;
 case 103:
@@ -3210,14 +3210,14 @@ case 187:
 #line 975 "c_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[0].ast_id.d);
-        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, s_symbolTable, UsageDefined);
+        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
     }
 break;
 case 188:
 #line 979 "c_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[-2].ast_id.d);
-        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, s_symbolTable, UsageDefined);
+        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
     }
 break;
 case 189:
@@ -4026,7 +4026,7 @@ case 342:
         /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
-        addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, s_symbolTable, UsageDefined);
+        addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, symbolTable, UsageDefined);
         tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
         stackMemoryBlockStart();
         counters.localVar = 0;
@@ -4036,7 +4036,7 @@ case 342:
         for(p=yyvsp[0].ast_symbol.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
             if (p->bits.symbolType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
-            addFunctionParameterToSymTable(yyvsp[0].ast_symbol.d, p, i, s_symbolTable);
+            addFunctionParameterToSymTable(yyvsp[0].ast_symbol.d, p, i, symbolTable);
         }
     }
 break;
@@ -4090,21 +4090,21 @@ case 350:
 #line 1698 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
-        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,s_symbolTable);
+        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
     }
 break;
 case 351:
 #line 1702 "c_parser.y"
 {
         yyval.ast_symbol.d = & s_defaultIntDefinition;
-        addNewDeclaration(yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,s_symbolTable);
+        addNewDeclaration(yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
     }
 break;
 case 352:
 #line 1706 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
-        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,s_symbolTable);
+        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
     }
 break;
 case 353:

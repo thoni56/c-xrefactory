@@ -2242,11 +2242,11 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initOptions();
 
     /* TODO: should go into a newSymbolTable() function... */
-    s_symbolTable = StackMemoryAlloc(SymbolTable);
-    symbolTableInit(s_symbolTable, MAX_SYMBOLS);
+    symbolTable = StackMemoryAlloc(SymbolTable);
+    symbolTableInit(symbolTable, MAX_SYMBOLS);
 
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
-                  s_symbolTable,NULL,AccessDefault,s_cpInit,noFileIndex,NULL);
+                  symbolTable,NULL,AccessDefault,s_cpInit,noFileIndex,NULL);
     s_javaStat = StackMemoryAlloc(S_javaStat);
     *s_javaStat = s_initJavaStat;
     javaFqtTableInit(&javaFqtTable, FQT_CLASS_TAB_SIZE);

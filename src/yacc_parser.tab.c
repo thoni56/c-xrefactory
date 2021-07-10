@@ -2754,7 +2754,7 @@ static void addRuleLocalVariable(Id *name, int order) {
             fillSymbolBits(&ss->bits, AccessDefault, TypeDefault, StorageAuto);
 
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
-            addNewDeclaration(p, ss, NULL, StorageAuto, s_symbolTable);
+            addNewDeclaration(p, ss, NULL, StorageAuto, symbolTable);
         }
     }
 }
@@ -3021,7 +3021,7 @@ case 15:
 
             addYaccSymbolReference(yyvsp[0].ast_id.d,UsageDeclared);
             if (l_currentType!=NULL) {
-                addNewDeclaration(l_currentType, ss, NULL, StorageAuto,s_symbolTable);
+                addNewDeclaration(l_currentType, ss, NULL, StorageAuto,symbolTable);
             }
         }
 break;
@@ -3144,7 +3144,7 @@ case 192:
             d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
-            dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
+            dd = addNewSymbolDef(d, StorageExtern, symbolTable, UsageUsed);
             yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->p, UsageUsed, noFileIndex, noFileIndex);
         }
     }
@@ -3633,14 +3633,14 @@ case 292:
 #line 877 "yacc_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
-        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageAuto, s_symbolTable);
+        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageAuto, symbolTable);
     }
 break;
 case 293:
 #line 881 "yacc_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
-        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageAuto, s_symbolTable);
+        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageAuto, symbolTable);
     }
 break;
 case 294:
@@ -4060,14 +4060,14 @@ case 378:
 #line 1201 "yacc_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[0].ast_id.d);
-        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, s_symbolTable, UsageDefined);
+        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
     }
 break;
 case 379:
 #line 1205 "yacc_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[-2].ast_id.d);
-        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, s_symbolTable, UsageDefined);
+        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
     }
 break;
 case 380:
@@ -4876,7 +4876,7 @@ case 533:
         /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
-        addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, s_symbolTable, UsageDefined);
+        addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, symbolTable, UsageDefined);
         tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
         stackMemoryBlockStart();
         counters.localVar = 0;
@@ -4886,7 +4886,7 @@ case 533:
         for(p=yyvsp[0].ast_symbol.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
             if (p->bits.symbolType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
-            addFunctionParameterToSymTable(yyvsp[0].ast_symbol.d, p, i, s_symbolTable);
+            addFunctionParameterToSymTable(yyvsp[0].ast_symbol.d, p, i, symbolTable);
         }
     }
 break;
@@ -4940,21 +4940,21 @@ case 541:
 #line 1924 "yacc_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
-        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,s_symbolTable);
+        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
     }
 break;
 case 542:
 #line 1928 "yacc_parser.y"
 {
         yyval.ast_symbol.d = & s_defaultIntDefinition;
-        addNewDeclaration(yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,s_symbolTable);
+        addNewDeclaration(yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
     }
 break;
 case 543:
 #line 1932 "yacc_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
-        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,s_symbolTable);
+        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
     }
 break;
 case 544:

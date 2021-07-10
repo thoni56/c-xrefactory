@@ -254,7 +254,7 @@ primary_expr
             d = newSymbolAsType($1.d->name, $1.d->name, $1.d->p, $$.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
-            dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
+            dd = addNewSymbolDef(d, StorageExtern, symbolTable, UsageUsed);
             $$.d.reference = addCxReference(dd, &$1.d->p, UsageUsed, noFileIndex, noFileIndex);
         }
     }
@@ -650,11 +650,11 @@ declaration
 init_declarations
     : declaration_specifiers init_declarator eq_initializer_opt {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, $3.d, StorageAuto, s_symbolTable);
+        addNewDeclaration($1.d, $2.d, $3.d, StorageAuto, symbolTable);
     }
     | init_declarations ',' init_declarator eq_initializer_opt  {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, $4.d, StorageAuto, s_symbolTable);
+        addNewDeclaration($1.d, $3.d, $4.d, StorageAuto, symbolTable);
     }
     | error                                             {
         /* $$.d = &s_errorSymbol; */
@@ -974,11 +974,11 @@ enumerator_list
 enumerator
     : identifier                            {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
-        addNewSymbolDef($$.d,StorageConstant, s_symbolTable, UsageDefined);
+        addNewSymbolDef($$.d,StorageConstant, symbolTable, UsageDefined);
     }
     | identifier '=' constant_expr          {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
-        addNewSymbolDef($$.d,StorageConstant, s_symbolTable, UsageDefined);
+        addNewSymbolDef($$.d,StorageConstant, symbolTable, UsageDefined);
     }
     | error                                 {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
@@ -1655,7 +1655,7 @@ external_definition
         /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
-        addNewSymbolDef($2.d, StorageExtern, s_symbolTable, UsageDefined);
+        addNewSymbolDef($2.d, StorageExtern, symbolTable, UsageDefined);
         tmpWorkMemoryIndex = $1.d;
         stackMemoryBlockStart();
         counters.localVar = 0;
@@ -1665,7 +1665,7 @@ external_definition
         for(p=$2.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
             if (p->bits.symbolType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
-            addFunctionParameterToSymTable($2.d, p, i, s_symbolTable);
+            addFunctionParameterToSymTable($2.d, p, i, symbolTable);
         }
     } compound_statement {
         stackMemoryBlockEnd();
@@ -1697,15 +1697,15 @@ external_definition
 top_init_declarations
     : declaration_specifiers init_declarator eq_initializer_opt {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, $3.d, StorageExtern,s_symbolTable);
+        addNewDeclaration($1.d, $2.d, $3.d, StorageExtern,symbolTable);
     }
     | init_declarator eq_initializer_opt                        {
         $$.d = & s_defaultIntDefinition;
-        addNewDeclaration($$.d, $1.d, $2.d, StorageExtern,s_symbolTable);
+        addNewDeclaration($$.d, $1.d, $2.d, StorageExtern,symbolTable);
     }
     | top_init_declarations ',' init_declarator eq_initializer_opt          {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, $4.d, StorageExtern,s_symbolTable);
+        addNewDeclaration($1.d, $3.d, $4.d, StorageExtern,symbolTable);
     }
     | error                                                     {
         /* $$.d = &s_errorSymbol; */

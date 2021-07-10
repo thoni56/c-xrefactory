@@ -587,7 +587,7 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *original, int accessFlags, Posit
 
     added = newSymbolAsCopyOf(original);
     added->pos = *importPos;
-    addSymbol(added, s_symbolTable);
+    addSymbol(added, symbolTable);
 
     return(original);
 }
@@ -623,7 +623,7 @@ Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
     fillSymbol(&pp, tname->id.name, tname->id.name, s_noPos);
     fillSymbolBits(&pp.bits, accessFlags, TypeStruct, StorageNone);
 
-    if (tname->next==NULL && symbolTableIsMember(s_symbolTable, &pp, NULL, &memb)) {
+    if (tname->next==NULL && symbolTableIsMember(symbolTable, &pp, NULL, &memb)) {
         // get canonical copy
         memb = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
         return(memb);
@@ -1013,7 +1013,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
     fillSymbolBits(&sd.bits, AccessDefault, TypeStruct, StorageNone);
 
     haveit = false;
-    if (symbolTableIsMember(s_symbolTable, &sd, NULL, &memb)) {
+    if (symbolTableIsMember(symbolTable, &sd, NULL, &memb)) {
         /* a type */
         assert(memb);
         // O.K. I have to load the class in order to check its access flags

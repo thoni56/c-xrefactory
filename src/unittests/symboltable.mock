@@ -2,7 +2,7 @@
 #include "symboltable.h"
 #include <cgreen/mocks.h>
 
-SymbolTable *s_symbolTable;
+SymbolTable *symbolTable;
 
 void symbolTableInit(SymbolTable *table, int size) {
   mock(table, size);

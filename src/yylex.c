@@ -586,7 +586,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
     fillSymbol(&ss, tmpBuff, tmpBuff, s_noPos);
     fillSymbolBits(&ss.bits, AccessDefault, TypeMacro, StorageNone);
 
-    if (symbolTableIsMember(s_symbolTable, &ss, NULL, &memb))
+    if (symbolTableIsMember(symbolTable, &ss, NULL, &memb))
         return;
     nyyin = openInclude(pchar, iname, &fname, is_include_next);
     if (nyyin == NULL) {
@@ -648,13 +648,13 @@ static void addMacroToTabs(Symbol *pp, char *name) {
     int index, mm;
     Symbol *memb;
 
-    mm = symbolTableIsMember(s_symbolTable, pp, &index, &memb);
+    mm = symbolTableIsMember(symbolTable, pp, &index, &memb);
     if (mm) {
         log_trace(": masking macro %s", name);
     } else {
         log_trace(": adding macro %s", name);
     }
-    symbolTableSet(s_symbolTable, pp, index);
+    symbolTableSet(symbolTable, pp, index);
 }
 
 static void setMacroArgumentName(MacroArgumentTableElement *arg, void *at) {
@@ -990,7 +990,7 @@ static void processUndefineDirective(void) {
         assert(options.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
-        if (symbolTableIsMember(s_symbolTable, &dd, NULL, &memb)) {
+        if (symbolTableIsMember(symbolTable, &dd, NULL, &memb)) {
             addCxReference(memb, &position, UsageUndefinedMacro, noFileIndex, noFileIndex);
 
             PP_ALLOC(pp, Symbol);
@@ -1136,7 +1136,7 @@ static void processIfdefDirective(bool isIfdef) {
     fillSymbolBits(&pp.bits, AccessDefault, TypeMacro, StorageNone);
 
     assert(options.taskRegime);
-    mm = symbolTableIsMember(s_symbolTable, &pp, NULL, &memb);
+    mm = symbolTableIsMember(symbolTable, &pp, NULL, &memb);
     if (mm && memb->u.mbody==NULL) mm = 0;	// undefined macro
     if (mm) {
         addCxReference(memb, &position, UsageUsed, noFileIndex, noFileIndex);
@@ -1207,7 +1207,7 @@ int cexp_yylex(void) {
 
         log_debug("(%s)", dd.name);
 
-        mm = symbolTableIsMember(s_symbolTable, &dd, NULL, &memb);
+        mm = symbolTableIsMember(symbolTable, &dd, NULL, &memb);
         if (mm && memb->u.mbody == NULL)
             mm = 0;   // undefined macro
         assert(options.taskRegime);
@@ -1272,7 +1272,7 @@ static void processPragmaDirective(void) {
         fillSymbol(pp, mname, mname, position);
         fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
 
-        symbolTableAdd(s_symbolTable,pp,&ii);
+        symbolTableAdd(symbolTable,pp,&ii);
     }
     while (lexem != '\n') {
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
@@ -1489,7 +1489,7 @@ static void expandMacroArgument(LexInput *argb) {
         if (lexem == IDENTIFIER) {
             fillSymbol(&sd, currentLexem, currentLexem, s_noPos);
             fillSymbolBits(&sd.bits, AccessDefault, TypeMacro, StorageNone);
-            if (symbolTableIsMember(s_symbolTable, &sd, NULL, &memb)) {
+            if (symbolTableIsMember(symbolTable, &sd, NULL, &memb)) {
                 /* it is a macro, provide macro expansion */
                 if (expandMacroCall(memb,&position)) goto nextLexem;
                 else failedMacroExpansion = 1;
@@ -2094,10 +2094,10 @@ static bool isIdAKeyword(Symbol *symbol, Position *position) {
 static int lookupCIdentifier(char *id, Position *position) {
     Symbol *symbol;
     Symbol *memb = NULL;
-    unsigned hash = hashFun(id) % s_symbolTable->size;
+    unsigned hash = hashFun(id) % symbolTable->size;
 
-    log_trace("looking for C id '%s' in symbol table %p", id, s_symbolTable);
-    for(symbol=s_symbolTable->tab[hash]; symbol!=NULL; symbol=symbol->next) {
+    log_trace("looking for C id '%s' in symbol table %p", id, symbolTable);
+    for(symbol=symbolTable->tab[hash]; symbol!=NULL; symbol=symbol->next) {
         if (strcmp(symbol->name, id) == 0) {
             if (memb == NULL)
                 memb = symbol;
@@ -2127,10 +2127,10 @@ static int lookupCIdentifier(char *id, Position *position) {
 static int lookupJavaIdentifier(char *id, Position *idposa) {
     Symbol *symbol;
     Symbol *memb = NULL;
-    unsigned hash = hashFun(id) % s_symbolTable->size;
+    unsigned hash = hashFun(id) % symbolTable->size;
 
-    log_trace("looking for Java id '%s' in symbol table %p", id, s_symbolTable);
-    for(symbol=s_symbolTable->tab[hash]; symbol!=NULL; symbol=symbol->next) {
+    log_trace("looking for Java id '%s' in symbol table %p", id, symbolTable);
+    for(symbol=symbolTable->tab[hash]; symbol!=NULL; symbol=symbol->next) {
         if (strcmp(symbol->name, id) == 0) {
             if (memb == NULL)
                 memb = symbol;
@@ -2270,7 +2270,7 @@ int yylex(void) {
 
         if ((!LANGUAGE(LANG_JAVA))
             && lexem!=IDENT_NO_CPP_EXPAND
-            && symbolTableIsMember(s_symbolTable, &symbol, NULL, &memberP)) {
+            && symbolTableIsMember(symbolTable, &symbol, NULL, &memberP)) {
             // following is because the macro check can read new lexBuf,
             // so id would be destroyed
             //&assert(strcmp(id,memberP->name)==0);

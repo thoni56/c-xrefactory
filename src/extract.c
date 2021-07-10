@@ -78,7 +78,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     s = newSymbolAsLabel(name, name, s_noPos, labn);
     fillSymbolBits(&s->bits, AccessDefault, TypeLabel, StorageAuto);
 
-    AddSymbolNoTrail(s, s_symbolTable);
+    AddSymbolNoTrail(s, symbolTable);
     return(s);
 }
 
@@ -91,7 +91,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
 
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
-    if (symbolTableIsMember(s_symbolTable, &ss, NULL, &memb)) {
+    if (symbolTableIsMember(symbolTable, &ss, NULL, &memb)) {
         deleteContinueBreakSymbol(memb);
     } else {
         assert(0);
@@ -107,7 +107,7 @@ void genContinueBreakReference(char *name) {
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
 
-    if (symbolTableIsMember(s_symbolTable, &ss, NULL, &memb)) {
+    if (symbolTableIsMember(symbolTable, &ss, NULL, &memb)) {
         generateInternalLabelReference(memb->u.labelIndex, UsageUsed);
     }
 }
@@ -120,7 +120,7 @@ void generateSwitchCaseFork(bool isLast) {
 
     fillSymbolWithLabel(&symbol, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
     fillSymbolBits(&symbol.bits, AccessDefault, TypeLabel, StorageAuto);
-    if (symbolTableIsMember(s_symbolTable, &symbol, NULL, &found_member_pointer)) {
+    if (symbolTableIsMember(symbolTable, &symbol, NULL, &found_member_pointer)) {
         generateInternalLabelReference(found_member_pointer->u.labelIndex, UsageDefined);
         if (!isLast) {
             found_member_pointer->u.labelIndex++;

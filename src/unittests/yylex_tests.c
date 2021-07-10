@@ -42,8 +42,8 @@ BeforeEach(Yylex) {
     options.taskRegime = RegimeEditServer;
     ppMemInit();
     initFileTable(&fileTable);
-    s_symbolTable = StackMemoryAlloc(SymbolTable);
-    symbolTableInit(s_symbolTable, 10);
+    symbolTable = StackMemoryAlloc(SymbolTable);
+    symbolTableInit(symbolTable, 10);
 }
 AfterEach(Yylex) {}
 
