@@ -30,7 +30,6 @@ and you can also get java.class.version=55 => java version without decoding dire
 ** TODO Restore some original version to working state (branch?)
 * TODO Strange that <update-report> is put in the -o file since that output is probably meant to be synchronous
 Should really be sent synchronously so that the editor can display it.
-* TODO Make C-xref->Misc->About show commit-id
 * TODO Introduce adapter for stat() in fileio
 * TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
@@ -122,6 +121,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Make C-xref->Misc->About show commit-id
 * DONE Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
 * DONE Implement non-standard #include_next since both gcc and clang is using it in system headers
 * DONE Rename int2StringTabs, should not have Init in them

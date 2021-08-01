@@ -4573,7 +4573,7 @@ corresponding to this project name.
 (defun c-xref-project-set-active ()
 "Set  active  project.
 
-This function is meningfull only if your '.c-xrefrc' file
+This function is meningful only if your '.c-xrefrc' file
 contains a section defining options for your project. After
 setting a project to be active all C-xrefactory functions will
 proceed according to options corresponding to this project name.
