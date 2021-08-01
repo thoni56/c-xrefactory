@@ -18,8 +18,9 @@ Optionally the most frequent functions can be bound to shortcuts.
 C-xrefactory can also be customized via standard Emacs and jEdit
 customization dialog.
 
-NOTE: Some of these descriptions refers to the jEdit plugin and/or are
-relevant only when browsing Java.
+NOTE: Some of these descriptions refers to the jEdit plugin (not
+supported and may or may not work) and/or are relevant only when
+browsing Java.
 
 
 ## Quick start

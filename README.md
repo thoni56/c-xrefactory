@@ -24,6 +24,35 @@ code will never be the same. Some highlights:
 When installed correctly there will be an Emacs menu called `C-xref`
 for easy access to most functions.
 
+## Setup
+
+If your Emacs runs in a "standard" *ux-like environment with `bash`,
+`make`, `cc` etc. you probably don't need anything in particular.
+
+Just make sure that you have a `zlib-devel` installed as the current
+`c-xrefactory` install using `el-get` does not automatically compiles
+it own.
+
+This will make Emacs/c-xrefactory work on Linux, including WSL,
+Cygwin, Msys2-MSYS (but not Msys2-MingW*) and on MacOS/Darwin.
+
+For Windows I really recommend doing your development in WSL
+(especially WSL2). You can setup `c-xrefactory` as described above and
+run Emacs in a terminal window without any problems.
+
+To use Emacs in a graphical environment (in an X11 window) you need a
+Windows X11 server like
+[VcXsrv](https://sourceforge.net/projects/vcxsrv/) (my
+recommendatioin), x410 (from the Windows Store),
+[Xming](https://sourceforge.net/projects/xming/)) or, if you already
+have MobaXterm, that also comes with an X11 server. Then set it the
+server according to [these
+instructions](https://stackoverflow.com/a/61110604/204658).
+
+## Features and notes
+
+TBD. Some documentation is [here](https://github.com/thoni56/c-xrefactory/blob/master/doc/c-xrefactory.md).
+
 ### Yacc special features
 
 C code inside semantic actions in a Yacc file will be analysed so that
