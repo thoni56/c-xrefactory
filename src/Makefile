@@ -8,9 +8,9 @@ export COVERAGE =
 
 WARNINGS = -Wall -Wno-char-subscripts
 
-GIT_HASH = `git rev-parse HEAD`
+GIT_HASH = $(shell git rev-parse HEAD)
 
-CFLAGS = -g $(INCLUDES) -MMD -funsigned-char $(WARNINGS) $(COVERAGE) -DGIT_HASH=\"$(GIT_HASH)\"
+CFLAGS = -g -O0 $(INCLUDES) -MMD -funsigned-char $(WARNINGS) $(COVERAGE) -DGIT_HASH=\"$(GIT_HASH)\"
 
 LDFLAGS = $(COVERAGE)
 

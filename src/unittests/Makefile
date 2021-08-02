@@ -3,9 +3,6 @@ vpath %.dll.a /usr/local:/usr/local/lib
 vpath %.so /usr/lib:/usr/local/lib
 vpath %.dylib /usr/lib:/usr/local/lib
 
-# Set COVERAGE to enable coverage, duh!
-# E.g. COVERAGE=--coverage
-
 WARNINGS = -Wall -Wno-char-subscripts
 CFLAGS = -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. -I/usr/include -I/usr/local/include $(COVERAGE) -DHAVE_ZLIB
 
@@ -49,6 +46,11 @@ all: $(UNITTESTS)
 			info2gcov -q unittests.info ; \
 		fi ; \
 	fi
+
+# Set COVERAGE to enable coverage, duh!
+# E.g. COVERAGE=--coverage
+coverage: COVERAGE=--coverage
+coverage: all
 
 clean:
 	-rm $(OBJDIR)/*.[od] *.$(EXT) $(OBJDIR)/*.gc*
