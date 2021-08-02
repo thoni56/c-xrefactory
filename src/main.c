@@ -1925,7 +1925,7 @@ static char *gnuisms[] = {
                           "__attribute__(xxx)",
                           "__alignof__(xxx) 8",
                           "__typeof__(xxx) int",
-                          "__gnuc_va_list void",
+                          "__builtin_va_list void",
                           "__leaf__",
                           "__restrict=",
                           "__restrict__=",
