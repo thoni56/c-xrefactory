@@ -1921,15 +1921,18 @@ static void discoverBuiltinIncludePaths(void) {
 }
 
 
-static char *gnuisms[] = {
-                          "__attribute__(xxx)",
-                          "__alignof__(xxx) 8",
-                          "__typeof__(xxx) int",
-                          "__builtin_va_list void",
-                          "__leaf__",
-                          "__restrict=",
-                          "__restrict__=",
-                          "__extension__="
+static char *extra_defines[] = {
+    /* Standard types */
+    "__Bool int",
+    /* GNUisms: */
+    "__attribute__(xxx)",
+    "__alignof__(xxx) 8",
+    "__typeof__(xxx) int",
+    "__builtin_va_list void",
+    "__leaf__",
+    "__restrict=",
+    "__restrict__=",
+    "__extension__="
 };
 
 static void discoverStandardDefines(void) {
@@ -1938,6 +1941,10 @@ static void discoverStandardDefines(void) {
     char *tempfile_name;
     FILE *tempfile;
     char command[TMP_BUFF_SIZE];
+
+    /* This function discovers the compiler builtin defines by making
+     * a call to it and then sets those up as if they where defined on
+     * the command line */
 
     if (!(LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC))) {
         return;
@@ -1948,7 +1955,7 @@ static void discoverStandardDefines(void) {
     sprintf(command, "%s -E -dM - >%s 2>&1", options.compiler, tempfile_name);
 
     /* Need to pipe an empty file into gcc, an alternative would be to
-       create an empty file, but that seems as much work */
+       create an empty file, but that seems as much work as this */
     FILE *p = popen(command, "w");
     closeFile(p);
 
@@ -1961,10 +1968,10 @@ static void discoverStandardDefines(void) {
         addMacroDefinedByOption(&line[strlen("#define")+1]);
     }
 
-    /* Also define some GNU-isms */
-    for (int i=0; i<sizeof(gnuisms)/sizeof(gnuisms[0]); i++) {
-        log_trace("Add definition '%s'", gnuisms[i]);
-        addMacroDefinedByOption(gnuisms[i]);
+    /* Also define some faked standard base types and GNU-isms */
+    for (int i=0; i<sizeof(extra_defines)/sizeof(extra_defines[0]); i++) {
+        log_trace("Add definition '%s'", extra_defines[i]);
+        addMacroDefinedByOption(extra_defines[i]);
     }
  }
 

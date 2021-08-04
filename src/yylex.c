@@ -741,7 +741,6 @@ static Lexem getNonBlankLexem(jmp_buf exceptionHandler, Position *_pos, int *_l,
 /* Public only for unittesting */
 void processDefineDirective(bool hasArguments) {
     Lexem lexem;
-    bool isReadingBody = false;
     int foundIndex;
     int argumentCount, ellipsis;
     Symbol *symbol;
@@ -754,6 +753,7 @@ void processDefineDirective(bool hasArguments) {
     int lineNumber, value, length; UNUSED lineNumber; UNUSED value; UNUSED length;
 
     /* These need to be static to survive longjmp since they are used after endOfFile */
+    static bool isReadingBody = false;
     static int macroSize;
     static int allocatedSize;
 

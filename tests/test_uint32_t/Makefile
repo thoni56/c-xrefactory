@@ -10,7 +10,7 @@ include ../Makefile.boilerplate
 # gcc -E source.c
 
 CXREF = ../../src/c-xref
-COMMAND = $(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -DMYDEFINE=mydefine -p $(CURDIR) $(TRACE) source_not_working.c source_working.c -log=log -o output.tmp
+COMMAND = $(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) uint32.c -log=log -o output.tmp
 
 $(TEST): .c-xrefrc
 	$(COMMAND)

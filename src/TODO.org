@@ -12,9 +12,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
-* TODO Investigate why test_uint32_t fails on some systems
-Maybe they don't define the required standard types using header files, or we need some
-flag for C99 compatibility? Should we revert to pre-defining the standard symbols?
 * TODO Add menu for running the tutorial (in C or Java)
 ** TODO Elisp function to copy cexercise to /tmp and visit it
 ** TODO Elisp function to copy jexercise to /tmp and visit it
@@ -121,6 +118,11 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Investigate why test_uint32_t fails on some systems
+Maybe they don't define the required standard types using header files, or we need some
+flag for C99 compatibility? Should we revert to pre-defining the standard symbols?
+
+Seems like the current strategy actually works...
 * DONE Make C-xref->Misc->About show commit-id
 * DONE Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
 * DONE Implement non-standard #include_next since both gcc and clang is using it in system headers
