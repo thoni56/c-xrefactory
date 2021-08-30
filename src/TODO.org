@@ -12,11 +12,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
-* TODO Add menu for running the tutorial (in C or Java)
-** TODO Elisp function to copy cexercise to /tmp and visit it
-** TODO Elisp function to copy jexercise to /tmp and visit it
-** TODO Menu for the two exercises
-** TODO Add end of old INSTALL to README.md
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
 * TODO Don't do any default operation (currently 'complete') if none given on command line
@@ -118,6 +113,11 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Add menu for running the tutorial (in C or Java)
+** TODO Elisp function to copy cexercise to /tmp and visit it
+** TODO Elisp function to copy jexercise to /tmp and visit it
+** TODO Menu for the two exercises
+*** TODO Add end of old INSTALL to README.md
 * DONE Investigate why test_uint32_t fails on some systems
 Maybe they don't define the required standard types using header files, or we need some
 flag for C99 compatibility? Should we revert to pre-defining the standard symbols?

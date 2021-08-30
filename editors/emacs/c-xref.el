@@ -7656,7 +7656,22 @@ functions.
           ))
       (message "** No process to kill. **")
       ))
-)
+  )
+
+(defvar c-xref-tutorial-directory (format "%s/../../doc/cexercise" (file-name-directory load-file-name))
+  "*Directory for tutorial file belonging to package \`c-xrefactory'.")
+
+(require 'dired-aux)
+
+(defun c-xref-tutorial (lang)
+  "Run the tutorial."
+  (interactive "P")
+  (let ((temp-dir (format "/tmp/c-xref-tutorial-%d/" (emacs-pid))))
+    (make-directory temp-dir t)
+    (dired-copy-file-recursive c-xref-tutorial-directory temp-dir nil nil nil 'always)
+    (find-file (concat (file-name-as-directory temp-dir) "cexercise/index.c"))
+    )
+  )
 
 (defun c-xref-about (exit)
   "Show C-xref version."

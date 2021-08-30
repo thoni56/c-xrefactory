@@ -876,6 +876,7 @@ faces and highlighting in buffers created by C-xrefactory.
 
       (defvar c-xref-misc-menu (make-sparse-keymap "Misc Menu"))
       (fset 'c-xref-misc-menu (symbol-value 'c-xref-misc-menu))
+      (define-key c-xref-misc-menu [c-xref-tutorial] '("Tutorial" . c-xref-tutorial))
       (define-key c-xref-misc-menu [c-xref-about] '("About C-xref" . c-xref-about))
       (define-key c-xref-misc-menu [c-xref-help] '("C-xref Help" . c-xref-help))
       (define-key c-xref-misc-menu [c-xref-kill] '("Kill C-xref Process" . c-xref-kill-xref-process))
@@ -1164,6 +1165,7 @@ your .c-xrefrc file.
 
 (autoload 'c-xref-help "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-about "c-xref" c-xref-default-documentation-string t)
+(autoload 'c-xref-tutorial "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-kill-xref-process "c-xref" c-xref-default-documentation-string t)
 
 (autoload 'c-xref-find-file-on-mouse "c-xref" c-xref-default-documentation-string t)

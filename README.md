@@ -24,6 +24,14 @@ code will never be the same. Some highlights:
 When installed correctly there will be an Emacs menu called `C-xref`
 for easy access to most functions.
 
+## Tutorial
+
+Once you have that menu in Emacs you can try the Tutorial under
+`C-xref->C-xref Misc`.  It will automatically create the tutorial
+project files in a temporary directory and open the initial file.
+Then just follow the instructions for a quick walk-through of what
+`c-xrefactory` can do.
+
 ## Setup
 
 If your Emacs runs in a "standard" *ux-like environment with `bash`,
