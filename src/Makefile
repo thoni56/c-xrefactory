@@ -29,7 +29,7 @@ ifeq ($(OS),Darwin)
 	endif
 endif
 
-# We need to use compatible gcov (Darwin/Brew now have GCC v10)
+# We need to use compatible gcov (for Darwin/Brew we need to use GCC:s gcov)
 ifeq ("$(CC)", "gcc-11")
 	LCOV = lcov --gcov-tool gcov-11
 else
@@ -39,6 +39,8 @@ endif
 #########################################################################
 #
 # The heavy lifting is here
+
+all: devel
 
 # For production - no smartness just compile
 prod: c-xref
@@ -78,7 +80,8 @@ include sources.mk
 
 .PHONY: build
 build: check-tokens # check that token sections in parsers are identical before compiling
-	@$(MAKE) -e c-xref
+	$(MAKE) -e c-xref
+	$(MAKE) -C ../editors/emacs
 
 c-xref: CFLAGS+=-Og
 .PHONY: c-xref

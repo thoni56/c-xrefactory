@@ -12,6 +12,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
+* TODO Update to rxi/log.c - requires reimplementing `log_with_line()`
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
 * TODO Don't do any default operation (currently 'complete') if none given on command line
@@ -113,6 +114,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Re-generate `c-xrefprotocol.el` on builds on src rather than on prod builds to avoid package update problems
 * DONE Add menu for running the tutorial (in C or Java)
 ** TODO Elisp function to copy cexercise to /tmp and visit it
 ** TODO Elisp function to copy jexercise to /tmp and visit it
