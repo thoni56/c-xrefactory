@@ -13,6 +13,7 @@
 /* These are ok to be dependent on */
 #include "fileio.h"
 #include "log.h"
+#include "stringlist.h"
 
 
 void closeMainOutputFile(void) {
@@ -153,6 +154,15 @@ char *normalizeFileName(char *name, char *relative_to) {
 }
 
 
+static StringList *temporary_filenames = NULL;
+static bool registered = false;
+
+static void delete_all_temporary_files(void) {
+    /* This is only done when exiting so we don't care about freeing the list nodes */
+    for (StringList *list = temporary_filenames; list != NULL; list = list->next)
+        unlink(list->string);
+}
+
 char *create_temporary_filename(void) {
     static char temporary_name[MAX_FILE_NAME_SIZE] = "";
 #ifdef __WIN32__
@@ -185,9 +195,16 @@ char *create_temporary_filename(void) {
     else
         close(fd);
 #endif
-    //&fprintf(dumpOut,"temp file: %s\n", temporary_name);
+    log_trace("Created temporary filename: %s", temporary_name);
     if (strlen(temporary_name) == 0)
         fatalError(ERR_ST, "couldn't create temporary file name", XREF_EXIT_ERR);
+
+    // Remember to remove this file at exit
+    temporary_filenames = newStringList(temporary_name, temporary_filenames);
+    if (!registered) {
+      atexit(delete_all_temporary_files);
+      registered = true;
+    }
 
     return temporary_name;
 }
