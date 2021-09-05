@@ -1056,7 +1056,7 @@ static void cxrfSymbolName(int size,
                            ) {
     SymbolReferenceItem *ddd, *memb;
     S_olSymbolsMenu *cms;
-    int si, symType, len, rr, vApplClass, vFunClass, ols, accessFlags, storage;
+    int si, symType, rr, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;
 
     assert(marker == CXFI_SYMBOL_NAME);
@@ -1069,7 +1069,7 @@ static void cxrfSymbolName(int size,
     si = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = lastIncomingInfo.cachedSymbolName[si];
-    len = scanSymNameString( size, cb, id);
+    scanSymNameString( size, cb, id);
     getSymTypeAndClasses(&symType, &vApplClass, &vFunClass);
 
     ddd = &lastIncomingInfo.cachedSymbolReferenceItem[si];

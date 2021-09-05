@@ -2,8 +2,9 @@
 
 #include "globals.h"
 #include "options.h"
+#include "fileio.h"
 
-
+/* TODO: should be bool... */
 int creatingOlcxRefs(void) {
     /* TODO: what does this actually test? that we need to create
        refs?  And why does this not work when we introduce a OLO_NONE
@@ -40,4 +41,28 @@ int creatingOlcxRefs(void) {
             ||  options.server_operation==OLO_NOT_FQT_REFS
             ||  options.server_operation==OLO_NOT_FQT_REFS_IN_CLASS
             );
+}
+
+
+void recursivelyCreateFileDirIfNotExists(char *fpath) {
+    char    *p;
+    int     ch,len,loopFlag;
+    struct stat  st;
+
+    len = strlen(fpath);
+    loopFlag = 1;
+    for (p=fpath+len; p>fpath && loopFlag; p--) {
+        if (*p!=FILE_PATH_SEPARATOR) continue;
+        ch = *p; *p = 0;
+        if (stat(fpath, &st)==0 && (st.st_mode & S_IFMT) == S_IFDIR) {
+            loopFlag=0;
+        }
+        *p = ch;
+    }
+    for(p+=2; *p; p++) {
+        if (*p!=FILE_PATH_SEPARATOR) continue;
+        ch = *p; *p = 0;
+        createDir(fpath);
+        *p = ch;
+    }
 }

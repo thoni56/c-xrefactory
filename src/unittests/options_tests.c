@@ -8,7 +8,6 @@
 #include "commons.mock"
 #include "misc.mock"
 #include "cxref.mock"
-#include "html.mock"
 #include "main.mock"
 #include "editor.mock"
 #include "filetable.mock"

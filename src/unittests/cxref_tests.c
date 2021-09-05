@@ -13,7 +13,6 @@
 #include "refactory.mock"
 #include "misc.mock"
 #include "classhierarchy.mock"
-#include "html.mock"
 #include "complete.mock"
 #include "caching.mock"
 #include "options.mock"

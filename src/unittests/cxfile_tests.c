@@ -8,7 +8,6 @@
 #include "commons.mock"
 #include "misc.mock"
 #include "cxref.mock"
-#include "html.mock"
 #include "reftab.mock"
 #include "filetable.mock"
 #include "options.mock"
@@ -19,6 +18,7 @@
 #include "characterreader.mock"
 #include "classhierarchy.mock"
 #include "fileio.mock"
+#include "utils.mock"
 
 
 Describe(CxFile);
