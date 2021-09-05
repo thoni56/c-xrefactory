@@ -369,7 +369,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
 static bool fileNameShouldBePruned(char *fn) {
     StringList    *pp;
     for(pp=options.pruneNames; pp!=NULL; pp=pp->next) {
-        JavaMapOnPaths(pp->string, {
+        MapOnPaths(pp->string, {
                 if (compareFileNames(currentPath, fn)==0) return true;
             });
     }
@@ -437,7 +437,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     } else if (containsWildcard(fn)) {
         expandWildcardsInOnePath(fn, wcPaths, MAX_OPTION_LEN);
         //&fprintf(dumpOut, "wildcard path %s expanded to %s\n", fn, wcPaths);
-        JavaMapOnPaths(wcPaths, {
+        MapOnPaths(wcPaths, {
                 dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag);
             });
     } else if (topCallFlag
@@ -691,7 +691,7 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
     log_debug("processing %s for file %s project==%s", tt, section, project);
 #if 1
     *writeFlag = 0;
-    JavaMapOnPaths(tt, {
+    MapOnPaths(tt, {
             if (firstPath[0]==0) strcpy(firstPath, currentPath);
             if (project!=NULL) {
                 if (strcmp(currentPath, project)==0) {
@@ -972,7 +972,7 @@ bool packageOnCommandLine(char *packageName) {
 
 void addSourcePathsCut(void) {
     javaSetSourcePath(1);
-    JavaMapOnPaths(javaSourcePaths, {
+    MapOnPaths(javaSourcePaths, {
             addHtmlCutPath(currentPath);
         });
 }
@@ -1042,7 +1042,7 @@ static char *getJdkClassPathFromJavaHomeOrPath(void) {
     }
     path = getenv("PATH");
     if (path != NULL) {
-        JavaMapOnPaths(path, {
+        MapOnPaths(path, {
                 dir = canItBeJavaBinPath(currentPath);
                 if (dir != NULL)
                     return dir;

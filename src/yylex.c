@@ -547,7 +547,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName, bool is_
     for (includeDirP = start; includeDirP != NULL && editorBuffer == NULL && file == NULL; includeDirP = includeDirP->next) {
         strcpy(normalizedName, normalizeFileName(includeDirP->string, cwd));
         expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
-        JavaMapOnPaths(wildcardExpandedPaths, {
+        MapOnPaths(wildcardExpandedPaths, {
                 int length;
                 strcpy(normalizedName, currentPath);
                 length = strlen(normalizedName);

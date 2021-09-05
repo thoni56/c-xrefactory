@@ -262,7 +262,7 @@ typedef enum language {
              && (accessFlags & AccessStatic)))                          \
     )
 
-#define JavaMapOnPaths(thePaths, COMMAND) {                             \
+#define MapOnPaths(thePaths, COMMAND) {                             \
         char *currentPath, *jmop_pp, *jmop_ecp;                         \
         int jmop_i, jmop_ind;                                           \
         /* following was static, but I need to call this recursively */ \

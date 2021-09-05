@@ -532,7 +532,7 @@ char *javaCutSourcePathFromFileName(char *fname) {
     res = fname;
     ss = strchr(fname, ZIP_SEPARATOR_CHAR);
     if (ss!=NULL) return(ss+1);         // .zip archive symbol
-    JavaMapOnPaths(javaSourcePaths, {
+    MapOnPaths(javaSourcePaths, {
             len = strlen(currentPath);
             if (fnnCmp(currentPath, fname, len) == 0) {
                 res = fname+len;
@@ -1079,7 +1079,7 @@ void expandWildcardsInPaths(char *paths, char *outpaths, int availableSpace) {
     int     olen;
     assert(availableSpace == MAX_OPTION_LEN);
     oop = opaths = outpaths; olen = availableSpace;
-    JavaMapOnPaths(paths, {
+    MapOnPaths(paths, {
             expandWildcardsInOnePathRecursiveMaybe(currentPath, &opaths, &olen);
         });
     *opaths = 0;
@@ -1247,7 +1247,7 @@ static char *concatFNameInTmpMemory(char *directoryName, char *packageFilename) 
 }
 
 static int pathsStringContainsPath(char *paths, char *path) {
-    JavaMapOnPaths(paths, {
+    MapOnPaths(paths, {
             //&fprintf(dumpOut,"[sp]checking %s<->%s\n", currentPath, path);
             if (compareFileNames(currentPath, path)==0) {
                 //&fprintf(dumpOut,"[sp] saving of mapping %s\n", path);
@@ -1353,7 +1353,7 @@ void javaMapDirectoryFiles1(
         packageFilename = "";
 
     // source paths
-    JavaMapOnPaths(javaSourcePaths, {
+    MapOnPaths(javaSourcePaths, {
             fname = concatFNameInTmpMemory(currentPath, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,currentPath,packageFilename,a1,a2,a3);
         });

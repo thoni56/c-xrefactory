@@ -1499,7 +1499,7 @@ static char *getExpandedLocalJavaDocFile_st(char *expandedPath, char *prefix, ch
     char            *s;
     struct stat     st;
     int             cplen;
-    JavaMapOnPaths(expandedPath, {
+    MapOnPaths(expandedPath, {
             cplen = strlen(currentPath);
             if (cplen>0 && currentPath[cplen-1]==FILE_PATH_SEPARATOR) {
                 if (prefix == NULL) {

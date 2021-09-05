@@ -1405,7 +1405,7 @@ static void mainScheduleInputFileOptionToFileTable(char *infile) {
     javaSetSourcePath(1);      // for case of packages on command line
     topCallFlag = 1;
     recursFlag = &topCallFlag;
-    JavaMapOnPaths(infile, {
+    MapOnPaths(infile, {
             dirInputFile(currentPath, "", NULL, NULL, recursFlag, &topCallFlag);
         });
 }

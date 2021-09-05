@@ -11,6 +11,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** TODO Scope rules for loop variable, don't really understand how that works...
 * TODO Automatic project selection does not work
 Is it because of Emacs versions or if you actually have set the project?
+Or does it work?
 * TODO Include of <file> does not follow standard so Cgreen's 'internal/...' is not found
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
