@@ -9,6 +9,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Handle for-loops with declarations ("for (int i = 0;...")
 ** DONE Grammar changes for C and Yacc
 ** TODO Scope rules for loop variable, don't really understand how that works...
+* TODO Automatic project selection does not work in Emacs 26 or above
 * TODO Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
