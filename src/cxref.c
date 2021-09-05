@@ -2386,6 +2386,27 @@ S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     return res;
 }
 
+static bool htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
+    SymbolReferenceItem *s1, *s2;
+    int r;
+    char *n1, *n2;
+    int len1;
+    int len2;
+    UNUSED len1;
+    UNUSED len2;
+
+    s1 = &ss1->s; s2 = &ss2->s;
+    GET_BARE_NAME(s1->name, n1, len1);
+    GET_BARE_NAME(s2->name, n2, len2);
+    r = strcmp(n1, n2);
+    if (r!=0)
+        return r<0;
+    r = strcmp(s1->name, s2->name);
+    if (r!=0)
+        return r<0;
+    return classHierarchyClassNameLess(ss1->s.vApplClass,ss2->s.vApplClass);
+}
+
 static void olcxTopSymbolResolution(void) {
     S_olcxReferences    *refs;
     S_olSymbolsMenu     *ss;
