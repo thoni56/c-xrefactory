@@ -9,16 +9,20 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Handle for-loops with declarations ("for (int i = 0;...")
 ** DONE Grammar changes for C and Yacc
 ** TODO Scope rules for loop variable, don't really understand how that works...
-* TODO Automatic project selection does not work in Emacs 26 or above
+* TODO Automatic project selection does not work
+Is it because of Emacs versions or if you actually have set the project?
+* TODO Include of <file> does not follow standard so Cgreen's 'internal/...' is not found
+* TODO displayingErrorMessages() seems to be duplicated functionality
+  Change to preventErrorMessage() and let logger handle actual prevention?
 * TODO Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
-* TODO Update to rxi/log.c - requires reimplementing `log_with_line()`
-* TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
-and you can also get java.class.version=55 => java version without decoding directory names
+* TODO Add yacc construct for field in yystype ('$<field>$')
 * TODO Don't do any default operation (currently 'complete') if none given on command line
 * TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
-* TODO REFACTOR: Extract storage module interface and implmentation
+* TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
+and you can also get java.class.version=55 => java version without decoding directory names
+* TODO REFACTOR: Extract storage module interface and implementation
 * TODO Architecture diagrams using C4-PlantUML (/design folder)
 * TODO Make the regression example tests compare against the original c-xrefs output instead of fixed
 ** TODO Restore some original version to working state (branch?)
@@ -115,6 +119,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Update to rxi/log.c of 2020 - requires reimplementing `log_with_line()`
 * DONE Re-generate `c-xrefprotocol.el` on builds on src rather than on prod builds to avoid package update problems
 * DONE Add menu for running the tutorial (in C or Java)
 ** TODO Elisp function to copy cexercise to /tmp and visit it
