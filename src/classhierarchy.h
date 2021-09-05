@@ -21,7 +21,7 @@ extern void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
                                       void *p1,
                                       char *p2
                                       );
-extern void htmlGenerateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn);
+extern void generateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn);
 extern void genClassHierarchies(FILE *ff, S_olSymbolsMenu *rrr,
                                 int virtFlag, int pass );
 extern bool classHierarchyClassNameLess(int c1, int c2);

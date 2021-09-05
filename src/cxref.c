@@ -1847,7 +1847,7 @@ void olcxPrintClassTree(S_olSymbolsMenu *sss) {
         fprintf(communicationChannel, "<");
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
-    htmlGenerateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
+    generateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
     if (options.xref2) ppcGenRecordEnd(PPC_DISPLAY_CLASS_TREE);
 }
 
@@ -1859,7 +1859,7 @@ void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
     }
     if (sss!=NULL) {
         readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
-        htmlGenerateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
+        generateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
     }
     if (options.xref2) {
         ppcGenRecordEnd(PPC_SYMBOL_RESOLUTION);

@@ -510,7 +510,7 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
 }
 
 
-void htmlGenerateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
+void generateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
     S_olSymbolsMenu *rr;
 
     for(rr=rrr; rr!=NULL; rr=rr->next) rr->outOnLine = 0;

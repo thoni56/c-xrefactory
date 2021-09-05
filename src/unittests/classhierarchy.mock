@@ -18,7 +18,7 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr, void (*fun)(S_olSymbolsMenu
   mock(rrr, fun, p1, p2);
 }
 
-void htmlGenerateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
+void generateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
   mock(rrr, ff, fn);
 }
 
