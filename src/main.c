@@ -105,6 +105,9 @@ static void usage(char *s) {
     fprintf(stdout, "\t-refalpha2hash            - split references alphabetically (-refnum=28*28)\n");
     fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
     fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
+    fprintf(stdout, "\t-infos                    - report all informational messages, and above\n");
+    fprintf(stdout, "\t-warnings                 - report all warning messages, and above\n");
+    fprintf(stdout, "\t-errors                   - report all error messages (default)\n");
     fprintf(stdout, "\t-debug                    - produce debug output of the execution\n");
     fprintf(stdout, "\t-trace                    - produce trace output of the execution\n");
     fprintf(stdout, "\t-log=<file>               - log to <file>\n");
@@ -119,7 +122,6 @@ static void usage(char *s) {
     fprintf(stdout, "\t-update                   - update old 'refs' reference file\n");
     fprintf(stdout, "\t-fastupdate               - fast update (modified files only)\n");
     fprintf(stdout, "\t-fullupdate               - full update (all files)\n");
-    fprintf(stdout, "\t-errors                   - report all error messages\n");
     fprintf(stdout, "\t-version                  - print version information\n");
 }
 
@@ -202,12 +204,19 @@ static int mainHandleIncludeOption(int argc, char **argv, int i) {
     return i;
 }
 
+static struct {
+    bool errors;
+    bool warnings;
+    bool infos;
+    bool debug;
+    bool trace;
+} logging_selected = {false, false, false, false, false};
 
 /* *************************************************************************** */
 /*                                      OPTIONS                                */
 
 static bool processNegativeOption(int *ii, int argc, char **argv, int infilesFlag) {
-    int i = * ii;
+    int i = *ii;
     if (0) {}
     else if (strcmp(argv[i], "--r")==0) {
         if (infilesFlag == INFILES_ENABLED)
@@ -327,6 +336,7 @@ static bool processEOption(int *ii, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i], "-errors")==0) {
         options.show_errors = true;
+        logging_selected.errors = true;
     } else if (strcmp(argv[i], "-exit")==0) {
         log_debug("Exiting");
         exit(XREF_EXIT_BASE);
@@ -519,6 +529,9 @@ static bool processIOption(int *ii, int argc, char **argv) {
         warningMessage(ERR_ST, "-include option is deprecated, use -optinclude instead");
         i = mainHandleIncludeOption(argc, argv, i);
     }
+    else if (strcmp(argv[i], "-infos")==0) {
+        logging_selected.infos = true;
+    }
     else return false;
     *ii = i;
     return true;
@@ -652,7 +665,7 @@ static bool processOOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
     else if (strncmp(argv[i], "-oocheckbits=",13)==0)    {
-        sscanf(argv[i]+13, "%o",&options.ooChecksBits);
+        sscanf(argv[i]+13, "%o", &options.ooChecksBits);
     }
     else if (strncmp(argv[i], "-olinelen=",10)==0) {
         sscanf(argv[i]+10, "%d",&options.olineLen);
@@ -1337,6 +1350,9 @@ static bool processVOption(int *ii, int argc, char **argv) {
 static bool processWOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
+    else if (strcmp(argv[i], "-warnings") == 0){
+        logging_selected.warnings = true;
+    }
     else return false;
     *ii = i;
     return true;
@@ -3106,14 +3122,17 @@ static void initLogging(int argc, char *argv[]) {
     log_set_level(level);
 }
 
-/* setupLogging() is called as part of the normal argument handling so can only change level */
+/* setupLogging() is called as part of the normal argument handling so
+ * can only change level of console messages shown */
 static void setupLogging(void) {
-    if (options.trace)
-        log_set_file_level(LOG_TRACE);
-    else if (options.debug)
-        log_set_file_level(LOG_DEBUG);
-    else
-        log_set_file_level(LOG_INFO);
+    if (logging_selected.trace)
+        log_set_level(LOG_TRACE);
+    else if (logging_selected.debug)
+        log_set_level(LOG_DEBUG);
+    else if (logging_selected.infos)
+        log_set_level(LOG_INFO);
+    else if (logging_selected.warnings)
+        log_set_level(LOG_WARN);
 }
 
 

@@ -42,6 +42,11 @@ options:
 	-refalpha2hash            - split references alphabetically (-refnum=28*28)
 	-exactpositionresolve     - resolve symbols by def. position
 	-mf<n>                    - factor increasing cxMemory
+	-infos                    - report all informational messages, and above
+	-warnings                 - report all warning messages, and above
+	-errors                   - report all error messages (default)
+	-debug                    - produce debug output of the execution
+	-trace                    - produce trace output of the execution
 	-log=<file>               - log to <file>
 	-no-classfiles            - Don't collect references from class files
 	-no-cppcomments           - C++ like comments '//' not allowed
@@ -54,5 +59,4 @@ options:
 	-update                   - update old 'refs' reference file
 	-fastupdate               - fast update (modified files only)
 	-fullupdate               - full update (all files)
-	-errors                   - report all error messages
 	-version                  - print version information
