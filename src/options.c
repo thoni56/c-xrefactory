@@ -662,7 +662,7 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
 }
 
 static void processSingleSectionMarker(char *tt,char *section,
-                                       int *writeFlag, char *resSection) {
+                                       bool *writeFlag, char *resSection) {
     int sl,casesensitivity=1;
     sl = strlen(tt);
 #if defined (__WIN32__)
@@ -674,14 +674,14 @@ static void processSingleSectionMarker(char *tt,char *section,
             strcpy(resSection,tt);
             assert(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
         }
-        *writeFlag = 1;
+        *writeFlag = true;
     } else {
-        *writeFlag = 0;
+        *writeFlag = false;
     }
 }
 
 static void processSectionMarker(char *ttt,int i,char *project,char *section,
-                                 int *writeFlag, char *resSection) {
+                                 bool *writeFlag, char *resSection) {
     char        *tt;
     char        firstPath[MAX_FILE_NAME_SIZE];
 
@@ -732,6 +732,17 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
         //&strncpy(cwd, resSection, MAX_FILE_NAME_SIZE-1);
         //&cwd[MAX_FILE_NAME_SIZE-1] = 0;
     }
+
+
+#define OPTION_SPACE_ALLOCC(memFl,cc,num,type) {                        \
+        if (memFl==MEM_ALLOC_ON_SM) {                                   \
+            SM_ALLOCC(optMemory,cc,num,type);                           \
+        } else if (memFl==MEM_ALLOC_ON_PP) {                            \
+            PP_ALLOCC(cc,num,type);                                     \
+        } else {                                                        \
+            assert(0);                                                  \
+        }                                                               \
+    }
 }
 
 #define ADD_OPTION_TO_ARGS(memFl,tt,len,argv,argc) {                    \
@@ -748,28 +759,21 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
     }
 
 
-#define OPTION_SPACE_ALLOCC(memFl,cc,num,type) {                        \
-        if (memFl==MEM_ALLOC_ON_SM) {                                   \
-            SM_ALLOCC(optMemory,cc,num,type);                           \
-        } else if (memFl==MEM_ALLOC_ON_PP) {                            \
-            PP_ALLOCC(cc,num,type);                                     \
-        } else {                                                        \
-            assert(0);                                                  \
-        }                                                               \
-    }
-
-#define ACTIVE_OPTION() (isActiveSection && isActivePass)
-
 bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
                        char *sectionFile, char *project, char *resSection) {
     char text[MAX_OPTION_LEN];
-    int len, argc, i, c, isActiveSection, isActivePass, passn=0;
+    int len, argc, i, c, passn=0;
+    bool isActiveSection, isActivePass;
     bool found = false;
     char **aargv,*argv[MAX_STD_ARGS];
 
-    argc = 1; isActiveSection = isActivePass = 1; aargv=NULL;
+    argc = 1; aargv=NULL;
+    isActiveSection = isActivePass = true;
     resSection[0]=0;
-    if (memFl==MEM_ALLOC_ON_SM) SM_INIT(optMemory);
+
+    if (memFl==MEM_ALLOC_ON_SM)
+        SM_INIT(optMemory);
+
     c = 'a';
     while (c!=EOF) {
         c = getOptionFromFile(file, text, &len);
@@ -782,34 +786,33 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             log_trace("checking '%s'", text);
             expandEnvironmentVariables(text+1, MAX_OPTION_LEN, &len, GLOBAL_ENV_ONLY);
             log_trace("expanded '%s'", text);
-            processSectionMarker(text,len+1,project,sectionFile,&isActiveSection,resSection);
-        } else if (isActiveSection && strncmp(text,"-pass", 5) == 0) {
+            processSectionMarker(text, len+1, project, sectionFile, &isActiveSection, resSection);
+        } else if (isActiveSection && strncmp(text, "-pass", 5) == 0) {
             sscanf(text+5, "%d", &passn);
             if (passn==currentCppPass || currentCppPass==ANY_CPP_PASS) {
-                isActivePass = 1;
+                isActivePass = true;
             } else {
-                isActivePass = 0;
+                isActivePass = false;
             }
             if (passn > s_cppPassMax) s_cppPassMax = passn;
-        } else if (strcmp(text,"-set")==0 && ACTIVE_OPTION()
-                   && memFl!=MEM_NO_ALLOC) {
+        } else if (strcmp(text,"-set")==0 && (isActiveSection && isActivePass) && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set
             found = true;
-            ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
+            ADD_OPTION_TO_ARGS(memFl, text, len, argv, argc);
             c = getOptionFromFile(file,text,&len);
             expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
-            ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
+            ADD_OPTION_TO_ARGS(memFl, text, len, argv, argc);
             c = getOptionFromFile(file,text,&len);
             expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
-            ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
+            ADD_OPTION_TO_ARGS(memFl, text, len, argv, argc);
             if (argc < MAX_STD_ARGS) {
                 assert(argc>=3);
                 mainHandleSetOption(argc, argv, argc-3);
             }
-        } else if (c!=EOF && ACTIVE_OPTION()) {
+        } else if (c!=EOF && (isActiveSection && isActivePass)) {
             found = true;
-            expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
-            ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
+            expandEnvironmentVariables(text, MAX_OPTION_LEN, &len, DEFAULT_VALUE);
+            ADD_OPTION_TO_ARGS(memFl, text, len, argv, argc);
         }
     }
     if (argc >= MAX_STD_ARGS-1) errorMessage(ERR_ST,"too many options");
