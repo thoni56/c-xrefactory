@@ -239,9 +239,9 @@ static void fillCaching(S_caching *caching,
 #define CAN_CONTINUE_CACHING_CLASSES(cp) (                              \
                                           CACHING_CLASSES               \
                                           && LANGUAGE(LANG_JAVA)         \
-                                          && (options.taskRegime == RegimeXref || options.taskRegime == RegimeHtmlGenerate) \
+                                          && options.taskRegime == RegimeXref \
                                           && ppmMemoryIndex < (SIZE_ppmMemory/3)*2 \
-                                                                        )
+    )
 
 
 void recoverCachePointZero(void) {

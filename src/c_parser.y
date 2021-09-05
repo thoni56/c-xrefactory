@@ -22,7 +22,6 @@
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"
-#include "html.h"
 #include "id.h"
 #include "list.h"
 #include "misc.h"
@@ -1670,9 +1669,6 @@ external_definition
     } compound_statement {
         stackMemoryBlockEnd();
         s_cp.function = NULL;
-        if (options.taskRegime == RegimeHtmlGenerate) {
-            htmlAddFunctionSeparatorReference();
-        }
     }
     | Sv_tmp EXTERN STRING_LITERAL  external_definition {
         tmpWorkMemoryIndex = $1.d;

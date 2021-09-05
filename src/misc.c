@@ -17,7 +17,6 @@
 #include "cxref.h"
 #include "classfilereader.h"
 #include "editor.h"
-#include "html.h"
 
 #include "log.h"
 

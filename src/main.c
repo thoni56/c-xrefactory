@@ -6,7 +6,6 @@
 #include "extract.h"
 #include "misc.h"
 #include "complete.h"
-#include "html.h"
 #include "options.h"
 #include "init.h"
 #include "jslsemact.h"
@@ -427,78 +426,7 @@ static bool processGOption(int *ii, int argc, char **argv) {
 
 static bool processHOption(int *ii, int argc, char **argv) {
     int i = * ii;
-    if (strncmp(argv[i], "-htmltab=",9)==0)  {
-        sscanf(argv[i]+9, "%d",&options.tabulator);
-    }
-    else if (strcmp(argv[i], "-htmllinenums")==0)
-        options.htmlLineNums = 1;
-    else if (strcmp(argv[i], "-htmlnocolors")==0)
-        options.htmlNoColors = true;
-    else if (strcmp(argv[i], "-htmlgxlist")==0)
-        options.htmlglobalx = true;
-    else if (strcmp(argv[i], "-htmllxlist")==0)
-        options.htmllocalx = true;
-    else if (strcmp(argv[i], "-htmlfunseparate")==0)
-        options.htmlFunSeparate=true;
-    else if (strcmp(argv[i], "-html")==0) {
-        options.taskRegime = RegimeHtmlGenerate;
-        options.fileEncoding = MULE_EUROPEAN; // no multibyte encodings
-        options.multiHeadRefsCare = 0;    // JUST TEMPORARY !!!!!!!
-    }
-    else if (strncmp(argv[i], "-htmlroot=",10)==0)   {
-        int ln;
-        ln=strlen(argv[i]);
-        if (ln>11 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
-            warningMessage(ERR_ST, "slash at the end of -htmlroot path");
-        }
-        createOptionString(&options.htmlRoot, argv[i]+10);
-    }
-    else if (strcmp(argv[i], "-htmlgenjavadoclinks")==0) {
-        options.htmlGenJdkDocLinks = 1;
-    }
-    else if (strncmp(argv[i], "-htmljavadocavailable=",22)==0) {
-        createOptionString(&options.htmlJdkDocAvailable, argv[i]+22);
-    }
-    else if (strncmp(argv[i], "-htmljavadocpath=",17)==0)    {
-        createOptionString(&options.htmlJdkDocUrl, argv[i]+17);
-    }
-    else if (strncmp(argv[i], "-htmlcutpath=",13)==0)    {
-        addHtmlCutPath(argv[i]+13);
-    }
-    else if (strcmp(argv[i], "-htmlcutcwd")==0)  {
-        addHtmlCutPath(cwd);
-    }
-    else if (strcmp(argv[i], "-htmlcutsourcepaths")==0)  {
-        addSourcePathsCut();
-    }
-    else if (strcmp(argv[i], "-htmlcutsuffix")==0)   {
-        options.htmlCutSuffix = 1;
-    }
-    else if (strncmp(argv[i], "-htmllinenumlabel=", 18)==0)  {
-        createOptionString(&options.htmlLineNumLabel, argv[i]+18);
-    }
-    else if (strcmp(argv[i], "-htmlnounderline")==0) {
-        options.htmlNoUnderline = true;
-    }
-    else if (strcmp(argv[i], "-htmldirectx")==0) {
-        options.htmlDirectX = true;
-    }
-    else if (strncmp(argv[i], "-htmllinkcolor=",15)==0)  {
-        createOptionString(&options.htmlLinkColor, argv[i]+15);
-    }
-    else if (strncmp(argv[i], "-htmllinenumcolor=",18)==0)   {
-        createOptionString(&options.htmlLineNumColor, argv[i]+18);
-    }
-    else if (strncmp(argv[i], "-htmlcxlinelen=",15)==0)  {
-        sscanf(argv[i]+15, "%d", &options.htmlCxLineLen);
-    }
-    else if (strncmp(argv[i], "-htmlzip=",9)==0) {
-        createOptionString(&options.htmlZipCommand, argv[i]+9);
-    }
-    else if (strncmp(argv[i], "-htmllinksuffix=",16)==0) {
-        createOptionString(&options.htmlLinkSuffix, argv[i]+16);
-    }
-    else if (strcmp(argv[i], "-help")==0) {
+    if (strcmp(argv[i], "-help")==0) {
         usage(argv[0]);
         exit(0);
     }
@@ -1512,8 +1440,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
         if (! processed) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "unknown option %s, (try c-xref -help)\n",argv[i]);
-            if (options.taskRegime==RegimeXref
-                ||  options.taskRegime==RegimeHtmlGenerate) {
+            if (options.taskRegime==RegimeXref) {
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
             } else
                 errorMessage(ERR_ST, tmpBuff);
@@ -1580,8 +1507,7 @@ static void schedulingUpdateToProcess(FileItem *p) {
 }
 
 static void schedulingToUpdate(FileItem *p, void *rs) {
-    struct stat fstat, hstat;
-    char sss[MAX_FILE_NAME_SIZE];
+    struct stat fstat;
 
     if (p == fileTable.tab[noFileIndex]) return;
     //& if (options.update==UPDATE_FAST && !p->b.commandLineEntered) return;
@@ -1604,13 +1530,6 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
         // on -update, a very serious bug !!!!
         if (p->name[0] != ZIP_SEPARATOR_CHAR) {
             p->b.cxLoading = true;     /* Hack, to remove references from file */
-        }
-    } else if (options.taskRegime == RegimeHtmlGenerate) {
-        concatPaths(sss,MAX_FILE_NAME_SIZE,options.htmlRoot,p->name, ".html");
-        strcat(sss, options.htmlLinkSuffix);
-        assert(strlen(sss) < MAX_FILE_NAME_SIZE-2);
-        if (editorFileStatus(sss, &hstat) || fstat.st_mtime >= hstat.st_mtime) {
-            p->b.scheduledToUpdate = true;
         }
     } else if (options.update == UPDATE_FULL) {
         if (fstat.st_mtime != p->lastFullUpdateMtime) {
@@ -2143,9 +2062,7 @@ static void mainFileProcessingInitialisations(int *firstPass,
     mainSetLanguage(fileName,  outLanguage);
     s_input_file_number = currentFile.lexBuffer.buffer.fileNumber;
     assert(options.taskRegime);
-    if (    (options.taskRegime==RegimeXref
-             || options.taskRegime==RegimeHtmlGenerate)
-            && (! s_javaPreScanOnly)) {
+    if (options.taskRegime==RegimeXref && !s_javaPreScanOnly) {
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION, getRealFileNameStatic(inputFilename));
         } else {
@@ -2299,7 +2216,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         CX_ALLOCC(sss, 6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
         CX_FREE_UNTIL(sss);
     }
-    if (options.taskRegime==RegimeXref || options.taskRegime==RegimeHtmlGenerate) {
+    if (options.taskRegime==RegimeXref) {
         // get some memory if cross referencing
         assert(options.cxMemoryFactor>=1);
         CX_ALLOCC(sss, 3*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
@@ -2375,7 +2292,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     int i,fi,savingFlag;
 
     ENTER();
-    if (mess!=LONGJMP_REASON_NONE && options.taskRegime!=RegimeHtmlGenerate) {
+    if (mess != LONGJMP_REASON_NONE) {
         log_trace("swapping references to disk");
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION, "swapping references to disk");
@@ -2405,14 +2322,6 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         fileTable.tab[fi]->b.cxLoading = false;
         if (currentFile.lexBuffer.buffer.file!=NULL)
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
-    }
-    if (options.taskRegime==RegimeHtmlGenerate) {
-        if (options.noCxFile) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "cross-references overflowed, use -mf<n> option");
-            fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
-        }
-        generateHtml();
     }
     if (options.taskRegime==RegimeXref)
         mainGenerateReferenceFile();
@@ -2897,7 +2806,7 @@ static FileItem *mainCreateListOfInputFiles(void) {
 }
 
 void mainCallXref(int argc, char **argv) {
-    static char *cxFreeBase0, *cxFreeBase;
+    static char *cxFreeBase;
     static int firstPassing, atLeastOneProcessed;
     static FileItem *ffc, *pffc;
     static int messagePrinted = 0;
@@ -2905,13 +2814,10 @@ void mainCallXref(int argc, char **argv) {
     LongjmpReason reason = LONGJMP_REASON_NONE;
 
     currentCppPass = ANY_CPP_PASS;
-    CX_ALLOCC(cxFreeBase0,0,char);
-    if (options.taskRegime == RegimeHtmlGenerate && ! options.noCxFile) {
-        htmlGetDefinitionReferences();
-    }
     CX_ALLOCC(cxFreeBase,0,char);
     s_cxResizingBlocked = 1;
-    if (options.update) scheduleModifiedFilesToUpdate();
+    if (options.update)
+        scheduleModifiedFilesToUpdate();
     atLeastOneProcessed = 0;
     ffc = pffc = mainCreateListOfInputFiles();
     inputCounter = pinputCounter = 0;
@@ -2959,14 +2865,6 @@ void mainCallXref(int argc, char **argv) {
  regime1fini:
     s_fileAbortionEnabled = 0;
     if (atLeastOneProcessed) {
-        if (options.taskRegime==RegimeHtmlGenerate) {
-            // following is for case if an internalCheckFail, will rejump here
-            atLeastOneProcessed = 0;
-            generateHtml();
-            if (options.noCxFile) CX_ALLOCC(cxFreeBase0,0,char);
-            htmlGenGlobalReferenceLists(cxFreeBase0);
-            //& if (options.htmlglobalx || options.htmllocalx) htmlGenEmptyRefsFile();
-        }
         if (options.taskRegime==RegimeXref) {
             if (options.update==0 || options.update==UPDATE_FULL) {
                 fileTableMap(&fileTable, setFullUpdateMtimesInFileTab);
@@ -3165,7 +3063,6 @@ int main(int argc, char **argv) {
     /* And why s_opt.refactoringRegime and not s_opt.taskRegime == RegimeRefactory? */
     if (options.refactoringRegime == RegimeRefactory) mainRefactory(argc, argv);
     if (options.taskRegime == RegimeXref) mainXref(argc, argv);
-    if (options.taskRegime == RegimeHtmlGenerate) mainXref(argc, argv);
     if (options.taskRegime == RegimeEditServer) mainEditServer(argc, argv);
 
     LEAVE();

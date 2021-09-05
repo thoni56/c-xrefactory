@@ -20,7 +20,6 @@
 #include "head.h"
 #include "misc.h"
 #include "commons.h"
-#include "html.h"
 #include "complete.h"
 #include "proto.h"
 #include "protocol.h"
@@ -1498,7 +1497,6 @@ FieldDeclaration
                             LIST_APPEND(Symbol, clas->u.s->records, p);
                         }
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
-                        htmlAddJavaDocReference(p, &p->pos, vClass, vClass);
                     }
                     $$.d = $3.d;
                     if (options.taskRegime == RegimeEditServer
@@ -1938,12 +1936,9 @@ ConstructorDeclaration
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockEnd();
-                    if (options.taskRegime == RegimeHtmlGenerate) {
-                        htmlAddFunctionSeparatorReference();
-                    } else {
-                        PropagateBoundaries($$, $1, $6);
-                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
-                    }
+                    PropagateBoundaries($$, $1, $6);
+                    if ($$.b.file == noFileIndex)
+                        PropagateBoundaries($$, $2, $$);
                 }
                 s_cp.function = NULL; /* added for set-target-position checks */
             }

@@ -11,7 +11,6 @@
 #include "cxref.h"
 #include "classfilereader.h"
 #include "filedescriptor.h"
-#include "html.h"
 #include "editor.h"
 #include "symbol.h"
 #include "javafqttab.h"
@@ -196,7 +195,6 @@ Symbol *javaAddType(IdList *class, Access access, Position *p) {
     dd = javaTypeSymbolDefinition(class, access, ADD_YES);
     dd->bits.access = access;
     addCxReference(dd, p, UsageDefined, noFileIndex, noFileIndex);
-    htmlAddJavaDocReference(dd, p, noFileIndex, noFileIndex);
     return(dd);
 }
 
@@ -1179,8 +1177,6 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     IdList   sname;
     char            *pp, packname[TMP_STRING_SIZE];
 
-    if (options.taskRegime == RegimeHtmlGenerate) return(usage);
-
     pp = strchr(sym->linkName, '/');
     if (pp==NULL) pp = sym->linkName;
     pplen = pp - sym->linkName;
@@ -1217,10 +1213,6 @@ static void javaCheckForUselessFqt(IdList *name, int classif, Symbol *rstr,
     IdList   sname;
 
     uselessFqt = 0;
-
-    // no useless name reference for HTML as they overwrites normal
-    // usage reference and makes problems
-    if (options.taskRegime == RegimeHtmlGenerate) return;
 
     //& for(nn=name; nn!=NULL && nn->nameType!=TypePackage; nn=nn->next) ;
     //& if (nn==NULL) return;
@@ -1269,10 +1261,6 @@ static Reference *javaCheckForUselessTypeName(IdList   *name,
     Reference     *res;
 
     res = NULL;
-
-    // no useless name reference for HTML as they overwrites normal
-    // usage reference and makes problems
-    if (options.taskRegime == RegimeHtmlGenerate) return(res);
 
     //& for(nn=name; nn!=NULL && nn->nameType!=TypePackage; nn=nn->next) ;
     //& if (nn==NULL) return;
@@ -1772,7 +1760,8 @@ void addMethodCxReferences(unsigned modif, Symbol *method, Symbol *clas) {
 
 Symbol *javaMethodHeader(unsigned modif, Symbol *type,
                            Symbol *decl, int storage) {
-    int newFun,vClass;
+    int newFun;
+
     completeDeclarator(type, decl);
     decl->bits.access = modif;
     decl->bits.storage = storage;
@@ -1780,11 +1769,8 @@ Symbol *javaMethodHeader(unsigned modif, Symbol *type,
         // set interface default access flags
         decl->bits.access |= (AccessPublic | AccessAbstract);
     }
-    newFun = javaSetFunctionLinkName(s_javaStat->thisClass, decl,MEMORY_XX);
-    //&assert(newFun==0); // This should be allways zero now with jsl.
-    vClass = s_javaStat->classFileIndex;
+    newFun = javaSetFunctionLinkName(s_javaStat->thisClass, decl, MEMORY_XX);
     addMethodCxReferences(modif, decl, s_javaStat->thisClass);
-    htmlAddJavaDocReference(decl, &decl->pos, vClass, vClass);
     if (newFun) {
         LIST_APPEND(Symbol, s_javaStat->thisClass->u.s->records, decl);
     }
@@ -1811,9 +1797,7 @@ void javaMethodBodyBeginning(Symbol *method) {
 
 // this should be merged with _bef_ token!
 void javaMethodBodyEnding(Position *endpos) {
-    if (options.taskRegime == RegimeHtmlGenerate) {
-        htmlAddFunctionSeparatorReference();
-    } else if (options.taskRegime == RegimeEditServer) {
+    if (options.taskRegime == RegimeEditServer) {
         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
             s_cps.methodCoordEndLine = currentFile.lineNumber+1;
         }

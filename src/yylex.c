@@ -1292,9 +1292,6 @@ endOfFile:
 /* ***************************************************************** */
 
 #define AddHtmlCppReference(pos) {\
-    if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) {\
-        addTrivialCxReference("_",TypeCppAny,StorageDefault,&pos,UsageUsed);\
-    }\
 }
 
 static bool processPreprocessorConstruct(Lexem lexem) {
@@ -2079,12 +2076,6 @@ static bool isIdAKeyword(Symbol *symbol, Position *position) {
     if (symbol->bits.symbolType == TypeKeyword) {
         //SET_IDENTIFIER_YYLVAL(symbol->name, symbol, *position);
         setYylvalsForIdentifier(symbol->name, symbol, *position);
-        if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) {
-            char ttt[TMP_STRING_SIZE];
-            sprintf(ttt, "%s-%x", symbol->name, position->file);
-            addTrivialCxReference(ttt, TypeKeyword, StorageDefault, position, UsageUsed);
-            /*&addCxReference(symbol, position, UsageUsed, noFileIndex, noFileIndex);&*/
-        }
         //return symbol->u.keyword;
         return true;
     }

@@ -153,33 +153,9 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
     }
 
 #define CommentBeginReference(cb) {                                     \
-        if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) { \
-            int lcoll;                                                  \
-            Position pos;                                               \
-            char ttt[TMP_STRING_SIZE];                                  \
-            lcoll = columnPosition(cb) - 1;                             \
-            fillPosition(&pos, cb->fileNumber, cb->lineNumber, lcoll);  \
-            sprintf(ttt,"%x/*", cb->fileNumber);                        \
-            addTrivialCxReference(ttt, TypeComment, StorageDefault, &pos, UsageDefined); \
-        }                                                               \
     }
 
 #define CommentEndReference(cb, jdoc) {                                 \
-        if (options.taskRegime==RegimeHtmlGenerate) {                   \
-            int lcoll;                                                  \
-            Position pos;                                               \
-            char ttt[TMP_STRING_SIZE];                                  \
-            lcoll = columnPosition(cb);                                 \
-            fillPosition(&pos, cb->fileNumber, cb->lineNumber, lcoll);  \
-            sprintf(ttt,"%x/*", cb->fileNumber);                        \
-            if (!options.htmlNoColors) {                                \
-                addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageUsed); \
-            }                                                           \
-            if (jdoc) {                                                 \
-                pos.col -= 2;                                           \
-                addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageJavaDoc); \
-            }                                                           \
-        }                                                               \
     }
 
 #define NOTE_NEW_LEXEM_POSITION(cb, lb) {                               \
@@ -621,7 +597,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='*') {
-                    bool isJavadoc=false;
                     CommentBeginReference(cb);
                     ch = getChar(cb);
                     if (ch == '&') {
@@ -629,8 +604,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         ch = getChar(cb);
                         goto nextLexem;
                     } else {
-                        if (ch=='*' && LANGUAGE(LANG_JAVA))
-                            isJavadoc = true;
                         ungetChar(cb, ch);
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
@@ -709,9 +682,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             /* ****** a code comment, ignore */
                             ch = getChar(cb);
                         } else {
-                            int javadoc=0;
-                            if (ch == '*' && LANGUAGE(LANG_JAVA))
-                                javadoc = 1;
                             ungetChar(cb, ch);
                             ch = '*';
                             int line = cb->lineNumber;

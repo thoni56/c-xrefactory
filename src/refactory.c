@@ -16,7 +16,6 @@
  */
 #include "main.h"
 #include "options.h"
-#include "html.h"
 #include "misc.h"
 #include "complete.h"
 #include "commons.h"

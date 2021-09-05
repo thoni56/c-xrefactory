@@ -7,7 +7,6 @@
 #include "classfilereader.h"
 #include "globals.h"
 #include "caching.h"
-#include "html.h"
 #include "misc.h"
 #include "complete.h"
 #include "protocol.h"
@@ -331,22 +330,6 @@ static void getSymbolCxrefCategories(Symbol *symbol,
     }
     if (symbol->bits.symbolType == TypeYaccSymbol) {
         category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
-    }
-    if (options.taskRegime == RegimeHtmlGenerate) {
-        if (symbol->bits.symbolType == TypeKeyword) {
-            category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
-            /* global because I dont want them from processed include files */
-        }
-        if (symbol->bits.symbolType == TypeComment) {
-            category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
-        }
-        if (symbol->bits.symbolType == TypeCppAny) {
-            category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
-        }
-        if (symbol->bits.symbolType == TypeCppIfElse) {
-            /* it tooks too much memory on first pass */
-            category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
-        }
     }
     /* JAVA packages */
     if (symbol->bits.symbolType == TypePackage) {
@@ -780,13 +763,6 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         if (!fileTable.tab[pos->file]->b.cxLoading)
             return NULL;
     }
-    if (options.taskRegime == RegimeHtmlGenerate) {
-        if (!fileTable.tab[pos->file]->b.cxLoading && category==CategoryGlobal)
-            return NULL;
-        if (fileTable.tab[pos->file]->b.cxLoaded
-            &&symbol->bits.symbolType==TypeCppIfElse)
-            return NULL;
-    }
     reftab = &referenceTable;
     fillSymbolRefItem(&ppp, symbol->linkName, 0, // cxFileHashNumber(symbol->linkName),
                                 vApplCl, vFunCl);
@@ -872,7 +848,7 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
 
     /* Test for available space */
     assert(options.taskRegime);
-    if (options.taskRegime==RegimeXref||options.taskRegime==RegimeHtmlGenerate) {
+    if (options.taskRegime==RegimeXref) {
         if (!(DM_FREE_SPACE(cxMemory, CX_SPACE_RESERVE))) {
             longjmp(cxmemOverflow, LONGJUMP_REASON_REFERENCE_OVERFLOW);
         }
@@ -1699,8 +1675,7 @@ static void passSourcePutChar(int c, FILE *ff) {
             strcpy(s_crefListLine + s_crefListLinei, "...");
         }
     } else {
-        if (options.taskRegime == RegimeHtmlGenerate) htmlPutChar(ff,c);
-        else fputc(c,ff);
+        fputc(c,ff);
     }
 }
 
@@ -1734,25 +1709,24 @@ static void linePosProcess(FILE *off,
     s_crefListLine[s_crefListLinei] = 0;
     do {
         if (LISTABLE_USAGE(rr, usages, usageFilter)) {
-            if (r==NULL || r->usage.base > rr->usage.base)  r = rr;
-            if (options.taskRegime!=RegimeHtmlGenerate) {
-                if (pendingRefFlag) {
-                    if (! options.xref2) fprintf(off,"\n");
-                }
-                if (options.xref2) {
-                    if (! pendingRefFlag) {
-                        sprintf(s_crefListLine+s_crefListLinei, "%s:%d:", fn, rr->p.line);
-                        s_crefListLinei += strlen(s_crefListLine+s_crefListLinei);
-                    }
-                } else {
-                    if (positionsAreNotEqual(*callerp, rr->p)) fprintf(off, " ");
-                    else fprintf(off, ">");
-                    fprintf(off,"%c%s:%d:",refCharCode(rr->usage.base),fn,
-                            rr->p.line);
-                }
-                linerefn++;
-                pendingRefFlag = 1;
+            if (r==NULL || r->usage.base > rr->usage.base)
+                r = rr;
+            if (pendingRefFlag) {
+                if (! options.xref2) fprintf(off,"\n");
             }
+            if (options.xref2) {
+                if (! pendingRefFlag) {
+                    sprintf(s_crefListLine+s_crefListLinei, "%s:%d:", fn, rr->p.line);
+                    s_crefListLinei += strlen(s_crefListLine+s_crefListLinei);
+                }
+            } else {
+                if (positionsAreNotEqual(*callerp, rr->p)) fprintf(off, " ");
+                else fprintf(off, ">");
+                fprintf(off,"%c%s:%d:",refCharCode(rr->usage.base),fn,
+                        rr->p.line);
+            }
+            linerefn++;
+            pendingRefFlag = 1;
         }
         rr=rr->next;
     } while (rr!=NULL && ((rr->p.file == cp->file && rr->p.line == cp->line)

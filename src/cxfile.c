@@ -3,7 +3,6 @@
 #include "lexer.h"
 #include "yylex.h"
 #include "cxref.h"
-#include "html.h"
 #include "options.h"
 #include "editor.h"
 #include "reftab.h"
@@ -1057,10 +1056,8 @@ static void cxrfSymbolName(int size,
                            ) {
     SymbolReferenceItem *ddd, *memb;
     S_olSymbolsMenu *cms;
-    int not_used2;
     int si, symType, len, rr, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;
-    char *ss;
 
     assert(marker == CXFI_SYMBOL_NAME);
     if (options.taskRegime==RegimeEditServer && additionalArg==DEAD_CODE_DETECTION) {
@@ -1085,19 +1082,6 @@ static void cxrfSymbolName(int size,
     rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
     while (rr && memb->b.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
     assert(options.taskRegime);
-    if (options.taskRegime == RegimeHtmlGenerate) {
-        if (memb==NULL) {
-            CX_ALLOCC(ss, len+1, char);
-            strcpy(ss,id);
-            CX_ALLOC(memb, SymbolReferenceItem);
-            fillSymbolRefItem(memb, ss, cxFileHashNumber(ss),
-                                        vApplClass, vFunClass);
-            fillSymbolRefItemBits(&memb->b,symType, storage,
-                                   ScopeGlobal, accessFlags, CategoryGlobal, 0);
-            refTabAdd(&referenceTable,memb, &not_used2);
-        }
-        lastIncomingInfo.symbolTab[si] = memb;
-    }
     if (options.taskRegime == RegimeXref) {
         if (memb==NULL) memb=ddd;
         genRefItem0(memb, true);
@@ -1204,23 +1188,6 @@ static void cxrfReference(int size,
         }
         if (copyrefFl)
             writeCxReferenceBase(sym, usage, reqAcc, file, line, col);
-    } else  if (options.taskRegime == RegimeHtmlGenerate) {
-        fillPosition(&pos,file,line,col);
-        fillUsageBits(&usageBits, usage, reqAcc);
-        fill_reference(&rr, usageBits, pos, NULL);
-        assert(sym>=0 && sym<MAX_CX_SYMBOL_TAB);
-        if (additionalArg==CX_HTML_SECOND_PASS) {
-            if (rr.usage.base<UsageMaxOLUsages || rr.usage.base==UsageClassTreeDefinition) {
-                addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
-                             &rr.usage,&rr.p,CategoryGlobal);
-            }
-        } else if (rr.usage.base==UsageDefined || rr.usage.base==UsageDeclared
-                   ||  !fileTable.tab[rr.p.file]->b.commandLineEntered ) {
-            log_trace("htmladdref %s on %s:%d", lastIncomingInfo.symbolTab[sym]->name,
-                      fileTable.tab[rr.p.file]->name, rr.p.line);
-            addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
-                         &rr.usage,&rr.p,CategoryGlobal);
-        }
     } else if (options.taskRegime == RegimeEditServer) {
         fillPosition(&pos,file,line,col);
         fillUsageBits(&usageBits, usage, reqAcc);
@@ -1331,9 +1298,6 @@ static void cxrfSubClass(int size,
     assert(options.taskRegime);
 
     switch (options.taskRegime) {
-    case RegimeHtmlGenerate:
-        createSubClassInfo(super_class, sub_class, fileIndex, NO_CX_FILE_ITEM_GEN);
-        break;
     case RegimeXref:
         if (!fileTable.tab[fileIndex]->b.cxLoading &&
             additionalArg==CX_GENERATE_OUTPUT) {

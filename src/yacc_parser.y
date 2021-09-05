@@ -25,7 +25,6 @@
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"
-#include "html.h"
 #include "list.h"
 #include "misc.h"
 #include "semact.h"
@@ -45,9 +44,6 @@
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
 
 #define AddHtmlTrivialReference(pos) {\
-    if (options.taskRegime == RegimeHtmlGenerate) {\
-        addTrivialCxReference("%",TypeKeyword,StorageDefault,&pos,UsageUsed);\
-    }\
 }
 
 static Symbol *l_yaccUnion = NULL;
@@ -1896,9 +1892,6 @@ external_definition
     } compound_statement {
         stackMemoryBlockEnd();
         s_cp.function = NULL;
-        if (options.taskRegime == RegimeHtmlGenerate) {
-            htmlAddFunctionSeparatorReference();
-        }
     }
     | Sv_tmp EXTERN STRING_LITERAL  external_definition {
         tmpWorkMemoryIndex = $1.d;

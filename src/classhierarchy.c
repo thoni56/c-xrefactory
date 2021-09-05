@@ -4,7 +4,6 @@
 #include "globals.h"
 #include "options.h"
 #include "misc.h"
-#include "html.h"
 #include "cxref.h"
 #include "list.h"
 
@@ -131,7 +130,7 @@ void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu) {
 static void genClassHierarchyVerticalBars( FILE *ff, IntegerList *nextbars,
                                            int secondpass) {
     IntegerList *nn;
-    if (options.xref2 && options.taskRegime!=RegimeHtmlGenerate) {
+    if (options.xref2) {
         fprintf(ff," %s=\"", PPCA_TREE_DEPS);
     }
     if (nextbars!=NULL) {
@@ -146,7 +145,7 @@ static void genClassHierarchyVerticalBars( FILE *ff, IntegerList *nextbars,
         }
         LIST_REVERSE(IntegerList, nextbars);
     }
-    if (options.xref2 && options.taskRegime!=RegimeHtmlGenerate) {
+    if (options.xref2) {
         fprintf(ff,"\"");
     }
 }
@@ -164,54 +163,6 @@ static S_olSymbolsMenu *htmlItemInOriginalList(S_olSymbolsMenu *orr, int fInd) {
     rr = tmpVApplClassBackPointersToMenu[fInd];
     //& LIST_FIND(S_olSymbolsMenu, fInd, s.vApplClass, orr, rr);
     return(rr);
-}
-
-static void htmlCHEmptyIndent( FILE *ff ) {
-    fprintf(ff,"    ");
-}
-
-
-static void htmlPrintClassHierarchyLine( FILE *ff, int fInd,
-                                         IntegerList *nextbars,
-                                         int virtFlag,
-                                         S_olSymbolsMenu *itt ) {
-    char *cname, *pref1, *pref2, *suf1, *suf2;
-    FileItem *fi;
-    int cnt;
-
-    fi = fileTable.tab[fInd];
-    htmlCHEmptyIndent( ff);
-    genClassHierarchyVerticalBars( ff, nextbars, 0);
-    fprintf(ff,"\n");
-
-    cname = javaGetNudePreTypeName_st(getRealFileNameStatic(fi->name),
-                                      options.nestedClassDisplaying);
-    pref1 = pref2 = suf1 = suf2 = "";
-    if (fi->b.isInterface) {
-        pref2 = "<em>"; suf2 = "</em>";
-    }
-    if (itt!=NULL && THEBIT(tmpChProcessed,fInd)==0) {
-        assert(itt);
-        genClassHierarchyItemLinks( ff, itt, virtFlag);
-        genClassHierarchyVerticalBars( ff, nextbars, 1);
-        if (itt->s.vApplClass == itt->s.vFunClass) {
-            pref1 = "<B>"; suf1 = "</B>";
-        }
-        fprintf(ff,"%s%s%s%s%s", pref1, pref2, cname, suf2, suf1);
-        cnt = itt->defRefn+itt->refn;
-        if (cnt > 0) {
-            fprintf(ff,"\t\t(%d)", cnt);
-        }
-    } else {
-        htmlCHEmptyIndent( ff);
-        genClassHierarchyVerticalBars( ff, nextbars, 1);
-        fprintf(ff,"%s%s%s%s%s", pref1, pref2, cname, suf2, suf1);
-        //&fprintf(ff,"\t\t(0)");
-    }
-    if (THEBIT(tmpChProcessed,fInd)==1) {
-        fprintf(ff, " ---> up");
-    }
-    fprintf(ff,"\n");
 }
 
 static void olcxPrintMenuItemPrefix(FILE *ff, S_olSymbolsMenu *itt,
@@ -366,11 +317,7 @@ static void descendTheClassHierarchy(FILE *ff,
     if (s_symbolListOutputCurrentLine == 1) s_symbolListOutputCurrentLine++; // first line irregularity
     if (itt!=NULL && itt->outOnLine==0) itt->outOnLine = s_symbolListOutputCurrentLine;
     s_symbolListOutputCurrentLine ++;
-    if (options.taskRegime==RegimeHtmlGenerate) {
-        htmlPrintClassHierarchyLine( ff, vApplCl, nextbars, virtFlag, itt);
-    } else {
-        olcxMenuPrintClassHierarchyLine( ff, vApplCl, nextbars, virtFlag, itt);
-    }
+    olcxMenuPrintClassHierarchyLine( ff, vApplCl, nextbars, virtFlag, itt);
 
     if (THEBIT(tmpChProcessed,vApplCl)==1) return;
     SETBIT(tmpChProcessed, vApplCl);
@@ -473,14 +420,6 @@ static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, S_olSymbolsMenu *rrr) {
     //& s_symbolListOutputCurrentLine ++ ;
 }
 
-static void htmlMarkVisibleAllClassesHavingDefinition( S_olSymbolsMenu *rrr ) {
-    S_olSymbolsMenu *rr;
-    // put all classes having definition visible
-    for(rr=rrr; rr!=NULL; rr=rr->next) {
-        if (rr->s.vApplClass==rr->s.vFunClass) rr->visible = 1;
-    }
-}
-
 static int isVirtualMenuItem(SymbolReferenceItem *p) {
     return (p->b.storage == StorageField
             || p->b.storage == StorageMethod
@@ -502,12 +441,7 @@ static void genVirtualsGlobRefLists(    S_olSymbolsMenu *rrr,
     assert(p!=NULL);
     //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->b.storage]);
     if (isVirtualMenuItem(p)) {
-        if (options.taskRegime==RegimeHtmlGenerate) {
-            htmlMarkVisibleAllClassesHavingDefinition( rrr);
-            htmlGenGlobRefsForVirtMethod( ff, fn, rrr);
-        } else {
-            olcxMenuGenGlobRefsForVirtMethod( ff, rrr);
-        }
+        olcxMenuGenGlobRefsForVirtMethod( ff, rrr);
     }
 }
 
@@ -527,11 +461,7 @@ static void genNonVirtualsGlobRefLists(S_olSymbolsMenu *rrr,
     if (! isVirtualMenuItem(p)) {
         for(ss=rrr; ss!=NULL; ss=ss->next) {
             p = &ss->s;
-            if (options.taskRegime==RegimeHtmlGenerate) {
-                htmlGenNonVirtualGlobSymList( ff, fn, p);
-            } else {
-                olcxMenuGenNonVirtualGlobSymList( ff, ss);
-            }
+            olcxMenuGenNonVirtualGlobSymList( ff, ss);
         }
     }
 }
