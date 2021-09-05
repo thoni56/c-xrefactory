@@ -1,6 +1,6 @@
 /* -*- c -*-*/
 
-/* This are the parser/yacc fields required. They should be the same
+/* These are the parser/yacc fields required. They should be the same
    for all parsers since the YYSTYPE need to be the same. Include this
    file in the %union section instead of local field declarations and
    make additions here.
@@ -8,7 +8,7 @@
 
 Symbol                                 *symbol;
 TypeModifier                           *typeModifier;
-FreeTrail                            *trail;
+FreeTrail                              *trail;
 
 S_extRecFindStr                        *erfs;
 

@@ -16,7 +16,7 @@
 #include "options.h"
 #include "jsemact.h"
 #include "editor.h"
-#include "main.h"               /* For searchDefaultOptionsFile() */
+#include "main.h"               /*& For searchDefaultOptionsFile() */
 #include "reftab.h"
 #include "characterreader.h"
 #include "symbol.h"
@@ -614,7 +614,7 @@ static void setOlAvailableRefactorings(Symbol *p, S_olSymbolsMenu *mmi, int usag
                 if (p->bits.access & AccessStatic) {
                     availableRefactorings[PPC_AVR_MOVE_STATIC_FIELD].available = true;
                 } else {
-                    //& TODO! restrict this better
+                    // TODO! restrict this better
                     availableRefactorings[PPC_AVR_PULL_UP_FIELD].available = true;
                     availableRefactorings[PPC_AVR_PUSH_DOWN_FIELD].available = true;
                 }
@@ -5124,8 +5124,8 @@ static unsigned olcxOoBits(S_olSymbolsMenu *ols, SymbolReferenceItem *p) {
         if (vFunCl == olvFunCl) ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
     } else {
         // the following may be too strong, maybe only test FunCl ???
-        //&     } else if (vFunCl==olvFunCl) {
-        //&         ooBits |= OOC_VIRT_SAME_FUN_CLASS;
+        //     } else if (vFunCl==olvFunCl) {
+        //         ooBits |= OOC_VIRT_SAME_FUN_CLASS;
         if (vApplCl == olvFunCl && vFunCl==olvFunCl) {
             ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
         } else if (olcxVirtualyUsageAdequate(vApplCl, vFunCl, olusage, olvApplCl, olvFunCl)) {

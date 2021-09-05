@@ -2674,7 +2674,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     /* If the completion window is shown, or there is no completion,
        add also hints (should be optionally) */
     /*& if (s_completions.comPrefix[0]!=0  && (s_completions.alternativeIndex != 0) &*/
-    /*&	&& options.cxrefs != OLO_SEARCH) return; &*/
+    /*&	&& options.server_operation != OLO_SEARCH) return; &*/
 
     for (i=0;(token=hintCompletionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
@@ -5988,7 +5988,7 @@ case 365:
                             /* I have removed following because it makes problems when*/
                             /* expanding to FQT names, WHY IT WAS HERE ???*/
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                                         s_javaStat->classFileInd, &$1.d->p,
+                                         s_javaStat->classFileIndex, &$1.d->p,
                                          UsageNotFQField); &*/
                         } else {
                             /* here I should annulate class reference, as it is an error*/
