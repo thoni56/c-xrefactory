@@ -1,3 +1,0 @@
-Here we really want to run the development version of c-xref including
-emacs library. This does not work yet, it uses your standard emacs,
-probably this is way this fails in some environments.
