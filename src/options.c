@@ -95,28 +95,9 @@ Options s_initOpt = {
     1,                          // javaSlAllowed (autoUpdateFromSrc)
     XFILE_HASH_DEFAULT,
 
-    /* HTML */
-    "",                         // htmlroot
-    NULL,                       // htmlLineNumColor
-    80,                         // htmlcxlinelen
+    /* JAVADOC: */
     "java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming",     // -htmljavadocavailable
-    ":",                        // htmlLineNumLabel
-    0,                          // html cut suffix
-    0,                          // htmlGenJdkDocLinks
     NULL,                       // htmlJdkDocUrl - "http://java.sun.com/j2se/1.3/docs/api",
-    false,                      // htmlDirectX
-    "",                         // htmlLinkSuffix
-    false,                      // htmlNoUnderline
-    "navy",                     // htmlLinkColor
-    "",                         // htmlCutPath
-    0,                          // htmlCutPathLen
-    0,                          /* htmlLineNums */
-    false,                      /* htmlNoColors */
-    NULL,                       /* htmlZipCommand */
-    false,                      /* htmlFunSeparate */
-    false,                      /* htmlglobalx */
-    false,                      /* htmllocalx */
-    {0, },                      // -cutpaths
 
     /* JAVA: */
     "",                         // javaDocPath

@@ -201,28 +201,9 @@ typedef struct options {
     int javaSlAllowed;
     int xfileHashingMethod;
 
-    /* HTML: */
-    char *htmlRoot;
-    char *htmlLineNumColor;
-    int htmlCxLineLen;
+    /* JAVADOC: */
     char *htmlJdkDocAvailable;
-    char *htmlLineNumLabel;
-    int htmlCutSuffix;
-    int htmlGenJdkDocLinks;
     char *htmlJdkDocUrl;
-    bool htmlDirectX;
-    char *htmlLinkSuffix;
-    bool htmlNoUnderline;
-    char *htmlLinkColor;
-    char *htmlCutPath;
-    int htmlCutPathLen;
-    int htmlLineNums;
-    bool htmlNoColors;
-    char *htmlZipCommand;
-    bool htmlFunSeparate;
-    bool htmlglobalx;
-    bool htmllocalx;
-    struct htmlCutPathsOpts htmlCut;
 
     /* JAVA: */
     char *javaDocPath;
