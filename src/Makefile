@@ -8,7 +8,7 @@ export COVERAGE =
 
 WARNINGS = -Wall -Wno-char-subscripts
 
-GIT_HASH = $(shell git rev-parse HEAD)
+GIT_HASH = $(shell git describe --abbrev=4 --always --tags)
 
 CFLAGS = -g -O0 $(INCLUDES) -MMD -funsigned-char $(WARNINGS) $(COVERAGE) -DGIT_HASH=\"$(GIT_HASH)\"
 
@@ -39,14 +39,16 @@ endif
 #########################################################################
 #
 # The heavy lifting is here
+all: COVERAGE=--coverage
+all: build
 
-all: devel
-
-# For production - no smartness just compile
-prod: c-xref
+# For production - no smartness just compile, ensure clean production build
+prod:
+	$(MAKE) clean
+	$(MAKE) c-xref
 
 yydebug: CFLAGS += -DYYDEBUG
-yydebug: build
+yydebug: all
 
 devel: COVERAGE=--coverage
 devel: clean-coverage check-tokens
