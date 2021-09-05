@@ -1,11 +1,14 @@
 #include <cgreen/cgreen.h>
 
 #include "memory.h"
+#include "log.h"
+
 #include "globals.mock"
 
 
 Describe(Memory);
 BeforeEach(Memory) {
+    log_set_level(LOG_ERROR);
     stackMemoryInit();
 }
 AfterEach(Memory) {}

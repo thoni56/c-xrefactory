@@ -44,6 +44,7 @@ void myError(int errCode, char *mess) {
 
 Describe(Extract);
 BeforeEach(Extract) {
+    log_set_level(LOG_ERROR);
     memoryUseFunctionForError(myError);
     memoryUseFunctionForInternalCheckFail(myInternalCheckFail);
     memoryUseFunctionForFatalError(myFatalError);

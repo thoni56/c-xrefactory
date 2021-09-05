@@ -3081,36 +3081,29 @@ static void mainEditServer(int argc, char **argv) {
 }
 
 
-/* initLogging() is called as the first thing in main() so we look for log filename */
+/* initLogging() is called as the first thing in main() so we look for log command line options here */
 static void initLogging(int argc, char *argv[]) {
     char fileName[MAX_FILE_NAME_SIZE+1] = "";
-    bool debug = false;
-    bool trace = false;
+    int level = LOG_ERROR;
 
     for (int i=0; i<argc; i++) {
         if (strncmp(argv[i], "-log=", 5)==0)
             strcpy(fileName, &argv[i][5]);
         if (strcmp(argv[i], "-debug") == 0)
-            debug = true;
+            level = LOG_DEBUG;
         if (strcmp(argv[i], "-trace") == 0)
-            trace = true;
+            level = LOG_TRACE;
     }
+
+    /* Was there a filename, -log given? */
     if (fileName[0] != '\0') {
         FILE *tempFile = openFile(fileName, "w");
         if (tempFile != NULL)
-            log_set_fp(tempFile);
-    } else
-        log_set_fp(stderr);
-
-    if (trace)
-        log_set_file_level(LOG_TRACE);
-    else if (debug)
-        log_set_file_level(LOG_DEBUG);
-    else
-        log_set_file_level(LOG_INFO);
+            log_add_fp(tempFile, LOG_TRACE);
+    }
 
     /* Always log errors and above to console */
-    log_set_console_level(LOG_ERROR);
+    log_set_level(level);
 }
 
 /* setupLogging() is called as part of the normal argument handling so can only change level */

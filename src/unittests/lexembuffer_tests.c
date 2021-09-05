@@ -2,6 +2,7 @@
 
 #include "lexem.h"
 #include "lexembuffer.h"
+#include "log.h"
 
 #include "zlib.mock"
 #include "fileio.mock"
@@ -9,7 +10,9 @@
 
 
 Describe(LexemBuffer);
-BeforeEach(LexemBuffer) {}
+BeforeEach(LexemBuffer) {
+    log_set_level(LOG_ERROR);
+}
 AfterEach(LexemBuffer) {}
 
 

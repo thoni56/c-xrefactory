@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 
 #include "options.h"
+#include "log.h"
 
 #include "globals.mock"
 #include "classfilereader.mock"
@@ -16,7 +17,9 @@
 
 
 Describe(Options);
-BeforeEach(Options) {}
+BeforeEach(Options) {
+    log_set_level(LOG_ERROR);
+}
 AfterEach(Options) {}
 
 

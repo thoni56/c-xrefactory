@@ -301,7 +301,7 @@ void warningMessage(int errCode, char *message) {
             ppcGenRecord(PPC_WARNING, ppcTmpBuff);
         } else {
             if (displayingErrorMessages())
-                log_warning("%s", ppcTmpBuff);
+                log_warn("%s", ppcTmpBuff);
         }
     }
 }

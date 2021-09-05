@@ -17,14 +17,15 @@
 #include "fileio.mock"
 
 
-Describe(Lex);
-BeforeEach(Lex) {
+Describe(Lexer);
+BeforeEach(Lexer) {
     s_language = LANG_C;
+    log_set_level(LOG_ERROR);
 }
-AfterEach(Lex) {}
+AfterEach(Lexer) {}
 
 
-Ensure(Lex, will_signal_false_for_empty_lexbuffer) {
+Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
     LexemBuffer lexemBuffer;
 
     s_cache.activeCache = false; /* ?? */
@@ -38,7 +39,7 @@ Ensure(Lex, will_signal_false_for_empty_lexbuffer) {
     assert_that(getLexemFromLexer(&lexemBuffer), is_false);
 }
 
-Ensure(Lex, can_scan_a_floating_point_number) {
+Ensure(Lexer, can_scan_a_floating_point_number) {
     LexemBuffer lexemBuffer;
     char *lexemPointer = lexemBuffer.lexemStream;
     CharacterBuffer *charBuffer = &lexemBuffer.buffer;
@@ -55,7 +56,7 @@ Ensure(Lex, can_scan_a_floating_point_number) {
     assert_that(getLexToken(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
 }
 
-Ensure(Lex, can_scan_include_next) {
+Ensure(Lexer, can_scan_include_next) {
     LexemBuffer lexemBuffer;
     char *lexemPointer = lexemBuffer.lexemStream;
     CharacterBuffer *charBuffer = &lexemBuffer.buffer;

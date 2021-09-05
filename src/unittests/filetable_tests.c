@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 
 #include "../filetable.h"
+#include "log.h"
 
 #include "misc.mock"
 #include "commons.mock"
@@ -8,7 +9,9 @@
 
 
 Describe(FileTable);
-BeforeEach(FileTable) {}
+BeforeEach(FileTable) {
+    log_set_level(LOG_ERROR);
+}
 AfterEach(FileTable) {}
 
 

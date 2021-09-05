@@ -12,6 +12,7 @@ void processIncludeNextDirective(Position *includePosition);
 #include "symboltable.h"
 #include "macroargumenttable.h"
 #include "symbol.h"
+#include "log.h"
 
 #include "globals.mock"
 #include "options.mock"
@@ -39,6 +40,7 @@ void processIncludeNextDirective(Position *includePosition);
 
 Describe(Yylex);
 BeforeEach(Yylex) {
+    log_set_level(LOG_ERROR);
     options.taskRegime = RegimeEditServer;
     ppMemInit();
     initFileTable(&fileTable);

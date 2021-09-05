@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 
 #include "cxref.h"
+#include "log.h"
 
 /* Dependencies: */
 #include "filedescriptor.mock"
@@ -29,7 +30,9 @@
 
 
 Describe(CxRef);
-BeforeEach(CxRef) {}
+BeforeEach(CxRef) {
+    log_set_level(LOG_ERROR);
+}
 AfterEach(CxRef) {}
 
 

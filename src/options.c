@@ -1002,7 +1002,7 @@ static char *canItBeJavaBinPath(char *possibleBinPath) {
                 sprintf(filename+len-3, "jrt-fs.jar");
                 if (fileExists(filename))
                     /* In Java 9 the rt.jar was removed and replaced by "implementation dependent" files in lib... */
-                    log_warning("Found Java > 8 which don't have a jar that we can read...");
+                    log_warn("Found Java > 8 which don't have a jar that we can read...");
             }
         }
     }

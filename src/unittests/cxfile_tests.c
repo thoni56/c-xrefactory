@@ -23,7 +23,7 @@
 
 Describe(CxFile);
 BeforeEach(CxFile) {
-    log_set_console_level(LOG_DEBUG); /* Set to LOG_TRACE if needed */
+    log_set_level(LOG_DEBUG); /* Set to LOG_TRACE if needed */
 }
 AfterEach(CxFile) {}
 
