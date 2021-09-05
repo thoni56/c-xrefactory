@@ -14,6 +14,7 @@
 #include "fileio.h"
 #include "log.h"
 #include "stringlist.h"
+#include "utils.h"
 
 
 void closeMainOutputFile(void) {
@@ -347,7 +348,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     if (errOut == NULL)
         errOut = stderr;
     sprintf(msg,"'%s' is not true in '%s:%d'", expr, file, line);
-    log_with_line(LOG_FATAL, file, line, "'%s' is not true",  expr);
+    log_with_explicit_file_and_line(LOG_FATAL, file, line, "'%s' is not true",  expr);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
     if (options.taskRegime == RegimeEditServer || options.refactoringRegime == RegimeRefactory) {
         if (options.xref2) {
