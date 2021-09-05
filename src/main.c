@@ -1939,7 +1939,7 @@ static void discoverBuiltinIncludePaths(void) {
 
 static char *extra_defines[] = {
     /* Standard types */
-    "__Bool int",
+    "_Bool int",
     /* GNUisms: */
     "__attribute__(xxx)",
     "__alignof__(xxx) 8",
