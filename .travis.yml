@@ -25,8 +25,8 @@ script:
     - cd ..
     # Now reset coverage and run everything
     - lcov -q -z -d .
-    - touch ../tests/test_uint32_t/.suspended # Suspend one test
     - make GCOV_OPTIONS= ci                   # = unit, build & test (even slow)
+    - cd ..
 
 branches:
     except:
@@ -38,5 +38,4 @@ after_success:
     - lcov -q --remove coverage.info '*.mock' '*.tab.c' '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
     # Move "stable" tag if on master
-    - cd ..
     - ./.travis.merge_to_stable_maybe.sh
