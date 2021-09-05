@@ -506,17 +506,8 @@ void setLocalVariableLinkName(struct symbol *p) {
         if (p->bits.storage==StorageExtern && ! options.exactPositionResolve) {
             sprintf(ttt,"%s", p->name);
         } else {
-            // it is now better to have name allways accessible
-            //&         if (options.taskRegime == RegimeHtmlGenerate) {
-            // html symbol, must pass the name for cxreference list item
             sprintf(ttt,"%x-%x-%x%c%s",p->pos.file,p->pos.line,p->pos.col,
                     LINK_NAME_SEPARATOR, p->name);
-            /*&
-              } else {
-              // no special information need to pass
-              sprintf(ttt,"%x-%x-%x", p->pos.file,p->pos.line,p->pos.col);
-              }
-              &*/
         }
     }
     len = strlen(ttt);
