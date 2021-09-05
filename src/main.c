@@ -48,26 +48,6 @@ static void usage(char *s) {
     fprintf(stdout, "\n");
     fprintf(stdout, "options:\n");
     fprintf(stdout, "\t-r                        - recursively descend directories (default, --r to negate)\n");
-    fprintf(stdout, "\t-html                     - convert sources to html format\n");
-    fprintf(stdout, "\t-htmlroot=<dir>           - specifies root dir. for html output\n");
-    fprintf(stdout, "\t-htmltab=<n>              - set tabulator to <n> in htmls\n");
-    fprintf(stdout, "\t-htmlgxlist               - generate xref-lists for global symbols\n");
-    fprintf(stdout, "\t-htmllxlist               - generate xref-lists for local symbols\n");
-    fprintf(stdout, "\t-htmldirectx              - link first character to cross references\n");
-    fprintf(stdout, "\t-htmlfunseparate          - separate functions by a bar\n");
-    fprintf(stdout, "\t-htmlzip=<command>        - zip command, use '!' for the file name\n");
-    fprintf(stdout, "\t-htmllinksuffix=<suf>     - add this suffix to file links\n");
-    fprintf(stdout, "\t-htmllinenums             - generate line numbers in HTML\n");
-    fprintf(stdout, "\t-htmlnocolors             - do not generate colors in HTML\n");
-    fprintf(stdout, "\t-htmlnounderline          - do not underline HTML links\n");
-    fprintf(stdout, "\t-htmlcutpath=<path>       - cut path in generated html\n");
-    fprintf(stdout, "\t-htmlcutcwd               - cut current dir in html\n");
-    fprintf(stdout, "\t-htmlcutsourcepaths       - cut source paths in html\n");
-    fprintf(stdout, "\t-htmlcutsuffix            - cut language suffix in html\n");
-    fprintf(stdout, "\t-htmllinkcolor=<color>    - color of HTML links\n");
-    fprintf(stdout, "\t-htmllinenumcolor=<color> - color of line numbers in HTML links\n");
-    fprintf(stdout, "\t-htmlgenjavadoclinks      - generate links to Java API docs if no definition\n");
-    fprintf(stdout, "\t                            only for packages from -htmljavadocavailable\n");
     fprintf(stdout, "\t-javadocurl=<http>        - url to existing Java API docs\n");
     fprintf(stdout, "\t-javadocpath=<path>       - paths to existing Java API docs\n");
     fprintf(stdout, "\t-javadocavailable=<packs> - packages for which javadoc is available\n");
@@ -303,18 +283,6 @@ static bool processDOption(int *ii, int argc, char **argv) {
     if (0) {}                   /* For copy/paste/re-order convenience, all tests can start with "else if.." */
     else if (strcmp(argv[i], "-debug")==0)
         options.debug = true;
-    else if (strcmp(argv[i], "-d")==0)   {
-        int ln;
-        NEXT_FILE_ARG();
-        ln=strlen(argv[i]);
-        if (ln>1 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
-            warningMessage(ERR_ST, "slash at the end of -d path");
-        }
-        if (! isAbsolutePath(argv[i])) {
-            warningMessage(ERR_ST, "'-d' option should be followed by an ABSOLUTE path");
-        }
-        createOptionString(&options.htmlRoot, argv[i]);
-    }
     // TODO, do this macro allocation differently!!!!!!!!!!!!!
     // just store macros in options and later add them into pp_memory
     else if (strncmp(argv[i], "-D",2)==0)

@@ -1,26 +1,6 @@
 usage:		../../src/c-xref <option>+ <input files>
 options:
 	-r                        - recursively descend directories (default, --r to negate)
-	-html                     - convert sources to html format
-	-htmlroot=<dir>           - specifies root dir. for html output
-	-htmltab=<n>              - set tabulator to <n> in htmls
-	-htmlgxlist               - generate xref-lists for global symbols
-	-htmllxlist               - generate xref-lists for local symbols
-	-htmldirectx              - link first character to cross references
-	-htmlfunseparate          - separate functions by a bar
-	-htmlzip=<command>        - zip command, use '!' for the file name
-	-htmllinksuffix=<suf>     - add this suffix to file links
-	-htmllinenums             - generate line numbers in HTML
-	-htmlnocolors             - do not generate colors in HTML
-	-htmlnounderline          - do not underline HTML links
-	-htmlcutpath=<path>       - cut path in generated html
-	-htmlcutcwd               - cut current dir in html
-	-htmlcutsourcepaths       - cut source paths in html
-	-htmlcutsuffix            - cut language suffix in html
-	-htmllinkcolor=<color>    - color of HTML links
-	-htmllinenumcolor=<color> - color of line numbers in HTML links
-	-htmlgenjavadoclinks      - generate links to Java API docs if no definition
-	                            only for packages from -htmljavadocavailable
 	-javadocurl=<http>        - url to existing Java API docs
 	-javadocpath=<path>       - paths to existing Java API docs
 	-javadocavailable=<packs> - packages for which javadoc is available
