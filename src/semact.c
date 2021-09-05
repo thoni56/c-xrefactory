@@ -27,10 +27,10 @@ void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *current
 }
 
 bool displayingErrorMessages(void) {
-    // no error messages for file preloaded for symbols
+    // no error messages for Java file preloaded for symbols
     if (LANGUAGE(LANG_JAVA) && s_jsl!=NULL)
         return false;
-    if (options.debug || options.show_errors)
+    if (options.debug || options.errors)
         return true;
     return false;
 }
@@ -51,7 +51,7 @@ int styyerror(char *s) {
 
 void noSuchFieldError(char *rec) {
     char message[TMP_BUFF_SIZE];
-    if (options.debug || options.show_errors) {
+    if (options.debug || options.errors) {
         sprintf(message, "Field/member '%s' not found", rec);
         errorMessage(ERR_ST, message);
     }

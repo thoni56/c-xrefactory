@@ -2194,7 +2194,7 @@ static TypeModifier *javaMethodInvocation(
 
 static void methodAppliedOnNonClass(char *rec) {
     char message[TMP_BUFF_SIZE];
-    if (options.debug || options.show_errors) {
+    if (options.debug || options.errors) {
         sprintf(message, "'%s' not applied on a class", rec);
         errorMessage(ERR_ST, message);
     }
@@ -2202,7 +2202,7 @@ static void methodAppliedOnNonClass(char *rec) {
 
 static void methodNameNotRecognized(char *rec) {
     char message[TMP_BUFF_SIZE];
-    if (options.debug || options.show_errors) {
+    if (options.debug || options.errors) {
         sprintf(message, "'%s' not recognized as method name", rec);
         errorMessage(ERR_ST, message);
     }

@@ -335,7 +335,7 @@ static bool processEOption(int *ii, int argc, char **argv) {
 
     if (0) {}
     else if (strcmp(argv[i], "-errors")==0) {
-        options.show_errors = true;
+        options.errors = true;
         logging_selected.errors = true;
     } else if (strcmp(argv[i], "-exit")==0) {
         log_debug("Exiting");

@@ -596,7 +596,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         cb->lineNumber ++;
                         cb->lineBegin = cb->next;
                         cb->columnOffset = 0;
-                        if (options.strictAnsi && (options.debug || options.show_errors)) {
+                        if (options.strictAnsi && (options.debug || options.errors)) {
                             warningMessage(ERR_ST,"string constant through end of line");
                         }
                     }

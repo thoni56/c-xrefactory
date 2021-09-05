@@ -275,7 +275,7 @@ typedef struct options {
     bool no_stdop;
 
     /* CXREF options  */
-    bool show_errors;
+    bool errors;
     UpdateType update;
     bool updateOnlyModifiedFiles;
     char *last_message;
