@@ -501,16 +501,14 @@ void popInclude(void) {
     }
 }
 
-static FILE *openInclude(char includeType, char *name, char **fileName, bool is_include_next) {
+static bool openInclude(char includeType, char *name, char **fileName, bool is_include_next) {
     EditorBuffer *editorBuffer = NULL;
     FILE *file = NULL;
     StringList *includeDirP;
     char wildcardExpandedPaths[MAX_OPTION_LEN];
     char normalizedName[MAX_FILE_NAME_SIZE];
     char path[MAX_FILE_NAME_SIZE];
-    int nnlen, nmlen;
 
-    nmlen = strlen(name);
     extractPathInto(currentFile.fileName, path);
 
     StringList *start = options.includeDirs;
@@ -556,9 +554,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName, bool is_
                     length++;
                 }
                 strcpy(normalizedName+length, name);
-                nnlen = length+nmlen;
-                normalizedName[nnlen]=0;
-                log_trace("trying to open <%s>", normalizedName);
+                log_trace("trying to open '%s'", normalizedName);
                 editorBuffer = editorFindFile(normalizedName);
                 if (editorBuffer == NULL)
                     file = openFile(normalizedName, "r");
@@ -566,18 +562,20 @@ static FILE *openInclude(char includeType, char *name, char **fileName, bool is_
                     goto found;
             });
     }
-    if (editorBuffer==NULL && file==NULL)
-        return NULL;
+    if (editorBuffer==NULL && file==NULL) {
+        log_error("failed to open '%s'", name);
+        return false;
+    }
  found:
     strcpy(normalizedName, normalizeFileName(normalizedName, cwd));
-    log_trace("file '%s' opened", normalizedName);
+    log_debug("opened file '%s'", normalizedName);
     pushInclude(file, editorBuffer, normalizedName, "\n");
-    return stdin;               // NOT NULL TODO: WTF?!?!? Why not bool? Check return value usage at call sites...
+    return true;
 }
 
 static void processInclude2(Position *ipos, char pchar, char *iname, bool is_include_next) {
     char *fname;
-    FILE *nyyin;
+    bool nyyin;
     Symbol ss,*memb;
     char tmpBuff[TMP_BUFF_SIZE];
 
@@ -589,7 +587,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
     if (symbolTableIsMember(symbolTable, &ss, NULL, &memb))
         return;
     nyyin = openInclude(pchar, iname, &fname, is_include_next);
-    if (nyyin == NULL) {
+    if (!nyyin) {
         assert(options.taskRegime);
         if (options.taskRegime!=RegimeEditServer)
             warningMessage(ERR_CANT_OPEN, iname);
