@@ -86,7 +86,7 @@ static void usage(char *s) {
     fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
     fprintf(stdout, "\t-infos                    - report all informational messages, and above\n");
     fprintf(stdout, "\t-warnings                 - report all warning messages, and above\n");
-    fprintf(stdout, "\t-errors                   - report all error messages (default)\n");
+    fprintf(stdout, "\t-errors                   - report all error messages\n");
     fprintf(stdout, "\t-debug                    - produce debug output of the execution\n");
     fprintf(stdout, "\t-trace                    - produce trace output of the execution\n");
     fprintf(stdout, "\t-log=<file>               - log to <file>\n");

@@ -8,7 +8,7 @@ export COVERAGE =
 
 WARNINGS = -Wall -Wno-char-subscripts
 
-GIT_HASH = $(shell git describe --abbrev=4 --always --tags)
+GIT_HASH = $(shell git describe --abbrev=5 --always --tags --dirty)
 
 CFLAGS = -g -O0 $(INCLUDES) -MMD -funsigned-char $(WARNINGS) $(COVERAGE) -DGIT_HASH=\"$(GIT_HASH)\"
 
