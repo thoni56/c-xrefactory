@@ -9,9 +9,8 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Handle for-loops with declarations ("for (int i = 0;...")
 ** DONE Grammar changes for C and Yacc
 ** TODO Scope rules for loop variable, don't really understand how that works...
-* TODO Automatic project selection does not work
-Is it because of Emacs versions or if you actually have set the project?
-Or does it work?
+* TODO Selecting automatic project selection after having set a specific does not work
+* TODO Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 * TODO Include of <file> does not follow standard so Cgreen's 'internal/...' is not found
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?

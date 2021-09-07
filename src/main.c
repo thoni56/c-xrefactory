@@ -1819,7 +1819,18 @@ static void discoverBuiltinIncludePaths(void) {
             }
         } while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF);
 
+
+    /* Discover which compiler is used, for future special defines for it */
+    rewind(tempfile);
+    while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
+        if (strstr(line, " version ") != 0) {
+            log_debug("Compiler is '%s'", line);
+            break;
+        }
+    }
+
     closeFile(tempfile);
+    
     removeFile(tempfile_name);
     LEAVE();
 }
