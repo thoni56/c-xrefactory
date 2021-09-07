@@ -4653,8 +4653,7 @@ static void pushSymbolByName(char *name) {
         currentCppPass = spass;
     }
     rstack = s_olcxCurrentUser->browserStack.top;
-    rstack->hkSelectedSym = olCreateSpecialMenuItem(
-                                                    name, noFileIndex, StorageDefault);
+    rstack->hkSelectedSym = olCreateSpecialMenuItem(name, noFileIndex, StorageDefault);
     getCallerPositionFromCommandLineOption(&rstack->cpos);
 }
 

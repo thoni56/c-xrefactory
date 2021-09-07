@@ -763,7 +763,8 @@ static bool processOOption(int *ii, int argc, char **argv) {
         options.server_operation = OLO_NEXT;
     else if (strcmp(argv[i], "-olcxprevious")==0)
         options.server_operation = OLO_PREVIOUS;
-    else if (strcmp(argv[i], "-olcxcomplet")==0)options.server_operation=OLO_COMPLETION;
+    else if (strcmp(argv[i], "-olcxcomplet")==0)
+        options.server_operation=OLO_COMPLETION;
     else if (strcmp(argv[i], "-olcxtarget")==0)
         options.server_operation=OLO_SET_MOVE_TARGET;
     else if (strcmp(argv[i], "-olcxmctarget")==0)
