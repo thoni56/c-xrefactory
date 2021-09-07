@@ -1,22 +1,19 @@
 #include "cxfile.h"
 
-#include "lexer.h"
-#include "yylex.h"
+#include "yylex.h"              /* addFileTabItem() ? */
 #include "cxref.h"
 #include "options.h"
-#include "editor.h"
 #include "reftab.h"
 #include "classhierarchy.h"
 #include "fileio.h"
-#include "characterreader.h"
 
-#include "protocol.h"
+#include "protocol.h"           /* C_XREF_FILE_VERSION_NUMBER */
 #include "globals.h"
 #include "commons.h"
 #include "misc.h"
 #include "hash.h"
 #include "log.h"
-#include "utils.h"
+#include "utils.h"              /* recursivelyCreateFileDirIfNotExists() */
 
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
