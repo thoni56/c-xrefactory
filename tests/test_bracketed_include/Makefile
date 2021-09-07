@@ -6,7 +6,7 @@ CXREF_COMMAND = $(CXREF) -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -log=log
 $(TEST): .c-xrefrc
 	$(CXREF_COMMAND) > output.tmp
 	@$(NORMALIZE) output.tmp > output
-	grep "error len" output ; \
+	grep "failed to open" output ; \
 	if [ $$? -eq 0 ] ; then \
 		$(FAIL) ; \
 	else \
