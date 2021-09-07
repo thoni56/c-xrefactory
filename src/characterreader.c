@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "proto.h"              /*& ERR_ST ...  */
-#include "commons.h"            /*& error() */
+#include "proto.h"              /* ERR_ST ...  */
+#include "commons.h"            /* error() */
 #include "fileio.h"
 
 #include "log.h"

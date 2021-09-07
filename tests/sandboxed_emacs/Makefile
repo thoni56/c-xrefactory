@@ -36,7 +36,7 @@ pipe-spy: pipe-spy.c Makefile
 	$(CC) -o pipe-spy -g -Wall -DTARGET=\"$(TARGET_PATH)\" pipe-spy.c
 
 clean:
-	-rm $(LOGFILE)* /tmp/c-xrefx*.log
+	-rm $(LOGFILE)* /tmp/c-xref*.log
 
 pure: .emacs.d/el-get/c-xrefactory
 	@-rm bin/c-xref

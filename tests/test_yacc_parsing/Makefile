@@ -10,14 +10,12 @@ include ../Makefile.boilerplate
 
 COMMAND = ../../src/c-xref -xrefrc .c-xrefrc simple_grammar.y -o $(TEST).log
 
-# Alternate way to look for content in a file
-CHECK_FOR_CONTENT = python -c "content=open('$(1)').read(); target=open('output').read(); exit(0 if content in target else 1);"
-
 $(TEST):
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
 	@echo "Tests in '$(TEST)': $(shell tput setaf 3)No tests, just executing$(shell tput sgr0)"
 	@exit 0
 
-gdb:
-	gdb --args $(COMMAND)
+debug: DEBUGGER=gdb
+debug:
+	$(DEBUGGER) --args $(COMMAND)

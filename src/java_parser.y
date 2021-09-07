@@ -3189,17 +3189,17 @@ ClassInstanceCreationExpression
                     ss = javaTypeSymbolUsage($3.d, AccessDefault);
                     if (isANestedClass(ss)) {
                         if (javaIsInnerAndCanGetUnnamedEnclosingInstance(ss, &ei)) {
-                            // before it was s_javaStat->classFileInd, but be more precise
+                            // MARIAN(?): before it was s_javaStat->classFileIndex, but be more precise
                             // in reality you should keep both to discover references
                             // to original class from class nested in method.
                             addThisCxReferences(ei->u.s->classFile, &$1.d->p);
-                            // I have removed following because it makes problems when
+                            // MARIAN(?): I have removed following because it makes problems when
                             // expanding to FQT names, WHY IT WAS HERE ???
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                                         s_javaStat->classFileInd, &$1.d->p,
+                                         s_javaStat->classFileIndex, &$1.d->p,
                                          UsageNotFQField); &*/
                         } else {
-                            // here I should annulate class reference, as it is an error
+                            // MARIAN(?): here I should annulate class reference, as it is an error
                             // because can't get enclosing instance, this is sufficient to
                             // pull-up/down to report a problem
                             // BERK, It was completely wrong, because it is completely legal
@@ -4454,7 +4454,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     /* If the completion window is shown, or there is no completion,
        add also hints (should be optionally) */
     /*& if (s_completions.comPrefix[0]!=0  && (s_completions.alternativeIndex != 0) &*/
-    /*&	&& options.cxrefs != OLO_SEARCH) return; &*/
+    /*&	&& options.server_operation != OLO_SEARCH) return; &*/
 
     for (i=0;(token=hintCompletionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {

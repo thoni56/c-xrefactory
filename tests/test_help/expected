@@ -24,7 +24,7 @@ options:
 	-mf<n>                    - factor increasing cxMemory
 	-infos                    - report all informational messages, and above
 	-warnings                 - report all warning messages, and above
-	-errors                   - report all error messages (default)
+	-errors                   - report all error messages
 	-debug                    - produce debug output of the execution
 	-trace                    - produce trace output of the execution
 	-log=<file>               - log to <file>

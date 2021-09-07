@@ -15,7 +15,7 @@
 #include "options.h"
 #include "jsemact.h"
 #include "editor.h"
-#include "main.h"               /*& For searchDefaultOptionsFile() */
+#include "main.h"               /* For searchDefaultOptionsFile() */
 #include "reftab.h"
 #include "characterreader.h"
 #include "symbol.h"
