@@ -563,7 +563,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
             });
     }
     if (editorBuffer==NULL && file==NULL) {
-        log_error("failed to open '%s'", name);
+        log_trace("failed to open '%s'", name);
         return false;
     }
  found:
@@ -575,7 +575,6 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
 
 static void processInclude2(Position *ipos, char pchar, char *iname, bool is_include_next) {
     char *fname;
-    bool nyyin;
     Symbol ss,*memb;
     char tmpBuff[TMP_BUFF_SIZE];
 
@@ -586,8 +585,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
 
     if (symbolTableIsMember(symbolTable, &ss, NULL, &memb))
         return;
-    nyyin = openInclude(pchar, iname, &fname, is_include_next);
-    if (!nyyin) {
+    if (!openInclude(pchar, iname, &fname, is_include_next)) {
         assert(options.taskRegime);
         if (options.taskRegime!=RegimeEditServer)
             warningMessage(ERR_CANT_OPEN, iname);
