@@ -62,6 +62,6 @@ void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
   mock(fname, scanFunTab);
 }
 
-int smartReadFileTabFile(void) {
-  return (int) mock();
+bool smartReadFileTabFile(void) {
+  return (bool) mock();
 }

@@ -276,7 +276,7 @@ char *crTagSearchLineStatic(char *name, Position *p,
     } else {
         sprintf(res, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);
     }
-    return(res);
+    return res;
 }
 
 // Filter out symbols which pollute search reports
@@ -1435,7 +1435,7 @@ void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
     }
 }
 
-int smartReadFileTabFile(void) {
+bool smartReadFileTabFile(void) {
     static time_t fileModificationTime = 0;
     static off_t fileSize = 0;
     static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = "";
@@ -1461,15 +1461,15 @@ int smartReadFileTabFile(void) {
         } else {
             log_trace(":saving the (re)reading of file tab");
         }
-        return(1);
+        return true;
     }
-    return(0);
+    return false;
 }
 
 // symbolName can be NULL !!!!!!
 void readOneAppropReferenceFile(char *symbolName,
                                 ScanFileFunctionStep  *scanFileFunctionTable
-                                ) {
+) {
     static char fns[MAX_FILE_NAME_SIZE];
     int i;
 
