@@ -25,22 +25,22 @@ extern ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[];
 extern ScanFileFunctionStep symbolSearchFunctionSequence[];
 extern ScanFileFunctionStep deadCodeDetectionFunctionSequence[];
 
+extern void genReferenceFile(bool updating, char *filename);
+extern int cxFileHashNumber(char *sym);
+extern void scanCxFile(ScanFileFunctionStep *scanFuns);
+extern bool scanReferenceFile(char *fname, char *fns1, char *fns2,
+                             ScanFileFunctionStep *scanFunTab);
+extern void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab);
+extern bool smartReadFileTabFile(void);
+extern void readOneAppropReferenceFile(char *symname,
+                                       ScanFileFunctionStep *scanFunTab);
 
 extern int searchStringFitness(char *cxtag, int slen);
 extern char *crTagSearchLineStatic(char *name, Position *p,
                                    int *len1, int *len2, int *len3);
 extern bool symbolNameShouldBeHiddenFromReports(char *name);
 extern void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr);
-extern int cxFileHashNumber(char *sym);
-extern void genReferenceFile(bool updating, char *filename);
 extern void addSubClassItemToFileTab( int sup, int inf, int origin);
 extern void addSubClassesItemsToFileTab(Symbol *ss, int origin);
-extern void scanCxFile(ScanFileFunctionStep *scanFuns);
-extern bool scanReferenceFile(char *fname, char *fns1, char *fns2,
-                             ScanFileFunctionStep *scanFunTab);
-extern void readOneAppropReferenceFile(char *symname,
-                                       ScanFileFunctionStep *scanFunTab);
-extern void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab);
-extern int smartReadFileTabFile(void);
 
 #endif
