@@ -53,7 +53,7 @@ coverage: COVERAGE=--coverage
 coverage: all
 
 clean:
-	-rm $(OBJDIR)/*.[od] *.$(EXT) $(OBJDIR)/*.gc*
+	-rm -r $(OBJDIR) *.$(EXT)
 
 .objs/*.o: Makefile
 
