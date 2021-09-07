@@ -195,10 +195,10 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
            when(source, is_equal_to_string("path1/include.h")),
            will_set_contents_of_parameter(dest, "path1", sizeof(char*)));
 
-    /* First look in current directory since it's not an angle bracketed include */
+    /* First look in directory of file with the #include since it's not an angle bracketed include */
     expect(normalizeFileName,
            when(name, is_equal_to_string("include.h")),
-           when(relative_to, is_equal_to_string("cwd")),
+           when(relative_to, is_equal_to_string("path1")),
            will_return("path1/include.h"));
     /* Editor should not have any file open... */
     always_expect(editorFindFile, will_return(NULL));

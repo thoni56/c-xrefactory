@@ -531,9 +531,9 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
         }
     }
 
-    /* If not an angle bracketed include, look first in the current directory */
+    /* If not an angle bracketed include, look first in the directory of the current file */
     if (includeType != '<') {
-        strcpy(normalizedName, normalizeFileName(name, cwd));
+        strcpy(normalizedName, normalizeFileName(name, path));
         log_trace("trying to open %s", normalizedName);
         editorBuffer = editorFindFile(normalizedName);
         if (editorBuffer == NULL)
