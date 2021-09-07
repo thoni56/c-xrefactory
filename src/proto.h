@@ -501,7 +501,7 @@ typedef struct olcxReferences {
 } S_olcxReferences;
 
 typedef struct classTreeData {
-    int						baseClassIndex;
+    int						baseClassFileIndex;
     struct olSymbolsMenu	*tree;
 } S_classTreeData;
 

@@ -348,10 +348,10 @@ static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.s);
     assert(ct);
     //&fprintf(dumpOut,"!looking for result of %s\n",p->linkName);fflush(dumpOut);
-    ct->baseClassIndex = s_javaObjectSymbol->u.s->classFile;
+    ct->baseClassFileIndex = s_javaObjectSymbol->u.s->classFile;
     if (p->bits.symbolType == TypeStruct) {
         assert(p->u.s);
-        ct->baseClassIndex = p->u.s->classFile;
+        ct->baseClassFileIndex = p->u.s->classFile;
     } else if (p->bits.symbolType == TypeDefault && p->bits.storage!=StorageConstructor) {
         tt = p->u.type;
         assert(tt);
@@ -362,7 +362,7 @@ static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
             assert(rtcls!=NULL && rtcls->bits.symbolType==TypeStruct
                    && rtcls->u.s!=NULL);
             //&fprintf(dumpOut,"!resulting class is %s\n",rtcls->linkName);fflush(dumpOut);
-            ct->baseClassIndex = rtcls->u.s->classFile;
+            ct->baseClassFileIndex = rtcls->u.s->classFile;
         }
     }
 }
@@ -1070,7 +1070,7 @@ static void initUserOlcx(UserOlcxData *dd, char *user) {
     dd->completionsStack.root = NULL;
     dd->retrieverStack.top = NULL;
     dd->retrieverStack.root = NULL;
-    dd->classTree.baseClassIndex = noFileIndex;
+    dd->classTree.baseClassFileIndex = noFileIndex;
     dd->classTree.tree = NULL;
     dd->next = NULL;
 }
@@ -3550,8 +3550,8 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
             clii = getClassNumFromClassLinkName(ss->s.name, clii);
         } else {
             if (options.server_operation == OLO_CLASS_TREE) {
-                assert(s_olcxCurrentUser->classTree.baseClassIndex!=noFileIndex);
-                clii = s_olcxCurrentUser->classTree.baseClassIndex;
+                assert(s_olcxCurrentUser->classTree.baseClassFileIndex!=noFileIndex);
+                clii = s_olcxCurrentUser->classTree.baseClassFileIndex;
             } else {
                 if (ss->s.vApplClass!=noFileIndex) clii = ss->s.vApplClass;
             }
