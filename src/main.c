@@ -72,7 +72,7 @@ static void usage(char *s) {
     fprintf(stdout, "\t-olcxlist                 - generate, push and list on-line cxrefs\n");
     fprintf(stdout, "\t-olcxpop                  - pop on-line cxrefs\n");
     fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
-    fprintf(stdout, "\t-olcxprevious                - previous on-line reference\n");
+    fprintf(stdout, "\t-olcxprevious             - previous on-line reference\n");
     fprintf(stdout, "\t-olcxgoto<n>              - go to the n-th on-line reference\n");
     fprintf(stdout, "\t-user                     - user logname for olcx\n");
     fprintf(stdout, "\t-o <file>                 - write output to <file>\n");
@@ -1835,7 +1835,7 @@ static void discoverBuiltinIncludePaths(void) {
     }
 
     closeFile(tempfile);
-    
+
     removeFile(tempfile_name);
     LEAVE();
 }

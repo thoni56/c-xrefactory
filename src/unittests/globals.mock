@@ -7,7 +7,7 @@ char *s_editCommunicationString = "C@$./@mVeDitznAC";
 
 int s_fileAbortionEnabled;
 
-#define LAST_TOKEN 456          /* To not have to include parsers.h */
+#include "lexem.h"
 
 char mbMemory[SIZE_mbMemory];
 int mbMemoryIndex=0;
