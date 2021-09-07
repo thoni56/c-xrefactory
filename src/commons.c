@@ -43,7 +43,7 @@ void initCwd(void) {
             strcpy(cwd, returnedCwd);
         }
     }
-#if defined (__WIN32__)
+#ifdef __WIN32__
     if (strlen(cwd)<=2 || cwd[1]!=':') {
         // starts with drive specification
         sprintf(nid,"%c:",tolower('c'));
@@ -63,7 +63,7 @@ void reInitCwd(char *dffname, char *dffsect) {
         extractPathInto(dffname, cwd);
     }
     if (dffsect[0]!=0
-#if defined (__WIN32__)
+#ifdef __WIN32__
         && dffsect[1]==':' && dffsect[2]==FILE_PATH_SEPARATOR
 #else
         && dffsect[0]==FILE_PATH_SEPARATOR
@@ -88,7 +88,7 @@ char *normalizeFileName(char *name, char *relative_to) {
         // special case a class name
         l1 = -1;
         inzip = 1;
-#if defined (__WIN32__)
+#ifdef __WIN32__
     } else if (name[0]=='\\' || name[0]=='/') {
         normalizedFileName[0] = relative_to[0];
         normalizedFileName[1] = ':';
