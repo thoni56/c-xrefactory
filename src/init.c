@@ -276,10 +276,21 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
     }
 }
 
+
+static void infoMessage(char message[]) {
+    if (options.xref2) {
+        ppcGenRecord(PPC_INFORMATION, message);
+    } else {
+        log_info(message);
+    }
+}
+
+
 void initTokenNamesTables(void) {
     char *javaVersion;
     int not_used_symbol_index;
     Symbol *symbolP;
+    
     static bool messageWritten = false;
 
     if (!options.strictAnsi) {
@@ -289,15 +300,10 @@ void initTokenNamesTables(void) {
     if (strcmp(javaVersion, JAVA_VERSION_AUTO)==0)
         javaVersion = autoDetectJavaVersion();
 
-    if (options.taskRegime!=RegimeEditServer
-        && !messageWritten) {
-        if (options.xref2) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff,"java version == %s", javaVersion);
-            ppcGenRecord(PPC_INFORMATION, tmpBuff);
-        } else {
-            fprintf(dumpOut,"java version == %s\n", javaVersion);
-        }
+    if (options.taskRegime!=RegimeEditServer && !messageWritten) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff,"java version == %s", javaVersion);
+        infoMessage(tmpBuff);
         messageWritten = true;
     }
 
