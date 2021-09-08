@@ -39,7 +39,6 @@ endif
 #########################################################################
 #
 # The heavy lifting is here
-all: COVERAGE=--coverage
 all: build
 
 # For production - no smartness just compile, ensure clean production build
@@ -50,16 +49,18 @@ prod:
 yydebug: CFLAGS += -DYYDEBUG
 yydebug: all
 
-devel: COVERAGE=--coverage
-devel: clean-coverage check-tokens
+devel: check-tokens
 	$(MAKE) -e devel-proper
 
 devel-proper: unit build test
-	$(MAKE) coverage-report
 	$(MAKE) -C ../editors/emacs
 
 coverage: COVERAGE=--coverage
-coverage: ci
+coverage:
+	$(MAKE) -e clean-coverage
+	$(MAKE) -e ci
+	$(MAKE) -e coverage-report
+
 
 ci: COVERAGE=--coverage
 ci:
