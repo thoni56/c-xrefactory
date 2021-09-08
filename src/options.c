@@ -72,7 +72,7 @@ Options s_initOpt = {
     0,
     0,
     "nouser",                   // moveToUser
-    0,                          // noerrors
+    false,                      // noerrors
     0,                          // fqtNameToCompletions
     NULL,                       // moveTargetClass
     0,                          // TPC_NON, trivial pre-check

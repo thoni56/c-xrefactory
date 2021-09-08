@@ -551,7 +551,7 @@ static bool processNOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i], "-no-autoupdatefromsrc")==0)
         options.javaSlAllowed = 0;
     else if (strcmp(argv[i], "-no-errors")==0)
-        options.noErrors=1;
+        options.noErrors = true;
     else return false;
     *ii = i;
     return true;
@@ -1522,9 +1522,11 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
     int nargc;
     char **nargv;
 
-    options_filename[0] = 0; section[0]=0;
-    if (filename == NULL) return;
-    if (options.stdopFlag || options.no_stdop) return;
+    options_filename[0] = 0;
+    section[0]=0;
+
+    if (filename == NULL || options.stdopFlag || options.no_stdop)
+        return;
 
     /* Try to find section in HOME config. */
     getXrefrcFileName(options_filename);
@@ -1627,9 +1629,9 @@ static void handlePathologicProjectCases(char *file,char *outFName,char *outSect
     }
 }
 
-static void getOptionsFile(char *file, char *outFName, char *outSect,int errMessage) {
-    searchDefaultOptionsFile(file, outFName, outSect);
-    handlePathologicProjectCases(file, outFName, outSect, errMessage);
+static void getOptionsFile(char *file, char *optionsFileName, char *sectionName, int errorMessage) {
+    searchDefaultOptionsFile(file, optionsFileName, sectionName);
+    handlePathologicProjectCases(file, optionsFileName, sectionName, errorMessage);
     return;
 }
 
@@ -1786,6 +1788,8 @@ static void discoverBuiltinIncludePaths(void) {
     char command[TMP_BUFF_SIZE];
     bool found = false;
 
+    static bool messageWritten = false;
+
     ENTER();
     if (!LANGUAGE(LANG_C) && !LANGUAGE(LANG_YACC)) {
         LEAVE();
@@ -1823,8 +1827,9 @@ static void discoverBuiltinIncludePaths(void) {
     /* Discover which compiler is used, for future special defines for it */
     rewind(tempfile);
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
-        if (strstr(line, " version ") != 0) {
-            log_debug("Compiler is '%s'", line);
+        if (strstr(line, " version ") != 0 && !messageWritten) {
+            log_info("Compiler is '%s'", line);
+            messageWritten = true;
             break;
         }
     }
@@ -1953,24 +1958,25 @@ static void mainFileProcessingInitialisations(int *firstPass,
                                               bool *outInputIn,
                                               Language *outLanguage
 ) {
-    char            dffname[MAX_FILE_NAME_SIZE];
-    char            dffsect[MAX_FILE_NAME_SIZE];
-    struct stat     dffstat;
-    char            *fileName;
-    StringList    *tmpIncludeDirs;
+    char defaultOptionsFileName[MAX_FILE_NAME_SIZE];
+    char defaultOptionsSectionName[MAX_FILE_NAME_SIZE];
+    struct stat dffstat;
+    char *fileName;
+    StringList *tmpIncludeDirs;
 
     fileName = inputFilename;
     mainSetLanguage(fileName, outLanguage);
-    getOptionsFile(fileName, dffname, dffsect,DEFAULT_VALUE);
+    getOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName, DEFAULT_VALUE);
     initAllInputs();
-    if (dffname[0] != 0 ) stat(dffname, &dffstat);
+
+    if (defaultOptionsFileName[0] != 0 ) stat(defaultOptionsFileName, &dffstat);
     else dffstat.st_mtime = oldStdopTime;               // !!! just for now
     //&fprintf(dumpOut, "checking oldcp==%s\n",oldOnLineClassPath);
     //&fprintf(dumpOut, "checking newcp==%s\n",options.classpath);
     if (*firstPass
         || oldCppPass != currentCppPass
-        || strcmp(oldStdopFile,dffname)
-        || strcmp(oldStdopSection,dffsect)
+        || strcmp(oldStdopFile,defaultOptionsFileName)
+        || strcmp(oldStdopSection,defaultOptionsSectionName)
         || oldStdopTime != dffstat.st_mtime
         || oldLanguage!= *outLanguage
         || strcmp(oldOnLineClassPath, options.classpath)
@@ -2001,11 +2007,11 @@ static void mainFileProcessingInitialisations(int *firstPass,
         copyOptions(&s_tmpOptions, &options);
         processOptions(nargc, nargv, INFILES_DISABLED);
 
-        reInitCwd(dffname, dffsect);
+        reInitCwd(defaultOptionsFileName, defaultOptionsSectionName);
         tmpIncludeDirs = options.includeDirs;
         options.includeDirs = NULL;
 
-        getAndProcessXrefrcOptions(dffname, dffsect, dffsect);
+        getAndProcessXrefrcOptions(defaultOptionsFileName, defaultOptionsSectionName, defaultOptionsSectionName);
         discoverStandardDefines();
         discoverBuiltinIncludePaths();
 
@@ -2018,8 +2024,8 @@ static void mainFileProcessingInitialisations(int *firstPass,
         processOptions(nargc, nargv, INFILES_DISABLED);
         getJavaClassAndSourcePath();
         *outInputIn = computeAndOpenInputFile();
-        strcpy(oldStdopFile,dffname);
-        strcpy(oldStdopSection,dffsect);
+        strcpy(oldStdopFile,defaultOptionsFileName);
+        strcpy(oldStdopSection,defaultOptionsSectionName);
         oldStdopTime = dffstat.st_mtime;
         oldLanguage = *outLanguage;
         oldCppPass = currentCppPass;
@@ -2132,16 +2138,17 @@ static void mainReinitFileTabEntry(FileItem *ft) {
 }
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
-    char        tt[MAX_FILE_NAME_SIZE];
-    char        dffname[MAX_FILE_NAME_SIZE];
-    char        dffsect[MAX_FILE_NAME_SIZE];
-    char        *ss;
-    int         dfargc;
-    char        **dfargv;
-    int         argcount;
-    char        *sss,*cmdlnInputFile;
-    int         inmode, noerropt;
-    static int  firstmemory=0;
+    char tt[MAX_FILE_NAME_SIZE];
+    char defaultOptionsFileName[MAX_FILE_NAME_SIZE];
+    char defaultOptionsSection[MAX_FILE_NAME_SIZE];
+    char *ss;
+    int dfargc;
+    char **dfargv;
+    int argcount;
+    char *sss,*cmdlnInputFile;
+    int inmode;
+    bool noerropt;
+    static int firstmemory=0;
 
     s_fileAbortionEnabled = 0;
 
@@ -2215,17 +2222,17 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     inputFilename = cmdlnInputFile = getCommandLineFile(&argcount);
     if (inputFilename==NULL) {
         ss = strmcpy(tt, cwd);
-        if (ss!=tt && ss[-1] == FILE_PATH_SEPARATOR) ss[-1]=0;
+        if (ss!=tt && ss[-1] == FILE_PATH_SEPARATOR)
+            ss[-1]=0;
         assert(strlen(tt)+1<MAX_FILE_NAME_SIZE);
         inputFilename=tt;
-        //&fprintf(dumpOut, "here we are '%s'\n",tt);fflush(dumpOut);
     } else {
         strcpy(tt, inputFilename);
     }
-    getOptionsFile(tt, dffname, dffsect, NO_ERROR_MESSAGE);
-    reInitCwd(dffname, dffsect);
-    if (dffname[0]!=0) {
-        readOptionFile(dffname, &dfargc, &dfargv, dffsect, dffsect);
+    getOptionsFile(tt, defaultOptionsFileName, defaultOptionsSection, NO_ERROR_MESSAGE);
+    reInitCwd(defaultOptionsFileName, defaultOptionsSection);
+    if (defaultOptionsFileName[0]!=0) {
+        readOptionFile(defaultOptionsFileName, &dfargc, &dfargv, defaultOptionsSection, defaultOptionsSection);
         if (options.refactoringRegime == RegimeRefactory) {
             inmode = INFILES_DISABLED;
         } else if (options.taskRegime==RegimeEditServer) {
@@ -2238,7 +2245,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         // disable error reporting on xref task on this pre-reading of .c-xrefrc
         noerropt = options.noErrors;
         if (options.taskRegime==RegimeEditServer) {
-            options.noErrors = 1;
+            options.noErrors = true;
         }
         // there is a problem with INFILES_ENABLED (update for safetycheck),
         // It should first load cxref file, in order to protect file numbers.

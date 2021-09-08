@@ -178,7 +178,7 @@ typedef struct options {
     int olcxWinDelToLine;
     int olcxWinDelToCol;
     char *moveFromUser;
-    int noErrors;
+    bool noErrors;
     int fqtNameToCompletions;
     char *moveTargetClass;
     int trivialPreCheckCode;
