@@ -1099,12 +1099,6 @@ UserOlcxData *olcxSetCurrentUser(char *user) {
     return memb;
 }
 
-static void setRefSuffix(S_olcxReferences *refs) {
-    strncpy(refs->refsuffix, options.olcxRefSuffix, MAX_OLCX_SUFF_SIZE-1);
-    refs->refsuffix[MAX_OLCX_SUFF_SIZE-1]=0;
-    refs->act = refs->r;
-}
-
 static void olcxFreePopedStackItems(S_olcxReferencesStack *stack) {
     assert(stack);
     // delete all after top
@@ -1130,7 +1124,6 @@ void olcxPushEmptyStackItem(S_olcxReferencesStack *stack) {
     S_olcxReferences *res;
     olcxFreePopedStackItems(stack);
     res = pushOlcxReference(stack);
-    setRefSuffix(res);
     stack->top = stack->root = res;
 }
 
@@ -1300,7 +1293,6 @@ static void olcxRenameInit(void) {
     S_olcxReferences *refs;
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
-    //  setRefSuffix(refs);
     refs->act = refs->r;
     generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
                         refs->act->usage.base, refs->refsuffix, "");
@@ -1356,7 +1348,6 @@ static void olcxGenNoReferenceSignal(void) {
 static void olcxOrderRefsAndGotoFirst(void) {
     S_olcxReferences *refs;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
-    //& setRefSuffix(refs);
     LIST_MERGE_SORT(Reference, refs->r, olcxListLessFunction);
     refs->act = refs->r;
     if (refs->r != NULL) {
@@ -1622,7 +1613,6 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
     S_olcxReferences *refs;
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
-    //& setRefSuffix(refs);
     orderRefsAndGotoDefinition(refs, afterMenuFlag);
 }
 
@@ -1959,8 +1949,6 @@ static void olcxPrintRefList(char *commandString, S_olcxReferences *refs) {
 static void olcxReferenceList(char *commandString) {
     S_olcxReferences    *refs;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs, CHECK_NULL);
-    //& setRefSuffix(refs);
-    //&LIST_MERGE_SORT(Reference, refs->r, olcxListLessFunction);
     olcxPrintRefList(commandString, refs);
 }
 
@@ -3863,9 +3851,7 @@ static void olcxSafetyCheck1(void) {
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     assert(s_olcxCurrentUser->browserStack.top->previous);
     assert(options.server_operation == OLO_SAFETY_CHECK1);
-    //&fprintf(dumpOut,":here I am in safety check\n");fflush(dumpOut);
     rstack = s_olcxCurrentUser->browserStack.top->previous;
-    //& setRefSuffix();
     olProcessSelectedReferences(rstack, olcxProceedSafetyCheck1OnInloadedRefs);
     if (s_olcxCurrentUser->browserStack.top->r == NULL) {
         fprintf(communicationChannel,"* check1 passed");
