@@ -144,11 +144,6 @@ Options s_initOpt = {
     0,
     "",
 
-    false,                      /* no locals */
-    false,                      /* no structs/records */
-    false,                      /* no enums */
-    false,                      /* no typedefs */
-    false,                      /* no macros */
     false,                      /* no stdoptions */
 
     /* CXREF options  */

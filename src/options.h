@@ -248,11 +248,6 @@ typedef struct options {
     int olcxGotoVal;
     char *originalDir;
 
-    bool no_ref_locals;
-    bool no_ref_records;
-    bool no_ref_enumerator;
-    bool no_ref_typedef;
-    bool no_ref_macro;
     bool no_stdop;
 
     /* CXREF options  */

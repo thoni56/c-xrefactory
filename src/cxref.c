@@ -683,7 +683,7 @@ static int olcxOnlyParseNoPushing(int opt) {
 /* ********************************************************************* */
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
 /*                                                                       */
-Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
+Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
                                 int vFunCl, int vApplCl) {
     int index,mm,category,scope,storage,defusage;
     char *linkName;
@@ -695,8 +695,9 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     int usage_base;
 
     usage_base = usage->base;
-    // do not record references on prescanning
+    // do not record references during prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
+    // TODO: So is this relevant now that HTML is gone?
     if (s_javaPreScanOnly)
         return NULL;
     if (symbol->linkName == NULL)
@@ -707,35 +708,11 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         return NULL;
     if (pos->file == noFileIndex)
         return NULL;
+
     assert(pos->file<MAX_FILES);
     assert(fileTable.tab[pos->file]);
-    if (symbol->bits.symbolType==TypeDefault && symbol->bits.storage==StorageConstant) {
-        if (options.no_ref_enumerator)
-            return NULL;
-    }
-    /* typedefs */
-    if (symbol->bits.symbolType==TypeDefault && symbol->bits.storage==StorageTypedef) {
-        if (options.no_ref_typedef)
-            return NULL;
-    }
-    /* struct, union, enum */
-    if ((symbol->bits.symbolType==TypeStruct||symbol->bits.symbolType==TypeUnion||symbol->bits.symbolType==TypeEnum)){
-        if (options.no_ref_typedef)
-            return NULL;
-    }
-    /* macros */
-    if (symbol->bits.symbolType == TypeMacro) {
-        if (options.no_ref_macro)
-            return NULL;
-    }
-    if (symbol->bits.symbolType==TypeDefault) {
-        if (symbol->bits.isRecord && options.no_ref_records)
-            return NULL;
-    }
 
-    getSymbolCxrefCategories( symbol, &category, &scope, &storage);
-    if (scope == ScopeAuto && options.no_ref_locals)
-        return NULL;
+    getSymbolCxrefCategories(symbol, &category, &scope, &storage);
 
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
               vFunCl,vApplCl, pos->file, pos->line, pos->col, category==CategoryGlobal?"Global":"Local",
@@ -748,8 +725,7 @@ Reference * addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         } else {
             if (category==CategoryGlobal && symbol->bits.symbolType!=TypeCppInclude && options.server_operation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
-                if (s_olOriginalFileNumber!=pos->file
-                    && options.noIncludeRefs)
+                if (s_olOriginalFileNumber != pos->file && options.noIncludeRefs)
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file

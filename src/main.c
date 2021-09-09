@@ -92,11 +92,6 @@ static void usage(char *s) {
     fprintf(stdout, "\t-log=<file>               - log to <file>\n");
     fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
     fprintf(stdout, "\t-no-cppcomments           - C++ like comments '//' not allowed\n");
-    fprintf(stdout, "\t-no-enums                 - don't cross reference enumeration constants\n");
-    fprintf(stdout, "\t-no-macros                - don't cross reference macros\n");
-    fprintf(stdout, "\t-no-types                 - don't cross reference type names\n");
-    fprintf(stdout, "\t-no-structs               - don't cross reference str. records\n");
-    fprintf(stdout, "\t-no-locals                - don't cross reference local vars\n");
     fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
     fprintf(stdout, "\t-update                   - update old 'refs' reference file\n");
     fprintf(stdout, "\t-fastupdate               - fast update (modified files only)\n");
@@ -534,16 +529,6 @@ static bool processNOption(int *ii, int argc, char **argv) {
         options.noCxFile = 1;
     else if (strcmp(argv[i], "-no-cppcomments")==0)
         options.cpp_comments = false;
-    else if (strcmp(argv[i], "-no-enums")==0)
-        options.no_ref_enumerator = true;
-    else if (strcmp(argv[i], "-no-macros")==0)
-        options.no_ref_macro = true;
-    else if (strcmp(argv[i], "-no-types")==0)
-        options.no_ref_typedef = true;
-    else if (strcmp(argv[i], "-no-structs")==0)
-        options.no_ref_records = true;
-    else if (strcmp(argv[i], "-no-locals")==0)
-        options.no_ref_locals = true;
     else if (strcmp(argv[i], "-no-classfiles")==0)
         options.allowClassFileRefs = false;
     else if (strcmp(argv[i], "-no-stdoptions")==0)
