@@ -1,12 +1,12 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-CXREF_COMMAND = $(CXREF) -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -log=log source.c
+CXREF_COMMAND = $(CXREF) -create -xrefrc .c-xrefrc -p $(CURDIR) -log=log source.c
 
 $(TEST): .c-xrefrc
 	$(CXREF_COMMAND) > output.tmp
 	@$(NORMALIZE) output.tmp > output
-	grep "failed to open" output ; \
+	grep "failed to open" log ; \
 	if [ $$? -eq 0 ] ; then \
 		$(FAIL) ; \
 	else \
