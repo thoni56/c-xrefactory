@@ -1,7 +1,7 @@
 #ifndef REFACTORINGS_H_INCLUDED
 #define REFACTORINGS_H_INCLUDED
 
-typedef enum availableRefactorings {
+typedef enum Refactorings {
     AVR_NO_REFACTORING = 0,
     AVR_RENAME_SYMBOL = 10,
     AVR_RENAME_CLASS = 20,
@@ -33,6 +33,6 @@ typedef enum availableRefactorings {
     AVR_SET_MOVE_TARGET = 280,
     AVR_UNDO = 290,
     AVR_MAX_AVAILABLE_REFACTORINGS = 300
-} AvailableRefactorings;
+} Refactorings;
 
 #endif

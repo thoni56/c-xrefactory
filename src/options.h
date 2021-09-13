@@ -157,7 +157,7 @@ typedef struct options {
     int parnum2;
     char *refpar1;
     char *refpar2;
-    AvailableRefactorings theRefactoring;
+    Refactorings theRefactoring;
     bool briefoutput;
     int cacheIncludes;
     int stdopFlag;		// does this serve to anything ?
