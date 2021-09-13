@@ -129,7 +129,6 @@ Options s_initOpt = {
     MAX_COMPLETIONS,
     0,
     0,
-    "",
     true,                       // recurse directories
     "",                         // default classpath
     8,                          /* tabulator */

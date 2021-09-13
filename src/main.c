@@ -564,13 +564,6 @@ static bool processOOption(int *ii, int argc, char **argv) {
         createOptionString(&options.checkVersion, argv[i]+16);
         options.server_operation = OLO_CHECK_VERSION;
     }
-    else if (strncmp(argv[i], "-olcxrefsuffix=",15)==0)  {
-        createOptionString(&options.olcxRefSuffix, argv[i]+15);
-    }
-    else if (strncmp(argv[i], "-olcxresetrefsuffix=",20)==0)     {
-        options.server_operation = OLO_RESET_REF_SUFFIX;
-        createOptionString(&options.olcxRefSuffix, argv[i]+20);
-    }
     else if (strcmp(argv[i], "-olcxextract")==0) {
         options.server_operation = OLO_EXTRACT;
     }

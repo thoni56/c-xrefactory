@@ -92,7 +92,6 @@ enum olcxOptions {
     OLO_MENU_FILTER_MINUS,	/* smaller filtering */
     OLO_MENU_GO,            /* push references from selected menu items */
     OLO_CHECK_VERSION,      /* check version correspondance */
-    OLO_RESET_REF_SUFFIX,	/* set n-th argument after argument insert */
     OLO_TRIVIAL_PRECHECK,	/* trivial pre-refactoring checks */
     OLO_MM_PRE_CHECK,		/* move method pre check */
     OLO_PP_PRE_CHECK,		/* push-down/pull-up method pre check */
@@ -233,7 +232,6 @@ typedef struct options {
     int maxCompletions;
     int editor;
     int create;
-    char *olcxRefSuffix;
     bool recurseDirectories;
     char *classpath;
     int tabulator;

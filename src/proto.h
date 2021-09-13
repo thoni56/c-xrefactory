@@ -487,8 +487,6 @@ typedef struct olcxReferences {
     char					command;	/* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
     char					language;	/* C/JAVA/YACC */
     time_t					atime;		/* last access time */
-    // refsuffix is useless now, should be removed !!!!
-    char					refsuffix[MAX_OLCX_SUFF_SIZE];
     struct position			cpos;		/* caller position */
     struct olCompletion		*cpls;		/* completions list for OLO_COMPLETION */
     // following two lists should be probably split into hashed tables of lists

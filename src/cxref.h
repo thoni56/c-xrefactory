@@ -8,10 +8,11 @@
 
 
 extern void fill_reference(Reference *reference, UsageBits usage, Position position, Reference *next);
-extern void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass);
+extern void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
+                              int vFunClass);
 extern void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
-                                   unsigned storage, unsigned scope, unsigned accessFlags,
-                                   unsigned category, unsigned htmlWasLn);
+                                  unsigned storage, unsigned scope, unsigned accessFlags,
+                                  unsigned category, unsigned htmlWasLn);
 extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu, struct symbolReferenceItem	s,
                                char selected, char visible, unsigned ooBits, char olUsage,
                                short int vlevel, short int refn, short int defRefn,
@@ -36,12 +37,10 @@ extern void olcxPopOnly(void);
 extern Reference * olcxCopyRefList(Reference *ll);
 extern void olStackDeleteSymbol(S_olcxReferences *refs);
 extern int getFileNumberFromName(char *name);
-extern void generateOnlineCxref(Position *p, char *commandString, int usage,
-                                char *suffix, char *suffix2
-                                );
+extern void generateOnlineCxref(Position *p, char *commandString, int usage, char *suffix);
 extern Reference *olcxAddReferenceNoUsageCheck(Reference **rlist,
-                                                 Reference *ref,
-                                                 int bestMatchFlag);
+                                               Reference *ref,
+                                               int bestMatchFlag);
 extern Reference *olcxAddReference(Reference **rlist,
                                    Reference *ref,
                                    int bestMatchFlag);
