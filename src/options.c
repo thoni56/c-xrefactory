@@ -700,6 +700,8 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
     bool found = false;
     char **aargv,*argv[MAX_STD_ARGS];
 
+    ENTER();
+
     argc = 1; aargv=NULL;
     isActiveSection = isActivePass = true;
     resSection[0]=0;
@@ -722,12 +724,9 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             processSectionMarker(text, len+1, project, sectionFile, &isActiveSection, resSection);
         } else if (isActiveSection && strncmp(text, "-pass", 5) == 0) {
             sscanf(text+5, "%d", &passn);
-            if (passn==currentCppPass || currentCppPass==ANY_CPP_PASS) {
-                isActivePass = true;
-            } else {
-                isActivePass = false;
-            }
-            if (passn > s_cppPassMax) s_cppPassMax = passn;
+            isActivePass = passn==currentCppPass || currentCppPass==ANY_CPP_PASS;
+            if (passn > s_cppPassMax)
+                s_cppPassMax = passn;
         } else if (strcmp(text,"-set")==0 && (isActiveSection && isActivePass) && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set
             found = true;
@@ -748,13 +747,16 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             ADD_OPTION_TO_ARGS(memFl, text, len, argv, argc);
         }
     }
-    if (argc >= MAX_STD_ARGS-1) errorMessage(ERR_ST,"too many options");
+    if (argc >= MAX_STD_ARGS-1)
+        errorMessage(ERR_ST,"too many options");
     if (found && memFl!=MEM_NO_ALLOC) {
         OPTION_SPACE_ALLOCC(memFl, aargv, argc, char*);
         for(i=1; i<argc; i++) aargv[i] = argv[i];
     }
     *nargc = argc;
     *nargv = aargv;
+
+    LEAVE();
 
     return found;
 }
