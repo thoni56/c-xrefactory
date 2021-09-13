@@ -139,7 +139,7 @@ extern char *simpleFileNameFromFileNum(int fnum);
 extern char *getShortClassNameFromClassNum_st(int fnum);
 extern void printSymbolLinkNameString( FILE *ff, char *linkName);
 extern void printClassFqtNameFromClassNum(FILE *ff, int fnum);
-extern void sprintfSymbolLinkName(char *ttt, S_olSymbolsMenu *ss);
-extern void printSymbolLinkName( FILE *ff, S_olSymbolsMenu *ss);
+extern void sprintfSymbolLinkName(char *ttt, SymbolsMenu *ss);
+extern void printSymbolLinkName( FILE *ff, SymbolsMenu *ss);
 
 #endif

@@ -80,7 +80,7 @@ static int generatedFieldMarkersList[] = {
 
 typedef struct lastCxFileInfo {
     int                 onLineReferencedSym;
-    S_olSymbolsMenu     *onLineRefMenuItem;
+    SymbolsMenu     *onLineRefMenuItem;
     int                 onLineRefIsBestMatchFlag; // vyhodit ?
     SymbolReferenceItem *symbolTab[MAX_CX_SYMBOL_TAB];
     bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
@@ -1052,7 +1052,7 @@ static void cxrfSymbolName(int size,
                            int additionalArg
                            ) {
     SymbolReferenceItem *ddd, *memb;
-    S_olSymbolsMenu *cms;
+    SymbolsMenu *cms;
     int si, symType, rr, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;
 
@@ -1188,7 +1188,7 @@ static void cxrfReference(int size,
     } else if (options.taskRegime == RegimeEditServer) {
         fillPosition(&pos,file,line,col);
         fillUsageBits(&usageBits, usage, reqAcc);
-        fill_reference(&rr, usageBits, pos, NULL);
+        fillReference(&rr, usageBits, pos, NULL);
         if (additionalArg == DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&rr)) {
                 // restrict reported symbols to those defined in project
@@ -1235,7 +1235,7 @@ static void cxrfReference(int size,
                             || options.server_operation==OLO_PUSH_SPECIAL_NAME
                             ) {
                             //&fprintf(dumpOut,":adding reference %s:%d\n", fileTable.tab[rr.p.file]->name, rr.p.line);
-                            olcxAddReferenceToOlSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &rr, lastIncomingInfo.onLineRefIsBestMatchFlag);
+                            olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &rr, lastIncomingInfo.onLineRefIsBestMatchFlag);
                         }
                     } else if (additionalArg == CX_BY_PASS) {
                         if (positionsAreEqual(s_olcxByPassPos,rr.p)) {

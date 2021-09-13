@@ -15,14 +15,14 @@ typedef struct classHierarchyReference {
 
 extern ClassHierarchyReference *newClassHierarchyReference(int origin, int class, ClassHierarchyReference *next);
 extern void classHierarchyGenInit(void);
-extern void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu);
-extern void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
-                                      void (*fun)(S_olSymbolsMenu *, void *, void *),
+extern void setTmpClassBackPointersToMenu(SymbolsMenu *menu);
+extern void splitMenuPerSymbolsAndMap(SymbolsMenu *rrr,
+                                      void (*fun)(SymbolsMenu *, void *, void *),
                                       void *p1,
                                       char *p2
                                       );
-extern void generateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn);
-extern void genClassHierarchies(FILE *ff, S_olSymbolsMenu *rrr,
+extern void generateGlobalReferenceLists(SymbolsMenu *rrr, FILE *ff, char *fn);
+extern void genClassHierarchies(FILE *ff, SymbolsMenu *rrr,
                                 int virtFlag, int pass );
 extern bool classHierarchyClassNameLess(int c1, int c2);
 extern int classHierarchySupClassNameLess(ClassHierarchyReference *c1, ClassHierarchyReference *c2);

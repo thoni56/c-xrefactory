@@ -457,13 +457,13 @@ typedef struct olCompletion {
     struct olCompletion		*next;
 } S_olCompletion;
 
-typedef struct olSymbolFoundInformation {
+typedef struct SymbolFoundInformation {
     struct symbolReferenceItem	*symrefs;		/* this is valid */
     struct symbolReferenceItem	*symRefsInfo;	/* additional for error message */
     struct reference		*currentRef;
-} S_olSymbolFoundInformation;
+} SymbolFoundInformation;
 
-typedef struct olSymbolsMenu {
+typedef struct SymbolsMenu {
     struct symbolReferenceItem	s;
     char					selected;
     char					visible;
@@ -476,8 +476,8 @@ typedef struct olSymbolsMenu {
     struct position         defpos;
     int                     outOnLine;
     struct editorMarkerList	*markers;	/* for refactory only */
-    struct olSymbolsMenu	*next;
-} S_olSymbolsMenu;
+    struct SymbolsMenu	*next;
+} SymbolsMenu;
 
 // if you add something to this structure, update olcxMoveTopFromAnotherUser()
 // !!!!!
@@ -491,22 +491,22 @@ typedef struct olcxReferences {
     struct olCompletion		*cpls;		/* completions list for OLO_COMPLETION */
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
-    struct olSymbolsMenu	*hkSelectedSym; /* resolved symbols under the cursor */
-    struct olSymbolsMenu	*menuSym;		/* hkSelectedSyms plus same name */
+    struct SymbolsMenu	*hkSelectedSym; /* resolved symbols under the cursor */
+    struct SymbolsMenu	*menuSym;		/* hkSelectedSyms plus same name */
     int						menuFilterLevel;
     int						refsFilterLevel;
     struct olcxReferences	*previous;
-} S_olcxReferences;
+} OlcxReferences;
 
 typedef struct classTreeData {
     int						baseClassFileIndex;
-    struct olSymbolsMenu	*tree;
+    struct SymbolsMenu	*tree;
 } S_classTreeData;
 
 typedef struct olcxReferencesStack {
     struct olcxReferences	*top;
     struct olcxReferences	*root;
-} S_olcxReferencesStack;
+} OlcxReferencesStack;
 
 
 

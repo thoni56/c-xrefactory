@@ -310,10 +310,10 @@ void printClassFqtNameFromClassNum(FILE *ff, int fnum) {
   mock(ff, fnum);
 }
 
-void sprintfSymbolLinkName(char *ttt, S_olSymbolsMenu *ss) {
+void sprintfSymbolLinkName(char *ttt, SymbolsMenu *ss) {
   mock(ttt, ss);
 }
 
-void printSymbolLinkName(FILE *ff, S_olSymbolsMenu *ss) {
+void printSymbolLinkName(FILE *ff, SymbolsMenu *ss) {
   mock(ff, ss);
 }

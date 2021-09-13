@@ -2094,7 +2094,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
 
     fillPosition(&s_noPos, noFileIndex, 0, 0);
     fillUsageBits(&s_noUsage, UsageNone, 0);
-    fill_reference(&s_noRef, s_noUsage, s_noPos, NULL);
+    fillReference(&s_noRef, s_noUsage, s_noPos, NULL);
     s_input_file_number = noFileIndex;
     s_javaAnonymousClassName.p = s_noPos;
 
@@ -2428,8 +2428,8 @@ void mainOpenOutputFile(char *ofile) {
 
 static int scheduleFileUsingTheMacro(void) {
     SymbolReferenceItem     ddd;
-    S_olSymbolsMenu     mm, *oldMenu;
-    S_olcxReferences    *tmpc;
+    SymbolsMenu     mm, *oldMenu;
+    OlcxReferences    *tmpc;
     assert(s_olstringInMbody);
     tmpc = NULL;
     fillSymbolRefItem(&ddd, s_olstringInMbody,
@@ -2442,7 +2442,7 @@ static int scheduleFileUsingTheMacro(void) {
     //& assert(rr);
     //& if (rr==0) return noFileIndex;
 
-    fill_olSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
+    fillSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
     if (s_olcxCurrentUser==NULL || s_olcxCurrentUser->browserStack.top==NULL) {
         olcxSetCurrentUser(options.user);
         olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
