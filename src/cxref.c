@@ -1012,29 +1012,32 @@ void freeOldestOlcx(void) {
     }
 }
 
-int olcxFreeOldCompletionItems(S_olcxReferencesStack *stack) {
+void olcxFreeOldCompletionItems(S_olcxReferencesStack *stack) {
     S_olcxReferences **ss;
-    int i;
+
     ss = &stack->top;
-    if (*ss == NULL) return(0);
-    for(i=1; i<MAX_COMPLETIONS_HISTORY_DEEP; i++) {
+    if (*ss == NULL)
+        return;
+    for(int i=1; i<MAX_COMPLETIONS_HISTORY_DEEP; i++) {
         ss = &(*ss)->previous;
-        if (*ss == NULL) return(0);
+        if (*ss == NULL)
+            return;
     }
     deleteOlcxRefs(ss, stack);
-    return(1);
 }
 
 void olcxInit(void) {
-    int i;
     void * uu[OLCX_USER_RESERVE];
+
     REAL_MEMORY_INIT(olcxMemory);
     REAL_MEMORY_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, UserOlcxData *);
     //CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
     olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);
     /* reserve place for some users */
-    for(i=0; i<OLCX_USER_RESERVE; i++) OLCX_ALLOC(uu[i], UserOlcxData);
-    for(i=0; i<OLCX_USER_RESERVE; i++) REAL_MEMORY_FREE(olcxMemory, uu[i], sizeof(UserOlcxData));
+    for(int i=0; i<OLCX_USER_RESERVE; i++)
+        OLCX_ALLOC(uu[i], UserOlcxData);
+    for(int i=0; i<OLCX_USER_RESERVE; i++)
+        REAL_MEMORY_FREE(olcxMemory, uu[i], sizeof(UserOlcxData));
 }
 
 

@@ -99,7 +99,7 @@ extern void putOnLineLoadedReferences(SymbolReferenceItem *p);
 extern void genOnLineReferences(S_olcxReferences *rstack, S_olSymbolsMenu *cms);
 extern S_olSymbolsMenu *createSelectionMenu(SymbolReferenceItem *dd);
 extern void mapCreateSelectionMenu(SymbolReferenceItem *dd);
-extern int olcxFreeOldCompletionItems(S_olcxReferencesStack *stack);
+extern void olcxFreeOldCompletionItems(S_olcxReferencesStack *stack);
 
 extern void olcxInit(void);
 extern UserOlcxData *olcxSetCurrentUser(char *user);

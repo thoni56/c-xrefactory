@@ -230,8 +230,8 @@ void mapCreateSelectionMenu(SymbolReferenceItem *dd) {
     mock(dd);
 }
 
-int olcxFreeOldCompletionItems(S_olcxReferencesStack *stack) {
-    return (int) mock(stack);
+void olcxFreeOldCompletionItems(S_olcxReferencesStack *stack) {
+    mock(stack);
 }
 
 void olcxInit(void) {
