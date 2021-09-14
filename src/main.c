@@ -1140,10 +1140,6 @@ static bool processTOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i], "-task_regime_server")==0) {
         options.taskRegime = RegimeEditServer;
     }
-    else if (strcmp(argv[i], "-thread")==0) {
-        NEXT_FILE_ARG();
-        createOptionString(&options.user, argv[i]);
-    }
     else if (strcmp(argv[i], "-tpchrenamepackage")==0) {
         options.trivialPreCheckCode = TPC_RENAME_PACKAGE;
     }
