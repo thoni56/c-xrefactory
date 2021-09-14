@@ -2020,8 +2020,9 @@ static void olcxPopAndFreeAndPopsUntil(OlcxReferences *oldtop) {
 }
 
 static void olcxFindDefinitionAndGenGoto(SymbolReferenceItem *sym) {
-    OlcxReferences    *refs, *oldtop;
-    SymbolsMenu     mmm;
+    OlcxReferences *refs, *oldtop;
+    SymbolsMenu mmm;
+
     // preserve poped items from browser first
     oldtop = olcxPushUserOnPhysicalTopOfStack();
     refs = s_olcxCurrentUser->browserStack.top;
@@ -2038,8 +2039,8 @@ static void olcxFindDefinitionAndGenGoto(SymbolReferenceItem *sym) {
 }
 
 static void olcxReferenceGotoCompletion(int refn) {
-    OlcxReferences    *refs;
-    S_olCompletion      *rr;
+    OlcxReferences *refs;
+    S_olCompletion *rr;
 
     assert(refn > 0);
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
@@ -2385,24 +2386,29 @@ bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
 }
 
 bool isSameCxSymbolIncludingFunctionClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    if (p1->vFunClass != p2->vFunClass) return false;
+    if (p1->vFunClass != p2->vFunClass)
+        return false;
     return isSameCxSymbol(p1, p2);
 }
 
 bool isSameCxSymbolIncludingApplicationClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    if (p1->vApplClass != p2->vApplClass) return false;
+    if (p1->vApplClass != p2->vApplClass)
+        return false;
     return isSameCxSymbol(p1, p2);
 }
 
 bool olcxIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
+
     //& CHECK_ATTRIBUTES(p1,p2);  // to show panic macro and panic symbol and to make safetycheck working
     GET_BARE_NAME(p1->name, n1start, n1len);
     GET_BARE_NAME(p2->name, n2start, n2len);
-    if (n1len != n2len) return(0);
-    if (strncmp(n1start, n2start, n1len)) return(0);
-    return(1);
+    if (n1len != n2len)
+        return false;
+    if (strncmp(n1start, n2start, n1len))
+        return false;
+    return true;
 }
 
 void olStackDeleteSymbol(OlcxReferences *refs) {
@@ -2414,14 +2420,14 @@ void olStackDeleteSymbol(OlcxReferences *refs) {
 }
 
 static void olcxGenInspectClassDefinitionRef(int classnum) {
-    SymbolReferenceItem     mmm;
-    char                ccc[MAX_CX_SYMBOL_SIZE];
+    SymbolReferenceItem mmm;
+    char ccc[MAX_CX_SYMBOL_SIZE];
+
     javaGetClassNameFromFileNum(classnum, ccc, KEEP_SLASHES);
     fillSymbolRefItem(&mmm, ccc, cxFileHashNumber(ccc),
-                                noFileIndex, noFileIndex);
+                      noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&mmm.b, TypeStruct, StorageExtern, ScopeGlobal,
-                           AccessDefault, CategoryGlobal, 0);
-    //&sprintf(tmpBuff, "looking for %s (%s)", mmm.name, fileTable.tab[mmm.vApplClass]->name);ppcGenTmpBuff();
+                          AccessDefault, CategoryGlobal, 0);
     olcxFindDefinitionAndGenGoto(&mmm);
 }
 
@@ -3601,7 +3607,7 @@ void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r) {
     //&fprintf(dumpOut,"checking 1 file refs %s at %s:%d\n", ss->name,simpleFileNameFromFileNum(r->p.file),r->p.line);
     pushed = itIsSymbolToPushOlRefences(ss, rstack, &cms, DEFAULT_VALUE);
     // this is very slow to check the symbol name for each reference
-    if ((!pushed) && olcxIsSameCxSymbol(ss, sss)) {
+    if (!pushed && olcxIsSameCxSymbol(ss, sss)) {
         olcxSingleReferenceCheck1(ss, rstack, r);
     }
 }
@@ -3618,7 +3624,7 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, Symbol
     pushed = itIsSymbolToPushOlRefences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
     //&fprintf(dumpOut,":checking %s to %s (%d)\n",p->name, sss->name, pushed);
-    if ((! pushed) && olcxIsSameCxSymbol(p, sss)) {
+    if (!pushed && olcxIsSameCxSymbol(p, sss)) {
         //&fprintf(dumpOut,"checking %s references\n",p->name);
         for(r=p->refs; r!=NULL; r=r->next) {
             olcxSingleReferenceCheck1(p, rstack, r);
@@ -5049,8 +5055,9 @@ static int classCmp(int cl1, int cl2) {
 static unsigned olcxOoBits(SymbolsMenu *ols, SymbolReferenceItem *p) {
     unsigned ooBits;
     int olusage,vFunCl,olvFunCl,vApplCl,olvApplCl;
+
     ooBits = 0;
-    assert(olcxIsSameCxSymbol(&ols->s,p));
+    assert(olcxIsSameCxSymbol(&ols->s, p));
     olvFunCl = ols->s.vFunClass;
     olvApplCl = ols->s.vApplClass;
     olusage = ols->olUsage;

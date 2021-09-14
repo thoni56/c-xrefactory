@@ -2681,7 +2681,7 @@ static void refactoryStaticMoveCheckCorrespondance(
                                                    SymbolsMenu *menu1,
                                                    SymbolsMenu *menu2,
                                                    SymbolReferenceItem *theMethod
-                                                   ) {
+) {
     SymbolsMenu *mm1, *mm2;
     EditorMarkerList *diff1, *diff2, *totalDiff;
 
@@ -2700,7 +2700,7 @@ static void refactoryStaticMoveCheckCorrespondance(
         // O.K. something to be checked, find correspondance in mm2
         //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->s.name);
         for(mm2=menu2; mm2!=NULL; mm2=mm2->next) {
-            //&fprintf(dumpOut, "Checking %s\n", mm2->s.name);
+            log_trace("Checking '%s'", mm2->s.name);
             if (isSameCxSymbolIncludingApplicationClass(&mm1->s, &mm2->s)) break;
         }
         if (mm2==NULL) {

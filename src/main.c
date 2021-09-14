@@ -2667,7 +2667,8 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
 
     s_cppPassMax = 1;
     for(currentCppPass=1; currentCppPass<=s_cppPassMax; currentCppPass++) {
-        if (! firstPassing) copyOptions(&options, &s_cachedOptions);
+        if (!firstPassing)
+            copyOptions(&options, &s_cachedOptions);
         mainFileProcessingInitialisations(&firstPassing,
                                           argc, argv, 0, NULL, &inputIn,
                                           &s_language);
@@ -3017,11 +3018,8 @@ int main(int argc, char **argv) {
     mainTotalTaskEntryInitialisations(argc, argv);
     mainTaskEntryInitialisations(argc, argv);
 
-    setupLogging();
-
-    // Ok, so there were these five, now four, main operating modes
+    // Ok, so there were these five, now four, no three, main operating modes
     /* TODO: Is there an underlying reason for not doing this as a switch()? */
-    /* And why s_opt.refactoringRegime and not s_opt.taskRegime == RegimeRefactory? */
     if (options.refactoringRegime == RegimeRefactory) mainRefactory(argc, argv);
     if (options.taskRegime == RegimeXref) mainXref(argc, argv);
     if (options.taskRegime == RegimeEditServer) mainEditServer(argc, argv);
