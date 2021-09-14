@@ -9,7 +9,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Handle for-loops with declarations ("for (int i = 0;...")
 ** DONE Grammar changes for C and Yacc
 ** TODO Scope rules for loop variable, don't really understand how that works...
-* TODO Selecting automatic project selection after having set a specific does not work
+   Seems to be working?!??! Check that it does using push-go and extract.
+* DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
+  https://en.cppreference.com/w/c/types/integer
+* TODO Selecting automatic project selection after having set a specific does not seem to work
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO Cleanup log/messages - now there are a lot of special cases
   We really want command line options to govern what the user/client sees on stdout/stderr(?)
