@@ -21,7 +21,7 @@ include ../Makefile.boilerplate
 # directory we want to include that one using "#include_next stdint.h".
 
 CXREF = ../../src/c-xref
-CXREF_COMMAND = $(CXREF) -create -errors -xrefrc .c-xrefrc -p $(CURDIR) -I path1 -I path2 -log=log source.c -errors -o output.tmp
+CXREF_COMMAND = $(CXREF) -create -xrefrc .c-xrefrc -p $(CURDIR) -I path1 -I path2 source.c -xrefactory-II -errors -o output.tmp
 
 $(TEST): .c-xrefrc
 	$(CXREF_COMMAND)

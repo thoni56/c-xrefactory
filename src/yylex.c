@@ -563,7 +563,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
             });
     }
     if (editorBuffer==NULL && file==NULL) {
-        log_trace("failed to open '%s'", name);
+        log_error("failed to open '%s'", name);
         return false;
     }
  found:

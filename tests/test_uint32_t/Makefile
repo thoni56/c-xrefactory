@@ -1,4 +1,3 @@
-
 include ../Makefile.boilerplate
 
 # Test to see if uint32 is defined
@@ -26,7 +25,7 @@ include ../Makefile.boilerplate
 
 
 CXREF = ../../src/c-xref
-COMMAND = $(CXREF) -xrefactory-II -create -errors -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) uint32.c -log=log -o output.tmp
+COMMAND = $(CXREF) -xrefactory-II -create -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) uint32.c -log=log -o output.tmp
 
 $(TEST): .c-xrefrc
 	$(COMMAND)

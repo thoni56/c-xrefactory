@@ -84,16 +84,17 @@ static void usage() {
     fprintf(stdout, "\t-refalpha2hash            - split references alphabetically (-refnum=28*28)\n");
     fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
     fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
-    fprintf(stdout, "\t-infos                    - report all informational messages, and above\n");
-    fprintf(stdout, "\t-warnings                 - report all warning messages, and above\n");
-    fprintf(stdout, "\t-errors                   - report all error messages\n");
-    fprintf(stdout, "\t-log=<file>               - log info/warn/error messages to <file>\n");
+    fprintf(stdout, "\t-errors                   - report all error messages on the console\n");
+    fprintf(stdout, "\t                            (by default only fatal errors are shown)\n");
+    fprintf(stdout, "\t-warnings                 - also report warning messages on the console\n");
+    fprintf(stdout, "\t-infos                    - also report informational & warning messages on the console\n");
+    fprintf(stdout, "\t-log=<file>               - log all fatal/error/warnings/informational messages to <file>\n");
     fprintf(stdout, "\t-debug                    - also log debug messages in log\n");
-    fprintf(stdout, "\t-trace                    - also log debug & trace messages in log\n");
+    fprintf(stdout, "\t-trace                    - also log trace & debug messages in log\n");
     fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
     fprintf(stdout, "\t-no-cppcomments           - C++ like comments '//' not allowed\n");
     fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
-    fprintf(stdout, "\t-update                   - update old 'refs' reference file\n");
+    fprintf(stdout, "\t-update                   - update existing references database\n");
     fprintf(stdout, "\t-fastupdate               - fast update (modified files only)\n");
     fprintf(stdout, "\t-fullupdate               - full update (all files)\n");
     fprintf(stdout, "\t-version                  - print version information\n");
@@ -2960,41 +2961,36 @@ static void mainEditServer(int argc, char **argv) {
 /* initLogging() is called as the first thing in main() so we look for log command line options here */
 static void initLogging(int argc, char *argv[]) {
     char fileName[MAX_FILE_NAME_SIZE+1] = "";
-    int level = LOG_ERROR;
+    int log_level = LOG_ERROR;
+    int console_level = LOG_FATAL;
 
     for (int i=0; i<argc; i++) {
+        /* Levels in the log file, if enabled */
         if (strncmp(argv[i], "-log=", 5)==0)
             strcpy(fileName, &argv[i][5]);
         if (strcmp(argv[i], "-debug") == 0)
-            level = LOG_DEBUG;
+            log_level = LOG_DEBUG;
         if (strcmp(argv[i], "-trace") == 0)
-            level = LOG_TRACE;
+            log_level = LOG_TRACE;
+        /* Levels on the console */
+        if (strcmp(argv[i], "-errors") == 0)
+            console_level = LOG_ERROR;
+        if (strcmp(argv[i], "-warnings") == 0)
+            console_level = LOG_WARN;
+        if (strcmp(argv[i], "-info") == 0)
+            console_level = LOG_INFO;
     }
 
     /* Was there a filename, -log given? */
     if (fileName[0] != '\0') {
         FILE *tempFile = openFile(fileName, "w");
         if (tempFile != NULL)
-            log_add_fp(tempFile, LOG_TRACE);
+            log_add_fp(tempFile, log_level);
     }
 
     /* Always log errors and above to console */
-    log_set_level(level);
+    log_set_level(console_level);
 }
-
-/* setupLogging() is called as part of the normal argument handling so
- * can only change level of console messages shown */
-static void setupLogging(void) {
-    if (logging_selected.trace)
-        log_set_level(LOG_TRACE);
-    else if (logging_selected.debug)
-        log_set_level(LOG_DEBUG);
-    else if (logging_selected.infos)
-        log_set_level(LOG_INFO);
-    else if (logging_selected.warnings)
-        log_set_level(LOG_WARN);
-}
-
 
 /* *********************************************************************** */
 /* **************************       MAIN      **************************** */

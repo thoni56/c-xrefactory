@@ -1,4 +1,4 @@
-usage:		../../src/c-xref <option>+ <input files>
+usage:		c-xref <option>+ <input files>
 options:
 	-r                        - recursively descend directories (default, --r to negate)
 	-javadocurl=<http>        - url to existing Java API docs
@@ -22,16 +22,17 @@ options:
 	-refalpha2hash            - split references alphabetically (-refnum=28*28)
 	-exactpositionresolve     - resolve symbols by def. position
 	-mf<n>                    - factor increasing cxMemory
-	-infos                    - report all informational messages, and above
-	-warnings                 - report all warning messages, and above
-	-errors                   - report all error messages
-	-debug                    - produce debug output of the execution
-	-trace                    - produce trace output of the execution
-	-log=<file>               - log to <file>
+	-errors                   - report all error messages on the console
+	                            (by default only fatal errors are shown)
+	-warnings                 - also report warning messages on the console
+	-infos                    - also report informational & warning messages on the console
+	-log=<file>               - log all fatal/error/warnings/informational messages to <file>
+	-debug                    - also log debug messages in log
+	-trace                    - also log trace & debug messages in log
 	-no-classfiles            - Don't collect references from class files
 	-no-cppcomments           - C++ like comments '//' not allowed
 	-compiler=<path>          - path to compiler to use for autodiscovered includes and defines
-	-update                   - update old 'refs' reference file
+	-update                   - update existing references database
 	-fastupdate               - fast update (modified files only)
 	-fullupdate               - full update (all files)
 	-version                  - print version information
