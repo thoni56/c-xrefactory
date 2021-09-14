@@ -42,8 +42,8 @@ static int oldLanguage;
 static int oldCppPass;
 static Options s_tmpOptions;
 
-static void usage(char *s) {
-    fprintf(stdout, "usage:\t\t%s <option>+ ",s);
+static void usage() {
+    fprintf(stdout, "usage:\t\tc-xref <option>+ ");
     fprintf(stdout, "<input files>");
     fprintf(stdout, "\n");
     fprintf(stdout, "options:\n");
@@ -122,9 +122,9 @@ static void aboutMessage(void) {
     char tmpBuff[TMP_BUFF_SIZE];                                        \
     i++;                                                                \
     if (i >= argc) {                                                    \
-        sprintf(tmpBuff, "file name expected after %s",argv[i-1]);     \
+        sprintf(tmpBuff, "file name expected after %s", argv[i-1]);     \
         errorMessage(ERR_ST,tmpBuff);                                   \
-        usage(argv[0]);                                                 \
+        usage();                                                 \
         exit(1);                                                        \
     }                                                                   \
 }
@@ -135,7 +135,7 @@ static void aboutMessage(void) {
     if (i >= argc) {                                                    \
         sprintf(tmpBuff, "further argument(s) expected after %s",argv[i-1]); \
         errorMessage(ERR_ST,tmpBuff);                                   \
-        usage(argv[0]);                                                 \
+        usage();                                                 \
         exit(1);                                                        \
     }                                                                   \
 }
@@ -390,7 +390,7 @@ static bool processGOption(int *ii, int argc, char **argv) {
 static bool processHOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (strcmp(argv[i], "-help")==0) {
-        usage(argv[0]);
+        usage();
         exit(0);
     }
     else return false;
@@ -409,7 +409,7 @@ static bool processIOption(int *ii, int argc, char **argv) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "directory name expected after -I");
             errorMessage(ERR_ST,tmpBuff);
-            usage(argv[0]);
+            usage();
         }
         addStringListOption(&options.includeDirs, argv[i]);
     }
