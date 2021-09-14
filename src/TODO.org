@@ -13,6 +13,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
 * TODO Selecting automatic project selection after having set a specific does not seem to work
+* TODO Use -trace and -debug to change level in log file only
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO Cleanup log/messages - now there are a lot of special cases
   We really want command line options to govern what the user/client sees on stdout/stderr(?)

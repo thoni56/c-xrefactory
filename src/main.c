@@ -87,9 +87,9 @@ static void usage(char *s) {
     fprintf(stdout, "\t-infos                    - report all informational messages, and above\n");
     fprintf(stdout, "\t-warnings                 - report all warning messages, and above\n");
     fprintf(stdout, "\t-errors                   - report all error messages\n");
-    fprintf(stdout, "\t-debug                    - produce debug output of the execution\n");
-    fprintf(stdout, "\t-trace                    - produce trace output of the execution\n");
-    fprintf(stdout, "\t-log=<file>               - log to <file>\n");
+    fprintf(stdout, "\t-log=<file>               - log info/warn/error messages to <file>\n");
+    fprintf(stdout, "\t-debug                    - also log debug messages in log\n");
+    fprintf(stdout, "\t-trace                    - also log debug & trace messages in log\n");
     fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
     fprintf(stdout, "\t-no-cppcomments           - C++ like comments '//' not allowed\n");
     fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
