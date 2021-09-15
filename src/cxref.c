@@ -4608,9 +4608,9 @@ static void pushSymbolByName(char *name) {
     OlcxReferences *rstack;
     if (s_cache.cpi>0) {
         int spass;
-        spass = currentCppPass; currentCppPass=1;
+        spass = currentPass; currentPass=1;
         recoverCachePointZero();
-        currentCppPass = spass;
+        currentPass = spass;
     }
     rstack = s_olcxCurrentUser->browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(name, noFileIndex, StorageDefault);

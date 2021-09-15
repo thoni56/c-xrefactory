@@ -157,8 +157,8 @@ extern char *inputFilename;
 extern time_t s_fileProcessStartTime;
 
 extern Language s_language;
-extern int currentCppPass;
-extern int s_cppPassMax;
+extern int currentPass;
+extern int maxPasses;
 
 extern Completions s_completions;
 extern unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];

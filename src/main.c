@@ -1949,7 +1949,7 @@ static void mainFileProcessingInitialisations(int *firstPass,
     //&fprintf(dumpOut, "checking oldcp==%s\n",oldOnLineClassPath);
     //&fprintf(dumpOut, "checking newcp==%s\n",options.classpath);
     if (*firstPass
-        || oldCppPass != currentCppPass
+        || oldCppPass != currentPass
         || strcmp(oldStdopFile,defaultOptionsFileName)
         || strcmp(oldStdopSection,defaultOptionsSectionName)
         || oldStdopTime != dffstat.st_mtime
@@ -2003,7 +2003,7 @@ static void mainFileProcessingInitialisations(int *firstPass,
         strcpy(oldStdopSection,defaultOptionsSectionName);
         oldStdopTime = dffstat.st_mtime;
         oldLanguage = *outLanguage;
-        oldCppPass = currentCppPass;
+        oldCppPass = currentPass;
 
         // this was before 'getAndProcessXrefrcOptions(df...' I hope it will not cause
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
@@ -2547,9 +2547,9 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     return true;
 }
 
-static void mainEditSrvFileSingleCppPass(int argc, char **argv,
-                                         int nargc, char **nargv,
-                                         int *firstPass
+static void mainEditSrvFileSinglePass(int argc, char **argv,
+                                      int nargc, char **nargv,
+                                      int *firstPass
 ) {
     bool inputIn = false;
     int ol2procfile;
@@ -2593,19 +2593,16 @@ static void mainEditServerProcessFile(int argc, char **argv,
                                       int *firstPass
 ) {
     assert(fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
-    s_cppPassMax = 1;           /* WTF? */
-    currentCppPass = 1;
-    for(currentCppPass=1; currentCppPass<=s_cppPassMax; currentCppPass++) {
+    maxPasses = 1;
+    for(currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFilename = fileTable.tab[s_olOriginalComFileNumber]->name;
         assert(inputFilename!=NULL);
-        mainEditSrvFileSingleCppPass(argc, argv, nargc, nargv, firstPass);
-        if (options.server_operation==OLO_EXTRACT
-            || (s_olstringServed && ! creatingOlcxRefs()))
-            goto fileParsed; /* TODO: break? */
+        mainEditSrvFileSinglePass(argc, argv, nargc, nargv, firstPass);
+        if (options.server_operation==OLO_EXTRACT || (s_olstringServed && !creatingOlcxRefs()))
+            break;
         if (LANGUAGE(LANG_JAVA))
-            goto fileParsed;
+            break;
     }
- fileParsed:
     fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
 }
 
@@ -2666,8 +2663,8 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
     int firstPassing = *_firstPassing;
     int atLeastOneProcessed = *_atLeastOneProcessed;
 
-    s_cppPassMax = 1;
-    for(currentCppPass=1; currentCppPass<=s_cppPassMax; currentCppPass++) {
+    maxPasses = 1;
+    for(currentPass=1; currentPass<=maxPasses; currentPass++) {
         if (!firstPassing)
             copyOptions(&options, &s_cachedOptions);
         mainFileProcessingInitialisations(&firstPassing,
@@ -2776,7 +2773,7 @@ void mainCallXref(int argc, char **argv) {
     static int numberOfInputs, inputCounter, pinputCounter;
     LongjmpReason reason = LONGJMP_REASON_NONE;
 
-    currentCppPass = ANY_CPP_PASS;
+    currentPass = ANY_PASS;
     CX_ALLOCC(cxFreeBase,0,char);
     s_cxResizingBlocked = 1;
     if (options.update)
@@ -2786,7 +2783,7 @@ void mainCallXref(int argc, char **argv) {
     inputCounter = pinputCounter = 0;
     LIST_LEN(numberOfInputs, FileItem, ffc);
     for(;;) {
-        currentCppPass = ANY_CPP_PASS;
+        currentPass = ANY_PASS;
         firstPassing = 1;
         if ((reason=setjmp(cxmemOverflow))!=0) {
             mainReferencesOverflowed(cxFreeBase,reason);
@@ -2923,7 +2920,7 @@ static void mainEditServer(int argc, char **argv) {
     firstPassing = 1;
     copyOptions(&s_cachedOptions, &options);
     for(;;) {
-        currentCppPass = ANY_CPP_PASS;
+        currentPass = ANY_PASS;
         copyOptions(&options, &s_cachedOptions);
         getPipedOptions(&nargc, &nargv);
         // O.K. -o option given on command line should catch also file not found
@@ -2997,7 +2994,7 @@ static void initLogging(int argc, char *argv[]) {
 /* *********************************************************************** */
 
 int main(int argc, char **argv) {
-    /* Options are read very late down below, so we need some sensible defaults until then */
+    /* Options are read very late down below, so we need to setup logging before then */
     initLogging(argc, argv);
     ENTER();
 
@@ -3010,7 +3007,7 @@ int main(int argc, char **argv) {
                    XREF_EXIT_ERR);
     }
 
-    currentCppPass = ANY_CPP_PASS;
+    currentPass = ANY_PASS;
     mainTotalTaskEntryInitialisations(argc, argv);
     mainTaskEntryInitialisations(argc, argv);
 

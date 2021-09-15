@@ -86,8 +86,8 @@ int s_cxRefFlag=0;
 time_t s_fileProcessStartTime;
 
 Language s_language;
-int currentCppPass;
-int s_cppPassMax;
+int currentPass;
+int maxPasses;
 
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
     (OOC_VIRT_ANY | OOC_PROFILE_ANY),

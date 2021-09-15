@@ -723,9 +723,9 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             processSectionMarker(text, len+1, project, sectionFile, &isActiveSection, resSection);
         } else if (isActiveSection && strncmp(text, "-pass", 5) == 0) {
             sscanf(text+5, "%d", &passn);
-            isActivePass = passn==currentCppPass || currentCppPass==ANY_CPP_PASS;
-            if (passn > s_cppPassMax)
-                s_cppPassMax = passn;
+            isActivePass = passn==currentPass || currentPass==ANY_PASS;
+            if (passn > maxPasses)
+                maxPasses = passn;
         } else if (strcmp(text,"-set")==0 && (isActiveSection && isActivePass) && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set
             found = true;
