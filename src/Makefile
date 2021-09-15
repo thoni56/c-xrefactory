@@ -39,7 +39,10 @@ endif
 #########################################################################
 #
 # The heavy lifting is here
-all: build
+all: unit-coverage build
+
+unit-coverage:
+	$(MAKE) -C unittests coverage
 
 # For production - no smartness just compile, ensure clean production build
 prod:
