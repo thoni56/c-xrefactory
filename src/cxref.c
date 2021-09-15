@@ -5267,15 +5267,14 @@ static int olTagSearchSortFunction(S_olCompletion *c1, S_olCompletion *c2) {
 }
 
 static void tagSearchShortRemoveMultipleLines(S_olCompletion *list) {
-    S_olCompletion *ll, *tmp;
-    for(ll=list; ll!=NULL; ll=ll->next) {
-    cont:
-        if (ll->next!=NULL && strcmp(ll->name, ll->next->name)==0) {
-            // O.K. remove redundand one
-            tmp = ll->next;
-            ll->next = ll->next->next;
+    for(S_olCompletion *l=list; l!=NULL; l=l->next) {
+    again:
+        if (l->next!=NULL && strcmp(l->name, l->next->name)==0) {
+            // O.K. remove redundant one
+            S_olCompletion *tmp = l->next;
+            l->next = l->next->next;
             olcxFreeCompletion(tmp);
-            goto cont;
+            goto again;          /* Again, but don't advance */
         }
     }
 }
