@@ -449,7 +449,7 @@ typedef struct olCompletion {
     char					*vclass;
     short int				jindent;
     short int				lineCount;
-    char					cat;			/* CatGlobal/CatLocal */
+    char					category;       /* Global/Local */
     char					csymType;		/* symtype of completion */
     struct reference		ref;
     struct symbolReferenceItem	sym;

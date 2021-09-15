@@ -911,7 +911,7 @@ static void olcxFreeCompletion(S_olCompletion *r) {
     REAL_MEMORY_FREE(olcxMemory, r->name, strlen(r->name)+1);
     if (r->fullName!=NULL) REAL_MEMORY_FREE(olcxMemory, r->fullName, strlen(r->fullName)+1);
     if (r->vclass!=NULL) REAL_MEMORY_FREE(olcxMemory, r->vclass, strlen(r->vclass)+1);
-    if (r->cat == CategoryGlobal) {
+    if (r->category == CategoryGlobal) {
         assert(r->sym.name);
         nlen = strlen(r->sym.name);
         REAL_MEMORY_FREE(olcxMemory, r->sym.name, nlen+1);
@@ -2045,7 +2045,7 @@ static void olcxReferenceGotoCompletion(int refn) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     rr = olCompletionNthLineRef(refs->cpls, refn);
     if (rr != NULL) {
-        if (rr->cat == CategoryLocal /*& || refs->command == OLO_TAG_SEARCH &*/) {
+        if (rr->category == CategoryLocal /*& || refs->command == OLO_TAG_SEARCH &*/) {
             if (rr->ref.usage.base != UsageClassFileDefinition
                 && rr->ref.usage.base != UsageClassTreeDefinition
                 && positionsAreNotEqual(rr->ref.p, s_noPos)) {
@@ -2094,7 +2094,7 @@ static void olcxReferenceBrowseCompletion(int refn) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     rr = olCompletionNthLineRef(refs->cpls, refn);
     if (rr != NULL) {
-        if (rr->cat == CategoryLocal) {
+        if (rr->category == CategoryLocal) {
             if (options.xref2)
                 ppcGenRecord(PPC_ERROR, "No JavaDoc is available for local symbols.");
             else
@@ -5156,14 +5156,15 @@ void mapCreateSelectionMenu(SymbolReferenceItem *p) {
 /* ********************************************************************** */
 
 static S_olCompletion *newOlCompletion(char *name,
-                              char *fullName,
-                              char *vclass,
-                              short int jindent,
-                              short int lineCount,
-                              char cat,
-                              char csymType,
-                              struct reference ref,
-                              struct symbolReferenceItem sym) {
+                                       char *fullName,
+                                       char *vclass,
+                                       short int jindent,
+                                       short int lineCount,
+                                       char category,
+                                       char csymType,
+                                       struct reference ref,
+                                       struct symbolReferenceItem sym
+) {
     S_olCompletion *olCompletion;
     OLCX_ALLOC(olCompletion, S_olCompletion);
 
@@ -5172,7 +5173,7 @@ static S_olCompletion *newOlCompletion(char *name,
     olCompletion->vclass = vclass;
     olCompletion->jindent = jindent;
     olCompletion->lineCount = lineCount;
-    olCompletion->cat = cat;
+    olCompletion->category = category;
     olCompletion->csymType = csymType;
     olCompletion->ref = ref;
     olCompletion->sym = sym;
