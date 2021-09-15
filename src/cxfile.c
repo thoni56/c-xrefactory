@@ -547,7 +547,7 @@ static void genRefItem0(SymbolReferenceItem *d, bool force) {
                       d->vApplClass, d->vFunClass);
     fillSymbolRefItemBits(&lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex].b,
                            d->b.symType, d->b.storage,
-                           d->b.scope, d->b.accessFlags, d->b.category, 0);
+                           d->b.scope, d->b.accessFlags, d->b.category);
     lastOutgoingInfo.symbolTab[symbolIndex] = &lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex];
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
 
@@ -988,7 +988,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                 cxFileHashNumber(id), //useless, put 0
                                 vApplClass, vFunClass);
     fillSymbolRefItemBits(&ddd->b, symType, storage, ScopeGlobal, accessFlags,
-                           CategoryGlobal, 0);
+                           CategoryGlobal);
     rr = refTabIsMember(&referenceTable, ddd, &out_index, &memb);
     if (rr == 0) {
         CX_ALLOCC(ss, len+1, char);
@@ -997,7 +997,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         fillSymbolRefItem(memb,ss, cxFileHashNumber(ss),
                                     vApplClass, vFunClass);
         fillSymbolRefItemBits(&memb->b, symType, storage,
-                               ScopeGlobal, accessFlags, CategoryGlobal,0);
+                               ScopeGlobal, accessFlags, CategoryGlobal);
         refTabAdd(&referenceTable, memb, &out_index);
     }
     lastIncomingInfo.symbolTab[si] = memb;
@@ -1075,7 +1075,7 @@ static void cxrfSymbolName(int size,
                                 cxFileHashNumber(id), // useless put 0
                                 vApplClass, vFunClass);
     fillSymbolRefItemBits(&ddd->b,symType, storage, ScopeGlobal, accessFlags,
-                           CategoryGlobal, 0);
+                           CategoryGlobal);
     rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
     while (rr && memb->b.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
     assert(options.taskRegime);

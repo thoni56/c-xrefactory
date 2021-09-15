@@ -715,6 +715,7 @@ static MacroBody *newMacroBody(int macroSize, int argCount, char *name, char *bo
 }
 
 
+/* TODO: This was extracted and should be cleaned up w.r.t out arguments */
 static Lexem getNonBlankLexem(jmp_buf exceptionHandler, Position *_pos, int *_l, int *_v, int *_len) {
     Lexem lexem;
     Position position = *_pos;
@@ -1890,7 +1891,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
                                 cxFileHashNumber(mdef->linkName), // useless, put 0
                                 noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&ppp.b,TypeMacro, StorageDefault, ScopeGlobal,
-                           mdef->bits.access, CategoryGlobal, 0);
+                           mdef->bits.access, CategoryGlobal);
     rr = refTabIsMember(&referenceTable, &ppp, NULL, &memb);
     r = NULL;
     if (rr) {

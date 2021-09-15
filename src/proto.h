@@ -423,7 +423,6 @@ typedef struct symbolReferenceItemBits {
     ReferenceScope			scope		: SCOPES_LN;
     Access					accessFlags	: 12; /* java access bits */
     ReferenceCategory		category	: 2;  /* local/global */
-    unsigned				htmlWasLn	: 1;  /* html ln generated */
 } SymbolReferenceItemBits;
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefItem!

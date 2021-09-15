@@ -63,13 +63,12 @@ void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name,
 
 void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
                            unsigned storage, unsigned scope, unsigned accessFlags,
-                           unsigned category, unsigned htmlWasLn) {
+                           unsigned category) {
     symbolRefItemBits->symType = symType;
     symbolRefItemBits->storage = storage;
     symbolRefItemBits->scope = scope;
     symbolRefItemBits->accessFlags = accessFlags;                \
     symbolRefItemBits->category = category;
-    symbolRefItemBits->htmlWasLn = htmlWasLn;
 }
 
 void fillReference(Reference *reference, UsageBits usage, Position position, Reference *next) {
@@ -414,7 +413,7 @@ static void changeFieldRefUsages(SymbolReferenceItem  *ri, void  *rrcd) {
                                 cxFileHashNumber(rcd->linkName),
                                 noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&ddd.b, TypeDefault, StorageField,
-                           ScopeFile, AccessDefault, rcd->category, 0);
+                           ScopeFile, AccessDefault, rcd->category);
     if (isSameCxSymbol(ri, &ddd)) {
         //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
         for(rr = ri->refs; rr!=NULL; rr=rr->next) {
@@ -744,7 +743,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     fillSymbolRefItem(&ppp, symbol->linkName, 0, // cxFileHashNumber(symbol->linkName),
                                 vApplCl, vFunCl);
     fillSymbolRefItemBits(&ppp.b, symbol->bits.symbolType, storage, scope,
-                           symbol->bits.access, category, 0);
+                           symbol->bits.access, category);
     if (options.taskRegime==RegimeEditServer && options.server_operation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
         fillUsageBits(&rr.usage, usage_base, 0);
         fillReference(&rr, rr.usage, *pos, NULL);
@@ -762,7 +761,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         fillSymbolRefItem(pp, linkName, cxFileHashNumber(linkName),
                                     vApplCl, vFunCl);
         fillSymbolRefItemBits(&pp->b, symbol->bits.symbolType, storage, scope,
-                               symbol->bits.access, category, 0);
+                               symbol->bits.access, category);
         refTabSet(reftab, pp, index);
         memb = pp;
     } else {
@@ -2319,7 +2318,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     fillSymbolRefItem(&ss, fieldName, cxFileHashNumber(fieldName),
                                 cfi, cfi);
     fillSymbolRefItemBits(&ss.b, TypeDefault, storage, ScopeGlobal,
-                           AccessDefault, CategoryGlobal, 0);
+                           AccessDefault, CategoryGlobal);
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &s_noPos, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
@@ -2427,7 +2426,7 @@ static void olcxGenInspectClassDefinitionRef(int classnum) {
     fillSymbolRefItem(&mmm, ccc, cxFileHashNumber(ccc),
                       noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&mmm.b, TypeStruct, StorageExtern, ScopeGlobal,
-                          AccessDefault, CategoryGlobal, 0);
+                          AccessDefault, CategoryGlobal);
     olcxFindDefinitionAndGenGoto(&mmm);
 }
 
@@ -5232,11 +5231,11 @@ S_olCompletion * olCompletionListPrepend(char *name,
         fillSymbolRefItem(&sri, "", cxFileHashNumber(""),
                                     noFileIndex, noFileIndex);
         fillSymbolRefItemBits(&sri.b, TypeUnknown, StorageNone,
-                               ScopeAuto, AccessDefault, CategoryLocal, 0);
+                               ScopeAuto, AccessDefault, CategoryLocal);
         cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, reference, sri);
     } else {
         getSymbolCxrefCategories(s, &category, &scope, &storage);
-        //&fprintf(dumpOut,":adding sym %s %d\n",s->linkName,category);fflush(dumpOut);
+        log_trace(":adding sym '%s' %d", s->linkName, category);
         slen = strlen(s->linkName);
         OLCX_ALLOCC(ss, slen+1, char);
         strcpy(ss, s->linkName);
@@ -5245,7 +5244,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         fillSymbolRefItem(&sri, ss, cxFileHashNumber(ss),
                                     vFunClass, vFunClass);
         fillSymbolRefItemBits(&sri.b, s->bits.symbolType, storage,
-                               scope, s->bits.access, category, 0);
+                               scope, s->bits.access, category);
         cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, reference, sri);
     }
     if (fullText!=NULL) {
@@ -5255,7 +5254,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
     }
     cc->next = stack->cpls;
     stack->cpls = cc;
-    return(cc);
+    return cc;
 }
 
 void olCompletionListReverse(void) {
@@ -5263,7 +5262,7 @@ void olCompletionListReverse(void) {
 }
 
 static int olTagSearchSortFunction(S_olCompletion *c1, S_olCompletion *c2) {
-    return(strcmp(c1->name, c2->name) < 0);
+    return strcmp(c1->name, c2->name) < 0;
 }
 
 static void tagSearchShortRemoveMultipleLines(S_olCompletion *list) {

@@ -17,8 +17,8 @@ void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned 
 
 void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
                            unsigned storage, unsigned scope, unsigned accessFlags,
-                           unsigned category, unsigned htmlWasLn) {
-    mock(symbolRefItemBits, symType, storage, scope, accessFlags, category, htmlWasLn);
+                           unsigned category) {
+    mock(symbolRefItemBits, symType, storage, scope, accessFlags, category);
 
 }
 

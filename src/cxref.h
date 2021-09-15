@@ -12,7 +12,7 @@ extern void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, un
                               int vFunClass);
 extern void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
                                   unsigned storage, unsigned scope, unsigned accessFlags,
-                                  unsigned category, unsigned htmlWasLn);
+                                  unsigned category);
 extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct symbolReferenceItem s,
                             char selected, char visible, unsigned ooBits, char olUsage,
                             short int vlevel, short int refn, short int defRefn,

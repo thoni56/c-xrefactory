@@ -738,7 +738,7 @@ void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name) {
     fillSymbolRefItem(ddd, name, cxFileHashNumber(name),
                                 noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&ddd->b, TypeUnknown, StorageAuto,
-                           ScopeAuto, AccessDefault, CategoryLocal, 0);
+                           ScopeAuto, AccessDefault, CategoryLocal);
 }
 
 /* ***************************************************************** */

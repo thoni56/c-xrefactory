@@ -2338,7 +2338,7 @@ static void fillIncludeRefItem( SymbolReferenceItem *ddd , int fnum) {
                                 cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
                                 fnum, fnum);
     fillSymbolRefItemBits(&ddd->b, TypeCppInclude, StorageExtern,
-                           ScopeGlobal, AccessDefault, CategoryGlobal,0);
+                           ScopeGlobal, AccessDefault, CategoryGlobal);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
@@ -2437,7 +2437,7 @@ static int scheduleFileUsingTheMacro(void) {
                                 cxFileHashNumber(s_olstringInMbody),
                                 noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
-                           ScopeGlobal, AccessDefault, CategoryGlobal, 0);
+                           ScopeGlobal, AccessDefault, CategoryGlobal);
 
     //& rr = refTabIsMember(&referenceTable, &ddd, &ii, &memb);
     //& assert(rr);
