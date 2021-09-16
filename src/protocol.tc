@@ -5,7 +5,6 @@ PROTOCOL_ITEM(String, PPC_NO_TAG,                       "-- no tag --")
 
 PROTOCOL_ITEM(String, PPC_VERSION_MISMATCH,             "version-mismatch")
 
-PROTOCOL_ITEM(String, PPC_MULTIPLE_COMPLETIONS,         "completions")
 PROTOCOL_ITEM(String, PPC_FULL_MULTIPLE_COMPLETIONS,    "full-completions")
 PROTOCOL_ITEM(String, PPC_ALL_COMPLETIONS,              "all-completions")
 PROTOCOL_ITEM(String, PPC_MULTIPLE_COMPLETION_LINE,     "cl")

@@ -8,7 +8,6 @@
 
 (defvar PPC_VERSION_MISMATCH "version-mismatch")
 
-(defvar PPC_MULTIPLE_COMPLETIONS "completions")
 (defvar PPC_FULL_MULTIPLE_COMPLETIONS "full-completions")
 (defvar PPC_ALL_COMPLETIONS "all-completions")
 (defvar PPC_MULTIPLE_COMPLETION_LINE "cl")

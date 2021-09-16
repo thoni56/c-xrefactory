@@ -3497,34 +3497,6 @@ Special hotkeys available:
       )
 ))
 
-(defun c-xref-server-dispatch-completions (ss i len dispatch-data)
-  ;; this is old way of passing compeltions requiring parsing of each
-  ;; completion and hence too slow
-  (let ((tlen) (cc) (nofocus))
-      ;; unique completion window in all frames
-    (setq nofocus (c-xref-server-dispatch-get-int-attr PPCA_NO_FOCUS))
-    (c-xref-reset-or-increment-completion-windows-counter)
-    (c-xref-delete-window-in-any-frame c-xref-completions-buffer nil)
-    (c-xref-server-dispatch-create-and-set-completions-buffer dispatch-data)
-    (setq c-xref-this-buffer-dispatch-data dispatch-data)
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (while (equal c-xref-server-ctag PPC_MULTIPLE_COMPLETION_LINE)
-      (setq tlen (c-xref-server-dispatch-get-int-attr PPCA_LEN))
-      (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-      (setq i (+ i tlen))
-      (insert cc)
-      (newline)
-      (setq i (c-xref-server-parse-xml-tag ss i len))
-      (c-xref-server-dispatch-require-end-ctag PPC_MULTIPLE_COMPLETION_LINE)
-      (setq i (c-xref-server-parse-xml-tag ss i len))
-      )
-    (c-xref-server-dispatch-require-end-ctag PPC_MULTIPLE_COMPLETIONS)
-    (c-xref-line-hightlight 0 (point-max) nil 1 c-xref-font-lock-compl-keywords t)
-    (goto-char (point-min))
-    (c-xref-server-dispatch-show-completions-buffer (eq nofocus 0) dispatch-data)
-    i
-))
-
 (defun c-xref-server-dispatch-all-completions (ss i len dispatch-data)
   (let ((tlen) (cc) (nofocus))
       ;; unique completion window in all frames
@@ -4265,10 +4237,6 @@ Special hotkeys available:
        (
         (equal c-xref-server-ctag PPC_DEBUG_INFORMATION)
         (setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
-       (
-        ;; unused tag (backward compatibility)
-        (equal c-xref-server-ctag PPC_MULTIPLE_COMPLETIONS)
-        (setq i (c-xref-server-dispatch-completions ss i len dispatch-data)))
        (
         t
         (error "unknown tag: %s" c-xref-server-ctag))
