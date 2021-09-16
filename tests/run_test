@@ -2,7 +2,8 @@
 # Run an autodiscovered test in the c-xrefactory test suite
 # args: 1 = test (directory) name
 # Environment variables:
-#	Gcov options such as "GCOV_PREFIX=<path> GCOV_PREFIX_STRIP=6"
+#   COVERAGE is empty if not running for coverage
+#	GCOV_OPTIONS such as "GCOV_PREFIX=<path> GCOV_PREFIX_STRIP=6"
 #	LCOV should set lcov command to use, e.g. "lcov --gcov-tool /usr/local/bin/gcov-10"
 
 if [ -f $1/.suspended ] ; then
