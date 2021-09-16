@@ -715,22 +715,14 @@ static MacroBody *newMacroBody(int macroSize, int argCount, char *name, char *bo
 }
 
 
-/* TODO: This was extracted and should be cleaned up w.r.t out arguments */
-static Lexem getNonBlankLexem(jmp_buf exceptionHandler, Position *_pos, int *_l, int *_v, int *_len) {
+static Lexem getNonBlankLexem(jmp_buf exceptionHandler, Position *position, int *lineNumber, int *value, int *length) {
     Lexem lexem;
-    Position position = *_pos;
-    int lineNumber = *_l, value = *_v, length = *_len;
 
     lexem = getLex(exceptionHandler);
     while (lexem == LINE_TOKEN) {
-        passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
+        passLexem(&currentInput.currentLexemP, lexem, lineNumber, value, position, length, true);
         lexem = getLex(exceptionHandler);
     }
-    *_l = lineNumber;
-    *_v = value;
-    *_pos = position;
-    *_len = length;
-
     return lexem;
 }
 
