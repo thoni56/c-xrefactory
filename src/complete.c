@@ -149,10 +149,10 @@ static int printJavaModifiers(char *buf, int *size, Access access) {
         assert(i< *size);
     }
     *size -= i;
-    return(i);
+    return i;
 }
 
-static char *getCompletionClassFieldString( CompletionLine *cl) {
+static char *getCompletionClassFieldString(CompletionLine *cl) {
     char *cname;
     //& if (cl->symbol->bits.access & AccessStatic) {
     // statics, get class from link name
@@ -166,18 +166,20 @@ static char *getCompletionClassFieldString( CompletionLine *cl) {
         cname = javaGetNudePreTypeName_st(cl->symbol->linkName,CUT_OUTERS);
         //&             sprintf(tmpBuff,"%s", cname);
     }
-    return(cname);
+    return cname;
 }
 
 
 static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
-    int size,ll,i,tdexpFlag,vFunCl,cindent, ttlen;
+    int size, ll, tdexpFlag, vFunCl, cindent, ttlen;
     char tt[COMPLETION_STRING_SIZE];
     char *pname,*cname;
     char *ppc;
 
     ppc = ppcTmpBuff;
-    if (c->alternatives[ii].symbolType == TypeUndefMacro) return;
+    if (c->alternatives[ii].symbolType == TypeUndefMacro)
+        return;
+
     // remove parenthesis (if any)
     strcpy(tt, c->alternatives[ii].string);
     ttlen = strlen(tt);
@@ -216,7 +218,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
         }
         tdexpFlag = 1;
         if (c->alternatives[ii].symbol->bits.storage == StorageTypedef) {
-            sprintf(tt,"typedef ");
+            sprintf(tt, "typedef ");
             ll = strlen(tt);
             size -= ll;
             tdexpFlag = 0;
@@ -268,8 +270,9 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
         assert(c->alternatives[ii].symbolType>=0 && c->alternatives[ii].symbolType<MAX_TYPE);
         sprintf(tt,"%s", typeNamesTable[c->alternatives[ii].symbolType]);
     }
+
     formatFullCompletions(tt, indent+FULL_COMPLETION_INDENT_CHARS+2, cindent);
-    for(i=0; tt[i]; i++) {
+    for(int i=0; tt[i]; i++) {
         sprintf(ppc,"%c",tt[i]);
         ppc += strlen(ppc);
         if (tt[i] == '\n') {
@@ -364,7 +367,7 @@ static int completionsWillPrintEllipsis(S_olCompletion *olc) {
     if (max >= MAX_COMPLETIONS - 2 || max == options.maxCompletions) {
         ellipsis = 1;
     }
-    return(ellipsis);
+    return ellipsis;
 }
 
 static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
@@ -551,9 +554,9 @@ static int compareCompletionClassName(CompletionLine *c1, CompletionLine *c2) {
     strcpy(n1, getCompletionClassFieldString(c1));
     n2 = getCompletionClassFieldString(c2);
     c = strcmp(n1, n2);
-    if (c<0) return(-1);
-    if (c>0) return(1);
-    return(0);
+    if (c<0) return -1;
+    if (c>0) return 1;
+    return 0;
 }
 
 static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
@@ -568,58 +571,58 @@ static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
         if (s2 == NULL) l2 = strlen(c2->string);
         else l2 = s2 - c2->string;
         if (l1 == s_completions.idToProcessLen && l2 != s_completions.idToProcessLen)
-            return(-1);
+            return -1;
         if (l1 != s_completions.idToProcessLen && l2 == s_completions.idToProcessLen)
-            return(1);
-        return(strcmp(c1->string, c2->string));
+            return 1;
+        return strcmp(c1->string, c2->string);
     } else {
         if (c1->symbolType==TypeKeyword && c2->symbolType!=TypeKeyword)
-            return(1);
+            return 1;
         if (c1->symbolType!=TypeKeyword && c2->symbolType==TypeKeyword)
-            return(-1);
+            return -1;
         if (c1->symbolType==TypeNonImportedClass && c2->symbolType!=TypeNonImportedClass)
-            return(1);
+            return 1;
         if (c1->symbolType!=TypeNonImportedClass && c2->symbolType==TypeNonImportedClass)
-            return(-1);
+            return -1;
         if (c1->symbolType!=TypeInheritedFullMethod && c2->symbolType==TypeInheritedFullMethod)
-            return(1);
+            return 1;
         if (c1->symbolType==TypeInheritedFullMethod && c2->symbolType!=TypeInheritedFullMethod)
-            return(-1);
+            return -1;
         if (c1->symbolType==TypeInheritedFullMethod && c2->symbolType==TypeInheritedFullMethod) {
             if (c1->symbol == NULL)
-                return(1);    // "main"
+                return 1;    // "main"
             if (c2->symbol == NULL)
-                return(-1);
+                return -1;
             c = compareCompletionClassName(c1, c2);
             if (c!=0)
-                return(c);
+                return c;
         }
         if (c1->symbolType!=TypeDefault && c2->symbolType==TypeDefault)
-            return(1);
+            return 1;
         if (c1->symbolType==TypeDefault && c2->symbolType!=TypeDefault)
-            return(-1);
+            return -1;
         // exact matches goes first
         l1 = strlen(c1->string);
         l2 = strlen(c2->string);
         if (l1 == s_completions.idToProcessLen && l2 != s_completions.idToProcessLen)
-            return(-1);
+            return -1;
         if (l1 != s_completions.idToProcessLen && l2 == s_completions.idToProcessLen)
-            return(1);
+            return 1;
         if (c1->symbolType==TypeDefault && c2->symbolType==TypeDefault) {
             c = c1->virtLevel - c2->virtLevel;
             if (c<0)
-                return(-1);
+                return -1;
             if (c>0)
-                return(1);
+                return 1;
             c = compareCompletionClassName(c1, c2);
             if (c!=0)
-                return(c);
+                return c;
             // compare storages, fields goes first, then methods
             if (c1->symbol!=NULL && c2->symbol!=NULL) {
                 if (c1->symbol->bits.storage==StorageField && c2->symbol->bits.storage==StorageMethod)
-                    return(-1);
+                    return -1;
                 if (c1->symbol->bits.storage==StorageMethod && c2->symbol->bits.storage==StorageField)
-                    return(1);
+                    return 1;
             }
         }
         if (c1->symbolType==TypeNonImportedClass && c2->symbolType==TypeNonImportedClass) {
@@ -628,13 +631,13 @@ static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
             if (s1 == NULL) s1 = c1->string;
             s2 = lastOccurenceInString(c2->string, '.');
             if (s2 == NULL) s2 = c2->string;
-            return(strcmp(s1, s2));
+            return strcmp(s1, s2);
         }
-        return(strcmp(c1->string, c2->string));
+        return strcmp(c1->string, c2->string);
     }
 }
 
-static int reallyInsert(
+static bool reallyInsert(
     CompletionLine *a,
     int *aip,
     char *s,
@@ -653,8 +656,10 @@ static int reallyInsert(
             c = completionOrderCmp(t, &a[x]);
             //&     c = strcmp(s, a[x].string);
             if (c==0) { /* identifier yet in completions */
-                if (s_language != LANG_JAVA) return(0); /* no overloading, so ... */
-                if (symbolIsInTab(a, ai, &x, s, t)) return(0);
+                if (s_language != LANG_JAVA)
+                    return false; /* no overloading, so ... */
+                if (symbolIsInTab(a, ai, &x, s, t))
+                    return false;
                 r = x; l = x + 1;
                 break;
             }
@@ -664,7 +669,8 @@ static int reallyInsert(
     } else {
         // linear search
         for(l=0; l<ai; l++) {
-            if (isTheSameSymbol(t, &a[l])) return(0);
+            if (isTheSameSymbol(t, &a[l]))
+                return false;
         }
     }
     if (orderFlag) {
@@ -679,7 +685,7 @@ static int reallyInsert(
     a[l].string = s;
     if (ai < MAX_COMPLETIONS-2) ai++;
     *aip = ai;
-    return(1);
+    return true;
 }
 
 static void computeComPrefix(char *d, char *s) {
@@ -696,21 +702,23 @@ static int completionTestPrefix(Completions *ci, char *s) {
     while (*d == *s || (options.completionCaseSensitive==0 && tolower(*d)==tolower(*s))) {
         if (*d == 0) {
             ci->isCompleteFlag = true;    /* complete, but maybe not unique*/
-            return(0);
+            return 0;
         }
         d++; s++;
     }
-    if (*d == 0) return(0);
-    return(1);
+    if (*d == 0)
+        return 0;
+    return 1;
 }
 
-static int stringContainsCaseInsensitive(char *s1, char *s2) {
+static bool stringContainsCaseInsensitive(char *s1, char *s2) {
     char *p,*a,*b;
     for (p=s1; *p; p++) {
         for(a=p,b=s2; tolower(*a)==tolower(*b); a++,b++) ;
-        if (*b==0) return(1);
+        if (*b==0)
+            return true;
     }
-    return(0);
+    return false;
 }
 
 static void completionInsertName(char *name, CompletionLine *completionLine, int orderFlag,
@@ -886,11 +894,14 @@ void completeStructs(Completions *c) {
 static bool javaLinkable(Access access) {
 
     log_trace("testing linkability %x", access);
-    if (s_language != LANG_JAVA) return true;
-    if (access == AccessAll) return true;
-    if ((options.ooChecksBits & OOC_LINKAGE_CHECK) == 0) return true;
-    if (access & AccessStatic) return((access & AccessStatic) != 0);
-
+    if (s_language != LANG_JAVA)
+        return true;
+    if (access == AccessAll)
+        return true;
+    if ((options.ooChecksBits & OOC_LINKAGE_CHECK) == 0)
+        return true;
+    if (access & AccessStatic)
+        return (access & AccessStatic) != 0;
     return true;
 }
 
@@ -1085,41 +1096,51 @@ static Symbol *getSymFromRef(Reference *reference) {
         }
     }
  cont:
-    if (i>=referenceTable.size) return(NULL);
+    if (i>=referenceTable.size)
+        return NULL;
     assert(r==reference);
     // now look symbol table to find the symbol , berk!
     for(i=0; i<symbolTable->size; i++) {
         for(sym=symbolTable->tab[i]; sym!=NULL; sym=sym->next) {
-            if (strcmp(sym->linkName,ss->name)==0) return(sym);
+            if (strcmp(sym->linkName,ss->name)==0)
+                return sym;
         }
     }
-    return(NULL);
+    return NULL;
 }
 
-static int isEqualType(TypeModifier *t1, TypeModifier *t2) {
+static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
     TypeModifier *s1,*s2;
     Symbol        *ss1,*ss2;
+
     assert(t1 && t2);
     for(s1=t1,s2=t2; s1->next!=NULL&&s2->next!=NULL; s1=s1->next,s2=s2->next) {
-        if (s1->kind!=s2->kind) return(0);
+        if (s1->kind!=s2->kind)
+            return false;
     }
-    if (s1->next!=NULL || s2->next!=NULL) return(0);
-    if (s1->kind != s2->kind) return(0);
+    if (s1->next!=NULL || s2->next!=NULL)
+        return false;
+    if (s1->kind != s2->kind)
+        return false;
     if (s1->kind==TypeStruct || s1->kind==TypeUnion || s1->kind==TypeEnum) {
-        if (s1->u.t != s2->u.t) return(0);
+        if (s1->u.t != s2->u.t)
+            return false;
     } else if (s1->kind==TypeFunction) {
         if (LANGUAGE(LANG_JAVA)) {
-            if (strcmp(s1->u.m.signature,s2->u.m.signature)!=0) return(0);
+            if (strcmp(s1->u.m.signature,s2->u.m.signature)!=0)
+                return false;
         } else {
             for(ss1=s1->u.f.args, ss2=s2->u.f.args;
                 ss1!=NULL&&ss2!=NULL;
                 ss1=ss1->next, ss2=ss2->next) {
-                if (! isEqualType(ss1->u.type, ss2->u.type)) return(0);
+                if (!isEqualType(ss1->u.type, ss2->u.type))
+                    return false;
             }
-            if (ss1!=NULL||ss2!=NULL) return(0);
+            if (ss1!=NULL||ss2!=NULL)
+                return false;
         }
     }
-    return(1);
+    return true;
 }
 
 static char *spComplFindNextRecord(S_exprTokenType *tok) {
@@ -1150,10 +1171,10 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
             }
         }
     }
-    return(res);
+    return res;
 }
 
-static int isForCompletionSymbol(
+static bool isForCompletionSymbol(
     Completions *c,
     S_exprTokenType *token,
     Symbol **sym,
@@ -1161,19 +1182,23 @@ static int isForCompletionSymbol(
 ) {
     Symbol    *sy;
 
-    if (options.server_operation != OLO_COMPLETION)  return(0);
-    if (token->typeModifier==NULL) return(0);
-    if (c->idToProcessLen != 0) return(0);
+    if (options.server_operation != OLO_COMPLETION)
+        return false;
+    if (token->typeModifier==NULL)
+        return false;
+    if (c->idToProcessLen != 0)
+        return false;
     if (token->typeModifier->kind == TypePointer) {
         assert(token->typeModifier->next);
         if (token->typeModifier->next->kind == TypeStruct) {
             *sym = sy = getSymFromRef(token->reference);
-            if (sy==NULL) return(0);
+            if (sy==NULL)
+                return false;
             *nextRecord = spComplFindNextRecord(token);
-            return(1);
+            return true;
         }
     }
-    return(0);
+    return false;
 }
 
 void completeForSpecial1(Completions* c) {
@@ -1225,7 +1250,7 @@ static Symbol * javaGetFileNameClass(char *fname) {
     Symbol    *res;
     pp = javaCutClassPathFromFileName(fname);
     res = javaGetFieldClass(pp,NULL);
-    return(res);
+    return res;
 }
 
 
@@ -1551,13 +1576,14 @@ static void completeFqtClassFileFromZipArchiv(char *zip, char *file, void *cfmpi
     completeFqtFromFileName(file, cfmpi);
 }
 
-static int isItCurrentPackageName(char *fn) {
+static bool isCurrentPackageName(char *fn) {
     int plen;
     if (s_javaThisPackageName!=NULL && s_javaThisPackageName[0]!=0) {
         plen = strlen(s_javaThisPackageName);
-        if (fnnCmp(fn, s_javaThisPackageName, plen)==0) return(1);
+        if (fnnCmp(fn, s_javaThisPackageName, plen)==0)
+            return true;
     }
-    return(0);
+    return false;
 }
 
 static void completeFqtClassFileFromFileTab(FileItem *fi, void *cfmpi) {
@@ -1566,7 +1592,7 @@ static void completeFqtClassFileFromFileTab(FileItem *fi, void *cfmpi) {
     if (fi->name[0] == ZIP_SEPARATOR_CHAR) {
         // remove current package
         fn = fi->name+1;
-        if (! isItCurrentPackageName(fn)) {
+        if (!isCurrentPackageName(fn)) {
             completeFqtFromFileName(fn, cfmpi);
         }
     }
@@ -1594,7 +1620,7 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
         assert(path!=NULL);
         plen = strlen(path);
         assert(fnnCmp(fn, path, plen)==0);
-        if (fn[plen]!=0 && ! isItCurrentPackageName(fn)) {
+        if (fn[plen]!=0 && !isCurrentPackageName(fn)) {
             completeFqtFromFileName(fn+plen+1, a4);
         }
     }
