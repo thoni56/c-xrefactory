@@ -39,13 +39,11 @@ static char oldStdopSection[MAX_FILE_NAME_SIZE];
 static char oldOnLineClassPath[MAX_OPTION_LEN];
 static time_t oldStdopTime;
 static int oldLanguage;
-static int oldCppPass;
+static int oldPass;
 static Options s_tmpOptions;
 
 static void usage() {
-    fprintf(stdout, "usage:\t\tc-xref <option>+ ");
-    fprintf(stdout, "<input files>");
-    fprintf(stdout, "\n");
+    fprintf(stdout, "usage:\t\tc-xref <option>+ <input files>\n\n");
     fprintf(stdout, "options:\n");
     fprintf(stdout, "\t-r                        - recursively descend directories (default, --r to negate)\n");
     fprintf(stdout, "\t-javadocurl=<http>        - url to existing Java API docs\n");
@@ -61,7 +59,7 @@ static void usage() {
     fprintf(stdout, "\t-filescaseunsensitive     - file names are case unsensitive\n");
     fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')\n");
     fprintf(stdout, "\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by ':' (or ';')\n");
-    fprintf(stdout, "\t-stdoptions <file>        - read options from <file> instead of ~/.c-xrefrc\n");
+    fprintf(stdout, "\t-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc\n");
     fprintf(stdout, "\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file\n");
 #if 0
     fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
@@ -1949,7 +1947,7 @@ static void mainFileProcessingInitialisations(int *firstPass,
     //&fprintf(dumpOut, "checking oldcp==%s\n",oldOnLineClassPath);
     //&fprintf(dumpOut, "checking newcp==%s\n",options.classpath);
     if (*firstPass
-        || oldCppPass != currentPass
+        || oldPass != currentPass
         || strcmp(oldStdopFile,defaultOptionsFileName)
         || strcmp(oldStdopSection,defaultOptionsSectionName)
         || oldStdopTime != dffstat.st_mtime
@@ -2003,7 +2001,7 @@ static void mainFileProcessingInitialisations(int *firstPass,
         strcpy(oldStdopSection,defaultOptionsSectionName);
         oldStdopTime = dffstat.st_mtime;
         oldLanguage = *outLanguage;
-        oldCppPass = currentPass;
+        oldPass = currentPass;
 
         // this was before 'getAndProcessXrefrcOptions(df...' I hope it will not cause
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
@@ -2872,7 +2870,7 @@ static void mainXref(int argc, char **argv) {
 }
 
 /* *************************************************************** */
-/*                          Edit regime                            */
+/*                          Edit Server Regime                     */
 /* *************************************************************** */
 
 void mainCallEditServerInit(int nargc, char **nargv) {
