@@ -127,15 +127,13 @@ void setTmpClassBackPointersToMenu(SymbolsMenu *menu) {
     }
 }
 
-static void genClassHierarchyVerticalBars( FILE *ff, IntegerList *nextbars,
-                                           int secondpass) {
-    IntegerList *nn;
+static void genClassHierarchyVerticalBars(FILE *ff, IntegerList *nextbars, int secondpass) {
     if (options.xref2) {
         fprintf(ff," %s=\"", PPCA_TREE_DEPS);
     }
     if (nextbars!=NULL) {
         LIST_REVERSE(IntegerList, nextbars);
-        for(nn = nextbars; nn!=NULL; nn=nn->next) {
+        for (IntegerList *nn = nextbars; nn!=NULL; nn=nn->next) {
             if (nn->next==NULL) {
                 if (secondpass) fprintf(ff,"  +- ");
                 else fprintf(ff,"  |  ");
