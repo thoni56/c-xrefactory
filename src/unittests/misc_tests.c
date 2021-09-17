@@ -15,6 +15,7 @@
 #include "memory.mock"
 #include "commons.mock"
 #include "editor.mock"
+#include "ppc.mock"
 
 
 Describe(Misc);

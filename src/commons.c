@@ -15,6 +15,7 @@
 #include "log.h"
 #include "stringlist.h"
 #include "utils.h"
+#include "ppc.h"
 
 
 void closeMainOutputFile(void) {
@@ -290,30 +291,42 @@ static void formatMessage(char *out, int errCode, char *mess) {
         break;
     }
     out += strlen(out);
-    assert(strlen(ppcTmpBuff) < MAX_PPC_RECORD_SIZE-1);
 }
 
 void warningMessage(int errCode, char *message) {
-    if ((! options.noErrors) && (! s_javaPreScanOnly)) {
-        formatMessage(ppcTmpBuff, errCode, message);
+    char buffer[MAX_PPC_RECORD_SIZE];
+
+    if (!options.noErrors && !s_javaPreScanOnly) {
+        formatMessage(buffer, errCode, message);
         if (options.xref2) {
-            strcat(ppcTmpBuff, "\n");
-            ppcGenRecord(PPC_WARNING, ppcTmpBuff);
+            strcat(buffer, "\n");
+            ppcGenRecord(PPC_WARNING, buffer);
         } else {
             if (displayingErrorMessages())
-                log_warn("%s", ppcTmpBuff);
+                log_warn("%s", buffer);
         }
     }
 }
 
-static void writeErrorMessage(int errCode, char *mess) {
-    formatMessage(ppcTmpBuff, errCode, mess);
+void infoMessage(char message[]) {
     if (options.xref2) {
-        strcat(ppcTmpBuff, "\n");
-        ppcGenRecord(PPC_ERROR, ppcTmpBuff);
+        ppcGenRecord(PPC_INFORMATION, message);
+    } else {
+        log_info(message);
+    }
+}
+
+
+static void writeErrorMessage(int errorCode, char *message) {
+    char buffer[MAX_PPC_RECORD_SIZE];
+
+    formatMessage(buffer, errorCode, message);
+    if (options.xref2) {
+        strcat(buffer, "\n");
+        ppcGenRecord(PPC_ERROR, buffer);
     } else {
         if (displayingErrorMessages())
-            log_error("%s", ppcTmpBuff);
+            log_error("%s", buffer);
     }
 }
 

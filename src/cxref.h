@@ -5,6 +5,7 @@
 #include "usage.h"
 #include "symbol.h"
 #include "olcxtab.h"
+#include "ppc.h"
 
 
 extern void fillReference(Reference *reference, UsageBits usage, Position position, Reference *next);
