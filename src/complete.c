@@ -14,9 +14,10 @@
 #include "list.h"
 #include "yylex.h"
 #include "log.h"
+#include "protocol.h"
 
 
-#define FULL_COMPLETION_INDENT_CHARS    2
+#define FULL_COMPLETION_INDENT_CHARS 2
 
 enum fqtCompletion {
     FQT_COMPLETE_DEFAULT,
@@ -27,17 +28,17 @@ enum fqtCompletion {
 typedef struct completionSymInfo {
     struct completions *res;
     Type symType;
-} S_completionSymInfo;
+} CompletionSymbolInfo;
 
 typedef struct completionSymFunInfo {
     struct completions *res;
     Storage storage;
-} S_completionSymFunInfo;
+} CompletionSymbolFunInfo;
 
 typedef struct completionFqtMapInfo {
     struct completions *res;
     int completionType;
-} S_completionFqtMapInfo;
+} CompletionFqtMapInfo;
 
 
 void initCompletions(Completions *completions, int length, Position position) {
@@ -62,54 +63,62 @@ void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Typ
     cline->vFunClass = vFunClass;                  \
 }
 
-static void fillCompletionSymInfo(S_completionSymInfo *completionSymInfo, Completions *completions,
+static void fillCompletionSymInfo(CompletionSymbolInfo *completionSymInfo, Completions *completions,
                                   unsigned symType) {
     completionSymInfo->res = completions;
     completionSymInfo->symType = symType;
 }
 
-static void fillCompletionSymFunInfo(S_completionSymFunInfo *completionSymFunInfo, Completions *completions,
+static void fillCompletionSymFunInfo(CompletionSymbolFunInfo *completionSymFunInfo, Completions *completions,
                                      enum storage storage) {
     completionSymFunInfo->res = completions;
     completionSymFunInfo->storage = storage;
 }
 
-static void fillCompletionFqtMapInfo(S_completionFqtMapInfo *completionFqtMapInfo, Completions *completions,
+static void fillCompletionFqtMapInfo(CompletionFqtMapInfo *completionFqtMapInfo, Completions *completions,
                                      enum fqtCompletion completionType) {
     completionFqtMapInfo->res = completions;
     completionFqtMapInfo->completionType = completionType;
 }
 
 static void formatFullCompletions(char *tt, int indent, int inipos) {
-    int     pos;
-    char    *nlpos,*p;
-    //&sprintf(tmpBuff,"formatting '\%s' indent==%d, inipos==%d, linelen==%d",tt,indent,inipos,options.olineLen);ppcGenTmpBuff();
-    pos = inipos; nlpos=NULL;
+    int pos;
+    char *nlpos, *p;
+
+    log_trace("formatting '%s' indent==%d, inipos==%d, linelen==%d" ,tt, indent, inipos, options.olineLen);
+    pos = inipos;
+    nlpos=NULL;
     p = tt;
     for(;;) {
         while (pos<options.olineLen || nlpos==NULL) {
             p++; pos++;
-            if (*p == 0) goto formatFullCompletionsEnd;
-            if (*p ==' ' && pos>indent) nlpos = p;
+            if (*p == 0)
+                goto formatFullCompletionsEnd;
+            if (*p ==' ' && pos>indent)
+                nlpos = p;
         }
-        *nlpos = '\n'; pos = indent+(p-nlpos); nlpos=NULL;
+        *nlpos = '\n';
+        pos = indent+(p-nlpos);
+        nlpos=NULL;
     }
  formatFullCompletionsEnd:
+    log_trace("result '%s'", tt);
     return;
-    //&sprintf(tmpBuff,"result '\%s'",tt);ppcGenTmpBuff();
 }
 
 void formatOutputLine(char *line, int startingColumn) {
-    int     pos, n;
-    char    *nlp,*p;
+    int pos, n;
+    char *nlp, *p;
 
     pos = startingColumn; nlp=NULL;
     assert(options.tabulator>1);
     p = line;
     for(;;) {
         while (pos<options.olineLen || nlp==NULL) {
-            if (*p == 0) return;
-            if (*p == ' ') nlp = p;
+            if (*p == 0)
+                return;
+            if (*p == ' ')
+                nlp = p;
             if (*p == '\t') {
                 nlp = p;
                 n = options.tabulator-(pos-1)%options.tabulator-1;
@@ -119,26 +128,28 @@ void formatOutputLine(char *line, int startingColumn) {
             }
             p++;
         }
-        *nlp = '\n'; p = nlp+1; nlp=NULL; pos = 0;
+        *nlp = '\n';
+        p = nlp+1;
+        nlp=NULL;
+        pos = 0;
     }
 }
 
-static int printJavaModifiers(char *buf, int *size, Access access) {
-    int i;
-    i = 0;
-    if (1 || (options.ooChecksBits & OOC_ACCESS_CHECK)==0) {
-        if (access & AccessPublic) {
-            sprintf(buf+i,"public "); i+=strlen(buf+i);
-            assert(i< *size);
-        }
-        if (access & AccessPrivate) {
-            sprintf(buf+i,"private "); i+=strlen(buf+i);
-            assert(i< *size);
-        }
-        if (access & AccessProtected) {
-            sprintf(buf+i,"protected "); i+=strlen(buf+i);
-            assert(i< *size);
-        }
+/* STATIC except for unittests */
+int printJavaModifiers(char *buf, int *size, Access access) {
+    int i = 0;
+
+    if (access & AccessPublic) {
+        sprintf(buf+i,"public "); i+=strlen(buf+i);
+        assert(i< *size);
+    }
+    if (access & AccessPrivate) {
+        sprintf(buf+i,"private "); i+=strlen(buf+i);
+        assert(i< *size);
+    }
+    if (access & AccessProtected) {
+        sprintf(buf+i,"protected "); i+=strlen(buf+i);
+        assert(i< *size);
     }
     if (access & AccessStatic) {
         sprintf(buf+i,"static "); i+=strlen(buf+i);
@@ -154,17 +165,12 @@ static int printJavaModifiers(char *buf, int *size, Access access) {
 
 static char *getCompletionClassFieldString(CompletionLine *cl) {
     char *cname;
-    //& if (cl->symbol->bits.access & AccessStatic) {
-    // statics, get class from link name
-    //&     cname = javaGetNudePreTypeName_st(cl->symbol->linkName,CUT_OUTERS);
-    //&             sprintf(tmpBuff,"%s", cname);
-    //&} else
+
     if (cl->vFunClass!=NULL) {
         cname = javaGetShortClassName(cl->vFunClass->linkName);
     } else {
         assert(cl->symbol);
         cname = javaGetNudePreTypeName_st(cl->symbol->linkName,CUT_OUTERS);
-        //&             sprintf(tmpBuff,"%s", cname);
     }
     return cname;
 }
@@ -223,12 +229,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
             size -= ll;
             tdexpFlag = 0;
         }
-        /*      if (c->a[ii].t->u.type->m == TypeFunction) {*/
-        //      if (LANGUAGE(LAN_JAVA) && c->a[ii].t->b.storage != StorageAuto) {
-        //          pname = c->a[ii].t->linkName;
-        //      } else {
         pname = c->alternatives[ii].symbol->name;
-        //      }
         if (LANGUAGE(LANG_JAVA)) {
             ll += printJavaModifiers(tt+ll, &size, c->alternatives[ii].symbol->bits.access);
             if (c->alternatives[ii].vFunClass!=NULL) {
@@ -801,9 +802,9 @@ void processName(char *name, CompletionLine *compLine, int orderFlag, void *c) {
 }
 
 static void completeFun(Symbol *s, void *c) {
-    S_completionSymInfo *cc;
+    CompletionSymbolInfo *cc;
     CompletionLine compLine;
-    cc = (S_completionSymInfo *) c;
+    cc = (CompletionSymbolInfo *) c;
     assert(s && cc);
     if (s->bits.symbolType != cc->symType) return;
     /*&fprintf(dumpOut,"testing %s\n",s->linkName);fflush(dumpOut);&*/
@@ -862,10 +863,10 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
 }
 
 static void completeSymFun(Symbol *s, void *c) {
-    S_completionSymFunInfo *cc;
+    CompletionSymbolFunInfo *cc;
     CompletionLine compLine;
     char    *completionName;
-    cc = (S_completionSymFunInfo *) c;
+    cc = (CompletionSymbolFunInfo *) c;
     assert(s);
     if (s->bits.symbolType != TypeDefault) return;
     assert(s);
@@ -883,7 +884,7 @@ static void completeSymFun(Symbol *s, void *c) {
 }
 
 void completeStructs(Completions *c) {
-    S_completionSymInfo ii;
+    CompletionSymbolInfo ii;
 
     fillCompletionSymInfo(&ii, c, TypeStruct);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
@@ -1032,7 +1033,7 @@ void completeRecNames(Completions *c) {
 }
 
 static void completeFromSymTab(Completions*c, unsigned storage){
-    S_completionSymFunInfo  info;
+    CompletionSymbolFunInfo  info;
     S_javaStat              *cs;
     int                     vlevelOffset;
 
@@ -1052,19 +1053,19 @@ static void completeFromSymTab(Completions*c, unsigned storage){
 }
 
 void completeEnums(Completions *c) {
-    S_completionSymInfo ii;
+    CompletionSymbolInfo ii;
     fillCompletionSymInfo(&ii, c, TypeEnum);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
 }
 
 void completeLabels(Completions *c) {
-    S_completionSymInfo ii;
+    CompletionSymbolInfo ii;
     fillCompletionSymInfo(&ii, c, TypeLabel);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
 }
 
 void completeMacros(Completions *c) {
-    S_completionSymInfo ii;
+    CompletionSymbolInfo ii;
     fillCompletionSymInfo(&ii, c, TypeMacro);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
 }
@@ -1503,7 +1504,7 @@ void javaCompleteClassDefinitionNameSpecial(Completions*c) {
 }
 
 void javaCompleteClassDefinitionName(Completions*c) {
-    S_completionSymInfo ii;
+    CompletionSymbolInfo ii;
     javaCompleteThisClassDefinitionName(c);
     // order is important because of hack in nestedcl Access modifs
     javaCompleteNestedClSingleName(c);
@@ -1518,7 +1519,7 @@ void javaCompletePackageCompName(Completions*c) {
 }
 
 void javaCompleteTypeSingleName(Completions*c) {
-    S_completionSymInfo ii;
+    CompletionSymbolInfo ii;
     // order is important because of hack in nestedcl Access modifs
     javaCompleteNestedClSingleName(c);
     javaMapDirectoryFiles2(NULL, javaTypeNameCompletion, c, NULL, NULL);
@@ -1531,11 +1532,11 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
     char                    sss[MAX_FILE_NAME_SIZE];
     char                    *suff, *sname, *ss;
     CompletionLine                 compLine;
-    S_completionFqtMapInfo  *fmi;
+    CompletionFqtMapInfo  *fmi;
     Completions           *c;
     Symbol                *memb;
 
-    fmi = (S_completionFqtMapInfo *) cfmpi;
+    fmi = (CompletionFqtMapInfo *) cfmpi;
     c = fmi->res;
     suff = getFileSuffix(file);
     if (compareFileNames(suff, ".class")==0 || compareFileNames(suff, ".java")==0) {
@@ -1627,7 +1628,7 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
 }
 
 static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType) {
-    S_completionFqtMapInfo  cfmi;
+    CompletionFqtMapInfo  cfmi;
     int                     i;
     StringList            *pp;
 
@@ -1743,7 +1744,7 @@ void javaCompleteConstructNestPrimName(Completions*c) {
 }
 
 void javaCompleteExprSingleName(Completions*c) {
-    S_completionSymInfo ii;
+    CompletionSymbolInfo ii;
     javaMapDirectoryFiles1(NULL, javaTypeNameCompletion, c, NULL, NULL);
     fillCompletionSymInfo(&ii, c, TypeStruct);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
@@ -1850,9 +1851,9 @@ void javaCompleteMethodCompName(Completions*c) {
 /* ************************** Yacc stuff ************************ */
 
 static void completeFromXrefFun(SymbolReferenceItem *s, void *c) {
-    S_completionSymInfo *cc;
+    CompletionSymbolInfo *cc;
     CompletionLine compLine;
-    cc = (S_completionSymInfo *) c;
+    cc = (CompletionSymbolInfo *) c;
     assert(s && cc);
     if (s->b.symType != cc->symType) return;
     /*&fprintf(dumpOut,"testing %s\n",s->name);fflush(dumpOut);&*/
@@ -1861,7 +1862,7 @@ static void completeFromXrefFun(SymbolReferenceItem *s, void *c) {
 }
 
 void completeYaccLexem(Completions*c) {
-    S_completionSymInfo ii;
+    CompletionSymbolInfo ii;
     fillCompletionSymInfo(&ii, c, TypeYaccSymbol);
     refTabMap2(&referenceTable, completeFromXrefFun, (void*) &ii);
 }
