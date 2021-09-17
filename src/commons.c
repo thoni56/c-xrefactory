@@ -345,12 +345,14 @@ static void emergencyExit(int exitStatus) {
 }
 
 
-void fatalError(int errCode, char *mess, int exitStatus) {
-    formatMessage(ppcTmpBuff, errCode, mess);
+void fatalError(int errorCode, char *message, int exitStatus) {
+    char buffer[MAX_PPC_RECORD_SIZE];
+
+    formatMessage(buffer, errorCode, message);
     if (options.xref2) {
-        ppcGenRecord(PPC_FATAL_ERROR, ppcTmpBuff);
+        ppcGenRecord(PPC_FATAL_ERROR, buffer);
     } else {
-        log_error(ppcTmpBuff);
+        log_error(buffer);
     }
     emergencyExit(exitStatus);
 }

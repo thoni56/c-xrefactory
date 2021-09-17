@@ -277,15 +277,6 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
 }
 
 
-static void infoMessage(char message[]) {
-    if (options.xref2) {
-        ppcGenRecord(PPC_INFORMATION, message);
-    } else {
-        log_info(message);
-    }
-}
-
-
 void initTokenNamesTables(void) {
     char *javaVersion;
     int not_used_symbol_index;
