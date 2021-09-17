@@ -226,6 +226,10 @@ char *javaGetNudePreTypeName_st(char *inn, int cutMode) {
   return (char *) mock(inn, cutMode);
 }
 
+char *javaGetShortClassName(char *inn) {
+  return (char *) mock(inn);
+}
+
 char *javaGetShortClassNameFromFileNum_st(int fnum) {
   return (char *) mock(fnum);
 }

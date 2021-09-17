@@ -104,6 +104,8 @@ bool s_wildcardSearch;
 int s_lastReturnedLexem;
 
 int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
+Reference s_noRef;
+S_exprTokenType s_forCompletionType;
 
 char *s_javaThisPackageName = "";
 int s_javaPreScanOnly;
@@ -111,6 +113,8 @@ char *javaSourcePaths;
 StringList *javaClassPaths;
 Symbol *s_javaObjectSymbol;
 int s_javaCharCodeBaseTypes[MAX_CHARS];
+TypeModifier *s_javaCompletionLastPrimary;
+Symbol s_javaArrayObjectSymbol;
 
 int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
     AccessPublic,

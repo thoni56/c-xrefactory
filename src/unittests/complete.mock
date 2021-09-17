@@ -162,10 +162,6 @@ void completeYaccLexem(Completions *c) {
   mock(c);
 }
 
-char *javaGetShortClassName(char *inn) {
-  return (char *) mock(inn);
-}
-
 void olCompletionListInit(Position *originalPos) {
   mock(originalPos);
 }
