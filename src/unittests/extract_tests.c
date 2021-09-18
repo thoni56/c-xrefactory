@@ -26,6 +26,8 @@
 #include "symboltable.mock"
 #include "cxref.mock"
 #include "semact.mock"
+#include "ppc.mock"
+
 
 
 void myFatalError(int errCode, char *mess, int exitStatus) {

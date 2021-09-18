@@ -11,6 +11,8 @@
 #include "cxref.mock"
 #include "commons.mock"
 #include "fileio.mock"
+#include "ppc.mock"
+
 
 
 Describe(Editor);

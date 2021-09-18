@@ -19,6 +19,7 @@
 #include "cxref.mock"
 #include "cxfile.mock"
 #include "semact.mock"
+#include "ppc.mock"
 
 
 

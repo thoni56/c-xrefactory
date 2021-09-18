@@ -26,6 +26,8 @@
 #include "reftab.mock"
 #include "fileio.mock"
 #include "classfilereader.mock"
+#include "ppc.mock"
+
 
 
 Describe(CxRef);

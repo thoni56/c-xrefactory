@@ -9,6 +9,7 @@
 #include "fileio.mock"
 #include "misc.mock"
 #include "yylex.mock"
+#include "ppc.mock"
 
 
 Describe(Commons);

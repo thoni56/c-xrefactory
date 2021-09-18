@@ -13,6 +13,7 @@
 #include "filetable.mock"
 #include "fileio.mock"
 #include "yylex.mock"
+#include "ppc.mock"
 
 
 Describe(Options);
