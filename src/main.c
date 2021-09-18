@@ -2452,13 +2452,13 @@ static int scheduleFileUsingTheMacro(void) {
     oldMenu = s_olcxCurrentUser->browserStack.top->menuSym;
     s_olcxCurrentUser->browserStack.top->menuSym = &mm;
     s_olMacro2PassFile = noFileIndex;
-    //&fprintf(dumpOut, ":here I am, looking for usage of %s\n",memb->name);
+    log_trace(":looking for usage of '%s'", memb->name);
     readOneAppropReferenceFile(s_olstringInMbody,secondPassMacroUsageFunctionSequence);
     s_olcxCurrentUser->browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
-    //&fprintf(dumpOut, ":scheduling file %s\n", fileTable.tab[s_olMacro2PassFile]->name); fflush(dumpOut);
+    log_trace(":scheduling file '%s'", fileTable.tab[s_olMacro2PassFile]->name);
     if (s_olMacro2PassFile == noFileIndex) return noFileIndex;
     return s_olMacro2PassFile;
 }

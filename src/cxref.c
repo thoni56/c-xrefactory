@@ -1220,15 +1220,12 @@ static void olcxAddReferencesToSymbolsMenu(SymbolsMenu  *cms,
     }
 }
 
-void generateOnlineCxref(Position *p,
-                         char *commandString,
-                         int usage,
-                         char *suffix
-) {
+void gotoOnlineCxref(Position *p, int usage, char *suffix)
+{
     if (options.xref2) {
         ppcGenGotoPositionRecord(p);
     } else {
-        fprintf(communicationChannel,"%s%s#*+*#%d %d :%c%s ;;\n", commandString,
+        fprintf(communicationChannel,"%s%s#*+*#%d %d :%c%s ;;\n", COLCX_GOTO_REFERENCE,
                 getRealFileNameStatic(fileTable.tab[p->file]->name),
                 p->line, p->col, refCharCode(usage),
                 suffix);
@@ -1271,8 +1268,7 @@ static void olcxRenameInit(void) {
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     refs->act = refs->r;
-    generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
-                        refs->act->usage.base, "");
+    gotoOnlineCxref(&refs->act->p, refs->act->usage.base, "");
 }
 
 
@@ -1328,8 +1324,7 @@ static void olcxOrderRefsAndGotoFirst(void) {
     LIST_MERGE_SORT(Reference, refs->r, olcxListLessFunction);
     refs->act = refs->r;
     if (refs->r != NULL) {
-        generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
-                            refs->act->usage.base, "");
+        gotoOnlineCxref(&refs->act->p, refs->act->usage.base, "");
     } else {
         olcxGenNoReferenceSignal();
     }
@@ -1571,8 +1566,7 @@ static void orderRefsAndGotoDefinition(OlcxReferences *refs, int afterMenuFlag) 
         }
     } else if (refs->r->usage.base<=UsageDeclared) {
         refs->act = refs->r;
-        generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
-                            refs->act->usage.base, "");
+        gotoOnlineCxref(&refs->act->p, refs->act->usage.base, "");
     } else {
         if (afterMenuFlag==PUSH_AFTER_MENU) res=0;
         else res = checkTheJavaDocBrowsing(refs);
@@ -1936,8 +1930,7 @@ static void olcxListTopReferences(char *commandString) {
 
 static void olcxGenGotoActReference(OlcxReferences *refs) {
     if (refs->act != NULL) {
-        generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
-                            refs->act->usage.base, "");
+        gotoOnlineCxref(&refs->act->p, refs->act->usage.base, "");
     } else {
         olcxGenNoReferenceSignal();
     }
@@ -2049,8 +2042,7 @@ static void olcxReferenceGotoCompletion(int refn) {
             if (rr->ref.usage.base != UsageClassFileDefinition
                 && rr->ref.usage.base != UsageClassTreeDefinition
                 && positionsAreNotEqual(rr->ref.p, s_noPos)) {
-                generateOnlineCxref(&rr->ref.p, COLCX_GOTO_REFERENCE,
-                                    UsageDefined, "");
+                gotoOnlineCxref(&rr->ref.p, UsageDefined, "");
             } else {
                 if (!olcxBrowseSymbolInJavaDoc(&rr->sym))
                     olcxGenNoReferenceSignal();
@@ -2074,8 +2066,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
         if (rr->ref.usage.base != UsageClassFileDefinition
             && rr->ref.usage.base != UsageClassTreeDefinition
             && positionsAreNotEqual(rr->ref.p, s_noPos)) {
-            generateOnlineCxref(&rr->ref.p, COLCX_GOTO_REFERENCE,
-                                UsageDefined, "");
+            gotoOnlineCxref(&rr->ref.p, UsageDefined, "");
         } else {
             if (!olcxBrowseSymbolInJavaDoc(&rr->sym))
                 olcxGenNoReferenceSignal();
@@ -2210,8 +2201,7 @@ static void olcxReferenceGotoCaller(void) {
     OlcxReferences    *refs;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     if (refs->cpos.file != noFileIndex) {
-        generateOnlineCxref(&refs->cpos, COLCX_GOTO_REFERENCE,
-                            UsageUsed, "");
+        gotoOnlineCxref(&refs->cpos, UsageUsed, "");
 
     } else {
         olcxGenNoReferenceSignal();
@@ -2446,8 +2436,7 @@ static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
     } else {
         if (inspect == INSPECT_DEF) {
             if (ss->defpos.file>=0 && ss->defpos.file!=noFileIndex) {
-                generateOnlineCxref(&ss->defpos, COLCX_GOTO_REFERENCE,
-                                    UsageDefined, "");
+                gotoOnlineCxref(&ss->defpos, UsageDefined, "");
             } else if (!olcxBrowseSymbolInJavaDoc(&ss->s)) {
                 olcxGenNoReferenceSignal();
             }
@@ -2957,7 +2946,7 @@ static void olcxReferencePop(void) {
     OlcxReferences *refs;
     OLCX_MOVE_INIT(s_olcxCurrentUser, refs, CHECK_NULL);
     if (refs->cpos.file != noFileIndex) {
-        generateOnlineCxref(&refs->cpos, COLCX_GOTO_REFERENCE, UsageUsed, "");
+        gotoOnlineCxref(&refs->cpos, UsageUsed, "");
     } else {
         olcxGenNoReferenceSignal();
     }
@@ -3217,7 +3206,7 @@ static void olCompletionSelect(void) {
             ppcGenRecord(PPC_SINGLE_COMPLETION, rr->name);
         }
     } else {
-        generateOnlineCxref(&refs->cpos, COLCX_GOTO_REFERENCE, UsageUsed, rr->name);
+        gotoOnlineCxref(&refs->cpos, UsageUsed, rr->name);
     }
     //& olStackDeleteSymbol(refs);
 }
@@ -4923,8 +4912,7 @@ void mainAnswerEditAction(void) {
     case OLO_GOTO_PARAM_NAME:
         // I hope this is not used anymore, put there assert(0);
         if (s_olstringServed && s_paramPosition.file != noFileIndex) {
-            generateOnlineCxref(&s_paramPosition, COLCX_GOTO_REFERENCE,
-                                UsageDefined, "");
+            gotoOnlineCxref(&s_paramPosition, UsageDefined, "");
             olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
@@ -4934,8 +4922,7 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_GET_PRIMARY_START:
         if (s_olstringServed && s_primaryStartPosition.file != noFileIndex) {
-            generateOnlineCxref(&s_primaryStartPosition, COLCX_GOTO_REFERENCE,
-                                UsageDefined, "");
+            gotoOnlineCxref(&s_primaryStartPosition, UsageDefined, "");
             olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         } else {
             errorMessage(ERR_ST, "Begin of primary expression not found.");
