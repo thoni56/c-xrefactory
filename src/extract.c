@@ -1203,7 +1203,7 @@ static void makeExtraction(void) {
     }
 
     if (options.xref2)
-        ppcGenRecordWithAttributeBegin(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
+        ppcBeginWithAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
 
     CX_ALLOCC(rb, EXTRACT_GEN_BUFFER_SIZE, char);
 
@@ -1250,7 +1250,7 @@ static void makeExtraction(void) {
     }
 
     if (options.xref2)
-        ppcGenRecordEnd(PPC_EXTRACTION_DIALOG);
+        ppcEnd(PPC_EXTRACTION_DIALOG);
 }
 
 

@@ -204,7 +204,7 @@ static void refactoryUpdateReferences(char *project) {
         return;
     }
 
-    ppcGenRecordBegin(PPC_UPDATE_REPORT);
+    ppcBegin(PPC_UPDATE_REPORT);
 
     editorQuasiSaveModifiedBuffers();
 
@@ -230,7 +230,7 @@ static void refactoryUpdateReferences(char *project) {
 
     //&resetImportantOptionsFromRefactoringCommandLine();
     //&fprintf(dumpOut,"here I am, %s, %s %s %s %s\n", refactoringOptions.user, options.user, savedOptions.user, s_cachedOptions.user, savedCachedOptions.user);
-    ppcGenRecordEnd(PPC_UPDATE_REPORT);
+    ppcEnd(PPC_UPDATE_REPORT);
 
     // return into editSubTaskState
     mainTaskEntryInitialisations(argument_count(s_refactoryEditSrvInitOptions),

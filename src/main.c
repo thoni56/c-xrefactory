@@ -2404,21 +2404,21 @@ static void scheduleModifiedFilesToUpdate(void) {
 }
 
 
-void mainOpenOutputFile(char *ofile) {
+void mainOpenOutputFile(char *outfile) {
     closeMainOutputFile();
-    if (ofile!=NULL) {
-        //&fprintf(dumpOut, "OPENING OUTPUT FILE %s\n", options.outputFileName);
+    if (outfile!=NULL) {
+        log_trace("Opening output file '%s'", options.outputFileName);
 #if defined (__WIN32__)
         // open it as binary file, so that record lengths will be correct
-        communicationChannel = openFile(ofile, "wb");
+        communicationChannel = openFile(outfile, "wb");
 #else
-        communicationChannel = openFile(ofile, "w");
+        communicationChannel = openFile(outfile, "w");
 #endif
     } else {
         communicationChannel = stdout;
     }
     if (communicationChannel == NULL) {
-        errorMessage(ERR_CANT_OPEN, ofile);
+        errorMessage(ERR_CANT_OPEN, outfile);
         communicationChannel = stdout;
     }
     errOut = communicationChannel;

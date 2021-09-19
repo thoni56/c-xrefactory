@@ -378,7 +378,7 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
     LIST_LEN(max, S_olCompletion, olc);
     if (options.xref2) {
         if (options.editor == EDITOR_JEDIT) {
-            ppcGenTwoNumericAndRecordBegin(PPC_FULL_MULTIPLE_COMPLETIONS,
+            ppcBeginWithTwoNumericValues(PPC_FULL_MULTIPLE_COMPLETIONS,
                                            PPCA_NUMBER, max,
                                            PPCA_NO_FOCUS, noFocus);
         } else {
@@ -388,7 +388,7 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
                 if (cc->next!=NULL) tlen++;
             }
             if (completionsWillPrintEllipsis(olc)) tlen += 4;
-            ppcGenAllCompletionsRecordBegin(noFocus, tlen);
+            ppcBeginAllCompletions(noFocus, tlen);
         }
     } else {
         fprintf(communicationChannel,";");
@@ -417,9 +417,9 @@ static void printCompletionsEnding(S_olCompletion *olc) {
     }
     if (options.xref2) {
         if (options.editor == EDITOR_JEDIT) {
-            ppcGenRecordEnd(PPC_FULL_MULTIPLE_COMPLETIONS);
+            ppcEnd(PPC_FULL_MULTIPLE_COMPLETIONS);
         } else {
-            ppcGenRecordEnd(PPC_ALL_COMPLETIONS);
+            ppcEnd(PPC_ALL_COMPLETIONS);
         }
     }
 }

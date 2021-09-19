@@ -661,13 +661,13 @@ static void olGetAvailableRefactorings(void) {
             availableRefactorings[PPC_AVR_EXTRACT_MACRO].available = true;
         }
     }
-    ppcGenRecordBegin(PPC_AVAILABLE_REFACTORINGS);
+    ppcBegin(PPC_AVAILABLE_REFACTORINGS);
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
         if (availableRefactorings[i].available) {
             ppcGenNumericRecord(PPC_INT_VALUE, i, availableRefactorings[i].option);
         }
     }
-    ppcGenRecordEnd(PPC_AVAILABLE_REFACTORINGS);
+    ppcEnd(PPC_AVAILABLE_REFACTORINGS);
 }
 
 
@@ -1802,18 +1802,18 @@ bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
 
 void olcxPrintClassTree(SymbolsMenu *sss) {
     if (options.xref2) {
-        ppcGenRecordBegin(PPC_DISPLAY_CLASS_TREE);
+        ppcBegin(PPC_DISPLAY_CLASS_TREE);
     } else {
         fprintf(communicationChannel, "<");
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
     generateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
-    if (options.xref2) ppcGenRecordEnd(PPC_DISPLAY_CLASS_TREE);
+    if (options.xref2) ppcEnd(PPC_DISPLAY_CLASS_TREE);
 }
 
 void olcxPrintSelectionMenu(SymbolsMenu *sss) {
     if (options.xref2) {
-        ppcGenRecordBegin(PPC_SYMBOL_RESOLUTION);
+        ppcBegin(PPC_SYMBOL_RESOLUTION);
     } else {
         fprintf(communicationChannel, ">");
     }
@@ -1822,7 +1822,7 @@ void olcxPrintSelectionMenu(SymbolsMenu *sss) {
         generateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
     }
     if (options.xref2) {
-        ppcGenRecordEnd(PPC_SYMBOL_RESOLUTION);
+        ppcEnd(PPC_SYMBOL_RESOLUTION);
     } else {
         if (options.server_operation==OLO_RENAME || options.server_operation==OLO_ARG_MANIP || options.server_operation==OLO_ENCAPSULATE) {
             if (LANGUAGE(LANG_JAVA)) {
@@ -1893,10 +1893,10 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
             len = strlen(ttt);
             ttt[len]='\"';
             ttt[len+1]=0;
-            ppcGenWithNumericAndRecordBegin(PPC_REFERENCE_LIST, actn,
+            ppcBeginWithNumericValueAndAttribute(PPC_REFERENCE_LIST, actn,
                                             PPCA_SYMBOL, ttt);
         } else {
-            ppcGenNumericRecordBegin(PPC_REFERENCE_LIST, actn);
+            ppcBeginWithNumericValue(PPC_REFERENCE_LIST, actn);
         }
     } else {
         fprintf(communicationChannel,"%s",commandString);/* communication char */
@@ -1910,7 +1910,7 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
         }
     }
     if (options.xref2) {
-        ppcGenRecordEnd(PPC_REFERENCE_LIST);
+        ppcEnd(PPC_REFERENCE_LIST);
         //& if (refs!=NULL && refs->act!=NULL) ppcGotoPosition(&refs->act->p);
     }
     fflush(communicationChannel);
@@ -2136,7 +2136,8 @@ static void olcxReferencePlus(void) {
     OlcxReferences    *refs;
     Reference         *r;
     OLCX_MOVE_INIT(s_olcxCurrentUser, refs, CHECK_NULL);
-    if (refs->act == NULL) refs->act = refs->r;
+    if (refs->act == NULL)
+        refs->act = refs->r;
     else {
         r = refs->act->next;
         olcxSetActReferenceToFirstVisible(refs, r);
@@ -5298,7 +5299,7 @@ void printTagSearchResults(void) {
     len = len1;
     // the second is writing
     if (options.xref2)
-        ppcGenRecordBegin(PPC_SYMBOL_LIST);
+        ppcBegin(PPC_SYMBOL_LIST);
     assert(s_olcxCurrentUser->retrieverStack.top);
     for(cc=s_olcxCurrentUser->retrieverStack.top->cpls; cc!=NULL; cc=cc->next) {
         ls = crTagSearchLineStatic(cc->name, &cc->ref.p,
@@ -5310,5 +5311,5 @@ void printTagSearchResults(void) {
         }
         len1 = len;
     }
-    if (options.xref2) ppcGenRecordEnd(PPC_SYMBOL_LIST);
+    if (options.xref2) ppcEnd(PPC_SYMBOL_LIST);
 }
