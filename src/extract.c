@@ -1202,30 +1202,45 @@ static void makeExtraction(void) {
         else s_extractionName = "newFunction_";
     }
 
-    if (options.xref2) ppcGenRecordWithAttributeBegin(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
+    if (options.xref2)
+        ppcGenRecordWithAttributeBegin(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
+
     CX_ALLOCC(rb, EXTRACT_GEN_BUFFER_SIZE, char);
 
-    if (! options.xref2) {
+    if (!options.xref2) {
         fprintf(communicationChannel,
                 "%%!\n------------------------ The Invocation ------------------------\n!\n");
     }
-    if (options.extractMode==EXTRACT_MACRO) generateNewMacroCall(program);
-    else if (needToExtractNewClass) extJavaGenNewClassCall(program);
-    else generateNewFunctionCall(program);
-    if (! options.xref2) {
+    if (options.extractMode==EXTRACT_MACRO)
+        generateNewMacroCall(program);
+    else if (needToExtractNewClass)
+        extJavaGenNewClassCall(program);
+    else
+        generateNewFunctionCall(program);
+
+    if (!options.xref2) {
         fprintf(communicationChannel,
                 "!\n--------------------------- The Head ---------------------------\n!\n");
     }
-    if (options.extractMode==EXTRACT_MACRO) extGenNewMacroHead(program);
-    else if (needToExtractNewClass) extJavaGenNewClassHead(program);
-    else generateNewFunctionHead(program);
-    if (! options.xref2) {
+
+    if (options.extractMode==EXTRACT_MACRO)
+        extGenNewMacroHead(program);
+    else if (needToExtractNewClass)
+        extJavaGenNewClassHead(program);
+    else
+        generateNewFunctionHead(program);
+
+    if (!options.xref2) {
         fprintf(communicationChannel,
                 "!\n--------------------------- The Tail ---------------------------\n!\n");
     }
-    if (options.extractMode==EXTRACT_MACRO) generateNewMacroTail(program);
-    else if (needToExtractNewClass) extJavaGenNewClassTail(program);
-    else generateNewFunctionTail(program);
+
+    if (options.extractMode==EXTRACT_MACRO)
+        generateNewMacroTail(program);
+    else if (needToExtractNewClass)
+        extJavaGenNewClassTail(program);
+    else
+        generateNewFunctionTail(program);
 
     if (options.xref2) {
         ppcGenNumericRecord(PPC_INT_VALUE, s_cp.funBegPosition, "");
@@ -1234,7 +1249,8 @@ static void makeExtraction(void) {
         fflush(communicationChannel);
     }
 
-    if (options.xref2) ppcGenRecordEnd(PPC_EXTRACTION_DIALOG);
+    if (options.xref2)
+        ppcGenRecordEnd(PPC_EXTRACTION_DIALOG);
 }
 
 

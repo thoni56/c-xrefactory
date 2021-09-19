@@ -338,7 +338,7 @@ void errorMessage(int errCode, char *mess) {
 static void emergencyExit(int exitStatus) {
     closeMainOutputFile();
     if (options.xref2) {
-        ppcGenSynchroRecord();
+        ppcSynchronize();
     }
     exit(exitStatus);
 }
@@ -368,7 +368,7 @@ void internalCheckFail(char *expr, char *file, int line) {
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION,"Exiting");
             closeMainOutputFile();
-            ppcGenSynchroRecord();
+            ppcSynchronize();
         } else {
             fprintf(errOut, "\t exiting!\n"); fflush(stderr);
         }

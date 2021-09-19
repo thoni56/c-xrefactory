@@ -1,7 +1,7 @@
 #include "editor.h"
 
 
-void ppcGenSynchroRecord(void) {
+void ppcSynchronize(void) {
   mock();
 }
 
@@ -9,7 +9,7 @@ void ppcIndent(void) {
   mock();
 }
 
-void ppcGenGotoOffsetPosition(char *fname, int offset) {
+void ppcGotoOffsetPosition(char *fname, int offset) {
   mock(fname, offset);
 }
 
@@ -65,16 +65,12 @@ void ppcGenTmpBuff(void) {
   mock();
 }
 
-void ppcGenDisplaySelectionRecord(char *message, int messageType, int continuation) {
+void ppcDisplaySelection(char *message, int messageType, int continuation) {
   mock(message, messageType, continuation);
 }
 
-void ppcGenGotoMarkerRecord(EditorMarker *pos) {
+void ppcGotoMarker(EditorMarker *pos) {
   mock(pos);
-}
-
-void ppcGenPosition(Position *p) {
-  mock(p);
 }
 
 void ppcGenDefinitionNotFoundWarning(void) {
@@ -85,26 +81,22 @@ void ppcGenDefinitionNotFoundWarningAtBottom(void) {
   mock();
 }
 
-void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldNameLen, char *newName) {
+void ppcReplace(char *file, int offset, char *oldName, int oldNameLen, char *newName) {
   mock(file, offset, oldName, oldNameLen, newName);
 }
 
-void ppcGenPreCheckRecord(EditorMarker *pos, int oldLen) {
+void ppcPreCheck(EditorMarker *pos, int oldLen) {
   mock(pos, oldLen);
 }
 
-void ppcGenReferencePreCheckRecord(Reference *r, char *text) {
+void ppcReferencePreCheck(Reference *r, char *text) {
   mock(r, text);
 }
 
-void ppcGenGotoPositionRecord(Position *p) {
+void ppcGotoPosition(Position *p) {
   mock(p);
 }
 
 void ppcGenOffsetPosition(char *fn, int offset) {
   mock(fn, offset);
-}
-
-void ppcGenMarker(EditorMarker *m) {
-  mock(m);
 }

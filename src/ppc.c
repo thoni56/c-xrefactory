@@ -6,7 +6,33 @@
 
 static int ppcIndentOffset = 0;
 
-void ppcGenSynchroRecord(void) {
+
+static void ppcGenOffsetPosition(char *fn, int offset) {
+    ppcIndent();
+    fprintf(communicationChannel, "<%s %s=%d %s=%ld>%s</%s>\n",
+            PPC_OFFSET_POSITION,
+            PPCA_OFFSET, offset,
+            PPCA_LEN, (unsigned long)strlen(fn), fn,
+            PPC_OFFSET_POSITION);
+}
+
+static void ppcGenMarker(EditorMarker *m) {
+    ppcGenOffsetPosition(m->buffer->name, m->offset);
+}
+
+static void ppcGenPosition(Position *p) {
+    char *fn;
+    assert(p!=NULL);
+    fn = fileTable.tab[p->file]->name;
+    ppcIndent();
+    fprintf(communicationChannel, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n",
+            PPC_LC_POSITION,
+            PPCA_LINE, p->line, PPCA_COL, p->col,
+            PPCA_LEN, (unsigned long)strlen(fn), fn,
+            PPC_LC_POSITION);
+}
+
+void ppcSynchronize(void) {
     fprintf(stdout, "<%s>\n", PPC_SYNCHRO_RECORD);
     fflush(stdout);
 }
@@ -17,49 +43,19 @@ void ppcIndent(void) {
         fputc(' ', communicationChannel);
 }
 
-void ppcGenPosition(Position *p) {
-    char *fn;
-    assert(p!=NULL);
-    fn = fileTable.tab[p->file]->name;
-    ppcIndent();
-    fprintf(communicationChannel, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n",
-            PPC_LC_POSITION,
-            PPCA_LINE, p->line, PPCA_COL, p->col,
-            PPCA_LEN, (unsigned long)strlen(fn), fn,
-            PPC_LC_POSITION);
-    //&ppcGenRecord(PPC_FILE, fileTable.tab[p->file]->name);
-    //&ppcGenNumericRecord(PPC_LINE, p->line,"");
-    //&ppcGenNumericRecord(PPC_COL, p->col,"");
-}
-
-void ppcGenGotoPositionRecord(Position *p) {
+void ppcGotoPosition(Position *p) {
     ppcGenRecordBegin(PPC_GOTO);
     ppcGenPosition(p);
     ppcGenRecordEnd(PPC_GOTO);
 }
 
-void ppcGenGotoMarkerRecord(EditorMarker *pos) {
+void ppcGotoMarker(EditorMarker *pos) {
     ppcGenRecordBegin(PPC_GOTO);
     ppcGenMarker(pos);
     ppcGenRecordEnd(PPC_GOTO);
 }
 
-void ppcGenOffsetPosition(char *fn, int offset) {
-    ppcIndent();
-    fprintf(communicationChannel, "<%s %s=%d %s=%ld>%s</%s>\n",
-            PPC_OFFSET_POSITION,
-            PPCA_OFFSET, offset,
-            PPCA_LEN, (unsigned long)strlen(fn), fn,
-            PPC_OFFSET_POSITION);
-    //&ppcGenRecord(PPC_FILE, m->buffer->name);
-    //&ppcGenNumericRecord(PPC_OFFSET, m->offset,"");
-}
-
-void ppcGenMarker(EditorMarker *m) {
-    ppcGenOffsetPosition(m->buffer->name, m->offset);
-}
-
-void ppcGenGotoOffsetPosition(char *fname, int offset) {
+void ppcGotoOffsetPosition(char *fname, int offset) {
     ppcGenRecordBegin(PPC_GOTO);
     ppcGenOffsetPosition(fname, offset);
     ppcGenRecordEnd(PPC_GOTO);
@@ -137,7 +133,7 @@ void ppcGenTmpBuff(void) {
     fflush(communicationChannel);
 }
 
-void ppcGenDisplaySelectionRecord(char *message, int messageType, int continuation) {
+void ppcDisplaySelection(char *message, int messageType, int continuation) {
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%ld %s=%d %s=%d>%s</%s>\n", PPC_DISPLAY_RESOLUTION,
             PPCA_LEN, (unsigned long)strlen(message),
@@ -146,35 +142,33 @@ void ppcGenDisplaySelectionRecord(char *message, int messageType, int continuati
             message, PPC_DISPLAY_RESOLUTION);
 }
 
-void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldLen, char *newName) {
-    int i;
-    ppcGenGotoOffsetPosition(file, offset);
+void ppcReplace(char *file, int offset, char *oldName, int oldLen, char *newName) {
+    ppcGotoOffsetPosition(file, offset);
     ppcGenRecordBegin(PPC_REFACTORING_REPLACEMENT);
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%d>", PPC_STRING_VALUE, PPCA_LEN, oldLen);
-    for(i=0; i<oldLen; i++) putc(oldName[i], communicationChannel);
+    for(int i=0; i<oldLen; i++)
+        putc(oldName[i], communicationChannel);
     fprintf(communicationChannel, "</%s> ", PPC_STRING_VALUE);
     ppcGenRecord(PPC_STRING_VALUE, newName);
     ppcGenRecordEnd(PPC_REFACTORING_REPLACEMENT);
 }
 
-void ppcGenPreCheckRecord(EditorMarker *pos, int oldLen) {
+void ppcPreCheck(EditorMarker *pos, int oldLen) {
     int     i;
     char    *bufferedText;
     bufferedText = pos->buffer->allocation.text + pos->offset;
-    ppcGenGotoMarkerRecord(pos);
+    ppcGotoMarker(pos);
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%d>", PPC_REFACTORING_PRECHECK, PPCA_LEN, oldLen);
     for(i=0; i<oldLen; i++) putc(bufferedText[i], communicationChannel);
     fprintf(communicationChannel, "</%s>\n", PPC_REFACTORING_PRECHECK);
 }
 
-void ppcGenReferencePreCheckRecord(Reference *r, char *text) {
-    int     len;
-    len = strlen(text);
-    ppcGenGotoPositionRecord(&r->p);
+void ppcReferencePreCheck(Reference *r, char *text) {
+    ppcGotoPosition(&r->p);
     ppcIndent();
-    fprintf(communicationChannel, "<%s %s=%d>", PPC_REFACTORING_PRECHECK, PPCA_LEN, len);
+    fprintf(communicationChannel, "<%s %s=%ld>", PPC_REFACTORING_PRECHECK, PPCA_LEN, (unsigned long)strlen(text));
     fprintf(communicationChannel, "%s", text);
     fprintf(communicationChannel, "</%s>\n", PPC_REFACTORING_PRECHECK);
 }

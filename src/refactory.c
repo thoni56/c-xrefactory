@@ -274,7 +274,7 @@ static void refactoryBeInteractive(void) {
     copyOptions(&s_cachedOptions, &options);
     for(;;) {
         closeMainOutputFile();
-        ppcGenSynchroRecord();
+        ppcSynchronize();
         copyOptions(&options, &s_cachedOptions);
         processOptions(argument_count(s_refactoryEditSrvInitOptions),
                        s_refactoryEditSrvInitOptions, INFILES_DISABLED);
@@ -298,10 +298,10 @@ static void refactoryBeInteractive(void) {
 
 
 void refactoryDisplayResolutionDialog(char *message,int messageType,int continuation) {
-    char tmpBuff[TMP_BUFF_SIZE];
-    strcpy(tmpBuff, message);
-    formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-    ppcGenDisplaySelectionRecord(tmpBuff, messageType, continuation);
+    char buf[TMP_BUFF_SIZE];
+    strcpy(buf, message);
+    formatOutputLine(buf, ERROR_MESSAGE_STARTING_OFFSET);
+    ppcDisplaySelection(buf, messageType, continuation);
     refactoryBeInteractive();
 }
 
@@ -421,7 +421,7 @@ void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
         switch (uu->operation) {
         case UNDO_REPLACE_STRING:
             if (gen == GEN_FULL_OUTPUT) {
-                ppcGenReplaceRecord(uu->buffer->name, uu->u.replace.offset,
+                ppcReplace(uu->buffer->name, uu->u.replace.offset,
                                     uu->buffer->allocation.text+uu->u.replace.offset,
                                     uu->u.replace.size, uu->u.replace.str);
             }
@@ -431,7 +431,7 @@ void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
             break;
         case UNDO_RENAME_BUFFER:
             if (gen == GEN_FULL_OUTPUT) {
-                ppcGenGotoOffsetPosition(uu->buffer->name, 0);
+                ppcGotoOffsetPosition(uu->buffer->name, 0);
                 ppcGenRecord(PPC_MOVE_FILE_AS, uu->u.rename.name);
             }
             editorRenameBuffer(uu->buffer, uu->u.rename.name, undoundo);
@@ -440,12 +440,12 @@ void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
             m1 = editorCrNewMarker(uu->buffer, uu->u.moveBlock.offset);
             m2 = editorCrNewMarker(uu->u.moveBlock.dbuffer, uu->u.moveBlock.doffset);
             if (gen == GEN_FULL_OUTPUT) {
-                ppcGenGotoMarkerRecord(m1);
+                ppcGotoMarker(m1);
                 ppcGenNumericRecord(PPC_REFACTORING_CUT_BLOCK,uu->u.moveBlock.size,"");
             }
             editorMoveBlock(m2, m1, uu->u.moveBlock.size, undoundo);
             if (gen == GEN_FULL_OUTPUT) {
-                ppcGenGotoMarkerRecord(m1);
+                ppcGotoMarker(m1);
                 ppcGenRecord(PPC_REFACTORING_PASTE_BLOCK, "");
             }
             editorFreeMarker(m2);
@@ -477,7 +477,7 @@ static void refactoryFatalErrorOnPosition(EditorMarker *p, int errType, char *me
     EditorUndo *redo;
     redo = NULL;
     editorUndoUntil(s_refactoringStartPoint, &redo);
-    ppcGenGotoMarkerRecord(p);
+    ppcGotoMarker(p);
     fatalError(errType, message, XREF_EXIT_ERR);
     // unreachable, but do the things properly
     editorApplyUndos(redo, NULL, &s_editorUndo, GEN_NO_OUTPUT);
@@ -1104,7 +1104,7 @@ bool tpCheckSuperMethodReferencesForDynToSt(void) {
     // synthetize an answer
     if (rr.foundSpecialRefItem!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
-        if (options.xref2) ppcGenGotoPositionRecord(&rr.foundSpecialR->p);
+        if (options.xref2) ppcGotoPosition(&rr.foundSpecialR->p);
         sprintf(tmpBuff,"This method invokes another method using the keyword \"super\". Current version of C-xrefactory does not know how to make it static.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
@@ -1131,7 +1131,7 @@ bool tpCheckOuterScopeUsagesForDynToSt(void) {
         sprintf(tmpBuff,"Inner class method is using symbols from outer scope. Current version of C-xrefactory does not know how to make it static.");
         // be soft, so that user can try it and see.
         if (options.xref2) {
-            ppcGenGotoPositionRecord(&rr.foundOuterScopeRef->p);
+            ppcGotoPosition(&rr.foundOuterScopeRef->p);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             ppcGenRecord(PPC_ERROR, tmpBuff);
         } else {
@@ -1431,7 +1431,7 @@ static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, EditorMark
         if (off1 < 0) off1 = 0;
         if (off2 >= pos->buffer->allocation.bufferSize) off2 = pos->buffer->allocation.bufferSize-1;
         pp = editorCrNewMarker(pos->buffer, off1);
-        ppcGenPreCheckRecord(pp, off2-off1);
+        ppcPreCheck(pp, off2-off1);
         editorFreeMarker(pp);
     }
 }
@@ -1597,7 +1597,7 @@ static void refactorySimpleRenaming(EditorMarkerList *occs, EditorMarker *point,
         for(ll=occs; ll!=NULL; ll=ll->next) {
             refactoryRenameTo(ll->marker, symname, refactoringOptions.renameTo);
         }
-        ppcGenGotoMarkerRecord(point);
+        ppcGotoMarker(point);
         if (refactoringOptions.theRefactoring == AVR_RENAME_CLASS) {
             if (strcmp(simpleFileNameWithoutSuffix_st(point->buffer->name), symname)==0) {
                 // O.K. file name equals to class name, rename file
@@ -1762,7 +1762,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace2( SymbolReferenceIt
                                                                ) {
     if (refOccursInRefs(r, rstack->r)) {
         char tmpBuff[TMP_BUFF_SIZE];
-        ppcGenGotoPositionRecord(&r->p);
+        ppcGotoPosition(&r->p);
         sprintf(tmpBuff, "The reference at this place refers to multiple symbols. The refactoring will probably damage your program. Do you really want to continue?");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
@@ -1841,7 +1841,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 
     // finish where you have started
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
 
     // no messages, they make problem on extract method
     //&if (check) ppcGenRecord(PPC_INFORMATION,"Symbol has been safely renamed");
@@ -1890,7 +1890,7 @@ static int refactoryGetParamPosition(EditorMarker *pos, char *fname, int argn) {
     if (! (strcmp(actName, fname)==0
            || strcmp(actName,"this")==0
            || strcmp(actName,"super")==0)) {
-        ppcGenGotoMarkerRecord(pos);
+        ppcGotoMarker(pos);
         sprintf(tmpBuff, "This reference is not pointing to the function/method name. Maybe a composed symbol. Sorry, do not know how to handle this case.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
@@ -1907,7 +1907,7 @@ static int refactoryGetParamPosition(EditorMarker *pos, char *fname, int argn) {
         || s_paramBeginPosition.file == -1
         || s_paramEndPosition.file == -1
         ) {
-        ppcGenGotoMarkerRecord(pos);
+        ppcGotoMarker(pos);
         errorMessage(ERR_INTERNAL, "Can't get end of parameter");
         res = RETURN_ERROR;
     }
@@ -1916,7 +1916,7 @@ static int refactoryGetParamPosition(EditorMarker *pos, char *fname, int argn) {
         || s_paramBeginPosition.line > s_paramEndPosition.line
         || (s_paramBeginPosition.line == s_paramEndPosition.line
             && s_paramBeginPosition.col > s_paramEndPosition.col)) {
-        ppcGenGotoMarkerRecord(pos);
+        ppcGotoMarker(pos);
         sprintf(tmpBuff, "Something goes wrong at this occurence, can't get reasonable parameter limites");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
@@ -1969,7 +1969,7 @@ static int refactoryAddStringAsParameter(EditorMarker *pos, EditorMarker *endm,
             sep1=", "; sep2="";
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
-            ppcGenGotoMarkerRecord(pos);
+            ppcGotoMarker(pos);
             sprintf(tmpBuff, "Something goes wrong, probably different parameter coordinates at different cpp passes.");
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             fatalError(ERR_INTERNAL, tmpBuff, XREF_EXIT_ERR);
@@ -2194,7 +2194,7 @@ static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker 
     //&editorDumpBuffer(occs->marker->buffer);
     //&editorDumpMarkerList(occs);
     // for some error mesages it is more natural that cursor does not move
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
     redoTrack = NULL;
     refactoryApplyParamManip(nameOnPoint, occs,
                              manip, argn1, argn2
@@ -2212,7 +2212,7 @@ static void refactoryParameterManipulation(EditorBuffer *buf, EditorMarker *poin
     refactoryApplyParameterManipulation(buf, point, manip, argn1, argn2);
     // and generate output
     refactoryApplyWholeRefactoringFromUndo();
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
 }
 
 static int createMarkersForAllReferencesInRegions(
@@ -2271,7 +2271,7 @@ static void refactoryApplyExpandShortNames(EditorBuffer *buf, EditorMarker *poin
                 char tmpBuff[TMP_BUFF_SIZE];
                 log_trace("expanding at %s:%d", ppp->marker->buffer->name, ppp->marker->offset);
                 if (ppp->usage.base == UsageNonExpandableNotFQTNameInClassOrMethod) {
-                    ppcGenGotoMarkerRecord(ppp->marker);
+                    ppcGotoMarker(ppp->marker);
                     sprintf(tmpBuff, "This occurence of %s would be misinterpreted after expansion to %s.\nNo action made at this place.", shortName, fqtName);
                     warningMessage(ERR_ST, tmpBuff);
                 } else if (ppp->usage.base == UsageNotFQFieldInClassOrMethod) {
@@ -2291,7 +2291,7 @@ static void refactoryApplyExpandShortNames(EditorBuffer *buf, EditorMarker *poin
 static void refactoryExpandShortNames(EditorBuffer *buf, EditorMarker *point) {
     refactoryApplyExpandShortNames(buf, point);
     refactoryApplyWholeRefactoringFromUndo();
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
 }
 
 static EditorMarker *refactoryReplaceStaticPrefix(EditorMarker *d, char *npref) {
@@ -2491,7 +2491,7 @@ static int refactoryInteractiveAskForAddImportAction(EditorMarkerList *ppp, int 
                                                      ) {
     int action;
     refactoryApplyWholeRefactoringFromUndo();  // make current state visible
-    ppcGenGotoMarkerRecord(ppp->marker);
+    ppcGotoMarker(ppp->marker);
     ppcGenNumericRecord(PPC_ADD_TO_IMPORTS_DIALOG,defaultAction,fqtName);
     refactoryBeInteractive();
     action = options.continueRefactoring;
@@ -2623,7 +2623,7 @@ static void refactoryReduceLongNamesInTheFile(EditorBuffer *buf, EditorMarker *p
     refactoryPerformReduceNamesAndAddImportsInSingleFile(point, &wholeBuffer, INTERACTIVE_NO);
     editorFreeMarkersAndRegionList(wholeBuffer);wholeBuffer=NULL;
     refactoryApplyWholeRefactoringFromUndo();
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
 }
 
 // this is reduction of a single fqt, problem is with detection of applicable context
@@ -2643,7 +2643,7 @@ static void refactoryAddToImports(EditorBuffer *buf, EditorMarker *point) {
     regionList=NULL;
 
     refactoryApplyWholeRefactoringFromUndo();
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
 }
 
 
@@ -2921,7 +2921,7 @@ static void refactoryMoveStaticFieldOrMethod(EditorMarker *point, int limitIndex
 
     // and generate output
     refactoryApplyWholeRefactoringFromUndo();
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
     ppcGenNumericRecord(PPC_INDENT, lines, "");
 }
 
@@ -3022,7 +3022,7 @@ static void refactoryMoveField(EditorMarker *point) {
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 
 
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
     ppcGenNumericRecord(PPC_INDENT, lines, "");
 }
 
@@ -3135,7 +3135,7 @@ static void refactoryMoveClass(EditorMarker *point) {
 
     // and generate output
     refactoryApplyWholeRefactoringFromUndo();
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
     ppcGenNumericRecord(PPC_INDENT, linenum, "");
 
     ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former class.");
@@ -3195,7 +3195,7 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
     refactoryApplyWholeRefactoringFromUndo();
 
     // indentation must be at the end (undo, redo does not work with)
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
     ppcGenNumericRecord(PPC_INDENT, linenum, "");
 
     // TODO check whether the original class was the only class in the file
@@ -3203,7 +3203,7 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
     // just to parse the file
     refactoryEditServerParseBuffer(refactoringOptions.project, npoint->buffer, npoint,NULL, "-olcxpushspecialname=", NULL);
     if (s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION].file == noFileIndex) {
-        ppcGenGotoMarkerRecord(npoint);
+        ppcGotoMarker(npoint);
         ppcGenRecord(PPC_KILL_BUFFER_REMOVE_FILE, "This file does not contain classes anymore, can I remove it?");
     }
     ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former class.");
@@ -3355,7 +3355,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
             for(ll=mm->markers; ll!=NULL; ll=ll->next) {
                 if (ll->usage.base == UsageMaybeQualifThisInClassOrMethod) {
                     editorUndoUntil(undoStartPoint,NULL);
-                    ppcGenGotoMarkerRecord(ll->marker);
+                    ppcGotoMarker(ll->marker);
                     errorMessage(ERR_ST, "The method is using qualified this to access enclosed instance. Do not know how to make it static.");
                     return;
                 } else if (ll->usage.base == UsageMaybeThisInClassOrMethod) {
@@ -3396,7 +3396,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     editorMarkersDifferences(&npoccs, &npadded, &diff1, &diff2);
     LIST_APPEND(EditorMarkerList, diff1, diff2); diff2=NULL;
     if (diff1!=NULL) {
-        ppcGenGotoMarkerRecord(point);
+        ppcGotoMarker(point);
         refactoryShowSafetyCheckFailingDialog( &diff1, "The new parameter conflicts with existing symbols");
     }
 
@@ -3418,7 +3418,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     editorFreeMarkersAndMarkerList(allrefs); allrefs=NULL;
 
     refactoryApplyWholeRefactoringFromUndo();
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
 }
 
 static int noSpaceChar(int c) {return(! isspace(c));}
@@ -3553,7 +3553,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     strcpy(nameOnPoint, refactoryGetIdentifierOnMarker_st(point));
     res = refactoryGetParamNamePosition(point, nameOnPoint, argn);
     if (res != RETURN_OK) {
-        ppcGenGotoMarkerRecord(point);
+        ppcGotoMarker(point);
         errorMessage(ERR_INTERNAL, "Can't determine position of parameter");
         return;
     }
@@ -3681,7 +3681,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
 
     // and generate output
     refactoryApplyWholeRefactoringFromUndo();
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
 
     // DONE!
 }
@@ -3799,7 +3799,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     for(ll=occs; ll!=NULL; ll=ll->next) {
         if (ll->usage.base == UsageAddrUsed) {
             char tmpBuff[TMP_BUFF_SIZE];
-            ppcGenGotoMarkerRecord(ll->marker);
+            ppcGotoMarker(ll->marker);
             sprintf(tmpBuff, "There is a combined l-value reference of the field. Current version of C-xrefactory doesn't  know how  to encapsulate such  assignment. Please, turn it into simple assignment (i.e. field = field 'op' ...;) first.");
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             errorMessage(ERR_ST, tmpBuff);
@@ -3937,10 +3937,10 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
 
     // put it here, undo-redo sometimes shifts markers
     de->offset = indoffset;
-    ppcGenGotoMarkerRecord(de);
+    ppcGotoMarker(de);
     ppcGenNumericRecord(PPC_INDENT, indlines, "");
 
-    ppcGenGotoMarkerRecord(point);
+    ppcGotoMarker(point);
 }
 
 static void refactorySelfEncapsulateField(EditorMarker *point) {
@@ -4648,7 +4648,7 @@ void mainRefactory(int argc, char **argv) {
     editorQuasiSaveModifiedBuffers();
 
     closeMainOutputFile();
-    ppcGenSynchroRecord();
+    ppcSynchronize();
 
     // exiting, put undefined, so that main will finish
     options.taskRegime = RegimeUndefined;

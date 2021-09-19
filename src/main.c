@@ -2429,6 +2429,7 @@ static int scheduleFileUsingTheMacro(void) {
     SymbolReferenceItem     ddd;
     SymbolsMenu     mm, *oldMenu;
     OlcxReferences    *tmpc;
+
     assert(s_olstringInMbody);
     tmpc = NULL;
     fillSymbolRefItem(&ddd, s_olstringInMbody,
@@ -2436,10 +2437,6 @@ static int scheduleFileUsingTheMacro(void) {
                                 noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal);
-
-    //& rr = refTabIsMember(&referenceTable, &ddd, &ii, &memb);
-    //& assert(rr);
-    //& if (rr==0) return noFileIndex;
 
     fillSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
     if (s_olcxCurrentUser==NULL || s_olcxCurrentUser->browserStack.top==NULL) {
@@ -2452,18 +2449,18 @@ static int scheduleFileUsingTheMacro(void) {
     oldMenu = s_olcxCurrentUser->browserStack.top->menuSym;
     s_olcxCurrentUser->browserStack.top->menuSym = &mm;
     s_olMacro2PassFile = noFileIndex;
-    log_trace(":looking for usage of '%s'", memb->name);
-    readOneAppropReferenceFile(s_olstringInMbody,secondPassMacroUsageFunctionSequence);
+    readOneAppropReferenceFile(s_olstringInMbody, secondPassMacroUsageFunctionSequence);
     s_olcxCurrentUser->browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
     log_trace(":scheduling file '%s'", fileTable.tab[s_olMacro2PassFile]->name);
-    if (s_olMacro2PassFile == noFileIndex) return noFileIndex;
+    if (s_olMacro2PassFile == noFileIndex)
+        return noFileIndex;
     return s_olMacro2PassFile;
 }
 
-// this is necessary to put new mtimies for header files
+// this is necessary to put new mtimes for header files
 static void setFullUpdateMtimesInFileTab(FileItem *fi) {
     if (fi->b.scheduledToUpdate || options.create) {
         fi->lastFullUpdateMtime = fi->lastModified;
@@ -2857,7 +2854,7 @@ static void mainXref(int argc, char **argv) {
     mainCallXref(argc, argv);
     closeMainOutputFile();
     if (options.xref2) {
-        ppcGenSynchroRecord();
+        ppcSynchronize();
     }
     if (options.last_message!=NULL) {
         fflush(dumpOut);
@@ -2946,7 +2943,7 @@ static void mainEditServer(int argc, char **argv) {
             fprintf(communicationChannel, "%s",options.last_message);
             fflush(communicationChannel);
         }
-        if (options.xref2) ppcGenSynchroRecord();
+        if (options.xref2) ppcSynchronize();
         /*fprintf(dumpOut, "request answered\n\n");fflush(dumpOut);*/
     }
     LEAVE();

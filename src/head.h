@@ -191,10 +191,6 @@ typedef enum language {
 
 /* ******************************************************************** */
 
-#define DEFINITION_NOT_FOUND_MESSAGE "Definition not found"
-
-/* *********************************************************************** */
-
 #define RESET_REFERENCE_USAGE(rrr,uuu) {\
     if (rrr!=NULL && rrr->usage.base > uuu) {\
         rrr->usage.base = uuu;\

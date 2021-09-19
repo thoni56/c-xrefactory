@@ -1223,7 +1223,7 @@ static void olcxAddReferencesToSymbolsMenu(SymbolsMenu  *cms,
 void gotoOnlineCxref(Position *p, int usage, char *suffix)
 {
     if (options.xref2) {
-        ppcGenGotoPositionRecord(p);
+        ppcGotoPosition(p);
     } else {
         fprintf(communicationChannel,"%s%s#*+*#%d %d :%c%s ;;\n", COLCX_GOTO_REFERENCE,
                 getRealFileNameStatic(fileTable.tab[p->file]->name),
@@ -1911,7 +1911,7 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
     }
     if (options.xref2) {
         ppcGenRecordEnd(PPC_REFERENCE_LIST);
-        //& if (refs!=NULL && refs->act!=NULL) ppcGenGotoPositionRecord(&refs->act->p);
+        //& if (refs!=NULL && refs->act!=NULL) ppcGotoPosition(&refs->act->p);
     }
     fflush(communicationChannel);
 }
@@ -1954,10 +1954,10 @@ static void olcxPushAndCallMacro(void) {
     symbolHighlighNameSprint(symbol, refs->hkSelectedSym);
     // precheck first
     for(rr=refs->r; rr!=NULL; rr=rr->next) {
-        ppcGenReferencePreCheckRecord(rr, symbol);
+        ppcReferencePreCheck(rr, symbol);
     }
     for(rr=refs->r; rr!=NULL; rr=rr->next) {
-        ppcGenReferencePreCheckRecord(rr, symbol);
+        ppcReferencePreCheck(rr, symbol);
         ppcGenRecord(PPC_CALL_MACRO, "");
     }
     LIST_REVERSE(Reference, refs->r);
@@ -2571,7 +2571,7 @@ static void olcxMenuSelectOnly(void) {
                 }
             }
         } else {
-            ppcGenGotoPositionRecord(&refs->act->p);
+            ppcGotoPosition(&refs->act->p);
         }
     } else {
         fprintf(communicationChannel, "*");
@@ -2931,7 +2931,7 @@ static void olcxReferenceRePush(void) {
         s_olcxCurrentUser->browserStack.top = nextrr;
         olcxGenGotoActReference(s_olcxCurrentUser->browserStack.top);
         // TODO, replace this by follwoing since 1.6.1
-        //& ppcGenGotoPositionRecord(&s_olcxCurrentUser->browserStack.top->cpos);
+        //& ppcGotoPosition(&s_olcxCurrentUser->browserStack.top->cpos);
         olcxPrintSymbolName(s_olcxCurrentUser->browserStack.top);
     } else {
         if (options.xref2) {
@@ -3199,7 +3199,7 @@ static void olCompletionSelect(void) {
     }
     if (options.xref2) {
         assert(s_olcxCurrentUser->completionsStack.root!=NULL);
-        ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.root->cpos);
+        ppcGotoPosition(&s_olcxCurrentUser->completionsStack.root->cpos);
         if (rr->csymType==TypeNonImportedClass) {
             ppcGenRecord(PPC_FQT_COMPLETION, rr->name);
         } else {
@@ -3225,7 +3225,7 @@ static void olcxReferenceSelectTagSearchItem(int refn) {
         return;
     }
     assert(s_olcxCurrentUser->retrieverStack.root!=NULL);
-    ppcGenGotoPositionRecord(&s_olcxCurrentUser->retrieverStack.root->cpos);
+    ppcGotoPosition(&s_olcxCurrentUser->retrieverStack.root->cpos);
     sprintf(ttt, " %s", rr->name);
     ppcGenRecord(PPC_SINGLE_COMPLETION, ttt);
 }
@@ -3236,7 +3236,7 @@ static void olCompletionBack(void) {
     top = s_olcxCurrentUser->completionsStack.top;
     if (top != NULL && top->previous != NULL) {
         s_olcxCurrentUser->completionsStack.top = s_olcxCurrentUser->completionsStack.top->previous;
-        ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.top->cpos);
+        ppcGotoPosition(&s_olcxCurrentUser->completionsStack.top->cpos);
         printCompletionsList(0);
     }
 }
@@ -3247,7 +3247,7 @@ static void olCompletionForward(void) {
     top = getNextTopStackItem(&s_olcxCurrentUser->completionsStack);
     if (top != NULL) {
         s_olcxCurrentUser->completionsStack.top = top;
-        ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.top->cpos);
+        ppcGotoPosition(&s_olcxCurrentUser->completionsStack.top->cpos);
         printCompletionsList(0);
     }
 }
@@ -4649,7 +4649,7 @@ void mainAnswerEditAction(void) {
         if (s_olcxCurrentUser->retrieverStack.top!=NULL &&
             s_olcxCurrentUser->retrieverStack.top->previous!=NULL) {
             s_olcxCurrentUser->retrieverStack.top = s_olcxCurrentUser->retrieverStack.top->previous;
-            ppcGenGotoPositionRecord(&s_olcxCurrentUser->retrieverStack.top->cpos);
+            ppcGotoPosition(&s_olcxCurrentUser->retrieverStack.top->cpos);
             printTagSearchResults();
         }
         break;
@@ -4658,7 +4658,7 @@ void mainAnswerEditAction(void) {
         nextrr = getNextTopStackItem(&s_olcxCurrentUser->retrieverStack);
         if (nextrr != NULL) {
             s_olcxCurrentUser->retrieverStack.top = nextrr;
-            ppcGenGotoPositionRecord(&s_olcxCurrentUser->retrieverStack.top->cpos);
+            ppcGotoPosition(&s_olcxCurrentUser->retrieverStack.top->cpos);
             printTagSearchResults();
         }
         break;
@@ -5297,7 +5297,8 @@ void printTagSearchResults(void) {
     }
     len = len1;
     // the second is writing
-    if (options.xref2) ppcGenRecordBegin(PPC_SYMBOL_LIST);
+    if (options.xref2)
+        ppcGenRecordBegin(PPC_SYMBOL_LIST);
     assert(s_olcxCurrentUser->retrieverStack.top);
     for(cc=s_olcxCurrentUser->retrieverStack.top->cpls; cc!=NULL; cc=cc->next) {
         ls = crTagSearchLineStatic(cc->name, &cc->ref.p,
