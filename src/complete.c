@@ -358,7 +358,7 @@ void olCompletionListInit(Position *originalPos) {
     olcxSetCurrentUser(options.user);
     olcxFreeOldCompletionItems(&s_olcxCurrentUser->completionsStack);
     olcxPushEmptyStackItem(&s_olcxCurrentUser->completionsStack);
-    s_olcxCurrentUser->completionsStack.top->cpos = *originalPos;
+    s_olcxCurrentUser->completionsStack.top->callerPosition = *originalPos;
 }
 
 static int completionsWillPrintEllipsis(S_olCompletion *olc) {
@@ -455,7 +455,7 @@ void printCompletions(Completions* c) {
     }
     if ((! c->fullMatchFlag) && c->alternativeIndex==1) {
         if (options.xref2) {
-            ppcGotoPosition(&s_olcxCurrentUser->completionsStack.top->cpos);
+            ppcGotoPosition(&s_olcxCurrentUser->completionsStack.top->callerPosition);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
         } else {
             fprintf(communicationChannel,".%s", c->comPrefix+c->idToProcessLen);
@@ -464,7 +464,7 @@ void printCompletions(Completions* c) {
     }
     if ((! c->fullMatchFlag) && strlen(c->comPrefix) > c->idToProcessLen) {
         if (options.xref2) {
-            ppcGotoPosition(&s_olcxCurrentUser->completionsStack.top->cpos);
+            ppcGotoPosition(&s_olcxCurrentUser->completionsStack.top->callerPosition);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->comPrefix);
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         } else {

@@ -853,7 +853,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void
             // O.K. there is a reference inside the moved class, add it to the list,
             assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
             rstack = s_olcxCurrentUser->browserStack.top;
-            olcxAddReference(&rstack->r, rr, 0);
+            olcxAddReference(&rstack->references, rr, 0);
             break;
         }
     }
@@ -910,11 +910,11 @@ bool tpCheckMoveClassAccessibilities(void) {
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
-    if (rstack->r!=NULL) {
+    if (rstack->references!=NULL) {
         ss = rstack->menuSym;
         assert(ss);
-        ss->s.refs = olcxCopyRefList(rstack->r);
-        rstack->act = rstack->r;
+        ss->s.refs = olcxCopyRefList(rstack->references);
+        rstack->actual = rstack->references;
         if (refactoringOptions.refactoringRegime==RegimeRefactory) {
             refactoryDisplayResolutionDialog(
                                              "These references inside moved class are refering to symbols which will be inaccessible at new class location. You should adjust their access first. (Each symbol is listed only once)",
@@ -1384,7 +1384,7 @@ static bool refactoryMakeSafetyCheckAndUndo(
     olcxPushSpecialCheckMenuSym(OLO_SAFETY_CHECK_INIT, LINK_NAME_SAFETY_CHECK_MISSED);
     refactorySafetyCheck( refactoringOptions.project, defin->buffer, defin);
 
-    chks = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->r,filter0, NULL);
+    chks = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->references,filter0, NULL);
     //&sprintf(tmpBuff,"\nchecking\n");ppcGenTmpBuff();editorDumpMarkerList(*occs);sprintf(tmpBuff,"and\n");ppcGenTmpBuff;editorDumpMarkerList(chks);
     editorMarkersDifferences(occs, &chks, &diff1, &diff2);
     //&fprintf(dumpOut,"\ndiff1==\n");editorDumpMarkerList(diff1);fprintf(dumpOut,"diff2==\n");editorDumpMarkerList(diff2);fflush(dumpOut);
@@ -1624,7 +1624,7 @@ static EditorMarkerList *refactoryGetReferences(
     refactoryPushReferences( buf, point, "-olcxrename", resolveMessage,
                              messageType);
     assert(s_olcxCurrentUser->browserStack.top && s_olcxCurrentUser->browserStack.top->hkSelectedSym);
-    occs = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->r, filter0, NULL);
+    occs = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->references, filter0, NULL);
     return(occs);
 }
 
@@ -1736,7 +1736,7 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
     refactoryPushReferences(point->buffer, point, "-olcxrename", NULL, 0);
     assert(s_olcxCurrentUser->browserStack.top && s_olcxCurrentUser->browserStack.top->menuSym);
 
-    for(rr=s_olcxCurrentUser->browserStack.top->r; rr!=NULL; rr=rr->next) {
+    for(rr=s_olcxCurrentUser->browserStack.top->references; rr!=NULL; rr=rr->next) {
         if (! IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
             if (rr->usage.requiredAccess < accIndex) {
                 accIndex = rr->usage.requiredAccess;
@@ -1760,7 +1760,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace2( SymbolReferenceIt
                                                                OlcxReferences *rstack,
                                                                Reference *r
                                                                ) {
-    if (refOccursInRefs(r, rstack->r)) {
+    if (refOccursInRefs(r, rstack->references)) {
         char tmpBuff[TMP_BUFF_SIZE];
         ppcGotoPosition(&r->p);
         sprintf(tmpBuff, "The reference at this place refers to multiple symbols. The refactoring will probably damage your program. Do you really want to continue?");
@@ -2002,7 +2002,7 @@ static int refactoryAddStringAsParameter(EditorMarker *pos, EditorMarker *endm,
 static int refactoryIsThisSymbolUsed(EditorMarker *pos) {
     int refn;
     refactoryPushReferences( pos->buffer, pos, "-olcxpushforlm",STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
-    LIST_LEN(refn, Reference, s_olcxCurrentUser->browserStack.top->r);
+    LIST_LEN(refn, Reference, s_olcxCurrentUser->browserStack.top->references);
     olcxPopOnly();
     return(refn > 1);
 }
@@ -2186,7 +2186,7 @@ static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker 
 
     strcpy(nameOnPoint, refactoryGetIdentifierOnMarker_st(point));
     refactoryPushReferences( buf, point, "-olcxargmanip",STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
-    occs = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->r, filter0, NULL);
+    occs = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->references, filter0, NULL);
     startPoint = s_editorUndo;
     // first just check that loaded files are up to date
     //& refactoryPreCheckThatSymbolRefsCorresponds(nameOnPoint, occs);
@@ -2331,7 +2331,7 @@ static void refactoryReduceLongReferencesInRegions(
     refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point,NULL,
                                    "-olcxuselesslongnames", "-olallchecks");
     olcxPushSpecial(LINK_NAME_IMPORTED_QUALIFIED_ITEM, OLO_USELESS_LONG_NAME);
-    rli = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->r, filter0, NULL);
+    rli = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->references, filter0, NULL);
     editorSplitMarkersWithRespectToRegions(&rli, regions, &ri, &ro);
     editorFreeMarkersAndMarkerList(ro); ro = NULL;
 

@@ -1246,7 +1246,7 @@ static void cxrfReference(int size,
                                                1, 1, 0, usage,0,&s_noPos, UsageNone);
                         }
                     } else {
-                        olcxAddReference(&s_olcxCurrentUser->browserStack.top->r, &rr,
+                        olcxAddReference(&s_olcxCurrentUser->browserStack.top->references, &rr,
                                          lastIncomingInfo.onLineRefIsBestMatchFlag);
                     }
                 }

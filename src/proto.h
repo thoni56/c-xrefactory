@@ -481,13 +481,13 @@ typedef struct SymbolsMenu {
 // if you add something to this structure, update olcxMoveTopFromAnotherUser()
 // !!!!!
 typedef struct olcxReferences {
-    struct reference        *r;			/* list of references */
-    struct reference        *act;		/* actual reference */
-    char					command;	/* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
-    char					language;	/* C/JAVA/YACC */
-    time_t					atime;		/* last access time */
-    struct position			cpos;		/* caller position */
-    struct olCompletion		*cpls;		/* completions list for OLO_COMPLETION */
+    struct reference        *references; /* list of references */
+    struct reference        *actual;     /* actual reference */
+    char					command;     /* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
+    char					language;    /* C/JAVA/YACC */
+    time_t					accessTime;	 /* last access time */
+    struct position			callerPosition; /* caller position */
+    struct olCompletion		*cpls;       /* completions list for OLO_COMPLETION */
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
     struct SymbolsMenu	*hkSelectedSym; /* resolved symbols under the cursor */
