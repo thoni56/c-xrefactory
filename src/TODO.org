@@ -18,6 +18,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO Cleanup log/messages - now there are a lot of special cases
   We really want command line options to govern what the user/client sees on stdout/stderr(?)
   But if -log is used the log file should always contain everything
+* TODO Handle void as no parameters in formal argument lists, e.g. when refactoring them
 * TODO Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 * TODO Include of <file> does not follow standard so Cgreen's 'internal/...' is not found
 * TODO displayingErrorMessages() seems to be duplicated functionality

@@ -1203,7 +1203,7 @@ static void makeExtraction(void) {
     }
 
     if (options.xref2)
-        ppcBeginWithAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
+        ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
 
     CX_ALLOCC(rb, EXTRACT_GEN_BUFFER_SIZE, char);
 
@@ -1243,7 +1243,7 @@ static void makeExtraction(void) {
         generateNewFunctionTail(program);
 
     if (options.xref2) {
-        ppcGenNumericRecord(PPC_INT_VALUE, s_cp.funBegPosition, "");
+        ppcValueRecord(PPC_INT_VALUE, s_cp.funBegPosition, "");
     } else {
         fprintf(communicationChannel,"!%d!\n", s_cp.funBegPosition);
         fflush(communicationChannel);

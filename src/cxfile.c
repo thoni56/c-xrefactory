@@ -340,7 +340,7 @@ void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
         //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, rr, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
-        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, fileTable.tab[rr->p.file]->name, rr->p.file, options.olcxSearchString, s_wildcardSearch);ppcGenTmpBuff();
+        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, fileTable.tab[rr->p.file]->name, rr->p.file, options.olcxSearchString, s_wildcardSearch);ppcBottomInformation(tmpBuff);
         olCompletionListPrepend(sname, NULL, NULL, 0, NULL, ss, rr, ss->b.symType, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time

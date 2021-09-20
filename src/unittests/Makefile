@@ -4,7 +4,7 @@ vpath %.so /usr/lib:/usr/local/lib
 vpath %.dylib /usr/lib:/usr/local/lib
 
 WARNINGS = -Wall -Wno-char-subscripts
-CFLAGS = -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. -I/usr/include -I/usr/local/include $(COVERAGE) -DHAVE_ZLIB
+CFLAGS = -DUNITTESTING -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. -I/usr/include -I/usr/local/include $(COVERAGE) -DHAVE_ZLIB
 
 OBJDIR=.objects
 
@@ -82,6 +82,7 @@ $(eval $(call UNITTEST,memory,log))
 $(eval $(call UNITTEST,misc,protocol log type))
 $(eval $(call UNITTEST,olcxtab,hash))
 $(eval $(call UNITTEST,options,protocol log position memory))
+$(eval $(call UNITTEST,ppc,protocol))
 $(eval $(call UNITTEST,position,log))
 $(eval $(call UNITTEST,semact,protocol hash position log storage type))
 $(eval $(call UNITTEST,symbol))

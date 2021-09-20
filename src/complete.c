@@ -378,7 +378,7 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
     LIST_LEN(max, S_olCompletion, olc);
     if (options.xref2) {
         if (options.editor == EDITOR_JEDIT) {
-            ppcBeginWithTwoNumericValues(PPC_FULL_MULTIPLE_COMPLETIONS,
+            ppcBeginWithTwoNumericAttributes(PPC_FULL_MULTIPLE_COMPLETIONS,
                                            PPCA_NUMBER, max,
                                            PPCA_NO_FOCUS, noFocus);
         } else {

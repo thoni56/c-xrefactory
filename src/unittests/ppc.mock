@@ -17,7 +17,7 @@ void ppcBegin(char *kind) {
   mock(kind);
 }
 
-void ppcBeginWithAttribute(char *kind, char *attr, char *val) {
+void ppcBeginWithStringAttribute(char *kind, char *attr, char *val) {
   mock(kind, attr, val);
 }
 
@@ -33,7 +33,7 @@ void ppcBeginWithNumericValue(char *kind, int val) {
   mock(kind, val);
 }
 
-void ppcBeginWithTwoNumericValues(char *kind, char *attr1, int val1, char *attr2, int val2) {
+void ppcBeginWithTwoNumericAttributes(char *kind, char *attr1, int val1, char *attr2, int val2) {
   mock(kind, attr1, val1, attr2, val2);
 }
 
@@ -53,7 +53,7 @@ void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message) {
   mock(kind, attr, val, message);
 }
 
-void ppcGenNumericRecord(char *kind, int val, char *message) {
+void ppcValueRecord(char *kind, int val, char *message) {
   mock(kind, val, message);
 }
 
@@ -61,8 +61,8 @@ void ppcGenRecord(char *kind, char *message) {
   mock(kind, message);
 }
 
-void ppcGenTmpBuff(void) {
-  mock();
+void ppcBottomInformation(char *string) {
+  mock(string);
 }
 
 void ppcDisplaySelection(char *message, int messageType, int continuation) {
@@ -73,11 +73,11 @@ void ppcGotoMarker(EditorMarker *pos) {
   mock(pos);
 }
 
-void ppcGenDefinitionNotFoundWarning(void) {
+void ppcWarning(char *message) {
   mock();
 }
 
-void ppcGenDefinitionNotFoundWarningAtBottom(void) {
+void ppcBottomWarning(char *message) {
   mock();
 }
 

@@ -664,7 +664,7 @@ static void olGetAvailableRefactorings(void) {
     ppcBegin(PPC_AVAILABLE_REFACTORINGS);
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
         if (availableRefactorings[i].available) {
-            ppcGenNumericRecord(PPC_INT_VALUE, i, availableRefactorings[i].option);
+            ppcValueRecord(PPC_INT_VALUE, i, availableRefactorings[i].option);
         }
     }
     ppcEnd(PPC_AVAILABLE_REFACTORINGS);
@@ -1255,7 +1255,7 @@ void gotoOnlineCxref(Position *p, int usage, char *suffix)
         }                                                               \
         if (checkFlag==CHECK_NULL && refs == NULL) {                    \
             if (options.xref2) {                                          \
-                ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "Empty stack"); \
+                ppcBottomWarning("Empty stack");        \
             } else {                                                    \
                 fprintf(communicationChannel, "=");                                    \
             }                                                           \
@@ -1312,7 +1312,7 @@ static void olcxNaturalReorder(OlcxReferences *refs) {
 
 static void olcxGenNoReferenceSignal(void) {
     if (options.xref2) {
-        ppcGenRecord(PPC_BOTTOM_INFORMATION, "No reference");
+        ppcBottomInformation("No reference");
     } else {
         fprintf(communicationChannel, "_");
     }
@@ -1571,7 +1571,7 @@ static void orderRefsAndGotoDefinition(OlcxReferences *refs, int afterMenuFlag) 
         else res = checkTheJavaDocBrowsing(refs);
         if (res==0) {
             if (options.xref2) {
-                ppcGenDefinitionNotFoundWarning();
+                ppcWarning("Definition not found");
             } else {
                 fprintf(communicationChannel,"*** Definition reference not found **");
             }
@@ -2123,7 +2123,7 @@ static void olcxSetActReferenceToFirstVisible(OlcxReferences *refs, Reference *r
         refs->actual = r;
     } else {
         if (options.xref2) {
-            ppcGenRecord(PPC_BOTTOM_INFORMATION, "Moving to the first reference");
+            ppcBottomInformation("Moving to the first reference");
         }
         r = refs->references;
         while (r!=NULL && r->usage.base>=rlevel) r = r->next;
@@ -2159,7 +2159,7 @@ static void olcxReferenceMinus(void) {
         }
         if (l==NULL) {
             if (options.xref2) {
-                ppcGenRecord(PPC_BOTTOM_INFORMATION, "Moving to the last reference");
+                ppcBottomInformation("Moving to the last reference");
             }
             for(; r!=NULL; r=r->next) {
                 if (r->usage.base < rlevel) l = r;
@@ -2194,7 +2194,7 @@ static void olcxReferenceGetCurrentRefn(void) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     n = getCurrentRefPosition(refs);
     assert(options.xref2);
-    ppcGenNumericRecord(PPC_UPDATE_CURRENT_REFERENCE, n, "");
+    ppcValueRecord(PPC_UPDATE_CURRENT_REFERENCE, n, "");
 }
 
 static void olcxReferenceGotoCaller(void) {
@@ -2215,14 +2215,14 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
     SymbolsMenu *ss;
     if (refs==NULL) {
         if (options.xref2) {
-            ppcGenRecord(PPC_BOTTOM_INFORMATION, "stack is now empty");
+            ppcBottomInformation("stack is now empty");
         } else {
             fprintf(communicationChannel, "*stack is now empty");
         }
         //&     fprintf(communicationChannel, "*");
     } else if (refs->hkSelectedSym==NULL) {
         if (options.xref2) {
-            ppcGenRecord(PPC_BOTTOM_INFORMATION, "Current top symbol: <empty>");
+            ppcBottomInformation("Current top symbol: <empty>");
         } else {
             fprintf(communicationChannel, "*Current top symbol: <empty>");
         }
@@ -2232,7 +2232,7 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
             sprintf(ttt, "Current top symbol: ");
             assert(strlen(ttt) < MAX_SYMBOL_MESSAGE_LEN);
             sprintfSymbolLinkName(ttt+strlen(ttt), ss);
-            ppcGenRecord(PPC_BOTTOM_INFORMATION, ttt);
+            ppcBottomInformation(ttt);
         } else {
             fprintf(communicationChannel, "*Current top symbol: ");
             printSymbolLinkName(communicationChannel, ss);
@@ -2425,7 +2425,7 @@ static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
     int line;
 
     for(ss=menu; ss!=NULL; ss=ss->next) {
-        //&sprintf(tmpBuff,"checking line %d", ss->outOnLine);  ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff);
+        //&sprintf(tmpBuff,"checking line %d", ss->outOnLine); ppcBottomInformation(tmpBuff);
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
         if (line == options.olcxMenuSelectLineNum)
             goto breakl;
@@ -2475,7 +2475,7 @@ void olProcessSelectedReferences(
     //& renameCollationSymbols(ss);
     LIST_MERGE_SORT(Reference, rstack->references, olcxReferenceInternalLessFunction);
     for(ss=rstack->menuSym; ss!=NULL; ss=ss->next) {
-        //&LIST_LEN(nn, Reference, ss->s.refs);sprintf(tmpBuff,"xxx1 %d refs for %s", nn, fileTable.tab[ss->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
+        //&LIST_LEN(nn, Reference, ss->s.refs);sprintf(tmpBuff,"xxx1 %d refs for %s", nn, fileTable.tab[ss->s.vApplClass]->name);ppcBottomInformation(tmpBuff);
         referencesMapFun(rstack, ss);
     }
     olcxSetCurrentRefsOnCaller(rstack);
@@ -2546,7 +2546,7 @@ static void olcxMenuSelectOnly(void) {
     }
     if (sel==NULL) {
         if (options.xref2) {
-            ppcGenRecord(PPC_BOTTOM_WARNING, "No Symbol");
+            ppcBottomWarning("No Symbol");
         } else {
             fprintf(communicationChannel,"*No symbol");
         }
@@ -2562,12 +2562,12 @@ static void olcxMenuSelectOnly(void) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintfSymbolLinkName(ttt, sel);
                 sprintf(tmpBuff,"Class %s does not define %s", javaGetShortClassNameFromFileNum_st(sel->s.vApplClass), ttt);
-                ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, tmpBuff);
+                ppcBottomWarning(tmpBuff);
             } else {
                 if (!olcxBrowseSymbolInJavaDoc(&sel->s)) {  //& checkTheJavaDocBrowsing(refs);
-                    ppcGenDefinitionNotFoundWarningAtBottom();
+                    ppcBottomWarning("Definition not found");
                 } else {
-                    ppcGenRecord(PPC_BOTTOM_INFORMATION, "Definition not found, loading javadoc.");
+                    ppcBottomInformation("Definition not found, loading javadoc.");
                 }
             }
         } else {
@@ -2935,7 +2935,7 @@ static void olcxReferenceRePush(void) {
         olcxPrintSymbolName(s_olcxCurrentUser->browserStack.top);
     } else {
         if (options.xref2) {
-            ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "You are on the top of browser stack.");
+            ppcBottomWarning("You are on the top of browser stack.");
         } else {
             fprintf(communicationChannel, "*** Complete stack, no pop-ed references");
         }
@@ -5011,7 +5011,7 @@ void putOnLineLoadedReferences(SymbolReferenceItem *p) {
                                      &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols) {
         assert(cms);
-        //&LIST_LEN(nn, Reference, p->refs);sprintf(tmpBuff,"!putting %d references of %s\n", nn, fileTable.tab[p->vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
+        //&LIST_LEN(nn, Reference, p->refs);sprintf(tmpBuff,"!putting %d references of %s\n", nn, fileTable.tab[p->vApplClass]->name);ppcBottomInformation(tmpBuff);
         for(rr=p->refs; rr!=NULL; rr=rr->next) {
             olcxAddReferenceToSymbolsMenu(cms, rr, (ols == 2));
         }

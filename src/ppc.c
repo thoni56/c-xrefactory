@@ -6,6 +6,10 @@
 
 static int ppcIndentOffset = 0;
 
+#ifdef UNITTESTING
+#define fprintf mocked_fprintf
+extern int mocked_fprintf(FILE *stream, const char *format, ...);
+#endif
 
 static void ppcGenOffsetPosition(char *fn, int offset) {
     ppcIndent();
@@ -67,7 +71,7 @@ void ppcBegin(char *kind) {
     ppcIndentOffset++;
 }
 
-void ppcBeginWithAttribute(char *kind, char *attr, char *val) {
+void ppcBeginWithStringAttribute(char *kind, char *attr, char *val) {
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%s>", kind, attr, val);
     ppcIndentOffset++;
@@ -90,12 +94,12 @@ void ppcBeginWithNumericValue(char *kind, int val) {
     fprintf(communicationChannel, "<%s %s=%d>\n", kind, PPCA_VALUE, val);
 }
 
-void ppcBeginWithNumericValueAndAttribute(char *kind, int val, char *attr, char *attrVal) {
+void ppcBeginWithNumericValueAndAttribute(char *kind, int value, char *attr, char *attrVal) {
     ppcIndent();
-    fprintf(communicationChannel, "<%s %s=%d %s=%s>\n", kind, PPCA_VALUE, val, attr, attrVal);
+    fprintf(communicationChannel, "<%s %s=%d %s=%s>\n", kind, PPCA_VALUE, value, attr, attrVal);
 }
 
-void ppcBeginWithTwoNumericValues(char *kind, char *attr1, int val1, char *attr2, int val2) {
+void ppcBeginWithTwoNumericAttributes(char *kind, char *attr1, int val1, char *attr2, int val2) {
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%d %s=%d>\n", kind, attr1, val1, attr2, val2);
 }
@@ -112,7 +116,7 @@ void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message) {
             message, kind);
 }
 
-void ppcGenNumericRecord(char *kind, int val,char *message) {
+void ppcValueRecord(char *kind, int val,char *message) {
     ppcIndent();
     ppcGenRecordWithNumeric(kind, PPCA_VALUE, val, message);
 }
@@ -122,15 +126,6 @@ void ppcGenRecord(char *kind, char *message) {
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%ld>%s</%s>\n", kind, PPCA_LEN, (unsigned long)strlen(message),
             message, kind);
-}
-
-// use this for debugging purposes only!!!
-void ppcGenTmpBuff(void) {
-    char tmpBuff[TMP_BUFF_SIZE];
-
-    ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
-    //&ppcGenRecord(PPC_INFORMATION,tmpBuff);
-    fflush(communicationChannel);
 }
 
 void ppcDisplaySelection(char *message, int messageType, int continuation) {
@@ -173,10 +168,16 @@ void ppcReferencePreCheck(Reference *r, char *text) {
     fprintf(communicationChannel, "</%s>\n", PPC_REFACTORING_PRECHECK);
 }
 
-void ppcGenDefinitionNotFoundWarning(void) {
-    ppcGenRecord(PPC_WARNING, DEFINITION_NOT_FOUND_MESSAGE);
+void ppcWarning(char *message) {
+    ppcGenRecord(PPC_WARNING, message);
 }
 
-void ppcGenDefinitionNotFoundWarningAtBottom(void) {
-    ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, DEFINITION_NOT_FOUND_MESSAGE);
+void ppcBottomWarning(char *message) {
+    ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, message);
+}
+
+void ppcBottomInformation(char *message) {
+    ppcGenRecord(PPC_BOTTOM_INFORMATION, message);
+    //&ppcGenRecord(PPC_INFORMATION,message);
+    fflush(communicationChannel);
 }

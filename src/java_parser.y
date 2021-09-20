@@ -1373,11 +1373,11 @@ _bef_:	{
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
                             s_cps.cxMemoryIndexAtMethodBegin = s_cp.cxMemoryIndexAtFunctionBegin;
                             s_cps.cxMemoryIndexAtMethodEnd = cxMemory->index;
-                            /*& sprintf(tmpBuff,"setting %s, %d,%d   %d,%d",
-                                    olcxOptionsName[options.server_operation],
-                                    s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored,
-                                    s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd),
-                                ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff); &*/
+                                 /*& sprintf(tmpBuff,"setting %s, %d,%d   %d,%d",
+                                     olcxOptionsName[options.server_operation],
+                                     s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored,
+                                     s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd),
+                                     ppcBottomInformation(tmpBuff); &*/
                             s_cp.thisMethodMemoriesStored = 1;
                             if (options.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,

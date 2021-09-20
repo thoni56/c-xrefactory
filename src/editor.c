@@ -1211,22 +1211,26 @@ void editorFreeMarkersAndMarkerList(EditorMarkerList *occs) {
 void editorDumpMarker(EditorMarker *mm) {
     char tmpBuff[TMP_BUFF_SIZE];
 
-    sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->buffer->name), mm->offset, CHAR_ON_MARKER(mm)); ppcGenTmpBuff();
+    sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->buffer->name), mm->offset, CHAR_ON_MARKER(mm));
+    ppcBottomInformation(tmpBuff);
 }
 
 void editorDumpMarkerList(EditorMarkerList *mml) {
     EditorMarkerList *mm;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    sprintf(tmpBuff, "------------------[[dumping editor markers]]");ppcGenTmpBuff();
+    sprintf(tmpBuff, "------------------[[dumping editor markers]]");
+    ppcBottomInformation(tmpBuff);
     for(mm=mml; mm!=NULL; mm=mm->next) {
         if (mm->marker == NULL) {
-            sprintf(tmpBuff, "[null]");ppcGenTmpBuff();
+            sprintf(tmpBuff, "[null]");
+            ppcBottomInformation(tmpBuff);
         } else {
-            sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->marker->buffer->name), mm->marker->offset, CHAR_ON_MARKER(mm->marker)); ppcGenTmpBuff();
+            sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->marker->buffer->name), mm->marker->offset, CHAR_ON_MARKER(mm->marker));
+            ppcBottomInformation(tmpBuff);
         }
     }
-    sprintf(tmpBuff, "------------------[[dumpend]]\n");ppcGenTmpBuff();
+    sprintf(tmpBuff, "------------------[[dumpend]]\n");ppcBottomInformation(tmpBuff);
 }
 
 void editorDumpRegionList(EditorRegionList *mml) {

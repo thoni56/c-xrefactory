@@ -2041,7 +2041,7 @@ int javaMethodApplicability(Symbol *memb, char *actArgs) {
     assert(memb && memb->bits.symbolType==TypeDefault && memb->u.type);
     assert(memb->u.type->kind == TypeFunction && memb->u.type->u.m.signature);
     fargs = memb->u.type->u.m.signature;
-//&sprintf(tmpBuff,"testing applicability of %s to %s\n",fargs,actArgs);ppcGenTmpBuff();
+//&sprintf(tmpBuff,"testing applicability of %s to %s\n",fargs,actArgs);ppcBottomInformation(tmpBuff);
     assert(*fargs == '(');
     fargs ++;
     while (*fargs != ')' && *actArgs!=0) {
@@ -2096,8 +2096,8 @@ static TypeModifier *javaMethodInvocation(
     baseCl = rfs->baseClass->u.s->classFile;
     assert(baseCl != -1);
 
-//&sprintf(tmpBuff,"java method invocation\n"); ppcGenTmpBuff();
-//&sprintf(tmpBuff,"the method is %s == '%s'\n",memb->name,memb->linkName);ppcGenTmpBuff();
+//&sprintf(tmpBuff,"java method invocation\n"); ppcBottomInformation(tmpBuff);
+//&sprintf(tmpBuff,"the method is %s == '%s'\n",memb->name,memb->linkName);ppcBottomInformation(tmpBuff);
     assert(memb && memb->bits.symbolType==TypeDefault && memb->u.type->kind == TypeFunction);
     for(aaa=args; aaa!=NULL; aaa=aaa->next) {
         if (aaa->d->kind == TypeError) {
@@ -2111,11 +2111,11 @@ static TypeModifier *javaMethodInvocation(
     for(aaa=args; aaa!=NULL; aaa=aaa->next) {
         actArgi += javaTypeToString(aaa->d,actArg+actArgi,MAX_PROFILE_SIZE-actArgi);
     }
-//&sprintf(tmpBuff,"arguments types == %s\n",actArg);ppcGenTmpBuff();
+//&sprintf(tmpBuff,"arguments types == %s\n",actArg);ppcBottomInformation(tmpBuff);
     appli = 0;
     do {
         assert(memb != NULL);
-//&sprintf(tmpBuff,"testing: %s\n",memb->linkName);ppcGenTmpBuff();
+//&sprintf(tmpBuff,"testing: %s\n",memb->linkName);ppcBottomInformation(tmpBuff);
         if (javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, memb)
             && javaMethodApplicability(memb,actArg) == PROFILE_APPLICABLE) {
             appl[appli] = memb;
@@ -2124,7 +2124,7 @@ static TypeModifier *javaMethodInvocation(
             funCl[appli] = rfs->currClass->u.s->classFile;
             assert(funCl[appli] != -1);
             appli++;
-//&sprintf(tmpBuff,"applicable: %s of %s\n",memb->linkName,rfs->currClass->linkName);ppcGenTmpBuff();
+//&sprintf(tmpBuff,"applicable: %s of %s\n",memb->linkName,rfs->currClass->linkName);ppcBottomInformation(tmpBuff);
         }
         rr = findStrRecordSym(rfs, name->name, &memb,
                               CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
@@ -2134,7 +2134,7 @@ static TypeModifier *javaMethodInvocation(
         }
     } while (rr==RETURN_OK);
     if (appli == 0) return(&s_errorModifier);
-//&sprintf(tmpBuff,"looking for smallest\n");ppcGenTmpBuff();
+//&sprintf(tmpBuff,"looking for smallest\n");ppcBottomInformation(tmpBuff);
     smallesti = 0;
     for (i=1; i<appli; i++) {
         if (! javaSmallerProfile(appl[smallesti], appl[i])) smallesti = i;
@@ -2146,7 +2146,7 @@ static TypeModifier *javaMethodInvocation(
     for (i=0; i<appli; i++) {
         if (! javaSmallerProfile(appl[smallesti], appl[i])) return(&s_errorModifier);
     }
-//&sprintf(tmpBuff,"the invoked method is %s of %s\n\n",appl[smallesti]->linkName,fileTable.tab[funCl[smallesti]]->name);ppcGenTmpBuff();
+//&sprintf(tmpBuff,"the invoked method is %s of %s\n\n",appl[smallesti]->linkName,fileTable.tab[funCl[smallesti]]->name);ppcBottomInformation(tmpBuff);
     assert(appl[smallesti]->bits.symbolType == TypeDefault);
     assert(appl[smallesti]->u.type->kind == TypeFunction);
     assert(funCl[smallesti] != -1);
@@ -2523,7 +2523,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
         nst = oldStat->thisClass->u.s->nest;
         noff = oldStat->currentNestedIndex;
         oldStat->currentNestedIndex ++;
-//&sprintf(tmpBuff,"checking %d of %d of %s(%d)\n", noff,nnest,oldStat->thisClass->linkName, oldStat->thisClass);ppcGenTmpBuff();
+//&sprintf(tmpBuff,"checking %d of %d of %s(%d)\n", noff,nnest,oldStat->thisClass->linkName, oldStat->thisClass);ppcBottomInformation(tmpBuff);
         assert(noff >=0 && noff<nnest);
         nn = & nst[noff];
         // nested class, it should be the same order as in first pass

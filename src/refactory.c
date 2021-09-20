@@ -441,7 +441,7 @@ void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
             m2 = editorCrNewMarker(uu->u.moveBlock.dbuffer, uu->u.moveBlock.doffset);
             if (gen == GEN_FULL_OUTPUT) {
                 ppcGotoMarker(m1);
-                ppcGenNumericRecord(PPC_REFACTORING_CUT_BLOCK,uu->u.moveBlock.size,"");
+                ppcValueRecord(PPC_REFACTORING_CUT_BLOCK,uu->u.moveBlock.size,"");
             }
             editorMoveBlock(m2, m1, uu->u.moveBlock.size, undoundo);
             if (gen == GEN_FULL_OUTPUT) {
@@ -1211,7 +1211,7 @@ bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     if (flag == REQ_SUBCLASS) cl=fileTable.tab[ss->s.vApplClass]->inferiorClasses;
     else cl=fileTable.tab[ss->s.vApplClass]->superClasses;
     for(; cl!=NULL; cl=cl->next) {
-        //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, fileTable.tab[cl->superClass]->name, target->u.s->classFile, fileTable.tab[target->u.s->classFile]->name);ppcGenTmpBuff();
+        //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, fileTable.tab[cl->superClass]->name, target->u.s->classFile, fileTable.tab[target->u.s->classFile]->name);ppcBottomInformation(tmpBuff);
         if (cl->superClass == target->u.s->classFile) {
             found = true;
             break;
@@ -1385,7 +1385,7 @@ static bool refactoryMakeSafetyCheckAndUndo(
     refactorySafetyCheck( refactoringOptions.project, defin->buffer, defin);
 
     chks = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->references,filter0, NULL);
-    //&sprintf(tmpBuff,"\nchecking\n");ppcGenTmpBuff();editorDumpMarkerList(*occs);sprintf(tmpBuff,"and\n");ppcGenTmpBuff;editorDumpMarkerList(chks);
+    //&sprintf(tmpBuff,"\nchecking\n");ppcBottomInformation(tmpBuff);editorDumpMarkerList(*occs);sprintf(tmpBuff,"and\n");ppcBottomInformation(tmpBuff);editorDumpMarkerList(chks);
     editorMarkersDifferences(occs, &chks, &diff1, &diff2);
     //&fprintf(dumpOut,"\ndiff1==\n");editorDumpMarkerList(diff1);fprintf(dumpOut,"diff2==\n");editorDumpMarkerList(diff2);fflush(dumpOut);
     editorFreeMarkersAndMarkerList(chks);
@@ -2492,7 +2492,7 @@ static int refactoryInteractiveAskForAddImportAction(EditorMarkerList *ppp, int 
     int action;
     refactoryApplyWholeRefactoringFromUndo();  // make current state visible
     ppcGotoMarker(ppp->marker);
-    ppcGenNumericRecord(PPC_ADD_TO_IMPORTS_DIALOG,defaultAction,fqtName);
+    ppcValueRecord(PPC_ADD_TO_IMPORTS_DIALOG,defaultAction,fqtName);
     refactoryBeInteractive();
     action = options.continueRefactoring;
     return(action);
@@ -2553,7 +2553,7 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
                 } else {
                     action = translatePassToAddImportAction(defaultAction);
                 }
-                //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(ppp->marker->buffer->ftnum), fqtName, action); ppcGenTmpBuff();
+                //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(ppp->marker->buffer->ftnum), fqtName, action); ppcBottomInformation(tmpBuff);
                 switch (action) {
                 case RC_IMPORT_ON_DEMAND:
                     strcpy(starName, fqtName);
@@ -2916,13 +2916,13 @@ static void refactoryMoveStaticFieldOrMethod(EditorMarker *point, int limitIndex
     refactoryPerformMovingOfStaticObjectAndMakeItPublic(mstart, point, mend, target,
                                                         targetFqtName,
                                                         &accFlags, APPLY_CHECKS, limitIndex);
-    //&sprintf(tmpBuff,"original acc == %d", accFlags); ppcGenTmpBuff();
+    //&sprintf(tmpBuff,"original acc == %d", accFlags); ppcBottomInformation(tmpBuff);
     refactoryRestrictAccessibility(point, limitIndex, accFlags);
 
     // and generate output
     refactoryApplyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
-    ppcGenNumericRecord(PPC_INDENT, lines, "");
+    ppcValueRecord(PPC_INDENT, lines, "");
 }
 
 
@@ -3023,7 +3023,7 @@ static void refactoryMoveField(EditorMarker *point) {
 
 
     ppcGotoMarker(point);
-    ppcGenNumericRecord(PPC_INDENT, lines, "");
+    ppcValueRecord(PPC_INDENT, lines, "");
 }
 
 // ---------------------------------------------------------- MoveClass
@@ -3106,7 +3106,7 @@ static void refactoryPerformMoveClass(EditorMarker *point,
     if (ss->s.b.accessFlags & AccessStatic) {
         if (! targetIsNestedInClass) {
             // nested -> top level
-            //&sprintf(tmpBuff,"removing modifier"); ppcGenTmpBuff();
+            //&sprintf(tmpBuff,"removing modifier"); ppcBottomInformation(tmpBuff);
             refactoryRemoveModifier(point, SPP_CLASS_DECLARATION_BEGIN_POSITION, "static");
         }
     } else {
@@ -3136,7 +3136,7 @@ static void refactoryMoveClass(EditorMarker *point) {
     // and generate output
     refactoryApplyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
-    ppcGenNumericRecord(PPC_INDENT, linenum, "");
+    ppcValueRecord(PPC_INDENT, linenum, "");
 
     ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former class.");
 }
@@ -3196,7 +3196,7 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
 
     // indentation must be at the end (undo, redo does not work with)
     ppcGotoMarker(point);
-    ppcGenNumericRecord(PPC_INDENT, linenum, "");
+    ppcValueRecord(PPC_INDENT, linenum, "");
 
     // TODO check whether the original class was the only class in the file
     npoint = editorCrNewMarker(buff, 0);
@@ -3938,7 +3938,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     // put it here, undo-redo sometimes shifts markers
     de->offset = indoffset;
     ppcGotoMarker(de);
-    ppcGenNumericRecord(PPC_INDENT, indlines, "");
+    ppcValueRecord(PPC_INDENT, indlines, "");
 
     ppcGotoMarker(point);
 }

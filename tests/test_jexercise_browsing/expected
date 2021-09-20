@@ -277,7 +277,7 @@ end-of-options
 end-of-options
 
 <sync>
-<bottom-warning len=<n>>No Symbol</bottom-warning>
+<bottom-warning beep=1 len=<n>>No Symbol</bottom-warning>
 -exit
 end-of-options
 
