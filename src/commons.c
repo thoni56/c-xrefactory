@@ -258,35 +258,35 @@ int extractPathInto(char *source, char *dest) {
 
 /*************************************************************************/
 
-static void formatMessage(char *out, int errCode, char *mess) {
+static void formatMessage(char *out, int errCode, char *text) {
     if (options.taskRegime != RegimeEditServer) {
         sprintf(out, "%s ", placeIdent());
         out += strlen(out);
     }
     switch (errCode) {
     case ERR_CANT_OPEN:
-        sprintf(out, "Can't open file %s : %s", mess, strerror(errno));
+        sprintf(out, "Can't open file %s : %s", text, strerror(errno));
         break;
     case ERR_CANT_OPEN_FOR_READ:
-        sprintf(out, "Can't open file %s for reading : %s", mess, strerror(errno));
+        sprintf(out, "Can't open file %s for reading : %s", text, strerror(errno));
         break;
     case ERR_CANT_OPEN_FOR_WRITE:
-        sprintf(out, "Can't open file %s for writing : %s", mess, strerror(errno));
+        sprintf(out, "Can't open file %s for writing : %s", text, strerror(errno));
         break;
     case ERR_NO_MEMORY:
-        sprintf(out, "Memory %s overflowed, read TROUBLES section of README file.", mess);
+        sprintf(out, "Memory %s overflowed, read TROUBLES section of README file.", text);
         break;
     case ERR_INTERNAL:
-        sprintf(out, "Internal error, %s", mess);
+        sprintf(out, "Internal error, %s", text);
         break;
     case ERR_INTERNAL_CHECK:
-        sprintf(out, "Internal check %s failed", mess);
+        sprintf(out, "Internal check %s failed", text);
         break;
     case ERR_CFG:
-        sprintf(out, "Problem while reading config record %s", mess);
+        sprintf(out, "Problem while reading config record %s", text);
         break;
     default:
-        sprintf(out, "%s", mess);
+        sprintf(out, "%s", text);
         break;
     }
     out += strlen(out);
