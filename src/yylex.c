@@ -563,7 +563,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
             });
     }
     if (editorBuffer==NULL && file==NULL) {
-        log_error("failed to open '%s'", name);
+        log_trace("failed to open '%s'", name);
         return false;
     }
  found:
@@ -589,6 +589,8 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
         assert(options.taskRegime);
         if (options.taskRegime!=RegimeEditServer)
             warningMessage(ERR_CANT_OPEN, iname);
+        else
+            log_error("Can't open file '%s'", fname);
     } else {
         addIncludeReferences(currentFile.lexBuffer.buffer.fileNumber, ipos);
     }

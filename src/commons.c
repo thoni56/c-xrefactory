@@ -265,25 +265,25 @@ static void formatMessage(char *out, int errCode, char *mess) {
     }
     switch (errCode) {
     case ERR_CANT_OPEN:
-        sprintf(out, "can't open file %s : %s", mess, strerror(errno));
+        sprintf(out, "Can't open file %s : %s", mess, strerror(errno));
         break;
     case ERR_CANT_OPEN_FOR_READ:
-        sprintf(out, "can't open file %s for reading : %s", mess, strerror(errno));
+        sprintf(out, "Can't open file %s for reading : %s", mess, strerror(errno));
         break;
     case ERR_CANT_OPEN_FOR_WRITE:
-        sprintf(out, "can't open file %s for writing : %s", mess, strerror(errno));
+        sprintf(out, "Can't open file %s for writing : %s", mess, strerror(errno));
         break;
     case ERR_NO_MEMORY:
-        sprintf(out, "memory %s overflowed, read TROUBLES section of README file.", mess);
+        sprintf(out, "Memory %s overflowed, read TROUBLES section of README file.", mess);
         break;
     case ERR_INTERNAL:
-        sprintf(out, "internal error, %s", mess);
+        sprintf(out, "Internal error, %s", mess);
         break;
     case ERR_INTERNAL_CHECK:
-        sprintf(out, "internal check %s", mess);
+        sprintf(out, "Internal check %s failed", mess);
         break;
     case ERR_CFG:
-        sprintf(out, "a problem while reading config record %s", mess);
+        sprintf(out, "Problem while reading config record %s", mess);
         break;
     default:
         sprintf(out, "%s", mess);
@@ -330,7 +330,7 @@ static void writeErrorMessage(int errorCode, char *message) {
 }
 
 void errorMessage(int errCode, char *mess) {
-    if ((! options.noErrors) && (! s_javaPreScanOnly)) {
+    if (!options.noErrors && !s_javaPreScanOnly) {
         writeErrorMessage(errCode, mess);
     }
 }
