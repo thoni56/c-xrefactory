@@ -1027,7 +1027,7 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
 }
 
 void olcxInit(void) {
-    void * uu[OLCX_USER_RESERVE];
+    void *uu[OLCX_USER_RESERVE];
 
     REAL_MEMORY_INIT(olcxMemory);
     REAL_MEMORY_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, UserOlcxData *);
@@ -1041,7 +1041,7 @@ void olcxInit(void) {
 }
 
 
-static void initUserOlcx(UserOlcxData *dd, char *user) {
+static void initUserOlcxData(UserOlcxData *dd, char *user) {
     dd->name = user;
     dd->browserStack.top = NULL;
     dd->browserStack.root = NULL;
@@ -1061,7 +1061,7 @@ UserOlcxData *olcxSetCurrentUser(char *user) {
     int sz;
     char *nn;
 
-    initUserOlcx(&dd, user);
+    initUserOlcxData(&dd, user);
     if (! olcxTabIsMember(&s_olcxTab, &dd, &not_used1, &memb)) {
         // I have changed it to FT, so it never invokes freeing of OLCX
         FT_ALLOC(memb, UserOlcxData);
@@ -1070,7 +1070,7 @@ UserOlcxData *olcxSetCurrentUser(char *user) {
             sz = sizeof(void*);
         FT_ALLOCC(nn, sz, char); // why this is in ftMem ?, some pb with free
         strcpy(nn, user);
-        initUserOlcx(memb, nn);
+        initUserOlcxData(memb, nn);
         olcxTabAdd(&s_olcxTab, memb, &not_used2);
     }
     s_olcxCurrentUser = memb;
