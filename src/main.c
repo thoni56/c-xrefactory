@@ -2475,14 +2475,14 @@ static void mainCloseInputFile(bool inputIn) {
     }
 }
 
-static void mainEditSrvParseInputFile(int *firstPassing, bool inputIn) {
+static void mainEditSrvParseInputFile(int *firstPass, bool inputIn) {
     if (inputIn) {
         if (options.server_operation!=OLO_TAG_SEARCH && options.server_operation!=OLO_PUSH_NAME) {
             log_trace("parse start");
             recoverFromCache();
             mainParseInputFile();
             log_trace("parse end");
-            *firstPassing = 0;
+            *firstPass = 0;
         }
         currentFile.lexBuffer.buffer.isAtEOF = false;
         mainCloseInputFile(inputIn);
@@ -2653,16 +2653,16 @@ static int needToProcessInputFile(void) {
 /* *************************************************************** */
 /*                          Xref regime                            */
 /* *************************************************************** */
-static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *_firstPassing, int *_atLeastOneProcessed ) {
+static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *_firstPass, int *_atLeastOneProcessed ) {
     bool inputIn = *_inputIn;
-    int firstPassing = *_firstPassing;
+    int firstPass = *_firstPass;
     int atLeastOneProcessed = *_atLeastOneProcessed;
 
     maxPasses = 1;
     for(currentPass=1; currentPass<=maxPasses; currentPass++) {
-        if (!firstPassing)
+        if (!firstPass)
             copyOptions(&options, &s_cachedOptions);
-        mainFileProcessingInitialisations(&firstPassing,
+        mainFileProcessingInitialisations(&firstPass,
                                           argc, argv, 0, NULL, &inputIn,
                                           &s_language);
         s_olOriginalFileNumber = s_input_file_number;
@@ -2686,20 +2686,20 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
             fprintf(dumpOut, "\tmaybe forgotten -p option?\n");
         }
         // no multiple passes for java programs
-        firstPassing = 0;
+        firstPass = 0;
         currentFile.lexBuffer.buffer.isAtEOF = false;
         if (LANGUAGE(LANG_JAVA)) goto fileParsed;
     }
 
  fileParsed:
     *_inputIn = inputIn;
-    *_firstPassing = firstPassing;
+    *_firstPass = firstPass;
     *_atLeastOneProcessed = atLeastOneProcessed;
 }
 
 static void mainXrefOneWholeFileProcessing(int argc, char **argv,
                                            FileItem *ff,
-                                           int *firstPassing, int *atLeastOneProcessed) {
+                                           int *firstPass, int *atLeastOneProcessed) {
     int         inputIn;
     inputFilename = ff->name;
     s_fileProcessStartTime = time(NULL);
@@ -2709,7 +2709,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
         ff->lastFullUpdateMtime = ff->lastModified;
     }
     mainXrefProcessInputFile(argc, argv, &inputIn,
-                             firstPassing, atLeastOneProcessed);
+                             firstPass, atLeastOneProcessed);
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very carefull about this!!!
@@ -2762,7 +2762,7 @@ static FileItem *mainCreateListOfInputFiles(void) {
 
 void mainCallXref(int argc, char **argv) {
     static char *cxFreeBase;
-    static int firstPassing, atLeastOneProcessed;
+    static int firstPass, atLeastOneProcessed;
     static FileItem *ffc, *pffc;
     static int messagePrinted = 0;
     static int numberOfInputs, inputCounter, pinputCounter;
@@ -2779,7 +2779,7 @@ void mainCallXref(int argc, char **argv) {
     LIST_LEN(numberOfInputs, FileItem, ffc);
     for(;;) {
         currentPass = ANY_PASS;
-        firstPassing = 1;
+        firstPass = 1;
         if ((reason=setjmp(cxmemOverflow))!=0) {
             mainReferencesOverflowed(cxFreeBase,reason);
             if (reason==LONGJMP_REASON_FILE_ABORT) {
@@ -2797,7 +2797,7 @@ void mainCallXref(int argc, char **argv) {
                 if (LANGUAGE(LANG_JAVA)) {
                     /* TODO: problematic if a single file generates overflow, e.g. a JAR
                        Can we just reread from the last class file? */
-                    mainXrefOneWholeFileProcessing(argc, argv, pffc, &firstPassing, &atLeastOneProcessed);
+                    mainXrefOneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed);
                 }
                 if (options.xref2)
                     writeRelativeProgress(10*pinputCounter/numberOfInputs);
@@ -2806,7 +2806,7 @@ void mainCallXref(int argc, char **argv) {
             s_javaPreScanOnly = 0;
             s_fileAbortionEnabled = 1;
             for(; ffc!=NULL; ffc=ffc->next) {
-                mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPassing, &atLeastOneProcessed);
+                mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed);
                 ffc->b.scheduledToProcess = false;
                 ffc->b.scheduledToUpdate = false;
                 if (options.xref2)
@@ -2908,11 +2908,11 @@ void mainCallEditServer(int argc, char **argv,
 
 static void mainEditServer(int argc, char **argv) {
     int     nargc;  char **nargv;
-    int     firstPassing;
+    int     firstPass;
 
     ENTER();
     s_cxResizingBlocked = 1;
-    firstPassing = 1;
+    firstPass = 1;
     copyOptions(&s_cachedOptions, &options);
     for(;;) {
         currentPass = ANY_PASS;
@@ -2927,7 +2927,7 @@ static void mainEditServer(int argc, char **argv) {
         if (communicationChannel==stdout && options.outputFileName!=NULL) {
             mainOpenOutputFile(options.outputFileName);
         }
-        mainCallEditServer(argc, argv, nargc, nargv, &firstPassing);
+        mainCallEditServer(argc, argv, nargc, nargv, &firstPass);
         if (options.server_operation == OLO_ABOUT) {
             aboutMessage();
         } else {
