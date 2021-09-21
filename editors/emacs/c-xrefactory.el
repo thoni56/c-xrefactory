@@ -901,7 +901,6 @@ faces and highlighting in buffers created by C-xrefactory.
       (define-key c-xref-menu [c-xref-sb-menu] '("Browsing with Symbol Stack" . c-xref-sb-menu))
       (define-key c-xref-menu [c-xref-lm-menu] '("Local Motion" . c-xref-lm-menu))
       (define-key c-xref-menu [separator-buffers3] '("--"))
-      (define-key c-xref-menu [c-xref-gen-html] '("Generate HTML Documentation" . c-xref-gen-html-documentation))
       (define-key c-xref-menu [c-xref-fast-update-refs] '("Fast Update of Tags" . c-xref-fast-update-refs))
       (define-key c-xref-menu [c-xref-update-refs] '("Full Update of Tags" . c-xref-update-refs))
       (define-key c-xref-menu [c-xref-create-refs] '("Create C-xref Tags" . c-xref-create-refs))
@@ -998,7 +997,6 @@ faces and highlighting in buffers created by C-xrefactory.
           ["Create C-xref Tags"             c-xref-create-refs t]
           ["Full Update of Tags"            c-xref-update-refs t]
           ["Fast Update of Tags"            c-xref-fast-update-refs t]
-          ["Generate HTML Documentation"	c-xref-gen-html-documentation t]
           "--"
           ;; browsing menus will come here
           ["Search Definition in Tags"	c-xref-search-definition-in-tag-file t]
@@ -1130,7 +1128,6 @@ your .c-xrefrc file.
 (autoload 'c-xref-create-refs "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-fast-update-refs "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-update-refs "c-xref" c-xref-default-documentation-string t)
-(autoload 'c-xref-gen-html-documentation "c-xref" c-xref-default-documentation-string t)
 
 (autoload 'c-xref-alternative-previous-reference "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-alternative-next-reference "c-xref" c-xref-default-documentation-string t)

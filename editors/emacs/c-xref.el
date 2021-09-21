@@ -5185,31 +5185,6 @@ part belonging to this project.
         )
       )
 
-    ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; HTML common questions
-    (setq htmlopt "")
-    (setq aaa (read-from-minibuffer
-               "Will you generate HTML documentation for this project [yn]? " "n"))
-    (if (or (equal aaa "y") (equal aaa "Y"))
-        (progn
-          (if hom
-              (setq rrr (format "%s%cHTML" hom c-xref-slash))
-            (setq rrr (format "%sHTML" inidir))
-            )
-          (setq rrr (c-xref-read-jpath-from-minibuffer
-                     "Output directory for generated HTML documentation: " rrr))
-          (setq rrr (c-xref-remove-pending-slash (c-xref-backslashify-name rrr)))
-          (setq htmlopt "  //  HTML configuration")
-          (setq htmlopt (format "%s\n  %s" htmlopt
-                                (c-xref-optionify-string (concat "-htmlroot=" rrr) "\"")))
-          (setq htmlopt (format "%s\n  -htmlgxlist -htmllxlist -htmldirectx -htmllinenums" htmlopt))
-          (setq htmlopt (format "%s\n  -htmltab=%d -htmllinenumcolor=000000" htmlopt tab-width))
-          (if (or (equal planguage "j") (equal planguage "J")
-                  (equal planguage "b") (equal planguage "B"))
-              (progn
-                (setq htmlopt (format "%s\n  -htmlgenjavadoclinks -htmlcutsuffix -htmllinenumlabel=line" htmlopt))
-                ))
-          ))
-
     ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; all questions done
     (find-file c-xref-options-file)
     (c-xref-append-new-project-section pname planguage "y" ;; pcomments
@@ -5953,22 +5928,6 @@ browser and refactorer) are updated.  The behavior of the
   (interactive "P")
   (c-xref-entry-point-make-initialisations)
   (c-xref-server-tags-process (cons "-update" nil))
-  (c-xref-tags-process-show-log)
-)
-
-(defun c-xref-gen-html-documentation ()
-"Generate HTML documentation for active project.
-
-This function executes 'c-xref -html' command.  The effect of the
-invocation is that C-xrefactory generates files containing html
-form of source files.  This function requires that tag file is
-created and is up to date.  It also requires that options
-controlling HTML generation for active project are configured in
-the C-xrefactory configuration file.
-"
-  (interactive "")
-  (c-xref-entry-point-make-initialisations)
-  (c-xref-server-tags-process (cons "-html" nil))
   (c-xref-tags-process-show-log)
 )
 
