@@ -1925,7 +1925,7 @@ void writeRelativeProgress(int val) {
     if (val==100) s_progressOffset++;
 }
 
-static void mainFileProcessingInitialisations(int *firstPass,
+static void mainFileProcessingInitialisations(bool *firstPass,
                                               int argc, char **argv,      // command-line options
                                               int nargc, char **nargv,    // piped options
                                               bool *outInputIn,
@@ -1957,7 +1957,7 @@ static void mainFileProcessingInitialisations(int *firstPass,
     ) {
         if (*firstPass) {
             initCaching();
-            *firstPass = 0;
+            *firstPass = false;
         } else {
             recoverCachePointZero();
         }
@@ -2475,14 +2475,14 @@ static void mainCloseInputFile(bool inputIn) {
     }
 }
 
-static void mainEditSrvParseInputFile(int *firstPass, bool inputIn) {
+static void mainEditSrvParseInputFile(bool *firstPass, bool inputIn) {
     if (inputIn) {
         if (options.server_operation!=OLO_TAG_SEARCH && options.server_operation!=OLO_PUSH_NAME) {
             log_trace("parse start");
             recoverFromCache();
             mainParseInputFile();
             log_trace("parse end");
-            *firstPass = 0;
+            *firstPass = false;
         }
         currentFile.lexBuffer.buffer.isAtEOF = false;
         mainCloseInputFile(inputIn);
@@ -2544,7 +2544,7 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
 
 static void mainEditSrvFileSinglePass(int argc, char **argv,
                                       int nargc, char **nargv,
-                                      int *firstPass
+                                      bool *firstPass
 ) {
     bool inputIn = false;
     int ol2procfile;
@@ -2585,7 +2585,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
 
 static void mainEditServerProcessFile(int argc, char **argv,
                                       int nargc, char **nargv,
-                                      int *firstPass
+                                      bool *firstPass
 ) {
     assert(fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
     maxPasses = 1;
@@ -2653,9 +2653,9 @@ static int needToProcessInputFile(void) {
 /* *************************************************************** */
 /*                          Xref regime                            */
 /* *************************************************************** */
-static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *_firstPass, int *_atLeastOneProcessed ) {
+static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, bool *_firstPass, bool *_atLeastOneProcessed ) {
     bool inputIn = *_inputIn;
-    int firstPass = *_firstPass;
+    bool firstPass = *_firstPass;
     int atLeastOneProcessed = *_atLeastOneProcessed;
 
     maxPasses = 1;
@@ -2686,7 +2686,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
             fprintf(dumpOut, "\tmaybe forgotten -p option?\n");
         }
         // no multiple passes for java programs
-        firstPass = 0;
+        firstPass = false;
         currentFile.lexBuffer.buffer.isAtEOF = false;
         if (LANGUAGE(LANG_JAVA)) goto fileParsed;
     }
@@ -2699,7 +2699,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
 
 static void mainXrefOneWholeFileProcessing(int argc, char **argv,
                                            FileItem *ff,
-                                           int *firstPass, int *atLeastOneProcessed) {
+                                           bool *firstPass, bool *atLeastOneProcessed) {
     int         inputIn;
     inputFilename = ff->name;
     s_fileProcessStartTime = time(NULL);
@@ -2762,7 +2762,7 @@ static FileItem *mainCreateListOfInputFiles(void) {
 
 void mainCallXref(int argc, char **argv) {
     static char *cxFreeBase;
-    static int firstPass, atLeastOneProcessed;
+    static bool firstPass, atLeastOneProcessed;
     static FileItem *ffc, *pffc;
     static int messagePrinted = 0;
     static int numberOfInputs, inputCounter, pinputCounter;
@@ -2779,7 +2779,7 @@ void mainCallXref(int argc, char **argv) {
     LIST_LEN(numberOfInputs, FileItem, ffc);
     for(;;) {
         currentPass = ANY_PASS;
-        firstPass = 1;
+        firstPass = true;
         if ((reason=setjmp(cxmemOverflow))!=0) {
             mainReferencesOverflowed(cxFreeBase,reason);
             if (reason==LONGJMP_REASON_FILE_ABORT) {
@@ -2883,7 +2883,7 @@ void mainCallEditServerInit(int nargc, char **nargv) {
 
 void mainCallEditServer(int argc, char **argv,
                         int nargc, char **nargv,
-                        int *firstPass
+                        bool *firstPass
 ) {
     ENTER();
     editorLoadAllOpenedBufferFiles();
@@ -2907,12 +2907,12 @@ void mainCallEditServer(int argc, char **argv,
 }
 
 static void mainEditServer(int argc, char **argv) {
-    int     nargc;  char **nargv;
-    int     firstPass;
+    int nargc;  char **nargv;
+    bool firstPass;
 
     ENTER();
     s_cxResizingBlocked = 1;
-    firstPass = 1;
+    firstPass = true;
     copyOptions(&s_cachedOptions, &options);
     for(;;) {
         currentPass = ANY_PASS;

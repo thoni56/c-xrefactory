@@ -21,7 +21,7 @@ extern void mainSetLanguage(char *inFileName, Language *outLanguage);
 extern void mainCallEditServerInit(int nargc, char **nargv);
 extern void mainCallEditServer(int argc, char **argv,
                                int nargc, char **nargv,
-                               int *firstPass);
+                               bool *firstPass);
 extern void mainCallXref(int argc, char **argv);
 extern void mainTaskEntryInitialisations(int argc, char **argv);
 extern void mainOpenOutputFile(char *ofile);

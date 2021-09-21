@@ -55,7 +55,7 @@ typedef struct disabledList {
 
 static EditorUndo *s_refactoringStartPoint;
 
-static int refactoryXrefEditServerSubTaskFirstPass = 1;
+static bool refactoryXrefEditServerSubTaskFirstPass = 1;
 
 static char *s_refactoryEditSrvInitOptions[] = {
     "xref",
