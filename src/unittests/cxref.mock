@@ -205,9 +205,9 @@ char *getXrefEnvironmentValue(char *name) {
     return (char *) mock(name);
 }
 
-int itIsSymbolToPushOlRefences(SymbolReferenceItem *p, OlcxReferences *rstack, SymbolsMenu **rss,
+bool itIsSymbolToPushOlRefences(SymbolReferenceItem *p, OlcxReferences *rstack, SymbolsMenu **rss,
                                int checkSelFlag) {
-    return (int) mock(p, rstack, rss, checkSelFlag);
+    return (bool) mock(p, rstack, rss, checkSelFlag);
 }
 
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *cms, Reference *rr, int bestFitFlag) {

@@ -9,6 +9,13 @@ int s_fileAbortionEnabled;
 
 #include "lexem.h"
 
+Position s_spp[SPP_MAX];
+
+int s_progressOffset=0;
+int s_progressFactor=1;
+
+Position s_staticPrefixStartPosition;
+
 char mbMemory[SIZE_mbMemory];
 int mbMemoryIndex=0;
 char ppmMemory[SIZE_ppmMemory];

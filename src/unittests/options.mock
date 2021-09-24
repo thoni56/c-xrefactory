@@ -4,6 +4,7 @@
 
 Options options;
 Options refactoringOptions;
+Options s_cachedOptions;
 
 void xrefSetenv(char *name, char *val) {
   mock(name, val);

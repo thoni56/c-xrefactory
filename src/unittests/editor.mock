@@ -2,8 +2,19 @@
 #include "editor.h"
 #include <cgreen/mocks.h>
 
+
+EditorUndo *s_editorUndo;
+
 void editorInit(void) {
   mock();
+}
+
+EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous, EditorMarker *next) {
+    return (EditorMarker *)mock(buffer, offset, previous, next);
+}
+
+EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
+    return (EditorRegionList *)mock(begin, end, next);
 }
 
 int editorFileStatus(char *path, struct stat *statbuf) {
