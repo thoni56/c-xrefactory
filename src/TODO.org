@@ -5,14 +5,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
+* DOING Selecting automatic project selection after having set a specific does not seem to work
 * DOING Move XX_ALLOCC and friends to "memory" module
-* DOING Handle for-loops with declarations ("for (int i = 0;...")
-** DONE Grammar changes for C and Yacc
-** TODO Scope rules for loop variable, don't really understand how that works...
-   Seems to be working?!??! Check that it does using push-go and extract.
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
-* TODO Selecting automatic project selection after having set a specific does not seem to work
 * TODO Use -trace and -debug to change level in log file only
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO Cleanup log/messages - now there are a lot of special cases
@@ -128,6 +124,10 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Handle for-loops with declarations ("for (int i = 0;...")
+** DONE Grammar changes for C and Yacc
+** DONE Scope rules for loop variable, don't really understand how that works...
+   Seems to be working?!??! Check that it does using push-go and extract.
 * DONE Update to rxi/log.c of 2020 - requires reimplementing `log_with_line()`
 * DONE Re-generate `c-xrefprotocol.el` on builds on src rather than on prod builds to avoid package update problems
 * DONE Add menu for running the tutorial (in C or Java)

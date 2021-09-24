@@ -899,7 +899,7 @@ static bool processPOption(int *ii, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-p")==0) {
         NEXT_FILE_ARG();
-        //fprintf(dumpOut, "current project '%s'\n", argv[i]);
+        log_trace("Current project '%s'", argv[i]);
         createOptionString(&options.project, argv[i]);
     }
     else if (strcmp(argv[i], "-preload")==0) {
@@ -1505,7 +1505,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
     getXrefrcFileName(options_filename);
     options_file = openFile(options_filename, "r");
     if (options_file != NULL) {
-        found = readOptionFromFile(options_file,&nargc,&nargv,MEM_NO_ALLOC,filename,options.project,section);
+        found = readOptionFromFile(options_file, &nargc, &nargv, MEM_NO_ALLOC,filename, options.project, section);
         if (found) {
             log_debug("options file '%s' section '%s'", options_filename, section);
         }

@@ -1,0 +1,6 @@
+
+[SRCDIR]
+  //  input files and directories (processed recursively)
+  SRCDIR
+  //  directory where tag files are stored
+  -refs CURDIR/CXrefs/src
