@@ -20,12 +20,6 @@ typedef enum taskRegimes {
     RegimeRefactory /* refactoring server, called by on-line editing */
 } TaskRegimes;
 
-typedef struct htmlCutPathsOpts {
-    int pathsNum;
-    char *path[MAX_HTML_CUT_PATHS];
-    int plen[MAX_HTML_CUT_PATHS];
-} S_htmlCutPathsOpts;
-
 typedef struct setGetEnv {
     int num;
     char *name[MAX_SET_GET_OPTIONS];
