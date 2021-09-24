@@ -58,7 +58,7 @@ autodiscovered_tests: $(TESTS)
 # that all coverage is directed to a separate directory for each
 # autodiscovered test. If not running in parallel then GCOV_OPTIONS
 # can be empty to make coverage written to the original object
-# directory (required by Travis build. e.g)
+# directory (required by Travis build as set in .travis.yml)
 
 # Define a macro to generate a RULE for a test(directory)
 # In case we run the tests with -j all tests need to store

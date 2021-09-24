@@ -1,3 +1,28 @@
+#######################################################################
+# c-xrefactory Makefile
+#
+# TODO: This makefile should (it doesn't yet) support the following use cases
+#
+# 1: production - simple straight forward build of c-xref for use when
+# installing c-xref using el-get. Works:
+#     make prod
+#
+# 2: ci - build unittests & c-xref and run all tests with coverage
+# and create coverage report. Works:
+#     make ci
+#
+# 3: build and run unittests with coverage and produce gcov files for
+# cov-mode in Emacs
+#
+# 4: build c-xref with coverage, run one test and produce gcov files
+#
+# 5: run another test and produce aggregated gcov files
+#
+# 6: build c-xref with coverage, run all "quick" tests and produce gcov
+#
+# 7: produce coverage report for current collected coverage (from 4,5)
+#
+
 #########################################################################
 # Always export following variables to environment of sub-makes (to use you need "-e")
 
@@ -61,7 +86,7 @@ devel-proper: unit build test
 coverage: COVERAGE=--coverage
 coverage:
 	$(MAKE) -e clean-coverage
-	$(MAKE) -e ci
+	$(MAKE) -e devel
 	$(MAKE) -e coverage-report
 
 
