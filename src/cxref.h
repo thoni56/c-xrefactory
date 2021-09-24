@@ -47,12 +47,12 @@ extern Reference *olcxAddReference(Reference **rlist,
                                    int bestMatchFlag);
 extern void olcxFreeReferences(Reference *r);
 extern bool isSmallerOrEqClass(int inf, int sup);
-extern int olcxPushLessFunction(Reference *r1, Reference *r2);
-extern int olcxListLessFunction(Reference *r1, Reference *r2);
+extern bool olcxPushLessFunction(Reference *r1, Reference *r2);
+extern bool olcxListLessFunction(Reference *r1, Reference *r2);
 extern char *getJavaDocUrl_st(SymbolReferenceItem *rr);
 extern char *getLocalJavaDocFile_st(char *fileUrl);
 extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
-extern int htmlJdkDocAvailableForUrl(char *ss);
+extern bool htmlJdkDocAvailableForUrl(char *ss);
 extern Reference *duplicateReference(Reference *r);
 extern Reference * addCxReferenceNew(Symbol *symbol, Position *pos,
                                      UsageBits *usage, int vFunClass, int vApplClass);
@@ -92,7 +92,7 @@ extern bool isInRefList(Reference *list,
                         Position *pos,
                         int category);
 extern char *getXrefEnvironmentValue(char *name);
-extern int itIsSymbolToPushOlRefences(SymbolReferenceItem *p, OlcxReferences *rstack,
+extern int itIsSymbolToPushOlReferences(SymbolReferenceItem *p, OlcxReferences *rstack,
                                       SymbolsMenu **rss, int checkSelFlag);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
                                             int bestFitFlag);
@@ -105,7 +105,7 @@ extern void olcxFreeOldCompletionItems(OlcxReferencesStack *stack);
 extern void olcxInit(void);
 extern UserOlcxData *olcxSetCurrentUser(char *user);
 extern Reference * getDefinitionRef(Reference *rr);
-extern int safetyCheck2ShouldWarn(void);
+extern bool safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);
 extern void olcxPushEmptyStackItem(OlcxReferencesStack *stack);
 extern void olcxPrintSelectionMenu(SymbolsMenu *sss);
@@ -118,7 +118,7 @@ extern int getClassNumFromClassLinkName(char *name, int defaultResult);
 extern void getLineColCursorPositionFromCommandLineOption( int *l, int *c );
 extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                         Symbol *cclass);
-extern int isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
+extern bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
 extern void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                          Symbol *cclass);
 extern void olcxPushSpecialCheckMenuSym(int command, char *symname);
@@ -132,7 +132,7 @@ extern void olcxPrintPushingAction(int opt, int afterMenu);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
 extern Symbol *getMoveTargetClass(void);
 extern int javaGetSuperClassNumFromClassNum(int cn);
-extern int javaIsSuperClass(int superclas, int clas);
+extern bool javaIsSuperClass(int superclas, int clas);
 extern void pushLocalUnusedSymbolsAction(void);
 extern void mainAnswerEditAction(void);
 extern void freeOldestOlcx(void);

@@ -271,7 +271,7 @@ static void refactoryEditServerParseBuffer(char *project,
 static void refactoryBeInteractive(void) {
     int pargc;
     char **pargv;
-    
+
     copyOptions(&s_cachedOptions, &options);
     for (;;) {
         closeMainOutputFile();
@@ -383,7 +383,7 @@ static void refactoryCheckedReplaceString(EditorMarker *pos, int len,
                                           char *oldVal, char *newVal) {
     char    *bVal;
     int     check, d;
-    
+
     bVal = pos->buffer->allocation.text + pos->offset;
     check = (strlen(oldVal)==len && strncmp(oldVal, bVal, len) == 0);
     if (check) {
@@ -704,7 +704,7 @@ static EditorMarker *refactoryGetMarkFromRefactoryOptions(EditorBuffer *buf) {
 static void refactoryPushMarkersAsReferences(EditorMarkerList **markers,
                                              OlcxReferences *refs, char *sym) {
     Reference *rr;
-    
+
     rr = editorMarkersToReferences(markers);
     for (SymbolsMenu *mm=refs->menuSym; mm!=NULL; mm=mm->next) {
         if (strcmp(mm->s.name, sym)==0) {
@@ -1511,7 +1511,7 @@ static bool refactoryRenamePackageFileMove(char *currentPath, EditorMarkerList *
                                            EditorUndo *rpundo) {
     int plen;
     bool res = false;
-    
+
     plen = strlen(currentPath);
     //&sprintf(tmpBuff,"checking %s<->%s, %s<->%s\n",ll->marker->buffer->name, currentPath,ll->marker->buffer->name+plen+1, symLinkName);ppcGenRecord(PPC_WARNING,tmpBuff);
     if (fnnCmp(ll->marker->buffer->name, currentPath, plen)==0
@@ -1536,7 +1536,7 @@ static void refactorySimplePackageRenaming(
     bool mvfile;
     EditorMarker      *pp;
     EditorUndo        *rpundo;
-    
+
     // get original and new directory, but how?
     snlen = strlen(symname);
     slnlen = strlen(symLinkName);
@@ -1674,7 +1674,7 @@ static void refactoryRemoveModifier(EditorMarker *point, int limitIndex, char *m
     int i, j, mlen;
     char *text;
     EditorMarker  *mm;
-    
+
     mlen = strlen(modifier);
     text = point->buffer->allocation.text;
     mm = refactoryFindModifierAndCrMarker(point, modifier, limitIndex);
@@ -1770,7 +1770,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace(OlcxReferences *rst
     p = &ccms->s;
     assert(rstack && rstack->menuSym);
     sss = &rstack->menuSym->s;
-    pushed = itIsSymbolToPushOlRefences(p, rstack, &cms, DEFAULT_VALUE);
+    pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
     log_trace(":checking %s to %s (%d)", p->name, sss->name, pushed);
     if ((! pushed) && olcxIsSameCxSymbol(p, sss)) {
@@ -3411,7 +3411,7 @@ static void refactoryPushMethodSymbolsPlusThoseWithClearedRegion(EditorMarker *m
     char spaces[REFACTORING_TMP_STRING_SIZE];
     EditorUndo *undoMark;
     int slen;
-    
+
     assert(m1->buffer == m2->buffer);
     undoMark = s_editorUndo;
     refactoryPushAllReferencesOfMethod(m1,NULL);
@@ -3478,7 +3478,7 @@ static bool staticToDynCanBeThisOccurence(EditorMarker *pp, char *param, int *rl
     char *pp2;
     EditorMarker  *mm;
     bool res = false;
-    
+
     mm = editorCrNewMarker(pp->buffer, pp->offset);
     pp2 = strchr(param, '.');
     if (pp2==NULL) {

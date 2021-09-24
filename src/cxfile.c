@@ -1104,7 +1104,7 @@ static void cxrfSymbolName(int size,
                     else ols = 1;
                 }
             } else if (additionalArg!=CX_BY_PASS) {
-                ols=itIsSymbolToPushOlRefences(ddd,s_olcxCurrentUser->browserStack.top,&cms,DEFAULT_VALUE);
+                ols=itIsSymbolToPushOlReferences(ddd,s_olcxCurrentUser->browserStack.top,&cms,DEFAULT_VALUE);
             }
             lastIncomingInfo.onLineRefMenuItem = cms;
             if (ols || (additionalArg==CX_BY_PASS && canBypassAcceptableSymbol(ddd))
