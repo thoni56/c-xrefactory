@@ -3587,7 +3587,8 @@ void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r) {
     SymbolReferenceItem     *sss;
     OlcxReferences    *rstack;
     SymbolsMenu     *cms;
-    int                 pushed;
+    bool pushed;
+
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top->previous;
     assert(rstack && rstack->menuSym);
@@ -3605,7 +3606,8 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, Symbol
     SymbolReferenceItem     *sss;
     Reference         *r;
     SymbolsMenu     *cms;
-    int                 pushed;
+    bool pushed;
+    
     p = &ccms->s;
     assert(rstack && rstack->menuSym);
     sss = &rstack->menuSym->s;
@@ -4979,7 +4981,7 @@ void mainAnswerEditAction(void) {
     //&RLM_FREE_COUNT(olcxMemory);
 }
 
-int itIsSymbolToPushOlRefences(SymbolReferenceItem *p,
+bool itIsSymbolToPushOlRefences(SymbolReferenceItem *p,
                                OlcxReferences *rstack,
                                SymbolsMenu **rss,
                                int checkSelFlag) {
@@ -5003,7 +5005,7 @@ int itIsSymbolToPushOlRefences(SymbolReferenceItem *p,
 
 
 void putOnLineLoadedReferences(SymbolReferenceItem *p) {
-    int                 ols;
+    bool ols;
     SymbolsMenu     *cms;
     Reference         *rr;
 

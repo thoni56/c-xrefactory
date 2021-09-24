@@ -89,35 +89,34 @@ static void javaSlashifyDotName(char *ss) {
 }
 
 static int argument_count(char **margv) {
-    int res;
-
-    for(res=0; *margv!=NULL; res++,margv++)
+    int count;
+    for (count=0; *margv!=NULL; count++,margv++)
         ;
-    return(res);
+    return count;
 }
 
 static int filter0(Reference *rr, void *dummy) {
-    if (rr->usage.base < UsageMaxOLUsages) return(1);
-    return(0);
+    if (rr->usage.base < UsageMaxOLUsages) return 1;
+    return 0;
 }
 
 #ifdef FILTERS
 static int filter1(S_reference *rr, void *dummy) {
-    if (rr->usg.base < s_refListFilters[1]) return(1);
-    return(0);
+    if (rr->usg.base < s_refListFilters[1]) return 1;
+    return 0;
 }
 
 static int filter2(S_reference *rr, void *dummy) {
-    if (rr->usg.base < s_refListFilters[2]) return(1);
-    return(0);
+    if (rr->usg.base < s_refListFilters[2]) return 1;
+    return 0;
 }
 
 static int filterBuffer(S_reference *rr, void *buffer) {
     S_editorBuffer *buff;
     buff = (S_editorBuffer *) buffer;
-    if (rr->usg.base >= UsageMaxOLUsages) return(0);
-    if (rr->p.file == buff->ftnum) return(1);
-    return(0);
+    if (rr->usg.base >= UsageMaxOLUsages) return 0;
+    if (rr->p.file == buff->ftnum) return 1;
+    return 0;
 }
 #endif
 
@@ -194,10 +193,11 @@ static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
 // including options in s_opt, ...
 // call to this function MUST be followed by a pushing action, to refresh options
 static void refactoryUpdateReferences(char *project) {
-    int i, nargc, refactoryXrefInitOptionsNum;
+    int nargc, refactoryXrefInitOptionsNum;
     char *nargv[MAX_NARGV_OPTIONS_NUM];
+
     // following would be too long to be allocated on stack
-    static Options    savedOptions;
+    static Options savedOptions;
 
     if (s_refactoryUpdateOption==NULL || *s_refactoryUpdateOption==0) {
         writeRelativeProgress(100);
@@ -214,7 +214,7 @@ static void refactoryUpdateReferences(char *project) {
     refactorySetNargv(nargv, NULL, project, NULL, NULL);
     nargc = argument_count(nargv);
     refactoryXrefInitOptionsNum = argument_count(s_refactoryXrefInitOptions);
-    for(i=1; i<refactoryXrefInitOptionsNum; i++) {
+    for (int i=1; i<refactoryXrefInitOptionsNum; i++) {
         nargv[nargc++] = s_refactoryXrefInitOptions[i];
     }
     nargv[nargc++] = s_refactoryUpdateOption;
@@ -269,10 +269,11 @@ static void refactoryEditServerParseBuffer(char *project,
 }
 
 static void refactoryBeInteractive(void) {
-    int                 pargc;
-    char                **pargv;
+    int pargc;
+    char **pargv;
+    
     copyOptions(&s_cachedOptions, &options);
-    for(;;) {
+    for (;;) {
         closeMainOutputFile();
         ppcSynchronize();
         copyOptions(&options, &s_cachedOptions);
@@ -312,9 +313,9 @@ void refactoryDisplayResolutionDialog(char *message,int messageType,int continua
 static void refactoryPushReferences(EditorBuffer *buf, EditorMarker *point,
                                     char *pushOption, char *resolveMessage,
                                     int messageType
-                                    ) {
+) {
     /* now remake task initialisation as for edit server */
-    refactoryEditServerParseBuffer( refactoringOptions.project, buf, point,NULL, pushOption,NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, buf, point, NULL, pushOption, NULL);
 
     assert(s_olcxCurrentUser!=NULL && s_olcxCurrentUser->browserStack.top!=NULL);
     if (s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL) {
@@ -322,14 +323,14 @@ static void refactoryPushReferences(EditorBuffer *buf, EditorMarker *point,
     }
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
     if (resolveMessage!=NULL && olcxShowSelectionMenu()) {
-        refactoryDisplayResolutionDialog( resolveMessage, messageType,CONTINUATION_ENABLED);
+        refactoryDisplayResolutionDialog(resolveMessage, messageType,CONTINUATION_ENABLED);
     }
 }
 
 static void refactorySafetyCheck(char *project, EditorBuffer *buf, EditorMarker *point) {
     // !!!!update references MUST be followed by a pushing action, to refresh options
     refactoryUpdateReferences(refactoringOptions.project);
-    refactoryEditServerParseBuffer( project, buf, point,NULL, "-olcxsafetycheck2",NULL);
+    refactoryEditServerParseBuffer(project, buf, point,NULL, "-olcxsafetycheck2",NULL);
 
     assert(s_olcxCurrentUser!=NULL && s_olcxCurrentUser->browserStack.top!=NULL);
     if (s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL) {
@@ -358,15 +359,19 @@ static char *refactoryGetIdentifierOnMarker_st(EditorMarker *pos) {
     smin = buff->allocation.text;
     smax = buff->allocation.text + buff->allocation.bufferSize;
     // move to the beginning of identifier
-    for(; s>=smin && (isalpha(*s) || isdigit(*s) || *s=='_' || *s=='$'); s--) ;
-    for(s++; s<smax && isdigit(*s); s++) ;
+    for (; s>=smin && (isalpha(*s) || isdigit(*s) || *s=='_' || *s=='$'); s--)
+        ;
+    for (s++; s<smax && isdigit(*s); s++)
+        ;
     // now get it
-    for(e=s; e<smax && (isalpha(*e) || isdigit(*e) || *e=='_' || *e=='$'); e++) ;
+    for (e=s; e<smax && (isalpha(*e) || isdigit(*e) || *e=='_' || *e=='$'); e++)
+        ;
     reslen = e-s;
     assert(reslen < TMP_STRING_SIZE-1);
     strncpy(res, s, reslen);
     res[reslen] = 0;
-    return(res);
+
+    return res;
 }
 
 static void refactoryReplaceString(EditorMarker *pos, int len, char *newVal) {
@@ -377,7 +382,8 @@ static void refactoryReplaceString(EditorMarker *pos, int len, char *newVal) {
 static void refactoryCheckedReplaceString(EditorMarker *pos, int len,
                                           char *oldVal, char *newVal) {
     char    *bVal;
-    int     check, i, d;
+    int     check, d;
+    
     bVal = pos->buffer->allocation.text + pos->offset;
     check = (strlen(oldVal)==len && strncmp(oldVal, bVal, len) == 0);
     if (check) {
@@ -386,7 +392,8 @@ static void refactoryCheckedReplaceString(EditorMarker *pos, int len,
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "checked replacement of %s to %s failed on ", oldVal, newVal);
         d = strlen(tmpBuff);
-        for(i=0; i<len; i++) tmpBuff[d++] = bVal[i];
+        for (int i=0; i<len; i++)
+            tmpBuff[d++] = bVal[i];
         tmpBuff[d++]=0;
         errorMessage(ERR_INTERNAL, tmpBuff);
     }
@@ -588,7 +595,7 @@ static int refactoryMarkerWRTComment(EditorMarker *mm, int *commentBeginOffset) 
             if (s+1<e) s += 2;
             if (s>mms) {
                 *commentBeginOffset = b-mm->buffer->allocation.text;
-                return(MARKER_IS_IN_STAR_COMMENT);
+                return MARKER_IS_IN_STAR_COMMENT;
             }
         } else if (*s=='/' && s+1<e && *(s+1)=='/') {
             // // comment
@@ -597,7 +604,7 @@ static int refactoryMarkerWRTComment(EditorMarker *mm, int *commentBeginOffset) 
             if (s<e) s += 1;
             if (s>mms) {
                 *commentBeginOffset = b-mm->buffer->allocation.text;
-                return(MARKER_IS_IN_SLASH_COMMENT);
+                return MARKER_IS_IN_SLASH_COMMENT;
             }
         } else if (*s=='"') {
             // string, pass it removing all inside (also /**/ comments)
@@ -611,7 +618,7 @@ static int refactoryMarkerWRTComment(EditorMarker *mm, int *commentBeginOffset) 
             s++;
         }
     }
-    return(MARKER_IS_IN_CODE);
+    return MARKER_IS_IN_CODE;
 }
 
 static void refactoryMoveMarkerToTheBeginOfDefinitionScope(EditorMarker *mm) {
@@ -619,7 +626,7 @@ static void refactoryMoveMarkerToTheBeginOfDefinitionScope(EditorMarker *mm) {
     int             slashedCommentsProcessed, staredCommentsProcessed;
 
     slashedCommentsProcessed = staredCommentsProcessed = 0;
-    for(;;) {
+    for (;;) {
         theBeginningOffset = mm->offset;
         mm->offset --;
         editorMoveMarkerToNonBlankOrNewline(mm, -1);
@@ -681,29 +688,27 @@ static EditorMarker *refactoryPointMark(EditorBuffer *buf, int offset) {
     if (offset >= 0) {
         point = editorCrNewMarker(buf, offset);
     }
-    return(point);
+    return point;
 }
 
 static EditorMarker *refactoryGetPointFromRefactoryOptions(EditorBuffer *buf) {
     assert(buf);
-    return(refactoryPointMark(buf, refactoringOptions.olCursorPos));
+    return refactoryPointMark(buf, refactoringOptions.olCursorPos);
 }
 
 static EditorMarker *refactoryGetMarkFromRefactoryOptions(EditorBuffer *buf) {
     assert(buf);
-    return(refactoryPointMark(buf, refactoringOptions.olMarkPos));
+    return refactoryPointMark(buf, refactoringOptions.olMarkPos);
 }
 
 static void refactoryPushMarkersAsReferences(EditorMarkerList **markers,
                                              OlcxReferences *refs, char *sym) {
-    SymbolsMenu     *mm;
-    Reference         *r, *rr;
+    Reference *rr;
+    
     rr = editorMarkersToReferences(markers);
-    for(mm=refs->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=refs->menuSym; mm!=NULL; mm=mm->next) {
         if (strcmp(mm->s.name, sym)==0) {
-            for(r=rr; r!=NULL; r=r->next) {
-                //&sprintf(tmpBuff,"adding mis ref on %d:%d", r->p.line, r->p.col);
-                //&ppcGenRecord(PPC_INFORMATION, tmpBuff);
+            for (Reference *r=rr; r!=NULL; r=r->next) {
                 olcxAddReference(&mm->s.refs, r, 0);
             }
         }
@@ -712,34 +717,34 @@ static void refactoryPushMarkersAsReferences(EditorMarkerList **markers,
     olcxRecomputeSelRefs(refs);
 }
 
-static int validTargetPlace(EditorMarker *target, char *checkOpt) {
-    int res;
-    res = 1;
-    refactoryEditServerParseBuffer(refactoringOptions.project, target->buffer, target,NULL, checkOpt, NULL);
+static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
+    bool valid = true;
+
+    refactoryEditServerParseBuffer(refactoringOptions.project, target->buffer, target, NULL, checkOpt, NULL);
     if (!s_cps.moveTargetApproved) {
-        res = 0;
+        valid = false;
         errorMessage(ERR_ST, "Invalid target place");
     }
-    return(res);
+    return valid;
 }
 
 // ------------------------- Trivial prechecks --------------------------------------
 
 static SymbolsMenu *javaGetRelevantHkSelectedItem(SymbolReferenceItem *ri) {
-    SymbolsMenu     *ss;
-    OlcxReferences    *rstack;
+    SymbolsMenu *ss;
+    OlcxReferences *rstack;
+
     rstack = s_olcxCurrentUser->browserStack.top;
-    for(ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
-        if (isSameCxSymbol(ri, &ss->s)
-            && ri->vFunClass == ss->s.vFunClass) {
+    for (ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
+        if (isSameCxSymbol(ri, &ss->s) && ri->vFunClass == ss->s.vFunClass) {
             break;
         }
     }
-    return(ss);
+
+    return ss;
 }
 
 static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd) {
-    Reference *rr;
     S_tpCheckMoveClassData *dd;
     SymbolsMenu *ss;
 
@@ -749,7 +754,7 @@ static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd
     ss = javaGetRelevantHkSelectedItem(ri);
     if (ss!=NULL) {
         // relevant symbol
-        for(rr=ri->refs; rr!=NULL; rr=rr->next) {
+        for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
             // I should check only references from this file
             if (rr->p.file == s_input_file_number) {
                 // check if the reference is outside moved class
@@ -765,7 +770,6 @@ static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd
 }
 
 static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void *ddd) {
-    Reference *rr;
     OlcxReferences *rstack;
     S_tpCheckMoveClassData *dd;
 
@@ -773,8 +777,8 @@ static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void
     //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
     // fine, add it to Menu, so we will load its references
-    for(rr=ri->refs; rr!=NULL; rr=rr->next) {
-        //&fprintf(dumpOut,"checking %d.%d ref of %s\n", rr->p.line,rr->p.col,ri->name); fflush(dumpOut);
+    for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
+        log_trace("Checking %d.%d ref of %s", rr->p.line,rr->p.col,ri->name);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
             if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
                 // definition inside class, default or private acces to be checked
@@ -787,12 +791,9 @@ static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void
     }
 }
 
-static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(
-                                                                         S_tpCheckMoveClassData dd
-                                                                         ) {
+static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpCheckMoveClassData dd) {
     OlcxReferences *rstack;
-    SymbolsMenu *ss, **sss, *mm;
-    Reference *rr;
+    SymbolsMenu **sss;
 
     rstack = s_olcxCurrentUser->browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(
@@ -802,16 +803,16 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(
     // load all theirs references
     olCreateSelectionMenu(rstack->command);
     // mark all as unselected unvisible
-    for(ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
+    for (SymbolsMenu *ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
         ss->selected = ss->visible = 0;
     }
     // checks all references from within this file
     refTabMap2(&referenceTable, tpCheckFutureAccOfLocalReferences, &dd);
     // check references from outside
-    for(mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
-        ss = javaGetRelevantHkSelectedItem(&mm->s);
+    for (SymbolsMenu *mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
+        SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&mm->s);
         if (ss!=NULL && (! ss->selected)) {
-            for(rr=mm->s.refs; rr!=NULL; rr=rr->next) {
+            for (Reference *rr=mm->s.refs; rr!=NULL; rr=rr->next) {
                 if (rr->p.file != s_input_file_number) {
                     // yes there is a reference from outside to our symbol
                     ss->selected = ss->visible = 1;
@@ -824,7 +825,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(
 
     sss= &rstack->menuSym;
     while (*sss!=NULL) {
-        ss = javaGetRelevantHkSelectedItem(&(*sss)->s);
+        SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&(*sss)->s);
         if (ss!=NULL && ss->selected) {
             sss= &(*sss)->next;
         } else {
@@ -834,11 +835,11 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(
 }
 
 static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void *ddd) {
-    Reference             *rr;
     OlcxReferences        *rstack;
     S_tpCheckMoveClassData  *dd;
     char                    symclass[MAX_FILE_NAME_SIZE];
     int                     sclen, symclen;
+
     dd = (S_tpCheckMoveClassData *) ddd;
     //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
@@ -848,7 +849,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void
     symclen = strlen(symclass);
     if (sclen<=symclen && fnnCmp(dd->sclass, symclass, sclen)==0) return;
     // O.K. finally check if there is a reference
-    for(rr=ri->refs; rr!=NULL; rr=rr->next) {
+    for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
             // O.K. there is a reference inside the moved class, add it to the list,
             assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -970,10 +971,7 @@ bool tpCheckSourceIsNotInnerClass(void) {
     return true;
 }
 
-static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri,
-                                           void *ddd
-                                           ) {
-    Reference *rr;
+static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri, void *ddd) {
     S_tpCheckSpecialReferencesData *dd;
 
     dd = (S_tpCheckSpecialReferencesData *) ddd;
@@ -983,7 +981,7 @@ static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri,
     if (strcmp(ri->name, dd->symbolToTest)!=0)
         return;
     //&fprintf(dumpOut,"comparing %d <-> %d; %s <-> %s\n", ri->vFunClass, scl,  fileTable.tab[ri->vFunClass]->name, fileTable.tab[scl]->name);
-    for(rr=ri->refs; rr!=NULL; rr=rr->next) {
+    for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
         if (DM_IS_BETWEEN(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi) ){
             // a super method reference
             dd->foundSpecialRefItem = ri;
@@ -1210,7 +1208,7 @@ bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
     if (flag == REQ_SUBCLASS) cl=fileTable.tab[ss->s.vApplClass]->inferiorClasses;
     else cl=fileTable.tab[ss->s.vApplClass]->superClasses;
-    for(; cl!=NULL; cl=cl->next) {
+    for (; cl!=NULL; cl=cl->next) {
         //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, fileTable.tab[cl->superClass]->name, target->u.s->classFile, fileTable.tab[target->u.s->classFile]->name);ppcBottomInformation(tmpBuff);
         if (cl->superClass == target->u.s->classFile) {
             found = true;
@@ -1245,32 +1243,33 @@ bool tpPullUpFieldLastPreconditions(void) {
     target = getMoveTargetClass();
     assert(target!=NULL);
     assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
-    for(mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
+    for (mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         if (isSameCxSymbol(&ss->s,&mm->s)
             && mm->s.vApplClass == target->u.s->classFile) goto cont2;
     }
     // it is O.K. no item found
-    return(1);
+    return true;
  cont2:
     // an item found, it must be empty
-    if (mm->s.refs == NULL) return(1);
+    if (mm->s.refs == NULL)
+        return true;
     javaGetClassNameFromFileNum(target->u.s->classFile, ttt, DOTIFY_NAME);
     if (IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usage.base) && mm->s.refs->next==NULL) {
         if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
         sprintf(tmpBuff, "%s is already defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should make sure that both fields are initialized to the same value.", mm->s.name, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         warningMessage(ERR_ST, tmpBuff);
-        return(0);
+        return false;
     }
     sprintf(tmpBuff,"There are already references of the field %s syntactically applied on the superclass %s, pulling up this field would cause confusion!", mm->s.name, ttt);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
     errorMessage(ERR_ST, tmpBuff);
-    return(0);
+    return false;
 }
 
 bool tpPushDownFieldLastPreconditions(void) {
     OlcxReferences *rstack;
-    SymbolsMenu *ss,*mm, *sourcesm, *targetsm;
+    SymbolsMenu *ss, *sourcesm, *targetsm;
     char ttt[TMP_STRING_SIZE];
     Reference *rr;
     Symbol *target;
@@ -1288,7 +1287,7 @@ bool tpPushDownFieldLastPreconditions(void) {
     assert(target!=NULL);
     assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
     sourcesm = targetsm = NULL;
-    for(mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         if (isSameCxSymbol(&ss->s,&mm->s)) {
             if (mm->s.vApplClass == target->u.s->classFile) targetsm = mm;
             if (mm->s.vApplClass == thisclassi) sourcesm = mm;
@@ -1324,12 +1323,10 @@ bool tpPushDownFieldLastPreconditions(void) {
 static bool refactoryHandleSafetyCheckDifferenceLists(
     EditorMarkerList *diff1, EditorMarkerList *diff2, OlcxReferences *diffrefs
 ) {
-    SymbolsMenu *mm;
-
     if (diff1!=NULL || diff2!=NULL) {
         //&editorDumpMarkerList(diff1);
         //&editorDumpMarkerList(diff2);
-        for(mm=diffrefs->menuSym; mm!=NULL; mm=mm->next) {
+        for (SymbolsMenu *mm=diffrefs->menuSym; mm!=NULL; mm=mm->next) {
             mm->selected = mm->visible = 1;
             mm->ooBits = 07777777;
             // hack, freeing now all diffs computed by old method
@@ -1382,7 +1379,7 @@ static bool refactoryMakeSafetyCheckAndUndo(
     //&if (dd != NULL) defin = dd->d;
 
     olcxPushSpecialCheckMenuSym(OLO_SAFETY_CHECK_INIT, LINK_NAME_SAFETY_CHECK_MISSED);
-    refactorySafetyCheck( refactoringOptions.project, defin->buffer, defin);
+    refactorySafetyCheck(refactoringOptions.project, defin->buffer, defin);
 
     chks = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->references,filter0, NULL);
     //&sprintf(tmpBuff,"\nchecking\n");ppcBottomInformation(tmpBuff);editorDumpMarkerList(*occs);sprintf(tmpBuff,"and\n");ppcBottomInformation(tmpBuff);editorDumpMarkerList(chks);
@@ -1409,10 +1406,9 @@ void refactoryAskForReallyContinueConfirmation(void) {
 static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *occs) {
     char *cid;
     int off1, off2;
-    EditorMarkerList *ll;
     EditorMarker *pos, *pp;
 
-    for(ll=occs; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
         pos = ll->marker;
         // first check that I have updated reference
         cid = refactoryGetIdentifierOnMarker_st(pos);
@@ -1437,8 +1433,8 @@ static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, EditorMark
 }
 
 static void refactoryMakeSyntaxPassOnSource(EditorMarker *point) {
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer,
-                                    point, NULL, "-olcxsyntaxpass",NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer,
+                                   point, NULL, "-olcxsyntaxpass",NULL);
     olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
 }
 
@@ -1446,8 +1442,8 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int
     EditorMarker  *pp;
     EditorBuffer  *bb;
     Position      *pos;
-    refactoryEditServerParseBuffer( refactoringOptions.project, d->buffer,
-                                    d,NULL, "-olcxprimarystart",NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, d->buffer,
+                                   d ,NULL, "-olcxprimarystart", NULL);
     olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
     if (kind == GET_PRIMARY_START) {
         pos = &s_primaryStartPosition;
@@ -1463,14 +1459,14 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int
         } else {
             refactoryFatalErrorOnPosition(d, ERR_INTERNAL, "Can't determine beginning of primary expression");
         }
-        return(NULL);
+        return NULL;
     } else {
         bb = editorGetOpenedAndLoadedBuffer(fileTable.tab[pos->file]->name);
         pp = editorCrNewMarker(bb, 0);
         editorMoveMarkerToLineCol(pp, pos->line, pos->col);
         assert(pp->buffer == d->buffer);
         assert(pp->offset <= d->offset);
-        return(pp);
+        return pp;
     }
 }
 
@@ -1510,35 +1506,37 @@ static void refactoryMoveFileAndDirForPackageRename(
 }
 
 
-static int refactoryRenamePackageFileMove(char *currentPath, EditorMarkerList *ll,
-                                          char *symLinkName, int slnlen,
-                                          EditorUndo *rpundo) {
-    int                 res, plen;
-    res = 0;
+static bool refactoryRenamePackageFileMove(char *currentPath, EditorMarkerList *ll,
+                                           char *symLinkName, int slnlen,
+                                           EditorUndo *rpundo) {
+    int plen;
+    bool res = false;
+    
     plen = strlen(currentPath);
     //&sprintf(tmpBuff,"checking %s<->%s, %s<->%s\n",ll->marker->buffer->name, currentPath,ll->marker->buffer->name+plen+1, symLinkName);ppcGenRecord(PPC_WARNING,tmpBuff);
     if (fnnCmp(ll->marker->buffer->name, currentPath, plen)==0
         && ll->marker->buffer->name[plen] == FILE_PATH_SEPARATOR
         && fnnCmp(ll->marker->buffer->name+plen+1, symLinkName, slnlen)==0) {
-        refactoryMoveFileAndDirForPackageRename( currentPath, rpundo, ll->marker, symLinkName);
-        res = 1;
+        refactoryMoveFileAndDirForPackageRename(currentPath, rpundo, ll->marker, symLinkName);
+        res = true;
         goto fini;
     }
  fini:
-    return(res);
+    return res;
 }
 
 static void refactorySimplePackageRenaming(
-                                           EditorMarkerList *occs, EditorMarker *point,
-                                           char *symname,char *symLinkName, int symtype
-                                           ) {
-    char                rtpack[MAX_FILE_NAME_SIZE];
-    char                rtprefix[MAX_FILE_NAME_SIZE];
-    char                *ss;
-    int                 snlen, slnlen, mvfile;
-    EditorMarkerList  *ll;
+    EditorMarkerList *occs, EditorMarker *point,
+    char *symname,char *symLinkName, int symtype
+) {
+    char rtpack[MAX_FILE_NAME_SIZE];
+    char rtprefix[MAX_FILE_NAME_SIZE];
+    char *ss;
+    int snlen, slnlen;
+    bool mvfile;
     EditorMarker      *pp;
     EditorUndo        *rpundo;
+    
     // get original and new directory, but how?
     snlen = strlen(symname);
     slnlen = strlen(symLinkName);
@@ -1551,7 +1549,7 @@ static void refactorySimplePackageRenaming(
         strcpy(rtpack, ss+1);
         *(ss+1)=0;
     }
-    for(ll=occs; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
         pp = refactoryCrNewMarkerForExpressionBegin(ll->marker, GET_STATIC_PREFIX_START);
         if (pp!=NULL) {
             refactoryRemoveNonCommentCode(pp, ll->marker->offset - pp->offset);
@@ -1564,7 +1562,7 @@ static void refactorySimplePackageRenaming(
         editorFreeMarker(pp);
     }
     rpundo = s_editorUndo;
-    for(ll=occs; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
         if (ll->next == NULL || ll->next->marker->buffer!=ll->marker->buffer) {
             // O.K. verify whether I should move the file
             MapOnPaths(javaSourcePaths, {
@@ -1581,7 +1579,7 @@ static void refactorySimpleRenaming(EditorMarkerList *occs, EditorMarker *point,
                                     char *symname,char *symLinkName, int symtype) {
     char                nfile[MAX_FILE_NAME_SIZE];
     char                *ss;
-    EditorMarkerList  *ll;
+
     if (symtype == TypeStruct && LANGUAGE(LANG_JAVA)
         && refactoringOptions.theRefactoring != AVR_RENAME_CLASS) {
         errorMessage(ERR_INTERNAL, "Use Rename Class to rename classes");
@@ -1594,7 +1592,7 @@ static void refactorySimpleRenaming(EditorMarkerList *occs, EditorMarker *point,
     if (refactoringOptions.theRefactoring == AVR_RENAME_PACKAGE) {
         refactorySimplePackageRenaming(occs, point, symname, symLinkName, symtype);
     } else {
-        for(ll=occs; ll!=NULL; ll=ll->next) {
+        for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
             refactoryRenameTo(ll->marker, symname, refactoringOptions.renameTo);
         }
         ppcGotoMarker(point);
@@ -1616,33 +1614,28 @@ static void refactorySimpleRenaming(EditorMarkerList *occs, EditorMarker *point,
     }
 }
 
-static EditorMarkerList *refactoryGetReferences(
-                                                  EditorBuffer *buf, EditorMarker *point,
-                                                  char *resolveMessage, int messageType
-                                                  ) {
+static EditorMarkerList *refactoryGetReferences(EditorBuffer *buf, EditorMarker *point,
+                                                char *resolveMessage, int messageType
+) {
     EditorMarkerList *occs;
-    refactoryPushReferences( buf, point, "-olcxrename", resolveMessage,
-                             messageType);
+    refactoryPushReferences(buf, point, "-olcxrename", resolveMessage, messageType);
     assert(s_olcxCurrentUser->browserStack.top && s_olcxCurrentUser->browserStack.top->hkSelectedSym);
     occs = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->references, filter0, NULL);
-    return(occs);
+    return occs;
 }
 
 
-static EditorMarkerList *refactoryPushGetAndPreCheckReferences(
-                                                                 EditorBuffer *buf, EditorMarker *point, char *nameOnPoint,
-                                                                 char *resolveMessage, int messageType
-                                                                 ) {
+static EditorMarkerList *refactoryPushGetAndPreCheckReferences(EditorBuffer *buf, EditorMarker *point, char *nameOnPoint,
+                                                               char *resolveMessage, int messageType
+) {
     EditorMarkerList *occs;
     occs = refactoryGetReferences(buf, point, resolveMessage, messageType);
     refactoryPreCheckThatSymbolRefsCorresponds(nameOnPoint, occs);
-    return(occs);
+    return occs;
 }
 
 
-static EditorMarker *refactoryFindModifierAndCrMarker(
-                                                        EditorMarker *point, char *modifier, int limitIndex
-                                                        ) {
+static EditorMarker *refactoryFindModifierAndCrMarker(EditorMarker *point, char *modifier, int limitIndex) {
     int             i, mlen, blen, mini;
     char            *text;
     EditorMarker  *mm, *mb, *me;
@@ -1670,24 +1663,24 @@ static EditorMarker *refactoryFindModifierAndCrMarker(
             && (i==0 || isspace(text[i-1]))
             && (i+mlen==blen || isspace(text[i+mlen]))) {
             mm = editorCrNewMarker(point->buffer, i);
-            return(mm);
+            return mm;
         }
         i--;
     }
-    return(NULL);
+    return NULL;
 }
 
-static void refactoryRemoveModifier(
-                                    EditorMarker *point, int limitIndex, char *modifier) {
-    int             i, j, mlen;
-    char            *text;
+static void refactoryRemoveModifier(EditorMarker *point, int limitIndex, char *modifier) {
+    int i, j, mlen;
+    char *text;
     EditorMarker  *mm;
+    
     mlen = strlen(modifier);
     text = point->buffer->allocation.text;
     mm = refactoryFindModifierAndCrMarker(point, modifier, limitIndex);
     if (mm!=NULL) {
         i = mm->offset;
-        for(j=i+mlen; isspace(text[j]); j++) ;
+        for (j=i+mlen; isspace(text[j]); j++) ;
         refactoryReplaceString(mm, j-i, "");
     }
     editorFreeMarker(mm);
@@ -1722,11 +1715,10 @@ static void refactoryChangeAccessModifier(
 }
 
 static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, int minAccess) {
-    int             accIndex, access;
-    Reference     *rr;
+    int accIndex, access;
 
     minAccess &= ACCESS_PPP_MODIFER_MASK;
-    for(accIndex=0; accIndex<MAX_REQUIRED_ACCESS; accIndex++) {
+    for (accIndex=0; accIndex<MAX_REQUIRED_ACCESS; accIndex++) {
         if (s_javaRequiredeAccessibilitiesTable[accIndex] == minAccess) break;
     }
 
@@ -1736,7 +1728,7 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
     refactoryPushReferences(point->buffer, point, "-olcxrename", NULL, 0);
     assert(s_olcxCurrentUser->browserStack.top && s_olcxCurrentUser->browserStack.top->menuSym);
 
-    for(rr=s_olcxCurrentUser->browserStack.top->references; rr!=NULL; rr=rr->next) {
+    for (Reference *rr=s_olcxCurrentUser->browserStack.top->references; rr!=NULL; rr=rr->next) {
         if (! IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
             if (rr->usage.requiredAccess < accIndex) {
                 accIndex = rr->usage.requiredAccess;
@@ -1756,10 +1748,10 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
 }
 
 
-static void refactoryCheckForMultipleReferencesOnSinglePlace2( SymbolReferenceItem *p,
-                                                               OlcxReferences *rstack,
-                                                               Reference *r
-                                                               ) {
+static void refactoryCheckForMultipleReferencesOnSinglePlace2(SymbolReferenceItem *p,
+                                                              OlcxReferences *rstack,
+                                                              Reference *r
+) {
     if (refOccursInRefs(r, rstack->references)) {
         char tmpBuff[TMP_BUFF_SIZE];
         ppcGotoPosition(&r->p);
@@ -1771,20 +1763,20 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace2( SymbolReferenceIt
 }
 
 static void refactoryCheckForMultipleReferencesOnSinglePlace(OlcxReferences *rstack, SymbolsMenu *ccms) {
-    SymbolReferenceItem     *p, *sss;
-    Reference         *r;
-    SymbolsMenu     *cms;
-    int                 pushed;
+    SymbolReferenceItem *p, *sss;
+    SymbolsMenu *cms;
+    bool pushed;
+
     p = &ccms->s;
     assert(rstack && rstack->menuSym);
     sss = &rstack->menuSym->s;
     pushed = itIsSymbolToPushOlRefences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
-    //&fprintf(dumpOut,":checking %s to %s (%d)\n",p->name, sss->name, pushed);
+    log_trace(":checking %s to %s (%d)", p->name, sss->name, pushed);
     if ((! pushed) && olcxIsSameCxSymbol(p, sss)) {
         //&fprintf(dumpOut,"checking %s references\n",p->name);
-        for(r=p->refs; r!=NULL; r=r->next) {
-            refactoryCheckForMultipleReferencesOnSinglePlace2( p, rstack, r);
+        for (Reference *r=p->refs; r!=NULL; r=r->next) {
+            refactoryCheckForMultipleReferencesOnSinglePlace2(p, rstack, r);
         }
     }
 }
@@ -1792,7 +1784,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace(OlcxReferences *rst
 static void refactoryMultipleOccurencesSafetyCheck(void) {
     OlcxReferences    *rstack;
 
-    assert( s_olcxCurrentUser!=NULL);
+    assert(s_olcxCurrentUser!=NULL);
     rstack = s_olcxCurrentUser->browserStack.top;
     olProcessSelectedReferences(rstack, refactoryCheckForMultipleReferencesOnSinglePlace);
 }
@@ -1830,7 +1822,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     if (!LANGUAGE(LANG_JAVA)) {
         refactoryMultipleOccurencesSafetyCheck();
     }
-    refactorySimpleRenaming( occs, point,nameOnPoint,symLinkName, symtype);
+    refactorySimpleRenaming(occs, point, nameOnPoint, symLinkName, symtype);
     //&editorDumpBuffers();
     redoTrack = NULL;
     check = refactoryMakeSafetyCheckAndUndo(buf, point, &occs, undoStartPoint, &redoTrack);
@@ -1870,14 +1862,14 @@ static int refactoryGetParamNamePosition(EditorMarker *pos, char *fname, int arg
     clearParamPositions();
     assert(strcmp(actName, fname)==0);
     sprintf(pushOpt, "-olcxgotoparname%d", argn);
-    refactoryEditServerParseBuffer( refactoringOptions.project, pos->buffer, pos,NULL, pushOpt,NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, pos->buffer, pos, NULL, pushOpt, NULL);
     olcxPopOnly();
     if (s_paramPosition.file != noFileIndex) {
         res = RETURN_OK;
     } else {
         res = RETURN_ERROR;
     }
-    return(res);
+    return res;
 }
 
 static int refactoryGetParamPosition(EditorMarker *pos, char *fname, int argn) {
@@ -1898,7 +1890,7 @@ static int refactoryGetParamPosition(EditorMarker *pos, char *fname, int argn) {
 
     clearParamPositions();
     sprintf(pushOpt, "-olcxgetparamcoord%d", argn);
-    refactoryEditServerParseBuffer( refactoringOptions.project, pos->buffer, pos,NULL, pushOpt,NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, pos->buffer, pos, NULL, pushOpt, NULL);
     olcxPopOnly();
 
     res = RETURN_OK;
@@ -1930,7 +1922,7 @@ static int refactoryGetParamPosition(EditorMarker *pos, char *fname, int argn) {
         //    function(PAR1 PAR2 0);
         // Hmmm, but how to do it? TODO!!!!
     }
-    return(res);
+    return res;
 }
 
 // !!!!!!!!! pos and endm can be the same marker !!!!!!
@@ -1946,7 +1938,7 @@ static int refactoryAddStringAsParameter(EditorMarker *pos, EditorMarker *endm,
     rr = refactoryGetParamPosition(pos, fname, argn);
     if (rr != RETURN_OK) {
         errorMessage(ERR_INTERNAL, "Problem while adding parameter");
-        return(insertionOffset);
+        return insertionOffset;
     }
     text = pos->buffer->allocation.text;
 
@@ -1996,20 +1988,20 @@ static int refactoryAddStringAsParameter(EditorMarker *pos, EditorMarker *endm,
     }
     // O.K. I hope that mm == endp is moved to
     // end of inserted parameter
-    return(insertionOffset);
+    return insertionOffset;
 }
 
 static int refactoryIsThisSymbolUsed(EditorMarker *pos) {
     int refn;
-    refactoryPushReferences( pos->buffer, pos, "-olcxpushforlm",STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
+    refactoryPushReferences(pos->buffer, pos, "-olcxpushforlm",STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
     LIST_LEN(refn, Reference, s_olcxCurrentUser->browserStack.top->references);
     olcxPopOnly();
-    return(refn > 1);
+    return refn > 1;
 }
 
 static int refactoryIsParameterUsedExceptRecursiveCalls(EditorMarker *ppos, EditorMarker *fpos, char *fname) {
     // for the moment
-    return(refactoryIsThisSymbolUsed(ppos));
+    return refactoryIsThisSymbolUsed(ppos);
 }
 
 static void refactoryCheckThatParameterIsUnused(EditorMarker *pos, char *fname,
@@ -2147,11 +2139,11 @@ static void refactoryMoveParameter(EditorMarker *pos, char *fname,
 
 static void refactoryApplyParamManip(char *functionName, EditorMarkerList *occs,
                                      int manip, int argn1, int argn2
-                                     ) {
-    EditorMarkerList *ll;
+) {
     int progressi, progressn;
+
     LIST_LEN(progressn, EditorMarkerList, occs); progressi=0;
-    for(ll=occs; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
         if (ll->usage.base != UsageUndefinedMacro) {
             if (manip==PPC_AVR_ADD_PARAMETER) {
                 refactoryAddParameter(ll->marker, functionName, argn1,
@@ -2185,7 +2177,7 @@ static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker 
     refactoryUpdateReferences(refactoringOptions.project);
 
     strcpy(nameOnPoint, refactoryGetIdentifierOnMarker_st(point));
-    refactoryPushReferences( buf, point, "-olcxargmanip",STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
+    refactoryPushReferences(buf, point, "-olcxargmanip",STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
     occs = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->references, filter0, NULL);
     startPoint = s_editorUndo;
     // first just check that loaded files are up to date
@@ -2215,14 +2207,11 @@ static void refactoryParameterManipulation(EditorBuffer *buf, EditorMarker *poin
     ppcGotoMarker(point);
 }
 
-static int createMarkersForAllReferencesInRegions(
-                                                  SymbolsMenu *menu, EditorRegionList **regions
-                                                  ) {
-    SymbolsMenu *mm;
+static int createMarkersForAllReferencesInRegions(SymbolsMenu *menu, EditorRegionList **regions) {
     int res, n;
 
     res = 0;
-    for(mm=menu; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=menu; mm!=NULL; mm=mm->next) {
         assert(mm->markers==NULL);
         if (mm->selected && mm->visible) {
             //&LIST_LEN(nn, Reference, mm->s.refs);sprintf(tmpBuff,"there are %d refs for %s", nn, fileTable.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
@@ -2236,14 +2225,12 @@ static int createMarkersForAllReferencesInRegions(
             res += n;
         }
     }
-    return(res);
+    return res;
 }
 
 // --------------------------------------- ExpandShortNames
 
 static void refactoryApplyExpandShortNames(EditorBuffer *buf, EditorMarker *point) {
-    SymbolsMenu *mm;
-    EditorMarkerList *ppp;
     char fqtName[MAX_FILE_NAME_SIZE];
     char fqtNameDot[2*MAX_FILE_NAME_SIZE];
     char *shortName;
@@ -2257,7 +2244,7 @@ static void refactoryApplyExpandShortNames(EditorBuffer *buf, EditorMarker *poin
     // everything to markers
     createMarkersForAllReferencesInRegions(s_olcxCurrentUser->browserStack.top->menuSym, NULL);
     // Hmm. what if one reference will be twice ? Is it possible?
-    for(mm = s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm = s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
             javaGetClassNameFromFileNum(mm->s.vApplClass, fqtName, DOTIFY_NAME);
             javaDotifyClassName(fqtName);
@@ -2267,7 +2254,7 @@ static void refactoryApplyExpandShortNames(EditorBuffer *buf, EditorMarker *poin
             if (isdigit(shortName[0])) {
                 goto cont;  // anonymous nested class, no expansion
             }
-            for(ppp=mm->markers; ppp!=NULL; ppp=ppp->next) {
+            for (EditorMarkerList *ppp=mm->markers; ppp!=NULL; ppp=ppp->next) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 log_trace("expanding at %s:%d", ppp->marker->buffer->name, ppp->marker->offset);
                 if (ppp->usage.base == UsageNonExpandableNotFQTNameInClassOrMethod) {
@@ -2315,7 +2302,7 @@ static EditorMarker *refactoryReplaceStaticPrefix(EditorMarker *d, char *npref) 
         // return it back to beginning of fqt
         pp->offset = ppoffset;
     }
-    return(pp);
+    return pp;
 }
 
 // -------------------------------------- ReduceLongNames
@@ -2323,8 +2310,8 @@ static EditorMarker *refactoryReplaceStaticPrefix(EditorMarker *d, char *npref) 
 static void refactoryReduceLongReferencesInRegions(
                                                    EditorMarker      *point,
                                                    EditorRegionList  **regions
-                                                   ) {
-    EditorMarkerList *rli, *ri, *ro, *rr;
+) {
+    EditorMarkerList *rli, *ri, *ro;
     EditorMarker *pp;
     int progressi, progressn;
 
@@ -2340,7 +2327,7 @@ static void refactoryReduceLongReferencesInRegions(
 
     s_progressFactor += 1;
     LIST_LEN(progressn, EditorMarkerList, ri); progressi=0;
-    for(rr=ri; rr!=NULL; rr=rr->next) {
+    for (EditorMarkerList *rr=ri; rr!=NULL; rr=rr->next) {
         pp = refactoryReplaceStaticPrefix(rr->marker, "");
         editorFreeMarker(pp);
         writeRelativeProgress((((progressi++)*100/progressn)/10)*10);
@@ -2352,15 +2339,14 @@ static void refactoryReduceLongReferencesInRegions(
 
 static int refactoryIsTheImportUsed(EditorMarker *point, int line, int coll) {
     char                isymName[TMP_STRING_SIZE];
-    SymbolsMenu     *mm;
     int                 res;
 
     strcpy(isymName, javaImportSymbolName_st(point->buffer->ftnum, line, coll));
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer, point,NULL,
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point,NULL,
                                     "-olcxpushfileunused", "-olallchecks");
     pushLocalUnusedSymbolsAction();
     res = 1;
-    for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->visible && strcmp(mm->s.name, isymName)==0) {
             res = 0;
             goto fini1;
@@ -2368,27 +2354,27 @@ static int refactoryIsTheImportUsed(EditorMarker *point, int line, int coll) {
     }
  fini1:
     olcxPopOnly();
-    return(res);
+    return res;
 }
 
 static int refactoryPushFileUnimportedFqts(EditorMarker *point, EditorRegionList **regions) {
     char                pushOpt[TMP_STRING_SIZE];
     int                 lastImportLine;
+
     sprintf(pushOpt, "-olcxpushspecialname=%s", LINK_NAME_UNIMPORTED_QUALIFIED_ITEM);
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer, point,NULL,pushOpt, "-olallchecks");
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point,NULL,pushOpt, "-olallchecks");
     lastImportLine = s_cps.lastImportLine;
     olcxPushSpecial(LINK_NAME_UNIMPORTED_QUALIFIED_ITEM, OLO_PUSH_SPECIAL_NAME);
     createMarkersForAllReferencesInRegions(s_olcxCurrentUser->browserStack.top->menuSym, regions);
-    return(lastImportLine);
+    return lastImportLine;
 }
 
 static int refactoryImportNeeded(EditorMarker *point, EditorRegionList **regions, int vApplCl) {
-    SymbolsMenu     *mm;
-    int                 res;
+    int res;
 
     // check whether the symbol is reduced
     refactoryPushFileUnimportedFqts(point, regions);
-    for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->s.vApplClass == vApplCl) {
             res = 1;
             goto fini;
@@ -2397,16 +2383,16 @@ static int refactoryImportNeeded(EditorMarker *point, EditorRegionList **regions
     res = 0;
  fini:
     olcxPopOnly();
-    return(res);
+    return res;
 }
 
-static int refactoryAddImport(EditorMarker *point, EditorRegionList **regions,
+static bool refactoryAddImport(EditorMarker *point, EditorRegionList **regions,
                               char *iname, int line, int vApplCl, int interactive) {
     char                istat[MAX_CX_SYMBOL_SIZE];
     char                icoll;
-    char                *ld1, *ld2, *ss;
+    char                *ld1, *ld2;
     EditorMarker      *mm;
-    int                 res;
+    bool res;
     EditorUndo        *undoBase;
     EditorRegionList  *wholeBuffer;
 
@@ -2427,12 +2413,12 @@ static int refactoryAddImport(EditorMarker *point, EditorRegionList **regions,
     editorMoveMarkerToLineCol(mm, line, 0);
     refactoryReplaceString(mm, 0, istat);
 
-    res = 1;
+    res = true;
 
     // TODO verify that import is unused
     ld1 = NULL;
     ld2 = istat + strlen("import");
-    for(ss=ld2; *ss; ss++) {
+    for (char *ss=ld2; *ss; ss++) {
         if (*ss == '.') {
             ld1 = ld2;
             ld2 = ss;
@@ -2441,14 +2427,13 @@ static int refactoryAddImport(EditorMarker *point, EditorRegionList **regions,
     if (ld1 == NULL) {
         errorMessage(ERR_INTERNAL, "can't find imported package");
     } else {
-
         icoll = ld1 - istat + 1;
         if (refactoryIsTheImportUsed(mm, line, icoll)) {
             if (interactive == INTERACTIVE_YES) {
                 ppcGenRecord(PPC_WARNING,
                              "Sorry, adding this import would cause misinterpretation of\nsome of classes used elsewhere it the file.");
             }
-            res = 0;
+            res = false;
         } else {
             wholeBuffer = editorWholeBufferRegion(point->buffer);
             refactoryReduceLongReferencesInRegions(point, &wholeBuffer);
@@ -2458,32 +2443,33 @@ static int refactoryAddImport(EditorMarker *point, EditorRegionList **regions,
                     ppcGenRecord(PPC_WARNING,
                                  "Sorry, this import will not help to reduce class references.");
                 }
-                res = 0;
+                res = false;
             }
         }
     }
-    if (res == 0) editorUndoUntil(undoBase, NULL);
+    if (!res)
+        editorUndoUntil(undoBase, NULL);
 
     editorFreeMarker(mm);
-    return(res);
+    return res;
 }
 
-static int isInDisabledList(S_disabledList *list, int file, int vApplCl) {
-    S_disabledList *ll;
-    for(ll=list; ll!=NULL; ll=ll->next) {
-        if (ll->file == file && ll->clas == vApplCl) return(1);
+static bool isInDisabledList(S_disabledList *list, int file, int vApplCl) {
+    for (S_disabledList *ll=list; ll!=NULL; ll=ll->next) {
+        if (ll->file == file && ll->clas == vApplCl)
+            return true;
     }
-    return(0);
+    return false;
 }
 
 static int translatePassToAddImportAction(int pass) {
     switch (pass) {
-    case 0: return(RC_IMPORT_ON_DEMAND);
-    case 1: return(RC_IMPORT_SINGLE_TYPE);
-    case 2: return(RC_CONTINUE);
+    case 0: return RC_IMPORT_ON_DEMAND;
+    case 1: return RC_IMPORT_SINGLE_TYPE;
+    case 2: return RC_CONTINUE;
     default: errorMessage(ERR_INTERNAL, "wrong code for noninteractive add import");
     }
-    return(0);
+    return 0;
 }
 
 static int refactoryInteractiveAskForAddImportAction(EditorMarkerList *ppp, int defaultAction,
@@ -2495,7 +2481,7 @@ static int refactoryInteractiveAskForAddImportAction(EditorMarkerList *ppp, int 
     ppcValueRecord(PPC_ADD_TO_IMPORTS_DIALOG,defaultAction,fqtName);
     refactoryBeInteractive();
     action = options.continueRefactoring;
-    return(action);
+    return action;
 }
 
 static S_disabledList *newDisabledList(SymbolsMenu *mm, int cfile, S_disabledList *disabled) {
@@ -2508,14 +2494,12 @@ static S_disabledList *newDisabledList(SymbolsMenu *mm, int cfile, S_disabledLis
 }
 
 
-static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
-                                                                 EditorMarker *point, EditorRegionList **regions, int interactive
-                                                                 ) {
-    SymbolsMenu *mm;
+static void refactoryPerformReduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegionList **regions,
+                                                                 int interactive) {
     EditorMarkerList *ppp;
-    EditorRegionList *rl;
     EditorBuffer *b;
-    int action, keepAdding, lastImportLine;
+    int action, lastImportLine;
+    bool keepAdding;
     int defaultAction, cfile;
     char fqtName[MAX_FILE_NAME_SIZE];
     char starName[MAX_FILE_NAME_SIZE];
@@ -2525,7 +2509,7 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
     // just verify that all references are from single file
     if (regions!=NULL && *regions!=NULL) {
         b = (*regions)->region.begin->buffer;
-        for(rl= *regions; rl!=NULL; rl=rl->next) {
+        for (EditorRegionList *rl= *regions; rl!=NULL; rl=rl->next) {
             if (rl->region.begin->buffer != b || rl->region.end->buffer != b) {
                 assert(0 && "[refactoryPerformAddImportsInSingleFile] region list contains multiple buffers!");
                 break;
@@ -2536,14 +2520,14 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
     refactoryReduceLongReferencesInRegions(point, regions);
 
     disabled = NULL;
-    keepAdding = 1;
+    keepAdding = true;
     while (keepAdding) {
-        keepAdding = 0;
+        keepAdding = false;
         lastImportLine = refactoryPushFileUnimportedFqts(point, regions);
-        for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+        for (SymbolsMenu *mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
             ppp=mm->markers;
             defaultAction = refactoringOptions.defaultAddImportStrategy;
-            while (ppp!=NULL && keepAdding==0
+            while (ppp!=NULL && !keepAdding
                    && !isInDisabledList(disabled, ppp->marker->buffer->ftnum, mm->s.vApplClass)) {
                 cfile = ppp->marker->buffer->ftnum;
                 javaGetClassNameFromFileNum(mm->s.vApplClass, fqtName, DOTIFY_NAME);
@@ -2648,7 +2632,7 @@ static void refactoryAddToImports(EditorBuffer *buf, EditorMarker *point) {
 
 
 static void refactoryPushAllReferencesOfMethod(EditorMarker *m1, char *specialOption) {
-    refactoryEditServerParseBuffer( refactoringOptions.project, m1->buffer, m1,NULL, "-olcxpushallinmethod", specialOption);
+    refactoryEditServerParseBuffer(refactoringOptions.project, m1->buffer, m1,NULL, "-olcxpushallinmethod", specialOption);
     olPushAllReferencesInBetween(s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
 }
 
@@ -2699,7 +2683,7 @@ static void refactoryStaticMoveCheckCorrespondance(
         // (maybe I should not test any local symbols ???)
         // O.K. something to be checked, find correspondance in mm2
         //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->s.name);
-        for(mm2=menu2; mm2!=NULL; mm2=mm2->next) {
+        for (mm2=menu2; mm2!=NULL; mm2=mm2->next) {
             log_trace("Checking '%s'", mm2->s.name);
             if (isSameCxSymbolIncludingApplicationClass(&mm1->s, &mm2->s)) break;
         }
@@ -2737,7 +2721,7 @@ static void refactoryStaticMoveCheckCorrespondance(
     cont:
         mm1=mm1->next;
     }
-    for(mm2=menu2; mm2!=NULL; mm2=mm2->next) {
+    for (mm2=menu2; mm2!=NULL; mm2=mm2->next) {
         editorFreeMarkersAndMarkerList(mm2->markers);
         mm2->markers = NULL;
     }
@@ -2769,7 +2753,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     int size;
     SymbolsMenu *mm1, *mm2;
     EditorMarker *pp, *ppp, *movedEnd;
-    EditorMarkerList *occs, *ll;
+    EditorMarkerList *occs;
     EditorRegionList *regions;
     SymbolReferenceItem *theMethod;
     int progressi, progressn;
@@ -2803,7 +2787,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
     LIST_LEN(progressn, EditorMarkerList, occs); progressi=0;
     regions = NULL;
-    for(ll=occs; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
         if ((! IS_DEFINITION_OR_DECL_USAGE(ll->usage.base))
             && ll->usage.base!=UsageConstructorDefinition) {
             pp = refactoryReplaceStaticPrefix(ll->marker, fqtname);
@@ -2854,7 +2838,7 @@ static EditorMarker *getTargetFromOptions(void) {
     target = editorCrNewMarker(tb, 0);
     sscanf(refactoringOptions.refpar1, "%d", &tline);
     editorMoveMarkerToLineCol(target, tline, 0);
-    return(target);
+    return target;
 }
 
 static void refactoryGetMethodLimitsForMoving(EditorMarker *point,
@@ -2878,8 +2862,8 @@ static void refactoryGetMethodLimitsForMoving(EditorMarker *point,
 }
 
 static void refactoryGetNameOfTheClassAndSuperClass(EditorMarker *point, char *ccname, char *supercname) {
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer,
-                                    point,NULL, "-olcxcurrentclass",NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer,
+                                   point, NULL, "-olcxcurrentclass", NULL);
     if (ccname != NULL) {
         if (s_cps.currentClassAnswer[0] == 0) {
             fatalError(ERR_ST, "can't get class on point", XREF_EXIT_ERR);
@@ -2943,7 +2927,7 @@ static void refactoryMoveField(EditorMarker *point) {
     char prefixDot[TMP_STRING_SIZE];
     int lines, size, check, accessFlags;
     EditorMarker *target, *mstart, *mend, *movedEnd;
-    EditorMarkerList *occs, *ll;
+    EditorMarkerList *occs;
     EditorMarker *pp, *ppp;
     EditorRegionList *regions;
     EditorUndo *undoStartPoint, *redoTrack;
@@ -2989,7 +2973,7 @@ static void refactoryMoveField(EditorMarker *point) {
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
     LIST_LEN(progressn, EditorMarkerList, occs); progressi=0;
     regions = NULL;
-    for(ll=occs; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
         if (! IS_DEFINITION_OR_DECL_USAGE(ll->usage.base)) {
             if (*prefixDot != 0) {
                 refactoryReplaceString(ll->marker, 0, prefixDot);
@@ -3030,8 +3014,8 @@ static void refactoryMoveField(EditorMarker *point) {
 
 static void refactorySetMovingPrecheckStandardEnvironment(EditorMarker *point, char *targetFqtName) {
     SymbolsMenu *ss;
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer,
-                                    point, NULL, "-olcxtrivialprecheck",NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer,
+                                   point, NULL, "-olcxtrivialprecheck", NULL);
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
     options.moveTargetFile = refactoringOptions.moveTargetFile;
@@ -3237,10 +3221,10 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     int plen, ppoffset, poffset;
     int progressi, progressj, progressn;
     EditorMarker *pp, *ppp, *nparamdefpos;
-    EditorMarkerList *ll, *occs, *allrefs;
+    EditorMarkerList *occs, *allrefs;
     EditorMarkerList *npoccs, *npadded, *diff1, *diff2;
     EditorRegionList *regions, **reglast, *lll;
-    SymbolsMenu *csym, *mm;
+    SymbolsMenu *csym;
     EditorUndo *undoStartPoint;
     UsageBits defusage;
 
@@ -3265,7 +3249,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     sprintf(fqstaticname+strlen(fqstaticname), ".");
 
     progressn = progressi = 0;
-    for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
             mm->markers = editorReferencesToMarkers(mm->s.refs, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
@@ -3275,12 +3259,12 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     }
     undoStartPoint = s_editorUndo;
     regions = NULL; reglast = &regions; allrefs = NULL;
-    for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
             javaGetClassNameFromFileNum(mm->s.vApplClass, fqthis, DOTIFY_NAME);
             javaDotifyClassName(fqthis);
             sprintf(fqthis+strlen(fqthis), ".this");
-            for(ll=mm->markers; ll!=NULL; ll=ll->next) {
+            for (EditorMarkerList *ll=mm->markers; ll!=NULL; ll=ll->next) {
                 refactoryAddCopyOfMarkerToList(&allrefs, ll->marker, &ll->usage);
                 pp = NULL;
                 if (IS_DEFINITION_OR_DECL_USAGE(ll->usage.base)) {
@@ -3331,12 +3315,12 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
 
     sprintf(parusage, "%s.", refactoringOptions.refpar1);
 
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer, point,NULL, "-olcxmaybethis",NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxmaybethis", NULL);
     olcxPushSpecial(LINK_NAME_MAYBE_THIS_ITEM, OLO_MAYBE_THIS);
 
     progressn = progressi = 0;
     assert(s_olcxCurrentUser->browserStack.top && s_olcxCurrentUser->browserStack.top->hkSelectedSym);
-    for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
             mm->markers = editorReferencesToMarkers(mm->s.refs, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
@@ -3350,9 +3334,9 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     fillUsageBits(&defusage, UsageDefined, 0);
     refactoryAddCopyOfMarkerToList(&npadded, nparamdefpos, &defusage);
 
-    for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            for(ll=mm->markers; ll!=NULL; ll=ll->next) {
+            for (EditorMarkerList *ll=mm->markers; ll!=NULL; ll=ll->next) {
                 if (ll->usage.base == UsageMaybeQualifThisInClassOrMethod) {
                     editorUndoUntil(undoStartPoint,NULL);
                     ppcGotoMarker(ll->marker);
@@ -3397,7 +3381,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     LIST_APPEND(EditorMarkerList, diff1, diff2); diff2=NULL;
     if (diff1!=NULL) {
         ppcGotoMarker(point);
-        refactoryShowSafetyCheckFailingDialog( &diff1, "The new parameter conflicts with existing symbols");
+        refactoryShowSafetyCheckFailingDialog(&diff1, "The new parameter conflicts with existing symbols");
     }
 
     if (npoccs != NULL && npoccs->next == NULL) {
@@ -3421,25 +3405,13 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     ppcGotoMarker(point);
 }
 
-static int noSpaceChar(int c) {return(! isspace(c));}
+static int noSpaceChar(int c) {return !isspace(c);}
 
-#if ZERO
-static void dumpReferences(S_reference *rr) {
-    S_reference *r;
-    fprintf(dumpOut, "[dump]");
-    for(r=rr; r!=NULL; r=r->next) {
-        fprintf(dumpOut,"%s:%d:%d\n", s_fileTab.tab[r->p.file]->name, r->p.line, r->p.coll);
-    }
-    fprintf(dumpOut, "\n\n");
-}
-#endif
-
-static void refactoryPushMethodSymbolsPlusThoseWithClearedRegion(
-                                                                 EditorMarker *m1, EditorMarker *m2
-                                                                 ) {
-    char                spaces[REFACTORING_TMP_STRING_SIZE];
+static void refactoryPushMethodSymbolsPlusThoseWithClearedRegion(EditorMarker *m1, EditorMarker *m2) {
+    char spaces[REFACTORING_TMP_STRING_SIZE];
     EditorUndo *undoMark;
     int slen;
+    
     assert(m1->buffer == m2->buffer);
     undoMark = s_editorUndo;
     refactoryPushAllReferencesOfMethod(m1,NULL);
@@ -3455,18 +3427,17 @@ static void refactoryPushMethodSymbolsPlusThoseWithClearedRegion(
 static int refactoryIsMethodPartRedundant(
                                           EditorMarker *m1,
                                           EditorMarker *m2
-                                          ) {
+) {
     SymbolsMenu *mm1, *mm2;
     Reference *diff;
     EditorMarkerList *lll, *ll;
-    int res;
+    bool res = true;
 
     refactoryPushMethodSymbolsPlusThoseWithClearedRegion(m1, m2);
-    res = 1;
     assert(s_olcxCurrentUser->browserStack.top && s_olcxCurrentUser->browserStack.top->previous);
     mm1 = s_olcxCurrentUser->browserStack.top->menuSym;
     mm2 = s_olcxCurrentUser->browserStack.top->previous->menuSym;
-    while (mm1!=NULL && mm2!=NULL && res!=0) {
+    while (mm1!=NULL && mm2!=NULL && res) {
         //&symbolRefItemDump(&mm1->s); dumpReferences(mm1->s.refs);
         //&symbolRefItemDump(&mm2->s); dumpReferences(mm2->s.refs);
         olcxReferencesDiff(&mm1->s.refs, &mm2->s.refs, &diff);
@@ -3477,7 +3448,7 @@ static int refactoryIsMethodPartRedundant(
                 assert(ll->marker->buffer == m1->buffer);
                 //&sprintf(tmpBuff, "checking diff %d", ll->marker->offset); ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 if (editorMarkerLess(ll->marker, m1) || editorMarkerLessOrEq(m2, ll->marker)) {
-                    res=0;
+                    res=false;
                 }
             }
             editorFreeMarkersAndMarkerList(lll);
@@ -3489,7 +3460,7 @@ static int refactoryIsMethodPartRedundant(
     olcxPopOnly();
     olcxPopOnly();
 
-    return(res);
+    return res;
 }
 
 static void refactoryRemoveMethodPartIfRedundant(EditorMarker *m, int len) {
@@ -3501,12 +3472,13 @@ static void refactoryRemoveMethodPartIfRedundant(EditorMarker *m, int len) {
     editorFreeMarker(mm);
 }
 
-static int isMethodBeg(int c) {return(c=='{');}
+static int isMethodBeg(int c) { return c=='{'; }
 
-static int staticToDynCanBeThisOccurence(EditorMarker *pp, char *param, int *rlen) {
-    char            *pp2;
+static bool staticToDynCanBeThisOccurence(EditorMarker *pp, char *param, int *rlen) {
+    char *pp2;
     EditorMarker  *mm;
-    int             res = 0;
+    bool res = false;
+    
     mm = editorCrNewMarker(pp->buffer, pp->offset);
     pp2 = strchr(param, '.');
     if (pp2==NULL) {
@@ -3523,10 +3495,10 @@ static int staticToDynCanBeThisOccurence(EditorMarker *pp, char *param, int *rle
     editorMoveMarkerToNonBlank(mm, 1);
     if (strcmp(refactoryGetIdentifierOnMarker_st(mm), pp2+1)!=0) goto fini;
     *rlen = mm->offset - pp->offset + strlen(pp2+1);
-    res = 1;
+    res = true;
  fini:
     editorFreeMarker(mm);
-    return(res);
+    return res;
 }
 
 // ----------------------------------------------- TurnStaticToDynamic
@@ -3540,7 +3512,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     int                 classnum, parclassnum;
     int                 progressi, progressn;
     EditorMarker      *mm, *m1, *m2, *pp;
-    EditorMarkerList  *ll, *occs, *poccs;
+    EditorMarkerList  *occs, *poccs;
     EditorUndo        *checkPoint;
 
     refactoryUpdateReferences(refactoringOptions.project);
@@ -3566,8 +3538,8 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     plen = strlen(param);
 
     // TODO!!! precheck
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer,
-                                    point,NULL, "-olcxcurrentclass",NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer,
+                                   point,NULL, "-olcxcurrentclass",NULL);
     if (s_cps.currentClassAnswer[0] == 0) {
         errorMessage(ERR_INTERNAL, "Can't get current class");
         return;
@@ -3619,7 +3591,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     occs = refactoryPushGetAndPreCheckReferences(point->buffer, point, nameOnPoint,STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
 
     LIST_LEN(progressn, EditorMarkerList, occs); progressi=0;
-    for(ll=occs; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
         if (! IS_DEFINITION_OR_DECL_USAGE(ll->usage.base)) {
             res = refactoryGetParamPosition(ll->marker, nameOnPoint, argn);
             if (res == RETURN_OK) {
@@ -3660,7 +3632,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
                                    mm->buffer, mm,
                                    STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO
                                    );
-    for(ll=poccs; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=poccs; ll!=NULL; ll=ll->next) {
         if (! IS_DEFINITION_OR_DECL_USAGE(ll->usage.base)) {
             if (ll->marker->offset+plen <= ll->marker->buffer->allocation.bufferSize
                 // TODO! do this at least little bit better, by skipping spaces, etc.
@@ -3690,33 +3662,33 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
 // ------------------------------------------------------ ExtractMethod
 
 static void refactoryExtractMethod(EditorMarker *point, EditorMarker *mark) {
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer, point, mark,
-                                    "-olcxextract", NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point, mark,
+                                   "-olcxextract", NULL);
 }
 
 static void refactoryExtractMacro(EditorMarker *point, EditorMarker *mark) {
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer, point, mark,
-                                    "-olcxextract", "-olexmacro");
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point, mark,
+                                   "-olcxextract", "-olexmacro");
 }
 
 // ------------------------------------------------------- Encapsulate
 
 static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *mname) {
-    SymbolsMenu     *mm, *hk;
-    char                clist[REFACTORING_TMP_STRING_SIZE];
-    char                cn[TMP_STRING_SIZE];
-    Reference         *rr, *anotherDefinition;
+    SymbolsMenu *hk;
+    char clist[REFACTORING_TMP_STRING_SIZE];
+    char cn[TMP_STRING_SIZE];
+    Reference *anotherDefinition = NULL;
+
     clist[0] = 0;
     assert(s_olcxCurrentUser->browserStack.top);
     assert(s_olcxCurrentUser->browserStack.top->hkSelectedSym);
     assert(s_olcxCurrentUser->browserStack.top->menuSym);
-    anotherDefinition = NULL;
     hk = s_olcxCurrentUser->browserStack.top->hkSelectedSym;
-    for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (isSameCxSymbol(&mm->s, &hk->s) && mm->defRefn != 0) {
             if (mm->s.vFunClass==hk->s.vFunClass) {
                 // find definition of another function
-                for(rr=mm->s.refs; rr!=NULL; rr=rr->next) {
+                for (Reference *rr=mm->s.refs; rr!=NULL; rr=rr->next) {
                     if (IS_DEFINITION_USAGE(rr->usage.base)) {
                         if (positionsAreNotEqual(rr->p, hk->defpos)) {
                             anotherDefinition = rr;
@@ -3752,7 +3724,7 @@ static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
     }
-    return(anotherDefinition);
+    return anotherDefinition;
 }
 
 static void refactoryAddMethodToForbiddenRegions(Reference *methodRef,
@@ -3783,7 +3755,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     int nameOnPointLen, declLen, indlines, indoffset;
     Reference *anotherGetter, *anotherSetter;
     unsigned accFlags;
-    EditorMarkerList  *ll, *occs, *insiders, *outsiders;
+    EditorMarkerList  *occs, *insiders, *outsiders;
     EditorMarker *dte, *dtb, *de;
     EditorMarker *getterm, *setterm, *tbeg, *tend;
     EditorUndo *beforeInsertionUndo;
@@ -3796,7 +3768,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     occs = refactoryPushGetAndPreCheckReferences(point->buffer, point, nameOnPoint,
                                                  ERROR_SELECT_SYMBOLS_MESSAGE,
                                                  PPCV_BROWSER_TYPE_WARNING);
-    for(ll=occs; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
         if (ll->usage.base == UsageAddrUsed) {
             char tmpBuff[TMP_BUFF_SIZE];
             ppcGotoMarker(ll->marker);
@@ -3836,10 +3808,10 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     strncpy(declarator, MARKER_TO_POINTER(dtb), declLen);
     declarator[declLen] = 0;
 
-    sprintf(getterBody, "public %s%s %s() {\nreturn(%s);\n}\n",
+    sprintf(getterBody, "public %s%s %s() {\nreturn %s;\n}\n",
             ((accFlags&AccessStatic)?"static ":""),
             declarator, getter, nameOnPoint);
-    sprintf(setterBody, "public %s%s %s(%s %s) {\n%s.%s = %s;\nreturn(%s);\n}\n",
+    sprintf(setterBody, "public %s%s %s(%s %s) {\n%s.%s = %s;\nreturn %s;\n}\n",
             ((accFlags&AccessStatic)?"static ":""),
             declarator, setter, declarator, nameOnPoint,
             ((accFlags&AccessStatic)?scclass:"this"),
@@ -3899,7 +3871,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
 
     // generate getter and setter invocations
     editorSplitMarkersWithRespectToRegions(&occs, forbiddenRegions, &insiders, &outsiders);
-    for(ll=outsiders; ll!=NULL; ll=ll->next) {
+    for (EditorMarkerList *ll=outsiders; ll!=NULL; ll=ll->next) {
         if (ll->usage.base == UsageLvalUsed) {
             refactoryMakeSyntaxPassOnSource(ll->marker);
             if (s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION].file == noFileIndex) {
@@ -3981,10 +3953,11 @@ static SymbolsMenu *refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown
                                                                                      ) {
     SymbolsMenu *mm2;
     EditorMarkerList *rr2;
+
     // find corresponding reference
-    for(mm2=menu2; mm2!=NULL; mm2=mm2->next) {
+    for (mm2=menu2; mm2!=NULL; mm2=mm2->next) {
         if (mm1->s.b.symType!=mm2->s.b.symType && mm2->s.b.symType!=TypeInducedError) continue;
-        for(rr2=mm2->markers; rr2!=NULL; rr2=rr2->next) {
+        for (rr2=mm2->markers; rr2!=NULL; rr2=rr2->next) {
             if (MARKER_EQ(rr1->marker, rr2->marker)) goto breakrr2;
         }
     breakrr2:
@@ -3995,15 +3968,12 @@ static SymbolsMenu *refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown
         //&fprintf(dumpOut, "Checking %s\n", mm2->s.name);
     }
  breakmm2:
-    return(mm2);
+    return mm2;
 }
 
-static int refactoryIsMethodPartRedundantWrtPullUpPushDown(
-                                                           EditorMarker *m1, EditorMarker *m2
-                                                           ) {
+static bool refactoryIsMethodPartRedundantWrtPullUpPushDown(EditorMarker *m1, EditorMarker *m2) {
     SymbolsMenu *mm1, *mm2;
-    EditorMarkerList *rr1;
-    int res;
+    bool res;
     EditorRegionList *regions;
     EditorBuffer *buf;
 
@@ -4025,29 +3995,28 @@ static int refactoryIsMethodPartRedundantWrtPullUpPushDown(
     createMarkersForAllReferencesInRegions(mm1, &regions);
     createMarkersForAllReferencesInRegions(mm2, &regions);
 
-    res = 1;
+    res = true;
     while (mm1!=NULL) {
-        for(rr1=mm1->markers; rr1!=NULL; rr1=rr1->next) {
+        for (EditorMarkerList *rr1=mm1->markers; rr1!=NULL; rr1=rr1->next) {
             if (refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown(mm2, mm1, rr1)==NULL) {
-                res = 0;
+                res = false;
                 goto fini;
             }
         }
         mm1=mm1->next;
     }
  fini:
-
     editorFreeMarkersAndRegionList(regions);
     olcxPopOnly();
     olcxPopOnly();
-    return(res);
+    return res;
 }
 
 static EditorMarkerList *refactoryPullUpPushDownDifferences(
                                                               SymbolsMenu *menu1, SymbolsMenu *menu2, SymbolReferenceItem *theMethod
                                                               ) {
     SymbolsMenu *mm1, *mm2;
-    EditorMarkerList *rr, *rr1, *diff;
+    EditorMarkerList *rr, *diff;
 
     diff = NULL;
     mm1 = menu1;
@@ -4063,7 +4032,7 @@ static EditorMarkerList *refactoryPullUpPushDownDifferences(
         // (maybe I should not test any local symbols ???)
         // O.K. something to be checked, find correspondance in mm2
         //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->s.name);
-        for(rr1=mm1->markers; rr1!=NULL; rr1=rr1->next) {
+        for (EditorMarkerList *rr1=mm1->markers; rr1!=NULL; rr1=rr1->next) {
             mm2 = refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown(menu2, mm1, rr1);
             if (mm2==NULL) {
                 ED_ALLOC(rr, EditorMarkerList);
@@ -4074,7 +4043,7 @@ static EditorMarkerList *refactoryPullUpPushDownDifferences(
     cont:
         mm1=mm1->next;
     }
-    return(diff);
+    return diff;
 }
 
 static void refactoryPullUpPushDownCheckCorrespondance(
@@ -4177,11 +4146,11 @@ static void refactoryReduceCastedThis(EditorMarker *mm, char *superFqtName) {
     }
 }
 
-static int refactoryIsThereACastOfThis(EditorMarker *mm) {
-    EditorMarker  *eb, *ee;
-    char            *ss;
-    int             res;
-    res = 0;
+static bool refactoryIsThereACastOfThis(EditorMarker *mm) {
+    EditorMarker *eb, *ee;
+    char *ss;
+    bool res = false;
+
     ss = refactoryGetIdentifierOnMarker_st(mm);
     if (strcmp(ss,"this")==0) {
         refactoryMakeSyntaxPassOnSource(mm);
@@ -4192,31 +4161,27 @@ static int refactoryIsThereACastOfThis(EditorMarker *mm) {
             eb = editorCrNewMarkerForPosition(&s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION]);
             ee = editorCrNewMarkerForPosition(&s_spp[SPP_CAST_EXPRESSION_END_POSITION]);
             if (ee->offset - eb->offset == 4 /*strlen("this")*/) {
-                res = 1;
+                res = true;
             }
             editorFreeMarker(eb);
             editorFreeMarker(ee);
         }
     }
-    return(res);
+    return res;
 }
 
-static void refactoryReduceRedundantCastedThissInMethod(
-                                                        EditorMarker *point, EditorRegionList **methodreg
-                                                        ) {
-    EditorMarkerList *ll;
-    SymbolsMenu *mm;
+static void refactoryReduceRedundantCastedThissInMethod(EditorMarker *point, EditorRegionList **methodreg) {
     char superFqtName[MAX_FILE_NAME_SIZE];
     char *ss;
 
     refactoryGetNameOfTheClassAndSuperClass(point, NULL, superFqtName);
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer, point,NULL, "-olcxmaybethis",NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point,NULL, "-olcxmaybethis",NULL);
     olcxPushSpecial(LINK_NAME_MAYBE_THIS_ITEM, OLO_MAYBE_THIS);
 
     createMarkersForAllReferencesInRegions(s_olcxCurrentUser->browserStack.top->menuSym, methodreg);
-    for(mm = s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm = s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            for(ll=mm->markers; ll!=NULL; ll=ll->next) {
+            for (EditorMarkerList *ll=mm->markers; ll!=NULL; ll=ll->next) {
                 // casted expression "((cast)this) -> this"
                 // casted expression "((cast)this) -> super"
                 ss = refactoryGetIdentifierOnMarker_st(ll->marker);
@@ -4233,23 +4198,20 @@ static void refactoryReduceRedundantCastedThissInMethod(
 static void refactoryExpandThissToCastedThisInTheMethod(EditorMarker *point,
                                                         char *thiscFqtName, char *supercFqtName,
                                                         EditorRegionList *methodreg
-                                                        ) {
-    char                thisCast[MAX_FILE_NAME_SIZE];
-    char                superCast[MAX_FILE_NAME_SIZE];
-    char                *ss;
-    EditorMarkerList  *ll;
-    SymbolsMenu     *mm;
+) {
+    char thisCast[MAX_FILE_NAME_SIZE];
+    char superCast[MAX_FILE_NAME_SIZE];
 
     sprintf(thisCast, "((%s)this)", thiscFqtName);
     sprintf(superCast, "((%s)this)", supercFqtName);
 
-    refactoryEditServerParseBuffer( refactoringOptions.project, point->buffer, point,NULL, "-olcxmaybethis",NULL);
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point,NULL, "-olcxmaybethis",NULL);
     olcxPushSpecial(LINK_NAME_MAYBE_THIS_ITEM, OLO_MAYBE_THIS);
     createMarkersForAllReferencesInRegions(s_olcxCurrentUser->browserStack.top->menuSym, &methodreg);
-    for(mm = s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
+    for (SymbolsMenu *mm = s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            for(ll=mm->markers; ll!=NULL; ll=ll->next) {
-                ss = refactoryGetIdentifierOnMarker_st(ll->marker);
+            for (EditorMarkerList *ll=mm->markers; ll!=NULL; ll=ll->next) {
+                char *ss = refactoryGetIdentifierOnMarker_st(ll->marker);
                 // add casts only if there is yet this or super
                 if (strcmp(ss,"this")==0) {
                     // check whether there is yet a casted this
@@ -4390,7 +4352,7 @@ static void refactoryPushDownMethod(EditorMarker *point) {
 
 
 static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
-    EditorMarkerList  *occs, *o;
+    EditorMarkerList  *occs;
     SymbolsMenu     *csym;
     int                 hasHeaderReferenceFlag, scope, cat, multiFileRefsFlag, fn;
     int                 symtype, storage, accflags;
@@ -4414,7 +4376,7 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
         assert(occs->marker!=NULL && occs->marker->buffer!=NULL);
         fn = occs->marker->buffer->ftnum;
     }
-    for(o=occs; o!=NULL; o=o->next) {
+    for (EditorMarkerList *o = occs; o!=NULL; o=o->next) {
         assert(o->marker!=NULL && o->marker->buffer!=NULL);
         assert(fileTable.tab[o->marker->buffer->ftnum]!=NULL);
         if (fn != o->marker->buffer->ftnum) {
@@ -4470,7 +4432,7 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
     occs = NULL;
     olcxPopOnly();
 
-    return(res);
+    return res;
 }
 
 // --------------------------------------------------------------------

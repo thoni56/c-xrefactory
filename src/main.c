@@ -123,7 +123,7 @@ static void aboutMessage(void) {
     if (i >= argc) {                                                    \
         sprintf(tmpBuff, "file name expected after %s", argv[i-1]);     \
         errorMessage(ERR_ST,tmpBuff);                                   \
-        usage();                                                 \
+        usage();                                                        \
         exit(1);                                                        \
     }                                                                   \
 }
@@ -134,7 +134,7 @@ static void aboutMessage(void) {
     if (i >= argc) {                                                    \
         sprintf(tmpBuff, "further argument(s) expected after %s",argv[i-1]); \
         errorMessage(ERR_ST,tmpBuff);                                   \
-        usage();                                                 \
+        usage();                                                        \
         exit(1);                                                        \
     }                                                                   \
 }
@@ -154,7 +154,7 @@ static bool isAbsolutePath(char *p) {
 #endif
 
 
-int mainHandleSetOption( int argc, char **argv, int i ) {
+int mainHandleSetOption(int argc, char **argv, int i ) {
     char *name, *val;
 
     NEXT_ARG();

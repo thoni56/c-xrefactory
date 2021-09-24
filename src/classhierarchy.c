@@ -165,7 +165,6 @@ static SymbolsMenu *htmlItemInOriginalList(SymbolsMenu *orr, int fInd) {
 
 static void olcxPrintMenuItemPrefix(FILE *ff, SymbolsMenu *itt,
                                     int selectable) {
-    assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     if (options.server_operation==OLO_CLASS_TREE || options.server_operation==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff,"");
     } else if (! selectable) {

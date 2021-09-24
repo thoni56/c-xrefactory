@@ -29,148 +29,148 @@
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>public int getField() {
-return(field);
+return field;
 }
 </str>
 </replacement>
 <goto>
- <position-off off=449 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=448 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>public int setField(int field) {
 this.field = field;
-return(field);
+return field;
 }
 </str>
 </replacement>
 <goto>
- <position-off off=823 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=821 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>>field</str>  <str len=<n>></str>
 </replacement>
 <goto>
- <position-off off=823 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=821 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>setField</str>
+</replacement>
+<goto>
+ <position-off off=829 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>(</str>
+</replacement>
+<goto>
+ <position-off off=830 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>> </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=830 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>>=</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=830 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>> </str>  <str len=<n>></str>
 </replacement>
 <goto>
  <position-off off=831 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
- <str len=<n>></str>  <str len=<n>>(</str>
-</replacement>
-<goto>
- <position-off off=832 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
-</goto>
-<replacement>
- <str len=<n>> </str>  <str len=<n>></str>
-</replacement>
-<goto>
- <position-off off=832 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
-</goto>
-<replacement>
- <str len=<n>>=</str>  <str len=<n>></str>
-</replacement>
-<goto>
- <position-off off=832 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
-</goto>
-<replacement>
- <str len=<n>> </str>  <str len=<n>></str>
-</replacement>
-<goto>
- <position-off off=833 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
-</goto>
-<replacement>
  <str len=<n>></str>  <str len=<n>>)</str>
 </replacement>
 <goto>
- <position-off off=833 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=831 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>></str>
 </replacement>
 <goto>
- <position-off off=698 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=696 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>>field</str>  <str len=<n>></str>
 </replacement>
 <goto>
- <position-off off=698 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=696 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>getField</str>
 </replacement>
 <goto>
- <position-off off=706 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=704 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>()</str>
 </replacement>
 <goto>
- <position-off off=564 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=562 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>>field</str>  <str len=<n>></str>
 </replacement>
 <goto>
- <position-off off=564 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=562 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>getField</str>
 </replacement>
 <goto>
- <position-off off=572 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=570 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>()</str>
 </replacement>
 <goto>
- <position-off off=556 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=554 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>>field</str>  <str len=<n>></str>
 </replacement>
 <goto>
- <position-off off=556 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=554 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>setField</str>
 </replacement>
 <goto>
- <position-off off=564 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=562 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>(</str>
 </replacement>
 <goto>
- <position-off off=565 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=563 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>> </str>  <str len=<n>></str>
 </replacement>
 <goto>
- <position-off off=565 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=563 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>>=</str>  <str len=<n>></str>
 </replacement>
 <goto>
- <position-off off=565 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=563 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>> </str>  <str len=<n>></str>
 </replacement>
 <goto>
- <position-off off=579 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=577 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>)</str>
 </replacement>
 <goto>
- <position-off off=579 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
+ <position-off off=577 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>></str>
