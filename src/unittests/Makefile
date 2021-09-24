@@ -35,6 +35,7 @@ endif
 LCOV_EXCLUDES = --exclude 'log.c' --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 LCOV_IGNORE_COVERAGE = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
 
+all: COVERAGE = --coverage
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
@@ -84,6 +85,7 @@ $(eval $(call UNITTEST,olcxtab,hash))
 $(eval $(call UNITTEST,options,protocol log position memory))
 $(eval $(call UNITTEST,ppc,protocol))
 $(eval $(call UNITTEST,position,log))
+$(eval $(call UNITTEST,refactory,protocol position log))
 $(eval $(call UNITTEST,semact,protocol hash position log storage type))
 $(eval $(call UNITTEST,symbol))
 $(eval $(call UNITTEST,symboltable,hash))
