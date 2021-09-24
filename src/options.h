@@ -34,7 +34,7 @@ typedef enum updateType {
 
 
 /* ************** on-line (browsing) operations for c-xref server  ********** */
-enum olcxOptions {
+enum olcxOperations {
     OLO_NOOP = 0,
     OLO_COMPLETION,
     OLO_SEARCH,
@@ -236,7 +236,7 @@ typedef struct options {
     bool debug;
     bool trace;
     bool cpp_comments;
-    enum olcxOptions server_operation;
+    enum olcxOperations server_operation;
     int olcxGotoVal;
     char *originalDir;
 
