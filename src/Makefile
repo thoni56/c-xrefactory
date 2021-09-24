@@ -12,21 +12,23 @@
 #     make ci
 #
 # 3: build and run unittests with coverage and produce gcov files for
-# cov-mode in Emacs
+# cov-mode in Emacs. Works:
+#     make unit
 #
-# 4: build c-xref with coverage, run one test and produce gcov files
+# 4: build c-xref with coverage, run all "quick" tests and produce gcov. Works:
+#     make devel
 #
-# 5: run another test and produce aggregated gcov files
+# 5: build c-xref with coverage, run one test and produce gcov files
 #
-# 6: build c-xref with coverage, run all "quick" tests and produce gcov
+# 6: run another test and produce aggregated gcov files
 #
-# 7: produce coverage report for current collected coverage (from 4,5)
+# 7: produce coverage report for current collected coverage (from 5/6)
 #
 
 #########################################################################
 # Always export following variables to environment of sub-makes (to use you need "-e")
 
-export CC = gcc
+export CC = cc
 export COVERAGE =
 
 # Other variables
@@ -62,33 +64,22 @@ else
 endif
 
 #########################################################################
-#
-# The heavy lifting is here
-all: unit-coverage build
-
-unit-coverage:
-	$(MAKE) -C unittests coverage
-
 # For production - no smartness just compile, ensure clean production build
-prod:
+all prod:
 	$(MAKE) clean
 	$(MAKE) c-xref
 
-yydebug: CFLAGS += -DYYDEBUG
-yydebug: all
-
+#########################################################################
+# For development - various ways to build
+devel: COVERAGE = --coverage
 devel: check-tokens
-	$(MAKE) -e devel-proper
-
-devel-proper: unit build test
 	$(MAKE) -C ../editors/emacs
-
-coverage: COVERAGE=--coverage
-coverage:
 	$(MAKE) -e clean-coverage
-	$(MAKE) -e devel
-	$(MAKE) -e coverage-report
+	$(MAKE) -e devel-proper
+	$(MAKE) coverage-report
 
+devel-proper: unit build
+	$(MAKE) -e test
 
 ci: COVERAGE=--coverage
 ci:
@@ -98,13 +89,13 @@ ci:
 	$(MAKE) -e -C ../tests/ffmpeg init
 	$(MAKE) -e -C ../tests all
 
+yydebug: CFLAGS += -DYYDEBUG
+yydebug: all
+
 chcheck:
 	for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
 		chcheck $$m ; \
 	done
-
-# Be silent unless VERBOSE is set to something (VERBOSE=1)
-#$(VERBOSE).SILENT:
 
 #########################################################################
 include sources.mk
@@ -120,7 +111,7 @@ c-xref: $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
 #########################################################################
-test: c-xref
+test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) -e -C ../tests quick
 
@@ -232,7 +223,6 @@ clean:
 
 .PHONY: clean-coverage
 clean-coverage:
-	echo coverage=$(COVERAGE)
 	-if command -v lcov > /dev/null 2>&1 ; then \
 		lcov -q -z -d .. ; \
 	fi
