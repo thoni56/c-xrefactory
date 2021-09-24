@@ -152,6 +152,10 @@
     LIST_CONS(elem,(*ptmp)); \
 }
 
+#define SORTED_LIST_LESS(tmp,key) (positionIsLessThan((tmp)->p, (key).p))
+
+#define SORTED_LIST_NEQ(tmp,key) (positionsAreNotEqual((tmp)->p, (key).p))
+
 /*
           LIST_INSERTSORT(sort, i/o ioList, lessfunction)
 */

@@ -37,12 +37,6 @@ typedef struct referencesChangeData {
 } S_referencesChangeData;
 
 
-#define SORTED_LIST_LESS(tmp,key) (positionIsLessThan((tmp)->p, (key).p))
-
-#define SORTED_LIST_NEQ(tmp,key) (                                  \
-                                  positionsAreNotEqual((tmp)->p, (key).p)   \
-                                  )
-
 #define OLCX_USER_RESERVE 30
 
 /* ************************************************************** */
@@ -229,9 +223,7 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 
 Reference **addToRefList(Reference **list,
                          UsageBits *pusage,
-                         Position *pos,
-                         ReferenceCategory category
-) {
+                         Position *pos) {
     Reference *rr, **place;
     Reference ppp;
 
@@ -247,21 +239,6 @@ Reference **addToRefList(Reference **list,
         (*place)->usage = *pusage;
     }
     return place;
-}
-
-
-bool isInRefList(Reference *list,
-                UsageBits *pusage,
-                Position *pos,
-                int category
-                ) {
-    Reference *rr;
-    Reference ppp;
-    fillReference(&ppp, *pusage, *pos, NULL);
-    SORTED_LIST_FIND2(rr, Reference, ppp, list);
-    if (rr==NULL || SORTED_LIST_NEQ(rr,ppp))
-        return false;
-    return true;
 }
 
 
@@ -768,7 +745,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         memb->b.accessFlags |= symbol->bits.access;
     }
     /*  category = reftab->category; */
-    place = addToRefList(&memb->refs,usage,pos,category);
+    place = addToRefList(&memb->refs,usage,pos);
     //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", fileTable.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, fileTable.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), positionsAreEqual(s_cxRefPos, *pos), usage_base, symbol->linkName);
 
     if (options.taskRegime == RegimeEditServer
@@ -1646,7 +1623,6 @@ static void passSourcePutChar(int c, FILE *ff) {
                                                      )
 
 static void linePosProcess(FILE *off,
-                           char *ofname,
                            int usages,
                            int usageFilter, // only if usages==USAGE_FILTER
                            char *fname,
@@ -1771,7 +1747,7 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
             while (ch!='\n' && ch!=EOF) GetBufChar(ch, &cxfBuf);
             GetFileChar(ch, &cp, &cxfBuf);
         }
-        linePosProcess(outputFile, ofname, usages, usageFilter, cofileName,
+        linePosProcess(outputFile, usages, usageFilter, cofileName,
                        &references, callerp, &cp, &ch, &cxfBuf);
     }
     //&if (cofile != NULL) closeFile(cofile);

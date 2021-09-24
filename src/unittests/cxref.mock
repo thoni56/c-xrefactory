@@ -193,12 +193,8 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-Reference **addToRefList(Reference **list, UsageBits *pusage, Position *pos, ReferenceCategory category) {
-    return (Reference **) mock(list, pusage, pos, category);
-}
-
-bool isInRefList(Reference *list, UsageBits *pusage, Position *pos, int category) {
-    return (bool) mock(list, pusage, pos, category);
+Reference **addToRefList(Reference **list, UsageBits *pusage, Position *pos) {
+    return (Reference **) mock(list, pusage, pos);
 }
 
 char *getXrefEnvironmentValue(char *name) {

@@ -85,12 +85,7 @@ extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern Reference **addToRefList(Reference **list,
                                 UsageBits *pusage,
-                                Position *pos,
-                                ReferenceCategory category);
-extern bool isInRefList(Reference *list,
-                        UsageBits *pusage,
-                        Position *pos,
-                        int category);
+                                Position *pos);
 extern char *getXrefEnvironmentValue(char *name);
 extern int itIsSymbolToPushOlReferences(SymbolReferenceItem *p, OlcxReferences *rstack,
                                       SymbolsMenu **rss, int checkSelFlag);

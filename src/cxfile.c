@@ -6,6 +6,7 @@
 #include "reftab.h"
 #include "classhierarchy.h"
 #include "fileio.h"
+#include "list.h"
 
 #include "protocol.h"           /* C_XREF_FILE_VERSION_NUMBER */
 #include "globals.h"
@@ -1147,9 +1148,22 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     if (lastIncomingInfo.onLineReferencedSym ==
         lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
         addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
-                     &usageBits,&pos,CategoryGlobal);
+                     &usageBits,&pos);
     }
 }
+
+static bool isInRefList(Reference *list,
+                        UsageBits *pusage,
+                        Position *pos) {
+    Reference *rr;
+    Reference ppp;
+    fillReference(&ppp, *pusage, *pos, NULL);
+    SORTED_LIST_FIND2(rr, Reference, ppp, list);
+    if (rr==NULL || SORTED_LIST_NEQ(rr,ppp))
+        return false;
+    return true;
+}
+
 
 static void cxrfReference(int size,
                           int marker,
@@ -1179,7 +1193,7 @@ static void cxrfReference(int size,
             fillPosition(&pos,file,line,col);
             fillUsageBits(&usageBits, usage, reqAcc);
             copyrefFl = ! isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
-                                      &usageBits, &pos, CategoryGlobal);
+                                      &usageBits, &pos);
         } else {
             copyrefFl = ! fileTable.tab[file]->b.cxLoading;
         }

@@ -1,7 +1,7 @@
 #include <cgreen/cgreen.h>
 
-/* Must #include it since we are (for now) unittesting an internal macro (ScanInt) */
-#include "cxfile.c"
+#include "cxfile.h"
+#include "log.h"
 
 #include "globals.mock"
 #include "olcxtab.mock"
