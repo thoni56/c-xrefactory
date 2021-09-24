@@ -3444,16 +3444,16 @@ int safetyCheck2ShouldWarn(void) {
     return(res);
 }
 
-static int olMenuHashFileNumLess(SymbolsMenu *s1, SymbolsMenu *s2) {
+static bool olMenuHashFileNumLess(SymbolsMenu *s1, SymbolsMenu *s2) {
     int fi1, fi2;
     fi1 = cxFileHashNumber(s1->s.name);
     fi2 = cxFileHashNumber(s2->s.name);
-    if (fi1 < fi2) return(1);
-    if (fi1 > fi2) return(0);
-    if (s1->s.b.category == CategoryLocal) return(1);
-    if (s1->s.b.category == CategoryLocal) return(0);
+    if (fi1 < fi2) return true;
+    if (fi1 > fi2) return false;
+    if (s1->s.b.category == CategoryLocal) return true;
+    if (s1->s.b.category == CategoryLocal) return false;
     // both files and categories equals ?
-    return(0);
+    return false;
 }
 
 void getLineColCursorPositionFromCommandLineOption(int *l, int *c) {
@@ -3596,7 +3596,7 @@ void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r) {
     //&fprintf(dumpOut,"checking 1 file refs %s at %s:%d\n", ss->name,simpleFileNameFromFileNum(r->p.file),r->p.line);
     pushed = itIsSymbolToPushOlRefences(ss, rstack, &cms, DEFAULT_VALUE);
     // this is very slow to check the symbol name for each reference
-    if (!pushed && olcxIsSameCxSymbol(ss, sss)) {
+    if (pushed == 0 && olcxIsSameCxSymbol(ss, sss)) {
         olcxSingleReferenceCheck1(ss, rstack, r);
     }
 }
@@ -3607,7 +3607,7 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, Symbol
     Reference         *r;
     SymbolsMenu     *cms;
     bool pushed;
-    
+
     p = &ccms->s;
     assert(rstack && rstack->menuSym);
     sss = &rstack->menuSym->s;
@@ -4966,7 +4966,7 @@ void mainAnswerEditAction(void) {
              rstack->hkSelectedSym->s.b.storage!=StorageMethod &&
              rstack->hkSelectedSym->s.b.storage!=StorageConstructor)) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or contructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (contructor) name and reinvoke the refactoring.");
+            sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or constructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (constructor) name and reinvoke the refactoring.");
             errorMessage(ERR_ST, tmpBuff);
         } else {
             mainAnswerReferencePushingAction(options.server_operation);
@@ -4981,37 +4981,36 @@ void mainAnswerEditAction(void) {
     //&RLM_FREE_COUNT(olcxMemory);
 }
 
-bool itIsSymbolToPushOlRefences(SymbolReferenceItem *p,
+int itIsSymbolToPushOlRefences(SymbolReferenceItem *p,
                                OlcxReferences *rstack,
                                SymbolsMenu **rss,
                                int checkSelFlag) {
-    SymbolsMenu     *ss;
-    for(ss=rstack->menuSym; ss!=NULL; ss=ss->next) {
+    for (SymbolsMenu *ss=rstack->menuSym; ss!=NULL; ss=ss->next) {
         if ((ss->selected || checkSelFlag==DO_NOT_CHECK_IF_SELECTED)
             && ss->s.vApplClass == p->vApplClass
             && ss->s.vFunClass == p->vFunClass
             && isSameCxSymbol(p, &ss->s)) {
             *rss = ss;
             if (IS_BEST_FIT_MATCH(ss)) {
-                return(2);
+                return 2;
             } else {
-                return(1);
+                return 1;
             }
         }
     }
     *rss = NULL;
-    return(0);
+    return 0;
 }
 
 
 void putOnLineLoadedReferences(SymbolReferenceItem *p) {
-    bool ols;
-    SymbolsMenu     *cms;
-    Reference         *rr;
+    int ols;
+    SymbolsMenu *cms;
+    Reference *rr;
 
     ols = itIsSymbolToPushOlRefences(p,s_olcxCurrentUser->browserStack.top,
                                      &cms, DO_NOT_CHECK_IF_SELECTED);
-    if (ols) {
+    if (ols > 0) {
         assert(cms);
         //&LIST_LEN(nn, Reference, p->refs);sprintf(tmpBuff,"!putting %d references of %s\n", nn, fileTable.tab[p->vApplClass]->name);ppcBottomInformation(tmpBuff);
         for(rr=p->refs; rr!=NULL; rr=rr->next) {

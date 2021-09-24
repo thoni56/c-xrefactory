@@ -92,7 +92,7 @@ extern bool isInRefList(Reference *list,
                         Position *pos,
                         int category);
 extern char *getXrefEnvironmentValue(char *name);
-extern bool itIsSymbolToPushOlRefences(SymbolReferenceItem *p, OlcxReferences *rstack,
+extern int itIsSymbolToPushOlRefences(SymbolReferenceItem *p, OlcxReferences *rstack,
                                       SymbolsMenu **rss, int checkSelFlag);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
                                             int bestFitFlag);
