@@ -18,8 +18,8 @@ void editorUndoUntil(EditorUndo *until, EditorUndo **undoUndo) {
   mock(until, undoUndo);
 }
 
-void mainRefactory(int argc, char **argv) {
-  mock(argc, argv);
+void mainRefactory() {
+  mock();
 }
 
 bool tpCheckSourceIsNotInnerClass(void) {

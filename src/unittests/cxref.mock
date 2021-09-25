@@ -294,8 +294,8 @@ void changeMethodReferencesUsages(char *linkName, int category, int fnum, Symbol
     mock(linkName, category, fnum, cclass);
 }
 
-void olcxPushSpecialCheckMenuSym(int command, char *symname) {
-    mock(command, symname);
+void olcxPushSpecialCheckMenuSym(char *symname) {
+    mock(symname);
 }
 
 bool refOccursInRefs(Reference *r, Reference *list) {

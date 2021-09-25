@@ -3008,7 +3008,7 @@ int main(int argc, char **argv) {
 
     // Ok, so there were these five, now four, no three, main operating modes
     /* TODO: Is there an underlying reason for not doing this as a switch()? */
-    if (options.refactoringRegime == RegimeRefactory) mainRefactory(argc, argv);
+    if (options.refactoringRegime == RegimeRefactory) mainRefactory();
     if (options.taskRegime == RegimeXref) mainXref(argc, argv);
     if (options.taskRegime == RegimeEditServer) mainEditServer(argc, argv);
 

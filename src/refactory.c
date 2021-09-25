@@ -906,7 +906,7 @@ bool tpCheckMoveClassAccessibilities(void) {
     char tpack[MAX_FILE_NAME_SIZE];
 
     tpCheckFillMoveClassData(&dd, spack, tpack);
-    olcxPushSpecialCheckMenuSym(options.server_operation,LINK_NAME_MOVE_CLASS_MISSED);
+    olcxPushSpecialCheckMenuSym(LINK_NAME_MOVE_CLASS_MISSED);
     refTabMap2(&referenceTable, tpCheckDefaultAccessibilitiesMoveClass, &dd);
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -1356,8 +1356,7 @@ static bool refactoryHandleSafetyCheckDifferenceLists(
 }
 
 
-static bool refactoryMakeSafetyCheckAndUndo(
-    EditorBuffer *buf, EditorMarker *point,
+static bool refactoryMakeSafetyCheckAndUndo(EditorMarker *point,
     EditorMarkerList **occs, EditorUndo *startPoint,
     EditorUndo **redoTrack
 ) {
@@ -1378,7 +1377,7 @@ static bool refactoryMakeSafetyCheckAndUndo(
     //&}
     //&if (dd != NULL) defin = dd->d;
 
-    olcxPushSpecialCheckMenuSym(OLO_SAFETY_CHECK_INIT, LINK_NAME_SAFETY_CHECK_MISSED);
+    olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     refactorySafetyCheck(refactoringOptions.project, defin->buffer, defin);
 
     chks = editorReferencesToMarkers(s_olcxCurrentUser->browserStack.top->references,filter0, NULL);
@@ -1483,10 +1482,7 @@ static void refactoryCheckedRenameBuffer(
     editorRenameBuffer(buff, newName, undo);
 }
 
-static void refactoryMoveFileAndDirForPackageRename(
-                                                    char *currentPath, EditorUndo *undoBase, EditorMarker *lld,
-                                                    char *symLinkName
-                                                    ) {
+static void refactoryMoveFileAndDirForPackageRename(char *currentPath, EditorMarker *lld, char *symLinkName) {
     char newfile[2*MAX_FILE_NAME_SIZE];
     char packdir[2*MAX_FILE_NAME_SIZE];
     char newpackdir[2*MAX_FILE_NAME_SIZE];
@@ -1507,8 +1503,7 @@ static void refactoryMoveFileAndDirForPackageRename(
 
 
 static bool refactoryRenamePackageFileMove(char *currentPath, EditorMarkerList *ll,
-                                           char *symLinkName, int slnlen,
-                                           EditorUndo *rpundo) {
+                                           char *symLinkName, int slnlen) {
     int plen;
     bool res = false;
 
@@ -1517,7 +1512,7 @@ static bool refactoryRenamePackageFileMove(char *currentPath, EditorMarkerList *
     if (fnnCmp(ll->marker->buffer->name, currentPath, plen)==0
         && ll->marker->buffer->name[plen] == FILE_PATH_SEPARATOR
         && fnnCmp(ll->marker->buffer->name+plen+1, symLinkName, slnlen)==0) {
-        refactoryMoveFileAndDirForPackageRename(currentPath, rpundo, ll->marker, symLinkName);
+        refactoryMoveFileAndDirForPackageRename(currentPath, ll->marker, symLinkName);
         res = true;
         goto fini;
     }
@@ -1525,17 +1520,13 @@ static bool refactoryRenamePackageFileMove(char *currentPath, EditorMarkerList *
     return res;
 }
 
-static void refactorySimplePackageRenaming(
-    EditorMarkerList *occs, EditorMarker *point,
-    char *symname,char *symLinkName, int symtype
-) {
+static void refactorySimplePackageRenaming(EditorMarkerList *occs, char *symname, char *symLinkName) {
     char rtpack[MAX_FILE_NAME_SIZE];
     char rtprefix[MAX_FILE_NAME_SIZE];
     char *ss;
     int snlen, slnlen;
     bool mvfile;
     EditorMarker      *pp;
-    EditorUndo        *rpundo;
 
     // get original and new directory, but how?
     snlen = strlen(symname);
@@ -1561,13 +1552,12 @@ static void refactorySimplePackageRenaming(
         }
         editorFreeMarker(pp);
     }
-    rpundo = s_editorUndo;
     for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
         if (ll->next == NULL || ll->next->marker->buffer!=ll->marker->buffer) {
             // O.K. verify whether I should move the file
             MapOnPaths(javaSourcePaths, {
                     mvfile = refactoryRenamePackageFileMove(currentPath, ll, symLinkName,
-                                                            slnlen, rpundo);
+                                                            slnlen);
                     if (mvfile) goto moved;
                 });
         moved:;
@@ -1590,7 +1580,7 @@ static void refactorySimpleRenaming(EditorMarkerList *occs, EditorMarker *point,
     }
 
     if (refactoringOptions.theRefactoring == AVR_RENAME_PACKAGE) {
-        refactorySimplePackageRenaming(occs, point, symname, symLinkName, symtype);
+        refactorySimplePackageRenaming(occs, symname, symLinkName);
     } else {
         for (EditorMarkerList *ll=occs; ll!=NULL; ll=ll->next) {
             refactoryRenameTo(ll->marker, symname, refactoringOptions.renameTo);
@@ -1748,10 +1738,7 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
 }
 
 
-static void refactoryCheckForMultipleReferencesOnSinglePlace2(SymbolReferenceItem *p,
-                                                              OlcxReferences *rstack,
-                                                              Reference *r
-) {
+static void refactoryCheckForMultipleReferencesOnSinglePlace2(OlcxReferences *rstack, Reference *r) {
     if (refOccursInRefs(r, rstack->references)) {
         char tmpBuff[TMP_BUFF_SIZE];
         ppcGotoPosition(&r->p);
@@ -1776,7 +1763,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace(OlcxReferences *rst
     if ((! pushed) && olcxIsSameCxSymbol(p, sss)) {
         //&fprintf(dumpOut,"checking %s references\n",p->name);
         for (Reference *r=p->refs; r!=NULL; r=r->next) {
-            refactoryCheckForMultipleReferencesOnSinglePlace2(p, rstack, r);
+            refactoryCheckForMultipleReferencesOnSinglePlace2(rstack, r);
         }
     }
 }
@@ -1825,7 +1812,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     refactorySimpleRenaming(occs, point, nameOnPoint, symLinkName, symtype);
     //&editorDumpBuffers();
     redoTrack = NULL;
-    check = refactoryMakeSafetyCheckAndUndo(buf, point, &occs, undoStartPoint, &redoTrack);
+    check = refactoryMakeSafetyCheckAndUndo(point, &occs, undoStartPoint, &redoTrack);
     if (! check) {
         refactoryAskForReallyContinueConfirmation();
     }
@@ -1999,7 +1986,7 @@ static int refactoryIsThisSymbolUsed(EditorMarker *pos) {
     return refn > 1;
 }
 
-static int refactoryIsParameterUsedExceptRecursiveCalls(EditorMarker *ppos, EditorMarker *fpos, char *fname) {
+static int refactoryIsParameterUsedExceptRecursiveCalls(EditorMarker *ppos, EditorMarker *fpos) {
     // for the moment
     return refactoryIsThisSymbolUsed(ppos);
 }
@@ -2019,7 +2006,7 @@ static void refactoryCheckThatParameterIsUnused(EditorMarker *pos, char *fname,
     mm = editorCrNewMarkerForPosition(&s_paramPosition);
     strncpy(pname, refactoryGetIdentifierOnMarker_st(mm), TMP_STRING_SIZE);
     pname[TMP_STRING_SIZE-1] = 0;
-    if (refactoryIsParameterUsedExceptRecursiveCalls(mm, pos, fname)) {
+    if (refactoryIsParameterUsedExceptRecursiveCalls(mm, pos)) {
         char tmpBuff[TMP_BUFF_SIZE];
         if (checkfor==CHECK_FOR_ADD_PARAM) {
             sprintf(tmpBuff, "parameter '%s' clashes with an existing symbol, continue anyway?", pname);
@@ -2192,7 +2179,7 @@ static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker 
                              manip, argn1, argn2
                              );
     if (LANGUAGE(LANG_JAVA)) {
-        check = refactoryMakeSafetyCheckAndUndo(buf, point, &occs, startPoint, &redoTrack);
+        check = refactoryMakeSafetyCheckAndUndo(point, &occs, startPoint, &redoTrack);
         if (! check) refactoryAskForReallyContinueConfirmation();
         editorApplyUndos(redoTrack, NULL, &s_editorUndo, GEN_NO_OUTPUT);
     }
@@ -2611,7 +2598,7 @@ static void refactoryReduceLongNamesInTheFile(EditorBuffer *buf, EditorMarker *p
 }
 
 // this is reduction of a single fqt, problem is with detection of applicable context
-static void refactoryAddToImports(EditorBuffer *buf, EditorMarker *point) {
+static void refactoryAddToImports(EditorMarker *point) {
     EditorMarker          *begin, *end;
     EditorRegionList      *regionList;
 
@@ -2651,7 +2638,7 @@ static void refactoryShowSafetyCheckFailingDialog(EditorMarkerList **totalDiff, 
     EditorUndo *redo;
     redo = NULL;
     editorUndoUntil(s_refactoringStartPoint, &redo);
-    olcxPushSpecialCheckMenuSym(OLO_SAFETY_CHECK_INIT, LINK_NAME_SAFETY_CHECK_MISSED);
+    olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     refactoryPushMarkersAsReferences(totalDiff, s_olcxCurrentUser->browserStack.top,
                                      LINK_NAME_SAFETY_CHECK_MISSED);
     refactoryDisplayResolutionDialog(message, PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
@@ -2997,7 +2984,7 @@ static void refactoryMoveField(EditorMarker *point) {
     refactoryRestrictAccessibility(point, SPP_FIELD_DECLARATION_BEGIN_POSITION, accessFlags);
 
     redoTrack = NULL;
-    check = refactoryMakeSafetyCheckAndUndo(point->buffer, point, &occs,
+    check = refactoryMakeSafetyCheckAndUndo(point, &occs,
                                             undoStartPoint, &redoTrack);
     if (! check) {
         refactoryAskForReallyContinueConfirmation();
@@ -3140,7 +3127,7 @@ static void refactoryGetPackageNameFromMarkerFileName(EditorMarker *target, char
 }
 
 
-static void refactoryInsertPackageStatToNewFile(EditorMarker *src, EditorMarker *target) {
+static void refactoryInsertPackageStatToNewFile(EditorMarker *target) {
     char tclass[MAX_FILE_NAME_SIZE];
     char pack[2*MAX_FILE_NAME_SIZE];
 
@@ -3166,7 +3153,7 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
     target = getTargetFromOptions();
 
     // insert package statement
-    refactoryInsertPackageStatToNewFile(point, target);
+    refactoryInsertPackageStatToNewFile(target);
 
     refactoryPerformMoveClass(point, target, &mstart, &mend);
 
@@ -3194,9 +3181,8 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
 }
 
 static void refactoryMoveAllClassesToNewFile(EditorMarker *point) {
-    // this should really copy whole file, including commentaries
+    // TODO: this should really copy whole file, including commentaries
     // between classes, etc... Then update all references
-
 }
 
 static void refactoryAddCopyOfMarkerToList(EditorMarkerList **ll, EditorMarker *mm, UsageBits *usage) {
@@ -4438,12 +4424,12 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
 // --------------------------------------------------------------------
 
 
-void mainRefactory(int argc, char **argv) {
-    int                 fArgCount;
-    char                *file, *argumentFile;
-    char                inputFileName[MAX_FILE_NAME_SIZE];
-    EditorBuffer      *buf;
-    EditorMarker      *point, *mark;
+void mainRefactory() {
+    int fArgCount;
+    char *file, *argumentFile;
+    char inputFileName[MAX_FILE_NAME_SIZE];
+    EditorBuffer *buf;
+    EditorMarker *point, *mark;
 
     ENTER();
 
@@ -4515,7 +4501,7 @@ void mainRefactory(int argc, char **argv) {
         break;
     case AVR_ADD_TO_IMPORT:
         s_progressFactor = 2;
-        refactoryAddToImports(buf, point);
+        refactoryAddToImports(point);
         break;
     case AVR_ADD_PARAMETER:
     case AVR_DEL_PARAMETER:

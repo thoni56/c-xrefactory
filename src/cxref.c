@@ -1701,8 +1701,7 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
 }
 
 static void passRefsThroughSourceFile(Reference **in_out_references, Position *callerp,
-                                      FILE *outputFile,
-                                      char *ofname, int usages, int usageFilter) {
+                                      FILE *outputFile, int usages, int usageFilter) {
     Reference *references,*oldrr;
     int ch,fnum;
     EditorBuffer *ebuf;
@@ -1882,7 +1881,7 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
         rr=refs->references;
         while (rr != NULL) {
             passRefsThroughSourceFile(&rr, &refs->actual->p,
-                                      communicationChannel, "*xref-list*", USAGE_FILTER,
+                                      communicationChannel, USAGE_FILTER,
                                       s_refListFilters[refs->refsFilterLevel]);
         }
     }
@@ -3600,21 +3599,19 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, Symbol
     }
 }
 
-void olcxPushSpecialCheckMenuSym(int pushCommand,char *symname) {
-    OlcxReferences    *rstack;
+void olcxPushSpecialCheckMenuSym(char *symname) {
+    OlcxReferences *rstack;
     olcxSetCurrentUser(options.user);
     olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
-    rstack->hkSelectedSym = olCreateSpecialMenuItem(
-                                                    symname, noFileIndex, StorageDefault);
-    rstack->menuSym = olCreateSpecialMenuItem(
-                                              symname, noFileIndex, StorageDefault);
+    rstack->hkSelectedSym = olCreateSpecialMenuItem(symname, noFileIndex, StorageDefault);
+    rstack->menuSym = olCreateSpecialMenuItem(symname, noFileIndex, StorageDefault);
 }
 
 static void olcxSafetyCheckInit(void) {
     assert(options.server_operation == OLO_SAFETY_CHECK_INIT);
-    olcxPushSpecialCheckMenuSym(options.server_operation,LINK_NAME_SAFETY_CHECK_MISSED);
+    olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     fprintf(communicationChannel,"* safety checks initialized");
     fflush(communicationChannel);
 }
