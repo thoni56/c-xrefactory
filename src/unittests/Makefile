@@ -74,10 +74,12 @@ endef
 $(eval $(call UNITTEST,commons,protocol log stringlist))
 $(eval $(call UNITTEST,complete,protocol log type))
 $(eval $(call UNITTEST,cxref,protocol log hash position type storage usage))
+$(eval $(call UNITTEST,cxfile,protocol log position))
 $(eval $(call UNITTEST,editor,position log))
 $(eval $(call UNITTEST,filetable,hash log))
 $(eval $(call UNITTEST,id))
 $(eval $(call UNITTEST,jslsemact,symbol log id))
+$(eval $(call UNITTEST,lexer,log lexembuffer characterreader position))
 $(eval $(call UNITTEST,lexembuffer,characterreader position log))
 $(eval $(call UNITTEST,memory,log))
 $(eval $(call UNITTEST,misc,protocol log type))
@@ -92,16 +94,6 @@ $(eval $(call UNITTEST,symboltable,hash))
 $(eval $(call UNITTEST,yylex,protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))
 
 # These includes the modules .c to be able to test internal functions or macros
-LEXER_DEPENDENCIES = log position lexembuffer characterreader
-LEXER_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEXER_DEPENDENCIES))
-lexer_tests.$(EXT): $(OBJDIR)/lexer_tests.o $(LEXER_DEPS) $(CGREEN)
-	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN_LINK)
-
-CXFILE_DEPENDENCIES = protocol log position type usage
-CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
-cxfile_tests.$(EXT): $(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS) $(CGREEN)
-	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN_LINK)
-
 EXTRACT_DEPENDENCIES = protocol log position memory id log usage
 EXTRACT_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(EXTRACT_DEPENDENCIES))
 extract_tests.$(EXT): $(OBJDIR)/extract_tests.o $(EXTRACT_DEPS) $(CGREEN)

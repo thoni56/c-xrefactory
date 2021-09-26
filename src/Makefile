@@ -115,7 +115,7 @@ test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) -e -C ../tests quick
 
-unit: check-tokens $(OBJS)
+unit: check-tokens
 	$(MAKE) -e -C unittests
 
 #########################################################################
