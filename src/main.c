@@ -1448,10 +1448,11 @@ static void schedulingUpdateToProcess(FileItem *p) {
     }
 }
 
-static void schedulingToUpdate(FileItem *p, void *rs) {
+static void schedulingToUpdate(FileItem *p, void *dummy) {
     struct stat fstat;
 
-    if (p == fileTable.tab[noFileIndex]) return;
+    if (p == fileTable.tab[noFileIndex])
+        return;
     //& if (options.update==UPDATE_FAST && !p->b.commandLineEntered) return;
     //&fprintf(dumpOut, "checking %s for update\n",p->name); fflush(dumpOut);
     if (editorFileStatus(p->name, &fstat)) {
@@ -1460,7 +1461,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
             // no messages during refactorings
             if (refactoringOptions.refactoringRegime != RegimeRefactory) {
                 char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "file %s not accessible",   p->name);
+                sprintf(tmpBuff, "file %s not accessible", p->name);
                 warningMessage(ERR_ST, tmpBuff);
             }
         }
