@@ -85,7 +85,6 @@ typedef struct lastCxFileInfo {
     int                 onLineRefIsBestMatchFlag; // vyhodit ?
     SymbolReferenceItem *symbolTab[MAX_CX_SYMBOL_TAB];
     bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
-    char                *symbolBestMatchFlag[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                markers[MAX_CHARS];
     int                 values[MAX_CHARS];
