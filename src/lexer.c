@@ -3,7 +3,6 @@
 #include "globals.h"
 #include "options.h"
 #include "commons.h"
-#include "cxref.h"
 #include "yylex.h"
 #include "filedescriptor.h"
 

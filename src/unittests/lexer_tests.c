@@ -7,7 +7,6 @@
 #include "options.mock"
 #include "commons.mock"
 #include "caching.mock"
-#include "cxref.mock"
 #include "utils.mock"
 #include "jslsemact.mock"
 #include "yylex.mock"
