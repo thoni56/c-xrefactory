@@ -4,7 +4,7 @@
 #
 # Usage:
 #
-#     server_driver.py <commandsfile> <curdir> [ <seconds> ]
+#     server_driver.py <commandsfile> --curdir=<curdir> --delay=<seconds> --options=<extra options>
 #
 # <curdir> is the current directory to replace "CURDIR" with in command input files
 # and output so that they are location independent.
@@ -44,6 +44,7 @@ import io
 import time
 import shlex
 from shutil import copy
+import argparse
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -89,49 +90,38 @@ def read_output(filename):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Error - not enough arguments", file=sys.stderr)
-        print("Usage:\t"+os.path.basename(sys.argv[0])+" <commandsfile> <curdir> [ <delay> ]")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Read c-xref commands from file and handle synchronization and file buffering")
+    parser.add_argument('command_file', help="File with the commands to feed to the c-xref server process, including the command to start the c-xref server (must be the first line)")
+    parser.add_argument('--curdir', dest='CURDIR', help="The value to replace CURDIR in command file, default '" + os.getcwd()+"'", default=os.getcwd())
+    parser.add_argument('--delay', type=int, dest='delay', help="How many seconds to sleep before starting the c-xref server process", default=0)
+    parser.add_argument('--buffer', dest='server_buffer_filename', help="Name of file to use as communication buffer, default 'server-buffer'", default="server-buffer")
+    parser.add_argument('--extra', dest='extra_options', help="Extra options to the c-xref startup command", default="")
+    args = parser.parse_args()
 
-    # First argument is the file with the commands
-    command_file = sys.argv[1]
-
-    # Second argument is the value of CURDIR
-    CURDIR = sys.argv[2]
-
-    server_buffer_filename = "server-buffer"
-    with open(server_buffer_filename, "w"):
+    with open(args.server_buffer_filename, "w"):
         pass
 
-    # If there is a third argument that is a sleep timer to
-    # be able to attach a debugger
-    if len(sys.argv) == 4:
-        sleep = int(sys.argv[3])
-    else:
-        sleep = None
-
-    with open(command_file, 'rb') as file:
-        invocation = file.readline().decode().rstrip().replace("CURDIR", CURDIR)
-        invocation += " -o "+server_buffer_filename
+    with open(args.command_file, 'rb') as file:
+        invocation = file.readline().decode().rstrip().replace("CURDIR", args.CURDIR)
+        invocation += " -o "+args.server_buffer_filename
         print(invocation)
 
-        args = shlex.split(invocation)
-        if sleep:
-            args = [args[0]] + ["-pause", sys.argv[3]] + args[1:]
+        arguments = shlex.split(invocation+" "+args.extra_options)
+        if args.delay > 0:
+            arguments = [arguments[0]] + ["-pause", args.delay] + arguments[1:]
 
-        p = subprocess.Popen(args,
+        p = subprocess.Popen(arguments,
                              stdout=subprocess.PIPE,
                              stdin=subprocess.PIPE)
 
         if "-refactory" in invocation:
             wait_for_sync(p)
-            read_output(server_buffer_filename)
+            read_output(args.server_buffer_filename)
 
         command = file.readline().decode().rstrip()
         while command != '':
             while command != '<sync>' and command != '<exit>' and command != '': #and not "-refactory" in command:
-                send_command(p, command.replace("CURDIR", CURDIR))
+                send_command(p, command.replace("CURDIR", args.CURDIR))
                 command = file.readline().decode().rstrip()
 
             if command == '<exit>':
@@ -143,7 +133,7 @@ if __name__ == "__main__":
             if command == '<sync>':
                 end_of_options(p)
                 wait_for_sync(p)
-                read_output(server_buffer_filename)
+                read_output(args.server_buffer_filename)
                 command = file.readline().decode().rstrip()
 
             if command == '<update-report>':

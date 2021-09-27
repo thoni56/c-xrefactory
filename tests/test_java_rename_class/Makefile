@@ -1,15 +1,14 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
-COMMAND = $(CXREF) "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-user" "1" "-rfct-rename-class" "-renameto=RenameClass" "-olcursor=270" "-addimportdefault=0" "$(CURDIR)/jexercise/com/xrefactory/refactorings/RenameSymbol.java"
 
 $(TEST): CXrefs
-	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) > output.tmp
+	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
 gdb:
-	gdb --args $(COMMAND)
+	gdb --args `cat commands.input`
 
 CXrefs: .c-xrefrc
 	@# Files in the jexercise subdir

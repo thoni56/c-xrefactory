@@ -10,7 +10,7 @@ $(TEST): CXrefs
 		echo "Tests in '$(TEST)': $(shell tput setaf 3)No JDK available, skipping$(shell tput sgr0)" ; \
 		exit 0 ; \
 	else \
-		$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) > output.tmp ; \
+		$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp ; \
 		$(NORMALIZE) output.tmp > output ; \
 		$(VERIFY) ; \
 	fi
@@ -25,6 +25,6 @@ clean:
 	rm -rf CXrefs .c-xrefrc
 
 gdb:
-	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" 5 > output.tmp &
+	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1
 	sudo gdb -pid `pgrep c-xref | tail -1`

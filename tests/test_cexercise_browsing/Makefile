@@ -3,11 +3,11 @@
 include ../Makefile.boilerplate
 
 $(TEST): CXrefs
-	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) > output.tmp
+	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
 
-trace: CXREF+=-trace
+trace: EXTRA = \'-trace\'
 trace: $(TEST)
 
 CXREF = ../../src/c-xref
@@ -21,7 +21,3 @@ CXrefs: .c-xrefrc
 
 clean:
 	rm -rf CXrefs .c-xrefrc
-
-DEBUGGER = gdb
-debug:
-	$(DEBUGGER) --args $(COMMAND)

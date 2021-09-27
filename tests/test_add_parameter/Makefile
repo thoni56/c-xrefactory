@@ -13,7 +13,7 @@ CXREF = ../../src/c-xref
 
 $(TEST): clean
 	@# First do the extract
-	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) > output.tmp
+	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@diff -B output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
@@ -26,13 +26,13 @@ $(TEST): clean
 		exit 0 ; \
 	fi
 
-trace: CXREF+=-trace
+trace: EXTRA=--extra \"-trace\"
 trace: $(TEST)
 
 clean:
 	@-rm -rf CXrefs output.log output.tmp output log
 
 gdb:
-	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" 15 > output.tmp &
+	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1
 	sudo gdb -pid `pgrep c-xref | tail -1` -ex 'br mainRefactory' -ex 'continue'

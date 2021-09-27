@@ -5,7 +5,7 @@
 
 include ../Makefile.boilerplate
 
-EDIT_SERVER_DRIVER_COMMAND=$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)"
+EDIT_SERVER_DRIVER_COMMAND=$(EDIT_SERVER_DRIVER) commands.input $(EXTRA)
 
 $(TEST): CXrefs
 	@$(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
@@ -28,6 +28,6 @@ clean:
 	@-rm -rf CXrefs output.tmp output log *~ .c-xrefrc
 
 gdb:
-	@$(EDIT_SERVER_DRIVER_COMMAND) 15 > output.tmp &
+	@$(EDIT_SERVER_DRIVER_COMMAND) --delay 5 > output.tmp &
 	sleep 1
 	sudo gdb ../../src/c-xref -pid `pgrep c-xref | tail -1` -ex 'br refactoryTurnDynamicToStatic'
