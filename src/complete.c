@@ -53,7 +53,7 @@ void initCompletions(Completions *completions, int length, Position position) {
 }
 
 void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType,
-                short int virtualLevel, short int margn, char **margs, Symbol *vFunClass) {
+                        short int virtualLevel, short int margn, char **margs, Symbol *vFunClass) {
     cline->string = string;
     cline->symbol = symbol;
     cline->symbolType = symbolType;
@@ -436,8 +436,8 @@ void printCompletionsList(int noFocus) {
 }
 
 void printCompletions(Completions* c) {
-    int                 ii, indent, jindent, max, vFunCl;
-    char                *vclass;
+    int indent, jindent, max, vFunCl;
+    char *vclass;
 
     jindent = 0; vclass = NULL;
     // O.K. there will be a menu diplayed, clear the old one
@@ -451,7 +451,7 @@ void printCompletions(Completions* c) {
         } else {
             fprintf(communicationChannel,"-");
         }
-        goto finiWithoutMenu;
+        goto finishWithoutMenu;
     }
     if ((! c->fullMatchFlag) && c->alternativeIndex==1) {
         if (options.xref2) {
@@ -460,7 +460,7 @@ void printCompletions(Completions* c) {
         } else {
             fprintf(communicationChannel,".%s", c->comPrefix+c->idToProcessLen);
         }
-        goto finiWithoutMenu;
+        goto finishWithoutMenu;
     }
     if ((! c->fullMatchFlag) && strlen(c->comPrefix) > c->idToProcessLen) {
         if (options.xref2) {
@@ -470,7 +470,7 @@ void printCompletions(Completions* c) {
         } else {
             fprintf(communicationChannel,",%s", c->comPrefix+c->idToProcessLen);
         }
-        goto finiWithoutMenu;
+        goto finishWithoutMenu;
     }
     // this can't be ordered directly, because of overloading
     //&     if (LANGUAGE(LANG_JAVA)) reorderCompletionArray(c);
@@ -482,7 +482,7 @@ void printCompletions(Completions* c) {
     if (indent > MAX_COMPLETION_INDENT) indent = MAX_COMPLETION_INDENT;
     if (c->alternativeIndex > options.maxCompletions) max = options.maxCompletions;
     else max = c->alternativeIndex;
-    for(ii=0; ii<max; ii++) {
+    for(int ii=0; ii<max; ii++) {
         if (options.editor == EDITOR_JEDIT) {
             sprintFullJeditCompletionInfo(c, ii, &jindent, &vclass);
         } else {
@@ -499,7 +499,7 @@ void printCompletions(Completions* c) {
     printCompletionsList(c->noFocusOnCompletions);
     fflush(communicationChannel);
     return;
- finiWithoutMenu:
+ finishWithoutMenu:
     s_olcxCurrentUser->completionsStack.top = s_olcxCurrentUser->completionsStack.top->previous;
     fflush(communicationChannel);
 }
@@ -697,7 +697,7 @@ static void computeComPrefix(char *d, char *s) {
     *d = 0;
 }
 
-static int completionTestPrefix(Completions *ci, char *s) {
+static bool completionTestPrefix(Completions *ci, char *s) {
     char *d;
     d = ci->idToProcess;
     while (*d == *s || (options.completionCaseSensitive==0 && tolower(*d)==tolower(*s))) {
@@ -708,8 +708,8 @@ static int completionTestPrefix(Completions *ci, char *s) {
         d++; s++;
     }
     if (*d == 0)
-        return 0;
-    return 1;
+        return false;
+    return true;
 }
 
 static bool stringContainsCaseInsensitive(char *s1, char *s2) {
