@@ -523,7 +523,7 @@ int zipIndexArchive(char *name) {
     if (archiveIndex<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[archiveIndex].fn[0] == 0) {
         // new file into the table
         log_debug("adding %s into index ",name);
-        if (stat(name ,&fst)!=0) {
+        if (fileStatus(name ,&fst)!=0) {
             assert(options.taskRegime);
             if (options.taskRegime!=RegimeEditServer) {
                 static int singleOut=0;

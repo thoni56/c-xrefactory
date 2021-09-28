@@ -28,6 +28,10 @@ void removeFile(char *fileName) {
     unlink(fileName);
 }
 
+int fileStatus(char *path, struct stat *statbuf) {
+    return stat(path, statbuf);
+}
+    
 bool dirExists(char *fullPath) {
     struct stat st;
     int statResult;
