@@ -71,6 +71,7 @@ $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS) $$(CGRE
 	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LINK)
 endef
 
+$(eval $(call UNITTEST,classfilereader,log position))
 $(eval $(call UNITTEST,commons,protocol log stringlist))
 $(eval $(call UNITTEST,complete,protocol log type))
 $(eval $(call UNITTEST,cxref,protocol log hash position type storage usage))
