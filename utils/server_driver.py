@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
         arguments = shlex.split(invocation+" "+args.extra_options)
         if args.delay > 0:
-            arguments = [arguments[0]] + ["-pause", args.delay] + arguments[1:]
+            arguments = [arguments[0]] + ["-pause", str(args.delay)] + arguments[1:]
 
         p = subprocess.Popen(arguments,
                              stdout=subprocess.PIPE,
