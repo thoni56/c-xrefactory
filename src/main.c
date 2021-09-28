@@ -1538,7 +1538,8 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
 static void writeOptionsFileMessage(char *file, char *outFName, char *outSect ) {
     char tmpBuff[TMP_BUFF_SIZE];
 
-    if (options.refactoringRegime==RegimeRefactory) return;
+    if (options.refactoringRegime==RegimeRefactory)
+        return;
     if (outFName[0]==0) {
         if (options.project!=NULL) {
             sprintf(tmpBuff, "'%s' project options not found",

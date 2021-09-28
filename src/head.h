@@ -5,10 +5,6 @@
 
 #include "memory.h"
 
-/* ************************** VERSION NUMBER ********************* */
-
-// version numbers were moved to 'protocol.tc'
-
 /* *********************************************************************** */
 
 #define JAVA_VERSION_1_3 "1.3"

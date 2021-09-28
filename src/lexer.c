@@ -105,6 +105,7 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 }
 
 
+// TODO: un-macrofy ProcessIdentifier
 #define ProcessIdentifier(ch, cb, dd, labelSuffix) {                    \
         int idcoll;                                                     \
         char *ddd;                                                      \
