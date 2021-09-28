@@ -1753,6 +1753,9 @@ static int getLineFromFile(FILE *file, char *line, int max, int *outLength) {
     return result;
 }
 
+static char compiler_identification[MAX_OPTION_LEN];
+
+
 static void discoverBuiltinIncludePaths(void) {
     char line[MAX_OPTION_LEN];
     int len;
@@ -1791,7 +1794,7 @@ static void discoverBuiltinIncludePaths(void) {
         do {
             if (strncmp(line, "End of search list.", 19) == 0)
                 break;
-            if (editorFileStatus(line,&stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR) {
+            if (editorFileStatus(line, &stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR) {
                 log_trace("Add include '%s'", line);
                 addStringListOption(&options.includeDirs, line);
             }
@@ -1803,6 +1806,7 @@ static void discoverBuiltinIncludePaths(void) {
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
         if (strstr(line, " version ") != 0 && !messageWritten) {
             log_info("Compiler is '%s'", line);
+            strcpy(compiler_identification, line);
             messageWritten = true;
             break;
         }
@@ -1814,6 +1818,25 @@ static void discoverBuiltinIncludePaths(void) {
     LEAVE();
 }
 
+/* For each set the first string is the compiler
+ * identification. Search will consider all sets for which the
+ * identification string is a substring of the
+ * compiler_identification, so you can have a set specific for "Apple
+ * clang version 12", then for "Apple clang", then "clang" */
+
+static char *clang_defines[] = {
+    "__int64_t int",
+    "__int32_t int",
+    "__uint32_t int",
+    "__uint64_t int",
+    NULL
+};
+
+typedef struct {char *compiler; char **defines;} CompilerDependentDefines;
+static CompilerDependentDefines compiler_dependent_defines[] = {
+    {"clang", clang_defines}
+};
+     
 
 static char *extra_defines[] = {
     /* Standard types */
@@ -1852,7 +1875,7 @@ static void discoverStandardDefines(void) {
        create an empty file, but that seems as much work as this */
     FILE *p = popen(command, "w");
     closeFile(p);
-
+    
     tempfile = openFile(tempfile_name, "r");
     if (tempfile==NULL) return;
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
@@ -1867,6 +1890,17 @@ static void discoverStandardDefines(void) {
         log_trace("Add definition '%s'", extra_defines[i]);
         addMacroDefinedByOption(extra_defines[i]);
     }
+
+    /* for (int c=0; c<sizeof(compiler_dependent_defines)/sizeof(CompilerDependentDefines); c++) { */
+    /*     if (strstr(compiler_dependent_defines[c].compiler, compiler_identification) != NULL) { */
+    /*         log_trace("Adding compiler specific defines for '%s'", compiler_dependent_defines[c].compiler); */
+    /*         for (char **d=compiler_dependent_defines[c].defines; d != NULL; d++) { */
+    /*             log_trace("Add definition '%s'", *d); */
+    /*             addMacroDefinedByOption(*d); */
+    /*         } */
+    /*     } */
+    /* } */
+ 
  }
 
 static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {
