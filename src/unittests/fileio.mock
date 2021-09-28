@@ -2,6 +2,7 @@
 #include <cgreen/mocks.h>
 #include "fileio.h"
 
+
 FILE *openFile(char *fileName, char *modes) {
     return (FILE *)mock(fileName, modes);
 }
@@ -16,6 +17,10 @@ void createDir(char *dirName) {
 
 void removeFile(char *fileName) {
     mock(fileName);
+}
+
+int fileStatus(char *path, struct stat *statbuf) {
+    return (int)mock(path, statbuf);
 }
 
 bool dirExists(char *fullPath) {

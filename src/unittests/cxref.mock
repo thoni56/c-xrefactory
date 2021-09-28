@@ -26,6 +26,15 @@ void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess)
     mock(usageBits, base, requiredAccess);
 }
 
+void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct symbolReferenceItem s,
+                     char selected, char visible, unsigned ooBits, char olUsage,
+                     short int vlevel, short int refn, short int defRefn,
+                     char defUsage, struct position defpos, int outOnLine,
+                     struct editorMarkerList *markers,	/* for refactory only */
+                     SymbolsMenu *next) {
+    mock();
+}
+
 int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
 }
@@ -360,4 +369,8 @@ void olcxFreeResolutionMenu(SymbolsMenu *sym) {
 
 int refCharCode(int usage) {
     return (int) mock(usage);
+}
+
+void initAvailableRefactorings(void) {
+    mock();
 }

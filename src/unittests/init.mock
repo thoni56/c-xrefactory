@@ -1,0 +1,31 @@
+#include <cgreen/mocks.h>
+#include "init.h"
+
+void initTokenNamesTables(void) {
+    mock();
+}
+
+void initJavaTypePCTIConvertIniTab(void) {
+    mock();
+}
+
+void initTypeCharCodeTab(void) {
+    mock();
+}
+
+void initArchaicTypes(void) {
+    mock();
+}
+
+void initPreCreatedTypes(void) {
+    mock();
+}
+
+void initStorageNames(void) {
+    mock();
+}
+
+void initTypeNames(void) {
+    mock();
+}
+

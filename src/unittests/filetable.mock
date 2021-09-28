@@ -12,8 +12,8 @@ void fileTableInit(FileTable *table,
     mock(table, size);
 }
 
-void fileTableNAInit(FileTable *table,
-                     int size
+void fileTableNoAllocInit(FileTable *table,
+                          int size
 ) {
     mock(table, size);
 }

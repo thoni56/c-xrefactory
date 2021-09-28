@@ -1,0 +1,88 @@
+/* -*- c -*-*/
+#include <cgreen/mocks.h>
+#include "javafqttab.h"
+
+
+JavaFqtTable javaFqtTable;
+
+
+void javaFqtTableInit (struct javaFqtTable *table, int size)
+{
+    mock(table, size);
+}
+
+void javaFqtTableNoAllocInit(struct javaFqtTable *table, int size) {
+    mock(table, size);
+}
+
+bool javaFqtTableIsMember(struct javaFqtTable *table, SymbolList *element, int *position, SymbolList **origin) {
+    return (int)mock(table, element, position, origin);
+}
+
+int javaFqtTableMembEqual(SymbolList *e1, SymbolList *e2) {
+    return (int)mock(e1, e2);
+}
+
+int javaFqtTableNextMember(SymbolList *element, SymbolList **original) {
+    return (int)mock(element, original);
+}
+
+void javaFqtTableSet(struct javaFqtTable *table, SymbolList *element, int position) {
+    mock(table, element, position);
+}
+
+void javaFqtTableSetLast(struct javaFqtTable *table, SymbolList *element, int position) {
+    mock(table, element, position);
+}
+
+void javaFqtTableAdd(struct javaFqtTable *table, SymbolList *element, int *position) {
+    mock(table, element, position);
+}
+
+int javaFqtTableDelete(struct javaFqtTable *table, SymbolList *element) {
+    return (int)mock(table, element);
+}
+
+int javaFqtTableDeleteExact(struct javaFqtTable *table, SymbolList *element) {
+    return (int)mock(table, element);
+}
+
+int javaFqtTableDeleteLast(struct javaFqtTable *table, SymbolList *element) {
+    return (int)mock(table, element);
+}
+
+void javaFqtTableFree(struct javaFqtTable *table) {
+    mock(table);
+}
+
+void javaFqtTableMap(struct javaFqtTable *table, void (*fun)(SymbolList *)) {
+    mock(table, fun);
+}
+
+void javaFqtTableMap2(struct javaFqtTable *table, void (*fun)(SymbolList *, void *), void *a) {
+    mock(table, fun);
+}
+
+void javaFqtTableMap3(struct javaFqtTable *table, void (*fun)(int)) {
+    mock(table, fun);
+}
+
+void javaFqtTableMap31(struct javaFqtTable *table, void (*fun)(int, void *, void *), void *arg1, void *arg2) {
+    mock(table, fun, arg1, arg2);
+}
+
+void javaFqtTableMap32(struct javaFqtTable *table, void (*fun)(int, void *, void *, void *), void *arg1, void *arg2, void *arg3) {
+    mock(table, fun, arg1, arg2, arg3);
+}
+
+void javaFqtTableMap4(struct javaFqtTable *table, void (*fun)(SymbolList *, int),int i) {
+    mock(table, fun, i);
+}
+
+void javaFqtTableMap5(struct javaFqtTable *table, void (*fun)(SymbolList *, void *), void *arg) {
+    mock(table, fun, arg);
+}
+
+void javaFqtTableStatistics(struct javaFqtTable *table, int *usedIndexes, int *elements, int *maxdepth) {
+    mock(table, usedIndexes, elements, maxdepth);
+}

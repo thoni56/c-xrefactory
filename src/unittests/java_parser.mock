@@ -2,6 +2,10 @@
 #include "java_parser.h"
 #include <cgreen/mocks.h>
 
+int java_yyparse(void) {
+    return (int)mock();
+}
+
 void makeJavaCompletions(char *s, int len, Position *pos) {
      (void)mock(s, len, pos);
 }

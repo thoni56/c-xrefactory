@@ -81,6 +81,7 @@ $(eval $(call UNITTEST,id))
 $(eval $(call UNITTEST,jslsemact,symbol log id))
 $(eval $(call UNITTEST,lexer,log lexembuffer characterreader position))
 $(eval $(call UNITTEST,lexembuffer,characterreader position log))
+$(eval $(call UNITTEST,main,protocol log position))
 $(eval $(call UNITTEST,memory,log))
 $(eval $(call UNITTEST,misc,protocol log type))
 $(eval $(call UNITTEST,olcxtab,hash))
@@ -99,6 +100,8 @@ EXTRACT_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(EXTRACT_DEPENDENCIES))
 extract_tests.$(EXT): $(OBJDIR)/extract_tests.o $(EXTRACT_DEPS) $(CGREEN)
 	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN_LINK)
 
+
+$(OBJDIR)/main.o: CFLAGS+=-DGIT_HASH=\"NOT_A_REAL_GIT_HASH\"
 
 
 # A test lib for a module is built from its .o and the _test.o (and some extras)

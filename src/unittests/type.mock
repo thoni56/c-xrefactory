@@ -1,0 +1,3 @@
+#include "type.h"
+
+const char *typeNamesTable[];

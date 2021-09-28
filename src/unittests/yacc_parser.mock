@@ -3,7 +3,7 @@
 #include <cgreen/mocks.h>
 
 int yacc_yyparse() {
-  return (int) mock();
+  return (int)mock();
 }
 
 void makeYaccCompletions(char *s, int len, Position *pos) {

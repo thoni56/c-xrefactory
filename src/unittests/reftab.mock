@@ -13,7 +13,7 @@ void refTabInit(
     mock(table, size);
 }
 
-void refTabNAInit(
+void refTabNoAllocInit(
     ReferenceTable *table,
     int size
 ) {

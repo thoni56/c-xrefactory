@@ -4,6 +4,11 @@
 
 S_caching s_cache;
 
+
+void setupCaching(void) {
+    mock();
+}
+
 bool checkFileModifiedTime(int fileIndex) {
   return (bool) mock(fileIndex);
 }

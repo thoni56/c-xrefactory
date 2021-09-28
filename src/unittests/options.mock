@@ -5,6 +5,7 @@
 Options options;
 Options refactoringOptions;
 Options s_cachedOptions;
+Options s_initOpt;
 
 void xrefSetenv(char *name, char *val) {
   mock(name, val);
@@ -22,8 +23,8 @@ void addSourcePathsCut(void) {
   mock();
 }
 
-int addHtmlCutPath(char *ss) {
-  return (int) mock(ss);
+void addStringListOption(StringList **optlist, char *argvi) {
+    mock(optlist, argvi);
 }
 
 void getXrefrcFileName(char *ttt) {

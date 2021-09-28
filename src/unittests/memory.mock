@@ -13,6 +13,15 @@ int ftMemoryIndex = 0;
 
 char tmpMemory[SIZE_TMP_MEM];
 
+jmp_buf memoryResizeJumpTarget;
+
+void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus)) {
+    mock();
+}
+
+void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line)) {
+    mock();
+}
 
 void memoryResize(void) {
   mock();

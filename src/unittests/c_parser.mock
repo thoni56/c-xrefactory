@@ -2,7 +2,7 @@
 #include "c_parser.h"
 #include <cgreen/mocks.h>
 
-int cyyparse() {
+int c_yyparse() {
   return (int) mock();
 }
 
