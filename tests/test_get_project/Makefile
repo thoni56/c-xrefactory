@@ -8,7 +8,7 @@ $(TEST): CXrefs
 	$(NORMALIZE) output.tmp | sed -e"s+$(realpath ../../src)+SRCDIR+" > output
 	$(VERIFY)
 
-trace: EXTRA+=--extra="-trace -log=log"
+trace debug: EXTRA+=--extra="-trace -log=log"
 trace: $(TEST)
 
 CXrefs:
@@ -20,7 +20,7 @@ clean:
 gdb:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1
-	sudo gdb -ex 'br mainAnswerEditAction' -pid `pgrep c-xref | tail -1` -ex 'continue'
+	sudo gdb -ex 'br mainEditServer' -pid `pgrep c-xref | tail -1` -ex 'continue'
 
 x:
 	$(EDIT_SERVER_DRIVER) commands.input $(EXTRA)
