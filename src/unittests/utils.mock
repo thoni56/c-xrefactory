@@ -2,8 +2,8 @@
 #include "utils.h"
 #include <cgreen/mocks.h>
 
-int creatingOlcxRefs(void) {
-  return (int) mock();
+bool creatingOlcxRefs(void) {
+  return (bool) mock();
 }
 
 void recursivelyCreateFileDirIfNotExists(char *fpath) {
