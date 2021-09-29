@@ -4587,8 +4587,10 @@ void mainAnswerEditAction(void) {
     char dffname[MAX_FILE_NAME_SIZE];
     char dffsect[MAX_FILE_NAME_SIZE];
 
+    ENTER();
     assert(communicationChannel);
 
+    log_trace("Server operation = %d", options.server_operation);
     switch (options.server_operation) {
     case OLO_CHECK_VERSION:
         assert(options.checkVersion!=NULL);
@@ -4952,6 +4954,7 @@ void mainAnswerEditAction(void) {
     fflush(communicationChannel);
     inputFilename = NULL;
     //&RLM_FREE_COUNT(olcxMemory);
+    LEAVE();
 }
 
 int itIsSymbolToPushOlReferences(SymbolReferenceItem *p,

@@ -1973,6 +1973,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     char *fileName;
     StringList *tmpIncludeDirs;
 
+    ENTER();
     fileName = inputFilename;
     mainSetLanguage(fileName, outLanguage);
     getOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName, DEFAULT_VALUE);
@@ -2012,7 +2013,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
 
         processOptions(argc, argv, INFILES_DISABLED);   /* command line opts */
         /* piped options (no include or define options)
-           must be befor .xrefrc file options, but, the s_cachedOPtions
+           must be before .xrefrc file options, but, the s_cachedOptions
            must be set after .c-xrefrc file, but s_cachedOptions can't contain
            piped options, !!! berk.
         */
@@ -2074,6 +2075,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         errOut = dumpOut;
     checkExactPositionUpdate(0);
     // so s_input_file_number is not set if the file is not really opened!!!
+    LEAVE();
 }
 
 static int power(int x, int y) {
