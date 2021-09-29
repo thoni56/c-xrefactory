@@ -1977,10 +1977,13 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     getOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName, DEFAULT_VALUE);
     initAllInputs();
 
-    if (defaultOptionsFileName[0] != 0 ) stat(defaultOptionsFileName, &dffstat);
-    else dffstat.st_mtime = oldStdopTime;               // !!! just for now
-    //&fprintf(dumpOut, "checking oldcp==%s\n",oldOnLineClassPath);
-    //&fprintf(dumpOut, "checking newcp==%s\n",options.classpath);
+    if (defaultOptionsFileName[0] != 0 )
+        fileStatus(defaultOptionsFileName, &dffstat);
+    else
+        dffstat.st_mtime = oldStdopTime;               // !!! just for now
+
+    log_trace("Checking oldcp==%s", oldOnLineClassPath);
+    log_trace("Checking newcp==%s", options.classpath);
     if (*firstPass
         || oldPass != currentPass
         || strcmp(oldStdopFile,defaultOptionsFileName)

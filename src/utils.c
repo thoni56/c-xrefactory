@@ -4,11 +4,9 @@
 #include "options.h"
 #include "fileio.h"
 
-/* TODO: should be bool... */
-int creatingOlcxRefs(void) {
-    /* TODO: what does this actually test? that we need to create
-       refs?  And why does this not work when we introduce a OLO_NONE
-       before OLO_COMPLETE? */
+
+bool creatingOlcxRefs(void) {
+    /* TODO: what does this actually test? that we need to create refs?  */
     return (
             options.server_operation==OLO_PUSH
             ||  options.server_operation==OLO_PUSH_ONLY

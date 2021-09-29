@@ -1470,9 +1470,7 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int
 }
 
 
-static void refactoryCheckedRenameBuffer(
-                                         EditorBuffer *buff, char *newName, EditorUndo **undo
-                                         ) {
+static void refactoryCheckedRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo) {
     struct stat st;
     if (editorFileStatus(newName, &st)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
