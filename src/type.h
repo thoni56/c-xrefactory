@@ -6,38 +6,35 @@
   enum values so here are some explanations of some of the Type enum
   values:
 
-  TypeCppInclude - dummy, the Cpp #include reference
-  TypeMacro - dummy, a macro in the symbol table
-  TypeCppIfElse - dummy, the Cpp #if #else #fi references
-  TypeCppCollate - dummy, the Cpp ## joined string reference
-  TypePackage - dummy, a package in java
-  TypeYaccSymbol - dummy, for yacc grammar references
-  MAX_HTML_LIST_TYPE - only types up to here will be listed in html list
-  TypeLabel - dummy, a label in the symbol tabl
-  TypeKeyword - dummy, a keyword in the symbol table, + html ref.
-  TypeToken - dummy, a token for completions
-  TypeUndefMacro - dummy, an undefined macro in the symbol table
-  TypeMacroArg - dummy, a macro argument
-  TypeDefinedOp - dummy, the 'defined' keyword in #if directives
-  TypeCppAny - dummy, a Cpp reference (html only)
-  TypeBlockMarker - dummy, block markers for extract
-  TypeTryCatchMarker - dummy, block markers for extract
-  TypeComment - dummy, a comment reference (html only)
-  TypeExpression - dummy, an ambig. name evaluated to expression in java
-  TypePackedType - dummy, typemodif, when type is in linkname
-  TypeFunSep - dummy, function separator for HTML
-  TypeSpecialComplet - dummy special completion string (for(;xx!=NULL ..
-  TypeNonImportedClass - dummy for completio
-  TypeInducedError - dummy in genera
+  TypeCppInclude - the Cpp #include reference
+  TypeMacro - a macro in the symbol table
+  TypeCppIfElse - the Cpp #if #else #fi references
+  TypeCppCollate - the Cpp ## joined string reference
+  TypePackage - a package in java
+  TypeYaccSymbol - for yacc grammar references
+  TypeLabel - a label in the symbol tabl
+  TypeKeyword - a keyword in the symbol table, + html ref.
+  TypeToken - a token for completions
+  TypeUndefMacro - an undefined macro in the symbol table
+  TypeMacroArg - a macro argument
+  TypeDefinedOp - the 'defined' keyword in #if directives
+  TypeCppAny - a Cpp reference (html only)
+  TypeBlockMarker - block markers for extract
+  TypeTryCatchMarker - block markers for extract
+  TypeComment - a comment reference (html only)
+  TypeExpression - an ambig. name evaluated to expression in java
+  TypePackedType - typemodif, when type is in linkname
+  TypeFunSep - function separator for HTML
+  TypeSpecialComplet - special completion string (for(;xx!=NULL ..
+  TypeNonImportedClass - for completion
+  TypeInducedError - dummy in general
   TypeInheritedFullMethod - dummy for completion, complete whole definition
   TypeSpecialConstructorCompletion - dummy completion of constructor 'super'
   TypeUnknown - dummy for completion
 
  */
 
-/* Some CPP magic to be able to print enums as strings: */
-#define GENERATE_ENUM_VALUE(ENUM) ENUM,
-#define GENERATE_ENUM_STRING(STRING) #STRING,
+#include "enums.h"
 
 #define ALL_TYPE_ENUMS(ENUM)                                            \
     ENUM(TypeDefault)                                                   \
@@ -100,7 +97,6 @@
         ENUM(TypeCppCollate)                                            \
         ENUM(TypePackage)                                               \
         ENUM(TypeYaccSymbol)                                            \
-        ENUM(MAX_HTML_LIST_TYPE)                                        \
         ENUM(TypeLabel)                                                 \
         ENUM(TypeKeyword)                                               \
         ENUM(TypeToken)                                                 \

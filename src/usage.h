@@ -33,15 +33,12 @@
 
  */
 
-/* Some CPP magic to be able to print enums as strings: */
-#define GENERATE_ENUM_VALUE(ENUM) ENUM,
-#define GENERATE_ENUM_STRING(STRING) #STRING,
-
 
 // !!!!!!!!!!!!! All this stuff is to be removed, new way of defining usages
 // !!!!!!!!!!!!! is to set various bits in usg structure
 /* TODO: well, they are still used, so there must be more to this... */
 
+#include "enums.h"
 #define ALL_USAGE_ENUMS(ENUM)                   \
 /* filter3  == all filters */                   \
     ENUM(ureserve0)                             \

@@ -14,10 +14,7 @@
 
 */
 
-/* Some CPP magic to be able to print enums as strings: */
-#define GENERATE_ENUM_VALUE(ENUM) ENUM,
-#define GENERATE_ENUM_STRING(STRING) #STRING,
-
+#include "enums.h"
 #define ALL_STORAGE_ENUMS(ENUM)             \
     ENUM(StorageError)                      \
     ENUM(StorageAuto)                       \
