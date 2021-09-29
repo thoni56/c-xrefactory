@@ -1303,7 +1303,7 @@ static void mainProcessInFileOption(char *infile) {
 }
 
 void processOptions(int argc, char **argv, int infilesFlag) {
-    int             i, processed;
+    int i, processed;
 
     for (i=1; i<argc; i++) {
         if (options.taskRegime==RegimeEditServer &&
@@ -1837,7 +1837,7 @@ typedef struct {char *compiler; char **defines;} CompilerDependentDefines;
 static CompilerDependentDefines compiler_dependent_defines[] = {
     {"clang", clang_defines}
 };
-     
+
 
 static char *extra_defines[] = {
     /* Standard types */
@@ -1876,7 +1876,7 @@ static void discoverStandardDefines(void) {
        create an empty file, but that seems as much work as this */
     FILE *p = popen(command, "w");
     closeFile(p);
-    
+
     tempfile = openFile(tempfile_name, "r");
     if (tempfile==NULL) return;
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
@@ -1901,7 +1901,7 @@ static void discoverStandardDefines(void) {
     /*         } */
     /*     } */
     /* } */
- 
+
  }
 
 static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {

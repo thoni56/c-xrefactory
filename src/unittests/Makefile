@@ -74,7 +74,7 @@ endef
 $(eval $(call UNITTEST,classfilereader,log position))
 $(eval $(call UNITTEST,commons,protocol log stringlist))
 $(eval $(call UNITTEST,complete,protocol log type))
-$(eval $(call UNITTEST,cxref,protocol log hash position type storage usage))
+$(eval $(call UNITTEST,cxref,server protocol log hash position type storage usage))
 $(eval $(call UNITTEST,cxfile,protocol log position))
 $(eval $(call UNITTEST,editor,position log))
 $(eval $(call UNITTEST,fileio,log))

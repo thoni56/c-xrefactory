@@ -74,7 +74,7 @@
         ENUM(TypeReserve2)                                              \
         ENUM(TypeReserve3)                                              \
         ENUM(TypeReserve4)                                              \
-        ENUM(MODIFIERS_END)                                             \
+        ENUM(TYPE_MODIFIERS_END)                                        \
         ENUM(TypeElipsis)                                               \
         ENUM(JAVA_TYPES)                                                \
         ENUM(TypeByte)                                                  \

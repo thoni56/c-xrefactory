@@ -4590,7 +4590,7 @@ void mainAnswerEditAction(void) {
     ENTER();
     assert(communicationChannel);
 
-    log_trace("Server operation = %d", options.server_operation);
+    log_trace("Server operation = %s(%d)", operationNamesTable[options.server_operation], options.server_operation);
     switch (options.server_operation) {
     case OLO_CHECK_VERSION:
         assert(options.checkVersion!=NULL);

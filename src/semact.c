@@ -677,7 +677,7 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
 static TypeModifier *mergeBaseType(TypeModifier *t1,TypeModifier *t2){
     unsigned b,r;
     unsigned modif;
-    assert(t1->kind<MODIFIERS_END && t2->kind<MODIFIERS_END);
+    assert(t1->kind<TYPE_MODIFIERS_END && t2->kind<TYPE_MODIFIERS_END);
     b=t1->kind; modif=t2->kind;// just to confuse compiler warning
     /* if both are types, error, return the new one only*/
     if (t1->kind <= MODIFIERS_START && t2->kind <= MODIFIERS_START) return(t2);
