@@ -1410,8 +1410,8 @@ static char *getExpandedLocalJavaDocFile_st(char *expandedPath, char *prefix, ch
     static char     fullurl[11*MAX_FILE_NAME_SIZE];
     char            fullfname[MAX_FILE_NAME_SIZE];
     char            *s;
-    struct stat     st;
     int             cplen;
+
     MapOnPaths(expandedPath, {
             cplen = strlen(currentPath);
             if (cplen>0 && currentPath[cplen-1]==FILE_PATH_SEPARATOR) {
@@ -1428,8 +1428,10 @@ static char *getExpandedLocalJavaDocFile_st(char *expandedPath, char *prefix, ch
                 }
             }
             strcpy(fullfname, fullurl);
-            if ((s=strchr(fullfname, '#'))!=NULL) *s = 0;
-            if (stat(fullfname, &st)==0) return fullurl;
+            if ((s=strchr(fullfname, '#'))!=NULL)
+                *s = 0;
+            if (fileStatus(fullfname, NULL)==0)
+                return fullurl;
         });
     return NULL;
 }

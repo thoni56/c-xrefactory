@@ -352,7 +352,7 @@ int editorFileStatus(char *path, struct stat *statbuf) {
         }
         return 0;
     }
-    return stat(path, statbuf);
+    return fileStatus(path, statbuf);
 }
 
 static void editorError(int errCode, char *message) {
@@ -652,7 +652,7 @@ static EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsi
 
 void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
-    int fileIndex, not_used, mem, deleted;
+    int fileIndex, not_used, deleted;
     EditorBuffer dd, *removed;
     EditorBufferList ddl, *memb, *memb2;
     char *oldName;
@@ -661,8 +661,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warningMessage(ERR_INTERNAL, tmpBuff);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    mem = editorBufferTabIsMember(&editorBufferTables, &ddl, NULL, &memb);
-    if (! mem) {
+    if (! editorBufferTabIsMember(&editorBufferTables, &ddl, NULL, &memb)) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
         errorMessage(ERR_INTERNAL, tmpBuff);
@@ -709,9 +708,9 @@ EditorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName) {
     if (res != NULL) {
         return(res);
     }
-    stat(fileName, &st);
+    fileStatus(fileName, &st);
     res = editorCreateNewBuffer(name, fileName, &st);
-    return(res);
+    return res;
 }
 
 EditorBuffer *editorFindFile(char *name) {
@@ -723,11 +722,11 @@ EditorBuffer *editorFindFile(char *name) {
     if (editorBuffer==NULL) {
         editorBuffer = editorGetOpenedBuffer(name);
         if (editorBuffer == NULL) {
-            if (stat(name, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
+            if (fileStatus(name, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
                 editorBuffer = editorCreateNewBuffer(name, name, &st);
             }
         }
-        if (editorBuffer != NULL && stat(editorBuffer->fileName, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
+        if (editorBuffer != NULL && fileStatus(editorBuffer->fileName, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
             // O.K. supposing that I have a regular file
             size = st.st_size;
             allocNewEditorBufferTextSpace(editorBuffer, size);
@@ -951,7 +950,7 @@ void editorLoadAllOpenedBufferFiles(void) {
     for(i=0; i<editorBufferTables.size; i++) {
         for(ll=editorBufferTables.tab[i]; ll!=NULL; ll=ll->next) {
             if (!ll->buffer->bits.textLoaded) {
-                if (stat(ll->buffer->fileName, &st)==0) {
+                if (fileStatus(ll->buffer->fileName, &st)==0) {
                     size = st.st_size;
                     allocNewEditorBufferTextSpace(ll->buffer, size);
                     editorLoadFileIntoBufferText(ll->buffer, &st);
@@ -1485,7 +1484,6 @@ int editorMapOnNonexistantFiles(
     EditorBufferList *ll, *bl;
     char *ss, *lastMapped;
     char fname[MAX_FILE_NAME_SIZE];
-    struct stat st;
 
     // In order to avoid mapping of the same directory several
     // times, first just create list of all files, sort it, and then
@@ -1515,7 +1513,8 @@ int editorMapOnNonexistantFiles(
                 fnlen = strlen(fname);
             }
             // check if file exists, map only nonexistant
-            if (stat(ll->buffer->name, &st)!=0) {
+            struct stat st;
+            if (fileStatus(ll->buffer->name, &st)!=0) {
                 // get file name
                 //&sprintf(tmpBuff, "MAPPING %s as %s in %s", ll->buffer->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuff);
                 (*fun)(fname, a1, a2, a3, a4, a5);

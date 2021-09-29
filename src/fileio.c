@@ -28,8 +28,14 @@ void removeFile(char *fileName) {
     unlink(fileName);
 }
 
-int fileStatus(char *path, struct stat *statbuf) {
-    return stat(path, statbuf);
+int fileStatus(char *path, struct stat *statP) {
+    struct stat st;
+    int return_value;
+    
+    return_value = stat(path, &st);
+    if (statP != NULL)
+        *statP = st;
+    return return_value;
 }
     
 bool dirExists(char *fullPath) {
