@@ -9,13 +9,18 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Move XX_ALLOCC and friends to "memory" module
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
-* TODO Use -trace and -debug to change level in log file only
+* DOING Introduce adapter for stat() in fileio
+We are only using the following attributes of the struct stat:
+- st_size
+- 
+* DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
-* TODO Cleanup log/messages - now there are a lot of special cases
-  We really want command line options to govern what the user/client sees on stdout/stderr(?)
-  But if -log is used the log file should always contain everything
+* TODO Turn the out parameter "position" of XXXTabAdd to return value instead, so it can be ignored without unused variable
 * TODO Handle void as no parameters in formal argument lists, e.g. when refactoring them
-* TODO Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
+* TODO BUG: an unterminated "assert(" (with the c-xref def of it) breaks PUSH
+Instead it results in 
+error in process filter: if: SYNCHRO PROBLEM: 
+12:06:15 FATAL yylex.c:1809: '((char *)(buf)) + (bufsize+1000)*sizeof(char) == ppmMemory + ppmMemoryIndex' is not true
 * TODO Include of <file> does not follow standard so Cgreen's 'internal/...' is not found
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
@@ -33,7 +38,6 @@ and you can also get java.class.version=55 => java version without decoding dire
 ** TODO Restore some original version to working state (branch?)
 * TODO Strange that <update-report> is put in the -o file since that output is probably meant to be synchronous
 Should really be sent synchronously so that the editor can display it.
-* TODO Introduce adapter for stat() in fileio
 * TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
 * TODO Better, and unified, options handling
@@ -120,10 +124,11 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   datatypes that need to be in proto.h because of the strFill et. al
   generation. (Gone now!) Not all does, though...
 
-* TODO Modules. Better use of modules (Clean Code/Architecture)
+* TODO Modules. Better use of modules (Clean Code/Architecture/Hexagonal)
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Use -trace and -debug to change level in log file only
 * DONE Handle for-loops with declarations ("for (int i = 0;...")
 ** DONE Grammar changes for C and Yacc
 ** DONE Scope rules for loop variable, don't really understand how that works...
