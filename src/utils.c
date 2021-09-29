@@ -41,24 +41,27 @@ bool creatingOlcxRefs(void) {
             );
 }
 
-
 void recursivelyCreateFileDirIfNotExists(char *fpath) {
     char    *p;
-    int     ch,len,loopFlag;
+    int     ch,len;
     struct stat  st;
+    bool loopFlag = true;
 
+    /* Check each level from the deepest, stop when it exists */
     len = strlen(fpath);
-    loopFlag = 1;
     for (p=fpath+len; p>fpath && loopFlag; p--) {
-        if (*p!=FILE_PATH_SEPARATOR) continue;
-        ch = *p; *p = 0;
-        if (stat(fpath, &st)==0 && (st.st_mode & S_IFMT) == S_IFDIR) {
-            loopFlag=0;
+        if (*p!=FILE_PATH_SEPARATOR)
+            continue;
+        ch = *p; *p = 0;        /* Truncate here, remember the char */
+        if (dirExists(fpath)) {
+            loopFlag=false;
         }
-        *p = ch;
+        *p = ch;                /* Restore the char */
     }
+    /* Create each of the remaining levels */
     for(p+=2; *p; p++) {
-        if (*p!=FILE_PATH_SEPARATOR) continue;
+        if (*p!=FILE_PATH_SEPARATOR)
+            continue;
         ch = *p; *p = 0;
         createDir(fpath);
         *p = ch;
