@@ -647,7 +647,8 @@ static void createDirIfNotExists(char *dirname) {
     struct stat st;
 
     if (stat(dirname, &st)==0) {
-        if ((st.st_mode & S_IFMT) == S_IFDIR) return;
+        if ((st.st_mode & S_IFMT) == S_IFDIR)
+            return;
         removeFile(dirname);
     }
     createDir(dirname);
@@ -1015,22 +1016,23 @@ static void cxfileCheckLastSymbolDeadness(void) {
 }
 
 
-static int symbolIsReportableAsDead(SymbolReferenceItem *ss) {
+static bool symbolIsReportableAsDead(SymbolReferenceItem *ss) {
     if (ss==NULL || ss->name[0]==' ')
-        return(0);
+        return false;
 
     // you need to be strong here, in fact struct record can be used
     // without using struct explicitly
     if (ss->b.symType == TypeStruct)
-        return(0);
+        return false;
 
     // maybe I should collect also all toString() references?
     if (ss->b.storage==StorageMethod && strcmp(ss->name,"toString()")==0)
-        return(0);
+        return false;
 
     // in this first approach restrict this to variables and functions
-    if (ss->b.symType == TypeMacro) return(0);
-    return(1);
+    if (ss->b.symType == TypeMacro)
+        return false;
+    return true;
 }
 
 static bool canBypassAcceptableSymbol(SymbolReferenceItem *symbol) {
