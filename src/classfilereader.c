@@ -526,11 +526,12 @@ int zipIndexArchive(char *name) {
         if (fileStatus(name ,&fst)!=0) {
             assert(options.taskRegime);
             if (options.taskRegime!=RegimeEditServer) {
-                static int singleOut=0;
-                if (singleOut==0) warningMessage(ERR_CANT_OPEN, name);
-                singleOut=1;
+                static bool messageWritten = false;
+                if (!messageWritten)
+                    warningMessage(ERR_CANT_OPEN, name);
+                messageWritten = true;
             }
-            return(-1);
+            return -1;
         }
 #if defined (__WIN32__)
         zipFile = openFile(name,"rb");
@@ -542,7 +543,7 @@ int zipIndexArchive(char *name) {
             if (options.taskRegime!=RegimeEditServer) {
                 warningMessage(ERR_CANT_OPEN, name);
             }
-            return(-1);
+            return -1;
         }
         initCharacterBuffer(buffer, zipFile);
         assert(namelen+2 < MAX_FILE_NAME_SIZE);
@@ -553,7 +554,7 @@ int zipIndexArchive(char *name) {
         zipArchiveScan(buffer,&zipArchiveTable[archiveIndex], fst.st_size);
         closeFile(zipFile);
     }
-    return(archiveIndex);
+    return archiveIndex;
 }
 
 
