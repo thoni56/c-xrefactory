@@ -28,7 +28,8 @@ else
             # Copy the .gcno files to the coverage directory, because they are needed there by lcov
             cp .objects/*.gcno ../tests/$1/.coverage
             mkdir -p ../tests/coverage
-            $LCOV -q -t $1 -d ../tests/$1/.coverage -c -o ../tests/coverage/$1.info -b .
+            # We will collect all .gcda from all tests later
+            #$LCOV -q -t $1 -d ../tests/$1/.coverage -c -o ../tests/coverage/$1.info -b .
         fi
     fi
 fi
