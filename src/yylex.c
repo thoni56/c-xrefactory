@@ -161,7 +161,7 @@ static bool isPreprocessorToken(Lexem lexem) {
 
 static void traceNewline(int lines) {
     for (int i=1; i<=lines; i++) {
-        log_trace("Line %s:%d", currentFile.fileName, currentFile.lineNumber+i);
+        log_trace("Line %s:%d(%d+%d)", currentFile.fileName, currentFile.lineNumber+i, currentFile.lineNumber, i);
     }
 }
 

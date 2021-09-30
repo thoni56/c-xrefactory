@@ -448,16 +448,20 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
     char ttt[MAX_OPTION_LEN];
     char vname[MAX_OPTION_LEN];
     char *vval;
-    int i, d, j, starti, termc, expanded, vlen, tilda;
+    int i, d, j, starti, termc, vlen, tilde;
+    bool expanded;
+
     i = d = 0;
-    //&fprintf(dumpOut, "expanding option '%s'\n", tt);
+    log_trace("Expanding environment variables for option '%s'", tt);
     while(tt[i] && i<ttsize-2) {
         starti = -1;
-        expanded = 0;
+        expanded = false;
         termc = 0;
-        tilda = 0;
+        tilde = 0;
 #if (!defined (__WIN32__))
-        if (i==0 && tt[i]=='~' && tt[i+1]=='/') {starti = i; termc='~'; tilda=1;}
+        if (i==0 && tt[i]=='~' && tt[i+1]=='/') {
+            starti = i; termc='~'; tilde=1;
+        }
 #endif
         if (tt[i]=='$' && tt[i+1]=='{') {starti = i+2; termc='}';}
         if (tt[i]=='%') {starti = i+1; termc='%';}
@@ -474,18 +478,19 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
                 }
                 if (vval==NULL) vval = getenv(vname);
 #if (!defined (__WIN32__))
-                if (tilda) vval = getenv("HOME");
+                if (tilde)
+                    vval = getenv("HOME");
 #endif
                 if (vval != NULL) {
                     strcpy(&ttt[d], vval);
                     d += strlen(vval);
-                    expanded = 1;
+                    expanded = true;
                 }
-                //& expanded = 1;
-                if (expanded) i = j+1;
+                if (expanded)
+                    i = j+1;
             }
         }
-        if (expanded==0) {
+        if (!expanded) {
             ttt[d++] = tt[i++];
         }
         assert(d<MAX_OPTION_LEN-2);
@@ -497,6 +502,8 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
 }
 
 /* Not official API, public for unittesting */
+/* Return EOF if at EOF, but can still return option text, return
+   something else if not */
 int getOptionFromFile(FILE *file, char *text, int *chars_read) {
     int i, c;
     int res;
@@ -593,68 +600,57 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
     return res;
 }
 
-static void processSingleSectionMarker(char *tt,char *section,
-                                       bool *writeFlag, char *resSection) {
-    int sl,casesensitivity=1;
-    sl = strlen(tt);
+static void processSingleSectionMarker(char *path, char *section,
+                                       bool *writeFlagP, char *resSection) {
+    int length;
+    bool casesensitivity=true;
+
+    length = strlen(path);
 #if defined (__WIN32__)
-    casesensitivity = 0;
+    casesensitivity = false;
 #endif
-    if (pathncmp(tt, section, sl, casesensitivity)==0
-        && (section[sl]=='/' || section[sl]=='\\' || section[sl]==0)) {
-        if (sl > strlen(resSection)) {
-            strcpy(resSection,tt);
+    if (pathncmp(path, section, length, casesensitivity)==0
+        && (section[length]=='/' || section[length]=='\\' || section[length]==0)) {
+        if (length > strlen(resSection)) {
+            strcpy(resSection,path);
             assert(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
         }
-        *writeFlag = true;
+        *writeFlagP = true;
     } else {
-        *writeFlag = false;
+        *writeFlagP = false;
     }
 }
 
-static void processSectionMarker(char *ttt,int i,char *project,char *section,
-                                 bool *writeFlag, char *resSection) {
-    char        *tt;
-    char        firstPath[MAX_FILE_NAME_SIZE];
+static void processSectionMarker(char *optionText, int i, char *project, char *section,
+                                 bool *writeFlagP, char *resSection) {
+    char *tt;
+    char firstPath[MAX_FILE_NAME_SIZE];
 
-    ttt[i-1]=0;
-    tt = ttt+1;
+    optionText[i-1]=0;
+    tt = optionText+1;
     firstPath[0]=0;
     log_debug("processing %s for file %s project==%s", tt, section, project);
-#if 1
-    *writeFlag = 0;
+
+    *writeFlagP = false;
     MapOnPaths(tt, {
             if (firstPath[0]==0) strcpy(firstPath, currentPath);
             if (project!=NULL) {
                 if (strcmp(currentPath, project)==0) {
-                    strcpy(resSection,currentPath);
+                    strcpy(resSection, currentPath);
                     assert(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
-                    *writeFlag = 1;
+                    *writeFlagP = true;
                     goto fini;
                 } else {
-                    *writeFlag = 0;
+                    *writeFlagP = false;
                 }
             } else {
-                processSingleSectionMarker(currentPath, section, writeFlag, resSection);
-                if (*writeFlag) goto fini;
+                processSingleSectionMarker(currentPath, section, writeFlagP, resSection);
+                if (*writeFlagP)
+                    goto fini;
             }
         });
-#else
-    strcpy(firstPath, tt);
-    if (project!=NULL) {
-        if (strcmp(tt, project)==0) {
-            strcpy(resSection,tt);
-            assert(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
-            *writeFlag = 1;
-        } else {
-            *writeFlag = 0;
-        }
-    } else {
-        processSingleSectionMarker(tt, section, writeFlag, resSection);
-    }
-#endif
  fini:;
-    if (*writeFlag) {
+    if (*writeFlagP) {
         // TODO!!! YOU NEED TO ALLOCATE SPACE FOR THIS!!!
         strcpy(s_base, resSection);
         assert(strlen(resSection) < MAX_FILE_NAME_SIZE-1);
@@ -693,7 +689,7 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
 
 bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
                        char *sectionFile, char *project, char *resSection) {
-    char text[MAX_OPTION_LEN];
+    char optionText[MAX_OPTION_LEN];
     int len, argc, i, c, passn=0;
     bool isActiveSection, isActivePass;
     bool found = false;
@@ -708,42 +704,42 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
     if (memFl==MEM_ALLOC_ON_SM)
         SM_INIT(optMemory);
 
-    c = 'a';
+    c = 'a';                    /* Something not EOF */
     while (c!=EOF) {
-        c = getOptionFromFile(file, text, &len);
+        c = getOptionFromFile(file, optionText, &len);
         if (c==EOF) {
-            log_trace("got option from file (@EOF): '%s'", text);
+            log_trace("got option from file (@EOF): '%s'", optionText);
         } else {
-            log_trace("got option from file: '%s'", text);
+            log_trace("got option from file: '%s'", optionText);
         }
-        if (len>=2 && text[0]=='[' && text[len-1]==']') {
-            log_trace("checking '%s'", text);
-            expandEnvironmentVariables(text+1, MAX_OPTION_LEN, &len, GLOBAL_ENV_ONLY);
-            log_trace("expanded '%s'", text);
-            processSectionMarker(text, len+1, project, sectionFile, &isActiveSection, resSection);
-        } else if (isActiveSection && strncmp(text, "-pass", 5) == 0) {
-            sscanf(text+5, "%d", &passn);
+        if (len>=2 && optionText[0]=='[' && optionText[len-1]==']') {
+            log_trace("checking '%s'", optionText);
+            expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, GLOBAL_ENV_ONLY);
+            log_trace("expanded '%s'", optionText);
+            processSectionMarker(optionText, len+1, project, sectionFile, &isActiveSection, resSection);
+        } else if (isActiveSection && strncmp(optionText, "-pass", 5) == 0) {
+            sscanf(optionText+5, "%d", &passn);
             isActivePass = passn==currentPass || currentPass==ANY_PASS;
             if (passn > maxPasses)
                 maxPasses = passn;
-        } else if (strcmp(text,"-set")==0 && (isActiveSection && isActivePass) && memFl!=MEM_NO_ALLOC) {
+        } else if (strcmp(optionText,"-set")==0 && (isActiveSection && isActivePass) && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set
             found = true;
-            ADD_OPTION_TO_ARGS(memFl, text, len, argv, argc);
-            c = getOptionFromFile(file,text,&len);
-            expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
-            ADD_OPTION_TO_ARGS(memFl, text, len, argv, argc);
-            c = getOptionFromFile(file,text,&len);
-            expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
-            ADD_OPTION_TO_ARGS(memFl, text, len, argv, argc);
+            ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
+            c = getOptionFromFile(file,optionText,&len);
+            expandEnvironmentVariables(optionText,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
+            ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
+            c = getOptionFromFile(file,optionText,&len);
+            expandEnvironmentVariables(optionText,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
+            ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
             if (argc < MAX_STD_ARGS) {
                 assert(argc>=3);
                 mainHandleSetOption(argc, argv, argc-3);
             }
         } else if (c!=EOF && (isActiveSection && isActivePass)) {
             found = true;
-            expandEnvironmentVariables(text, MAX_OPTION_LEN, &len, DEFAULT_VALUE);
-            ADD_OPTION_TO_ARGS(memFl, text, len, argv, argc);
+            expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, DEFAULT_VALUE);
+            ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
         }
     }
     if (argc >= MAX_STD_ARGS-1)
