@@ -443,47 +443,57 @@ char *expandSpecialFilePredefinedVariables_st(char *variable, char *inputFilenam
     return(expanded);
 }
 
-static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
-                                       int envFlag) {
-    char ttt[MAX_OPTION_LEN];
-    char vname[MAX_OPTION_LEN];
-    char *vval;
-    int i, d, j, starti, termc, vlen, tilde;
+static void expandEnvironmentVariables(char *original, int availableSize, int *len, bool global_environment_only) {
+    char temporary[MAX_OPTION_LEN];
+    char variableName[MAX_OPTION_LEN];
+    char *value;
+    int i, d, j, startIndex, terminationCharacter;
+    bool tilde;
     bool expanded;
 
     i = d = 0;
-    log_trace("Expanding environment variables for option '%s'", tt);
-    while(tt[i] && i<ttsize-2) {
-        starti = -1;
+    log_trace("Expanding environment variables for option '%s'", original);
+    while (original[i] && i<availableSize-2) {
+        startIndex = -1;
         expanded = false;
-        termc = 0;
-        tilde = 0;
+        terminationCharacter = 0;
+        tilde = false;
 #if (!defined (__WIN32__))
-        if (i==0 && tt[i]=='~' && tt[i+1]=='/') {
-            starti = i; termc='~'; tilde=1;
+        if (i==0 && original[i]=='~' && original[i+1]=='/') {
+            startIndex = i;
+            terminationCharacter = '~';
+            tilde = true;
         }
 #endif
-        if (tt[i]=='$' && tt[i+1]=='{') {starti = i+2; termc='}';}
-        if (tt[i]=='%') {starti = i+1; termc='%';}
-        if (starti >= 0) {
-            j = starti;
-            while (isalpha(tt[j]) || isdigit(tt[j]) || tt[j]=='_') j++;
-            if (j<ttsize-2 && tt[j]==termc) {
-                vlen = j-starti;
-                strncpy(vname, &tt[starti], vlen);
-                vname[vlen]=0;
-                vval = NULL;
-                if (envFlag != GLOBAL_ENV_ONLY) {
-                    vval = getXrefEnvironmentValue(vname);
+        if (original[i]=='$' && original[i+1]=='{') {
+            startIndex = i+2;
+            terminationCharacter = '}';
+        }
+        if (original[i]=='%') {
+            startIndex = i+1;
+            terminationCharacter = '%';
+        }
+        if (startIndex >= 0) {
+            j = startIndex;
+            while (isalpha(original[j]) || isdigit(original[j]) || original[j]=='_')
+                j++;
+            if (j<availableSize-2 && original[j]==terminationCharacter) {
+                int len = j-startIndex;
+                strncpy(variableName, &original[startIndex], len);
+                variableName[len]=0;
+                value = NULL;
+                if (!global_environment_only) {
+                    value = getXrefEnvironmentValue(variableName);
                 }
-                if (vval==NULL) vval = getenv(vname);
+                if (value==NULL)
+                    value = getenv(variableName);
 #if (!defined (__WIN32__))
                 if (tilde)
-                    vval = getenv("HOME");
+                    value = getenv("HOME");
 #endif
-                if (vval != NULL) {
-                    strcpy(&ttt[d], vval);
-                    d += strlen(vval);
+                if (value != NULL) {
+                    strcpy(&temporary[d], value);
+                    d += strlen(value);
                     expanded = true;
                 }
                 if (expanded)
@@ -491,19 +501,20 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
             }
         }
         if (!expanded) {
-            ttt[d++] = tt[i++];
+            temporary[d++] = original[i++];
         }
         assert(d<MAX_OPTION_LEN-2);
     }
-    ttt[d] = 0;
+    temporary[d] = 0;
     *len = d;
-    strcpy(tt, ttt);
-    //&fprintf(dumpOut, "result '%s'\n", tt);
+    strcpy(original, temporary);
+    //&fprintf(dumpOut, "result '%s'\n", original);
 }
 
 /* Not official API, public for unittesting */
 /* Return EOF if at EOF, but can still return option text, return
-   something else if not */
+   something else if not.  TODO: hide this fact from caller, return
+   either text or EOF (probably as a bool return value instead) */
 int getOptionFromFile(FILE *file, char *text, int *chars_read) {
     int i, c;
     int res;
@@ -714,7 +725,7 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
         }
         if (len>=2 && optionText[0]=='[' && optionText[len-1]==']') {
             log_trace("checking '%s'", optionText);
-            expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, GLOBAL_ENV_ONLY);
+            expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
             log_trace("expanded '%s'", optionText);
             processSectionMarker(optionText, len+1, project, sectionFile, &isActiveSection, resSection);
         } else if (isActiveSection && strncmp(optionText, "-pass", 5) == 0) {
@@ -727,10 +738,10 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             found = true;
             ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
             c = getOptionFromFile(file,optionText,&len);
-            expandEnvironmentVariables(optionText,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
+            expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
             c = getOptionFromFile(file,optionText,&len);
-            expandEnvironmentVariables(optionText,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
+            expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
             if (argc < MAX_STD_ARGS) {
                 assert(argc>=3);
@@ -738,7 +749,7 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             }
         } else if (c!=EOF && (isActiveSection && isActivePass)) {
             found = true;
-            expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, DEFAULT_VALUE);
+            expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
         }
     }
