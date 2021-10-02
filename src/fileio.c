@@ -7,6 +7,12 @@
 #include "head.h"
 
 
+bool exists(char *path) {
+    struct stat st;
+    int rc = stat(path, &st);
+    return rc == 0;
+}
+
 FILE *openFile(char *fileName, char *modes) {
     return fopen(fileName, modes);
 }
@@ -16,10 +22,18 @@ int closeFile(FILE *file) {
 }
 
 void createDir(char *dirname) {
+    struct stat st;
+
+    if (exists(dirname)) {
+        stat(dirname, &st);
+        if (S_ISDIR(st.st_mode))
+            return;
+        removeFile(dirname);
+    }
 #ifdef __WIN32__
     mkdir(dirname);
 #else
-    mkdir(dirname,0777);
+    mkdir(dirname, 0777);
 #endif
 }
 
@@ -31,18 +45,18 @@ void removeFile(char *fileName) {
 int fileStatus(char *path, struct stat *statP) {
     struct stat st;
     int return_value;
-    
+
     return_value = stat(path, &st);
     if (statP != NULL)
         *statP = st;
     return return_value;
 }
-    
-bool dirExists(char *fullPath) {
+
+bool dirExists(char *path) {
     struct stat st;
     int statResult;
 
-    statResult = stat(fullPath, &st);
+    statResult = stat(path, &st);
     return statResult==0 && S_ISDIR(st.st_mode);
 }
 

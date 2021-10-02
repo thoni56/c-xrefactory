@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 
 
+extern bool exists(char *path);
 extern FILE *openFile(char *fileName, char *modes);
 extern int closeFile(FILE *file);
 extern void createDir(char *dirname);

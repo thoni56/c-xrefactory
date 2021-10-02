@@ -642,20 +642,7 @@ static void closeReferenceFile(char *fname) {
     cxOut = stdout;
 }
 
-/* TODO: Move to fileio */
-static void createDirIfNotExists(char *dirname) {
-    struct stat st;
-
-    if (stat(dirname, &st)==0) {
-        if ((st.st_mode & S_IFMT) == S_IFDIR)
-            return;
-        removeFile(dirname);
-    }
-    createDir(dirname);
-}
-
-/* fnamesuff contains '/' at the beginning */
-
+/* suffix contains '/' at the beginning */
 static void genPartialFileTabRefFile(int updateFlag,
                                      char *dirname,
                                      char *suffix,
@@ -714,7 +701,7 @@ void genReferenceFile(bool updating, char *filename) {
         char *dirname = filename;
         int i;
 
-        createDirIfNotExists(dirname);
+        createDir(dirname);
         genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_FILES,
                                  writeFileIndexItem, writeFileSourceIndexItem);
         genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_CLASSES,
