@@ -97,7 +97,6 @@ extern TypeModifier s_defaultVoidModifier;
 extern Symbol s_defaultVoidDefinition;
 extern TypeModifier s_errorModifier;
 extern Symbol s_errorSymbol;
-extern struct stat s_noStat;
 extern Position s_noPos;
 extern Reference s_noRef;
 

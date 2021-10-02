@@ -543,8 +543,9 @@ static void fillEmptyEditorBuffer(EditorBuffer *ff, char *aname, int ftnum,
     ff->bits = (EditorBufferBits){.textLoaded = 0, .modified = 0, .modifiedSinceLastQuasiSave = 0};
     ff->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                            .allocatedBlock = NULL, .allocatedIndex = 0, .allocatedSize = 0};
-    *ff = (EditorBuffer){.name = aname, .ftnum = ftnum, .fileName = afname, .stat = s_noStat, .markers = NULL,
+    *ff = (EditorBuffer){.name = aname, .ftnum = ftnum, .fileName = afname, .markers = NULL,
                            .allocation = ff->allocation, .bits = ff->bits};
+    memset(&ff->stat, 0, sizeof(ff->stat));
 }
 
 static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {

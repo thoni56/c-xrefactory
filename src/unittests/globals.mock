@@ -86,7 +86,6 @@ int s_olstringServed;
 Position s_olcxByPassPos;
 int s_olMacro2PassFile;
 
-struct stat s_noStat;
 UsageBits s_noUsage;
 Position s_noPos = {-1, 0, 0};
 
