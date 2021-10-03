@@ -135,7 +135,7 @@ char *javaCreateComposedName(char *prefix,
     len -= ll;
     strncpy(ln+len, prefix, ll);
     assert(len == 0);
-    return(ln);
+    return ln;
 }
 
 void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
@@ -175,13 +175,13 @@ Position *javaGetNameStartingPosition(IdList *name) {
     for(ll=name; ll!=NULL; ll=ll->next) {
         res = &ll->id.p;
     }
-    return(res);
+    return res;
 }
 
 static Reference *javaAddClassCxReference(Symbol *dd, Position *pos, unsigned usage) {
     Reference *res;
     res = addCxReference(dd, pos, usage, noFileIndex, noFileIndex);
-    return(res);
+    return res;
 }
 
 static void javaAddNameCxReference(IdList *id, unsigned usage) {
@@ -202,7 +202,7 @@ Symbol *javaAddType(IdList *class, Access access, Position *p) {
     dd = javaTypeSymbolDefinition(class, access, ADD_YES);
     dd->bits.access = access;
     addCxReference(dd, p, UsageDefined, noFileIndex, noFileIndex);
-    return(dd);
+    return dd;
 }
 
 void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname,
@@ -227,11 +227,11 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname,
 }
 
 // resName can be NULL!!!
-static int javaFindFile0(char *classPath, char *slash, char *name,
+static bool javaFindFile0(char *classPath, char *slash, char *name,
                          char *suffix, char **resName, struct stat *stt) {
     char fname[MAX_FILE_NAME_SIZE];
     char *ffn;
-    int res = 0;
+    bool found = false;
 
     strcpy(fname, classPath);
     strcat(fname, slash);
@@ -243,38 +243,42 @@ static int javaFindFile0(char *classPath, char *slash, char *name,
     log_trace("looking for file %s", ffn);
     if (editorFileStatus(ffn, stt) == 0) {
         log_trace("found in buffer file %s", ffn);
-        res = 1;
+        found = true;
     }
-    if (res && resName!=NULL) {
+    if (found && resName!=NULL) {
         *resName = StackMemoryAllocC(strlen(ffn)+1, char);
         strcpy(*resName, ffn);
     }
-    return(res);
+    return found;
 }
 
 static int specialFileNameCasesCheck(char *fname) {
 #ifdef __WIN32__
     WIN32_FIND_DATA		fdata;
-    HANDLE				han;
+    HANDLE				handle;
     int					dif;
     char				*ss;
     EditorBuffer		*buff;
     // first check if the file is from editor
     buff = editorGetOpenedBuffer(fname);
-    if (buff != NULL) return(1);
+    if (buff != NULL)
+        return true;
     // there is only drive name before the first slash, copy it.
     ss = lastOccurenceInString(fname, '/');
-    if (ss==NULL) ss = lastOccurenceInString(fname, '\\');
-    if (ss==NULL) return(1);
-    log_trace("translating %s",ttt);
-    han = FindFirstFile(fname, &fdata);
-    if (han == INVALID_HANDLE_VALUE) return(1);
+    if (ss==NULL)
+        ss = lastOccurenceInString(fname, '\\');
+    if (ss==NULL)
+        return true;
+    log_trace("translating %s", ttt);
+    handle = FindFirstFile(fname, &fdata);
+    if (handle == INVALID_HANDLE_VALUE)
+        return true;
     dif = strcmp(ss+1, fdata.cFileName);
-    FindClose(han);
-    log_trace("result %s",ttt);
-    return(dif==0);
+    FindClose(handle);
+    log_trace("result %s", ttt);
+    return dif==0;
 #else
-    return(1);
+    return true;
 #endif
 }
 
@@ -340,27 +344,29 @@ bool javaTypeFileExist(IdList *name) {
     return false;
 }
 
-static int javaFindClassFile(char *name, char **resName, struct stat *stt) {
+static bool javaFindClassFile(char *name, char **resName, struct stat *stt) {
     StringList *cp;
     int i;
 
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
         if (javaFindFile0(s_javaStat->unnamedPackagePath,"/",name, ".class",
-                          resName, stt)) return(1);
+                          resName, stt))
+            return true;
     }
     // now other classpaths
     for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        if (javaFindFile0(cp->string,"/",name, ".class", resName, stt)) return(1);
+        if (javaFindFile0(cp->string,"/",name, ".class", resName, stt))
+            return true;
     }
     // finally look into databazes
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
 //&fprintf(dumpOut,"looking in %s\n", zipArchiveTable[i].fn);fflush(dumpOut);
         if (zipFindFile(name,resName,&zipArchiveTable[i])) {
             *stt = zipArchiveTable[i].st;
-            return(1);
+            return true;
         }
     }
-    return(0);
+    return false;
 }
 
 static int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
@@ -369,74 +375,91 @@ static int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
 /*fprintf(dumpOut,"searching for %s %s\n",s_javaStat->thisFileDir,name);fflush(dumpOut);*/
         if (javaFindFile0(s_javaStat->unnamedPackagePath,"/",name, ".java",
-                          resName, stt)) return(1);
+                          resName, stt))
+            return true;
     }
     // sourcepaths
     MapOnPaths(javaSourcePaths, {
-        if (javaFindFile0(currentPath,"/",name,".java",resName,stt)) return(1);
+        if (javaFindFile0(currentPath,"/",name,".java",resName,stt))
+            return true;
     });
     // now other classpaths
     for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        if (javaFindFile0(cp->string,"/",name, ".java", resName, stt)) return(1);
+        if (javaFindFile0(cp->string,"/",name, ".java", resName, stt))
+            return true;
     }
     // auto-inferred source-path
     if (s_javaStat->namedPackagePath != NULL) {
-        if (javaFindFile0(s_javaStat->namedPackagePath,"/",name, ".java", resName, stt)) return(1);
+        if (javaFindFile0(s_javaStat->namedPackagePath,"/",name, ".java", resName, stt))
+            return true;
     }
-    return(0);
+    return false;
 }
 
-// if file exists, then set its name to non NULL !!!!!!!!!!
-static int javaFindFile(Symbol *clas,
-                        char **resSourceFile,
-                        char **resClassFile
-    ) {
-    char ttt[MAX_FILE_NAME_SIZE];
-    int rc,rs,si;
+// if file exists, then set its name
+static FindJavaFileResult javaFindFile(Symbol *classSymbol,
+                                       char **sourceFileNameP,
+                                       char **classFileNameP
+) {
+    int sourceIndex;
+    bool classFound;
+    bool sourceFound;
     struct stat sourceStat;
     struct stat classStat;
-    char *lname, *nn, *slname;
-    lname = slname = clas->linkName;
+    char *lname, *slname;
+
+    lname = slname = classSymbol->linkName;
     if (strchr(lname, '$')!=NULL) {
+        char innerName[MAX_FILE_NAME_SIZE];
+        char *dollarPosition;
         // looking for an inner class, source must be included in outer file
-        strcpy(ttt, clas->linkName);
-        slname = ttt;
-        nn = strchr(ttt, '$');
-        assert(nn);
-        *nn = 0;
+        strcpy(innerName, classSymbol->linkName);
+        slname = innerName;
+        dollarPosition = strchr(innerName, '$');
+        assert(dollarPosition);
+        *dollarPosition = 0;
     }
-    *resClassFile = *resSourceFile = "";
-//&fprintf(dumpOut,"!looking for %s.classf(in %s)== %d\n", lname, slname, clas->u.s->classFile); fflush(dumpOut);fprintf(dumpOut,"!looking for %s %s\n", lname, fileTable.tab[clas->u.s->classFile]->name); fflush(dumpOut);
-    rs = javaFindSourceFile(slname, resSourceFile, &sourceStat);
-    assert(clas->u.s && fileTable.tab[clas->u.s->classFile]);
-    si = fileTable.tab[clas->u.s->classFile]->b.sourceFileNumber;
-//&fprintf(dumpOut,"source search %d %d\n", rs, si);
-    if (rs==0 && si!= -1 && si!=noFileIndex) {
+    *classFileNameP = *sourceFileNameP = "";
+    //&fprintf(dumpOut,"!looking for %s.classf(in %s)== %d\n", lname, slname, classSymbol->u.s->classFile); fflush(dumpOut);fprintf(dumpOut,"!looking for %s %s\n", lname, fileTable.tab[classSymbol->u.s->classFile]->name); fflush(dumpOut);
+    sourceFound = javaFindSourceFile(slname, sourceFileNameP, &sourceStat);
+    assert(classSymbol->u.s && fileTable.tab[classSymbol->u.s->classFile]);
+    sourceIndex = fileTable.tab[classSymbol->u.s->classFile]->b.sourceFileNumber;
+
+    if (!sourceFound && sourceIndex!=-1 && sourceIndex!=noFileIndex) {
         // try the source indicated by source field of filetab
-        assert(fileTable.tab[si]);
-//&fprintf(dumpOut,"checking %s\n", fileTable.tab[si]->name);
-        rs = javaFindFile0( "","",fileTable.tab[si]->name, "", resSourceFile,
-                            &sourceStat);
-//&fprintf(dumpOut,"result %d %s\n", rs, *resSourceFile);
+        assert(fileTable.tab[sourceIndex]);
+        //&fprintf(dumpOut,"checking %s\n", fileTable.tab[sourceIndex]->name);
+        sourceFound = javaFindFile0("","",fileTable.tab[sourceIndex]->name, "", sourceFileNameP,
+                                    &sourceStat);
+        //&fprintf(dumpOut,"result %d %s\n", sourceFound, *sourceFileNameP);
     }
-    rc = javaFindClassFile(lname, resClassFile, &classStat);
-    if (rc==0) *resClassFile = NULL;
-//&fprintf(dumpOut,": checking to input name '%s' '%s'\n",*resSourceFile, fileTable.tab[s_olOriginalFileNumber]->name);
-    if (rs==0) *resSourceFile = NULL;
-//&fprintf(dumpOut,"O.K. here we are rc, rs == %d, %d\n", rc,rs);
+
+    classFound = javaFindClassFile(lname, classFileNameP, &classStat);
+    if (!classFound)
+        *classFileNameP = NULL;
+    if (!sourceFound)
+        *sourceFileNameP = NULL;
+
+    //&fprintf(dumpOut,"O.K. here we are rc, rs == %d, %d\n", classFound, sourceFound);
     if (options.javaSlAllowed == 0) {
-        if (rc) return(RESULT_IS_CLASS_FILE);
-        else return(RESULT_NO_FILE_FOUND);
+        if (classFound)
+            return RESULT_IS_CLASS_FILE;
+        else
+            return RESULT_NO_FILE_FOUND;
     }
-    if (rc==0 && rs==0) return(RESULT_NO_FILE_FOUND);
-    if (rc==1 && rs==0) return(RESULT_IS_CLASS_FILE);
-    if (rc==0 && rs==1) return(RESULT_IS_JAVA_FILE);
-    assert(rs==1 && rc==1);
-//&fprintf(dumpOut,"comparing src(%s)", ctime(&sourceStat.st_mtime));fprintf(dumpOut,"to class(%s)", ctime(&classStat.st_mtime));
+    if (!classFound && !sourceFound)
+        return RESULT_NO_FILE_FOUND;
+    if (classFound && !sourceFound)
+        return RESULT_IS_CLASS_FILE;
+    if (!classFound && sourceFound)
+        return RESULT_IS_JAVA_FILE;
+    assert(sourceFound && classFound);
+
+    //&fprintf(dumpOut,"comparing src(%s)", ctime(&sourceStat.st_mtime));fprintf(dumpOut,"to class(%s)", ctime(&classStat.st_mtime));
     if (sourceStat.st_mtime > classStat.st_mtime) {
-        return(RESULT_IS_JAVA_FILE);
+        return RESULT_IS_JAVA_FILE;
     } else {
-        return(RESULT_IS_CLASS_FILE);
+        return RESULT_IS_CLASS_FILE;
     }
 }
 
@@ -444,47 +467,43 @@ static int javaFqtNameIsFromThePackage(char *cpack, char *classFqName) {
     char   *p1,*p2;
 
     for(p1=cpack, p2=classFqName; *p1 == *p2; p1++,p2++) ;
-    if (*p1 != 0) return(0);
-    if (*p2 == 0) return(0);
-    //& if (*p2 != '/') return(0);
-    for(p2++; *p2; p2++) if (*p2 == '/') return(0);
-    return(1);
+    if (*p1 != 0) return false;
+    if (*p2 == 0) return false;
+    //& if (*p2 != '/') return false;
+    for(p2++; *p2; p2++) if (*p2 == '/') return false;
+    return true;
 }
 
 int javaFqtNamesAreFromTheSamePackage(char *nn1, char *nn2) {
     char   *p1,*p2;
 
-    if (nn1==NULL || nn2==NULL) return(0);
+    if (nn1==NULL || nn2==NULL) return false;
 //&fprintf(dumpOut,"checking equal package %s %s\n", nn1, nn2);
     for(p1=nn1, p2=nn2; *p1 == *p2 && *p1 && *p2; p1++,p2++) ;
-    for(; *p1; p1++) if (*p1 == '/') return(0);
-    for(; *p2; p2++) if (*p2 == '/') return(0);
+    for(; *p1; p1++) if (*p1 == '/') return false;
+    for(; *p2; p2++) if (*p2 == '/') return false;
 //*fprintf(dumpOut,"YES EQUALS\n");
-    return(1);
+    return true;
 }
 
 int javaClassIsInCurrentPackage(Symbol *cl) {
     if (s_jsl!=NULL) {
         if (s_jsl->classStat->thisClass == NULL) {
             // probably import class.*; (nested subclasses)
-            return(javaFqtNameIsFromThePackage(
-                s_jsl->classStat->thisPackage,
-                cl->linkName));
+            return javaFqtNameIsFromThePackage(s_jsl->classStat->thisPackage,
+                                               cl->linkName);
         } else {
-            return(javaFqtNamesAreFromTheSamePackage(
-                cl->linkName,
-                s_jsl->classStat->thisClass->linkName));
+            return javaFqtNamesAreFromTheSamePackage(cl->linkName,
+                                                     s_jsl->classStat->thisClass->linkName);
         }
     } else {
         if (s_javaStat->thisClass == NULL) {
             // probably import class.*; (nested subclasses)
-            return(javaFqtNameIsFromThePackage(
-                s_javaStat->currentPackage,
-                cl->linkName));
+            return javaFqtNameIsFromThePackage(s_javaStat->currentPackage,
+                                               cl->linkName);
         } else {
-            return(javaFqtNamesAreFromTheSamePackage(
-                cl->linkName,
-                s_javaStat->thisClass->linkName));
+            return javaFqtNamesAreFromTheSamePackage(cl->linkName,
+                                                     s_javaStat->thisClass->linkName);
         }
     }
 }
@@ -526,7 +545,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     // this would be too strong, javaLoadClassSymbolsFromFile(memb);
     /* so, this table is not freed by Trail */
     //&if (stringContainsSubstring(fqName, "ComboBoxTreeFilter")) {fprintf(dumpOut,"\nAAAAAAAAAAAAA : %s %s\n\n", name, fqName);} if (strcmp(fqName, "ComboBoxTreeFilter")==0) assert(0);
-    return(memb);
+    return memb;
 }
 
 Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
@@ -578,7 +597,7 @@ Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
     strncpy(sbuf,lp,slen);
     sbuf[slen]=0;
     memb = javaFQTypeSymbolDefinition(sbuf, fqbuf);
-    return(memb);
+    return memb;
 }
 
 
@@ -594,7 +613,7 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *original, int accessFlags, Posit
     added->pos = *importPos;
     addSymbol(added, symbolTable);
 
-    return(original);
+    return original;
 }
 
 Symbol *javaTypeSymbolDefinition(IdList *tname,
@@ -615,7 +634,7 @@ Symbol *javaTypeSymbolDefinition(IdList *tname,
     if (addType == ADD_YES) {
         typeSymbol = javaAddTypeToSymbolTable(typeSymbol, accessFlags, &s_noPos, false);
     }
-    return(typeSymbol);
+    return typeSymbol;
 }
 
 Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
@@ -631,11 +650,11 @@ Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
     if (tname->next==NULL && symbolTableIsMember(symbolTable, &pp, NULL, &memb)) {
         // get canonical copy
         memb = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
-        return(memb);
+        return memb;
     }
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     memb = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
-    return(memb);
+    return memb;
 }
 
 Symbol *javaTypeNameDefinition(IdList *tname) {
@@ -791,21 +810,23 @@ static void javaHackCopySourceLoadedCopyPars(Symbol *memb) {
 void javaLoadClassSymbolsFromFile(Symbol *memb) {
     char *sname, *cname;
     Symbol *cl;
-    int ffound, cfi, cInd;
-    if (memb == NULL) return;
-//&fprintf(dumpOut,"!requesting class (%d)%s\n", memb, memb->linkName);
+    int cfi, cInd;
+    FindJavaFileResult findResult;
+
+    if (memb == NULL)
+        return;
+    //&fprintf(dumpOut,"!requesting class (%d)%s\n", memb, memb->linkName);
     sname = cname = "";
-    if (memb->bits.javaFileIsLoaded == 0) {
-        memb->bits.javaFileIsLoaded = 1;
+    if (!memb->bits.javaFileIsLoaded) {
+        memb->bits.javaFileIsLoaded = true;
         // following is a hack due to multiple items in symbol tab !!!
         cl = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
-        if (cl!=NULL && cl!=memb) cl->bits.javaFileIsLoaded = 1;
+        if (cl!=NULL && cl!=memb)
+            cl->bits.javaFileIsLoaded = true;
         cInd = javaCreateClassFileItem(memb);
         addCfClassTreeHierarchyRef(cInd, UsageClassFileDefinition);
-        ffound = javaFindFile(memb, &sname, &cname);
-//&fprintf(dumpOut,"![load] file containing %s, %s, %s %s\n", memb->linkName, miscellaneousName[ffound], sname, cname);
-//&sprintf(tmpBuff,"![load] file containing %s, %s, %s %s\n", memb->linkName, miscellaneousName[ffound], sname, cname);ppcGenRecord(PPC_IGNORE, tmpBuff);
-        if (ffound == RESULT_IS_JAVA_FILE) {
+        findResult = javaFindFile(memb, &sname, &cname);
+        if (findResult == RESULT_IS_JAVA_FILE) {
             assert(memb->u.s);
             cfi = memb->u.s->classFile;
             assert(fileTable.tab[cfi]);
@@ -815,16 +836,16 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
             if (fileTable.tab[cfi]->b.sourceFileNumber == noFileIndex) {
                 // class definition not found in the source file,
                 // (moved inner class) retry searching for class file
-                ffound = javaFindFile(memb, &sname, &cname);
+                findResult = javaFindFile(memb, &sname, &cname);
             }
             if (memb->bits.javaSourceIsLoaded == 0){
                 // HACK, probably loaded into another possition of symboltab, make copy
                 javaHackCopySourceLoadedCopyPars(memb);
             }
         }
-        if (ffound == RESULT_IS_CLASS_FILE) {
+        if (findResult == RESULT_IS_CLASS_FILE) {
             javaReadClassFile(cname,memb, LOAD_SUPER);
-        } else if (ffound == RESULT_NO_FILE_FOUND) {
+        } else if (findResult == RESULT_NO_FILE_FOUND) {
             if (displayingErrorMessages()) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff, "class %s not found", memb->name);
@@ -884,7 +905,7 @@ static int findTopLevelNameInternal(char *name,
         }
         res = findStrRecordSym(resRfs, name, resMemb, classif, accessibilityCheck, visibilityCheck);
     }
-    return(res);
+    return res;
 }
 
 int findTopLevelName(char *name, S_recFindStr *resRfs,
@@ -906,7 +927,7 @@ int findTopLevelName(char *name, S_recFindStr *resRfs,
                                        scopeToSearch, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO,
                                        &resultScope);
     }
-    return(res);
+    return res;
 }
 
 static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
@@ -929,12 +950,12 @@ static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
                 // or not. Why I have put this there????
 //&				if ((inners[i].cl->bits.access&AccessStatic)==0) {
                     *innmemb = inners[i].cl;
-                    return(1);
+                    return true;
 //&				}
             }
         }
     }
-    return(0);
+    return false;
 }
 
 static int javaClassIsInnerNonStaticMemberClass(Symbol *tclas, Symbol *name) {
@@ -953,11 +974,11 @@ static int javaClassIsInnerNonStaticMemberClass(Symbol *tclas, Symbol *name) {
 //&fprintf(dumpOut,"checking %s<->%s\n",inners[i].cl->name, name);fflush(dumpOut);
             if (inners[i].membFlag && strcmp(inners[i].cl->linkName, name->linkName)==0
                 && (inners[i].cl->bits.access & AccessStatic) == 0) {
-                return(1);
+                return true;
             }
         }
     }
-    return(0);
+    return false;
 }
 
 #if ZERO
@@ -970,10 +991,10 @@ static int javaSimpleNameIsInnerMemberClass(char *name, S_symbol **innmemb) {
         ) {
         if (javaIsNestedClass(cscope->thisClass, name, innmemb)) {
 //&fprintf(dumpOut,"inner class %s found %s %s\n",name,(*innmemb)->name, (*innmemb)->linkName);fflush(dumpOut);
-            return(1);
+            return true;
         }
     }
-    return(0);
+    return false;
 }
 #endif
 
@@ -987,24 +1008,24 @@ int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi) {
         if (javaClassIsInnerNonStaticMemberClass(cscope->thisClass, name)) {
 //&fprintf(dumpOut,"inner class %s found %s %s\n",name,(*innmemb)->name, (*innmemb)->linkName);fflush(dumpOut);
             *outEi = cscope->thisClass;
-            return(1);
+            return true;
         }
     }
-    return(0);
+    return false;
 }
 
-#define JAVA_CLASS_SAN_HAVE_IT(name,str,outImportPos,mm,memb,haveit) {\
-    haveit = 1;\
-    *str = mm;\
-    name->nameType = TypeStruct;\
-    name->fname = mm->linkName;\
-    if (cxrefFlag == ADD_CX_REFS) {\
-        ipos = & memb->pos; /* here MUST be memb, not mm, as it contains the import line !!*/\
-        if (ipos->file != noFileIndex && ipos->file != -1) {\
-            javaAddImportConstructionReference(ipos, ipos, UsageUsed);\
-        }\
-    }\
-}
+#define JAVA_CLASS_CAN_HAVE_IT(name,str,outImportPos,mm,memb,haveit) {  \
+        haveit = true;                                                  \
+        *str = mm;                                                      \
+        name->nameType = TypeStruct;                                    \
+        name->fname = mm->linkName;                                     \
+        if (cxrefFlag == ADD_CX_REFS) {                                 \
+            ipos = & memb->pos; /* here MUST be memb, not mm, as it contains the import line !!*/ \
+            if (ipos->file != noFileIndex && ipos->file != -1) {        \
+                javaAddImportConstructionReference(ipos, ipos, UsageUsed); \
+            }                                                           \
+        }                                                               \
+    }
 
 int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                             Symbol **str,
@@ -1033,7 +1054,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                 if (! haveit) {
                     javaLoadClassSymbolsFromFile(mm);
                     if (javaOuterClassAccessible(mm)) {
-                        JAVA_CLASS_SAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
+                        JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
                     }
                 } else {
                     if ((*str) != mm) {
@@ -1059,13 +1080,13 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
             } else {
                 // just find the first accessible
                 if (nextmemb == NULL) {
-                    JAVA_CLASS_SAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
+                    JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
                     goto breakcycle;
                 } else {
                     // O.K. there may be an ambiguity resolved by accessibility
                     javaLoadClassSymbolsFromFile(mm);
                     if (javaOuterClassAccessible(mm)) {
-                        JAVA_CLASS_SAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
+                        JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
                         goto breakcycle;
                     }
                 }
@@ -1108,7 +1129,7 @@ char *javaImportSymbolName_st(int file, int line, int coll) {
             LINK_NAME_SEPARATOR,
             /*& simpleFileName(getRealFileNameStatic(fileTable.tab[file]->name)), &*/
             line);
-    return(res);
+    return res;
 }
 
 void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage) {
@@ -1151,7 +1172,7 @@ static int javaClassifySingleAmbigName( IdList *name,
                     }
                 }
             }
-            return(name->nameType);
+            return name->nameType;
         }
     }
     res = javaClassifySingleAmbigNameToTypeOrPack( name, str, cxrefFlag);
@@ -1172,7 +1193,7 @@ static int javaClassifySingleAmbigName( IdList *name,
         // Well, I do not know, putting the assert there just to learn
         assert(0);
     }
-    return(name->nameType);
+    return name->nameType;
 }
 
 static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
@@ -1195,9 +1216,9 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
         rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
                                          CLASS_TO_EXPR, UsageNone, NO_CX_REFS);
     if (rr != TypePackage) {
-        return(UsageNonExpandableNotFQTName);
+        return UsageNonExpandableNotFQTName;
     }
-    return(usage);
+    return usage;
 }
 
 static void javaResetUselessReference(Reference *ref) {
@@ -1292,7 +1313,7 @@ static Reference *javaCheckForUselessTypeName(IdList   *name,
             javaResetUselessReference(lref);
         }
     }
-    return(res);
+    return res;
 }
 
 static void javaClassifyNameToNestedType(IdList *name, Symbol *outerc, int uusage, Symbol **str, Reference **oref) {
@@ -1448,7 +1469,7 @@ int javaClassifyAmbiguousName(
         default: assert(0);
         }
     }
-    return(name->nameType);
+    return name->nameType;
 }
 
 #undef AddAmbCxRef
@@ -1465,7 +1486,7 @@ TypeModifier *javaClassifyToExpressionName(IdList *name,
         res = &str->u.s->stype; /* because of casts & s_errorModifier;*/
         assert(res && res->kind == TypeStruct);
     } else res = & s_errorModifier;
-    return(res);
+    return res;
 }
 
 // returns last useless reference (if any)
@@ -1475,7 +1496,7 @@ Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **st
     lastUselessRef = NULL;
     javaClassifyAmbiguousName(tname, NULL, str, &expr, &rr, &lastUselessRef, allowUselesFqtRefs,
                               CLASS_TO_TYPE, usage);
-    return(lastUselessRef);
+    return lastUselessRef;
 }
 
 Reference *javaClassifyToTypeName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
@@ -1489,7 +1510,7 @@ Reference *javaClassifyToTypeName(IdList *tname, int usage, Symbol **str, int al
         //ss = javaTypeSymbolUsage(tname, ACC_DEFAULT);
         //addCxReference(ss, &tname->idi.p, usage, s_noneFileIndex, s_noneFileIndex);
     }
-    return(res);
+    return res;
 }
 
 // !!! this is called also for qualified super
@@ -1518,7 +1539,7 @@ Symbol * javaQualifiedThis(IdList *tname, Id *thisid) {
         str = &s_errorSymbol;
     }
     tname->nameType = TypeStruct;
-    return(str);
+    return str;
 }
 
 void javaClassifyToPackageName( IdList *id ) {
@@ -1563,7 +1584,7 @@ Symbol *javaCreateNewMethod(char *nn, Position *p, int mem) {
     initTypeModifierAsFunction(m, NULL, NULL, NULL, NULL);
     fillSymbolWithType(symbol, name, name, *p, m);
 
-    return(symbol);
+    return symbol;
 }
 
 int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
@@ -1585,7 +1606,7 @@ int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
         assert(ppi < ppSize);
     }
     pp[ppi]=0;
-    return(ppi);
+    return ppi;
 }
 
 int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
@@ -1595,11 +1616,11 @@ int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
     //&fprintf(dumpOut, "[javaIsYetInTheClass] checking %s <-> %s\n",r->linkName, lname);fflush(dumpOut);
         if (strcmp(r->linkName, lname)==0) {
             *eq = r;
-            return(1);
+            return true;
         }
     }
     *eq = NULL;
-    return(0);
+    return false;
 }
 
 
@@ -1613,7 +1634,7 @@ static int javaNumberOfNativeMethodsWithThisName(Symbol *clas, char *name) {
             res++;
         }
     }
-    return(res);
+    return res;
 }
 
 
@@ -1625,10 +1646,12 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
     Symbol *memb;
 
     res = 0;
-    if (decl == &s_errorSymbol || decl->bits.symbolType==TypeError) return(res);
+    if (decl == &s_errorSymbol || decl->bits.symbolType==TypeError)
+        return res;
     assert(decl->bits.symbolType == TypeDefault);
     assert(decl->u.type);
-    if (decl->u.type->kind != TypeFunction) return(res);
+    if (decl->u.type->kind != TypeFunction)
+        return res;
     ppi=0;
 //&	if (decl->bits.access & AccessStatic) {
 //&		sprintf(pp+ppi,"%s.%s",clas->linkName, decl->name);
@@ -1657,7 +1680,7 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
         decl->linkName = ln;
         res = 1;
     }
-    return(res);
+    return res;
 }
 
 static void addNativeMethodCxReference(Symbol *decl, Symbol *clas) {
@@ -1699,12 +1722,12 @@ int javaLinkNameIsANestedClass(char *cname) {
     // this is a very hack!!   TODO do this seriously
     // an alternative can be 'javaSimpleNameIsInnerMemberClass', but it seems
     // to be even worst
-    if (strchr(cname, '$') != NULL) return(1);
-    return(0);
+    if (strchr(cname, '$') != NULL) return true;
+    return false;
 }
 
 int isANestedClass(Symbol *ss) {
-    return(javaLinkNameIsANestedClass(ss->linkName));
+    return javaLinkNameIsANestedClass(ss->linkName);
 }
 
 int javaLinkNameIsAnnonymousClass(char *linkname) {
@@ -1713,9 +1736,9 @@ int javaLinkNameIsAnnonymousClass(char *linkname) {
     ss = linkname;
     while ((ss=strchr(ss, '$'))!=NULL) {
         ss++;
-        if (isdigit(*ss)) return(1);
+        if (isdigit(*ss)) return true;
     }
-    return(0);
+    return false;
 }
 
 void addThisCxReferences(int classIndex, Position *pos) {
@@ -1733,14 +1756,14 @@ Reference *addUselessFQTReference(int classIndex, Position *pos) {
     Reference *res;
     res = addSpecialFieldReference(LINK_NAME_IMPORTED_QUALIFIED_ITEM,StorageField,
                                    classIndex, pos, UsageLastUseless);
-    return(res);
+    return res;
 }
 
 Reference *addUnimportedTypeLongReference(int classIndex, Position *pos) {
     Reference *res;
     res = addSpecialFieldReference(LINK_NAME_UNIMPORTED_QUALIFIED_ITEM, StorageField,
                                    classIndex, pos, UsageUsed);
-    return(res);
+    return res;
 }
 
 void addSuperMethodCxReferences(int classIndex, Position *pos) {
@@ -1751,7 +1774,7 @@ void addSuperMethodCxReferences(int classIndex, Position *pos) {
 
 Symbol *javaPrependDirectEnclosingInstanceArgument(Symbol *args) {
     warningMessage(ERR_ST,"[javaPrependDirectEnclosingInstanceArgument] not yet implemented");
-    return(args);
+    return args;
 }
 
 void addMethodCxReferences(unsigned modif, Symbol *method, Symbol *clas) {
@@ -1781,7 +1804,7 @@ Symbol *javaMethodHeader(unsigned modif, Symbol *type,
     if (newFun) {
         LIST_APPEND(Symbol, s_javaStat->thisClass->u.s->records, decl);
     }
-    return(decl);
+    return decl;
 }
 
 void javaAddMethodParametersToSymTable(Symbol *method) {
@@ -1883,7 +1906,7 @@ TypeModifier *javaNestedNewType(Symbol *sym, Id *thenew,
             res = &s_errorModifier;
         }
     }
-    return(res);
+    return res;
 }
 
 TypeModifier *javaNewAfterName(IdList *name, Id *thenew, IdList *idl) {
@@ -1901,7 +1924,7 @@ TypeModifier *javaNewAfterName(IdList *name, Id *thenew, IdList *idl) {
         assert(str->bits.symbolType == TypeStruct);
         res = javaNestedNewType(str, thenew, idl);
     } else res = & s_errorModifier;
-    return(res);
+    return res;
 }
 
 static int javaExistBaseTypeWideningConversion(int t1, int t2) {
@@ -1909,16 +1932,16 @@ static int javaExistBaseTypeWideningConversion(int t1, int t2) {
     assert(t1>=0 && t1<MAX_TYPE);
     assert(t2>=0 && t2<MAX_TYPE);
 /*fprintf(dumpOut,"testing base convertibility of %s to %s\n",typeName[t1],typesName[t2]);fflush(dumpOut);*/
-    if (t1 == t2) return(1);
+    if (t1 == t2) return true;
     i1 = s_javaTypePCTIConvert[t1];
     i2 = s_javaTypePCTIConvert[t2];
-    if (i1 == 0 || i2 == 0) return(0);
+    if (i1 == 0 || i2 == 0) return false;
     assert(i1-1>=0 && i1-1<MAX_PCTIndex-1);
     assert(i2-1>=0 && i2-1<MAX_PCTIndex-1);
     res = s_javaPrimitiveWideningConversions[i1-1][i2-1];
     assert(res == 0 || res == 1);
 /*fprintf(dumpOut,"the result is %d\n",res); fflush(dumpOut);*/
-    return(res);
+    return res;
 }
 
 static int javaExistBaseWideningConversion(char c1, char c2) {
@@ -1926,10 +1949,10 @@ static int javaExistBaseWideningConversion(char c1, char c2) {
 /*fprintf(dumpOut,"testing base convertibility of %c to %c\n",c1,c2);fflush(dumpOut);*/
     assert(c1>=0 && c1<MAX_CHARS);
     assert(c2>=0 && c2<MAX_CHARS);
-    if (c1 == c2) return(1);
+    if (c1 == c2) return true;
     t1 = s_javaCharCodeBaseTypes[c1];
     t2 = s_javaCharCodeBaseTypes[c2];
-    return(javaExistBaseTypeWideningConversion(t1, t2));
+    return javaExistBaseTypeWideningConversion(t1, t2);
 }
 
 #define PassArrayTypeString(tstring) {\
@@ -1946,7 +1969,7 @@ static char * javaPassToNextParamInTypeString(char *ss) {
     } else {
         ss++;
     }
-    return(ss);
+    return ss;
 }
 
 static Symbol *javaStringTypeObject(char **ss) {
@@ -1964,7 +1987,7 @@ static Symbol *javaStringTypeObject(char **ss) {
         s++;
     }
     *ss = s;
-    return(res);
+    return res;
 }
 
 static int javaExistWideningConversion(char **t1, char **t2) {
@@ -2016,7 +2039,7 @@ static int javaExistWideningConversion(char **t1, char **t2) {
 finish:
     *t1 = s1; *t2 = s2;
 /*fprintf(dumpOut,"the result is %d\n",res); fflush(dumpOut);*/
-    return(res);
+    return res;
 }
 
 
@@ -2035,11 +2058,11 @@ static int javaSmallerProfile(Symbol *s1, Symbol *s2) {
     p1 ++; p2++;
     while (*p1 != ')' && *p2 != ')') {
         r = javaExistWideningConversion(&p1, &p2);
-        if (r == 0) return(0);
+        if (r == 0) return false;
     }
-    if (*p1 != ')' || *p2 != ')') return(0);
+    if (*p1 != ')' || *p2 != ')') return false;
 /*fprintf(dumpOut,"the result is 1\n"); fflush(dumpOut);*/
-    return(1);
+    return true;
 }
 
 int javaMethodApplicability(Symbol *memb, char *actArgs) {
@@ -2053,19 +2076,22 @@ int javaMethodApplicability(Symbol *memb, char *actArgs) {
     fargs ++;
     while (*fargs != ')' && *actArgs!=0) {
         r = javaExistWideningConversion(&actArgs, &fargs);
-        if (r == 0) return(0);
+        if (r == 0) return false;
     }
-    if (*fargs == ')' && *actArgs == 0) return(PROFILE_APPLICABLE);
-    if (*actArgs == 0) return(PROFILE_PARTIALLY_APPLICABLE);
-    return(PROFILE_NOT_APPLICABLE);
+    if (*fargs == ')' && *actArgs == 0)
+        return PROFILE_APPLICABLE;
+    if (*actArgs == 0)
+        return PROFILE_PARTIALLY_APPLICABLE;
+    return PROFILE_NOT_APPLICABLE;
 }
 
 Symbol *javaGetSuperClass(Symbol *cc) {
     SymbolList		*sups;
     assert(cc->bits.symbolType == TypeStruct && cc->u.s);
     sups = cc->u.s->super;
-    if (sups == NULL) return(&s_errorSymbol);	/* class Object only */
-    return(sups->d);
+    if (sups == NULL)
+        return &s_errorSymbol;	/* class Object only */
+    return sups->d;
 }
 
 Symbol *javaCurrentSuperClass(void) {
@@ -2076,7 +2102,7 @@ Symbol *javaCurrentSuperClass(void) {
     tt = s_javaStat->thisType;
     assert(tt->kind == TypeStruct);
     cc = tt->u.t;
-    return(javaGetSuperClass(cc));
+    return javaGetSuperClass(cc);
 }
 
 /* ********************* method invocations ************************** */
@@ -2111,7 +2137,7 @@ static TypeModifier *javaMethodInvocation(
 //&fprintf(dumpOut,"induced missinterpred at %d\n", name->p.line);
             addTrivialCxReference(LINK_NAME_INDUCED_ERROR,TypeInducedError,StorageDefault,
                                   &name->p, UsageUsed);
-            return(&s_errorModifier);
+            return &s_errorModifier;
         }
     }
     *actArg = 0; actArgi = 0;
@@ -2140,7 +2166,8 @@ static TypeModifier *javaMethodInvocation(
             rr = RETURN_NOT_FOUND;
         }
     } while (rr==RETURN_OK);
-    if (appli == 0) return(&s_errorModifier);
+    if (appli == 0)
+        return &s_errorModifier;
 //&sprintf(tmpBuff,"looking for smallest\n");ppcBottomInformation(tmpBuff);
     smallesti = 0;
     for (i=1; i<appli; i++) {
@@ -2151,7 +2178,8 @@ static TypeModifier *javaMethodInvocation(
 /*&		}&*/
     }
     for (i=0; i<appli; i++) {
-        if (! javaSmallerProfile(appl[smallesti], appl[i])) return(&s_errorModifier);
+        if (! javaSmallerProfile(appl[smallesti], appl[i]))
+            return &s_errorModifier;
     }
 //&sprintf(tmpBuff,"the invoked method is %s of %s\n\n",appl[smallesti]->linkName,fileTable.tab[funCl[smallesti]]->name);ppcBottomInformation(tmpBuff);
     assert(appl[smallesti]->bits.symbolType == TypeDefault);
@@ -2179,7 +2207,7 @@ static TypeModifier *javaMethodInvocation(
             addCxReference(ee->d, &name->p, UsageThrown, noFileIndex, noFileIndex);
         }
     }
-    return(appl[smallesti]->u.type->next);
+    return appl[smallesti]->u.type->next;
 }
 
 
@@ -2209,10 +2237,11 @@ S_extRecFindStr *javaCrErfsForMethodInvocationN(IdList *name) {
     nt = javaClassifyAmbiguousName(name, &erfs->s,&erfs->memb,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_METHOD,UsageUsed);
     if (nt != TypeExpression) {
         methodNameNotRecognized(name->id.name);
-        return(NULL);
+        return NULL;
     }
-    if (expr == &s_errorModifier) return(NULL);
-    return(erfs);
+    if (expr == &s_errorModifier)
+        return NULL;
+    return erfs;
 }
 
 TypeModifier *javaMethodInvocationN(	IdList *name,
@@ -2221,9 +2250,10 @@ TypeModifier *javaMethodInvocationN(	IdList *name,
     S_extRecFindStr		*erfs;
     TypeModifier		*res;
     erfs = javaCrErfsForMethodInvocationN(name);
-    if (erfs == NULL) return(&s_errorModifier);
+    if (erfs == NULL)
+        return &s_errorModifier;
     res = javaMethodInvocation(&erfs->s, erfs->memb, &name->id, args,REGULAR_METHOD,&s_noPos);
-    return(res);
+    return res;
 }
 
 S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
@@ -2235,7 +2265,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
     if (tt->kind == TypeArray) tt = &s_javaArrayObjectSymbol.u.s->stype;
     if (tt->kind != TypeStruct) {
         methodAppliedOnNonClass(name->name);
-        return(NULL);
+        return NULL;
     }
     erfs = StackMemoryAlloc(S_extRecFindStr);
     erfs->params = NULL;
@@ -2244,9 +2274,9 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
                         CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
     if (rr != RETURN_OK) {
         noSuchFieldError(name->name);
-        return(NULL);
+        return NULL;
     }
-    return(erfs);
+    return erfs;
 }
 
 TypeModifier *javaMethodInvocationT(TypeModifier *tt,
@@ -2256,9 +2286,10 @@ TypeModifier *javaMethodInvocationT(TypeModifier *tt,
     S_extRecFindStr		*erfs;
     TypeModifier		*res;
     erfs = javaCrErfsForMethodInvocationT(tt, name);
-    if (erfs == NULL) return(&s_errorModifier);
+    if (erfs == NULL)
+        return &s_errorModifier;
     res = javaMethodInvocation(&erfs->s, erfs->memb, name, args,REGULAR_METHOD,&s_noPos);
-    return(res);
+    return res;
 }
 
 S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
@@ -2266,7 +2297,8 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
     S_extRecFindStr		*erfs;
     int					rr;
     ss = javaCurrentSuperClass();
-    if (ss == &s_errorSymbol || ss->bits.symbolType==TypeError) return(NULL);
+    if (ss == &s_errorSymbol || ss->bits.symbolType==TypeError)
+        return NULL;
     assert(ss && ss->bits.symbolType == TypeStruct);
     assert(ss->bits.javaFileIsLoaded);
     erfs = StackMemoryAlloc(S_extRecFindStr);
@@ -2278,8 +2310,9 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
 */
     rr = findStrRecordSym(iniFind(ss, &erfs->s), name->name, &erfs->memb,
                         CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
-    if (rr != RETURN_OK) return(NULL);
-    return(erfs);
+    if (rr != RETURN_OK)
+        return NULL;
+    return erfs;
 }
 
 TypeModifier *javaMethodInvocationS(Id *super,
@@ -2289,10 +2322,11 @@ TypeModifier *javaMethodInvocationS(Id *super,
     S_extRecFindStr		*erfs;
     TypeModifier		*res;
     erfs = javaCrErfsForMethodInvocationS(super, name);
-    if (erfs==NULL) return(&s_errorModifier);
+    if (erfs==NULL)
+        return &s_errorModifier;
     res = javaMethodInvocation(&erfs->s, erfs->memb, name, args, SUPER_METHOD_INVOCATION,&super->p);
     assert(erfs->s.currClass && erfs->s.currClass->u.s);
-    return(res);
+    return res;
 }
 
 S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
@@ -2300,7 +2334,8 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     ) {
     S_extRecFindStr		*erfs;
     int					rr;
-    if (clas == &s_errorSymbol || clas->bits.symbolType==TypeError) return(NULL);
+    if (clas == &s_errorSymbol || clas->bits.symbolType==TypeError)
+        return NULL;
     assert(clas && clas->bits.symbolType == TypeStruct);
     javaLoadClassSymbolsFromFile(clas);
     erfs = StackMemoryAlloc(S_extRecFindStr);
@@ -2308,8 +2343,9 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     assert(clas->bits.javaFileIsLoaded);
     rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
                         CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
-    if (rr != RETURN_OK) return(NULL);
-    return(erfs);
+    if (rr != RETURN_OK)
+        return NULL;
+    return erfs;
 }
 
 TypeModifier *javaConstructorInvocation(Symbol *clas,
@@ -2320,11 +2356,13 @@ TypeModifier *javaConstructorInvocation(Symbol *clas,
     TypeModifier		*res;
     Id			name;
     erfs = javaCrErfsForConstructorInvocation(clas, pos);
-    if (erfs == NULL) return(&s_errorModifier);
-    if (erfs->s.baseClass != erfs->s.currClass) return(&s_errorModifier);
+    if (erfs == NULL)
+        return &s_errorModifier;
+    if (erfs->s.baseClass != erfs->s.currClass)
+        return &s_errorModifier;
     fillId(&name, clas->name, NULL, *pos);
     res = javaMethodInvocation(&erfs->s, erfs->memb, &name, args,CONSTRUCTOR_INVOCATION,&s_noPos);
-    return(res);
+    return res;
 }
 
 
@@ -2337,15 +2375,17 @@ static int javaIsNumeric(TypeModifier *tt) {
     case TypeByte: case TypeShort: case TypeChar:
     case TypeInt: case TypeLong:
     case TypeDouble: case TypeFloat:
-        return(1);
+        return true;
     default:
-        return(0);
+        return false;
     }
 }
 
 TypeModifier *javaCheckNumeric(TypeModifier *tt) {
-    if (javaIsNumeric(tt)) return(tt);
-    else return(&s_errorModifier);
+    if (javaIsNumeric(tt))
+        return tt;
+    else
+        return &s_errorModifier;
 }
 
 TypeModifier *javaNumericPromotion(TypeModifier *tt) {
@@ -2359,9 +2399,9 @@ TypeModifier *javaNumericPromotion(TypeModifier *tt) {
     case TypeLong:
     case TypeDouble:
     case TypeFloat:
-        return(tt);
+        return tt;
     default:
-        return(&s_errorModifier);
+        return &s_errorModifier;
     }
 }
 
@@ -2383,73 +2423,84 @@ TypeModifier *javaBitwiseLogicalPromotion(	TypeModifier *t1,
                                                 TypeModifier *t2
                                             ) {
     assert(t1 && t2);
-    if (t1->kind == TypeBoolean && t2->kind == TypeBoolean) return(t1);
-    return(javaBinaryNumericPromotion(t1,t2));
+    if (t1->kind == TypeBoolean && t2->kind == TypeBoolean)
+        return t1;
+    return javaBinaryNumericPromotion(t1,t2);
 }
 
 int javaIsStringType(TypeModifier *tt) {
-    if (tt->kind != TypeStruct) return(0);
-    return(tt->u.t == s_javaStringSymbol);
+    if (tt->kind != TypeStruct)
+        return false;
+    return tt->u.t == s_javaStringSymbol;
 }
 
 static int javaEqualTypes(TypeModifier *t1,TypeModifier *t2) {
     int m;
 lastRecursionLabel:
-    if (t1->kind != t2->kind) return(0);
+    if (t1->kind != t2->kind) return false;
     m = t1->kind;
-    if (m == TypeStruct || m == TypeUnion) return(t1->u.t == t2->u.t);
+    if (m == TypeStruct || m == TypeUnion)
+        return t1->u.t == t2->u.t;
     if (m == TypeArray) {
         t1 = t1->next; t2 = t2->next;
         goto lastRecursionLabel;
     }
     assert(m != TypeFunction);
-    return(1);
+    return true;
 }
 
 static int javaTypeConvertible(TypeModifier *t1,
                                TypeModifier *t2
 ) {
     Symbol    *s1,*s2;
-    int         res;
 lastRecLabel:
     if (javaIsNumeric(t1) && javaIsNumeric(t2)) {
-        return(javaExistBaseTypeWideningConversion(t1->kind, t2->kind));
+        return javaExistBaseTypeWideningConversion(t1->kind, t2->kind);
     }
-    if (t1->kind != t2->kind) return(0);
+    if (t1->kind != t2->kind)
+        return false;
     if (t1->kind == TypeArray) {
         t1 = t1->next; t2 = t2->next;
         goto lastRecLabel;
     }
     if (t1->kind == TypeStruct) {
+        int res;
         s1 = t1->u.t; s2 = t2->u.t;
         assert(s1 && s2);
         assert(s1->bits.symbolType == TypeStruct && s1->u.s);
         javaLoadClassSymbolsFromFile(s1);
         res = cctIsMember(&s1->u.s->casts, s2, 1);
 //&fprintf(dumpOut,"!checking convertibility %s->%s, res==%d\n",s1->linkName, s2->linkName, res);fflush(dumpOut);
-        return(res);
+        return res;
     }
-    return(0);
+    return 0;
 }
 
 TypeModifier *javaConditionalPromotion(	TypeModifier *t1,
                                             TypeModifier *t2
                                         ) {
-    if (javaEqualTypes(t1,t2)) return(t1);
+    if (javaEqualTypes(t1,t2))
+        return t1;
     if (javaIsNumeric(t1) && javaIsNumeric(t2)) {
-        if (t1->kind == TypeShort && t2->kind == TypeByte) return(t1);
-        if (t1->kind == TypeByte && t2->kind == TypeShort) return(t2);
+        if (t1->kind == TypeShort && t2->kind == TypeByte)
+            return t1;
+        if (t1->kind == TypeByte && t2->kind == TypeShort)
+            return t2;
         /* TO FINISH FOR BYTE, SHORT, CHAR CONSTANT */
-        return(javaBinaryNumericPromotion(t1,t2));
+        return javaBinaryNumericPromotion(t1,t2);
     }
-    if (t1->kind == TypeNull && IsJavaReferenceType(t2->kind)) return(t2);
-    if (t2->kind == TypeNull && IsJavaReferenceType(t1->kind)) return(t1);
+    if (t1->kind == TypeNull && IsJavaReferenceType(t2->kind))
+        return t2;
+    if (t2->kind == TypeNull && IsJavaReferenceType(t1->kind))
+        return t1;
     if (! IsJavaReferenceType(t1->kind) || ! IsJavaReferenceType(t2->kind)) {
-        return(&s_errorModifier);
+        return &s_errorModifier;
     }
-    if (javaTypeConvertible(t1,t2)) return(t2);
-    if (javaTypeConvertible(t2,t1)) return(t1);
-    return(&s_errorModifier);
+    if (javaTypeConvertible(t1,t2))
+        return t2;
+    if (javaTypeConvertible(t2,t1))
+        return t1;
+    return &s_errorModifier;
 }
 
 void javaTypeDump(TypeModifier *tt) {
@@ -2562,7 +2613,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
     // added 8/8/2001 for clearing s_cp.function for SET_TARGET_POSITION check
     s_cp = s_cpInit;
 //&fprintf(dumpOut,"clearing s_cp\n");
-    return(res);
+    return res;
 }
 
 struct freeTrail *newAnonClassDefinitionBegin(Id *interfName) {
@@ -2575,7 +2626,7 @@ struct freeTrail *newAnonClassDefinitionBegin(Id *interfName) {
     interf = javaTypeNameDefinition(ll);
     res = newClassDefinitionBegin(&s_javaAnonymousClassName, AccessDefault,
                                   interf);
-    return(res);
+    return res;
 }
 
 void newClassDefinitionEnd(FreeTrail *trail) {
@@ -2620,7 +2671,7 @@ TypeModifier *javaArrayFieldAccess(Id *id) {
     Symbol *rec=NULL;
     findStructureFieldFromType(&s_javaArrayObjectSymbol.u.s->stype, id, &rec, CLASS_TO_EXPR);
     assert(rec);
-    return(rec->u.type);
+    return rec->u.type;
 }
 
 void javaParsedSuperClass(Symbol *symbol) {
@@ -2658,16 +2709,18 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
 
 
 void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
-    StringList	*pp;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    if (options.taskRegime == RegimeEditServer) return;
-    for(pp=javaClassPaths; pp!=NULL; pp=pp->next) {
-        if (compareFileNames(dir, pp->string)==0) return;
+    if (options.taskRegime == RegimeEditServer)
+        return;
+    for (StringList *pp=javaClassPaths; pp!=NULL; pp=pp->next) {
+        if (compareFileNames(dir, pp->string)==0)
+            return;
     }
     MapOnPaths(javaSourcePaths, {
-        if (compareFileNames(dir, currentPath)==0) return;
-    });
+            if (compareFileNames(dir, currentPath)==0)
+                return;
+        });
     sprintf(tmpBuff, "Directory %s is not listed in paths", dir);
     warningMessage(ERR_ST, tmpBuff);
 }

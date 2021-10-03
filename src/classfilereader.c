@@ -1142,7 +1142,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         goto endOfFile;
     }
 
-    symbol->bits.javaFileIsLoaded = 1;
+    symbol->bits.javaFileIsLoaded = true;
 
     /* Open the file, the name is prefixing the actual class name separated by separator, if any */
     zipSeparatorIndex = strchr(className, ZIP_SEPARATOR_CHAR);

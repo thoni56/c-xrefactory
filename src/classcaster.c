@@ -38,6 +38,7 @@ void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int depthFactor) {
 }
 
 
+/* TODO: Boolify */
 int cctIsMember(S_cctNode *cc, Symbol *x, int depthFactor) {
     int h,res;
     //&if (cc->node!=NULL) fprintf(dumpOut,"checking cast %s to %d == %s\n", cc->node->linkName, x, x->linkName);

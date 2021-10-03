@@ -198,15 +198,16 @@ static void includeListDeleteOutOfMemory(void) {
 }
 
 static int cachedIncludedFilePass(int cpi) {
-    int i,mi,mt;
+    int mi,mt;
     assert (cpi > 0);
     mi = s_cache.cp[cpi].ibi;
-    for(i=s_cache.cp[cpi-1].ibi; i<mi; i++) {
+    for (int i=s_cache.cp[cpi-1].ibi; i<mi; i++) {
         mt = checkFileModifiedTime(s_cache.ib[i]);
-        log_debug("mtime of %s eval to %d", fileTable.tab[s_cache.ib[i]]->name,mt);
-        if (mt == 0) return(0);
+        log_debug("mtime of %s eval to %d", fileTable.tab[s_cache.ib[i]]->name, mt);
+        if (mt == 0)
+            return 0;
     }
-    return(1);
+    return 1;
 }
 
 static void recoverCxMemory(char *cxMemFreeBase) {
@@ -315,10 +316,12 @@ void recoverFromCache(void) {
     /*  s_cache.recoveringFromCache = 1;*/
     log_debug("reading from cache");
     readUntil = s_cache.cp[0].lbcc;
-    for(i=1; i<s_cache.cpi; i++) {
+    for (i=1; i<s_cache.cpi; i++) {
         log_trace("trying to recover cache point %d", i);
-        if (cachedInputPass(i,&readUntil) == 0) break;
-        if (cachedIncludedFilePass(i) == 0) break;
+        if (cachedInputPass(i, &readUntil) == 0)
+            break;
+        if (cachedIncludedFilePass(i) == 0)
+            break;
     }
     assert(i > 1);
     /* now, recover state from the cache point 'i-1' */

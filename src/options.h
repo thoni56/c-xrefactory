@@ -95,7 +95,7 @@ typedef struct options {
     int checkNewLineNumber;
 
     char *getValue;
-    int javaSlAllowed;
+    int javaSlAllowed;          /* TODO: Boolify? */
     int xfileHashingMethod;
 
     /* JAVADOC: */

@@ -341,18 +341,18 @@ void editorInit(void) {
     editorBufferTabNoAllocInit(&editorBufferTables, EDITOR_BUFF_TAB_SIZE);
 }
 
-int editorFileStatus(char *path, struct stat *statbuf) {
+int editorFileStatus(char *path, struct stat *statP) {
     EditorBuffer *buffer;
 
     buffer = editorGetOpenedBuffer(path);
     if (buffer != NULL) {
-        if (statbuf != NULL) {
-            *statbuf = buffer->stat;
+        if (statP != NULL) {
+            *statP = buffer->stat;
             log_trace("returning stat of %s modified at %s", path, ctime(&buffer->stat.st_mtime));
         }
         return 0;
     }
-    return fileStatus(path, statbuf);
+    return fileStatus(path, statP);
 }
 
 static void editorError(int errCode, char *message) {

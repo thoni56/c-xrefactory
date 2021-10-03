@@ -913,7 +913,7 @@ char *getRealFileNameStatic(char *fn) {
     static char         realFilename[MAX_FILE_NAME_SIZE];
 #if defined (__WIN32__)
     WIN32_FIND_DATA     fdata;
-    HANDLE              han;
+    HANDLE              handle;
     int                 si,di,bdi;
     // there is only drive name before the first slash, copy it.
     for(si=0,di=0; fn[si]&&fn[si]!=FILE_PATH_SEPARATOR; si++,di++) realFilename[di]=fn[si];
@@ -926,11 +926,11 @@ char *getRealFileNameStatic(char *fn) {
         }
         realFilename[di] = 0;
         //fprintf(ccOut,"translating %s\n",ttt);
-        han = FindFirstFile(realFilename, &fdata);
-        if (han == INVALID_HANDLE_VALUE) goto bbreak;
+        handle = FindFirstFile(realFilename, &fdata);
+        if (handle == INVALID_HANDLE_VALUE) goto bbreak;
         strcpy(realFilename+bdi, fdata.cFileName);
         di = bdi + strlen(realFilename+bdi);
-        FindClose(han);
+        FindClose(handle);
         assert(di < MAX_FILE_NAME_SIZE-1);
         realFilename[di] = fn[si];
         //fprintf(ccOut,"res %s\n",ttt);
@@ -957,20 +957,20 @@ static int mapPatternFiles(char *pattern ,
                            void *a4, int *a5) {
 #if defined (__WIN32__)
     WIN32_FIND_DATA     fdata;
-    HANDLE              han;
+    HANDLE              handle;
     int res;
 
     res = 0;
-    han = FindFirstFile(pattern, &fdata);
-    if (han != INVALID_HANDLE_VALUE) {
+    handle = FindFirstFile(pattern, &fdata);
+    if (handle != INVALID_HANDLE_VALUE) {
         do {
             if (    strcmp(fdata.cFileName,".")!=0
                     &&  strcmp(fdata.cFileName,"..")!=0) {
                 (*fun)(fdata.cFileName, a1, a2, a3, a4, a5);
                 res = 1;
             }
-        } while (FindNextFile(han,&fdata));
-        FindClose(han);
+        } while (FindNextFile(handle,&fdata));
+        FindClose(handle);
     }
     return(res);
 #else
@@ -1008,7 +1008,7 @@ int mapDirectoryFiles(
     int res=0;
 #ifdef __WIN32__
     WIN32_FIND_DATA     fdata;
-    HANDLE              han;
+    HANDLE              handle;
     char                *s,*d;
     char                ttt[MAX_FILE_NAME_SIZE];
     for (s=dirname,d=ttt; *s; s++,d++) {

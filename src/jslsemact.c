@@ -599,7 +599,7 @@ void jslNewClassDefinitionBegin(Id *name,
                           s_jsl->classStat);
     s_jsl->classStat = nss;
     javaCreateClassFileItem(cc);
-    cc->bits.javaFileIsLoaded = 1;
+    cc->bits.javaFileIsLoaded = true;
     cc->bits.javaSourceIsLoaded = 1;
     if (anonInterf!=NULL && s_jsl->pass==2) {
         /* anonymous implementing an interface, one more time */
