@@ -21,6 +21,10 @@ int editorFileStatus(char *path, struct stat *statP) {
   return (int) mock(path, statP);
 }
 
+bool editorFileExists(char *path) {
+    return (bool)mock(path);
+}
+
 bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }

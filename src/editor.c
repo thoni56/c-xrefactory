@@ -355,6 +355,15 @@ int editorFileStatus(char *path, struct stat *statP) {
     return fileStatus(path, statP);
 }
 
+bool editorFileExists(char *path) {
+    EditorBuffer *buffer;
+
+    buffer = editorGetOpenedBuffer(path);
+    if (buffer != NULL)
+        return true;
+    return fileExists(path);
+}
+
 static void editorError(int errCode, char *message) {
     errorMessage(errCode, message);
 }

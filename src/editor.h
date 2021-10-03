@@ -100,6 +100,7 @@ extern EditorUndo *s_editorUndo;
 extern void editorInit(void);
 extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous, EditorMarker *next);
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
+extern bool editorFileExists(char *path);
 extern int editorFileStatus(char *path, struct stat *statbuf);
 extern bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2);

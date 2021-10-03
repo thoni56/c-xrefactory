@@ -825,18 +825,20 @@ CompilationUnit: {
                 s_javaStat->currentPackage = s_javaThisPackageName;
                 if (! SyntaxPassOnly()) {
 
-                    int             i,j,packlen;
+                    int             packlen;
                     char            *cdir, *fname;
                     JslTypeTab	*jsltypeTab;
-                    struct stat     st;
+
                     // it is important to know the package before everything
                     // else, as it must be set on class adding in order to set
                     // isinCurrentPackage field. !!!!!!!!!!!!!!!!
                     // this may be problem for CACHING !!!!
                     if ($2.d == NULL) {	/* anonymous package */
+                        int j = 0;
                         s_javaStat->className = NULL;
-                        for(i=0,j=0; currentFile.fileName[i]; i++) {
-                            if (currentFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
+                        for (int i=0; currentFile.fileName[i]; i++) {
+                            if (currentFile.fileName[i] == FILE_PATH_SEPARATOR)
+                                j=i;
                         }
                         cdir = StackMemoryAllocC(j+1, char);
                         strncpy(cdir,currentFile.fileName,j); cdir[j]=0;
@@ -845,8 +847,10 @@ CompilationUnit: {
                     } else {
                         javaAddPackageDefinition($2.d);
                         s_javaStat->className = $2.d;
-                        for(i=0,j=0; currentFile.fileName[i]; i++) {
-                            if (currentFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
+                        int j = 0;
+                        for (int i=0; currentFile.fileName[i]; i++) {
+                            if (currentFile.fileName[i] == FILE_PATH_SEPARATOR)
+                                j=i;
                         }
                         packlen = strlen(s_javaThisPackageName);
                         if (j>packlen && fnnCmp(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
@@ -873,13 +877,13 @@ CompilationUnit: {
                     if (options.taskRegime == RegimeEditServer
                         && refactoringOptions.refactoringRegime!=RegimeRefactory) {
                         // this must be before reading 's_olOriginalComFile' !!!
-                        if (editorFileStatus(fname, &st)==0) {
+                        if (editorFileExists(fname)) {
                             javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
                         }
                     }
 
                     // this must be last reading of this class before parsing
-                    if (editorFileStatus(fileTable.tab[s_olOriginalComFileNumber]->name, &st)==0) {
+                    if (editorFileExists(fileTable.tab[s_olOriginalComFileNumber]->name)) {
                         javaReadSymbolsFromSourceFileNoFreeing(
                             fileTable.tab[s_olOriginalComFileNumber]->name, fname);
                     }
