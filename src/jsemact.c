@@ -28,6 +28,13 @@
 #include "log.h"
 
 
+typedef enum {
+    RESULT_IS_CLASS_FILE,
+    RESULT_IS_JAVA_FILE,
+    RESULT_NO_FILE_FOUND
+} FindJavaFileResult;
+
+
 S_javaStat *s_javaStat;
 S_javaStat s_initJavaStat;
 
