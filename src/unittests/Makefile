@@ -72,6 +72,7 @@ $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS) $$(CGRE
 endef
 
 $(eval $(call UNITTEST,classfilereader,log position))
+$(eval $(call UNITTEST,caching,log memory))
 $(eval $(call UNITTEST,commons,protocol log stringlist))
 $(eval $(call UNITTEST,complete,protocol log type))
 $(eval $(call UNITTEST,cxref,server protocol log hash position type storage usage))

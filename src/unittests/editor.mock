@@ -17,8 +17,8 @@ EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, Ed
     return (EditorRegionList *)mock(begin, end, next);
 }
 
-int editorFileStatus(char *path, struct stat *statbuf) {
-  return (int) mock(path, statbuf);
+int editorFileStatus(char *path, struct stat *statP) {
+  return (int) mock(path, statP);
 }
 
 bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {

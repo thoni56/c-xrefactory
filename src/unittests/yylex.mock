@@ -2,8 +2,14 @@
 #include "yylex.h"
 #include <cgreen/mocks.h>
 
+LexInput currentInput;
 int macroStackIndex=0;
 
+
+void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,
+                  char *beginningOfBuffer, char *macroName, InputType margExpFlag) {
+    mock(lexInput, currentLexem, endOfBuffer, beginningOfBuffer, macroName, margExpFlag);
+}
 
 void ppMemInit(void) {
   mock();

@@ -1,3 +1,4 @@
+#include <cgreen/mocks.h>
 #include "editor.h"
 
 
