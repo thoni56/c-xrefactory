@@ -1449,13 +1449,11 @@ static void schedulingUpdateToProcess(FileItem *p) {
 }
 
 static void schedulingToUpdate(FileItem *p, void *dummy) {
-    struct stat fstat;
-
     if (p == fileTable.tab[noFileIndex])
         return;
     //& if (options.update==UPDATE_FAST && !p->b.commandLineEntered) return;
     //&fprintf(dumpOut, "checking %s for update\n",p->name); fflush(dumpOut);
-    if (editorFileStatus(p->name, &fstat)) {
+    if (!editorFileExists(p->name)) {
         // removed file, remove it from watched updates, load no reference
         if (p->b.commandLineEntered) {
             // no messages during refactorings
@@ -1475,18 +1473,23 @@ static void schedulingToUpdate(FileItem *p, void *dummy) {
             p->b.cxLoading = true;     /* Hack, to remove references from file */
         }
     } else if (options.update == UPDATE_FULL) {
+        struct stat fstat;
+
+        editorFileStatus(p->name, &fstat); /* TODO: replace with editorFileModifiedTime() */
         if (fstat.st_mtime != p->lastFullUpdateMtime) {
             p->b.scheduledToUpdate = true;
             //&         p->lastFullUpdateMtime = fstat.st_mtime;
             //&         p->lastUpdateMtime = fstat.st_mtime;
         }
     } else {
+        struct stat fstat; /* TODO: replace with editorFileModifiedTime() */
+        editorFileStatus(p->name, &fstat);
         if (fstat.st_mtime != p->lastUpdateMtime) {
             p->b.scheduledToUpdate = true;
             //&         p->lastUpdateMtime = fstat.st_mtime;
         }
     }
-    //&if (p->b.scheduledToUpdate) {fprintf(dumpOut, "scheduling %s to update\n", p->name); fflush(dumpOut);}
+    log_trace("Scheduling '%s' to update: %s", p->name, p->b.scheduledToUpdate?"yes":"no");
 }
 
 void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {

@@ -18,7 +18,6 @@ S_caching s_cache;
 
 
 bool checkFileModifiedTime(int fileIndex) {
-    struct stat fst;
     time_t now;
 
     assert(fileTable.tab[fileIndex] != NULL);
@@ -28,10 +27,12 @@ bool checkFileModifiedTime(int fileIndex) {
         /* Assuming that files cannot change during one execution */
         return true;
     }
-    if (editorFileStatus(fileTable.tab[fileIndex]->name, &fst)) {
-//    if (editorFileExists(fileTable.tab[fileIndex]->name)) {
+    if (!editorFileExists(fileTable.tab[fileIndex]->name)) {
         return true;
     }
+
+    struct stat fst;
+    editorFileStatus(fileTable.tab[fileIndex]->name, &fst);
     fileTable.tab[fileIndex]->lastInspected = now;
     if (fst.st_mtime == fileTable.tab[fileIndex]->lastModified) {
         return true;
