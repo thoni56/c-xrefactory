@@ -1718,7 +1718,8 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
     assert(fileTable.tab[fnum]);
     cofileName = fileTable.tab[fnum]->name;
     references = passNonPrintableRefsForFile(references, fnum, usages, usageFilter);
-    if (references==NULL || references->p.file != fnum) goto fin;
+    if (references==NULL || references->p.file != fnum)
+        goto fin;
     if (options.referenceListWithoutSource) {
         ebuf = NULL;
     } else {
@@ -1745,7 +1746,8 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
     while (references!=NULL && references->p.file==cp.file && references->p.line>=cp.line) {
         assert(oldrr!=references); oldrr=references;    // because it is a dangerous loop
         while ((! cxfBuf.isAtEOF) && cp.line<references->p.line) {
-            while (ch!='\n' && ch!=EOF) GetBufChar(ch, &cxfBuf);
+            while (ch!='\n' && ch!=EOF)
+                GetBufChar(ch, &cxfBuf);
             GetFileChar(ch, &cp, &cxfBuf);
         }
         linePosProcess(outputFile, usages, usageFilter, cofileName,

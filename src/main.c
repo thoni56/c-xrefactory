@@ -2435,7 +2435,8 @@ static void scheduleModifiedFilesToUpdate(void) {
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         filestab = ttt;
     }
-    if (editorFileStatus(filestab, &refStat)) refStat.st_mtime = 0;
+    if (editorFileStatus(filestab, &refStat))
+        refStat.st_mtime = 0;
     scanReferenceFile(options.cxrefFileName, suffix, "", normalScanFunctionSequence);
     fileTableMap2(&fileTable, schedulingToUpdate, &refStat);
     if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
