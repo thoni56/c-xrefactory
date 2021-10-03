@@ -124,6 +124,8 @@ int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 Reference s_noRef;
 S_exprTokenType s_forCompletionType;
 
+Symbol *s_javaStringSymbol;
+char s_javaTypePCTIConvert[MAX_TYPE];
 char *s_javaThisPackageName = "";
 int s_javaPreScanOnly;
 char *javaSourcePaths;
@@ -132,6 +134,20 @@ Symbol *s_javaObjectSymbol;
 int s_javaCharCodeBaseTypes[MAX_CHARS];
 TypeModifier *s_javaCompletionLastPrimary;
 Symbol s_javaArrayObjectSymbol;
+Symbol *s_javaCloneableSymbol;
+char s_javaBaseTypeCharCodes[MAX_TYPE];
+Symbol *s_javaIoSerializableSymbol;
+TypeModifier s_defaultIntModifier;
+char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
+    /* Byte,Short,Char,Int,Long,Float,Double */
+    {1,     1,    0,   1,  1,   1,    1},   /* Byte, */
+    {0,     1,    0,   1,  1,   1,    1},   /* Short, */
+    {0,     0,    1,   1,  1,   1,    1},   /* Char, */
+    {0,     0,    0,   1,  1,   1,    1},   /* Int, */
+    {0,     0,    0,   0,  1,   1,    1},   /* Long, */
+    {0,     0,    0,   0,  0,   1,    1},   /* Float, */
+    {0,     0,    0,   0,  0,   0,    1},   /* Double, */
+};
 
 int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
     AccessPublic,

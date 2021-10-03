@@ -11,17 +11,20 @@ There are a *lot* of things to do to make c-xref into modern C.
   https://en.cppreference.com/w/c/types/integer
 * DOING Introduce adapter for stat() in fileio
 We are only using the following attributes of the struct stat:
+- st_mode
 - st_size
-- 
+- st_mtime
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
+** DONE clang definition table
+** TODO Use compiler identification to set extra defines
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
+* TODO All fillXXX() should not be mocked but have the same body as the real one
 * TODO Turn the out parameter "position" of XXXTabAdd to return value instead, so it can be ignored without unused variable
 * TODO Handle void as no parameters in formal argument lists, e.g. when refactoring them
 * TODO BUG: an unterminated "assert(" (with the c-xref def of it) breaks PUSH
 Instead it results in 
 error in process filter: if: SYNCHRO PROBLEM: 
 12:06:15 FATAL yylex.c:1809: '((char *)(buf)) + (bufsize+1000)*sizeof(char) == ppmMemory + ppmMemoryIndex' is not true
-* TODO Include of <file> does not follow standard so Cgreen's 'internal/...' is not found
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
 * TODO Turn lexembuffer functions into methods on the buffer
@@ -34,8 +37,6 @@ error in process filter: if: SYNCHRO PROBLEM:
 and you can also get java.class.version=55 => java version without decoding directory names
 * TODO REFACTOR: Extract storage module interface and implementation
 * TODO Architecture diagrams using C4-PlantUML (/design folder)
-* TODO Make the regression example tests compare against the original c-xrefs output instead of fixed
-** TODO Restore some original version to working state (branch?)
 * TODO Strange that <update-report> is put in the -o file since that output is probably meant to be synchronous
 Should really be sent synchronously so that the editor can display it.
 * TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
@@ -128,6 +129,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Include of <file> does not follow standard so Cgreen's 'internal/...' is not found
 * DONE Use -trace and -debug to change level in log file only
 * DONE Handle for-loops with declarations ("for (int i = 0;...")
 ** DONE Grammar changes for C and Yacc

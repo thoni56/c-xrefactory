@@ -2,149 +2,162 @@
 #include "semact.h"
 #include <cgreen/mocks.h>
 
+void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord, unsigned recsClassCounter) {
+    recFindStr->baseClass = baseClass;
+    recFindStr->currClass = currentClass;
+    recFindStr->nextRecord = nextRecord;
+    recFindStr->recsClassCounter = recsClassCounter;
+    recFindStr->sti = 0;
+    recFindStr->aui = 0;
+}
+
+void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
+    mock(symStruct, records);
+}
+
 void unpackPointers(Symbol *pp) {
-  mock(pp);
+    mock(pp);
 }
 
 bool displayingErrorMessages(void) {
-  return (int) mock();
+    return (int) mock();
 }
 
 void noSuchFieldError(char *rec) {
-  mock(rec);
+    mock(rec);
 }
 
 void deleteSymDef(void *p) {
-  mock(p);
+    mock(p);
 }
 
 void addSymbol(Symbol *pp, SymbolTable *tab) {
-  mock(pp, tab);
+    mock(pp, tab);
 }
 
 void recFindPush(Symbol *sym, S_recFindStr *rfs) {
-  mock(sym, rfs);
+    mock(sym, rfs);
 }
 
 S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
-  return (S_recFindStr *) mock(s, rfs);
+    return (S_recFindStr *) mock(s, rfs);
 }
 
 bool javaOuterClassAccessible(Symbol *cl) {
-  return (int) mock(cl);
+    return (int) mock(cl);
 }
 
 int javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags) {
-  return (int) mock(rfs, applcl, funcl, rec, recAccessFlags);
+    return (int) mock(rfs, applcl, funcl, rec, recAccessFlags);
 }
 
 int javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
-  return (int) mock(rfs, applCl, funCl, r);
+    return (int) mock(rfs, applCl, funCl, r);
 }
 
 int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
-  return (int) mock(rfs, r);
+    return (int) mock(rfs, r);
 }
 
 int findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClassif,
                      AccessibilityCheckYesNo accessibilityCheck, VisibilityCheckYesNo visibilityCheck) {
-  return (int) mock(ss, recname, res, javaClassif, accessibilityCheck, visibilityCheck);
+    return (int) mock(ss, recname, res, javaClassif, accessibilityCheck, visibilityCheck);
 }
 
 Symbol *addNewSymbolDef(Symbol *p, unsigned storage, SymbolTable *tab, Usage usage) {
-  return (Symbol *) mock(p, storage, tab, usage);
+    return (Symbol *) mock(p, storage, tab, usage);
 }
 
 Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl, unsigned storage, SymbolTable *tab) {
-  return (Symbol *) mock(btype, decl, idl, storage, tab);
+    return (Symbol *) mock(btype, decl, idl, storage, tab);
 }
 
 int styyerror(char *s) {
-  return (int) mock(s);
+    return (int) mock(s);
 }
 
 int styyErrorRecovery(void) {
-  return (int) mock();
+    return (int) mock();
 }
 
 void setToNull(void *p) {
-  mock(p);
+    mock(p);
 }
 
 Symbol *typeSpecifier1(unsigned t) {
-  return (Symbol *) mock(t);
+    return (Symbol *) mock(t);
 }
 
 void declTypeSpecifier1(Symbol *d, unsigned t) {
-  mock(d, t);
+    mock(d, t);
 }
 
 Symbol *typeSpecifier2(TypeModifier *t) {
-  return (Symbol *) mock(t);
+    return (Symbol *) mock(t);
 }
 
 void declTypeSpecifier2(Symbol *d, TypeModifier *t) {
-  mock(d, t);
+    mock(d, t);
 }
 
 void declTypeSpecifier21(TypeModifier *t, Symbol *d) {
-  mock(t, d);
+    mock(t, d);
 }
 
 TypeModifier *appendComposedType(TypeModifier **d, unsigned t) {
-  return (TypeModifier *) mock(d, t);
+    return (TypeModifier *) mock(d, t);
 }
 
 TypeModifier *prependComposedType(TypeModifier *d, unsigned t) {
-  return (TypeModifier *) mock(d, t);
+    return (TypeModifier *) mock(d, t);
 }
 
 void completeDeclarator(Symbol *t, Symbol *d) {
-  mock(t, d);
+    mock(t, d);
 }
 
 void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTable *tab) {
-  mock(function, p, i, tab);
+    mock(function, p, i, tab);
 }
 
 SymbolList *createDefinitionList(Symbol *symbol) {
-  return (SymbolList *) mock(symbol);
+    return (SymbolList *) mock(symbol);
 }
 
 Symbol *createSimpleDefinition(unsigned storage, unsigned t, Id *id) {
-  return (Symbol *) mock(storage, t, id);
+    return (Symbol *) mock(storage, t, id);
 }
 
 int findStrRecord(Symbol *s, char *recname, Symbol **res, int javaClassif) {
-  return (int) mock(s, recname, res, javaClassif);
+    return (int) mock(s, recname, res, javaClassif);
 }
 
 Reference *findStrRecordFromSymbol(Symbol *str, Id *record, Symbol **res, int javaClassif, Id *super) {
-  return (Reference *) mock(str, record, res, javaClassif, super);
+    return (Reference *) mock(str, record, res, javaClassif, super);
 }
 
 Reference *findStructureFieldFromType(TypeModifier *structure, Id *field, Symbol **resultingSymbol, int javaClassifier) {
-  return (Reference *) mock(structure, field, resultingSymbol, javaClassifier);
+    return (Reference *) mock(structure, field, resultingSymbol, javaClassifier);
 }
 
 int mergeArguments(Symbol *id, Symbol *ty) {
-  return (int) mock(id, ty);
+    return (int) mock(id, ty);
 }
 
 TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
-  return (TypeModifier *) mock(typeName, id, usage);
+    return (TypeModifier *) mock(typeName, id, usage);
 }
 
 TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
-  return (TypeModifier *) mock(typeName);
+    return (TypeModifier *) mock(typeName);
 }
 
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
-  mock(sd, rec);
+    mock(sd, rec);
 }
 
 TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
-  return (TypeModifier *) mock(id, usage);
+    return (TypeModifier *) mock(id, usage);
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
@@ -153,45 +166,45 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
 }
 
 TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
-  return (TypeModifier *) mock(enums);
+    return (TypeModifier *) mock(enums);
 }
 
 void appendPositionToList(PositionList **list, Position *pos) {
-  mock(list, pos);
+    mock(list, pos);
 }
 
 void setParamPositionForFunctionWithoutParams(Position *lpar) {
-  mock(lpar);
+    mock(lpar);
 }
 
 void setParamPositionForParameter0(Position *lpar) {
-  mock(lpar);
+    mock(lpar);
 }
 
 void setParamPositionForParameterBeyondRange(Position *rpar) {
-  mock(rpar);
+    mock(rpar);
 }
 
 Symbol *createEmptyField(void) {
-  return (Symbol *) mock();
+    return (Symbol *) mock();
 }
 
 void handleDeclaratorParamPositions(Symbol *decl, Position *lpar, PositionList *commas, Position *rpar, int hasParam) {
-  mock(decl, lpar, commas, rpar, hasParam);
+    mock(decl, lpar, commas, rpar, hasParam);
 }
 
 void handleInvocationParamPositions(Reference *ref, Position *lpar, PositionList *commas, Position *rpar, int hasParam) {
-  mock(ref, lpar, commas, rpar, hasParam);
+    mock(ref, lpar, commas, rpar, hasParam);
 }
 
 void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar, PositionList *commas, Position *rpar) {
-  mock(sym, lpar, commas, rpar);
+    mock(sym, lpar, commas, rpar);
 }
 
 void setLocalVariableLinkName(struct symbol *p) {
-  mock(p);
+    mock(p);
 }
 
 void labelReference(Id *id, Usage usage) {
-  mock(id, usage);
+    mock(id, usage);
 }
