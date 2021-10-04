@@ -266,12 +266,11 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
          * strlen() with strlen()s of the tokenNamesTable entry */
         tokenNameLengthsTable[token] = strlen(name);
         if ((isalpha(*name) || *name=='_') && (languages & s_language)) {
-            int not_used_symbol_index;
             /* looks like a keyword */
             log_trace("adding keyword '%s' to symbol table", name);
             symbol = newSymbolAsKeyword(name, name, s_noPos, token);
             fillSymbolBits(&symbol->bits, AccessDefault, TypeKeyword, StorageNone);
-            symbolTableAdd(symbolTable, symbol, &not_used_symbol_index);
+            symbolTableAdd(symbolTable, symbol, NULL);
         }
     }
 }
@@ -279,9 +278,8 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
 
 void initTokenNamesTables(void) {
     char *javaVersion;
-    int not_used_symbol_index;
     Symbol *symbolP;
-    
+
     static bool messageWritten = false;
 
     if (!options.strictAnsi) {
@@ -308,7 +306,7 @@ void initTokenNamesTables(void) {
     /* and add the 'defined' keyword for #if */
     symbolP = newSymbol("defined", "defined", s_noPos);
     fillSymbolBits(&symbolP->bits, AccessDefault, TypeDefinedOp, StorageNone);
-    symbolTableAdd(symbolTable, symbolP, &not_used_symbol_index);
+    symbolTableAdd(symbolTable, symbolP, NULL);
 }
 
 void initJavaTypePCTIConvertIniTab(void) {

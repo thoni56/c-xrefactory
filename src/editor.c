@@ -599,7 +599,7 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
     log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
 
-    editorBufferTabAdd(&editorBufferTables, bufferList, &not_used);
+    editorBufferTabAdd(&editorBufferTables, bufferList, NULL);
 
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
@@ -711,7 +711,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
         editorBufferTabDeleteExact(&editorBufferTables, memb2);
         editorFreeBuffer(memb2);
     }
-    editorBufferTabAdd(&editorBufferTables, memb, &not_used);
+    editorBufferTabAdd(&editorBufferTables, memb, NULL);
 
     // note undo operation
     if (undo!=NULL) {

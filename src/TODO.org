@@ -70,10 +70,10 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   refactoring. Then it should only contain what's needed for that.
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
-** DONE Make commons.c independent on main
-** DOING Make options.c independent on main
-** TODO Make cxref.c independent on main
-** TODO Make refactory.c independent on main
+** DONE Make commons.c independent of main
+** DOING Make options.c independent of main
+** TODO Make cxref.c independent of main
+** TODO Make refactory.c independent of main
    This probably requires a lot more understanding of refactory.c and why
    it is structured the way it is, it seems to be calling on itself and
    main processing. Also refactory task is always performed in a separate

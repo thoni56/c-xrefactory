@@ -1236,7 +1236,7 @@ static void processIfDirective(void) {
 
 static void processPragmaDirective(void) {
     Lexem lexem;
-    int lineNumber,ii;
+    int lineNumber;
     char *mname, *fname;
     Position position;
     Symbol *pp;
@@ -1263,7 +1263,7 @@ static void processPragmaDirective(void) {
         fillSymbol(pp, mname, mname, position);
         fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
 
-        symbolTableAdd(symbolTable,pp,&ii);
+        symbolTableAdd(symbolTable, pp, NULL);
     }
     while (lexem != '\n') {
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);

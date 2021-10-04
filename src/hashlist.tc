@@ -145,8 +145,11 @@ void CONCAT(HASH_FUN_PREFIX,Add) (
     int *position
 ) {
     HASH_ELEM_TYPE *origin;
-    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,position,&origin)) {
-        CONCAT(HASH_FUN_PREFIX,Set) (table,element,*position);
+    int tempPosition;
+    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,&tempPosition,&origin)) {
+        CONCAT(HASH_FUN_PREFIX,Set) (table,element,tempPosition);
+        if (position != NULL)
+            *position = tempPosition;
     }
 }
 
