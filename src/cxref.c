@@ -116,18 +116,30 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
 bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2) {
     int cmp;
     cmp = strcmp(s1->name, s2->name);
-    if (cmp < 0) return true;
-    else if (cmp > 0) return false;
-    if (s1->vFunClass < s2->vFunClass) return true;
-    else if (s1->vFunClass > s2->vFunClass) return false;
-    if (s1->vApplClass < s2->vApplClass) return true;
-    else if (s1->vApplClass > s2->vApplClass) return false;
-    if (s1->b.symType < s2->b.symType) return true;
-    else if (s1->b.symType > s2->b.symType) return false;
-    if (s1->b.storage < s2->b.storage) return true;
-    else if (s1->b.storage > s2->b.storage) return false;
-    if (s1->b.category < s2->b.category) return true;
-    else if (s1->b.category > s2->b.category) return false;
+    if (cmp < 0)
+        return true;
+    else if (cmp > 0)
+        return false;
+    if (s1->vFunClass < s2->vFunClass)
+        return true;
+    else if (s1->vFunClass > s2->vFunClass)
+        return false;
+    if (s1->vApplClass < s2->vApplClass)
+        return true;
+    else if (s1->vApplClass > s2->vApplClass)
+        return false;
+    if (s1->b.symType < s2->b.symType)
+        return true;
+    else if (s1->b.symType > s2->b.symType)
+        return false;
+    if (s1->b.storage < s2->b.storage)
+        return true;
+    else if (s1->b.storage > s2->b.storage)
+        return false;
+    if (s1->b.category < s2->b.category)
+        return true;
+    else if (s1->b.category > s2->b.category)
+        return false;
     return false;
 }
 
