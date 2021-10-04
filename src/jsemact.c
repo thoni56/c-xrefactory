@@ -706,55 +706,41 @@ void javaReadSymbolFromSourceFileEnd(void) {
 }
 
 void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
-    FILE                    *ff;
-    EditorBuffer			*bb;
-    SymbolList            *ll;
-    int						cfilenum;
-    static int              nestDeep = 0;
-    nestDeep ++;
+    FILE *file;
+    EditorBuffer *buffer;
+    int cfilenum;
+    static int nestingDepth = 0;
 
-    log_debug("[jsl] FIRST PASS through %s level %d", fname, nestDeep);
-    ff = NULL;
-    //&bb = editorGetOpenedAndLoadedBuffer(fname);
-    bb = editorFindFile(fname);
-    if (bb==NULL) {
-        ff = openFile(fname, "r");
-        if (ff==NULL) {
-            errorMessage(ERR_CANT_OPEN, fname);
-            goto fini;
-        }
-    }
+    nestingDepth++;
+
     // ?? is this really necessary?
     // memset(s_yygstate, sizeof(struct yyGlobalState), 0);
     uniyylval = & s_yygstate->gyylval;
-    pushInclude(ff, bb, asfname, "\n");
-    cfilenum = currentFile.lexBuffer.buffer.fileNumber;
-    s_jsl->pass = 1;
-    java_yyparse();
-    popInclude();      // this will close the file
-    log_debug("[jsl] CLOSE file %s level %d", fname, nestDeep);
-    log_debug("[jsl] SECOND PASS through %s level %d", fname, nestDeep);
-    ff = NULL;
-    //&bb = editorGetOpenedAndLoadedBuffer(fname);
-    bb = editorFindFile(fname);
-    if (bb==NULL) {
-        ff = openFile(fname, "r");
-        if (ff==NULL) {
-            errorMessage(ERR_CANT_OPEN, fname);
-            goto fini;
+
+    for (int pass=1; pass<=2; pass++) {
+        log_debug("[jsl] PASS %d through %s level %d", pass, fname, nestingDepth);
+        file = NULL;
+        buffer = editorFindFile(fname);
+        if (buffer==NULL) {
+            file = openFile(fname, "r");
+            if (file==NULL) {
+                errorMessage(ERR_CANT_OPEN, fname);
+                goto fini;
+            }
         }
+        pushInclude(file, buffer, asfname, "\n");
+        cfilenum = currentFile.lexBuffer.buffer.fileNumber;
+        s_jsl->pass = pass;
+        java_yyparse();
+        popInclude();      // this will close the file
+        log_debug("[jsl] CLOSE file %s level %d", fname, nestingDepth);
     }
-    pushInclude(ff, bb, asfname, "\n");
-    cfilenum = currentFile.lexBuffer.buffer.fileNumber;
-    s_jsl->pass = 2;
-    java_yyparse();
-    popInclude();      // this will close the file
-    log_debug("[jsl] CLOSE file %s level %d", fname, nestDeep);
-    for(ll=s_jsl->waitList; ll!=NULL; ll=ll->next) {
+
+    for (SymbolList *ll=s_jsl->waitList; ll!=NULL; ll=ll->next) {
         javaJslLoadSuperClasses(ll->d, cfilenum);
     }
  fini:
-    nestDeep --;
+    nestingDepth--;
 }
 
 void javaReadSymbolsFromSourceFile(char *fname) {
