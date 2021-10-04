@@ -1051,7 +1051,7 @@ UserOlcxData *olcxSetCurrentUser(char *user) {
         FT_ALLOCC(nn, sz, char); // why this is in ftMem ?, some pb with free
         strcpy(nn, user);
         initUserOlcxData(memb, nn);
-        olcxTabAdd(&s_olcxTab, memb, NULL);
+        olcxTabAdd(&s_olcxTab, memb);
     }
     s_olcxCurrentUser = memb;
 

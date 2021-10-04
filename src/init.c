@@ -270,7 +270,7 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
             log_trace("adding keyword '%s' to symbol table", name);
             symbol = newSymbolAsKeyword(name, name, s_noPos, token);
             fillSymbolBits(&symbol->bits, AccessDefault, TypeKeyword, StorageNone);
-            symbolTableAdd(symbolTable, symbol, NULL);
+            symbolTableAdd(symbolTable, symbol);
         }
     }
 }
@@ -306,7 +306,7 @@ void initTokenNamesTables(void) {
     /* and add the 'defined' keyword for #if */
     symbolP = newSymbol("defined", "defined", s_noPos);
     fillSymbolBits(&symbolP->bits, AccessDefault, TypeDefinedOp, StorageNone);
-    symbolTableAdd(symbolTable, symbolP, NULL);
+    symbolTableAdd(symbolTable, symbolP);
 }
 
 void initJavaTypePCTIConvertIniTab(void) {

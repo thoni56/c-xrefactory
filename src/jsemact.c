@@ -530,7 +530,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     /* REPLACED: FILL_symbolList(pppl, memb, NULL); with compound literal */
     *pppl = (SymbolList){.d = memb, .next = NULL};
 
-    javaFqtTableAdd(&javaFqtTable, pppl, NULL);
+    javaFqtTableAdd(&javaFqtTable, pppl);
 
     // I think this can be there, as it is very used
     javaCreateClassFileItem(memb);

@@ -59,12 +59,11 @@ void refTabSetLast(
     mock(table, element, position);
 }
 
-void refTabAdd(
+int refTabAdd(
     ReferenceTable *table,
-    SymbolReferenceItem *element,
-    int *position
+    SymbolReferenceItem *element
 ) {
-    mock(table, element, position);
+    return mock(table, element);
 }
 
 int refTabDelete(

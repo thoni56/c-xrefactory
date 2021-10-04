@@ -32,8 +32,8 @@ void editorBufferTabSetLast(struct editorBufferTab *table, EditorBufferList *ele
   mock(table, element, position);
 }
 
-void editorBufferTabAdd(struct editorBufferTab *table, EditorBufferList *element, int *position) {
-  mock(table, element, position);
+int editorBufferTabAdd(struct editorBufferTab *table, EditorBufferList *element) {
+  return mock(table, element);
 }
 
 int editorBufferTabDelete(struct editorBufferTab *table, EditorBufferList *element) {

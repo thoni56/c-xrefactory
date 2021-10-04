@@ -14,7 +14,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** TODO Use compiler identification to set extra defines
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO All fillXXX() should not be mocked but have the same body as the real one
-* TODO Turn the out parameter "position" of XXXTabAdd to return value instead, so it can be ignored without unused variable
 * TODO Handle void as no parameters in formal argument lists, e.g. when refactoring them
 * TODO BUG: an unterminated "assert(" (with the c-xref def of it) breaks PUSH
 Instead it results in 
@@ -124,6 +123,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Turn the out parameter "position" of XXXTabAdd to return value instead, so it can be ignored without unused variable
 * DONE Introduce adapter for stat() in fileio
 We are only using the following attributes of the struct stat:
 - st_mode : for file typing (DIR, REG, ...)

@@ -576,7 +576,6 @@ static void fillEmptyEditorBuffer(EditorBuffer *ff, char *aname, int ftnum,
 }
 
 static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {
-    int not_used;
     char *allocatedName, *normalizedName, *afname, *normalizedFileName;
     EditorBuffer *buffer;
     EditorBufferList *bufferList;
@@ -599,7 +598,7 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
     log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
 
-    editorBufferTabAdd(&editorBufferTables, bufferList, NULL);
+    editorBufferTabAdd(&editorBufferTables, bufferList);
 
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
@@ -662,8 +661,8 @@ static EditorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
 }
 
 static EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsigned size,
-                                       EditorBuffer *dbuffer, unsigned doffset,
-                                       struct editorUndo *next) {
+                                     EditorBuffer *dbuffer, unsigned doffset,
+                                     struct editorUndo *next) {
     EditorUndo *undo;
 
     ED_ALLOC(undo, EditorUndo);
@@ -680,7 +679,7 @@ static EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsi
 
 void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
-    int fileIndex, not_used, deleted;
+    int fileIndex, deleted;
     EditorBuffer dd, *removed;
     EditorBufferList ddl, *memb, *memb2;
     char *oldName;
@@ -711,7 +710,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
         editorBufferTabDeleteExact(&editorBufferTables, memb2);
         editorFreeBuffer(memb2);
     }
-    editorBufferTabAdd(&editorBufferTables, memb, NULL);
+    editorBufferTabAdd(&editorBufferTables, memb);
 
     // note undo operation
     if (undo!=NULL) {

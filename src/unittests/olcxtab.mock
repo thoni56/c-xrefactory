@@ -36,8 +36,8 @@ void olcxTabSetLast(struct olcxTab *table, UserOlcxData *element, int position) 
     mock(table, element, position);
 }
 
-void olcxTabAdd(struct olcxTab *table, UserOlcxData *element, int *position) {
-    mock(table, element, position);
+int olcxTabAdd(struct olcxTab *table, UserOlcxData *element) {
+    return mock(table, element);
 }
 
 int olcxTabDelete(struct olcxTab *table, UserOlcxData *element) {

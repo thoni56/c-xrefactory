@@ -60,10 +60,9 @@ extern void CONCAT(HASH_FUN_PREFIX, SetLast) (	/* append elem at position */
     int position
 );
 
-extern void CONCAT(HASH_FUN_PREFIX, Add) (	/* Add, returns position */
+extern int CONCAT(HASH_FUN_PREFIX, Add) (	/* Add, returns position */
     HASH_TAB_TYPE *table,
-    HASH_ELEM_TYPE *element,
-    int *position
+    HASH_ELEM_TYPE *element
 );
 
 extern int CONCAT(HASH_FUN_PREFIX, Delete) (	/* Delete first of elem from tab */

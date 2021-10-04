@@ -31,8 +31,8 @@ void jslTypeTabSetLast(struct jslTypeTab *table, JslSymbolList *element, int pos
   mock(table, element, position);
 }
 
-void jslTypeTabAdd(struct jslTypeTab *table, JslSymbolList *element, int *position) {
-  mock(table, element, position);
+int jslTypeTabAdd(struct jslTypeTab *table, JslSymbolList *element) {
+  return mock(table, element);
 }
 
 int jslTypeTabDelete(struct jslTypeTab *table, JslSymbolList *element) {

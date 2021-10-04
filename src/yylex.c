@@ -1263,7 +1263,7 @@ static void processPragmaDirective(void) {
         fillSymbol(pp, mname, mname, position);
         fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
 
-        symbolTableAdd(symbolTable, pp, NULL);
+        symbolTableAdd(symbolTable, pp);
     }
     while (lexem != '\n') {
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);

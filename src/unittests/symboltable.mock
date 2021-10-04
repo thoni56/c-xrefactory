@@ -32,8 +32,8 @@ void symbolTableSetLast(SymbolTable *table, Symbol *element, int position) {
   mock(table, element, position);
 }
 
-void symbolTableAdd(SymbolTable *table, Symbol *element, int *position) {
-  mock(table, element, position);
+int symbolTableAdd(SymbolTable *table, Symbol *element) {
+  return mock(table, element);
 }
 
 int symbolTableDelete(SymbolTable *table, Symbol *element) {

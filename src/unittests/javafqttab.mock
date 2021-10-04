@@ -35,8 +35,8 @@ void javaFqtTableSetLast(struct javaFqtTable *table, SymbolList *element, int po
     mock(table, element, position);
 }
 
-void javaFqtTableAdd(struct javaFqtTable *table, SymbolList *element, int *position) {
-    mock(table, element, position);
+int javaFqtTableAdd(struct javaFqtTable *table, SymbolList *element) {
+    return mock(table, element);
 }
 
 int javaFqtTableDelete(struct javaFqtTable *table, SymbolList *element) {

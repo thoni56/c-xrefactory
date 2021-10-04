@@ -139,18 +139,16 @@ void CONCAT(HASH_FUN_PREFIX,SetLast) (
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Add) (
+int CONCAT(HASH_FUN_PREFIX,Add) (
     HASH_TAB_TYPE *table,
-    HASH_ELEM_TYPE *element,
-    int *position
+    HASH_ELEM_TYPE *element
 ) {
     HASH_ELEM_TYPE *origin;
-    int tempPosition;
-    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,&tempPosition,&origin)) {
-        CONCAT(HASH_FUN_PREFIX,Set) (table,element,tempPosition);
-        if (position != NULL)
-            *position = tempPosition;
+    int position;
+    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,&position,&origin)) {
+        CONCAT(HASH_FUN_PREFIX,Set) (table,element,position);
     }
+    return position;
 }
 
 

@@ -986,7 +986,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                     vApplClass, vFunClass);
         fillSymbolRefItemBits(&memb->b, symType, storage,
                                ScopeGlobal, accessFlags, CategoryGlobal);
-        refTabAdd(&referenceTable, memb, NULL);
+        refTabAdd(&referenceTable, memb);
     }
     lastIncomingInfo.symbolTab[si] = memb;
     lastIncomingInfo.onLineReferencedSym = si;
