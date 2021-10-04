@@ -15,6 +15,7 @@
 #include "yylex.h"
 #include "log.h"
 #include "protocol.h"
+#include "fileio.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS 2
@@ -1600,29 +1601,33 @@ static void completeFqtClassFileFromFileTab(FileItem *fi, void *cfmpi) {
 }
 
 static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
-    char            *fname, *dir, *path;
-    char            fn[MAX_FILE_NAME_SIZE];
-    struct stat     st;
-    int             stt, plen;
+    char *fname, *dir, *path;
+    char fn[MAX_FILE_NAME_SIZE];
+    int pathLength;
+
     fname = file;
     dir = a1;
     path = a2;
-    if (strcmp(fname,".")==0) return;
-    if (strcmp(fname,"..")==0) return;
+    if (strcmp(fname,".")==0)
+        return;
+    if (strcmp(fname,"..")==0)
+        return;
+
     // do not descent too deep
-    if (strlen(dir)+strlen(fname) >= MAX_FILE_NAME_SIZE-50) return;
+    if (strlen(dir)+strlen(fname) >= MAX_FILE_NAME_SIZE-50)
+        return;
     sprintf(fn,"%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
-    stt = editorFileStatus(fn, &st);
-    if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
+
+    if (dirExists(fn)) {
         mapDirectoryFiles(fn, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
                           fn, path, NULL, a4, NULL);
-    } else if (stt==0) {
+    } else if (fileExists(fn)) {
         // O.K. cut the path
         assert(path!=NULL);
-        plen = strlen(path);
-        assert(fnnCmp(fn, path, plen)==0);
-        if (fn[plen]!=0 && !isCurrentPackageName(fn)) {
-            completeFqtFromFileName(fn+plen+1, a4);
+        pathLength = strlen(path);
+        assert(fnnCmp(fn, path, pathLength)==0);
+        if (fn[pathLength]!=0 && !isCurrentPackageName(fn)) {
+            completeFqtFromFileName(fn+pathLength+1, a4);
         }
     }
 }

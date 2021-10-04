@@ -52,6 +52,20 @@ int fileStatus(char *path, struct stat *statP) {
     return return_value;
 }
 
+time_t fileModificationTime(char *path) {
+    struct stat st;
+    if (fileStatus(path, &st) !=0)
+        return 0;               /* File not found? */
+    return st.st_mtime;
+}
+
+size_t fileSize(char *path) {
+    struct stat st;
+    if (fileStatus(path, &st) !=0)
+        return 0;               /* File not found? */
+    return st.st_size;
+}
+
 bool dirExists(char *path) {
     struct stat st;
     int statResult;

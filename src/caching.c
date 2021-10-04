@@ -31,13 +31,12 @@ bool checkFileModifiedTime(int fileIndex) {
         return true;
     }
 
-    struct stat fst;
-    editorFileStatus(fileTable.tab[fileIndex]->name, &fst);
     fileTable.tab[fileIndex]->lastInspected = now;
-    if (fst.st_mtime == fileTable.tab[fileIndex]->lastModified) {
+    time_t modificationTime = editorFileModificationTime(fileTable.tab[fileIndex]->name);
+    if (modificationTime == fileTable.tab[fileIndex]->lastModified) {
         return true;
     } else {
-        fileTable.tab[fileIndex]->lastModified = fst.st_mtime;
+        fileTable.tab[fileIndex]->lastModified = modificationTime;
         return false;
     }
 }

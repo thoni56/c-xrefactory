@@ -197,7 +197,8 @@ void xrefSetenv(char *name, char *val) {
         if (strcmp(sge->name[j], name)==0)
             break;
     }
-    if (j==n) createOptionString(&(sge->name[j]), name);
+    if (j==n)
+        createOptionString(&(sge->name[j]), name);
     if (j==n || strcmp(sge->value[j], val)!=0) {
         createOptionString(&(sge->value[j]), val);
     }

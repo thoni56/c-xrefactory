@@ -284,13 +284,11 @@ static int specialFileNameCasesCheck(char *fname) {
 
 /* TODO this function strangely ressembles to javaFindFile, join them ????*/
 bool javaTypeFileExist(IdList *name) {
-    char            *fname;
-    struct stat		stt;
-    StringList	*cp;
-    int				i;
+    char *fname;
     IdList	tname;
 
-    if (name==NULL) return false;
+    if (name==NULL)
+        return false;
     tname = *name;
     tname.nameType = TypeStruct;
 
@@ -321,7 +319,7 @@ bool javaTypeFileExist(IdList *name) {
         if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
             return true;
     });
-    for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
+    for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         fname = javaCreateComposedName(cp->string, &tname, FILE_PATH_SEPARATOR, "class", tmpMemory, SIZE_TMP_MEM);
         // hmm. do not need to check statb for .class files
         if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
@@ -329,7 +327,7 @@ bool javaTypeFileExist(IdList *name) {
     }
     // databazes
     fname=javaCreateComposedName(NULL,&tname,'/',"class",tmpMemory,SIZE_TMP_MEM);
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
+    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
         if (fsIsMember(&zipArchiveTable[i].dir,fname,0,ADD_NO,NULL))
             return true;
     }

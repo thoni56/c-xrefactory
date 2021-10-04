@@ -17,12 +17,20 @@ EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, Ed
     return (EditorRegionList *)mock(begin, end, next);
 }
 
-int editorFileStatus(char *path, struct stat *statP) {
-  return (int) mock(path, statP);
-}
-
 bool editorFileExists(char *path) {
     return (bool)mock(path);
+}
+
+time_t editorFileModificationTime(char *path) {
+    return (time_t)mock(path);
+}
+
+size_t editorFileSize(char *path) {
+    return (time_t)mock(path);
+}
+
+int editorFileStatus(char *path, struct stat *statP) {
+  return (int) mock(path, statP);
 }
 
 bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {

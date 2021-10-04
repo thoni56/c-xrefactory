@@ -1438,9 +1438,9 @@ void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
 }
 
 bool smartReadFileTabFile(void) {
-    static time_t fileModificationTime = 0; /* TODO: WTF? Static? Why? */
-    static off_t fileSize = 0;
-    static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = "";
+    static time_t savedModificationTime = 0; /* Cache previously read file data... */
+    static off_t savedFileSize = 0;
+    static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */
     char fileName[MAX_FILE_NAME_SIZE];
 
     if (options.referenceFileCount <= 1) {
@@ -1449,17 +1449,17 @@ bool smartReadFileTabFile(void) {
         sprintf(fileName, "%s%s", options.cxrefFileName, REFERENCE_FILENAME_FILES);
     }
     if (editorFileExists(fileName)) {
-        struct stat st;
-        editorFileStatus(fileName, &st); /* TODO: replace with editorFileModificationTime() */
-        if (fileModificationTime != st.st_mtime
-            ||  fileSize != st.st_size
-            ||  strcmp(previouslyReadFileName, fileName) != 0)
+        size_t currentSize = editorFileSize(fileName);
+        time_t currentModificationTime = editorFileModificationTime(fileName);
+        if (strcmp(previouslyReadFileName, fileName) != 0
+            || savedModificationTime != currentModificationTime
+            || savedFileSize != currentSize)
         {
             log_trace(":(re)reading file tab");
             if (scanReferenceFile(fileName, "", "", normalScanFunctionSequence)) {
-                fileModificationTime = st.st_mtime;
-                fileSize = st.st_size;
                 strcpy(previouslyReadFileName, fileName);
+                savedModificationTime = currentModificationTime;
+                savedFileSize = currentSize;
             }
         } else {
             log_trace(":saving the (re)reading of file tab");

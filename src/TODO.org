@@ -9,11 +9,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Move XX_ALLOCC and friends to "memory" module
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
-* DOING Introduce adapter for stat() in fileio
-We are only using the following attributes of the struct stat:
-- st_mode
-- st_size
-- st_mtime
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra defines
@@ -30,7 +25,7 @@ error in process filter: if: SYNCHRO PROBLEM:
 * TODO Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
-* TODO Add yacc construct for field in yystype ('$<field>$')
+* TODO Add yacc parser construct for field in yystype ('$<field>$')
 * TODO Don't do any default operation (currently 'complete') if none given on command line
 * TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
@@ -129,6 +124,14 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Introduce adapter for stat() in fileio
+We are only using the following attributes of the struct stat:
+- st_mode : for file typing (DIR, REG, ...)
+- st_size
+- st_mtime
+** DONE Introduce editorFileExists()
+** DONE Introduce editorFileModificationTime() to replace stat.st_mtime query
+** DONE Introduce editorFileSize() to replace stat.st_size query          
 * DONE Include of <file> does not follow standard so Cgreen's 'internal/...' is not found
 * DONE Use -trace and -debug to change level in log file only
 * DONE Handle for-loops with declarations ("for (int i = 0;...")

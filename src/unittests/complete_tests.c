@@ -20,6 +20,7 @@
 #include "cxfile.mock"
 #include "semact.mock"
 #include "ppc.mock"
+#include "fileio.mock"
 
 
 

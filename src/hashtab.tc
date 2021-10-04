@@ -147,7 +147,8 @@ void CONCAT(HASH_FUN_PREFIX,Map2)(
 ) {
     int i;
     for(i=0; i<table->size; i++) {
-        if (table->tab[i]!=NULL) (*fun)(table->tab[i], a);
+        if (table->tab[i]!=NULL)
+            (*fun)(table->tab[i], a);
     }
 }
 

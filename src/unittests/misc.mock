@@ -70,8 +70,8 @@ char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
   return (char *) mock(fullFileName);
 }
 
-int containsWildcard(char *ss) {
-  return (int) mock(ss);
+bool containsWildcard(char *ss) {
+  return (bool) mock(ss);
 }
 
 int shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {

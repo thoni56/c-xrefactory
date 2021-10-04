@@ -3,6 +3,26 @@
 #include "fileio.h"
 
 
+bool dirExists(char *fullPath) {
+    return (bool)mock(fullPath);
+}
+
+bool fileExists(char *fullPath) {
+    return (bool)mock(fullPath);
+}
+
+int fileStatus(char *path, struct stat *statbuf) {
+    return (int)mock(path, statbuf);
+}
+
+time_t fileModificationTime(char *path) {
+    return (time_t)mock(path);
+}
+
+size_t fileSize(char *path) {
+    return (size_t)mock(path);
+}
+
 FILE *openFile(char *fileName, char *modes) {
     return (FILE *)mock(fileName, modes);
 }
@@ -17,18 +37,6 @@ void createDir(char *dirName) {
 
 void removeFile(char *fileName) {
     mock(fileName);
-}
-
-int fileStatus(char *path, struct stat *statbuf) {
-    return (int)mock(path, statbuf);
-}
-
-bool dirExists(char *fullPath) {
-    return (bool)mock(fullPath);
-}
-
-bool fileExists(char *fullPath) {
-    return (bool)mock(fullPath);
 }
 
 size_t readFile(void *buffer, size_t size, size_t count, FILE *file) {

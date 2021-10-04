@@ -355,6 +355,24 @@ int editorFileStatus(char *path, struct stat *statP) {
     return fileStatus(path, statP);
 }
 
+time_t editorFileModificationTime(char *path) {
+    EditorBuffer *buffer;
+
+    buffer = editorGetOpenedBuffer(path);
+    if (buffer != NULL)
+        return buffer->stat.st_mtime;
+    return fileModificationTime(path);
+}
+
+size_t editorFileSize(char *path) {
+    EditorBuffer *buffer;
+
+    buffer = editorGetOpenedBuffer(path);
+    if (buffer != NULL)
+        return buffer->stat.st_size;
+    return fileSize(path);
+}
+
 bool editorFileExists(char *path) {
     EditorBuffer *buffer;
 

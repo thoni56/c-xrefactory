@@ -1442,54 +1442,45 @@ static void mainGenerateReferenceFile(void) {
     }
 }
 
-static void schedulingUpdateToProcess(FileItem *p) {
-    if (p->b.scheduledToUpdate && p->b.commandLineEntered) {
-        p->b.scheduledToProcess = true;
+static void schedulingUpdateToProcess(FileItem *fileItem) {
+    if (fileItem->b.scheduledToUpdate && fileItem->b.commandLineEntered) {
+        fileItem->b.scheduledToProcess = true;
     }
 }
 
-static void schedulingToUpdate(FileItem *p, void *dummy) {
-    if (p == fileTable.tab[noFileIndex])
+static void schedulingToUpdate(FileItem *fileItem, void *dummy) {
+    if (fileItem == fileTable.tab[noFileIndex])
         return;
-    //& if (options.update==UPDATE_FAST && !p->b.commandLineEntered) return;
-    //&fprintf(dumpOut, "checking %s for update\n",p->name); fflush(dumpOut);
-    if (!editorFileExists(p->name)) {
+
+    if (!editorFileExists(fileItem->name)) {
         // removed file, remove it from watched updates, load no reference
-        if (p->b.commandLineEntered) {
+        if (fileItem->b.commandLineEntered) {
             // no messages during refactorings
             if (refactoringOptions.refactoringRegime != RegimeRefactory) {
                 char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "file %s not accessible", p->name);
+                sprintf(tmpBuff, "file %s not accessible", fileItem->name);
                 warningMessage(ERR_ST, tmpBuff);
             }
         }
-        p->b.commandLineEntered = false;
-        p->b.scheduledToProcess = false;
-        p->b.scheduledToUpdate = false;
+        fileItem->b.commandLineEntered = false;
+        fileItem->b.scheduledToProcess = false;
+        fileItem->b.scheduledToUpdate = false;
         // (missing of following if) has caused that all class hierarchy items
         // as well as all cxreferences based in .class files were lost
         // on -update, a very serious bug !!!!
-        if (p->name[0] != ZIP_SEPARATOR_CHAR) {
-            p->b.cxLoading = true;     /* Hack, to remove references from file */
+        if (fileItem->name[0] != ZIP_SEPARATOR_CHAR) {
+            fileItem->b.cxLoading = true;     /* Hack, to remove references from file */
         }
     } else if (options.update == UPDATE_FULL) {
-        struct stat fstat;
-
-        editorFileStatus(p->name, &fstat); /* TODO: replace with editorFileModifiedTime() */
-        if (fstat.st_mtime != p->lastFullUpdateMtime) {
-            p->b.scheduledToUpdate = true;
-            //&         p->lastFullUpdateMtime = fstat.st_mtime;
-            //&         p->lastUpdateMtime = fstat.st_mtime;
+        if (editorFileModificationTime(fileItem->name) != fileItem->lastFullUpdateMtime) {
+            fileItem->b.scheduledToUpdate = true;
         }
     } else {
-        struct stat fstat; /* TODO: replace with editorFileModifiedTime() */
-        editorFileStatus(p->name, &fstat);
-        if (fstat.st_mtime != p->lastUpdateMtime) {
-            p->b.scheduledToUpdate = true;
-            //&         p->lastUpdateMtime = fstat.st_mtime;
+        if (editorFileModificationTime(fileItem->name) != fileItem->lastUpdateMtime) {
+            fileItem->b.scheduledToUpdate = true;
         }
     }
-    log_trace("Scheduling '%s' to update: %s", p->name, p->b.scheduledToUpdate?"yes":"no");
+    log_trace("Scheduling '%s' to update: %s", fileItem->name, fileItem->b.scheduledToUpdate?"yes":"no");
 }
 
 void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
@@ -1714,7 +1705,7 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
     if (inFileName == NULL
         || fileNameHasOneOfSuffixes(inFileName, options.javaFilesSuffixes)
         || (fnnCmp(simpleFileName(inFileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
-        ) {
+    ) {
         *outLanguage = LANG_JAVA;
         typeNamesTable[TypeStruct] = "class";
     } else {
@@ -1765,7 +1756,6 @@ static void discoverBuiltinIncludePaths(void) {
     int len;
     char *tempfile_name;
     FILE *tempfile;
-    struct stat stt;
     char command[TMP_BUFF_SIZE];
     bool found = false;
 
@@ -1798,7 +1788,7 @@ static void discoverBuiltinIncludePaths(void) {
         do {
             if (strncmp(line, "End of search list.", 19) == 0)
                 break;
-            if (editorFileStatus(line, &stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR) {
+            if (dirExists(line)) {
                 log_trace("Add include '%s'", line);
                 addStringListOption(&options.includeDirs, line);
             }
@@ -2428,6 +2418,7 @@ static void scheduleModifiedFilesToUpdate(void) {
     char        *filestab;
     struct stat refStat;
     char        *suffix;
+
     checkExactPositionUpdate(1);
     if (options.referenceFileCount <= 1) {
         suffix = "";

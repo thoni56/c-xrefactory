@@ -16,6 +16,7 @@
 #include "commons.mock"
 #include "editor.mock"
 #include "ppc.mock"
+#include "fileio.mock"
 
 
 Describe(Misc);

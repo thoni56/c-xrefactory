@@ -803,21 +803,22 @@ int shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
     return(res);
 }
 
-int containsWildcard(char *ss) {
+bool containsWildcard(char *ss) {
     int c;
     for(; *ss; ss++) {
         c = *ss;
-        if (c=='*' || c=='?' || c=='[') return(1);
+        if (c=='*' || c=='?' || c=='[')
+            return true;
     }
-    return(0);
+    return false;
 }
 
 
 static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
-    char            ttt[MAX_FILE_NAME_SIZE];
-    char            *dir1, *pattern, *dir2, **outpath;
-    int             *freeolen;
-    struct stat     st;
+    char path[MAX_FILE_NAME_SIZE];
+    char *dir1, *pattern, *dir2, **outpath;
+    int *freeolen;
+
     dir1 = (char*) a1;
     pattern = (char*) a2;
     dir2 = (char*) a3;
@@ -826,12 +827,13 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
     //&fprintf(dumpOut,"checking match %s <-> %s   %s\n", file, pattern, dir2);fflush(dumpOut);
     if (dir2[0] == FILE_PATH_SEPARATOR) {
         // small optimisation, restrict search to directories
-        sprintf(ttt, "%s%s", dir1, file);
-        if (editorFileStatus(ttt, &st)!=0 || (st.st_mode & S_IFMT) != S_IFDIR) return;
+        sprintf(path, "%s%s", dir1, file);
+        if (!dirExists(path))
+            return;
     }
     if (shellMatch(file, strlen(file), pattern, options.fileNamesCaseSensitive)) {
-        sprintf(ttt, "%s%s%s", dir1, file, dir2);
-        expandWildcardsInOnePathRecursiveMaybe(ttt, outpath, freeolen);
+        sprintf(path, "%s%s%s", dir1, file, dir2);
+        expandWildcardsInOnePathRecursiveMaybe(path, outpath, freeolen);
     }
 }
 

@@ -59,7 +59,7 @@ extern char *strmcpy(char *dest, char *src);
 extern char *simpleFileName(char *fullFileName);
 extern char *directoryName_st(char *fullFileName);
 extern char *simpleFileNameWithoutSuffix_st(char *fullFileName);
-extern int containsWildcard(char *ss);
+extern bool containsWildcard(char *ss);
 extern int shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive);
 extern void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *freeolen);
 extern void expandWildcardsInOnePath(char *fn, char *outpaths, int olen);
