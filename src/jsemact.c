@@ -228,7 +228,7 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname,
 
 // resName can be NULL!!!
 static bool javaFindFile0(char *classPath, char *separator, char *name,
-                         char *suffix, char **resultingName, struct stat *stt) {
+                          char *suffix, char **resultingName) {
     char fullName[MAX_FILE_NAME_SIZE];
     char *normalizedFileName;
     bool found = false;
@@ -322,7 +322,7 @@ bool javaTypeFileExist(IdList *name) {
         if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
             return true;
     }
-    // databazes
+    // Archives...
     fname=javaCreateComposedName(NULL,&tname,'/',"class",tmpMemory,SIZE_TMP_MEM);
     for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
         if (fsIsMember(&zipArchiveTable[i].dir,fname,0,ADD_NO,NULL))
@@ -337,22 +337,26 @@ bool javaTypeFileExist(IdList *name) {
     return false;
 }
 
-static bool javaFindClassFile(char *name, char **resName, struct stat *stat) {
+static bool javaFindClassFile(char *name, char **resultingName, struct stat *stat) {
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
-        if (javaFindFile0(s_javaStat->unnamedPackagePath,"/",name, ".class",
-                          resName, stat))
+        if (javaFindFile0(s_javaStat->unnamedPackagePath, "/", name, ".class",
+                          resultingName)) {
+            editorFileStatus(*resultingName, stat);
             return true;
+        }
     }
     // now other classpaths
     for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        if (javaFindFile0(cp->string,"/",name, ".class", resName, stat))
+        if (javaFindFile0(cp->string, "/", name, ".class", resultingName)) {
+            editorFileStatus(*resultingName, stat);
             return true;
+        }
     }
     // finally look into java archives
     /* TODO: if it were not for this, we could skip the stat return value */
     for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
         log_trace("Looking in '%s'", zipArchiveTable[i].fn);
-        if (zipFindFile(name,resName,&zipArchiveTable[i])) {
+        if (zipFindFile(name,resultingName,&zipArchiveTable[i])) {
             *stat = zipArchiveTable[i].stat;
             return true;
         }
@@ -360,29 +364,26 @@ static bool javaFindClassFile(char *name, char **resName, struct stat *stat) {
     return false;
 }
 
-static int javaFindSourceFile(char *name, char **resultingName, struct stat *stt2) {
+static int javaFindSourceFile(char *name, char **resultingName) {
     StringList	*cp;
-    struct stat stat;
-    struct stat *stt = &stat;
 
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
-        if (javaFindFile0(s_javaStat->unnamedPackagePath, "/", name, ".java",
-                          resultingName, stt))
+        if (javaFindFile0(s_javaStat->unnamedPackagePath, "/", name, ".java", resultingName))
             return true;
     }
     // sourcepaths
     MapOnPaths(javaSourcePaths, {
-        if (javaFindFile0(currentPath,"/",name,".java",resultingName,stt))
+        if (javaFindFile0(currentPath, "/", name, ".java", resultingName))
             return true;
     });
     // now other classpaths
     for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        if (javaFindFile0(cp->string,"/",name, ".java", resultingName, stt))
+        if (javaFindFile0(cp->string, "/", name, ".java", resultingName))
             return true;
     }
     // auto-inferred source-path
     if (s_javaStat->namedPackagePath != NULL) {
-        if (javaFindFile0(s_javaStat->namedPackagePath,"/",name, ".java", resultingName, stt))
+        if (javaFindFile0(s_javaStat->namedPackagePath, "/", name, ".java", resultingName))
             return true;
     }
     return false;
@@ -396,13 +397,12 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
     int sourceIndex;
     bool classFound;
     bool sourceFound;
-    struct stat sourceStat;
     struct stat classStat;
-    char *lname, *slname;
+    char *linkName, *slname;
 
-    log_trace("looking for '%s'", classSymbol->linkName);
-    lname = slname = classSymbol->linkName;
-    if (strchr(lname, '$')!=NULL) {
+    log_trace("looking for Java file '%s'", classSymbol->linkName);
+    linkName = slname = classSymbol->linkName;
+    if (strchr(linkName, '$')!=NULL) {
         char innerName[MAX_FILE_NAME_SIZE];
         char *dollarPosition;
         // looking for an inner class, source must be included in outer file
@@ -413,8 +413,8 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
         *dollarPosition = 0;
     }
     *classFileNameP = *sourceFileNameP = "";
-    //&fprintf(dumpOut,"!looking for %s.classf(in %s)== %d\n", lname, slname, classSymbol->u.s->classFile); fflush(dumpOut);fprintf(dumpOut,"!looking for %s %s\n", lname, fileTable.tab[classSymbol->u.s->classFile]->name); fflush(dumpOut);
-    sourceFound = javaFindSourceFile(slname, sourceFileNameP, &sourceStat);
+    //&fprintf(dumpOut,"!looking for %s.classf(in %s)== %d\n", linkName, slname, classSymbol->u.s->classFile); fflush(dumpOut);fprintf(dumpOut,"!looking for %s %s\n", linkName, fileTable.tab[classSymbol->u.s->classFile]->name); fflush(dumpOut);
+    sourceFound = javaFindSourceFile(slname, sourceFileNameP);
     assert(classSymbol->u.s && fileTable.tab[classSymbol->u.s->classFile]);
     sourceIndex = fileTable.tab[classSymbol->u.s->classFile]->b.sourceFileNumber;
 
@@ -422,13 +422,12 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
         // try the source indicated by source field of filetab
         assert(fileTable.tab[sourceIndex]);
         //&fprintf(dumpOut,"checking %s\n", fileTable.tab[sourceIndex]->name);
-        sourceFound = javaFindFile0("","",fileTable.tab[sourceIndex]->name, "", sourceFileNameP,
-                                    &sourceStat);
+        sourceFound = javaFindFile0("","",fileTable.tab[sourceIndex]->name, "", sourceFileNameP);
         //&fprintf(dumpOut,"result %d %s\n", sourceFound, *sourceFileNameP);
     }
 
     /* We need to retain the stat value for class files since it can be inside an archive */
-    classFound = javaFindClassFile(lname, classFileNameP, &classStat);
+    classFound = javaFindClassFile(linkName, classFileNameP, &classStat);
     if (!classFound)
         *classFileNameP = NULL;
     if (!sourceFound)
@@ -801,7 +800,7 @@ static void javaHackCopySourceLoadedCopyPars(Symbol *memb) {
 }
 
 void javaLoadClassSymbolsFromFile(Symbol *memb) {
-    char *sname, *cname;
+    char *sourceName, *className;
     Symbol *cl;
     int cfi, cInd;
     FindJavaFileResult findResult;
@@ -809,7 +808,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
     if (memb == NULL)
         return;
     //&fprintf(dumpOut,"!requesting class (%d)%s\n", memb, memb->linkName);
-    sname = cname = "";
+    sourceName = className = "";
     if (!memb->bits.javaFileIsLoaded) {
         memb->bits.javaFileIsLoaded = true;
         // following is a hack due to multiple items in symbol tab !!!
@@ -818,18 +817,18 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
             cl->bits.javaFileIsLoaded = true;
         cInd = javaCreateClassFileItem(memb);
         addCfClassTreeHierarchyRef(cInd, UsageClassFileDefinition);
-        findResult = javaFindFile(memb, &sname, &cname);
+        findResult = javaFindFile(memb, &sourceName, &className);
         if (findResult == RESULT_IS_JAVA_FILE) {
             assert(memb->u.s);
             cfi = memb->u.s->classFile;
             assert(fileTable.tab[cfi]);
             // set it to none, if class is inside jslparsing  will re-set it
             fileTable.tab[cfi]->b.sourceFileNumber=noFileIndex;
-            javaReadSymbolsFromSourceFile(sname);
+            javaReadSymbolsFromSourceFile(sourceName);
             if (fileTable.tab[cfi]->b.sourceFileNumber == noFileIndex) {
                 // class definition not found in the source file,
                 // (moved inner class) retry searching for class file
-                findResult = javaFindFile(memb, &sname, &cname);
+                findResult = javaFindFile(memb, &sourceName, &className);
             }
             if (!memb->bits.javaSourceIsLoaded) {
                 // HACK, probably loaded into another possition of symboltab, make copy
@@ -837,7 +836,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
             }
         }
         if (findResult == RESULT_IS_CLASS_FILE) {
-            javaReadClassFile(cname,memb, LOAD_SUPER);
+            javaReadClassFile(className,memb, LOAD_SUPER);
         } else if (findResult == RESULT_NO_FILE_FOUND) {
             if (displayingErrorMessages()) {
                 char tmpBuff[TMP_BUFF_SIZE];
@@ -846,12 +845,12 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
             }
         }
         // I need to get also accessflags for example
-        if (cl!=NULL && cl!=memb) cl->bits = memb->bits;
-        if (sname != NULL) {
-            addJavaFileDependency(s_olOriginalFileNumber, sname);
+        if (cl!=NULL && cl!=memb)
+            cl->bits = memb->bits;
+        if (sourceName != NULL) {
+            addJavaFileDependency(s_olOriginalFileNumber, sourceName);
         }
     }
-//&fprintf(dumpOut,"finishing with  class %s\n", memb->linkName);
 }
 
 
