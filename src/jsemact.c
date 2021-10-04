@@ -340,25 +340,22 @@ bool javaTypeFileExist(IdList *name) {
     return false;
 }
 
-static bool javaFindClassFile(char *name, char **resName, struct stat *stt) {
-    StringList *cp;
-    int i;
-
+static bool javaFindClassFile(char *name, char **resName, struct stat *stat) {
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
         if (javaFindFile0(s_javaStat->unnamedPackagePath,"/",name, ".class",
-                          resName, stt))
+                          resName, stat))
             return true;
     }
     // now other classpaths
-    for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        if (javaFindFile0(cp->string,"/",name, ".class", resName, stt))
+    for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
+        if (javaFindFile0(cp->string,"/",name, ".class", resName, stat))
             return true;
     }
     // finally look into databazes
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
-//&fprintf(dumpOut,"looking in %s\n", zipArchiveTable[i].fn);fflush(dumpOut);
+    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
+        //&fprintf(dumpOut,"looking in %s\n", zipArchiveTable[i].fn);fflush(dumpOut);
         if (zipFindFile(name,resName,&zipArchiveTable[i])) {
-            *stt = zipArchiveTable[i].st;
+            *stat = zipArchiveTable[i].stat;
             return true;
         }
     }

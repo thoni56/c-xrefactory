@@ -15,7 +15,7 @@ typedef struct zipArchiveDir {
 
 typedef struct zipFileTableItem {
     char                    fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
-    struct stat				st;						/* status of the archive file */
+    struct stat				stat;                   /* status of the archive file */
     struct zipArchiveDir	*dir;
 } ZipFileTableItem;
 

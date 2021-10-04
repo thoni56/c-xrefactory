@@ -297,7 +297,7 @@ static void initZipArchiveDir(ZipArchiveDir *dir) {
 
 
 static void fillZipFileTableItem(ZipFileTableItem *fileItem, struct stat st, ZipArchiveDir *dir) {
-    fileItem->st = st;
+    fileItem->stat = st;
     fileItem->dir = dir;
 }
 
