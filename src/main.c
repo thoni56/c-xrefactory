@@ -1731,25 +1731,28 @@ static int getLineFromFile(FILE *file, char *line, int max, int *outLength) {
     int result = EOF;
 
     ch = getc(file);
+    /* Skip whitespace */
     while ((ch>=0 && ch<=' ') || ch=='\n' || ch=='\t')
         ch=getc(file);
     if (ch==EOF) {
         goto fini;
     }
+
     while (ch!=EOF && ch!='\n') {
         if (i < max-1)
             line[i++]=ch;
         ch=getc(file);
     }
     result = 'A';
+
  fini:
     line[i] = 0;
     *outLength  = i;
     return result;
 }
 
-static char compiler_identification[MAX_OPTION_LEN];
 
+static char compiler_identification[MAX_OPTION_LEN];
 
 static void discoverBuiltinIncludePaths(void) {
     char line[MAX_OPTION_LEN];
@@ -1853,11 +1856,14 @@ static void discoverStandardDefines(void) {
     FILE *tempfile;
     char command[TMP_BUFF_SIZE];
 
+    ENTER();
+
     /* This function discovers the compiler builtin defines by making
      * a call to it and then sets those up as if they where defined on
      * the command line */
 
     if (!(LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC))) {
+        LEAVE();
         return;
     }
     tempfile_name = create_temporary_filename();
@@ -1871,7 +1877,10 @@ static void discoverStandardDefines(void) {
     closeFile(p);
 
     tempfile = openFile(tempfile_name, "r");
-    if (tempfile==NULL) return;
+    if (tempfile==NULL) {
+        log_debug("Could not open tempfile");
+        return;
+    }
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
         if (strncmp(line, "#define", strlen("#define")))
             log_error("Expected #define from compiler standard definitions");
@@ -1895,6 +1904,7 @@ static void discoverStandardDefines(void) {
     /*     } */
     /* } */
 
+    LEAVE();
  }
 
 static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {

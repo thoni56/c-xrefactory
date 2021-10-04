@@ -17,6 +17,7 @@
 #include "cxref.h"
 #include "classfilereader.h"
 #include "editor.h"
+#include "fileio.h"
 
 #include "log.h"
 #include "ppc.h"

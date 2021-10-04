@@ -63,9 +63,12 @@ else
 	LCOV = lcov
 endif
 
+
+all: unit build
+
 #########################################################################
 # For production - no smartness just compile, ensure clean production build
-all prod:
+prod:
 	$(MAKE) clean
 	$(MAKE) c-xref
 

@@ -10,11 +10,12 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
+COMMAND = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -user 1 -rfct-add-param -olcxparnum=2 "-rfct-param1=int arg" -rfct-param2=42 -olcursor=36 $(CURDIR)/test_source/hello-extracted.c
 
 $(TEST): clean
 	@# First do the extract
-	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
-	@$(NORMALIZE) output.tmp > output
+	$(CXREF) $(COMMAND) -log=log $(EXTRA) > output.tmp
+	@$(NORMALIZE) output.tmp | grep -v progress > output
 	@diff -B output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
@@ -26,13 +27,12 @@ $(TEST): clean
 		exit 0 ; \
 	fi
 
-trace: EXTRA=--extra \"-trace\"
+trace: EXTRA=-trace
 trace: $(TEST)
 
 clean:
 	@-rm -rf CXrefs output.log output.tmp output log
 
-gdb:
-	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
-	sleep 1
-	sudo gdb -pid `pgrep c-xref | tail -1` -ex 'br mainRefactory' -ex 'continue'
+debug: DEBUGGER=gdb
+debug:
+	$(DEBUGGER) --args $(CXREF) $(COMMAND)
