@@ -1192,7 +1192,8 @@ static void makeExtraction(void) {
     extClassifyLocalVariables(program);
     extReClassifyIOVars(program);
 
-    if (LANGUAGE(LANG_JAVA)) needToExtractNewClass =  extractJavaIsNewClassNecessary(program);
+    if (LANGUAGE(LANG_JAVA))
+        needToExtractNewClass = extractJavaIsNewClassNecessary(program);
 
     if (LANGUAGE(LANG_JAVA)) {
         if (needToExtractNewClass) s_extractionName = "newClass_";
