@@ -671,7 +671,7 @@ static bool olcxOnlyParseNoPushing(int opt) {
 /*                                                                       */
 Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
                                 int vFunCl, int vApplCl) {
-    int index,mm,category,scope,storage,defusage;
+    int index,category,scope,storage,defusage;
     char *linkName;
     Reference rr, **place;
     Position *defpos;
@@ -736,10 +736,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         searchSymbolCheckReference(&ppp, &rr);
         return NULL;
     }
-    mm = refTabIsMember(reftab, &ppp, &index, &memb);
-    // Was:
-    //& if (newRefTabItem(reftab,&memb,usage_base,storage,scope,category,symbol,vApplCl,vFunCl,&index));
-    if (mm==0) {
+    if (!refTabIsMember(reftab, &ppp, &index, &memb)) {
         log_trace("allocating '%s'", symbol->linkName);
         CX_ALLOC(pp, SymbolReferenceItem);
         CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);
@@ -1037,12 +1034,11 @@ static void initUserOlcxData(UserOlcxData *dd, char *user) {
 
 UserOlcxData *olcxSetCurrentUser(char *user) {
     UserOlcxData dd, *memb;
-    int not_used1;
     int sz;
     char *nn;
 
     initUserOlcxData(&dd, user);
-    if (! olcxTabIsMember(&s_olcxTab, &dd, &not_used1, &memb)) {
+    if (! olcxTabIsMember(&s_olcxTab, &dd, NULL, &memb)) {
         // I have changed it to FT, so it never invokes freeing of OLCX
         FT_ALLOC(memb, UserOlcxData);
         sz = strlen(user)+1;

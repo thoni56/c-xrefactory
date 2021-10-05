@@ -638,16 +638,19 @@ assert(0);
     }
     return;
 
- endOfMacroArgument:	assert(0);
- endOfFile:;
+ endOfMacroArgument:
+    assert(0);
+ endOfFile:
+    ;
 }
 
 static void addMacroToTabs(Symbol *pp, char *name) {
-    int index, mm;
+    int index;
+    bool isMember;
     Symbol *memb;
 
-    mm = symbolTableIsMember(symbolTable, pp, &index, &memb);
-    if (mm) {
+    isMember = symbolTableIsMember(symbolTable, pp, &index, &memb);
+    if (isMember) {
         log_trace(": masking macro %s", name);
     } else {
         log_trace(": adding macro %s", name);
@@ -1890,13 +1893,14 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
     r = NULL;
     if (rr) {
         // this is optimization to avoid multiple base references
-        for(r=memb->refs; r!=NULL; r=r->next) {
-            if (r->usage.base == UsageMacroBaseFileUsage) break;
+        for (r=memb->refs; r!=NULL; r=r->next) {
+            if (r->usage.base == UsageMacroBaseFileUsage)
+                break;
         }
     }
     if (rr==0 || r==NULL) {
-        addCxReference(mdef,&basePos,UsageMacroBaseFileUsage,
-                              noFileIndex, noFileIndex);
+        addCxReference(mdef, &basePos, UsageMacroBaseFileUsage,
+                       noFileIndex, noFileIndex);
     }
 }
 

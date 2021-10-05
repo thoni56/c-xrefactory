@@ -952,7 +952,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                                 int additionalArg
                                                 ) {
     SymbolReferenceItem *ddd, *memb;
-    int out_index, si, symType, len, rr, vApplClass, vFunClass, accessFlags;
+    int si, symType, len, rr, vApplClass, vFunClass, accessFlags;
     int storage;
     char *id;
     char *ss;
@@ -972,12 +972,10 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     }
     ddd = &lastIncomingInfo.cachedSymbolReferenceItem[si];
     lastIncomingInfo.symbolTab[si] = ddd;
-    fillSymbolRefItem(ddd, id,
-                                cxFileHashNumber(id), //useless, put 0
-                                vApplClass, vFunClass);
-    fillSymbolRefItemBits(&ddd->b, symType, storage, ScopeGlobal, accessFlags,
-                           CategoryGlobal);
-    rr = refTabIsMember(&referenceTable, ddd, &out_index, &memb);
+    fillSymbolRefItem(ddd, id, cxFileHashNumber(id), //useless, put 0
+                      vApplClass, vFunClass);
+    fillSymbolRefItemBits(&ddd->b, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
+    rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
     if (rr == 0) {
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);

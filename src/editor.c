@@ -688,7 +688,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warningMessage(ERR_INTERNAL, tmpBuff);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    if (! editorBufferTabIsMember(&editorBufferTables, &ddl, NULL, &memb)) {
+    if (!editorBufferTabIsMember(&editorBufferTables, &ddl, NULL, &memb)) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
         errorMessage(ERR_INTERNAL, tmpBuff);

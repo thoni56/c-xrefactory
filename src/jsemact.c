@@ -500,8 +500,7 @@ int javaClassIsInCurrentPackage(Symbol *cl) {
     }
 }
 
-static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
-                                                char *fqName, int ii) {
+static Symbol *javaFQTypeSymbolDefinitionCreate(char *name, char *fqName) {
     Symbol *memb;
     SymbolList *pppl;
     char *lname1, *sname;
@@ -543,7 +542,6 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
 Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     Symbol symbol, *member;
     SymbolList ppl, *pppl;
-    int position;
 
     /* This probably creates a SymbolList element so ..IsMember() can be used */
     /* TODO: create a function to check if a *Symbol* is member... */
@@ -553,11 +551,10 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     /* REPLACED: FILL_symbolList(&ppl, &symbol, NULL); with compound literal */
     ppl = (SymbolList){.d = &symbol, .next = NULL};
 
-    if (javaFqtTableIsMember(&javaFqtTable, &ppl, &position, &pppl)) {
+    if (javaFqtTableIsMember(&javaFqtTable, &ppl, NULL, &pppl)) {
         member = pppl->d;
     } else {
-        assert(position >= 0);
-        member = javaFQTypeSymbolDefinitionCreate(name, fqName, position);
+        member = javaFQTypeSymbolDefinitionCreate(name, fqName);
     }
     return member;
 }

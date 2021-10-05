@@ -120,13 +120,14 @@ void jslCompleteDeclarator(Symbol *t, Symbol *d) {
 
 static void jslRemoveNestedClass(void  *ddv) {
     JslSymbolList *dd;
-    int             check;
+    bool deleted;
+
     dd = (JslSymbolList *) ddv;
     //&fprintf(dumpOut, "removing class %s from jsltab\n", dd->d->name);
     log_debug("removing class %s from jsltab", dd->d->name);
     assert(s_jsl!=NULL);
-    check = jslTypeTabDeleteExact(s_jsl->typeTab, dd);
-    assert(check);
+    deleted = jslTypeTabDeleteExact(s_jsl->typeTab, dd);
+    assert(deleted);
 }
 
 Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
