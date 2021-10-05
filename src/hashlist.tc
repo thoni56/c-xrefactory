@@ -78,7 +78,7 @@ int CONCAT(HASH_FUN_PREFIX,MembEqual)(
 }
 
 
-int CONCAT(HASH_FUN_PREFIX,Delete)(
+bool CONCAT(HASH_FUN_PREFIX,Delete)(
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 ) {
@@ -90,29 +90,30 @@ int CONCAT(HASH_FUN_PREFIX,Delete)(
     for (pp= &(table->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
         if (HASH_ELEM_EQUAL((*pp), element)) {
             *pp = (*pp)->next;
-            return(1);
+            return true;
         }
     }
-    return(0);
+    return false;
 }
 
 
-int CONCAT(HASH_FUN_PREFIX,DeleteExact)(
+bool CONCAT(HASH_FUN_PREFIX,DeleteExact)(
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 ) {
     unsigned posid;
     HASH_ELEM_TYPE **pp;
+
     posid = HASH_FUN(element);
     posid = posid % table->size;
     assert(table->tab!=NULL);
     for (pp= &(table->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
         if ((*pp) == element) {
             *pp = (*pp)->next;
-            return(1);
+            return true;
         }
     }
-    return(0);
+    return false;
 }
 
 

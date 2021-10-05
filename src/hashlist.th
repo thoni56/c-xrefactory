@@ -65,13 +65,13 @@ extern int CONCAT(HASH_FUN_PREFIX, Add) (	/* Add, returns position */
     HASH_ELEM_TYPE *element
 );
 
-extern int CONCAT(HASH_FUN_PREFIX, Delete) (	/* Delete first of elem from tab */
+extern bool CONCAT(HASH_FUN_PREFIX, Delete) (	/* Delete first of elem from tab */
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 );
 
 /* Delete first of elem from tab, check exact equality of pointers */
-extern int CONCAT(HASH_FUN_PREFIX, DeleteExact) (
+extern bool CONCAT(HASH_FUN_PREFIX, DeleteExact) (
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 );

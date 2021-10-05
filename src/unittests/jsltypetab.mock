@@ -35,12 +35,12 @@ int jslTypeTabAdd(struct jslTypeTab *table, JslSymbolList *element) {
   return mock(table, element);
 }
 
-int jslTypeTabDelete(struct jslTypeTab *table, JslSymbolList *element) {
-  return (int) mock(table, element);
+bool jslTypeTabDelete(struct jslTypeTab *table, JslSymbolList *element) {
+  return (bool) mock(table, element);
 }
 
-int jslTypeTabDeleteExact(struct jslTypeTab *table, JslSymbolList *element) {
-  return (int) mock(table, element);
+bool jslTypeTabDeleteExact(struct jslTypeTab *table, JslSymbolList *element) {
+  return (bool) mock(table, element);
 }
 
 int jslTypeTabDeleteLast(struct jslTypeTab *table, JslSymbolList *element) {

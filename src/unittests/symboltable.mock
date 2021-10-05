@@ -36,12 +36,12 @@ int symbolTableAdd(SymbolTable *table, Symbol *element) {
   return mock(table, element);
 }
 
-int symbolTableDelete(SymbolTable *table, Symbol *element) {
-  return (int) mock(table, element);
+bool symbolTableDelete(SymbolTable *table, Symbol *element) {
+  return (bool) mock(table, element);
 }
 
-int symbolTableDeleteExact(SymbolTable *table, Symbol *element) {
-  return (int) mock(table, element);
+bool symbolTableDeleteExact(SymbolTable *table, Symbol *element) {
+  return (bool) mock(table, element);
 }
 
 int symbolTableDeleteLast(SymbolTable *table, Symbol *element) {

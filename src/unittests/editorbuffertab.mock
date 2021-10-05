@@ -36,12 +36,12 @@ int editorBufferTabAdd(struct editorBufferTab *table, EditorBufferList *element)
   return mock(table, element);
 }
 
-int editorBufferTabDelete(struct editorBufferTab *table, EditorBufferList *element) {
-  return (int) mock(table, element);
+bool editorBufferTabDelete(struct editorBufferTab *table, EditorBufferList *element) {
+  return (bool) mock(table, element);
 }
 
-int editorBufferTabDeleteExact(struct editorBufferTab *table, EditorBufferList *element) {
-  return (int) mock(table, element);
+bool editorBufferTabDeleteExact(struct editorBufferTab *table, EditorBufferList *element) {
+  return (bool)mock(table, element);
 }
 
 int editorBufferTabDeleteLast(struct editorBufferTab *table, EditorBufferList *element) {

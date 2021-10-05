@@ -39,12 +39,12 @@ int javaFqtTableAdd(struct javaFqtTable *table, SymbolList *element) {
     return mock(table, element);
 }
 
-int javaFqtTableDelete(struct javaFqtTable *table, SymbolList *element) {
-    return (int)mock(table, element);
+bool javaFqtTableDelete(struct javaFqtTable *table, SymbolList *element) {
+    return (bool)mock(table, element);
 }
 
-int javaFqtTableDeleteExact(struct javaFqtTable *table, SymbolList *element) {
-    return (int)mock(table, element);
+bool javaFqtTableDeleteExact(struct javaFqtTable *table, SymbolList *element) {
+    return (bool)mock(table, element);
 }
 
 int javaFqtTableDeleteLast(struct javaFqtTable *table, SymbolList *element) {
