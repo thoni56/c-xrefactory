@@ -56,18 +56,6 @@ void editorBufferTabMap3(struct editorBufferTab *table, void (*fun)(int)) {
   mock(table, fun);
 }
 
-void editorBufferTabMap31(struct editorBufferTab *table, void (*fun)(int, void *, void *), void *arg1, void *arg2) {
-  mock(table, fun, arg1, arg2);
-}
-
-void editorBufferTabMap32(struct editorBufferTab *table, void (*fun)(int, void *, void *, void *), void *arg1, void *arg2, void *arg3) {
-  mock(table, fun, arg1, arg2, arg3);
-}
-
-void editorBufferTabMap4(struct editorBufferTab *table, void (*fun)(EditorBufferList *, int), int a) {
-  mock(table, fun, a);
-}
-
 void editorBufferTabMap5(struct editorBufferTab *table, void (*fun)(EditorBufferList *, void *), void *arg) {
   mock(table, fun, arg);
 }

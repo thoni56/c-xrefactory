@@ -92,24 +92,6 @@ extern void CONCAT(HASH_FUN_PREFIX, Map3) (
     void (*fun) (int)
 );
 
-extern void CONCAT(HASH_FUN_PREFIX, Map31) (
-    HASH_TAB_TYPE *table,
-    void (*fun) (int, void *, void *),
-    void *arg1, void *arg2
-);
-
-extern void CONCAT(HASH_FUN_PREFIX, Map32) (
-    HASH_TAB_TYPE *table,
-    void (*fun) (int, void *, void *, void *),
-    void *arg1, void *arg2, void *arg3
-);
-
-extern void CONCAT(HASH_FUN_PREFIX, Map4) (
-    HASH_TAB_TYPE *table,
-    void (*fun) (HASH_ELEM_TYPE *, int),
-    int a
-);
-
 extern void CONCAT(HASH_FUN_PREFIX, Map5) (
     HASH_TAB_TYPE *table,
     void (*fun) (HASH_ELEM_TYPE *, void *),

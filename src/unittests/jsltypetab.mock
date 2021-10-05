@@ -55,18 +55,6 @@ void jslTypeTabMap3(struct jslTypeTab *table, void (*fun)(int)) {
   mock(table, fun);
 }
 
-void jslTypeTabMap31(struct jslTypeTab *table, void (*fun)(int, void *, void *), void *arg1, void *arg2) {
-  mock(table, fun, arg1, arg2);
-}
-
-void jslTypeTabMap32(struct jslTypeTab *table, void (*fun)(int, void *, void *, void *), void *arg1, void *arg2, void *arg3) {
-  mock(table, fun, arg1, arg2, arg3);
-}
-
-void jslTypeTabMap4(struct jslTypeTab *table, void (*fun)(JslSymbolList *, int), int a) {
-  mock(table, fun, a);
-}
-
 void jslTypeTabMap5(struct jslTypeTab *table, void (*fun)(JslSymbolList *, void *), void *arg) {
   mock(table, fun, arg);
 }

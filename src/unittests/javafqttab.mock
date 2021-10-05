@@ -59,18 +59,6 @@ void javaFqtTableMap3(struct javaFqtTable *table, void (*fun)(int)) {
     mock(table, fun);
 }
 
-void javaFqtTableMap31(struct javaFqtTable *table, void (*fun)(int, void *, void *), void *arg1, void *arg2) {
-    mock(table, fun, arg1, arg2);
-}
-
-void javaFqtTableMap32(struct javaFqtTable *table, void (*fun)(int, void *, void *, void *), void *arg1, void *arg2, void *arg3) {
-    mock(table, fun, arg1, arg2, arg3);
-}
-
-void javaFqtTableMap4(struct javaFqtTable *table, void (*fun)(SymbolList *, int),int i) {
-    mock(table, fun, i);
-}
-
 void javaFqtTableMap5(struct javaFqtTable *table, void (*fun)(SymbolList *, void *), void *arg) {
     mock(table, fun, arg);
 }

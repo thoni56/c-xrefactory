@@ -178,42 +178,6 @@ void CONCAT(HASH_FUN_PREFIX,Map3)(
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Map31)(
-    HASH_TAB_TYPE *table,
-    void (*fun)(int, void *, void *),
-    void *arg1, void *arg2
-) {
-    for (int i=0; i<table->size; i++) {
-        if (table->tab[i] != NULL)
-            (*fun)(i,arg1,arg2);
-    }
-}
-
-void CONCAT(HASH_FUN_PREFIX,Map32)(
-    HASH_TAB_TYPE *table,
-    void (*fun)(int, void *, void *, void *),
-    void *arg1, void *arg2, void *arg3
-) {
-    for (int i=0; i<table->size; i++) {
-        if (table->tab[i] != NULL)
-            (*fun)(i,arg1,arg2,arg3);
-    }
-}
-
-
-void CONCAT(HASH_FUN_PREFIX,Map4)(
-    HASH_TAB_TYPE *table,
-    void (*fun)(HASH_ELEM_TYPE *, int),
-    int a
-) {
-    HASH_ELEM_TYPE *pp;
-    for (int i=0; i<table->size; i++) {
-        for(pp=table->tab[i]; pp!=NULL; pp=pp->next)
-            (*fun)(pp, a);
-    }
-}
-
-
 void CONCAT(HASH_FUN_PREFIX,Map5)(
     HASH_TAB_TYPE *table,
     void (*fun)(HASH_ELEM_TYPE *, void *),
