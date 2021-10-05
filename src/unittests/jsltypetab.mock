@@ -15,10 +15,6 @@ bool jslTypeTabIsMember(struct jslTypeTab *table, JslSymbolList *element, int *p
   return (int) mock(table, element, position, origin);
 }
 
-int jslTypeTabMembEqual(JslSymbolList *e1, JslSymbolList *e2) {
-  return (int) mock(e1, e2);
-}
-
 int jslTypeTabNextMember(JslSymbolList *element, JslSymbolList **original) {
   return (int) mock(element, original);
 }
@@ -45,10 +41,6 @@ bool jslTypeTabDeleteExact(struct jslTypeTab *table, JslSymbolList *element) {
 
 int jslTypeTabDeleteLast(struct jslTypeTab *table, JslSymbolList *element) {
   return (int) mock(table, element);
-}
-
-void jslTypeTabFree(struct jslTypeTab *tab) {
-  mock(tab);
 }
 
 void jslTypeTabMap(struct jslTypeTab *table, void (*fun)(JslSymbolList *)) {

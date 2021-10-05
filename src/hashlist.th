@@ -76,10 +76,6 @@ extern bool CONCAT(HASH_FUN_PREFIX, DeleteExact) (
     HASH_ELEM_TYPE *element
 );
 
-extern void CONCAT(HASH_FUN_PREFIX, Free) (
-    HASH_TAB_TYPE *tab
-);
-
 extern void CONCAT(HASH_FUN_PREFIX, Map) (
     HASH_TAB_TYPE *table,
     void (*fun) (HASH_ELEM_TYPE *)

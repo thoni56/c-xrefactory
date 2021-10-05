@@ -16,10 +16,6 @@ bool editorBufferTabIsMember(struct editorBufferTab *table, EditorBufferList *el
   return (int) mock(table, element, position, origin);
 }
 
-int editorBufferTabMembEqual(EditorBufferList *e1, EditorBufferList *e2) {
-  return (int) mock(e1, e2);
-}
-
 int editorBufferTabNextMember(EditorBufferList *element, EditorBufferList **original) {
   return (int) mock(element, original);
 }
@@ -46,10 +42,6 @@ bool editorBufferTabDeleteExact(struct editorBufferTab *table, EditorBufferList 
 
 int editorBufferTabDeleteLast(struct editorBufferTab *table, EditorBufferList *element) {
   return (int) mock(table, element);
-}
-
-void editorBufferTabFree(struct editorBufferTab *tab) {
-  mock(tab);
 }
 
 void editorBufferTabMap(struct editorBufferTab *table, void (*fun)(EditorBufferList *)) {

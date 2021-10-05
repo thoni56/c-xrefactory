@@ -69,15 +69,6 @@ int CONCAT(HASH_FUN_PREFIX,NextMember)(
 }
 
 
-int CONCAT(HASH_FUN_PREFIX,MembEqual)(
-    HASH_ELEM_TYPE *e1,
-    HASH_ELEM_TYPE *e2
-) {
-    assert(e1 && e2);
-    return(HASH_ELEM_EQUAL(e1, e2));
-}
-
-
 bool CONCAT(HASH_FUN_PREFIX,Delete)(
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
@@ -153,18 +144,13 @@ int CONCAT(HASH_FUN_PREFIX,Add) (
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *table) {
-    StackMemoryFree(table->tab);
-}
-
-
 void CONCAT(HASH_FUN_PREFIX,Map)(
     HASH_TAB_TYPE *table,
     void (*fun)(HASH_ELEM_TYPE *)
 ) {
-    HASH_ELEM_TYPE *pp;
     for (int i=0; i<table->size; i++) {
-        for(pp=table->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp);
+        for (HASH_ELEM_TYPE *element=table->tab[i]; element!=NULL; element=element->next)
+            (*fun)(element);
     }
 }
 
@@ -174,9 +160,9 @@ void CONCAT(HASH_FUN_PREFIX,Map2)(
     void (*fun)(HASH_ELEM_TYPE *, void *),
     void *a
 ) {
-    HASH_ELEM_TYPE *pp;
     for (int i=0; i<table->size; i++) {
-        for(pp=table->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, a);
+        for (HASH_ELEM_TYPE *element=table->tab[i]; element!=NULL; element=element->next)
+            (*fun)(element, a);
     }
 }
 
@@ -186,7 +172,8 @@ void CONCAT(HASH_FUN_PREFIX,Map3)(
     void (*fun)(int)
 ) {
     for (int i=0; i<table->size; i++) {
-        if (table->tab[i] != NULL) (*fun)(i);
+        if (table->tab[i] != NULL)
+            (*fun)(i);
     }
 }
 
@@ -197,7 +184,8 @@ void CONCAT(HASH_FUN_PREFIX,Map31)(
     void *arg1, void *arg2
 ) {
     for (int i=0; i<table->size; i++) {
-        if (table->tab[i] != NULL) (*fun)(i,arg1,arg2);
+        if (table->tab[i] != NULL)
+            (*fun)(i,arg1,arg2);
     }
 }
 
@@ -207,7 +195,8 @@ void CONCAT(HASH_FUN_PREFIX,Map32)(
     void *arg1, void *arg2, void *arg3
 ) {
     for (int i=0; i<table->size; i++) {
-        if (table->tab[i] != NULL) (*fun)(i,arg1,arg2,arg3);
+        if (table->tab[i] != NULL)
+            (*fun)(i,arg1,arg2,arg3);
     }
 }
 
@@ -219,7 +208,8 @@ void CONCAT(HASH_FUN_PREFIX,Map4)(
 ) {
     HASH_ELEM_TYPE *pp;
     for (int i=0; i<table->size; i++) {
-        for(pp=table->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, a);
+        for(pp=table->tab[i]; pp!=NULL; pp=pp->next)
+            (*fun)(pp, a);
     }
 }
 
@@ -231,7 +221,8 @@ void CONCAT(HASH_FUN_PREFIX,Map5)(
 ) {
     HASH_ELEM_TYPE *pp;
     for (int i=0; i<table->size; i++) {
-        for(pp=table->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, arg);
+        for(pp=table->tab[i]; pp!=NULL; pp=pp->next)
+            (*fun)(pp, arg);
     }
 }
 

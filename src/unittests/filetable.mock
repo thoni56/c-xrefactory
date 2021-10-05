@@ -39,10 +39,6 @@ int fileTableAdd(FileTable *table,
     return mock(table, element);
 }
 
-void fileTableFree(FileTable *table) {
-    mock(table);
-}
-
 void fileTableMap(FileTable *table,
                   void (*fun)(FileItem *)
 ) {

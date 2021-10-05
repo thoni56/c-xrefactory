@@ -20,10 +20,6 @@ bool olcxTabIsMember(struct olcxTab *table, UserOlcxData *element, int *position
     return (int)mock(table, element, position, origin);
 }
 
-int olcxTabMembEqual(UserOlcxData *e1, UserOlcxData *e2) {
-    return (int)mock(e1, e2);
-}
-
 int olcxTabNextMember(UserOlcxData *element, UserOlcxData **original) {
     return (int)mock(element, original);
 }
@@ -50,10 +46,6 @@ bool olcxTabDeleteExact(struct olcxTab *table, UserOlcxData *element) {
 
 int olcxTabDeleteLast(struct olcxTab *table, UserOlcxData *element) {
     return (int)mock(table, element);
-}
-
-void olcxTabFree(struct olcxTab *table) {
-    mock(table);
 }
 
 void olcxTabMap(struct olcxTab *table, void (*fun)(UserOlcxData *)) {

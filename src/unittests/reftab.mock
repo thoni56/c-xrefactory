@@ -19,10 +19,6 @@ bool refTabIsMember(ReferenceTable *table, SymbolReferenceItem *element,
     return (int)mock(table, element, position, origin);
 }
 
-int refTabMembEqual(SymbolReferenceItem *e1, SymbolReferenceItem *e2) {
-    return (int)mock(e1, e2);
-}
-
 int refTabNextMember(SymbolReferenceItem *element, SymbolReferenceItem **original) {
     return (int)mock(element, original);
 }
@@ -49,10 +45,6 @@ bool refTabDeleteExact(ReferenceTable *table, SymbolReferenceItem *element) {
 
 int refTabDeleteLast(ReferenceTable *table, SymbolReferenceItem *element) {
     return(int)mock(table, element);
-}
-
-void refTabFree(ReferenceTable *table) {
-    mock(table);
 }
 
 void refTabMap(ReferenceTable *table, void(*fun)(SymbolReferenceItem *)) {

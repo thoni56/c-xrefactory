@@ -726,10 +726,9 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
             return NULL;
     }
     reftab = &referenceTable;
-    fillSymbolRefItem(&ppp, symbol->linkName, 0, // cxFileHashNumber(symbol->linkName),
-                                vApplCl, vFunCl);
+    fillSymbolRefItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl);
     fillSymbolRefItemBits(&ppp.b, symbol->bits.symbolType, storage, scope,
-                           symbol->bits.access, category);
+                          symbol->bits.access, category);
     if (options.taskRegime==RegimeEditServer && options.server_operation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
         fillUsageBits(&rr.usage, usage_base, 0);
         fillReference(&rr, rr.usage, *pos, NULL);
@@ -741,10 +740,9 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         CX_ALLOC(pp, SymbolReferenceItem);
         CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);
         strcpy(linkName, symbol->linkName);
-        fillSymbolRefItem(pp, linkName, cxFileHashNumber(linkName),
-                                    vApplCl, vFunCl);
+        fillSymbolRefItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl);
         fillSymbolRefItemBits(&pp->b, symbol->bits.symbolType, storage, scope,
-                               symbol->bits.access, category);
+                              symbol->bits.access, category);
         refTabSet(reftab, pp, index);
         memb = pp;
     } else {

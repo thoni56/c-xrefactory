@@ -16,10 +16,6 @@ bool symbolTableIsMember(SymbolTable *table, Symbol *element, int *position, Sym
   return (int) mock(table, element, position, foundMemberPointer);
 }
 
-int symbolTableMembEqual(Symbol *e1, Symbol *e2) {
-  return (int) mock(e1, e2);
-}
-
 int symbolTableNextMember(Symbol *element, Symbol **original) {
   return (int) mock(element, original);
 }
@@ -46,10 +42,6 @@ bool symbolTableDeleteExact(SymbolTable *table, Symbol *element) {
 
 int symbolTableDeleteLast(SymbolTable *table, Symbol *element) {
   return (int) mock(table, element);
-}
-
-void symbolTableFree(SymbolTable *tab) {
-  mock(tab);
 }
 
 void symbolTableMap(SymbolTable *table, void (*fun)(Symbol *)) {
