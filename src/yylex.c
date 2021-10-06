@@ -2138,8 +2138,10 @@ static int lookupCIdentifier(char *id, Position *position) {
             }
         }
     }
-    if (memb == NULL) id = stackMemoryPushString(id);
-    else id = memb->name;
+    if (memb == NULL)
+        id = stackMemoryPushString(id);
+    else
+        id = memb->name;
     setYylvalsForIdentifier(id, memb, *position);
     return IDENTIFIER;
 }
