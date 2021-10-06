@@ -806,7 +806,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     /* Test for available space */
     assert(options.taskRegime);
     if (options.taskRegime==RegimeXref) {
-        if (!(DM_FREE_SPACE(cxMemory, CX_SPACE_RESERVE))) {
+        if (!(DM_ENOUGH_SPACE_FOR(cxMemory, CX_SPACE_RESERVE))) {
             longjmp(cxmemOverflow, LONGJUMP_REASON_REFERENCE_OVERFLOW);
         }
     }

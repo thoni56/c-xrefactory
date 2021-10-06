@@ -58,7 +58,7 @@
 
 */
 
-#define DM_FREE_SPACE(mem,n) (mem->index+(n) < mem->size)
+#define DM_ENOUGH_SPACE_FOR(mem,n) (mem->index+(n) < mem->size)
 
 #define DM_IS_BETWEEN(mem,ppp,iii,jjj) (\
     ((char*)ppp) >= ((char*)&mem->b) + (iii) && ((char*)ppp) < ((char*)&mem->b) + (jjj) \
@@ -66,16 +66,16 @@
 #define DM_FREED_POINTER(mem,ppp) DM_IS_BETWEEN(mem,ppp,mem->index,mem->size)
 
 #define DM_INIT(mem) {mem->index = 0;}
-#define DM_ALLOCC(mem,p,n,type) {\
-    assert( (n) >= 0);\
-    mem->index = ((char*)ALIGNMENT(((char*)&mem->b)+mem->index,STANDARD_ALIGNMENT)) - ((char*)&mem->b);\
-    if (mem->index+(n)*sizeof(type) >= mem->size) {\
-        if (mem->overflowHandler(n)) memoryResize();        \
-        else fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);\
-    }\
-    p = (type*) (((char*)&mem->b) + mem->index);\
-    mem->index += (n)*sizeof(type);\
-}
+#define DM_ALLOCC(mem,p,n,type) {                                       \
+        assert( (n) >= 0);                                              \
+        mem->index = ((char*)ALIGNMENT(((char*)&mem->b)+mem->index,STANDARD_ALIGNMENT)) - ((char*)&mem->b); \
+        if (mem->index+(n)*sizeof(type) >= mem->size) {                 \
+            if (mem->overflowHandler(n)) memoryResize();                \
+            else fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);         \
+        }                                                               \
+        p = (type*) (((char*)&mem->b) + mem->index);                    \
+        mem->index += (n)*sizeof(type);                                 \
+    }
 #define DM_ALLOC(mem,p,t) {DM_ALLOCC(mem,p,1,t);}
 #define DM_REALLOCC(mem,p,n,t,oldn) {\
     assert(((char *)(p)) + (oldn)*sizeof(t) == &mem->b + mem->i);\

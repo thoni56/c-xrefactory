@@ -62,6 +62,7 @@ bool cxMemoryOverflowHandler(int n) {
     int oldfactor, factor, oldsize, newsize;
     Memory *oldcxMemory;
 
+    log_trace("Handling CX memory overflow with n=%d", n);
     if (cxMemory!=NULL) {
         oldsize = cxMemory->size;
     } else {

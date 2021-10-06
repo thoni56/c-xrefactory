@@ -2100,10 +2100,11 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
 
     assert(PPC_MAX_AVAILABLE_REFACTORINGS < MAX_AVAILABLE_REFACTORINGS);
 
-    // initialize cxMemory
+    // initialize cxMemory by trying to allocate one byte(?)
     mm = cxMemoryOverflowHandler(1);
     assert(mm);
-    // initoptions
+
+    // init options memory
     initMemory(((Memory*)&s_initOpt.pendingMemory),
                optionsOverflowHandler, SIZE_opiMemory);
 

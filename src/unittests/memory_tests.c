@@ -4,6 +4,7 @@
 #include "log.h"
 
 #include "globals.mock"
+#include "commons.mock"           /* For fatalError() */
 
 
 Describe(Memory);
@@ -36,4 +37,37 @@ Ensure(Memory, can_calculate_nesting_level) {
     assert_that(nestingLevel(), is_equal_to(0));
     stackMemoryBlockStart();
     assert_that(nestingLevel(), is_equal_to(1));
+}
+
+static int overflowRequest = 0;
+static bool overflowHandler(int n) {
+    overflowRequest = n;
+    return true;
+}
+
+Ensure(Memory, can_allocate_direct_memory) {
+    char *character = NULL;
+    Memory memory;
+
+    initMemory((&memory), overflowHandler, SIZE_opiMemory);
+    DM_ALLOC((&memory), character, char);
+    assert_that(character, is_not_null);
+}
+
+Ensure(Memory, will_extend_direct_memory_when_next_allocation_will_fill_up) {
+    char *character = NULL;
+    Memory memory;
+
+    if (!setjmp(memoryResizeJumpTarget)) {
+        initMemory((&memory), overflowHandler, 10);
+        DM_ALLOCC((&memory), character, 9, char);
+    } else
+        fail_test("unexpected memory resize");
+    assert_that(overflowRequest, is_equal_to(0));
+    assert_that(character, is_not_null);
+
+    if (!setjmp(memoryResizeJumpTarget)) {
+        DM_ALLOC((&memory), character, char);
+    }
+    assert_that(overflowRequest, is_greater_than(0));
 }
