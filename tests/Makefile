@@ -24,9 +24,15 @@ all: quick slow
 quick: autodiscovered_tests
 
 .PHONY: slow
-slow:
+slow: c-xref-test ffmpeg-test systemd-test
+
+c-xref-test:
 	$(MAKE) -C c-xref
+
+ffmpeg-test:
 	$(MAKE) -C ffmpeg
+
+systemd-test:
 	$(MAKE) -C systemd
 
 .PHONY: list
