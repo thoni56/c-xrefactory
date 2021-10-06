@@ -5,25 +5,38 @@
 #
 # 1: production - simple straight forward build of c-xref for use when
 # installing c-xref using el-get. Works:
-#     make prod
+#	make prod
 #
 # 2: ci - build unittests & c-xref and run all tests with coverage
 # and create coverage report. Works:
-#     make ci
+#	make ci
 #
-# 3: build and run unittests with coverage and produce gcov files for
+# 3: all (or no target) - build and run unittests & build the c-xref exe.
+# Works:
+#	make
+#
+# 4: build and run unittests with coverage and produce gcov files for
 # cov-mode in Emacs. Works:
-#     make unit
+#	make unit
 #
-# 4: build c-xref with coverage, run all "quick" tests and produce gcov. Works:
-#     make devel
+# 5: build c-xref with coverage, run all "quick" tests and produce gcov. Works:
+#	make devel
 #
-# 5: build c-xref with coverage, run one test and produce gcov files
+# 6: build c-xref with coverage, run one test and produce gcov files
+# Works:
+#   make
+#	make clean-coverage
+#	<run test>
+#	make coverage-report
 #
 # 6: run another test and produce aggregated gcov files
+# Works:
+#	<run another test>
+#	make coverage-report
 #
-# 7: produce coverage report for current collected coverage (from 5/6)
-#
+# 7: produce coverage report for current collected coverage
+# Works:
+#	make coverage-report
 
 #########################################################################
 # Always export following variables to environment of sub-makes (to use you need "-e")
