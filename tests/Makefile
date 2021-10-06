@@ -72,7 +72,7 @@ autodiscovered_tests: $(TESTS)
 define RULE
 .PHONY: $(1)
 $(1):
-	GCOV_OPTIONS="GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`" LCOV="$(LCOV)" COVERAGE="$(COVERAGE)" ./run_test $(1)
+	GCOV_OPTIONS="GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`" ./run_test $(1)
 endef
 
 # Loop over all test_ directories to create a rule for each

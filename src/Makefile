@@ -240,7 +240,7 @@ clean:
 .PHONY: clean-coverage
 clean-coverage:
 	-if command -v lcov > /dev/null 2>&1 ; then \
-		lcov -q -z -d .. ; \
+		$(LCOV) -q -z -d .. ; \
 	fi
 
 coverage-report:
@@ -255,14 +255,14 @@ endif
 
 the-actual-coverage-report:
 	@mkdir -p ../coverage
-	lcov -d .. -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info
+	$(LCOV) -d .. -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info
 	@# Re-create collated gcov files from total.info for Emacs gcov-mode
 	if command -v info2gcov > /dev/null 2>&1 ; then \
 		info2gcov -q ../coverage/total.info ; \
 	fi
 	@printf "\\r"
 ifeq (, $(LCOV_EXCLUDES))
-	lcov -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 endif
 	genhtml -q -o ../coverage ../coverage/total.info
 	@echo Coverage done
