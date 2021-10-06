@@ -938,7 +938,6 @@ static AccessibilityCheckYesNo calculateAccessCheckOption(void) {
 static void completeRecordsNames(
     Completions *c,
     Symbol *s,
-    Access access,
     int classification,
     int constructorOpt,
     int completionType,
@@ -1027,8 +1026,7 @@ void completeRecNames(Completions *c) {
     if (str->kind == TypeStruct || str->kind == TypeUnion) {
         s = str->u.t;
         assert(s);
-        completeRecordsNames(c, s, AccessDefault,CLASS_TO_ANY,
-                             StorageDefault,TypeDefault,0);
+        completeRecordsNames(c, s, CLASS_TO_ANY, StorageDefault, TypeDefault, 0);
     }
     s_structRecordCompletionType = &s_errorModifier;
 }
@@ -1043,9 +1041,7 @@ static void completeFromSymTab(Completions*c, unsigned storage){
         vlevelOffset = 0;
         for(cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL ;cs=cs->next) {
             symbolTableMap2(cs->locals, completeSymFun, (void*) &info);
-            completeRecordsNames(c, cs->thisClass, s_javaStat->methodModifiers,
-                                 CLASS_TO_ANY,
-                                 storage,TypeDefault,vlevelOffset);
+            completeRecordsNames(c, cs->thisClass, CLASS_TO_ANY, storage, TypeDefault, vlevelOffset);
             vlevelOffset += NEST_VIRT_COMPL_OFFSET;
         }
     } else {
@@ -1265,7 +1261,7 @@ static void completeConstructorsFromFile(Completions *c, char *fname) {
         /* only when exact match, otherwise it would be too memory costly*/
         //&fprintf(dumpOut,"O.K. %s\n", memb->linkName);
         javaLoadClassSymbolsFromFile(memb);
-        completeRecordsNames(c, memb, AccessAll,CLASS_TO_ANY, StorageConstructor,TypeDefault,0);
+        completeRecordsNames(c, memb,CLASS_TO_ANY, StorageConstructor,TypeDefault,0);
     }
 }
 
@@ -1274,13 +1270,14 @@ static void completeJavaConstructors(Symbol *s, void *c) {
     completeConstructorsFromFile((Completions *)c, s->linkName);
 }
 
+/* NOTE: Map-function */
 static void javaPackageNameCompletion(
-    char            *fname,
-    char            *path,
-    char            *pack,
-    Completions   *c,
-    void            *idp,
-    int             *pstorage
+    char        *fname,
+    char        *path,
+    char        *pack,
+    Completions *c,
+    void        *idp,
+    int         *pstorage
 ) {
     CompletionLine compLine;
     char *cname;
@@ -1292,13 +1289,14 @@ static void javaPackageNameCompletion(
     processName(cname, &compLine, 1, (void*) c);
 }
 
+/* NOTE: Map-function */
 static void javaTypeNameCompletion(
-    char            *fname,
-    char            *path,
-    char            *pack,
-    Completions   *c,
-    void            *idp,
-    int             *pstorage
+    char        *fname,
+    char        *path,
+    char        *pack,
+    Completions *c,
+    void        *idp,
+    int         *pstorage
 ) {
     char cfname[MAX_FILE_NAME_SIZE];
     CompletionLine compLine;
@@ -1358,7 +1356,7 @@ static void javaCompleteNestedClasses(  Completions *c,
                 processName(memb->name, &compLine, 1, (void*) c);
                 if (storage == StorageConstructor) {
                     javaLoadClassSymbolsFromFile(memb);
-                    completeRecordsNames(c, memb, AccessAll,CLASS_TO_ANY, StorageConstructor,TypeDefault,0);
+                    completeRecordsNames(c, memb, CLASS_TO_ANY, StorageConstructor, TypeDefault, 0);
                 }
             }
         }
@@ -1416,7 +1414,7 @@ static void javaCompleteComposedName(Completions *c,
     if (classif==CLASS_TO_EXPR && str!=NULL && storage!=StorageConstructor
         && (nameType==TypeStruct || nameType==TypeExpression)) {
         javaLoadClassSymbolsFromFile(str);
-        completeRecordsNames(c, str, access,CLASS_TO_ANY, storage,TypeDefault,0);
+        completeRecordsNames(c, str, CLASS_TO_ANY, storage, TypeDefault, 0);
     }
 }
 
@@ -1574,6 +1572,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
     }
 }
 
+/* NOTE: Map-function */
 static void completeFqtClassFileFromZipArchiv(char *zip, char *file, void *cfmpi) {
     completeFqtFromFileName(file, cfmpi);
 }
@@ -1762,7 +1761,7 @@ void javaCompleteThisConstructor (Completions *c) {
     if (options.server_operation == OLO_SEARCH) return;
     memb = s_javaStat->thisClass;
     javaLoadClassSymbolsFromFile(memb);
-    completeRecordsNames(c, memb, AccessAll,CLASS_TO_ANY, StorageConstructor,
+    completeRecordsNames(c, memb, CLASS_TO_ANY, StorageConstructor,
                          TypeSpecialConstructorCompletion,0);
 }
 
@@ -1772,7 +1771,7 @@ void javaCompleteSuperConstructor (Completions *c) {
     if (options.server_operation == OLO_SEARCH) return;
     memb = javaCurrentSuperClass();
     javaLoadClassSymbolsFromFile(memb);
-    completeRecordsNames(c, memb, AccessAll,CLASS_TO_ANY, StorageConstructor,
+    completeRecordsNames(c, memb, CLASS_TO_ANY, StorageConstructor,
                          TypeSpecialConstructorCompletion,0);
 }
 
@@ -1781,11 +1780,11 @@ void javaCompleteSuperNestedConstructor (Completions *c) {
     //TODO!!!
 }
 
-void javaCompleteExprCompName(Completions*c) {
+void javaCompleteExprCompName(Completions *c) {
     javaCompleteComposedName(c, CLASS_TO_EXPR, StorageDefault,0);
 }
 
-void javaCompleteStrRecordPrimary(Completions*c) {
+void javaCompleteStrRecordPrimary(Completions *c) {
     Symbol *memb;
     if (s_javaCompletionLastPrimary == NULL) return;
     if (s_javaCompletionLastPrimary->kind == TypeStruct) {
@@ -1796,19 +1795,19 @@ void javaCompleteStrRecordPrimary(Completions*c) {
     assert(memb);
     javaLoadClassSymbolsFromFile(memb);
     /*fprintf(dumpOut,": completing %s\n",memb->linkName);fflush(dumpOut);*/
-    completeRecordsNames(c, memb, AccessDefault,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
+    completeRecordsNames(c, memb, CLASS_TO_ANY, StorageDefault,TypeDefault,0);
 }
 
-void javaCompleteStrRecordSuper(Completions*c) {
+void javaCompleteStrRecordSuper(Completions *c) {
     Symbol *memb;
     memb = javaCurrentSuperClass();
     if (memb == &s_errorSymbol || memb->bits.symbolType==TypeError) return;
     assert(memb);
     javaLoadClassSymbolsFromFile(memb);
-    completeRecordsNames(c, memb, s_javaStat->methodModifiers,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
+    completeRecordsNames(c, memb, CLASS_TO_ANY, StorageDefault,TypeDefault,0);
 }
 
-void javaCompleteStrRecordQualifiedSuper(Completions*c) {
+void javaCompleteStrRecordQualifiedSuper(Completions *c) {
     Symbol *str;
     TypeModifier *expr;
     Reference *rr, *lastUselessRef;
@@ -1822,20 +1821,20 @@ void javaCompleteStrRecordQualifiedSuper(Completions*c) {
     str = javaGetSuperClass(str);
     if (str == &s_errorSymbol || str->bits.symbolType==TypeError) return;
     assert(str);
-    completeRecordsNames(c, str, s_javaStat->methodModifiers,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
+    completeRecordsNames(c, str,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
 }
 
-void javaCompleteUpMethodSingleName(Completions*c) {
+void javaCompleteUpMethodSingleName(Completions *c) {
     if (s_javaStat!=NULL) {
-        completeRecordsNames(c, s_javaStat->thisClass, AccessAll,CLASS_TO_ANY,
+        completeRecordsNames(c, s_javaStat->thisClass,CLASS_TO_ANY,
                              StorageDefault,TypeDefault,0);
     }
 }
 
-void javaCompleteFullInheritedMethodHeader(Completions*c) {
+void javaCompleteFullInheritedMethodHeader(Completions *c) {
     if (c->idToProcessLen != 0) return;
     if (s_javaStat!=NULL) {
-        completeRecordsNames(c,s_javaStat->thisClass,AccessAll,CLASS_TO_METHOD,
+        completeRecordsNames(c,s_javaStat->thisClass,CLASS_TO_METHOD,
                              StorageDefault,TypeInheritedFullMethod,0);
     }
 #if ZERO
@@ -1848,7 +1847,7 @@ void javaCompleteFullInheritedMethodHeader(Completions*c) {
 }
 
 /* this is only used in completionsTab */
-void javaCompleteMethodCompName(Completions*c) {
+void javaCompleteMethodCompName(Completions *c) {
     javaCompleteExprCompName(c);
 }
 
@@ -1866,7 +1865,7 @@ static void completeFromXrefFun(SymbolReferenceItem *s, void *c) {
     processName(s->name, &compLine, 1, cc->res);
 }
 
-void completeYaccLexem(Completions*c) {
+void completeYaccLexem(Completions *c) {
     CompletionSymbolInfo ii;
     fillCompletionSymInfo(&ii, c, TypeYaccSymbol);
     refTabMap2(&referenceTable, completeFromXrefFun, (void*) &ii);

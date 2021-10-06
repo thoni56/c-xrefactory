@@ -33,10 +33,9 @@ typedef struct integerList {
  */
 
 void dumpOptions(int nargc, char **nargv) {
-    int i;
     char tmpBuff[TMP_BUFF_SIZE] = "";
 
-    for(i=0; i<nargc; i++) {
+    for (int i=0; i<nargc; i++) {
         sprintf(tmpBuff+strlen(tmpBuff), "%s", nargv[i]);
     }
     assert(strlen(tmpBuff)<TMP_BUFF_SIZE-1);
@@ -164,7 +163,8 @@ void typeSPrint(char *buff, int *size, TypeModifier *t,
             }
             post[j++]=')';
             break;
-        case TypeStruct: case TypeUnion:
+        case TypeStruct:
+        case TypeUnion:
             if (s_language != LANG_JAVA) {
                 if (t->kind == TypeStruct) sprintf(type,"struct ");
                 else sprintf(type,"union ");
@@ -1217,11 +1217,11 @@ void javaMapDirectoryFiles2(
 
 /* ************************************************************* */
 
-static void scanClassFile(char *zip, char *file, void *arg) {
-    char        ttt[MAX_FILE_NAME_SIZE];
-    char        *tt, *suff;
-    Symbol    *memb;
-    int         cpi, fileInd;
+static void scanClassFile(char *zip, char *file, void *dummy) {
+    char ttt[MAX_FILE_NAME_SIZE];
+    char *tt, *suff;
+    Symbol *memb;
+    int cpi, fileInd;
 
     log_trace("scanning %s ; %s", zip, file);
     suff = getFileSuffix(file);

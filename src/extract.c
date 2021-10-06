@@ -552,7 +552,7 @@ static void extGenNewMacroHead(ProgramGraphNode *program) {
     }
 }
 
-static void generateNewMacroTail(ProgramGraphNode *program) {
+static void generateNewMacroTail() {
     rb[0]=0;
 
     sprintf(rb+strlen(rb),"}\n\n");
@@ -1237,7 +1237,7 @@ static void makeExtraction(void) {
     }
 
     if (options.extractMode==EXTRACT_MACRO)
-        generateNewMacroTail(program);
+        generateNewMacroTail();
     else if (needToExtractNewClass)
         extJavaGenNewClassTail(program);
     else

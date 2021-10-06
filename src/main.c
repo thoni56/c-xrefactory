@@ -1448,6 +1448,7 @@ static void schedulingUpdateToProcess(FileItem *fileItem) {
     }
 }
 
+/* NOTE: Map-function */
 static void schedulingToUpdate(FileItem *fileItem, void *dummy) {
     if (fileItem == fileTable.tab[noFileIndex])
         return;
@@ -2082,8 +2083,9 @@ static void mainFileProcessingInitialisations(bool *firstPass,
 }
 
 static int power(int x, int y) {
-    int i,res = 1;
-    for(i=0; i<y; i++) res *= x;
+    int res = 1;
+    for (int i=0; i<y; i++)
+        res *= x;
     return res;
 }
 
@@ -2092,7 +2094,7 @@ static bool optionsOverflowHandler(int n) {
     return true;
 }
 
-static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
+static void mainTotalTaskEntryInitialisations() {
     int mm;
 
     errOut = stderr;
@@ -3050,7 +3052,7 @@ int main(int argc, char **argv) {
     }
 
     currentPass = ANY_PASS;
-    mainTotalTaskEntryInitialisations(argc, argv);
+    mainTotalTaskEntryInitialisations();
     mainTaskEntryInitialisations(argc, argv);
 
     // Ok, so there were these five, now four, no three, main operating modes
