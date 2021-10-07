@@ -43,10 +43,6 @@ void removeFromTrailUntil(FreeTrail *untilP) {
   mock(untilP);
 }
 
-void *stackMemoryPush(void *p, int size) {
-  return (void *) mock(p, size);
-}
-
 char *stackMemoryPushString(char *s) {
   return (char *) mock(s);
 }

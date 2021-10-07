@@ -18,7 +18,6 @@
 */
 #define StackMemoryAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
 #define StackMemoryAllocC(n, t) ((t*) stackMemoryAlloc((n)*sizeof(t)))
-#define StackMemoryFree(p)              { }
 
 
 /**********************************************************************
@@ -211,7 +210,6 @@ extern void removeFromTrailUntil(FreeTrail *untilP);
 
 extern void stackMemoryInit(void);
 extern void *stackMemoryAlloc(int size);
-extern void *stackMemoryPush(void *p, int size);
 extern char *stackMemoryPushString(char *s);
 extern void stackMemoryBlockStart(void);
 extern void stackMemoryBlockEnd(void);

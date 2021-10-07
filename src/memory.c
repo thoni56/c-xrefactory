@@ -153,11 +153,11 @@ void *stackMemoryAlloc(int size) {
     }
 }
 
-void *stackMemoryPush(void *p, int size) {
+static void *stackMemoryPush(void *p, int size) {
     void *m;
     m = stackMemoryAlloc(size);
     memcpy(m,p,size);
-    return(m);
+    return m;
 }
 
 char *stackMemoryPushString(char *s) {
