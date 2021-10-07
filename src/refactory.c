@@ -100,32 +100,12 @@ static int filter0(Reference *rr, void *dummy) {
     return 0;
 }
 
-#ifdef FILTERS
-static int filter1(S_reference *rr, void *dummy) {
-    if (rr->usg.base < s_refListFilters[1]) return 1;
-    return 0;
-}
-
-static int filter2(S_reference *rr, void *dummy) {
-    if (rr->usg.base < s_refListFilters[2]) return 1;
-    return 0;
-}
-
-static int filterBuffer(S_reference *rr, void *buffer) {
-    S_editorBuffer *buff;
-    buff = (S_editorBuffer *) buffer;
-    if (rr->usg.base >= UsageMaxOLUsages) return 0;
-    if (rr->p.file == buff->ftnum) return 1;
-    return 0;
-}
-#endif
-
 static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
                               EditorBuffer *buf,
                               char *project,
                               EditorMarker *point,
                               EditorMarker *mark
-                              ) {
+) {
     static char optPoint[TMP_STRING_SIZE];
     static char optMark[TMP_STRING_SIZE];
     static char optXrefrc[MAX_FILE_NAME_SIZE];
