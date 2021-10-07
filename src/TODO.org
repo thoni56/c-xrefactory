@@ -12,13 +12,12 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra defines
+* DOING BUG: an unterminated "assert(" (with the c-xref def of it: MACRO) breaks
+Test case end_of_macro exhibits this.
+NOTE: An uncompleted macro outside any context segv:s
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO All fillXXX() should not be mocked but have the same body as the real one
 * TODO Handle void as no parameters in formal argument lists, e.g. when refactoring them
-* TODO BUG: an unterminated "assert(" (with the c-xref def of it) breaks PUSH
-Instead it results in 
-error in process filter: if: SYNCHRO PROBLEM: 
-12:06:15 FATAL yylex.c:1809: '((char *)(buf)) + (bufsize+1000)*sizeof(char) == ppmMemory + ppmMemoryIndex' is not true
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
 * TODO Turn lexembuffer functions into methods on the buffer
