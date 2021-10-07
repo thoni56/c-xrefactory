@@ -4411,7 +4411,7 @@ static bool exists_valid_parser_action_on(int token) {
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
 void makeJavaCompletions(char *s, int len, Position *pos) {
-    int token, i;
+    int token;
     CompletionLine compLine;
 
     log_trace("completing \"%s\" in state %d", s, lastyystate);
@@ -4420,7 +4420,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     initCompletions(&s_completions, len, *pos);
 
     /* special wizard completions */
-    for (i=0;(token=spCompletionsTab[i].token)!=0; i++) {
+    for (int i=0;(token=spCompletionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
             (*spCompletionsTab[i].fun)(&s_completions);
@@ -4430,8 +4430,9 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.alternativeIndex != 0 && options.server_operation != OLO_SEARCH) return;
-    for (i=0;(token=completionsTab[i].token)!=0; i++) {
+    if (s_completions.alternativeIndex != 0 && options.server_operation != OLO_SEARCH)
+        return;
+    for (int i=0;(token=completionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
@@ -4442,7 +4443,8 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
 
     /* basic language tokens */
     for (token=0; token<LAST_TOKEN; token++) {
-        if (token==IDENTIFIER) continue;
+        if (token==IDENTIFIER)
+            continue;
         if (exists_valid_parser_action_on(token)) {
             if (tokenNamesTable[token]!= NULL) {
                 if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
@@ -4456,11 +4458,11 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     }
 
     /* If the completion window is shown, or there is no completion,
-       add also hints (should be optionally) */
+<       add also hints (should be optionally) */
     /*& if (s_completions.comPrefix[0]!=0  && (s_completions.alternativeIndex != 0) &*/
     /*&	&& options.server_operation != OLO_SEARCH) return; &*/
 
-    for (i=0;(token=hintCompletionsTab[i].token)!=0; i++) {
+    for (int i=0;(token=hintCompletionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
             (*hintCompletionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
