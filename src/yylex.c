@@ -433,8 +433,10 @@ void processLineDirective(void) {
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
     return;
 
-endOfMacroArgument:	assert(0);
-endOfFile:;
+endOfMacroArgument:
+	assert(0);
+endOfFile:
+    return;
 }
 
 /* ********************************* #INCLUDE ********************** */
@@ -645,7 +647,7 @@ assert(0);
  endOfMacroArgument:
     assert(0);
  endOfFile:
-    ;
+    return;
 }
 
 static void addMacroToTabs(Symbol *pp, char *name) {
@@ -741,12 +743,11 @@ void processDefineDirective(bool hasArguments) {
     Lexem lexem;
     int foundIndex;
     int ellipsis;
-    Symbol *symbol;
     MacroArgumentTableElement *maca, mmaca;
     MacroBody *macroBody;
     Position position, macroPosition, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
-    char *currentLexemStart, *macroName, *argumentName;
-    char *body, *mm;
+    char *currentLexemStart, *argumentName;
+    char *mm;
     char **argumentNames, *argLinkName;
     int lineNumber, value, length; UNUSED lineNumber; UNUSED value; UNUSED length;
 
@@ -755,7 +756,10 @@ void processDefineDirective(bool hasArguments) {
     static int argumentCount = 0;
     static bool isReadingBody = false;
     static int macroSize = 0;
+    static char *macroName = NULL;
     static int allocatedSize = 0;
+    static Symbol *symbol = NULL;
+    static char *body = NULL;
 
     //symbol=NULL;macroBody=NULL;macroName=body=NULL; // to calm compiler
 
@@ -909,7 +913,7 @@ void processDefineDirective(bool hasArguments) {
     }
 
 endOfBody:
-    /* We might get here by a longjmp from getLex... so anything that is needed here needs to be static */
+    /* We might get here by a longjmp from getLex() on endOfFile... so anything that is needed here needs to be static */
     assert(macroSize>=0);
     PP_REALLOCC(body, macroSize, char, allocatedSize+MAX_LEXEM_SIZE);
     allocatedSize = macroSize;
@@ -922,7 +926,7 @@ endOfBody:
     macroBody = newMacroBody(allocatedSize, argumentCount, macroName, body, argumentNames);
     symbol->u.mbody = macroBody;
 
-    addMacroToTabs(symbol,macroName);
+    addMacroToTabs(symbol, macroName);
     assert(options.taskRegime);
     addCxReference(symbol, &macroPosition, UsageDefined, noFileIndex, noFileIndex);
     return;
@@ -1014,8 +1018,9 @@ static void processUndefineDirective(void) {
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
     }
     return;
-endOfMacroArgument:	assert(0);
-endOfFile:;
+endOfMacroArgument:
+    assert(0);
+endOfFile:
     return;
 }
 
@@ -1170,8 +1175,10 @@ static void processIfdefDirective(bool isIfdef) {
     }
     execCppIf(deleteSrc);
     return;
-endOfMacroArgument:	assert(0);
-endOfFile:;
+endOfMacroArgument:
+	assert(0);
+endOfFile:
+    return;
 }
 
 /* ********************************* #IF ************************** */
@@ -1411,7 +1418,8 @@ static bool processPreprocessorConstruct(Lexem lexem) {
     }
     return true;
 
-endOfMacroArgument: assert(0);
+endOfMacroArgument:
+    assert(0);
 endOfFile:
     return false;
 }
@@ -1437,21 +1445,20 @@ endOfFile:
 
 /* *********************************************************** */
 
-static int cyclicCall(MacroBody *mb) {
-    struct lexInput *ll;
+static bool cyclicCall(MacroBody *mb) {
     char *name;
 
     name = mb->name;
-/*fprintf(dumpOut,"testing '%s' against curr '%s'\n",name,cInput.macname);*/
+    log_debug("Testing for cyclic call, '%s' against curr '%s'", name, currentInput.macroName);
     if (currentInput.macroName != NULL && strcmp(name,currentInput.macroName)==0)
-        return 1;
+        return true;
     for(int i=0; i<macroStackIndex; i++) {
-        ll = &macroStack[i];
-/*fprintf(dumpOut,"testing '%s' against '%s'\n",name,ll->macname);*/
+        LexInput *ll = &macroStack[i];
+        log_debug("Testing '%s' against '%s'", name, ll->macroName);
         if (ll->macroName != NULL && strcmp(name,ll->macroName)==0)
-            return 1;
+            return true;
     }
-    return 0;
+    return false;
 }
 
 
@@ -1464,15 +1471,19 @@ static void prependMacroInput(LexInput *argb) {
 }
 
 
+/* NOTE: Non-reentrant */
 static void expandMacroArgument(LexInput *argb) {
     Symbol sd, *memb;
-    char *buf, *previousLexem, *currentLexem, *bcc, *tbcc;
+    char *previousLexem, *currentLexem, *tbcc;
     int length, lineNumber, failedMacroExpansion;
     Lexem lexem;
     Position position;
     int value;
     UNUSED value;
     int bsize = MACRO_UNIT_SIZE;
+
+    static char *buf;
+    static char *bcc;
 
     prependMacroInput(argb);
 
@@ -1772,6 +1783,7 @@ static Lexem getLexSkippingLines(char **previousLexemP, int *lineNumberP,
     return lexem;
 }
 
+/* NOTE: Non-reentrant */
 static void getActualMacroArgument(
     char *previousLexem,
     Lexem *out_lexem,
@@ -1782,12 +1794,15 @@ static void getActualMacroArgument(
     MacroBody *macroBody,
     int actualArgumentIndex
 ) {
-    char *buf,*bcc;
     int lineNumber,poffset;
-    int bufsize,depth;
-    Lexem lexem;
+    int depth;
     Position pos; UNUSED pos;
     int value,len; UNUSED len; UNUSED value;
+
+    static Lexem lexem;
+    static char *buf;
+    static char *bcc;
+    static int bufsize;
 
     /* Exceptions from getLexem... */
     jmp_buf exceptionHandler;
@@ -1839,7 +1854,7 @@ endOfMacroArgument:;
         }
     }
     PP_REALLOCC(buf, bcc-buf, char, bufsize+MAX_LEXEM_SIZE);
-    fillLexInput(actArg,buf,bcc,buf,currentInput.macroName,INPUT_NORMAL);
+    fillLexInput(actArg, buf, bcc, buf, currentInput.macroName, INPUT_NORMAL);
     *out_lexem = lexem;
     return;
 }
@@ -1939,12 +1954,14 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
 static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     Lexem lexem;
     int lineNumber;
-    char *previousLexemP, *freeBase;
     Position lparPosition;
     LexInput *actualArgumentsInput, macroBodyInput;
     MacroBody *macroBody;
     Position pos; UNUSED pos;
     int value,length; UNUSED length; UNUSED value;
+
+    static char *previousLexemP;
+    static char *freeBase;
 
     macroBody = macroSymbol->u.mbody;
     if (macroBody == NULL)
@@ -1997,7 +2014,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
 
 endOfMacroArgument:
     /* unterminated macro call in argument */
-    /* TODO unread readed argument */
+    /* TODO unread argument read */
     currentInput.currentLexemP = previousLexemP;
     PP_FREE_UNTIL(freeBase);
     return false;
@@ -2045,11 +2062,15 @@ int dumpLexemBuffer(LexemBuffer *lb) {
 /* ************************************************************** */
 int cachedInputPass(int cpoint, char **cfrom) {
     Lexem lexem;
-    int lineNumber, res;
+    int lineNumber;
     Position position;
     unsigned lexemLength;
-    char *previousLexem, *cto, *ccc;
+    char *previousLexem, *cto;
     int value, length; UNUSED length; UNUSED value;
+
+    /* NOTE: Non-reentrant because of setjmp/longjmp */
+    static char *ccc;
+    static int res;
 
     assert(cpoint > 0);
     cto = s_cache.cp[cpoint].lbcc;
@@ -2092,7 +2113,7 @@ endOfFile:
     return res;
 endOfMacroArgument:
     assert(0);
-    return -1;                  /* The assert should protect this from executing */
+    return -1;
 }
 
 /* ***************************************************************** */
