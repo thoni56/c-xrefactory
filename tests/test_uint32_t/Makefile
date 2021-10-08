@@ -18,19 +18,13 @@ include ../Makefile.boilerplate
 # gcc -E source.c
 
 
-# TODO: this is too complicated to just check that c-xref can find a
-# definition provided by the compiler and add that. An easier way
-# would be to create a "compiler"-script that produces acceptable but
-# canned definitions.
-
-
 CXREF = ../../src/c-xref
-COMMAND = $(CXREF) -xrefactory-II -create -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) uint32.c -log=log -o output.tmp
+ARGUMENTS = -create -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) uint32.c -errors -log=log
 
 $(TEST): .c-xrefrc
-	$(COMMAND)
+	$(CXREF) $(ARGUMENTS) 2> output.tmp
 	@$(NORMALIZE) output.tmp > output
-	grep "error len" output ; \
+	grep ERROR output | grep intptr_t; \
 	if [ $$? -eq 0 ] ; then \
 		$(FAIL) ; \
 	else \
@@ -47,4 +41,5 @@ clean:
 DEBUGGER = gdb
 debug: TRACE = -trace
 debug:
-	$(DEBUGGER) --args $(COMMAND)
+	echo run $(ARGUMENTS)
+	$(DEBUGGER) $(CXREF)
