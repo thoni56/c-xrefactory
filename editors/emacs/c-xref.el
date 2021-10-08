@@ -7627,7 +7627,7 @@ functions.
 )
 
 
-(defun  c-xref-help ()
+(defun c-xref-help ()
   "Show basic help informations for use of C-xrefactory."
   (interactive "")
   (let ((iw))
@@ -7724,6 +7724,11 @@ options you can customize via .c-xrefrc; for more information
 read the c-xref and c-xrefrc man pages. Before using C-xrefactory
 you should also read the README file included in the distribution
 package.
+
+TUTORIAL:
+
+You can invoke a tutorial from the menu, 'C-xref -> Misc -> Tutorial'.
+
 ")
   (goto-char (point-min))
   (c-xref-use-local-map c-xref-help-mode-map)

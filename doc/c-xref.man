@@ -23,54 +23,25 @@ c-xref \- A cross referencing tool for C and Java.
 <project>
 .TP
 .B c-xref
-.I -html -p
-<project>
-.TP
-.B c-xref
-.I -update -html -p
-<project>
-.TP
-.TP
-.B c-xref
-<srcdir>
-.TP
-.B c-xref
-.I -html
 <srcdir>
 .SH DESCRIPTION
 C-Xref is a C and Java cross-referencing tool.
 It parses input files noting all symbol's
-definitions and usages. If not invoked with the
-.I -html
-option its output is a list of symbols, together
+definitions and usages. Its output is a list of symbols, together
 with positions of declarations, definition and all usages.
 Output is written to the file specified by the
 .I -refs
 option. C-Xref's cross references are destinated to be read by
 .I c-xref
-itself or by on-line editing macros. Programming language in which an
+itself or by on-line editing functions. The programming language in which an
 input file is written is inferred
 from file suffix as follows: .java for a Java language file, .y
 for a YACC (and C) input file, .jar for a Java archive file and finally
 all other suffixes are interpreted as C input files.
 
-When invoked with the
-.I -html
-option c-xref  does not produce the cross reference file. Instead it
-reads an existing cross reference file and then it
-converts input files into a HTML format browsable by standard Internet
-browsers. In those files each symbol is linked to its definition.
-If options '-htmlgxlist' and '-htmllxlist' is present
-then each definition is linked to a
-list of all symbol usages.
-HTML files are written in directory hierarchy
-specified by the
-.I -htmlroot
-option.
+.SH WILDCARDS
 
-.SH WILD CHARACTERS
-
-Following wild characters can be used when specifying input files: '*'
+The following wildcard characters can be used when specifying input files: '*'
 expands to any (possibly empty) string; '?' expands to any single
 character and '[...]' pair expands to one of enclosed
 characters. Ranges of characters can be included between [ and ], so
@@ -85,10 +56,8 @@ as they can considerably slow down the task.
 .SH NOTE
 C-Xref accepts many options, however except the
 .I -p
-,
-.I -update
 and
-.I -html
+.I -update
 options, it is not recommended to write them directly on the command line.
 The standard way of passing options to c-xref is configuration file named
 .I .c-xrefrc
@@ -314,11 +283,11 @@ modified files are not scheduled to be processed. Unless you
 are using also '-exactpositionresolve' option this is
 enough for most references to be correctly updated.
 .TP
-.B "\-fastupdate"
-Fast update, force update of input files. This option is like the
+.B "\-fullupdate"
+Force update of input files. This option is like the
 .I -update
 option with the difference that input files entered on command
-line are always reparsed (not depending on their modification time).
+line are always reparsed (independent of their modification time).
 .TP
 .B "\-set <name> <value>"
 The c-xref task provide a simple environment management. The -set option
@@ -350,131 +319,6 @@ can contain newline characters to separate sequence of commands.
 For more info about compile and run commands see on-line Emacs help of
 the corresponding C-Xrefactory macros.
 .TP
-.B "\-brief"
-The output of cross referencing will be in compact form, still readable by
-.I c-xref
-but rather difficult for human reader. This option is default now.
-.TP
-.B "\-no-brief"
-The output of cross referencing will contain "comment" records
-for human readers.
-.TP
-.B "\-no-enums"
-Don't cross reference enumerators.
-.TP
-.B "\-no-macros"
-Don't cross reference macros.
-.TP
-.B "\-no-types"
-Don't cross-reference user defined types.
-.TP
-.B "\-no-structs"
-Don't cross reference structure records.
-.TP
-.B "\-no-locals"
-Don't cross reference function arguments and local variables.
-.TP
-.B "\-no-classfiles"
-Don't get cross references from class files. This can decrease the size of
-your Tag file. However, because informations about class hierarchy are taken
-mainly from class files this option may causes that showed class hierarchies
-will be incomplete.
-.TP
-.B \-html
-Causes c-xref to not produce the cross reference file. Instead it reads
-a previously generated cross reference file, then it proceeds input files
-creating browsable files in the HTML format.
-.TP
-.B \-htmlroot=dir
-Write output HTML files into directory hierarchy starting by the
-.I dir.
-This option is meaningful only with combination with
-.I -html
-option.
-.TP
-.B \-d dir
-Equivalent to -htmlroot=dir.
-.TP
-.B \-htmltab=number
-When generating HTML files, set the tabulator to
-.I number.
-.TP
-.B \-htmllinenums
-When converting source files into HTML format generate
-line numbers before source code.
-.TP
-.B \-htmlnocolors
-When converting source files into HTML format do not generate
-color highlighting of keywords, commentaries and preprocessor
-directives.
-.TP
-.B \-htmlgxlist
-When converting source files into HTML format generate lists of all
-usages for each
-.I global
-symbol.
-.TP
-.B \-htmllxlist
-When converting source files into HTML format generate lists of all
-usages for each
-.I local
-symbol.
-.TP
-.B \-htmldirectx
-When converting source files into HTML format, link the first character
-of a symbol directly to its cross references.
-.TP
-.B \-htmlfunseparate
-Causes that HTML files will contain horizontal bar separating function
-definitions.
-.TP
-.B \-htmlcutpath=<path>
-This option causes that the output files from the
-.I path
-directory are not stored with full path name under -htmlroot directory.
-Rather the
-.I path
-is cut from the full file name. C-Xref accepts several '-htmlcutpath'
-options. On MS-DOS (QNX) system, the path should be an absolute path
-but without drive (node) specification.
-.TP
-.B \-htmlcutcwd
-equals '-htmlcutpath=${CWD}' cutting current working directory path
-from html paths.
-.TP
-.B \-htmlcutsourcepaths
-cut also all Java source paths defined by SOURCEPATH environment variable
-or by -sourcepath option.
-.TP
-.B \-htmlcutsuffix
-Cut language suffix from generated html file names. With this option c-xref
-will generate files Class.html instead of Class.java.html (or file.html
-instead of file.c.html for C language).
-.TP
-.B \-htmllinenumlabel=<label>
-Set the label generated before line number in html documents. For example
--htmllinenumlabel=line will generate line<n> labels compatible with
-links generated by javadoc version 1.4.
-.TP
-.B \-htmllinkcolor=<color>
-This option specifies the color in which links of the HTML document will
-appear. For example '-htmllinkcolor=black' or '-htmllinkcolor=#000000'
-causes that links will be black.
-.TP
-.B \-htmllinenumcolor=<color>
-This option specifies the color of line numbers for generated HTML.
-For example '-htmllinenumcolor=black' or '-htmllinenumcolor=#000000'
-causes that line numbers will always be black. This option is meaningful
-only in combination with -htmllinenums option.
-.TP
-.B \-htmlnounderline
-This option causes that links in the HTML document will not be underlined
-(if your browser support styles).
-.TP
-.B \-htmlgenjavadoclinks
-When generating html generate links to Javadoc documentation for symbols
-without definition reference.
-.TP
 .B \-encoding=<type>
 This option specifies international encoding of input files. Available
 values for <type>
@@ -500,28 +344,6 @@ on the URL specified by the -javadocurl option.
 The <packs> string is a list of packages separated by ':' sign. For example
 correct setting for standard jdk is: "-javadocavailable=java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming".
 See also -javadocpath, -javadocurl and -htmlgenjavadoclink options.
-.TP
-.B \-htmlzip=<command>
-This option causes that the command
-.I command
-is called after having created any HTML file. The character '!' included
-in the
-.I command
-has special meaning and is replaced by the name of the last generated
-HTML file. For example
-.I """-htmlzip=gzip -f !"""
-option causes that all
-generated HTML files will be zipped. See also '-htmllinksuffix' option.
-.TP
-.B \-htmllinksuffix=<suf>
-This option causes that whenever a hypertext link to a file xxx should be
-generated then in reality a link to the file xxx.suf is generated. This
-option is meaningful mainly with the '-htmlzip' option. For example
-the combination
-.I """-htmlzip=gzip -f !""" -htmllinksuffix=.gz
-causes
-that all generated HTML files will be compressed and the links are
-correctly generated to those compressed files.
 .TP
 .B \-optinclude file (or \-stdop file)
 This option causes that the file `\|\c
