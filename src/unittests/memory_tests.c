@@ -58,6 +58,7 @@ Ensure(Memory, will_extend_direct_memory_when_next_allocation_will_fill_up) {
     char *character = NULL;
     Memory memory;
 
+    /* NOTE: This test seems to indicate that overflow happens when there is one byte left */
     if (!setjmp(memoryResizeJumpTarget)) {
         initMemory((&memory), overflowHandler, 10);
         DM_ALLOCC((&memory), character, 9, char);

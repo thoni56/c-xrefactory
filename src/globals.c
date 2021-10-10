@@ -75,10 +75,10 @@ Completions s_completions;
 char ppmMemory[SIZE_ppmMemory];
 char mbMemory[SIZE_mbMemory];
 
-int olcxMemoryAllocatedBytes;
-
 bool s_ifEvaluation = false;     /* flag for yylex, to not filter '\n' TODO: move, duh!*/
 
+
+int olcxMemoryAllocatedBytes;
 Position s_olcxByPassPos;
 Position s_cxRefPos;
 int s_cxRefFlag=0;

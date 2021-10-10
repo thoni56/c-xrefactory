@@ -53,7 +53,7 @@ void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size) {
     memory->overflowHandler = overflowHandler;
     memory->index = 0;
     memory->size = size;
-    memory->b = 0;
+    memory->block = 0;
 }
 
 /* ************************** Overflow Handlers ************************* */
@@ -91,38 +91,39 @@ bool cxMemoryOverflowHandler(int n) {
 /* ***************************************************************** */
 
 static void trailDump(void) {
-    FreeTrail *t;
-    log_trace("*** start trailDump");
-    for(t=s_topBlock->trail; t!=NULL; t=t->next)
+    log_trace("*** begin trailDump");
+    for (FreeTrail *t=s_topBlock->trail; t!=NULL; t=t->next)
         log_trace("%p ", t);
-    log_trace("***stop trailDump");
+    log_trace("*** end trailDump");
 }
 
 
-void addToTrail(void (*a)(void*), void *p) {
+void addToTrail(void (*action)(void*), void *pointer) {
     FreeTrail *t;
     /* no trail at level 0 in C*/
     if ((nestingLevel() == 0) && (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)))
         return;
     t = StackMemoryAlloc(FreeTrail);
-    t->action = a;
-    t->p = (void **) p;
+    t->action = action;
+    t->pointer = (void **) pointer;
     t->next = s_topBlock->trail;
     s_topBlock->trail = t;
-    if (memoryTrace) trailDump();
+    if (memoryTrace)
+        trailDump();
 }
 
 void removeFromTrailUntil(FreeTrail *untilP) {
     FreeTrail *p;
-    for(p=s_topBlock->trail; untilP<p; p=p->next) {
+    for (p=s_topBlock->trail; untilP<p; p=p->next) {
         assert(p!=NULL);
-        (*(p->action))(p->p);
+        (*(p->action))(p->pointer);
     }
     if (p!=untilP) {
         error(ERR_INTERNAL, "block structure mismatch?");
     }
     s_topBlock->trail = p;
-    if (memoryTrace) trailDump();
+    if (memoryTrace)
+        trailDump();
 }
 
 static void fillTopBlock(TopBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, FreeTrail *trail, TopBlock *previousTopBlock) {

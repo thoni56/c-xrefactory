@@ -57,33 +57,28 @@
 
 */
 
-#define DM_ENOUGH_SPACE_FOR(mem,n) (mem->index+(n) < mem->size)
+#define DM_ENOUGH_SPACE_FOR(memory, bytes) (memory->index+(bytes) < memory->size)
 
-#define DM_IS_BETWEEN(mem,ppp,iii,jjj) (\
-    ((char*)ppp) >= ((char*)&mem->b) + (iii) && ((char*)ppp) < ((char*)&mem->b) + (jjj) \
+#define DM_IS_BETWEEN(memory, pointer, low, high) (\
+    ((char*)pointer) >= ((char*)&memory->block) + (low) && ((char*)pointer) < ((char*)&memory->block) + (high) \
 )
-#define DM_FREED_POINTER(mem,ppp) DM_IS_BETWEEN(mem,ppp,mem->index,mem->size)
+#define DM_FREED_POINTER(memory, pointer) DM_IS_BETWEEN(memory, pointer, memory->index, memory->size)
 
-#define DM_INIT(mem) {mem->index = 0;}
-#define DM_ALLOCC(mem,p,n,type) {                                       \
-        assert( (n) >= 0);                                              \
-        mem->index = ((char*)ALIGNMENT(((char*)&mem->b)+mem->index,STANDARD_ALIGNMENT)) - ((char*)&mem->b); \
-        if (mem->index+(n)*sizeof(type) >= mem->size) {                 \
-            if (mem->overflowHandler(n)) memoryResize();                \
-            else fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);         \
+#define DM_INIT(memory) {memory->index = 0;}
+#define DM_ALLOCC(memory, variable, count, type) {                      \
+        assert((count) >= 0);                                           \
+        memory->index = ((char*)ALIGNMENT(((char*)&memory->block)+memory->index,STANDARD_ALIGNMENT)) - ((char*)&memory->block); \
+        if (memory->index+(count)*sizeof(type) >= memory->size) {       \
+            if (memory->overflowHandler(count)) memoryResize();         \
+            else fatalError(ERR_NO_MEMORY,#memory, XREF_EXIT_ERR);      \
         }                                                               \
-        p = (type*) (((char*)&mem->b) + mem->index);                    \
-        mem->index += (n)*sizeof(type);                                 \
+        variable = (type*) (((char*)&memory->block) + memory->index);   \
+        memory->index += (count)*sizeof(type);                          \
     }
-#define DM_ALLOC(mem,p,t) {DM_ALLOCC(mem,p,1,t);}
-#define DM_REALLOCC(mem,p,n,t,oldn) {\
-    assert(((char *)(p)) + (oldn)*sizeof(t) == &mem->b + mem->i);\
-    mem->i = ((char*)p) - &mem->b;\
-    DM_ALLOCC(mem,p,n,t);\
-}
-#define DM_FREE_UNTIL(mem,p) {\
-    assert((p)>= ((char*)&mem->b) && (p)<= ((char*)&mem->b)+mem->index);\
-    mem->index = ((char*)(p)) - ((char*)&mem->b);\
+#define DM_ALLOC(memory, variable, type) {DM_ALLOCC(memory,variable,1,type);}
+#define DM_FREE_UNTIL(memory, pointer) {\
+    assert((pointer)>= ((char*)&memory->block) && (pointer)<= ((char*)&memory->block)+memory->index);\
+    memory->index = ((char*)(pointer)) - ((char*)&memory->block);\
 }
 
 /* editor allocations, for now, store it in olcxmemory */
@@ -165,15 +160,15 @@
 
 typedef struct freeTrail {
     void             (*action)(void*);
-    void             *p;
+    void             *pointer;
     struct freeTrail *next;
 } FreeTrail;
 
 typedef struct memory {
-    bool	(*overflowHandler)(int n);
+    bool	(*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
     int     index;
     int		size;
-    double  b;		//  double in order to get it properly aligned
+    double  block;		//  double in order to get it properly aligned
 } Memory;
 
 typedef struct topBlock {

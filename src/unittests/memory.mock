@@ -64,7 +64,7 @@ void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size) {
     memory->overflowHandler = overflowHandler;
     memory->index = 0;
     memory->size = size;
-    memory->b = 0;
+    memory->block = 0;
 }
 
 bool cxMemoryOverflowHandler(int n) {
