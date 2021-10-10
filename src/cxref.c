@@ -868,7 +868,7 @@ bool isSmallerOrEqClass(int inf, int sup) {
     return isSmallerOrEqClassR(inf, sup, 1) != 0;
 }
 
-#define OLCX_FREE_REFERENCE(r) {                        \
+#define OLCX_FREE_REFERENCE(r) {                              \
         REAL_MEMORY_FREE(olcxMemory, (r), sizeof(Reference)); \
     }
 

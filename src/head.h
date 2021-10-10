@@ -131,43 +131,6 @@ typedef enum language {
 #define MAX_AVAILABLE_REFACTORINGS 500
 
 /* ********************************************************************** */
-
-/* pre-processor macro definitions allocations */
-#define PP_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
-#define PP_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
-#define PP_REALLOCC(p,n,t,on)	{SM_REALLOCC(ppmMemory,p,n,t,on);}
-#define PP_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);}
-
-/* java class-file read allocations ( same memory as cpp !!!!!!!! ) */
-#define CF_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
-#define CF_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
-
-/* file table allocations */
-#define FT_ALLOC(p,t)           {SM_ALLOC(ftMemory,p,t);}
-#define FT_ALLOCC(p,n,t)        {SM_ALLOCC(ftMemory,p,n,t);}
-
-/* cross - references global symbols allocations */
-#define CX_ALLOC(p,t)           {DM_ALLOC(cxMemory,p,t);}
-#define CX_ALLOCC(p,n,t)        {DM_ALLOCC(cxMemory,p,n,t);}
-#define CX_FREE_UNTIL(p)        {DM_FREE_UNTIL(cxMemory,p);}
-
-/* options allocations */
-#define OPT_ALLOC(p,t)          {DM_ALLOC(((Memory*)&options.pendingMemory),p,t);}
-#define OPT_ALLOCC(p,n,t)       {DM_ALLOCC(((Memory*)&options.pendingMemory),p,n,t);}
-
-/* on-line dialogs allocation */
-#define OLCX_ALLOCC(p,n,t) {                                \
-        REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);       \
-        while (p==NULL) {                                   \
-            freeOldestOlcx();                               \
-            REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);   \
-        }                                                   \
-    }
-#define OLCX_ALLOC(p,t) OLCX_ALLOCC(p,1,t)
-#define OLCX_FREE(p,size) REAL_MEMORY_FREE(olcxMemory, p, size)
-
-
-/* ********************************************************************** */
 /*            common integer return values for cplex funs                 */
 
 #define RETURN_OK           0

@@ -1,5 +1,5 @@
-#ifndef MEMMAC_H_INCLUDED
-#define MEMMAC_H_INCLUDED
+#ifndef MEMORY_H_INCLUDED
+#define MEMORY_H_INCLUDED
 
 #include "stdinc.h"
 
@@ -26,30 +26,30 @@
 */
 
 #define SM_INIT(mem) {mem##Index = 0;}
-#define SM_ALLOCC(mem,p,n,t) {\
-    assert( (n) >= 0);\
-    /* memset(mem+mem##Index,0,(n)*sizeof(t)); */\
-    mem##Index = ((char*)ALIGNMENT(mem+mem##Index,STANDARD_ALIGNMENT)) - mem;\
-    if (mem##Index+(n)*sizeof(t) >= SIZE_##mem) {\
-        fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);\
-    }\
-    p = (t*) (mem + mem##Index);\
-    /* memset(p,0,(n)*sizeof(t)); / * for detecting any bug */\
-    mem##Index += (n)*sizeof(t);\
-}
+#define SM_ALLOCC(mem,p,n,t) {                                          \
+        assert( (n) >= 0);                                              \
+        /* memset(mem+mem##Index,0,(n)*sizeof(t)); */                   \
+        mem##Index = ((char*)ALIGNMENT(mem+mem##Index,STANDARD_ALIGNMENT)) - mem; \
+        if (mem##Index+(n)*sizeof(t) >= SIZE_##mem) {                   \
+            fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);              \
+        }                                                               \
+        p = (t*) (mem + mem##Index);                                    \
+        /* memset(p,0,(n)*sizeof(t)); / * for detecting any bug */      \
+        mem##Index += (n)*sizeof(t);                                    \
+    }
 #define SM_ALLOC(mem,p,t) {SM_ALLOCC(mem,p,1,t);}
-#define SM_REALLOCC(mem,p,n,t,oldn) {\
-    assert(((char *)(p)) + (oldn)*sizeof(t) == mem + mem##Index);\
-    mem##Index = ((char*)p) - mem;\
-    SM_ALLOCC(mem,p,n,t);\
+#define SM_REALLOCC(mem,p,n,t,oldn) {                                   \
+        assert(((char *)(p)) + (oldn)*sizeof(t) == mem + mem##Index);   \
+        mem##Index = ((char*)p) - mem;                                  \
+        SM_ALLOCC(mem,p,n,t);                                           \
 }
-#define SM_FREE_UNTIL(mem,p) {\
-    assert((p)>=mem && (p)<= mem+mem##Index);\
-    mem##Index = ((char*)(p))-mem;\
-}
-#define SM_FREED_POINTER(mem,ppp) (\
-    ((char*)ppp) >= mem + mem##Index && ((char*)ppp) < mem + SIZE_##mem \
-)
+#define SM_FREE_UNTIL(mem,p) {                      \
+        assert((p)>=mem && (p)<= mem+mem##Index);   \
+        mem##Index = ((char*)(p))-mem;              \
+    }
+#define SM_FREED_POINTER(mem,ppp) (                                     \
+        ((char*)ppp) >= mem + mem##Index && ((char*)ppp) < mem + SIZE_##mem \
+    )
 
 
 /**********************************************************************
@@ -59,9 +59,9 @@
 
 #define DM_ENOUGH_SPACE_FOR(memory, bytes) (memory->index+(bytes) < memory->size)
 
-#define DM_IS_BETWEEN(memory, pointer, low, high) (\
-    ((char*)pointer) >= ((char*)&memory->block) + (low) && ((char*)pointer) < ((char*)&memory->block) + (high) \
-)
+#define DM_IS_BETWEEN(memory, pointer, low, high) (                     \
+        ((char*)pointer) >= ((char*)&memory->block) + (low) && ((char*)pointer) < ((char*)&memory->block) + (high) \
+    )
 #define DM_FREED_POINTER(memory, pointer) DM_IS_BETWEEN(memory, pointer, memory->index, memory->size)
 
 #define DM_INIT(memory) {memory->index = 0;}
@@ -76,10 +76,10 @@
         memory->index += (count)*sizeof(type);                          \
     }
 #define DM_ALLOC(memory, variable, type) {DM_ALLOCC(memory,variable,1,type);}
-#define DM_FREE_UNTIL(memory, pointer) {\
-    assert((pointer)>= ((char*)&memory->block) && (pointer)<= ((char*)&memory->block)+memory->index);\
-    memory->index = ((char*)(pointer)) - ((char*)&memory->block);\
-}
+#define DM_FREE_UNTIL(memory, pointer) {                                \
+        assert((pointer)>= ((char*)&memory->block) && (pointer)<= ((char*)&memory->block)+memory->index); \
+        memory->index = ((char*)(pointer)) - ((char*)&memory->block);   \
+    }
 
 /* editor allocations, for now, store it in olcxmemory */
 #define ED_ALLOCC(p,n,t) OLCX_ALLOCC(p,n,t)
@@ -92,19 +92,57 @@
 /* This is only used for olcxMemory so "mem" is always olcxMemory... */
 #define REAL_MEMORY_INIT(mem) {mem##AllocatedBytes = 0;}
 
-#define REAL_MEMORY_SOFT_ALLOCC(memory, variable, count, type) {\
-    int n = (count) * sizeof(type);\
-    if (n+memory##AllocatedBytes > SIZE_##memory) {\
-        variable = NULL;\
-    } else {\
-        variable = (type*) malloc(n);\
-        memory##AllocatedBytes += n;\
-    }\
-}
-#define REAL_MEMORY_FREE(mem,p,nn) {\
-    mem##AllocatedBytes -= nn; /* decrement first, free after (because of nn=strlen(p)) */\
-    free(p);\
-}
+#define REAL_MEMORY_SOFT_ALLOCC(memory, variable, count, type) {    \
+        int n = (count) * sizeof(type);                             \
+        if (n+memory##AllocatedBytes > SIZE_##memory) {             \
+            variable = NULL;                                        \
+        } else {                                                    \
+            variable = (type*) malloc(n);                           \
+            memory##AllocatedBytes += n;                            \
+        }                                                           \
+    }
+#define REAL_MEMORY_FREE(mem,p,nn) {                                    \
+        /* decrement first, free after (because of nn=strlen(p)) */     \
+        mem##AllocatedBytes -= nn;                                      \
+        free(p);                                                        \
+    }
+
+
+/* ********************************************************************** */
+
+/* pre-processor macro definitions allocations */
+#define PP_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
+#define PP_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
+#define PP_REALLOCC(p,n,t,on)	{SM_REALLOCC(ppmMemory,p,n,t,on);}
+#define PP_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);}
+
+/* java class-file read allocations ( same memory as cpp !!!!!!!! ) */
+#define CF_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
+#define CF_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
+
+/* file table allocations */
+#define FT_ALLOC(p,t)           {SM_ALLOC(ftMemory,p,t);}
+#define FT_ALLOCC(p,n,t)        {SM_ALLOCC(ftMemory,p,n,t);}
+
+/* cross - references global symbols allocations */
+#define CX_ALLOC(p,t)           {DM_ALLOC(cxMemory,p,t);}
+#define CX_ALLOCC(p,n,t)        {DM_ALLOCC(cxMemory,p,n,t);}
+#define CX_FREE_UNTIL(p)        {DM_FREE_UNTIL(cxMemory,p);}
+
+/* options allocations */
+#define OPT_ALLOC(p,t)          {DM_ALLOC(((Memory*)&options.pendingMemory),p,t);}
+#define OPT_ALLOCC(p,n,t)       {DM_ALLOCC(((Memory*)&options.pendingMemory),p,n,t);}
+
+/* on-line dialogs allocation */
+#define OLCX_ALLOCC(p,n,t) {                                \
+        REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);       \
+        while (p==NULL) {                                   \
+            freeOldestOlcx();                               \
+            REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);   \
+        }                                                   \
+    }
+#define OLCX_ALLOC(p,t) OLCX_ALLOCC(p,1,t)
+#define OLCX_FREE(p,size) REAL_MEMORY_FREE(olcxMemory, p, size)
 
 
 /* ********************************************************************** */
