@@ -90,70 +90,21 @@
 /* ************* a supplementary level with free-lists ******************** */
 
 /* This is only used for olcxMemory so "mem" is always olcxMemory... */
-#define REAL_MEMORY_INIT(mem) {mem##AllocatedBytes = 0; CHECK_INIT();}
+#define REAL_MEMORY_INIT(mem) {mem##AllocatedBytes = 0;}
 
-#define REAL_MEMORY_SOFT_ALLOCC(mem,p,nn,t) {\
-    int n = (nn) * sizeof(t);\
-    if (n+mem##AllocatedBytes > SIZE_##mem) {\
-        p = NULL;\
+#define REAL_MEMORY_SOFT_ALLOCC(memory, variable, count, type) {\
+    int n = (count) * sizeof(type);\
+    if (n+memory##AllocatedBytes > SIZE_##memory) {\
+        variable = NULL;\
     } else {\
-        p = (t*) malloc(n);\
-        mem##AllocatedBytes += n;\
-        CHECK_ALLOC(p, n);\
+        variable = (type*) malloc(n);\
+        memory##AllocatedBytes += n;\
     }\
 }
 #define REAL_MEMORY_FREE(mem,p,nn) {\
-    CHECK_FREE(p, nn);\
     mem##AllocatedBytes -= nn; /* decrement first, free after (because of nn=strlen(p)) */\
     free(p);\
 }
-
-
-
-/* ********************************************************************** */
-
-/* Here are some macros that adds consistency checks to olcx-memory handling */
-
-#ifdef OLCX_MEMORY_CHECK
-#define CHECK_INIT() {s_olcx_check_arrayi=0;}
-#define CHECK_ALLOC(p, n) {\
-    if (s_olcx_check_arrayi == -1) assert(0);\
-    s_olcx_check_array[s_olcx_check_arrayi] = p;\
-    s_olcx_check_array_sizes[s_olcx_check_arrayi] = n;\
-    s_olcx_check_arrayi ++;\
-    assert(s_olcx_check_arrayi<OLCX_CHECK_ARRAY_SIZE-2);\
-}
-#define CHECK_FREE(p, nn) {\
-    int _itmpi, _nnlen;\
-    _nnlen = nn;\
-    if (nn == 0) error(ERR_INTERNAL, "Freeing chunk of size 0");\
-    for (_itmpi=0; _itmpi<s_olcx_check_arrayi; _itmpi++) {\
-        if (s_olcx_check_array[_itmpi] == p) {\
-            s_olcx_check_array[_itmpi]=NULL;\
-            if (_nnlen != s_olcx_check_array_sizes[_itmpi]) {\
-                sprintf(tmpBuff, "Cell %d allocated with size %d and freed with %d\n", _itmpi, s_olcx_check_array_sizes[_itmpi], _nnlen);\
-                fatalError(ERR_INTERNAL, tmpBuff, XREF_EXIT_ERR);\
-            }\
-            break;\
-        }\
-    }\
-    if (_itmpi==s_olcx_check_arrayi) fatalError(ERR_INTERNAL, "Freeing unallocated cell", XREF_EXIT_ERR);\
-}
-#define CHECK_FINAL() {\
-    int _itmpi;\
-    for (_itmpi=0; _itmpi<s_olcx_check_arrayi; _itmpi++) {\
-        if (s_olcx_check_array[_itmpi]!=NULL) {\
-            sprintf(tmpBuff, "unfreed cell #%d\n", _itmpi);\
-            error(ERR_INTERNAL, tmpBuff;\
-        }\
-    }\
-}
-#else
-#define CHECK_INIT() {}
-#define CHECK_ALLOC(p, n) {}
-#define CHECK_FREE(p, n) {}
-#define CHECK_FINAL() {}
-#endif
 
 
 /* ********************************************************************** */

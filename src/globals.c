@@ -12,12 +12,6 @@
 
 int s_fileAbortionEnabled;
 
-#ifdef OLCX_MEMORY_CHECK
-void *s_olcx_check_array[OLCX_CHECK_ARRAY_SIZE];
-int s_olcx_check_array_sizes[OLCX_CHECK_ARRAY_SIZE];
-int s_olcx_check_arrayi = 0;
-#endif
-
 bool s_wildcardSearch;
 int s_lastReturnedLexem;
 

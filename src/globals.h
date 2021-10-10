@@ -26,11 +26,6 @@ extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
 extern int s_fileAbortionEnabled;
 
-#ifdef OLCX_MEMORY_CHECK
-extern void *s_olcx_check_array[OLCX_CHECK_ARRAY_SIZE];
-extern int s_olcx_check_array_sizes[OLCX_CHECK_ARRAY_SIZE];
-extern int s_olcx_check_arrayi;
-#endif
 extern bool s_wildcardSearch;
 extern int s_lastReturnedLexem;
 extern Position s_spp[SPP_MAX];

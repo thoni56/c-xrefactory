@@ -2861,7 +2861,6 @@ void mainCallXref(int argc, char **argv) {
                 if (options.xref2)
                     writeRelativeProgress(10+90*inputCounter/numberOfInputs);
                 inputCounter++;
-                CHECK_FINAL();
             }
             goto regime1fini;
         }

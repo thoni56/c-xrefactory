@@ -129,7 +129,6 @@ typedef enum language {
 #define MAXIMAL_INT             ((int) (((unsigned) -2)>>1))
 
 #define MAX_AVAILABLE_REFACTORINGS 500
-#define OLCX_CHECK_ARRAY_SIZE 1000000
 
 /* ********************************************************************** */
 
