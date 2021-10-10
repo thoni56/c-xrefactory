@@ -77,18 +77,18 @@ static void fileTabDeleteOutOfMemory(FileItem *p, int i) {
     while (*hh!=NULL) {
         if (DM_FREED_POINTER(cxMemory,*hh)) {
             *hh = (*hh)->next;
-            goto contlabel;
+            goto contlabel;     /* TODO: continue? */
         }
-        hh= &(*hh)->next;
+        hh= &(*hh)->next;       /* TODO: else? */
     contlabel:;
     }
     hh = &p->inferiorClasses;
     while (*hh!=NULL) {
         if (DM_FREED_POINTER(cxMemory,*hh)) {
             *hh = (*hh)->next;
-            goto contlabel2;
+            goto contlabel2;    /* TODO: continue? */
         }
-        hh= &(*hh)->next;
+        hh= &(*hh)->next;       /* TODO: else? */
     contlabel2:;
     }
 }
