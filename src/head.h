@@ -156,13 +156,13 @@ typedef enum language {
 #define OPT_ALLOCC(p,n,t)       {DM_ALLOCC(((Memory*)&options.pendingMemory),p,n,t);}
 
 /* on-line dialogs allocation */
-#define OLCX_ALLOCC(p,n,t) {\
-    REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);\
-    while (p==NULL) {\
-        freeOldestOlcx();\
-        REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);\
-    }\
-}
+#define OLCX_ALLOCC(p,n,t) {                                \
+        REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);       \
+        while (p==NULL) {                                   \
+            freeOldestOlcx();                               \
+            REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);   \
+        }                                                   \
+    }
 #define OLCX_ALLOC(p,t) OLCX_ALLOCC(p,1,t)
 #define OLCX_FREE(p,size) REAL_MEMORY_FREE(olcxMemory, p, size)
 
