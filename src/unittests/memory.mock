@@ -59,6 +59,14 @@ void stackMemoryDump(void) {
   mock();
 }
 
+int nestingLevel(void) {
+    return mock();
+}
+
+bool memoryFromPreviousBlock(void *address) {
+    return (bool)mock(address);
+}
+
 /* Actual function (copies) down here */
 void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size) {
     memory->overflowHandler = overflowHandler;
@@ -90,7 +98,7 @@ bool cxMemoryOverflowHandler(int n) {
         initMemory(cxMemory, cxMemoryOverflowHandler, newsize);
     }
 
-    return(cxMemory!=NULL);
+    return cxMemory != NULL;
 }
 
 /* No mock, just allocate memory as requested */
@@ -98,10 +106,6 @@ void *stackMemoryAlloc(int size) {
   return (void *)malloc(size);
 }
 
-int nestingLevel(void) {
-    return mock();
-}
-
-bool memoryFromPreviousBlock(void *address) {
-    return (bool)mock(address);
+void dm_init(Memory *memory) {
+    memory->index = 0;
 }

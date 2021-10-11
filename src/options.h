@@ -157,9 +157,9 @@ typedef struct options {
     struct setGetEnv setGetEnv;
 
     // memory for strings
-    struct stringPointerList	*allAllocatedStrings;
-    struct memory			pendingMemory;
-    char					pendingFreeSpace[SIZE_opiMemory];
+    struct stringPointerList *allAllocatedStrings;
+    struct memory			 pendingMemory;
+    char					 pendingFreeSpace[SIZE_opiMemory];
 } Options;
 
 

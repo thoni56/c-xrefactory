@@ -52,7 +52,7 @@ BeforeEach(Extract) {
     options.cxMemoryFactor = 2;
     if (!cxMemoryOverflowHandler(1))
         fail_test("cxMemoryOverflowHandler() returned false");
-    DM_INIT(cxMemory);
+    dm_init(cxMemory);
 }
 AfterEach(Extract) {}
 

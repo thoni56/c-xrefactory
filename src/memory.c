@@ -214,3 +214,7 @@ bool freedPointer(void *ptr) {
     return ((char*)ptr >= memory + s_topBlock->firstFreeIndex &&
             (char*)ptr < memory + SIZE_workMemory);
 }
+
+void dm_init(Memory *memory) {
+    memory->index = 0;
+}

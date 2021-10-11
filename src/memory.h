@@ -4,6 +4,29 @@
 #include "stdinc.h"
 
 
+/* ************************ Types ******************************** */
+
+typedef struct freeTrail {
+    void             (*action)(void*);
+    void             *pointer;
+    struct freeTrail *next;
+} FreeTrail;
+
+typedef struct memory {
+    bool	(*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
+    int     index;
+    int		size;
+    double  block;		//  double in order to get it properly aligned
+} Memory;
+
+typedef struct topBlock {
+    int              firstFreeIndex;
+    int              tmpMemoryBasei;
+    struct freeTrail *trail;
+    struct topBlock  *previousTopBlock;
+} TopBlock;
+
+
 /* ******************** a simple memory handler ************************ */
 
 #define ALIGNMENT_OFF(xxx,align) (align-1-((((uintptr_t)(xxx))-1) & (align-1)))
@@ -64,7 +87,7 @@
     )
 #define DM_FREED_POINTER(memory, pointer) DM_IS_BETWEEN(memory, pointer, memory->index, memory->size)
 
-#define DM_INIT(memory) {memory->index = 0;}
+
 #define DM_ALLOCC(memory, variable, count, type) {                      \
         assert((count) >= 0);                                           \
         memory->index = ((char*)ALIGNMENT(((char*)&memory->block)+memory->index,STANDARD_ALIGNMENT)) - ((char*)&memory->block); \
@@ -108,7 +131,7 @@
     }
 
 
-/* ********************************************************************** */
+/*****************  Different types of memories ****************************** */
 
 /* pre-processor macro definitions allocations */
 #define PP_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
@@ -125,48 +148,27 @@
 #define FT_ALLOCC(p,n,t)        {SM_ALLOCC(ftMemory,p,n,t);}
 
 /* cross - references global symbols allocations */
-#define CX_ALLOC(p,t)           {DM_ALLOC(cxMemory,p,t);}
-#define CX_ALLOCC(p,n,t)        {DM_ALLOCC(cxMemory,p,n,t);}
-#define CX_FREE_UNTIL(p)        {DM_FREE_UNTIL(cxMemory,p);}
+#define CX_ALLOC(pointer, type)         {DM_ALLOC(cxMemory, pointer, type);}
+#define CX_ALLOCC(pointer, count, type) {DM_ALLOCC(cxMemory, pointer, count, type);}
+#define CX_FREE_UNTIL(pointer)          {DM_FREE_UNTIL(cxMemory, pointer);}
 
 /* options allocations */
-#define OPT_ALLOC(p,t)          {DM_ALLOC(((Memory*)&options.pendingMemory),p,t);}
-#define OPT_ALLOCC(p,n,t)       {DM_ALLOCC(((Memory*)&options.pendingMemory),p,n,t);}
+#define OPT_ALLOC(pointer, type)         {DM_ALLOC((&options.pendingMemory), pointer, type);}
+#define OPT_ALLOCC(pointer, count, type) {DM_ALLOCC((&options.pendingMemory), pointer, count, type);}
 
 /* on-line dialogs allocation */
-#define OLCX_ALLOCC(p,n,t) {                                \
-        REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);       \
-        while (p==NULL) {                                   \
-            freeOldestOlcx();                               \
-            REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);   \
-        }                                                   \
+#define OLCX_ALLOCC(pointer, count, type) {                             \
+        REAL_MEMORY_SOFT_ALLOCC(olcxMemory, pointer, count, type);      \
+        while (pointer==NULL) {                                         \
+            freeOldestOlcx();                                           \
+            REAL_MEMORY_SOFT_ALLOCC(olcxMemory, pointer, count, type);  \
+        }                                                               \
     }
-#define OLCX_ALLOC(p,t) OLCX_ALLOCC(p,1,t)
-#define OLCX_FREE(p,size) REAL_MEMORY_FREE(olcxMemory, p, size)
+#define OLCX_ALLOC(pointer, type) OLCX_ALLOCC(pointer, 1, type)
+#define OLCX_FREE(pointer, size) REAL_MEMORY_FREE(olcxMemory, pointer, size)
 
 
-/* ********************************************************************** */
-
-typedef struct freeTrail {
-    void             (*action)(void*);
-    void             *pointer;
-    struct freeTrail *next;
-} FreeTrail;
-
-typedef struct memory {
-    bool	(*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
-    int     index;
-    int		size;
-    double  block;		//  double in order to get it properly aligned
-} Memory;
-
-typedef struct topBlock {
-    int              firstFreeIndex;
-    int              tmpMemoryBasei;
-    struct freeTrail *trail;
-    struct topBlock  *previousTopBlock;
-} TopBlock;
-
+/***********************************************************************/
 
 extern Memory *cxMemory;
 extern TopBlock *s_topBlock;
@@ -175,8 +177,10 @@ extern jmp_buf memoryResizeJumpTarget;
 
 extern char tmpWorkMemory[];
 extern int tmpWorkMemoryIndex;
+
 extern char ftMemory[];
 extern int ftMemoryIndex;
+
 extern char tmpMemory[];
 
 
@@ -185,6 +189,7 @@ extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *m
 extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line));
 extern void memoryUseFunctionForError(void (*function)(int code, char *message));
 
+extern void dm_init(Memory *memory);
 extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);
 extern void memoryResize(void);
 extern bool cxMemoryOverflowHandler(int n);
