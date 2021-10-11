@@ -10,11 +10,11 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-COMMAND = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -user 1 -rfct-add-param -olcxparnum=2 "-rfct-param1=int arg" -rfct-param2=42 -olcursor=36 $(CURDIR)/test_source/hello-extracted.c
+ARGUMENTS = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -user 1 -rfct-add-param -olcxparnum=2 "-rfct-param1=int arg" -rfct-param2=42 -olcursor=36 $(CURDIR)/test_source/hello-extracted.c
 
 $(TEST): clean
 	@# First do the extract
-	$(CXREF) $(COMMAND) -log=log $(EXTRA) > output.tmp
+	$(CXREF) $(ARGUMENTS) -log=log $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp | grep -v progress > output
 	@diff -B output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
@@ -35,4 +35,5 @@ clean:
 
 debug: DEBUGGER=gdb
 debug:
-	$(DEBUGGER) --args $(CXREF) $(COMMAND)
+	echo run $(ARGUMENTS)
+	$(DEBUGGER) $(CXREF)
