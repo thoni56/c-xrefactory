@@ -79,26 +79,32 @@ char *javaCreateComposedName(char *prefix,
                              char *name,
                              char *resBuff,
                              int resBuffSize
-                             ) {
-    int len, ll, sss;
+) {
+    int len, ll;
+    bool sss;
     char *ln;
     char separator;
-    IdList *ii;
+    IdList *ids;
 
-    if (name == NULL) name = "";
-    if (prefix == NULL) prefix = "";
-    sss = 0;
+    if (name == NULL)
+        name = "";
+    if (prefix == NULL)
+        prefix = "";
+    sss = false;
     len = 0;
     ll = strlen(prefix);
-    if (ll!=0) sss=1;
+    if (ll!=0)
+        sss = true;
     len += ll;
-    for (ii=className; ii!=NULL; ii=ii->next) {
-        if (sss) len ++;
-        len += strlen(ii->fname);
-        sss = 1;
+    for (ids=className; ids!=NULL; ids=ids->next) {
+        if (sss)
+            len ++;
+        len += strlen(ids->fname);
+        sss = true;
     }
     ll = strlen(name);
-    if (sss && ll!=0) len++;
+    if (sss && ll!=0)
+        len++;
     len += ll;
     if (resBuff == NULL) {
         ln = StackMemoryAllocC(len+1, char);
@@ -109,29 +115,34 @@ char *javaCreateComposedName(char *prefix,
     ll = strlen(name);
     len -= ll;
     strcpy(ln+len,name);
-    if (ll == 0) sss = 0;
-    else sss = 1;
+    if (ll == 0)
+        sss = false;
+    else
+        sss = true;
     separator = '.';
-    for (ii=className; ii!=NULL; ii=ii->next) {
+    for (ids=className; ids!=NULL; ids=ids->next) {
         if (sss) {
             len --;
             ln[len] = separator;
         }
-        ll = strlen(ii->fname);
+        ll = strlen(ids->fname);
         len -= ll;
-        strncpy(ln+len,ii->fname,ll);
-        sss = 1;
-        assert(ii->nameType==TypeStruct || ii->nameType==TypePackage
-                || ii->nameType==TypeExpression);
-        if (ii->nameType==TypeStruct &&
-                ii->next!=NULL && ii->next->nameType==TypeStruct) {
+        strncpy(ln+len,ids->fname,ll);
+        sss = true;
+        assert(ids->nameType==TypeStruct || ids->nameType==TypePackage
+                || ids->nameType==TypeExpression);
+        if (ids->nameType==TypeStruct &&
+                ids->next!=NULL && ids->next->nameType==TypeStruct) {
             separator = '$';
         } else {
             separator = classNameSeparator;
         }
     }
     ll = strlen(prefix);
-    if (sss && ll!=0) {len --; ln[len] = separator; }
+    if (sss && ll!=0) {
+        len --;
+        ln[len] = separator;
+    }
     len -= ll;
     strncpy(ln+len, prefix, ll);
     assert(len == 0);
