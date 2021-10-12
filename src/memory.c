@@ -215,6 +215,7 @@ bool freedPointer(void *ptr) {
             (char*)ptr < memory + SIZE_workMemory);
 }
 
-void dm_init(Memory *memory) {
+void dm_init(Memory *memory, char *name) {
+    memory->name = name;
     memory->index = 0;
 }

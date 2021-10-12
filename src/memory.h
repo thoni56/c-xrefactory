@@ -13,6 +13,7 @@ typedef struct freeTrail {
 } FreeTrail;
 
 typedef struct memory {
+    char    *name;              /* String representing the name of the memory */
     bool	(*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
     int     index;
     int		size;
@@ -189,7 +190,7 @@ extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *m
 extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line));
 extern void memoryUseFunctionForError(void (*function)(int code, char *message));
 
-extern void dm_init(Memory *memory);
+extern void dm_init(Memory *memory, char *name);
 extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);
 extern void memoryResize(void);
 extern bool cxMemoryOverflowHandler(int n);

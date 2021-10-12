@@ -73,10 +73,13 @@ Ensure(Memory, will_extend_direct_memory_when_next_allocation_will_fill_up) {
     assert_that(overflowRequest, is_greater_than(0));
 }
 
-Ensure(Memory, has_functions_for_DM_macros) {
+Ensure(Memory, has_functions_that_can_replace_DM_macros) {
     Memory memory;
-    memory.index = 42;
+    Memory *variablep = NULL;
 
-    dm_init(&memory);
+    memory.index = 42;
+    dm_init(&memory, "Memory");
     assert_that(memory.index, is_equal_to(0));
+    assert_that(memory.name, is_equal_to_string("Memory"));
+
 }

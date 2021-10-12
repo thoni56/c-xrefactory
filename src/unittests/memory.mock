@@ -106,6 +106,7 @@ void *stackMemoryAlloc(int size) {
   return (void *)malloc(size);
 }
 
-void dm_init(Memory *memory) {
+void dm_init(Memory *memory, char *name) {
+    memory->name = name;
     memory->index = 0;
 }
