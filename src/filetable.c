@@ -5,15 +5,6 @@
 #include "hash.h"
 #include "memory.h"
 
-/* FILETAB:
-
-   The .tab field is an array of file items. A file "number" is an
-   index into this array. Since the file items have the filename as a
-   field, all you need to find a filename from a "number" is
-
-   <filetab>.tab[<fileno>]->name
-
- */
 
 #define HASH_FUN(elemp) hashFun(elemp->name)
 #define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->name,e2->name)==0)

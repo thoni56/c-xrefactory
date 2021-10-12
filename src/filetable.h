@@ -7,6 +7,16 @@
 #include <stdbool.h>
 
 
+/* FILETAB:
+
+   The .tab field is an array of file items. A file "number" is an
+   index into this array. Since the file items have the filename as a
+   field, all you need to find a filename from a "number" is
+
+   <filetab>.tab[<fileno>]->name
+
+ */
+
 typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     char *name;
     time_t lastModified;
