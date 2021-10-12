@@ -45,7 +45,10 @@ typedef struct topBlock {
 
 
 /**********************************************************************
-  SM = Static Memory - once allocated cannot expand
+  SM = Static Memory? - once allocated cannot expand?
+
+  Have a separate int variable called mem##Index instead of the Memory
+  struct used by DM (merge?)
 
 */
 
