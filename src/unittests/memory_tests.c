@@ -82,4 +82,8 @@ Ensure(Memory, has_functions_that_can_replace_DM_macros) {
     assert_that(memory.index, is_equal_to(0));
     assert_that(memory.name, is_equal_to_string("Memory"));
 
+    variablep = dm_allocc(&memory, 1, sizeof(*variablep));
+    assert_that(variablep, is_not_null);
+    /* TODO This assumes that alignment is initially correct */
+    assert_that(memory.index, is_equal_to(sizeof(*variablep)));
 }

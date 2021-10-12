@@ -219,3 +219,25 @@ void dm_init(Memory *memory, char *name) {
     memory->name = name;
     memory->index = 0;
 }
+
+
+static void align(Memory *memory) {
+    memory->index = ((char*)ALIGNMENT(((char*)&memory->block)+memory->index,STANDARD_ALIGNMENT)) - ((char*)&memory->block);
+}
+
+
+void *dm_allocc(Memory *memory, int count, size_t size) {
+    int previous_index;
+
+    assert(count >= 0);
+    align(memory);
+    if (memory->index+count*size >= memory->size) {
+        if (memory->overflowHandler(count))
+            memoryResize();
+        else
+            fatalError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR);
+    }
+    previous_index = memory->index;
+    memory->index += (count)*size;
+    return (void *) (((char*)&memory->block) + previous_index);
+}

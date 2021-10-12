@@ -89,6 +89,7 @@ typedef struct topBlock {
 #define DM_FREED_POINTER(memory, pointer) DM_IS_BETWEEN(memory, pointer, memory->index, memory->size)
 
 
+extern void *dm_alloc(Memory *memory, int count, size_t size);
 #define DM_ALLOCC(memory, variable, count, type) {                      \
         assert((count) >= 0);                                           \
         memory->index = ((char*)ALIGNMENT(((char*)&memory->block)+memory->index,STANDARD_ALIGNMENT)) - ((char*)&memory->block); \
@@ -191,6 +192,8 @@ extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, c
 extern void memoryUseFunctionForError(void (*function)(int code, char *message));
 
 extern void dm_init(Memory *memory, char *name);
+extern void *dm_allocc(Memory *memory, int count, size_t size);
+
 extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);
 extern void memoryResize(void);
 extern bool cxMemoryOverflowHandler(int n);
