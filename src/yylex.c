@@ -413,7 +413,7 @@ void processLineDirective(void) {
     Position position; UNUSED position;
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -608,7 +608,7 @@ void processIncludeDirective(Position *includePosition, bool is_include_next) {
     Position position; UNUSED position;
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -751,8 +751,7 @@ void processDefineDirective(bool hasArguments) {
     char **argumentNames, *argLinkName;
     int lineNumber, value, length; UNUSED lineNumber; UNUSED value; UNUSED length;
 
-    /* NOT RE-ENTRANT! */
-    /* These need to be static to survive longjmp since they are used after endOfFile */
+    /* These need to be volatile to survive longjmp since they are used after endOfFile */
     volatile int argumentCount = 0;
     volatile bool isReadingBody = false;
     volatile int macroSize = 0;
@@ -774,7 +773,7 @@ void processDefineDirective(bool hasArguments) {
 
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -978,7 +977,7 @@ static void processUndefineDirective(void) {
     UNUSED length; UNUSED value; UNUSED lineNumber;
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -1060,7 +1059,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
     int lineNumber, value, length; UNUSED length; UNUSED value;
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -1130,7 +1129,7 @@ static void processIfdefDirective(bool isIfdef) {
     UNUSED length; UNUSED value; UNUSED lineNumber;
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -1194,7 +1193,7 @@ int cexp_yylex(void) {
     UNUSED length; UNUSED value;
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -1274,7 +1273,7 @@ static void processPragmaDirective(void) {
     int value, length; UNUSED length; UNUSED value;
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -1393,7 +1392,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
     case CPP_LINE: {
         jmp_buf exceptionHandler;
 
-        switch(setjmp(exceptionHandler)) {
+        switch (setjmp(exceptionHandler)) {
         case END_OF_FILE_EXCEPTION:
             log_trace("END OF FILE exception");
             goto endOfFile;
@@ -1480,6 +1479,7 @@ static void expandMacroArgument(LexInput *argb) {
     int value;
     UNUSED value;
 
+    /* These need to be volatile to survive longjmp since they are used after endOfFile */
     volatile char *buf;
     volatile char *bcc;
     volatile int bsize;
@@ -1494,7 +1494,7 @@ static void expandMacroArgument(LexInput *argb) {
 
     /* Exceptions from getLexem... */
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -1799,6 +1799,7 @@ static void getActualMacroArgument(
     Position pos; UNUSED pos;
     int value,len; UNUSED len; UNUSED value;
 
+    /* These need to be volatile to survive longjmp since they are used after endOfFile */
     volatile Lexem lexem;
     volatile char *buf;
     volatile char *bcc;
@@ -1806,7 +1807,7 @@ static void getActualMacroArgument(
 
     /* Exceptions from getLexem... */
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -1871,7 +1872,7 @@ static struct lexInput *getActualMacroArguments(MacroBody *macroBody, Position *
 
     /* Exceptions from getLexem... */
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -1960,6 +1961,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     Position pos; UNUSED pos;
     int value,length; UNUSED length; UNUSED value;
 
+    /* These need to be volatile to survive longjmp since they are used after endOfFile */
     volatile char *previousLexemP;
     volatile char *freeBase;
 
@@ -1980,7 +1982,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
 
     /* Exceptions from getLexem... */
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -2068,6 +2070,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
     char *previousLexem, *cto;
     int value, length; UNUSED length; UNUSED value;
 
+    /* These need to be volatile to survive longjmp since they are used after endOfFile */
     volatile char *ccc;
     volatile int res;
 
@@ -2077,7 +2080,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
     res = 1;
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
@@ -2257,7 +2260,7 @@ int yylex(void) {
     int length = 0;
 
     jmp_buf exceptionHandler;
-    switch(setjmp(exceptionHandler)) {
+    switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
         log_trace("END OF FILE exception");
         goto endOfFile;
