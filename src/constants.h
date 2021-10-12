@@ -76,21 +76,14 @@
 #define MAX_ANONYMOUS_FIELDS     200
 #define MAX_APPL_OVERLOAD_FUNS	1000	/* max applicable overloaded funs */
 #define MAX_OPTION_LEN         10000
-#define MAX_NESTED_ERR_ZONES     100
 #define MAX_COMPLETIONS        10002	/* max items in completion list */
-#define MAX_NESTED_DEPTH         500	/* depth of nested structure defs. */
-#define MAX_NESTED_CPP_IF        100	/* depth of nested #if directives */
 #define MAX_INNER_CLASSES        200	/* max number of inner classes */
-#define MAX_HTML_CUT_PATHS        50
 
-#define MAX_OLCX_SUFF_SIZE		MAX_FUN_NAME_SIZE
 #define MAX_SOURCE_PATH_SIZE	MAX_OPTION_LEN
 
 /* if there are too many on-line references, they are not ordered
    alphabetically according file name. It takes too much time.
 */
-#define MAX_OL_REFERENCES_TO_SORT	500
-
 #define MAX_SET_GET_OPTIONS         50
 
 /* ************************ preprocessor constants ********************** */
@@ -136,8 +129,6 @@
 #define DEFAULT_MENU_FILTER_LEVEL FilterSameProfileRelatedClass
 #define DEFAULT_REFS_FILTER_LEVEL RFilterAll
 
-#define MAX_BUFFERED_SIZE_olcxMemory    (MAX_OLCX_SUFF_SIZE+500)
-
 #define TMP_BUFF_SIZE   50000
 
 #define EXTRACT_REFERENCE_ARG_STRING "&"
@@ -154,7 +145,6 @@
 #define MAX_TAG_SEARCH_INDENT 80          /* maximal tag search indentation with scroll */
 #define MAX_TAG_SEARCH_INDENT_RATIO 66    /* maximal tag search indentation screen ratio in % */
 
-#define HTML_DIRECTORY_SEPARATOR '/'               /* directory separator for generated HTML */
 
 /* just constants to be checked, that are data type limits              */
 /*  references are compacted (up to 22 bits) */
