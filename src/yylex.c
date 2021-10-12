@@ -408,10 +408,10 @@ void processLineDirective(void) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -603,10 +603,10 @@ void processIncludeDirective(Position *includePosition, bool is_include_next) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -768,10 +768,10 @@ void processDefineDirective(bool hasArguments) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -972,10 +972,10 @@ static void processUndefineDirective(void) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -1054,10 +1054,10 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -1124,10 +1124,10 @@ static void processIfdefDirective(bool isIfdef) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -1188,10 +1188,10 @@ int cexp_yylex(void) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -1268,10 +1268,10 @@ static void processPragmaDirective(void) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -1387,10 +1387,10 @@ static bool processPreprocessorConstruct(Lexem lexem) {
 
         switch (setjmp(exceptionHandler)) {
         case END_OF_FILE_EXCEPTION:
-            log_trace("END OF FILE exception");
+            log_trace("Exception handler: END OF FILE");
             goto endOfFile;
         case END_OF_MACRO_ARGUMENT_EXCEPTION:
-            log_trace("END OF MACRO ARGUMENT exception");
+            log_trace("Exception handler: END OF MACRO ARGUMENT");
             goto endOfMacroArgument;
         }
 
@@ -1489,7 +1489,7 @@ static void expandMacroArgument(LexInput *argb) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
         log_trace("END OF MACRO exception");
@@ -1802,10 +1802,10 @@ static void getActualMacroArgument(
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -1867,10 +1867,10 @@ static struct lexInput *getActualMacroArguments(MacroBody *macroBody, Position *
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -1977,7 +1977,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
         log_trace("END OF MACRO exception");
@@ -2075,10 +2075,10 @@ int cachedInputPass(int cpoint, char **cfrom) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
@@ -2255,10 +2255,10 @@ int yylex(void) {
     jmp_buf exceptionHandler;
     switch (setjmp(exceptionHandler)) {
     case END_OF_FILE_EXCEPTION:
-        log_trace("END OF FILE exception");
+        log_trace("Exception handler: END OF FILE");
         goto endOfFile;
     case END_OF_MACRO_ARGUMENT_EXCEPTION:
-        log_trace("END OF MACRO ARGUMENT exception");
+        log_trace("Exception handler: END OF MACRO ARGUMENT");
         goto endOfMacroArgument;
     }
 
