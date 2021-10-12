@@ -753,13 +753,13 @@ void processDefineDirective(bool hasArguments) {
 
     /* NOT RE-ENTRANT! */
     /* These need to be static to survive longjmp since they are used after endOfFile */
-    static int argumentCount = 0;
-    static bool isReadingBody = false;
-    static int macroSize = 0;
-    static char *macroName = NULL;
-    static int allocatedSize = 0;
-    static Symbol *symbol = NULL;
-    static char *body = NULL;
+    volatile int argumentCount = 0;
+    volatile bool isReadingBody = false;
+    volatile int macroSize = 0;
+    volatile char *macroName = NULL;
+    volatile int allocatedSize = 0;
+    volatile Symbol *symbol = NULL;
+    volatile char *body = NULL;
 
     //symbol=NULL;macroBody=NULL;macroName=body=NULL; // to calm compiler
 
@@ -1471,7 +1471,6 @@ static void prependMacroInput(LexInput *argb) {
 }
 
 
-/* NOTE: Non-reentrant */
 static void expandMacroArgument(LexInput *argb) {
     Symbol sd, *memb;
     char *previousLexem, *currentLexem, *tbcc;
@@ -1480,10 +1479,12 @@ static void expandMacroArgument(LexInput *argb) {
     Position position;
     int value;
     UNUSED value;
-    int bsize = MACRO_UNIT_SIZE;
 
-    static char *buf;
-    static char *bcc;
+    volatile char *buf;
+    volatile char *bcc;
+    volatile int bsize;
+
+    bsize = MACRO_UNIT_SIZE;
 
     prependMacroInput(argb);
 
@@ -1783,7 +1784,6 @@ static Lexem getLexSkippingLines(char **previousLexemP, int *lineNumberP,
     return lexem;
 }
 
-/* NOTE: Non-reentrant */
 static void getActualMacroArgument(
     char *previousLexem,
     Lexem *out_lexem,
@@ -1799,10 +1799,10 @@ static void getActualMacroArgument(
     Position pos; UNUSED pos;
     int value,len; UNUSED len; UNUSED value;
 
-    static Lexem lexem;
-    static char *buf;
-    static char *bcc;
-    static int bufsize;
+    volatile Lexem lexem;
+    volatile char *buf;
+    volatile char *bcc;
+    volatile int bufsize;
 
     /* Exceptions from getLexem... */
     jmp_buf exceptionHandler;
@@ -1960,8 +1960,8 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     Position pos; UNUSED pos;
     int value,length; UNUSED length; UNUSED value;
 
-    static char *previousLexemP;
-    static char *freeBase;
+    volatile char *previousLexemP;
+    volatile char *freeBase;
 
     macroBody = macroSymbol->u.mbody;
     if (macroBody == NULL)
@@ -2068,9 +2068,8 @@ int cachedInputPass(int cpoint, char **cfrom) {
     char *previousLexem, *cto;
     int value, length; UNUSED length; UNUSED value;
 
-    /* NOTE: Non-reentrant because of setjmp/longjmp */
-    static char *ccc;
-    static int res;
+    volatile char *ccc;
+    volatile int res;
 
     assert(cpoint > 0);
     cto = s_cache.cp[cpoint].lbcc;
