@@ -175,11 +175,15 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 
 /***********************************************************************/
 
+/* DM (Dynamic Memory) areas */
+
 extern Memory *cxMemory;
+
 extern TopBlock *s_topBlock;
 
 extern jmp_buf memoryResizeJumpTarget;
 
+/* SM (Static memory) areas */
 extern char tmpWorkMemory[];
 extern int tmpWorkMemoryIndex;
 
