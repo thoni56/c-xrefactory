@@ -10,7 +10,7 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-ARGUMENTS = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -user 1 -rfct-add-param -olcxparnum=2 "-rfct-param1=int arg" -rfct-param2=42 -olcursor=36 $(CURDIR)/test_source/hello-extracted.c
+ARGUMENTS = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -user 1 -rfct-add-param -olcxparnum=2 -rfct-param1=int\ arg -rfct-param2=42 -olcursor=36 $(CURDIR)/test_source/hello-extracted.c
 
 $(TEST): clean
 	@# First do the extract
