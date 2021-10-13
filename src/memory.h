@@ -177,11 +177,12 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 
 /* DM (Dynamic Memory) areas */
 
-extern Memory *cxMemory;
-
 extern TopBlock *s_topBlock;
 
 extern jmp_buf memoryResizeJumpTarget;
+
+extern Memory *cxMemory;
+extern int olcxMemoryAllocatedBytes;
 
 /* SM (Static memory) areas */
 extern char tmpWorkMemory[];
@@ -189,6 +190,12 @@ extern int tmpWorkMemoryIndex;
 
 extern char ftMemory[];
 extern int ftMemoryIndex;
+
+extern char ppmMemory[];
+extern int ppmMemoryIndex;
+
+extern char mbMemory[];
+extern int mbMemoryIndex;
 
 extern char tmpMemory[];
 

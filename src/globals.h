@@ -138,12 +138,6 @@ extern char *s_editCommunicationString;
 
 extern time_t s_expiration;
 
-extern char ppmMemory[SIZE_ppmMemory];
-extern int ppmMemoryIndex;
-
-extern int olcxMemoryAllocatedBytes;
-
-
 extern jmp_buf cxmemOverflow;
 
 extern char *inputFilename;
@@ -168,9 +162,6 @@ extern char *s_olstringInMbody;
 extern int s_olMacro2PassFile;
 
 /* **************** variables due to cpp **************** */
-
-extern char mbMemory[SIZE_mbMemory];
-extern int mbMemoryIndex;
 
 extern bool s_ifEvaluation;		/* flag for yylex, to not filter '\n' */
 

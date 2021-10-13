@@ -11,6 +11,7 @@
 #include "cxref.mock"
 #include "commons.mock"
 #include "fileio.mock"
+#include "memory.mock"
 #include "ppc.mock"
 
 

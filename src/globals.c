@@ -64,17 +64,9 @@ Completions s_completions;
 
 /* **************** cached symbols ********************** */
 
-char ppmMemory[SIZE_ppmMemory];
-int ppmMemoryIndex=0;
-
-char mbMemory[SIZE_mbMemory];
-int mbMemoryIndex=0;
-
-
 bool s_ifEvaluation = false;     /* flag for yylex, to not filter '\n' TODO: move, duh!*/
 
 
-int olcxMemoryAllocatedBytes;
 Position s_olcxByPassPos;
 Position s_cxRefPos;
 int s_cxRefFlag=0;

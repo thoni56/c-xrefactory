@@ -8,8 +8,10 @@ static bool memoryTrace = false;
 #define mem_trace(...)  { if (memoryTrace) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__); }
 
 
-Memory *cxMemory=NULL;
 TopBlock *s_topBlock;
+
+Memory *cxMemory=NULL;
+int olcxMemoryAllocatedBytes;
 
 jmp_buf memoryResizeJumpTarget;
 
@@ -23,6 +25,13 @@ char ftMemory[SIZE_ftMemory];
 int ftMemoryIndex = 0;
 
 char tmpMemory[SIZE_TMP_MEM];
+
+char ppmMemory[SIZE_ppmMemory];
+int ppmMemoryIndex=0;
+
+char mbMemory[SIZE_mbMemory];
+int mbMemoryIndex=0;
+
 
 
 /* Inject the function to call when fatalErrors occur */

@@ -26,11 +26,6 @@ int s_progressFactor=1;
 
 Position s_staticPrefixStartPosition;
 
-char mbMemory[SIZE_mbMemory];
-int mbMemoryIndex=0;
-char ppmMemory[SIZE_ppmMemory];
-int ppmMemoryIndex=0;
-int olcxMemoryAllocatedBytes;
 jmp_buf cxmemOverflow;
 
 S_currentlyParsedCl s_cp;
