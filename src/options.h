@@ -158,8 +158,8 @@ typedef struct options {
 
     // memory for strings
     struct stringPointerList *allAllocatedStrings;
-    struct memory			 pendingMemory;
-    char					 pendingFreeSpace[SIZE_opiMemory];
+    struct memory			 pendingMemory; /* TODO: WTF: this structs last field is used to overrun... */
+    char					 pendingFreeSpace[SIZE_opiMemory]; /* ... into this area! */
 } Options;
 
 

@@ -52,31 +52,28 @@ typedef struct topBlock {
 
 */
 
-#define SM_INIT(mem) {mem##Index = 0;}
-#define SM_ALLOCC(mem,p,n,t) {                                          \
-        assert( (n) >= 0);                                              \
+#define SM_INIT(memory) {memory##Index = 0;}
+#define SM_ALLOCC(memory, pointer, count, type) {                       \
+        assert( (count) >= 0);                                          \
         /* memset(mem+mem##Index,0,(n)*sizeof(t)); */                   \
-        mem##Index = ((char*)ALIGNMENT(mem+mem##Index,STANDARD_ALIGNMENT)) - mem; \
-        if (mem##Index+(n)*sizeof(t) >= SIZE_##mem) {                   \
-            fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);              \
+        memory##Index = ((char*)ALIGNMENT(memory+memory##Index,STANDARD_ALIGNMENT)) - memory; \
+        if (memory##Index+(count)*sizeof(type) >= SIZE_##memory) {      \
+            fatalError(ERR_NO_MEMORY,#memory, XREF_EXIT_ERR);           \
         }                                                               \
-        p = (t*) (mem + mem##Index);                                    \
+        pointer = (type*) (memory + memory##Index);                     \
         /* memset(p,0,(n)*sizeof(t)); / * for detecting any bug */      \
-        mem##Index += (n)*sizeof(t);                                    \
+        memory##Index += (count)*sizeof(type);                          \
     }
-#define SM_ALLOC(mem,p,t) {SM_ALLOCC(mem,p,1,t);}
-#define SM_REALLOCC(mem,p,n,t,oldn) {                                   \
-        assert(((char *)(p)) + (oldn)*sizeof(t) == mem + mem##Index);   \
-        mem##Index = ((char*)p) - mem;                                  \
-        SM_ALLOCC(mem,p,n,t);                                           \
-}
-#define SM_FREE_UNTIL(mem,p) {                      \
-        assert((p)>=mem && (p)<= mem+mem##Index);   \
-        mem##Index = ((char*)(p))-mem;              \
+#define SM_ALLOC(memory, pointer, type) {SM_ALLOCC(memory,pointer,1,type);}
+#define SM_REALLOCC(memory, pointer, count, type, oldSize) {            \
+        assert(((char *)(pointer)) + (oldSize)*sizeof(type) == memory + memory##Index); \
+        memory##Index = ((char*)pointer) - memory;                      \
+        SM_ALLOCC(memory,pointer,count,type);                           \
     }
-#define SM_FREED_POINTER(mem,ppp) (                                     \
-        ((char*)ppp) >= mem + mem##Index && ((char*)ppp) < mem + SIZE_##mem \
-    )
+#define SM_FREE_UNTIL(memory, pointer) {                                \
+        assert((pointer)>=memory && (pointer)<= memory+memory##Index);  \
+        memory##Index = ((char*)(pointer))-memory;                      \
+    }
 
 
 /**********************************************************************
@@ -91,58 +88,35 @@ typedef struct topBlock {
     )
 #define DM_FREED_POINTER(memory, pointer) DM_IS_BETWEEN(memory, pointer, memory->index, memory->size)
 
-
-extern void *dm_alloc(Memory *memory, int count, size_t size);
 #define DM_ALLOCC(memory, variable, count, type) {                      \
         assert((count) >= 0);                                           \
         memory->index = ((char*)ALIGNMENT(((char*)&memory->block)+memory->index,STANDARD_ALIGNMENT)) - ((char*)&memory->block); \
         if (memory->index+(count)*sizeof(type) >= memory->size) {       \
-            if (memory->overflowHandler(count)) memoryResize();         \
+            if (memory->overflowHandler(count)) memoryResized();         \
             else fatalError(ERR_NO_MEMORY,#memory, XREF_EXIT_ERR);      \
         }                                                               \
         variable = (type*) (((char*)&memory->block) + memory->index);   \
         memory->index += (count)*sizeof(type);                          \
     }
+extern void *dm_alloc(Memory *memory, int count, size_t size);
 #define DM_ALLOC(memory, variable, type) {DM_ALLOCC(memory,variable,1,type);}
 #define DM_FREE_UNTIL(memory, pointer) {                                \
         assert((pointer)>= ((char*)&memory->block) && (pointer)<= ((char*)&memory->block)+memory->index); \
         memory->index = ((char*)(pointer)) - ((char*)&memory->block);   \
     }
 
-/* editor allocations, for now, store it in olcxmemory */
-#define ED_ALLOCC(p,n,t) OLCX_ALLOCC(p,n,t)
-#define ED_ALLOC(p,t) ED_ALLOCC(p,1,t)
-#define ED_FREE(p,size) OLCX_FREE(p,size)
 
+/*****************  Memories for various uses ****************************** */
 
-/* ************* a supplementary level with free-lists ******************** */
-
-/* This is only used for olcxMemory so "mem" is always olcxMemory... */
-#define REAL_MEMORY_INIT(mem) {mem##AllocatedBytes = 0;}
-
-#define REAL_MEMORY_SOFT_ALLOCC(memory, variable, count, type) {    \
-        int n = (count) * sizeof(type);                             \
-        if (n+memory##AllocatedBytes > SIZE_##memory) {             \
-            variable = NULL;                                        \
-        } else {                                                    \
-            variable = (type*) malloc(n);                           \
-            memory##AllocatedBytes += n;                            \
-        }                                                           \
-    }
-#define REAL_MEMORY_FREE(mem,p,nn) {                                    \
-        /* decrement first, free after (because of nn=strlen(p)) */     \
-        mem##AllocatedBytes -= nn;                                      \
-        free(p);                                                        \
-    }
-
-
-/*****************  Different types of memories ****************************** */
 
 /* pre-processor macro definitions allocations */
 #define PP_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
 #define PP_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
 #define PP_REALLOCC(p,n,t,on)	{SM_REALLOCC(ppmMemory,p,n,t,on);}
 #define PP_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);}
+#define PP_FREED_POINTER(pointer) (                                     \
+        ((char*)pointer) >= ppmMemory + ppmMemoryIndex && ((char*)pointer) < ppmMemory + SIZE_ppmMemory \
+    )
 
 /* java class-file read allocations ( same memory as cpp !!!!!!!! ) */
 #define CF_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
@@ -152,25 +126,55 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 #define FT_ALLOC(p,t)           {SM_ALLOC(ftMemory,p,t);}
 #define FT_ALLOCC(p,n,t)        {SM_ALLOCC(ftMemory,p,n,t);}
 
+/* macro bodies */
+#define MB_INIT()				{SM_INIT(mbMemory);}
+#define MB_ALLOCC(p,n,t)        {SM_ALLOCC(mbMemory,p,n,t);}
+#define MB_REALLOCC(p,n,t,on)	{SM_REALLOCC(mbMemory,p,n,t,on);}
+#define MB_FREE_UNTIL(p)        {SM_FREE_UNTIL(mbMemory,p);}
+
+
 /* cross - references global symbols allocations */
 #define CX_ALLOC(pointer, type)         {DM_ALLOC(cxMemory, pointer, type);}
 #define CX_ALLOCC(pointer, count, type) {DM_ALLOCC(cxMemory, pointer, count, type);}
 #define CX_FREE_UNTIL(pointer)          {DM_FREE_UNTIL(cxMemory, pointer);}
+#define CX_FREED_POINTER(pointer)       DM_FREED_POINTER(cxMemory, pointer)
 
 /* options allocations */
 #define OPT_ALLOC(pointer, type)         {DM_ALLOC((&options.pendingMemory), pointer, type);}
 #define OPT_ALLOCC(pointer, count, type) {DM_ALLOCC((&options.pendingMemory), pointer, count, type);}
 
+
 /* on-line dialogs allocation */
+#define OLCX_MEMORY_INIT() {olcxMemoryAllocatedBytes = 0;}
+
+#define OLCX_MEMORY_SOFT_ALLOCC(variable, count, type) {               \
+        int size = (count) * sizeof(type);                             \
+        if (size+olcxMemoryAllocatedBytes > SIZE_olcxMemory) {         \
+            variable = NULL;                                           \
+        } else {                                                       \
+            variable = (type*) malloc(size);                           \
+            olcxMemoryAllocatedBytes += size;                          \
+        }                                                              \
+    }
+#define OLCX_MEMORY_FREE(pointer, size) {                               \
+        olcxMemoryAllocatedBytes -= size;                               \
+        free(pointer);                                                  \
+    }
 #define OLCX_ALLOCC(pointer, count, type) {                             \
-        REAL_MEMORY_SOFT_ALLOCC(olcxMemory, pointer, count, type);      \
+        OLCX_MEMORY_SOFT_ALLOCC(pointer, count, type);                  \
         while (pointer==NULL) {                                         \
             freeOldestOlcx();                                           \
-            REAL_MEMORY_SOFT_ALLOCC(olcxMemory, pointer, count, type);  \
+            OLCX_MEMORY_SOFT_ALLOCC(pointer, count, type);              \
         }                                                               \
     }
 #define OLCX_ALLOC(pointer, type) OLCX_ALLOCC(pointer, 1, type)
-#define OLCX_FREE(pointer, size) REAL_MEMORY_FREE(olcxMemory, pointer, size)
+#define OLCX_FREE(pointer, size) OLCX_MEMORY_FREE(pointer, size)
+
+
+/* editor allocations, for now, store it in olcxmemory */
+#define ED_ALLOCC(p,n,t) OLCX_ALLOCC(p,n,t)
+#define ED_ALLOC(p,t) ED_ALLOCC(p,1,t)
+#define ED_FREE(p,size) OLCX_FREE(p,size)
 
 
 /***********************************************************************/
@@ -209,7 +213,7 @@ extern void dm_init(Memory *memory, char *name);
 extern void *dm_allocc(Memory *memory, int count, size_t size);
 
 extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);
-extern void memoryResize(void);
+extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
 
 extern void addToTrail (void (*action)(void*),  void *p);

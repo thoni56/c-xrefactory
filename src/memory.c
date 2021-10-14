@@ -54,7 +54,7 @@ void memoryUseFunctionForError(void (*function)(int code, char *message)) {
 
 
 /* With this as a separate function it is possible to catch memory resize longjmps */
-void memoryResize(void) {
+void memoryResized(void) {
     longjmp(memoryResizeJumpTarget,1);
 }
 
@@ -242,7 +242,7 @@ void *dm_allocc(Memory *memory, int count, size_t size) {
     align(memory);
     if (memory->index+count*size >= memory->size) {
         if (memory->overflowHandler(count))
-            memoryResize();
+            memoryResized();
         else
             fatalError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR);
     }

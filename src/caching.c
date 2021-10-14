@@ -44,7 +44,7 @@ bool checkFileModifiedTime(int fileIndex) {
 
 static void deleteReferencesOutOfMemory(Reference **rr) {
     while (*rr!=NULL) {
-        if (DM_FREED_POINTER(cxMemory,*rr)) {
+        if (CX_FREED_POINTER(*rr)) {
             log_trace("deleting reference on %s:%d", fileTable.tab[(*rr)->p.file]->name, (*rr)->p.line);
             *rr = (*rr)->next;
             continue;
@@ -58,7 +58,7 @@ static void cxrefTabDeleteOutOfMemory(int i) {
 
     pp = &referenceTable.tab[i];
     while (*pp!=NULL) {
-        if (DM_FREED_POINTER(cxMemory, *pp)) {
+        if (CX_FREED_POINTER(*pp)) {
             /* out of memory, delete it */
             log_trace("deleting all references on %s", (*pp)->name);
             *pp = (*pp)->next;  /* Unlink it and look at next */
@@ -75,7 +75,7 @@ static void fileTabDeleteOutOfMemory(FileItem *p, int i) {
     ClassHierarchyReference **hh;
     hh = &p->superClasses;
     while (*hh!=NULL) {
-        if (DM_FREED_POINTER(cxMemory,*hh)) {
+        if (CX_FREED_POINTER(*hh)) {
             *hh = (*hh)->next;
             goto contlabel;     /* TODO: continue? */
         }
@@ -84,7 +84,7 @@ static void fileTabDeleteOutOfMemory(FileItem *p, int i) {
     }
     hh = &p->inferiorClasses;
     while (*hh!=NULL) {
-        if (DM_FREED_POINTER(cxMemory,*hh)) {
+        if (CX_FREED_POINTER(*hh)) {
             *hh = (*hh)->next;
             goto contlabel2;    /* TODO: continue? */
         }
@@ -97,22 +97,22 @@ static void structCachingFree(Symbol *symbol) {
     SymbolList **superList;
     assert(symbol->u.s);
     if (freedPointer(symbol->u.s->records) ||
-        SM_FREED_POINTER(ppmMemory,symbol->u.s->records)) {
+        PP_FREED_POINTER(symbol->u.s->records)) {
         symbol->u.s->records = NULL;
     }
     if (freedPointer(symbol->u.s->casts.node) ||
-        SM_FREED_POINTER(ppmMemory,symbol->u.s->casts.node)) {
+        PP_FREED_POINTER(symbol->u.s->casts.node)) {
         symbol->u.s->casts.node = NULL;
     }
     if (freedPointer(symbol->u.s->casts.sub) ||
-        SM_FREED_POINTER(ppmMemory,symbol->u.s->casts.sub)) {
+        PP_FREED_POINTER(symbol->u.s->casts.sub)) {
         symbol->u.s->casts.sub = NULL;
     }
 
     superList = &symbol->u.s->super;
     while (*superList!=NULL) {
         if (freedPointer(*superList) ||
-            SM_FREED_POINTER(ppmMemory,*superList)) {
+            PP_FREED_POINTER(*superList)) {
             *superList = (*superList)->next;
             goto contlabel;
         }
@@ -127,14 +127,14 @@ static void symbolTableDeleteOutOfMemory(int i) {
     while (*pp!=NULL) {
         switch ((*pp)->bits.symbolType) {
         case TypeMacro:
-            if (SM_FREED_POINTER(ppmMemory,*pp)) {
+            if (PP_FREED_POINTER(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             }
             break;
         case TypeStruct:
         case TypeUnion:
-            if (freedPointer(*pp) || SM_FREED_POINTER(ppmMemory,*pp)) {
+            if (freedPointer(*pp) || PP_FREED_POINTER(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             } else {
@@ -164,11 +164,11 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
     SymbolList **pp;
     pp = &javaFqtTable.tab[i];
     while (*pp!=NULL) {
-        if (SM_FREED_POINTER(ppmMemory,*pp)) {
+        if (PP_FREED_POINTER(*pp)) {
             *pp = (*pp)->next;
             continue;
         } else if (freedPointer((*pp)->d)
-                   || SM_FREED_POINTER(ppmMemory,(*pp)->d)) {
+                   || PP_FREED_POINTER((*pp)->d)) {
             *pp = (*pp)->next;
             continue;
         } else {
@@ -190,7 +190,7 @@ static void includeListDeleteOutOfMemory(void) {
     StringList **pp;
     pp = & options.includeDirs;
     while (*pp!=NULL) {
-        if (SM_FREED_POINTER(ppmMemory,*pp)) {
+        if (PP_FREED_POINTER(*pp)) {
             *pp = (*pp)->next;
             continue;
         }

@@ -58,13 +58,6 @@ static void setYylvalsForInteger(int val, Position position, int length) {
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
 
 
-#define MB_INIT()				{SM_INIT(mbMemory);}
-#define MB_ALLOC(p,t)           {SM_ALLOC(mbMemory,p,t);}
-#define MB_ALLOCC(p,n,t)        {SM_ALLOCC(mbMemory,p,n,t);}
-#define MB_REALLOCC(p,n,t,on)	{SM_REALLOCC(mbMemory,p,n,t,on);}
-#define MB_FREE_UNTIL(p)        {SM_FREE_UNTIL(mbMemory,p);}
-
-
 /* Exceptions: */
 #define END_OF_MACRO_ARGUMENT_EXCEPTION -1
 #define END_OF_FILE_EXCEPTION -2
@@ -74,8 +67,8 @@ int macroStackIndex=0;
 
 static char ppMemory[SIZE_ppMemory];
 static int ppMemoryIndex=0;
-static LexInput macroStack[MACRO_STACK_SIZE];
 
+static LexInput macroStack[MACRO_STACK_SIZE];
 
 
 
@@ -90,7 +83,7 @@ static bool expandMacroCall(Symbol *mdef, Position *mpos);
 /* ************************************************************ */
 
 void initAllInputs(void) {
-    mbMemoryIndex=0;
+    MB_INIT();
     includeStackPointer=0;
     macroStackIndex=0;
     s_ifEvaluation = 0;
@@ -434,7 +427,7 @@ void processLineDirective(void) {
     return;
 
 endOfMacroArgument:
-	assert(0);
+    assert(0);
 endOfFile:
     return;
 }
@@ -1175,7 +1168,7 @@ static void processIfdefDirective(bool isIfdef) {
     execCppIf(deleteSrc);
     return;
 endOfMacroArgument:
-	assert(0);
+    assert(0);
 endOfFile:
     return;
 }
@@ -1249,7 +1242,7 @@ int cexp_yylex(void) {
     }
     return lexem;
 endOfMacroArgument:
-	assert(0);
+    assert(0);
 endOfFile:
     return 0;
 }

@@ -869,7 +869,7 @@ bool isSmallerOrEqClass(int inf, int sup) {
 }
 
 #define OLCX_FREE_REFERENCE(r) {                              \
-        REAL_MEMORY_FREE(olcxMemory, (r), sizeof(Reference)); \
+        OLCX_MEMORY_FREE((r), sizeof(Reference)); \
     }
 
 
@@ -884,15 +884,15 @@ void olcxFreeReferences(Reference *r) {
 
 static void olcxFreeCompletion(S_olCompletion *r) {
     int nlen;
-    REAL_MEMORY_FREE(olcxMemory, r->name, strlen(r->name)+1);
-    if (r->fullName!=NULL) REAL_MEMORY_FREE(olcxMemory, r->fullName, strlen(r->fullName)+1);
-    if (r->vclass!=NULL) REAL_MEMORY_FREE(olcxMemory, r->vclass, strlen(r->vclass)+1);
+    OLCX_MEMORY_FREE(r->name, strlen(r->name)+1);
+    if (r->fullName!=NULL) OLCX_MEMORY_FREE(r->fullName, strlen(r->fullName)+1);
+    if (r->vclass!=NULL) OLCX_MEMORY_FREE(r->vclass, strlen(r->vclass)+1);
     if (r->category == CategoryGlobal) {
         assert(r->sym.name);
         nlen = strlen(r->sym.name);
-        REAL_MEMORY_FREE(olcxMemory, r->sym.name, nlen+1);
+        OLCX_MEMORY_FREE(r->sym.name, nlen+1);
     }
-    REAL_MEMORY_FREE(olcxMemory, r, sizeof(S_olCompletion));
+    OLCX_MEMORY_FREE(r, sizeof(S_olCompletion));
 }
 
 
@@ -946,7 +946,7 @@ static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
         stack->root = refs->previous;
     }
     *rrefs = refs->previous;
-    REAL_MEMORY_FREE(olcxMemory, refs, sizeof(OlcxReferences));
+    OLCX_MEMORY_FREE(refs, sizeof(OlcxReferences));
 }
 
 #define CHECK_AND_SET_OLDEST(stack) {                                   \
@@ -1004,15 +1004,15 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
 void olcxInit(void) {
     void *uu[OLCX_USER_RESERVE];
 
-    REAL_MEMORY_INIT(olcxMemory);
-    REAL_MEMORY_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, UserOlcxData *);
+    OLCX_MEMORY_INIT();
+    OLCX_MEMORY_SOFT_ALLOCC(s_olcxTab.tab, OLCX_TAB_SIZE, UserOlcxData *);
     //CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
     olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);
     /* reserve place for some users */
     for (int i=0; i<OLCX_USER_RESERVE; i++)
         OLCX_ALLOC(uu[i], UserOlcxData);
     for (int i=0; i<OLCX_USER_RESERVE; i++)
-        REAL_MEMORY_FREE(olcxMemory, uu[i], sizeof(UserOlcxData));
+        OLCX_MEMORY_FREE(uu[i], sizeof(UserOlcxData));
 }
 
 
