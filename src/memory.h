@@ -6,26 +6,30 @@
 
 /* ************************ Types ******************************** */
 
-typedef struct freeTrail {
-    void             (*action)(void*);
-    void             *pointer;
-    struct freeTrail *next;
-} FreeTrail;
-
 typedef struct memory {
     char    *name;              /* String representing the name of the memory */
     bool	(*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
     int     index;
     int		size;
     double  block;		//  double in order to get it properly aligned
+    /* WTF: TODO It seems like the actual area is in the array *after*
+     * this struct, so it overruns into the memory after, this won't
+     * work in all compilers (re-arranging declarations) or
+     * architectures... */
 } Memory;
 
-typedef struct topBlock {
+typedef struct freeTrail {
+    void             (*action)(void*);
+    void             *pointer;
+    struct freeTrail *next;
+} FreeTrail;
+
+typedef struct codeBlock {
     int              firstFreeIndex;
     int              tmpMemoryBaseIndex;
     struct freeTrail *trail;
-    struct topBlock  *previousTopBlock;
-} TopBlock;
+    struct codeBlock *outerBlock;
+} CodeBlock;
 
 
 /* ******************** a simple memory handler ************************ */
@@ -181,7 +185,7 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 
 /* DM (Dynamic Memory) areas */
 
-extern TopBlock *s_topBlock;
+extern CodeBlock *s_topBlock;
 
 extern jmp_buf memoryResizeJumpTarget;
 
@@ -218,14 +222,15 @@ extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size)
 extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
 
-extern void addToTrail (void (*action)(void*),  void *p);
+extern void addToTrail(void (*action)(void*), void *p);
 extern void removeFromTrailUntil(FreeTrail *untilP);
 
 extern void stackMemoryInit(void);
 extern void *stackMemoryAlloc(int size);
 extern char *stackMemoryPushString(char *s);
-extern void stackMemoryBlockStart(void);
-extern void stackMemoryBlockEnd(void);
+
+extern void beginBlock(void);
+extern void endBlock(void);
 extern int nestingLevel(void);
 
 extern bool isMemoryFromPreviousBlock(void *ppp);

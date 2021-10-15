@@ -758,13 +758,14 @@ void javaReadSymbolsFromSourceFile(char *fname) {
 
     fileIndex = addFileTabItem(fname);
     memBalance = s_topBlock->firstFreeIndex;
-    stackMemoryBlockStart();
+    beginBlock();
     typeTab = StackMemoryAlloc(JslTypeTab);
     javaReadSymbolFromSourceFileInit(fileIndex, typeTab);
     jslTypeTabInit(typeTab, MAX_JSL_SYMBOLS);
     javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
     // there may be several unbalanced blocks
-    while (memBalance < s_topBlock->firstFreeIndex) stackMemoryBlockEnd();
+    while (memBalance < s_topBlock->firstFreeIndex)
+        endBlock();
     javaReadSymbolFromSourceFileEnd();
 }
 
@@ -2592,7 +2593,8 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
     }
     res = s_topBlock->trail;
     classf = dd->u.s->classFile;
-    if (classf == -1) classf = noFileIndex;
+    if (classf == -1)
+        classf = noFileIndex;
     fillJavaStat(s_javaStat,p,&dd->u.s->stype,dd,0, oldStat->currentPackage,
                   oldStat->unnamedPackagePath, oldStat->namedPackagePath,
                   locals, oldStat->lastParsedName,AccessDefault,s_cp,classf,oldStat);

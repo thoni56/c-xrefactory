@@ -4533,7 +4533,7 @@ case 176:
                         mh=javaMethodHeader(yyvsp[-2].ast_unsigned.d, &s_errorSymbol, args, StorageConstructor);
                         /* TODO! Merge this with 'javaMethodBodyBeginning'!*/
                         assert(mh->u.type && mh->u.type->kind == TypeFunction);
-                        stackMemoryBlockStart();  /* in order to remove arguments*/
+                        beginBlock();  /* in order to remove arguments*/
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
                         generateInternalLabelReference(-1, UsageDefined);
@@ -4557,7 +4557,7 @@ case 177:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                     PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_unsigned, yyvsp[-1].ast_position);
                     if (yyval.ast_position.b.file == noFileIndex)
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_symbol, yyval.ast_position);
@@ -5406,7 +5406,7 @@ case 309:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockStart();
+                    beginBlock();
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
@@ -5466,7 +5466,7 @@ case 313:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
@@ -5478,7 +5478,7 @@ case 314:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 } else {
                     SetNullBoundariesFor(yyval.ast_position);
                 }
@@ -5490,7 +5490,7 @@ case 315:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
@@ -5502,7 +5502,7 @@ case 316:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 } else {
                     SetNullBoundariesFor(yyval.ast_position);
                 }
@@ -7207,7 +7207,7 @@ case 483:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockStart();
+                    beginBlock();
                 }
             }
         }
@@ -7217,7 +7217,7 @@ case 484:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 }
             }
         }

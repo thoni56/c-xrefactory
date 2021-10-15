@@ -1879,7 +1879,7 @@ external_definition
         // the function, if yes and is declared static, make it static!
         addNewSymbolDef($2.d, StorageExtern, symbolTable, UsageDefined);
         tmpWorkMemoryIndex = $1.d;
-        stackMemoryBlockStart();
+        beginBlock();
         counters.localVar = 0;
         assert($2.d->u.type && $2.d->u.type->kind == TypeFunction);
         s_cp.function = $2.d;
@@ -1890,7 +1890,7 @@ external_definition
             addFunctionParameterToSymTable($2.d, p, i, symbolTable);
         }
     } compound_statement {
-        stackMemoryBlockEnd();
+        endBlock();
         s_cp.function = NULL;
     }
     | Sv_tmp EXTERN STRING_LITERAL  external_definition {
@@ -1986,10 +1986,10 @@ function_head_declaration
     ;
 
 
-Start_block:    { stackMemoryBlockStart(); }
+Start_block:    { beginBlock(); }
     ;
 
-End_block:     { stackMemoryBlockEnd(); }
+End_block:     { endBlock(); }
     ;
 
 identifier

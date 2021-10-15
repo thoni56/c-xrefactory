@@ -1285,14 +1285,14 @@ void extractActionOnBlockMarker(void) {
     Position pos;
     if (s_cps.cxMemoryIndexAtBlockBegin == 0) {
         s_cps.cxMemoryIndexAtBlockBegin = cxMemory->index;
-        s_cps.workMemoryIndexAtBlockBegin = s_topBlock->previousTopBlock;
+        s_cps.workMemoryIndexAtBlockBegin = s_topBlock->outerBlock;
         if (LANGUAGE(LANG_JAVA)) {
             s_javaExtractFromFunctionMods = s_javaStat->methodModifiers;
         }
     } else {
         assert(s_cps.cxMemoryIndexAtBlockEnd == 0);
         s_cps.cxMemoryIndexAtBlockEnd = cxMemory->index;
-        s_cps.workMemiAtBlockEnd = s_topBlock->previousTopBlock;
+        s_cps.workMemiAtBlockEnd = s_topBlock->outerBlock;
     }
     fillPosition(&pos, currentFile.lexBuffer.buffer.fileNumber, 0, 0);
     addTrivialCxReference("Block", TypeBlockMarker,StorageDefault, &pos, UsageUsed);

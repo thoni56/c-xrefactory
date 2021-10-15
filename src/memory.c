@@ -8,7 +8,7 @@ static bool memoryTrace = false;
 #define mem_trace(...)  { if (memoryTrace) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__); }
 
 
-TopBlock *s_topBlock;
+CodeBlock *s_topBlock;
 
 Memory *cxMemory=NULL;
 int olcxMemoryAllocatedBytes;
@@ -109,7 +109,7 @@ static void trailDump(void) {
 
 void addToTrail(void (*action)(void*), void *pointer) {
     FreeTrail *t;
-    /* no trail at level 0 in C*/
+    /* no trail at level 0 in C */
     if ((nestingLevel() == 0) && (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)))
         return;
     t = StackMemoryAlloc(FreeTrail);
@@ -135,16 +135,16 @@ void removeFromTrailUntil(FreeTrail *untilP) {
         trailDump();
 }
 
-static void fillTopBlock(TopBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, FreeTrail *trail, TopBlock *previousTopBlock) {
+static void fillTopBlock(CodeBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, FreeTrail *trail, CodeBlock *previousTopBlock) {
     topBlock->firstFreeIndex = firstFreeIndex;
     topBlock->tmpMemoryBaseIndex = tmpMemoryBasei;
     topBlock->trail = trail;
-    topBlock->previousTopBlock = previousTopBlock;
+    topBlock->outerBlock = previousTopBlock;
 }
 
 void stackMemoryInit(void) {
-    s_topBlock = (TopBlock *) workMemory;
-    fillTopBlock(s_topBlock, sizeof(TopBlock), 0, NULL, NULL);
+    s_topBlock = (CodeBlock *) workMemory;
+    fillTopBlock(s_topBlock, sizeof(CodeBlock), 0, NULL, NULL);
 }
 
 void *stackMemoryAlloc(int size) {
@@ -175,25 +175,25 @@ char *stackMemoryPushString(char *s) {
     return((char*)stackMemoryPush(s, strlen(s)+1));
 }
 
-void stackMemoryBlockStart(void) {
-    TopBlock *p,top;
-    log_trace("start block");
+void beginBlock(void) {
+    CodeBlock *p, top;
+    log_trace("Start block");
     top = *s_topBlock;
-    p = stackMemoryPush(&top, sizeof(TopBlock));
+    p = stackMemoryPush(&top, sizeof(CodeBlock));
     // trail can't be reset to NULL, because in case of syntax errors
     // this would avoid balancing of } at the end of class
     fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryIndex, s_topBlock->trail, p);
 }
 
-void stackMemoryBlockEnd(void) {
+void endBlock(void) {
     log_trace("finish block");
     //&removeFromTrailUntil(NULL);
-    assert(s_topBlock && s_topBlock->previousTopBlock);
-    removeFromTrailUntil(s_topBlock->previousTopBlock->trail);
+    assert(s_topBlock && s_topBlock->outerBlock);
+    removeFromTrailUntil(s_topBlock->outerBlock->trail);
     log_trace("block free %d %d",tmpWorkMemoryIndex,s_topBlock->tmpMemoryBaseIndex);
     assert(tmpWorkMemoryIndex >= s_topBlock->tmpMemoryBaseIndex);
     tmpWorkMemoryIndex = s_topBlock->tmpMemoryBaseIndex;
-    * s_topBlock =  * s_topBlock->previousTopBlock;
+    * s_topBlock =  * s_topBlock->outerBlock;
     /*  FILL_topBlock(s_topBlock,s_topBlock->firstFreeIndex,NULL,NULL); */
     // burk, following disables any memory freeing for Java
     //  if (LANGUAGE(LAN_JAVA)) s_topBlock->firstFreeIndex = memi;
@@ -203,9 +203,9 @@ void stackMemoryBlockEnd(void) {
 
 int nestingLevel(void) {
     int level = 0;
-    TopBlock *block = s_topBlock;
-    while (block->previousTopBlock != NULL) {
-        block = block->previousTopBlock;
+    CodeBlock *block = s_topBlock;
+    while (block->outerBlock != NULL) {
+        block = block->outerBlock;
         level++;
     }
     return level;
@@ -213,9 +213,9 @@ int nestingLevel(void) {
 
 
 bool isMemoryFromPreviousBlock(void *address) {
-    return s_topBlock->previousTopBlock != NULL &&
+    return s_topBlock->outerBlock != NULL &&
         (char*)address > workMemory &&
-        (char*)address < workMemory + s_topBlock->previousTopBlock->firstFreeIndex;
+        (char*)address < workMemory + s_topBlock->outerBlock->firstFreeIndex;
 }
 
 

@@ -2,7 +2,7 @@
 #include "memory.h"
 #include <cgreen/mocks.h>
 
-TopBlock *s_topBlock;
+CodeBlock *s_topBlock;
 
 Memory *cxMemory = NULL;
 int olcxMemoryAllocatedBytes = 0;
@@ -55,11 +55,11 @@ char *stackMemoryPushString(char *s) {
   return (char *) mock(s);
 }
 
-void stackMemoryBlockStart(void) {
+void beginBlock(void) {
   mock();
 }
 
-void stackMemoryBlockEnd(void) {
+void endBlock(void) {
   mock();
 }
 

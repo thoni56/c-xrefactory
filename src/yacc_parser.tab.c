@@ -4874,7 +4874,7 @@ case 533:
         /* the function, if yes and is declared static, make it static!*/
         addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, symbolTable, UsageDefined);
         tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
-        stackMemoryBlockStart();
+        beginBlock();
         counters.localVar = 0;
         assert(yyvsp[0].ast_symbol.d->u.type && yyvsp[0].ast_symbol.d->u.type->kind == TypeFunction);
         s_cp.function = yyvsp[0].ast_symbol.d;
@@ -4889,7 +4889,7 @@ break;
 case 534:
 #line 1892 "yacc_parser.y"
 {
-        stackMemoryBlockEnd();
+        endBlock();
         s_cp.function = NULL;
     }
 break;
@@ -5023,11 +5023,11 @@ case 553:
 break;
 case 554:
 #line 1989 "yacc_parser.y"
-{ stackMemoryBlockStart(); }
+{ beginBlock(); }
 break;
 case 555:
 #line 1992 "yacc_parser.y"
-{ stackMemoryBlockEnd(); }
+{ endBlock(); }
 break;
 #line 5033 "yacc_parser.tab.c"
     }

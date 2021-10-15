@@ -593,7 +593,7 @@ void jslNewClassDefinitionBegin(Id *name,
     if (s_jsl->pass==1)
         cc->u.s->nestedCount = 0;
 
-    stackMemoryBlockStart();
+    beginBlock();
     ill = StackMemoryAlloc(IdList);
     fillfIdList(ill, cc->name, inname->symbol, inname->p, cc->name, TypeStruct, s_jsl->classStat->className);
     nss = newJslClassStat(ill, cc, s_jsl->classStat->thisPackage,
@@ -629,7 +629,7 @@ void jslNewClassDefinitionEnd(void) {
     }
 
     s_jsl->classStat = s_jsl->classStat->next;
-    stackMemoryBlockEnd();
+    endBlock();
 }
 
 void jslAddDefaultConstructor(Symbol *cl) {

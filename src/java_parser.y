@@ -1918,7 +1918,7 @@ ConstructorDeclaration
                         mh=javaMethodHeader($1.d, &s_errorSymbol, args, StorageConstructor);
                         // TODO! Merge this with 'javaMethodBodyBeginning'!
                         assert(mh->u.type && mh->u.type->kind == TypeFunction);
-                        stackMemoryBlockStart();  // in order to remove arguments
+                        beginBlock();  // in order to remove arguments
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
                         generateInternalLabelReference(-1, UsageDefined);
@@ -1939,7 +1939,7 @@ ConstructorDeclaration
          Start_block ConstructorBody End_block {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                     PropagateBoundaries($$, $1, $6);
                     if ($$.b.file == noFileIndex)
                         PropagateBoundaries($$, $2, $$);
@@ -2670,7 +2670,7 @@ ForKeyword
     :   FOR			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockStart();
+                    beginBlock();
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -2732,7 +2732,7 @@ ForStatement
     :   ForKeyword ForStatementBody {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2741,7 +2741,7 @@ ForStatement
     |	ForKeyword error {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 } else {
                     SetNullBoundariesFor($$);
                 }
@@ -2753,7 +2753,7 @@ ForStatementNoShortIf
     :   ForKeyword ForStatementNoShortIfBody {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2762,7 +2762,7 @@ ForStatementNoShortIf
     |	ForKeyword error {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 } else {
                     SetNullBoundariesFor($$);
                 }
@@ -4306,7 +4306,7 @@ ConstantExpression
 Start_block:	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockStart();
+                    beginBlock();
                 }
             }
         }
@@ -4315,7 +4315,7 @@ Start_block:	{
 End_block:		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    stackMemoryBlockEnd();
+                    endBlock();
                 }
             }
         }

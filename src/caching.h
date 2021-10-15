@@ -6,8 +6,8 @@
 
 
 typedef struct cachePoint {
-    struct topBlock			*topBlock;
-    struct topBlock         topBlockContent;
+    struct codeBlock			*topBlock;
+    struct codeBlock         topBlockContent;
     int                     ppmMemoryIndex;
     int                     cxMemoryIndex;
     int                     mbMemoryIndex;
