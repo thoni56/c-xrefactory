@@ -16,7 +16,7 @@ int olcxMemoryAllocatedBytes;
 jmp_buf memoryResizeJumpTarget;
 
 /* Memory types */
-static char memory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
+static char workMemory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
 char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryIndex = 0;
@@ -143,7 +143,7 @@ static void fillTopBlock(TopBlock *topBlock, int firstFreeIndex, int tmpMemoryBa
 }
 
 void stackMemoryInit(void) {
-    s_topBlock = (TopBlock *) memory;
+    s_topBlock = (TopBlock *) workMemory;
     fillTopBlock(s_topBlock, sizeof(TopBlock), 0, NULL, NULL);
 }
 
@@ -152,10 +152,10 @@ void *stackMemoryAlloc(int size) {
 
     mem_trace("stackMemoryAlloc: allocating %d bytes", size);
     i = s_topBlock->firstFreeIndex;
-    i = ((char *)ALIGNMENT(memory+i,STANDARD_ALIGNMENT))-memory;
+    i = ((char *)ALIGNMENT(workMemory+i,STANDARD_ALIGNMENT))-workMemory;
     if (i+size < SIZE_workMemory) {
         s_topBlock->firstFreeIndex = i+size;
-        return &memory[i];
+        return &workMemory[i];
     } else {
         fatalError(ERR_ST,"i+size > SIZE_workMemory,\n\tworking memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR);
         /* Should not return, but for testing and compilers sake return something */
@@ -214,14 +214,14 @@ int nestingLevel(void) {
 
 bool isMemoryFromPreviousBlock(void *address) {
     return s_topBlock->previousTopBlock != NULL &&
-        (char*)address > memory &&
-        (char*)address < memory + s_topBlock->previousTopBlock->firstFreeIndex;
+        (char*)address > workMemory &&
+        (char*)address < workMemory + s_topBlock->previousTopBlock->firstFreeIndex;
 }
 
 
 bool freedPointer(void *ptr) {
-    return ((char*)ptr >= memory + s_topBlock->firstFreeIndex &&
-            (char*)ptr < memory + SIZE_workMemory);
+    return ((char*)ptr >= workMemory + s_topBlock->firstFreeIndex &&
+            (char*)ptr < workMemory + SIZE_workMemory);
 }
 
 void dm_init(Memory *memory, char *name) {

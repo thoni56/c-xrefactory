@@ -186,7 +186,9 @@ extern TopBlock *s_topBlock;
 extern jmp_buf memoryResizeJumpTarget;
 
 extern Memory *cxMemory;
+
 extern int olcxMemoryAllocatedBytes;
+
 
 /* SM (Static memory) areas */
 extern char tmpWorkMemory[];
