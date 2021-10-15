@@ -97,22 +97,22 @@ static void structCachingFree(Symbol *symbol) {
     SymbolList **superList;
     assert(symbol->u.s);
     if (freedPointer(symbol->u.s->records) ||
-        PP_FREED_POINTER(symbol->u.s->records)) {
+        PPM_FREED_POINTER(symbol->u.s->records)) {
         symbol->u.s->records = NULL;
     }
     if (freedPointer(symbol->u.s->casts.node) ||
-        PP_FREED_POINTER(symbol->u.s->casts.node)) {
+        PPM_FREED_POINTER(symbol->u.s->casts.node)) {
         symbol->u.s->casts.node = NULL;
     }
     if (freedPointer(symbol->u.s->casts.sub) ||
-        PP_FREED_POINTER(symbol->u.s->casts.sub)) {
+        PPM_FREED_POINTER(symbol->u.s->casts.sub)) {
         symbol->u.s->casts.sub = NULL;
     }
 
     superList = &symbol->u.s->super;
     while (*superList!=NULL) {
         if (freedPointer(*superList) ||
-            PP_FREED_POINTER(*superList)) {
+            PPM_FREED_POINTER(*superList)) {
             *superList = (*superList)->next;
             goto contlabel;
         }
@@ -127,14 +127,14 @@ static void symbolTableDeleteOutOfMemory(int i) {
     while (*pp!=NULL) {
         switch ((*pp)->bits.symbolType) {
         case TypeMacro:
-            if (PP_FREED_POINTER(*pp)) {
+            if (PPM_FREED_POINTER(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             }
             break;
         case TypeStruct:
         case TypeUnion:
-            if (freedPointer(*pp) || PP_FREED_POINTER(*pp)) {
+            if (freedPointer(*pp) || PPM_FREED_POINTER(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             } else {
@@ -164,11 +164,11 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
     SymbolList **pp;
     pp = &javaFqtTable.tab[i];
     while (*pp!=NULL) {
-        if (PP_FREED_POINTER(*pp)) {
+        if (PPM_FREED_POINTER(*pp)) {
             *pp = (*pp)->next;
             continue;
         } else if (freedPointer((*pp)->d)
-                   || PP_FREED_POINTER((*pp)->d)) {
+                   || PPM_FREED_POINTER((*pp)->d)) {
             *pp = (*pp)->next;
             continue;
         } else {
@@ -190,7 +190,7 @@ static void includeListDeleteOutOfMemory(void) {
     StringList **pp;
     pp = & options.includeDirs;
     while (*pp!=NULL) {
-        if (PP_FREED_POINTER(*pp)) {
+        if (PPM_FREED_POINTER(*pp)) {
             *pp = (*pp)->next;
             continue;
         }

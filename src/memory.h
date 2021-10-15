@@ -110,27 +110,27 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 
 
 /* pre-processor macro definitions allocations */
-#define PP_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
-#define PP_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
-#define PP_REALLOCC(p,n,t,on)	{SM_REALLOCC(ppmMemory,p,n,t,on);}
-#define PP_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);}
-#define PP_FREED_POINTER(pointer) (                                     \
+#define PPM_ALLOC(pointer, type)         {SM_ALLOC(ppmMemory, pointer, type);}
+#define PPM_ALLOCC(pointer, count, type) {SM_ALLOCC(ppmMemory, pointer, count, type);}
+#define PPM_REALLOCC(pointer, count, type, oldSize)	{SM_REALLOCC(ppmMemory, pointer, count, type, oldSize);}
+#define PPM_FREE_UNTIL(pointer)          {SM_FREE_UNTIL(ppmMemory, pointer);}
+#define PPM_FREED_POINTER(pointer) (                                     \
         ((char*)pointer) >= ppmMemory + ppmMemoryIndex && ((char*)pointer) < ppmMemory + SIZE_ppmMemory \
     )
 
 /* java class-file read allocations ( same memory as cpp !!!!!!!! ) */
-#define CF_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
-#define CF_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
+#define CF_ALLOC(pointer, type)         {SM_ALLOC(ppmMemory, pointer, type);}
+#define CF_ALLOCC(pointer, count, type) {SM_ALLOCC(ppmMemory, pointer, count, type);}
 
 /* file table allocations */
-#define FT_ALLOC(p,t)           {SM_ALLOC(ftMemory,p,t);}
-#define FT_ALLOCC(p,n,t)        {SM_ALLOCC(ftMemory,p,n,t);}
+#define FT_ALLOC(pointer, type)         {SM_ALLOC(ftMemory, pointer, type);}
+#define FT_ALLOCC(pointer, count, type) {SM_ALLOCC(ftMemory, pointer, count, type);}
 
 /* macro bodies */
-#define MB_INIT()				{SM_INIT(mbMemory);}
-#define MB_ALLOCC(p,n,t)        {SM_ALLOCC(mbMemory,p,n,t);}
-#define MB_REALLOCC(p,n,t,on)	{SM_REALLOCC(mbMemory,p,n,t,on);}
-#define MB_FREE_UNTIL(p)        {SM_FREE_UNTIL(mbMemory,p);}
+#define MB_INIT()				        {SM_INIT(mbMemory);}
+#define MB_ALLOCC(pointer, count, type) {SM_ALLOCC(mbMemory, pointer, count, type);}
+#define MB_REALLOCC(pointer, count, type, on)	{SM_REALLOCC(mbMemory, pointer, count, type,on);}
+#define MB_FREE_UNTIL(pointer)          {SM_FREE_UNTIL(mbMemory, pointer);}
 
 
 /* cross - references global symbols allocations */
@@ -172,9 +172,9 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 
 
 /* editor allocations, for now, store it in olcxmemory */
-#define ED_ALLOCC(p,n,t) OLCX_ALLOCC(p,n,t)
-#define ED_ALLOC(p,t) ED_ALLOCC(p,1,t)
-#define ED_FREE(p,size) OLCX_FREE(p,size)
+#define ED_ALLOCC(pointer, count, type) OLCX_ALLOCC(pointer,count,type)
+#define ED_ALLOC(pointer, type) ED_ALLOCC(pointer,1,type)
+#define ED_FREE(pointer, size) OLCX_FREE(pointer,size)
 
 
 /***********************************************************************/

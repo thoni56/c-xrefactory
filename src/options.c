@@ -678,7 +678,7 @@ static void processSectionMarker(char *optionText, int i, char *project, char *s
         if (memFl==MEM_ALLOC_ON_SM) {                                   \
             SM_ALLOCC(optMemory,cc,num,type);                           \
         } else if (memFl==MEM_ALLOC_ON_PP) {                            \
-            PP_ALLOCC(cc,num,type);                                     \
+            PPM_ALLOCC(cc,num,type);                                     \
         } else {                                                        \
             assert(0);                                                  \
         }                                                               \
@@ -833,9 +833,9 @@ static void processClassPathString(char *cp) {
             log_debug("Done.");
         } else {
             // just path
-            PP_ALLOCC(nn, strlen(np)+1, char);
+            PPM_ALLOCC(nn, strlen(np)+1, char);
             strcpy(nn,np);
-            PP_ALLOC(*ll, StringList);
+            PPM_ALLOC(*ll, StringList);
             **ll = (StringList){.string = nn, .next = NULL};
             ll = &(*ll)->next;
         }

@@ -237,7 +237,7 @@ static void setCurrentFileInfoFor(char *fileName) {
 /* ***************************************************************** */
 
 void ppMemInit(void) {
-    PP_ALLOCC(macroArgumentTable.tab, MAX_MACRO_ARGS, MacroArgumentTableElement *);
+    PPM_ALLOCC(macroArgumentTable.tab, MAX_MACRO_ARGS, MacroArgumentTableElement *);
     macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
     ppMemoryIndex = 0;
 }
@@ -708,7 +708,7 @@ static void handleMacroUsageParameterPositions(int argi, Position *macpos,
 static MacroBody *newMacroBody(int macroSize, int argCount, char *name, char *body, char **argumentNames) {
     MacroBody *macroBody;
 
-    PP_ALLOC(macroBody, MacroBody);
+    PPM_ALLOC(macroBody, MacroBody);
     macroBody->argCount = argCount;
     macroBody->size = macroSize;
     macroBody->name = name;
@@ -788,7 +788,7 @@ void processDefineDirective(bool hasArguments) {
     if (lexem != IDENTIFIER)
         return;
 
-    PP_ALLOC(symbol, Symbol);
+    PPM_ALLOC(symbol, Symbol);
     fillSymbol(symbol, NULL, NULL, macroPosition);
     fillSymbolBits(&symbol->bits, AccessDefault, TypeMacro, StorageNone);
 
@@ -823,11 +823,11 @@ void processDefineDirective(bool hasArguments) {
                     ellipsis = 1;
                 } else
                     goto errorlab;
-                PP_ALLOCC(mm, strlen(argumentName)+1, char);
+                PPM_ALLOCC(mm, strlen(argumentName)+1, char);
                 strcpy(mm, argumentName);
                 sprintf(tmpBuff, "%x-%x%c%s", position.file, position.line,
                         LINK_NAME_SEPARATOR, argumentName);
-                PP_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
+                PPM_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
                 SM_ALLOC(ppMemory, maca, MacroArgumentTableElement);
                 fillMacroArgTabElem(maca, mm, argLinkName, argumentCount);
@@ -862,7 +862,7 @@ void processDefineDirective(bool hasArguments) {
     /* process macro body */
     allocatedSize = MACRO_UNIT_SIZE;
     macroSize = 0;
-    PP_ALLOCC(body, allocatedSize+MAX_LEXEM_SIZE, char);
+    PPM_ALLOCC(body, allocatedSize+MAX_LEXEM_SIZE, char);
     isReadingBody = true;
 
     lexem = getNonBlankLexem(exceptionHandler, &position, &lineNumber, &value, &length);
@@ -899,7 +899,7 @@ void processDefineDirective(bool hasArguments) {
         }
         if (lexem != '\n') {
             allocatedSize += MACRO_UNIT_SIZE;
-            PP_REALLOCC(body, allocatedSize+MAX_LEXEM_SIZE, char,
+            PPM_REALLOCC(body, allocatedSize+MAX_LEXEM_SIZE, char,
                         allocatedSize+MAX_LEXEM_SIZE-MACRO_UNIT_SIZE);
         }
     }
@@ -907,10 +907,10 @@ void processDefineDirective(bool hasArguments) {
 endOfBody:
     /* We might get here by a longjmp from getLex() on endOfFile... so anything that is needed here needs to be static */
     assert(macroSize>=0);
-    PP_REALLOCC(body, macroSize, char, allocatedSize+MAX_LEXEM_SIZE);
+    PPM_REALLOCC(body, macroSize, char, allocatedSize+MAX_LEXEM_SIZE);
     allocatedSize = macroSize;
     if (argumentCount > 0) {
-        PP_ALLOCC(argumentNames, argumentCount, char*);
+        PPM_ALLOCC(argumentNames, argumentCount, char*);
         memset(argumentNames, 0, argumentCount*sizeof(char*));
         macroArgumentTableMap2(&macroArgumentTable, setMacroArgumentName, argumentNames);
     } else
@@ -941,7 +941,7 @@ void addMacroDefinedByOption(char *opt) {
     char *cc,*nopt;
     bool args = false;
 
-    PP_ALLOCC(nopt,strlen(opt)+3,char);
+    PPM_ALLOCC(nopt,strlen(opt)+3,char);
     strcpy(nopt,opt);
     cc = nopt;
     while (isalpha(*cc) || isdigit(*cc) || *cc == '_') cc++;
@@ -997,7 +997,7 @@ static void processUndefineDirective(void) {
         if (symbolTableIsMember(symbolTable, &dd, NULL, &memb)) {
             addCxReference(memb, &position, UsageUndefinedMacro, noFileIndex, noFileIndex);
 
-            PP_ALLOC(pp, Symbol);
+            PPM_ALLOC(pp, Symbol);
             fillSymbol(pp, memb->name, memb->linkName, position);
             fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
 
@@ -1032,7 +1032,7 @@ static void genCppIfElseReference(int level, Position *pos, int usage) {
     Position			dp;
     S_cppIfStack       *ss;
     if (level > 0) {
-      PP_ALLOC(ss, S_cppIfStack);
+      PPM_ALLOC(ss, S_cppIfStack);
       ss->pos = *pos;
       ss->next = currentFile.ifStack;
       currentFile.ifStack = ss;
@@ -1281,10 +1281,10 @@ static void processPragmaDirective(void) {
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
         fname = simpleFileName(fileTable.tab[position.file]->name);
         sprintf(tmpBuff, "PragmaOnce-%s", fname);
-        PP_ALLOCC(mname, strlen(tmpBuff)+1, char);
+        PPM_ALLOCC(mname, strlen(tmpBuff)+1, char);
         strcpy(mname, tmpBuff);
 
-        PP_ALLOC(pp, Symbol);
+        PPM_ALLOC(pp, Symbol);
         fillSymbol(pp, mname, mname, position);
         fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
 
@@ -1423,7 +1423,7 @@ endOfFile:
 #define TestPPBufOverflow(bcc,buf,bsize) {\
     if (bcc >= buf+bsize) {\
         bsize += MACRO_UNIT_SIZE;\
-        PP_REALLOCC(buf,bsize+MAX_LEXEM_SIZE,char,\
+        PPM_REALLOCC(buf,bsize+MAX_LEXEM_SIZE,char,\
                         bsize+MAX_LEXEM_SIZE-MACRO_UNIT_SIZE);\
     }\
 }
@@ -1482,7 +1482,7 @@ static void expandMacroArgument(LexInput *argb) {
     prependMacroInput(argb);
 
     currentInput.inputType = INPUT_MACRO_ARGUMENT;
-    PP_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
+    PPM_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
     bcc = buf;
 
     /* Exceptions from getLexem... */
@@ -1529,7 +1529,7 @@ static void expandMacroArgument(LexInput *argb) {
     }
 endOfMacroArgument:
     currentInput = macroStack[--macroStackIndex];
-    PP_REALLOCC(buf, bcc-buf, char, bsize+MAX_LEXEM_SIZE);
+    PPM_REALLOCC(buf, bcc-buf, char, bsize+MAX_LEXEM_SIZE);
     fillLexInput(argb, buf, bcc, buf, NULL, INPUT_NORMAL);
     return;
 endOfFile:
@@ -1694,7 +1694,7 @@ static void createMacroBody(LexInput *macroBody,
     value=0; //compiler
     /* first make ## collations */
     bsize = MACRO_UNIT_SIZE;
-    PP_ALLOCC(buf,bsize+MAX_LEXEM_SIZE, char);
+    PPM_ALLOCC(buf,bsize+MAX_LEXEM_SIZE, char);
     cc = mb->body;
     cfin = mb->body + mb->size;
     bcc = buf;
@@ -1713,7 +1713,7 @@ static void createMacroBody(LexInput *macroBody,
         }
         TestPPBufOverflow(bcc,buf,bsize);
     }
-    PP_REALLOCC(buf,bcc-buf,char,bsize+MAX_LEXEM_SIZE);
+    PPM_REALLOCC(buf,bcc-buf,char,bsize+MAX_LEXEM_SIZE);
 
 
     /* expand arguments */
@@ -1812,7 +1812,7 @@ static void getActualMacroArgument(
     lexem = *out_lexem;
     bufsize = MACRO_ARG_UNIT_SIZE;
     depth = 0;
-    PP_ALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char);
+    PPM_ALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char);
     bcc = buf;
     /* if lastArgument, collect everything there */
     poffset = 0;
@@ -1826,7 +1826,7 @@ static void getActualMacroArgument(
             *bcc = *previousLexem;
         if (bcc-buf >= bufsize) {
             bufsize += MACRO_ARG_UNIT_SIZE;
-            PP_REALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char,
+            PPM_REALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char,
                     bufsize+MAX_LEXEM_SIZE-MACRO_ARG_UNIT_SIZE);
         }
         lexem = getLexSkippingLines(&previousLexem, &lineNumber, &value, &pos, &len, exceptionHandler);
@@ -1847,7 +1847,7 @@ endOfMacroArgument:;
             warningMessage(ERR_ST,"[getActMacroArgument] unterminated macro call");
         }
     }
-    PP_REALLOCC(buf, bcc-buf, char, bufsize+MAX_LEXEM_SIZE);
+    PPM_REALLOCC(buf, bcc-buf, char, bufsize+MAX_LEXEM_SIZE);
     fillLexInput(actArg, buf, bcc, buf, currentInput.macroName, INPUT_NORMAL);
     *out_lexem = lexem;
     return;
@@ -1878,7 +1878,7 @@ static struct lexInput *getActualMacroArguments(MacroBody *macroBody, Position *
     ppb2 = lparPosition;
     parpos1 = &ppb1;
     parpos2 = &ppb2;
-    PP_ALLOCC(actualArgs, macroBody->argCount, struct lexInput);
+    PPM_ALLOCC(actualArgs, macroBody->argCount, struct lexInput);
     lexem = getLexSkippingLines(&previousLexem, &lineNumber, &value, &position, &length, exceptionHandler);
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
     if (lexem == ')') {
@@ -1971,7 +1971,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     /* Make sure these are initialized */
     /* TODO: might not survive long_jmp?!?! */
     previousLexemP = currentInput.currentLexemP;
-    PP_ALLOCC(freeBase, 0, char);
+    PPM_ALLOCC(freeBase, 0, char);
 
     /* Exceptions from getLexem... */
     jmp_buf exceptionHandler;
@@ -2004,14 +2004,14 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     createMacroBody(&macroBodyInput,macroBody,actualArgumentsInput,macroBody->argCount);
     prependMacroInput(&macroBodyInput);
     log_trace("expanding macro '%s'", macroBody->name);
-    PP_FREE_UNTIL(freeBase);
+    PPM_FREE_UNTIL(freeBase);
     return true;
 
 endOfMacroArgument:
     /* unterminated macro call in argument */
     /* TODO unread argument read */
     currentInput.currentLexemP = previousLexemP;
-    PP_FREE_UNTIL(freeBase);
+    PPM_FREE_UNTIL(freeBase);
     return false;
 
  endOfFile:
@@ -2020,7 +2020,7 @@ endOfMacroArgument:
         warningMessage(ERR_ST,"[macroCallExpand] unterminated macro call");
     }
     currentInput.currentLexemP = previousLexemP;
-    PP_FREE_UNTIL(freeBase);
+    PPM_FREE_UNTIL(freeBase);
     return false;
 }
 

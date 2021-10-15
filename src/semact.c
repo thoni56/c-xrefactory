@@ -946,7 +946,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
     if (memory == MEMORY_XX) {
         mname = StackMemoryAllocC(len2+1, char);
     } else {
-        PP_ALLOCC(mname, len2+1, char);
+        PPM_ALLOCC(mname, len2+1, char);
     }
     strcpy(mname, tmp);
     strcpy(mname+len,iname);
