@@ -185,7 +185,7 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 
 /* DM (Dynamic Memory) areas */
 
-extern CodeBlock *s_topBlock;
+extern CodeBlock *currentBlock;
 
 extern jmp_buf memoryResizeJumpTarget;
 

@@ -180,7 +180,7 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
 
 static void trailDeleteOutOfMemory(void) {
     FreeTrail **pp;
-    pp = &s_topBlock->trail;
+    pp = &currentBlock->trail;
     while (freedPointer(*pp)) {
         *pp = (*pp)->next;
     }
@@ -269,9 +269,9 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
         //& if (CACHING_CLASSES) fprintf(dumpOut, "\nflushing classes\n\n");
     }
     mbMemoryIndex = cp->mbMemoryIndex;
-    s_topBlock = cp->topBlock;
+    currentBlock = cp->topBlock;
     tmpWorkMemoryIndex = 0;
-    *s_topBlock = cp->topBlockContent;
+    *currentBlock = cp->topBlockContent;
     s_javaStat = cp->javaCached;
     counters = cp->counters;
     trailDeleteOutOfMemory();
@@ -413,7 +413,7 @@ void placeCachePoint(bool inputCaching) {
         return; /* something in non-cached tmp memory */
     pp = &s_cache.cp[s_cache.cpi];
     log_debug("placing cache point %d", s_cache.cpi);
-    fillCachePoint(pp, s_topBlock, ppmMemoryIndex, cxMemory->index, mbMemoryIndex, s_cache.lbcc,
+    fillCachePoint(pp, currentBlock, ppmMemoryIndex, cxMemory->index, mbMemoryIndex, s_cache.lbcc,
                    s_cache.ibi, currentFile.lineNumber, currentFile.ifDepth,
                    currentFile.ifStack, s_javaStat, counters);
     s_cache.cpi ++;

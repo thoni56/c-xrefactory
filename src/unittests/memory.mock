@@ -2,7 +2,7 @@
 #include "memory.h"
 #include <cgreen/mocks.h>
 
-CodeBlock *s_topBlock;
+CodeBlock *currentBlock;
 
 Memory *cxMemory = NULL;
 int olcxMemoryAllocatedBytes = 0;

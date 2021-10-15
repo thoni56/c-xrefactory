@@ -757,14 +757,14 @@ void javaReadSymbolsFromSourceFile(char *fname) {
     int				memBalance;
 
     fileIndex = addFileTabItem(fname);
-    memBalance = s_topBlock->firstFreeIndex;
+    memBalance = currentBlock->firstFreeIndex;
     beginBlock();
     typeTab = StackMemoryAlloc(JslTypeTab);
     javaReadSymbolFromSourceFileInit(fileIndex, typeTab);
     jslTypeTabInit(typeTab, MAX_JSL_SYMBOLS);
     javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
     // there may be several unbalanced blocks
-    while (memBalance < s_topBlock->firstFreeIndex)
+    while (memBalance < currentBlock->firstFreeIndex)
         endBlock();
     javaReadSymbolFromSourceFileEnd();
 }
@@ -774,9 +774,11 @@ static void addJavaFileDependency(int file, char *onfile) {
     Position	pos;
 
     // do dependencies only when doing cross reference file
-    if (options.taskRegime != RegimeXref) return;
+    if (options.taskRegime != RegimeXref)
+        return;
     // also do it only for source files
-    if (! fileTable.tab[file]->b.commandLineEntered) return;
+    if (! fileTable.tab[file]->b.commandLineEntered)
+        return;
     fileIndex = addFileTabItem(onfile);
     fillPosition(&pos, file, 0, 0);
     addIncludeReference(fileIndex, &pos);
@@ -2591,7 +2593,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
         assert(dd->bits.symbolType == TypeStruct);
         s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION] = name->p;
     }
-    res = s_topBlock->trail;
+    res = currentBlock->trail;
     classf = dd->u.s->classFile;
     if (classf == -1)
         classf = noFileIndex;

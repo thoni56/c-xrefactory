@@ -21,13 +21,12 @@ extern bool javaOuterClassAccessible(Symbol *cl);
 extern int javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags);
 extern int javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r);
 extern int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r);
-extern int findStrRecordSym(	S_recFindStr *ss,
-                                char *recname,
-                                Symbol **res,
-                                int javaClassif,
-                                AccessibilityCheckYesNo accessCheck,
-                                VisibilityCheckYesNo visibilityCheck
-                                );
+extern int findStrRecordSym(S_recFindStr *ss,
+                            char *recname,
+                            Symbol **res,
+                            int javaClassif,
+                            AccessibilityCheckYesNo accessCheck,
+                            VisibilityCheckYesNo visibilityCheck);
 extern Symbol *addNewSymbolDef(Symbol *p, unsigned storage, SymbolTable *tab, Usage usage);
 extern Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl,
                                    unsigned storage, SymbolTable *tab);
@@ -46,21 +45,18 @@ extern void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S
 extern SymbolList *createDefinitionList(Symbol *symbol);
 extern Symbol *createSimpleDefinition(unsigned storage, unsigned t, Id *id);
 extern int findStrRecord(Symbol	*s,
-                         char		*recname,	/* can be NULL */
+                         char   *recname,	/* can be NULL */
                          Symbol	**res,
-                         int		javaClassif
-                         );
-extern Reference * findStrRecordFromSymbol(Symbol *str,
-                                             Id *record,
-                                             Symbol **res,
-                                             int javaClassif,
-                                             Id *super
-                                             );
-extern Reference * findStructureFieldFromType(TypeModifier *structure,
-                                                Id *field,
-                                                Symbol **resultingSymbol,
-                                                int javaClassifier
-                                                );
+                         int    javaClassif);
+extern Reference *findStrRecordFromSymbol(Symbol *str,
+                                          Id *record,
+                                          Symbol **res,
+                                          int javaClassif,
+                                          Id *super);
+extern Reference *findStructureFieldFromType(TypeModifier *structure,
+                                             Id *field,
+                                             Symbol **resultingSymbol,
+                                             int javaClassifier);
 extern int mergeArguments(Symbol *id, Symbol *ty);
 extern TypeModifier *simpleStrUnionSpecifier(Id *typeName,
                                              Id *id,
