@@ -570,7 +570,7 @@ typedef struct currentlyParsedStatics {
     char			currentSuperClassAnswer[TMP_STRING_SIZE];
     int				methodCoordEndLine;        // to be removed
     int				classCoordEndLine;
-    struct topBlock *workMemiAtBlockBegin;
+    struct topBlock *workMemoryIndexAtBlockBegin;
     struct topBlock *workMemiAtBlockEnd;
     int             cxMemoryIndexAtBlockBegin;
     int             cxMemoryIndexAtBlockEnd;

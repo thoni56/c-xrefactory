@@ -137,7 +137,7 @@ void removeFromTrailUntil(FreeTrail *untilP) {
 
 static void fillTopBlock(TopBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, FreeTrail *trail, TopBlock *previousTopBlock) {
     topBlock->firstFreeIndex = firstFreeIndex;
-    topBlock->tmpMemoryBasei = tmpMemoryBasei;
+    topBlock->tmpMemoryBaseIndex = tmpMemoryBasei;
     topBlock->trail = trail;
     topBlock->previousTopBlock = previousTopBlock;
 }
@@ -190,9 +190,9 @@ void stackMemoryBlockEnd(void) {
     //&removeFromTrailUntil(NULL);
     assert(s_topBlock && s_topBlock->previousTopBlock);
     removeFromTrailUntil(s_topBlock->previousTopBlock->trail);
-    log_trace("block free %d %d",tmpWorkMemoryIndex,s_topBlock->tmpMemoryBasei);
-    assert(tmpWorkMemoryIndex >= s_topBlock->tmpMemoryBasei);
-    tmpWorkMemoryIndex = s_topBlock->tmpMemoryBasei;
+    log_trace("block free %d %d",tmpWorkMemoryIndex,s_topBlock->tmpMemoryBaseIndex);
+    assert(tmpWorkMemoryIndex >= s_topBlock->tmpMemoryBaseIndex);
+    tmpWorkMemoryIndex = s_topBlock->tmpMemoryBaseIndex;
     * s_topBlock =  * s_topBlock->previousTopBlock;
     /*  FILL_topBlock(s_topBlock,s_topBlock->firstFreeIndex,NULL,NULL); */
     // burk, following disables any memory freeing for Java

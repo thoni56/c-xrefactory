@@ -1171,7 +1171,7 @@ static void makeExtraction(void) {
     if (s_cp.cxMemoryIndexAtFunctionBegin > s_cps.cxMemoryIndexAtBlockBegin
         || s_cps.cxMemoryIndexAtBlockBegin > s_cps.cxMemoryIndexAtBlockEnd
         || s_cps.cxMemoryIndexAtBlockEnd > s_cp.cxMemoryIndexAtFunctionEnd
-        || s_cps.workMemiAtBlockBegin != s_cps.workMemiAtBlockEnd) {
+        || s_cps.workMemoryIndexAtBlockBegin != s_cps.workMemiAtBlockEnd) {
         errorMessage(ERR_ST, "Region / program structure mismatch");
         return;
     }
@@ -1285,7 +1285,7 @@ void extractActionOnBlockMarker(void) {
     Position pos;
     if (s_cps.cxMemoryIndexAtBlockBegin == 0) {
         s_cps.cxMemoryIndexAtBlockBegin = cxMemory->index;
-        s_cps.workMemiAtBlockBegin = s_topBlock->previousTopBlock;
+        s_cps.workMemoryIndexAtBlockBegin = s_topBlock->previousTopBlock;
         if (LANGUAGE(LANG_JAVA)) {
             s_javaExtractFromFunctionMods = s_javaStat->methodModifiers;
         }

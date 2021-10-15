@@ -22,7 +22,7 @@ typedef struct memory {
 
 typedef struct topBlock {
     int              firstFreeIndex;
-    int              tmpMemoryBasei;
+    int              tmpMemoryBaseIndex;
     struct freeTrail *trail;
     struct topBlock  *previousTopBlock;
 } TopBlock;
@@ -127,7 +127,7 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 #define FT_ALLOCC(pointer, count, type) {SM_ALLOCC(ftMemory, pointer, count, type);}
 
 /* macro bodies */
-#define MB_INIT()				        {SM_INIT(mbMemory);}
+#define MB_INIT()                       {SM_INIT(mbMemory);}
 #define MB_ALLOCC(pointer, count, type) {SM_ALLOCC(mbMemory, pointer, count, type);}
 #define MB_REALLOCC(pointer, count, type, on)	{SM_REALLOCC(mbMemory, pointer, count, type,on);}
 #define MB_FREE_UNTIL(pointer)          {SM_FREE_UNTIL(mbMemory, pointer);}
