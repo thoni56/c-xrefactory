@@ -71,7 +71,7 @@ int nestingLevel(void) {
     return mock();
 }
 
-bool memoryFromPreviousBlock(void *address) {
+bool isMemoryFromPreviousBlock(void *address) {
     return (bool)mock(address);
 }
 

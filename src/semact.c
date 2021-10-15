@@ -886,7 +886,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     fillSymbolBits(&p.bits, AccessDefault, type, StorageNone);
 
     if (!symbolTableIsMember(symbolTable, &p, NULL, &pp)
-        || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
+        || (isMemoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         pp = StackMemoryAlloc(Symbol);
         *pp = p;
@@ -1012,7 +1012,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
     fillSymbolBits(&p.bits, AccessDefault, TypeEnum, StorageNone);
 
     if (! symbolTableIsMember(symbolTable, &p, NULL, &pp)
-        || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
+        || (isMemoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemoryAlloc(Symbol);
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);

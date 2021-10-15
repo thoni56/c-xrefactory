@@ -226,7 +226,7 @@ extern void stackMemoryBlockStart(void);
 extern void stackMemoryBlockEnd(void);
 extern int nestingLevel(void);
 
-extern bool memoryFromPreviousBlock(void *ppp);
+extern bool isMemoryFromPreviousBlock(void *ppp);
 extern bool freedPointer(void *ptr);
 
 #endif

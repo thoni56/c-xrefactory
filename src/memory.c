@@ -212,7 +212,7 @@ int nestingLevel(void) {
 }
 
 
-bool memoryFromPreviousBlock(void *address) {
+bool isMemoryFromPreviousBlock(void *address) {
     return s_topBlock->previousTopBlock != NULL &&
         (char*)address > memory &&
         (char*)address < memory + s_topBlock->previousTopBlock->firstFreeIndex;
