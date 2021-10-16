@@ -16,7 +16,7 @@ int olcxMemoryAllocatedBytes;
 jmp_buf memoryResizeJumpTarget;
 
 /* Memory types */
-static char workMemory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
+char workMemory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
 char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryIndex = 0;
@@ -135,11 +135,11 @@ void removeFromTrailUntil(FreeTrail *untilP) {
         trailDump();
 }
 
-static void fillCodeBlock(CodeBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, FreeTrail *trail, CodeBlock *previousTopBlock) {
-    topBlock->firstFreeIndex = firstFreeIndex;
-    topBlock->tmpMemoryBaseIndex = tmpMemoryBasei;
-    topBlock->trail = trail;
-    topBlock->outerBlock = previousTopBlock;
+static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, int tmpMemoryBaseIndex, FreeTrail *trail, CodeBlock *outerBlock) {
+    block->firstFreeIndex = firstFreeIndex;
+    block->tmpMemoryBaseIndex = tmpMemoryBaseIndex;
+    block->trail = trail;
+    block->outerBlock = outerBlock;
 }
 
 void stackMemoryInit(void) {
@@ -170,9 +170,9 @@ static void *stackMemoryPush(void *p, int size) {
     return m;
 }
 
-char *stackMemoryPushString(char *s) {
-    /*fprintf(dumpOut,"pushing string %s\n",s);*/
-    return((char*)stackMemoryPush(s, strlen(s)+1));
+char *stackMemoryPushString(char *string) {
+    log_trace("Pushing string '%s'", string);
+    return (char*)stackMemoryPush(string, strlen(string)+1);
 }
 
 void beginBlock(void) {

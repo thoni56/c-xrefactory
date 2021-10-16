@@ -33,6 +33,20 @@ Ensure(Memory, calls_fatalError_on_out_of_memory) {
         pass_test();
 }
 
+Ensure(Memory, can_begin_and_end_block) {
+    stackMemoryInit();
+    assert_that(currentBlock->outerBlock, is_null);
+    assert_that(tmpWorkMemoryIndex, is_equal_to(0));
+
+    beginBlock();
+    assert_that(currentBlock->outerBlock, is_equal_to(&workMemory[sizeof(CodeBlock)]));
+    assert_that(currentBlock->outerBlock, is_not_null);
+    assert_that(currentBlock->outerBlock->outerBlock, is_null);
+
+    endBlock();
+    assert_that(currentBlock->outerBlock, is_null);
+}
+
 Ensure(Memory, can_calculate_nesting_level) {
     assert_that(nestingLevel(), is_equal_to(0));
     beginBlock();
