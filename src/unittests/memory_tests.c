@@ -34,14 +34,21 @@ Ensure(Memory, calls_fatalError_on_out_of_memory) {
 }
 
 Ensure(Memory, can_begin_and_end_block) {
+    FreeTrail freeTrail;
+
     stackMemoryInit();
     assert_that(currentBlock->outerBlock, is_null);
     assert_that(tmpWorkMemoryIndex, is_equal_to(0));
+
+    currentBlock->trail = &freeTrail; /* "Random" pointer to be able to figure out what happens with it... */
 
     beginBlock();
     assert_that(currentBlock->outerBlock, is_equal_to(&workMemory[sizeof(CodeBlock)]));
     assert_that(currentBlock->outerBlock, is_not_null);
     assert_that(currentBlock->outerBlock->outerBlock, is_null);
+    assert_that(currentBlock->trail, is_equal_to(currentBlock->outerBlock->trail));
+    assert_that(currentBlock->trail, is_equal_to(&freeTrail));
+    assert_that(currentBlock->outerBlock->trail, is_equal_to(&freeTrail));
 
     endBlock();
     assert_that(currentBlock->outerBlock, is_null);
