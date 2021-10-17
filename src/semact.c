@@ -116,11 +116,9 @@ void recFindPush(Symbol *str, S_recFindStr *rfs) {
     ss = str->u.s;
     rfs->nextRecord = ss->records;
     rfs->currClass = str;
-    //& if (ss->super != NULL) { // this optimization makes completion info wrong
     rfs->st[rfs->sti] = ss->super;
     assert(rfs->sti < MAX_INHERITANCE_DEEP);
     rfs->sti ++;
-    //& }
 }
 
 S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {

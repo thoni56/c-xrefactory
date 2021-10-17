@@ -18,6 +18,7 @@ typedef struct memory {
      * architectures... */
 } Memory;
 
+/* The "trail" seems to only be used for Java so ignore it for now... */
 typedef struct freeTrail {
     void             (*action)(void*);
     void             *pointer;
