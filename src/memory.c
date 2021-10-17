@@ -163,11 +163,10 @@ void *stackMemoryAlloc(int size) {
     }
 }
 
-static void *stackMemoryPush(void *p, int size) {
-    void *m;
-    m = stackMemoryAlloc(size);
-    memcpy(m,p,size);
-    return m;
+static void *stackMemoryPush(void *pointer, int size) {
+    void *new = stackMemoryAlloc(size);
+    memcpy(new, pointer, size);
+    return new;
 }
 
 char *stackMemoryPushString(char *string) {
@@ -176,13 +175,13 @@ char *stackMemoryPushString(char *string) {
 }
 
 void beginBlock(void) {
-    CodeBlock *p, top;
+    CodeBlock *pushed, previous;
     log_trace("Begin block");
-    top = *currentBlock;
-    p = stackMemoryPush(&top, sizeof(CodeBlock));
+    previous = *currentBlock;
+    pushed = stackMemoryPush(&previous, sizeof(CodeBlock));
     // trail can't be reset to NULL, because in case of syntax errors
     // this would avoid balancing of } at the end of class
-    fillCodeBlock(currentBlock, currentBlock->firstFreeIndex, tmpWorkMemoryIndex, currentBlock->trail, p);
+    fillCodeBlock(currentBlock, currentBlock->firstFreeIndex, tmpWorkMemoryIndex, currentBlock->trail, pushed);
 }
 
 void endBlock(void) {
