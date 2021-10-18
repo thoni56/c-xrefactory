@@ -332,12 +332,10 @@ void initTypeCharCodeTab(void) {
 }
 
 void initTypeNames(void) {
-    Int2StringTable *s;
-
     for (int i=0; typeNamesInitTable[i].i != -1; i++) {
-        s = &typeNamesInitTable[i];
+        Int2StringTable *s = &typeNamesInitTable[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
-        typeNamesTable[s->i] = s->string;
+        typeEnumName[s->i] = s->string;
     }
 }
 
