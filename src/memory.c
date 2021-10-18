@@ -17,8 +17,6 @@ jmp_buf memoryResizeJumpTarget;
 
 /* Memory types */
 char workMemory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
-
-char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryIndex = 0;
 
 char ftMemory[SIZE_ftMemory];
