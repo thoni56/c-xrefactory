@@ -6,9 +6,18 @@
 `c-xrefactory` is a free Emacs refactoring tool and code browser for
 _C_ (& _Java_ and _Yacc_).
 
+BEWARE: As `c-xrefactory` is undergoing radical refactorings and
+changes and doesn't have tests for all features occassional hickups
+are likely. I use it almost everyday and the stable version, which you
+get if you install as per below, has passed all tests. But YMMV.
+
+## Install
+
 Easiest way to install is using `el-get` (see NOTE below):
 
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
+
+## Use
 
 Place cursor on an identifier and `go to definition` (F-6), navigate
 between occurrences (F-3, F-4), refactor (F-11) with `rename`, mark
@@ -37,19 +46,20 @@ Then just follow the instructions for a quick walk-through of what
 If your Emacs runs in a "standard" *ux-like environment with `bash`,
 `make`, `cc` etc. you probably don't need anything in particular.
 
-Just make sure that you have a `zlib-devel` installed as the current
-`c-xrefactory` install using `el-get` does not automatically compiles
-it own.
+Just make sure that you have a `zlib-devel` installed because the
+current `c-xrefactory` install (using `el-get`) does not automatically
+compile its own. You can re-compile it with "local" zlib if you really
+need to.
 
-This will make Emacs/c-xrefactory work on Linux, including WSL,
-Cygwin, Msys2-MSYS (but not Msys2-MingW*) and on MacOS/Darwin.
+`c-xrefactory` works with recent Emacsen on Linux, including WSL,
+Cygwin, Msys2-MSYS (but not Msys2-MingW*) and MacOS/Darwin.
 
 For Windows I really recommend doing your development in WSL
 (especially WSL2). You can setup `c-xrefactory` as described above and
 run Emacs in a terminal window without any problems.
 
-To use Emacs in a graphical environment (in an X11 window) you need a
-Windows X11 server like
+To use Emacs in a graphical environment from WSL (in an X11 window)
+you need a Windows X11 server like
 [VcXsrv](https://sourceforge.net/projects/vcxsrv/) (my
 recommendatioin), x410 (from the Windows Store),
 [Xming](https://sourceforge.net/projects/xming/)) or, if you already
@@ -64,7 +74,7 @@ TBD. Some documentation is [here](https://github.com/thoni56/c-xrefactory/blob/m
 ### Yacc special features
 
 C code inside semantic actions in a Yacc file will be analysed so that
-you can (mostly) navigate symbol even inside them.
+you can (mostly) navigate symbols even inside them.
 
 Non-terminals (rule names) can be navigated and completed as if they
 were any other symbol. Furthermore the special symbol `$<n>`, where
@@ -75,6 +85,15 @@ the terminal or non-terminal that you meant to.
 Unfortunately there are no refactorings of Yacc rules possible (but
 that would be a cool project!). But you can of course do all the C
 refactorings you want from inside the C code in the semantic actions.
+
+### LSP
+
+As noted in one issue, a natural development would be to support LSP
+([The Language Server
+Protocol](https://microsoft.github.io/language-server-protocol/)), but
+that is still far out of reach. A lot of refactoring needs to be done
+to clean up the current modules and protocol to get closer to that
+point.
 
 ### Java notes
 
@@ -90,6 +109,12 @@ standardized format (which was Jar-files with class files) so
 `c-xrefactory` cannot read it. You can still compile with Java > 8 and
 use `c-xrefactory` with a Java 8 JRE.
 
+As there are good Java tools available with refactoring support I'm
+thinking of removing all Java support from `c-xrefactory` since that
+complicates a lot of things. And some of the cool solutions don't work
+any longer, like navigating Java library symbols by loading the
+jar-files that were part of any Java install up to Java 8.
+
 ## Help!
 
 This code is pre-historic legacy. It seems to have been born in a
@@ -99,7 +124,7 @@ tests at all for that matter.
 I'm on a long-time quest to resurrect this code to understandable,
 maintainable and developable standard. This is hard, difficult and
 time consuming, as it is almost impossible to understand what anything
-does. At this point we have reached almost 60% test coverage which
+does. At this point we have reached almost 75% test coverage which
 makes me confident in refactoring many things.
 
 If you think you can help, I'll be happy to take it, even if it is
