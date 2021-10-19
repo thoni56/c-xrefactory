@@ -881,10 +881,9 @@ struct_declaration_list
 
 struct_declaration
     : Sv_tmp type_specifier_list struct_declarator_list ';'     {
-        Symbol *p;
         assert($2.d && $3.d);
-        for(p=$3.d; p!=NULL; p=p->next) {
-            completeDeclarator($2.d, p);
+        for (Symbol *symbol=$3.d; symbol!=NULL; symbol=symbol->next) {
+            completeDeclarator($2.d, symbol);
         }
         $$.d = $3.d;
         tmpWorkMemoryIndex = $1.d;

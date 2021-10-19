@@ -84,25 +84,24 @@ void deleteSymDef(void *p) {
     }
 }
 
-void unpackPointers(Symbol *pp) {
-    unsigned i;
-    for (i=0; i<pp->bits.npointers; i++) {
-        appendComposedType(&pp->u.type, TypePointer);
+void unpackPointers(Symbol *symbol) {
+    for (int i=0; i<symbol->bits.npointers; i++) {
+        appendComposedType(&symbol->u.type, TypePointer);
     }
-    pp->bits.npointers=0;
+    symbol->bits.npointers=0;
 }
 
-void addSymbol(Symbol *pp, SymbolTable *tab) {
+void addSymbol(Symbol *symbol, SymbolTable *table) {
     /*  a bug can produce, if you add a symbol into old table, and the same
         symbol exists in a newer one. Then it will be deleted from the newer
         one. All this story is about storing information in trail. It should
         containt, both table and pointer !!!!
     */
-    log_debug("adding symbol %s: %s %s",pp->name, typeNamesTable[pp->bits.symbolType], storageEnumName[pp->bits.storage]);
-    assert(pp->bits.npointers==0);
-    AddSymbolNoTrail(pp,tab);
-    addToTrail(deleteSymDef, pp  /* AND ALSO!!! , tab */ );
-    //if (WORK_NEST_LEVEL0()) {static int c=0;fprintf(dumpOut,"addsym0#%d\n",c++);}
+    log_debug("adding symbol %s: %s %s", symbol->name, typeNamesTable[symbol->bits.symbolType],
+              storageEnumName[symbol->bits.storage]);
+    assert(symbol->bits.npointers==0);
+    AddSymbolNoTrail(symbol, table);
+    addToTrail(deleteSymDef, symbol /* TODO? Should also include reference to table */ );
 }
 
 void recFindPush(Symbol *str, S_recFindStr *rfs) {
@@ -769,38 +768,38 @@ TypeModifier *prependComposedType(TypeModifier *d, Type type) {
     return newTypeModifier(type, NULL, d);
 }
 
-void completeDeclarator(Symbol *t, Symbol *d) {
+void completeDeclarator(Symbol *type, Symbol *declarator) {
     TypeModifier *tt,**dt;
     //static int counter=0;
-    assert(t && d);
-    if (t == &s_errorSymbol || d == &s_errorSymbol
-        || t->bits.symbolType==TypeError || d->bits.symbolType==TypeError) return;
-    d->bits.storage = t->bits.storage;
-    assert(t->bits.symbolType==TypeDefault);
-    dt = &(d->u.type); tt = t->u.type;
-    if (d->bits.npointers) {
-        if (d->bits.npointers>=1 && (tt->kind==TypeStruct||tt->kind==TypeUnion)
+    assert(type && declarator);
+    if (type == &s_errorSymbol || declarator == &s_errorSymbol
+        || type->bits.symbolType==TypeError || declarator->bits.symbolType==TypeError) return;
+    declarator->bits.storage = type->bits.storage;
+    assert(type->bits.symbolType==TypeDefault);
+    dt = &(declarator->u.type); tt = type->u.type;
+    if (declarator->bits.npointers) {
+        if (declarator->bits.npointers>=1 && (tt->kind==TypeStruct||tt->kind==TypeUnion)
             && tt->typedefSymbol==NULL) {
             //fprintf(dumpOut,"saving 1 str pointer:%d\n",counter++);fflush(dumpOut);
-            d->bits.npointers--;
+            declarator->bits.npointers--;
             //if(d->b.npointers) {fprintf(dumpOut,"possible 2\n");fflush(dumpOut);}
             assert(tt->u.t && tt->u.t->bits.symbolType==tt->kind && tt->u.t->u.s);
             tt = & tt->u.t->u.s->sptrtype;
-        } else if (d->bits.npointers>=2 && s_preCrPtr2TypesTab[tt->kind]!=NULL
+        } else if (declarator->bits.npointers>=2 && s_preCrPtr2TypesTab[tt->kind]!=NULL
                    && tt->typedefSymbol==NULL) {
             assert(tt->next==NULL); /* not a user defined type */
             //fprintf(dumpOut,"saving 2 pointer\n");fflush(dumpOut);
-            d->bits.npointers-=2;
+            declarator->bits.npointers-=2;
             tt = s_preCrPtr2TypesTab[tt->kind];
-        } else if (d->bits.npointers>=1 && s_preCrPtr1TypesTab[tt->kind]!=NULL
+        } else if (declarator->bits.npointers>=1 && s_preCrPtr1TypesTab[tt->kind]!=NULL
                    && tt->typedefSymbol==NULL) {
             assert(tt->next==NULL); /* not a user defined type */
             //fprintf(dumpOut,"saving 1 pointer\n");fflush(dumpOut);
-            d->bits.npointers--;
+            declarator->bits.npointers--;
             tt = s_preCrPtr1TypesTab[tt->kind];
         }
     }
-    unpackPointers(d);
+    unpackPointers(declarator);
     LIST_APPEND(TypeModifier, *dt, tt);
 }
 
