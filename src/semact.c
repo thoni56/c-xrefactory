@@ -730,7 +730,11 @@ Symbol *typeSpecifier2(TypeModifier *t) {
     Symbol    *r;
 
     /* this is temporary, as long as we do not have the tempmemory in java, c++ */
-    r = StackMemoryAlloc(Symbol);
+    if (LANGUAGE(LANG_C)) {
+        SM_ALLOC(tmpWorkMemory, r, Symbol); /* This is the only use of tmpWorkMemory?!?!? */
+    } else {
+        r = StackMemoryAlloc(Symbol);
+    }
     fillSymbolWithType(r, NULL, NULL, s_noPos, t);
 
     return r;
