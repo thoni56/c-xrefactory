@@ -225,7 +225,6 @@ bool freedPointer(void *ptr) {
 void dm_init(Memory *memory, char *name) {
     memory->name = name;
     memory->index = 0;
-    memory->overflowHandler = NULL;
 }
 
 
