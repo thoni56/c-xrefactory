@@ -3,6 +3,10 @@ os:
   - linux
   - osx
 
+jobs:
+  allow_failures:
+    - os: osx
+
 dist: focal
 osx_image: xcode12
 
@@ -25,7 +29,8 @@ script:
     - cd ..
     # Now reset coverage and run everything
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then lcov -q -z -d . ; fi
-    - make GCOV_OPTIONS= ci                   # = unit, build & test (even slow)
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then make ci ; fi
+    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then make build ; make test ; fi
     - cd ..
 
 branches:
