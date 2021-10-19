@@ -1,6 +1,10 @@
 language: c
-os: linux
-dist: focal
+os:
+ - linux
+   dist: focal
+ - osx
+   osx_image: xcode11.4
+
 if: NOT tag = stable
 
 addons:
@@ -21,10 +25,10 @@ script:
     # Separate coverage for unittest to Codecov
     - cd unittests
     - make COVERAGE=--coverage
-    - bash <(curl -s https://codecov.io/bash) -X gcovout
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then bash <(curl -s https://codecov.io/bash) -X gcovout ; fi
     - cd ..
     # Now reset coverage and run everything
-    - lcov -q -z -d .
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then lcov -q -z -d . ; fi
     - make GCOV_OPTIONS= ci                   # = unit, build & test (even slow)
     - cd ..
 
@@ -33,7 +37,8 @@ branches:
         - stable
 
 after_success:
-    # Coverage for tests to Coveralls
+    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then exit ; fi
+    # Coverage for tests to Coveralls, but only for linux
     - lcov -q -d . -c -o coverage.info
     - lcov -q --remove coverage.info '*.mock' '*.tab.c' '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
