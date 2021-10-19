@@ -1,9 +1,10 @@
 language: c
 os:
- - linux
-   dist: focal
- - osx
-   osx_image: xcode11.4
+  - linux
+  - osx
+
+dist: focal
+osx_image: xcode12
 
 if: NOT tag = stable
 
