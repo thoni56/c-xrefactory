@@ -14,7 +14,7 @@ addons:
     - lcov
 
 before_install:
-    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then exit ; fi
+    - if: "$TRAVIS_OS_NAME" = "linux"
     - wget https://github.com/cgreen-devs/cgreen/releases/download/1.4.0/cgreen_1.4.0_amd64.deb
     - sudo apt-get install ./cgreen_1.4.0_amd64.deb
     - sudo apt install openjdk-8-jre
@@ -39,7 +39,7 @@ branches:
         - stable
 
 after_success:
-    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then exit ; fi
+    - if: "$TRAVIS_OS_NAME" = "linux"
     # Coverage for tests to Coveralls, but only for linux
     - lcov -q -d . -c -o coverage.info
     - lcov -q --remove coverage.info '*.mock' '*.tab.c' '/usr/*' -o coverage.info
