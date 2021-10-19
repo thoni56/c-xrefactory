@@ -14,13 +14,7 @@ addons:
     - lcov
 
 before_install:
-    - if: "$TRAVIS_OS_NAME" = "linux"
-    - wget https://github.com/cgreen-devs/cgreen/releases/download/1.4.0/cgreen_1.4.0_amd64.deb
-    - sudo apt-get install ./cgreen_1.4.0_amd64.deb
-    - sudo apt install openjdk-8-jre
-    - lcov --version
-    - gcov --version
-    - gem install coveralls-lcov
+    - if [ "$TRAVIS_OS_NAME" = "linux" ] ; then ./.travis_install_linux.sh ; fi
 
 script:
     - cd src
@@ -39,10 +33,4 @@ branches:
         - stable
 
 after_success:
-    - if: "$TRAVIS_OS_NAME" = "linux"
-    # Coverage for tests to Coveralls, but only for linux
-    - lcov -q -d . -c -o coverage.info
-    - lcov -q --remove coverage.info '*.mock' '*.tab.c' '/usr/*' -o coverage.info
-    - coveralls-lcov coverage.info
-    # Move "stable" tag if on master
-    - ./.travis.merge_to_stable_maybe.sh
+    - if [ "$TRAVIS_OS_NAME" = "linux" ] ; then ./.travis_after_success_linux.sh ; fi
