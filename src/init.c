@@ -335,7 +335,7 @@ void initTypeNames(void) {
     for (int i=0; typeNamesInitTable[i].i != -1; i++) {
         Int2StringTable *s = &typeNamesInitTable[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
-        typeEnumName[s->i] = s->string;
+        typeNamesTable[s->i] = s->string;
     }
 }
 
