@@ -225,6 +225,7 @@ bool freedPointer(void *ptr) {
 void dm_init(Memory *memory, char *name) {
     memory->name = name;
     memory->index = 0;
+    memory->overflowHandler = NULL;
 }
 
 
@@ -239,7 +240,7 @@ void *dm_allocc(Memory *memory, int count, size_t size) {
     assert(count >= 0);
     align(memory);
     if (memory->index+count*size >= memory->size) {
-        if (memory->overflowHandler(count))
+        if (memory->overflowHandler != NULL && memory->overflowHandler(count))
             memoryResized();
         else
             fatalError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR);

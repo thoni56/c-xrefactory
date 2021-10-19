@@ -7,23 +7,28 @@
 #include "commons.mock"           /* For fatalError() */
 
 
+static bool fatalErrorAllowed = false;
+static bool myFatalErrorCalled = false;
+static void myFatalError(int errCode, char *mess, int exitStatus) {
+    if (!fatalErrorAllowed)
+        fail_test("FatalError() called");
+    myFatalErrorCalled = true;
+}
+
+
 Describe(Memory);
 BeforeEach(Memory) {
     log_set_level(LOG_ERROR);
     stackMemoryInit();
+    memoryUseFunctionForFatalError(myFatalError);
 }
 AfterEach(Memory) {}
 
-static bool myFatalErrorCalled = false;
-static void myFatalError(int errCode, char *mess, int exitStatus) {
-    myFatalErrorCalled = true;
-}
 
 Ensure(Memory, calls_fatalError_on_out_of_memory) {
     void *allocatedMemory = &allocatedMemory; /* Point to something initially */
 
-    memoryUseFunctionForFatalError(myFatalError);
-
+    fatalErrorAllowed = true;
     while(!myFatalErrorCalled && allocatedMemory != NULL)
         allocatedMemory = stackMemoryAlloc(5);
 
@@ -103,6 +108,8 @@ Ensure(Memory, has_functions_that_can_replace_DM_macros) {
     assert_that(memory.index, is_equal_to(0));
     assert_that(memory.name, is_equal_to_string("Memory"));
 
+    /* This will probably trigger overflow handling so... */
+    fatalErrorAllowed = true;
     variablep = dm_allocc(&memory, 1, sizeof(*variablep));
     assert_that(variablep, is_not_null);
     /* TODO This assumes that alignment is initially correct */
