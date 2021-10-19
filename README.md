@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/thoni56/c-xrefactory.svg?branch=main)](https://travis-ci.com/thoni56/c-xrefactory)[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=main)](https://coveralls.io/github/thoni56/c-xrefactory?branch=main)[![codecov](https://codecov.io/gh/thoni56/c-xrefactory/branch/main/graph/badge.svg)](https://codecov.io/gh/thoni56/c-xrefactory)
+[![Build Status](https://travis-ci.com/thoni56/c-xrefactory.svg?branch=main)](https://app.travis-ci.com/thoni56/c-xrefactory)[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=main)](https://coveralls.io/github/thoni56/c-xrefactory?branch=main)[![codecov](https://codecov.io/gh/thoni56/c-xrefactory/branch/main/graph/badge.svg)](https://codecov.io/gh/thoni56/c-xrefactory)
 # C-xrefactory - A refactoring tool for C/Java and Emacs
 
 ## TL;DR
