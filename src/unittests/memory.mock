@@ -7,7 +7,6 @@ CodeBlock *currentBlock;
 Memory *cxMemory = NULL;
 int olcxMemoryAllocatedBytes = 0;
 
-char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryIndex = 0;
 
 char ftMemory[SIZE_ftMemory];
