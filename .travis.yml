@@ -29,8 +29,7 @@ script:
     - cd ..
     # Now reset coverage and run everything
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then lcov -q -z -d . ; fi
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then make ci ; fi
-    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then make build ; make test ; fi
+    - make ci                   # = unit, build & test (even slow)
     - cd ..
 
 branches:

@@ -35,6 +35,11 @@ endif
 LCOV_EXCLUDES = --exclude 'log.c' --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 LCOV_IGNORE_COVERAGE = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
 
+CGREEN := $(shell which cgreen-runner)
+ifeq ($(CGREEN),)
+all:
+	@echo Cgreen not available, cannot run unittests
+else
 all: COVERAGE = --coverage
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
@@ -47,20 +52,13 @@ all: $(UNITTESTS)
 			info2gcov -q unittests.info ; \
 		fi ; \
 	fi
-
-# Set COVERAGE to enable coverage, duh!
-# E.g. COVERAGE=--coverage
-coverage: COVERAGE=--coverage
-coverage: all
+endif
 
 clean:
 	-rm -r $(OBJDIR) *.$(EXT)
 
 .objs/*.o: Makefile
 
-
-# Be silent unless VERBOSE is set to something (VERBOSE=1)
-#$(VERBOSE).SILENT:
 
 # Macro for unittests that link the SUT and a small number of dependent .o
 # Parameters: <module>, <dependent modules ...>
