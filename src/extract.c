@@ -12,6 +12,7 @@
 #include "jsemact.h"
 #include "filedescriptor.h"
 #include "log.h"
+#include "protocol.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000
@@ -648,7 +649,8 @@ static SymbolReferenceItemList *concatRefItemList(SymbolReferenceItemList **ll, 
 }
 
 
-static void addSymbolToSymRefList(SymbolReferenceItemList **ll, SymbolReferenceItem *s) {
+/* Public for unittesting */
+void addSymbolToSymRefList(SymbolReferenceItemList **ll, SymbolReferenceItem *s) {
     SymbolReferenceItemList *r;
 
     r = *ll;

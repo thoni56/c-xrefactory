@@ -1,7 +1,7 @@
 #include <cgreen/cgreen.h>
 
 /* Need to include C file to test static functions */
-#include "extract.c"
+#include "extract.h"
 
 /* Dependencies: */
 #include "filedescriptor.mock"
@@ -27,6 +27,7 @@
 #include "cxref.mock"
 #include "semact.mock"
 #include "ppc.mock"
+#include "log.h"
 
 
 

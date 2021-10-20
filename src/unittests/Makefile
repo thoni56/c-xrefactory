@@ -20,9 +20,11 @@ endif
 
 # If you have a make >3.something (MacOS don't!) you can use vpath to locate Cgreen library
 # as a dependency which will automatically be linked
-# CGREEN = -lcgreen
+# CGREEN_LIB = -lcgreen
 # else you have to add explicit linkage directives
-CGREEN_LINK = -L/usr/local/lib -lcgreen
+CGREEN_LIB = -L/usr/local/lib -lcgreen
+# And for Homebrew on M1
+# CGREEN_LIB = -L/opt/homebrew/lib -lcgreen
 
 # We need to use compatible gcov (Darwin/Brew now have GCC v11)
 ifeq ("$(CC)", "gcc-11")
@@ -66,7 +68,7 @@ define UNITTEST
 $(1)_DEPENDENCIES = $(2)
 $(1)_DEPS = $$(patsubst %,$(OBJDIR)/%.o,$$($(1)_DEPENDENCIES))
 $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
-	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LINK)
+	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LIB)
 endef
 
 $(eval $(call UNITTEST,classfilereader,log position))
@@ -76,6 +78,7 @@ $(eval $(call UNITTEST,complete,protocol log type))
 $(eval $(call UNITTEST,cxref,server protocol log hash position type storage usage))
 $(eval $(call UNITTEST,cxfile,protocol log position))
 $(eval $(call UNITTEST,editor,position log))
+$(eval $(call UNITTEST,extract,position log memory storage type id usage protocol))
 $(eval $(call UNITTEST,fileio,log))
 $(eval $(call UNITTEST,filetable,hash log))
 $(eval $(call UNITTEST,id))
@@ -95,12 +98,6 @@ $(eval $(call UNITTEST,semact,protocol hash position log storage type))
 $(eval $(call UNITTEST,symbol))
 $(eval $(call UNITTEST,symboltable,hash))
 $(eval $(call UNITTEST,yylex,protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))
-
-# These includes the modules .c to be able to test internal functions or macros
-EXTRACT_DEPENDENCIES = protocol log position memory id log usage
-EXTRACT_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(EXTRACT_DEPENDENCIES))
-extract_tests.$(EXT): $(OBJDIR)/extract_tests.o $(EXTRACT_DEPS) $(CGREEN)
-	$(CC) -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN_LINK)
 
 
 $(OBJDIR)/main.o: CFLAGS+=-DGIT_HASH=\"NOT_A_REAL_GIT_HASH\"
