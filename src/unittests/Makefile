@@ -35,8 +35,8 @@ endif
 LCOV_EXCLUDES = --exclude 'log.c' --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 LCOV_IGNORE_COVERAGE = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
 
-CGREEN := $(shell which cgreen-runner)
-ifeq ($(CGREEN),)
+
+ifeq ($(shell which cgreen-runner),)
 all:
 	@echo Cgreen not available, cannot run unittests
 else
@@ -65,7 +65,7 @@ clean:
 define UNITTEST
 $(1)_DEPENDENCIES = $(2)
 $(1)_DEPS = $$(patsubst %,$(OBJDIR)/%.o,$$($(1)_DEPENDENCIES))
-$(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS) $$(CGREEN)
+$(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
 	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LINK)
 endef
 
