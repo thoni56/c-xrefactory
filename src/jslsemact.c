@@ -261,7 +261,7 @@ int jslClassifyAmbiguousTypeName(IdList *name, Symbol **str) {
         default: assert(0);
         }
     }
-    return(name->nameType);
+    return name->nameType;
 }
 
 Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args) {

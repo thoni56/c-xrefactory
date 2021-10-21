@@ -80,19 +80,18 @@
 /* In case that there is a class and package differing only in letter case in name */
 /* then even if classified to type it should be reclassified dep on the case */
 
-#define JslImportOnDemandDeclaration(iname) {                           \
-        Symbol *sym;                                                    \
-        int st;                                                         \
-        st = jslClassifyAmbiguousTypeName(iname, &sym);                 \
-        if (st == TypeStruct) {                                         \
-            javaLoadClassSymbolsFromFile(sym);                          \
-            jslAddNestedClassesToJslTypeTab(sym, ORDER_APPEND);         \
-        } else {                                                        \
-            javaMapDirectoryFiles2(iname,jslAddMapedImportTypeName,NULL,iname,NULL); \
-        }                                                               \
+static void jslImportOnDemandDeclaration(struct idList *iname) {
+    Symbol *sym;
+    int st;
+    st = jslClassifyAmbiguousTypeName(iname, &sym);
+    if (st == TypeStruct) {
+        javaLoadClassSymbolsFromFile(sym);
+        jslAddNestedClassesToJslTypeTab(sym, ORDER_APPEND);
+    } else {
+        javaMapDirectoryFiles2(iname,jslAddMapedImportTypeName,NULL,iname,NULL);
     }
+}
 
-    /* TODO: This is just silly... Convert to something like newPositionAsCopyOf()  */
 #define SetPrimitiveTypePos(res, typ) {         \
         if (1 || SyntaxPassOnly()) {            \
             res = StackMemoryAlloc(Position);   \
@@ -101,6 +100,7 @@
         else assert(0);                         \
     }
 
+/* NOTE: These cannot be unmacrofied since the "node" can have different types */
 #define PropagateBoundaries(node, startSymbol, endSymbol) {node.b=startSymbol.b; node.e=endSymbol.e;}
 #define PropagateBoundariesIfRegularSyntaxPass(node, startSymbol, endSymbol) {         \
         if (regularPass()) {                                            \
@@ -3469,7 +3469,7 @@ case 71:
 {
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
-                JslImportOnDemandDeclaration(yyvsp[0].ast_idList.d);
+                jslImportOnDemandDeclaration(yyvsp[0].ast_idList.d);
             }
         }
 break;
@@ -3487,7 +3487,7 @@ case 73:
 {
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
-                JslImportOnDemandDeclaration(yyvsp[0].ast_idList.d);
+                jslImportOnDemandDeclaration(yyvsp[0].ast_idList.d);
             }
         }
 break;
