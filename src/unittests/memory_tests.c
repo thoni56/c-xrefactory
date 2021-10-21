@@ -107,6 +107,9 @@ Ensure(Memory, has_functions_that_can_replace_DM_macros) {
     assert_that(memory.index, is_equal_to(0));
     assert_that(memory.name, is_equal_to_string("Memory"));
 
+    memory.size = 0;
+    memory.overflowHandler = NULL;
+
     /* This will probably trigger overflow handling so... */
     fatalErrorAllowed = true;
     variablep = dm_allocc(&memory, 1, sizeof(*variablep));
