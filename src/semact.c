@@ -46,7 +46,7 @@ int styyerror(char *s) {
         sprintf(tmpBuff, "Syntax error on: %s", yytext);
         errorMessage(ERR_ST, tmpBuff);
     }
-    return(0);
+    return 0;
 }
 
 void noSuchFieldError(char *rec) {
@@ -61,7 +61,7 @@ int styyErrorRecovery(void) {
     if (options.debug && displayingErrorMessages()) {
         errorMessage(ERR_ST, "recovery");
     }
-    return(0);
+    return 0;
 }
 
 void setToNull(void *p) {
@@ -127,7 +127,7 @@ S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
     assert(rfs);
     fillRecFindStr(rfs, s, NULL, NULL,s_recFindCl++);
     recFindPush(s, rfs);
-    return(rfs);
+    return rfs;
 }
 
 void setDirectStructureCompletionType(TypeModifier *typeModifier) {
@@ -169,9 +169,10 @@ static int javaRecordVisible(Symbol *appcl, Symbol *funcl, unsigned accessFlags)
     // there is special case to check! Private symbols are not inherited!
     if (accessFlags & AccessPrivate) {
         // check classes to string equality, just to be sure
-        if (appcl!=funcl && strcmp(appcl->linkName, funcl->linkName)!=0) return(0);
+        if (appcl!=funcl && strcmp(appcl->linkName, funcl->linkName)!=0)
+            return 0;
     }
-    return(1);
+    return 1;
 }
 
 static int accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
@@ -180,11 +181,11 @@ static int accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
     SymbolList    *sups;
     if (rfs==NULL) {
         // nested class checking, just check without inheritance checking
-        return(javaClassIsInCurrentPackage(funcl));
+        return javaClassIsInCurrentPackage(funcl);
     }
     // check accessibilities over inheritance hierarchy
     if (! javaClassIsInCurrentPackage(rfs->baseClass)) {
-        return(0);
+        return 0;
     }
     cc = rfs->baseClass;
     for(i=0; i<rfs->sti-1; i++) {
@@ -193,12 +194,13 @@ static int accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
             if (sups->next==rfs->st[i]) break;
         }
         if (sups!=NULL && sups->next == rfs->st[i]) {
-            if (! javaClassIsInCurrentPackage(sups->d)) return(0);
+            if (! javaClassIsInCurrentPackage(sups->d))
+                return 0;
         }
         cc = sups->d;
     }
     assert(cc==rfs->currClass);
-    return(1);
+    return 1;
 }
 
 // BERK, there is a copy of this function in jslsemact.c (jslRecordAccessible)
@@ -208,7 +210,8 @@ static int accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
 int javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags) {
     S_javaStat          *cs, *lcs;
     int                 len;
-    if (funcl == NULL) return(1);  /* argument or local variable */
+    if (funcl == NULL)
+        return 1;  /* argument or local variable */
     log_trace("testing accessibility %s . %s of x%x",funcl->linkName,rec->linkName, recAccessFlags);
     assert(s_javaStat);
     if (recAccessFlags & AccessPublic) {
@@ -260,36 +263,33 @@ int javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbol
 }
 
 int javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
-    return(
-           javaRecordVisible(rfs->baseClass, rfs->currClass, r->bits.access)
-           &&
-           javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, r, r->bits.access)
-           );
+    return javaRecordVisible(rfs->baseClass, rfs->currClass, r->bits.access)
+        && javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, r, r->bits.access);
 }
 
 int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     int acc, i;
-    for(i=MAX_REQUIRED_ACCESS; i>0; i--) {
+    for (i=MAX_REQUIRED_ACCESS; i>0; i--) {
         acc = s_javaRequiredeAccessibilitiesTable[i];
         if (javaRecordVisible(rfs->baseClass, rfs->currClass, acc)
             && javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, r, acc)) {
-            return(i);
+            return i;
         }
     }
-    return(i);
+    return i;
 }
 
 #define FSRS_RETURN_WITH_SUCCESS(ss,res,r) {    \
         *res = r;                               \
         ss->nextRecord = r->next;               \
-        return(RETURN_OK);                      \
+        return RETURN_OK;                       \
     }
 
 
 #define FSRS_RETURN_WITH_FAIL(ss,res) {         \
         ss->nextRecord = NULL;                  \
         *res = &s_errorSymbol;                  \
-        return(RETURN_NOT_FOUND);               \
+        return RETURN_NOT_FOUND;                \
     }
 
 int findStrRecordSym(S_recFindStr *ss,
@@ -394,8 +394,8 @@ int findStrRecord(Symbol *s,
                   int javaClassif
 ) {
     S_recFindStr rfs;
-    return(findStrRecordSym(iniFind(s,&rfs), recname, res, javaClassif,
-                            ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES));
+    return findStrRecordSym(iniFind(s,&rfs), recname, res, javaClassif,
+                           ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
 }
 
 /* and push reference */
@@ -437,7 +437,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
     } else {
         noSuchFieldError(record->name);
     }
-    return(ref);
+    return ref;
 }
 
 Reference *findStructureFieldFromType(TypeModifier *structure,
@@ -453,7 +453,7 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
     }
     reference = findStrRecordFromSymbol(structure->u.t, field, resultingSymbol, javaClassifier, NULL);
  fini:
-    return(reference);
+    return reference;
 }
 
 void labelReference(Id *id, Usage usage) {
@@ -545,9 +545,9 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
     TypeModifier *tt;
 
     if (p == &s_errorSymbol || p->bits.symbolType==TypeError)
-        return(p);
+        return p;
     if (p->bits.symbolType == TypeError)
-        return(p);
+        return p;
     assert(p && p->bits.symbolType == TypeDefault && p->u.type);
     if (p->u.type->kind == TypeFunction && p->bits.storage == StorageDefault) {
         p->bits.storage = StorageExtern;
@@ -570,7 +570,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
     }
     addSymbol(p, tab);
     addCxReference(p, &p->pos, usage,noFileIndex, noFileIndex);
-    return(p);
+    return p;
 }
 
 static void addInitializerRefs(Symbol *decl,
@@ -607,7 +607,7 @@ Symbol *addNewDeclaration(
     int usage;
     if (decl == &s_errorSymbol || btype == &s_errorSymbol
         || decl->bits.symbolType==TypeError || btype->bits.symbolType==TypeError) {
-        return(decl);
+        return decl;
     }
     assert(decl->bits.symbolType == TypeDefault);
     completeDeclarator(btype, decl);
@@ -616,7 +616,7 @@ Symbol *addNewDeclaration(
     else if (decl->bits.storage == StorageExtern) usage = UsageDeclared;
     addNewSymbolDef(decl, storage, tab, usage);
     addInitializerRefs(decl, idl);
-    return(decl);
+    return decl;
 }
 
 void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTable *tab) {
@@ -677,7 +677,8 @@ static TypeModifier *mergeBaseType(TypeModifier *t1,TypeModifier *t2){
     assert(t1->kind<TYPE_MODIFIERS_END && t2->kind<TYPE_MODIFIERS_END);
     b=t1->kind; modif=t2->kind;// just to confuse compiler warning
     /* if both are types, error, return the new one only*/
-    if (t1->kind <= MODIFIERS_START && t2->kind <= MODIFIERS_START) return(t2);
+    if (t1->kind <= MODIFIERS_START && t2->kind <= MODIFIERS_START)
+        return t2;
     /* if not use tables*/
     if (t1->kind > MODIFIERS_START) {modif = t1->kind; b = t2->kind; }
     if (t2->kind > MODIFIERS_START) {modif = t2->kind; b = t1->kind; }
@@ -712,18 +713,18 @@ static TypeModifier *mergeBaseType(TypeModifier *t1,TypeModifier *t2){
         break;
     default: assert(0); r=0;
     }
-    return(createSimpleTypeModifier(r));
+    return createSimpleTypeModifier(r);
 }
 
 static TypeModifier * mergeBaseModTypes(TypeModifier *t1, TypeModifier *t2) {
     assert(t1 && t2);
-    if (t1->kind == TypeDefault) return(t2);
-    if (t2->kind == TypeDefault) return(t1);
+    if (t1->kind == TypeDefault) return t2;
+    if (t2->kind == TypeDefault) return t1;
     assert(t1->kind >=0 && t1->kind<MAX_TYPE);
     assert(t2->kind >=0 && t2->kind<MAX_TYPE);
-    if (s_preCreatedTypesTable[t2->kind] == NULL) return(t2);  /* not base type*/
-    if (s_preCreatedTypesTable[t1->kind] == NULL) return(t1);  /* not base type*/
-    return(mergeBaseType(t1, t2));
+    if (s_preCreatedTypesTable[t2->kind] == NULL) return t2;  /* not base type */
+    if (s_preCreatedTypesTable[t1->kind] == NULL) return t1;  /* not base type */
+    return mergeBaseType(t1, t2);
 }
 
 Symbol *typeSpecifier2(TypeModifier *t) {
@@ -738,7 +739,7 @@ Symbol *typeSpecifier2(TypeModifier *t) {
 Symbol *typeSpecifier1(unsigned t) {
     Symbol        *r;
     r = typeSpecifier2(createSimpleTypeModifier(t));
-    return(r);
+    return r;
 }
 
 void declTypeSpecifier1(Symbol *d, Type type) {
@@ -760,7 +761,7 @@ TypeModifier *appendComposedType(TypeModifier **d, Type type) {
     TypeModifier *p;
     p = newTypeModifier(type, NULL, NULL);
     LIST_APPEND(TypeModifier, (*d), p);
-    return(p);
+    return p;
 }
 
 TypeModifier *prependComposedType(TypeModifier *d, Type type) {
@@ -845,7 +846,7 @@ int mergeArguments(Symbol *id, Symbol *ty) {
             }
         }
     }
-    return(res);
+    return res;
 }
 
 static TypeModifier *createSimpleEnumType(Symbol *enumDefinition) {
@@ -896,7 +897,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         addSymbol(pp, symbolTable);
     }
     addCxReference(pp, &id->p, usage,noFileIndex, noFileIndex);
-    return(&pp->u.s->stype);
+    return &pp->u.s->stype;
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
@@ -978,7 +979,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
 
     addSymbol(pp, symbolTable);
 
-    return(&pp->u.s->stype);
+    return &pp->u.s->stype;
 }
 
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
@@ -1011,7 +1012,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
         addSymbol(pp, symbolTable);
     }
     addCxReference(pp, &id->p, usage,noFileIndex, noFileIndex);
-    return(createSimpleEnumType(pp));
+    return createSimpleEnumType(pp);
 }
 
 TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
@@ -1022,7 +1023,7 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
 
     setGlobalFileDepNames("", pp, MEMORY_XX);
     pp->u.enums = enums;
-    return(createSimpleEnumType(pp));
+    return createSimpleEnumType(pp);
 }
 
 void appendPositionToList( PositionList **list,Position *pos) {
