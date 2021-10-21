@@ -270,7 +270,6 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     }
     mbMemoryIndex = cp->mbMemoryIndex;
     currentBlock = cp->topBlock;
-    tmpWorkMemoryIndex = 0;
     *currentBlock = cp->topBlockContent;
     s_javaStat = cp->javaCached;
     counters = cp->counters;
@@ -409,8 +408,6 @@ void placeCachePoint(bool inputCaching) {
         cacheInput();
     if (!s_cache.activeCache)
         return;
-    if (tmpWorkMemoryIndex != 0)
-        return; /* something in non-cached tmp memory */
     pp = &s_cache.cp[s_cache.cpi];
     log_debug("placing cache point %d", s_cache.cpi);
     fillCachePoint(pp, currentBlock, ppmMemoryIndex, cxMemory->index, mbMemoryIndex, s_cache.lbcc,

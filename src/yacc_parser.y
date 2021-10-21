@@ -52,6 +52,8 @@ static Symbol *l_currentType = NULL;
 static void addRuleLocalVariable(Id *name, int order);
 static void addYaccSymbolReference(Id *name, int usage);
 
+static int savedWorkMemoryIndex = 0;
+
 %}
 
 /* Token definitions *must* be the same in all parsers. The following
@@ -852,13 +854,13 @@ constant_expr
 
 Sv_tmp
     :    {
-        $$.d = tmpWorkMemoryIndex;
+        $$.d = savedWorkMemoryIndex;
     }
     ;
 
 declaration
-    : Sv_tmp declaration_specifiers ';'     { tmpWorkMemoryIndex = $1.d; }
-    | Sv_tmp init_declarations ';'          { tmpWorkMemoryIndex = $1.d; }
+    : Sv_tmp declaration_specifiers ';'     { savedWorkMemoryIndex = $1.d; }
+    | Sv_tmp init_declarations ';'          { savedWorkMemoryIndex = $1.d; }
     | error
         {
 #if YYDEBUG
@@ -1109,7 +1111,7 @@ struct_declaration
             completeDeclarator($2.d, symbol);
         }
         $$.d = $3.d;
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | error                                             {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
@@ -1531,11 +1533,11 @@ initializer
 initializer_list
     : Sv_tmp designation_opt Start_block initializer End_block {
         $$.d = $2.d;
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | initializer_list ',' Sv_tmp designation_opt Start_block initializer End_block {
         LIST_APPEND(IdList, $1.d, $4.d);
-        tmpWorkMemoryIndex = $3.d;
+        savedWorkMemoryIndex = $3.d;
     }
     ;
 
@@ -1571,28 +1573,28 @@ designator
 
 statement
     : Sv_tmp labeled_statement      {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp compound_statement     {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp expression_statement       {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp selection_statement        {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp iteration_statement        {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp jump_statement     {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp asm_statement      {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp error  {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     ;
 
@@ -1862,10 +1864,10 @@ cached_external_definition_list
 
 external_definition
     : Sv_tmp declaration_specifiers ';'     {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp top_init_declarations ';'      {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp function_definition_head {
         Symbol *p;
@@ -1877,7 +1879,7 @@ external_definition
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
         addNewSymbolDef($2.d, StorageExtern, symbolTable, UsageDefined);
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
         beginBlock();
         counters.localVar = 0;
         assert($2.d->u.type && $2.d->u.type->kind == TypeFunction);
@@ -1893,22 +1895,22 @@ external_definition
         s_cp.function = NULL;
     }
     | Sv_tmp EXTERN STRING_LITERAL  external_definition {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp EXTERN STRING_LITERAL  '{' cached_external_definition_list '}' {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp ASM_KEYWORD '(' expr ')' ';'       {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp error compound_statement       {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp error      {
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     | Sv_tmp ';'        {  /* empty external definition */
-        tmpWorkMemoryIndex = $1.d;
+        savedWorkMemoryIndex = $1.d;
     }
     ;
 

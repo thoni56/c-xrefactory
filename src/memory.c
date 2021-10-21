@@ -18,8 +18,6 @@ jmp_buf memoryResizeJumpTarget;
 /* Memory types */
 char workMemory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
-int tmpWorkMemoryIndex = 0;
-
 char ftMemory[SIZE_ftMemory];
 int ftMemoryIndex = 0;
 
@@ -134,16 +132,15 @@ void removeFromTrailUntil(FreeTrail *untilP) {
         trailDump();
 }
 
-static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, int tmpMemoryBaseIndex, FreeTrail *trail, CodeBlock *outerBlock) {
+static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, FreeTrail *trail, CodeBlock *outerBlock) {
     block->firstFreeIndex = firstFreeIndex;
-    block->tmpMemoryBaseIndex = tmpMemoryBaseIndex;
     block->trail = trail;
     block->outerBlock = outerBlock;
 }
 
 void stackMemoryInit(void) {
     currentBlock = (CodeBlock *) workMemory;
-    fillCodeBlock(currentBlock, sizeof(CodeBlock), 0, NULL, NULL);
+    fillCodeBlock(currentBlock, sizeof(CodeBlock), NULL, NULL);
 }
 
 void *stackMemoryAlloc(int size) {
@@ -180,7 +177,7 @@ void beginBlock(void) {
     pushed = stackMemoryPush(&previous, sizeof(CodeBlock));
     // trail can't be reset to NULL, because in case of syntax errors
     // this would avoid balancing of } at the end of class
-    fillCodeBlock(currentBlock, currentBlock->firstFreeIndex, tmpWorkMemoryIndex, currentBlock->trail, pushed);
+    fillCodeBlock(currentBlock, currentBlock->firstFreeIndex, currentBlock->trail, pushed);
 }
 
 void endBlock(void) {
@@ -188,13 +185,7 @@ void endBlock(void) {
     //&removeFromTrailUntil(NULL);
     assert(currentBlock && currentBlock->outerBlock);
     removeFromTrailUntil(currentBlock->outerBlock->trail);
-    log_trace("block free %d %d",tmpWorkMemoryIndex,currentBlock->tmpMemoryBaseIndex);
-    assert(tmpWorkMemoryIndex >= currentBlock->tmpMemoryBaseIndex);
-    tmpWorkMemoryIndex = currentBlock->tmpMemoryBaseIndex;
-    * currentBlock =  * currentBlock->outerBlock;
-    /*  FILL_topBlock(s_topBlock,s_topBlock->firstFreeIndex,NULL,NULL); */
-    // burk, following disables any memory freeing for Java
-    //  if (LANGUAGE(LAN_JAVA)) s_topBlock->firstFreeIndex = memi;
+    *currentBlock =  *currentBlock->outerBlock;
     assert(currentBlock != NULL);
 }
 

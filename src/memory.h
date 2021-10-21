@@ -197,7 +197,6 @@ extern int olcxMemoryAllocatedBytes;
 
 /* SM (Static memory) areas */
 extern char workMemory[];
-extern int tmpWorkMemoryIndex;  /* Saved index into workMemory? */
 
 extern char ftMemory[];
 extern int ftMemoryIndex;

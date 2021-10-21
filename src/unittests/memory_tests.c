@@ -43,7 +43,6 @@ Ensure(Memory, can_begin_and_end_block) {
 
     stackMemoryInit();
     assert_that(currentBlock->outerBlock, is_null);
-    assert_that(tmpWorkMemoryIndex, is_equal_to(0));
 
     currentBlock->trail = &freeTrail; /* "Random" pointer to be able to figure out what happens with it... */
 
