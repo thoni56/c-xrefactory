@@ -43,9 +43,6 @@
 
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
 
-#define AddHtmlTrivialReference(pos) {\
-}
-
 static Symbol *l_yaccUnion = NULL;
 static Symbol *l_currentType = NULL;
 
@@ -274,7 +271,6 @@ before_rules_item
 */
         any_token
     |   '%' UNION {
-            AddHtmlTrivialReference($2.d->p);
             $<typeModifier>$ = createNewAnonymousStructOrUnion($2.d);
         }
         '{' struct_declaration_list '}' {
@@ -282,12 +278,10 @@ before_rules_item
             l_yaccUnion = $<typeModifier>3->u.t;
         }
     |   '%' IDENTIFIER token_seq_opt    {
-            AddHtmlTrivialReference($2.d->p);
         }
     |   '%' IDENTIFIER '<' IDENTIFIER '>' {
             Symbol   *res;
             int rr;
-            AddHtmlTrivialReference($2.d->p);
             l_currentType = NULL;
             if (l_yaccUnion!=NULL) {
                 rr = findStrRecord(l_yaccUnion, $4.d->name, &res, CLASS_TO_ANY);
