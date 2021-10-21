@@ -18,8 +18,8 @@ extern void addSymbol(Symbol *pp, SymbolTable *tab);
 extern void recFindPush(Symbol *sym, S_recFindStr *rfs);
 extern S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs);
 extern bool javaOuterClassAccessible(Symbol *cl);
-extern int javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags);
-extern int javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r);
+extern bool javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags);
+extern bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r);
 extern int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r);
 extern int findStrRecordSym(S_recFindStr *ss,
                             char *recname,

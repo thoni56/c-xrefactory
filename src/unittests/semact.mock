@@ -47,12 +47,12 @@ bool javaOuterClassAccessible(Symbol *cl) {
     return (int) mock(cl);
 }
 
-int javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags) {
-    return (int) mock(rfs, applcl, funcl, rec, recAccessFlags);
+bool javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags) {
+    return (bool) mock(rfs, applcl, funcl, rec, recAccessFlags);
 }
 
-int javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
-    return (int) mock(rfs, applCl, funCl, r);
+bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
+    return (bool) mock(rfs, applCl, funCl, r);
 }
 
 int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
