@@ -198,7 +198,7 @@ static int savedWorkMemoryIndex = 0;
 %type <ast_integer> assignment_operator
 %type <ast_integer> pointer CONSTANT _ncounter_ _nlabel_ _ngoto_ _nfork_
 %type <ast_unsigned> storage_class_specifier type_specifier1
-%type <ast_unsigned> type_modality_specifier Sv_tmp
+%type <ast_unsigned> type_modality_specifier Save_index
 %type <ast_symbol> init_declarator declarator declarator2 struct_declarator
 %type <ast_symbol> type_specifier_list type_mod_specifier_list
 %type <ast_symbol> type_specifier_list0
@@ -629,15 +629,15 @@ constant_expr
     : conditional_expr
     ;
 
-Sv_tmp
+Save_index
     :    {
         $$.d = savedWorkMemoryIndex;
     }
     ;
 
 declaration
-    : Sv_tmp declaration_specifiers ';'     { savedWorkMemoryIndex = $1.d; }
-    | Sv_tmp init_declarations ';'          { savedWorkMemoryIndex = $1.d; }
+    : Save_index declaration_specifiers ';'     { savedWorkMemoryIndex = $1.d; }
+    | Save_index init_declarations ';'          { savedWorkMemoryIndex = $1.d; }
     | error
         {
 #if YYDEBUG
@@ -882,7 +882,7 @@ struct_declaration_list
     ;
 
 struct_declaration
-    : Sv_tmp type_specifier_list struct_declarator_list ';'     {
+    : Save_index type_specifier_list struct_declarator_list ';'     {
         assert($2.d && $3.d);
         for (Symbol *symbol=$3.d; symbol!=NULL; symbol=symbol->next) {
             completeDeclarator($2.d, symbol);
@@ -1308,11 +1308,11 @@ initializer
     ;
 
 initializer_list
-    : Sv_tmp designation_opt Start_block initializer End_block {
+    : Save_index designation_opt Start_block initializer End_block {
         $$.d = $2.d;
         savedWorkMemoryIndex = $1.d;
     }
-    | initializer_list ',' Sv_tmp designation_opt Start_block initializer End_block {
+    | initializer_list ',' Save_index designation_opt Start_block initializer End_block {
         LIST_APPEND(IdList, $1.d, $4.d);
         savedWorkMemoryIndex = $3.d;
     }
@@ -1349,28 +1349,28 @@ designator
     ;
 
 statement
-    : Sv_tmp labeled_statement      {
+    : Save_index labeled_statement      {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp compound_statement     {
+    | Save_index compound_statement     {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp expression_statement       {
+    | Save_index expression_statement       {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp selection_statement        {
+    | Save_index selection_statement        {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp iteration_statement        {
+    | Save_index iteration_statement        {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp jump_statement     {
+    | Save_index jump_statement     {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp asm_statement      {
+    | Save_index asm_statement      {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp error  {
+    | Save_index error  {
         savedWorkMemoryIndex = $1.d;
     }
     ;
@@ -1640,13 +1640,13 @@ cached_external_definition_list
     ;
 
 external_definition
-    : Sv_tmp declaration_specifiers ';'     {
+    : Save_index declaration_specifiers ';'     {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp top_init_declarations ';'      {
+    | Save_index top_init_declarations ';'      {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp function_definition_head {
+    | Save_index function_definition_head {
         Symbol *p;
         int i;
         assert($2.d);
@@ -1671,22 +1671,22 @@ external_definition
         endBlock();
         s_cp.function = NULL;
     }
-    | Sv_tmp EXTERN STRING_LITERAL  external_definition {
+    | Save_index EXTERN STRING_LITERAL  external_definition {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp EXTERN STRING_LITERAL  '{' cached_external_definition_list '}' {
+    | Save_index EXTERN STRING_LITERAL  '{' cached_external_definition_list '}' {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp ASM_KEYWORD '(' expr ')' ';'       {
+    | Save_index ASM_KEYWORD '(' expr ')' ';'       {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp error compound_statement       {
+    | Save_index error compound_statement       {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp error      {
+    | Save_index error      {
         savedWorkMemoryIndex = $1.d;
     }
-    | Sv_tmp ';'        {  /* empty external definition */
+    | Save_index ';'        {  /* empty external definition */
         savedWorkMemoryIndex = $1.d;
     }
     ;
