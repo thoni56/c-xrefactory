@@ -1363,16 +1363,14 @@ endOfFile:
 /* *********************************************************** */
 
 static bool cyclicCall(MacroBody *mb) {
-    char *name;
-
-    name = mb->name;
+    char *name = mb->name;
     log_debug("Testing for cyclic call, '%s' against curr '%s'", name, currentInput.macroName);
     if (currentInput.macroName != NULL && strcmp(name,currentInput.macroName)==0)
         return true;
-    for(int i=0; i<macroStackIndex; i++) {
-        LexInput *ll = &macroStack[i];
-        log_debug("Testing '%s' against '%s'", name, ll->macroName);
-        if (ll->macroName != NULL && strcmp(name,ll->macroName)==0)
+    for (int i=0; i<macroStackIndex; i++) {
+        LexInput *lexInput = &macroStack[i];
+        log_debug("Testing '%s' against '%s'", name, lexInput->macroName);
+        if (lexInput->macroName != NULL && strcmp(name,lexInput->macroName)==0)
             return true;
     }
     return false;
