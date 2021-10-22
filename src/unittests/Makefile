@@ -33,6 +33,8 @@ else
 	LCOV = lcov
 endif
 
+COVERAGE = --coverage
+
 # NOTE: lcov >= 1.14 does not have --exclude
 LCOV_EXCLUDES = --exclude 'log.c' --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 LCOV_IGNORE_COVERAGE = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
@@ -42,7 +44,6 @@ ifeq ($(shell which cgreen-runner),)
 all:
 	@echo Cgreen not available, cannot run unittests
 else
-all: COVERAGE = --coverage
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^

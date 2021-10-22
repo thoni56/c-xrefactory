@@ -41,8 +41,9 @@
 #########################################################################
 # Always export following variables to environment of sub-makes (to use you need "-e")
 
+# Build with coverage for all cases except "prod"
+export COVERAGE = --coverage
 export CC = cc
-export COVERAGE =
 
 # Other variables
 
@@ -81,13 +82,13 @@ all: unit build
 
 #########################################################################
 # For production - no smartness just compile, ensure clean production build
+prod: COVERAGE =
 prod:
 	$(MAKE) clean
 	$(MAKE) c-xref
 
 #########################################################################
 # For development - various ways to build
-devel: COVERAGE = --coverage
 devel: check-tokens
 	$(MAKE) -C ../editors/emacs
 	$(MAKE) -e clean-coverage
@@ -97,7 +98,6 @@ devel: check-tokens
 devel-proper: unit build
 	$(MAKE) -e test
 
-ci: COVERAGE=--coverage
 ci:
 	$(MAKE) -e unit
 	$(MAKE) -e build
