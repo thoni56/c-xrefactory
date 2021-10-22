@@ -90,7 +90,7 @@
 
 #define MAX_MACRO_ARGS		500		/* max number of macro args */
 #define INCLUDE_STACK_SIZE   80		/* max include depth */
-#define MACRO_STACK_SIZE	500		/* max depth of macro bodies nesting */
+#define MACRO_INPUT_STACK_SIZE	500		/* max depth of macro bodies nesting */
 
 #define MACRO_UNIT_SIZE		20000		/* allocation unit for macro body */
 #define MACRO_ARG_UNIT_SIZE	20000		/* allocation unit for macro act arg */

@@ -70,7 +70,7 @@ int macroStackIndex=0;
 static char ppMemory[SIZE_ppMemory];
 static int ppMemoryIndex=0;
 
-static LexInput macroStack[MACRO_STACK_SIZE];
+static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 
 
 
@@ -330,7 +330,7 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
                 return END_OF_MACRO_ARGUMENT_EXCEPTION;
             }
             MB_FREE_UNTIL(currentInput.beginningOfBuffer);
-            currentInput = macroStack[--macroStackIndex];
+            currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCFileConsistency();
             if (!getLexemFromLexer(&currentFile.lexBuffer)) {
@@ -592,7 +592,7 @@ void processIncludeDirective(Position *includePosition, bool is_include_next) {
         if (macroStackIndex != 0) {
             errorMessage(ERR_INTERNAL,"include directive in macro body?");
 assert(0);
-            currentInput = macroStack[0];
+            currentInput = macroInputStack[0];
             macroStackIndex = 0;
         }
         processInclude2(includePosition, *currentLexemP, currentLexemP+1, is_include_next);
@@ -600,7 +600,7 @@ assert(0);
         currentInput.currentLexemP = previousLexemP;		/* unget lexem */
         lexem = yylex();
         if (lexem == STRING_LITERAL) {
-            currentInput = macroStack[0];		// hack, cut everything pending
+            currentInput = macroInputStack[0];		// hack, cut everything pending
             macroStackIndex = 0;
             processInclude2(includePosition, '\"', yytext, is_include_next);
         } else if (lexem == '<') {
@@ -1368,7 +1368,7 @@ static bool cyclicCall(MacroBody *mb) {
     if (currentInput.macroName != NULL && strcmp(name,currentInput.macroName)==0)
         return true;
     for (int i=0; i<macroStackIndex; i++) {
-        LexInput *lexInput = &macroStack[i];
+        LexInput *lexInput = &macroInputStack[i];
         log_debug("Testing '%s' against '%s'", name, lexInput->macroName);
         if (lexInput->macroName != NULL && strcmp(name,lexInput->macroName)==0)
             return true;
@@ -1378,8 +1378,8 @@ static bool cyclicCall(MacroBody *mb) {
 
 
 static void prependMacroInput(LexInput *argb) {
-    assert(macroStackIndex < MACRO_STACK_SIZE-1);
-    macroStack[macroStackIndex++] = currentInput;
+    assert(macroStackIndex < MACRO_INPUT_STACK_SIZE-1);
+    macroInputStack[macroStackIndex++] = currentInput;
     currentInput = *argb;
     currentInput.currentLexemP = currentInput.beginningOfBuffer;
     currentInput.inputType = INPUT_MACRO;
@@ -1439,7 +1439,7 @@ static void expandMacroArgument(LexInput *argb) {
         TestPPBufOverflow(bcc, buf, bsize);
     }
 endOfMacroArgument:
-    currentInput = macroStack[--macroStackIndex];
+    currentInput = macroInputStack[--macroStackIndex];
     PPM_REALLOCC(buf, bcc-buf, char, bsize+MAX_LEXEM_SIZE);
     fillLexInput(argb, buf, bcc, buf, NULL, INPUT_NORMAL);
     return;
