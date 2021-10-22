@@ -57,6 +57,8 @@ BeforeEach(Extract) {
 }
 AfterEach(Extract) {}
 
+/* Non-public function in extract module */
+void addSymbolToSymRefList(SymbolReferenceItemList **ll, SymbolReferenceItem *s);
 
 Ensure(Extract, can_concat_symRefItemList_when_null) {
     SymbolReferenceItemList *lp = NULL;
