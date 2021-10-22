@@ -1345,20 +1345,20 @@ endOfFile:
 /* *********************   MACRO CALL EXPANSION *********************** */
 /* ******************************************************************** */
 
-#define TestPPBufOverflow(bcc,buf,bsize) {\
-    if (bcc >= buf+bsize) {\
-        bsize += MACRO_UNIT_SIZE;\
-        PPM_REALLOCC(buf,bsize+MAX_LEXEM_SIZE,char,\
-                        bsize+MAX_LEXEM_SIZE-MACRO_UNIT_SIZE);\
-    }\
-}
-#define TestMBBufOverflow(bcc,len,buf2,bsize) {\
-    while (bcc + len >= buf2 + bsize) {\
-        bsize += MACRO_UNIT_SIZE;\
-        MB_REALLOCC(buf2,bsize+MAX_LEXEM_SIZE,char,\
-                    bsize+MAX_LEXEM_SIZE-MACRO_UNIT_SIZE);\
-    }\
-}
+#define TestPPBufOverflow(bcc,buf,bsize) {                      \
+        if (bcc >= buf+bsize) {                                 \
+            bsize += MACRO_UNIT_SIZE;                           \
+            PPM_REALLOCC(buf,bsize+MAX_LEXEM_SIZE,char,         \
+                         bsize+MAX_LEXEM_SIZE-MACRO_UNIT_SIZE); \
+        }                                                       \
+    }
+#define TestMBBufOverflow(bcc,len,buf2,bsize) {                 \
+        while (bcc + len >= buf2 + bsize) {                     \
+            bsize += MACRO_UNIT_SIZE;                           \
+            MB_REALLOCC(buf2,bsize+MAX_LEXEM_SIZE,char,         \
+                        bsize+MAX_LEXEM_SIZE-MACRO_UNIT_SIZE);  \
+        }                                                       \
+    }
 
 /* *********************************************************** */
 
