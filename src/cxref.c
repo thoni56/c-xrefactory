@@ -1324,9 +1324,9 @@ static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
 }
 
 char *getJavaDocUrl_st(SymbolReferenceItem *rr) {
-    static char res[MAX_HTML_REF_LEN];
+    static char res[MAX_REF_LEN];
     char *tt;
-    int len = MAX_HTML_REF_LEN;
+    int len = MAX_REF_LEN;
     res[0] = 0;
     if (rr->b.symType == TypeDefault) {
         if (rr->vFunClass==noFileIndex) {
@@ -1339,7 +1339,7 @@ char *getJavaDocUrl_st(SymbolReferenceItem *rr) {
                 sprintf(res+len, ".html#");
                 len = strlen(res);
                 linkNamePrettyPrint(res+len, tt+1,
-                                    MAX_HTML_REF_LEN-len, LONG_NAME);
+                                    MAX_REF_LEN-len, LONG_NAME);
             }
         } else {
             javaGetClassNameFromFileNum(rr->vFunClass, res, KEEP_SLASHES);
@@ -1351,7 +1351,7 @@ char *getJavaDocUrl_st(SymbolReferenceItem *rr) {
                 sprintf(res+len, "#");
                 len += strlen(res+len);
                 linkNamePrettyPrint(res+len, rr->name,
-                                    MAX_HTML_REF_LEN-len, LONG_NAME);
+                                    MAX_REF_LEN-len, LONG_NAME);
             }
         }
     } else if (rr->b.symType == TypeStruct) {
@@ -1359,7 +1359,7 @@ char *getJavaDocUrl_st(SymbolReferenceItem *rr) {
     } else if (rr->b.symType == TypePackage) {
         sprintf(res,"%s/package-tree.html",rr->name);
     }
-    assert(strlen(res)<MAX_HTML_REF_LEN-1);
+    assert(strlen(res)<MAX_REF_LEN-1);
     return res;
 }
 
@@ -2481,7 +2481,7 @@ static void olcxMenuToggleSelect(void) {
     OlcxReferences    *refs;
     SymbolsMenu     *ss;
     int                 line;
-    char                ln[MAX_HTML_REF_LEN];
+    char                ln[MAX_REF_LEN];
     char                *cname;
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
@@ -2502,7 +2502,7 @@ static void olcxMenuToggleSelect(void) {
             olcxGenNoReferenceSignal();
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
-            linkNamePrettyPrint(ln, ss->s.name,MAX_HTML_REF_LEN,SHORT_NAME);
+            linkNamePrettyPrint(ln, ss->s.name,MAX_REF_LEN,SHORT_NAME);
             cname = javaGetNudePreTypeName_st(getRealFileNameStatic(
                                                                     fileTable.tab[ss->s.vApplClass]->name),
                                               options.nestedClassDisplaying);

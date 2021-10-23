@@ -129,22 +129,22 @@ static void setCInputConsistency(void) {
 }
 
 char *placeIdent(void) {
-    static char tt[2*MAX_HTML_REF_LEN];
+    static char tt[2*MAX_REF_LEN];
     char fn[MAX_FILE_NAME_SIZE];
-    char mm[MAX_HTML_REF_LEN];
+    char mm[MAX_REF_LEN];
     int s;
     if (currentFile.fileName!=NULL) {
         if (options.xref2 && options.taskRegime!=RegimeEditServer) {
             strcpy(fn, getRealFileNameStatic(normalizeFileName(currentFile.fileName, cwd)));
             assert(strlen(fn) < MAX_FILE_NAME_SIZE);
             sprintf(mm, "%s:%d", simpleFileName(fn),currentFile.lineNumber);
-            assert(strlen(mm) < MAX_HTML_REF_LEN);
+            assert(strlen(mm) < MAX_REF_LEN);
             sprintf(tt, "<A HREF=\"file://%s#%d\" %s=%ld>%s</A>", fn, currentFile.lineNumber, PPCA_LEN, (unsigned long)strlen(mm), mm);
         } else {
             sprintf(tt,"%s:%d ",simpleFileName(getRealFileNameStatic(currentFile.fileName)),currentFile.lineNumber);
         }
         s = strlen(tt);
-        assert(s<MAX_HTML_REF_LEN);
+        assert(s<MAX_REF_LEN);
         return tt;
     }
     return "";

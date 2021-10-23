@@ -69,7 +69,7 @@
 
 #define MAX_FILE_NAME_SIZE		1000
 #define MAX_FUN_NAME_SIZE		1000
-#define MAX_HTML_REF_LEN		3000
+#define MAX_REF_LEN             3000
 #define MAX_PROFILE_SIZE        3000	/* max size of java profile string */
 #define MAX_CX_SYMBOL_SIZE		3000
 #define MAX_INHERITANCE_DEEP     200

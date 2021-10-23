@@ -390,9 +390,9 @@ void genClassHierarchies(FILE *file, SymbolsMenu *menuList,
 }
 
 static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, SymbolsMenu *rrr) {
-    char ln[MAX_HTML_REF_LEN];
+    char ln[MAX_REF_LEN];
 
-    linkNamePrettyPrint(ln,rrr->s.name,MAX_HTML_REF_LEN,SHORT_NAME);
+    linkNamePrettyPrint(ln,rrr->s.name,MAX_REF_LEN,SHORT_NAME);
     if (strcmp(rrr->s.name, LINK_NAME_CLASS_TREE_ITEM)==0) {
         /*&
           fprintf(ff, "\n");
