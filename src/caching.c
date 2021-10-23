@@ -347,8 +347,16 @@ void cacheInput(void) {
     int size;
 
     ENTER();
-    if (!s_cache.activeCache) return;
-    if (includeStackPointer != 0 || macroStackIndex != 0) return;
+    if (!s_cache.activeCache) {
+        log_trace("Caching is not active");
+        LEAVE();
+        return;
+    }
+    if (includeStackPointer != 0 || macroStackIndex != 0) {
+        log_trace("In include or macro");
+        LEAVE();
+        return;
+    }
     size = currentInput.currentLexemP - s_cache.lexcc;
     if (s_cache.lbcc - s_cache.lb + size >= LEX_BUF_CACHE_SIZE) {
         s_cache.activeCache = false;

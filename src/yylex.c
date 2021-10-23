@@ -66,11 +66,11 @@ static void setYylvalsForInteger(int val, Position position, int length) {
 
 LexInput currentInput;
 int macroStackIndex=0;
+static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 
 static char ppMemory[SIZE_ppMemory];
 static int ppMemoryIndex=0;
 
-static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 
 
 
