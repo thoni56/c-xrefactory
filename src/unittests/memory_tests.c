@@ -107,7 +107,7 @@ Ensure(Memory, has_functions_that_can_replace_DM_macros) {
     assert_that(memory.index, is_equal_to(0));
     assert_that(memory.name, is_equal_to_string("Memory"));
 
-    memory.size = 0;
+    /* Setting this in dm_init() does not work for some reason... */
     memory.overflowHandler = NULL;
 
     /* This will probably trigger overflow handling so... */
