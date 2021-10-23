@@ -239,3 +239,8 @@ void *dm_allocc(Memory *memory, int count, size_t size) {
     memory->index += (count)*size;
     return (void *) (((char*)&memory->block) + previous_index);
 }
+
+
+void olcx_memory_init() {
+    olcxMemoryAllocatedBytes = 0;
+}

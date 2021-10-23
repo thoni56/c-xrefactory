@@ -218,6 +218,8 @@ extern void memoryUseFunctionForError(void (*function)(int code, char *message))
 extern void dm_init(Memory *memory, char *name);
 extern void *dm_allocc(Memory *memory, int count, size_t size);
 
+extern void olcx_memory_init();
+
 extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);
 extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);

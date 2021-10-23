@@ -5,6 +5,7 @@
 
 #include "globals.mock"
 #include "commons.mock"           /* For fatalError() */
+#include "cxref.mock"             /* For freeOldestOlcx() */
 
 
 static bool fatalErrorAllowed = false;
@@ -116,4 +117,20 @@ Ensure(Memory, has_functions_that_can_replace_DM_macros) {
     assert_that(variablep, is_not_null);
     /* TODO This assumes that alignment is initially correct */
     assert_that(memory.index, is_equal_to(sizeof(*variablep)));
+}
+
+Ensure(Memory, can_handle_olcx_memory) {
+    char *pointer;
+    olcxMemoryAllocatedBytes = 42;
+
+    olcx_memory_init();
+    assert_that(olcxMemoryAllocatedBytes, is_equal_to(0));
+
+    pointer = NULL;
+    OLCX_ALLOCC(pointer, 1, char *);
+    assert_that(pointer, is_not_null);
+
+    pointer = NULL;
+    OLCX_ALLOC(pointer, char *);
+    assert_that(pointer, is_not_null);
 }
