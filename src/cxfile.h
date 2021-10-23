@@ -21,7 +21,6 @@ extern ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[];
 extern ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
 extern ScanFileFunctionStep classHierarchyFunctionSequence[];
 extern ScanFileFunctionStep fullUpdateFunctionSequence[];
-extern ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[];
 extern ScanFileFunctionStep symbolSearchFunctionSequence[];
 extern ScanFileFunctionStep deadCodeDetectionFunctionSequence[];
 

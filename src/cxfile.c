@@ -1592,17 +1592,6 @@ ScanFileFunctionStep classHierarchyFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
-    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
-    {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
-    {CXFI_SYMBOL_NAME, cxrfSymbolName, CX_SECOND_PASS},
-    {CXFI_REFERENCE, cxrfReference, CX_SECOND_PASS},
-    {CXFI_REFNUM, cxrfRefNum, 0},
-    {-1,NULL, 0},
-};
-
 ScanFileFunctionStep symbolSearchFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_REFNUM, cxrfRefNum, 0},

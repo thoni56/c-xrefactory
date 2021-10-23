@@ -10,7 +10,6 @@ ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[1];
 ScanFileFunctionStep secondPassMacroUsageFunctionSequence[1];
 ScanFileFunctionStep classHierarchyFunctionSequence[1];
 ScanFileFunctionStep fullUpdateFunctionSequence[1];
-ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[1];
 ScanFileFunctionStep symbolSearchFunctionSequence[1];
 ScanFileFunctionStep deadCodeDetectionFunctionSequence[1];
 
