@@ -149,18 +149,14 @@ static void genClassHierarchyVerticalBars(FILE *ff, IntegerList *nextbars, int s
 }
 
 
-/* ******************************************************************* */
-/* ***************************** HTML ******************************** */
-/* ******************************************************************* */
-
-
-static SymbolsMenu *htmlItemInOriginalList(SymbolsMenu *orr, int fInd) {
+static SymbolsMenu *itemInOriginalList(SymbolsMenu *orr, int fInd) {
     SymbolsMenu *rr;
-    if (fInd == -1) return(NULL);
+    if (fInd == -1)
+        return(NULL);
     assert(fInd>=0 && fInd<MAX_FILES);
     rr = tmpVApplClassBackPointersToMenu[fInd];
     //& LIST_FIND(SymbolsMenu, fInd, s.vApplClass, orr, rr);
-    return(rr);
+    return rr;
 }
 
 static void olcxPrintMenuItemPrefix(FILE *ff, SymbolsMenu *itt,
@@ -295,7 +291,7 @@ static void descendTheClassHierarchy(FILE *ff,
     fi = fileTable.tab[vApplCl];
     assert(fi!=NULL);
     if (THEBIT(tmpChRelevant,vApplCl)==0) return;
-    itt = htmlItemInOriginalList(rrr, vApplCl);
+    itt = itemInOriginalList(rrr, vApplCl);
 
     if (itt == NULL) {
         assert(rrr);
