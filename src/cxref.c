@@ -2305,7 +2305,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     return res;
 }
 
-static bool htmlRefItemsOrderLess(SymbolsMenu *ss1, SymbolsMenu *ss2) {
+static bool refItemsOrderLess(SymbolsMenu *ss1, SymbolsMenu *ss2) {
     SymbolReferenceItem *s1, *s2;
     int r;
     char *n1, *n2;
@@ -2334,7 +2334,7 @@ static void olcxTopSymbolResolution(void) {
     if (refs!=NULL) {
         LIST_MERGE_SORT(SymbolsMenu,
                         refs->menuSym,
-                        htmlRefItemsOrderLess);
+                        refItemsOrderLess);
         ss = refs->menuSym;
     }
     olcxPrintSelectionMenu(ss);
@@ -3510,7 +3510,7 @@ void olCreateSelectionMenu(int command) {
     // I think this ordering is useless
     LIST_MERGE_SORT(SymbolsMenu,
                     s_olcxCurrentUser->browserStack.top->hkSelectedSym,
-                    htmlRefItemsOrderLess);
+                    refItemsOrderLess);
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
@@ -3532,7 +3532,7 @@ void olCreateSelectionMenu(int command) {
     // isn't ordering useless ?
     LIST_MERGE_SORT(SymbolsMenu,
                     s_olcxCurrentUser->browserStack.top->menuSym,
-                    htmlRefItemsOrderLess);
+                    refItemsOrderLess);
 }
 
 bool refOccursInRefs(Reference *r, Reference *list) {
