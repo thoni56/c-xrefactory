@@ -418,10 +418,6 @@ endOfFile:
 /* ********************************* #INCLUDE ********************** */
 
 static void fillIncludeSymbolItem(Symbol *ss, int filenum, Position *pos){
-    // should be different for HTML to be beatiful, however,
-    // all includes needs to be in the same cxfile, because of
-    // -update. On the other hand in HTML I wish them to split
-    // by first letter of file name.
     fillSymbol(ss, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
     fillSymbolBits(&ss->bits, AccessDefault, TypeCppInclude, StorageDefault);
 }
@@ -1241,9 +1237,6 @@ endOfFile:
 /*                                 CPP                               */
 /* ***************************************************************** */
 
-#define AddHtmlCppReference(pos) {\
-}
-
 static bool processPreprocessorConstruct(Lexem lexem) {
     int lineNumber;
     Position position;
@@ -1259,15 +1252,12 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         processIncludeDirective(&position, true);
         break;
     case CPP_DEFINE0:
-        AddHtmlCppReference(position);
         processDefineDirective(0);
         break;
     case CPP_DEFINE:
-        AddHtmlCppReference(position);
         processDefineDirective(1);
         break;
     case CPP_UNDEF:
-        AddHtmlCppReference(position);
         processUndefineDirective();
         break;
     case CPP_IFDEF:
@@ -1313,11 +1303,9 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         break;
     case CPP_PRAGMA:
         log_debug("#pragma");
-        AddHtmlCppReference(position);
         processPragmaDirective();
         break;
     case CPP_LINE: {
-        AddHtmlCppReference(position);
         processLineDirective();
 
         lexem = getLex();

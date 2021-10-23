@@ -112,7 +112,6 @@ typedef enum language {
 /* ************ char to separate archive from file name ********** */
 
 #define ZIP_SEPARATOR_CHAR ';'
-#define HTML_GXANY -1
 
 /* *************************************************************** */
 
