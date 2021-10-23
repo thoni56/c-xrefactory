@@ -171,13 +171,12 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
         }                                                               \
     }
 #define OLCX_ALLOC(pointer, type) OLCX_ALLOCC(pointer, 1, type)
-#define OLCX_FREE(pointer, size) OLCX_MEMORY_FREE(pointer, size)
 
 
 /* editor allocations, for now, store it in olcxmemory */
 #define ED_ALLOCC(pointer, count, type) OLCX_ALLOCC(pointer,count,type)
 #define ED_ALLOC(pointer, type) ED_ALLOCC(pointer,1,type)
-#define ED_FREE(pointer, size) OLCX_FREE(pointer,size)
+#define ED_FREE(pointer, size) OLCX_MEMORY_FREE(pointer,size)
 
 
 /***********************************************************************/

@@ -212,7 +212,7 @@ void renameCollationSymbols(SymbolsMenu *sss) {
             strncpy(nn, ss->s.name, len1);
             strcpy(nn+len1, cs+2);
             //&fprintf(dumpOut, "renaming %s to %s\n", ss->s.name, nn);
-            OLCX_FREE(ss->s.name, len+1);
+            OLCX_MEMORY_FREE(ss->s.name, len+1);
             ss->s.name = nn;
         }
     }
@@ -910,10 +910,10 @@ SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll) {
     int nlen;
     SymbolsMenu *tt;
     nlen = strlen(ll->s.name);
-    OLCX_FREE(ll->s.name, nlen+1);
+    OLCX_MEMORY_FREE(ll->s.name, nlen+1);
     olcxFreeReferences(ll->s.refs);
     tt = ll->next;
-    OLCX_FREE(ll, sizeof(*ll));
+    OLCX_MEMORY_FREE(ll, sizeof(*ll));
     ll = tt;
     return ll;
 }

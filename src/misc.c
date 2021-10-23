@@ -701,7 +701,7 @@ static void shellMatchDeleteState(IntegerList **s) {
     IntegerList *p;
     p = *s;
     *s = (*s)->next;
-    OLCX_FREE(p, sizeof(IntegerList));
+    OLCX_MEMORY_FREE(p, sizeof(IntegerList));
 }
 
 static int shellMatchParseBracketPattern(char *pattern, int pi, bool caseSensitive, char *asciiMap) {
