@@ -1004,7 +1004,7 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
 void olcxInit(void) {
     void *uu[OLCX_USER_RESERVE];
 
-    OLCX_MEMORY_INIT();
+    olcx_memory_init();
     OLCX_MEMORY_SOFT_ALLOCC(s_olcxTab.tab, OLCX_TAB_SIZE, UserOlcxData *);
     //CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
     olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);

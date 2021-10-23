@@ -115,3 +115,7 @@ void dm_init(Memory *memory, char *name) {
     memory->name = name;
     memory->index = 0;
 }
+
+void olcx_memory_init() {
+    mock();
+}

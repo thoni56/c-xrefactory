@@ -150,8 +150,6 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 
 
 /* on-line dialogs allocation */
-#define OLCX_MEMORY_INIT() {olcxMemoryAllocatedBytes = 0;}
-
 #define OLCX_MEMORY_SOFT_ALLOCC(variable, count, type) {               \
         int size = (count) * sizeof(type);                             \
         if (size+olcxMemoryAllocatedBytes > SIZE_olcxMemory) {         \
