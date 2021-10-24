@@ -875,7 +875,6 @@ void processDefineDirective(bool hasArguments) {
     }
 
 endOfBody:
-    /* We might get here by a longjmp from getLex() on endOfFile... so anything that is needed here needs to be static */
     assert(macroSize>=0);
     PPM_REALLOCC(body, macroSize, char, allocatedSize+MAX_LEXEM_SIZE);
     allocatedSize = macroSize;
