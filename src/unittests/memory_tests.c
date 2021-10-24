@@ -126,6 +126,13 @@ Ensure(Memory, can_handle_olcx_memory) {
     olcx_memory_init();
     assert_that(olcxMemoryAllocatedBytes, is_equal_to(0));
 
+
+    pointer = NULL;
+    pointer = olcx_memory_soft_allocc(1, sizeof(char));
+    assert_that(pointer, is_not_null);
+
+    olcx_memory_free(pointer, sizeof(*pointer));
+
     pointer = NULL;
     OLCX_ALLOCC(pointer, 1, char);
     assert_that(pointer, is_not_null);

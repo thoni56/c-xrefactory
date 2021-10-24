@@ -1000,7 +1000,7 @@ void olcxInit(void) {
     void *uu[OLCX_USER_RESERVE];
 
     olcx_memory_init();
-    OLCX_MEMORY_SOFT_ALLOCC(s_olcxTab.tab, OLCX_TAB_SIZE, UserOlcxData *);
+    s_olcxTab.tab = olcx_memory_soft_allocc(OLCX_TAB_SIZE, sizeof(UserOlcxData *));
     //CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
     olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);
     /* reserve place for some users */

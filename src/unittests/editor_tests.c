@@ -2,6 +2,8 @@
 
 #include "../editor.h"
 
+#include "memory.h"
+
 #include "yylex.mock"
 #include "options.mock"
 #include "misc.mock"
@@ -11,7 +13,6 @@
 #include "cxref.mock"
 #include "commons.mock"
 #include "fileio.mock"
-#include "memory.mock"
 #include "ppc.mock"
 
 

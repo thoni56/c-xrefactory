@@ -120,6 +120,10 @@ void olcx_memory_init() {
     mock();
 }
 
+void *olcx_memory_soft_allocc(int count, size_t elementSize) {
+    return (void *)mock(count, elementSize);
+}
+
 void olcx_memory_free(void *pointer, size_t size) {
     mock(pointer, size);
 }
