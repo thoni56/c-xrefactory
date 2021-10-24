@@ -134,7 +134,7 @@ Ensure(Memory, can_handle_olcx_memory) {
     olcx_memory_free(pointer, sizeof(*pointer));
 
     pointer = NULL;
-    pointer = olcx_allocc(1, sizeof(char));
+    pointer = olcx_memory_allocc(1, sizeof(char));
     assert_that(pointer, is_not_null);
 
     pointer = NULL;

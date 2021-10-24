@@ -151,7 +151,7 @@ static char *olcxStringCopy(char *string) {
     int length;
     char *copy;
     length = strlen(string);
-    copy = olcx_allocc(length+1, sizeof(char));
+    copy = olcx_memory_allocc(length+1, sizeof(char));
     strcpy(copy, string);
     return copy;
 }
@@ -207,7 +207,7 @@ void renameCollationSymbols(SymbolsMenu *sss) {
         if (cs!=NULL && ss->s.b.symType==TypeCppCollate) {
             len = strlen(ss->s.name);
             assert(len>=2);
-            nn = olcx_allocc(len-1, sizeof(char));
+            nn = olcx_memory_allocc(len-1, sizeof(char));
             len1 = cs-ss->s.name;
             strncpy(nn, ss->s.name, len1);
             strcpy(nn+len1, cs+2);
@@ -5170,22 +5170,22 @@ S_olCompletion * olCompletionListPrepend(char *name,
     Reference reference;
 
     nlen = strlen(name);
-    nn = olcx_allocc(nlen+1, sizeof(char));
+    nn = olcx_memory_allocc(nlen+1, sizeof(char));
     strcpy(nn, name);
     fullnn = NULL;
     if (fullText!=NULL) {
-        fullnn = olcx_allocc(strlen(fullText)+1, sizeof(char));
+        fullnn = olcx_memory_allocc(strlen(fullText)+1, sizeof(char));
         strcpy(fullnn, fullText);
     }
     vclnn = NULL;
     if (vclass!=NULL) {
-        vclnn = olcx_allocc(strlen(vclass)+1, sizeof(char));
+        vclnn = olcx_memory_allocc(strlen(vclass)+1, sizeof(char));
         strcpy(vclnn, vclass);
     }
     if (rr!=NULL) {
         // probably a 'search in tag' file item
         slen = strlen(rr->name);
-        ss = olcx_allocc(slen+1, sizeof(char));
+        ss = olcx_memory_allocc(slen+1, sizeof(char));
         strcpy(ss, rr->name);
         fillSymbolRefItem(&sri, ss, cxFileHashNumber(ss),
                                     rr->vApplClass, rr->vFunClass);
@@ -5204,7 +5204,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         getSymbolCxrefCategories(s, &category, &scope, &storage);
         log_trace(":adding sym '%s' %d", s->linkName, category);
         slen = strlen(s->linkName);
-        ss = olcx_allocc(slen+1, sizeof(char));
+        ss = olcx_memory_allocc(slen+1, sizeof(char));
         strcpy(ss, s->linkName);
         fillUsageBits(&reference.usage, UsageDefined, 0);
         fillReference(&reference, reference.usage, s->pos, NULL);

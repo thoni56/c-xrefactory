@@ -150,7 +150,7 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 
 
 /* editor allocations, for now, store it in olcxmemory */
-#define ED_ALLOCC(pointer, count, type) { pointer = olcx_allocc(count, sizeof(type)); }
+#define ED_ALLOCC(pointer, count, type) { pointer = olcx_memory_allocc(count, sizeof(type)); }
 #define ED_ALLOC(pointer, type) ED_ALLOCC(pointer,1,type)
 #define ED_FREE(pointer, size) olcx_memory_free(pointer, size)
 
@@ -194,7 +194,7 @@ extern void *dm_allocc(Memory *memory, int count, size_t size);
 /* on-line dialogs allocation */
 extern void olcx_memory_init();
 extern void *olcx_memory_soft_allocc(int count, size_t size);
-extern void *olcx_allocc(int count, size_t size);
+extern void *olcx_memory_allocc(int count, size_t size);
 extern void *olcx_alloc(size_t size);
 extern void olcx_memory_free(void *pointer, size_t size);
 

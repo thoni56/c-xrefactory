@@ -259,7 +259,7 @@ void *olcx_memory_soft_allocc(int count, size_t elementSize) {
     }
 }
 
-void *olcx_allocc(int count, size_t elementSize) {
+void *olcx_memory_allocc(int count, size_t elementSize) {
     void *pointer = olcx_memory_soft_allocc(count, elementSize);
     while (pointer==NULL) {
         freeOldestOlcx();
@@ -269,7 +269,7 @@ void *olcx_allocc(int count, size_t elementSize) {
 }
 
 void *olcx_alloc(size_t size) {
-    return olcx_allocc(1, size);
+    return olcx_memory_allocc(1, size);
 }
 
 
