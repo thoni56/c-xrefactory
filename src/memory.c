@@ -244,3 +244,8 @@ void *dm_allocc(Memory *memory, int count, size_t size) {
 void olcx_memory_init() {
     olcxMemoryAllocatedBytes = 0;
 }
+
+extern void olcx_memory_free(void *pointer, size_t size) {
+    olcxMemoryAllocatedBytes -= size;
+    free(pointer);
+}

@@ -119,3 +119,7 @@ void dm_init(Memory *memory, char *name) {
 void olcx_memory_init() {
     mock();
 }
+
+void olcx_memory_free(void *pointer, size_t size) {
+    mock(pointer, size);
+}

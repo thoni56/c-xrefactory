@@ -127,10 +127,10 @@ Ensure(Memory, can_handle_olcx_memory) {
     assert_that(olcxMemoryAllocatedBytes, is_equal_to(0));
 
     pointer = NULL;
-    OLCX_ALLOCC(pointer, 1, char *);
+    OLCX_ALLOCC(pointer, 1, char);
     assert_that(pointer, is_not_null);
 
     pointer = NULL;
-    OLCX_ALLOC(pointer, char *);
+    OLCX_ALLOC(pointer, char);
     assert_that(pointer, is_not_null);
 }

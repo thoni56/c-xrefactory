@@ -212,7 +212,7 @@ void renameCollationSymbols(SymbolsMenu *sss) {
             strncpy(nn, ss->s.name, len1);
             strcpy(nn+len1, cs+2);
             //&fprintf(dumpOut, "renaming %s to %s\n", ss->s.name, nn);
-            OLCX_MEMORY_FREE(ss->s.name, len+1);
+            olcx_memory_free(ss->s.name, len+1);
             ss->s.name = nn;
         }
     }
@@ -868,31 +868,26 @@ bool isSmallerOrEqClass(int inf, int sup) {
     return isSmallerOrEqClassR(inf, sup, 1) != 0;
 }
 
-#define OLCX_FREE_REFERENCE(r) {                              \
-        OLCX_MEMORY_FREE((r), sizeof(Reference)); \
-    }
-
-
 void olcxFreeReferences(Reference *r) {
     Reference *tmp;
     while (r!=NULL) {
         tmp = r->next;
-        OLCX_FREE_REFERENCE(r);
+        olcx_memory_free((r), sizeof(Reference)); \
         r = tmp;
     }
 }
 
 static void olcxFreeCompletion(S_olCompletion *r) {
-    int nlen;
-    OLCX_MEMORY_FREE(r->name, strlen(r->name)+1);
-    if (r->fullName!=NULL) OLCX_MEMORY_FREE(r->fullName, strlen(r->fullName)+1);
-    if (r->vclass!=NULL) OLCX_MEMORY_FREE(r->vclass, strlen(r->vclass)+1);
+    olcx_memory_free(r->name, strlen(r->name)+1);
+    if (r->fullName!=NULL)
+        olcx_memory_free(r->fullName, strlen(r->fullName)+1);
+    if (r->vclass!=NULL)
+        olcx_memory_free(r->vclass, strlen(r->vclass)+1);
     if (r->category == CategoryGlobal) {
         assert(r->sym.name);
-        nlen = strlen(r->sym.name);
-        OLCX_MEMORY_FREE(r->sym.name, nlen+1);
+        olcx_memory_free(r->sym.name, strlen(r->sym.name)+1);
     }
-    OLCX_MEMORY_FREE(r, sizeof(S_olCompletion));
+    olcx_memory_free(r, sizeof(S_olCompletion));
 }
 
 
@@ -910,10 +905,10 @@ SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll) {
     int nlen;
     SymbolsMenu *tt;
     nlen = strlen(ll->s.name);
-    OLCX_MEMORY_FREE(ll->s.name, nlen+1);
+    olcx_memory_free(ll->s.name, nlen+1);
     olcxFreeReferences(ll->s.refs);
     tt = ll->next;
-    OLCX_MEMORY_FREE(ll, sizeof(*ll));
+    olcx_memory_free(ll, sizeof(*ll));
     ll = tt;
     return ll;
 }
@@ -946,7 +941,7 @@ static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
         stack->root = refs->previous;
     }
     *rrefs = refs->previous;
-    OLCX_MEMORY_FREE(refs, sizeof(OlcxReferences));
+    olcx_memory_free(refs, sizeof(OlcxReferences));
 }
 
 #define CHECK_AND_SET_OLDEST(stack) {                                   \
@@ -1012,7 +1007,7 @@ void olcxInit(void) {
     for (int i=0; i<OLCX_USER_RESERVE; i++)
         OLCX_ALLOC(uu[i], UserOlcxData);
     for (int i=0; i<OLCX_USER_RESERVE; i++)
-        OLCX_MEMORY_FREE(uu[i], sizeof(UserOlcxData));
+        olcx_memory_free(uu[i], sizeof(UserOlcxData));
 }
 
 
@@ -3152,7 +3147,7 @@ static bool olRemoveCallerReference(OlcxReferences *refs) {
         return false;
     //&fprintf(dumpOut,"!removing reference on %d\n", rr->p.line);
     *rrr = rr->next;
-    OLCX_FREE_REFERENCE(rr);
+    olcx_memory_free(rr, sizeof(Reference));
 
     return true;
 }
@@ -3836,7 +3831,7 @@ static void olcxTopReferencesIntersection(void) {
         if (!refOccursInRefsCompareFileAndLineOnly(*r, top2->references)) {
             // remove the reference
             nr = *r1;
-            OLCX_FREE_REFERENCE(*r);
+            olcx_memory_free(*r, sizeof(Reference));
             *r = nr;
             r1 = r;
         }
@@ -3858,7 +3853,7 @@ static void olcxRemoveRefWinFromRefList(Reference **r1,
             && positionIsLessThan(*fp, cr->p) && positionIsLessThan(cr->p, *tp)) {
             // remove the reference
             nr = *r1;
-            OLCX_FREE_REFERENCE(*r);
+            olcx_memory_free(*r, sizeof(Reference));
             *r = nr;
             r1 = r;
             //&fprintf(dumpOut,"! removing reference %d:%d\n", cr->p.line, cr->p.col);

@@ -159,10 +159,6 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
             olcxMemoryAllocatedBytes += size;                          \
         }                                                              \
     }
-#define OLCX_MEMORY_FREE(pointer, size) {                               \
-        olcxMemoryAllocatedBytes -= size;                               \
-        free(pointer);                                                  \
-    }
 #define OLCX_ALLOCC(pointer, count, type) {                             \
         OLCX_MEMORY_SOFT_ALLOCC(pointer, count, type);                  \
         while (pointer==NULL) {                                         \
@@ -176,7 +172,7 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 /* editor allocations, for now, store it in olcxmemory */
 #define ED_ALLOCC(pointer, count, type) OLCX_ALLOCC(pointer,count,type)
 #define ED_ALLOC(pointer, type) ED_ALLOCC(pointer,1,type)
-#define ED_FREE(pointer, size) OLCX_MEMORY_FREE(pointer,size)
+#define ED_FREE(pointer, size) olcx_memory_free(pointer, size)
 
 
 /***********************************************************************/
@@ -216,6 +212,7 @@ extern void dm_init(Memory *memory, char *name);
 extern void *dm_allocc(Memory *memory, int count, size_t size);
 
 extern void olcx_memory_init();
+extern void olcx_memory_free(void *pointer, size_t size);
 
 extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);
 extern void memoryResized(void);
