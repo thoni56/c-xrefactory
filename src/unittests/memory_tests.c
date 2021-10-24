@@ -138,6 +138,6 @@ Ensure(Memory, can_handle_olcx_memory) {
     assert_that(pointer, is_not_null);
 
     pointer = NULL;
-    OLCX_ALLOC(pointer, char);
+    pointer = olcx_alloc(sizeof(char));
     assert_that(pointer, is_not_null);
 }

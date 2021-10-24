@@ -149,10 +149,6 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 #define OPT_ALLOCC(pointer, count, type) {DM_ALLOCC((&options.pendingMemory), pointer, count, type);}
 
 
-/* on-line dialogs allocation */
-#define OLCX_ALLOC(pointer, type) { pointer = olcx_allocc(1, sizeof(type)); }
-
-
 /* editor allocations, for now, store it in olcxmemory */
 #define ED_ALLOCC(pointer, count, type) { pointer = olcx_allocc(count, sizeof(type)); }
 #define ED_ALLOC(pointer, type) ED_ALLOCC(pointer,1,type)
@@ -195,9 +191,11 @@ extern void memoryUseFunctionForError(void (*function)(int code, char *message))
 extern void dm_init(Memory *memory, char *name);
 extern void *dm_allocc(Memory *memory, int count, size_t size);
 
+/* on-line dialogs allocation */
 extern void olcx_memory_init();
 extern void *olcx_memory_soft_allocc(int count, size_t size);
 extern void *olcx_allocc(int count, size_t size);
+extern void *olcx_alloc(size_t size);
 extern void olcx_memory_free(void *pointer, size_t size);
 
 extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);

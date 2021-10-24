@@ -172,7 +172,7 @@ SymbolsMenu *olCreateNewMenuItem(SymbolReferenceItem *symbol, int vApplClass, in
                                 vApplClass, vFunCl);
     refItem.b = symbol->b;
 
-    OLCX_ALLOC(symbolsMenu, SymbolsMenu);
+    symbolsMenu = olcx_alloc(sizeof(SymbolsMenu));
     fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage,
                        vlevel, 0, 0, defusage, *defpos, 0, NULL, NULL);
     return symbolsMenu;
@@ -1005,7 +1005,7 @@ void olcxInit(void) {
     olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);
     /* reserve place for some users */
     for (int i=0; i<OLCX_USER_RESERVE; i++)
-        OLCX_ALLOC(uu[i], UserOlcxData);
+        uu[i] = olcx_alloc(sizeof(UserOlcxData));
     for (int i=0; i<OLCX_USER_RESERVE; i++)
         olcx_memory_free(uu[i], sizeof(UserOlcxData));
 }
@@ -1059,7 +1059,7 @@ static void olcxFreePopedStackItems(OlcxReferencesStack *stack) {
 static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
     OlcxReferences *res;
 
-    OLCX_ALLOC(res, OlcxReferences);
+    res = olcx_alloc(sizeof(OlcxReferences));
     *res = (OlcxReferences){.references = NULL, .actual = NULL, .command = options.server_operation, .language = s_language,
                               .accessTime = s_fileProcessStartTime, .callerPosition = s_noPos, .cpls = NULL, .hkSelectedSym = NULL,
                               .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, . refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
@@ -1102,7 +1102,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int b
     rr = NULL;
     SORTED_LIST_PLACE2(place,Reference, *ref, rlist);
     if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
-        OLCX_ALLOC(rr, Reference);
+        rr = olcx_alloc(sizeof(Reference));
         *rr = *ref;
         if (LANGUAGE(LANG_JAVA)) {
             if (ref->usage.base==UsageDefined &&  bestMatchFlag) {
@@ -1126,7 +1126,7 @@ Reference *olcxAddReference(Reference **rlist,Reference *ref,int bestMatchFlag) 
 
 static Reference *olcxCopyReference(Reference *ref) {
     Reference *rr;
-    OLCX_ALLOC(rr, Reference);
+    rr = olcx_alloc(sizeof(Reference));
     *rr = *ref;
     rr->next = NULL;
     return rr;
@@ -2951,7 +2951,7 @@ Reference * olcxCopyRefList(Reference *ll) {
     Reference *res, *a, **aa;
     res = NULL; aa= &res;
     for (Reference *rr=ll; rr!=NULL; rr=rr->next) {
-        OLCX_ALLOC(a, Reference);
+        a = olcx_alloc(sizeof(Reference));
         *a = *rr;
         a->next = NULL;
         *aa = a;
@@ -3090,8 +3090,7 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *rr) {
     lmline = options.checkFirstMovedLine + options.checkLinesMoved;
     res = NULL; resa = &res;
     for (Reference *r=rr; r!=NULL; r=r->next) {
-        Reference *tt;
-        OLCX_ALLOC(tt, Reference);
+        Reference *tt = olcx_alloc(sizeof(Reference));
         *tt = *r;
         if (tt->p.file==ofn && tt->p.line>=fmline && tt->p.line<lmline) {
             tt->p.file = nfn;
@@ -5133,8 +5132,7 @@ static S_olCompletion *newOlCompletion(char *name,
                                        struct reference ref,
                                        struct symbolReferenceItem sym
 ) {
-    S_olCompletion *olCompletion;
-    OLCX_ALLOC(olCompletion, S_olCompletion);
+    S_olCompletion *olCompletion = olcx_alloc(sizeof(S_olCompletion));
 
     olCompletion->name = name;
     olCompletion->fullName = fullName;

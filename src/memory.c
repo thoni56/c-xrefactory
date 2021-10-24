@@ -268,6 +268,10 @@ void *olcx_allocc(int count, size_t elementSize) {
     return pointer;
 }
 
+void *olcx_alloc(size_t size) {
+    return olcx_allocc(1, size);
+}
+
 
 void olcx_memory_free(void *pointer, size_t size) {
     olcxMemoryAllocatedBytes -= size;

@@ -1173,7 +1173,7 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
         ln = 1; c = 0;
         for( ; s<smax; s++, c++) {
             if (s == off) {
-                OLCX_ALLOC(rr, Reference);
+                rr = olcx_alloc(sizeof(Reference));
                 fillPosition(&rr->p, buf->ftnum, ln, c);
                 fillReference(rr, mm->usage, rr->p, res);
                 res = rr;
@@ -1184,7 +1184,7 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
             if (*s=='\n') {ln++; c = -1;}
         }
         while (mm!=NULL && mm->marker->buffer==buf) {
-            OLCX_ALLOC(rr, Reference);
+            rr = olcx_alloc(sizeof(Reference));
             fillPosition(&rr->p, buf->ftnum, ln, 0);
             fillReference(rr, mm->usage, rr->p, res);
             res = rr;

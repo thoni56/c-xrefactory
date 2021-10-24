@@ -690,11 +690,10 @@ int compareFileNames(char *ss1, char *ss2) {
 // ------------------------------------------- SHELL (SUB)EXPRESSIONS ---
 
 static IntegerList *shellMatchNewState(int s, IntegerList *next) {
-    IntegerList     *res;
-    OLCX_ALLOC(res, IntegerList);
+    IntegerList *res = olcx_alloc(sizeof(IntegerList));
     res->i = s;
     res->next = next;
-    return(res);
+    return res;
 }
 
 static void shellMatchDeleteState(IntegerList **s) {
