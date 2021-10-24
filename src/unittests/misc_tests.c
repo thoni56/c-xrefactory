@@ -3,6 +3,8 @@
 
 #include "misc.h"
 
+#include "memory.h"
+
 #include "globals.mock"
 #include "options.mock"
 #include "caching.mock"
@@ -12,7 +14,6 @@
 #include "cxref.mock"
 #include "cxfile.mock"
 #include "yylex.mock"
-#include "memory.mock"
 #include "commons.mock"
 #include "editor.mock"
 #include "ppc.mock"

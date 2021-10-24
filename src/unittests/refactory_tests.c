@@ -1,7 +1,9 @@
 #include <cgreen/cgreen.h>
 
 #include "refactory.h"
+
 #include "log.h"
+#include "memory.h"
 
 #include "commons.mock"
 #include "globals.mock"
@@ -16,7 +18,6 @@
 #include "reftab.mock"
 #include "filetable.mock"
 #include "cxfile.mock"
-#include "memory.mock"
 #include "complete.mock"
 #include "jsemact.mock"
 

@@ -1,7 +1,9 @@
 #include <cgreen/cgreen.h>
 
 #include "cxref.h"
+
 #include "log.h"
+#include "memory.h"
 
 /* Dependencies: */
 #include "filedescriptor.mock"
@@ -21,7 +23,6 @@
 #include "commons.mock"
 #include "characterreader.mock"
 #include "jsemact.mock"
-#include "memory.mock"
 #include "utils.mock"
 #include "reftab.mock"
 #include "fileio.mock"
