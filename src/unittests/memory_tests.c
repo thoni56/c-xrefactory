@@ -9,11 +9,11 @@
 
 
 static bool fatalErrorAllowed = false;
-static bool myFatalErrorCalled = false;
+static bool fatalErrorCalled = false;
 static void myFatalError(int errCode, char *mess, int exitStatus) {
     if (!fatalErrorAllowed)
         fail_test("FatalError() called");
-    myFatalErrorCalled = true;
+    fatalErrorCalled = true;
 }
 
 
@@ -30,10 +30,10 @@ Ensure(Memory, calls_fatalError_on_out_of_memory) {
     void *allocatedMemory = &allocatedMemory; /* Point to something initially */
 
     fatalErrorAllowed = true;
-    while(!myFatalErrorCalled && allocatedMemory != NULL)
+    while(!fatalErrorCalled && allocatedMemory != NULL)
         allocatedMemory = stackMemoryAlloc(5);
 
-    if (!myFatalErrorCalled)
+    if (!fatalErrorCalled)
         fail_test("fatalError() not called");
     else
         pass_test();
