@@ -141,3 +141,24 @@ Ensure(Memory, can_handle_olcx_memory) {
     pointer = olcx_alloc(sizeof(char));
     assert_that(pointer, is_not_null);
 }
+
+
+#define SIZE_testMemory 12
+static int testMemoryIndex;
+static char testMemory[SIZE_testMemory];
+
+Ensure(Memory, can_handle_sm_memory) {
+    SM_INIT(testMemory);
+
+    char *pointer = NULL;
+    SM_ALLOCC(testMemory, pointer, 1, char);
+    assert_that(pointer, is_not_null);
+    assert_that(pointer, is_equal_to(testMemory)); /* First allocated item in testMemory */
+
+    /* Allocate more that size renders fatalError() */
+    fatalErrorAllowed = true;
+    expect(fatalError);
+    SM_ALLOCC(testMemory, pointer, SIZE_testMemory+1, char);
+
+
+}
