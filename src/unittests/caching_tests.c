@@ -13,6 +13,8 @@
 #include "jsemact.mock"
 #include "editor.mock"
 #include "commons.mock"
+#include "cxref.mock"           /* For freeOldestOlcx() */
+
 
 
 Describe(Caching);

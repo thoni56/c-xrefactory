@@ -151,7 +151,7 @@ static char *olcxStringCopy(char *string) {
     int length;
     char *copy;
     length = strlen(string);
-    OLCX_ALLOCC(copy, length+1, char);
+    copy = olcx_allocc(length+1, sizeof(char));
     strcpy(copy, string);
     return copy;
 }
@@ -207,7 +207,7 @@ void renameCollationSymbols(SymbolsMenu *sss) {
         if (cs!=NULL && ss->s.b.symType==TypeCppCollate) {
             len = strlen(ss->s.name);
             assert(len>=2);
-            OLCX_ALLOCC(nn, len-1, char);
+            nn = olcx_allocc(len-1, sizeof(char));
             len1 = cs-ss->s.name;
             strncpy(nn, ss->s.name, len1);
             strcpy(nn+len1, cs+2);
@@ -5172,22 +5172,22 @@ S_olCompletion * olCompletionListPrepend(char *name,
     Reference reference;
 
     nlen = strlen(name);
-    OLCX_ALLOCC(nn, nlen+1, char);
+    nn = olcx_allocc(nlen+1, sizeof(char));
     strcpy(nn, name);
     fullnn = NULL;
     if (fullText!=NULL) {
-        OLCX_ALLOCC(fullnn, strlen(fullText)+1, char);
+        fullnn = olcx_allocc(strlen(fullText)+1, sizeof(char));
         strcpy(fullnn, fullText);
     }
     vclnn = NULL;
     if (vclass!=NULL) {
-        OLCX_ALLOCC(vclnn, strlen(vclass)+1, char);
+        vclnn = olcx_allocc(strlen(vclass)+1, sizeof(char));
         strcpy(vclnn, vclass);
     }
     if (rr!=NULL) {
         // probably a 'search in tag' file item
         slen = strlen(rr->name);
-        OLCX_ALLOCC(ss, slen+1, char);
+        ss = olcx_allocc(slen+1, sizeof(char));
         strcpy(ss, rr->name);
         fillSymbolRefItem(&sri, ss, cxFileHashNumber(ss),
                                     rr->vApplClass, rr->vFunClass);
@@ -5206,7 +5206,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         getSymbolCxrefCategories(s, &category, &scope, &storage);
         log_trace(":adding sym '%s' %d", s->linkName, category);
         slen = strlen(s->linkName);
-        OLCX_ALLOCC(ss, slen+1, char);
+        ss = olcx_allocc(slen+1, sizeof(char));
         strcpy(ss, s->linkName);
         fillUsageBits(&reference.usage, UsageDefined, 0);
         fillReference(&reference, reference.usage, s->pos, NULL);

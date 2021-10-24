@@ -4,6 +4,10 @@
 #include "log.h"
 
 
+/* We don't want to add an actual dependency to cxref so... */
+extern void freeOldestOlcx(void);
+
+
 static bool memoryTrace = false;
 #define mem_trace(...)  { if (memoryTrace) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__); }
 
@@ -253,6 +257,15 @@ void *olcx_memory_soft_allocc(int count, size_t elementSize) {
         olcxMemoryAllocatedBytes += size;
         return malloc(size);
     }
+}
+
+void *olcx_allocc(int count, size_t elementSize) {
+    void *pointer = olcx_memory_soft_allocc(count, elementSize);
+    while (pointer==NULL) {
+        freeOldestOlcx();
+        pointer = olcx_memory_soft_allocc(count, elementSize);
+    }
+    return pointer;
 }
 
 

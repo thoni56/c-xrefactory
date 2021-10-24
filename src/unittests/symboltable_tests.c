@@ -6,6 +6,7 @@
 
 #include "misc.mock"
 #include "globals.mock"
+#include "cxref.mock"           /* For freeOldestOlcx() */
 
 
 Describe(SymbolTable);

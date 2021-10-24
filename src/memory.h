@@ -150,18 +150,11 @@ extern void *dm_alloc(Memory *memory, int count, size_t size);
 
 
 /* on-line dialogs allocation */
-#define OLCX_ALLOCC(pointer, count, type) {                             \
-        pointer = olcx_memory_soft_allocc(count, sizeof(type));         \
-        while (pointer==NULL) {                                         \
-            freeOldestOlcx();                                           \
-            pointer = olcx_memory_soft_allocc(count, sizeof(type));     \
-        }                                                               \
-    }
-#define OLCX_ALLOC(pointer, type) OLCX_ALLOCC(pointer, 1, type)
+#define OLCX_ALLOC(pointer, type) { pointer = olcx_allocc(1, sizeof(type)); }
 
 
 /* editor allocations, for now, store it in olcxmemory */
-#define ED_ALLOCC(pointer, count, type) OLCX_ALLOCC(pointer,count,type)
+#define ED_ALLOCC(pointer, count, type) { pointer = olcx_allocc(count, sizeof(type)); }
 #define ED_ALLOC(pointer, type) ED_ALLOCC(pointer,1,type)
 #define ED_FREE(pointer, size) olcx_memory_free(pointer, size)
 
@@ -204,6 +197,7 @@ extern void *dm_allocc(Memory *memory, int count, size_t size);
 
 extern void olcx_memory_init();
 extern void *olcx_memory_soft_allocc(int count, size_t size);
+extern void *olcx_allocc(int count, size_t size);
 extern void olcx_memory_free(void *pointer, size_t size);
 
 extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);
