@@ -357,7 +357,7 @@ static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
 }
 
 Reference *addSpecialFieldReference(char *name,int storage, int fnum,
-                                      Position *p, int usage){
+                                    Position *p, int usage){
     Symbol        ss;
     Reference     *res;
 

@@ -23,7 +23,7 @@ typedef struct symbolBits {
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
     enum storage	storage				: STORAGES_LN;
     unsigned		npointers			: 4; /*tmp. stored #of dcl. ptrs*/
-} S_symbolBits;
+} SymbolBits;
 
 typedef struct symbol {
     char					*name;
@@ -52,7 +52,7 @@ typedef struct symbolList {
 
 /* Functions: */
 
-/* NOTE These will not fill bits-field, has to be done after allocation */
+/* NOTE These will not fill bit-fields, has to be done after allocation */
 extern Symbol *newSymbol(char *name, char *linkName, struct position pos);
 extern Symbol *newSymbolAsCopyOf(Symbol *original);
 extern Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos,
@@ -71,7 +71,7 @@ extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
 extern void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName,
                                  struct position pos, struct symStructSpec *structSpec);
 
-extern void fillSymbolBits(S_symbolBits *bits, unsigned accessFlags, unsigned symType,
+extern void fillSymbolBits(SymbolBits *bits, unsigned accessFlags, unsigned symType,
                            unsigned storage);
 
 #endif

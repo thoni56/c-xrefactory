@@ -1016,14 +1016,14 @@ TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
 }
 
 TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
-    Symbol *pp;
+    Symbol *symbol;
 
-    pp = newSymbolAsEnum("", "", s_noPos, enums);
-    fillSymbolBits(&pp->bits, AccessDefault, TypeEnum, StorageNone);
+    symbol = newSymbolAsEnum("", "", s_noPos, enums);
+    fillSymbolBits(&symbol->bits, AccessDefault, TypeEnum, StorageNone);
 
-    setGlobalFileDepNames("", pp, MEMORY_XX);
-    pp->u.enums = enums;
-    return createSimpleEnumType(pp);
+    setGlobalFileDepNames("", symbol, MEMORY_XX);
+    symbol->u.enums = enums;
+    return createSimpleEnumType(symbol);
 }
 
 void appendPositionToList(PositionList **list, Position *pos) {

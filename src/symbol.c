@@ -3,8 +3,8 @@
 #include "memory.h"
 
 
-void fillSymbolBits(S_symbolBits *bits, Access access, Type symType, Storage storage) {
-    memset(bits, 0, sizeof(S_symbolBits));
+void fillSymbolBits(SymbolBits *bits, Access access, Type symType, Storage storage) {
+    memset(bits, 0, sizeof(SymbolBits));
     bits->access = access;
     bits->symbolType = symType;
     bits->storage = storage;
