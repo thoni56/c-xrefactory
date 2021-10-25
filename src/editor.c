@@ -1160,7 +1160,7 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
     EditorMarkerList  *mm;
     EditorBuffer      *buf;
     char                *s, *smax, *off;
-    int                 ln, c;
+    int                 line, col;
     Reference         *res, *rr;
     LIST_MERGE_SORT(EditorMarkerList, *mms, editorMarkerListLess);
     res = NULL;
@@ -1170,22 +1170,22 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
         s = buf->allocation.text;
         smax = s + buf->allocation.bufferSize;
         off = buf->allocation.text + mm->marker->offset;
-        ln = 1; c = 0;
-        for( ; s<smax; s++, c++) {
+        line = 1; col = 0;
+        for( ; s<smax; s++, col++) {
             if (s == off) {
                 rr = olcx_alloc(sizeof(Reference));
-                fillPosition(&rr->p, buf->ftnum, ln, c);
+                rr->p = makePosition(buf->ftnum, line, col);
                 fillReference(rr, mm->usage, rr->p, res);
                 res = rr;
                 mm = mm->next;
                 if (mm==NULL || mm->marker->buffer != buf) break;
                 off = buf->allocation.text + mm->marker->offset;
             }
-            if (*s=='\n') {ln++; c = -1;}
+            if (*s=='\n') {line++; col = -1;}
         }
         while (mm!=NULL && mm->marker->buffer==buf) {
             rr = olcx_alloc(sizeof(Reference));
-            fillPosition(&rr->p, buf->ftnum, ln, 0);
+            rr->p = makePosition(buf->ftnum, line, 0);
             fillReference(rr, mm->usage, rr->p, res);
             res = rr;
             mm = mm->next;

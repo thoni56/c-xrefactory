@@ -427,7 +427,7 @@ void addThisFileDefineIncludeReference(int filenum) {
     Position position;
     Symbol symbol;
 
-    fillPosition(&position, filenum, 1, 0);
+    position = makePosition(filenum, 1, 0);
     fillIncludeSymbolItem(&symbol,filenum, &position);
     log_trace("adding reference on file %d==%s", filenum, fileTable.tab[filenum]->name);
     addCxReference(&symbol, &position, UsageDefined, filenum, filenum);
@@ -1801,7 +1801,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
     Reference *r;
     Position basePos;
 
-    fillPosition(&basePos, s_input_file_number, 0, 0);
+    basePos = makePosition(s_input_file_number, 0, 0);
     fillSymbolRefItem(&ppp, mdef->linkName,
                                 cxFileHashNumber(mdef->linkName), // useless, put 0
                                 noFileIndex, noFileIndex);

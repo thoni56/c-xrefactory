@@ -46,6 +46,7 @@ Ensure(Position, can_see_if_positions_are_equal) {
     p2.line--;
     p2.file++;
     assert_that(!positionsAreEqual(p1, p2));
+    assert_that(positionsAreNotEqual(p1, p2));
 }
 
 Ensure(Position, can_see_if_position_is_less_than) {

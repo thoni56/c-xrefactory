@@ -1296,8 +1296,8 @@ void extractActionOnBlockMarker(void) {
         s_cps.cxMemoryIndexAtBlockEnd = cxMemory->index;
         s_cps.workMemiAtBlockEnd = currentBlock->outerBlock;
     }
-    fillPosition(&pos, currentFile.lexBuffer.buffer.fileNumber, 0, 0);
-    addTrivialCxReference("Block", TypeBlockMarker,StorageDefault, &pos, UsageUsed);
+    pos = makePosition(currentFile.lexBuffer.buffer.fileNumber, 0, 0);
+    addTrivialCxReference("Block", TypeBlockMarker, StorageDefault, &pos, UsageUsed);
 }
 
 void deleteContinueBreakSymbol(Symbol *symbol) {

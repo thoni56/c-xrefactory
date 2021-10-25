@@ -1130,7 +1130,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     log_trace("%d %d->%d %d", usage, file, s_decodeFilesNum[file], line);
-    fillPosition(&pos,file,line,col);
+    pos = makePosition(file, line, col);
     if (lastIncomingInfo.onLineReferencedSym ==
         lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
         addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
@@ -1176,7 +1176,7 @@ static void cxrfReference(int size,
     if (options.taskRegime == RegimeXref) {
         if (fileTable.tab[file]->b.cxLoading&&fileTable.tab[file]->b.cxSaved) {
             /* if we repass refs after overflow */
-            fillPosition(&pos,file,line,col);
+            pos = makePosition(file, line, col);
             fillUsageBits(&usageBits, usage, reqAcc);
             copyrefFl = ! isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
                                       &usageBits, &pos);
@@ -1186,7 +1186,7 @@ static void cxrfReference(int size,
         if (copyrefFl)
             writeCxReferenceBase(sym, usage, reqAcc, file, line, col);
     } else if (options.taskRegime == RegimeEditServer) {
-        fillPosition(&pos,file,line,col);
+        pos = makePosition(file, line, col);
         fillUsageBits(&usageBits, usage, reqAcc);
         fillReference(&rr, usageBits, pos, NULL);
         if (additionalArg == DEAD_CODE_DETECTION) {

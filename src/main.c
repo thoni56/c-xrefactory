@@ -2138,7 +2138,7 @@ static void mainTotalTaskEntryInitialisations() {
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
     initFileTable(&fileTable);
 
-    fillPosition(&s_noPos, noFileIndex, 0, 0);
+    s_noPos = makePosition(noFileIndex, 0, 0);
     fillUsageBits(&s_noUsage, UsageNone, 0);
     fillReference(&s_noRef, s_noUsage, s_noPos, NULL);
     s_input_file_number = noFileIndex;
@@ -2573,7 +2573,7 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     // here read one reference file looking for the refs
     // assume s_opt.olcxlccursor is correctly set;
     getLineColCursorPositionFromCommandLineOption( &line, &col);
-    fillPosition(&s_olcxByPassPos, fnum, line, col);
+    s_olcxByPassPos = makePosition(fnum, line, col);
     olSetCallerPosition(&s_olcxByPassPos);
     readOneAppropReferenceFile(options.browsedSymName, byPassFunctionSequence);
     // if no symbol found, it may be a local symbol, try by parsing
@@ -2612,8 +2612,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (creatingOlcxRefs()) {
-            Position dpos;
-            fillPosition(&dpos, s_input_file_number, 1, 0);
+            Position dpos = makePosition(s_input_file_number, 1, 0);
             gotOnLineCxRefs(&dpos);
         }
         addThisFileDefineIncludeReference(s_input_file_number);

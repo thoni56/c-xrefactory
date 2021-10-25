@@ -887,7 +887,7 @@ static void cfAddRecordToClass(char *name,
     assert(clas->u.s);
     LIST_APPEND(Symbol, clas->u.s->records, symbol);
     if (options.allowClassFileRefs) {
-        fillPosition(&dpos, clas->u.s->classFile, 1, 0);
+        dpos = makePosition(clas->u.s->classFile, 1, 0);
         addCxReference(symbol, &dpos, UsageClassFileDefinition, vFunCl, vFunCl);
     }
 }
@@ -1162,7 +1162,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     fileIndex = javaCreateClassFileItem(symbol);
     fileTable.tab[fileIndex]->b.cxLoading = true;
 
-    fillPosition(&pos, fileIndex, 1, 0);
+    pos = makePosition(fileIndex, 1, 0);
     addCxReference(symbol, &pos, UsageClassFileDefinition,
                    noFileIndex, noFileIndex);
     addCfClassTreeHierarchyRef(fileIndex, UsageClassFileDefinition);

@@ -179,10 +179,10 @@ SymbolsMenu *olCreateNewMenuItem(SymbolReferenceItem *symbol, int vApplClass, in
 }
 
 SymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, SymbolsMenu **list,
-                                    int selected, int visible, unsigned ooBits,
-                                    int olusage, int vlevel,
-                                    Position *defpos, int defusage) {
-    SymbolsMenu     *rr, **place, ddd;
+                                int selected, int visible, unsigned ooBits,
+                                int olusage, int vlevel,
+                                Position *defpos, int defusage) {
+    SymbolsMenu *rr, **place, ddd;
 
     fillSymbolsMenu(&ddd, *sym, 0,0,0, olusage, vlevel,0,0, UsageNone,s_noPos,0, NULL, NULL);
     SORTED_LIST_PLACE3(place, SymbolsMenu, (&ddd), list, olSymbolMenuLess);
@@ -245,7 +245,7 @@ Reference **addToRefList(Reference **list,
         || options.server_operation==OLO_EXTRACT) {
         CX_ALLOC(rr, Reference);
         fillReference(rr, *usageP, *pos, NULL);
-        LIST_CONS(rr,(*place));
+        LIST_CONS(rr, (*place));
     } else {
         assert(*place);
         (*place)->usage = *usageP;
@@ -837,8 +837,7 @@ void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {
 }
 
 void addCfClassTreeHierarchyRef(int fnum, int usage) {
-    Position      p;
-    fillPosition(&p, fnum, 0, 0);
+    Position p = makePosition(fnum, 0, 0);
     addClassTreeHierarchyReference(fnum, &p, usage);
 }
 
@@ -1742,7 +1741,7 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
         fillCharacterBuffer(&cxfBuf, ebuf->allocation.text, ebuf->allocation.text+ebuf->allocation.bufferSize, NULL, ebuf->allocation.bufferSize, noFileIndex, ebuf->allocation.text);
         GetFileChar(ch, &cp, &cxfBuf);
     }
-    fillPosition(&cp, references->p.file, 1, 0);
+    cp = makePosition(references->p.file, 1, 0);
     oldrr=NULL;
     while (references!=NULL && references->p.file==cp.file && references->p.line>=cp.line) {
         assert(oldrr!=references); oldrr=references;    // because it is a dangerous loop
@@ -3707,7 +3706,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
     SymbolsMenu *nsym, *diffsym, *ofirstsym, *nfirstsym;
     Position moveOffset;
 
-    fillPosition(&moveOffset, 0,0,0);
+    moveOffset = makePosition(0, 0, 0);
     ofirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(origrefs->menuSym);
     nfirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(newrefs->menuSym);
     if (ofirstsym!=NULL && nfirstsym!=NULL) {
@@ -3872,8 +3871,8 @@ static void olcxTopReferencesRemoveWindow(void) {
     assert(s_olcxCurrentUser->browserStack.top->previous);
     assert(options.server_operation == OLO_REMOVE_WIN);
     wdfile = getFileNumberFromName(options.olcxWinDelFile);
-    fillPosition(&fp,wdfile,options.olcxWinDelFromLine,options.olcxWinDelFromCol);
-    fillPosition(&tp,wdfile,options.olcxWinDelToLine,options.olcxWinDelToCol);
+    fp = makePosition(wdfile, options.olcxWinDelFromLine, options.olcxWinDelFromCol);
+    tp = makePosition(wdfile, options.olcxWinDelToLine, options.olcxWinDelToCol);
     top1 = s_olcxCurrentUser->browserStack.top;
     olcxRemoveRefWinFromRefList(&top1->references, wdfile, &fp, &tp);
     for (SymbolsMenu *mm=top1->menuSym; mm!=NULL; mm=mm->next) {
@@ -4056,7 +4055,7 @@ void olcxPushSpecial(char *fieldName, int command) {
         }
         olProcessSelectedReferences(refs, genOnLineReferences);
         getLineColCursorPositionFromCommandLineOption(&line, &col);
-        fillPosition(&callerPos, s_input_file_number, line, col);
+        callerPos = makePosition(s_input_file_number, line, col);
         olSetCallerPosition(&callerPos);
     }
 }
@@ -4547,12 +4546,12 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
 }
 
 static void getCallerPositionFromCommandLineOption(Position *opos) {
-    int f,l,c;
+    int file, line, col;
 
     assert(opos != NULL);
-    f = s_olOriginalFileNumber;
-    getLineColCursorPositionFromCommandLineOption(&l, &c);
-    fillPosition(opos, f, l, c);
+    file = s_olOriginalFileNumber;
+    getLineColCursorPositionFromCommandLineOption(&line, &col);
+    *opos = makePosition(file, line, col);
 }
 
 static void answerClassName(char *name) {

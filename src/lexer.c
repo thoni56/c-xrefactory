@@ -107,11 +107,11 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 
 // TODO: un-macrofy ProcessIdentifier
 #define ProcessIdentifier(ch, cb, dd, labelSuffix) {                    \
-        int idcoll;                                                     \
+        int idcol;                                                     \
         char *ddd;                                                      \
         /* ***************  identifier ****************************  */ \
         ddd = dd;                                                       \
-        idcoll = columnPosition(cb);                                    \
+        idcol = columnPosition(cb);                                     \
         putLexToken(IDENTIFIER, &dd);                                   \
         do {                                                            \
             putLexChar(ch, &dd);                                        \
@@ -137,7 +137,7 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
                     ch = getChar(cb);                                   \
                 } else if (ch == CC_CXREF) {                            \
                     s_cache.activeCache = false;                        \
-                    fillPosition(&s_cxRefPos, cb->fileNumber, cb->lineNumber, idcoll); \
+                    s_cxRefPos = makePosition(cb->fileNumber, cb->lineNumber, idcol); \
                     goto identCont##labelSuffix;                        \
                 } else errorMessage(ERR_INTERNAL, "unknown communication char"); \
             } else {                                                    \
@@ -149,7 +149,7 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
             }                                                           \
         }                                                               \
         putLexChar(0, &dd);                                             \
-        putLexPosition(cb->fileNumber, cb->lineNumber, idcoll, &dd);    \
+        putLexPosition(cb->fileNumber, cb->lineNumber, idcol, &dd);     \
     }
 
 #define CommentBeginReference(cb) {                                     \

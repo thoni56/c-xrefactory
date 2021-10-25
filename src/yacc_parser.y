@@ -1360,8 +1360,7 @@ parameter_identifier_list
     : identifier_list                           /*& { $$.d = $1.d; } &*/
     | identifier_list ',' ELLIPSIS               {
         Symbol *symbol;
-        Position pos;
-        fillPosition(&pos, -1, 0, 0);
+        Position pos = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", pos);
         fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
@@ -1393,8 +1392,7 @@ parameter_type_list
     : parameter_list                    /*& { $$.d = $1.d; } &*/
     | parameter_list ',' ELLIPSIS                {
         Symbol *symbol;
-        Position position;
-        fillPosition(&position, -1, 0, 0);
+        Position position = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", position);
         fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);

@@ -40,7 +40,8 @@
 /* SORTED_LIST_FIND2(o reselem, type, i key value, i list) */
 #define SORTED_LIST_FIND2(reselem, type, key, list) {                   \
         type *tmp; tmp = list;                                          \
-        while (tmp!=NULL && SORTED_LIST_LESS(tmp,(key))) tmp=tmp->next; \
+        while (tmp!=NULL && SORTED_LIST_LESS(tmp,(key)))                \
+            tmp=tmp->next;                                              \
         reselem=tmp;                                                    \
     }
 
