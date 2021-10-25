@@ -3735,7 +3735,7 @@ case 110:
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
                         if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
-                        if (positionIsInTheSameFileAndBetween(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
+                        if (positionIsBetween(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
                             && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
                             s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-6].ast_id.b;
@@ -4093,7 +4093,7 @@ case 141:
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_position);
                     if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
-                    if (positionIsInTheSameFileAndBetween(yyval.ast_symbol.b, s_cxRefPos, yyval.ast_symbol.e)
+                    if (positionIsBetween(yyval.ast_symbol.b, s_cxRefPos, yyval.ast_symbol.e)
                         && s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==noFileIndex) {
                         s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION] = yyval.ast_symbol.b;
                         s_spp[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
@@ -4261,7 +4261,7 @@ case 153:
                         javaMethodBodyEnding(&yyvsp[-1].ast_position.d);
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_symbol, yyvsp[-1].ast_position);
-                        if (positionIsInTheSameFileAndBetween(yyvsp[-4].ast_symbol.b, s_cxRefPos, yyvsp[-4].ast_symbol.e)) {
+                        if (positionIsBetween(yyvsp[-4].ast_symbol.b, s_cxRefPos, yyvsp[-4].ast_symbol.e)) {
                             s_spp[SPP_METHOD_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
                             s_spp[SPP_METHOD_DECLARATION_END_POSITION] = yyval.ast_position.e;
                         }
@@ -4280,7 +4280,7 @@ case 154:
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
                     if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
                     if (yyval.ast_symbol.e.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
-                    if (positionIsInTheSameFileAndBetween(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
+                    if (positionIsBetween(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
                     }
@@ -4301,7 +4301,7 @@ case 155:
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
                     if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
                     if (yyval.ast_symbol.e.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
-                    if (positionIsInTheSameFileAndBetween(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
+                    if (positionIsBetween(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_id.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_id.e;
                     }
@@ -4767,7 +4767,7 @@ case 198:
                 } else {
                     PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_unsigned, yyvsp[0].ast_position);
                     if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
-                    if (positionIsInTheSameFileAndBetween(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
+                    if (positionIsBetween(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
                         && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
                         s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
                         s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-5].ast_position.b;
@@ -5855,7 +5855,7 @@ case 353:
                     yyval.ast_expressionType.d.position = StackMemoryAlloc(Position);
                     *yyval.ast_expressionType.d.position = yyvsp[-2].ast_position.d;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
-                    if (positionIsInTheSameFileAndBetween(yyval.ast_expressionType.b, s_cxRefPos, yyval.ast_expressionType.e)
+                    if (positionIsBetween(yyval.ast_expressionType.b, s_cxRefPos, yyval.ast_expressionType.e)
                         && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = yyvsp[-2].ast_position.b;
                         s_spp[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = yyvsp[0].ast_position.b;
@@ -6653,7 +6653,7 @@ case 425:
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
-                    if (positionIsInTheSameFileAndBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
+                    if (positionIsBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
                         s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
@@ -6676,7 +6676,7 @@ case 426:
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
-                    if (positionIsInTheSameFileAndBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
+                    if (positionIsBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
                         s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
@@ -6699,7 +6699,7 @@ case 427:
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
-                    if (positionIsInTheSameFileAndBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
+                    if (positionIsBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
                         s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
@@ -7075,7 +7075,7 @@ case 463:
                 } else {
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_expressionType);
                     if (options.taskRegime == RegimeEditServer) {
-                        if (positionIsInTheSameFileAndBetween(yyvsp[-3].ast_expressionType.b, s_cxRefPos, yyvsp[-3].ast_expressionType.e)) {
+                        if (positionIsBetween(yyvsp[-3].ast_expressionType.b, s_cxRefPos, yyvsp[-3].ast_expressionType.e)) {
                             s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION] = yyvsp[-1].ast_unsignedPositionPair.b;
                             s_spp[SPP_ASSIGNMENT_END_POSITION] = yyvsp[0].ast_expressionType.e;
                         }

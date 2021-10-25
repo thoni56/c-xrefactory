@@ -26,6 +26,6 @@ extern bool positionsAreEqual(Position p1, Position p2);
 extern bool positionsAreNotEqual(Position p1, Position p2);
 extern bool positionIsLessThan(Position p1, Position p2);
 extern bool positionIsLessOrEqualTo(Position p1, Position p2);
-extern bool positionIsInTheSameFileAndBetween(Position p1, Position p, Position p2);
+extern bool positionIsBetween(Position p1, Position p, Position p2);
 
 #endif
