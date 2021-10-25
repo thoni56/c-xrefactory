@@ -234,21 +234,21 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 
 
 Reference **addToRefList(Reference **list,
-                         UsageBits *pusage,
+                         UsageBits *usageP,
                          Position *pos) {
     Reference *rr, **place;
-    Reference ppp;
+    Reference reference;
 
-    fillReference(&ppp, *pusage, *pos, NULL);
-    SORTED_LIST_PLACE2(place,Reference,ppp,list);
-    if (*place==NULL || SORTED_LIST_NEQ((*place),ppp)
+    fillReference(&reference, *usageP, *pos, NULL);
+    SORTED_LIST_PLACE2(place,reference,list);
+    if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
         || options.server_operation==OLO_EXTRACT) {
         CX_ALLOC(rr, Reference);
-        fillReference(rr, *pusage, *pos, NULL);
+        fillReference(rr, *usageP, *pos, NULL);
         LIST_CONS(rr,(*place));
     } else {
         assert(*place);
-        (*place)->usage = *pusage;
+        (*place)->usage = *usageP;
     }
     return place;
 }
@@ -1100,7 +1100,7 @@ static bool olcxVirtualyUsageAdequate(int vApplCl, int vFunCl,
 Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int bestMatchFlag) {
     Reference **place, *rr;
     rr = NULL;
-    SORTED_LIST_PLACE2(place,Reference, *ref, rlist);
+    SORTED_LIST_PLACE2(place, *ref, rlist);
     if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
         rr = olcx_alloc(sizeof(Reference));
         *rr = *ref;

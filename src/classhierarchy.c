@@ -155,7 +155,6 @@ static SymbolsMenu *itemInOriginalList(SymbolsMenu *orr, int fInd) {
         return(NULL);
     assert(fInd>=0 && fInd<MAX_FILES);
     rr = tmpVApplClassBackPointersToMenu[fInd];
-    //& LIST_FIND(SymbolsMenu, fInd, s.vApplClass, orr, rr);
     return rr;
 }
 
