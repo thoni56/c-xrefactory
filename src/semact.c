@@ -1026,7 +1026,7 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
     return createSimpleEnumType(pp);
 }
 
-void appendPositionToList( PositionList **list,Position *pos) {
+void appendPositionToList(PositionList **list, Position *pos) {
     PositionList *ppl;
     ppl = StackMemoryAlloc(PositionList);
     fillPositionList(ppl, *pos, NULL);

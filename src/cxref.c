@@ -3640,7 +3640,7 @@ static SymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
     Reference sr, *place;
 
     sr = *ref;
-    addPositionsInto(&sr.p, ref->p, *moveOffset);
+    sr.p = addPositions(ref->p, *moveOffset);
     // now looks for the reference 'r'
     for (SymbolsMenu *mm=refs->menuSym; mm!=NULL; mm=mm->next) {
         // do not check anything, but symbol type to avoid missresolution
@@ -3700,9 +3700,9 @@ bool symbolsCorrespondWrtMoving(SymbolsMenu *osym,
 }
 
 static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
-                                    OlcxReferences *newrefs,
-                                    OlcxReferences *diffrefs
-                                    ) {
+                                     OlcxReferences *newrefs,
+                                     OlcxReferences *diffrefs
+) {
     SymbolsMenu *nsym, *diffsym, *ofirstsym, *nfirstsym;
     Position moveOffset;
 
@@ -3712,8 +3712,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
     if (ofirstsym!=NULL && nfirstsym!=NULL) {
         // TODO! Check here rather symbol name, than just column offsets
         assert(ofirstsym->s.refs && nfirstsym->s.refs);
-        subtractPositionsInto(&moveOffset, nfirstsym->s.refs->p, ofirstsym->s.refs->p);
-        //&fprintf(dumpOut,"!ofirstsym, nfirstsym == %s %s at %d,%d %d,%d\n", ofirstsym->s.name, nfirstsym->s.name, ofirstsym->s.refs->p.line, ofirstsym->s.refs->p.col, nfirstsym->s.refs->p.line, nfirstsym->s.refs->p.col);
+        moveOffset = subtractPositions(nfirstsym->s.refs->p, ofirstsym->s.refs->p);
         if (moveOffset.col!=0) {
             errorMessage(ERR_ST, "method has to be moved into an empty line");
             return true;

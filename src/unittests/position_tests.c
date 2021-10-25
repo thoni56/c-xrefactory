@@ -12,7 +12,7 @@ Ensure(Position, can_add_two_positions) {
     Position pos1 = {1, 1, 1};
     Position pos2 = {2, 2, 2};
 
-    addPositionsInto(&pos, pos1, pos2);
+    pos = addPositions(pos1, pos2);
     assert_that(pos.file, is_equal_to(3));
     assert_that(pos.line, is_equal_to(3));
     assert_that(pos.col, is_equal_to(3));
@@ -24,7 +24,7 @@ Ensure(Position, can_subtract_two_positions) {
     Position minuend = {5, 5, 5};
     Position subtrahend = {2, 2, 2};
 
-    subtractPositionsInto(&difference, minuend, subtrahend);
+    difference = subtractPositions(minuend, subtrahend);
     assert_that(difference.file, is_equal_to(3));
     assert_that(difference.line, is_equal_to(3));
     assert_that(difference.col, is_equal_to(3));
@@ -38,12 +38,12 @@ Ensure(Position, can_see_if_positions_are_equal) {
 
     p2.col++;
     assert_that(!positionsAreEqual(p1, p2));
-
     p2.col--;
+
     p2.line++;
     assert_that(!positionsAreEqual(p1, p2));
-
     p2.line--;
+
     p2.file++;
     assert_that(!positionsAreEqual(p1, p2));
     assert_that(positionsAreNotEqual(p1, p2));
@@ -57,12 +57,12 @@ Ensure(Position, can_see_if_position_is_less_than) {
 
     p1.col--;
     assert_that(positionIsLessThan(p1, p2));
-
     p1.col++;
+
     p1.line--;
     assert_that(positionIsLessThan(p1, p2));
-
     p1.line++;
+
     p1.file--;
     assert_that(positionIsLessThan(p1, p2));
 }
@@ -75,12 +75,12 @@ Ensure(Position, can_see_if_position_is_less_or_equal_to) {
 
     p1.col--;
     assert_that(positionIsLessOrEqualTo(p1, p2));
-
     p1.col++;
+
     p1.line--;
     assert_that(positionIsLessOrEqualTo(p1, p2));
-
     p1.line++;
+
     p1.file--;
     assert_that(positionIsLessOrEqualTo(p1, p2));
 }
