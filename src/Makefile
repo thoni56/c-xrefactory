@@ -245,8 +245,12 @@ clean-coverage:
 	fi
 
 coverage-report:
+ifeq ("$(CC)", "gcc-11")
 	@echo Doing the coverage reporting in the background...
 	$(MAKE) the-actual-coverage-report &
+else
+	@echo Not generating coverage report since CC != gcc-11 ...
+endif
 
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
 # NOTE: lcov < 1.14 don't have --exclude, need to use separate --remove step for compatibility
