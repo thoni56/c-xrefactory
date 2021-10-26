@@ -60,7 +60,7 @@ typedef struct codeBlock {
 #define SM_ALLOCC(memory, pointer, count, type) {                       \
         assert( (count) >= 0);                                          \
         /* memset(mem+mem##Index,0,(n)*sizeof(t)); */                   \
-        memory##Index = ((char*)ALIGNMENT(memory+memory##Index,STANDARD_ALIGNMENT)) - memory; \
+        /* memory##Index = ((char*)ALIGNMENT(memory+memory##Index,STANDARD_ALIGNMENT)) - memory; */ \
         if (memory##Index+(count)*sizeof(type) >= SIZE_##memory) {      \
             fatalError(ERR_NO_MEMORY,#memory, XREF_EXIT_ERR);           \
         }                                                               \
