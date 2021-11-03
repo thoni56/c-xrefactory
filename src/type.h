@@ -15,18 +15,15 @@
   TypePackage - a package in java
   TypeYaccSymbol - for yacc grammar references
   TypeLabel - a label in the symbol tabl
-  TypeKeyword - a keyword in the symbol table, + html ref.
+  TypeKeyword - a keyword in the symbol table
   TypeToken - a token for completions
   TypeUndefMacro - an undefined macro in the symbol table
   TypeMacroArg - a macro argument
   TypeDefinedOp - the 'defined' keyword in #if directives
-  TypeCppAny - a Cpp reference (html only)
   TypeBlockMarker - block markers for extract
   TypeTryCatchMarker - block markers for extract
-  TypeComment - a comment reference (html only)
   TypeExpression - an ambig. name evaluated to expression in java
   TypePackedType - typemodif, when type is in linkname
-  TypeFunSep - function separator for HTML
   TypeSpecialComplet - special completion string (for(;xx!=NULL ..
   TypeNonImportedClass - for completion
   TypeInducedError - dummy in general
@@ -105,13 +102,10 @@
         ENUM(TypeUndefMacro)                                            \
         ENUM(TypeMacroArg)                                              \
         ENUM(TypeDefinedOp)                                             \
-        ENUM(TypeCppAny)                                                \
         ENUM(TypeBlockMarker)                                           \
         ENUM(TypeTryCatchMarker)                                        \
-        ENUM(TypeComment)                                               \
         ENUM(TypeExpression)                                            \
         ENUM(TypePackedType)                                            \
-        ENUM(TypeFunSep)                                                \
         ENUM(TypeSpecialComplet)                                        \
         ENUM(TypeNonImportedClass)                                      \
         ENUM(TypeInducedError)                                          \
