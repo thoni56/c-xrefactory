@@ -333,14 +333,14 @@ void initTypeCharCodeTab(void) {
 
 void initTypeNames(void) {
     for (int i=0; typeNamesInitTable[i].i != -1; i++) {
-        Int2StringTable *s = &typeNamesInitTable[i];
+        Int2StringDictionary *s = &typeNamesInitTable[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
         typeNamesTable[s->i] = s->string;
     }
 }
 
 void initStorageNames(void) {
-    Int2StringTable      *s;
+    Int2StringDictionary      *s;
 
     for (int i=0; i<MAX_STORAGE_NAMES; i++)
         storageNamesTable[i]="";

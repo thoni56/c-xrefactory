@@ -10,7 +10,7 @@
 typedef struct int2StringTable {
     int     i;
     char    *string;
-} Int2StringTable;
+} Int2StringDictionary;
 
 /* ***************** unique counters  *********************** */
 typedef struct counters {
@@ -130,9 +130,9 @@ extern int s_olStringSecondProcessing;  /* am I in macro body pass ? */
 extern int s_olOriginalFileNumber;      /* original file name */
 extern int s_olOriginalComFileNumber;	/* original communication file */
 
-extern Int2StringTable typeNamesInitTable[];
+extern Int2StringDictionary typeNamesInitTable[];
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
-extern Int2StringTable storageNamesInitTable[];
+extern Int2StringDictionary storageNamesInitTable[];
 
 extern char *s_editCommunicationString;
 

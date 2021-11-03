@@ -281,7 +281,7 @@ S_javaTypePCTIConvertIni s_javaTypePCTIConvertIniTab[] = {
 
 char *storageNamesTable[MAX_STORAGE_NAMES];
 
-Int2StringTable storageNamesInitTable[] = {
+Int2StringDictionary storageNamesInitTable[] = {
     {StorageExtern,     "extern "},
     {StorageStatic,     "static "},
     {StorageRegister,   "register "},
@@ -289,7 +289,7 @@ Int2StringTable storageNamesInitTable[] = {
     {-1,                NULL}
 };
 
-Int2StringTable typeNamesInitTable[] = {
+Int2StringDictionary typeNamesInitTable[] = {
     {TypeDefault,           "Default"},
     {TypeChar,              "char"},
     {TypeUnsignedChar,      "unsigned char"},
