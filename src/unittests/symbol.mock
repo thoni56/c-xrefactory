@@ -2,7 +2,7 @@
 #include "symbol.h"
 #include <cgreen/mocks.h>
 
-Symbol *newSymbol(char *name, char *linkName, struct position pos) {
+Symbol *newSymbol(char *name, char *linkName, Position pos) {
     return (Symbol*)mock(name, linkName);
 }
 
@@ -10,40 +10,50 @@ Symbol *newSymbolAsCopyOf(Symbol *original) {
     return (Symbol*)mock(original);
 }
 
-void fillSymbol(Symbol *symbol, char *name, char *linkName, struct position pos) {
+void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos) {
     mock(symbol, name, linkName);
 }
 
-Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos, int keyWordVal) {
+Symbol *newSymbolAsKeyword(char *name, char *linkName, Position pos, int keyWordVal) {
     return (Symbol *)mock(name, linkName, keyWordVal);
 }
 
-Symbol *newSymbolAsType(char *name, char *linkName, struct position pos, struct typeModifier *type) {
+Symbol *newSymbolAsType(char *name, char *linkName, Position pos, struct typeModifier *type) {
     return (Symbol *)mock(name, linkName, type);
 }
 
-void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifier *type) {
-    mock(symbol, name, linkName, type);
+void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName, Position pos,
+                                struct typeModifier *typeModifier) {
+    mock(symbol, name, linkName, typeModifier);
 }
 
-Symbol *newSymbolAsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums) {
+Symbol *newSymbolAsEnum(char *name, char *linkName, Position pos, struct symbolList *enums) {
     return (Symbol *)mock(name, linkName, enums);
 }
 
-Symbol *newSymbolAsLabel(char *name, char *linkName, struct position pos, int labelIndex) {
+Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelIndex) {
     return (Symbol *)mock(name, linkName, labelIndex);
 }
 
-void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex) {
+void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position pos, int labelIndex) {
     mock(symbol, name, linkName, labelIndex);
 }
 
-void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, struct position pos,
-                          struct symStructSpec *structSpec
-) {
-    mock(symbol, name, linkName, structSpec);
+void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, Position pos,
+                          struct symStructSpec *structSpec)
+{
+    Position *posP = &pos;
+    mock(symbol, name, linkName, posP, structSpec);
 }
 
 void fillSymbolBits(SymbolBits *bits, Access access, Type symType, Storage storage) {
     mock(bits, access, symType, storage);
+}
+
+Symbol makeSymbolWithBits(char *name, char *linkName, Position pos,
+                          unsigned accessFlags, unsigned symbolType, unsigned storage) {
+    Symbol *symbolP = (Symbol *)mock(name, linkName, &pos, accessFlags, symbolType, storage);
+    Symbol symbol = *symbolP;
+    free(symbolP);
+    return symbol;
 }

@@ -147,10 +147,10 @@ void typeSPrint(char *buff, int *size, TypeModifier *t,
                     if (dd->bits.symbolType == TypeElipsis) ttm = "...";
                     else if (dd->name == NULL) ttm = "";
                     else ttm = dd->name;
-                    if (dd->bits.symbolType == TypeDefault && dd->u.type!=NULL) {
+                    if (dd->bits.symbolType == TypeDefault && dd->u.typeModifier!=NULL) {
                         /* TODO ALL, for string overflow */
                         jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                        typeSPrint(post+j,&jj,dd->u.type,ttm,' ',maxDeep-1,1,longOrShortName, NULL);
+                        typeSPrint(post+j,&jj,dd->u.typeModifier,ttm,' ',maxDeep-1,1,longOrShortName, NULL);
                         j += jj;
                     } else {
                         sprintf(post+j,"%s",ttm);
@@ -182,13 +182,13 @@ void typeSPrint(char *buff, int *size, TypeModifier *t,
                 minInfi = r;
                 sprintf(type+r,"{ ");
                 r += strlen(type+r);
-                assert(t->u.t->u.s);
-                for(ddd=t->u.t->u.s->records; ddd!=NULL; ddd=ddd->next) {
+                assert(t->u.t->u.structSpec);
+                for(ddd=t->u.t->u.structSpec->records; ddd!=NULL; ddd=ddd->next) {
                     if (ddd->name == NULL) ttm = "";
                     else ttm = ddd->name;
                     rr = COMPLETION_STRING_SIZE - r - TYPE_STR_RESERVE;
-                    assert(ddd->u.type);
-                    typeSPrint(type+r, &rr, ddd->u.type, ttm,' ', maxDeep-1,1,longOrShortName, NULL);
+                    assert(ddd->u.typeModifier);
+                    typeSPrint(type+r, &rr, ddd->u.typeModifier, ttm,' ', maxDeep-1,1,longOrShortName, NULL);
                     r += rr;
                     if (ddd->next!=NULL && r<COMPLETION_STRING_SIZE) {
                         sprintf(type+r,"; ");
@@ -1237,7 +1237,7 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
             sprintf(ttt, "%s%s", zip, file);
             assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
             // recover memories, only cxrefs are interesting
-            assert(memb->u.s);
+            assert(memb->u.structSpec);
             log_trace("adding %s %s", memb->name, fileTable.tab[fileInd]->name);
             javaReadClassFile(ttt, memb, DO_NOT_LOAD_SUPER);
         }

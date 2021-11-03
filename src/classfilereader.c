@@ -850,11 +850,11 @@ static void cfAddRecordToClass(char *name,
               &*/
         }
         sprintf(pp,"%s%s", name, sig);
-        vFunCl = clas->u.s->classFile;
+        vFunCl = clas->u.structSpec->classFile;
         *restype = bc;
     } else {
         sprintf(pp,"%s", name);
-        vFunCl = clas->u.s->classFile;
+        vFunCl = clas->u.structSpec->classFile;
         /*&
           sprintf(pp,"%s.%s", clas->linkName, name);
           vFunCl = noFileIndex;
@@ -881,13 +881,13 @@ static void cfAddRecordToClass(char *name,
     log_trace("adding definition of %s == %s", name, linkName);
     /* TODO If this was allocated in "normal" memory we could use newSymbol() */
     CF_ALLOC(symbol, Symbol);
-    fillSymbolWithType(symbol, name, linkName, s_noPos, tt);
+    fillSymbolWithTypeModifier(symbol, name, linkName, s_noPos, tt);
     fillSymbolBits(&symbol->bits, accessFlags, TypeDefault, storage);
 
-    assert(clas->u.s);
-    LIST_APPEND(Symbol, clas->u.s->records, symbol);
+    assert(clas->u.structSpec);
+    LIST_APPEND(Symbol, clas->u.structSpec->records, symbol);
     if (options.allowClassFileRefs) {
-        dpos = makePosition(clas->u.s->classFile, 1, 0);
+        dpos = makePosition(clas->u.structSpec->classFile, 1, 0);
         addCxReference(symbol, &dpos, UsageClassFileDefinition, vFunCl, vFunCl);
     }
 }
@@ -969,10 +969,10 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             // if constructor, put there type name as constructor name
             // instead of <init>
             log_trace("constructor '%s' of '%s'", name, memb->name);
-            assert(memb && memb->bits.symbolType==TypeStruct && memb->u.s);
+            assert(memb && memb->bits.symbolType==TypeStruct && memb->u.structSpec);
             name = memb->name;
             storage = StorageConstructor;
-            if (fileTable.tab[memb->u.s->classFile]->directEnclosingInstance != noFileIndex) {
+            if (fileTable.tab[memb->u.structSpec->classFile]->directEnclosingInstance != noFileIndex) {
                 // the first argument is direct enclosing instance, remove it
                 sign2 = skipFirstArgumentInDescriptorString(descriptor);
                 CF_ALLOCC(descriptor, strlen(sign2)+2, char);
@@ -1053,10 +1053,10 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
 
 
 Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
-    assert(memb->u.s);
-    cctAddSimpleValue(&memb->u.s->casts, sup, 1);
-    assert(sup->u.s);
-    cctAddCctTree(&memb->u.s->casts, &sup->u.s->casts, 1);
+    assert(memb->u.structSpec);
+    cctAddSimpleValue(&memb->u.structSpec->casts, sup, 1);
+    assert(sup->u.structSpec);
+    cctAddCctTree(&memb->u.structSpec->casts, &sup->u.structSpec->casts, 1);
     return(sup);
 }
 
@@ -1066,12 +1066,12 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
     char tmpBuff[TMP_BUFF_SIZE];
 
     super = javaFQTypeSymbolDefinition(super->name, super->linkName);
-    for(s = member->u.s->super; s != NULL && s->d != super; s = s->next)
+    for(s = member->u.structSpec->super; s != NULL && s->d != super; s = s->next)
         ;
     if (s != NULL && s->d == super)
         return; // avoid multiple occurrences
     log_debug("adding superclass %s to %s", super->linkName, member->linkName);
-    if (cctIsMember(&super->u.s->casts, member, 1) || member == super) {
+    if (cctIsMember(&super->u.structSpec->casts, member, 1) || member == super) {
         sprintf(tmpBuff, "detected cycle in super classes of %s",
                 member->linkName);
         errorMessage(ERR_ST, tmpBuff);
@@ -1081,9 +1081,9 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
     CF_ALLOC(symbolList, SymbolList);
     /* REPLACED: FILL_symbolList(ssl, supp, NULL); with compound literal */
     *symbolList = (SymbolList){.d = super, .next = NULL};
-    LIST_APPEND(SymbolList, member->u.s->super, symbolList);
-    addSubClassItemToFileTab(super->u.s->classFile,
-                             member->u.s->classFile,
+    LIST_APPEND(SymbolList, member->u.structSpec->super, symbolList);
+    addSubClassItemToFileTab(super->u.structSpec->classFile,
+                             member->u.structSpec->classFile,
                              origin);
 }
 
@@ -1111,7 +1111,7 @@ int javaCreateClassFileItem( Symbol *memb) {
 
     convertLinkNameToClassFileName(ftname, memb->linkName);
     fileIndex = addFileTabItem(ftname);
-    memb->u.s->classFile = fileIndex;
+    memb->u.structSpec->classFile = fileIndex;
 
     return fileIndex;
 }
@@ -1204,7 +1204,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         if (superClass<0 || superClass>=cpSize)
             goto corrupted;
         super = constantPool[constantPool[superClass].class.name_index].utf8;
-        addSuperClassOrInterfaceByName(symbol, super, symbol->u.s->classFile,
+        addSuperClassOrInterfaceByName(symbol, super, symbol->u.structSpec->classFile,
                                        loadSuper);
     }
 
@@ -1216,11 +1216,11 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         if (readValue != 0) {
             if (readValue<0 || readValue>=cpSize) goto corrupted;
             interf = constantPool[constantPool[readValue].class.name_index].utf8;
-            addSuperClassOrInterfaceByName(symbol, interf, symbol->u.s->classFile,
+            addSuperClassOrInterfaceByName(symbol, interf, symbol->u.structSpec->classFile,
                                            loadSuper);
         }
     }
-    //& addSubClassesItemsToFileTab(symbol, symbol->u.s->classFile);
+    //& addSubClassesItemsToFileTab(symbol, symbol->u.structSpec->classFile);
 
     cfReadFieldInfos(cb, symbol, constantPool);
 
@@ -1236,17 +1236,17 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         GetU4(alen, cb, exception);
         if (strcmp(constantPool[aname].utf8,"InnerClasses")==0) {
             GetU2(inum, cb, exception);
-            symbol->u.s->nestedCount = inum;
+            symbol->u.structSpec->nestedCount = inum;
             // TODO: replace the inner tab by inner list
             if (inum >= MAX_INNER_CLASSES) {
                 fatalError(ERR_ST,"number of nested classes overflowed over MAX_INNERS_CLASSES", XREF_EXIT_ERR);
             }
-            symbol->u.s->nest = NULL;
+            symbol->u.structSpec->nest = NULL;
             if (inum > 0) {
                 // I think this should be optimized, not all mentioned here
                 // are my inners classes
-                //&             CF_ALLOCC(symbol->u.s->nest, MAX_INNER_CLASSES, S_nestedSpec);
-                CF_ALLOCC(symbol->u.s->nest, inum, S_nestedSpec);
+                //&             CF_ALLOCC(symbol->u.structSpec->nest, MAX_INNER_CLASSES, S_nestedSpec);
+                CF_ALLOCC(symbol->u.structSpec->nest, inum, S_nestedSpec);
             }
             for(rinners=0; rinners<inum; rinners++) {
                 GetU2(innval, cb, exception);
@@ -1271,13 +1271,13 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 //& inners->bits.access |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
-                fill_nestedSpec(& symbol->u.s->nest[rinners], inners, membFlag, modifs);
-                assert(inners && inners->bits.symbolType==TypeStruct && inners->u.s);
-                cn = inners->u.s->classFile;
+                fill_nestedSpec(& symbol->u.structSpec->nest[rinners], inners, membFlag, modifs);
+                assert(inners && inners->bits.symbolType==TypeStruct && inners->u.structSpec);
+                cn = inners->u.structSpec->classFile;
                 if (membFlag && ! (modifs & AccessStatic)) {
                     // note that non-static direct enclosing class exists
                     assert(fileTable.tab[cn]);
-                    fileTable.tab[cn]->directEnclosingInstance = symbol->u.s->classFile;
+                    fileTable.tab[cn]->directEnclosingInstance = symbol->u.structSpec->classFile;
                 } else {
                     fileTable.tab[cn]->directEnclosingInstance = noFileIndex;
                 }
@@ -1298,7 +1298,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     errorMessage(ERR_ST, tmpBuff);
     goto emergency;
  emergency:
-    symbol->u.s->nestedCount = 0;
+    symbol->u.structSpec->nestedCount = 0;
  finish:
     log_debug("closing file %s", className);
     popInclude();

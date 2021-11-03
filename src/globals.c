@@ -184,7 +184,7 @@ int s_olOriginalFileNumber = -1;
 int s_olOriginalComFileNumber = -1;
 time_t s_expiration;
 
-TypeModifier s_defaultIntModifier;
+TypeModifier defaultIntModifier;
 Symbol s_defaultIntDefinition;
 TypeModifier s_defaultPackedTypeModifier;
 TypeModifier s_defaultVoidModifier;

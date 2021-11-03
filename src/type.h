@@ -2,6 +2,8 @@
 #define TYPES_H_INCLUDED
 
 /*
+  SYMBOL TYPES
+
   Because of the macro magic we can't have the comments close to the
   enum values so here are some explanations of some of the Type enum
   values:

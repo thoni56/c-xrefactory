@@ -41,7 +41,7 @@
 #define yyErrorRecovery styyErrorRecovery
 
 
-#define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
+#define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.typeModifier, ttt)
 
 static Symbol *l_yaccUnion = NULL;
 static Symbol *l_currentType = NULL;
@@ -457,7 +457,7 @@ primary_expr
             assert(p && p);
             dd = p;
             assert(dd->bits.storage != StorageTypedef);
-            $$.d.typeModifier = dd->u.type;
+            $$.d.typeModifier = dd->u.typeModifier;
             assert(options.taskRegime);
             $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed, noFileIndex, noFileIndex);
         } else {
@@ -548,7 +548,7 @@ postfix_expr
         Symbol *rec=NULL;
         $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
-        $$.d.typeModifier = rec->u.type;
+        $$.d.typeModifier = rec->u.typeModifier;
         assert($$.d.typeModifier);
     }
     | postfix_expr {setIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier   {
@@ -557,7 +557,7 @@ postfix_expr
         if ($1.d.typeModifier->kind==TypePointer || $1.d.typeModifier->kind==TypeArray) {
             $$.d.reference = findStructureFieldFromType($1.d.typeModifier->next, $4.d, &rec, CLASS_TO_ANY);
             assert(rec);
-            $$.d.typeModifier = rec->u.type;
+            $$.d.typeModifier = rec->u.typeModifier;
         } else $$.d.typeModifier = &s_errorModifier;
         assert($$.d.typeModifier);
     }
@@ -673,15 +673,15 @@ cast_expr
 multiplicative_expr
     : cast_expr                         /*& { $$.d = $1.d; } &*/
     | multiplicative_expr '*' cast_expr {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     | multiplicative_expr '/' cast_expr {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     | multiplicative_expr '%' cast_expr {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
@@ -703,11 +703,11 @@ additive_expr
 shift_expr
     : additive_expr                             /*& { $$.d = $1.d; } &*/
     | shift_expr LEFT_OP additive_expr          {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     | shift_expr RIGHT_OP additive_expr         {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
@@ -715,19 +715,19 @@ shift_expr
 relational_expr
     : shift_expr                                /*& { $$.d = $1.d; } &*/
     | relational_expr '<' shift_expr            {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     | relational_expr '>' shift_expr            {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     | relational_expr LE_OP shift_expr          {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     | relational_expr GE_OP shift_expr          {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
@@ -735,11 +735,11 @@ relational_expr
 equality_expr
     : relational_expr                           /*& { $$.d = $1.d; } &*/
     | equality_expr EQ_OP relational_expr       {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     | equality_expr NE_OP relational_expr       {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
@@ -747,7 +747,7 @@ equality_expr
 and_expr
     : equality_expr                             /*& { $$.d = $1.d; } &*/
     | and_expr '&' equality_expr                {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
@@ -755,7 +755,7 @@ and_expr
 exclusive_or_expr
     : and_expr                                  /*& { $$.d = $1.d; } &*/
     | exclusive_or_expr '^' and_expr            {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
@@ -763,7 +763,7 @@ exclusive_or_expr
 inclusive_or_expr
     : exclusive_or_expr                         /*& { $$.d = $1.d; } &*/
     | inclusive_or_expr '|' exclusive_or_expr   {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
@@ -771,7 +771,7 @@ inclusive_or_expr
 logical_and_expr
     : inclusive_or_expr                         /*& { $$.d = $1.d; } &*/
     | logical_and_expr AND_OP inclusive_or_expr {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
@@ -779,7 +779,7 @@ logical_and_expr
 logical_or_expr
     : logical_and_expr                          /*& { $$.d = $1.d; } &*/
     | logical_or_expr OR_OP logical_and_expr    {
-        $$.d.typeModifier = &s_defaultIntModifier;
+        $$.d.typeModifier = &defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
@@ -909,7 +909,7 @@ declaration_specifiers0
     : user_defined_type                                     {
         assert($1.d);
         assert($1.d->symbol);
-        $$.d = typeSpecifier2($1.d->symbol->u.type);
+        $$.d = typeSpecifier2($1.d->symbol->u.typeModifier);
     }
     | type_specifier1                                       {
         $$.d  = typeSpecifier1($1.d);
@@ -921,7 +921,7 @@ declaration_specifiers0
         assert($2.d);
         assert($2.d->symbol);
         $$.d = $1.d;
-        declTypeSpecifier2($1.d,$2.d->symbol->u.type);
+        declTypeSpecifier2($1.d,$2.d->symbol->u.typeModifier);
     }
     | declaration_modality_specifiers type_specifier1       {
         $$.d = $1.d;
@@ -1313,7 +1313,7 @@ type_specifier_list0
         assert($1.d);
         assert($1.d->symbol);
         assert($1.d->symbol);
-        $$.d = typeSpecifier2($1.d->symbol->u.type);
+        $$.d = typeSpecifier2($1.d->symbol->u.typeModifier);
     }
     | type_specifier1                                       {
         $$.d  = typeSpecifier1($1.d);
@@ -1326,7 +1326,7 @@ type_specifier_list0
         assert($2.d->symbol);
         assert($2.d->symbol);
         $$.d = $1.d;
-        declTypeSpecifier2($1.d,$2.d->symbol->u.type);
+        declTypeSpecifier2($1.d,$2.d->symbol->u.typeModifier);
     }
     | type_mod_specifier_list type_specifier1       {
         $$.d = $1.d;
@@ -1436,11 +1436,11 @@ parameter_declaration
 
 type_name
     : declaration_specifiers                        {
-        $$.d = $1.d->u.type;
+        $$.d = $1.d->u.typeModifier;
     }
     | declaration_specifiers abstract_declarator    {
         $$.d = $2.d;
-        LIST_APPEND(TypeModifier, $$.d, $1.d->u.type);
+        LIST_APPEND(TypeModifier, $$.d, $1.d->u.typeModifier);
     }
     ;
 
@@ -1874,12 +1874,14 @@ external_definition
         savedWorkMemoryIndex = $1.d;
         beginBlock();
         counters.localVar = 0;
-        assert($2.d->u.type && $2.d->u.type->kind == TypeFunction);
+        assert($2.d->u.typeModifier && $2.d->u.typeModifier->kind == TypeFunction);
         s_cp.function = $2.d;
         generateInternalLabelReference(-1, UsageDefined);
-        for(p=$2.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
-            if (p->bits.symbolType == TypeElipsis) continue;
-            if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
+        for (p=$2.d->u.typeModifier->u.f.args, i=1; p!=NULL; p=p->next,i++) {
+            if (p->bits.symbolType == TypeElipsis)
+                continue;
+            if (p->u.typeModifier == NULL)
+                p->u.typeModifier = &defaultIntModifier;
             addFunctionParameterToSymTable($2.d, p, i, symbolTable);
         }
     } compound_statement {
@@ -1929,8 +1931,8 @@ function_definition_head
     : function_head_declaration                         /*& { $$.d = $1.d; } &*/
     | function_definition_head fun_arg_declaration      {
         int r;
-        assert($1.d->u.type && $1.d->u.type->kind == TypeFunction);
-        r = mergeArguments($1.d->u.type->u.f.args, $2.d);
+        assert($1.d->u.typeModifier && $1.d->u.typeModifier->kind == TypeFunction);
+        r = mergeArguments($1.d->u.typeModifier->u.f.args, $2.d);
         if (r == RESULT_ERR) YYERROR;
         $$.d = $1.d;
     }
@@ -1966,14 +1968,14 @@ fun_arg_init_declarations
 function_head_declaration
     : declarator                            {
         completeDeclarator(&s_defaultIntDefinition, $1.d);
-        assert($1.d && $1.d->u.type);
-        if ($1.d->u.type->kind != TypeFunction) YYERROR;
+        assert($1.d && $1.d->u.typeModifier);
+        if ($1.d->u.typeModifier->kind != TypeFunction) YYERROR;
         $$.d = $1.d;
     }
     | declaration_specifiers declarator     {
         completeDeclarator($1.d, $2.d);
-        assert($2.d && $2.d->u.type);
-        if ($2.d->u.type->kind != TypeFunction) YYERROR;
+        assert($2.d && $2.d->u.typeModifier);
+        if ($2.d->u.typeModifier->kind != TypeFunction) YYERROR;
         $$.d = $2.d;
     }
     ;

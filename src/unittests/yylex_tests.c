@@ -104,6 +104,7 @@ static CgreenValue make_cgreen_pointer_value(void *pointer) {
     return value;
 }
 
+/* Start of custom Cgreen constraint... */
 
 static void capture_parameter(Constraint *constraint, const char *function, CgreenValue actual,
                               const char *test_file, int test_line, TestReporter *reporter) {
@@ -132,6 +133,8 @@ static Constraint *create_capture_parameter_constraint(const char *parameter_nam
 }
 
 #define will_capture_parameter(parameter_name, local_variable) create_capture_parameter_constraint(#parameter_name, &local_variable, sizeof(local_variable))
+
+/* End of custom Cgreen constraint */
 
 
 Ensure(Yylex, can_process_include_directive) {

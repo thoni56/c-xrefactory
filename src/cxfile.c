@@ -521,12 +521,12 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
     assert(ss->bits.javaFileIsLoaded);
     if (!ss->bits.javaFileIsLoaded)
         return;
-    cf1 = ss->u.s->classFile;
+    cf1 = ss->u.structSpec->classFile;
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
     /*fprintf(dumpOut,"loaded: #sups == %d\n",ns);*/
-    for(sups=ss->u.s->super; sups!=NULL; sups=sups->next) {
+    for(sups=ss->u.structSpec->super; sups!=NULL; sups=sups->next) {
         assert(sups->d && sups->d->bits.symbolType == TypeStruct);
-        addSubClassItemToFileTab( sups->d->u.s->classFile, cf1, origin);
+        addSubClassItemToFileTab( sups->d->u.structSpec->classFile, cf1, origin);
     }
 }
 

@@ -70,7 +70,7 @@ Symbol *jslTypeSpecifier2(TypeModifier *t) {
    Symbol *symbol;
 
     CF_ALLOC(symbol, Symbol);   /* Not in same memory as newSymbol() uses, why? */
-    fillSymbolWithType(symbol, NULL, NULL, s_noPos, t);
+    fillSymbolWithTypeModifier(symbol, NULL, NULL, s_noPos, t);
 
     return symbol;
 }
@@ -114,7 +114,7 @@ void jslCompleteDeclarator(Symbol *t, Symbol *d) {
     assert(t && d);
     if (t == &s_errorSymbol || d == &s_errorSymbol
         || t->bits.symbolType==TypeError || d->bits.symbolType==TypeError) return;
-    LIST_APPEND(TypeModifier, d->u.type, t->u.type);
+    LIST_APPEND(TypeModifier, d->u.typeModifier, t->u.typeModifier);
     d->bits.storage = t->bits.storage;
 }
 
@@ -193,7 +193,7 @@ Symbol *jslTypeNameDefinition(IdList *tname) {
     initTypeModifierAsStructUnionOrEnum(td, TypeStruct, memb, NULL, NULL);
 
     CF_ALLOC(dd, Symbol); //XX_ALLOC?
-    fillSymbolWithType(dd, memb->name, memb->linkName, tname->id.p, td);
+    fillSymbolWithTypeModifier(dd, memb->name, memb->linkName, tname->id.p, td);
 
     return dd;
 }
@@ -290,10 +290,10 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
     if (newFun) {
         log_debug("[jsl] adding method %s==%s to %s (at %lx)", decl->name,
                   decl->linkName, s_jsl->classStat->thisClass->linkName, (unsigned long)decl);
-        LIST_APPEND(Symbol, s_jsl->classStat->thisClass->u.s->records, decl);
+        LIST_APPEND(Symbol, s_jsl->classStat->thisClass->u.structSpec->records, decl);
     }
-    decl->u.type->u.m.signature = strchr(decl->linkName, '(');
-    decl->u.type->u.m.exceptions = throws;
+    decl->u.typeModifier->u.m.signature = strchr(decl->linkName, '(');
+    decl->u.typeModifier->u.m.exceptions = throws;
     return(decl);
 }
 
@@ -372,7 +372,7 @@ void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp){
 
     log_debug("loading super/interf %s of %s", supp->linkName, memb->linkName);
     javaLoadClassSymbolsFromFile(supp);
-    origin = memb->u.s->classFile;
+    origin = memb->u.structSpec->classFile;
     addSuperClassOrInterface( memb, supp, origin);
 }
 
@@ -387,18 +387,18 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
                               int accessFlags) {
     int n;
 
-    assert(outer && outer->bits.symbolType==TypeStruct && outer->u.s);
-    n = outer->u.s->nestedCount;
+    assert(outer && outer->bits.symbolType==TypeStruct && outer->u.structSpec);
+    n = outer->u.structSpec->nestedCount;
     log_debug("adding nested %s of %s(at %lx)[%d] --> %s to %s", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
     if (n == 0) {
-        CF_ALLOCC(outer->u.s->nest, MAX_INNER_CLASSES, S_nestedSpec);
+        CF_ALLOCC(outer->u.structSpec->nest, MAX_INNER_CLASSES, S_nestedSpec);
     }
     // avoid multiple occurences, rather not, as it must correspond to
     // file processing order
-    //& for(i=0; i<n; i++) if (outer->u.s->nest[i].cl == inner) return;
-    fill_nestedSpec(&(outer->u.s->nest[n]), inner, memb, accessFlags);
-    outer->u.s->nestedCount ++;
-    if (outer->u.s->nestedCount >= MAX_INNER_CLASSES) {
+    //& for(i=0; i<n; i++) if (outer->u.structSpec->nest[i].cl == inner) return;
+    fill_nestedSpec(&(outer->u.structSpec->nest[n]), inner, memb, accessFlags);
+    outer->u.structSpec->nestedCount ++;
+    if (outer->u.structSpec->nestedCount >= MAX_INNER_CLASSES) {
         fatalError(ERR_ST,"number of nested classes overflowed MAX_INNER_CLASSES", XREF_EXIT_ERR);
     }
 }
@@ -430,7 +430,7 @@ static int jslRecordAccessible(Symbol *cl, Symbol *rec, unsigned recAccessFlags)
                 log_trace("ret 1 as it is inside class");
                 return 1;
             }
-            if (cctIsMember(&cs->thisClass->u.s->casts, cl, 1)) {
+            if (cctIsMember(&cs->thisClass->u.structSpec->casts, cl, 1)) {
                 log_trace("ret 1 as it is inside subclass");
                 return 1;
             }
@@ -470,7 +470,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     int i;
 
     assert(str && str->bits.symbolType==TypeStruct);
-    ss = str->u.s;
+    ss = str->u.structSpec;
     assert(ss);
     log_debug("appending %d nested classes of %s", ss->nestedCount, str->linkName);
     for(i=0; i<ss->nestedCount; i++) {
@@ -488,7 +488,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
 
 void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc) {
     SymbolList *ss;
-    for(ss=cc->u.s->super; ss!=NULL; ss=ss->next) {
+    for(ss=cc->u.structSpec->super; ss!=NULL; ss=ss->next) {
         jslAddSuperNestedClassesToJslTypeTab(ss->d);
     }
     jslAddNestedClassesToJslTypeTab(cc, ORDER_PREPEND);
@@ -545,16 +545,16 @@ void jslNewClassDefinitionBegin(Id *name,
         membflag = (anonInterf==NULL && position!=CPOS_FUNCTION_INNER);
         if (s_jsl->pass==1) {
             jslAddNestedClass(cc, s_jsl->classStat->thisClass, membflag, accFlags);
-            cn = cc->u.s->classFile;
+            cn = cc->u.structSpec->classFile;
             assert(fileTable.tab[cn]);
             if (! (accFlags & AccessStatic)) {
                 // note that non-static direct enclosing class exists
                 // I am putting in comment just by prudence, but you can
                 // freely uncoment it
-                assert(s_jsl->classStat->thisClass && s_jsl->classStat->thisClass->u.s);
+                assert(s_jsl->classStat->thisClass && s_jsl->classStat->thisClass->u.structSpec);
                 assert(s_jsl->classStat->thisClass->bits.symbolType==TypeStruct);
-                fileTable.tab[cn]->directEnclosingInstance = s_jsl->classStat->thisClass->u.s->classFile;
-                log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.s->classFile,
+                fileTable.tab[cn]->directEnclosingInstance = s_jsl->classStat->thisClass->u.structSpec->classFile;
+                log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.structSpec->classFile,
                           fileTable.tab[cn]->name, noFileIndex);
             } else {
                 fileTable.tab[cn]->directEnclosingInstance = noFileIndex;
@@ -569,11 +569,11 @@ void jslNewClassDefinitionBegin(Id *name,
                                 ADD_YES, ORDER_PREPEND, false);
     }
 
-    assert(cc && cc->u.s && fileTable.tab[cc->u.s->classFile]);
+    assert(cc && cc->u.structSpec && fileTable.tab[cc->u.structSpec->classFile]);
     assert(s_jsl->sourceFileNumber>=0 && s_jsl->sourceFileNumber!=noFileIndex);
     assert(fileTable.tab[s_jsl->sourceFileNumber]);
-    fileInd = cc->u.s->classFile;
-    log_trace("setting source file of %s to %s", fileTable.tab[cc->u.s->classFile]->name,
+    fileInd = cc->u.structSpec->classFile;
+    log_trace("setting source file of %s to %s", fileTable.tab[cc->u.structSpec->classFile]->name,
               fileTable.tab[s_jsl->sourceFileNumber]->name);
     fileTable.tab[fileInd]->b.sourceFileNumber = s_jsl->sourceFileNumber;
 
@@ -591,7 +591,7 @@ void jslNewClassDefinitionBegin(Id *name,
     // surely allocate the table and will start from the first one
     // it is a little bit HACKED :)
     if (s_jsl->pass==1)
-        cc->u.s->nestedCount = 0;
+        cc->u.structSpec->nestedCount = 0;
 
     beginBlock();
     ill = StackMemoryAlloc(IdList);
@@ -623,7 +623,7 @@ void jslNewClassDefinitionEnd(void) {
     assert(s_jsl->classStat && s_jsl->classStat->next);
 
     cc = s_jsl->classStat->thisClass;
-    fileInd = cc->u.s->classFile;
+    fileInd = cc->u.structSpec->classFile;
     if (fileTable.tab[fileInd]->b.cxLoading) {
         fileTable.tab[fileInd]->b.cxLoaded = true;
     }

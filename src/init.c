@@ -355,16 +355,16 @@ void initStorageNames(void) {
 void initArchaicTypes(void) {
     /* ******* some defaults and built-ins initialisations ********* */
 
-    initTypeModifier(&s_defaultIntModifier, TypeInt);
-    fillSymbolWithType(&s_defaultIntDefinition, NULL, NULL, s_noPos, &s_defaultIntModifier);
+    initTypeModifier(&defaultIntModifier, TypeInt);
+    fillSymbolWithTypeModifier(&s_defaultIntDefinition, NULL, NULL, s_noPos, &defaultIntModifier);
 
     initTypeModifier(&s_defaultPackedTypeModifier, TypePackedType);
 
     initTypeModifier(&s_defaultVoidModifier,TypeVoid);
-    fillSymbolWithType(&s_defaultVoidDefinition, NULL, NULL, s_noPos, &s_defaultVoidModifier);
+    fillSymbolWithTypeModifier(&s_defaultVoidDefinition, NULL, NULL, s_noPos, &s_defaultVoidModifier);
 
     initTypeModifier(&s_errorModifier, TypeError);
-    fillSymbolWithType(&s_errorSymbol, "__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
+    fillSymbolWithTypeModifier(&s_errorSymbol, "__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
     fillSymbolBits(&s_errorSymbol.bits, AccessDefault, TypeError, StorageNone);
 }
 

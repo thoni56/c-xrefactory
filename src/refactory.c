@@ -1141,8 +1141,8 @@ bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     assert(ss);
     srccn = ss->s.vApplClass;
     target = getMoveTargetClass();
-    assert(target!=NULL && target->u.s);
-    targetcn = target->u.s->classFile;
+    assert(target!=NULL && target->u.structSpec);
+    targetcn = target->u.structSpec->classFile;
     for (mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         if (isSameCxSymbol(&ss->s, &mm->s)) {
             if (javaIsSuperClass(mm->s.vApplClass, srccn)) {
@@ -1185,12 +1185,12 @@ bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
         return false;
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
-    assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
+    assert(target->u.structSpec!=NULL&&target->u.structSpec->classFile!=noFileIndex);
     if (flag == REQ_SUBCLASS) cl=fileTable.tab[ss->s.vApplClass]->inferiorClasses;
     else cl=fileTable.tab[ss->s.vApplClass]->superClasses;
     for (; cl!=NULL; cl=cl->next) {
-        //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, fileTable.tab[cl->superClass]->name, target->u.s->classFile, fileTable.tab[target->u.s->classFile]->name);ppcBottomInformation(tmpBuff);
-        if (cl->superClass == target->u.s->classFile) {
+        //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, fileTable.tab[cl->superClass]->name, target->u.structSpec->classFile, fileTable.tab[target->u.structSpec->classFile]->name);ppcBottomInformation(tmpBuff);
+        if (cl->superClass == target->u.structSpec->classFile) {
             found = true;
             break;
         }
@@ -1198,7 +1198,7 @@ bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     if (found)
         return true;
 
-    javaGetClassNameFromFileNum(target->u.s->classFile, tt, DOTIFY_NAME);
+    javaGetClassNameFromFileNum(target->u.structSpec->classFile, tt, DOTIFY_NAME);
     javaGetClassNameFromFileNum(ss->s.vApplClass, ttt, DOTIFY_NAME);
     char tmpBuff[TMP_BUFF_SIZE];
     sprintf(tmpBuff,"Class %s is not direct %s of %s. This refactoring provides moving to direct %ses only.", tt, subOrSuper, ttt, subOrSuper);
@@ -1222,10 +1222,10 @@ bool tpPullUpFieldLastPreconditions(void) {
     assert(ss);
     target = getMoveTargetClass();
     assert(target!=NULL);
-    assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
+    assert(target->u.structSpec!=NULL&&target->u.structSpec->classFile!=noFileIndex);
     for (mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         if (isSameCxSymbol(&ss->s,&mm->s)
-            && mm->s.vApplClass == target->u.s->classFile) goto cont2;
+            && mm->s.vApplClass == target->u.structSpec->classFile) goto cont2;
     }
     // it is O.K. no item found
     return true;
@@ -1233,7 +1233,7 @@ bool tpPullUpFieldLastPreconditions(void) {
     // an item found, it must be empty
     if (mm->s.refs == NULL)
         return true;
-    javaGetClassNameFromFileNum(target->u.s->classFile, ttt, DOTIFY_NAME);
+    javaGetClassNameFromFileNum(target->u.structSpec->classFile, ttt, DOTIFY_NAME);
     if (IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usage.base) && mm->s.refs->next==NULL) {
         if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
         sprintf(tmpBuff, "%s is already defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should make sure that both fields are initialized to the same value.", mm->s.name, ttt);
@@ -1265,18 +1265,18 @@ bool tpPushDownFieldLastPreconditions(void) {
     thisclassi = ss->s.vApplClass;
     target = getMoveTargetClass();
     assert(target!=NULL);
-    assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
+    assert(target->u.structSpec!=NULL&&target->u.structSpec->classFile!=noFileIndex);
     sourcesm = targetsm = NULL;
     for (SymbolsMenu *mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         if (isSameCxSymbol(&ss->s,&mm->s)) {
-            if (mm->s.vApplClass == target->u.s->classFile) targetsm = mm;
+            if (mm->s.vApplClass == target->u.structSpec->classFile) targetsm = mm;
             if (mm->s.vApplClass == thisclassi) sourcesm = mm;
         }
     }
     if (targetsm != NULL) {
         rr = getDefinitionRef(targetsm->s.refs);
         if (rr!=NULL && IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
-            javaGetClassNameFromFileNum(target->u.s->classFile, ttt, DOTIFY_NAME);
+            javaGetClassNameFromFileNum(target->u.structSpec->classFile, ttt, DOTIFY_NAME);
             sprintf(tmpBuff,"The field %s is already defined in %s!",
                     targetsm->s.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);

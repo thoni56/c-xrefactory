@@ -95,21 +95,21 @@ static void fileTabDeleteOutOfMemory(FileItem *p, int i) {
 
 static void structCachingFree(Symbol *symbol) {
     SymbolList **superList;
-    assert(symbol->u.s);
-    if (freedPointer(symbol->u.s->records) ||
-        PPM_FREED_POINTER(symbol->u.s->records)) {
-        symbol->u.s->records = NULL;
+    assert(symbol->u.structSpec);
+    if (freedPointer(symbol->u.structSpec->records) ||
+        PPM_FREED_POINTER(symbol->u.structSpec->records)) {
+        symbol->u.structSpec->records = NULL;
     }
-    if (freedPointer(symbol->u.s->casts.node) ||
-        PPM_FREED_POINTER(symbol->u.s->casts.node)) {
-        symbol->u.s->casts.node = NULL;
+    if (freedPointer(symbol->u.structSpec->casts.node) ||
+        PPM_FREED_POINTER(symbol->u.structSpec->casts.node)) {
+        symbol->u.structSpec->casts.node = NULL;
     }
-    if (freedPointer(symbol->u.s->casts.sub) ||
-        PPM_FREED_POINTER(symbol->u.s->casts.sub)) {
-        symbol->u.s->casts.sub = NULL;
+    if (freedPointer(symbol->u.structSpec->casts.sub) ||
+        PPM_FREED_POINTER(symbol->u.structSpec->casts.sub)) {
+        symbol->u.structSpec->casts.sub = NULL;
     }
 
-    superList = &symbol->u.s->super;
+    superList = &symbol->u.structSpec->super;
     while (*superList!=NULL) {
         if (freedPointer(*superList) ||
             PPM_FREED_POINTER(*superList)) {

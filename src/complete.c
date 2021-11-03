@@ -205,7 +205,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
     size = COMPLETION_STRING_SIZE;
     ll = 0;
     if (c->alternatives[ii].symbolType==TypeDefault) {
-        assert(c->alternatives[ii].symbol && c->alternatives[ii].symbol->u.type);
+        assert(c->alternatives[ii].symbol && c->alternatives[ii].symbol->u.typeModifier);
         if (LANGUAGE(LANG_JAVA)) {
             char tmpBuff[TMP_BUFF_SIZE];
             cname = getCompletionClassFieldString(&c->alternatives[ii]);
@@ -234,15 +234,15 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
         if (LANGUAGE(LANG_JAVA)) {
             ll += printJavaModifiers(tt+ll, &size, c->alternatives[ii].symbol->bits.access);
             if (c->alternatives[ii].vFunClass!=NULL) {
-                vFunCl = c->alternatives[ii].vFunClass->u.s->classFile;
+                vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFile;
                 if (vFunCl == -1) vFunCl = noFileIndex;
             }
         }
-        typeSPrint(tt+ll, &size, c->alternatives[ii].symbol->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
+        typeSPrint(tt+ll, &size, c->alternatives[ii].symbol->u.typeModifier, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
         if (LANGUAGE(LANG_JAVA)
             && (c->alternatives[ii].symbol->bits.storage == StorageMethod
                 || c->alternatives[ii].symbol->bits.storage == StorageConstructor)) {
-            throwsSprintf(tt+ll+size, COMPLETION_STRING_SIZE-ll-size, c->alternatives[ii].symbol->u.type->u.m.exceptions);
+            throwsSprintf(tt+ll+size, COMPLETION_STRING_SIZE-ll-size, c->alternatives[ii].symbol->u.typeModifier->u.m.exceptions);
         }
     } else if (c->alternatives[ii].symbolType==TypeMacro) {
         macDefSPrintf(tt, &size, "", c->alternatives[ii].string,
@@ -263,7 +263,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
     } else if (c->alternatives[ii].symbolType == TypeInheritedFullMethod) {
         if (c->alternatives[ii].vFunClass!=NULL) {
             sprintf(tt,"%s \t:%s", c->alternatives[ii].vFunClass->name, typeNamesTable[c->alternatives[ii].symbolType]);
-            vFunCl = c->alternatives[ii].vFunClass->u.s->classFile;
+            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFile;
             if (vFunCl == -1) vFunCl = noFileIndex;
         } else {
             sprintf(tt,"%s", typeNamesTable[c->alternatives[ii].symbolType]);
@@ -293,7 +293,7 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
     sprintf(vlevelBuff," ");
     if (vclass != NULL) *vclass = vlevelBuff;
     if (c->alternatives[ii].symbolType==TypeDefault) {
-        assert(c->alternatives[ii].symbol && c->alternatives[ii].symbol->u.type);
+        assert(c->alternatives[ii].symbol && c->alternatives[ii].symbol->u.typeModifier);
         if (LANGUAGE(LANG_JAVA)) {
             cname = getCompletionClassFieldString(&c->alternatives[ii]);
             if (c->alternatives[ii].virtLevel>NEST_VIRT_COMPL_OFFSET) {
@@ -316,12 +316,12 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
         if (LANGUAGE(LANG_JAVA)) {
             ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->bits.access);
         }
-        typeSPrint(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, nindent);
+        typeSPrint(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->u.typeModifier, pname,' ', 0, tdexpFlag,SHORT_NAME, nindent);
         *nindent += ll;
         if (LANGUAGE(LANG_JAVA)
             && (c->alternatives[ii].symbol->bits.storage == StorageMethod
                 || c->alternatives[ii].symbol->bits.storage == StorageConstructor)) {
-            throwsSprintf(ppcTmpBuff+ll+size, COMPLETION_STRING_SIZE-ll-size, c->alternatives[ii].symbol->u.type->u.m.exceptions);
+            throwsSprintf(ppcTmpBuff+ll+size, COMPLETION_STRING_SIZE-ll-size, c->alternatives[ii].symbol->u.typeModifier->u.m.exceptions);
         }
     } else if (c->alternatives[ii].symbolType==TypeMacro) {
         macDefSPrintf(ppcTmpBuff, &size, "", c->alternatives[ii].string,
@@ -492,7 +492,7 @@ void printCompletions(Completions* c) {
         }
         vFunCl = noFileIndex;
         if (LANGUAGE(LANG_JAVA)  && c->alternatives[ii].vFunClass!=NULL) {
-            vFunCl = c->alternatives[ii].vFunClass->u.s->classFile;
+            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFile;
             if (vFunCl == -1) vFunCl = noFileIndex;
         }
         olCompletionListPrepend(c->alternatives[ii].string, ppcTmpBuff, vclass, jindent, c->alternatives[ii].symbol,NULL, &s_noRef, c->alternatives[ii].symbolType, vFunCl, s_olcxCurrentUser->completionsStack.top);
@@ -523,18 +523,18 @@ static bool isTheSameSymbol(CompletionLine *c1, CompletionLine *c2) {
     }
     if (c1->symbolType != TypeDefault)
         return true;
-    assert(c1->symbol && c1->symbol->u.type);
-    assert(c2->symbol && c2->symbol->u.type);
+    assert(c1->symbol && c1->symbol->u.typeModifier);
+    assert(c2->symbol && c2->symbol->u.typeModifier);
     /*fprintf(dumpOut,"tm %d %d\n",c1->t->u.type->m,c2->t->u.type->m);*/
-    if (c1->symbol->u.type->kind != c2->symbol->u.type->kind)
+    if (c1->symbol->u.typeModifier->kind != c2->symbol->u.typeModifier->kind)
         return false;
     if (c1->vFunClass != c2->vFunClass)
         return false;
-    if (c2->symbol->u.type->kind != TypeFunction)
+    if (c2->symbol->u.typeModifier->kind != TypeFunction)
         return true;
     /*fprintf(dumpOut,"sigs %s %s\n",c1->t->u.type->u.sig,c2->t->u.type->u.sig);*/
-    assert(c1->symbol->u.type->u.m.signature && c2->symbol->u.type->u.m.signature);
-    if (strcmp(c1->symbol->u.type->u.m.signature,c2->symbol->u.type->u.m.signature))
+    assert(c1->symbol->u.typeModifier->u.m.signature && c2->symbol->u.typeModifier->u.m.signature);
+    if (strcmp(c1->symbol->u.typeModifier->u.m.signature,c2->symbol->u.typeModifier->u.m.signature))
         return false;
     return true;
 }
@@ -840,9 +840,9 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
     if (options.completeParenthesis == 0) {
         cn = cname;
     } else {
-        assert(r->u.type!=NULL);
+        assert(r->u.typeModifier!=NULL);
         if (LANGUAGE(LANG_JAVA)) {
-            msig = r->u.type->u.m.signature;
+            msig = r->u.typeModifier->u.m.signature;
             assert(msig!=NULL);
             if (msig[0]=='(' && msig[1]==')') {
                 psuff = "()";
@@ -850,7 +850,7 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
                 psuff = "(";
             }
         } else {
-            if (r->u.type!=NULL && r->u.type->u.f.args == NULL) {
+            if (r->u.typeModifier!=NULL && r->u.typeModifier->u.f.args == NULL) {
                 psuff = "()";
             } else {
                 psuff = "(";
@@ -876,7 +876,7 @@ static void completeSymFun(Symbol *s, void *c) {
     completionName = s->name;
     CONST_CONSTRUCT_NAME(cc->storage,s->bits.storage,completionName);
     if (completionName!=NULL) {
-        if (s->bits.symbolType == TypeDefault && s->u.type!=NULL && s->u.type->kind == TypeFunction) {
+        if (s->bits.symbolType == TypeDefault && s->u.typeModifier!=NULL && s->u.typeModifier->kind == TypeFunction) {
             completeFunctionOrMethodName(cc->res, 1, 0, s, NULL);
         } else {
             fillCompletionLine(&compLine, completionName, s, s->bits.symbolType,0, 0, NULL,NULL);
@@ -918,7 +918,7 @@ static void processSpecialInheritedFullCompletion( Completions *c, int orderFlag
     if (LANGUAGE(LANG_JAVA)) {
         ll+=printJavaModifiers(tt+ll, &size, r->bits.access);
     }
-    typeSPrint(tt+ll, &size, r->u.type, cname, ' ', 0, 1,SHORT_NAME, NULL);
+    typeSPrint(tt+ll, &size, r->u.typeModifier, cname, ' ', 0, 1,SHORT_NAME, NULL);
     fcc = StackMemoryAllocC(strlen(tt)+1, char);
     strcpy(fcc,tt);
     //&fprintf(dumpOut,":adding %s\n",fcc);fflush(dumpOut);
@@ -956,7 +956,7 @@ static void completeRecordsNames(
     } else {
         orderFlag = 1;
     }
-    assert(s->u.s);
+    assert(s->u.structSpec);
     iniFind(s, &rfs);
     //&fprintf(dumpOut,"checking records of %s\n", s->linkName);
     for(;;) {
@@ -986,10 +986,10 @@ static void completeRecordsNames(
                 //  What is more natural ???
                 && javaLinkable(r->bits.access)) {
             //&fprintf(dumpOut,"passed\n", cname);
-            assert(rfs.currClass && rfs.currClass->u.s);
+            assert(rfs.currClass && rfs.currClass->u.structSpec);
             assert(r->bits.symbolType == TypeDefault);
             vFunCl = rfs.currClass;
-            if (vFunCl->u.s->classFile == -1) {
+            if (vFunCl->u.structSpec->classFile == -1) {
                 vFunCl = NULL;
             }
             vlevel = rfs.sti + vlevelOffset;
@@ -1132,7 +1132,7 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
             for(ss1=s1->u.f.args, ss2=s2->u.f.args;
                 ss1!=NULL&&ss2!=NULL;
                 ss1=ss1->next, ss2=ss2->next) {
-                if (!isEqualType(ss1->u.type, ss2->u.type))
+                if (!isEqualType(ss1->u.typeModifier, ss2->u.typeModifier))
                     return false;
             }
             if (ss1!=NULL||ss2!=NULL)
@@ -1151,7 +1151,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
     static char     *cprevious="previous";
     s = tok->typeModifier->next->u.t;
     res = NULL;
-    assert(s->u.s);
+    assert(s->u.structSpec);
     iniFind(s, &rfs);
     for(;;) {
         rr = findStrRecordSym(&rfs, NULL, &r, CLASS_TO_ANY, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
@@ -1160,9 +1160,9 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
         cname = r->name;
         CONST_CONSTRUCT_NAME(StorageDefault,r->bits.storage,cname);
         if (cname!=NULL && javaLinkable(r->bits.access)){
-            assert(rfs.currClass && rfs.currClass->u.s);
+            assert(rfs.currClass && rfs.currClass->u.structSpec);
             assert(r->bits.symbolType == TypeDefault);
-            if (isEqualType(r->u.type, tok->typeModifier)) {
+            if (isEqualType(r->u.typeModifier, tok->typeModifier)) {
                 // there is a record of the same type
                 if (res == NULL) res = cname;
                 else if (strcmp(cname,cnext)==0) res = cnext;
@@ -1345,14 +1345,14 @@ static void javaCompleteNestedClasses(  Completions *c,
     str = cclas;
     // TODO count inheritance and virtual levels (at least for nested classes)
     for(str=cclas;
-        str!=NULL && str->u.s->super!=NULL;
-        str=str->u.s->super->d) {
-        assert(str && str->u.s);
-        for(i=0; i<str->u.s->nestedCount; i++) {
-            if (str->u.s->nest[i].membFlag) {
-                memb = str->u.s->nest[i].cl;
+        str!=NULL && str->u.structSpec->super!=NULL;
+        str=str->u.structSpec->super->d) {
+        assert(str && str->u.structSpec);
+        for(i=0; i<str->u.structSpec->nestedCount; i++) {
+            if (str->u.structSpec->nest[i].membFlag) {
+                memb = str->u.structSpec->nest[i].cl;
                 assert(memb);
-                memb->bits.access |= str->u.s->nest[i].accFlags;  // hack!!!
+                memb->bits.access |= str->u.structSpec->nest[i].accFlags;  // hack!!!
                 fillCompletionLine(&compLine, memb->name, memb, TypeStruct,0, 0 , NULL,NULL);
                 processName(memb->name, &compLine, 1, (void*) c);
                 if (storage == StorageConstructor) {
@@ -1389,7 +1389,7 @@ static void javaCompleteComposedName(Completions *c,
     if (innerConstruct && nameType != TypeExpression)
         return;
     if (nameType == TypeExpression) {
-        if (expr->kind == TypeArray) expr = &s_javaArrayObjectSymbol.u.s->stype;
+        if (expr->kind == TypeArray) expr = &s_javaArrayObjectSymbol.u.structSpec->stype;
         if (expr->kind != TypeStruct)
             return;
         str = expr->u.t;
@@ -1441,7 +1441,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
         assert(r != NULL);
         if (*actArg==0 || javaMethodApplicability(r,actArg)==PROFILE_PARTIALLY_APPLICABLE) {
             vFunCl = rfs->currClass;
-            if (vFunCl->u.s->classFile == -1) {
+            if (vFunCl->u.structSpec->classFile == -1) {
                 vFunCl = NULL;
             }
             vlevel = rfs->sti;

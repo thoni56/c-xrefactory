@@ -39,7 +39,7 @@
 #define java_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
-#define JslAddComposedType(ddd, ttt) jslAppendComposedType(&ddd->u.type, ttt)
+#define JslAddComposedType(ddd, ttt) jslAppendComposedType(&ddd->u.typeModifier, ttt)
 
 #define JslImportSingleDeclaration(iname) {\
     Symbol *sym;\
@@ -82,7 +82,7 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
 
 #define NULL_POS NULL
 
-#define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
+#define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.typeModifier, ttt)
 
 
 static bool regularPass(void) { return s_jsl == NULL; }
@@ -555,8 +555,8 @@ ClassOrInterfaceType
                 if (! SyntaxPassOnly()) {
                     javaClassifyToTypeName($1.d,UsageUsed, &$$.d, USELESS_FQT_REFS_ALLOWED);
                     $$.d = javaTypeNameDefinition($1.d);
-                    assert($$.d->u.type);
-                    s_cps.lastDeclaratorType = $$.d->u.type->u.t;
+                    assert($$.d->u.typeModifier);
+                    s_cps.lastDeclaratorType = $$.d->u.typeModifier->u.t;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -603,7 +603,7 @@ ArrayType
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.symbol = typeSpecifier1($1.d.u);
-                    $$.d.symbol->u.type = prependComposedType($$.d.symbol->u.type, TypeArray);
+                    $$.d.symbol->u.typeModifier = prependComposedType($$.d.symbol->u.typeModifier, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -612,7 +612,7 @@ ArrayType
             };
             if (inSecondJslPass()) {
                 $$.d.symbol = jslTypeSpecifier1($1.d.u);
-                $$.d.symbol->u.type = jslPrependComposedType($$.d.symbol->u.type, TypeArray);
+                $$.d.symbol->u.typeModifier = jslPrependComposedType($$.d.symbol->u.typeModifier, TypeArray);
             }
         }
     |	Name '[' ']'				{
@@ -620,9 +620,9 @@ ArrayType
                 if (! SyntaxPassOnly()) {
                     javaClassifyToTypeName($1.d,UsageUsed, &($$.d.symbol), USELESS_FQT_REFS_ALLOWED);
                     $$.d.symbol = javaTypeNameDefinition($1.d);
-                    assert($$.d.symbol && $$.d.symbol->u.type);
-                    s_cps.lastDeclaratorType = $$.d.symbol->u.type->u.t;
-                    $$.d.symbol->u.type = prependComposedType($$.d.symbol->u.type, TypeArray);
+                    assert($$.d.symbol && $$.d.symbol->u.typeModifier);
+                    s_cps.lastDeclaratorType = $$.d.symbol->u.typeModifier->u.t;
+                    $$.d.symbol->u.typeModifier = prependComposedType($$.d.symbol->u.typeModifier, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -632,21 +632,21 @@ ArrayType
                 Symbol *ss;
                 jslClassifyAmbiguousTypeName($1.d, &ss);
                 $$.d.symbol = jslTypeNameDefinition($1.d);
-                $$.d.symbol->u.type = jslPrependComposedType($$.d.symbol->u.type, TypeArray);
+                $$.d.symbol->u.typeModifier = jslPrependComposedType($$.d.symbol->u.typeModifier, TypeArray);
             }
         }
     |	ArrayType '[' ']'			{
             if (regularPass()) {
                 $$.d = $1.d;
                 if (! SyntaxPassOnly()) {
-                    $$.d.symbol->u.type = prependComposedType($$.d.symbol->u.type, TypeArray);
+                    $$.d.symbol->u.typeModifier = prependComposedType($$.d.symbol->u.typeModifier, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             };
             if (inSecondJslPass()) {
                 $$.d = $1.d;
-                $$.d.symbol->u.type = jslPrependComposedType($$.d.symbol->u.type, TypeArray);
+                $$.d.symbol->u.typeModifier = jslPrependComposedType($$.d.symbol->u.typeModifier, TypeArray);
             }
         }
     |   CompletionTypeName '[' ']'	{ /* rule never used */ }
@@ -1308,18 +1308,18 @@ Super_opt
     |	EXTENDS ExtendClassOrInterfaceType			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.type);
-                    assert($2.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass($2.d->u.type->u.t);
+                    assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.typeModifier);
+                    assert($2.d->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($2.d->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
             }
             if (inSecondJslPass()) {
-                assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.type);
-                assert($2.d->u.type->kind == TypeStruct);
+                assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.typeModifier);
+                assert($2.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $2.d->u.type->u.t);
+                                            $2.d->u.typeModifier->u.t);
             }
         }
     ;
@@ -1336,35 +1336,35 @@ InterfaceTypeList
     :   InterfaceType							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($1.d && $1.d->bits.symbolType == TypeDefault && $1.d->u.type);
-                    assert($1.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass($1.d->u.type->u.t);
+                    assert($1.d && $1.d->bits.symbolType == TypeDefault && $1.d->u.typeModifier);
+                    assert($1.d->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($1.d->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
             }
             if (inSecondJslPass()) {
-                assert($1.d && $1.d->bits.symbolType == TypeDefault && $1.d->u.type);
-                assert($1.d->u.type->kind == TypeStruct);
+                assert($1.d && $1.d->bits.symbolType == TypeDefault && $1.d->u.typeModifier);
+                assert($1.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $1.d->u.type->u.t);
+                                            $1.d->u.typeModifier->u.t);
             }
         }
     |	InterfaceTypeList ',' InterfaceType		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.type);
-                    assert($3.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass($3.d->u.type->u.t);
+                    assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                    assert($3.d->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($3.d->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
-                assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.type);
-                assert($3.d->u.type->kind == TypeStruct);
+                assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                assert($3.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $3.d->u.type->u.t);
+                                            $3.d->u.typeModifier->u.t);
             }
         }
     ;
@@ -1497,8 +1497,8 @@ FieldDeclaration
                         iniFind(clas, &rfs);
                         if (findStrRecordSym(&rfs, p->name, &memb, CLASS_TO_ANY,
                                              ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO) == RETURN_NOT_FOUND) {
-                            assert(clas->u.s);
-                            LIST_APPEND(Symbol, clas->u.s->records, p);
+                            assert(clas->u.structSpec);
+                            LIST_APPEND(Symbol, clas->u.structSpec->records, p);
                         }
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
@@ -1532,8 +1532,8 @@ FieldDeclaration
                     p->next = NULL;
                     if (p->bits.symbolType == TypeError) continue;
                     assert(p->bits.symbolType == TypeDefault);
-                    assert(clas->u.s);
-                    vClass = clas->u.s->classFile;
+                    assert(clas->u.structSpec);
+                    vClass = clas->u.structSpec->classFile;
                     jslCompleteDeclarator($2.d, p);
                     p->bits.access = $1.d;
                     p->bits.storage = StorageField;
@@ -1543,7 +1543,7 @@ FieldDeclaration
                     }
                     log_debug("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
-                    LIST_APPEND(Symbol, clas->u.s->records, p);
+                    LIST_APPEND(Symbol, clas->u.structSpec->records, p);
                     assert(vClass!=noFileIndex);
                     if (p->pos.file!=s_olOriginalFileNumber && options.server_operation==OLO_PUSH) {
                         // pre load of saved file akes problem on move field/method, ...
@@ -1741,8 +1741,8 @@ MethodDeclarator
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
-                        assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                        initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
+                        assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
+                        initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
                         PropagateBoundaries($$, $1, $5);
@@ -1750,8 +1750,8 @@ MethodDeclarator
                 }
                 if (inSecondJslPass()) {
                     $$.d = $<symbol>2;
-                    assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                    initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
+                    assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
+                    initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.s);
                 }
             }
     |	MethodDeclarator '[' ']'						{
@@ -1864,21 +1864,21 @@ ClassTypeList
     :   ClassType						{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
-                assert($1.d && $1.d->bits.symbolType == TypeDefault && $1.d->u.type);
-                assert($1.d->u.type->kind == TypeStruct);
+                assert($1.d && $1.d->bits.symbolType == TypeDefault && $1.d->u.typeModifier);
+                assert($1.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC($$.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with compound literal */
-                *$$.d = (SymbolList){.d = $1.d->u.type->u.t, .next = NULL};
+                *$$.d = (SymbolList){.d = $1.d->u.typeModifier->u.t, .next = NULL};
             }
         }
     |	ClassTypeList ',' ClassType		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
             if (inSecondJslPass()) {
-                assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.type);
-                assert($3.d->u.type->kind == TypeStruct);
+                assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                assert($3.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC($$.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with compound literal */
-                *$$.d = (SymbolList){.d = $3.d->u.type->u.t, .next = $1.d};
+                *$$.d = (SymbolList){.d = $3.d->u.typeModifier->u.t, .next = $1.d};
             }
         }
     ;
@@ -1917,15 +1917,15 @@ ConstructorDeclaration
                           &*/
                         mh=javaMethodHeader($1.d, &s_errorSymbol, args, StorageConstructor);
                         // TODO! Merge this with 'javaMethodBodyBeginning'!
-                        assert(mh->u.type && mh->u.type->kind == TypeFunction);
+                        assert(mh->u.typeModifier && mh->u.typeModifier->kind == TypeFunction);
                         beginBlock();  // in order to remove arguments
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
                         generateInternalLabelReference(-1, UsageDefined);
                         counters.localVar = 0;
-                        assert($2.d && $2.d->u.type);
+                        assert($2.d && $2.d->u.typeModifier);
                         javaAddMethodParametersToSymTable($2.d);
-                        mh->u.type->u.m.signature = strchr(mh->linkName, '(');
+                        mh->u.typeModifier->u.m.signature = strchr(mh->linkName, '(');
                         s_javaStat->methodModifiers = $1.d;
                     }
                 }
@@ -1982,8 +1982,8 @@ ConstructorDeclarator
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
-                        assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                        initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
+                        assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
+                        initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
                         PropagateBoundaries($$, $1, $5);
@@ -1991,8 +1991,8 @@ ConstructorDeclarator
                 }
                 if (inSecondJslPass()) {
                     $$.d = $<symbol>2;
-                    assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                    initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
+                    assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
+                    initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.s);
                 };
             }
     ;
@@ -2155,35 +2155,35 @@ ExtendsInterfaces
     :   EXTENDS ExtendClassOrInterfaceType		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.type);
-                    assert($2.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass($2.d->u.type->u.t);
+                    assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.typeModifier);
+                    assert($2.d->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($2.d->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
             }
             if (inSecondJslPass()) {
-                assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.type);
-                assert($2.d->u.type->kind == TypeStruct);
+                assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.typeModifier);
+                assert($2.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $2.d->u.type->u.t);
+                                            $2.d->u.typeModifier->u.t);
             }
         }
     |	ExtendsInterfaces ',' ExtendClassOrInterfaceType        {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.type);
-                    assert($3.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass($3.d->u.type->u.t);
+                    assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                    assert($3.d->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($3.d->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
-                assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.type);
-                assert($3.d->u.type->kind == TypeStruct);
+                assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                assert($3.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $3.d->u.type->u.t);
+                                            $3.d->u.typeModifier->u.t);
             }
         }
     ;
@@ -2921,7 +2921,7 @@ CatchClause
                                             UsageDefined);
                             if (options.server_operation == OLO_EXTRACT) {
                                 assert($3.d->bits.symbolType==TypeDefault);
-                                addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, noFileIndex, noFileIndex);
+                                addCxReference($3.d->u.typeModifier->u.t, &$1.d->p, UsageCatched, noFileIndex, noFileIndex);
                             }
                         }
                     }
@@ -2942,7 +2942,7 @@ CatchClause
                 if (! SyntaxPassOnly()) {
                     if (options.server_operation == OLO_EXTRACT) {
                         assert($3.d->bits.symbolType==TypeDefault);
-                        addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, noFileIndex, noFileIndex);
+                        addCxReference($3.d->u.typeModifier->u.t, &$1.d->p, UsageCatched, noFileIndex, noFileIndex);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $5);
@@ -3196,7 +3196,7 @@ ClassInstanceCreationExpression
                             // MARIAN(?): before it was s_javaStat->classFileIndex, but be more precise
                             // in reality you should keep both to discover references
                             // to original class from class nested in method.
-                            addThisCxReferences(ei->u.s->classFile, &$1.d->p);
+                            addThisCxReferences(ei->u.structSpec->classFile, &$1.d->p);
                             // MARIAN(?): I have removed following because it makes problems when
                             // expanding to FQT names, WHY IT WAS HERE ???
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
@@ -3211,13 +3211,13 @@ ClassInstanceCreationExpression
                             // Well, it is legal only for static nested classes.
                             // But for security reasons, I will keep it in comment,
                             /*& if (! (ss->bits.access&AccessStatic)) {
-                                    if (rr!=NULL) rr->usg.base = s_noUsage;
+                                    if (rr!=NULL) rr->usage.base = s_noUsage;
                                 } &*/
                         }
                     }
                     javaConstructorInvocation(ss, &($3.d->id.p), $5.d.t);
                     tt = javaTypeNameDefinition($3.d);
-                    $$.d.typeModifier = tt->u.type;
+                    $$.d.typeModifier = tt->u.typeModifier;
                     $$.d.reference = NULL;
                 } else {
                     javaHandleDeclaratorParamPositions(&$3.d->id.p, &$4.d, $5.d.p, &$6.d);
@@ -3260,8 +3260,8 @@ ClassInstanceCreationExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     newClassDefinitionEnd($<trail>8);
-                    assert($<symbol>7 && $<symbol>7->u.type);
-                    $$.d.typeModifier = $<symbol>7->u.type;
+                    assert($<symbol>7 && $<symbol>7->u.typeModifier);
+                    $$.d.typeModifier = $<symbol>7->u.typeModifier;
                     $$.d.reference = NULL;
                 } else {
                     $$.d.position = &$1.d->p;
@@ -3402,8 +3402,8 @@ ArrayCreationExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    assert($3.d && $3.d->u.type);
-                    $$.d.typeModifier = $3.d->u.type;
+                    assert($3.d && $3.d->u.typeModifier);
+                    $$.d.typeModifier = $3.d->u.typeModifier;
                     for(i=0; i<$4.d; i++)
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
                     $$.d.reference = NULL;
@@ -3418,8 +3418,8 @@ ArrayCreationExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    assert($3.d && $3.d->u.type);
-                    $$.d.typeModifier = $3.d->u.type;
+                    assert($3.d && $3.d->u.typeModifier);
+                    $$.d.typeModifier = $3.d->u.typeModifier;
                     for(i=0; i<$4.d; i++)
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
                     $$.d.reference = NULL;
@@ -3480,7 +3480,7 @@ FieldAccess
                         javaLoadClassSymbolsFromFile($1.d.typeModifier->u.t);
                         $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $3.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
-                        $$.d.typeModifier = rec->u.type;
+                        $$.d.typeModifier = rec->u.typeModifier;
                     } else if (s_language == LANG_JAVA) {
                         $$.d.typeModifier = javaArrayFieldAccess($3.d);
                     } else {
@@ -3507,7 +3507,7 @@ FieldAccess
                         $$.d.reference = findStrRecordFromSymbol(ss, $3.d, &rec,
                                                                  CLASS_TO_EXPR, $1.d);
                         assert(rec);
-                        $$.d.typeModifier = rec->u.type;
+                        $$.d.typeModifier = rec->u.typeModifier;
                     } else {
                         $$.d.typeModifier = &s_errorModifier;
                     }
@@ -3532,7 +3532,7 @@ FieldAccess
                         $$.d.reference = findStrRecordFromSymbol(ss, $5.d, &rec,
                                                                  CLASS_TO_EXPR, NULL);
                         assert(rec);
-                        $$.d.typeModifier = rec->u.type;
+                        $$.d.typeModifier = rec->u.typeModifier;
                     } else {
                         $$.d.typeModifier = &s_errorModifier;
                     }
@@ -3785,8 +3785,8 @@ CastExpression
     :   '(' ArrayType ')' UnaryExpression					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($2.d.symbol && $2.d.symbol->u.type);
-                    $$.d.typeModifier = $2.d.symbol->u.type;
+                    assert($2.d.symbol && $2.d.symbol->u.typeModifier);
+                    $$.d.typeModifier = $2.d.symbol->u.typeModifier;
                     $$.d.reference = NULL;
                     assert($$.d.typeModifier->kind == TypeArray);
                 } else {

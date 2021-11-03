@@ -86,7 +86,7 @@ void deleteSymDef(void *p) {
 
 void unpackPointers(Symbol *symbol) {
     for (int i=0; i<symbol->bits.npointers; i++) {
-        appendComposedType(&symbol->u.type, TypePointer);
+        appendComposedType(&symbol->u.typeModifier, TypePointer);
     }
     symbol->bits.npointers=0;
 }
@@ -112,7 +112,7 @@ void recFindPush(Symbol *str, S_recFindStr *rfs) {
         // this is hack to avoid problem when overloading to zero
         rfs->recsClassCounter++;
     }
-    ss = str->u.s;
+    ss = str->u.structSpec;
     rfs->nextRecord = ss->records;
     rfs->currClass = str;
     rfs->st[rfs->sti] = ss->super;
@@ -123,7 +123,7 @@ void recFindPush(Symbol *str, S_recFindStr *rfs) {
 S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
     assert(s);
     assert(s->bits.symbolType == TypeStruct || s->bits.symbolType == TypeUnion);
-    assert(s->u.s);
+    assert(s->u.structSpec);
     assert(rfs);
     fillRecFindStr(rfs, s, NULL, NULL,s_recFindCl++);
     recFindPush(s, rfs);
@@ -190,7 +190,7 @@ static bool accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
     cc = rfs->baseClass;
     for(i=0; i<rfs->sti-1; i++) {
         assert(cc);
-        for(sups=cc->u.s->super; sups!=NULL; sups=sups->next) {
+        for(sups=cc->u.structSpec->super; sups!=NULL; sups=sups->next) {
             if (sups->next==rfs->st[i]) break;
         }
         if (sups!=NULL && sups->next == rfs->st[i]) {
@@ -229,7 +229,7 @@ bool javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbo
                 log_trace("return true for inside class");
                 return true;
             }
-            if (cctIsMember(&cs->thisClass->u.s->casts, funcl, 1)) {
+            if (cctIsMember(&cs->thisClass->u.structSpec->casts, funcl, 1)) {
                 log_trace("return true for inside subclass");
                 return true;
             }
@@ -310,21 +310,21 @@ int findStrRecordSym(S_recFindStr *ss,
     for(;;) {
         assert(ss);
         cclass = ss->currClass;
-        if (cclass!=NULL&&cclass->u.s->recSearchCounter==ss->recsClassCounter){
+        if (cclass!=NULL&&cclass->u.structSpec->recSearchCounter==ss->recsClassCounter){
             // to avoid multiple pass through the same super-class ??
-            //&fprintf(dumpOut,":%d==%d --> skipping class %s\n",cclass->u.s->recSearchCounter,ss->recsClassCounter,cclass->linkName);
+            //&fprintf(dumpOut,":%d==%d --> skipping class %s\n",cclass->u.structSpec->recSearchCounter,ss->recsClassCounter,cclass->linkName);
             goto nextClass;
         }
         //&if(cclass!=NULL)fprintf(dumpOut,":looking in class %s(%d)\n",cclass->linkName,ss->sti); fflush(dumpOut);
         for(r=ss->nextRecord; r!=NULL; r=r->next) {
             // special gcc extension of anonymous struct record
             if (r->name!=NULL && *r->name==0 && r->bits.symbolType==TypeDefault
-                && r->u.type->kind==TypeAnonymousField
-                && r->u.type->next!=NULL
-                && (r->u.type->next->kind==TypeUnion || r->u.type->next->kind==TypeStruct)) {
+                && r->u.typeModifier->kind==TypeAnonymousField
+                && r->u.typeModifier->next!=NULL
+                && (r->u.typeModifier->next->kind==TypeUnion || r->u.typeModifier->next->kind==TypeStruct)) {
                 // put the anonymous union as 'super class'
                 if (ss->aui+1 < MAX_ANONYMOUS_FIELDS) {
-                    ss->au[ss->aui++] = r->u.type->next->u.t;
+                    ss->au[ss->aui++] = r->u.typeModifier->next->u.t;
                 }
             }
             //&fprintf(dumpOut,":checking %s\n",r->name); fflush(dumpOut);
@@ -335,8 +335,8 @@ int findStrRecordSym(S_recFindStr *ss,
                 //&fprintf(dumpOut,"acc O.K., checking classif %d\n",javaClassif);fflush(dumpOut);
                 if (javaClassif!=CLASS_TO_ANY) {
                     assert(r->bits.symbolType == TypeDefault);
-                    assert(r->u.type);
-                    m = r->u.type->kind;
+                    assert(r->u.typeModifier);
+                    m = r->u.typeModifier->kind;
                     if (m==TypeFunction && javaClassif!=CLASS_TO_METHOD) goto nextRecord;
                     if (m!=TypeFunction && javaClassif==CLASS_TO_METHOD) goto nextRecord;
                 }
@@ -371,7 +371,7 @@ int findStrRecordSym(S_recFindStr *ss,
         } else {
             // mark the class as processed
             if (cclass!=NULL) {
-                cclass->u.s->recSearchCounter = ss->recsClassCounter;
+                cclass->u.structSpec->recSearchCounter = ss->recsClassCounter;
             }
 
             while (ss->sti>0 && ss->st[ss->sti-1]==NULL) ss->sti--;
@@ -420,14 +420,14 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
         ((*res)->bits.storage==StorageField
          || (*res)->bits.storage==StorageMethod
          || (*res)->bits.storage==StorageConstructor)){
-        assert(rfs.currClass->u.s && rfs.baseClass && rfs.baseClass->u.s);
+        assert(rfs.currClass->u.structSpec && rfs.baseClass && rfs.baseClass->u.structSpec);
         if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
             || javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currClass, *res)) {
             minacc = javaGetMinimalAccessibility(&rfs, *res);
             fillUsageBits(&ub, UsageUsed, minacc);
             ref = addCxReferenceNew(*res,&record->p, &ub,
-                                    rfs.currClass->u.s->classFile,
-                                    rfs.baseClass->u.s->classFile);
+                                    rfs.currClass->u.structSpec->classFile,
+                                    rfs.baseClass->u.structSpec->classFile);
             // this is adding reference to 'super', not to the field!
             // for pull-up/push-down
             if (super!=NULL) addThisCxReferences(s_javaStat->classFileIndex,&super->p);
@@ -461,12 +461,12 @@ void labelReference(Id *id, Usage usage) {
     char *tt;
     assert(id);
     if (LANGUAGE(LANG_JAVA)) {
-        assert(s_javaStat&&s_javaStat->thisClass&&s_javaStat->thisClass->u.s);
+        assert(s_javaStat&&s_javaStat->thisClass&&s_javaStat->thisClass->u.structSpec);
         if (s_cp.function!=NULL) {
-            sprintf(ttt,"%x-%s.%s",s_javaStat->thisClass->u.s->classFile,
+            sprintf(ttt,"%x-%s.%s",s_javaStat->thisClass->u.structSpec->classFile,
                     s_cp.function->name, id->name);
         } else {
-            sprintf(ttt,"%x-.%s", s_javaStat->thisClass->u.s->classFile,
+            sprintf(ttt,"%x-.%s", s_javaStat->thisClass->u.structSpec->classFile,
                     id->name);
         }
     } else if (s_cp.function!=NULL) {
@@ -490,13 +490,13 @@ void setLocalVariableLinkName(struct symbol *p) {
         ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
         // why it commented out ?
         //& if ((!LANGUAGE(LANG_JAVA))
-        //&     && (p->u.type->kind == TypeUnion || p->u.type->kind == TypeStruct)) {
+        //&     && (p->u.typeModifier->kind == TypeUnion || p->u.typeModifier->kind == TypeStruct)) {
         //&     ttt[0] = LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
         //& }
         sprintf(ttt+1,"%s", storageNamesTable[p->bits.storage]);
         tti = strlen(ttt);
         len = TMP_STRING_SIZE - tti;
-        typeSPrint(ttt+tti, &len, p->u.type, nnn, LINK_NAME_SEPARATOR, 0,1,SHORT_NAME, NULL);
+        typeSPrint(ttt+tti, &len, p->u.typeModifier, nnn, LINK_NAME_SEPARATOR, 0,1,SHORT_NAME, NULL);
         sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
                 p->pos.file,p->pos.line,p->pos.col, counters.localVar++);
     } else {
@@ -548,8 +548,8 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
         return p;
     if (p->bits.symbolType == TypeError)
         return p;
-    assert(p && p->bits.symbolType == TypeDefault && p->u.type);
-    if (p->u.type->kind == TypeFunction && p->bits.storage == StorageDefault) {
+    assert(p && p->bits.symbolType == TypeDefault && p->u.typeModifier);
+    if (p->u.typeModifier->kind == TypeFunction && p->bits.storage == StorageDefault) {
         p->bits.storage = StorageExtern;
     }
     if (p->bits.storage == StorageDefault) {
@@ -558,8 +558,8 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
     if (p->bits.symbolType==TypeDefault && p->bits.storage==StorageTypedef) {
         // typedef HACK !!!
         tt = StackMemoryAlloc(TypeModifier);
-        *tt = *p->u.type;
-        p->u.type = tt;
+        *tt = *p->u.typeModifier;
+        p->u.typeModifier = tt;
         tt->typedefSymbol = p;
     }
     if (nestingLevel() != 0) {
@@ -582,7 +582,7 @@ static void addInitializerRefs(Symbol *decl,
     Reference *ref;
     Symbol *rec=NULL;
     for(ll=idl; ll!=NULL; ll=ll->next) {
-        tt = decl->u.type;
+        tt = decl->u.typeModifier;
         for (id = &ll->id; id!=NULL; id=id->next) {
             if (tt->kind == TypeArray) {
                 tt = tt->next;
@@ -592,7 +592,7 @@ static void addInitializerRefs(Symbol *decl,
             ref = findStructureFieldFromType(tt, id, &rec, CLASS_TO_ANY);
             if (NULL == ref) return;
             assert(rec);
-            tt = rec->u.type;
+            tt = rec->u.typeModifier;
         }
     }
 }
@@ -612,7 +612,7 @@ Symbol *addNewDeclaration(
     assert(decl->bits.symbolType == TypeDefault);
     completeDeclarator(btype, decl);
     usage = UsageDefined;
-    if (decl->u.type->kind == TypeFunction) usage = UsageDeclared;
+    if (decl->u.typeModifier->kind == TypeFunction) usage = UsageDeclared;
     else if (decl->bits.storage == StorageExtern) usage = UsageDeclared;
     addNewSymbolDef(decl, storage, tab, usage);
     addInitializerRefs(decl, idl);
@@ -628,7 +628,7 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTa
 
         // here checks a special case, double argument definition do not
         // redefine him, so refactorings will detect problem
-        for(pp=function->u.type->u.f.args; pp!=NULL && pp!=p; pp=pp->next) {
+        for(pp=function->u.typeModifier->u.f.args; pp!=NULL && pp!=p; pp=pp->next) {
             if (pp->name!=NULL && pp->bits.symbolType!=TypeError) {
                 if (p!=pp && strcmp(pp->name, p->name)==0) break;
             }
@@ -731,7 +731,7 @@ Symbol *typeSpecifier2(TypeModifier *t) {
     Symbol    *r;
 
     r = StackMemoryAlloc(Symbol);
-    fillSymbolWithType(r, NULL, NULL, s_noPos, t);
+    fillSymbolWithTypeModifier(r, NULL, NULL, s_noPos, t);
 
     return r;
 }
@@ -743,18 +743,18 @@ Symbol *typeSpecifier1(unsigned t) {
 }
 
 void declTypeSpecifier1(Symbol *d, Type type) {
-    assert(d && d->u.type);
-    d->u.type = mergeBaseModTypes(d->u.type,createSimpleTypeModifier(type));
+    assert(d && d->u.typeModifier);
+    d->u.typeModifier = mergeBaseModTypes(d->u.typeModifier,createSimpleTypeModifier(type));
 }
 
 void declTypeSpecifier2(Symbol *d, TypeModifier *t) {
-    assert(d && d->u.type);
-    d->u.type = mergeBaseModTypes(d->u.type, t);
+    assert(d && d->u.typeModifier);
+    d->u.typeModifier = mergeBaseModTypes(d->u.typeModifier, t);
 }
 
 void declTypeSpecifier21(TypeModifier *t, Symbol *d) {
-    assert(d && d->u.type);
-    d->u.type = mergeBaseModTypes(t, d->u.type);
+    assert(d && d->u.typeModifier);
+    d->u.typeModifier = mergeBaseModTypes(t, d->u.typeModifier);
 }
 
 TypeModifier *appendComposedType(TypeModifier **d, Type type) {
@@ -776,15 +776,15 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
         || type->bits.symbolType==TypeError || declarator->bits.symbolType==TypeError) return;
     declarator->bits.storage = type->bits.storage;
     assert(type->bits.symbolType==TypeDefault);
-    dt = &(declarator->u.type); tt = type->u.type;
+    dt = &(declarator->u.typeModifier); tt = type->u.typeModifier;
     if (declarator->bits.npointers) {
         if (declarator->bits.npointers>=1 && (tt->kind==TypeStruct||tt->kind==TypeUnion)
             && tt->typedefSymbol==NULL) {
             //fprintf(dumpOut,"saving 1 str pointer:%d\n",counter++);fflush(dumpOut);
             declarator->bits.npointers--;
             //if(d->b.npointers) {fprintf(dumpOut,"possible 2\n");fflush(dumpOut);}
-            assert(tt->u.t && tt->u.t->bits.symbolType==tt->kind && tt->u.t->u.s);
-            tt = & tt->u.t->u.s->sptrtype;
+            assert(tt->u.t && tt->u.t->bits.symbolType==tt->kind && tt->u.t->u.structSpec);
+            tt = & tt->u.t->u.structSpec->sptrtype;
         } else if (declarator->bits.npointers>=2 && s_preCrPtr2TypesTab[tt->kind]!=NULL
                    && tt->typedefSymbol==NULL) {
             assert(tt->next==NULL); /* not a user defined type */
@@ -842,7 +842,7 @@ int mergeArguments(Symbol *id, Symbol *ty) {
             }
             if (p==NULL) res = RESULT_ERR;
             else {
-                if (p->u.type == NULL) p->u.type = ty->u.type;
+                if (p->u.typeModifier == NULL) p->u.typeModifier = ty->u.typeModifier;
             }
         }
     }
@@ -883,21 +883,21 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         pp = StackMemoryAlloc(Symbol);
         *pp = p;
-        pp->u.s = StackMemoryAlloc(S_symStructSpec);
+        pp->u.structSpec = StackMemoryAlloc(S_symStructSpec);
 
-        initSymStructSpec(pp->u.s, /*.records=*/NULL);
-        TypeModifier *stype = &pp->u.s->stype;
+        initSymStructSpec(pp->u.structSpec, /*.records=*/NULL);
+        TypeModifier *stype = &pp->u.structSpec->stype;
         /* Assumed to be Struct/Union/Enum? */
         initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/pp,
                                             /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-        TypeModifier *sptrtype = &pp->u.s->sptrtype;
-        initTypeModifierAsPointer(sptrtype, &pp->u.s->stype);
+        TypeModifier *sptrtype = &pp->u.structSpec->sptrtype;
+        initTypeModifierAsPointer(sptrtype, &pp->u.structSpec->stype);
 
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(pp, symbolTable);
     }
     addCxReference(pp, &id->p, usage,noFileIndex, noFileIndex);
-    return &pp->u.s->stype;
+    return &pp->u.structSpec->stype;
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
@@ -966,29 +966,29 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
 
     setGlobalFileDepNames("", pp, MEMORY_XX);
 
-    pp->u.s = StackMemoryAlloc(S_symStructSpec);
+    pp->u.structSpec = StackMemoryAlloc(S_symStructSpec);
 
     /* This is a recurring pattern, create a struct and the pointer type to it*/
-    initSymStructSpec(pp->u.s, /*.records=*/NULL);
-    TypeModifier *stype = &pp->u.s->stype;
+    initSymStructSpec(pp->u.structSpec, /*.records=*/NULL);
+    TypeModifier *stype = &pp->u.structSpec->stype;
     /* Assumed to be Struct/Union/Enum? */
     initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/pp,
                                         /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-    TypeModifier *sptrtype = &pp->u.s->sptrtype;
-    initTypeModifierAsPointer(sptrtype, &pp->u.s->stype);
+    TypeModifier *sptrtype = &pp->u.structSpec->sptrtype;
+    initTypeModifierAsPointer(sptrtype, &pp->u.structSpec->stype);
 
     addSymbol(pp, symbolTable);
 
-    return &pp->u.s->stype;
+    return &pp->u.structSpec->stype;
 }
 
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     Symbol *dd;
     assert(sd->bits.symbolType == TypeStruct || sd->bits.symbolType == TypeUnion);
-    assert(sd->u.s);
-    if (sd->u.s->records!=NULL) return;
-    sd->u.s->records = rec;
-    addToTrail(setToNull, & (sd->u.s->records) );
+    assert(sd->u.structSpec);
+    if (sd->u.structSpec->records!=NULL) return;
+    sd->u.structSpec->records = rec;
+    addToTrail(setToNull, & (sd->u.structSpec->records) );
     for(dd=rec; dd!=NULL; dd=dd->next) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);

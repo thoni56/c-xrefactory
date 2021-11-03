@@ -131,7 +131,7 @@ Symbol s_javaArrayObjectSymbol;
 Symbol *s_javaCloneableSymbol;
 char s_javaBaseTypeCharCodes[MAX_TYPE];
 Symbol *s_javaIoSerializableSymbol;
-TypeModifier s_defaultIntModifier;
+TypeModifier defaultIntModifier;
 char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
     /* Byte,Short,Char,Int,Long,Float,Double */
     {1,     1,    0,   1,  1,   1,    1},   /* Byte, */

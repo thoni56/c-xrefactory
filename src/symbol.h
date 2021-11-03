@@ -33,14 +33,14 @@ typedef struct symbol {
                                             */
     struct symbolBits bits;
     union {
-        struct typeModifier		*type;		/* if symType == TypeDefault */
-        struct symStructSpec	*s;			/* if symType == Struct/Union */
-        struct symbolList		*enums;		/* if symType == Enum */
-        struct macroBody		*mbody;     /* if symType == Macro, can be NULL! */
-        int						labelIndex;	/* break/continue label index */
-        int						keyword;    /* if symType == Keyword */
+        struct typeModifier		*typeModifier; /* if bits.symbolType == TypeDefault */
+        struct symStructSpec	*structSpec;   /* if bits.symbolType == Struct/Union */
+        struct symbolList		*enums;		   /* if bits.symbolType == Enum */
+        struct macroBody		*mbody;        /* if bits.symbolType == Macro, can be NULL! */
+        int						labelIndex;	   /* break/continue label index */
+        int						keyword;       /* if bits.symbolType == Keyword */
     } u;
-    struct symbol               *next;      /* next table item with the same hash */
+    struct symbol               *next;         /* next table item with the same hash */
 } Symbol;
 
 typedef struct symbolList {
@@ -53,25 +53,33 @@ typedef struct symbolList {
 /* Functions: */
 
 /* NOTE These will not fill bit-fields, has to be done after allocation */
-extern Symbol *newSymbol(char *name, char *linkName, struct position pos);
+/* They all allocate in SM memory... */
+extern Symbol *newSymbol(char *name, char *linkName, Position pos);
 extern Symbol *newSymbolAsCopyOf(Symbol *original);
-extern Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos,
+extern Symbol *newSymbolAsKeyword(char *name, char *linkName, Position pos,
                                   int keyWordVal);
-extern Symbol *newSymbolAsType(char *name, char *linkName, struct position pos,
+extern Symbol *newSymbolAsType(char *name, char *linkName, Position pos,
                                struct typeModifier *type);
-extern Symbol *newSymbolAsEnum(char *name, char *linkName, struct position pos,
+extern Symbol *newSymbolAsEnum(char *name, char *linkName, Position pos,
                                struct symbolList *enums);
-extern Symbol *newSymbolAsLabel(char *name, char *linkName, struct position pos,
+extern Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos,
                                 int labelIndex);
-extern void fillSymbol(Symbol *symbol, char *name, char *linkName, struct position pos);
-extern void fillSymbolWithType(Symbol *symbol, char *name, char *linkName,
-                               struct position pos, struct typeModifier *type);
+
+extern void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos);
+extern void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName,
+                               Position pos, struct typeModifier *typeModifier);
 extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
-                                struct position pos, int labelIndex);
+                                Position pos, int labelIndex);
 extern void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName,
-                                 struct position pos, struct symStructSpec *structSpec);
+                                 Position pos, struct symStructSpec *structSpec);
 
 extern void fillSymbolBits(SymbolBits *bits, unsigned accessFlags, unsigned symType,
                            unsigned storage);
+
+extern Symbol makeSymbol(char *name, char *linkName, Position pos);
+extern Symbol makeSymbolWithBits(char *name, char *linkName, Position pos,
+                                 unsigned accessFlags, unsigned symbolType, unsigned storage);
+
+extern SymbolBits makeSymbolBits(unsigned accessFlags, unsigned symbolType, unsigned storage);
 
 #endif

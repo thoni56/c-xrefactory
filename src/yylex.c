@@ -2086,11 +2086,11 @@ static void actionOnBlockMarker(void) {
             if (s_javaStat!=NULL) {
                 strcpy(s_cps.currentPackageAnswer, s_javaThisPackageName);
                 if (s_javaStat->thisClass!=NULL) {
-                    assert(s_javaStat->thisClass->u.s);
+                    assert(s_javaStat->thisClass->u.structSpec);
                     strcpy(s_cps.currentClassAnswer, s_javaStat->thisClass->linkName);
-                    if (s_javaStat->thisClass->u.s->super!=NULL) {
-                        assert(s_javaStat->thisClass->u.s->super->d);
-                        strcpy(s_cps.currentSuperClassAnswer, s_javaStat->thisClass->u.s->super->d->linkName);
+                    if (s_javaStat->thisClass->u.structSpec->super!=NULL) {
+                        assert(s_javaStat->thisClass->u.structSpec->super->d);
+                        strcpy(s_cps.currentSuperClassAnswer, s_javaStat->thisClass->u.structSpec->super->d->linkName);
                     }
                 }
             }

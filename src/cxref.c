@@ -334,24 +334,24 @@ static void getSymbolCxrefCategories(Symbol *symbol,
 static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
     Symbol        *rtcls;
     TypeModifier *tt;
-    assert(s_javaObjectSymbol && s_javaObjectSymbol->u.s);
+    assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
     assert(ct);
     //&fprintf(dumpOut,"!looking for result of %s\n",p->linkName);fflush(dumpOut);
-    ct->baseClassFileIndex = s_javaObjectSymbol->u.s->classFile;
+    ct->baseClassFileIndex = s_javaObjectSymbol->u.structSpec->classFile;
     if (p->bits.symbolType == TypeStruct) {
-        assert(p->u.s);
-        ct->baseClassFileIndex = p->u.s->classFile;
+        assert(p->u.structSpec);
+        ct->baseClassFileIndex = p->u.structSpec->classFile;
     } else if (p->bits.symbolType == TypeDefault && p->bits.storage!=StorageConstructor) {
-        tt = p->u.type;
+        tt = p->u.typeModifier;
         assert(tt);
         if (tt->kind == TypeFunction) tt = tt->next;
         assert(tt);
         if (tt->kind == TypeStruct) {
             rtcls = tt->u.t;
             assert(rtcls!=NULL && rtcls->bits.symbolType==TypeStruct
-                   && rtcls->u.s!=NULL);
+                   && rtcls->u.structSpec!=NULL);
             //&fprintf(dumpOut,"!resulting class is %s\n",rtcls->linkName);fflush(dumpOut);
-            ct->baseClassFileIndex = rtcls->u.s->classFile;
+            ct->baseClassFileIndex = rtcls->u.structSpec->classFile;
         }
     }
 }
@@ -361,8 +361,7 @@ Reference *addSpecialFieldReference(char *name,int storage, int fnum,
     Symbol        ss;
     Reference     *res;
 
-    fillSymbol(&ss, name, name, *p);
-    fillSymbolBits(&ss.bits, AccessDefault, TypeDefault, storage);
+    ss = makeSymbolWithBits(name, name, *p, AccessDefault, TypeDefault, storage);
     res = addCxReference(&ss, p, usage, fnum, fnum);
 
     return res;
@@ -413,14 +412,14 @@ static void changeFieldRefUsages(SymbolReferenceItem *ri, void *rrcd) {
                 //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->p.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
                 switch(rr->usage.base) {
                 case UsageMaybeThis:
-                    assert(rcd->cclass->u.s);
-                    if (isEnclosingClass(rcd->cclass->u.s->classFile, ri->vFunClass)) {
+                    assert(rcd->cclass->u.structSpec);
+                    if (isEnclosingClass(rcd->cclass->u.structSpec->classFile, ri->vFunClass)) {
                         rr->usage.base = UsageMaybeThisInClassOrMethod;
                     }
                     break;
                 case UsageMaybeQualifiedThis:
-                    assert(rcd->cclass->u.s);
-                    if (isEnclosingClass(rcd->cclass->u.s->classFile, ri->vFunClass)) {
+                    assert(rcd->cclass->u.structSpec);
+                    if (isEnclosingClass(rcd->cclass->u.structSpec->classFile, ri->vFunClass)) {
                         rr->usage.base = UsageMaybeQualifThisInClassOrMethod;
                     }
                     break;
@@ -500,7 +499,7 @@ static void setOlSymbolTypeForPrint(Symbol *p) {
     s_olSymbolType[0]=0;
     s_olSymbolClassType[0]=0;
     if (p->bits.symbolType == TypeDefault) {
-        tt = p->u.type;
+        tt = p->u.typeModifier;
         if (tt!=NULL && tt->kind==TypeFunction) tt = tt->next;
         typeSPrint(s_olSymbolType, &size, tt, "", ' ', 0, 1, LONG_NAME, NULL);
         if (tt->kind == TypeStruct && tt->u.t!=NULL) {
@@ -576,7 +575,7 @@ static void setOlAvailableRefactorings(Symbol *p, SymbolsMenu *mmi, int usage) {
         if (p->bits.storage != StorageConstructor) {
             availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
         }
-        if (p->u.type->kind == TypeFunction || p->u.type->kind == TypeMacro) {
+        if (p->u.typeModifier->kind == TypeFunction || p->u.typeModifier->kind == TypeMacro) {
             availableRefactorings[PPC_AVR_ADD_PARAMETER].available = true;
             availableRefactorings[PPC_AVR_DEL_PARAMETER].available = true;
             availableRefactorings[PPC_AVR_MOVE_PARAMETER].available = true;
@@ -3466,8 +3465,8 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
         errorMessage(ERR_ST,"This function is available only in Java language");
         return noFileIndex;
     }
-    assert(s_javaObjectSymbol && s_javaObjectSymbol->u.s);
-    clii = s_javaObjectSymbol->u.s->classFile;
+    assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
+    clii = s_javaObjectSymbol->u.structSpec->classFile;
     //&fprintf(dumpOut,"class clii==%d==%s\n",clii,fileTable.tab[clii]->name);fflush(dumpOut);
     ss = rstack->hkSelectedSym;
     if (ss!=NULL && ss->next!=NULL) {
@@ -4041,8 +4040,8 @@ void olcxPushSpecial(char *fieldName, int command) {
 
     clii = olSpecialFieldCreateSelection(fieldName,StorageField);
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
-    assert(s_javaObjectSymbol && s_javaObjectSymbol->u.s);
-    if (clii == s_javaObjectSymbol->u.s->classFile
+    assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
+    if (clii == s_javaObjectSymbol->u.structSpec->classFile
         || command == OLO_MAYBE_THIS
         || command == OLO_NOT_FQT_REFS
         || command == OLO_NOT_FQT_REFS_IN_CLASS
