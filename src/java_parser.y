@@ -1742,7 +1742,7 @@ MethodDeclarator
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
                         assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
-                        initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.s);
+                        initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
                         PropagateBoundaries($$, $1, $5);
@@ -1751,7 +1751,7 @@ MethodDeclarator
                 if (inSecondJslPass()) {
                     $$.d = $<symbol>2;
                     assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
-                    initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.s);
+                    initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
                 }
             }
     |	MethodDeclarator '[' ']'						{
@@ -1772,7 +1772,7 @@ MethodDeclarator
     ;
 
 FormalParameterList_opt:					{
-            $$.d.s = NULL;
+            $$.d.symbol = NULL;
             $$.d.p = NULL;
             SetNullBoundariesFor($$);
         }
@@ -1782,7 +1782,7 @@ FormalParameterList_opt:					{
 FormalParameterList
     :   FormalParameter								{
             if (! SyntaxPassOnly()) {
-                $$.d.s = $1.d;
+                $$.d.symbol = $1.d;
             } else {
                 $$.d.p = NULL;
                 appendPositionToList(&$$.d.p, &s_noPos);
@@ -1793,7 +1793,7 @@ FormalParameterList
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = $1.d;
-                    LIST_APPEND(Symbol, $$.d.s, $3.d);
+                    LIST_APPEND(Symbol, $$.d.symbol, $3.d);
                 } else {
                     appendPositionToList(&$$.d.p, &$2.d);
                     PropagateBoundaries($$, $1, $3);
@@ -1801,7 +1801,7 @@ FormalParameterList
             }
             if (inSecondJslPass()) {
                 $$.d = $1.d;
-                LIST_APPEND(Symbol, $$.d.s, $3.d);
+                LIST_APPEND(Symbol, $$.d.symbol, $3.d);
             }
         }
     ;
@@ -1983,7 +1983,7 @@ ConstructorDeclarator
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
                         assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
-                        initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.s);
+                        initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
                         PropagateBoundaries($$, $1, $5);
@@ -1992,7 +1992,7 @@ ConstructorDeclarator
                 if (inSecondJslPass()) {
                     $$.d = $<symbol>2;
                     assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
-                    initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.s);
+                    initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
                 };
             }
     ;

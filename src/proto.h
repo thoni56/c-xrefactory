@@ -614,7 +614,7 @@ typedef struct symbolPositionPair {
 } S_symbolPositionPair;
 
 typedef struct symbolPositionListPair {
-    struct symbol		*s;
+    struct symbol		*symbol;
     struct positionList	*p;
 } S_symbolPositionListPair;
 

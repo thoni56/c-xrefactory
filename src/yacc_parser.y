@@ -1248,7 +1248,7 @@ declarator2
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        initFunctionTypeModifier(&p->u.f , $3.d.s);
+        initFunctionTypeModifier(&p->u.f , $3.d.symbol);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | declarator2 '(' parameter_identifier_list ')'     {
@@ -1256,7 +1256,7 @@ declarator2
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        initFunctionTypeModifier(&p->u.f , $3.d.s);
+        initFunctionTypeModifier(&p->u.f , $3.d.symbol);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
@@ -1366,7 +1366,7 @@ parameter_identifier_list
         fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
         $$.d = $1.d;
 
-        LIST_APPEND(Symbol, $$.d.s, symbol);
+        LIST_APPEND(Symbol, $$.d.symbol, symbol);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;
@@ -1375,14 +1375,14 @@ identifier_list
     : IDENTIFIER                                {
         Symbol *p;
         p = newSymbol($1.d->name, $1.d->name, $1.d->p);
-        $$.d.s = p;
+        $$.d.symbol = p;
         $$.d.p = NULL;
     }
     | identifier_list ',' identifier            {
         Symbol        *p;
         p = newSymbol($3.d->name, $3.d->name, $3.d->p);
         $$.d = $1.d;
-        LIST_APPEND(Symbol, $$.d.s, p);
+        LIST_APPEND(Symbol, $$.d.symbol, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
@@ -1398,19 +1398,19 @@ parameter_type_list
         fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
         $$.d = $1.d;
 
-        LIST_APPEND(Symbol, $$.d.s, symbol);
+        LIST_APPEND(Symbol, $$.d.symbol, symbol);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;
 
 parameter_list
     : parameter_declaration                         {
-        $$.d.s = $1.d;
+        $$.d.symbol = $1.d;
         $$.d.p = NULL;
     }
     | parameter_list ',' parameter_declaration      {
         $$.d = $1.d;
-        LIST_APPEND(Symbol, $1.d.s, $3.d);
+        LIST_APPEND(Symbol, $1.d.symbol, $3.d);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;
@@ -1482,7 +1482,7 @@ abstract_declarator2
         $$.d = newFunctionTypeModifier(NULL, NULL, NULL, NULL);
     }
     | '(' parameter_type_list ')'                   {
-        $$.d = newFunctionTypeModifier($2.d.s, NULL, NULL, NULL);
+        $$.d = newFunctionTypeModifier($2.d.symbol, NULL, NULL, NULL);
     }
     | abstract_declarator2 '(' ')'                  {
         TypeModifier *p;
@@ -1496,7 +1496,7 @@ abstract_declarator2
         p = appendComposedType(&($$.d), TypeFunction);
         // I think there should be the following, but in abstract
         // declarator it does not matter
-        /*& initFunctionTypeModifier(&p->u.f , $3.d.s); &*/
+        /*& initFunctionTypeModifier(&p->u.f , $3.d.symbol); &*/
         initFunctionTypeModifier(&p->u.f , NULL);
     }
     ;

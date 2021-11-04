@@ -4131,7 +4131,7 @@ case 389:
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
-        initFunctionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
+        initFunctionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.symbol);
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.d, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d, 1);
     }
 break;
@@ -4142,7 +4142,7 @@ case 390:
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
-        initFunctionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
+        initFunctionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.symbol);
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.d, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d, 1);
     }
 break;
@@ -4274,7 +4274,7 @@ case 412:
         fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
-        LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.s, symbol);
+        LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, symbol);
         appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &yyvsp[-1].ast_position.d);
     }
 break;
@@ -4283,7 +4283,7 @@ case 413:
 {
         Symbol *p;
         p = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p);
-        yyval.ast_symbolPositionListPair.d.s = p;
+        yyval.ast_symbolPositionListPair.d.symbol = p;
         yyval.ast_symbolPositionListPair.d.p = NULL;
     }
 break;
@@ -4293,7 +4293,7 @@ case 414:
         Symbol        *p;
         p = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p);
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
-        LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.s, p);
+        LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, p);
         appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &yyvsp[-1].ast_position.d);
     }
 break;
@@ -4311,14 +4311,14 @@ case 417:
         fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
-        LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.s, symbol);
+        LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, symbol);
         appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &yyvsp[-1].ast_position.d);
     }
 break;
 case 418:
 #line 1407 "yacc_parser.y"
 {
-        yyval.ast_symbolPositionListPair.d.s = yyvsp[0].ast_symbol.d;
+        yyval.ast_symbolPositionListPair.d.symbol = yyvsp[0].ast_symbol.d;
         yyval.ast_symbolPositionListPair.d.p = NULL;
     }
 break;
@@ -4326,7 +4326,7 @@ case 419:
 #line 1411 "yacc_parser.y"
 {
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
-        LIST_APPEND(Symbol, yyvsp[-2].ast_symbolPositionListPair.d.s, yyvsp[0].ast_symbol.d);
+        LIST_APPEND(Symbol, yyvsp[-2].ast_symbolPositionListPair.d.symbol, yyvsp[0].ast_symbol.d);
         appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &yyvsp[-1].ast_position.d);
     }
 break;
@@ -4430,7 +4430,7 @@ break;
 case 434:
 #line 1484 "yacc_parser.y"
 {
-        yyval.ast_typeModifiers.d = newFunctionTypeModifier(yyvsp[-1].ast_symbolPositionListPair.d.s, NULL, NULL, NULL);
+        yyval.ast_typeModifiers.d = newFunctionTypeModifier(yyvsp[-1].ast_symbolPositionListPair.d.symbol, NULL, NULL, NULL);
     }
 break;
 case 435:
@@ -4450,7 +4450,7 @@ case 436:
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
         /* I think there should be the following, but in abstract*/
         /* declarator it does not matter*/
-        /*& initFunctionTypeModifier(&p->u.f , $3.d.s); &*/
+        /*& initFunctionTypeModifier(&p->u.f , $3.d.symbol); &*/
         initFunctionTypeModifier(&p->u.f , NULL);
     }
 break;
