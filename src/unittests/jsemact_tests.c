@@ -16,7 +16,6 @@
 #include "parsers.mock"
 #include "recyacc.mock"
 #include "jslsemact.mock"
-#include "memory.mock"
 #include "type.mock"
 #include "typemodifier.mock"
 #include "extract.mock"

@@ -14,7 +14,6 @@
 #include "yylex.mock"
 #include "lexer.mock"
 #include "editor.mock"
-#include "memory.mock"
 #include "characterreader.mock"
 #include "classhierarchy.mock"
 #include "fileio.mock"

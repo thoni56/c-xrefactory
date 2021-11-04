@@ -11,7 +11,6 @@
 #include "options.mock"
 #include "yylex.mock"
 #include "editor.mock"
-#include "memory.mock"
 #include "characterreader.mock"
 #include "fileio.mock"
 #include "symbol.mock"

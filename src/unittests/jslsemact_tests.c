@@ -13,7 +13,6 @@
 #include "cxref.mock"
 #include "jsemact.mock"
 #include "jsltypetab.mock"
-#include "memory.mock"
 #include "misc.mock"
 #include "semact.mock"
 

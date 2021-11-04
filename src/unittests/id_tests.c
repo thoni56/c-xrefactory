@@ -3,11 +3,14 @@
 #include "id.h"
 
 /* Dependencies: */
-#include "memory.mock"
+#include "globals.mock"
+#include "cxref.mock"
 
 
 Describe(Id);
-BeforeEach(Id) {}
+BeforeEach(Id) {
+    stackMemoryInit();
+}
 AfterEach(Id) {}
 
 

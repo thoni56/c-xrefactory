@@ -4,7 +4,6 @@
 #include "log.h"
 #include "protocol.h"
 
-#include "memory.mock"
 #include "options.mock"
 #include "globals.mock"
 #include "filetable.mock"

@@ -13,7 +13,6 @@
 #include "cxref.mock"
 #include "cxfile.mock"
 #include "yylex.mock"
-#include "memory.mock"
 #include "commons.mock"
 #include "editor.mock"
 #include "symboltable.mock"

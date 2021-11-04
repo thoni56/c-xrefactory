@@ -1,12 +1,15 @@
 #include <cgreen/cgreen.h>
 
 #include "olcxtab.h"
-#include "memory.mock"
 #include "misc.mock"
+#include "globals.mock"
+#include "cxref.mock"
 
 
 Describe(olcxTab);
-BeforeEach(olcxTab) {}
+BeforeEach(olcxTab) {
+    stackMemoryInit();
+}
 AfterEach(olcxTab) {}
 
 static struct olcxTab table;

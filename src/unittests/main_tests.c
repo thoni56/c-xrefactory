@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 
 #include "main.h"
+
 #include "log.h"
 
 #include "fileio.mock"
@@ -9,7 +10,6 @@
 #include "globals.mock"
 #include "misc.mock"
 #include "options.mock"
-#include "memory.mock"
 #include "parsers.mock"
 #include "c_parser.mock"
 #include "yacc_parser.mock"

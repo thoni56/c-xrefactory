@@ -15,7 +15,6 @@
 #include "jsemact.mock"
 #include "editor.mock"
 #include "misc.mock"
-#include "memory.mock"
 #include "cxref.mock"
 #include "cxfile.mock"
 #include "semact.mock"

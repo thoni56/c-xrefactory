@@ -5,12 +5,14 @@
 
 #include "misc.mock"
 #include "commons.mock"
-#include "memory.mock"
+#include "globals.mock"
+#include "cxref.mock"
 
 
 Describe(FileTable);
 BeforeEach(FileTable) {
     log_set_level(LOG_ERROR);
+    stackMemoryInit();
 }
 AfterEach(FileTable) {}
 

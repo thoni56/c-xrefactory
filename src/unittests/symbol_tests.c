@@ -2,13 +2,14 @@
 
 #include "../symbol.h"
 
-#include "../proto.h"           /* For S_position */
-
-#include "memory.mock"
+#include "globals.mock"
+#include "cxref.mock"
 
 
 Describe(Symbol);
-BeforeEach(Symbol) {}
+BeforeEach(Symbol) {
+    stackMemoryInit();
+}
 AfterEach(Symbol) {}
 
 

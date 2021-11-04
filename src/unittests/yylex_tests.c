@@ -35,12 +35,13 @@ void processIncludeNextDirective(Position *includePosition);
 #include "c_parser.mock"
 #include "yacc_parser.mock"
 #include "fileio.mock"
-#include "memory.mock"
 
 
 Describe(Yylex);
 BeforeEach(Yylex) {
     log_set_level(LOG_ERROR);
+    stackMemoryInit();
+
     options.taskRegime = RegimeEditServer;
     ppMemInit();
     initFileTable(&fileTable);
