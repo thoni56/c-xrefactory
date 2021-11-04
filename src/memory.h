@@ -27,7 +27,6 @@ typedef struct freeTrail {
 
 typedef struct codeBlock {
     int              firstFreeIndex;
-    int              tmpMemoryBaseIndex;
     struct freeTrail *trail;
     struct codeBlock *outerBlock;
 } CodeBlock;
