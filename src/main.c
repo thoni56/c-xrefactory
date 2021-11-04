@@ -1400,14 +1400,16 @@ static void mainScheduleInputFilesFromOptionsToFileTable(void) {
 /* *************************************************************************** */
 
 
-static char * getInputFileFromFtab(int *fArgCount, int flag) {
+static char *getInputFileFromFtab(int *fArgCount, int flag) {
     int         i;
-    FileItem  *fi;
-    for(i= *fArgCount; i<fileTable.size; i++) {
-        fi = fileTable.tab[i];
-        if (fi!=NULL) {
-            if (flag==FF_SCHEDULED_TO_PROCESS&&fi->b.scheduledToProcess) break;
-            if (flag==FF_COMMAND_LINE_ENTERED&&fi->b.commandLineEntered) break;
+    FileItem  *fileItem;
+    for (i = *fArgCount; i<fileTable.size; i++) {
+        fileItem = fileTable.tab[i];
+        if (fileItem!=NULL) {
+            if (flag==FF_SCHEDULED_TO_PROCESS && fileItem->b.scheduledToProcess)
+                break;
+            if (flag==FF_COMMAND_LINE_ENTERED && fileItem->b.commandLineEntered)
+                break;
         }
     }
     *fArgCount = i;
@@ -1417,11 +1419,11 @@ static char * getInputFileFromFtab(int *fArgCount, int flag) {
         return NULL;
 }
 
-char * getInputFile(int *fArgCount) {
+char *getInputFile(int *fArgCount) {
     return getInputFileFromFtab(fArgCount,FF_SCHEDULED_TO_PROCESS);
 }
 
-static char * getCommandLineFile(int *fArgCount) {
+static char *getCommandLineFile(int *fArgCount) {
     return getInputFileFromFtab(fArgCount,FF_COMMAND_LINE_ENTERED);
 }
 
@@ -2778,35 +2780,40 @@ static void printPrescanningMessage(void) {
     }
 }
 
-static bool inputFileItemLess(FileItem *f1, FileItem *f2) {
-    int cc;
-    char dd1[MAX_FILE_NAME_SIZE];
-    char dd2[MAX_FILE_NAME_SIZE];
+static bool inputFileItemLess(FileItem *fileItem1, FileItem *fileItem2) {
+    int comparison;
+    char directoryName1[MAX_FILE_NAME_SIZE];
+    char directoryName2[MAX_FILE_NAME_SIZE];
+
     // first compare directory
-    strcpy(dd1, directoryName_st(f1->name));
-    strcpy(dd2, directoryName_st(f2->name));
-    cc = strcmp(dd1, dd2);
-    if (cc<0) return true;
-    if (cc>0) return false;
+    strcpy(directoryName1, directoryName_st(fileItem1->name));
+    strcpy(directoryName2, directoryName_st(fileItem2->name));
+    comparison = strcmp(directoryName1, directoryName2);
+    if (comparison<0)
+        return true;
+    if (comparison>0)
+        return false;
     // then full file name
-    cc = strcmp(f1->name, f2->name);
-    if (cc<0) return true;
-    if (cc>0) return false;
+    comparison = strcmp(fileItem1->name, fileItem2->name);
+    if (comparison<0)
+        return true;
+    if (comparison>0)
+        return false;
     return false;
 }
 
 static FileItem *mainCreateListOfInputFiles(void) {
-    FileItem *res;
-    char *nn;
-    int n;
-    res = NULL;
-    n = 0;
-    for(nn=getInputFile(&n); nn!=NULL; n++,nn=getInputFile(&n)) {
-        fileTable.tab[n]->next = res;
-        res = fileTable.tab[n];
+    FileItem *fileItem;
+    int fileIndex;
+
+    fileItem = NULL;
+    fileIndex = 0;
+    for (char *fileName=getInputFile(&fileIndex); fileName!=NULL; fileIndex++,fileName=getInputFile(&fileIndex)) {
+        fileTable.tab[fileIndex]->next = fileItem;
+        fileItem = fileTable.tab[fileIndex];
     }
-    LIST_MERGE_SORT(FileItem, res, inputFileItemLess);
-    return res;
+    LIST_MERGE_SORT(FileItem, fileItem, inputFileItemLess);
+    return fileItem;
 }
 
 void mainCallXref(int argc, char **argv) {
