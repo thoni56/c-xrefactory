@@ -1111,13 +1111,13 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
     while (r!=NULL) {
         while (r!=NULL && ! filter(r,filterParam)) r = r->next;
         if (r != NULL) {
-            file = r->p.file;
-            line = r->p.line;
-            col = r->p.col;
+            file = r->position.file;
+            line = r->position.line;
+            col = r->position.col;
             buff = editorFindFile(fileTable.tab[file]->name);
             if (buff==NULL) {
                 errorMessage(ERR_CANT_OPEN, fileTable.tab[file]->name);
-                while (r!=NULL && file == r->p.file) r = r->next;
+                while (r!=NULL && file == r->position.file) r = r->next;
             } else {
                 s = buff->allocation.text;
                 smax = s + buff->allocation.bufferSize;
@@ -1132,14 +1132,14 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
                         res = rrr;
                         r = r->next;
                         while (r!=NULL && ! filter(r,filterParam)) r = r->next;
-                        if (r==NULL || file != r->p.file) break;
-                        line = r->p.line;
-                        col = r->p.col;
+                        if (r==NULL || file != r->position.file) break;
+                        line = r->position.line;
+                        col = r->position.col;
                     }
                     if (*s=='\n') {ln++; c = -1;}
                 }
                 // references beyond end of buffer
-                while (r!=NULL && file == r->p.file) {
+                while (r!=NULL && file == r->position.file) {
                     m = editorCrNewMarker(buff, maxoffset);
                     ED_ALLOC(rrr, EditorMarkerList);
                     *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
@@ -1174,8 +1174,8 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
         for( ; s<smax; s++, col++) {
             if (s == off) {
                 rr = olcx_alloc(sizeof(Reference));
-                rr->p = makePosition(buf->ftnum, line, col);
-                fillReference(rr, mm->usage, rr->p, res);
+                rr->position = makePosition(buf->ftnum, line, col);
+                fillReference(rr, mm->usage, rr->position, res);
                 res = rr;
                 mm = mm->next;
                 if (mm==NULL || mm->marker->buffer != buf) break;
@@ -1185,8 +1185,8 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
         }
         while (mm!=NULL && mm->marker->buffer==buf) {
             rr = olcx_alloc(sizeof(Reference));
-            rr->p = makePosition(buf->ftnum, line, 0);
-            fillReference(rr, mm->usage, rr->p, res);
+            rr->position = makePosition(buf->ftnum, line, 0);
+            fillReference(rr, mm->usage, rr->position, res);
             res = rr;
             mm = mm->next;
         }

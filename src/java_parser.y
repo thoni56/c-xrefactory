@@ -489,7 +489,7 @@ PrimitiveType
     |	BOOLEAN			{
             $$.d.u  = TypeBoolean;
             if (regularPass()) {
-                SetPrimitiveTypePos($$.d.p, $1.d);
+                SetPrimitiveTypePos($$.d.position, $1.d);
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
@@ -503,27 +503,27 @@ NumericType
 IntegralType
     :   BYTE			{
             $$.d.u  = TypeByte;
-            if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
+            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	SHORT			{
             $$.d.u  = TypeShort;
-            if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
+            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	INT				{
             $$.d.u  = TypeInt;
-            if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
+            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	LONG			{
             $$.d.u  = TypeLong;
-            if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
+            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	CHAR			{
             $$.d.u  = TypeChar;
-            if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
+            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -531,12 +531,12 @@ IntegralType
 FloatingPointType
     :   FLOAT			{
             $$.d.u  = TypeFloat;
-            if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
+            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	DOUBLE			{
             $$.d.u  = TypeDouble;
-            if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
+            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -607,7 +607,7 @@ ArrayType
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
-                $$.d.position = $1.d.p;
+                $$.d.position = $1.d.position;
                 s_cps.lastDeclaratorType = NULL;
             };
             if (inSecondJslPass()) {
@@ -3024,7 +3024,7 @@ PrimaryNoNewArray
                     $$.d.typeModifier = &s_javaClassModifier;
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = $1.d.p;
+                    $$.d.position = $1.d.position;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3125,7 +3125,7 @@ NestedConstructorInvocation
                         javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.p), $8.d.t);
                     }
                 } else {
-                    $$.d.pp = $1.d.position;
+                    $$.d.position = $1.d.position;
                     PropagateBoundaries($$, $1, $9);
                 }
             }
@@ -3151,7 +3151,7 @@ NestedConstructorInvocation
                         javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.p), $8.d.t);
                     }
                 } else {
-                    $$.d.pp = javaGetNameStartingPosition($1.d);
+                    $$.d.position = javaGetNameStartingPosition($1.d);
                     javaHandleDeclaratorParamPositions(&$4.d->id.p, &$7.d, $8.d.p, &$9.d);
                     PropagateBoundaries($$, $1, $9);
                 }
@@ -3273,7 +3273,7 @@ ClassInstanceCreationExpression
         }
     |	NestedConstructorInvocation								{
             $$.d.typeModifier = $1.d.typeModifier;
-            $$.d.position = $1.d.pp;
+            $$.d.position = $1.d.position;
             $$.d.reference = NULL;
             PropagateBoundaries($$, $1, $1);
         }
@@ -3282,7 +3282,7 @@ ClassInstanceCreationExpression
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         $$.d.typeModifier = $1.d.typeModifier;
-                        $$.d.position = $1.d.pp;
+                        $$.d.position = $1.d.position;
                         $$.d.reference = NULL;
                         if ($$.d.typeModifier->kind != TypeError) {
                             $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName, AccessDefault, $$.d.typeModifier->u.t);
@@ -3290,7 +3290,7 @@ ClassInstanceCreationExpression
                             $<trail>$ = newAnonClassDefinitionBegin(& $1.d.idList->id);
                         }
                     } else {
-                        $$.d.position = $1.d.pp;
+                        $$.d.position = $1.d.position;
                     }
                 } else {
                     jslNewAnonClassDefinitionBegin(&$1.d.idList->id);

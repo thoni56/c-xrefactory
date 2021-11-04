@@ -161,7 +161,7 @@ void ppcPreCheck(EditorMarker *pos, int oldLen) {
 }
 
 void ppcReferencePreCheck(Reference *r, char *text) {
-    ppcGotoPosition(&r->p);
+    ppcGotoPosition(&r->position);
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%ld>", PPC_REFACTORING_PRECHECK, PPCA_LEN, (unsigned long)strlen(text));
     fprintf(communicationChannel, "%s", text);

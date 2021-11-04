@@ -53,7 +53,7 @@ void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int languag
 static void fillJslSymbolList(JslSymbolList *jslSymbolList, struct symbol *d,
                               struct position pos, bool isExplicitlyImported) {
     jslSymbolList->d = d;
-    jslSymbolList->pos = pos;
+    jslSymbolList->position = pos;
     jslSymbolList->isExplicitlyImported = isExplicitlyImported;
     jslSymbolList->next = NULL;
 }

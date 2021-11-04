@@ -1103,7 +1103,7 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                     ) {
     if (options.taskRegime != RegimeEditServer) return;
     if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
-    if (ref==NULL || positionsAreNotEqual(ref->p, s_cxRefPos)) return;
+    if (ref==NULL || positionsAreNotEqual(ref->position, s_cxRefPos)) return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
 

@@ -121,7 +121,6 @@ build: check-tokens # check that token sections in parsers are identical before 
 	$(MAKE) -e c-xref
 	$(MAKE) -C ../editors/emacs
 
-c-xref: CFLAGS+=-Og
 .PHONY: c-xref
 c-xref: $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)

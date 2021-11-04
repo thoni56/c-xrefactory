@@ -340,7 +340,7 @@ void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
         //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, rr, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
-        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, fileTable.tab[rr->p.file]->name, rr->p.file, options.olcxSearchString, s_wildcardSearch);ppcBottomInformation(tmpBuff);
+        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, fileTable.tab[rr->position.file]->name, rr->position.file, options.olcxSearchString, s_wildcardSearch);ppcBottomInformation(tmpBuff);
         olCompletionListPrepend(sname, NULL, NULL, 0, NULL, ss, rr, ss->b.symType, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time
@@ -437,7 +437,7 @@ static void writeCxReferenceBase(int symbolIndex, Usage usage, int requiredAcces
 
 static void writeCxReference(Reference *reference, int symbolNum) {
     writeCxReferenceBase(symbolNum, reference->usage.base, reference->usage.requiredAccess,
-                         reference->p.file, reference->p.line, reference->p.col);
+                         reference->position.file, reference->position.line, reference->position.col);
 }
 
 static void writeSubClassInfo(int sup, int inf, int origin) {
@@ -555,13 +555,13 @@ static void genRefItem0(SymbolReferenceItem *d, bool force) {
     if (d->refs == NULL && !force) return;
 
     for(reference = d->refs; reference!=NULL; reference=reference->next) {
-        log_trace("checking ref: loading=%d --< %s:%d", fileTable.tab[reference->p.file]->b.cxLoading,
-                  fileTable.tab[reference->p.file]->name, reference->p.line);
-        if (options.update==UPDATE_CREATE || fileTable.tab[reference->p.file]->b.cxLoading) {
+        log_trace("checking ref: loading=%d --< %s:%d", fileTable.tab[reference->position.file]->b.cxLoading,
+                  fileTable.tab[reference->position.file]->name, reference->position.line);
+        if (options.update==UPDATE_CREATE || fileTable.tab[reference->position.file]->b.cxLoading) {
             writeCxReference(reference, symbolIndex);
         } else {
             log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
-                      options.update, fileTable.tab[reference->p.file]->b.cxLoading);
+                      options.update, fileTable.tab[reference->position.file]->b.cxLoading);
             assert(0);
         }
     }
@@ -1194,7 +1194,7 @@ static void cxrfReference(int size,
                 // restrict reported symbols to those defined in project
                 // input file
                 if (IS_DEFINITION_USAGE(rr.usage.base)
-                    && fileTable.tab[rr.p.file]->b.commandLineEntered
+                    && fileTable.tab[rr.position.file]->b.commandLineEntered
                     ) {
                     lastIncomingInfo.deadSymbolIsDefined = 1;
                 } else if (! IS_DEFINITION_OR_DECL_USAGE(rr.usage.base)) {
@@ -1205,7 +1205,7 @@ static void cxrfReference(int size,
             if (    lastIncomingInfo.onLineReferencedSym ==
                     lastIncomingInfo.values[CXFI_SYMBOL_INDEX]
                     &&  rr.usage.base == UsageMacroBaseFileUsage) {
-                s_olMacro2PassFile = rr.p.file;
+                s_olMacro2PassFile = rr.position.file;
             }
         } else {
             if (options.server_operation == OLO_TAG_SEARCH) {
@@ -1234,11 +1234,11 @@ static void cxrfReference(int size,
                             || options.server_operation==OLO_PUSH_NAME
                             || options.server_operation==OLO_PUSH_SPECIAL_NAME
                             ) {
-                            //&fprintf(dumpOut,":adding reference %s:%d\n", fileTable.tab[rr.p.file]->name, rr.p.line);
+                            //&fprintf(dumpOut,":adding reference %s:%d\n", fileTable.tab[rr.position.file]->name, rr.position.line);
                             olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &rr, lastIncomingInfo.onLineRefIsBestMatchFlag);
                         }
                     } else if (additionalArg == CX_BY_PASS) {
-                        if (positionsAreEqual(s_olcxByPassPos,rr.p)) {
+                        if (positionsAreEqual(s_olcxByPassPos,rr.position)) {
                             // got the bypass reference
                             //&fprintf(dumpOut,":adding bypass selected symbol %s\n", lastIncomingInfo.symbolTab[sym]->name);
                             olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],

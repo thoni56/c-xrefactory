@@ -2409,7 +2409,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                 fillIncludeRefItem( &ddd, i);
                 if (refTabIsMember(&referenceTable, &ddd, NULL, &memb)) {
                     for(rr=memb->refs; rr!=NULL; rr=rr->next) {
-                        includer = fileTable.tab[rr->p.file];
+                        includer = fileTable.tab[rr->position.file];
                         assert(includer);
                         if (!includer->b.scheduledToUpdate) {
                             includer->b.scheduledToUpdate = true;

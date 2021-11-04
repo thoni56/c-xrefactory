@@ -67,7 +67,7 @@ void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned 
 
 void fillReference(Reference *reference, UsageBits usage, Position position, Reference *next) {
     reference->usage = usage;
-    reference->p = position;
+    reference->position = position;
     reference->next = next;
 }
 
@@ -406,10 +406,10 @@ static void changeFieldRefUsages(SymbolReferenceItem *ri, void *rrcd) {
     if (isSameCxSymbol(ri, &ddd)) {
         //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
         for (Reference *rr = ri->refs; rr!=NULL; rr=rr->next) {
-            //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->p.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
-            if (rr->p.file == rcd->fnum &&  /* I think it is used only for Java */
+            //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->position.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
+            if (rr->position.file == rcd->fnum &&  /* I think it is used only for Java */
                 DM_IS_BETWEEN(cxMemory,rr,rcd->cxMemBegin,rcd->cxMemEnd)) {
-                //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->p.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
+                //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->position.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
                 switch(rr->usage.base) {
                 case UsageMaybeThis:
                     assert(rcd->cclass->u.structSpec);
@@ -424,7 +424,7 @@ static void changeFieldRefUsages(SymbolReferenceItem *ri, void *rrcd) {
                     }
                     break;
                 case UsageNotFQType: rr->usage.base = UsageNotFQTypeInClassOrMethod;
-                    //&sprintf(tmpBuff, "reseting %d:%d:%d at %d", rr->p.file, rr->p.line, rr->p.col, rr);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
+                    //&sprintf(tmpBuff, "reseting %d:%d:%d at %d", rr->position.file, rr->position.line, rr->position.col, rr);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
                     break;
                 case UsageNotFQField: rr->usage.base = UsageNotFQFieldInClassOrMethod;
                     break;
@@ -812,7 +812,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
 
     assert(place);
     log_trace("returning %x == %s %s:%d", *place, usageEnumName[(*place)->usage.base],
-              fileTable.tab[(*place)->p.file]->name, (*place)->p.line);
+              fileTable.tab[(*place)->position.file]->name, (*place)->position.line);
     return *place;
 }
 
@@ -1108,7 +1108,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int b
             }
         }
         LIST_CONS(rr,(*place));
-        //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usageName[ref->usage.base], fileTable.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
+        //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usageName[ref->usage.base], fileTable.tab[ref->position.file]->name,ref->position.line,ref->position.col); fflush(dumpOut);
     }
     return rr;
 }
@@ -1116,7 +1116,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int b
 
 Reference *olcxAddReference(Reference **rlist,Reference *ref,int bestMatchFlag) {
     Reference *rr;
-    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usageName[ref->usage.base], simpleFileName(fileTable.tab[ref->p.file]->name),ref->p.line,ref->p.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
+    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usageName[ref->usage.base], simpleFileName(fileTable.tab[ref->position.file]->name),ref->position.line,ref->position.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
     if (! OL_VIEWABLE_REFS(ref)) return NULL; // no regular on-line refs
     rr = olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
     return rr;
@@ -1134,7 +1134,7 @@ static void olcxAppendReference(Reference *ref, OlcxReferences *refs) {
     Reference *rr;
     rr = olcxCopyReference(ref);
     LIST_APPEND(Reference, refs->references, rr);
-    //&fprintf(dumpOut,"olcx appending %s %s:%d:%d\n",usageName[ref->usage.base], fileTable.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
+    //&fprintf(dumpOut,"olcx appending %s %s:%d:%d\n",usageName[ref->usage.base], fileTable.tab[ref->position.file]->name,ref->position.line,ref->position.col); fflush(dumpOut);
 }
 
 /* fnum is file number of which references are added, can be ANY_FILE
@@ -1151,7 +1151,7 @@ void olcxAddReferences(Reference *list, Reference **dlist,
     list = revlist;
     revlist = NULL;
     while (list!=NULL) {
-        if (fnum==ANY_FILE || fnum==list->p.file) {
+        if (fnum==ANY_FILE || fnum==list->position.file) {
             olcxAddReference(dlist, list, bestMatchFlag);
         }
         tmp = list->next; list->next = revlist;
@@ -1164,15 +1164,15 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
                                      int bestFitFlag) {
     Reference *added;
     added = olcxAddReference(&cms->s.refs, rr, bestFitFlag);
-    if (rr->usage.base == UsageClassTreeDefinition) cms->defpos = rr->p;
+    if (rr->usage.base == UsageClassTreeDefinition) cms->defpos = rr->position;
     if (added!=NULL) {
         if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
-            if (rr->usage.base==UsageDefined && positionsAreEqual(rr->p, cms->defpos)) {
+            if (rr->usage.base==UsageDefined && positionsAreEqual(rr->position, cms->defpos)) {
                 added->usage.base = UsageOLBestFitDefined;
             }
             if (rr->usage.base < cms->defUsage) {
                 cms->defUsage = rr->usage.base;
-                cms->defpos = rr->p;
+                cms->defpos = rr->position;
             }
             cms->defRefn ++;
         } else {
@@ -1238,24 +1238,24 @@ static void olcxRenameInit(void) {
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     refs->actual = refs->references;
-    gotoOnlineCxref(&refs->actual->p, refs->actual->usage.base, "");
+    gotoOnlineCxref(&refs->actual->position, refs->actual->usage.base, "");
 }
 
 
 bool olcxListLessFunction(Reference *r1, Reference *r2) {
     int fc;
     char *s1,*s2;
-    s1 = simpleFileName(fileTable.tab[r1->p.file]->name);
-    s2 = simpleFileName(fileTable.tab[r2->p.file]->name);
+    s1 = simpleFileName(fileTable.tab[r1->position.file]->name);
+    s2 = simpleFileName(fileTable.tab[r2->position.file]->name);
     fc=strcmp(s1, s2);
     if (fc<0) return true;
     if (fc>0) return false;
-    if (r1->p.file < r2->p.file) return true;
-    if (r1->p.file > r2->p.file) return false;
-    if (r1->p.line < r2->p.line) return true;
-    if (r1->p.line > r2->p.line) return false;
-    if (r1->p.col < r2->p.col) return true;
-    if (r1->p.col > r2->p.col) return false;
+    if (r1->position.file < r2->position.file) return true;
+    if (r1->position.file > r2->position.file) return false;
+    if (r1->position.line < r2->position.line) return true;
+    if (r1->position.line > r2->position.line) return false;
+    if (r1->position.col < r2->position.col) return true;
+    if (r1->position.col > r2->position.col) return false;
     return false;
 }
 
@@ -1294,7 +1294,7 @@ static void olcxOrderRefsAndGotoFirst(void) {
     LIST_MERGE_SORT(Reference, refs->references, olcxListLessFunction);
     refs->actual = refs->references;
     if (refs->references != NULL) {
-        gotoOnlineCxref(&refs->actual->p, refs->actual->usage.base, "");
+        gotoOnlineCxref(&refs->actual->position, refs->actual->usage.base, "");
     } else {
         olcxGenNoReferenceSignal();
     }
@@ -1304,8 +1304,8 @@ static void olcxOrderRefsAndGotoFirst(void) {
 static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
     Reference *rr;
     for (rr=refs->references; rr!=NULL; rr=rr->next){
-        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.col, refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
-        if (! positionIsLessThan(rr->p, refs->callerPosition))
+        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->position.file, rr->position.line,rr->position.col, refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
+        if (! positionIsLessThan(rr->position, refs->callerPosition))
             break;
     }
     // it should never be NULL, but one never knows
@@ -1544,7 +1544,7 @@ static void orderRefsAndGotoDefinition(OlcxReferences *refs, int afterMenuFlag) 
         }
     } else if (refs->references->usage.base<=UsageDeclared) {
         refs->actual = refs->references;
-        gotoOnlineCxref(&refs->actual->p, refs->actual->usage.base, "");
+        gotoOnlineCxref(&refs->actual->position, refs->actual->usage.base, "");
     } else {
         if (afterMenuFlag==PUSH_AFTER_MENU) res=0;
         else res = checkTheJavaDocBrowsing(refs);
@@ -1654,20 +1654,20 @@ static void linePosProcess(FILE *off,
             }
             if (options.xref2) {
                 if (! pendingRefFlag) {
-                    sprintf(s_crefListLine+s_crefListLinei, "%s:%d:", fn, rr->p.line);
+                    sprintf(s_crefListLine+s_crefListLinei, "%s:%d:", fn, rr->position.line);
                     s_crefListLinei += strlen(s_crefListLine+s_crefListLinei);
                 }
             } else {
-                if (positionsAreNotEqual(*callerp, rr->p)) fprintf(off, " ");
+                if (positionsAreNotEqual(*callerp, rr->position)) fprintf(off, " ");
                 else fprintf(off, ">");
                 fprintf(off,"%c%s:%d:",refCharCode(rr->usage.base),fn,
-                        rr->p.line);
+                        rr->position.line);
             }
             linerefn++;
             pendingRefFlag = 1;
         }
         rr=rr->next;
-    } while (rr!=NULL && ((rr->p.file == cp->file && rr->p.line == cp->line)
+    } while (rr!=NULL && ((rr->position.file == cp->file && rr->position.line == cp->line)
                           || (rr->usage.base>UsageMaxOLUsages)));
     if (r!=NULL) {
         if (! cxfBuf->isAtEOF) {
@@ -1694,7 +1694,7 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
                                               int usages, int usageFilter) {
     Reference *r;
 
-    for (r=references; r!=NULL && r->p.file == wantedFileNumber; r=r->next) {
+    for (r=references; r!=NULL && r->position.file == wantedFileNumber; r=r->next) {
         if (LISTABLE_USAGE(r, usages, usageFilter))
             return r;
     }
@@ -1713,11 +1713,11 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
     references = *in_out_references;
     if (references==NULL)
         goto fin;
-    fnum = references->p.file;
+    fnum = references->position.file;
     assert(fileTable.tab[fnum]);
     cofileName = fileTable.tab[fnum]->name;
     references = passNonPrintableRefsForFile(references, fnum, usages, usageFilter);
-    if (references==NULL || references->p.file != fnum)
+    if (references==NULL || references->position.file != fnum)
         goto fin;
     if (options.referenceListWithoutSource) {
         ebuf = NULL;
@@ -1740,11 +1740,11 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
         fillCharacterBuffer(&cxfBuf, ebuf->allocation.text, ebuf->allocation.text+ebuf->allocation.bufferSize, NULL, ebuf->allocation.bufferSize, noFileIndex, ebuf->allocation.text);
         GetFileChar(ch, &cp, &cxfBuf);
     }
-    cp = makePosition(references->p.file, 1, 0);
+    cp = makePosition(references->position.file, 1, 0);
     oldrr=NULL;
-    while (references!=NULL && references->p.file==cp.file && references->p.line>=cp.line) {
+    while (references!=NULL && references->position.file==cp.file && references->position.line>=cp.line) {
         assert(oldrr!=references); oldrr=references;    // because it is a dangerous loop
-        while ((! cxfBuf.isAtEOF) && cp.line<references->p.line) {
+        while ((! cxfBuf.isAtEOF) && cp.line<references->position.line) {
             while (ch!='\n' && ch!=EOF)
                 GetBufChar(ch, &cxfBuf);
             GetFileChar(ch, &cp, &cxfBuf);
@@ -1883,14 +1883,14 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
     if (refs!=NULL) {
         rr=refs->references;
         while (rr != NULL) {
-            passRefsThroughSourceFile(&rr, &refs->actual->p,
+            passRefsThroughSourceFile(&rr, &refs->actual->position,
                                       communicationChannel, USAGE_FILTER,
                                       s_refListFilters[refs->refsFilterLevel]);
         }
     }
     if (options.xref2) {
         ppcEnd(PPC_REFERENCE_LIST);
-        //& if (refs!=NULL && refs->actual!=NULL) ppcGotoPosition(&refs->actual->p);
+        //& if (refs!=NULL && refs->actual!=NULL) ppcGotoPosition(&refs->actual->position);
     }
     fflush(communicationChannel);
 }
@@ -1909,7 +1909,7 @@ static void olcxListTopReferences(char *commandString) {
 
 static void olcxGenGotoActReference(OlcxReferences *refs) {
     if (refs->actual != NULL) {
-        gotoOnlineCxref(&refs->actual->p, refs->actual->usage.base, "");
+        gotoOnlineCxref(&refs->actual->position, refs->actual->usage.base, "");
     } else {
         olcxGenNoReferenceSignal();
     }
@@ -2022,8 +2022,8 @@ static void olcxReferenceGotoCompletion(int refn) {
         if (rr->category == CategoryLocal /*& || refs->command == OLO_TAG_SEARCH &*/) {
             if (rr->ref.usage.base != UsageClassFileDefinition
                 && rr->ref.usage.base != UsageClassTreeDefinition
-                && positionsAreNotEqual(rr->ref.p, s_noPos)) {
-                gotoOnlineCxref(&rr->ref.p, UsageDefined, "");
+                && positionsAreNotEqual(rr->ref.position, s_noPos)) {
+                gotoOnlineCxref(&rr->ref.position, UsageDefined, "");
             } else {
                 if (!olcxBrowseSymbolInJavaDoc(&rr->sym))
                     olcxGenNoReferenceSignal();
@@ -2046,8 +2046,8 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     if (rr != NULL) {
         if (rr->ref.usage.base != UsageClassFileDefinition
             && rr->ref.usage.base != UsageClassTreeDefinition
-            && positionsAreNotEqual(rr->ref.p, s_noPos)) {
-            gotoOnlineCxref(&rr->ref.p, UsageDefined, "");
+            && positionsAreNotEqual(rr->ref.position, s_noPos)) {
+            gotoOnlineCxref(&rr->ref.position, UsageDefined, "");
         } else {
             if (!olcxBrowseSymbolInJavaDoc(&rr->sym))
                 olcxGenNoReferenceSignal();
@@ -2162,7 +2162,7 @@ static void olcxReferenceGotoDef(void) {
     dr = getDefinitionRef(refs->references);
     if (dr != NULL) refs->actual = dr;
     else refs->actual = refs->references;
-    //&fprintf(dumpOut,"goto ref %d %d\n", refs->actual->p.line, refs->actual->p.col);
+    //&fprintf(dumpOut,"goto ref %d %d\n", refs->actual->position.line, refs->actual->position.col);
     olcxGenGotoActReference(refs);
 }
 
@@ -2234,7 +2234,7 @@ static void olcxShowTopSymbol(void) {
 }
 
 static int referenceLess(Reference *r1, Reference *r2) {
-    return positionIsLessThan(r1->p, r2->p);
+    return positionIsLessThan(r1->position, r2->position);
 }
 
 static SymbolsMenu *findSymbolCorrespondingToReference(SymbolsMenu *menu,
@@ -2244,7 +2244,7 @@ static SymbolsMenu *findSymbolCorrespondingToReference(SymbolsMenu *menu,
 
     for (SymbolsMenu *ss=menu; ss!=NULL; ss=ss->next) {
         SORTED_LIST_FIND3(rr, Reference, ref, ss->s.refs, referenceLess);
-        if (rr!=NULL && positionsAreEqual(rr->p, ref->p)) {
+        if (rr!=NULL && positionsAreEqual(rr->position, ref->position)) {
             return ss;
         }
     }
@@ -2549,7 +2549,7 @@ static void olcxMenuSelectOnly(void) {
                 }
             }
         } else {
-            ppcGotoPosition(&refs->actual->p);
+            ppcGotoPosition(&refs->actual->position);
         }
     } else {
         fprintf(communicationChannel, "*");
@@ -2968,10 +2968,10 @@ static void safetyCheckAddDiffRef(Reference *r, OlcxReferences *diffrefs,
     }
     if (mode == DIFF_MISSING_REF) {
         fprintf(communicationChannel, "%c %s:%d missing reference\n", prefixchar,
-                simpleFileNameFromFileNum(r->p.file), r->p.line);
+                simpleFileNameFromFileNum(r->position.file), r->position.line);
     } else if (mode == DIFF_UNEXPECTED_REF) {
         fprintf(communicationChannel, "%c %s:%d unexpected new reference\n", prefixchar,
-                simpleFileNameFromFileNum(r->p.file), r->p.line);
+                simpleFileNameFromFileNum(r->position.file), r->position.line);
     } else {
         assert(0);
     }
@@ -2989,7 +2989,7 @@ void olcxReferencesDiff(Reference **anr1,
     nr1 = *anr1; or2 = *aor2; dd = diff;
     *dd = NULL;
     while (nr1!=NULL && or2!=NULL) {
-        if (positionsAreEqual(nr1->p, or2->p)) {
+        if (positionsAreEqual(nr1->position, or2->position)) {
             nr1 = nr1->next; or2=or2->next;
         } else {
             if (SORTED_LIST_LESS(nr1, *or2)) {
@@ -3028,7 +3028,7 @@ static void safetyCheckDiff(Reference **anr1,
     LIST_MERGE_SORT(Reference, *aor2, olcxReferenceInternalLessFunction);
     nr1 = *anr1; or2 = *aor2;
     while (nr1!=NULL && or2!=NULL) {
-        if (nr1->p.file==or2->p.file && nr1->p.line==or2->p.line) {
+        if (nr1->position.file==or2->position.file && nr1->position.line==or2->position.line) {
             nr1 = nr1->next; or2=or2->next;
         } else {
             if (SORTED_LIST_LESS(nr1, *or2)) {
@@ -3090,10 +3090,10 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *rr) {
     for (Reference *r=rr; r!=NULL; r=r->next) {
         Reference *tt = olcx_alloc(sizeof(Reference));
         *tt = *r;
-        if (tt->p.file==ofn && tt->p.line>=fmline && tt->p.line<lmline) {
-            tt->p.file = nfn;
-            //&fprintf(dumpOut,"!shifting %d:%d to %d (%d %d %d)\n", tt->p.file, tt->p.line, options.checkNewLineNumber + (tt->p.line - fmline), options.checkFirstMovedLine, options.checkLinesMoved, options.checkNewLineNumber);
-            tt->p.line = options.checkNewLineNumber + (tt->p.line - fmline);
+        if (tt->position.file==ofn && tt->position.line>=fmline && tt->position.line<lmline) {
+            tt->position.file = nfn;
+            //&fprintf(dumpOut,"!shifting %d:%d to %d (%d %d %d)\n", tt->position.file, tt->position.line, options.checkNewLineNumber + (tt->position.line - fmline), options.checkFirstMovedLine, options.checkLinesMoved, options.checkNewLineNumber);
+            tt->position.line = options.checkNewLineNumber + (tt->position.line - fmline);
         }
         *resa=tt; tt->next=NULL; resa= &(tt->next);
     }
@@ -3134,15 +3134,15 @@ static bool olRemoveCallerReference(OlcxReferences *refs) {
     Reference *rr, **rrr;
     LIST_MERGE_SORT(Reference, refs->references, olcxReferenceInternalLessFunction);
     for (rrr= &refs->references, rr=refs->references; rr!=NULL; rrr= &rr->next, rr=rr->next){
-        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.col, refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
-        if (! positionIsLessThan(rr->p, refs->callerPosition))
+        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->position.file, rr->position.line,rr->position.col, refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
+        if (! positionIsLessThan(rr->position, refs->callerPosition))
             break;
     }
     if (rr == NULL)
         return false;
     if (! IS_DEFINITION_OR_DECL_USAGE(rr->usage.base))
         return false;
-    //&fprintf(dumpOut,"!removing reference on %d\n", rr->p.line);
+    //&fprintf(dumpOut,"!removing reference on %d\n", rr->position.line);
     *rrr = rr->next;
     olcx_memory_free(rr, sizeof(Reference));
 
@@ -3548,7 +3548,7 @@ static void olcxSingleReferenceCheck1(SymbolReferenceItem *p,
             prefixchar = '>';
         }
         fprintf(communicationChannel,"%c  %s:%d reference to '", prefixchar,
-                simpleFileNameFromFileNum(r->p.file), r->p.line);
+                simpleFileNameFromFileNum(r->position.file), r->position.line);
         printSymbolLinkNameString(communicationChannel, p->name);
         fprintf(communicationChannel,"' lost\n");
         olcxAppendReference(r, s_olcxCurrentUser->browserStack.top);
@@ -3573,7 +3573,7 @@ void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r) {
     rstack = s_olcxCurrentUser->browserStack.top->previous;
     assert(rstack && rstack->menuSym);
     sss = &rstack->menuSym->s;
-    //&fprintf(dumpOut,"checking 1 file refs %s at %s:%d\n", ss->name,simpleFileNameFromFileNum(r->p.file),r->p.line);
+    //&fprintf(dumpOut,"checking 1 file refs %s at %s:%d\n", ss->name,simpleFileNameFromFileNum(r->position.file),r->position.line);
     pushed = itIsSymbolToPushOlReferences(ss, rstack, &cms, DEFAULT_VALUE);
     // this is very slow to check the symbol name for each reference
     if (pushed == 0 && olcxIsSameCxSymbol(ss, sss)) {
@@ -3624,7 +3624,7 @@ static SymbolsMenu *mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(
 
     for (SymbolsMenu *mm=menuSym; mm!=NULL; mm=mm->next) {
         if (mm->s.refs!=NULL && IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usage.base) &&
-            (res==NULL || positionIsLessThan(mm->s.refs->p, res->s.refs->p))) {
+            (res==NULL || positionIsLessThan(mm->s.refs->position, res->s.refs->position))) {
             res = mm;
         }
     }
@@ -3639,7 +3639,7 @@ static SymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
     Reference sr, *place;
 
     sr = *ref;
-    sr.p = addPositions(ref->p, *moveOffset);
+    sr.position = addPositions(ref->position, *moveOffset);
     // now looks for the reference 'r'
     for (SymbolsMenu *mm=refs->menuSym; mm!=NULL; mm=mm->next) {
         // do not check anything, but symbol type to avoid missresolution
@@ -3711,7 +3711,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
     if (ofirstsym!=NULL && nfirstsym!=NULL) {
         // TODO! Check here rather symbol name, than just column offsets
         assert(ofirstsym->s.refs && nfirstsym->s.refs);
-        moveOffset = subtractPositions(nfirstsym->s.refs->p, ofirstsym->s.refs->p);
+        moveOffset = subtractPositions(nfirstsym->s.refs->position, ofirstsym->s.refs->position);
         if (moveOffset.col!=0) {
             errorMessage(ERR_ST, "method has to be moved into an empty line");
             return true;
@@ -3804,7 +3804,7 @@ static bool refOccursInRefsCompareFileAndLineOnly(Reference *rr,
                                                   Reference *list
 ) {
     for (Reference *r=list; r!=NULL; r=r->next) {
-        if (r->p.file==rr->p.file && r->p.line==rr->p.line)
+        if (r->position.file==rr->position.file && r->position.line==rr->position.line)
             return true;
     }
     return false;
@@ -3844,15 +3844,15 @@ static void olcxRemoveRefWinFromRefList(Reference **r1,
     while (*r1!=NULL) {
         r = r1; r1 = &(*r1)->next;
         cr = *r;
-        //&fprintf(dumpOut,"! checking %d:%d\n", cr->p.line, cr->p.col);
-        if (cr->p.file == wdfile
-            && positionIsLessThan(*fp, cr->p) && positionIsLessThan(cr->p, *tp)) {
+        //&fprintf(dumpOut,"! checking %d:%d\n", cr->position.line, cr->position.col);
+        if (cr->position.file == wdfile
+            && positionIsLessThan(*fp, cr->position) && positionIsLessThan(cr->position, *tp)) {
             // remove the reference
             nr = *r1;
             olcx_memory_free(*r, sizeof(Reference));
             *r = nr;
             r1 = r;
-            //&fprintf(dumpOut,"! removing reference %d:%d\n", cr->p.line, cr->p.col);
+            //&fprintf(dumpOut,"! removing reference %d:%d\n", cr->position.line, cr->position.col);
         }
     }
 }
@@ -4089,11 +4089,11 @@ static void olPushAllReferencesInBetweenMapFun(SymbolReferenceItem *ri,
     rstack = s_olcxCurrentUser->browserStack.top;
     if (!isPushAllMethodsValidRefItem(ri)) return;
     for (rr=ri->refs; rr!=NULL; rr=rr->next) {
-        log_trace("checking %d.%d ref of %s", rr->p.line,rr->p.col,ri->name);
+        log_trace("checking %d.%d ref of %s", rr->position.line,rr->position.col,ri->name);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd)) {
             defRef = getDefinitionRef(ri->refs);
             if (defRef!=NULL && IS_DEFINITION_OR_DECL_USAGE(defRef->usage.base)) {
-                defpos = defRef->p;
+                defpos = defRef->position;
                 defusage = defRef->usage.base;
             } else {
                 defpos = s_noPos;
@@ -4106,10 +4106,10 @@ static void olPushAllReferencesInBetweenMapFun(SymbolReferenceItem *ri,
             mm = olAddBrowsedSymbol(ri, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, &defpos, defusage);
             assert(mm!=NULL);
             for (; rr!=NULL; rr=rr->next) {
-                log_trace("checking reference of line %d, usage %s", rr->p.line, usageEnumName[rr->usage.base]);
+                log_trace("checking reference of line %d, usage %s", rr->position.line, usageEnumName[rr->usage.base]);
                 if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr,dd)) {
                     //& olcxAddReferenceToSymbolsMenu(mm, rr, 0);
-                    log_trace("adding reference of line %d",rr->p.line);
+                    log_trace("adding reference of line %d",rr->position.line);
                     olcxAddReferenceNoUsageCheck(&mm->s.refs, rr, 0);
                 }
             }
@@ -4493,7 +4493,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(SymbolReferenceItem *ss) {
         return;
     for (Reference *rr = ss->refs; rr!=NULL; rr=rr->next) {
         if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
-            if (rr->p.file == s_input_file_number) {
+            if (rr->position.file == s_input_file_number) {
                 if (IS_DEFINITION_USAGE(rr->usage.base)) {
                     dr = rr;
                 }
@@ -4507,7 +4507,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(SymbolReferenceItem *ss) {
     }
     if (!used && dr!=NULL) {
         olAddBrowsedSymbol(ss,&s_olcxCurrentUser->browserStack.top->hkSelectedSym,
-                           1,1,0,UsageDefined,0, &dr->p, dr->usage.base);
+                           1,1,0,UsageDefined,0, &dr->position, dr->usage.base);
     }
 }
 
@@ -5262,7 +5262,7 @@ void printTagSearchResults(void) {
     // the first loop is counting the length of fields
     assert(s_olcxCurrentUser->retrieverStack.top);
     for (S_olCompletion *cc=s_olcxCurrentUser->retrieverStack.top->cpls; cc!=NULL; cc=cc->next) {
-        ls = crTagSearchLineStatic(cc->name, &cc->ref.p,
+        ls = crTagSearchLineStatic(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
     }
     if (options.olineLen >= 50000) {
@@ -5281,7 +5281,7 @@ void printTagSearchResults(void) {
         ppcBegin(PPC_SYMBOL_LIST);
     assert(s_olcxCurrentUser->retrieverStack.top);
     for (S_olCompletion *cc=s_olcxCurrentUser->retrieverStack.top->cpls; cc!=NULL; cc=cc->next) {
-        ls = crTagSearchLineStatic(cc->name, &cc->ref.p,
+        ls = crTagSearchLineStatic(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);

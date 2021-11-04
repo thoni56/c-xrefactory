@@ -2977,7 +2977,7 @@ case 14:
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeBoolean;
             if (regularPass()) {
-                SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+                SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.position, yyvsp[0].ast_id.d);
                 PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
         }
@@ -2986,7 +2986,7 @@ case 17:
 #line 504 "java_parser.y"
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeByte;
-            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.position, yyvsp[0].ast_id.d);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
@@ -2994,7 +2994,7 @@ case 18:
 #line 509 "java_parser.y"
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeShort;
-            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.position, yyvsp[0].ast_id.d);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
@@ -3002,7 +3002,7 @@ case 19:
 #line 514 "java_parser.y"
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeInt;
-            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.position, yyvsp[0].ast_id.d);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
@@ -3010,7 +3010,7 @@ case 20:
 #line 519 "java_parser.y"
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeLong;
-            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.position, yyvsp[0].ast_id.d);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
@@ -3018,7 +3018,7 @@ case 21:
 #line 524 "java_parser.y"
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeChar;
-            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.position, yyvsp[0].ast_id.d);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
@@ -3026,7 +3026,7 @@ case 22:
 #line 532 "java_parser.y"
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeFloat;
-            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.position, yyvsp[0].ast_id.d);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
@@ -3034,7 +3034,7 @@ case 23:
 #line 537 "java_parser.y"
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeDouble;
-            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.position, yyvsp[0].ast_id.d);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
@@ -3101,7 +3101,7 @@ case 32:
                 } else {
                     PropagateBoundaries(yyval.ast_symbolPositionPair, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_position);
                 }
-                yyval.ast_symbolPositionPair.d.position = yyvsp[-2].ast_unsignedPositionPair.d.p;
+                yyval.ast_symbolPositionPair.d.position = yyvsp[-2].ast_unsignedPositionPair.d.position;
                 s_cps.lastDeclaratorType = NULL;
             };
             if (inSecondJslPass()) {
@@ -5796,7 +5796,7 @@ case 349:
                     yyval.ast_expressionType.d.typeModifier = &s_javaClassModifier;
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.d.position = yyvsp[-2].ast_unsignedPositionPair.d.p;
+                    yyval.ast_expressionType.d.position = yyvsp[-2].ast_unsignedPositionPair.d.position;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_id);
                 }
             }
@@ -5909,7 +5909,7 @@ case 361:
                         javaConstructorInvocation(yyval.ast_nestedConstrTokenType.d.typeModifier->u.t, &(yyvsp[-5].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     }
                 } else {
-                    yyval.ast_nestedConstrTokenType.d.pp = yyvsp[-8].ast_expressionType.d.position;
+                    yyval.ast_nestedConstrTokenType.d.position = yyvsp[-8].ast_expressionType.d.position;
                     PropagateBoundaries(yyval.ast_nestedConstrTokenType, yyvsp[-8].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
@@ -5940,7 +5940,7 @@ case 363:
                         javaConstructorInvocation(yyval.ast_nestedConstrTokenType.d.typeModifier->u.t, &(yyvsp[-5].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     }
                 } else {
-                    yyval.ast_nestedConstrTokenType.d.pp = javaGetNameStartingPosition(yyvsp[-8].ast_idList.d);
+                    yyval.ast_nestedConstrTokenType.d.position = javaGetNameStartingPosition(yyvsp[-8].ast_idList.d);
                     javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
                     PropagateBoundaries(yyval.ast_nestedConstrTokenType, yyvsp[-8].ast_idList, yyvsp[0].ast_position);
                 }
@@ -6073,7 +6073,7 @@ case 369:
 #line 3274 "java_parser.y"
 {
             yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_nestedConstrTokenType.d.typeModifier;
-            yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.pp;
+            yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.position;
             yyval.ast_expressionType.d.reference = NULL;
             PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_nestedConstrTokenType, yyvsp[0].ast_nestedConstrTokenType);
         }
@@ -6084,7 +6084,7 @@ case 370:
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_nestedConstrTokenType.d.typeModifier;
-                        yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.pp;
+                        yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.position;
                         yyval.ast_expressionType.d.reference = NULL;
                         if (yyval.ast_expressionType.d.typeModifier->kind != TypeError) {
                             yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName, AccessDefault, yyval.ast_expressionType.d.typeModifier->u.t);
@@ -6092,7 +6092,7 @@ case 370:
                             yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].ast_nestedConstrTokenType.d.idList->id);
                         }
                     } else {
-                        yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.pp;
+                        yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.position;
                     }
                 } else {
                     jslNewAnonClassDefinitionBegin(&yyvsp[0].ast_nestedConstrTokenType.d.idList->id);

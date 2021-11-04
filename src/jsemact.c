@@ -2511,7 +2511,7 @@ void javaAddJslReadedTopLevelClasses(JslTypeTab  *jslTypeTab) {
         if (jslTypeTab->tab[i]!=NULL) {
             LIST_REVERSE(JslSymbolList, jslTypeTab->tab[i]);
             for(ss=jslTypeTab->tab[i]; ss!=NULL; ss=ss->next) {
-                javaAddTypeToSymbolTable(ss->d, ss->d->bits.access, &ss->pos, ss->isExplicitlyImported);
+                javaAddTypeToSymbolTable(ss->d, ss->d->bits.access, &ss->position, ss->isExplicitlyImported);
             }
             LIST_REVERSE(JslSymbolList, jslTypeTab->tab[i]);
         }

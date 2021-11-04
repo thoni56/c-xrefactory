@@ -45,7 +45,7 @@ bool checkFileModifiedTime(int fileIndex) {
 static void deleteReferencesOutOfMemory(Reference **rr) {
     while (*rr!=NULL) {
         if (CX_FREED_POINTER(*rr)) {
-            log_trace("deleting reference on %s:%d", fileTable.tab[(*rr)->p.file]->name, (*rr)->p.line);
+            log_trace("deleting reference on %s:%d", fileTable.tab[(*rr)->position.file]->name, (*rr)->position.line);
             *rr = (*rr)->next;
             continue;
         }

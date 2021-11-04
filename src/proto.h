@@ -390,7 +390,7 @@ typedef struct symStructSpec {
 
 typedef struct jslSymbolList {
     struct symbol           *d;
-    struct position			pos;
+    struct position			position;
     bool					isExplicitlyImported;
     struct jslSymbolList	*next;
 } JslSymbolList;
@@ -407,7 +407,7 @@ typedef struct usageBits {
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
 typedef struct reference {
     struct usageBits			usage;
-    struct position				p;
+    struct position				position;
     struct reference            *next;
 } Reference;
 
@@ -584,7 +584,7 @@ typedef struct currentlyParsedStatics {
 /* ************************ PRE-PROCESSOR **************************** */
 
 typedef struct cppIfStack {
-    struct position pos;
+    struct position position;
     struct cppIfStack *next;
 } S_cppIfStack;
 
@@ -600,12 +600,12 @@ typedef struct expressionTokenType {
 typedef struct nestedConstrTokenType {
     struct typeModifier	*typeModifier;
     struct idList *idList;
-    struct position *pp;
+    struct position *position;
 } S_nestedConstrTokenType;
 
 typedef struct unsignedPositionPair {
     unsigned		u;
-    struct position	*p;
+    struct position	*position;
 } S_unsignedPositionPair;
 
 typedef struct symbolPositionPair {

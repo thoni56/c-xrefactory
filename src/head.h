@@ -265,8 +265,8 @@ typedef enum language {
 #define IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd) ( \
   DM_IS_BETWEEN(cxMemory, rr, (dd)->minMemi, (dd)->maxMemi) \
   && OL_VIEWABLE_REFS(rr)\
-  && rr->p.file != noFileIndex \
-  && rr->p.file == s_input_file_number /* fixing bug with references coming from jsl */\
+  && rr->position.file != noFileIndex \
+  && rr->position.file == s_input_file_number /* fixing bug with references coming from jsl */\
 )
 
 #define SPRINT_FILE_TAB_CLASS_NAME(ftname, linkName) {\

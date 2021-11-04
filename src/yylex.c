@@ -992,12 +992,12 @@ static void genCppIfElseReference(int level, Position *pos, int usage) {
     S_cppIfStack       *ss;
     if (level > 0) {
       PPM_ALLOC(ss, S_cppIfStack);
-      ss->pos = *pos;
+      ss->position = *pos;
       ss->next = currentFile.ifStack;
       currentFile.ifStack = ss;
     }
     if (currentFile.ifStack!=NULL) {
-      dp = currentFile.ifStack->pos;
+      dp = currentFile.ifStack->position;
       sprintf(ttt,"CppIf%x-%x-%d", dp.file, dp.col, dp.line);
       addTrivialCxReference(ttt, TypeCppIfElse,StorageDefault, pos, usage);
       if (level < 0) currentFile.ifStack = currentFile.ifStack->next;

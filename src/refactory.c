@@ -736,7 +736,7 @@ static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd
         // relevant symbol
         for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
             // I should check only references from this file
-            if (rr->p.file == s_input_file_number) {
+            if (rr->position.file == s_input_file_number) {
                 // check if the reference is outside moved class
                 if ((! DM_IS_BETWEEN(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi))
                     && OL_VIEWABLE_REFS(rr)) {
@@ -758,13 +758,13 @@ static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
     // fine, add it to Menu, so we will load its references
     for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
-        log_trace("Checking %d.%d ref of %s", rr->p.line,rr->p.col,ri->name);
+        log_trace("Checking %d.%d ref of %s", rr->position.line,rr->position.col,ri->name);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
             if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
                 // definition inside class, default or private acces to be checked
                 rstack = s_olcxCurrentUser->browserStack.top;
                 olAddBrowsedSymbol(ri, &rstack->hkSelectedSym, 1, 1,
-                                   0, UsageUsed, 0, &rr->p, rr->usage.base);
+                                   0, UsageUsed, 0, &rr->position, rr->usage.base);
                 break;
             }
         }
@@ -793,7 +793,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
         SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&mm->s);
         if (ss!=NULL && (! ss->selected)) {
             for (Reference *rr=mm->s.refs; rr!=NULL; rr=rr->next) {
-                if (rr->p.file != s_input_file_number) {
+                if (rr->position.file != s_input_file_number) {
                     // yes there is a reference from outside to our symbol
                     ss->selected = ss->visible = 1;
                     goto nextsym;
@@ -1082,7 +1082,7 @@ bool tpCheckSuperMethodReferencesForDynToSt(void) {
     // synthetize an answer
     if (rr.foundSpecialRefItem!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
-        if (options.xref2) ppcGotoPosition(&rr.foundSpecialR->p);
+        if (options.xref2) ppcGotoPosition(&rr.foundSpecialR->position);
         sprintf(tmpBuff,"This method invokes another method using the keyword \"super\". Current version of C-xrefactory does not know how to make it static.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
@@ -1109,7 +1109,7 @@ bool tpCheckOuterScopeUsagesForDynToSt(void) {
         sprintf(tmpBuff,"Inner class method is using symbols from outer scope. Current version of C-xrefactory does not know how to make it static.");
         // be soft, so that user can try it and see.
         if (options.xref2) {
-            ppcGotoPosition(&rr.foundOuterScopeRef->p);
+            ppcGotoPosition(&rr.foundOuterScopeRef->position);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             ppcGenRecord(PPC_ERROR, tmpBuff);
         } else {
@@ -1719,7 +1719,7 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
 static void refactoryCheckForMultipleReferencesOnSinglePlace2(OlcxReferences *rstack, Reference *r) {
     if (refOccursInRefs(r, rstack->references)) {
         char tmpBuff[TMP_BUFF_SIZE];
-        ppcGotoPosition(&r->p);
+        ppcGotoPosition(&r->position);
         sprintf(tmpBuff, "The reference at this place refers to multiple symbols. The refactoring will probably damage your program. Do you really want to continue?");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
@@ -3654,7 +3654,7 @@ static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *
                 // find definition of another function
                 for (Reference *rr=mm->s.refs; rr!=NULL; rr=rr->next) {
                     if (IS_DEFINITION_USAGE(rr->usage.base)) {
-                        if (positionsAreNotEqual(rr->p, hk->defpos)) {
+                        if (positionsAreNotEqual(rr->position, hk->defpos)) {
                             anotherDefinition = rr;
                             goto refbreak;
                         }
@@ -3696,7 +3696,7 @@ static void refactoryAddMethodToForbiddenRegions(Reference *methodRef,
                                                  ) {
     EditorMarker *mm, *mb, *me;
 
-    mm = editorCrNewMarkerForPosition(&methodRef->p);
+    mm = editorCrNewMarkerForPosition(&methodRef->position);
     refactoryMakeSyntaxPassOnSource(mm);
     mb = editorCrNewMarkerForPosition(&s_spp[SPP_METHOD_DECLARATION_BEGIN_POSITION]);
     me = editorCrNewMarkerForPosition(&s_spp[SPP_METHOD_DECLARATION_END_POSITION]);
