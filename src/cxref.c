@@ -943,35 +943,32 @@ static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
 }
 
 
-#define CHECK_AND_SET_OLDEST(stack) {                                   \
-        if ((stack)->root!=NULL) {                                      \
-            /* do never free the very first item, start by second */    \
-            for (refs= &((stack)->root->previous); *refs!=NULL; refs= &(*refs)->previous) { \
-                if (oldestTime > (*refs)->accessTime) {                    \
-                    oldestTime = (*refs)->accessTime;                      \
-                    oldest = refs;                                      \
-                    oldestStack = (stack);                              \
-                }                                                       \
-            }                                                           \
-        }                                                               \
+static void checkAndSetOldest(OlcxReferencesStack *stack, OlcxReferences ***oldest, time_t *oldestTime, OlcxReferencesStack **oldestStack) {
+    if (stack->root!=NULL) {
+        /* do never free the very first item, start by second WTF: Why? */
+        for (OlcxReferences **refs= &(stack->root->previous); *refs!=NULL; refs= &(*refs)->previous) {
+            if (*oldestTime > (*refs)->accessTime) {
+                *oldestTime = (*refs)->accessTime;
+                *oldest = refs;
+                *oldestStack = stack;
+            }
+        }
     }
+}
 
-// TODO!!! should free completions in priority!
 void freeOldestOlcx(void) {
     UserOlcxData          *userDataP;
-    OlcxReferences        **refs;
-    OlcxReferences        **oldest;
-    time_t                oldestTime;
-    OlcxReferencesStack   *oldestStack;
+    OlcxReferences        **oldest = NULL;
+    OlcxReferencesStack   *oldestStack = NULL;
+    time_t                oldestTime = fileProcessingStartTime;
 
-    oldestTime = fileProcessingStartTime; oldest=NULL; oldestStack=NULL;
     if (refactoringOptions.refactoringRegime != RegimeRefactory) {
         for (int i=0; i<OLCX_TAB_SIZE; i++) {
             userDataP = s_olcxTab.tab[i];
             if (userDataP!=NULL) {
-                CHECK_AND_SET_OLDEST(&userDataP->browserStack);
-                CHECK_AND_SET_OLDEST(&userDataP->completionsStack);
-                CHECK_AND_SET_OLDEST(&userDataP->retrieverStack);
+                checkAndSetOldest(&userDataP->browserStack, &oldest, &oldestTime, &oldestStack);
+                checkAndSetOldest(&userDataP->completionsStack, &oldest, &oldestTime, &oldestStack);
+                checkAndSetOldest(&userDataP->retrieverStack, &oldest, &oldestTime, &oldestStack);
             }
         }
     }
@@ -3555,14 +3552,6 @@ static void olcxSingleReferenceCheck1(SymbolReferenceItem *p,
         printSymbolLinkNameString(communicationChannel, p->name);
         fprintf(communicationChannel,"' lost\n");
         olcxAppendReference(r, currentUserData->browserStack.top);
-#if ZERO    // for the moment, it is difficult to get def. reference from cxfile
-        dr = getDefinitionRef(p->refs);
-        if (dr!=NULL && (dr->usg.base==UsageDefined || dr->usg.base==UsageDeclared)){
-            fprintf(ccOut, "        defined at %s:%d\n",
-                    simpleFileNameFromFileNum(dr->p.file), dr->p.line);
-            olcxAppendReference(dr, s_olcxCurrentUser->browserStack.top);
-        }
-#endif
     }
 }
 
