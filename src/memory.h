@@ -125,7 +125,7 @@ typedef struct codeBlock {
         variable = (type*) (((char*)&memory->block) + memory->index);   \
         memory->index += (count)*sizeof(type);                          \
     }
-#define DM_ALLOC(memory, variable, type) {DM_ALLOCC(memory,variable,1,type);}
+#define DM_ALLOC(memory, variable, type) variable = dm_alloc(memory, sizeof(type));
 #define DM_FREE_UNTIL(memory, pointer) {                                \
         assert((pointer)>= ((char*)&memory->block) && (pointer)<= ((char*)&memory->block)+memory->index); \
         memory->index = ((char*)(pointer)) - ((char*)&memory->block);   \
@@ -133,14 +133,14 @@ typedef struct codeBlock {
 
 
 /* cross-references global symbols allocations */
-#define CX_ALLOC(pointer, type)         {DM_ALLOC(cxMemory, pointer, type);}
-#define CX_ALLOCC(pointer, count, type) {DM_ALLOCC(cxMemory, pointer, count, type);}
+#define CX_ALLOC(pointer, type)         pointer = dm_alloc(cxMemory, sizeof(type));
+#define CX_ALLOCC(pointer, count, type) pointer = dm_allocc(cxMemory, count, sizeof(type));
 #define CX_FREE_UNTIL(pointer)          {DM_FREE_UNTIL(cxMemory, pointer);}
 #define CX_FREED_POINTER(pointer)       DM_FREED_POINTER(cxMemory, pointer)
 
 /* options allocations */
-#define OPT_ALLOC(pointer, type)         {DM_ALLOC((&options.pendingMemory), pointer, type);}
-#define OPT_ALLOCC(pointer, count, type) {DM_ALLOCC((&options.pendingMemory), pointer, count, type);}
+#define OPT_ALLOC(pointer, type)         pointer = dm_alloc(&options.memory, sizeof(type));
+#define OPT_ALLOCC(pointer, count, type) pointer = dm_allocc(&options.memory, count, sizeof(type));
 
 /* editor allocations, for now, store it in olcxmemory */
 #define ED_ALLOCC(pointer, count, type) { pointer = olcx_memory_allocc(count, sizeof(type)); }
@@ -182,6 +182,7 @@ extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, c
 extern void memoryUseFunctionForError(void (*function)(int code, char *message));
 
 extern void dm_init(Memory *memory, char *name);
+extern void *dm_alloc(Memory *memory, size_t size);
 extern void *dm_allocc(Memory *memory, int count, size_t size);
 
 /* on-line dialogs allocation */
