@@ -870,7 +870,7 @@ void olcxFreeReferences(Reference *r) {
     Reference *tmp;
     while (r!=NULL) {
         tmp = r->next;
-        olcx_memory_free((r), sizeof(Reference)); \
+        olcx_memory_free((r), sizeof(Reference));
         r = tmp;
     }
 }
@@ -997,7 +997,7 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
 }
 
 void olcxInit(void) {
-    void *uu[OLCX_USER_RESERVE];
+    void *userData[OLCX_USER_RESERVE];
 
     olcx_memory_init();
     s_olcxTab.tab = olcx_memory_soft_allocc(OLCX_TAB_SIZE, sizeof(UserOlcxData *));
@@ -1005,46 +1005,46 @@ void olcxInit(void) {
     olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);
     /* reserve place for some users */
     for (int i=0; i<OLCX_USER_RESERVE; i++)
-        uu[i] = olcx_alloc(sizeof(UserOlcxData));
+        userData[i] = olcx_alloc(sizeof(UserOlcxData));
     for (int i=0; i<OLCX_USER_RESERVE; i++)
-        olcx_memory_free(uu[i], sizeof(UserOlcxData));
+        olcx_memory_free(userData[i], sizeof(UserOlcxData));
 }
 
 
-static void initUserOlcxData(UserOlcxData *dd, char *user) {
-    dd->name = user;
-    dd->browserStack.top = NULL;
-    dd->browserStack.root = NULL;
-    dd->completionsStack.top = NULL;
-    dd->completionsStack.root = NULL;
-    dd->retrieverStack.top = NULL;
-    dd->retrieverStack.root = NULL;
-    dd->classTree.baseClassFileIndex = noFileIndex;
-    dd->classTree.tree = NULL;
-    dd->next = NULL;
+static void initUserOlcxData(UserOlcxData *userData, char *user) {
+    userData->name = user;
+    userData->browserStack.top = NULL;
+    userData->browserStack.root = NULL;
+    userData->completionsStack.top = NULL;
+    userData->completionsStack.root = NULL;
+    userData->retrieverStack.top = NULL;
+    userData->retrieverStack.root = NULL;
+    userData->classTree.baseClassFileIndex = noFileIndex;
+    userData->classTree.tree = NULL;
+    userData->next = NULL;
 }
 
 
 UserOlcxData *olcxSetCurrentUser(char *user) {
-    UserOlcxData dd, *memb;
-    int sz;
-    char *nn;
+    UserOlcxData userData, *member;
+    int size;
+    char *name;
 
-    initUserOlcxData(&dd, user);
-    if (! olcxTabIsMember(&s_olcxTab, &dd, NULL, &memb)) {
-        // I have changed it to FT, so it never invokes freeing of OLCX
-        FT_ALLOC(memb, UserOlcxData);
-        sz = strlen(user)+1;
-        if (sz < sizeof(void*))
-            sz = sizeof(void*);
-        FT_ALLOCC(nn, sz, char); // why this is in ftMem ?, some pb with free
-        strcpy(nn, user);
-        initUserOlcxData(memb, nn);
-        olcxTabAdd(&s_olcxTab, memb);
+    initUserOlcxData(&userData, user);
+    if (! olcxTabIsMember(&s_olcxTab, &userData, NULL, &member)) {
+        // Allocate in FT memory, so it never invokes freeing of OLCX (loop?)
+        FT_ALLOC(member, UserOlcxData);
+        size = strlen(user)+1;
+        if (size < sizeof(void*))
+            size = sizeof(void*);
+        FT_ALLOCC(name, size, char); // why this is in ftMem ?, some pb with free
+        strcpy(name, user);
+        initUserOlcxData(member, name);
+        olcxTabAdd(&s_olcxTab, member);
     }
-    s_olcxCurrentUser = memb;
+    s_olcxCurrentUser = member;
 
-    return memb;
+    return member;
 }
 
 static void olcxFreePopedStackItems(OlcxReferencesStack *stack) {
