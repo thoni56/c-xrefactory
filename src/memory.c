@@ -22,7 +22,7 @@ CodeBlock *currentBlock;
 /* Memory types */
 Memory *cxMemory=NULL;
 
-char workMemory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
+char stackMemory[SIZE_stackMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
 char ftMemory[SIZE_ftMemory];
 int ftMemoryIndex = 0;
@@ -150,7 +150,7 @@ static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, FreeTrail *trail
 }
 
 void stackMemoryInit(void) {
-    currentBlock = (CodeBlock *) workMemory;
+    currentBlock = (CodeBlock *) stackMemory;
     fillCodeBlock(currentBlock, sizeof(CodeBlock), NULL, NULL);
 }
 
@@ -159,10 +159,10 @@ void *stackMemoryAlloc(int size) {
 
     mem_trace("stackMemoryAlloc: allocating %d bytes", size);
     i = currentBlock->firstFreeIndex;
-    i = ((char *)ALIGNMENT(workMemory+i,STANDARD_ALIGNMENT))-workMemory;
-    if (i+size < SIZE_workMemory) {
+    i = ((char *)ALIGNMENT(stackMemory+i,STANDARD_ALIGNMENT))-stackMemory;
+    if (i+size < SIZE_stackMemory) {
         currentBlock->firstFreeIndex = i+size;
-        return &workMemory[i];
+        return &stackMemory[i];
     } else {
         fatalError(ERR_ST,"i+size > SIZE_workMemory,\n\tworking memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR);
         /* Should not return, but for testing and compilers sake return something */
@@ -214,14 +214,14 @@ int nestingLevel(void) {
 
 bool isMemoryFromPreviousBlock(void *address) {
     return currentBlock->outerBlock != NULL &&
-        (char*)address > workMemory &&
-        (char*)address < workMemory + currentBlock->outerBlock->firstFreeIndex;
+        (char*)address > stackMemory &&
+        (char*)address < stackMemory + currentBlock->outerBlock->firstFreeIndex;
 }
 
 
 bool freedPointer(void *ptr) {
-    return ((char*)ptr >= workMemory + currentBlock->firstFreeIndex &&
-            (char*)ptr < workMemory + SIZE_workMemory);
+    return ((char*)ptr >= stackMemory + currentBlock->firstFreeIndex &&
+            (char*)ptr < stackMemory + SIZE_stackMemory);
 }
 
 void dm_init(Memory *memory, char *name) {

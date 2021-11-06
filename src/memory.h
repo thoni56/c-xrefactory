@@ -162,7 +162,7 @@ extern int olcxMemoryAllocatedBytes;
 
 
 /* SM (Static memory) areas */
-extern char workMemory[];
+extern char stackMemory[];
 
 extern char ftMemory[];
 extern int ftMemoryIndex;
