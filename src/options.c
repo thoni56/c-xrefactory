@@ -221,9 +221,9 @@ static StringPointerList *newStringPointerList(char **destination, StringPointer
     return list;
 }
 
-static void optionAddToAllocatedList(char **destination) {
+static void optionAddStringToAllocatedList(char **destination) {
     StringPointerList *ll;
-    for(ll=options.allAllocatedStrings; ll!=NULL; ll=ll->next) {
+    for (ll=options.allAllocatedStrings; ll!=NULL; ll=ll->next) {
         // reassignement, do not keep two copies
         if (ll->destination == destination) break;
     }
@@ -233,16 +233,16 @@ static void optionAddToAllocatedList(char **destination) {
     }
 }
 
-static void allocOptionSpace(void **optAddress, int size) {
+static void allocOptionString(void **optAddress, int size) {
     char **res;
     res = (char**)optAddress;
     OPT_ALLOCC((*res), size, char); /* TODO: WTF what side effects does this have?! */
-    optionAddToAllocatedList(res);
+    optionAddStringToAllocatedList(res);
 }
 
 /* TODO: Memory management is a mystery, e.g. this can't be turned into a function returning the address... */
 void createOptionString(char **optAddress, char *text) {
-    allocOptionSpace((void**)optAddress, strlen(text)+1);
+    allocOptionString((void**)optAddress, strlen(text)+1);
     strcpy(*optAddress, text);
 }
 
@@ -278,7 +278,7 @@ void addStringListOption(StringList **optlist, char *string) {
         ;
 
     /* TODO refactor out to newOptionString()? */
-    allocOptionSpace((void**)list, sizeof(StringList));
+    allocOptionString((void**)list, sizeof(StringList));
     createOptionString(&(*list)->string, string);
     (*list)->next = NULL;
 }
