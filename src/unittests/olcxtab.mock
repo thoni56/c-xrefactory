@@ -7,8 +7,7 @@ UserOlcxData *s_olcxCurrentUser;
 OlcxTab s_olcxTab;
 
 
-void olcxTabInit (struct olcxTab *table, int size)
-{
+void olcxTabInit (struct olcxTab *table, int size) {
     mock(table, size);
 }
 
