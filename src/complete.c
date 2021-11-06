@@ -357,9 +357,9 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
 
 void olCompletionListInit(Position *originalPos) {
     olcxSetCurrentUser(options.user);
-    olcxFreeOldCompletionItems(&s_olcxCurrentUser->completionsStack);
-    olcxPushEmptyStackItem(&s_olcxCurrentUser->completionsStack);
-    s_olcxCurrentUser->completionsStack.top->callerPosition = *originalPos;
+    olcxFreeOldCompletionItems(&currentUserData->completionsStack);
+    olcxPushEmptyStackItem(&currentUserData->completionsStack);
+    currentUserData->completionsStack.top->callerPosition = *originalPos;
 }
 
 static int completionsWillPrintEllipsis(S_olCompletion *olc) {
@@ -428,7 +428,7 @@ static void printCompletionsEnding(S_olCompletion *olc) {
 
 void printCompletionsList(int noFocus) {
     S_olCompletion *cc, *olc;
-    olc = s_olcxCurrentUser->completionsStack.top->cpls;
+    olc = currentUserData->completionsStack.top->cpls;
     printCompletionsBeginning(olc, noFocus);
     for(cc=olc; cc!=NULL; cc=cc->next) {
         printOneCompletion(cc);
@@ -457,7 +457,7 @@ void printCompletions(Completions* c) {
     }
     if ((! c->fullMatchFlag) && c->alternativeIndex==1) {
         if (options.xref2) {
-            ppcGotoPosition(&s_olcxCurrentUser->completionsStack.top->callerPosition);
+            ppcGotoPosition(&currentUserData->completionsStack.top->callerPosition);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
         } else {
             fprintf(communicationChannel,".%s", c->comPrefix+c->idToProcessLen);
@@ -466,7 +466,7 @@ void printCompletions(Completions* c) {
     }
     if ((! c->fullMatchFlag) && strlen(c->comPrefix) > c->idToProcessLen) {
         if (options.xref2) {
-            ppcGotoPosition(&s_olcxCurrentUser->completionsStack.top->callerPosition);
+            ppcGotoPosition(&currentUserData->completionsStack.top->callerPosition);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->comPrefix);
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         } else {
@@ -495,14 +495,14 @@ void printCompletions(Completions* c) {
             vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFile;
             if (vFunCl == -1) vFunCl = noFileIndex;
         }
-        olCompletionListPrepend(c->alternatives[ii].string, ppcTmpBuff, vclass, jindent, c->alternatives[ii].symbol,NULL, &s_noRef, c->alternatives[ii].symbolType, vFunCl, s_olcxCurrentUser->completionsStack.top);
+        olCompletionListPrepend(c->alternatives[ii].string, ppcTmpBuff, vclass, jindent, c->alternatives[ii].symbol,NULL, &s_noRef, c->alternatives[ii].symbolType, vFunCl, currentUserData->completionsStack.top);
     }
     olCompletionListReverse();
     printCompletionsList(c->noFocusOnCompletions);
     fflush(communicationChannel);
     return;
  finishWithoutMenu:
-    s_olcxCurrentUser->completionsStack.top = s_olcxCurrentUser->completionsStack.top->previous;
+    currentUserData->completionsStack.top = currentUserData->completionsStack.top->previous;
     fflush(communicationChannel);
 }
 

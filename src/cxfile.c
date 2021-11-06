@@ -339,9 +339,9 @@ void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
     slen = strlen(sname);
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
-        //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, rr, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
+        //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, rr, ss->vFunClass, currentUserData->retrieverStack.top);
         //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, fileTable.tab[rr->position.file]->name, rr->position.file, options.olcxSearchString, s_wildcardSearch);ppcBottomInformation(tmpBuff);
-        olCompletionListPrepend(sname, NULL, NULL, 0, NULL, ss, rr, ss->b.symType, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
+        olCompletionListPrepend(sname, NULL, NULL, 0, NULL, ss, rr, ss->b.symType, ss->vFunClass, currentUserData->retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time
         count ++;
@@ -722,7 +722,7 @@ void genReferenceFile(bool updating, char *filename) {
 static void writeCxFileCompatibilityError(char *message) {
     static time_t lastMessageTime;
     if (options.taskRegime == RegimeEditServer) {
-        if (lastMessageTime < s_fileProcessStartTime) {
+        if (lastMessageTime < fileProcessingStartTime) {
             errorMessage(ERR_ST, message);
             lastMessageTime = time(NULL);
         }
@@ -815,8 +815,8 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(FileItem *ffi) {
         }
     }
     if (options.taskRegime == RegimeEditServer) {
-        log_trace("last inspected == %d, start at %d\n", ffi->lastInspected, s_fileProcessStartTime);
-        if (ffi->lastInspected < s_fileProcessStartTime) {
+        log_trace("last inspected == %d, start at %d\n", ffi->lastInspected, fileProcessingStartTime);
+        if (ffi->lastInspected < fileProcessingStartTime) {
             updateFromCxFile = true;
         } else {
             updateFromCxFile = false;
@@ -995,7 +995,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
         && lastIncomingInfo.deadSymbolIsDefined) {
         //&sprintf(tmpBuff,"adding %s storage==%s", lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness]->name, storagesName[lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff);
         olAddBrowsedSymbol(lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness],
-                           &s_olcxCurrentUser->browserStack.top->hkSelectedSym,
+                           &currentUserData->browserStack.top->hkSelectedSym,
                            1,1,0,UsageDefined,0, &s_noPos, UsageDefined);
     }
 }
@@ -1091,7 +1091,7 @@ static void cxrfSymbolName(int size,
                     else ols = 1;
                 }
             } else if (additionalArg!=CX_BY_PASS) {
-                ols=itIsSymbolToPushOlReferences(ddd,s_olcxCurrentUser->browserStack.top,&cms,DEFAULT_VALUE);
+                ols=itIsSymbolToPushOlReferences(ddd,currentUserData->browserStack.top,&cms,DEFAULT_VALUE);
             }
             lastIncomingInfo.onLineRefMenuItem = cms;
             if (ols || (additionalArg==CX_BY_PASS && canBypassAcceptableSymbol(ddd))
@@ -1242,11 +1242,11 @@ static void cxrfReference(int size,
                             // got the bypass reference
                             //&fprintf(dumpOut,":adding bypass selected symbol %s\n", lastIncomingInfo.symbolTab[sym]->name);
                             olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],
-                                               &s_olcxCurrentUser->browserStack.top->hkSelectedSym,
+                                               &currentUserData->browserStack.top->hkSelectedSym,
                                                1, 1, 0, usage,0,&s_noPos, UsageNone);
                         }
                     } else {
-                        olcxAddReference(&s_olcxCurrentUser->browserStack.top->references, &rr,
+                        olcxAddReference(&currentUserData->browserStack.top->references, &rr,
                                          lastIncomingInfo.onLineRefIsBestMatchFlag);
                     }
                 }

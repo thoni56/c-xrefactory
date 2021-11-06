@@ -142,7 +142,7 @@ extern jmp_buf cxmemOverflow;
 
 extern char *inputFilename;
 
-extern time_t s_fileProcessStartTime;
+extern time_t fileProcessingStartTime;
 
 extern Language s_language;
 extern int currentPass;

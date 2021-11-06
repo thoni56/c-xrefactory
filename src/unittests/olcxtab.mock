@@ -3,7 +3,7 @@
 #include <cgreen/mocks.h>
 
 
-UserOlcxData *s_olcxCurrentUser;
+UserOlcxData *currentUserData;
 OlcxTab s_olcxTab;
 
 

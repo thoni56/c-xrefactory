@@ -26,7 +26,7 @@ typedef struct userOlcxData {
 #undef HASH_ELEM_TYPE
 #endif
 
-extern UserOlcxData *s_olcxCurrentUser;
+extern UserOlcxData *currentUserData;
 extern OlcxTab s_olcxTab;
 
 #endif

@@ -22,7 +22,7 @@ bool checkFileModifiedTime(int fileIndex) {
 
     assert(fileTable.tab[fileIndex] != NULL);
     now = time(NULL);
-    if (fileTable.tab[fileIndex]->lastInspected >= s_fileProcessStartTime
+    if (fileTable.tab[fileIndex]->lastInspected >= fileProcessingStartTime
         && fileTable.tab[fileIndex]->lastInspected <= now) {
         /* Assuming that files cannot change during one execution */
         return true;

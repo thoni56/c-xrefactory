@@ -71,7 +71,7 @@ Position s_olcxByPassPos;
 Position s_cxRefPos;
 int s_cxRefFlag=0;
 
-time_t s_fileProcessStartTime;
+time_t fileProcessingStartTime;
 
 Language s_language;
 int currentPass;

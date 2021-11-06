@@ -2127,7 +2127,7 @@ static void mainTotalTaskEntryInitialisations() {
     memoryUseFunctionForInternalCheckFail(internalCheckFail);
 
     // just for very beginning
-    s_fileProcessStartTime = time(NULL);
+    fileProcessingStartTime = time(NULL);
 
     // following will be displayed only at third pass or so, because
     // s_opt.debug is set only after passing through option processing
@@ -2491,18 +2491,18 @@ static int scheduleFileUsingTheMacro(void) {
                            ScopeGlobal, AccessDefault, CategoryGlobal);
 
     fillSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
-    if (s_olcxCurrentUser==NULL || s_olcxCurrentUser->browserStack.top==NULL) {
+    if (currentUserData==NULL || currentUserData->browserStack.top==NULL) {
         olcxSetCurrentUser(options.user);
-        olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
-        assert(s_olcxCurrentUser);
-        tmpc = s_olcxCurrentUser->browserStack.top;
+        olcxPushEmptyStackItem(&currentUserData->browserStack);
+        assert(currentUserData);
+        tmpc = currentUserData->browserStack.top;
     }
-    assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
-    oldMenu = s_olcxCurrentUser->browserStack.top->menuSym;
-    s_olcxCurrentUser->browserStack.top->menuSym = &mm;
+    assert(currentUserData && currentUserData->browserStack.top);
+    oldMenu = currentUserData->browserStack.top->menuSym;
+    currentUserData->browserStack.top->menuSym = &mm;
     s_olMacro2PassFile = noFileIndex;
     readOneAppropReferenceFile(s_olstringInMbody, secondPassMacroUsageFunctionSequence);
-    s_olcxCurrentUser->browserStack.top->menuSym = oldMenu;
+    currentUserData->browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
@@ -2579,8 +2579,8 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     olSetCallerPosition(&s_olcxByPassPos);
     readOneAppropReferenceFile(options.browsedSymName, byPassFunctionSequence);
     // if no symbol found, it may be a local symbol, try by parsing
-    log_trace("checking that %d, != NULL", s_olcxCurrentUser->browserStack.top->hkSelectedSym);
-    if (s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL)
+    log_trace("checking that %d, != NULL", currentUserData->browserStack.top->hkSelectedSym);
+    if (currentUserData->browserStack.top->hkSelectedSym==NULL)
         return false;
 
     // here I should set caching to 1 and recover the cachePoint ???
@@ -2655,7 +2655,7 @@ static void mainEditServerProcessFile(int argc, char **argv,
 static char *presetEditServerFileDependingStatics(void) {
     int     i, fArgCount;
     char    *fileName;
-    s_fileProcessStartTime = time(NULL);
+    fileProcessingStartTime = time(NULL);
     //&s_paramPosition = s_noPos;
     //&s_paramBeginPosition = s_noPos;
     //&s_paramEndPosition = s_noPos;
@@ -2753,7 +2753,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
                                            bool *firstPass, bool *atLeastOneProcessed) {
     int         inputIn;
     inputFilename = ff->name;
-    s_fileProcessStartTime = time(NULL);
+    fileProcessingStartTime = time(NULL);
     // O.K. but this is missing all header files
     ff->lastUpdateMtime = ff->lastModified;
     if (options.update == UPDATE_FULL || options.create) {
@@ -2944,7 +2944,7 @@ void mainCallEditServer(int argc, char **argv,
     editorLoadAllOpenedBufferFiles();
     olcxSetCurrentUser(options.user);
     if (creatingOlcxRefs())
-        olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
+        olcxPushEmptyStackItem(&currentUserData->browserStack);
     if (needToProcessInputFile()) {
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");

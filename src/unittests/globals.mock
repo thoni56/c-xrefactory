@@ -102,7 +102,7 @@ int s_cxRefFlag=0;
 
 int s_input_file_number;
 char *inputFilename;
-time_t s_fileProcessStartTime;
+time_t fileProcessingStartTime;
 
 char cwd[MAX_FILE_NAME_SIZE];
 
