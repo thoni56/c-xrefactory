@@ -957,7 +957,7 @@ static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
 
 // TODO!!! should free completions in priority!
 void freeOldestOlcx(void) {
-    UserOlcxData          *user;
+    UserOlcxData          *userDataP;
     OlcxReferences        **refs;
     OlcxReferences        **oldest;
     time_t                oldestTime;
@@ -966,11 +966,11 @@ void freeOldestOlcx(void) {
     oldestTime = fileProcessingStartTime; oldest=NULL; oldestStack=NULL;
     if (refactoringOptions.refactoringRegime != RegimeRefactory) {
         for (int i=0; i<OLCX_TAB_SIZE; i++) {
-            user = s_olcxTab.tab[i];
-            if (user!=NULL) {
-                CHECK_AND_SET_OLDEST(&user->browserStack);
-                CHECK_AND_SET_OLDEST(&user->completionsStack);
-                CHECK_AND_SET_OLDEST(&user->retrieverStack);
+            userDataP = s_olcxTab.tab[i];
+            if (userDataP!=NULL) {
+                CHECK_AND_SET_OLDEST(&userDataP->browserStack);
+                CHECK_AND_SET_OLDEST(&userDataP->completionsStack);
+                CHECK_AND_SET_OLDEST(&userDataP->retrieverStack);
             }
         }
     }
