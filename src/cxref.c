@@ -193,7 +193,7 @@ SymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, SymbolsMenu **list,
                                  selected, visible, ooBits,
                                  olusage, vlevel);
         LIST_CONS(rr,(*place));
-        //fprintf(dumpOut,":adding browsed symbol %s\n", sym->name);
+        log_trace(":adding browsed symbol '%s'", sym->name);
     }
     return rr;
 }
@@ -926,7 +926,7 @@ static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
     refs = *rrefs;
     /*fprintf(ccOut,": pop 2\n"); fflush(ccOut);*/
     olcxFreeReferences(refs->references);
-    olcxFreeCompletions(refs->cpls);
+    olcxFreeCompletions(refs->completions);
     olcxFreeResolutionMenu(refs->hkSelectedSym);
     olcxFreeResolutionMenu(refs->menuSym);
     /*fprintf(ccOut,": pop 3\n"); fflush(ccOut);*/
@@ -941,6 +941,7 @@ static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
     *rrefs = refs->previous;
     olcx_memory_free(refs, sizeof(OlcxReferences));
 }
+
 
 #define CHECK_AND_SET_OLDEST(stack) {                                   \
         if ((stack)->root!=NULL) {                                      \
@@ -1061,8 +1062,8 @@ static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
 
     res = olcx_alloc(sizeof(OlcxReferences));
     *res = (OlcxReferences){.references = NULL, .actual = NULL, .command = options.server_operation, .language = s_language,
-                              .accessTime = fileProcessingStartTime, .callerPosition = s_noPos, .cpls = NULL, .hkSelectedSym = NULL,
-                              .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, . refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
+                              .accessTime = fileProcessingStartTime, .callerPosition = s_noPos, .completions = NULL, .hkSelectedSym = NULL,
+                              .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
                               .previous = stack->top};
     return res;
 }
@@ -2019,7 +2020,7 @@ static void olcxReferenceGotoCompletion(int refn) {
 
     assert(refn > 0);
     OLCX_MOVE_INIT(currentUserData,refs,CHECK_NULL);
-    rr = olCompletionNthLineRef(refs->cpls, refn);
+    rr = olCompletionNthLineRef(refs->completions, refn);
     if (rr != NULL) {
         if (rr->category == CategoryLocal /*& || refs->command == OLO_TAG_SEARCH &*/) {
             if (rr->ref.usage.base != UsageClassFileDefinition
@@ -2044,7 +2045,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     assert(refn > 0);
     assert(currentUserData);
     assert(currentUserData->retrieverStack.top);
-    rr = olCompletionNthLineRef(currentUserData->retrieverStack.top->cpls, refn);
+    rr = olCompletionNthLineRef(currentUserData->retrieverStack.top->completions, refn);
     if (rr != NULL) {
         if (rr->ref.usage.base != UsageClassFileDefinition
             && rr->ref.usage.base != UsageClassTreeDefinition
@@ -2066,7 +2067,7 @@ static void olcxReferenceBrowseCompletion(int refn) {
 
     assert(refn > 0);
     OLCX_MOVE_INIT(currentUserData,refs,CHECK_NULL);
-    rr = olCompletionNthLineRef(refs->cpls, refn);
+    rr = olCompletionNthLineRef(refs->completions, refn);
     if (rr != NULL) {
         if (rr->category == CategoryLocal) {
             if (options.xref2)
@@ -3177,7 +3178,7 @@ static void olCompletionSelect(void) {
     OlcxReferences    *refs;
     S_olCompletion      *rr;
     OLCX_MOVE_INIT(currentUserData,refs, CHECK_NULL);
-    rr = olCompletionNthLineRef(refs->cpls, options.olcxGotoVal);
+    rr = olCompletionNthLineRef(refs->completions, options.olcxGotoVal);
     if (rr==NULL) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
@@ -3204,7 +3205,7 @@ static void olcxReferenceSelectTagSearchItem(int refn) {
     assert(currentUserData);
     assert(currentUserData->retrieverStack.top);
     refs = currentUserData->retrieverStack.top;
-    rr = olCompletionNthLineRef(refs->cpls, refn);
+    rr = olCompletionNthLineRef(refs->completions, refn);
     if (rr == NULL) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
@@ -3540,7 +3541,7 @@ bool refOccursInRefs(Reference *r, Reference *list) {
 static void olcxSingleReferenceCheck1(SymbolReferenceItem *p,
                                       OlcxReferences *rstack,
                                       Reference *r
-                                      ) {
+) {
     int prefixchar;
 
     if (refOccursInRefs(r, rstack->references)) {
@@ -5219,13 +5220,13 @@ S_olCompletion * olCompletionListPrepend(char *name,
                 cc->lineCount++;
         }
     }
-    cc->next = stack->cpls;
-    stack->cpls = cc;
+    cc->next = stack->completions;
+    stack->completions = cc;
     return cc;
 }
 
 void olCompletionListReverse(void) {
-    LIST_REVERSE(S_olCompletion, currentUserData->completionsStack.top->cpls);
+    LIST_REVERSE(S_olCompletion, currentUserData->completionsStack.top->completions);
 }
 
 static int olTagSearchSortFunction(S_olCompletion *c1, S_olCompletion *c2) {
@@ -5247,10 +5248,10 @@ static void tagSearchShortRemoveMultipleLines(S_olCompletion *list) {
 
 void tagSearchCompactShortResults(void) {
     assert(currentUserData);
-    LIST_MERGE_SORT(S_olCompletion, currentUserData->retrieverStack.top->cpls, olTagSearchSortFunction);
+    LIST_MERGE_SORT(S_olCompletion, currentUserData->retrieverStack.top->completions, olTagSearchSortFunction);
     if (options.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
         || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
-        tagSearchShortRemoveMultipleLines(currentUserData->retrieverStack.top->cpls);
+        tagSearchShortRemoveMultipleLines(currentUserData->retrieverStack.top->completions);
     }
 }
 
@@ -5263,7 +5264,7 @@ void printTagSearchResults(void) {
 
     // the first loop is counting the length of fields
     assert(currentUserData->retrieverStack.top);
-    for (S_olCompletion *cc=currentUserData->retrieverStack.top->cpls; cc!=NULL; cc=cc->next) {
+    for (S_olCompletion *cc=currentUserData->retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
         ls = crTagSearchLineStatic(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
     }
@@ -5282,7 +5283,7 @@ void printTagSearchResults(void) {
     if (options.xref2)
         ppcBegin(PPC_SYMBOL_LIST);
     assert(currentUserData->retrieverStack.top);
-    for (S_olCompletion *cc=currentUserData->retrieverStack.top->cpls; cc!=NULL; cc=cc->next) {
+    for (S_olCompletion *cc=currentUserData->retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
         ls = crTagSearchLineStatic(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
         if (options.xref2) {

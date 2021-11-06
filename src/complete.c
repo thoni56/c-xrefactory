@@ -428,7 +428,7 @@ static void printCompletionsEnding(S_olCompletion *olc) {
 
 void printCompletionsList(int noFocus) {
     S_olCompletion *cc, *olc;
-    olc = currentUserData->completionsStack.top->cpls;
+    olc = currentUserData->completionsStack.top->completions;
     printCompletionsBeginning(olc, noFocus);
     for(cc=olc; cc!=NULL; cc=cc->next) {
         printOneCompletion(cc);
