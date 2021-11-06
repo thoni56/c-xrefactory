@@ -156,9 +156,10 @@ typedef struct options {
     // all the rest initialized to zeros by default
     struct setGetEnv setGetEnv;
 
-    // memory for strings
+    // list of strings
     struct stringPointerList *allAllocatedStrings;
-    struct memory			 pendingMemory; /* TODO: WTF: this structs last field is used to overrun... */
+    // Memory area
+    struct memory			 memory; /* TODO: WTF: this structs last field is used to overrun... */
     char					 pendingFreeSpace[SIZE_opiMemory]; /* ... into this area! */
 } Options;
 

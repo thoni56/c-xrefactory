@@ -742,7 +742,7 @@ static int shellMatchParseBracketPattern(char *pattern, int pi, bool caseSensiti
         }
     }
     if (pattern[i] != ']') {
-        errorMessage(ERR_ST,"wrong [] pattern in regexp");
+        errorMessage(ERR_ST, "wrong [] pattern in regexp");
     }
     return(i);
 }

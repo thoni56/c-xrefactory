@@ -15,10 +15,14 @@
 #include "yylex.mock"
 #include "ppc.mock"
 
+static bool optionsOverflowHandler() {
+}
+
 
 Describe(Options);
 BeforeEach(Options) {
     log_set_level(LOG_ERROR);
+    initMemory(&options.memory, optionsOverflowHandler, SIZE_opiMemory);
 }
 AfterEach(Options) {}
 
@@ -154,4 +158,13 @@ Ensure(Options, can_expand_special_variable_file) {
 
     char *expanded = expandSpecialFilePredefinedVariables_st("${__file}", "options.c");
     assert_that(expanded, is_equal_to_string("/some/path/to/options.c"));
+}
+
+Ensure(Options, can_allocate_a_string) {
+    char *allocatedString;
+
+    assert_that(options.memory.index, is_equal_to(0));
+    createOptionString(&allocatedString, "allocated string");
+    assert_that(allocatedString, is_equal_to_string("allocated string"));
+    assert_that(options.memory.index, is_greater_than(0));
 }

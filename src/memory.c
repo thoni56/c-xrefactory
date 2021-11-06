@@ -12,20 +12,20 @@ static bool memoryTrace = false;
 #define mem_trace(...)  { if (memoryTrace) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__); }
 
 
-CodeBlock *currentBlock;
-
-Memory *cxMemory=NULL;
-int olcxMemoryAllocatedBytes;
-
 jmp_buf memoryResizeJumpTarget;
 
+int olcxMemoryAllocatedBytes;
+
+CodeBlock *currentBlock;
+
+
 /* Memory types */
+Memory *cxMemory=NULL;
+
 char workMemory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
 char ftMemory[SIZE_ftMemory];
 int ftMemoryIndex = 0;
-
-char tmpMemory[SIZE_TMP_MEM];
 
 char ppmMemory[SIZE_ppmMemory];
 int ppmMemoryIndex=0;
@@ -33,10 +33,17 @@ int ppmMemoryIndex=0;
 char mbMemory[SIZE_mbMemory];
 int mbMemoryIndex=0;
 
+char tmpMemory[SIZE_TMP_MEM];
 
+
+/* This is used unless the fatalError function is set */
+static void fallBackFatalError(int errorCode, char *message, int exitStatus) {
+    log_fatal("Error code: %d, Message: '%s'", errorCode, message);
+    exit(exitStatus);
+}
 
 /* Inject the function to call when fatalErrors occur */
-static void (*fatalError)(int errCode, char *mess, int exitStatus);
+static void (*fatalError)(int errCode, char *mess, int exitStatus) = fallBackFatalError;
 void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus)) {
     fatalError = function;
 }
@@ -242,6 +249,10 @@ void *dm_allocc(Memory *memory, int count, size_t size) {
     previous_index = memory->index;
     memory->index += (count)*size;
     return (void *) (((char*)&memory->block) + previous_index);
+}
+
+void *dm_alloc(Memory *memory, size_t size) {
+    return dm_allocc(memory, 1, size);
 }
 
 

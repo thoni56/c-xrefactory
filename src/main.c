@@ -2119,7 +2119,7 @@ static void mainTotalTaskEntryInitialisations() {
     assert(mm);
 
     // init options memory
-    initMemory(((Memory*)&s_initOpt.pendingMemory),
+    initMemory(((Memory*)&s_initOpt.memory),
                optionsOverflowHandler, SIZE_opiMemory);
 
     // Inject error handling functions
