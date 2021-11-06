@@ -33,15 +33,15 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
     int *position,
     HASH_ELEM_TYPE **foundMemberPointer
 ) {
-    unsigned posid;
+    unsigned index;
     HASH_ELEM_TYPE *pp;
 
-    posid = HASH_FUN(element);
-    posid = posid % table->size;
+    index = HASH_FUN(element);
+    index = index % table->size;
     if (position)
-        *position = posid;
+        *position = index;
     assert(table->tab != NULL);
-    for (pp=table->tab[posid]; pp!=NULL; pp=pp->next) {
+    for (pp=table->tab[index]; pp!=NULL; pp=pp->next) {
         if (HASH_ELEM_EQUAL(pp, element)) {
             *foundMemberPointer = pp;
             return true;
@@ -73,12 +73,12 @@ bool CONCAT(HASH_FUN_PREFIX,Delete)(
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 ) {
-    unsigned posid;
+    unsigned index;
     HASH_ELEM_TYPE **pp;
-    posid = HASH_FUN(element);
-    posid = posid % table->size;
+    index = HASH_FUN(element);
+    index = index % table->size;
     assert(table->tab!=NULL);
-    for (pp= &(table->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
+    for (pp= &(table->tab[index]); *pp!=NULL; pp= &((*pp)->next)) {
         if (HASH_ELEM_EQUAL((*pp), element)) {
             *pp = (*pp)->next;
             return true;
@@ -92,13 +92,13 @@ bool CONCAT(HASH_FUN_PREFIX,DeleteExact)(
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 ) {
-    unsigned posid;
+    unsigned index;
     HASH_ELEM_TYPE **pp;
 
-    posid = HASH_FUN(element);
-    posid = posid % table->size;
+    index = HASH_FUN(element);
+    index = index % table->size;
     assert(table->tab!=NULL);
-    for (pp= &(table->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
+    for (pp= &(table->tab[index]); *pp!=NULL; pp= &((*pp)->next)) {
         if ((*pp) == element) {
             *pp = (*pp)->next;
             return true;

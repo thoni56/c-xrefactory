@@ -946,8 +946,8 @@ static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
         if ((stack)->root!=NULL) {                                      \
             /* do never free the very first item, start by second */    \
             for (refs= &((stack)->root->previous); *refs!=NULL; refs= &(*refs)->previous) { \
-                if (oldestt > (*refs)->accessTime) {                    \
-                    oldestt = (*refs)->accessTime;                      \
+                if (oldestTime > (*refs)->accessTime) {                    \
+                    oldestTime = (*refs)->accessTime;                      \
                     oldest = refs;                                      \
                     oldestStack = (stack);                              \
                 }                                                       \
@@ -957,11 +957,13 @@ static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
 
 // TODO!!! should free completions in priority!
 void freeOldestOlcx(void) {
-    UserOlcxData              *user;
-    OlcxReferences        **refs,**oldest;
-    time_t                  oldestt;
+    UserOlcxData          *user;
+    OlcxReferences        **refs;
+    OlcxReferences        **oldest;
+    time_t                oldestTime;
     OlcxReferencesStack   *oldestStack;
-    oldestt = s_fileProcessStartTime; oldest=NULL; oldestStack=NULL;
+
+    oldestTime = s_fileProcessStartTime; oldest=NULL; oldestStack=NULL;
     if (refactoringOptions.refactoringRegime != RegimeRefactory) {
         for (int i=0; i<OLCX_TAB_SIZE; i++) {
             user = s_olcxTab.tab[i];
@@ -972,7 +974,7 @@ void freeOldestOlcx(void) {
             }
         }
     }
-    if (oldestt == s_fileProcessStartTime || oldest == NULL) {
+    if (oldestTime == s_fileProcessStartTime || oldest == NULL) {
         fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR);
     } else {
         assert(oldest!=NULL && oldestStack!=NULL);
@@ -981,17 +983,17 @@ void freeOldestOlcx(void) {
 }
 
 void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
-    OlcxReferences **ss;
+    OlcxReferences **references;
 
-    ss = &stack->top;
-    if (*ss == NULL)
+    references = &stack->top;
+    if (*references == NULL)
         return;
     for (int i=1; i<MAX_COMPLETIONS_HISTORY_DEEP; i++) {
-        ss = &(*ss)->previous;
-        if (*ss == NULL)
+        references = &(*references)->previous;
+        if (*references == NULL)
             return;
     }
-    deleteOlcxRefs(ss, stack);
+    deleteOlcxRefs(references, stack);
 }
 
 void olcxInit(void) {
