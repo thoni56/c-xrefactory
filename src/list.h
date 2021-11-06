@@ -37,19 +37,20 @@
 
 /* SORTED LIST WITH NON_TRIVIAL ORDERING */
 
-/* SORTED_LIST_FIND2(o reselem, type, i key value, i list) */
-#define SORTED_LIST_FIND2(reselem, type, key, list) {                   \
+/* SORTED_LIST_FIND2(o result, type, i key value, i list) */
+#define SORTED_LIST_FIND2(result, type, key, list) {                    \
         type *tmp; tmp = list;                                          \
         while (tmp!=NULL && SORTED_LIST_LESS(tmp,(key)))                \
             tmp=tmp->next;                                              \
-        reselem=tmp;                                                    \
+        result=tmp;                                                     \
     }
 
-/* SORTED_LIST_FIND2(o reselem, type, i key value, i list) */
-#define SORTED_LIST_FIND3(reselem, type, key, list, lessfunction) { \
+/* SORTED_LIST_FIND2(o result, type, i key value, i list) */
+#define SORTED_LIST_FIND3(result, type, key, list, lessfunction) {  \
         type *tmp; tmp = list;                                      \
-        while (tmp!=NULL && lessfunction(tmp,(key))) tmp=tmp->next; \
-        reselem=tmp;                                                \
+        while (tmp!=NULL && lessfunction(tmp,(key)))                \
+            tmp=tmp->next;                                          \
+        result=tmp;                                                 \
     }
 
 /*
