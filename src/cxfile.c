@@ -1139,13 +1139,14 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
 }
 
 static bool isInRefList(Reference *list,
-                        UsageBits *pusage,
-                        Position *pos) {
-    Reference *rr;
-    Reference ppp;
-    fillReference(&ppp, *pusage, *pos, NULL);
-    SORTED_LIST_FIND2(rr, Reference, ppp, list);
-    if (rr==NULL || SORTED_LIST_NEQ(rr,ppp))
+                        UsageBits usage,
+                        Position pos) {
+    Reference *foundReference;
+    Reference reference;
+
+    fillReference(&reference, usage, pos, NULL);
+    SORTED_LIST_FIND2(foundReference, Reference, reference, list);
+    if (foundReference==NULL || SORTED_LIST_NEQ(foundReference,reference))
         return false;
     return true;
 }
@@ -1178,8 +1179,8 @@ static void cxrfReference(int size,
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
             fillUsageBits(&usageBits, usage, reqAcc);
-            copyrefFl = ! isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
-                                      &usageBits, &pos);
+            copyrefFl = !isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
+                                     usageBits, pos);
         } else {
             copyrefFl = ! fileTable.tab[file]->b.cxLoading;
         }
