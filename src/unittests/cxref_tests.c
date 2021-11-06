@@ -75,3 +75,13 @@ Ensure(CxRef, can_parse_line_and_col_from_command_line_option) {
     assert_that(line, is_equal_to(54));
     assert_that(column, is_equal_to(33));
 }
+
+Ensure(CxRef, can_try_to_free_oldest_olcx) {
+    fileProcessingStartTime = time(NULL)-20; /* Just to get some diff... */
+    expect(fatalError);                     /* Since we have nothing to free */
+
+    olcxSetCurrentUser("user1");
+    assert_that(currentUserData->name, is_equal_to_string("user1"));
+
+    freeOldestOlcx();
+}
