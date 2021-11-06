@@ -1156,9 +1156,9 @@ static void cxrfReference(int size,
                           int marker,
                           CharacterBuffer *cb,
                           int additionalArg
-                          ) {
+) {
     Position pos;
-    Reference rr;
+    Reference reference;
     UsageBits usageBits;
     int file, line, col, usage, sym, reqAcc;
     int copyrefFl;
@@ -1172,7 +1172,7 @@ static void cxrfReference(int size,
     assert(fileTable.tab[file]!=NULL);
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
     col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
-    /*&fprintf(dumpOut,"%d %d %d  ", usage,file,line);fflush(dumpOut);&*/
+
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
         if (fileTable.tab[file]->b.cxLoading&&fileTable.tab[file]->b.cxSaved) {
@@ -1189,39 +1189,39 @@ static void cxrfReference(int size,
     } else if (options.taskRegime == RegimeEditServer) {
         pos = makePosition(file, line, col);
         fillUsageBits(&usageBits, usage, reqAcc);
-        fillReference(&rr, usageBits, pos, NULL);
+        fillReference(&reference, usageBits, pos, NULL);
         if (additionalArg == DEAD_CODE_DETECTION) {
-            if (OL_VIEWABLE_REFS(&rr)) {
+            if (OL_VIEWABLE_REFS(&reference)) {
                 // restrict reported symbols to those defined in project
                 // input file
-                if (IS_DEFINITION_USAGE(rr.usage.base)
-                    && fileTable.tab[rr.position.file]->b.commandLineEntered
+                if (IS_DEFINITION_USAGE(reference.usage.base)
+                    && fileTable.tab[reference.position.file]->b.commandLineEntered
                     ) {
                     lastIncomingInfo.deadSymbolIsDefined = 1;
-                } else if (! IS_DEFINITION_OR_DECL_USAGE(rr.usage.base)) {
+                } else if (! IS_DEFINITION_OR_DECL_USAGE(reference.usage.base)) {
                     lastIncomingInfo.symbolToCheckForDeadness = -1;
                 }
             }
         } else if (additionalArg == OL_LOOKING_2_PASS_MACRO_USAGE) {
             if (    lastIncomingInfo.onLineReferencedSym ==
                     lastIncomingInfo.values[CXFI_SYMBOL_INDEX]
-                    &&  rr.usage.base == UsageMacroBaseFileUsage) {
-                s_olMacro2PassFile = rr.position.file;
+                    &&  reference.usage.base == UsageMacroBaseFileUsage) {
+                s_olMacro2PassFile = reference.position.file;
             }
         } else {
             if (options.server_operation == OLO_TAG_SEARCH) {
-                if (rr.usage.base==UsageDefined
+                if (reference.usage.base==UsageDefined
                     || ((options.tagSearchSpecif==TSS_FULL_SEARCH
                          || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
-                        &&  (rr.usage.base==UsageDeclared
-                             || rr.usage.base==UsageClassFileDefinition))) {
-                    searchSymbolCheckReference(lastIncomingInfo.symbolTab[sym],&rr);
+                        &&  (reference.usage.base==UsageDeclared
+                             || reference.usage.base==UsageClassFileDefinition))) {
+                    searchSymbolCheckReference(lastIncomingInfo.symbolTab[sym],&reference);
                 }
             } else if (options.server_operation == OLO_SAFETY_CHECK1) {
                 if (    lastIncomingInfo.onLineReferencedSym !=
                         lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     olcxCheck1CxFileReference(lastIncomingInfo.symbolTab[sym],
-                                              &rr);
+                                              &reference);
                 }
             } else {
                 if (    lastIncomingInfo.onLineReferencedSym ==
@@ -1235,11 +1235,11 @@ static void cxrfReference(int size,
                             || options.server_operation==OLO_PUSH_NAME
                             || options.server_operation==OLO_PUSH_SPECIAL_NAME
                             ) {
-                            //&fprintf(dumpOut,":adding reference %s:%d\n", fileTable.tab[rr.position.file]->name, rr.position.line);
-                            olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &rr, lastIncomingInfo.onLineRefIsBestMatchFlag);
+                            //&fprintf(dumpOut,":adding reference %s:%d\n", fileTable.tab[reference.position.file]->name, reference.position.line);
+                            olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &reference, lastIncomingInfo.onLineRefIsBestMatchFlag);
                         }
                     } else if (additionalArg == CX_BY_PASS) {
-                        if (positionsAreEqual(s_olcxByPassPos,rr.position)) {
+                        if (positionsAreEqual(s_olcxByPassPos,reference.position)) {
                             // got the bypass reference
                             //&fprintf(dumpOut,":adding bypass selected symbol %s\n", lastIncomingInfo.symbolTab[sym]->name);
                             olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],
@@ -1247,7 +1247,7 @@ static void cxrfReference(int size,
                                                1, 1, 0, usage,0,&s_noPos, UsageNone);
                         }
                     } else {
-                        olcxAddReference(&currentUserData->browserStack.top->references, &rr,
+                        olcxAddReference(&currentUserData->browserStack.top->references, &reference,
                                          lastIncomingInfo.onLineRefIsBestMatchFlag);
                     }
                 }
