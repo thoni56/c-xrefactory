@@ -198,9 +198,10 @@ static Reference *javaAddClassCxReference(Symbol *dd, Position *pos, unsigned us
 static void javaAddNameCxReference(IdList *id, unsigned usage) {
     char *cname;
     Symbol dd;
+    char tmpString[MAX_SOURCE_PATH_SIZE];
 
     assert(id != NULL);
-    cname = javaCreateComposedName(NULL,id,'/',NULL,tmpMemory,SIZE_TMP_MEM);
+    cname = javaCreateComposedName(NULL, id, '/', NULL, tmpString, sizeof(tmpString));
     fillSymbol(&dd, id->id.name, cname, id->id.p);
     fillSymbolBits(&dd.bits, AccessDefault, id->nameType, StorageNone);
 
@@ -221,12 +222,11 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname,
     S_symStructSpec *ss;
     IdList	ll;
     Symbol        *nn;
-    int i;
 
     assert(cc && cc->bits.symbolType==TypeStruct);
     ss = cc->u.structSpec;
     assert(ss);
-    for(i=0; i<ss->nestedCount; i++) {
+    for (int i=0; i<ss->nestedCount; i++) {
         if (ss->nest[i].membFlag) {
             nn = ss->nest[i].cl;
             assert(nn);
@@ -293,7 +293,8 @@ static int specialFileNameCasesCheck(char *fname) {
 /* TODO this function strangely ressembles to javaFindFile, join them ????*/
 bool javaTypeFileExist(IdList *name) {
     char *fname;
-    IdList	tname;
+    IdList tname;
+    char tmpString[MAX_SOURCE_PATH_SIZE];
 
     if (name==NULL)
         return false;
@@ -305,7 +306,8 @@ bool javaTypeFileExist(IdList *name) {
     // completion strings were added as types, then a package is resolved
     // as a type and a File from inside directory is not completed.
     // I try to solve it by requiring sourcefile index
-    fname = javaCreateComposedName(":", &tname, '/', "class", tmpMemory, SIZE_TMP_MEM);
+    fname = javaCreateComposedName(":", &tname, '/', "class",
+                                   tmpString, sizeof(tmpString));
     fname[1] = ZIP_SEPARATOR_CHAR;
 
     if (fileTableExists(&fileTable, fname+1)) {
@@ -316,32 +318,36 @@ bool javaTypeFileExist(IdList *name) {
     }
 
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
-        fname = javaCreateComposedName(NULL,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
+        fname = javaCreateComposedName(NULL, &tname, FILE_PATH_SEPARATOR, "java",
+                                       tmpString, sizeof(tmpString));
         log_trace("testing existence of file '%s'", fname);
         if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
             return true;
     }
     MapOnPaths(javaSourcePaths, {
-        fname = javaCreateComposedName(currentPath,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
-        log_trace("testing existence of file '%s'", fname);
-        if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
-            return true;
-    });
+            fname = javaCreateComposedName(currentPath, &tname, FILE_PATH_SEPARATOR, "java",
+                                           tmpString, sizeof(tmpString));
+            log_trace("testing existence of file '%s'", fname);
+            if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
+                return true;
+        });
     for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        fname = javaCreateComposedName(cp->string, &tname, FILE_PATH_SEPARATOR, "class", tmpMemory, SIZE_TMP_MEM);
+        fname = javaCreateComposedName(cp->string, &tname, FILE_PATH_SEPARATOR, "class",
+                                       tmpString, sizeof(tmpString));
         // hmm. do not need to check statb for .class files
         if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
             return true;
     }
     // Archives...
-    fname=javaCreateComposedName(NULL,&tname,'/',"class",tmpMemory,SIZE_TMP_MEM);
+    fname=javaCreateComposedName(NULL, &tname, '/', "class", tmpString, sizeof(tmpString));
     for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
         if (fsIsMember(&zipArchiveTable[i].dir,fname,0,ADD_NO,NULL))
             return true;
     }
     // auto-inferred source-path
     if (s_javaStat->namedPackagePath != NULL) {
-        fname = javaCreateComposedName(s_javaStat->namedPackagePath,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
+        fname = javaCreateComposedName(s_javaStat->namedPackagePath, &tname, FILE_PATH_SEPARATOR, "java",
+                                       tmpString, sizeof(tmpString));
         if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
             return true;
     }

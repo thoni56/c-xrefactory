@@ -33,8 +33,6 @@ int ppmMemoryIndex=0;
 char mbMemory[SIZE_mbMemory];
 int mbMemoryIndex=0;
 
-char tmpMemory[SIZE_TMP_MEM];
-
 
 /* This is used unless the fatalError function is set */
 static void fallBackFatalError(int errorCode, char *message, int exitStatus) {

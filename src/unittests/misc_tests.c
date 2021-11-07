@@ -36,5 +36,4 @@ Ensure(Misc, can_concat_filename_with_directory) {
 
     /* TODO: FILE_PATH_SEPARATOR might be '\\' */
     assert_that(result, is_equal_to_string("dirname/filename"));
-    assert_that(result, is_not_equal_to(tmpMemory));
 }

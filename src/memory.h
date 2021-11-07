@@ -173,8 +173,6 @@ extern int ppmMemoryIndex;
 extern char mbMemory[];
 extern int mbMemoryIndex;
 
-extern char tmpMemory[];
-
 
 /* Inject some error functions to remove linkage dependency */
 extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus));

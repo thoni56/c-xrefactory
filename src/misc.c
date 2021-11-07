@@ -1152,9 +1152,7 @@ void javaMapDirectoryFiles1(char *packageFilename,
                             void *a2,
                             int *a3
 ){
-    StringList    *cp;
     char            *fname;
-    int             i;
     // avoiding recursivity?
     //&static bitArray fileMapped[BIT_ARR_DIM(MAX_FILES)];
 
@@ -1166,20 +1164,22 @@ void javaMapDirectoryFiles1(char *packageFilename,
 
     // source paths
     MapOnPaths(javaSourcePaths, {
-            fname = concatDirectoryWithFileName(tmpMemory, currentPath, packageFilename);
+            char tmpString[MAX_SOURCE_PATH_SIZE];
+            fname = concatDirectoryWithFileName(tmpString, currentPath, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,currentPath,packageFilename,a1,a2,a3);
         });
     // class paths
-    for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
+    for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
+        char tmpString[MAX_SOURCE_PATH_SIZE];
         // avoid double mappings
         if (!pathsStringContainsPath(javaSourcePaths, cp->string)) {
             assert(strlen(cp->string)+strlen(packageFilename)+2 < SIZE_TMP_MEM);
-            fname = concatDirectoryWithFileName(tmpMemory, cp->string, packageFilename);
+            fname = concatDirectoryWithFileName(tmpString, cp->string, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->string,packageFilename,a1,a2,a3);
         }
     }
     // databazes
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
+    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
         javaMapZipDirFile(&zipArchiveTable[i],packageFilename,a1,a2,a3,fun,
                           zipArchiveTable[i].fn,packageFilename);
     }
@@ -1187,7 +1187,8 @@ void javaMapDirectoryFiles1(char *packageFilename,
     if (s_javaStat->namedPackagePath != NULL) {
         if (!pathsStringContainsPath(javaSourcePaths, s_javaStat->namedPackagePath)
             && !classPathContainsPath(s_javaStat->namedPackagePath)) {
-            fname = concatDirectoryWithFileName(tmpMemory, s_javaStat->namedPackagePath, packageFilename);
+            char tmpString[MAX_SOURCE_PATH_SIZE];
+            fname = concatDirectoryWithFileName(tmpString, s_javaStat->namedPackagePath, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,s_javaStat->namedPackagePath,packageFilename,a1,a2,a3);
         }
     }
