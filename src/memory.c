@@ -147,7 +147,7 @@ static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, FreeTrail *trail
     block->outerBlock = outerBlock;
 }
 
-void stackMemoryInit(void) {
+void initOuterCodeBlock(void) {
     currentBlock = (CodeBlock *) stackMemory;
     fillCodeBlock(currentBlock, sizeof(CodeBlock), NULL, NULL);
 }

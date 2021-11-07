@@ -40,7 +40,7 @@ void processIncludeNextDirective(Position *includePosition);
 Describe(Yylex);
 BeforeEach(Yylex) {
     log_set_level(LOG_ERROR);
-    stackMemoryInit();
+    initOuterCodeBlock();
 
     options.taskRegime = RegimeEditServer;
     ppMemInit();

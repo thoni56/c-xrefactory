@@ -8,7 +8,7 @@
 
 Describe(Symbol);
 BeforeEach(Symbol) {
-    stackMemoryInit();
+    initOuterCodeBlock();
 }
 AfterEach(Symbol) {}
 

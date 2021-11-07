@@ -9,7 +9,7 @@
 
 Describe(Id);
 BeforeEach(Id) {
-    stackMemoryInit();
+    initOuterCodeBlock();
 }
 AfterEach(Id) {}
 

@@ -2185,7 +2185,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     refTabNoAllocInit( &referenceTable,MAX_CXREF_SYMBOLS);
     SM_INIT(ppmMemory);
     ppMemInit();
-    stackMemoryInit();
+    initOuterCodeBlock();
 
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();

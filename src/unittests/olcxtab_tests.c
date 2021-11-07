@@ -8,7 +8,7 @@
 
 Describe(olcxTab);
 BeforeEach(olcxTab) {
-    stackMemoryInit();
+    initOuterCodeBlock();
 }
 AfterEach(olcxTab) {}
 

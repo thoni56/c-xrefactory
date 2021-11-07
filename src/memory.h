@@ -197,7 +197,7 @@ extern bool cxMemoryOverflowHandler(int n);
 extern void addToTrail(void (*action)(void*), void *p);
 extern void removeFromTrailUntil(FreeTrail *untilP);
 
-extern void stackMemoryInit(void);
+extern void initOuterCodeBlock(void);
 extern void *stackMemoryAlloc(int size);
 extern char *stackMemoryPushString(char *s);
 

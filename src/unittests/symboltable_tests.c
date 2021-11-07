@@ -11,7 +11,7 @@
 
 Describe(SymbolTable);
 BeforeEach(SymbolTable) {
-    stackMemoryInit();
+    initOuterCodeBlock();
 }
 AfterEach(SymbolTable) {}
 

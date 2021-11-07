@@ -20,7 +20,7 @@ static void myFatalError(int errCode, char *mess, int exitStatus) {
 Describe(Memory);
 BeforeEach(Memory) {
     log_set_level(LOG_ERROR);
-    stackMemoryInit();
+    initOuterCodeBlock();
     memoryUseFunctionForFatalError(myFatalError);
 }
 AfterEach(Memory) {}
@@ -42,7 +42,7 @@ Ensure(Memory, calls_fatalError_on_out_of_memory) {
 Ensure(Memory, can_begin_and_end_block) {
     FreeTrail freeTrail;
 
-    stackMemoryInit();
+    initOuterCodeBlock();
     assert_that(currentBlock->outerBlock, is_null);
 
     currentBlock->trail = &freeTrail; /* "Random" pointer to be able to figure out what happens with it... */

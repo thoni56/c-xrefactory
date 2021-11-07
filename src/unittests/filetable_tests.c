@@ -12,7 +12,7 @@
 Describe(FileTable);
 BeforeEach(FileTable) {
     log_set_level(LOG_ERROR);
-    stackMemoryInit();
+    initOuterCodeBlock();
 }
 AfterEach(FileTable) {}
 
