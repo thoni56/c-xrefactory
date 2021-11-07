@@ -1967,33 +1967,33 @@ endOfMacroArgument:
 static char charText[2]={0,0};
 static char constant[50];
 
-static bool isIdAKeyword(Symbol *symbol, Position *position) {
+static bool isIdAKeyword(Symbol *symbol, Position position) {
     if (symbol->bits.symbolType == TypeKeyword) {
-        setYylvalsForIdentifier(symbol->name, symbol, *position);
+        setYylvalsForIdentifier(symbol->name, symbol, position);
         return true;
     }
     return false;
 }
 
-/* TODO: Lookup for C and Java are similar, C has check for CPP and Typedef. Merge! */
+/* TODO: Lookup for C and Java are similar, C has check for CPP and Typedef. Merge? */
 /* And probably move to symboltable.c... */
-static int lookupCIdentifier(char *id, Position *position) {
-    Symbol *memb = NULL;
+static int lookupCIdentifier(char *id, Position position) {
+    Symbol *symbol = NULL;
     unsigned hash = hashFun(id) % symbolTable->size;
 
     log_trace("looking for C id '%s' in symbol table %p", id, symbolTable);
-    for (Symbol *symbol=symbolTable->tab[hash]; symbol!=NULL; symbol=symbol->next) {
-        if (strcmp(symbol->name, id) == 0) {
-            if (memb == NULL)
-                memb = symbol;
-            if (isIdAKeyword(symbol, position))
-                return symbol->u.keyword;
-            if (symbol->bits.symbolType == TypeDefinedOp && s_ifEvaluation) {
+    for (Symbol *s=symbolTable->tab[hash]; s!=NULL; s=s->next) {
+        if (strcmp(s->name, id) == 0) {
+            if (symbol == NULL)
+                symbol = s;
+            if (isIdAKeyword(s, position))
+                return s->u.keyword;
+            if (s->bits.symbolType == TypeDefinedOp && s_ifEvaluation) {
                 return CPP_DEFINED_OP;
             }
-            if (symbol->bits.symbolType == TypeDefault) {
-                setYylvalsForIdentifier(symbol->name, symbol, *position);
-                if (symbol->bits.storage == StorageTypedef) {
+            if (s->bits.symbolType == TypeDefault) {
+                setYylvalsForIdentifier(s->name, s, position);
+                if (s->bits.storage == StorageTypedef) {
                     return TYPE_NAME;
                 } else {
                     return IDENTIFIER;
@@ -2001,37 +2001,37 @@ static int lookupCIdentifier(char *id, Position *position) {
             }
         }
     }
-    if (memb == NULL)
+    if (symbol == NULL)
         id = stackMemoryPushString(id);
     else
-        id = memb->name;
-    setYylvalsForIdentifier(id, memb, *position);
+        id = symbol->name;
+    setYylvalsForIdentifier(id, symbol, position);
     return IDENTIFIER;
 }
 
 
-static int lookupJavaIdentifier(char *id, Position *position) {
-    Symbol *memb = NULL;
+static int lookupJavaIdentifier(char *id, Position position) {
+    Symbol *symbol = NULL;
     unsigned hash = hashFun(id) % symbolTable->size;
 
     log_trace("looking for Java id '%s' in symbol table %p", id, symbolTable);
-    for (Symbol *symbol=symbolTable->tab[hash]; symbol!=NULL; symbol=symbol->next) {
-        if (strcmp(symbol->name, id) == 0) {
-            if (memb == NULL)
-                memb = symbol;
-            if (isIdAKeyword(symbol, position))
-                return symbol->u.keyword;
-            if (symbol->bits.symbolType == TypeDefault) {
-                setYylvalsForIdentifier(symbol->name, symbol, *position);
+    for (Symbol *s=symbolTable->tab[hash]; s!=NULL; s=s->next) {
+        if (strcmp(s->name, id) == 0) {
+            if (symbol == NULL)
+                symbol = s;
+            if (isIdAKeyword(s, position))
+                return s->u.keyword;
+            if (s->bits.symbolType == TypeDefault) {
+                setYylvalsForIdentifier(s->name, s, position);
                 return IDENTIFIER;
             }
         }
     }
-    if (memb == NULL)
+    if (symbol == NULL)
         id = stackMemoryPushString(id);
     else
-        id = memb->name;
-    setYylvalsForIdentifier(id, memb, *position);
+        id = symbol->name;
+    setYylvalsForIdentifier(id, symbol, position);
     return IDENTIFIER;
 }
 
@@ -2160,9 +2160,9 @@ int yylex(void) {
 
         /* TODO: Push down language check into a common lookupIdentifier() */
         if (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC))
-            lexem=lookupCIdentifier(id,&idpos);
+            lexem=lookupCIdentifier(id, idpos);
         else if (LANGUAGE(LANG_JAVA))
-            lexem = lookupJavaIdentifier(id, &idpos);
+            lexem = lookupJavaIdentifier(id, idpos);
         else
             assert(0);
 
