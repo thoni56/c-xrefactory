@@ -562,29 +562,27 @@ void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name) {
 
 /* ***************************************************************** */
 
+/* Can handle overlapping strings... */
 char *strmcpy(char *dest, char *src) {
     char *p1,*p2;
-    for(p1=dest,p2=src; *p2; p1++, p2++) *p1 = *p2;
+    for (p1=dest,p2=src; *p2; p1++, p2++)
+        *p1 = *p2;
     *p1 = 0;
-    return(p1);
+    return p1;
 }
 
 char *lastOccurenceInString(char *string, int ch) {
-    char *s,*res;
-    res = NULL;
-    for(s=string; *s; s++) {
-        if (*s == ch) res=s;
-    }
-    return res;
+    return strrchr(string, ch);
 }
 
 char *lastOccurenceOfSlashOrBackslash(char *string) {
-    char *s,*res;
-    res = NULL;
-    for(s=string; *s; s++) {
-        if (*s == '/' || *s == '\\') res=s;
+    char *result;
+    result = NULL;
+    for (char *s=string; *s; s++) {
+        if (*s == '/' || *s == '\\')
+            result=s;
     }
-    return(res);
+    return result;
 }
 
 char * getFileSuffix(char *fn) {
@@ -1062,7 +1060,7 @@ static char *concatFNameInTmpMemory(char *directoryName, char *packageFilename) 
                 *s = FILE_PATH_SEPARATOR;
 #endif
     }
-    return(fname);
+    return fname;
 }
 
 static int pathsStringContainsPath(char *paths, char *path) {
@@ -1152,13 +1150,12 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
     if (dd!=NULL) *dd=0;
 }
 
-void javaMapDirectoryFiles1(
-                            char *packageFilename,
+void javaMapDirectoryFiles1(char *packageFilename,
                             void (*fun)(MAP_FUN_SIGNATURE),
                             Completions *a1,
                             void *a2,
                             int *a3
-                            ){
+){
     StringList    *cp;
     char            *fname;
     int             i;

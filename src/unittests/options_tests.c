@@ -16,6 +16,7 @@
 #include "ppc.mock"
 
 static bool optionsOverflowHandler() {
+    return false;
 }
 
 

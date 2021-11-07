@@ -161,14 +161,15 @@ static void fillZipStreamFromBuffer(CharacterBuffer  *buffer, char *dd) {
 
 void switchToZippedCharBuff(CharacterBuffer *buffer) {
     char *dd;
-    char *cc;
-    char *fin;
+    char *next;
+    char *end;
 
     refillBuffer(buffer);     // just for now
 #ifdef HAVE_ZLIB
-    fin = buffer->end;
-    cc = buffer->next;
-    for(dd=buffer->z; cc<fin; cc++,dd++) *dd = *cc;
+    end = buffer->end;
+    next = buffer->next;
+    for(dd=buffer->z; next<end; next++,dd++)
+        *dd = *next;
 
     fillZipStreamFromBuffer(buffer, dd);
 

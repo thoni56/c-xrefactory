@@ -4479,27 +4479,27 @@ static void mainAnswerReferencePushingAction(int command) {
 
 static void mapAddLocalUnusedSymbolsToHkSelection(SymbolReferenceItem *ss) {
     bool used = false;
-    Reference *dr = NULL;
+    Reference *definitionReference = NULL;
 
     if (ss->b.category != CategoryLocal)
         return;
-    for (Reference *rr = ss->refs; rr!=NULL; rr=rr->next) {
-        if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
-            if (rr->position.file == s_input_file_number) {
-                if (IS_DEFINITION_USAGE(rr->usage.base)) {
-                    dr = rr;
+    for (Reference *r = ss->refs; r!=NULL; r=r->next) {
+        if (IS_DEFINITION_OR_DECL_USAGE(r->usage.base)) {
+            if (r->position.file == s_input_file_number) {
+                if (IS_DEFINITION_USAGE(r->usage.base)) {
+                    definitionReference = r;
                 }
-                if (dr == NULL)
-                    dr = rr;
+                if (definitionReference == NULL)
+                    definitionReference = r;
             }
         } else {
             used = true;
             break;
         }
     }
-    if (!used && dr!=NULL) {
+    if (!used && definitionReference!=NULL) {
         olAddBrowsedSymbol(ss,&currentUserData->browserStack.top->hkSelectedSym,
-                           1,1,0,UsageDefined,0, &dr->position, dr->usage.base);
+                           1,1,0,UsageDefined,0, &definitionReference->position, definitionReference->usage.base);
     }
 }
 
