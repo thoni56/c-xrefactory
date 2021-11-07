@@ -84,6 +84,7 @@ $(eval $(call UNITTEST,extract,position log memory storage type id usage protoco
 $(eval $(call UNITTEST,fileio,log))
 $(eval $(call UNITTEST,filetable,log memory hash))
 $(eval $(call UNITTEST,id,log memory))
+$(eval $(call UNITTEST,init,log))
 $(eval $(call UNITTEST,jslsemact,log memory symbol id))
 $(eval $(call UNITTEST,jsemact,log memory position symbol id))
 $(eval $(call UNITTEST,lexer,log lexembuffer characterreader position))

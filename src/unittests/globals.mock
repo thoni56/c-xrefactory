@@ -14,7 +14,6 @@ Id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
 TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 Symbol s_errorSymbol;
 char *s_javaLangObjectLinkName="java/lang/Object";
-Symbol s_defaultVoidDefinition;
 
 int s_olStringSecondProcessing;
 int s_cxResizingBlocked;
@@ -118,6 +117,12 @@ int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 Reference s_noRef;
 S_exprTokenType s_forCompletionType;
 
+TypeModifier s_defaultVoidModifier;
+Symbol s_defaultVoidDefinition;
+TypeModifier defaultIntModifier;
+Symbol s_defaultIntDefinition;
+TypeModifier s_defaultPackedTypeModifier;
+
 Symbol *s_javaStringSymbol;
 char s_javaTypePCTIConvert[MAX_TYPE];
 char *s_javaThisPackageName = "";
@@ -131,7 +136,6 @@ Symbol s_javaArrayObjectSymbol;
 Symbol *s_javaCloneableSymbol;
 char s_javaBaseTypeCharCodes[MAX_TYPE];
 Symbol *s_javaIoSerializableSymbol;
-TypeModifier defaultIntModifier;
 char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
     /* Byte,Short,Char,Int,Long,Float,Double */
     {1,     1,    0,   1,  1,   1,    1},   /* Byte, */

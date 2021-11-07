@@ -15,6 +15,10 @@ void reInitCwd(char *dffname, char *dffsect) {
     mock(dffname, dffsect);
 }
 
+void infoMessage(char message[]) {
+    mock(message);
+}
+
 void warningMessage(int code, char *message) {
     mock(code, message);
 }
