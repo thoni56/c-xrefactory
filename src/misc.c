@@ -1065,27 +1065,26 @@ char *concatDirectoryWithFileName(char *output, char *directoryName, char *fileN
     return output;
 }
 
-static int pathsStringContainsPath(char *paths, char *path) {
+static bool pathsStringContainsPath(char *paths, char *path) {
     MapOnPaths(paths, {
             //&fprintf(dumpOut,"[sp]checking %s<->%s\n", currentPath, path);
             if (compareFileNames(currentPath, path)==0) {
                 //&fprintf(dumpOut,"[sp] saving of mapping %s\n", path);
-                return(1);
+                return true;
             }
         });
-    return(0);
+    return false;
 }
 
-static int classPathContainsPath(char *path) {
-    StringList    *cp;
-    for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
+static bool classPathContainsPath(char *path) {
+    for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         //&fprintf(dumpOut,"[cp]checking %s<->%s\n", cp->string, path);
         if (compareFileNames(cp->string, path)==0) {
             //&fprintf(dumpOut,"[cp] saving of mapping %s\n", path);
-            return(1);
+            return true;
         }
     }
-    return(0);
+    return false;
 }
 
 int fileNameHasOneOfSuffixes(char *fname, char *suffs) {
@@ -1093,7 +1092,7 @@ int fileNameHasOneOfSuffixes(char *fname, char *suffs) {
     suff = getFileSuffix(fname);
     if (suff==NULL) return(0);
     if (*suff == '.') suff++;
-    return(pathsStringContainsPath(suffs, suff));
+    return pathsStringContainsPath(suffs, suff);
 }
 
 int stringEndsBySuffix(char *s, char *suffix) {
@@ -1178,7 +1177,7 @@ void javaMapDirectoryFiles1(char *packageFilename,
     // class paths
     for (cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         // avoid double mappings
-        if ((! pathsStringContainsPath(javaSourcePaths, cp->string))) {
+        if (!pathsStringContainsPath(javaSourcePaths, cp->string)) {
             assert(strlen(cp->string)+strlen(packageFilename)+2 < SIZE_TMP_MEM);
             fname = concatDirectoryWithFileName(tmpMemory, cp->string, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->string,packageFilename,a1,a2,a3);
@@ -1191,8 +1190,8 @@ void javaMapDirectoryFiles1(char *packageFilename,
     }
     // auto-inferred source path
     if (s_javaStat->namedPackagePath != NULL) {
-        if ((! pathsStringContainsPath(javaSourcePaths, s_javaStat->namedPackagePath))
-            && (! classPathContainsPath(s_javaStat->namedPackagePath))) {
+        if (!pathsStringContainsPath(javaSourcePaths, s_javaStat->namedPackagePath)
+            && !classPathContainsPath(s_javaStat->namedPackagePath)) {
             fname = concatDirectoryWithFileName(tmpMemory, s_javaStat->namedPackagePath, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,s_javaStat->namedPackagePath,packageFilename,a1,a2,a3);
         }
