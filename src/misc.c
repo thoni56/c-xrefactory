@@ -1087,32 +1087,27 @@ static bool classPathContainsPath(char *path) {
     return false;
 }
 
-int fileNameHasOneOfSuffixes(char *fname, char *suffs) {
+bool fileNameHasOneOfSuffixes(char *fname, char *suffs) {
     char *suff;
     suff = getFileSuffix(fname);
-    if (suff==NULL) return(0);
-    if (*suff == '.') suff++;
+    if (suff==NULL)
+        return false;
+    if (*suff == '.')
+        suff++;
     return pathsStringContainsPath(suffs, suff);
 }
 
-int stringEndsBySuffix(char *s, char *suffix) {
-    int sl, sfl;
-    sl = strlen(s);
-    sfl = strlen(suffix);
-    if (sl >= sfl && strcmp(s+sl-sfl, suffix)==0) return(1);
-    return(0);
-}
-
-int stringContainsSubstring(char *s, char *subs) {
-    int i, im;
+bool stringContainsSubstring(char *s, char *subs) {
+    int im;
     int sl, sbl;
     sl = strlen(s);
     sbl = strlen(subs);
     im = sl-sbl;
-    for(i=0; i<=im; i++) {
-        if (strncmp(s+i, subs, sbl)==0) return(1);
+    for (int i=0; i<=im; i++) {
+        if (strncmp(s+i, subs, sbl)==0)
+            return true;
     }
-    return(0);
+    return false;
 }
 
 int substringIndexWithLimit(char *s, int limit, char *subs) {

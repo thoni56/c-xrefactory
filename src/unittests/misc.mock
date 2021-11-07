@@ -98,8 +98,8 @@ int substringIndexWithLimit(char *s, int limit, char *subs) {
   return (int) mock(s, limit, subs);
 }
 
-int stringContainsSubstring(char *s, char *subs) {
-  return (int) mock(s, subs);
+bool stringContainsSubstring(char *s, char *subs) {
+  return (bool) mock(s, subs);
 }
 
 void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
@@ -130,12 +130,8 @@ int substringIndex(char *s, char *subs) {
   return (int) mock(s, subs);
 }
 
-int stringEndsBySuffix(char *s, char *suffix) {
-  return (int) mock(s, suffix);
-}
-
-int fileNameHasOneOfSuffixes(char *fname, char *suffs) {
-  return (int) mock(fname, suffs);
+bool fileNameHasOneOfSuffixes(char *fname, char *suffs) {
+  return (bool) mock(fname, suffs);
 }
 
 int mapPatternFiles(char *pattern, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), char *a1, char *a2, Completions *a3, void *a4, int *a5) {

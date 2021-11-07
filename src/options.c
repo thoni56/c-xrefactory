@@ -354,15 +354,15 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         // .class can be inside a jar archive, but this makes problem on
         // recursive read of a directory, it attempts to read .class
         if (topCallFlag==0
-            &&  (! fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes))
-            &&  (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
-            &&  compareFileNames(suff, ".y")!=0
+            && !fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes)
+            && !fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes)
+            && compareFileNames(suff, ".y")!=0
         ) {
             return;
         }
         if (options.javaFilesOnly && options.taskRegime != RegimeEditServer
-            && (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
-            && (! fileNameHasOneOfSuffixes(fname, "jar:class"))
+            && !fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes)
+            && !fileNameHasOneOfSuffixes(fname, "jar:class")
         ) {
             return;
         }
