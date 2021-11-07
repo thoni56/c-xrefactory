@@ -19,4 +19,6 @@ extern MacroArgumentTable macroArgumentTable;
 #undef HASH_ELEM_TYPE
 #endif
 
+extern void allocateMacroArgumentTable(void);
+
 #endif

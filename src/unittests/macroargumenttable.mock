@@ -3,11 +3,11 @@
 
 #include "macroargumenttable.h"
 
-S_macroArgumentTable s_macroArgumentTable;
+MacroArgumentTable s_macroArgumentTable;
 
 /* Repeated from macroargumenttable.h since that undef's them */
 #define HASH_TAB_NAME macroArgumentTable
-#define HASH_ELEM_TYPE S_macroArgumentTableElement
+#define HASH_ELEM_TYPE MacroArgumentTableElement
 
 /* Copied from hashtab.th to work here */
 #define HASH_TAB_TYPE struct HASH_TAB_NAME
@@ -71,3 +71,7 @@ void CONCAT(HASH_FUN_PREFIX, Map4)(
 #undef HASH_ELEM_TYPE
 #undef HASH_TAB_TYPE
 #undef HASH_FUN_PREFIX
+
+void allocateMacroArgumentTable(void) {
+  mock();
+}

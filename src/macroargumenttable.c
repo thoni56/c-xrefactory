@@ -10,3 +10,8 @@
 #include "hashtab.tc"
 
 MacroArgumentTable macroArgumentTable;
+
+void allocateMacroArgumentTable(void) {
+    PPM_ALLOCC(macroArgumentTable.tab, MAX_MACRO_ARGS, MacroArgumentTableElement *);
+    macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
+}

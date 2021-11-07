@@ -11,10 +11,6 @@ void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,
     mock(lexInput, currentLexem, endOfBuffer, beginningOfBuffer, macroName, margExpFlag);
 }
 
-void ppMemInit(void) {
-  mock();
-}
-
 void initAllInputs(void) {
   mock();
 }

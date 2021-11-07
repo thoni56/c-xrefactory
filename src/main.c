@@ -31,6 +31,7 @@
 #include "log.h"
 #include "utils.h"
 #include "filedescriptor.h"
+#include "macroargumenttable.h"
 
 #include "protocol.h"
 
@@ -2184,7 +2185,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     CX_ALLOCC(referenceTable.tab,MAX_CXREF_SYMBOLS, struct symbolReferenceItem *);
     refTabNoAllocInit( &referenceTable,MAX_CXREF_SYMBOLS);
     SM_INIT(ppmMemory);
-    ppMemInit();
+    allocateMacroArgumentTable();
     initOuterCodeBlock();
 
     // init options as soon as possible! for exampl initCwd needs them

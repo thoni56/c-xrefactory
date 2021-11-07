@@ -238,12 +238,6 @@ static void setCurrentFileInfoFor(char *fileName) {
 /*                             Init Reading                          */
 /* ***************************************************************** */
 
-void ppMemInit(void) {
-    PPM_ALLOCC(macroArgumentTable.tab, MAX_MACRO_ARGS, MacroArgumentTableElement *);
-    macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
-    ppMemoryIndex = 0;
-}
-
 // it is supposed that one of file or buffer is NULL
 void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileName) {
     int     prefixLength, bufferSize, offset;

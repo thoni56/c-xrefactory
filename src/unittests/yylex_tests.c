@@ -43,7 +43,7 @@ BeforeEach(Yylex) {
     initOuterCodeBlock();
 
     options.taskRegime = RegimeEditServer;
-    ppMemInit();
+    allocateMacroArgumentTable();
     initFileTable(&fileTable);
     symbolTable = StackMemoryAlloc(SymbolTable);
     symbolTableInit(symbolTable, 10);

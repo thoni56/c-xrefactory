@@ -35,6 +35,7 @@
 #include "filedescriptor.mock"
 #include "utils.mock"
 #include "lexer.mock"
+#include "macroargumenttable.mock"
 
 
 Describe(Main);
