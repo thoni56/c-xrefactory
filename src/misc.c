@@ -1047,20 +1047,22 @@ int mapDirectoryFiles(
     return(res);
 }
 
-static char *concatFNameInTmpMemory(char *directoryName, char *packageFilename) {
-    char *tt, *fname;
-    fname = tmpMemory;
-    tt = strmcpy(fname, directoryName);
-    if (*packageFilename) {
-        *tt = FILE_PATH_SEPARATOR;
-        strcpy(tt+1, packageFilename);
+
+/* Non-static just for unittesting */
+char *concatDirectoryWithFileName(char *output, char *directoryName, char *fileName) {
+    char *charP;
+
+    charP = strmcpy(output, directoryName);
+    if (*fileName) {
+        *charP = FILE_PATH_SEPARATOR;
+        strcpy(charP+1, fileName);
 #if defined (__WIN32__)
-        for(s=tt+1; *s; s++)
+        for (char *s=charP+1; *s; s++)
             if (*s=='/')
                 *s = FILE_PATH_SEPARATOR;
 #endif
     }
-    return fname;
+    return output;
 }
 
 static int pathsStringContainsPath(char *paths, char *path) {
@@ -1170,7 +1172,7 @@ void javaMapDirectoryFiles1(char *packageFilename,
 
     // source paths
     MapOnPaths(javaSourcePaths, {
-            fname = concatFNameInTmpMemory(currentPath, packageFilename);
+            fname = concatDirectoryWithFileName(tmpMemory, currentPath, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,currentPath,packageFilename,a1,a2,a3);
         });
     // class paths
@@ -1178,7 +1180,7 @@ void javaMapDirectoryFiles1(char *packageFilename,
         // avoid double mappings
         if ((! pathsStringContainsPath(javaSourcePaths, cp->string))) {
             assert(strlen(cp->string)+strlen(packageFilename)+2 < SIZE_TMP_MEM);
-            fname = concatFNameInTmpMemory(cp->string, packageFilename);
+            fname = concatDirectoryWithFileName(tmpMemory, cp->string, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->string,packageFilename,a1,a2,a3);
         }
     }
@@ -1191,7 +1193,7 @@ void javaMapDirectoryFiles1(char *packageFilename,
     if (s_javaStat->namedPackagePath != NULL) {
         if ((! pathsStringContainsPath(javaSourcePaths, s_javaStat->namedPackagePath))
             && (! classPathContainsPath(s_javaStat->namedPackagePath))) {
-            fname = concatFNameInTmpMemory(s_javaStat->namedPackagePath, packageFilename);
+            fname = concatDirectoryWithFileName(tmpMemory, s_javaStat->namedPackagePath, packageFilename);
             mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,s_javaStat->namedPackagePath,packageFilename,a1,a2,a3);
         }
     }

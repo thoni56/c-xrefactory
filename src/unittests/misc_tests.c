@@ -25,5 +25,16 @@ BeforeEach(Misc) {}
 AfterEach(Misc) {}
 
 
-Ensure(Misc, can_run_an_empty_test) {
+/* Protected */
+extern char *concatDirectoryWithFileName(char *result, char *directoryName, char *packageFilename);
+
+Ensure(Misc, can_concat_filename_with_directory) {
+    char *dirname = "dirname";
+    char *filename = "filename";
+    char buffer[1000];
+    char *result = concatDirectoryWithFileName(buffer, dirname, filename);
+
+    /* TODO: FILE_PATH_SEPARATOR might be '\\' */
+    assert_that(result, is_equal_to_string("dirname/filename"));
+    assert_that(result, is_not_equal_to(tmpMemory));
 }
