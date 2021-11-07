@@ -233,22 +233,154 @@ static TokenNamesInitTable tokenNameInitTable3[] = {
 };
 
 
+static S_javaTypePCTIConvertIni s_javaTypePCTIConvertIniTab[] = {
+    {TypeByte,      PCTIndexByte},
+    {TypeShort,     PCTIndexShort},
+    {TypeChar,      PCTIndexChar},
+    {TypeInt,       PCTIndexInt},
+    {TypeLong,      PCTIndexLong},
+    {TypeFloat,     PCTIndexFloat},
+    {TypeDouble,    PCTIndexDouble},
+    {-1,			-1},
+};
+
+static int preCreatedTypesInitTable[] = {
+    TypeDefault,
+    TypeChar,
+    TypeUnsignedChar,
+    TypeSignedChar,
+    TypeInt,
+    TypeUnsignedInt,
+    TypeSignedInt,
+    TypeShortInt,
+    TypeShortUnsignedInt,
+    TypeShortSignedInt,
+    TypeLongInt,
+    TypeLongUnsignedInt,
+    TypeLongSignedInt,
+    TypeFloat,
+    TypeDouble,
+    TypeVoid,
+    TypeError,
+    TypeAnonymousField,
+    /* MODIFIERS, */
+    TmodLong,
+    TmodShort,
+    TmodSigned,
+    TmodUnsigned,
+    TmodShortSigned,
+    TmodShortUnsigned,
+    TmodLongSigned,
+    TmodLongUnsigned,
+    /* JAVA_TYPES, */
+    TypeByte,
+    TypeShort,
+    TypeLong,
+    TypeBoolean,
+    TypeNull,
+    -1,
+};
+
+static S_typeCharCodeIni s_baseTypeCharCodesIniTab[] = {
+    {TypeByte,      'B'},
+    {TypeChar,      'C'},
+    {TypeDouble,    'D'},
+    {TypeFloat,     'F'},
+    {TypeInt,       'I'},
+    {TypeLong,      'J'},
+    {TypeShort,     'S'},
+    {TypeBoolean,   'Z'},
+    {TypeVoid,      'V'},
+    {TypeError,     'E'},
+    {TypeNull,      JAVA_NULL_CODE},    /* this is just my in(con)vention */
+    {-1,            ' '},
+};
+
+static Int2StringDictionary typeNamesInitTable[] = {
+    {TypeDefault,           "Default"},
+    {TypeChar,              "char"},
+    {TypeUnsignedChar,      "unsigned char"},
+    {TypeSignedChar,        "signed char"},
+    {TypeInt,               "int"},
+    {TypeUnsignedInt,       "unsigned int"},
+    {TypeSignedInt,         "signed int"},
+    {TypeShortInt,          "short int"},
+    {TypeShortUnsignedInt,  "short unsigned int"},
+    {TypeShortSignedInt,    "short signed int"},
+    {TypeLongInt,           "long int"},
+    {TypeLongUnsignedInt,   "long unsigned int"},
+    {TypeLongSignedInt,     "long signed int"},
+    {TypeFloat,             "float"},
+    {TypeDouble,            "double"},
+    {TypeStruct,            "struct"},
+    {TypeUnion,             "union"},
+    {TypeEnum,              "enum"},
+    {TypeVoid,              "void"},
+    {TypePointer,           "Pointer"},
+    {TypeArray,             "Array"},
+    {TypeFunction,          "Function"},
+    {TypeAnonymousField,    "AnonymousField"},
+    {TypeError,             "Error"},
+    {TypeCppIfElse,         "#if-else-fi"},
+    {TypeCppInclude,        "#include"},
+    {TypeCppCollate,        "##"},
+
+    {TmodLong,              "long"},
+    {TmodShort,             "short"},
+    {TmodSigned,            "signed"},
+    {TmodUnsigned,          "unsigned"},
+    {TmodShortSigned,       "short signed"},
+    {TmodShortUnsigned,     "short unsigned"},
+    {TmodLongSigned,        "long signed"},
+    {TmodLongUnsigned,      "long unsigned"},
+
+    {TypeElipsis,           "elipsis"},
+
+    {TypeByte,              "byte"},
+    {TypeShort,             "short"},
+    {TypeLong,              "long"},
+    {TypeBoolean,           "boolean"},
+    {TypeNull,              "null"},
+    {TypeOverloadedFunction,    "OverloadedFunction"},
+
+    {TypeWchar_t,           "wchar_t"},
+
+    {TypeLabel,             "label"},
+    {TypeKeyword,           "keyword"},
+    {TypeToken,             "token"},
+    {TypeMacro,             "macro"},
+    {TypeMacroArg,          "macro argument"},
+    {TypeUndefMacro,        "Undefined Macro"},
+    {TypePackage,           "package"},
+    {TypeYaccSymbol,        "yacc symbol"},
+    {TypeCppCollate,        "Cpp##sym"},
+    {TypeSpecialComplet,    "(Completion Wizard)"},
+    {TypeInheritedFullMethod,   "(Override Wizard)"},
+    {TypeNonImportedClass,  "fully qualified name"},
+    {-1,					NULL}
+};
+
+
+static Int2StringDictionary storageNamesInitTable[] = {
+    {StorageExtern,     "extern "},
+    {StorageStatic,     "static "},
+    {StorageRegister,   "register "},
+    {StorageTypedef,    "typedef "},
+    {-1,                NULL}
+};
+
+
 static char *autoDetectJavaVersion(void) {
-    int i;
-    char *res;
     // O.K. pass jars and look for rt.jar
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
+    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
         if (stringContainsSubstring(zipArchiveTable[i].fn, "rt.jar")) {
             // I got it, detect java version
             if (stringContainsSubstring(zipArchiveTable[i].fn, "1.4")) {
-                res = JAVA_VERSION_1_4;
-                goto fini;
+                return JAVA_VERSION_1_4;
             }
         }
     }
-    res = JAVA_VERSION_1_3;
- fini:
-    return res;
+    return JAVA_VERSION_1_3;
 }
 
 static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
@@ -310,10 +442,8 @@ void initTokenNamesTables(void) {
 }
 
 void initJavaTypePCTIConvertIniTab(void) {
-    int                         i;
-    S_javaTypePCTIConvertIni    *s;
-    for (i=0; s_javaTypePCTIConvertIniTab[i].symType != -1; i++) {
-        s = &s_javaTypePCTIConvertIniTab[i];
+    for (int i=0; s_javaTypePCTIConvertIniTab[i].symType != -1; i++) {
+        S_javaTypePCTIConvertIni *s = &s_javaTypePCTIConvertIniTab[i];
         assert(s->symType >= 0 && s->symType < MAX_TYPE);
         s_javaTypePCTIConvert[s->symType] = s->PCTIndex;
     }

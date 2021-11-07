@@ -106,7 +106,6 @@ extern S_exprTokenType s_forCompletionType;
 extern TypeModifier *s_javaCompletionLastPrimary;
 extern char *tokenNamesTable[];
 extern int tokenNameLengthsTable[];
-extern int preCreatedTypesInitTable[];
 extern TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 extern TypeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
 extern TypeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
@@ -114,10 +113,7 @@ extern TypeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
 extern char s_javaBaseTypeCharCodes[MAX_TYPE];
 extern int s_javaCharCodeBaseTypes[MAX_CHARS];
 extern char s_javaTypePCTIConvert[MAX_TYPE];
-extern S_javaTypePCTIConvertIni s_javaTypePCTIConvertIniTab[];
 extern char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1];
-
-extern S_typeCharCodeIni s_baseTypeCharCodesIniTab[];
 
 extern Position s_olcxByPassPos;
 extern Position s_cxRefPos;
@@ -130,9 +126,7 @@ extern int s_olStringSecondProcessing;  /* am I in macro body pass ? */
 extern int s_olOriginalFileNumber;      /* original file name */
 extern int s_olOriginalComFileNumber;	/* original communication file */
 
-extern Int2StringDictionary typeNamesInitTable[];
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
-extern Int2StringDictionary storageNamesInitTable[];
 
 extern char *s_editCommunicationString;
 
