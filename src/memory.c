@@ -162,7 +162,7 @@ void *stackMemoryAlloc(int size) {
         currentBlock->firstFreeIndex = i+size;
         return &stackMemory[i];
     } else {
-        fatalError(ERR_ST,"i+size > SIZE_workMemory,\n\tworking memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR);
+        fatalError(ERR_ST,"i+size > SIZE_stackMemory,\n\tstack memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR);
         /* Should not return, but for testing and compilers sake return something */
         return NULL;
     }
