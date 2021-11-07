@@ -6,15 +6,13 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * DOING Selecting automatic project selection after having set a specific does not seem to work
-* DOING Move XX_ALLOCC and friends to "memory" module
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra defines
-* DOING BUG: an unterminated "assert(" (with the c-xref def of it: MACRO) breaks
-Test case end_of_macro exhibits this.
-NOTE: An uncompleted macro outside any context segv:s
+* TODO BUG: an unterminated "assert(" (with the c-xref def of it: MACRO) breaks
+  with error message "size of #macro_argument exceeded MACRO_UNIT_SIZE"
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO All fillXXX() should not be mocked but have the same body as the real one
 * TODO Handle void as no parameters in formal argument lists, e.g. when refactoring them
@@ -63,7 +61,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
 ** TODO Bug: when extracting C function including declarations that are required
    by code left outside the extraction, that declaration is moved to the
    extracted function. This should probably trigger "structure error".
-* TODO Separate the options into sections and move HTML (at least) to separate structure
+* TODO Separate the options into sections and move them to separate structures
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
 * TODO Make all modules independent on main
@@ -122,6 +120,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Move XX_ALLOCC and friends to "memory" module
 * DONE Turn the out parameter "position" of XXXTabAdd to return value instead, so it can be ignored without unused variable
 * DONE Introduce adapter for stat() in fileio
 We are only using the following attributes of the struct stat:
