@@ -9,7 +9,8 @@ CYAN  = 6
 WHITE = 7
 
 # OK and FAIL messages (with colour)
-OK = echo "Tests in '$(TEST)': $(shell tput setaf $(GREEN))Ok$(shell tput sgr0)"
+#OK = echo "Tests in '$(TEST)': $(shell tput setaf $(GREEN))Ok$(shell tput sgr0)"
+OK = echo -n "$(shell tput setaf $(GREEN)).$(shell tput sgr0)"
 FAIL = echo "Tests in '$(TEST)': $(shell tput setaf $(RED))Failed$(shell tput sgr0)"
 NO_TESTS = @echo "Tests in '$(TEST)': $(shell tput setaf $(YELLOW))No tests, just executing$(shell tput sgr0)"
 IGNORED = @echo "Tests in '$(TEST)': $(shell tput setaf $(BLUE))Ignored$(shell tput sgr0)"

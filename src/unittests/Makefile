@@ -46,7 +46,7 @@ all:
 else
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
-	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
+	cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $^
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
 		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
