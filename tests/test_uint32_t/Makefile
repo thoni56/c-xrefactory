@@ -22,7 +22,7 @@ CXREF = ../../src/c-xref
 ARGUMENTS = -create -xrefrc .c-xrefrc -p $(CURDIR) $(TRACE) uint32.c -errors -log=log
 
 $(TEST): .c-xrefrc
-	$(CXREF) $(ARGUMENTS) 2> output.tmp
+	$(CXREF) $(ARGUMENTS) 2> output.tmp > out
 	@$(NORMALIZE) output.tmp > output
 	grep ERROR output | grep intptr_t; \
 	if [ $$? -eq 0 ] ; then \

@@ -24,7 +24,7 @@ CXREF = ../../src/c-xref
 CXREF_COMMAND = $(CXREF) -create -xrefrc .c-xrefrc -p $(CURDIR) -I path1 -I path2 source.c -xrefactory-II -errors -o output.tmp
 
 $(TEST): .c-xrefrc
-	$(CXREF_COMMAND)
+	$(CXREF_COMMAND) > out
 	@$(NORMALIZE) output.tmp > output
 	grep "error len" output ; \
 	if [ $$? -eq 0 ] ; then \
