@@ -23,8 +23,14 @@ endif
 # CGREEN_LIB = -lcgreen
 # else you have to add explicit linkage directives
 CGREEN_LIB = -L/usr/local/lib -lcgreen
+
+ifeq ($(OS),Darwin)
+ifeq ($(shell arch),arm64)
 # And for Homebrew on M1
-# CGREEN_LIB = -L/opt/homebrew/lib -lcgreen
+CGREEN_LIB = -L/opt/homebrew/lib -lcgreen
+DYLD_PATH = DYLD_LIBRARY_PATH=/opt/homebrew/lib
+endif
+endif
 
 # We need to use compatible gcov (Darwin/Brew now have GCC v11)
 ifeq ("$(CC)", "gcc-11")
@@ -46,7 +52,7 @@ all:
 else
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
-	cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $^
+	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $^
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
 		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
