@@ -25,11 +25,11 @@ endif
 CGREEN_LIB = -L/usr/local/lib -lcgreen
 
 ifeq ($(OS),Darwin)
-ifeq ($(shell arch),arm64)
-# And for Homebrew on M1
-CGREEN_LIB = -L/opt/homebrew/lib -lcgreen
-DYLD_PATH = DYLD_LIBRARY_PATH=/opt/homebrew/lib
-endif
+	ifeq ($(shell arch),arm64)
+		# And for Homebrew on M1
+		CGREEN_LIB = -L/opt/homebrew/lib -lcgreen
+		DYLD_PATH = DYLD_LIBRARY_PATH=/opt/homebrew/lib
+	endif
 endif
 
 # We need to use compatible gcov (Darwin/Brew now have GCC v11)

@@ -70,6 +70,10 @@ ifeq ($(OS),Darwin)
 	ifneq (, $(shell which gcc-11))
 		CC=gcc-11
 	endif
+	ifeq ($(shell arch),arm64)
+		# And for Homebrew on M1
+		CC=cc
+	endif
 endif
 
 # We need to use compatible gcov (for Darwin/Brew we need to use GCC:s gcov)
@@ -245,12 +249,8 @@ clean-coverage:
 	fi
 
 coverage-report:
-ifeq ("$(CC)", "gcc-11")
 	@echo Doing the coverage reporting in the background...
 	$(MAKE) the-actual-coverage-report &
-else
-	@echo Not generating coverage report since CC != gcc-11 ...
-endif
 
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
 # NOTE: lcov < 1.14 don't have --exclude, need to use separate --remove step for compatibility
