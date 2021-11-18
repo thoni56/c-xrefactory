@@ -244,7 +244,7 @@ clean:
 
 .PHONY: clean-coverage
 clean-coverage:
-	-if command -v lcov > /dev/null 2>&1 ; then \
+	-if command -v $(LCOV) > /dev/null 2>&1 ; then \
 		$(LCOV) -q -z -d .. ; \
 	fi
 
