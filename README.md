@@ -1,31 +1,39 @@
-[![Build Status](https://travis-ci.com/thoni56/c-xrefactory.svg?branch=main)](https://app.travis-ci.com/thoni56/c-xrefactory)[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=main)](https://coveralls.io/github/thoni56/c-xrefactory?branch=main)[![codecov](https://codecov.io/gh/thoni56/c-xrefactory/branch/main/graph/badge.svg)](https://codecov.io/gh/thoni56/c-xrefactory)
-# C-xrefactory - A refactoring tool for C/Java and Emacs
+[![Build Status][travis badge]][travis link]&nbsp;
+[![Coverage Status][coveralls badge]][coveralls link]&nbsp;
+[![codecov][codecov badge]][codecov link]
+
+# C-xrefactory — A refactoring tool for C/Java and Emacs
 
 ## TL;DR
 
 `c-xrefactory` is a free Emacs refactoring tool and code browser for
 _C_ (& _Java_ and _Yacc_).
 
-BEWARE: As `c-xrefactory` is undergoing radical refactorings and
-changes and doesn't have tests for all features occassional hickups
-are likely. I use it almost everyday and the stable version, which you
-get if you install as per below, has passed all tests. But YMMV.
+> **BEWARE**: As `c-xrefactory` is undergoing radical refactorings and
+> changes and doesn't have tests for all features occasional hiccups
+> are likely. I use it almost everyday and the stable version, which you
+> get if you install as per below, has passed all tests. But YMMV.
 
 ## Install
 
-Easiest way to install is using `el-get` (see NOTE below):
+Easiest way to install is using `el-get`:
 
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
 
+> **NOTE**: You can easily install `el-get` in your running emacs using
+> a snippet from [`el-get`'s GitHub repo][el-get repo], but don't forget
+> to add the `el-get` pieces in your emacs init.
+
 ## Use
 
-Place cursor on an identifier and `go to definition` (F-6), navigate
-between occurrences (F-3, F-4), refactor (F-11) with `rename`, mark
-some code and `extract function`. Your C programming and
-code will never be the same. Some highlights:
+Place cursor on an identifier and `go to definition` (<kbd>F6</kbd>),
+navigate between occurrences (<kbd>F3</kbd>, <kbd>F4</kbd>), refactor
+(<kbd>F11</kbd>) with `rename`, mark some code and `extract function`.
+Your C programming and code will never be the same. Some highlights:
 
 - navigate through all usages of any type of symbol
-- rename any type of symbol, variable, macro, parameter, or Yacc grammar rule
+- rename any type of symbol, variable, macro, parameter,
+  or Yacc grammar rule
 - add or delete function parameter
 - extract function or macro
 - detect unused symbols locally or in the complete project
@@ -58,18 +66,15 @@ For Windows I really recommend doing your development in WSL
 (especially WSL2). You can setup `c-xrefactory` as described above and
 run Emacs in a terminal window without any problems.
 
-To use Emacs in a graphical environment from WSL (in an X11 window)
-you need a Windows X11 server like
-[VcXsrv](https://sourceforge.net/projects/vcxsrv/) (my
-recommendatioin), x410 (from the Windows Store),
-[Xming](https://sourceforge.net/projects/xming/)) or, if you already
-have MobaXterm, that also comes with an X11 server. Then set it the
-server according to [these
-instructions](https://stackoverflow.com/a/61110604/204658).
+To use Emacs in a graphical environment from WSL (in an X11 window) you
+need a Windows X11 server like [VcXsrv] (my recommendation), [X410]
+(from the Windows Store), [Xming] or, if you already have [MobaXterm],
+that also comes with an X11 server. Then set it the server according
+to [these instructions][X11 WSL2].
 
 ## Features and notes
 
-TBD. Some documentation is [here](https://github.com/thoni56/c-xrefactory/blob/master/doc/c-xrefactory.md).
+TBD. Some documentation can be found [here][our docs].
 
 ### Yacc special features
 
@@ -78,9 +83,9 @@ you can (mostly) navigate symbols even inside them.
 
 Non-terminals (rule names) can be navigated and completed as if they
 were any other symbol. Furthermore the special symbol `$<n>`, where
-<n> is a number referencing symbol <n> in the rule can also be
-navigated. This is extra handy with F6 to be sure that you referenced
-the terminal or non-terminal that you meant to.
+&lt;n&gt; is a number referencing symbol &lt;n&gt; in the rule can also
+be navigated. This is extra handy with <kbd>F6</kbd> to be sure that
+you referenced the terminal or non-terminal that you meant to.
 
 Unfortunately there are no refactorings of Yacc rules possible (but
 that would be a cool project!). But you can of course do all the C
@@ -89,11 +94,9 @@ refactorings you want from inside the C code in the semantic actions.
 ### LSP
 
 As noted in one issue, a natural development would be to support LSP
-([The Language Server
-Protocol](https://microsoft.github.io/language-server-protocol/)), but
-that is still far out of reach. A lot of refactoring needs to be done
-to clean up the current modules and protocol to get closer to that
-point.
+(The [Language Server Protocol]), but that is still far out of reach.
+A lot of refactoring needs to be done to clean up the current modules
+and protocol to get closer to that point.
 
 ### Java notes
 
@@ -106,8 +109,8 @@ You need to have a JRE installed so that it can be found. If it's
 Java 8 it will also be parsed for all Java standard library
 symbols. Unfortunately later versions does not store JRE in a
 standardized format (which was Jar-files with class files) so
-`c-xrefactory` cannot read it. You can still compile with Java > 8 and
-use `c-xrefactory` with a Java 8 JRE.
+`c-xrefactory` cannot read it. You can still compile with Java &gt; 8
+and use `c-xrefactory` with a Java 8 JRE.
 
 As there are good Java tools available with refactoring support I'm
 thinking of removing all Java support from `c-xrefactory` since that
@@ -130,47 +133,69 @@ makes me confident in refactoring many things.
 If you think you can help, I'll be happy to take it, even if it is
 only adding one line of understanding in the wiki...
 
-
 ## The Story
 
-Once apon a time there was [http://www.xref.sk](http://www.xref.sk), a
-site promoting possibly the worlds first refactoring browser to cross
-the ["Refactoring's
-Rubicon"](http://martinfowler.com/articles/refactoringRubicon.html). That
-site seems to be going up and (mostly) down and there has been no
-support for many years, but it seems that
-[http://www.xrefactory.com/](http://www.xrefactory.com/) is now a
+Once apon a time there was [www.xref.sk], a site promoting possibly the
+worlds first refactoring browser to cross the ["Refactoring's Rubicon"].
+That site seems to be going up and (mostly) down and there has been no
+support for many years, but it seems that [www.xrefactory.com] is now a
 better and more stable URL to the original Xrefactory, where it is
 still available.
 
 At that time it had a free Java and C version, and a paid C++
-version. Development seems to have been headed by a [Marián
-Vittek](http://dai.fmph.uniba.sk/w/Marian_Vittek/en).
+version. Development seems to have been headed by a [Marián Vittek].
 
 Marián made a C-version, c-xref, available under GPL already 2009 on
-[SourceForge](http://sourceforge.net/projects/c-xref/). The reason
-seems to have been to allow parallell installations of free and
-non-free versions. `c-xref` seems to be intended to be limited to C
-and Emacs. Actually it's not. It is all but identical to the original
-full/free C/Java refactoring browser from
-[http://www.xref.sk](http://www.xref.sk). So Java is also supported,
-at least Java 1.3(?).
+[SourceForge][c-xref]. The reason seems to have been to allow
+parallel installations of free and non-free versions. `c-xref` seems to
+be intended to be limited to C and Emacs. Actually it's not. It is all
+but identical to the original full/free C/Java refactoring browser from
+[www.xref.sk]. So Java is also supported, at least Java 1.3(?).
 
 ## About This Clone
 
 As I'm almost dependent on this and refactoring tools for C is sadly
-lacking, I decided to pick this up and work a bit on it, maybe even
-make it a [bit more visible](http://sourceforge.net/projects/c-xref/),
-by moving it to GitHub.
+lacking, I decided to pick this up and work a bit on it, and maybe even
+[give it more visibility][c-xref], by moving it to GitHub.
 
-No-one would be more happy than me if the C++ version where also put
+No-one would be more happy than me if the C++ version was also put
 in the public domain.
 
-If someone has contact with Marián, please inform him and ask him to
-contact me. Perhaps we can create something great from this together
+If someone is in contact with Marián, please inform him and ask him to
+contact me. Perhaps we can create something great from this, together
 with others who might be interested.
 
-NOTE: You can easily install `el-get` in your running emacs using a
-snippet from [`el-get`s github
-repo](https://github.com/dimitri/el-get), but don't forget to add the
-`el-get` pieces in you emacs init.
+<!------------------------- REFERENCE LINKS -------------------------->
+
+[el-get repo]: https://github.com/dimitri/el-get "Visti el-get repository at GitHub"
+[Language Server Protocol]: https://microsoft.github.io/language-server-protocol "LSP website"
+
+<!-- xrefactory -->
+
+[our docs]: https://github.com/thoni56/c-xrefactory/blob/master/doc/c-xrefactory.md "Read our C-xrefactory documentation"
+
+["Refactoring's Rubicon"]: http://martinfowler.com/articles/refactoringRubicon.html "Read the 'Crossing Refactoring's Rubicon' article, by Martin Fowler (2001)"
+[c-xref]: http://sourceforge.net/projects/c-xref/ "c-xref project at SourceForge"
+[www.xref.sk]: http://www.xref.sk "Xrefactory old website (unreachable)"
+[www.xrefactory.com]: http://www.xrefactory.com "Xrefactory webiste"
+
+<!-- X11 Windows OS -->
+
+[MobaXterm]: https://mobaxterm.mobatek.net "MobaXterm website"
+[VcXsrv]: https://sourceforge.net/projects/vcxsrv/ "VcXsrv project at SourceForge"
+[X11 WSL2]: https://stackoverflow.com/a/61110604/204658 "StackOverflow: How to set up working X11 forwarding on WSL2"
+[X410]: https://www.microsoft.com/en-us/p/x410/9nlp712zmn9q "X410 page at MS Windows Store"
+[Xming]: https://sourceforge.net/projects/xming/ "Xming project at SourceForge"
+
+<!-- people -->
+
+[Marián Vittek]: http://dai.fmph.uniba.sk/w/Marian_Vittek/en "Marián Vittek profile at Comenius University (Bratislava)"
+
+<!-- badges -->
+
+[travis badge]: https://travis-ci.com/thoni56/c-xrefactory.svg?branch=main "Travis CI build status"
+[travis link]: https://app.travis-ci.com/thoni56/c-xrefactory
+[coveralls badge]: https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=main "Coveralls code coverage status"
+[coveralls link]: https://coveralls.io/github/thoni56/c-xrefactory?branch=main
+[codecov badge]: https://codecov.io/gh/thoni56/c-xrefactory/branch/main/graph/badge.svg "Codecov code coverage status"
+[codecov link]: https://codecov.io/gh/thoni56/c-xrefactory
