@@ -1228,13 +1228,10 @@ static void cxrfReference(int size,
                         lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     if (additionalArg == CX_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
-                        if (file!=s_olOriginalFileNumber
-                            || !fileTable.tab[file]->b.commandLineEntered
-                            || options.server_operation==OLO_GOTO
-                            || options.server_operation==OLO_CGOTO
-                            || options.server_operation==OLO_PUSH_NAME
-                            || options.server_operation==OLO_PUSH_SPECIAL_NAME
-                            ) {
+                        if (file != olOriginalFileNumber || !fileTable.tab[file]->b.commandLineEntered ||
+                            options.server_operation == OLO_GOTO || options.server_operation == OLO_CGOTO ||
+                            options.server_operation == OLO_PUSH_NAME ||
+                            options.server_operation == OLO_PUSH_SPECIAL_NAME) {
                             //&fprintf(dumpOut,":adding reference %s:%d\n", fileTable.tab[reference.position.file]->name, reference.position.line);
                             olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &reference, lastIncomingInfo.onLineRefIsBestMatchFlag);
                         }
@@ -1303,7 +1300,7 @@ static void cxrfSubClass(int size,
         }
         break;
     case RegimeEditServer:
-        if (fileIndex!=s_input_file_number) {
+        if (fileIndex != inputFileNumber) {
             log_trace("reading %s < %s", simpleFileName(fileTable.tab[sub_class]->name),
                       simpleFileName(fileTable.tab[super_class]->name));
             createSubClassInfo(super_class, sub_class, fileIndex, NO_CX_FILE_ITEM_GEN);

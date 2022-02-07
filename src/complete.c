@@ -1469,7 +1469,7 @@ void javaCompleteThisPackageName(Completions *c) {
     static char cname[TMP_STRING_SIZE];
     char        *cc, *ss, *dd;
     if (c->idToProcessLen != 0) return;
-    ss = javaCutSourcePathFromFileName(getRealFileNameStatic(fileTable.tab[s_olOriginalFileNumber]->name));
+    ss = javaCutSourcePathFromFileName(getRealFileNameStatic(fileTable.tab[olOriginalFileNumber]->name));
     strcpy(cname, ss);
     dd = lastOccurenceInString(cname, '.');
     if (dd!=NULL) *dd=0;
@@ -1486,7 +1486,7 @@ static void javaCompleteThisClassDefinitionName(Completions*c) {
     static char cname[TMP_STRING_SIZE];
     char        *cc;
 
-    javaGetClassNameFromFileNum(s_olOriginalFileNumber, cname, DOTIFY_NAME);
+    javaGetClassNameFromFileNum(olOriginalFileNumber, cname, DOTIFY_NAME);
     cc = strchr(cname,0);
     assert(cc!=NULL);
     *cc++ = ' '; *cc=0;

@@ -736,7 +736,7 @@ static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd
         // relevant symbol
         for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
             // I should check only references from this file
-            if (rr->position.file == s_input_file_number) {
+            if (rr->position.file == inputFileNumber) {
                 // check if the reference is outside moved class
                 if ((! DM_IS_BETWEEN(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi))
                     && OL_VIEWABLE_REFS(rr)) {
@@ -793,7 +793,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
         SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&mm->s);
         if (ss!=NULL && (! ss->selected)) {
             for (Reference *rr=mm->s.refs; rr!=NULL; rr=rr->next) {
-                if (rr->position.file != s_input_file_number) {
+                if (rr->position.file != inputFileNumber) {
                     // yes there is a reference from outside to our symbol
                     ss->selected = ss->visible = 1;
                     goto nextsym;

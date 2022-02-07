@@ -870,10 +870,10 @@ CompilationUnit: {
                     assert(s_jsl == NULL); // no nesting
                     jsltypeTab = StackMemoryAlloc(JslTypeTab);
                     jslTypeTabInit(jsltypeTab, MAX_JSL_SYMBOLS);
-                    javaReadSymbolFromSourceFileInit(s_olOriginalFileNumber,
+                    javaReadSymbolFromSourceFileInit(olOriginalFileNumber,
                                                      jsltypeTab);
 
-                    fname = fileTable.tab[s_olOriginalFileNumber]->name;
+                    fname = fileTable.tab[olOriginalFileNumber]->name;
                     if (options.taskRegime == RegimeEditServer
                         && refactoringOptions.refactoringRegime!=RegimeRefactory) {
                         // this must be before reading 's_olOriginalComFile' !!!
@@ -883,9 +883,9 @@ CompilationUnit: {
                     }
 
                     // this must be last reading of this class before parsing
-                    if (editorFileExists(fileTable.tab[s_olOriginalComFileNumber]->name)) {
+                    if (editorFileExists(fileTable.tab[olOriginalComFileNumber]->name)) {
                         javaReadSymbolsFromSourceFileNoFreeing(
-                            fileTable.tab[s_olOriginalComFileNumber]->name, fname);
+                            fileTable.tab[olOriginalComFileNumber]->name, fname);
                     }
 
                     javaReadSymbolFromSourceFileEnd();
@@ -1545,7 +1545,7 @@ FieldDeclaration
                               p->name,clas->linkName);
                     LIST_APPEND(Symbol, clas->u.structSpec->records, p);
                     assert(vClass!=noFileIndex);
-                    if (p->pos.file!=s_olOriginalFileNumber && options.server_operation==OLO_PUSH) {
+                    if (p->pos.file!=olOriginalFileNumber && options.server_operation==OLO_PUSH) {
                         // pre load of saved file akes problem on move field/method, ...
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }

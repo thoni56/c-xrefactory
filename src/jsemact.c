@@ -851,7 +851,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
         if (cl!=NULL && cl!=memb)
             cl->bits = memb->bits;
         if (sourceName != NULL) {
-            addJavaFileDependency(s_olOriginalFileNumber, sourceName);
+            addJavaFileDependency(olOriginalFileNumber, sourceName);
         }
     }
 }

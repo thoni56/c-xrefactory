@@ -1795,7 +1795,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
     Reference *r;
     Position basePos;
 
-    basePos = makePosition(s_input_file_number, 0, 0);
+    basePos = makePosition(inputFileNumber, 0, 0);
     fillSymbolRefItem(&ppp, mdef->linkName,
                                 cxFileHashNumber(mdef->linkName), // useless, put 0
                                 noFileIndex, noFileIndex);

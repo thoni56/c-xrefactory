@@ -34,7 +34,7 @@ extern UsageBits s_noUsage;
 extern int s_progressFactor;
 extern int s_progressOffset;
 
-extern int s_cxResizingBlocked;
+extern int      cxResizingBlocked;
 extern Counters counters;
 extern unsigned s_recFindCl;
 
@@ -121,16 +121,16 @@ extern int s_cxRefFlag;
 
 extern FILE *inputFile;
 
-extern int s_input_file_number;
-extern int s_olStringSecondProcessing;  /* am I in macro body pass ? */
-extern int s_olOriginalFileNumber;      /* original file name */
-extern int s_olOriginalComFileNumber;	/* original communication file */
+extern int inputFileNumber;
+extern int olOriginalFileNumber;     /* number of original file */
+extern int olOriginalComFileNumber;  /* number of original communication file */
+extern int olStringSecondProcessing; /* am I in macro body pass ? */
+
+extern time_t expirationTime;
 
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
 
 extern char *s_editCommunicationString;
-
-extern time_t s_expiration;
 
 extern jmp_buf cxmemOverflow;
 

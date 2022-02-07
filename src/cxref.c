@@ -705,12 +705,12 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (options.server_operation == OLO_EXTRACT) {
-            if (s_input_file_number != currentFile.lexBuffer.buffer.fileNumber)
+            if (inputFileNumber != currentFile.lexBuffer.buffer.fileNumber)
                 return NULL;
         } else {
             if (category==CategoryGlobal && symbol->bits.symbolType!=TypeCppInclude && options.server_operation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
-                if (s_olOriginalFileNumber != pos->file && options.noIncludeRefs)
+                if (olOriginalFileNumber != pos->file && options.noIncludeRefs)
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
@@ -4045,7 +4045,7 @@ void olcxPushSpecial(char *fieldName, int command) {
         }
         olProcessSelectedReferences(refs, genOnLineReferences);
         getLineColCursorPositionFromCommandLineOption(&line, &col);
-        callerPos = makePosition(s_input_file_number, line, col);
+        callerPos = makePosition(inputFileNumber, line, col);
         olSetCallerPosition(&callerPos);
     }
 }
@@ -4485,7 +4485,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(SymbolReferenceItem *ss) {
         return;
     for (Reference *r = ss->refs; r!=NULL; r=r->next) {
         if (IS_DEFINITION_OR_DECL_USAGE(r->usage.base)) {
-            if (r->position.file == s_input_file_number) {
+            if (r->position.file == inputFileNumber) {
                 if (IS_DEFINITION_USAGE(r->usage.base)) {
                     definitionReference = r;
                 }
@@ -4539,7 +4539,7 @@ static void getCallerPositionFromCommandLineOption(Position *opos) {
     int file, line, col;
 
     assert(opos != NULL);
-    file = s_olOriginalFileNumber;
+    file = olOriginalFileNumber;
     getLineColCursorPositionFromCommandLineOption(&line, &col);
     *opos = makePosition(file, line, col);
 }
@@ -4638,14 +4638,14 @@ void mainAnswerEditAction(void) {
                 fprintf(communicationChannel,"*%s", options.project);
             }
         } else {
-            if (s_olOriginalComFileNumber == noFileIndex) {
+            if (olOriginalComFileNumber == noFileIndex) {
                 if (options.xref2) {
                     ppcGenRecord(PPC_ERROR, "No source file to identify project");
                 } else {
                     fprintf(communicationChannel,"!** No source file to identify project");
                 }
             } else {
-                ifname = fileTable.tab[s_olOriginalComFileNumber]->name;
+                ifname = fileTable.tab[olOriginalComFileNumber]->name;
                 log_trace("ifname = %s", ifname);
                 searchDefaultOptionsFile(ifname, dffname, dffsect);
                 if (dffname[0]==0 || dffsect[0]==0) {

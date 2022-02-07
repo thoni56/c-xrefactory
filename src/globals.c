@@ -176,13 +176,14 @@ FILE *communicationChannel=NULL;
 FILE *dumpOut=NULL;
 FILE *errOut=NULL;
 
-int s_cxResizingBlocked = 0;
+int cxResizingBlocked = 0;
 
-int s_input_file_number = -1;
-int s_olStringSecondProcessing=0;
-int s_olOriginalFileNumber = -1;
-int s_olOriginalComFileNumber = -1;
-time_t s_expiration;
+int inputFileNumber          = -1;
+int olOriginalFileNumber     = -1;
+int olOriginalComFileNumber  = -1;
+int olStringSecondProcessing = 0;
+
+time_t expirationTime;
 
 TypeModifier defaultIntModifier;
 Symbol s_defaultIntDefinition;

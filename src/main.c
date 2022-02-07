@@ -1652,7 +1652,7 @@ static bool computeAndOpenInputFile(void) {
 static void initOptions(void) {
     copyOptions(&options, &s_initOpt);
     options.stdopFlag = 0;
-    s_input_file_number = noFileIndex;
+    inputFileNumber   = noFileIndex;
 }
 
 static void initDefaultCxrefFileName(char *inputfile) {
@@ -2066,7 +2066,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     }
     // reset language once knowing all language suffixes
     mainSetLanguage(fileName,  outLanguage);
-    s_input_file_number = currentFile.lexBuffer.buffer.fileNumber;
+    inputFileNumber = currentFile.lexBuffer.buffer.fileNumber;
     assert(options.taskRegime);
     if (options.taskRegime==RegimeXref && !s_javaPreScanOnly) {
         if (options.xref2) {
@@ -2144,7 +2144,7 @@ static void mainTotalTaskEntryInitialisations() {
     s_noPos = makePosition(noFileIndex, 0, 0);
     fillUsageBits(&s_noUsage, UsageNone, 0);
     fillReference(&s_noRef, s_noUsage, s_noPos, NULL);
-    s_input_file_number = noFileIndex;
+    inputFileNumber            = noFileIndex;
     s_javaAnonymousClassName.p = s_noPos;
 
     olcxInit();
@@ -2600,12 +2600,12 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
     bool inputIn = false;
     int ol2procfile;
 
-    s_olStringSecondProcessing = 0;
+    olStringSecondProcessing = 0;
     mainFileProcessingInitialisations(firstPass, argc, argv,
                                       nargc, nargv, &inputIn, &s_language);
     smartReadFileTabFile();
-    s_olOriginalFileNumber = s_input_file_number;
-    if (mainSymbolCanBeIdentifiedByPosition(s_input_file_number)) {
+    olOriginalFileNumber = inputFileNumber;
+    if (mainSymbolCanBeIdentifiedByPosition(inputFileNumber)) {
         mainCloseInputFile(inputIn);
         return;
     }
@@ -2613,10 +2613,10 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (creatingOlcxRefs()) {
-            Position dpos = makePosition(s_input_file_number, 1, 0);
+            Position dpos = makePosition(inputFileNumber, 1, 0);
             gotOnLineCxRefs(&dpos);
         }
-        addThisFileDefineIncludeReference(s_input_file_number);
+        addThisFileDefineIncludeReference(inputFileNumber);
     }
     if (s_olstringFound && s_olstringServed==0) {
         // on-line action with cursor in an un-used macro body ???
@@ -2624,7 +2624,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
         if (ol2procfile!=noFileIndex) {
             inputFilename = fileTable.tab[ol2procfile]->name;
             inputIn = false;
-            s_olStringSecondProcessing=1;
+            olStringSecondProcessing = 1;
             mainFileProcessingInitialisations(firstPass, argc, argv,
                                               nargc, nargv, &inputIn, &s_language);
             mainEditSrvParseInputFile(firstPass, inputIn);
@@ -2637,10 +2637,10 @@ static void mainEditServerProcessFile(int argc, char **argv,
                                       int nargc, char **nargv,
                                       bool *firstPass
 ) {
-    assert(fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
+    assert(fileTable.tab[olOriginalComFileNumber]->b.scheduledToProcess);
     maxPasses = 1;
     for(currentPass=1; currentPass<=maxPasses; currentPass++) {
-        inputFilename = fileTable.tab[s_olOriginalComFileNumber]->name;
+        inputFilename = fileTable.tab[olOriginalComFileNumber]->name;
         assert(inputFilename!=NULL);
         mainEditSrvFileSinglePass(argc, argv, nargc, nargv, firstPass);
         if (options.server_operation==OLO_EXTRACT || (s_olstringServed && !creatingOlcxRefs()))
@@ -2648,7 +2648,7 @@ static void mainEditServerProcessFile(int argc, char **argv,
         if (LANGUAGE(LANG_JAVA))
             break;
     }
-    fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
+    fileTable.tab[olOriginalComFileNumber]->b.scheduledToProcess = false;
 }
 
 static char *presetEditServerFileDependingStatics(void) {
@@ -2665,7 +2665,7 @@ static char *presetEditServerFileDependingStatics(void) {
     fArgCount = 0; inputFilename = getInputFile(&fArgCount);
     if (fArgCount>=fileTable.size) {
         // conservative message, probably macro invoked on nonsaved file
-        s_olOriginalComFileNumber = noFileIndex;
+        olOriginalComFileNumber = noFileIndex;
         return NULL;
     }
     assert(fArgCount>=0 && fArgCount<fileTable.size && fileTable.tab[fArgCount]->b.scheduledToProcess);
@@ -2674,7 +2674,7 @@ static char *presetEditServerFileDependingStatics(void) {
             fileTable.tab[i]->b.scheduledToProcess = false;
         }
     }
-    s_olOriginalComFileNumber = fArgCount;
+    olOriginalComFileNumber = fArgCount;
     fileName = inputFilename;
     mainSetLanguage(fileName,  &s_language);
     // O.K. just to be sure, there is no other input file
@@ -2715,8 +2715,8 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, bool 
         mainFileProcessingInitialisations(&firstPass,
                                           argc, argv, 0, NULL, &inputIn,
                                           &s_language);
-        s_olOriginalFileNumber = s_input_file_number;
-        s_olOriginalComFileNumber = s_olOriginalFileNumber;
+        olOriginalFileNumber    = inputFileNumber;
+        olOriginalComFileNumber = olOriginalFileNumber;
         if (inputIn) {
             recoverFromCache();
             s_cache.activeCache = false;    /* no caching in cxref */
@@ -2825,7 +2825,7 @@ void mainCallXref(int argc, char **argv) {
 
     currentPass = ANY_PASS;
     CX_ALLOCC(cxFreeBase,0,char);
-    s_cxResizingBlocked = 1;
+    cxResizingBlocked = 1;
     if (options.update)
         scheduleModifiedFilesToUpdate();
     atLeastOneProcessed = 0;
@@ -2952,7 +2952,7 @@ void mainCallEditServer(int argc, char **argv,
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
-            fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
+            fileTable.tab[olOriginalComFileNumber]->b.scheduledToProcess = false;
             // added [26.12.2002] because of loading options without input file
             inputFilename = NULL;
         }
@@ -2965,7 +2965,7 @@ static void mainEditServer(int argc, char **argv) {
     bool firstPass;
 
     ENTER();
-    s_cxResizingBlocked = 1;
+    cxResizingBlocked = 1;
     firstPass = true;
     copyOptions(&s_cachedOptions, &options);
     for(;;) {
@@ -3051,7 +3051,7 @@ int main(int argc, char **argv) {
        CX_ALLOCC always makes one longjmp back to here before we can
        start processing for real ... Allocating initial memory? */
     setjmp(memoryResizeJumpTarget);
-    if (s_cxResizingBlocked) {
+    if (cxResizingBlocked) {
         fatalError(ERR_ST, "cx_memory resizing required, see file TROUBLES",
                    XREF_EXIT_ERR);
     }

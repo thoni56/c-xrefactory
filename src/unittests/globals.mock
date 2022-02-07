@@ -15,8 +15,8 @@ TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 Symbol s_errorSymbol;
 char *s_javaLangObjectLinkName="java/lang/Object";
 
-int s_olStringSecondProcessing;
-int s_cxResizingBlocked;
+int olStringSecondProcessing;
+int cxResizingBlocked;
 
 Position s_spp[SPP_MAX];
 
@@ -72,9 +72,9 @@ char *s_olstringInMbody = NULL;
 int s_olstringUsage = 0;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
 char s_olSymbolClassType[COMPLETION_STRING_SIZE];
-int s_olOriginalFileNumber = -1;
+int olOriginalFileNumber = -1;
 int s_olstringUsage;
-int s_olOriginalComFileNumber;
+int olOriginalComFileNumber;
 int s_olstringServed;
 Position s_olcxByPassPos;
 int s_olMacro2PassFile;
@@ -99,7 +99,7 @@ Position s_paramEndPosition;
 Position s_cxRefPos;
 int s_cxRefFlag=0;
 
-int s_input_file_number;
+int inputFileNumber;
 char *inputFilename;
 time_t fileProcessingStartTime;
 
