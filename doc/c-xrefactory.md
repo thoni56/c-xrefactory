@@ -1,26 +1,27 @@
 # C-xrefactory for Emacs and jEdit
 
--  [General](#general)
--  [Completion](#completion)
--  [Browser](#browser)
--  [Symbol Retriever](#retriever)
--  [Refactorer](#refactorer)
--  [Feedback](#feedback)
--  [License](#license)
+- [General]
+- [Completion]
+- [Browser]
+- [Symbol Retriever]
+- [Refactorer]
+- [Refactorings]
+- [Feedback]
+- [License]
 
 
 # General
 
 C-xrefactory is a refactoring development environment for C and Java.
 Its functions can be accessed via the 'c-xref' menu in Emacs and the
-'Plugins->C-xrefactory' submenu of the main menu bar in jEdit.
+'Plugins &gt; C-xrefactory' submenu of the main menu bar in jEdit.
 Optionally the most frequent functions can be bound to shortcuts.
 C-xrefactory can also be customized via standard Emacs and jEdit
 customization dialog.
 
-NOTE: Some of these descriptions refers to the jEdit plugin (not
-supported and may or may not work) and/or are relevant only when
-browsing Java.
+> **NOTE** — Some of these descriptions refers to the jEdit plugin (not
+> supported and may or may not work) and/or are relevant only when
+> browsing Java.
 
 
 ## Quick start
@@ -44,12 +45,12 @@ distinct for all projects.  Information about the selected 'active
 project' is displayed after each browsing action in the bottom
 information line of the editor.
 
-NOTE: Project autodetection directories are (in general) not the same
-as directories containing project files.  Project files can contain
-common libraries used in many projects, while project detection
-directory should be the directory which is project specific,
-i.e. directory containing project specific files not shared with other
-projects.
+> **NOTE** — Project autodetection directories are (in general) not the
+> same as directories containing project files.  Project files can contain
+> common libraries used in many projects, while project detection
+> directory should be the directory which is project specific,
+> i.e. directory containing project specific files not shared with other
+> projects.
 
 
 ## Tags
@@ -76,7 +77,7 @@ that the task has run into an inconsistent state, you can invoke the
 # Completion
 
 Completion is implemented with the function 'Complete', in jEdit
-usually bound to 'Control Space' hot-key, in Emacs the F8 key.
+usually bound to 'Control Space' hot-key, in Emacs the <kbd>F8</kbd> key.
 Completion tries to complete identifier before the caret by
 contextually appropriate strings.  C-xrefactory is recognizing around
 15 different context among them, completion of class attributes,
@@ -93,9 +94,9 @@ proposed symbol is defined, and the full definition of the symbol.
 Symbol can be selected using standard motion keys.  The following
 special keys are available:
 
-- &lt;return&gt; - close dialog and insert completion.
-- &lt;space&gt; - inspect definition (or javadoc) of the symbol.
-- &lt;escape&gt; - return to invocation place and close dialog.
+- <kbd>return</kbd> — close dialog and insert completion.
+- <kbd>space</kbd> — inspect definition (or javadoc) of the symbol.
+- <kbd>escape</kbd> — return to invocation place and close dialog.
 
 When completing a type name, fully qualified names of classes from jar
 archives can also be proposed.  When selecting such name, an
@@ -108,10 +109,10 @@ C-xrefactory browser allows resolving any symbol in source file,
 inspect its definition and all usages.  Following four basic functions
 are available for browsing and it is usual to bind them to hot-keys:
 
-- Browser - Push Symbol and Goto Definition
-- Browser - Pop Symbol
-- Browser - Previous Reference
-- Browser - Next Reference.
+- Browser &gt; Push Symbol and Goto Definition
+- Browser &gt; Pop Symbol
+- Browser &gt; Previous Reference
+- Browser &gt; Next Reference.
 
 When browsing a symbol, you first need to activate it by moving the
 caret on an occurrence of the symbol and invoke 'Push Symbol and Goto
@@ -120,7 +121,7 @@ the definition of the symbol. This is because inspecting definition is
 the most usual browsing function and it is performed together with the
 resolution. In case you are trying to browse a virtual method and the
 unique definition can not be determined by static analysis, the
-[Browser Dialog](#browserdialog) is opened for manual resolution.
+[Browser Dialog] is opened for manual resolution.
 After successful resolution you can inspect all usages of the symbol
 using 'Previous' and 'Next Reference' functions.
 
@@ -145,13 +146,13 @@ stack by the function 'Push Symbol and Goto Definition'. Functions
 of the symbol placed on the top of the stack. Function 'Backward' is
 removing one element from the top of the stack.
 
-It is possible to push back an element which was poped from the stack
-by error. This is done with the function 'Browser - Forward'.  This
+It is possible to push back an element which was popped from the stack
+by error. This is done with the function 'Browser &gt; Forward'.  This
 function is particularly useful when using visualization of the
 browser stack in the Browser Dialog.
 
 Another way how to push references onto browser stack is the function:
-'Browser - Push Name and Goto Definition'. This function takes a
+'Browser &gt; Push Name and Goto Definition'. This function takes a
 string pointed by the caret, scans the Tag file and pushes ALL symbols
 having this name. No semantic information such as scopes or
 overloading resolution is taken into account. This is why this
@@ -217,7 +218,7 @@ The browse name text field can be used to enter manually a name to be
 pushed onto the browser stack. This may be used when you wish to
 browse a symbol which you do not see in your source code. Otherwise,
 it is more natural to use either "Push Name and Goto Definition" or
-"Push Symbol and Goto Definition" funtion.
+"Push Symbol and Goto Definition" function.
 
 ### Symbol Pane
 
@@ -240,7 +241,7 @@ class name follows a number of references.
 |   |   |
 |---|---|
 | Equal name    | all symbols of given name are displayed. Class tree is not restricted. |
-| Equal profile | the browsed symbol is displayed. Class tree is not restricted.  |
+| Equal&nbsp;profile | the browsed symbol is displayed. Class tree is not restricted.  |
 | Relevant      | the browsed symbol is displayed. Class tree does not display classes not related to class of browsed symbol.  |
 
 ### References Pane
@@ -265,16 +266,16 @@ Meaning of **filters for variables**:
 |---|---|
 | Level&nbsp;3 | Only definitions and declarations are shown.  |
 | Level&nbsp;2 | As level 3 plus l-value usages. |
-| Level&nbsp;1 | Not used in Java langauge. |
+| Level&nbsp;1 | Not used in Java language. |
 | Level&nbsp;0 | All references are shown. |
 
 
-# Symbol retriever
+# Symbol Retriever
 
 C-xrefactory symbol retriever is useful for finding forgotten symbol
 names and for finding symbols from third parties libraries.  You enter
 a string to search and C-xrefactory scans Tags (optionally also jar
-archives from the claspath). All symbols matching entered string are
+archives from the class path). All symbols matching entered string are
 reported.
 
 
@@ -290,12 +291,12 @@ Ranges of characters can be included between `[` and `]`,
 so for example `[a-zA-Z]` matches any letter, `[0-9]` matches any
 digit, as per usual in shell expressions. If the first character
 following the `[` is a `^` then the meaning of the expansion is
-inversed, for example `[^0-9]` expands to any non-digit character.  A
+inverted, for example `[^0-9]` expands to any non-digit character.  A
 symbol is reported only if it completely matches the searched string.
 Method profile is considered as part of the name of the method, for
 example, the expression `*(*int*)` will report all methods taking at
 least one parameter of type int.  Letters are considered case
-unsensitive except letters enclosed between `[` and `]`.
+insensitive except letters enclosed between `[` and `]`.
 
 
 For example the expression `*get*` will report all symbols containing
@@ -318,7 +319,7 @@ expression is equivalent to entering `*get*`.
 
 Refactoring is a software development and maintenance process where
 the source code is changed in such a way that it does not alter the
-external behavior. C-xrefactory offers automatic support for several
+external behaviour. C-xrefactory offers automatic support for several
 general refactoring patterns available via refactorer function.
 Whenever it is possible it also checks that performed modifications do
 not change program behaviour. For example, in case of symbol renaming,
@@ -357,24 +358,28 @@ Here follows the list of refactorings implemented by C-xrefactory:
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-           for(int a=0; a<args.length; a++) {
-                   action(args\[a\]);
-           }
+```java
+for(int a=0; a<args.length; a++) {
+    action(args[a]);
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-           for(int i=0; i<args.length; i++) {
-                   action(args\[i\]);
-           }
+```java
+for(int i=0; i<args.length; i++) {
+    action(args[i]);
+}
+```
 
 **Refactoring Context**: Cursor has to be on the symbol.
 
 **Input parameters**: New name of the symbol (for example: 'i')
 
 **Mechanics**:  Replace  old  symbol name  by  the  new  name on  all  its
-        occurences in the project. In case of public class stored in a
+        occurrences in the project. In case of public class stored in a
         file  of the  same  name, also  rename  the file.  In case  of
         package also store files in new directories.RM110-039-53484
 
@@ -384,19 +389,23 @@ Here follows the list of refactorings implemented by C-xrefactory:
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            public int method(int x) {
-                   if (x<=1) return(1);
-                   return(method(x-1)+method(x-2));
-            }
+```java
+public int method(int x) {
+    if (x<=1) return(1);
+    return(method(x-1)+method(x-2));
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            public int method(int x, int y) {
-                   if (x<=1) return(1);
-                   return(method(x-1, 0)+method(x-2, 0));
-            }
+```java
+public int method(int x, int y) {
+    if (x<=1) return(1);
+    return(method(x-1, 0)+method(x-2, 0));
+}
+```
 
 **Refactoring Context**: Cursor  has to be on the  method's (function's or
         macro's) name.
@@ -414,19 +423,23 @@ Here follows the list of refactorings implemented by C-xrefactory:
 
 **Example**:
 
- **Before refactoring:**
+_Before refactoring_:
 
-            public int method(int x, int y) {
-                   if (x<=1) return(1);
-                   return(method(x-1, 0)+method(x-2, 0));
-            }
+```java
+public int method(int x, int y) {
+    if (x<=1) return(1);
+    return(method(x-1, 0)+method(x-2, 0));
+}
+```
 
- **After refactoring:**
+_After refactoring_:
 
-            public int method(int x) {
-                   if (x<=1) return(1);
-                   return(method(x-1)+method(x-2));
-            }
+```java
+public int method(int x) {
+    if (x<=1) return(1);
+    return(method(x-1)+method(x-2));
+}
+```
 
 **Refactoring Context**: Cursor  has to be on the  method's (function's or
         macro's) name.
@@ -437,25 +450,29 @@ Here follows the list of refactorings implemented by C-xrefactory:
 **Mechanics**: Inspect  all references of  the method (function  or macro)
         and remove the parameter.
 
-# Move Parameter
+## Move Parameter
 
 **Description**: Reorder parameter of a method, function or macro.
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            public int method(int x, int y) {
-                   if (x<=1) return(1);
-                   return(method(x-1, 0)+method(x-2, 0));
-            }
+```java
+public int method(int x, int y) {
+    if (x<=1) return(1);
+    return(method(x-1, 0)+method(x-2, 0));
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            public int method(int y, int x) {
-                   if (x<=1) return(1);
-                   return(method(0, x-1)+method(0, x-2));
-            }
+```java
+public int method(int y, int x) {
+    if (x<=1) return(1);
+    return(method(0, x-1)+method(0, x-2));
+}
+```
 
 **Refactoring Context**: Cursor  has to be on the  method's (function's or
         macro's) name.
@@ -463,7 +480,7 @@ Here follows the list of refactorings implemented by C-xrefactory:
 **Input parameters**: Old and new positions of the parameter (for example:
       '1' and '2').
 
-**Mechanics**: Inspect all references of  the mehod and move the parameter
+**Mechanics**: Inspect all references of  the method and move the parameter
         from its original to its new position.
 
 ## Extract Method/Function/Macro
@@ -472,41 +489,44 @@ Here follows the list of refactorings implemented by C-xrefactory:
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            public static void main(String\[\] args) {
-                   int i,n,x,y,t;
-                   n = Integer.parseInt(args\[0\]);
-                   x=0; y=1;
-                   for(i=0; i<n; i++) {
-                            t=x+y; x=y; y=t;
-                   }
-                   System.out.println("" + n + "-th fib == " + x);
-            }
+```java
+public static void main(String[] args) {
+    int i,n,x,y,t;
+    n = Integer.parseInt(args[0]);
+    x=0; y=1;
+    for(i=0; i<n; i++) {
+        t=x+y; x=y; y=t;
+    }
+    System.out.println("" + n + "-th fib == " + x);
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            static int fib(int n) {
-                   int i, x, y, t;
-                   x=0; y=1;
-                   for(i=0; i<n; i++) {
-                            t=x+y; x=y; y=t;
-                   }
-                   return(x);
-            }
+```java
+static int fib(int n) {
+   int i, x, y, t;
+   x=0; y=1;
+   for(i=0; i<n; i++) {
+        t=x+y; x=y; y=t;
+   }
+   return(x);
+}
 
-
-            public static void main(String\[\] args) {
-                   int i,n,x,y,t;
-                   n = Integer.parseInt(args\[0\]);
-                   x = fib(n);
-                   System.out.println("" + n + "-th fib == " + x);
-            }
+public static void main(String[] args) {
+   int i,n,x,y,t;
+   n = Integer.parseInt(args[0]);
+   x = fib(n);
+   System.out.println("" + n + "-th fib == " + x);
+}
+```
 
 **Refactoring Context**: The code for extraction has to be selected within
             the editor.
 
-**Input Parameters**: Name fo the new method (function or macro).
+**Input Parameters**: Name of the new method (function or macro).
 
 **Mechanics**: Copy the region  before the method (function), generate new
            header  and footer  based on  static analysis  of  code and
@@ -518,25 +538,29 @@ Here follows the list of refactorings implemented by C-xrefactory:
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            package com.xrefactory.refactorings;
-            import javax.swing.\*;
-            class Hello {
-                public static void main(String argv\[\]) {
-                    JOptionPane.showMessageDialog(null, "Hello world");
-                }
-            }
+```java
+package com.xrefactory.refactorings;
+import javax.swing.\*;
+class Hello {
+    public static void main(String argv[]) {
+        JOptionPane.showMessageDialog(null, "Hello world");
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            package com.xrefactory.refactorings;
-            import javax.swing.\*;
-            class Hello {
-                public static void main(java.lang.String argv\[\]) {
-                    javax.swing.JOptionPane.showMessageDialog(null, "Hello world");
-                }
-            }
+```java
+package com.xrefactory.refactorings;
+import javax.swing.\*;
+class Hello {
+    public static void main(java.lang.String argv[]) {
+        javax.swing.JOptionPane.showMessageDialog(null, "Hello world");
+    }
+}
+```
 
 **Refactoring Context**: Cursor has to be on a definition of a class.
 
@@ -550,24 +574,28 @@ Here follows the list of refactorings implemented by C-xrefactory:
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            package com.xrefactory.refactorings;
-            class Hello {
-                public static void main(java.lang.String argv\[\]) {
-                    javax.swing.JOptionPane.showMessageDialog(null, "Hello world");
-                }
-            }
+```java
+package com.xrefactory.refactorings;
+class Hello {
+    public static void main(java.lang.String argv[]) {
+        javax.swing.JOptionPane.showMessageDialog(null, "Hello world");
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            package com.xrefactory.refactorings;
-            import javax.swing.JOptionPane;
-            class Hello {
-                public static void main(String argv\[\]) {
-                    JOptionPane.showMessageDialog(null, "Hello world");
-                }
-            }
+```java
+package com.xrefactory.refactorings;
+import javax.swing.JOptionPane;
+class Hello {
+    public static void main(String argv[]) {
+        JOptionPane.showMessageDialog(null, "Hello world");
+    }
+}
+```
 
 **Refactoring Context**: Cursor has to be on a definition of a class.
 
@@ -579,50 +607,54 @@ Here follows the list of refactorings implemented by C-xrefactory:
 
 ## Set Target for Next Moving Refactoring
 
-**Description**: Set target positon for moving refactorings
+**Description**: Set target position for moving refactorings
 
 **Refactoring Context**: Cursor has to be on the position where the field,
             method or class will be moved, pulled up or pushed down.
 
 **Input Parameters**: None.
 
-# Move Static Field/Method
+## Move Static Field/Method
 
 **Description**: Move static field or method to another place.
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-        class Target {
-            static int i=0;
-        }
+```java
+class Target {
+    static int i=0;
+}
 
-        class Source {
-            static int j=1;
-            public static void method() {
-                    System.out.println("i, j == " + Target.i + ", " + j);
-            }
-            public static void main(String\[\] args) {
-                    method();
-            }
-        }
+class Source {
+    static int j=1;
+    public static void method() {
+        System.out.println("i, j == " + Target.i + ", " + j);
+    }
+    public static void main(String[] args) {
+        method();
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-        class Target {
-            static int i=0;
-            public static void method() {
-                 System.out.println("i, j == " + i + ", " + Source.j);
-            }
-        }
+```java
+class Target {
+    static int i=0;
+    public static void method() {
+         System.out.println("i, j == " + i + ", " + Source.j);
+    }
+}
 
-        class Source {
-            static int j=1;
-            public static void main(String\[\] args) {
-                Target.method();
-            }
-        }
+class Source {
+    static int j=1;
+    public static void main(String[] args) {
+        Target.method();
+    }
+}
+```
 
 **Refactoring  Context**:  Target  place  has  to set  using  'Set  Target
             Position',  cursor has  to be  on the  name of  the method
@@ -634,34 +666,38 @@ Here follows the list of refactorings implemented by C-xrefactory:
            body  (initialisation)  and   all  its  references  in  the
            project.
 
-# Move Class
+## Move Class
 
 **Description**: Move class from one place to another.
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            class A {
-                static int i;
-                static class B {
-                    static void method() {
-                        System.out.println("i==" + i);
-                    }
-                }
-            }
+```java
+class A {
+    static int i;
+    static class B {
+        static void method() {
+            System.out.println("i==" + i);
+        }
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            class A {
-                static int i;
-            }
+```java
+class A {
+    static int i;
+}
 
-            class B {
-                static void method() {
-                    System.out.println("i==" + A.i);
-                }
-            }
+class B {
+    static void method() {
+        System.out.println("i==" + A.i);
+    }
+}
+```
 
 **Refactoring  Context**:  Target  place  has  to set  using  'Set  Target
             Position', cursor has to be on the name of the class to be
@@ -677,40 +713,46 @@ Here follows the list of refactorings implemented by C-xrefactory:
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
 file A.java:
 
-            package pack;
+```java
+package pack;
 
-            class A {
-                static int i;
-                static class B {
-                    static void method() {
-                        System.out.println("i==" + i);
-                    }
-                }
-            }
+class A {
+    static int i;
+    static class B {
+        static void method() {
+            System.out.println("i==" + i);
+        }
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
 file A.java:
 
-            package pack;
+```java
+package pack;
 
-            class A {
-                static int i;
-            }
+class A {
+    static int i;
+}
+```
 
 file B.java:
 
-            package pack;
+```java
+package pack;
 
-            public class B {
-                static void method() {
-                    System.out.println("i==" + A.i);
-                }
-            }
+public class B {
+    static void method() {
+        System.out.println("i==" + A.i);
+    }
+}
+```
 
 **Refactoring Context**: Cursor  has to be on the name of  the class to be
             moved (at its definition).
@@ -720,38 +762,42 @@ file B.java:
 **Mechanics**: Create new file, add package and imports and move the class
            and adjust all its references.
 
-# Move Field
+## Move Field
 
 **Description**: Move field from one class to another
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            class Target {
+```java
+class Target {
 
-            }
+}
 
-            class Source {
-                  Target link;
-                  int field;
-                  public int method() {
-                         return(field);
-                  }
-            }
+class Source {
+    Target link;
+    int field;
+    public int method() {
+        return(field);
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            class Target {
-                  int field;
-            }
+```java
+class Target {
+    int field;
+}
 
-            class Source {
-                  Target link;
-                  public int method() {
-                         return(link.field);
-                  }
-            }
+class Source {
+    Target link;
+    public int method() {
+        return(link.field);
+    }
+}
+```
 
 **Refactoring  Context**:  Target  place  has  to set  using  'Set  Target
             Position', cursor has to be on the name of the field to be
@@ -773,50 +819,54 @@ file B.java:
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            class SuperClass {
-                int x = 0;
-                int y = 0;
+```java
+class SuperClass {
+    int x = 0;
+    int y = 0;
 
-            }
+}
 
-            class InferClass extends SuperClass {
-                int y = 1;
+class InferClass extends SuperClass {
+    int y = 1;
 
-                void method() {
-                    System.out.println("x == " + x);
-                    System.out.println("this.x == " + this.x);
-                    System.out.println("this.y == " + this.y);
-                    System.out.println("super.y == " + super.y);
-                }
+    void method() {
+        System.out.println("x == " + x);
+        System.out.println("this.x == " + this.x);
+        System.out.println("this.y == " + this.y);
+        System.out.println("super.y == " + super.y);
+    }
 
-                public static void main(String args\[\]) {
-                    (new InferClass()).method();
-                }
-            }
+    public static void main(String args[]) {
+        (new InferClass()).method();
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            class SuperClass {
-                int x = 0;
-                int y = 0;
+```java
+class SuperClass {
+    int x = 0;
+    int y = 0;
 
-                public void method() {
-                    System.out.println("x == " + x);
-                    System.out.println("this.x == " + this.x);
-                    System.out.println("this.y == " + ((InferClass)this).y);
-                    System.out.println("super.y == " + this.y);
-                }
-            }
+    public void method() {
+        System.out.println("x == " + x);
+        System.out.println("this.x == " + this.x);
+        System.out.println("this.y == " + ((InferClass)this).y);
+        System.out.println("super.y == " + this.y);
+    }
+}
 
-            class InferClass extends SuperClass {
-                int y = 1;
+class InferClass extends SuperClass {
+    int y = 1;
 
-                public static void main(String args\[\]) {
-                    (new InferClass()).method();
-                }
-            }
+    public static void main(String args[]) {
+        (new InferClass()).method();
+    }
+}
+```
 
 **Refactoring  Context**:  Target  place  has  to set  using  'Set  Target
             Position',  cursor has  to be  on the  name of  the method
@@ -833,39 +883,43 @@ file B.java:
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            class EncapsulateField {
-                public int field;
+```java
+class EncapsulateField {
+    public int field;
 
-                void incrementField() {
-                    field = field + 1;
-                }
-            }
+    void incrementField() {
+        field = field + 1;
+    }
+}
 
-            class AnotherClass extends EncapsulateField {
-                void printField() {
-                    System.out.println("field == " + field);
-                }
-            }
+class AnotherClass extends EncapsulateField {
+    void printField() {
+        System.out.println("field == " + field);
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            class EncapsulateField {
-                private int field;
-                public int getField() {return field;}
-                public int setField(int field) { this.field=field; return field;}
+```java
+class EncapsulateField {
+    private int field;
+    public int getField() {return field;}
+    public int setField(int field) { this.field=field; return field;}
 
-                void incrementField() {
-                    setField(getField() + 1);
-                }
-            }
+    void incrementField() {
+        setField(getField() + 1);
+    }
+}
 
-            class AnotherClass extends EncapsulateField {
-                void printField() {
-                    System.out.println("field == " + getField());
-                }
-            }
+class AnotherClass extends EncapsulateField {
+    void printField() {
+        System.out.println("field == " + getField());
+    }
+}
+```
 
 **Refactoring  Context**:  Cursor has  to  on the  name  of  the field  to
              encapsulate (on its definition).
@@ -885,37 +939,41 @@ file B.java:
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            class Project {
-                Person\[\] participants;
-            }
+```java
+class Project {
+    Person[] participants;
+}
 
-            class Person {
-                int id;
-                public boolean participate(Project proj) {
-                    for(int i=0; i<proj.participants.length; i++) {
-                        if (proj.participants\[i\].id == id) return(true);
-                    }
-                    return(false);
-                }
-            }
+class Person {
+    int id;
+    public boolean participate(Project proj) {
+        for(int i=0; i<proj.participants.length; i++) {
+            if (proj.participants[i].id == id) return(true);
+        }
+        return(false);
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            class Project {
-                Person\[\] participants;
-                static public boolean participate(Person person, Project proj) {
-                    for(int i=0; i<proj.participants.length; i++) {
-                        if (proj.participants\[i\].id == person.id) return(true);
-                    }
-                    return(false);
-                }
-            }
+```java
+class Project {
+    Person[] participants;
+    static public boolean participate(Person person, Project proj) {
+        for(int i=0; i<proj.participants.length; i++) {
+            if (proj.participants[i].id == person.id) return(true);
+        }
+        return(false);
+    }
+}
 
-            class Person {
-                int id;
-            }
+class Person {
+    int id;
+}
+```
 
 **Refactoring Context**:  Cursor has to  on the name  of the method  to be
              turned static (on its name).
@@ -923,53 +981,57 @@ file B.java:
 **Input  Parameters**: The  name of  the  new parameter  (in the  example:
        'person').
 
-**Mechanics**:  Add new  parameter to  the method  passing  its invocation
-           object.  Make  all accesses to method's object  via the new
-           parameter.  Declare  the method static and  make all method
+**Mechanics**:  Add new parameter to  the method  passing its invocation
+           object.  Make  all accesses to method's object via the new
+           parameter.  Declare the method static and make all method
            invocations static.
 
-**Comment**: This refactoring  is usualy used to move  virtual method from
-         one  class to another  in the  sequence 'Turn  Virtual Method
-         into Static',  'Move Static  Method' and 'Turn  Static Method
+**Comment**: This refactoring is usually used to move virtual method from
+         one class to another in the  sequence 'Turn Virtual Method
+         into Static', 'Move Static  Method' and 'Turn Static Method
          into Virtual'.
 
-# Turn Static Method to Virtual
+## Turn Static Method to Virtual
 
 **Description**: Make the method virtual.
 
 **Example**:
 
- **Before refactoring**:
+_Before refactoring_:
 
-            class Target {
-                int field;
-                static int method(Source ss) {
-                    System.out.println("field==" + ss.link.field);
-                }
-            }
+```java
+class Target {
+    int field;
+    static int method(Source ss) {
+        System.out.println("field==" + ss.link.field);
+    }
+}
 
-            class Source {
-                Target link;
-                static void main(String\[\] args) {
-                    Target.method(new Source());
-                }
-            }
+class Source {
+    Target link;
+    static void main(String[] args) {
+        Target.method(new Source());
+    }
+}
+```
 
- **After refactoring**:
+_After refactoring_:
 
-            class Target {
-                int field;
-                int method() {
-                    System.out.println("field==" + field);
-                }
-            }
+```java
+class Target {
+    int field;
+    int method() {
+        System.out.println("field==" + field);
+    }
+}
 
-            class Source {
-                Target link;
-                static void main(String\[\] args) {
-                    new Source().link.method();
-                }
-            }
+class Source {
+    Target link;
+    static void main(String[] args) {
+        new Source().link.method();
+    }
+}
+```
 
 **Refactoring Context**:  Cursor has to  on the name  of the method  to be
              turned virtual (on its name).
@@ -982,20 +1044,50 @@ file B.java:
            apply  method on  the method's  object (method's  object is
            determine from the combination of parameter and field).
 
-**Comment**: This refactoring  is usualy used to move  virtual method from
+**Comment**: This refactoring  is usually used to move  virtual method from
          one  class to another  in the  sequence 'Turn  Virtual Method
          into Static',  'Move Static  Method' and 'Turn  Static Method
          into Virtual'.
 
 # Feedback
 
-Any feedback is welcome at the [c-xrefactory Github repo](https://github.com/thoni56/c-xrefactory).
+Any feedback is welcome at the [c-xrefactory GitHub repo].
 
 
 # License
 
-You can read the license at the [c-xrefactory Github repo](https://github.com/thoni56/c-xrefactory/blob/master/LICENSE).
+You can read the license at the [c-xrefactory GitHub repo][repo license].
 
---- C
-code
----
+
+<!----------------------------- REFERENCE LINKS ------------------------------>
+
+[c-xrefactory GitHub repo]: https://github.com/thoni56/c-xrefactory "Visit the c-xrefactory repository at GitHub"
+[repo license]: https://github.com/thoni56/c-xrefactory/blob/main/LICENSE "View c-xrefactory license file"
+
+<!-- in-doc x-refs -->
+
+[(Self) Encapsulate Field]: #self-encapsulate-field
+[Add Parameter]: #add-parameter
+[Browser Dialog]: #browser-dialog
+[Browser]: #browser
+[Completion]: #completion
+[Delete Parameter]: #delete-parameter
+[Expand Names]: #expand-names
+[Extract Method/Function/Macro]: #extract-methodfunctionmacro
+[Feedback]: #feedback
+[General]: #general
+[License]: #license
+[Move Class to New File]: #move-class-to-new-file
+[Move Class]: #move-class
+[Move Field]: #move-field
+[Move Parameter]: #move-parameter
+[Move Static Field/Method]: #move-static-fieldmethod
+[Pull Up/Push Down Field/Method]: #pull-uppush-down-fieldmethod
+[Reduce Names]: #reduce-names
+[Refactorer]: #refactorer
+[Refactorings]: #refactorings
+[Rename Symbol/Class/Package]: #rename-symbolclasspackage
+[Set Target for Next Moving Refactoring]: #set-target-for-next-moving-refactoring
+[Symbol Retriever]: #symbol-retriever
+[Turn Static Method to Virtual]: #turn-static-method-to-virtual
+[Turn Virtual Method to Static]: #turn-virtual-method-to-static
