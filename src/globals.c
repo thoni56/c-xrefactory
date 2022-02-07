@@ -227,10 +227,10 @@ uchar typeLongChange[MAX_TYPE];
 uchar typeSignedChange[MAX_TYPE];
 uchar typeUnsignedChange[MAX_TYPE];
 
-char s_javaBaseTypeCharCodes[MAX_TYPE];
-int s_javaCharCodeBaseTypes[MAX_CHARS];
+char javaBaseTypeCharCodes[MAX_TYPE];
+int javaCharCodeBaseTypes[MAX_CHARS];
 
-char s_javaTypePCTIConvert[MAX_TYPE];
+char javaTypePCTIConvert[MAX_TYPE];
 
 char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
     /* Byte,Short,Char,Int,Long,Float,Double */

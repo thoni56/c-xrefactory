@@ -467,7 +467,7 @@ void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
             }
             break;
         default:
-            typ = s_javaCharCodeBaseTypes[*ssig];
+            typ = javaCharCodeBaseTypes[*ssig];
             assert(typ > 0 && typ < MAX_TYPE);
             sprintf(buff+j, "%s", typeNamesTable[typ]);
             j += strlen(buff+j);

@@ -124,17 +124,17 @@ Symbol s_defaultIntDefinition;
 TypeModifier s_defaultPackedTypeModifier;
 
 Symbol *s_javaStringSymbol;
-char s_javaTypePCTIConvert[MAX_TYPE];
+char javaTypePCTIConvert[MAX_TYPE];
 char *s_javaThisPackageName = "";
 int s_javaPreScanOnly;
 char *javaSourcePaths;
 StringList *javaClassPaths;
 Symbol *s_javaObjectSymbol;
-int s_javaCharCodeBaseTypes[MAX_CHARS];
+int javaCharCodeBaseTypes[MAX_CHARS];
 TypeModifier *s_javaCompletionLastPrimary;
 Symbol s_javaArrayObjectSymbol;
 Symbol *s_javaCloneableSymbol;
-char s_javaBaseTypeCharCodes[MAX_TYPE];
+char javaBaseTypeCharCodes[MAX_TYPE];
 Symbol *s_javaIoSerializableSymbol;
 char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
     /* Byte,Short,Char,Int,Long,Float,Double */

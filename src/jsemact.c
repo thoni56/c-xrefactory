@@ -1595,8 +1595,8 @@ int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
             sprintf(pp+ppi,"L%s;",tt->u.t->linkName);
             ppi += strlen(pp+ppi);
         } else {
-            assert(s_javaBaseTypeCharCodes[tt->kind]!=0);
-            pp[ppi++] = s_javaBaseTypeCharCodes[tt->kind];
+            assert(javaBaseTypeCharCodes[tt->kind]!=0);
+            pp[ppi++] = javaBaseTypeCharCodes[tt->kind];
         }
         assert(ppi < ppSize);
     }
@@ -1928,8 +1928,8 @@ static int javaExistBaseTypeWideningConversion(int t1, int t2) {
     assert(t2>=0 && t2<MAX_TYPE);
 /*fprintf(dumpOut,"testing base convertibility of %s to %s\n",typeName[t1],typesName[t2]);fflush(dumpOut);*/
     if (t1 == t2) return true;
-    i1 = s_javaTypePCTIConvert[t1];
-    i2 = s_javaTypePCTIConvert[t2];
+    i1 = javaTypePCTIConvert[t1];
+    i2 = javaTypePCTIConvert[t2];
     if (i1 == 0 || i2 == 0) return false;
     assert(i1-1>=0 && i1-1<MAX_PCTIndex-1);
     assert(i2-1>=0 && i2-1<MAX_PCTIndex-1);
@@ -1945,8 +1945,8 @@ static int javaExistBaseWideningConversion(char c1, char c2) {
     assert(c1>=0 && c1<MAX_CHARS);
     assert(c2>=0 && c2<MAX_CHARS);
     if (c1 == c2) return true;
-    t1 = s_javaCharCodeBaseTypes[c1];
-    t2 = s_javaCharCodeBaseTypes[c2];
+    t1 = javaCharCodeBaseTypes[c1];
+    t2 = javaCharCodeBaseTypes[c2];
     return javaExistBaseTypeWideningConversion(t1, t2);
 }
 

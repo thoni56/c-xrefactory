@@ -110,9 +110,9 @@ extern TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 extern TypeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
 extern TypeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
 
-extern char s_javaBaseTypeCharCodes[MAX_TYPE];
-extern int s_javaCharCodeBaseTypes[MAX_CHARS];
-extern char s_javaTypePCTIConvert[MAX_TYPE];
+extern char javaBaseTypeCharCodes[MAX_TYPE];
+extern int javaCharCodeBaseTypes[MAX_CHARS];
+extern char javaTypePCTIConvert[MAX_TYPE];
 extern char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1];
 
 extern Position s_olcxByPassPos;

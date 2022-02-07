@@ -536,7 +536,7 @@ typedef struct completions {
 typedef struct typeCharCodeIni {
     int         symType;
     char		code;
-} S_typeCharCodeIni;
+} TypeCharCodeInit;
 
 typedef struct javaTypePCTIConvertIni {
     int		symType;

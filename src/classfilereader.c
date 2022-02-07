@@ -813,7 +813,7 @@ static TypeModifier *cfUnPackResultType(char *sig, char **restype) {
             *ssig = ';';
             break;
         default:
-            typ = s_javaCharCodeBaseTypes[*ssig];
+            typ = javaCharCodeBaseTypes[*ssig];
             assert(typ != 0);
             initTypeModifier(tt, typ);
         }

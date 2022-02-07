@@ -281,7 +281,7 @@ static int preCreatedTypesInitTable[] = {
     -1,
 };
 
-static S_typeCharCodeIni s_baseTypeCharCodesIniTab[] = {
+static TypeCharCodeInit baseTypeCharCodesInitTable[] = {
     {TypeByte,      'B'},
     {TypeChar,      'C'},
     {TypeDouble,    'D'},
@@ -445,19 +445,19 @@ void initJavaTypePCTIConvertIniTab(void) {
     for (int i=0; s_javaTypePCTIConvertIniTab[i].symType != -1; i++) {
         S_javaTypePCTIConvertIni *s = &s_javaTypePCTIConvertIniTab[i];
         assert(s->symType >= 0 && s->symType < MAX_TYPE);
-        s_javaTypePCTIConvert[s->symType] = s->PCTIndex;
+        javaTypePCTIConvert[s->symType] = s->PCTIndex;
     }
 }
 
 void initTypeCharCodeTab(void) {
-    S_typeCharCodeIni *s;
+    TypeCharCodeInit *s;
 
-    for (int i=0; s_baseTypeCharCodesIniTab[i].symType != -1; i++) {
-        s = &s_baseTypeCharCodesIniTab[i];
+    for (int i=0; baseTypeCharCodesInitTable[i].symType != -1; i++) {
+        s = &baseTypeCharCodesInitTable[i];
         assert(s->symType >= 0 && s->symType < MAX_TYPE);
-        s_javaBaseTypeCharCodes[s->symType] = s->code;
+        javaBaseTypeCharCodes[s->symType] = s->code;
         assert(s->code >= 0 && s->code < MAX_CHARS);
-        s_javaCharCodeBaseTypes[s->code] = s->symType;
+        javaCharCodeBaseTypes[s->code] = s->symType;
     }
 }
 
