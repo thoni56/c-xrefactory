@@ -1,0 +1,3 @@
+[submodule "clang-format-hooks"]
+	path = clang-format-hooks
+	url = https://github.com/barisione/clang-format-hooks.git
