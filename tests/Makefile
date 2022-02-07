@@ -59,6 +59,7 @@ endif
 TESTS = $(patsubst %/.,%,$(wildcard test_*/.))
 .PHONY: autodiscovered_tests
 autodiscovered_tests: $(TESTS)
+	echo
 
 # To make it possible to run tests in parallel we use GCOV settings so
 # that all coverage is directed to a separate directory for each
