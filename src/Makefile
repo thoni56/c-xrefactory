@@ -265,7 +265,7 @@ the-actual-coverage-report:
 ifeq (, $(LCOV_EXCLUDES))
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 endif
-	genhtml -q -o ../coverage ../coverage/total.info
+	genhtml -q -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
 	@echo Coverage done
 
 #########################################################################

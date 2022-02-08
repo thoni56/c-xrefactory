@@ -52,3 +52,9 @@ VERIFY = cmp output expected ; \
 # the standard does not work
 .c-xrefrc: ../c-xrefrc.tpl
 	@sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" ../c-xrefrc.tpl > .c-xrefrc
+
+coverage:
+	cd ../../src ; make clean-coverage
+	@echo "Doing coverage in this directory only"
+	$(MAKE) $(TEST)
+	cd ../../src ; make COVERAGE_CASE=$(TEST) the-actual-coverage-report
