@@ -425,15 +425,15 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
             || javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currClass, *res)) {
             minacc = javaGetMinimalAccessibility(&rfs, *res);
             fillUsageBits(&ub, UsageUsed, minacc);
-            ref = addCxReferenceNew(*res,&record->p, &ub,
+            ref = addCxReferenceNew(*res,&record->position, &ub,
                                     rfs.currClass->u.structSpec->classFile,
                                     rfs.baseClass->u.structSpec->classFile);
             // this is adding reference to 'super', not to the field!
             // for pull-up/push-down
-            if (super!=NULL) addThisCxReferences(s_javaStat->classFileIndex,&super->p);
+            if (super!=NULL) addThisCxReferences(s_javaStat->classFileIndex,&super->position);
         }
     } else if (rr == RESULT_OK) {
-        ref = addCxReference(*res,&record->p,UsageUsed, noFileIndex, noFileIndex);
+        ref = addCxReference(*res,&record->position,UsageUsed, noFileIndex, noFileIndex);
     } else {
         noSuchFieldError(record->name);
     }
@@ -477,7 +477,7 @@ void labelReference(Id *id, Usage usage) {
         strcpy(ttt, id->name);
     }
     assert(strlen(ttt)<TMP_STRING_SIZE-1);
-    addTrivialCxReference(ttt, TypeLabel,StorageDefault, &id->p, usage);
+    addTrivialCxReference(ttt, TypeLabel,StorageDefault, &id->position, usage);
 }
 
 void setLocalVariableLinkName(struct symbol *p) {
@@ -809,7 +809,7 @@ Symbol *createSimpleDefinition(Storage storage, Type type, Id *id) {
 
     typeModifier = newTypeModifier(type, NULL, NULL);
     if (id!=NULL) {
-        r = newSymbolAsType(id->name, id->name, id->p, typeModifier);
+        r = newSymbolAsType(id->name, id->name, id->position, typeModifier);
     } else {
         r = newSymbolAsType(NULL, NULL, noPosition, typeModifier);
     }
@@ -875,7 +875,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     if (typeName->symbol->u.keyword != UNION) type = TypeStruct;
     else type = TypeUnion;
 
-    fillSymbol(&p, id->name, id->name, id->p);
+    fillSymbol(&p, id->name, id->name, id->position);
     fillSymbolBits(&p.bits, AccessDefault, type, StorageNone);
 
     if (!symbolTableIsMember(symbolTable, &p, NULL, &pp)
@@ -896,7 +896,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(pp, symbolTable);
     }
-    addCxReference(pp, &id->p, usage,noFileIndex, noFileIndex);
+    addCxReference(pp, &id->position, usage,noFileIndex, noFileIndex);
     return &pp->u.structSpec->stype;
 }
 
@@ -961,7 +961,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     if (typeName->symbol->u.keyword == STRUCT) type = TypeStruct;
     else type = TypeUnion;
 
-    pp = newSymbol("", NULL, typeName->p);
+    pp = newSymbol("", NULL, typeName->position);
     fillSymbolBits(&pp->bits, AccessDefault, type, StorageNone);
 
     setGlobalFileDepNames("", pp, MEMORY_XX);
@@ -1001,7 +1001,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
 TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
     Symbol p,*pp;
 
-    fillSymbol(&p, id->name, id->name, id->p);
+    fillSymbol(&p, id->name, id->name, id->position);
     fillSymbolBits(&p.bits, AccessDefault, TypeEnum, StorageNone);
 
     if (! symbolTableIsMember(symbolTable, &p, NULL, &pp)
@@ -1011,7 +1011,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(pp, symbolTable);
     }
-    addCxReference(pp, &id->p, usage,noFileIndex, noFileIndex);
+    addCxReference(pp, &id->position, usage,noFileIndex, noFileIndex);
     return createSimpleEnumType(pp);
 }
 

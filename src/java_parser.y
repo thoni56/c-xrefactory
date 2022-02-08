@@ -66,7 +66,7 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
 #define SetPrimitiveTypePos(res, typ) {         \
         if (1 || SyntaxPassOnly()) {            \
             res = StackMemoryAlloc(Position);   \
-            *res = typ->p;                      \
+            *res = typ->position;                      \
         }                                       \
         else assert(0);                         \
     }
@@ -455,7 +455,7 @@ Literal
                     $$.d.reference = NULL;
                 } else {
                     $$.d.position = StackMemoryAlloc(Position);
-                    *$$.d.position = $1.d->p;
+                    *$$.d.position = $1.d->position;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -709,8 +709,8 @@ Name
                     s_javaStat->lastParsedName = $1.d;
                 } else {
                     PropagateBoundaries($$, $1, $1);
-                    javaCheckForPrimaryStart(&$1.d->id.p, &$1.d->id.p);
-                    javaCheckForStaticPrefixStart(&$1.d->id.p, &$1.d->id.p);
+                    javaCheckForPrimaryStart(&$1.d->id.position, &$1.d->id.position);
+                    javaCheckForStaticPrefixStart(&$1.d->id.position, &$1.d->id.position);
                 }
             };
         }
@@ -1010,9 +1010,9 @@ SingleTypeImportDeclaration
                     lastUselessRef = javaClassifyToTypeName($2.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     // last useless reference is not useless here!
                     if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
-                    s_cps.lastImportLine = $1.d->p.line;
+                    s_cps.lastImportLine = $1.d->position.line;
                     if ($2.d->next!=NULL) {
-                        javaAddImportConstructionReference(&$2.d->next->id.p, &$1.d->p, UsageDefined);
+                        javaAddImportConstructionReference(&$2.d->next->id.position, &$1.d->position, UsageDefined);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -1036,8 +1036,8 @@ TypeImportOnDemandDeclaration
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
                     if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
-                    s_cps.lastImportLine = $1.d->p.line;
-                    javaAddImportConstructionReference(&$2.d->id.p, &$1.d->p, UsageDefined);
+                    s_cps.lastImportLine = $1.d->position.line;
+                    javaAddImportConstructionReference(&$2.d->id.position, &$1.d->position, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $5);
                 }
@@ -1073,14 +1073,14 @@ PackageDeclaration_opt:							{
     |	Package Name ';'						{
             $$.d = $2.d;
             if (regularPass()) {
-                s_cps.lastImportLine = $1.d->p.line;
+                s_cps.lastImportLine = $1.d->position.line;
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
             }
         }
     |	Package error							{
             $$.d = NULL;
             if (regularPass()) {
-                s_cps.lastImportLine = $1.d->p.line;
+                s_cps.lastImportLine = $1.d->position.line;
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
@@ -1256,7 +1256,7 @@ FunctionInnerClassDeclaration
                     } else {
                         PropagateBoundaries($$, $1, $8);
                         if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $8);
-                        if (positionsAreEqual(s_cxRefPos, $3.d->p)) {
+                        if (positionsAreEqual(s_cxRefPos, $3.d->position)) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                             s_spp[SPP_CLASS_DECLARATION_END_POSITION] = $$.e;
                         }
@@ -1619,7 +1619,7 @@ VariableDeclaratorId
     :   Identifier							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
+                    $$.d = newSymbol($1.d->name, $1.d->name, $1.d->position);
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -1629,7 +1629,7 @@ VariableDeclaratorId
                 CF_ALLOCC(name, strlen($1.d->name)+1, char);
                 strcpy(name, $1.d->name);
                 CF_ALLOC($$.d, Symbol);
-                fillSymbol($$.d, name, name, $1.d->p);
+                fillSymbol($$.d, name, name, $1.d->position);
             }
         }
     |	VariableDeclaratorId '[' ']'		{
@@ -1729,11 +1729,11 @@ MethodDeclarator
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->p), MEMORY_XX);
+                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->position), MEMORY_XX);
                     }
                 }
                 if (inSecondJslPass()) {
-                    $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->p), MEMORY_CF);
+                    $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->position), MEMORY_CF);
                 }
             }
         '(' FormalParameterList_opt ')'
@@ -1744,7 +1744,7 @@ MethodDeclarator
                         assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
                         initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
+                        javaHandleDeclaratorParamPositions(&$1.d->position, &$3.d, $4.d.p, &$5.d);
                         PropagateBoundaries($$, $1, $5);
                     }
                 }
@@ -1955,13 +1955,13 @@ ConstructorDeclarator
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         if (strcmp($1.d->name, s_javaStat->thisClass->name)==0) {
-                            addCxReference(s_javaStat->thisClass, &$1.d->p,
+                            addCxReference(s_javaStat->thisClass, &$1.d->position,
                                            UsageConstructorDefinition,noFileIndex, noFileIndex);
                             $<symbol>$ = javaCreateNewMethod($1.d->name,//JAVA_CONSTRUCTOR_NAME1,
-                                                             &($1.d->p), MEMORY_XX);
+                                                             &($1.d->position), MEMORY_XX);
                         } else {
                             // a type forgotten for a method?
-                            $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->p),MEMORY_XX);
+                            $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->position),MEMORY_XX);
                         }
                     }
                 }
@@ -1969,11 +1969,11 @@ ConstructorDeclarator
                     if (strcmp($1.d->name, s_jsl->classStat->thisClass->name)==0) {
                         $<symbol>$ = javaCreateNewMethod(
                                         $1.d->name, //JAVA_CONSTRUCTOR_NAME1,
-                                        &($1.d->p),
+                                        &($1.d->position),
                                         MEMORY_CF);
                     } else {
                         // a type forgotten for a method?
-                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->p), MEMORY_CF);
+                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->position), MEMORY_CF);
                     }
                 }
             }
@@ -1985,7 +1985,7 @@ ConstructorDeclarator
                         assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
                         initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
+                        javaHandleDeclaratorParamPositions(&$1.d->position, &$3.d, $4.d.p, &$5.d);
                         PropagateBoundaries($$, $1, $5);
                     }
                 }
@@ -2017,15 +2017,15 @@ ExplicitConstructorInvocation
     :   This _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &$1.d->p);
+                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &$1.d->position);
                 }
             } '(' ArgumentList_opt ')'			{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaConstructorInvocation(s_javaStat->thisClass, &($1.d->p), $5.d.t);
+                        javaConstructorInvocation(s_javaStat->thisClass, &($1.d->position), $5.d.t);
                         s_cp.erfsForParamsComplet = $2;
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.d->p, &$4.d, $5.d.p, &$6.d);
+                        javaHandleDeclaratorParamPositions(&$1.d->position, &$4.d, $5.d.p, &$6.d);
                         PropagateBoundaries($$, $1, $6);
                     }
                 }
@@ -2033,17 +2033,17 @@ ExplicitConstructorInvocation
     |	Super _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &$1.d->p);
+                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &$1.d->position);
                 }
             }   '(' ArgumentList_opt ')'			{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &($1.d->p), $5.d.t);
+                        javaConstructorInvocation(ss, &($1.d->position), $5.d.t);
                         s_cp.erfsForParamsComplet = $2;
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.d->p, &$4.d, $5.d.p, &$6.d);
+                        javaHandleDeclaratorParamPositions(&$1.d->position, &$4.d, $5.d.p, &$6.d);
                         PropagateBoundaries($$, $1, $6);
                     }
                 }
@@ -2051,17 +2051,17 @@ ExplicitConstructorInvocation
     |	Primary  '.' Super _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &($3.d->p));
+                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &($3.d->position));
                 }
             } '(' ArgumentList_opt ')'		{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &($3.d->p), $7.d.t);
+                        javaConstructorInvocation(ss, &($3.d->position), $7.d.t);
                         s_cp.erfsForParamsComplet = $4;
                     } else {
-                        javaHandleDeclaratorParamPositions(&$3.d->p, &$6.d, $7.d.p, &$8.d);
+                        javaHandleDeclaratorParamPositions(&$3.d->position, &$6.d, $7.d.p, &$8.d);
                         PropagateBoundaries($$, $1, $8);
                     }
                 }
@@ -2855,7 +2855,7 @@ ThrowStatement
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (options.server_operation==OLO_EXTRACT) {
-                        addCxReference($2.d.typeModifier->u.t, &$1.d->p, UsageThrown, noFileIndex, noFileIndex);
+                        addCxReference($2.d.typeModifier->u.t, &$1.d->position, UsageThrown, noFileIndex, noFileIndex);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -2883,7 +2883,7 @@ TryStatement
             {
                 if (options.server_operation == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                            &$1.d->p, UsageTryCatchBegin);
+                                            &$1.d->position, UsageTryCatchBegin);
                 }
             }
         Block
@@ -2898,7 +2898,7 @@ TryStatement
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
             if (options.server_operation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                        &$1.d->p, UsageTryCatchEnd);
+                                        &$1.d->position, UsageTryCatchEnd);
             }
         }
 
@@ -2921,7 +2921,7 @@ CatchClause
                                             UsageDefined);
                             if (options.server_operation == OLO_EXTRACT) {
                                 assert($3.d->bits.symbolType==TypeDefault);
-                                addCxReference($3.d->u.typeModifier->u.t, &$1.d->p, UsageCatched, noFileIndex, noFileIndex);
+                                addCxReference($3.d->u.typeModifier->u.t, &$1.d->position, UsageCatched, noFileIndex, noFileIndex);
                             }
                         }
                     }
@@ -2942,7 +2942,7 @@ CatchClause
                 if (! SyntaxPassOnly()) {
                     if (options.server_operation == OLO_EXTRACT) {
                         assert($3.d->bits.symbolType==TypeDefault);
-                        addCxReference($3.d->u.typeModifier->u.t, &$1.d->p, UsageCatched, noFileIndex, noFileIndex);
+                        addCxReference($3.d->u.typeModifier->u.t, &$1.d->position, UsageCatched, noFileIndex, noFileIndex);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $5);
@@ -2996,11 +2996,11 @@ PrimaryNoNewArray
                     assert(s_javaStat && s_javaStat->thisType);
 //fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);
                     $$.d.typeModifier = s_javaStat->thisType;
-                    addThisCxReferences(s_javaStat->classFileIndex, &$1.d->p);
+                    addThisCxReferences(s_javaStat->classFileIndex, &$1.d->position);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->p;
-                    javaCheckForStaticPrefixStart(&$1.d->p, &$1.d->p);
+                    $$.d.position = &$1.d->position;
+                    javaCheckForStaticPrefixStart(&$1.d->position, &$1.d->position);
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -3013,7 +3013,7 @@ PrimaryNoNewArray
                     $$.d.reference = NULL;
                 } else {
                     $$.d.position = javaGetNameStartingPosition($1.d);
-                    javaCheckForStaticPrefixStart(&$3.d->p, javaGetNameStartingPosition($1.d));
+                    javaCheckForStaticPrefixStart(&$3.d->position, javaGetNameStartingPosition($1.d));
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3104,7 +3104,7 @@ NestedConstructorInvocation
                     if ($1.d.typeModifier->kind == TypeStruct) {
                         mm = javaNestedNewType($1.d.typeModifier->u.t, $3.d, $4.d);
                         if (mm->kind != TypeError) {
-                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.p));
+                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.position));
                         }
                     }
                 }
@@ -3118,11 +3118,11 @@ NestedConstructorInvocation
                     } else {
                         $$.d.typeModifier = &s_errorModifier;
                     }
-                    javaHandleDeclaratorParamPositions(&$4.d->id.p, &$7.d, $8.d.p, &$9.d);
+                    javaHandleDeclaratorParamPositions(&$4.d->id.position, &$7.d, $8.d.p, &$9.d);
                     assert($$.d.typeModifier);
                     $$.d.idList = $4.d;
                     if ($$.d.typeModifier->kind != TypeError) {
-                        javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.p), $8.d.t);
+                        javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.position), $8.d.t);
                     }
                 } else {
                     $$.d.position = $1.d.position;
@@ -3137,7 +3137,7 @@ NestedConstructorInvocation
                     s_cp.erfsForParamsComplet = NULL;
                     mm = javaNewAfterName($1.d, $3.d, $4.d);
                     if (mm->kind != TypeError) {
-                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.p));
+                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.position));
                     }
                 }
             }
@@ -3148,11 +3148,11 @@ NestedConstructorInvocation
                     $$.d.typeModifier = javaNewAfterName($1.d, $3.d, $4.d);
                     $$.d.idList = $4.d;
                     if ($$.d.typeModifier->kind != TypeError) {
-                        javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.p), $8.d.t);
+                        javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.position), $8.d.t);
                     }
                 } else {
                     $$.d.position = javaGetNameStartingPosition($1.d);
-                    javaHandleDeclaratorParamPositions(&$4.d->id.p, &$7.d, $8.d.p, &$9.d);
+                    javaHandleDeclaratorParamPositions(&$4.d->id.position, &$7.d, $8.d.p, &$9.d);
                     PropagateBoundaries($$, $1, $9);
                 }
             }
@@ -3170,7 +3170,7 @@ NewName
                                           CLASS_TO_TYPE,UsageUsed);
                 $1.d->nameType = TypeStruct;
                 ss = javaTypeSymbolUsage($1.d, AccessDefault);
-                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &($1.d->id.p));
+                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &($1.d->id.position));
             }
             $$ = $1;
         }
@@ -3196,11 +3196,11 @@ ClassInstanceCreationExpression
                             // MARIAN(?): before it was s_javaStat->classFileIndex, but be more precise
                             // in reality you should keep both to discover references
                             // to original class from class nested in method.
-                            addThisCxReferences(ei->u.structSpec->classFile, &$1.d->p);
+                            addThisCxReferences(ei->u.structSpec->classFile, &$1.d->position);
                             // MARIAN(?): I have removed following because it makes problems when
                             // expanding to FQT names, WHY IT WAS HERE ???
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                                         s_javaStat->classFileIndex, &$1.d->p,
+                                         s_javaStat->classFileIndex, &$1.d->position,
                                          UsageNotFQField); &*/
                         } else {
                             // MARIAN(?): here I should annulate class reference, as it is an error
@@ -3215,13 +3215,13 @@ ClassInstanceCreationExpression
                                 } &*/
                         }
                     }
-                    javaConstructorInvocation(ss, &($3.d->id.p), $5.d.t);
+                    javaConstructorInvocation(ss, &($3.d->id.position), $5.d.t);
                     tt = javaTypeNameDefinition($3.d);
                     $$.d.typeModifier = tt->u.typeModifier;
                     $$.d.reference = NULL;
                 } else {
-                    javaHandleDeclaratorParamPositions(&$3.d->id.p, &$4.d, $5.d.p, &$6.d);
-                    $$.d.position = &$1.d->p;
+                    javaHandleDeclaratorParamPositions(&$3.d->id.position, &$4.d, $5.d.p, &$6.d);
+                    $$.d.position = &$1.d->position;
                     PropagateBoundaries($$, $1, $6);
                 }
             }
@@ -3235,9 +3235,9 @@ ClassInstanceCreationExpression
                         javaClassifyToTypeName($3.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         $<symbol>$ = javaTypeNameDefinition($3.d);
                         ss = javaTypeSymbolUsage($3.d, AccessDefault);
-                        javaConstructorInvocation(ss, &($3.d->id.p), $5.d.t);
+                        javaConstructorInvocation(ss, &($3.d->id.position), $5.d.t);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$3.d->id.p, &$4.d, $5.d.p, &$6.d);
+                        javaHandleDeclaratorParamPositions(&$3.d->id.position, &$4.d, $5.d.p, &$6.d);
                         // seems that there is no problem like in previous case,
                         // interfaces are never inner.
                     }
@@ -3245,14 +3245,14 @@ ClassInstanceCreationExpression
                     Symbol *str, *cls;
                     jslClassifyAmbiguousTypeName($3.d, &str);
                     cls = jslTypeNameDefinition($3.d);
-                    jslNewClassDefinitionBegin(&s_javaAnonymousClassName,
+                    jslNewClassDefinitionBegin(&javaAnonymousClassName,
                                                 AccessDefault, cls, CPOS_ST);
                 }
             }
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName,AccessDefault, $<symbol>6);
+                        $<trail>$ = newClassDefinitionBegin(&javaAnonymousClassName,AccessDefault, $<symbol>6);
                     }
                 }
             }
@@ -3264,7 +3264,7 @@ ClassInstanceCreationExpression
                     $$.d.typeModifier = $<symbol>7->u.typeModifier;
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->p;
+                    $$.d.position = &$1.d->position;
                     PropagateBoundaries($$, $1, $9);
                 }
             } else {
@@ -3285,7 +3285,7 @@ ClassInstanceCreationExpression
                         $$.d.position = $1.d.position;
                         $$.d.reference = NULL;
                         if ($$.d.typeModifier->kind != TypeError) {
-                            $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName, AccessDefault, $$.d.typeModifier->u.t);
+                            $<trail>$ = newClassDefinitionBegin(&javaAnonymousClassName, AccessDefault, $$.d.typeModifier->u.t);
                         } else {
                             $<trail>$ = newAnonClassDefinitionBegin(& $1.d.idList->id);
                         }
@@ -3378,7 +3378,7 @@ ArrayCreationExpression
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->p;
+                    $$.d.position = &$1.d->position;
                     PropagateBoundaries($$, $1, $5);
                     if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $4);
                 }
@@ -3393,7 +3393,7 @@ ArrayCreationExpression
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->p;
+                    $$.d.position = &$1.d->position;
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -3408,7 +3408,7 @@ ArrayCreationExpression
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->p;
+                    $$.d.position = &$1.d->position;
                     PropagateBoundaries($$, $1, $5);
                     if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $4);
                 }
@@ -3424,7 +3424,7 @@ ArrayCreationExpression
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->p;
+                    $$.d.position = &$1.d->position;
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -3489,7 +3489,7 @@ FieldAccess
                     assert($$.d.typeModifier);
                 } else {
                     $$.d.position = $1.d.position;
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
+                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3500,7 +3500,7 @@ FieldAccess
                     Symbol *ss,*rec=NULL;
 
                     $$.d.reference = NULL;
-                    $$.d.position = &$1.d->p;
+                    $$.d.position = &$1.d->position;
                     ss = javaCurrentSuperClass();
                     if (ss != &s_errorSymbol && ss->bits.symbolType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
@@ -3513,9 +3513,9 @@ FieldAccess
                     }
                     assert($$.d.typeModifier);
                 } else {
-                    $$.d.position = &$1.d->p;
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
-                    javaCheckForStaticPrefixStart(&$3.d->p, $$.d.position);
+                    $$.d.position = &$1.d->position;
+                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
+                    javaCheckForStaticPrefixStart(&$3.d->position, $$.d.position);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3540,10 +3540,10 @@ FieldAccess
                     assert($$.d.typeModifier);
                 } else {
                     $$.d.position = javaGetNameStartingPosition($1.d);
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
-                    javaCheckForPrimaryStart(&$5.d->p, $$.d.position);
-                    javaCheckForStaticPrefixStart(&$3.d->p, $$.d.position);
-                    javaCheckForStaticPrefixStart(&$5.d->p, $$.d.position);
+                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
+                    javaCheckForPrimaryStart(&$5.d->position, $$.d.position);
+                    javaCheckForStaticPrefixStart(&$3.d->position, $$.d.position);
+                    javaCheckForStaticPrefixStart(&$5.d->position, $$.d.position);
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -3568,7 +3568,7 @@ MethodInvocation
                     $$.d.position = javaGetNameStartingPosition($1.d);
                     javaCheckForPrimaryStartInNameList($1.d, $$.d.position);
                     javaCheckForStaticPrefixInNameList($1.d, $$.d.position);
-                    javaHandleDeclaratorParamPositions(&$1.d->id.p, &$4.d, $5.d.p, &$6.d);
+                    javaHandleDeclaratorParamPositions(&$1.d->id.position, &$4.d, $5.d.p, &$6.d);
                     PropagateBoundaries($$, $1, $6);
                 }
             }
@@ -3585,8 +3585,8 @@ MethodInvocation
                     s_cp.erfsForParamsComplet = $4;
                 } else {
                     $$.d.position = $1.d.position;
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
-                    javaHandleDeclaratorParamPositions(&$3.d->p, &$6.d, $7.d.p, &$8.d);
+                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
+                    javaHandleDeclaratorParamPositions(&$3.d->position, &$6.d, $7.d.p, &$8.d);
                     PropagateBoundaries($$, $1, $8);
                 }
             }
@@ -3602,10 +3602,10 @@ MethodInvocation
                     $$.d.reference = NULL;
                     s_cp.erfsForParamsComplet = $4;
                 } else {
-                    $$.d.position = &$1.d->p;
-                    javaCheckForPrimaryStart(&$1.d->p, $$.d.position);
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
-                    javaHandleDeclaratorParamPositions(&$3.d->p, &$6.d, $7.d.p, &$8.d);
+                    $$.d.position = &$1.d->position;
+                    javaCheckForPrimaryStart(&$1.d->position, $$.d.position);
+                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
+                    javaHandleDeclaratorParamPositions(&$3.d->position, &$6.d, $7.d.p, &$8.d);
                     PropagateBoundaries($$, $1, $8);
                 }
             }

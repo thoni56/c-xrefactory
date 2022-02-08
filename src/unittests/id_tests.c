@@ -20,9 +20,9 @@ Ensure(Id, can_copy_id) {
     Id *id2;
 
     id1->name = "idName";
-    id1->p.file = 1;
-    id1->p.line = 2;
-    id1->p.col = 3;
+    id1->position.file = 1;
+    id1->position.line = 2;
+    id1->position.col = 3;
     id1->symbol = NULL;
     id1->next = &id;
 

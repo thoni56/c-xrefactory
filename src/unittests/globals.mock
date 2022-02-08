@@ -9,7 +9,7 @@ int s_fileAbortionEnabled;
 
 #include "lexem.h"
 
-Id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
+Id javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
 Id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
 TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 Symbol s_errorSymbol;

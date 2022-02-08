@@ -64,7 +64,7 @@ void generateInternalLabelReference(int counter, int usage) {
     fillId(&labelId, labelName, NULL, position);
 
     if (usage != UsageDefined)
-        labelId.p.line++;
+        labelId.position.line++;
     // line == 0 or 1 , (hack to get definition first)
     labelReference(&labelId, usage);
 }

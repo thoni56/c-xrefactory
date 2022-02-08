@@ -96,7 +96,7 @@ char defaultClassPath[] = ".";
 StringList *javaClassPaths;
 char *javaSourcePaths;
 
-Id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
+Id javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
 Id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
 
 static IdList s_javaDefaultPackageNameBody[] = {

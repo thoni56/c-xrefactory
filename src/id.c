@@ -3,7 +3,7 @@
 void fillId(Id *id, char *name, Symbol *symbol, Position position) {
     id->name = name;
     id->symbol = symbol;
-    id->p = position;
+    id->position = position;
     id->next = NULL;
 }
 
@@ -19,7 +19,7 @@ void fillfIdList(IdList *idList, char *name, Symbol *symbol,
                   char *fname, Type nameType, IdList *next) {
     idList->id.name = name;
     idList->id.symbol = symbol;
-    idList->id.p = position;
+    idList->id.position = position;
     idList->id.next = NULL;
     idList->fname = fname;
     idList->nameType = nameType;

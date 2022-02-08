@@ -2144,7 +2144,7 @@ static void mainTotalTaskEntryInitialisations() {
 
     noPosition = makePosition(noFileIndex, 0, 0);
     inputFileNumber            = noFileIndex;
-    s_javaAnonymousClassName.p = noPosition;
+    javaAnonymousClassName.position   = noPosition;
 
     olcxInit();
     editorInit();

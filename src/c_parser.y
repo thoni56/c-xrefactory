@@ -242,7 +242,7 @@ primary_expr
             assert(dd->bits.storage != StorageTypedef);
             $$.d.typeModifier = dd->u.typeModifier;
             assert(options.taskRegime);
-            $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed, noFileIndex, noFileIndex);
+            $$.d.reference = addCxReference(p, &$1.d->position, UsageUsed, noFileIndex, noFileIndex);
         } else {
             /* implicit function declaration */
             TypeModifier *p;
@@ -252,11 +252,11 @@ primary_expr
             p = newTypeModifier(TypeInt, NULL, NULL);
             $$.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
-            d = newSymbolAsType($1.d->name, $1.d->name, $1.d->p, $$.d.typeModifier);
+            d = newSymbolAsType($1.d->name, $1.d->name, $1.d->position, $$.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, symbolTable, UsageUsed);
-            $$.d.reference = addCxReference(dd, &$1.d->p, UsageUsed, noFileIndex, noFileIndex);
+            $$.d.reference = addCxReference(dd, &$1.d->position, UsageUsed, noFileIndex, noFileIndex);
         }
     }
     | CHAR_LITERAL          { $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.reference = NULL;}
@@ -684,7 +684,7 @@ user_defined_type
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        addCxReference($1.d->symbol,&$1.d->p,usage,noFileIndex,noFileIndex);
+        addCxReference($1.d->symbol,&$1.d->position,usage,noFileIndex,noFileIndex);
     }
     ;
 
@@ -1002,7 +1002,7 @@ declarator
 
 declarator2
     : identifier                                        {
-        $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
+        $$.d = newSymbol($1.d->name, $1.d->name, $1.d->position);
     }
     | '(' declarator ')'                                {
         $$.d = $2.d;
@@ -1157,13 +1157,13 @@ parameter_identifier_list
 identifier_list
     : IDENTIFIER                                {
         Symbol *p;
-        p = newSymbol($1.d->name, $1.d->name, $1.d->p);
+        p = newSymbol($1.d->name, $1.d->name, $1.d->position);
         $$.d.symbol = p;
         $$.d.p = NULL;
     }
     | identifier_list ',' identifier            {
         Symbol        *p;
-        p = newSymbol($3.d->name, $3.d->name, $3.d->p);
+        p = newSymbol($3.d->name, $3.d->name, $3.d->position);
         $$.d = $1.d;
         LIST_APPEND(Symbol, $$.d.symbol, p);
         appendPositionToList(&$$.d.p, &$2.d);

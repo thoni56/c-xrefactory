@@ -2282,7 +2282,7 @@ case 1:
             assert(dd->bits.storage != StorageTypedef);
             yyval.ast_expressionType.d.typeModifier = dd->u.typeModifier;
             assert(options.taskRegime);
-            yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->p, UsageUsed, noFileIndex, noFileIndex);
+            yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->position, UsageUsed, noFileIndex, noFileIndex);
         } else {
             /* implicit function declaration */
             TypeModifier *p;
@@ -2292,11 +2292,11 @@ case 1:
             p = newTypeModifier(TypeInt, NULL, NULL);
             yyval.ast_expressionType.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
-            d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.typeModifier);
+            d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position, yyval.ast_expressionType.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, symbolTable, UsageUsed);
-            yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->p, UsageUsed, noFileIndex, noFileIndex);
+            yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->position, UsageUsed, noFileIndex, noFileIndex);
         }
     }
 break;
@@ -2818,7 +2818,7 @@ case 106:
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        addCxReference(yyvsp[0].ast_id.d->symbol,&yyvsp[0].ast_id.d->p,usage,noFileIndex,noFileIndex);
+        addCxReference(yyvsp[0].ast_id.d->symbol,&yyvsp[0].ast_id.d->position,usage,noFileIndex,noFileIndex);
     }
 break;
 case 107:
@@ -3246,7 +3246,7 @@ break;
 case 193:
 #line 1004 "c_parser.y"
 {
-        yyval.ast_symbol.d = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p);
+        yyval.ast_symbol.d = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position);
     }
 break;
 case 194:
@@ -3441,7 +3441,7 @@ case 222:
 #line 1158 "c_parser.y"
 {
         Symbol *p;
-        p = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p);
+        p = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position);
         yyval.ast_symbolPositionListPair.d.symbol = p;
         yyval.ast_symbolPositionListPair.d.p = NULL;
     }
@@ -3450,7 +3450,7 @@ case 223:
 #line 1164 "c_parser.y"
 {
         Symbol        *p;
-        p = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p);
+        p = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position);
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, p);
         appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &yyvsp[-1].ast_position.d);

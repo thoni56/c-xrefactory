@@ -55,7 +55,7 @@ extern int s_yyIdentBufi;
 
 extern char *s_cppVarArgsName;
 extern char defaultClassPath[];
-extern Id s_javaAnonymousClassName;
+extern Id javaAnonymousClassName;
 extern Id s_javaConstructorName;
 extern StringList *javaClassPaths;
 extern char *javaSourcePaths;

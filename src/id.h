@@ -9,7 +9,7 @@
 typedef struct id {
     char *name;
     struct symbol *symbol;
-    struct position	p;
+    struct position	position;
     struct id *next;
 } Id;
 

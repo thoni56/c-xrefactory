@@ -146,7 +146,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
     //&fprintf(communicationChannel, "[jsl] jslTypeSymbolDefinition %s, %s, %s, %s\n", ttt2, fqtName, smemb->name, smemb->linkName);
     if (add == ADD_YES) {
-        if (packid!=NULL) importPos = &packid->id.p;
+        if (packid!=NULL) importPos = &packid->id.position;
         else importPos = &noPosition;
         xss = StackMemoryAlloc(JslSymbolList); // CF_ALLOC ???
         fillJslSymbolList(xss, smemb, *importPos, isExplicitlyImported);
@@ -193,7 +193,7 @@ Symbol *jslTypeNameDefinition(IdList *tname) {
     initTypeModifierAsStructUnionOrEnum(td, TypeStruct, memb, NULL, NULL);
 
     CF_ALLOC(dd, Symbol); //XX_ALLOC?
-    fillSymbolWithTypeModifier(dd, memb->name, memb->linkName, tname->id.p, td);
+    fillSymbolWithTypeModifier(dd, memb->name, memb->linkName, tname->id.position, td);
 
     return dd;
 }
@@ -578,10 +578,10 @@ void jslNewClassDefinitionBegin(Id *name,
     fileTable.tab[fileInd]->b.sourceFileNumber = s_jsl->sourceFileNumber;
 
     if (accFlags & AccessInterface) fileTable.tab[fileInd]->b.isInterface = true;
-    addClassTreeHierarchyReference(fileInd,&inname->p,UsageClassTreeDefinition);
-    if (inname->p.file != olOriginalFileNumber && options.server_operation == OLO_PUSH) {
+    addClassTreeHierarchyReference(fileInd,&inname->position,UsageClassTreeDefinition);
+    if (inname->position.file != olOriginalFileNumber && options.server_operation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
-        addCxReference(cc, &inname->p, UsageDefined,noFileIndex, noFileIndex);
+        addCxReference(cc, &inname->position, UsageDefined,noFileIndex, noFileIndex);
     }
     // this is to update references affected to class file before
     // if you remove this, then remove also at class end
@@ -595,7 +595,7 @@ void jslNewClassDefinitionBegin(Id *name,
 
     beginBlock();
     ill = StackMemoryAlloc(IdList);
-    fillfIdList(ill, cc->name, inname->symbol, inname->p, cc->name, TypeStruct, s_jsl->classStat->className);
+    fillfIdList(ill, cc->name, inname->symbol, inname->position, cc->name, TypeStruct, s_jsl->classStat->className);
     nss = newJslClassStat(ill, cc, s_jsl->classStat->thisPackage,
                           s_jsl->classStat);
     s_jsl->classStat = nss;
@@ -646,6 +646,6 @@ void jslNewAnonClassDefinitionBegin(Id *interfName) {
     fillIdList(&ll, *interfName, interfName->name, TypeDefault, NULL);
     jslClassifyAmbiguousTypeName(&ll, &str);
     interf = jslTypeNameDefinition(&ll);
-    jslNewClassDefinitionBegin(&s_javaAnonymousClassName, AccessDefault,
+    jslNewClassDefinitionBegin(&javaAnonymousClassName, AccessDefault,
                                interf, CPOS_ST);
 }
