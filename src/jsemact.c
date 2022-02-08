@@ -99,7 +99,7 @@ char *javaCreateComposedName(char *prefix,
     for (ids=className; ids!=NULL; ids=ids->next) {
         if (sss)
             len ++;
-        len += strlen(ids->fname);
+        len += strlen(ids->fqtname);
         sss = true;
     }
     ll = strlen(name);
@@ -125,9 +125,9 @@ char *javaCreateComposedName(char *prefix,
             len --;
             ln[len] = separator;
         }
-        ll = strlen(ids->fname);
+        ll = strlen(ids->fqtname);
         len -= ll;
-        strncpy(ln+len,ids->fname,ll);
+        strncpy(ln + len, ids->fqtname, ll);
         sss = true;
         assert(ids->nameType==TypeStruct || ids->nameType==TypePackage
                 || ids->nameType==TypeExpression);
@@ -1009,17 +1009,18 @@ int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi) {
     return false;
 }
 
-#define JAVA_CLASS_CAN_HAVE_IT(name,str,outImportPos,mm,memb,haveit) {  \
-        haveit = true;                                                  \
-        *str = mm;                                                      \
-        name->nameType = TypeStruct;                                    \
-        name->fname = mm->linkName;                                     \
-        if (cxrefFlag == ADD_CX_REFS) {                                 \
-            ipos = & memb->pos; /* here MUST be memb, not mm, as it contains the import line !!*/ \
-            if (ipos->file != noFileIndex && ipos->file != -1) {        \
-                javaAddImportConstructionReference(ipos, ipos, UsageUsed); \
-            }                                                           \
-        }                                                               \
+#define JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit)                                         \
+    {                                                                                                             \
+        haveit         = true;                                                                                    \
+        *str           = mm;                                                                                      \
+        name->nameType = TypeStruct;                                                                              \
+        name->fqtname  = mm->linkName;                                                                            \
+        if (cxrefFlag == ADD_CX_REFS) {                                                                           \
+            ipos = &memb->pos; /* here MUST be memb, not mm, as it contains the import line !!*/                  \
+            if (ipos->file != noFileIndex && ipos->file != -1) {                                                  \
+                javaAddImportConstructionReference(ipos, ipos, UsageUsed);                                        \
+            }                                                                                                     \
+        }                                                                                                         \
     }
 
 int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,

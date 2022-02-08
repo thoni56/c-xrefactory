@@ -15,8 +15,8 @@ typedef struct id {
 
 typedef struct idList {
     struct id id;
-    char *fname;                /* fqt name for java */
-    enum type nameType;             /* type of name segment for java */
+    char *         fqtname;  /* fqt name for java */
+    enum type      nameType; /* type of name segment for java */
     struct idList *next;
 } IdList;
 

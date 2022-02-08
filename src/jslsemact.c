@@ -225,7 +225,7 @@ static int jslClassifySingleAmbigNameToTypeOrPack(IdList *name,
                 log_trace("O.K. class '%s' is accessible", memb->d->name);
                 *str = memb->d;
                 name->nameType = TypeStruct;
-                name->fname = memb->d->linkName;
+                name->fqtname  = memb->d->linkName;
                 return(TypeStruct);
             }
         }
