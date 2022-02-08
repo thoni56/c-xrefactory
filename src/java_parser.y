@@ -1009,7 +1009,7 @@ SingleTypeImportDeclaration
                     // it was type or packege, but I thing this would be better
                     lastUselessRef = javaClassifyToTypeName($2.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     // last useless reference is not useless here!
-                    if (lastUselessRef!=NULL) lastUselessRef->usage = s_noUsage;
+                    if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
                     s_cps.lastImportLine = $1.d->p.line;
                     if ($2.d->next!=NULL) {
                         javaAddImportConstructionReference(&$2.d->next->id.p, &$1.d->p, UsageDefined);
@@ -1035,7 +1035,7 @@ TypeImportOnDemandDeclaration
                     st = javaClassifyAmbiguousName($2.d, NULL,&str,&expr,&rr,
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
-                    if (lastUselessRef!=NULL) lastUselessRef->usage = s_noUsage;
+                    if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
                     s_cps.lastImportLine = $1.d->p.line;
                     javaAddImportConstructionReference(&$2.d->id.p, &$1.d->p, UsageDefined);
                 } else {
@@ -4176,7 +4176,7 @@ Assignment
                     if ($1.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
                         Reference *rr;
                         rr = duplicateReference($1.d.reference);
-                        $1.d.reference->usage = s_noUsage;
+                        $1.d.reference->usage = NO_USAGE;
                         if ($3.d.u == '=') {
                             RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
                         } else {

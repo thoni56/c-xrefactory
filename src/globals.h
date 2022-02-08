@@ -29,7 +29,9 @@ extern int s_fileAbortionEnabled;
 extern bool s_wildcardSearch;
 extern int s_lastReturnedLexem;
 extern Position s_spp[SPP_MAX];
-extern UsageBits s_noUsage;
+
+// !!! if changing this, change also s_noRef!!!
+#define NO_USAGE (UsageBits){UsageNone, 0}
 
 extern int progressFactor;
 extern int progressOffset;

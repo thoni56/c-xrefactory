@@ -258,7 +258,7 @@ Reference *duplicateReference(Reference *r) {
     // this is used in extract x=x+2; to re-arrange order of references
     // i.e. usage must be first, lValue second.
     Reference *rr;
-    r->usage = s_noUsage;
+    r->usage = NO_USAGE;
     CX_ALLOC(rr, Reference);
     *rr = *r;
     r->next = rr;
@@ -670,14 +670,21 @@ static bool olcxOnlyParseNoPushing(int opt) {
 /*                                                                       */
 Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
                                 int vFunCl, int vApplCl) {
-    int index,category,scope,storage,defusage;
-    char *linkName;
-    Reference rr, **place;
-    Position *defpos;
-    SymbolReferenceItem *pp,*memb, ppp;
-    SymbolsMenu *mmi;
-    ReferenceTable *reftab;
-    int usage_base;
+    int                  index;
+    int                  category;
+    int                  scope;
+    int                  storage;
+    int                  defaultUsage;
+    char                *linkName;
+    Reference            rr;
+    Reference **         place;
+    Position *           defpos;
+    SymbolReferenceItem *pp;
+    SymbolReferenceItem *memb;
+    SymbolReferenceItem  ppp;
+    SymbolsMenu *        mmi;
+    ReferenceTable *     reftab;
+    int                  usage_base;
 
     usage_base = usage->base;
     // do not record references during prescanning
@@ -771,17 +778,17 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
             assert(currentUserData && currentUserData->browserStack.top);
             olSetCallerPosition(pos);
             defpos = &s_noPos;
-            defusage = s_noUsage.base;
+            defaultUsage = NO_USAGE.base;
             if (symbol->bits.symbolType==TypeMacro && ! options.exactPositionResolve) {
                 // a hack for macros
                 defpos = &symbol->pos;
-                defusage = UsageDefined;
+                defaultUsage = UsageDefined;
             }
             if (defpos->file!=noFileIndex)
                 log_trace("getting definition position of %s at line %d", symbol->name, defpos->line);
             if (! olcxOnlyParseNoPushing(options.server_operation)) {
                 mmi = olAddBrowsedSymbol(memb,&currentUserData->browserStack.top->hkSelectedSym,
-                                         1,1,0,usage_base,0, defpos, defusage);
+                                         1,1,0,usage_base,0, defpos, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
                 if (IS_DEFINITION_USAGE(usage_base)) {

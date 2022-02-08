@@ -29,8 +29,7 @@ typedef struct symbol {
     char					*name;
     char					*linkName;		/* fully qualified name for cx */
     struct position			pos;			/* definition position for most syms;
-                                               import position for imported classes!
-                                            */
+                                               import position for imported classes! */
     struct symbolBits bits;
     union {
         struct typeModifier		*typeModifier; /* if bits.symbolType == TypeDefault */

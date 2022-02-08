@@ -17,9 +17,6 @@ int s_lastReturnedLexem;
 
 Position s_spp[SPP_MAX];
 
-// !!! if changing this, change also s_noRef!!!
-UsageBits s_noUsage = {UsageNone, 0, };
-
 Reference s_noRef = {{UsageNone, 0, }, {-1, 0, 0}, NULL};
 
 int progressOffset=0;

@@ -586,7 +586,7 @@ assignment_expr
         if ($1.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
             Reference *rr;
             rr = duplicateReference($1.d.reference);
-            $1.d.reference->usage = s_noUsage;
+            $1.d.reference->usage = NO_USAGE;
             if ($2.d == '=') {
                 RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
             } else {

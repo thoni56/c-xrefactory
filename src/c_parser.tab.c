@@ -2689,7 +2689,7 @@ case 82:
         if (yyvsp[-2].ast_expressionType.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
             Reference *rr;
             rr = duplicateReference(yyvsp[-2].ast_expressionType.d.reference);
-            yyvsp[-2].ast_expressionType.d.reference->usage = s_noUsage;
+            yyvsp[-2].ast_expressionType.d.reference->usage = NO_USAGE;
             if (yyvsp[-1].ast_integer.d == '=') {
                 RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
             } else {

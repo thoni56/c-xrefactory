@@ -3501,7 +3501,7 @@ case 74:
                     /* it was type or packege, but I thing this would be better*/
                     lastUselessRef = javaClassifyToTypeName(yyvsp[-1].ast_idList.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     /* last useless reference is not useless here!*/
-                    if (lastUselessRef!=NULL) lastUselessRef->usage = s_noUsage;
+                    if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
                     s_cps.lastImportLine = yyvsp[-2].ast_id.d->p.line;
                     if (yyvsp[-1].ast_idList.d->next!=NULL) {
                         javaAddImportConstructionReference(&yyvsp[-1].ast_idList.d->next->id.p, &yyvsp[-2].ast_id.d->p, UsageDefined);
@@ -3533,7 +3533,7 @@ case 77:
                     st = javaClassifyAmbiguousName(yyvsp[-3].ast_idList.d, NULL,&str,&expr,&rr,
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
-                    if (lastUselessRef!=NULL) lastUselessRef->usage = s_noUsage;
+                    if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
                     s_cps.lastImportLine = yyvsp[-4].ast_id.d->p.line;
                     javaAddImportConstructionReference(&yyvsp[-3].ast_idList.d->id.p, &yyvsp[-4].ast_id.d->p, UsageDefined);
                 } else {
@@ -7049,7 +7049,7 @@ case 463:
                     if (yyvsp[-3].ast_expressionType.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
                         Reference *rr;
                         rr = duplicateReference(yyvsp[-3].ast_expressionType.d.reference);
-                        yyvsp[-3].ast_expressionType.d.reference->usage = s_noUsage;
+                        yyvsp[-3].ast_expressionType.d.reference->usage = NO_USAGE;
                         if (yyvsp[-1].ast_unsignedPositionPair.d.u == '=') {
                             RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
                         } else {

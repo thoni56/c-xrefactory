@@ -2142,8 +2142,7 @@ static void mainTotalTaskEntryInitialisations() {
     initFileTable(&fileTable);
 
     s_noPos = makePosition(noFileIndex, 0, 0);
-    fillUsageBits(&s_noUsage, UsageNone, 0);
-    fillReference(&s_noRef, s_noUsage, s_noPos, NULL);
+    fillReference(&s_noRef, NO_USAGE, s_noPos, NULL);
     inputFileNumber            = noFileIndex;
     s_javaAnonymousClassName.p = s_noPos;
 
