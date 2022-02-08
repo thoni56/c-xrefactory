@@ -495,8 +495,9 @@ void printCompletions(Completions* c) {
             vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFile;
             if (vFunCl == -1) vFunCl = noFileIndex;
         }
+        Reference ref;
         olCompletionListPrepend(c->alternatives[ii].string, ppcTmpBuff, vclass, jindent,
-                                c->alternatives[ii].symbol, NULL, &s_noRef, c->alternatives[ii].symbolType, vFunCl,
+                                c->alternatives[ii].symbol, NULL, &ref, c->alternatives[ii].symbolType, vFunCl,
                                 currentUserData->completionsStack.top);
     }
     olCompletionListReverse();

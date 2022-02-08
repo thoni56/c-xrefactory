@@ -5151,14 +5151,14 @@ void olSetCallerPosition(Position *pos) {
 
 // if s==NULL, then the pos is taken as default position of this ref !!!
 
-S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s,
-                                        SymbolReferenceItem *rr, Reference *dfref, int cType, int vFunClass,
-                                        OlcxReferences *stack) {
+/* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
+S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *symbol,
+                                        SymbolReferenceItem *referenceItem, Reference *reference, int cType,
+                                        int vFunClass, OlcxReferences *stack) {
     S_olCompletion *cc;
     char *ss,*nn, *fullnn, *vclnn;
     int category, scope, storage, slen, nlen;
     SymbolReferenceItem sri;
-    Reference reference;
 
     nlen = strlen(name);
     nn = olcx_memory_allocc(nlen+1, sizeof(char));
@@ -5173,37 +5173,37 @@ S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass
         vclnn = olcx_memory_allocc(strlen(vclass)+1, sizeof(char));
         strcpy(vclnn, vclass);
     }
-    if (rr!=NULL) {
+    if (referenceItem!=NULL) {
         // probably a 'search in tag' file item
-        slen = strlen(rr->name);
+        slen = strlen(referenceItem->name);
         ss = olcx_memory_allocc(slen+1, sizeof(char));
-        strcpy(ss, rr->name);
+        strcpy(ss, referenceItem->name);
         fillSymbolRefItem(&sri, ss, cxFileHashNumber(ss),
-                                    rr->vApplClass, rr->vFunClass);
-        sri.b = rr->b;
+                                    referenceItem->vApplClass, referenceItem->vFunClass);
+        sri.b = referenceItem->b;
 
-        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, rr->b.category, cType, *dfref, sri);
-    } else if (s==NULL) {
-        reference = *dfref;
-        reference.next = NULL;
-        fillSymbolRefItem(&sri, "", cxFileHashNumber(""),
-                                    noFileIndex, noFileIndex);
+        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, referenceItem->b.category, cType, *reference, sri);
+    } else if (symbol==NULL) {
+        Reference r = *reference;
+        r.next = NULL;
+        fillSymbolRefItem(&sri, "", cxFileHashNumber(""), noFileIndex, noFileIndex);
         fillSymbolRefItemBits(&sri.b, TypeUnknown, StorageNone,
                                ScopeAuto, AccessDefault, CategoryLocal);
-        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, reference, sri);
+        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
     } else {
-        getSymbolCxrefCategories(s, &category, &scope, &storage);
-        log_trace(":adding sym '%s' %d", s->linkName, category);
-        slen = strlen(s->linkName);
+        Reference r;
+        getSymbolCxrefCategories(symbol, &category, &scope, &storage);
+        log_trace(":adding sym '%s' %d", symbol->linkName, category);
+        slen = strlen(symbol->linkName);
         ss = olcx_memory_allocc(slen+1, sizeof(char));
-        strcpy(ss, s->linkName);
-        fillUsageBits(&reference.usage, UsageDefined, 0);
-        fillReference(&reference, reference.usage, s->pos, NULL);
+        strcpy(ss, symbol->linkName);
+        fillUsageBits(&r.usage, UsageDefined, 0);
+        fillReference(&r, r.usage, symbol->pos, NULL);
         fillSymbolRefItem(&sri, ss, cxFileHashNumber(ss),
                                     vFunClass, vFunClass);
-        fillSymbolRefItemBits(&sri.b, s->bits.symbolType, storage,
-                               scope, s->bits.access, category);
-        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, reference, sri);
+        fillSymbolRefItemBits(&sri.b, symbol->bits.symbolType, storage,
+                               scope, symbol->bits.access, category);
+        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);
     }
     if (fullText!=NULL) {
         for (int i=0; fullText[i]; i++) {

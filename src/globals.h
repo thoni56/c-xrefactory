@@ -95,7 +95,6 @@ extern Symbol s_defaultVoidDefinition;
 extern TypeModifier s_errorModifier;
 extern Symbol s_errorSymbol;
 extern Position noPosition;
-extern Reference s_noRef;
 
 extern uchar typeLongChange[MAX_TYPE];
 extern uchar typeShortChange[MAX_TYPE];

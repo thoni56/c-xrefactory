@@ -312,17 +312,17 @@ bool symbolNameShouldBeHiddenFromReports(char *name) {
     return false;
 }
 
-void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
+void searchSymbolCheckReference(SymbolReferenceItem  *referenceItem, Reference *reference) {
     char ssname[MAX_CX_SYMBOL_SIZE];
     char *s, *sname;
     int slen;
 
-    if (ss->b.symType == TypeCppInclude)
+    if (referenceItem->b.symType == TypeCppInclude)
         return;   // no %%i symbols
-    if (symbolNameShouldBeHiddenFromReports(ss->name))
+    if (symbolNameShouldBeHiddenFromReports(referenceItem->name))
         return;
 
-    linkNamePrettyPrint(ssname, ss->name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+    linkNamePrettyPrint(ssname, referenceItem->name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     sname = ssname;
     slen = strlen(sname);
     // if completing without profile, cut profile
@@ -339,9 +339,10 @@ void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
     slen = strlen(sname);
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
-        //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, rr, ss->vFunClass, currentUserData->retrieverStack.top);
-        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, fileTable.tab[rr->position.file]->name, rr->position.file, options.olcxSearchString, s_wildcardSearch);ppcBottomInformation(tmpBuff);
-        olCompletionListPrepend(sname, NULL, NULL, 0, NULL, ss, rr, ss->b.symType, ss->vFunClass, currentUserData->retrieverStack.top);
+        //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, reference, referenceItem->vFunClass, currentUserData->retrieverStack.top);
+        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, fileTable.tab[reference->position.file]->name, reference->position.file, options.olcxSearchString, s_wildcardSearch);ppcBottomInformation(tmpBuff);
+        olCompletionListPrepend(sname, NULL, NULL, 0, NULL, referenceItem, reference, referenceItem->b.symType,
+                                referenceItem->vFunClass, currentUserData->retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time
         count ++;

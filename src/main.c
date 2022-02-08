@@ -2143,7 +2143,6 @@ static void mainTotalTaskEntryInitialisations() {
     initFileTable(&fileTable);  /* Sets noFileIndex to something real */
 
     noPosition = makePosition(noFileIndex, 0, 0);
-    fillReference(&s_noRef, NO_USAGE, noPosition, NULL);
     inputFileNumber            = noFileIndex;
     s_javaAnonymousClassName.p = noPosition;
 
