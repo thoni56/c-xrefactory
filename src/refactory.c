@@ -2290,7 +2290,7 @@ static void refactoryReduceLongReferencesInRegions(
     // a hack, as we cannot predict how many times this will be
     // invoked, adjust progress bar counter ratio
 
-    s_progressFactor += 1;
+    progressFactor += 1;
     LIST_LEN(progressn, EditorMarkerList, ri); progressi=0;
     for (EditorMarkerList *rr=ri; rr!=NULL; rr=rr->next) {
         pp = refactoryReplaceStaticPrefix(rr->marker, "");
@@ -4455,104 +4455,104 @@ void mainRefactory() {
                                  s_refactoryEditSrvInitOptions);
     refactoryXrefEditServerSubTaskFirstPass = 1;
 
-    s_progressFactor = 1;
+    progressFactor = 1;
 
     switch (refactoringOptions.theRefactoring) {
     case AVR_RENAME_SYMBOL:
     case AVR_RENAME_CLASS:
     case AVR_RENAME_PACKAGE:
-        s_progressFactor = 3;
+        progressFactor = 3;
         s_refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
         refactoryRename(buf, point);
         break;
     case AVR_EXPAND_NAMES:
-        s_progressFactor = 1;
+        progressFactor = 1;
         refactoryExpandShortNames(buf, point);
         break;
     case AVR_REDUCE_NAMES:
-        s_progressFactor = 1;
+        progressFactor = 1;
         refactoryReduceLongNamesInTheFile(buf, point);
         break;
     case AVR_ADD_ALL_POSSIBLE_IMPORTS:
-        s_progressFactor = 2;
+        progressFactor = 2;
         refactoryReduceLongNamesInTheFile(buf, point);
         break;
     case AVR_ADD_TO_IMPORT:
-        s_progressFactor = 2;
+        progressFactor = 2;
         refactoryAddToImports(point);
         break;
     case AVR_ADD_PARAMETER:
     case AVR_DEL_PARAMETER:
     case AVR_MOVE_PARAMETER:
-        s_progressFactor = 3;
+        progressFactor = 3;
         s_refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
         mainSetLanguage(file, &s_language);
-        if (LANGUAGE(LANG_JAVA)) s_progressFactor++;
+        if (LANGUAGE(LANG_JAVA)) progressFactor++;
         refactoryParameterManipulation(buf, point, refactoringOptions.theRefactoring,
                                        refactoringOptions.olcxGotoVal, refactoringOptions.parnum2);
         break;
     case AVR_MOVE_FIELD:
-        s_progressFactor = 6;
+        progressFactor = 6;
         refactoryMoveField(point);
         break;
     case AVR_MOVE_STATIC_FIELD:
-        s_progressFactor = 4;
+        progressFactor = 4;
         refactoryMoveStaticField(point);
         break;
     case AVR_MOVE_STATIC_METHOD:
-        s_progressFactor = 4;
+        progressFactor = 4;
         refactoryMoveStaticMethod(point);
         break;
     case AVR_MOVE_CLASS:
-        s_progressFactor = 3;
+        progressFactor = 3;
         refactoryMoveClass(point);
         break;
     case AVR_MOVE_CLASS_TO_NEW_FILE:
-        s_progressFactor = 3;
+        progressFactor = 3;
         refactoryMoveClassToNewFile(point);
         break;
     case AVR_MOVE_ALL_CLASSES_TO_NEW_FILE:
-        s_progressFactor = 3;
+        progressFactor = 3;
         refactoryMoveAllClassesToNewFile(point);
         break;
     case AVR_PULL_UP_METHOD:
-        s_progressFactor = 2;
+        progressFactor = 2;
         refactoryPullUpMethod(point);
         break;
     case AVR_PULL_UP_FIELD:
-        s_progressFactor = 2;
+        progressFactor = 2;
         refactoryPullUpField(point);
         break;
     case AVR_PUSH_DOWN_METHOD:
-        s_progressFactor = 2;
+        progressFactor = 2;
         refactoryPushDownMethod(point);
         break;
     case AVR_PUSH_DOWN_FIELD:
-        s_progressFactor = 2;
+        progressFactor = 2;
         refactoryPushDownField(point);
         break;
     case AVR_TURN_STATIC_METHOD_TO_DYNAMIC:
-        s_progressFactor = 6;
+        progressFactor = 6;
         refactoryTurnStaticToDynamic(point);
         break;
     case AVR_TURN_DYNAMIC_METHOD_TO_STATIC:
-        s_progressFactor = 4;
+        progressFactor = 4;
         refactoryTurnDynamicToStatic(point);
         break;
     case AVR_EXTRACT_METHOD:
-        s_progressFactor = 1;
+        progressFactor = 1;
         refactoryExtractMethod(point, mark);
         break;
     case AVR_EXTRACT_MACRO:
-        s_progressFactor = 1;
+        progressFactor = 1;
         refactoryExtractMacro(point, mark);
         break;
     case AVR_SELF_ENCAPSULATE_FIELD:
-        s_progressFactor = 3;
+        progressFactor = 3;
         refactorySelfEncapsulateField(point);
         break;
     case AVR_ENCAPSULATE_FIELD:
-        s_progressFactor = 3;
+        progressFactor = 3;
         refactoryEncapsulateField(point);
         break;
     default:
@@ -4564,9 +4564,9 @@ void mainRefactory() {
     writeRelativeProgress(0);
     writeRelativeProgress(100);
 
-    if (s_progressOffset != s_progressFactor) {
+    if (progressOffset != progressFactor) {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "s_progressOffset (%d) != s_progressFactor (%d)", s_progressOffset, s_progressFactor);
+        sprintf(tmpBuff, "s_progressOffset (%d) != s_progressFactor (%d)", progressOffset, progressFactor);
         ppcGenRecord(PPC_DEBUG_INFORMATION, tmpBuff);
     }
 

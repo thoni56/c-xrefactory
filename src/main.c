@@ -1964,8 +1964,8 @@ static void writeProgressInformation(int progress) {
 }
 
 void writeRelativeProgress(int val) {
-    writeProgressInformation((100*s_progressOffset + val)/s_progressFactor);
-    if (val==100) s_progressOffset++;
+    writeProgressInformation((100*progressOffset + val)/progressFactor);
+    if (val==100) progressOffset++;
 }
 
 static void mainFileProcessingInitialisations(bool *firstPass,

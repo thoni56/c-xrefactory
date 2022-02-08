@@ -31,8 +31,8 @@ extern int s_lastReturnedLexem;
 extern Position s_spp[SPP_MAX];
 extern UsageBits s_noUsage;
 
-extern int s_progressFactor;
-extern int s_progressOffset;
+extern int progressFactor;
+extern int progressOffset;
 
 extern int      cxResizingBlocked;
 extern Counters counters;

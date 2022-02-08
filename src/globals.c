@@ -22,8 +22,8 @@ UsageBits s_noUsage = {UsageNone, 0, };
 
 Reference s_noRef = {{UsageNone, 0, }, {-1, 0, 0}, NULL};
 
-int s_progressOffset=0;
-int s_progressFactor=1;
+int progressOffset=0;
+int progressFactor=1;
 
 Counters counters;
 unsigned s_recFindCl = 1;
