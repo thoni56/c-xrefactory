@@ -400,7 +400,7 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
         if ((isalpha(*name) || *name=='_') && (languages & s_language)) {
             /* looks like a keyword */
             log_trace("adding keyword '%s' to symbol table", name);
-            symbol = newSymbolAsKeyword(name, name, s_noPos, token);
+            symbol = newSymbolAsKeyword(name, name, noPosition, token);
             fillSymbolBits(&symbol->bits, AccessDefault, TypeKeyword, StorageNone);
             symbolTableAdd(symbolTable, symbol);
         }
@@ -436,7 +436,7 @@ void initTokenNamesTables(void) {
     initTokensFromTable(tokenNameInitTable1);
 
     /* and add the 'defined' keyword for #if */
-    symbolP = newSymbol("defined", "defined", s_noPos);
+    symbolP = newSymbol("defined", "defined", noPosition);
     fillSymbolBits(&symbolP->bits, AccessDefault, TypeDefinedOp, StorageNone);
     symbolTableAdd(symbolTable, symbolP);
 }
@@ -486,15 +486,15 @@ void initArchaicTypes(void) {
     /* ******* some defaults and built-ins initialisations ********* */
 
     initTypeModifier(&defaultIntModifier, TypeInt);
-    fillSymbolWithTypeModifier(&s_defaultIntDefinition, NULL, NULL, s_noPos, &defaultIntModifier);
+    fillSymbolWithTypeModifier(&s_defaultIntDefinition, NULL, NULL, noPosition, &defaultIntModifier);
 
     initTypeModifier(&s_defaultPackedTypeModifier, TypePackedType);
 
     initTypeModifier(&s_defaultVoidModifier,TypeVoid);
-    fillSymbolWithTypeModifier(&s_defaultVoidDefinition, NULL, NULL, s_noPos, &s_defaultVoidModifier);
+    fillSymbolWithTypeModifier(&s_defaultVoidDefinition, NULL, NULL, noPosition, &s_defaultVoidModifier);
 
     initTypeModifier(&s_errorModifier, TypeError);
-    fillSymbolWithTypeModifier(&s_errorSymbol, "__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
+    fillSymbolWithTypeModifier(&s_errorSymbol, "__ERROR__", "__ERROR__", noPosition, &s_errorModifier);
     fillSymbolBits(&s_errorSymbol.bits, AccessDefault, TypeError, StorageNone);
 }
 

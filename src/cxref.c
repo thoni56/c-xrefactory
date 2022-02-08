@@ -184,7 +184,7 @@ SymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, SymbolsMenu **list,
                                 Position *defpos, int defusage) {
     SymbolsMenu *rr, **place, ddd;
 
-    fillSymbolsMenu(&ddd, *sym, 0,0,0, olusage, vlevel,0,0, UsageNone,s_noPos,0, NULL, NULL);
+    fillSymbolsMenu(&ddd, *sym, 0,0,0, olusage, vlevel,0,0, UsageNone,noPosition,0, NULL, NULL);
     SORTED_LIST_PLACE3(place, SymbolsMenu, (&ddd), list, olSymbolMenuLess);
     rr = *place;
     if (*place==NULL || olSymbolMenuLess(&ddd, *place)) {
@@ -777,7 +777,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
             s_olstringUsage = usage_base;
             assert(currentUserData && currentUserData->browserStack.top);
             olSetCallerPosition(pos);
-            defpos = &s_noPos;
+            defpos = &noPosition;
             defaultUsage = NO_USAGE.base;
             if (symbol->bits.symbolType==TypeMacro && ! options.exactPositionResolve) {
                 // a hack for macros
@@ -1066,7 +1066,7 @@ static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
 
     res = olcx_alloc(sizeof(OlcxReferences));
     *res = (OlcxReferences){.references = NULL, .actual = NULL, .command = options.server_operation, .language = s_language,
-                              .accessTime = fileProcessingStartTime, .callerPosition = s_noPos, .completions = NULL, .hkSelectedSym = NULL,
+                              .accessTime = fileProcessingStartTime, .callerPosition = noPosition, .completions = NULL, .hkSelectedSym = NULL,
                               .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
                               .previous = stack->top};
     return res;
@@ -2006,7 +2006,7 @@ static void olcxFindDefinitionAndGenGoto(SymbolReferenceItem *sym) {
     // preserve poped items from browser first
     oldtop = olcxPushUserOnPhysicalTopOfStack();
     refs = currentUserData->browserStack.top;
-    fillSymbolsMenu(&mmm, *sym, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
+    fillSymbolsMenu(&mmm, *sym, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);
     //&oldrefs = *refs;
     refs->menuSym = &mmm;
     readOneAppropReferenceFile(sym->name, fullScanFunctionSequence);
@@ -2029,7 +2029,7 @@ static void olcxReferenceGotoCompletion(int refn) {
         if (rr->category == CategoryLocal /*& || refs->command == OLO_TAG_SEARCH &*/) {
             if (rr->ref.usage.base != UsageClassFileDefinition
                 && rr->ref.usage.base != UsageClassTreeDefinition
-                && positionsAreNotEqual(rr->ref.position, s_noPos)) {
+                && positionsAreNotEqual(rr->ref.position, noPosition)) {
                 gotoOnlineCxref(&rr->ref.position, UsageDefined, "");
             } else {
                 if (!olcxBrowseSymbolInJavaDoc(&rr->sym))
@@ -2053,7 +2053,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     if (rr != NULL) {
         if (rr->ref.usage.base != UsageClassFileDefinition
             && rr->ref.usage.base != UsageClassTreeDefinition
-            && positionsAreNotEqual(rr->ref.position, s_noPos)) {
+            && positionsAreNotEqual(rr->ref.position, noPosition)) {
             gotoOnlineCxref(&rr->ref.position, UsageDefined, "");
         } else {
             if (!olcxBrowseSymbolInJavaDoc(&rr->sym))
@@ -2299,7 +2299,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
                                 cfi, cfi);
     fillSymbolRefItemBits(&ss.b, TypeDefault, storage, ScopeGlobal,
                            AccessDefault, CategoryGlobal);
-    res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &s_noPos, UsageNone,
+    res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
     return res;
@@ -3738,7 +3738,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
                     diffsym = olAddBrowsedSymbol(
                                                  &osym->s, &diffrefs->menuSym, 1, 1,
                                                  (OOC_PROFILE_EQUAL|OOC_VIRT_SAME_FUN_CLASS),
-                                                 USAGE_ANY, 0, &s_noPos, UsageNone);
+                                                 USAGE_ANY, 0, &noPosition, UsageNone);
                 }
                 olcxAddReferenceToSymbolsMenu(diffsym, rr, 0);
             }
@@ -3768,7 +3768,7 @@ static void olcxMMPreCheck(void) {
         if (diffrefs->menuSym!=NULL) {
             fillTrivialSpecialRefItem(&dri, "  references missinterpreted after refactoring");
             olAddBrowsedSymbol(&dri, &diffrefs->hkSelectedSym, 1, 1, 0,
-                               USAGE_ANY, 0, &s_noPos, UsageNone);
+                               USAGE_ANY, 0, &noPosition, UsageNone);
             olProcessSelectedReferences(diffrefs, genOnLineReferences);
             //&olcxPrintSelectionMenu(diffrefs->menuSym);
             olcxPrintRefList(";", diffrefs);
@@ -4095,7 +4095,7 @@ static void olPushAllReferencesInBetweenMapFun(SymbolReferenceItem *ri,
                 defpos = defRef->position;
                 defusage = defRef->usage.base;
             } else {
-                defpos = s_noPos;
+                defpos = noPosition;
                 defusage = UsageNone;
             }
             select = visible = 1;
@@ -5079,7 +5079,7 @@ SymbolsMenu *createSelectionMenu(SymbolReferenceItem *p) {
 
     rstack = currentUserData->browserStack.top;
     ooBits = 0; vlevel = 0;
-    defpos = &s_noPos; defusage = UsageNone;
+    defpos = &noPosition; defusage = UsageNone;
     log_trace("ooBits for '%s'", fileTable.tab[p->vApplClass]->name);
 
     for (SymbolsMenu *ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
@@ -5151,14 +5151,9 @@ void olSetCallerPosition(Position *pos) {
 
 // if s==NULL, then the pos is taken as default position of this ref !!!
 
-S_olCompletion * olCompletionListPrepend(char *name,
-                                         char *fullText, char *vclass, int jindent,
-                                         Symbol *s,
-                                         SymbolReferenceItem *rr,
-                                         Reference *dfref,
-                                         int cType,
-                                         int vFunClass,
-                                         OlcxReferences *stack) {
+S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s,
+                                        SymbolReferenceItem *rr, Reference *dfref, int cType, int vFunClass,
+                                        OlcxReferences *stack) {
     S_olCompletion *cc;
     char *ss,*nn, *fullnn, *vclnn;
     int category, scope, storage, slen, nlen;

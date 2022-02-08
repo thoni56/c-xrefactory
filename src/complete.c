@@ -495,7 +495,9 @@ void printCompletions(Completions* c) {
             vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFile;
             if (vFunCl == -1) vFunCl = noFileIndex;
         }
-        olCompletionListPrepend(c->alternatives[ii].string, ppcTmpBuff, vclass, jindent, c->alternatives[ii].symbol,NULL, &s_noRef, c->alternatives[ii].symbolType, vFunCl, currentUserData->completionsStack.top);
+        olCompletionListPrepend(c->alternatives[ii].string, ppcTmpBuff, vclass, jindent,
+                                c->alternatives[ii].symbol, NULL, &s_noRef, c->alternatives[ii].symbolType, vFunCl,
+                                currentUserData->completionsStack.top);
     }
     olCompletionListReverse();
     printCompletionsList(c->noFocusOnCompletions);
@@ -1233,7 +1235,7 @@ void completeUpFunProfile(Completions* c) {
         && c->idToProcess[0] == 0
         && c->alternativeIndex == 0
         ) {
-        dd = newSymbolAsType("    ", "    ", s_noPos, s_upLevelFunctionCompletionType);
+        dd = newSymbolAsType("    ", "    ", noPosition, s_upLevelFunctionCompletionType);
 
         fillCompletionLine(&c->alternatives[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
         c->fullMatchFlag = true;

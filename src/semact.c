@@ -731,7 +731,7 @@ Symbol *typeSpecifier2(TypeModifier *t) {
     Symbol    *r;
 
     r = StackMemoryAlloc(Symbol);
-    fillSymbolWithTypeModifier(r, NULL, NULL, s_noPos, t);
+    fillSymbolWithTypeModifier(r, NULL, NULL, noPosition, t);
 
     return r;
 }
@@ -811,7 +811,7 @@ Symbol *createSimpleDefinition(Storage storage, Type type, Id *id) {
     if (id!=NULL) {
         r = newSymbolAsType(id->name, id->name, id->p, typeModifier);
     } else {
-        r = newSymbolAsType(NULL, NULL, s_noPos, typeModifier);
+        r = newSymbolAsType(NULL, NULL, noPosition, typeModifier);
     }
     fillSymbolBits(&r->bits, AccessDefault, TypeDefault, storage);
 
@@ -1018,7 +1018,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
 TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
     Symbol *symbol;
 
-    symbol = newSymbolAsEnum("", "", s_noPos, enums);
+    symbol = newSymbolAsEnum("", "", noPosition, enums);
     fillSymbolBits(&symbol->bits, AccessDefault, TypeEnum, StorageNone);
 
     setGlobalFileDepNames("", symbol, MEMORY_XX);
@@ -1084,7 +1084,7 @@ Symbol *createEmptyField(void) {
     TypeModifier *p;
 
     p = newSimpleTypeModifier(TypeAnonymousField);
-    return newSymbolAsType("", "", s_noPos, p);
+    return newSymbolAsType("", "", noPosition, p);
 }
 
 void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,

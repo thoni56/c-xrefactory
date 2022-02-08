@@ -405,6 +405,7 @@ typedef struct usageBits {
 } UsageBits;
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
+#define NO_REFERENCE (Reference){NO_USAGE, no_Position, NULL)
 typedef struct reference {
     struct usageBits			usage;
     struct position				position;

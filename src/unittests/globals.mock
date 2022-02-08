@@ -80,7 +80,7 @@ Position s_olcxByPassPos;
 int s_olMacro2PassFile;
 
 UsageBits s_noUsage;
-Position s_noPos = {-1, 0, 0};
+Position noPosition = {-1, 0, 0};
 
 Language s_language;
 

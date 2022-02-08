@@ -107,7 +107,7 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
             if (SyntaxPassOnly()) {PropagateBoundaries(node, startSymbol, endSymbol);} \
         }                                                               \
     }
-#define SetNullBoundariesFor(node) {node.b=s_noPos; node.e=s_noPos;}
+#define SetNullBoundariesFor(node) {node.b=noPosition; node.e=noPosition;}
 
 #define NULL_POS NULL
 
@@ -2832,7 +2832,7 @@ case 2:
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.d.position = &s_noPos;
+                    yyval.ast_expressionType.d.position = &noPosition;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
@@ -2846,7 +2846,7 @@ case 3:
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.d.position = &s_noPos;
+                    yyval.ast_expressionType.d.position = &noPosition;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
@@ -2860,7 +2860,7 @@ case 4:
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeInt);
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.d.position = &s_noPos;
+                    yyval.ast_expressionType.d.position = &noPosition;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_integer, yyvsp[0].ast_integer);
                 }
             }
@@ -2874,7 +2874,7 @@ case 5:
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeLong);
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.d.position = &s_noPos;
+                    yyval.ast_expressionType.d.position = &noPosition;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
@@ -2888,7 +2888,7 @@ case 6:
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeFloat);
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.d.position = &s_noPos;
+                    yyval.ast_expressionType.d.position = &noPosition;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
@@ -2900,7 +2900,7 @@ case 7:
             if (regularPass()) {
                 yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeDouble);
                 yyval.ast_expressionType.d.reference = NULL;
-                yyval.ast_expressionType.d.position = &s_noPos;
+                yyval.ast_expressionType.d.position = &noPosition;
                 if (SyntaxPassOnly()) {PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);}
             }
         }
@@ -2913,7 +2913,7 @@ case 8:
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeChar);
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.d.position = &s_noPos;
+                    yyval.ast_expressionType.d.position = &noPosition;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
@@ -4384,7 +4384,7 @@ case 163:
                 yyval.ast_symbolPositionListPair.d.symbol = yyvsp[0].ast_symbol.d;
             } else {
                 yyval.ast_symbolPositionListPair.d.p = NULL;
-                appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &s_noPos);
+                appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &noPosition);
                 PropagateBoundaries(yyval.ast_symbolPositionListPair, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
             }
         }
@@ -6149,7 +6149,7 @@ case 377:
                     }
                 } else {
                     yyval.ast_typeModifiersListPositionListPair.d.p = NULL;
-                    appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.d.p, &s_noPos);
+                    appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.d.p, &noPosition);
                     PropagateBoundaries(yyval.ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }

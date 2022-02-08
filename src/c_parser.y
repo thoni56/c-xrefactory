@@ -383,7 +383,7 @@ argument_expr_list_opt
     }
     |   argument_expr_list          {
             $$.d = StackMemoryAlloc(PositionList);
-            fillPositionList($$.d, s_noPos, $1.d);
+            fillPositionList($$.d, noPosition, $1.d);
         }
     ;
 
@@ -1205,7 +1205,7 @@ parameter_declaration
         $$.d = $2.d;
     }
     | type_name                                 {
-        $$.d = newSymbolAsType(NULL, NULL, s_noPos, $1.d);
+        $$.d = newSymbolAsType(NULL, NULL, noPosition, $1.d);
     }
     | error                                     {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
@@ -1338,7 +1338,7 @@ designator_list
 designator
     : '[' constant_expr ']'     {
         $$.d = StackMemoryAlloc(Id);
-        fillId($$.d, "", NULL, s_noPos);
+        fillId($$.d, "", NULL, noPosition);
     }
     | '.' str_rec_identifier    {
         $$.d = StackMemoryAlloc(Id);

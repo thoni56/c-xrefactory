@@ -189,7 +189,7 @@ TypeModifier s_defaultVoidModifier;
 Symbol s_defaultVoidDefinition;
 TypeModifier s_errorModifier;
 Symbol s_errorSymbol;
-Position s_noPos = {-1, 0, 0};
+Position noPosition = {-1, 0, 0};
 
 Symbol s_javaArrayObjectSymbol;
 Symbol *s_javaStringSymbol;

@@ -1814,9 +1814,9 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
 }
 
 static void clearParamPositions(void) {
-    s_paramPosition = s_noPos;
-    s_paramBeginPosition = s_noPos;
-    s_paramEndPosition = s_noPos;
+    s_paramPosition = noPosition;
+    s_paramBeginPosition = noPosition;
+    s_paramEndPosition = noPosition;
 }
 
 static int refactoryGetParamNamePosition(EditorMarker *pos, char *fname, int argn) {

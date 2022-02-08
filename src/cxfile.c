@@ -996,7 +996,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
         //&sprintf(tmpBuff,"adding %s storage==%s", lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness]->name, storagesName[lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff);
         olAddBrowsedSymbol(lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness],
                            &currentUserData->browserStack.top->hkSelectedSym,
-                           1,1,0,UsageDefined,0, &s_noPos, UsageDefined);
+                           1,1,0,UsageDefined,0, &noPosition, UsageDefined);
     }
 }
 
@@ -1241,7 +1241,7 @@ static void cxrfReference(int size,
                             //&fprintf(dumpOut,":adding bypass selected symbol %s\n", lastIncomingInfo.symbolTab[sym]->name);
                             olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],
                                                &currentUserData->browserStack.top->hkSelectedSym,
-                                               1, 1, 0, usage,0,&s_noPos, UsageNone);
+                                               1, 1, 0, usage,0,&noPosition, UsageNone);
                         }
                     } else {
                         olcxAddReference(&currentUserData->browserStack.top->references, &reference,

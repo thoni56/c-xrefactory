@@ -1672,9 +1672,9 @@ static void initializationsPerInvocation(void) {
     int i;
     s_cp = s_cpInit;
     s_cps = s_cpsInit;
-    for(i=0; i<SPP_MAX; i++) s_spp[i] = s_noPos;
+    for(i=0; i<SPP_MAX; i++) s_spp[i] = noPosition;
     s_cxRefFlag=0;
-    s_cxRefPos = s_noPos;
+    s_cxRefPos = noPosition;
     s_olstring[0]=0;
     s_olstringFound = 0;
     s_olstringServed = 0;
@@ -2139,12 +2139,13 @@ static void mainTotalTaskEntryInitialisations() {
 
     /* TODO: This could be done inside initFileTable()... */
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
-    initFileTable(&fileTable);
 
-    s_noPos = makePosition(noFileIndex, 0, 0);
-    fillReference(&s_noRef, NO_USAGE, s_noPos, NULL);
+    initFileTable(&fileTable);  /* Sets noFileIndex to something real */
+
+    noPosition = makePosition(noFileIndex, 0, 0);
+    fillReference(&s_noRef, NO_USAGE, noPosition, NULL);
     inputFileNumber            = noFileIndex;
-    s_javaAnonymousClassName.p = s_noPos;
+    s_javaAnonymousClassName.p = noPosition;
 
     olcxInit();
     editorInit();
@@ -2488,7 +2489,7 @@ static int scheduleFileUsingTheMacro(void) {
     fillSymbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal);
 
-    fillSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
+    fillSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);
     if (currentUserData==NULL || currentUserData->browserStack.top==NULL) {
         olcxSetCurrentUser(options.user);
         olcxPushEmptyStackItem(&currentUserData->browserStack);
@@ -2654,11 +2655,11 @@ static char *presetEditServerFileDependingStatics(void) {
     int     i, fArgCount;
     char    *fileName;
     fileProcessingStartTime = time(NULL);
-    //&s_paramPosition = s_noPos;
-    //&s_paramBeginPosition = s_noPos;
-    //&s_paramEndPosition = s_noPos;
-    s_primaryStartPosition = s_noPos;
-    s_staticPrefixStartPosition = s_noPos;
+    //&s_paramPosition = noPosition;
+    //&s_paramBeginPosition = noPosition;
+    //&s_paramEndPosition = noPosition;
+    s_primaryStartPosition = noPosition;
+    s_staticPrefixStartPosition = noPosition;
     // THIS is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an eror
     fArgCount = 0; inputFilename = getInputFile(&fArgCount);
@@ -2931,7 +2932,7 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     if (options.server_operation == OLO_EXTRACT)
         s_cache.cpi = 2; // !!!! no cache, TODO why is 2 = no cache?
     olcxSetCurrentUser(options.user);
-    initCompletions(&s_completions, 0, s_noPos);
+    initCompletions(&s_completions, 0, noPosition);
 }
 
 void mainCallEditServer(int argc, char **argv,

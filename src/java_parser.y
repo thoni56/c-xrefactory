@@ -78,7 +78,7 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
             if (SyntaxPassOnly()) {PropagateBoundaries(node, startSymbol, endSymbol);} \
         }                                                               \
     }
-#define SetNullBoundariesFor(node) {node.b=s_noPos; node.e=s_noPos;}
+#define SetNullBoundariesFor(node) {node.b=noPosition; node.e=noPosition;}
 
 #define NULL_POS NULL
 
@@ -368,7 +368,7 @@ Literal
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &s_noPos;
+                    $$.d.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -379,7 +379,7 @@ Literal
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &s_noPos;
+                    $$.d.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -390,7 +390,7 @@ Literal
                     $$.d.typeModifier = newSimpleTypeModifier(TypeInt);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &s_noPos;
+                    $$.d.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -401,7 +401,7 @@ Literal
                     $$.d.typeModifier = newSimpleTypeModifier(TypeLong);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &s_noPos;
+                    $$.d.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -412,7 +412,7 @@ Literal
                     $$.d.typeModifier = newSimpleTypeModifier(TypeFloat);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &s_noPos;
+                    $$.d.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -421,7 +421,7 @@ Literal
             if (regularPass()) {
                 $$.d.typeModifier = newSimpleTypeModifier(TypeDouble);
                 $$.d.reference = NULL;
-                $$.d.position = &s_noPos;
+                $$.d.position = &noPosition;
                 if (SyntaxPassOnly()) {PropagateBoundaries($$, $1, $1);}
             }
         }
@@ -431,7 +431,7 @@ Literal
                     $$.d.typeModifier = newSimpleTypeModifier(TypeChar);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = &s_noPos;
+                    $$.d.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -1785,7 +1785,7 @@ FormalParameterList
                 $$.d.symbol = $1.d;
             } else {
                 $$.d.p = NULL;
-                appendPositionToList(&$$.d.p, &s_noPos);
+                appendPositionToList(&$$.d.p, &noPosition);
                 PropagateBoundaries($$, $1, $1);
             }
         }
@@ -3344,7 +3344,7 @@ ArgumentList
                     }
                 } else {
                     $$.d.p = NULL;
-                    appendPositionToList(&$$.d.p, &s_noPos);
+                    appendPositionToList(&$$.d.p, &noPosition);
                     PropagateBoundaries($$, $1, $1);
                 }
             }

@@ -182,7 +182,7 @@ void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp) {
 Position *javaGetNameStartingPosition(IdList *name) {
     IdList *ll;
     Position *res;
-    res = &s_noPos;
+    res = &noPosition;
     for(ll=name; ll!=NULL; ll=ll->next) {
         res = &ll->id.p;
     }
@@ -230,7 +230,7 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname,
         if (ss->nest[i].membFlag) {
             nn = ss->nest[i].cl;
             assert(nn);
-            fillId(&ll.id, nn->name, cc, s_noPos);
+            fillId(&ll.id, nn->name, cc, noPosition);
             fillIdList(&ll, ll.id, nn->name,TypeStruct,oclassname);
             javaTypeSymbolDefinition(&ll, accessFlags, ADD_YES);
         }
@@ -529,7 +529,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name, char *fqName) {
     strcpy(lname1, fqName);
 
     CF_ALLOC(memb, Symbol);
-    fillSymbol(memb, sname, lname1, s_noPos);
+    fillSymbol(memb, sname, lname1, noPosition);
     fillSymbolBits(&memb->bits, AccessDefault, TypeStruct, StorageNone);
 
     CF_ALLOC(memb->u.structSpec, S_symStructSpec);
@@ -562,7 +562,7 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
 
     /* This probably creates a SymbolList element so ..IsMember() can be used */
     /* TODO: create a function to check if a *Symbol* is member... */
-    fillSymbol(&symbol, name, fqName, s_noPos);
+    fillSymbol(&symbol, name, fqName, noPosition);
     fillSymbolBits(&symbol.bits, AccessDefault, TypeStruct, StorageNone);
 
     /* REPLACED: FILL_symbolList(&ppl, &symbol, NULL); with compound literal */
@@ -632,13 +632,13 @@ Symbol *javaTypeSymbolDefinition(IdList *tname,
     assert(tname);
     assert(tname->nameType == TypeStruct);
 
-    fillSymbol(&pp, tname->id.name, tname->id.name, s_noPos);
+    fillSymbol(&pp, tname->id.name, tname->id.name, noPosition);
     fillSymbolBits(&pp.bits, accessFlags, TypeStruct, StorageNone);
 
     javaCreateComposedName(NULL, tname, '/', NULL, fqtName, MAX_FILE_NAME_SIZE);
     typeSymbol = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
     if (addType == ADD_YES) {
-        typeSymbol = javaAddTypeToSymbolTable(typeSymbol, accessFlags, &s_noPos, false);
+        typeSymbol = javaAddTypeToSymbolTable(typeSymbol, accessFlags, &noPosition, false);
     }
     return typeSymbol;
 }
@@ -650,7 +650,7 @@ Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
     assert(tname);
     assert(tname->nameType == TypeStruct);
 
-    fillSymbol(&pp, tname->id.name, tname->id.name, s_noPos);
+    fillSymbol(&pp, tname->id.name, tname->id.name, noPosition);
     fillSymbolBits(&pp.bits, accessFlags, TypeStruct, StorageNone);
 
     if (tname->next==NULL && symbolTableIsMember(symbolTable, &pp, NULL, &memb)) {
@@ -875,7 +875,7 @@ static int findTopLevelNameInternal(char *name,
     assert(accessibilityCheck==ACCESSIBILITY_CHECK_YES || accessibilityCheck==ACCESSIBILITY_CHECK_NO);
     assert(visibilityCheck==VISIBILITY_CHECK_YES || visibilityCheck==VISIBILITY_CHECK_NO);
 
-    fillSymbol(&sd, name, name, s_noPos);
+    fillSymbol(&sd, name, name, noPosition);
     fillSymbolBits(&sd.bits, 0, TypeDefault, StorageNone);
 
     res = RETURN_NOT_FOUND;
@@ -1030,7 +1030,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
     bool haveit;
     Position *ipos;
 
-    fillSymbol(&sd, name->id.name, name->id.name, s_noPos);
+    fillSymbol(&sd, name->id.name, name->id.name, noPosition);
     fillSymbolBits(&sd.bits, AccessDefault, TypeStruct, StorageNone);
 
     haveit = false;
@@ -1207,7 +1207,7 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     strncpy(packname, sym->linkName, pplen);
     packname[pplen] = 0;
 
-    fillfIdList(&sname, packname, NULL, s_noPos, packname, TypeExpression, NULL);
+    fillfIdList(&sname, packname, NULL, noPosition, packname, TypeExpression, NULL);
         rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
                                          CLASS_TO_EXPR, UsageNone, NO_CX_REFS);
     if (rr != TypePackage) {
@@ -1854,7 +1854,7 @@ void javaAddMapedTypeName(
     strncpy(ttt2, file, len2);
     assert(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
-    fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
+    fillfIdList(&dd2, ttt2, NULL, noPosition, ttt2, TypeStruct, packid);
     memb = javaTypeSymbolDefinition(&dd2, AccessDefault, ADD_YES);
     log_debug(":import type %s == %s", memb->name, memb->linkName);
 }
@@ -1882,7 +1882,7 @@ TypeModifier *javaNestedNewType(Symbol *sym, Id *thenew,
         id = &idl->id;
         assert(sym && sym->linkName);
         id2 = sym->linkName;
-        fillfIdList(&d2, id2, sym, s_noPos, id2, TypeStruct, NULL);
+        fillfIdList(&d2, id2, sym, noPosition, id2, TypeStruct, NULL);
         fillIdList(&d1, *id, id->name, TypeStruct, &d2);
         javaClassifyNameToNestedType(&d1, sym, UsageUsed, &str, &rr);
         res = javaClassNameType(&d1);
@@ -2247,7 +2247,7 @@ TypeModifier *javaMethodInvocationN(	IdList *name,
     erfs = javaCrErfsForMethodInvocationN(name);
     if (erfs == NULL)
         return &s_errorModifier;
-    res = javaMethodInvocation(&erfs->s, erfs->memb, &name->id, args,REGULAR_METHOD,&s_noPos);
+    res = javaMethodInvocation(&erfs->s, erfs->memb, &name->id, args,REGULAR_METHOD,&noPosition);
     return res;
 }
 
@@ -2283,7 +2283,7 @@ TypeModifier *javaMethodInvocationT(TypeModifier *tt,
     erfs = javaCrErfsForMethodInvocationT(tt, name);
     if (erfs == NULL)
         return &s_errorModifier;
-    res = javaMethodInvocation(&erfs->s, erfs->memb, name, args,REGULAR_METHOD,&s_noPos);
+    res = javaMethodInvocation(&erfs->s, erfs->memb, name, args,REGULAR_METHOD,&noPosition);
     return res;
 }
 
@@ -2356,7 +2356,7 @@ TypeModifier *javaConstructorInvocation(Symbol *clas,
     if (erfs->s.baseClass != erfs->s.currClass)
         return &s_errorModifier;
     fillId(&name, clas->name, NULL, *pos);
-    res = javaMethodInvocation(&erfs->s, erfs->memb, &name, args,CONSTRUCTOR_INVOCATION,&s_noPos);
+    res = javaMethodInvocation(&erfs->s, erfs->memb, &name, args,CONSTRUCTOR_INVOCATION,&noPosition);
     return res;
 }
 
@@ -2533,7 +2533,7 @@ static void javaAddNestedClassToSymbolTab( Symbol *str ) {
     assert(ss);
     for(i=0; i<ss->nestedCount; i++) {
         if (ss->nest[i].membFlag && javaRecordAccessible(NULL,str, str, ss->nest[i].cl, ss->nest[i].accFlags)) {
-            javaAddTypeToSymbolTable(ss->nest[i].cl, ss->nest[i].cl->bits.access, &s_noPos, false);
+            javaAddTypeToSymbolTable(ss->nest[i].cl, ss->nest[i].cl->bits.access, &noPosition, false);
         }
     }
 }
@@ -2644,7 +2644,7 @@ void javaInitArrayObject(void) {
     javaLoadClassSymbolsFromFile(s_javaObjectSymbol);
 
     fillSymbolWithTypeModifier(&s_lengthSymbol, "length", "java/lang/array.length",
-                       s_noPos, &defaultIntModifier);
+                       noPosition, &defaultIntModifier);
 
     initSymStructSpec(&s_arraySpec, /*.records=*/&s_lengthSymbol);
     /* Assumed to be Struct/Union/Enum? */
@@ -2654,7 +2654,7 @@ void javaInitArrayObject(void) {
     initTypeModifierAsPointer(&s_arraySpec.sptrtype, &s_arraySpec.stype);
 
     fillSymbolWithStruct(&s_javaArrayObjectSymbol, "__arrayObject__", "__arrayObject__",
-                         s_noPos, &s_arraySpec);
+                         noPosition, &s_arraySpec);
     fillSymbolBits(&s_javaArrayObjectSymbol.bits, AccessPublic, TypeStruct, StorageDefault);
     s_javaArrayObjectSymbol.u.structSpec = &s_arraySpec;
 

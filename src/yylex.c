@@ -550,7 +550,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
 
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
 
-    fillSymbol(&ss, tmpBuff, tmpBuff, s_noPos);
+    fillSymbol(&ss, tmpBuff, tmpBuff, noPosition);
     fillSymbolBits(&ss.bits, AccessDefault, TypeMacro, StorageNone);
 
     if (symbolTableIsMember(symbolTable, &ss, NULL, &memb))
@@ -722,8 +722,8 @@ void processDefineDirective(bool hasArguments) {
     macroSize = -1;
 
     SM_INIT(ppMemory);
-    ppb1 = s_noPos;
-    ppb2 = s_noPos;
+    ppb1 = noPosition;
+    ppb2 = noPosition;
     parpos1 = &ppb1;
     parpos2 = &ppb2;
 
@@ -813,10 +813,10 @@ void processDefineDirective(bool hasArguments) {
                 lexem = getNonBlankLexem(&position, &lineNumber, &value, &length);
                 EXCEPTION_CHECK(lexem, endOfFile, endOfMacroArgument);
             }
-            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &s_noPos, parpos2, 1);
+            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, 1);
         } else {
             passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, parpos2, &length, true);
-            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &s_noPos, parpos2, 1);
+            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, 1);
         }
     }
     /* process macro body */
@@ -1074,7 +1074,7 @@ static void processIfdefDirective(bool isIfdef) {
     if (! isIdentifierLexem(lexem))
         return;
 
-    fillSymbol(&pp, cc, cc, s_noPos);
+    fillSymbol(&pp, cc, cc, noPosition);
     fillSymbolBits(&pp.bits, AccessDefault, TypeMacro, StorageNone);
 
     assert(options.taskRegime);
@@ -1143,7 +1143,7 @@ int cexp_yylex(void) {
         if (!isIdentifierLexem(lexem))
             return 0;
 
-        fillSymbol(&dd, cc, cc, s_noPos);
+        fillSymbol(&dd, cc, cc, noPosition);
         fillSymbolBits(&dd.bits, AccessDefault, TypeMacro, StorageNone);
 
         log_debug("(%s)", dd.name);
@@ -1402,7 +1402,7 @@ static void expandMacroArgument(LexInput *argb) {
         // read new lexbuffer and destroy cInput, so copy it now.
         failedMacroExpansion = 0;
         if (lexem == IDENTIFIER) {
-            fillSymbol(&sd, currentLexem, currentLexem, s_noPos);
+            fillSymbol(&sd, currentLexem, currentLexem, noPosition);
             fillSymbolBits(&sd.bits, AccessDefault, TypeMacro, StorageNone);
             if (symbolTableIsMember(symbolTable, &sd, NULL, &memb)) {
                 /* it is a macro, provide macro expansion */
@@ -2144,7 +2144,7 @@ int yylex(void) {
             testCxrefCompletionId(&lexem,yytext,&idpos);
         }
         log_trace("id '%s' position %d, %d, %d", yytext, idpos.file, idpos.line, idpos.col);
-        fillSymbol(&symbol, yytext, yytext, s_noPos);
+        fillSymbol(&symbol, yytext, yytext, noPosition);
         fillSymbolBits(&symbol.bits, AccessDefault, TypeMacro, StorageNone);
 
         if ((!LANGUAGE(LANG_JAVA))

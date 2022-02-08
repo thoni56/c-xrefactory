@@ -61,16 +61,16 @@ static void fillJslSymbolList(JslSymbolList *jslSymbolList, struct symbol *d,
 static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
     Symbol *s;
 
-    s = newSymbol(name, name, s_noPos);
+    s = newSymbol(name, name, noPosition);
     fillSymbolBits(&s->bits, AccessDefault, TypeStruct, StorageNone);
-    fillJslSymbolList(ss, s, s_noPos, false);
+    fillJslSymbolList(ss, s, noPosition, false);
 }
 
 Symbol *jslTypeSpecifier2(TypeModifier *t) {
    Symbol *symbol;
 
     CF_ALLOC(symbol, Symbol);   /* Not in same memory as newSymbol() uses, why? */
-    fillSymbolWithTypeModifier(symbol, NULL, NULL, s_noPos, t);
+    fillSymbolWithTypeModifier(symbol, NULL, NULL, noPosition, t);
 
     return symbol;
 }
@@ -141,13 +141,13 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
     bool isMember; UNUSED isMember; /* Because log_trace() might not generate any code... */
 
     jslCreateTypeSymbolInList(&ss, ttt2);
-    fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
+    fillfIdList(&dd2, ttt2, NULL, noPosition, ttt2, TypeStruct, packid);
     javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
     //&fprintf(communicationChannel, "[jsl] jslTypeSymbolDefinition %s, %s, %s, %s\n", ttt2, fqtName, smemb->name, smemb->linkName);
     if (add == ADD_YES) {
         if (packid!=NULL) importPos = &packid->id.p;
-        else importPos = &s_noPos;
+        else importPos = &noPosition;
         xss = StackMemoryAlloc(JslSymbolList); // CF_ALLOC ???
         fillJslSymbolList(xss, smemb, *importPos, isExplicitlyImported);
         /* TODO: Why are we using isMember() and not looking at the result? Side-effect? */
@@ -177,7 +177,7 @@ static Symbol *jslTypeSymbolUsage(char *ttt2, IdList *packid) {
         smemb = memb->d;
         return(smemb);
     }
-    fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
+    fillfIdList(&dd2, ttt2, NULL, noPosition, ttt2, TypeStruct, packid);
     javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
     return(smemb);
@@ -476,7 +476,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     for(i=0; i<ss->nestedCount; i++) {
         log_trace("checking %s %s %d %d", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
         if (ss->nest[i].membFlag && jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags)) {
-            fillId(&ocid, str->linkName, NULL, s_noPos);
+            fillId(&ocid, str->linkName, NULL, noPosition);
             fillIdList(&oclassid, ocid, str->linkName, TypeStruct, NULL);
             log_trace("adding %s %s", ss->nest[i].cl->name, ss->nest[i].cl->linkName);
             jslTypeSymbolDefinition(ss->nest[i].cl->name, &oclassid,
@@ -515,7 +515,7 @@ void jslNewClassDefinitionBegin(Id *name,
             s_jsl->classStat->functionInnerCounter++;
             sprintf(tttn, "%d", s_jsl->classStat->functionInnerCounter);
             sprintf(ttt, "%s", inname->name);
-            fillfIdList(&mntmp, tttn, NULL, s_noPos, tttn, TypeStruct, s_jsl->classStat->className);
+            fillfIdList(&mntmp, tttn, NULL, noPosition, tttn, TypeStruct, s_jsl->classStat->className);
             // this is a very special reason why to do TYPE_ADD_YES here,
             // because method nested class will not be added as class nested
             // at the end of this function
@@ -634,7 +634,7 @@ void jslNewClassDefinitionEnd(void) {
 
 void jslAddDefaultConstructor(Symbol *cl) {
     Symbol *cc;
-    cc = javaCreateNewMethod(cl->name, &s_noPos, MEMORY_CF);
+    cc = javaCreateNewMethod(cl->name, &noPosition, MEMORY_CF);
     jslMethodHeader(cl->bits.access, &s_defaultVoidDefinition, cc,
                     StorageConstructor, NULL);
 }

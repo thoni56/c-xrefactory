@@ -2452,7 +2452,7 @@ case 30:
 #line 384 "c_parser.y"
 {
             yyval.ast_positionList.d = StackMemoryAlloc(PositionList);
-            fillPositionList(yyval.ast_positionList.d, s_noPos, yyvsp[0].ast_positionList.d);
+            fillPositionList(yyval.ast_positionList.d, noPosition, yyvsp[0].ast_positionList.d);
         }
 break;
 case 31:
@@ -3499,7 +3499,7 @@ break;
 case 230:
 #line 1207 "c_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsType(NULL, NULL, s_noPos, yyvsp[0].ast_typeModifiers.d);
+        yyval.ast_symbol.d = newSymbolAsType(NULL, NULL, noPosition, yyvsp[0].ast_typeModifiers.d);
     }
 break;
 case 231:
@@ -3685,7 +3685,7 @@ case 256:
 #line 1339 "c_parser.y"
 {
         yyval.ast_id.d = StackMemoryAlloc(Id);
-        fillId(yyval.ast_id.d, "", NULL, s_noPos);
+        fillId(yyval.ast_id.d, "", NULL, noPosition);
     }
 break;
 case 257:

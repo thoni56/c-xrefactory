@@ -296,7 +296,7 @@ static void descendTheClassHierarchy(FILE *ff,
         assert(rrr);
         vFunCl = oldvFunCl;
         // O.K. create new item, so that browse class action will work
-        itt = olCreateNewMenuItem(&rrr->s, vApplCl, vFunCl, &s_noPos, UsageNone,
+        itt = olCreateNewMenuItem(&rrr->s, vApplCl, vFunCl, &noPosition, UsageNone,
                                   0, 1, 0, UsageNone, 0);
         // insert it into the list, no matter where?
         itt->next = rrr->next;

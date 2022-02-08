@@ -3293,7 +3293,7 @@ case 221:
 #line 601 "yacc_parser.y"
 {
             yyval.ast_positionList.d = StackMemoryAlloc(PositionList);
-            fillPositionList(yyval.ast_positionList.d, s_noPos, yyvsp[0].ast_positionList.d);
+            fillPositionList(yyval.ast_positionList.d, noPosition, yyvsp[0].ast_positionList.d);
         }
 break;
 case 222:
@@ -4340,7 +4340,7 @@ break;
 case 421:
 #line 1424 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsType(NULL, NULL, s_noPos, yyvsp[0].ast_typeModifiers.d);
+        yyval.ast_symbol.d = newSymbolAsType(NULL, NULL, noPosition, yyvsp[0].ast_typeModifiers.d);
     }
 break;
 case 422:
@@ -4526,7 +4526,7 @@ case 447:
 #line 1556 "yacc_parser.y"
 {
         yyval.ast_id.d = StackMemoryAlloc(Id);
-        fillId(yyval.ast_id.d, "", NULL, s_noPos);
+        fillId(yyval.ast_id.d, "", NULL, noPosition);
     }
 break;
 case 448:

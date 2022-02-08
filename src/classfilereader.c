@@ -881,7 +881,7 @@ static void cfAddRecordToClass(char *name,
     log_trace("adding definition of %s == %s", name, linkName);
     /* TODO If this was allocated in "normal" memory we could use newSymbol() */
     CF_ALLOC(symbol, Symbol);
-    fillSymbolWithTypeModifier(symbol, name, linkName, s_noPos, tt);
+    fillSymbolWithTypeModifier(symbol, name, linkName, noPosition, tt);
     fillSymbolBits(&symbol->bits, accessFlags, TypeDefault, storage);
 
     assert(clas->u.structSpec);
