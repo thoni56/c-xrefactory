@@ -103,7 +103,7 @@ extern uchar typeUnsignedChange[MAX_TYPE];
 
 extern TypeModifier *s_structRecordCompletionType;
 extern TypeModifier *s_upLevelFunctionCompletionType;
-extern S_exprTokenType s_forCompletionType;
+extern ExprTokenType s_forCompletionType;
 extern TypeModifier *s_javaCompletionLastPrimary;
 extern char *tokenNamesTable[];
 extern int tokenNameLengthsTable[];

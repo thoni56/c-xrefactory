@@ -1145,7 +1145,7 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
     return true;
 }
 
-static char *spComplFindNextRecord(S_exprTokenType *tok) {
+static char *spComplFindNextRecord(ExprTokenType *tok) {
     S_recFindStr    rfs;
     int             rr;
     Symbol        *r,*s;
@@ -1178,7 +1178,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
 
 static bool isForCompletionSymbol(
     Completions *c,
-    S_exprTokenType *token,
+    ExprTokenType *token,
     Symbol **sym,
     char   **nextRecord
 ) {

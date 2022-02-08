@@ -596,7 +596,7 @@ typedef struct expressionTokenType {
     struct typeModifier  *typeModifier;
     struct reference     *reference;
     struct position      *position;
-} S_exprTokenType;
+} ExprTokenType;
 
 typedef struct nestedConstrTokenType {
     struct typeModifier	*typeModifier;
