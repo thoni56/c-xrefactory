@@ -1097,25 +1097,25 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
     return TypePackage;
 }
 
-#define AddAmbCxRef(classif,sym,pos,usage, minacc,oref, rfs) {\
-    UsageBits ub;\
-    if (classif!=CLASS_TO_METHOD) {\
-        if (rfs != NULL && rfs->currClass!=NULL) {\
-            assert(rfs && rfs->currClass && \
-                rfs->currClass->bits.symbolType==TypeStruct && rfs->currClass->u.structSpec);\
-            assert(rfs && rfs->baseClass && \
-                rfs->baseClass->bits.symbolType==TypeStruct && rfs->baseClass->u.structSpec);\
-            if (options.server_operation!=OLO_ENCAPSULATE \
-                || ! javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, sym, AccessPrivate)) {\
-                fillUsageBits(&ub, usage, minacc);\
-                oref=addCxReferenceNew(sym,pos, &ub,\
-                    rfs->currClass->u.structSpec->classFile,\
-                    rfs->baseClass->u.structSpec->classFile);\
-            }\
-        } else {\
-            oref=addCxReference(sym, pos, usage, noFileIndex, noFileIndex);\
-        }\
-    }\
+static void addAmbCxRef(int classif, Symbol *sym, Position *pos, int usage, int minacc, Reference **oref, S_recFindStr *rfs) {
+    UsageBits ub;
+    if (classif!=CLASS_TO_METHOD) {
+        if (rfs != NULL && rfs->currClass!=NULL) {
+            assert(rfs && rfs->currClass &&
+                   rfs->currClass->bits.symbolType==TypeStruct && rfs->currClass->u.structSpec);
+            assert(rfs && rfs->baseClass &&
+                   rfs->baseClass->bits.symbolType==TypeStruct && rfs->baseClass->u.structSpec);
+            if (options.server_operation!=OLO_ENCAPSULATE
+                || ! javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, sym, AccessPrivate)) {
+                fillUsageBits(&ub, usage, minacc);
+                *oref=addCxReferenceNew(sym,pos, &ub,
+                                       rfs->currClass->u.structSpec->classFile,
+                                       rfs->baseClass->u.structSpec->classFile);
+            }
+        } else {
+            *oref=addCxReference(sym, pos, usage, noFileIndex, noFileIndex);
+        }
+    }
 }
 
 char *javaImportSymbolName_st(int file, int line, int coll) {
@@ -1135,15 +1135,15 @@ void javaAddImportConstructionReference(Position *importPos, Position *pos, int 
     addSpecialFieldReference(isymName, StorageDefault, noFileIndex, pos, usage);
 }
 
-static int javaClassifySingleAmbigName( IdList *name,
-                                        S_recFindStr *rfs,
-                                        Symbol **str,
-                                        TypeModifier **expr,
-                                        Reference **oref,
-                                        int classif, int uusage,
-                                        int cxrefFlag
-    ) {
-    int             res, nfqtusage, minacc;
+static int javaClassifySingleAmbigName(IdList *name,
+                                       S_recFindStr *rfs,
+                                       Symbol **str,
+                                       TypeModifier **expr,
+                                       Reference **oref,
+                                       int classif, int uusage,
+                                       int cxrefFlag
+) {
+    int res, nfqtusage, minacc;
     S_recFindStr *nullRfs = NULL;
 
     if (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD) {
@@ -1153,7 +1153,7 @@ static int javaClassifySingleAmbigName( IdList *name,
             name->nameType = TypeExpression;
             if (cxrefFlag==ADD_CX_REFS) {
                 minacc = javaGetMinimalAccessibility(rfs, *str);
-                AddAmbCxRef(classif,*str, &name->id.position, uusage, minacc, *oref, rfs);
+                addAmbCxRef(classif,*str, &name->id.position, uusage, minacc, oref, rfs);
                 if (rfs!=NULL && rfs->currClass != NULL) {
                     // the question is: is a reference to static field
                     // also reference to 'this'? If yes, it will
@@ -1174,7 +1174,7 @@ static int javaClassifySingleAmbigName( IdList *name,
     res = javaClassifySingleAmbigNameToTypeOrPack( name, str, cxrefFlag);
     if (res == TypeStruct) {
         if (cxrefFlag==ADD_CX_REFS) {
-            AddAmbCxRef(classif, *str, &name->id.position, uusage, MIN_REQUIRED_ACCESS, *oref, nullRfs);
+            addAmbCxRef(classif, *str, &name->id.position, uusage, MIN_REQUIRED_ACCESS, oref, nullRfs);
             // the problem is here when invoked as nested "new Name()"?
             nfqtusage = javaNotFqtUsageCorrection((*str), UsageNotFQType);
             addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM, StorageField,
@@ -1421,7 +1421,7 @@ int javaClassifyAmbiguousName(
                     if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
                         || javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, *str)) {
                         minacc = javaGetMinimalAccessibility(rfs, *str);
-                        AddAmbCxRef(classif,*str,&name->id.position, uusage, minacc, *oref, rfs);
+                        addAmbCxRef(classif,*str,&name->id.position, uusage, minacc, oref, rfs);
                         if (allowUselesFqtRefs == USELESS_FQT_REFS_ALLOWED) {
                             javaCheckForUselessTypeName(name, classif, rfs,
                                                         rdtoref, prdtoref);
@@ -1453,7 +1453,7 @@ int javaClassifyAmbiguousName(
                     if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
                         || javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, *str)) {
                         minacc = javaGetMinimalAccessibility(rfs, *str);
-                        AddAmbCxRef(classif,*str,&name->id.position,uusage, minacc, *oref, rfs);
+                        addAmbCxRef(classif,*str,&name->id.position,uusage, minacc, oref, rfs);
                     }
                 } else {
                     noSuchFieldError(name->id.name);
@@ -1468,10 +1468,8 @@ int javaClassifyAmbiguousName(
     return name->nameType;
 }
 
-#undef AddAmbCxRef
-
 TypeModifier *javaClassifyToExpressionName(IdList *name,
-                                              Reference **oref) {
+                                           Reference **oref) {
     Symbol    *str;
     TypeModifier		*expr,*res;
     int atype;
