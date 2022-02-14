@@ -1210,24 +1210,14 @@ void gotoOnlineCxref(Position *p, int usage, char *suffix)
     }
 }
 
-// This is out-commented in every usage - which is strange...
-// #define IS_COMPLETION_COMMAND(comm)
-//    ((comm == OLO_COMPLETION || comm == OLO_SEARCH || comm == OLO_CGOTO /*&|| comm==OLO_TAG_SEARCH &*/
-//      ))
-
-
 static bool olcx_move_init(UserOlcxData *olcxuser, OlcxReferences **refs, int checkFlag) {
     assert(olcxuser);
     if (options.server_operation==OLO_COMPLETION || options.server_operation==OLO_CSELECT
         ||  options.server_operation==OLO_CGOTO || options.server_operation==OLO_CBROWSE
-        /*& || options.server_operation==OLO_SEARCH &*/
         ||  options.server_operation==OLO_TAG_SEARCH) {
-        /*&refs = olcxuser->browserStack.top;&*/
-        /*&while (refs!=NULL && !IS_COMPLETION_COMMAND(refs->command)) refs=refs->previous;&*/
         *refs = olcxuser->completionsStack.top;
     } else {
         *refs = olcxuser->browserStack.top;
-        /*&while (refs!=NULL && IS_COMPLETION_COMMAND(refs->command)) refs=refs->previous;&*/
     }
     if (checkFlag==CHECK_NULL && *refs == NULL) {
         if (options.xref2) {
@@ -1235,7 +1225,7 @@ static bool olcx_move_init(UserOlcxData *olcxuser, OlcxReferences **refs, int ch
         } else {
             fprintf(communicationChannel, "=");
         }
-        return false; /* tricky return from function calling this macro !!!!! */
+        return false;
     }
     return true;
 }
