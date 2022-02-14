@@ -5,11 +5,11 @@
 #include "symbol.h"
 #include "position.h"
 
-typedef struct id {
-    char *          name;
-    struct symbol * symbol;
+typedef struct Id {
+    char *name;
+    struct symbol *symbol;
     struct position position;
-    struct id *     next;
+    struct Id *next;
 } Id;
 
 typedef struct idList {

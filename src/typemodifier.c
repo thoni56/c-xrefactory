@@ -108,6 +108,6 @@ S_typeModifierList *newTypeModifierList(TypeModifier *d) {
     return list;
 }
 
-TypeModifier *prependTypeModifierWith(TypeModifier *this, Type kind) {
-    return newTypeModifier(kind, NULL, this);
+TypeModifier *prependTypeModifierWith(TypeModifier *thisModifier, Type kind) {
+    return newTypeModifier(kind, NULL, thisModifier);
 }
