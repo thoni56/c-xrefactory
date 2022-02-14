@@ -230,8 +230,10 @@ static int searchStringNonWildcardFitness(char *cxtag, int len) {
 }
 
 int searchStringFitness(char *cxtag, int len) {
-    if (s_wildcardSearch) return(shellMatch(cxtag, len, options.olcxSearchString, false));
-    else return(searchStringNonWildcardFitness(cxtag, len));
+    if (containsWildcard(options.olcxSearchString))
+        return shellMatch(cxtag, len, options.olcxSearchString, false);
+    else
+        return searchStringNonWildcardFitness(cxtag, len);
 }
 
 
@@ -339,8 +341,6 @@ void searchSymbolCheckReference(SymbolReferenceItem  *referenceItem, Reference *
     slen = strlen(sname);
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
-        //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, reference, referenceItem->vFunClass, currentUserData->retrieverStack.top);
-        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, fileTable.tab[reference->position.file]->name, reference->position.file, options.olcxSearchString, s_wildcardSearch);ppcBottomInformation(tmpBuff);
         olCompletionListPrepend(sname, NULL, NULL, 0, NULL, referenceItem, reference, referenceItem->b.symType,
                                 referenceItem->vFunClass, currentUserData->retrieverStack.top);
         // this is a hack for memory reduction

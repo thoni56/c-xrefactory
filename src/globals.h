@@ -26,7 +26,6 @@ extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
 extern int s_fileAbortionEnabled;
 
-extern bool s_wildcardSearch;
 extern int s_lastReturnedLexem;
 extern Position s_spp[SPP_MAX];
 

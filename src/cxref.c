@@ -4624,8 +4624,6 @@ void mainAnswerEditAction(void) {
         olcxPushEmptyStackItem(&currentUserData->retrieverStack);
         currentUserData->retrieverStack.top->callerPosition = opos;
 
-        s_wildcardSearch = containsWildcard(options.olcxSearchString);
-
         if (options.tagSearchSpecif==TSS_FULL_SEARCH) scanJarFilesForTagSearch();
         scanReferenceFiles(options.cxrefFileName, symbolSearchFunctionSequence);
         printTagSearchResults();

@@ -110,7 +110,6 @@ TypeModifier *s_upLevelFunctionCompletionType;
 Position s_primaryStartPosition;
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 
-bool s_wildcardSearch;
 int s_lastReturnedLexem;
 
 int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];

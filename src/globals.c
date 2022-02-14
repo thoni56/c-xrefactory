@@ -12,7 +12,6 @@
 
 int s_fileAbortionEnabled;
 
-bool s_wildcardSearch;
 int s_lastReturnedLexem;
 
 Position s_spp[SPP_MAX];
