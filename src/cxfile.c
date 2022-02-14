@@ -1135,7 +1135,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     if (lastIncomingInfo.onLineReferencedSym ==
         lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
         addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
-                     &usageBits,&pos);
+                     &usageBits, pos);
     }
 }
 

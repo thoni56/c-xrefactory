@@ -234,21 +234,21 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 
 
 Reference **addToRefList(Reference **list,
-                         UsageBits *usageP,
-                         Position *pos) {
+                         UsageBits *usage,
+                         Position pos) {
     Reference *rr, **place;
     Reference reference;
 
-    fillReference(&reference, *usageP, *pos, NULL);
+    fillReference(&reference, *usage, pos, NULL);
     SORTED_LIST_PLACE2(place,reference,list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
         || options.server_operation==OLO_EXTRACT) {
         CX_ALLOC(rr, Reference);
-        fillReference(rr, *usageP, *pos, NULL);
+        fillReference(rr, *usage, pos, NULL);
         LIST_CONS(rr, (*place));
     } else {
         assert(*place);
-        (*place)->usage = *usageP;
+        (*place)->usage = *usage;
     }
     return place;
 }
@@ -669,7 +669,8 @@ static bool olcxOnlyParseNoPushing(int opt) {
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
 /*                                                                       */
 Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
-                                int vFunCl, int vApplCl) {
+                             int vFunCl, int vApplCl) {
+    // TODO UsageBits are not written to, could be by-value
     int                  index;
     int                  category;
     int                  scope;
@@ -758,7 +759,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         memb->b.accessFlags |= symbol->bits.access;
     }
     /*  category = reftab->category; */
-    place = addToRefList(&memb->refs,usage,pos);
+    place = addToRefList(&memb->refs,usage, *pos);
     //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", fileTable.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, fileTable.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), positionsAreEqual(s_cxRefPos, *pos), usage_base, symbol->linkName);
 
     if (options.taskRegime == RegimeEditServer
