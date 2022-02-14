@@ -674,7 +674,7 @@ typedef struct {
 } Ast_freeTrail;
 typedef struct {
     struct position      b, e;
-    struct id		*d;
+    Id		*d;
 } Ast_id;
 typedef struct {
     struct position          b, e;

@@ -13,7 +13,7 @@ typedef struct id {
 } Id;
 
 typedef struct idList {
-    struct id      id;
+    Id      id;
     char *         fqtname;  /* fqt name for java */
     enum type      nameType; /* type of name segment for java */
     struct idList *next;
