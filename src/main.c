@@ -118,7 +118,8 @@ static void aboutMessage(void) {
     if (options.exit) exit(XREF_EXIT_BASE);
 }
 
-#define NEXT_FILE_ARG() {                                               \
+
+#define NEXT_FILE_ARG(i) {                                              \
     char tmpBuff[TMP_BUFF_SIZE];                                        \
     i++;                                                                \
     if (i >= argc) {                                                    \
@@ -129,11 +130,11 @@ static void aboutMessage(void) {
     }                                                                   \
 }
 
-#define NEXT_ARG() {                                                    \
+#define NEXT_ARG(i) {                                                   \
     char tmpBuff[TMP_BUFF_SIZE];                                        \
     i++;                                                                \
     if (i >= argc) {                                                    \
-        sprintf(tmpBuff, "further argument(s) expected after %s",argv[i-1]); \
+        sprintf(tmpBuff, "further argument(s) expected after %s", argv[i-1]); \
         errorMessage(ERR_ST,tmpBuff);                                   \
         usage();                                                        \
         exit(1);                                                        \
@@ -158,10 +159,10 @@ static bool isAbsolutePath(char *p) {
 int mainHandleSetOption(int argc, char **argv, int i ) {
     char *name, *val;
 
-    NEXT_ARG();
+    NEXT_ARG(i);
     name = argv[i];
     assert(name);
-    NEXT_ARG();
+    NEXT_ARG(i);
     val = argv[i];
     xrefSetenv(name, val);
     return i;
@@ -170,7 +171,7 @@ int mainHandleSetOption(int argc, char **argv, int i ) {
 static int mainHandleIncludeOption(int argc, char **argv, int i) {
     int nargc;
     char **nargv;
-    NEXT_FILE_ARG();
+    NEXT_FILE_ARG(i);
     options.stdopFlag = 1;
     readOptionFile(argv[i],&nargc,&nargv, "",NULL);
     processOptions(nargc, nargv, INFILES_DISABLED);
@@ -189,20 +190,20 @@ static struct {
 /* *************************************************************************** */
 /*                                      OPTIONS                                */
 
-static bool processNegativeOption(int *ii, int argc, char **argv, int infilesFlag) {
-    int i = *ii;
+static bool processNegativeOption(int *argi, int argc, char **argv, int infilesFlag) {
+    int i = *argi;
     if (0) {}
     else if (strcmp(argv[i], "--r")==0) {
         if (infilesFlag == INFILES_ENABLED)
             options.recurseDirectories = false;
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processAOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processAOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-addimportdefault=",18)==0) {
         sscanf(argv[i]+18, "%d", &options.defaultAddImportStrategy);
@@ -211,12 +212,12 @@ static bool processAOption(int *ii, int argc, char **argv) {
         options.server_operation = OLO_ABOUT;
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processBOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processBOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-briefoutput")==0)
         options.briefoutput = true;
@@ -224,12 +225,12 @@ static bool processBOption(int *ii, int argc, char **argv) {
         createOptionString(&options.browsedSymName, argv[i]+12);
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processCOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processCOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-cacheincludes")==0)
         options.cacheIncludes=1;
@@ -257,7 +258,7 @@ static bool processCOption(int *ii, int argc, char **argv) {
         options.continueRefactoring = RC_IMPORT_ON_DEMAND;
     }
     else if (strcmp(argv[i], "-classpath")==0) {
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         createOptionString(&options.classpath, argv[i]);
     }
     else if (strncmp(argv[i], "-csuffixes=",11)==0) {
@@ -268,12 +269,12 @@ static bool processCOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i], "-compiler=", 10)==0) {
         options.compiler = &argv[i][10];
     } else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processDOption(int *ii, int argc, char **argv) {
-    int i = *ii;
+static bool processDOption(int *argi, int argc, char **argv) {
+    int i = *argi;
 
     if (0) {}                   /* For copy/paste/re-order convenience, all tests can start with "else if.." */
     else if (strcmp(argv[i], "-debug")==0)
@@ -287,12 +288,12 @@ static bool processDOption(int *ii, int argc, char **argv) {
     }
     else return false;
 
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processEOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processEOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     char ttt[TMP_STRING_SIZE];
 
     if (0) {}
@@ -345,12 +346,12 @@ static bool processEOption(int *ii, int argc, char **argv) {
         }
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processFOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processFOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-filescasesensitive")==0) {
         options.fileNamesCaseSensitive = 1;
@@ -367,39 +368,39 @@ static bool processFOption(int *ii, int argc, char **argv) {
         options.updateOnlyModifiedFiles = false;
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processGOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processGOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-getlastimportline")==0) {
         options.trivialPreCheckCode = TPC_GET_LAST_IMPORT_LINE;
     }
     else if (strcmp(argv[i], "-get")==0) {
-        NEXT_ARG();
+        NEXT_ARG(i);
         createOptionString(&options.getValue, argv[i]);
         options.server_operation = OLO_GET_ENV_VALUE;
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processHOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processHOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (strcmp(argv[i], "-help")==0) {
         usage();
         exit(0);
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processIOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processIOption(int *argi, int argc, char **argv) {
+    int i = * argi;
 
     if (0) {}
     else if (strcmp(argv[i], "-I")==0) {
@@ -424,12 +425,12 @@ static bool processIOption(int *ii, int argc, char **argv) {
         logging_selected.infos = true;
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processJOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processJOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-javadoc")==0)
         options.javaDoc = true;
@@ -453,7 +454,7 @@ static bool processJOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i], "-javadocpath=",13)==0)    {
         createOptionString(&options.javaDocPath, argv[i]+13);
     } else if (strcmp(argv[i], "-javadocpath")==0)   {
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         createOptionString(&options.javaDocPath, argv[i]);
     }
     else if (strncmp(argv[i], "-javasuffixes=",14)==0) {
@@ -463,24 +464,24 @@ static bool processJOption(int *ii, int argc, char **argv) {
         options.javaFilesOnly = 1;
     }
     else if (strcmp(argv[i], "-jdkclasspath")==0 || strcmp(argv[i], "-javaruntime")==0) {
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         createOptionString(&options.jdkClassPath, argv[i]);
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processKOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processKOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processLOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processLOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-log=", 5)==0) {
         ;                       /* Already handled in initLogging() */
@@ -489,12 +490,12 @@ static bool processLOption(int *ii, int argc, char **argv) {
         createOptionString(&options.last_message, argv[i]+14);
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processMOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processMOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-mf=", 4)==0) {
         int mf;
@@ -514,12 +515,12 @@ static bool processMOption(int *ii, int argc, char **argv) {
         createOptionString(&options.moveTargetFile, argv[i]+16);
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processNOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processNOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-no-includerefs")==0)
         options.noIncludeRefs = true;
@@ -538,12 +539,12 @@ static bool processNOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i], "-no-errors")==0)
         options.noErrors = true;
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processOOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processOOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-oocheckbits=",13)==0)    {
         sscanf(argv[i]+13, "%o", &options.ooChecksBits);
@@ -622,16 +623,16 @@ static bool processOOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i], "-olcxsafetycheckmovedfile")==0
              || strcmp(argv[i], "-olcxsafetycheckmoved")==0  /* backward compatibility */
              ) {
-        NEXT_ARG();
+        NEXT_ARG(i);
         createOptionString(&options.checkFileMovedFrom, argv[i]);
-        NEXT_ARG();
+        NEXT_ARG(i);
         createOptionString(&options.checkFileMovedTo, argv[i]);
     }
     else if (strcmp(argv[i], "-olcxwindel")==0) {
         options.server_operation = OLO_REMOVE_WIN;
     }
     else if (strcmp(argv[i], "-olcxwindelfile")==0) {
-        NEXT_ARG();
+        NEXT_ARG(i);
         createOptionString(&options.olcxWinDelFile, argv[i]);
     }
     else if (strncmp(argv[i], "-olcxwindelwin=",15)==0) {
@@ -875,21 +876,22 @@ static bool processOOption(int *ii, int argc, char **argv) {
         i = mainHandleIncludeOption(argc, argv, i);
     }
     else if (strcmp(argv[i], "-o")==0) {
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         createOptionString(&options.outputFileName, argv[i]);
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processPOption(int *ii, int argc, char **argv) {
+static bool processPOption(int *argi, int argc, char **argv) {
     char    ttt[MAX_FILE_NAME_SIZE];
-    int     i = * ii;
+    int     i = *argi;
+
     if (0) {}
     else if (strncmp(argv[i], "-pause",5)==0) {
         /* Pause to be able to attach with debugger... */
-        NEXT_ARG();
+        NEXT_ARG(i);
         sleep(atoi(argv[i]));
     }
     else if (strncmp(argv[i], "-pass",5)==0) {
@@ -899,16 +901,16 @@ static bool processPOption(int *ii, int argc, char **argv) {
         options.allowPackagesOnCommandLine = 1;
     }
     else if (strcmp(argv[i], "-p")==0) {
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         log_trace("Current project '%s'", argv[i]);
         createOptionString(&options.project, argv[i]);
     }
     else if (strcmp(argv[i], "-preload")==0) {
         char *file, *fromFile;
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         file = argv[i];
         strcpy(ttt, normalizeFileName(file, cwd));
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         fromFile = argv[i];
         // TODO, maybe do this also through allocated list of options
         // and serve them later ?
@@ -916,19 +918,19 @@ static bool processPOption(int *ii, int argc, char **argv) {
         editorOpenBufferNoFileLoad(ttt, fromFile);
     }
     else if (strcmp(argv[i], "-prune")==0) {
-        NEXT_ARG();
+        NEXT_ARG(i);
         addStringListOption(&options.pruneNames, argv[i]);
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processQOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processQOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
@@ -944,8 +946,8 @@ static void setXrefsFile(char *argvi) {
     createOptionString(&options.cxrefFileName, normalizeFileName(argvi, cwd));
 }
 
-static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
-    int i = * ii;
+static bool processROption(int *argi, int argc, char **argv, int infilesFlag) {
+    int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-refnum=",8)==0)  {
         sscanf(argv[i]+8, "%d", &options.referenceFileCount);
@@ -980,7 +982,7 @@ static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
         options.includeDirs = NULL;
     }
     else if (strcmp(argv[i], "-refs")==0)    {
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         setXrefsFile(argv[i]);
     }
     else if (strncmp(argv[i], "-refs=",6)==0)    {
@@ -1077,12 +1079,12 @@ static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
         createOptionString(&options.refpar2, argv[i]+13);
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processSOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processSOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     char *name, *val;
 
     if (0) {}
@@ -1091,7 +1093,7 @@ static bool processSOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i], "-stderr")==0)          errOut = stdout;
     else if (strcmp(argv[i], "-source")==0)  {
         char tmpBuff[TMP_BUFF_SIZE];
-        NEXT_ARG();
+        NEXT_ARG(i);
         if (strcmp(argv[i], JAVA_VERSION_1_3)!=0 && strcmp(argv[i], JAVA_VERSION_1_4)!=0) {
             sprintf(tmpBuff, "wrong -javaversion=<value>, available values are %s, %s",
                     JAVA_VERSION_1_3, JAVA_VERSION_1_4);
@@ -1101,7 +1103,7 @@ static bool processSOption(int *ii, int argc, char **argv) {
         }
     }
     else if (strcmp(argv[i], "-sourcepath")==0) {
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         createOptionString(&options.sourcePath, argv[i]);
         xrefSetenv("-sourcepath", options.sourcePath);
     }
@@ -1113,7 +1115,7 @@ static bool processSOption(int *ii, int argc, char **argv) {
     }
     else if (strncmp(argv[i], "-set",4)==0) {
         name = argv[i]+4;
-        NEXT_ARG();
+        NEXT_ARG(i);
         val = argv[i];
         xrefSetenv(name, val);
     }
@@ -1127,12 +1129,12 @@ static bool processSOption(int *ii, int argc, char **argv) {
         options.tagSearchSpecif = TSS_SEARCH_DEFS_ONLY_SHORT;
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processTOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processTOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-trace")==0) {
         options.trace = true;
@@ -1180,7 +1182,7 @@ static bool processTOption(int *ii, int argc, char **argv) {
         options.trivialPreCheckCode = TPC_PUSH_DOWN_FIELD;
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
@@ -1194,7 +1196,7 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
         options.urlGenTemporaryFile = false;
     }
     else if (strcmp(argv[i], "-user")==0) {
-        NEXT_ARG();
+        NEXT_ARG(i);
         createOptionString(&options.user, argv[i]);
     }
     else if (strcmp(argv[i], "-update")==0)  {
@@ -1207,30 +1209,30 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
     return true;
 }
 
-static bool processVOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processVOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-version")==0||strcmp(argv[i], "-about")==0){
         options.server_operation = OLO_ABOUT;
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processWOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processWOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-warnings") == 0){
         logging_selected.warnings = true;
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processXOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processXOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-xrefactory-II") == 0){
         options.xref2 = 1;
@@ -1239,16 +1241,16 @@ static bool processXOption(int *ii, int argc, char **argv) {
         createOptionString(&options.xrefrc, argv[i]+8);
     }
     else if (strcmp(argv[i], "-xrefrc") == 0) {
-        NEXT_FILE_ARG();
+        NEXT_FILE_ARG(i);
         createOptionString(&options.xrefrc, argv[i]);
     }
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processYOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processYOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
 #ifdef YYDEBUG
     else if (strcmp(argv[i], "-yydebug") == 0){
@@ -1258,15 +1260,15 @@ static bool processYOption(int *ii, int argc, char **argv) {
     }
 #endif
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
-static bool processZOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processZOption(int *argi, int argc, char **argv) {
+    int i = * argi;
     if (0) {}
     else return false;
-    *ii = i;
+    *argi = i;
     return true;
 }
 
