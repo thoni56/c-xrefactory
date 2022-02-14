@@ -5265,7 +5265,7 @@ void printTagSearchResults(void) {
     // the first loop is counting the length of fields
     assert(currentUserData->retrieverStack.top);
     for (S_olCompletion *cc=currentUserData->retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = crTagSearchLineStatic(cc->name, &cc->ref.position,
+        ls = createTagSearchLineStatic(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
     }
     if (options.olineLen >= 50000) {
@@ -5284,7 +5284,7 @@ void printTagSearchResults(void) {
         ppcBegin(PPC_SYMBOL_LIST);
     assert(currentUserData->retrieverStack.top);
     for (S_olCompletion *cc=currentUserData->retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = crTagSearchLineStatic(cc->name, &cc->ref.position,
+        ls = createTagSearchLineStatic(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);

@@ -239,9 +239,9 @@ int searchStringFitness(char *cxtag, int len) {
 
 #define maxOf(a, b) (((a) > (b)) ? (a) : (b))
 
-char *crTagSearchLineStatic(char *name, Position *p,
-                            int *len1, int *len2, int *len3) {
-    static char res[2*COMPLETION_STRING_SIZE];
+char *createTagSearchLineStatic(char *name, Position *pos,
+                                int *len1, int *len2, int *len3) {
+    static char line[2*COMPLETION_STRING_SIZE];
     char file[TMP_STRING_SIZE];
     char dir[TMP_STRING_SIZE];
     char *ffname;
@@ -258,7 +258,7 @@ char *crTagSearchLineStatic(char *name, Position *p,
       }
       &*/
 
-    ffname = fileTable.tab[p->file]->name;
+    ffname = fileTable.tab[pos->file]->name;
     assert(ffname);
     ffname = getRealFileNameStatic(ffname);
     fl = strlen(ffname);
@@ -274,11 +274,11 @@ char *crTagSearchLineStatic(char *name, Position *p,
 
     if (options.tagSearchSpecif == TSS_SEARCH_DEFS_ONLY_SHORT
         || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
-        sprintf(res, "%s", name);
+        sprintf(line, "%s", name);
     } else {
-        sprintf(res, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);
+        sprintf(line, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);
     }
-    return res;
+    return line;                /* static! */
 }
 
 // Filter out symbols which pollute search reports

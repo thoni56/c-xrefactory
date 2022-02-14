@@ -35,7 +35,7 @@ extern void readOneAppropReferenceFile(char *symname,
                                        ScanFileFunctionStep *scanFunTab);
 
 extern int searchStringFitness(char *cxtag, int slen);
-extern char *crTagSearchLineStatic(char *name, Position *p,
+extern char *createTagSearchLineStatic(char *name, Position *p,
                                    int *len1, int *len2, int *len3);
 extern bool symbolNameShouldBeHiddenFromReports(char *name);
 extern void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr);
