@@ -2348,16 +2348,7 @@ static void olcxTopSymbolResolution(void) {
     olcxPrintSelectionMenu(ss);
 }
 
-/* NOTE: may return! */
-#define CHECK_ATTRIBUTES(p1,p2) {                                       \
-        if (p1 == p2) return true;                                      \
-        if (p1->b.category != p2->b.category) return false;             \
-        if (p1->b.symType!=TypeCppCollate && p2->b.symType!=TypeCppCollate && p1->b.symType!=p2->b.symType) return false; \
-        if (p1->b.storage!=p2->b.storage) return false;                 \
-    }
-
 bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    /* Expansion of CHECK_ATTRIBUTES() macro to be explicit about returns... */
     if (p1 == p2)
         return true;
     if (p1->b.category != p2->b.category)
@@ -2388,7 +2379,6 @@ bool olcxIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
 
-    //& CHECK_ATTRIBUTES(p1,p2);  // to show panic macro and panic symbol and to make safetycheck working
     GET_BARE_NAME(p1->name, n1start, n1len);
     GET_BARE_NAME(p2->name, n2start, n2len);
     if (n1len != n2len)
@@ -2752,22 +2742,24 @@ static void handleConstructorSpecialsInSelectingSymbolInMenu(SymbolsMenu *menu, 
 }
 
 
-#define RENAME_MENU_SELECTION(command) (                                \
-                                        command == OLO_RENAME           \
-                                        || command == OLO_ENCAPSULATE   \
-                                        || command == OLO_VIRTUAL2STATIC_PUSH \
-                                        || command == OLO_ARG_MANIP     \
-                                        || command == OLO_PUSH_FOR_LOCALM \
-                                        || command == OLO_SAFETY_CHECK1 \
-                                        || command == OLO_SAFETY_CHECK2 \
-                                        || options.manualResolve == RESOLVE_DIALOG_NEVER \
-                                        )
+static bool isRenameMenuSelection(int command) {
+    return (command == OLO_RENAME
+            || command == OLO_ENCAPSULATE
+            || command == OLO_VIRTUAL2STATIC_PUSH
+            || command == OLO_ARG_MANIP
+            || command == OLO_PUSH_FOR_LOCALM
+            || command == OLO_SAFETY_CHECK1
+            || command == OLO_SAFETY_CHECK2
+            || options.manualResolve == RESOLVE_DIALOG_NEVER
+    );
+}
+
 
 static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
     unsigned oov;
     int st, change;
 
-    if (RENAME_MENU_SELECTION(command)) {
+    if (isRenameMenuSelection(command)) {
         // even worse than O(n^2), hmm.
         change = 1;
         while (change) {
@@ -2840,7 +2832,7 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
         // set it to select and show all symbols
         oovisible = 0;
         ooselected = 0;
-    } else if (RENAME_MENU_SELECTION(command)) {
+    } else if (isRenameMenuSelection(command)) {
         oovisible = options.ooChecksBits;
         ooselected = RENAME_SELECTION_OO_BITS;
     } else {
