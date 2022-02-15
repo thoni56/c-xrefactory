@@ -825,14 +825,14 @@ static void completeFun(Symbol *s, void *c) {
     processName(s->name, &compLine, 1, cc->res);
 }
 
-#define CONST_CONSTRUCT_NAME(ccstorage,sstorage,completionName) {       \
-        if (ccstorage!=StorageConstructor && sstorage==StorageConstructor) { \
-            completionName = NULL;                                      \
-        }                                                               \
-        if (ccstorage==StorageConstructor && sstorage!=StorageConstructor) { \
-            completionName = NULL;                                      \
-        }                                                               \
+static void CONST_CONSTRUCT_NAME(Storage ccstorage, Storage sstorage, char **completionName) {
+    if (ccstorage!=StorageConstructor && sstorage==StorageConstructor) {
+        *completionName = NULL;
     }
+    if (ccstorage==StorageConstructor && sstorage!=StorageConstructor) {
+        *completionName = NULL;
+    }
+}
 
 static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl) {
     CompletionLine         compLine;
@@ -867,22 +867,23 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
     processName(cn, &compLine, orderFlag, (void*) c);
 }
 
-static void completeSymFun(Symbol *s, void *c) {
+static void completeSymFun(Symbol *symbol, void *c) {
     CompletionSymbolFunInfo *cc;
     CompletionLine compLine;
     char    *completionName;
     cc = (CompletionSymbolFunInfo *) c;
-    assert(s);
-    if (s->bits.symbolType != TypeDefault) return;
-    assert(s);
-    if (cc->storage==StorageTypedef && s->bits.storage!=StorageTypedef) return;
-    completionName = s->name;
-    CONST_CONSTRUCT_NAME(cc->storage,s->bits.storage,completionName);
+    assert(symbol);
+    if (symbol->bits.symbolType != TypeDefault) return;
+    assert(symbol);
+    if (cc->storage==StorageTypedef && symbol->bits.storage!=StorageTypedef)
+        return;
+    completionName = symbol->name;
+    CONST_CONSTRUCT_NAME(cc->storage, symbol->bits.storage, &completionName);
     if (completionName!=NULL) {
-        if (s->bits.symbolType == TypeDefault && s->u.typeModifier!=NULL && s->u.typeModifier->kind == TypeFunction) {
-            completeFunctionOrMethodName(cc->res, 1, 0, s, NULL);
+        if (symbol->bits.symbolType == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->kind == TypeFunction) {
+            completeFunctionOrMethodName(cc->res, 1, 0, symbol, NULL);
         } else {
-            fillCompletionLine(&compLine, completionName, s, s->bits.symbolType,0, 0, NULL,NULL);
+            fillCompletionLine(&compLine, completionName, symbol, symbol->bits.symbolType,0, 0, NULL,NULL);
             processName(completionName, &compLine, 1, cc->res);
         }
     }
@@ -978,7 +979,7 @@ static void completeRecordsNames(
         /* because constructors are not inherited */
         assert(r);
         cname = r->name;
-        CONST_CONSTRUCT_NAME(constructorOpt,r->bits.storage,cname);
+        CONST_CONSTRUCT_NAME(constructorOpt, r->bits.storage, &cname);
         //&fprintf(dumpOut,"record %s\n", cname);
         if (    cname!=NULL
                 && *cname != 0
@@ -1161,7 +1162,7 @@ static char *spComplFindNextRecord(ExprTokenType *tok) {
         if (rr != RETURN_OK) break;
         assert(r);
         cname = r->name;
-        CONST_CONSTRUCT_NAME(StorageDefault,r->bits.storage,cname);
+        CONST_CONSTRUCT_NAME(StorageDefault, r->bits.storage, &cname);
         if (cname!=NULL && javaLinkable(r->bits.access)){
             assert(rfs.currClass && rfs.currClass->u.structSpec);
             assert(r->bits.symbolType == TypeDefault);
