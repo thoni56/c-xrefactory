@@ -289,7 +289,7 @@ bool symbolNameShouldBeHiddenFromReports(char *name) {
     if (name[0] == ' ')
         return true;
 
-    // Only Java specific pollution
+    // Only Java specific pollution below
     if (! LANGUAGE(LANG_JAVA))
         return false;
 
