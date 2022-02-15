@@ -26,20 +26,20 @@ enum fqtCompletion {
 };
 
 
-typedef struct completionSymInfo {
+typedef struct {
     struct completions *res;
     Type symType;
-} CompletionSymbolInfo;
+} SymbolCompletionInfo;
 
-typedef struct completionSymFunInfo {
+typedef struct {
     struct completions *res;
     Storage storage;
-} CompletionSymbolFunInfo;
+} SymbolCompletionFunctionInfo;
 
-typedef struct completionFqtMapInfo {
+typedef struct {
     struct completions *res;
     int completionType;
-} CompletionFqtMapInfo;
+} FqtMapCompletionInfo;
 
 
 void initCompletions(Completions *completions, int length, Position position) {
@@ -64,19 +64,19 @@ void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Typ
     cline->vFunClass = vFunClass;                  \
 }
 
-static void fillCompletionSymInfo(CompletionSymbolInfo *completionSymInfo, Completions *completions,
+static void fillCompletionSymInfo(SymbolCompletionInfo *completionSymInfo, Completions *completions,
                                   unsigned symType) {
     completionSymInfo->res = completions;
     completionSymInfo->symType = symType;
 }
 
-static void fillCompletionSymFunInfo(CompletionSymbolFunInfo *completionSymFunInfo, Completions *completions,
+static void fillCompletionSymFunInfo(SymbolCompletionFunctionInfo *completionSymFunInfo, Completions *completions,
                                      enum storage storage) {
     completionSymFunInfo->res = completions;
     completionSymFunInfo->storage = storage;
 }
 
-static void fillCompletionFqtMapInfo(CompletionFqtMapInfo *completionFqtMapInfo, Completions *completions,
+static void fillCompletionFqtMapInfo(FqtMapCompletionInfo *completionFqtMapInfo, Completions *completions,
                                      enum fqtCompletion completionType) {
     completionFqtMapInfo->res = completions;
     completionFqtMapInfo->completionType = completionType;
@@ -807,9 +807,9 @@ void processName(char *name, CompletionLine *compLine, int orderFlag, void *c) {
 }
 
 static void completeFun(Symbol *s, void *c) {
-    CompletionSymbolInfo *cc;
+    SymbolCompletionInfo *cc;
     CompletionLine compLine;
-    cc = (CompletionSymbolInfo *) c;
+    cc = (SymbolCompletionInfo *) c;
     assert(s && cc);
     if (s->bits.symbolType != cc->symType) return;
     /*&fprintf(dumpOut,"testing %s\n",s->linkName);fflush(dumpOut);&*/
@@ -825,6 +825,7 @@ static void completeFun(Symbol *s, void *c) {
     processName(s->name, &compLine, 1, cc->res);
 }
 
+/* TODO: Meaning? Something about constructor... If either then clear completionN */
 static void CONST_CONSTRUCT_NAME(Storage ccstorage, Storage sstorage, char **completionName) {
     if (ccstorage!=StorageConstructor && sstorage==StorageConstructor) {
         *completionName = NULL;
@@ -867,11 +868,11 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
     processName(cn, &compLine, orderFlag, (void*) c);
 }
 
-static void completeSymFun(Symbol *symbol, void *c) {
-    CompletionSymbolFunInfo *cc;
-    CompletionLine compLine;
+static void symbolCompletionFunction(Symbol *symbol, void *c) {
+    SymbolCompletionFunctionInfo *cc;
+    CompletionLine completionLine;
     char    *completionName;
-    cc = (CompletionSymbolFunInfo *) c;
+    cc = (SymbolCompletionFunctionInfo *) c;
     assert(symbol);
     if (symbol->bits.symbolType != TypeDefault) return;
     assert(symbol);
@@ -883,14 +884,14 @@ static void completeSymFun(Symbol *symbol, void *c) {
         if (symbol->bits.symbolType == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->kind == TypeFunction) {
             completeFunctionOrMethodName(cc->res, 1, 0, symbol, NULL);
         } else {
-            fillCompletionLine(&compLine, completionName, symbol, symbol->bits.symbolType,0, 0, NULL,NULL);
-            processName(completionName, &compLine, 1, cc->res);
+            fillCompletionLine(&completionLine, completionName, symbol, symbol->bits.symbolType,0, 0, NULL,NULL);
+            processName(completionName, &completionLine, 1, cc->res);
         }
     }
 }
 
 void completeStructs(Completions *c) {
-    CompletionSymbolInfo ii;
+    SymbolCompletionInfo ii;
 
     fillCompletionSymInfo(&ii, c, TypeStruct);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
@@ -938,31 +939,29 @@ static AccessibilityCheckYesNo calculateAccessCheckOption(void) {
     }
 }
 
-#define STR_REC_INFO(cc) (* cc->idToProcess == 0 && s_language!=LANG_JAVA)
-
 static void completeRecordsNames(
     Completions *c,
-    Symbol *s,
+    Symbol *symbol,
     int classification,
     int constructorOpt,
     int completionType,
     int vlevelOffset
 ) {
     CompletionLine completionLine;
-    int orderFlag,rr,vlevel, accessCheck,  visibilityCheck;
+    int orderFlag, rr, vlevel, accessCheck, visibilityCheck;
     Symbol *r, *vFunCl;
     S_recFindStr rfs;
     char *cname;
 
-    if (s==NULL) return;
-    if (STR_REC_INFO(c)) {
+    if (symbol==NULL) return;
+    if (c->idToProcess[0] == 0 && s_language!=LANG_JAVA) {
         orderFlag = 0;
     } else {
         orderFlag = 1;
     }
-    assert(s->u.structSpec);
-    iniFind(s, &rfs);
-    //&fprintf(dumpOut,"checking records of %s\n", s->linkName);
+    assert(symbol->u.structSpec);
+    iniFind(symbol, &rfs);
+    //&fprintf(dumpOut,"checking records of %s\n", symbol->linkName);
     for(;;) {
         // this is in fact about not cutting all records of the class,
         // not about visibility checks
@@ -975,7 +974,7 @@ static void completeRecordsNames(
         //&}
         rr = findStrRecordSym(&rfs, NULL, &r, classification, accessCheck, visibilityCheck);
         if (rr != RETURN_OK) break;
-        if (constructorOpt==StorageConstructor && rfs.currClass!=s) break;
+        if (constructorOpt==StorageConstructor && rfs.currClass!=symbol) break;
         /* because constructors are not inherited */
         assert(r);
         cname = r->name;
@@ -1019,7 +1018,8 @@ static void completeRecordsNames(
             }
         }
     }
-    if (STR_REC_INFO(c)) c->comPrefix[0] = 0;  // no common prefix completed
+    if (c->idToProcess[0] == 0 && s_language!=LANG_JAVA)
+        c->comPrefix[0] = 0;  // no common prefix completed
 }
 
 
@@ -1037,7 +1037,7 @@ void completeRecNames(Completions *c) {
 }
 
 static void completeFromSymTab(Completions*c, unsigned storage){
-    CompletionSymbolFunInfo  info;
+    SymbolCompletionFunctionInfo  info;
     S_javaStat              *cs;
     int                     vlevelOffset;
 
@@ -1045,29 +1045,29 @@ static void completeFromSymTab(Completions*c, unsigned storage){
     if (s_language == LANG_JAVA) {
         vlevelOffset = 0;
         for(cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL ;cs=cs->next) {
-            symbolTableMap2(cs->locals, completeSymFun, (void*) &info);
+            symbolTableMap2(cs->locals, symbolCompletionFunction, (void*) &info);
             completeRecordsNames(c, cs->thisClass, CLASS_TO_ANY, storage, TypeDefault, vlevelOffset);
             vlevelOffset += NEST_VIRT_COMPL_OFFSET;
         }
     } else {
-        symbolTableMap2(symbolTable, completeSymFun, (void*) &info);
+        symbolTableMap2(symbolTable, symbolCompletionFunction, (void*) &info);
     }
 }
 
 void completeEnums(Completions *c) {
-    CompletionSymbolInfo ii;
+    SymbolCompletionInfo ii;
     fillCompletionSymInfo(&ii, c, TypeEnum);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
 }
 
 void completeLabels(Completions *c) {
-    CompletionSymbolInfo ii;
+    SymbolCompletionInfo ii;
     fillCompletionSymInfo(&ii, c, TypeLabel);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
 }
 
 void completeMacros(Completions *c) {
-    CompletionSymbolInfo ii;
+    SymbolCompletionInfo ii;
     fillCompletionSymInfo(&ii, c, TypeMacro);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
 }
@@ -1508,7 +1508,7 @@ void javaCompleteClassDefinitionNameSpecial(Completions*c) {
 }
 
 void javaCompleteClassDefinitionName(Completions*c) {
-    CompletionSymbolInfo ii;
+    SymbolCompletionInfo ii;
     javaCompleteThisClassDefinitionName(c);
     // order is important because of hack in nestedcl Access modifs
     javaCompleteNestedClSingleName(c);
@@ -1523,7 +1523,7 @@ void javaCompletePackageCompName(Completions*c) {
 }
 
 void javaCompleteTypeSingleName(Completions*c) {
-    CompletionSymbolInfo ii;
+    SymbolCompletionInfo ii;
     // order is important because of hack in nestedcl Access modifs
     javaCompleteNestedClSingleName(c);
     javaMapDirectoryFiles2(NULL, javaTypeNameCompletion, c, NULL, NULL);
@@ -1536,11 +1536,11 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
     char                    sss[MAX_FILE_NAME_SIZE];
     char                    *suff, *sname, *ss;
     CompletionLine                 compLine;
-    CompletionFqtMapInfo  *fmi;
+    FqtMapCompletionInfo  *fmi;
     Completions           *c;
     Symbol                *memb;
 
-    fmi = (CompletionFqtMapInfo *) cfmpi;
+    fmi = (FqtMapCompletionInfo *) cfmpi;
     c = fmi->res;
     suff = getFileSuffix(file);
     if (compareFileNames(suff, ".class")==0 || compareFileNames(suff, ".java")==0) {
@@ -1637,7 +1637,7 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
 }
 
 static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType) {
-    CompletionFqtMapInfo  cfmi;
+    FqtMapCompletionInfo  cfmi;
     StringList            *pp;
 
     fillCompletionFqtMapInfo(&cfmi, c, completionType);
@@ -1758,7 +1758,7 @@ void javaCompleteConstructNestPrimName(Completions*c) {
 }
 
 void javaCompleteExprSingleName(Completions*c) {
-    CompletionSymbolInfo ii;
+    SymbolCompletionInfo ii;
     javaMapDirectoryFiles1(NULL, javaTypeNameCompletion, c, NULL, NULL);
     fillCompletionSymInfo(&ii, c, TypeStruct);
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
@@ -1875,9 +1875,9 @@ void javaCompleteMethodCompName(Completions *c) {
 /* ************************** Yacc stuff ************************ */
 
 static void completeFromXrefFun(SymbolReferenceItem *s, void *c) {
-    CompletionSymbolInfo *cc;
+    SymbolCompletionInfo *cc;
     CompletionLine compLine;
-    cc = (CompletionSymbolInfo *) c;
+    cc = (SymbolCompletionInfo *) c;
     assert(s && cc);
     if (s->b.symType != cc->symType)
         return;
@@ -1887,7 +1887,7 @@ static void completeFromXrefFun(SymbolReferenceItem *s, void *c) {
 }
 
 void completeYaccLexem(Completions *c) {
-    CompletionSymbolInfo ii;
+    SymbolCompletionInfo ii;
     fillCompletionSymInfo(&ii, c, TypeYaccSymbol);
     refTabMap2(&referenceTable, completeFromXrefFun, (void*) &ii);
 }
