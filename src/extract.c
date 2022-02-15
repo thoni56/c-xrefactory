@@ -388,16 +388,16 @@ static int extIsJumpInOutBlock(ProgramGraphNode *program) {
     return(0);
 }
 
-#define EXT_LOCAL_VAR_REF(ppp) (                                        \
-                                ppp->ref->usage.base==UsageDefined        \
-                                &&  ppp->symRef->b.symType==TypeDefault \
-                                &&  ppp->symRef->b.scope==ScopeAuto     \
-                                )
+static bool isLocalVariable(ProgramGraphNode *node) {
+    return node->ref->usage.base==UsageDefined
+        &&  node->symRef->b.symType==TypeDefault
+        &&  node->symRef->b.scope==ScopeAuto;
+}
 
 static void extClassifyLocalVariables(ProgramGraphNode *program) {
     ProgramGraphNode *p;
     for(p=program; p!=NULL; p=p->next) {
-        if (EXT_LOCAL_VAR_REF(p)) {
+        if (isLocalVariable(p)) {
             p->classifBits = categorizeLocalVariableExtraction(program,p);
         }
     }
