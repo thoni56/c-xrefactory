@@ -6,8 +6,8 @@ void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int depthFactor) {
   mock(cc, x, depthFactor);
 }
 
-int cctIsMember(S_cctNode *cc, Symbol *x, int depthFactor) {
-  return (int) mock(cc, x, depthFactor);
+bool cctIsMember(S_cctNode *cc, Symbol *x, int depthFactor) {
+  return (bool) mock(cc, x, depthFactor);
 }
 
 void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int depthFactor) {

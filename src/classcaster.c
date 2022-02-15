@@ -40,16 +40,15 @@ void cctAddSimpleValue(S_cctNode *cc, Symbol *symbol, int depthFactor) {
 }
 
 
-/* TODO: Boolify */
-int cctIsMember(S_cctNode *cc, Symbol *symbol, int depthFactor) {
-    int h,res;
+bool cctIsMember(S_cctNode *cc, Symbol *symbol, int depthFactor) {
+    int h,result;
     //&if (cc->node!=NULL) fprintf(dumpOut,"checking cast %s to %d == %s\n", cc->node->linkName, symbol, symbol->linkName);
-    if (cc->node == symbol) return(1);
-    if (cc->sub == NULL) return(0);
+    if (cc->node == symbol) return true;
+    if (cc->sub == NULL) return false;
     h = cctTreeHash(symbol, depthFactor);
     assert(h>=0 && h<CCT_TREE_INDEX);
-    res = cctIsMember(&cc->sub[h], symbol, depthFactor*CCT_TREE_INDEX);
-    return(res);
+    result = cctIsMember(&cc->sub[h], symbol, depthFactor*CCT_TREE_INDEX);
+    return result;
 }
 
 

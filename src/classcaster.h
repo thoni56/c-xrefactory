@@ -11,7 +11,7 @@ typedef struct cctNode {
 
 
 extern void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int depthFactor);
-extern int cctIsMember(S_cctNode *cc, Symbol *x, int depthFactor);
+extern bool cctIsMember(S_cctNode *cc, Symbol *x, int depthFactor);
 extern void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int depthFactor);
 extern void cctDump(S_cctNode *cc, int depth);
 
