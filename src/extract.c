@@ -216,15 +216,6 @@ static ProgramGraphNode * extMakeProgramGraph(void) {
     return(program);
 }
 
-#define IS_SETTING_USAGE(usage) (                                       \
-                                 (usage)==UsageLvalUsed || (usage)==UsageAddrUsed \
-                                 )
-#define TOGGLE_IN_OUT_BLOCK(pos) {                                  \
-        if (pos==INSP_INSIDE_BLOCK) pos = INSP_OUTSIDE_BLOCK;       \
-        else if (pos==INSP_OUTSIDE_BLOCK) pos = INSP_INSIDE_BLOCK;  \
-        else assert(0);                                             \
-    }
-
 #define IS_STR_UNION_SYMBOL(ref) (ref->symRef->name[0]==LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG)
 
 static void extSetSetStates(    ProgramGraphNode *p,
@@ -354,12 +345,25 @@ static ExtractCategory categorizeLocalVariableExtraction(
     return(category);
 }
 
+static unsigned toogleInOutBlock(unsigned *pos) {
+    if (*pos == INSP_INSIDE_BLOCK)
+        *pos = INSP_OUTSIDE_BLOCK;
+    else if (*pos == INSP_OUTSIDE_BLOCK)
+        *pos = INSP_INSIDE_BLOCK;
+    else
+        assert(0);
+
+    return *pos;
+}
+
 static void extSetInOutBlockFields(ProgramGraphNode *program) {
     ProgramGraphNode *p;
     unsigned    pos;
     pos = INSP_OUTSIDE_BLOCK;
     for(p=program; p!=NULL; p=p->next) {
-        if (p->symRef->b.symType == TypeBlockMarker) TOGGLE_IN_OUT_BLOCK(pos);
+        if (p->symRef->b.symType == TypeBlockMarker) {
+            toogleInOutBlock(&pos);
+        }
         p->posBits = pos;
     }
 }
