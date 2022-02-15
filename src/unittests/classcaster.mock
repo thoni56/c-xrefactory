@@ -2,19 +2,19 @@
 #include "classcaster.h"
 #include <cgreen/mocks.h>
 
-void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int depthFactor) {
+void cctAddSimpleValue(CctNode *cc, Symbol *x, int depthFactor) {
   mock(cc, x, depthFactor);
 }
 
-bool cctIsMember(S_cctNode *cc, Symbol *x, int depthFactor) {
+bool cctIsMember(CctNode *cc, Symbol *x, int depthFactor) {
   return (bool) mock(cc, x, depthFactor);
 }
 
-void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int depthFactor) {
+void cctAddCctTree(CctNode *cc, CctNode *x, int depthFactor) {
   mock(cc, x, depthFactor);
 }
 
-void cctDump(S_cctNode *cc, int depth) {
+void cctDump(CctNode *cc, int depth) {
   mock(cc, depth);
 }
 

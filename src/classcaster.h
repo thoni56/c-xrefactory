@@ -7,12 +7,12 @@
 typedef struct cctNode {
     struct symbol	*node;
     struct cctNode	*sub;       /* sub[CCT_TREE_INDEX]; */
-} S_cctNode;
+} CctNode;
 
 
-extern void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int depthFactor);
-extern bool cctIsMember(S_cctNode *cc, Symbol *x, int depthFactor);
-extern void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int depthFactor);
-extern void cctDump(S_cctNode *cc, int depth);
+extern void cctAddSimpleValue(CctNode *cc, Symbol *x, int depthFactor);
+extern bool cctIsMember(CctNode *cc, Symbol *x, int depthFactor);
+extern void cctAddCctTree(CctNode *cc, CctNode *x, int depthFactor);
+extern void cctDump(CctNode *cc, int depth);
 
 #endif

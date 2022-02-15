@@ -13,13 +13,13 @@ static int cctTreeHash(Symbol *symbol, int depthFactor) {
     return (((long unsigned)symbol) >> 4)/(depthFactor)%CCT_TREE_INDEX;
 }
 
-static void fillCctNode(S_cctNode *cct, Symbol *node, S_cctNode *subtree) {
+static void fillCctNode(CctNode *cct, Symbol *node, CctNode *subtree) {
     cct->node = node;
     cct->sub = subtree;
 }
 
-void cctAddSimpleValue(S_cctNode *cc, Symbol *symbol, int depthFactor) {
-    S_cctNode *nn;
+void cctAddSimpleValue(CctNode *cc, Symbol *symbol, int depthFactor) {
+    CctNode *nn;
     int i,h;
 
     log_trace("adding %d == %s to casts at %d at depth %d", symbol, symbol->linkName, cc, depthFactor);
@@ -30,7 +30,7 @@ void cctAddSimpleValue(S_cctNode *cc, Symbol *symbol, int depthFactor) {
     }
     h = cctTreeHash(symbol, depthFactor);
     if (cc->sub == NULL) {
-        CF_ALLOCC(nn, CCT_TREE_INDEX, S_cctNode);
+        CF_ALLOCC(nn, CCT_TREE_INDEX, CctNode);
         for(i=0; i<CCT_TREE_INDEX; i++) fillCctNode(&nn[i], NULL, NULL);
         nn[h].node = symbol;
         cc->sub = nn;           /* should be trailed ? */
@@ -40,7 +40,7 @@ void cctAddSimpleValue(S_cctNode *cc, Symbol *symbol, int depthFactor) {
 }
 
 
-bool cctIsMember(S_cctNode *cc, Symbol *symbol, int depthFactor) {
+bool cctIsMember(CctNode *cc, Symbol *symbol, int depthFactor) {
     int h,result;
     //&if (cc->node!=NULL) fprintf(dumpOut,"checking cast %s to %d == %s\n", cc->node->linkName, symbol, symbol->linkName);
     if (cc->node == symbol) return true;
@@ -52,7 +52,7 @@ bool cctIsMember(S_cctNode *cc, Symbol *symbol, int depthFactor) {
 }
 
 
-void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int depthFactor) {
+void cctAddCctTree(CctNode *cc, CctNode *x, int depthFactor) {
     int i;
 
     log_trace("adding %d tree to %d tree at depth == %d", x, cc, depthFactor);
@@ -64,7 +64,7 @@ void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int depthFactor) {
     cctAddSimpleValue(cc, x->node, depthFactor);
     if (x->sub == NULL) return;
     if (cc->sub == NULL) {
-        CF_ALLOCC(cc->sub, CCT_TREE_INDEX, S_cctNode);
+        CF_ALLOCC(cc->sub, CCT_TREE_INDEX, CctNode);
         for(i=0; i<CCT_TREE_INDEX; i++) cc->sub[i] = x->sub[i];
     } else {
         for(i=0; i<CCT_TREE_INDEX; i++) {
@@ -73,7 +73,7 @@ void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int depthFactor) {
     }
 }
 
-void cctDump(S_cctNode *cc, int depth) {
+void cctDump(CctNode *cc, int depth) {
     int i;
     if (cc->node==NULL) {
         log_trace("%*sNULL",depth,"");
