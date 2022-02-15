@@ -216,7 +216,9 @@ static ProgramGraphNode * extMakeProgramGraph(void) {
     return(program);
 }
 
-#define IS_STR_UNION_SYMBOL(ref) (ref->symRef->name[0]==LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG)
+static bool isStructOrUnion(ProgramGraphNode *node) {
+    return node->symRef->name[0]==LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
+}
 
 static void extSetSetStates(    ProgramGraphNode *p,
                                 SymbolReferenceItem *symRef,
@@ -236,7 +238,7 @@ static void extSetSetStates(    ProgramGraphNode *p,
                 // change only state, so usage is kept
             } else if (p->ref->usage.base == UsageLvalUsed
                        || (p->ref->usage.base == UsageDefined
-                           && ! IS_STR_UNION_SYMBOL(p))
+                           && ! isStructOrUnion(p))
                        ) {
                 // change also current value, because there is no usage
                 p->stateBits = cstate = cpos;
@@ -338,7 +340,7 @@ static ExtractCategory categorizeLocalVariableExtraction(
 
     category = categorizeLocalVariableExtraction0(program, varRef);
     //&log_trace("extraction categorized to %s", miscellaneousName[category]);
-    if (IS_STR_UNION_SYMBOL(varRef)
+    if (isStructOrUnion(varRef)
         && category!=EXTRACT_NONE && category!=EXTRACT_LOCAL_VAR) {
         return(EXTRACT_ADDRESS_ARGUMENT);
     }
