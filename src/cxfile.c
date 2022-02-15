@@ -113,21 +113,7 @@ static char tmpFileName[MAX_FILE_NAME_SIZE];
 
 
 static void fPutDecimal(FILE *ff, int num) {
-    static char ttt[TMP_STRING_SIZE]= {0,};
-    char *d;
-    int n;
-
-    /* TODO: why re-implement fprintf("%d",num)? */
-    n = num;
-    assert(n>=0);
-    d = ttt+TMP_STRING_SIZE-1;
-    while (n>=10) {
-        *(--d) = n%10 + '0';
-        n = n/10;
-    }
-    *(--d) = n + '0';
-    assert(d>=ttt);             /* TODO: WTF? */
-    fputs(d, ff);
+    fprintf(ff, "%d", num);
 }
 
 
@@ -1373,17 +1359,6 @@ void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
         } else if (! lastIncomingInfo.markers[ch]) {
             assert(scannedInt>0);
             skipCharacters(cb, scannedInt-1);
-            //& CxSkipNChars(scannedInt-1, next, end, cb);
-            /* { */
-            /*     int ccount = scannedInt-1; */
-            /*     while (cb->next + ccount > cb->end) { */
-            /*         ccount -= cb->end - cb->next; */
-            /*         cb->next = cb->end; */
-            /*         ch = getChar(cb); */
-            /*         ccount --; */
-            /*     } */
-            /*     cb->next += ccount; */
-            /* } */
         }
         ch = getChar(cb);
     }
