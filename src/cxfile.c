@@ -105,9 +105,9 @@ static LastCxFileInfo lastIncomingInfo;
 static LastCxFileInfo lastOutgoingInfo;
 
 
-static CharacterBuffer cxfCharacterBuffer;
+static CharacterBuffer cxFileCharacterBuffer;
 
-static unsigned s_decodeFilesNum[MAX_FILES];
+static unsigned decodeFileNumbers[MAX_FILES];
 
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
@@ -153,7 +153,7 @@ int cxFileHashNumber(char *sym) {
         return(res);
     } else if (options.xfileHashingMethod == XFILE_HASH_ALPHA1) {
         assert(options.referenceFileCount == XFILE_HASH_ALPHA1_REFNUM);
-        for(ss = bb = sym; *ss && *ss!='('; ss++) {
+        for (ss = bb = sym; *ss && *ss!='('; ss++) {
             c = *ss;
             if (LINK_NAME_MAYBE_START(c)) bb = ss+1;
         }
@@ -164,7 +164,7 @@ int cxFileHashNumber(char *sym) {
         assert(res>=0 && res<options.referenceFileCount);
         return(res);
     } else if (options.xfileHashingMethod == XFILE_HASH_ALPHA2) {
-        for(ss = bb = sym; *ss && *ss!='('; ss++) {
+        for (ss = bb = sym; *ss && *ss!='('; ss++) {
             c = *ss;
             if (LINK_NAME_MAYBE_START(c)) bb = ss+1;
         }
@@ -207,7 +207,7 @@ static int searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
         return(searchSingleStringEqual(searchedStr+1, cxtag));
     } else {
         cc = cxtag;
-        for(cc=cxtag, i=0; *cc && i<len; cc++,i++) {
+        for (cc=cxtag, i=0; *cc && i<len; cc++,i++) {
             if (searchSingleStringEqual(searchedStr, cc)) return(1);
         }
     }
@@ -470,7 +470,7 @@ static void writeFileSourceIndexItem(struct fileItem *fileItem, int ii) {
 
 static void genClassHierarchyItems(struct fileItem *fi, int ii) {
     ClassHierarchyReference *p;
-    for(p=fi->superClasses; p!=NULL; p=p->next) {
+    for (p=fi->superClasses; p!=NULL; p=p->next) {
         writeSubClassInfo(p->superClass, ii, p->ofile);
     }
 }
@@ -478,7 +478,7 @@ static void genClassHierarchyItems(struct fileItem *fi, int ii) {
 
 static ClassHierarchyReference *findSuperiorInSuperClasses(int superior, FileItem *iFile) {
     ClassHierarchyReference *p;
-    for(p=iFile->superClasses; p!=NULL && p->superClass!=superior; p=p->next)
+    for (p=iFile->superClasses; p!=NULL && p->superClass!=superior; p=p->next)
         ;
 
     return p;
@@ -525,7 +525,7 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
     cf1 = ss->u.structSpec->classFile;
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
     /*fprintf(dumpOut,"loaded: #sups == %d\n",ns);*/
-    for(sups=ss->u.structSpec->super; sups!=NULL; sups=sups->next) {
+    for (sups=ss->u.structSpec->super; sups!=NULL; sups=sups->next) {
         assert(sups->d && sups->d->bits.symbolType == TypeStruct);
         addSubClassItemToFileTab( sups->d->u.structSpec->classFile, cf1, origin);
     }
@@ -555,7 +555,7 @@ static void genRefItem0(SymbolReferenceItem *d, bool force) {
     if (d->b.category == CategoryLocal) return;
     if (d->refs == NULL && !force) return;
 
-    for(reference = d->refs; reference!=NULL; reference=reference->next) {
+    for (reference = d->refs; reference!=NULL; reference=reference->next) {
         log_trace("checking ref: loading=%d --< %s:%d", fileTable.tab[reference->position.file]->b.cxLoading,
                   fileTable.tab[reference->position.file]->name, reference->position.line);
         if (options.update==UPDATE_CREATE || fileTable.tab[reference->position.file]->b.cxLoading) {
@@ -592,13 +592,13 @@ static void genCxFileHead(void) {
     char ttt[TMP_STRING_SIZE];
     int i;
     memset(&lastOutgoingInfo, 0, sizeof(lastOutgoingInfo));
-    for(i=0; i<MAX_CHARS; i++) {
+    for (i=0; i<MAX_CHARS; i++) {
         lastOutgoingInfo.values[i] = -1;
     }
     get_version_string(ttt);
     writeStringRecord(CXFI_VERSION, ttt, "\n\n");
     fprintf(cxOut,"\n\n\n");
-    for(i=0; i<MAX_CHARS && generatedFieldMarkersList[i] != -1; i++) {
+    for (i=0; i<MAX_CHARS && generatedFieldMarkersList[i] != -1; i++) {
         sr[i] = generatedFieldMarkersList[i];
     }
     assert(i < MAX_CHARS);
@@ -743,7 +743,7 @@ static void cxrfReadRecordMarkers(int size,
     int i, ch;
 
     assert(marker == CXFI_MARKER_LIST);
-    for(i=0; i<size-1; i++) {
+    for (i=0; i<size-1; i++) {
         ch = getChar(cb);
         lastIncomingInfo.markers[ch] = 1;
     }
@@ -760,7 +760,7 @@ static void cxrfVersionCheck(int size,
     int i, ch;
 
     assert(marker == CXFI_VERSION);
-    for(i=0; i<size-1; i++) {
+    for (i=0; i<size-1; i++) {
         ch = getChar(cb);
         versionString[i]=ch;
     }
@@ -884,7 +884,7 @@ static void cxReadFileName(int size,
         //&if (umtime>fileItem->lastUpdateMtime) fileItem->lastUpdateMtime=umtime;
     }
     fileItem->b.isFromCxfile = true;
-    s_decodeFilesNum[ii]=fileIndex;
+    decodeFileNumbers[ii]=fileIndex;
     log_trace("%d: '%s' scanned: added as %d",ii,id,fileIndex);
 }
 
@@ -897,9 +897,9 @@ static void cxrfSourceIndex(int size,
 
     assert(marker == CXFI_SOURCE_INDEX);
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
-    file = s_decodeFilesNum[file];
+    file = decodeFileNumbers[file];
     sfile = lastIncomingInfo.values[CXFI_SOURCE_INDEX];
-    sfile = s_decodeFilesNum[sfile];
+    sfile = decodeFileNumbers[sfile];
     assert(file>=0 && file<MAX_FILES && fileTable.tab[file]);
     // hmmm. here be more generous in getting corrct source info
     if (fileTable.tab[file]->b.sourceFileNumber == noFileIndex) {
@@ -935,10 +935,10 @@ static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
     int symType, vApplClass, vFunClass;
     symType = lastIncomingInfo.values[CXFI_SYMBOL_TYPE];
     vApplClass = lastIncomingInfo.values[CXFI_SUBCLASS];
-    vApplClass = s_decodeFilesNum[vApplClass];
+    vApplClass = decodeFileNumbers[vApplClass];
     assert(fileTable.tab[vApplClass] != NULL);
     vFunClass = lastIncomingInfo.values[CXFI_SUPERCLASS];
-    vFunClass = s_decodeFilesNum[vFunClass];
+    vFunClass = decodeFileNumbers[vFunClass];
     assert(fileTable.tab[vFunClass] != NULL);
     *_symType = symType;
     *_vApplClass = vApplClass;
@@ -1125,12 +1125,12 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     fillUsageBits(&usageBits, usage, reqAcc);
     sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
-    file = s_decodeFilesNum[file];
+    file = decodeFileNumbers[file];
     assert(fileTable.tab[file]!=NULL);
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
     col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
-    log_trace("%d %d->%d %d", usage, file, s_decodeFilesNum[file], line);
+    log_trace("%d %d->%d %d", usage, file, decodeFileNumbers[file], line);
     pos = makePosition(file, line, col);
     if (lastIncomingInfo.onLineReferencedSym ==
         lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
@@ -1169,7 +1169,7 @@ static void cxrfReference(int size,
     reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
     sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
-    file = s_decodeFilesNum[file];
+    file = decodeFileNumbers[file];
     assert(fileTable.tab[file]!=NULL);
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
     col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
@@ -1284,12 +1284,12 @@ static void cxrfSubClass(int size,
     /*fprintf(dumpOut,"%d %d->%d %d  ", usage,file,s_decodeFilesNum[file],line);*/
     /*fflush(dumpOut);*/
 
-    fileIndex = s_decodeFilesNum[fileIndex];
+    fileIndex = decodeFileNumbers[fileIndex];
     assert(fileTable.tab[fileIndex]!=NULL);
 
-    super_class = s_decodeFilesNum[super_class];
+    super_class = decodeFileNumbers[super_class];
     assert(fileTable.tab[super_class]!=NULL);
-    sub_class = s_decodeFilesNum[sub_class];
+    sub_class = decodeFileNumbers[sub_class];
     assert(fileTable.tab[sub_class]!=NULL);
     assert(options.taskRegime);
 
@@ -1319,7 +1319,7 @@ static int scanInteger(CharacterBuffer *cb, int *_ch) {
     scannedInt = 0;
     while (isdigit(ch)) {
         scannedInt = scannedInt*10 + ch-'0';
-        ch = getChar(&cxfCharacterBuffer);
+        ch = getChar(&cxFileCharacterBuffer);
     }
     *_ch = ch;
 
@@ -1330,7 +1330,7 @@ static int scanInteger(CharacterBuffer *cb, int *_ch) {
 
 void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
     int scannedInt = 0;
-    int ch,i;
+    int ch;
 
     ENTER();
     if (inputFile == NULL) {
@@ -1345,22 +1345,22 @@ void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
     lastIncomingInfo.onLineRefMenuItem = NULL;
     lastIncomingInfo.markers[CXFI_SUBCLASS] = noFileIndex;
     lastIncomingInfo.markers[CXFI_SUPERCLASS] = noFileIndex;
-    s_decodeFilesNum[noFileIndex] = noFileIndex;
+    decodeFileNumbers[noFileIndex] = noFileIndex;
 
-    for(i=0; scanningFunctions[i].recordCode>0; i++) {
+    for (int i=0; scanningFunctions[i].recordCode>0; i++) {
         assert(scanningFunctions[i].recordCode < MAX_CHARS);
         ch = scanningFunctions[i].recordCode;
         lastIncomingInfo.fun[ch] = scanningFunctions[i].handleFun;
         lastIncomingInfo.additional[ch] = scanningFunctions[i].additionalArg;
     }
 
-    initCharacterBuffer(&cxfCharacterBuffer, inputFile);
+    initCharacterBuffer(&cxFileCharacterBuffer, inputFile);
     ch = ' ';
-    while(! cxfCharacterBuffer.isAtEOF) {
-        CharacterBuffer *cb = &cxfCharacterBuffer;
+    while (!cxFileCharacterBuffer.isAtEOF) {
+        CharacterBuffer *cb = &cxFileCharacterBuffer;
         scannedInt = scanInteger(cb, &ch);
 
-        if (cxfCharacterBuffer.isAtEOF)
+        if (cxFileCharacterBuffer.isAtEOF)
             break;
 
         assert(ch >= 0 && ch<MAX_CHARS);
@@ -1368,7 +1368,7 @@ void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
             lastIncomingInfo.values[ch] = scannedInt;
         }
         if (lastIncomingInfo.fun[ch] != NULL) {
-            (*lastIncomingInfo.fun[ch])(scannedInt, ch, &cxfCharacterBuffer,
+            (*lastIncomingInfo.fun[ch])(scannedInt, ch, &cxFileCharacterBuffer,
                                      lastIncomingInfo.additional[ch]);
         } else if (! lastIncomingInfo.markers[ch]) {
             assert(scannedInt>0);
@@ -1401,7 +1401,7 @@ void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
 
 /* suffix contains '/' at the beginning !!! */
 bool scanReferenceFile(char *fileName, char *suffix1, char *suffix2,
-                      ScanFileFunctionStep *scanFunTab) {
+                      ScanFileFunctionStep *scanFunctionTable) {
     char fn[MAX_FILE_NAME_SIZE];
 
     sprintf(fn, "%s%s%s", fileName, suffix1, suffix2);
@@ -1411,25 +1411,25 @@ bool scanReferenceFile(char *fileName, char *suffix1, char *suffix2,
     if (inputFile==NULL) {
         return false;
     } else {
-        scanCxFile(scanFunTab);
+        scanCxFile(scanFunctionTable);
         closeFile(inputFile);
         inputFile = NULL;
         return true;
     }
 }
 
-void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
+void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunctionTable) {
     char nn[MAX_FILE_NAME_SIZE];
     int i;
 
     if (options.referenceFileCount <= 1) {
-        scanReferenceFile(fname,"","",scanFunTab);
+        scanReferenceFile(fname,"","",scanFunctionTable);
     } else {
-        scanReferenceFile(fname,REFERENCE_FILENAME_FILES,"",scanFunTab);
-        scanReferenceFile(fname,REFERENCE_FILENAME_CLASSES,"",scanFunTab);
+        scanReferenceFile(fname,REFERENCE_FILENAME_FILES,"",scanFunctionTable);
+        scanReferenceFile(fname,REFERENCE_FILENAME_CLASSES,"",scanFunctionTable);
         for (i=0; i<options.referenceFileCount; i++) {
             sprintf(nn,"%04d",i);
-            scanReferenceFile(fname,REFERENCE_FILENAME_PREFIX,nn,scanFunTab);
+            scanReferenceFile(fname,REFERENCE_FILENAME_PREFIX,nn,scanFunctionTable);
         }
     }
 }
