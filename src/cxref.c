@@ -3467,7 +3467,7 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
     fileIndex = defaultResult;
     convertLinkNameToClassFileName(classFileName, name);
     log_trace("Looking for class file '%s'", classFileName);
-    if (fileTableExists(&fileTable, classFileName))
+    if (fileExistsInTable(&fileTable, classFileName))
         fileIndex = fileTableLookup(&fileTable, classFileName);
 
     return fileIndex;

@@ -76,7 +76,7 @@ int fileTableLookup(FileTable *table, char *fileName) {
     return -1;                  /* Not found */
 }
 
-bool fileTableExists(FileTable *table, char *fileName) {
+bool fileExistsInTable(FileTable *table, char *fileName) {
     return fileTableLookup(table, fileName) != -1;
 }
 
@@ -90,7 +90,7 @@ int addFileTabItem(char *name) {
     normalizedFileName = normalizeFileName(name, cwd);
 
     /* Does it already exist? */
-    if (fileTableExists(&fileTable, normalizedFileName))
+    if (fileExistsInTable(&fileTable, normalizedFileName))
         return fileTableLookup(&fileTable, normalizedFileName);
 
     /* If not, add it, but then we need a filename and a fileitem in FT-memory  */

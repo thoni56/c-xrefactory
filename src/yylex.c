@@ -170,7 +170,7 @@ static void setCurrentFileInfoFor(char *fileName) {
         number = noFileIndex;
         name = fileTable.tab[number]->name;
     } else {
-        existed = fileTableExists(&fileTable, fileName);
+        existed = fileExistsInTable(&fileTable, fileName);
         number = addFileTabItem(fileName);
         name = fileTable.tab[number]->name;
         checkFileModifiedTime(number);

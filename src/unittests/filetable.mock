@@ -65,7 +65,7 @@ void fileTableMapWithIndex(FileTable *table,
     mock(table, fun);
 }
 
-bool fileTableExists(FileTable *table, char *fileName) {
+bool fileExistsInTable(FileTable *table, char *fileName) {
     return mock(table, fileName);
 }
 
