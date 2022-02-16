@@ -16,6 +16,7 @@
 #include "javafqttab.h"
 #include "list.h"
 #include "fileio.h"
+#include "filetable.h"
 
 #include "java_parser.h"
 

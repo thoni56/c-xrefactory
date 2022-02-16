@@ -27,6 +27,7 @@
 #include "macroargumenttable.h"
 #include "filedescriptor.h"
 #include "fileio.h"
+#include "filetable.h"
 #include "log.h"
 
 
@@ -158,35 +159,6 @@ static void traceNewline(int lines) {
     for (int i=1; i<=lines; i++) {
         log_trace("Line %s:%d(%d+%d)", currentFile.fileName, currentFile.lineNumber+i, currentFile.lineNumber, i);
     }
-}
-
-/* TODO: Shouldn't this be in <filetab>? */
-/* *********************************************************** */
-/* Always return the found index                               */
-int addFileTabItem(char *name) {
-    int fileIndex, len;
-    char *fname, *normalizedFileName;
-    struct fileItem *createdFileItem;
-
-    /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
-    normalizedFileName = normalizeFileName(name, cwd);
-
-    /* Does it already exist? */
-    if (fileTableExists(&fileTable, normalizedFileName))
-        return fileTableLookup(&fileTable, normalizedFileName);
-
-    /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
-    len = strlen(normalizedFileName);
-    FT_ALLOCC(fname, len+1, char);
-    strcpy(fname, normalizedFileName);
-
-    FT_ALLOC(createdFileItem, FileItem);
-    fillFileItem(createdFileItem, fname, false);
-
-    fileIndex = fileTableAdd(&fileTable, createdFileItem);
-    checkFileModifiedTime(fileIndex); // it was too slow on load ?
-
-    return fileIndex;
 }
 
 static void setCurrentFileInfoFor(char *fileName) {

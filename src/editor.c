@@ -9,6 +9,7 @@
 #include "list.h"
 #include "log.h"
 #include "fileio.h"
+#include "filetable.h"
 
 #include "protocol.h"
 

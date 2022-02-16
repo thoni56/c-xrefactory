@@ -28,6 +28,7 @@
 #include "symbol.h"
 #include "list.h"
 #include "filedescriptor.h"
+#include "filetable.h"
 #include "typemodifier.h"
 
 #include "log.h"

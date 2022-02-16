@@ -29,6 +29,7 @@
 #include "list.h"
 #include "classhierarchy.h"
 #include "protocol.h"
+#include "filetable.h"
 
 #include "log.h"
 #include "utils.h"

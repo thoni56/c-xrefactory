@@ -1,10 +1,11 @@
-#define IN_FILETAB_C
-#include "filetable.h"
-
 #include "commons.h"            /* For fatalError() */
 #include "hash.h"
 #include "memory.h"
+#include "globals.h"            /* For cwd */
+#include "caching.h"            /* For checkModifiedTime() */
 
+#define IN_FILETAB_C
+#include "filetable.h"
 
 #define HASH_FUN(elemp) hashFun(elemp->name)
 #define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->name,e2->name)==0)
@@ -69,4 +70,30 @@ int fileTableLookup(FileTable *table, char *fileName) {
 
 bool fileTableExists(FileTable *table, char *fileName) {
     return fileTableLookup(table, fileName) != -1;
+}
+
+int addFileTabItem(char *name) {
+    int fileIndex, len;
+    char *fname, *normalizedFileName;
+    struct fileItem *createdFileItem;
+
+    /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
+    normalizedFileName = normalizeFileName(name, cwd);
+
+    /* Does it already exist? */
+    if (fileTableExists(&fileTable, normalizedFileName))
+        return fileTableLookup(&fileTable, normalizedFileName);
+
+    /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
+    len = strlen(normalizedFileName);
+    FT_ALLOCC(fname, len+1, char);
+    strcpy(fname, normalizedFileName);
+
+    FT_ALLOC(createdFileItem, FileItem);
+    fillFileItem(createdFileItem, fname, false);
+
+    fileIndex = fileTableAdd(&fileTable, createdFileItem);
+    checkFileModifiedTime(fileIndex); // it was too slow on load ?
+
+    return fileIndex;
 }

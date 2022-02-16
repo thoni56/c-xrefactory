@@ -11,6 +11,7 @@
 #include "classhierarchy.h"
 #include "jsemact.h"
 #include "filedescriptor.h"
+#include "filetable.h"
 
 #include "log.h"
 

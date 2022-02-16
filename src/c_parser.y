@@ -22,6 +22,7 @@
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"
+#include "filetable.h"
 #include "id.h"
 #include "list.h"
 #include "misc.h"

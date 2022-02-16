@@ -25,6 +25,7 @@
 #include "cxref.h"
 #include "extract.h"
 #include "filedescriptor.h"
+#include "filetable.h"
 #include "list.h"
 #include "misc.h"
 #include "semact.h"

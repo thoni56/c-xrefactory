@@ -7,6 +7,7 @@
 #include "classhierarchy.h"
 #include "fileio.h"
 #include "list.h"
+#include "filetable.h"
 
 #include "protocol.h"           /* C_XREF_FILE_VERSION_NUMBER */
 #include "globals.h"

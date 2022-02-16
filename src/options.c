@@ -8,6 +8,7 @@
 #include "classfilereader.h"
 #include "editor.h"
 #include "fileio.h"
+#include "filetable.h"
 
 /* The following are currently needed from main:
    mainHandleSetOption

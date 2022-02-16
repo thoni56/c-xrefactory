@@ -16,6 +16,7 @@
 #include "log.h"
 #include "protocol.h"
 #include "fileio.h"
+#include "filetable.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS 2

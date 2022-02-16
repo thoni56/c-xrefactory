@@ -18,6 +18,7 @@
 #include "classfilereader.h"
 #include "editor.h"
 #include "fileio.h"
+#include "filetable.h"
 
 #include "log.h"
 #include "ppc.h"

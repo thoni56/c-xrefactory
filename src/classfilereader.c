@@ -17,6 +17,7 @@
 #include "list.h"
 #include "filedescriptor.h"
 #include "fileio.h"
+#include "filetable.h"
 
 #include "log.h"
 #include "utils.h"

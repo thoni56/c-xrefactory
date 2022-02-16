@@ -9,6 +9,7 @@
 #include "semact.h"
 #include "cxref.h"
 #include "classfilereader.h"
+#include "filetable.h"
 #include "jsemact.h"
 #include "symbol.h"
 #include "list.h"

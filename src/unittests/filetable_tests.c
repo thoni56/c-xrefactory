@@ -7,6 +7,7 @@
 #include "commons.mock"
 #include "globals.mock"
 #include "cxref.mock"
+#include "caching.mock"
 
 
 Describe(FileTable);

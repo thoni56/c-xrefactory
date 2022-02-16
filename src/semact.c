@@ -12,6 +12,7 @@
 #include "jslsemact.h"          /*& s_jsl &*/
 #include "symbol.h"
 #include "list.h"
+#include "filetable.h"
 
 #include "hash.h"
 #include "log.h"

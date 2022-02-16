@@ -11,6 +11,7 @@
 #include "list.h"
 #include "jsemact.h"
 #include "filedescriptor.h"
+#include "filetable.h"
 #include "log.h"
 #include "protocol.h"
 

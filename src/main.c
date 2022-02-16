@@ -15,6 +15,7 @@
 #include "list.h"
 #include "jsemact.h"
 #include "fileio.h"
+#include "filetable.h"
 
 #include "c_parser.h"
 #include "yacc_parser.h"

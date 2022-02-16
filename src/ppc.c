@@ -2,6 +2,7 @@
 
 #include "globals.h"
 #include "protocol.h"
+#include "filetable.h"
 
 
 static int ppcIndentOffset = 0;

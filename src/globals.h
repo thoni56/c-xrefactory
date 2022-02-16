@@ -3,9 +3,8 @@
 
 #include "constants.h"
 #include "symboltable.h"
-#include "filetable.h"
 #include "stringlist.h"
-
+#include "proto.h"
 
 typedef struct int2StringTable {
     int     i;
