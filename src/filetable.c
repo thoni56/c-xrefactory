@@ -18,18 +18,31 @@ FileTable fileTable;
 int noFileIndex;                /* Initialized to an actual index in initFileTable() which needs to be called early */
 
 
-/* TODO: Always called (2 locations) with FT memory allocated space, so newFileItem() is possible */
-void fillFileItem(FileItem *item, char *name, bool fromCommandLine) {
+static void fillFileItem(FileItem *item, char *name) {
     memset(item, 0, sizeof(FileItem));
     item->name = name;
-    item->b.commandLineEntered = fromCommandLine;
+    item->b.commandLineEntered = false;
     item->directEnclosingInstance = noFileIndex;
     item->b.sourceFileNumber = noFileIndex;
 }
 
+
+static struct fileItem *newFileItem(char *normalizedFileName) {
+    int              len;
+    char *           fname;
+    struct fileItem *createdFileItem;
+    len = strlen(normalizedFileName);
+    FT_ALLOCC(fname, len + 1, char);
+    strcpy(fname, normalizedFileName);
+
+    FT_ALLOC(createdFileItem, FileItem);
+    fillFileItem(createdFileItem, fname);
+
+    return createdFileItem;
+}
+
+
 void initFileTable(FileTable *fileTable) {
-    int len;
-    char *fileName;
     FileItem *fileItem;
 
     SM_INIT(ftMemory);
@@ -37,12 +50,7 @@ void initFileTable(FileTable *fileTable) {
 
     fileTableNoAllocInit(fileTable, MAX_FILES);
 
-    /* Create a "NON_FILE" in FT memory */
-    len = strlen(NO_FILE_NAME);
-    FT_ALLOCC(fileName, len+1, char);
-    strcpy(fileName, NO_FILE_NAME);
-    FT_ALLOC(fileItem, FileItem);
-    fillFileItem(fileItem, fileName, false);
+    fileItem = newFileItem(NO_FILE_NAME);
 
     /* Add it to the fileTab and remember its index for future use */
     noFileIndex = fileTableAdd(fileTable, fileItem);
@@ -72,9 +80,10 @@ bool fileTableExists(FileTable *table, char *fileName) {
     return fileTableLookup(table, fileName) != -1;
 }
 
+
 int addFileTabItem(char *name) {
-    int fileIndex, len;
-    char *fname, *normalizedFileName;
+    int fileIndex;
+    char *normalizedFileName;
     struct fileItem *createdFileItem;
 
     /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
@@ -85,12 +94,7 @@ int addFileTabItem(char *name) {
         return fileTableLookup(&fileTable, normalizedFileName);
 
     /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
-    len = strlen(normalizedFileName);
-    FT_ALLOCC(fname, len+1, char);
-    strcpy(fname, normalizedFileName);
-
-    FT_ALLOC(createdFileItem, FileItem);
-    fillFileItem(createdFileItem, fname, false);
+    createdFileItem = newFileItem(normalizedFileName);
 
     fileIndex = fileTableAdd(&fileTable, createdFileItem);
     checkFileModifiedTime(fileIndex); // it was too slow on load ?

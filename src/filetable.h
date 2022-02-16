@@ -62,11 +62,9 @@ extern FileTable fileTable;
 /* Index into file table for the "NON FILE" */
 extern int noFileIndex;
 
-
-extern void fillFileItem(FileItem *item, char *name, bool fromCommandLine);
-
 extern void initFileTable(FileTable *table);
 extern bool fileTableExists(FileTable *table, char *fileName);
 extern int fileTableLookup(FileTable *table, char *fileName);
+extern int addFileTabItem(char *name);
 
 #endif

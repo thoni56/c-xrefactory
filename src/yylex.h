@@ -40,7 +40,6 @@ extern void addIncludeReference(int filenum, Position *pos);
 extern void addThisFileDefineIncludeReference(int filenum);
 extern void pushInclude(FILE *f, EditorBuffer *buff, char *name, char *prepend);
 extern void popInclude(void);
-extern int addFileTabItem(char *name);
 extern void addMacroDefinedByOption(char *opt);
 extern char *placeIdent(void);
 extern int cachedInputPass(int cpoint, char **cfromto);
