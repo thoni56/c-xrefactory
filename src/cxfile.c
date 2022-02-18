@@ -129,6 +129,7 @@ static char tmpFileName[MAX_FILE_NAME_SIZE];
 
 static ScanFileFunctionStep normalScanFunctionSequence[];
 
+static ScanFileFunctionStep fullScanFunctionSequence[];
 
 
 static void fPutDecimal(FILE *ff, int num) {
@@ -1496,6 +1497,14 @@ void normalScanFor(char *fileName, char *suffix) {
     scanReferenceFile(fileName, suffix, "", normalScanFunctionSequence);
 }
 
+void scanForClassHierarchy(void) {
+    readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
+}
+
+void fullScanFor(char *symbolName) {
+    readOneAppropReferenceFile(symbolName, fullScanFunctionSequence);
+}
+
 /* ************************************************************ */
 
 static ScanFileFunctionStep normalScanFunctionSequence[]={
@@ -1507,7 +1516,7 @@ static ScanFileFunctionStep normalScanFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep fullScanFunctionSequence[]={
+static ScanFileFunctionStep fullScanFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_VERSION, cxrfVersionCheck, CXSF_UNUSED},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, CXSF_UNUSED},

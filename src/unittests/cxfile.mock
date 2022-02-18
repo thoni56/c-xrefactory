@@ -6,6 +6,11 @@ void normalScanFor(char *fileName, char *suffix) {
     mock(fileName, suffix);
 }
 
+void scanForClassHierarchy(void) { mock(); }
+
+void fullScanFor(char *symbolName) { mock(symbolName); }
+
+
 ScanFileFunctionStep fullScanFunctionSequence[1];
 ScanFileFunctionStep byPassFunctionSequence[1];
 ScanFileFunctionStep symbolMenuCreationFunctionSequence[1];

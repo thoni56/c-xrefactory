@@ -2009,7 +2009,7 @@ static void olcxFindDefinitionAndGenGoto(SymbolReferenceItem *sym) {
     fillSymbolsMenu(&mmm, *sym, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);
     //&oldrefs = *refs;
     refs->menuSym = &mmm;
-    readOneAppropReferenceFile(sym->name, fullScanFunctionSequence);
+    fullScanFor(sym->name);
     orderRefsAndGotoDefinition(refs, DEFAULT_VALUE);
     //&olcxFreeReferences(refs->references);
     //&*refs = oldrefs;

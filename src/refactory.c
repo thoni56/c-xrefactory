@@ -1185,7 +1185,8 @@ bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
         errorMessage(ERR_ST, "moving to NULL target class?");
         return false;
     }
-    readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
+
+    scanForClassHierarchy();
     assert(target->u.structSpec!=NULL&&target->u.structSpec->classFile!=noFileIndex);
     if (flag == REQ_SUBCLASS) cl=fileTable.tab[ss->s.vApplClass]->inferiorClasses;
     else cl=fileTable.tab[ss->s.vApplClass]->superClasses;
