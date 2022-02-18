@@ -2397,8 +2397,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     SymbolReferenceItem ddd,*memb;
     Reference           *rr;
     CX_ALLOCC(cxFreeBase,0,char);
-    readOneAppropReferenceFile(LINK_NAME_INCLUDE_REFS,
-                               fullUpdateFunctionSequence); // get include refs
+    fullScanFor(LINK_NAME_INCLUDE_REFS);
     // iterate over scheduled files
     fileAddedFlag = 1;
     while (fileAddedFlag) {

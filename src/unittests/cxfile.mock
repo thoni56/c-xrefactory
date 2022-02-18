@@ -19,8 +19,6 @@ void scanReferencesToCreateMenu(char *symbolName) { mock(symbolName); }
 void scanForMacroUsage(char *symbolName) { mock(symbolName); }
 
 
-ScanFileFunctionStep classHierarchyFunctionSequence[1];
-ScanFileFunctionStep fullUpdateFunctionSequence[1];
 ScanFileFunctionStep symbolSearchFunctionSequence[1];
 ScanFileFunctionStep deadCodeDetectionFunctionSequence[1];
 

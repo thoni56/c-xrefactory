@@ -19,9 +19,8 @@ extern void fullScanFor(char *symbolName);
 extern void scanForBypass(char *symbolName);
 extern void scanReferencesToCreateMenu(char *symbolName);
 extern void scanForMacroUsage(char *symbolName);
+extern void scanForClassHierarchy(void);
 
-extern ScanFileFunctionStep classHierarchyFunctionSequence[];
-extern ScanFileFunctionStep fullUpdateFunctionSequence[];
 extern ScanFileFunctionStep symbolSearchFunctionSequence[];
 extern ScanFileFunctionStep deadCodeDetectionFunctionSequence[];
 

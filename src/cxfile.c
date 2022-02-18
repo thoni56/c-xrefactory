@@ -131,7 +131,7 @@ static ScanFileFunctionStep fullScanFunctionSequence[];
 static ScanFileFunctionStep byPassFunctionSequence[];
 static ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
 static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
-
+static ScanFileFunctionStep classHierarchyFunctionSequence[];
 
 
 static void fPutDecimal(FILE *ff, int num) {
@@ -1605,7 +1605,7 @@ static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep classHierarchyFunctionSequence[]={
+static ScanFileFunctionStep classHierarchyFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
     {CXFI_CLASS_EXT, cxrfSubClass, CXSF_JUST_READ},
