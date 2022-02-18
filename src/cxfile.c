@@ -126,6 +126,11 @@ static unsigned decodeFileNumbers[MAX_FILES];
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
 
+
+static ScanFileFunctionStep normalScanFunctionSequence[];
+
+
+
 static void fPutDecimal(FILE *ff, int num) {
     fprintf(ff, "%d", num);
 }
@@ -1486,10 +1491,14 @@ void readOneAppropReferenceFile(char *symbolName,
     }
 }
 
+
+void normalScanFor(char *fileName, char *suffix) {
+    scanReferenceFile(fileName, suffix, "", normalScanFunctionSequence);
+}
+
 /* ************************************************************ */
 
-
-ScanFileFunctionStep normalScanFunctionSequence[]={
+static ScanFileFunctionStep normalScanFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, CXSF_UNUSED},

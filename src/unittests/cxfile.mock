@@ -2,7 +2,10 @@
 #include "cxfile.h"
 #include <cgreen/mocks.h>
 
-ScanFileFunctionStep normalScanFunctionSequence[1];
+void normalScanFor(char *fileName, char *suffix) {
+    mock(fileName, suffix);
+}
+
 ScanFileFunctionStep fullScanFunctionSequence[1];
 ScanFileFunctionStep byPassFunctionSequence[1];
 ScanFileFunctionStep symbolMenuCreationFunctionSequence[1];
