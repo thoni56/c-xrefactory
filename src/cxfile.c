@@ -126,10 +126,12 @@ static unsigned decodeFileNumbers[MAX_FILES];
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
 
-
 static ScanFileFunctionStep normalScanFunctionSequence[];
-
 static ScanFileFunctionStep fullScanFunctionSequence[];
+static ScanFileFunctionStep byPassFunctionSequence[];
+static ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
+static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
+
 
 
 static void fPutDecimal(FILE *ff, int num) {
@@ -1505,6 +1507,19 @@ void fullScanFor(char *symbolName) {
     readOneAppropReferenceFile(symbolName, fullScanFunctionSequence);
 }
 
+void scanForBypass(char *symbolName) {
+    readOneAppropReferenceFile(options.browsedSymName, byPassFunctionSequence);
+}
+
+void scanReferencesToCreateMenu(char *symbolName){
+    readOneAppropReferenceFile(symbolName, symbolMenuCreationFunctionSequence);
+}
+
+void scanForMacroUsage(char *symbolName) {
+    readOneAppropReferenceFile(symbolName, secondPassMacroUsageFunctionSequence);
+}
+
+
 /* ************************************************************ */
 
 static ScanFileFunctionStep normalScanFunctionSequence[]={
@@ -1529,7 +1544,7 @@ static ScanFileFunctionStep fullScanFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep byPassFunctionSequence[]={
+static ScanFileFunctionStep byPassFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_VERSION, cxrfVersionCheck, CXSF_UNUSED},
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
@@ -1554,7 +1569,7 @@ ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
+static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_VERSION, cxrfVersionCheck, CXSF_UNUSED},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, CXSF_UNUSED},
@@ -1579,7 +1594,7 @@ ScanFileFunctionStep fullUpdateFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
+static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CXSF_JUST_READ},

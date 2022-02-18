@@ -3530,7 +3530,7 @@ void olCreateSelectionMenu(int command) {
     LIST_SORT(SymbolsMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
     ss = rstack->hkSelectedSym;
     while (ss!=NULL) {
-        readOneAppropReferenceFile(ss->s.name, symbolMenuCreationFunctionSequence);
+        scanReferencesToCreateMenu(ss->s.name);
         fnum = cxFileHashNumber(ss->s.name);
         //&fprintf(dumpOut,"file %d readed\n", fnum);
         while (ss!=NULL && fnum==cxFileHashNumber(ss->s.name)) ss = ss->next;

@@ -2502,7 +2502,7 @@ static int scheduleFileUsingTheMacro(void) {
     oldMenu = currentUserData->browserStack.top->menuSym;
     currentUserData->browserStack.top->menuSym = &mm;
     s_olMacro2PassFile = noFileIndex;
-    readOneAppropReferenceFile(s_olstringInMbody, secondPassMacroUsageFunctionSequence);
+    scanForMacroUsage(s_olstringInMbody);
     currentUserData->browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
@@ -2578,7 +2578,7 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     getLineColCursorPositionFromCommandLineOption( &line, &col);
     s_olcxByPassPos = makePosition(fnum, line, col);
     olSetCallerPosition(&s_olcxByPassPos);
-    readOneAppropReferenceFile(options.browsedSymName, byPassFunctionSequence);
+    scanForBypass(options.browsedSymName);
     // if no symbol found, it may be a local symbol, try by parsing
     log_trace("checking that %d, != NULL", currentUserData->browserStack.top->hkSelectedSym);
     if (currentUserData->browserStack.top->hkSelectedSym==NULL)

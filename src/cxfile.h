@@ -16,11 +16,10 @@ typedef struct scanFileFunctionStep {
 extern void normalScanFor(char *fileName, char *suffix);
 extern void scanForClassHierarchy(void);
 extern void fullScanFor(char *symbolName);
+extern void scanForBypass(char *symbolName);
+extern void scanReferencesToCreateMenu(char *symbolName);
+extern void scanForMacroUsage(char *symbolName);
 
-extern ScanFileFunctionStep byPassFunctionSequence[];
-extern ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
-extern ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[];
-extern ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
 extern ScanFileFunctionStep classHierarchyFunctionSequence[];
 extern ScanFileFunctionStep fullUpdateFunctionSequence[];
 extern ScanFileFunctionStep symbolSearchFunctionSequence[];

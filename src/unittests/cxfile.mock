@@ -10,12 +10,15 @@ void scanForClassHierarchy(void) { mock(); }
 
 void fullScanFor(char *symbolName) { mock(symbolName); }
 
+void scanForBypass(char *symbolName) {
+    mock(symbolName);
+}
 
-ScanFileFunctionStep fullScanFunctionSequence[1];
-ScanFileFunctionStep byPassFunctionSequence[1];
-ScanFileFunctionStep symbolMenuCreationFunctionSequence[1];
-ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[1];
-ScanFileFunctionStep secondPassMacroUsageFunctionSequence[1];
+void scanReferencesToCreateMenu(char *symbolName) { mock(symbolName); }
+
+void scanForMacroUsage(char *symbolName) { mock(symbolName); }
+
+
 ScanFileFunctionStep classHierarchyFunctionSequence[1];
 ScanFileFunctionStep fullUpdateFunctionSequence[1];
 ScanFileFunctionStep symbolSearchFunctionSequence[1];
