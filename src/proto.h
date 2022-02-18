@@ -64,24 +64,18 @@ typedef enum pushPullDirection {
 } PushPullDirection;
 
 typedef enum loadSuperOrNot {
-    LOAD_SUPER = PUSHING_DOWN+1,
+    LOAD_SUPER = PUSHING_DOWN + 1,
     DO_NOT_LOAD_SUPER
 } LoadSuperOrNot;
 
 enum miscellaneous {						/* misc. constants */
-    DEFAULT_VALUE,
+    DEFAULT_VALUE = DO_NOT_LOAD_SUPER + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
     CLASS_TO_ANY,
     CX_FILE_ITEM_GEN,
     NO_CX_FILE_ITEM_GEN,
-    CX_GENERATE_OUTPUT,
-    CX_JUST_READ,
-    CX_FIRST_PASS,
-    CX_SECOND_PASS,
-    CX_MENU_CREATION,
-    CX_BY_PASS,
     MEM_ALLOC_ON_SM,
     MEM_ALLOC_ON_PP,
     MEM_NO_ALLOC,
@@ -91,7 +85,6 @@ enum miscellaneous {						/* misc. constants */
     SEARCH_SYMBOL,
     FF_SCHEDULED_TO_PROCESS,
     FF_COMMAND_LINE_ENTERED,
-    OL_LOOKING_2_PASS_MACRO_USAGE,
     SHORT_NAME,
     LONG_NAME,
     GEN_JAVA_DOC,
@@ -164,7 +157,6 @@ enum miscellaneous {						/* misc. constants */
     DO_NOT_ALLOW_EDITOR_FILES,
     DEPTH_ONE,
     DEPTH_ANY,
-    DEAD_CODE_DETECTION,
     INTERACTIVE_YES,
     INTERACTIVE_NO,
     MARKER_IS_IN_CODE,
