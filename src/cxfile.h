@@ -29,14 +29,14 @@ extern int cxFileHashNumber(char *sym);
 extern void scanCxFile(ScanFileFunctionStep *scanFuns);
 extern bool scanReferenceFile(char *fname, char *fns1, char *fns2,
                              ScanFileFunctionStep *scanFunTab);
-extern void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab);
+extern void scanReferenceFiles(char *fname, ScanFileFunctionStep scanFunctionTable[]);
 extern bool smartReadFileTabFile(void);
 extern void readOneAppropReferenceFile(char *symname,
-                                       ScanFileFunctionStep *scanFunTab);
+                                       ScanFileFunctionStep scanFunctionTable[]);
 
 extern int searchStringFitness(char *cxtag, int slen);
 extern char *createTagSearchLineStatic(char *name, Position *p,
-                                   int *len1, int *len2, int *len3);
+                                       int *len1, int *len2, int *len3);
 extern bool symbolNameShouldBeHiddenFromReports(char *name);
 extern void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr);
 extern void addSubClassItemToFileTab( int sup, int inf, int origin);
