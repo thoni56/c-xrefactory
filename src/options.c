@@ -94,7 +94,6 @@ Options s_initOpt = {
 
     "",                         // getValue
     1,                          // javaSlAllowed (autoUpdateFromSrc)
-    XFILE_HASH_DEFAULT,
 
     /* JAVADOC: */
     "java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming",     // -htmljavadocavailable
@@ -131,6 +130,7 @@ Options s_initOpt = {
     0,
     0,
     true,                       // recurse directories
+
     "",                         // default classpath
     8,                          /* tabulator */
     -1,

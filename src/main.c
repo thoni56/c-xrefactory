@@ -80,8 +80,6 @@ static void usage() {
 #endif
     fprintf(stdout, "\t-refs <file>              - name of file with cxrefs\n");
     fprintf(stdout, "\t-refnum=<n>               - number of cxref files\n");
-    fprintf(stdout, "\t-refalphahash             - split references alphabetically (-refnum=28)\n");
-    fprintf(stdout, "\t-refalpha2hash            - split references alphabetically (-refnum=28*28)\n");
     fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
     fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
     fprintf(stdout, "\t-errors                   - report all error messages on the console\n");
@@ -952,25 +950,6 @@ static bool processROption(int *argi, int argc, char **argv, int infilesFlag) {
     if (0) {}
     else if (strncmp(argv[i], "-refnum=",8)==0)  {
         sscanf(argv[i]+8, "%d", &options.referenceFileCount);
-    }
-    else if (strcmp(argv[i], "-refalphahash")==0
-             || strcmp(argv[i], "-refalpha1hash")==0)    {
-        int check;
-        options.xfileHashingMethod = XFILE_HASH_ALPHA1;
-        check = checkReferenceFileCountOption(XFILE_HASH_ALPHA1_REFNUM);
-        if (check == 0) {
-            assert(options.taskRegime);
-            fatalError(ERR_ST, "'-refalphahash' conflicts with '-refnum' option", XREF_EXIT_ERR);
-        }
-    }
-    else if (strcmp(argv[i], "-refalpha2hash")==0)   {
-        int check;
-        options.xfileHashingMethod = XFILE_HASH_ALPHA2;
-        check = checkReferenceFileCountOption(XFILE_HASH_ALPHA2_REFNUM);
-        if (check == 0) {
-            assert(options.taskRegime);
-            fatalError(ERR_ST, "'-refalpha2hash' conflicts with '-refnum' option", XREF_EXIT_ERR);
-        }
     }
     else if (strcmp(argv[i], "-r")==0) {
         if (infilesFlag == INFILES_ENABLED)

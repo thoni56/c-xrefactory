@@ -134,66 +134,32 @@ static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
 static ScanFileFunctionStep classHierarchyFunctionSequence[];
 
 
-static void fPutDecimal(FILE *ff, int num) {
-    fprintf(ff, "%d", num);
+static void fPutDecimal(FILE *file, int num) {
+    fprintf(file, "%d", num);
 }
 
 
 /* *********************** INPUT/OUTPUT ************************** */
 
 int cxFileHashNumber(char *sym) {
-    unsigned   res,r;
-    char       *ss,*bb;
+    unsigned   res;
+    char       *ss;
     int        c;
 
-    if (options.referenceFileCount <= 1) return(0);
-    if (options.xfileHashingMethod == XFILE_HASH_DEFAULT) {
-        res = 0;
-        ss = sym;
-        while ((c = *ss)) {
-            if (c == '(') break;
-            SYMTAB_HASH_FUN_INC(res, c);
-            if (LINK_NAME_MAYBE_START(c)) res = 0;
-            ss++;
-        }
-        SYMTAB_HASH_FUN_FINAL(res);
-        res %= options.referenceFileCount;
-        return(res);
-    } else if (options.xfileHashingMethod == XFILE_HASH_ALPHA1) {
-        assert(options.referenceFileCount == XFILE_HASH_ALPHA1_REFNUM);
-        for (ss = bb = sym; *ss && *ss!='('; ss++) {
-            c = *ss;
-            if (LINK_NAME_MAYBE_START(c)) bb = ss+1;
-        }
-        c = *bb;
-        c = tolower(c);
-        if (c>='a' && c<='z') res = c-'a';
-        else res = ('z'-'a')+1;
-        assert(res>=0 && res<options.referenceFileCount);
-        return(res);
-    } else if (options.xfileHashingMethod == XFILE_HASH_ALPHA2) {
-        for (ss = bb = sym; *ss && *ss!='('; ss++) {
-            c = *ss;
-            if (LINK_NAME_MAYBE_START(c)) bb = ss+1;
-        }
-        c = *bb;
-        c = tolower(c);
-        if (c>='a' && c<='z') r = c-'a';
-        else r = ('z'-'a')+1;
-        if (c==0) res=0;
-        else {
-            c = *(bb+1);
-            c = tolower(c);
-            if (c>='a' && c<='z') res = c-'a';
-            else res = ('z'-'a')+1;
-        }
-        res = r*XFILE_HASH_ALPHA1_REFNUM + res;
-        assert(res>=0 && res<options.referenceFileCount);
-        return(res);
-    } else {
-        assert(0);
-        return(0);
+    if (options.referenceFileCount <= 1)
+        return 0;
+
+    res = 0;
+    ss = sym;
+    while ((c = *ss)) {
+        if (c == '(') break;
+        SYMTAB_HASH_FUN_INC(res, c);
+        if (LINK_NAME_MAYBE_START(c)) res = 0;
+        ss++;
     }
+    SYMTAB_HASH_FUN_FINAL(res);
+    res %= options.referenceFileCount;
+    return res;
 }
 
 static int searchSingleStringEqual(char *s, char *c) {
@@ -201,7 +167,7 @@ static int searchSingleStringEqual(char *s, char *c) {
         c++; s++;
     }
     if (*s==0 || *s==' ' || *s=='\t') return(1);
-    return(0);
+    return 0;
 }
 
 static int searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
@@ -581,16 +547,15 @@ static void genRefItem(SymbolReferenceItem *dd) {
     genRefItem0(dd, false);
 }
 
-#define COMPOSE_CXFI_CHECK_NUM(filen,hashMethod,exactPositionLinkFlag) ( \
-        ((filen)*XFILE_HASH_MAX+hashMethod)*2+exactPositionLinkFlag     \
+#define COMPOSE_CXFI_CHECK_NUM(filen, exactPositionLinkFlag) (  \
+        ((filen)*XFILE_HASH_MAX)*2+exactPositionLinkFlag        \
     )
 
-#define DECOMPOSE_CXFI_CHECK_NUM(num,filen,hashMethod,exactPositionLinkFlag){ \
+#define DECOMPOSE_CXFI_CHECK_NUM(num, filen, exactPositionLinkFlag){    \
         unsigned tmp;                                                   \
         tmp = num;                                                      \
         exactPositionLinkFlag = tmp % 2;                                \
         tmp = tmp / 2;                                                  \
-        hashMethod = tmp % XFILE_HASH_MAX;                              \
         tmp = tmp / XFILE_HASH_MAX;                                     \
         filen = tmp;                                                    \
     }
@@ -615,7 +580,6 @@ static void genCxFileHead(void) {
     writeCompactRecord(CXFI_REFNUM, options.referenceFileCount, " ");
     writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(
                                                                MAX_FILES,
-                                                               options.xfileHashingMethod,
                                                                options.exactPositionResolve
                                                                ), " ");
 }
@@ -784,7 +748,7 @@ static void cxrfCheckNumber(int size,
                             CharacterBuffer *cb,
                             int additionalArg
 ) {
-    int magicn, filen, hashMethod, exactPositionLinkFlag;
+    int magicn, filen, exactPositionLinkFlag;
     char tmpBuff[TMP_BUFF_SIZE];
 
     assert(marker == CXFI_CHECK_NUMBER);
@@ -792,13 +756,9 @@ static void cxrfCheckNumber(int size,
         return; // no check when creating new file
 
     magicn = lastIncomingInfo.values[CXFI_CHECK_NUMBER];
-    DECOMPOSE_CXFI_CHECK_NUM(magicn,filen,hashMethod,exactPositionLinkFlag);
+    DECOMPOSE_CXFI_CHECK_NUM(magicn, filen, exactPositionLinkFlag);
     if (filen != MAX_FILES) {
         sprintf(tmpBuff,"The Tag file was generated with different MAX_FILES, recreate it");
-        writeCxFileCompatibilityError(tmpBuff);
-    }
-    if (hashMethod != options.xfileHashingMethod) {
-        sprintf(tmpBuff,"The Tag file was generated with different hash method, recreate it");
         writeCxFileCompatibilityError(tmpBuff);
     }
     log_trace("checking %d <-> %d", exactPositionLinkFlag, options.exactPositionResolve);
@@ -1464,7 +1424,7 @@ bool smartReadFileTabFile(void) {
 }
 
 // symbolName can be NULL !!!!!!
-void readOneAppropReferenceFile(char *symbolName,
+static void readOneAppropReferenceFile(char *symbolName,
                                 ScanFileFunctionStep  scanFileFunctionTable[]
 ) {
     if (options.cxrefFileName == NULL)

@@ -96,7 +96,6 @@ typedef struct options {
 
     char *getValue;
     int javaSlAllowed;          /* TODO: Boolify? */
-    int xfileHashingMethod;
 
     /* JAVADOC: */
     char *htmlJdkDocAvailable;

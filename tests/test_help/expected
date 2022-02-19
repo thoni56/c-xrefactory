@@ -19,8 +19,6 @@ options:
 	-no-stdoptions            - don't read the '~/.c-xrefrc' option file
 	-refs <file>              - name of file with cxrefs
 	-refnum=<n>               - number of cxref files
-	-refalphahash             - split references alphabetically (-refnum=28)
-	-refalpha2hash            - split references alphabetically (-refnum=28*28)
 	-exactpositionresolve     - resolve symbols by def. position
 	-mf<n>                    - factor increasing cxMemory
 	-errors                   - report all error messages on the console
