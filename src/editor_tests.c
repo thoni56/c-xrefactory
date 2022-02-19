@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-#include "../editor.h"
+#include "editor.h"
 
 #include "memory.h"
 

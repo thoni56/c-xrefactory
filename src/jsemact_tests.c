@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-#include "../jsemact.h"
+#include "jsemact.h"
 
 #include "yylex.mock"
 #include "globals.mock"

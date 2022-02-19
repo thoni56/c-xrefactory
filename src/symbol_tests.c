@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-#include "../symbol.h"
+#include "symbol.h"
 
 #include "globals.mock"
 #include "cxref.mock"

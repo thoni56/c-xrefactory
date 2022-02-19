@@ -23,7 +23,7 @@ $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -MP -c $<
 
 $(OBJDIR):
-	mkdir $(OBJDIR)
+	-mkdir $(OBJDIR)
 
 -include $(OBJDIR)/*.d
 

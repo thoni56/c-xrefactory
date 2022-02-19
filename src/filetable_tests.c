@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-#include "../filetable.h"
+#include "filetable.h"
 #include "log.h"
 
 #include "misc.mock"

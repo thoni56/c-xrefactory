@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-#include "../caching.h"
+#include "caching.h"
 
 #include "yylex.mock"
 #include "globals.mock"

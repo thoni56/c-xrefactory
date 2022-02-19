@@ -1,8 +1,0 @@
-*.d
-*.so
-pycparser
-.objs
-coverage.info
-unittests.info
-coverage
-.cgreen-debug-commands
