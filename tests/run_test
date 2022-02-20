@@ -2,8 +2,8 @@
 # Run an autodiscovered test in the c-xrefactory test suite
 # args: 1 = test (directory) name
 # Environment variables:
-#	GCOV_OPTIONS such as "GCOV_PREFIX=<path> GCOV_PREFIX_STRIP=6"
-#	LCOV should be complete lcov command to use, e.g. "lcov --gcov-tool /usr/local/bin/gcov-10"
+#       GCOV_OPTIONS such as "GCOV_PREFIX=<path> GCOV_PREFIX_STRIP=6"
+#       LCOV should be complete lcov command to use, e.g. "lcov --gcov-tool /usr/local/bin/gcov-10"
 # NOTE: We don't do lcov collection here, but instead from .. using the Makefile in ../src
 
 if [ -f $1/.suspended ] ; then
@@ -22,7 +22,7 @@ else
             # If there was any .gcda files...
             cd ../src
             # Copy the .gcno files to the coverage directory, because they are needed there by lcov
-            cp .objects/*.gcno ../tests/$1/.coverage
+            #cp .objects/*.gcno ../tests/$1/.coverage
             #mkdir -p ../tests/coverage
             # NOTE: We will aggregate all .gcda from all tests later
             #$LCOV -q -t $1 -d ../tests/$1/.coverage -c -o ../tests/coverage/$1.info -b .

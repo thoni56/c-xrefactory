@@ -248,7 +248,9 @@ clean-coverage:
 	fi
 
 coverage-report:
-	@echo Doing the coverage reporting in the background...
+	for tc in ../tests/*/.coverage ; do gcov-tool merge $$tc .objects -o .objects; done
+	gcov *.c -o .objects > /dev/null
+	@echo Doing the reporting in the background...
 	$(MAKE) the-actual-coverage-report &
 
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
@@ -261,11 +263,6 @@ the-actual-coverage-report:
 	@mkdir -p ../coverage
 	$(LCOV) -d .. -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info
 	@echo "LCOV-ing done..."
-	@# Re-create collated gcov files from total.info for Emacs gcov-mode
-	if command -v info2gcov > /dev/null 2>&1 ; then \
-		info2gcov -q ../coverage/total.info ; \
-	fi
-	@printf "\\r"
 ifeq (, $(LCOV_EXCLUDES))
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 	@echo "LCOV --remove done..."
