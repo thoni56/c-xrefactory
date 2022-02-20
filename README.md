@@ -177,7 +177,7 @@ with others who might be interested.
 ["Refactoring's Rubicon"]: http://martinfowler.com/articles/refactoringRubicon.html "Read the 'Crossing Refactoring's Rubicon' article, by Martin Fowler (2001)"
 [c-xref]: http://sourceforge.net/projects/c-xref/ "c-xref project at SourceForge"
 [www.xref.sk]: http://www.xref.sk "Xrefactory old website (unreachable)"
-[www.xrefactory.com]: http://www.xrefactory.com "Xrefactory webiste"
+[www.xrefactory.com]: http://www.xrefactory.com "Xrefactory website"
 
 <!-- X11 Windows OS -->
 

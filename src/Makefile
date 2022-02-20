@@ -248,7 +248,7 @@ clean-coverage:
 	fi
 
 coverage-report:
-	for tc in ../tests/*/.coverage ; do gcov-tool merge $$tc .objects -o .objects; done
+	for tc in ../tests/*/.coverage ; do gcov-tool merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 	-gcov .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
 	@echo Doing the reporting in the background...
 	$(MAKE) the-actual-coverage-report &
