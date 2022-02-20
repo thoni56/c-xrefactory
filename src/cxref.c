@@ -1579,10 +1579,13 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
 
-#define GetFileChar(ch,cp,bbb) {                    \
-        if (ch=='\n') {(cp)->line++; (cp)->col=0;} \
-        else (cp)->col++;                          \
-        GetBufChar(ch, bbb);                        \
+static void getFileChar(int *chP, Position *position, CharacterBuffer *characterBuffer) {
+        if (*chP=='\n') {
+            position->line++;
+            position->col=0;
+        } else
+            position->col++;
+        GetBufChar(*chP, characterBuffer);
     }
 
 int refCharCode(int usage) {
@@ -1630,7 +1633,7 @@ static void linePosProcess(FILE *outFile,
                            char *fname,
                            Reference **rrr,
                            Position *callerPosition,
-                           Position *cp,
+                           Position *positionP,
                            int *chP,
                            CharacterBuffer *cxfBuf
 ) {
@@ -1668,13 +1671,13 @@ static void linePosProcess(FILE *outFile,
             pendingRefFlag = 1;
         }
         rr=rr->next;
-    } while (rr!=NULL && ((rr->position.file == cp->file && rr->position.line == cp->line)
+    } while (rr!=NULL && ((rr->position.file == positionP->file && rr->position.line == positionP->line)
                           || (rr->usage.base>UsageMaxOLUsages)));
     if (r!=NULL) {
         if (! cxfBuf->isAtEOF) {
             while (ch!='\n' && (! cxfBuf->isAtEOF)) {
                 passSourcePutChar(ch,outFile);
-                GetFileChar(ch, cp, cxfBuf);
+                getFileChar(&ch, positionP, cxfBuf);
             }
         }
         if (! options.xref2) passSourcePutChar('\n',outFile);
@@ -1702,13 +1705,13 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
     return r;                   /* TODO: Why return the last one? */
 }
 
-static void passRefsThroughSourceFile(Reference **in_out_references, Position *callerp,
+static void passRefsThroughSourceFile(Reference **in_out_references, Position *callerPosition,
                                       FILE *outputFile, int usages, int usageFilter) {
     Reference *references,*oldrr;
     int ch,fnum;
     EditorBuffer *ebuf;
     char *cofileName;
-    Position cp;
+    Position position;
     CharacterBuffer cxfBuf;
 
     references = *in_out_references;
@@ -1739,19 +1742,19 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
         cxfBuf.isAtEOF = true;
     } else {
         fillCharacterBuffer(&cxfBuf, ebuf->allocation.text, ebuf->allocation.text+ebuf->allocation.bufferSize, NULL, ebuf->allocation.bufferSize, noFileIndex, ebuf->allocation.text);
-        GetFileChar(ch, &cp, &cxfBuf);
+        getFileChar(&ch, &position, &cxfBuf);
     }
-    cp = makePosition(references->position.file, 1, 0);
+    position = makePosition(references->position.file, 1, 0);
     oldrr=NULL;
-    while (references!=NULL && references->position.file==cp.file && references->position.line>=cp.line) {
+    while (references!=NULL && references->position.file==position.file && references->position.line>=position.line) {
         assert(oldrr!=references); oldrr=references;    // because it is a dangerous loop
-        while ((! cxfBuf.isAtEOF) && cp.line<references->position.line) {
+        while ((! cxfBuf.isAtEOF) && position.line<references->position.line) {
             while (ch!='\n' && ch!=EOF)
                 GetBufChar(ch, &cxfBuf);
-            GetFileChar(ch, &cp, &cxfBuf);
+            getFileChar(&ch, &position, &cxfBuf);
         }
         linePosProcess(outputFile, usages, usageFilter, cofileName,
-                       &references, callerp, &cp, &ch, &cxfBuf);
+                       &references, callerPosition, &position, &ch, &cxfBuf);
     }
     //&if (cofile != NULL) closeFile(cofile);
  fin:
