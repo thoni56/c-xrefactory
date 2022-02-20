@@ -110,6 +110,8 @@ ci:
 	$(MAKE) -e -C ../tests/systemd init
 	$(MAKE) -e -C ../tests/ffmpeg init
 	$(MAKE) -e -C ../tests all
+	for tc in ../tests/*/.coverage ; do gcov-tool merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+
 
 yydebug: CFLAGS += -DYYDEBUG
 yydebug: all
