@@ -1602,19 +1602,19 @@ int refCharCode(int usage) {
     assert(0);
 }
 
-static char s_crefListLine[MAX_REF_LIST_LINE_LEN+5];
-static int s_crefListLinei = 0;
+static char listLine[MAX_REF_LIST_LINE_LEN+5];
+static int listLineIndex = 0;
 
-static void passSourcePutChar(int c, FILE *ff) {
+static void passSourcePutChar(int c, FILE *file) {
     if (options.xref2) {
-        if (s_crefListLinei < MAX_REF_LIST_LINE_LEN) {
-            s_crefListLine[s_crefListLinei++] = c;
-            s_crefListLine[s_crefListLinei] = 0;
+        if (listLineIndex < MAX_REF_LIST_LINE_LEN) {
+            listLine[listLineIndex++] = c;
+            listLine[listLineIndex] = 0;
         } else {
-            strcpy(s_crefListLine + s_crefListLinei, "...");
+            strcpy(listLine + listLineIndex, "...");
         }
     } else {
-        fputc(c,ff);
+        fputc(c,file);
     }
 }
 
@@ -1624,7 +1624,7 @@ static bool listableUsage(Reference *ref, int usages, int usageFilter) {
 }
 
 
-static void linePosProcess(FILE *off,
+static void linePosProcess(FILE *outFile,
                            int usages,
                            int usageFilter, // only if usages==USAGE_FILTER
                            char *fname,
@@ -1644,24 +1644,24 @@ static void linePosProcess(FILE *off,
     //& fn = getRealFileNameStatic(fname);
     r = NULL; pendingRefFlag = 0;
     linerefn = 0;
-    s_crefListLinei = 0;
-    s_crefListLine[s_crefListLinei] = 0;
+    listLineIndex = 0;
+    listLine[listLineIndex] = 0;
     do {
         if (listableUsage(rr, usages, usageFilter)) {
             if (r==NULL || r->usage.base > rr->usage.base)
                 r = rr;
             if (pendingRefFlag) {
-                if (! options.xref2) fprintf(off,"\n");
+                if (! options.xref2) fprintf(outFile,"\n");
             }
             if (options.xref2) {
                 if (! pendingRefFlag) {
-                    sprintf(s_crefListLine+s_crefListLinei, "%s:%d:", fn, rr->position.line);
-                    s_crefListLinei += strlen(s_crefListLine+s_crefListLinei);
+                    sprintf(listLine+listLineIndex, "%s:%d:", fn, rr->position.line);
+                    listLineIndex += strlen(listLine+listLineIndex);
                 }
             } else {
-                if (positionsAreNotEqual(*callerp, rr->position)) fprintf(off, " ");
-                else fprintf(off, ">");
-                fprintf(off,"%c%s:%d:",refCharCode(rr->usage.base),fn,
+                if (positionsAreNotEqual(*callerp, rr->position)) fprintf(outFile, " ");
+                else fprintf(outFile, ">");
+                fprintf(outFile,"%c%s:%d:",refCharCode(rr->usage.base),fn,
                         rr->position.line);
             }
             linerefn++;
@@ -1673,18 +1673,18 @@ static void linePosProcess(FILE *off,
     if (r!=NULL) {
         if (! cxfBuf->isAtEOF) {
             while (ch!='\n' && (! cxfBuf->isAtEOF)) {
-                passSourcePutChar(ch,off);
+                passSourcePutChar(ch,outFile);
                 GetFileChar(ch, cp, cxfBuf);
             }
         }
-        if (! options.xref2) passSourcePutChar('\n',off);
+        if (! options.xref2) passSourcePutChar('\n',outFile);
     }
-    if (options.xref2 && s_crefListLinei!=0) {
+    if (options.xref2 && listLineIndex!=0) {
         ppcIndent();
-        fprintf(off, "<%s %s=%d %s=%ld>%s</%s>\n",
+        fprintf(outFile, "<%s %s=%d %s=%ld>%s</%s>\n",
                 PPC_SRC_LINE, PPCA_REFN, linerefn,
-                PPCA_LEN, (unsigned long)strlen(s_crefListLine),
-                s_crefListLine, PPC_SRC_LINE);
+                PPCA_LEN, (unsigned long)strlen(listLine),
+                listLine, PPC_SRC_LINE);
     }
     *rrr = rr;
     *cch = ch;
