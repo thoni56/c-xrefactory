@@ -55,7 +55,7 @@ extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
 extern bool htmlJdkDocAvailableForUrl(char *ss);
 extern Reference *duplicateReference(Reference *r);
 extern Reference * addCxReferenceNew(Symbol *symbol, Position *pos,
-                                     UsageBits *usage, int vFunClass, int vApplClass);
+                                     UsageBits usage, int vFunClass, int vApplClass);
 extern Reference * addCxReference(Symbol *symbol, Position *pos, Usage usage,
                                   int vFunClass,int vApplClass);
 extern Reference *addSpecialFieldReference(char *name, int storage,
@@ -84,7 +84,7 @@ extern SymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, SymbolsMenu **l
 extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern Reference **addToRefList(Reference **list,
-                                UsageBits *pusage,
+                                UsageBits usage,
                                 Position pos);
 extern char *getXrefEnvironmentValue(char *name);
 extern int itIsSymbolToPushOlReferences(SymbolReferenceItem *p, OlcxReferences *rstack,

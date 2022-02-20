@@ -426,7 +426,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
             || javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currClass, *res)) {
             minacc = javaGetMinimalAccessibility(&rfs, *res);
             fillUsageBits(&ub, UsageUsed, minacc);
-            ref = addCxReferenceNew(*res,&record->position, &ub,
+            ref = addCxReferenceNew(*res,&record->position, ub,
                                     rfs.currClass->u.structSpec->classFile,
                                     rfs.baseClass->u.structSpec->classFile);
             // this is adding reference to 'super', not to the field!

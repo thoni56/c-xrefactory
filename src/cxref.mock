@@ -144,7 +144,8 @@ Reference *duplicateReference(Reference *r) {
     return (Reference *) mock(r);
 }
 
-Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage, int vFunClass, int vApplClass) {
+Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits usage_arg, int vFunClass, int vApplClass) {
+    UsageBits *usage = &usage_arg;
     return (Reference *) mock(symbol, pos, usage, vFunClass, vApplClass);
 }
 
@@ -202,9 +203,10 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-Reference **addToRefList(Reference **list, UsageBits *pusage, Position pos1) {
-    Position *pos = &pos1;
-    return (Reference **) mock(list, pusage, pos);
+Reference **addToRefList(Reference **list, UsageBits usage_arg, Position pos_arg) {
+    Position *pos = &pos_arg;
+    UsageBits *usage = &usage_arg;
+    return (Reference **) mock(list, usage, pos);
 }
 
 char *getXrefEnvironmentValue(char *name) {

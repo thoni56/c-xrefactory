@@ -95,7 +95,7 @@ static int generatedFieldMarkersList[] = {
 
 typedef struct lastCxFileInfo {
     int                 onLineReferencedSym;
-    SymbolsMenu     *onLineRefMenuItem;
+    SymbolsMenu         *onLineRefMenuItem;
     int                 onLineRefIsBestMatchFlag; // vyhodit ?
     SymbolReferenceItem *symbolTab[MAX_CX_SYMBOL_TAB];
     bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
@@ -1103,7 +1103,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     if (lastIncomingInfo.onLineReferencedSym ==
         lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
         addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
-                     &usageBits, pos);
+                     usageBits, pos);
     }
 }
 
@@ -1466,7 +1466,7 @@ void fullScanFor(char *symbolName) {
 }
 
 void scanForBypass(char *symbolName) {
-    readOneAppropReferenceFile(options.browsedSymName, byPassFunctionSequence);
+    readOneAppropReferenceFile(symbolName, byPassFunctionSequence);
 }
 
 void scanReferencesToCreateMenu(char *symbolName){

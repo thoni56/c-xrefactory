@@ -235,21 +235,21 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 
 
 Reference **addToRefList(Reference **list,
-                         UsageBits *usage,
+                         UsageBits usage,
                          Position pos) {
     Reference *rr, **place;
     Reference reference;
 
-    fillReference(&reference, *usage, pos, NULL);
+    fillReference(&reference, usage, pos, NULL);
     SORTED_LIST_PLACE2(place,reference,list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
         || options.server_operation==OLO_EXTRACT) {
         CX_ALLOC(rr, Reference);
-        fillReference(rr, *usage, pos, NULL);
+        fillReference(rr, usage, pos, NULL);
         LIST_CONS(rr, (*place));
     } else {
         assert(*place);
-        (*place)->usage = *usage;
+        (*place)->usage = usage;
     }
     return place;
 }
@@ -669,7 +669,7 @@ static bool olcxOnlyParseNoPushing(int opt) {
 /* ********************************************************************* */
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
 /*                                                                       */
-Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
+Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits usage,
                              int vFunCl, int vApplCl) {
     // TODO UsageBits are not written to, could be by-value
     int                  index;
@@ -679,16 +679,14 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     int                  defaultUsage;
     char                *linkName;
     Reference            rr;
-    Reference **         place;
-    Position *           defpos;
+    Reference          **place;
+    Position            *defpos;
     SymbolReferenceItem *pp;
     SymbolReferenceItem *memb;
     SymbolReferenceItem  ppp;
     SymbolsMenu *        mmi;
     ReferenceTable *     reftab;
-    int                  usage_base;
 
-    usage_base = usage->base;
     // do not record references during prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
     // TODO: So is this relevant now that HTML is gone?
@@ -710,7 +708,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
 
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
               vFunCl,vApplCl, pos->file, pos->line, pos->col, category==CategoryGlobal?"Global":"Local",
-              usageEnumName[usage_base], storageEnumName[symbol->bits.storage]);
+              usageEnumName[usage.base], storageEnumName[symbol->bits.storage]);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (options.server_operation == OLO_EXTRACT) {
@@ -738,7 +736,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
     fillSymbolRefItemBits(&ppp.b, symbol->bits.symbolType, storage, scope,
                           symbol->bits.access, category);
     if (options.taskRegime==RegimeEditServer && options.server_operation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
-        fillUsageBits(&rr.usage, usage_base, 0);
+        fillUsageBits(&rr.usage, usage.base, 0);
         fillReference(&rr, rr.usage, *pos, NULL);
         searchSymbolCheckReference(&ppp, &rr);
         return NULL;
@@ -760,23 +758,23 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
         memb->b.accessFlags |= symbol->bits.access;
     }
     /*  category = reftab->category; */
-    place = addToRefList(&memb->refs,usage, *pos);
-    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", fileTable.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, fileTable.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), positionsAreEqual(s_cxRefPos, *pos), usage_base, symbol->linkName);
+    place = addToRefList(&memb->refs, usage, *pos);
+    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", fileTable.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, fileTable.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), positionsAreEqual(s_cxRefPos, *pos), usage.base, symbol->linkName);
 
     if (options.taskRegime == RegimeEditServer
         && positionsAreEqual(s_cxRefPos, *pos)
-        && usage_base<UsageMaxOLUsages) {
+        && usage.base<UsageMaxOLUsages) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
                 if (options.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setOlAvailableRefactorings(symbol, NULL, usage_base);
+                    setOlAvailableRefactorings(symbol, NULL, usage.base);
                 }
             }
         } else {
             /* an on - line cxref action ?*/
             //&fprintf(dumpOut,"!got it %s !!!!!!!\n", memb->name);
             s_olstringServed = 1;       /* olstring will be served */
-            s_olstringUsage = usage_base;
+            s_olstringUsage = usage.base;
             assert(currentUserData && currentUserData->browserStack.top);
             olSetCallerPosition(pos);
             defpos = &noPosition;
@@ -790,12 +788,12 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
                 log_trace("getting definition position of %s at line %d", symbol->name, defpos->line);
             if (! olcxOnlyParseNoPushing(options.server_operation)) {
                 mmi = olAddBrowsedSymbol(memb,&currentUserData->browserStack.top->hkSelectedSym,
-                                         1,1,0,usage_base,0, defpos, defaultUsage);
+                                         1,1,0,usage.base,0, defpos, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
-                if (IS_DEFINITION_USAGE(usage_base)) {
+                if (IS_DEFINITION_USAGE(usage.base)) {
                     mmi->defpos = *pos;
-                    mmi->defUsage = usage_base;
+                    mmi->defUsage = usage.base;
                 }
                 if (options.server_operation == OLO_CLASS_TREE
                     && LANGUAGE(LANG_JAVA)) {
@@ -805,7 +803,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
                     setOlSymbolTypeForPrint(symbol);
                 }
                 if (options.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setOlAvailableRefactorings(symbol, mmi, usage_base);
+                    setOlAvailableRefactorings(symbol, mmi, usage.base);
                 }
             }
         }
@@ -828,7 +826,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits *usage,
 Reference * addCxReference(Symbol *symbol, Position *pos, Usage usage, int vFunClass, int vApplClass) {
     UsageBits ub;
     fillUsageBits(&ub, usage, MIN_REQUIRED_ACCESS);
-    return addCxReferenceNew(symbol, pos, &ub, vFunClass, vApplClass);
+    return addCxReferenceNew(symbol, pos, ub, vFunClass, vApplClass);
 }
 
 void addTrivialCxReference(char *name, int symType, int storage, Position *pos, int usage) {
