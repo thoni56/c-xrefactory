@@ -159,21 +159,22 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 #define CommentEndReference(cb, jdoc) {                                 \
     }
 
-#define NOTE_NEW_LEXEM_POSITION(cb, lb) {                               \
-        int index = lb->index % LEX_POSITIONS_RING_SIZE;                \
-        lb->fileOffsetRing[index] = absoluteFilePosition(cb);           \
-        lb->positionRing[index].file = cb->fileNumber;                  \
-        lb->positionRing[index].line = cb->lineNumber;                  \
-        lb->positionRing[index].col = columnPosition(cb);               \
-        lb->index ++;                                                   \
-    }
+static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
+    int index = lb->index % LEX_POSITIONS_RING_SIZE;
+    lb->fileOffsetRing[index] = absoluteFilePosition(cb);
+    lb->positionRing[index].file = cb->fileNumber;
+    lb->positionRing[index].line = cb->lineNumber;
+    lb->positionRing[index].col = columnPosition(cb);
+    lb->index++;
+}
 
-#define PUT_EMPTY_COMPLETION_ID(cb, dd, len) {                          \
-        putLexToken(IDENT_TO_COMPLETE, &dd);                            \
-        putLexChar(0, &dd);                                             \
-        putLexPosition(cb->fileNumber, cb->lineNumber,                  \
-                       columnPosition(cb) - (len), &dd);                \
-    }
+
+static void put_empty_completion_id(CharacterBuffer *cb, char **dd, int len) {
+    putLexToken(IDENT_TO_COMPLETE, dd);
+    putLexChar(0, dd);
+    putLexPosition(cb->fileNumber, cb->lineNumber,
+                   columnPosition(cb) - len, dd);
+}
 
 
 bool getLexemFromLexer(LexemBuffer *lb) {
@@ -205,7 +206,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             ungetChar(cb, ch);
             break;
         }
-        NOTE_NEW_LEXEM_POSITION(cb, lb);
+        noteNewLexemPosition(cb, lb);
         /*  yytext = ccc; */
         lexStartDd = dd;
         lexemStartingColumn = columnPosition(cb);
@@ -700,7 +701,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 putLexToken('\n', &dd);
                 putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
                 if (ch == '#' && LANGUAGE(LANG_C|LANG_YACC)) {
-                    NOTE_NEW_LEXEM_POSITION(cb, lb);
+                    noteNewLexemPosition(cb, lb);
                     //&        HandleCppToken(ch, cb, dd, cb->next, cb->fileNumber, cb->lineNumber, cb->lineBegin);
                     // #define HandleCppToken(ch, cb, dd, cb->next, cb->fileNumber, cb->lineNumber, cb->lineBegin) {
                     {
@@ -762,7 +763,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             putLexToken(CPP_DEFINE0, &dd);
                             putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
                             ch = skipBlanks(cb, ch);
-                            NOTE_NEW_LEXEM_POSITION(cb, lb);
+                            noteNewLexemPosition(cb, lb);
                             ProcessIdentifier(ch, cb, dd,lab1);
                             if (ch == '(') {
                                 putLexToken(CPP_DEFINE, &ddd);
@@ -891,7 +892,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                                 log_trace(":ress %s", lexStartDd+TOKEN_SIZE);
                             } else {
                                 // completion after an identifier
-                                PUT_EMPTY_COMPLETION_ID(cb, dd,
+                                put_empty_completion_id(cb, &dd,
                                                         apos-options.olCursorPos);
                             }
                         } else if ((lastlex == LINE_TOKEN || lastlex == STRING_LITERAL)
@@ -900,7 +901,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             // NO COMPLETION
                         } else {
                             // completion after another lexem
-                            PUT_EMPTY_COMPLETION_ID(cb, dd,
+                            put_empty_completion_id(cb, &dd,
                                                     apos-options.olCursorPos);
                         }
                     }
