@@ -1629,9 +1629,9 @@ static void linePosProcess(FILE *outFile,
                            int usageFilter, // only if usages==USAGE_FILTER
                            char *fname,
                            Reference **rrr,
-                           Position *callerp,
+                           Position *callerPosition,
                            Position *cp,
-                           int *cch,
+                           int *chP,
                            CharacterBuffer *cxfBuf
 ) {
     int             ch, pendingRefFlag, linerefn;
@@ -1639,7 +1639,7 @@ static void linePosProcess(FILE *outFile,
     char           *fn;
 
     rr = *rrr;
-    ch = *cch;
+    ch = *chP;
     fn = simpleFileName(getRealFileNameStatic(fname));
     //& fn = getRealFileNameStatic(fname);
     r = NULL; pendingRefFlag = 0;
@@ -1659,7 +1659,7 @@ static void linePosProcess(FILE *outFile,
                     listLineIndex += strlen(listLine+listLineIndex);
                 }
             } else {
-                if (positionsAreNotEqual(*callerp, rr->position)) fprintf(outFile, " ");
+                if (positionsAreNotEqual(*callerPosition, rr->position)) fprintf(outFile, " ");
                 else fprintf(outFile, ">");
                 fprintf(outFile,"%c%s:%d:",refCharCode(rr->usage.base),fn,
                         rr->position.line);
@@ -1687,7 +1687,7 @@ static void linePosProcess(FILE *outFile,
                 listLine, PPC_SRC_LINE);
     }
     *rrr = rr;
-    *cch = ch;
+    *chP = ch;
 }
 
 static Reference *passNonPrintableRefsForFile(Reference *references,
