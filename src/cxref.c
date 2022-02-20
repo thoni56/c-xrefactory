@@ -1618,10 +1618,11 @@ static void passSourcePutChar(int c, FILE *ff) {
     }
 }
 
-#define LISTABLE_USAGE(rr, usages, usageFilter) (                       \
-                                                 usages==USAGE_ANY || usages==rr->usage.base \
-                                                     || (usages==USAGE_FILTER && rr->usage.base<usageFilter) \
-                                                     )
+
+static bool listableUsage(Reference *ref, int usages, int usageFilter) {
+    return usages==USAGE_ANY || usages==ref->usage.base || (usages==USAGE_FILTER && ref->usage.base<usageFilter);
+}
+
 
 static void linePosProcess(FILE *off,
                            int usages,
@@ -1632,10 +1633,10 @@ static void linePosProcess(FILE *off,
                            Position *cp,
                            int *cch,
                            CharacterBuffer *cxfBuf
-                           ) {
+) {
     int             ch, pendingRefFlag, linerefn;
-    Reference     *rr, *r;
-    char            *fn;
+    Reference      *rr, *r;
+    char           *fn;
 
     rr = *rrr;
     ch = *cch;
@@ -1646,7 +1647,7 @@ static void linePosProcess(FILE *off,
     s_crefListLinei = 0;
     s_crefListLine[s_crefListLinei] = 0;
     do {
-        if (LISTABLE_USAGE(rr, usages, usageFilter)) {
+        if (listableUsage(rr, usages, usageFilter)) {
             if (r==NULL || r->usage.base > rr->usage.base)
                 r = rr;
             if (pendingRefFlag) {
@@ -1695,10 +1696,10 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
     Reference *r;
 
     for (r=references; r!=NULL && r->position.file == wantedFileNumber; r=r->next) {
-        if (LISTABLE_USAGE(r, usages, usageFilter))
+        if (listableUsage(r, usages, usageFilter))
             return r;
     }
-    return r;
+    return r;                   /* TODO: Why return the last one? */
 }
 
 static void passRefsThroughSourceFile(Reference **in_out_references, Position *callerp,
