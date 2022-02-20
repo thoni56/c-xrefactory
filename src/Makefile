@@ -249,7 +249,7 @@ clean-coverage:
 
 coverage-report:
 	for tc in ../tests/*/.coverage ; do gcov-tool merge $$tc .objects -o .objects; done
-	gcov *.c -o .objects > /dev/null
+	-gcov .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
 	@echo Doing the reporting in the background...
 	$(MAKE) the-actual-coverage-report &
 
@@ -261,7 +261,7 @@ endif
 
 the-actual-coverage-report:
 	@mkdir -p ../coverage
-	$(LCOV) -d .. -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info
+	$(LCOV) -d . -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info
 	@echo "LCOV-ing done..."
 ifeq (, $(LCOV_EXCLUDES))
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
@@ -316,7 +316,7 @@ unittests: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $^
 	# Create .gcov for Emacs cov-mode based on unittests
-	gcov .objects/*.o --object-directory $(OBJDIR) > /dev/null
+	-gcov .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
 		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
