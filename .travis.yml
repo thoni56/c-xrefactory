@@ -39,6 +39,7 @@ branches:
         - stable
 
 after_success:
+    - pwd
     - if [ "$TRAVIS_OS_NAME" = "linux" ] ; then
         ./.travis_after_success_linux.sh ;
       fi
