@@ -185,7 +185,7 @@ java_parser.tab.intermediate : java_parser.y $(YACC)
 	sed -E '/^$$/q' java_parser.output > java_parser.rules
 
 
-# There is no include feature in grammars so we need duplicate
+# There is no include feature in grammars so we need to duplicate
 # token definitons. Here we ensure they are in sync
 # Extract all three token sections
 EXTRACT_TOKEN_DEFINITIONS = sed -E '/END OF COMMON TOKEN DEFINITIONS/,$$d' | sed -E '/START OF COMMON TOKEN DEFINITIONS/,$$!d'
@@ -318,13 +318,12 @@ else
 unittests: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $^
+	# Create .gcov for Emacs cov-mode based on unittests
+	gcov .objects/*.o --object-directory $(OBJDIR) > /dev/null
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
 		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
-		$(LCOV) -q --remove unittests.info $(LCOV_IGNORE_COVERAGE) -o unittests.info ; \
-		if command -v info2gcov > /dev/null 2>&1 ; then \
-			info2gcov -q unittests.info ; \
-		fi ; \
+		$(LCOV) -q --remove unittests.info $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.info ; \
 	fi
 endif
 
