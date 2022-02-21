@@ -20,13 +20,12 @@ extern void scanForBypass(char *symbolName);
 extern void scanReferencesToCreateMenu(char *symbolName);
 extern void scanForMacroUsage(char *symbolName);
 extern void scanForClassHierarchy(void);
+extern void scanForGlobalUnused(char *cxrefFileName);
 
 extern ScanFileFunctionStep symbolSearchFunctionSequence[];
-extern ScanFileFunctionStep deadCodeDetectionFunctionSequence[];
 
 extern void genReferenceFile(bool updating, char *filename);
 extern int cxFileHashNumber(char *sym);
-extern void scanCxFile(ScanFileFunctionStep *scanFuns);
 extern bool scanReferenceFile(char *fname, char *fns1, char *fns2,
                              ScanFileFunctionStep *scanFunTab);
 extern void scanReferenceFiles(char *fname, ScanFileFunctionStep scanFunctionTable[]);

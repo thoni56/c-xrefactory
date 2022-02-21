@@ -4550,7 +4550,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     rstack = currentUserData->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
-    scanReferenceFiles(options.cxrefFileName, deadCodeDetectionFunctionSequence);
+    scanForGlobalUnused(options.cxrefFileName);
     olCreateSelectionMenu(options.server_operation);
     assert(options.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");

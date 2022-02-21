@@ -132,6 +132,9 @@ static ScanFileFunctionStep byPassFunctionSequence[];
 static ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
 static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
 static ScanFileFunctionStep classHierarchyFunctionSequence[];
+static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[];
+
+static void scanCxFile(ScanFileFunctionStep *scanFuns);
 
 
 static void fPutDecimal(FILE *file, int num) {
@@ -521,8 +524,8 @@ static void genRefItem0(SymbolReferenceItem *d, bool force) {
                       d->fileHash, // useless put 0
                       d->vApplClass, d->vFunClass);
     fillSymbolRefItemBits(&lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex].b,
-                           d->b.symType, d->b.storage,
-                           d->b.scope, d->b.accessFlags, d->b.category);
+                          d->b.symType, d->b.storage,
+                          d->b.scope, d->b.accessFlags, d->b.category);
     lastOutgoingInfo.symbolTab[symbolIndex] = &lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex];
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
 
@@ -578,10 +581,9 @@ static void genCxFileHead(void) {
     sr[i]=0;
     writeStringRecord(CXFI_MARKER_LIST, sr, "");
     writeCompactRecord(CXFI_REFNUM, options.referenceFileCount, " ");
-    writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(
-                                                               MAX_FILES,
-                                                               options.exactPositionResolve
-                                                               ), " ");
+    writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(MAX_FILES,
+                                                                 options.exactPositionResolve),
+                       " ");
 }
 
 static void openInOutReferenceFiles(int updateFlag, char *filename) {
@@ -950,9 +952,9 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         strcpy(ss,id);
         CX_ALLOC(memb, SymbolReferenceItem);
         fillSymbolRefItem(memb,ss, cxFileHashNumber(ss),
-                                    vApplClass, vFunClass);
+                          vApplClass, vFunClass);
         fillSymbolRefItemBits(&memb->b, symType, storage,
-                               ScopeGlobal, accessFlags, CategoryGlobal);
+                              ScopeGlobal, accessFlags, CategoryGlobal);
         refTabAdd(&referenceTable, memb);
     }
     lastIncomingInfo.symbolTab[si] = memb;
@@ -1031,7 +1033,7 @@ static void cxrfSymbolName(int size,
                       cxFileHashNumber(id), // useless put 0
                       vApplClass, vFunClass);
     fillSymbolRefItemBits(&ddd->b,symType, storage, ScopeGlobal, accessFlags,
-                           CategoryGlobal);
+                          CategoryGlobal);
     rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
     while (rr && memb->b.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
     assert(options.taskRegime);
@@ -1063,8 +1065,7 @@ static void cxrfSymbolName(int size,
                 ols=itIsSymbolToPushOlReferences(ddd,currentUserData->browserStack.top,&cms,DEFAULT_VALUE);
             }
             lastIncomingInfo.onLineRefMenuItem = cms;
-            if (ols || (additionalArg==CXSF_BY_PASS && canBypassAcceptableSymbol(ddd))
-                ) {
+            if (ols || (additionalArg==CXSF_BY_PASS && canBypassAcceptableSymbol(ddd))) {
                 lastIncomingInfo.onLineReferencedSym = si;
                 lastIncomingInfo.onLineRefIsBestMatchFlag = (ols == 2);
                 log_trace("symbol %s is O.K. for %s (ols==%d)", ddd->name, options.browsedSymName, ols);
@@ -1165,16 +1166,17 @@ static void cxrfReference(int size,
                 // input file
                 if (IS_DEFINITION_USAGE(reference.usage.base)
                     && fileTable.tab[reference.position.file]->b.commandLineEntered
-                    ) {
+                ) {
                     lastIncomingInfo.deadSymbolIsDefined = 1;
                 } else if (! IS_DEFINITION_OR_DECL_USAGE(reference.usage.base)) {
                     lastIncomingInfo.symbolToCheckForDeadness = -1;
                 }
             }
         } else if (additionalArg == CXSF_PASS_MACRO_USAGE) {
-            if (    lastIncomingInfo.onLineReferencedSym ==
-                    lastIncomingInfo.values[CXFI_SYMBOL_INDEX]
-                    &&  reference.usage.base == UsageMacroBaseFileUsage) {
+            if (lastIncomingInfo.onLineReferencedSym ==
+                lastIncomingInfo.values[CXFI_SYMBOL_INDEX]
+                && reference.usage.base == UsageMacroBaseFileUsage
+            ) {
                 s_olMacro2PassFile = reference.position.file;
             }
         } else {
@@ -1296,7 +1298,7 @@ static int scanInteger(CharacterBuffer *cb, int *_ch) {
 
 
 
-void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
+static void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
     int scannedInt = 0;
     int ch;
 
@@ -1337,7 +1339,7 @@ void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
         }
         if (lastIncomingInfo.fun[ch] != NULL) {
             (*lastIncomingInfo.fun[ch])(scannedInt, ch, &cxFileCharacterBuffer,
-                                     lastIncomingInfo.additional[ch]);
+                                        lastIncomingInfo.additional[ch]);
         } else if (! lastIncomingInfo.markers[ch]) {
             assert(scannedInt>0);
             skipCharacters(cb, scannedInt-1);
@@ -1358,7 +1360,7 @@ void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
 
 /* suffix contains '/' at the beginning !!! */
 bool scanReferenceFile(char *fileName, char *suffix1, char *suffix2,
-                      ScanFileFunctionStep *scanFunctionTable) {
+                       ScanFileFunctionStep *scanFunctionTable) {
     char fn[MAX_FILE_NAME_SIZE];
 
     sprintf(fn, "%s%s%s", fileName, suffix1, suffix2);
@@ -1425,7 +1427,7 @@ bool smartReadFileTabFile(void) {
 
 // symbolName can be NULL !!!!!!
 static void readOneAppropReferenceFile(char *symbolName,
-                                ScanFileFunctionStep  scanFileFunctionTable[]
+                                       ScanFileFunctionStep  scanFileFunctionTable[]
 ) {
     if (options.cxrefFileName == NULL)
         return;
@@ -1477,6 +1479,9 @@ void scanForMacroUsage(char *symbolName) {
     readOneAppropReferenceFile(symbolName, secondPassMacroUsageFunctionSequence);
 }
 
+void scanForGlobalUnused(char *cxrefFileName) {
+    scanReferenceFiles(cxrefFileName, globalUnusedDetectionFunctionSequence);
+}
 
 /* ************************************************************ */
 
@@ -1581,7 +1586,7 @@ ScanFileFunctionStep symbolSearchFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep deadCodeDetectionFunctionSequence[]={
+static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
