@@ -1,0 +1,15 @@
+../../src/c-xref -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -task_regime_server -o server-buffer
+-olcxpushglobalunused  CURDIR/hello.c -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1
+end-of-options
+
+<sync>
+<display-or-update-browser len=<n>></display-or-update-browser>
+-olcxmenufilter=2 -encoding=european -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1
+end-of-options
+
+<sync>
+<resolution>
+</resolution>
+-exit
+end-of-options
+
