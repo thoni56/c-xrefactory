@@ -78,7 +78,7 @@ static void usage() {
     fprintf(stdout, "\t-o <file>                 - write output to <file>\n");
     fprintf(stdout, "\t-file <file>              - name of the file given to stdin\n");
 #endif
-    fprintf(stdout, "\t-refs <file>              - name of file with cxrefs\n");
+    fprintf(stdout, "\t-refs <file>              - name of file with cxrefs, or directory if refnum > 1\n");
     fprintf(stdout, "\t-refnum=<n>               - number of cxref files\n");
     fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
     fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
@@ -105,7 +105,7 @@ static void aboutMessage(void) {
     sprintf(output+strlen(output), "(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
     sprintf(output+strlen(output), "Released into GPL 2009 by Marian Vittek (SourceForge)\n");
     sprintf(output+strlen(output), "Work resurrected and continued by Thomas Nilefalk 2015-\n");
-    sprintf(output+strlen(output), "(http://github.com/thoni56/c-xrefactory)\n");
+    sprintf(output+strlen(output), "(https://github.com/thoni56/c-xrefactory)\n");
     if (options.exit) {
         sprintf(output+strlen(output), "Exiting!");
     }
