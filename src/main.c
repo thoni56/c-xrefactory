@@ -1801,7 +1801,9 @@ static void discoverBuiltinIncludePaths(void) {
     LEAVE();
 }
 
-/* For each set the first string is the compiler
+#ifdef USE_COMPILER_DEPENDENT_DEFINES
+/* TODO: create tables that contains specific defines needed for each
+ * supported compiler. For each set the first string is the compiler
  * identification. Search will consider all sets for which the
  * identification string is a substring of the
  * compiler_identification, so you can have a set specific for "Apple
@@ -1816,9 +1818,8 @@ static char *clang_defines[] = {
 };
 
 typedef struct {char *compiler; char **defines;} CompilerDependentDefines;
-static CompilerDependentDefines compiler_dependent_defines[] = {
-    {"clang", clang_defines}
-};
+static CompilerDependentDefines compiler_dependent_defines[] = {{"clang", clang_defines}};
+#endif
 
 
 static char *extra_defines[] = {
@@ -2361,40 +2362,41 @@ void getPipedOptions(int *outNargc,char ***outNargv){
     }
 }
 
-static void fillIncludeRefItem( SymbolReferenceItem *ddd , int fnum) {
-    fillSymbolRefItem(ddd, LINK_NAME_INCLUDE_REFS,
+static void fillIncludeRefItem(SymbolReferenceItem *referenceItem, int fnum) {
+    fillSymbolRefItem(referenceItem, LINK_NAME_INCLUDE_REFS,
                                 cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
                                 fnum, fnum);
-    fillSymbolRefItemBits(&ddd->b, TypeCppInclude, StorageExtern,
+    fillSymbolRefItemBits(&referenceItem->b, TypeCppInclude, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
     char                *cxFreeBase;
-    int                 i, fileAddedFlag, isJavaFileFlag;
-    FileItem            *fi,*includer;
-    SymbolReferenceItem ddd,*memb;
+    int                 fileAddedFlag, isJavaFileFlag;
+    FileItem            *fileItem, *includer;
+    SymbolReferenceItem referenceItem, *member;
     Reference           *rr;
+
     CX_ALLOCC(cxFreeBase,0,char);
     fullScanFor(LINK_NAME_INCLUDE_REFS);
     // iterate over scheduled files
-    fileAddedFlag = 1;
+    fileAddedFlag = true;
     while (fileAddedFlag) {
-        fileAddedFlag = 0;
-        for(i=0; i<fileTable.size; i++) {
-            fi = fileTable.tab[i];
-            if (fi!=NULL && fi->b.scheduledToUpdate
-                && !fi->b.fullUpdateIncludesProcessed) {
-                fi->b.fullUpdateIncludesProcessed = true;
-                isJavaFileFlag = fileNameHasOneOfSuffixes(fi->name, options.javaFilesSuffixes);
-                fillIncludeRefItem( &ddd, i);
-                if (refTabIsMember(&referenceTable, &ddd, NULL, &memb)) {
-                    for(rr=memb->refs; rr!=NULL; rr=rr->next) {
+        fileAddedFlag = false;
+        for (int i=0; i<fileTable.size; i++) {
+            fileItem = fileTable.tab[i];
+            if (fileItem!=NULL && fileItem->b.scheduledToUpdate
+                && !fileItem->b.fullUpdateIncludesProcessed) {
+                fileItem->b.fullUpdateIncludesProcessed = true;
+                isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
+                fillIncludeRefItem(&referenceItem, i);
+                if (refTabIsMember(&referenceTable, &referenceItem, NULL, &member)) {
+                    for (rr=member->refs; rr!=NULL; rr=rr->next) {
                         includer = fileTable.tab[rr->position.file];
                         assert(includer);
                         if (!includer->b.scheduledToUpdate) {
                             includer->b.scheduledToUpdate = true;
-                            fileAddedFlag = 1;
+                            fileAddedFlag = true;
                             if (isJavaFileFlag) {
                                 // no transitive closure for Java
                                 includer->b.fullUpdateIncludesProcessed = true;

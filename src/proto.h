@@ -465,8 +465,7 @@ typedef struct SymbolsMenu {
     struct SymbolsMenu	*next;
 } SymbolsMenu;
 
-// if you add something to this structure, update olcxMoveTopFromAnotherUser()
-// !!!!!
+
 typedef struct olcxReferences {
     struct reference        *references; /* list of references */
     struct reference        *actual;     /* actual reference */

@@ -24,14 +24,14 @@ extern void scanForGlobalUnused(char *cxrefFileName);
 extern void scanForSearch(char *cxrefFileName);
 
 extern void genReferenceFile(bool updating, char *filename);
-extern int cxFileHashNumber(char *sym);
+extern int cxFileHashNumber(char *symbol);
 extern bool smartReadFileTabFile(void);
 extern bool searchStringFitness(char *cxtag, int slen);
-extern char *createTagSearchLineStatic(char *name, Position *p,
+extern char *createTagSearchLineStatic(char *name, Position *position,
                                        int *len1, int *len2, int *len3);
 extern bool symbolNameShouldBeHiddenFromReports(char *name);
-extern void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr);
-extern void addSubClassItemToFileTab( int sup, int inf, int origin);
-extern void addSubClassesItemsToFileTab(Symbol *ss, int origin);
+extern void searchSymbolCheckReference(SymbolReferenceItem  *symbolReference, Reference *reference);
+extern void addSubClassItemToFileTab(int superior, int inferior, int origin);
+extern void addSubClassesItemsToFileTab(Symbol *symbol, int origin);
 
 #endif

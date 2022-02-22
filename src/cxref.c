@@ -3493,7 +3493,8 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
     if (ss!=NULL && ss->next!=NULL) {
         // several cursor selected fields
         // probably constructor, look for a class type
-        if (ss->next->s.b.symType == TypeStruct) ss = ss->next;
+        if (ss->next->s.b.symType == TypeStruct)
+            ss = ss->next;
     }
     if (ss != NULL) {
         //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typeNamesTable[ss->s.b.symType]);
@@ -3508,7 +3509,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
             }
         }
     }
-    //&fprintf(dumpOut,"class clii==%d==%s\n",clii,fileTable.tab[clii]->name);fflush(dumpOut);
+
     olcxFreeResolutionMenu(ss);
     rstack->hkSelectedSym = olCreateSpecialMenuItem(fieldName, clii, storage);
     return clii;
@@ -3534,8 +3535,8 @@ void olCreateSelectionMenu(int command) {
     while (ss!=NULL) {
         scanReferencesToCreateMenu(ss->s.name);
         fnum = cxFileHashNumber(ss->s.name);
-        //&fprintf(dumpOut,"file %d readed\n", fnum);
-        while (ss!=NULL && fnum==cxFileHashNumber(ss->s.name)) ss = ss->next;
+        while (ss!=NULL && fnum==cxFileHashNumber(ss->s.name))
+            ss = ss->next;
     }
     refTabMap(&referenceTable, mapCreateSelectionMenu);
     refTabMap(&referenceTable, putOnLineLoadedReferences);
@@ -3548,49 +3549,48 @@ void olCreateSelectionMenu(int command) {
                     refItemsOrderLess);
 }
 
-bool refOccursInRefs(Reference *r, Reference *list) {
+bool refOccursInRefs(Reference *reference, Reference *list) {
     Reference *place;
-    SORTED_LIST_FIND2(place,Reference, (*r),list);
-    if (place==NULL || SORTED_LIST_NEQ(place, *r))
+    SORTED_LIST_FIND2(place,Reference, (*reference),list);
+    if (place==NULL || SORTED_LIST_NEQ(place, *reference))
         return false;
     return true;
 }
 
-static void olcxSingleReferenceCheck1(SymbolReferenceItem *p,
+static void olcxSingleReferenceCheck1(SymbolReferenceItem *referenceItem,
                                       OlcxReferences *rstack,
-                                      Reference *r
+                                      Reference *reference
 ) {
     int prefixchar;
 
-    if (refOccursInRefs(r, rstack->references)) {
+    if (refOccursInRefs(reference, rstack->references)) {
         prefixchar = ' ';
         if (currentUserData->browserStack.top->references == NULL) {
             fprintf(communicationChannel,"%s",COLCX_LIST);
             prefixchar = '>';
         }
         fprintf(communicationChannel,"%c  %s:%d reference to '", prefixchar,
-                simpleFileNameFromFileNum(r->position.file), r->position.line);
-        printSymbolLinkNameString(communicationChannel, p->name);
+                simpleFileNameFromFileNum(reference->position.file), reference->position.line);
+        printSymbolLinkNameString(communicationChannel, referenceItem->name);
         fprintf(communicationChannel,"' lost\n");
-        olcxAppendReference(r, currentUserData->browserStack.top);
+        olcxAppendReference(reference, currentUserData->browserStack.top);
     }
 }
 
-void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r) {
+void olcxCheck1CxFileReference(SymbolReferenceItem *referenceItem, Reference *reference) {
     SymbolReferenceItem     *sss;
     OlcxReferences    *rstack;
     SymbolsMenu     *cms;
-    bool pushed;
+    int pushedKind;
 
     assert(currentUserData && currentUserData->browserStack.top);
     rstack = currentUserData->browserStack.top->previous;
     assert(rstack && rstack->menuSym);
     sss = &rstack->menuSym->s;
-    //&fprintf(dumpOut,"checking 1 file refs %s at %s:%d\n", ss->name,simpleFileNameFromFileNum(r->position.file),r->position.line);
-    pushed = itIsSymbolToPushOlReferences(ss, rstack, &cms, DEFAULT_VALUE);
+    pushedKind = itIsSymbolToPushOlReferences(referenceItem, rstack, &cms, DEFAULT_VALUE);
     // this is very slow to check the symbol name for each reference
-    if (pushed == 0 && olcxIsSameCxSymbol(ss, sss)) {
-        olcxSingleReferenceCheck1(ss, rstack, r);
+    if (pushedKind == 0 && olcxIsSameCxSymbol(referenceItem, sss)) {
+        olcxSingleReferenceCheck1(referenceItem, rstack, reference);
     }
 }
 
@@ -3675,9 +3675,9 @@ static SymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
     return NULL;
 }
 
-bool symbolsCorrespondWrtMoving(SymbolsMenu *osym,
-                               SymbolsMenu *nsym,
-                               int command) {
+bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
+                                int command
+) {
     bool res = false;
 
     switch (command) {
@@ -3707,7 +3707,6 @@ bool symbolsCorrespondWrtMoving(SymbolsMenu *osym,
     // do not report misinterpretations induced by previous errors
     if (nsym->s.b.symType == TypeInducedError)
         res = true;
-    //&fprintf(dumpOut,";checking corr. %s %s res==%d\n", osym->s.name, nsym->s.name, res);
     return res;
 }
 
@@ -4627,7 +4626,8 @@ void mainAnswerEditAction(void) {
         olcxPushEmptyStackItem(&currentUserData->retrieverStack);
         currentUserData->retrieverStack.top->callerPosition = opos;
 
-        if (options.tagSearchSpecif==TSS_FULL_SEARCH) scanJarFilesForTagSearch();
+        if (options.tagSearchSpecif==TSS_FULL_SEARCH)
+            scanJarFilesForTagSearch();
         scanForSearch(options.cxrefFileName);
         printTagSearchResults();
         break;
