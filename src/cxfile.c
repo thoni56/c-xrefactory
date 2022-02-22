@@ -169,11 +169,12 @@ static int searchSingleStringEqual(char *s, char *c) {
     while (*s!=0 && *s!=' ' && *s!='\t' && tolower(*s)==tolower(*c)) {
         c++; s++;
     }
-    if (*s==0 || *s==' ' || *s=='\t') return(1);
-    return 0;
+    if (*s==0 || *s==' ' || *s=='\t')
+        return true;
+    return false;
 }
 
-static int searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
+static bool searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
     char *cc;
     int i, pilotc;
 
@@ -181,32 +182,36 @@ static int searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
     pilotc = tolower(*searchedStr);
     if (pilotc == '^') {
         // check for exact prefix
-        return(searchSingleStringEqual(searchedStr+1, cxtag));
+        return searchSingleStringEqual(searchedStr+1, cxtag);
     } else {
         cc = cxtag;
         for (cc=cxtag, i=0; *cc && i<len; cc++,i++) {
-            if (searchSingleStringEqual(searchedStr, cc)) return(1);
+            if (searchSingleStringEqual(searchedStr, cc))
+                return true;
         }
     }
-    return(0);
+    return false;
 }
 
-static int searchStringNonWildcardFitness(char *cxtag, int len) {
+static bool searchStringNonWildcardFitness(char *cxtag, int len) {
     char    *ss;
     int     r;
+
     ss = options.olcxSearchString;
     while (*ss) {
         while (*ss==' ' || *ss=='\t') ss++;
         if (*ss == 0) goto fini1;
         r = searchSingleStringFitness(cxtag, ss, len);
-        if (r==0) return(0);
-        while (*ss!=0 && *ss!=' ' && *ss!='\t') ss++;
+        if (r==0)
+            return false;
+        while (*ss!=0 && *ss!=' ' && *ss!='\t')
+            ss++;
     }
  fini1:
-    return(1);
+    return true;
 }
 
-int searchStringFitness(char *cxtag, int len) {
+bool searchStringFitness(char *cxtag, int len) {
     if (containsWildcard(options.olcxSearchString))
         return shellMatch(cxtag, len, options.olcxSearchString, false);
     else
@@ -963,8 +968,8 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
 
 static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingInfo.symbolToCheckForDeadness != -1
-        && lastIncomingInfo.deadSymbolIsDefined) {
-        //&sprintf(tmpBuff,"adding %s storage==%s", lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness]->name, storagesName[lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff);
+        && lastIncomingInfo.deadSymbolIsDefined
+    ) {
         olAddBrowsedSymbol(lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness],
                            &currentUserData->browserStack.top->hkSelectedSym,
                            1,1,0,UsageDefined,0, &noPosition, UsageDefined);

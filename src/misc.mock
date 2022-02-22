@@ -74,8 +74,8 @@ bool containsWildcard(char *ss) {
   return (bool) mock(ss);
 }
 
-int shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
-  return (int) mock(string, stringLen, pattern, caseSensitive);
+bool shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
+  return (bool) mock(string, stringLen, pattern, caseSensitive);
 }
 
 void expandWildcardsInOnePathRecursiveMaybe(char *filename, char **outpaths, int *availableSpace) {

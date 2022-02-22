@@ -775,7 +775,7 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
         // the new one
         // since 1.6.0 this may not work, because switching to
         // regular expressions
-        if (searchStringFitness(name, strlen(name)) == 0)
+        if (!searchStringFitness(name, strlen(name)))
             return;
     }
     //&compLine->string = name;

@@ -30,7 +30,7 @@ extern bool scanReferenceFile(char *fname, char *fns1, char *fns2,
                              ScanFileFunctionStep *scanFunTab);
 extern void scanReferenceFiles(char *fname, ScanFileFunctionStep scanFunctionTable[]);
 extern bool smartReadFileTabFile(void);
-extern int searchStringFitness(char *cxtag, int slen);
+extern bool searchStringFitness(char *cxtag, int slen);
 extern char *createTagSearchLineStatic(char *name, Position *p,
                                        int *len1, int *len2, int *len3);
 extern bool symbolNameShouldBeHiddenFromReports(char *name);

@@ -746,10 +746,11 @@ static int shellMatchParseBracketPattern(char *pattern, int pi, bool caseSensiti
     return(i);
 }
 
-int shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
-    int             si, pi, slen, plen, res;
-    IntegerList       *states, **p, *f;
+bool shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
+    int             si, pi, slen, plen;
+    IntegerList    *states, **p;
     char            asciiMap[MAX_ASCII_CHAR];
+
     si = 0;
     //&slen = strlen(string);
     slen = stringLen;
@@ -787,19 +788,19 @@ int shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) {
         }
         si ++;
     }
- fini:
-    res = 0;
-    for(f=states; f!=NULL; f=f->next) {
+ fini: ;
+    bool res = false;
+    for (IntegerList *f=states; f!=NULL; f=f->next) {
         if (f->i == plen || (f->i < plen
                              && strncmp(pattern+f->i,"**************",plen-f->i)==0)
-            ) {
-            res = 1;
+        ) {
+            res = true;
             break;
         }
     }
     while (states!=NULL) shellMatchDeleteState(&states);
 
-    return(res);
+    return res;
 }
 
 bool containsWildcard(char *ss) {

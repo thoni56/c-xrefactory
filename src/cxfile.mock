@@ -24,7 +24,7 @@ void scanForGlobalUnused(char *cxrefFileName) {
 
 ScanFileFunctionStep symbolSearchFunctionSequence[1];
 
-int searchStringFitness(char *cxtag, int slen) {
+bool searchStringFitness(char *cxtag, int slen) {
   return (int) mock(cxtag, slen);
 }
 
