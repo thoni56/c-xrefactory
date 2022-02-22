@@ -1366,8 +1366,8 @@ static void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
 
 
 /* suffix contains '/' at the beginning !!! */
-bool scanReferenceFile(char *fileName, char *suffix1, char *suffix2,
-                       ScanFileFunctionStep *scanFunctionTable) {
+static bool scanReferenceFile(char *fileName, char *suffix1, char *suffix2,
+                              ScanFileFunctionStep *scanFunctionTable) {
     char fn[MAX_FILE_NAME_SIZE];
 
     sprintf(fn, "%s%s%s", fileName, suffix1, suffix2);
@@ -1384,7 +1384,7 @@ bool scanReferenceFile(char *fileName, char *suffix1, char *suffix2,
     }
 }
 
-void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunctionTable) {
+static void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunctionTable) {
     char nn[MAX_FILE_NAME_SIZE];
     int i;
 

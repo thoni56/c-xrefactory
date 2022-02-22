@@ -60,22 +60,6 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
   mock(ss, origin);
 }
 
-void scanCxFile(ScanFileFunctionStep *scanFuns) {
-  mock(scanFuns);
-}
-
-bool scanReferenceFile(char *fname, char *fns1, char *fns2, ScanFileFunctionStep *scanFunTab) {
-  return (int) mock(fname, fns1, fns2, scanFunTab);
-}
-
-void readOneAppropReferenceFile(char *symname, ScanFileFunctionStep *scanFunTab) {
-  mock(symname, scanFunTab);
-}
-
-void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
-  mock(fname, scanFunTab);
-}
-
 bool smartReadFileTabFile(void) {
   return (bool) mock();
 }

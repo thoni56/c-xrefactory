@@ -25,9 +25,6 @@ extern void scanForSearch(char *cxrefFileName);
 
 extern void genReferenceFile(bool updating, char *filename);
 extern int cxFileHashNumber(char *sym);
-extern bool scanReferenceFile(char *fname, char *fns1, char *fns2,
-                             ScanFileFunctionStep *scanFunTab);
-extern void scanReferenceFiles(char *fname, ScanFileFunctionStep scanFunctionTable[]);
 extern bool smartReadFileTabFile(void);
 extern bool searchStringFitness(char *cxtag, int slen);
 extern char *createTagSearchLineStatic(char *name, Position *p,
