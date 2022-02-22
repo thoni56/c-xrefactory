@@ -22,6 +22,10 @@ void scanForGlobalUnused(char *cxrefFileName) {
     mock(cxrefFileName);
 }
 
+void scanForSearch(char *cxrefFileName) {
+    mock(cxrefFileName);
+}
+
 ScanFileFunctionStep symbolSearchFunctionSequence[1];
 
 bool searchStringFitness(char *cxtag, int slen) {

@@ -133,6 +133,7 @@ static ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
 static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
 static ScanFileFunctionStep classHierarchyFunctionSequence[];
 static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[];
+static ScanFileFunctionStep symbolSearchFunctionSequence[];
 
 static void scanCxFile(ScanFileFunctionStep *scanFuns);
 
@@ -145,24 +146,25 @@ static void fPutDecimal(FILE *file, int num) {
 /* *********************** INPUT/OUTPUT ************************** */
 
 int cxFileHashNumber(char *sym) {
-    unsigned   res;
+    unsigned   hash;
     char       *ss;
     int        c;
 
     if (options.referenceFileCount <= 1)
         return 0;
 
-    res = 0;
+    hash = 0;
     ss = sym;
     while ((c = *ss)) {
         if (c == '(') break;
-        SYMTAB_HASH_FUN_INC(res, c);
-        if (LINK_NAME_MAYBE_START(c)) res = 0;
+        SYMTAB_HASH_FUN_INC(hash, c);
+        if (LINK_NAME_MAYBE_START(c))
+            hash = 0;
         ss++;
     }
-    SYMTAB_HASH_FUN_FINAL(res);
-    res %= options.referenceFileCount;
-    return res;
+    SYMTAB_HASH_FUN_FINAL(hash);
+    hash %= options.referenceFileCount;
+    return hash;
 }
 
 static int searchSingleStringEqual(char *s, char *c) {
@@ -1488,6 +1490,11 @@ void scanForGlobalUnused(char *cxrefFileName) {
     scanReferenceFiles(cxrefFileName, globalUnusedDetectionFunctionSequence);
 }
 
+void scanForSearch(char *cxrefFileName) {
+    scanReferenceFiles(cxrefFileName, symbolSearchFunctionSequence);
+}
+
+
 /* ************************************************************ */
 
 static ScanFileFunctionStep normalScanFunctionSequence[]={
@@ -1581,7 +1588,7 @@ static ScanFileFunctionStep classHierarchyFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep symbolSearchFunctionSequence[]={
+static ScanFileFunctionStep symbolSearchFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},

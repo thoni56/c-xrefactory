@@ -4628,7 +4628,7 @@ void mainAnswerEditAction(void) {
         currentUserData->retrieverStack.top->callerPosition = opos;
 
         if (options.tagSearchSpecif==TSS_FULL_SEARCH) scanJarFilesForTagSearch();
-        scanReferenceFiles(options.cxrefFileName, symbolSearchFunctionSequence);
+        scanForSearch(options.cxrefFileName);
         printTagSearchResults();
         break;
     case OLO_TAG_SEARCH_BACK:

@@ -21,8 +21,7 @@ extern void scanReferencesToCreateMenu(char *symbolName);
 extern void scanForMacroUsage(char *symbolName);
 extern void scanForClassHierarchy(void);
 extern void scanForGlobalUnused(char *cxrefFileName);
-
-extern ScanFileFunctionStep symbolSearchFunctionSequence[];
+extern void scanForSearch(char *cxrefFileName);
 
 extern void genReferenceFile(bool updating, char *filename);
 extern int cxFileHashNumber(char *sym);
