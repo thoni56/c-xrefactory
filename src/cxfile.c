@@ -128,6 +128,7 @@ static char tmpFileName[MAX_FILE_NAME_SIZE];
 
 static ScanFileFunctionStep normalScanFunctionSequence[];
 static ScanFileFunctionStep fullScanFunctionSequence[];
+static ScanFileFunctionStep fullUpdateFunctionSequence[];
 static ScanFileFunctionStep byPassFunctionSequence[];
 static ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
 static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
@@ -1468,7 +1469,7 @@ void scanForClassHierarchy(void) {
 }
 
 void fullScanFor(char *symbolName) {
-    readOneAppropReferenceFile(symbolName, fullScanFunctionSequence);
+    readOneAppropReferenceFile(symbolName, fullUpdateFunctionSequence);
 }
 
 void scanForBypass(char *symbolName) {
@@ -1528,7 +1529,7 @@ static ScanFileFunctionStep byPassFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
+static ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_VERSION, cxrfVersionCheck, CXSF_UNUSED},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, CXSF_UNUSED},
@@ -1554,7 +1555,7 @@ static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-ScanFileFunctionStep fullUpdateFunctionSequence[]={
+static ScanFileFunctionStep fullUpdateFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_VERSION, cxrfVersionCheck, CXSF_UNUSED},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, CXSF_UNUSED},
