@@ -126,6 +126,13 @@ static unsigned decodeFileNumbers[MAX_FILES];
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
 
+typedef struct scanFileFunctionStep {
+    int		recordCode;
+    void    (*handleFun)(int size, int ri, CharacterBuffer *cb, int additionalArg); /* TODO: Break out a type */
+    int		additionalArg;
+} ScanFileFunctionStep;
+
+
 static ScanFileFunctionStep normalScanFunctionSequence[];
 static ScanFileFunctionStep fullScanFunctionSequence[];
 static ScanFileFunctionStep fullUpdateFunctionSequence[];

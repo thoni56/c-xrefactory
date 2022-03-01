@@ -26,8 +26,6 @@ void scanForSearch(char *cxrefFileName) {
     mock(cxrefFileName);
 }
 
-ScanFileFunctionStep symbolSearchFunctionSequence[1];
-
 bool searchStringFitness(char *cxtag, int slen) {
   return (int) mock(cxtag, slen);
 }

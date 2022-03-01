@@ -6,13 +6,6 @@
 #include "characterreader.h"
 
 
-typedef struct scanFileFunctionStep {
-    int		recordCode;
-    void    (*handleFun)(int size, int ri, CharacterBuffer *cb, int additionalArg); /* TODO: Break out a type */
-    int		additionalArg;
-} ScanFileFunctionStep;
-
-
 extern void normalScanFor(char *fileName, char *suffix);
 extern void scanForClassHierarchy(void);
 extern void fullScanFor(char *symbolName);
