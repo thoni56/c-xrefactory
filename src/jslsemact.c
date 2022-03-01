@@ -373,7 +373,7 @@ void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp){
 
     log_debug("loading super/interf %s of %s", supp->linkName, memb->linkName);
     javaLoadClassSymbolsFromFile(supp);
-    origin = memb->u.structSpec->classFile;
+    origin = memb->u.structSpec->classFileIndex;
     addSuperClassOrInterface( memb, supp, origin);
 }
 
@@ -546,7 +546,7 @@ void jslNewClassDefinitionBegin(Id *name,
         membflag = (anonInterf==NULL && position!=CPOS_FUNCTION_INNER);
         if (s_jsl->pass==1) {
             jslAddNestedClass(cc, s_jsl->classStat->thisClass, membflag, accFlags);
-            cn = cc->u.structSpec->classFile;
+            cn = cc->u.structSpec->classFileIndex;
             assert(fileTable.tab[cn]);
             if (! (accFlags & AccessStatic)) {
                 // note that non-static direct enclosing class exists
@@ -554,8 +554,8 @@ void jslNewClassDefinitionBegin(Id *name,
                 // freely uncoment it
                 assert(s_jsl->classStat->thisClass && s_jsl->classStat->thisClass->u.structSpec);
                 assert(s_jsl->classStat->thisClass->bits.symbolType==TypeStruct);
-                fileTable.tab[cn]->directEnclosingInstance = s_jsl->classStat->thisClass->u.structSpec->classFile;
-                log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.structSpec->classFile,
+                fileTable.tab[cn]->directEnclosingInstance = s_jsl->classStat->thisClass->u.structSpec->classFileIndex;
+                log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.structSpec->classFileIndex,
                           fileTable.tab[cn]->name, noFileIndex);
             } else {
                 fileTable.tab[cn]->directEnclosingInstance = noFileIndex;
@@ -570,11 +570,11 @@ void jslNewClassDefinitionBegin(Id *name,
                                 ADD_YES, ORDER_PREPEND, false);
     }
 
-    assert(cc && cc->u.structSpec && fileTable.tab[cc->u.structSpec->classFile]);
+    assert(cc && cc->u.structSpec && fileTable.tab[cc->u.structSpec->classFileIndex]);
     assert(s_jsl->sourceFileNumber>=0 && s_jsl->sourceFileNumber!=noFileIndex);
     assert(fileTable.tab[s_jsl->sourceFileNumber]);
-    fileInd = cc->u.structSpec->classFile;
-    log_trace("setting source file of %s to %s", fileTable.tab[cc->u.structSpec->classFile]->name,
+    fileInd = cc->u.structSpec->classFileIndex;
+    log_trace("setting source file of %s to %s", fileTable.tab[cc->u.structSpec->classFileIndex]->name,
               fileTable.tab[s_jsl->sourceFileNumber]->name);
     fileTable.tab[fileInd]->b.sourceFileNumber = s_jsl->sourceFileNumber;
 
@@ -624,7 +624,7 @@ void jslNewClassDefinitionEnd(void) {
     assert(s_jsl->classStat && s_jsl->classStat->next);
 
     cc = s_jsl->classStat->thisClass;
-    fileInd = cc->u.structSpec->classFile;
+    fileInd = cc->u.structSpec->classFileIndex;
     if (fileTable.tab[fileInd]->b.cxLoading) {
         fileTable.tab[fileInd]->b.cxLoaded = true;
     }

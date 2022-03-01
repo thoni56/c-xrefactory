@@ -1534,7 +1534,7 @@ FieldDeclaration
                     if (p->bits.symbolType == TypeError) continue;
                     assert(p->bits.symbolType == TypeDefault);
                     assert(clas->u.structSpec);
-                    vClass = clas->u.structSpec->classFile;
+                    vClass = clas->u.structSpec->classFileIndex;
                     jslCompleteDeclarator($2.d, p);
                     p->bits.access = $1.d;
                     p->bits.storage = StorageField;
@@ -3197,7 +3197,7 @@ ClassInstanceCreationExpression
                             // MARIAN(?): before it was s_javaStat->classFileIndex, but be more precise
                             // in reality you should keep both to discover references
                             // to original class from class nested in method.
-                            addThisCxReferences(ei->u.structSpec->classFile, &$1.d->position);
+                            addThisCxReferences(ei->u.structSpec->classFileIndex, &$1.d->position);
                             // MARIAN(?): I have removed following because it makes problems when
                             // expanding to FQT names, WHY IT WAS HERE ???
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,

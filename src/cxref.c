@@ -338,10 +338,10 @@ static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
     assert(ct);
     //&fprintf(dumpOut,"!looking for result of %s\n",p->linkName);fflush(dumpOut);
-    ct->baseClassFileIndex = s_javaObjectSymbol->u.structSpec->classFile;
+    ct->baseClassFileIndex = s_javaObjectSymbol->u.structSpec->classFileIndex;
     if (p->bits.symbolType == TypeStruct) {
         assert(p->u.structSpec);
-        ct->baseClassFileIndex = p->u.structSpec->classFile;
+        ct->baseClassFileIndex = p->u.structSpec->classFileIndex;
     } else if (p->bits.symbolType == TypeDefault && p->bits.storage!=StorageConstructor) {
         tt = p->u.typeModifier;
         assert(tt);
@@ -352,7 +352,7 @@ static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
             assert(rtcls!=NULL && rtcls->bits.symbolType==TypeStruct
                    && rtcls->u.structSpec!=NULL);
             //&fprintf(dumpOut,"!resulting class is %s\n",rtcls->linkName);fflush(dumpOut);
-            ct->baseClassFileIndex = rtcls->u.structSpec->classFile;
+            ct->baseClassFileIndex = rtcls->u.structSpec->classFileIndex;
         }
     }
 }
@@ -414,13 +414,13 @@ static void changeFieldRefUsages(SymbolReferenceItem *ri, void *rrcd) {
                 switch(rr->usage.base) {
                 case UsageMaybeThis:
                     assert(rcd->cclass->u.structSpec);
-                    if (isEnclosingClass(rcd->cclass->u.structSpec->classFile, ri->vFunClass)) {
+                    if (isEnclosingClass(rcd->cclass->u.structSpec->classFileIndex, ri->vFunClass)) {
                         rr->usage.base = UsageMaybeThisInClassOrMethod;
                     }
                     break;
                 case UsageMaybeQualifiedThis:
                     assert(rcd->cclass->u.structSpec);
-                    if (isEnclosingClass(rcd->cclass->u.structSpec->classFile, ri->vFunClass)) {
+                    if (isEnclosingClass(rcd->cclass->u.structSpec->classFileIndex, ri->vFunClass)) {
                         rr->usage.base = UsageMaybeQualifThisInClassOrMethod;
                     }
                     break;
@@ -3487,7 +3487,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
         return noFileIndex;
     }
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
-    clii = s_javaObjectSymbol->u.structSpec->classFile;
+    clii = s_javaObjectSymbol->u.structSpec->classFileIndex;
     //&fprintf(dumpOut,"class clii==%d==%s\n",clii,fileTable.tab[clii]->name);fflush(dumpOut);
     ss = rstack->hkSelectedSym;
     if (ss!=NULL && ss->next!=NULL) {
@@ -4053,7 +4053,7 @@ void olcxPushSpecial(char *fieldName, int command) {
     clii = olSpecialFieldCreateSelection(fieldName,StorageField);
     olCreateSelectionMenu(currentUserData->browserStack.top->command);
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
-    if (clii == s_javaObjectSymbol->u.structSpec->classFile
+    if (clii == s_javaObjectSymbol->u.structSpec->classFileIndex
         || command == OLO_MAYBE_THIS
         || command == OLO_NOT_FQT_REFS
         || command == OLO_NOT_FQT_REFS_IN_CLASS

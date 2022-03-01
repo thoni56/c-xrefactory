@@ -477,7 +477,7 @@ static ClassHierarchyReference *findSuperiorInSuperClasses(int superior, FileIte
 }
 
 
-static void createSubClassInfo(int superior, int inferior, int origin, int genfl) {
+static void createSubClassInfo(int superior, int inferior, int originFileIndex, int genfl) {
     FileItem      *iFile, *sFile;
     ClassHierarchyReference   *p, *pp;
 
@@ -486,21 +486,21 @@ static void createSubClassInfo(int superior, int inferior, int origin, int genfl
     assert(iFile && sFile);
     p = findSuperiorInSuperClasses(superior, iFile);
     if (p==NULL) {
-        p = newClassHierarchyReference(origin, superior, iFile->superClasses);
+        p = newClassHierarchyReference(originFileIndex, superior, iFile->superClasses);
         iFile->superClasses = p;
         assert(options.taskRegime);
         if (options.taskRegime == RegimeXref) {
             if (genfl == CX_FILE_ITEM_GEN)
-                writeSubClassInfo(superior, inferior, origin);
+                writeSubClassInfo(superior, inferior, originFileIndex);
         }
-        pp = newClassHierarchyReference(origin, inferior, sFile->superClasses);
+        pp = newClassHierarchyReference(originFileIndex, inferior, sFile->superClasses);
         sFile->inferiorClasses = pp;
     }
 }
 
-void addSubClassItemToFileTab( int sup, int inf, int origin) {
+void addSubClassItemToFileTab( int sup, int inf, int originFileIndex) {
     if (sup >= 0 && inf >= 0) {
-        createSubClassInfo(sup, inf, origin, NO_CX_FILE_ITEM_GEN);
+        createSubClassInfo(sup, inf, originFileIndex, NO_CX_FILE_ITEM_GEN);
     }
 }
 
@@ -514,12 +514,12 @@ void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
     assert(symbol->bits.javaFileIsLoaded);
     if (!symbol->bits.javaFileIsLoaded)
         return;
-    cf1 = symbol->u.structSpec->classFile;
+    cf1 = symbol->u.structSpec->classFileIndex;
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
     /*fprintf(dumpOut,"loaded: #sups == %d\n",ns);*/
     for (sups=symbol->u.structSpec->super; sups!=NULL; sups=sups->next) {
         assert(sups->d && sups->d->bits.symbolType == TypeStruct);
-        addSubClassItemToFileTab( sups->d->u.structSpec->classFile, cf1, origin);
+        addSubClassItemToFileTab(sups->d->u.structSpec->classFileIndex, cf1, origin);
     }
 }
 
@@ -1405,7 +1405,7 @@ static void scanReferenceFiles(char *cxrefFileName, ScanFileFunctionStep *scanFu
     }
 }
 
-static bool smartReadFileTabFile(void) {
+bool smartReadFileTabFile(void) {
     static time_t savedModificationTime = 0; /* Cache previously read file data... */
     static off_t savedFileSize = 0;
     static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */

@@ -851,11 +851,11 @@ static void cfAddRecordToClass(char *name,
               &*/
         }
         sprintf(pp,"%s%s", name, sig);
-        vFunCl = clas->u.structSpec->classFile;
+        vFunCl = clas->u.structSpec->classFileIndex;
         *restype = bc;
     } else {
         sprintf(pp,"%s", name);
-        vFunCl = clas->u.structSpec->classFile;
+        vFunCl = clas->u.structSpec->classFileIndex;
         /*&
           sprintf(pp,"%s.%s", clas->linkName, name);
           vFunCl = noFileIndex;
@@ -888,7 +888,7 @@ static void cfAddRecordToClass(char *name,
     assert(clas->u.structSpec);
     LIST_APPEND(Symbol, clas->u.structSpec->records, symbol);
     if (options.allowClassFileRefs) {
-        dpos = makePosition(clas->u.structSpec->classFile, 1, 0);
+        dpos = makePosition(clas->u.structSpec->classFileIndex, 1, 0);
         addCxReference(symbol, &dpos, UsageClassFileDefinition, vFunCl, vFunCl);
     }
 }
@@ -973,7 +973,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             assert(memb && memb->bits.symbolType==TypeStruct && memb->u.structSpec);
             name = memb->name;
             storage = StorageConstructor;
-            if (fileTable.tab[memb->u.structSpec->classFile]->directEnclosingInstance != noFileIndex) {
+            if (fileTable.tab[memb->u.structSpec->classFileIndex]->directEnclosingInstance != noFileIndex) {
                 // the first argument is direct enclosing instance, remove it
                 sign2 = skipFirstArgumentInDescriptorString(descriptor);
                 CF_ALLOCC(descriptor, strlen(sign2)+2, char);
@@ -1062,7 +1062,7 @@ Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
 }
 
 
-void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
+void addSuperClassOrInterface(Symbol *member, Symbol *super, int originFileIndex) {
     SymbolList *symbolList, *s;
     char tmpBuff[TMP_BUFF_SIZE];
 
@@ -1080,23 +1080,25 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
     }
     cfAddCastsToModule(member, super);
     CF_ALLOC(symbolList, SymbolList);
+
+    /* TODO: three occurrences of CF_ALLOC(.. SymbolList) warrants 'newSymbolList()'... */
     /* REPLACED: FILL_symbolList(ssl, supp, NULL); with compound literal */
     *symbolList = (SymbolList){.d = super, .next = NULL};
     LIST_APPEND(SymbolList, member->u.structSpec->super, symbolList);
-    addSubClassItemToFileTab(super->u.structSpec->classFile,
-                             member->u.structSpec->classFile,
-                             origin);
+    addSubClassItemToFileTab(super->u.structSpec->classFileIndex,
+                             member->u.structSpec->classFileIndex,
+                             originFileIndex);
 }
 
 
-void addSuperClassOrInterfaceByName(Symbol *member, char *super, int origin,
+void addSuperClassOrInterfaceByName(Symbol *member, char *super, int originFileIndex,
                                     LoadSuperOrNot loadSuper) {
     Symbol *s;
 
     s = javaGetFieldClass(super, NULL);
     if (loadSuper == LOAD_SUPER)
         javaLoadClassSymbolsFromFile(s);
-    addSuperClassOrInterface(member, s, origin);
+    addSuperClassOrInterface(member, s, originFileIndex);
 }
 
 
@@ -1112,7 +1114,7 @@ int javaCreateClassFileItem( Symbol *memb) {
 
     convertLinkNameToClassFileName(ftname, memb->linkName);
     fileIndex = addFileTabItem(ftname);
-    memb->u.structSpec->classFile = fileIndex;
+    memb->u.structSpec->classFileIndex = fileIndex;
 
     return fileIndex;
 }
@@ -1205,7 +1207,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         if (superClass<0 || superClass>=cpSize)
             goto corrupted;
         super = constantPool[constantPool[superClass].class.name_index].utf8;
-        addSuperClassOrInterfaceByName(symbol, super, symbol->u.structSpec->classFile,
+        addSuperClassOrInterfaceByName(symbol, super, symbol->u.structSpec->classFileIndex,
                                        loadSuper);
     }
 
@@ -1217,11 +1219,11 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         if (readValue != 0) {
             if (readValue<0 || readValue>=cpSize) goto corrupted;
             interf = constantPool[constantPool[readValue].class.name_index].utf8;
-            addSuperClassOrInterfaceByName(symbol, interf, symbol->u.structSpec->classFile,
+            addSuperClassOrInterfaceByName(symbol, interf, symbol->u.structSpec->classFileIndex,
                                            loadSuper);
         }
     }
-    //& addSubClassesItemsToFileTab(symbol, symbol->u.structSpec->classFile);
+    //& addSubClassesItemsToFileTab(symbol, symbol->u.structSpec->classFileIndex);
 
     cfReadFieldInfos(cb, symbol, constantPool);
 
@@ -1274,11 +1276,11 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
 
                 fill_nestedSpec(& symbol->u.structSpec->nest[rinners], inners, membFlag, modifs);
                 assert(inners && inners->bits.symbolType==TypeStruct && inners->u.structSpec);
-                cn = inners->u.structSpec->classFile;
+                cn = inners->u.structSpec->classFileIndex;
                 if (membFlag && ! (modifs & AccessStatic)) {
                     // note that non-static direct enclosing class exists
                     assert(fileTable.tab[cn]);
-                    fileTable.tab[cn]->directEnclosingInstance = symbol->u.structSpec->classFile;
+                    fileTable.tab[cn]->directEnclosingInstance = symbol->u.structSpec->classFileIndex;
                 } else {
                     fileTable.tab[cn]->directEnclosingInstance = noFileIndex;
                 }

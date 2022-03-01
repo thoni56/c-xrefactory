@@ -235,7 +235,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
         if (LANGUAGE(LANG_JAVA)) {
             ll += printJavaModifiers(tt+ll, &size, c->alternatives[ii].symbol->bits.access);
             if (c->alternatives[ii].vFunClass!=NULL) {
-                vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFile;
+                vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFileIndex;
                 if (vFunCl == -1) vFunCl = noFileIndex;
             }
         }
@@ -264,7 +264,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
     } else if (c->alternatives[ii].symbolType == TypeInheritedFullMethod) {
         if (c->alternatives[ii].vFunClass!=NULL) {
             sprintf(tt,"%s \t:%s", c->alternatives[ii].vFunClass->name, typeNamesTable[c->alternatives[ii].symbolType]);
-            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFile;
+            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFileIndex;
             if (vFunCl == -1) vFunCl = noFileIndex;
         } else {
             sprintf(tt,"%s", typeNamesTable[c->alternatives[ii].symbolType]);
@@ -493,7 +493,7 @@ void printCompletions(Completions* c) {
         }
         vFunCl = noFileIndex;
         if (LANGUAGE(LANG_JAVA)  && c->alternatives[ii].vFunClass!=NULL) {
-            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFile;
+            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFileIndex;
             if (vFunCl == -1) vFunCl = noFileIndex;
         }
         Reference ref;
@@ -993,7 +993,7 @@ static void completeRecordsNames(
             assert(rfs.currClass && rfs.currClass->u.structSpec);
             assert(r->bits.symbolType == TypeDefault);
             vFunCl = rfs.currClass;
-            if (vFunCl->u.structSpec->classFile == -1) {
+            if (vFunCl->u.structSpec->classFileIndex == -1) {
                 vFunCl = NULL;
             }
             vlevel = rfs.sti + vlevelOffset;
@@ -1446,7 +1446,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
         assert(r != NULL);
         if (*actArg==0 || javaMethodApplicability(r,actArg)==PROFILE_PARTIALLY_APPLICABLE) {
             vFunCl = rfs->currClass;
-            if (vFunCl->u.structSpec->classFile == -1) {
+            if (vFunCl->u.structSpec->classFileIndex == -1) {
                 vFunCl = NULL;
             }
             vlevel = rfs->sti;

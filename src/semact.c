@@ -427,8 +427,8 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
             minacc = javaGetMinimalAccessibility(&rfs, *res);
             fillUsageBits(&ub, UsageUsed, minacc);
             ref = addCxReferenceNew(*res,&record->position, ub,
-                                    rfs.currClass->u.structSpec->classFile,
-                                    rfs.baseClass->u.structSpec->classFile);
+                                    rfs.currClass->u.structSpec->classFileIndex,
+                                    rfs.baseClass->u.structSpec->classFileIndex);
             // this is adding reference to 'super', not to the field!
             // for pull-up/push-down
             if (super!=NULL) addThisCxReferences(s_javaStat->classFileIndex,&super->position);
@@ -464,10 +464,10 @@ void labelReference(Id *id, Usage usage) {
     if (LANGUAGE(LANG_JAVA)) {
         assert(s_javaStat&&s_javaStat->thisClass&&s_javaStat->thisClass->u.structSpec);
         if (s_cp.function!=NULL) {
-            sprintf(ttt,"%x-%s.%s",s_javaStat->thisClass->u.structSpec->classFile,
+            sprintf(ttt,"%x-%s.%s",s_javaStat->thisClass->u.structSpec->classFileIndex,
                     s_cp.function->name, id->name);
         } else {
-            sprintf(ttt,"%x-.%s", s_javaStat->thisClass->u.structSpec->classFile,
+            sprintf(ttt,"%x-.%s", s_javaStat->thisClass->u.structSpec->classFileIndex,
                     id->name);
         }
     } else if (s_cp.function!=NULL) {
@@ -857,7 +857,7 @@ static TypeModifier *createSimpleEnumType(Symbol *enumDefinition) {
 void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
     memset((void*)symStruct, 0, sizeof(*symStruct));
     symStruct->records = records;
-    symStruct->classFile = -1;  /* Should be s_noFile? */
+    symStruct->classFileIndex = -1;  /* Should be s_noFile? */
 }
 
 TypeModifier *simpleStrUnionSpecifier(Id *typeName,

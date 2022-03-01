@@ -50,8 +50,8 @@ void genReferenceFile(bool updating, char *filename) {
   mock(updating, filename);
 }
 
-void addSubClassItemToFileTab(int sup, int inf, int origin) {
-  mock(sup, inf, origin);
+void addSubClassItemToFileTab(int superior, int inferior, int origin) {
+  mock(superior, inferior, origin);
 }
 
 void addSubClassesItemsToFileTab(Symbol *ss, int origin) {

@@ -42,11 +42,12 @@ static void clearTmpClassBackPointersToMenu(void) {
 }
 
 
-ClassHierarchyReference *newClassHierarchyReference(int origin, int superClass, ClassHierarchyReference *next) {
+ClassHierarchyReference *newClassHierarchyReference(int originFileIndex, int superClass,
+                                                    ClassHierarchyReference *next) {
     ClassHierarchyReference *p;
 
     CX_ALLOC(p, ClassHierarchyReference);
-    p->ofile = origin;
+    p->ofile = originFileIndex;
     p->superClass = superClass;
     p->next = next;
 

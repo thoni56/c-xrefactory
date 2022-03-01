@@ -4116,7 +4116,7 @@ case 141:
                     if (p->bits.symbolType == TypeError) continue;
                     assert(p->bits.symbolType == TypeDefault);
                     assert(clas->u.structSpec);
-                    vClass = clas->u.structSpec->classFile;
+                    vClass = clas->u.structSpec->classFileIndex;
                     jslCompleteDeclarator(yyvsp[-2].ast_symbol.d, p);
                     p->bits.access = yyvsp[-3].ast_unsigned.d;
                     p->bits.storage = StorageField;
@@ -5986,7 +5986,7 @@ case 365:
                             /* MARIAN(?): before it was s_javaStat->classFileIndex, but be more precise*/
                             /* in reality you should keep both to discover references*/
                             /* to original class from class nested in method.*/
-                            addThisCxReferences(ei->u.structSpec->classFile, &yyvsp[-5].ast_id.d->position);
+                            addThisCxReferences(ei->u.structSpec->classFileIndex, &yyvsp[-5].ast_id.d->position);
                             /* MARIAN(?): I have removed following because it makes problems when*/
                             /* expanding to FQT names, WHY IT WAS HERE ???*/
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
