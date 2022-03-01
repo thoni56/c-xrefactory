@@ -1405,7 +1405,7 @@ static void scanReferenceFiles(char *cxrefFileName, ScanFileFunctionStep *scanFu
     }
 }
 
-bool smartReadFileTabFile(void) {
+static bool smartReadFileTabFile(void) {
     static time_t savedModificationTime = 0; /* Cache previously read file data... */
     static off_t savedFileSize = 0;
     static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */
