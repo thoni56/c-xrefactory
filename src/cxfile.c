@@ -781,7 +781,7 @@ static void cxrfCheckNumber(int size,
         sprintf(tmpBuff,"The Tag file was generated with different MAX_FILES, recreate it");
         writeCxFileCompatibilityError(tmpBuff);
     }
-    log_trace("checking %d <-> %d", exactPositionLinkFlag, options.exactPositionResolve);
+    log_trace("checking exactPositionResolve: %d <-> %d", exactPositionLinkFlag, options.exactPositionResolve);
     if (exactPositionLinkFlag != options.exactPositionResolve) {
         if (exactPositionLinkFlag) {
             sprintf(tmpBuff,"The Tag file was generated with '-exactpositionresolve' flag, recreate it");
