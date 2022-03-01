@@ -1371,11 +1371,11 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
 
 
 /* suffix contains '/' at the beginning !!! */
-static bool scanReferenceFile(char *fileName, char *suffix1, char *suffix2,
+static bool scanReferenceFile(char *cxrefFileName, char *suffix1, char *suffix2,
                               ScanFileFunctionStep *scanFunctionTable) {
     char fn[MAX_FILE_NAME_SIZE];
 
-    sprintf(fn, "%s%s%s", fileName, suffix1, suffix2);
+    sprintf(fn, "%s%s%s", cxrefFileName, suffix1, suffix2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     log_trace(":scanning file %s", fn);
     inputFile = openFile(fn, "r");
@@ -1389,18 +1389,18 @@ static bool scanReferenceFile(char *fileName, char *suffix1, char *suffix2,
     }
 }
 
-static void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunctionTable) {
+static void scanReferenceFiles(char *cxrefFileName, ScanFileFunctionStep *scanFunctionTable) {
     char nn[MAX_FILE_NAME_SIZE];
     int i;
 
     if (options.referenceFileCount <= 1) {
-        scanReferenceFile(fname,"","",scanFunctionTable);
+        scanReferenceFile(cxrefFileName,"","",scanFunctionTable);
     } else {
-        scanReferenceFile(fname,REFERENCE_FILENAME_FILES,"",scanFunctionTable);
-        scanReferenceFile(fname,REFERENCE_FILENAME_CLASSES,"",scanFunctionTable);
+        scanReferenceFile(cxrefFileName,REFERENCE_FILENAME_FILES,"",scanFunctionTable);
+        scanReferenceFile(cxrefFileName,REFERENCE_FILENAME_CLASSES,"",scanFunctionTable);
         for (i=0; i<options.referenceFileCount; i++) {
             sprintf(nn,"%04d",i);
-            scanReferenceFile(fname,REFERENCE_FILENAME_PREFIX,nn,scanFunctionTable);
+            scanReferenceFile(cxrefFileName,REFERENCE_FILENAME_PREFIX,nn,scanFunctionTable);
         }
     }
 }
@@ -1409,23 +1409,23 @@ bool smartReadFileTabFile(void) {
     static time_t savedModificationTime = 0; /* Cache previously read file data... */
     static off_t savedFileSize = 0;
     static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */
-    char fileName[MAX_FILE_NAME_SIZE];
+    char cxrefFileName[MAX_FILE_NAME_SIZE];
 
     if (options.referenceFileCount <= 1) {
-        sprintf(fileName, "%s", options.cxrefFileName);
+        sprintf(cxrefFileName, "%s", options.cxrefFileName);
     } else {
-        sprintf(fileName, "%s%s", options.cxrefFileName, REFERENCE_FILENAME_FILES);
+        sprintf(cxrefFileName, "%s%s", options.cxrefFileName, REFERENCE_FILENAME_FILES);
     }
-    if (editorFileExists(fileName)) {
-        size_t currentSize = editorFileSize(fileName);
-        time_t currentModificationTime = editorFileModificationTime(fileName);
-        if (strcmp(previouslyReadFileName, fileName) != 0
+    if (editorFileExists(cxrefFileName)) {
+        size_t currentSize = editorFileSize(cxrefFileName);
+        time_t currentModificationTime = editorFileModificationTime(cxrefFileName);
+        if (strcmp(previouslyReadFileName, cxrefFileName) != 0
             || savedModificationTime != currentModificationTime
             || savedFileSize != currentSize)
         {
             log_trace(":(re)reading file tab");
-            if (scanReferenceFile(fileName, "", "", normalScanFunctionSequence)) {
-                strcpy(previouslyReadFileName, fileName);
+            if (scanReferenceFile(cxrefFileName, "", "", normalScanFunctionSequence)) {
+                strcpy(previouslyReadFileName, cxrefFileName);
                 savedModificationTime = currentModificationTime;
                 savedFileSize = currentSize;
             }
@@ -1467,8 +1467,8 @@ static void readOneAppropReferenceFile(char *symbolName,
 }
 
 
-void normalScanFor(char *fileName, char *suffix) {
-    scanReferenceFile(fileName, suffix, "", normalScanFunctionSequence);
+void normalScanFor(char *cxrefFileName, char *suffix) {
+    scanReferenceFile(cxrefFileName, suffix, "", normalScanFunctionSequence);
 }
 
 void scanForClassHierarchy(void) {
