@@ -20,7 +20,6 @@ extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct symbolReferenceItem
                             char defUsage, struct position defpos, int outOnLine,
                             struct editorMarkerList *markers,	/* for refactory only */
                             SymbolsMenu *next);
-extern void fillUsageBits(UsageBits *STRUCTP, unsigned base, unsigned requiredAccess);
 extern int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2);
 extern void tagSearchCompactShortResults(void);

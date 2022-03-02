@@ -104,12 +104,6 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
 }
 
 
-void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess) {
-    usageBits->base = base;
-    usageBits->requiredAccess = requiredAccess;
-}
-
-
 int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return SORTED_LIST_LESS(r1, (*r2));
 }

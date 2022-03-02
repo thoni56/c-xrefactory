@@ -105,6 +105,11 @@ typedef enum usage {
 } Usage;
 
 
+#include "proto.h"              /* For UsageBits */
+
+
 extern const char *usageEnumName[];
+
+extern void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess);
 
 #endif

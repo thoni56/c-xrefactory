@@ -22,10 +22,6 @@ void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned 
 
 }
 
-void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess) {
-    mock(usageBits, base, requiredAccess);
-}
-
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct symbolReferenceItem s,
                      char selected, char visible, unsigned ooBits, char olUsage,
                      short int vlevel, short int refn, short int defRefn,
