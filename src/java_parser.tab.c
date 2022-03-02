@@ -6001,7 +6001,7 @@ case 365:
                             /* Well, it is legal only for static nested classes.*/
                             /* But for security reasons, I will keep it in comment,*/
                             /*& if (! (ss->bits.access&AccessStatic)) {
-                                    if (rr!=NULL) rr->usage.base = s_noUsage;
+                                    if (rr!=NULL) rr->usage.kind = s_noUsage;
                                 } &*/
                         }
                     }

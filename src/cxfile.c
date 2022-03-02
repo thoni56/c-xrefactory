@@ -7,6 +7,7 @@
 
 #include "cxref.h"
 #include "reftab.h"
+#include "olcxtab.h"
 #include "classhierarchy.h"
 #include "fileio.h"
 #include "list.h"
@@ -431,7 +432,7 @@ static void writeCxReferenceBase(int symbolIndex, Usage usage, int requiredAcces
 }
 
 static void writeCxReference(Reference *reference, int symbolNum) {
-    writeCxReferenceBase(symbolNum, reference->usage.base, reference->usage.requiredAccess,
+    writeCxReferenceBase(symbolNum, reference->usage.kind, reference->usage.requiredAccess,
                          reference->position.file, reference->position.line, reference->position.col);
 }
 
@@ -1181,28 +1182,28 @@ static void cxrfReference(int size,
             if (OL_VIEWABLE_REFS(&reference)) {
                 // restrict reported symbols to those defined in project
                 // input file
-                if (IS_DEFINITION_USAGE(reference.usage.base)
+                if (IS_DEFINITION_USAGE(reference.usage.kind)
                     && fileTable.tab[reference.position.file]->b.commandLineEntered
                 ) {
                     lastIncomingInfo.deadSymbolIsDefined = 1;
-                } else if (! IS_DEFINITION_OR_DECL_USAGE(reference.usage.base)) {
+                } else if (! IS_DEFINITION_OR_DECL_USAGE(reference.usage.kind)) {
                     lastIncomingInfo.symbolToCheckForDeadness = -1;
                 }
             }
         } else if (additionalArg == CXSF_PASS_MACRO_USAGE) {
             if (lastIncomingInfo.onLineReferencedSym ==
                 lastIncomingInfo.values[CXFI_SYMBOL_INDEX]
-                && reference.usage.base == UsageMacroBaseFileUsage
+                && reference.usage.kind == UsageMacroBaseFileUsage
             ) {
                 s_olMacro2PassFile = reference.position.file;
             }
         } else {
             if (options.server_operation == OLO_TAG_SEARCH) {
-                if (reference.usage.base==UsageDefined
+                if (reference.usage.kind==UsageDefined
                     || ((options.tagSearchSpecif==TSS_FULL_SEARCH
                          || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
-                        &&  (reference.usage.base==UsageDeclared
-                             || reference.usage.base==UsageClassFileDefinition))) {
+                        &&  (reference.usage.kind==UsageDeclared
+                             || reference.usage.kind==UsageClassFileDefinition))) {
                     searchSymbolCheckReference(lastIncomingInfo.symbolTab[sym],&reference);
                 }
             } else if (options.server_operation == OLO_SAFETY_CHECK1) {

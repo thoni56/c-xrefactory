@@ -144,8 +144,8 @@ typedef enum language {
 /* ******************************************************************** */
 
 #define RESET_REFERENCE_USAGE(rrr,uuu) {\
-    if (rrr!=NULL && rrr->usage.base > uuu) {\
-        rrr->usage.base = uuu;\
+    if (rrr!=NULL && rrr->usage.kind > uuu) {\
+        rrr->usage.kind = uuu;\
     }\
 }
 
@@ -169,7 +169,7 @@ typedef enum language {
   || (usage)==UsageDeclared \
 )
 
-#define OL_VIEWABLE_REFS(rrr) ((rrr)->usage.base < UsageMaxOLUsages)
+#define OL_VIEWABLE_REFS(rrr) ((rrr)->usage.kind < UsageMaxOLUsages)
 
 #define SHOW_COMPLETION_WINDOW(ccc) (\
    (ccc)->comPrefix[0]==0\

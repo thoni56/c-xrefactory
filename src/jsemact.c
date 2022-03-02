@@ -1219,8 +1219,8 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
 }
 
 static void javaResetUselessReference(Reference *ref) {
-    if (ref != NULL /*& && ref->usage.base == UsageLastUseless &*/) {
-        ref->usage.base = UsageOtherUseless;
+    if (ref != NULL /*& && ref->usage.kind == UsageLastUseless &*/) {
+        ref->usage.kind = UsageOtherUseless;
     }
 }
 

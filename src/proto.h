@@ -392,7 +392,7 @@ typedef struct jslSymbolList {
 /*          symbol definition item in cross-reference table           */
 
 typedef struct usageBits {
-    unsigned base:8;								// 0 - 128, it should not grow anymore
+    unsigned kind:8;								// 0 - 128, it should not grow anymore
     unsigned requiredAccess:MAX_REQUIRED_ACCESS_LN;	// required accessibility of the reference
 } UsageBits;
 
