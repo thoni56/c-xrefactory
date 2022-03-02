@@ -1,20 +1,21 @@
 #include "cxfile.h"
 
-#include "cxref.h"
+#include "globals.h"
+#include "commons.h"
 #include "options.h"
+#include "protocol.h"           /* C_XREF_FILE_VERSION_NUMBER */
+
+#include "cxref.h"
 #include "reftab.h"
 #include "classhierarchy.h"
 #include "fileio.h"
 #include "list.h"
 #include "filetable.h"
 
-#include "protocol.h"           /* C_XREF_FILE_VERSION_NUMBER */
-#include "globals.h"
-#include "commons.h"
 #include "misc.h"
 #include "hash.h"
+#include "usage.h"
 #include "log.h"
-#include "utils.h"              /* recursivelyCreateFileDirIfNotExists() */
 
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
