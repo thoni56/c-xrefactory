@@ -210,7 +210,7 @@ static void javaAddNameCxReference(IdList *id, unsigned usage) {
     addCxReference(&dd, &id->id.position, usage, noFileIndex, noFileIndex);
 }
 
-Symbol *javaAddType(IdList *class, Access access, Position *p) {
+Symbol *javaAddType(IdList *class, AccessKind access, Position *p) {
     Symbol *dd;
     dd = javaTypeSymbolDefinition(class, access, ADD_YES);
     dd->bits.access = access;
@@ -2548,7 +2548,7 @@ void javaAddSuperNestedClassToSymbolTab( Symbol *cc ) {
 
 
 struct freeTrail *newClassDefinitionBegin(Id *name,
-                                          Access access,
+                                          AccessKind access,
                                           Symbol *anonymousInterface) {
     IdList   *p;
     Symbol        *dd,*ddd;

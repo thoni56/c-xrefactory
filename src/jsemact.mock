@@ -98,7 +98,7 @@ void javaAddPackageDefinition(IdList *id) {
     mock(id);
 }
 
-Symbol *javaAddType(IdList *class, Access access, Position *p) {
+Symbol *javaAddType(IdList *class, AccessKind access, Position *p) {
     return (Symbol *) mock(class, access, p);
 }
 
@@ -330,7 +330,7 @@ void javaAddSuperNestedClassToSymbolTab(Symbol *cc) {
     mock(cc);
 }
 
-struct freeTrail *newClassDefinitionBegin(Id *name, Access access, Symbol *anonymousInterface) {
+struct freeTrail *newClassDefinitionBegin(Id *name, AccessKind access, Symbol *anonymousInterface) {
     return (struct freeTrail *) mock(name, access, anonymousInterface);
 }
 

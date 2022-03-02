@@ -391,10 +391,7 @@ typedef struct jslSymbolList {
 /* ****************************************************************** */
 /*          symbol definition item in cross-reference table           */
 
-typedef struct usageBits {
-    unsigned kind:8;								// 0 - 128, it should not grow anymore
-    unsigned requiredAccess:MAX_REQUIRED_ACCESS_LN;	// required accessibility of the reference
-} UsageBits;
+#include "usage.h"
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
 #define NO_REFERENCE (Reference){NO_USAGE, no_Position, NULL)
@@ -408,7 +405,7 @@ typedef struct symbolReferenceItemBits {
     Type					symType		: SYMTYPES_LN;
     Storage					storage		: STORAGES_LN;
     ReferenceScope			scope		: SCOPES_LN;
-    Access					accessFlags	: 12; /* java access bits */
+    AccessKind					accessFlags	: 12; /* java access bits */
     ReferenceCategory		category	: 2;  /* local/global */
 } SymbolReferenceItemBits;
 

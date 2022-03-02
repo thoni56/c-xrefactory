@@ -5,14 +5,14 @@
 
 /* Symbol bits */
 
-void fillSymbolBits(SymbolBits *bits, Access access, Type symType, Storage storage) {
+void fillSymbolBits(SymbolBits *bits, AccessKind access, Type symType, Storage storage) {
     memset(bits, 0, sizeof(SymbolBits));
     bits->access = access;
     bits->symbolType = symType;
     bits->storage = storage;
 }
 
-SymbolBits makeSymbolBits(Access access, Type symbolType, Storage storage) {
+SymbolBits makeSymbolBits(AccessKind access, Type symbolType, Storage storage) {
     return (SymbolBits){.access = access, .symbolType = symbolType, .storage = storage};
 }
 
@@ -31,7 +31,7 @@ Symbol makeSymbol(char *name, char *linkName, Position pos) {
     return symbol;
 }
 
-Symbol makeSymbolWithBits(char *name, char *linkName, Position pos, Access access, Type type, Storage storage) {
+Symbol makeSymbolWithBits(char *name, char *linkName, Position pos, AccessKind access, Type type, Storage storage) {
     Symbol symbol = (Symbol){.name = name, .linkName = linkName, .pos = pos, .next = NULL};
     symbol.bits = makeSymbolBits(access, type, storage);
     return symbol;

@@ -4,7 +4,7 @@
 /* *********************************************************************** */
 /*                       JAVA Access Attribute                             */
 
-typedef enum access {
+typedef enum {
     AccessDefault		=		(0u << 0), //0x000,
     AccessPublic		=		(1u << 0), //0x001,
     AccessPrivate		=		(1u << 1), //0x002,
@@ -18,7 +18,7 @@ typedef enum access {
     AccessInterface		=		(1u << 9), //0x200,
     AccessAbstract		=		(1u << 10), //0x400,
     AccessAll			=		(1u << 11), //0x800
-} Access;
+} AccessKind;
 
 #define ACCESS_PPP_MODIFER_MASK    0x007
 

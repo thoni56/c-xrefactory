@@ -24,7 +24,7 @@
 
 
 /* Private method: */
-int printJavaModifiers(char *buf, int *size, Access access);
+int printJavaModifiers(char *buf, int *size, AccessKind access);
 
 
 Describe(Complete);

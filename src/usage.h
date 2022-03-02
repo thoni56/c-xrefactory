@@ -100,16 +100,21 @@
     ENUM(USAGE_FILTER)
 
 
-typedef enum usage {
+#include "access.h"
+
+typedef enum {
     ALL_USAGE_ENUMS(GENERATE_ENUM_VALUE)
 } UsageKind;
 
 
-#include "proto.h"              /* For UsageBits */
+typedef struct usageBits {
+    UsageKind kind:8;                                   // 0 - 128, it should not grow anymore
+    AccessKind requiredAccess:MAX_REQUIRED_ACCESS_LN;   // required accessibility of the reference
+} UsageBits;
 
 
 extern const char *usageKindEnumName[];
 
-extern void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess);
+extern void fillUsageBits(struct usageBits *usageBits, UsageKind kind, AccessKind requiredAccess);
 
 #endif

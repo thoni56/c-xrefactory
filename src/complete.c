@@ -138,7 +138,7 @@ void formatOutputLine(char *line, int startingColumn) {
 }
 
 /* STATIC except for unittests */
-int printJavaModifiers(char *buf, int *size, Access access) {
+int printJavaModifiers(char *buf, int *size, AccessKind access) {
     int i = 0;
 
     if (access & AccessPublic) {
@@ -900,7 +900,7 @@ void completeStructs(Completions *c) {
     symbolTableMap2(symbolTable, completeFun, (void*) &ii);
 }
 
-static bool javaLinkable(Access access) {
+static bool javaLinkable(AccessKind access) {
 
     log_trace("testing linkability %x", access);
     if (s_language != LANG_JAVA)

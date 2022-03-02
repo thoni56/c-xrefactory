@@ -15,7 +15,7 @@
 typedef struct symbolBits {
     bool			isRecord			: 1;  /* whether struct record */
     bool			isExplicitlyImported: 1;  /* whether not imported by * import */
-    Access			access				: 12; /* java access bits */
+    AccessKind			access				: 12; /* java access bits */
     bool			javaSourceIsLoaded	: 1;  /* is jsl source file loaded ? */
     bool			javaFileIsLoaded	: 1;  /* is class file loaded ? */
 

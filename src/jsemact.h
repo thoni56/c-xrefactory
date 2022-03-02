@@ -78,7 +78,7 @@ extern TypeModifier *javaClassifyToExpressionName(IdList *name,Reference **oref)
 extern Symbol *javaTypeNameDefinition(IdList *tname);
 extern void javaSetFieldLinkName(Symbol *d);
 extern void javaAddPackageDefinition(IdList *id);
-extern Symbol *javaAddType(IdList *class, Access access, Position *p);
+extern Symbol *javaAddType(IdList *class, AccessKind access, Position *p);
 extern Symbol *javaCreateNewMethod(char *name, Position *pos, int mem);
 extern int javaTypeToString(TypeModifier *type, char *pp, int ppSize);
 extern int javaIsYetInTheClass(
@@ -167,7 +167,7 @@ extern void javaTypeDump(TypeModifier *tt);
 extern void javaAddJslReadedTopLevelClasses(JslTypeTab  *typeTab);
 extern struct freeTrail * newAnonClassDefinitionBegin(Id *interfName);
 extern void javaAddSuperNestedClassToSymbolTab( Symbol *cc);
-extern struct freeTrail *newClassDefinitionBegin(Id *name, Access access, Symbol *anonInterf);
+extern struct freeTrail *newClassDefinitionBegin(Id *name, AccessKind access, Symbol *anonInterf);
 extern void newClassDefinitionEnd(FreeTrail *trail);
 extern void javaInitArrayObject(void);
 extern void javaParsedSuperClass(Symbol *s);
