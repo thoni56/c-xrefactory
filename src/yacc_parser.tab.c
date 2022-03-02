@@ -4000,12 +4000,12 @@ break;
 case 368:
 #line 1145 "yacc_parser.y"
 {
-        Usage usage;
+        UsageKind usageKind;
         if (nestingLevel() == 0)
-            usage = USAGE_TOP_LEVEL_USED;
+            usageKind = USAGE_TOP_LEVEL_USED;
         else
-            usage = UsageUsed;
-        yyval.ast_typeModifiers.d = simpleEnumSpecifier(yyvsp[0].ast_id.d, usage);
+            usageKind = UsageUsed;
+        yyval.ast_typeModifiers.d = simpleEnumSpecifier(yyvsp[0].ast_id.d, usageKind);
     }
 break;
 case 369:

@@ -457,7 +457,7 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
     return reference;
 }
 
-void labelReference(Id *id, Usage usage) {
+void labelReference(Id *id, UsageKind usage) {
     char ttt[TMP_STRING_SIZE];
     char *tt;
     assert(id);
@@ -542,7 +542,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
 
 
 Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
-                        Usage usage) {
+                        UsageKind usage) {
     TypeModifier *tt;
 
     if (p == &s_errorSymbol || p->bits.symbolType==TypeError)
@@ -862,7 +862,7 @@ void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
 
 TypeModifier *simpleStrUnionSpecifier(Id *typeName,
                                       Id *id,
-                                      Usage usage
+                                      UsageKind usage
 ) {
     Symbol p,*pp;
     int type;
@@ -999,7 +999,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     }
 }
 
-TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
+TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
     Symbol p,*pp;
 
     fillSymbol(&p, id->name, id->name, id->position);

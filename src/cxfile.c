@@ -414,7 +414,7 @@ static void writeSymbolItemIfNotWritten(int symbolIndex) {
     }
 }
 
-static void writeCxReferenceBase(int symbolIndex, Usage usage, int requiredAccess, int file, int line, int col) {
+static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredAccess, int file, int line, int col) {
     writeSymbolItemIfNotWritten(symbolIndex);
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */

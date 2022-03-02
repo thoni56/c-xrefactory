@@ -55,7 +55,7 @@ extern bool htmlJdkDocAvailableForUrl(char *ss);
 extern Reference *duplicateReference(Reference *r);
 extern Reference * addCxReferenceNew(Symbol *symbol, Position *pos,
                                      UsageBits usage, int vFunClass, int vApplClass);
-extern Reference * addCxReference(Symbol *symbol, Position *pos, Usage usage,
+extern Reference * addCxReference(Symbol *symbol, Position *pos, UsageKind usage,
                                   int vFunClass,int vApplClass);
 extern Reference *addSpecialFieldReference(char *name, int storage,
                                            int fnum, Position *p, int usage);

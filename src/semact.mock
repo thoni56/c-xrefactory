@@ -64,7 +64,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClas
     return (int) mock(ss, recname, res, javaClassif, accessibilityCheck, visibilityCheck);
 }
 
-Symbol *addNewSymbolDef(Symbol *p, unsigned storage, SymbolTable *tab, Usage usage) {
+Symbol *addNewSymbolDef(Symbol *p, unsigned storage, SymbolTable *tab, UsageKind usage) {
     return (Symbol *) mock(p, storage, tab, usage);
 }
 
@@ -144,7 +144,7 @@ int mergeArguments(Symbol *id, Symbol *ty) {
     return (int) mock(id, ty);
 }
 
-TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, Usage usage) {
+TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, UsageKind usage) {
     return (TypeModifier *) mock(typeName, id, usage);
 }
 
@@ -156,7 +156,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     mock(sd, rec);
 }
 
-TypeModifier *simpleEnumSpecifier(Id *id, Usage usage) {
+TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
     return (TypeModifier *) mock(id, usage);
 }
 
@@ -205,6 +205,6 @@ void setLocalVariableLinkName(struct symbol *p) {
     mock(p);
 }
 
-void labelReference(Id *id, Usage usage) {
+void labelReference(Id *id, UsageKind usage) {
     mock(id, usage);
 }

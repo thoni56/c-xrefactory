@@ -926,12 +926,12 @@ struct_declarator
 
 enum_specifier
     : ENUM enum_identifier                                  {
-        Usage usage;
+        UsageKind usageKind;
         if (nestingLevel() == 0)
-            usage = USAGE_TOP_LEVEL_USED;
+            usageKind = USAGE_TOP_LEVEL_USED;
         else
-            usage = UsageUsed;
-        $$.d = simpleEnumSpecifier($2.d, usage);
+            usageKind = UsageUsed;
+        $$.d = simpleEnumSpecifier($2.d, usageKind);
     }
     | enum_define_specifier '{' enumerator_list_comma '}'       {
         assert($1.d && $1.d->kind == TypeEnum && $1.d->u.t);

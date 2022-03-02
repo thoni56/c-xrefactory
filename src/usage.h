@@ -102,13 +102,13 @@
 
 typedef enum usage {
     ALL_USAGE_ENUMS(GENERATE_ENUM_VALUE)
-} Usage;
+} UsageKind;
 
 
 #include "proto.h"              /* For UsageBits */
 
 
-extern const char *usageEnumName[];
+extern const char *usageKindEnumName[];
 
 extern void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess);
 

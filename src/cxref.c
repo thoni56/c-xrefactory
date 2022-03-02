@@ -702,7 +702,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits usage,
 
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
               vFunCl,vApplCl, pos->file, pos->line, pos->col, category==CategoryGlobal?"Global":"Local",
-              usageEnumName[usage.kind], storageEnumName[symbol->bits.storage]);
+              usageKindEnumName[usage.kind], storageEnumName[symbol->bits.storage]);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (options.server_operation == OLO_EXTRACT) {
@@ -812,12 +812,12 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits usage,
     }
 
     assert(place);
-    log_trace("returning %x == %s %s:%d", *place, usageEnumName[(*place)->usage.kind],
+    log_trace("returning %x == %s %s:%d", *place, usageKindEnumName[(*place)->usage.kind],
               fileTable.tab[(*place)->position.file]->name, (*place)->position.line);
     return *place;
 }
 
-Reference * addCxReference(Symbol *symbol, Position *pos, Usage usage, int vFunClass, int vApplClass) {
+Reference * addCxReference(Symbol *symbol, Position *pos, UsageKind usage, int vFunClass, int vApplClass) {
     UsageBits ub;
     fillUsageBits(&ub, usage, MIN_REQUIRED_ACCESS);
     return addCxReferenceNew(symbol, pos, ub, vFunClass, vApplClass);
@@ -4112,7 +4112,7 @@ static void olPushAllReferencesInBetweenMapFun(SymbolReferenceItem *ri,
             mm = olAddBrowsedSymbol(ri, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, &defpos, defusage);
             assert(mm!=NULL);
             for (; rr!=NULL; rr=rr->next) {
-                log_trace("checking reference of line %d, usage %s", rr->position.line, usageEnumName[rr->usage.kind]);
+                log_trace("checking reference of line %d, usage %s", rr->position.line, usageKindEnumName[rr->usage.kind]);
                 if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr,dd)) {
                     //& olcxAddReferenceToSymbolsMenu(mm, rr, 0);
                     log_trace("adding reference of line %d",rr->position.line);
