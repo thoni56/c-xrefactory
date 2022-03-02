@@ -28,6 +28,5 @@ typedef enum {
 
 #define MIN_REQUIRED_ACCESS 0
 #define MAX_REQUIRED_ACCESS 3
-#define MAX_REQUIRED_ACCESS_LN 2
 
 #endif

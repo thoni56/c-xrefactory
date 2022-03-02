@@ -158,7 +158,7 @@ extern int s_olMacro2PassFile;
 
 extern bool s_ifEvaluation;		/* flag for yylex, to not filter '\n' */
 
-extern int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1];
+extern AccessKind javaRequiredAccessibilityTable[MAX_REQUIRED_ACCESS+1];
 
 extern char *s_javaThisPackageName;
 

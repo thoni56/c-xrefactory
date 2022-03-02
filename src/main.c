@@ -2094,7 +2094,6 @@ static void mainTotalTaskEntryInitialisations() {
     assert(MAX_TYPE < power(2,SYMTYPES_LN));
     assert(MAX_STORAGE_NAMES < power(2,STORAGES_LN));
     assert(MAX_SCOPES < power(2,SCOPES_LN));
-    assert(MAX_REQUIRED_ACCESS < power(2, MAX_REQUIRED_ACCESS_LN));
 
     assert(PPC_MAX_AVAILABLE_REFACTORINGS < MAX_AVAILABLE_REFACTORINGS);
 

@@ -145,7 +145,7 @@ char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
     {0,     0,    0,   0,  0,   0,    1},   /* Double, */
 };
 
-int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
+AccessKind javaRequiredAccessibilityTable[MAX_REQUIRED_ACCESS+1] = {
     AccessPublic,
     AccessProtected,
     AccessDefault,

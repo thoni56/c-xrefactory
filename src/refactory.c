@@ -1689,7 +1689,7 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
 
     minAccess &= ACCESS_PPP_MODIFER_MASK;
     for (accIndex=0; accIndex<MAX_REQUIRED_ACCESS; accIndex++) {
-        if (s_javaRequiredeAccessibilitiesTable[accIndex] == minAccess) break;
+        if (javaRequiredAccessibilityTable[accIndex] == minAccess) break;
     }
 
     // must update, because usualy they are out of date here
@@ -1708,7 +1708,7 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
 
     olcxPopOnly();
 
-    access = s_javaRequiredeAccessibilitiesTable[accIndex];
+    access = javaRequiredAccessibilityTable[accIndex];
 
     if (access == AccessPublic) refactoryChangeAccessModifier(point, limitIndex, "public");
     else if (access == AccessProtected) refactoryChangeAccessModifier(point, limitIndex, "protected");

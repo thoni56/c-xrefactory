@@ -108,13 +108,13 @@ typedef enum {
 
 
 typedef struct usageBits {
-    UsageKind kind:8;                                   // 0 - 128, it should not grow anymore
-    AccessKind requiredAccess:MAX_REQUIRED_ACCESS_LN;   // required accessibility of the reference
+    UsageKind kind;
+    AccessKind requiredAccess;   // required accessibility of the reference
 } UsageBits;
 
 
 extern const char *usageKindEnumName[];
 
-extern void fillUsageBits(struct usageBits *usageBits, UsageKind kind, AccessKind requiredAccess);
+extern void fillUsageBits(UsageBits *usageBits, UsageKind kind, AccessKind requiredAccess);
 
 #endif

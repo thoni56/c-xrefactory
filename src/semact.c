@@ -271,7 +271,7 @@ bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *f
 int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     int acc, i;
     for (i=MAX_REQUIRED_ACCESS; i>0; i--) {
-        acc = s_javaRequiredeAccessibilitiesTable[i];
+        acc = javaRequiredAccessibilityTable[i];
         if (javaRecordVisible(rfs->baseClass, rfs->currClass, acc)
             && javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, r, acc)) {
             return i;
