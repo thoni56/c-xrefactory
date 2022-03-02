@@ -1467,8 +1467,8 @@ static void readOneAppropReferenceFile(char *symbolName,
 }
 
 
-void normalScanFor(char *cxrefFileName, char *suffix) {
-    scanReferenceFile(cxrefFileName, suffix, "", normalScanFunctionSequence);
+void normalScanFor(char *suffix) {
+    scanReferenceFile(options.cxrefFileName, suffix, "", normalScanFunctionSequence);
 }
 
 void scanForClassHierarchy(void) {
