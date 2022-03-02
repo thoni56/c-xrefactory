@@ -1405,7 +1405,7 @@ static void scanReferenceFiles(char *cxrefFileName, ScanFileFunctionStep *scanFu
     }
 }
 
-bool smartReadFileTabFile(void) {
+bool smartReadReferences(void) {
     static time_t savedModificationTime = 0; /* Cache previously read file data... */
     static off_t savedFileSize = 0;
     static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = ""; /* ... and name */
@@ -1423,14 +1423,14 @@ bool smartReadFileTabFile(void) {
             || savedModificationTime != currentModificationTime
             || savedFileSize != currentSize)
         {
-            log_trace(":(re)reading file tab");
+            log_trace(":(re)reading reference file '%s'", cxrefFileName);
             if (scanReferenceFile(cxrefFileName, "", "", normalScanFunctionSequence)) {
                 strcpy(previouslyReadFileName, cxrefFileName);
                 savedModificationTime = currentModificationTime;
                 savedFileSize = currentSize;
             }
         } else {
-            log_trace(":saving the (re)reading of file tab");
+            log_trace(":skipping (re)reading reference file '%s'", cxrefFileName);
         }
         return true;
     }
@@ -1447,7 +1447,7 @@ static void readOneAppropReferenceFile(char *symbolName,
     if (options.referenceFileCount <= 1) {
         scanReferenceFile(options.cxrefFileName, "", "", scanFileFunctionTable);
     } else {
-        if (!smartReadFileTabFile())
+        if (!smartReadReferences())
             return;
         if (!scanReferenceFile(options.cxrefFileName, REFERENCE_FILENAME_CLASSES, "",
                                scanFileFunctionTable))

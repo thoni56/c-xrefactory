@@ -58,6 +58,6 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
   mock(ss, origin);
 }
 
-bool smartReadFileTabFile(void) {
+bool smartReadReferences(void) {
   return (bool) mock();
 }

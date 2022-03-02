@@ -2261,7 +2261,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             // of cxref file.
             // I need to read fstab also to remove removed files on update
             processOptions(dfargc, dfargv, INFILES_DISABLED);
-            smartReadFileTabFile();
+            smartReadReferences();
         }
         processOptions(dfargc, dfargv, inmode);
         // recover value of errors messages
@@ -2585,7 +2585,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
     olStringSecondProcessing = 0;
     mainFileProcessingInitialisations(firstPass, argc, argv,
                                       nargc, nargv, &inputIn, &s_language);
-    smartReadFileTabFile();
+    smartReadReferences();
     olOriginalFileNumber = inputFileNumber;
     if (mainSymbolCanBeIdentifiedByPosition(inputFileNumber)) {
         mainCloseInputFile(inputIn);
