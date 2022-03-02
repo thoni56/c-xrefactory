@@ -83,6 +83,12 @@ else
 	LCOV = lcov
 endif
 
+# We might not have gcov-tool available
+ifneq (, $(shell which gcov-tool))
+    HAVE_GCOV_TOOL=yes
+else
+	HAVE_GCOV_TOOL=
+endif
 
 all: unit build
 
@@ -250,8 +256,10 @@ clean-coverage:
 	fi
 
 coverage-report:
+ifeq ($(HAVE_GCOV_TOOL),yes)
 	for tc in ../tests/*/.coverage ; do gcov-tool merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 	-gcov .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
+endif
 	@echo Doing the reporting in the background...
 	$(MAKE) the-actual-coverage-report &
 
