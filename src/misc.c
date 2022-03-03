@@ -828,7 +828,7 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
     if (dir2[0] == FILE_PATH_SEPARATOR) {
         // small optimisation, restrict search to directories
         sprintf(path, "%s%s", dir1, file);
-        if (!dirExists(path))
+        if (!directoryExists(path))
             return;
     }
     if (shellMatch(file, strlen(file), pattern, options.fileNamesCaseSensitive)) {

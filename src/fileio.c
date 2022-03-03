@@ -21,7 +21,7 @@ int closeFile(FILE *file) {
     return fclose(file);
 }
 
-void createDir(char *dirname) {
+void createDirectory(char *dirname) {
     struct stat st;
 
     if (exists(dirname)) {
@@ -49,7 +49,7 @@ void recursivelyCreateFileDirIfNotExists(char *fpath) {
         if (*p!=FILE_PATH_SEPARATOR)
             continue;
         ch = *p; *p = 0;        /* Truncate here, remember the char */
-        if (dirExists(fpath)) {
+        if (directoryExists(fpath)) {
             loopFlag=false;
         }
         *p = ch;                /* Restore the char */
@@ -59,7 +59,7 @@ void recursivelyCreateFileDirIfNotExists(char *fpath) {
         if (*p!=FILE_PATH_SEPARATOR)
             continue;
         ch = *p; *p = 0;
-        createDir(fpath);
+        createDirectory(fpath);
         *p = ch;
     }
 }
@@ -94,7 +94,7 @@ size_t fileSize(char *path) {
     return st.st_size;
 }
 
-bool dirExists(char *path) {
+bool directoryExists(char *path) {
     struct stat st;
     int statResult;
 

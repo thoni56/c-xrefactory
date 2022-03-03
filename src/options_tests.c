@@ -35,7 +35,7 @@ Ensure(Options, will_return_false_if_package_structure_does_not_exist) {
 Ensure(Options, will_return_true_if_package_structure_exists) {
 
     javaSourcePaths = ".";
-    expect(dirExists, when(fullPath, is_equal_to_string("./org/existant")),
+    expect(directoryExists, when(fullPath, is_equal_to_string("./org/existant")),
            will_return(true));
     expect(normalizeFileName, when(name, is_equal_to_string("./org/existant")), will_return("./org/existant"));
     expect(getFileSuffix, will_return(""));
@@ -50,9 +50,9 @@ Ensure(Options, will_return_true_if_package_structure_exists) {
 
 Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
     javaSourcePaths = "not/this/path:but/this/path";
-    expect(dirExists, when(fullPath, is_equal_to_string("not/this/path/org/existant")),
+    expect(directoryExists, when(fullPath, is_equal_to_string("not/this/path/org/existant")),
            will_return(false));
-    expect(dirExists, when(fullPath, is_equal_to_string("but/this/path/org/existant")),
+    expect(directoryExists, when(fullPath, is_equal_to_string("but/this/path/org/existant")),
            will_return(true));
     expect(normalizeFileName, when(name, is_equal_to_string("but/this/path/org/existant")),
            will_return("but/this/path/org/existant"));

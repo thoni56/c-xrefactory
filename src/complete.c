@@ -1623,7 +1623,7 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
         return;
     sprintf(fn,"%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
 
-    if (dirExists(fn)) {
+    if (directoryExists(fn)) {
         mapDirectoryFiles(fn, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
                           fn, path, NULL, a4, NULL);
     } else if (fileExists(fn)) {

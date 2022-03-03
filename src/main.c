@@ -1777,7 +1777,7 @@ static void discoverBuiltinIncludePaths(void) {
         do {
             if (strncmp(line, "End of search list.", 19) == 0)
                 break;
-            if (dirExists(line)) {
+            if (directoryExists(line)) {
                 log_trace("Add include '%s'", line);
                 addStringListOption(&options.includeDirs, line);
             }

@@ -3,7 +3,7 @@
 #include "fileio.h"
 
 
-bool dirExists(char *fullPath) {
+bool directoryExists(char *fullPath) {
     return (bool)mock(fullPath);
 }
 
@@ -31,7 +31,7 @@ int closeFile(FILE *file) {
     return fclose(file);
 }
 
-void createDir(char *dirName) {
+void createDirectory(char *dirName) {
     mock(dirName);
 }
 

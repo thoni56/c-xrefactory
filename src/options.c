@@ -896,7 +896,7 @@ bool packageOnCommandLine(char *packageName) {
         pathConcat(path, packagePath);
         assert(strlen(path)<MAX_FILE_NAME_SIZE-1);
 
-        if (dirExists(path)) {
+        if (directoryExists(path)) {
             // it is a package name, process all source files
             //&fprintf(dumpOut,"it is a package\n");
             packageFound = true;
@@ -930,7 +930,7 @@ static char *canItBeJavaBinPath(char *possibleBinPath) {
         filename[len]=0;
         if (len>4 && compareFileNames(filename+len-3, "bin")==0 && filename[len-4]==FILE_PATH_SEPARATOR) {
             sprintf(filename+len-3, "jre");
-            if (dirExists(filename)) {
+            if (directoryExists(filename)) {
                 /* This is a JRE or JDK < Java 9 */
                 sprintf(filename+len-3, "jre%clib%crt.jar", FILE_PATH_SEPARATOR, FILE_PATH_SEPARATOR);
                 assert(strlen(filename)<MAX_FILE_NAME_SIZE-1);

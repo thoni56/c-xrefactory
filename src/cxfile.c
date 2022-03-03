@@ -693,7 +693,7 @@ void genReferenceFile(bool updating, char *filename) {
         char *dirname = filename;
         int i;
 
-        createDir(dirname);
+        createDirectory(dirname);
         genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_FILES,
                                  writeFileIndexItem, writeFileSourceIndexItem);
         genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_CLASSES,

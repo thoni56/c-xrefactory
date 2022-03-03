@@ -20,5 +20,5 @@ Ensure(Fileio, can_see_if_exists) {
 }
 
 Ensure(Fileio, can_create_directory_even_if_exists) {
-    createDir(".");
+    createDirectory(".");
 }
