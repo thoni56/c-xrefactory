@@ -1685,11 +1685,11 @@ static void refactoryChangeAccessModifier(
 }
 
 static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, int minAccess) {
-    int accIndex, access;
+    int accessIndex, access;
 
     minAccess &= ACCESS_PPP_MODIFER_MASK;
-    for (accIndex=0; accIndex<MAX_REQUIRED_ACCESS; accIndex++) {
-        if (javaRequiredAccessibilityTable[accIndex] == minAccess) break;
+    for (accessIndex=0; accessIndex<MAX_REQUIRED_ACCESS; accessIndex++) {
+        if (javaRequiredAccessibilityTable[accessIndex] == minAccess) break;
     }
 
     // must update, because usualy they are out of date here
@@ -1700,21 +1700,21 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
 
     for (Reference *rr=currentUserData->browserStack.top->references; rr!=NULL; rr=rr->next) {
         if (! IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
-            if (rr->usage.requiredAccess < accIndex) {
-                accIndex = rr->usage.requiredAccess;
+            if (rr->usage.requiredAccess < accessIndex) {
+                accessIndex = rr->usage.requiredAccess;
             }
         }
     }
 
     olcxPopOnly();
 
-    access = javaRequiredAccessibilityTable[accIndex];
+    access = javaRequiredAccessibilityTable[accessIndex];
 
     if (access == AccessPublic) refactoryChangeAccessModifier(point, limitIndex, "public");
     else if (access == AccessProtected) refactoryChangeAccessModifier(point, limitIndex, "protected");
     else if (access == AccessDefault) refactoryChangeAccessModifier(point, limitIndex, "");
     else if (access == AccessPrivate) refactoryChangeAccessModifier(point, limitIndex, "private");
-    else errorMessage(ERR_INTERNAL, "No access modifier computed");
+    else errorMessage(ERR_INTERNAL, "No access modifier could be computed");
 }
 
 
