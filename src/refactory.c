@@ -3164,12 +3164,12 @@ static void refactoryMoveAllClassesToNewFile(EditorMarker *point) {
     // between classes, etc... Then update all references
 }
 
-static void refactoryAddCopyOfMarkerToList(EditorMarkerList **ll, EditorMarker *mm, Usage *usage) {
+static void refactoryAddCopyOfMarkerToList(EditorMarkerList **ll, EditorMarker *mm, Usage usage) {
     EditorMarker          *nn;
     EditorMarkerList      *lll;
     nn = editorCrNewMarker(mm->buffer, mm->offset);
     ED_ALLOC(lll, EditorMarkerList);
-    *lll = (EditorMarkerList){.marker = nn, .usage = *usage, .next = *ll};
+    *lll = (EditorMarkerList){.marker = nn, .usage = usage, .next = *ll};
     *ll = lll;
 }
 
@@ -3191,7 +3191,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     EditorRegionList *regions, **reglast, *lll;
     SymbolsMenu *csym;
     EditorUndo *undoStartPoint;
-    Usage defusage;
+    Usage defaultUsage;
 
     nparamdefpos = NULL;
     refactoryUpdateReferences(refactoringOptions.project);
@@ -3230,7 +3230,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
             javaDotifyClassName(fqthis);
             sprintf(fqthis+strlen(fqthis), ".this");
             for (EditorMarkerList *ll=mm->markers; ll!=NULL; ll=ll->next) {
-                refactoryAddCopyOfMarkerToList(&allrefs, ll->marker, &ll->usage);
+                refactoryAddCopyOfMarkerToList(&allrefs, ll->marker, ll->usage);
                 pp = NULL;
                 if (IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
                     pp = editorCrNewMarker(ll->marker->buffer, ll->marker->offset);
@@ -3296,8 +3296,8 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
 
     // passing references inside method and change them to the new parameter
     npadded = NULL;
-    fillUsage(&defusage, UsageDefined, 0);
-    refactoryAddCopyOfMarkerToList(&npadded, nparamdefpos, &defusage);
+    fillUsage(&defaultUsage, UsageDefined, 0);
+    refactoryAddCopyOfMarkerToList(&npadded, nparamdefpos, defaultUsage);
 
     for (SymbolsMenu *mm=currentUserData->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
@@ -3321,7 +3321,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
                         refactoryReplaceString(ll->marker, 0, parusage);
                     }
                     ll->marker->offset = poffset;
-                    refactoryAddCopyOfMarkerToList(&npadded, ll->marker, &ll->usage);
+                    refactoryAddCopyOfMarkerToList(&npadded, ll->marker, ll->usage);
                 }
                 writeRelativeProgress((progressi++)*100/progressn);
             }

@@ -6,7 +6,7 @@ const char *usageKindEnumName[] = {
 };
 
 
-void fillUsage(Usage *usageBits, UsageKind kind, AccessKind requiredAccess) {
-    usageBits->kind = kind;
-    usageBits->requiredAccess = requiredAccess;
+void fillUsage(Usage *usage, UsageKind kind, AccessKind requiredAccess) {
+    usage->kind = kind;
+    usage->requiredAccess = requiredAccess;
 }

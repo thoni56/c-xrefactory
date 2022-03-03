@@ -2,6 +2,7 @@
 
 #include "commons.h"
 #include "lexer.h"
+#include "usage.h"
 #include "yylex.h"
 #include "classhierarchy.h"
 #include "classfilereader.h"
@@ -817,18 +818,18 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, Usage usage,
     return *place;
 }
 
-Reference * addCxReference(Symbol *symbol, Position *pos, UsageKind usage, int vFunClass, int vApplClass) {
-    Usage ub;
-    fillUsage(&ub, usage, MIN_REQUIRED_ACCESS);
-    return addCxReferenceNew(symbol, pos, ub, vFunClass, vApplClass);
+Reference * addCxReference(Symbol *symbol, Position *pos, UsageKind usageKind, int vFunClass, int vApplClass) {
+    Usage usage;
+    fillUsage(&usage, usageKind, MIN_REQUIRED_ACCESS);
+    return addCxReferenceNew(symbol, pos, usage, vFunClass, vApplClass);
 }
 
-void addTrivialCxReference(char *name, int symType, int storage, Position *pos, int usage) {
+void addTrivialCxReference(char *name, int symType, int storage, Position *pos, UsageKind usageKind) {
     Symbol symbol;
 
     fillSymbol(&symbol, name, name, *pos);
     fillSymbolBits(&symbol.bits, AccessDefault, symType, storage);
-    addCxReference(&symbol, pos, usage, noFileIndex, noFileIndex);
+    addCxReference(&symbol, pos, usageKind, noFileIndex, noFileIndex);
 }
 
 void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {

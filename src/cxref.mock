@@ -162,8 +162,8 @@ void addCfClassTreeHierarchyRef(int fnum, int usage) {
     mock(fnum, usage);
 }
 
-void addTrivialCxReference(char *name, int symType, int storage, Position *pos, int usage) {
-    mock(name, symType, storage, pos, usage);
+void addTrivialCxReference(char *name, int symType, int storage, Position *pos, UsageKind usageKind) {
+    mock(name, symType, storage, pos, usageKind);
 }
 
 void olcxAddReferences(Reference *list, Reference **dlist, int fnum, int bestMatchFlag) {

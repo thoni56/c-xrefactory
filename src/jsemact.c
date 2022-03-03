@@ -6,6 +6,7 @@
 #include "classcaster.h"
 #include "misc.h"
 #include "extract.h"
+#include "usage.h"
 #include "yylex.h"
 #include "semact.h"
 #include "cxref.h"
@@ -1098,8 +1099,8 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
     return TypePackage;
 }
 
-static void addAmbCxRef(int classif, Symbol *sym, Position *pos, int usage, int minacc, Reference **oref, S_recFindStr *rfs) {
-    Usage ub;
+static void addAmbCxRef(int classif, Symbol *sym, Position *pos, UsageKind usageKind, int minacc, Reference **oref, S_recFindStr *rfs) {
+    Usage usage;
     if (classif!=CLASS_TO_METHOD) {
         if (rfs != NULL && rfs->currClass!=NULL) {
             assert(rfs && rfs->currClass &&
@@ -1108,13 +1109,13 @@ static void addAmbCxRef(int classif, Symbol *sym, Position *pos, int usage, int 
                    rfs->baseClass->bits.symbolType==TypeStruct && rfs->baseClass->u.structSpec);
             if (options.server_operation!=OLO_ENCAPSULATE
                 || ! javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, sym, AccessPrivate)) {
-                fillUsage(&ub, usage, minacc);
-                *oref=addCxReferenceNew(sym,pos, ub,
+                fillUsage(&usage, usageKind, minacc);
+                *oref=addCxReferenceNew(sym,pos, usage,
                                        rfs->currClass->u.structSpec->classFileIndex,
                                        rfs->baseClass->u.structSpec->classFileIndex);
             }
         } else {
-            *oref=addCxReference(sym, pos, usage, noFileIndex, noFileIndex);
+            *oref=addCxReference(sym, pos, usageKind, noFileIndex, noFileIndex);
         }
     }
 }
@@ -2115,7 +2116,7 @@ static TypeModifier *javaMethodInvocation(
     unsigned			minacc[MAX_APPL_OVERLOAD_FUNS];
     SymbolList		*ee;
     S_typeModifierList *aaa;
-    Usage			ub;
+    Usage			usage;
     int					smallesti, baseCl, vApplCl, vFunCl, usedusage;
     int					i,appli,actArgi,rr;
 
@@ -2195,8 +2196,8 @@ static TypeModifier *javaMethodInvocation(
         usedusage = UsageMethodInvokedViaSuper;
         addSuperMethodCxReferences(vFunCl, superPos);
     }
-    fillUsage(&ub, usedusage, minacc[smallesti]);
-    addCxReferenceNew(appl[smallesti], &name->position, ub, vFunCl, vApplCl);
+    fillUsage(&usage, usedusage, minacc[smallesti]);
+    addCxReferenceNew(appl[smallesti], &name->position, usage, vFunCl, vApplCl);
     if (options.server_operation == OLO_EXTRACT) {
         for(ee=appl[smallesti]->u.typeModifier->u.m.exceptions; ee!=NULL; ee=ee->next) {
             addCxReference(ee->d, &name->position, UsageThrown, noFileIndex, noFileIndex);

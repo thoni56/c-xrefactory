@@ -410,7 +410,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
 ) {
     S_recFindStr    rfs;
     Reference     *ref;
-    Usage     ub;
+    Usage     usage;
     int rr, minacc;
     ref = NULL;
     // when in java, then always in qualified name, so access and visibility checks
@@ -425,8 +425,8 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
         if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
             || javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currClass, *res)) {
             minacc = javaGetMinimalAccessibility(&rfs, *res);
-            fillUsage(&ub, UsageUsed, minacc);
-            ref = addCxReferenceNew(*res,&record->position, ub,
+            fillUsage(&usage, UsageUsed, minacc);
+            ref = addCxReferenceNew(*res,&record->position, usage,
                                     rfs.currClass->u.structSpec->classFileIndex,
                                     rfs.baseClass->u.structSpec->classFileIndex);
             // this is adding reference to 'super', not to the field!

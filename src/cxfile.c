@@ -1102,14 +1102,15 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
                                                int additionalArg
 ) {
     Position pos;
-    Usage usageBits;
-    int file, line, col, usage, sym, vApplClass, vFunClass;
+    int      file, line, col, sym, vApplClass, vFunClass;
+    UsageKind usageKind;
+    Usage usage;
     int symType,reqAcc;
 
     assert(marker == CXFI_REFERENCE);
-    usage = lastIncomingInfo.values[CXFI_USAGE];
+    usageKind = lastIncomingInfo.values[CXFI_USAGE];
     reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
-    fillUsage(&usageBits, usage, reqAcc);
+    fillUsage(&usage, usageKind, reqAcc);
     sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
     file = decodeFileNumbers[file];
@@ -1117,12 +1118,12 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
     col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
-    log_trace("%d %d->%d %d", usage, file, decodeFileNumbers[file], line);
+    log_trace("%d %d->%d %d", usageKind, file, decodeFileNumbers[file], line);
     pos = makePosition(file, line, col);
     if (lastIncomingInfo.onLineReferencedSym ==
         lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
         addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
-                     usageBits, pos);
+                     usage, pos);
     }
 }
 
@@ -1147,12 +1148,13 @@ static void cxrfReference(int size,
 ) {
     Position pos;
     Reference reference;
-    Usage usageBits;
-    int file, line, col, usage, sym, reqAcc;
+    Usage usage;
+    int       file, line, col, sym, reqAcc;
+    UsageKind usageKind;
     int copyrefFl;
 
     assert(marker == CXFI_REFERENCE);
-    usage = lastIncomingInfo.values[CXFI_USAGE];
+    usageKind = lastIncomingInfo.values[CXFI_USAGE];
     reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
     sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
@@ -1166,18 +1168,18 @@ static void cxrfReference(int size,
         if (fileTable.tab[file]->b.cxLoading&&fileTable.tab[file]->b.cxSaved) {
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
-            fillUsage(&usageBits, usage, reqAcc);
+            fillUsage(&usage, usageKind, reqAcc);
             copyrefFl = !isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
-                                     usageBits, pos);
+                                     usage, pos);
         } else {
             copyrefFl = ! fileTable.tab[file]->b.cxLoading;
         }
         if (copyrefFl)
-            writeCxReferenceBase(sym, usage, reqAcc, file, line, col);
+            writeCxReferenceBase(sym, usageKind, reqAcc, file, line, col);
     } else if (options.taskRegime == RegimeEditServer) {
         pos = makePosition(file, line, col);
-        fillUsage(&usageBits, usage, reqAcc);
-        fillReference(&reference, usageBits, pos, NULL);
+        fillUsage(&usage, usageKind, reqAcc);
+        fillReference(&reference, usage, pos, NULL);
         if (additionalArg == CXSF_DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&reference)) {
                 // restrict reported symbols to those defined in project
@@ -1230,7 +1232,7 @@ static void cxrfReference(int size,
                             //&fprintf(dumpOut,":adding bypass selected symbol %s\n", lastIncomingInfo.symbolTab[sym]->name);
                             olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],
                                                &currentUserData->browserStack.top->hkSelectedSym,
-                                               1, 1, 0, usage,0,&noPosition, UsageNone);
+                                               1, 1, 0, usageKind,0,&noPosition, UsageNone);
                         }
                     } else {
                         olcxAddReference(&currentUserData->browserStack.top->references, &reference,
