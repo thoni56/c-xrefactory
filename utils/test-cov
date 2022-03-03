@@ -1,0 +1,8 @@
+#! /bin/bash
+# Use the coverage from a single integration test to generate .gcov files in src directory
+# $1 is the name of the directory in tests except the test_ part, so tests/test_$1 should be
+# a test directory and it should have a .coverage subdirectory
+
+rm *.gcov
+cp ../tests/test_$1/.coverage/*.gcda .objects
+gcov .objects/*.o --object-directory .objects 
