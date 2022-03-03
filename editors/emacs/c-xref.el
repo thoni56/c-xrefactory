@@ -4717,8 +4717,6 @@ will be deleted.
             (insert "  -refnum=10\n")
             )
           )
-      (insert "  //  split tag files using first letter\n")
-      (insert "  -refalphahash\n")
       )
 
     (if (or (equal planguage "c") (equal planguage "C")
