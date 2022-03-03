@@ -50,6 +50,9 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO New refactoring: Extract variable
 ** TODO Extract function should extract a boolean function inside an if() correctly
 ** TODO New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
+** TODO Change to having reference file in the project tree?
+   This needs some thinking. Find it by looking upwards
+   in the dir, on create we need to ask where to store it starting with current directory
 ** TODO FUTURE: Use clangd as backend - is that even possible
 ** TODO FUTURE: Implement LSP (Language Server Protocol)
 * TODO Remove FULL/FAST update, we always want correct info?
