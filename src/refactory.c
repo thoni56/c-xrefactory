@@ -1718,18 +1718,15 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
 }
 
 
-static void refactoryCheckForMultipleReferencesOnSinglePlace2(OlcxReferences *rstack, Reference *r) {
-    if (refOccursInRefs(r, rstack->references)) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        ppcGotoPosition(&r->position);
-        sprintf(tmpBuff, "The reference at this place refers to multiple symbols. The refactoring will probably damage your program. Do you really want to continue?");
-        formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
-        //& olcxAppendReference(r, currentUserData->browserStack.top);
-    }
+static void multipleReferencesInSamePlaceMessage(Reference *r) {
+    char tmpBuff[TMP_BUFF_SIZE];
+    ppcGotoPosition(&r->position);
+    sprintf(tmpBuff, "The reference at this place refers to multiple symbols. The refactoring will probably damage your program. Do you really want to continue?");
+    formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
+    ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
 }
 
-static void refactoryCheckForMultipleReferencesOnSinglePlace(OlcxReferences *rstack, SymbolsMenu *ccms) {
+static void refactoryCheckForMultipleReferencesInSamePlace(OlcxReferences *rstack, SymbolsMenu *ccms) {
     SymbolReferenceItem *p, *sss;
     SymbolsMenu *cms;
     bool pushed;
@@ -1741,9 +1738,11 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace(OlcxReferences *rst
     // TODO, this can be simplified, as ccms == cms.
     log_trace(":checking %s to %s (%d)", p->name, sss->name, pushed);
     if ((! pushed) && olcxIsSameCxSymbol(p, sss)) {
-        //&fprintf(dumpOut,"checking %s references\n",p->name);
+        log_trace("checking %s references", p->name);
         for (Reference *r=p->refs; r!=NULL; r=r->next) {
-            refactoryCheckForMultipleReferencesOnSinglePlace2(rstack, r);
+            if (refOccursInRefs(r, rstack->references)) {
+                multipleReferencesInSamePlaceMessage(r);
+            }
         }
     }
 }
@@ -1753,7 +1752,7 @@ static void refactoryMultipleOccurencesSafetyCheck(void) {
 
     assert(currentUserData!=NULL);
     rstack = currentUserData->browserStack.top;
-    olProcessSelectedReferences(rstack, refactoryCheckForMultipleReferencesOnSinglePlace);
+    olProcessSelectedReferences(rstack, refactoryCheckForMultipleReferencesInSamePlace);
 }
 
 // -------------------------------------------- Rename
