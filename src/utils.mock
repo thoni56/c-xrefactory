@@ -5,7 +5,3 @@
 bool creatingOlcxRefs(void) {
   return (bool) mock();
 }
-
-void recursivelyCreateFileDirIfNotExists(char *fpath) {
-    mock(fpath);
-}

@@ -35,6 +35,10 @@ void createDir(char *dirName) {
     mock(dirName);
 }
 
+void recursivelyCreateFileDirIfNotExists(char *fpath) {
+    mock(fpath);
+}
+
 void removeFile(char *fileName) {
     mock(fileName);
 }

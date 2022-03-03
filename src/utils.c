@@ -40,29 +40,3 @@ bool creatingOlcxRefs(void) {
             ||  options.server_operation==OLO_NOT_FQT_REFS_IN_CLASS
             );
 }
-
-void recursivelyCreateFileDirIfNotExists(char *fpath) {
-    char *p;
-    int ch, len;
-    bool loopFlag = true;
-
-    /* Check each level from the deepest, stop when it exists */
-    len = strlen(fpath);
-    for (p=fpath+len; p>fpath && loopFlag; p--) {
-        if (*p!=FILE_PATH_SEPARATOR)
-            continue;
-        ch = *p; *p = 0;        /* Truncate here, remember the char */
-        if (dirExists(fpath)) {
-            loopFlag=false;
-        }
-        *p = ch;                /* Restore the char */
-    }
-    /* Create each of the remaining levels */
-    for (p+=2; *p; p++) {
-        if (*p!=FILE_PATH_SEPARATOR)
-            continue;
-        ch = *p; *p = 0;
-        createDir(fpath);
-        *p = ch;
-    }
-}

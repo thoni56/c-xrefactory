@@ -14,7 +14,6 @@
 #include "filetable.h"
 
 #include "misc.h"
-#include "utils.h"              /* For recursivelyCreateFileDirIfNotExists() - should move to fileio */
 #include "hash.h"
 #include "usage.h"
 #include "log.h"
