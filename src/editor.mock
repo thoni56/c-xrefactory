@@ -129,7 +129,7 @@ void editorLoadAllOpenedBufferFiles(void) {
   mock();
 }
 
-EditorMarker *editorCrNewMarker(EditorBuffer *buff, int offset) {
+EditorMarker *editorCreateNewMarker(EditorBuffer *buff, int offset) {
   return (EditorMarker *) mock(buff, offset);
 }
 

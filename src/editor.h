@@ -132,7 +132,7 @@ extern void editorDumpMarkerList(EditorMarkerList *mml);
 extern void editorDumpRegionList(EditorRegionList *mml);
 extern void editorQuasiSaveModifiedBuffers(void);
 extern void editorLoadAllOpenedBufferFiles(void);
-extern EditorMarker *editorCrNewMarker(EditorBuffer *buff, int offset);
+extern EditorMarker *editorCreateNewMarker(EditorBuffer *buff, int offset);
 extern EditorMarker *editorDuplicateMarker(EditorMarker *mm);
 extern int editorCountLinesBetweenMarkers(EditorMarker *m1, EditorMarker *m2);
 extern int editorRunWithMarkerUntil(EditorMarker *m, int (*until)(int), int step);

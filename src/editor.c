@@ -431,7 +431,7 @@ static void editorAffectMarkerToBuffer(EditorBuffer *buffer, EditorMarker *marke
         marker->next->previous = marker;
 }
 
-EditorMarker *editorCrNewMarker(EditorBuffer *buffer, int offset) {
+EditorMarker *editorCreateNewMarker(EditorBuffer *buffer, int offset) {
     EditorMarker *marker;
 
     ED_ALLOC(marker, EditorMarker);
@@ -448,13 +448,13 @@ EditorMarker *editorCrNewMarkerForPosition(Position *position) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for nonexistant position");
     }
     buffer = editorFindFile(fileTable.tab[position->file]->name);
-    marker = editorCrNewMarker(buffer, 0);
+    marker = editorCreateNewMarker(buffer, 0);
     editorMoveMarkerToLineCol(marker, position->line, position->col);
     return marker;
 }
 
 EditorMarker *editorDuplicateMarker(EditorMarker *marker) {
-    return(editorCrNewMarker(marker->buffer, marker->offset));
+    return(editorCreateNewMarker(marker->buffer, marker->offset));
 }
 
 static void editorRemoveMarkerFromBufferNoFreeing(EditorMarker *marker) {
@@ -1127,7 +1127,7 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
                 ln = 1; c = 0;
                 for(; s<smax; s++, c++) {
                     if (ln==line && c==col) {
-                        m = editorCrNewMarker(buff, s - buff->allocation.text);
+                        m = editorCreateNewMarker(buff, s - buff->allocation.text);
                         ED_ALLOC(rrr, EditorMarkerList);
                         *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
                         res = rrr;
@@ -1141,7 +1141,7 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
                 }
                 // references beyond end of buffer
                 while (r!=NULL && file == r->position.file) {
-                    m = editorCrNewMarker(buff, maxoffset);
+                    m = editorCreateNewMarker(buff, maxoffset);
                     ED_ALLOC(rrr, EditorMarkerList);
                     *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
                     res = rrr;
@@ -1326,13 +1326,13 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
     *diff1 = *diff2 = NULL;
     for(l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
         if (editorMarkerListLess(l1, l2)) {
-            m = editorCrNewMarker(l1->marker->buffer, l1->marker->offset);
+            m = editorCreateNewMarker(l1->marker->buffer, l1->marker->offset);
             ED_ALLOC(ll, EditorMarkerList);
             *ll = (EditorMarkerList){.marker = m, .usage = l1->usage, .next = *diff1};
             *diff1 = ll;
             l1 = l1->next;
         } else if (editorMarkerListLess(l2, l1)) {
-            m = editorCrNewMarker(l2->marker->buffer, l2->marker->offset);
+            m = editorCreateNewMarker(l2->marker->buffer, l2->marker->offset);
             ED_ALLOC(ll, EditorMarkerList);
             *ll = (EditorMarkerList){.marker = m, .usage = l2->usage, .next = *diff2};
             *diff2 = ll;
@@ -1342,14 +1342,14 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
         }
     }
     while (l1 != NULL) {
-        m = editorCrNewMarker(l1->marker->buffer, l1->marker->offset);
+        m = editorCreateNewMarker(l1->marker->buffer, l1->marker->offset);
         ED_ALLOC(ll, EditorMarkerList);
         *ll = (EditorMarkerList){.marker = m, .usage = l1->usage, .next = *diff1};
         *diff1 = ll;
         l1 = l1->next;
     }
     while (l2 != NULL) {
-        m = editorCrNewMarker(l2->marker->buffer, l2->marker->offset);
+        m = editorCreateNewMarker(l2->marker->buffer, l2->marker->offset);
         ED_ALLOC(ll, EditorMarkerList);
         *ll = (EditorMarkerList){.marker = m, .usage = l2->usage, .next = *diff2};
         *diff2 = ll;
@@ -1445,11 +1445,11 @@ void editorRestrictMarkersToRegions(EditorMarkerList **mm, EditorRegionList **re
 }
 
 EditorMarker *editorCrMarkerForBufferBegin(EditorBuffer *buffer) {
-    return(editorCrNewMarker(buffer,0));
+    return(editorCreateNewMarker(buffer,0));
 }
 
 EditorMarker *editorCrMarkerForBufferEnd(EditorBuffer *buffer) {
-    return(editorCrNewMarker(buffer,buffer->allocation.bufferSize));
+    return(editorCreateNewMarker(buffer,buffer->allocation.bufferSize));
 }
 
 EditorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {

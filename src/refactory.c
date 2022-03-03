@@ -425,8 +425,8 @@ void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
             editorRenameBuffer(uu->buffer, uu->u.rename.name, undoundo);
             break;
         case UNDO_MOVE_BLOCK:
-            m1 = editorCrNewMarker(uu->buffer, uu->u.moveBlock.offset);
-            m2 = editorCrNewMarker(uu->u.moveBlock.dbuffer, uu->u.moveBlock.doffset);
+            m1 = editorCreateNewMarker(uu->buffer, uu->u.moveBlock.offset);
+            m2 = editorCreateNewMarker(uu->u.moveBlock.dbuffer, uu->u.moveBlock.doffset);
             if (gen == GEN_FULL_OUTPUT) {
                 ppcGotoMarker(m1);
                 ppcValueRecord(PPC_REFACTORING_CUT_BLOCK,uu->u.moveBlock.size,"");
@@ -480,7 +480,7 @@ static void refactoryRemoveNonCommentCode(EditorMarker *m, int len) {
     assert(m->buffer && m->buffer->allocation.text);
     s = m->buffer->allocation.text + m->offset;
     nn = len;
-    mm = editorCrNewMarker(m->buffer, m->offset);
+    mm = editorCreateNewMarker(m->buffer, m->offset);
     if (m->offset + nn > m->buffer->allocation.bufferSize) {
         nn = m->buffer->allocation.bufferSize - m->offset;
     }
@@ -667,7 +667,7 @@ static EditorMarker *refactoryPointMark(EditorBuffer *buf, int offset) {
     EditorMarker *point;
     point = NULL;
     if (offset >= 0) {
-        point = editorCrNewMarker(buf, offset);
+        point = editorCreateNewMarker(buf, offset);
     }
     return point;
 }
@@ -1407,7 +1407,7 @@ static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, EditorMark
         off2 = pos->offset + strlen(oldName) + RRF_CHARS_TO_PRE_CHECK_AROUND;
         if (off1 < 0) off1 = 0;
         if (off2 >= pos->buffer->allocation.bufferSize) off2 = pos->buffer->allocation.bufferSize-1;
-        pp = editorCrNewMarker(pos->buffer, off1);
+        pp = editorCreateNewMarker(pos->buffer, off1);
         ppcPreCheck(pp, off2-off1);
         editorFreeMarker(pp);
     }
@@ -1443,7 +1443,7 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int
         return NULL;
     } else {
         bb = editorGetOpenedAndLoadedBuffer(fileTable.tab[pos->file]->name);
-        pp = editorCrNewMarker(bb, 0);
+        pp = editorCreateNewMarker(bb, 0);
         editorMoveMarkerToLineCol(pp, pos->line, pos->col);
         assert(pp->buffer == d->buffer);
         assert(pp->offset <= d->offset);
@@ -1632,7 +1632,7 @@ static EditorMarker *refactoryFindModifierAndCrMarker(EditorMarker *point, char 
         if (strncmp(text+i, modifier, mlen)==0
             && (i==0 || isspace(text[i-1]))
             && (i+mlen==blen || isspace(text[i+mlen]))) {
-            mm = editorCrNewMarker(point->buffer, i);
+            mm = editorCreateNewMarker(point->buffer, i);
             return mm;
         }
         i--;
@@ -2255,7 +2255,7 @@ static EditorMarker *refactoryReplaceStaticPrefix(EditorMarker *d, char *npref) 
     pp = refactoryCrNewMarkerForExpressionBegin(d, GET_STATIC_PREFIX_START);
     if (pp==NULL) {
         // this is an error, this is just to avoid possible core dump in the future
-        pp = editorCrNewMarker(d->buffer, d->offset);
+        pp = editorCreateNewMarker(d->buffer, d->offset);
     } else {
         ppoffset = pp->offset;
         refactoryRemoveNonCommentCode(pp, d->offset-pp->offset);
@@ -2364,7 +2364,7 @@ static bool refactoryAddImport(EditorMarker *point, EditorRegionList **regions,
 
     undoBase = s_editorUndo;
     sprintf(istat, "import %s;\n", iname);
-    mm = editorCrNewMarker(point->buffer, 0);
+    mm = editorCreateNewMarker(point->buffer, 0);
     // a little hack, make one free line after 'package'
     if (line > 1) {
         editorMoveMarkerToLineCol(mm, line-1, 0);
@@ -2757,7 +2757,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
         if ((! IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind))
             && ll->usage.kind!=UsageConstructorDefinition) {
             pp = refactoryReplaceStaticPrefix(ll->marker, fqtname);
-            ppp = editorCrNewMarker(ll->marker->buffer, ll->marker->offset);
+            ppp = editorCreateNewMarker(ll->marker->buffer, ll->marker->offset);
             editorMoveMarkerBeyondIdentifier(ppp, 1);
             regions = newEditorRegionList(pp, ppp, regions);
         }
@@ -2801,7 +2801,7 @@ static EditorMarker *getTargetFromOptions(void) {
     EditorBuffer  *tb;
     int             tline;
     tb = editorFindFileCreate(normalizeFileName(refactoringOptions.moveTargetFile, cwd));
-    target = editorCrNewMarker(tb, 0);
+    target = editorCreateNewMarker(tb, 0);
     sscanf(refactoringOptions.refpar1, "%d", &tline);
     editorMoveMarkerToLineCol(target, tline, 0);
     return target;
@@ -3037,7 +3037,7 @@ static void refactoryPerformMoveClass(EditorMarker *point,
 
     *outstart = mstart;
     // put outend -1 to be updated during moving
-    *outend = editorCrNewMarker(mend->buffer, mend->offset-1);
+    *outend = editorCreateNewMarker(mend->buffer, mend->offset-1);
 
     // prechecks
     refactorySetMovingPrecheckStandardEnvironment(point, targetFqtName);
@@ -3149,7 +3149,7 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
     ppcValueRecord(PPC_INDENT, linenum, "");
 
     // TODO check whether the original class was the only class in the file
-    npoint = editorCrNewMarker(buff, 0);
+    npoint = editorCreateNewMarker(buff, 0);
     // just to parse the file
     refactoryEditServerParseBuffer(refactoringOptions.project, npoint->buffer, npoint,NULL, "-olcxpushspecialname=", NULL);
     if (s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION].file == noFileIndex) {
@@ -3164,10 +3164,10 @@ static void refactoryMoveAllClassesToNewFile(EditorMarker *point) {
     // between classes, etc... Then update all references
 }
 
-static void refactoryAddCopyOfMarkerToList(EditorMarkerList **ll, EditorMarker *mm, Usage usage) {
+static void addCopyOfMarkerToList(EditorMarkerList **ll, EditorMarker *mm, Usage usage) {
     EditorMarker          *nn;
     EditorMarkerList      *lll;
-    nn = editorCrNewMarker(mm->buffer, mm->offset);
+    nn = editorCreateNewMarker(mm->buffer, mm->offset);
     ED_ALLOC(lll, EditorMarkerList);
     *lll = (EditorMarkerList){.marker = nn, .usage = usage, .next = *ll};
     *ll = lll;
@@ -3175,7 +3175,7 @@ static void refactoryAddCopyOfMarkerToList(EditorMarkerList **ll, EditorMarker *
 
 // ------------------------------------------ TurnDynamicToStatic
 
-static void refactoryTurnDynamicToStatic(EditorMarker *point) {
+static void refactorVirtualToStatic(EditorMarker *point) {
     char nameOnPoint[TMP_STRING_SIZE];
     char primary[REFACTORING_TMP_STRING_SIZE];
     char fqstaticname[REFACTORING_TMP_STRING_SIZE];
@@ -3230,14 +3230,14 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
             javaDotifyClassName(fqthis);
             sprintf(fqthis+strlen(fqthis), ".this");
             for (EditorMarkerList *ll=mm->markers; ll!=NULL; ll=ll->next) {
-                refactoryAddCopyOfMarkerToList(&allrefs, ll->marker, ll->usage);
+                addCopyOfMarkerToList(&allrefs, ll->marker, ll->usage);
                 pp = NULL;
                 if (IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
-                    pp = editorCrNewMarker(ll->marker->buffer, ll->marker->offset);
+                    pp = editorCreateNewMarker(ll->marker->buffer, ll->marker->offset);
                     pp->offset = refactoryAddStringAsParameter(ll->marker, ll->marker, nameOnPoint,
                                                                1, pardecl);
                     // remember definition position of new parameter
-                    nparamdefpos = editorCrNewMarker(pp->buffer, pp->offset+strlen(pardecl)-strlen(refactoringOptions.refpar1));
+                    nparamdefpos = editorCreateNewMarker(pp->buffer, pp->offset+strlen(pardecl)-strlen(refactoringOptions.refpar1));
                 } else {
                     pp = refactoryCrNewMarkerForExpressionBegin(ll->marker, GET_PRIMARY_START);
                     assert(pp!=NULL);
@@ -3260,7 +3260,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
                     // return offset back to beginning of fqt
                     pp->offset = ppoffset;
                 }
-                ppp = editorCrNewMarker(ll->marker->buffer, ll->marker->offset);
+                ppp = editorCreateNewMarker(ll->marker->buffer, ll->marker->offset);
                 editorMoveMarkerBeyondIdentifier(ppp, 1);
 
                 /* TODO: clean up... */
@@ -3297,7 +3297,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     // passing references inside method and change them to the new parameter
     npadded = NULL;
     fillUsage(&defaultUsage, UsageDefined, 0);
-    refactoryAddCopyOfMarkerToList(&npadded, nparamdefpos, defaultUsage);
+    addCopyOfMarkerToList(&npadded, nparamdefpos, defaultUsage);
 
     for (SymbolsMenu *mm=currentUserData->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
@@ -3321,7 +3321,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
                         refactoryReplaceString(ll->marker, 0, parusage);
                     }
                     ll->marker->offset = poffset;
-                    refactoryAddCopyOfMarkerToList(&npadded, ll->marker, ll->usage);
+                    addCopyOfMarkerToList(&npadded, ll->marker, ll->usage);
                 }
                 writeRelativeProgress((progressi++)*100/progressn);
             }
@@ -3430,7 +3430,7 @@ static int refactoryIsMethodPartRedundant(
 
 static void refactoryRemoveMethodPartIfRedundant(EditorMarker *m, int len) {
     EditorMarker *mm;
-    mm = editorCrNewMarker(m->buffer, m->offset+len);
+    mm = editorCreateNewMarker(m->buffer, m->offset+len);
     if (refactoryIsMethodPartRedundant(m, mm)) {
         refactoryReplaceString(m, len, "");
     }
@@ -3444,7 +3444,7 @@ static bool staticToDynCanBeThisOccurence(EditorMarker *pp, char *param, int *rl
     EditorMarker  *mm;
     bool res = false;
 
-    mm = editorCrNewMarker(pp->buffer, pp->offset);
+    mm = editorCreateNewMarker(pp->buffer, pp->offset);
     pp2 = strchr(param, '.');
     if (pp2==NULL) {
         *rlen = strlen(param);
@@ -3516,7 +3516,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     }
 
     checkPoint = s_editorUndo;
-    pp = editorCrNewMarker(point->buffer, point->offset);
+    pp = editorCreateNewMarker(point->buffer, point->offset);
     res = editorRunWithMarkerUntil(pp, isMethodBeg, 1);
     if (! res) {
         errorMessage(ERR_INTERNAL, "Can't find beginning of method");
@@ -3788,12 +3788,12 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     tbeg->offset --;
 
     getterm = setterm = NULL;
-    getterm = editorCrNewMarker(de->buffer, de->offset-1);
+    getterm = editorCreateNewMarker(de->buffer, de->offset-1);
     refactoryReplaceString(de, 0, getterBody);
     getterm->offset += substringIndex(getterBody, getter)+1;
 
     if ((accFlags & AccessFinal) ==  0) {
-        setterm = editorCrNewMarker(de->buffer, de->offset-1);
+        setterm = editorCreateNewMarker(de->buffer, de->offset-1);
         refactoryReplaceString(de, 0, setterBody);
         setterm->offset += substringIndex(setterBody, setter)+1;
     }
@@ -4538,7 +4538,7 @@ void mainRefactory() {
         break;
     case AVR_TURN_DYNAMIC_METHOD_TO_STATIC:
         progressFactor = 4;
-        refactoryTurnDynamicToStatic(point);
+        refactorVirtualToStatic(point);
         break;
     case AVR_EXTRACT_METHOD:
         progressFactor = 1;
