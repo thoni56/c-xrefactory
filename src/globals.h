@@ -29,7 +29,7 @@ extern int s_lastReturnedLexem;
 extern Position s_spp[SPP_MAX];
 
 // !!! if changing this, change also s_noRef!!!
-#define NO_USAGE (UsageBits){UsageNone, 0}
+#define NO_USAGE (Usage){UsageNone, 0}
 
 extern int progressFactor;
 extern int progressOffset;

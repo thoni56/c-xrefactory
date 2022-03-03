@@ -3165,7 +3165,7 @@ static void refactoryMoveAllClassesToNewFile(EditorMarker *point) {
     // between classes, etc... Then update all references
 }
 
-static void refactoryAddCopyOfMarkerToList(EditorMarkerList **ll, EditorMarker *mm, UsageBits *usage) {
+static void refactoryAddCopyOfMarkerToList(EditorMarkerList **ll, EditorMarker *mm, Usage *usage) {
     EditorMarker          *nn;
     EditorMarkerList      *lll;
     nn = editorCrNewMarker(mm->buffer, mm->offset);
@@ -3192,7 +3192,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
     EditorRegionList *regions, **reglast, *lll;
     SymbolsMenu *csym;
     EditorUndo *undoStartPoint;
-    UsageBits defusage;
+    Usage defusage;
 
     nparamdefpos = NULL;
     refactoryUpdateReferences(refactoringOptions.project);
@@ -3297,7 +3297,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
 
     // passing references inside method and change them to the new parameter
     npadded = NULL;
-    fillUsageBits(&defusage, UsageDefined, 0);
+    fillUsage(&defusage, UsageDefined, 0);
     refactoryAddCopyOfMarkerToList(&npadded, nparamdefpos, &defusage);
 
     for (SymbolsMenu *mm=currentUserData->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {

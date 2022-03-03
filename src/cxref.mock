@@ -4,7 +4,7 @@
 
 #include "olcxtab.h"
 
-void fillReference(Reference *reference, UsageBits usage, Position position,
+void fillReference(Reference *reference, Usage usage, Position position,
                     Reference *next) {
     /* NOTE can't mock UsageBits or Position */
     mock(reference, next);
@@ -140,8 +140,8 @@ Reference *duplicateReference(Reference *r) {
     return (Reference *) mock(r);
 }
 
-Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits usage_arg, int vFunClass, int vApplClass) {
-    UsageBits *usage = &usage_arg;
+Reference *addCxReferenceNew(Symbol *symbol, Position *pos, Usage usage_arg, int vFunClass, int vApplClass) {
+    Usage *usage = &usage_arg;
     return (Reference *) mock(symbol, pos, usage, vFunClass, vApplClass);
 }
 
@@ -199,9 +199,9 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-Reference **addToRefList(Reference **list, UsageBits usage_arg, Position pos_arg) {
+Reference **addToRefList(Reference **list, Usage usage_arg, Position pos_arg) {
     Position *pos = &pos_arg;
-    UsageBits *usage = &usage_arg;
+    Usage *usage = &usage_arg;
     return (Reference **) mock(list, usage, pos);
 }
 

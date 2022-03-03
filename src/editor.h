@@ -56,7 +56,7 @@ typedef struct editorMarker {
 
 typedef struct editorMarkerList {
     struct editorMarker		*marker;
-    struct usageBits		usage;
+    struct usage		usage;
     struct editorMarkerList	*next;
 } EditorMarkerList;
 

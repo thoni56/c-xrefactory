@@ -8,7 +8,7 @@
 #include "ppc.h"
 
 
-extern void fillReference(Reference *reference, UsageBits usage, Position position, Reference *next);
+extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
 extern void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
                               int vFunClass);
 extern void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
@@ -54,7 +54,7 @@ extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
 extern bool htmlJdkDocAvailableForUrl(char *ss);
 extern Reference *duplicateReference(Reference *r);
 extern Reference * addCxReferenceNew(Symbol *symbol, Position *pos,
-                                     UsageBits usage, int vFunClass, int vApplClass);
+                                     Usage usage, int vFunClass, int vApplClass);
 extern Reference * addCxReference(Symbol *symbol, Position *pos, UsageKind usage,
                                   int vFunClass,int vApplClass);
 extern Reference *addSpecialFieldReference(char *name, int storage,
@@ -83,7 +83,7 @@ extern SymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, SymbolsMenu **l
 extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern Reference **addToRefList(Reference **list,
-                                UsageBits usage,
+                                Usage usage,
                                 Position pos);
 extern char *getXrefEnvironmentValue(char *name);
 extern int itIsSymbolToPushOlReferences(SymbolReferenceItem *p, OlcxReferences *rstack,

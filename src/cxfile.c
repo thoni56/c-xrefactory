@@ -1102,14 +1102,14 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
                                                int additionalArg
 ) {
     Position pos;
-    UsageBits usageBits;
+    Usage usageBits;
     int file, line, col, usage, sym, vApplClass, vFunClass;
     int symType,reqAcc;
 
     assert(marker == CXFI_REFERENCE);
     usage = lastIncomingInfo.values[CXFI_USAGE];
     reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
-    fillUsageBits(&usageBits, usage, reqAcc);
+    fillUsage(&usageBits, usage, reqAcc);
     sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
     file = decodeFileNumbers[file];
@@ -1127,7 +1127,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
 }
 
 static bool isInRefList(Reference *list,
-                        UsageBits usage,
+                        Usage usage,
                         Position position) {
     Reference *foundReference;
     Reference reference;
@@ -1147,7 +1147,7 @@ static void cxrfReference(int size,
 ) {
     Position pos;
     Reference reference;
-    UsageBits usageBits;
+    Usage usageBits;
     int file, line, col, usage, sym, reqAcc;
     int copyrefFl;
 
@@ -1166,7 +1166,7 @@ static void cxrfReference(int size,
         if (fileTable.tab[file]->b.cxLoading&&fileTable.tab[file]->b.cxSaved) {
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
-            fillUsageBits(&usageBits, usage, reqAcc);
+            fillUsage(&usageBits, usage, reqAcc);
             copyrefFl = !isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
                                      usageBits, pos);
         } else {
@@ -1176,7 +1176,7 @@ static void cxrfReference(int size,
             writeCxReferenceBase(sym, usage, reqAcc, file, line, col);
     } else if (options.taskRegime == RegimeEditServer) {
         pos = makePosition(file, line, col);
-        fillUsageBits(&usageBits, usage, reqAcc);
+        fillUsage(&usageBits, usage, reqAcc);
         fillReference(&reference, usageBits, pos, NULL);
         if (additionalArg == CXSF_DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&reference)) {

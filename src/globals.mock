@@ -79,7 +79,7 @@ int s_olstringServed;
 Position s_olcxByPassPos;
 int s_olMacro2PassFile;
 
-UsageBits s_noUsage;
+Usage s_noUsage;
 Position noPosition = {-1, 0, 0};
 
 Language s_language;

@@ -1099,7 +1099,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
 }
 
 static void addAmbCxRef(int classif, Symbol *sym, Position *pos, int usage, int minacc, Reference **oref, S_recFindStr *rfs) {
-    UsageBits ub;
+    Usage ub;
     if (classif!=CLASS_TO_METHOD) {
         if (rfs != NULL && rfs->currClass!=NULL) {
             assert(rfs && rfs->currClass &&
@@ -1108,7 +1108,7 @@ static void addAmbCxRef(int classif, Symbol *sym, Position *pos, int usage, int 
                    rfs->baseClass->bits.symbolType==TypeStruct && rfs->baseClass->u.structSpec);
             if (options.server_operation!=OLO_ENCAPSULATE
                 || ! javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, sym, AccessPrivate)) {
-                fillUsageBits(&ub, usage, minacc);
+                fillUsage(&ub, usage, minacc);
                 *oref=addCxReferenceNew(sym,pos, ub,
                                        rfs->currClass->u.structSpec->classFileIndex,
                                        rfs->baseClass->u.structSpec->classFileIndex);
@@ -2115,7 +2115,7 @@ static TypeModifier *javaMethodInvocation(
     unsigned			minacc[MAX_APPL_OVERLOAD_FUNS];
     SymbolList		*ee;
     S_typeModifierList *aaa;
-    UsageBits			ub;
+    Usage			ub;
     int					smallesti, baseCl, vApplCl, vFunCl, usedusage;
     int					i,appli,actArgi,rr;
 
@@ -2195,7 +2195,7 @@ static TypeModifier *javaMethodInvocation(
         usedusage = UsageMethodInvokedViaSuper;
         addSuperMethodCxReferences(vFunCl, superPos);
     }
-    fillUsageBits(&ub, usedusage, minacc[smallesti]);
+    fillUsage(&ub, usedusage, minacc[smallesti]);
     addCxReferenceNew(appl[smallesti], &name->position, ub, vFunCl, vApplCl);
     if (options.server_operation == OLO_EXTRACT) {
         for(ee=appl[smallesti]->u.typeModifier->u.m.exceptions; ee!=NULL; ee=ee->next) {

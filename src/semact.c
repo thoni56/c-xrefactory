@@ -410,7 +410,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
 ) {
     S_recFindStr    rfs;
     Reference     *ref;
-    UsageBits     ub;
+    Usage     ub;
     int rr, minacc;
     ref = NULL;
     // when in java, then always in qualified name, so access and visibility checks
@@ -425,7 +425,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
         if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
             || javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currClass, *res)) {
             minacc = javaGetMinimalAccessibility(&rfs, *res);
-            fillUsageBits(&ub, UsageUsed, minacc);
+            fillUsage(&ub, UsageUsed, minacc);
             ref = addCxReferenceNew(*res,&record->position, ub,
                                     rfs.currClass->u.structSpec->classFileIndex,
                                     rfs.baseClass->u.structSpec->classFileIndex);

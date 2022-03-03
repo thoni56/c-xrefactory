@@ -66,7 +66,7 @@ void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned 
     symbolRefItemBits->category = category;
 }
 
-void fillReference(Reference *reference, UsageBits usage, Position position, Reference *next) {
+void fillReference(Reference *reference, Usage usage, Position position, Reference *next) {
     reference->usage = usage;
     reference->position = position;
     reference->next = next;
@@ -229,7 +229,7 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 
 
 Reference **addToRefList(Reference **list,
-                         UsageBits usage,
+                         Usage usage,
                          Position pos) {
     Reference *rr, **place;
     Reference reference;
@@ -663,7 +663,7 @@ static bool olcxOnlyParseNoPushing(int opt) {
 /* ********************************************************************* */
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
 /*                                                                       */
-Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits usage,
+Reference *addCxReferenceNew(Symbol *symbol, Position *pos, Usage usage,
                              int vFunCl, int vApplCl) {
     // TODO UsageBits are not written to, could be by-value
     int                  index;
@@ -730,7 +730,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits usage,
     fillSymbolRefItemBits(&ppp.b, symbol->bits.symbolType, storage, scope,
                           symbol->bits.access, category);
     if (options.taskRegime==RegimeEditServer && options.server_operation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
-        fillUsageBits(&rr.usage, usage.kind, 0);
+        fillUsage(&rr.usage, usage.kind, 0);
         fillReference(&rr, rr.usage, *pos, NULL);
         searchSymbolCheckReference(&ppp, &rr);
         return NULL;
@@ -818,8 +818,8 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, UsageBits usage,
 }
 
 Reference * addCxReference(Symbol *symbol, Position *pos, UsageKind usage, int vFunClass, int vApplClass) {
-    UsageBits ub;
-    fillUsageBits(&ub, usage, MIN_REQUIRED_ACCESS);
+    Usage ub;
+    fillUsage(&ub, usage, MIN_REQUIRED_ACCESS);
     return addCxReferenceNew(symbol, pos, ub, vFunClass, vApplClass);
 }
 
@@ -5203,7 +5203,7 @@ S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass
         slen = strlen(symbol->linkName);
         ss = olcx_memory_allocc(slen+1, sizeof(char));
         strcpy(ss, symbol->linkName);
-        fillUsageBits(&r.usage, UsageDefined, 0);
+        fillUsage(&r.usage, UsageDefined, 0);
         fillReference(&r, r.usage, symbol->pos, NULL);
         fillSymbolRefItem(&sri, ss, cxFileHashNumber(ss),
                                     vFunClass, vFunClass);
