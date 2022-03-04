@@ -1,3 +1,3 @@
 CompileFlags:
-    Add: [-I.., -DGIT_HASH="1"]
+    Add: [-DGIT_HASH="1"]
     
