@@ -5,4 +5,4 @@
 
 rm *.gcov
 cp ../tests/test_$1/.coverage/*.gcda .objects
-gcov .objects/*.o --object-directory .objects 
+gcov .objects/*.o --object-directory .objects | grep "File"
