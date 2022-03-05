@@ -4544,7 +4544,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     rstack = currentUserData->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
-    scanForGlobalUnused(options.cxrefFileName);
+    scanForGlobalUnused(options.cxrefsLocation);
     olCreateSelectionMenu(options.server_operation);
     assert(options.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
@@ -4623,7 +4623,7 @@ void mainAnswerEditAction(void) {
 
         if (options.tagSearchSpecif==TSS_FULL_SEARCH)
             scanJarFilesForTagSearch();
-        scanForSearch(options.cxrefFileName);
+        scanForSearch(options.cxrefsLocation);
         printTagSearchResults();
         break;
     case OLO_TAG_SEARCH_BACK:

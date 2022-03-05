@@ -86,7 +86,7 @@ typedef struct options {
     char *outputFileName;
     char *lineFileName;
     struct stringList *includeDirs;
-    char *cxrefFileName;
+    char *cxrefsLocation;
 
     char *checkFileMovedFrom;
     char *checkFileMovedTo;

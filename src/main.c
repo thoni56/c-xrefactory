@@ -942,7 +942,7 @@ static void setXrefsFile(char *argvi) {
         sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option",argvi);
         warningMessage(ERR_ST, tmpBuff);
     }
-    createOptionString(&options.cxrefFileName, normalizeFileName(argvi, cwd));
+    createOptionString(&options.cxrefsLocation, normalizeFileName(argvi, cwd));
 }
 
 static bool processROption(int *argi, int argc, char **argv, int infilesFlag) {
@@ -1417,13 +1417,13 @@ static void mainGenerateReferenceFile(void) {
                                         generated from scratch so now
                                         we can just update? */
 
-    if (options.cxrefFileName == NULL)
+    if (options.cxrefsLocation == NULL)
         return;
     if (!updateFlag && options.update == UPDATE_CREATE) {
-        genReferenceFile(false, options.cxrefFileName);
+        genReferenceFile(false, options.cxrefsLocation);
         updateFlag = true;
     } else {
-        genReferenceFile(true, options.cxrefFileName);
+        genReferenceFile(true, options.cxrefsLocation);
     }
 }
 
@@ -1647,7 +1647,7 @@ static void initDefaultCxrefFileName(char *inputfile) {
     assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
     strcpy(defaultCxrefFileName, getRealFileNameStatic(normalizeFileName(defaultCxrefFileName, cwd)));
     assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
-    options.cxrefFileName = defaultCxrefFileName;
+    options.cxrefsLocation = defaultCxrefFileName;
 }
 
 static void initializationsPerInvocation(void) {
@@ -2292,7 +2292,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
             fflush(dumpOut);
         }
     }
-    if (options.cxrefFileName == NULL) {
+    if (options.cxrefsLocation == NULL) {
         fatalError(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
     for(i=0; i<includeStackPointer; i++) {
@@ -2418,16 +2418,16 @@ static void scheduleModifiedFilesToUpdate(void) {
     checkExactPositionUpdate(1);
     if (options.referenceFileCount <= 1) {
         suffix = "";
-        filestab = options.cxrefFileName;
+        filestab = options.cxrefsLocation;
     } else {
         suffix = REFERENCE_FILENAME_FILES;
-        sprintf(ttt, "%s%s", options.cxrefFileName, suffix);
+        sprintf(ttt, "%s%s", options.cxrefsLocation, suffix);
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         filestab = ttt;
     }
     if (editorFileStatus(filestab, &refStat))
         refStat.st_mtime = 0;
-    normalScanFor(suffix);
+    normalScanReferenceFile(suffix);
     fileTableMap2(&fileTable, schedulingToUpdate, &refStat);
     if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
@@ -2861,10 +2861,10 @@ void mainCallXref(int argc, char **argv) {
             }
             if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "Generating '%s'",options.cxrefFileName);
+                sprintf(tmpBuff, "Generating '%s'",options.cxrefsLocation);
                 ppcGenRecord(PPC_INFORMATION, tmpBuff);
             } else {
-                log_info("Generating '%s'",options.cxrefFileName);
+                log_info("Generating '%s'",options.cxrefsLocation);
             }
             mainGenerateReferenceFile();
         }

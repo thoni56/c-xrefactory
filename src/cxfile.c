@@ -794,7 +794,7 @@ static void cxrfCheckNumber(int size,
 static int cxrfFileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
     bool updateFromCxFile = true;
 
-    log_trace("re-read info from '%s' for '%s'?", options.cxrefFileName, fileItem->name);
+    log_trace("re-read info from '%s' for '%s'?", options.cxrefsLocation, fileItem->name);
     if (options.taskRegime == RegimeXref) {
         if (fileItem->b.cxLoading && ! fileItem->b.cxSaved) {
             updateFromCxFile = false;
@@ -811,7 +811,7 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
         }
     }
     log_trace("%s re-read info from '%s' for '%s'", updateFromCxFile?"yes,":"no, not necessary to",
-              options.cxrefFileName, fileItem->name);
+              options.cxrefsLocation, fileItem->name);
 
     return updateFromCxFile;
 }
@@ -1375,11 +1375,11 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
 
 
 /* suffix contains '/' at the beginning !!! */
-static bool scanReferenceFile(char *cxrefFileName, char *suffix1, char *suffix2,
+static bool scanReferenceFile(char *cxrefLocation, char *element1, char *element2,
                               ScanFileFunctionStep *scanFunctionTable) {
     char fn[MAX_FILE_NAME_SIZE];
 
-    sprintf(fn, "%s%s%s", cxrefFileName, suffix1, suffix2);
+    sprintf(fn, "%s%s%s", cxrefLocation, element1, element2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     log_trace(":scanning file %s", fn);
     inputFile = openFile(fn, "r");
@@ -1393,18 +1393,18 @@ static bool scanReferenceFile(char *cxrefFileName, char *suffix1, char *suffix2,
     }
 }
 
-static void scanReferenceFiles(char *cxrefFileName, ScanFileFunctionStep *scanFunctionTable) {
+static void scanReferenceFiles(char *cxrefLocation, ScanFileFunctionStep *scanFunctionTable) {
     char nn[MAX_FILE_NAME_SIZE];
     int i;
 
     if (options.referenceFileCount <= 1) {
-        scanReferenceFile(cxrefFileName,"","",scanFunctionTable);
+        scanReferenceFile(cxrefLocation,"","",scanFunctionTable);
     } else {
-        scanReferenceFile(cxrefFileName,REFERENCE_FILENAME_FILES,"",scanFunctionTable);
-        scanReferenceFile(cxrefFileName,REFERENCE_FILENAME_CLASSES,"",scanFunctionTable);
+        scanReferenceFile(cxrefLocation,REFERENCE_FILENAME_FILES,"",scanFunctionTable);
+        scanReferenceFile(cxrefLocation,REFERENCE_FILENAME_CLASSES,"",scanFunctionTable);
         for (i=0; i<options.referenceFileCount; i++) {
             sprintf(nn,"%04d",i);
-            scanReferenceFile(cxrefFileName,REFERENCE_FILENAME_PREFIX,nn,scanFunctionTable);
+            scanReferenceFile(cxrefLocation,REFERENCE_FILENAME_PREFIX,nn,scanFunctionTable);
         }
     }
 }
@@ -1416,9 +1416,9 @@ bool smartReadReferences(void) {
     char cxrefFileName[MAX_FILE_NAME_SIZE];
 
     if (options.referenceFileCount <= 1) {
-        sprintf(cxrefFileName, "%s", options.cxrefFileName);
+        sprintf(cxrefFileName, "%s", options.cxrefsLocation);
     } else {
-        sprintf(cxrefFileName, "%s%s", options.cxrefFileName, REFERENCE_FILENAME_FILES);
+        sprintf(cxrefFileName, "%s%s", options.cxrefsLocation, REFERENCE_FILENAME_FILES);
     }
     if (editorFileExists(cxrefFileName)) {
         size_t currentSize = editorFileSize(cxrefFileName);
@@ -1445,15 +1445,15 @@ bool smartReadReferences(void) {
 static void readOneAppropReferenceFile(char *symbolName,
                                        ScanFileFunctionStep  scanFileFunctionTable[]
 ) {
-    if (options.cxrefFileName == NULL)
+    if (options.cxrefsLocation == NULL)
         return;
     cxOut = stdout;
     if (options.referenceFileCount <= 1) {
-        scanReferenceFile(options.cxrefFileName, "", "", scanFileFunctionTable);
+        scanReferenceFile(options.cxrefsLocation, "", "", scanFileFunctionTable);
     } else {
         if (!smartReadReferences())
             return;
-        if (!scanReferenceFile(options.cxrefFileName, REFERENCE_FILENAME_CLASSES, "",
+        if (!scanReferenceFile(options.cxrefsLocation, REFERENCE_FILENAME_CLASSES, "",
                                scanFileFunctionTable))
             return;
         if (symbolName == NULL)
@@ -1465,14 +1465,14 @@ static void readOneAppropReferenceFile(char *symbolName,
 
         sprintf(fns, "%04d", i);
         assert(strlen(fns) < MAX_FILE_NAME_SIZE-1);
-        scanReferenceFile(options.cxrefFileName, REFERENCE_FILENAME_PREFIX, fns,
+        scanReferenceFile(options.cxrefsLocation, REFERENCE_FILENAME_PREFIX, fns,
                           scanFileFunctionTable);
     }
 }
 
 
-void normalScanFor(char *suffix) {
-    scanReferenceFile(options.cxrefFileName, suffix, "", normalScanFunctionSequence);
+void normalScanReferenceFile(char *name) {
+    scanReferenceFile(options.cxrefsLocation, name, "", normalScanFunctionSequence);
 }
 
 void scanForClassHierarchy(void) {
@@ -1495,12 +1495,12 @@ void scanForMacroUsage(char *symbolName) {
     readOneAppropReferenceFile(symbolName, secondPassMacroUsageFunctionSequence);
 }
 
-void scanForGlobalUnused(char *cxrefFileName) {
-    scanReferenceFiles(cxrefFileName, globalUnusedDetectionFunctionSequence);
+void scanForGlobalUnused(char *cxrefLocation) {
+    scanReferenceFiles(cxrefLocation, globalUnusedDetectionFunctionSequence);
 }
 
-void scanForSearch(char *cxrefFileName) {
-    scanReferenceFiles(cxrefFileName, symbolSearchFunctionSequence);
+void scanForSearch(char *cxrefLocation) {
+    scanReferenceFiles(cxrefLocation, symbolSearchFunctionSequence);
 }
 
 

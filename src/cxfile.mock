@@ -2,8 +2,8 @@
 #include "cxfile.h"
 #include <cgreen/mocks.h>
 
-void normalScanFor(char *suffix) {
-    mock(suffix);
+void normalScanReferenceFile(char *name) {
+    mock(name);
 }
 
 void scanForClassHierarchy(void) { mock(); }

@@ -6,7 +6,7 @@
 #include "characterreader.h"
 
 
-extern void normalScanFor(char *suffix);
+extern void normalScanReferenceFile(char *name);
 extern void scanForClassHierarchy(void);
 extern void fullScanFor(char *symbolName);
 extern void scanForBypass(char *symbolName);

@@ -1,4 +1,6 @@
+#include <cgreen/assertions.h>
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
 #include "cxfile.h"
 #include "log.h"
@@ -29,4 +31,10 @@ AfterEach(CxFile) {}
 Ensure(CxFile, can_run_empty_test) {
     options.referenceFileCount = 1;
     assert_that(cxFileHashNumber(NULL), is_equal_to(0));
+}
+
+xEnsure(CxFile, can_scan_all_files_with_extension) {
+    options.cxrefsLocation = "./CXrefs";
+    expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return((FILE*) 4654654645));
+    normalScanReferenceFile("/XFiles");
 }
