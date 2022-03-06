@@ -603,7 +603,7 @@ static void genCxFileHead(void) {
                        " ");
 }
 
-static void openInOutReferenceFiles(int updateFlag, char *filename) {
+static void openInOutReferenceFile(int updateFlag, char *filename) {
     if (updateFlag) {
         char *tempname = create_temporary_filename();
         strcpy(tmpFileName, tempname);
@@ -644,7 +644,7 @@ static void genPartialFileTabRefFile(int updateFlag,
 
     sprintf(filename, "%s%s", dirname, suffix);
     assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
-    openInOutReferenceFiles(updateFlag, filename);
+    openInOutReferenceFile(updateFlag, filename);
     genCxFileHead();
     fileTableMapWithIndex(&fileTable, mapfun);
     if (mapfun2!=NULL)
@@ -678,7 +678,7 @@ void genReferenceFile(bool updating, char *filename) {
 
     if (options.referenceFileCount <= 1) {
         /* single reference file */
-        openInOutReferenceFiles(updating, filename);
+        openInOutReferenceFile(updating, filename);
         /*&     fileTabMap(&fileTable, javaInitSubClassInfo); &*/
         genCxFileHead();
         fileTableMapWithIndex(&fileTable, writeFileIndexItem);
@@ -701,7 +701,7 @@ void genReferenceFile(bool updating, char *filename) {
         for (i=0; i<options.referenceFileCount; i++) {
             sprintf(referenceFileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
             assert(strlen(referenceFileName) < MAX_FILE_NAME_SIZE-1);
-            openInOutReferenceFiles(updating, referenceFileName);
+            openInOutReferenceFile(updating, referenceFileName);
             genCxFileHead();
             scanCxFile(fullScanFunctionSequence);
             //&refTabMap4(&referenceTable, genPartialRefItem, i);
