@@ -281,6 +281,10 @@ endif
 	@echo Coverage done
 
 #########################################################################
+watch:
+	watchexec -e c,h,y,mock "make -j devel"
+
+#########################################################################
 #
 # Trigger building our patched yacc if it doesn't exist
 
@@ -306,7 +310,8 @@ endif
 # If you have a make >3.something (MacOS don't!) you can use vpath to locate Cgreen library
 # as a dependency which will automatically be linked
 # CGREEN_LIB = -lcgreen
-# else you have to add explicit linkage directives
+# else you have to add explicit linkage and/or include directives
+CGREEN_INCLUDE = -I/usr/local/include
 CGREEN_LIB = -L/usr/local/lib -lcgreen
 
 ifeq ($(OS),Darwin)
@@ -318,6 +323,7 @@ ifeq ($(OS),Darwin)
 endif
 
 .PHONY: unittests
+unittests: CFLAGS += $(CGREEN_INCLUDE)
 ifeq ($(shell which cgreen-runner),)
 unittests:
 	@echo Cgreen not available, cannot run unittests
