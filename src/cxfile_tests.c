@@ -2,6 +2,7 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 
+#include "characterreader.h"
 #include "cxfile.h"
 #include "log.h"
 
@@ -33,10 +34,20 @@ Ensure(CxFile, can_run_empty_test) {
     assert_that(cxFileHashNumber(NULL), is_equal_to(0));
 }
 
+
+#include "cgreen_capture_parameter.c"
+
+
 xEnsure(CxFile, can_do_normal_scan) {
+    FILE *filePointer = (FILE *)4654654645;
+    CharacterBuffer *buffer;
+
     options.cxrefsLocation = "./CXrefs";
 
-    expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return((FILE*) 4654654645));
+    expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(filePointer));
+    expect(initCharacterBuffer, when(file, is_equal_to(filePointer)),
+           will_capture_parameter(characterBuffer, buffer));
+
     always_expect(skipWhiteSpace);
 
     normalScanReferenceFile("/XFiles");
