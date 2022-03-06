@@ -6,10 +6,6 @@
 #include "stringlist.h"
 #include "proto.h"
 
-typedef struct int2StringTable {
-    int     i;
-    char    *string;
-} Int2StringDictionary;
 
 /* ***************** unique counters  *********************** */
 typedef struct counters {

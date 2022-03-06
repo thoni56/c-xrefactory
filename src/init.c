@@ -1,12 +1,8 @@
 #include "init.h"
 
-#include "commons.h"
 #include "globals.h"
 #include "options.h"
 #include "parsers.h"
-#include "protocol.h"
-#include "misc.h"
-#include "symbol.h"
 #include "classfilereader.h"
 #include "log.h"
 
@@ -20,6 +16,23 @@ typedef struct tokenNameIni {
     int         token;
     unsigned    languages;
 } TokenNamesInitTable;
+
+typedef struct javaTypePCTIConvertIni {
+    int		symType;
+    int		PCTIndex;
+} JavaTypePCTIConvertIni;
+
+typedef struct typeCharCodeIni {
+    int         symType;
+    char		code;
+} TypeCharCodeInit;
+
+
+static TokenNamesInitTable tokenNameInitTable3[] = {
+    {"assert",          ASSERT,				LANG_JAVA},
+    {NULL,              0,					LANG_C}         /* sentinel*/
+};
+
 
 static TokenNamesInitTable tokenNameInitTable1[] = {
     {"asm",         ASM_KEYWORD,	LANG_C | LANG_YACC},
@@ -227,13 +240,8 @@ static TokenNamesInitTable tokenNameInitTable2[] = {
     {NULL,              0,					LANG_C}         /* sentinel*/
 };
 
-static TokenNamesInitTable tokenNameInitTable3[] = {
-    {"assert",          ASSERT,				LANG_JAVA},
-    {NULL,              0,					LANG_C}         /* sentinel*/
-};
 
-
-static S_javaTypePCTIConvertIni s_javaTypePCTIConvertIniTab[] = {
+static JavaTypePCTIConvertIni s_javaTypePCTIConvertIniTab[] = {
     {TypeByte,      PCTIndexByte},
     {TypeShort,     PCTIndexShort},
     {TypeChar,      PCTIndexChar},
@@ -295,6 +303,12 @@ static TypeCharCodeInit baseTypeCharCodesInitTable[] = {
     {TypeNull,      JAVA_NULL_CODE},    /* this is just my in(con)vention */
     {-1,            ' '},
 };
+
+typedef struct int2StringTable {
+    int     i;
+    char    *string;
+} Int2StringDictionary;
+
 
 static Int2StringDictionary typeNamesInitTable[] = {
     {TypeDefault,           "Default"},
@@ -443,7 +457,7 @@ void initTokenNamesTables(void) {
 
 void initJavaTypePCTIConvertIniTab(void) {
     for (int i=0; s_javaTypePCTIConvertIniTab[i].symType != -1; i++) {
-        S_javaTypePCTIConvertIni *s = &s_javaTypePCTIConvertIniTab[i];
+        JavaTypePCTIConvertIni *s = &s_javaTypePCTIConvertIniTab[i];
         assert(s->symType >= 0 && s->symType < MAX_TYPE);
         javaTypePCTIConvert[s->symType] = s->PCTIndex;
     }

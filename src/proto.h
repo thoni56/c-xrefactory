@@ -520,18 +520,6 @@ typedef struct completions {
 } Completions;
 
 
-/* ************************** INIT STRUCTURES ********************* */
-
-typedef struct typeCharCodeIni {
-    int         symType;
-    char		code;
-} TypeCharCodeInit;
-
-typedef struct javaTypePCTIConvertIni {
-    int		symType;
-    int		PCTIndex;
-} S_javaTypePCTIConvertIni;
-
 typedef struct currentlyParsedCl {		// class local, nested for classes
     struct symbol			*function;
     struct extRecFindStr	*erfsForParamsComplet;			// curently parsed method for param completion
