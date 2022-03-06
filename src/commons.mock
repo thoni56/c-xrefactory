@@ -2,6 +2,7 @@
 #include "commons.h"
 
 #include <cgreen/mocks.h>
+#include <stdlib.h>
 
 void closeMainOutputFile(void) {
     mock();
@@ -32,7 +33,11 @@ void fatalError(int code, char *message, int exitCode) {
 }
 
 void internalCheckFail(char *expr, char *file, int line) {
-    printf("COMMONS MOCK: *** INTERNAL CHECK FAILED: %s in line %s:%d\n", expr, file, line);
+    char message[100];
+    sprintf(message, "COMMONS MOCK: *** INTERNAL CHECK FAILED: %s in line %s:%d\n", expr, file, line);
+    /* NOTE: This uses internal cgreen functions to point to the calling location, may not be forward compatible... */
+    (*get_test_reporter()->assert_true)(get_test_reporter(), file, line, (false), message, NULL);
+    exit(EXIT_FAILURE);
 }
 
 char *create_temporary_filename() {
