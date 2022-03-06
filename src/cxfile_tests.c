@@ -6,20 +6,20 @@
 #include "log.h"
 
 #include "globals.mock"
-#include "olcxtab.mock"
-#include "commons.mock"
 #include "misc.mock"
+#include "utils.mock"
+#include "options.mock"
+#include "commons.mock"
+
+#include "olcxtab.mock"
 #include "cxref.mock"
 #include "reftab.mock"
 #include "filetable.mock"
-#include "options.mock"
-#include "yylex.mock"
-#include "lexer.mock"
+#include "yylex.mock"           /* For addFiletabItem */
 #include "editor.mock"
 #include "characterreader.mock"
 #include "classhierarchy.mock"
 #include "fileio.mock"
-#include "utils.mock"
 
 
 Describe(CxFile);
@@ -33,8 +33,11 @@ Ensure(CxFile, can_run_empty_test) {
     assert_that(cxFileHashNumber(NULL), is_equal_to(0));
 }
 
-xEnsure(CxFile, can_scan_all_files_with_extension) {
+xEnsure(CxFile, can_do_normal_scan) {
     options.cxrefsLocation = "./CXrefs";
+
     expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return((FILE*) 4654654645));
+    always_expect(skipWhiteSpace);
+
     normalScanReferenceFile("/XFiles");
 }
