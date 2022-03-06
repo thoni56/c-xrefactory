@@ -47,6 +47,8 @@ BeforeEach(Yylex) {
     initFileTable(&fileTable);
     symbolTable = StackMemoryAlloc(SymbolTable);
     symbolTableInit(symbolTable, 10);
+
+    always_expect(initCharacterBuffer);
 }
 AfterEach(Yylex) {}
 

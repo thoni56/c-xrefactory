@@ -29,8 +29,9 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
 void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file) {
     fillCharacterBuffer(characterBuffer, characterBuffer->chars, characterBuffer->chars,
                         file, 0, -1, characterBuffer->chars);
-
+    mock(characterBuffer, file);
 }
+
 
 /* Here be mocks... */
 
