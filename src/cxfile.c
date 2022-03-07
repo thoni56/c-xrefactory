@@ -1343,8 +1343,7 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
     initCharacterBuffer(&cxFileCharacterBuffer, inputFile);
     ch = ' ';
     while (!cxFileCharacterBuffer.isAtEOF) {
-        CharacterBuffer *cb = &cxFileCharacterBuffer;
-        scannedInt = scanInteger(cb, &ch);
+        scannedInt = scanInteger(&cxFileCharacterBuffer, &ch);
 
         if (cxFileCharacterBuffer.isAtEOF)
             break;
@@ -1358,11 +1357,12 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
                                         lastIncomingInfo.additional[ch]);
         } else if (! lastIncomingInfo.markers[ch]) {
             assert(scannedInt>0);
-            skipCharacters(cb, scannedInt-1);
+            skipCharacters(&cxFileCharacterBuffer, scannedInt-1);
         }
-        ch = getChar(cb);
+        ch = getChar(&cxFileCharacterBuffer);
     }
 
+    /* TODO: This should be done outside this function... */
     if (options.taskRegime==RegimeEditServer
         && (options.server_operation==OLO_LOCAL_UNUSED
             || options.server_operation==OLO_GLOBAL_UNUSED)) {
