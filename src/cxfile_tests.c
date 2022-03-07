@@ -38,8 +38,15 @@ Ensure(CxFile, can_run_empty_test) {
 
 #include "cgreen_capture_parameter.c"
 
+static expect_string(char string[]) {
+    for (int i=0; string[i] != '\0'; i++) {
+        if (isspace(string[i])
+            expect(skipWhiteSpace, will_return(string[i++]));
+        else
+            expect(getChar, will_return(string[i]));
+}
 
-xEnsure(CxFile, can_do_normal_scan) {
+Ensure(CxFile, can_do_normal_scan) {
     FILE *filePointer = (FILE *)4654654645;
     CharacterBuffer *buffer;
 
@@ -51,11 +58,7 @@ xEnsure(CxFile, can_do_normal_scan) {
            will_capture_parameter(characterBuffer, buffer));
 
     /* Version marking always starts a file */
-    expect(skipWhiteSpace, will_return('3'));
-    expect(getChar, will_return('4'));
-    expect(getChar, will_return('v'));
-    expect(getChar, will_return(' '));
-    expect(skipCharacters, when(count, is_equal_to(33)));
+    expect_string(" 34v file format: C-xrefactory 1.6.0 ");
 
     /* Generation setttings, file count, ... */
     expect(getChar, will_return('2'));
