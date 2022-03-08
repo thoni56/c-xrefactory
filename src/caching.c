@@ -20,24 +20,24 @@ S_caching s_cache;
 
 bool checkFileModifiedTime(int fileIndex) {
     time_t now;
+    FileItem *fileItem = getFileItem(fileIndex);
 
-    assert(fileTable.tab[fileIndex] != NULL);
     now = time(NULL);
-    if (fileTable.tab[fileIndex]->lastInspected >= fileProcessingStartTime
-        && fileTable.tab[fileIndex]->lastInspected <= now) {
+    if (fileItem->lastInspected >= fileProcessingStartTime
+        && fileItem->lastInspected <= now) {
         /* Assuming that files cannot change during one execution */
         return true;
     }
-    if (!editorFileExists(fileTable.tab[fileIndex]->name)) {
+    if (!editorFileExists(fileItem->name)) {
         return true;
     }
 
-    fileTable.tab[fileIndex]->lastInspected = now;
-    time_t modificationTime = editorFileModificationTime(fileTable.tab[fileIndex]->name);
-    if (modificationTime == fileTable.tab[fileIndex]->lastModified) {
+    fileItem->lastInspected = now;
+    time_t modificationTime = editorFileModificationTime(fileItem->name);
+    if (modificationTime == fileItem->lastModified) {
         return true;
     } else {
-        fileTable.tab[fileIndex]->lastModified = modificationTime;
+        fileItem->lastModified = modificationTime;
         return false;
     }
 }

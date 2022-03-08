@@ -18,6 +18,9 @@ void fileTableNoAllocInit(FileTable *table,
     mock(table, size);
 }
 
+FileItem *getFileItem(int fileIndex) {
+    return (FileItem *)mock(fileIndex);
+}
 
 bool fileTableIsMember(FileTable *table,
                        FileItem *element,
