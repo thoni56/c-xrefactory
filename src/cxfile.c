@@ -244,15 +244,8 @@ char *createTagSearchLineStatic(char *name, Position *position,
     l1 = l2 = l3 = 0;
     l1 = strlen(name);
 
-    /*&
-      char type[TMP_STRING_SIZE];
-      type[0]=0;
-      if (symType != TypeDefault) {
-      l2 = strmcpy(type,typeName[symType]+4) - type;
-      }
-      &*/
-
-    ffname = fileTable.tab[position->file]->name;
+    FileItem *fileItem = getFileItem(position->file);
+    ffname = fileItem->name;
     assert(ffname);
     ffname = getRealFileNameStatic(ffname);
     fl = strlen(ffname);
@@ -480,23 +473,22 @@ static ClassHierarchyReference *findSuperiorInSuperClasses(int superior, FileIte
 
 
 static void createSubClassInfo(int superior, int inferior, int originFileIndex, int genfl) {
-    FileItem      *iFile, *sFile;
     ClassHierarchyReference   *p, *pp;
 
-    iFile = fileTable.tab[inferior];
-    sFile = fileTable.tab[superior];
-    assert(iFile && sFile);
-    p = findSuperiorInSuperClasses(superior, iFile);
+    FileItem *inferiorFile = getFileItem(inferior);
+    FileItem *superiorFile = getFileItem(superior);
+
+    p = findSuperiorInSuperClasses(superior, inferiorFile);
     if (p==NULL) {
-        p = newClassHierarchyReference(originFileIndex, superior, iFile->superClasses);
-        iFile->superClasses = p;
+        p = newClassHierarchyReference(originFileIndex, superior, inferiorFile->superClasses);
+        inferiorFile->superClasses = p;
         assert(options.taskRegime);
         if (options.taskRegime == RegimeXref) {
             if (genfl == CX_FILE_ITEM_GEN)
                 writeSubClassInfo(superior, inferior, originFileIndex);
         }
-        pp = newClassHierarchyReference(originFileIndex, inferior, sFile->superClasses);
-        sFile->inferiorClasses = pp;
+        pp = newClassHierarchyReference(originFileIndex, inferior, superiorFile->superClasses);
+        superiorFile->inferiorClasses = pp;
     }
 }
 
@@ -549,14 +541,15 @@ static void genRefItem0(SymbolReferenceItem *referenceItem, bool force) {
     if (referenceItem->b.category == CategoryLocal) return;
     if (referenceItem->refs == NULL && !force) return;
 
-    for (reference = referenceItem->refs; reference!=NULL; reference=reference->next) {
-        log_trace("checking ref: loading=%d --< %s:%d", fileTable.tab[reference->position.file]->b.cxLoading,
-                  fileTable.tab[reference->position.file]->name, reference->position.line);
-        if (options.update==UPDATE_CREATE || fileTable.tab[reference->position.file]->b.cxLoading) {
+    for (reference = referenceItem->refs; reference != NULL; reference = reference->next) {
+        FileItem *fileItem = getFileItem(reference->position.file);
+        log_trace("checking ref: loading=%d --< %s:%d", fileItem->b.cxLoading,
+                  fileItem->name, reference->position.line);
+        if (options.update==UPDATE_CREATE || fileItem->b.cxLoading) {
             writeCxReference(reference, symbolIndex);
         } else {
             log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
-                      options.update, fileTable.tab[reference->position.file]->b.cxLoading);
+                      options.update, fileItem->b.cxLoading);
             assert(0);
         }
     }
@@ -843,11 +836,13 @@ static void cxReadFileName(int size,
     assert(ii>=0 && ii<MAX_FILES);
     if (!fileExistsInTable(&fileTable, id)) {
         fileIndex = addFileTabItem(id);
-        fileItem = fileTable.tab[fileIndex];
+        fileItem = getFileItem(fileIndex);
         fileItem->b.commandLineEntered = commandLineFlag;
         fileItem->b.isInterface = isInterface;
-        if (fileItem->lastFullUpdateMtime == 0) fileItem->lastFullUpdateMtime=fumtime;
-        if (fileItem->lastUpdateMtime == 0) fileItem->lastUpdateMtime=umtime;
+        if (fileItem->lastFullUpdateMtime == 0)
+            fileItem->lastFullUpdateMtime=fumtime;
+        if (fileItem->lastUpdateMtime == 0)
+            fileItem->lastUpdateMtime=umtime;
         assert(options.taskRegime);
         if (options.taskRegime == RegimeXref) {
             if (additionalArg == CXSF_GENERATE_OUTPUT) {
@@ -856,7 +851,7 @@ static void cxReadFileName(int size,
         }
     } else {
         fileIndex = fileTableLookup(&fileTable, id);
-        fileItem = fileTable.tab[fileIndex];
+        fileItem = getFileItem(fileIndex);
         if (cxrfFileItemShouldBeUpdatedFromCxFile(fileItem)) {
             fileItem->b.isInterface = isInterface;
             // Set it to none, it will be updated by source item
@@ -865,14 +860,16 @@ static void cxReadFileName(int size,
         if (options.taskRegime == RegimeEditServer) {
             fileItem->b.commandLineEntered = commandLineFlag;
         }
-        if (fileItem->lastFullUpdateMtime == 0) fileItem->lastFullUpdateMtime=fumtime;
-        if (fileItem->lastUpdateMtime == 0) fileItem->lastUpdateMtime=umtime;
+        if (fileItem->lastFullUpdateMtime == 0)
+            fileItem->lastFullUpdateMtime=fumtime;
+        if (fileItem->lastUpdateMtime == 0)
+            fileItem->lastUpdateMtime=umtime;
         //&if (fumtime>fileItem->lastFullUpdateMtime) fileItem->lastFullUpdateMtime=fumtime;
         //&if (umtime>fileItem->lastUpdateMtime) fileItem->lastUpdateMtime=umtime;
     }
     fileItem->b.isFromCxfile = true;
     decodeFileNumbers[ii]=fileIndex;
-    log_trace("%d: '%s' scanned: added as %d",ii,id,fileIndex);
+    log_trace("%d: '%s' scanned: added as %d", ii, id, fileIndex);
 }
 
 static void cxrfSourceIndex(int size,
@@ -887,14 +884,14 @@ static void cxrfSourceIndex(int size,
     file = decodeFileNumbers[file];
     sfile = lastIncomingInfo.values[CXFI_SOURCE_INDEX];
     sfile = decodeFileNumbers[sfile];
-    assert(file>=0 && file<MAX_FILES && fileTable.tab[file]);
-    // hmmm. here be more generous in getting corrct source info
-    if (fileTable.tab[file]->b.sourceFileNumber == noFileIndex) {
-        //&fprintf(dumpOut,"setting %d source to %d\n", file, sfile);fflush(dumpOut);
-        //&fprintf(dumpOut,"setting %s source to %s\n", fileTable.tab[file]->name, fileTable.tab[sfile]->name);fflush(dumpOut);
+
+    FileItem *fileItem = getFileItem(file);
+    assert(file>=0 && file<MAX_FILES && fileItem);
+    // hmmm. here be more generous in getting correct source info
+    if (fileItem->b.sourceFileNumber == noFileIndex) {
         // first check that it is not set directly from source
-        if (! fileTable.tab[file]->b.cxLoading) {
-            fileTable.tab[file]->b.sourceFileNumber = sfile;
+        if (! fileItem->b.cxLoading) {
+            fileItem->b.sourceFileNumber = sfile;
         }
     }
 }
@@ -917,19 +914,14 @@ static int scanSymNameString(int size,
 }
 
 
-static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
-                                 int *_vFunClass) {
-    int symType, vApplClass, vFunClass;
-    symType = lastIncomingInfo.values[CXFI_SYMBOL_TYPE];
-    vApplClass = lastIncomingInfo.values[CXFI_SUBCLASS];
-    vApplClass = decodeFileNumbers[vApplClass];
-    assert(fileTable.tab[vApplClass] != NULL);
-    vFunClass = lastIncomingInfo.values[CXFI_SUPERCLASS];
-    vFunClass = decodeFileNumbers[vFunClass];
-    assert(fileTable.tab[vFunClass] != NULL);
-    *_symType = symType;
-    *_vApplClass = vApplClass;
-    *_vFunClass = vFunClass;
+static void getSymTypeAndClasses(int *symType, int *vApplClass, int *vFunClass) {
+    *symType = lastIncomingInfo.values[CXFI_SYMBOL_TYPE];
+
+    *vApplClass = decodeFileNumbers[lastIncomingInfo.values[CXFI_SUBCLASS]];
+    assert(getFileItem(*vApplClass) != NULL);
+
+    *vFunClass = decodeFileNumbers[lastIncomingInfo.values[CXFI_SUPERCLASS]];
+    assert(getFileItem(*vFunClass) != NULL);
 }
 
 

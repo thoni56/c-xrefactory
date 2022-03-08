@@ -19,10 +19,9 @@ S_caching s_cache;
 
 
 bool checkFileModifiedTime(int fileIndex) {
-    time_t now;
+    time_t now = time(NULL);
     FileItem *fileItem = getFileItem(fileIndex);
 
-    now = time(NULL);
     if (fileItem->lastInspected >= fileProcessingStartTime
         && fileItem->lastInspected <= now) {
         /* Assuming that files cannot change during one execution */

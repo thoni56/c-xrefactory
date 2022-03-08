@@ -1130,7 +1130,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     char *super, *interf, *innerCName, *zipSeparatorIndex;
     Symbol *inners;
     int thisClass, superClass, access, cpSize;
-    int fileIndex, ind, count, aname, alen, cn;
+    int fileIndex, ind, count, aname, alen;
     char *inner, *upper, *thisClassName;
     ConstantPoolUnion *constantPool;
     Position pos;
@@ -1163,14 +1163,15 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     }
 
     fileIndex = javaCreateClassFileItem(symbol);
-    fileTable.tab[fileIndex]->b.cxLoading = true;
+    FileItem *fileItem = getFileItem(fileIndex);
+    fileItem->b.cxLoading = true;
 
     pos = makePosition(fileIndex, 1, 0);
     addCxReference(symbol, &pos, UsageClassFileDefinition,
                    noFileIndex, noFileIndex);
     addCfClassTreeHierarchyRef(fileIndex, UsageClassFileDefinition);
-    log_trace("fileitem=='%s'", fileTable.tab[fileIndex]->name);
-    pushInclude(zipFile, NULL, fileTable.tab[fileIndex]->name, "");
+    log_trace("fileitem=='%s'", fileItem->name);
+    pushInclude(zipFile, NULL, fileItem->name, "");
 
     log_debug("reading file '%s'", className);
 
@@ -1194,7 +1195,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     symbol->bits.access = access;
     log_trace("reading accessFlags %s == %x", className, access);
     if (access & AccessInterface)
-        fileTable.tab[fileIndex]->b.isInterface = true;
+        fileItem->b.isInterface = true;
     GetU2(thisClass, cb, exception);
     if (thisClass<0 || thisClass>=cpSize)
         goto corrupted;
@@ -1276,20 +1277,20 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
 
                 fill_nestedSpec(& symbol->u.structSpec->nest[rinners], inners, membFlag, modifs);
                 assert(inners && inners->bits.symbolType==TypeStruct && inners->u.structSpec);
-                cn = inners->u.structSpec->classFileIndex;
+                int classFileIndex = inners->u.structSpec->classFileIndex;
+                FileItem *classFileItem = getFileItem(classFileIndex);
                 if (membFlag && ! (modifs & AccessStatic)) {
                     // note that non-static direct enclosing class exists
-                    assert(fileTable.tab[cn]);
-                    fileTable.tab[cn]->directEnclosingInstance = symbol->u.structSpec->classFileIndex;
+                    classFileItem->directEnclosingInstance = symbol->u.structSpec->classFileIndex;
                 } else {
-                    fileTable.tab[cn]->directEnclosingInstance = noFileIndex;
+                    classFileItem->directEnclosingInstance = noFileIndex;
                 }
             }
         } else {
             skipCharacters(cb, alen);
         }
     }
-    fileTable.tab[fileIndex]->b.cxLoaded = true;
+    fileItem->b.cxLoaded = true;
     goto finish;
 
  endOfFile:
