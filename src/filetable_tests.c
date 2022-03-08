@@ -14,6 +14,7 @@ Describe(FileTable);
 BeforeEach(FileTable) {
     log_set_level(LOG_ERROR);
     initOuterCodeBlock();
+    fileTableInit(&fileTable, 5);
 }
 AfterEach(FileTable) {}
 
@@ -23,7 +24,6 @@ Ensure(FileTable, can_fetch_a_stored_filename) {
     int position_1 = 1;
     int fetched_position;
 
-    fileTableInit(&fileTable, 5);
     position_1 = fileTableAdd(&fileTable, &fileItem);
     fileTableAdd(&fileTable, &fileItem);
 
@@ -36,7 +36,6 @@ Ensure(FileTable, cannot_find_filename_not_in_tab) {
     FileItem donotexist = {"donot_exist.c"};
     int out_position = -1;
 
-    fileTableInit(&fileTable, 5);
     out_position = fileTableAdd(&fileTable, &exists);
 
     assert_that(fileTableIsMember(&fileTable, &exists, &out_position));
@@ -50,7 +49,6 @@ Ensure(FileTable, can_add_and_find_multiple_files) {
     FileItem donotexist = {"donot_exist.c"};
     int out_position = -1;
 
-    fileTableInit(&fileTable, 5);
     out_position = fileTableAdd(&fileTable, &exists1);
 
     assert_that(fileTableIsMember(&fileTable, &exists1, &out_position));
@@ -73,7 +71,6 @@ Ensure(FileTable, can_check_filename_exists) {
     FileItem exists2 = {"exists2.c"};
     FileItem exists3 = {"exists3.c"};
 
-    fileTableInit(&fileTable, 6);
     fileTableAdd(&fileTable, &exists1);
     fileTableAdd(&fileTable, &exists2);
     fileTableAdd(&fileTable, &exists3);
@@ -91,7 +88,6 @@ Ensure(FileTable, can_lookup_filename) {
     FileItem exists3 = {"exists3.c"};
     int position = -1;
 
-    fileTableInit(&fileTable, 6);
     assert_that(fileTableLookup(&fileTable, "donot_exist.c"), is_equal_to(-1));
 
     position = fileTableAdd(&fileTable, &exists1);
