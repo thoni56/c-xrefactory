@@ -2,8 +2,8 @@
 #include "classhierarchy.h"
 #include <cgreen/mocks.h>
 
-ClassHierarchyReference *newClassHierarchyReference(int origin, int class, ClassHierarchyReference *next) {
-    return (ClassHierarchyReference *)mock(origin, class, next);
+ClassHierarchyReference *newClassHierarchyReference(int origin, int superClass, ClassHierarchyReference *next) {
+    return (ClassHierarchyReference *)mock(origin, superClass, next);
 }
 
 void classHierarchyGenInit(void) {
@@ -27,9 +27,5 @@ void genClassHierarchies(FILE *ff, SymbolsMenu *rrr, int virtFlag, int pass) {
 }
 
 bool classHierarchyClassNameLess(int c1, int c2) {
-  return (int) mock(c1, c2);
-}
-
-int classHierarchySupClassNameLess(ClassHierarchyReference *c1, ClassHierarchyReference *c2) {
   return (int) mock(c1, c2);
 }

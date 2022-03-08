@@ -1,4 +1,5 @@
 #include "misc.h"
+#include "proto.h"
 
 #ifdef __WIN32__
 #include <direct.h>
@@ -381,7 +382,7 @@ void javaDotifyFileName(char *ss) {
 // file num is not neccessary a class item !
 static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
     char *dd, *ss;
-    ss = javaCutClassPathFromFileName(getRealFileNameStatic(fileTable.tab[fnum]->name));
+    ss = javaCutClassPathFromFileName(getRealFileName_static(fileTable.tab[fnum]->name));
     strcpy(ttt, ss);
     dd = lastOccurenceInString(ttt, '.');
     if (dd!=NULL) *dd=0;
@@ -414,7 +415,7 @@ char *javaGetShortClassNameFromFileNum_st(int fnum) {
     return(javaGetShortClassName(res));
 }
 
-char *javaGetNudePreTypeName_st( char *inn, int cutMode) {
+char *javaGetNudePreTypeName_static(char *inn, CutOuters cutMode) {
     int             i,len;
     char            *cut,*res,*res2;
     static char     ttt[TMP_STRING_SIZE];
@@ -519,31 +520,32 @@ void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
 }
 
 char *simpleFileNameFromFileNum(int fnum) {
-    return(simpleFileName(getRealFileNameStatic(fileTable.tab[fnum]->name)));
+    return(simpleFileName(getRealFileName_static(getFileItem(fnum)->name)));
 }
 
 char *getShortClassNameFromClassNum_st(int fnum) {
-    return(javaGetNudePreTypeName_st(getRealFileNameStatic(fileTable.tab[fnum]->name),options.nestedClassDisplaying));
+    return(javaGetNudePreTypeName_static(getRealFileName_static(getFileItem(fnum)->name),
+                                         options.displayNestedClasses));
 }
 
-void printSymbolLinkNameString( FILE *ff, char *linkName) {
-    char ttt[MAX_CX_SYMBOL_SIZE];
-    linkNamePrettyPrint(ttt, linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
-    fprintf(ff,"%s", ttt);
+void printSymbolLinkNameString(FILE *file, char *linkName) {
+    char temp[MAX_CX_SYMBOL_SIZE];
+    linkNamePrettyPrint(temp, linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+    fprintf(file, "%s", temp);
 }
 
-void printClassFqtNameFromClassNum(FILE *ff, int fnum) {
-    char ttt[MAX_CX_SYMBOL_SIZE];
-    getClassFqtNameFromFileNum(fnum, ttt);
-    printSymbolLinkNameString(ff, ttt);
+void printClassFqtNameFromClassNum(FILE *file, int fnum) {
+    char temp[MAX_CX_SYMBOL_SIZE];
+    getClassFqtNameFromFileNum(fnum, temp);
+    printSymbolLinkNameString(file, temp);
 }
 
-void sprintfSymbolLinkName(char *ttt, SymbolsMenu *ss) {
-    if (ss->s.b.symType == TypeCppInclude) {
-        sprintf(ttt, "%s", simpleFileName(getRealFileNameStatic(
-                                                                fileTable.tab[ss->s.vApplClass]->name)));
+void sprintfSymbolLinkName(char *outString, SymbolsMenu *menu) {
+    if (menu->s.b.symType == TypeCppInclude) {
+        sprintf(outString, "%s",
+                simpleFileName(getRealFileName_static(fileTable.tab[menu->s.vApplClass]->name)));
     } else {
-        linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        linkNamePrettyPrint(outString, menu->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     }
 }
 
@@ -911,7 +913,7 @@ void expandWildcardsInPaths(char *paths, char *outpaths, int availableSpace) {
    this complicated code?
 */
 
-char *getRealFileNameStatic(char *fn) {
+char *getRealFileName_static(char *fn) {
     static char         realFilename[MAX_FILE_NAME_SIZE];
 #if defined (__WIN32__)
     WIN32_FIND_DATA     fdata;

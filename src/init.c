@@ -8,6 +8,7 @@
 #include "misc.h"               /* For stringContainsSubstring() */
 #include "commons.h"            /* For infoMessage() */
 #include "log.h"
+#include "commons.h"
 
 
 /* *********************************************************************** */

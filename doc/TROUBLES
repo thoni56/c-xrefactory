@@ -77,9 +77,10 @@ or
 It means that your program is too long. There are either too many
 lines in a single file, or a line which is too long.
 
-C-xrefacotory only supports files below ~4 million lines (and
-columns). If you encounter this rewrite your application and report
-the case to https://github.com/thoni56/c-xrefactory.
+C-xrefactory only supports files below ~4 million lines (and
+columns). If you encounter this you should really rewrite your
+application and report the case on
+https://github.com/thoni56/c-xrefactory.
 
 ----------------------------------------------------------------------
 You see a message like:

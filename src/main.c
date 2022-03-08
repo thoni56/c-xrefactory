@@ -283,7 +283,7 @@ static bool processDOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-D",2)==0)
         addMacroDefinedByOption(argv[i]+2);
     else if (strcmp(argv[i], "-displaynestedwithouters")==0) {
-        options.nestedClassDisplaying = NO_OUTERS_CUT;
+        options.displayNestedClasses = NO_OUTERS_CUT;
     }
     else return false;
 
@@ -571,7 +571,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.server_operation = OLO_TRIVIAL_PRECHECK;
     }
     else if (strcmp(argv[i], "-olmanualresolve")==0) {
-        options.manualResolve = RESOLVE_DIALOG_ALLWAYS;
+        options.manualResolve = RESOLVE_DIALOG_ALWAYS;
     }
     else if (strcmp(argv[i], "-olnodialog")==0) {
         options.manualResolve = RESOLVE_DIALOG_NEVER;
@@ -1386,6 +1386,8 @@ static void mainScheduleInputFilesFromOptionsToFileTable(void) {
 static char *getInputFileFromFtab(int *fArgCount, int flag) {
     int         i;
     FileItem  *fileItem;
+
+    /* TODO: replace with something to loop over all non-null entries in file table */
     for (i = *fArgCount; i<fileTable.size; i++) {
         fileItem = fileTable.tab[i];
         if (fileItem!=NULL) {
@@ -1397,17 +1399,17 @@ static char *getInputFileFromFtab(int *fArgCount, int flag) {
     }
     *fArgCount = i;
     if (i<fileTable.size)
-        return fileTable.tab[i]->name;
+        return fileItem->name;
     else
         return NULL;
 }
 
 char *getInputFile(int *fArgCount) {
-    return getInputFileFromFtab(fArgCount,FF_SCHEDULED_TO_PROCESS);
+    return getInputFileFromFtab(fArgCount, FF_SCHEDULED_TO_PROCESS);
 }
 
 static char *getCommandLineFile(int *fArgCount) {
-    return getInputFileFromFtab(fArgCount,FF_COMMAND_LINE_ENTERED);
+    return getInputFileFromFtab(fArgCount, FF_COMMAND_LINE_ENTERED);
 }
 
 static void mainGenerateReferenceFile(void) {
@@ -1435,7 +1437,7 @@ static void schedulingUpdateToProcess(FileItem *fileItem) {
 
 /* NOTE: Map-function */
 static void schedulingToUpdate(FileItem *fileItem, void *dummy) {
-    if (fileItem == fileTable.tab[noFileIndex])
+    if (fileItem == getFileItem(noFileIndex))
         return;
 
     if (!editorFileExists(fileItem->name)) {
@@ -1505,7 +1507,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
         // it may happen that after deletion of the project, the request for active
         // project will return non-existent project. And then return "not found"?
         fileno = getFileNumberFromName(filename);
-        if (fileno != noFileIndex && fileTable.tab[fileno]->b.isFromCxfile) {
+        if (fileno != noFileIndex && getFileItem(fileno)->b.isFromCxfile) {
             strcpy(options_filename, oldStdopFile);
             strcpy(section, oldStdopSection);
             return;
@@ -1645,7 +1647,7 @@ static void initDefaultCxrefFileName(char *inputfile) {
     assert(pathLength < MAX_FILE_NAME_SIZE);
     strcpy(&defaultCxrefFileName[pathLength], DEFAULT_CXREF_FILE);
     assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
-    strcpy(defaultCxrefFileName, getRealFileNameStatic(normalizeFileName(defaultCxrefFileName, cwd)));
+    strcpy(defaultCxrefFileName, getRealFileName_static(normalizeFileName(defaultCxrefFileName, cwd)));
     assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
     options.cxrefsLocation = defaultCxrefFileName;
 }
@@ -2053,9 +2055,9 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     assert(options.taskRegime);
     if (options.taskRegime==RegimeXref && !s_javaPreScanOnly) {
         if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION, getRealFileNameStatic(inputFilename));
+            ppcGenRecord(PPC_INFORMATION, getRealFileName_static(inputFilename));
         } else {
-            log_info("Processing '%s'", getRealFileNameStatic(inputFilename));
+            log_info("Processing '%s'", getRealFileName_static(inputFilename));
         }
     }
  fini:
@@ -2374,8 +2376,7 @@ static void fillIncludeRefItem(SymbolReferenceItem *referenceItem, int fnum) {
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
     char                *cxFreeBase;
-    int                 fileAddedFlag, isJavaFileFlag;
-    FileItem            *fileItem, *includer;
+    int                 fileAddedFlag;
     SymbolReferenceItem referenceItem, *member;
     Reference           *rr;
 
@@ -2385,28 +2386,29 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     fileAddedFlag = true;
     while (fileAddedFlag) {
         fileAddedFlag = false;
+        /* TODO: Replace with something looping over all existing entries in fileTable */
         for (int i=0; i<fileTable.size; i++) {
-            fileItem = fileTable.tab[i];
-            if (fileItem!=NULL && fileItem->b.scheduledToUpdate
-                && !fileItem->b.fullUpdateIncludesProcessed) {
-                fileItem->b.fullUpdateIncludesProcessed = true;
-                isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
-                fillIncludeRefItem(&referenceItem, i);
-                if (refTabIsMember(&referenceTable, &referenceItem, NULL, &member)) {
-                    for (rr=member->refs; rr!=NULL; rr=rr->next) {
-                        includer = fileTable.tab[rr->position.file];
-                        assert(includer);
-                        if (!includer->b.scheduledToUpdate) {
-                            includer->b.scheduledToUpdate = true;
-                            fileAddedFlag = true;
-                            if (isJavaFileFlag) {
-                                // no transitive closure for Java
-                                includer->b.fullUpdateIncludesProcessed = true;
+            FileItem *fileItem = fileTable.tab[i];
+            if (fileItem!=NULL)
+                if (fileItem->b.scheduledToUpdate)
+                    if (!fileItem->b.fullUpdateIncludesProcessed) {
+                        fileItem->b.fullUpdateIncludesProcessed = true;
+                        bool isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
+                        fillIncludeRefItem(&referenceItem, i);
+                        if (refTabIsMember(&referenceTable, &referenceItem, NULL, &member)) {
+                            for (rr=member->refs; rr!=NULL; rr=rr->next) {
+                                FileItem *includer = getFileItem(rr->position.file);
+                                if (!includer->b.scheduledToUpdate) {
+                                    includer->b.scheduledToUpdate = true;
+                                    fileAddedFlag = true;
+                                    if (isJavaFileFlag) {
+                                        // no transitive closure for Java
+                                        includer->b.fullUpdateIncludesProcessed = true;
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
         }
     }
     recoverMemoriesAfterOverflow(cxFreeBase);
@@ -2489,7 +2491,7 @@ static int scheduleFileUsingTheMacro(void) {
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
-    log_trace(":scheduling file '%s'", fileTable.tab[s_olMacro2PassFile]->name);
+    log_trace(":scheduling file '%s'", getFileItem(s_olMacro2PassFile)->name);
     if (s_olMacro2PassFile == noFileIndex)
         return noFileIndex;
     return s_olMacro2PassFile;
@@ -2545,14 +2547,15 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     // and because references from currently procesed file would
     // be not loaded from the TAG file (it expects they are loaded
     // by parsing).
-    log_trace("checking if cmd %s, == %d\n", fileTable.tab[fnum]->name,fileTable.tab[fnum]->b.commandLineEntered);
-    if (fileTable.tab[fnum]->b.commandLineEntered)
+    FileItem *fileItem = getFileItem(fnum);
+    log_trace("checking if cmd %s, == %d\n", fileItem->name, fileItem->b.commandLineEntered);
+    if (fileItem->b.commandLineEntered)
         return false;
 
     // if references are not updated do not search it here
     // there were fullUpdate time? why?
-    //&fprintf(dumpOut, "checking that lastmodif %d, == %d\n", fileTable.tab[fnum]->lastModified, fileTable.tab[fnum]->lastUpdateMtime);
-    if (fileTable.tab[fnum]->lastModified!=fileTable.tab[fnum]->lastUpdateMtime)
+    log_trace("checking last modified: %d, update: %d", fileItem->lastModified, fileItem->lastUpdateMtime);
+    if (fileItem->lastModified != fileItem->lastUpdateMtime)
         return false;
 
     // here read one reference file looking for the refs
@@ -2606,7 +2609,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
         // on-line action with cursor in an un-used macro body ???
         ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=noFileIndex) {
-            inputFilename = fileTable.tab[ol2procfile]->name;
+            inputFilename = getFileItem(ol2procfile)->name;
             inputIn = false;
             olStringSecondProcessing = 1;
             mainFileProcessingInitialisations(firstPass, argc, argv,
@@ -2621,10 +2624,12 @@ static void mainEditServerProcessFile(int argc, char **argv,
                                       int nargc, char **nargv,
                                       bool *firstPass
 ) {
-    assert(fileTable.tab[olOriginalComFileNumber]->b.scheduledToProcess);
+    FileItem *fileItem = getFileItem(olOriginalComFileNumber);
+
+    assert(fileItem->b.scheduledToProcess);
     maxPasses = 1;
-    for(currentPass=1; currentPass<=maxPasses; currentPass++) {
-        inputFilename = fileTable.tab[olOriginalComFileNumber]->name;
+    for (currentPass=1; currentPass<=maxPasses; currentPass++) {
+        inputFilename = fileItem->name;
         assert(inputFilename!=NULL);
         mainEditSrvFileSinglePass(argc, argv, nargc, nargv, firstPass);
         if (options.server_operation==OLO_EXTRACT || (s_olstringServed && !creatingOlcxRefs()))
@@ -2632,7 +2637,7 @@ static void mainEditServerProcessFile(int argc, char **argv,
         if (LANGUAGE(LANG_JAVA))
             break;
     }
-    fileTable.tab[olOriginalComFileNumber]->b.scheduledToProcess = false;
+    fileItem->b.scheduledToProcess = false;
 }
 
 static char *presetEditServerFileDependingStatics(void) {
@@ -2644,18 +2649,22 @@ static char *presetEditServerFileDependingStatics(void) {
     //&s_paramEndPosition = noPosition;
     s_primaryStartPosition = noPosition;
     s_staticPrefixStartPosition = noPosition;
+
     // THIS is pretty stupid, there is always only one input file
-    // in edit server, otherwise it is an eror
-    fArgCount = 0; inputFilename = getInputFile(&fArgCount);
+    // in edit server, otherwise it is an error
+    fArgCount = 0;
+    inputFilename = getInputFile(&fArgCount);
     if (fArgCount>=fileTable.size) {
         // conservative message, probably macro invoked on nonsaved file
         olOriginalComFileNumber = noFileIndex;
         return NULL;
     }
+
+    /* TODO: replace by something to get all items in FileTable... */
     assert(fArgCount>=0 && fArgCount<fileTable.size && fileTable.tab[fArgCount]->b.scheduledToProcess);
     for(i=fArgCount+1; i<fileTable.size; i++) {
         if (fileTable.tab[i] != NULL) {
-            fileTable.tab[i]->b.scheduledToProcess = false;
+            getFileItem(i)->b.scheduledToProcess = false;
         }
     }
     olOriginalComFileNumber = fArgCount;
@@ -2792,8 +2801,9 @@ static FileItem *mainCreateListOfInputFiles(void) {
     fileItem = NULL;
     fileIndex = 0;
     for (char *fileName=getInputFile(&fileIndex); fileName!=NULL; fileIndex++,fileName=getInputFile(&fileIndex)) {
-        fileTable.tab[fileIndex]->next = fileItem;
-        fileItem = fileTable.tab[fileIndex];
+        FileItem *current = getFileItem(fileIndex);
+        current->next = fileItem;
+        fileItem = current;
     }
     LIST_MERGE_SORT(FileItem, fileItem, inputFileItemLess);
     return fileItem;
@@ -2936,7 +2946,7 @@ void mainCallEditServer(int argc, char **argv,
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
-            fileTable.tab[olOriginalComFileNumber]->b.scheduledToProcess = false;
+            getFileItem(olOriginalComFileNumber)->b.scheduledToProcess = false;
             // added [26.12.2002] because of loading options without input file
             inputFilename = NULL;
         }

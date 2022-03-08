@@ -132,7 +132,7 @@ Ensure(Options, can_read_square_bracketed_option_strings) {
 }
 
 Ensure(Options, will_not_expand_special_file_variable_when_no_value) {
-    expect(getRealFileNameStatic, when(fn, is_equal_to_string("options.c")),
+    expect(getRealFileName_static, when(fn, is_equal_to_string("options.c")),
            will_return("/some/path/to/options.c"));
     expect(directoryName_st, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
            will_return("/some/path/to"));
@@ -147,7 +147,7 @@ Ensure(Options, will_not_expand_special_file_variable_when_no_value) {
 }
 
 Ensure(Options, can_expand_special_variable_file) {
-    expect(getRealFileNameStatic, when(fn, is_equal_to_string("options.c")),
+    expect(getRealFileName_static, when(fn, is_equal_to_string("options.c")),
            will_return("/some/path/to/options.c"));
     expect(directoryName_st, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
            will_return("/some/path/to"));

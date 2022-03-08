@@ -397,7 +397,7 @@ char *expandSpecialFilePredefinedVariables_st(char *variable, char *inputFilenam
     char thisclass[MAX_FILE_NAME_SIZE];
     char superclass[MAX_FILE_NAME_SIZE];
 
-    strcpy(filename, getRealFileNameStatic(inputFilename));
+    strcpy(filename, getRealFileName_static(inputFilename));
     assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
     strcpy(path, directoryName_st(filename));
     strcpy(name, simpleFileNameWithoutSuffix_st(filename));

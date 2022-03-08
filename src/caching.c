@@ -45,7 +45,7 @@ bool checkFileModifiedTime(int fileIndex) {
 static void deleteReferencesOutOfMemory(Reference **rr) {
     while (*rr!=NULL) {
         if (CX_FREED_POINTER(*rr)) {
-            log_trace("deleting reference on %s:%d", fileTable.tab[(*rr)->position.file]->name, (*rr)->position.line);
+            log_trace("deleting reference on %s:%d", getFileItem((*rr)->position.file)->name, (*rr)->position.line);
             *rr = (*rr)->next;
             continue;
         }
@@ -204,7 +204,7 @@ static int cachedIncludedFilePass(int cpi) {
     mi = s_cache.cp[cpi].ibi;
     for (int i=s_cache.cp[cpi-1].ibi; i<mi; i++) {
         mt = checkFileModifiedTime(s_cache.ib[i]);
-        log_debug("mtime of %s eval to %d", fileTable.tab[s_cache.ib[i]]->name, mt);
+        log_debug("mtime of %s eval to %d", getFileItem(s_cache.ib[i])->name, mt);
         if (mt == 0)
             return 0;
     }
@@ -375,7 +375,7 @@ void cacheInclude(int fileNum) {
     if (!s_cache.activeCache)
         return;
     log_debug("caching include of file %d: %s",
-              s_cache.ibi, fileTable.tab[fileNum]->name);
+              s_cache.ibi, getFileItem(fileNum)->name);
     checkFileModifiedTime(fileNum);
     assert(s_cache.ibi < INCLUDE_CACHE_SIZE);
     s_cache.ib[s_cache.ibi] = fileNum;

@@ -973,7 +973,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             assert(memb && memb->bits.symbolType==TypeStruct && memb->u.structSpec);
             name = memb->name;
             storage = StorageConstructor;
-            if (fileTable.tab[memb->u.structSpec->classFileIndex]->directEnclosingInstance != noFileIndex) {
+            if (getFileItem(memb->u.structSpec->classFileIndex)->directEnclosingInstance != noFileIndex) {
                 // the first argument is direct enclosing instance, remove it
                 sign2 = skipFirstArgumentInDescriptorString(descriptor);
                 CF_ALLOCC(descriptor, strlen(sign2)+2, char);

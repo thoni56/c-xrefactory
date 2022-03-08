@@ -68,8 +68,18 @@ typedef enum loadSuperOrNot {
     DO_NOT_LOAD_SUPER
 } LoadSuperOrNot;
 
+typedef enum resolveDialog {
+    RESOLVE_DIALOG_ALWAYS = DO_NOT_LOAD_SUPER+1,
+    RESOLVE_DIALOG_NEVER,
+} ResolveDialog;
+
+typedef enum cutOuters {
+    CUT_OUTERS = RESOLVE_DIALOG_NEVER+1,
+    NO_OUTERS_CUT,
+} CutOuters;
+
 enum miscellaneous {						/* misc. constants */
-    DEFAULT_VALUE = DO_NOT_LOAD_SUPER + 1,
+    DEFAULT_VALUE = NO_OUTERS_CUT + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
@@ -91,8 +101,6 @@ enum miscellaneous {						/* misc. constants */
     ONLINE_ONLY,
     ALL_REFS,
     COUNT_ONLY,
-    CUT_OUTERS,
-    NO_OUTERS_CUT,
     VIRT_ITEM,
     SINGLE_VIRT_ITEM,
     FIRST_PASS,
@@ -111,8 +119,6 @@ enum miscellaneous {						/* misc. constants */
     CONSTRUCTOR_INVOCATION,
     REGULAR_METHOD,
     SUPER_METHOD_INVOCATION,
-    RESOLVE_DIALOG_ALLWAYS,
-    RESOLVE_DIALOG_NEVER,
     GLOBAL_ENV_ONLY,
     NO_ERROR_MESSAGE,
     ADD_CX_REFS,

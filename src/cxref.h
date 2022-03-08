@@ -46,8 +46,6 @@ extern Reference *olcxAddReference(Reference **rlist,
                                    int bestMatchFlag);
 extern void olcxFreeReferences(Reference *r);
 extern bool isSmallerOrEqClass(int inf, int sup);
-extern bool olcxPushLessFunction(Reference *r1, Reference *r2);
-extern bool olcxListLessFunction(Reference *r1, Reference *r2);
 extern char *getJavaDocUrl_st(SymbolReferenceItem *rr);
 extern char *getLocalJavaDocFile_st(char *fileUrl);
 extern char *getFullUrlOfJavaDoc_st(char *fileUrl);

@@ -247,7 +247,7 @@ char *createTagSearchLineStatic(char *name, Position *position,
     FileItem *fileItem = getFileItem(position->file);
     ffname = fileItem->name;
     assert(ffname);
-    ffname = getRealFileNameStatic(ffname);
+    ffname = getRealFileName_static(ffname);
     fl = strlen(ffname);
     l3 = strmcpy(file,simpleFileName(ffname)) - file;
 
@@ -647,18 +647,14 @@ static void genPartialFileTabRefFile(int updateFlag,
 }
 
 static void generateRefsFromMemory(int fileOrder) {
-    int                 tsize;
-    SymbolReferenceItem *pp;
-
-    tsize = referenceTable.size;
-    for (int i=0; i<tsize; i++) {
-        for (pp=referenceTable.tab[i]; pp!=NULL; pp=pp->next) {
-            if (pp->b.category == CategoryLocal)
+    for (int i=0; i<referenceTable.size; i++) {
+        for (SymbolReferenceItem *r=referenceTable.tab[i]; r!=NULL; r=r->next) {
+            if (r->b.category == CategoryLocal)
                 continue;
-            if (pp->refs == NULL)
+            if (r->refs == NULL)
                 continue;
-            if (pp->fileHash == fileOrder)
-                genRefItem0(pp, false);
+            if (r->fileHash == fileOrder)
+                genRefItem0(r, false);
         }
     }
 }
@@ -1099,22 +1095,24 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     int symType,reqAcc;
 
     assert(marker == CXFI_REFERENCE);
+
     usageKind = lastIncomingInfo.values[CXFI_USAGE];
     reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
     fillUsage(&usage, usageKind, reqAcc);
+
     sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
+
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
     file = decodeFileNumbers[file];
-    assert(fileTable.tab[file]!=NULL);
+
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
     col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     log_trace("%d %d->%d %d", usageKind, file, decodeFileNumbers[file], line);
+
     pos = makePosition(file, line, col);
-    if (lastIncomingInfo.onLineReferencedSym ==
-        lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
-        addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
-                     usage, pos);
+    if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
+        addToRefList(&lastIncomingInfo.symbolTab[sym]->refs, usage, pos);
     }
 }
 
@@ -1147,23 +1145,26 @@ static void cxrfReference(int size,
     assert(marker == CXFI_REFERENCE);
     usageKind = lastIncomingInfo.values[CXFI_USAGE];
     reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
+
     sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
+
     file = lastIncomingInfo.values[CXFI_FILE_INDEX];
     file = decodeFileNumbers[file];
-    assert(fileTable.tab[file]!=NULL);
+    FileItem *fileItem = getFileItem(file);
+
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
     col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
 
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
-        if (fileTable.tab[file]->b.cxLoading&&fileTable.tab[file]->b.cxSaved) {
+        if (fileItem->b.cxLoading && fileItem->b.cxSaved) {
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
             fillUsage(&usage, usageKind, reqAcc);
             copyrefFl = !isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
                                      usage, pos);
         } else {
-            copyrefFl = ! fileTable.tab[file]->b.cxLoading;
+            copyrefFl = !fileItem->b.cxLoading;
         }
         if (copyrefFl)
             writeCxReferenceBase(sym, usageKind, reqAcc, file, line, col);
@@ -1171,12 +1172,12 @@ static void cxrfReference(int size,
         pos = makePosition(file, line, col);
         fillUsage(&usage, usageKind, reqAcc);
         fillReference(&reference, usage, pos, NULL);
+        FileItem *referenceFileItem = getFileItem(reference.position.file);
         if (additionalArg == CXSF_DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&reference)) {
-                // restrict reported symbols to those defined in project
-                // input file
+                // restrict reported symbols to those defined in project input file
                 if (IS_DEFINITION_USAGE(reference.usage.kind)
-                    && fileTable.tab[reference.position.file]->b.commandLineEntered
+                    && referenceFileItem->b.commandLineEntered
                 ) {
                     lastIncomingInfo.deadSymbolIsDefined = 1;
                 } else if (! IS_DEFINITION_OR_DECL_USAGE(reference.usage.kind)) {
@@ -1200,27 +1201,26 @@ static void cxrfReference(int size,
                     searchSymbolCheckReference(lastIncomingInfo.symbolTab[sym],&reference);
                 }
             } else if (options.server_operation == OLO_SAFETY_CHECK1) {
-                if (    lastIncomingInfo.onLineReferencedSym !=
-                        lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
+                if (lastIncomingInfo.onLineReferencedSym != lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     olcxCheck1CxFileReference(lastIncomingInfo.symbolTab[sym],
                                               &reference);
                 }
             } else {
-                if (    lastIncomingInfo.onLineReferencedSym ==
-                        lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
+                if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     if (additionalArg == CXSF_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
-                        if (file != olOriginalFileNumber || !fileTable.tab[file]->b.commandLineEntered ||
+                        if (file != olOriginalFileNumber || !fileItem->b.commandLineEntered ||
                             options.server_operation == OLO_GOTO || options.server_operation == OLO_CGOTO ||
                             options.server_operation == OLO_PUSH_NAME ||
                             options.server_operation == OLO_PUSH_SPECIAL_NAME) {
-                            //&fprintf(dumpOut,":adding reference %s:%d\n", fileTable.tab[reference.position.file]->name, reference.position.line);
-                            olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &reference, lastIncomingInfo.onLineRefIsBestMatchFlag);
+                            log_trace (":adding reference %s:%d", referenceFileItem->name, reference.position.line);
+                            olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &reference,
+                                                          lastIncomingInfo.onLineRefIsBestMatchFlag);
                         }
                     } else if (additionalArg == CXSF_BY_PASS) {
                         if (positionsAreEqual(s_olcxByPassPos,reference.position)) {
                             // got the bypass reference
-                            //&fprintf(dumpOut,":adding bypass selected symbol %s\n", lastIncomingInfo.symbolTab[sym]->name);
+                            log_trace(":adding bypass selected symbol %s", lastIncomingInfo.symbolTab[sym]->name);
                             olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],
                                                &currentUserData->browserStack.top->hkSelectedSym,
                                                1, 1, 0, usageKind,0,&noPosition, UsageNone);
@@ -1264,25 +1264,26 @@ static void cxrfSubClass(int size,
     sub_class = lastIncomingInfo.values[CXFI_SUBCLASS];
 
     fileIndex = decodeFileNumbers[fileIndex];
-    assert(fileTable.tab[fileIndex]!=NULL);
+    FileItem *fileItem = getFileItem(fileIndex);
 
     super_class = decodeFileNumbers[super_class];
-    assert(fileTable.tab[super_class]!=NULL);
-    sub_class = decodeFileNumbers[sub_class];
-    assert(fileTable.tab[sub_class]!=NULL);
-    assert(options.taskRegime);
+    FileItem *superFileItem = getFileItem(super_class);
 
+    sub_class = decodeFileNumbers[sub_class];
+    FileItem *subFileItem = getFileItem(sub_class);
+
+    assert(options.taskRegime);
     switch (options.taskRegime) {
     case RegimeXref:
-        if (!fileTable.tab[fileIndex]->b.cxLoading &&
+        if (!fileItem->b.cxLoading &&
             additionalArg==CXSF_GENERATE_OUTPUT) {
             writeSubClassInfo(super_class, sub_class, fileIndex);  // updating refs
         }
         break;
     case RegimeEditServer:
         if (fileIndex != inputFileNumber) {
-            log_trace("reading %s < %s", simpleFileName(fileTable.tab[sub_class]->name),
-                      simpleFileName(fileTable.tab[super_class]->name));
+            log_trace("reading %s < %s", simpleFileName(subFileItem->name),
+                      simpleFileName(superFileItem->name));
             createSubClassInfo(super_class, sub_class, fileIndex, NO_CX_FILE_ITEM_GEN);
         }
         break;

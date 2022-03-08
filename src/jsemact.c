@@ -1125,7 +1125,7 @@ char *javaImportSymbolName_st(int file, int line, int coll) {
     sprintf(res, "%s:%x:%x:%x%cimport on line %3d", LINK_NAME_IMPORT_STATEMENT,
             file, line, coll,
             LINK_NAME_SEPARATOR,
-            /*& simpleFileName(getRealFileNameStatic(fileTable.tab[file]->name)), &*/
+            /*& simpleFileName(getRealFileName_static(fileTable.tab[file]->name)), &*/
             line);
     return res;
 }

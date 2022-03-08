@@ -1397,7 +1397,7 @@ static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, EditorMark
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,
                     "something goes wrong: expecting %s instead of %s at %s, offset:%d",
-                    oldName, cid, simpleFileName(getRealFileNameStatic(pos->buffer->name)),
+                    oldName, cid, simpleFileName(getRealFileName_static(pos->buffer->name)),
                     pos->offset);
             errorMessage(ERR_INTERNAL, tmpBuff);
             return;

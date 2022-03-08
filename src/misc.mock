@@ -90,7 +90,7 @@ void expandWildcardsInPaths(char *paths, char *outpaths, int availableSpace) {
   mock(paths, outpaths, availableSpace);
 }
 
-char *getRealFileNameStatic(char *fn) {
+char *getRealFileName_static(char *fn) {
   return (char *) mock(fn);
 }
 
@@ -114,7 +114,7 @@ void javaDotifyFileName(char *ss) {
   mock(ss);
 }
 
-char *javaGetNudePreTypeName_st(char *inn, int cutMode) {
+char *javaGetNudePreTypeName_static(char *inn, CutOuters cutMode) {
   return (char *) mock(inn, cutMode);
 }
 

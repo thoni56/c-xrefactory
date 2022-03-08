@@ -112,14 +112,6 @@ bool isSmallerOrEqClass(int inf, int sup) {
     return (bool) mock(inf, sup);
 }
 
-bool olcxPushLessFunction(Reference *r1, Reference *r2) {
-    return (bool) mock(r1, r2);
-}
-
-bool olcxListLessFunction(Reference *r1, Reference *r2) {
-    return (bool) mock(r1, r2);
-}
-
 char *getJavaDocUrl_st(SymbolReferenceItem *rr) {
     return (char *) mock(rr);
 }

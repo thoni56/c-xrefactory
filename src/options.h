@@ -1,6 +1,7 @@
 #ifndef OPTIONS_H_INCLUDED
 #define OPTIONS_H_INCLUDED
 
+#include "proto.h"
 #include "stdinc.h"
 #include <stdbool.h>
 
@@ -50,7 +51,7 @@ typedef struct options {
     char *xrefrc;
     int eolConversion;
     char *checkVersion;
-    int nestedClassDisplaying;
+    CutOuters displayNestedClasses;
     char *pushName;
     int parnum2;
     char *refpar1;
@@ -112,7 +113,7 @@ typedef struct options {
     bool allowClassFileRefs;
     int filterValue;
     char *jdkClassPath;
-    int manualResolve;
+    ResolveDialog manualResolve;
     char *browsedSymName;
     bool modifiedFlag;
     int olcxMenuSelectLineNum;

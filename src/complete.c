@@ -172,7 +172,7 @@ static char *getCompletionClassFieldString(CompletionLine *cl) {
         cname = javaGetShortClassName(cl->vFunClass->linkName);
     } else {
         assert(cl->symbol);
-        cname = javaGetNudePreTypeName_st(cl->symbol->linkName,CUT_OUTERS);
+        cname = javaGetNudePreTypeName_static(cl->symbol->linkName, CUT_OUTERS);
     }
     return cname;
 }
@@ -1474,7 +1474,7 @@ void javaCompleteThisPackageName(Completions *c) {
     static char cname[TMP_STRING_SIZE];
     char        *cc, *ss, *dd;
     if (c->idToProcessLen != 0) return;
-    ss = javaCutSourcePathFromFileName(getRealFileNameStatic(fileTable.tab[olOriginalFileNumber]->name));
+    ss = javaCutSourcePathFromFileName(getRealFileName_static(getFileItem(olOriginalFileNumber)->name));
     strcpy(cname, ss);
     dd = lastOccurenceInString(cname, '.');
     if (dd!=NULL) *dd=0;
@@ -1654,6 +1654,7 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
         return;
 
     // fqt from filetab
+    /* TODO: figure out how to loop over all fileItems without knowing the implementation */
     for (int i=0; i<fileTable.size; i++) {
         if (fileTable.tab[i]!=NULL)
             completeFqtClassFileFromFileTab(fileTable.tab[i], &cfmi);
