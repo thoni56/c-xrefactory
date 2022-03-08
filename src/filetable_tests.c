@@ -34,12 +34,12 @@ Ensure(FileTable, can_fetch_a_stored_filename) {
 Ensure(FileTable, cannot_find_filename_not_in_tab) {
     FileItem exists = {"exists.c"};
     FileItem donotexist = {"donot_exist.c"};
-    int out_position = -1;
+    int index = -1;
 
-    out_position = fileTableAdd(&fileTable, &exists);
+    index = fileTableAdd(&fileTable, &exists);
 
-    assert_that(fileTableIsMember(&fileTable, &exists, &out_position));
-    assert_that(!fileTableIsMember(&fileTable, &donotexist, &out_position));
+    assert_that(fileTableIsMember(&fileTable, &exists, &index));
+    assert_that(!fileTableIsMember(&fileTable, &donotexist, &index));
 }
 
 Ensure(FileTable, can_add_and_find_multiple_files) {
@@ -47,23 +47,23 @@ Ensure(FileTable, can_add_and_find_multiple_files) {
     FileItem exists2 = {"exists2.c"};
     FileItem exists3 = {"exists3.c"};
     FileItem donotexist = {"donot_exist.c"};
-    int out_position = -1;
+    int index = -1;
 
-    out_position = fileTableAdd(&fileTable, &exists1);
+    index = fileTableAdd(&fileTable, &exists1);
 
-    assert_that(fileTableIsMember(&fileTable, &exists1, &out_position));
-    assert_that(!fileTableIsMember(&fileTable, &donotexist, &out_position));
+    assert_that(fileTableIsMember(&fileTable, &exists1, &index));
+    assert_that(!fileTableIsMember(&fileTable, &donotexist, &index));
 
-    out_position = fileTableAdd(&fileTable, &exists2);
-    assert_that(fileTableIsMember(&fileTable, &exists1, &out_position));
-    assert_that(fileTableIsMember(&fileTable, &exists2, &out_position));
-    assert_that(!fileTableIsMember(&fileTable, &donotexist, &out_position));
+    index = fileTableAdd(&fileTable, &exists2);
+    assert_that(fileTableIsMember(&fileTable, &exists1, &index));
+    assert_that(fileTableIsMember(&fileTable, &exists2, &index));
+    assert_that(!fileTableIsMember(&fileTable, &donotexist, &index));
 
-    out_position = fileTableAdd(&fileTable, &exists3);
-    assert_that(fileTableIsMember(&fileTable, &exists1, &out_position));
-    assert_that(fileTableIsMember(&fileTable, &exists2, &out_position));
-    assert_that(fileTableIsMember(&fileTable, &exists3, &out_position));
-    assert_that(!fileTableIsMember(&fileTable, &donotexist, &out_position));
+    index = fileTableAdd(&fileTable, &exists3);
+    assert_that(fileTableIsMember(&fileTable, &exists1, &index));
+    assert_that(fileTableIsMember(&fileTable, &exists2, &index));
+    assert_that(fileTableIsMember(&fileTable, &exists3, &index));
+    assert_that(!fileTableIsMember(&fileTable, &donotexist, &index));
 }
 
 Ensure(FileTable, can_check_filename_exists) {
@@ -86,19 +86,32 @@ Ensure(FileTable, can_lookup_filename) {
     FileItem exists1 = {"exists1.c"};
     FileItem exists2 = {"exists2.c"};
     FileItem exists3 = {"exists3.c"};
-    int position = -1;
+    int index = -1;
 
     assert_that(fileTableLookup(&fileTable, "donot_exist.c"), is_equal_to(-1));
 
-    position = fileTableAdd(&fileTable, &exists1);
+    index = fileTableAdd(&fileTable, &exists1);
     assert_that(fileTableLookup(&fileTable, "donot_exist.c"), is_equal_to(-1));
-    assert_that(fileTableLookup(&fileTable, "exists1.c"), is_equal_to(position));
+    assert_that(fileTableLookup(&fileTable, "exists1.c"), is_equal_to(index));
 
-    position = fileTableAdd(&fileTable, &exists2);
+    index = fileTableAdd(&fileTable, &exists2);
     assert_that(fileTableLookup(&fileTable, "donot_exist.c"), is_equal_to(-1));
-    assert_that(fileTableLookup(&fileTable, "exists2.c"), is_equal_to(position));
+    assert_that(fileTableLookup(&fileTable, "exists2.c"), is_equal_to(index));
 
-    position = fileTableAdd(&fileTable, &exists3);
+    index = fileTableAdd(&fileTable, &exists3);
     assert_that(fileTableLookup(&fileTable, "donot_exist.c"), is_equal_to(-1));
-    assert_that(fileTableLookup(&fileTable, "exists3.c"), is_equal_to(position));
+    assert_that(fileTableLookup(&fileTable, "exists3.c"), is_equal_to(index));
+}
+
+Ensure(FileTable, can_get_fileitem) {
+    FileItem item = {"item.c"};
+    int index = fileTableAdd(&fileTable, &item);
+
+    FileItem *gotten = getFileItem(index);
+
+    /* Has the same name */
+    assert_that(gotten->name, is_equal_to_string(item.name));
+
+    /* And is actually the same item... */
+    assert_that(gotten, is_equal_to(&item));
 }
