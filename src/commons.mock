@@ -37,7 +37,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     sprintf(message, "COMMONS MOCK: *** INTERNAL CHECK FAILED: %s in line %s:%d\n", expr, file, line);
     /* NOTE: This uses internal cgreen functions to point to the calling location, may not be forward compatible... */
     (*get_test_reporter()->assert_true)(get_test_reporter(), file, line, (false), message, NULL);
-    exit(EXIT_FAILURE);
+    exit(EXIT_SUCCESS);
 }
 
 char *create_temporary_filename() {

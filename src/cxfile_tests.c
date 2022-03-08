@@ -1,23 +1,25 @@
 #include <cgreen/assertions.h>
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint.h>
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/mocks.h>
 
 #include "characterreader.h"
 #include "cxfile.h"
+#include "filetable.h"
 #include "log.h"
 
 #include "globals.mock"
 #include "misc.mock"
+#include "options.h"
 #include "utils.mock"
 #include "options.mock"
 #include "commons.mock"
+#include "caching.mock"
 
 #include "olcxtab.mock"
 #include "cxref.mock"
 #include "reftab.mock"
-#include "filetable.mock"
-#include "yylex.mock"           /* For addFiletabItem */
 #include "editor.mock"
 #include "characterreader.mock"
 #include "classhierarchy.mock"
@@ -27,6 +29,9 @@
 Describe(CxFile);
 BeforeEach(CxFile) {
     log_set_level(LOG_DEBUG); /* Set to LOG_TRACE if needed */
+
+    options.taskRegime = RegimeEditServer;
+    initFileTable(&fileTable);
 }
 AfterEach(CxFile) {}
 
@@ -36,35 +41,48 @@ Ensure(CxFile, can_run_empty_test) {
 }
 
 
-#include "cgreen_capture_parameter.c"
 
-static expect_string(char string[]) {
-    for (int i=0; string[i] != '\0'; i++) {
-        if (isspace(string[i])
-            expect(skipWhiteSpace, will_return(string[i++]));
-        else
+/* The string should not start with a space, but it is assumed that
+ * this string is delimited by some leading whitespace so it always
+ * expects a skipWhitespace() first */
+static void expect_string(char string[]) {
+    expect(skipWhiteSpace, will_return(string[0]));
+    for (int i=1; string[i] != '\0'; i++) {
+        if (isspace(string[i])) {
+            expect(getChar, will_return(' '));
+            if (string[i+1] != '\0')
+                expect(skipWhiteSpace, will_return(string[++i]));
+          } else
             expect(getChar, will_return(string[i]));
+    }
 }
 
-Ensure(CxFile, can_do_normal_scan) {
+
+#include "cgreen_capture_parameter.c"
+
+xEnsure(CxFile, can_do_normal_scan) {
     FILE *filePointer = (FILE *)4654654645;
     CharacterBuffer *buffer;
 
-    cgreen_mocks_are(learning_mocks);
     options.cxrefsLocation = "./CXrefs";
+    options.referenceFileCount = 10;
 
     expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(filePointer));
     expect(initCharacterBuffer, when(file, is_equal_to(filePointer)),
            will_capture_parameter(characterBuffer, buffer));
 
     /* Version marking always starts a file */
-    expect_string(" 34v file format: C-xrefactory 1.6.0 ");
+    expect_string("34v");
+    expect(skipCharacters, when(count, is_equal_to(33)));
+    expect(getChar, will_return(' '));
 
     /* Generation setttings, file count, ... */
-    expect(getChar, will_return('2'));
-    expect(getChar, will_return('1'));
-    expect(getChar, will_return('@'));
-    expect(getChar, will_return(' '));
+    expect_string("21@mpfotulcsrhdeibnaAgk 10n 300000k ");
+
+    expect_string("49976f 1646087914m 53:/home/thoni/Utveckling/c-xrefactory/src/extract.mock");
+    expect(normalizeFileName, when(name, is_equal_to_string("/home/thoni/Utveckling/c-xrefactory/src/extract.mock")),
+           will_return("/home/thoni/Utveckling/c-xrefactory/src/extract.mock"));
+
 
     normalScanReferenceFile("/XFiles");
 }
