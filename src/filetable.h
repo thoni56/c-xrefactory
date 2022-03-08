@@ -66,5 +66,6 @@ extern void initFileTable(FileTable *table);
 extern bool fileExistsInTable(FileTable *table, char *fileName);
 extern int fileTableLookup(FileTable *table, char *fileName);
 extern int addFileTabItem(char *name);
+extern FileItem *getFileItem(int fileIndex);
 
 #endif
