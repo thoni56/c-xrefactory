@@ -79,12 +79,16 @@ endif
 # We need to use compatible gcov (for Darwin/Brew we need to use GCC:s gcov)
 ifeq ("$(CC)", "gcc-11")
 	LCOV = lcov --gcov-tool gcov-11
+	GCOV = gcov-11
+	GCOV_TOOL = gcov-tool-11
 else
 	LCOV = lcov
+	GCOV = gcov
+	GCOV_TOOL = gcov-tool
 endif
 
 # We might not have gcov-tool available
-ifneq (, $(shell which gcov-tool))
+ifneq (, $(shell which $(GCOV_TOOL)))
     HAVE_GCOV_TOOL=yes
 else
 	HAVE_GCOV_TOOL=
@@ -116,7 +120,7 @@ ci:
 	$(MAKE) -e -C ../tests/systemd init
 	$(MAKE) -e -C ../tests/ffmpeg init
 	$(MAKE) -e -C ../tests all
-	for tc in ../tests/*/.coverage ; do gcov-tool merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+	for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 
 
 yydebug: CFLAGS += -DYYDEBUG
@@ -257,8 +261,8 @@ clean-coverage:
 
 coverage-report:
 ifeq ($(HAVE_GCOV_TOOL),yes)
-	for tc in ../tests/*/.coverage ; do gcov-tool merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
-	-gcov .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
+	for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+	-$(GCOV) .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
 endif
 	@echo Doing the reporting in the background...
 	$(MAKE) the-actual-coverage-report &
@@ -332,7 +336,7 @@ unittests: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $^
 	# Create .gcov for Emacs cov-mode based on unittests
-	-gcov .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
+	-$(GCOV) .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
 		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
