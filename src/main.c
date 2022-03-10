@@ -2279,7 +2279,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 }
 
 static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
-    int i,fi,savingFlag;
+    int fi;
 
     ENTER();
     if (mess != LONGJMP_REASON_NONE) {
@@ -2292,10 +2292,13 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
             fflush(dumpOut);
         }
     }
+
+    /* TODO: Why is this here? */
     if (options.cxrefsLocation == NULL) {
         fatalError(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
-    for(i=0; i<includeStackPointer; i++) {
+
+    for (int i=0; i<includeStackPointer; i++) {
         log_trace("inspecting include %d, fileNumber: %d", i, includeStack[i].lexBuffer.buffer.fileNumber);
         if (includeStack[i].lexBuffer.buffer.file != stdin) {
             fi = includeStack[i].lexBuffer.buffer.fileNumber;
@@ -2318,22 +2321,22 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     recoverMemoriesAfterOverflow(cxMemFreeBase);
 
     /* ************ start with CXREFS and memories clean ************ */
-    savingFlag = 0;
-    for(i=0; i<fileTable.size; i++) {
+    bool savingFlag = false;
+    for (int i=0; i<fileTable.size; i++) {
         if (fileTable.tab[i]!=NULL) {
             if (fileTable.tab[i]->b.cxLoading) {
                 fileTable.tab[i]->b.cxLoading = false;
                 fileTable.tab[i]->b.cxSaved = 1;
                 if (fileTable.tab[i]->b.commandLineEntered || !options.multiHeadRefsCare)
-                    savingFlag = 1;
+                    savingFlag = true;
                 // before, but do not work as scheduledToProcess is auto-cleared
                 //&             if (fileTable.tab[i]->b.scheduledToProcess
-                //&                 || !options.multiHeadRefsCare) savingFlag = 1;
+                //&                 || !options.multiHeadRefsCare) savingFlag = true;
                 log_trace(" -># '%s'",fileTable.tab[i]->name);
             }
         }
     }
-    if (savingFlag==0 && mess!=LONGJMP_REASON_FILE_ABORT) {
+    if (savingFlag && mess!=LONGJMP_REASON_FILE_ABORT) {
         /* references overflowed, but no whole file readed */
         fatalError(ERR_NO_MEMORY, "cxMemory", XREF_EXIT_ERR);
     }
