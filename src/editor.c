@@ -1114,9 +1114,10 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
             file = r->position.file;
             line = r->position.line;
             col = r->position.col;
-            buff = editorFindFile(fileTable.tab[file]->name);
+            FileItem *fileItem = getFileItem(file);
+            buff = editorFindFile(fileItem->name);
             if (buff==NULL) {
-                errorMessage(ERR_CANT_OPEN, getFileItem(file)->name);
+                errorMessage(ERR_CANT_OPEN, fileItem->name);
                 while (r!=NULL && file == r->position.file) r = r->next;
             } else {
                 s = buff->allocation.text;

@@ -2377,28 +2377,28 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     while (fileAddedFlag) {
         fileAddedFlag = false;
         /* TODO: Replace with something looping over all existing entries in fileTable */
-        for (int i=0; i<fileTable.size; i++) {
-            FileItem *fileItem = fileTable.tab[i];
-            if (fileItem!=NULL)
-                if (fileItem->b.scheduledToUpdate)
-                    if (!fileItem->b.fullUpdateIncludesProcessed) {
-                        fileItem->b.fullUpdateIncludesProcessed = true;
-                        bool isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
-                        fillIncludeRefItem(&referenceItem, i);
-                        if (refTabIsMember(&referenceTable, &referenceItem, NULL, &member)) {
-                            for (rr=member->refs; rr!=NULL; rr=rr->next) {
-                                FileItem *includer = getFileItem(rr->position.file);
-                                if (!includer->b.scheduledToUpdate) {
-                                    includer->b.scheduledToUpdate = true;
-                                    fileAddedFlag = true;
-                                    if (isJavaFileFlag) {
-                                        // no transitive closure for Java
-                                        includer->b.fullUpdateIncludesProcessed = true;
-                                    }
+        for (int i=getNextExistingFileIndex(-1); i != fileTable.size; i = getNextExistingFileIndex(i)) {
+            FileItem *fileItem = getFileItem(i);
+            if (fileItem->b.scheduledToUpdate)
+                if (!fileItem->b.fullUpdateIncludesProcessed) {
+                    fileItem->b.fullUpdateIncludesProcessed = true;
+                    bool isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
+                    fillIncludeRefItem(&referenceItem, i);
+                    if (refTabIsMember(&referenceTable, &referenceItem, NULL, &member)) {
+                        for (rr=member->refs; rr!=NULL; rr=rr->next) {
+                            FileItem *includer = getFileItem(rr->position.file);
+                            if (!includer->b.scheduledToUpdate) {
+                                includer->b.scheduledToUpdate = true;
+                                fileAddedFlag = true;
+                                if (isJavaFileFlag) {
+                                    // no transitive closure for Java
+                                    includer->b.fullUpdateIncludesProcessed = true;
                                 }
                             }
                         }
                     }
+                }
+
         }
     }
     recoverMemoriesAfterOverflow(cxFreeBase);
@@ -2631,8 +2631,6 @@ static void mainEditServerProcessFile(int argc, char **argv,
 }
 
 static char *presetEditServerFileDependingStatics(void) {
-    int     i;
-    char    *fileName;
     fileProcessingStartTime = time(NULL);
     //&s_paramPosition = noPosition;
     //&s_paramBeginPosition = noPosition;
@@ -2640,7 +2638,7 @@ static char *presetEditServerFileDependingStatics(void) {
     s_primaryStartPosition = noPosition;
     s_staticPrefixStartPosition = noPosition;
 
-    // THIS is pretty stupid, there is always only one input file
+    // This is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an error
     int fileIndex = 0;
     inputFilename = getNextInputFile(&fileIndex);
@@ -2650,16 +2648,15 @@ static char *presetEditServerFileDependingStatics(void) {
         return NULL;
     }
 
-    /* TODO: replace by something to get all items in FileTable... */
-    assert(fileIndex>=0 && fileIndex<fileTable.size && fileTable.tab[fileIndex]->b.scheduledToProcess);
-    for(i=fileIndex+1; i<fileTable.size; i++) {
-        if (fileTable.tab[i] != NULL) {
-            getFileItem(i)->b.scheduledToProcess = false;
-        }
+    assert(fileIndex>=0 && fileIndex<fileTable.size && getFileItem(fileIndex)->b.scheduledToProcess);
+    for (int i=getNextExistingFileIndex(fileIndex); i != fileTable.size; i = getNextExistingFileIndex(i)) {
+        getFileItem(i)->b.scheduledToProcess = false;
     }
+
     olOriginalComFileNumber = fileIndex;
-    fileName = inputFilename;
-    mainSetLanguage(fileName,  &s_language);
+
+    char *fileName = inputFilename;
+    mainSetLanguage(fileName, &s_language);
     // O.K. just to be sure, there is no other input file
     return fileName;
 }

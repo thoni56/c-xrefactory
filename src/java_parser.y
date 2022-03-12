@@ -874,7 +874,7 @@ CompilationUnit: {
                     javaReadSymbolFromSourceFileInit(olOriginalFileNumber,
                                                      jsltypeTab);
 
-                    fname = fileTable.tab[olOriginalFileNumber]->name;
+                    fname = getFileItem(olOriginalFileNumber)->name;
                     if (options.taskRegime == RegimeEditServer
                         && refactoringOptions.refactoringRegime!=RegimeRefactory) {
                         // this must be before reading 's_olOriginalComFile' !!!
@@ -884,9 +884,10 @@ CompilationUnit: {
                     }
 
                     // this must be last reading of this class before parsing
-                    if (editorFileExists(fileTable.tab[olOriginalComFileNumber]->name)) {
+                    FileItem *fileItem = getFileItem(olOriginalComFileNumber);
+                    if (editorFileExists(fileItem->name)) {
                         javaReadSymbolsFromSourceFileNoFreeing(
-                            fileTable.tab[olOriginalComFileNumber]->name, fname);
+                            fileItem->name, fname);
                     }
 
                     javaReadSymbolFromSourceFileEnd();
