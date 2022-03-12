@@ -1173,7 +1173,7 @@ static void processPragmaDirective(void) {
     if (lexem == IDENTIFIER && strcmp(currentInput.currentLexemP, "once")==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
-        fname = simpleFileName(fileTable.tab[position.file]->name);
+        fname = simpleFileName(getFileItem(position.file)->name);
         sprintf(tmpBuff, "PragmaOnce-%s", fname);
         PPM_ALLOCC(mname, strlen(tmpBuff)+1, char);
         strcpy(mname, tmpBuff);

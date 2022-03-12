@@ -447,7 +447,7 @@ EditorMarker *editorCreateNewMarkerForPosition(Position *position) {
     if (position->file==noFileIndex || position->file<0) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for nonexistant position");
     }
-    buffer = editorFindFile(fileTable.tab[position->file]->name);
+    buffer = editorFindFile(getFileItem(position->file)->name);
     marker = editorCreateNewMarker(buffer, 0);
     editorMoveMarkerToLineCol(marker, position->line, position->col);
     return marker;
@@ -703,7 +703,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     strcpy(buff->name, newName);
     // update also ftnum
     fileIndex = addFileTableItem(newName);
-    fileTable.tab[fileIndex]->b.commandLineEntered = fileTable.tab[buff->ftnum]->b.commandLineEntered;
+    getFileItem(fileIndex)->b.commandLineEntered = getFileItem(buff->ftnum)->b.commandLineEntered;
     buff->ftnum = fileIndex;
 
     *memb = (EditorBufferList){.buffer = buff, .next = NULL};
@@ -930,38 +930,37 @@ void editorDumpBuffers(void) {
 static void editorQuasiSaveBuffer(EditorBuffer *buffer) {
     buffer->bits.modifiedSinceLastQuasiSave = false;
     buffer->stat.st_mtime = time(NULL);  //? why it does not work with 1;
-    assert(fileTable.tab[buffer->ftnum]);
-    fileTable.tab[buffer->ftnum]->lastModified = buffer->stat.st_mtime;
+    FileItem *fileItem = getFileItem(buffer->ftnum);
+    fileItem->lastModified = buffer->stat.st_mtime;
 }
 
 void editorQuasiSaveModifiedBuffers(void) {
-    int                     i, saving;
-    static time_t           lastQuazySaveTime = 0;
-    time_t                  timeNull;
-    EditorBufferList      *ll;
-    saving = 0;
-    for(i=0; i<editorBufferTables.size; i++) {
-        for(ll=editorBufferTables.tab[i]; ll!=NULL; ll=ll->next) {
+    bool saving = false;
+    static time_t lastQuazySaveTime = 0;
+    time_t currentTime;
+
+    for (int i=0; i<editorBufferTables.size; i++) {
+        for (EditorBufferList *ll=editorBufferTables.tab[i]; ll!=NULL; ll=ll->next) {
             if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
-                saving = 1;
+                saving = true;
                 goto cont;
             }
         }
     }
  cont:
     if (saving) {
-        // sychronization, since last quazy save, there must
+        // sychronization, since last quazi save, there must
         // be at least one second, otherwise times will be wrong
-        timeNull = time(NULL);
-        if (lastQuazySaveTime > timeNull+5) {
+        currentTime = time(NULL);
+        if (lastQuazySaveTime > currentTime+5) {
             fatalError(ERR_INTERNAL, "last save in the future, travelling in time?", XREF_EXIT_ERR);
-        } else if (lastQuazySaveTime >= timeNull) {
-            sleep(1+lastQuazySaveTime-timeNull);
+        } else if (lastQuazySaveTime >= currentTime) {
+            sleep(1+lastQuazySaveTime-currentTime);
             //&         ppcGenRecord(PPC_INFORMATION,"slept");
         }
     }
-    for(i=0; i<editorBufferTables.size; i++) {
-        for(ll=editorBufferTables.tab[i]; ll!=NULL; ll=ll->next) {
+    for (int i=0; i<editorBufferTables.size; i++) {
+        for (EditorBufferList *ll=editorBufferTables.tab[i]; ll!=NULL; ll=ll->next) {
             if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
                 editorQuasiSaveBuffer(ll->buffer);
             }
@@ -1117,7 +1116,7 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
             col = r->position.col;
             buff = editorFindFile(fileTable.tab[file]->name);
             if (buff==NULL) {
-                errorMessage(ERR_CANT_OPEN, fileTable.tab[file]->name);
+                errorMessage(ERR_CANT_OPEN, getFileItem(file)->name);
                 while (r!=NULL && file == r->position.file) r = r->next;
             } else {
                 s = buff->allocation.text;

@@ -314,7 +314,7 @@ bool javaTypeFileExist(IdList *name) {
 
     if (fileExistsInTable(&fileTable, fname+1)) {
         int fileIndex = fileTableLookup(&fileTable, fname+1);
-        if (fileTable.tab[fileIndex]->b.sourceFileNumber != noFileIndex) {
+        if (getFileItem(fileIndex)->b.sourceFileNumber != noFileIndex) {
             return true;
         }
     }
@@ -432,17 +432,19 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
         *dollarPosition = 0;
     }
     *classFileNameP = *sourceFileNameP = "";
-    //&fprintf(dumpOut,"!looking for %s.classf(in %s)== %d\n", linkName, slname, classSymbol->u.structSpec->classFileIndex); fflush(dumpOut);fprintf(dumpOut,"!looking for %s %s\n", linkName, fileTable.tab[classSymbol->u.structSpec->classFileIndex]->name); fflush(dumpOut);
+    log_trace("!looking for %s.classf(in %s)== %d", linkName, slname, classSymbol->u.structSpec->classFileIndex);
+    log_trace("!looking for %s %s", linkName, getFileItem(classSymbol->u.structSpec->classFileIndex)->name);
     sourceFound = javaFindSourceFile(slname, sourceFileNameP);
-    assert(classSymbol->u.structSpec && fileTable.tab[classSymbol->u.structSpec->classFileIndex]);
-    sourceIndex = fileTable.tab[classSymbol->u.structSpec->classFileIndex]->b.sourceFileNumber;
+    assert(classSymbol->u.structSpec);
+    FileItem *fileItem = getFileItem(classSymbol->u.structSpec->classFileIndex);
+    sourceIndex = fileItem->b.sourceFileNumber;
 
     if (!sourceFound && sourceIndex!=-1 && sourceIndex!=noFileIndex) {
         // try the source indicated by source field of filetab
-        assert(fileTable.tab[sourceIndex]);
-        //&fprintf(dumpOut,"checking %s\n", fileTable.tab[sourceIndex]->name);
-        sourceFound = javaFindFile0("","",fileTable.tab[sourceIndex]->name, "", sourceFileNameP);
-        //&fprintf(dumpOut,"result %d %s\n", sourceFound, *sourceFileNameP);
+        FileItem *sourceFileItem = getFileItem(sourceIndex);
+        log_trace("checking %s", sourceFileItem->name);
+        sourceFound = javaFindFile0("", "", sourceFileItem->name, "", sourceFileNameP);
+        log_trace("result %d %s", sourceFound, *sourceFileNameP);
     }
 
     /* We need to retain the stat value for class files since it can be inside an archive */
@@ -785,7 +787,7 @@ static void addJavaFileDependency(int file, char *onfile) {
     if (options.taskRegime != RegimeXref)
         return;
     // also do it only for source files
-    if (! fileTable.tab[file]->b.commandLineEntered)
+    if (!getFileItem(file)->b.commandLineEntered)
         return;
     fileIndex = addFileTableItem(onfile);
     pos = makePosition(file, 0, 0);
@@ -812,7 +814,8 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
 
     if (memb == NULL)
         return;
-    //&fprintf(dumpOut,"!requesting class (%d)%s\n", memb, memb->linkName);
+
+    log_trace("!requesting class (%d)%s", memb, memb->linkName);
     sourceName = className = "";
     if (!memb->bits.javaFileIsLoaded) {
         memb->bits.javaFileIsLoaded = true;
@@ -826,11 +829,11 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
         if (findResult == RESULT_IS_JAVA_FILE) {
             assert(memb->u.structSpec);
             cfi = memb->u.structSpec->classFileIndex;
-            assert(fileTable.tab[cfi]);
+            FileItem *cfiFileItem = getFileItem(cfi);
             // set it to none, if class is inside jslparsing  will re-set it
-            fileTable.tab[cfi]->b.sourceFileNumber=noFileIndex;
+            cfiFileItem->b.sourceFileNumber=noFileIndex;
             javaReadSymbolsFromSourceFile(sourceName);
-            if (fileTable.tab[cfi]->b.sourceFileNumber == noFileIndex) {
+            if (cfiFileItem->b.sourceFileNumber == noFileIndex) {
                 // class definition not found in the source file,
                 // (moved inner class) retry searching for class file
                 findResult = javaFindFile(memb, &sourceName, &className);
@@ -1125,15 +1128,17 @@ char *javaImportSymbolName_st(int file, int line, int coll) {
     sprintf(res, "%s:%x:%x:%x%cimport on line %3d", LINK_NAME_IMPORT_STATEMENT,
             file, line, coll,
             LINK_NAME_SEPARATOR,
-            /*& simpleFileName(getRealFileName_static(fileTable.tab[file]->name)), &*/
+            /*& simpleFileName(getRealFileName_static(getFileItem(file)->name)), &*/
             line);
     return res;
 }
 
 void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage) {
     char *isymName;
+
     isymName = javaImportSymbolName_st(importPos->file, importPos->line, importPos->col);
-//&fprintf(dumpOut,"using import on %s:%d (%d)  at %s:%d\n", simpleFileName(fileTable.tab[importPos->file]->name), importPos->line, importPos->col, simpleFileName(fileTable.tab[pos->file]->name), pos->line);
+    log_trace("using import on %s:%d (%d) at %s:%d\n", simpleFileName(getFileItem(importPos->file)->name),
+              importPos->line, importPos->col, simpleFileName(getFileItem(pos->file)->name), pos->line);
     addSpecialFieldReference(isymName, StorageDefault, noFileIndex, pos, usage);
 }
 
@@ -2177,7 +2182,7 @@ static TypeModifier *javaMethodInvocation(
         if (! javaSmallerProfile(appl[smallesti], appl[i]))
             return &s_errorModifier;
     }
-//&sprintf(tmpBuff,"the invoked method is %s of %s\n\n",appl[smallesti]->linkName,fileTable.tab[funCl[smallesti]]->name);ppcBottomInformation(tmpBuff);
+    log_trace("the invoked method is %s of %s", appl[smallesti]->linkName, getFileItem(funCl[smallesti])->name);
     assert(appl[smallesti]->bits.symbolType == TypeDefault);
     assert(appl[smallesti]->u.typeModifier->kind == TypeFunction);
     assert(funCl[smallesti] != -1);
@@ -2680,8 +2685,8 @@ void javaParsedSuperClass(Symbol *symbol) {
         if (pp->d == symbol) break;
     }
     if (pp==NULL) {
-//&fprintf(dumpOut,"manual super class %s of %s == %s\n",symbol->linkName,s_javaStat->thisClass->linkName, fileTable.tab[s_javaStat->thisClass->u.structSpec->classFileIndex]->name);fflush(dumpOut);
-        //&assert(0); // this should never comed now
+        log_trace("manual super class %s of %s == %s" ,symbol->linkName, s_javaStat->thisClass->linkName,
+                  getFileItem(s_javaStat->thisClass->u.structSpec->classFileIndex)->name);
         javaLoadClassSymbolsFromFile(symbol);
         addSuperClassOrInterface(s_javaStat->thisClass, symbol,
                                  currentFile.lexBuffer.buffer.fileNumber);
@@ -2701,7 +2706,7 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
     }
     SPRINT_FILE_TAB_CLASS_NAME(className, fqt);
     fileIndex = addFileTableItem(className);
-    fileTable.tab[fileIndex]->b.sourceFileNumber = classId->position.file;
+    getFileItem(fileIndex)->b.sourceFileNumber = classId->position.file;
 }
 
 
