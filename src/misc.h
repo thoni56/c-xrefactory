@@ -68,7 +68,7 @@ extern char * getRealFileName_static(char *fn);
 extern int substringIndexWithLimit(char *s, int limit, char *subs);
 extern bool stringContainsSubstring(char *s, char *subs);
 extern void javaGetPackageNameFromSourceFileName(char *src, char *opack);
-extern void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify);
+extern void javaGetClassNameFromFileNum(int nn, char *tmpOut, bool dotify);
 extern void javaDotifyFileName( char *ss);
 extern char *javaGetNudePreTypeName_static( char *inn, CutOuters cutMode);
 extern char *javaGetShortClassName(char *inn);

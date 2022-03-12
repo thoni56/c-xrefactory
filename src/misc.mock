@@ -106,7 +106,7 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
   mock(src, opack);
 }
 
-void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify) {
+void javaGetClassNameFromFileNum(int nn, char *tmpOut, bool dotify) {
   mock(nn, tmpOut, dotify);
 }
 

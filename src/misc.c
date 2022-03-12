@@ -59,13 +59,13 @@ void typeDump(TypeModifier *t) {
     fprintf(dumpOut,"dumpStop\n");
 }
 
-void symbolRefItemDump(SymbolReferenceItem *ss) {
+void symbolRefItemDump(SymbolReferenceItem *s) {
     fprintf(dumpOut,"%s\t%s %s %d %d %d %d %d\n",
-            ss->name,
-            fileTable.tab[ss->vApplClass]->name,
-            fileTable.tab[ss->vFunClass]->name,
-            ss->b.symType, ss->b.storage, ss->b.scope,
-            ss->b.accessFlags, ss->b.category);
+            s->name,
+            getFileItem(s->vApplClass)->name,
+            getFileItem(s->vFunClass)->name,
+            s->b.symType, s->b.storage, s->b.scope,
+            s->b.accessFlags, s->b.category);
 }
 
 /* *********************************************************************** */
@@ -382,16 +382,17 @@ void javaDotifyFileName(char *ss) {
 // file num is not neccessary a class item !
 static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
     char *dd, *ss;
-    ss = javaCutClassPathFromFileName(getRealFileName_static(fileTable.tab[fnum]->name));
+    ss = javaCutClassPathFromFileName(getRealFileName_static(getFileItem(fnum)->name));
     strcpy(ttt, ss);
     dd = lastOccurenceInString(ttt, '.');
     if (dd!=NULL) *dd=0;
 }
 
-// file num is not neccessary a class item !
-void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify) {
+// file num is not neccessarily a class item !
+void javaGetClassNameFromFileNum(int nn, char *tmpOut, bool dotify) {
     getClassFqtNameFromFileNum(nn, tmpOut);
-    if (dotify==DOTIFY_NAME) javaDotifyFileName(tmpOut);
+    if (dotify==DOTIFY_NAME)
+        javaDotifyFileName(tmpOut);
 }
 
 char *javaGetShortClassName(char *inn) {
