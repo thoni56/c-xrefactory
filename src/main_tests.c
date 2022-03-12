@@ -8,6 +8,7 @@
 #include "fileio.mock"
 #include "filedescriptor.mock"
 #include "characterreader.mock"
+#include "memory.h"
 #include "reftab.mock"
 #include "filetable.mock"
 #include "macroargumenttable.mock"
@@ -46,5 +47,17 @@ BeforeEach(Main) {
 }
 AfterEach(Main) {}
 
-Ensure(Main, can_run_empty_test) {
+Ensure(Main, mainCallXref_without_input_files_gives_error_message) {
+    expect(errorMessage);
+
+    cxMemoryOverflowHandler(0); /* Implicitly allocate and init cxMemory */
+
+    mainCallXref(0, NULL);
+}
+
+xEnsure(Main, can_handle_cxMemory_overflow) {
+    cxMemoryOverflowHandler(0); /* Implicitly allocate and init cxMemory */
+    cxMemory->index = cxMemory->size-10; /* Simulate memory almost out */
+
+    mainCallXref(0, NULL);
 }
