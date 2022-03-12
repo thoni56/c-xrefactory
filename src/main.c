@@ -1387,9 +1387,8 @@ static char *getInputFileFromFtab(int *fArgCount, int flag) {
     int         i;
     FileItem  *fileItem;
 
-    /* TODO: replace with something to loop over all non-null entries in file table */
-    for (i = *fArgCount; i<fileTable.size; i++) {
-        fileItem = fileTable.tab[i];
+    for (i = getNextExistingFileIndex(*fArgCount); i < fileTable.size; i = getNextExistingFileIndex(i)) {
+        fileItem = getFileItem(i);
         if (fileItem!=NULL) {
             if (flag==FF_SCHEDULED_TO_PROCESS && fileItem->b.scheduledToProcess)
                 break;
@@ -2321,6 +2320,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
 
     /* ************ start with CXREFS and memories clean ************ */
     savingFlag = 0;
+    /* TODO: Replace with something looping over all existing entries in fileTable */
     for(i=0; i<fileTable.size; i++) {
         if (fileTable.tab[i]!=NULL) {
             if (fileTable.tab[i]->b.cxLoading) {

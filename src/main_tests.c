@@ -1,4 +1,5 @@
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
 #include "main.h"
 
@@ -48,6 +49,7 @@ BeforeEach(Main) {
 AfterEach(Main) {}
 
 Ensure(Main, mainCallXref_without_input_files_gives_error_message) {
+    expect(getNextExistingFileIndex, will_return(fileTable.size));
     expect(errorMessage);
 
     cxMemoryOverflowHandler(0); /* Implicitly allocate and init cxMemory */

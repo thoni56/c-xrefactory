@@ -47,6 +47,13 @@ FileItem *getFileItem(int fileIndex) {
     return fileTable.tab[fileIndex];
 }
 
+int getNextExistingFileIndex(int index) {
+    for (int i=index+1; i < fileTable.size; i++)
+        if (fileTable.tab[i] != NULL)
+            return i;
+    return fileTable.size;
+}
+
 
 void initFileTable(FileTable *fileTable) {
     FileItem *fileItem;

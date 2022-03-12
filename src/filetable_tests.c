@@ -1,4 +1,5 @@
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
 #include "filetable.h"
 #include "log.h"
@@ -114,4 +115,15 @@ Ensure(FileTable, can_get_fileitem) {
 
     /* And is actually the same item... */
     assert_that(gotten, is_equal_to(&item));
+}
+
+Ensure(FileTable, can_return_next_existing_file_index) {
+    FileItem item = {"item.c"};
+    int index = fileTableAdd(&fileTable, &item);
+
+    assert_that(getNextExistingFileIndex(-1), is_equal_to(index));
+}
+
+Ensure(FileTable, will_return_error_for_no_more_next_file_item) {
+    assert_that(getNextExistingFileIndex(-1), is_equal_to(fileTable.size));
 }

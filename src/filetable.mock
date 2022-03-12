@@ -22,6 +22,10 @@ FileItem *getFileItem(int fileIndex) {
     return (FileItem *)mock(fileIndex);
 }
 
+int getNextExistingFileIndex(int index) {
+    return (int)mock(index);
+}
+
 bool fileTableIsMember(FileTable *table,
                        FileItem *element,
                        int *position

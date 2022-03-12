@@ -333,6 +333,7 @@ void jslAddAllPackageClassesFromFileTab(IdList *packid) {
 
     javaCreateComposedName(NULL,packid,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     pnlen = strlen(fqtName);
+    /* TODO: Replace with something looping over all existing entries in fileTable */
     for(i=0; i<fileTable.size; i++) {
         ff = fileTable.tab[i];
         if (ff!=NULL
