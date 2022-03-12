@@ -1654,10 +1654,8 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
         return;
 
     // fqt from filetab
-    /* TODO: figure out how to loop over all fileItems without knowing the implementation */
-    for (int i=0; i<fileTable.size; i++) {
-        if (fileTable.tab[i]!=NULL)
             completeFqtClassFileFromFileTab(fileTable.tab[i], &cfmi);
+    for (int i=getNextExistingFileIndex(-1); i<fileTable.size; i = getNextExistingFileIndex(i)) {
     }
     if (options.fqtNameToCompletions <= 2)
         return;
