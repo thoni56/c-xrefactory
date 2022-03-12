@@ -440,7 +440,7 @@ EditorMarker *editorCreateNewMarker(EditorBuffer *buffer, int offset) {
     return marker;
 }
 
-EditorMarker *editorCrNewMarkerForPosition(Position *position) {
+EditorMarker *editorCreateNewMarkerForPosition(Position *position) {
     EditorBuffer *buffer;
     EditorMarker *marker;
 

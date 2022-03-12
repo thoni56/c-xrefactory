@@ -119,7 +119,7 @@ extern EditorBuffer *editorGetOpenedBuffer(char *name);
 extern EditorBuffer *editorGetOpenedAndLoadedBuffer(char *name);
 extern EditorBuffer *editorFindFile(char *name);
 extern EditorBuffer *editorFindFileCreate(char *name);
-extern EditorMarker *editorCrNewMarkerForPosition(Position *pos);
+extern EditorMarker *editorCreateNewMarkerForPosition(Position *pos);
 extern EditorMarkerList *editorReferencesToMarkers(Reference *refs, int (*filter)(Reference *, void *), void *filterParam);
 extern Reference *editorMarkersToReferences(EditorMarkerList **mms);
 extern void editorRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);

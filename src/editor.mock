@@ -77,7 +77,7 @@ EditorBuffer *editorFindFileCreate(char *name) {
   return (EditorBuffer *) mock(name);
 }
 
-EditorMarker *editorCrNewMarkerForPosition(Position *pos) {
+EditorMarker *editorCreateNewMarkerForPosition(Position *pos) {
   return (EditorMarker *) mock(pos);
 }
 
