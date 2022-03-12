@@ -2123,7 +2123,7 @@ static void mainTotalTaskEntryInitialisations() {
     initFileTable(&fileTable);  /* Sets noFileIndex to something real */
 
     noPosition = makePosition(noFileIndex, 0, 0);
-    inputFileNumber            = noFileIndex;
+    inputFileNumber = noFileIndex;
     javaAnonymousClassName.position   = noPosition;
 
     olcxInit();

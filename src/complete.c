@@ -1638,40 +1638,39 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
 }
 
 static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType) {
-    FqtMapCompletionInfo  cfmi;
-    StringList            *pp;
+    FqtMapCompletionInfo  info;
 
-    fillCompletionFqtMapInfo(&cfmi, c, completionType);
+    fillCompletionFqtMapInfo(&info, c, completionType);
     if (options.fqtNameToCompletions == 0)
         return;
 
     // fqt from .jars
     for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
         fsRecMapOnFiles(zipArchiveTable[i].dir, zipArchiveTable[i].fn,
-                        "", completeFqtClassFileFromZipArchiv, &cfmi);
+                        "", completeFqtClassFileFromZipArchiv, &info);
     }
     if (options.fqtNameToCompletions <= 1)
         return;
 
     // fqt from filetab
-            completeFqtClassFileFromFileTab(fileTable.tab[i], &cfmi);
     for (int i=getNextExistingFileIndex(-1); i<fileTable.size; i = getNextExistingFileIndex(i)) {
+        completeFqtClassFileFromFileTab(getFileItem(i), &info);
     }
     if (options.fqtNameToCompletions <= 2)
         return;
 
     // fqt from classpath
-    for(pp=javaClassPaths; pp!=NULL; pp=pp->next) {
-        mapDirectoryFiles(pp->string, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
-                          pp->string, pp->string, NULL, &cfmi, NULL);
+    for (StringList *path=javaClassPaths; path!=NULL; path=path->next) {
+        mapDirectoryFiles(path->string, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
+                          path->string, path->string, NULL, &info, NULL);
     }
     if (options.fqtNameToCompletions <= 3)
         return;
 
     // fqt from sourcepath
     MapOnPaths(javaSourcePaths, {
-            mapDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
-                              currentPath,currentPath,NULL,&cfmi,NULL);
+            mapDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
+                              currentPath, currentPath, NULL, &info, NULL);
         });
 }
 
