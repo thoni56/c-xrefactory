@@ -4432,7 +4432,7 @@ void mainRefactory() {
     }
 
     fArgCount = 0;
-    argumentFile = getInputFile(&fArgCount);
+    argumentFile = getNextInputFile(&fArgCount);
     if (argumentFile==NULL) {
         file = NULL;
     } else {

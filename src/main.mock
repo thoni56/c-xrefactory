@@ -14,7 +14,7 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
   mock(outNargc, outNargv);
 }
 
-char *getInputFile(int *fArgCount) {
+char *getNextInputFile(int *fArgCount) {
   return (char *) mock(fArgCount);
 }
 

@@ -1383,11 +1383,11 @@ static void mainScheduleInputFilesFromOptionsToFileTable(void) {
 /* *************************************************************************** */
 
 
-static char *getInputFileFromFtab(int *fArgCount, int flag) {
+static char *getNextInputFileFromFileTable(int *indexP, int flag) {
     int         i;
     FileItem  *fileItem;
 
-    for (i = getNextExistingFileIndex(*fArgCount); i < fileTable.size; i = getNextExistingFileIndex(i)) {
+    for (i = getNextExistingFileIndex(*indexP); i < fileTable.size; i = getNextExistingFileIndex(i)) {
         fileItem = getFileItem(i);
         if (fileItem!=NULL) {
             if (flag==FF_SCHEDULED_TO_PROCESS && fileItem->b.scheduledToProcess)
@@ -1396,19 +1396,19 @@ static char *getInputFileFromFtab(int *fArgCount, int flag) {
                 break;
         }
     }
-    *fArgCount = i;
+    *indexP = i;
     if (i<fileTable.size)
         return fileItem->name;
     else
         return NULL;
 }
 
-char *getInputFile(int *fArgCount) {
-    return getInputFileFromFtab(fArgCount, FF_SCHEDULED_TO_PROCESS);
+char *getNextInputFile(int *indexP) {
+    return getNextInputFileFromFileTable(indexP, FF_SCHEDULED_TO_PROCESS);
 }
 
-static char *getCommandLineFile(int *fArgCount) {
-    return getInputFileFromFtab(fArgCount, FF_COMMAND_LINE_ENTERED);
+static char *getNextCommandLineFile(int *indexP) {
+    return getNextInputFileFromFileTable(indexP, FF_COMMAND_LINE_ENTERED);
 }
 
 static void mainGenerateReferenceFile(void) {
@@ -2223,7 +2223,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initCaching();
     // enclosed in cache point, because of persistent #define in XrefEdit
     argcount = 0;
-    inputFilename = cmdlnInputFile = getCommandLineFile(&argcount);
+    inputFilename = cmdlnInputFile = getNextCommandLineFile(&argcount);
     if (inputFilename==NULL) {
         ss = strmcpy(tt, cwd);
         if (ss!=tt && ss[-1] == FILE_PATH_SEPARATOR)
@@ -2650,7 +2650,7 @@ static char *presetEditServerFileDependingStatics(void) {
     // THIS is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an error
     fArgCount = 0;
-    inputFilename = getInputFile(&fArgCount);
+    inputFilename = getNextInputFile(&fArgCount);
     if (fArgCount>=fileTable.size) {
         // conservative message, probably macro invoked on nonsaved file
         olOriginalComFileNumber = noFileIndex;
@@ -2797,7 +2797,7 @@ static FileItem *mainCreateListOfInputFiles(void) {
 
     fileItem = NULL;
     fileIndex = 0;
-    for (char *fileName=getInputFile(&fileIndex); fileName!=NULL; fileIndex++,fileName=getInputFile(&fileIndex)) {
+    for (char *fileName=getNextInputFile(&fileIndex); fileName!=NULL; fileIndex++,fileName=getNextInputFile(&fileIndex)) {
         FileItem *current = getFileItem(fileIndex);
         current->next = fileItem;
         fileItem = current;
