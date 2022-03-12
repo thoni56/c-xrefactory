@@ -2120,9 +2120,6 @@ static void mainTotalTaskEntryInitialisations() {
     options.includeDirs = NULL;
     SM_INIT(ftMemory);
 
-    /* TODO: This should be done inside initFileTable()... */
-    FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
-
     initFileTable(&fileTable);  /* Sets noFileIndex to something real */
 
     noPosition = makePosition(noFileIndex, 0, 0);
