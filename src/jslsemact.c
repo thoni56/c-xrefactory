@@ -323,37 +323,37 @@ void jslAddMapedImportTypeName(
     jslTypeSymbolDefinition(ttt2, packid, ADD_YES, ORDER_APPEND, false);
 }
 
-void jslAddAllPackageClassesFromFileTab(IdList *packid) {
-    int i;
-    FileItem *ff;
-    int pnlen, c;
+void jslAddAllPackageClassesFromFileTab(IdList *packageId) {
+    int pnlen;
     char fqtName[MAX_FILE_NAME_SIZE];
-    char ttt[MAX_FILE_NAME_SIZE];
-    char *ee, *bb, *dd;
+    char tempString[MAX_FILE_NAME_SIZE];
 
-    javaCreateComposedName(NULL,packid,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
+    javaCreateComposedName(NULL, packageId, '/', NULL, fqtName, MAX_FILE_NAME_SIZE);
     pnlen = strlen(fqtName);
-    /* TODO: Replace with something looping over all existing entries in fileTable */
-    for(i=0; i<fileTable.size; i++) {
-        ff = fileTable.tab[i];
-        if (ff!=NULL
-            && ff->name[0]==ZIP_SEPARATOR_CHAR
-            && strncmp(ff->name+1, fqtName, pnlen)==0
-            && (packid==NULL || ff->name[pnlen+1] == '/')) {
-            if (packid==NULL) bb = ff->name+pnlen+1;
-            else bb = ff->name+pnlen+2;
-            c = 0;
-            for(ee=bb, dd=ttt; *ee; ee++,dd++) {
-                c = *ee;
-                if (c=='.' || c=='/' || c=='$') {
+
+    for (int i=getNextExistingFileIndex(-1); i<fileTable.size; i = getNextExistingFileIndex(i)) {
+        FileItem *fileItem = getFileItem(i);
+        if (fileItem->name[0]==ZIP_SEPARATOR_CHAR
+            && strncmp(fileItem->name+1, fqtName, pnlen)==0
+            && (packageId==NULL || fileItem->name[pnlen+1] == '/'))
+        {
+            char *bb;
+            if (packageId==NULL)
+                bb = fileItem->name+pnlen+1;
+            else
+                bb = fileItem->name+pnlen+2;
+            int ch = 0;
+            for (char *ee=bb, *dd=tempString; *ee; ee++,dd++) {
+                ch = *ee;
+                if (ch=='.' || ch=='/' || ch=='$') {
                     *dd = 0;
                     break;
                 } else {
-                    *dd = c;
+                    *dd = ch;
                 }
             }
-            if (c=='.') {
-                jslTypeSymbolDefinition(ttt, packid, ADD_YES, ORDER_APPEND, false);
+            if (ch=='.') {
+                jslTypeSymbolDefinition(tempString, packageId, ADD_YES, ORDER_APPEND, false);
             }
         }
     }
