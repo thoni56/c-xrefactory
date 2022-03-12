@@ -114,6 +114,10 @@ devel: check-tokens
 devel-proper: unit build
 	$(MAKE) -e test
 
+slow:
+	make -C ../tests slow
+	make gcov
+
 ci:
 	$(MAKE) -e unit
 	$(MAKE) -e build
@@ -259,10 +263,14 @@ clean-coverage:
 		$(LCOV) -q -z -d .. ; \
 	fi
 
+# Create .gcov files from .gcda in $(OBJDIR)
+gcov:
+	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" | cat
+
 coverage-report:
 ifeq ($(HAVE_GCOV_TOOL),yes)
 	for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
-	-$(GCOV) .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
+	make gcov
 endif
 	@echo Doing the reporting in the background...
 	$(MAKE) the-actual-coverage-report &
@@ -335,8 +343,7 @@ else
 unittests: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $^
-	# Create .gcov for Emacs cov-mode based on unittests
-	-$(GCOV) .objects/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed"
+	make gcov
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
 		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
