@@ -288,7 +288,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     int fileIndex;
 
     ENTER();
-    fileIndex = addFileTabItem(fn);
+    fileIndex = addFileTableItem(fn);
     if (options.taskRegime!=RegimeEditServer) {
         // yes in edit server you process also headers, etc.
         fileTable.tab[fileIndex]->b.commandLineEntered = true;

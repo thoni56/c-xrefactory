@@ -191,7 +191,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     /* found: */
     expect(normalizeFileName, when(name, is_equal_to_string("path2/include.h")), will_return("path2/include.h"));
 
-    /* Yet another normalization in addFileTabItem()... */
+    /* Yet another normalization in addFileTableItem()... */
     expect(normalizeFileName, when(name, is_equal_to_string("path2/include.h")), will_return("path2/include.h"));
 
 
@@ -263,7 +263,7 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
            when(relative_to, is_equal_to_string("cwd")),
            will_return("path3/include.h"));
 
-    /* Yet another normalization in addFileTabItem()... */
+    /* Yet another normalization in addFileTableItem()... */
     expect(normalizeFileName, when(name, is_equal_to_string("path3/include.h")), will_return("path3/include.h"));
 
 

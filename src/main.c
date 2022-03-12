@@ -2277,7 +2277,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 }
 
 static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
-    int i,fi,savingFlag;
+    int fi;
 
     ENTER();
     if (mess != LONGJMP_REASON_NONE) {
@@ -2293,12 +2293,11 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     if (options.cxrefsLocation == NULL) {
         fatalError(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
-    for(i=0; i<includeStackPointer; i++) {
+    for (int i=0; i<includeStackPointer; i++) {
         log_trace("inspecting include %d, fileNumber: %d", i, includeStack[i].lexBuffer.buffer.fileNumber);
         if (includeStack[i].lexBuffer.buffer.file != stdin) {
             fi = includeStack[i].lexBuffer.buffer.fileNumber;
-            assert(fileTable.tab[fi]);
-            fileTable.tab[fi]->b.cxLoading = false;
+            getFileItem(fi)->b.cxLoading = false;
             if (includeStack[i].lexBuffer.buffer.file!=NULL)
                 closeCharacterBuffer(&includeStack[i].lexBuffer.buffer);
         }
@@ -2306,8 +2305,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     if (currentFile.lexBuffer.buffer.file != stdin) {
         log_trace("inspecting current file, fileNumber: %d", currentFile.lexBuffer.buffer.fileNumber);
         fi = currentFile.lexBuffer.buffer.fileNumber;
-        assert(fileTable.tab[fi]);
-        fileTable.tab[fi]->b.cxLoading = false;
+        getFileItem(fi)->b.cxLoading = false;
         if (currentFile.lexBuffer.buffer.file!=NULL)
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
@@ -2316,23 +2314,21 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     recoverMemoriesAfterOverflow(cxMemFreeBase);
 
     /* ************ start with CXREFS and memories clean ************ */
-    savingFlag = 0;
-    /* TODO: Replace with something looping over all existing entries in fileTable */
-    for(i=0; i<fileTable.size; i++) {
-        if (fileTable.tab[i]!=NULL) {
-            if (fileTable.tab[i]->b.cxLoading) {
-                fileTable.tab[i]->b.cxLoading = false;
-                fileTable.tab[i]->b.cxSaved = 1;
-                if (fileTable.tab[i]->b.commandLineEntered || !options.multiHeadRefsCare)
-                    savingFlag = 1;
-                // before, but do not work as scheduledToProcess is auto-cleared
-                //&             if (fileTable.tab[i]->b.scheduledToProcess
-                //&                 || !options.multiHeadRefsCare) savingFlag = 1;
-                log_trace(" -># '%s'",fileTable.tab[i]->name);
-            }
+    bool savingFlag = false;
+    for (int i=getNextExistingFileIndex(-1); i<fileTable.size; i = getNextExistingFileIndex(i)) {
+        FileItem *fileItem = getFileItem(i);
+        if (fileItem->b.cxLoading) {
+            fileItem->b.cxLoading = false;
+            fileItem->b.cxSaved = 1;
+            if (fileItem->b.commandLineEntered || !options.multiHeadRefsCare)
+                savingFlag = true;
+            // before, but do not work as scheduledToProcess is auto-cleared
+            //&             if (fileItem->b.scheduledToProcess
+            //&                 || !options.multiHeadRefsCare) savingFlag = true;
+            log_trace(" -># '%s'",fileItem->name);
         }
     }
-    if (savingFlag==0 && mess!=LONGJMP_REASON_FILE_ABORT) {
+    if (!savingFlag && mess!=LONGJMP_REASON_FILE_ABORT) {
         /* references overflowed, but no whole file readed */
         fatalError(ERR_NO_MEMORY, "cxMemory", XREF_EXIT_ERR);
     }
@@ -2635,7 +2631,7 @@ static void mainEditServerProcessFile(int argc, char **argv,
 }
 
 static char *presetEditServerFileDependingStatics(void) {
-    int     i, fArgCount;
+    int     i;
     char    *fileName;
     fileProcessingStartTime = time(NULL);
     //&s_paramPosition = noPosition;
@@ -2646,22 +2642,22 @@ static char *presetEditServerFileDependingStatics(void) {
 
     // THIS is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an error
-    fArgCount = 0;
-    inputFilename = getNextInputFile(&fArgCount);
-    if (fArgCount>=fileTable.size) {
+    int fileIndex = 0;
+    inputFilename = getNextInputFile(&fileIndex);
+    if (fileIndex == fileTable.size) { /* TODO: This is a check for no more input files... */
         // conservative message, probably macro invoked on nonsaved file
         olOriginalComFileNumber = noFileIndex;
         return NULL;
     }
 
     /* TODO: replace by something to get all items in FileTable... */
-    assert(fArgCount>=0 && fArgCount<fileTable.size && fileTable.tab[fArgCount]->b.scheduledToProcess);
-    for(i=fArgCount+1; i<fileTable.size; i++) {
+    assert(fileIndex>=0 && fileIndex<fileTable.size && fileTable.tab[fileIndex]->b.scheduledToProcess);
+    for(i=fileIndex+1; i<fileTable.size; i++) {
         if (fileTable.tab[i] != NULL) {
             getFileItem(i)->b.scheduledToProcess = false;
         }
     }
-    olOriginalComFileNumber = fArgCount;
+    olOriginalComFileNumber = fileIndex;
     fileName = inputFilename;
     mainSetLanguage(fileName,  &s_language);
     // O.K. just to be sure, there is no other input file

@@ -171,7 +171,7 @@ static void setCurrentFileInfoFor(char *fileName) {
         name = fileTable.tab[number]->name;
     } else {
         existed = fileExistsInTable(&fileTable, fileName);
-        number = addFileTabItem(fileName);
+        number = addFileTableItem(fileName);
         name = fileTable.tab[number]->name;
         checkFileModifiedTime(number);
         cxloading = fileTable.tab[number]->b.cxLoading;

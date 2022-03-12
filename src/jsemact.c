@@ -764,7 +764,7 @@ void javaReadSymbolsFromSourceFile(char *fname) {
     int				fileIndex;
     int				memBalance;
 
-    fileIndex = addFileTabItem(fname);
+    fileIndex = addFileTableItem(fname);
     memBalance = currentBlock->firstFreeIndex;
     beginBlock();
     typeTab = StackMemoryAlloc(JslTypeTab);
@@ -787,7 +787,7 @@ static void addJavaFileDependency(int file, char *onfile) {
     // also do it only for source files
     if (! fileTable.tab[file]->b.commandLineEntered)
         return;
-    fileIndex = addFileTabItem(onfile);
+    fileIndex = addFileTableItem(onfile);
     pos = makePosition(file, 0, 0);
     addIncludeReference(fileIndex, &pos);
 }
@@ -2700,7 +2700,7 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
         sprintf(fqt, "%s/%s", package, classId->name);
     }
     SPRINT_FILE_TAB_CLASS_NAME(className, fqt);
-    fileIndex = addFileTabItem(className);
+    fileIndex = addFileTableItem(className);
     fileTable.tab[fileIndex]->b.sourceFileNumber = classId->position.file;
 }
 

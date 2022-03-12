@@ -35,7 +35,7 @@ void popInclude(void) {
   mock();
 }
 
-int addFileTabItem(char *name) {
+int addFileTableItem(char *name) {
   return (int) mock(name);
 }
 

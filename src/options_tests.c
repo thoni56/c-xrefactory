@@ -43,7 +43,7 @@ Ensure(Options, will_return_true_if_package_structure_exists) {
 
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
     FT_ALLOC(fileTable.tab[42], struct fileItem);
-    expect(addFileTabItem, will_return(42));
+    expect(addFileTableItem, will_return(42));
 
     assert_that(packageOnCommandLine("org.existant"));
 }
@@ -61,7 +61,7 @@ Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
 
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
     FT_ALLOC(fileTable.tab[42], struct fileItem);
-    expect(addFileTabItem, will_return(42));
+    expect(addFileTableItem, will_return(42));
 
     assert_that(packageOnCommandLine("org.existant"));
 }
