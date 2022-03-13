@@ -1113,7 +1113,7 @@ int javaCreateClassFileItem( Symbol *memb) {
     int fileIndex;
 
     convertLinkNameToClassFileName(ftname, memb->linkName);
-    fileIndex = addFileTableItem(ftname);
+    fileIndex = addFileNameToFileTable(ftname);
     memb->u.structSpec->classFileIndex = fileIndex;
 
     return fileIndex;

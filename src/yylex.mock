@@ -35,10 +35,6 @@ void popInclude(void) {
   mock();
 }
 
-int addFileTableItem(char *name) {
-  return (int) mock(name);
-}
-
 void addMacroDefinedByOption(char *opt) {
   mock(opt);
 }

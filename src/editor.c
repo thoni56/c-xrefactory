@@ -603,7 +603,7 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
 
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
-    buffer->ftnum = addFileTableItem(allocatedName);
+    buffer->ftnum = addFileNameToFileTable(allocatedName);
 
     return buffer;
 }
@@ -702,7 +702,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     ED_ALLOCC(buff->name, strlen(newName)+1, char);
     strcpy(buff->name, newName);
     // update also ftnum
-    fileIndex = addFileTableItem(newName);
+    fileIndex = addFileNameToFileTable(newName);
     getFileItem(fileIndex)->b.commandLineEntered = getFileItem(buff->ftnum)->b.commandLineEntered;
     buff->ftnum = fileIndex;
 

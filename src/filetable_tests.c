@@ -22,17 +22,17 @@ AfterEach(FileTable) {}
 
 Ensure(FileTable, can_fetch_a_stored_filename) {
     FileItem fileItem = {"file.c"};
-    int position_1 = 1;
-    int fetched_position;
+    int index_1 = 1;
+    int fetched_index;
 
-    position_1 = fileTableAdd(&fileTable, &fileItem);
+    index_1 = fileTableAdd(&fileTable, &fileItem);
     fileTableAdd(&fileTable, &fileItem);
 
-    assert_that(fileTableIsMember(&fileTable, &fileItem, &fetched_position));
-    assert_that(fetched_position, is_equal_to(position_1));
+    assert_that(fileTableIsMember(&fileTable, &fileItem, &fetched_index));
+    assert_that(fetched_index, is_equal_to(index_1));
 }
 
-Ensure(FileTable, cannot_find_filename_not_in_tab) {
+Ensure(FileTable, can_only_find_filenames_in_tab) {
     FileItem exists = {"exists.c"};
     FileItem donotexist = {"donot_exist.c"};
     int index = -1;

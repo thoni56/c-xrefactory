@@ -95,7 +95,7 @@ bool existsInFileTable(char *fileName) {
 }
 
 
-int addFileTableItem(char *name) {
+int addFileNameToFileTable(char *name) {
     int fileIndex;
     char *normalizedFileName;
     struct fileItem *createdFileItem;

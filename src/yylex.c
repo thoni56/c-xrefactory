@@ -170,7 +170,7 @@ static void setCurrentFileInfoFor(char *fileName) {
         name = getFileItem(number)->name;
     } else {
         bool existed = existsInFileTable(fileName);
-        number = addFileTableItem(fileName);
+        number = addFileNameToFileTable(fileName);
         FileItem *fileItem = getFileItem(number);
         name = fileItem->name;
         checkFileModifiedTime(number);

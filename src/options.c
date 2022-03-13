@@ -286,7 +286,7 @@ void addStringListOption(StringList **optlist, char *string) {
 
 static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     ENTER();
-    int fileIndex = addFileTableItem(fn);
+    int fileIndex = addFileNameToFileTable(fn);
     FileItem *fileItem = getFileItem(fileIndex);
     if (options.taskRegime!=RegimeEditServer) {
         // yes in edit server you process also headers, etc.

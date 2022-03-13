@@ -58,6 +58,10 @@ void initNoFile(void) {
     mock();
 }
 
+int addFileNameToFileTable(char *name) {
+  return (int) mock(name);
+}
+
 void mapOverFileTable(void (*fun)(FileItem *)) {
     mock(fun);
 }
