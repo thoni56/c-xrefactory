@@ -72,8 +72,8 @@ void fileTableMapWithIndex(FileTable *table,
     mock(table, fun);
 }
 
-bool fileExistsInTable(FileTable *table, char *fileName) {
-    return mock(table, fileName);
+bool existsInFileTable(char *fileName) {
+    return mock(fileName);
 }
 
 int fileTableLookup(FileTable *table, char *fileName) {

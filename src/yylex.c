@@ -169,7 +169,7 @@ static void setCurrentFileInfoFor(char *fileName) {
         number = noFileIndex;
         name = getFileItem(number)->name;
     } else {
-        bool existed = fileExistsInTable(&fileTable, fileName);
+        bool existed = existsInFileTable(fileName);
         number = addFileTableItem(fileName);
         FileItem *fileItem = getFileItem(number);
         name = fileItem->name;

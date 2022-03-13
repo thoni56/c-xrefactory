@@ -830,7 +830,7 @@ static void cxReadFileName(int size,
     len = i;
     assert(len+1 < MAX_FILE_NAME_SIZE);
     assert(ii>=0 && ii<MAX_FILES);
-    if (!fileExistsInTable(&fileTable, id)) {
+    if (!existsInFileTable(id)) {
         fileIndex = addFileTableItem(id);
         fileItem = getFileItem(fileIndex);
         fileItem->b.commandLineEntered = commandLineFlag;

@@ -76,11 +76,11 @@ Ensure(FileTable, can_check_filename_exists) {
     fileTableAdd(&fileTable, &exists2);
     fileTableAdd(&fileTable, &exists3);
 
-    assert_that(!fileExistsInTable(&fileTable, "anything"));
-    assert_that(!fileExistsInTable(&fileTable, "donot_exist.c"));
-    assert_that(fileExistsInTable(&fileTable, "exists1.c"));
-    assert_that(fileExistsInTable(&fileTable, "exists2.c"));
-    assert_that(fileExistsInTable(&fileTable, "exists3.c"));
+    assert_that(!existsInFileTable("anything"));
+    assert_that(!existsInFileTable("donot_exist.c"));
+    assert_that(existsInFileTable("exists1.c"));
+    assert_that(existsInFileTable("exists2.c"));
+    assert_that(existsInFileTable("exists3.c"));
 }
 
 Ensure(FileTable, can_lookup_filename) {

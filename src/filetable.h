@@ -63,7 +63,7 @@ extern FileTable fileTable;
 extern int noFileIndex;
 
 extern void initFileTable(FileTable *table);
-extern bool fileExistsInTable(FileTable *table, char *fileName);
+extern bool existsInFileTable(char *fileName);
 extern int fileTableLookup(FileTable *table, char *fileName);
 extern int addFileTableItem(char *name);
 extern FileItem *getFileItem(int fileIndex);
