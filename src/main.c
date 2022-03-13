@@ -1387,7 +1387,7 @@ static char *getNextInputFileFromFileTable(int *indexP, int flag) {
     int         i;
     FileItem  *fileItem;
 
-    for (i = getNextExistingFileIndex(*indexP); i < fileTable.size; i = getNextExistingFileIndex(i)) {
+    for (i = getNextExistingFileIndex(*indexP); i != -1; i = getNextExistingFileIndex(i)) {
         fileItem = getFileItem(i);
         if (fileItem!=NULL) {
             if (flag==FF_SCHEDULED_TO_PROCESS && fileItem->b.scheduledToProcess)
@@ -1397,7 +1397,7 @@ static char *getNextInputFileFromFileTable(int *indexP, int flag) {
         }
     }
     *indexP = i;
-    if (i<fileTable.size)
+    if (i != -1)
         return fileItem->name;
     else
         return NULL;
@@ -2315,7 +2315,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
 
     /* ************ start with CXREFS and memories clean ************ */
     bool savingFlag = false;
-    for (int i=getNextExistingFileIndex(-1); i<fileTable.size; i = getNextExistingFileIndex(i)) {
+    for (int i=getNextExistingFileIndex(-1); i != -1; i = getNextExistingFileIndex(i)) {
         FileItem *fileItem = getFileItem(i);
         if (fileItem->b.cxLoading) {
             fileItem->b.cxLoading = false;
@@ -2377,7 +2377,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     while (fileAddedFlag) {
         fileAddedFlag = false;
         /* TODO: Replace with something looping over all existing entries in fileTable */
-        for (int i=getNextExistingFileIndex(-1); i != fileTable.size; i = getNextExistingFileIndex(i)) {
+        for (int i=getNextExistingFileIndex(-1); i != -1; i = getNextExistingFileIndex(i)) {
             FileItem *fileItem = getFileItem(i);
             if (fileItem->b.scheduledToUpdate)
                 if (!fileItem->b.fullUpdateIncludesProcessed) {
@@ -2632,9 +2632,7 @@ static void mainEditServerProcessFile(int argc, char **argv,
 
 static char *presetEditServerFileDependingStatics(void) {
     fileProcessingStartTime = time(NULL);
-    //&s_paramPosition = noPosition;
-    //&s_paramBeginPosition = noPosition;
-    //&s_paramEndPosition = noPosition;
+
     s_primaryStartPosition = noPosition;
     s_staticPrefixStartPosition = noPosition;
 
@@ -2642,14 +2640,15 @@ static char *presetEditServerFileDependingStatics(void) {
     // in edit server, otherwise it is an error
     int fileIndex = 0;
     inputFilename = getNextInputFile(&fileIndex);
-    if (fileIndex == fileTable.size) { /* TODO: This is a check for no more input files... */
+    if (fileIndex == -1) { /* No more input files... */
         // conservative message, probably macro invoked on nonsaved file
         olOriginalComFileNumber = noFileIndex;
         return NULL;
     }
 
-    assert(fileIndex>=0 && fileIndex<fileTable.size && getFileItem(fileIndex)->b.scheduledToProcess);
-    for (int i=getNextExistingFileIndex(fileIndex); i != fileTable.size; i = getNextExistingFileIndex(i)) {
+    /* TODO: This seems strange, we only assert that the first file is scheduled to process. Why? */
+    assert(getFileItem(fileIndex)->b.scheduledToProcess);
+    for (int i=getNextExistingFileIndex(fileIndex); i != -1; i = getNextExistingFileIndex(i)) {
         getFileItem(i)->b.scheduledToProcess = false;
     }
 

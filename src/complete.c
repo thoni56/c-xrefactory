@@ -1653,7 +1653,7 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
         return;
 
     // fqt from filetab
-    for (int i=getNextExistingFileIndex(-1); i<fileTable.size; i = getNextExistingFileIndex(i)) {
+    for (int i=getNextExistingFileIndex(-1); i != -1; i = getNextExistingFileIndex(i)) {
         completeFqtClassFileFromFileTab(getFileItem(i), &info);
     }
     if (options.fqtNameToCompletions <= 2)

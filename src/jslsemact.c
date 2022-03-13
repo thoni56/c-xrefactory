@@ -331,7 +331,7 @@ void jslAddAllPackageClassesFromFileTab(IdList *packageId) {
     javaCreateComposedName(NULL, packageId, '/', NULL, fqtName, MAX_FILE_NAME_SIZE);
     pnlen = strlen(fqtName);
 
-    for (int i=getNextExistingFileIndex(-1); i<fileTable.size; i = getNextExistingFileIndex(i)) {
+    for (int i=getNextExistingFileIndex(-1); i != -1; i = getNextExistingFileIndex(i)) {
         FileItem *fileItem = getFileItem(i);
         if (fileItem->name[0]==ZIP_SEPARATOR_CHAR
             && strncmp(fileItem->name+1, fqtName, pnlen)==0

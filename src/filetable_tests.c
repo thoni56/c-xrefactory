@@ -125,5 +125,5 @@ Ensure(FileTable, can_return_next_existing_file_index) {
 }
 
 Ensure(FileTable, will_return_error_for_no_more_next_file_item) {
-    assert_that(getNextExistingFileIndex(-1), is_equal_to(fileTable.size));
+    assert_that(getNextExistingFileIndex(-1), is_equal_to(-1));
 }

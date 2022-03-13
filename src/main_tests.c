@@ -49,7 +49,7 @@ BeforeEach(Main) {
 AfterEach(Main) {}
 
 Ensure(Main, mainCallXref_without_input_files_gives_error_message) {
-    expect(getNextExistingFileIndex, will_return(fileTable.size));
+    expect(getNextExistingFileIndex, will_return(-1));
     expect(errorMessage);
 
     cxMemoryOverflowHandler(0); /* Implicitly allocate and init cxMemory */

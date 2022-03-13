@@ -42,6 +42,7 @@ static struct fileItem *newFileItem(char *normalizedFileName) {
 }
 
 FileItem *getFileItem(int fileIndex) {
+    assert(fileIndex != -1);
     assert(fileTable.tab != NULL);
     assert(fileTable.tab[fileIndex] != NULL);
     return fileTable.tab[fileIndex];
@@ -51,7 +52,7 @@ int getNextExistingFileIndex(int index) {
     for (int i=index+1; i < fileTable.size; i++)
         if (fileTable.tab[i] != NULL)
             return i;
-    return fileTable.size;
+    return -1;
 }
 
 
