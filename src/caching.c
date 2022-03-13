@@ -71,24 +71,24 @@ static void cxrefTabDeleteOutOfMemory(int i) {
     }
 }
 
-static void fileTabDeleteOutOfMemory(FileItem *p, int i) {
-    ClassHierarchyReference **hh;
-    hh = &p->superClasses;
-    while (*hh!=NULL) {
-        if (CX_FREED_POINTER(*hh)) {
-            *hh = (*hh)->next;
+static void fileTabDeleteOutOfMemory(FileItem *fileItem, int index) {
+    ClassHierarchyReference **h;
+    h = &fileItem->superClasses;
+    while (*h!=NULL) {
+        if (CX_FREED_POINTER(*h)) {
+            *h = (*h)->next;
             goto contlabel;     /* TODO: continue? */
         }
-        hh= &(*hh)->next;       /* TODO: else? */
+        h= &(*h)->next;       /* TODO: else? */
     contlabel:;
     }
-    hh = &p->inferiorClasses;
-    while (*hh!=NULL) {
-        if (CX_FREED_POINTER(*hh)) {
-            *hh = (*hh)->next;
+    h = &fileItem->inferiorClasses;
+    while (*h!=NULL) {
+        if (CX_FREED_POINTER(*h)) {
+            *h = (*h)->next;
             goto contlabel2;    /* TODO: continue? */
         }
-        hh= &(*hh)->next;       /* TODO: else? */
+        h= &(*h)->next;       /* TODO: else? */
     contlabel2:;
     }
 }
