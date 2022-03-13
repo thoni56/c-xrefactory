@@ -15,7 +15,7 @@ Describe(FileTable);
 BeforeEach(FileTable) {
     log_set_level(LOG_ERROR);
     initOuterCodeBlock();
-    fileTableInit(&fileTable, 5);
+    initFileTable();
 }
 AfterEach(FileTable) {}
 

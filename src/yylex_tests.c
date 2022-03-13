@@ -45,6 +45,8 @@ BeforeEach(Yylex) {
     options.taskRegime = RegimeEditServer;
     allocateMacroArgumentTable();
     initFileTable();
+    initNoFile();
+
     symbolTable = StackMemoryAlloc(SymbolTable);
     symbolTableInit(symbolTable, 10);
 

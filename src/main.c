@@ -2120,7 +2120,8 @@ static void mainTotalTaskEntryInitialisations() {
     options.includeDirs = NULL;
     SM_INIT(ftMemory);
 
-    initFileTable();  /* Sets noFileIndex to something real */
+    initFileTable();
+    initNoFile();             /* Sets noFileIndex to something real */
 
     noPosition = makePosition(noFileIndex, 0, 0);
     inputFileNumber = noFileIndex;

@@ -46,18 +46,15 @@ int fileTableAdd(FileTable *table,
     return mock(table, element);
 }
 
-void fileTableMap4(FileTable *table,
-                   void (*fun)(int, void *, void *),
-                   void *a, void *b
-) {
-    mock(table, fun, a, b);
-}
-
 bool existsInFileTable(char *fileName) {
     return mock(fileName);
 }
 
 void initFileTable(void) {
+    mock();
+}
+
+void initNoFile(void) {
     mock();
 }
 
