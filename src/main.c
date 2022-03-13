@@ -2130,13 +2130,13 @@ static void mainTotalTaskEntryInitialisations() {
     editorInit();
 }
 
-static void mainReinitFileTabEntry(FileItem *ft) {
-    ft->inferiorClasses = ft->superClasses = NULL;
-    ft->directEnclosingInstance = noFileIndex;
-    ft->b.scheduledToProcess = false;
-    ft->b.scheduledToUpdate = false;
-    ft->b.fullUpdateIncludesProcessed = false;
-    ft->b.cxLoaded = ft->b.cxLoading = ft->b.cxSaved = false;
+static void mainReinitFileTabEntry(FileItem *fileItem) {
+    fileItem->inferiorClasses = fileItem->superClasses = NULL;
+    fileItem->directEnclosingInstance = noFileIndex;
+    fileItem->b.scheduledToProcess = false;
+    fileItem->b.scheduledToUpdate = false;
+    fileItem->b.fullUpdateIncludesProcessed = false;
+    fileItem->b.cxLoaded = fileItem->b.cxLoading = fileItem->b.cxSaved = false;
 }
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
@@ -2154,15 +2154,15 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     s_fileAbortionEnabled = 0;
 
     // supposing that file table is still here, but reinit it
-    fileTableMap(&fileTable, mainReinitFileTabEntry);
+    mapOverFileTable(mainReinitFileTabEntry);
 
     dm_init(cxMemory, "cxMemory");
 
     // the following causes long jump, berk.
     CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
     CX_FREE_UNTIL(sss);
-    CX_ALLOCC(referenceTable.tab,MAX_CXREF_SYMBOLS, struct symbolReferenceItem *);
-    refTabNoAllocInit( &referenceTable,MAX_CXREF_SYMBOLS);
+    CX_ALLOCC(referenceTable.tab, MAX_CXREF_SYMBOLS, struct symbolReferenceItem *);
+    refTabNoAllocInit(&referenceTable, MAX_CXREF_SYMBOLS);
     SM_INIT(ppmMemory);
     allocateMacroArgumentTable();
     initOuterCodeBlock();
@@ -2426,7 +2426,7 @@ static void scheduleModifiedFilesToUpdate(void) {
     if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
     }
-    fileTableMap(&fileTable, schedulingUpdateToProcess);
+    mapOverFileTable(schedulingUpdateToProcess);
 }
 
 
@@ -2855,7 +2855,7 @@ void mainCallXref(int argc, char **argv) {
     if (atLeastOneProcessed) {
         if (options.taskRegime==RegimeXref) {
             if (options.update==0 || options.update==UPDATE_FULL) {
-                fileTableMap(&fileTable, setFullUpdateMtimesInFileTab);
+                mapOverFileTable(setFullUpdateMtimesInFileTab);
             }
             if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];

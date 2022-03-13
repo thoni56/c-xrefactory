@@ -74,6 +74,10 @@ void initFileTable(void) {
     mock();
 }
 
+void mapOverFileTable(void (*fun)(FileItem *)) {
+    mock(fun);
+}
+
 void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
     mock(fun);
 }

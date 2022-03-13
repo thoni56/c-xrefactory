@@ -144,3 +144,22 @@ Ensure(FileTable, can_map_with_index) {
     assert_that(mapFunctionWithIndexCalled, is_equal_to(1));
 
 }
+
+static int mapFunctionCalled = 0;
+static void mapFunction(FileItem *fileItem) {
+    mapFunctionCalled++;
+}
+
+Ensure(FileTable, can_map) {
+    FileItem item1 = {"item1.c"};
+    FileItem item2 = {"item2.c"};
+    fileTableAdd(&fileTable, &item1);
+    fileTableAdd(&fileTable, &item2);
+
+    mapFunctionCalled = 0;
+
+    mapOverFileTable(mapFunction);
+
+    assert_that(mapFunctionCalled, is_equal_to(2));
+
+}
