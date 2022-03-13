@@ -623,7 +623,7 @@ void jslNewClassDefinitionBegin(Id *name,
 
 void jslNewClassDefinitionEnd(void) {
     Symbol *cc;
-    int fileIndex;
+
     assert(s_jsl->classStat && s_jsl->classStat->next);
 
     cc = s_jsl->classStat->thisClass;

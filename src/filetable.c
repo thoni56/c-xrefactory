@@ -116,13 +116,17 @@ int addFileTableItem(char *name) {
     return fileIndex;
 }
 
-/* "Override" some hashtab functions to hide filetable variable to be global */
+/* "Override" some hashtab functions to hide filetable variable from being global */
+void mapOverFileTable(void (*fun)(FileItem *)) {
+    fileTableMap(&fileTable, fun);
+}
+
 void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
     fileTableMapWithIndex(&fileTable, fun);
 }
 
-void mapOverFileTable(void (*fun)(FileItem *)) {
-    fileTableMap(&fileTable, fun);
+void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer) {
+    fileTableMap2(&fileTable, fun, pointer);
 }
 
 int lookupFileTable(char *fileName) {

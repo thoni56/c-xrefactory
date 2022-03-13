@@ -46,19 +46,6 @@ int fileTableAdd(FileTable *table,
     return mock(table, element);
 }
 
-void fileTableMap(FileTable *table,
-                  void (*fun)(FileItem *)
-) {
-    mock(table, fun);
-}
-
-void fileTableMap2(FileTable *table,
-                   void (*fun)(FileItem *, void *),
-                   void *a
-) {
-    mock(table, fun, a);
-}
-
 void fileTableMap4(FileTable *table,
                    void (*fun)(int, void *, void *),
                    void *a, void *b
@@ -80,6 +67,10 @@ void mapOverFileTable(void (*fun)(FileItem *)) {
 
 void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
     mock(fun);
+}
+
+void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer) {
+    mock(fun, pointer);
 }
 
 int lookupFileTable(char *fileName) {

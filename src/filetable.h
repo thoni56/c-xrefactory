@@ -70,7 +70,9 @@ extern FileItem *getFileItem(int fileIndex);
 extern int getNextExistingFileIndex(int index);
 
 extern void mapOverFileTable(void (*fun)(FileItem *));
-extern void mapOverFileTableWithIndex(void (*fun)(FileItem *fileItem, int index));
+extern void mapOverFileTableWithIndex(void (*fun)(FileItem *, int));
+extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer);
+
 extern int  lookupFileTable(char *fileName);
 
 #endif

@@ -2422,7 +2422,7 @@ static void scheduleModifiedFilesToUpdate(void) {
     if (editorFileStatus(filestab, &refStat))
         refStat.st_mtime = 0;
     normalScanReferenceFile(suffix);
-    fileTableMap2(&fileTable, schedulingToUpdate, &refStat);
+    mapOverFileTableWithPointer(schedulingToUpdate, &refStat);
     if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
     }

@@ -128,22 +128,6 @@ Ensure(FileTable, will_return_error_for_no_more_next_file_item) {
     assert_that(getNextExistingFileIndex(-1), is_equal_to(-1));
 }
 
-static int mapFunctionWithIndexCalled = 0;
-static void mapFunctionWithIndex(FileItem *fileItem, int index) {
-    mapFunctionWithIndexCalled++;
-}
-
-Ensure(FileTable, can_map_with_index) {
-    FileItem item = {"item.c"};
-    int index = fileTableAdd(&fileTable, &item);
-
-    mapFunctionWithIndexCalled = 0;
-
-    mapOverFileTableWithIndex(mapFunctionWithIndex);
-
-    assert_that(mapFunctionWithIndexCalled, is_equal_to(1));
-
-}
 
 static int mapFunctionCalled = 0;
 static void mapFunction(FileItem *fileItem) {
@@ -161,5 +145,49 @@ Ensure(FileTable, can_map) {
     mapOverFileTable(mapFunction);
 
     assert_that(mapFunctionCalled, is_equal_to(2));
+
+}
+
+
+static int mapFunctionWithIndexCalled = 0;
+static void mapFunctionWithIndex(FileItem *fileItem, int index) {
+    mapFunctionWithIndexCalled++;
+}
+
+Ensure(FileTable, can_map_with_index) {
+    FileItem item = {"item.c"};
+    fileTableAdd(&fileTable, &item);
+
+    mapFunctionWithIndexCalled = 0;
+
+    mapOverFileTableWithIndex(mapFunctionWithIndex);
+
+    assert_that(mapFunctionWithIndexCalled, is_equal_to(1));
+
+}
+
+
+static int variable;
+
+static int mapFunctionWithPointerCalled = 0;
+static void mapFunctionWithPointer(FileItem *fileItem, void *pointer) {
+    assert_that(pointer, is_equal_to(&variable));
+    mapFunctionWithPointerCalled++;
+}
+
+
+Ensure(FileTable, can_map_with_pointer) {
+    FileItem item1 = {"item1.c"};
+    FileItem item2 = {"item2.c"};
+    FileItem item3 = {"item3.c"};
+    fileTableAdd(&fileTable, &item1);
+    fileTableAdd(&fileTable, &item2);
+    fileTableAdd(&fileTable, &item3);
+
+    mapFunctionCalled = 0;
+
+    mapOverFileTableWithPointer(mapFunctionWithPointer, &variable);
+
+    assert_that(mapFunctionWithPointerCalled, is_equal_to(3));
 
 }
