@@ -28,7 +28,7 @@ static void ppcGenMarker(EditorMarker *m) {
 static void ppcGenPosition(Position *p) {
     char *fn;
     assert(p!=NULL);
-    fn = fileTable.tab[p->file]->name;
+    fn = getFileItem(p->file)->name;
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n",
             PPC_LC_POSITION,

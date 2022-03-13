@@ -525,7 +525,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     // With exactPositionResolve interpret them as distinct symbols for
     // each compilation unit.
     if (usage==UsageDefined && ! options.exactPositionResolve) {
-        basefname=fileTable.tab[p->pos.file]->name;
+        basefname=getFileItem(p->pos.file)->name;
     } else {
         basefname=inputFilename;
     }
@@ -901,35 +901,37 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     return &pp->u.structSpec->stype;
 }
 
-void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
+void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
     char *mname, *fname;
     char tmp[MACRO_NAME_SIZE];
     Symbol *memb;
-    int rr,filen, order, len, len2;
+    int isMember,filen, order, len, len2;
 
-    if (iname == NULL) iname="";
-    assert(pp);
+    if (iname == NULL)
+        iname="";
+    assert(symbol);
     if (options.exactPositionResolve) {
-        fname = simpleFileName(fileTable.tab[pp->pos.file]->name);
-        sprintf(tmp, "%x-%s-%x-%x%c",
-                hashFun(fileTable.tab[pp->pos.file]->name),
-                fname, pp->pos.line, pp->pos.col,
+        FileItem *fileItem = getFileItem(symbol->pos.file);
+        fname = simpleFileName(fileItem->name);
+        sprintf(tmp, "%x-%s-%x-%x%c", hashFun(fileItem->name), fname, symbol->pos.line, symbol->pos.col,
                 LINK_NAME_SEPARATOR);
     } else if (iname[0]==0) {
         // anonymous enum/structure/union ...
-        filen = pp->pos.file;
-        pp->name=iname; pp->linkName=iname;
+        int fileIndex = symbol->pos.file;
+        symbol->name=iname;
+        symbol->linkName=iname;
         order = 0;
-        rr = symbolTableIsMember(symbolTable, pp, NULL, &memb);
-        while (rr) {
-            if (memb->pos.file==filen) order++;
-            rr = symbolTableNextMember(pp, &memb);
+        isMember = symbolTableIsMember(symbolTable, symbol, NULL, &memb);
+        while (isMember) {
+            if (memb->pos.file==fileIndex)
+                order++;
+            isMember = symbolTableNextMember(symbol, &memb);
         }
-        fname = simpleFileName(fileTable.tab[filen]->name);
+        fname = simpleFileName(getFileItem(fileIndex)->name);
         sprintf(tmp, "%s%c%d%c", fname, FILE_PATH_SEPARATOR, order, LINK_NAME_SEPARATOR);
         /*&     // macros will be identified by name only?
-          } else if (pp->bits.symbolType == TypeMacro) {
-          sprintf(tmp, "%x%c", pp->pos.file, LINK_NAME_SEPARATOR);
+          } else if (symbol->bits.symbolType == TypeMacro) {
+          sprintf(tmp, "%x%c", symbol->pos.file, LINK_NAME_SEPARATOR);
           &*/
     } else {
         tmp[0] = 0;
@@ -944,8 +946,8 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
     }
     strcpy(mname, tmp);
     strcpy(mname+len,iname);
-    pp->name = mname + len;
-    pp->linkName = mname;
+    symbol->name = mname + len;
+    symbol->linkName = mname;
 }
 
 TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {

@@ -927,21 +927,21 @@ bool tpCheckMoveClassAccessibilities(void) {
 }
 
 bool tpCheckSourceIsNotInnerClass(void) {
-    OlcxReferences    *rstack;
-    SymbolsMenu     *ss;
-    int                 thisclassi,deii;
+    OlcxReferences *rstack;
+    SymbolsMenu *menu;
 
     assert(currentUserData && currentUserData->browserStack.top);
     rstack = currentUserData->browserStack.top;
-    ss = rstack->hkSelectedSym;
-    assert(ss);
+    menu = rstack->hkSelectedSym;
+    assert(menu);
+
     // I can rely that it is a class
-    thisclassi = getClassNumFromClassLinkName(ss->s.name, noFileIndex);
+    int index = getClassNumFromClassLinkName(menu->s.name, noFileIndex);
     //& target = options.moveTargetClass;
     //& assert(target!=NULL);
-    assert(fileTable.tab[thisclassi]);
-    deii = fileTable.tab[thisclassi]->directEnclosingInstance;
-    if (deii != -1 && deii != noFileIndex && (ss->s.b.accessFlags&AccessInterface)==0) {
+
+    int directEnclosingInstanceIndex = getFileItem(index)->directEnclosingInstance;
+    if (directEnclosingInstanceIndex != -1 && directEnclosingInstanceIndex != noFileIndex && (menu->s.b.accessFlags&AccessInterface)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         // If there exists a direct enclosing instance, it is an inner class
         sprintf(tmpBuff, "This is an inner class. Current version of C-xrefactory can only move top level classes and nested classes that are declared 'static'. If the class does not depend on its enclosing instances, you should declare it 'static' and then move it.");
@@ -961,7 +961,6 @@ static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri, void *ddd) {
     //&fprintf(dumpOut,"! checking %s\n", ri->name);
     if (strcmp(ri->name, dd->symbolToTest)!=0)
         return;
-    //&fprintf(dumpOut,"comparing %d <-> %d; %s <-> %s\n", ri->vFunClass, scl,  fileTable.tab[ri->vFunClass]->name, fileTable.tab[scl]->name);
     for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
         if (DM_IS_BETWEEN(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi) ){
             // a super method reference
@@ -1188,10 +1187,14 @@ bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
 
     scanForClassHierarchy();
     assert(target->u.structSpec!=NULL&&target->u.structSpec->classFileIndex!=noFileIndex);
-    if (flag == REQ_SUBCLASS) cl=fileTable.tab[ss->s.vApplClass]->inferiorClasses;
-    else cl=fileTable.tab[ss->s.vApplClass]->superClasses;
+    FileItem *fileItem = getFileItem(ss->s.vApplClass);
+    if (flag == REQ_SUBCLASS)
+        cl=fileItem->inferiorClasses;
+    else
+        cl=fileItem->superClasses;
     for (; cl!=NULL; cl=cl->next) {
-        //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, fileTable.tab[cl->superClass]->name, target->u.structSpec->classFileIndex, fileTable.tab[target->u.structSpec->classFileIndex]->name);ppcBottomInformation(tmpBuff);
+        log_trace("!checking %d(%s) <-> %d(%s)", cl->superClass, getFileItem(cl->superClass)->name,
+                  target->u.structSpec->classFileIndex, getFileItem(target->u.structSpec->classFileIndex)->name);
         if (cl->superClass == target->u.structSpec->classFileIndex) {
             found = true;
             break;
@@ -1419,12 +1422,10 @@ static void refactoryMakeSyntaxPassOnSource(EditorMarker *point) {
     olStackDeleteSymbol(currentUserData->browserStack.top);
 }
 
-static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int kind) {
-    EditorMarker  *pp;
-    EditorBuffer  *bb;
-    Position      *pos;
-    refactoryEditServerParseBuffer(refactoringOptions.project, d->buffer,
-                                   d ,NULL, "-olcxprimarystart", NULL);
+static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *marker, int kind) {
+    Position *pos;
+    refactoryEditServerParseBuffer(refactoringOptions.project, marker->buffer,
+                                   marker ,NULL, "-olcxprimarystart", NULL);
     olStackDeleteSymbol(currentUserData->browserStack.top);
     if (kind == GET_PRIMARY_START) {
         pos = &s_primaryStartPosition;
@@ -1436,18 +1437,18 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int
     }
     if (pos->file == noFileIndex) {
         if (kind == GET_STATIC_PREFIX_START) {
-            refactoryFatalErrorOnPosition(d, ERR_ST, "Can't determine static prefix. Maybe non-static reference to a static object? Make this invocation static before refactoring.");
+            refactoryFatalErrorOnPosition(marker, ERR_ST, "Can't determine static prefix. Maybe non-static reference to a static object? Make this invocation static before refactoring.");
         } else {
-            refactoryFatalErrorOnPosition(d, ERR_INTERNAL, "Can't determine beginning of primary expression");
+            refactoryFatalErrorOnPosition(marker, ERR_INTERNAL, "Can't determine beginning of primary expression");
         }
         return NULL;
     } else {
-        bb = editorGetOpenedAndLoadedBuffer(fileTable.tab[pos->file]->name);
-        pp = editorCreateNewMarker(bb, 0);
-        editorMoveMarkerToLineCol(pp, pos->line, pos->col);
-        assert(pp->buffer == d->buffer);
-        assert(pp->offset <= d->offset);
-        return pp;
+        EditorBuffer *buffer = editorGetOpenedAndLoadedBuffer(getFileItem(pos->file)->name);
+        EditorMarker *newMarker = editorCreateNewMarker(buffer, 0);
+        editorMoveMarkerToLineCol(newMarker, pos->line, pos->col);
+        assert(newMarker->buffer == marker->buffer);
+        assert(newMarker->offset <= marker->offset);
+        return newMarker;
     }
 }
 
@@ -2180,12 +2181,10 @@ static int createMarkersForAllReferencesInRegions(SymbolsMenu *menu, EditorRegio
     for (SymbolsMenu *mm=menu; mm!=NULL; mm=mm->next) {
         assert(mm->markers==NULL);
         if (mm->selected && mm->visible) {
-            //&LIST_LEN(nn, Reference, mm->s.refs);sprintf(tmpBuff,"there are %d refs for %s", nn, fileTable.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
             mm->markers = editorReferencesToMarkers(mm->s.refs,filter0, NULL);
             if (regions != NULL) {
                 editorRestrictMarkersToRegions(&mm->markers, regions);
             }
-            //&LIST_LEN(nn, EditorMarkerList, mm->markers);sprintf(tmpBuff,"converted to %d refs for %s", nn, fileTable.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(n, EditorMarkerList, mm->markers);
             res += n;
@@ -4343,11 +4342,11 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
     }
     for (EditorMarkerList *o = occs; o!=NULL; o=o->next) {
         assert(o->marker!=NULL && o->marker->buffer!=NULL);
-        assert(fileTable.tab[o->marker->buffer->ftnum]!=NULL);
+        FileItem *fileItem = getFileItem(o->marker->buffer->ftnum);
         if (fn != o->marker->buffer->ftnum) {
             multiFileRefsFlag = 1;
         }
-        if (! fileTable.tab[o->marker->buffer->ftnum]->b.commandLineEntered) {
+        if (!fileItem->b.commandLineEntered) {
             hasHeaderReferenceFlag = 1;
         }
     }

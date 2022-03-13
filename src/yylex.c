@@ -163,44 +163,44 @@ static void traceNewline(int lines) {
 
 static void setCurrentFileInfoFor(char *fileName) {
     char *name;
-    int number, cxloading;
-    bool existed = false;
+    int number;
 
     if (fileName==NULL) {
         number = noFileIndex;
-        name = fileTable.tab[number]->name;
+        name = getFileItem(number)->name;
     } else {
-        existed = fileExistsInTable(&fileTable, fileName);
+        bool existed = fileExistsInTable(&fileTable, fileName);
         number = addFileTableItem(fileName);
-        name = fileTable.tab[number]->name;
+        FileItem *fileItem = getFileItem(number);
+        name = fileItem->name;
         checkFileModifiedTime(number);
-        cxloading = fileTable.tab[number]->b.cxLoading;
+        bool cxloading = fileItem->b.cxLoading;
         if (!existed) {
-            cxloading = 1;
+            cxloading = true;
         } else if (options.update==UPDATE_FAST) {
-            if (fileTable.tab[number]->b.scheduledToProcess) {
+            if (fileItem->b.scheduledToProcess) {
                 // references from headers are not loaded on fast update !
-                cxloading = 1;
+                cxloading = true;
             }
         } else if (options.update==UPDATE_FULL) {
-            if (fileTable.tab[number]->b.scheduledToUpdate) {
-                cxloading = 1;
+            if (fileItem->b.scheduledToUpdate) {
+                cxloading = true;
             }
         } else {
-            cxloading = 1;
+            cxloading = true;
         }
-        if (fileTable.tab[number]->b.cxSaved==1 && ! options.multiHeadRefsCare) {
+        if (fileItem->b.cxSaved==1 && ! options.multiHeadRefsCare) {
             /* if multihead references care, load include refs each time */
-            cxloading = 0;
+            cxloading = false;
         }
         if (LANGUAGE(LANG_JAVA)) {
             if (s_jsl!=NULL || s_javaPreScanOnly) {
                 // do not load (and save) references from jsl loaded files
                 // nor during prescanning
-                cxloading = fileTable.tab[number]->b.cxLoading;
+                cxloading = fileItem->b.cxLoading;
             }
         }
-        fileTable.tab[number]->b.cxLoading = cxloading;
+        fileItem->b.cxLoading = cxloading;
     }
     currentFile.lexBuffer.buffer.fileNumber = number;
     currentFile.fileName = name;
@@ -389,30 +389,30 @@ static void fillIncludeSymbolItem(Symbol *ss, int filenum, Position *pos){
 }
 
 
-void addThisFileDefineIncludeReference(int filenum) {
+void addThisFileDefineIncludeReference(int fileIndex) {
     Position position;
     Symbol symbol;
 
-    position = makePosition(filenum, 1, 0);
-    fillIncludeSymbolItem(&symbol,filenum, &position);
-    log_trace("adding reference on file %d==%s", filenum, fileTable.tab[filenum]->name);
-    addCxReference(&symbol, &position, UsageDefined, filenum, filenum);
+    position = makePosition(fileIndex, 1, 0);
+    fillIncludeSymbolItem(&symbol,fileIndex, &position);
+    log_trace("adding reference on file %d==%s", fileIndex, getFileItem(fileIndex)->name);
+    addCxReference(&symbol, &position, UsageDefined, fileIndex, fileIndex);
 }
 
-void addIncludeReference(int filenum, Position *position) {
+void addIncludeReference(int fileIndex, Position *position) {
     Symbol symbol;
 
-    log_trace("adding reference on file %d==%s", filenum, fileTable.tab[filenum]->name);
-    fillIncludeSymbolItem( &symbol, filenum, position);
-    addCxReference(&symbol, position, UsageUsed, filenum, filenum);
+    log_trace("adding reference on file %d==%s", fileIndex, getFileItem(fileIndex)->name);
+    fillIncludeSymbolItem( &symbol, fileIndex, position);
+    addCxReference(&symbol, position, UsageUsed, fileIndex, fileIndex);
 }
 
-static void addIncludeReferences(int filenum, Position *position) {
-    addIncludeReference(filenum, position);
-    addThisFileDefineIncludeReference(filenum);
+static void addIncludeReferences(int fileIndex, Position *position) {
+    addIncludeReference(fileIndex, position);
+    addThisFileDefineIncludeReference(fileIndex);
 }
 
-void pushInclude(FILE *f, EditorBuffer *buffer, char *name, char *prepend) {
+void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     if (currentInput.inputType == INPUT_CACHE) {
         setCacheConsistency();
     } else {
@@ -423,14 +423,14 @@ void pushInclude(FILE *f, EditorBuffer *buffer, char *name, char *prepend) {
         fatalError(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
     }
     includeStackPointer ++;
-    initInput(f, buffer, prepend, name);
+    initInput(file, buffer, prepend, name);
     cacheInclude(currentFile.lexBuffer.buffer.fileNumber);
 }
 
 void popInclude(void) {
-    assert(fileTable.tab[currentFile.lexBuffer.buffer.fileNumber]);
-    if (fileTable.tab[currentFile.lexBuffer.buffer.fileNumber]->b.cxLoading) {
-        fileTable.tab[currentFile.lexBuffer.buffer.fileNumber]->b.cxLoaded = true;
+    FileItem *fileItem = getFileItem(currentFile.lexBuffer.buffer.fileNumber);
+    if (fileItem->b.cxLoading) {
+        fileItem->b.cxLoaded = true;
     }
     closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     if (includeStackPointer != 0) {

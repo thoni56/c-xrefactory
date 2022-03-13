@@ -1,5 +1,7 @@
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
+#include "filetable.h"
 #include "options.h"
 #include "log.h"
 
@@ -33,7 +35,6 @@ Ensure(Options, will_return_false_if_package_structure_does_not_exist) {
 }
 
 Ensure(Options, will_return_true_if_package_structure_exists) {
-
     javaSourcePaths = ".";
     expect(directoryExists, when(fullPath, is_equal_to_string("./org/existant")),
            will_return(true));
@@ -44,6 +45,8 @@ Ensure(Options, will_return_true_if_package_structure_exists) {
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
     FT_ALLOC(fileTable.tab[42], struct fileItem);
     expect(addFileTableItem, will_return(42));
+    expect(getFileItem, when(fileIndex, is_equal_to(42)),
+           will_return(fileTable.tab[42]));
 
     assert_that(packageOnCommandLine("org.existant"));
 }
@@ -62,6 +65,8 @@ Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
     FT_ALLOC(fileTable.tab[42], struct fileItem);
     expect(addFileTableItem, will_return(42));
+    expect(getFileItem, when(fileIndex, is_equal_to(42)),
+           will_return(fileTable.tab[42]));
 
     assert_that(packageOnCommandLine("org.existant"));
 }

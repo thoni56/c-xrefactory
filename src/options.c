@@ -285,26 +285,25 @@ void addStringListOption(StringList **optlist, char *string) {
 }
 
 static void scheduleCommandLineEnteredFileToProcess(char *fn) {
-    int fileIndex;
-
     ENTER();
-    fileIndex = addFileTableItem(fn);
+    int fileIndex = addFileTableItem(fn);
+    FileItem *fileItem = getFileItem(fileIndex);
     if (options.taskRegime!=RegimeEditServer) {
         // yes in edit server you process also headers, etc.
-        fileTable.tab[fileIndex]->b.commandLineEntered = true;
+        fileItem->b.commandLineEntered = true;
     }
-    log_trace("recursively process command line argument file #%d '%s'", fileIndex, fileTable.tab[fileIndex]->name);
+    log_trace("recursively process command line argument file #%d '%s'", fileIndex, fileItem->name);
     if (!options.updateOnlyModifiedFiles) {
-        fileTable.tab[fileIndex]->b.scheduledToProcess = true;
+        fileItem->b.scheduledToProcess = true;
     }
     LEAVE();
 }
 
 static bool fileNameShouldBePruned(char *fn) {
-    StringList    *pp;
-    for(pp=options.pruneNames; pp!=NULL; pp=pp->next) {
-        MapOnPaths(pp->string, {
-                if (compareFileNames(currentPath, fn)==0) return true;
+    for (StringList *s=options.pruneNames; s!=NULL; s=s->next) {
+        MapOnPaths(s->string, {
+                if (compareFileNames(currentPath, fn)==0)
+                    return true;
             });
     }
     return false;

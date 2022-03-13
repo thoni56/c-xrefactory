@@ -544,7 +544,7 @@ void printClassFqtNameFromClassNum(FILE *file, int fnum) {
 void sprintfSymbolLinkName(char *outString, SymbolsMenu *menu) {
     if (menu->s.b.symType == TypeCppInclude) {
         sprintf(outString, "%s",
-                simpleFileName(getRealFileName_static(fileTable.tab[menu->s.vApplClass]->name)));
+                simpleFileName(getRealFileName_static(getFileItem(menu->s.vApplClass)->name)));
     } else {
         linkNamePrettyPrint(outString, menu->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     }
@@ -1216,10 +1216,10 @@ void javaMapDirectoryFiles2(
 /* ************************************************************* */
 
 static void scanClassFile(char *zip, char *file, void *dummy) {
-    char ttt[MAX_FILE_NAME_SIZE];
+    char name[MAX_FILE_NAME_SIZE];
     char *tt, *suff;
     Symbol *memb;
-    int cpi, fileInd;
+    int cpi;
 
     log_trace("scanning %s ; %s", zip, file);
     suff = getFileSuffix(file);
@@ -1230,21 +1230,21 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
         placeCachePoint(false);
         s_cache.activeCache = false;
         memb = javaGetFieldClass(file, &tt);
-        fileInd = javaCreateClassFileItem(memb);
-        if (! fileTable.tab[fileInd]->b.cxSaved) {
+        FileItem *fileItem = getFileItem(javaCreateClassFileItem(memb));
+        if (!fileItem->b.cxSaved) {
             // read only if not saved (and returned through overflow)
-            sprintf(ttt, "%s%s", zip, file);
-            assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
+            sprintf(name, "%s%s", zip, file);
+            assert(strlen(name) < MAX_FILE_NAME_SIZE-1);
             // recover memories, only cxrefs are interesting
             assert(memb->u.structSpec);
-            log_trace("adding %s %s", memb->name, fileTable.tab[fileInd]->name);
-            javaReadClassFile(ttt, memb, DO_NOT_LOAD_SUPER);
+            log_trace("adding %s %s", memb->name, fileItem->name);
+            javaReadClassFile(name, memb, DO_NOT_LOAD_SUPER);
         }
         // following is to free CF_MEMORY taken by scan, only
         // cross references in CX_MEMORY are interesting in this case.
         recoverCachePoint(cpi-1, s_cache.cp[cpi-1].lbcc, 0);
         log_trace("firstFreeIndex = %d", currentBlock->firstFreeIndex);
-        //&fprintf(dumpOut,": ppmmem == %d/%d %x-%x\n",ppmMemoryIndex,SIZE_ppmMemory,ppmMemory,ppmMemory+SIZE_ppmMemory);
+        log_trace(":ppmmem == %d/%d %x-%x", ppmMemoryIndex, SIZE_ppmMemory, ppmMemory, ppmMemory+SIZE_ppmMemory);
     }
 }
 
@@ -1255,14 +1255,15 @@ void jarFileParse(char *file_name) {
     assert(fileExistsInTable(&fileTable, file_name)); /* Filename has to exist in the table */
     fileIndex = addFileTableItem(inputFilename);
     checkFileModifiedTime(fileIndex);
-    // set loading to 1, no matter whether saved (by overflow) or not
-    // following make create a loop, but it is very unprobable
-    fileTable.tab[fileIndex]->b.cxLoading = true;
+    // set loading to true, no matter whether saved (by overflow) or not
+    // the following may create a loop, but it is very unprobable
+    FileItem *fileItem = getFileItem(fileIndex);
+    fileItem->b.cxLoading = true;
     if (archive>=0 && archive<MAX_JAVA_ZIP_ARCHIVES) {
         fsRecMapOnFiles(zipArchiveTable[archive].dir, zipArchiveTable[archive].fn,
                         "", scanClassFile, NULL);
     }
-    fileTable.tab[fileIndex]->b.cxLoaded = true;
+    fileItem->b.cxLoaded = true;
 }
 
 void scanJarFilesForTagSearch(void) {
