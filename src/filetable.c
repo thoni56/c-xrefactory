@@ -115,3 +115,8 @@ int addFileTableItem(char *name) {
 
     return fileIndex;
 }
+
+/* Hide some hashtab functions to hide filetable variable to be global */
+void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
+    fileTableMapWithIndex(&fileTable, fun);
+}

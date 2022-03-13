@@ -127,3 +127,20 @@ Ensure(FileTable, can_return_next_existing_file_index) {
 Ensure(FileTable, will_return_error_for_no_more_next_file_item) {
     assert_that(getNextExistingFileIndex(-1), is_equal_to(-1));
 }
+
+static int mapFunctionWithIndexCalled = 0;
+static void mapFunctionWithIndex(FileItem *fileItem, int index) {
+    mapFunctionWithIndexCalled++;
+}
+
+Ensure(FileTable, can_map_with_index) {
+    FileItem item = {"item.c"};
+    int index = fileTableAdd(&fileTable, &item);
+
+    mapFunctionWithIndexCalled = 0;
+
+    mapOverFileTableWithIndex(mapFunctionWithIndex);
+
+    assert_that(mapFunctionWithIndexCalled, is_equal_to(1));
+
+}

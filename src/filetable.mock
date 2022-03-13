@@ -83,3 +83,7 @@ int fileTableLookup(FileTable *table, char *fileName) {
 void initFileTable(void) {
     mock();
 }
+
+void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
+    mock(fun);
+}

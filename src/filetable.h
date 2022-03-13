@@ -69,4 +69,6 @@ extern int addFileTableItem(char *name);
 extern FileItem *getFileItem(int fileIndex);
 extern int getNextExistingFileIndex(int index);
 
+extern void mapOverFileTableWithIndex(void (*fun)(FileItem *fileItem, int index));
+
 #endif
