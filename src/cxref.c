@@ -3077,7 +3077,7 @@ int getFileNumberFromName(char *name) {
     int fileIndex;
 
     normalizedName = normalizeFileName(name, cwd);
-    if ((fileIndex = fileTableLookup(&fileTable, normalizedName)) != -1) {
+    if ((fileIndex = lookupFileTable(normalizedName)) != -1) {
         return fileIndex;
     } else {
         return noFileIndex;
@@ -3463,7 +3463,7 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
     convertLinkNameToClassFileName(classFileName, name);
     log_trace("Looking for class file '%s'", classFileName);
     if (existsInFileTable(classFileName))
-        fileIndex = fileTableLookup(&fileTable, classFileName);
+        fileIndex = lookupFileTable(classFileName);
 
     return fileIndex;
 }

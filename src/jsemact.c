@@ -313,7 +313,7 @@ bool javaTypeFileExist(IdList *name) {
     fname[1] = ZIP_SEPARATOR_CHAR;
 
     if (existsInFileTable(fname+1)) {
-        int fileIndex = fileTableLookup(&fileTable, fname+1);
+        int fileIndex = lookupFileTable(fname+1);
         if (getFileItem(fileIndex)->b.sourceFileNumber != noFileIndex) {
             return true;
         }

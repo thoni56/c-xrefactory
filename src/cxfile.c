@@ -639,9 +639,9 @@ static void genPartialFileTabRefFile(int updateFlag,
     assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
     openInOutReferenceFile(updateFlag, filename);
     genCxFileHead();
-    fileTableMapWithIndex(&fileTable, mapfun);
+    mapOverFileTableWithIndex(mapfun);
     if (mapfun2!=NULL)
-        fileTableMapWithIndex(&fileTable, mapfun2);
+        mapOverFileTableWithIndex(mapfun2);
     scanCxFile(fullScanFunctionSequence);
     closeReferenceFile(filename);
 }
@@ -668,11 +668,10 @@ void genReferenceFile(bool updating, char *filename) {
     if (options.referenceFileCount <= 1) {
         /* single reference file */
         openInOutReferenceFile(updating, filename);
-        /*&     fileTabMap(&fileTable, javaInitSubClassInfo); &*/
         genCxFileHead();
-        fileTableMapWithIndex(&fileTable, writeFileIndexItem);
-        fileTableMapWithIndex(&fileTable, writeFileSourceIndexItem);
-        fileTableMapWithIndex(&fileTable, genClassHierarchyItems);
+        mapOverFileTableWithIndex(writeFileIndexItem);
+        mapOverFileTableWithIndex(writeFileSourceIndexItem);
+        mapOverFileTableWithIndex(genClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
         refTabMap(&referenceTable, genRefItem);
         closeReferenceFile(filename);
@@ -846,7 +845,7 @@ static void cxReadFileName(int size,
             }
         }
     } else {
-        fileIndex = fileTableLookup(&fileTable, id);
+        fileIndex = lookupFileTable(id);
         fileItem = getFileItem(fileIndex);
         if (cxrfFileItemShouldBeUpdatedFromCxFile(fileItem)) {
             fileItem->b.isInterface = isInterface;

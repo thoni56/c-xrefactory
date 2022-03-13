@@ -70,10 +70,6 @@ bool existsInFileTable(char *fileName) {
     return mock(fileName);
 }
 
-int fileTableLookup(FileTable *table, char *fileName) {
-    return mock(table, fileName);
-}
-
 void initFileTable(void) {
     mock();
 }

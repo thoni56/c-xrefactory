@@ -60,7 +60,7 @@ Ensure(CxRef, get_class_num_from_class_linkname_will_return_filenumber_if_member
     expect(existsInFileTable,
            when(fileName, is_equal_to_string(";name.class")),
            will_return(true));
-    expect(fileTableLookup, will_return(position));
+    expect(lookupFileTable, will_return(position));
     expect(convertLinkNameToClassFileName,
            when(linkName, is_equal_to_string("name")),
            will_set_contents_of_parameter(classFileName, ";name.class", 12));
