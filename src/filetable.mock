@@ -80,6 +80,6 @@ int fileTableLookup(FileTable *table, char *fileName) {
     return mock(table, fileName);
 }
 
-void initFileTable(FileTable *table) {
-    mock(table);
+void initFileTable(void) {
+    mock();
 }

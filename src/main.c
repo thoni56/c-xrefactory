@@ -2120,7 +2120,7 @@ static void mainTotalTaskEntryInitialisations() {
     options.includeDirs = NULL;
     SM_INIT(ftMemory);
 
-    initFileTable(&fileTable);  /* Sets noFileIndex to something real */
+    initFileTable();  /* Sets noFileIndex to something real */
 
     noPosition = makePosition(noFileIndex, 0, 0);
     inputFileNumber = noFileIndex;
@@ -2376,7 +2376,6 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     fileAddedFlag = true;
     while (fileAddedFlag) {
         fileAddedFlag = false;
-        /* TODO: Replace with something looping over all existing entries in fileTable */
         for (int i=getNextExistingFileIndex(-1); i != -1; i = getNextExistingFileIndex(i)) {
             FileItem *fileItem = getFileItem(i);
             if (fileItem->b.scheduledToUpdate)

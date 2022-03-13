@@ -56,18 +56,18 @@ int getNextExistingFileIndex(int index) {
 }
 
 
-void initFileTable(FileTable *fileTable) {
+void initFileTable(void) {
     FileItem *fileItem;
 
     SM_INIT(ftMemory);
-    FT_ALLOCC(fileTable->tab, MAX_FILES, struct fileItem *);
+    FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
 
-    fileTableNoAllocInit(fileTable, MAX_FILES);
+    fileTableNoAllocInit(&fileTable, MAX_FILES);
 
     fileItem = newFileItem(NO_FILE_NAME);
 
     /* Add it to the fileTab and remember its index for future use */
-    noFileIndex = fileTableAdd(fileTable, fileItem);
+    noFileIndex = fileTableAdd(&fileTable, fileItem);
 }
 
 
