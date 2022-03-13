@@ -42,11 +42,10 @@ Ensure(Options, will_return_true_if_package_structure_exists) {
     expect(getFileSuffix, will_return(""));
     expect(editorFileStatus, will_return(0));
 
-    FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
-    FT_ALLOC(fileTable.tab[42], struct fileItem);
     expect(addFileTableItem, will_return(42));
+    FileItem fileItem = {"./org/existant"};
     expect(getFileItem, when(fileIndex, is_equal_to(42)),
-           will_return(fileTable.tab[42]));
+           will_return(&fileItem));
 
     assert_that(packageOnCommandLine("org.existant"));
 }
@@ -62,11 +61,10 @@ Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
     expect(getFileSuffix, will_return(""));
     expect(editorFileStatus);
 
-    FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
-    FT_ALLOC(fileTable.tab[42], struct fileItem);
     expect(addFileTableItem, will_return(42));
+    FileItem fileItem = {"but/this/path/org/existant"};
     expect(getFileItem, when(fileIndex, is_equal_to(42)),
-           will_return(fileTable.tab[42]));
+           will_return(&fileItem));
 
     assert_that(packageOnCommandLine("org.existant"));
 }

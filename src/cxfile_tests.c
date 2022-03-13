@@ -31,7 +31,6 @@ BeforeEach(CxFile) {
     log_set_level(LOG_DEBUG); /* Set to LOG_TRACE if needed */
 
     options.taskRegime = RegimeEditServer;
-    initFileTable(&fileTable);
 }
 AfterEach(CxFile) {}
 

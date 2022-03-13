@@ -135,8 +135,6 @@ Ensure(Yylex, can_process_include_directive) {
            times(2));           /* Don't know why two times... */
 
     processIncludeDirective(&position, false);
-
-    assert_that(fileTable.tab[fileNumber]->name, is_equal_to_string("some/path/include.h"));
 }
 
 Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) {
@@ -204,8 +202,6 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
            times(2));           /* Don't know why two times... */
 
     processIncludeDirective(&position, false);
-
-    assert_that(fileTable.tab[fileNumber]->name, is_equal_to_string("path2/include.h"));
 }
 
 
@@ -276,6 +272,4 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
            times(2));           /* Don't know why two times... */
 
     processIncludeDirective(&position, true);
-
-    assert_that(fileTable.tab[fileNumber]->name, is_equal_to_string("path3/include.h"));
 }
