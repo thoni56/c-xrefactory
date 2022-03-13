@@ -213,7 +213,7 @@ static int cachedIncludedFilePass(int cpi) {
 
 static void recoverCxMemory(char *cxMemFreeBase) {
     CX_FREE_UNTIL(cxMemFreeBase);
-    fileTableMapWithIndex(&fileTable, fileTabDeleteOutOfMemory);
+    mapOverFileTableWithIndex(fileTabDeleteOutOfMemory);
     refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
 }
 
@@ -280,15 +280,13 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
         log_trace("removing references");
         cxMemory->index = cp->cxMemoryIndex;
         refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
-        fileTableMapWithIndex(&fileTable, fileTabDeleteOutOfMemory);
+        mapOverFileTableWithIndex(fileTabDeleteOutOfMemory);
     }
     log_trace("recovering 0");
     symbolTableMap3(symbolTable, symbolTableDeleteOutOfMemory);
     log_trace("recovering 1");
     javaFqtTableMap3(&javaFqtTable, javaFqtTabDeleteOutOfMemory);
     log_trace("recovering 2");
-
-    /*& fileTabMapWithIndex(&fileTable, fileTabDeleteOutOfMemory); &*/
 
     // do not forget that includes are listed in PP_MEMORY too.
     includeListDeleteOutOfMemory();

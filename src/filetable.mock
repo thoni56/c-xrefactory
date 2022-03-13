@@ -66,12 +66,6 @@ void fileTableMap4(FileTable *table,
     mock(table, fun, a, b);
 }
 
-void fileTableMapWithIndex(FileTable *table,
-                           void (*fun)(FileItem *fileItem, int index)
-) {
-    mock(table, fun);
-}
-
 bool existsInFileTable(char *fileName) {
     return mock(fileName);
 }
@@ -86,4 +80,8 @@ void initFileTable(void) {
 
 void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
     mock(fun);
+}
+
+int lookupFileTable(char *fileName) {
+    return (int)mock(fileName);
 }

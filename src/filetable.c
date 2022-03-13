@@ -120,3 +120,7 @@ int addFileTableItem(char *name) {
 void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
     fileTableMapWithIndex(&fileTable, fun);
 }
+
+int lookupFileTable(char *fileName) {
+    return fileTableLookup(&fileTable, fileName);
+}
