@@ -703,7 +703,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     strcpy(buff->name, newName);
     // update also ftnum
     fileIndex = addFileNameToFileTable(newName);
-    getFileItem(fileIndex)->b.commandLineEntered = getFileItem(buff->ftnum)->b.commandLineEntered;
+    getFileItem(fileIndex)->bits.commandLineEntered = getFileItem(buff->ftnum)->bits.commandLineEntered;
     buff->ftnum = fileIndex;
 
     *memb = (EditorBufferList){.buffer = buff, .next = NULL};

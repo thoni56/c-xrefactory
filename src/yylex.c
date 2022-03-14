@@ -174,22 +174,22 @@ static void setCurrentFileInfoFor(char *fileName) {
         FileItem *fileItem = getFileItem(number);
         name = fileItem->name;
         checkFileModifiedTime(number);
-        bool cxloading = fileItem->b.cxLoading;
+        bool cxloading = fileItem->bits.cxLoading;
         if (!existed) {
             cxloading = true;
         } else if (options.update==UPDATE_FAST) {
-            if (fileItem->b.scheduledToProcess) {
+            if (fileItem->bits.scheduledToProcess) {
                 // references from headers are not loaded on fast update !
                 cxloading = true;
             }
         } else if (options.update==UPDATE_FULL) {
-            if (fileItem->b.scheduledToUpdate) {
+            if (fileItem->bits.scheduledToUpdate) {
                 cxloading = true;
             }
         } else {
             cxloading = true;
         }
-        if (fileItem->b.cxSaved==1 && ! options.multiHeadRefsCare) {
+        if (fileItem->bits.cxSaved==1 && ! options.multiHeadRefsCare) {
             /* if multihead references care, load include refs each time */
             cxloading = false;
         }
@@ -197,10 +197,10 @@ static void setCurrentFileInfoFor(char *fileName) {
             if (s_jsl!=NULL || s_javaPreScanOnly) {
                 // do not load (and save) references from jsl loaded files
                 // nor during prescanning
-                cxloading = fileItem->b.cxLoading;
+                cxloading = fileItem->bits.cxLoading;
             }
         }
-        fileItem->b.cxLoading = cxloading;
+        fileItem->bits.cxLoading = cxloading;
     }
     currentFile.lexBuffer.buffer.fileNumber = number;
     currentFile.fileName = name;
@@ -429,8 +429,8 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
 
 void popInclude(void) {
     FileItem *fileItem = getFileItem(currentFile.lexBuffer.buffer.fileNumber);
-    if (fileItem->b.cxLoading) {
-        fileItem->b.cxLoaded = true;
+    if (fileItem->bits.cxLoading) {
+        fileItem->bits.cxLoaded = true;
     }
     closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     if (includeStackPointer != 0) {

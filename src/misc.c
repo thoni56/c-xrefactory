@@ -1234,7 +1234,7 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
         s_cache.activeCache = false;
         memb = javaGetFieldClass(file, &tt);
         FileItem *fileItem = getFileItem(javaCreateClassFileItem(memb));
-        if (!fileItem->b.cxSaved) {
+        if (!fileItem->bits.cxSaved) {
             // read only if not saved (and returned through overflow)
             sprintf(name, "%s%s", zip, file);
             assert(strlen(name) < MAX_FILE_NAME_SIZE-1);
@@ -1261,12 +1261,12 @@ void jarFileParse(char *file_name) {
     // set loading to true, no matter whether saved (by overflow) or not
     // the following may create a loop, but it is very unprobable
     FileItem *fileItem = getFileItem(fileIndex);
-    fileItem->b.cxLoading = true;
+    fileItem->bits.cxLoading = true;
     if (archive>=0 && archive<MAX_JAVA_ZIP_ARCHIVES) {
         fsRecMapOnFiles(zipArchiveTable[archive].dir, zipArchiveTable[archive].fn,
                         "", scanClassFile, NULL);
     }
-    fileItem->b.cxLoaded = true;
+    fileItem->bits.cxLoaded = true;
 }
 
 void scanJarFilesForTagSearch(void) {

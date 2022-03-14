@@ -1543,8 +1543,7 @@ FieldDeclaration
                         // set interface default access flags
                         p->bits.access |= (AccessPublic|AccessStatic|AccessFinal);
                     }
-                    log_debug("[jsl] adding field %s to %s\n",
-                              p->name,clas->linkName);
+                    log_debug("[jsl] adding field %s to %s", p->name,clas->linkName);
                     LIST_APPEND(Symbol, clas->u.structSpec->records, p);
                     assert(vClass!=noFileIndex);
                     if (p->pos.file!=olOriginalFileNumber && options.server_operation==OLO_PUSH) {

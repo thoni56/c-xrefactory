@@ -439,8 +439,8 @@ static void writeFileIndexItem(FileItem *fileItem, int index) {
     writeOptionalCompactRecord(CXFI_FILE_INDEX, index, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
-    writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->b.commandLineEntered, "");
-    if (fileItem->b.isInterface) {
+    writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->bits.commandLineEntered, "");
+    if (fileItem->bits.isInterface) {
         writeOptionalCompactRecord(CXFI_ACCESS_BITS, AccessInterface, "");
     } else {
         writeOptionalCompactRecord(CXFI_ACCESS_BITS, AccessDefault, "");
@@ -449,9 +449,9 @@ static void writeFileIndexItem(FileItem *fileItem, int index) {
 }
 
 static void writeFileSourceIndexItem(FileItem *fileItem, int index) {
-    if (fileItem->b.sourceFileNumber != noFileIndex) {
+    if (fileItem->bits.sourceFileNumber != noFileIndex) {
         writeOptionalCompactRecord(CXFI_FILE_INDEX, index, "\n");
-        writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->b.sourceFileNumber, " ");
+        writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->bits.sourceFileNumber, " ");
     }
 }
 
@@ -543,13 +543,13 @@ static void genRefItem0(SymbolReferenceItem *referenceItem, bool force) {
 
     for (reference = referenceItem->refs; reference != NULL; reference = reference->next) {
         FileItem *fileItem = getFileItem(reference->position.file);
-        log_trace("checking ref: loading=%d --< %s:%d", fileItem->b.cxLoading,
+        log_trace("checking ref: loading=%d --< %s:%d", fileItem->bits.cxLoading,
                   fileItem->name, reference->position.line);
-        if (options.update==UPDATE_CREATE || fileItem->b.cxLoading) {
+        if (options.update==UPDATE_CREATE || fileItem->bits.cxLoading) {
             writeCxReference(reference, symbolIndex);
         } else {
             log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
-                      options.update, fileItem->b.cxLoading);
+                      options.update, fileItem->bits.cxLoading);
             assert(0);
         }
     }
@@ -784,7 +784,7 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
 
     log_trace("re-read info from '%s' for '%s'?", options.cxrefsLocation, fileItem->name);
     if (options.taskRegime == RegimeXref) {
-        if (fileItem->b.cxLoading && ! fileItem->b.cxSaved) {
+        if (fileItem->bits.cxLoading && ! fileItem->bits.cxSaved) {
             updateFromCxFile = false;
         } else {
             updateFromCxFile = true;
@@ -832,8 +832,8 @@ static void cxReadFileName(int size,
     if (!existsInFileTable(id)) {
         fileIndex = addFileNameToFileTable(id);
         fileItem = getFileItem(fileIndex);
-        fileItem->b.commandLineEntered = commandLineFlag;
-        fileItem->b.isInterface = isInterface;
+        fileItem->bits.commandLineEntered = commandLineFlag;
+        fileItem->bits.isInterface = isInterface;
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
         if (fileItem->lastUpdateMtime == 0)
@@ -848,12 +848,12 @@ static void cxReadFileName(int size,
         fileIndex = lookupFileTable(id);
         fileItem = getFileItem(fileIndex);
         if (cxrfFileItemShouldBeUpdatedFromCxFile(fileItem)) {
-            fileItem->b.isInterface = isInterface;
+            fileItem->bits.isInterface = isInterface;
             // Set it to none, it will be updated by source item
-            fileItem->b.sourceFileNumber = noFileIndex;
+            fileItem->bits.sourceFileNumber = noFileIndex;
         }
         if (options.taskRegime == RegimeEditServer) {
-            fileItem->b.commandLineEntered = commandLineFlag;
+            fileItem->bits.commandLineEntered = commandLineFlag;
         }
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
@@ -862,7 +862,7 @@ static void cxReadFileName(int size,
         //&if (fumtime>fileItem->lastFullUpdateMtime) fileItem->lastFullUpdateMtime=fumtime;
         //&if (umtime>fileItem->lastUpdateMtime) fileItem->lastUpdateMtime=umtime;
     }
-    fileItem->b.isFromCxfile = true;
+    fileItem->bits.isFromCxfile = true;
     decodeFileNumbers[ii]=fileIndex;
     log_trace("%d: '%s' scanned: added as %d", ii, id, fileIndex);
 }
@@ -883,10 +883,10 @@ static void cxrfSourceIndex(int size,
     FileItem *fileItem = getFileItem(file);
     assert(file>=0 && file<MAX_FILES && fileItem);
     // hmmm. here be more generous in getting correct source info
-    if (fileItem->b.sourceFileNumber == noFileIndex) {
+    if (fileItem->bits.sourceFileNumber == noFileIndex) {
         // first check that it is not set directly from source
-        if (! fileItem->b.cxLoading) {
-            fileItem->b.sourceFileNumber = sfile;
+        if (! fileItem->bits.cxLoading) {
+            fileItem->bits.sourceFileNumber = sfile;
         }
     }
 }
@@ -1156,14 +1156,14 @@ static void cxrfReference(int size,
 
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
-        if (fileItem->b.cxLoading && fileItem->b.cxSaved) {
+        if (fileItem->bits.cxLoading && fileItem->bits.cxSaved) {
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
             fillUsage(&usage, usageKind, reqAcc);
             copyrefFl = !isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
                                      usage, pos);
         } else {
-            copyrefFl = !fileItem->b.cxLoading;
+            copyrefFl = !fileItem->bits.cxLoading;
         }
         if (copyrefFl)
             writeCxReferenceBase(sym, usageKind, reqAcc, file, line, col);
@@ -1176,7 +1176,7 @@ static void cxrfReference(int size,
             if (OL_VIEWABLE_REFS(&reference)) {
                 // restrict reported symbols to those defined in project input file
                 if (IS_DEFINITION_USAGE(reference.usage.kind)
-                    && referenceFileItem->b.commandLineEntered
+                    && referenceFileItem->bits.commandLineEntered
                 ) {
                     lastIncomingInfo.deadSymbolIsDefined = 1;
                 } else if (! IS_DEFINITION_OR_DECL_USAGE(reference.usage.kind)) {
@@ -1208,7 +1208,7 @@ static void cxrfReference(int size,
                 if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     if (additionalArg == CXSF_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
-                        if (file != olOriginalFileNumber || !fileItem->b.commandLineEntered ||
+                        if (file != olOriginalFileNumber || !fileItem->bits.commandLineEntered ||
                             options.server_operation == OLO_GOTO || options.server_operation == OLO_CGOTO ||
                             options.server_operation == OLO_PUSH_NAME ||
                             options.server_operation == OLO_PUSH_SPECIAL_NAME) {
@@ -1274,7 +1274,7 @@ static void cxrfSubClass(int size,
     assert(options.taskRegime);
     switch (options.taskRegime) {
     case RegimeXref:
-        if (!fileItem->b.cxLoading &&
+        if (!fileItem->bits.cxLoading &&
             additionalArg==CXSF_GENERATE_OUTPUT) {
             writeSubClassInfo(super_class, sub_class, fileIndex);  // updating refs
         }

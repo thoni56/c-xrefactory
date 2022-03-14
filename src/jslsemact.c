@@ -578,10 +578,10 @@ void jslNewClassDefinitionBegin(Id *name,
 
     classFileIndex = cc->u.structSpec->classFileIndex;
     FileItem *classFileItem = getFileItem(classFileIndex);
-    classFileItem->b.sourceFileNumber = s_jsl->sourceFileNumber;
+    classFileItem->bits.sourceFileNumber = s_jsl->sourceFileNumber;
 
     if (accFlags & AccessInterface)
-        classFileItem->b.isInterface = true;
+        classFileItem->bits.isInterface = true;
     addClassTreeHierarchyReference(classFileIndex, &inname->position,UsageClassTreeDefinition);
     if (inname->position.file != olOriginalFileNumber && options.server_operation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
@@ -590,7 +590,7 @@ void jslNewClassDefinitionBegin(Id *name,
     // this is to update references affected to class file before
     // if you remove this, then remove also at class end
     // berk, this removes all usages to be loaded !!
-    //& getFileItem(classFileIndex)->b.cxLoading = true;
+    //& getFileItem(classFileIndex)->bits.cxLoading = true;
     // here reset the innerclasses number, so the next call will
     // surely allocate the table and will start from the first one
     // it is a little bit HACKED :)
@@ -628,8 +628,8 @@ void jslNewClassDefinitionEnd(void) {
 
     cc = s_jsl->classStat->thisClass;
     FileItem *fileItem = getFileItem(cc->u.structSpec->classFileIndex);
-    if (fileItem->b.cxLoading) {
-        fileItem->b.cxLoaded = true;
+    if (fileItem->bits.cxLoading) {
+        fileItem->bits.cxLoaded = true;
     }
 
     s_jsl->classStat = s_jsl->classStat->next;

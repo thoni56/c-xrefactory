@@ -1164,7 +1164,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
 
     fileIndex = javaCreateClassFileItem(symbol);
     FileItem *fileItem = getFileItem(fileIndex);
-    fileItem->b.cxLoading = true;
+    fileItem->bits.cxLoading = true;
 
     pos = makePosition(fileIndex, 1, 0);
     addCxReference(symbol, &pos, UsageClassFileDefinition,
@@ -1195,7 +1195,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     symbol->bits.access = access;
     log_trace("reading accessFlags %s == %x", className, access);
     if (access & AccessInterface)
-        fileItem->b.isInterface = true;
+        fileItem->bits.isInterface = true;
     GetU2(thisClass, cb, exception);
     if (thisClass<0 || thisClass>=cpSize)
         goto corrupted;
@@ -1290,7 +1290,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
             skipCharacters(cb, alen);
         }
     }
-    fileItem->b.cxLoaded = true;
+    fileItem->bits.cxLoaded = true;
     goto finish;
 
  endOfFile:

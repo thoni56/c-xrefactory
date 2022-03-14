@@ -719,14 +719,14 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, Usage usage,
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
-                //&fprintf(dumpOut,"%s comm %d\n", fileItem->name, fileItem->b.commandLineEntered);
+                //&fprintf(dumpOut,"%s comm %d\n", fileItem->name, fileItem->bits.commandLineEntered);
             }
         }
     }
     if (options.taskRegime == RegimeXref) {
         if (category == CategoryLocal)
             return NULL; /* dont cxref local symbols */
-        if (!fileItem->b.cxLoading)
+        if (!fileItem->bits.cxLoading)
             return NULL;
     }
     reftab = &referenceTable;
@@ -4295,7 +4295,7 @@ static bool tpCheckPrintSelectedSymbol(void) {
 int javaGetSuperClassNumFromClassNum(int cn) {
     for (ClassHierarchyReference *cl = getFileItem(cn)->superClasses; cl!=NULL; cl=cl->next) {
         int superClass = cl->superClass;
-        if (!getFileItem(superClass)->b.isInterface)
+        if (!getFileItem(superClass)->bits.isInterface)
             return superClass;
     }
     return noFileIndex;
