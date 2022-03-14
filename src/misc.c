@@ -392,9 +392,9 @@ static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
 /* TODO: dotify has one of the values DOTIFY_NAME, KEEP_SLASHES or 0
    Convert to enums or keep bool?
 */
-void javaGetClassNameFromFileNum(int nn, char *tmpOut, bool dotify) {
+void javaGetClassNameFromFileNum(int nn, char *tmpOut, DotifyMode dotifyMode) {
     getClassFqtNameFromFileNum(nn, tmpOut);
-    if (dotify==DOTIFY_NAME)
+    if (dotifyMode == DOTIFY_NAME)
         javaDotifyFileName(tmpOut);
 }
 

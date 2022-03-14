@@ -74,12 +74,17 @@ typedef enum resolveDialog {
 } ResolveDialog;
 
 typedef enum cutOuters {
-    CUT_OUTERS = RESOLVE_DIALOG_NEVER+1,
+    CUT_OUTERS = RESOLVE_DIALOG_NEVER + 1,
     NO_OUTERS_CUT,
 } CutOuters;
 
+typedef enum dotifyMode {
+    DOTIFY_NAME = NO_OUTERS_CUT + 1,
+    KEEP_SLASHES,
+} DotifyMode;
+
 enum miscellaneous {						/* misc. constants */
-    DEFAULT_VALUE = NO_OUTERS_CUT + 1,
+    DEFAULT_VALUE = KEEP_SLASHES + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
@@ -139,8 +144,6 @@ enum miscellaneous {						/* misc. constants */
     REQ_PACKAGE,
     INSPECT_DEF,
     INSPECT_CLASS,
-    DOTIFY_NAME,
-    KEEP_SLASHES,
     ADD_MAYBE_THIS_REFERENCE,
     TSS_FULL_SEARCH,
     TSS_SEARCH_DEFS_ONLY,
