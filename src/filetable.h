@@ -62,11 +62,17 @@ extern FileTable fileTable;
 /* Index into file table for the "NON FILE" */
 extern int noFileIndex;
 
+extern int fileTableLookup(FileTable *table, char *fileName);
+
 extern void initFileTable(void);
 extern void initNoFile(void);
-extern bool existsInFileTable(char *fileName);
-extern int fileTableLookup(FileTable *table, char *fileName);
+
+extern int addToFileTable(FileItem *fileItem);
 extern int addFileNameToFileTable(char *name);
+
+extern int  lookupFileTable(char *fileName);
+extern bool existsInFileTable(char *fileName);
+
 extern FileItem *getFileItem(int fileIndex);
 extern int getNextExistingFileIndex(int index);
 
@@ -74,6 +80,5 @@ extern void mapOverFileTable(void (*fun)(FileItem *));
 extern void mapOverFileTableWithIndex(void (*fun)(FileItem *, int));
 extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer);
 
-extern int  lookupFileTable(char *fileName);
 
 #endif

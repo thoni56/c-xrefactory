@@ -62,6 +62,10 @@ int addFileNameToFileTable(char *name) {
   return (int) mock(name);
 }
 
+int addToFileTable(FileItem *fileItem) {
+    return (int)mock(fileItem);
+}
+
 void mapOverFileTable(void (*fun)(FileItem *)) {
     mock(fun);
 }

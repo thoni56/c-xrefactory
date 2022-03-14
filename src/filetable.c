@@ -42,6 +42,10 @@ static struct fileItem *newFileItem(char *normalizedFileName) {
     return createdFileItem;
 }
 
+int addToFileTable(FileItem *fileItem) {
+    return fileTableAdd(&fileTable, fileItem);
+}
+
 FileItem *getFileItem(int fileIndex) {
     assert(fileIndex != -1);
     assert(fileTable.tab != NULL);
