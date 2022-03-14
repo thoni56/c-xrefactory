@@ -416,10 +416,6 @@ static bool processIOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-I", 2)==0 && argv[i][2]!=0) {
         addStringListOption(&options.includeDirs, argv[i]+2);
     }
-    else if (strcmp(argv[i], "-include")==0) {
-        warningMessage(ERR_ST, "-include option is deprecated, use -optinclude instead");
-        i = mainHandleIncludeOption(argc, argv, i);
-    }
     else if (strcmp(argv[i], "-infos")==0) {
         logging_selected.infos = true;
     }
