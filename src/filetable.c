@@ -15,7 +15,8 @@
 
 FileTable fileTable;
 
-int noFileIndex;                /* Initialized to an actual index in initFileTable() which needs to be called early */
+int noFileIndex;                /* Initialized to an actual index in initNoFile() which needs
+                                   to be called early */
 
 
 static void fillFileItem(FileItem *item, char *name) {
@@ -49,7 +50,7 @@ FileItem *getFileItem(int fileIndex) {
 }
 
 int getNextExistingFileIndex(int index) {
-    for (int i=index+1; i < fileTable.size; i++)
+    for (int i=index; i < fileTable.size; i++)
         if (fileTable.tab[i] != NULL)
             return i;
     return -1;

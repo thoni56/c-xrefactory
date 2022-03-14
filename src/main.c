@@ -1387,7 +1387,7 @@ static char *getNextInputFileFromFileTable(int *indexP, int flag) {
     int         i;
     FileItem  *fileItem;
 
-    for (i = getNextExistingFileIndex(*indexP); i != -1; i = getNextExistingFileIndex(i)) {
+    for (i = getNextExistingFileIndex(*indexP); i != -1; i = getNextExistingFileIndex(i+1)) {
         fileItem = getFileItem(i);
         if (fileItem!=NULL) {
             if (flag==FF_SCHEDULED_TO_PROCESS && fileItem->b.scheduledToProcess)
@@ -2316,7 +2316,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
 
     /* ************ start with CXREFS and memories clean ************ */
     bool savingFlag = false;
-    for (int i=getNextExistingFileIndex(-1); i != -1; i = getNextExistingFileIndex(i)) {
+    for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
         FileItem *fileItem = getFileItem(i);
         if (fileItem->b.cxLoading) {
             fileItem->b.cxLoading = false;
@@ -2377,7 +2377,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     fileAddedFlag = true;
     while (fileAddedFlag) {
         fileAddedFlag = false;
-        for (int i=getNextExistingFileIndex(-1); i != -1; i = getNextExistingFileIndex(i)) {
+        for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
             FileItem *fileItem = getFileItem(i);
             if (fileItem->b.scheduledToUpdate)
                 if (!fileItem->b.fullUpdateIncludesProcessed) {
@@ -2641,14 +2641,15 @@ static char *presetEditServerFileDependingStatics(void) {
     int fileIndex = 0;
     inputFilename = getNextInputFile(&fileIndex);
     if (fileIndex == -1) { /* No more input files... */
-        // conservative message, probably macro invoked on nonsaved file
+        // conservative message, probably macro invoked on nonsaved file, TODO: WTF?
         olOriginalComFileNumber = noFileIndex;
         return NULL;
     }
 
-    /* TODO: This seems strange, we only assert that the first file is scheduled to process. Why? */
+    /* TODO: This seems strange, we only assert that the first file is scheduled to process.
+       Then reset all other files, why? */
     assert(getFileItem(fileIndex)->b.scheduledToProcess);
-    for (int i=getNextExistingFileIndex(fileIndex); i != -1; i = getNextExistingFileIndex(i)) {
+    for (int i=getNextExistingFileIndex(fileIndex+1); i != -1; i = getNextExistingFileIndex(i+1)) {
         getFileItem(i)->b.scheduledToProcess = false;
     }
 
