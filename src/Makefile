@@ -1,7 +1,7 @@
 #######################################################################
 # c-xrefactory Makefile
 #
-# TODO: This makefile should (it doesn't yet) support the following use cases
+# This makefile supports the following use cases
 #
 # 1: production - simple straight forward build of c-xref for use when
 # installing c-xref using el-get. Works:

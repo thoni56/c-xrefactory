@@ -636,12 +636,14 @@ static bool processOOption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+15, "%d:%dx%d:%d",
                &options.olcxWinDelFromLine, &options.olcxWinDelFromCol,
                &options.olcxWinDelToLine, &options.olcxWinDelToCol);
-        //&fprintf(dumpOut, "; delete refs %d:%d-%d:%d\n", options.olcxWinDelFromLine, options.olcxWinDelFromCol, options.olcxWinDelToLine, options.olcxWinDelToCol);
+        log_trace("; delete refs %d:%d-%d:%d", options.olcxWinDelFromLine, options.olcxWinDelFromCol,
+                  options.olcxWinDelToLine, options.olcxWinDelToCol);
     }
     else if (strncmp(argv[i], "-olcxsafetycheckmovedblock=",27)==0) {
         sscanf(argv[i]+27, "%d:%d:%d", &options.checkFirstMovedLine,
                &options.checkLinesMoved, &options.checkNewLineNumber);
-        //&fprintf(dumpOut, "safety check block moved == %d:%d:%d\n", options.checkFirstMovedLine,options.checkLinesMoved, options.checkNewLineNumber);
+        log_trace("safety check block moved == %d:%d:%d", options.checkFirstMovedLine, options.checkLinesMoved,
+                  options.checkNewLineNumber);
     }
     else if (strcmp(argv[i], "-olcxgotodef")==0)
         options.server_operation = OLO_GOTO_DEF;
@@ -1588,17 +1590,17 @@ static void getOptionsFile(char *file, char *optionsFileName, char *sectionName,
 }
 
 static bool computeAndOpenInputFile(void) {
-    FILE *inputIn;
-    EditorBuffer *inputBuff;
+    FILE *inputFile;
+    EditorBuffer *inputBuffer;
 
     assert(s_language);
-    inputBuff = NULL;
+    inputBuffer = NULL;
     //!!!! hack for .jar files !!!
     if (LANGUAGE(LANG_JAR) || LANGUAGE(LANG_CLASS))
         return false;
     if (inputFilename == NULL) {
         assert(0);
-        inputIn = stdin;
+        inputFile = stdin;
         inputFilename = "__none__";
         //& } else if (options.server_operation == OLO_GET_ENV_VALUE) {
         // hack for getenv
@@ -1606,22 +1608,22 @@ static bool computeAndOpenInputFile(void) {
         // also if yes, then move this to 'mainEditSrvParseInputFile' !
         //&     return false;
     } else {
-        inputIn = NULL;
-        //& inputBuff = editorGetOpenedAndLoadedBuffer(inputFilename);
-        inputBuff = editorFindFile(inputFilename);
-        if (inputBuff == NULL) {
+        inputFile = NULL;
+        //& inputBuffer = editorGetOpenedAndLoadedBuffer(inputFilename);
+        inputBuffer = editorFindFile(inputFilename);
+        if (inputBuffer == NULL) {
 #if defined (__WIN32__)
-            inputIn = openFile(inputFilename, "rb");
+            inputFile = openFile(inputFilename, "rb");
 #else
-            inputIn = openFile(inputFilename, "r");
+            inputFile = openFile(inputFilename, "r");
 #endif
-            if (inputIn == NULL) {
+            if (inputFile == NULL) {
                 errorMessage(ERR_CANT_OPEN, inputFilename);
             }
         }
     }
-    initInput(inputIn, inputBuff, "\n", inputFilename);
-    if (inputIn==NULL && inputBuff==NULL) {
+    initInput(inputFile, inputBuffer, "\n", inputFilename);
+    if (inputFile==NULL && inputBuffer==NULL) {
         return false;
     } else {
         return true;
@@ -1951,7 +1953,7 @@ void writeRelativeProgress(int val) {
 static void mainFileProcessingInitialisations(bool *firstPass,
                                               int argc, char **argv,      // command-line options
                                               int nargc, char **nargv,    // piped options
-                                              bool *outInputIn,
+                                              bool *inputOpened,
                                               Language *outLanguage
 ) {
     char defaultOptionsFileName[MAX_FILE_NAME_SIZE];
@@ -2017,13 +2019,13 @@ static void mainFileProcessingInitialisations(bool *firstPass,
 
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
         if (options.taskRegime != RegimeEditServer && inputFilename == NULL) {
-            *outInputIn = false;
+            *inputOpened = false;
             goto fini;
         }
         copyOptions(&s_cachedOptions, &options);  // before getJavaClassPath, it modifies ???
         processOptions(nargc, nargv, INFILES_DISABLED);
         getJavaClassAndSourcePath();
-        *outInputIn = computeAndOpenInputFile();
+        *inputOpened = computeAndOpenInputFile();
         strcpy(oldStdopFile,defaultOptionsFileName);
         strcpy(oldStdopSection,defaultOptionsSectionName);
         oldStdopTime = dffstat.st_mtime;
@@ -2042,7 +2044,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     } else {
         copyOptions(&options, &s_cachedOptions);
         processOptions(nargc, nargv, INFILES_DISABLED); /* no include or define options */
-        *outInputIn = computeAndOpenInputFile();
+        *inputOpened = computeAndOpenInputFile();
     }
     // reset language once knowing all language suffixes
     mainSetLanguage(fileName,  outLanguage);
@@ -2679,54 +2681,53 @@ static int needToProcessInputFile(void) {
 /* *************************************************************** */
 /*                          Xref regime                            */
 /* *************************************************************** */
-static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, bool *_firstPass, bool *_atLeastOneProcessed ) {
-    bool inputIn = *_inputIn;
-    bool firstPass = *_firstPass;
-    int atLeastOneProcessed = *_atLeastOneProcessed;
+static void mainXrefProcessInputFile(int argc, char **argv, bool *_inputOpened, bool *firstPass,
+                                     bool *atLeastOneProcessed) {
+    bool inputOpened = *_inputOpened;
 
     maxPasses = 1;
-    for(currentPass=1; currentPass<=maxPasses; currentPass++) {
-        if (!firstPass)
+    for (currentPass=1; currentPass<=maxPasses; currentPass++) {
+        if (!*firstPass)
             copyOptions(&options, &s_cachedOptions);
-        mainFileProcessingInitialisations(&firstPass,
-                                          argc, argv, 0, NULL, &inputIn,
+        mainFileProcessingInitialisations(firstPass,
+                                          argc, argv, 0, NULL, &inputOpened,
                                           &s_language);
         olOriginalFileNumber    = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileNumber;
-        if (inputIn) {
+        if (inputOpened) {
             recoverFromCache();
             s_cache.activeCache = false;    /* no caching in cxref */
             mainParseInputFile();
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
-            inputIn = 0;
+            inputOpened = false;
             currentFile.lexBuffer.buffer.file = stdin;
-            atLeastOneProcessed=1;
+            *atLeastOneProcessed = true;
         } else if (LANGUAGE(LANG_JAR)) {
             jarFileParse(inputFilename);
-            atLeastOneProcessed=1;
+            *atLeastOneProcessed = true;
         } else if (LANGUAGE(LANG_CLASS)) {
             classFileParse();
-            atLeastOneProcessed=1;
+            *atLeastOneProcessed = true;
         } else {
-            errorMessage(ERR_CANT_OPEN,inputFilename);
+            errorMessage(ERR_CANT_OPEN, inputFilename);
             fprintf(dumpOut, "\tmaybe forgotten -p option?\n");
         }
         // no multiple passes for java programs
-        firstPass = false;
+        *firstPass = false;
         currentFile.lexBuffer.buffer.isAtEOF = false;
-        if (LANGUAGE(LANG_JAVA)) goto fileParsed;
+        if (LANGUAGE(LANG_JAVA))
+            goto fileParsed;
     }
 
  fileParsed:
-    *_inputIn = inputIn;
-    *_firstPass = firstPass;
-    *_atLeastOneProcessed = atLeastOneProcessed;
+    *_inputOpened = inputOpened;
 }
 
 static void mainXrefOneWholeFileProcessing(int argc, char **argv,
                                            FileItem *ff,
                                            bool *firstPass, bool *atLeastOneProcessed) {
-    int         inputIn;
+    bool inputOpened;
+
     inputFilename = ff->name;
     fileProcessingStartTime = time(NULL);
     // O.K. but this is missing all header files
@@ -2734,7 +2735,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
     if (options.update == UPDATE_FULL || options.create) {
         ff->lastFullUpdateMtime = ff->lastModified;
     }
-    mainXrefProcessInputFile(argc, argv, &inputIn,
+    mainXrefProcessInputFile(argc, argv, &inputOpened,
                              firstPass, atLeastOneProcessed);
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
