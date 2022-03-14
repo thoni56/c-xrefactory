@@ -94,8 +94,8 @@ void initAllInputs(void) {
     macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
     ppMemoryIndex=0;
     s_olstring[0]=0;
-    s_olstringFound = 0;
-    s_olstringServed = 0;
+    s_olstringFound = false;
+    s_olstringServed = false;
     s_olstringInMbody = NULL;
     s_upLevelFunctionCompletionType = NULL;
     s_structRecordCompletionType = NULL;
@@ -336,7 +336,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
     if (options.taskRegime == RegimeEditServer) {
         if (lexem==IDENT_TO_COMPLETE) {
             s_cache.activeCache = false;
-            s_olstringServed = 1;
+            s_olstringServed = true;
             if (s_language == LANG_JAVA) {
                 makeJavaCompletions(idd, strlen(idd), pos);
             }
@@ -819,7 +819,8 @@ void processDefineDirective(bool hasArguments) {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, s_cxRefPos))) {
                     s_cache.activeCache = false;
-                    s_olstringFound = 1; s_olstringInMbody = symbol->linkName;
+                    s_olstringFound = true;
+                    s_olstringInMbody = symbol->linkName;
                 }
                 destination = body+macroSize;
                 putLexToken(lexem, &destination);

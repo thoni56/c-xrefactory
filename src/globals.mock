@@ -66,8 +66,8 @@ int tokenNameLengthsTable[LAST_TOKEN];
 char *s_cppVarArgsName = "__VA_ARGS__";
 
 char s_olstring[MAX_FUN_NAME_SIZE];
-int s_olstringFound = 0;
-int s_olstringServed = 0;
+bool s_olstringFound = false;
+bool s_olstringServed = false;
 char *s_olstringInMbody = NULL;
 int s_olstringUsage = 0;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
@@ -75,7 +75,6 @@ char s_olSymbolClassType[COMPLETION_STRING_SIZE];
 int olOriginalFileNumber = -1;
 int s_olstringUsage;
 int olOriginalComFileNumber;
-int s_olstringServed;
 Position s_olcxByPassPos;
 int s_olMacro2PassFile;
 

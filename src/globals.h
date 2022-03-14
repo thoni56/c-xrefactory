@@ -144,8 +144,8 @@ extern int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 /* ********* vars for on-line additions after EOF ****** */
 
 extern char s_olstring[MAX_FUN_NAME_SIZE];
-extern int s_olstringFound;
-extern int s_olstringServed;
+extern bool s_olstringFound;
+extern bool s_olstringServed;
 extern int s_olstringUsage;
 extern char *s_olstringInMbody;
 extern int s_olMacro2PassFile;

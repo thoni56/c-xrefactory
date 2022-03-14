@@ -145,11 +145,12 @@ static IdList s_javaLangObjectNameBody[] = {
 IdList *s_javaLangObjectName = s_javaLangObjectNameBody;
 char *s_javaLangObjectLinkName="java/lang/Object";
 
+
 /* ********* vars for on-line additions after EOF ****** */
 
 char s_olstring[MAX_FUN_NAME_SIZE];
-int s_olstringFound = 0;
-int s_olstringServed = 0;
+bool s_olstringFound = false;
+bool s_olstringServed = false;
 int s_olstringUsage = 0;
 char *s_olstringInMbody = NULL;
 int s_olMacro2PassFile;

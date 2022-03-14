@@ -771,7 +771,7 @@ Reference *addCxReferenceNew(Symbol *symbol, Position *pos, Usage usage,
         } else {
             /* an on - line cxref action ?*/
             //&fprintf(dumpOut,"!got it %s !!!!!!!\n", memb->name);
-            s_olstringServed = 1;       /* olstring will be served */
+            s_olstringServed = true;       /* olstring will be served */
             s_olstringUsage = usage.kind;
             assert(currentUserData && currentUserData->browserStack.top);
             olSetCallerPosition(pos);

@@ -3531,7 +3531,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
                                    pp, NULL, "-olcxgetsymboltype", "-no-errors");
     // -no-errors is basically very dangerous in this context, recover it in s_opt
     options.noErrors = 0;
-    if (! s_olstringServed) {
+    if (!s_olstringServed) {
         errorMessage(ERR_ST, "Can't infer type for parameter/field");
         return;
     }

@@ -1657,8 +1657,8 @@ static void initializationsPerInvocation(void) {
     s_cxRefFlag=0;
     s_cxRefPos = noPosition;
     s_olstring[0]=0;
-    s_olstringFound = 0;
-    s_olstringServed = 0;
+    s_olstringFound = false;
+    s_olstringServed = false;
     s_olstringInMbody = NULL;
     s_yygstate = s_initYygstate;
     s_jsl = NULL;
@@ -2593,7 +2593,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
         }
         addThisFileDefineIncludeReference(inputFileNumber);
     }
-    if (s_olstringFound && s_olstringServed==0) {
+    if (s_olstringFound && !s_olstringServed) {
         // on-line action with cursor in an un-used macro body ???
         ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=noFileIndex) {
