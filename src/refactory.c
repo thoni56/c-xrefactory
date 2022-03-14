@@ -20,6 +20,7 @@
 #include "complete.h"
 #include "commons.h"
 #include "globals.h"
+#include "proto.h"
 #include "yylex.h"
 #include "cxref.h"
 #include "cxfile.h"
@@ -535,11 +536,11 @@ static void refactoryMoveMarkerToTheEndOfDefinitionScope(EditorMarker *mm) {
         return;
     }
     if (CHAR_ON_MARKER(mm)=='/' && CHAR_AFTER_MARKER(mm)=='/') {
-        if (refactoringOptions.commentMovingLevel == CM_NO_COMMENT) return;
+        if (refactoringOptions.commentMovingMode == CM_NO_COMMENT) return;
         editorMoveMarkerToNewline(mm, 1);
         mm->offset ++;
     } else if (CHAR_ON_MARKER(mm)=='/' && CHAR_AFTER_MARKER(mm)=='*') {
-        if (refactoringOptions.commentMovingLevel == CM_NO_COMMENT) return;
+        if (refactoringOptions.commentMovingMode == CM_NO_COMMENT) return;
         mm->offset ++; mm->offset ++;
         while (mm->offset<mm->buffer->allocation.bufferSize &&
                (CHAR_ON_MARKER(mm)!='*' || CHAR_AFTER_MARKER(mm)!='/')) {
@@ -556,7 +557,7 @@ static void refactoryMoveMarkerToTheEndOfDefinitionScope(EditorMarker *mm) {
     } else if (CHAR_ON_MARKER(mm)=='\n') {
         mm->offset ++;
     } else {
-        if (refactoringOptions.commentMovingLevel == CM_NO_COMMENT) return;
+        if (refactoringOptions.commentMovingMode == CM_NO_COMMENT) return;
         mm->offset = offset;
     }
 }
@@ -615,33 +616,33 @@ static void refactoryMoveMarkerToTheBeginOfDefinitionScope(EditorMarker *mm) {
             theBeginningOffset = mm->offset+1;
             mm->offset --;
         }
-        if (refactoringOptions.commentMovingLevel == CM_NO_COMMENT)
+        if (refactoringOptions.commentMovingMode == CM_NO_COMMENT)
             goto fini;
         editorMoveMarkerToNonBlank(mm, -1);
         mp = refactoryMarkerWRTComment(mm, &comBeginOffset);
         if (mp == MARKER_IS_IN_CODE)
             goto fini;
         else if (mp == MARKER_IS_IN_STAR_COMMENT) {
-            if (refactoringOptions.commentMovingLevel == CM_SINGLE_SLASHED)
+            if (refactoringOptions.commentMovingMode == CM_SINGLE_SLASHED)
                 goto fini;
-            if (refactoringOptions.commentMovingLevel == CM_ALL_SLASHED)
+            if (refactoringOptions.commentMovingMode == CM_ALL_SLASHED)
                 goto fini;
-            if (staredCommentsProcessed>0 && refactoringOptions.commentMovingLevel==CM_SINGLE_STARED)
+            if (staredCommentsProcessed>0 && refactoringOptions.commentMovingMode==CM_SINGLE_STARRED)
                 goto fini;
-            if (staredCommentsProcessed>0 && refactoringOptions.commentMovingLevel==CM_SINGLE_SLASHED_AND_STARED)
+            if (staredCommentsProcessed>0 && refactoringOptions.commentMovingMode==CM_SINGLE_SLASHED_AND_STARRED)
                 goto fini;
             staredCommentsProcessed ++;
             mm->offset = comBeginOffset;
         }
         // slash comment, skip them all
         else if (mp == MARKER_IS_IN_SLASH_COMMENT) {
-            if (refactoringOptions.commentMovingLevel == CM_SINGLE_STARED)
+            if (refactoringOptions.commentMovingMode == CM_SINGLE_STARRED)
                 goto fini;
-            if (refactoringOptions.commentMovingLevel == CM_ALL_STARED)
+            if (refactoringOptions.commentMovingMode == CM_ALL_STARRED)
                 goto fini;
-            if (slashedCommentsProcessed>0 && refactoringOptions.commentMovingLevel==CM_SINGLE_SLASHED)
+            if (slashedCommentsProcessed>0 && refactoringOptions.commentMovingMode==CM_SINGLE_SLASHED)
                 goto fini;
-            if (slashedCommentsProcessed>0 && refactoringOptions.commentMovingLevel==CM_SINGLE_SLASHED_AND_STARED)
+            if (slashedCommentsProcessed>0 && refactoringOptions.commentMovingMode==CM_SINGLE_SLASHED_AND_STARRED)
                 goto fini;
             slashedCommentsProcessed ++;
             mm->offset = comBeginOffset;
@@ -825,7 +826,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void
     //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
     // check that it is not from moved class
-    javaGetClassNameFromFileNum(ri->vFunClass, symclass, 0);
+    javaGetClassNameFromFileNum(ri->vFunClass, symclass, KEEP_SLASHES);
     sclen = strlen(dd->sclass);
     symclen = strlen(symclass);
     if (sclen<=symclen && fnnCmp(dd->sclass, symclass, sclen)==0) return;

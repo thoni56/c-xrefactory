@@ -194,15 +194,15 @@ enum fileEncodings {
 
 /* *******************      comment moving levels for refactoring      *************** */
 
-enum commentMovement {
+typedef enum commentMovingMode {
     CM_NO_COMMENT,
     CM_SINGLE_SLASHED,
-    CM_SINGLE_STARED,
-    CM_SINGLE_SLASHED_AND_STARED,
+    CM_SINGLE_STARRED,
+    CM_SINGLE_SLASHED_AND_STARRED,
     CM_ALL_SLASHED,
-    CM_ALL_STARED,
-    CM_ALL_SLASHED_AND_STARED,
-};
+    CM_ALL_STARRED,
+    CM_ALL_SLASHED_AND_STARRED,
+} CommentMovingMode;
 
 /* *******************      generating imports defaults      *************** */
 

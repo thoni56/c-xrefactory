@@ -43,7 +43,7 @@ typedef struct options {
     int defaultAddImportStrategy;
     char referenceListWithoutSource;
     int completionOverloadWizardDeep;
-    int commentMovingLevel;
+    CommentMovingMode commentMovingMode;
     struct stringList *pruneNames;
     struct stringList *inputFiles;
     int continueRefactoring;
