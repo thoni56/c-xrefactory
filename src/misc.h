@@ -52,7 +52,7 @@ extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
                        int longOrShortName, int *oNamePos);
 extern void throwsSprintf(char *out, int outsize, SymbolList *exceptions);
 extern void macDefSPrintf(char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos);
-extern char * string3ConcatInStackMem(char *str1, char *str2, char *str3);
+extern char *string3ConcatInStackMem(char *str1, char *str2, char *str3);
 
 extern void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle);
 extern char *strmcpy(char *dest, char *src);
@@ -64,16 +64,16 @@ extern bool shellMatch(char *string, int stringLen, char *pattern, bool caseSens
 extern void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *freeolen);
 extern void expandWildcardsInOnePath(char *fn, char *outpaths, int olen);
 extern void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen);
-extern char * getRealFileName_static(char *fn);
+extern char *getRealFileName_static(char *fn);
 extern int substringIndexWithLimit(char *s, int limit, char *subs);
 extern bool stringContainsSubstring(char *s, char *subs);
 extern void javaGetPackageNameFromSourceFileName(char *src, char *opack);
 extern void javaGetClassNameFromFileNum(int nn, char *tmpOut, DotifyMode dotifyMode);
 extern void javaDotifyFileName( char *ss);
-extern char *javaGetNudePreTypeName_static( char *inn, CutOuters cutMode);
+extern char *javaGetNudePreTypeName_static(char *inn, CutOuters cutMode);
 extern char *javaGetShortClassName(char *inn);
 extern char *javaGetShortClassNameFromFileNum_st(int fnum);
-extern int substringIndex(char *s, char *subs);
+extern int substringIndex(char *string, char *substring);
 extern bool fileNameHasOneOfSuffixes(char *fname, char *suffs);
 extern int mapDirectoryFiles(
         char *dirname,
