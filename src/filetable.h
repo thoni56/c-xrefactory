@@ -72,6 +72,7 @@ extern int addFileNameToFileTable(char *name);
 
 extern int  lookupFileTable(char *fileName);
 extern bool existsInFileTable(char *fileName);
+extern bool isMemberInFileTable(FileItem *fileItem, int *index);
 
 extern FileItem *getFileItem(int fileIndex);
 extern int getNextExistingFileIndex(int index);

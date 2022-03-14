@@ -99,6 +99,10 @@ bool existsInFileTable(char *fileName) {
     return fileTableLookup(&fileTable, fileName) != -1;
 }
 
+bool isMemberInFileTable(FileItem *fileItem, int *index) {
+    return fileTableIsMember(&fileTable, fileItem, index);
+}
+
 
 int addFileNameToFileTable(char *name) {
     int fileIndex;

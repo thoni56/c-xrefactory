@@ -22,14 +22,14 @@ AfterEach(FileTable) {}
 
 Ensure(FileTable, can_fetch_a_stored_filename) {
     FileItem fileItem = {"file.c"};
-    int index_1 = 1;
+    int fileIndex = 1;
     int fetched_index;
 
-    index_1 = addToFileTable(&fileItem);
+    fileIndex = addToFileTable(&fileItem);
     addToFileTable(&fileItem);
 
-    assert_that(fileTableIsMember(&fileTable, &fileItem, &fetched_index));
-    assert_that(fetched_index, is_equal_to(index_1));
+    assert_that(isMemberInFileTable(&fileItem, &fetched_index));
+    assert_that(fetched_index, is_equal_to(fileIndex));
 }
 
 Ensure(FileTable, can_only_find_filenames_in_tab) {
@@ -39,8 +39,8 @@ Ensure(FileTable, can_only_find_filenames_in_tab) {
 
     index = addToFileTable(&exists);
 
-    assert_that(fileTableIsMember(&fileTable, &exists, &index));
-    assert_that(!fileTableIsMember(&fileTable, &donotexist, &index));
+    assert_that(isMemberInFileTable(&exists, &index));
+    assert_that(!isMemberInFileTable(&donotexist, &index));
 }
 
 Ensure(FileTable, can_add_and_find_multiple_files) {
@@ -52,19 +52,19 @@ Ensure(FileTable, can_add_and_find_multiple_files) {
 
     index = addToFileTable(&exists1);
 
-    assert_that(fileTableIsMember(&fileTable, &exists1, &index));
-    assert_that(!fileTableIsMember(&fileTable, &donotexist, &index));
+    assert_that(isMemberInFileTable(&exists1, &index));
+    assert_that(!isMemberInFileTable(&donotexist, &index));
 
     index = addToFileTable(&exists2);
-    assert_that(fileTableIsMember(&fileTable, &exists1, &index));
-    assert_that(fileTableIsMember(&fileTable, &exists2, &index));
-    assert_that(!fileTableIsMember(&fileTable, &donotexist, &index));
+    assert_that(isMemberInFileTable(&exists1, &index));
+    assert_that(isMemberInFileTable(&exists2, &index));
+    assert_that(!isMemberInFileTable(&donotexist, &index));
 
     index = addToFileTable(&exists3);
-    assert_that(fileTableIsMember(&fileTable, &exists1, &index));
-    assert_that(fileTableIsMember(&fileTable, &exists2, &index));
-    assert_that(fileTableIsMember(&fileTable, &exists3, &index));
-    assert_that(!fileTableIsMember(&fileTable, &donotexist, &index));
+    assert_that(isMemberInFileTable(&exists1, &index));
+    assert_that(isMemberInFileTable(&exists2, &index));
+    assert_that(isMemberInFileTable(&exists3, &index));
+    assert_that(!isMemberInFileTable(&donotexist, &index));
 }
 
 Ensure(FileTable, can_check_filename_exists) {

@@ -6,49 +6,6 @@ FileTable fileTable;
 
 int noFileIndex = -1;
 
-void fileTableInit(FileTable *table,
-                   int size
-) {
-    mock(table, size);
-}
-
-void fileTableNoAllocInit(FileTable *table,
-                          int size
-) {
-    mock(table, size);
-}
-
-FileItem *getFileItem(int fileIndex) {
-    return (FileItem *)mock(fileIndex);
-}
-
-int getNextExistingFileIndex(int index) {
-    return (int)mock(index);
-}
-
-bool fileTableIsMember(FileTable *table,
-                       FileItem *element,
-                       int *position
-) {
-    return (bool)mock(table, element, position);
-}
-
-void fileTableSet(FileTable *table,
-                  FileItem *element,
-                  int position
-) {
-    mock(table, element, position);
-}
-
-int fileTableAdd(FileTable *table,
-                 FileItem *element
-) {
-    return mock(table, element);
-}
-
-bool existsInFileTable(char *fileName) {
-    return mock(fileName);
-}
 
 void initFileTable(void) {
     mock();
@@ -64,6 +21,18 @@ int addFileNameToFileTable(char *name) {
 
 int addToFileTable(FileItem *fileItem) {
     return (int)mock(fileItem);
+}
+
+bool existsInFileTable(char *fileName) {
+    return mock(fileName);
+}
+
+FileItem *getFileItem(int fileIndex) {
+    return (FileItem *)mock(fileIndex);
+}
+
+int getNextExistingFileIndex(int index) {
+    return (int)mock(index);
 }
 
 void mapOverFileTable(void (*fun)(FileItem *)) {

@@ -81,7 +81,8 @@ void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
     CONCAT(HASH_FUN_PREFIX,NoAllocInit)(table, size);
 }
 
-/* Check for membership, will return position if found, next free if not */
+/* Check for membership, will return position if found, next free if
+ * not, use position == null if you're not interested in it */
 bool CONCAT(HASH_FUN_PREFIX,IsMember)(
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element,
