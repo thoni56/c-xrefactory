@@ -1905,10 +1905,10 @@ static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *projec
     }
 }
 
-static void checkExactPositionUpdate(int message) {
+static void checkExactPositionUpdate(bool printMessage) {
     if (options.update == UPDATE_FAST && options.exactPositionResolve) {
         options.update = UPDATE_FULL;
-        if (message) {
+        if (printMessage) {
             warningMessage(ERR_ST, "-exactpositionresolve implies full update");
         }
     }
@@ -2062,7 +2062,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     // some final touch to options
     if (options.debug)
         errOut = dumpOut;
-    checkExactPositionUpdate(0);
+    checkExactPositionUpdate(false);
     // so s_input_file_number is not set if the file is not really opened!!!
     LEAVE();
 }
@@ -2263,7 +2263,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         // recover value of errors messages
         if (options.taskRegime==RegimeEditServer)
             options.noErrors = noerropt;
-        checkExactPositionUpdate(0);
+        checkExactPositionUpdate(false);
         if (inmode == INFILES_ENABLED)
             mainScheduleInputFilesFromOptionsToFileTable();
     }
@@ -2408,7 +2408,7 @@ static void scheduleModifiedFilesToUpdate(void) {
     struct stat refStat;
     char        *suffix;
 
-    checkExactPositionUpdate(1);
+    checkExactPositionUpdate(true);
     if (options.referenceFileCount <= 1) {
         suffix = "";
         filestab = options.cxrefsLocation;
@@ -2492,11 +2492,9 @@ static void setFullUpdateMtimesInFileTab(FileItem *fi) {
     }
 }
 
-static void mainCloseInputFile(bool inputIn) {
-    if (inputIn) {
-        if (currentFile.lexBuffer.buffer.file!=stdin) {
-            closeCharacterBuffer(&currentFile.lexBuffer.buffer);
-        }
+static void mainCloseInputFile(void) {
+    if (currentFile.lexBuffer.buffer.file!=stdin) {
+        closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
 }
 
@@ -2510,7 +2508,7 @@ static void mainEditSrvParseInputFile(bool *firstPass, bool inputIn) {
             *firstPass = false;
         }
         currentFile.lexBuffer.buffer.isAtEOF = false;
-        mainCloseInputFile(inputIn);
+        mainCloseInputFile();
     }
 }
 
@@ -2572,19 +2570,21 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
                                       int nargc, char **nargv,
                                       bool *firstPass
 ) {
-    bool inputIn = false;
+    bool inputOpened = false;
     int ol2procfile;
 
     olStringSecondProcessing = 0;
     mainFileProcessingInitialisations(firstPass, argc, argv,
-                                      nargc, nargv, &inputIn, &s_language);
+                                      nargc, nargv, &inputOpened, &s_language);
     smartReadReferences();
     olOriginalFileNumber = inputFileNumber;
     if (mainSymbolCanBeIdentifiedByPosition(inputFileNumber)) {
-        mainCloseInputFile(inputIn);
+        if (inputOpened)
+            mainCloseInputFile();
         return;
     }
-    mainEditSrvParseInputFile(firstPass, inputIn);
+    if (inputOpened)
+        mainEditSrvParseInputFile(firstPass, inputOpened);
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (creatingOlcxRefs()) {
@@ -2598,11 +2598,12 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
         ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=noFileIndex) {
             inputFilename = getFileItem(ol2procfile)->name;
-            inputIn = false;
+            inputOpened = false;
             olStringSecondProcessing = 1;
             mainFileProcessingInitialisations(firstPass, argc, argv,
-                                              nargc, nargv, &inputIn, &s_language);
-            mainEditSrvParseInputFile(firstPass, inputIn);
+                                              nargc, nargv, &inputOpened, &s_language);
+            if (inputOpened)
+                mainEditSrvParseInputFile(firstPass, inputOpened);
         }
     }
 }
@@ -2681,17 +2682,15 @@ static int needToProcessInputFile(void) {
 /* *************************************************************** */
 /*                          Xref regime                            */
 /* *************************************************************** */
-static void mainXrefProcessInputFile(int argc, char **argv, bool *_inputOpened, bool *firstPass,
+static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPass,
                                      bool *atLeastOneProcessed) {
-    bool inputOpened = *_inputOpened;
+    bool inputOpened;
 
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         if (!*firstPass)
             copyOptions(&options, &s_cachedOptions);
-        mainFileProcessingInitialisations(firstPass,
-                                          argc, argv, 0, NULL, &inputOpened,
-                                          &s_language);
+        mainFileProcessingInitialisations(firstPass, argc, argv, 0, NULL, &inputOpened, &s_language);
         olOriginalFileNumber    = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileNumber;
         if (inputOpened) {
@@ -2716,33 +2715,27 @@ static void mainXrefProcessInputFile(int argc, char **argv, bool *_inputOpened, 
         *firstPass = false;
         currentFile.lexBuffer.buffer.isAtEOF = false;
         if (LANGUAGE(LANG_JAVA))
-            goto fileParsed;
+            break;
     }
-
- fileParsed:
-    *_inputOpened = inputOpened;
 }
 
-static void mainXrefOneWholeFileProcessing(int argc, char **argv,
-                                           FileItem *ff,
+static void mainXrefOneWholeFileProcessing(int argc, char **argv, FileItem *fileItem,
                                            bool *firstPass, bool *atLeastOneProcessed) {
-    bool inputOpened;
-
-    inputFilename = ff->name;
+    inputFilename = fileItem->name;
     fileProcessingStartTime = time(NULL);
     // O.K. but this is missing all header files
-    ff->lastUpdateMtime = ff->lastModified;
+    fileItem->lastUpdateMtime = fileItem->lastModified;
     if (options.update == UPDATE_FULL || options.create) {
-        ff->lastFullUpdateMtime = ff->lastModified;
+        fileItem->lastFullUpdateMtime = fileItem->lastModified;
     }
-    mainXrefProcessInputFile(argc, argv, &inputOpened,
-                             firstPass, atLeastOneProcessed);
+    mainXrefProcessInputFile(argc, argv, firstPass, atLeastOneProcessed);
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very carefull about this!!!
     if (refactoringOptions.refactoringRegime!=RegimeRefactory) {
         editorCloseBufferIfClosable(inputFilename);
-        if (! options.cacheIncludes) editorCloseAllBuffersIfClosable();
+        if (!options.cacheIncludes)
+            editorCloseAllBuffersIfClosable();
     }
 }
 
