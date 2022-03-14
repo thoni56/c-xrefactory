@@ -2,7 +2,6 @@
 #include "filetable.h"
 #include <cgreen/mocks.h>
 
-FileTable fileTable;
 
 int noFileIndex = -1;
 

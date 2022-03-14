@@ -13,11 +13,10 @@
 #include "hashtab.tc"
 
 
-FileTable fileTable;
-
 int noFileIndex;                /* Initialized to an actual index in initNoFile() which needs
                                    to be called early */
 
+static FileTable fileTable;
 
 static void fillFileItem(FileItem *item, char *name) {
     memset(item, 0, sizeof(FileItem));
