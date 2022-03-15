@@ -245,7 +245,7 @@ static bool processCOption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+27, "%d", &options.completionOverloadWizardDeep);
     }
     else if (strncmp(argv[i], "-commentmovinglevel=",20)==0) {
-        sscanf(argv[i]+20, "%d", &options.commentMovingMode);
+        sscanf(argv[i]+20, "%d", (int*)&options.commentMovingMode);
     }
     else if (strcmp(argv[i], "-continuerefactoring")==0) {
         options.continueRefactoring=RC_CONTINUE;
