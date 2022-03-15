@@ -1094,7 +1094,7 @@ static Symbol *getSymFromRef(Reference *reference) {
     for(i=0; i<referenceTable.size; i++) {
         ss = referenceTable.tab[i];
         if (ss!=NULL) {
-            for(r=ss->refs; r!=NULL; r=r->next) {
+            for(r=ss->references; r!=NULL; r=r->next) {
                 if (reference == r) goto cont;
             }
         }

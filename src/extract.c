@@ -157,7 +157,7 @@ static void extractFunGraphRef(SymbolReferenceItem *rr, void *prog) {
     Reference *r;
     ProgramGraphNode *p,**ap;
     ap = (ProgramGraphNode **) prog;
-    for (r=rr->refs; r!=NULL; r=r->next) {
+    for (r=rr->references; r!=NULL; r=r->next) {
         if (DM_IS_BETWEEN(cxMemory,r,s_cp.cxMemoryIndexAtFunctionBegin,s_cp.cxMemoryIndexAtFunctionEnd)){
             p = newProgramGraphNode(r, rr, NULL, 0, 0, EXTRACT_NONE, *ap);
             *ap = p;
@@ -178,7 +178,7 @@ static ProgramGraphNode *getGraphAddress( ProgramGraphNode  *program,
 
 static Reference *getDefinitionReference(SymbolReferenceItem *lab) {
     Reference *res;
-    for (res=lab->refs; res!=NULL && res->usage.kind!=UsageDefined; res=res->next) ;
+    for (res=lab->references; res!=NULL && res->usage.kind!=UsageDefined; res=res->next) ;
     if (res == NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"jump to unknown label '%s'",lab->name);

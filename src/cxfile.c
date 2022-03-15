@@ -539,9 +539,9 @@ static void genRefItem0(SymbolReferenceItem *referenceItem, bool force) {
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
 
     if (referenceItem->bits.category == CategoryLocal) return;
-    if (referenceItem->refs == NULL && !force) return;
+    if (referenceItem->references == NULL && !force) return;
 
-    for (reference = referenceItem->refs; reference != NULL; reference = reference->next) {
+    for (reference = referenceItem->references; reference != NULL; reference = reference->next) {
         FileItem *fileItem = getFileItem(reference->position.file);
         log_trace("checking ref: loading=%d --< %s:%d", fileItem->bits.cxLoading,
                   fileItem->name, reference->position.line);
@@ -651,7 +651,7 @@ static void generateRefsFromMemory(int fileOrder) {
         for (SymbolReferenceItem *r=referenceTable.tab[i]; r!=NULL; r=r->next) {
             if (r->bits.category == CategoryLocal)
                 continue;
-            if (r->refs == NULL)
+            if (r->references == NULL)
                 continue;
             if (r->fileHash == fileOrder)
                 genRefItem0(r, false);
@@ -1045,8 +1045,8 @@ static void cxrfSymbolName(int size,
     if (options.taskRegime == RegimeXref) {
         if (memb==NULL) memb=ddd;
         genRefItem0(memb, true);
-        ddd->refs = memb->refs; // note references to not generate multiple
-        memb->refs = NULL;      // HACK, remove them, to not be regenerated
+        ddd->references = memb->references; // note references to not generate multiple
+        memb->references = NULL;      // HACK, remove them, to not be regenerated
     }
     if (options.taskRegime == RegimeEditServer) {
         if (additionalArg == CXSF_DEAD_CODE_DETECTION) {
@@ -1112,7 +1112,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
 
     pos = makePosition(file, line, col);
     if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
-        addToRefList(&lastIncomingInfo.symbolTab[sym]->refs, usage, pos);
+        addToRefList(&lastIncomingInfo.symbolTab[sym]->references, usage, pos);
     }
 }
 
@@ -1161,7 +1161,7 @@ static void cxrfReference(int size,
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
             fillUsage(&usage, usageKind, reqAcc);
-            copyrefFl = !isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
+            copyrefFl = !isInRefList(lastIncomingInfo.symbolTab[sym]->references,
                                      usage, pos);
         } else {
             copyrefFl = !fileItem->bits.cxLoading;

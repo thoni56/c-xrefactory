@@ -403,6 +403,7 @@ typedef struct jslSymbolList {
 #include "usage.h"
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
+// A *reference* is a position with a particular usage
 #define NO_REFERENCE (Reference){NO_USAGE, no_Position, NULL)
 typedef struct reference {
     struct usage			usage;
@@ -425,7 +426,7 @@ typedef struct symbolReferenceItem {
     int							vApplClass;	/* appl class for java virtuals */
     int							vFunClass;	/* fun class for java virtuals */
     struct symbolReferenceItemBits bits;
-    struct reference			*refs;
+    struct reference			*references;
     struct symbolReferenceItem  *next;
 } SymbolReferenceItem;
 

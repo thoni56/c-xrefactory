@@ -54,7 +54,7 @@ void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name,
     symbolRefItem->fileHash = fileHash;
     symbolRefItem->vApplClass = vApplClass;
     symbolRefItem->vFunClass = vFunClass;
-    symbolRefItem->refs = NULL;
+    symbolRefItem->references = NULL;
     symbolRefItem->next = NULL;
 }
 
@@ -404,7 +404,7 @@ static void changeFieldRefUsages(SymbolReferenceItem *ri, void *rrcd) {
                            ScopeFile, AccessDefault, rcd->category);
     if (isSameCxSymbol(ri, &ddd)) {
         //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
-        for (Reference *rr = ri->refs; rr!=NULL; rr=rr->next) {
+        for (Reference *rr = ri->references; rr!=NULL; rr=rr->next) {
             //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->position.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
             if (rr->position.file == rcd->fnum &&  /* I think it is used only for Java */
                 DM_IS_BETWEEN(cxMemory,rr,rcd->cxMemBegin,rcd->cxMemEnd)) {
@@ -753,7 +753,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         // without knowing if it is an interface or not
         memb->bits.accessFlags |= symbol->bits.access;
     }
-    place = addToRefList(&memb->refs, usage, *position);
+    place = addToRefList(&memb->references, usage, *position);
     log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
               getFileItem(s_cxRefPos.file)->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col,
               fileItem->name, position->file, position->line, position->col,
@@ -910,7 +910,7 @@ SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll) {
     SymbolsMenu *tt;
     nlen = strlen(ll->s.name);
     olcx_memory_free(ll->s.name, nlen+1);
-    olcxFreeReferences(ll->s.refs);
+    olcxFreeReferences(ll->s.references);
     tt = ll->next;
     olcx_memory_free(ll, sizeof(*ll));
     ll = tt;
@@ -1172,7 +1172,7 @@ void olcxAddReferences(Reference *list, Reference **dlist,
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
                                      int bestFitFlag) {
     Reference *added;
-    added = olcxAddReference(&cms->s.refs, rr, bestFitFlag);
+    added = olcxAddReference(&cms->s.references, rr, bestFitFlag);
     if (rr->usage.kind == UsageClassTreeDefinition) cms->defpos = rr->position;
     if (added!=NULL) {
         if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
@@ -2256,7 +2256,7 @@ static SymbolsMenu *findSymbolCorrespondingToReference(SymbolsMenu *menu,
     Reference *rr;
 
     for (SymbolsMenu *ss=menu; ss!=NULL; ss=ss->next) {
-        SORTED_LIST_FIND3(rr, Reference, ref, ss->s.refs, referenceLess);
+        SORTED_LIST_FIND3(rr, Reference, ref, ss->s.references, referenceLess);
         if (rr!=NULL && positionsAreEqual(rr->position, ref->position)) {
             return ss;
         }
@@ -3602,7 +3602,7 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, Symbol
     //&fprintf(dumpOut,":checking %s to %s (%d)\n",p->name, sss->name, pushed);
     if (!pushed && olcxIsSameCxSymbol(p, sss)) {
         //&fprintf(dumpOut,"checking %s references\n",p->name);
-        for (Reference *r=p->refs; r!=NULL; r=r->next) {
+        for (Reference *r=p->references; r!=NULL; r=r->next) {
             olcxSingleReferenceCheck1(p, rstack, r);
         }
     }
@@ -3630,8 +3630,8 @@ static SymbolsMenu *mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(
     SymbolsMenu *res = NULL;
 
     for (SymbolsMenu *mm=menuSym; mm!=NULL; mm=mm->next) {
-        if (mm->s.refs!=NULL && IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usage.kind) &&
-            (res==NULL || positionIsLessThan(mm->s.refs->position, res->s.refs->position))) {
+        if (mm->s.references!=NULL && IS_DEFINITION_OR_DECL_USAGE(mm->s.references->usage.kind) &&
+            (res==NULL || positionIsLessThan(mm->s.references->position, res->s.references->position))) {
             res = mm;
         }
     }
@@ -3659,7 +3659,7 @@ static SymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
         //& if (mm->s.name[0]!=' ' || osym->s.name[0]!=' ') continue;
         //&}
         //&fprintf(dumpOut,";looking references\n");
-        SORTED_LIST_FIND2(place,Reference, sr, mm->s.refs);
+        SORTED_LIST_FIND2(place,Reference, sr, mm->s.references);
         if (place!=NULL && ! SORTED_LIST_NEQ(place, sr)) {
             // I have got it
             //&fprintf(dumpOut,";I have got it!\n");
@@ -3716,8 +3716,8 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
     nfirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(newrefs->menuSym);
     if (ofirstsym!=NULL && nfirstsym!=NULL) {
         // TODO! Check here rather symbol name, than just column offsets
-        assert(ofirstsym->s.refs && nfirstsym->s.refs);
-        moveOffset = subtractPositions(nfirstsym->s.refs->position, ofirstsym->s.refs->position);
+        assert(ofirstsym->s.references && nfirstsym->s.references);
+        moveOffset = subtractPositions(nfirstsym->s.references->position, ofirstsym->s.references->position);
         if (moveOffset.col!=0) {
             errorMessage(ERR_ST, "method has to be moved into an empty line");
             return true;
@@ -3738,7 +3738,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
 
         // check the symbol
         diffsym = NULL;
-        for (Reference *rr=osym->s.refs; rr!=NULL; rr=rr->next) {
+        for (Reference *rr=osym->s.references; rr!=NULL; rr=rr->next) {
             nsym = mmFindSymWithCorrespondingRef(rr,osym,newrefs,&moveOffset);
             if (nsym==NULL || !symbolsCorrespondWrtMoving(osym, nsym, options.server_operation)) {
                 if (diffsym == NULL) {
@@ -3880,7 +3880,7 @@ static void olcxTopReferencesRemoveWindow(void) {
     top1 = currentUserData->browserStack.top;
     olcxRemoveRefWinFromRefList(&top1->references, wdfile, &fp, &tp);
     for (SymbolsMenu *mm=top1->menuSym; mm!=NULL; mm=mm->next) {
-        olcxRemoveRefWinFromRefList(&mm->s.refs, wdfile, &fp, &tp);
+        olcxRemoveRefWinFromRefList(&mm->s.references, wdfile, &fp, &tp);
     }
     top1->actual = top1->references;
     fprintf(communicationChannel,"*");
@@ -4031,8 +4031,8 @@ static void olcxCreateClassTree(void) {
 
     // now free special references, which will never be used
     for (SymbolsMenu *ss=currentUserData->classTree.tree; ss!=NULL; ss=ss->next) {
-        olcxFreeReferences(ss->s.refs);
-        ss->s.refs = NULL;
+        olcxFreeReferences(ss->s.references);
+        ss->s.references = NULL;
     }
     // delete it as last command, because the top command is tested
     // everywhere.
@@ -4094,10 +4094,10 @@ static void olPushAllReferencesInBetweenMapFun(SymbolReferenceItem *ri,
     assert(currentUserData && currentUserData->browserStack.top);
     rstack = currentUserData->browserStack.top;
     if (!isPushAllMethodsValidRefItem(ri)) return;
-    for (rr=ri->refs; rr!=NULL; rr=rr->next) {
+    for (rr=ri->references; rr!=NULL; rr=rr->next) {
         log_trace("checking %d.%d ref of %s", rr->position.line,rr->position.col,ri->name);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd)) {
-            defRef = getDefinitionRef(ri->refs);
+            defRef = getDefinitionRef(ri->references);
             if (defRef!=NULL && IS_DEFINITION_OR_DECL_USAGE(defRef->usage.kind)) {
                 defpos = defRef->position;
                 defusage = defRef->usage.kind;
@@ -4116,7 +4116,7 @@ static void olPushAllReferencesInBetweenMapFun(SymbolReferenceItem *ri,
                 if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr,dd)) {
                     //& olcxAddReferenceToSymbolsMenu(mm, rr, 0);
                     log_trace("adding reference of line %d",rr->position.line);
-                    olcxAddReferenceNoUsageCheck(&mm->s.refs, rr, 0);
+                    olcxAddReferenceNoUsageCheck(&mm->s.references, rr, 0);
                 }
             }
             goto fini;
@@ -4511,7 +4511,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(SymbolReferenceItem *ss) {
 
     if (ss->bits.category != CategoryLocal)
         return;
-    for (Reference *r = ss->refs; r!=NULL; r=r->next) {
+    for (Reference *r = ss->references; r!=NULL; r=r->next) {
         if (IS_DEFINITION_OR_DECL_USAGE(r->usage.kind)) {
             if (r->position.file == inputFileNumber) {
                 if (IS_DEFINITION_USAGE(r->usage.kind)) {
@@ -5005,7 +5005,7 @@ void putOnLineLoadedReferences(SymbolReferenceItem *p) {
                                        &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols > 0) {
         assert(cms);
-        for (Reference *rr=p->refs; rr!=NULL; rr=rr->next) {
+        for (Reference *rr=p->references; rr!=NULL; rr=rr->next) {
             olcxAddReferenceToSymbolsMenu(cms, rr, (ols == 2));
         }
     }
@@ -5014,7 +5014,7 @@ void putOnLineLoadedReferences(SymbolReferenceItem *p) {
 void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
     if (cms->selected) {
         assert(cms);
-        olcxAddReferences(cms->s.refs, &rstack->references, ANY_FILE,
+        olcxAddReferences(cms->s.references, &rstack->references, ANY_FILE,
                           IS_BEST_FIT_MATCH(cms));
     }
 }

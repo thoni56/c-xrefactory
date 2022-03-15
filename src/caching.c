@@ -65,7 +65,7 @@ static void cxrefTabDeleteOutOfMemory(int i) {
             continue;
         } else {
             /* in memory, examine all refs */
-            deleteReferencesOutOfMemory(&(*pp)->refs);
+            deleteReferencesOutOfMemory(&(*pp)->references);
         }
         pp= &(*pp)->next;
     }

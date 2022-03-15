@@ -714,7 +714,7 @@ static void refactoryPushMarkersAsReferences(EditorMarkerList **markers,
     for (SymbolsMenu *mm=refs->menuSym; mm!=NULL; mm=mm->next) {
         if (strcmp(mm->s.name, sym)==0) {
             for (Reference *r=rr; r!=NULL; r=r->next) {
-                olcxAddReference(&mm->s.refs, r, 0);
+                olcxAddReference(&mm->s.references, r, 0);
             }
         }
     }
@@ -761,7 +761,7 @@ static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd
     ss = javaGetRelevantHkSelectedItem(ri);
     if (ss!=NULL) {
         // relevant symbol
-        for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
+        for (Reference *rr=ri->references; rr!=NULL; rr=rr->next) {
             // I should check only references from this file
             if (rr->position.file == inputFileNumber) {
                 // check if the reference is outside moved class
@@ -786,7 +786,7 @@ static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void
         return;
 
     // fine, add it to Menu, so we will load its references
-    for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
+    for (Reference *rr=ri->references; rr!=NULL; rr=rr->next) {
         log_trace("Checking %d.%d ref of %s", rr->position.line,rr->position.col,ri->name);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
             if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
@@ -820,7 +820,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
     for (SymbolsMenu *mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&mm->s);
         if (ss!=NULL && (! ss->selected)) {
-            for (Reference *rr=mm->s.refs; rr!=NULL; rr=rr->next) {
+            for (Reference *rr=mm->s.references; rr!=NULL; rr=rr->next) {
                 if (rr->position.file != inputFileNumber) {
                     // yes there is a reference from outside to our symbol
                     ss->selected = ss->visible = 1;
@@ -859,7 +859,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void
     symclen = strlen(symclass);
     if (sclen<=symclen && fnnCmp(dd->sclass, symclass, sclen)==0) return;
     // O.K. finally check if there is a reference
-    for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
+    for (Reference *rr=ri->references; rr!=NULL; rr=rr->next) {
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
             // O.K. there is a reference inside the moved class, add it to the list,
             assert(currentUserData && currentUserData->browserStack.top);
@@ -924,7 +924,7 @@ bool tpCheckMoveClassAccessibilities(void) {
     if (rstack->references!=NULL) {
         ss = rstack->menuSym;
         assert(ss);
-        ss->s.refs = olcxCopyRefList(rstack->references);
+        ss->s.references = olcxCopyRefList(rstack->references);
         rstack->actual = rstack->references;
         if (refactoringOptions.refactoringRegime==RegimeRefactory) {
             refactoryDisplayResolutionDialog(
@@ -990,7 +990,7 @@ static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri, void *ddd) {
     //&fprintf(dumpOut,"! checking %s\n", ri->name);
     if (strcmp(ri->name, dd->symbolToTest)!=0)
         return;
-    for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
+    for (Reference *rr=ri->references; rr!=NULL; rr=rr->next) {
         if (DM_IS_BETWEEN(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi) ){
             // a super method reference
             dd->foundSpecialRefItem = ri;
@@ -1177,7 +1177,7 @@ bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
             if (javaIsSuperClass(mm->s.vApplClass, srccn)) {
                 // finally check there is some other reference than super.method()
                 // and definition
-                for (rr=mm->s.refs; rr!=NULL; rr=rr->next) {
+                for (rr=mm->s.references; rr!=NULL; rr=rr->next) {
                     if ((! IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind))
                         && rr->usage.kind != UsageMethodInvokedViaSuper) {
                         // well there is, issue warning message and finish
@@ -1265,10 +1265,10 @@ bool tpPullUpFieldLastPreconditions(void) {
     return true;
  cont2:
     // an item found, it must be empty
-    if (mm->s.refs == NULL)
+    if (mm->s.references == NULL)
         return true;
     javaGetClassNameFromFileNum(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
-    if (IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usage.kind) && mm->s.refs->next==NULL) {
+    if (IS_DEFINITION_OR_DECL_USAGE(mm->s.references->usage.kind) && mm->s.references->next==NULL) {
         if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
         sprintf(tmpBuff, "%s is already defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should make sure that both fields are initialized to the same value.", mm->s.name, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1308,7 +1308,7 @@ bool tpPushDownFieldLastPreconditions(void) {
         }
     }
     if (targetsm != NULL) {
-        rr = getDefinitionRef(targetsm->s.refs);
+        rr = getDefinitionRef(targetsm->s.references);
         if (rr!=NULL && IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
             javaGetClassNameFromFileNum(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
             sprintf(tmpBuff,"The field %s is already defined in %s!",
@@ -1319,7 +1319,7 @@ bool tpPushDownFieldLastPreconditions(void) {
         }
     }
     if (sourcesm != NULL) {
-        if (sourcesm->s.refs!=NULL && sourcesm->s.refs->next!=NULL) {
+        if (sourcesm->s.references!=NULL && sourcesm->s.references->next!=NULL) {
             //& if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
             javaGetClassNameFromFileNum(thisclassi, ttt, DOTIFY_NAME);
             sprintf(tmpBuff, "There are several references of %s syntactically applied on %s. This may cause that the refactoring will not be behaviour preserving!", sourcesm->s.name, ttt);
@@ -1344,7 +1344,7 @@ static bool refactoryHandleSafetyCheckDifferenceLists(
             mm->selected = mm->visible = 1;
             mm->ooBits = 07777777;
             // hack, freeing now all diffs computed by old method
-            olcxFreeReferences(mm->s.refs); mm->s.refs = NULL;
+            olcxFreeReferences(mm->s.references); mm->s.references = NULL;
         }
         //&editorDumpMarkerList(diff1);
         //& safetyCheckFailPrepareRefStack();
@@ -1769,7 +1769,7 @@ static void refactoryCheckForMultipleReferencesInSamePlace(OlcxReferences *rstac
     log_trace(":checking %s to %s (%d)", p->name, sss->name, pushed);
     if ((! pushed) && olcxIsSameCxSymbol(p, sss)) {
         log_trace("checking %s references", p->name);
-        for (Reference *r=p->refs; r!=NULL; r=r->next) {
+        for (Reference *r=p->references; r!=NULL; r=r->next) {
             if (refOccursInRefs(r, rstack->references)) {
                 multipleReferencesInSamePlaceMessage(r);
             }
@@ -2210,7 +2210,7 @@ static int createMarkersForAllReferencesInRegions(SymbolsMenu *menu, EditorRegio
     for (SymbolsMenu *mm=menu; mm!=NULL; mm=mm->next) {
         assert(mm->markers==NULL);
         if (mm->selected && mm->visible) {
-            mm->markers = editorReferencesToMarkers(mm->s.refs,filter0, NULL);
+            mm->markers = editorReferencesToMarkers(mm->s.references,filter0, NULL);
             if (regions != NULL) {
                 editorRestrictMarkersToRegions(&mm->markers, regions);
             }
@@ -3244,7 +3244,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     progressn = progressi = 0;
     for (SymbolsMenu *mm=currentUserData->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            mm->markers = editorReferencesToMarkers(mm->s.refs, filter0, NULL);
+            mm->markers = editorReferencesToMarkers(mm->s.references, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             progressn += progressj;
@@ -3315,7 +3315,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     assert(currentUserData->browserStack.top && currentUserData->browserStack.top->hkSelectedSym);
     for (SymbolsMenu *mm=currentUserData->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            mm->markers = editorReferencesToMarkers(mm->s.refs, filter0, NULL);
+            mm->markers = editorReferencesToMarkers(mm->s.references, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             progressn += progressj;
@@ -3431,9 +3431,9 @@ static int refactoryIsMethodPartRedundant(
     mm1 = currentUserData->browserStack.top->menuSym;
     mm2 = currentUserData->browserStack.top->previous->menuSym;
     while (mm1!=NULL && mm2!=NULL && res) {
-        //&symbolRefItemDump(&mm1->s); dumpReferences(mm1->s.refs);
-        //&symbolRefItemDump(&mm2->s); dumpReferences(mm2->s.refs);
-        olcxReferencesDiff(&mm1->s.refs, &mm2->s.refs, &diff);
+        //&symbolRefItemDump(&mm1->s); dumpReferences(mm1->s.references);
+        //&symbolRefItemDump(&mm2->s); dumpReferences(mm2->s.references);
+        olcxReferencesDiff(&mm1->s.references, &mm2->s.references, &diff);
         if (diff!=NULL) {
             lll = editorReferencesToMarkers(diff, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, lll, editorMarkerListLess);
@@ -3681,7 +3681,7 @@ static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *
         if (isSameCxSymbol(&mm->s, &hk->s) && mm->defRefn != 0) {
             if (mm->s.vFunClass==hk->s.vFunClass) {
                 // find definition of another function
-                for (Reference *rr=mm->s.refs; rr!=NULL; rr=rr->next) {
+                for (Reference *rr=mm->s.references; rr!=NULL; rr=rr->next) {
                     if (IS_DEFINITION_USAGE(rr->usage.kind)) {
                         if (positionsAreNotEqual(rr->position, hk->defpos)) {
                             anotherDefinition = rr;
