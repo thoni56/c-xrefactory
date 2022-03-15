@@ -239,21 +239,6 @@ typedef enum language {
     }\
 }
 
-#define MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri,dd) {\
-    if (!isPushAllMethodsValidRefItem(ri)) return;\
-    /* this is too strong, but check only fields and methods */\
-    if (ri->bits.storage!=StorageField\
-        && ri->bits.storage!=StorageMethod\
-        && ri->bits.storage!=StorageConstructor) return;\
-    /* check that it has default accessibility*/\
-    if (ri->bits.accessFlags & AccessPublic) return;\
-    if (ri->bits.accessFlags & AccessProtected) return;\
-    if (! (ri->bits.accessFlags & AccessPrivate)) {\
-        /* default accessibility, check only if transpackage move*/\
-        if (! dd->transPackageMove) return;\
-    }\
-}
-
 #define IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd)                                                               \
     (DM_IS_BETWEEN(cxMemory, rr, (dd)->minMemi, (dd)->maxMemi) && OL_VIEWABLE_REFS(rr) &&                         \
      rr->position.file != noFileIndex &&                                                                          \

@@ -76,6 +76,29 @@ static char *s_refactoryXrefInitOptions[] = {
 
 static char *s_refactoryUpdateOption = "-fastupdate";
 
+
+static bool moveClassMapFunReturnOnUninterestingSymbols(SymbolReferenceItem *ri, S_tpCheckMoveClassData *dd) {
+    if (!isPushAllMethodsValidRefItem(ri))
+        return true;
+    /* this is too strong, but check only fields and methods */
+    if (ri->bits.storage!=StorageField
+        && ri->bits.storage!=StorageMethod
+        && ri->bits.storage!=StorageConstructor)
+        return true;
+    /* check that it has default accessibility*/
+    if (ri->bits.accessFlags & AccessPublic)
+        return true;
+    if (ri->bits.accessFlags & AccessProtected)
+        return true;
+    if (!(ri->bits.accessFlags & AccessPrivate)) {
+        /* default accessibility, check only if transpackage move*/
+        if (!dd->transPackageMove)
+            return true;
+    }
+    return false;
+}
+
+
 static void javaDotifyClassName(char *ss) {
     char *s;
     for (s=ss; *s; s++) {
@@ -731,8 +754,10 @@ static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd
     SymbolsMenu *ss;
 
     dd = (S_tpCheckMoveClassData *) ddd;
-    //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
-    MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
+    log_trace("!mapping %s", ri->name);
+    if (moveClassMapFunReturnOnUninterestingSymbols(ri, dd))
+        return;
+
     ss = javaGetRelevantHkSelectedItem(ri);
     if (ss!=NULL) {
         // relevant symbol
@@ -756,8 +781,10 @@ static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void
     S_tpCheckMoveClassData *dd;
 
     dd = (S_tpCheckMoveClassData *) ddd;
-    //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
-    MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
+    log_trace("!mapping %s", ri->name);
+    if (moveClassMapFunReturnOnUninterestingSymbols(ri, dd))
+        return;
+
     // fine, add it to Menu, so we will load its references
     for (Reference *rr=ri->refs; rr!=NULL; rr=rr->next) {
         log_trace("Checking %d.%d ref of %s", rr->position.line,rr->position.col,ri->name);
@@ -778,8 +805,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
     SymbolsMenu **sss;
 
     rstack = currentUserData->browserStack.top;
-    rstack->hkSelectedSym = olCreateSpecialMenuItem(
-                                                    LINK_NAME_MOVE_CLASS_MISSED, noFileIndex, StorageDefault);
+    rstack->hkSelectedSym = olCreateSpecialMenuItem(LINK_NAME_MOVE_CLASS_MISSED, noFileIndex, StorageDefault);
     // push them into hkSelection,
     refTabMap2(&referenceTable, tpCheckMoveClassPutClassDefaultSymbols, &dd);
     // load all theirs references
@@ -824,7 +850,9 @@ static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void
 
     dd = (S_tpCheckMoveClassData *) ddd;
     //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
-    MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
+    if (moveClassMapFunReturnOnUninterestingSymbols(ri, dd))
+        return;
+
     // check that it is not from moved class
     javaGetClassNameFromFileNum(ri->vFunClass, symclass, KEEP_SLASHES);
     sclen = strlen(dd->sclass);
