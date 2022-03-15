@@ -2148,7 +2148,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     int argcount;
     char *sss,*cmdlnInputFile;
     int inmode;
-    bool noerropt;
+    bool previousNoErrorsOption;
 
     s_fileAbortionEnabled = 0;
 
@@ -2243,7 +2243,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             inmode = INFILES_DISABLED;
         }
         // disable error reporting on xref task on this pre-reading of .c-xrefrc
-        noerropt = options.noErrors;
+        previousNoErrorsOption = options.noErrors;
         if (options.taskRegime==RegimeEditServer) {
             options.noErrors = true;
         }
@@ -2262,7 +2262,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         processOptions(dfargc, dfargv, inmode);
         // recover value of errors messages
         if (options.taskRegime==RegimeEditServer)
-            options.noErrors = noerropt;
+            options.noErrors = previousNoErrorsOption;
         checkExactPositionUpdate(false);
         if (inmode == INFILES_ENABLED)
             mainScheduleInputFilesFromOptionsToFileTable();
@@ -2276,8 +2276,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 }
 
 static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
-    int fi;
-
     ENTER();
     if (mess != LONGJMP_REASON_NONE) {
         log_trace("swapping references to disk");
@@ -2295,16 +2293,16 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     for (int i=0; i<includeStackPointer; i++) {
         log_trace("inspecting include %d, fileNumber: %d", i, includeStack[i].lexBuffer.buffer.fileNumber);
         if (includeStack[i].lexBuffer.buffer.file != stdin) {
-            fi = includeStack[i].lexBuffer.buffer.fileNumber;
-            getFileItem(fi)->bits.cxLoading = false;
+            int fileIndex = includeStack[i].lexBuffer.buffer.fileNumber;
+            getFileItem(fileIndex)->bits.cxLoading = false;
             if (includeStack[i].lexBuffer.buffer.file!=NULL)
                 closeCharacterBuffer(&includeStack[i].lexBuffer.buffer);
         }
     }
     if (currentFile.lexBuffer.buffer.file != stdin) {
         log_trace("inspecting current file, fileNumber: %d", currentFile.lexBuffer.buffer.fileNumber);
-        fi = currentFile.lexBuffer.buffer.fileNumber;
-        getFileItem(fi)->bits.cxLoading = false;
+        int fileIndex = currentFile.lexBuffer.buffer.fileNumber;
+        getFileItem(fileIndex)->bits.cxLoading = false;
         if (currentFile.lexBuffer.buffer.file!=NULL)
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
