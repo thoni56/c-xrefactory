@@ -151,14 +151,6 @@ typedef enum language {
 
 #define MARKER_EQ(mm1, mm2) (mm1->buffer==mm2->buffer && mm1->offset==mm2->offset)
 
-#define REF_ELEM_EQUAL(e1,e2) (\
-    e1->bits.symType==e2->bits.symType && \
-    e1->bits.storage==e2->bits.storage && \
-    e1->bits.category==e2->bits.category && \
-    e1->vApplClass==e2->vApplClass && \
-    strcmp(e1->name,e2->name)==0\
-)
-
 #define IS_DEFINITION_USAGE(usage) (\
   (usage)==UsageDefined \
   || (usage)==UsageOLBestFitDefined\
