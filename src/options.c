@@ -118,24 +118,22 @@ Options s_initOpt = {
     0,
     (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_PROFILE_APPLICABLE), // ooChecksBits
     1,                          // cxMemoryFactor
-    1,
-    0,
-    NULL,
+    0,                          /* strict ansi */
+    NULL,                       /* project */
     "0:3",                      // olcxlccursor
     "",                         /* olcxSearchString */
     79,                         /* olineLen */
     "*_",                       /* olExtractAddrParPrefix */
     0,                          // extractMode, must be zero
-    MAX_COMPLETIONS,
-    0,
-    0,
+    MAX_COMPLETIONS,            /* maxCompletions */
+    0,                          /* editor */
+    0,                          /* create */
     true,                       // recurse directories
-
     "",                         // default classpath
     8,                          /* tabulator */
-    -1,
-    -1,
-    RegimeXref,
+    -1,                         /* olCursorPos */
+    -1,                         /* olMarkPos */
+    RegimeXref,                 /* taskRegime */
     "nouser",                   // -user
     false,                      /* debug */
     false,                      /* trace */

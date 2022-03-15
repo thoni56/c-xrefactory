@@ -107,6 +107,8 @@ typedef struct options {
     int allowPackagesOnCommandLine;
     char *sourcePath;
     char *jdocTmpDir;
+
+    /* MIXED THINGS... */
     int noCxFile;
     bool javaDoc;
     bool noIncludeRefs;
@@ -119,7 +121,6 @@ typedef struct options {
     int olcxMenuSelectLineNum;
     int ooChecksBits;
     int cxMemoryFactor;
-    int multiHeadRefsCare;
     bool strictAnsi;
     char *project;
     char *olcxlccursor;

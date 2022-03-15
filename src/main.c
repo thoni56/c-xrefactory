@@ -2316,12 +2316,9 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         FileItem *fileItem = getFileItem(i);
         if (fileItem->bits.cxLoading) {
             fileItem->bits.cxLoading = false;
-            fileItem->bits.cxSaved = 1;
-            if (fileItem->bits.commandLineEntered || !options.multiHeadRefsCare)
+            fileItem->bits.cxSaved = true;
+            if (fileItem->bits.commandLineEntered)
                 savingFlag = true;
-            // before, but do not work as scheduledToProcess is auto-cleared
-            //&             if (fileItem->bits.scheduledToProcess
-            //&                 || !options.multiHeadRefsCare) savingFlag = true;
             log_trace(" -># '%s'",fileItem->name);
         }
     }

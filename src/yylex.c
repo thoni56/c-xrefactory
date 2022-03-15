@@ -189,8 +189,7 @@ static void setCurrentFileInfoFor(char *fileName) {
         } else {
             cxloading = true;
         }
-        if (fileItem->bits.cxSaved==1 && ! options.multiHeadRefsCare) {
-            /* if multihead references care, load include refs each time */
+        if (fileItem->bits.cxSaved) {
             cxloading = false;
         }
         if (LANGUAGE(LANG_JAVA)) {
