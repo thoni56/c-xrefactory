@@ -784,7 +784,7 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
 
     log_trace("re-read info from '%s' for '%s'?", options.cxrefsLocation, fileItem->name);
     if (options.taskRegime == RegimeXref) {
-        if (fileItem->bits.cxLoading && ! fileItem->bits.cxSaved) {
+        if (fileItem->bits.cxLoading && !fileItem->bits.cxSaved) {
             updateFromCxFile = false;
         } else {
             updateFromCxFile = true;
@@ -885,7 +885,7 @@ static void cxrfSourceIndex(int size,
     // hmmm. here be more generous in getting correct source info
     if (fileItem->bits.sourceFileNumber == noFileIndex) {
         // first check that it is not set directly from source
-        if (! fileItem->bits.cxLoading) {
+        if (!fileItem->bits.cxLoading) {
             fileItem->bits.sourceFileNumber = sfile;
         }
     }

@@ -129,7 +129,7 @@ typedef struct options {
     int extractMode;
     int maxCompletions;
     int editor;
-    int create;
+    bool create;
     bool recurseDirectories;
     char *classpath;
     int tabulator;

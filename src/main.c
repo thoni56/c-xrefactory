@@ -264,7 +264,7 @@ static bool processCOption(int *argi, int argc, char **argv) {
         createOptionString(&options.cFilesSuffixes, argv[i]+11);
     }
     else if (strcmp(argv[i], "-create")==0)
-        options.create = 1;
+        options.create = true;
     else if (strncmp(argv[i], "-compiler=", 10)==0) {
         options.compiler = &argv[i][10];
     } else return false;
