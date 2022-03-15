@@ -306,7 +306,7 @@ void searchSymbolCheckReference(SymbolReferenceItem  *referenceItem, Reference *
     char *s, *sname;
     int slen;
 
-    if (referenceItem->b.symType == TypeCppInclude)
+    if (referenceItem->bits.symType == TypeCppInclude)
         return;   // no %%i symbols
     if (symbolNameShouldBeHiddenFromReports(referenceItem->name))
         return;
@@ -328,7 +328,7 @@ void searchSymbolCheckReference(SymbolReferenceItem  *referenceItem, Reference *
     slen = strlen(sname);
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
-        olCompletionListPrepend(sname, NULL, NULL, 0, NULL, referenceItem, reference, referenceItem->b.symType,
+        olCompletionListPrepend(sname, NULL, NULL, 0, NULL, referenceItem, reference, referenceItem->bits.symType,
                                 referenceItem->vFunClass, currentUserData->retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time
@@ -389,11 +389,11 @@ static void writeSymbolItem(int symbolIndex) {
 
     /* Then the reference info */
     d = lastOutgoingInfo.symbolTab[symbolIndex];
-    writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, d->b.symType, "\n"); /* Why newline in the middle of all this? */
+    writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, d->bits.symType, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_SUBCLASS, d->vApplClass, "");
     writeOptionalCompactRecord(CXFI_SUPERCLASS, d->vFunClass, "");
-    writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->b.accessFlags, "");
-    writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
+    writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->bits.accessFlags, "");
+    writeOptionalCompactRecord(CXFI_STORAGE, d->bits.storage, "");
     lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex] = 0;
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = true;
     writeStringRecord(CXFI_SYMBOL_NAME, d->name, "\t");
@@ -532,13 +532,13 @@ static void genRefItem0(SymbolReferenceItem *referenceItem, bool force) {
                       lastOutgoingInfo.cachedSymbolName[symbolIndex],
                       referenceItem->fileHash, // useless put 0
                       referenceItem->vApplClass, referenceItem->vFunClass);
-    fillSymbolRefItemBits(&lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex].b,
-                          referenceItem->b.symType, referenceItem->b.storage,
-                          referenceItem->b.scope, referenceItem->b.accessFlags, referenceItem->b.category);
+    fillSymbolRefItemBits(&lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex].bits,
+                          referenceItem->bits.symType, referenceItem->bits.storage,
+                          referenceItem->bits.scope, referenceItem->bits.accessFlags, referenceItem->bits.category);
     lastOutgoingInfo.symbolTab[symbolIndex] = &lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex];
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
 
-    if (referenceItem->b.category == CategoryLocal) return;
+    if (referenceItem->bits.category == CategoryLocal) return;
     if (referenceItem->refs == NULL && !force) return;
 
     for (reference = referenceItem->refs; reference != NULL; reference = reference->next) {
@@ -649,7 +649,7 @@ static void genPartialFileTabRefFile(int updateFlag,
 static void generateRefsFromMemory(int fileOrder) {
     for (int i=0; i<referenceTable.size; i++) {
         for (SymbolReferenceItem *r=referenceTable.tab[i]; r!=NULL; r=r->next) {
-            if (r->b.category == CategoryLocal)
+            if (r->bits.category == CategoryLocal)
                 continue;
             if (r->refs == NULL)
                 continue;
@@ -926,8 +926,8 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                                 CharacterBuffer *cb,
                                                 int additionalArg
 ) {
-    SymbolReferenceItem *ddd, *memb;
-    int si, symType, len, rr, vApplClass, vFunClass, accessFlags;
+    SymbolReferenceItem *memb;
+    int si, symType, len, vApplClass, vFunClass, accessFlags;
     int storage;
     char *id;
     char *ss;
@@ -945,19 +945,20 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         lastIncomingInfo.onLineReferencedSym = -1;
         return;
     }
-    ddd = &lastIncomingInfo.cachedSymbolReferenceItem[si];
-    lastIncomingInfo.symbolTab[si] = ddd;
-    fillSymbolRefItem(ddd, id, cxFileHashNumber(id), //useless, put 0
+
+    SymbolReferenceItem *referenceItem = &lastIncomingInfo.cachedSymbolReferenceItem[si];
+    lastIncomingInfo.symbolTab[si] = referenceItem;
+    fillSymbolRefItem(referenceItem, id, cxFileHashNumber(id), //useless, put 0
                       vApplClass, vFunClass);
-    fillSymbolRefItemBits(&ddd->b, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
-    rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
-    if (rr == 0) {
+    fillSymbolRefItemBits(&referenceItem->bits, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
+
+    if (!refTabIsMember(&referenceTable, referenceItem, NULL, &memb)) {
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
         CX_ALLOC(memb, SymbolReferenceItem);
-        fillSymbolRefItem(memb,ss, cxFileHashNumber(ss),
+        fillSymbolRefItem(memb, ss, cxFileHashNumber(ss),
                           vApplClass, vFunClass);
-        fillSymbolRefItemBits(&memb->b, symType, storage,
+        fillSymbolRefItemBits(&memb->bits, symType, storage,
                               ScopeGlobal, accessFlags, CategoryGlobal);
         refTabAdd(&referenceTable, memb);
     }
@@ -982,15 +983,15 @@ static bool symbolIsReportableAsUnused(SymbolReferenceItem *referenceItem) {
 
     // you need to be strong here, in fact struct record can be used
     // without using struct explicitly
-    if (referenceItem->b.symType == TypeStruct)
+    if (referenceItem->bits.symType == TypeStruct)
         return false;
 
     // maybe I should collect also all toString() references?
-    if (referenceItem->b.storage==StorageMethod && strcmp(referenceItem->name,"toString()")==0)
+    if (referenceItem->bits.storage==StorageMethod && strcmp(referenceItem->name,"toString()")==0)
         return false;
 
     // in this first approach restrict this to variables and functions
-    if (referenceItem->b.symType == TypeMacro)
+    if (referenceItem->bits.symType == TypeMacro)
         return false;
     return true;
 }
@@ -1036,10 +1037,10 @@ static void cxrfSymbolName(int size,
     fillSymbolRefItem(ddd, id,
                       cxFileHashNumber(id), // useless put 0
                       vApplClass, vFunClass);
-    fillSymbolRefItemBits(&ddd->b,symType, storage, ScopeGlobal, accessFlags,
+    fillSymbolRefItemBits(&ddd->bits,symType, storage, ScopeGlobal, accessFlags,
                           CategoryGlobal);
     rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
-    while (rr && memb->b.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
+    while (rr && memb->bits.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
         if (memb==NULL) memb=ddd;

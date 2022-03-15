@@ -2354,7 +2354,7 @@ static void fillIncludeRefItem(SymbolReferenceItem *referenceItem, int fnum) {
     fillSymbolRefItem(referenceItem, LINK_NAME_INCLUDE_REFS,
                                 cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
                                 fnum, fnum);
-    fillSymbolRefItemBits(&referenceItem->b, TypeCppInclude, StorageExtern,
+    fillSymbolRefItemBits(&referenceItem->bits, TypeCppInclude, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal);
 }
 
@@ -2455,7 +2455,7 @@ static int scheduleFileUsingTheMacro(void) {
     fillSymbolRefItem(&ddd, s_olstringInMbody,
                                 cxFileHashNumber(s_olstringInMbody),
                                 noFileIndex, noFileIndex);
-    fillSymbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
+    fillSymbolRefItemBits(&ddd.bits, TypeMacro, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal);
 
     fillSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);

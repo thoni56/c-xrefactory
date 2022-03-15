@@ -942,7 +942,7 @@ bool tpCheckSourceIsNotInnerClass(void) {
     //& assert(target!=NULL);
 
     int directEnclosingInstanceIndex = getFileItem(index)->directEnclosingInstance;
-    if (directEnclosingInstanceIndex != -1 && directEnclosingInstanceIndex != noFileIndex && (menu->s.b.accessFlags&AccessInterface)==0) {
+    if (directEnclosingInstanceIndex != -1 && directEnclosingInstanceIndex != noFileIndex && (menu->s.bits.accessFlags&AccessInterface)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         // If there exists a direct enclosing instance, it is an inner class
         sprintf(tmpBuff, "This is an inner class. Current version of C-xrefactory can only move top level classes and nested classes that are declared 'static'. If the class does not depend on its enclosing instances, you should declare it 'static' and then move it.");
@@ -1784,7 +1784,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE-1);
     occs = refactoryPushGetAndPreCheckReferences(buf, point, nameOnPoint, message,PPCV_BROWSER_TYPE_INFO);
     csym =  currentUserData->browserStack.top->hkSelectedSym;
-    symtype = csym->s.b.symType;
+    symtype = csym->s.bits.symType;
     symLinkName = csym->s.name;
     undoStartPoint = s_editorUndo;
     if (!LANGUAGE(LANG_JAVA)) {
@@ -2641,9 +2641,9 @@ static void refactoryStaticMoveCheckCorrespondance(
         // do not check recursive calls
         if (isSameCxSymbolIncludingFunctionClass(&mm1->s, theMethod)) goto cont;
         // nor local variables
-        if (mm1->s.b.storage == StorageAuto) goto cont;
+        if (mm1->s.bits.storage == StorageAuto) goto cont;
         // nor labels
-        if (mm1->s.b.symType == TypeLabel) goto cont;
+        if (mm1->s.bits.symType == TypeLabel) goto cont;
         // do not check also any symbols from classes defined in inner scope
         if (isStrictlyEnclosingClass(mm1->s.vFunClass, theMethod->vFunClass)) goto cont;
         // (maybe I should not test any local symbols ???)
@@ -2746,7 +2746,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     occs = refactoryGetReferences(point->buffer, point,STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
     assert(currentUserData->browserStack.top && currentUserData->browserStack.top->hkSelectedSym);
     if (outAccessFlags!=NULL) {
-        *outAccessFlags = currentUserData->browserStack.top->hkSelectedSym->s.b.accessFlags;
+        *outAccessFlags = currentUserData->browserStack.top->hkSelectedSym->s.bits.accessFlags;
     }
     //&refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point, "-olcxrename");
 
@@ -2933,7 +2933,7 @@ static void refactoryMoveField(EditorMarker *point) {
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE-1);
     occs = refactoryGetReferences(point->buffer, point,STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
     assert(currentUserData->browserStack.top && currentUserData->browserStack.top->hkSelectedSym);
-    accessFlags = currentUserData->browserStack.top->hkSelectedSym->s.b.accessFlags;
+    accessFlags = currentUserData->browserStack.top->hkSelectedSym->s.bits.accessFlags;
 
     undoStartPoint = s_editorUndo;
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
@@ -3053,7 +3053,7 @@ static void refactoryPerformMoveClass(EditorMarker *point,
     (*outend)->offset++;
 
     // finally fiddle modifiers
-    if (ss->s.b.accessFlags & AccessStatic) {
+    if (ss->s.bits.accessFlags & AccessStatic) {
         if (! targetIsNestedInClass) {
             // nested -> top level
             //&sprintf(tmpBuff,"removing modifier"); ppcBottomInformation(tmpBuff);
@@ -3745,7 +3745,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     }
 
     assert(currentUserData->browserStack.top && currentUserData->browserStack.top->hkSelectedSym);
-    accFlags = currentUserData->browserStack.top->hkSelectedSym->s.b.accessFlags;
+    accFlags = currentUserData->browserStack.top->hkSelectedSym->s.bits.accessFlags;
 
     cclass[0] = 0; scclass = cclass;
     if (accFlags&AccessStatic) {
@@ -3921,7 +3921,7 @@ static SymbolsMenu *refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown
 
     // find corresponding reference
     for (mm2=menu2; mm2!=NULL; mm2=mm2->next) {
-        if (mm1->s.b.symType!=mm2->s.b.symType && mm2->s.b.symType!=TypeInducedError) continue;
+        if (mm1->s.bits.symType!=mm2->s.bits.symType && mm2->s.bits.symType!=TypeInducedError) continue;
         for (rr2=mm2->markers; rr2!=NULL; rr2=rr2->next) {
             if (MARKER_EQ(rr1->marker, rr2->marker)) goto breakrr2;
         }
@@ -3989,9 +3989,9 @@ static EditorMarkerList *refactoryPullUpPushDownDifferences(
         // do not check recursive calls
         if (isSameCxSymbolIncludingFunctionClass(&mm1->s, theMethod)) goto cont;
         // nor local variables
-        if (mm1->s.b.storage == StorageAuto) goto cont;
+        if (mm1->s.bits.storage == StorageAuto) goto cont;
         // nor labels
-        if (mm1->s.b.symType == TypeLabel) goto cont;
+        if (mm1->s.bits.symType == TypeLabel) goto cont;
         // do not check also any symbols from classes defined in inner scope
         if (isStrictlyEnclosingClass(mm1->s.vFunClass, theMethod->vFunClass)) goto cont;
         // (maybe I should not test any local symbols ???)
@@ -4330,11 +4330,11 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
     multiFileRefsFlag = 0;
     occs = refactoryGetReferences(point->buffer, point, NULL, PPCV_BROWSER_TYPE_WARNING);
     csym =  currentUserData->browserStack.top->hkSelectedSym;
-    scope = csym->s.b.scope;
-    cat = csym->s.b.category;
-    symtype = csym->s.b.symType;
-    storage = csym->s.b.storage;
-    accflags = csym->s.b.accessFlags;
+    scope = csym->s.bits.scope;
+    cat = csym->s.bits.category;
+    symtype = csym->s.bits.symType;
+    storage = csym->s.bits.storage;
+    accflags = csym->s.bits.accessFlags;
     if (occs == NULL) {
         fn = noFileIndex;
     } else {

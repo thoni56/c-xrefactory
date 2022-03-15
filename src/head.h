@@ -152,9 +152,9 @@ typedef enum language {
 #define MARKER_EQ(mm1, mm2) (mm1->buffer==mm2->buffer && mm1->offset==mm2->offset)
 
 #define REF_ELEM_EQUAL(e1,e2) (\
-    e1->b.symType==e2->b.symType && \
-    e1->b.storage==e2->b.storage && \
-    e1->b.category==e2->b.category && \
+    e1->bits.symType==e2->bits.symType && \
+    e1->bits.storage==e2->bits.storage && \
+    e1->bits.category==e2->bits.category && \
     e1->vApplClass==e2->vApplClass && \
     strcmp(e1->name,e2->name)==0\
 )
@@ -250,13 +250,13 @@ typedef enum language {
 #define MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri,dd) {\
     if (!isPushAllMethodsValidRefItem(ri)) return;\
     /* this is too strong, but check only fields and methods */\
-    if (ri->b.storage!=StorageField\
-        && ri->b.storage!=StorageMethod\
-        && ri->b.storage!=StorageConstructor) return;\
+    if (ri->bits.storage!=StorageField\
+        && ri->bits.storage!=StorageMethod\
+        && ri->bits.storage!=StorageConstructor) return;\
     /* check that it has default accessibility*/\
-    if (ri->b.accessFlags & AccessPublic) return;\
-    if (ri->b.accessFlags & AccessProtected) return;\
-    if (! (ri->b.accessFlags & AccessPrivate)) {\
+    if (ri->bits.accessFlags & AccessPublic) return;\
+    if (ri->bits.accessFlags & AccessProtected) return;\
+    if (! (ri->bits.accessFlags & AccessPrivate)) {\
         /* default accessibility, check only if transpackage move*/\
         if (! dd->transPackageMove) return;\
     }\

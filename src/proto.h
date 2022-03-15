@@ -372,18 +372,18 @@ typedef struct nestedSpec {
 #include "classcaster.h"
 
 typedef struct symStructSpec {
-    struct symbolList		*super;			/* list of super classes & interfaces */
-    struct symbol			*records;		/* str. records, should be a table of   */
-    struct cctNode			casts;			/* possible casts                       */
-    short int				nestedCount;		/* # of java nested classes     */
-    struct nestedSpec		*nest;			/* array of nested classes		*/
-    struct typeModifier	stype;              /* this structure type */
-    struct typeModifier	sptrtype;           /* this structure pointer type */
-    int						classFileIndex;		/* in java, my class file index
+    struct symbolList	*super;			/* list of super classes & interfaces */
+    struct symbol		*records;		/* str. records, should be a table of   */
+    struct cctNode		casts;			/* possible casts                       */
+    short int			nestedCount;	/* # of java nested classes     */
+    struct nestedSpec	*nest;			/* array of nested classes		*/
+    struct typeModifier	stype;          /* this structure type */
+    struct typeModifier	sptrtype;       /* this structure pointer type */
+    int					classFileIndex;		/* in java, my class file index
                                                == -1 for none, TODO to change
                                                it to s_noneFileIndex !!!
                                             */
-    unsigned				recSearchCounter; /* tmp counter when looking for a record
+    unsigned			recSearchCounter; /* tmp counter when looking for a record
                                                 it flags searched classes
                                              */
 } S_symStructSpec;
@@ -406,15 +406,15 @@ typedef struct jslSymbolList {
 #define NO_REFERENCE (Reference){NO_USAGE, no_Position, NULL)
 typedef struct reference {
     struct usage			usage;
-    struct position				position;
-    struct reference            *next;
+    struct position			position;
+    struct reference        *next;
 } Reference;
 
 typedef struct symbolReferenceItemBits {
     Type					symType		: SYMTYPES_LN;
     Storage					storage		: STORAGES_LN;
     ReferenceScope			scope		: SCOPES_LN;
-    AccessKind					accessFlags	: 12; /* java access bits */
+    AccessKind				accessFlags	: 12; /* java access bits */
     ReferenceCategory		category	: 2;  /* local/global */
 } SymbolReferenceItemBits;
 
@@ -424,7 +424,7 @@ typedef struct symbolReferenceItem {
     unsigned					fileHash;
     int							vApplClass;	/* appl class for java virtuals */
     int							vFunClass;	/* fun class for java virtuals */
-    struct symbolReferenceItemBits b;
+    struct symbolReferenceItemBits bits;
     struct reference			*refs;
     struct symbolReferenceItem  *next;
 } SymbolReferenceItem;

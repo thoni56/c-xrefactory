@@ -37,3 +37,15 @@ Ensure(Misc, can_concat_filename_with_directory) {
     /* TODO: FILE_PATH_SEPARATOR might be '\\' */
     assert_that(result, is_equal_to_string("dirname/filename"));
 }
+
+
+Ensure(Misc, can_see_if_string_contains_wildcard) {
+    assert_that(!containsWildcard(""));
+    assert_that(!containsWildcard("sldlsadkj 234 %¤!#¤!¤"));
+    assert_that(containsWildcard("?"));
+    assert_that(containsWildcard("*"));
+    assert_that(containsWildcard("[abc]"));
+    assert_that(containsWildcard("abc?"));
+    assert_that(containsWildcard("abc*"));
+    assert_that(containsWildcard("abc[abc]"));
+}

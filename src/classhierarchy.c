@@ -11,11 +11,11 @@
 #include "protocol.h"
 #include "log.h"
 
-typedef struct integerList {
-    int         i;
-    struct integerList   *next;
-} IntegerList;
 
+typedef struct integerList {
+    int                integer;
+    struct integerList *next;
+} IntegerList;
 
 
 static bitArray tmpChRelevant[BIT_ARR_DIM(MAX_FILES)];
@@ -123,102 +123,99 @@ void setTmpClassBackPointersToMenu(SymbolsMenu *menu) {
     }
 }
 
-static void genClassHierarchyVerticalBars(FILE *ff, IntegerList *nextbars, int secondpass) {
+static void genClassHierarchyVerticalBars(FILE *file, IntegerList *nextbars) {
     if (options.xref2) {
-        fprintf(ff," %s=\"", PPCA_TREE_DEPS);
+        fprintf(file," %s=\"", PPCA_TREE_DEPS);
     }
     if (nextbars!=NULL) {
         LIST_REVERSE(IntegerList, nextbars);
-        for (IntegerList *nn = nextbars; nn!=NULL; nn=nn->next) {
-            if (nn->next==NULL) {
-                if (secondpass) fprintf(ff,"  +- ");
-                else fprintf(ff,"  |  ");
+        for (IntegerList *n = nextbars; n!=NULL; n=n->next) {
+            if (n->next==NULL) {
+                fprintf(file,"  +- ");
             }
-            else if (nn->i) fprintf(ff,"  | ");
-            else fprintf(ff,"    ");
+            else if (n->integer) fprintf(file,"  | ");
+            else fprintf(file,"    ");
         }
         LIST_REVERSE(IntegerList, nextbars);
     }
     if (options.xref2) {
-        fprintf(ff,"\"");
+        fprintf(file,"\"");
     }
 }
 
 
-static SymbolsMenu *itemInOriginalList(SymbolsMenu *orr, int fInd) {
-    SymbolsMenu *rr;
-    if (fInd == -1)
-        return(NULL);
-    assert(fInd>=0 && fInd<MAX_FILES);
-    rr = tmpVApplClassBackPointersToMenu[fInd];
-    return rr;
+static SymbolsMenu *itemInOriginalList(int fileIndex) {
+    if (fileIndex == -1)
+        return NULL;
+    assert(fileIndex>=0 && fileIndex<MAX_FILES);
+    return tmpVApplClassBackPointersToMenu[fileIndex];
 }
 
-static void olcxPrintMenuItemPrefix(FILE *ff, SymbolsMenu *itt,
-                                    int selectable) {
+static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, int selectable) {
     if (options.server_operation==OLO_CLASS_TREE || options.server_operation==OLO_SHOW_CLASS_TREE) {
-        ; //fprintf(ff,"");
+        ; // fprintf(file,"");
     } else if (! selectable) {
-        if (options.xref2) fprintf(ff, " %s=2", PPCA_SELECTED);
-        else fprintf(ff,"- ");
-    } else if (itt!=NULL && itt->selected) {
-        if (options.xref2) fprintf(ff, " %s=1", PPCA_SELECTED);
-        else fprintf(ff,"+ ");
+        if (options.xref2) fprintf(file, " %s=2", PPCA_SELECTED);
+        else fprintf(file,"- ");
+    } else if (menu!=NULL && menu->selected) {
+        if (options.xref2) fprintf(file, " %s=1", PPCA_SELECTED);
+        else fprintf(file,"+ ");
     } else {
-        if (options.xref2) fprintf(ff, " %s=0", PPCA_SELECTED);
-        else fprintf(ff,"  ");
+        if (options.xref2) fprintf(file, " %s=0", PPCA_SELECTED);
+        else fprintf(file,"  ");
     }
-    if (itt!=NULL
-        && itt->vlevel==1
-        && ooBitsGreaterOrEqual(itt->ooBits, OOC_PROFILE_APPLICABLE)) {
-        if (options.xref2) fprintf(ff, " %s=1", PPCA_BASE);
-        else fprintf(ff,">>");
+    if (menu != NULL && menu->vlevel==1 && ooBitsGreaterOrEqual(menu->ooBits, OOC_PROFILE_APPLICABLE)) {
+        if (options.xref2) fprintf(file, " %s=1", PPCA_BASE);
+        else fprintf(file,">>");
     } else {
-        if (options.xref2) fprintf(ff, " %s=0", PPCA_BASE);
-        else fprintf(ff,"  ");
+        if (options.xref2) fprintf(file, " %s=0", PPCA_BASE);
+        else fprintf(file,"  ");
     }
-    if (! options.xref2) fprintf(ff," ");
+    if (!options.xref2) fprintf(file," ");
     if (options.server_operation==OLO_CLASS_TREE || options.server_operation==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff, "");
-    } else if (itt==NULL || (itt->defRefn==0 && itt->refn==0) || !selectable) {
-        if (options.xref2) fprintf(ff, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
-        else fprintf(ff, "  -/-  ");
-    } else if (itt->defRefn==0) {
-        if (options.xref2) fprintf(ff, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, itt->refn);
-        else fprintf(ff, "  -/%-3d", itt->refn);
-    } else if (itt->refn==0) {
-        if (options.xref2) fprintf(ff, " %s=%d %s=0", PPCA_DEF_REFN, itt->defRefn, PPCA_REFN);
-        else fprintf(ff, "%3d/-  ", itt->defRefn);
+    } else if (menu==NULL || (menu->defRefn==0 && menu->refn==0) || !selectable) {
+        if (options.xref2) fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
+        else fprintf(file, "  -/-  ");
+    } else if (menu->defRefn==0) {
+        if (options.xref2) fprintf(file, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, menu->refn);
+        else fprintf(file, "  -/%-3d", menu->refn);
+    } else if (menu->refn==0) {
+        if (options.xref2) fprintf(file, " %s=%d %s=0", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN);
+        else fprintf(file, "%3d/-  ", menu->defRefn);
     } else {
-        if (options.xref2) fprintf(ff, " %s=%d %s=%d", PPCA_DEF_REFN, itt->defRefn, PPCA_REFN, itt->refn);
-        else fprintf(ff, "%3d/%-3d", itt->defRefn, itt->refn);
+        if (options.xref2) fprintf(file, " %s=%d %s=%d", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN, menu->refn);
+        else fprintf(file, "%3d/%-3d", menu->defRefn, menu->refn);
     }
-    if (! options.xref2) fprintf(ff,"    ");
+    if (!options.xref2)
+        fprintf(file,"    ");
 }
 
-static void olcxMenuGenNonVirtualGlobSymList( FILE *ff, SymbolsMenu *ss) {
-    char ttt[MAX_CX_SYMBOL_SIZE];
+static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
 
-    if (s_symbolListOutputCurrentLine == 1) s_symbolListOutputCurrentLine++; // first line irregularity
-    ss->outOnLine = s_symbolListOutputCurrentLine;
-    s_symbolListOutputCurrentLine ++ ;
+    if (s_symbolListOutputCurrentLine == 1)
+        s_symbolListOutputCurrentLine++; // first line irregularity
+    menu->outOnLine = s_symbolListOutputCurrentLine;
+    s_symbolListOutputCurrentLine++ ;
     if (options.xref2) {
         ppcIndent();
-        fprintf(ff,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, ss->outOnLine+SYMBOL_MENU_FIRST_LINE);
-        if (ss->s.b.symType!=TypeDefault) {
-            fprintf(ff," %s=%s", PPCA_TYPE, typeNamesTable[ss->s.b.symType]);
+        fprintf(file,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, menu->outOnLine+SYMBOL_MENU_FIRST_LINE);
+        if (menu->s.bits.symType!=TypeDefault) {
+            fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->s.bits.symType]);
         }
-        olcxPrintMenuItemPrefix(ff, ss, 1);
-        sprintfSymbolLinkName(ttt, ss);
-        fprintf(ff," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(ttt), ttt, PPC_SYMBOL);
+        olcxPrintMenuItemPrefix(file, menu, 1);
+
+        char tempString[MAX_CX_SYMBOL_SIZE];
+        sprintfSymbolLinkName(tempString, menu);
+        fprintf(file," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(tempString), tempString, PPC_SYMBOL);
     } else {
-        fprintf(ff,"\n");
-        olcxPrintMenuItemPrefix(ff, ss, 1);
-        printSymbolLinkName(ff, ss);
-        if (ss->s.b.symType != TypeDefault) {
-            fprintf(ff,"\t(%s)", typeNamesTable[ss->s.b.symType]);
+        fprintf(file,"\n");
+        olcxPrintMenuItemPrefix(file, menu, 1);
+        printSymbolLinkName(file, menu);
+        if (menu->s.bits.symType != TypeDefault) {
+            fprintf(file,"\t(%s)", typeNamesTable[menu->s.bits.symType]);
         }
-        //&fprintf(ff," ==%s %o (%s) at %x", ss->s.name, ss->ooBits, refCategoriesName[ss->s.b.category], ss);
+        //&fprintf(file," ==%s %o (%s) at %x", menu->s.name, menu->ooBits, refCategoriesName[menu->s.bits.category], menu);
     }
 }
 
@@ -237,7 +234,7 @@ static void olcxMenuPrintClassHierarchyLine(FILE *file, int fileIndex,
         LIST_LEN(indent, IntegerList, nextbars);
         fprintf(file, " %s=%d", PPCA_INDENT, indent);
     }
-    genClassHierarchyVerticalBars(file, nextbars, 1);
+    genClassHierarchyVerticalBars(file, nextbars);
 
     FileItem *fileItem = getFileItem(fileIndex);
     if (menu != NULL) {
@@ -285,7 +282,7 @@ static void descendTheClassHierarchy(FILE *file,
 
     FileItem *fileItem = getFileItem(vApplCl);
     if (THEBIT(tmpChRelevant,vApplCl)==0) return;
-    itt = itemInOriginalList(menu, vApplCl);
+    itt = itemInOriginalList(vApplCl);
 
     if (itt == NULL) {
         assert(menu);
@@ -322,7 +319,7 @@ static void descendTheClassHierarchy(FILE *file,
         while (snext!=NULL && THEBIT(tmpChRelevant,snext->superClass)==0) {
             snext = snext->next;
         }
-        snextbar = (IntegerList) {.i = (snext!=NULL), .next = nextbars};
+        snextbar = (IntegerList) {.integer = (snext!=NULL), .next = nextbars};
         descendTheClassHierarchy(file, s->superClass, vFunCl, menu, level+1,
                                  &snextbar, passNumber);
         s = snext;
@@ -403,9 +400,9 @@ static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, SymbolsMenu *rrr) {
 }
 
 static int isVirtualMenuItem(SymbolReferenceItem *p) {
-    return (p->b.storage == StorageField
-            || p->b.storage == StorageMethod
-            || p->b.storage == StorageConstructor);
+    return (p->bits.storage == StorageField
+            || p->bits.storage == StorageMethod
+            || p->bits.storage == StorageConstructor);
 }
 
 static void genVirtualsGlobRefLists(    SymbolsMenu *rrr,
@@ -421,7 +418,7 @@ static void genVirtualsGlobRefLists(    SymbolsMenu *rrr,
     assert(rrr!=NULL);
     p = &rrr->s;
     assert(p!=NULL);
-    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->b.storage]);
+    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->bits.storage]);
     if (isVirtualMenuItem(p)) {
         olcxMenuGenGlobRefsForVirtMethod( ff, rrr);
     }
@@ -439,7 +436,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *rrr,
     assert(rrr!=NULL);
     p = &rrr->s;
     assert(p!=NULL);
-    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->b.storage]);
+    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->bits.storage]);
     if (! isVirtualMenuItem(p)) {
         for(ss=rrr; ss!=NULL; ss=ss->next) {
             p = &ss->s;

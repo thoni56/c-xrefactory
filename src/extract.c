@@ -43,7 +43,7 @@ void dumpProgram(ProgramGraphNode *program) {
                 p->posBits, p->stateBits,
                 p->symRef->name,
                 usageKindEnumName[p->ref->usage.kind]+5);
-        if (p->symRef->b.symType==TypeLabel && p->ref->usage.kind!=UsageDefined) {
+        if (p->symRef->bits.symType==TypeLabel && p->ref->usage.kind!=UsageDefined) {
             log_trace("    Jump: %p", p->jump);
         }
     }
@@ -192,7 +192,7 @@ static ProgramGraphNode *getLabelGraphAddress(ProgramGraphNode *program,
                                                 ) {
     ProgramGraphNode  *res;
     Reference         *defref;
-    assert(lab->b.symType == TypeLabel);
+    assert(lab->bits.symType == TypeLabel);
     defref = getDefinitionReference(lab);
     res = getGraphAddress(program, defref);
     return(res);
@@ -209,7 +209,7 @@ static ProgramGraphNode * extMakeProgramGraph(void) {
     LIST_SORT(ProgramGraphNode, program, linearOrder);
     dumpProgram(program);
     for (p=program; p!=NULL; p=p->next) {
-        if (p->symRef->b.symType==TypeLabel && p->ref->usage.kind!=UsageDefined) {
+        if (p->symRef->bits.symType==TypeLabel && p->ref->usage.kind!=UsageDefined) {
             // resolve the jump
             p->jump = getLabelGraphAddress(program, p->symRef);
         }
@@ -244,7 +244,7 @@ static void extSetSetStates(    ProgramGraphNode *p,
                 // change also current value, because there is no usage
                 p->stateBits = cstate = cpos;
             }
-        } else if (p->symRef->b.symType==TypeBlockMarker &&
+        } else if (p->symRef->bits.symType==TypeBlockMarker &&
                    (p->posBits&INSP_INSIDE_BLOCK) == 0) {
             // leaving the block
             if (cstate & INSP_INSIDE_BLOCK) {
@@ -256,7 +256,7 @@ static void extSetSetStates(    ProgramGraphNode *p,
                 // leaving and value is set from outside, set value passing flag
                 cstate |= INSP_INSIDE_PASSING;
             }
-        } else if (p->symRef->b.symType==TypeLabel) {
+        } else if (p->symRef->bits.symType==TypeLabel) {
             if (p->ref->usage.kind==UsageUsed) {  // goto
                 p = p->jump;
                 goto cont;
@@ -364,7 +364,7 @@ static void extSetInOutBlockFields(ProgramGraphNode *program) {
     unsigned    pos;
     pos = INSP_OUTSIDE_BLOCK;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->symRef->b.symType == TypeBlockMarker) {
+        if (p->symRef->bits.symType == TypeBlockMarker) {
             toogleInOutBlock(&pos);
         }
         p->posBits = pos;
@@ -375,7 +375,7 @@ static int extIsJumpInOutBlock(ProgramGraphNode *program) {
     ProgramGraphNode *p;
     for (p=program; p!=NULL; p=p->next) {
         assert(p->symRef!=NULL)
-            if (p->symRef->b.symType==TypeLabel) {
+            if (p->symRef->bits.symType==TypeLabel) {
                 assert(p->ref!=NULL);
                 if (p->ref->usage.kind==UsageUsed || p->ref->usage.kind==UsageFork) {
                     assert(p->jump != NULL);
@@ -391,8 +391,8 @@ static int extIsJumpInOutBlock(ProgramGraphNode *program) {
 
 static bool isLocalVariable(ProgramGraphNode *node) {
     return node->ref->usage.kind==UsageDefined
-        &&  node->symRef->b.symType==TypeDefault
-        &&  node->symRef->b.scope==ScopeAuto;
+        &&  node->symRef->bits.symType==TypeDefault
+        &&  node->symRef->bits.scope==ScopeAuto;
 }
 
 static void extClassifyLocalVariables(ProgramGraphNode *program) {
@@ -683,10 +683,10 @@ static SymbolReferenceItemList *computeExceptionsThrownBetween(ProgramGraphNode 
 
     catched = NULL; noncatched = NULL; cl = &catched;
     for (p=bb; p!=NULL && p!=ee; p=p->next) {
-        if (p->symRef->b.symType == TypeTryCatchMarker && p->ref->usage.kind == UsageTryCatchBegin) {
+        if (p->symRef->bits.symType == TypeTryCatchMarker && p->ref->usage.kind == UsageTryCatchBegin) {
             depth = 0;
             for (e=p; e!=NULL && e!=ee; e=e->next) {
-                if (e->symRef->b.symType == TypeTryCatchMarker) {
+                if (e->symRef->bits.symType == TypeTryCatchMarker) {
                     if (e->ref->usage.kind == UsageTryCatchBegin) depth++;
                     else depth --;
                     if (depth == 0) break;
@@ -717,10 +717,10 @@ static SymbolReferenceItemList *computeExceptionsThrownBetween(ProgramGraphNode 
 
 static SymbolReferenceItemList *computeExceptionsThrownInBlock(ProgramGraphNode *program) {
     ProgramGraphNode  *pp, *ee;
-    for (pp=program; pp!=NULL && pp->symRef->b.symType!=TypeBlockMarker; pp=pp->next) ;
+    for (pp=program; pp!=NULL && pp->symRef->bits.symType!=TypeBlockMarker; pp=pp->next) ;
     if (pp==NULL)
         return(NULL);
-    for (ee=pp->next; ee!=NULL && ee->symRef->b.symType!=TypeBlockMarker; ee=ee->next) ;
+    for (ee=pp->next; ee!=NULL && ee->symRef->bits.symType!=TypeBlockMarker; ee=ee->next) ;
     return(computeExceptionsThrownBetween(pp, ee));
 }
 
@@ -833,7 +833,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
                     ||  p->classifBits == EXTRACT_LOCAL_VAR
                     ||  p->classifBits == EXTRACT_OUT_ARGUMENT
                     ||  p->classifBits == EXTRACT_RESULT_VALUE
-                    ||  (   p->symRef->b.storage == StorageExtern
+                    ||  (   p->symRef->bits.storage == StorageExtern
                             && p->ref->usage.kind == UsageDeclared)
                     ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
@@ -1092,7 +1092,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     for (p=program; p!=NULL; p=p->next) {
         if (    p->classifBits == EXTRACT_LOCAL_VAR
                 ||  p->classifBits == EXTRACT_RESULT_VALUE
-                ||  (   p->symRef->b.storage == StorageExtern
+                ||  (   p->symRef->bits.storage == StorageExtern
                         && p->ref->usage.kind == UsageDeclared)
                 ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);

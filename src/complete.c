@@ -1878,10 +1878,10 @@ static void completeFromXrefFun(SymbolReferenceItem *s, void *c) {
     CompletionLine compLine;
     cc = (SymbolCompletionInfo *) c;
     assert(s && cc);
-    if (s->b.symType != cc->symType)
+    if (s->bits.symType != cc->symType)
         return;
     /*&fprintf(dumpOut,"testing %s\n",s->name);fflush(dumpOut);&*/
-    fillCompletionLine(&compLine, s->name, NULL, s->b.symType,0, 0, NULL,NULL);
+    fillCompletionLine(&compLine, s->name, NULL, s->bits.symType,0, 0, NULL,NULL);
     processName(s->name, &compLine, 1, cc->res);
 }
 

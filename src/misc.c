@@ -26,7 +26,7 @@
 
 
 typedef struct integerList {
-    int i;
+    int integer;
     struct integerList *next;
 } IntegerList;
 
@@ -64,8 +64,8 @@ void symbolRefItemDump(SymbolReferenceItem *s) {
             s->name,
             getFileItem(s->vApplClass)->name,
             getFileItem(s->vFunClass)->name,
-            s->b.symType, s->b.storage, s->b.scope,
-            s->b.accessFlags, s->b.category);
+            s->bits.symType, s->bits.storage, s->bits.scope,
+            s->bits.accessFlags, s->bits.category);
 }
 
 /* *********************************************************************** */
@@ -545,7 +545,7 @@ void printClassFqtNameFromClassNum(FILE *file, int fnum) {
 }
 
 void sprintfSymbolLinkName(char *outString, SymbolsMenu *menu) {
-    if (menu->s.b.symType == TypeCppInclude) {
+    if (menu->s.bits.symType == TypeCppInclude) {
         sprintf(outString, "%s",
                 simpleFileName(getRealFileName_static(getFileItem(menu->s.vApplClass)->name)));
     } else {
@@ -563,7 +563,7 @@ void printSymbolLinkName(FILE *ff, SymbolsMenu *ss) {
 void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name) {
     fillSymbolRefItem(ddd, name, cxFileHashNumber(name),
                                 noFileIndex, noFileIndex);
-    fillSymbolRefItemBits(&ddd->b, TypeUnknown, StorageAuto,
+    fillSymbolRefItemBits(&ddd->bits, TypeUnknown, StorageAuto,
                            ScopeAuto, AccessDefault, CategoryLocal);
 }
 
@@ -696,7 +696,7 @@ int compareFileNames(char *ss1, char *ss2) {
 
 static IntegerList *shellMatchNewState(int s, IntegerList *next) {
     IntegerList *res = olcx_alloc(sizeof(IntegerList));
-    res->i = s;
+    res->integer = s;
     res->next = next;
     return res;
 }
@@ -766,29 +766,29 @@ bool shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) 
         if (states == NULL) goto fini;
         p= &states;
         while(*p!=NULL) {
-            pi = (*p)->i;
+            pi = (*p)->integer;
             //&fprintf(dumpOut,"checking char %d(%c) and state %d(%c)\n", si, string[si], pi, pattern[pi]);
             if (pattern[pi] == 0) {shellMatchDeleteState(p); continue;}
             if (pattern[pi] == '*') {
                 (*p)->next = shellMatchNewState(pi+1, (*p)->next);
             } else if (pattern[pi] == '?') {
-                (*p)->i = pi + 1;
+                (*p)->integer = pi + 1;
             } else if (pattern[pi] == '[') {
                 pi = shellMatchParseBracketPattern(pattern, pi, 1, asciiMap);
                 if (! asciiMap[string[si]]) {shellMatchDeleteState(p); continue;}
-                if (pattern[pi]==']') (*p)->i = pi+1;
+                if (pattern[pi]==']') (*p)->integer = pi+1;
             } else if (isalpha(pattern[pi]) && ! caseSensitive) {
                 // simple case unsensitive letter
                 if (tolower(pattern[pi]) != tolower(string[si])) {
                     shellMatchDeleteState(p); continue;
                 }
-                (*p)->i = pi + 1;
+                (*p)->integer = pi + 1;
             } else {
                 // simple character
                 if (pattern[pi] != string[si]) {
                     shellMatchDeleteState(p); continue;
                 }
-                (*p)->i = pi + 1;
+                (*p)->integer = pi + 1;
             }
             p= &(*p)->next;
         }
@@ -797,22 +797,22 @@ bool shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive) 
  fini: ;
     bool res = false;
     for (IntegerList *f=states; f!=NULL; f=f->next) {
-        if (f->i == plen || (f->i < plen
-                             && strncmp(pattern+f->i,"**************",plen-f->i)==0)
+        if (f->integer == plen || (f->integer < plen
+                                   && strncmp(pattern+f->integer,"**************",plen-f->integer)==0)
         ) {
             res = true;
             break;
         }
     }
-    while (states!=NULL) shellMatchDeleteState(&states);
+    while (states!=NULL)
+        shellMatchDeleteState(&states);
 
     return res;
 }
 
-bool containsWildcard(char *ss) {
-    int c;
-    for(; *ss; ss++) {
-        c = *ss;
+bool containsWildcard(char *string) {
+    for (; *string; string++) {
+        int c = *string;
         if (c=='*' || c=='?' || c=='[')
             return true;
     }
@@ -830,7 +830,8 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
     dir2 = (char*) a3;
     outpath = (char **) a4;
     freeolen = a5;
-    //&fprintf(dumpOut,"checking match %s <-> %s   %s\n", file, pattern, dir2);fflush(dumpOut);
+
+    log_trace("checking match %s <-> %s %s", file, pattern, dir2);
     if (dir2[0] == FILE_PATH_SEPARATOR) {
         // small optimisation, restrict search to directories
         sprintf(path, "%s%s", dir1, file);
@@ -845,36 +846,37 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
 
 // Dont use this function!!!! what you need is: expandWildcardsInOnePath
 /* TODO: WTF, why? we *are* using it... */
-void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *availableSpace) {
-    char                ttt[MAX_FILE_NAME_SIZE];
-    int                 i, si,di, ldi, len;
-    struct stat         st;
+void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpaths, int *availableSpace) {
+    struct stat st;
 
-    //&fprintf(dumpOut,"expandwc(%s)\n", fn);fflush(dumpOut);
-    if (containsWildcard(fn)) {
-        si = 0; di = 0;
-        while (fn[si]) {
-            ldi = di;
-            while (fn[si] && fn[si]!=FILE_PATH_SEPARATOR)  {
-                ttt[di] = fn[si];
+    log_trace("expand wildcards(%s)", fileName);
+    if (containsWildcard(fileName)) {
+        int si = 0;
+        int di = 0;
+        while (fileName[si]) {
+            char tempString[MAX_FILE_NAME_SIZE];
+            int ldi = di;
+            while (fileName[si] && fileName[si]!=FILE_PATH_SEPARATOR)  {
+                tempString[di] = fileName[si];
                 si++; di++;
             }
-            ttt[di] = 0;
-            if (containsWildcard(ttt+ldi)) {
-                for(i=di; i>=ldi; i--) ttt[i+1] = ttt[i];
-                ttt[ldi]=0;
-                //&fprintf(dumpOut,"mapdirectoryfiles(%s, %s, %s)\n", ttt, ttt+ldi+1, fn+si);fflush(dumpOut);
-                mapDirectoryFiles(ttt, expandWildcardsMapFun, 0, ttt, ttt+ldi+1,
-                                  (Completions*)(fn+si), outpaths, availableSpace);
+            tempString[di] = 0;
+            if (containsWildcard(tempString+ldi)) {
+                for (int i=di; i>=ldi; i--)
+                    tempString[i+1] = tempString[i];
+                tempString[ldi]=0;
+                log_trace("mapdirectoryfiles(%s, %s, %s)", tempString, tempString+ldi+1, fileName+si);
+                mapDirectoryFiles(tempString, expandWildcardsMapFun, 0, tempString, tempString+ldi+1,
+                                  (Completions*)(fileName+si), outpaths, availableSpace);
             } else {
-                ttt[di] = fn[si];
-                if (fn[si]) { di++; si++; }
+                tempString[di] = fileName[si];
+                if (fileName[si]) { di++; si++; }
             }
         }
-    } else if (editorFileStatus(fn, &st) == 0) {
-        len = strlen(fn);
-        strcpy(*outpaths, fn);
-        //&fprintf(dumpOut,"adding expandedpath==%s\n", fn);fflush(dumpOut);
+    } else if (editorFileStatus(fileName, &st) == 0) {
+        int len = strlen(fileName);
+        strcpy(*outpaths, fileName);
+        log_trace("adding expandedpath==%s", fileName);
         *outpaths += len;
         *availableSpace -= len;
         *((*outpaths)++) = CLASS_PATH_SEPARATOR;

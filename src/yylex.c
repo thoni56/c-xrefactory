@@ -1771,7 +1771,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
     fillSymbolRefItem(&ppp, mdef->linkName,
                                 cxFileHashNumber(mdef->linkName), // useless, put 0
                                 noFileIndex, noFileIndex);
-    fillSymbolRefItemBits(&ppp.b,TypeMacro, StorageDefault, ScopeGlobal,
+    fillSymbolRefItemBits(&ppp.bits,TypeMacro, StorageDefault, ScopeGlobal,
                            mdef->bits.access, CategoryGlobal);
     rr = refTabIsMember(&referenceTable, &ppp, NULL, &memb);
     r = NULL;

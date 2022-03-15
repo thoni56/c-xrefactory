@@ -1113,7 +1113,7 @@ static void addAmbCxRef(int classif, Symbol *sym, Position *pos, UsageKind usage
             if (options.server_operation!=OLO_ENCAPSULATE
                 || ! javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, sym, AccessPrivate)) {
                 fillUsage(&usage, usageKind, minacc);
-                *oref=addCxReferenceNew(sym,pos, usage,
+                *oref=addNewCxReference(sym,pos, usage,
                                        rfs->currClass->u.structSpec->classFileIndex,
                                        rfs->baseClass->u.structSpec->classFileIndex);
             }
@@ -2202,7 +2202,7 @@ static TypeModifier *javaMethodInvocation(
         addSuperMethodCxReferences(vFunCl, superPos);
     }
     fillUsage(&usage, usedusage, minacc[smallesti]);
-    addCxReferenceNew(appl[smallesti], &name->position, usage, vFunCl, vApplCl);
+    addNewCxReference(appl[smallesti], &name->position, usage, vFunCl, vApplCl);
     if (options.server_operation == OLO_EXTRACT) {
         for(ee=appl[smallesti]->u.typeModifier->u.m.exceptions; ee!=NULL; ee=ee->next) {
             addCxReference(ee->d, &name->position, UsageThrown, noFileIndex, noFileIndex);
