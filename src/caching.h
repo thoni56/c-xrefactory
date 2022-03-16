@@ -20,7 +20,7 @@ typedef struct cachePoint {
     struct counters			counters;
 } CachePoint;
 
-typedef struct caching {
+typedef struct cache {
     bool activeCache;		/* whether putting input to cache */
     int					cpi;
     struct cachePoint	cp[MAX_CACHE_POINTS];
@@ -31,10 +31,10 @@ typedef struct caching {
     char				*lexcc;					/* first not yet cached lexem */
     char				*cc;					/* cc when input from cache */
     char				*cfin;					/* end of cc, when input ... */
-} S_caching;
+} Cache;
 
 
-extern S_caching cache;
+extern Cache cache;
 
 
 extern void setupCaching(void);

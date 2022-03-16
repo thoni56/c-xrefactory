@@ -15,7 +15,7 @@
 
 #include "log.h"
 
-S_caching cache;
+Cache cache;
 
 
 bool checkFileModifiedTime(int fileIndex) {
@@ -217,7 +217,7 @@ static void recoverCxMemory(char *cxMemFreeBase) {
     refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
 }
 
-static void fillCaching(S_caching *caching,
+static void fillCaching(Cache *caching,
                          char activeCache,
                          int cpi,
                          int ibi,
