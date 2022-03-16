@@ -430,10 +430,6 @@ typedef struct symbolReferenceItem {
     struct symbolReferenceItem  *next;
 } SymbolReferenceItem;
 
-typedef struct symbolReferenceItemList {
-    struct symbolReferenceItem		*d;
-    struct symbolReferenceItemList	*next;
-} SymbolReferenceItemList;
 
 /* ***************** on - line cross referencing ***************** */
 

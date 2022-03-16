@@ -638,7 +638,7 @@ static void removeSymbolFromSymRefList(SymbolReferenceItemList **ll, SymbolRefer
     SymbolReferenceItemList **r;
     r=ll;
     while (*r!=NULL) {
-        if (isSmallerOrEqClass(getClassNumFromClassLinkName((*r)->d->name, noFileIndex),
+        if (isSmallerOrEqClass(getClassNumFromClassLinkName((*r)->item->name, noFileIndex),
                                getClassNumFromClassLinkName(s->name, noFileIndex))) {
             *r = (*r)->next;
         } else {
@@ -650,7 +650,7 @@ static void removeSymbolFromSymRefList(SymbolReferenceItemList **ll, SymbolRefer
 static SymbolReferenceItemList *concatRefItemList(SymbolReferenceItemList **ll, SymbolReferenceItem *s) {
     SymbolReferenceItemList *refItemList;
     CX_ALLOC(refItemList, SymbolReferenceItemList);
-    refItemList->d = s;
+    refItemList->item = s;
     refItemList->next = *ll;
     return refItemList;
 }
@@ -663,7 +663,7 @@ void addSymbolToSymRefList(SymbolReferenceItemList **ll, SymbolReferenceItem *s)
     r = *ll;
     while (r!=NULL) {
         if (isSmallerOrEqClass(getClassNumFromClassLinkName(s->name, noFileIndex),
-                               getClassNumFromClassLinkName(r->d->name, noFileIndex))) {
+                               getClassNumFromClassLinkName(r->item->name, noFileIndex))) {
             return;
         }
         r= r->next;
@@ -695,7 +695,7 @@ static SymbolReferenceItemList *computeExceptionsThrownBetween(ProgramGraphNode 
             if (depth==0) {
                 // add exceptions thrown in block
                 for (excs=computeExceptionsThrownBetween(p->next,e); excs!=NULL; excs=excs->next){
-                    addSymbolToSymRefList(cl, excs->d);
+                    addSymbolToSymRefList(cl, excs->item);
                 }
             }
         }
@@ -710,7 +710,7 @@ static SymbolReferenceItemList *computeExceptionsThrownBetween(ProgramGraphNode 
     }
     res = catched;
     for (excs=noncatched; excs!=NULL; excs=excs->next) {
-        addSymbolToSymRefList(&res, excs->d);
+        addSymbolToSymRefList(&res, excs->item);
     }
     return(res);
 }
@@ -734,10 +734,10 @@ static void extractSprintThrownExceptions(char *nhead, ProgramGraphNode *program
         sprintf(nhead+nhi, " throws");
         nhi += strlen(nhead+nhi);
         for (ee=exceptions; ee!=NULL; ee=ee->next) {
-            sname = lastOccurenceInString(ee->d->name, '$');
-            if (sname==NULL) sname = lastOccurenceInString(ee->d->name, '/');
+            sname = lastOccurenceInString(ee->item->name, '$');
+            if (sname==NULL) sname = lastOccurenceInString(ee->item->name, '/');
             if (sname==NULL) {
-                sname = ee->d->name;
+                sname = ee->item->name;
             } else {
                 sname ++;
             }

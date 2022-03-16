@@ -11,6 +11,12 @@ enum extractModes {
     EXTRACT_MACRO,
 };
 
+/* Revealed publicly only to allow unittesting */
+typedef struct symbolReferenceItemList {
+    struct symbolReferenceItem		*item;
+    struct symbolReferenceItemList	*next;
+} SymbolReferenceItemList;
+
 
 extern Symbol *addContinueBreakLabelSymbol(int labn, char *name);
 extern void actionsBeforeAfterExternalDefinition(void);

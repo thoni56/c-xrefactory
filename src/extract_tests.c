@@ -65,7 +65,7 @@ Ensure(Extract, can_concat_symRefItemList_when_null) {
     SymbolReferenceItem s = {"s", 0, 0, 0, {}, NULL, NULL};
 
     addSymbolToSymRefList(&lp, &s);
-    assert_that(lp->d, is_equal_to(&s));
+    assert_that(lp->item, is_equal_to(&s));
 }
 
 Ensure(Extract, can_concat_symRefItemList_before_existing) {
@@ -78,6 +78,6 @@ Ensure(Extract, can_concat_symRefItemList_before_existing) {
     expect(isSmallerOrEqClass, will_return(false), times(2));
 
     addSymbolToSymRefList(&lp, &s2);
-    assert_that(lp->d, is_equal_to(&s2));
-    assert_that(lp->next->d, is_equal_to(&s1));
+    assert_that(lp->item, is_equal_to(&s2));
+    assert_that(lp->next->item, is_equal_to(&s1));
 }
