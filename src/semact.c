@@ -905,7 +905,7 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
     char *mname, *fname;
     char tmp[MACRO_NAME_SIZE];
     Symbol *memb;
-    int isMember,filen, order, len, len2;
+    int isMember, order, len, len2;
 
     if (iname == NULL)
         iname="";
