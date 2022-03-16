@@ -2960,7 +2960,7 @@ yyreduce:
 case 1:
 #line 248 "yacc_parser.y"
 {
-            s_cache.activeCache = false;    /* no caching in yaccgram */
+            cache.activeCache = false;    /* no caching in yaccgram */
             /* initialize locals*/
             l_yaccUnion = NULL;
             l_currentType = NULL;

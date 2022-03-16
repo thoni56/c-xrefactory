@@ -2,7 +2,7 @@
 #include "caching.h"
 #include <cgreen/mocks.h>
 
-S_caching s_cache;
+S_caching cache;
 
 
 void setupCaching(void) {

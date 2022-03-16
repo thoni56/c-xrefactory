@@ -4574,13 +4574,13 @@ static void getCallerPositionFromCommandLineOption(Position *opos) {
 }
 
 static void answerClassName(char *name) {
-    char ttt[MAX_CX_SYMBOL_SIZE];
+    char tempString[MAX_CX_SYMBOL_SIZE];
     if (*name!=0) {
-        linkNamePrettyPrint(ttt, name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        linkNamePrettyPrint(tempString, name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         if (options.xref2) {
-            ppcGenRecord(PPC_SET_INFO, ttt);
+            ppcGenRecord(PPC_SET_INFO, tempString);
         } else {
-            fprintf(communicationChannel,"*%s", ttt);
+            fprintf(communicationChannel,"*%s", tempString);
         }
     } else {
         errorMessage(ERR_ST, "Not inside a class. Can't get current class.");
@@ -4589,7 +4589,7 @@ static void answerClassName(char *name) {
 
 static void pushSymbolByName(char *name) {
     OlcxReferences *rstack;
-    if (s_cache.cpi>0) {
+    if (cache.cpi>0) {
         int spass;
         spass = currentPass; currentPass=1;
         recoverCachePointZero();
@@ -4630,7 +4630,8 @@ void mainAnswerEditAction(void) {
     case OLO_TAG_SEARCH:
         getCallerPositionFromCommandLineOption(&opos);
         //&olCompletionListInit(&opos);
-        if (! options.xref2) fprintf(communicationChannel,";");
+        if (!options.xref2)
+            fprintf(communicationChannel,";");
         assert(currentUserData);
         olcxPushEmptyStackItem(&currentUserData->retrieverStack);
         currentUserData->retrieverStack.top->callerPosition = opos;

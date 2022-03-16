@@ -1229,11 +1229,11 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
     log_trace("scanning %s ; %s", zip, file);
     suff = getFileSuffix(file);
     if (compareFileNames(suff, ".class")==0) {
-        cpi = s_cache.cpi;
-        s_cache.activeCache = true;
+        cpi = cache.cpi;
+        cache.activeCache = true;
         log_trace("firstFreeIndex = %d", currentBlock->firstFreeIndex);
         placeCachePoint(false);
-        s_cache.activeCache = false;
+        cache.activeCache = false;
         memb = javaGetFieldClass(file, &tt);
         FileItem *fileItem = getFileItem(javaCreateClassFileItem(memb));
         if (!fileItem->bits.cxSaved) {
@@ -1247,7 +1247,7 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
         }
         // following is to free CF_MEMORY taken by scan, only
         // cross references in CX_MEMORY are interesting in this case.
-        recoverCachePoint(cpi-1, s_cache.cp[cpi-1].lbcc, 0);
+        recoverCachePoint(cpi-1, cache.cp[cpi-1].lbcc, 0);
         log_trace("firstFreeIndex = %d", currentBlock->firstFreeIndex);
         log_trace(":ppmmem == %d/%d %x-%x", ppmMemoryIndex, SIZE_ppmMemory, ppmMemory, ppmMemory+SIZE_ppmMemory);
     }

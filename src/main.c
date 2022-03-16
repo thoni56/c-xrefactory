@@ -1680,7 +1680,7 @@ static void mainParseInputFile(void) {
         uniyylval = & c_yylval;
         c_yyparse();
     }
-    s_cache.activeCache = false;
+    cache.activeCache = false;
     currentFile.fileName = NULL;
 }
 
@@ -1982,7 +1982,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         || oldStdopTime != dffstat.st_mtime
         || oldLanguage!= *outLanguage
         || strcmp(oldOnLineClassPath, options.classpath)
-        || s_cache.cpi == 1     /* some kind of reset was made */
+        || cache.cpi == 1     /* some kind of reset was made */
     ) {
         if (*firstPass) {
             initCaching();
@@ -2036,11 +2036,11 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
         initTokenNamesTables();
 
-        s_cache.activeCache = true;
+        cache.activeCache = true;
         placeCachePoint(false);
-        s_cache.activeCache = false;
-        assert(s_cache.lbcc == s_cache.cp[0].lbcc);
-        assert(s_cache.lbcc == s_cache.cp[1].lbcc);
+        cache.activeCache = false;
+        assert(cache.lbcc == cache.cp[0].lbcc);
+        assert(cache.lbcc == cache.cp[1].lbcc);
     } else {
         copyOptions(&options, &s_cachedOptions);
         processOptions(nargc, nargv, INFILES_DISABLED); /* no include or define options */
@@ -2692,7 +2692,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPass,
         olOriginalComFileNumber = olOriginalFileNumber;
         if (inputOpened) {
             recoverFromCache();
-            s_cache.activeCache = false;    /* no caching in cxref */
+            cache.activeCache = false;    /* no caching in cxref */
             mainParseInputFile();
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
             inputOpened = false;
@@ -2898,7 +2898,7 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     processOptions(nargc, nargv, INFILES_ENABLED); /* no include or define options */
     mainScheduleInputFilesFromOptionsToFileTable();
     if (options.server_operation == OLO_EXTRACT)
-        s_cache.cpi = 2; // !!!! no cache, TODO why is 2 = no cache?
+        cache.cpi = 2; // !!!! no cache, TODO why is 2 = no cache?
     olcxSetCurrentUser(options.user);
     initCompletions(&s_completions, 0, noPosition);
 }
@@ -2960,7 +2960,7 @@ static void mainEditServer(int argc, char **argv) {
         editorCloseAllBuffers();
         closeMainOutputFile();
         if (options.server_operation == OLO_EXTRACT)
-            s_cache.cpi = 2; // !!!! no cache
+            cache.cpi = 2; // !!!! no cache
         if (options.last_message != NULL) {
             fprintf(communicationChannel, "%s",options.last_message);
             fflush(communicationChannel);

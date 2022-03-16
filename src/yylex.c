@@ -119,7 +119,7 @@ void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,
 }
 
 static void setCacheConsistency(void) {
-    s_cache.cc = currentInput.currentLexemP;
+    cache.cc = currentInput.currentLexemP;
 }
 static void setCFileConsistency(void) {
     currentFile.lexBuffer.next = currentInput.currentLexemP;
@@ -303,9 +303,9 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
             }
             setCInputConsistency();
         } else {
-            s_cache.cc = s_cache.cfin = NULL;
+            cache.cc = cache.cfin = NULL;
             cacheInput();
-            s_cache.lexcc = currentFile.lexBuffer.next;
+            cache.lexcc = currentFile.lexBuffer.next;
             setCInputConsistency();
         }
         *previousLexem = currentInput.currentLexemP;
@@ -334,7 +334,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (lexem==IDENT_TO_COMPLETE) {
-            s_cache.activeCache = false;
+            cache.activeCache = false;
             s_olstringServed = true;
             if (s_language == LANG_JAVA) {
                 makeJavaCompletions(idd, strlen(idd), pos);
@@ -434,8 +434,8 @@ void popInclude(void) {
     closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     if (includeStackPointer != 0) {
         currentFile = includeStack[--includeStackPointer];	/* buffers are copied !!!!!!, burk */
-        if (includeStackPointer == 0 && s_cache.cc!=NULL) {
-            fillLexInput(&currentInput, s_cache.cc, s_cache.cfin, s_cache.lb, NULL, INPUT_CACHE);
+        if (includeStackPointer == 0 && cache.cc!=NULL) {
+            fillLexInput(&currentInput, cache.cc, cache.cfin, cache.lb, NULL, INPUT_CACHE);
         } else {
             setCInputConsistency();
         }
@@ -817,7 +817,7 @@ void processDefineDirective(bool hasArguments) {
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, s_cxRefPos))) {
-                    s_cache.activeCache = false;
+                    cache.activeCache = false;
                     s_olstringFound = true;
                     s_olstringInMbody = symbol->linkName;
                 }
@@ -1898,7 +1898,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
     int res;
 
     assert(cpoint > 0);
-    cto = s_cache.cp[cpoint].lbcc;
+    cto = cache.cp[cpoint].lbcc;
     ccc = *cfrom;
     res = 1;
 

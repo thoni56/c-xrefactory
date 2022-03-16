@@ -16,7 +16,7 @@
 
 void gotOnLineCxRefs(Position *ps ) {
     if (creatingOlcxRefs()) {
-        s_cache.activeCache = false;
+        cache.activeCache = false;
         s_cxRefPos = *ps;
     }
 }
@@ -137,7 +137,7 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
                     putLexToken(IDENT_TO_COMPLETE, &ddd);               \
                     ch = getChar(cb);                                   \
                 } else if (ch == CC_CXREF) {                            \
-                    s_cache.activeCache = false;                        \
+                    cache.activeCache = false;                        \
                     s_cxRefPos = makePosition(cb->fileNumber, cb->lineNumber, idcol); \
                     goto identCont##labelSuffix;                        \
                 } else errorMessage(ERR_INTERNAL, "unknown communication char"); \
@@ -188,9 +188,9 @@ bool getLexemFromLexer(LexemBuffer *lb) {
 
     /* first test whether the input is cached */
     /* TODO: why do we need to know this? */
-    if (s_cache.activeCache && includeStackPointer==0 && macroStackIndex==0) {
+    if (cache.activeCache && includeStackPointer==0 && macroStackIndex==0) {
         cacheInput();
-        s_cache.lexcc = lb->lexemStream;
+        cache.lexcc = lb->lexemStream;
     }
 
     lmax = lb->lexemStream + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;

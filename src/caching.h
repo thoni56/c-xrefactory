@@ -34,7 +34,7 @@ typedef struct caching {
 } S_caching;
 
 
-extern S_caching s_cache;
+extern S_caching cache;
 
 
 extern void setupCaching(void);
