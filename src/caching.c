@@ -217,24 +217,16 @@ static void recoverCxMemory(char *cxMemFreeBase) {
     refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
 }
 
-static void fillCaching(Cache *caching,
-                         char activeCache,
-                         int cpi,
-                         int ibi,
-                         char *lbcc,
-                         char *lexcc,
-                         char *cc,
-                         char *cfin
-                         ) {
-    caching->activeCache = activeCache;
-    caching->cpi = cpi;
-    caching->ibi = ibi;
-    caching->lbcc = lbcc;
-    caching->lexcc = lexcc;
-    caching->cc = cc;
-    caching->cfin = cfin;
+static void fillCaching(Cache *caching, char activeCache, int cpi, int ibi, char *lbcc, char *lexcc, char *cc,
+                        char *cfin) {
+    caching->active = activeCache;
+    caching->cpi    = cpi;
+    caching->ibi    = ibi;
+    caching->lbcc   = lbcc;
+    caching->lexcc  = lexcc;
+    caching->cc     = cc;
+    caching->cfin   = cfin;
 }
-
 
 // before allowing it, fix problem when modifying .xrefrc during run!!!!
 #define CACHING_CLASSES 1
@@ -310,7 +302,7 @@ void recoverFromCache(void) {
     char *readUntil;
 
     assert(cache.cpi >= 1);
-    cache.activeCache = false;
+    cache.active = false;
     /*  s_cache.recoveringFromCache = 1;*/
     log_debug("reading from cache");
     readUntil = cache.cp[0].lbcc;
@@ -334,7 +326,7 @@ void setupCaching(void) {
 void initCaching(void) {
     fillCaching(&cache, 1, 0, 0, cache.lb, currentFile.lexBuffer.next, NULL,NULL);
     placeCachePoint(false);
-    cache.activeCache = false;
+    cache.active = false;
 }
 
 /* ****************************************************************** */
@@ -345,7 +337,7 @@ void cacheInput(void) {
     int size;
 
     ENTER();
-    if (!cache.activeCache) {
+    if (!cache.active) {
         log_trace("Caching is not active");
         LEAVE();
         return;
@@ -357,7 +349,7 @@ void cacheInput(void) {
     }
     size = currentInput.currentLexemP - cache.lexcc;
     if (cache.lbcc - cache.lb + size >= LEX_BUF_CACHE_SIZE) {
-        cache.activeCache = false;
+        cache.active = false;
         LEAVE();
         return;
     }
@@ -370,7 +362,7 @@ void cacheInput(void) {
 }
 
 void cacheInclude(int fileNum) {
-    if (!cache.activeCache)
+    if (!cache.active)
         return;
     log_debug("caching include of file %d: %s",
               cache.ibi, getFileItem(fileNum)->name);
@@ -379,7 +371,7 @@ void cacheInclude(int fileNum) {
     cache.ib[cache.ibi] = fileNum;
     cache.ibi ++;
     if (cache.ibi >= INCLUDE_CACHE_SIZE)
-        cache.activeCache = false;
+        cache.active = false;
 }
 
 static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmMemoryIndex,
@@ -402,17 +394,17 @@ static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmM
 
 void placeCachePoint(bool inputCaching) {
     CachePoint *pp;
-    if (!cache.activeCache)
+    if (!cache.active)
         return;
     if (includeStackPointer != 0 || macroStackIndex != 0)
         return;
     if (cache.cpi >= MAX_CACHE_POINTS) {
-        cache.activeCache = false;
+        cache.active = false;
         return;
     }
     if (inputCaching)
         cacheInput();
-    if (!cache.activeCache)
+    if (!cache.active)
         return;
     pp = &cache.cp[cache.cpi];
     log_debug("placing cache point %d", cache.cpi);

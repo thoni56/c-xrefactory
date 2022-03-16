@@ -1680,7 +1680,7 @@ static void mainParseInputFile(void) {
         uniyylval = & c_yylval;
         c_yyparse();
     }
-    cache.activeCache = false;
+    cache.active = false;
     currentFile.fileName = NULL;
 }
 
@@ -2036,9 +2036,9 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
         initTokenNamesTables();
 
-        cache.activeCache = true;
+        cache.active = true;
         placeCachePoint(false);
-        cache.activeCache = false;
+        cache.active = false;
         assert(cache.lbcc == cache.cp[0].lbcc);
         assert(cache.lbcc == cache.cp[1].lbcc);
     } else {
@@ -2692,7 +2692,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPass,
         olOriginalComFileNumber = olOriginalFileNumber;
         if (inputOpened) {
             recoverFromCache();
-            cache.activeCache = false;    /* no caching in cxref */
+            cache.active = false;    /* no caching in cxref */
             mainParseInputFile();
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
             inputOpened = false;

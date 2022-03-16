@@ -334,7 +334,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (lexem==IDENT_TO_COMPLETE) {
-            cache.activeCache = false;
+            cache.active = false;
             s_olstringServed = true;
             if (s_language == LANG_JAVA) {
                 makeJavaCompletions(idd, strlen(idd), pos);
@@ -817,7 +817,7 @@ void processDefineDirective(bool hasArguments) {
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, s_cxRefPos))) {
-                    cache.activeCache = false;
+                    cache.active = false;
                     s_olstringFound = true;
                     s_olstringInMbody = symbol->linkName;
                 }

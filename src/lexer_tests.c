@@ -27,7 +27,7 @@ AfterEach(Lexer) {}
 Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
     LexemBuffer lexemBuffer;
 
-    cache.activeCache = false; /* ?? */
+    cache.active = false; /* ?? */
 
     lexemBuffer.next = NULL;
     lexemBuffer.end = NULL;
@@ -44,7 +44,7 @@ Ensure(Lexer, can_scan_a_floating_point_number) {
     CharacterBuffer *charBuffer = &lexemBuffer.buffer;
     char *inputString = "4.3f";
 
-    cache.activeCache = false; /* ?? */
+    cache.active = false; /* ?? */
 
     initLexemBuffer(&lexemBuffer, NULL);
     charBuffer->fileNumber = 0;
@@ -61,7 +61,7 @@ Ensure(Lexer, can_scan_include_next) {
     CharacterBuffer *charBuffer = &lexemBuffer.buffer;
     char *inputString = "\n#include_next \"file\""; /* Directives must follow \n to be in column 1 */
 
-    cache.activeCache = false; /* ?? */
+    cache.active = false; /* ?? */
 
     initLexemBuffer(&lexemBuffer, NULL);
     charBuffer->fileNumber = 0;
