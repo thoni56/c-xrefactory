@@ -10,7 +10,12 @@ There are a *lot* of things to do to make c-xref into modern C.
   https://en.cppreference.com/w/c/types/integer
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
-** TODO Use compiler identification to set extra defines
+** TODO Use compiler identification to set extra 
+* TODO Header files. There are a number of sections in the proto.h that
+  indicates which file/module it declares an externa interface for. We
+  should move that to a <module>.h file instead. Just watchout for
+  datatypes that need to be in proto.h because of the strFill et. al
+  generation. (Gone now!) Not all does, though...
 * TODO BUG: sometimes cxref data gets out of sync with actual code (in Emacs)
   Unknown if it has to do with buffer management, it is not possible to reproduce yet
 * TODO BUG: an unterminated "assert(" (with the c-xref def of it: MACRO) breaks
@@ -114,12 +119,6 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
 ** TODO Use actual typedef names where ever possible
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
-
-* TODO Header files. There are a number of sections in the proto.h that
-  indicates which file/module it declares an externa interface for. We
-  should move that to a <module>.h file instead. Just watchout for
-  datatypes that need to be in proto.h because of the strFill et. al
-  generation. (Gone now!) Not all does, though...
 
 * TODO Modules. Better use of modules (Clean Code/Architecture/Hexagonal)
   The hash tables and lists are such candidates. If we do that it would be much
