@@ -7,7 +7,7 @@
 #include "filedescriptor.h"
 #include "filetable.h"
 
-#include "caching.h"            /* s_cache && cacheInput() */
+#include "caching.h"            /* cache && cacheInput() */
 #include "jslsemact.h"          /* s_jsl */
 
 #include "log.h"

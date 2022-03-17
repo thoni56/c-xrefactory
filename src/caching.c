@@ -217,21 +217,20 @@ static void recoverCxMemory(char *cxMemFreeBase) {
     refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
 }
 
-static void fillCaching(Cache *caching, char activeCache, int cpi, int ibi, char *lbcc, char *lexcc, char *cc,
-                        char *cfin) {
-    caching->active = activeCache;
-    caching->cpi    = cpi;
-    caching->ibi    = ibi;
-    caching->lbcc   = lbcc;
-    caching->lexcc  = lexcc;
-    caching->cc     = cc;
-    caching->cfin   = cfin;
+static void fillCache(Cache *cache, char active, int cpi, int ibi, char *lbcc, char *lexcc, char *cc,
+                      char *cfin) {
+    cache->active = active;
+    cache->cpi    = cpi;
+    cache->ibi    = ibi;
+    cache->lbcc   = lbcc;
+    cache->lexcc  = lexcc;
+    cache->cc     = cc;
+    cache->cfin   = cfin;
 }
 
 // before allowing it, fix problem when modifying .xrefrc during run!!!!
 #define CACHING_CLASSES 1
-#define CAN_CONTINUE_CACHING_CLASSES(cp) (                              \
-                                          CACHING_CLASSES               \
+#define CAN_CONTINUE_CACHING_CLASSES(cp) (CACHING_CLASSES               \
                                           && LANGUAGE(LANG_JAVA)         \
                                           && options.taskRegime == RegimeXref \
                                           && ppmMemoryIndex < (SIZE_ppmMemory/3)*2 \
@@ -287,7 +286,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     currentFile.ifDepth = cp->ifDepth;
     currentFile.ifStack = cp->ifStack;
     fillLexInput(&currentInput, cp->lbcc, readUntil, cache.lb, NULL, INPUT_CACHE);
-    fillCaching(&cache,
+    fillCache(&cache,
                 activeCaching, i+1, cp->ibi, cp->lbcc,
                 currentInput.currentLexemP, currentInput.currentLexemP, currentInput.endOfBuffer);
     log_trace("finished recovering");
@@ -303,7 +302,6 @@ void recoverFromCache(void) {
 
     assert(cache.cpi >= 1);
     cache.active = false;
-    /*  s_cache.recoveringFromCache = 1;*/
     log_debug("reading from cache");
     readUntil = cache.cp[0].lbcc;
     for (i=1; i<cache.cpi; i++) {
@@ -320,17 +318,17 @@ void recoverFromCache(void) {
 }
 
 void setupCaching(void) {
-    fillCaching(&cache,0,0,0,NULL,NULL,NULL,NULL);
+    fillCache(&cache,0,0,0,NULL,NULL,NULL,NULL);
 }
 
 void initCaching(void) {
-    fillCaching(&cache, 1, 0, 0, cache.lb, currentFile.lexBuffer.next, NULL,NULL);
+    fillCache(&cache, 1, 0, 0, cache.lb, currentFile.lexBuffer.next, NULL,NULL);
     placeCachePoint(false);
     cache.active = false;
 }
 
 /* ****************************************************************** */
-/*        caching of input from 's_cache.lexcc' to 'cInput.cc'       */
+/*        caching of input from 'cache.lexcc' to 'cInput.cc'          */
 /* ****************************************************************** */
 
 void cacheInput(void) {
