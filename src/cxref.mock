@@ -166,10 +166,10 @@ void olSetCallerPosition(Position *pos) {
     mock(pos);
 }
 
-S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s,
+OlCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s,
                                         ReferencesItem *ri, Reference *dfpos, int symType, int vFunClass,
                                         OlcxReferences *stack) {
-    return (S_olCompletion *) mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, stack);
+    return (OlCompletion *) mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, stack);
 }
 
 SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl, Position *defpos,

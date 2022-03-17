@@ -363,9 +363,9 @@ void olCompletionListInit(Position *originalPos) {
     currentUserData->completionsStack.top->callerPosition = *originalPos;
 }
 
-static int completionsWillPrintEllipsis(S_olCompletion *olc) {
+static int completionsWillPrintEllipsis(OlCompletion *olc) {
     int max, ellipsis;
-    LIST_LEN(max, S_olCompletion, olc);
+    LIST_LEN(max, OlCompletion, olc);
     ellipsis = 0;
     if (max >= MAX_COMPLETIONS - 2 || max == options.maxCompletions) {
         ellipsis = 1;
@@ -373,11 +373,11 @@ static int completionsWillPrintEllipsis(S_olCompletion *olc) {
     return ellipsis;
 }
 
-static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
+static void printCompletionsBeginning(OlCompletion *olc, int noFocus) {
     int                 max;
     int                 tlen;
 
-    LIST_LEN(max, S_olCompletion, olc);
+    LIST_LEN(max, OlCompletion, olc);
     if (options.xref2) {
         if (options.editor == EDITOR_JEDIT) {
             ppcBeginWithTwoNumericAttributes(PPC_FULL_MULTIPLE_COMPLETIONS,
@@ -385,7 +385,7 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
                                            PPCA_NO_FOCUS, noFocus);
         } else {
             tlen = 0;
-            for (S_olCompletion *cc=olc; cc!=NULL; cc=cc->next) {
+            for (OlCompletion *cc=olc; cc!=NULL; cc=cc->next) {
                 tlen += strlen(cc->fullName);
                 if (cc->next!=NULL) tlen++;
             }
@@ -398,7 +398,7 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
     }
 }
 
-static void printOneCompletion(S_olCompletion *olc) {
+static void printOneCompletion(OlCompletion *olc) {
     if (options.editor == EDITOR_JEDIT) {
         fprintf(communicationChannel,"<%s %s=\"%s\" %s=%d %s=%ld>", PPC_MULTIPLE_COMPLETION_LINE,
                 PPCA_VCLASS, olc->vclass,
@@ -411,7 +411,7 @@ static void printOneCompletion(S_olCompletion *olc) {
     }
 }
 
-static void printCompletionsEnding(S_olCompletion *olc) {
+static void printCompletionsEnding(OlCompletion *olc) {
     if (completionsWillPrintEllipsis(olc)) {
         if (options.editor == EDITOR_JEDIT) {
         } else {
@@ -428,7 +428,7 @@ static void printCompletionsEnding(S_olCompletion *olc) {
 }
 
 void printCompletionsList(int noFocus) {
-    S_olCompletion *cc, *olc;
+    OlCompletion *cc, *olc;
     olc = currentUserData->completionsStack.top->completions;
     printCompletionsBeginning(olc, noFocus);
     for(cc=olc; cc!=NULL; cc=cc->next) {

@@ -64,7 +64,7 @@ extern void addTrivialCxReference (char *name, int symType, int storage,
 extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
                               int bestMatchFlag);
 extern void olSetCallerPosition(Position *pos);
-extern S_olCompletion * olCompletionListPrepend(char *name, char *fullText,
+extern OlCompletion * olCompletionListPrepend(char *name, char *fullText,
                                                 char *vclass, int jindent, Symbol *s,
                                                 ReferencesItem *ri, Reference *dfpos,
                                                 int symType, int vFunClass,

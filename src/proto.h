@@ -434,22 +434,22 @@ typedef struct referencesItem {
 /* ***************** on - line cross referencing ***************** */
 
 typedef struct olCompletion {
-    char					*name;
-    char					*fullName;
-    char					*vclass;
-    short int				jindent;
-    short int				lineCount;
-    char					category;       /* Global/Local */
-    char					csymType;		/* symtype of completion */
-    struct reference		ref;
-    struct referencesItem	sym;
-    struct olCompletion		*next;
-} S_olCompletion;
+    char                 *name;
+    char                 *fullName;
+    char                 *vclass;
+    short int             jindent;
+    short int             lineCount;
+    char                  category; /* Global/Local TODO: enum!*/
+    Type                  csymType; /* symtype of completion */
+    struct reference      ref;
+    struct referencesItem sym;
+    struct olCompletion  *next;
+} OlCompletion;
 
 typedef struct SymbolFoundInformation {
-    struct referencesItem	*symrefs;		/* this is valid */
-    struct referencesItem	*symRefsInfo;	/* additional for error message */
-    struct reference		*currentRef;
+    struct referencesItem *symrefs;     /* this is valid */
+    struct referencesItem *symRefsInfo; /* additional for error message */
+    struct reference      *currentRef;
 } SymbolFoundInformation;
 
 typedef struct SymbolsMenu {
@@ -467,7 +467,6 @@ typedef struct SymbolsMenu {
     struct editorMarkerList	*markers;	/* for refactory only */
     struct SymbolsMenu	*next;
 } SymbolsMenu;
-
 
 typedef struct olcxReferences {
     struct reference        *references; /* list of references */
