@@ -3137,7 +3137,7 @@ case 192:
             d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position, yyval.ast_expressionType.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
-            dd = addNewSymbolDef(d, StorageExtern, symbolTable, UsageUsed);
+            dd = addNewSymbolDefinition(d, StorageExtern, symbolTable, UsageUsed);
             yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->position, UsageUsed, noFileIndex, noFileIndex);
         }
     }
@@ -4052,14 +4052,14 @@ case 378:
 #line 1193 "yacc_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[0].ast_id.d);
-        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
     }
 break;
 case 379:
 #line 1197 "yacc_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[-2].ast_id.d);
-        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
     }
 break;
 case 380:
@@ -4866,7 +4866,7 @@ case 533:
         /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
-        addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, symbolTable, UsageDefined);
+        addNewSymbolDefinition(yyvsp[0].ast_symbol.d, StorageExtern, symbolTable, UsageDefined);
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
         beginBlock();
         counters.localVar = 0;

@@ -473,7 +473,7 @@ primary_expr
             d = newSymbolAsType($1.d->name, $1.d->name, $1.d->position, $$.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
-            dd = addNewSymbolDef(d, StorageExtern, symbolTable, UsageUsed);
+            dd = addNewSymbolDefinition(d, StorageExtern, symbolTable, UsageUsed);
             $$.d.reference = addCxReference(dd, &$1.d->position, UsageUsed, noFileIndex, noFileIndex);
         }
     }
@@ -1192,11 +1192,11 @@ enumerator_list
 enumerator
     : identifier                            {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
-        addNewSymbolDef($$.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition($$.d,StorageConstant, symbolTable, UsageDefined);
     }
     | identifier '=' constant_expr          {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
-        addNewSymbolDef($$.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition($$.d,StorageConstant, symbolTable, UsageDefined);
     }
     | error                                 {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
@@ -1871,7 +1871,7 @@ external_definition
         /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
-        addNewSymbolDef($2.d, StorageExtern, symbolTable, UsageDefined);
+        addNewSymbolDefinition($2.d, StorageExtern, symbolTable, UsageDefined);
         savedWorkMemoryIndex = $1.d;
         beginBlock();
         counters.localVar = 0;

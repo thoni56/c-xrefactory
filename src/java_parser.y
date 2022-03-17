@@ -2918,7 +2918,7 @@ CatchClause
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         if ($3.d->bits.symbolType != TypeError) {
-                            addNewSymbolDef($3.d, StorageAuto, s_javaStat->locals,
+                            addNewSymbolDefinition($3.d, StorageAuto, s_javaStat->locals,
                                             UsageDefined);
                             if (options.server_operation == OLO_EXTRACT) {
                                 assert($3.d->bits.symbolType==TypeDefault);

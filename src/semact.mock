@@ -64,7 +64,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClas
     return (int) mock(ss, recname, res, javaClassif, accessibilityCheck, visibilityCheck);
 }
 
-Symbol *addNewSymbolDef(Symbol *p, unsigned storage, SymbolTable *tab, UsageKind usage) {
+Symbol *addNewSymbolDefinition(Symbol *p, unsigned storage, SymbolTable *tab, UsageKind usage) {
     return (Symbol *) mock(p, storage, tab, usage);
 }
 

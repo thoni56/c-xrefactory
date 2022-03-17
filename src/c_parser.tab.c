@@ -2296,7 +2296,7 @@ case 1:
             d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position, yyval.ast_expressionType.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
-            dd = addNewSymbolDef(d, StorageExtern, symbolTable, UsageUsed);
+            dd = addNewSymbolDefinition(d, StorageExtern, symbolTable, UsageUsed);
             yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->position, UsageUsed, noFileIndex, noFileIndex);
         }
     }
@@ -3211,14 +3211,14 @@ case 187:
 #line 976 "c_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[0].ast_id.d);
-        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition(yyval.ast_symbol.d, StorageConstant, symbolTable, UsageDefined);
     }
 break;
 case 188:
 #line 980 "c_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[-2].ast_id.d);
-        addNewSymbolDef(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition(yyval.ast_symbol.d, StorageConstant, symbolTable, UsageDefined);
     }
 break;
 case 189:
@@ -4025,7 +4025,7 @@ case 342:
         /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
-        addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, symbolTable, UsageDefined);
+        addNewSymbolDefinition(yyvsp[0].ast_symbol.d, StorageExtern, symbolTable, UsageDefined);
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
         beginBlock();
         counters.localVar = 0;
@@ -4088,21 +4088,21 @@ case 350:
 #line 1696 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
-        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
+        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern, symbolTable);
     }
 break;
 case 351:
 #line 1700 "c_parser.y"
 {
         yyval.ast_symbol.d = & s_defaultIntDefinition;
-        addNewDeclaration(yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
+        addNewDeclaration(yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern, symbolTable);
     }
 break;
 case 352:
 #line 1704 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
-        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
+        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern, symbolTable);
     }
 break;
 case 353:

@@ -256,7 +256,7 @@ primary_expr
             d = newSymbolAsType($1.d->name, $1.d->name, $1.d->position, $$.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
-            dd = addNewSymbolDef(d, StorageExtern, symbolTable, UsageUsed);
+            dd = addNewSymbolDefinition(d, StorageExtern, symbolTable, UsageUsed);
             $$.d.reference = addCxReference(dd, &$1.d->position, UsageUsed, noFileIndex, noFileIndex);
         }
     }
@@ -975,11 +975,11 @@ enumerator_list
 enumerator
     : identifier                            {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
-        addNewSymbolDef($$.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition($$.d, StorageConstant, symbolTable, UsageDefined);
     }
     | identifier '=' constant_expr          {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
-        addNewSymbolDef($$.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition($$.d, StorageConstant, symbolTable, UsageDefined);
     }
     | error                                 {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
@@ -1654,7 +1654,7 @@ external_definition
         /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
-        addNewSymbolDef($2.d, StorageExtern, symbolTable, UsageDefined);
+        addNewSymbolDefinition($2.d, StorageExtern, symbolTable, UsageDefined);
         savedWorkMemoryIndex = $1.d;
         beginBlock();
         counters.localVar = 0;
@@ -1695,15 +1695,15 @@ external_definition
 top_init_declarations
     : declaration_specifiers init_declarator eq_initializer_opt {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, $3.d, StorageExtern,symbolTable);
+        addNewDeclaration($1.d, $2.d, $3.d, StorageExtern, symbolTable);
     }
     | init_declarator eq_initializer_opt                        {
         $$.d = & s_defaultIntDefinition;
-        addNewDeclaration($$.d, $1.d, $2.d, StorageExtern,symbolTable);
+        addNewDeclaration($$.d, $1.d, $2.d, StorageExtern, symbolTable);
     }
     | top_init_declarations ',' init_declarator eq_initializer_opt          {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, $4.d, StorageExtern,symbolTable);
+        addNewDeclaration($1.d, $3.d, $4.d, StorageExtern, symbolTable);
     }
     | error                                                     {
         /* $$.d = &s_errorSymbol; */
