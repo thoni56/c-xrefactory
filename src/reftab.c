@@ -10,7 +10,7 @@
 
 ReferenceTable referenceTable;
 
-static bool equalReferenceItems(SymbolReferenceItem *e1, SymbolReferenceItem *e2) {
+static bool equalReferenceItems(ReferencesItem *e1, ReferencesItem *e2) {
     return e1->bits.symType==e2->bits.symType
         && e1->bits.storage==e2->bits.storage
         && e1->bits.category==e2->bits.category

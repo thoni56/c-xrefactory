@@ -5,7 +5,7 @@
 
 #define HASH_TAB_NAME refTab
 #define HASH_TAB_TYPE ReferenceTable
-#define HASH_ELEM_TYPE SymbolReferenceItem
+#define HASH_ELEM_TYPE ReferencesItem
 
 #include "hashlist.th"
 

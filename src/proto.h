@@ -404,32 +404,32 @@ typedef struct jslSymbolList {
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
 // A *reference* is a position with a particular usage
-#define NO_REFERENCE (Reference){NO_USAGE, no_Position, NULL)
+#define NO_REFERENCE                                                                                              \
+    (Reference) {NO_USAGE, no_Position, NULL)
 typedef struct reference {
-    struct usage			usage;
-    struct position			position;
-    struct reference        *next;
+    struct usage      usage;
+    struct position   position;
+    struct reference *next;
 } Reference;
 
-typedef struct symbolReferenceItemBits {
-    Type					symType		: SYMTYPES_LN;
-    Storage					storage		: STORAGES_LN;
-    ReferenceScope			scope		: SCOPES_LN;
-    AccessKind				accessFlags	: 12; /* java access bits */
-    ReferenceCategory		category	: 2;  /* local/global */
-} SymbolReferenceItemBits;
+typedef struct referencesItemBits {
+    Type              symType : SYMTYPES_LN;
+    Storage           storage : STORAGES_LN;
+    ReferenceScope    scope : SCOPES_LN;
+    AccessKind        accessFlags : 12; /* java access bits */
+    ReferenceCategory category : 2;     /* local/global */
+} ReferencesItemBits;
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefItem!
-typedef struct symbolReferenceItem {
-    char						*name;
-    unsigned					fileHash;
-    int							vApplClass;	/* appl class for java virtuals */
-    int							vFunClass;	/* fun class for java virtuals */
-    struct symbolReferenceItemBits bits;
-    struct reference			*references;
-    struct symbolReferenceItem  *next;
-} SymbolReferenceItem;
-
+typedef struct referencesItem {
+    char                     *name;
+    unsigned                  fileHash;
+    int                       vApplClass; /* appl class for java virtuals */
+    int                       vFunClass;  /* fun class for java virtuals */
+    struct referencesItemBits bits;
+    struct reference         *references;
+    struct referencesItem    *next;
+} ReferencesItem;
 
 /* ***************** on - line cross referencing ***************** */
 
@@ -442,18 +442,18 @@ typedef struct olCompletion {
     char					category;       /* Global/Local */
     char					csymType;		/* symtype of completion */
     struct reference		ref;
-    struct symbolReferenceItem	sym;
+    struct referencesItem	sym;
     struct olCompletion		*next;
 } S_olCompletion;
 
 typedef struct SymbolFoundInformation {
-    struct symbolReferenceItem	*symrefs;		/* this is valid */
-    struct symbolReferenceItem	*symRefsInfo;	/* additional for error message */
+    struct referencesItem	*symrefs;		/* this is valid */
+    struct referencesItem	*symRefsInfo;	/* additional for error message */
     struct reference		*currentRef;
 } SymbolFoundInformation;
 
 typedef struct SymbolsMenu {
-    struct symbolReferenceItem	s;
+    struct referencesItem	s;
     char					selected;
     char					visible;
     unsigned				ooBits;

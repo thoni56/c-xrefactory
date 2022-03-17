@@ -39,13 +39,13 @@ typedef unsigned bitArray;
 extern void jarFileParse(char *file_name);
 extern void scanJarFilesForTagSearch(void);
 extern void classFileParse(void);
-extern void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name);
+extern void fillTrivialSpecialRefItem(ReferencesItem *ddd , char *name);
 
 extern void dumpOptions(int nargc, char **nargv);
 
 extern void symDump(Symbol *symbol);
 extern void typeDump(TypeModifier *typeModifiers);
-extern void symbolRefItemDump(SymbolReferenceItem *ss);
+extern void symbolRefItemDump(ReferencesItem *ss);
 extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos);
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
                        int dclSepChar, int maxDeep, int typedefexp,

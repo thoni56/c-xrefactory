@@ -399,7 +399,7 @@ static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, SymbolsMenu *rrr) {
     //& s_symbolListOutputCurrentLine ++ ;
 }
 
-static int isVirtualMenuItem(SymbolReferenceItem *p) {
+static int isVirtualMenuItem(ReferencesItem *p) {
     return (p->bits.storage == StorageField
             || p->bits.storage == StorageMethod
             || p->bits.storage == StorageConstructor);
@@ -410,7 +410,7 @@ static void genVirtualsGlobRefLists(    SymbolsMenu *rrr,
                                         char *fn
                                         ) {
     SymbolsMenu *ss;
-    SymbolReferenceItem *p;
+    ReferencesItem *p;
 
     // first count if there are some references at all
     for(ss=rrr; ss!=NULL && ss->visible==0; ss=ss->next) ;
@@ -428,7 +428,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *rrr,
                                        FILE *ff,
                                        char *fn) {
     SymbolsMenu *ss;
-    SymbolReferenceItem *p;
+    ReferencesItem *p;
 
     // first count if there are some references at all
     for(ss=rrr; ss!=NULL && ss->visible==0; ss=ss->next) ;
@@ -451,7 +451,7 @@ void splitMenuPerSymbolsAndMap(SymbolsMenu *rrr,
                                char *p2
                                ) {
     SymbolsMenu *rr, *mp, **ss, *cc, *all;
-    SymbolReferenceItem *cs;
+    ReferencesItem *cs;
     all = NULL;
     rr = rrr;
     while (rr!=NULL) {

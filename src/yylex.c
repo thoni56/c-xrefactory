@@ -1763,7 +1763,7 @@ endOfFile:
 
 static void addMacroBaseUsageRef(Symbol *mdef) {
     int rr;
-    SymbolReferenceItem ppp, *memb;
+    ReferencesItem ppp, *memb;
     Reference *r;
     Position basePos;
 

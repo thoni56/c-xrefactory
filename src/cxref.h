@@ -9,26 +9,26 @@
 
 
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
-extern void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
+extern void fillSymbolRefItem(ReferencesItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
                               int vFunClass);
-extern void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
+extern void fillSymbolRefItemBits(ReferencesItemBits *symbolRefItemBits, unsigned symType,
                                   unsigned storage, unsigned scope, unsigned accessFlags,
                                   unsigned category);
-extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct symbolReferenceItem s,
+extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s,
                             char selected, char visible, unsigned ooBits, char olUsage,
                             short int vlevel, short int refn, short int defRefn,
                             char defUsage, struct position defpos, int outOnLine,
                             struct editorMarkerList *markers,	/* for refactory only */
                             SymbolsMenu *next);
 extern int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
-extern bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2);
+extern bool olSymbolRefItemLess(ReferencesItem *s1, ReferencesItem *s2);
 extern void tagSearchCompactShortResults(void);
 extern void printTagSearchResults(void);
 extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, int storage);
-extern bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
-extern bool isSameCxSymbolIncludingFunctionClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
-extern bool isSameCxSymbolIncludingApplicationClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
-extern bool olcxIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
+extern bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2);
+extern bool isSameCxSymbolIncludingFunctionClass(ReferencesItem *p1, ReferencesItem *p2);
+extern bool isSameCxSymbolIncludingApplicationClass(ReferencesItem *p1, ReferencesItem *p2);
+extern bool olcxIsSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2);
 extern void olcxRecomputeSelRefs(OlcxReferences *refs );
 extern void olProcessSelectedReferences(OlcxReferences *rstack,
                                         void (*referencesMapFun)(OlcxReferences *rstack,
@@ -46,7 +46,7 @@ extern Reference *olcxAddReference(Reference **rlist,
                                    int bestMatchFlag);
 extern void olcxFreeReferences(Reference *r);
 extern bool isSmallerOrEqClass(int inf, int sup);
-extern char *getJavaDocUrl_st(SymbolReferenceItem *rr);
+extern char *getJavaDocUrl_st(ReferencesItem *rr);
 extern char *getLocalJavaDocFile_st(char *fileUrl);
 extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
 extern bool htmlJdkDocAvailableForUrl(char *ss);
@@ -66,15 +66,15 @@ extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
 extern void olSetCallerPosition(Position *pos);
 extern S_olCompletion * olCompletionListPrepend(char *name, char *fullText,
                                                 char *vclass, int jindent, Symbol *s,
-                                                SymbolReferenceItem *ri, Reference *dfpos,
+                                                ReferencesItem *ri, Reference *dfpos,
                                                 int symType, int vFunClass,
                                                 OlcxReferences *stack);
-extern SymbolsMenu *olCreateNewMenuItem(SymbolReferenceItem *sym, int vApplClass,
+extern SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass,
                                             int vFunCl, Position *defpos, int defusage,
                                             int selected, int visible,
                                             unsigned ooBits, int olusage, int vlevel
                                             );
-extern SymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, SymbolsMenu **list,
+extern SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
                                            int selected, int visible, unsigned ooBits,
                                            int olusage, int vlevel,
                                            Position *defpos, int defusage);
@@ -84,14 +84,14 @@ extern Reference **addToRefList(Reference **list,
                                 Usage usage,
                                 Position pos);
 extern char *getXrefEnvironmentValue(char *name);
-extern int itIsSymbolToPushOlReferences(SymbolReferenceItem *p, OlcxReferences *rstack,
+extern int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack,
                                       SymbolsMenu **rss, int checkSelFlag);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
                                             int bestFitFlag);
-extern void putOnLineLoadedReferences(SymbolReferenceItem *p);
+extern void putOnLineLoadedReferences(ReferencesItem *p);
 extern void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms);
-extern SymbolsMenu *createSelectionMenu(SymbolReferenceItem *dd);
-extern void mapCreateSelectionMenu(SymbolReferenceItem *dd);
+extern SymbolsMenu *createSelectionMenu(ReferencesItem *dd);
+extern void mapCreateSelectionMenu(ReferencesItem *dd);
 extern void olcxFreeOldCompletionItems(OlcxReferencesStack *stack);
 
 extern void olcxInit(void);
@@ -115,9 +115,9 @@ extern void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                          Symbol *cclass);
 extern void olcxPushSpecialCheckMenuSym(char *symname);
 extern bool refOccursInRefs(Reference *r, Reference *list);
-extern void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r);
+extern void olcxCheck1CxFileReference(ReferencesItem *ss, Reference *r);
 extern void olcxPushSpecial(char *fieldName, int command);
-extern bool isPushAllMethodsValidRefItem(SymbolReferenceItem *ri);
+extern bool isPushAllMethodsValidRefItem(ReferencesItem *ri);
 extern bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
                                       int command);
 extern void olcxPrintPushingAction(int opt, int afterMenu);

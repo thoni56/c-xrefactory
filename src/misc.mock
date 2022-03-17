@@ -14,7 +14,7 @@ void classFileParse(void) {
   mock();
 }
 
-void fillTrivialSpecialRefItem(SymbolReferenceItem *ddd, char *name) {
+void fillTrivialSpecialRefItem(ReferencesItem *ddd, char *name) {
   mock(ddd, name);
 }
 
@@ -26,7 +26,7 @@ void symDump(Symbol *symbol) {
   mock(symbol);
 }
 
-void symbolRefItemDump(SymbolReferenceItem *ss) {
+void symbolRefItemDump(ReferencesItem *ss) {
   mock(ss);
 }
 

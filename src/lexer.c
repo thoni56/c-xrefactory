@@ -812,8 +812,8 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             pi = (lb->index-1) % LEX_POSITIONS_RING_SIZE;
             ps = &lb->positionRing[pi];
             currentLexemPosition = lb->fileOffsetRing[pi];
-            if (cb->fileNumber == olOriginalFileNumber && cb->fileNumber != noFileIndex && cb->fileNumber != -1 &&
-                s_jsl == NULL) {
+            if (cb->fileNumber == olOriginalFileNumber && cb->fileNumber != noFileIndex
+                && cb->fileNumber != -1 && s_jsl == NULL) {
                 if (options.server_operation == OLO_EXTRACT && lb->index>=2) {
                     ch = skipBlanks(cb, ch);
                     pos1 = absoluteFilePosition(cb);

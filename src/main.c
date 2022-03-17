@@ -2160,8 +2160,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // the following causes long jump, berk.
     CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
     CX_FREE_UNTIL(sss);
+    CX_ALLOCC(referenceTable.tab, MAX_CXREF_SYMBOLS, struct referencesItem *);
 
-    CX_ALLOCC(referenceTable.tab, MAX_CXREF_SYMBOLS, struct symbolReferenceItem *);
     refTabNoAllocInit(&referenceTable, MAX_CXREF_SYMBOLS);
 
     SM_INIT(ppmMemory);
@@ -2352,7 +2352,7 @@ void getPipedOptions(int *outNargc,char ***outNargv){
     }
 }
 
-static void fillIncludeRefItem(SymbolReferenceItem *referenceItem, int fnum) {
+static void fillIncludeRefItem(ReferencesItem *referenceItem, int fnum) {
     fillSymbolRefItem(referenceItem, LINK_NAME_INCLUDE_REFS,
                                 cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
                                 fnum, fnum);
@@ -2363,7 +2363,7 @@ static void fillIncludeRefItem(SymbolReferenceItem *referenceItem, int fnum) {
 static void makeIncludeClosureOfFilesToUpdate(void) {
     char                *cxFreeBase;
     int                 fileAddedFlag;
-    SymbolReferenceItem referenceItem, *member;
+    ReferencesItem referenceItem, *member;
     Reference           *rr;
 
     CX_ALLOCC(cxFreeBase,0,char);
@@ -2448,7 +2448,7 @@ void mainOpenOutputFile(char *outfile) {
 }
 
 static int scheduleFileUsingTheMacro(void) {
-    SymbolReferenceItem     ddd;
+    ReferencesItem     ddd;
     SymbolsMenu     mm, *oldMenu;
     OlcxReferences    *tmpc;
 
@@ -2857,7 +2857,7 @@ void mainCallXref(int argc, char **argv) {
         }
     } else if (options.server_operation == OLO_ABOUT) {
         aboutMessage();
-    } else if (! options.update)  {
+    } else if (!options.update)  {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "no input file");
         errorMessage(ERR_ST, tmpBuff);

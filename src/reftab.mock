@@ -13,45 +13,45 @@ void refTabNoAllocInit(ReferenceTable *table, int size) {
     mock(table, size);
 }
 
-bool refTabIsMember(ReferenceTable *table, SymbolReferenceItem *element,
-                    int *position, SymbolReferenceItem **origin
+bool refTabIsMember(ReferenceTable *table, ReferencesItem *element,
+                    int *position, ReferencesItem **origin
 ) {
     return (int)mock(table, element, position, origin);
 }
 
-int refTabNextMember(SymbolReferenceItem *element, SymbolReferenceItem **original) {
+int refTabNextMember(ReferencesItem *element, ReferencesItem **original) {
     return (int)mock(element, original);
 }
 
-void refTabSet(ReferenceTable *table, SymbolReferenceItem *element, int position) {
+void refTabSet(ReferenceTable *table, ReferencesItem *element, int position) {
     mock(table, element, position);
 }
 
-void refTabSetLast(ReferenceTable *table, SymbolReferenceItem *element, int position) {
+void refTabSetLast(ReferenceTable *table, ReferencesItem *element, int position) {
     mock(table, element, position);
 }
 
-int refTabAdd(ReferenceTable *table, SymbolReferenceItem *element) {
+int refTabAdd(ReferenceTable *table, ReferencesItem *element) {
     return mock(table, element);
 }
 
-bool refTabDelete(ReferenceTable *table, SymbolReferenceItem *element) {
+bool refTabDelete(ReferenceTable *table, ReferencesItem *element) {
     return(bool)mock(table, element);
 }
 
-bool refTabDeleteExact(ReferenceTable *table, SymbolReferenceItem *element) {
+bool refTabDeleteExact(ReferenceTable *table, ReferencesItem *element) {
     return (bool)mock(table, element);
 }
 
-int refTabDeleteLast(ReferenceTable *table, SymbolReferenceItem *element) {
+int refTabDeleteLast(ReferenceTable *table, ReferencesItem *element) {
     return(int)mock(table, element);
 }
 
-void refTabMap(ReferenceTable *table, void(*fun)(SymbolReferenceItem *)) {
+void refTabMap(ReferenceTable *table, void(*fun)(ReferencesItem *)) {
     mock(table, fun);
 }
 
-void refTabMap2(ReferenceTable *table, void(*fun)(SymbolReferenceItem *, void *), void *a) {
+void refTabMap2(ReferenceTable *table, void(*fun)(ReferencesItem *, void *), void *a) {
     mock(table, fun);
 }
 
@@ -67,11 +67,11 @@ void refTabMap32(ReferenceTable *table, void(*fun)(int, void *, void *, void *),
     mock(table, fun, arg1, arg2, arg3);
 }
 
-void refTabMap4(ReferenceTable *table, void(*fun)(SymbolReferenceItem *, int), int i) {
+void refTabMap4(ReferenceTable *table, void(*fun)(ReferencesItem *, int), int i) {
     mock(table, fun, i);
 }
 
-void refTabMap5(ReferenceTable *table, void(*fun)(SymbolReferenceItem *, void *), void *arg) {
+void refTabMap5(ReferenceTable *table, void(*fun)(ReferencesItem *, void *), void *arg) {
     mock(table, fun, arg);
 }
 

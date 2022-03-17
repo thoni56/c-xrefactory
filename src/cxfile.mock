@@ -38,8 +38,8 @@ bool symbolNameShouldBeHiddenFromReports(char *name) {
   return (bool) mock(name);
 }
 
-void searchSymbolCheckReference(SymbolReferenceItem *ss, Reference *rr) {
-  mock(ss, rr);
+void searchSymbolCheckReference(ReferencesItem *symbolReferences, Reference *reference) {
+  mock(symbolReferences, reference);
 }
 
 int cxFileHashNumber(char *sym) {

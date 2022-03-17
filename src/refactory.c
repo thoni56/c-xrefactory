@@ -42,10 +42,10 @@ typedef struct tpCheckSpecialReferencesData {
     struct pushAllInBetweenData	mm;
     char						*symbolToTest;
     int							classToTest;
-    struct symbolReferenceItem	*foundSpecialRefItem;
+    struct referencesItem	*foundSpecialRefItem;
     struct reference			*foundSpecialR;
-    struct symbolReferenceItem  *foundRefToTestedClass;
-    struct symbolReferenceItem  *foundRefNotToTestedClass;
+    struct referencesItem  *foundRefToTestedClass;
+    struct referencesItem  *foundRefNotToTestedClass;
     struct reference            *foundOuterScopeRef;
 } S_tpCheckSpecialReferencesData;
 
@@ -77,7 +77,7 @@ static char *s_refactoryXrefInitOptions[] = {
 static char *s_refactoryUpdateOption = "-fastupdate";
 
 
-static bool moveClassMapFunReturnOnUninterestingSymbols(SymbolReferenceItem *ri, S_tpCheckMoveClassData *dd) {
+static bool moveClassMapFunReturnOnUninterestingSymbols(ReferencesItem *ri, S_tpCheckMoveClassData *dd) {
     if (!isPushAllMethodsValidRefItem(ri))
         return true;
     /* this is too strong, but check only fields and methods */
@@ -286,9 +286,8 @@ static void refactoryBeInteractive(void) {
                        s_refactoryEditSrvInitOptions, INFILES_DISABLED);
         getPipedOptions(&pargc, &pargv);
         mainOpenOutputFile(refactoringOptions.outputFileName);
-        //&ppcGenRecord(PPC_INFORMATION, "Refactoring task answering");
-        // old way how to finish dialog
-        if (pargc <= 1) break;
+        if (pargc <= 1)
+            break;
         mainCallEditServerInit(pargc, pargv);
         if (options.continueRefactoring != RC_NONE)
             break;
@@ -735,7 +734,7 @@ static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
 
 // ------------------------- Trivial prechecks --------------------------------------
 
-static SymbolsMenu *javaGetRelevantHkSelectedItem(SymbolReferenceItem *ri) {
+static SymbolsMenu *javaGetRelevantHkSelectedItem(ReferencesItem *ri) {
     SymbolsMenu *ss;
     OlcxReferences *rstack;
 
@@ -749,7 +748,7 @@ static SymbolsMenu *javaGetRelevantHkSelectedItem(SymbolReferenceItem *ri) {
     return ss;
 }
 
-static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd) {
+static void tpCheckFutureAccOfLocalReferences(ReferencesItem *ri, void *ddd) {
     S_tpCheckMoveClassData *dd;
     SymbolsMenu *ss;
 
@@ -776,7 +775,7 @@ static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd
     }
 }
 
-static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void *ddd) {
+static void tpCheckMoveClassPutClassDefaultSymbols(ReferencesItem *ri, void *ddd) {
     OlcxReferences *rstack;
     S_tpCheckMoveClassData *dd;
 
@@ -842,7 +841,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
     }
 }
 
-static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void *ddd) {
+static void tpCheckDefaultAccessibilitiesMoveClass(ReferencesItem *ri, void *ddd) {
     OlcxReferences        *rstack;
     S_tpCheckMoveClassData  *dd;
     char                    symclass[MAX_FILE_NAME_SIZE];
@@ -981,7 +980,7 @@ bool tpCheckSourceIsNotInnerClass(void) {
     return true;
 }
 
-static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri, void *ddd) {
+static void tpCheckSpecialReferencesMapFun(ReferencesItem *ri, void *ddd) {
     S_tpCheckSpecialReferencesData *dd;
 
     dd = (S_tpCheckSpecialReferencesData *) ddd;
@@ -1757,7 +1756,7 @@ static void multipleReferencesInSamePlaceMessage(Reference *r) {
 }
 
 static void refactoryCheckForMultipleReferencesInSamePlace(OlcxReferences *rstack, SymbolsMenu *ccms) {
-    SymbolReferenceItem *p, *sss;
+    ReferencesItem *p, *sss;
     SymbolsMenu *cms;
     bool pushed;
 
@@ -2658,7 +2657,7 @@ static void refactoryShowSafetyCheckFailingDialog(EditorMarkerList **totalDiff, 
 static void refactoryStaticMoveCheckCorrespondance(
                                                    SymbolsMenu *menu1,
                                                    SymbolsMenu *menu2,
-                                                   SymbolReferenceItem *theMethod
+                                                   ReferencesItem *theMethod
 ) {
     SymbolsMenu *mm1, *mm2;
     EditorMarkerList *diff1, *diff2, *totalDiff;
@@ -2749,7 +2748,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     EditorMarker *pp, *ppp, *movedEnd;
     EditorMarkerList *occs;
     EditorRegionList *regions;
-    SymbolReferenceItem *theMethod;
+    ReferencesItem *theMethod;
     int progressi, progressn;
 
 
@@ -4006,7 +4005,7 @@ static bool refactoryIsMethodPartRedundantWrtPullUpPushDown(EditorMarker *m1, Ed
 }
 
 static EditorMarkerList *refactoryPullUpPushDownDifferences(
-                                                              SymbolsMenu *menu1, SymbolsMenu *menu2, SymbolReferenceItem *theMethod
+                                                              SymbolsMenu *menu1, SymbolsMenu *menu2, ReferencesItem *theMethod
                                                               ) {
     SymbolsMenu *mm1, *mm2;
     EditorMarkerList *rr, *diff;
@@ -4040,7 +4039,7 @@ static EditorMarkerList *refactoryPullUpPushDownDifferences(
 }
 
 static void refactoryPullUpPushDownCheckCorrespondance(
-                                                       SymbolsMenu *menu1, SymbolsMenu *menu2, SymbolReferenceItem *theMethod
+                                                       SymbolsMenu *menu1, SymbolsMenu *menu2, ReferencesItem *theMethod
                                                        ) {
     EditorMarkerList *diff;
 
@@ -4228,7 +4227,7 @@ static void refactoryPushDownPullUp(EditorMarker *point, PushPullDirection direc
     EditorMarker *target, *movedStart, *mend, *movedEnd, *startMarker, *endMarker;
     EditorRegionList *methodreg;
     SymbolsMenu *mm1, *mm2;
-    SymbolReferenceItem *theMethod;
+    ReferencesItem *theMethod;
     int size;
     int lines;
     UNUSED lines;

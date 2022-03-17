@@ -13,7 +13,7 @@ enum extractModes {
 
 /* Revealed publicly only to allow unittesting */
 typedef struct symbolReferenceItemList {
-    struct symbolReferenceItem		*item;
+    struct referencesItem		*item;
     struct symbolReferenceItemList	*next;
 } SymbolReferenceItemList;
 

@@ -20,7 +20,7 @@
 
 typedef struct programGraphNode {
     struct reference            *ref;		/* original reference of node */
-    struct symbolReferenceItem  *symRef;
+    struct referencesItem  *symRef;
     struct programGraphNode		*jump;
     char						posBits;		/* INSIDE/OUSIDE block */
     char						stateBits;		/* visited + where setted */
@@ -132,7 +132,7 @@ void generateSwitchCaseFork(bool isLast) {
 }
 
 static ProgramGraphNode *newProgramGraphNode(
-    Reference *ref, SymbolReferenceItem *symRef,
+    Reference *ref, ReferencesItem *symRef,
     ProgramGraphNode *jump, char posBits,
     char stateBits,
     char classifBits,
@@ -153,7 +153,7 @@ static ProgramGraphNode *newProgramGraphNode(
     return programGraph;
 }
 
-static void extractFunGraphRef(SymbolReferenceItem *rr, void *prog) {
+static void extractFunGraphRef(ReferencesItem *rr, void *prog) {
     Reference *r;
     ProgramGraphNode *p,**ap;
     ap = (ProgramGraphNode **) prog;
@@ -176,7 +176,7 @@ static ProgramGraphNode *getGraphAddress( ProgramGraphNode  *program,
     return(res);
 }
 
-static Reference *getDefinitionReference(SymbolReferenceItem *lab) {
+static Reference *getDefinitionReference(ReferencesItem *lab) {
     Reference *res;
     for (res=lab->references; res!=NULL && res->usage.kind!=UsageDefined; res=res->next) ;
     if (res == NULL) {
@@ -188,7 +188,7 @@ static Reference *getDefinitionReference(SymbolReferenceItem *lab) {
 }
 
 static ProgramGraphNode *getLabelGraphAddress(ProgramGraphNode *program,
-                                                SymbolReferenceItem     *lab
+                                                ReferencesItem     *lab
                                                 ) {
     ProgramGraphNode  *res;
     Reference         *defref;
@@ -222,7 +222,7 @@ static bool isStructOrUnion(ProgramGraphNode *node) {
 }
 
 static void extSetSetStates(    ProgramGraphNode *p,
-                                SymbolReferenceItem *symRef,
+                                ReferencesItem *symRef,
                                 unsigned cstate
                                 ) {
     unsigned cpos,oldStateBits;
@@ -272,7 +272,7 @@ static ExtractCategory categorizeLocalVariableExtraction0(
     ProgramGraphNode *varRef
 ) {
     ProgramGraphNode *p;
-    SymbolReferenceItem     *symRef;
+    ReferencesItem     *symRef;
     unsigned    inUsages,outUsages,outUsageBothExists;
     symRef = varRef->symRef;
     for (p=program; p!=NULL; p=p->next) {
@@ -634,7 +634,7 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     }
 }
 
-static void removeSymbolFromSymRefList(SymbolReferenceItemList **ll, SymbolReferenceItem *s) {
+static void removeSymbolFromSymRefList(SymbolReferenceItemList **ll, ReferencesItem *s) {
     SymbolReferenceItemList **r;
     r=ll;
     while (*r!=NULL) {
@@ -647,7 +647,7 @@ static void removeSymbolFromSymRefList(SymbolReferenceItemList **ll, SymbolRefer
     }
 }
 
-static SymbolReferenceItemList *concatRefItemList(SymbolReferenceItemList **ll, SymbolReferenceItem *s) {
+static SymbolReferenceItemList *concatRefItemList(SymbolReferenceItemList **ll, ReferencesItem *s) {
     SymbolReferenceItemList *refItemList;
     CX_ALLOC(refItemList, SymbolReferenceItemList);
     refItemList->item = s;
@@ -657,7 +657,7 @@ static SymbolReferenceItemList *concatRefItemList(SymbolReferenceItemList **ll, 
 
 
 /* Public for unittesting */
-void addSymbolToSymRefList(SymbolReferenceItemList **ll, SymbolReferenceItem *s) {
+void addSymbolToSymRefList(SymbolReferenceItemList **ll, ReferencesItem *s) {
     SymbolReferenceItemList *r;
 
     r = *ll;

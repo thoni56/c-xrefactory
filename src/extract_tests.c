@@ -58,19 +58,19 @@ BeforeEach(Extract) {
 AfterEach(Extract) {}
 
 /* Non-public function in extract module */
-void addSymbolToSymRefList(SymbolReferenceItemList **ll, SymbolReferenceItem *s);
+void addSymbolToSymRefList(SymbolReferenceItemList **ll, ReferencesItem *s);
 
 Ensure(Extract, can_concat_symRefItemList_when_null) {
     SymbolReferenceItemList *lp = NULL;
-    SymbolReferenceItem s = {"s", 0, 0, 0, {}, NULL, NULL};
+    ReferencesItem s = {"s", 0, 0, 0, {}, NULL, NULL};
 
     addSymbolToSymRefList(&lp, &s);
     assert_that(lp->item, is_equal_to(&s));
 }
 
 Ensure(Extract, can_concat_symRefItemList_before_existing) {
-    SymbolReferenceItem s1 = {"s1", 0, 0, 0, {}, NULL, NULL};
-    SymbolReferenceItem s2 = {"s2", 0, 0, 0, {}, NULL, NULL};
+    ReferencesItem s1 = {"s1", 0, 0, 0, {}, NULL, NULL};
+    ReferencesItem s2 = {"s2", 0, 0, 0, {}, NULL, NULL};
     SymbolReferenceItemList l = {&s1, NULL};
     SymbolReferenceItemList *lp = &l;
 

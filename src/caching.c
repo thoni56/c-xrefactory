@@ -54,7 +54,7 @@ static void deleteReferencesOutOfMemory(Reference **rr) {
 }
 
 static void cxrefTabDeleteOutOfMemory(int i) {
-    SymbolReferenceItem **pp;
+    ReferencesItem **pp;
 
     pp = &referenceTable.tab[i];
     while (*pp!=NULL) {

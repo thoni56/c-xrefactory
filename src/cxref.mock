@@ -10,19 +10,19 @@ void fillReference(Reference *reference, Usage usage, Position position,
     mock(reference, next);
 }
 
-void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
+void fillSymbolRefItem(ReferencesItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
                        int vFunClass) {
     mock(symbolRefItem, name, fileHash, vApplClass, vFunClass);
 }
 
-void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
+void fillSymbolRefItemBits(ReferencesItemBits *symbolRefItemBits, unsigned symType,
                            unsigned storage, unsigned scope, unsigned accessFlags,
                            unsigned category) {
     mock(symbolRefItemBits, symType, storage, scope, accessFlags, category);
 
 }
 
-void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct symbolReferenceItem s,
+void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s,
                      char selected, char visible, unsigned ooBits, char olUsage,
                      short int vlevel, short int refn, short int defRefn,
                      char defUsage, struct position defpos, int outOnLine,
@@ -35,7 +35,7 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
 }
 
-bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2) {
+bool olSymbolRefItemLess(ReferencesItem *s1, ReferencesItem *s2) {
     return (bool) mock(s1, s2);
 }
 
@@ -51,19 +51,19 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, int storage) {
     return (SymbolsMenu *) mock(fieldName, cfi, storage);
 }
 
-bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-bool isSameCxSymbolIncludingFunctionClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbolIncludingFunctionClass(ReferencesItem *p1, ReferencesItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-bool isSameCxSymbolIncludingApplicationClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbolIncludingApplicationClass(ReferencesItem *p1, ReferencesItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-bool olcxIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool olcxIsSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     return (bool) mock(p1, p2);
 }
 
@@ -112,7 +112,7 @@ bool isSmallerOrEqClass(int inf, int sup) {
     return (bool) mock(inf, sup);
 }
 
-char *getJavaDocUrl_st(SymbolReferenceItem *rr) {
+char *getJavaDocUrl_st(ReferencesItem *rr) {
     return (char *) mock(rr);
 }
 
@@ -167,18 +167,18 @@ void olSetCallerPosition(Position *pos) {
 }
 
 S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s,
-                                        SymbolReferenceItem *ri, Reference *dfpos, int symType, int vFunClass,
+                                        ReferencesItem *ri, Reference *dfpos, int symType, int vFunClass,
                                         OlcxReferences *stack) {
     return (S_olCompletion *) mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, stack);
 }
 
-SymbolsMenu *olCreateNewMenuItem(SymbolReferenceItem *sym, int vApplClass, int vFunCl, Position *defpos,
+SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl, Position *defpos,
                                      int defusage, int selected, int visible, unsigned ooBits, int olusage,
                                      int vlevel) {
     return (SymbolsMenu *) mock(sym, vApplClass, vFunCl, defpos, defusage, selected, visible, ooBits, olusage, vlevel);
 }
 
-SymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, SymbolsMenu **list, int selected, int visible,
+SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list, int selected, int visible,
                                     unsigned ooBits, int olusage, int vlevel, Position *defpos, int defusage) {
     return (SymbolsMenu *) mock(sym, list, selected, visible, ooBits, olusage, vlevel, defpos, defusage);
 }
@@ -201,7 +201,7 @@ char *getXrefEnvironmentValue(char *name) {
     return (char *) mock(name);
 }
 
-int itIsSymbolToPushOlReferences(SymbolReferenceItem *p, OlcxReferences *rstack, SymbolsMenu **rss,
+int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack, SymbolsMenu **rss,
                                int checkSelFlag) {
     return (int) mock(p, rstack, rss, checkSelFlag);
 }
@@ -210,7 +210,7 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu *cms, Reference *rr, int bestFitF
     mock(cms, rr, bestFitFlag);
 }
 
-void putOnLineLoadedReferences(SymbolReferenceItem *p) {
+void putOnLineLoadedReferences(ReferencesItem *p) {
     mock(p);
 }
 
@@ -218,11 +218,11 @@ void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
     mock(rstack, cms);
 }
 
-SymbolsMenu *createSelectionMenu(SymbolReferenceItem *dd) {
+SymbolsMenu *createSelectionMenu(ReferencesItem *dd) {
     return (SymbolsMenu *) mock(dd);
 }
 
-void mapCreateSelectionMenu(SymbolReferenceItem *dd) {
+void mapCreateSelectionMenu(ReferencesItem *dd) {
     mock(dd);
 }
 
@@ -302,7 +302,7 @@ bool refOccursInRefs(Reference *r, Reference *list) {
     return (bool) mock(r, list);
 }
 
-void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r) {
+void olcxCheck1CxFileReference(ReferencesItem *ss, Reference *r) {
     mock(ss, r);
 }
 
@@ -310,7 +310,7 @@ void olcxPushSpecial(char *fieldName, int command) {
     mock(fieldName, command);
 }
 
-bool isPushAllMethodsValidRefItem(SymbolReferenceItem *ri) {
+bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
     return (bool) mock(ri);
 }
 

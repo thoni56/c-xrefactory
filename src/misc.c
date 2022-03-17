@@ -59,7 +59,7 @@ void typeDump(TypeModifier *t) {
     fprintf(dumpOut,"dumpStop\n");
 }
 
-void symbolRefItemDump(SymbolReferenceItem *s) {
+void symbolRefItemDump(ReferencesItem *s) {
     fprintf(dumpOut,"%s\t%s %s %d %d %d %d %d\n",
             s->name,
             getFileItem(s->vApplClass)->name,
@@ -560,7 +560,7 @@ void printSymbolLinkName(FILE *ff, SymbolsMenu *ss) {
     fprintf(ff, "%s", ttt);
 }
 
-void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name) {
+void fillTrivialSpecialRefItem(ReferencesItem *ddd , char *name) {
     fillSymbolRefItem(ddd, name, cxFileHashNumber(name),
                                 noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&ddd->bits, TypeUnknown, StorageAuto,

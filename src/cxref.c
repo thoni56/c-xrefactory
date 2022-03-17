@@ -48,7 +48,7 @@ typedef struct referencesChangeData {
 
 /* *********************************************************************** */
 
-void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name,
+void fillSymbolRefItem(ReferencesItem *symbolRefItem, char *name,
                        unsigned fileHash, int vApplClass, int vFunClass) {
     symbolRefItem->name = name;
     symbolRefItem->fileHash = fileHash;
@@ -58,7 +58,7 @@ void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name,
     symbolRefItem->next = NULL;
 }
 
-void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
+void fillSymbolRefItemBits(ReferencesItemBits *symbolRefItemBits, unsigned symType,
                            unsigned storage, unsigned scope, unsigned accessFlags,
                            unsigned category) {
     symbolRefItemBits->symType = symType;
@@ -76,7 +76,7 @@ void fillReference(Reference *reference, Usage usage, Position position, Referen
 
 
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
-                     struct symbolReferenceItem s,
+                     struct referencesItem s,
                      char selected,
                      char visible,
                      unsigned ooBits,
@@ -110,7 +110,7 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return SORTED_LIST_LESS(r1, (*r2));
 }
 
-bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2) {
+bool olSymbolRefItemLess(ReferencesItem *s1, ReferencesItem *s2) {
     int cmp;
     cmp = strcmp(s1->name, s2->name);
     if (cmp < 0)
@@ -154,12 +154,12 @@ static char *olcxStringCopy(char *string) {
 }
 
 
-SymbolsMenu *olCreateNewMenuItem(SymbolReferenceItem *symbol, int vApplClass, int vFunCl,
+SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFunCl,
                                      Position *defpos, int defusage,
                                      int selected, int visible,
                                      unsigned ooBits, int olusage, int vlevel) {
     SymbolsMenu *symbolsMenu;
-    SymbolReferenceItem refItem;
+    ReferencesItem refItem;
     char *allocatedNameCopy;
 
     allocatedNameCopy = olcxStringCopy(symbol->name);
@@ -175,7 +175,7 @@ SymbolsMenu *olCreateNewMenuItem(SymbolReferenceItem *symbol, int vApplClass, in
     return symbolsMenu;
 }
 
-SymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, SymbolsMenu **list,
+SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
                                 int selected, int visible, unsigned ooBits,
                                 int olusage, int vlevel,
                                 Position *defpos, int defusage) {
@@ -392,9 +392,9 @@ bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
 }
 
 // TODO, all this stuff should be done differently! Why?
-static void changeFieldRefUsages(SymbolReferenceItem *ri, void *rrcd) {
+static void changeFieldRefUsages(ReferencesItem *ri, void *rrcd) {
     S_referencesChangeData *rcd;
-    SymbolReferenceItem ddd;
+    ReferencesItem ddd;
 
     rcd = (S_referencesChangeData*) rrcd;
     fillSymbolRefItem(&ddd,rcd->linkName,
@@ -677,9 +677,9 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     Reference            reference;
     Reference          **place;
     Position            *defaultPosition;
-    SymbolReferenceItem *pp;
-    SymbolReferenceItem *memb;
-    SymbolReferenceItem  ppp;
+    ReferencesItem *pp;
+    ReferencesItem *memb;
+    ReferencesItem  ppp;
     SymbolsMenu *        mmi;
 
     // do not record references during prescanning
@@ -739,7 +739,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     int index;
     if (!refTabIsMember(&referenceTable, &ppp, &index, &memb)) {
         log_trace("allocating '%s'", symbol->linkName);
-        CX_ALLOC(pp, SymbolReferenceItem);
+        CX_ALLOC(pp, ReferencesItem);
         CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);
         strcpy(linkName, symbol->linkName);
         fillSymbolRefItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl);
@@ -1320,7 +1320,7 @@ static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
     }
 }
 
-char *getJavaDocUrl_st(SymbolReferenceItem *rr) {
+char *getJavaDocUrl_st(ReferencesItem *rr) {
     static char res[MAX_REF_LEN];
     char *tt;
     int len = MAX_REF_LEN;
@@ -1483,7 +1483,7 @@ char *getFullUrlOfJavaDoc_st(char *fileUrl) {
     return fullUrl;
 }
 
-static bool olcxBrowseSymbolInJavaDoc(SymbolReferenceItem *rr) {
+static bool olcxBrowseSymbolInJavaDoc(ReferencesItem *rr) {
     char *url, *tmd, *lfn;
     char tmpfname[MAX_FILE_NAME_SIZE];
     char theUrl[2*MAX_FILE_NAME_SIZE];
@@ -1997,7 +1997,7 @@ static void olcxPopAndFreeAndPopsUntil(OlcxReferences *oldtop) {
     }
 }
 
-static void olcxFindDefinitionAndGenGoto(SymbolReferenceItem *sym) {
+static void olcxFindDefinitionAndGenGoto(ReferencesItem *sym) {
     OlcxReferences *refs, *oldtop;
     SymbolsMenu mmm;
 
@@ -2299,7 +2299,7 @@ static void olcxShowClassTree(void) {
 
 SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     SymbolsMenu     *res;
-    SymbolReferenceItem     ss;
+    ReferencesItem     ss;
 
     fillSymbolRefItem(&ss, fieldName, cxFileHashNumber(fieldName),
                                 cfi, cfi);
@@ -2312,7 +2312,7 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
 }
 
 static bool refItemsOrderLess(SymbolsMenu *ss1, SymbolsMenu *ss2) {
-    SymbolReferenceItem *s1, *s2;
+    ReferencesItem *s1, *s2;
     int r;
     char *n1, *n2;
     int len1;
@@ -2347,7 +2347,7 @@ static void olcxTopSymbolResolution(void) {
     olcxPrintSelectionMenu(ss);
 }
 
-bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     if (p1 == p2)
         return true;
     if (p1->bits.category != p2->bits.category)
@@ -2362,19 +2362,19 @@ bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     return true;
 }
 
-bool isSameCxSymbolIncludingFunctionClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbolIncludingFunctionClass(ReferencesItem *p1, ReferencesItem *p2) {
     if (p1->vFunClass != p2->vFunClass)
         return false;
     return isSameCxSymbol(p1, p2);
 }
 
-bool isSameCxSymbolIncludingApplicationClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbolIncludingApplicationClass(ReferencesItem *p1, ReferencesItem *p2) {
     if (p1->vApplClass != p2->vApplClass)
         return false;
     return isSameCxSymbol(p1, p2);
 }
 
-bool olcxIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool olcxIsSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
 
@@ -2396,7 +2396,7 @@ void olStackDeleteSymbol(OlcxReferences *refs) {
 }
 
 static void olcxGenInspectClassDefinitionRef(int classnum) {
-    SymbolReferenceItem mmm;
+    ReferencesItem mmm;
     char ccc[MAX_CX_SYMBOL_SIZE];
 
     javaGetClassNameFromFileNum(classnum, ccc, KEEP_SLASHES);
@@ -3552,7 +3552,7 @@ bool refOccursInRefs(Reference *reference, Reference *list) {
     return true;
 }
 
-static void olcxSingleReferenceCheck1(SymbolReferenceItem *referenceItem,
+static void olcxSingleReferenceCheck1(ReferencesItem *referenceItem,
                                       OlcxReferences *rstack,
                                       Reference *reference
 ) {
@@ -3572,8 +3572,8 @@ static void olcxSingleReferenceCheck1(SymbolReferenceItem *referenceItem,
     }
 }
 
-void olcxCheck1CxFileReference(SymbolReferenceItem *referenceItem, Reference *reference) {
-    SymbolReferenceItem     *sss;
+void olcxCheck1CxFileReference(ReferencesItem *referenceItem, Reference *reference) {
+    ReferencesItem     *sss;
     OlcxReferences    *rstack;
     SymbolsMenu     *cms;
     int pushedKind;
@@ -3590,8 +3590,8 @@ void olcxCheck1CxFileReference(SymbolReferenceItem *referenceItem, Reference *re
 }
 
 static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, SymbolsMenu *ccms) {
-    SymbolReferenceItem     *p;
-    SymbolReferenceItem     *sss;
+    ReferencesItem     *p;
+    ReferencesItem     *sss;
     SymbolsMenu     *cms;
     bool pushed;
 
@@ -3758,7 +3758,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
 
 static void olcxMMPreCheck(void) {
     OlcxReferences    *diffrefs, *origrefs, *newrefs;
-    SymbolReferenceItem     dri;
+    ReferencesItem     dri;
     bool precheck;
 
     olcxSetCurrentUser(options.user);
@@ -4072,7 +4072,7 @@ static void olcxListSpecial(char *fieldName) {
     olcxPrintPushingAction(options.server_operation, DEFAULT_VALUE);
 }
 
-bool isPushAllMethodsValidRefItem(SymbolReferenceItem *ri) {
+bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
     if (ri->name[0]!=' ')
         return true;
     if (ri->bits.symType==TypeInducedError)
@@ -4081,7 +4081,7 @@ bool isPushAllMethodsValidRefItem(SymbolReferenceItem *ri) {
     return false;
 }
 
-static void olPushAllReferencesInBetweenMapFun(SymbolReferenceItem *ri,
+static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri,
                                                void *ddd
                                                ) {
     Reference             *rr, *defRef;
@@ -4506,7 +4506,7 @@ static void mainAnswerReferencePushingAction(int command) {
     }
 }
 
-static void mapAddLocalUnusedSymbolsToHkSelection(SymbolReferenceItem *ss) {
+static void mapAddLocalUnusedSymbolsToHkSelection(ReferencesItem *ss) {
     bool used = false;
     Reference *definitionReference = NULL;
 
@@ -4977,7 +4977,7 @@ void mainAnswerEditAction(void) {
     LEAVE();
 }
 
-int itIsSymbolToPushOlReferences(SymbolReferenceItem *p,
+int itIsSymbolToPushOlReferences(ReferencesItem *p,
                                OlcxReferences *rstack,
                                SymbolsMenu **rss,
                                int checkSelFlag) {
@@ -4999,7 +4999,7 @@ int itIsSymbolToPushOlReferences(SymbolReferenceItem *p,
 }
 
 
-void putOnLineLoadedReferences(SymbolReferenceItem *p) {
+void putOnLineLoadedReferences(ReferencesItem *p) {
     int ols;
     SymbolsMenu *cms;
 
@@ -5032,7 +5032,7 @@ static int classCmp(int cl1, int cl2) {
     return res;
 }
 
-static unsigned olcxOoBits(SymbolsMenu *ols, SymbolReferenceItem *p) {
+static unsigned olcxOoBits(SymbolsMenu *ols, ReferencesItem *p) {
     unsigned ooBits;
     int olusage,vFunCl,olvFunCl,vApplCl,olvApplCl;
 
@@ -5089,7 +5089,7 @@ static unsigned ooBitsMax(unsigned oo1, unsigned oo2) {
     return res;
 }
 
-SymbolsMenu *createSelectionMenu(SymbolReferenceItem *p) {
+SymbolsMenu *createSelectionMenu(ReferencesItem *p) {
     OlcxReferences *rstack;
     Position *defpos;
     unsigned ooBits, oo;
@@ -5131,7 +5131,7 @@ SymbolsMenu *createSelectionMenu(SymbolReferenceItem *p) {
     return result;
 }
 
-void mapCreateSelectionMenu(SymbolReferenceItem *p) {
+void mapCreateSelectionMenu(ReferencesItem *p) {
     createSelectionMenu(p);
 }
 
@@ -5146,7 +5146,7 @@ static S_olCompletion *newOlCompletion(char *name,
                                        char category,
                                        char csymType,
                                        struct reference ref,
-                                       struct symbolReferenceItem sym
+                                       struct referencesItem sym
 ) {
     S_olCompletion *olCompletion = olcx_alloc(sizeof(S_olCompletion));
 
@@ -5173,12 +5173,12 @@ void olSetCallerPosition(Position *pos) {
 
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
 S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *symbol,
-                                        SymbolReferenceItem *referenceItem, Reference *reference, int cType,
+                                        ReferencesItem *referenceItem, Reference *reference, int cType,
                                         int vFunClass, OlcxReferences *stack) {
     S_olCompletion *cc;
     char *ss,*nn, *fullnn, *vclnn;
     int category, scope, storage, slen, nlen;
-    SymbolReferenceItem sri;
+    ReferencesItem sri;
 
     nlen = strlen(name);
     nn = olcx_memory_allocc(nlen+1, sizeof(char));

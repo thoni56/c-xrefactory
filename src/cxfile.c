@@ -99,7 +99,7 @@ typedef struct lastCxFileInfo {
     int                 onLineReferencedSym;
     SymbolsMenu         *onLineRefMenuItem;
     int                 onLineRefIsBestMatchFlag; // vyhodit ?
-    SymbolReferenceItem *symbolTab[MAX_CX_SYMBOL_TAB];
+    ReferencesItem *symbolTab[MAX_CX_SYMBOL_TAB];
     bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                markers[MAX_CHARS];
@@ -113,7 +113,7 @@ typedef struct lastCxFileInfo {
 
     // following item can be used only via symbolTab,
     // it is just to simplify memory handling !!!!!!!!!!!!!!!!
-    SymbolReferenceItem     cachedSymbolReferenceItem[MAX_CX_SYMBOL_TAB];
+    ReferencesItem     cachedSymbolReferenceItem[MAX_CX_SYMBOL_TAB];
     char                cachedSymbolName[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
 } LastCxFileInfo;
 
@@ -301,7 +301,7 @@ bool symbolNameShouldBeHiddenFromReports(char *name) {
     return false;
 }
 
-void searchSymbolCheckReference(SymbolReferenceItem  *referenceItem, Reference *reference) {
+void searchSymbolCheckReference(ReferencesItem  *referenceItem, Reference *reference) {
     char ssname[MAX_CX_SYMBOL_SIZE];
     char *s, *sname;
     int slen;
@@ -382,7 +382,7 @@ static void writeStringRecord(int marker, char *s, char *blankPrefix) {
 
 /* Here we do the actual writing of the symbol */
 static void writeSymbolItem(int symbolIndex) {
-    SymbolReferenceItem *d;
+    ReferencesItem *d;
 
     /* First the symbol info, if not done already */
     writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, symbolIndex, "");
@@ -519,7 +519,7 @@ void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
 
 /* *************************************************************** */
 
-static void genRefItem0(SymbolReferenceItem *referenceItem, bool force) {
+static void genRefItem0(ReferencesItem *referenceItem, bool force) {
     Reference *reference;
     int symbolIndex;
 
@@ -556,7 +556,7 @@ static void genRefItem0(SymbolReferenceItem *referenceItem, bool force) {
     //&fflush(cxOut);
 }
 
-static void genRefItem(SymbolReferenceItem *referenceItem) {
+static void genRefItem(ReferencesItem *referenceItem) {
     genRefItem0(referenceItem, false);
 }
 
@@ -648,7 +648,7 @@ static void genPartialFileTabRefFile(int updateFlag,
 
 static void generateRefsFromMemory(int fileOrder) {
     for (int i=0; i<referenceTable.size; i++) {
-        for (SymbolReferenceItem *r=referenceTable.tab[i]; r!=NULL; r=r->next) {
+        for (ReferencesItem *r=referenceTable.tab[i]; r!=NULL; r=r->next) {
             if (r->bits.category == CategoryLocal)
                 continue;
             if (r->references == NULL)
@@ -926,7 +926,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                                 CharacterBuffer *cb,
                                                 int additionalArg
 ) {
-    SymbolReferenceItem *memb;
+    ReferencesItem *memb;
     int si, symType, len, vApplClass, vFunClass, accessFlags;
     int storage;
     char *id;
@@ -946,7 +946,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         return;
     }
 
-    SymbolReferenceItem *referenceItem = &lastIncomingInfo.cachedSymbolReferenceItem[si];
+    ReferencesItem *referenceItem = &lastIncomingInfo.cachedSymbolReferenceItem[si];
     lastIncomingInfo.symbolTab[si] = referenceItem;
     fillSymbolRefItem(referenceItem, id, cxFileHashNumber(id), //useless, put 0
                       vApplClass, vFunClass);
@@ -955,7 +955,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     if (!refTabIsMember(&referenceTable, referenceItem, NULL, &memb)) {
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
-        CX_ALLOC(memb, SymbolReferenceItem);
+        CX_ALLOC(memb, ReferencesItem);
         fillSymbolRefItem(memb, ss, cxFileHashNumber(ss),
                           vApplClass, vFunClass);
         fillSymbolRefItemBits(&memb->bits, symType, storage,
@@ -977,7 +977,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
 }
 
 
-static bool symbolIsReportableAsUnused(SymbolReferenceItem *referenceItem) {
+static bool symbolIsReportableAsUnused(ReferencesItem *referenceItem) {
     if (referenceItem==NULL || referenceItem->name[0]==' ')
         return false;
 
@@ -996,7 +996,7 @@ static bool symbolIsReportableAsUnused(SymbolReferenceItem *referenceItem) {
     return true;
 }
 
-static bool canBypassAcceptableSymbol(SymbolReferenceItem *symbol) {
+static bool canBypassAcceptableSymbol(ReferencesItem *symbol) {
     int nlen,len;
     char *nn, *nnn;
 
@@ -1014,7 +1014,7 @@ static void cxrfSymbolName(int size,
                            CharacterBuffer *cb,
                            int additionalArg
 ) {
-    SymbolReferenceItem *ddd, *memb;
+    ReferencesItem *ddd, *memb;
     SymbolsMenu *cms;
     int si, symType, rr, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;

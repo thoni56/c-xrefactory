@@ -23,7 +23,7 @@ extern bool searchStringFitness(char *cxtag, int slen);
 extern char *createTagSearchLineStatic(char *name, Position *position,
                                        int *len1, int *len2, int *len3);
 extern bool symbolNameShouldBeHiddenFromReports(char *name);
-extern void searchSymbolCheckReference(SymbolReferenceItem  *symbolReference, Reference *reference);
+extern void searchSymbolCheckReference(ReferencesItem *symbolReference, Reference *reference);
 extern void addSubClassItemToFileTab(int superior, int inferior, int origin);
 extern void addSubClassesItemsToFileTab(Symbol *symbol, int origin);
 
