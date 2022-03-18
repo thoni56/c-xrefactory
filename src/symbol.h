@@ -7,47 +7,43 @@
 #include "type.h"
 #include "storage.h"
 
-
-
 /* ****************************************************************** */
 /*              symbol definition item in symbol table                */
 
 typedef struct symbolBits {
-    bool			isRecord			: 1;  /* whether struct record */
-    bool			isExplicitlyImported: 1;  /* whether not imported by * import */
-    AccessKind			access				: 12; /* java access bits */
-    bool			javaSourceIsLoaded	: 1;  /* is jsl source file loaded ? */
-    bool			javaFileIsLoaded	: 1;  /* is class file loaded ? */
+    bool       isRecord : 1;             /* whether struct record */
+    bool       isExplicitlyImported : 1; /* whether not imported by * import */
+    AccessKind access : 12;              /* java access bits */
+    bool       javaSourceIsLoaded : 1;   /* is jsl source file loaded ? */
+    bool       javaFileIsLoaded : 1;     /* is class file loaded ? */
 
-    enum type		symbolType			: SYMTYPES_LN;
+    enum type symbolType : SYMTYPES_LN;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
-    enum storage	storage				: STORAGES_LN;
-    unsigned		npointers			: 4; /*tmp. stored #of dcl. ptrs*/
+    enum storage storage : STORAGES_LN;
+    unsigned     npointers : 4; /*tmp. stored #of dcl. ptrs*/
 } SymbolBits;
 
 typedef struct symbol {
-    char					*name;
-    char					*linkName;		/* fully qualified name for cx */
-    struct position			pos;			/* definition position for most syms;
-                                               import position for imported classes! */
+    char           *name;
+    char           *linkName; /* fully qualified name for cx */
+    struct position pos;      /* definition position for most syms;
+             import position for imported classes! */
     struct symbolBits bits;
     union {
-        struct typeModifier		*typeModifier; /* if bits.symbolType == TypeDefault */
-        struct symStructSpec	*structSpec;   /* if bits.symbolType == Struct/Union */
-        struct symbolList		*enums;		   /* if bits.symbolType == Enum */
-        struct macroBody		*mbody;        /* if bits.symbolType == Macro, can be NULL! */
-        int						labelIndex;	   /* break/continue label index */
-        int						keyword;       /* if bits.symbolType == Keyword */
+        struct typeModifier  *typeModifier; /* if bits.symbolType == TypeDefault */
+        struct symStructSpec *structSpec;   /* if bits.symbolType == Struct/Union */
+        struct symbolList    *enums;        /* if bits.symbolType == Enum */
+        struct macroBody     *mbody;        /* if bits.symbolType == Macro, can be NULL! */
+        int                   labelIndex;   /* break/continue label index */
+        int                   keyword;      /* if bits.symbolType == Keyword */
     } u;
-    struct symbol               *next;         /* next table item with the same hash */
+    struct symbol *next; /* next table item with the same hash */
 } Symbol;
 
 typedef struct symbolList {
-    struct symbol        *d;
-    struct symbolList    *next;
+    struct symbol     *d;
+    struct symbolList *next;
 } SymbolList;
-
-
 
 /* Functions: */
 

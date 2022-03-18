@@ -6,6 +6,7 @@
 #include "parsers.h"
 #include "misc.h"
 #include "classcaster.h"
+#include "usage.h"
 #include "yylex.h"
 #include "cxref.h"
 #include "jsemact.h"
@@ -598,24 +599,21 @@ static void addInitializerRefs(Symbol *decl,
     }
 }
 
-Symbol *addNewDeclaration(
-                            Symbol *btype,
-                            Symbol *decl,
-                            IdList *idl,
-                            unsigned storage,
-                            SymbolTable *tab
-                            ) {
-    int usage;
-    if (decl == &s_errorSymbol || btype == &s_errorSymbol
-        || decl->bits.symbolType==TypeError || btype->bits.symbolType==TypeError) {
+Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl, unsigned storage, SymbolTable *tab) {
+    UsageKind usageKind = UsageDefined;
+
+    if (decl == &s_errorSymbol || btype == &s_errorSymbol || decl->bits.symbolType == TypeError ||
+        btype->bits.symbolType == TypeError) {
         return decl;
     }
     assert(decl->bits.symbolType == TypeDefault);
     completeDeclarator(btype, decl);
-    usage = UsageDefined;
-    if (decl->u.typeModifier->kind == TypeFunction) usage = UsageDeclared;
-    else if (decl->bits.storage == StorageExtern) usage = UsageDeclared;
-    addNewSymbolDefinition(decl, storage, tab, usage);
+
+    if (decl->u.typeModifier->kind == TypeFunction)
+        usageKind = UsageDeclared;
+    else if (decl->bits.storage == StorageExtern)
+        usageKind = UsageDeclared;
+    addNewSymbolDefinition(decl, storage, tab, usageKind);
     addInitializerRefs(decl, idl);
     return decl;
 }
