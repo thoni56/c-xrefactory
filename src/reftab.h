@@ -18,4 +18,7 @@ extern ReferenceTable referenceTable;
 #undef HASH_ELEM_TYPE
 #endif
 
+extern void initReferenceTable(void);
+
+
 #endif

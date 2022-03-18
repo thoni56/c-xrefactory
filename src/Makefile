@@ -356,6 +356,8 @@ endif
 #	$(CC) -shared -o $@ $(sort $(EXTRA_OBJS) $^) $(LDLIBS) -lcgreen
 
 
+# Hmm, TODO: The UNITTEST macro does not seem to create the correct dependencies to schedule parallel jobs correctly...
+
 # Macro for unittests that link the SUT and a small number of dependent .o
 # Parameters: <module>, <dependent modules ...>
 define UNITTEST
@@ -390,6 +392,7 @@ $(eval $(call UNITTEST,olcxtab,memory log hash))
 $(eval $(call UNITTEST,options,protocol log position memory))
 $(eval $(call UNITTEST,position,log))
 $(eval $(call UNITTEST,refactory,protocol usage position log memory))
+$(eval $(call UNITTEST,reftab,log memory hash))
 $(eval $(call UNITTEST,semact,memory log protocol usage hash position storage type))
 $(eval $(call UNITTEST,symbol,memory log))
 $(eval $(call UNITTEST,symboltable,hash log memory))

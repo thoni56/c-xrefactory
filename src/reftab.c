@@ -23,3 +23,7 @@ static bool equalReferenceItems(SymbolReferenceItem *e1, SymbolReferenceItem *e2
 #define HASH_ELEM_EQUAL(e1,e2) equalReferenceItems(e1, e2)
 
 #include "hashlist.tc"
+
+
+void initReferenceTable(void) {
+}
