@@ -6,8 +6,8 @@
 int noFileIndex = -1;
 
 
-void initFileTable(void) {
-    mock();
+void initFileTable(int size) {
+    mock(size);
 }
 
 void initNoFile(void) {

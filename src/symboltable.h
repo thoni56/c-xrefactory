@@ -21,7 +21,7 @@ extern SymbolTable *symbolTable;
 #undef HASH_ELEM_TYPE
 #endif
 
-extern void initSymbolTable(void);
+extern void initSymbolTable(int size);
 extern int addToSymbolTable(Symbol *symbol);
 extern Symbol *getSymbol(int index);
 extern int getNextExistingSymbol(int index);

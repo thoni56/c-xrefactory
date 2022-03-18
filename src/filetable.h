@@ -66,7 +66,7 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
 extern int noFileIndex;
 
 
-extern void initFileTable(void);
+extern void initFileTable(int size);
 extern void initNoFile(void);
 
 extern int addToFileTable(FileItem *fileItem);

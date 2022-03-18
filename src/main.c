@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "commons.h"
+#include "constants.h"
 #include "globals.h"
 #include "refactory.h"
 #include "extract.h"
@@ -2119,7 +2120,7 @@ static void mainTotalTaskEntryInitialisations() {
     options.includeDirs = NULL;
     SM_INIT(ftMemory);
 
-    initFileTable();
+    initFileTable(MAX_FILES);
     initNoFile();             /* Sets noFileIndex to something real */
 
     noPosition = makePosition(noFileIndex, 0, 0);
@@ -2172,7 +2173,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();
 
-    initSymbolTable();
+    initSymbolTable(MAX_SYMBOLS);
 
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
                   symbolTable,NULL,AccessDefault,s_cpInit,noFileIndex,NULL);

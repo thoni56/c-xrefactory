@@ -64,6 +64,6 @@ void symbolTableStatistics(SymbolTable *table, int *usedIndexes, int *elements, 
   mock(table, usedIndexes, elements, maxdepth);
 }
 
-void initSymbolTable(void) {
-    mock();
-}
+void initSymbolTable(int size) { mock(size); }
+
+int addToSymbolTable(Symbol *symbol) { return (int)mock(symbol); }

@@ -13,7 +13,7 @@
 Describe(SymbolTable);
 BeforeEach(SymbolTable) {
     initOuterCodeBlock();
-    initSymbolTable();
+    initSymbolTable(100);
 }
 AfterEach(SymbolTable) {}
 

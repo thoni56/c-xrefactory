@@ -60,11 +60,11 @@ int getNextExistingFileIndex(int index) {
 }
 
 
-void initFileTable(void) {
+void initFileTable(int size) {
     SM_INIT(ftMemory);
-    FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
+    FT_ALLOCC(fileTable.tab, size, struct fileItem *);
 
-    fileTableNoAllocInit(&fileTable, MAX_FILES);
+    fileTableNoAllocInit(&fileTable, size);
 }
 
 void initNoFile(void) {
