@@ -63,3 +63,7 @@ void symbolTableMap5(SymbolTable *table, void (*fun)(Symbol *, void *), void *ar
 void symbolTableStatistics(SymbolTable *table, int *usedIndexes, int *elements, int *maxdepth) {
   mock(table, usedIndexes, elements, maxdepth);
 }
+
+void initSymbolTable(void) {
+    mock();
+}

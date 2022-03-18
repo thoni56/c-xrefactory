@@ -18,6 +18,7 @@
 #include "filetable.h"
 
 #include "c_parser.h"
+#include "symboltable.h"
 #include "yacc_parser.h"
 #include "java_parser.h"
 #include "parsers.h"
@@ -2171,9 +2172,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();
 
-    /* TODO: should go into a newSymbolTable() function... */
-    symbolTable = StackMemoryAlloc(SymbolTable);
-    symbolTableInit(symbolTable, MAX_SYMBOLS);
+    initSymbolTable();
 
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
                   symbolTable,NULL,AccessDefault,s_cpInit,noFileIndex,NULL);

@@ -149,6 +149,7 @@ static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, FreeTrail *trail
 }
 
 void initOuterCodeBlock(void) {
+    /* Any use of stack memory will require that this is run first */
     currentBlock = (CodeBlock *) stackMemory;
     fillCodeBlock(currentBlock, sizeof(CodeBlock), NULL, NULL);
 }
@@ -156,6 +157,7 @@ void initOuterCodeBlock(void) {
 void *stackMemoryAlloc(int size) {
     int i;
 
+    assert(currentBlock);
     mem_trace("stackMemoryAlloc: allocating %d bytes", size);
     i = currentBlock->firstFreeIndex;
     i = ((char *)ALIGNMENT(stackMemory+i,STANDARD_ALIGNMENT))-stackMemory;

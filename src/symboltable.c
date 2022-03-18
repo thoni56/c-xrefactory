@@ -14,7 +14,9 @@ SymbolTable *symbolTable;
 #include "hashlist.tc"
 
 
-void initSymbolTable(void) {}
-
+void initSymbolTable(void) {
+    symbolTable = StackMemoryAlloc(SymbolTable);
+    symbolTableInit(symbolTable, MAX_SYMBOLS);
+}
 
 int getNextExistingSymbol(int index) {return -1;}
