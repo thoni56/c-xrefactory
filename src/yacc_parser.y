@@ -1155,7 +1155,7 @@ enum_specifier
         $$.d = $1.d;
         if ($$.d->u.t->u.enums==NULL) {
             $$.d->u.t->u.enums = $3.d;
-            addToTrail(setToNull, & ($$.d->u.t->u.enums) );
+            addToTrail(setToNull, & ($$.d->u.t->u.enums) , false);
         }
     }
     | ENUM '{' enumerator_list_comma '}'                        {

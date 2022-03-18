@@ -102,7 +102,7 @@ void addSymbol(Symbol *symbol, SymbolTable *table) {
               storageEnumName[symbol->bits.storage]);
     assert(symbol->bits.npointers==0);
     AddSymbolNoTrail(symbol, table);
-    addToTrail(deleteSymDef, symbol /* TODO? Should also include reference to table */ );
+    addToTrail(deleteSymDef, symbol /* TODO? Should also include reference to table */, (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
 }
 
 void recFindPush(Symbol *str, S_recFindStr *rfs) {
@@ -991,7 +991,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     assert(sd->u.structSpec);
     if (sd->u.structSpec->records!=NULL) return;
     sd->u.structSpec->records = rec;
-    addToTrail(setToNull, & (sd->u.structSpec->records) );
+    addToTrail(setToNull, & (sd->u.structSpec->records), (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
     for(dd=rec; dd!=NULL; dd=dd->next) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);

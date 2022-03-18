@@ -3174,7 +3174,7 @@ case 178:
         yyval.ast_typeModifiers.d = yyvsp[-3].ast_typeModifiers.d;
         if (yyval.ast_typeModifiers.d->u.t->u.enums==NULL) {
             yyval.ast_typeModifiers.d->u.t->u.enums = yyvsp[-1].ast_symbolList.d;
-            addToTrail(setToNull, & (yyval.ast_typeModifiers.d->u.t->u.enums) );
+            addToTrail(setToNull, & (yyval.ast_typeModifiers.d->u.t->u.enums), (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
         }
     }
 break;

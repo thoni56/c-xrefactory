@@ -157,11 +157,11 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
         if (order == ORDER_PREPEND) {
             log_debug("[jsl] prepending class %s to jsltab", smemb->name);
             jslTypeTabSet(s_jsl->typeTab, xss, index);
-            addToTrail(jslRemoveNestedClass, xss);
+            addToTrail(jslRemoveNestedClass, xss, (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
         } else {
             log_debug("[jsl] appending class %s to jsltab", smemb->name);
             jslTypeTabSetLast(s_jsl->typeTab, xss, index);
-            addToTrail(jslRemoveNestedClass, xss);
+            addToTrail(jslRemoveNestedClass, xss, (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
         }
     }
     return(smemb);

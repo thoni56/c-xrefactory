@@ -194,7 +194,7 @@ extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size)
 extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
 
-extern void addToTrail(void (*action)(void*), void *p);
+extern void addToTrail(void (*action)(void*), void *p, bool needTrailOnTopLevel);
 extern void removeFromTrailUntil(FreeTrail *untilP);
 
 extern void initOuterCodeBlock(void);

@@ -1,7 +1,8 @@
-#include "globals.h"            /* for s_language in addToTrail() */
-
 #include "memory.h"
 #include "log.h"
+
+#include "constants.h"
+#include "proto.h"
 
 
 /* We don't want to add an actual dependency to cxref so... */
@@ -113,10 +114,10 @@ static void trailDump(void) {
 }
 
 
-void addToTrail(void (*action)(void*), void *pointer) {
+void addToTrail(void (*action)(void*), void *pointer, bool needTrailOnTopLevel) {
     FreeTrail *t;
     /* no trail at level 0 in C */
-    if ((nestingLevel() == 0) && (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)))
+    if ((nestingLevel() == 0) && !needTrailOnTopLevel)
         return;
     t = StackMemoryAlloc(FreeTrail);
     t->action = action;
