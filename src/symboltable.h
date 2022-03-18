@@ -1,7 +1,7 @@
 #ifndef SYMTAB_H_INCLUDED
 #define SYMTAB_H_INCLUDED
 
-/* symTab - an instance of hashlist */
+/* An instance of hashlist */
 
 #include "symbol.h"
 
@@ -20,5 +20,8 @@ extern SymbolTable *symbolTable;
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE
 #endif
+
+extern void initSymbolTable(void);
+extern int getNextExistingSymbol(int index);
 
 #endif

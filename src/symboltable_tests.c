@@ -1,4 +1,5 @@
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
 #include "symboltable.h"
 
@@ -11,16 +12,17 @@
 
 Describe(SymbolTable);
 BeforeEach(SymbolTable) {
+    initSymbolTable();
     initOuterCodeBlock();
 }
 AfterEach(SymbolTable) {}
 
-static struct symbolTable symtab;
 
-Ensure(SymbolTable, can_init) {
-    symbolTableInit(&symtab, 100);
-    assert_that(symtab.size, is_equal_to(100));
-    for (int i=0; i<100; i++)
-        if (symtab.tab[i] != NULL)
-            fail_test("allocated symtab entry is not null");
+Ensure(SymbolTable, is_empty_after_init) {
+    assert_that(getNextExistingSymbol(0), is_equal_to(-1));
+}
+
+
+Ensure(SymbolTable, can_retrieve_stored_symbol) {
+
 }

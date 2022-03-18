@@ -12,3 +12,9 @@
 SymbolTable *symbolTable;
 
 #include "hashlist.tc"
+
+
+void initSymbolTable(void) {}
+
+
+int getNextExistingSymbol(int index) {return -1;}
