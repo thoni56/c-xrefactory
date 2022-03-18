@@ -28,3 +28,11 @@ Ensure(SymbolTable, can_retrieve_stored_symbol) {
     int index = addToSymbolTable(&symbol);
     assert_that(getSymbol(index), is_equal_to(&symbol));
 }
+
+
+Ensure(SymbolTable, can_retrieve_next_existing_symbol) {
+    Symbol symbol = {"symbol"};
+
+    int index = addToSymbolTable(&symbol);
+    assert_that(getNextExistingSymbol(0), is_equal_to(index));
+}

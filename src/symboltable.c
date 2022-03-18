@@ -30,4 +30,9 @@ Symbol *getSymbol(int index) {
 }
 
 
-int getNextExistingSymbol(int index) {return -1;}
+int getNextExistingSymbol(int index) {
+    for (int i = index; i < symbolTable->size; i++)
+        if (symbolTable->tab[i] != NULL)
+            return i;
+    return -1;
+}
