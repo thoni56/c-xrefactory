@@ -3148,15 +3148,16 @@ static bool olRemoveCallerReference(OlcxReferences *refs) {
     Reference *rr, **rrr;
     LIST_MERGE_SORT(Reference, refs->references, olcxReferenceInternalLessFunction);
     for (rrr= &refs->references, rr=refs->references; rr!=NULL; rrr= &rr->next, rr=rr->next){
-        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->position.file, rr->position.line,rr->position.col, refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
-        if (! positionIsLessThan(rr->position, refs->callerPosition))
+        log_trace("checking %d %d %d to %d %d %d", rr->position.file, rr->position.line, rr->position.col,
+                  refs->callerPosition.file, refs->callerPosition.line, refs->callerPosition.col);
+        if (!positionIsLessThan(rr->position, refs->callerPosition))
             break;
     }
     if (rr == NULL)
         return false;
-    if (! IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind))
+    if (!IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind))
         return false;
-    //&fprintf(dumpOut,"!removing reference on %d\n", rr->position.line);
+    log_trace("!removing reference on %d", rr->position.line);
     *rrr = rr->next;
     olcx_memory_free(rr, sizeof(Reference));
 

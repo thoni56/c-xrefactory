@@ -2160,8 +2160,10 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // the following causes long jump, berk.
     CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
     CX_FREE_UNTIL(sss);
+
     CX_ALLOCC(referenceTable.tab, MAX_CXREF_SYMBOLS, struct symbolReferenceItem *);
     refTabNoAllocInit(&referenceTable, MAX_CXREF_SYMBOLS);
+
     SM_INIT(ppmMemory);
     allocateMacroArgumentTable();
     initOuterCodeBlock();
