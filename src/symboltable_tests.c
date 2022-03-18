@@ -21,3 +21,10 @@ AfterEach(SymbolTable) {}
 Ensure(SymbolTable, is_empty_after_init) {
     assert_that(getNextExistingSymbol(0), is_equal_to(-1));
 }
+
+Ensure(SymbolTable, can_retrieve_stored_symbol) {
+    Symbol symbol = {"symbol"};
+
+    int index = addToSymbolTable(&symbol);
+    assert_that(getSymbol(index), is_equal_to(&symbol));
+}

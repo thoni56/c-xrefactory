@@ -19,4 +19,15 @@ void initSymbolTable(void) {
     symbolTableInit(symbolTable, MAX_SYMBOLS);
 }
 
+
+int addToSymbolTable(Symbol *symbol) {
+    return symbolTableAdd(symbolTable, symbol);
+}
+
+
+Symbol *getSymbol(int index) {
+    return symbolTable->tab[index];
+}
+
+
 int getNextExistingSymbol(int index) {return -1;}
