@@ -116,7 +116,8 @@ static void trailDump(void) {
 
 void addToTrail(void (*action)(void*), void *pointer, bool needTrailOnTopLevel) {
     FreeTrail *t;
-    /* no trail at level 0 in C */
+
+    /* no trail at level 0 in C, Yacc */
     if ((nestingLevel() == 0) && !needTrailOnTopLevel)
         return;
     t = StackMemoryAlloc(FreeTrail);

@@ -171,13 +171,6 @@ typedef enum language {
     (ss->ooBits&OOC_VIRTUAL_MASK)==OOC_VIRT_SAME_APPL_FUN_CLASS\
 )
 
-#define AddSymbolNoTrail(pp,symtab) {\
-    int i;\
-    Symbol *memb;\
-    symbolTableIsMember(symtab,pp,&i,&memb);\
-    symbolTableSet(symtab,pp,i);\
-}
-
 #define LINK_NAME_MAYBE_START(ccc) (\
     ccc=='.' || ccc=='/' || ccc==LINK_NAME_SEPARATOR \
     || ccc==LINK_NAME_COLLATE_SYMBOL \

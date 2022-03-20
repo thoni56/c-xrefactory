@@ -5,23 +5,21 @@
 #include "symbol.h"
 #include "symboltable.h"
 
-
 typedef struct javaStat {
-    struct idList *className;	   /* this class name */
-    struct typeModifier *thisType; /* this class type */
-    struct symbol *thisClass;	   /* this class definition */
-    int currentNestedIndex;	   /* currently parsed nested class */
-    char *currentPackage;	   /* current package */
-    char *unnamedPackagePath;	   /* directory for unnamed package */
-    char *namedPackagePath;        /* inferred source-path for named package */
-    struct symbolTable *locals;	   /* args and local variables */
-    struct idList *lastParsedName;
-    unsigned methodModifiers;	   /* currently parsed method modifs */
-    struct currentlyParsedCl cp;   /* some parsing positions */
-    int classFileIndex;		   /* this file class index */
-    struct javaStat *next;	   /* outer class */
+    struct idList           *className;          /* this class name */
+    struct typeModifier     *thisType;           /* this class type */
+    struct symbol           *thisClass;          /* this class definition */
+    int                      currentNestedIndex; /* currently parsed nested class */
+    char                    *currentPackage;     /* current package */
+    char                    *unnamedPackagePath; /* directory for unnamed package */
+    char                    *namedPackagePath;   /* inferred source-path for named package */
+    struct symbolTable      *locals;             /* args and local variables */
+    struct idList           *lastParsedName;
+    unsigned                 methodModifiers; /* currently parsed method modifs */
+    struct currentlyParsedCl cp;              /* some parsing positions */
+    int                      classFileIndex;  /* this file class index */
+    struct javaStat         *next;            /* outer class */
 } S_javaStat;
-
 
 extern S_javaStat *s_javaStat;
 extern S_javaStat s_initJavaStat;

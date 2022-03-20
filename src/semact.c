@@ -66,12 +66,16 @@ int styyErrorRecovery(void) {
     return 0;
 }
 
+
+/* Used as action in addToTrail(), thus void* */
 void setToNull(void *p) {
     void **pp;
     pp = (void **)p;
     *pp = NULL;
 }
 
+
+/* Used as action in addToTrail(), thus void* */
 void deleteSymDef(void *p) {
     Symbol        *pp;
 
@@ -102,7 +106,7 @@ void addSymbol(Symbol *symbol, SymbolTable *table) {
     log_debug("adding symbol %s: %s %s", symbol->name, typeNamesTable[symbol->bits.symbolType],
               storageEnumName[symbol->bits.storage]);
     assert(symbol->bits.npointers==0);
-    AddSymbolNoTrail(symbol, table);
+    addSymbolNoTrail(symbol, table);
     addToTrail(deleteSymDef, symbol /* TODO? Should also include reference to table */, (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
 }
 

@@ -22,7 +22,8 @@ extern SymbolTable *symbolTable;
 #endif
 
 extern void initSymbolTable(int size);
-extern int addToSymbolTable(Symbol *symbol);
+extern int  addToSymbolTable(Symbol *symbol);
+extern void addSymbolNoTrail(Symbol *symbol, SymbolTable *symbolTable); /* TODO remove table argument? */
 extern Symbol *getSymbol(int index);
 extern int getNextExistingSymbol(int index);
 
