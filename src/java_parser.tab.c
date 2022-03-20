@@ -5679,7 +5679,7 @@ case 340:
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         if (yyvsp[-3].ast_symbol.d->bits.symbolType != TypeError) {
-                            addNewSymbolDefinition(yyvsp[-3].ast_symbol.d, StorageAuto, s_javaStat->locals,
+                            addNewSymbolDefinition(s_javaStat->locals, yyvsp[-3].ast_symbol.d, StorageAuto,
                                             UsageDefined);
                             if (options.server_operation == OLO_EXTRACT) {
                                 assert(yyvsp[-3].ast_symbol.d->bits.symbolType==TypeDefault);

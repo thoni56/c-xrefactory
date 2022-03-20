@@ -2960,7 +2960,7 @@ yyreduce:
 case 1:
 #line 248 "yacc_parser.y"
 {
-            cache.active = false;    /* no caching in yaccgram */
+            cache.active = false;    /* no caching in yacc_parser */
             /* initialize locals*/
             l_yaccUnion = NULL;
             l_currentType = NULL;
@@ -3137,7 +3137,7 @@ case 192:
             d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position, yyval.ast_expressionType.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
-            dd = addNewSymbolDefinition(d, StorageExtern, symbolTable, UsageUsed);
+            dd = addNewSymbolDefinition(symbolTable, d, StorageExtern, UsageUsed);
             yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->position, UsageUsed, noFileIndex, noFileIndex);
         }
     }
@@ -4015,7 +4015,7 @@ case 369:
         yyval.ast_typeModifiers.d = yyvsp[-3].ast_typeModifiers.d;
         if (yyval.ast_typeModifiers.d->u.t->u.enums==NULL) {
             yyval.ast_typeModifiers.d->u.t->u.enums = yyvsp[-1].ast_symbolList.d;
-            addToTrail(setToNull, & (yyval.ast_typeModifiers.d->u.t->u.enums), (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
+            addToTrail(setToNull, &(yyval.ast_typeModifiers.d->u.t->u.enums), (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
         }
     }
 break;
@@ -4052,14 +4052,14 @@ case 378:
 #line 1193 "yacc_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[0].ast_id.d);
-        addNewSymbolDefinition(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition(symbolTable, yyval.ast_symbol.d, StorageConstant, UsageDefined);
     }
 break;
 case 379:
 #line 1197 "yacc_parser.y"
 {
         yyval.ast_symbol.d = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[-2].ast_id.d);
-        addNewSymbolDefinition(yyval.ast_symbol.d,StorageConstant, symbolTable, UsageDefined);
+        addNewSymbolDefinition(symbolTable, yyval.ast_symbol.d, StorageConstant, UsageDefined);
     }
 break;
 case 380:
@@ -4866,7 +4866,7 @@ case 533:
         /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
-        addNewSymbolDefinition(yyvsp[0].ast_symbol.d, StorageExtern, symbolTable, UsageDefined);
+        addNewSymbolDefinition(symbolTable, yyvsp[0].ast_symbol.d, StorageExtern, UsageDefined);
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
         beginBlock();
         counters.localVar = 0;
@@ -4929,21 +4929,21 @@ case 541:
 #line 1913 "yacc_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
-        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
+        addNewDeclaration(yyvsp[-2].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern, symbolTable);
     }
 break;
 case 542:
 #line 1917 "yacc_parser.y"
 {
         yyval.ast_symbol.d = & s_defaultIntDefinition;
-        addNewDeclaration(yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
+        addNewDeclaration(yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern, symbolTable);
     }
 break;
 case 543:
 #line 1921 "yacc_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
-        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern,symbolTable);
+        addNewDeclaration(yyvsp[-3].ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern, symbolTable);
     }
 break;
 case 544:

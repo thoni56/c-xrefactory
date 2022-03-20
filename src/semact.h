@@ -27,7 +27,7 @@ extern int findStrRecordSym(S_recFindStr *ss,
                             int javaClassif,
                             AccessibilityCheckYesNo accessCheck,
                             VisibilityCheckYesNo visibilityCheck);
-extern Symbol *addNewSymbolDefinition(Symbol *p, unsigned storage, SymbolTable *tab, UsageKind usage);
+extern Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage storage, UsageKind usage);
 extern Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl,
                                    unsigned storage, SymbolTable *tab);
 extern int styyerror(char *s);

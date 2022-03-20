@@ -546,7 +546,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
 }
 
 
-Symbol *addNewSymbolDefinition(Symbol *symbol, unsigned theDefaultStorage, SymbolTable *table, UsageKind usage) {
+Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage theDefaultStorage, UsageKind usage) {
     if (symbol == &s_errorSymbol || symbol->bits.symbolType == TypeError)
         return symbol;
     if (symbol->bits.symbolType == TypeError)
@@ -615,7 +615,7 @@ Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl, unsigned sto
         usageKind = UsageDeclared;
     else if (decl->bits.storage == StorageExtern)
         usageKind = UsageDeclared;
-    addNewSymbolDefinition(decl, storage, tab, usageKind);
+    addNewSymbolDefinition(tab, decl, storage, usageKind);
     addInitializerRefs(decl, idl);
     return decl;
 }
@@ -639,7 +639,7 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTa
                 addCxReference(ppp, &p->pos, UsageUsed, noFileIndex, noFileIndex);
             }
         } else {
-            addNewSymbolDefinition(pa, StorageAuto, tab, UsageDefined);
+            addNewSymbolDefinition(tab, pa, StorageAuto, UsageDefined);
         }
         if (options.server_operation == OLO_EXTRACT) {
             addCxReference(pa, &pa->pos, UsageLvalUsed,
