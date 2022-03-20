@@ -1883,7 +1883,7 @@ external_definition
                 continue;
             if (p->u.typeModifier == NULL)
                 p->u.typeModifier = &defaultIntModifier;
-            addFunctionParameterToSymTable($2.d, p, i, symbolTable);
+            addFunctionParameterToSymTable(symbolTable, $2.d, p, i);
         }
     } compound_statement {
         endBlock();

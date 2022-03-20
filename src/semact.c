@@ -616,7 +616,7 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
     return declaration;
 }
 
-void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTable *tab) {
+void addFunctionParameterToSymTable(SymbolTable *tab, Symbol *function, Symbol *p, int i) {
     Symbol *pp, *pa, *ppp;
 
     if (p->name != NULL && p->bits.symbolType!=TypeError) {

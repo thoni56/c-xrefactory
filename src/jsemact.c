@@ -1812,7 +1812,7 @@ void javaAddMethodParametersToSymTable(Symbol *method) {
     Symbol *p;
     int i;
     for(p=method->u.typeModifier->u.f.args,i=1; p!=NULL; p=p->next,i++) {
-        addFunctionParameterToSymTable(method, p, i, s_javaStat->locals);
+        addFunctionParameterToSymTable(s_javaStat->locals, method, p, i);
     }
 }
 

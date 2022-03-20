@@ -4878,7 +4878,7 @@ case 533:
                 continue;
             if (p->u.typeModifier == NULL)
                 p->u.typeModifier = &defaultIntModifier;
-            addFunctionParameterToSymTable(yyvsp[0].ast_symbol.d, p, i, symbolTable);
+            addFunctionParameterToSymTable(symbolTable, yyvsp[0].ast_symbol.d, p, i);
         }
     }
 break;
