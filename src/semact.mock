@@ -68,8 +68,8 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage stora
     return (Symbol *) mock(symbol, storage, table, usage);
 }
 
-Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl, unsigned storage, SymbolTable *tab) {
-    return (Symbol *) mock(btype, decl, idl, storage, tab);
+Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declaration, IdList *idList, Storage storage) {
+    return (Symbol *) mock(baseType, declaration, idList, storage, table);
 }
 
 int styyerror(char *s) {

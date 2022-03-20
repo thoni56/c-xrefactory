@@ -4990,7 +4990,7 @@ case 234:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto,s_javaStat->locals);
+                    addNewDeclaration(s_javaStat->locals, yyvsp[-1].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto);
                     yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-1].ast_symbol, yyvsp[0].ast_symbol);
@@ -5003,7 +5003,7 @@ case 235:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto,s_javaStat->locals);
+                    addNewDeclaration(s_javaStat->locals, yyvsp[-1].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto);
                     yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
@@ -5017,7 +5017,7 @@ case 236:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[-2].ast_symbol.d->bits.symbolType != TypeError) {
-                        addNewDeclaration(yyvsp[-2].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto,s_javaStat->locals);
+                        addNewDeclaration(s_javaStat->locals, yyvsp[-2].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto);
                     }
                     yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
                 } else {

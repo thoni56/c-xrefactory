@@ -2294,7 +2294,7 @@ LocalVarDeclUntilInit
     :   JavaType VariableDeclaratorId							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration($1.d,$2.d,NULL,StorageAuto,s_javaStat->locals);
+                    addNewDeclaration(s_javaStat->locals, $1.d,$2.d,NULL,StorageAuto);
                     $$.d = $1.d;
                 } else {
                     PropagateBoundaries($$, $1, $2);
@@ -2304,7 +2304,7 @@ LocalVarDeclUntilInit
     |	FINAL JavaType VariableDeclaratorId						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration($2.d,$3.d,NULL,StorageAuto,s_javaStat->locals);
+                    addNewDeclaration(s_javaStat->locals, $2.d,$3.d,NULL,StorageAuto);
                     $$.d = $2.d;
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -2315,7 +2315,7 @@ LocalVarDeclUntilInit
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.d->bits.symbolType != TypeError) {
-                        addNewDeclaration($1.d,$3.d,NULL,StorageAuto,s_javaStat->locals);
+                        addNewDeclaration(s_javaStat->locals, $1.d,$3.d,NULL,StorageAuto);
                     }
                     $$.d = $1.d;
                 } else {

@@ -28,8 +28,8 @@ extern int findStrRecordSym(S_recFindStr *ss,
                             AccessibilityCheckYesNo accessCheck,
                             VisibilityCheckYesNo visibilityCheck);
 extern Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage storage, UsageKind usage);
-extern Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl,
-                                   unsigned storage, SymbolTable *tab);
+extern Symbol *addNewDeclaration(SymbolTable *tab, Symbol *btype, Symbol *decl, IdList *idl,
+                                   unsigned storage);
 extern int styyerror(char *s);
 extern int styyErrorRecovery(void);
 extern void setToNull(void *p);

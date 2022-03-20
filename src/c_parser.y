@@ -652,11 +652,11 @@ declaration
 init_declarations
     : declaration_specifiers init_declarator eq_initializer_opt {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, $3.d, StorageAuto, symbolTable);
+        addNewDeclaration(symbolTable, $1.d, $2.d, $3.d, StorageAuto);
     }
     | init_declarations ',' init_declarator eq_initializer_opt  {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, $4.d, StorageAuto, symbolTable);
+        addNewDeclaration(symbolTable, $1.d, $3.d, $4.d, StorageAuto);
     }
     | error                                             {
         /* $$.d = &s_errorSymbol; */
@@ -1695,15 +1695,15 @@ external_definition
 top_init_declarations
     : declaration_specifiers init_declarator eq_initializer_opt {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, $3.d, StorageExtern, symbolTable);
+        addNewDeclaration(symbolTable, $1.d, $2.d, $3.d, StorageExtern);
     }
     | init_declarator eq_initializer_opt                        {
         $$.d = & s_defaultIntDefinition;
-        addNewDeclaration($$.d, $1.d, $2.d, StorageExtern, symbolTable);
+        addNewDeclaration(symbolTable, $$.d, $1.d, $2.d, StorageExtern);
     }
     | top_init_declarations ',' init_declarator eq_initializer_opt          {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, $4.d, StorageExtern, symbolTable);
+        addNewDeclaration(symbolTable, $1.d, $3.d, $4.d, StorageExtern);
     }
     | error                                                     {
         /* $$.d = &s_errorSymbol; */

@@ -596,23 +596,24 @@ static void addInitializerRefs(Symbol *declaration, IdList *idList) {
     }
 }
 
-Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl, unsigned storage, SymbolTable *tab) {
+Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declaration, IdList *idList,
+                          Storage storage) {
     UsageKind usageKind = UsageDefined;
 
-    if (decl == &s_errorSymbol || btype == &s_errorSymbol || decl->bits.symbolType == TypeError ||
-        btype->bits.symbolType == TypeError) {
-        return decl;
+    if (declaration == &s_errorSymbol || baseType == &s_errorSymbol || declaration->bits.symbolType == TypeError ||
+        baseType->bits.symbolType == TypeError) {
+        return declaration;
     }
-    assert(decl->bits.symbolType == TypeDefault);
-    completeDeclarator(btype, decl);
+    assert(declaration->bits.symbolType == TypeDefault);
+    completeDeclarator(baseType, declaration);
 
-    if (decl->u.typeModifier->kind == TypeFunction)
+    if (declaration->u.typeModifier->kind == TypeFunction)
         usageKind = UsageDeclared;
-    else if (decl->bits.storage == StorageExtern)
+    else if (declaration->bits.storage == StorageExtern)
         usageKind = UsageDeclared;
-    addNewSymbolDefinition(tab, decl, storage, usageKind);
-    addInitializerRefs(decl, idl);
-    return decl;
+    addNewSymbolDefinition(table, declaration, storage, usageKind);
+    addInitializerRefs(declaration, idList);
+    return declaration;
 }
 
 void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTable *tab) {
