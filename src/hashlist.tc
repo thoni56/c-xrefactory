@@ -27,11 +27,12 @@ void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
 }
 
 
+/* Use NULL for position and/or foundMemberPointer if you are not interested in them */
 bool CONCAT(HASH_FUN_PREFIX,IsMember)(
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element,
-    int *position,
-    HASH_ELEM_TYPE **foundMemberPointer
+    int *position,              /* OUT */
+    HASH_ELEM_TYPE **foundMemberPointer /* OUT */
 ) {
     unsigned index;
     HASH_ELEM_TYPE *pp;
@@ -43,7 +44,8 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
     assert(table->tab != NULL);
     for (pp=table->tab[index]; pp!=NULL; pp=pp->next) {
         if (HASH_ELEM_EQUAL(pp, element)) {
-            *foundMemberPointer = pp;
+            if (foundMemberPointer)
+                *foundMemberPointer = pp;
             return true;
         }
     }

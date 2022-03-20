@@ -616,36 +616,37 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
     return declaration;
 }
 
-void addFunctionParameterToSymTable(SymbolTable *tab, Symbol *function, Symbol *p, int i) {
-    Symbol *pp, *pa, *ppp;
-
-    if (p->name != NULL && p->bits.symbolType!=TypeError) {
+void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol *parameter, int position) {
+    if (parameter->name != NULL && parameter->bits.symbolType!=TypeError) {
         assert(s_javaStat->locals!=NULL);
-        pa = newSymbolAsCopyOf(p);
+        Symbol *parameterCopy = newSymbolAsCopyOf(parameter);
+        Symbol *pp;
 
         // here checks a special case, double argument definition do not
         // redefine him, so refactorings will detect problem
-        for(pp=function->u.typeModifier->u.f.args; pp!=NULL && pp!=p; pp=pp->next) {
-            if (pp->name!=NULL && pp->bits.symbolType!=TypeError) {
-                if (p!=pp && strcmp(pp->name, p->name)==0) break;
+        for (pp = function->u.typeModifier->u.f.args; pp != NULL && pp != parameter; pp = pp->next) {
+            if (pp->name != NULL && pp->bits.symbolType != TypeError) {
+                if (parameter != pp && strcmp(pp->name, parameter->name) == 0)
+                    break;
             }
         }
-        if (pp!=NULL && pp!=p) {
-            if (symbolTableIsMember(tab, pa, NULL, &ppp)) {
-                addCxReference(ppp, &p->pos, UsageUsed, noFileIndex, noFileIndex);
+        if (pp != NULL && pp != parameter) {
+            Symbol *foundMember;
+            if (symbolTableIsMember(table, parameterCopy, NULL, &foundMember)) {
+                addCxReference(foundMember, &parameter->pos, UsageUsed, noFileIndex, noFileIndex);
             }
         } else {
-            addNewSymbolDefinition(tab, pa, StorageAuto, UsageDefined);
+            addNewSymbolDefinition(table, parameterCopy, StorageAuto, UsageDefined);
         }
         if (options.server_operation == OLO_EXTRACT) {
-            addCxReference(pa, &pa->pos, UsageLvalUsed,
-                           noFileIndex, noFileIndex);
+            addCxReference(parameterCopy, &parameterCopy->pos, UsageLvalUsed, noFileIndex, noFileIndex);
         }
     }
     if (options.server_operation == OLO_GOTO_PARAM_NAME
-        && i == options.olcxGotoVal
-        && positionsAreEqual(function->pos, s_cxRefPos)) {
-        s_paramPosition = p->pos;
+        && position == options.olcxGotoVal
+        && positionsAreEqual(function->pos, s_cxRefPos))
+    {
+        s_paramPosition = parameter->pos;
     }
 }
 
