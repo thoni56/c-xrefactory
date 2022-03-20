@@ -870,7 +870,7 @@ static int findTopLevelNameInternal(char *name,
                                     int accessibilityCheck,
                                     int visibilityCheck,
                                     S_javaStat **rscope
-                                    ) {
+) {
     int res;
     Symbol sd;
     S_javaStat *cscope;

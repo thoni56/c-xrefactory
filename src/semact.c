@@ -19,7 +19,8 @@
 #include "log.h"
 
 
-void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord, unsigned recsClassCounter) {
+void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord,
+                    unsigned recsClassCounter) {
     recFindStr->baseClass = baseClass;
     recFindStr->currClass = currentClass;
     recFindStr->nextRecord = nextRecord;
@@ -285,109 +286,108 @@ int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     return i;
 }
 
-#define FSRS_RETURN_WITH_SUCCESS(ss,res,r) {    \
-        *res = r;                               \
-        ss->nextRecord = r->next;               \
-        return RETURN_OK;                       \
-    }
-
-
-#define FSRS_RETURN_WITH_FAIL(ss,res) {         \
-        ss->nextRecord = NULL;                  \
-        *res = &s_errorSymbol;                  \
-        return RETURN_NOT_FOUND;                \
-    }
-
-int findStrRecordSym(S_recFindStr *ss,
-                     char *recname,    /* can be NULL */
-                     Symbol **res,
-                     int javaClassif, /* classify to method/field*/
-                     AccessibilityCheckYesNo accessibilityCheck,    /* java check accessibility */
-                     VisibilityCheckYesNo visibilityCheck /* redundant, always equal to accCheck? */
+int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL */
+                     Symbol **res, int javaClassif,              /* classify to method/field*/
+                     AccessibilityCheckYesNo accessibilityCheck, /* java check accessibility */
+                     VisibilityCheckYesNo    visibilityCheck     /* redundant, always equal to accCheck? */
 ) {
-    Symbol            *s,*r,*cclass;
-    SymbolList        *sss;
-    int                 m;
+    Symbol     *s, *r, *cclass;
+    SymbolList *sss;
+    int         m;
 
     assert(accessibilityCheck == ACCESSIBILITY_CHECK_YES || accessibilityCheck == ACCESSIBILITY_CHECK_NO);
     assert(visibilityCheck == VISIBILITY_CHECK_YES || visibilityCheck == VISIBILITY_CHECK_NO);
 
     //&fprintf(dumpOut,":\nNEW SEARCH\n"); fflush(dumpOut);
-    for(;;) {
+    for (;;) {
         assert(ss);
         cclass = ss->currClass;
-        if (cclass!=NULL&&cclass->u.structSpec->recSearchCounter==ss->recsClassCounter){
+        if (cclass != NULL && cclass->u.structSpec->recSearchCounter == ss->recsClassCounter) {
             // to avoid multiple pass through the same super-class ??
-            //&fprintf(dumpOut,":%d==%d --> skipping class %s\n",cclass->u.structSpec->recSearchCounter,ss->recsClassCounter,cclass->linkName);
+            //&fprintf(dumpOut,":%d==%d --> skipping class
+            //%s\n",cclass->u.structSpec->recSearchCounter,ss->recsClassCounter,cclass->linkName);
             goto nextClass;
         }
         //&if(cclass!=NULL)fprintf(dumpOut,":looking in class %s(%d)\n",cclass->linkName,ss->sti); fflush(dumpOut);
-        for(r=ss->nextRecord; r!=NULL; r=r->next) {
+        for (r = ss->nextRecord; r != NULL; r = r->next) {
             // special gcc extension of anonymous struct record
-            if (r->name!=NULL && *r->name==0 && r->bits.symbolType==TypeDefault
-                && r->u.typeModifier->kind==TypeAnonymousField
-                && r->u.typeModifier->next!=NULL
-                && (r->u.typeModifier->next->kind==TypeUnion || r->u.typeModifier->next->kind==TypeStruct)) {
+            if (r->name != NULL && *r->name == 0 && r->bits.symbolType == TypeDefault &&
+                r->u.typeModifier->kind == TypeAnonymousField && r->u.typeModifier->next != NULL &&
+                (r->u.typeModifier->next->kind == TypeUnion || r->u.typeModifier->next->kind == TypeStruct)) {
                 // put the anonymous union as 'super class'
-                if (ss->aui+1 < MAX_ANONYMOUS_FIELDS) {
+                if (ss->aui + 1 < MAX_ANONYMOUS_FIELDS) {
                     ss->au[ss->aui++] = r->u.typeModifier->next->u.t;
                 }
             }
             //&fprintf(dumpOut,":checking %s\n",r->name); fflush(dumpOut);
-            if (recname==NULL || strcmp(r->name,recname)==0) {
-                if (! LANGUAGE(LANG_JAVA)) {
-                    FSRS_RETURN_WITH_SUCCESS(ss, res, r);
+            if (recname == NULL || strcmp(r->name, recname) == 0) {
+                if (!LANGUAGE(LANG_JAVA)) {
+                    *res           = r;
+                    ss->nextRecord = r->next;
+                    return RETURN_OK;
                 }
                 //&fprintf(dumpOut,"acc O.K., checking classif %d\n",javaClassif);fflush(dumpOut);
-                if (javaClassif!=CLASS_TO_ANY) {
+                if (javaClassif != CLASS_TO_ANY) {
                     assert(r->bits.symbolType == TypeDefault);
                     assert(r->u.typeModifier);
                     m = r->u.typeModifier->kind;
-                    if (m==TypeFunction && javaClassif!=CLASS_TO_METHOD) goto nextRecord;
-                    if (m!=TypeFunction && javaClassif==CLASS_TO_METHOD) goto nextRecord;
+                    if (m == TypeFunction && javaClassif != CLASS_TO_METHOD)
+                        goto nextRecord;
+                    if (m != TypeFunction && javaClassif == CLASS_TO_METHOD)
+                        goto nextRecord;
                 }
-                //&if(cclass!=NULL)fprintf(dumpOut,"name O.K., checking accesibility %xd %xd\n",cclass->bits.access,r->bits.access); fflush(dumpOut);
+                //&if(cclass!=NULL)fprintf(dumpOut,"name O.K., checking accesibility %xd
+                //%xd\n",cclass->bits.access,r->bits.access); fflush(dumpOut);
                 // I have it, check visibility and accessibility
                 assert(r);
                 if (visibilityCheck == VISIBILITY_CHECK_YES) {
-                    if (! javaRecordVisible(ss->baseClass, cclass, r->bits.access)) {
+                    if (!javaRecordVisible(ss->baseClass, cclass, r->bits.access)) {
                         // WRONG? return, Doesn't it iverrides any other of this name
                         // Yes, definitely correct, in the first step determining
                         // class to search
-                        FSRS_RETURN_WITH_FAIL(ss, res);
+                        ss->nextRecord = NULL;
+                        *res           = &s_errorSymbol;
+                        return RETURN_NOT_FOUND;
                     }
                 }
                 if (accessibilityCheck == ACCESSIBILITY_CHECK_YES) {
-                    if (! javaRecordAccessible(ss, ss->baseClass,cclass,r,r->bits.access)){
+                    if (!javaRecordAccessible(ss, ss->baseClass, cclass, r, r->bits.access)) {
                         if (visibilityCheck == VISIBILITY_CHECK_YES) {
-                            FSRS_RETURN_WITH_FAIL(ss, res);
+                            ss->nextRecord = NULL;
+                            *res           = &s_errorSymbol;
+                            return RETURN_NOT_FOUND;
                         } else {
                             goto nextRecord;
                         }
                     }
                 }
-                FSRS_RETURN_WITH_SUCCESS(ss, res, r);
+                *res           = r;
+                ss->nextRecord = r->next;
+                return RETURN_OK;
             }
         nextRecord:;
         }
     nextClass:
-        if (ss->aui!=0) {
+        if (ss->aui != 0) {
             // O.K. try first to pas to anonymous record
             s = ss->au[--ss->aui];
         } else {
             // mark the class as processed
-            if (cclass!=NULL) {
+            if (cclass != NULL) {
                 cclass->u.structSpec->recSearchCounter = ss->recsClassCounter;
             }
 
-            while (ss->sti>0 && ss->st[ss->sti-1]==NULL) ss->sti--;
-            if (ss->sti==0) {
-                FSRS_RETURN_WITH_FAIL(ss, res);
+            while (ss->sti > 0 && ss->st[ss->sti - 1] == NULL)
+                ss->sti--;
+            if (ss->sti == 0) {
+                ss->nextRecord = NULL;
+                *res           = &s_errorSymbol;
+                return RETURN_NOT_FOUND;
             }
-            sss = ss->st[ss->sti-1];
-            s = sss->d;
-            ss->st[ss->sti-1] = sss->next;
-            assert(s && (s->bits.symbolType==TypeStruct || s->bits.symbolType==TypeUnion));
+            sss                 = ss->st[ss->sti - 1];
+            s                   = sss->d;
+            ss->st[ss->sti - 1] = sss->next;
+            assert(s && (s->bits.symbolType == TypeStruct || s->bits.symbolType == TypeUnion));
             //&fprintf(dumpOut,":pass to super class %s(%d)\n",s->linkName,ss->sti); fflush(dumpOut);
         }
         recFindPush(s, ss);

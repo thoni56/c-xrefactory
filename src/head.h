@@ -131,6 +131,7 @@ typedef enum language {
 
 /* ********************************************************************** */
 /*            common integer return values for cplex funs                 */
+/* TODO: Turn into an enum and change return types, also see RESULT_OK/ERR in proto.h */
 
 #define RETURN_OK           0
 #define RETURN_NOT_FOUND	1
