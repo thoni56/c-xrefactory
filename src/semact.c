@@ -576,27 +576,22 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage theDe
     return symbol;
 }
 
-
-static void addInitializerRefs(Symbol *decl,
-                               IdList *idl
-                               ) {
-    IdList *ll;
-    Id* id;
-    TypeModifier *tt;
-    Reference *ref;
-    Symbol *rec=NULL;
-    for(ll=idl; ll!=NULL; ll=ll->next) {
-        tt = decl->u.typeModifier;
-        for (id = &ll->id; id!=NULL; id=id->next) {
-            if (tt->kind == TypeArray) {
-                tt = tt->next;
+static void addInitializerRefs(Symbol *declaration, IdList *idList) {
+    for (IdList *l = idList; l != NULL; l = l->next) {
+        TypeModifier *typeModifierP = declaration->u.typeModifier;
+        for (Id *id = &l->id; id != NULL; id = id->next) {
+            if (typeModifierP->kind == TypeArray) {
+                typeModifierP = typeModifierP->next;
                 continue;
             }
-            if (tt->kind != TypeStruct && tt->kind != TypeUnion) return;
-            ref = findStructureFieldFromType(tt, id, &rec, CLASS_TO_ANY);
-            if (NULL == ref) return;
+            if (typeModifierP->kind != TypeStruct && typeModifierP->kind != TypeUnion)
+                return;
+            Symbol *rec = NULL;
+            Reference *ref = findStructureFieldFromType(typeModifierP, id, &rec, CLASS_TO_ANY);
+            if (ref == NULL)
+                return;
             assert(rec);
-            tt = rec->u.typeModifier;
+            typeModifierP = rec->u.typeModifier;
         }
     }
 }
