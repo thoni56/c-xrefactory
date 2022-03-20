@@ -828,19 +828,21 @@ SymbolList *createDefinitionList(Symbol *symbol) {
 }
 
 int mergeArguments(Symbol *id, Symbol *ty) {
-    Symbol *p;
-    int res;
-    res = RESULT_OK;
+    int res = RESULT_OK;
     /* if a type of non-exist. argument is declared, it is probably */
     /* only a missing ';', so syntax error should be raised */
-    for(;ty!=NULL; ty=ty->next) {
+    for (; ty != NULL; ty = ty->next) {
         if (ty->name != NULL) {
-            for(p=id; p!=NULL; p=p->next) {
-                if (p->name!=NULL && strcmp(p->name,ty->name)==0) break;
+            Symbol *symbol;
+            for (symbol = id; symbol != NULL; symbol = symbol->next) {
+                if (symbol->name != NULL && strcmp(symbol->name, ty->name) == 0)
+                    break;
             }
-            if (p==NULL) res = RESULT_ERR;
+            if (symbol == NULL)
+                res = RESULT_ERR;
             else {
-                if (p->u.typeModifier == NULL) p->u.typeModifier = ty->u.typeModifier;
+                if (symbol->u.typeModifier == NULL)
+                    symbol->u.typeModifier = ty->u.typeModifier;
             }
         }
     }
