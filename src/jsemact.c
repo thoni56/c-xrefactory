@@ -621,7 +621,7 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *original, int accessFlags, Posit
 
     added = newSymbolAsCopyOf(original);
     added->pos = *importPos;
-    addSymbol(added, symbolTable);
+    addSymbol(symbolTable, added);
 
     return original;
 }

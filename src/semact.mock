@@ -31,7 +31,7 @@ void deleteSymDef(void *p) {
     mock(p);
 }
 
-void addSymbol(Symbol *pp, SymbolTable *tab) {
+void addSymbol(SymbolTable *tab, Symbol *pp) {
     mock(pp, tab);
 }
 

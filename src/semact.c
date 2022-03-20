@@ -97,7 +97,7 @@ void unpackPointers(Symbol *symbol) {
     symbol->bits.npointers=0;
 }
 
-void addSymbol(Symbol *symbol, SymbolTable *table) {
+void addSymbol(SymbolTable *table, Symbol *symbol) {
     /*  a bug can produce, if you add a symbol into old table, and the same
         symbol exists in a newer one. Then it will be deleted from the newer
         one. All this story is about storing information in trail. It should
@@ -546,38 +546,36 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
 }
 
 
-Symbol *addNewSymbolDefinition(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
-                        UsageKind usage) {
-    TypeModifier *tt;
-
-    if (p == &s_errorSymbol || p->bits.symbolType==TypeError)
-        return p;
-    if (p->bits.symbolType == TypeError)
-        return p;
-    assert(p && p->bits.symbolType == TypeDefault && p->u.typeModifier);
-    if (p->u.typeModifier->kind == TypeFunction && p->bits.storage == StorageDefault) {
-        p->bits.storage = StorageExtern;
+Symbol *addNewSymbolDefinition(Symbol *symbol, unsigned theDefaultStorage, SymbolTable *table, UsageKind usage) {
+    if (symbol == &s_errorSymbol || symbol->bits.symbolType == TypeError)
+        return symbol;
+    if (symbol->bits.symbolType == TypeError)
+        return symbol;
+    assert(symbol && symbol->bits.symbolType == TypeDefault && symbol->u.typeModifier);
+    if (symbol->u.typeModifier->kind == TypeFunction && symbol->bits.storage == StorageDefault) {
+        symbol->bits.storage = StorageExtern;
     }
-    if (p->bits.storage == StorageDefault) {
-        p->bits.storage = theDefaultStorage;
+    if (symbol->bits.storage == StorageDefault) {
+        symbol->bits.storage = theDefaultStorage;
     }
-    if (p->bits.symbolType==TypeDefault && p->bits.storage==StorageTypedef) {
+    if (symbol->bits.symbolType == TypeDefault && symbol->bits.storage == StorageTypedef) {
         // typedef HACK !!!
-        tt = StackMemoryAlloc(TypeModifier);
-        *tt = *p->u.typeModifier;
-        p->u.typeModifier = tt;
-        tt->typedefSymbol = p;
+        TypeModifier *tt       = StackMemoryAlloc(TypeModifier);
+        *tt                    = *symbol->u.typeModifier;
+        symbol->u.typeModifier = tt;
+        tt->typedefSymbol      = symbol;
     }
     if (nestingLevel() != 0) {
         // local scope symbol
-        setLocalVariableLinkName(p);
-    } else if (p->bits.symbolType==TypeDefault && p->bits.storage==StorageStatic) {
-        setStaticFunctionLinkName(p, usage);
+        setLocalVariableLinkName(symbol);
+    } else if (symbol->bits.symbolType == TypeDefault && symbol->bits.storage == StorageStatic) {
+        setStaticFunctionLinkName(symbol, usage);
     }
-    addSymbol(p, tab);
-    addCxReference(p, &p->pos, usage,noFileIndex, noFileIndex);
-    return p;
+    addSymbol(table, symbol);
+    addCxReference(symbol, &symbol->pos, usage, noFileIndex, noFileIndex);
+    return symbol;
 }
+
 
 static void addInitializerRefs(Symbol *decl,
                                IdList *idl
@@ -897,7 +895,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         initTypeModifierAsPointer(sptrtype, &pp->u.structSpec->stype);
 
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
-        addSymbol(pp, symbolTable);
+        addSymbol(symbolTable, pp);
     }
     addCxReference(pp, &id->position, usage,noFileIndex, noFileIndex);
     return &pp->u.structSpec->stype;
@@ -982,7 +980,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     TypeModifier *sptrtype = &pp->u.structSpec->sptrtype;
     initTypeModifierAsPointer(sptrtype, &pp->u.structSpec->stype);
 
-    addSymbol(pp, symbolTable);
+    addSymbol(symbolTable, pp);
 
     return &pp->u.structSpec->stype;
 }
@@ -1014,7 +1012,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
         pp = StackMemoryAlloc(Symbol);
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
-        addSymbol(pp, symbolTable);
+        addSymbol(symbolTable, pp);
     }
     addCxReference(pp, &id->position, usage,noFileIndex, noFileIndex);
     return createSimpleEnumType(pp);
