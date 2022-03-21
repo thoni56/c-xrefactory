@@ -31,6 +31,7 @@ BeforeEach(CxFile) {
     log_set_level(LOG_DEBUG); /* Set to LOG_TRACE if needed */
 
     options.taskRegime = RegimeEditServer;
+    initFileTable(100);
 }
 AfterEach(CxFile) {}
 
@@ -66,7 +67,9 @@ xEnsure(CxFile, can_do_normal_scan) {
     CharacterBuffer *buffer;
 
     options.cxrefsLocation = "./CXrefs";
-    options.referenceFileCount = 10;
+    options.referenceFileCount = 1;
+
+    expect(checkReferenceFileCountOption, will_return(10));
 
     expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(filePointer));
     expect(initCharacterBuffer, when(file, is_equal_to(filePointer)),

@@ -1236,15 +1236,12 @@ static void cxrfReference(int size,
 }
 
 
-static void cxrfRefNum(int fileRefNum,
-                       int marker,
-                       CharacterBuffer *cb,
-                       int additionalArg
+static void cxrfReferenceFileCountCheck(int referenceFileCount,
+                                        int marker,
+                                        CharacterBuffer *cb,
+                                        int additionalArg
 ) {
-    int check;
-
-    check = checkReferenceFileCountOption(fileRefNum);
-    if (check == 0) {
+    if (checkReferenceFileCountOption(referenceFileCount) == 0) {
         assert(options.taskRegime);
         fatalError(ERR_ST,"Tag file was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
     }
@@ -1504,7 +1501,7 @@ static ScanFileFunctionStep normalScanFunctionSequence[]={
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, CXSF_UNUSED},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CXSF_JUST_READ},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {-1,NULL, 0},
 };
 
@@ -1517,7 +1514,7 @@ static ScanFileFunctionStep fullScanFunctionSequence[]={
     {CXFI_SYMBOL_NAME, cxrfSymbolName, CXSF_DEFAULT},
     {CXFI_REFERENCE, cxrfReference, CXSF_FIRST_PASS},
     {CXFI_CLASS_EXT, cxrfSubClass, CXSF_GENERATE_OUTPUT},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {-1,NULL, 0},
 };
 
@@ -1529,7 +1526,7 @@ static ScanFileFunctionStep byPassFunctionSequence[]={
     {CXFI_SYMBOL_NAME, cxrfSymbolName, CXSF_BY_PASS},
     {CXFI_REFERENCE, cxrfReference, CXSF_BY_PASS},
     {CXFI_CLASS_EXT, cxrfSubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {-1,NULL, 0},
 };
 
@@ -1542,7 +1539,7 @@ static ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
     {CXFI_SYMBOL_NAME, cxrfSymbolName, CXSF_DEFAULT},
     {CXFI_REFERENCE, cxrfReference, CXSF_MENU_CREATION},
     {CXFI_CLASS_EXT, cxrfSubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {-1,NULL, 0},
 };
 
@@ -1555,7 +1552,7 @@ static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
     {CXFI_SYMBOL_NAME, cxrfSymbolName, CXSF_MENU_CREATION},
     {CXFI_REFERENCE, cxrfReference, CXSF_MENU_CREATION},
     {CXFI_CLASS_EXT, cxrfSubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {-1,NULL, 0},
 };
 
@@ -1567,7 +1564,7 @@ static ScanFileFunctionStep fullUpdateFunctionSequence[]={
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, cxrfSymbolNameForFullUpdateSchedule, CXSF_UNUSED},
     {CXFI_REFERENCE, cxrfReferenceForFullUpdateSchedule, CXSF_UNUSED},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {-1,NULL, 0},
 };
 
@@ -1578,7 +1575,7 @@ static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
     {CXFI_SYMBOL_NAME, cxrfSymbolName, CXSF_PASS_MACRO_USAGE},
     {CXFI_REFERENCE, cxrfReference, CXSF_PASS_MACRO_USAGE},
     {CXFI_CLASS_EXT, cxrfSubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {-1,NULL, 0},
 };
 
@@ -1586,13 +1583,13 @@ static ScanFileFunctionStep classHierarchyFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
     {CXFI_CLASS_EXT, cxrfSubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {-1,NULL, 0},
 };
 
 static ScanFileFunctionStep symbolSearchFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, cxrfSymbolName, SEARCH_SYMBOL},
@@ -1602,7 +1599,7 @@ static ScanFileFunctionStep symbolSearchFunctionSequence[]={
 
 static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
-    {CXFI_REFNUM, cxrfRefNum, CXSF_UNUSED},
+    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
     {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, cxrfSymbolName, CXSF_DEAD_CODE_DETECTION},
