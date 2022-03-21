@@ -2,7 +2,7 @@
 #include "hash.h"
 #include "memory.h"
 #include "globals.h"            /* For cwd */
-#include "caching.h"            /* For checkModifiedTime() */
+#include "caching.h"            /* For checkFileModifiedTime() */
 
 #define IN_FILETAB_C
 #include "filetable.h"
