@@ -118,9 +118,7 @@ slow:
 	make -C ../tests slow
 	make gcov
 
-ci:
-	$(MAKE) -e unit
-	$(MAKE) -e build
+ci: unit build
 	$(MAKE) -e -C ../tests/systemd init
 	$(MAKE) -e -C ../tests/ffmpeg init
 	$(MAKE) -e -C ../tests all
@@ -139,12 +137,11 @@ chcheck:
 include sources.mk
 
 .PHONY: build
-build: check-tokens # check that token sections in parsers are identical before compiling
-	$(MAKE) -e c-xref
+build: c-xref
 	$(MAKE) -C ../editors/emacs
 
 .PHONY: c-xref
-c-xref: $(OBJS) $(OPTIONAL_ZLIB_LIB)
+c-xref: check-tokens $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
 #########################################################################
@@ -152,8 +149,7 @@ test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) -e -C ../tests quick
 
-unit: check-tokens
-	$(MAKE) -e unittests
+unit: check-tokens unittests
 
 #########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
@@ -214,9 +210,15 @@ yacc_parser.tokens: yacc_parser.y
 java_parser.tokens: java_parser.y
 	cat java_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > java_parser.tokens
 
-# Compare the three token sections to ensure that they are exactly the same
+# Ensure they are extracted by making the parser object files dependent on them
+$(OBJECTS)/c_parser.tab.o : c_parser.tokens
+$(OBJECTS)/yacc_parser.tab.o : yacc_parser.tokens
+$(OBJECTS)/java_parser.tab.o : java_parser.tokens
+
+# And compare the three token sections to ensure that they are exactly the same
 .PHONY: check-tokens
 check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
+	@echo Checking tokens across parsers ...
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
 		echo "ERROR: Parser token section must be identical:" ; \
 		diff -c c_parser.tokens yacc_parser.tokens ; \
@@ -335,7 +337,6 @@ ifeq ($(OS),Darwin)
 endif
 
 .PHONY: unittests
-unittests: CFLAGS += $(CGREEN_INCLUDE)
 ifeq ($(shell which cgreen-runner),)
 unittests:
 	@echo Cgreen not available, cannot run unittests
@@ -356,13 +357,12 @@ endif
 #	$(CC) -shared -o $@ $(sort $(EXTRA_OBJS) $^) $(LDLIBS) -lcgreen
 
 
-# Hmm, TODO: The UNITTEST macro does not seem to create the correct dependencies to schedule parallel jobs correctly...
-
 # Macro for unittests that link the SUT and a small number of dependent .o
 # Parameters: <module>, <dependent modules ...>
 define UNITTEST
 $(1)_DEPENDENCIES = $(2)
 $(1)_DEPS = $$(patsubst %,$(OBJDIR)/%.o,$$($(1)_DEPENDENCIES))
+$(OBJDIR)/$(1)_tests.o: CFLAGS += $(CGREEN_INCLUDE)
 $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
 	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LIB)
 endef
