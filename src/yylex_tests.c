@@ -97,11 +97,10 @@ Ensure(Yylex, can_handle_a_line_directive_without_number) {
     /* No asserts, only for execution of END_OF_FILE_EXCEPTION in #line directive */
 }
 
-/* ----------------------------------------------------*/
-/* Custom Cgreen constraint to capture parameter value */
 
+#if CGREEN_VERSION_MINOR < 5
 #include "cgreen_capture_parameter.c"
-
+#endif
 
 Ensure(Yylex, can_process_include_directive) {
     Position position = (Position){1,2,3};

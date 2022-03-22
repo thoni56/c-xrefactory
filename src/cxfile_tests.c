@@ -57,7 +57,9 @@ static void expect_string(char string[]) {
 }
 
 
+#if CGREEN_VERSION_MINOR < 5
 #include "cgreen_capture_parameter.c"
+#endif
 
 xEnsure(CxFile, can_do_normal_scan) {
     FILE *filePointer = (FILE *)4654654645;
