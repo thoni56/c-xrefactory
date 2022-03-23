@@ -40,53 +40,65 @@ Ensure(CxFile, can_run_empty_test) {
     assert_that(cxFileHashNumber(NULL), is_equal_to(0));
 }
 
-
+static bool trueValue  = true;
+static bool falseValue = false;
 
 /* The string should not start with a space, but it is assumed that
  * this string is delimited by some leading whitespace so it always
  * expects a skipWhitespace() first */
-static void expect_string(char string[]) {
+static void expect_string(char string[], bool eof) {
+    int i;
+
     expect(skipWhiteSpace, will_return(string[0]));
-    for (int i=1; string[i] != '\0'; i++) {
+    for (i = 1; string[i+1] != '\0'; i++) {
         if (isspace(string[i])) {
             expect(getChar, will_return(' '));
-            if (string[i+1] != '\0')
+            if (string[i + 1] != '\0')
                 expect(skipWhiteSpace, will_return(string[++i]));
-          } else
+        } else {
             expect(getChar, will_return(string[i]));
+        }
     }
+    if (eof)
+        expect(getChar, will_return(string[i]),
+               will_set_contents_of_parameter(isAtEOF, &trueValue, sizeof(bool)));
+    else
+        expect(getChar, will_return(string[i]),
+               will_set_contents_of_parameter(isAtEOF, &falseValue, sizeof(bool)));
 }
 
 
-#if CGREEN_VERSION_MINOR < 5
-#include "cgreen_capture_parameter.c"
-#endif
-
 xEnsure(CxFile, can_do_normal_scan) {
-    FILE *filePointer = (FILE *)4654654645;
-    CharacterBuffer *buffer;
+    FILE *xfilesFilePointer = (FILE *)4654654645;
+    FILE *sourceFilePointer = (FILE *)4679898745;
 
     options.cxrefsLocation = "./CXrefs";
     options.referenceFileCount = 1;
 
     expect(checkReferenceFileCountOption, will_return(10));
 
-    expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(filePointer));
-    expect(initCharacterBuffer, when(file, is_equal_to(filePointer)),
-           will_capture_parameter(characterBuffer, buffer));
+    expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(xfilesFilePointer));
+    expect(initCharacterBuffer, when(file, is_equal_to(xfilesFilePointer)));
 
     /* Version marking always starts a file */
-    expect_string("34v");
+    expect_string("34v", false);
     expect(skipCharacters, when(count, is_equal_to(33)));
     expect(getChar, will_return(' '));
 
     /* Generation setttings, file count, ... */
-    expect_string("21@mpfotulcsrhdeibnaAgk 10n 300000k ");
+    expect_string("21@mpfotulcsrhdeibnaAgk 10n 300000k ", false);
 
-    expect_string("49976f 1646087914m 53:/home/thoni/Utveckling/c-xrefactory/src/extract.mock");
+    expect_string("49976f 1646087914m 53:/home/thoni/Utveckling/c-xrefactory/src/extract.mock ", false);
     expect(normalizeFileName, when(name, is_equal_to_string("/home/thoni/Utveckling/c-xrefactory/src/extract.mock")),
            will_return("/home/thoni/Utveckling/c-xrefactory/src/extract.mock"));
 
+    expect_string("19491f 1647180780p m1ia 73:/home/thoni/Utveckling/c-xrefactory/tests/test_single_xref_file/source.c ", true);
+    expect(closeFile, when(file, is_equal_to(xfilesFilePointer)));
+
+    expect(openFile, when(fileName, is_equal_to_string("/home/thoni/Utveckling/c-xrefactory/src/extract.mock")),
+           will_return(sourceFilePointer));
+    expect(checkFileModifiedTime);
+    expect(closeFile, when(file, is_equal_to(sourceFilePointer)));
 
     normalScanReferenceFile("/XFiles");
 }

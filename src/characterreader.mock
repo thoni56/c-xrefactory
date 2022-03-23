@@ -72,7 +72,8 @@ void skipCharacters(CharacterBuffer *buffer, unsigned count) {
 }
 
 int getChar(CharacterBuffer *cb) {
-    int r = (int)mock(cb);
+    bool *isAtEOF = &cb->isAtEOF;
+    int r = (int)mock(cb, isAtEOF);
     if (getenv("TRACE_MOCKS"))
         printf("getChar(): returning '%c'\n", r);
     return r;

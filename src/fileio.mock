@@ -28,7 +28,7 @@ FILE *openFile(char *fileName, char *modes) {
 }
 
 int closeFile(FILE *file) {
-    return fclose(file);
+    return (int)mock(file);
 }
 
 void createDirectory(char *dirName) {
