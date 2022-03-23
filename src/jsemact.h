@@ -2,6 +2,7 @@
 #define JSEMACT_H_INCLUDED
 
 #include "jsltypetab.h"
+#include "proto.h"
 #include "symbol.h"
 #include "symboltable.h"
 
@@ -53,7 +54,7 @@ extern int findTopLevelName(
                             );
 extern int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                                    Symbol **str,
-                                                   int cxrefFlag
+                                                   IncludeCxrefs cxrefFlag
                                                    );
 extern void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage);
 extern int javaClassifyAmbiguousName(

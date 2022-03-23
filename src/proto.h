@@ -83,8 +83,14 @@ typedef enum dotifyMode {
     KEEP_SLASHES,
 } DotifyMode;
 
+typedef enum includeCxrefs {
+    NO_CX_REFS = KEEP_SLASHES + 1,
+    ADD_CX_REFS
+} IncludeCxrefs;
+
+
 enum miscellaneous {						/* misc. constants */
-    DEFAULT_VALUE = KEEP_SLASHES + 1,
+    DEFAULT_VALUE = ADD_CX_REFS + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
@@ -126,8 +132,6 @@ enum miscellaneous {						/* misc. constants */
     SUPER_METHOD_INVOCATION,
     GLOBAL_ENV_ONLY,
     NO_ERROR_MESSAGE,
-    ADD_CX_REFS,
-    NO_CX_REFS,
     ORDER_PREPEND,
     ORDER_APPEND,
     MEMBER_CLASS,

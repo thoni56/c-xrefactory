@@ -6,6 +6,7 @@
 #include "classcaster.h"
 #include "misc.h"
 #include "extract.h"
+#include "proto.h"
 #include "usage.h"
 #include "yylex.h"
 #include "semact.h"
@@ -1017,8 +1018,8 @@ int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi) {
 
 int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                             Symbol **str,
-                                            int cxrefFlag
-    ){
+                                            IncludeCxrefs cxrefFlag
+){
     Symbol symbol, *mm, *member, *nextmemb;
     bool haveit;
     Position *ipos;
@@ -1165,7 +1166,7 @@ static int javaClassifySingleAmbigName(IdList *name,
                                        TypeModifier **expr,
                                        Reference **oref,
                                        int classif, int uusage,
-                                       int cxrefFlag
+                                       IncludeCxrefs cxrefFlag
 ) {
     int res, nfqtusage, minacc;
     S_recFindStr *nullRfs = NULL;
@@ -1195,7 +1196,7 @@ static int javaClassifySingleAmbigName(IdList *name,
             return name->nameType;
         }
     }
-    res = javaClassifySingleAmbigNameToTypeOrPack( name, str, cxrefFlag);
+    res = javaClassifySingleAmbigNameToTypeOrPack(name, str, cxrefFlag);
     if (res == TypeStruct) {
         if (cxrefFlag==ADD_CX_REFS) {
             addAmbCxRef(classif, *str, &name->id.position, uusage, MIN_REQUIRED_ACCESS, oref, nullRfs);

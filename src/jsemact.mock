@@ -46,7 +46,7 @@ int findTopLevelName(char *name, S_recFindStr *resRfs, Symbol **resMemb, int cla
     return (int) mock(name, resRfs, resMemb, classif);
 }
 
-int javaClassifySingleAmbigNameToTypeOrPack(IdList *name, Symbol **str, int cxrefFlag) {
+int javaClassifySingleAmbigNameToTypeOrPack(IdList *name, Symbol **str, IncludeCxrefs cxrefFlag) {
     return (int) mock(name, str, cxrefFlag);
 }
 
