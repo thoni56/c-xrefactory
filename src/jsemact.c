@@ -1014,19 +1014,6 @@ int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi) {
     return false;
 }
 
-#define JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit)                                         \
-    {                                                                                                             \
-        haveit         = true;                                                                                    \
-        *str           = mm;                                                                                      \
-        name->nameType = TypeStruct;                                                                              \
-        name->fqtname  = mm->linkName;                                                                            \
-        if (cxrefFlag == ADD_CX_REFS) {                                                                           \
-            ipos = &memb->pos; /* here MUST be memb, not mm, as it contains the import line !!*/                  \
-            if (ipos->file != noFileIndex && ipos->file != -1) {                                                  \
-                javaAddImportConstructionReference(ipos, ipos, UsageUsed);                                        \
-            }                                                                                                     \
-        }                                                                                                         \
-    }
 
 int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                             Symbol **str,
@@ -1055,7 +1042,17 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                 if (! haveit) {
                     javaLoadClassSymbolsFromFile(mm);
                     if (javaOuterClassAccessible(mm)) {
-                        JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, member, haveit);
+                        //JAVA_CLASS_CAN_HAVE_IT(name, str, mm, member, haveit);
+                        haveit         = true;
+                        *str           = mm;
+                        name->nameType = TypeStruct;
+                        name->fqtname  = mm->linkName;
+                        if (cxrefFlag == ADD_CX_REFS) {
+                            ipos = &member->pos; /* here MUST be memb, not mm, as it contains the import line !!*/
+                            if (ipos->file != noFileIndex && ipos->file != -1) {
+                                javaAddImportConstructionReference(ipos, ipos, UsageUsed);
+                            }
+                        }
                     }
                 } else {
                     if ((*str) != mm) {
@@ -1081,13 +1078,33 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
             } else {
                 // just find the first accessible
                 if (nextmemb == NULL) {
-                    JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, member, haveit);
+                    // JAVA_CLASS_CAN_HAVE_IT(name, str, mm, member, haveit);
+                    haveit         = true;
+                    *str           = mm;
+                    name->nameType = TypeStruct;
+                    name->fqtname  = mm->linkName;
+                    if (cxrefFlag == ADD_CX_REFS) {
+                        ipos = &member->pos; /* here MUST be memb, not mm, as it contains the import line !!*/
+                        if (ipos->file != noFileIndex && ipos->file != -1) {
+                            javaAddImportConstructionReference(ipos, ipos, UsageUsed);
+                        }
+                    }
                     goto breakcycle;
                 } else {
                     // O.K. there may be an ambiguity resolved by accessibility
                     javaLoadClassSymbolsFromFile(mm);
                     if (javaOuterClassAccessible(mm)) {
-                        JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, member, haveit);
+                        //JAVA_CLASS_CAN_HAVE_IT(name, str, mm, member, haveit);
+                        haveit         = true;
+                        *str           = mm;
+                        name->nameType = TypeStruct;
+                        name->fqtname  = mm->linkName;
+                        if (cxrefFlag == ADD_CX_REFS) {
+                            ipos = &member->pos; /* here MUST be memb, not mm, as it contains the import line !!*/
+                            if (ipos->file != noFileIndex && ipos->file != -1) {
+                                javaAddImportConstructionReference(ipos, ipos, UsageUsed);
+                            }
+                        }
                         goto breakcycle;
                     }
                 }
@@ -1236,14 +1253,13 @@ static void javaResetUselessReference(Reference *ref) {
 */
 static void javaCheckForUselessFqt(IdList *name, int classif, Symbol *rstr,
                                    Reference **oref, Reference *lref){
-    int             rr, uselessFqt;
+    int             rr;
+    bool uselessFqt = false;
     S_recFindStr    localRfs;
     Symbol        *str;
     TypeModifier *expr;
     Reference     *loref;
     IdList   sname;
-
-    uselessFqt = 0;
 
     //& for(nn=name; nn!=NULL && nn->nameType!=TypePackage; nn=nn->next) ;
     //& if (nn==NULL) return;
@@ -1252,12 +1268,12 @@ static void javaCheckForUselessFqt(IdList *name, int classif, Symbol *rstr,
 
     sname = *name;
     sname.next = NULL;
-    //& rr = javaClassifySingleAmbigNameToTypeOrPack( &sname, &str, NO_CX_REFS); // wrong
     rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
                                       classif, UsageNone, NO_CX_REFS);
     if (rr==TypeStruct) {
         assert(str && rstr);
-//&fprintf(dumpOut,"!checking %s == %s  (%d==%d)\n",str->linkName,rstr->linkName,str->u.structSpec->classFileIndex,rstr->u.structSpec->classFileIndex);
+        log_trace("!checking %s == %s  (%d==%d)", str->linkName, rstr->linkName,
+                  str->u.structSpec->classFileIndex, rstr->u.structSpec->classFileIndex);
         // equality of pointers may be too strong ???
         // what about classfile index comparing
         //if (strcmp(str->linkName, rstr->linkName) == 0) {
@@ -1265,12 +1281,12 @@ static void javaCheckForUselessFqt(IdList *name, int classif, Symbol *rstr,
         if (str->u.structSpec->classFileIndex == rstr->u.structSpec->classFileIndex) {
             assert(name && rstr->u.structSpec);
             *oref = addUselessFQTReference(rstr->u.structSpec->classFileIndex,&name->id.position);
-//&fprintf(dumpOut,"!adding TYPE useless reference on %d,%d\n", name->id.position.line, name->id.position.col);
+            log_trace("!adding TYPE useless reference on %d,%d", name->id.position.line, name->id.position.col);
             javaResetUselessReference(lref);
-            uselessFqt = 1;
+            uselessFqt = true;
         }
     }
-    if (! uselessFqt) {
+    if (!uselessFqt) {
         assert(name->next != NULL);			// it is long name
         assert(name && rstr->u.structSpec);
         addUnimportedTypeLongReference(rstr->u.structSpec->classFileIndex,&name->id.position);
