@@ -648,23 +648,23 @@ Symbol *javaTypeSymbolDefinition(IdList *tname,
 }
 
 Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
-    Symbol pp,*memb;
+    Symbol symbol, *member;
     char fqtName[MAX_FILE_NAME_SIZE];
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
 
-    fillSymbol(&pp, tname->id.name, tname->id.name, noPosition);
-    fillSymbolBits(&pp.bits, accessFlags, TypeStruct, StorageNone);
+    fillSymbol(&symbol, tname->id.name, tname->id.name, noPosition);
+    fillSymbolBits(&symbol.bits, accessFlags, TypeStruct, StorageNone);
 
-    if (tname->next==NULL && symbolTableIsMember(symbolTable, &pp, NULL, &memb)) {
+    if (tname->next==NULL && symbolTableIsMember(symbolTable, &symbol, NULL, &member)) {
         // get canonical copy
-        memb = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
-        return memb;
+        member = javaFQTypeSymbolDefinition(member->name, member->linkName);
+        return member;
     }
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
-    memb = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
-    return memb;
+    member = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
+    return member;
 }
 
 Symbol *javaTypeNameDefinition(IdList *tname) {
@@ -864,15 +864,15 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
 
 static int findTopLevelNameInternal(char *name,
                                     S_recFindStr *resRfs,
-                                    Symbol **resMemb,
+                                    Symbol **resultingMemberP,
                                     int classif,
                                     S_javaStat *startingScope,
                                     int accessibilityCheck,
                                     int visibilityCheck,
                                     S_javaStat **rscope
 ) {
-    int res;
-    Symbol sd;
+    int result;
+    Symbol symbol;
     S_javaStat *cscope;
 
     assert((!LANGUAGE(LANG_JAVA)) ||
@@ -880,21 +880,21 @@ static int findTopLevelNameInternal(char *name,
     assert(accessibilityCheck==ACCESSIBILITY_CHECK_YES || accessibilityCheck==ACCESSIBILITY_CHECK_NO);
     assert(visibilityCheck==VISIBILITY_CHECK_YES || visibilityCheck==VISIBILITY_CHECK_NO);
 
-    fillSymbol(&sd, name, name, noPosition);
-    fillSymbolBits(&sd.bits, 0, TypeDefault, StorageNone);
+    fillSymbol(&symbol, name, name, noPosition);
+    fillSymbolBits(&symbol.bits, 0, TypeDefault, StorageNone);
 
-    res = RETURN_NOT_FOUND;
+    result = RETURN_NOT_FOUND;
     for(cscope=startingScope;
-        cscope!=NULL && cscope->thisClass!=NULL && res!=RETURN_OK;
+        cscope!=NULL && cscope->thisClass!=NULL && result!=RETURN_OK;
         cscope=cscope->next
-        ) {
+    ) {
         assert(cscope->thisClass);
-        if (classif!=CLASS_TO_METHOD && symbolTableIsMember(cscope->locals, &sd, NULL, resMemb)) {
+        if (classif!=CLASS_TO_METHOD && symbolTableIsMember(cscope->locals, &symbol, NULL, resultingMemberP)) {
             /* it is an argument or local variable */
             /* this is tricky */
             /* I guess, you cannot have an overloaded function here, so ... */
             log_trace("%s is identified as local var or parameter", name);
-            fillRecFindStr(resRfs, NULL, NULL, *resMemb,s_recFindCl++);
+            fillRecFindStr(resRfs, NULL, NULL, *resultingMemberP, s_recFindCl++);
             *rscope = NULL;
         } else {
             /* if present, then as a structure record */
@@ -903,9 +903,9 @@ static int findTopLevelNameInternal(char *name,
             recFindPush(cscope->thisClass, resRfs);
             *rscope = cscope;
         }
-        res = findStrRecordSym(resRfs, name, resMemb, classif, accessibilityCheck, visibilityCheck);
+        result = findStrRecordSym(resRfs, name, resultingMemberP, classif, accessibilityCheck, visibilityCheck);
     }
-    return res;
+    return result;
 }
 
 int findTopLevelName(char *name, S_recFindStr *resRfs,
@@ -1032,30 +1032,30 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                             Symbol **str,
                                             int cxrefFlag
     ){
-    Symbol sd, *mm, *memb, *nextmemb;
+    Symbol symbol, *mm, *member, *nextmemb;
     bool haveit;
     Position *ipos;
 
-    fillSymbol(&sd, name->id.name, name->id.name, noPosition);
-    fillSymbolBits(&sd.bits, AccessDefault, TypeStruct, StorageNone);
+    fillSymbol(&symbol, name->id.name, name->id.name, noPosition);
+    fillSymbolBits(&symbol.bits, AccessDefault, TypeStruct, StorageNone);
 
     haveit = false;
-    if (symbolTableIsMember(symbolTable, &sd, NULL, &memb)) {
+    if (symbolTableIsMember(symbolTable, &symbol, NULL, &member)) {
         /* a type */
-        assert(memb);
+        assert(member);
         // O.K. I have to load the class in order to check its access flags
-        for(; memb!=NULL; memb=nextmemb) {
-            nextmemb = memb;
-            symbolTableNextMember(&sd, &nextmemb);
+        for(; member!=NULL; member=nextmemb) {
+            nextmemb = member;
+            symbolTableNextMember(&symbol, &nextmemb);
             // take canonical copy (as there can be more than one class
             // item in symtab
-            mm = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
+            mm = javaFQTypeSymbolDefinition(member->name, member->linkName);
             if ((options.ooChecksBits & OOC_ALL_CHECKS)) {
                 // do carefully all checks
                 if (! haveit) {
                     javaLoadClassSymbolsFromFile(mm);
                     if (javaOuterClassAccessible(mm)) {
-                        JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
+                        JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, member, haveit);
                     }
                 } else {
                     if ((*str) != mm) {
@@ -1069,7 +1069,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                 // it is "used" to disqualify some references, so
                                 // during name reduction refactoring, it will not adding
                                 // such import
-                                ipos = &memb->pos;
+                                ipos = &member->pos;
                                 if (ipos->file != noFileIndex && ipos->file != -1) {
                                     javaAddImportConstructionReference(ipos, ipos, UsageUsed);
                                 }
@@ -1081,13 +1081,13 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
             } else {
                 // just find the first accessible
                 if (nextmemb == NULL) {
-                    JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
+                    JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, member, haveit);
                     goto breakcycle;
                 } else {
                     // O.K. there may be an ambiguity resolved by accessibility
                     javaLoadClassSymbolsFromFile(mm);
                     if (javaOuterClassAccessible(mm)) {
-                        JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
+                        JAVA_CLASS_CAN_HAVE_IT(name, str, outImportPos, mm, member, haveit);
                         goto breakcycle;
                     }
                 }

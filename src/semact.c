@@ -863,8 +863,8 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
                                       Id *id,
                                       UsageKind usage
 ) {
-    Symbol p,*pp;
-    int type;
+    Symbol symbol, *member;
+    int kind;
 
     log_trace("new struct %s", id->name);
     assert(typeName && typeName->symbol && typeName->symbol->bits.symbolType == TypeKeyword);
@@ -872,38 +872,39 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
                 ||  typeName->symbol->u.keyword == CLASS
                 ||  typeName->symbol->u.keyword == UNION
                 );
-    if (typeName->symbol->u.keyword != UNION) type = TypeStruct;
-    else type = TypeUnion;
+    if (typeName->symbol->u.keyword != UNION)
+        kind = TypeStruct;
+    else
+        kind = TypeUnion;
 
-    fillSymbol(&p, id->name, id->name, id->position);
-    fillSymbolBits(&p.bits, AccessDefault, type, StorageNone);
+    fillSymbol(&symbol, id->name, id->name, id->position);
+    fillSymbolBits(&symbol.bits, AccessDefault, kind, StorageNone);
 
-    if (!symbolTableIsMember(symbolTable, &p, NULL, &pp)
-        || (isMemoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
+    if (!symbolTableIsMember(symbolTable, &symbol, NULL, &member)
+        || (isMemoryFromPreviousBlock(member) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
-        pp = StackMemoryAlloc(Symbol);
-        *pp = p;
-        pp->u.structSpec = StackMemoryAlloc(S_symStructSpec);
+        member = StackMemoryAlloc(Symbol);
+        *member = symbol;
+        member->u.structSpec = StackMemoryAlloc(S_symStructSpec);
 
-        initSymStructSpec(pp->u.structSpec, /*.records=*/NULL);
-        TypeModifier *stype = &pp->u.structSpec->stype;
+        initSymStructSpec(member->u.structSpec, /*.records=*/NULL);
+        TypeModifier *stype = &member->u.structSpec->stype;
         /* Assumed to be Struct/Union/Enum? */
-        initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/pp,
+        initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/kind, /*.u.t=*/member,
                                             /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-        TypeModifier *sptrtype = &pp->u.structSpec->sptrtype;
-        initTypeModifierAsPointer(sptrtype, &pp->u.structSpec->stype);
+        TypeModifier *sptrtype = &member->u.structSpec->sptrtype;
+        initTypeModifierAsPointer(sptrtype, &member->u.structSpec->stype);
 
-        setGlobalFileDepNames(id->name, pp, MEMORY_XX);
-        addSymbol(symbolTable, pp);
+        setGlobalFileDepNames(id->name, member, MEMORY_XX);
+        addSymbol(symbolTable, member);
     }
-    addCxReference(pp, &id->position, usage,noFileIndex, noFileIndex);
-    return &pp->u.structSpec->stype;
+    addCxReference(member, &id->position, usage,noFileIndex, noFileIndex);
+    return &member->u.structSpec->stype;
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
     char *mname, *fname;
     char tmp[MACRO_NAME_SIZE];
-    Symbol *memb;
     int isMember, order, len, len2;
 
     if (iname == NULL)
@@ -915,16 +916,17 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
         sprintf(tmp, "%x-%s-%x-%x%c", hashFun(fileItem->name), fname, symbol->pos.line, symbol->pos.col,
                 LINK_NAME_SEPARATOR);
     } else if (iname[0]==0) {
+        Symbol *member;
         // anonymous enum/structure/union ...
         int fileIndex = symbol->pos.file;
         symbol->name=iname;
         symbol->linkName=iname;
         order = 0;
-        isMember = symbolTableIsMember(symbolTable, symbol, NULL, &memb);
+        isMember = symbolTableIsMember(symbolTable, symbol, NULL, &member);
         while (isMember) {
-            if (memb->pos.file==fileIndex)
+            if (member->pos.file==fileIndex)
                 order++;
-            isMember = symbolTableNextMember(symbol, &memb);
+            isMember = symbolTableNextMember(symbol, &member);
         }
         fname = simpleFileName(getFileItem(fileIndex)->name);
         sprintf(tmp, "%s%c%d%c", fname, FILE_PATH_SEPARATOR, order, LINK_NAME_SEPARATOR);

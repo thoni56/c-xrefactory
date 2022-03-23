@@ -900,7 +900,6 @@ static void processUndefineDirective(void) {
     Lexem lexem;
     char *cc;
     Position position;
-    Symbol dd, *pp, *memb;
     int lineNumber, value, length;
     UNUSED length; UNUSED value; UNUSED lineNumber;
 
@@ -911,22 +910,26 @@ static void processUndefineDirective(void) {
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
     testCxrefCompletionId(&lexem, cc, &position);
     if (isIdentifierLexem(lexem)) {
-        log_debug(": undef macro %s",cc);
+        Symbol symbol;
+        Symbol *member;
 
-        fillSymbol(&dd, cc, cc, position);
-        fillSymbolBits(&dd.bits, AccessDefault, TypeMacro, StorageNone);
+        log_debug(": undef macro %s", cc);
+
+        fillSymbol(&symbol, cc, cc, position);
+        fillSymbolBits(&symbol.bits, AccessDefault, TypeMacro, StorageNone);
 
         assert(options.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
-        if (symbolTableIsMember(symbolTable, &dd, NULL, &memb)) {
-            addCxReference(memb, &position, UsageUndefinedMacro, noFileIndex, noFileIndex);
+        if (symbolTableIsMember(symbolTable, &symbol, NULL, &member)) {
+            Symbol *pp;
+            addCxReference(member, &position, UsageUndefinedMacro, noFileIndex, noFileIndex);
 
             PPM_ALLOC(pp, Symbol);
-            fillSymbol(pp, memb->name, memb->linkName, position);
+            fillSymbol(pp, member->name, member->linkName, position);
             fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
 
-            addMacroToTabs(pp, memb->name);
+            addMacroToTabs(pp, member->name);
         }
     }
     while (lexem != '\n') {
@@ -1014,25 +1017,25 @@ endOfFile:;
     return UNTIL_ENDIF;
 }
 
-static void execCppIf(int deleteSource) {
+static void execCppIf(bool deleteSource) {
     int onElse;
-    if (deleteSource==0) currentFile.ifDepth ++;
+    if (!deleteSource)
+        currentFile.ifDepth ++;
     else {
         onElse = cppDeleteUntilEndElse(false);
         if (onElse==UNTIL_ELSE) {
             /* #if #else */
             currentFile.ifDepth ++;
-        } else if (onElse==UNTIL_ELIF) processIfDirective();
+        } else if (onElse==UNTIL_ELIF)
+            processIfDirective();
     }
 }
 
 static void processIfdefDirective(bool isIfdef) {
     Lexem lexem;
-    int mm;
-    Symbol pp, *memb;
     char *cc;
     Position position;
-    int deleteSrc;
+    bool deleteSrc;
     int lineNumber, value, length;
     UNUSED length; UNUSED value; UNUSED lineNumber;
 
@@ -1041,33 +1044,35 @@ static void processIfdefDirective(bool isIfdef) {
 
     cc = currentInput.currentLexemP;
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
-    testCxrefCompletionId(&lexem,cc,&position);
+    testCxrefCompletionId(&lexem, cc, &position);
 
-    if (! isIdentifierLexem(lexem))
+    if (!isIdentifierLexem(lexem))
         return;
 
-    fillSymbol(&pp, cc, cc, noPosition);
-    fillSymbolBits(&pp.bits, AccessDefault, TypeMacro, StorageNone);
+    Symbol symbol;
+    fillSymbol(&symbol, cc, cc, noPosition);
+    fillSymbolBits(&symbol.bits, AccessDefault, TypeMacro, StorageNone);
 
-    assert(options.taskRegime);
-    mm = symbolTableIsMember(symbolTable, &pp, NULL, &memb);
-    if (mm && memb->u.mbody==NULL) mm = 0;	// undefined macro
-    if (mm) {
-        addCxReference(memb, &position, UsageUsed, noFileIndex, noFileIndex);
+    Symbol *member;
+    bool isMember = symbolTableIsMember(symbolTable, &symbol, NULL, &member);
+    if (isMember && member->u.mbody==NULL)
+        isMember = false;	// undefined macro
+    if (isMember) {
+        addCxReference(member, &position, UsageUsed, noFileIndex, noFileIndex);
         if (isIfdef) {
             log_debug("#ifdef (true)");
-            deleteSrc = 0;
+            deleteSrc = false;
         } else {
             log_debug("#ifndef (false)");
-            deleteSrc = 1;
+            deleteSrc = true;
         }
     } else {
         if (isIfdef) {
             log_debug("#ifdef (false)");
-            deleteSrc = 1;
+            deleteSrc = true;
         } else {
             log_debug("#ifndef (true)");
-            deleteSrc = 0;
+            deleteSrc = false;
         }
     }
     execCppIf(deleteSrc);
