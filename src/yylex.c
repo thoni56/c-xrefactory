@@ -320,7 +320,7 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
     return lexem;
 }
 
-static int getLex() {
+static int getLexem() {
     char *previousLexem;
     UNUSED previousLexem;
     Lexem lexem = getLexemSavePrevious(&previousLexem);
@@ -366,14 +366,14 @@ void processLineDirective(void) {
     int lineNumber, value, length; UNUSED length; UNUSED value; UNUSED lineNumber;
     Position position; UNUSED position;
 
-    lexem = getLex();
+    lexem = getLexem();
     ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
     if (lexem != CONSTANT)
         return;
 
-    lexem = getLex();
+    lexem = getLexem();
     ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
@@ -662,10 +662,10 @@ static MacroBody *newMacroBody(int macroSize, int argCount, char *name, char *bo
 static Lexem getNonBlankLexem(Position *position, int *lineNumber, int *value, int *length) {
     Lexem lexem;
 
-    lexem = getLex();
+    lexem = getLexem();
     while (lexem == LINE_TOKEN) {
         passLexem(&currentInput.currentLexemP, lexem, lineNumber, value, position, length, true);
-        lexem = getLex();
+        lexem = getLexem();
     }
     return lexem;
 }
@@ -703,7 +703,7 @@ void processDefineDirective(bool hasArguments) {
     parpos1 = &ppb1;
     parpos2 = &ppb2;
 
-    lexem = getLex();
+    lexem = getLexem();
     ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     currentLexemStart = currentInput.currentLexemP;
@@ -908,7 +908,7 @@ static void processUndefineDirective(void) {
     int lineNumber, value, length;
     UNUSED length; UNUSED value; UNUSED lineNumber;
 
-    lexem = getLex();
+    lexem = getLexem();
     ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     cc = currentInput.currentLexemP;
@@ -938,7 +938,7 @@ static void processUndefineDirective(void) {
         }
     }
     while (lexem != '\n') {
-        lexem = getLex();
+        lexem = getLexem();
         ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
     }
@@ -986,7 +986,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
 
     depth = 1;
     while (depth > 0) {
-        lexem = getLex();
+        lexem = getLexem();
         ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
@@ -1044,7 +1044,7 @@ static void processIfdefDirective(bool isIfdef) {
     int lineNumber, value, length;
     UNUSED length; UNUSED value; UNUSED lineNumber;
 
-    lexem = getLex();
+    lexem = getLexem();
     ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     /* Then we are probably looking at the id... */
@@ -1178,7 +1178,7 @@ static void processPragmaDirective(void) {
     Symbol *pp;
     int value, length; UNUSED length; UNUSED value;
 
-    lexem = getLex();
+    lexem = getLexem();
     ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     if (lexem == IDENTIFIER && strcmp(currentInput.currentLexemP, "once")==0) {
@@ -1197,7 +1197,7 @@ static void processPragmaDirective(void) {
     }
     while (lexem != '\n') {
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
-        lexem = getLex();
+        lexem = getLexem();
         ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
     }
     passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
@@ -1284,11 +1284,11 @@ static bool processPreprocessorConstruct(Lexem lexem) {
     case CPP_LINE: {
         processLineDirective();
 
-        lexem = getLex();
+        lexem = getLexem();
         ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
         while (lexem != '\n') {
             passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
-            lexem = getLex();
+            lexem = getLexem();
             ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
         }
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
@@ -2097,7 +2097,7 @@ int yylex(void) {
                 passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length,
                                    macroStackIndex == 0);
                 for(;;) {
-                    lexem = getLex();
+                    lexem = getLexem();
                     ON_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
                     if (!isPreprocessorToken(lexem))
