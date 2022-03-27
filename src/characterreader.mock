@@ -53,29 +53,25 @@ int absoluteFilePosition(CharacterBuffer *cb) {
 
 int skipBlanks(CharacterBuffer *cb, int ch) {
     int r = (int)mock(cb, ch);
-    if (getenv("TRACE_MOCKS"))
-        printf("skipBlanks(): returning '%c'\n", r);
+    log_trace("skipBlanks(): returning '%c'", r);
     return r;
 }
 
 int skipWhiteSpace(CharacterBuffer *cb, int ch) {
     int r = (int)mock(cb, ch);
-    if (getenv("TRACE_MOCKS"))
-        printf("skipWhiteSpace(): returning '%c'\n", r);
+    log_trace("skipWhiteSpace(): returning '%c'", r);
     return r;
 }
 
 void skipCharacters(CharacterBuffer *buffer, unsigned count) {
     mock(buffer, count);
-    if (getenv("TRACE_MOCKS"))
-        printf("skipCharacters(): skipping %d\n", count);
+    log_trace("skipCharacters(): skipping %d", count);
 }
 
 int getChar(CharacterBuffer *cb) {
     bool *isAtEOF = &cb->isAtEOF;
     int r = (int)mock(cb, isAtEOF);
-    if (getenv("TRACE_MOCKS"))
-        printf("getChar(): returning '%c'\n", r);
+    log_trace("getChar(): returning '%c'", r);
     return r;
 }
 
