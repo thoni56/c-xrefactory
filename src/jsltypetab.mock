@@ -15,8 +15,8 @@ bool jslTypeTabIsMember(struct jslTypeTab *table, JslSymbolList *element, int *p
   return (int) mock(table, element, position, origin);
 }
 
-int jslTypeTabNextMember(JslSymbolList *element, JslSymbolList **original) {
-  return (int) mock(element, original);
+bool jslTypeTabNextMember(JslSymbolList *element, JslSymbolList **original) {
+  return (bool) mock(element, original);
 }
 
 void jslTypeTabSet(struct jslTypeTab *table, JslSymbolList *element, int position) {

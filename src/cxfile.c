@@ -500,18 +500,17 @@ void addSubClassItemToFileTab( int sup, int inf, int originFileIndex) {
 
 
 void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
-    int cf1;
-    SymbolList *sups;
+    if (symbol->bits.symbolType != TypeStruct)
+        return;
 
-    if (symbol->bits.symbolType != TypeStruct) return;
-    /*fprintf(dumpOut,"testing %s\n",ss->name);*/
+    log_trace("testing %s", symbol->name);
     assert(symbol->bits.javaFileIsLoaded);
     if (!symbol->bits.javaFileIsLoaded)
         return;
-    cf1 = symbol->u.structSpec->classFileIndex;
+    int cf1 = symbol->u.structSpec->classFileIndex;
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
-    /*fprintf(dumpOut,"loaded: #sups == %d\n",ns);*/
-    for (sups=symbol->u.structSpec->super; sups!=NULL; sups=sups->next) {
+
+    for (SymbolList *sups=symbol->u.structSpec->super; sups!=NULL; sups=sups->next) {
         assert(sups->d && sups->d->bits.symbolType == TypeStruct);
         addSubClassItemToFileTab(sups->d->u.structSpec->classFileIndex, cf1, origin);
     }
@@ -520,11 +519,9 @@ void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
 /* *************************************************************** */
 
 static void genRefItem0(ReferencesItem *referenceItem, bool force) {
-    Reference *reference;
-    int symbolIndex;
+    int symbolIndex = 0;
 
     log_trace("generate cxref for symbol '%s'", referenceItem->name);
-    symbolIndex = 0;
     assert(strlen(referenceItem->name)+1 < MAX_CX_SYMBOL_SIZE);
 
     strcpy(lastOutgoingInfo.cachedSymbolName[symbolIndex], referenceItem->name);
@@ -538,10 +535,12 @@ static void genRefItem0(ReferencesItem *referenceItem, bool force) {
     lastOutgoingInfo.symbolTab[symbolIndex] = &lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex];
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
 
-    if (referenceItem->bits.category == CategoryLocal) return;
-    if (referenceItem->references == NULL && !force) return;
+    if (referenceItem->bits.category == CategoryLocal)
+        return;
+    if (referenceItem->references == NULL && !force)
+        return;
 
-    for (reference = referenceItem->references; reference != NULL; reference = reference->next) {
+    for (Reference *reference = referenceItem->references; reference != NULL; reference = reference->next) {
         FileItem *fileItem = getFileItem(reference->position.file);
         log_trace("checking ref: loading=%d --< %s:%d", fileItem->bits.cxLoading,
                   fileItem->name, reference->position.line);
@@ -553,7 +552,6 @@ static void genRefItem0(ReferencesItem *referenceItem, bool force) {
             assert(0);
         }
     }
-    //&fflush(cxOut);
 }
 
 static void genRefItem(ReferencesItem *referenceItem) {
@@ -719,11 +717,9 @@ static void cxrfReadRecordMarkers(int size,
                                   CharacterBuffer *cb,
                                   int additionalArg
 ) {
-    int i, ch;
-
     assert(marker == CXFI_MARKER_LIST);
-    for (i=0; i<size-1; i++) {
-        ch = getChar(cb);
+    for (int i=0; i<size-1; i++) {
+        int ch = getChar(cb);
         lastIncomingInfo.markers[ch] = 1;
     }
 }
@@ -736,11 +732,11 @@ static void cxrfVersionCheck(int size,
 ) {
     char versionString[TMP_STRING_SIZE];
     char thisVersionString[TMP_STRING_SIZE];
-    int i, ch;
+    int i;
 
     assert(marker == CXFI_VERSION);
     for (i=0; i<size-1; i++) {
-        ch = getChar(cb);
+        int ch = getChar(cb);
         versionString[i]=ch;
     }
     versionString[i]=0;
@@ -1016,7 +1012,7 @@ static void cxrfSymbolName(int size,
 ) {
     ReferencesItem *ddd, *memb;
     SymbolsMenu *cms;
-    int si, symType, rr, vApplClass, vFunClass, ols, accessFlags, storage;
+    int si, symType, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;
 
     assert(marker == CXFI_SYMBOL_NAME);
@@ -1039,11 +1035,15 @@ static void cxrfSymbolName(int size,
                       vApplClass, vFunClass);
     fillSymbolRefItemBits(&ddd->bits,symType, storage, ScopeGlobal, accessFlags,
                           CategoryGlobal);
-    rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
-    while (rr && memb->bits.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
+
+    int rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
+    while (rr && memb->bits.category!=CategoryGlobal)
+        rr=refTabNextMember(ddd, &memb);
+
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
-        if (memb==NULL) memb=ddd;
+        if (memb==NULL)
+            memb=ddd;
         genRefItem0(memb, true);
         ddd->references = memb->references; // note references to not generate multiple
         memb->references = NULL;      // HACK, remove them, to not be regenerated
@@ -1345,7 +1345,7 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
         if (lastIncomingInfo.fun[ch] != NULL) {
             (*lastIncomingInfo.fun[ch])(scannedInt, ch, &cxFileCharacterBuffer,
                                         lastIncomingInfo.additional[ch]);
-        } else if (! lastIncomingInfo.markers[ch]) {
+        } else if (!lastIncomingInfo.markers[ch]) {
             assert(scannedInt>0);
             skipCharacters(&cxFileCharacterBuffer, scannedInt-1);
         }

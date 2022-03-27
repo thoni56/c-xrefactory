@@ -3452,7 +3452,7 @@ static bool olMenuHashFileNumLess(SymbolsMenu *s1, SymbolsMenu *s2) {
     return false;
 }
 
-void getLineColCursorPositionFromCommandLineOption(int *l, int *c) {
+void getLineAndColumnCursorPositionFromCommandLineOptions(int *l, int *c) {
     assert(options.olcxlccursor!=NULL);
     sscanf(options.olcxlccursor,"%d:%d", l, c);
 }
@@ -4059,7 +4059,7 @@ void olcxPushSpecial(char *fieldName, int command) {
             ss->visible = ss->selected = 1;
         }
         olProcessSelectedReferences(refs, genOnLineReferences);
-        getLineColCursorPositionFromCommandLineOption(&line, &col);
+        getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
         callerPos = makePosition(inputFileNumber, line, col);
         olSetCallerPosition(&callerPos);
     }
@@ -4569,7 +4569,7 @@ static void getCallerPositionFromCommandLineOption(Position *opos) {
 
     assert(opos != NULL);
     file = olOriginalFileNumber;
-    getLineColCursorPositionFromCommandLineOption(&line, &col);
+    getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
     *opos = makePosition(file, line, col);
 }
 

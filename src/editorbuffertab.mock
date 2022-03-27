@@ -16,8 +16,8 @@ bool editorBufferTabIsMember(struct editorBufferTab *table, EditorBufferList *el
   return (int) mock(table, element, position, origin);
 }
 
-int editorBufferTabNextMember(EditorBufferList *element, EditorBufferList **original) {
-  return (int) mock(element, original);
+bool editorBufferTabNextMember(EditorBufferList *element, EditorBufferList **original) {
+  return (bool) mock(element, original);
 }
 
 void editorBufferTabSet(struct editorBufferTab *table, EditorBufferList *element, int position) {

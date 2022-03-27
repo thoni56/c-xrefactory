@@ -16,8 +16,8 @@ bool symbolTableIsMember(SymbolTable *table, Symbol *element, int *position, Sym
   return (int) mock(table, element, position, foundMemberPointer);
 }
 
-int symbolTableNextMember(Symbol *element, Symbol **original) {
-  return (int) mock(element, original);
+bool symbolTableNextMember(Symbol *element, Symbol **original) {
+  return (bool) mock(element, original);
 }
 
 void symbolTableSet(SymbolTable *table, Symbol *element, int position) {

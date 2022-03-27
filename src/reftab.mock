@@ -19,8 +19,8 @@ bool refTabIsMember(ReferenceTable *table, ReferencesItem *element,
     return (int)mock(table, element, position, origin);
 }
 
-int refTabNextMember(ReferencesItem *element, ReferencesItem **original) {
-    return (int)mock(element, original);
+bool refTabNextMember(ReferencesItem *element, ReferencesItem **original) {
+    return (bool)mock(element, original);
 }
 
 void refTabSet(ReferenceTable *table, ReferencesItem *element, int position) {

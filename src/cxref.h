@@ -107,7 +107,7 @@ extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
                                Reference **diff);
 extern bool olcxShowSelectionMenu(void);
 extern int getClassNumFromClassLinkName(char *name, int defaultResult);
-extern void getLineColCursorPositionFromCommandLineOption( int *l, int *c );
+extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
 extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                         Symbol *cclass);
 extern bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);

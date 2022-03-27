@@ -54,7 +54,7 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
 }
 
 
-int CONCAT(HASH_FUN_PREFIX,NextMember)(
+bool CONCAT(HASH_FUN_PREFIX,NextMember)(
     HASH_ELEM_TYPE *element,
     HASH_ELEM_TYPE **foundMemberPointer
 ) {
@@ -63,11 +63,11 @@ int CONCAT(HASH_FUN_PREFIX,NextMember)(
     for (pp= (*foundMemberPointer)->next; pp!=NULL; pp=pp->next) {
         if (HASH_ELEM_EQUAL(pp, element)) {
             *foundMemberPointer = pp;
-            return(1);
+            return true;
         }
     }
     *foundMemberPointer = NULL;
-    return(0);
+    return false;
 }
 
 

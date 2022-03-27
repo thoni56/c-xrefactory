@@ -43,7 +43,7 @@ extern int CONCAT(HASH_FUN_PREFIX, MembEqual) (
     HASH_ELEM_TYPE *e2
 );
 
-extern int CONCAT(HASH_FUN_PREFIX, NextMember) (
+extern bool CONCAT(HASH_FUN_PREFIX, NextMember) (
     HASH_ELEM_TYPE *element,
     HASH_ELEM_TYPE **original
 );

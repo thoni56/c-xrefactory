@@ -2509,7 +2509,7 @@ static void mainEditSrvParseInputFile(bool *firstPass, bool inputIn) {
     }
 }
 
-static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
+static bool mainSymbolCanBeIdentifiedByPosition(int fileIndex) {
     int line,col;
 
     // there is a serious problem with options memory for options got from
@@ -2517,9 +2517,12 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     // which problem ??????
     // seems that those options are somewhere in ppmMemory overwritten?
     //&return 0;
-    if (!creatingOlcxRefs()) return false;
-    if (options.browsedSymName == NULL) return false;
-    log_trace("looking for sym %s on %s",options.browsedSymName,options.olcxlccursor);
+    if (!creatingOlcxRefs())
+        return false;
+    if (options.browsedSymName == NULL)
+        return false;
+    log_trace("looking for sym %s on %s", options.browsedSymName, options.olcxlccursor);
+
     // modified file, can't identify the reference
     log_trace(":modif flag == %d", options.modifiedFlag);
     if (options.modifiedFlag)
@@ -2530,8 +2533,8 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     // and because references from currently procesed file would
     // be not loaded from the TAG file (it expects they are loaded
     // by parsing).
-    FileItem *fileItem = getFileItem(fnum);
-    log_trace("checking if cmd %s, == %d\n", fileItem->name, fileItem->bits.commandLineEntered);
+    FileItem *fileItem = getFileItem(fileIndex);
+    log_trace("commandLineEntered %s == %d", fileItem->name, fileItem->bits.commandLineEntered);
     if (fileItem->bits.commandLineEntered)
         return false;
 
@@ -2543,13 +2546,14 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
 
     // here read one reference file looking for the refs
     // assume s_opt.olcxlccursor is correctly set;
-    getLineColCursorPositionFromCommandLineOption( &line, &col);
-    s_olcxByPassPos = makePosition(fnum, line, col);
+    getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
+    s_olcxByPassPos = makePosition(fileIndex, line, col);
     olSetCallerPosition(&s_olcxByPassPos);
     scanForBypass(options.browsedSymName);
+
     // if no symbol found, it may be a local symbol, try by parsing
-    log_trace("checking that %d, != NULL", currentUserData->browserStack.top->hkSelectedSym);
-    if (currentUserData->browserStack.top->hkSelectedSym==NULL)
+    log_trace("checking that %d != NULL", currentUserData->browserStack.top->hkSelectedSym);
+    if (currentUserData->browserStack.top->hkSelectedSym == NULL)
         return false;
 
     // here I should set caching to 1 and recover the cachePoint ???

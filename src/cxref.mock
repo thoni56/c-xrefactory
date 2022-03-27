@@ -278,8 +278,8 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
     return (int) mock(name, defaultResult);
 }
 
-void getLineColCursorPositionFromCommandLineOption(int *l, int *c) {
-    mock(l, c);
+void getLineAndColumnCursorPositionFromCommandLineOptions(int *lineP, int *colP) {
+    mock(lineP, colP);
 }
 
 void changeClassReferencesUsages(char *linkName, int category, int fnum, Symbol *cclass) {
