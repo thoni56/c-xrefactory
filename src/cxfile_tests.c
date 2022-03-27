@@ -6,7 +6,6 @@
 
 #include "characterreader.h"
 #include "cxfile.h"
-#include "filetable.h"
 #include "log.h"
 
 #include "globals.mock"
@@ -24,6 +23,7 @@
 #include "characterreader.mock"
 #include "classhierarchy.mock"
 #include "fileio.mock"
+#include "filetable.mock"
 
 
 Describe(CxFile);
@@ -31,7 +31,6 @@ BeforeEach(CxFile) {
     log_set_level(LOG_DEBUG); /* Set to LOG_TRACE if needed */
 
     options.taskRegime = RegimeEditServer;
-    initFileTable(100);
 }
 AfterEach(CxFile) {}
 
@@ -68,12 +67,18 @@ static void expect_string(char string[], bool eof) {
 }
 
 
-xEnsure(CxFile, can_do_normal_scan) {
+Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     FILE *xfilesFilePointer = (FILE *)4654654645;
-    FILE *sourceFilePointer = (FILE *)4679898745;
+
+    char *sourceFileName1 = "source1.c";
+    int sourceFileIndex1 = 44;
+    FileItem fileItem1 = {.name = sourceFileName1};
+
+    //log_set_level(LOG_TRACE);
 
     options.cxrefsLocation = "./CXrefs";
     options.referenceFileCount = 1;
+
 
     expect(checkReferenceFileCountOption, will_return(10));
 
@@ -88,17 +93,19 @@ xEnsure(CxFile, can_do_normal_scan) {
     /* Generation setttings, file count, ... */
     expect_string("21@mpfotulcsrhdeibnaAgk 10n 300000k ", false);
 
-    expect_string("49976f 1646087914m 53:/home/thoni/Utveckling/c-xrefactory/src/extract.mock ", false);
-    expect(normalizeFileName, when(name, is_equal_to_string("/home/thoni/Utveckling/c-xrefactory/src/extract.mock")),
-           will_return("/home/thoni/Utveckling/c-xrefactory/src/extract.mock"));
+    /* First and only file, no other symbols */
+    expect_string("49976f 1646087914m 10:source1.c ", true);
 
-    expect_string("19491f 1647180780p m1ia 73:/home/thoni/Utveckling/c-xrefactory/tests/test_single_xref_file/source.c ", true);
+    expect(existsInFileTable, when(fileName, is_equal_to_string("source1.c")),
+           will_return(false));
+
+    expect(addFileNameToFileTable, when(name, is_equal_to_string("source1.c")),
+           will_return(sourceFileIndex1));
+
+    expect(getFileItem, when(fileIndex, is_equal_to(sourceFileIndex1)),
+           will_return(&fileItem1));
+
     expect(closeFile, when(file, is_equal_to(xfilesFilePointer)));
-
-    expect(openFile, when(fileName, is_equal_to_string("/home/thoni/Utveckling/c-xrefactory/src/extract.mock")),
-           will_return(sourceFilePointer));
-    expect(checkFileModifiedTime);
-    expect(closeFile, when(file, is_equal_to(sourceFilePointer)));
 
     normalScanReferenceFile("/XFiles");
 }
