@@ -113,7 +113,7 @@ typedef struct lastCxFileInfo {
 
     // following item can be used only via symbolTab,
     // it is just to simplify memory handling !!!!!!!!!!!!!!!!
-    ReferencesItem     cachedSymbolReferenceItem[MAX_CX_SYMBOL_TAB];
+    ReferencesItem     cachedReferencesItem[MAX_CX_SYMBOL_TAB];
     char                cachedSymbolName[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
 } LastCxFileInfo;
 
@@ -525,14 +525,14 @@ static void genRefItem0(ReferencesItem *referenceItem, bool force) {
     assert(strlen(referenceItem->name)+1 < MAX_CX_SYMBOL_SIZE);
 
     strcpy(lastOutgoingInfo.cachedSymbolName[symbolIndex], referenceItem->name);
-    fillSymbolRefItem(&lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex],
+    fillReferencesItem(&lastOutgoingInfo.cachedReferencesItem[symbolIndex],
                       lastOutgoingInfo.cachedSymbolName[symbolIndex],
                       referenceItem->fileHash, // useless put 0
                       referenceItem->vApplClass, referenceItem->vFunClass);
-    fillSymbolRefItemBits(&lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex].bits,
+    fillReferencesItemBits(&lastOutgoingInfo.cachedReferencesItem[symbolIndex].bits,
                           referenceItem->bits.symType, referenceItem->bits.storage,
                           referenceItem->bits.scope, referenceItem->bits.accessFlags, referenceItem->bits.category);
-    lastOutgoingInfo.symbolTab[symbolIndex] = &lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex];
+    lastOutgoingInfo.symbolTab[symbolIndex] = &lastOutgoingInfo.cachedReferencesItem[symbolIndex];
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
 
     if (referenceItem->bits.category == CategoryLocal)
@@ -942,19 +942,19 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         return;
     }
 
-    ReferencesItem *referenceItem = &lastIncomingInfo.cachedSymbolReferenceItem[si];
+    ReferencesItem *referenceItem = &lastIncomingInfo.cachedReferencesItem[si];
     lastIncomingInfo.symbolTab[si] = referenceItem;
-    fillSymbolRefItem(referenceItem, id, cxFileHashNumber(id), //useless, put 0
+    fillReferencesItem(referenceItem, id, cxFileHashNumber(id), //useless, put 0
                       vApplClass, vFunClass);
-    fillSymbolRefItemBits(&referenceItem->bits, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
+    fillReferencesItemBits(&referenceItem->bits, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
 
     if (!refTabIsMember(&referenceTable, referenceItem, NULL, &memb)) {
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
         CX_ALLOC(memb, ReferencesItem);
-        fillSymbolRefItem(memb, ss, cxFileHashNumber(ss),
+        fillReferencesItem(memb, ss, cxFileHashNumber(ss),
                           vApplClass, vFunClass);
-        fillSymbolRefItemBits(&memb->bits, symType, storage,
+        fillReferencesItemBits(&memb->bits, symType, storage,
                               ScopeGlobal, accessFlags, CategoryGlobal);
         refTabAdd(&referenceTable, memb);
     }
@@ -1010,9 +1010,9 @@ static void cxrfSymbolName(int size,
                            CharacterBuffer *cb,
                            int additionalArg
 ) {
-    ReferencesItem *ddd, *memb;
+    ReferencesItem *referencesItem, *member;
     SymbolsMenu *cms;
-    int si, symType, vApplClass, vFunClass, ols, accessFlags, storage;
+    int symbolIndex, symType, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;
 
     assert(marker == CXFI_SYMBOL_NAME);
@@ -1022,36 +1022,36 @@ static void cxrfSymbolName(int size,
     }
     accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
     storage = lastIncomingInfo.values[CXFI_STORAGE];
-    si = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
-    assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
-    id = lastIncomingInfo.cachedSymbolName[si];
+    symbolIndex = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
+    assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
+    id = lastIncomingInfo.cachedSymbolName[symbolIndex];
     scanSymNameString(size, cb, id);
     getSymTypeAndClasses(&symType, &vApplClass, &vFunClass);
 
-    ddd = &lastIncomingInfo.cachedSymbolReferenceItem[si];
-    lastIncomingInfo.symbolTab[si] = ddd;
-    fillSymbolRefItem(ddd, id,
+    referencesItem = &lastIncomingInfo.cachedReferencesItem[symbolIndex];
+    lastIncomingInfo.symbolTab[symbolIndex] = referencesItem;
+    fillReferencesItem(referencesItem, id,
                       cxFileHashNumber(id), // useless put 0
                       vApplClass, vFunClass);
-    fillSymbolRefItemBits(&ddd->bits,symType, storage, ScopeGlobal, accessFlags,
+    fillReferencesItemBits(&referencesItem->bits, symType, storage, ScopeGlobal, accessFlags,
                           CategoryGlobal);
 
-    int rr = refTabIsMember(&referenceTable, ddd, NULL, &memb);
-    while (rr && memb->bits.category!=CategoryGlobal)
-        rr=refTabNextMember(ddd, &memb);
+    bool isMember = refTabIsMember(&referenceTable, referencesItem, NULL, &member);
+    while (isMember && member->bits.category!=CategoryGlobal)
+        isMember = refTabNextMember(referencesItem, &member);
 
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
-        if (memb==NULL)
-            memb=ddd;
-        genRefItem0(memb, true);
-        ddd->references = memb->references; // note references to not generate multiple
-        memb->references = NULL;      // HACK, remove them, to not be regenerated
+        if (member==NULL)
+            member=referencesItem;
+        genRefItem0(member, true);
+        referencesItem->references = member->references; // note references to not generate multiple
+        member->references = NULL;      // HACK, remove them, to not be regenerated
     }
     if (options.taskRegime == RegimeEditServer) {
         if (additionalArg == CXSF_DEAD_CODE_DETECTION) {
-            if (symbolIsReportableAsUnused(lastIncomingInfo.symbolTab[si])) {
-                lastIncomingInfo.symbolToCheckForDeadness = si;
+            if (symbolIsReportableAsUnused(lastIncomingInfo.symbolTab[symbolIndex])) {
+                lastIncomingInfo.symbolToCheckForDeadness = symbolIndex;
                 lastIncomingInfo.deadSymbolIsDefined = 0;
             } else {
                 lastIncomingInfo.symbolToCheckForDeadness = -1;
@@ -1059,7 +1059,7 @@ static void cxrfSymbolName(int size,
         } else if (options.server_operation!=OLO_TAG_SEARCH) {
             cms = NULL; ols = 0;
             if (additionalArg == CXSF_MENU_CREATION) {
-                cms = createSelectionMenu(ddd);
+                cms = createSelectionMenu(referencesItem);
                 if (cms == NULL) {
                     ols = 0;
                 } else {
@@ -1067,15 +1067,16 @@ static void cxrfSymbolName(int size,
                     else ols = 1;
                 }
             } else if (additionalArg!=CXSF_BY_PASS) {
-                ols=itIsSymbolToPushOlReferences(ddd,currentUserData->browserStack.top,&cms,DEFAULT_VALUE);
+                ols=itIsSymbolToPushOlReferences(referencesItem, currentUserData->browserStack.top, &cms,
+                                                 DEFAULT_VALUE);
             }
             lastIncomingInfo.onLineRefMenuItem = cms;
-            if (ols || (additionalArg==CXSF_BY_PASS && canBypassAcceptableSymbol(ddd))) {
-                lastIncomingInfo.onLineReferencedSym = si;
+            if (ols || (additionalArg==CXSF_BY_PASS && canBypassAcceptableSymbol(referencesItem))) {
+                lastIncomingInfo.onLineReferencedSym = symbolIndex;
                 lastIncomingInfo.onLineRefIsBestMatchFlag = (ols == 2);
-                log_trace("symbol %s is O.K. for %s (ols==%d)", ddd->name, options.browsedSymName, ols);
+                log_trace("symbol %s is O.K. for %s (ols==%d)", referencesItem->name, options.browsedSymName, ols);
             } else {
-                if (lastIncomingInfo.onLineReferencedSym == si) {
+                if (lastIncomingInfo.onLineReferencedSym == symbolIndex) {
                     lastIncomingInfo.onLineReferencedSym = -1;
                 }
             }

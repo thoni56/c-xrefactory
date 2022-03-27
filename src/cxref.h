@@ -9,9 +9,9 @@
 
 
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
-extern void fillSymbolRefItem(ReferencesItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
+extern void fillReferencesItem(ReferencesItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
                               int vFunClass);
-extern void fillSymbolRefItemBits(ReferencesItemBits *symbolRefItemBits, unsigned symType,
+extern void fillReferencesItemBits(ReferencesItemBits *symbolRefItemBits, unsigned symType,
                                   unsigned storage, unsigned scope, unsigned accessFlags,
                                   unsigned category);
 extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s,
@@ -21,7 +21,6 @@ extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s,
                             struct editorMarkerList *markers,	/* for refactory only */
                             SymbolsMenu *next);
 extern int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
-extern bool olSymbolRefItemLess(ReferencesItem *s1, ReferencesItem *s2);
 extern void tagSearchCompactShortResults(void);
 extern void printTagSearchResults(void);
 extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, int storage);

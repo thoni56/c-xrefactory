@@ -561,9 +561,9 @@ void printSymbolLinkName(FILE *ff, SymbolsMenu *ss) {
 }
 
 void fillTrivialSpecialRefItem(ReferencesItem *ddd , char *name) {
-    fillSymbolRefItem(ddd, name, cxFileHashNumber(name),
+    fillReferencesItem(ddd, name, cxFileHashNumber(name),
                                 noFileIndex, noFileIndex);
-    fillSymbolRefItemBits(&ddd->bits, TypeUnknown, StorageAuto,
+    fillReferencesItemBits(&ddd->bits, TypeUnknown, StorageAuto,
                            ScopeAuto, AccessDefault, CategoryLocal);
 }
 

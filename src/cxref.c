@@ -2,7 +2,6 @@
 
 #include "access.h"
 #include "commons.h"
-#include "lexer.h"
 #include "usage.h"
 #include "yylex.h"
 #include "classhierarchy.h"
@@ -29,16 +28,14 @@
 #include "log.h"
 #include "utils.h"
 
-
-typedef struct referencesChangeData {
-    char			*linkName;
-    int				fnum;
-    struct symbol	*cclass;
-    int				category;
-    int				cxMemBegin;
-    int				cxMemEnd;
-} S_referencesChangeData;
-
+typedef struct ReferencesChangeData {
+    char   *linkName;
+    int     fnum;
+    Symbol *cclass;
+    int     category;
+    int     cxMemBegin;
+    int     cxMemEnd;
+} ReferencesChangeData;
 
 #define OLCX_USER_RESERVE 30
 
@@ -48,24 +45,24 @@ typedef struct referencesChangeData {
 
 /* *********************************************************************** */
 
-void fillSymbolRefItem(ReferencesItem *symbolRefItem, char *name,
-                       unsigned fileHash, int vApplClass, int vFunClass) {
-    symbolRefItem->name = name;
-    symbolRefItem->fileHash = fileHash;
-    symbolRefItem->vApplClass = vApplClass;
-    symbolRefItem->vFunClass = vFunClass;
-    symbolRefItem->references = NULL;
-    symbolRefItem->next = NULL;
+void fillReferencesItem(ReferencesItem *referencesItem, char *name,
+                        unsigned fileHash, int vApplClass, int vFunClass) {
+    referencesItem->name = name;
+    referencesItem->fileHash = fileHash;
+    referencesItem->vApplClass = vApplClass;
+    referencesItem->vFunClass = vFunClass;
+    referencesItem->references = NULL;
+    referencesItem->next = NULL;
 }
 
-void fillSymbolRefItemBits(ReferencesItemBits *symbolRefItemBits, unsigned symType,
-                           unsigned storage, unsigned scope, unsigned accessFlags,
-                           unsigned category) {
-    symbolRefItemBits->symType = symType;
-    symbolRefItemBits->storage = storage;
-    symbolRefItemBits->scope = scope;
-    symbolRefItemBits->accessFlags = accessFlags;                \
-    symbolRefItemBits->category = category;
+void fillReferencesItemBits(ReferencesItemBits *referencesItemBits, unsigned symType,
+                            unsigned storage, unsigned scope, unsigned accessFlags,
+                            unsigned category) {
+    referencesItemBits->symType = symType;
+    referencesItemBits->storage = storage;
+    referencesItemBits->scope = scope;
+    referencesItemBits->accessFlags = accessFlags;
+    referencesItemBits->category = category;
 }
 
 void fillReference(Reference *reference, Usage usage, Position position, Reference *next) {
@@ -76,7 +73,7 @@ void fillReference(Reference *reference, Usage usage, Position position, Referen
 
 
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
-                     struct referencesItem s,
+                     ReferencesItem s,
                      char selected,
                      char visible,
                      unsigned ooBits,
@@ -85,10 +82,10 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
                      short int refn,
                      short int defRefn,
                      char defUsage,
-                     struct position defpos,
+                     Position defpos,
                      int outOnLine,
-                     struct editorMarkerList *markers,	/* for refactory only */
-                     struct SymbolsMenu *next
+                     EditorMarkerList *markers,	/* for refactory only */
+                     SymbolsMenu *next
 ) {
     symbolsMenu->s = s;
     symbolsMenu->selected = selected;
@@ -110,7 +107,7 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return SORTED_LIST_LESS(r1, (*r2));
 }
 
-bool olSymbolRefItemLess(ReferencesItem *s1, ReferencesItem *s2) {
+static bool olReferencesItemIsLess(ReferencesItem *s1, ReferencesItem *s2) {
     int cmp;
     cmp = strcmp(s1->name, s2->name);
     if (cmp < 0)
@@ -140,8 +137,8 @@ bool olSymbolRefItemLess(ReferencesItem *s1, ReferencesItem *s2) {
     return false;
 }
 
-static bool olSymbolMenuLess(SymbolsMenu *s1, SymbolsMenu *s2) {
-    return olSymbolRefItemLess(&s1->s, &s2->s);
+static bool olSymbolMenuIsLess(SymbolsMenu *s1, SymbolsMenu *s2) {
+    return olReferencesItemIsLess(&s1->s, &s2->s);
 }
 
 static char *olcxStringCopy(char *string) {
@@ -164,7 +161,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
 
     allocatedNameCopy = olcxStringCopy(symbol->name);
 
-    fillSymbolRefItem(&refItem, allocatedNameCopy,
+    fillReferencesItem(&refItem, allocatedNameCopy,
                                 cxFileHashNumber(allocatedNameCopy),
                                 vApplClass, vFunCl);
     refItem.bits = symbol->bits;
@@ -182,9 +179,9 @@ SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
     SymbolsMenu *rr, **place, ddd;
 
     fillSymbolsMenu(&ddd, *sym, 0,0,0, olusage, vlevel,0,0, UsageNone,noPosition,0, NULL, NULL);
-    SORTED_LIST_PLACE3(place, SymbolsMenu, (&ddd), list, olSymbolMenuLess);
+    SORTED_LIST_PLACE3(place, SymbolsMenu, (&ddd), list, olSymbolMenuIsLess);
     rr = *place;
-    if (*place==NULL || olSymbolMenuLess(&ddd, *place)) {
+    if (*place==NULL || olSymbolMenuIsLess(&ddd, *place)) {
         assert(sym);
         rr = olCreateNewMenuItem(sym, sym->vApplClass, sym->vFunClass, defpos, defusage,
                                  selected, visible, ooBits,
@@ -393,14 +390,14 @@ bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
 
 // TODO, all this stuff should be done differently! Why?
 static void changeFieldRefUsages(ReferencesItem *ri, void *rrcd) {
-    S_referencesChangeData *rcd;
+    ReferencesChangeData *rcd;
     ReferencesItem ddd;
 
-    rcd = (S_referencesChangeData*) rrcd;
-    fillSymbolRefItem(&ddd,rcd->linkName,
+    rcd = (ReferencesChangeData*) rrcd;
+    fillReferencesItem(&ddd,rcd->linkName,
                                 cxFileHashNumber(rcd->linkName),
                                 noFileIndex, noFileIndex);
-    fillSymbolRefItemBits(&ddd.bits, TypeDefault, StorageField,
+    fillReferencesItemBits(&ddd.bits, TypeDefault, StorageField,
                            ScopeFile, AccessDefault, rcd->category);
     if (isSameCxSymbol(ri, &ddd)) {
         //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
@@ -449,7 +446,7 @@ static void changeFieldRefUsages(ReferencesItem *ri, void *rrcd) {
     }
 }
 
-static void fillReferencesChangeData(S_referencesChangeData *referencesChangeData, char *linkName, int fnum,
+static void fillReferencesChangeData(ReferencesChangeData *referencesChangeData, char *linkName, int fnum,
                                       Symbol *cclass, int category, int memBegin, int memEnd) {
     referencesChangeData->linkName = linkName;
     referencesChangeData->fnum = fnum;
@@ -461,7 +458,7 @@ static void fillReferencesChangeData(S_referencesChangeData *referencesChangeDat
 
 void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                   Symbol *cclass){
-    S_referencesChangeData rr;
+    ReferencesChangeData rr;
     fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemoryIndexAtMethodBegin,
                               s_cps.cxMemoryIndexAtMethodEnd);
@@ -470,7 +467,7 @@ void changeMethodReferencesUsages(char *linkName, int category, int fnum,
 
 void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                  Symbol *cclass){
-    S_referencesChangeData rr;
+    ReferencesChangeData rr;
     fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemoryIndexAtClassBeginning,
                               s_cps.cxMemoryIndexAtClassEnd);
@@ -727,8 +724,8 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         if (!fileItem->bits.cxLoading)
             return NULL;
     }
-    fillSymbolRefItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl);
-    fillSymbolRefItemBits(&ppp.bits, symbol->bits.symbolType, storage, scope,
+    fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl);
+    fillReferencesItemBits(&ppp.bits, symbol->bits.symbolType, storage, scope,
                           symbol->bits.access, category);
     if (options.taskRegime==RegimeEditServer && options.server_operation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
         fillUsage(&reference.usage, usage.kind, AccessDefault);
@@ -742,8 +739,8 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         CX_ALLOC(pp, ReferencesItem);
         CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);
         strcpy(linkName, symbol->linkName);
-        fillSymbolRefItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl);
-        fillSymbolRefItemBits(&pp->bits, symbol->bits.symbolType, storage, scope,
+        fillReferencesItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl);
+        fillReferencesItemBits(&pp->bits, symbol->bits.symbolType, storage, scope,
                               symbol->bits.access, category);
         refTabSet(&referenceTable, pp, index);
         memb = pp;
@@ -2301,9 +2298,9 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     SymbolsMenu     *res;
     ReferencesItem     ss;
 
-    fillSymbolRefItem(&ss, fieldName, cxFileHashNumber(fieldName),
+    fillReferencesItem(&ss, fieldName, cxFileHashNumber(fieldName),
                                 cfi, cfi);
-    fillSymbolRefItemBits(&ss.bits, TypeDefault, storage, ScopeGlobal,
+    fillReferencesItemBits(&ss.bits, TypeDefault, storage, ScopeGlobal,
                            AccessDefault, CategoryGlobal);
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
@@ -2400,9 +2397,9 @@ static void olcxGenInspectClassDefinitionRef(int classnum) {
     char ccc[MAX_CX_SYMBOL_SIZE];
 
     javaGetClassNameFromFileNum(classnum, ccc, KEEP_SLASHES);
-    fillSymbolRefItem(&mmm, ccc, cxFileHashNumber(ccc),
+    fillReferencesItem(&mmm, ccc, cxFileHashNumber(ccc),
                       noFileIndex, noFileIndex);
-    fillSymbolRefItemBits(&mmm.bits, TypeStruct, StorageExtern, ScopeGlobal,
+    fillReferencesItemBits(&mmm.bits, TypeStruct, StorageExtern, ScopeGlobal,
                           AccessDefault, CategoryGlobal);
     olcxFindDefinitionAndGenGoto(&mmm);
 }
@@ -5198,7 +5195,7 @@ OlCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, 
         slen = strlen(referenceItem->name);
         ss = olcx_memory_allocc(slen+1, sizeof(char));
         strcpy(ss, referenceItem->name);
-        fillSymbolRefItem(&sri, ss, cxFileHashNumber(ss),
+        fillReferencesItem(&sri, ss, cxFileHashNumber(ss),
                                     referenceItem->vApplClass, referenceItem->vFunClass);
         sri.bits = referenceItem->bits;
 
@@ -5206,8 +5203,8 @@ OlCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, 
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
-        fillSymbolRefItem(&sri, "", cxFileHashNumber(""), noFileIndex, noFileIndex);
-        fillSymbolRefItemBits(&sri.bits, TypeUnknown, StorageNone,
+        fillReferencesItem(&sri, "", cxFileHashNumber(""), noFileIndex, noFileIndex);
+        fillReferencesItemBits(&sri.bits, TypeUnknown, StorageNone,
                                ScopeAuto, AccessDefault, CategoryLocal);
         cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
     } else {
@@ -5219,9 +5216,9 @@ OlCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, 
         strcpy(ss, symbol->linkName);
         fillUsage(&r.usage, UsageDefined, 0);
         fillReference(&r, r.usage, symbol->pos, NULL);
-        fillSymbolRefItem(&sri, ss, cxFileHashNumber(ss),
+        fillReferencesItem(&sri, ss, cxFileHashNumber(ss),
                                     vFunClass, vFunClass);
-        fillSymbolRefItemBits(&sri.bits, symbol->bits.symbolType, storage,
+        fillReferencesItemBits(&sri.bits, symbol->bits.symbolType, storage,
                                scope, symbol->bits.access, category);
         cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);
     }

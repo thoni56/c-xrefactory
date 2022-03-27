@@ -10,12 +10,12 @@ void fillReference(Reference *reference, Usage usage, Position position,
     mock(reference, next);
 }
 
-void fillSymbolRefItem(ReferencesItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
+void fillReferencesItem(ReferencesItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
                        int vFunClass) {
     mock(symbolRefItem, name, fileHash, vApplClass, vFunClass);
 }
 
-void fillSymbolRefItemBits(ReferencesItemBits *symbolRefItemBits, unsigned symType,
+void fillReferencesItemBits(ReferencesItemBits *symbolRefItemBits, unsigned symType,
                            unsigned storage, unsigned scope, unsigned accessFlags,
                            unsigned category) {
     mock(symbolRefItemBits, symType, storage, scope, accessFlags, category);
@@ -33,10 +33,6 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s,
 
 int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
-}
-
-bool olSymbolRefItemLess(ReferencesItem *s1, ReferencesItem *s2) {
-    return (bool) mock(s1, s2);
 }
 
 void tagSearchCompactShortResults(void) {

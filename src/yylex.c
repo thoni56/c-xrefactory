@@ -1779,10 +1779,10 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
     Position basePos;
 
     basePos = makePosition(inputFileNumber, 0, 0);
-    fillSymbolRefItem(&ppp, mdef->linkName,
-                                cxFileHashNumber(mdef->linkName), // useless, put 0
-                                noFileIndex, noFileIndex);
-    fillSymbolRefItemBits(&ppp.bits,TypeMacro, StorageDefault, ScopeGlobal,
+    fillReferencesItem(&ppp, mdef->linkName,
+                       cxFileHashNumber(mdef->linkName), // useless, put 0
+                       noFileIndex, noFileIndex);
+    fillReferencesItemBits(&ppp.bits,TypeMacro, StorageDefault, ScopeGlobal,
                            mdef->bits.access, CategoryGlobal);
     rr = refTabIsMember(&referenceTable, &ppp, NULL, &memb);
     r = NULL;
