@@ -1158,11 +1158,12 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
 }
 
 Reference *editorMarkersToReferences(EditorMarkerList **mms) {
-    EditorMarkerList  *mm;
-    EditorBuffer      *buf;
-    char                *s, *smax, *off;
-    int                 line, col;
-    Reference         *res, *rr;
+    EditorMarkerList *mm;
+    EditorBuffer     *buf;
+    char             *s, *smax, *off;
+    int               line, col;
+    Reference        *res;
+
     LIST_MERGE_SORT(EditorMarkerList, *mms, editorMarkerListLess);
     res = NULL;
     mm = *mms;
@@ -1174,7 +1175,7 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
         line = 1; col = 0;
         for( ; s<smax; s++, col++) {
             if (s == off) {
-                rr = olcx_alloc(sizeof(Reference));
+                Reference *rr = olcx_alloc(sizeof(Reference));
                 rr->position = makePosition(buf->ftnum, line, col);
                 fillReference(rr, mm->usage, rr->position, res);
                 res = rr;
@@ -1185,7 +1186,7 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
             if (*s=='\n') {line++; col = -1;}
         }
         while (mm!=NULL && mm->marker->buffer==buf) {
-            rr = olcx_alloc(sizeof(Reference));
+            Reference *rr = olcx_alloc(sizeof(Reference));
             rr->position = makePosition(buf->ftnum, line, 0);
             fillReference(rr, mm->usage, rr->position, res);
             res = rr;
@@ -1193,7 +1194,7 @@ Reference *editorMarkersToReferences(EditorMarkerList **mms) {
         }
     }
     LIST_MERGE_SORT(Reference, res, olcxReferenceInternalLessFunction);
-    return(res);
+    return res;
 }
 
 void editorFreeRegionListNotMarkers(EditorRegionList *occs) {

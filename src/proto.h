@@ -492,7 +492,7 @@ typedef struct olcxReferences {
 typedef struct classTreeData {
     int						baseClassFileIndex;
     struct SymbolsMenu	*tree;
-} S_classTreeData;
+} ClassTreeData;
 
 typedef struct olcxReferencesStack {
     struct olcxReferences	*top;

@@ -325,7 +325,7 @@ static void getSymbolCxrefProperties(Symbol *symbol,
 }
 
 
-static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
+static void setClassTreeBaseType(ClassTreeData *ct, Symbol *p) {
     Symbol        *rtcls;
     TypeModifier *tt;
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
@@ -1305,8 +1305,9 @@ static void olcxOrderRefsAndGotoFirst(void) {
 static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
     Reference *rr;
     for (rr=refs->references; rr!=NULL; rr=rr->next){
-        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->position.file, rr->position.line,rr->position.col, refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
-        if (! positionIsLessThan(rr->position, refs->callerPosition))
+        log_trace("checking %d:%d:%d to %d:%d:%d", rr->position.file, rr->position.line,rr->position.col,
+                  refs->callerPosition.file,  refs->callerPosition.line,  refs->callerPosition.col);
+        if (!positionIsLessThan(rr->position, refs->callerPosition))
             break;
     }
     // it should never be NULL, but one never knows
@@ -2243,19 +2244,18 @@ static void olcxShowTopSymbol(void) {
     olcxPrintSymbolName(refs);
 }
 
-static int referenceLess(Reference *r1, Reference *r2) {
+static bool referenceIsLess(Reference *r1, Reference *r2) {
     return positionIsLessThan(r1->position, r2->position);
 }
 
 static SymbolsMenu *findSymbolCorrespondingToReference(SymbolsMenu *menu,
-                                                       Reference *ref
+                                                       Reference *reference
 ) {
-    Reference *rr;
-
-    for (SymbolsMenu *ss=menu; ss!=NULL; ss=ss->next) {
-        SORTED_LIST_FIND3(rr, Reference, ref, ss->s.references, referenceLess);
-        if (rr!=NULL && positionsAreEqual(rr->position, ref->position)) {
-            return ss;
+    for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
+        Reference *r;
+        SORTED_LIST_FIND3(r, Reference, reference, s->s.references, referenceIsLess);
+        if (r!=NULL && positionsAreEqual(r->position, reference->position)) {
+            return s;
         }
     }
     return NULL;
