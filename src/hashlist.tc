@@ -35,17 +35,16 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
     HASH_ELEM_TYPE **foundMemberPointer /* OUT */
 ) {
     unsigned index;
-    HASH_ELEM_TYPE *pp;
 
     index = HASH_FUN(element);
     index = index % table->size;
     if (position)
         *position = index;
     assert(table->tab != NULL);
-    for (pp=table->tab[index]; pp!=NULL; pp=pp->next) {
-        if (HASH_ELEM_EQUAL(pp, element)) {
+    for (HASH_ELEM_TYPE *e = table->tab[index]; e!=NULL; e=e->next) {
+        if (HASH_ELEM_EQUAL(e, element)) {
             if (foundMemberPointer)
-                *foundMemberPointer = pp;
+                *foundMemberPointer = e;
             return true;
         }
     }
@@ -58,11 +57,10 @@ bool CONCAT(HASH_FUN_PREFIX,NextMember)(
     HASH_ELEM_TYPE *element,
     HASH_ELEM_TYPE **foundMemberPointer
 ) {
-    HASH_ELEM_TYPE *pp;
     assert(*foundMemberPointer);
-    for (pp= (*foundMemberPointer)->next; pp!=NULL; pp=pp->next) {
-        if (HASH_ELEM_EQUAL(pp, element)) {
-            *foundMemberPointer = pp;
+    for (HASH_ELEM_TYPE *e = (*foundMemberPointer)->next; e!=NULL; e=e->next) {
+        if (HASH_ELEM_EQUAL(e, element)) {
+            *foundMemberPointer = e;
             return true;
         }
     }
@@ -76,13 +74,13 @@ bool CONCAT(HASH_FUN_PREFIX,Delete)(
     HASH_ELEM_TYPE *element
 ) {
     unsigned index;
-    HASH_ELEM_TYPE **pp;
+
     index = HASH_FUN(element);
     index = index % table->size;
     assert(table->tab!=NULL);
-    for (pp= &(table->tab[index]); *pp!=NULL; pp= &((*pp)->next)) {
-        if (HASH_ELEM_EQUAL((*pp), element)) {
-            *pp = (*pp)->next;
+    for (HASH_ELEM_TYPE **e= &(table->tab[index]); *e!=NULL; e= &((*e)->next)) {
+        if (HASH_ELEM_EQUAL((*e), element)) {
+            *e = (*e)->next;
             return true;
         }
     }
@@ -95,14 +93,13 @@ bool CONCAT(HASH_FUN_PREFIX,DeleteExact)(
     HASH_ELEM_TYPE *element
 ) {
     unsigned index;
-    HASH_ELEM_TYPE **pp;
 
     index = HASH_FUN(element);
     index = index % table->size;
     assert(table->tab!=NULL);
-    for (pp= &(table->tab[index]); *pp!=NULL; pp= &((*pp)->next)) {
-        if ((*pp) == element) {
-            *pp = (*pp)->next;
+    for (HASH_ELEM_TYPE **e= &(table->tab[index]); *e!=NULL; e= &((*e)->next)) {
+        if ((*e) == element) {
+            *e = (*e)->next;
             return true;
         }
     }
@@ -125,10 +122,10 @@ void CONCAT(HASH_FUN_PREFIX,SetLast) (
     HASH_ELEM_TYPE *element,
     int position
 ) {
-    HASH_ELEM_TYPE **pp;
-    for (pp= &(table->tab[position]); *pp!=NULL; pp= &((*pp)->next))
+    HASH_ELEM_TYPE **e;
+    for (e= &(table->tab[position]); *e!=NULL; e= &((*e)->next))
         ;
-    *pp = element;
+    *e = element;
     element->next = NULL;
 }
 
@@ -139,7 +136,7 @@ int CONCAT(HASH_FUN_PREFIX,Add) (
 ) {
     HASH_ELEM_TYPE *origin;
     int position;
-    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,&position,&origin)) {
+    if (!CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,&position,&origin)) {
         CONCAT(HASH_FUN_PREFIX,Set) (table,element,position);
     }
     return position;
@@ -185,10 +182,9 @@ void CONCAT(HASH_FUN_PREFIX,Map5)(
     void (*fun)(HASH_ELEM_TYPE *, void *),
     void *arg
 ) {
-    HASH_ELEM_TYPE *pp;
     for (int i=0; i<table->size; i++) {
-        for(pp=table->tab[i]; pp!=NULL; pp=pp->next)
-            (*fun)(pp, arg);
+        for (HASH_ELEM_TYPE *e=table->tab[i]; e!=NULL; e=e->next)
+            (*fun)(e, arg);
     }
 }
 
