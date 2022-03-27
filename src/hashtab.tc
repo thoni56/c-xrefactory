@@ -91,6 +91,7 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
     unsigned posid;
     posid = HASH_FUN(element);
     posid = posid % table->size;
+
     assert(table->tab!=NULL);
     while (table->tab[posid] != NULL) {
         if (HASH_ELEM_EQUAL(table->tab[posid], element)) {

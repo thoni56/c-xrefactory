@@ -6,6 +6,8 @@
 
   TOOD: unsure about exact difference between hashtab and hashlist...
 
+  A HASHLIST hashes an index and might then have a list of items on that index
+
 */
 
 #define GLUE(a,b) a ## b
