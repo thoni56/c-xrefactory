@@ -36,3 +36,13 @@ Ensure(SymbolTable, can_retrieve_next_existing_symbol) {
     int index = addToSymbolTable(&symbol);
     assert_that(getNextExistingSymbol(0), is_equal_to(index));
 }
+
+Ensure(SymbolTable, can_lookup_symbol_by_name) {
+    Symbol symbol = {"symbol"};
+
+    int index = addToSymbolTable(&symbol);
+
+    int found;
+    assert_that(symbolTableIsMember(symbolTable, &symbol, &found, NULL));
+    assert_that(found, is_equal_to(index));
+}
