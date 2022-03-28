@@ -178,12 +178,7 @@ static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
         i++;
     }
     assert(i < MAX_NARGV_OPTIONS_NUM);
-    if (refactoringOptions.user!=NULL) {
-        nargv[i] = "-user";
-        i++;
-        nargv[i] = refactoringOptions.user;
-        i++;
-    }
+
     // finally mark end of options
     nargv[i] = NULL;
     i++;

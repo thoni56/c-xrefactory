@@ -76,7 +76,6 @@ static void usage() {
     fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
     fprintf(stdout, "\t-olcxprevious             - previous on-line reference\n");
     fprintf(stdout, "\t-olcxgoto<n>              - go to the n-th on-line reference\n");
-    fprintf(stdout, "\t-user                     - user logname for olcx\n");
     fprintf(stdout, "\t-o <file>                 - write output to <file>\n");
     fprintf(stdout, "\t-file <file>              - name of the file given to stdin\n");
 #endif
@@ -1174,10 +1173,6 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-urldirect")==0)   {
         options.urlGenTemporaryFile = false;
-    }
-    else if (strcmp(argv[i], "-user")==0) {
-        NEXT_ARG(i);
-        createOptionString(&options.user, argv[i]);
     }
     else if (strcmp(argv[i], "-update")==0)  {
         options.update = UPDATE_FULL;
