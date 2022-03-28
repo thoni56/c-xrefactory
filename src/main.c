@@ -1895,11 +1895,11 @@ static void discoverStandardDefines(void) {
     LEAVE();
  }
 
-static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {
+static void getAndProcessXrefrcOptions(char *dffname, char *dffsect, char *project) {
     int dfargc;
     char **dfargv;
     if (*dffname != 0 && options.stdopFlag==0 && !options.no_stdop) {
-        readOptionFile(dffname,&dfargc,&dfargv,dffsect,project);
+        readOptionFile(dffname, &dfargc, &dfargv, dffsect, project);
         // warning, the following can overwrite variables like
         // 's_cxref_file_name' allocated in PPM_MEMORY, then when memory
         // is got back by caching, it may provoke a problem
@@ -1919,12 +1919,13 @@ static void checkExactPositionUpdate(bool printMessage) {
 static void writeProgressInformation(int progress) {
     static int      lastprogress;
     static time_t   timeZero;
-    static int      dialogDisplayed = 0;
-    static int      initialCall = 1;
+    static bool     dialogDisplayed = false;
+    static bool     initialCall = true;
     time_t          ct;
+
     if (progress == 0 || initialCall) {
-        initialCall = 0;
-        dialogDisplayed = 0;
+        initialCall = false;
+        dialogDisplayed = false;
         lastprogress = 0;
         timeZero = time(NULL);
     } else {
@@ -1936,10 +1937,10 @@ static void writeProgressInformation(int progress) {
         || (progress == 0 && ct-timeZero > 1)
         || (progress != 0 && ct-timeZero >= 1 && 100*((double)ct-timeZero)/progress > 3)
         ) {
-        if (! dialogDisplayed) {
+        if (!dialogDisplayed) {
             // display progress bar
             fprintf(stdout, "<%s>0 \n", PPC_PROGRESS);
-            dialogDisplayed = 1;
+            dialogDisplayed = true;
         }
         fprintf(stdout, "<%s>%d \n", PPC_PROGRESS, progress);
         fflush(stdout);
@@ -1947,9 +1948,10 @@ static void writeProgressInformation(int progress) {
     }
 }
 
-void writeRelativeProgress(int val) {
-    writeProgressInformation((100*progressOffset + val)/progressFactor);
-    if (val==100) progressOffset++;
+void writeRelativeProgress(int progress) {
+    writeProgressInformation((100*progressOffset + progress)/progressFactor);
+    if (progress==100)
+        progressOffset++;
 }
 
 static void mainFileProcessingInitialisations(bool *firstPass,

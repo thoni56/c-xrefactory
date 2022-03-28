@@ -192,9 +192,9 @@ static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// ----------------------- interface to edit server sub-task --------------------------
+// ----------------------- interface to refactory sub-task --------------------------
 
-// be very carefull when calling this function as it is messing all static variables
+// be very careful when calling this function as it is messing all static variables
 // including options in s_opt, ...
 // call to this function MUST be followed by a pushing action, to refresh options
 static void refactoryUpdateReferences(char *project) {
@@ -214,7 +214,6 @@ static void refactoryUpdateReferences(char *project) {
     editorQuasiSaveModifiedBuffers();
 
     copyOptions(&savedOptions, &options);
-    //copyOptions(&savedCachedOptions, &s_cachedOptions);
 
     refactorySetNargv(nargv, NULL, project, NULL, NULL);
     nargc = argument_count(nargv);
@@ -226,15 +225,10 @@ static void refactoryUpdateReferences(char *project) {
 
     currentPass = ANY_PASS;
     mainTaskEntryInitialisations(nargc, nargv);
-    //copyOptions(&s_cachedOptions, &s_opt);
 
     mainCallXref(nargc, nargv);
 
     copyOptions(&options, &savedOptions);
-    //&copyOptions(&s_cachedOptions, &savedCachedOptions);
-
-    //&resetImportantOptionsFromRefactoringCommandLine();
-    //&fprintf(dumpOut,"here I am, %s, %s %s %s %s\n", refactoringOptions.user, options.user, savedOptions.user, s_cachedOptions.user, savedCachedOptions.user);
     ppcEnd(PPC_UPDATE_REPORT);
 
     // return into editSubTaskState
@@ -253,9 +247,6 @@ static void refactoryEditServerParseBuffer(char *project,
     int nargc;
 
     currentPass = ANY_PASS;
-    // this probably creates a memory leak in options
-    // is it necessary? Try to put it in comment [2/8/2003]
-    //& copyOptions(&s_cachedOptions, &options);
 
     assert(options.taskRegime == RegimeEditServer);
 
