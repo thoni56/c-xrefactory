@@ -18,9 +18,10 @@ clean:
 	rm -rf .c-xrefrc CXrefs output*
 
 debug:
-	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
+	if [ "`pgrep c-xref`" != "" ] ; then \
+	    echo "You already have a c-xref process running, please stop it first" ; \
+	    false ; \
+	fi
+	$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1
 	sudo gdb -ex 'br mainEditServer' -pid `pgrep c-xref | tail -1` -ex 'continue'
-
-x:
-	$(EDIT_SERVER_DRIVER) commands.input $(EXTRA)
