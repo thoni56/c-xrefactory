@@ -23,13 +23,13 @@ public class XrefTask {
 
 	Progress progress = null;
 
-	LinkedList 		temporaryFiles = new LinkedList();
-	File 			xrefOutputFile;
+	LinkedList		temporaryFiles = new LinkedList();
+	File			xrefOutputFile;
 	boolean			keepOutputFile = false;
 
 	static class TmpBufferFile {
-		Buffer 	buffer;
-		File 	savedAsFile;
+		Buffer	buffer;
+		File	savedAsFile;
 		TmpBufferFile(Buffer buffer, File file) {
 			this.buffer = buffer;
 			this.savedAsFile = file;
@@ -65,7 +65,7 @@ public class XrefTask {
 		try {deleteXrefOutputFile();} catch (Exception e) {}
 		try {removeTemporaryFiles();} catch (Exception e) {}
 	}
-	
+
 	public void startThis() throws IOException {
 		Runtime rt = Runtime.getRuntime();
 		XrefStringArray ex = new XrefStringArray();
@@ -110,7 +110,7 @@ public class XrefTask {
 			temporaryFiles.add(new TmpBufferFile(buffer, ofl));
 		} catch (Exception e) {
 			if (s.debug) e.printStackTrace(System.err);
-			JOptionPane.showMessageDialog(s.view, "While saving tmp files: " + e, 
+			JOptionPane.showMessageDialog(s.view, "While saving tmp files: " + e,
 										  "Xrefactory Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -191,17 +191,17 @@ public class XrefTask {
 	}
 
 	public XrefCharBuffer getTaskOutput(DispatchData data) {
-		XrefCharBuffer 	res = new XrefCharBuffer();
-		int 			c;
-		boolean 		loop, loop2;
+		XrefCharBuffer	res = new XrefCharBuffer();
+		int			c;
+		boolean			loop, loop2;
 		c = ' '; loop = true;
- 		try {
+		try {
 			while (loop) {
 				res.clear();
 				while (c != -1 && Character.isWhitespace((char)c)) c = ii.read();
 				while (c != -1 && loop) {
-					// in reality this is just pipe synchronisation, 
-					// real answer is written to a file, here just 
+					// in reality this is just pipe synchronisation,
+					// real answer is written to a file, here just
 					// loop until a <synchro> record is readed
 					res.append(""+(char)c);
 					if (s.debug) System.err.println("got : " + c + "==" + (char)c);
@@ -247,7 +247,7 @@ public class XrefTask {
 							new Exception().printStackTrace(System.err);
 							JOptionPane.showMessageDialog(
 								s.getProbableParent(data.callerComponent),
-								"Internal Error, synchro problem: " + res.toString(), 
+								"Internal Error, synchro problem: " + res.toString(),
 								"Xrefactory Error",
 								JOptionPane.ERROR_MESSAGE);
 							//& throw new XrefException("'"+res.toString()+"'");
@@ -273,47 +273,47 @@ public class XrefTask {
 			}
 		} catch (Exception e) {
 			if (s.debug) e.printStackTrace();
-			JOptionPane.showMessageDialog(s.getProbableParent(data.callerComponent), 
-										  "Communication problem: " + e, 
+			JOptionPane.showMessageDialog(s.getProbableParent(data.callerComponent),
+										  "Communication problem: " + e,
 										  "Xrefactory Error",
 										  JOptionPane.ERROR_MESSAGE);
 			//res.clear();
 		}
 		return(res);
 	}
-	
+
 	public synchronized XrefCharBuffer callProcess(XrefStringArray args, DispatchData data) {
 		String				putargs = null;
-		XrefCharBuffer 		res = new XrefCharBuffer();
-		int 				i,c,reslen,lmlen;
-		boolean 			loop,freshProcess=false;
-		char        		pilot;
+		XrefCharBuffer		res = new XrefCharBuffer();
+		int				i,c,reslen,lmlen;
+		boolean				loop,freshProcess=false;
+		char			pilot;
 
 		// first clean output file, to avoid interferences
 		// no additional options here, (because of continue after resolution dialog)
 		putargs = args.toString();
- 		putargs += " end-of-options\n";
- 		try {
+		putargs += " end-of-options\n";
+		try {
 			if (pp == null && restartable) startThis();
 			sendDataToRunningProcess(putargs);
 		} catch (Exception e) {
 			if (! restartable) {
 				if (s.debug) e.printStackTrace();
 				JOptionPane.showMessageDialog(s.getProbableParent(data.callerComponent),
-											  "Internal Error: process exited " + e, 
+											  "Internal Error: process exited " + e,
 											  "Xrefactory Error",
 											  JOptionPane.ERROR_MESSAGE);
 				return(res);
 			}
 			killThis(false);
-			try {	
+			try {
 				startThis();
 				sendDataToRunningProcess(putargs);
 			} catch (Exception e2) {
 				killThis(false);
 				if (s.debug) e2.printStackTrace();
 				JOptionPane.showMessageDialog(s.getProbableParent(data.callerComponent),
-											  "Internal Error: can't start process: " + e2, 
+											  "Internal Error: can't start process: " + e2,
 											  "Xrefactory Error",
 											  JOptionPane.ERROR_MESSAGE);
 				if (s.debug) e.printStackTrace();
@@ -326,7 +326,6 @@ public class XrefTask {
 	}
 
 	public static void addCommonOptions(XrefStringArray options, DispatchData data) {
-		options.add("-user");
 		options.add(s.getViewParameter(data.viewId));
 		String project = Opt.activeProject();
 		if (s.activeProject != null) {
@@ -347,8 +346,8 @@ public class XrefTask {
 			res = callProcess(options, data);
 		} catch(Exception e) {
 			if (s.debug) e.printStackTrace();
-			JOptionPane.showMessageDialog(s.view, "Internal Error while passing file to task: " + e, 
-										  "Xrefactory Error", 
+			JOptionPane.showMessageDialog(s.view, "Internal Error while passing file to task: " + e,
+										  "Xrefactory Error",
 										  JOptionPane.ERROR_MESSAGE);
 		}
 		return(res);
@@ -388,4 +387,3 @@ public class XrefTask {
 	}
 
 }
-

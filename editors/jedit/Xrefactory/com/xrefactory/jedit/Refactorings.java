@@ -7,7 +7,7 @@ import java.io.*;
 
 public abstract class Refactorings {
 
-	String 				param;
+	String				param;
 
 	// abstract methods
 	abstract int getCode();
@@ -270,7 +270,7 @@ public abstract class Refactorings {
 				if (ff.getAbsolutePath().equals(cpos.file)) {
 					JOptionPane.showMessageDialog(
 						s.view,
-						"The file contains the class to be moved. Can not clear it and then move.", 
+						"The file contains the class to be moved. Can not clear it and then move.",
 						"Xrefactory Error",
 						JOptionPane.ERROR_MESSAGE);
 				} else {
@@ -278,9 +278,9 @@ public abstract class Refactorings {
 					if (ff.exists()) {
 						int confirm = JOptionPane.YES_OPTION;
 						confirm = JOptionPane.showConfirmDialog(
-							s.view, 
+							s.view,
 							"File "+ff+" exists. Can I erase it first?",
-							"Confirmation", 
+							"Confirmation",
 							JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE);
 						if (confirm == JOptionPane.YES_OPTION) {
@@ -526,7 +526,7 @@ public abstract class Refactorings {
 			break;
 		default:
 			res = null;
-			JOptionPane.showMessageDialog(s.view, "Unknown refactoring code: " + code, 
+			JOptionPane.showMessageDialog(s.view, "Unknown refactoring code: " + code,
 										  "Xrefactory Internal Error", JOptionPane.ERROR_MESSAGE);
 		}
 		return(res);
@@ -534,7 +534,7 @@ public abstract class Refactorings {
 
 	static class ApplyRefactoring implements Runnable {
 		XrefCharBuffer	receipt;
-		DispatchData 	ndata;
+		DispatchData	ndata;
 		public void run() {
 			Dispatch.dispatch(receipt, ndata);
 			if ((!ndata.panic) && Opt.saveFilesAfterRefactorings()) s.saveAllBuffers(s.view);
@@ -547,7 +547,7 @@ public abstract class Refactorings {
 
 	static class RefactoringsRunnable implements Runnable {
 		XrefStringArray				runOptions;
-		static boolean 				running;
+		static boolean				running;
 		static XrefactorerTask		activeProcess;
 
 		public static boolean passCheckForRunningProcess() {
@@ -590,7 +590,6 @@ public abstract class Refactorings {
 				taskOptions.add("-p");
 				taskOptions.add(project);
 				taskOptions.add(runOptions);
-				taskOptions.add("-user");
 				taskOptions.add(s.getViewParameter(ndata.viewId));
 				if (jEdit.getBooleanProperty(s.optRefactoryPreferImportOnDemand, true)) {
 					taskOptions.add("-addimportdefault=0");
@@ -633,7 +632,7 @@ public abstract class Refactorings {
 		}
 	}
 
-	static boolean 		running;
+	static boolean		running;
 
 	public static void mainRefactorerInvocation(XrefStringArray options,
 												boolean synchronisation
@@ -649,4 +648,3 @@ public abstract class Refactorings {
 
 
 }
-
