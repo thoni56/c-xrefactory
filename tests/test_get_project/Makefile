@@ -17,7 +17,7 @@ CXrefs:
 clean:
 	rm -rf .c-xrefrc CXrefs output*
 
-gdb:
+debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1
 	sudo gdb -ex 'br mainEditServer' -pid `pgrep c-xref | tail -1` -ex 'continue'
