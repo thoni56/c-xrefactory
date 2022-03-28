@@ -357,7 +357,7 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
 }
 
 void olCompletionListInit(Position *originalPos) {
-    olcxSetCurrentUser(options.user);
+    olcxSetCurrentUser();
     olcxFreeOldCompletionItems(&currentUserData->completionsStack);
     olcxPushEmptyStackItem(&currentUserData->completionsStack);
     currentUserData->completionsStack.top->callerPosition = *originalPos;

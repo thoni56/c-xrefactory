@@ -134,7 +134,6 @@ Options s_initOpt = {
     -1,                         /* olCursorPos */
     -1,                         /* olMarkPos */
     RegimeXref,                 /* taskRegime */
-    "nouser",                   // -user
     false,                      /* debug */
     false,                      /* trace */
     true,                       /* cpp_comment allowed? */

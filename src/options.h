@@ -137,7 +137,6 @@ typedef struct options {
     int olCursorPos;
     int olMarkPos;
     enum taskRegimes taskRegime;
-    char *user;
     bool debug;
     bool trace;
     bool cpp_comments;

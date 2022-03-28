@@ -1012,8 +1012,8 @@ void olcxInit(void) {
 }
 
 
-static void initUserOlcxData(UserOlcxData *userData, char *user) {
-    userData->name = user;
+static void initUserOlcxData(UserOlcxData *userData) {
+    userData->name = "nouser";
     userData->browserStack.top = NULL;
     userData->browserStack.root = NULL;
     userData->completionsStack.top = NULL;
@@ -1026,21 +1026,21 @@ static void initUserOlcxData(UserOlcxData *userData, char *user) {
 }
 
 
-UserOlcxData *olcxSetCurrentUser(char *user) {
+UserOlcxData *olcxSetCurrentUser(void) {
     UserOlcxData userData, *member;
     int size;
     char *name;
 
-    initUserOlcxData(&userData, user);
+    initUserOlcxData(&userData);
     if (! olcxTabIsMember(&s_olcxTab, &userData, NULL, &member)) {
         // Allocate in FT memory, so it never invokes freeing of OLCX (loop?)
         FT_ALLOC(member, UserOlcxData);
-        size = strlen(user)+1;
+        size = strlen("nouser")+1;
         if (size < sizeof(void*))
             size = sizeof(void*);
         FT_ALLOCC(name, size, char); // why this is in ftMem ?, some pb with free
-        strcpy(name, user);
-        initUserOlcxData(member, name);
+        strcpy(name, "nouser");
+        initUserOlcxData(member);
         olcxTabAdd(&s_olcxTab, member);
     }
     currentUserData = member;
@@ -3608,7 +3608,7 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, Symbol
 
 void olcxPushSpecialCheckMenuSym(char *symname) {
     OlcxReferences *rstack;
-    olcxSetCurrentUser(options.user);
+    olcxSetCurrentUser();
     olcxPushEmptyStackItem(&currentUserData->browserStack);
     assert(currentUserData && currentUserData->browserStack.top);
     rstack = currentUserData->browserStack.top;
@@ -3758,7 +3758,7 @@ static void olcxMMPreCheck(void) {
     ReferencesItem     dri;
     bool precheck;
 
-    olcxSetCurrentUser(options.user);
+    olcxSetCurrentUser();
     olcxPushEmptyStackItem(&currentUserData->browserStack);
     assert(currentUserData && currentUserData->browserStack.top);
     assert(options.server_operation == OLO_MM_PRE_CHECK || options.server_operation == OLO_PP_PRE_CHECK);
@@ -4639,7 +4639,7 @@ void mainAnswerEditAction(void) {
         printTagSearchResults();
         break;
     case OLO_TAG_SEARCH_BACK:
-        olcxSetCurrentUser(options.user);
+        olcxSetCurrentUser();
         if (currentUserData->retrieverStack.top!=NULL &&
             currentUserData->retrieverStack.top->previous!=NULL) {
             currentUserData->retrieverStack.top = currentUserData->retrieverStack.top->previous;
@@ -4648,7 +4648,7 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_TAG_SEARCH_FORWARD:
-        olcxSetCurrentUser(options.user);
+        olcxSetCurrentUser();
         nextrr = getNextTopStackItem(&currentUserData->retrieverStack);
         if (nextrr != NULL) {
             currentUserData->retrieverStack.top = nextrr;

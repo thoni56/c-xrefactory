@@ -82,8 +82,8 @@ Ensure(CxRef, can_try_to_free_oldest_olcx) {
     never_expect(fatalError);   /* Since we should find something to free */
 
     /* Create a user */
-    olcxSetCurrentUser("user1");
-    assert_that(currentUserData->name, is_equal_to_string("user1"));
+    olcxSetCurrentUser();
+    assert_that(currentUserData->name, is_equal_to_string("nouser"));
 
     /* Push two references (will not free first reference...) */
     olcxPushEmptyStackItem(&currentUserData->browserStack);
