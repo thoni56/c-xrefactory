@@ -5,12 +5,18 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
+* TODO Can we remove -user option? Emacs treats frames a users for different browsing contexts
 * DOING Selecting automatic project selection after having set a specific does not seem to work
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra 
+* TODO Change to having reference file in the project tree?
+  This needs some thinking. Find it by looking upwards in the dir, on
+  create we need to ask where to store it starting with current
+  directory. This could enable storing non-absolute filenames in the
+  xrefs, they should be relative to where the db is.
 * TODO Header files. There are a number of sections in the proto.h that
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead. Just watchout for
@@ -31,8 +37,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO Add yacc parser construct for field in yystype ('$<field>$')
 * TODO Don't do any default operation (currently 'complete') if none given on command line
 * TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
-* TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
-and you can also get java.class.version=55 => java version without decoding directory names
 * TODO REFACTOR: Extract storage module interface and implementation
 * TODO Architecture diagrams using C4-PlantUML (/design folder)
 * TODO Strange that <update-report> is put in the -o file since that output is probably meant to be synchronous
@@ -50,18 +54,13 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO Test case for corruptionError() and compressionError()
 ** TODO Create jar reading test for unexpected end of file
 * TODO NEW FEATURES:
-** TODO New refactoring: move function for C
 ** TODO New refactoring: change return type of function
 ** TODO New refactoring: Extract variable
 ** TODO Extract function should extract a boolean function inside an if() correctly
 ** TODO New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
-** TODO Change to having reference file in the project tree?
-   This needs some thinking. Find it by looking upwards in the dir, on
-   create we need to ask where to store it starting with current
-   directory. This could enable storing non-absolute filenames in the
-   xrefs, they should be relative to where the db is.
 ** TODO FUTURE: Use clangd as backend - is that even possible
 ** TODO FUTURE: Implement LSP (Language Server Protocol)
+** TODO New refactoring: move function for C
 * TODO Remove FULL/FAST update, we always want correct info?
   There are a number of update modes available from the command line, 'fupdate',
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
@@ -103,6 +102,8 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   prevent reading explicit -xrefrc options?
 * TODO Cannot mock structs as arguments like in symbol.mock
   We need to change pos to *pos if that's gonna work
+* TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
+and you can also get java.class.version=55 => java version without decoding directory names
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
