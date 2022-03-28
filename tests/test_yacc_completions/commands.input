@@ -1,6 +1,6 @@
 ../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236  "-olmark=496" "-olcursor=411" "CURDIR/simple_grammar.y" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236  "-olmark=496" "-olcursor=411" "CURDIR/simple_grammar.y" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236  "-olmark=496" "-olcursor=423" "CURDIR/simple_grammar.y" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236  "-olmark=496" "-olcursor=423" "CURDIR/simple_grammar.y" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 <sync>
 <exit>

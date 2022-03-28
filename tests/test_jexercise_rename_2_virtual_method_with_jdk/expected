@@ -1,4 +1,4 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-rename" "-renameto=wmethod" "-olcursor=603" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java" -o server-buffer
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-rename" "-renameto=wmethod" "-olcursor=603" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java" -o server-buffer
 <sync>
 <update-report>
 </update-report>
@@ -6,7 +6,7 @@
 during refactoring. It is highly recommended to process whole hierarchy of
 related classes all at once. Unselection of any class and its exclusion from
 refactoring may cause changes in your program behaviour.</display-resolution>
--olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise/com/xrefactory/refactorings" -user 1
+-olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise/com/xrefactory/refactorings"
 end-of-options
 
 <sync>
@@ -15,7 +15,7 @@ end-of-options
  <class line=3 selected=1 base=1 drefn=1 refn=0 indent=0 deps="" definition=1 len=<n>>Super</class>
  <class line=4 selected=1 base=0 drefn=1 refn=0 indent=1 deps="  +- " definition=1 len=<n>>Infer</class>
 </resolution>
--olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
@@ -23,7 +23,7 @@ end-of-options
 <src-line refn=1 len=<n>>RenameSymbol.java:24:        void vmethod() {}</src-line>
 <src-line refn=1 len=<n>>RenameSymbol.java:27:        void vmethod() {}</src-line>
 </reference-list>
--continuerefactoring -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-continuerefactoring -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>

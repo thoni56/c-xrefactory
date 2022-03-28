@@ -1,7 +1,7 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-del-param" "-olcxparnum=1" "-olmark=1188" "-olcursor=1193" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java"
--olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-del-param" "-olcxparnum=1" "-olmark=1188" "-olcursor=1193" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java"
+-olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 <sync>
--olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 <sync>
--continuerefactoring -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-continuerefactoring -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 <sync>

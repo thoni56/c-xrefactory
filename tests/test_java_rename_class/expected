@@ -1,4 +1,4 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-rename-class" "-renameto=RenameClass" "-olcursor=270" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java" -o server-buffer
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-rename-class" "-renameto=RenameClass" "-olcursor=270" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java" -o server-buffer
 <sync>
 <update-report>
 </update-report>

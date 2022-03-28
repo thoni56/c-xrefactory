@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -rfct-extract-method -olmark=54 -olcursor=125 CURDIR/test_source/hello.c -log=log1 -o server-buffer
+../../src/c-xref -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-method -olmark=54 -olcursor=125 CURDIR/test_source/hello.c -log=log1 -o server-buffer
 <sync>
 <extraction-dialog type=newFunction_> <str len=<n>>	newFunction_();
 </str>
@@ -9,7 +9,7 @@
 </str>
   <int val=2 len=<n>></int>
 </extraction-dialog>
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -rfct-rename -renameto=extracted -olcursor=179 -preload CURDIR/test_source/hello.c CURDIR/test_source/hello-extracted.c -addimportdefault=0 CURDIR/test_source/hello.c -log=log2 -o server-buffer
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -encoding=european -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-rename -renameto=extracted -olcursor=179 -preload CURDIR/test_source/hello.c CURDIR/test_source/hello-extracted.c -addimportdefault=0 CURDIR/test_source/hello.c -log=log2 -o server-buffer
 <sync>
 <goto>
  <position-off off=31 len=<n>>CURDIR/test_source/hello.c</position-off>

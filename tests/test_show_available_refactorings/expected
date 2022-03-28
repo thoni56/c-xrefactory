@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=483" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=483" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
@@ -19,7 +19,7 @@ end-of-options
   <int val=220 len=<n>></int>
   <int val=290 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=640" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=640" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
@@ -30,7 +30,7 @@ end-of-options
   <int val=220 len=<n>></int>
   <int val=290 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=1031" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=1031" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
@@ -45,7 +45,7 @@ end-of-options
   <int val=220 len=<n>></int>
   <int val=290 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=1191" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=1191" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
