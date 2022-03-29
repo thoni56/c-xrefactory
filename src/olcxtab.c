@@ -11,6 +11,6 @@
 #include "hashlist.tc"
 
 /* TODO Remove olcxTab since we now only handle one user */
-static UserOlcxData userData;
-UserOlcxData *currentUserData = &userData;
+static SessionData userData;
+SessionData *currentUserData = &userData;
 OlcxTab s_olcxTab;
