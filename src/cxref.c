@@ -975,17 +975,7 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
 }
 
 void olcxInit(void) {
-    void *userData[OLCX_USER_RESERVE];
-
     olcx_memory_init();
-    s_olcxTab.tab = olcx_memory_soft_allocc(OLCX_TAB_SIZE, sizeof(SessionData *));
-    //CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
-    olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);
-    /* reserve place for some users */
-    for (int i=0; i<OLCX_USER_RESERVE; i++)
-        userData[i] = olcx_alloc(sizeof(SessionData));
-    for (int i=0; i<OLCX_USER_RESERVE; i++)
-        olcx_memory_free(userData[i], sizeof(SessionData));
 }
 
 
