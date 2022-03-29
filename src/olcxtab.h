@@ -5,9 +5,9 @@
 
 typedef struct SessionData {
     char                        *name;
-    struct olcxReferencesStack	browserStack;
-    struct olcxReferencesStack	completionsStack;
-    struct olcxReferencesStack	retrieverStack;
+    struct OlcxReferencesStack	browserStack;
+    struct OlcxReferencesStack	completionsStack;
+    struct OlcxReferencesStack	retrieverStack;
     struct classTreeData		classTree;
     struct SessionData			*next;
 } SessionData;

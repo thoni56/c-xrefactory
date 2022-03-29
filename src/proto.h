@@ -494,7 +494,7 @@ typedef struct classTreeData {
     struct SymbolsMenu	*tree;
 } ClassTreeData;
 
-typedef struct olcxReferencesStack {
+typedef struct OlcxReferencesStack {
     struct olcxReferences	*top;
     struct olcxReferences	*root;
 } OlcxReferencesStack;
