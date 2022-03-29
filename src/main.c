@@ -2445,26 +2445,26 @@ void mainOpenOutputFile(char *outfile) {
 }
 
 static int scheduleFileUsingTheMacro(void) {
-    ReferencesItem     ddd;
-    SymbolsMenu     mm, *oldMenu;
-    OlcxReferences    *tmpc;
+    ReferencesItem  references;
+    SymbolsMenu     menu, *oldMenu;
+    OlcxReferences *tmpc;
 
     assert(s_olstringInMbody);
     tmpc = NULL;
-    fillReferencesItem(&ddd, s_olstringInMbody,
+    fillReferencesItem(&references, s_olstringInMbody,
                                 cxFileHashNumber(s_olstringInMbody),
                                 noFileIndex, noFileIndex);
-    fillReferencesItemBits(&ddd.bits, TypeMacro, StorageExtern,
+    fillReferencesItemBits(&references.bits, TypeMacro, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal);
 
-    fillSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);
+    fillSymbolsMenu(&menu, references, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);
     if (currentUserData==NULL || currentUserData->browserStack.top==NULL) {
         olcxPushEmptyStackItem(&currentUserData->browserStack);
         tmpc = currentUserData->browserStack.top;
     }
     assert(currentUserData && currentUserData->browserStack.top);
     oldMenu = currentUserData->browserStack.top->menuSym;
-    currentUserData->browserStack.top->menuSym = &mm;
+    currentUserData->browserStack.top->menuSym = &menu;
     s_olMacro2PassFile = noFileIndex;
     scanForMacroUsage(s_olstringInMbody);
     currentUserData->browserStack.top->menuSym = oldMenu;
@@ -2564,13 +2564,13 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fileIndex) {
 
 static void mainEditSrvFileSinglePass(int argc, char **argv,
                                       int nargc, char **nargv,
-                                      bool *firstPass
+                                      bool *firstPassP
 ) {
     bool inputOpened = false;
     int ol2procfile;
 
     olStringSecondProcessing = 0;
-    mainFileProcessingInitialisations(firstPass, argc, argv,
+    mainFileProcessingInitialisations(firstPassP, argc, argv,
                                       nargc, nargv, &inputOpened, &s_language);
     smartReadReferences();
     olOriginalFileNumber = inputFileNumber;
@@ -2580,7 +2580,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
         return;
     }
     if (inputOpened)
-        mainEditSrvParseInputFile(firstPass, inputOpened);
+        mainEditSrvParseInputFile(firstPassP, inputOpened);
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (creatingOlcxRefs()) {
@@ -2596,10 +2596,10 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
             inputFilename = getFileItem(ol2procfile)->name;
             inputOpened = false;
             olStringSecondProcessing = 1;
-            mainFileProcessingInitialisations(firstPass, argc, argv,
+            mainFileProcessingInitialisations(firstPassP, argc, argv,
                                               nargc, nargv, &inputOpened, &s_language);
             if (inputOpened)
-                mainEditSrvParseInputFile(firstPass, inputOpened);
+                mainEditSrvParseInputFile(firstPassP, inputOpened);
         }
     }
 }

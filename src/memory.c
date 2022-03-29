@@ -5,10 +5,6 @@
 #include "proto.h"
 
 
-/* We don't want to add an actual dependency to cxref so... */
-extern void freeOldestOlcx(void);
-
-
 static bool memoryTrace = false;
 #define mem_trace(...)  { if (memoryTrace) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__); }
 
@@ -275,8 +271,7 @@ void *olcx_memory_soft_allocc(int count, size_t elementSize) {
 void *olcx_memory_allocc(int count, size_t elementSize) {
     void *pointer = olcx_memory_soft_allocc(count, elementSize);
     while (pointer==NULL) {
-        freeOldestOlcx();
-        pointer = olcx_memory_soft_allocc(count, elementSize);
+        fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR);
     }
     return pointer;
 }

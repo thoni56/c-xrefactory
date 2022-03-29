@@ -959,29 +959,6 @@ static void checkAndSetOldest(OlcxReferencesStack *stack, OlcxReferences ***olde
     }
 }
 
-void freeOldestOlcx(void) {
-    UserOlcxData          *userDataP;
-    OlcxReferences        **oldest = NULL;
-    OlcxReferencesStack   *oldestStack = NULL;
-    time_t                oldestTime = fileProcessingStartTime;
-
-    if (refactoringOptions.refactoringRegime != RegimeRefactory) {
-        for (int i=0; i<OLCX_TAB_SIZE; i++) {
-            userDataP = s_olcxTab.tab[i];
-            if (userDataP!=NULL) {
-                checkAndSetOldest(&userDataP->browserStack, &oldest, &oldestTime, &oldestStack);
-                checkAndSetOldest(&userDataP->completionsStack, &oldest, &oldestTime, &oldestStack);
-                checkAndSetOldest(&userDataP->retrieverStack, &oldest, &oldestTime, &oldestStack);
-            }
-        }
-    }
-    if (oldestTime == fileProcessingStartTime || oldest == NULL) {
-        fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR);
-    } else {
-        assert(oldest!=NULL && oldestStack!=NULL);
-        deleteOlcxRefs(oldest, oldestStack);
-    }
-}
 
 void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
     OlcxReferences **references;
@@ -1195,7 +1172,7 @@ static bool olcx_move_init(UserOlcxData *olcxuser, OlcxReferences **refs, int ch
 static void olcxRenameInit(void) {
     OlcxReferences *refs;
 
-    if (!olcx_move_init(currentUserData, &refs,CHECK_NULL))
+    if (!olcx_move_init(currentUserData, &refs, CHECK_NULL))
         return;
     refs->actual = refs->references;
     gotoOnlineCxref(&refs->actual->position, refs->actual->usage.kind, "");
@@ -1254,7 +1231,7 @@ static void olcxGenNoReferenceSignal(void) {
 
 static void olcxOrderRefsAndGotoFirst(void) {
     OlcxReferences *refs;
-    if (!olcx_move_init(currentUserData, &refs,CHECK_NULL))
+    if (!olcx_move_init(currentUserData, &refs, CHECK_NULL))
         return;
     LIST_MERGE_SORT(Reference, refs->references, referenceIsLessThan);
     refs->actual = refs->references;
