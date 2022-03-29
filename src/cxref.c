@@ -1026,7 +1026,7 @@ static void initUserOlcxData(UserOlcxData *userData) {
 }
 
 
-UserOlcxData *olcxSetCurrentUser(void) {
+void olcxSetCurrentUser(void) {
     UserOlcxData userData, *member;
     int size;
     char *name;

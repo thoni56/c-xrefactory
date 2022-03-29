@@ -94,7 +94,7 @@ extern void mapCreateSelectionMenu(ReferencesItem *dd);
 extern void olcxFreeOldCompletionItems(OlcxReferencesStack *stack);
 
 extern void olcxInit(void);
-extern UserOlcxData *olcxSetCurrentUser(void);
+extern void olcxSetCurrentUser(void);
 extern Reference * getDefinitionRef(Reference *rr);
 extern bool safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);
