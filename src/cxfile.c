@@ -329,7 +329,7 @@ void searchSymbolCheckReference(ReferencesItem  *referenceItem, Reference *refer
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
         olCompletionListPrepend(sname, NULL, NULL, 0, NULL, referenceItem, reference, referenceItem->bits.symType,
-                                referenceItem->vFunClass, currentUserData->retrieverStack.top);
+                                referenceItem->vFunClass, currentUserData.retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time
         count ++;
@@ -967,7 +967,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
         && lastIncomingInfo.deadSymbolIsDefined
     ) {
         olAddBrowsedSymbol(lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness],
-                           &currentUserData->browserStack.top->hkSelectedSym,
+                           &currentUserData.browserStack.top->hkSelectedSym,
                            1,1,0,UsageDefined,0, &noPosition, UsageDefined);
     }
 }
@@ -1067,7 +1067,7 @@ static void cxrfSymbolName(int size,
                     else ols = 1;
                 }
             } else if (additionalArg!=CXSF_BY_PASS) {
-                ols=itIsSymbolToPushOlReferences(referencesItem, currentUserData->browserStack.top, &cms,
+                ols=itIsSymbolToPushOlReferences(referencesItem, currentUserData.browserStack.top, &cms,
                                                  DEFAULT_VALUE);
             }
             lastIncomingInfo.onLineRefMenuItem = cms;
@@ -1223,11 +1223,11 @@ static void cxrfReference(int size,
                             // got the bypass reference
                             log_trace(":adding bypass selected symbol %s", lastIncomingInfo.symbolTab[sym]->name);
                             olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],
-                                               &currentUserData->browserStack.top->hkSelectedSym,
+                                               &currentUserData.browserStack.top->hkSelectedSym,
                                                1, 1, 0, usageKind,0,&noPosition, UsageNone);
                         }
                     } else {
-                        olcxAddReference(&currentUserData->browserStack.top->references, &reference,
+                        olcxAddReference(&currentUserData.browserStack.top->references, &reference,
                                          lastIncomingInfo.onLineRefIsBestMatchFlag);
                     }
                 }

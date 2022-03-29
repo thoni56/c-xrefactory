@@ -1,5 +1,4 @@
 #include "olcxtab.h"
 
 
-static SessionData userData;
-SessionData *currentUserData = &userData;
+SessionData currentUserData;

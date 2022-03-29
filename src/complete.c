@@ -357,9 +357,9 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
 }
 
 void olCompletionListInit(Position *originalPos) {
-    olcxFreeOldCompletionItems(&currentUserData->completionsStack);
-    olcxPushEmptyStackItem(&currentUserData->completionsStack);
-    currentUserData->completionsStack.top->callerPosition = *originalPos;
+    olcxFreeOldCompletionItems(&currentUserData.completionsStack);
+    olcxPushEmptyStackItem(&currentUserData.completionsStack);
+    currentUserData.completionsStack.top->callerPosition = *originalPos;
 }
 
 static int completionsWillPrintEllipsis(OlCompletion *olc) {
@@ -428,7 +428,7 @@ static void printCompletionsEnding(OlCompletion *olc) {
 
 void printCompletionsList(int noFocus) {
     OlCompletion *cc, *olc;
-    olc = currentUserData->completionsStack.top->completions;
+    olc = currentUserData.completionsStack.top->completions;
     printCompletionsBeginning(olc, noFocus);
     for(cc=olc; cc!=NULL; cc=cc->next) {
         printOneCompletion(cc);
@@ -457,7 +457,7 @@ void printCompletions(Completions* c) {
     }
     if ((! c->fullMatchFlag) && c->alternativeIndex==1) {
         if (options.xref2) {
-            ppcGotoPosition(&currentUserData->completionsStack.top->callerPosition);
+            ppcGotoPosition(&currentUserData.completionsStack.top->callerPosition);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
         } else {
             fprintf(communicationChannel,".%s", c->comPrefix+c->idToProcessLen);
@@ -466,7 +466,7 @@ void printCompletions(Completions* c) {
     }
     if ((! c->fullMatchFlag) && strlen(c->comPrefix) > c->idToProcessLen) {
         if (options.xref2) {
-            ppcGotoPosition(&currentUserData->completionsStack.top->callerPosition);
+            ppcGotoPosition(&currentUserData.completionsStack.top->callerPosition);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->comPrefix);
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         } else {
@@ -498,14 +498,14 @@ void printCompletions(Completions* c) {
         Reference ref;
         olCompletionListPrepend(c->alternatives[ii].string, ppcTmpBuff, vclass, jindent,
                                 c->alternatives[ii].symbol, NULL, &ref, c->alternatives[ii].symbolType, vFunCl,
-                                currentUserData->completionsStack.top);
+                                currentUserData.completionsStack.top);
     }
     olCompletionListReverse();
     printCompletionsList(c->noFocusOnCompletions);
     fflush(communicationChannel);
     return;
  finishWithoutMenu:
-    currentUserData->completionsStack.top = currentUserData->completionsStack.top->previous;
+    currentUserData.completionsStack.top = currentUserData.completionsStack.top->previous;
     fflush(communicationChannel);
 }
 

@@ -220,9 +220,7 @@ typedef enum language {
     }
 
 #define SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs,pbflag) {\
-    assert(currentUserData);\
-/*&fprintf(communicationChannel,";safetyCheck2!!!\n");fflush(dumpOut);&*/\
-    refs = currentUserData->browserStack.top;\
+    refs = currentUserData.browserStack.top;\
     if (refs==NULL || refs->previous==NULL || refs->previous->previous==NULL){\
         errorMessage(ERR_INTERNAL, "something goes wrong at safety check");\
         pbflag = 1;\

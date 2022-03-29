@@ -2458,16 +2458,16 @@ static int scheduleFileUsingTheMacro(void) {
                            ScopeGlobal, AccessDefault, CategoryGlobal);
 
     fillSymbolsMenu(&menu, references, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);
-    if (currentUserData==NULL || currentUserData->browserStack.top==NULL) {
-        olcxPushEmptyStackItem(&currentUserData->browserStack);
-        tmpc = currentUserData->browserStack.top;
+    if (currentUserData.browserStack.top==NULL) {
+        olcxPushEmptyStackItem(&currentUserData.browserStack);
+        tmpc = currentUserData.browserStack.top;
     }
-    assert(currentUserData && currentUserData->browserStack.top);
-    oldMenu = currentUserData->browserStack.top->menuSym;
-    currentUserData->browserStack.top->menuSym = &menu;
+    assert(currentUserData.browserStack.top);
+    oldMenu = currentUserData.browserStack.top->menuSym;
+    currentUserData.browserStack.top->menuSym = &menu;
     s_olMacro2PassFile = noFileIndex;
     scanForMacroUsage(s_olstringInMbody);
-    currentUserData->browserStack.top->menuSym = oldMenu;
+    currentUserData.browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
@@ -2547,8 +2547,8 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fileIndex) {
     scanForBypass(options.browsedSymName);
 
     // if no symbol found, it may be a local symbol, try by parsing
-    log_trace("checking that %d != NULL", currentUserData->browserStack.top->hkSelectedSym);
-    if (currentUserData->browserStack.top->hkSelectedSym == NULL)
+    log_trace("checking that %d != NULL", currentUserData.browserStack.top->hkSelectedSym);
+    if (currentUserData.browserStack.top->hkSelectedSym == NULL)
         return false;
 
     // here I should set caching to 1 and recover the cachePoint ???
@@ -2908,7 +2908,7 @@ void mainCallEditServer(int argc, char **argv,
     ENTER();
     editorLoadAllOpenedBufferFiles();
     if (creatingOlcxRefs())
-        olcxPushEmptyStackItem(&currentUserData->browserStack);
+        olcxPushEmptyStackItem(&currentUserData.browserStack);
     if (needToProcessInputFile()) {
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");
