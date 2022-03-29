@@ -75,20 +75,3 @@ Ensure(CxRef, can_parse_line_and_col_from_command_line_option) {
     assert_that(line, is_equal_to(54));
     assert_that(column, is_equal_to(33));
 }
-
-Ensure(CxRef, can_try_to_free_oldest_olcx) {
-    fileProcessingStartTime = time(NULL);
-
-    never_expect(fatalError);   /* Since we should find something to free */
-
-    /* Create a user */
-    olcxSetCurrentUser();
-    assert_that(currentUserData->name, is_equal_to_string("nouser"));
-
-    /* Push two references (will not free first reference...) */
-    olcxPushEmptyStackItem(&currentUserData->browserStack);
-    olcxPushEmptyStackItem(&currentUserData->browserStack);
-    currentUserData->browserStack.top->previous->accessTime = time(NULL)-20; /* Just to get some diff... */
-
-    freeOldestOlcx();
-}

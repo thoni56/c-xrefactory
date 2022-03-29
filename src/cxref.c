@@ -1012,40 +1012,8 @@ void olcxInit(void) {
 }
 
 
-static void initUserOlcxData(UserOlcxData *userData) {
-    userData->name = "nouser";
-    userData->browserStack.top = NULL;
-    userData->browserStack.root = NULL;
-    userData->completionsStack.top = NULL;
-    userData->completionsStack.root = NULL;
-    userData->retrieverStack.top = NULL;
-    userData->retrieverStack.root = NULL;
-    userData->classTree.baseClassFileIndex = noFileIndex;
-    userData->classTree.tree = NULL;
-    userData->next = NULL;
-}
-
-
 void olcxSetCurrentUser(void) {
-    UserOlcxData userData, *member;
-    int size;
-    char *name;
-
-    initUserOlcxData(&userData);
-    if (! olcxTabIsMember(&s_olcxTab, &userData, NULL, &member)) {
-        // Allocate in FT memory, so it never invokes freeing of OLCX (loop?)
-        FT_ALLOC(member, UserOlcxData);
-        size = strlen("nouser")+1;
-        if (size < sizeof(void*))
-            size = sizeof(void*);
-        FT_ALLOCC(name, size, char); // why this is in ftMem ?, some pb with free
-        strcpy(name, "nouser");
-        initUserOlcxData(member);
-        olcxTabAdd(&s_olcxTab, member);
-    }
-    currentUserData = member;
-
-    return member;
+    return;
 }
 
 static void olcxFreePopedStackItems(OlcxReferencesStack *stack) {
