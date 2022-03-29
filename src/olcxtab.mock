@@ -3,4 +3,4 @@
 #include <cgreen/mocks.h>
 
 
-SessionData currentUserData;
+SessionData sessionData;

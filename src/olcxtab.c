@@ -1,4 +1,4 @@
 #include "olcxtab.h"
 
 
-SessionData currentUserData;
+SessionData sessionData;

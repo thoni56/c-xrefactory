@@ -13,6 +13,6 @@ typedef struct SessionData {
 } SessionData;
 
 
-extern SessionData currentUserData;
+extern SessionData sessionData;
 
 #endif
