@@ -1012,10 +1012,6 @@ void olcxInit(void) {
 }
 
 
-void olcxSetCurrentUser(void) {
-    return;
-}
-
 static void olcxFreePopedStackItems(OlcxReferencesStack *stack) {
     assert(stack);
     // delete all after top
@@ -3576,7 +3572,7 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, Symbol
 
 void olcxPushSpecialCheckMenuSym(char *symname) {
     OlcxReferences *rstack;
-    olcxSetCurrentUser();
+
     olcxPushEmptyStackItem(&currentUserData->browserStack);
     assert(currentUserData && currentUserData->browserStack.top);
     rstack = currentUserData->browserStack.top;
@@ -3726,7 +3722,6 @@ static void olcxMMPreCheck(void) {
     ReferencesItem     dri;
     bool precheck;
 
-    olcxSetCurrentUser();
     olcxPushEmptyStackItem(&currentUserData->browserStack);
     assert(currentUserData && currentUserData->browserStack.top);
     assert(options.server_operation == OLO_MM_PRE_CHECK || options.server_operation == OLO_PP_PRE_CHECK);
@@ -4607,7 +4602,6 @@ void mainAnswerEditAction(void) {
         printTagSearchResults();
         break;
     case OLO_TAG_SEARCH_BACK:
-        olcxSetCurrentUser();
         if (currentUserData->retrieverStack.top!=NULL &&
             currentUserData->retrieverStack.top->previous!=NULL) {
             currentUserData->retrieverStack.top = currentUserData->retrieverStack.top->previous;
@@ -4616,7 +4610,6 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_TAG_SEARCH_FORWARD:
-        olcxSetCurrentUser();
         nextrr = getNextTopStackItem(&currentUserData->retrieverStack);
         if (nextrr != NULL) {
             currentUserData->retrieverStack.top = nextrr;

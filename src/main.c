@@ -2459,9 +2459,7 @@ static int scheduleFileUsingTheMacro(void) {
 
     fillSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);
     if (currentUserData==NULL || currentUserData->browserStack.top==NULL) {
-        olcxSetCurrentUser();
         olcxPushEmptyStackItem(&currentUserData->browserStack);
-        assert(currentUserData);
         tmpc = currentUserData->browserStack.top;
     }
     assert(currentUserData && currentUserData->browserStack.top);
@@ -2900,7 +2898,6 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     mainScheduleInputFilesFromOptionsToFileTable();
     if (options.server_operation == OLO_EXTRACT)
         cache.cpi = 2; // !!!! no cache, TODO why is 2 = no cache?
-    olcxSetCurrentUser();
     initCompletions(&s_completions, 0, noPosition);
 }
 
@@ -2910,7 +2907,6 @@ void mainCallEditServer(int argc, char **argv,
 ) {
     ENTER();
     editorLoadAllOpenedBufferFiles();
-    olcxSetCurrentUser();
     if (creatingOlcxRefs())
         olcxPushEmptyStackItem(&currentUserData->browserStack);
     if (needToProcessInputFile()) {

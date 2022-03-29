@@ -230,10 +230,6 @@ void olcxInit(void) {
     mock();
 }
 
-void olcxSetCurrentUser(void) {
-    mock();
-}
-
 Reference *getDefinitionRef(Reference *rr) {
     return (Reference *) mock(rr);
 }
