@@ -13,4 +13,3 @@
 /* TODO Remove olcxTab since we now only handle one user */
 static SessionData userData;
 SessionData *currentUserData = &userData;
-OlcxTab s_olcxTab;

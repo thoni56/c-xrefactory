@@ -27,6 +27,5 @@ typedef struct SessionData {
 #endif
 
 extern SessionData *currentUserData;
-extern OlcxTab s_olcxTab;
 
 #endif
