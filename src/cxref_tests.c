@@ -6,7 +6,7 @@
 #include "memory.h"
 
 /* Dependencies: */
-#include "olcxtab.h"
+#include "session.h"
 
 #include "filedescriptor.mock"
 #include "filetable.mock"

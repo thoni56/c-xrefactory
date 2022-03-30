@@ -16,7 +16,6 @@
 #include "commons.mock"
 #include "caching.mock"
 
-#include "olcxtab.mock"
 #include "cxref.mock"
 #include "reftab.mock"
 #include "editor.mock"

@@ -7,7 +7,7 @@
 
 #include "cxref.h"
 #include "reftab.h"
-#include "olcxtab.h"
+#include "session.h"
 #include "classhierarchy.h"
 #include "fileio.h"
 #include "list.h"

@@ -7,7 +7,6 @@
 /* Dependencies: */
 #include "filedescriptor.mock"
 #include "filetable.mock"
-#include "olcxtab.mock"
 #include "globals.mock"
 #include "cxfile.mock"
 #include "editor.mock"

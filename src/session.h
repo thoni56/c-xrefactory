@@ -1,5 +1,5 @@
-#ifndef OLCXTAB_H_INCLUDED
-#define OLCXTAB_H_INCLUDED
+#ifndef SESSION_H_INCLUDED
+#define SESSION_H_INCLUDED
 
 #include "proto.h"
 

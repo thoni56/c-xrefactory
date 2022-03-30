@@ -2,7 +2,7 @@
 #include "cxref.h"
 #include <cgreen/mocks.h>
 
-#include "olcxtab.h"
+#include "session.h"
 
 void fillReference(Reference *reference, Usage usage, Position position,
                     Reference *next) {

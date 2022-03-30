@@ -14,7 +14,6 @@
 #include "main.mock"
 #include "cxref.mock"
 #include "misc.mock"
-#include "olcxtab.mock"
 #include "reftab.mock"
 #include "filetable.mock"
 #include "cxfile.mock"

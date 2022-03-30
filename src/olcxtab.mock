@@ -1,6 +1,0 @@
-/* -*- c -*-*/
-#include "olcxtab.h"
-#include <cgreen/mocks.h>
-
-
-SessionData sessionData;

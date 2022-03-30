@@ -4,7 +4,7 @@
 #include "proto.h"
 #include "usage.h"
 #include "symbol.h"
-#include "olcxtab.h"
+#include "session.h"
 #include "ppc.h"
 
 
