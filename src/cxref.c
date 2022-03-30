@@ -878,7 +878,7 @@ void olcxFreeReferences(Reference *r) {
     }
 }
 
-static void olcxFreeCompletion(OlCompletion *r) {
+static void olcxFreeCompletion(Completion *r) {
     olcx_memory_free(r->name, strlen(r->name)+1);
     if (r->fullName!=NULL)
         olcx_memory_free(r->fullName, strlen(r->fullName)+1);
@@ -888,12 +888,12 @@ static void olcxFreeCompletion(OlCompletion *r) {
         assert(r->sym.name);
         olcx_memory_free(r->sym.name, strlen(r->sym.name)+1);
     }
-    olcx_memory_free(r, sizeof(OlCompletion));
+    olcx_memory_free(r, sizeof(Completion));
 }
 
 
-static void olcxFreeCompletions(OlCompletion *r ) {
-    OlCompletion *tmp;
+static void olcxFreeCompletions(Completion *r ) {
+    Completion *tmp;
 
     while (r!=NULL) {
         tmp = r->next;
@@ -1876,8 +1876,8 @@ static void olcxReferenceGotoRef(int refn) {
     olcxGenGotoActReference(refs);
 }
 
-static OlCompletion *olCompletionNthLineRef(OlCompletion *cpls, int refn) {
-    OlCompletion *rr, *rrr;
+static Completion *olCompletionNthLineRef(Completion *cpls, int refn) {
+    Completion *rr, *rrr;
     int i;
 
     for (rr=rrr=cpls, i=1; i<=refn && rrr!=NULL; rrr=rrr->next) {
@@ -1933,7 +1933,7 @@ static void olcxFindDefinitionAndGenGoto(ReferencesItem *sym) {
 
 static void olcxReferenceGotoCompletion(int refn) {
     OlcxReferences *refs;
-    OlCompletion *rr;
+    Completion *rr;
 
     assert(refn > 0);
     if (!olcx_move_init(&sessionData, &refs,CHECK_NULL))
@@ -1958,7 +1958,7 @@ static void olcxReferenceGotoCompletion(int refn) {
 }
 
 static void olcxReferenceGotoTagSearchItem(int refn) {
-    OlCompletion      *rr;
+    Completion      *rr;
 
     assert(refn > 0);
     assert(sessionData.retrieverStack.top);
@@ -1979,7 +1979,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
 
 static void olcxReferenceBrowseCompletion(int refn) {
     OlcxReferences    *refs;
-    OlCompletion      *rr;
+    Completion      *rr;
     char                *url;
 
     assert(refn > 0);
@@ -3100,7 +3100,7 @@ static void olEncapsulationSafetyCheck(void) {
 
 static void olCompletionSelect(void) {
     OlcxReferences    *refs;
-    OlCompletion      *rr;
+    Completion      *rr;
     if (!olcx_move_init(&sessionData, &refs, CHECK_NULL))
         return;
     rr = olCompletionNthLineRef(refs->completions, options.olcxGotoVal);
@@ -3123,7 +3123,7 @@ static void olCompletionSelect(void) {
 }
 
 static void olcxReferenceSelectTagSearchItem(int refn) {
-    OlCompletion      *rr;
+    Completion      *rr;
     OlcxReferences    *refs;
     char                ttt[MAX_FUN_NAME_SIZE];
     assert(refn > 0);
@@ -5044,7 +5044,7 @@ void mapCreateSelectionMenu(ReferencesItem *p) {
 
 /* ********************************************************************** */
 
-static OlCompletion *newOlCompletion(char *name,
+static Completion *newOlCompletion(char *name,
                                        char *fullName,
                                        char *vclass,
                                        short int jindent,
@@ -5054,7 +5054,7 @@ static OlCompletion *newOlCompletion(char *name,
                                        struct reference ref,
                                        struct referencesItem sym
 ) {
-    OlCompletion *olCompletion = olcx_alloc(sizeof(OlCompletion));
+    Completion *olCompletion = olcx_alloc(sizeof(Completion));
 
     olCompletion->name = name;
     olCompletion->fullName = fullName;
@@ -5078,10 +5078,10 @@ void olSetCallerPosition(Position *pos) {
 // if s==NULL, then the pos is taken as default position of this ref !!!
 
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
-OlCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *symbol,
+Completion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *symbol,
                                         ReferencesItem *referenceItem, Reference *reference, int cType,
                                         int vFunClass, OlcxReferences *stack) {
-    OlCompletion *cc;
+    Completion *cc;
     char *ss,*nn, *fullnn, *vclnn;
     int category, scope, storage, slen, nlen;
     ReferencesItem sri;
@@ -5143,19 +5143,19 @@ OlCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, 
 }
 
 void olCompletionListReverse(void) {
-    LIST_REVERSE(OlCompletion, sessionData.completionsStack.top->completions);
+    LIST_REVERSE(Completion, sessionData.completionsStack.top->completions);
 }
 
-static int olTagSearchSortFunction(OlCompletion *c1, OlCompletion *c2) {
+static int olTagSearchSortFunction(Completion *c1, Completion *c2) {
     return strcmp(c1->name, c2->name) < 0;
 }
 
-static void tagSearchShortRemoveMultipleLines(OlCompletion *list) {
-    for (OlCompletion *l=list; l!=NULL; l=l->next) {
+static void tagSearchShortRemoveMultipleLines(Completion *list) {
+    for (Completion *l=list; l!=NULL; l=l->next) {
     again:
         if (l->next!=NULL && strcmp(l->name, l->next->name)==0) {
             // O.K. remove redundant one
-            OlCompletion *tmp = l->next;
+            Completion *tmp = l->next;
             l->next = l->next->next;
             olcxFreeCompletion(tmp);
             goto again;          /* Again, but don't advance */
@@ -5164,7 +5164,7 @@ static void tagSearchShortRemoveMultipleLines(OlCompletion *list) {
 }
 
 void tagSearchCompactShortResults(void) {
-    LIST_MERGE_SORT(OlCompletion, sessionData.retrieverStack.top->completions, olTagSearchSortFunction);
+    LIST_MERGE_SORT(Completion, sessionData.retrieverStack.top->completions, olTagSearchSortFunction);
     if (options.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
         || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
         tagSearchShortRemoveMultipleLines(sessionData.retrieverStack.top->completions);
@@ -5180,7 +5180,7 @@ void printTagSearchResults(void) {
 
     // the first loop is counting the length of fields
     assert(sessionData.retrieverStack.top);
-    for (OlCompletion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
+    for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
         ls = createTagSearchLineStatic(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
     }
@@ -5199,7 +5199,7 @@ void printTagSearchResults(void) {
     if (options.xref2)
         ppcBegin(PPC_SYMBOL_LIST);
     assert(sessionData.retrieverStack.top);
-    for (OlCompletion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
+    for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
         ls = createTagSearchLineStatic(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
         if (options.xref2) {

@@ -448,7 +448,7 @@ typedef struct olCompletion {
     struct reference      ref;
     struct referencesItem sym;
     struct olCompletion  *next;
-} OlCompletion;
+} Completion;
 
 typedef struct SymbolFoundInformation {
     struct referencesItem *symrefs;     /* this is valid */
