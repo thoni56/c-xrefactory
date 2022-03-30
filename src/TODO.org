@@ -5,7 +5,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* TODO Can we remove -user option? Emacs treats frames a users for different browsing contexts
 * DOING Selecting automatic project selection after having set a specific does not seem to work
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
@@ -127,6 +126,7 @@ and you can also get java.class.version=55 => java version without decoding dire
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Can we remove -user option? YES! Emacs treats frames a users for different browsing contexts
 * DONE Move XX_ALLOCC and friends to "memory" module
 * DONE Turn the out parameter "position" of XXXTabAdd to return value instead, so it can be ignored without unused variable
 * DONE Introduce adapter for stat() in fileio
