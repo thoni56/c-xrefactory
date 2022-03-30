@@ -106,7 +106,7 @@ extern char *javaCutClassPathFromFileName(char *fname);
 extern char *javaCutSourcePathFromFileName(char *fname);
 extern int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive);
 extern int compareFileNames(char *ss1, char *ss2);
-extern int fnnCmp(char *ss1, char *ss2, int n);
+extern int filenameCompare(char *ss1, char *ss2, int n);
 extern void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,int argsStyle);
 extern char *simpleFileNameFromFileNum(int fnum);
 extern char *getShortClassNameFromClassNum_st(int fnum);

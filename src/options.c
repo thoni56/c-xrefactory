@@ -24,7 +24,7 @@
 
 Options options;               // current options
 Options refactoringOptions;    // xref -refactory command line options
-Options s_cachedOptions;
+Options cachedOptions;
 Options s_initOpt = {
                                 /* GENERAL */
     0,                          // exit

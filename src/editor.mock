@@ -81,7 +81,7 @@ EditorMarker *editorCreateNewMarkerForPosition(Position *pos) {
   return (EditorMarker *) mock(pos);
 }
 
-EditorMarkerList *editorReferencesToMarkers(Reference *refs, int (*filter)(Reference *, void *), void *filterParam) {
+EditorMarkerList *editorReferencesToMarkers(Reference *refs, bool (*filter)(Reference *, void *), void *filterParam) {
   return (EditorMarkerList *) mock(refs, filter, filterParam);
 }
 

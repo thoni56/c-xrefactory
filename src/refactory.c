@@ -55,11 +55,11 @@ typedef struct disabledList {
     struct disabledList  *next;
 } S_disabledList;
 
-static EditorUndo *s_refactoringStartPoint;
+static EditorUndo *refactoringStartingPoint;
 
 static bool refactoryXrefEditServerSubTaskFirstPass = 1;
 
-static char *s_refactoryEditSrvInitOptions[] = {
+static char *refactoryEditServInitOptions[] = {
     "xref",
     "-xrefactory-II",
     //& "-debug",
@@ -67,14 +67,14 @@ static char *s_refactoryEditSrvInitOptions[] = {
     NULL,
 };
 
-static char *s_refactoryXrefInitOptions[] = {
+static char *refactoryXrefInitOptions[] = {
     "xref",
     "-xrefactory-II",
     "-briefoutput",
     NULL,
 };
 
-static char *s_refactoryUpdateOption = "-fastupdate";
+static char *refactoryUpdateOption = "-fastupdate";
 
 
 static bool moveClassMapFunReturnOnUninterestingSymbols(ReferencesItem *ri, S_tpCheckMoveClassData *dd) {
@@ -106,23 +106,15 @@ static void javaDotifyClassName(char *ss) {
     }
 }
 
-static void javaSlashifyDotName(char *ss) {
-    char *s;
-    for (s=ss; *s; s++) {
-        if (*s == '.') *s = FILE_PATH_SEPARATOR;
-    }
-}
-
-static int argument_count(char **margv) {
+static int argument_count(char **argv) {
     int count;
-    for (count=0; *margv!=NULL; count++,margv++)
+    for (count=0; *argv!=NULL; count++,argv++)
         ;
     return count;
 }
 
-static int filter0(Reference *rr, void *dummy) {
-    if (rr->usage.kind < UsageMaxOLUsages) return 1;
-    return 0;
+static bool filter0(Reference *reference, void *dummy) {
+    return reference->usage.kind < UsageMaxOLUsages;
 }
 
 static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
@@ -199,7 +191,7 @@ static void refactoryUpdateReferences(char *project) {
     // following would be too long to be allocated on stack
     static Options savedOptions;
 
-    if (s_refactoryUpdateOption==NULL || *s_refactoryUpdateOption==0) {
+    if (refactoryUpdateOption==NULL || *refactoryUpdateOption==0) {
         writeRelativeProgress(100);
         return;
     }
@@ -212,11 +204,11 @@ static void refactoryUpdateReferences(char *project) {
 
     refactorySetNargv(nargv, NULL, project, NULL, NULL);
     nargc = argument_count(nargv);
-    refactoryXrefInitOptionsNum = argument_count(s_refactoryXrefInitOptions);
+    refactoryXrefInitOptionsNum = argument_count(refactoryXrefInitOptions);
     for (int i=1; i<refactoryXrefInitOptionsNum; i++) {
-        nargv[nargc++] = s_refactoryXrefInitOptions[i];
+        nargv[nargc++] = refactoryXrefInitOptions[i];
     }
-    nargv[nargc++] = s_refactoryUpdateOption;
+    nargv[nargc++] = refactoryUpdateOption;
 
     currentPass = ANY_PASS;
     mainTaskEntryInitialisations(nargc, nargv);
@@ -227,8 +219,8 @@ static void refactoryUpdateReferences(char *project) {
     ppcEnd(PPC_UPDATE_REPORT);
 
     // return into editSubTaskState
-    mainTaskEntryInitialisations(argument_count(s_refactoryEditSrvInitOptions),
-                                 s_refactoryEditSrvInitOptions);
+    mainTaskEntryInitialisations(argument_count(refactoryEditServInitOptions),
+                                 refactoryEditServInitOptions);
     refactoryXrefEditServerSubTaskFirstPass = 1;
     return;
 }
@@ -254,8 +246,8 @@ static void refactoryEditServerParseBuffer(char *project,
         nargv[nargc++] = pushOption2;
     }
     mainCallEditServerInit(nargc, nargv);
-    mainCallEditServer(argument_count(s_refactoryEditSrvInitOptions),
-                       s_refactoryEditSrvInitOptions,
+    mainCallEditServer(argument_count(refactoryEditServInitOptions),
+                       refactoryEditServInitOptions,
                        nargc, nargv, &refactoryXrefEditServerSubTaskFirstPass);
 }
 
@@ -263,13 +255,13 @@ static void refactoryBeInteractive(void) {
     int pargc;
     char **pargv;
 
-    copyOptions(&s_cachedOptions, &options);
+    copyOptions(&cachedOptions, &options);
     for (;;) {
         closeMainOutputFile();
         ppcSynchronize();
-        copyOptions(&options, &s_cachedOptions);
-        processOptions(argument_count(s_refactoryEditSrvInitOptions),
-                       s_refactoryEditSrvInitOptions, INFILES_DISABLED);
+        copyOptions(&options, &cachedOptions);
+        processOptions(argument_count(refactoryEditServInitOptions),
+                       refactoryEditServInitOptions, INFILES_DISABLED);
         getPipedOptions(&pargc, &pargv);
         mainOpenOutputFile(refactoringOptions.outputFileName);
         if (pargc <= 1)
@@ -277,8 +269,8 @@ static void refactoryBeInteractive(void) {
         mainCallEditServerInit(pargc, pargv);
         if (options.continueRefactoring != RC_NONE)
             break;
-        mainCallEditServer(argument_count(s_refactoryEditSrvInitOptions),
-                           s_refactoryEditSrvInitOptions,
+        mainCallEditServer(argument_count(refactoryEditServInitOptions),
+                           refactoryEditServInitOptions,
                            pargc, pargv, &refactoryXrefEditServerSubTaskFirstPass);
         mainAnswerEditAction();
     }
@@ -466,14 +458,14 @@ void editorUndoUntil(EditorUndo *until, EditorUndo **undoundo) {
 static void refactoryApplyWholeRefactoringFromUndo(void) {
     EditorUndo        *redoTrack;
     redoTrack = NULL;
-    editorUndoUntil(s_refactoringStartPoint, &redoTrack);
+    editorUndoUntil(refactoringStartingPoint, &redoTrack);
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
 }
 
 static void refactoryFatalErrorOnPosition(EditorMarker *p, int errType, char *message) {
     EditorUndo *redo;
     redo = NULL;
-    editorUndoUntil(s_refactoringStartPoint, &redo);
+    editorUndoUntil(refactoringStartingPoint, &redo);
     ppcGotoMarker(p);
     fatalError(errType, message, XREF_EXIT_ERR);
     // unreachable, but do the things properly
@@ -842,7 +834,8 @@ static void tpCheckDefaultAccessibilitiesMoveClass(ReferencesItem *ri, void *ddd
     javaGetClassNameFromFileNum(ri->vFunClass, symclass, KEEP_SLASHES);
     sclen = strlen(dd->sclass);
     symclen = strlen(symclass);
-    if (sclen<=symclen && fnnCmp(dd->sclass, symclass, sclen)==0) return;
+    if (sclen<=symclen && filenameCompare(dd->sclass, symclass, sclen)==0)
+        return;
     // O.K. finally check if there is a reference
     for (Reference *rr=ri->references; rr!=NULL; rr=rr->next) {
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
@@ -1474,6 +1467,13 @@ static void refactoryCheckedRenameBuffer(EditorBuffer *buff, char *newName, Edit
     editorRenameBuffer(buff, newName, undo);
 }
 
+static void javaSlashifyDotName(char *ss) {
+    char *s;
+    for (s=ss; *s; s++) {
+        if (*s == '.') *s = FILE_PATH_SEPARATOR;
+    }
+}
+
 static void refactoryMoveFileAndDirForPackageRename(char *currentPath, EditorMarker *lld, char *symLinkName) {
     char newfile[2*MAX_FILE_NAME_SIZE];
     char packdir[2*MAX_FILE_NAME_SIZE];
@@ -1496,14 +1496,16 @@ static void refactoryMoveFileAndDirForPackageRename(char *currentPath, EditorMar
 
 static bool refactoryRenamePackageFileMove(char *currentPath, EditorMarkerList *ll,
                                            char *symLinkName, int slnlen) {
-    int plen;
+    int pathLength;
     bool res = false;
 
-    plen = strlen(currentPath);
-    //&sprintf(tmpBuff,"checking %s<->%s, %s<->%s\n",ll->marker->buffer->name, currentPath,ll->marker->buffer->name+plen+1, symLinkName);ppcGenRecord(PPC_WARNING,tmpBuff);
-    if (fnnCmp(ll->marker->buffer->name, currentPath, plen)==0
-        && ll->marker->buffer->name[plen] == FILE_PATH_SEPARATOR
-        && fnnCmp(ll->marker->buffer->name+plen+1, symLinkName, slnlen)==0) {
+    pathLength = strlen(currentPath);
+    log_trace("checking %s<->%s, %s<->%s", ll->marker->buffer->name, currentPath,
+              ll->marker->buffer->name+pathLength+1, symLinkName);
+    if (filenameCompare(ll->marker->buffer->name, currentPath, pathLength) == 0 &&
+        ll->marker->buffer->name[pathLength] == FILE_PATH_SEPARATOR &&
+        filenameCompare(ll->marker->buffer->name + pathLength + 1, symLinkName, slnlen) == 0)
+    {
         refactoryMoveFileAndDirForPackageRename(currentPath, ll->marker, symLinkName);
         res = true;
         goto fini;
@@ -2191,7 +2193,7 @@ static int createMarkersForAllReferencesInRegions(SymbolsMenu *menu, EditorRegio
     for (SymbolsMenu *mm=menu; mm!=NULL; mm=mm->next) {
         assert(mm->markers==NULL);
         if (mm->selected && mm->visible) {
-            mm->markers = editorReferencesToMarkers(mm->s.references,filter0, NULL);
+            mm->markers = editorReferencesToMarkers(mm->s.references, filter0, NULL);
             if (regions != NULL) {
                 editorRestrictMarkersToRegions(&mm->markers, regions);
             }
@@ -2625,7 +2627,7 @@ static void moveFirstElementOfMarkerList(EditorMarkerList **l1, EditorMarkerList
 static void refactoryShowSafetyCheckFailingDialog(EditorMarkerList **totalDiff, char *message) {
     EditorUndo *redo;
     redo = NULL;
-    editorUndoUntil(s_refactoringStartPoint, &redo);
+    editorUndoUntil(refactoringStartingPoint, &redo);
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     refactoryPushMarkersAsReferences(totalDiff, sessionData.browserStack.top,
                                      LINK_NAME_SAFETY_CHECK_MISSED);
@@ -4423,11 +4425,12 @@ void mainRefactory() {
 
     copyOptions(&refactoringOptions, &options);       // save command line options !!!!
     // in general in this file:
-    //   s_ropt are options passed to c-xrefactory
-    //   s_opt are options valid for interactive edit-server 'sub-task'
-    copyOptions(&s_cachedOptions, &options);
+    //   'refactoringOptions' are options passed to c-xrefactory
+    //   'options' are options valid for interactive edit-server 'sub-task'
+    copyOptions(&cachedOptions, &options);
 
-    // MAGIC, fill something to restrict to browsing
+    // MAGIC, set the server operation to just refresh or generate xrefs
+    // since we will be calling the "main task" below
     refactoringOptions.server_operation = OLO_LIST;
 
     mainOpenOutputFile(refactoringOptions.outputFileName);
@@ -4458,11 +4461,11 @@ void mainRefactory() {
     point = refactoryGetPointFromRefactoryOptions(buf);
     mark = refactoryGetMarkFromRefactoryOptions(buf);
 
-    s_refactoringStartPoint = s_editorUndo;
+    refactoringStartingPoint = s_editorUndo;
 
     // init subtask
-    mainTaskEntryInitialisations(argument_count(s_refactoryEditSrvInitOptions),
-                                 s_refactoryEditSrvInitOptions);
+    mainTaskEntryInitialisations(argument_count(refactoryEditServInitOptions),
+                                 refactoryEditServInitOptions);
     refactoryXrefEditServerSubTaskFirstPass = 1;
 
     progressFactor = 1;
@@ -4472,7 +4475,7 @@ void mainRefactory() {
     case AVR_RENAME_CLASS:
     case AVR_RENAME_PACKAGE:
         progressFactor = 3;
-        s_refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
+        refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
         refactoryRename(buf, point);
         break;
     case AVR_EXPAND_NAMES:
@@ -4495,7 +4498,7 @@ void mainRefactory() {
     case AVR_DEL_PARAMETER:
     case AVR_MOVE_PARAMETER:
         progressFactor = 3;
-        s_refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
+        refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
         mainSetLanguage(file, &s_language);
         if (LANGUAGE(LANG_JAVA)) progressFactor++;
         refactoryParameterManipulation(buf, point, refactoringOptions.theRefactoring,

@@ -120,7 +120,7 @@ extern EditorBuffer *editorGetOpenedAndLoadedBuffer(char *name);
 extern EditorBuffer *editorFindFile(char *name);
 extern EditorBuffer *editorFindFileCreate(char *name);
 extern EditorMarker *editorCreateNewMarkerForPosition(Position *pos);
-extern EditorMarkerList *editorReferencesToMarkers(Reference *refs, int (*filter)(Reference *, void *), void *filterParam);
+extern EditorMarkerList *editorReferencesToMarkers(Reference *refs, bool (*filter)(Reference *, void *), void *filterParam);
 extern Reference *editorMarkersToReferences(EditorMarkerList **mms);
 extern void editorRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
 extern void editorReplaceString(EditorBuffer *buff, int position, int delsize, char *str, int strlength, EditorUndo **undo);

@@ -22,7 +22,7 @@ trace: $(TEST)
 clean:
 	@-rm -rf .c-xrefrc CXrefs log output.tmp output
 
-gdb:
+debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1
 	sudo gdb -pid `pgrep c-xref | tail -1` -ex 'br mainRefactory' -ex 'continue'

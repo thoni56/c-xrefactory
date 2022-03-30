@@ -1096,8 +1096,8 @@ void editorMoveMarkerToLineCol(EditorMarker *m, int line, int col) {
 }
 
 EditorMarkerList *editorReferencesToMarkers(Reference *refs,
-                                              int (*filter)(Reference *, void *),
-                                              void *filterParam) {
+                                            bool (*filter)(Reference *, void *),
+                                            void *filterParam) {
     Reference         *r;
     EditorMarker      *m;
     EditorMarkerList  *res, *rrr;
@@ -1109,7 +1109,8 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
     res = NULL;
     r = refs;
     while (r!=NULL) {
-        while (r!=NULL && ! filter(r,filterParam)) r = r->next;
+        while (r!=NULL && !filter(r,filterParam))
+            r = r->next;
         if (r != NULL) {
             file = r->position.file;
             line = r->position.line;
@@ -1524,7 +1525,7 @@ int editorMapOnNonexistantFiles(
     ll = bl;
     //&sprintf(tmpBuff, "ENTER!!!"); ppcGenRecord(PPC_IGNORE,tmpBuff);
     while(ll!=NULL) {
-        if (fnnCmp(ll->buffer->name, dirname, dlen)==0
+        if (filenameCompare(ll->buffer->name, dirname, dlen)==0
             && (ll->buffer->name[dlen]=='/' || ll->buffer->name[dlen]=='\\')) {
             if (depth == DEPTH_ONE) {
                 ss = strchr(ll->buffer->name+dlen+1, '/');
@@ -1553,7 +1554,7 @@ int editorMapOnNonexistantFiles(
                 lastMappedLen = dlen+1+fnlen;
                 ll = ll->next;
                 while (ll!=NULL
-                       && fnnCmp(ll->buffer->name, lastMapped, lastMappedLen)==0
+                       && filenameCompare(ll->buffer->name, lastMapped, lastMappedLen)==0
                        && (ll->buffer->name[lastMappedLen]=='/' || ll->buffer->name[lastMappedLen]=='\\')) {
                     //&sprintf(tmpBuff, "SKIPPING %s", ll->buffer->name); ppcGenRecord(PPC_IGNORE,tmpBuff);
                     ll = ll->next;

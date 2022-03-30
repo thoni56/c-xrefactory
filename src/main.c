@@ -1686,7 +1686,7 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
     char *suff;
     if (inFileName == NULL
         || fileNameHasOneOfSuffixes(inFileName, options.javaFilesSuffixes)
-        || (fnnCmp(simpleFileName(inFileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
+        || (filenameCompare(simpleFileName(inFileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
     ) {
         *outLanguage = LANG_JAVA;
         typeNamesTable[TypeStruct] = "class";
@@ -2021,7 +2021,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
             *inputOpened = false;
             goto fini;
         }
-        copyOptions(&s_cachedOptions, &options);  // before getJavaClassPath, it modifies ???
+        copyOptions(&cachedOptions, &options);  // before getJavaClassPath, it modifies ???
         processOptions(nargc, nargv, INFILES_DISABLED);
         getJavaClassAndSourcePath();
         *inputOpened = computeAndOpenInputFile();
@@ -2041,7 +2041,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         assert(cache.lbcc == cache.cp[0].lbcc);
         assert(cache.lbcc == cache.cp[1].lbcc);
     } else {
-        copyOptions(&options, &s_cachedOptions);
+        copyOptions(&options, &cachedOptions);
         processOptions(nargc, nargv, INFILES_DISABLED); /* no include or define options */
         *inputOpened = computeAndOpenInputFile();
     }
@@ -2678,15 +2678,15 @@ static int needToProcessInputFile(void) {
 /* *************************************************************** */
 /*                          Xref regime                            */
 /* *************************************************************** */
-static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPass,
-                                     bool *atLeastOneProcessed) {
+static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPassP,
+                                     bool *atLeastOneProcessedP) {
     bool inputOpened;
 
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
-        if (!*firstPass)
-            copyOptions(&options, &s_cachedOptions);
-        mainFileProcessingInitialisations(firstPass, argc, argv, 0, NULL, &inputOpened, &s_language);
+        if (!*firstPassP)
+            copyOptions(&options, &cachedOptions);
+        mainFileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &inputOpened, &s_language);
         olOriginalFileNumber    = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileNumber;
         if (inputOpened) {
@@ -2696,19 +2696,19 @@ static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPass,
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
             inputOpened = false;
             currentFile.lexBuffer.buffer.file = stdin;
-            *atLeastOneProcessed = true;
+            *atLeastOneProcessedP = true;
         } else if (LANGUAGE(LANG_JAR)) {
             jarFileParse(inputFilename);
-            *atLeastOneProcessed = true;
+            *atLeastOneProcessedP = true;
         } else if (LANGUAGE(LANG_CLASS)) {
             classFileParse();
-            *atLeastOneProcessed = true;
+            *atLeastOneProcessedP = true;
         } else {
             errorMessage(ERR_CANT_OPEN, inputFilename);
             fprintf(dumpOut, "\tmaybe forgotten -p option?\n");
         }
         // no multiple passes for java programs
-        *firstPass = false;
+        *firstPassP = false;
         currentFile.lexBuffer.buffer.isAtEOF = false;
         if (LANGUAGE(LANG_JAVA))
             break;
@@ -2932,10 +2932,10 @@ static void mainEditServer(int argc, char **argv) {
     ENTER();
     cxResizingBlocked = 1;
     firstPass = true;
-    copyOptions(&s_cachedOptions, &options);
+    copyOptions(&cachedOptions, &options);
     for(;;) {
         currentPass = ANY_PASS;
-        copyOptions(&options, &s_cachedOptions);
+        copyOptions(&options, &cachedOptions);
         getPipedOptions(&nargc, &nargv);
         // O.K. -o option given on command line should catch also file not found
         // message

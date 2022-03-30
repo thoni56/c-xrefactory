@@ -336,7 +336,7 @@ char *javaCutClassPathFromFileName(char *fname) {
     }
     for(cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         len = strlen(cp->string);
-        if (fnnCmp(cp->string, fname, len) == 0) {
+        if (filenameCompare(cp->string, fname, len) == 0) {
             res = fname+len;
             goto fini;
         }
@@ -354,7 +354,7 @@ char *javaCutSourcePathFromFileName(char *fname) {
     if (ss!=NULL) return(ss+1);         // .zip archive symbol
     MapOnPaths(javaSourcePaths, {
             len = strlen(currentPath);
-            if (fnnCmp(currentPath, fname, len) == 0) {
+            if (filenameCompare(currentPath, fname, len) == 0) {
                 res = fname+len;
                 goto fini;
             }
@@ -362,7 +362,7 @@ char *javaCutSourcePathFromFileName(char *fname) {
     // cut auto-detected source-path
     if (s_javaStat!=NULL && s_javaStat->namedPackagePath != NULL) {
         len = strlen(s_javaStat->namedPackagePath);
-        if (fnnCmp(s_javaStat->namedPackagePath, fname, len) == 0) {
+        if (filenameCompare(s_javaStat->namedPackagePath, fname, len) == 0) {
             res = fname+len;
             goto fini;
         }
@@ -449,14 +449,17 @@ void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
     int posti;
     char *ssig;
     int j,bj,typ;
-    if (sig == NULL) return;
+
+    if (sig == NULL)
+        return;
     j = 0;
     /* fprintf(dumpOut,":processing '%s'\n",sig); fflush(dumpOut); */
     assert(*sig == '(');
     ssig = sig; posti=0; post[0]=0;
     for(ssig++; *ssig && *ssig!=')'; ssig++) {
         assert(j+1 < *size);
-        if (j+TYPE_STR_RESERVE > *size) goto fini;
+        if (j+TYPE_STR_RESERVE > *size)
+            goto fini;
     switchLabel:
         switch (*ssig) {
         case '[':
@@ -592,7 +595,7 @@ char *lastOccurenceOfSlashOrBackslash(char *string) {
     return result;
 }
 
-char * getFileSuffix(char *fn) {
+char *getFileSuffix(char *fn) {
     char *cc;
     if (fn == NULL) return("");
     cc = fn + strlen(fn);
@@ -634,34 +637,41 @@ char *directoryName_st(char *fullFileName) {
     return res;
 }
 
-int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive) {
+int pathncmp(char *path1, char *path2, int n, bool caseSensitive) {
     char *s1,*s2;
     int i;
     int res;
 
     res = 0;
 #if (!defined (__WIN32__))
-    if (caseSensitive) return(strncmp(ss1,ss2,n));
+    if (caseSensitive)
+        return strncmp(path1,path2,n);
 #endif
-    if (n<=0) return(0);
+    if (n<=0)
+        return 0;
 #if defined (__WIN32__)
     // there is also problem of drive name on windows
-    if (ss1[0]!=0 && tolower(ss1[0])==tolower(ss2[0]) && ss1[1]==':' && ss2[1]==':') {
-        ss1+=2;
-        ss2+=2;
+    if (path1[0]!=0 && tolower(path1[0])==tolower(path2[0]) && path1[1]==':' && path2[1]==':') {
+        path1+=2;
+        path2+=2;
         n -= 2;
     }
 #endif
-    if (n<=0) return(0);
-    for(s1=ss1,s2=ss2,i=1; *s1 && *s2 && i<n; s1++,s2++,i++) {
+    if (n<=0)
+        return 0;
+
+    for (s1=path1,s2=path2,i=1; *s1 && *s2 && i<n; s1++,s2++,i++) {
 #if defined (__WIN32__)
-        if (    (*s1 == '/' || *s1 == '\\')
-                &&  (*s2 == '/' || *s2 == '\\')) continue;
+        if ((*s1 == '/' || *s1 == '\\')
+            &&  (*s2 == '/' || *s2 == '\\'))
+            continue;
 #endif
         if (caseSensitive) {
-            if (*s1 != *s2) break;
+            if (*s1 != *s2)
+                break;
         } else {
-            if (tolower(*s1) != tolower(*s2)) break;
+            if (tolower(*s1) != tolower(*s2))
+                break;
         }
     }
 #if defined (__WIN32__)
@@ -678,7 +688,7 @@ int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive) {
     return res;
 }
 
-int fnnCmp(char *ss1, char *ss2, int n) {
+int filenameCompare(char *ss1, char *ss2, int n) {
     return pathncmp(ss1, ss2, n, options.fileNamesCaseSensitive);
 }
 
@@ -686,10 +696,11 @@ int fnnCmp(char *ss1, char *ss2, int n) {
 int compareFileNames(char *ss1, char *ss2) {
     int n;
 #if (!defined (__WIN32__))
-    if (options.fileNamesCaseSensitive) return(strcmp(ss1,ss2));
+    if (options.fileNamesCaseSensitive)
+        return strcmp(ss1, ss2);
 #endif
     n = strlen(ss1);
-    return fnnCmp(ss1,ss2,n+1);
+    return filenameCompare(ss1, ss2, n+1);
 }
 
 // ------------------------------------------- SHELL (SUB)EXPRESSIONS ---

@@ -1586,7 +1586,7 @@ static bool isCurrentPackageName(char *fn) {
     int plen;
     if (s_javaThisPackageName!=NULL && s_javaThisPackageName[0]!=0) {
         plen = strlen(s_javaThisPackageName);
-        if (fnnCmp(fn, s_javaThisPackageName, plen)==0)
+        if (filenameCompare(fn, s_javaThisPackageName, plen)==0)
             return true;
     }
     return false;
@@ -1629,7 +1629,7 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
         // O.K. cut the path
         assert(path!=NULL);
         pathLength = strlen(path);
-        assert(fnnCmp(fn, path, pathLength)==0);
+        assert(filenameCompare(fn, path, pathLength)==0);
         if (fn[pathLength]!=0 && !isCurrentPackageName(fn)) {
             completeFqtFromFileName(fn+pathLength+1, a4);
         }

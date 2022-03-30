@@ -3350,7 +3350,7 @@ case 64:
                                 j=i;
                         }
                         packlen = strlen(s_javaThisPackageName);
-                        if (j>packlen && fnnCmp(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
+                        if (j>packlen && filenameCompare(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
                             cdir = StackMemoryAllocC(j-packlen, char);
                             strncpy(cdir, currentFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
                             s_javaStat->namedPackagePath = cdir;

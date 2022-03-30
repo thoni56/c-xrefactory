@@ -178,7 +178,7 @@ int compareFileNames(char *ss1, char *ss2) {
   return (int) mock(ss1, ss2);
 }
 
-int fnnCmp(char *ss1, char *ss2, int n) {
+int filenameCompare(char *ss1, char *ss2, int n) {
   return (int) mock(ss1, ss2, n);
 }
 
