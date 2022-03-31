@@ -172,23 +172,23 @@ typedef enum language {
     (ss->ooBits&OOC_VIRTUAL_MASK)==OOC_VIRT_SAME_APPL_FUN_CLASS\
 )
 
-#define LINK_NAME_MAYBE_START(ccc) (\
-    ccc=='.' || ccc=='/' || ccc==LINK_NAME_SEPARATOR \
-    || ccc==LINK_NAME_COLLATE_SYMBOL \
-    || ccc=='$'\
-)
+#define LINK_NAME_MAYBE_START(ch) (                     \
+        ch=='.' || ch=='/' || ch==LINK_NAME_SEPARATOR   \
+        || ch==LINK_NAME_COLLATE_SYMBOL                 \
+        || ch=='$'                                      \
+    )
 
-#define GET_BARE_NAME(name, start, len) {\
-    register int _c_;\
-    register char *_ss_;\
-    _ss_ = start = name; \
-    while ((_c_= *_ss_)) {\
-        if (_c_ == '(') break;\
-        if (LINK_NAME_MAYBE_START(_c_)) start = _ss_+1;\
-        _ss_++ ;\
-    }\
-    len = _ss_ - start;\
-}
+#define GET_BARE_NAME(name, start, len) {                   \
+        register int _c_;                                   \
+        register char *_ss_;                                \
+        _ss_ = start = name;                                \
+        while ((_c_= *_ss_)) {                              \
+            if (_c_ == '(') break;                          \
+            if (LINK_NAME_MAYBE_START(_c_)) start = _ss_+1; \
+            _ss_++ ;                                        \
+        }                                                   \
+        len = _ss_ - start;                                 \
+    }
 
 #define JAVA_STATICALLY_LINKED(storage, accessFlags) (                  \
         (storage==StorageField                                          \
@@ -196,10 +196,9 @@ typedef enum language {
              && (accessFlags & AccessStatic)))                          \
     )
 
-#define MapOnPaths(thePaths, COMMAND) {                             \
+#define MapOnPaths(thePaths, COMMAND) {                                 \
         char *currentPath, *jmop_pp, *jmop_ecp;                         \
         int jmop_i, jmop_ind;                                           \
-        /* following was static, but I need to call this recursively */ \
         char sourcepaths[MAX_SOURCE_PATH_SIZE];                         \
         assert(thePaths!=NULL);                                         \
         jmop_pp = thePaths;                                             \
@@ -212,7 +211,8 @@ typedef enum language {
                 jmop_ind++) ;                                           \
             currentPath[jmop_ind] = 0;                                  \
             jmop_i = jmop_ind;                                          \
-            if (jmop_i>0 && currentPath[jmop_i-1]==FILE_PATH_SEPARATOR) currentPath[--jmop_i] = 0; \
+            if (jmop_i>0 && currentPath[jmop_i-1]==FILE_PATH_SEPARATOR) \
+                currentPath[--jmop_i] = 0;                              \
             COMMAND;                                                    \
             currentPath += jmop_ind;                                    \
             currentPath++;                                              \
