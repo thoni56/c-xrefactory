@@ -50,7 +50,6 @@ Options presetOptions = {
     AVR_NO_REFACTORING,         // refactoring
     false,                      // briefoutput
     0,                          // cacheIncludes
-    0,                          // stdopFlag
     NULL,                       // renameTo
     RegimeUndefined,            // refactoringRegime
     0,                          // xrefactory-II

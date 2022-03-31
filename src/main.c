@@ -172,10 +172,10 @@ static int mainHandleIncludeOption(int argc, char **argv, int i) {
     int nargc;
     char **nargv;
     NEXT_FILE_ARG(i);
-    options.stdopFlag = 1;
+
     readOptionFile(argv[i],&nargc,&nargv, "",NULL);
     processOptions(nargc, nargv, INFILES_DISABLED);
-    options.stdopFlag = 0;
+
     return i;
 }
 
@@ -529,7 +529,7 @@ static bool processNOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-no-classfiles")==0)
         options.allowClassFileRefs = false;
     else if (strcmp(argv[i], "-no-stdoptions")==0)
-        options.no_stdop = true;
+        options.no_stdoptions = true;
     else if (strcmp(argv[i], "-no-autoupdatefromsrc")==0)
         options.javaSlAllowed = 0;
     else if (strcmp(argv[i], "-no-errors")==0)
@@ -1264,7 +1264,7 @@ static void mainProcessInFileOption(char *infile) {
         int nargc;
         char **nargv, *pp;
         char command[MAX_OPTION_LEN];
-        options.stdopFlag = 1;
+
         strcpy(command, infile+1);
         pp = strchr(command, '`');
         if (pp!=NULL) *pp = 0;
@@ -1274,7 +1274,7 @@ static void mainProcessInFileOption(char *infile) {
                 mainScheduleInputFileOptionToFileTable(nargv[i]);
             }
         }
-        options.stdopFlag = 0;
+
     } else {
         mainScheduleInputFileOptionToFileTable(infile);
     }
@@ -1475,7 +1475,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
     options_filename[0] = 0;
     section[0]=0;
 
-    if (filename == NULL || options.stdopFlag || options.no_stdop)
+    if (filename == NULL || options.no_stdoptions)
         return;
 
     /* Try to find section in HOME config. */
@@ -1629,7 +1629,7 @@ static bool computeAndOpenInputFile(void) {
 
 static void initOptions(void) {
     copyOptions(&options, &presetOptions);
-    options.stdopFlag = 0;
+
     inputFileNumber   = noFileIndex;
 }
 
@@ -1893,7 +1893,7 @@ static void discoverStandardDefines(void) {
 static void getAndProcessXrefrcOptions(char *dffname, char *dffsect, char *project) {
     int dfargc;
     char **dfargv;
-    if (*dffname != 0 && options.stdopFlag==0 && !options.no_stdop) {
+    if (*dffname != 0 && !options.no_stdoptions) {
         readOptionFile(dffname, &dfargc, &dfargv, dffsect, project);
         // warning, the following can overwrite variables like
         // 's_cxref_file_name' allocated in PPM_MEMORY, then when memory
@@ -1991,8 +1991,6 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         }
         strcpy(oldOnLineClassPath, options.classpath);
         assert(strlen(oldOnLineClassPath)<MAX_OPTION_LEN-1);
-
-        options.stdopFlag = 0;
 
         initPreCreatedTypes();
         initCwd();
@@ -2266,7 +2264,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     }
     recoverCachePointZero();
 
-    options.stdopFlag = 0;
     initCaching();
 
     log_debug("Leaving all task initialisations.");

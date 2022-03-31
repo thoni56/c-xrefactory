@@ -59,7 +59,6 @@ typedef struct options {
     Refactorings theRefactoring;
     bool briefoutput;
     int cacheIncludes;
-    int stdopFlag;		// does this serve to anything ?
     char *renameTo;
     enum taskRegimes refactoringRegime;
     int xref2;
@@ -144,7 +143,7 @@ typedef struct options {
     int olcxGotoVal;
     char *originalDir;
 
-    bool no_stdop;
+    bool no_stdoptions;
 
     /* CXREF options  */
     bool errors;
