@@ -387,9 +387,9 @@ endOfFile:
 
 /* ********************************* #INCLUDE ********************** */
 
-static void fillIncludeSymbolItem(Symbol *ss, int filenum, Position *pos){
-    fillSymbol(ss, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
-    fillSymbolBits(&ss->bits, AccessDefault, TypeCppInclude, StorageDefault);
+static void fillIncludeSymbolItem(Symbol *symbol, Position *pos){
+    fillSymbol(symbol, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
+    fillSymbolBits(&symbol->bits, AccessDefault, TypeCppInclude, StorageDefault);
 }
 
 
@@ -398,7 +398,7 @@ void addThisFileDefineIncludeReference(int fileIndex) {
     Symbol symbol;
 
     position = makePosition(fileIndex, 1, 0);
-    fillIncludeSymbolItem(&symbol,fileIndex, &position);
+    fillIncludeSymbolItem(&symbol, &position);
     log_trace("adding reference on file %d==%s", fileIndex, getFileItem(fileIndex)->name);
     addCxReference(&symbol, &position, UsageDefined, fileIndex, fileIndex);
 }
@@ -407,7 +407,7 @@ void addIncludeReference(int fileIndex, Position *position) {
     Symbol symbol;
 
     log_trace("adding reference on file %d==%s", fileIndex, getFileItem(fileIndex)->name);
-    fillIncludeSymbolItem( &symbol, fileIndex, position);
+    fillIncludeSymbolItem(&symbol, position);
     addCxReference(&symbol, position, UsageUsed, fileIndex, fileIndex);
 }
 
