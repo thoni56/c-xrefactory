@@ -2128,7 +2128,7 @@ static void mainTotalTaskEntryInitialisations() {
     editorInit();
 }
 
-static void mainReinitFileTabEntry(FileItem *fileItem) {
+static void clearFileItem(FileItem *fileItem) {
     fileItem->inferiorClasses = fileItem->superClasses = NULL;
     fileItem->directEnclosingInstance = noFileIndex;
     fileItem->bits.scheduledToProcess = false;
@@ -2152,7 +2152,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     s_fileAbortionEnabled = 0;
 
     // supposing that file table is still here, but reinit it
-    mapOverFileTable(mainReinitFileTabEntry);
+    mapOverFileTable(clearFileItem);
 
     dm_init(cxMemory, "cxMemory");
 
