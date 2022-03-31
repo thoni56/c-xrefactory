@@ -130,7 +130,6 @@ typedef struct options {
     int maxCompletions;
     int editor;
     bool create;
-    bool recurseDirectories;
     char *classpath;
     int tabulator;
     int olCursorPos;

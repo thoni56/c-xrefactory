@@ -1,7 +1,6 @@
 usage:		c-xref <option>+ <input files>
 
 options:
-	-r                        - recursively descend directories (default, --r to negate)
 	-javadocurl=<http>        - url to existing Java API docs
 	-javadocpath=<path>       - paths to existing Java API docs
 	-javadocavailable=<packs> - packages for which javadoc is available

@@ -127,7 +127,6 @@ Options presetOptions = {
     MAX_COMPLETIONS,            /* maxCompletions */
     0,                          /* editor */
     0,                          /* create */
-    true,                       // recurse directories
     "",                         // default classpath
     8,                          /* tabulator */
     -1,                         /* olCursorPos */
@@ -335,8 +334,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
         if (recurseFlag!=NULL) {
             topCallFlag = 0;
-            if (options.recurseDirectories) nrecurseFlag = &topCallFlag;
-            else nrecurseFlag = NULL;
+            nrecurseFlag = &topCallFlag;
             mapDirectoryFiles(fn, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
                               fn, NULL, NULL, nrecurseFlag, &topCallFlag);
             editorMapOnNonexistantFiles(fn, dirInputFile, DEPTH_ANY,
@@ -893,13 +891,9 @@ bool packageOnCommandLine(char *packageName) {
 
         if (directoryExists(path)) {
             // it is a package name, process all source files
-            //&fprintf(dumpOut,"it is a package\n");
             packageFound = true;
             topCallFlag = 1;
-            if (options.recurseDirectories)
-                recurseFlag = &topCallFlag;
-            else
-                recurseFlag = NULL;
+            recurseFlag = &topCallFlag;
             dirInputFile(path, "", NULL, NULL, recurseFlag, &topCallFlag);
         }
         cp += len;

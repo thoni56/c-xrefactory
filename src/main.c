@@ -49,7 +49,6 @@ static Options s_tmpOptions;
 static void usage() {
     fprintf(stdout, "usage:\t\tc-xref <option>+ <input files>\n\n");
     fprintf(stdout, "options:\n");
-    fprintf(stdout, "\t-r                        - recursively descend directories (default, --r to negate)\n");
     fprintf(stdout, "\t-javadocurl=<http>        - url to existing Java API docs\n");
     fprintf(stdout, "\t-javadocpath=<path>       - paths to existing Java API docs\n");
     fprintf(stdout, "\t-javadocavailable=<packs> - packages for which javadoc is available\n");
@@ -189,18 +188,6 @@ static struct {
 
 /* *************************************************************************** */
 /*                                      OPTIONS                                */
-
-static bool processNegativeOption(int *argi, int argc, char **argv, int infilesFlag) {
-    int i = *argi;
-    if (0) {}
-    else if (strcmp(argv[i], "--r")==0) {
-        if (infilesFlag == INFILES_ENABLED)
-            options.recurseDirectories = false;
-    }
-    else return false;
-    *argi = i;
-    return true;
-}
 
 static bool processAOption(int *argi, int argc, char **argv) {
     int i = * argi;
@@ -950,10 +937,6 @@ static bool processROption(int *argi, int argc, char **argv, int infilesFlag) {
     else if (strncmp(argv[i], "-refnum=",8)==0)  {
         sscanf(argv[i]+8, "%d", &options.referenceFileCount);
     }
-    else if (strcmp(argv[i], "-r")==0) {
-        if (infilesFlag == INFILES_ENABLED)
-            options.recurseDirectories = true;
-    }
     else if (strncmp(argv[i], "-renameto=", 10)==0) {
         createOptionString(&options.renameTo, argv[i]+10);
     }
@@ -1294,8 +1277,6 @@ void processOptions(int argc, char **argv, int infilesFlag) {
         processed = 0;
         if (argv[i][0] == '-') {
             switch (argv[i][1]) {
-            case '-': processed = processNegativeOption(&i, argc, argv, infilesFlag);
-                break;
             case 'a': case 'A': processed = processAOption(&i, argc, argv);
                 break;
             case 'b': case 'B': processed = processBOption(&i, argc, argv);
@@ -2346,8 +2327,8 @@ void getPipedOptions(int *outNargc,char ***outNargv){
 
 static void fillIncludeRefItem(ReferencesItem *referenceItem, int fnum) {
     fillReferencesItem(referenceItem, LINK_NAME_INCLUDE_REFS,
-                                cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
-                                fnum, fnum);
+                       cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
+                       fnum, fnum);
     fillReferencesItemBits(&referenceItem->bits, TypeCppInclude, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal);
 }

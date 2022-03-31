@@ -7,27 +7,27 @@ import javax.swing.*;
 
 class Options {
 
-	public static final int OPT_GENERAL 	= 0;
-	public static final int OPT_COMMON 		= 1;
-	public static final int OPT_PROJECT 	= 2;
-	public static final int OPT_BOTH 		= 3;
+	public static final int OPT_GENERAL	= 0;
+	public static final int OPT_COMMON		= 1;
+	public static final int OPT_PROJECT	= 2;
+	public static final int OPT_BOTH		= 3;
 
 	static public class OptionDescription {
-		String 		name;
+		String		name;
 		int			nameLen;
-		int 		arity;
+		int		arity;
 		boolean		compact;
 		String		shortDescription;
 		String		longDescription;
 		boolean     interactive;
 		int			kind;		// OPT_...
-		boolean 	addAtBeginning;
+		boolean		addAtBeginning;
 		boolean		recreateTagsIfModified;
 		//   'bd' - browse directories
 		//   'bf' - browse files
 		//   'bfd' - browse files and directories
 		String		fileSystemBrowseOptions;
-		
+
 		OptionDescription(String name, boolean interactive,
 						  int kind, int arity, boolean compact,
 						  String shortDescription,
@@ -51,48 +51,43 @@ class Options {
 	}
 
 	public static OptionDescription optFilesCaseUnSensitive = new OptionDescription(
-		"-filescaseunsensitive", false, OPT_GENERAL, 1, true, 
-		"File names are considered case unsensitive", 
-		"File names are considered case unsensitive", 
+		"-filescaseunsensitive", false, OPT_GENERAL, 1, true,
+		"File names are considered case unsensitive",
+		"File names are considered case unsensitive",
 		null,false,true);
 	public static OptionDescription optJavaVersion = new OptionDescription(
-		"-source", true, OPT_BOTH, 2, false, 
-		"Sources are written in Java: ", 
-		"Java version in which sources are written.", 
+		"-source", true, OPT_BOTH, 2, false,
+		"Sources are written in Java: ",
+		"Java version in which sources are written.",
 		null, false,true);
 	public static OptionDescription optCSuffixes = new OptionDescription(
-		"-csuffixes=", false, OPT_BOTH, 2, true, 
-		"Suffixes determining C sources: ", 
-		"Identify files with those suffixes as C sources", 
+		"-csuffixes=", false, OPT_BOTH, 2, true,
+		"Suffixes determining C sources: ",
+		"Identify files with those suffixes as C sources",
 		null, true,true);
 	public static OptionDescription optJavaSuffixes = new OptionDescription(
-		"-javasuffixes=", false, OPT_BOTH, 2, true, 
-		"Suffixes determining Java sources: ", 
-		"Identify files with those suffixes as Java sources", 
+		"-javasuffixes=", false, OPT_BOTH, 2, true,
+		"Suffixes determining Java sources: ",
+		"Identify files with those suffixes as Java sources",
 		null, true,true);
 
-	public static OptionDescription optProjectMarker = new OptionDescription( 
-		"[",true, OPT_PROJECT, 2, true, 
-		"Project auto detection directories: ", 
-		"Project auto detection directories", 
+	public static OptionDescription optProjectMarker = new OptionDescription(
+		"[",true, OPT_PROJECT, 2, true,
+		"Project auto detection directories: ",
+		"Project auto detection directories",
 		"p",false,false);
 	public static OptionDescription optInputFile = new OptionDescription(
-		"",	true,OPT_PROJECT, 2, true, 
-		"Source files & directories: ", 
-		"Source files & directories", 
+		"",	true,OPT_PROJECT, 2, true,
+		"Source files & directories: ",
+		"Source files & directories",
 		"p",false,true);
 	public static OptionDescription optPruneDirs = new OptionDescription(
-		"-prune", true,OPT_PROJECT, 2, false, 
-		"Prune directories: ", 
-		"Prune directories", 
+		"-prune", true,OPT_PROJECT, 2, false,
+		"Prune directories: ",
+		"Prune directories",
 		"p",false,true);
-	public static OptionDescription optRecurseDirs = new OptionDescription(
-		"--r",	false, OPT_PROJECT, 1, true, 
-		"Do not descent into subdirectories when looking for input files", 
-		"Do not descent into subdirectories when looking for input files", 
-		null, true,true);
 	public static OptionDescription optXrefsFile = new OptionDescription(
-		"-refs",true,OPT_PROJECT, 2, false, 
+		"-refs",true,OPT_PROJECT, 2, false,
 		"Place to store Tags: ",
 		"Place to store Tag",
 		"fd",false,true);
@@ -102,32 +97,32 @@ class Options {
 		"Number of Tag files",
 		null,false,true);
 	public static OptionDescription optCommentOption = new OptionDescription(
-		"//",false,OPT_BOTH, 0, true, 
+		"//",false,OPT_BOTH, 0, true,
 		"Comment",
 		"Comment",
 		null,false,false);
 	public static OptionDescription optClassPath = new OptionDescription(
-		"-classpath",true,OPT_BOTH, 2, false, 
+		"-classpath",true,OPT_BOTH, 2, false,
 		"Classpath: ",
 		"Top directories with .class files (classpath)",
 		"p",false,true);
 	public static OptionDescription optSourcePath = new OptionDescription(
-		"-sourcepath",true,OPT_BOTH, 2, false, 
+		"-sourcepath",true,OPT_BOTH, 2, false,
 		"Sourcepath: ",
 		"Top directories with source code (sourcepath)",
 		"p",false,true);
 	public static OptionDescription optJavaDocPath = new OptionDescription(
-		"-javadocpath",true,OPT_BOTH, 2, false, 
+		"-javadocpath",true,OPT_BOTH, 2, false,
 		"Javadocpath: ",
 		"Top directories with javadoc documentation (javadocpath)",
 		"p",false,false);
 	public static OptionDescription optJdkClassPath = new OptionDescription(
-		"-jdkclasspath",true,OPT_BOTH, 2, false, 
+		"-jdkclasspath",true,OPT_BOTH, 2, false,
 		"Jdk runtime library (rt.jar): ",
 		"Jdk runtime library (rt.jar)",
 		"p",false,true);
 	public static OptionDescription optLicense = new OptionDescription(
-		"-license=",true,OPT_COMMON, 2, true, 
+		"-license=",true,OPT_COMMON, 2, true,
 		"License string: ",
 		"License string",
 		null,false,false);
@@ -136,7 +131,6 @@ class Options {
 		optInputFile,	// must be first!
 		// regular options
 		optPruneDirs,
-		optRecurseDirs,
 		optCSuffixes,
 		optJavaSuffixes,
 		optLicense,
@@ -148,18 +142,18 @@ class Options {
 		optProjectMarker,
 		optXrefsFile,
 		optJdkClassPath,
-//&		new OptionDescription("-include",true,OPT_BOTH, 2, false, 
+//&		new OptionDescription("-include",true,OPT_BOTH, 2, false,
 //&							  "Include option file",
 //&							  "Include option file",
 //&							  "f", false),
 		// not interactive options
 		optCommentOption,
 
-		new OptionDescription("-set",false,OPT_BOTH, 3, false, 
+		new OptionDescription("-set",false,OPT_BOTH, 3, false,
 							  "Set a user defined variable: ",
 							  "Set a user defined variable",
 							  "fd",false,false),
-		new OptionDescription("-refs=",false,OPT_PROJECT, 2, true, 
+		new OptionDescription("-refs=",false,OPT_PROJECT, 2, true,
 							  "Place to store Tags: ",
 							  "Place to store Tags",
 							  "fd",false,true),
@@ -168,10 +162,10 @@ class Options {
 	// --------------------- ClassPathIterator ------------------------
 
 	public static class PathIterator {
-		String 		ss;
-		int 		sslen;
-		int 		i;
-		String 		separator;
+		String		ss;
+		int		sslen;
+		int		i;
+		String		separator;
 		public String next( ) {
 			String res;
 			int j = ss.indexOf(separator, i);
@@ -200,7 +194,7 @@ class Options {
 	// ------------------------- Option -------------------------------
 
 	static class Option {
-		OptionDescription 	option;
+		OptionDescription	option;
 		String[]			fulltext;		// includes option name
 
 		Option(OptionDescription desc) {
@@ -232,9 +226,9 @@ class Options {
 	// ------------------------- OptionParser ---------------------------
 
 	static class OptionParser {
-		XrefCharBuffer 	ss;
-		int 			sslen;
-		int 			ind;
+		XrefCharBuffer	ss;
+		int			sslen;
+		int			ind;
 
 
 		private static OptionDescription getOptionDescription(String opt) {
@@ -253,8 +247,8 @@ class Options {
 		}
 
 		String parseOptItem() {
-			String 		opt;
-			int 		b,j;
+			String		opt;
+			int		b,j;
 			b = ind = s.skipBlank(ss, ind, sslen);
 			if (ind<sslen && ss.buf[ind]=='"') {
 				ind++;
@@ -294,7 +288,7 @@ class Options {
 				String oval = opt.substring(2) + ss.substring(b,ind);
 				return(new Option(desc, oval));
 			}
-			
+
 			if (desc.compact) {
 				return(new Option(desc, opt.substring(desc.nameLen)));
 			}
@@ -362,7 +356,7 @@ class Options {
     public static final int OPTIONS_ALLOCC_CHUNK = 2;
 
 	String		projectName;
-    Option[] 	option = new Option[0];
+    Option[]	option = new Option[0];
     int			optioni = 0;
     int			allocatedSize = 0;
 
@@ -405,7 +399,7 @@ class Options {
 		}
 		if (o.option.addAtBeginning) {
 			System.arraycopy(option, 0, option, 1, optioni);
-			option[0] = o;			
+			option[0] = o;
 		} else {
 			option[optioni] = o;
 		}
@@ -505,7 +499,7 @@ class Options {
 		}
 	}
 
-	public static boolean projectMarkersOverlapps(String d1, String d2) {	
+	public static boolean projectMarkersOverlapps(String d1, String d2) {
 		int d1len = d1.length();
 		int d2len = d2.length();
 		if (d1len == d2len) {
@@ -567,9 +561,9 @@ class Options {
 			ps.close();
 		} catch (Exception e) {
 			if (s.debug) e.printStackTrace(System.err);
-			JOptionPane.showMessageDialog(s.view, "While saving options: " + e, 
-										  "Xrefactory Error", 
-										  JOptionPane.ERROR_MESSAGE);				
+			JOptionPane.showMessageDialog(s.view, "While saving options: " + e,
+										  "Xrefactory Error",
+										  JOptionPane.ERROR_MESSAGE);
 			if (ps!=null) ps.close();
 		}
 	}
@@ -605,5 +599,3 @@ class Options {
 	}
 
 }
-
-
