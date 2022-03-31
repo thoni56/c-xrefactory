@@ -12,11 +12,22 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra 
-* TODO Change to having reference file in the project tree?
-  This needs some thinking. Find it by looking upwards in the dir, on
-  create we need to ask where to store it starting with current
-  directory. This could enable storing non-absolute filenames in the
-  xrefs, they should be relative to where the db is.
+* TODO ROADMAP
+** TODO LSP-like protocol (possibly also fulfill LSP functions)
+** TODO Cleaner interface Refactorer -> Server/Tag-generator
+*** TODO Separate refactory options into separate struct
+*** TODO Restructure option handling into -refactory, -server, -generate(?)
+    those are main options, you can only have one, and selecting one
+    will allow a set of separate options valid for that "mode"
+** TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
+   We could start with having same format but how to handle project names?
+** TODO Change to having reference file in the project tree?
+   This needs some thinking. Find it by looking upwards in the dir, on
+   create we need to ask where to store it starting with current
+   directory. This could enable storing non-absolute filenames in the
+   xrefs, they should be relative to where the db is.
+* TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
+  How to make this backwards compatible?
 * TODO Header files. There are a number of sections in the proto.h that
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead. Just watchout for
