@@ -17,4 +17,4 @@ clean:
 gdb:
 	@$(EDIT_SERVER_DRIVER_COMMAND) --delay 5 > output.tmp &
 	sleep 1
-	sudo gdb ../../src/c-xref -pid `pgrep c-xref | tail -1` -ex 'br refactoryPerformMoveClass'
+	sudo gdb ../../src/c-xref -pid `pgrep -a c-xref | grep -v emacs | awk { '{ print $$1 }'` -ex 'br refactoryPerformMoveClass'

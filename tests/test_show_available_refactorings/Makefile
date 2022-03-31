@@ -36,4 +36,4 @@ clean:
 gdb:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 15 > output.tmp &
 	sleep 1
-	sudo gdb -pid `pgrep c-xref | tail -1` -ex 'br mainRefactory' -ex 'continue'
+	sudo gdb -pid `pgrep -a c-xref | grep -v emacs | awk { '{ print $$1 }'` -ex 'br mainRefactory' -ex 'continue'
