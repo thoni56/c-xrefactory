@@ -5,6 +5,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
+* DOING Figure out, and if possible, clean up how 'refactory' calls 'server'
 * DOING Selecting automatic project selection after having set a specific does not seem to work
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
