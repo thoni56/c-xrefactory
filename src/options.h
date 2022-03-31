@@ -168,7 +168,7 @@ typedef struct options {
 extern Options options;            // current options
 extern Options refactoringOptions; // xref -refactory command line options
 extern Options cachedOptions;
-extern Options s_initOpt;
+extern Options presetOptions;
 
 extern void xrefSetenv(char *name, char *val);
 

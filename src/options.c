@@ -25,7 +25,7 @@
 Options options;               // current options
 Options refactoringOptions;    // xref -refactory command line options
 Options cachedOptions;
-Options s_initOpt = {
+Options presetOptions = {
                                 /* GENERAL */
     0,                          // exit
     "gcc",                      // path to compiler to use for auto-discovering compiler and defines

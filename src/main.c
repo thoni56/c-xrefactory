@@ -1628,7 +1628,7 @@ static bool computeAndOpenInputFile(void) {
 }
 
 static void initOptions(void) {
-    copyOptions(&options, &s_initOpt);
+    copyOptions(&options, &presetOptions);
     options.stdopFlag = 0;
     inputFileNumber   = noFileIndex;
 }
@@ -2079,8 +2079,6 @@ static bool optionsOverflowHandler(int n) {
 }
 
 static void mainTotalTaskEntryInitialisations() {
-    int mm;
-
     errOut = stderr;
     dumpOut = stdout;
 
@@ -2096,11 +2094,11 @@ static void mainTotalTaskEntryInitialisations() {
     assert(PPC_MAX_AVAILABLE_REFACTORINGS < MAX_AVAILABLE_REFACTORINGS);
 
     // initialize cxMemory by trying to allocate one byte(?)
-    mm = cxMemoryOverflowHandler(1);
+    int mm = cxMemoryOverflowHandler(1);
     assert(mm);
 
     // init options memory
-    initMemory(((Memory*)&s_initOpt.memory),
+    initMemory(((Memory*)&presetOptions.memory),
                optionsOverflowHandler, SIZE_opiMemory);
 
     // Inject error handling functions
