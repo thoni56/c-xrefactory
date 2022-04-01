@@ -94,7 +94,7 @@ typedef struct editorUndo {
 } EditorUndo;
 
 
-extern EditorUndo *s_editorUndo;
+extern EditorUndo *editorUndo;
 
 
 extern void editorInit(void);

@@ -3,7 +3,7 @@
 #include <cgreen/mocks.h>
 
 
-EditorUndo *s_editorUndo;
+EditorUndo *editorUndo;
 
 void editorInit(void) {
   mock();

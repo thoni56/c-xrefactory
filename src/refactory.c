@@ -358,7 +358,7 @@ static char *refactoryGetIdentifierOnMarker_st(EditorMarker *pos) {
 
 static void refactoryReplaceString(EditorMarker *pos, int len, char *newVal) {
     editorReplaceString(pos->buffer, pos->offset, len,
-                        newVal, strlen(newVal), &s_editorUndo);
+                        newVal, strlen(newVal), &editorUndo);
 }
 
 static void refactoryCheckedReplaceString(EditorMarker *pos, int len,
@@ -451,8 +451,8 @@ void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
 }
 
 void editorUndoUntil(EditorUndo *until, EditorUndo **undoundo) {
-    editorApplyUndos(s_editorUndo, until, undoundo, GEN_NO_OUTPUT);
-    s_editorUndo = until;
+    editorApplyUndos(editorUndo, until, undoundo, GEN_NO_OUTPUT);
+    editorUndo = until;
 }
 
 static void refactoryApplyWholeRefactoringFromUndo(void) {
@@ -469,7 +469,7 @@ static void refactoryFatalErrorOnPosition(EditorMarker *p, int errType, char *me
     ppcGotoMarker(p);
     fatalError(errType, message, XREF_EXIT_ERR);
     // unreachable, but do the things properly
-    editorApplyUndos(redo, NULL, &s_editorUndo, GEN_NO_OUTPUT);
+    editorApplyUndos(redo, NULL, &editorUndo, GEN_NO_OUTPUT);
 }
 
 // -------------------------- end of Undos
@@ -1490,7 +1490,7 @@ static void refactoryMoveFileAndDirForPackageRename(char *currentPath, EditorMar
     sprintf(newpackdir, "%s%c%s", path, FILE_PATH_SEPARATOR, refactoringOptions.renameTo);
     javaSlashifyDotName(newpackdir+strlen(path));
     sprintf(newfile, "%s%s", newpackdir, lld->buffer->name+strlen(packdir));
-    refactoryCheckedRenameBuffer(lld->buffer, newfile, &s_editorUndo);
+    refactoryCheckedRenameBuffer(lld->buffer, newfile, &editorUndo);
 }
 
 
@@ -1591,7 +1591,7 @@ static void refactorySimpleRenaming(EditorMarkerList *occs, EditorMarker *point,
                 assert(strlen(nfile) < MAX_FILE_NAME_SIZE-1);
                 if (strcmp(nfile, point->buffer->name)!=0) {
                     // O.K. I should move file
-                    refactoryCheckedRenameBuffer(point->buffer, nfile, &s_editorUndo);
+                    refactoryCheckedRenameBuffer(point->buffer, nfile, &editorUndo);
                 }
             }
         }
@@ -1797,7 +1797,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     csym =  sessionData.browserStack.top->hkSelectedSym;
     symtype = csym->s.bits.symType;
     symLinkName = csym->s.name;
-    undoStartPoint = s_editorUndo;
+    undoStartPoint = editorUndo;
     if (!LANGUAGE(LANG_JAVA)) {
         refactoryMultipleOccurencesSafetyCheck();
     }
@@ -2158,7 +2158,7 @@ static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker 
     strcpy(nameOnPoint, refactoryGetIdentifierOnMarker_st(point));
     refactoryPushReferences(buf, point, "-olcxargmanip",STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
     occs = editorReferencesToMarkers(sessionData.browserStack.top->references, filter0, NULL);
-    startPoint = s_editorUndo;
+    startPoint = editorUndo;
     // first just check that loaded files are up to date
     //& refactoryPreCheckThatSymbolRefsCorresponds(nameOnPoint, occs);
 
@@ -2173,7 +2173,7 @@ static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker 
     if (LANGUAGE(LANG_JAVA)) {
         check = refactoryMakeSafetyCheckAndUndo(point, &occs, startPoint, &redoTrack);
         if (! check) refactoryAskForReallyContinueConfirmation();
-        editorApplyUndos(redoTrack, NULL, &s_editorUndo, GEN_NO_OUTPUT);
+        editorApplyUndos(redoTrack, NULL, &editorUndo, GEN_NO_OUTPUT);
     }
     editorFreeMarkersAndMarkerList(occs);  // O(n^2)!
 }
@@ -2373,7 +2373,7 @@ static bool refactoryAddImport(EditorMarker *point, EditorRegionList **regions,
     EditorUndo        *undoBase;
     EditorRegionList  *wholeBuffer;
 
-    undoBase = s_editorUndo;
+    undoBase = editorUndo;
     sprintf(istat, "import %s;\n", iname);
     mm = editorCreateNewMarker(point->buffer, 0);
     // a little hack, make one free line after 'package'
@@ -2632,7 +2632,7 @@ static void refactoryShowSafetyCheckFailingDialog(EditorMarkerList **totalDiff, 
     refactoryPushMarkersAsReferences(totalDiff, sessionData.browserStack.top,
                                      LINK_NAME_SAFETY_CHECK_MISSED);
     refactoryDisplayResolutionDialog(message, PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
-    editorApplyUndos(redo, NULL, &s_editorUndo, GEN_NO_OUTPUT);
+    editorApplyUndos(redo, NULL, &editorUndo, GEN_NO_OUTPUT);
 }
 
 
@@ -2778,14 +2778,14 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
 
     size = mend->offset - mstart->offset;
     if (check==NO_CHECKS) {
-        editorMoveBlock(target, mstart, size, &s_editorUndo);
+        editorMoveBlock(target, mstart, size, &editorUndo);
         refactoryChangeAccessModifier(point, limitIndex, "public");
     } else {
         assert(sessionData.browserStack.top!=NULL && sessionData.browserStack.top->hkSelectedSym!=NULL);
         theMethod = &sessionData.browserStack.top->hkSelectedSym->s;
         refactoryPushAllReferencesOfMethod(point, "-olallchecks");
         createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
-        editorMoveBlock(target, mstart, size, &s_editorUndo);
+        editorMoveBlock(target, mstart, size, &editorUndo);
         refactoryChangeAccessModifier(point, limitIndex, "public");
         refactoryPushAllReferencesOfMethod(point, "-olallchecks");
         createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
@@ -2946,7 +2946,7 @@ static void refactoryMoveField(EditorMarker *point) {
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
     accessFlags = sessionData.browserStack.top->hkSelectedSym->s.bits.accessFlags;
 
-    undoStartPoint = s_editorUndo;
+    undoStartPoint = editorUndo;
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
     LIST_LEN(progressn, EditorMarkerList, occs); progressi=0;
     regions = NULL;
@@ -2961,7 +2961,7 @@ static void refactoryMoveField(EditorMarker *point) {
     writeRelativeProgress(100);
 
     size = mend->offset - mstart->offset;
-    editorMoveBlock(target, mstart, size, &s_editorUndo);
+    editorMoveBlock(target, mstart, size, &editorUndo);
 
     // reduce long names in the method
     pp = editorDuplicateMarker(mstart);
@@ -3233,7 +3233,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
             progressn += progressj;
         }
     }
-    undoStartPoint = s_editorUndo;
+    undoStartPoint = editorUndo;
     regions = NULL; reglast = &regions; allrefs = NULL;
     for (SymbolsMenu *mm=sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
@@ -3389,7 +3389,7 @@ static void refactoryPushMethodSymbolsPlusThoseWithClearedRegion(EditorMarker *m
     int slen;
 
     assert(m1->buffer == m2->buffer);
-    undoMark = s_editorUndo;
+    undoMark = editorUndo;
     refactoryPushAllReferencesOfMethod(m1,NULL);
     slen = m2->offset-m1->offset;
     assert(slen>=0 && slen<REFACTORING_TMP_STRING_SIZE);
@@ -3526,7 +3526,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
         return;
     }
 
-    checkPoint = s_editorUndo;
+    checkPoint = editorUndo;
     pp = editorCreateNewMarker(point->buffer, point->offset);
     res = editorRunWithMarkerUntil(pp, isMethodBeg, 1);
     if (! res) {
@@ -3536,7 +3536,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     pp->offset ++;
     sprintf(testi, "xxx(%s)", param);
     bi = pp->offset + 3 + plen;
-    editorReplaceString(pp->buffer, pp->offset, 0, testi, strlen(testi), &s_editorUndo);
+    editorReplaceString(pp->buffer, pp->offset, 0, testi, strlen(testi), &editorUndo);
     pp->offset = bi;
     refactoryEditServerParseBuffer(refactoringOptions.project, pp->buffer,
                                    pp, NULL, "-olcxgetsymboltype", "-no-errors");
@@ -3793,7 +3793,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
             ((accFlags&AccessStatic)?scclass:"this"),
             nameOnPoint, nameOnPoint, nameOnPoint);
 
-    beforeInsertionUndo = s_editorUndo;
+    beforeInsertionUndo = editorUndo;
     if (CHAR_BEFORE_MARKER(de) != '\n') refactoryReplaceString(de, 0, "\n");
     tbeg = editorDuplicateMarker(de);
     tbeg->offset --;
@@ -3828,7 +3828,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
         if (anotherSetter!=NULL) {
             refactoryAddMethodToForbiddenRegions(anotherSetter, forbiddenRegions);
         }
-        editorUndoUntil(beforeInsertionUndo, &s_editorUndo);
+        editorUndoUntil(beforeInsertionUndo, &editorUndo);
         de->offset = tbeg->offset;
         if (CHAR_BEFORE_MARKER(de) != '\n') refactoryReplaceString(de, 0, "\n");
         tbeg->offset --;
@@ -3859,12 +3859,12 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
                 refactoryCheckedReplaceString(ll->marker, nameOnPointLen, nameOnPoint, "");
                 refactoryReplaceString(ll->marker, 0, setter);
                 refactoryReplaceString(ll->marker, 0, "(");
-                editorRemoveBlanks(ll->marker, 1, &s_editorUndo);
+                editorRemoveBlanks(ll->marker, 1, &editorUndo);
                 refactoryCheckedReplaceString(eqm, 1, "=", "");
-                editorRemoveBlanks(eqm, 0, &s_editorUndo);
+                editorRemoveBlanks(eqm, 0, &editorUndo);
                 refactoryReplaceString(ee, 0, ")");
                 ee->offset --;
-                editorRemoveBlanks(ee, -1, &s_editorUndo);
+                editorRemoveBlanks(ee, -1, &editorUndo);
                 editorFreeMarker(eqm);
                 editorFreeMarker(ee);
             }
@@ -4270,7 +4270,7 @@ static void refactoryPushDownPullUp(EditorMarker *point, PushPullDirection direc
     createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
     assert(sessionData.browserStack.top!=NULL && sessionData.browserStack.top->hkSelectedSym!=NULL);
     theMethod = &sessionData.browserStack.top->hkSelectedSym->s;
-    editorMoveBlock(target, movedStart, size, &s_editorUndo);
+    editorMoveBlock(target, movedStart, size, &editorUndo);
 
     // recompute methodregion, maybe free old methodreg before!!
     startMarker = editorDuplicateMarker(movedStart);
@@ -4462,7 +4462,7 @@ void mainRefactory() {
     point = refactoryGetPointFromRefactoryOptions(buf);
     mark = refactoryGetMarkFromRefactoryOptions(buf);
 
-    refactoringStartingPoint = s_editorUndo;
+    refactoringStartingPoint = editorUndo;
 
     // init subtask
     mainTaskEntryInitialisations(argument_count(refactoryEditServInitOptions),

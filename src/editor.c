@@ -27,23 +27,24 @@ EditorUndo *editorUndo = NULL;
 #define EDITOR_ALLOCATION_RESERVE 1024
 #define EDITOR_FREE_PREFIX_SIZE 16
 
-S_editorMemoryBlock *s_editorMemory[MAX_EDITOR_MEMORY_BLOCK];
+static EditorMemoryBlock *editorMemory[MAX_EDITOR_MEMORY_BLOCK];
 
 #include "editorbuffertab.h"
 
 ////////////////////////////////////////////////////////////////////
 //                      encoding stuff
 
-#define EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, command) {  \
-        unsigned char *s, *d, *maxs;                          \
-        unsigned char *space;                                 \
-        space = (unsigned char *)buff->allocation.text;                \
-        maxs = space + buff->allocation.bufferSize;                    \
-        for(s=d=space; s<maxs; s++) {                         \
-            command                                           \
-        }                                                     \
-        buff->allocation.bufferSize = d - space;                       \
+#define EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, command) {    \
+        unsigned char *s, *d, *maxs;                            \
+        unsigned char *space;                                   \
+        space = (unsigned char *)buff->allocation.text;         \
+        maxs = space + buff->allocation.bufferSize;             \
+        for(s=d=space; s<maxs; s++) {                           \
+            command                                             \
+                }                                               \
+        buff->allocation.bufferSize = d - space;                \
     }
+
 #define EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)    \
     if (*s == '\r') {                               \
         if (s+1<maxs && *(s+1)=='\n') {             \
@@ -472,10 +473,10 @@ void editorFreeMarker(EditorMarker *marker) {
 }
 
 static void editorFreeTextSpace(char *space, int index) {
-    S_editorMemoryBlock *sp;
-    sp = (S_editorMemoryBlock *) space;
-    sp->next = s_editorMemory[index];
-    s_editorMemory[index] = sp;
+    EditorMemoryBlock *sp;
+    sp = (EditorMemoryBlock *) space;
+    sp->next = editorMemory[index];
+    editorMemory[index] = sp;
 }
 
 static void editorFreeBuffer(EditorBufferList *list) {
@@ -549,14 +550,14 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
         allocIndex ++;
         allocSize = allocSize << 1;
     }
-    space = (char *)s_editorMemory[allocIndex];
+    space = (char *)editorMemory[allocIndex];
     if (space == NULL) {
         space = malloc(allocSize+1);
         if (space == NULL) fatalError(ERR_NO_MEMORY, "global malloc", XREF_EXIT_ERR);
         // put magic
         space[allocSize] = 0x3b;
     } else {
-        s_editorMemory[allocIndex] = s_editorMemory[allocIndex]->next;
+        editorMemory[allocIndex] = editorMemory[allocIndex]->next;
     }
     ff->allocation = (EditorBufferAllocationData){.bufferSize = size, .text = space+EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedFreePrefixSize = EDITOR_FREE_PREFIX_SIZE,
@@ -617,7 +618,7 @@ EditorBuffer *editorGetOpenedBuffer(char *name) {
 
     fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
     editorBufferList = (EditorBufferList){.buffer = &editorBuffer, .next = NULL};
-    if (editorBufferTabIsMember(&editorBufferTable, &editorBufferList, NULL, &element)) {
+    if (editorBufferIsMember(&editorBufferList, NULL, &element)) {
         return element->buffer;
     }
     return NULL;
@@ -684,17 +685,17 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     char *oldName;
 
     strcpy(newName, normalizeFileName(nName, cwd));
-    //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warningMessage(ERR_INTERNAL, tmpBuff);
+    log_trace("Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    if (!editorBufferTabIsMember(&editorBufferTable, &ddl, NULL, &memb)) {
+    if (!editorBufferIsMember(&ddl, NULL, &memb)) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
         errorMessage(ERR_INTERNAL, tmpBuff);
         return;
     }
     assert(memb->buffer == buff);
-    deleted = editorBufferTabDeleteExact(&editorBufferTable, memb);
+    deleted = deleteEditorBuffer(memb);
     assert(deleted);
     oldName = buff->name;
     ED_ALLOCC(buff->name, strlen(newName)+1, char);
@@ -705,11 +706,11 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     buff->ftnum = fileIndex;
 
     *memb = (EditorBufferList){.buffer = buff, .next = NULL};
-    if (editorBufferTabIsMember(&editorBufferTable, memb, NULL, &memb2)) {
-        editorBufferTabDeleteExact(&editorBufferTable, memb2);
+    if (editorBufferIsMember(memb, NULL, &memb2)) {
+        deleteEditorBuffer(memb2);
         editorFreeBuffer(memb2);
     }
-    editorBufferTabAdd(&editorBufferTable, memb);
+    addEditorBuffer(memb);
 
     // note undo operation
     if (undo!=NULL) {
@@ -1598,7 +1599,7 @@ void editorCloseBufferIfClosable(char *name) {
 
     fillEmptyEditorBuffer(&dd, name, 0, name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    if (editorBufferTabIsMember(&editorBufferTable, &ddl, &index, &memb)) {
+    if (editorBufferIsMember(&ddl, &index, &memb)) {
         if (BUFFER_IS_CLOSABLE(memb->buffer)) {
             editorCloseBuffer(memb, index);
         }
