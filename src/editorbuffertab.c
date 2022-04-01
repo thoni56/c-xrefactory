@@ -20,3 +20,11 @@ void initEditorBufferTable() {
 int addEditorBuffer(EditorBufferList *bufferList) {
     return editorBufferTabAdd(&editorBufferTable, bufferList);
 }
+
+bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **originP) {
+    return editorBufferTabIsMember(&editorBufferTable, elementP, positionP, originP);
+}
+
+bool deleteEditorBuffer(EditorBufferList *elementP) {
+    return editorBufferTabDeleteExact(&editorBufferTable, elementP);
+}

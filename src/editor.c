@@ -10,14 +10,15 @@
 #include "log.h"
 #include "fileio.h"
 #include "filetable.h"
+#include "editorbuffertab.h"
 
 #include "protocol.h"
 
 typedef struct editorMemoryBlock {
     struct editorMemoryBlock *next;
-} S_editorMemoryBlock;
+} EditorMemoryBlock;
 
-EditorUndo *s_editorUndo = NULL;
+EditorUndo *editorUndo = NULL;
 
 #define MIN_EDITOR_MEMORY_BLOCK 11
 #define MAX_EDITOR_MEMORY_BLOCK 32

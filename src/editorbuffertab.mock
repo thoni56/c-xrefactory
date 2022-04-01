@@ -32,12 +32,8 @@ bool editorBufferTabDelete(struct editorBufferTab *table, EditorBufferList *elem
   return (bool) mock(table, element);
 }
 
-bool editorBufferTabDeleteExact(struct editorBufferTab *table, EditorBufferList *element) {
+bool editorBufferTabDeleteLast(struct editorBufferTab *table, EditorBufferList *element) {
   return (bool)mock(table, element);
-}
-
-int editorBufferTabDeleteLast(struct editorBufferTab *table, EditorBufferList *element) {
-  return (int) mock(table, element);
 }
 
 void editorBufferTabMap(struct editorBufferTab *table, void (*fun)(EditorBufferList *)) {
@@ -68,4 +64,12 @@ void initEditorBufferTable(void) {
 
 int addEditorBuffer(EditorBufferList *bufferList) {
     return (int)mock(bufferList);
+}
+
+bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **originP) {
+    return (bool)mock(elementP, positionP, originP);
+}
+
+bool deleteEditorBuffer(EditorBufferList *elementP) {
+    return (bool)mock(elementP);
 }
