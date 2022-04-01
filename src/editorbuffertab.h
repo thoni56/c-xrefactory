@@ -20,5 +20,6 @@
 extern EditorBufferTab editorBufferTable;
 
 extern void initEditorBufferTable(void);
+extern int addEditorBuffer(EditorBufferList *bufferList);
 
 #endif

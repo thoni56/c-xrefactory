@@ -596,7 +596,7 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
     log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
 
-    editorBufferTabAdd(&editorBufferTable, bufferList);
+    addEditorBuffer(bufferList);
 
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!

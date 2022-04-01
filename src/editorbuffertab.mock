@@ -4,10 +4,6 @@
 
 EditorBufferTab editorBufferTable;
 
-void editorBufferTabInit(struct editorBufferTab *table, int size) {
-  mock(table, size);
-}
-
 void editorBufferTabNoAllocInit(struct editorBufferTab *table, int size) {
   mock(table, size);
 }
@@ -68,4 +64,8 @@ void editorBufferTabStatistics(struct editorBufferTab *table, int *usedIndexes, 
 
 void initEditorBufferTable(void) {
     mock();
+}
+
+int addEditorBuffer(EditorBufferList *bufferList) {
+    return (int)mock(bufferList);
 }
