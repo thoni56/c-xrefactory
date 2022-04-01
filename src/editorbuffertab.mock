@@ -4,57 +4,6 @@
 
 EditorBufferTab editorBufferTable;
 
-void editorBufferTabNoAllocInit(struct editorBufferTab *table, int size) {
-  mock(table, size);
-}
-
-bool editorBufferTabIsMember(struct editorBufferTab *table, EditorBufferList *element, int *position, EditorBufferList **origin) {
-  return (int) mock(table, element, position, origin);
-}
-
-bool editorBufferTabNextMember(EditorBufferList *element, EditorBufferList **original) {
-  return (bool) mock(element, original);
-}
-
-void editorBufferTabSet(struct editorBufferTab *table, EditorBufferList *element, int position) {
-  mock(table, element, position);
-}
-
-void editorBufferTabSetLast(struct editorBufferTab *table, EditorBufferList *element, int position) {
-  mock(table, element, position);
-}
-
-int editorBufferTabAdd(struct editorBufferTab *table, EditorBufferList *element) {
-  return mock(table, element);
-}
-
-bool editorBufferTabDelete(struct editorBufferTab *table, EditorBufferList *element) {
-  return (bool) mock(table, element);
-}
-
-bool editorBufferTabDeleteLast(struct editorBufferTab *table, EditorBufferList *element) {
-  return (bool)mock(table, element);
-}
-
-void editorBufferTabMap(struct editorBufferTab *table, void (*fun)(EditorBufferList *)) {
-  mock(table, fun);
-}
-
-void editorBufferTabMap2(struct editorBufferTab *table, void (*fun)(EditorBufferList *, void *), void *a) {
-  mock(table, fun, a);
-}
-
-void editorBufferTabMap3(struct editorBufferTab *table, void (*fun)(int)) {
-  mock(table, fun);
-}
-
-void editorBufferTabMap5(struct editorBufferTab *table, void (*fun)(EditorBufferList *, void *), void *arg) {
-  mock(table, fun, arg);
-}
-
-void editorBufferTabStatistics(struct editorBufferTab *table, int *usedIndexes, int *elements, int *maxdepth) {
-  mock(table, usedIndexes, elements, maxdepth);
-}
 
 /* Non-hashlist functions for abstraction */
 
