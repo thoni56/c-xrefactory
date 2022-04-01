@@ -335,11 +335,8 @@ EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, Ed
 
 
 //////////////////////////////////////////////////////////////////////////////
-static EditorBufferList *editorBufferTablesInit[EDITOR_BUFF_TAB_SIZE];
-
 void editorInit(void) {
-    editorBufferTables.tab = editorBufferTablesInit;
-    editorBufferTabNoAllocInit(&editorBufferTables, EDITOR_BUFF_TAB_SIZE);
+    initEditorBufferTable();
 }
 
 int editorFileStatus(char *path, struct stat *statP) {
@@ -599,7 +596,7 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
     log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
 
-    editorBufferTabAdd(&editorBufferTables, bufferList);
+    editorBufferTabAdd(&editorBufferTable, bufferList);
 
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
@@ -619,7 +616,7 @@ EditorBuffer *editorGetOpenedBuffer(char *name) {
 
     fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
     editorBufferList = (EditorBufferList){.buffer = &editorBuffer, .next = NULL};
-    if (editorBufferTabIsMember(&editorBufferTables, &editorBufferList, NULL, &element)) {
+    if (editorBufferTabIsMember(&editorBufferTable, &editorBufferList, NULL, &element)) {
         return element->buffer;
     }
     return NULL;
@@ -689,14 +686,14 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warningMessage(ERR_INTERNAL, tmpBuff);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    if (!editorBufferTabIsMember(&editorBufferTables, &ddl, NULL, &memb)) {
+    if (!editorBufferTabIsMember(&editorBufferTable, &ddl, NULL, &memb)) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
         errorMessage(ERR_INTERNAL, tmpBuff);
         return;
     }
     assert(memb->buffer == buff);
-    deleted = editorBufferTabDeleteExact(&editorBufferTables, memb);
+    deleted = editorBufferTabDeleteExact(&editorBufferTable, memb);
     assert(deleted);
     oldName = buff->name;
     ED_ALLOCC(buff->name, strlen(newName)+1, char);
@@ -707,11 +704,11 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     buff->ftnum = fileIndex;
 
     *memb = (EditorBufferList){.buffer = buff, .next = NULL};
-    if (editorBufferTabIsMember(&editorBufferTables, memb, NULL, &memb2)) {
-        editorBufferTabDeleteExact(&editorBufferTables, memb2);
+    if (editorBufferTabIsMember(&editorBufferTable, memb, NULL, &memb2)) {
+        editorBufferTabDeleteExact(&editorBufferTable, memb2);
         editorFreeBuffer(memb2);
     }
-    editorBufferTabAdd(&editorBufferTables, memb);
+    editorBufferTabAdd(&editorBufferTable, memb);
 
     // note undo operation
     if (undo!=NULL) {
@@ -918,8 +915,8 @@ void editorDumpBuffers(void) {
     int                     i;
     EditorBufferList      *ll;
     fprintf(dumpOut,"[editorDumpBuffers] start\n");
-    for(i=0; i<editorBufferTables.size; i++) {
-        for(ll=editorBufferTables.tab[i]; ll!=NULL; ll=ll->next) {
+    for(i=0; i<editorBufferTable.size; i++) {
+        for(ll=editorBufferTable.tab[i]; ll!=NULL; ll=ll->next) {
             fprintf(dumpOut,"%d : %s==%s, %d\n", i, ll->buffer->name, ll->buffer->fileName,
                     ll->buffer->bits.textLoaded);
         }
@@ -939,8 +936,8 @@ void editorQuasiSaveModifiedBuffers(void) {
     static time_t lastQuazySaveTime = 0;
     time_t currentTime;
 
-    for (int i=0; i<editorBufferTables.size; i++) {
-        for (EditorBufferList *ll=editorBufferTables.tab[i]; ll!=NULL; ll=ll->next) {
+    for (int i=0; i<editorBufferTable.size; i++) {
+        for (EditorBufferList *ll=editorBufferTable.tab[i]; ll!=NULL; ll=ll->next) {
             if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
                 saving = true;
                 goto cont;
@@ -959,8 +956,8 @@ void editorQuasiSaveModifiedBuffers(void) {
             //&         ppcGenRecord(PPC_INFORMATION,"slept");
         }
     }
-    for (int i=0; i<editorBufferTables.size; i++) {
-        for (EditorBufferList *ll=editorBufferTables.tab[i]; ll!=NULL; ll=ll->next) {
+    for (int i=0; i<editorBufferTable.size; i++) {
+        for (EditorBufferList *ll=editorBufferTable.tab[i]; ll!=NULL; ll=ll->next) {
             if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
                 editorQuasiSaveBuffer(ll->buffer);
             }
@@ -974,8 +971,8 @@ void editorLoadAllOpenedBufferFiles(void) {
     EditorBufferList *ll;
     struct stat st;
 
-    for(i=0; i<editorBufferTables.size; i++) {
-        for(ll=editorBufferTables.tab[i]; ll!=NULL; ll=ll->next) {
+    for(i=0; i<editorBufferTable.size; i++) {
+        for(ll=editorBufferTable.tab[i]; ll!=NULL; ll=ll->next) {
             if (!ll->buffer->bits.textLoaded) {
                 if (fileStatus(ll->buffer->fileName, &st)==0) {
                     size = st.st_size;
@@ -1472,8 +1469,8 @@ static EditorBufferList *editorComputeAllBuffersList(void) {
     EditorBufferList  *l, *rr, *res;
 
     res = NULL;
-    for (int i=0; i<editorBufferTables.size; i++) {
-        for (l=editorBufferTables.tab[i]; l!=NULL; l=l->next) {
+    for (int i=0; i<editorBufferTable.size; i++) {
+        for (l=editorBufferTable.tab[i]; l!=NULL; l=l->next) {
             ED_ALLOC(rr, EditorBufferList);
             *rr = (EditorBufferList){.buffer = l->buffer, .next = res};
             res = rr;
@@ -1574,7 +1571,7 @@ int editorMapOnNonexistantFiles(
 static void editorCloseBuffer(EditorBufferList *memb, int index) {
     EditorBufferList **ll;
     //&sprintf(tmpBuff,"closing buffer %s %s\n", memb->buffer->name, memb->buffer->fileName);ppcGenRecord(PPC_IGNORE, tmpBuff);
-    for (ll = &editorBufferTables.tab[index]; (*ll)!=NULL; ll = &(*ll)->next) {
+    for (ll = &editorBufferTable.tab[index]; (*ll)!=NULL; ll = &(*ll)->next) {
         if (*ll == memb) break;
     }
     if (*ll == memb) {
@@ -1600,7 +1597,7 @@ void editorCloseBufferIfClosable(char *name) {
 
     fillEmptyEditorBuffer(&dd, name, 0, name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    if (editorBufferTabIsMember(&editorBufferTables, &ddl, &index, &memb)) {
+    if (editorBufferTabIsMember(&editorBufferTable, &ddl, &index, &memb)) {
         if (BUFFER_IS_CLOSABLE(memb->buffer)) {
             editorCloseBuffer(memb, index);
         }
@@ -1610,8 +1607,8 @@ void editorCloseBufferIfClosable(char *name) {
 void editorCloseAllBuffersIfClosable(void) {
     EditorBufferList *list, *next;
 
-    for (int i=0; i<editorBufferTables.size; i++) {
-        for(list=editorBufferTables.tab[i]; list!=NULL;) {
+    for (int i=0; i<editorBufferTable.size; i++) {
+        for(list=editorBufferTable.tab[i]; list!=NULL;) {
             next = list->next;
             //& fprintf(dumpOut, "closable %d for %s(%d) %s(%d)\n", BUFFER_IS_CLOSABLE(list->buffer), list->buffer->name, list->buffer->name, list->buffer->fileName, list->buffer->fileName);fflush(dumpOut);
             if (BUFFER_IS_CLOSABLE(list->buffer)) editorCloseBuffer(list, i);
@@ -1624,12 +1621,12 @@ void editorCloseAllBuffers(void) {
     int i;
     EditorBufferList *ll,*nn;
 
-    for(i=0; i<editorBufferTables.size; i++) {
-        for(ll=editorBufferTables.tab[i]; ll!=NULL;) {
+    for(i=0; i<editorBufferTable.size; i++) {
+        for(ll=editorBufferTable.tab[i]; ll!=NULL;) {
             nn = ll->next;
             editorFreeBuffer(ll);
             ll = nn;
         }
-        editorBufferTables.tab[i] = NULL;
+        editorBufferTable.tab[i] = NULL;
     }
 }

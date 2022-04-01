@@ -17,6 +17,8 @@
 
 #define EDITOR_BUFF_TAB_SIZE 100
 
-extern EditorBufferTab editorBufferTables;
+extern EditorBufferTab editorBufferTable;
+
+extern void initEditorBufferTable(void);
 
 #endif

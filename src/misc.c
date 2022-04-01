@@ -1044,9 +1044,9 @@ int mapDirectoryFiles(
     DIR             *fd;
     struct dirent   *dirbuf;
 
-    if (  editorFileStatus(dirname,&stt) == 0
-          && (stt.st_mode & S_IFMT) == S_IFDIR
-          && (fd = opendir(dirname)) != NULL) {
+    if (editorFileStatus(dirname, &stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR
+        && (fd = opendir(dirname)) != NULL)
+    {
         while ((dirbuf=readdir(fd)) != NULL) {
             if (  dirbuf->d_ino != 0 &&
                   strcmp(dirbuf->d_name, ".") != 0

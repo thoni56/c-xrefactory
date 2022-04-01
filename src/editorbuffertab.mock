@@ -2,7 +2,7 @@
 #include <cgreen/mocks.h>
 #include "editorbuffertab.h"
 
-EditorBufferTab editorBufferTables;
+EditorBufferTab editorBufferTable;
 
 void editorBufferTabInit(struct editorBufferTab *table, int size) {
   mock(table, size);
@@ -62,4 +62,10 @@ void editorBufferTabMap5(struct editorBufferTab *table, void (*fun)(EditorBuffer
 
 void editorBufferTabStatistics(struct editorBufferTab *table, int *usedIndexes, int *elements, int *maxdepth) {
   mock(table, usedIndexes, elements, maxdepth);
+}
+
+/* Non-hashlist functions for abstraction */
+
+void initEditorBufferTable(void) {
+    mock();
 }

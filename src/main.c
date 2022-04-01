@@ -1268,7 +1268,8 @@ void processOptions(int argc, char **argv, int infilesFlag) {
 
     for (i=1; i<argc; i++) {
         if (options.taskRegime==RegimeEditServer &&
-            strncmp(argv[i], "-last_message=",14)==0) {
+            strncmp(argv[i], "-last_message=",14)==0)
+        {
             // because of emacs-debug
             log_trace("processing argument '-lastmessage=...'");
         } else {

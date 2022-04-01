@@ -8,4 +8,11 @@
 
 #include "hashlist.tc"
 
-EditorBufferTab editorBufferTables;
+EditorBufferTab editorBufferTable;
+
+static EditorBufferList *editorBufferTablesInit[EDITOR_BUFF_TAB_SIZE];
+
+void initEditorBufferTable() {
+    editorBufferTable.tab = editorBufferTablesInit;
+    editorBufferTabNoAllocInit(&editorBufferTable, EDITOR_BUFF_TAB_SIZE);
+}
