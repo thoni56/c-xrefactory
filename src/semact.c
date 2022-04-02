@@ -107,7 +107,7 @@ void addSymbol(SymbolTable *table, Symbol *symbol) {
     log_debug("adding symbol %s: %s %s", symbol->name, typeNamesTable[symbol->bits.symbolType],
               storageEnumName[symbol->bits.storage]);
     assert(symbol->bits.npointers==0);
-    addSymbolNoTrail(symbol, table);
+    addSymbolNoTrail(table, symbol);
     addToTrail(deleteSymDef, symbol /* TODO? Should also include reference to table */, (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
 }
 

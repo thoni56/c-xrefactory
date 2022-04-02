@@ -37,8 +37,8 @@ int getNextExistingSymbol(int index) {
     return -1;
 }
 
-/* Java uses JavaStat.locals as a symboltable ("trail"?) so must use symtab */
-void addSymbolNoTrail(Symbol *symbol, SymbolTable *symtab) {
+/* Java uses JavaStat.locals as a symboltable ("trail"?) so must use symtab argument */
+void addSymbolNoTrail(SymbolTable *symtab, Symbol *symbol) {
     int i;
     Symbol *memb;
 

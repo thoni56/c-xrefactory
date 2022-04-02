@@ -80,7 +80,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     s = newSymbolAsLabel(name, name, noPosition, labn);
     fillSymbolBits(&s->bits, AccessDefault, TypeLabel, StorageAuto);
 
-    addSymbolNoTrail(s, symbolTable);
+    addSymbolNoTrail(symbolTable, s);
     return(s);
 }
 

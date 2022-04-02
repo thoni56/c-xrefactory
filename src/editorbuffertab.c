@@ -1,3 +1,4 @@
+#include "editor.h"
 #define IN_EDITORBUFFERTAB_C
 #include "editorbuffertab.h"
 
@@ -10,7 +11,7 @@
 
 
 static EditorBufferList *editorBufferTablesInit[EDITOR_BUFF_TAB_SIZE];
-EditorBufferTab editorBufferTable;
+static EditorBufferTab editorBufferTable;
 
 void initEditorBufferTable() {
     editorBufferTable.tab = editorBufferTablesInit;
@@ -29,9 +30,21 @@ bool deleteEditorBuffer(EditorBufferList *elementP) {
     return editorBufferTabDeleteExact(&editorBufferTable, elementP);
 }
 
+EditorBufferList *getEditorBuffer(int index) {
+    return editorBufferTable.tab[index];
+}
+
 int getNextExistingEditorBufferIndex(int index) {
     for (int i=index; i < editorBufferTable.size; i++)
         if (editorBufferTable.tab[i] != NULL)
             return i;
     return -1;
+}
+
+void setEditorBuffer(int index, EditorBufferList *elementP) {
+    editorBufferTable.tab[index] = elementP;
+}
+
+void clearEditorBuffer(int index) {
+    editorBufferTable.tab[index] = NULL;
 }

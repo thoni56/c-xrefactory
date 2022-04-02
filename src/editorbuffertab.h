@@ -17,12 +17,14 @@
 
 #define EDITOR_BUFF_TAB_SIZE 100
 
-extern EditorBufferTab editorBufferTable;
 
 extern void initEditorBufferTable(void);
 extern int  addEditorBuffer(EditorBufferList *bufferList);
 extern bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **originP);
 extern bool deleteEditorBuffer(EditorBufferList *element);
 extern int  getNextExistingEditorBufferIndex(int index);
+extern EditorBufferList *getEditorBuffer(int index);
+extern void setEditorBuffer(int index, EditorBufferList *buffer);
+extern void clearEditorBuffer(int index);
 
 #endif

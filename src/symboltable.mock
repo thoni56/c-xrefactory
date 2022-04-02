@@ -68,6 +68,6 @@ void initSymbolTable(int size) { mock(size); }
 
 int addToSymbolTable(Symbol *symbol) { return (int)mock(symbol); }
 
-void addSymbolNoTrail(Symbol *symbol, SymbolTable *symbolTable) { /* TODO remove table argument? */
+void addSymbolNoTrail(SymbolTable *symbolTable, Symbol *symbol) { /* TODO remove table argument? */
     mock(symbol, symbolTable);
 }

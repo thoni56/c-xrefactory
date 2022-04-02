@@ -22,3 +22,19 @@ bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBuff
 bool deleteEditorBuffer(EditorBufferList *elementP) {
     return (bool)mock(elementP);
 }
+
+EditorBufferList *getEditorBuffer(int index) {
+    return (EditorBufferList *)mock(index);
+}
+
+int getNextExistingEditorBufferIndex(int index) {
+    return (int)mock(index);
+}
+
+void setEditorBuffer(int index, EditorBufferList *elementP) {
+    mock(index, elementP);
+}
+
+void clearEditorBuffer(int index) {
+    mock(index);
+}
