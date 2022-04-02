@@ -20,8 +20,9 @@
 extern EditorBufferTab editorBufferTable;
 
 extern void initEditorBufferTable(void);
-extern int addEditorBuffer(EditorBufferList *bufferList);
+extern int  addEditorBuffer(EditorBufferList *bufferList);
 extern bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **originP);
 extern bool deleteEditorBuffer(EditorBufferList *element);
+extern int  getNextExistingEditorBufferIndex(int index);
 
 #endif

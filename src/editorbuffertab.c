@@ -28,3 +28,10 @@ bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBuff
 bool deleteEditorBuffer(EditorBufferList *elementP) {
     return editorBufferTabDeleteExact(&editorBufferTable, elementP);
 }
+
+int getNextExistingEditorBufferIndex(int index) {
+    for (int i=index; i < editorBufferTable.size; i++)
+        if (editorBufferTable.tab[i] != NULL)
+            return i;
+    return -1;
+}
