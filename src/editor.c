@@ -744,11 +744,9 @@ EditorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName) {
 }
 
 EditorBuffer *editorFindFile(char *name) {
-    int size;
     struct stat stat;
-    EditorBuffer *editorBuffer;
+    EditorBuffer *editorBuffer = editorGetOpenedAndLoadedBuffer(name);
 
-    editorBuffer = editorGetOpenedAndLoadedBuffer(name);
     if (editorBuffer==NULL) {
         editorBuffer = editorGetOpenedBuffer(name);
         if (editorBuffer == NULL) {
@@ -759,8 +757,7 @@ EditorBuffer *editorFindFile(char *name) {
         }
         if (editorBuffer != NULL && !isDirectory(editorBuffer->fileName)) {
             fileStatus(name, &stat);
-            size = stat.st_size;
-            allocNewEditorBufferTextSpace(editorBuffer, size);
+            allocNewEditorBufferTextSpace(editorBuffer, stat.st_size);
             editorLoadFileIntoBufferText(editorBuffer, &stat);
         } else {
             return NULL;
@@ -801,14 +798,14 @@ void editorReplaceString(EditorBuffer *buff, int position, int delsize,
         // deleting over end of buffer,
         // delete only until end of buffer
         delsize = oldsize - position;
-        if (options.debug) assert(0);
     }
-    //&fprintf(dumpOut,"replacing string in buffer %d (%s)\n", buff, buff->name);
+    log_trace("replacing string in buffer %d (%s)", buff, buff->name);
     nsize = oldsize + strlength - delsize;
     // prepare operation
     if (nsize >= buff->allocation.allocatedSize - buff->allocation.allocatedFreePrefixSize) {
         // resize buffer
-        //&sprintf(tmpBuff,"resizing %s from %d(%d) to %d\n", buff->name, buff->allocation.bufferSize, buff->allocation.allocatedSize, nsize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(communicationChannel);
+        log_trace("resizing %s from %d(%d) to %d", buff->name, buff->allocation.bufferSize,
+                  buff->allocation.allocatedSize, nsize);
         text = buff->allocation.text;
         space = buff->allocation.allocatedBlock; index = buff->allocation.allocatedIndex;
         allocNewEditorBufferTextSpace(buff, nsize);

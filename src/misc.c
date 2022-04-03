@@ -1047,10 +1047,8 @@ int mapDirectoryFiles(char *dirname,
         && (fd = opendir(dirname)) != NULL)
     {
         while ((dirbuf=readdir(fd)) != NULL) {
-            if (  dirbuf->d_ino != 0 &&
-                  strcmp(dirbuf->d_name, ".") != 0
-                  && strcmp(dirbuf->d_name, "..") != 0) {
-                /*fprintf(dumpOut,"mapping file %s\n",dirbuf->d_name);fflush(dumpOut);*/
+            if (dirbuf->d_ino != 0 && strcmp(dirbuf->d_name, ".") != 0 && strcmp(dirbuf->d_name, "..") != 0) {
+                log_trace("mapping file %s", dirbuf->d_name);
                 (*fun)(dirbuf->d_name, a1, a2, a3, a4, a5);
                 res = 1;
             }

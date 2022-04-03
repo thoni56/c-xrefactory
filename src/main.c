@@ -2374,7 +2374,6 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
 }
 
 static void scheduleModifiedFilesToUpdate(void) {
-    char        ttt[MAX_FILE_NAME_SIZE];
     char        *filestab;
     struct stat stat;
     char        *suffix;
@@ -2384,6 +2383,7 @@ static void scheduleModifiedFilesToUpdate(void) {
         suffix = "";
         filestab = options.cxrefsLocation;
     } else {
+        char ttt[MAX_FILE_NAME_SIZE];
         suffix = REFERENCE_FILENAME_FILES;
         sprintf(ttt, "%s%s", options.cxrefsLocation, suffix);
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
