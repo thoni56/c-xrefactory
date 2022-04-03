@@ -102,7 +102,7 @@ extern void editorInit(void);
 extern bool editorFileExists(char *path);
 extern size_t editorFileSize(char *path);
 extern time_t editorFileModificationTime(char *path);
-extern int editorFileStatus(char *path, struct stat *statbuf);
+extern int editorFileStatus(char *path, struct stat *statP);
 
 extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous, EditorMarker *next);
 extern bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2);

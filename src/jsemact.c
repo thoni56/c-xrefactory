@@ -357,18 +357,21 @@ bool javaTypeFileExist(IdList *name) {
     return false;
 }
 
-static bool javaFindClassFile(char *name, char **resultingName, struct stat *statP) {
+static bool javaFindClassFile(char *name, char **resultingName, time_t *modifiedTimeP) {
+    struct stat stat;
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
         if (javaFindFile0(s_javaStat->unnamedPackagePath, "/", name, ".class",
                           resultingName)) {
-            editorFileStatus(*resultingName, statP);
+            editorFileStatus(*resultingName, &stat);
+            *modifiedTimeP = stat.st_mtime;
             return true;
         }
     }
     // now other classpaths
     for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         if (javaFindFile0(cp->string, "/", name, ".class", resultingName)) {
-            editorFileStatus(*resultingName, statP);
+            editorFileStatus(*resultingName, &stat);
+            *modifiedTimeP = stat.st_mtime;
             return true;
         }
     }
@@ -377,7 +380,8 @@ static bool javaFindClassFile(char *name, char **resultingName, struct stat *sta
     for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
         log_trace("Looking in '%s'", zipArchiveTable[i].fn);
         if (zipFindFile(name,resultingName,&zipArchiveTable[i])) {
-            *statP = zipArchiveTable[i].stat;
+            stat = zipArchiveTable[i].stat;
+            *modifiedTimeP = stat.st_mtime;
             return true;
         }
     }
@@ -417,7 +421,6 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
     int sourceIndex;
     bool classFound;
     bool sourceFound;
-    struct stat stat;
     char *linkName, *slname;
 
     log_trace("looking for Java file '%s'", classSymbol->linkName);
@@ -448,8 +451,9 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
         log_trace("result %d %s", sourceFound, *sourceFileNameP);
     }
 
-    /* We need to retain the stat value for class files since it can be inside an archive */
-    classFound = javaFindClassFile(linkName, classFileNameP, &stat);
+    /* We need to retain the modified time for class files since it can be inside an archive */
+    time_t modifiedTime;
+    classFound = javaFindClassFile(linkName, classFileNameP, &modifiedTime);
     if (!classFound)
         *classFileNameP = NULL;
     if (!sourceFound)
@@ -470,7 +474,7 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
         return RESULT_IS_JAVA_FILE;
     assert(sourceFound && classFound);
 
-    if (fileModificationTime(*sourceFileNameP) > stat.st_mtime) {
+    if (fileModificationTime(*sourceFileNameP) > modifiedTime) {
         return RESULT_IS_JAVA_FILE;
     } else {
         return RESULT_IS_CLASS_FILE;

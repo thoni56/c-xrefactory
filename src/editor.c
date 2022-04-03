@@ -927,7 +927,7 @@ void editorDumpBuffers(void) {
 
 static void editorQuasiSaveBuffer(EditorBuffer *buffer) {
     buffer->bits.modifiedSinceLastQuasiSave = false;
-    buffer->stat.st_mtime = time(NULL);  //? why it does not work with 1;
+    buffer->stat.st_mtime = time(NULL);
     FileItem *fileItem = getFileItem(buffer->ftnum);
     fileItem->lastModified = buffer->stat.st_mtime;
 }
