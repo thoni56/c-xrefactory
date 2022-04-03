@@ -397,19 +397,19 @@ bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {
 }
 
 bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2) {
-    return(! editorMarkerLess(m2, m1));
+    return !editorMarkerLess(m2, m1);
 }
 
 bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2) {
-    return(editorMarkerLess(m2, m1));
+    return editorMarkerLess(m2, m1);
 }
 
 bool editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
-    return(editorMarkerLessOrEq(m2, m1));
+    return editorMarkerLessOrEq(m2, m1);
 }
 
 bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2) {
-    return(editorMarkerLess(l1->marker, l2->marker));
+    return editorMarkerLess(l1->marker, l2->marker);
 }
 
 bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2) {
@@ -453,7 +453,7 @@ EditorMarker *editorCreateNewMarkerForPosition(Position *position) {
 }
 
 EditorMarker *editorDuplicateMarker(EditorMarker *marker) {
-    return(editorCreateNewMarker(marker->buffer, marker->offset));
+    return editorCreateNewMarker(marker->buffer, marker->offset);
 }
 
 static void editorRemoveMarkerFromBufferNoFreeing(EditorMarker *marker) {
@@ -628,8 +628,9 @@ EditorBuffer *editorGetOpenedBuffer(char *name) {
 EditorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
     EditorBuffer *res;
     res = editorGetOpenedBuffer(name);
-    if (res!=NULL && res->bits.textLoaded) return(res);
-    return(NULL);
+    if (res!=NULL && res->bits.textLoaded)
+        return res;
+    return NULL;
 }
 
 static EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
@@ -734,7 +735,7 @@ EditorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName) {
     struct stat     st;
     res = editorGetOpenedBuffer(name);
     if (res != NULL) {
-        return(res);
+        return res;
     }
     fileStatus(fileName, &st);
     res = editorCreateNewBuffer(name, fileName, &st);
@@ -780,7 +781,7 @@ EditorBuffer *editorFindFileCreate(char *name) {
         allocNewEditorBufferTextSpace(res, 0);
         res->bits.textLoaded = true;
     }
-    return(res);
+    return res;
 }
 
 void editorReplaceString(EditorBuffer *buff, int position, int delsize,
@@ -993,20 +994,21 @@ int editorRunWithMarkerUntil(EditorMarker *m, int (*until)(int), int step) {
     m->offset = offset;
     if (offset<0) {
         m->offset = 0;
-        return(0);
+        return 0;
     }
     if (offset>=max) {
         m->offset = max-1;
-        return(0);
+        return 0;
     }
-    return(1);
+    return 1;
 }
 
 int editorCountLinesBetweenMarkers(EditorMarker *m1, EditorMarker *m2) {
     int     i, max, count;
     char    *text;
     // this can happen after an error in moving, just pass in this case
-    if (m1 == NULL || m2==NULL) return(0);
+    if (m1 == NULL || m2==NULL)
+        return 0;
     assert(m1->buffer == m2->buffer);
     assert(m1->offset <= m2->offset);
     text = m1->buffer->allocation.text;
@@ -1015,27 +1017,27 @@ int editorCountLinesBetweenMarkers(EditorMarker *m1, EditorMarker *m2) {
     for(i=m1->offset; i<max; i++) {
         if (text[i]=='\n') count ++;
     }
-    return(count);
+    return count;
 }
 
-static int isNewLine(int c) {return(c=='\n');}
+static int isNewLine(int c) {return c=='\n';}
 int editorMoveMarkerToNewline(EditorMarker *m, int direction) {
-    return(editorRunWithMarkerUntil(m, isNewLine, direction));
+    return editorRunWithMarkerUntil(m, isNewLine, direction);
 }
 
-static int isNonBlank(int c) {return(! isspace(c));}
+static int isNonBlank(int c) {return ! isspace(c);}
 int editorMoveMarkerToNonBlank(EditorMarker *m, int direction) {
-    return(editorRunWithMarkerUntil(m, isNonBlank, direction));
+    return editorRunWithMarkerUntil(m, isNonBlank, direction);
 }
 
-static int isNonBlankOrNewline(int c) {return(c=='\n' || ! isspace(c));}
+static int isNonBlankOrNewline(int c) {return c=='\n' || ! isspace(c);}
 int editorMoveMarkerToNonBlankOrNewline(EditorMarker *m, int direction) {
-    return(editorRunWithMarkerUntil(m, isNonBlankOrNewline, direction));
+    return editorRunWithMarkerUntil(m, isNonBlankOrNewline, direction);
 }
 
-static int isNotIdentPart(int c) {return((! isalnum(c)) && c!='_' && c!='$');}
+static int isNotIdentPart(int c) {return !isalnum(c) && c!='_' && c!='$';}
 int editorMoveMarkerBeyondIdentifier(EditorMarker *m, int direction) {
-    return(editorRunWithMarkerUntil(m, isNotIdentPart, direction));
+    return editorRunWithMarkerUntil(m, isNotIdentPart, direction);
 }
 
 void editorRemoveBlanks(EditorMarker *mm, int direction, EditorUndo **undo) {
@@ -1149,7 +1151,7 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
     // get markers in the same order as were references
     // ?? is this still needed?
     LIST_REVERSE(EditorMarkerList, res);
-    return(res);
+    return res;
 }
 
 Reference *editorMarkersToReferences(EditorMarkerList **mms) {
@@ -1252,32 +1254,23 @@ void editorDumpMarkerList(EditorMarkerList *mml) {
 }
 
 void editorDumpRegionList(EditorRegionList *mml) {
-    EditorRegionList *mm;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    sprintf(tmpBuff,"-------------------[[dumping editor regions]]\n");
-    fprintf(dumpOut,"%s\n",tmpBuff);
-    //ppcGenTmpBuff();
-    for(mm=mml; mm!=NULL; mm=mm->next) {
+    log_trace("[dumping editor regions]");
+    for (EditorRegionList *mm=mml; mm!=NULL; mm=mm->next) {
         if (mm->region.begin == NULL || mm->region.end == NULL) {
-            sprintf(tmpBuff,"%ld: [null]", (unsigned long)mm);
-            fprintf(dumpOut,"%s\n",tmpBuff);
-            //ppcGenTmpBuff();
+            log_trace("%ld: [null]", (unsigned long)mm);
         } else {
-            sprintf(tmpBuff, "%ld: [%s: %d - %d] --> %c - %c", (unsigned long)mm,
-                    simpleFileName(mm->region.begin->buffer->name), mm->region.begin->offset,
-                    mm->region.end->offset, CHAR_ON_MARKER(mm->region.begin), CHAR_ON_MARKER(mm->region.end));
-            fprintf(dumpOut,"%s\n",tmpBuff);
-            //ppcGenTmpBuff();
+            log_trace("%ld: [%s: %d - %d] --> %c - %c", (unsigned long)mm,
+                      simpleFileName(mm->region.begin->buffer->name), mm->region.begin->offset,
+                      mm->region.end->offset, CHAR_ON_MARKER(mm->region.begin), CHAR_ON_MARKER(mm->region.end));
         }
     }
-    sprintf(tmpBuff, "------------------[[dumpend]]\n");
-    fprintf(dumpOut,"%s\n",tmpBuff);
-    //ppcGenTmpBuff();
+    log_trace("[dumpend] of editor regions]");
 }
 
 void editorDumpUndoList(EditorUndo *undo) {
-    log_trace("[undodump] begin");
+    log_trace("[dumping editor undo list]");
     while (undo != NULL) {
         switch (undo->operation) {
         case UNDO_REPLACE_STRING:
@@ -1376,12 +1369,8 @@ void editorSortRegionsAndRemoveOverlaps(EditorRegionList **regions) {
     }
 }
 
-void editorSplitMarkersWithRespectToRegions(
-                                            EditorMarkerList  **inMarkers,
-                                            EditorRegionList  **inRegions,
-                                            EditorMarkerList  **outInsiders,
-                                            EditorMarkerList  **outOutsiders
-                                            ) {
+void editorSplitMarkersWithRespectToRegions(EditorMarkerList **inMarkers, EditorRegionList **inRegions,
+                                            EditorMarkerList **outInsiders, EditorMarkerList **outOutsiders) {
     EditorMarkerList *mm, *nn;
     EditorRegionList *rr;
 
@@ -1430,11 +1419,11 @@ void editorRestrictMarkersToRegions(EditorMarkerList **mm, EditorRegionList **re
 }
 
 EditorMarker *editorCrMarkerForBufferBegin(EditorBuffer *buffer) {
-    return(editorCreateNewMarker(buffer,0));
+    return editorCreateNewMarker(buffer,0);
 }
 
 EditorMarker *editorCrMarkerForBufferEnd(EditorBuffer *buffer) {
-    return(editorCreateNewMarker(buffer,buffer->allocation.bufferSize));
+    return editorCreateNewMarker(buffer,buffer->allocation.bufferSize);
 }
 
 EditorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {
@@ -1478,7 +1467,7 @@ static void editorFreeBufferListButNotBuffers(EditorBufferList *list) {
 }
 
 static int editorBufferNameLess(EditorBufferList*l1,EditorBufferList*l2) {
-    return(strcmp(l1->buffer->name, l2->buffer->name));
+    return strcmp(l1->buffer->name, l2->buffer->name);
 }
 
 // TODO, do all this stuff better!
@@ -1551,7 +1540,7 @@ int editorMapOnNonexistantFiles(char *dirname,
     }
     editorFreeBufferListButNotBuffers(bl);
     //&sprintf(tmpBuff, "QUIT!!!"); ppcGenRecord(PPC_IGNORE,tmpBuff);
-    return(res);
+    return res;
 }
 
 static void editorCloseBuffer(EditorBufferList *member, int index) {
