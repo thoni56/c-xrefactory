@@ -15,6 +15,7 @@ extern int closeFile(FILE *file);
 extern void createDirectory(char *dirname);
 extern void recursivelyCreateFileDirIfNotExists(char *fpath);
 extern void removeFile(char *dirname);
+extern bool isDirectory(char *fullPath);
 extern bool directoryExists(char *fullPath);
 extern bool fileExists(char *fullPath);
 extern size_t readFile(void *buffer, size_t size, size_t count, FILE *file);

@@ -94,6 +94,10 @@ size_t fileSize(char *path) {
     return st.st_size;
 }
 
+bool isDirectory(char *path) {
+    return directoryExists(path);
+}
+
 bool directoryExists(char *path) {
     struct stat st;
     int statResult;

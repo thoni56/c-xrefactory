@@ -752,13 +752,13 @@ EditorBuffer *editorFindFile(char *name) {
     if (editorBuffer==NULL) {
         editorBuffer = editorGetOpenedBuffer(name);
         if (editorBuffer == NULL) {
-            if (fileStatus(name, &stat)==0 && (stat.st_mode & S_IFMT)!=S_IFDIR) {
+            if (fileExists(name) && !isDirectory(name)) {
+                fileStatus(name, &stat);
                 editorBuffer = editorCreateNewBuffer(name, name, &stat);
             }
         }
-        if (editorBuffer != NULL && fileStatus(editorBuffer->fileName, &stat) == 0 &&
-            (stat.st_mode & S_IFMT) != S_IFDIR)
-        {
+        if (editorBuffer != NULL && !isDirectory(editorBuffer->fileName)) {
+            fileStatus(name, &stat);
             size = stat.st_size;
             allocNewEditorBufferTextSpace(editorBuffer, size);
             editorLoadFileIntoBufferText(editorBuffer, &stat);
@@ -1516,9 +1516,8 @@ int editorMapOnNonexistantFiles(char *dirname,
                 strcpy(fname, ll->buffer->name+dlen+1);
                 fnlen = strlen(fname);
             }
-            // check if file exists, map only nonexistant
-            struct stat stat;
-            if (fileStatus(ll->buffer->name, &stat)!=0) {
+            // Only map on nonexistant files
+            if (!fileExists(ll->buffer->name)) {
                 // get file name
                 //&sprintf(tmpBuff, "MAPPING %s as %s in %s", ll->buffer->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuff);
                 (*fun)(fname, a1, a2, a3, a4, a5);

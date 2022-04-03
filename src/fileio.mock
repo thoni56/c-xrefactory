@@ -3,6 +3,10 @@
 #include "fileio.h"
 
 
+bool isDirectory(char *fullPath) {
+    return (bool)mock(fullPath);
+}
+
 bool directoryExists(char *fullPath) {
     return (bool)mock(fullPath);
 }
