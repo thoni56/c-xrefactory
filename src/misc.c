@@ -1016,8 +1016,7 @@ static int mapPatternFiles(char *pattern ,
 #endif
 
 
-int mapDirectoryFiles(
-                      char *dirname,
+int mapDirectoryFiles(char *dirname,
                       void (*fun)(MAP_FUN_SIGNATURE),
                       int allowEditorFilesFlag,
                       char *a1,
@@ -1025,7 +1024,7 @@ int mapDirectoryFiles(
                       Completions *a3,
                       void *a4,
                       int *a5
-                      ){
+){
     int res=0;
 #ifdef __WIN32__
     WIN32_FIND_DATA     fdata;

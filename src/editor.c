@@ -548,7 +548,7 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
     minSize = size + EDITOR_ALLOCATION_RESERVE + EDITOR_FREE_PREFIX_SIZE;
     allocIndex = 11; allocSize = 2048;
     for(; allocSize<minSize; ) {
-        allocIndex ++;
+        allocIndex++;
         allocSize = allocSize << 1;
     }
     space = (char *)editorMemory[allocIndex];
@@ -566,14 +566,14 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
                                            .allocatedSize = allocSize};
 }
 
-static void fillEmptyEditorBuffer(EditorBuffer *ff, char *aname, int ftnum,
-                                  char*afname) {
-    ff->bits = (EditorBufferBits){.textLoaded = 0, .modified = 0, .modifiedSinceLastQuasiSave = 0};
-    ff->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
-                                           .allocatedBlock = NULL, .allocatedIndex = 0, .allocatedSize = 0};
-    *ff = (EditorBuffer){.name = aname, .ftnum = ftnum, .fileName = afname, .markers = NULL,
-                           .allocation = ff->allocation, .bits = ff->bits};
-    memset(&ff->stat, 0, sizeof(ff->stat));
+static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int ftnum, char *fileName) {
+    buffer->bits = (EditorBufferBits){.textLoaded = 0, .modified = 0, .modifiedSinceLastQuasiSave = 0};
+    buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
+                                                      .allocatedBlock = NULL, .allocatedIndex = 0,
+                                                      .allocatedSize = 0};
+    *buffer = (EditorBuffer){.name = name, .ftnum = ftnum, .fileName = fileName, .markers = NULL,
+                             .allocation = buffer->allocation, .bits = buffer->bits};
+    memset(&buffer->stat, 0, sizeof(buffer->stat));
 }
 
 static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {
@@ -1004,18 +1004,17 @@ int editorRunWithMarkerUntil(EditorMarker *m, int (*until)(int), int step) {
 }
 
 int editorCountLinesBetweenMarkers(EditorMarker *m1, EditorMarker *m2) {
-    int     i, max, count;
-    char    *text;
     // this can happen after an error in moving, just pass in this case
     if (m1 == NULL || m2==NULL)
         return 0;
     assert(m1->buffer == m2->buffer);
     assert(m1->offset <= m2->offset);
-    text = m1->buffer->allocation.text;
-    max = m2->offset;
-    count = 0;
-    for(i=m1->offset; i<max; i++) {
-        if (text[i]=='\n') count ++;
+    char *text = m1->buffer->allocation.text;
+    int max = m2->offset;
+    int count = 0;
+    for (int i=m1->offset; i<max; i++) {
+        if (text[i]=='\n')
+            count++;
     }
     return count;
 }
@@ -1047,7 +1046,7 @@ void editorRemoveBlanks(EditorMarker *mm, int direction, EditorUndo **undo) {
     if (direction < 0) {
         mm->offset --;
         editorMoveMarkerToNonBlank(mm, -1);
-        mm->offset ++;
+        mm->offset++;
         editorReplaceString(mm->buffer, mm->offset, moffset - mm->offset, "", 0, undo);
     } else if (direction > 0) {
         editorMoveMarkerToNonBlank(mm, 1);
@@ -1056,7 +1055,7 @@ void editorRemoveBlanks(EditorMarker *mm, int direction, EditorUndo **undo) {
         // both directions
         mm->offset --;
         editorMoveMarkerToNonBlank(mm, -1);
-        mm->offset ++;
+        mm->offset++;
         moffset = mm->offset;
         editorMoveMarkerToNonBlank(mm, 1);
         editorReplaceString(mm->buffer, moffset, mm->offset - moffset, "", 0, undo);
@@ -1077,8 +1076,9 @@ void editorMoveMarkerToLineCol(EditorMarker *m, int line, int col) {
     if (line > 1) {
         for(; s<smax; s++) {
             if (*s == '\n') {
-                ln ++;
-                if (ln == line) break;
+                ln++;
+                if (ln == line)
+                    break;
             }
         }
         if (s < smax) s++;

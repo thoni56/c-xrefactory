@@ -920,9 +920,8 @@ CompilationUnit: {
                         }
                         strncpy(cdir,currentFile.fileName,j);
                         cdir[j]=0;
-                        mapDirectoryFiles(cdir,
-                                    jslAddMapedImportTypeName,ALLOW_EDITOR_FILES, "",
-                                    "", NULL, NULL, NULL);
+                        mapDirectoryFiles(cdir, jslAddMapedImportTypeName, ALLOW_EDITOR_FILES,
+                                          "", "", NULL, NULL, NULL);
                         // why this is there, it makes problem when moving a class
                         // it stays in fileTab and there is a clash!
                         // [2/8/2003] Maybe I should put it out
