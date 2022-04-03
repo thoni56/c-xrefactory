@@ -1037,14 +1037,13 @@ int mapDirectoryFiles(char *dirname,
     }
     assert(d-ttt < MAX_FILE_NAME_SIZE-3);
     sprintf(d,"%c*",FILE_PATH_SEPARATOR);
-    res = mapPatternFiles( ttt, fun, a1, a2, a3, a4, a5);
+    res = mapPatternFiles(ttt, fun, a1, a2, a3, a4, a5);
 #else
     struct stat     stat;
     DIR             *fd;
     struct dirent   *dirbuf;
 
-    if (editorFileStatus(dirname, &stat) == 0 && (stat.st_mode & S_IFMT) == S_IFDIR
-        && (fd = opendir(dirname)) != NULL)
+    if (isDirectory(dirname) && (fd = opendir(dirname)) != NULL)
     {
         while ((dirbuf=readdir(fd)) != NULL) {
             if (dirbuf->d_ino != 0 && strcmp(dirbuf->d_name, ".") != 0 && strcmp(dirbuf->d_name, "..") != 0) {
