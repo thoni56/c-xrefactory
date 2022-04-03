@@ -1458,8 +1458,8 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *marker
 
 
 static void refactoryCheckedRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo) {
-    struct stat st;
-    if (editorFileStatus(newName, &st)==0) {
+    struct stat stat;
+    if (editorFileStatus(newName, &stat)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buff->name);
         ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);

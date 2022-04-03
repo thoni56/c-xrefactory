@@ -297,8 +297,8 @@ static void initZipArchiveDir(ZipArchiveDir *dir) {
 }
 
 
-static void fillZipFileTableItem(ZipFileTableItem *fileItem, struct stat st, ZipArchiveDir *dir) {
-    fileItem->stat = st;
+static void fillZipFileTableItem(ZipFileTableItem *fileItem, struct stat stat, ZipArchiveDir *dir) {
+    fileItem->stat = stat;
     fileItem->dir = dir;
 }
 
@@ -509,7 +509,7 @@ int zipIndexArchive(char *name) {
     int archiveIndex, namelen;
     FILE *zipFile;
     CharacterBuffer *buffer;
-    struct stat fst;
+    struct stat stat;
 
     buffer = &s_zipTmpBuff;
     namelen = strlen(name);
@@ -524,7 +524,7 @@ int zipIndexArchive(char *name) {
     if (archiveIndex<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[archiveIndex].fn[0] == 0) {
         // new file into the table
         log_debug("adding %s into index ",name);
-        if (fileStatus(name ,&fst)!=0) {
+        if (fileStatus(name ,&stat)!=0) {
             assert(options.taskRegime);
             if (options.taskRegime!=RegimeEditServer) {
                 static bool messageWritten = false;
@@ -551,8 +551,8 @@ int zipIndexArchive(char *name) {
         strcpy(zipArchiveTable[archiveIndex].fn, name);
         zipArchiveTable[archiveIndex].fn[namelen] = ZIP_SEPARATOR_CHAR;
         zipArchiveTable[archiveIndex].fn[namelen+1] = 0;
-        fillZipFileTableItem(&zipArchiveTable[archiveIndex], fst, NULL);
-        zipArchiveScan(buffer,&zipArchiveTable[archiveIndex], fst.st_size);
+        fillZipFileTableItem(&zipArchiveTable[archiveIndex], stat, NULL);
+        zipArchiveScan(buffer,&zipArchiveTable[archiveIndex], stat.st_size);
         closeFile(zipFile);
     }
     return archiveIndex;

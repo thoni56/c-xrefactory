@@ -1939,7 +1939,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
 ) {
     char defaultOptionsFileName[MAX_FILE_NAME_SIZE];
     char defaultOptionsSectionName[MAX_FILE_NAME_SIZE];
-    struct stat dffstat;
+    struct stat stat;
     char *fileName;
     StringList *tmpIncludeDirs;
 
@@ -1950,9 +1950,9 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     initAllInputs();
 
     if (defaultOptionsFileName[0] != 0 )
-        fileStatus(defaultOptionsFileName, &dffstat);
+        fileStatus(defaultOptionsFileName, &stat);
     else
-        dffstat.st_mtime = oldStdopTime;               // !!! just for now
+        stat.st_mtime = oldStdopTime;               // !!! just for now
 
     log_trace("Checking oldcp==%s", oldOnLineClassPath);
     log_trace("Checking newcp==%s", options.classpath);
@@ -1960,7 +1960,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         || oldPass != currentPass
         || strcmp(oldStdopFile,defaultOptionsFileName)
         || strcmp(oldStdopSection,defaultOptionsSectionName)
-        || oldStdopTime != dffstat.st_mtime
+        || oldStdopTime != stat.st_mtime
         || oldLanguage!= *outLanguage
         || strcmp(oldOnLineClassPath, options.classpath)
         || cache.cpi == 1     /* some kind of reset was made */
@@ -2007,7 +2007,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         *inputOpened = computeAndOpenInputFile();
         strcpy(oldStdopFile,defaultOptionsFileName);
         strcpy(oldStdopSection,defaultOptionsSectionName);
-        oldStdopTime = dffstat.st_mtime;
+        oldStdopTime = stat.st_mtime;
         oldLanguage = *outLanguage;
         oldPass = currentPass;
 
@@ -2376,7 +2376,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
 static void scheduleModifiedFilesToUpdate(void) {
     char        ttt[MAX_FILE_NAME_SIZE];
     char        *filestab;
-    struct stat refStat;
+    struct stat stat;
     char        *suffix;
 
     checkExactPositionUpdate(true);
@@ -2389,10 +2389,10 @@ static void scheduleModifiedFilesToUpdate(void) {
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         filestab = ttt;
     }
-    if (editorFileStatus(filestab, &refStat))
-        refStat.st_mtime = 0;
+    if (editorFileStatus(filestab, &stat))
+        stat.st_mtime = 0;
     normalScanReferenceFile(suffix);
-    mapOverFileTableWithPointer(schedulingToUpdate, &refStat);
+    mapOverFileTableWithPointer(schedulingToUpdate, &stat);
     if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
     }

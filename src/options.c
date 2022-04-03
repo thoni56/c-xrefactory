@@ -308,7 +308,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     char            *dir,*fname, *suff;
     void            *recurseFlag;
     void            *nrecurseFlag;
-    struct stat     st;
+    struct stat     stat;
     char            fn[MAX_FILE_NAME_SIZE];
     char            wcPaths[MAX_OPTION_LEN];
     int             topCallFlag, stt;
@@ -330,8 +330,8 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
     }
     suff = getFileSuffix(fname);
-    stt = editorFileStatus(fn, &st);
-    if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
+    stt = editorFileStatus(fn, &stat);
+    if (stt==0  && (stat.st_mode & S_IFMT)==S_IFDIR) {
         if (recurseFlag!=NULL) {
             topCallFlag = 0;
             nrecurseFlag = &topCallFlag;

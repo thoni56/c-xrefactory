@@ -502,7 +502,7 @@ static void editorFreeBuffer(EditorBufferList *list) {
     ED_FREE(list, sizeof(EditorBufferList));
 }
 
-static void editorLoadFileIntoBufferText(EditorBuffer *buffer, struct stat *stat) {
+static void editorLoadFileIntoBufferText(EditorBuffer *buffer, struct stat *statP) {
     char *space, *fname;
     FILE *file;
     char *bb;
@@ -538,7 +538,7 @@ static void editorLoadFileIntoBufferText(EditorBuffer *buffer, struct stat *stat
         }
     }
     editorPerformEncodingAdjustemets(buffer);
-    buffer->stat = *stat;
+    buffer->stat = *statP;
     buffer->bits.textLoaded = true;
 }
 
@@ -576,7 +576,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int ftnum, c
     memset(&buffer->stat, 0, sizeof(buffer->stat));
 }
 
-static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {
+static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *statP) {
     char *allocatedName, *normalizedName, *afname, *normalizedFileName;
     EditorBuffer *buffer;
     EditorBufferList *bufferList;
@@ -593,7 +593,7 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
     }
     ED_ALLOC(buffer, EditorBuffer);
     fillEmptyEditorBuffer(buffer, allocatedName, 0, afname);
-    buffer->stat = *st;
+    buffer->stat = *statP;
 
     ED_ALLOC(bufferList, EditorBufferList);
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
@@ -732,34 +732,36 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
 
 EditorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName) {
     EditorBuffer  *res;
-    struct stat     st;
+    struct stat    stat;
+
     res = editorGetOpenedBuffer(name);
     if (res != NULL) {
         return res;
     }
-    fileStatus(fileName, &st);
-    res = editorCreateNewBuffer(name, fileName, &st);
+    fileStatus(fileName, &stat);
+    res = editorCreateNewBuffer(name, fileName, &stat);
     return res;
 }
 
 EditorBuffer *editorFindFile(char *name) {
     int size;
-    struct stat st;
+    struct stat stat;
     EditorBuffer *editorBuffer;
 
     editorBuffer = editorGetOpenedAndLoadedBuffer(name);
     if (editorBuffer==NULL) {
         editorBuffer = editorGetOpenedBuffer(name);
         if (editorBuffer == NULL) {
-            if (fileStatus(name, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
-                editorBuffer = editorCreateNewBuffer(name, name, &st);
+            if (fileStatus(name, &stat)==0 && (stat.st_mode & S_IFMT)!=S_IFDIR) {
+                editorBuffer = editorCreateNewBuffer(name, name, &stat);
             }
         }
-        if (editorBuffer != NULL && fileStatus(editorBuffer->fileName, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
-            // O.K. supposing that I have a regular file
-            size = st.st_size;
+        if (editorBuffer != NULL && fileStatus(editorBuffer->fileName, &stat) == 0 &&
+            (stat.st_mode & S_IFMT) != S_IFDIR)
+        {
+            size = stat.st_size;
             allocNewEditorBufferTextSpace(editorBuffer, size);
-            editorLoadFileIntoBufferText(editorBuffer, &st);
+            editorLoadFileIntoBufferText(editorBuffer, &stat);
         } else {
             return NULL;
         }
@@ -769,14 +771,14 @@ EditorBuffer *editorFindFile(char *name) {
 
 EditorBuffer *editorFindFileCreate(char *name) {
     EditorBuffer  *res;
-    struct stat     st;
+    struct stat    stat;
     res = editorFindFile(name);
     if (res == NULL) {
         // create new buffer
-        st.st_size = 0;
-        st.st_mtime = st.st_atime = st.st_ctime = time(NULL);
-        st.st_mode = S_IFCHR;
-        res = editorCreateNewBuffer(name, name, &st);
+        stat.st_size = 0;
+        stat.st_mtime = stat.st_atime = stat.st_ctime = time(NULL);
+        stat.st_mode = S_IFCHR;
+        res = editorCreateNewBuffer(name, name, &stat);
         assert(res!=NULL);
         allocNewEditorBufferTextSpace(res, 0);
         res->bits.textLoaded = true;
@@ -971,11 +973,11 @@ void editorLoadAllOpenedBufferFiles(void) {
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
             if (!ll->buffer->bits.textLoaded) {
-                struct stat st;
-                if (fileStatus(ll->buffer->fileName, &st)==0) {
-                    int size = st.st_size;
+                struct stat stat;
+                if (fileStatus(ll->buffer->fileName, &stat)==0) {
+                    int size = stat.st_size;
                     allocNewEditorBufferTextSpace(ll->buffer, size);
-                    editorLoadFileIntoBufferText(ll->buffer, &st);
+                    editorLoadFileIntoBufferText(ll->buffer, &stat);
                     log_trace("preloading %s into %s", ll->buffer->fileName, ll->buffer->name);
                 }
             }
@@ -1515,8 +1517,8 @@ int editorMapOnNonexistantFiles(char *dirname,
                 fnlen = strlen(fname);
             }
             // check if file exists, map only nonexistant
-            struct stat st;
-            if (fileStatus(ll->buffer->name, &st)!=0) {
+            struct stat stat;
+            if (fileStatus(ll->buffer->name, &stat)!=0) {
                 // get file name
                 //&sprintf(tmpBuff, "MAPPING %s as %s in %s", ll->buffer->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuff);
                 (*fun)(fname, a1, a2, a3, a4, a5);

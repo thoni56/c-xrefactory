@@ -858,7 +858,7 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
 // Dont use this function!!!! what you need is: expandWildcardsInOnePath
 /* TODO: WTF, why? we *are* using it... */
 void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpaths, int *availableSpace) {
-    struct stat st;
+    struct stat stat;
 
     log_trace("expand wildcards(%s)", fileName);
     if (containsWildcard(fileName)) {
@@ -884,7 +884,7 @@ void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpaths, int
                 if (fileName[si]) { di++; si++; }
             }
         }
-    } else if (editorFileStatus(fileName, &st) == 0) {
+    } else if (editorFileStatus(fileName, &stat) == 0) {
         int len = strlen(fileName);
         strcpy(*outpaths, fileName);
         log_trace("adding expandedpath==%s", fileName);
@@ -1039,11 +1039,11 @@ int mapDirectoryFiles(char *dirname,
     sprintf(d,"%c*",FILE_PATH_SEPARATOR);
     res = mapPatternFiles( ttt, fun, a1, a2, a3, a4, a5);
 #else
-    struct stat     stt;
+    struct stat     stat;
     DIR             *fd;
     struct dirent   *dirbuf;
 
-    if (editorFileStatus(dirname, &stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR
+    if (editorFileStatus(dirname, &stat) == 0 && (stat.st_mode & S_IFMT) == S_IFDIR
         && (fd = opendir(dirname)) != NULL)
     {
         while ((dirbuf=readdir(fd)) != NULL) {
