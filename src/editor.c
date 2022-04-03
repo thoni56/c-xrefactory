@@ -1239,21 +1239,16 @@ void editorDumpMarker(EditorMarker *mm) {
 }
 
 void editorDumpMarkerList(EditorMarkerList *mml) {
-    EditorMarkerList *mm;
-    char tmpBuff[TMP_BUFF_SIZE];
-
-    sprintf(tmpBuff, "------------------[[dumping editor markers]]");
-    ppcBottomInformation(tmpBuff);
-    for(mm=mml; mm!=NULL; mm=mm->next) {
+    log_trace("[dumping editor markers]");
+    for (EditorMarkerList *mm=mml; mm!=NULL; mm=mm->next) {
         if (mm->marker == NULL) {
-            sprintf(tmpBuff, "[null]");
-            ppcBottomInformation(tmpBuff);
+            log_trace("[null]");
         } else {
-            sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->marker->buffer->name), mm->marker->offset, CHAR_ON_MARKER(mm->marker));
-            ppcBottomInformation(tmpBuff);
+            log_trace("[%s:%d] --> %c", simpleFileName(mm->marker->buffer->name), mm->marker->offset,
+                      CHAR_ON_MARKER(mm->marker));
         }
     }
-    sprintf(tmpBuff, "------------------[[dumpend]]\n");ppcBottomInformation(tmpBuff);
+    log_trace("[dumpend of editor marker]");
 }
 
 void editorDumpRegionList(EditorRegionList *mml) {
@@ -1281,37 +1276,31 @@ void editorDumpRegionList(EditorRegionList *mml) {
     //ppcGenTmpBuff();
 }
 
-void editorDumpUndoList(EditorUndo *uu) {
-    char tmpBuff[TMP_BUFF_SIZE];
-
-    fprintf(dumpOut,"\n\n[undodump] begin\n");
-    while (uu!=NULL) {
-        switch (uu->operation) {
+void editorDumpUndoList(EditorUndo *undo) {
+    log_trace("[undodump] begin");
+    while (undo != NULL) {
+        switch (undo->operation) {
         case UNDO_REPLACE_STRING:
-            sprintf(tmpBuff,"replace string [%s:%d] %d (%ld)%s %d", uu->buffer->name,
-                    uu->u.replace.offset, uu->u.replace.size, (unsigned long)uu->u.replace.str,
-                    uu->u.replace.str, uu->u.replace.strlen);
-            if (strlen(uu->u.replace.str)!=uu->u.replace.strlen)
-                fprintf(dumpOut,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            fprintf(dumpOut,"%s\n",tmpBuff);
+            log_trace("replace string [%s:%d] %d (%ld)%s %d", undo->buffer->name, undo->u.replace.offset,
+                      undo->u.replace.size, (unsigned long)undo->u.replace.str, undo->u.replace.str,
+                      undo->u.replace.strlen);
+            if (strlen(undo->u.replace.str) != undo->u.replace.strlen)
+                log_trace("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             break;
         case UNDO_RENAME_BUFFER:
-            sprintf(tmpBuff,"rename buffer %s %s", uu->buffer->name, uu->u.rename.name);
-            fprintf(dumpOut,"%s\n",tmpBuff);
+            log_trace("rename buffer %s %s", undo->buffer->name, undo->u.rename.name);
             break;
         case UNDO_MOVE_BLOCK:
-            sprintf(tmpBuff,"move block [%s:%d] [%s:%d] size==%d", uu->buffer->name, uu->u.moveBlock.offset, uu->u.moveBlock.dbuffer->name, uu->u.moveBlock.doffset, uu->u.moveBlock.size);
-            fprintf(dumpOut,"%s\n",tmpBuff);
+            log_trace("move block [%s:%d] [%s:%d] size==%d", undo->buffer->name, undo->u.moveBlock.offset,
+                      undo->u.moveBlock.dbuffer->name, undo->u.moveBlock.doffset, undo->u.moveBlock.size);
             break;
         default:
-            errorMessage(ERR_INTERNAL,"Unknown operation to undo");
+            errorMessage(ERR_INTERNAL, "Unknown operation to undo");
         }
-        uu = uu->next;
+        undo = undo->next;
     }
-    fprintf(dumpOut,"[undodump] end\n");
-    fflush(dumpOut);
+    log_trace("[undodump] end");
 }
-
 
 void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2,
                               EditorMarkerList **diff1, EditorMarkerList **diff2) {
