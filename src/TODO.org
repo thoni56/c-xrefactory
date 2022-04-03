@@ -29,7 +29,12 @@ There are a *lot* of things to do to make c-xref into modern C.
    xrefs, they should be relative to where the db is.
 * TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
   How to make this backwards compatible?
-* TODO Abstract away struct stat - figure out which parts are actually used so we don't need to store the whole st struct
+* TODO Abstract away struct stat - figure out which parts are actually used
+  ... so we don't need to store the whole st struct...
+  "grep stat\\. *.c" indicates that the following are used:
+  - st_mtime
+  - st_size
+  - st_mode (with S_IFDIF)
 * TODO Header files. There are a number of sections in the proto.h that
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead. Just watchout for

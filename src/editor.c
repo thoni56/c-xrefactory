@@ -776,7 +776,7 @@ EditorBuffer *editorFindFileCreate(char *name) {
     if (res == NULL) {
         // create new buffer
         stat.st_size = 0;
-        stat.st_mtime = stat.st_atime = stat.st_ctime = time(NULL);
+        stat.st_mtime = time(NULL);
         stat.st_mode = S_IFCHR;
         res = editorCreateNewBuffer(name, name, &stat);
         assert(res!=NULL);
