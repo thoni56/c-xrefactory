@@ -348,7 +348,7 @@ int editorFileStatus(char *path, struct stat *statP) {
     if (buffer != NULL) {
         if (statP != NULL) {
             *statP = buffer->stat;
-            log_trace("returning stat of %s modified at %s", path, ctime(&buffer->stat.st_mtime));
+            log_trace("returning stat of %s modified at %s", path, ctime(&buffer->modificationTime));
         }
         return 0;
     }
@@ -360,7 +360,7 @@ time_t editorFileModificationTime(char *path) {
 
     buffer = editorGetOpenedBuffer(path);
     if (buffer != NULL)
-        return buffer->stat.st_mtime;
+        return buffer->modificationTime;
     return fileModificationTime(path);
 }
 
@@ -369,7 +369,7 @@ size_t editorFileSize(char *path) {
 
     buffer = editorGetOpenedBuffer(path);
     if (buffer != NULL)
-        return buffer->stat.st_size;
+        return buffer->size;
     return fileSize(path);
 }
 
@@ -576,7 +576,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int ftnum, c
     memset(&buffer->stat, 0, sizeof(buffer->stat));
 }
 
-static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *statP) {
+static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, time_t modificationTime, size_t size) {
     char *allocatedName, *normalizedName, *afname, *normalizedFileName;
     EditorBuffer *buffer;
     EditorBufferList *bufferList;
@@ -593,7 +593,8 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct st
     }
     ED_ALLOC(buffer, EditorBuffer);
     fillEmptyEditorBuffer(buffer, allocatedName, 0, afname);
-    buffer->stat = *statP;
+    buffer->modificationTime = modificationTime;
+    buffer->size = size;
 
     ED_ALLOC(bufferList, EditorBufferList);
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
@@ -679,7 +680,7 @@ static EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsi
     return undo;
 }
 
-void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
+void editorRenameBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
     int fileIndex, deleted;
     EditorBuffer dd, *removed;
@@ -687,27 +688,27 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
     char *oldName;
 
     strcpy(newName, normalizeFileName(nName, cwd));
-    log_trace("Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);
-    fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
+    log_trace("Renaming %s (at %d) to %s (at %d)", buffer->name, buffer->name, newName, newName);
+    fillEmptyEditorBuffer(&dd, buffer->name, 0, buffer->name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
     if (!editorBufferIsMember(&ddl, NULL, &memb)) {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
+        sprintf(tmpBuff, "Trying to rename non existing buffer %s", buffer->name);
         errorMessage(ERR_INTERNAL, tmpBuff);
         return;
     }
-    assert(memb->buffer == buff);
+    assert(memb->buffer == buffer);
     deleted = deleteEditorBuffer(memb);
     assert(deleted);
-    oldName = buff->name;
-    ED_ALLOCC(buff->name, strlen(newName)+1, char);
-    strcpy(buff->name, newName);
+    oldName = buffer->name;
+    ED_ALLOCC(buffer->name, strlen(newName)+1, char);
+    strcpy(buffer->name, newName);
     // update also ftnum
     fileIndex = addFileNameToFileTable(newName);
-    getFileItem(fileIndex)->bits.commandLineEntered = getFileItem(buff->ftnum)->bits.commandLineEntered;
-    buff->ftnum = fileIndex;
+    getFileItem(fileIndex)->bits.commandLineEntered = getFileItem(buffer->ftnum)->bits.commandLineEntered;
+    buffer->ftnum = fileIndex;
 
-    *memb = (EditorBufferList){.buffer = buff, .next = NULL};
+    *memb = (EditorBufferList){.buffer = buffer, .next = NULL};
     if (editorBufferIsMember(memb, NULL, &memb2)) {
         deleteEditorBuffer(memb2);
         editorFreeBuffer(memb2);
@@ -716,46 +717,43 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, EditorUndo **undo) {
 
     // note undo operation
     if (undo!=NULL) {
-        *undo = newEditorUndoRename(buff, oldName, *undo);
+        *undo = newEditorUndoRename(buffer, oldName, *undo);
     }
-    editorSetBufferModifiedFlag(buff);
+    editorSetBufferModifiedFlag(buffer);
 
     // finally create a buffer with old name and empty text in order
     // to keep information that the file is no longer existing
     // so old references will be removed on update (fixing problem of
     // of moving a package into an existing package).
-    removed = editorCreateNewBuffer(oldName, oldName, &buff->stat);
+    removed = editorCreateNewBuffer(oldName, oldName, buffer->modificationTime, buffer->size);
     allocNewEditorBufferTextSpace(removed, 0);
     removed->bits.textLoaded = true;
     editorSetBufferModifiedFlag(removed);
 }
 
 EditorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName) {
-    EditorBuffer  *res;
-    struct stat    stat;
+    EditorBuffer  *buffer;
 
-    res = editorGetOpenedBuffer(name);
-    if (res != NULL) {
-        return res;
+    buffer = editorGetOpenedBuffer(name);
+    if (buffer != NULL) {
+        return buffer;
     }
-    fileStatus(fileName, &stat);
-    res = editorCreateNewBuffer(name, fileName, &stat);
-    return res;
+    buffer = editorCreateNewBuffer(name, fileName, fileModificationTime(fileName), fileSize(fileName));
+    return buffer;
 }
 
 EditorBuffer *editorFindFile(char *name) {
-    struct stat stat;
     EditorBuffer *editorBuffer = editorGetOpenedAndLoadedBuffer(name);
 
     if (editorBuffer==NULL) {
         editorBuffer = editorGetOpenedBuffer(name);
         if (editorBuffer == NULL) {
             if (fileExists(name) && !isDirectory(name)) {
-                fileStatus(name, &stat);
-                editorBuffer = editorCreateNewBuffer(name, name, &stat);
+                editorBuffer = editorCreateNewBuffer(name, name, fileModificationTime(name), fileSize(name));
             }
         }
         if (editorBuffer != NULL && !isDirectory(editorBuffer->fileName)) {
+            struct stat stat;
             fileStatus(name, &stat);
             allocNewEditorBufferTextSpace(editorBuffer, fileSize(name));
             editorLoadFileIntoBufferText(editorBuffer, &stat);
@@ -771,11 +769,7 @@ EditorBuffer *editorFindFileCreate(char *name) {
     struct stat    stat;
     buffer = editorFindFile(name);
     if (buffer == NULL) {
-        // create new buffer
-        stat.st_size = 0;
-        stat.st_mtime = time(NULL);
-        stat.st_mode = S_IFCHR;
-        buffer = editorCreateNewBuffer(name, name, &stat);
+        buffer = editorCreateNewBuffer(name, name, time(NULL), 0);
         assert(buffer!=NULL);
         allocNewEditorBufferTextSpace(buffer, 0);
         buffer->bits.textLoaded = true;
@@ -928,8 +922,9 @@ void editorDumpBuffers(void) {
 static void editorQuasiSaveBuffer(EditorBuffer *buffer) {
     buffer->bits.modifiedSinceLastQuasiSave = false;
     buffer->stat.st_mtime = time(NULL);
+    buffer->modificationTime = time(NULL);
     FileItem *fileItem = getFileItem(buffer->ftnum);
-    fileItem->lastModified = buffer->stat.st_mtime;
+    fileItem->lastModified = buffer->modificationTime;
 }
 
 void editorQuasiSaveModifiedBuffers(void) {
@@ -1253,8 +1248,6 @@ void editorDumpMarkerList(EditorMarkerList *mml) {
 }
 
 void editorDumpRegionList(EditorRegionList *mml) {
-    char tmpBuff[TMP_BUFF_SIZE];
-
     log_trace("[dumping editor regions]");
     for (EditorRegionList *mm=mml; mm!=NULL; mm=mm->next) {
         if (mm->region.begin == NULL || mm->region.end == NULL) {

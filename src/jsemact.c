@@ -360,18 +360,15 @@ bool javaTypeFileExist(IdList *name) {
 static bool javaFindClassFile(char *name, char **resultingName, time_t *modifiedTimeP) {
     struct stat stat;
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
-        if (javaFindFile0(s_javaStat->unnamedPackagePath, "/", name, ".class",
-                          resultingName)) {
-            editorFileStatus(*resultingName, &stat);
-            *modifiedTimeP = stat.st_mtime;
+        if (javaFindFile0(s_javaStat->unnamedPackagePath, "/", name, ".class", resultingName)) {
+            *modifiedTimeP = editorFileModificationTime(*resultingName);
             return true;
         }
     }
     // now other classpaths
     for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         if (javaFindFile0(cp->string, "/", name, ".class", resultingName)) {
-            editorFileStatus(*resultingName, &stat);
-            *modifiedTimeP = stat.st_mtime;
+            *modifiedTimeP = editorFileModificationTime(*resultingName);
             return true;
         }
     }
