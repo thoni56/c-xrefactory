@@ -347,7 +347,7 @@ int editorFileStatus(char *path, struct stat *statP) {
     buffer = editorGetOpenedBuffer(path);
     if (buffer != NULL) {
         if (statP != NULL) {
-            *statP = buffer->stat;
+            //*statP = buffer->stat; // We don't have this anymore
             log_trace("returning stat of %s modified at %s", path, ctime(&buffer->modificationTime));
         }
         return 0;
@@ -502,25 +502,26 @@ static void editorFreeBuffer(EditorBufferList *list) {
     ED_FREE(list, sizeof(EditorBufferList));
 }
 
-static void editorLoadFileIntoBufferText(EditorBuffer *buffer, struct stat *statP) {
+static void editorLoadFileIntoBufferText(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
     char *space, *fname;
     FILE *file;
     char *bb;
-    int n, ss, size;
+    int n, ss, bufferSize;
 
     fname = buffer->fileName;
     space = buffer->allocation.text;
-    size = buffer->allocation.bufferSize;
+    bufferSize = buffer->allocation.bufferSize;
+    log_trace(":loading file %s==%s size %d", fname, buffer->name, bufferSize);
+
 #if defined (__WIN32__)
     file = openFile(fname, "r");         // was rb, but did not work
 #else
     file = openFile(fname, "r");
 #endif
-    //&fprintf(dumpOut,":loading file %s==%s size %d\n", fname, buffer->name, size);
     if (file == NULL) {
         fatalError(ERR_CANT_OPEN, fname, XREF_EXIT_ERR);
     }
-    bb = space; ss = size;
+    bb = space; ss = bufferSize;
     assert(bb != NULL);
     do {
         n = readFile(bb, 1, ss, file);
@@ -528,17 +529,19 @@ static void editorLoadFileIntoBufferText(EditorBuffer *buffer, struct stat *stat
         ss = ss - n;
     } while (n>0);
     closeFile(file);
+
     if (ss!=0) {
         // this is possible, due to <CR><LF> conversion under MS-DOS
         buffer->allocation.bufferSize -= ss;
         if (ss < 0) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff,"File %s: readed %d chars of %d", fname, size-ss, size);
+            sprintf(tmpBuff,"File %s: read %d chars of %d", fname, bufferSize-ss, bufferSize);
             editorError(ERR_INTERNAL, tmpBuff);
         }
     }
     editorPerformEncodingAdjustemets(buffer);
-    buffer->stat = *statP;
+    buffer->modificationTime = modificationTime;
+    buffer->size = fileSize;
     buffer->bits.textLoaded = true;
 }
 
@@ -573,7 +576,8 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int ftnum, c
                                                       .allocatedSize = 0};
     *buffer = (EditorBuffer){.name = name, .ftnum = ftnum, .fileName = fileName, .markers = NULL,
                              .allocation = buffer->allocation, .bits = buffer->bits};
-    memset(&buffer->stat, 0, sizeof(buffer->stat));
+    buffer->modificationTime = 0;
+    buffer->size = 0;
 }
 
 static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, time_t modificationTime, size_t size) {
@@ -753,10 +757,8 @@ EditorBuffer *editorFindFile(char *name) {
             }
         }
         if (editorBuffer != NULL && !isDirectory(editorBuffer->fileName)) {
-            struct stat stat;
-            fileStatus(name, &stat);
             allocNewEditorBufferTextSpace(editorBuffer, fileSize(name));
-            editorLoadFileIntoBufferText(editorBuffer, &stat);
+            editorLoadFileIntoBufferText(editorBuffer, fileModificationTime(name), fileSize(name));
         } else {
             return NULL;
         }
@@ -765,9 +767,7 @@ EditorBuffer *editorFindFile(char *name) {
 }
 
 EditorBuffer *editorFindFileCreate(char *name) {
-    EditorBuffer  *buffer;
-    struct stat    stat;
-    buffer = editorFindFile(name);
+    EditorBuffer *buffer = editorFindFile(name);
     if (buffer == NULL) {
         buffer = editorCreateNewBuffer(name, name, time(NULL), 0);
         assert(buffer!=NULL);
@@ -921,7 +921,6 @@ void editorDumpBuffers(void) {
 
 static void editorQuasiSaveBuffer(EditorBuffer *buffer) {
     buffer->bits.modifiedSinceLastQuasiSave = false;
-    buffer->stat.st_mtime = time(NULL);
     buffer->modificationTime = time(NULL);
     FileItem *fileItem = getFileItem(buffer->ftnum);
     fileItem->lastModified = buffer->modificationTime;
@@ -963,14 +962,13 @@ void editorQuasiSaveModifiedBuffers(void) {
 
 void editorLoadAllOpenedBufferFiles(void) {
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
-        for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
-            if (!ll->buffer->bits.textLoaded) {
-                struct stat stat;
-                if (fileStatus(ll->buffer->fileName, &stat)==0) {
-                    int size = stat.st_size;
-                    allocNewEditorBufferTextSpace(ll->buffer, size);
-                    editorLoadFileIntoBufferText(ll->buffer, &stat);
-                    log_trace("preloading %s into %s", ll->buffer->fileName, ll->buffer->name);
+        for (EditorBufferList *l = getEditorBuffer(i); l != NULL; l = l->next) {
+            if (!l->buffer->bits.textLoaded) {
+                if (fileExists(l->buffer->fileName)) {
+                    int size = fileSize(l->buffer->fileName);
+                    allocNewEditorBufferTextSpace(l->buffer, size);
+                    editorLoadFileIntoBufferText(l->buffer, fileModificationTime(l->buffer->fileName), size);
+                    log_trace("preloading %s into %s", l->buffer->fileName, l->buffer->name);
                 }
             }
         }

@@ -2380,7 +2380,7 @@ static void scheduleModifiedFilesToUpdate(void) {
 
     checkExactPositionUpdate(true);
 
-    // This seems to get the name of the file that contains the files...
+    // TODO: This seems to get the name of the file that contains the list of files...
     if (options.referenceFileCount <= 1) {
         suffix = "";
         filestab = options.cxrefsLocation;
@@ -2391,7 +2391,7 @@ static void scheduleModifiedFilesToUpdate(void) {
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         filestab = ttt;
     }
-    // ... then gets the stat but resets modification time to 0 ...
+    // ... then gets the stat for it but resets modification time to 0 ...
     if (editorFileStatus(filestab, &stat))
         stat.st_mtime = 0;
 
@@ -2399,6 +2399,8 @@ static void scheduleModifiedFilesToUpdate(void) {
 
     // ... but schedulingToUpdate() does not use the stat data !?!?!?
     mapOverFileTableWithPointer(schedulingToUpdate, &stat);
+    // TODO: ... so WTF??!?!?!?
+
     if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
     }

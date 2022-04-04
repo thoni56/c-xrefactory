@@ -38,7 +38,6 @@ typedef struct editorBuffer {
     char				*fileName;
     time_t              modificationTime;
     size_t              size;
-    struct stat			stat;
     struct editorMarker	*markers;
     struct editorBufferAllocationData allocation;
     struct editorBufferBits bits;
