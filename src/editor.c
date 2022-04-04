@@ -757,7 +757,7 @@ EditorBuffer *editorFindFile(char *name) {
         }
         if (editorBuffer != NULL && !isDirectory(editorBuffer->fileName)) {
             fileStatus(name, &stat);
-            allocNewEditorBufferTextSpace(editorBuffer, stat.st_size);
+            allocNewEditorBufferTextSpace(editorBuffer, fileSize(name));
             editorLoadFileIntoBufferText(editorBuffer, &stat);
         } else {
             return NULL;
@@ -767,20 +767,20 @@ EditorBuffer *editorFindFile(char *name) {
 }
 
 EditorBuffer *editorFindFileCreate(char *name) {
-    EditorBuffer  *res;
+    EditorBuffer  *buffer;
     struct stat    stat;
-    res = editorFindFile(name);
-    if (res == NULL) {
+    buffer = editorFindFile(name);
+    if (buffer == NULL) {
         // create new buffer
         stat.st_size = 0;
         stat.st_mtime = time(NULL);
         stat.st_mode = S_IFCHR;
-        res = editorCreateNewBuffer(name, name, &stat);
-        assert(res!=NULL);
-        allocNewEditorBufferTextSpace(res, 0);
-        res->bits.textLoaded = true;
+        buffer = editorCreateNewBuffer(name, name, &stat);
+        assert(buffer!=NULL);
+        allocNewEditorBufferTextSpace(buffer, 0);
+        buffer->bits.textLoaded = true;
     }
-    return res;
+    return buffer;
 }
 
 void editorReplaceString(EditorBuffer *buff, int position, int delsize,

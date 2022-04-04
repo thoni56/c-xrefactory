@@ -22,8 +22,8 @@ int addEditorBuffer(EditorBufferList *bufferList) {
     return editorBufferTabAdd(&editorBufferTable, bufferList);
 }
 
-bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **originP) {
-    return editorBufferTabIsMember(&editorBufferTable, elementP, positionP, originP);
+bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **foundMemberP) {
+    return editorBufferTabIsMember(&editorBufferTable, elementP, positionP, foundMemberP);
 }
 
 bool deleteEditorBuffer(EditorBufferList *elementP) {
