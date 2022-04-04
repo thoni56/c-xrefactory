@@ -308,10 +308,9 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     char            *dir,*fname, *suff;
     void            *recurseFlag;
     void            *nrecurseFlag;
-    struct stat     stat;
     char            fn[MAX_FILE_NAME_SIZE];
     char            wcPaths[MAX_OPTION_LEN];
-    int             topCallFlag, stt;
+    int             topCallFlag;
 
     dir = a1; fname = file; recurseFlag = a4; topCallFlag = *a5;
     if (topCallFlag == 0) {
@@ -330,8 +329,8 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
     }
     suff = getFileSuffix(fname);
-    stt = editorFileStatus(fn, &stat);
-    if (stt==0  && (stat.st_mode & S_IFMT)==S_IFDIR) {
+    // Directories are never in editor buffers...
+    if (isDirectory(fn)) {
         if (recurseFlag!=NULL) {
             topCallFlag = 0;
             nrecurseFlag = &topCallFlag;
@@ -344,7 +343,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
             //& sprintf(tmpBuff, "omitting directory %s, missing '-r' option ?",fn);
             //& warningMessage(ERR_ST,tmpBuff);
         }
-    } else if (stt==0) {
+    } else if (editorFileExists(fn)) {
         // .class can be inside a jar archive, but this makes problem on
         // recursive read of a directory, it attempts to read .class
         if (topCallFlag==0

@@ -1,5 +1,6 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
+#include <cgreen/mocks.h>
 
 #include "filetable.h"
 #include "options.h"
@@ -40,7 +41,8 @@ Ensure(Options, will_return_true_if_package_structure_exists) {
            will_return(true));
     expect(normalizeFileName, when(name, is_equal_to_string("./org/existant")), will_return("./org/existant"));
     expect(getFileSuffix, will_return(""));
-    expect(editorFileStatus, will_return(0));
+    expect(isDirectory, will_return(false));
+    expect(editorFileExists, will_return(true));
 
     expect(addFileNameToFileTable, will_return(42));
     FileItem fileItem = {"./org/existant"};
@@ -59,7 +61,8 @@ Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
     expect(normalizeFileName, when(name, is_equal_to_string("but/this/path/org/existant")),
            will_return("but/this/path/org/existant"));
     expect(getFileSuffix, will_return(""));
-    expect(editorFileStatus);
+    expect(isDirectory, will_return(false));
+    expect(editorFileExists, will_return(true));
 
     expect(addFileNameToFileTable, will_return(42));
     FileItem fileItem = {"but/this/path/org/existant"};
