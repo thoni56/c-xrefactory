@@ -47,7 +47,18 @@ static int oldPass;
 static Options s_tmpOptions;
 
 static void usage() {
-    fprintf(stdout, "usage:\t\tc-xref <option>+ <input files>\n\n");
+    fprintf(stdout, "c-xref - a C/Yacc/Java cross-referencer and refactoring tool\n\n");
+#if 0
+    fprintf(stdout, "Usage:\n\t\tc-xref <mode> <option>+ <input files>\n\n");
+    fprintf(stdout, "mode (one of):\n");
+    fprintf(stdout, "\t-xref                     - generate cross-reference data in batch mode\n");
+    fprintf(stdout, "\t-server                   - enter edit server mode with c-xref protocol\n");
+    fprintf(stdout, "\t-lsp                      - enter edit server mode with Language Server Protocol (LSP)\n");
+    fprintf(stdout, "\t-refactor                 - make an automated refactoring\n");
+    fprintf(stdout, "\n");
+#else
+    fprintf(stdout, "Usage:\n\t\tc-xref <option>+ <input files>\n\n");
+#endif
     fprintf(stdout, "options:\n");
     fprintf(stdout, "\t-javadocurl=<http>        - url to existing Java API docs\n");
     fprintf(stdout, "\t-javadocpath=<path>       - paths to existing Java API docs\n");

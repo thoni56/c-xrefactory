@@ -1,4 +1,7 @@
-usage:		c-xref <option>+ <input files>
+c-xref - a C/Yacc/Java cross-referencer and refactoring tool
+
+Usage:
+		c-xref <option>+ <input files>
 
 options:
 	-javadocurl=<http>        - url to existing Java API docs
