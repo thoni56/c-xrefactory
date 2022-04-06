@@ -1588,28 +1588,17 @@ static bool computeAndOpenInputFile(void) {
     //!!!! hack for .jar files !!!
     if (LANGUAGE(LANG_JAR) || LANGUAGE(LANG_CLASS))
         return false;
-    if (inputFilename == NULL) {
-        assert(0);
-        inputFile = stdin;
-        inputFilename = "__none__";
-        //& } else if (options.server_operation == OLO_GET_ENV_VALUE) {
-        // hack for getenv
-        // not anymore, parse input for getenv ${__class}, ... settings
-        // also if yes, then move this to 'mainEditSrvParseInputFile' !
-        //&     return false;
-    } else {
-        inputFile = NULL;
-        //& inputBuffer = editorGetOpenedAndLoadedBuffer(inputFilename);
-        inputBuffer = editorFindFile(inputFilename);
-        if (inputBuffer == NULL) {
+
+    inputFile = NULL;
+    inputBuffer = editorFindFile(inputFilename);
+    if (inputBuffer == NULL) {
 #if defined (__WIN32__)
-            inputFile = openFile(inputFilename, "rb");
+        inputFile = openFile(inputFilename, "rb");
 #else
-            inputFile = openFile(inputFilename, "r");
+        inputFile = openFile(inputFilename, "r");
 #endif
-            if (inputFile == NULL) {
-                errorMessage(ERR_CANT_OPEN, inputFilename);
-            }
+        if (inputFile == NULL) {
+            errorMessage(ERR_CANT_OPEN, inputFilename);
         }
     }
     initInput(inputFile, inputBuffer, "\n", inputFilename);

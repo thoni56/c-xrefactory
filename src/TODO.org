@@ -5,9 +5,8 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Abstract editorBufferTable as per fileItemTable
-* DOING Figure out, and if possible, clean up how 'refactory' calls 'server'
-* DOING Selecting automatic project selection after having set a specific does not seem to work
+* DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
+* DOING BUG: Selecting automatic project selection after having set a specific does not seem to work
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
@@ -29,12 +28,6 @@ There are a *lot* of things to do to make c-xref into modern C.
    xrefs, they should be relative to where the db is.
 * TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
   How to make this backwards compatible?
-* TODO Abstract away struct stat - figure out which parts are actually used
-  ... so we don't need to store the whole st struct...
-  "grep stat\\. *.c" indicates that the following are used:
-  - st_mtime
-  - st_size
-  - st_mode (with S_IFDIF)
 * TODO Header files. There are a number of sections in the proto.h that
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead. Just watchout for
@@ -145,6 +138,13 @@ and you can also get java.class.version=55 => java version without decoding dire
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Abstract editorBufferTable as per fileItemTable
+* DONE Abstract away struct stat - figure out which parts are actually used
+  ... so we don't need to store the whole st struct...
+  "grep stat\\. *.c" indicates that the following are used:
+  - st_mtime
+  - st_size
+  - st_mode (with S_IFDIF)
 * DONE Can we remove -user option? YES! Emacs treats frames a users for different browsing contexts
 * DONE Move XX_ALLOCC and friends to "memory" module
 * DONE Turn the out parameter "position" of XXXTabAdd to return value instead, so it can be ignored without unused variable
