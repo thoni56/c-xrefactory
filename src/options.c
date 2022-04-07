@@ -1129,11 +1129,20 @@ void getXrefrcFileName(char *filename) {
 char *findConfigFile(char *start) {
     char currentDir[strlen(start)+1];
     char *normalizedFileName = normalizeFileName(".c-xrefrc", start);
-    int removed = 0;
 
     strcpy(currentDir, start);
-    while (!fileExists(normalizedFileName))
+    /* Remove possible trailing file separator */
+    if (cwd[strlen(cwd)] == FILE_PATH_SEPARATOR)
+        cwd[strlen(cwd)] = '\0';
 
-        return NULL;
+    while (!fileExists(normalizedFileName)) {
+        char *p = strrchr(cwd, FILE_PATH_SEPARATOR);
+        if (p == NULL || p == cwd)
+            return NULL;
+        else {
+            *p = 0;
+            normalizedFileName = normalizeFileName(cwd, ".c-xrefrc");
+        }
+    }
     return normalizedFileName;
 }

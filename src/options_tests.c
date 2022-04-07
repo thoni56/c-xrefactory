@@ -177,10 +177,10 @@ Ensure(Options, can_allocate_a_string) {
 }
 
 Ensure(Options, will_not_find_config_file_in_empty_current_directory_with_no_parents) {
-    strcpy(cwd, "/home/c-xref/dir");
-    expect(normalizeFileName, will_return("/home/c-xref/dir/.c-xrefrc"));
+    strcpy(cwd, "/");
+    expect(normalizeFileName, will_return("/.c-xrefrc"));
 
-    expect(fileExists, when(fullPath, is_equal_to_string("/home/c-xref/dir/.c-xrefrc")), will_return(false));
+    expect(fileExists, when(fullPath, is_equal_to_string("/.c-xrefrc")), will_return(false));
 
     assert_that(findConfigFile(cwd), is_equal_to(NULL));
 }
@@ -200,7 +200,10 @@ Ensure(Options, will_find_config_file_in_parent_directory) {
     strcpy(cwd, "/home/c-xref/dir");
     expect(normalizeFileName, will_return("/home/c-xref/dir/.c-xrefrc"));
     expect(fileExists, when(fullPath, is_equal_to_string("/home/c-xref/dir/.c-xrefrc")), will_return(false));
-    expect(normalizeFileName, will_return("/home/c-xref/.c-xrefrc"));
+    expect(normalizeFileName,
+           when(name, is_equal_to_string("/home/c-xref")),
+           when(relative_to, is_equal_to_string(".c-xrefrc")),
+           will_return("/home/c-xref/.c-xrefrc"));
     expect(fileExists, when(fullPath, is_equal_to_string("/home/c-xref/.c-xrefrc")), will_return(true));
 
     assert_that(findConfigFile(cwd), is_equal_to_string("/home/c-xref/.c-xrefrc"));
