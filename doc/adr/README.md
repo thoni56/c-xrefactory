@@ -11,12 +11,10 @@ seems relevant.
 The ADRs should be Markdown files given a name after the following
 pattern:
 
-    <nnn>-<decision-date>-<state>-<name>.md
+    <nnn>-<state>-<name>.md
 
 - <nnn> - sequential number
-- <decision-date> - date the decision was taken, i.e the date from
-  which that decision should be followed
-- <state> - One letter describing Pending, Current, Revoked, Overriden
+- <state> - One letter describing Pending, Accepted, Implemented, Revoked, Overriden
 - <name> should be a a present tense imperative verb phrase,
   e.g. "choose_database" or "manage_password" because this will match
   what the reader want to know when coming here
