@@ -168,6 +168,7 @@ extern Options refactoringOptions; // xref -refactory command line options
 extern Options cachedOptions;
 extern Options presetOptions;
 
+/* FUNCTIONS */
 extern void xrefSetenv(char *name, char *val);
 
 extern void getXrefrcFileName(char *ttt);
@@ -182,5 +183,7 @@ extern void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionF
 extern void readOptionPipe(char *command, int *nargc, char ***nargv, char *sectionFile);
 extern void javaSetSourcePath(int defaultCpAllowed);
 extern bool checkReferenceFileCountOption(int newRefNum);
+
+extern char *findConfigFile(char *cwd);
 
 #endif

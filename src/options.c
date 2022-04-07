@@ -1124,3 +1124,16 @@ void getXrefrcFileName(char *filename) {
     }
     assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
 }
+
+/* Config file handling */
+char *findConfigFile(char *start) {
+    char currentDir[strlen(start)+1];
+    char *normalizedFileName = normalizeFileName(".c-xrefrc", start);
+    int removed = 0;
+
+    strcpy(currentDir, start);
+    while (!fileExists(normalizedFileName))
+
+        return NULL;
+    return normalizedFileName;
+}
