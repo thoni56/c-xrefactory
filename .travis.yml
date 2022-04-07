@@ -37,7 +37,6 @@ script:
 branches:
     except:
         - stable
-	- previous_stable
 
 after_success:
     - if [ "$TRAVIS_OS_NAME" = "linux" ] ; then
