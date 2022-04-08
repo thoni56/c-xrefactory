@@ -428,9 +428,6 @@ static bool processJOption(int *argi, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i], "-javadoc")==0)
         options.javaDoc = true;
-    else if (strcmp(argv[i], "-java1.4")==0)     {
-        createOptionString(&options.javaVersion, JAVA_VERSION_1_4);
-    }
     else if (strncmp(argv[i], "-jdoctmpdir=",12)==0) {
         int ln;
         ln=strlen(argv[i]);
@@ -1063,18 +1060,8 @@ static bool processSOption(int *argi, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i], "-strict")==0)
         options.strictAnsi = true;
-    else if (strcmp(argv[i], "-stderr")==0)          errOut = stdout;
-    else if (strcmp(argv[i], "-source")==0)  {
-        char tmpBuff[TMP_BUFF_SIZE];
-        NEXT_ARG(i);
-        if (strcmp(argv[i], JAVA_VERSION_1_3)!=0 && strcmp(argv[i], JAVA_VERSION_1_4)!=0) {
-            sprintf(tmpBuff, "wrong -javaversion=<value>, available values are %s, %s",
-                    JAVA_VERSION_1_3, JAVA_VERSION_1_4);
-            errorMessage(ERR_ST, tmpBuff);
-        } else {
-            createOptionString(&options.javaVersion, argv[i]);
-        }
-    }
+    else if (strcmp(argv[i], "-stderr")==0)
+        errOut = stdout;
     else if (strcmp(argv[i], "-sourcepath")==0) {
         NEXT_FILE_ARG(i);
         createOptionString(&options.sourcePath, argv[i]);
@@ -2973,7 +2960,7 @@ static void initLogging(int argc, char *argv[]) {
             console_level = LOG_ERROR;
         if (strcmp(argv[i], "-warnings") == 0)
             console_level = LOG_WARN;
-        if (strcmp(argv[i], "-info") == 0)
+        if (strcmp(argv[i], "-infos") == 0)
             console_level = LOG_INFO;
     }
 

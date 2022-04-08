@@ -78,7 +78,8 @@ try                   :keyword
 true                  :keyword
 false                 :keyword
 null                  :keyword
-strictfp              :keyword</all-completions>
+strictfp              :keyword
+assert                :keyword</all-completions>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
@@ -235,7 +236,8 @@ try                   :keyword
 true                  :keyword
 false                 :keyword
 null                  :keyword
-strictfp              :keyword</all-completions>
+strictfp              :keyword
+assert                :keyword</all-completions>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
@@ -298,7 +300,8 @@ try                   :keyword
 true                  :keyword
 false                 :keyword
 null                  :keyword
-strictfp              :keyword</all-completions>
+strictfp              :keyword
+assert                :keyword</all-completions>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
@@ -361,7 +364,8 @@ try                   :keyword
 true                  :keyword
 false                 :keyword
 null                  :keyword
-strictfp              :keyword</all-completions>
+strictfp              :keyword
+assert                :keyword</all-completions>
 -olcomplselect2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 

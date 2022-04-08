@@ -32,12 +32,6 @@ typedef struct typeCharCodeIni {
 } TypeCharCodeInit;
 
 
-static TokenNamesInitTable tokenNameInitTable3[] = {
-    {"assert",          ASSERT,				LANG_JAVA},
-    {NULL,              0,					LANG_C}         /* sentinel*/
-};
-
-
 static TokenNamesInitTable tokenNameInitTable1[] = {
     {"asm",         ASM_KEYWORD,	LANG_C | LANG_YACC},
     {"auto",        AUTO,			LANG_C | LANG_YACC},
@@ -53,6 +47,7 @@ static TokenNamesInitTable tokenNameInitTable1[] = {
     {"unsigned",    UNSIGNED,		LANG_C | LANG_YACC},
 
     {"abstract",    ABSTRACT,		LANG_JAVA},
+    {"assert",      ASSERT,			LANG_JAVA},
     {"boolean",     BOOLEAN,		LANG_JAVA},
     {"byte",        BYTE,			LANG_JAVA},
     {"catch",       CATCH,			LANG_JAVA},
@@ -434,20 +429,6 @@ void initTokenNamesTables(void) {
 
     if (!options.strictAnsi) {
         initTokensFromTable(tokenNameInitTable2);
-    }
-    javaVersion = options.javaVersion;
-    if (strcmp(javaVersion, JAVA_VERSION_AUTO)==0)
-        javaVersion = autoDetectJavaVersion();
-
-    if (options.taskRegime!=RegimeEditServer && !messageWritten) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff,"java version == %s", javaVersion);
-        infoMessage(tmpBuff);
-        messageWritten = true;
-    }
-
-    if (strcmp(javaVersion, JAVA_VERSION_1_4)==0) {
-        initTokensFromTable(tokenNameInitTable3);
     }
 
     /* regular tokentab at last, because we wish to have correct names */
