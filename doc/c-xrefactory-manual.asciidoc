@@ -1,0 +1,632 @@
+//////////////////////////////////////////////////////////////////////
+In this Asciidoc document we use the convention that one sentence is kept on a single line.
+This creates nice diffs.
+//////////////////////////////////////////////////////////////////////
+:source-highlighter: highlightjs
+:icons: font
+:numbered:
+:toc: left
+:pp: ++
+:title-page:
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= C-xrefactory - a C/Yacc/Java refactoring and code browsing tool
+v{VERSION} - Generated {localdate}
+
+
+== C-xrefactory Intro
+
+=== What is C-xrefactory?
+
+`C-xrefactory` is a development tool for C (and Java) developers that allows browsing variables and functions in, as well as refactoring, C and Java code.
+
+Here is a list of features
+
+- Full integration with Emacs
+- Browsing source code in C and Java supporting multiple pre-processing passes, resolving scope, accessibility, overloading and polymorphism
+- Designed to work with large projects (> millions of lines)
+- Update using only modified files
+- First tool to [Crossing Refactoring's Rubicon](https://www.martinfowler.com/articles/refactoringRubicon.html) as described by Martin Fowler
+- Safe refactorings to
+  - rename variables, functions etc.
+  - extract function/method
+  - delete, add, move parameters
+  - move field and method
+  - push down/pull up fields and methods
+- Solid code completion, recognizing upto 15 different contexts
+- Find unused variables and functions, globally as well as locally
+- Auto-detection of project
+- Full undo in Emacs
+
+=== History
+
+=== Installing
+
+=== Usage
+
+==== Emacs
+
+==== Command line usage
+
+===== Use case
+
+Normally the `c-xref` program is controlled from an editor adapter.
+But sometimes running it from the command line, e.g. as part setting up a project, investigating problems with `c-xref` or as a part of the `c-xrefactory` test suite.
+
+Most options can be set in a configuration file to be effective for every execution of `c-xref` in a project.
+
+
+Here follows a description of the various available command line options.
+
+===== Command line options
+
+There is a large number of command line options.
+Some of them very obscure since they are only intended for use by the editor server protocol.
+Below is a list of all of them grouped after their usage (grouping and descriptions is a Work In Progress).
+
+====== Variables etc.
+
+-set <variable> <value>::
+
+Set `variable` to 'value' in the same fashion as environment variables.
+Variables set in this way can be used in configuration files and queried using the command line option `-get`.
+
+-get <variable>::
+
+Get the value of a previously set "environment variable".
+The value will be transfered over the edit server protocol as a `PPC_SET_INFO` record.
+
+====== Character encoding etc.
+
+-crconversion::
+
+-crlfconversion::
+  Convert various line-ending conventions to LF.
+
+-encoding=<encoding>::
+Consider files being in the indicated text encoding (`default`, `european`, `euc`, `sjis`, `utf`, `utf-8`, `utf-16`, `utf-16le`, `utf-16be`).
+
+
+====== Error reporting and output
+
+-errors, -no-errors::
+-warnings::
+-infos::
+-debug::
+-trace::
+Select level of information to print.
+
+-yydebug::
+
+Enable debugging of the C, Yacc or Java parsers according to the Yacc manual.
+
+-briefoutput::
+
+This option inhibits a few messages related to Java runtime, class and source paths.
+Note: Currently used from the `refactory` mode.
+
+-o <file>::
+
+Redirect all output to `file` rather than to standard output.
+
+-log=<file>::
+
+Place all log output in `file`.
+
+====== C specific options
+
+-D<variable>[=<value>]::
+
+Define a preprocessor variable in the same fashion as for the C/C++ pre-processor.
+This is typically used to set variables differently for different passes (see `-pass`).
+
+-I <directory>::
+
+Look for included C header files also in `directory`.
+If used multiple times the order of search will be the same as the order of the occurence of the `-I` options.
+
+-compiler <path>::
+
+Sets the path of the C compiler to use.
+`c-xrefactory` tries to setup pre-defined types, pre-processor variables, include paths etc. so that the parsing of the C source will be as close to what the compiler the project is using does.
+If the project is not using the default C compiler, `cc`, then this option allows `c-xrefactory` to inquire some compilers for their settings and apply them automatically.
+
+-csuffixes=<suffixes>::
+
+This option indicates which file suffixes to consider being a C file.
+Multiple suffixes should be separated by `:`.
+
+-strict::
+
+Force the C language parser to only accept what is in the ANSI C standard.
+
+====== Java specific options
+
+-javadoc::
+-javadocavailable::
+-javadocpath::
+-javadocurl::
+-jdoctmpdir::
+
+-javafilesonly::
+
+-javaruntime::
+
+-javasuffixes::
+
+-no-classfiles::
+Don't look for information in java `.class` files, including `.jar`.
+
+-sourcepath <path>::
+-classpath <path>::
+Look for source/class files in the directories indicated by `path`, which may contain multiple directories separated by `:`.
+
+
+====== Miscellaneous
+
+-about::
+-help::
+-version::
+Print short or long help text or version information.
+
+====== As yet unsorted options
+
+
+-addimportdefault::
+
+-browsedsym::
+
+-cacheincludes::
+
+-commentmovinglevel::
+
+-completeparenthesis::
+
+-completioncasesensitive::
+
+-completionoverloadwizdeep::
+
+-continuerefactoring::
+
+-create::
+
+-displaynestedwithouters::
+
+-editor::
+
+-exactpositionresolve::
+
+-exit::
+
+-extractAddrParPrefix::
+
+-fastupdate::
+
+-filescasesensitive::
+
+-filescaseunsensitive::
+
+-fullupdate::
+
+-getlastimportline::
+
+-last_message::
+
+-maxcompls::
+
+-mf::
+
+-movetargetclass::
+
+-movetargetfile::
+
+-no-autoupdatefromsrc::
+
+-no-cppcomments::
+
+-no-includerefresh::
+
+-no-includerefs::
+
+-no-stdoptions::
+
+-olallchecks::
+
+-olcheckaccess::
+
+-olchecklinkage::
+
+-olcheckversion::
+
+-olcomplback::
+
+-olcomplforward::
+
+-olcomplselect::
+
+-olcursor::
+
+-olcxargmanip::
+
+-olcxcbrowse::
+
+-olcxcgoto::
+
+-olcxclasslines::
+
+-olcxclasstree::
+
+-olcxcomplet::
+
+-olcxcplsearch::
+
+-olcxctinspectdef::
+
+-olcxcurrentclass::
+
+-olcxcurrentsuperclass::
+
+-olcxdynamictostatic1::
+
+-olcxedittop::
+
+-olcxencapsulate::
+
+-olcxencapsulatesc1::
+
+-olcxencapsulatesc2::
+
+-olcxextract::
+
+-olcxfilter::
+
+-olcxgetcurrentrefn::
+
+-olcxgetjavahome::
+
+-olcxgetparamcoord::
+
+-olcxgetprojectname::
+
+-olcxgetrefactorings::
+
+-olcxgetsymboltype::
+
+-olcxgoto::
+
+-olcxgotocaller::
+
+-olcxgotocurrent::
+
+-olcxgotodef::
+
+-olcxgotoparname::
+
+-olcxintersection::
+
+-olcxlccursor::
+
+-olcxlist::
+
+-olcxlisttop::
+
+-olcxmaybethis::
+
+-olcxmctarget::
+
+-olcxmenuall::
+
+-olcxmenufilter::
+
+-olcxmenugo::
+
+-olcxmenuinspectclass::
+
+-olcxmenuinspectdef::
+
+-olcxmenunone::
+
+-olcxmenuselect::
+
+-olcxmenusingleselect::
+
+-olcxmethodlines::
+
+-olcxmmprecheck::
+
+-olcxmmtarget::
+
+-olcxmodified::
+
+-olcxnext::
+
+-olcxnotfqt::
+
+-olcxnotfqtinclass::
+
+-olcxparnum::
+
+-olcxparnum2::
+
+-olcxpop::
+
+-olcxpoponly::
+
+-olcxppprecheck::
+
+-olcxprevious::
+
+-olcxprimarystart::
+
+-olcxpush::
+
+-olcxpushallinmethod::
+
+-olcxpushandcallmacro::
+
+-olcxpushfileunused::
+
+-olcxpushforlm::
+
+-olcxpushglobalunused::
+
+-olcxpushname::
+
+-olcxpushonly::
+
+-olcxpushspecialname::
+
+-olcxrename::
+
+-olcxrepush::
+
+-olcxsafetycheck1::
+
+-olcxsafetycheck2::
+
+-olcxsafetycheckinit::
+
+-olcxsafetycheckmoved::
+
+-olcxsafetycheckmovedblock::
+
+-olcxsafetycheckmovedfile::
+
+-olcxsearch::
+
+-olcxshowctree::
+
+-olcxsyntaxpass::
+
+-olcxtaggoto::
+
+-olcxtagsearch::
+
+-olcxtagsearchback::
+
+-olcxtagsearchforward::
+
+-olcxtagselect::
+
+-olcxtarget::
+
+-olcxtopapplcl::
+
+-olcxtops::
+
+-olcxtoptype::
+
+-olcxtrivialprecheck::
+
+-olcxunmodified::
+
+-olcxuselesslongnames::
+
+-olcxuselesslongnamesinclass::
+
+-olcxwindel::
+
+-olcxwindelfile::
+
+-olcxwindelwin::
+
+-olexaddress::
+
+-olexmacro::
+
+-olfqtcompletionslevel::
+
+-olinelen::
+
+-olmanualresolve::
+
+-olmark::
+
+-olnocheckaccess::
+
+-olnodialog::
+
+-oocheckbits::
+
+-optinclude::
+
+-p::
+
+-packages::
+
+-pass::
+
+-pause <n>::
+
+Will sleep `n` seconds before proceeding with next argument or processing.
+Useful when attaching a debugger to an edit server process.
+
+-preload <file1> <file2>::
+
+Indicates that the current content of the editor copy of `file1` is available in `file2`.
+If an editor has an edited, non-saved, buffer holding a relevant `file1` it is supposed that the editor adaptor saves the content into a file and indicates this to the edit server using this option.
+
+-prune::
+
+-refactory::
+
+-refnum::
+
+-refs::
+
+-renameto::
+
+-resetIncludeDirs::
+
+-rfct-add-param::
+
+-rfct-add-to-imports::
+
+-rfct-del-param::
+
+-rfct-dynamic-to-static::
+
+-rfct-encapsulate-field::
+
+-rfct-expand::
+
+-rfct-extract-macro::
+
+-rfct-extract-method::
+
+-rfct-move-all-classes-to-new-file::
+
+-rfct-move-class::
+
+-rfct-move-class-to-new-file::
+
+-rfct-move-field::
+
+-rfct-move-param::
+
+-rfct-move-static-field::
+
+-rfct-move-static-method::
+
+-rfct-param1::
+
+-rfct-param2::
+
+-rfct-pull-up-field::
+
+-rfct-pull-up-method::
+
+-rfct-push-down-field::
+
+-rfct-push-down-method::
+
+-rfct-reduce::
+
+-rfct-reduce-long-names-in-the-file::
+
+-rfct-rename::
+
+-rfct-rename-class::
+
+-rfct-rename-package::
+
+-rfct-self-encapsulate-field::
+
+-rfct-static-to-dynamic::
+
+-rlistwithoutsrc::
+
+-searchdef::
+
+-searchdefshortlist::
+
+-searchshortlist::
+
+-stderr::
+
+-stdop::
+
+-task_regime_server::
+
+-tpchmoveclass::
+
+-tpchmovefield::
+
+-tpchmovestaticfield::
+
+-tpchmovestaticmethod::
+
+-tpchpullupfield::
+
+-tpchpullupmethod::
+
+-tpchpushdownfield::
+
+-tpchpushdownmethod::
+
+-tpchpushdownmethodpostcheck::
+
+-tpchrenameclass::
+
+-tpchrenamepackage::
+
+-tpchturndyntostatic::
+
+-tpchturnstatictodyn::
+
+-update::
+
+-urldirect::
+
+-urlmanualredirect::
+
+-xrefactory-II::
+
+Applicable only to `server` mode.
+Will use a second generation protocol between the edit server and the editor adapter.
+Using the edit server/refactorer without activating `-xrefactory-II` is deprecated.
+Will be deprecated and removed in the future.
+
+-xrefrc::
+
+
+=== The configuration file
+
+[appendix]
+== Release History
+
+In this section only the introduction or changes of major user level features are listed, and thus only MINOR versions.
+For a detailed log of features, enhancements and bug fixes visit the projects repository on GitHub, https://github.com/thoni56/c-xrefactory.
+
+=== 1.6.15
+
+- Add support for for-loop initializers
+
+=== 1.6.13
+
+- Add support for C compound literals
+
+=== 1.6.11
+
+- First version in github based of Sourceforge GPL'd source
+
+=== 1.6.10
+
+- Latest version from https://xrefactory.com
+
+== Acknowledgements
+
+Thanks to
+
+- Marián Vittek, Bratislawa University, and his helpers that created this over many years (
+- Matt Hargett <plaztiksyke@gmail.com> - upgrading to the modern BDD-ish syntax
+- João Freitas <joaohf@gmail.com> - asciidoc documentation and Cmake build system
+- Thomas Nilefalk <thomas@junovagen.se> - cgreen-runner and current maintainer
+
+Thanks also go to @gardenia, @d-meiser, @stevemadsenblippar and others for their contributions.
