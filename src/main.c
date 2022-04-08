@@ -3010,6 +3010,8 @@ int main(int argc, char **argv) {
     mainTotalTaskEntryInitialisations();
     mainTaskEntryInitialisations(argc, argv);
 
+    findConfigFile(cwd);
+
     // Ok, so there were these five, now four, no three, main operating modes
     /* TODO: Is there an underlying reason for not doing this as a switch()? */
     if (options.refactoringRegime == RegimeRefactory) mainRefactory();

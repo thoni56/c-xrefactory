@@ -70,3 +70,7 @@ void javaSetSourcePath(int defaultCpAllowed) {
 bool checkReferenceFileCountOption(int newRefNum) {
   return (int) mock(newRefNum);
 }
+
+char *findConfigFile(char *cwd) {
+    (char *)mock(cwd);
+}
