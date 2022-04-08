@@ -72,5 +72,5 @@ bool checkReferenceFileCountOption(int newRefNum) {
 }
 
 char *findConfigFile(char *cwd) {
-    (char *)mock(cwd);
+    return (char *)mock(cwd);
 }
