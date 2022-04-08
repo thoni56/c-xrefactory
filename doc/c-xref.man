@@ -25,13 +25,13 @@ c-xref \- A cross referencing tool for C and Java.
 .B c-xref
 <srcdir>
 .SH DESCRIPTION
-C-Xref is a C and Java cross-referencing tool.
+C-xref is a C and Java cross-referencing tool.
 It parses input files noting all symbol's
 definitions and usages. Its output is a list of symbols, together
 with positions of declarations, definition and all usages.
 Output is written to the file specified by the
 .I -refs
-option. C-Xref's cross references are destinated to be read by
+option. C-xref's cross references are destinated to be read by
 .I c-xref
 itself or by on-line editing functions. The programming language in which an
 input file is written is inferred
@@ -54,7 +54,7 @@ accept wild characters. Be carefull when using wild characters in those options
 as they can considerably slow down the task.
 
 .SH NOTE
-C-Xref accepts many options, however except the
+C-xref accepts many options, however except the
 .I -p
 and
 .I -update
@@ -182,18 +182,6 @@ See also -javadocurl, -javadocavailable and -htmlgenjavadoclink options.
 This option allows to enter package names instead of input file
 names on command line.
 .TP
-.B \-source <version>
-Specifies version of Java in which sources are written. Currently available values
-are: "1.3", "1.4" and "auto". Version "auto" will cause that c-xref determines
-Java version automatically from Java runtime library. Version "1.4" means
-that 'assert' command is allowed and 'assert' string
-is considered as keyword, so you can't have any method or variable of this
-name. Default value is "1.3".
-.TP
-.B \-java1.4
-This option is obsolete, use -source instead.
-With this option sources are considered to be written in Java version 1.4 (or higher).
-.TP
 .B \-refs file
 This option specifies the file where the cross-references
 are stored. If the
@@ -317,7 +305,7 @@ will define run command to print 'will run now' message and then execute
 a.out command. When a command string is enclosed in quotas it
 can contain newline characters to separate sequence of commands.
 For more info about compile and run commands see on-line Emacs help of
-the corresponding C-Xrefactory macros.
+the corresponding C-xrefactory macros.
 .TP
 .B \-encoding=<type>
 This option specifies international encoding of input files. Available
@@ -359,7 +347,7 @@ and restart c-xref server task in order that changes take effect.
 .TP
 .B \-no-stdoptions
 This option prevents
-searching for standard option files '.c-xrefrc' and 'C-Xref.opt'.
+searching for standard option files '.c-xrefrc' and 'C-xref.opt'.
 .TP
 .B -mf=<n>
 This option sets the memory factor for cross-references. The larger is the
@@ -387,7 +375,7 @@ When scanning input files, do not consider the string `\|\c
 .B "\-csuffixes=<suffixes>"
 This option defines list of suffixes (separated by ':' character under Unix and ';' under MS-Windows)
 for C source files. Files with those suffixes will be inserted
-into Tag file and parsed with C-Xrefactory's C parser. Suffixes should not start by the '.'
+into Tag file and parsed with C-xrefactory's C parser. Suffixes should not start by the '.'
 dot character which is considered as suffix separator automatically. For example
 suffixes "c:tc" mean that files ending by ".c" or ".tc" strings are considered as C input
 files.
@@ -395,7 +383,7 @@ files.
 .B "\-javasuffixes=<suffixes>"
 This option defines list of suffixes (separated by ':' character under Unix and ';' under MS-Windows)
 for Java source files. Files with those suffixes will be inserted
-into Tag file and parsed with C-Xrefactory's Java parser. Suffixes should not start by the '.'
+into Tag file and parsed with C-xrefactory's Java parser. Suffixes should not start by the '.'
 dot character which is consider as suffix separator automatically.
 For example, the default value under MS-Windows is -javasuffixes=java;JAV.
 .TP
