@@ -517,8 +517,6 @@ static bool processNOption(int *argi, int argc, char **argv) {
         options.noIncludeRefs = true;
     else if (strcmp(argv[i], "-no-includerefresh")==0)
         options.noIncludeRefs=true;
-    else if (strcmp(argv[i], "-no-cxfile")==0)
-        options.noCxFile = 1;
     else if (strcmp(argv[i], "-no-cppcomments")==0)
         options.cpp_comments = false;
     else if (strcmp(argv[i], "-no-classfiles")==0)

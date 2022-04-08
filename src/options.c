@@ -104,7 +104,6 @@ Options presetOptions = {
     "/tmp",                     // jdocTmpDir
 
     /* MIXED THINGS... */
-    0,                          // noCxFile
     false,                      // javaDoc
     false,                      // noIncludeRefs
     true,                       // allowClassFileRefs
