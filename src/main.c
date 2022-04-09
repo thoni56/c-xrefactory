@@ -1055,8 +1055,6 @@ static bool processSOption(int *argi, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i], "-strict")==0)
         options.strictAnsi = true;
-    else if (strcmp(argv[i], "-stderr")==0)
-        errOut = stdout;
     else if (strcmp(argv[i], "-sourcepath")==0) {
         NEXT_FILE_ARG(i);
         createOptionString(&options.sourcePath, argv[i]);

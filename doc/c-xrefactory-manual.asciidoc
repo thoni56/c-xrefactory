@@ -569,8 +569,6 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 
 -searchshortlist::
 
--stderr::
-
 -stdop::
 
 -tpchmoveclass::
