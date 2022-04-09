@@ -383,19 +383,6 @@ static Int2StringDictionary storageNamesInitTable[] = {
 };
 
 
-static char *autoDetectJavaVersion(void) {
-    // O.K. pass jars and look for rt.jar
-    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
-        if (stringContainsSubstring(zipArchiveTable[i].fn, "rt.jar")) {
-            // I got it, detect java version
-            if (stringContainsSubstring(zipArchiveTable[i].fn, "1.4")) {
-                return JAVA_VERSION_1_4;
-            }
-        }
-    }
-    return JAVA_VERSION_1_3;
-}
-
 static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
     char *name;
     int token, languages;
@@ -422,10 +409,7 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
 
 
 void initTokenNamesTables(void) {
-    char *javaVersion;
     Symbol *symbolP;
-
-    static bool messageWritten = false;
 
     if (!options.strictAnsi) {
         initTokensFromTable(tokenNameInitTable2);

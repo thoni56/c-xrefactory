@@ -145,12 +145,14 @@ still available.
 At that time it had a free Java and C version, and a paid C++
 version. Development seems to have been headed by a [Marián Vittek].
 
-Marián made a C-version, c-xref, available under GPL already 2009 on
-[SourceForge][c-xref]. The reason seems to have been to allow
-parallel installations of free and non-free versions. `c-xref` seems to
-be intended to be limited to C and Emacs. Actually it's not. It is all
-but identical to the original full/free C/Java refactoring browser from
-[www.xref.sk]. So Java is also supported, at least Java 1.3(?).
+Marián made a C-version, `c-xref`, available under GPL already 2009 on
+[SourceForge][c-xref]. The reason seems to have been to allow parallel
+installations of free and non-free versions. `c-xref` seems to be
+intended to be limited to C and Emacs. Actually it's not. It is all
+but identical to the original full/free C/Java refactoring browser
+from [www.xref.sk]. So Java is also still supported, at least Java
+1.4. Although it might not be some time in the future (as there are
+other Java refactoring tools available).
 
 ## About This Clone
 

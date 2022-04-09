@@ -132,7 +132,6 @@ Options presetOptions = {
     RegimeXref,                 /* taskRegime */
     false,                      /* debug */
     false,                      /* trace */
-    true,                       /* cpp_comment allowed? */
     0,
     0,
     "",

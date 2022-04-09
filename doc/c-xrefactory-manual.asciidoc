@@ -67,8 +67,38 @@ Here follows a description of the various available command line options.
 ===== Command line options
 
 There is a large number of command line options.
-Some of them very obscure since they are only intended for use by the editor server protocol.
+Some of them might seem very obscure since they are only intended for use by the editor server protocol.
 Below is a list of all of them grouped after their usage (grouping and descriptions is a Work In Progress).
+
+====== Operating modes
+
+-refactory::
+
+-task_regime_server::
+
+`c-xrefactory` can operate in three different modes:
+
+- cross-referencer (default)
+- edit server - started by editor adapters
+- refactorer - normally called by editor adapters
+
+====== Cross-referencing options
+
+-create::
+Overwrite any existing crossreference data with a complete new set.
+
+-fastupdate::
+-fullupdate::
+
+"Fast update" ignores updated header files.
+NOTE: This option might be removed in the future.
+
+====== Selecting configurations
+
+-p <project>:: 
+
+`c-xrefactory` has project-based configurations. The `-p` selects which of the projects available in the selected configuration file (see `-xrefrc` option) that should be applied.
+
 
 ====== Variables etc.
 
@@ -194,8 +224,6 @@ Print short or long help text or version information.
 
 -continuerefactoring::
 
--create::
-
 -displaynestedwithouters::
 
 -editor::
@@ -206,13 +234,10 @@ Print short or long help text or version information.
 
 -extractAddrParPrefix::
 
--fastupdate::
 
 -filescasesensitive::
 
 -filescaseunsensitive::
-
--fullupdate::
 
 -getlastimportline::
 
@@ -227,8 +252,6 @@ Print short or long help text or version information.
 -movetargetfile::
 
 -no-autoupdatefromsrc::
-
--no-cppcomments::
 
 -no-includerefresh::
 
@@ -474,8 +497,6 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 
 -prune::
 
--refactory::
-
 -refnum::
 
 -refs::
@@ -551,8 +572,6 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 -stderr::
 
 -stdop::
-
--task_regime_server::
 
 -tpchmoveclass::
 

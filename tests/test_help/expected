@@ -31,7 +31,6 @@ options:
 	-debug                    - also log debug messages in log
 	-trace                    - also log trace & debug messages in log
 	-no-classfiles            - Don't collect references from class files
-	-no-cppcomments           - C++ like comments '//' not allowed
 	-compiler=<path>          - path to compiler to use for autodiscovered includes and defines
 	-update                   - update existing references database
 	-fastupdate               - fast update (modified files only)

@@ -101,7 +101,6 @@ static void usage() {
     fprintf(stdout, "\t-debug                    - also log debug messages in log\n");
     fprintf(stdout, "\t-trace                    - also log trace & debug messages in log\n");
     fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
-    fprintf(stdout, "\t-no-cppcomments           - C++ like comments '//' not allowed\n");
     fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
     fprintf(stdout, "\t-update                   - update existing references database\n");
     fprintf(stdout, "\t-fastupdate               - fast update (modified files only)\n");
@@ -517,8 +516,6 @@ static bool processNOption(int *argi, int argc, char **argv) {
         options.noIncludeRefs = true;
     else if (strcmp(argv[i], "-no-includerefresh")==0)
         options.noIncludeRefs=true;
-    else if (strcmp(argv[i], "-no-cppcomments")==0)
-        options.cpp_comments = false;
     else if (strcmp(argv[i], "-no-classfiles")==0)
         options.allowClassFileRefs = false;
     else if (strcmp(argv[i], "-no-stdoptions")==0)
@@ -2211,7 +2208,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         }
         // there is a problem with INFILES_ENABLED (update for safetycheck),
         // It should first load cxref file, in order to protect file numbers.
-        if (inmode==INFILES_ENABLED && options.update && !options.create) {
+        if (inmode==INFILES_ENABLED && options.update && !options.create) { /* TODO: .update != UPDATE_CREATE?!?! */
             //&fprintf(dumpOut, "PREREADING !!!!!!!!!!!!!!!!\n");
             // this makes a problem: I need to preread cxref file before
             // reading input files in order to preserve hash numbers, but
