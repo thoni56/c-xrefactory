@@ -85,7 +85,7 @@ Below is a list of all of them grouped after their usage (grouping and descripti
 ====== Cross-referencing options
 
 -create::
-Overwrite any existing crossreference data with a complete new set.
+Overwrite any existing crossreference data with a completely new set.
 
 -fastupdate::
 -fullupdate::
@@ -98,6 +98,12 @@ NOTE: This option might be removed in the future.
 -p <project>:: 
 
 `c-xrefactory` has project-based configurations. The `-p` selects which of the projects available in the selected configuration file (see `-xrefrc` option) that should be applied.
+
+-stdop <file>::
+
+Read `file` as a configuration file containing options, as if it was included from the selected configuration file.
+This makes it possible to share certain configuration options between multiple configuration files/projects.
+
 
 
 ====== Variables etc.
@@ -120,7 +126,7 @@ The value will be transfered over the edit server protocol as a `PPC_SET_INFO` r
   Convert various line-ending conventions to LF.
 
 -encoding=<encoding>::
-Consider files being in the indicated text encoding (`default`, `european`, `euc`, `sjis`, `utf`, `utf-8`, `utf-16`, `utf-16le`, `utf-16be`).
+Consider source files to use the indicated text encoding (`default`, `european`, `euc`, `sjis`, `utf`, `utf-8`, `utf-16`, `utf-16le`, `utf-16be`).
 
 
 ====== Error reporting and output
@@ -568,8 +574,6 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 -searchdefshortlist::
 
 -searchshortlist::
-
--stdop::
 
 -tpchmoveclass::
 

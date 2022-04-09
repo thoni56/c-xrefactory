@@ -182,7 +182,7 @@ static int mainHandleIncludeOption(int argc, char **argv, int i) {
     char **nargv;
     NEXT_FILE_ARG(i);
 
-    readOptionFile(argv[i],&nargc,&nargv, "",NULL);
+    readOptionFile(argv[i], &nargc, &nargv, "", NULL);
     processOptions(nargc, nargv, INFILES_DISABLED);
 
     return i;
@@ -1049,7 +1049,7 @@ static bool processROption(int *argi, int argc, char **argv, int infilesFlag) {
 }
 
 static bool processSOption(int *argi, int argc, char **argv) {
-    int i = * argi;
+    int i = *argi;
     char *name, *val;
 
     if (0) {}
@@ -1484,7 +1484,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
     return;
 }
 
-static void writeOptionsFileMessage(char *file, char *outFName, char *outSect ) {
+static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
     char tmpBuff[TMP_BUFF_SIZE];
 
     if (options.refactoringRegime==RegimeRefactory)
@@ -1515,38 +1515,38 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect ) 
     }
 }
 
-static void handlePathologicProjectCases(char *file,char *outFName,char *outSect,int errMessage){
+static void handlePathologicProjectCases(char *fileName, char *outFName, char *section, int errMessage){
     // all this stuff should be reworked, but be very careful when refactoring it
     // WTF? Why??!?!
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (errMessage!=NO_ERROR_MESSAGE) {
-            writeOptionsFileMessage(file, outFName, outSect);
+            writeOptionsFileMessage(fileName, outFName, section);
         }
     } else {
         if (*oldStdopFile == 0) {
             static int messageYetWritten=0; /* TODO: bool! "yet" = "already"? */
             if (errMessage!=NO_ERROR_MESSAGE && messageYetWritten == 0) {
                 messageYetWritten = 1;
-                writeOptionsFileMessage(file, outFName, outSect);
+                writeOptionsFileMessage(fileName, outFName, section);
             }
         } else {
-            if (outFName[0]==0 || outSect[0]==0) {
+            if (outFName[0]==0 || section[0]==0) {
                 warningMessage(ERR_ST, "no project name covers this file");
             }
-            if (outFName[0]==0 && outSect[0]==0) {
-                strcpy(outSect, oldStdopSection);
+            if (outFName[0]==0 && section[0]==0) {
+                strcpy(section, oldStdopSection);
             }
             if (outFName[0]==0) {
                 strcpy(outFName, oldStdopFile);
             }
-            if(strcmp(oldStdopFile,outFName)||strcmp(oldStdopSection,outSect)){
+            if(strcmp(oldStdopFile,outFName)||strcmp(oldStdopSection,section)){
                 if (options.xref2) {
                     char tmpBuff[TMP_BUFF_SIZE];                        \
-                    sprintf(tmpBuff, "[Xref] new project: '%s'", outSect);
+                    sprintf(tmpBuff, "[Xref] new project: '%s'", section);
                     ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 } else {
-                    fprintf(dumpOut, "[Xref] new project: '%s'\n", outSect);
+                    fprintf(dumpOut, "[Xref] new project: '%s'\n", section);
                 }
             }
         }

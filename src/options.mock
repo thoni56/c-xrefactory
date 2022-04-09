@@ -51,8 +51,8 @@ char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
   return (char *) mock(tt);
 }
 
-bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl, char *sectionFile, char *project, char *resSection) {
-  return (bool) mock(ff, nargc, nargv, memFl, sectionFile, project, resSection);
+bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl, char *section, char *project, char *resSection) {
+  return (bool) mock(ff, nargc, nargv, memFl, section, project, resSection);
 }
 
 void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project) {

@@ -690,7 +690,7 @@ static void processSectionMarker(char *optionText, int i, char *project, char *s
 
 
 bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
-                       char *sectionFile, char *project, char *resSection) {
+                       char *section, char *project, char *resSection) {
     char optionText[MAX_OPTION_LEN];
     int len, argc, i, c, passn=0;
     bool isActiveSection, isActivePass;
@@ -718,7 +718,7 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             log_trace("checking '%s'", optionText);
             expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
             log_trace("expanded '%s'", optionText);
-            processSectionMarker(optionText, len+1, project, sectionFile, &isActiveSection, resSection);
+            processSectionMarker(optionText, len+1, project, section, &isActiveSection, resSection);
         } else if (isActiveSection && strncmp(optionText, "-pass", 5) == 0) {
             sscanf(optionText+5, "%d", &passn);
             isActivePass = passn==currentPass || currentPass==ANY_PASS;
@@ -758,22 +758,26 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
     return found;
 }
 
-void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project) {
-    FILE *ff;
+void readOptionFile(char *name, int *nargc, char ***nargv, char *section, char *project) {
+    FILE *file;
     char realSection[MAX_FILE_NAME_SIZE];
-    ff = openFile(name,"r");
-    if (ff==NULL) fatalError(ERR_CANT_OPEN,name, XREF_EXIT_ERR);
-    readOptionFromFile(ff,nargc,nargv,MEM_ALLOC_ON_PP,sectionFile, project, realSection);
-    closeFile(ff);
+
+    file = openFile(name,"r");
+    if (file==NULL)
+        fatalError(ERR_CANT_OPEN,name, XREF_EXIT_ERR);
+    readOptionFromFile(file, nargc, nargv, MEM_ALLOC_ON_PP, section, project, realSection);
+    closeFile(file);
 }
 
-void readOptionPipe(char *comm, int *nargc, char ***nargv, char *sectionFile) {
-    FILE *ff;
+void readOptionPipe(char *comm, int *nargc, char ***nargv, char *section) {
+    FILE *file;
     char realSection[MAX_FILE_NAME_SIZE];
-    ff = popen(comm, "r");
-    if (ff==NULL) fatalError(ERR_CANT_OPEN, comm, XREF_EXIT_ERR);
-    readOptionFromFile(ff,nargc,nargv,MEM_ALLOC_ON_PP,sectionFile,NULL,realSection);
-    closeFile(ff);
+
+    file = popen(comm, "r");
+    if (file==NULL)
+        fatalError(ERR_CANT_OPEN, comm, XREF_EXIT_ERR);
+    readOptionFromFile(file, nargc, nargv, MEM_ALLOC_ON_PP, section, NULL, realSection);
+    closeFile(file);
 }
 
 static char *getClassPath(bool defaultCpAllowed) {
