@@ -95,67 +95,69 @@
 #define SORTED_LIST_NEQ(tmp,key) (positionsAreNotEqual((tmp)->position, (key).position))
 
 /*
-  LIST_SORT(sort, i/o ioList, lessfunction)
+  LIST_SORT(listType, i/o ioList, lessfunction)
 */
-#define LIST_SORT(sort,ioList,lessfunction) {                           \
-        register sort *tmpInList, *tmptmp;                              \
-        sort *tmpOutList;                                               \
+#define LIST_SORT(listType,ioList,lessfunction) {                       \
+        listType *tmpInList, *tmptmp;                                   \
+        listType *tmpOutList;                                           \
         tmpOutList = NULL;                                              \
         tmpInList = ioList;                                             \
         while (tmpInList!=NULL) {                                       \
             tmptmp = tmpInList->next;                                   \
             tmpInList->next = NULL;                                     \
-            SORTED_LIST_INSERT3(sort, tmpInList, (&tmpOutList), lessfunction); \
+            SORTED_LIST_INSERT3(listType, tmpInList, (&tmpOutList), lessfunction); \
             tmpInList = tmptmp;                                         \
         }                                                               \
         ioList = tmpOutList;                                            \
     }
 
 /*
-  LIST_MERGE(sort, lista, listb, sort **ioResTail, lessfunction)
+  LIST_MERGE(lista, listb, i/o **resultP, lessfunction)
 */
-#define LIST_MERGE(sort, a, b, restail, lessfunction) {         \
+#define LIST_MERGE(a, b, resultP, lessfunction) {               \
         while (a!=NULL && b!=NULL) {                            \
             if (lessfunction(a, b)) {                           \
-                *restail=a;  restail= &(a->next); a=a->next;    \
+                *resultP=a;  resultP= &(a->next); a=a->next;    \
             } else {                                            \
-                *restail=b;  restail= &(b->next); b=b->next;    \
+                *resultP=b;  resultP= &(b->next); b=b->next;    \
             }                                                   \
         }                                                       \
-        if (a!=NULL) *restail=a;                                \
-        else *restail=b;                                        \
-        while (*restail!=NULL)                                  \
-            restail= &((*restail)->next);                       \
+        if (a!=NULL) *resultP=a;                                \
+        else *resultP=b;                                        \
+        while (*resultP!=NULL)                                  \
+            resultP= &((*resultP)->next);                       \
     }                                                           \
 
 /*
-  LIST_INSERTSORT(sort, i/o ioList, lessfunction)
+  LIST_INSERTSORT(listType, i/o ioList, lessfunction)
 */
-#define LIST_MERGE_SORT(sort, ioList, lessfunction) {                   \
-        sort *_macrores;                                                \
+#define LIST_MERGE_SORT(listType, ioList, lessfunction) {               \
+        listType *_macrores;                                            \
         _macrores = (ioList);                                           \
         {                                                               \
-            sort *a, *b, *todo, *t, **restail;                          \
-            int i, n, contFlag;                                         \
-            contFlag = 1;                                               \
-            for(n=1; contFlag; n=n+n) {                                 \
-                todo=_macrores; _macrores=NULL; restail = &_macrores; contFlag=0; \
+            listType *a, *b, *todo, *t, **rest;                         \
+            int i;                                                      \
+            bool continueFlag = true;                                   \
+            for (int n=1; continueFlag; n=n+n) {                        \
+                todo=_macrores; _macrores=NULL; rest = &_macrores; continueFlag=false; \
                 while (todo!=NULL) {                                    \
                     a=todo;                                             \
-                    for (i=1, t=a;  i<n && t!=NULL;  i++, t=t->next) ;   \
+                    for (i=1, t=a;  i<n && t!=NULL;  i++, t=t->next) \
+                        ;                                               \
                     if (t==NULL) {                                      \
-                        *restail = a;                                   \
+                        *rest = a;                                      \
                         break;                                          \
                     }                                                   \
                     b=t->next; t->next=NULL;                            \
-                    for (i=1, t=b;  i<n && t!=NULL;  i++, t=t->next) ;   \
+                    for (i=1, t=b;  i<n && t!=NULL;  i++, t=t->next) \
+                        ;                                               \
                     if (t==NULL)                                        \
                         todo=NULL;                                      \
                     else {                                              \
                         todo=t->next; t->next=NULL;                     \
                     }                                                   \
-                    LIST_MERGE(sort,a,b,restail,lessfunction);          \
-                    contFlag=1;                                         \
+                    LIST_MERGE(a,b,rest,lessfunction);                  \
+                    continueFlag=true;                                  \
                 }                                                       \
             }                                                           \
         }                                                               \
