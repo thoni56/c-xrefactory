@@ -252,8 +252,6 @@ Print short or long help text or version information.
 
 -getlastimportline::
 
--last_message::
-
 -maxcompls::
 
 -mf::

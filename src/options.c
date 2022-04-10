@@ -142,7 +142,6 @@ Options presetOptions = {
     0,                          /* show err */
     UPDATE_CREATE,              /* create, update */
     false,                      // updateOnlyModifiedFiles
-    NULL,                       /* last_message */
     0,                          /* refnum */
 
     // all the rest is initialized to zeros

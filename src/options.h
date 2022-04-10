@@ -145,7 +145,6 @@ typedef struct options {
     bool errors;
     UpdateType update;
     bool updateOnlyModifiedFiles;
-    char *last_message;
     int referenceFileCount;
 
     // all the rest initialized to zeros by default

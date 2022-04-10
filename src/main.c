@@ -476,9 +476,6 @@ static bool processLOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-log=", 5)==0) {
         ;                       /* Already handled in initLogging() */
     }
-    else if (strncmp(argv[i], "-last_message=",14)==0) {
-        createOptionString(&options.last_message, argv[i]+14);
-    }
     else return false;
     *argi = i;
     return true;
@@ -2842,11 +2839,6 @@ static void mainXref(int argc, char **argv) {
     if (options.xref2) {
         ppcSynchronize();
     }
-    if (options.last_message!=NULL) {
-        fflush(dumpOut);
-        fprintf(dumpOut, "%s\n\n", options.last_message); fflush(dumpOut);
-        fflush(dumpOut);
-    }
     //& fprintf(dumpOut, "\n\nDUMP\n\n"); fflush(dumpOut);
     //& refTabMap(&referenceTable, symbolRefItemDump);
     LEAVE();
@@ -2923,10 +2915,6 @@ static void mainEditServer(int argc, char **argv) {
         closeMainOutputFile();
         if (options.server_operation == OLO_EXTRACT)
             cache.cpi = 2; // !!!! no cache
-        if (options.last_message != NULL) {
-            fprintf(communicationChannel, "%s",options.last_message);
-            fflush(communicationChannel);
-        }
         if (options.xref2) ppcSynchronize();
         /*fprintf(dumpOut, "request answered\n\n");fflush(dumpOut);*/
     }
