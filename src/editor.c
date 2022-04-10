@@ -574,7 +574,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int ftnum, c
     buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                                       .allocatedBlock = NULL, .allocatedIndex = 0,
                                                       .allocatedSize = 0};
-    *buffer = (EditorBuffer){.name = name, .ftnum = ftnum, .fileName = fileName, .markers = NULL,
+    *buffer = (EditorBuffer){.name = name, .fileIndex = ftnum, .fileName = fileName, .markers = NULL,
                              .allocation = buffer->allocation, .bits = buffer->bits};
     buffer->modificationTime = 0;
     buffer->size = 0;
@@ -608,7 +608,7 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, time_t mo
 
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
-    buffer->ftnum = addFileNameToFileTable(allocatedName);
+    buffer->fileIndex = addFileNameToFileTable(allocatedName);
 
     return buffer;
 }
@@ -709,8 +709,8 @@ void editorRenameBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     strcpy(buffer->name, newName);
     // update also ftnum
     fileIndex = addFileNameToFileTable(newName);
-    getFileItem(fileIndex)->bits.commandLineEntered = getFileItem(buffer->ftnum)->bits.commandLineEntered;
-    buffer->ftnum = fileIndex;
+    getFileItem(fileIndex)->bits.commandLineEntered = getFileItem(buffer->fileIndex)->bits.commandLineEntered;
+    buffer->fileIndex = fileIndex;
 
     *memb = (EditorBufferList){.buffer = buffer, .next = NULL};
     if (editorBufferIsMember(memb, NULL, &memb2)) {
@@ -922,7 +922,7 @@ void editorDumpBuffers(void) {
 static void editorQuasiSaveBuffer(EditorBuffer *buffer) {
     buffer->bits.modifiedSinceLastQuasiSave = false;
     buffer->modificationTime = time(NULL);
-    FileItem *fileItem = getFileItem(buffer->ftnum);
+    FileItem *fileItem = getFileItem(buffer->fileIndex);
     fileItem->lastModified = buffer->modificationTime;
 }
 
@@ -1146,44 +1146,48 @@ EditorMarkerList *editorReferencesToMarkers(Reference *refs,
     return res;
 }
 
-Reference *editorMarkersToReferences(EditorMarkerList **mms) {
-    EditorMarkerList *mm;
+Reference *editorMarkersToReferences(EditorMarkerList **editorMarkerListP) {
+    EditorMarkerList *markers;
     EditorBuffer     *buf;
-    char             *s, *smax, *off;
+    char             *s, *smax, *offset;
     int               line, col;
-    Reference        *res;
+    Reference        *reference;
 
-    LIST_MERGE_SORT(EditorMarkerList, *mms, editorMarkerListLess);
-    res = NULL;
-    mm = *mms;
-    while (mm!=NULL) {
-        buf = mm->marker->buffer;
+    LIST_MERGE_SORT(EditorMarkerList, *editorMarkerListP, editorMarkerListLess);
+    reference = NULL;
+    markers = *editorMarkerListP;
+    while (markers!=NULL) {
+        buf = markers->marker->buffer;
         s = buf->allocation.text;
         smax = s + buf->allocation.bufferSize;
-        off = buf->allocation.text + mm->marker->offset;
+        offset = buf->allocation.text + markers->marker->offset;
         line = 1; col = 0;
-        for( ; s<smax; s++, col++) {
-            if (s == off) {
-                Reference *rr = olcx_alloc(sizeof(Reference));
-                rr->position = makePosition(buf->ftnum, line, col);
-                fillReference(rr, mm->usage, rr->position, res);
-                res = rr;
-                mm = mm->next;
-                if (mm==NULL || mm->marker->buffer != buf) break;
-                off = buf->allocation.text + mm->marker->offset;
+        for (; s<smax; s++, col++) {
+            if (s == offset) {
+                Reference *r = olcx_alloc(sizeof(Reference));
+                r->position = makePosition(buf->fileIndex, line, col);
+                fillReference(r, markers->usage, r->position, reference);
+                reference = r;
+                markers = markers->next;
+                if (markers==NULL || markers->marker->buffer != buf)
+                    break;
+                offset = buf->allocation.text + markers->marker->offset;
             }
-            if (*s=='\n') {line++; col = -1;}
+            if (*s=='\n') {
+                line++;
+                col = -1;
+            }
         }
-        while (mm!=NULL && mm->marker->buffer==buf) {
+        while (markers!=NULL && markers->marker->buffer==buf) {
             Reference *rr = olcx_alloc(sizeof(Reference));
-            rr->position = makePosition(buf->ftnum, line, 0);
-            fillReference(rr, mm->usage, rr->position, res);
-            res = rr;
-            mm = mm->next;
+            rr->position = makePosition(buf->fileIndex, line, 0);
+            fillReference(rr, markers->usage, rr->position, reference);
+            reference = rr;
+            markers = markers->next;
         }
     }
-    LIST_MERGE_SORT(Reference, res, olcxReferenceInternalLessFunction);
-    return res;
+    LIST_MERGE_SORT(Reference, reference, olcxReferenceInternalLessFunction);
+    return reference;
 }
 
 void editorFreeRegionListNotMarkers(EditorRegionList *occs) {

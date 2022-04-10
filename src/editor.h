@@ -34,7 +34,7 @@ typedef struct editorBufferBits {
 
 typedef struct editorBuffer {
     char                *name;
-    int					ftnum;
+    int					fileIndex;
     char				*fileName;
     time_t              modificationTime;
     size_t              size;

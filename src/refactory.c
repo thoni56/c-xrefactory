@@ -1925,7 +1925,7 @@ static int refactoryAddStringAsParameter(EditorMarker *pos, EditorMarker *endm,
         mm = editorCreateNewMarkerForPosition(&s_paramBeginPosition);
     } else {
         mm = endm;
-        assert(mm->buffer->ftnum == s_paramBeginPosition.file);
+        assert(mm->buffer->fileIndex == s_paramBeginPosition.file);
         editorMoveMarkerToLineCol(mm, s_paramBeginPosition.line, s_paramBeginPosition.col);
     }
 
@@ -2318,7 +2318,7 @@ static int refactoryIsTheImportUsed(EditorMarker *point, int line, int coll) {
     char                isymName[TMP_STRING_SIZE];
     int                 res;
 
-    strcpy(isymName, javaImportSymbolName_st(point->buffer->ftnum, line, coll));
+    strcpy(isymName, javaImportSymbolName_st(point->buffer->fileIndex, line, coll));
     refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point,NULL,
                                     "-olcxpushfileunused", "-olallchecks");
     pushLocalUnusedSymbolsAction();
@@ -2505,8 +2505,8 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(EditorMarker *p
             markers=menu->markers;
             int defaultImportAction = refactoringOptions.defaultAddImportStrategy;
             while (markers!=NULL && !keepAdding
-                   && !isInDisabledList(disabled, markers->marker->buffer->ftnum, menu->s.vApplClass)) {
-                fileIndex = markers->marker->buffer->ftnum;
+                   && !isInDisabledList(disabled, markers->marker->buffer->fileIndex, menu->s.vApplClass)) {
+                fileIndex = markers->marker->buffer->fileIndex;
                 javaGetClassNameFromFileIndex(menu->s.vApplClass, fqtName, DOTIFY_NAME);
                 javaDotifyClassName(fqtName);
                 if (interactive == INTERACTIVE_YES) {
@@ -2514,7 +2514,7 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(EditorMarker *p
                 } else {
                     action = translatePassToAddImportAction(defaultImportAction);
                 }
-                //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(markers->marker->buffer->ftnum), fqtName, action); ppcBottomInformation(tmpBuff);
+                //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(markers->marker->buffer->fileIndex), fqtName, action); ppcBottomInformation(tmpBuff);
                 switch (action) {
                 case RC_IMPORT_ON_DEMAND:
                     strcpy(starName, fqtName);
@@ -4350,12 +4350,12 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
         fn = noFileIndex;
     } else {
         assert(occs->marker!=NULL && occs->marker->buffer!=NULL);
-        fn = occs->marker->buffer->ftnum;
+        fn = occs->marker->buffer->fileIndex;
     }
     for (EditorMarkerList *o = occs; o!=NULL; o=o->next) {
         assert(o->marker!=NULL && o->marker->buffer!=NULL);
-        FileItem *fileItem = getFileItem(o->marker->buffer->ftnum);
-        if (fn != o->marker->buffer->ftnum) {
+        FileItem *fileItem = getFileItem(o->marker->buffer->fileIndex);
+        if (fn != o->marker->buffer->fileIndex) {
             multiFileRefsFlag = 1;
         }
         if (!fileItem->bits.commandLineEntered) {
