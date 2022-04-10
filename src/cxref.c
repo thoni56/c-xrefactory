@@ -1628,7 +1628,7 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
 static void passRefsThroughSourceFile(Reference **in_out_references, Position *callerPosition,
                                       FILE *outputFile, int usages, int usageFilter) {
     Reference *references,*oldrr;
-    int ch, fnum;
+    int ch, fileIndex;
     EditorBuffer *ebuf;
     char *cofileName;
     Position position;
@@ -1637,11 +1637,11 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
     references = *in_out_references;
     if (references==NULL)
         goto fin;
-    fnum = references->position.file;
+    fileIndex = references->position.file;
 
-    cofileName = getFileItem(fnum)->name;
-    references = passNonPrintableRefsForFile(references, fnum, usages, usageFilter);
-    if (references==NULL || references->position.file != fnum)
+    cofileName = getFileItem(fileIndex)->name;
+    references = passNonPrintableRefsForFile(references, fileIndex, usages, usageFilter);
+    if (references==NULL || references->position.file != fileIndex)
         goto fin;
     if (options.referenceListWithoutSource) {
         ebuf = NULL;

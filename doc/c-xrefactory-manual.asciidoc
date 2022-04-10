@@ -40,6 +40,7 @@ Here is a list of features
   - move field and method
   - push down/pull up fields and methods
 - Solid code completion, recognizing upto 15 different contexts
+- Search for symbols using wildcards
 - Find unused variables and functions, globally as well as locally
 - Auto-detection of project
 - Full undo in Emacs
@@ -88,10 +89,11 @@ Below is a list of all of them grouped after their usage (grouping and descripti
 Overwrite any existing crossreference data with a completely new set.
 
 -fastupdate::
--fullupdate::
+-fullupdate, -update::
 
 "Fast update" ignores updated header files.
 NOTE: This option might be removed in the future.
+
 
 ====== Selecting configuration information
 
@@ -188,12 +190,6 @@ Reject keywords and types that are not part of the ANSI C standard, such as `__a
 
 ====== Java specific options
 
--javadoc::
--javadocavailable::
--javadocpath::
--javadocurl::
--jdoctmpdir::
-
 -javafilesonly::
 
 -javaruntime::
@@ -207,13 +203,40 @@ Don't look for information in java `.class` files, including `.jar`.
 -classpath <path>::
 Look for source/class files in the directories indicated by `path`, which may contain multiple directories separated by `:`.
 
+====== JavaDoc configuration
 
-====== Editor adapter configuration
+-javadoc::
+-javadocavailable::
+-javadocpath::
+-javadocurl::
+-jdoctmpdir::
+
+====== Editor adapter/server configuration
 
 -editor=<editor>::
 
 As there are minor differences between the editor adaptors for `emacs` and `jedit` the editor adapter uses this option to select the correct one.
 Default is `emacs`.
+
+-xrefactory-II::
+
+Applicable only to `server` mode.
+Will use a second generation protocol between the edit server and the editor adapter.
+Using the edit server/refactorer without activating `-xrefactory-II` is deprecated.
+Will be deprecated and removed in the future when legacy protocol is removed.
+
+-urldirect::
+
+Let editor navigate directly to URLs instead of creating a temporary file which is to be loaded.
+Default is to generate a temporary file.
+NOTE: This option might be removed in the future.
+
+-urlmanualredirect::
+
+If a temporary HTML file is generated to let the editor navigate to a URL (JavaDoc) then this option will override the default to automatically redirect to that URL.
+Instead the user wil have to press the link manually in the editor.
+NOTE: This option might be removed in the future.
+
 
 ====== Miscellaneous
 
@@ -605,19 +628,7 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 
 -tpchturnstatictodyn::
 
--update::
-
--urldirect::
-
--urlmanualredirect::
-
--xrefactory-II::
-
-Applicable only to `server` mode.
-Will use a second generation protocol between the edit server and the editor adapter.
-Using the edit server/refactorer without activating `-xrefactory-II` is deprecated.
-Will be deprecated and removed in the future.
-
+...
 
 === The configuration file
 
