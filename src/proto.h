@@ -210,7 +210,7 @@ typedef enum commentMovingMode {
 
 /* *******************      generating imports defaults      *************** */
 
-// do to touch this! order is used, with arithmetics!
+// do not touch this! order is used, with arithmetics!
 enum addImportsDefault {
     NID_IMPORT_ON_DEMAND,
     NID_SINGLE_TYPE_IMPORT,

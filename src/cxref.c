@@ -1254,7 +1254,7 @@ char *getJavaDocUrl_st(ReferencesItem *rr) {
                                     MAX_REF_LEN-len, LONG_NAME);
             }
         } else {
-            javaGetClassNameFromFileNum(rr->vFunClass, res, KEEP_SLASHES);
+            javaGetClassNameFromFileIndex(rr->vFunClass, res, KEEP_SLASHES);
             for (tt=res; *tt; tt++) if (*tt=='$') *tt = '.';
             len = strlen(res);
             sprintf(res+len, ".html");
@@ -2312,7 +2312,7 @@ static void olcxGenInspectClassDefinitionRef(int classnum) {
     ReferencesItem mmm;
     char ccc[MAX_CX_SYMBOL_SIZE];
 
-    javaGetClassNameFromFileNum(classnum, ccc, KEEP_SLASHES);
+    javaGetClassNameFromFileIndex(classnum, ccc, KEEP_SLASHES);
     fillReferencesItem(&mmm, ccc, cxFileHashNumber(ccc),
                       noFileIndex, noFileIndex);
     fillReferencesItemBits(&mmm.bits, TypeStruct, StorageExtern, ScopeGlobal,

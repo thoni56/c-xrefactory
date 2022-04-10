@@ -831,7 +831,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(ReferencesItem *ri, void *ddd
         return;
 
     // check that it is not from moved class
-    javaGetClassNameFromFileNum(ri->vFunClass, symclass, KEEP_SLASHES);
+    javaGetClassNameFromFileIndex(ri->vFunClass, symclass, KEEP_SLASHES);
     sclen = strlen(dd->sclass);
     symclen = strlen(symclass);
     if (sclen<=symclen && filenameCompare(dd->sclass, symclass, sclen)==0)
@@ -1045,7 +1045,7 @@ bool tpCheckSuperMethodReferencesForPullUp(void) {
     if (rr.foundRefToTestedClass!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
-        javaGetClassNameFromFileNum(rr.foundRefToTestedClass->vFunClass, tt, DOTIFY_NAME);
+        javaGetClassNameFromFileIndex(rr.foundRefToTestedClass->vFunClass, tt, DOTIFY_NAME);
         sprintf(tmpBuff,"'%s' invokes another method using the keyword \"super\" and this invocation is refering to class '%s', i.e. to the class where '%s' will be moved. In consequence, it is not possible to ensure behaviour preseving pulling-up of this method.", ttt, tt, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
@@ -1210,8 +1210,8 @@ bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     if (found)
         return true;
 
-    javaGetClassNameFromFileNum(target->u.structSpec->classFileIndex, tt, DOTIFY_NAME);
-    javaGetClassNameFromFileNum(ss->s.vApplClass, ttt, DOTIFY_NAME);
+    javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, tt, DOTIFY_NAME);
+    javaGetClassNameFromFileIndex(ss->s.vApplClass, ttt, DOTIFY_NAME);
     char tmpBuff[TMP_BUFF_SIZE];
     sprintf(tmpBuff,"Class %s is not direct %s of %s. This refactoring provides moving to direct %ses only.", tt, subOrSuper, ttt, subOrSuper);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1245,7 +1245,7 @@ bool tpPullUpFieldLastPreconditions(void) {
     // an item found, it must be empty
     if (mm->s.references == NULL)
         return true;
-    javaGetClassNameFromFileNum(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
+    javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
     if (IS_DEFINITION_OR_DECL_USAGE(mm->s.references->usage.kind) && mm->s.references->next==NULL) {
         if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
         sprintf(tmpBuff, "%s is already defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should make sure that both fields are initialized to the same value.", mm->s.name, ttt);
@@ -1288,7 +1288,7 @@ bool tpPushDownFieldLastPreconditions(void) {
     if (targetsm != NULL) {
         rr = getDefinitionRef(targetsm->s.references);
         if (rr!=NULL && IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
-            javaGetClassNameFromFileNum(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
+            javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
             sprintf(tmpBuff,"The field %s is already defined in %s!",
                     targetsm->s.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1299,7 +1299,7 @@ bool tpPushDownFieldLastPreconditions(void) {
     if (sourcesm != NULL) {
         if (sourcesm->s.references!=NULL && sourcesm->s.references->next!=NULL) {
             //& if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
-            javaGetClassNameFromFileNum(thisclassi, ttt, DOTIFY_NAME);
+            javaGetClassNameFromFileIndex(thisclassi, ttt, DOTIFY_NAME);
             sprintf(tmpBuff, "There are several references of %s syntactically applied on %s. This may cause that the refactoring will not be behaviour preserving!", sourcesm->s.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             warningMessage(ERR_ST, tmpBuff);
@@ -2223,7 +2223,7 @@ static void refactoryApplyExpandShortNames(EditorBuffer *buf, EditorMarker *poin
     // Hmm. what if one reference will be twice ? Is it possible?
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            javaGetClassNameFromFileNum(mm->s.vApplClass, fqtName, DOTIFY_NAME);
+            javaGetClassNameFromFileIndex(mm->s.vApplClass, fqtName, DOTIFY_NAME);
             javaDotifyClassName(fqtName);
             sprintf(fqtNameDot, "%s.", fqtName);
             shortName = javaGetShortClassName(fqtName);
@@ -2461,11 +2461,11 @@ static int refactoryInteractiveAskForAddImportAction(EditorMarkerList *ppp, int 
     return action;
 }
 
-static S_disabledList *newDisabledList(SymbolsMenu *mm, int cfile, S_disabledList *disabled) {
+static S_disabledList *newDisabledList(SymbolsMenu *menu, int cfile, S_disabledList *disabled) {
     S_disabledList *dl;
 
     ED_ALLOC(dl, S_disabledList);
-    *dl = (S_disabledList){.file = cfile, .clas = mm->s.vApplClass, .next = disabled};
+    *dl = (S_disabledList){.file = cfile, .clas = menu->s.vApplClass, .next = disabled};
 
     return dl;
 }
@@ -2473,11 +2473,10 @@ static S_disabledList *newDisabledList(SymbolsMenu *mm, int cfile, S_disabledLis
 
 static void refactoryPerformReduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegionList **regions,
                                                                  int interactive) {
-    EditorMarkerList *ppp;
     EditorBuffer *b;
     int action, lastImportLine;
     bool keepAdding;
-    int defaultAction, cfile;
+    int fileIndex;
     char fqtName[MAX_FILE_NAME_SIZE];
     char starName[MAX_FILE_NAME_SIZE];
     char *dd;
@@ -2501,20 +2500,21 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(EditorMarker *p
     while (keepAdding) {
         keepAdding = false;
         lastImportLine = refactoryPushFileUnimportedFqts(point, regions);
-        for (SymbolsMenu *mm=sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
-            ppp=mm->markers;
-            defaultAction = refactoringOptions.defaultAddImportStrategy;
-            while (ppp!=NULL && !keepAdding
-                   && !isInDisabledList(disabled, ppp->marker->buffer->ftnum, mm->s.vApplClass)) {
-                cfile = ppp->marker->buffer->ftnum;
-                javaGetClassNameFromFileNum(mm->s.vApplClass, fqtName, DOTIFY_NAME);
+        for (SymbolsMenu *menu=sessionData.browserStack.top->menuSym; menu!=NULL; menu=menu->next) {
+            EditorMarkerList *markers;
+            markers=menu->markers;
+            int defaultImportAction = refactoringOptions.defaultAddImportStrategy;
+            while (markers!=NULL && !keepAdding
+                   && !isInDisabledList(disabled, markers->marker->buffer->ftnum, menu->s.vApplClass)) {
+                fileIndex = markers->marker->buffer->ftnum;
+                javaGetClassNameFromFileIndex(menu->s.vApplClass, fqtName, DOTIFY_NAME);
                 javaDotifyClassName(fqtName);
                 if (interactive == INTERACTIVE_YES) {
-                    action = refactoryInteractiveAskForAddImportAction(ppp,defaultAction,fqtName);
+                    action = refactoryInteractiveAskForAddImportAction(markers, defaultImportAction, fqtName);
                 } else {
-                    action = translatePassToAddImportAction(defaultAction);
+                    action = translatePassToAddImportAction(defaultImportAction);
                 }
-                //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(ppp->marker->buffer->ftnum), fqtName, action); ppcBottomInformation(tmpBuff);
+                //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(markers->marker->buffer->ftnum), fqtName, action); ppcBottomInformation(tmpBuff);
                 switch (action) {
                 case RC_IMPORT_ON_DEMAND:
                     strcpy(starName, fqtName);
@@ -2522,29 +2522,29 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(EditorMarker *p
                     if (dd!=NULL) {
                         sprintf(dd, ".*");
                         keepAdding = refactoryAddImport(point, regions, starName,
-                                                        lastImportLine+1, mm->s.vApplClass,
+                                                        lastImportLine+1, menu->s.vApplClass,
                                                         interactive);
                     }
-                    defaultAction = NID_IMPORT_ON_DEMAND;
+                    defaultImportAction = NID_IMPORT_ON_DEMAND;
                     break;
                 case RC_IMPORT_SINGLE_TYPE:
                     keepAdding = refactoryAddImport(point, regions, fqtName,
-                                                    lastImportLine+1, mm->s.vApplClass,
+                                                    lastImportLine+1, menu->s.vApplClass,
                                                     interactive);
-                    defaultAction = NID_SINGLE_TYPE_IMPORT;
+                    defaultImportAction = NID_SINGLE_TYPE_IMPORT;
                     break;
                 case RC_CONTINUE:
-                    dl = newDisabledList(mm, cfile, disabled);
+                    dl = newDisabledList(menu, fileIndex, disabled);
                     disabled = dl;
-                    defaultAction = NID_KEPP_FQT_NAME;
+                    defaultImportAction = NID_KEPP_FQT_NAME;
                     break;
                 default:
                     fatalError(ERR_INTERNAL, "wrong continuation code", XREF_EXIT_ERR);
                 }
-                if (defaultAction <= 1)  defaultAction ++;
+                if (defaultImportAction <= 1)  defaultImportAction ++;
             }
-            editorFreeMarkersAndMarkerList(mm->markers);
-            mm->markers = NULL;
+            editorFreeMarkersAndMarkerList(menu->markers);
+            menu->markers = NULL;
         }
         olcxPopOnly();
     }
@@ -3219,7 +3219,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     // Pass over all references and move primary prefix to first parameter
     // also insert new first parameter on definition
     csym =  sessionData.browserStack.top->hkSelectedSym;
-    javaGetClassNameFromFileNum(csym->s.vFunClass, fqstaticname, DOTIFY_NAME);
+    javaGetClassNameFromFileIndex(csym->s.vFunClass, fqstaticname, DOTIFY_NAME);
     javaDotifyClassName(fqstaticname);
     sprintf(pardecl, "%s %s", fqstaticname, refactoringOptions.refpar1);
     sprintf(fqstaticname+strlen(fqstaticname), ".");
@@ -3237,7 +3237,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     regions = NULL; reglast = &regions; allrefs = NULL;
     for (SymbolsMenu *mm=sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            javaGetClassNameFromFileNum(mm->s.vApplClass, fqthis, DOTIFY_NAME);
+            javaGetClassNameFromFileIndex(mm->s.vApplClass, fqthis, DOTIFY_NAME);
             javaDotifyClassName(fqthis);
             sprintf(fqthis+strlen(fqthis), ".this");
             for (EditorMarkerList *ll=mm->markers; ll!=NULL; ll=ll->next) {

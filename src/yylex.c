@@ -1852,7 +1852,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
 
 endOfMacroArgument:
     /* unterminated macro call in argument */
-    /* TODO unread argument read */
+    /* TODO unread the argument that was read */
     currentInput.currentLexemP = previousLexemP;
     PPM_FREE_UNTIL(freeBase);
     return false;

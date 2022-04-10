@@ -204,6 +204,13 @@ Don't look for information in java `.class` files, including `.jar`.
 Look for source/class files in the directories indicated by `path`, which may contain multiple directories separated by `:`.
 
 
+====== Editor adapter configuration
+
+-editor=<editor>::
+
+As there are minor differences between the editor adaptors for `emacs` and `jedit` the editor adapter uses this option to select the correct one.
+Default is `emacs`.
+
 ====== Miscellaneous
 
 -about::
@@ -231,8 +238,6 @@ Print short or long help text or version information.
 -continuerefactoring::
 
 -displaynestedwithouters::
-
--editor::
 
 -exactpositionresolve::
 

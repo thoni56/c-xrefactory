@@ -1490,7 +1490,7 @@ static void javaCompleteThisClassDefinitionName(Completions*c) {
     static char cname[TMP_STRING_SIZE];
     char        *cc;
 
-    javaGetClassNameFromFileNum(olOriginalFileNumber, cname, DOTIFY_NAME);
+    javaGetClassNameFromFileIndex(olOriginalFileNumber, cname, DOTIFY_NAME);
     cc = strchr(cname,0);
     assert(cc!=NULL);
     *cc++ = ' '; *cc=0;

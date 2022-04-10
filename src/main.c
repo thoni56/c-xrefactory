@@ -290,8 +290,7 @@ static bool processDOption(int *argi, int argc, char **argv) {
 }
 
 static bool processEOption(int *argi, int argc, char **argv) {
-    int i = * argi;
-    char ttt[TMP_STRING_SIZE];
+    int i = *argi;
 
     if (0) {}
     else if (strcmp(argv[i], "-errors")==0) {
@@ -308,8 +307,9 @@ static bool processEOption(int *argi, int argc, char **argv) {
         options.editor = EDITOR_JEDIT;
     }
     else if (strncmp(argv[i], "-extractAddrParPrefix=",22)==0) {
-        sprintf(ttt, "*%s", argv[i]+22);
-        createOptionString(&options.olExtractAddrParPrefix, ttt);
+        char tmpString[TMP_STRING_SIZE];
+        sprintf(tmpString, "*%s", argv[i]+22);
+        createOptionString(&options.olExtractAddrParPrefix, tmpString);
     }
     else if (strcmp(argv[i], "-exactpositionresolve")==0) {
         options.exactPositionResolve = 1;
@@ -335,14 +335,15 @@ static bool processEOption(int *argi, int argc, char **argv) {
             } else if (strcmp(argv[i], "-encoding=utf-16be")==0) {
                 options.fileEncoding = MULE_UTF_16BE;
             } else {
-                char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "unsupported encoding, available values are 'default', 'european', 'euc', 'sjis', 'utf', 'utf-8', 'utf-16', 'utf-16le' and 'utf-16be'.");
-                formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-                errorMessage(ERR_ST, tmpBuff);
+                char tmpString[TMP_BUFF_SIZE];
+                sprintf(tmpString, "unsupported encoding, available values are 'default', 'european', 'euc', 'sjis', 'utf', 'utf-8', 'utf-16', 'utf-16le' and 'utf-16be'.");
+                formatOutputLine(tmpString, ERROR_MESSAGE_STARTING_OFFSET);
+                errorMessage(ERR_ST, tmpString);
             }
         }
     }
-    else return false;
+    else
+        return false;
     *argi = i;
     return true;
 }
@@ -428,9 +429,8 @@ static bool processJOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-javadoc")==0)
         options.javaDoc = true;
     else if (strncmp(argv[i], "-jdoctmpdir=",12)==0) {
-        int ln;
-        ln=strlen(argv[i]);
-        if (ln>13 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
+        int len = strlen(argv[i]);
+        if (len>13 && argv[i][len-1] == FILE_PATH_SEPARATOR) {
             warningMessage(ERR_ST, "slash at the end of -jdoctmpdir path");
         }
         createOptionString(&options.jdocTmpDir, argv[i]+12);
