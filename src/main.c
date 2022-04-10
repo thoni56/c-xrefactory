@@ -1220,12 +1220,12 @@ static bool processZOption(int *argi, int argc, char **argv) {
 
 static void mainScheduleInputFileOptionToFileTable(char *infile) {
     int topCallFlag;
-    void *recursFlag;
-    javaSetSourcePath(1);      // for case of packages on command line
+    void *recurseFlag;
+    javaSetSourcePath(true);      // for case of packages on command line
     topCallFlag = 1;
-    recursFlag = &topCallFlag;
+    recurseFlag = &topCallFlag;
     MapOnPaths(infile, {
-            dirInputFile(currentPath, "", NULL, NULL, recursFlag, &topCallFlag);
+            dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag);
         });
 }
 

@@ -63,8 +63,8 @@ void readOptionPipe(char *command, int *nargc, char ***nargv, char *sectionFile)
   mock(command, nargc, nargv, sectionFile);
 }
 
-void javaSetSourcePath(int defaultCpAllowed) {
-  mock(defaultCpAllowed);
+void javaSetSourcePath(bool defaultClassPathAllowed) {
+  mock(defaultClassPathAllowed);
 }
 
 bool checkReferenceFileCountOption(int newRefNum) {

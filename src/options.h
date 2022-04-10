@@ -177,7 +177,7 @@ extern bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv,
                                int memFl, char *sectionFile, char *project, char *resSection);
 extern void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project);
 extern void readOptionPipe(char *command, int *nargc, char ***nargv, char *sectionFile);
-extern void javaSetSourcePath(int defaultCpAllowed);
+extern void javaSetSourcePath(bool defaultClassPathAllowed);
 extern bool checkReferenceFileCountOption(int newRefNum);
 
 extern char *findConfigFile(char *cwd);

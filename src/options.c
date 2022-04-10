@@ -784,17 +784,19 @@ static char *getClassPath(bool defaultCpAllowed) {
     cp = options.classpath;
     if (cp == NULL || *cp==0) cp = getenv("CLASSPATH");
     if (cp == NULL || *cp==0) {
-        if (defaultCpAllowed) cp = defaultClassPath;
-        else cp = NULL;
+        if (defaultCpAllowed)
+            cp = defaultClassPath;
+        else
+            cp = NULL;
     }
-    return(cp);
+    return cp;
 }
 
-void javaSetSourcePath(int defaultCpAllowed) {
+void javaSetSourcePath(bool defaultClassPathAllowed) {
     char *cp;
     cp = options.sourcePath;
     if (cp == NULL || *cp==0) cp = getenv("SOURCEPATH");
-    if (cp == NULL || *cp==0) cp = getClassPath(defaultCpAllowed);
+    if (cp == NULL || *cp==0) cp = getClassPath(defaultClassPathAllowed);
     if (cp == NULL) {
         javaSourcePaths = NULL;
     } else {
