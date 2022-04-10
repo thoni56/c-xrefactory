@@ -93,7 +93,7 @@ Overwrite any existing crossreference data with a completely new set.
 "Fast update" ignores updated header files.
 NOTE: This option might be removed in the future.
 
-====== Selecting configurations
+====== Selecting configuration information
 
 -p <project>:: 
 
@@ -104,6 +104,10 @@ NOTE: This option might be removed in the future.
 Read `file` as a configuration file containing options, as if it was included from the selected configuration file.
 This makes it possible to share certain configuration options between multiple configuration files/projects.
 
+-xrefrc=<file>::
+-xrefrc <file>::
+
+Read the indicated `file` instead of the default `~/.c-xrefrc` for configuration information.
 
 
 ====== Variables etc.
@@ -157,9 +161,9 @@ Place all log output in `file`.
 
 ====== C specific options
 
--D<variable>[=<value>]::
+-D<macro>[=<body>]::
 
-Define a preprocessor variable in the same fashion as for the C/C++ pre-processor.
+Define a preprocessor macro or variable with name `macro` in the same fashion as for the C/C++ pre-processor.
 This is typically used to set variables differently for different passes (see `-pass`).
 
 -I <directory>::
@@ -180,7 +184,7 @@ Multiple suffixes should be separated by `:`.
 
 -strict::
 
-Force the C language parser to only accept what is in the ANSI C standard.
+Reject keywords and types that are not part of the ANSI C standard, such as `__asm__`, `_near` and `__const__`.
 
 ====== Java specific options
 
@@ -244,7 +248,6 @@ Print short or long help text or version information.
 -exit::
 
 -extractAddrParPrefix::
-
 
 -filescasesensitive::
 
@@ -488,8 +491,6 @@ Print short or long help text or version information.
 
 -optinclude::
 
--p::
-
 -packages::
 
 -pass::
@@ -616,8 +617,6 @@ Applicable only to `server` mode.
 Will use a second generation protocol between the edit server and the editor adapter.
 Using the edit server/refactorer without activating `-xrefactory-II` is deprecated.
 Will be deprecated and removed in the future.
-
--xrefrc::
 
 
 === The configuration file

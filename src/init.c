@@ -207,7 +207,7 @@ static TokenNamesInitTable tokenNameInitTable1[] = {
     {NULL,                0,                LANG_C}         /* sentinel*/
 };
 
-static TokenNamesInitTable tokenNameInitTable2[] = {
+static TokenNamesInitTable tokenNameInitTableNonAnsi[] = {
     {"__const",         CONST,				LANG_C | LANG_YACC},
     {"__const__",       CONST,				LANG_C | LANG_YACC},
     {"__signed",        SIGNED,				LANG_C | LANG_YACC},
@@ -412,7 +412,7 @@ void initTokenNamesTables(void) {
     Symbol *symbolP;
 
     if (!options.strictAnsi) {
-        initTokensFromTable(tokenNameInitTable2);
+        initTokensFromTable(tokenNameInitTableNonAnsi);
     }
 
     /* regular tokentab at last, because we wish to have correct names */
