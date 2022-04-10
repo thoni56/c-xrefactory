@@ -3367,10 +3367,10 @@ case 64:
                     assert(s_jsl == NULL); /* no nesting*/
                     jsltypeTab = StackMemoryAlloc(JslTypeTab);
                     jslTypeTabInit(jsltypeTab, MAX_JSL_SYMBOLS);
-                    javaReadSymbolFromSourceFileInit(olOriginalFileNumber,
+                    javaReadSymbolFromSourceFileInit(olOriginalFileIndex,
                                                      jsltypeTab);
 
-                    fname = getFileItem(olOriginalFileNumber)->name;
+                    fname = getFileItem(olOriginalFileIndex)->name;
                     if (options.taskRegime == RegimeEditServer
                         && refactoringOptions.refactoringRegime!=RegimeRefactory) {
                         /* this must be before reading 's_olOriginalComFile' !!!*/
@@ -4127,7 +4127,7 @@ case 141:
                     log_debug("[jsl] adding field %s to %s", p->name,clas->linkName);
                     LIST_APPEND(Symbol, clas->u.structSpec->records, p);
                     assert(vClass!=noFileIndex);
-                    if (p->pos.file!=olOriginalFileNumber && options.server_operation==OLO_PUSH) {
+                    if (p->pos.file!=olOriginalFileIndex && options.server_operation==OLO_PUSH) {
                         /* pre load of saved file akes problem on move field/method, ...*/
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }

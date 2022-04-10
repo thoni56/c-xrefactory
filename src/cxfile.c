@@ -1210,7 +1210,7 @@ static void cxrfReference(int size,
                 if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     if (additionalArg == CXSF_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
-                        if (file != olOriginalFileNumber || !fileItem->bits.commandLineEntered ||
+                        if (file != olOriginalFileIndex || !fileItem->bits.commandLineEntered ||
                             options.server_operation == OLO_GOTO || options.server_operation == OLO_CGOTO ||
                             options.server_operation == OLO_PUSH_NAME ||
                             options.server_operation == OLO_PUSH_SPECIAL_NAME) {

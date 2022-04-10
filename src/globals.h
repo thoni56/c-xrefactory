@@ -117,7 +117,7 @@ extern int s_cxRefFlag;
 extern FILE *inputFile;
 
 extern int inputFileNumber;
-extern int olOriginalFileNumber;     /* number of original file */
+extern int olOriginalFileIndex;     /* number of original file */
 extern int olOriginalComFileNumber;  /* number of original communication file */
 extern int olStringSecondProcessing; /* am I in macro body pass ? */
 

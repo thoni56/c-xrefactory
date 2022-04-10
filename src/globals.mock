@@ -72,7 +72,7 @@ char *s_olstringInMbody = NULL;
 int s_olstringUsage = 0;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
 char s_olSymbolClassType[COMPLETION_STRING_SIZE];
-int olOriginalFileNumber = -1;
+int olOriginalFileIndex = -1;
 int s_olstringUsage;
 int olOriginalComFileNumber;
 Position s_olcxByPassPos;

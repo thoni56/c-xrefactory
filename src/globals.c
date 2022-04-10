@@ -174,7 +174,7 @@ FILE *errOut=NULL;
 int cxResizingBlocked = 0;
 
 int inputFileNumber          = -1;
-int olOriginalFileNumber     = -1;
+int olOriginalFileIndex     = -1;
 int olOriginalComFileNumber  = -1;
 int olStringSecondProcessing = 0;
 

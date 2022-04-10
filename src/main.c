@@ -2535,7 +2535,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
     mainFileProcessingInitialisations(firstPassP, argc, argv,
                                       nargc, nargv, &inputOpened, &s_language);
     smartReadReferences();
-    olOriginalFileNumber = inputFileNumber;
+    olOriginalFileIndex = inputFileNumber;
     if (mainSymbolCanBeIdentifiedByPosition(inputFileNumber)) {
         if (inputOpened)
             mainCloseInputFile();
@@ -2649,8 +2649,8 @@ static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPassP,
         if (!*firstPassP)
             copyOptions(&options, &cachedOptions);
         mainFileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &inputOpened, &s_language);
-        olOriginalFileNumber    = inputFileNumber;
-        olOriginalComFileNumber = olOriginalFileNumber;
+        olOriginalFileIndex    = inputFileNumber;
+        olOriginalComFileNumber = olOriginalFileIndex;
         if (inputOpened) {
             recoverFromCache();
             cache.active = false;    /* no caching in cxref */

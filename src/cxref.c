@@ -710,7 +710,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         } else {
             if (category==CategoryGlobal && symbol->bits.symbolType!=TypeCppInclude && options.server_operation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
-                if (olOriginalFileNumber != position->file && options.noIncludeRefs)
+                if (olOriginalFileIndex != position->file && options.noIncludeRefs)
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
@@ -4477,7 +4477,7 @@ static void getCallerPositionFromCommandLineOption(Position *opos) {
     int file, line, col;
 
     assert(opos != NULL);
-    file = olOriginalFileNumber;
+    file = olOriginalFileIndex;
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
     *opos = makePosition(file, line, col);
 }
