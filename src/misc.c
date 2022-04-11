@@ -1039,7 +1039,6 @@ int mapDirectoryFiles(char *dirname,
     sprintf(d,"%c*",FILE_PATH_SEPARATOR);
     res = mapPatternFiles(ttt, fun, a1, a2, a3, a4, a5);
 #else
-    struct stat     stat;
     DIR             *fd;
     struct dirent   *dirbuf;
 

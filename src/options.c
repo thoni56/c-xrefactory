@@ -109,7 +109,7 @@ Options presetOptions = {
     true,                       // allowClassFileRefs
     0,
     "",
-    DEFAULT_VALUE,              // manual symbol resolution
+    RESOLVE_DIALOG_DEFAULT,     // manual symbol resolution TODO: This is different from any of the RESOLVE values above, why?
     NULL,                       // browsed symbol name
     true,                       // modifiedFlag
     0,

@@ -69,7 +69,8 @@ typedef enum loadSuperOrNot {
 } LoadSuperOrNot;
 
 typedef enum resolveDialog {
-    RESOLVE_DIALOG_ALWAYS = DO_NOT_LOAD_SUPER+1,
+    RESOLVE_DIALOG_DEFAULT = DO_NOT_LOAD_SUPER+1,
+    RESOLVE_DIALOG_ALWAYS,
     RESOLVE_DIALOG_NEVER,
 } ResolveDialog;
 
