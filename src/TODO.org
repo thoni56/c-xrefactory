@@ -5,6 +5,17 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
+* DOING Project local .c-xrefrc with relative file paths so it can be checked in to a repo
+   We could start with having same format but how to handle project names?
+** TODO Make "get project" lookup the directory tree for closest .c-xrefrc that covers the file
+   Maybe it could return the path to the project file as the name of the project, then...
+   NOTE: any -prune should be considered too
+** TODO A "-p" should first look at the path of the "project name" to see if there is a .c-xrefrc there
+** TODO Change to having reference file in the project tree?
+   This needs some thinking. Find it by looking upwards in the dir, on
+   create we need to ask where to store it starting with current
+   directory. This could enable storing non-absolute filenames in the
+   xrefs, they should be relative to where the db is.
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
 * DOING BUG: Selecting automatic project selection after having set a specific does not seem to work
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
@@ -13,19 +24,13 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra 
 * TODO ROADMAP
-** TODO LSP-like protocol (possibly also fulfill LSP functions)
+** DOING LSP-like protocol (possibly also fulfill LSP functions)
+** TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
 ** TODO Cleaner interface Refactorer -> Server/Tag-generator
 *** TODO Separate refactory options into separate struct
 *** TODO Restructure option handling into -refactory, -server, -generate(?)
     those are main options, you can only have one, and selecting one
     will allow a set of separate options valid for that "mode"
-** TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
-   We could start with having same format but how to handle project names?
-** TODO Change to having reference file in the project tree?
-   This needs some thinking. Find it by looking upwards in the dir, on
-   create we need to ask where to store it starting with current
-   directory. This could enable storing non-absolute filenames in the
-   xrefs, they should be relative to where the db is.
 * TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
   How to make this backwards compatible?
 * TODO Header files. There are a number of sections in the proto.h that
