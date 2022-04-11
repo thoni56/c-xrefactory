@@ -1612,9 +1612,7 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
     fname = file;
     dir = a1;
     path = a2;
-    if (strcmp(fname,".")==0)
-        return;
-    if (strcmp(fname,"..")==0)
+    if (strcmp(fname,".")==0 || strcmp(fname,"..")==0)
         return;
 
     // do not descent too deep
