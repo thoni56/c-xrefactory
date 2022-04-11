@@ -1104,12 +1104,12 @@ bool checkReferenceFileCountOption(int newReferenceFileCount) {
     return check;
 }
 
-void getXrefrcFileName(char *filename) {
+void getXrefrcFileName(char *fileName) {
     int hlen;
     char *home;
 
     if (options.xrefrc!=NULL) {
-        sprintf(filename, "%s", normalizeFileName(options.xrefrc, cwd));
+        sprintf(fileName, "%s", normalizeFileName(options.xrefrc, cwd));
         return;
     }
     home = getenv("HOME");
@@ -1120,11 +1120,11 @@ void getXrefrcFileName(char *filename) {
 #endif
     hlen = strlen(home);
     if (hlen>0 && (home[hlen-1]=='/' || home[hlen-1]=='\\')) {
-        sprintf(filename, "%s%cc-xrefrc", home, FILE_BEGIN_DOT);
+        sprintf(fileName, "%s%cc-xrefrc", home, FILE_BEGIN_DOT);
     } else {
-        sprintf(filename, "%s%c%cc-xrefrc", home, FILE_PATH_SEPARATOR, FILE_BEGIN_DOT);
+        sprintf(fileName, "%s%c%cc-xrefrc", home, FILE_PATH_SEPARATOR, FILE_BEGIN_DOT);
     }
-    assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(fileName) < MAX_FILE_NAME_SIZE-1);
 }
 
 /* Config file handling */
