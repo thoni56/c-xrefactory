@@ -1143,7 +1143,7 @@ char *findConfigFile(char *start) {
             return NULL;
         else {
             *p = 0;
-            normalizedFileName = normalizeFileName(cwd, ".c-xrefrc");
+            normalizedFileName = normalizeFileName(".c-xrefrc", cwd);
         }
     }
     return normalizedFileName;

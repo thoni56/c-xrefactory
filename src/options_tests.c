@@ -201,8 +201,8 @@ Ensure(Options, will_find_config_file_in_parent_directory) {
     expect(normalizeFileName, will_return("/home/c-xref/dir/.c-xrefrc"));
     expect(fileExists, when(fullPath, is_equal_to_string("/home/c-xref/dir/.c-xrefrc")), will_return(false));
     expect(normalizeFileName,
-           when(name, is_equal_to_string("/home/c-xref")),
-           when(relative_to, is_equal_to_string(".c-xrefrc")),
+           when(name, is_equal_to_string(".c-xrefrc")),
+           when(relative_to, is_equal_to_string("/home/c-xref")),
            will_return("/home/c-xref/.c-xrefrc"));
     expect(fileExists, when(fullPath, is_equal_to_string("/home/c-xref/.c-xrefrc")), will_return(true));
 
