@@ -663,14 +663,14 @@ static void processSectionMarker(char *optionText, int i, char *project, char *s
     }
 
 
-#define OPTION_SPACE_ALLOCC(memFl,cc,num,type) {                        \
-        if (memFl==MEM_ALLOC_ON_SM) {                                   \
-            SM_ALLOCC(optMemory,cc,num,type);                           \
-        } else if (memFl==MEM_ALLOC_ON_PP) {                            \
-            PPM_ALLOCC(cc,num,type);                                     \
-        } else {                                                        \
-            assert(0);                                                  \
-        }                                                               \
+#define OPTION_SPACE_ALLOCC(memFl,cc,num,type) {    \
+        if (memFl==MEM_ALLOC_ON_SM) {               \
+            SM_ALLOCC(optMemory,cc,num,type);       \
+        } else if (memFl==MEM_ALLOC_ON_PP) {        \
+            PPM_ALLOCC(cc,num,type);                \
+        } else {                                    \
+            assert(0);                              \
+        }                                           \
     }
 }
 
@@ -689,7 +689,7 @@ static void processSectionMarker(char *optionText, int i, char *project, char *s
 
 
 bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
-                       char *section, char *project, char *resSection) {
+                        char *section, char *project, char *resSection) {
     char optionText[MAX_OPTION_LEN];
     int len, argc, i, c, passn=0;
     bool isActiveSection, isActivePass;
