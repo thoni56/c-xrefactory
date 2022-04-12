@@ -603,9 +603,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.server_operation = OLO_SAFETY_CHECK2;
     else if (strcmp(argv[i], "-olcxintersection")==0)
         options.server_operation = OLO_INTERSECTION;
-    else if (strcmp(argv[i], "-olcxsafetycheckmovedfile")==0
-             || strcmp(argv[i], "-olcxsafetycheckmoved")==0  /* backward compatibility */
-             ) {
+    else if (strcmp(argv[i], "-olcxsafetycheckmovedfile")==0) {
         NEXT_ARG(i);
         createOptionString(&options.checkFileMovedFrom, argv[i]);
         NEXT_ARG(i);

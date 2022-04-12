@@ -450,8 +450,6 @@ Print short or long help text or version information.
 
 -olcxsafetycheckinit::
 
--olcxsafetycheckmoved::
-
 -olcxsafetycheckmovedblock::
 
 -olcxsafetycheckmovedfile::
