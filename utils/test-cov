@@ -1,5 +1,17 @@
 #! /bin/bash
 
+if [ "$#" -ne 1 ]; then
+    echo ""
+    echo "Usage: test-cov <test-directory>"
+    echo ""
+    echo "Will remove all current coverage and replace it with"
+    echo "the coverage from the indicated test. This helps to"
+    echo "define which test covers a particular set of lines."
+    echo ""
+    echo "Must be run from the src directory."
+    echo ""
+    exit
+fi
 # Use the coverage from a single integration test to generate .gcov
 # files in src directory $1 is the path to a directory, presumably in
 # tests, a test directory and it should have a .coverage subdirectory
