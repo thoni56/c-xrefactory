@@ -4832,7 +4832,7 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_PUSH_ALL_IN_METHOD:
-        //&fprintf(communicationChannel,":\n\n getting all references from %d to %d\n", s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
+        log_trace(":getting all references from begin=%d to end=%d", s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
         olPushAllReferencesInBetween(s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
         olcxPrintPushingAction(options.server_operation, 0);
         break;
