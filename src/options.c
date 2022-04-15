@@ -310,12 +310,14 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
 
     dir = a1; fname = file; recurseFlag = a4; isTopDirectory = *a5;
     if (isTopDirectory == 0) {
-        if (strcmp(fname, ".")==0) return;
-        if (strcmp(fname, "..")==0) return;
-        if (fileNameShouldBePruned(fname)) return;
+        if (strcmp(fname, ".")==0 || strcmp(fname, "..")==0)
+            return;
+        if (fileNameShouldBePruned(fname))
+            return;
         sprintf(fn, "%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
         strcpy(fn, normalizeFileName(fn, cwd));
-        if (fileNameShouldBePruned(fn)) return;
+        if (fileNameShouldBePruned(fn))
+            return;
     } else {
         strcpy(fn, normalizeFileName(fname, cwd));
     }
