@@ -306,10 +306,10 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     void            *nrecurseFlag;
     char            fn[MAX_FILE_NAME_SIZE];
     char            wcPaths[MAX_OPTION_LEN];
-    int             topCallFlag;
+    int             isTopDirectory;
 
-    dir = a1; fname = file; recurseFlag = a4; topCallFlag = *a5;
-    if (topCallFlag == 0) {
+    dir = a1; fname = file; recurseFlag = a4; isTopDirectory = *a5;
+    if (isTopDirectory == 0) {
         if (strcmp(fname, ".")==0) return;
         if (strcmp(fname, "..")==0) return;
         if (fileNameShouldBePruned(fname)) return;
@@ -328,12 +328,12 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     // Directories are never in editor buffers...
     if (isDirectory(fn)) {
         if (recurseFlag!=NULL) {
-            topCallFlag = 0;
-            nrecurseFlag = &topCallFlag;
+            isTopDirectory = 0;
+            nrecurseFlag = &isTopDirectory;
             mapDirectoryFiles(fn, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
-                              fn, NULL, NULL, nrecurseFlag, &topCallFlag);
+                              fn, NULL, NULL, nrecurseFlag, &isTopDirectory);
             editorMapOnNonexistantFiles(fn, dirInputFile, DEPTH_ANY,
-                                        fn, NULL, NULL, nrecurseFlag, &topCallFlag);
+                                        fn, NULL, NULL, nrecurseFlag, &isTopDirectory);
         } else {
             // no error, let it be
             //& sprintf(tmpBuff, "omitting directory %s, missing '-r' option ?",fn);
@@ -342,7 +342,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     } else if (editorFileExists(fn)) {
         // .class can be inside a jar archive, but this makes problem on
         // recursive read of a directory, it attempts to read .class
-        if (topCallFlag==0
+        if (isTopDirectory==0
             && !fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes)
             && !fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes)
             && compareFileNames(suff, ".y")!=0
@@ -360,9 +360,9 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         expandWildcardsInOnePath(fn, wcPaths, MAX_OPTION_LEN);
         //&fprintf(dumpOut, "wildcard path %s expanded to %s\n", fn, wcPaths);
         MapOnPaths(wcPaths, {
-                dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag);
+                dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory);
             });
-    } else if (topCallFlag
+    } else if (isTopDirectory
                && ((!options.allowPackagesOnCommandLine)
                    || !packageOnCommandLine(fname))) {
         if (options.taskRegime!=RegimeEditServer) {
