@@ -876,10 +876,7 @@ static void pathConcat(char path[], char packagePath[]) {
 
 bool packageOnCommandLine(char *packageName) {
     char *cp;
-    char path[MAX_FILE_NAME_SIZE];
     char packagePath[MAX_FILE_NAME_SIZE];
-    int isTopDirectory;
-    void *recurseFlag;
     bool packageFound = false;
 
     assert(strlen(packageName)<MAX_FILE_NAME_SIZE-1);
@@ -887,6 +884,7 @@ bool packageOnCommandLine(char *packageName) {
 
     cp = javaSourcePaths;
     while (cp!=NULL && *cp!=0) {
+        char path[MAX_FILE_NAME_SIZE];
         int len = copyPathSegment(cp, path);
 
         pathConcat(path, packagePath);
@@ -895,12 +893,13 @@ bool packageOnCommandLine(char *packageName) {
         if (directoryExists(path)) {
             // it is a package name, process all source files
             packageFound = true;
-            isTopDirectory = 1;
-            recurseFlag = &isTopDirectory;
+            int isTopDirectory = 1;
+            void *recurseFlag = &isTopDirectory;
             dirInputFile(path, "", NULL, NULL, recurseFlag, &isTopDirectory);
         }
         cp += len;
-        if (*cp == CLASS_PATH_SEPARATOR) cp++;
+        if (*cp == CLASS_PATH_SEPARATOR)
+            cp++;
     }
     return packageFound;
 }
