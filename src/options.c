@@ -876,7 +876,7 @@ bool packageOnCommandLine(char *packageName) {
     char *cp;
     char path[MAX_FILE_NAME_SIZE];
     char packagePath[MAX_FILE_NAME_SIZE];
-    int topCallFlag;
+    int isTopDirectory;
     void *recurseFlag;
     bool packageFound = false;
 
@@ -893,9 +893,9 @@ bool packageOnCommandLine(char *packageName) {
         if (directoryExists(path)) {
             // it is a package name, process all source files
             packageFound = true;
-            topCallFlag = 1;
-            recurseFlag = &topCallFlag;
-            dirInputFile(path, "", NULL, NULL, recurseFlag, &topCallFlag);
+            isTopDirectory = 1;
+            recurseFlag = &isTopDirectory;
+            dirInputFile(path, "", NULL, NULL, recurseFlag, &isTopDirectory);
         }
         cp += len;
         if (*cp == CLASS_PATH_SEPARATOR) cp++;
