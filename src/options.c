@@ -314,7 +314,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
             return;
         if (fileNameShouldBePruned(fname))
             return;
-        sprintf(fn, "%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
+        sprintf(fn, "%s%c%s", dir, FILE_PATH_SEPARATOR, fname);
         strcpy(fn, normalizeFileName(fn, cwd));
         if (fileNameShouldBePruned(fn))
             return;
