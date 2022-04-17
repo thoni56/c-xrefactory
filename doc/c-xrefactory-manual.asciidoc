@@ -600,32 +600,6 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 
 -searchshortlist::
 
--tpchmoveclass::
-
--tpchmovefield::
-
--tpchmovestaticfield::
-
--tpchmovestaticmethod::
-
--tpchpullupfield::
-
--tpchpullupmethod::
-
--tpchpushdownfield::
-
--tpchpushdownmethod::
-
--tpchpushdownmethodpostcheck::
-
--tpchrenameclass::
-
--tpchrenamepackage::
-
--tpchturndyntostatic::
-
--tpchturnstatictodyn::
-
 ...
 
 === The configuration file

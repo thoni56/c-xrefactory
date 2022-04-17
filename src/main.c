@@ -1090,45 +1090,6 @@ static bool processTOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-task_regime_server")==0) {
         options.taskRegime = RegimeEditServer;
     }
-    else if (strcmp(argv[i], "-tpchrenamepackage")==0) {
-        options.trivialPreCheckCode = TPC_RENAME_PACKAGE;
-    }
-    else if (strcmp(argv[i], "-tpchrenameclass")==0) {
-        options.trivialPreCheckCode = TPC_RENAME_CLASS;
-    }
-    else if (strcmp(argv[i], "-tpchmoveclass")==0) {
-        options.trivialPreCheckCode = TPC_MOVE_CLASS;
-    }
-    else if (strcmp(argv[i], "-tpchmovefield")==0) {
-        options.trivialPreCheckCode = TPC_MOVE_FIELD;
-    }
-    else if (strcmp(argv[i], "-tpchmovestaticfield")==0) {
-        options.trivialPreCheckCode = TPC_MOVE_STATIC_FIELD;
-    }
-    else if (strcmp(argv[i], "-tpchmovestaticmethod")==0) {
-        options.trivialPreCheckCode = TPC_MOVE_STATIC_METHOD;
-    }
-    else if (strcmp(argv[i], "-tpchturndyntostatic")==0) {
-        options.trivialPreCheckCode = TPC_TURN_DYN_METHOD_TO_STATIC;
-    }
-    else if (strcmp(argv[i], "-tpchturnstatictodyn")==0) {
-        options.trivialPreCheckCode = TPC_TURN_STATIC_METHOD_TO_DYN;
-    }
-    else if (strcmp(argv[i], "-tpchpullupmethod")==0) {
-        options.trivialPreCheckCode = TPC_PULL_UP_METHOD;
-    }
-    else if (strcmp(argv[i], "-tpchpushdownmethod")==0) {
-        options.trivialPreCheckCode = TPC_PUSH_DOWN_METHOD;
-    }
-    else if (strcmp(argv[i], "-tpchpushdownmethodpostcheck")==0) {
-        options.trivialPreCheckCode = TPC_PUSH_DOWN_METHOD_POST_CHECK;
-    }
-    else if (strcmp(argv[i], "-tpchpullupfield")==0) {
-        options.trivialPreCheckCode = TPC_PULL_UP_FIELD;
-    }
-    else if (strcmp(argv[i], "-tpchpushdownfield")==0) {
-        options.trivialPreCheckCode = TPC_PUSH_DOWN_FIELD;
-    }
     else return false;
     *argi = i;
     return true;

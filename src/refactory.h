@@ -7,19 +7,6 @@
 
 typedef enum trivialPreChecks {
     TPC_NONE,                   /* Must be 0 because of initOpt in globals.h */
-    TPC_MOVE_FIELD,
-    TPC_RENAME_PACKAGE,
-    TPC_RENAME_CLASS,
-    TPC_MOVE_CLASS,
-    TPC_MOVE_STATIC_FIELD,
-    TPC_MOVE_STATIC_METHOD,
-    TPC_TURN_DYN_METHOD_TO_STATIC,
-    TPC_TURN_STATIC_METHOD_TO_DYN,
-    TPC_PULL_UP_METHOD,
-    TPC_PUSH_DOWN_METHOD,
-    TPC_PUSH_DOWN_METHOD_POST_CHECK,
-    TPC_PULL_UP_FIELD,
-    TPC_PUSH_DOWN_FIELD,
     TPC_GET_LAST_IMPORT_LINE, // not really a check
 } TrivialPreChecks;
 
