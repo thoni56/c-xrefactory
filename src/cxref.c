@@ -2,6 +2,7 @@
 
 #include "access.h"
 #include "commons.h"
+#include "server.h"
 #include "usage.h"
 #include "yylex.h"
 #include "classhierarchy.h"
@@ -4461,7 +4462,7 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_MM_PRE_CHECK:
     case OLO_PP_PRE_CHECK:
-        olcxMMPreCheck();   // the value of s_opt.cxrefs is checked inside
+        olcxMMPreCheck();   // the value of s_opt.cxrefsLocation is checked inside
         break;
     case OLO_INTERSECTION:
         olcxTopReferencesIntersection();
@@ -4604,8 +4605,23 @@ void mainAnswerEditAction(void) {
             mainAnswerReferencePushingAction(options.server_operation);
         }
         break;
-    default:
+    case OLO_PUSH:
+    case OLO_PUSH_ONLY:
         mainAnswerReferencePushingAction(options.server_operation);
+        break;
+    case OLO_GET_LAST_IMPORT_LINE:
+        if (options.xref2) {
+            char tmpBuff[TMP_BUFF_SIZE];
+            sprintf(tmpBuff, "%d", s_cps.lastImportLine);
+            ppcGenRecord(PPC_SET_INFO, tmpBuff);
+        } else {
+            fprintf(communicationChannel,"*%d", s_cps.lastImportLine);
+        }
+        break;
+    case OLO_NOOP:
+        break;
+    default:
+        log_fatal("unexpected default case for %s\n", operationNamesTable[options.server_operation]);
     } // switch
 
     fflush(communicationChannel);

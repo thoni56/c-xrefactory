@@ -19,6 +19,7 @@
 #include "filetable.h"
 
 #include "c_parser.h"
+#include "server.h"
 #include "symboltable.h"
 #include "yacc_parser.h"
 #include "java_parser.h"
@@ -639,6 +640,8 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.server_operation = OLO_GOTO_CURRENT;
     else if (strcmp(argv[i], "-olcxgetcurrentrefn")==0)
         options.server_operation=OLO_GET_CURRENT_REFNUM;
+    else if (strcmp(argv[i], "-olcxgetlastimportline")==0)
+        options.server_operation=OLO_GET_LAST_IMPORT_LINE;
     else if (strncmp(argv[i], "-olcxgotoparname",16)==0) {
         options.server_operation = OLO_GOTO_PARAM_NAME;
         options.olcxGotoVal = 0;

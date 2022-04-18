@@ -90,6 +90,7 @@
         ENUM(OLO_GET_METHOD_COORD)                                      \
         ENUM(OLO_GET_CLASS_COORD)                                       \
         ENUM(OLO_GET_SYMBOL_TYPE)                                       \
+        ENUM(OLO_GET_LAST_IMPORT_LINE)                                  \
         ENUM(OLO_TAG_SEARCH_FORWARD)                                    \
         ENUM(OLO_TAG_SEARCH_BACK)                                       \
         ENUM(OLO_PUSH_ENCAPSULATE_SAFETY_CHECK)                         \

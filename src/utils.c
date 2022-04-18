@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "options.h"
 #include "fileio.h"
+#include "server.h"
 
 
 bool creatingOlcxRefs(void) {
@@ -21,6 +22,7 @@ bool creatingOlcxRefs(void) {
             ||  options.server_operation==OLO_PUSH_FOR_LOCALM
             ||  options.server_operation==OLO_TRIVIAL_PRECHECK
             ||  options.server_operation==OLO_GET_SYMBOL_TYPE
+            ||  options.server_operation==OLO_GET_LAST_IMPORT_LINE
             ||  options.server_operation==OLO_GLOBAL_UNUSED
             ||  options.server_operation==OLO_LOCAL_UNUSED
             ||  options.server_operation==OLO_LIST
