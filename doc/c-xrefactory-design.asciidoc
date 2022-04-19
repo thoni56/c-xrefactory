@@ -53,3 +53,36 @@ Rel(cxrefCore, sourceCode, "read/analyze")
 Rel(editor, sourceCode, "normal editing operations")
 Rel(editorExtension, sourceCode, "extended c-xrefactory operations")
 ....
+
+== Data Structures
+
+There is a lot of different data structures used in `c-xrefactory`.
+This is a first step towards visualising them.
+
+=== Symbols and References
+
+So, why is there no connection between the symbols and the references?!?
+
+[plantuml, png]
+....
+class Symbol
+Symbol : char *name
+Symbol : Position position
+Symbol : SymbolBits bits
+Symbol -> Symbol :  next
+
+class SymbolList
+SymbolList -> SymbolList : next
+SymbolList -> Symbol : symbol
+
+class ReferencesItem
+ReferencesItem : char *name
+ReferencesItem : ReferencesBits bits
+ReferencesItem -> Reference : references
+ReferencesItem -> ReferencesItem : next
+
+class Reference
+Reference : Usage usage
+Reference : Position position
+Reference -> Reference : next
+....
