@@ -46,7 +46,7 @@
                                            change this, RECREATE Tag file */
 #define MAX_JAVA_ZIP_ARCHIVES    200	/* max .jar archives in CLASSPATH */
 
-#define MAX_CXREF_SYMBOLS      65536	/* just hash table size, not limit */
+#define MAX_CXREF_ENTRIES      65536	/* just hash table size, not limit */
 
 #define FQT_CLASS_TAB_SIZE     10000	/* just hash list table size */
 #define MAX_SYMBOLS             5000	/* just hash list table size */
