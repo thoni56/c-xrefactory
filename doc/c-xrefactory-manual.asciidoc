@@ -16,7 +16,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-= C-xrefactory - a C/Yacc/Java refactoring and code browsing tool
+= C-xrefactory - a C/Yacc/Java refactoring and code browsing tool - User Manual
 v{VERSION} - Generated {localdate}
 
 

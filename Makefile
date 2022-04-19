@@ -19,6 +19,10 @@ test: all
 quick: all
 	make -C tests quick
 
+.PHONY: doc
+doc:
+	make -C doc
+
 clean:
 	make -C src clean
 	make -C byacc-1.9 clean
