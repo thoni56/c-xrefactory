@@ -109,12 +109,12 @@ typedef enum {
 
 typedef struct usage {
     UsageKind kind;
-    AccessKind requiredAccess;   // required accessibility of the reference
+    Access requiredAccess;   // required accessibility of the reference
 } Usage;
 
 
 extern const char *usageKindEnumName[];
 
-extern void fillUsage(Usage *usage, UsageKind kind, AccessKind requiredAccess);
+extern void fillUsage(Usage *usage, UsageKind kind, Access requiredAccess);
 
 #endif

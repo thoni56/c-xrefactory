@@ -2,6 +2,7 @@
 #define SYMBOL_H_INCLUDED
 
 /* Dependencies: */
+#include "access.h"
 #include "head.h"
 #include "position.h"
 #include "type.h"
@@ -13,7 +14,7 @@
 typedef struct symbolBits {
     bool       isRecord : 1;             /* whether struct record */
     bool       isExplicitlyImported : 1; /* whether not imported by * import */
-    AccessKind access : 12;              /* java access bits */
+    Access access : 12;              /* java access bits */
     bool       javaSourceIsLoaded : 1;   /* is jsl source file loaded ? */
     bool       javaFileIsLoaded : 1;     /* is class file loaded ? */
 
@@ -68,12 +69,11 @@ extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
 extern void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName,
                                  Position pos, struct symStructSpec *structSpec);
 
-extern void fillSymbolBits(SymbolBits *bits, unsigned accessFlags, unsigned symType,
-                           unsigned storage);
+extern void fillSymbolBits(SymbolBits *bits, Access access, Type type, Storage storage);
 
 extern Symbol makeSymbol(char *name, char *linkName, Position pos);
 extern Symbol makeSymbolWithBits(char *name, char *linkName, Position pos,
-                                 unsigned accessFlags, unsigned symbolType, unsigned storage);
+                                 Access access, Type type, Storage storage);
 
 extern SymbolBits makeSymbolBits(unsigned accessFlags, unsigned symbolType, unsigned storage);
 

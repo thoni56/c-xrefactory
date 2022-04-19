@@ -421,7 +421,7 @@ typedef struct referencesItemBits {
     Type              symType : SYMTYPES_LN;
     Storage           storage : STORAGES_LN;
     ReferenceScope    scope : SCOPES_LN;
-    AccessKind        accessFlags : 12; /* java access bits */
+    Access        accessFlags : 12; /* java access bits */
     ReferenceCategory category : 2;     /* local/global */
 } ReferencesItemBits;
 

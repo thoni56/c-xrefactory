@@ -18,7 +18,7 @@ typedef enum {
     AccessInterface		=		(1u << 9), //0x200,
     AccessAbstract		=		(1u << 10), //0x400,
     AccessAll			=		(1u << 11), //0x800
-} AccessKind;
+} Access;
 
 #define ACCESS_PPP_MODIFER_MASK    0x007
 

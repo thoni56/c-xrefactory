@@ -209,7 +209,7 @@ jmp_buf cxmemOverflow;
 /*                            real constants                              */
 /* ********************************************************************** */
 
-AccessKind javaRequiredAccessibilityTable[MAX_REQUIRED_ACCESS+1] = {
+Access javaRequiredAccessibilityTable[MAX_REQUIRED_ACCESS+1] = {
     AccessPublic,
     AccessProtected,
     AccessDefault,
