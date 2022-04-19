@@ -3311,7 +3311,7 @@ No.
 	(progn
 	  (c-xref-select-dispach-data-caller-window dispatch-data)
 	  (c-xref-server-call-on-current-buffer-no-saves
-	   "-olcxtrivialprecheck -getlastimportline"
+	   "-olcxgetlastimportline"
 	   dispatch-data)
 	  (setq iline (cdr (assoc 'info dispatch-data)))
 	  (setq iline-val (string-to-number iline))

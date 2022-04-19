@@ -14,15 +14,15 @@ import org.gjt.sp.jedit.gui.*;
 public class CompletionDialog extends JDialog implements KeyListener {
 
 	DispatchData				data;
-	JScrollPane 				scrollPane;
-	JTextArea 					textArea;
+	JScrollPane				scrollPane;
+	JTextArea					textArea;
 	String						text;
-	LinkedList	 				history;
+	LinkedList					history;
 	String						insertFile;
 	int							insertOffset;
 	//&boolean						urlBrowserOpenedAtStart; // not good idea
 
-	static CompletionDialog 	lastcDialog;   // to ensure only one dialog at the time
+	static CompletionDialog		lastcDialog;   // to ensure only one dialog at the time
 
 	int							x,y;	// window coordinates
 	int							mx, my;	// mouse coordinates
@@ -53,8 +53,8 @@ public class CompletionDialog extends JDialog implements KeyListener {
 	}
 
 	static class HistoryElem {
-		int 	caret;
-		String 	selection;
+		int	caret;
+		String	selection;
 		HistoryElem(int caret, String selection) {
 			this.caret = caret;
 			this.selection = selection;
@@ -79,7 +79,7 @@ public class CompletionDialog extends JDialog implements KeyListener {
 		try {
 			DispatchData ndata = new DispatchData(s.xbTask, s.view);
 			XrefCharBuffer receipt = ndata.xTask.callProcessOnFileNoSaves(
-				new String[]{"-olcxtrivialprecheck", "-getlastimportline"},
+				new String[]{"-olcxgetlastimportline"},
 				ndata);
 			Dispatch.dispatch(receipt,ndata);
 			int ln = Integer.parseInt(ndata.info);
@@ -124,8 +124,8 @@ public class CompletionDialog extends JDialog implements KeyListener {
 			String line = textArea.getText(lb, le-lb);
 			// search left par
 			for(i=line.length()-1; i>=0; i--) {
-				if (line.charAt(i)=='(' 
-					&& i<line.length()-1 
+				if (line.charAt(i)=='('
+					&& i<line.length()-1
 					&& i>0
 					&& line.charAt(i-1) != ':'
 					&& line.charAt(i+1) != ')') break;
@@ -159,8 +159,8 @@ public class CompletionDialog extends JDialog implements KeyListener {
 		if (code != KeyEvent.VK_UP && code != KeyEvent.VK_DOWN
 			&& code != KeyEvent.VK_KP_UP && code != KeyEvent.VK_KP_DOWN
 			&& code != KeyEvent.VK_PAGE_UP && code != KeyEvent.VK_PAGE_DOWN
-			&& code != KeyEvent.VK_LEFT && code != KeyEvent.VK_RIGHT			
-			&& code != KeyEvent.VK_HOME && code != KeyEvent.VK_END			
+			&& code != KeyEvent.VK_LEFT && code != KeyEvent.VK_RIGHT
+			&& code != KeyEvent.VK_HOME && code != KeyEvent.VK_END
 			) {
 			e.consume();
 		}
@@ -172,7 +172,7 @@ public class CompletionDialog extends JDialog implements KeyListener {
 			DispatchData ndata = new DispatchData(data, this);
 			XrefCharBuffer receipt = ndata.xTask.callProcessSingleOpt("-olcomplselect" + line, ndata);
 			Dispatch.dispatch(receipt,ndata);
-		} else if (code == KeyEvent.VK_SPACE 
+		} else if (code == KeyEvent.VK_SPACE
 				   && (e.getModifiers() & InputEvent.CTRL_MASK)!=0) {
 			closeDialog();
 			s.moveToPosition(s.getParentView(this),insertFile, insertOffset);
@@ -186,7 +186,7 @@ public class CompletionDialog extends JDialog implements KeyListener {
 				int newCaret = ((HistoryElem)history.getFirst()).selection.length();
 				showSelection();
 				if (newCaret < oldCaret) {
-					s.moveToPosition(s.getParentView(this),insertFile, insertOffset);			
+					s.moveToPosition(s.getParentView(this),insertFile, insertOffset);
 					insertOffset--;
 					s.getBuffer().remove(insertOffset, 1);
 				}
@@ -217,11 +217,11 @@ public class CompletionDialog extends JDialog implements KeyListener {
 		} else if (code == KeyEvent.VK_ESCAPE) {
 			closeDialog();
 			if (mod == InputEvent.SHIFT_MASK || mod == InputEvent.ALT_MASK) {
-				s.moveToPosition(s.getParentView(this), insertFile, insertOffset);								
+				s.moveToPosition(s.getParentView(this), insertFile, insertOffset);
 			}
 //&		} else if (code == KeyEvent.VK_LEFT) {
 //&		} else if (code == KeyEvent.VK_RIGHT) {
-		}			
+		}
 	}
 	public void keyReleased(KeyEvent e) {
 		e.consume();
@@ -274,7 +274,7 @@ public class CompletionDialog extends JDialog implements KeyListener {
 			DispatchData ndata = new DispatchData(s.xbTask, view);
 			XrefCharBuffer receipt = ndata.xTask.callProcessOnFileNoSaves(options.toStringArray(true), ndata);
 			Dispatch.dispatch(receipt, ndata);
-			// do not display project information to not erase profile info 
+			// do not display project information to not erase profile info
 			// from completions
 			//& s.displayProjectInformationLater();
 		}
@@ -345,4 +345,3 @@ public class CompletionDialog extends JDialog implements KeyListener {
 	}
 
 }
-
