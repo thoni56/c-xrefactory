@@ -106,7 +106,6 @@ typedef struct options {
     char *jdocTmpDir;
 
     /* MIXED THINGS... */
-    bool javaDoc;
     bool noIncludeRefs;
     bool allowClassFileRefs;
     int filterValue;

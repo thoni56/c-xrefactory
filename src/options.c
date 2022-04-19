@@ -73,7 +73,7 @@ Options presetOptions = {
     false,                      // noerrors
     0,                          // fqtNameToCompletions
     NULL,                       // moveTargetClass
-    0,                          // TPC_NON, trivial pre-check
+    0,                          // TPC_NONE, trivial pre-check
     1,                          // urlGenTemporaryFile
     1,                          // urlautoredirect
     0,                          // javafilesonly
@@ -103,7 +103,6 @@ Options presetOptions = {
     "/tmp",                     // jdocTmpDir
 
     /* MIXED THINGS... */
-    false,                      // javaDoc
     false,                      // noIncludeRefs
     true,                       // allowClassFileRefs
     0,

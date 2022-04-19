@@ -427,8 +427,6 @@ static bool processIOption(int *argi, int argc, char **argv) {
 static bool processJOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
-    else if (strcmp(argv[i], "-javadoc")==0)
-        options.javaDoc = true;
     else if (strncmp(argv[i], "-jdoctmpdir=",12)==0) {
         int len = strlen(argv[i]);
         if (len>13 && argv[i][len-1] == FILE_PATH_SEPARATOR) {
