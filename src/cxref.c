@@ -629,11 +629,6 @@ static void olGetAvailableRefactorings(void) {
     if (count==0) availableRefactorings[PPC_AVR_SET_MOVE_TARGET].available = true;
     if (options.editor == EDITOR_EMACS) {
         availableRefactorings[PPC_AVR_UNDO].available = true;
-#if ZERO
-        if (LANGUAGE(LANG_JAVA)) {
-            s_availableRefactorings[PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS].available = true;
-        }
-#endif
     }
     if (options.olCursorPos != options.olMarkPos) {
         // region selected, TODO!!! some more prechecks for extract method

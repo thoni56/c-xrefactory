@@ -73,7 +73,6 @@ typedef struct options {
     int olcxWinDelFromCol;
     int olcxWinDelToLine;
     int olcxWinDelToCol;
-    char *moveFromUser;
     bool noErrors;
     int fqtNameToCompletions;
     char *moveTargetClass;

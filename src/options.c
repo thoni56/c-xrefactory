@@ -70,7 +70,6 @@ Options presetOptions = {
     0,
     0,
     0,
-    "nouser",                   // moveToUser
     false,                      // noerrors
     0,                          // fqtNameToCompletions
     NULL,                       // moveTargetClass
