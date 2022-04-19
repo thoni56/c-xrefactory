@@ -451,12 +451,6 @@ typedef struct olCompletion {
     struct olCompletion  *next;
 } Completion;
 
-typedef struct SymbolFoundInformation {
-    struct referencesItem *symrefs;     /* this is valid */
-    struct referencesItem *symRefsInfo; /* additional for error message */
-    struct reference      *currentRef;
-} SymbolFoundInformation;
-
 typedef struct SymbolsMenu {
     struct referencesItem	s;
     char					selected;
