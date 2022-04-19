@@ -153,7 +153,6 @@ Options presetOptions = {
 
 
 /* memory where on-line given options are stored */
-#define SIZE_optMemory SIZE_opiMemory
 static char optMemory[SIZE_optMemory];
 static int optMemoryIndex;
 

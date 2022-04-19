@@ -75,7 +75,7 @@ Ensure(Memory, can_allocate_direct_memory) {
     char *character = NULL;
     Memory memory;
 
-    initMemory((&memory), overflowHandler, SIZE_opiMemory);
+    initMemory((&memory), overflowHandler, SIZE_optMemory);
     DM_ALLOC((&memory), character, char);
     assert_that(character, is_not_null);
 }

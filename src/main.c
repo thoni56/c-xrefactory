@@ -2016,7 +2016,7 @@ static void mainTotalTaskEntryInitialisations() {
 
     // init options memory
     initMemory(((Memory*)&presetOptions.memory),
-               optionsOverflowHandler, SIZE_opiMemory);
+               optionsOverflowHandler, SIZE_optMemory);
 
     // Inject error handling functions
     memoryUseFunctionForFatalError(fatalError);
