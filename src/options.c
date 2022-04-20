@@ -27,7 +27,7 @@ Options refactoringOptions;    // xref -refactory command line options
 Options cachedOptions;
 Options presetOptions = {
                                 /* GENERAL */
-    0,                          // exit
+    false,                      // exit
     "gcc",                      // path to compiler to use for auto-discovering compiler and defines
     MULE_DEFAULT,               // encoding
     0,                          // completeParenthesis
@@ -52,7 +52,7 @@ Options presetOptions = {
     0,                          // cacheIncludes
     NULL,                       // renameTo
     RegimeUndefined,            // refactoringRegime
-    0,                          // xrefactory-II
+    false,                      // xrefactory-II
     NULL,                       // moveTargetFile
 #if defined (__WIN32__)
     "c;C",                      // cFilesSuffixes

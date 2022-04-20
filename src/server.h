@@ -162,7 +162,7 @@
 #error OLO_NOP != 0
 #endif
 
-typedef enum olcxOperations {
+typedef enum {
     ALL_OPERATION_ENUMS(GENERATE_ENUM_VALUE)
 } ServerOperation;
 

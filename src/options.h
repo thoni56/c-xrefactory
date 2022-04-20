@@ -13,11 +13,11 @@
 
 
 /* Working regime in which the task is invoked */
-typedef enum taskRegimes {
-    RegimeUndefined = 0,        /* Explicitly zero so we can assert(regime) */
-    RegimeXref, /* Cross referencer called by user from command line */
-    RegimeEditServer, /* editor server, called by on-line editing action */
-    RegimeRefactory /* refactoring server, called by on-line editing */
+typedef enum {
+    RegimeUndefined = 0, /* Explicitly zero so we can assert(regime) */
+    RegimeXref,          /* Cross referencer called by user from command line */
+    RegimeEditServer,    /* editor server, called by on-line editing action */
+    RegimeRefactory      /* refactoring server, called by on-line editing */
 } TaskRegimes;
 
 typedef struct setGetEnv {
@@ -36,7 +36,7 @@ typedef enum updateType {
 
 typedef struct options {
     /* GENERAL */
-    int exit;
+    bool exit;
     char *compiler;
     int fileEncoding;
     char completeParenthesis;
@@ -60,8 +60,8 @@ typedef struct options {
     bool briefoutput;
     int cacheIncludes;
     char *renameTo;
-    enum taskRegimes refactoringRegime;
-    int xref2;
+    TaskRegimes refactoringRegime;
+    bool xref2;
     char *moveTargetFile;
     char *cFilesSuffixes;
     char *javaFilesSuffixes;
@@ -130,7 +130,7 @@ typedef struct options {
     int tabulator;
     int olCursorPos;
     int olMarkPos;
-    enum taskRegimes taskRegime;
+    TaskRegimes taskRegime;
     bool debug;
     bool trace;
     ServerOperation serverOperation;
