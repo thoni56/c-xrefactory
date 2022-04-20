@@ -57,7 +57,7 @@ typedef struct disabledList {
 
 static EditorUndo *refactoringStartingPoint;
 
-static bool refactoryXrefEditServerSubTaskFirstPass = 1;
+static bool refactoryXrefEditServerSubTaskFirstPass = true;
 
 static char *refactoryEditServInitOptions[] = {
     "xref",
@@ -67,6 +67,7 @@ static char *refactoryEditServInitOptions[] = {
     NULL,
 };
 
+// Refactory will always use xref2 protocol and inhibit a few messages
 static char *refactoryXrefInitOptions[] = {
     "xref",
     "-xrefactory-II",
@@ -221,7 +222,7 @@ static void refactoryUpdateReferences(char *project) {
     // return into editSubTaskState
     mainTaskEntryInitialisations(argument_count(refactoryEditServInitOptions),
                                  refactoryEditServInitOptions);
-    refactoryXrefEditServerSubTaskFirstPass = 1;
+    refactoryXrefEditServerSubTaskFirstPass = true;
     return;
 }
 
@@ -4467,7 +4468,7 @@ void mainRefactory() {
     // init subtask
     mainTaskEntryInitialisations(argument_count(refactoryEditServInitOptions),
                                  refactoryEditServInitOptions);
-    refactoryXrefEditServerSubTaskFirstPass = 1;
+    refactoryXrefEditServerSubTaskFirstPass = true;
 
     progressFactor = 1;
 
