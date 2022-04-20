@@ -446,7 +446,7 @@ void printCompletions(Completions* c) {
     olCompletionListInit(&c->idToProcessPos);
     if (c->alternativeIndex == 0) {
         if (options.xref2) {
-            if (options.server_operation == OLO_SEARCH)
+            if (options.serverOperation == OLO_SEARCH)
                 ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No matches **");
             else
                 ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
@@ -799,7 +799,7 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
 void processName(char *name, CompletionLine *compLine, int orderFlag, void *c) {
     Completions *ci;
     ci = (Completions *) c;
-    if (options.server_operation == OLO_SEARCH) {
+    if (options.serverOperation == OLO_SEARCH) {
         searchName(name, compLine, orderFlag, ci);
     } else {
         completeName(name, compLine, orderFlag, ci);
@@ -1185,7 +1185,7 @@ static bool isForCompletionSymbol(
 ) {
     Symbol    *sy;
 
-    if (options.server_operation != OLO_COMPLETION)
+    if (options.serverOperation != OLO_COMPLETION)
         return false;
     if (token->typeModifier==NULL)
         return false;
@@ -1459,7 +1459,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
         c->fullMatchFlag = true;
         c->noFocusOnCompletions = true;
     }
-    if (options.server_operation != OLO_SEARCH)
+    if (options.serverOperation != OLO_SEARCH)
         s_completions.abortFurtherCompletions = true;
 }
 
@@ -1724,7 +1724,7 @@ void javaCompleteConstructSingleName(Completions *c) {
 void javaCompleteHintForConstructSingleName(Completions *c) {
     CompletionLine     compLine;
     char        *name;
-    if (c->idToProcessLen == 0 && options.server_operation == OLO_COMPLETION) {
+    if (c->idToProcessLen == 0 && options.serverOperation == OLO_COMPLETION) {
         // O.K. wizard completion
         if (s_cps.lastAssignementStruct!=NULL) {
             name = s_cps.lastAssignementStruct->name;
@@ -1765,7 +1765,7 @@ void javaCompleteThisConstructor (Completions *c) {
     Symbol *memb;
     if (strcmp(c->idToProcess,"this")!=0)
         return;
-    if (options.server_operation == OLO_SEARCH)
+    if (options.serverOperation == OLO_SEARCH)
         return;
     memb = s_javaStat->thisClass;
     javaLoadClassSymbolsFromFile(memb);
@@ -1777,7 +1777,7 @@ void javaCompleteSuperConstructor (Completions *c) {
     Symbol *memb;
     if (strcmp(c->idToProcess,"super")!=0)
         return;
-    if (options.server_operation == OLO_SEARCH)
+    if (options.serverOperation == OLO_SEARCH)
         return;
     memb = javaCurrentSuperClass();
     javaLoadClassSymbolsFromFile(memb);

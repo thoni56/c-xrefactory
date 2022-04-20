@@ -152,7 +152,7 @@ static SymbolsMenu *itemInOriginalList(int fileIndex) {
 }
 
 static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, int selectable) {
-    if (options.server_operation==OLO_CLASS_TREE || options.server_operation==OLO_SHOW_CLASS_TREE) {
+    if (options.serverOperation==OLO_CLASS_TREE || options.serverOperation==OLO_SHOW_CLASS_TREE) {
         ; // fprintf(file,"");
     } else if (! selectable) {
         if (options.xref2) fprintf(file, " %s=2", PPCA_SELECTED);
@@ -172,7 +172,7 @@ static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, int selectabl
         else fprintf(file,"  ");
     }
     if (!options.xref2) fprintf(file," ");
-    if (options.server_operation==OLO_CLASS_TREE || options.server_operation==OLO_SHOW_CLASS_TREE) {
+    if (options.serverOperation==OLO_CLASS_TREE || options.serverOperation==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff, "");
     } else if (menu==NULL || (menu->defRefn==0 && menu->refn==0) || !selectable) {
         if (options.xref2) fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
@@ -238,7 +238,7 @@ static void olcxMenuPrintClassHierarchyLine(FILE *file, int fileIndex,
 
     FileItem *fileItem = getFileItem(fileIndex);
     if (menu != NULL) {
-        if (menu->s.vApplClass == menu->s.vFunClass && options.server_operation!=OLO_CLASS_TREE) {
+        if (menu->s.vApplClass == menu->s.vFunClass && options.serverOperation!=OLO_CLASS_TREE) {
             if (options.xref2)
                 fprintf(file, " %s=1", PPCA_DEFINITION);
             else

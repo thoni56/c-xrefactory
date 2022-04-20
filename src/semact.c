@@ -490,7 +490,7 @@ void setLocalVariableLinkName(struct symbol *p) {
     char ttt[TMP_STRING_SIZE];
     char nnn[TMP_STRING_SIZE];
     int len,tti;
-    if (options.server_operation == OLO_EXTRACT) {
+    if (options.serverOperation == OLO_EXTRACT) {
         // extract variable, must pass all needed informations in linkname
         sprintf(nnn, "%c%s%c", LINK_NAME_SEPARATOR, p->name, LINK_NAME_SEPARATOR);
         ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
@@ -638,11 +638,11 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
         } else {
             addNewSymbolDefinition(table, parameterCopy, StorageAuto, UsageDefined);
         }
-        if (options.server_operation == OLO_EXTRACT) {
+        if (options.serverOperation == OLO_EXTRACT) {
             addCxReference(parameterCopy, &parameterCopy->pos, UsageLvalUsed, noFileIndex, noFileIndex);
         }
     }
-    if (options.server_operation == OLO_GOTO_PARAM_NAME
+    if (options.serverOperation == OLO_GOTO_PARAM_NAME
         && position == options.olcxGotoVal
         && positionsAreEqual(function->pos, s_cxRefPos))
     {
@@ -1096,7 +1096,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
                                     int hasParam
                                     ) {
     if (options.taskRegime != RegimeEditServer) return;
-    if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
+    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES) return;
     if (positionsAreNotEqual(decl->pos, s_cxRefPos)) return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
@@ -1106,7 +1106,7 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                     int hasParam
                                     ) {
     if (options.taskRegime != RegimeEditServer) return;
-    if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
+    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES) return;
     if (ref==NULL || positionsAreNotEqual(ref->position, s_cxRefPos)) return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
@@ -1115,7 +1115,7 @@ void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
                                         PositionList *commas, Position *rpar
                                         ) {
     if (options.taskRegime != RegimeEditServer) return;
-    if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
+    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES) return;
     if (positionsAreNotEqual(*sym, s_cxRefPos)) return;
     if (commas==NULL) {
         handleParameterPositions(lpar, NULL, rpar, 0);

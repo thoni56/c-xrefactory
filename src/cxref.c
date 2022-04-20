@@ -237,7 +237,7 @@ Reference **addToRefList(Reference **list,
     fillReference(&reference, usage, pos, NULL);
     SORTED_LIST_PLACE2(place,reference,list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
-        || options.server_operation==OLO_EXTRACT) {
+        || options.serverOperation==OLO_EXTRACT) {
         CX_ALLOC(rr, Reference);
         fillReference(rr, usage, pos, NULL);
         LIST_CONS(rr, (*place));
@@ -700,11 +700,11 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
               usageKindEnumName[usage.kind], storageEnumName[symbol->bits.storage]);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
-        if (options.server_operation == OLO_EXTRACT) {
+        if (options.serverOperation == OLO_EXTRACT) {
             if (inputFileNumber != currentFile.lexBuffer.buffer.fileNumber)
                 return NULL;
         } else {
-            if (category==CategoryGlobal && symbol->bits.symbolType!=TypeCppInclude && options.server_operation!=OLO_TAG_SEARCH) {
+            if (category==CategoryGlobal && symbol->bits.symbolType!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
                 if (olOriginalFileIndex != position->file && options.noIncludeRefs)
                     return NULL;
@@ -723,7 +723,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl);
     fillReferencesItemBits(&ppp.bits, symbol->bits.symbolType, storage, scope,
                           symbol->bits.access, category);
-    if (options.taskRegime==RegimeEditServer && options.server_operation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
+    if (options.taskRegime==RegimeEditServer && options.serverOperation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
         fillUsage(&reference.usage, usage.kind, AccessDefault);
         fillReference(&reference, reference.usage, *position, NULL);
         searchSymbolCheckReference(&ppp, &reference);
@@ -758,7 +758,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         && usage.kind<UsageMaxOLUsages) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
-                if (options.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
+                if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
                     setOlAvailableRefactorings(symbol, NULL, usage.kind);
                 }
             }
@@ -778,7 +778,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             }
             if (defaultPosition->file!=noFileIndex)
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition->line);
-            if (! olcxOnlyParseNoPushing(options.server_operation)) {
+            if (! olcxOnlyParseNoPushing(options.serverOperation)) {
                 menu = olAddBrowsedSymbol(memb,&sessionData.browserStack.top->hkSelectedSym,
                                           1,1,0,usage.kind,0, defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
@@ -787,14 +787,14 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                     menu->defpos = *position;
                     menu->defUsage = usage.kind;
                 }
-                if (options.server_operation == OLO_CLASS_TREE
+                if (options.serverOperation == OLO_CLASS_TREE
                     && LANGUAGE(LANG_JAVA)) {
                     setClassTreeBaseType(&sessionData.classTree, symbol);
                 }
-                if (options.server_operation == OLO_GET_SYMBOL_TYPE) {
+                if (options.serverOperation == OLO_GET_SYMBOL_TYPE) {
                     setOlSymbolTypeForPrint(symbol);
                 }
-                if (options.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
+                if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
                     setOlAvailableRefactorings(symbol, menu, usage.kind);
                 }
             }
@@ -974,7 +974,7 @@ static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
     OlcxReferences *res;
 
     res = olcx_alloc(sizeof(OlcxReferences));
-    *res = (OlcxReferences){.references = NULL, .actual = NULL, .command = options.server_operation, .language = s_language,
+    *res = (OlcxReferences){.references = NULL, .actual = NULL, .command = options.serverOperation, .language = s_language,
                               .accessTime = fileProcessingStartTime, .callerPosition = noPosition, .completions = NULL, .hkSelectedSym = NULL,
                               .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
                               .previous = stack->top};
@@ -1122,9 +1122,9 @@ void gotoOnlineCxref(Position *p, int usage, char *suffix)
 
 static bool olcx_move_init(SessionData *olcxuser, OlcxReferences **refs, int checkFlag) {
     assert(olcxuser);
-    if (options.server_operation==OLO_COMPLETION || options.server_operation==OLO_CSELECT
-        ||  options.server_operation==OLO_CGOTO || options.server_operation==OLO_CBROWSE
-        ||  options.server_operation==OLO_TAG_SEARCH) {
+    if (options.serverOperation==OLO_COMPLETION || options.serverOperation==OLO_CSELECT
+        ||  options.serverOperation==OLO_CGOTO || options.serverOperation==OLO_CBROWSE
+        ||  options.serverOperation==OLO_TAG_SEARCH) {
         *refs = olcxuser->completionsStack.top;
     } else {
         *refs = olcxuser->browserStack.top;
@@ -1713,24 +1713,24 @@ void olcxPrintSelectionMenu(SymbolsMenu *sss) {
     if (options.xref2) {
         ppcEnd(PPC_SYMBOL_RESOLUTION);
     } else {
-        if (options.server_operation==OLO_RENAME || options.server_operation==OLO_ARG_MANIP || options.server_operation==OLO_ENCAPSULATE) {
+        if (options.serverOperation==OLO_RENAME || options.serverOperation==OLO_ARG_MANIP || options.serverOperation==OLO_ENCAPSULATE) {
             if (LANGUAGE(LANG_JAVA)) {
                 fprintf(communicationChannel, "-![Warning] It is highly recommended to process the whole hierarchy of related classes at once. Unselection of any class of applications above (and its exclusion from refactoring process) may cause changes in your program behavior. Press <return> to continue.\n");
             } else {
                 fprintf(communicationChannel, "-![Warning] It is highly recommended to process all symbols at once. Unselection of any symbols and its exclusion from refactoring process may cause changes in your program behavior. Press <return> to continue.\n");
             }
         }
-        if (options.server_operation==OLO_VIRTUAL2STATIC_PUSH) {
+        if (options.serverOperation==OLO_VIRTUAL2STATIC_PUSH) {
             fprintf(communicationChannel, "-![Warning] If you see this message it is highly probable that turning this virtual method into static will not be behaviour preserving! This refactoring is behaviour preserving only if the method does not use mechanism of virtual invocations. On this screen you should select the application classes which are refering to the method which will become static. If you can't unambiguously determine those references do not continue in this refactoring!\n");
         }
-        if (options.server_operation==OLO_SAFETY_CHECK2) {
+        if (options.serverOperation==OLO_SAFETY_CHECK2) {
             if (LANGUAGE(LANG_JAVA)) {
                 fprintf(communicationChannel, "-![Warning] There are differences between original class hierarchy and the new one, those name clashes may cause that the refactoring will not be behavior preserving!\n");
             } else {
                 fprintf(communicationChannel, "-![Error] There is differences between original and new symbols referenced at this position. The difference is due to name clashes and may cause changes in the behaviour of the program. Please, undo last refactoring!");
             }
         }
-        if (options.server_operation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK) {
+        if (options.serverOperation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK) {
             fprintf(communicationChannel, "-![Warning] A method (getter or setter) created during the encapsulation has the same name as an existing method, so it will be inserted into this (existing) inheritance hierarchy. This may cause that the refactoring will not be behaviour preserving. Please, select applications unambiguously reporting to the newly created method. If you can't do this, you should undo the refactoring and rename the field first!\n");
         }
     }
@@ -3159,7 +3159,7 @@ static void olCompletionForward(void) {
 }
 
 static void olcxNoSymbolFoundErrorMessage(void) {
-    if (options.server_operation == OLO_PUSH_NAME || options.server_operation == OLO_PUSH_SPECIAL_NAME) {
+    if (options.serverOperation == OLO_PUSH_NAME || options.serverOperation == OLO_PUSH_SPECIAL_NAME) {
         if (options.xref2) {
             ppcGenRecord(PPC_ERROR,"No symbol found.");
         } else {
@@ -3210,11 +3210,11 @@ bool olcxShowSelectionMenu(void) {
 
     // decide whether to show manual resolution menu
     assert(sessionData.browserStack.top);
-    if (options.server_operation == OLO_PUSH_FOR_LOCALM) {
+    if (options.serverOperation == OLO_PUSH_FOR_LOCALM) {
         // never ask for resolution for local motion symbols
         return false;
     }
-    if (options.server_operation == OLO_SAFETY_CHECK2) {
+    if (options.serverOperation == OLO_SAFETY_CHECK2) {
         // safety check showing of menu is resolved by safetyCheck2ShouldWarn
         return false;
     }
@@ -3230,12 +3230,12 @@ bool olcxShowSelectionMenu(void) {
         return false; // no visible
     }
     first = NULL;
-    if (options.server_operation==OLO_PUSH
-        || options.server_operation==OLO_PUSH_ONLY
-        || options.server_operation==OLO_PUSH_AND_CALL_MACRO
-        || options.server_operation==OLO_RENAME
-        || options.server_operation==OLO_ARG_MANIP
-        || options.server_operation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK
+    if (options.serverOperation==OLO_PUSH
+        || options.serverOperation==OLO_PUSH_ONLY
+        || options.serverOperation==OLO_PUSH_AND_CALL_MACRO
+        || options.serverOperation==OLO_RENAME
+        || options.serverOperation==OLO_ARG_MANIP
+        || options.serverOperation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK
         || JAVA_STATICALLY_LINKED(fvisible->s.bits.storage,
                                   fvisible->s.bits.accessFlags)) {
         // manually only if different
@@ -3329,7 +3329,7 @@ bool safetyCheck2ShouldWarn(void) {
     int res,problem;
     OlcxReferences *refs, *origrefs, *newrefs, *diffrefs;
     problem = 0;
-    if (options.server_operation != OLO_SAFETY_CHECK2) return false;
+    if (options.serverOperation != OLO_SAFETY_CHECK2) return false;
     if (! LANGUAGE(LANG_JAVA)) return false;
     // compare hierarchies and deselect diff
     origrefs = newrefs = diffrefs = NULL;
@@ -3402,7 +3402,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
         if (ss->s.bits.symType == TypeStruct) {
             clii = getClassNumFromClassLinkName(ss->s.name, clii);
         } else {
-            if (options.server_operation == OLO_CLASS_TREE) {
+            if (options.serverOperation == OLO_CLASS_TREE) {
                 assert(sessionData.classTree.baseClassFileIndex!=noFileIndex);
                 clii = sessionData.classTree.baseClassFileIndex;
             } else {
@@ -3526,7 +3526,7 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
 }
 
 static void olcxSafetyCheckInit(void) {
-    assert(options.server_operation == OLO_SAFETY_CHECK_INIT);
+    assert(options.serverOperation == OLO_SAFETY_CHECK_INIT);
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     fprintf(communicationChannel,"* safety checks initialized");
     fflush(communicationChannel);
@@ -3647,7 +3647,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
         diffsym = NULL;
         for (Reference *rr=osym->s.references; rr!=NULL; rr=rr->next) {
             nsym = mmFindSymWithCorrespondingRef(rr,osym,newrefs,&moveOffset);
-            if (nsym==NULL || !symbolsCorrespondWrtMoving(osym, nsym, options.server_operation)) {
+            if (nsym==NULL || !symbolsCorrespondWrtMoving(osym, nsym, options.serverOperation)) {
                 if (diffsym == NULL) {
                     diffsym = olAddBrowsedSymbol(
                                                  &osym->s, &diffrefs->menuSym, 1, 1,
@@ -3669,7 +3669,7 @@ static void olcxMMPreCheck(void) {
 
     olcxPushEmptyStackItem(&sessionData.browserStack);
     assert(sessionData.browserStack.top);
-    assert(options.server_operation == OLO_MM_PRE_CHECK || options.server_operation == OLO_PP_PRE_CHECK);
+    assert(options.serverOperation == OLO_MM_PRE_CHECK || options.serverOperation == OLO_PP_PRE_CHECK);
     diffrefs = sessionData.browserStack.top;
     assert(diffrefs && diffrefs->previous && diffrefs->previous->previous);
     newrefs = diffrefs->previous;
@@ -3700,7 +3700,7 @@ static void olcxSafetyCheck1(void) {
     // last file processing
     assert(sessionData.browserStack.top);
     assert(sessionData.browserStack.top->previous);
-    assert(options.server_operation == OLO_SAFETY_CHECK1);
+    assert(options.serverOperation == OLO_SAFETY_CHECK1);
     rstack = sessionData.browserStack.top->previous;
     olProcessSelectedReferences(rstack, olcxProceedSafetyCheck1OnInloadedRefs);
     if (sessionData.browserStack.top->references == NULL) {
@@ -3729,7 +3729,7 @@ static void olcxTopReferencesIntersection(void) {
     // last file processing
     assert(sessionData.browserStack.top);
     assert(sessionData.browserStack.top->previous);
-    assert(options.server_operation == OLO_INTERSECTION);
+    assert(options.serverOperation == OLO_INTERSECTION);
     top1 = sessionData.browserStack.top;
     top2 = sessionData.browserStack.top->previous;
     //TODO in linear time, not O(n^2) like now.
@@ -3779,7 +3779,7 @@ static void olcxTopReferencesRemoveWindow(void) {
     // last file processing
     assert(sessionData.browserStack.top);
     assert(sessionData.browserStack.top->previous);
-    assert(options.server_operation == OLO_REMOVE_WIN);
+    assert(options.serverOperation == OLO_REMOVE_WIN);
     wdfile = getFileNumberFromName(options.olcxWinDelFile);
     fp = makePosition(wdfile, options.olcxWinDelFromLine, options.olcxWinDelFromCol);
     tp = makePosition(wdfile, options.olcxWinDelToLine, options.olcxWinDelToCol);
@@ -3971,10 +3971,10 @@ void olcxPushSpecial(char *fieldName, int command) {
 }
 
 static void olcxListSpecial(char *fieldName) {
-    olcxPushSpecial(fieldName, options.server_operation);
+    olcxPushSpecial(fieldName, options.serverOperation);
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->menuSym);
     // previous do not work, because of automatic reduction in moving
-    olcxPrintPushingAction(options.server_operation, DEFAULT_VALUE);
+    olcxPrintPushingAction(options.serverOperation, DEFAULT_VALUE);
 }
 
 bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
@@ -4138,7 +4138,7 @@ static void mainAnswerReferencePushingAction(int command) {
     } else {
         assert(sessionData.browserStack.top);
         //&olProcessSelectedReferences(sessionData->browserStack.top, genOnLineReferences);
-        olcxPrintPushingAction(options.server_operation, DEFAULT_VALUE);
+        olcxPrintPushingAction(options.serverOperation, DEFAULT_VALUE);
     }
 }
 
@@ -4177,7 +4177,7 @@ void pushLocalUnusedSymbolsAction(void) {
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
     refTabMap(&referenceTable, mapAddLocalUnusedSymbolsToHkSelection);
-    olCreateSelectionMenu(options.server_operation);
+    olCreateSelectionMenu(options.serverOperation);
 }
 
 static void answerPushLocalUnusedSymbolsAction(void) {
@@ -4195,7 +4195,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
     scanForGlobalUnused(options.cxrefsLocation);
-    olCreateSelectionMenu(options.server_operation);
+    olCreateSelectionMenu(options.serverOperation);
     assert(options.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
 }
@@ -4246,8 +4246,8 @@ void mainAnswerEditAction(void) {
     ENTER();
     assert(communicationChannel);
 
-    log_trace("Server operation = %s(%d)", operationNamesTable[options.server_operation], options.server_operation);
-    switch (options.server_operation) {
+    log_trace("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
+    switch (options.serverOperation) {
     case OLO_CHECK_VERSION:
         assert(options.checkVersion!=NULL);
         if (strcmp(options.checkVersion, C_XREF_VERSION_NUMBER)!=0) {
@@ -4561,7 +4561,7 @@ void mainAnswerEditAction(void) {
     case OLO_PUSH_ALL_IN_METHOD:
         log_trace(":getting all references from begin=%d to end=%d", s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
         olPushAllReferencesInBetween(s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
-        olcxPrintPushingAction(options.server_operation, 0);
+        olcxPrintPushingAction(options.serverOperation, 0);
         break;
     case OLO_TRIVIAL_PRECHECK:
         olTrivialRefactoringPreCheck(options.trivialPreCheckCode);
@@ -4575,7 +4575,7 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_PUSH_NAME:
         pushSymbolByName(options.pushName);
-        mainAnswerReferencePushingAction(options.server_operation);
+        mainAnswerReferencePushingAction(options.serverOperation);
         break;
     case OLO_GLOBAL_UNUSED:
         answerPushGlobalUnusedSymbolsAction();
@@ -4597,12 +4597,12 @@ void mainAnswerEditAction(void) {
             sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or constructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (constructor) name and reinvoke the refactoring.");
             errorMessage(ERR_ST, tmpBuff);
         } else {
-            mainAnswerReferencePushingAction(options.server_operation);
+            mainAnswerReferencePushingAction(options.serverOperation);
         }
         break;
     case OLO_PUSH:
     case OLO_PUSH_ONLY:
-        mainAnswerReferencePushingAction(options.server_operation);
+        mainAnswerReferencePushingAction(options.serverOperation);
         break;
     case OLO_GET_LAST_IMPORT_LINE:
         if (options.xref2) {
@@ -4616,7 +4616,7 @@ void mainAnswerEditAction(void) {
     case OLO_NOOP:
         break;
     default:
-        log_fatal("unexpected default case for %s\n", operationNamesTable[options.server_operation]);
+        log_fatal("unexpected default case for %s\n", operationNamesTable[options.serverOperation]);
     } // switch
 
     fflush(communicationChannel);

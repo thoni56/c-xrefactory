@@ -133,7 +133,7 @@ typedef struct options {
     enum taskRegimes taskRegime;
     bool debug;
     bool trace;
-    enum olcxOperations server_operation;
+    ServerOperation serverOperation;
     int olcxGotoVal;
     char *originalDir;
 

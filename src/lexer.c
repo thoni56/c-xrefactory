@@ -814,7 +814,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             currentLexemPosition = lb->fileOffsetRing[pi];
             if (cb->fileNumber == olOriginalFileIndex && cb->fileNumber != noFileIndex
                 && cb->fileNumber != -1 && s_jsl == NULL) {
-                if (options.server_operation == OLO_EXTRACT && lb->index>=2) {
+                if (options.serverOperation == OLO_EXTRACT && lb->index>=2) {
                     ch = skipBlanks(cb, ch);
                     pos1 = absoluteFilePosition(cb);
                     log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",pos1,options.olCursorPos,options.olMarkPos);
@@ -865,8 +865,8 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         putLexPosition(ps->file,ps->line,ps->col, &dd);
                         s_cps.marker2Flag=1;
                     }
-                } else if (options.server_operation == OLO_COMPLETION
-                           ||  options.server_operation == OLO_SEARCH) {
+                } else if (options.serverOperation == OLO_COMPLETION
+                           ||  options.serverOperation == OLO_SEARCH) {
                     ch = skipBlanks(cb, ch);
                     apos = absoluteFilePosition(cb);
                     if (currentLexemPosition < options.olCursorPos
@@ -878,7 +878,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             len = options.olCursorPos-currentLexemPosition;
                             log_trace(":check %s[%d] <-> %d", lexStartDd+TOKEN_SIZE, len,strlen(lexStartDd+TOKEN_SIZE));
                             if (len <= strlen(lexStartDd+TOKEN_SIZE)) {
-                                if (options.server_operation == OLO_SEARCH) {
+                                if (options.serverOperation == OLO_SEARCH) {
                                     char *ddd;
                                     ddd = lexStartDd;
                                     putLexToken(IDENT_TO_COMPLETE, &ddd);

@@ -4432,7 +4432,7 @@ void mainRefactory() {
     // MAGIC, set the server operation to anything that just refreshes
     // or generates xrefs since we will be calling the "main task"
     // below
-    refactoringOptions.server_operation = OLO_LIST;
+    refactoringOptions.serverOperation = OLO_LIST;
 
     mainOpenOutputFile(refactoringOptions.outputFileName);
     editorLoadAllOpenedBufferFiles();

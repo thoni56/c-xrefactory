@@ -3528,7 +3528,7 @@ break;
 case 273:
 #line 803 "yacc_parser.y"
 {
-        if (yyvsp[-2].ast_expressionType.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
+        if (yyvsp[-2].ast_expressionType.d.reference != NULL && options.serverOperation == OLO_EXTRACT) {
             Reference *rr;
             rr = duplicateReference(yyvsp[-2].ast_expressionType.d.reference);
             yyvsp[-2].ast_expressionType.d.reference->usage = NO_USAGE;

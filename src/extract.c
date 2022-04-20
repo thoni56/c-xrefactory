@@ -56,7 +56,7 @@ void generateInternalLabelReference(int counter, int usage) {
     Id labelId;
     Position position;
 
-    if (options.server_operation != OLO_EXTRACT)
+    if (options.serverOperation != OLO_EXTRACT)
         return;
 
     snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);
@@ -74,7 +74,7 @@ void generateInternalLabelReference(int counter, int usage) {
 Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     Symbol *s;
 
-    if (options.server_operation != OLO_EXTRACT)
+    if (options.serverOperation != OLO_EXTRACT)
         return NULL;
 
     s = newSymbolAsLabel(name, name, noPosition, labn);
@@ -88,7 +88,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 void deleteContinueBreakLabelSymbol(char *name) {
     Symbol ss,*memb;
 
-    if (options.server_operation != OLO_EXTRACT)
+    if (options.serverOperation != OLO_EXTRACT)
         return;
 
     fillSymbolWithLabel(&ss, name, name, noPosition, 0);
@@ -103,7 +103,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
 void genContinueBreakReference(char *name) {
     Symbol ss,*memb;
 
-    if (options.server_operation != OLO_EXTRACT)
+    if (options.serverOperation != OLO_EXTRACT)
         return;
 
     fillSymbolWithLabel(&ss, name, name, noPosition, 0);
@@ -117,7 +117,7 @@ void genContinueBreakReference(char *name) {
 void generateSwitchCaseFork(bool isLast) {
     Symbol symbol, *found_member_pointer;
 
-    if (options.server_operation != OLO_EXTRACT)
+    if (options.serverOperation != OLO_EXTRACT)
         return;
 
     fillSymbolWithLabel(&symbol, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, noPosition, 0);
@@ -1271,7 +1271,7 @@ void actionsBeforeAfterExternalDefinition(void) {
         && s_cp.cxMemoryIndexAtFunctionBegin != 0
         && s_cp.cxMemoryIndexAtFunctionBegin <= s_cps.cxMemoryIndexAtBlockBegin
         // is it an extraction action ?
-        && options.server_operation == OLO_EXTRACT
+        && options.serverOperation == OLO_EXTRACT
         && (! s_cps.extractProcessedFlag))
     {
         // O.K. make extraction
@@ -1308,7 +1308,7 @@ void extractActionOnBlockMarker(void) {
 }
 
 void deleteContinueBreakSymbol(Symbol *symbol) {
-    if (options.server_operation == OLO_EXTRACT)
+    if (options.serverOperation == OLO_EXTRACT)
         deleteSymDef(symbol);
 }
 

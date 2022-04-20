@@ -608,7 +608,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
                                                     Position *parpos1,
                                                     Position *pos, Position *parpos2,
                                                     int final) {
-    if ((options.server_operation == OLO_GOTO_PARAM_NAME || options.server_operation == OLO_GET_PARAM_COORDINATES)
+    if ((options.serverOperation == OLO_GOTO_PARAM_NAME || options.serverOperation == OLO_GET_PARAM_COORDINATES)
         && positionsAreEqual(*macpos, s_cxRefPos)) {
         if (final) {
             if (argi==0) {
@@ -628,7 +628,7 @@ static void handleMacroUsageParameterPositions(int argi, Position *macpos,
                                                Position *parpos1, Position *parpos2,
                                                int final
     ) {
-    if (options.server_operation == OLO_GET_PARAM_COORDINATES
+    if (options.serverOperation == OLO_GET_PARAM_COORDINATES
         && positionsAreEqual(*macpos, s_cxRefPos)) {
         log_trace("checking param %d at %d,%d, final==%d", argi, parpos1->col, parpos2->col, final);
         if (final) {
@@ -2020,7 +2020,7 @@ static int lookupJavaIdentifier(char *id, Position position) {
 
 
 static void actionOnBlockMarker(void) {
-    if (options.server_operation == OLO_SET_MOVE_TARGET) {
+    if (options.serverOperation == OLO_SET_MOVE_TARGET) {
         s_cps.setTargetAnswerClass[0] = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
@@ -2033,7 +2033,7 @@ static void actionOnBlockMarker(void) {
                 }
             }
         }
-    } else if (options.server_operation == OLO_SET_MOVE_CLASS_TARGET) {
+    } else if (options.serverOperation == OLO_SET_MOVE_CLASS_TARGET) {
         s_cps.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
@@ -2042,7 +2042,7 @@ static void actionOnBlockMarker(void) {
                 }
             }
         }
-    } else if (options.server_operation == OLO_SET_MOVE_METHOD_TARGET) {
+    } else if (options.serverOperation == OLO_SET_MOVE_METHOD_TARGET) {
         s_cps.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
@@ -2053,7 +2053,7 @@ static void actionOnBlockMarker(void) {
                 }
             }
         }
-    } else if (options.server_operation == OLO_EXTRACT) {
+    } else if (options.serverOperation == OLO_EXTRACT) {
         extractActionOnBlockMarker();
     } else {
         s_cps.currentPackageAnswer[0] = 0;

@@ -801,7 +801,7 @@ conditional_expr
 assignment_expr
     : conditional_expr                                  /*& { $$.d = $1.d; } &*/
     | unary_expr assignment_operator assignment_expr    {
-        if ($1.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
+        if ($1.d.reference != NULL && options.serverOperation == OLO_EXTRACT) {
             Reference *rr;
             rr = duplicateReference($1.d.reference);
             $1.d.reference->usage = NO_USAGE;

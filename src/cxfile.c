@@ -1056,7 +1056,7 @@ static void cxrfSymbolName(int size,
             } else {
                 lastIncomingInfo.symbolToCheckForDeadness = -1;
             }
-        } else if (options.server_operation!=OLO_TAG_SEARCH) {
+        } else if (options.serverOperation!=OLO_TAG_SEARCH) {
             cms = NULL; ols = 0;
             if (additionalArg == CXSF_MENU_CREATION) {
                 cms = createSelectionMenu(referencesItem);
@@ -1193,7 +1193,7 @@ static void cxrfReference(int size,
                 s_olMacro2PassFile = reference.position.file;
             }
         } else {
-            if (options.server_operation == OLO_TAG_SEARCH) {
+            if (options.serverOperation == OLO_TAG_SEARCH) {
                 if (reference.usage.kind==UsageDefined
                     || ((options.tagSearchSpecif==TSS_FULL_SEARCH
                          || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
@@ -1201,7 +1201,7 @@ static void cxrfReference(int size,
                              || reference.usage.kind==UsageClassFileDefinition))) {
                     searchSymbolCheckReference(lastIncomingInfo.symbolTab[sym],&reference);
                 }
-            } else if (options.server_operation == OLO_SAFETY_CHECK1) {
+            } else if (options.serverOperation == OLO_SAFETY_CHECK1) {
                 if (lastIncomingInfo.onLineReferencedSym != lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     olcxCheck1CxFileReference(lastIncomingInfo.symbolTab[sym],
                                               &reference);
@@ -1211,9 +1211,9 @@ static void cxrfReference(int size,
                     if (additionalArg == CXSF_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
                         if (file != olOriginalFileIndex || !fileItem->bits.commandLineEntered ||
-                            options.server_operation == OLO_GOTO || options.server_operation == OLO_CGOTO ||
-                            options.server_operation == OLO_PUSH_NAME ||
-                            options.server_operation == OLO_PUSH_SPECIAL_NAME) {
+                            options.serverOperation == OLO_GOTO || options.serverOperation == OLO_CGOTO ||
+                            options.serverOperation == OLO_PUSH_NAME ||
+                            options.serverOperation == OLO_PUSH_SPECIAL_NAME) {
                             log_trace (":adding reference %s:%d", referenceFileItem->name, reference.position.line);
                             olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &reference,
                                                           lastIncomingInfo.onLineRefIsBestMatchFlag);
@@ -1355,8 +1355,8 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
 
     /* TODO: This should be done outside this function... */
     if (options.taskRegime==RegimeEditServer
-        && (options.server_operation==OLO_LOCAL_UNUSED
-            || options.server_operation==OLO_GLOBAL_UNUSED)) {
+        && (options.serverOperation==OLO_LOCAL_UNUSED
+            || options.serverOperation==OLO_GLOBAL_UNUSED)) {
         // check if last symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
