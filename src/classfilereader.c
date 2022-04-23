@@ -97,19 +97,19 @@ typedef enum exception {
 /* *********************************************************************** */
 
 #define GetChar(ch, cb, exception) {                                    \
-        if (cb->next >= cb->end) {                                      \
-            (cb)->next = cb->next;                                      \
+        if (cb->nextUnread >= cb->end) {                                      \
+            (cb)->nextUnread = cb->nextUnread;                                      \
             if ((cb)->isAtEOF || refillBuffer(cb) == 0) {               \
                 ch = -1;                                                \
                 (cb)->isAtEOF = true;                                   \
                 longjmp(exception, END_OF_FILE_EXCEPTION);              \
             } else {                                                    \
-                cb->next = (cb)->next;                                  \
+                cb->nextUnread = (cb)->nextUnread;                                  \
                 cb->end = (cb)->end;                                    \
-                ch = * ((unsigned char*)cb->next); cb->next ++;         \
+                ch = * ((unsigned char*)cb->nextUnread); cb->nextUnread ++;         \
             }                                                           \
         } else {                                                        \
-            ch = * ((unsigned char*)cb->next); cb->next++;              \
+            ch = * ((unsigned char*)cb->nextUnread); cb->nextUnread++;              \
         }                                                               \
     }
 
@@ -392,7 +392,7 @@ void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path, void (*fun)(char
 
 static void seekToPosition(CharacterBuffer *cb, int offset) {
     fseek(cb->file, offset, SEEK_SET);
-    cb->next = cb->end = cb->lineBegin = cb->chars;
+    cb->nextUnread = cb->end = cb->lineBegin = cb->chars;
 }
 
 
@@ -419,7 +419,7 @@ static bool findEndOfCentralDirectory(CharacterBuffer *cb, int fileSize) {
         goto fini;
     }
  fini:
-    cb->next = ccc; cb->end = ffin;
+    cb->nextUnread = ccc; cb->end = ffin;
     return found;
 }
 

@@ -21,7 +21,7 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                          int fileNumber,
                          char *lineBegin
 ) {
-    characterBuffer->next = next;
+    characterBuffer->nextUnread = next;
     characterBuffer->end = end;
     characterBuffer->file = file;
     characterBuffer->filePos = filePos;
@@ -124,7 +124,7 @@ bool refillBuffer(CharacterBuffer *buffer) {
     int charactersRead;
     int max_size;
 
-    next = buffer->next;
+    next = buffer->nextUnread;
     end = buffer->end;
 
     for(cp=buffer->chars+MAX_UNGET_CHARS; next<end; next++,cp++)
@@ -140,11 +140,11 @@ bool refillBuffer(CharacterBuffer *buffer) {
     if (charactersRead > 0) {
         buffer->filePos += charactersRead;
         buffer->end = cp+charactersRead;
-        buffer->next = buffer->chars+MAX_UNGET_CHARS;
+        buffer->nextUnread = buffer->chars+MAX_UNGET_CHARS;
     }
 
-    log_trace("refillBuffer: (%s) buffer->next=%p, buffer->end=%p", buffer->next == buffer->end?"equal":"not equal", buffer->next, buffer->end);
-    return buffer->next != buffer->end;
+    log_trace("refillBuffer: (%s) buffer->next=%p, buffer->end=%p", buffer->nextUnread == buffer->end?"equal":"not equal", buffer->nextUnread, buffer->end);
+    return buffer->nextUnread != buffer->end;
 }
 
 
@@ -167,13 +167,13 @@ void switchToZippedCharBuff(CharacterBuffer *buffer) {
     refillBuffer(buffer);     // just for now
 #ifdef HAVE_ZLIB
     end = buffer->end;
-    next = buffer->next;
+    next = buffer->nextUnread;
     for(dd=buffer->z; next<end; next++,dd++)
         *dd = *next;
 
     fillZipStreamFromBuffer(buffer, dd);
 
-    buffer->next = buffer->end = buffer->chars;
+    buffer->nextUnread = buffer->end = buffer->chars;
     buffer->inputMethod = INPUT_VIA_UNZIP;
     inflateInit2(&(buffer->zipStream), -MAX_WBITS);
     if (buffer->zipStream.msg != NULL) {
@@ -185,16 +185,16 @@ void switchToZippedCharBuff(CharacterBuffer *buffer) {
 
 void skipCharacters(CharacterBuffer *buffer, unsigned count) {
 
-    if (buffer->next+count < buffer->end) {
-        buffer->next += count;
+    if (buffer->nextUnread+count < buffer->end) {
+        buffer->nextUnread += count;
         return;
     }
 
-    count -= buffer->end - buffer->next;        /* How many to skip after refilling? */
+    count -= buffer->end - buffer->nextUnread;        /* How many to skip after refilling? */
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
-        buffer->next = buffer->end;
+        buffer->nextUnread = buffer->end;
         refillBuffer(buffer);
-        if (buffer->end != buffer->next) {
+        if (buffer->end != buffer->nextUnread) {
             // TODO remove last recursion
             skipCharacters(buffer, count);
         }
@@ -214,18 +214,18 @@ void skipCharacters(CharacterBuffer *buffer, unsigned count) {
             n = readFile(dd, 1, max_size, buffer->file);
         buffer->filePos += n;
         buffer->end = dd + n;
-        buffer->next = buffer->chars + MAX_UNGET_CHARS;
+        buffer->nextUnread = buffer->chars + MAX_UNGET_CHARS;
     }
 }
 
 
 int columnPosition(CharacterBuffer *cb) {
-    return cb->next - cb->lineBegin + cb->columnOffset - 1;
+    return cb->nextUnread - cb->lineBegin + cb->columnOffset - 1;
 }
 
 
 int absoluteFilePosition(CharacterBuffer *cb) {
-    return cb->filePos - (cb->end - cb->next) - 1;
+    return cb->filePos - (cb->end - cb->nextUnread) - 1;
 }
 
 
@@ -248,7 +248,7 @@ int skipWhiteSpace(CharacterBuffer *cb, int ch) {
 
 int getChar(CharacterBuffer *cb) {
     int ch;
-    if (cb->next >= cb->end) {
+    if (cb->nextUnread >= cb->end) {
         /* No more characters in buffer? */
         if (cb->isAtEOF) {
             ch = -1;
@@ -256,13 +256,13 @@ int getChar(CharacterBuffer *cb) {
             ch = -1;
             cb->isAtEOF = true;
         } else {
-            cb->lineBegin = cb->next;
-            ch = *((unsigned char *)cb->next);
-            cb->next++;
+            cb->lineBegin = cb->nextUnread;
+            ch = *((unsigned char *)cb->nextUnread);
+            cb->nextUnread++;
         }
     } else {
-        ch = * ((unsigned char *)cb->next);
-        cb->next++;
+        ch = * ((unsigned char *)cb->nextUnread);
+        cb->nextUnread++;
     }
 
     return ch;
@@ -274,5 +274,5 @@ void ungetChar(CharacterBuffer *cb, int ch) {
         log_trace("Ungetting ('\\n')");
     else
         log_trace("Ungetting ('%c')", ch);
-    *--(cb->next) = ch;
+    *--(cb->nextUnread) = ch;
 }

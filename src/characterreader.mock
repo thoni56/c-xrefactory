@@ -13,7 +13,7 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                          unsigned filePos,
                          int fileNumber,
                          char *lineBegin) {
-    characterBuffer->next = next;
+    characterBuffer->nextUnread = next;
     characterBuffer->end = end;
     characterBuffer->file = file;
     characterBuffer->filePos = filePos;

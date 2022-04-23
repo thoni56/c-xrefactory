@@ -32,7 +32,7 @@ static void passComment(CharacterBuffer *cb) {
     ch = getChar(cb);
     if (ch=='\n') {
         cb->lineNumber ++;
-        cb->lineBegin = cb->next;
+        cb->lineBegin = cb->nextUnread;
         cb->columnOffset = 0;
     }
     /* TODO test on cpp directive */
@@ -41,7 +41,7 @@ static void passComment(CharacterBuffer *cb) {
         ch = getChar(cb);
         if (ch=='\n') {
             cb->lineNumber ++;
-            cb->lineBegin = cb->next;
+            cb->lineBegin = cb->nextUnread;
             cb->columnOffset = 0;
         }
         /* TODO test on cpp directive */
@@ -565,14 +565,14 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             putLexChar(ch, &dd);
                         /* TODO escape sequences */
                         if (ch == '\n') {cb->lineNumber ++;
-                            cb->lineBegin = cb->next;
+                            cb->lineBegin = cb->nextUnread;
                             cb->columnOffset = 0;
                         }
                         ch = 0;
                     }
                     if (ch == '\n') {
                         cb->lineNumber ++;
-                        cb->lineBegin = cb->next;
+                        cb->lineBegin = cb->nextUnread;
                         cb->columnOffset = 0;
                         if (options.strictAnsi && (options.debug || options.errors)) {
                             warningMessage(ERR_ST,"string constant through end of line");
@@ -634,7 +634,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             ch = getChar(cb);
                             if (ch=='\n') {
                                 cb->lineNumber ++;
-                                cb->lineBegin = cb->next;
+                                cb->lineBegin = cb->nextUnread;
                                 cb->columnOffset = 0;
                             }
                             ch = getChar(cb);
@@ -652,7 +652,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '\n') {
                     cb->lineNumber ++;
-                    cb->lineBegin = cb->next;
+                    cb->lineBegin = cb->nextUnread;
                     cb->columnOffset = 0;
                     putLexLines(1, &dd);
                     ch = getChar(cb);
@@ -671,7 +671,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     fatalError(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file", XREF_EXIT_ERR);
                 }
                 cb->lineNumber ++;
-                cb->lineBegin = cb->next;
+                cb->lineBegin = cb->nextUnread;
                 cb->columnOffset = 0;
                 ch = getChar(cb);
                 ch = skipBlanks(cb, ch);
@@ -702,7 +702,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
                 if (ch == '#' && LANGUAGE(LANG_C|LANG_YACC)) {
                     noteNewLexemPosition(cb, lb);
-                    //&        HandleCppToken(ch, cb, dd, cb->next, cb->fileNumber, cb->lineNumber, cb->lineBegin);
+                    //&        HandleCppToken(ch, cb, dd, cb->nextUnread, cb->fileNumber, cb->lineNumber, cb->lineBegin);
                     // #define HandleCppToken(ch, cb, dd, cb->next, cb->fileNumber, cb->lineNumber, cb->lineBegin) {
                     {
                         char *ddd, tt[30];

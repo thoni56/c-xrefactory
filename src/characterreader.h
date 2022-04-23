@@ -14,7 +14,7 @@ typedef enum {
 } InputMethod;
 
 typedef struct characterBuffer {
-    char        *next;				/* first unread */
+    char        *nextUnread;				/* first unread */
     char        *end;				/* pointing after valid characters */
     char        chars[CHAR_BUFF_SIZE];
     FILE        *file;
@@ -34,7 +34,7 @@ typedef struct characterBuffer {
 extern void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file);
 extern void initCharacterBufferFromString(CharacterBuffer *characterbuffer, char *string);
 extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
-                                char *next,
+                                char *nextUnread,
                                 char *end,
                                 FILE *file,
                                 unsigned filePos,

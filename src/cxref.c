@@ -1482,15 +1482,15 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
 }
 
 #define GetBufChar(cch, bbb) {                                          \
-        if ((bbb)->next >= (bbb)->end) {                                \
+        if ((bbb)->nextUnread >= (bbb)->end) {                                \
             if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {               \
                 cch = EOF;                                              \
                 (bbb)->isAtEOF = true;                                  \
             } else {                                                    \
-                cch = * ((unsigned char*)(bbb)->next); (bbb)->next ++;  \
+                cch = * ((unsigned char*)(bbb)->nextUnread); (bbb)->nextUnread ++;  \
             }                                                           \
         } else {                                                        \
-            cch = * ((unsigned char*)(bbb)->next); (bbb)->next++;       \
+            cch = * ((unsigned char*)(bbb)->nextUnread); (bbb)->nextUnread++;       \
         }                                                               \
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
