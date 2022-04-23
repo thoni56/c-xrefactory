@@ -1179,10 +1179,10 @@ Reference *editorMarkersToReferences(EditorMarkerList **editorMarkerListP) {
             }
         }
         while (markers!=NULL && markers->marker->buffer==buf) {
-            Reference *rr = olcx_alloc(sizeof(Reference));
-            rr->position = makePosition(buf->fileIndex, line, 0);
-            fillReference(rr, markers->usage, rr->position, reference);
-            reference = rr;
+            Reference *r = olcx_alloc(sizeof(Reference));
+            r->position = makePosition(buf->fileIndex, line, 0);
+            fillReference(r, markers->usage, r->position, reference);
+            reference = r;
             markers = markers->next;
         }
     }
