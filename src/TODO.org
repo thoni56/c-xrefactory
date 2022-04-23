@@ -25,6 +25,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** TODO Use compiler identification to set extra 
 * TODO Convert fillBits() with explicit setting of "properties" like access, storage etc.
 * TODO Set xref2 to true as default and then convert all test cases that fail, remove the option
+  Hmmm. We only want that when running as a server, right?
 * TODO ROADMAP
 ** DOING LSP-like protocol (possibly also fulfill LSP functions)
 ** TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
