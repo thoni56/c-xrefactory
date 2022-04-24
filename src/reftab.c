@@ -26,8 +26,9 @@ static bool equalReferenceItems(ReferencesItem *e1, ReferencesItem *e2) {
 
 
 void initReferenceTable(int size) {
+    // We want this in cx_memory, so can't use refTabInit() b.c it allocates in StackMemory
     CX_ALLOCC(referenceTable.tab, size, ReferencesItem *);
-    referenceTable.size = size;
+    refTabNoAllocInit(&referenceTable, size);
 }
 
 int getNextExistingReferencesItem(int index) {

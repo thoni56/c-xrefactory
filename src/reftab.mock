@@ -4,6 +4,9 @@
 
 ReferenceTable referenceTable;
 
+void initReferenceTable(int size) {
+    mock(size);
+}
 
 void refTabInit(ReferenceTable *table, int size) {
     mock(table, size);
