@@ -1082,19 +1082,20 @@ void completeOthers(Completions *c) {
 }
 
 /* very costly function in time !!!! */
-static Symbol *getSymFromRef(Reference *reference) {
+static Symbol *getSymbolFromReference(Reference *reference) {
     int i;
     ReferencesItem *ss;
     Reference *r;
-    Symbol *sym;
+    Symbol *symbol;
 
     r = NULL; ss = NULL;
     // first visit all references, looking for symbol link name
     for(i=0; i<referenceTable.size; i++) {
         ss = referenceTable.tab[i];
         if (ss!=NULL) {
-            for(r=ss->references; r!=NULL; r=r->next) {
-                if (reference == r) goto cont;
+            for (r=ss->references; r!=NULL; r=r->next) {
+                if (reference == r)
+                    goto cont;
             }
         }
     }
@@ -1103,10 +1104,10 @@ static Symbol *getSymFromRef(Reference *reference) {
         return NULL;
     assert(r==reference);
     // now look symbol table to find the symbol , berk!
-    for(i=0; i<symbolTable->size; i++) {
-        for(sym=symbolTable->tab[i]; sym!=NULL; sym=sym->next) {
-            if (strcmp(sym->linkName,ss->name)==0)
-                return sym;
+    for (i=0; i<symbolTable->size; i++) {
+        for(symbol=symbolTable->tab[i]; symbol!=NULL; symbol=symbol->next) {
+            if (strcmp(symbol->linkName,ss->name)==0)
+                return symbol;
         }
     }
     return NULL;
@@ -1194,7 +1195,7 @@ static bool isForCompletionSymbol(
     if (token->typeModifier->kind == TypePointer) {
         assert(token->typeModifier->next);
         if (token->typeModifier->next->kind == TypeStruct) {
-            *sym = sy = getSymFromRef(token->reference);
+            *sym = sy = getSymbolFromReference(token->reference);
             if (sy==NULL)
                 return false;
             *nextRecord = spComplFindNextRecord(token);
