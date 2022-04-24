@@ -1535,19 +1535,6 @@ static ScanFileFunctionStep byPassFunctionSequence[]={
     {-1,NULL, 0},
 };
 
-static ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
-    {CXFI_VERSION, cxrfVersionCheck, CXSF_UNUSED},
-    {CXFI_CHECK_NUMBER, cxrfCheckNumber, CXSF_UNUSED},
-    {CXFI_FILE_NAME, cxReadFileName, CXSF_JUST_READ},
-    {CXFI_SOURCE_INDEX, cxrfSourceIndex, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, cxrfSymbolName, CXSF_DEFAULT},
-    {CXFI_REFERENCE, cxrfReference, CXSF_MENU_CREATION},
-    {CXFI_CLASS_EXT, cxrfSubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, cxrfReferenceFileCountCheck, CXSF_UNUSED},
-    {-1,NULL, 0},
-};
-
 static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
     {CXFI_MARKER_LIST, cxrfReadRecordMarkers, CXSF_UNUSED},
     {CXFI_VERSION, cxrfVersionCheck, CXSF_UNUSED},
