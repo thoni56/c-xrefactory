@@ -807,7 +807,7 @@ static void cxReadFileName(int size,
 ) {
     char id[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
-    int i, ii, fileIndex, len, commandLineFlag, isInterface;
+    int fileIndex, len, commandLineFlag, isInterface;
     time_t fumtime, umtime;
     char ch;
 
@@ -816,7 +816,8 @@ static void cxReadFileName(int size,
     umtime = (time_t) lastIncomingInfo.values[CXFI_FILE_UMTIME];
     commandLineFlag = lastIncomingInfo.values[CXFI_INPUT_FROM_COMMAND_LINE];
     isInterface=((lastIncomingInfo.values[CXFI_ACCESS_BITS] & AccessInterface)!=0);
-    ii = lastIncomingInfo.values[CXFI_FILE_INDEX];
+
+    int i;
     for (i=0; i<size-1; i++) {
         ch = getChar(cb);
         id[i] = ch;
@@ -824,7 +825,10 @@ static void cxReadFileName(int size,
     id[i] = 0;
     len = i;
     assert(len+1 < MAX_FILE_NAME_SIZE);
-    assert(ii>=0 && ii<MAX_FILES);
+
+    int lastIncomingFileIndex = lastIncomingInfo.values[CXFI_FILE_INDEX];
+    assert(lastIncomingFileIndex>=0 && lastIncomingFileIndex<MAX_FILES);
+
     if (!existsInFileTable(id)) {
         fileIndex = addFileNameToFileTable(id);
         fileItem = getFileItem(fileIndex);
@@ -859,8 +863,8 @@ static void cxReadFileName(int size,
         //&if (umtime>fileItem->lastUpdateMtime) fileItem->lastUpdateMtime=umtime;
     }
     fileItem->bits.isFromCxfile = true;
-    decodeFileNumbers[ii]=fileIndex;
-    log_trace("%d: '%s' scanned: added as %d", ii, id, fileIndex);
+    decodeFileNumbers[lastIncomingFileIndex]=fileIndex;
+    log_trace("%d: '%s' scanned: added as %d", lastIncomingFileIndex, id, fileIndex);
 }
 
 static void cxrfSourceIndex(int size,
