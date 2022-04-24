@@ -12,10 +12,10 @@ enum extractModes {
 };
 
 /* Revealed publicly only to allow unittesting */
-typedef struct symbolReferenceItemList {
+typedef struct referencesItemList {
     struct referencesItem		*item;
-    struct symbolReferenceItemList	*next;
-} SymbolReferenceItemList;
+    struct referencesItemList	*next;
+} ReferencesItemList;
 
 
 extern Symbol *addContinueBreakLabelSymbol(int labn, char *name);

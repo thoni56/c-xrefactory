@@ -433,7 +433,7 @@ typedef struct referencesItem {
     int                       vFunClass;  /* fun class for java virtuals */
     struct referencesItemBits bits;
     struct reference         *references;
-    struct referencesItem    *next;
+    struct referencesItem    *next; /* TODO: Link only for hashlist? */
 } ReferencesItem;
 
 /* ***************** on - line cross referencing ***************** */

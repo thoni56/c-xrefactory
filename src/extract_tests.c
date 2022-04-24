@@ -57,10 +57,10 @@ BeforeEach(Extract) {
 AfterEach(Extract) {}
 
 /* Non-public function in extract module */
-void addSymbolToSymRefList(SymbolReferenceItemList **ll, ReferencesItem *s);
+void addSymbolToSymRefList(ReferencesItemList **ll, ReferencesItem *s);
 
 Ensure(Extract, can_concat_symRefItemList_when_null) {
-    SymbolReferenceItemList *lp = NULL;
+    ReferencesItemList *lp = NULL;
     ReferencesItem s = {"s", 0, 0, 0, {}, NULL, NULL};
 
     addSymbolToSymRefList(&lp, &s);
@@ -70,8 +70,8 @@ Ensure(Extract, can_concat_symRefItemList_when_null) {
 Ensure(Extract, can_concat_symRefItemList_before_existing) {
     ReferencesItem s1 = {"s1", 0, 0, 0, {}, NULL, NULL};
     ReferencesItem s2 = {"s2", 0, 0, 0, {}, NULL, NULL};
-    SymbolReferenceItemList l = {&s1, NULL};
-    SymbolReferenceItemList *lp = &l;
+    ReferencesItemList l = {&s1, NULL};
+    ReferencesItemList *lp = &l;
 
     expect(getClassNumFromClassLinkName, times(4));
     expect(isSmallerOrEqClass, will_return(false), times(2));
