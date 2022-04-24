@@ -42,32 +42,34 @@ bool checkFileModifiedTime(int fileIndex) {
 }
 
 
-static void deleteReferencesOutOfMemory(Reference **rr) {
-    while (*rr!=NULL) {
-        if (CX_FREED_POINTER(*rr)) {
-            log_trace("deleting reference on %s:%d", getFileItem((*rr)->position.file)->name, (*rr)->position.line);
-            *rr = (*rr)->next;
+static void deleteReferencesOutOfMemory(Reference **referenceP) {
+    while (*referenceP!=NULL) {
+        if (CX_FREED_POINTER(*referenceP)) {
+            log_trace("deleting reference on %s:%d", getFileItem((*referenceP)->position.file)->name,
+                      (*referenceP)->position.line);
+            *referenceP = (*referenceP)->next;
             continue;
         }
-        rr= &(*rr)->next;
+        referenceP = &(*referenceP)->next;
     }
 }
 
-static void cxrefTabDeleteOutOfMemory(int i) {
-    ReferencesItem **pp;
+static void cxrefTabDeleteOutOfMemory(int index) {
+    ReferencesItem **itemP;
 
-    pp = &referenceTable.tab[i];
-    while (*pp!=NULL) {
-        if (CX_FREED_POINTER(*pp)) {
+    // TODO: Rewrite this to not directly write to .tab[i] but use refTabSet()
+    itemP = &referenceTable.tab[index];
+    while (*itemP!=NULL) {
+        if (CX_FREED_POINTER(*itemP)) {
             /* out of memory, delete it */
-            log_trace("deleting all references on %s", (*pp)->name);
-            *pp = (*pp)->next;  /* Unlink it and look at next */
+            log_trace("deleting all references on %s", (*itemP)->name);
+            *itemP = (*itemP)->next;  /* Unlink it and look at next */
             continue;
         } else {
             /* in memory, examine all refs */
-            deleteReferencesOutOfMemory(&(*pp)->references);
+            deleteReferencesOutOfMemory(&((*itemP)->references));
         }
-        pp= &(*pp)->next;
+        itemP = &((*itemP)->next);
     }
 }
 

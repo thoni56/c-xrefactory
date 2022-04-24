@@ -645,8 +645,8 @@ static void genPartialFileTabRefFile(int updateFlag,
 }
 
 static void generateRefsFromMemory(int fileOrder) {
-    for (int i=0; i<referenceTable.size; i++) {
-        for (ReferencesItem *r=referenceTable.tab[i]; r!=NULL; r=r->next) {
+    for (int i=getNextExistingReferencesItem(0); i != -1; i = getNextExistingReferencesItem(i+1)) {
+        for (ReferencesItem *r=getReferencesItem(i); r!=NULL; r=r->next) {
             if (r->bits.category == CategoryLocal)
                 continue;
             if (r->references == NULL)

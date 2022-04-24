@@ -1083,30 +1083,28 @@ void completeOthers(Completions *c) {
 
 /* very costly function in time !!!! */
 static Symbol *getSymbolFromReference(Reference *reference) {
-    int i;
-    ReferencesItem *ss;
-    Reference *r;
-    Symbol *symbol;
+    char *symbolLinkName;
 
-    r = NULL; ss = NULL;
     // first visit all references, looking for symbol link name
-    for(i=0; i<referenceTable.size; i++) {
-        ss = referenceTable.tab[i];
-        if (ss!=NULL) {
-            for (r=ss->references; r!=NULL; r=r->next) {
-                if (reference == r)
-                    goto cont;
+    // TODO: Feels like an API function... getReferencesItemFor(Reference *r)
+    for (int i=getNextExistingReferencesItem(0); i != -1; i = getNextExistingReferencesItem(i+1)) {
+        ReferencesItem *referencesItem = getReferencesItem(i);
+        if (referencesItem!=NULL) {
+            for (Reference *r=referencesItem->references; r!=NULL; r=r->next) {
+                if (r == reference) {
+                    symbolLinkName = referencesItem->name;
+                    goto found;
+                }
             }
         }
     }
- cont:
-    if (i>=referenceTable.size)
-        return NULL;
-    assert(r==reference);
-    // now look symbol table to find the symbol , berk!
-    for (i=0; i<symbolTable->size; i++) {
-        for(symbol=symbolTable->tab[i]; symbol!=NULL; symbol=symbol->next) {
-            if (strcmp(symbol->linkName,ss->name)==0)
+    return NULL;
+
+ found:
+    // now look symbol table to find the symbol, berk!
+    for (int i=0; i<symbolTable->size; i++) {
+        for (Symbol *symbol=symbolTable->tab[i]; symbol!=NULL; symbol=symbol->next) {
+            if (strcmp(symbol->linkName, symbolLinkName)==0)
                 return symbol;
         }
     }
