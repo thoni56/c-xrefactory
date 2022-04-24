@@ -20,6 +20,7 @@ extern ReferenceTable referenceTable;
 
 extern void initReferenceTable(int size);
 extern int addToReferencesTable(ReferencesItem *referencesItem);
+extern ReferencesItem *getReferencesItem(int index);
 extern int getNextExistingReferencesItem(int index);
 
 #endif

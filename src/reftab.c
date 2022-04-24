@@ -31,6 +31,12 @@ void initReferenceTable(int size) {
     refTabNoAllocInit(&referenceTable, size);
 }
 
+ReferencesItem *getReferencesItem(int index) {
+    assert(index < referenceTable.size);
+    assert(referenceTable.tab[index]);
+    return referenceTable.tab[index];
+}
+
 int getNextExistingReferencesItem(int index) {
     for (int i=index; i < referenceTable.size; i++)
         if (referenceTable.tab[i] != NULL)

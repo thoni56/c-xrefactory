@@ -953,6 +953,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     fillReferencesItemBits(&referenceItem->bits, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
 
     if (!refTabIsMember(&referenceTable, referenceItem, NULL, &memb)) {
+        // TODO: This is more or less the body of newReferencesItem()
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
         CX_ALLOC(memb, ReferencesItem);

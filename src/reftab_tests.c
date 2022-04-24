@@ -29,3 +29,11 @@ Ensure(ReferenceTable, will_return_index_to_next_entry) {
     assert_that(getNextExistingReferencesItem(0), is_equal_to(index));
     assert_that(getNextExistingReferencesItem(index+1), is_equal_to(-1));
 }
+
+Ensure(ReferenceTable, can_retrieve_item_using_index) {
+    ReferencesItem r = (ReferencesItem){ .name = "name" };
+
+    int index = addToReferencesTable(&r);
+    ReferencesItem *item = getReferencesItem(index);
+    assert_that(item->name, is_equal_to_string(r.name));
+}

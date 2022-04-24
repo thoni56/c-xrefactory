@@ -49,3 +49,11 @@ void refTabMap4(ReferenceTable *table, void(*fun)(ReferencesItem *, int), int i)
 void refTabMap5(ReferenceTable *table, void(*fun)(ReferencesItem *, void *), void *arg) {
     mock(table, fun, arg);
 }
+
+int getNextExistingReferencesItem(int index) {
+    return (int)mock(index);
+}
+
+ReferencesItem *getReferencesItem(int index) {
+    return (ReferencesItem *)mock(index);
+}
