@@ -161,20 +161,19 @@ static void symbolTableDeleteOutOfMemory(int i) {
 }
 
 static void javaFqtTabDeleteOutOfMemory(int i) {
-    SymbolList **pp;
-    pp = &javaFqtTable.tab[i];
-    while (*pp!=NULL) {
-        if (PPM_FREED_POINTER(*pp)) {
-            *pp = (*pp)->next;
+    SymbolList **symbolListP;
+    symbolListP = &javaFqtTable.tab[i];
+    while (*symbolListP != NULL) {
+        if (PPM_FREED_POINTER(*symbolListP)) {
+            *symbolListP = (*symbolListP)->next;
             continue;
-        } else if (freedPointer((*pp)->d)
-                   || PPM_FREED_POINTER((*pp)->d)) {
-            *pp = (*pp)->next;
+        } else if (freedPointer((*symbolListP)->d) || PPM_FREED_POINTER((*symbolListP)->d)) {
+            *symbolListP = (*symbolListP)->next;
             continue;
         } else {
-            structCachingFree((*pp)->d);
+            structCachingFree((*symbolListP)->d);
         }
-        pp= &(*pp)->next;
+        symbolListP = &(*symbolListP)->next;
     }
 }
 
