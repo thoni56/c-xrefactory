@@ -10,7 +10,7 @@ void initFileTable(int size) {
     mock(size);
 }
 
-void initNoFile(void) {
+void initNoFileIndex(void) {
     mock();
 }
 

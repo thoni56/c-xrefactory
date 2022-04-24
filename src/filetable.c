@@ -67,7 +67,7 @@ void initFileTable(int size) {
     fileTableNoAllocInit(&fileTable, size);
 }
 
-void initNoFile(void) {
+void initNoFileIndex(void) {
     FileItem *fileItem = newFileItem(NO_FILE_NAME);
 
     /* Add it to the fileTab and remember its index for future use */

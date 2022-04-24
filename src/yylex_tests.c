@@ -45,7 +45,7 @@ BeforeEach(Yylex) {
     options.taskRegime = RegimeEditServer;
     allocateMacroArgumentTable();
     initFileTable(100);
-    initNoFile();
+    initNoFileIndex();
 
     initSymbolTable(100);
 

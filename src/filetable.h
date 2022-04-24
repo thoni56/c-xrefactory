@@ -67,7 +67,7 @@ extern int noFileIndex;
 
 
 extern void initFileTable(int size);
-extern void initNoFile(void);
+extern void initNoFileIndex(void);
 
 extern int addToFileTable(FileItem *fileItem);
 extern int addFileNameToFileTable(char *name);

@@ -30,7 +30,7 @@ extern void CONCAT(HASH_FUN_PREFIX, Init) (		/* Init */
     int size
 );
 
-extern void CONCAT(HASH_FUN_PREFIX, NoAllocInit) ( /* No Allocation Init */
+extern void CONCAT(HASH_FUN_PREFIX, NoAllocInit) ( /* Init but don't allocate the entries */
     HASH_TAB_TYPE *table,
     int size
 );
@@ -41,7 +41,7 @@ extern bool CONCAT(HASH_FUN_PREFIX, IsMember) (	/* IsMember */
     int *position
 );
 
-extern int CONCAT(HASH_FUN_PREFIX, Add) (		/* Add, returns position */
+extern int CONCAT(HASH_FUN_PREFIX, Add) (		/* Add, returns index a.k.a fileNumber */
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 );

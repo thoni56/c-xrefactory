@@ -2033,7 +2033,7 @@ static void mainTotalTaskEntryInitialisations() {
     SM_INIT(ftMemory);
 
     initFileTable(MAX_FILES);
-    initNoFile();             /* Sets noFileIndex to something real */
+    initNoFileIndex();             /* Sets noFileIndex to something real */
 
     noPosition = makePosition(noFileIndex, 0, 0);
     inputFileNumber = noFileIndex;
