@@ -25,5 +25,18 @@ static bool equalReferenceItems(ReferencesItem *e1, ReferencesItem *e2) {
 #include "hashlist.tc"
 
 
-void initReferenceTable(void) {
+void initReferenceTable(int size) {
+    CX_ALLOCC(referenceTable.tab, size, ReferencesItem *);
+    referenceTable.size = size;
+}
+
+int getNextExistingReferencesItem(int index) {
+    for (int i=index; i < referenceTable.size; i++)
+        if (referenceTable.tab[i] != NULL)
+            return i;
+    return -1;
+}
+
+int addToReferencesTable(ReferencesItem *referencesItem) {
+    return refTabAdd(&referenceTable, referencesItem);
 }
