@@ -86,3 +86,19 @@ Reference : Usage usage
 Reference : Position position
 Reference -> Reference : next
 ....
+
+== Development Practices
+
+=== Utilities
+
+==== Covers
+
+`utils/covers.py` is a Python script that, in some enviroments, can list which test cases execute a particular line.
+
+This is handy when you want to debug or step through a particular part of the code.
+Find a test that covers that particular line and run it using the debugger (usually `make debug` in the test directory).
+
+Synopsis:
+
+    covers.py <file> <line>
+
