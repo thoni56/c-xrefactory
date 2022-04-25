@@ -17,7 +17,6 @@ CXrefs: .c-xrefrc
 	@# Sources in subdir
 	@sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
 	@mv .c-xrefrc.tmp .c-xrefrc
-	@$(CXREF) -create -o $(TEST).log
 
 clean:
 	rm -rf CXrefs .c-xrefrc
