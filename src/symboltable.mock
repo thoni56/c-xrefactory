@@ -20,7 +20,7 @@ bool symbolTableNextMember(Symbol *element, Symbol **original) {
   return (bool) mock(element, original);
 }
 
-void symbolTableSet(SymbolTable *table, Symbol *element, int position) {
+void symbolTablePush(SymbolTable *table, Symbol *element, int position) {
   mock(table, element, position);
 }
 

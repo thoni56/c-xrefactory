@@ -738,7 +738,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         fillReferencesItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl);
         fillReferencesItemBits(&pp->bits, symbol->bits.symbolType, storage, scope,
                               symbol->bits.access, category);
-        refTabSet(&referenceTable, pp, index);
+        refTabPush(&referenceTable, pp, index);
         memb = pp;
     } else {
         // at least reset some maybe new informations

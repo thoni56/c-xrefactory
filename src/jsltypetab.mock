@@ -19,7 +19,7 @@ bool jslTypeTabNextMember(JslSymbolList *element, JslSymbolList **original) {
   return (bool) mock(element, original);
 }
 
-void jslTypeTabSet(struct jslTypeTab *table, JslSymbolList *element, int position) {
+void jslTypeTabPush(struct jslTypeTab *table, JslSymbolList *element, int position) {
   mock(table, element, position);
 }
 

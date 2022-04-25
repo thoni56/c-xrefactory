@@ -22,7 +22,7 @@ bool refTabNextMember(ReferencesItem *element, ReferencesItem **original) {
     return (bool)mock(element, original);
 }
 
-void refTabSet(ReferenceTable *table, ReferencesItem *element, int position) {
+void refTabPush(ReferenceTable *table, ReferencesItem *element, int position) {
     mock(table, element, position);
 }
 

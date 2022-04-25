@@ -51,7 +51,7 @@ extern bool CONCAT(HASH_FUN_PREFIX, NextMember) (
     HASH_ELEM_TYPE **original
 );
 
-extern void CONCAT(HASH_FUN_PREFIX, Set) (		/* prepend elem at position */
+extern void CONCAT(HASH_FUN_PREFIX, Push) (		/* prepend elem at position */
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element,
     int position

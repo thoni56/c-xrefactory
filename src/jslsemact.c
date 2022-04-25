@@ -156,7 +156,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
         log_trace("[jsl] jslTypeTabIsMember() returned %s", isMember?"true":"false");
         if (order == ORDER_PREPEND) {
             log_debug("[jsl] prepending class %s to jsltab", smemb->name);
-            jslTypeTabSet(s_jsl->typeTab, xss, index);
+            jslTypeTabPush(s_jsl->typeTab, xss, index);
             addToTrail(jslRemoveNestedClass, xss, (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
         } else {
             log_debug("[jsl] appending class %s to jsltab", smemb->name);

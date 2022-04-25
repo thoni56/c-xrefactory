@@ -594,11 +594,11 @@ static void addMacroToTabs(Symbol *pp, char *name) {
     } else {
         log_trace(": adding macro %s", name);
     }
-    symbolTableSet(symbolTable, pp, index);
+    symbolTablePush(symbolTable, pp, index);
 }
 
 static void setMacroArgumentName(MacroArgumentTableElement *arg, void *at) {
-    char ** argTab;
+    char **argTab;
     argTab = (char**)at;
     assert(arg->order>=0);
     argTab[arg->order] = arg->name;

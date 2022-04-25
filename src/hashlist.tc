@@ -109,7 +109,7 @@ bool CONCAT(HASH_FUN_PREFIX,DeleteExact)(
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Set) (
+void CONCAT(HASH_FUN_PREFIX,Push) (
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element,
     int position
@@ -139,7 +139,7 @@ int CONCAT(HASH_FUN_PREFIX,Add) (
     HASH_ELEM_TYPE *origin;
     int position;
     if (!CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,&position,&origin)) {
-        CONCAT(HASH_FUN_PREFIX,Set) (table,element,position);
+        CONCAT(HASH_FUN_PREFIX,Push) (table,element,position);
     }
     return position;
 }

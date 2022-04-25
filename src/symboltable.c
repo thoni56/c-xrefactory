@@ -44,5 +44,5 @@ void addSymbolNoTrail(SymbolTable *symtab, Symbol *symbol) {
 
     //assert(symtab == symbolTable);
     symbolTableIsMember(symtab, symbol, &i, &memb);
-    symbolTableSet(symtab, symbol, i);
+    symbolTablePush(symtab, symbol, i);
 }
