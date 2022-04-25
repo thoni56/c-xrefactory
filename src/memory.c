@@ -253,6 +253,9 @@ void *dm_alloc(Memory *memory, size_t size) {
     return dm_allocc(memory, 1, size);
 }
 
+bool dmIsBetween(Memory *memory, void *pointer, int low, int high) {
+    return pointer >= (void *)&memory->block + low && pointer < (void *)&memory->block + high;
+}
 
 void olcx_memory_init() {
     olcxMemoryAllocatedBytes = 0;

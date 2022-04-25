@@ -405,7 +405,7 @@ static void changeFieldRefUsages(ReferencesItem *ri, void *rrcd) {
         for (Reference *rr = ri->references; rr!=NULL; rr=rr->next) {
             //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->position.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
             if (rr->position.file == rcd->fnum &&  /* I think it is used only for Java */
-                DM_IS_BETWEEN(cxMemory,rr,rcd->cxMemBegin,rcd->cxMemEnd)) {
+                dmIsBetween(cxMemory,rr,rcd->cxMemBegin,rcd->cxMemEnd)) {
                 //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->position.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
                 switch(rr->usage.kind) {
                 case UsageMaybeThis:

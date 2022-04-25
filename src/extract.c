@@ -158,7 +158,7 @@ static void extractFunGraphRef(ReferencesItem *rr, void *prog) {
     ProgramGraphNode *p,**ap;
     ap = (ProgramGraphNode **) prog;
     for (r=rr->references; r!=NULL; r=r->next) {
-        if (DM_IS_BETWEEN(cxMemory,r,s_cp.cxMemoryIndexAtFunctionBegin,s_cp.cxMemoryIndexAtFunctionEnd)){
+        if (dmIsBetween(cxMemory,r,s_cp.cxMemoryIndexAtFunctionBegin,s_cp.cxMemoryIndexAtFunctionEnd)){
             p = newProgramGraphNode(r, rr, NULL, 0, 0, EXTRACT_NONE, *ap);
             *ap = p;
         }
@@ -173,7 +173,7 @@ static ProgramGraphNode *getGraphAddress( ProgramGraphNode  *program,
     for (p=program; res==NULL && p!=NULL; p=p->next) {
         if (p->ref == ref) res = p;
     }
-    return(res);
+    return res;
 }
 
 static Reference *getDefinitionReference(ReferencesItem *lab) {

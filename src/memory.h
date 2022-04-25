@@ -110,10 +110,9 @@ typedef struct codeBlock {
 
 #define DM_ENOUGH_SPACE_FOR(memory, bytes) (memory->index+(bytes) < memory->size)
 
-#define DM_IS_BETWEEN(memory, pointer, low, high) (                     \
-        ((char*)pointer) >= ((char*)&memory->block) + (low) && ((char*)pointer) < ((char*)&memory->block) + (high) \
-    )
-#define DM_FREED_POINTER(memory, pointer) DM_IS_BETWEEN(memory, pointer, memory->index, memory->size)
+extern bool dmIsBetween(Memory *memory, void *pointer, int low, int high);
+
+#define DM_FREED_POINTER(memory, pointer) dmIsBetween(memory, pointer, memory->index, memory->size)
 
 #define DM_ALLOCC(memory, variable, count, type) {                      \
         assert((count) >= 0);                                           \
