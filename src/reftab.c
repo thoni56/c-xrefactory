@@ -49,5 +49,5 @@ int addToReferencesTable(ReferencesItem *referencesItem) {
 }
 
 void setReferencesItem(int index, ReferencesItem *item) {
-    refTabSet(&referenceTable, item, index);
+    referenceTable.tab[index] = item;
 }
