@@ -47,3 +47,7 @@ int getNextExistingReferencesItem(int index) {
 int addToReferencesTable(ReferencesItem *referencesItem) {
     return refTabAdd(&referenceTable, referencesItem);
 }
+
+void setReferencesItem(int index, ReferencesItem *item) {
+    refTabSet(&referenceTable, item, index);
+}

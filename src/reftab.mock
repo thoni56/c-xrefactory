@@ -57,3 +57,7 @@ int getNextExistingReferencesItem(int index) {
 ReferencesItem *getReferencesItem(int index) {
     return (ReferencesItem *)mock(index);
 }
+
+void setReferencesItem(int index, ReferencesItem *item) {
+    mock(index, item);
+}
