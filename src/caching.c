@@ -55,9 +55,15 @@ static void deleteReferencesOutOfMemory(Reference **referenceP) {
 }
 
 static void cxrefTabDeleteOutOfMemory(int index) {
+    ReferencesItem *item;
     ReferencesItem **itemP;
 
     // TODO: Rewrite this to not directly write to .tab[i] but use refTabSet()
+    // This is a half-baked attempt, which for some reason does not work
+    item = getReferencesItem(index);
+    itemP = &item;
+
+    // Original code...g
     itemP = &referenceTable.tab[index];
     while (*itemP!=NULL) {
         if (CX_FREED_POINTER(*itemP)) {
@@ -71,6 +77,7 @@ static void cxrefTabDeleteOutOfMemory(int index) {
         }
         itemP = &((*itemP)->next);
     }
+    //setReferencesItem(index, item); // This is the other half of it
 }
 
 static void fileTabDeleteOutOfMemory(FileItem *fileItem, int index) {
