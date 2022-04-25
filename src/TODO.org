@@ -23,6 +23,8 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra 
+* TODO Abstract refTab
+** TODO Implement table functions as per other tables (getReferenceItem
 * TODO Convert fillBits() with explicit setting of "properties" like access, storage etc.
 * TODO Set xref2 to true as default and then convert all test cases that fail, remove the option
   Hmmm. We only want that when running as a server, right?
@@ -123,7 +125,6 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   We need to change pos to *pos if that's gonna work
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
-* TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
