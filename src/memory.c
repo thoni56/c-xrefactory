@@ -252,10 +252,23 @@ void *dm_allocc(Memory *memory, int count, size_t size) {
 void *dm_alloc(Memory *memory, size_t size) {
     return dm_allocc(memory, 1, size);
 }
+bool dm_enoughSpaceFor(Memory *memory, size_t bytes) {
+    return memory->index + bytes < memory->size;
+}
 
-bool dmIsBetween(Memory *memory, void *pointer, int low, int high) {
+bool dm_isBetween(Memory *memory, void *pointer, int low, int high) {
     return pointer >= (void *)&memory->block + low && pointer < (void *)&memory->block + high;
 }
+
+bool dm_isFreedPointer(Memory *memory, void *pointer) {
+    return dm_isBetween(memory, pointer, memory->index, memory->size);
+}
+
+void dm_freeUntil(Memory *memory, void *pointer) {
+    assert(pointer >= (void *)&memory->block && pointer <= (void *)&memory->block+memory->index);
+    memory->index = (void *)pointer - (void *)&memory->block;
+}
+
 
 void olcx_memory_init() {
     olcxMemoryAllocatedBytes = 0;

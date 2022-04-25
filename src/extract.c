@@ -158,7 +158,7 @@ static void extractFunGraphRef(ReferencesItem *rr, void *prog) {
     ProgramGraphNode *p,**ap;
     ap = (ProgramGraphNode **) prog;
     for (r=rr->references; r!=NULL; r=r->next) {
-        if (dmIsBetween(cxMemory,r,s_cp.cxMemoryIndexAtFunctionBegin,s_cp.cxMemoryIndexAtFunctionEnd)){
+        if (dm_isBetween(cxMemory,r,s_cp.cxMemoryIndexAtFunctionBegin,s_cp.cxMemoryIndexAtFunctionEnd)){
             p = newProgramGraphNode(r, rr, NULL, 0, 0, EXTRACT_NONE, *ap);
             *ap = p;
         }

@@ -76,7 +76,7 @@ Ensure(Memory, can_allocate_direct_memory) {
     Memory memory;
 
     initMemory((&memory), overflowHandler, SIZE_optMemory);
-    DM_ALLOC((&memory), character, char);
+    character = dm_alloc(&memory, sizeof(char));
     assert_that(character, is_not_null);
 }
 
@@ -87,14 +87,14 @@ Ensure(Memory, will_extend_direct_memory_when_next_allocation_will_fill_up) {
     /* NOTE: This test seems to indicate that overflow happens when there is one byte left */
     if (!setjmp(memoryResizeJumpTarget)) {
         initMemory((&memory), overflowHandler, 10);
-        DM_ALLOCC((&memory), character, 9, char);
+        character = dm_allocc(&memory, 9, sizeof(char));
     } else
         fail_test("unexpected memory resize");
     assert_that(overflowRequest, is_equal_to(0));
     assert_that(character, is_not_null);
 
     if (!setjmp(memoryResizeJumpTarget)) {
-        DM_ALLOC((&memory), character, char);
+        character = dm_alloc(&memory, sizeof(char));
     }
     assert_that(overflowRequest, is_greater_than(0));
 }

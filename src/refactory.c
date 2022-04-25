@@ -743,7 +743,7 @@ static void tpCheckFutureAccOfLocalReferences(ReferencesItem *ri, void *ddd) {
             // I should check only references from this file
             if (rr->position.file == inputFileNumber) {
                 // check if the reference is outside moved class
-                if ((!dmIsBetween(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi))
+                if ((!dm_isBetween(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi))
                     && OL_VIEWABLE_REFS(rr)) {
                     // yes there is a reference from outside to our symbol
                     ss->selected = ss->visible = 1;
@@ -970,7 +970,7 @@ static void tpCheckSpecialReferencesMapFun(ReferencesItem *ri, void *ddd) {
     if (strcmp(ri->name, dd->symbolToTest)!=0)
         return;
     for (Reference *rr=ri->references; rr!=NULL; rr=rr->next) {
-        if (dmIsBetween(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi)) {
+        if (dm_isBetween(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi)) {
             // a super method reference
             dd->foundSpecialRefItem = ri;
             dd->foundSpecialR = rr;

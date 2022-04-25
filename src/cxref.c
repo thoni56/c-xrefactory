@@ -405,7 +405,7 @@ static void changeFieldRefUsages(ReferencesItem *ri, void *rrcd) {
         for (Reference *rr = ri->references; rr!=NULL; rr=rr->next) {
             //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->position.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
             if (rr->position.file == rcd->fnum &&  /* I think it is used only for Java */
-                dmIsBetween(cxMemory,rr,rcd->cxMemBegin,rcd->cxMemEnd)) {
+                dm_isBetween(cxMemory,rr,rcd->cxMemBegin,rcd->cxMemEnd)) {
                 //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->position.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
                 switch(rr->usage.kind) {
                 case UsageMaybeThis:
@@ -804,7 +804,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     /* Test for available space */
     assert(options.taskRegime);
     if (options.taskRegime==RegimeXref) {
-        if (!DM_ENOUGH_SPACE_FOR(cxMemory, CX_SPACE_RESERVE)) {
+        if (!dm_enoughSpaceFor(cxMemory, CX_SPACE_RESERVE)) {
             longjmp(cxmemOverflow, LONGJUMP_REASON_REFERENCE_OVERFLOW);
         }
     }
