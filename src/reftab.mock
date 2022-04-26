@@ -30,11 +30,11 @@ int refTabAdd(ReferenceTable *table, ReferencesItem *element) {
     return mock(table, element);
 }
 
-void refTabMap(ReferenceTable *table, void(*fun)(ReferencesItem *)) {
-    mock(table, fun);
+void mapOverReferenceTable(void (*fun)(ReferencesItem *)) {
+    mock(fun);
 }
 
-extern void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
+void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
     mock(fun, pointer);
 }
 

@@ -3439,8 +3439,8 @@ void olCreateSelectionMenu(int command) {
         while (ss!=NULL && fnum==cxFileHashNumber(ss->s.name))
             ss = ss->next;
     }
-    refTabMap(&referenceTable, mapCreateSelectionMenu);
-    refTabMap(&referenceTable, putOnLineLoadedReferences);
+    mapOverReferenceTable(mapCreateSelectionMenu);
+    mapOverReferenceTable(putOnLineLoadedReferences);
     setSelectedVisibleItems(rstack->menuSym, command, rstack->menuFilterLevel);
     assert(rstack->references==NULL);
     olProcessSelectedReferences(rstack, genOnLineReferences);
@@ -4176,7 +4176,7 @@ void pushLocalUnusedSymbolsAction(void) {
     rstack = sessionData.browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
-    refTabMap(&referenceTable, mapAddLocalUnusedSymbolsToHkSelection);
+    mapOverReferenceTable(mapAddLocalUnusedSymbolsToHkSelection);
     olCreateSelectionMenu(options.serverOperation);
 }
 

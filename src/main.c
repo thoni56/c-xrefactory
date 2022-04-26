@@ -2799,7 +2799,7 @@ static void mainXref(int argc, char **argv) {
         ppcSynchronize();
     }
     //& fprintf(dumpOut, "\n\nDUMP\n\n"); fflush(dumpOut);
-    //& refTabMap(&referenceTable, symbolRefItemDump);
+    //& mapOverReferenceTable(symbolRefItemDump);
     LEAVE();
 }
 

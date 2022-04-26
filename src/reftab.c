@@ -55,3 +55,7 @@ void setReferencesItem(int index, ReferencesItem *item) {
 void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
     refTabMap2(&referenceTable, fun, pointer);
 }
+
+void mapOverReferenceTable(void (*fun)(ReferencesItem *)) {
+    refTabMap(&referenceTable, fun);
+}

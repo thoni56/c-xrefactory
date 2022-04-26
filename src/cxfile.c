@@ -671,7 +671,7 @@ void genReferenceFile(bool updating, char *filename) {
         mapOverFileTableWithIndex(writeFileSourceIndexItem);
         mapOverFileTableWithIndex(genClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
-        refTabMap(&referenceTable, genRefItem);
+        mapOverReferenceTable(genRefItem);
         closeReferenceFile(filename);
     } else {
         /* several reference files */
