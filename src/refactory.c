@@ -785,7 +785,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
     rstack = sessionData.browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(LINK_NAME_MOVE_CLASS_MISSED, noFileIndex, StorageDefault);
     // push them into hkSelection,
-    refTabMap2(&referenceTable, tpCheckMoveClassPutClassDefaultSymbols, &dd);
+    mapOverReferenceTableWithPointer(tpCheckMoveClassPutClassDefaultSymbols, &dd);
     // load all theirs references
     olCreateSelectionMenu(rstack->command);
     // mark all as unselected unvisible
@@ -793,7 +793,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
         ss->selected = ss->visible = 0;
     }
     // checks all references from within this file
-    refTabMap2(&referenceTable, tpCheckFutureAccOfLocalReferences, &dd);
+    mapOverReferenceTableWithPointer(tpCheckFutureAccOfLocalReferences, &dd);
     // check references from outside
     for (SymbolsMenu *mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&mm->s);
@@ -896,7 +896,7 @@ bool tpCheckMoveClassAccessibilities(void) {
 
     tpCheckFillMoveClassData(&dd, spack, tpack);
     olcxPushSpecialCheckMenuSym(LINK_NAME_MOVE_CLASS_MISSED);
-    refTabMap2(&referenceTable, tpCheckDefaultAccessibilitiesMoveClass, &dd);
+    mapOverReferenceTableWithPointer(tpCheckDefaultAccessibilitiesMoveClass, &dd);
 
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
@@ -1022,7 +1022,7 @@ static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr)
     initTpCheckSpecialReferencesData(rr, s_cps.cxMemoryIndexAtMethodBegin,
                                      s_cps.cxMemoryIndexAtMethodEnd,
                                      LINK_NAME_SUPER_METHOD_ITEM, scl);
-    refTabMap2(&referenceTable, tpCheckSpecialReferencesMapFun, rr);
+    mapOverReferenceTableWithPointer(tpCheckSpecialReferencesMapFun, rr);
     return true;
 }
 
@@ -1111,7 +1111,7 @@ bool tpCheckOuterScopeUsagesForDynToSt(void) {
     initTpCheckSpecialReferencesData(&rr, s_cps.cxMemoryIndexAtMethodBegin,
                                      s_cps.cxMemoryIndexAtMethodEnd,
                                      LINK_NAME_MAYBE_THIS_ITEM, ss->s.vApplClass);
-    refTabMap2(&referenceTable, tpCheckSpecialReferencesMapFun, &rr);
+    mapOverReferenceTableWithPointer(tpCheckSpecialReferencesMapFun, &rr);
     if (rr.foundOuterScopeRef!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"Inner class method is using symbols from outer scope. Current version of C-xrefactory does not know how to make it static.");

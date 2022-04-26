@@ -51,3 +51,7 @@ int addToReferencesTable(ReferencesItem *referencesItem) {
 void setReferencesItem(int index, ReferencesItem *item) {
     referenceTable.tab[index] = item;
 }
+
+void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
+    refTabMap2(&referenceTable, fun, pointer);
+}

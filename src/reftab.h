@@ -23,5 +23,6 @@ extern int addToReferencesTable(ReferencesItem *referencesItem);
 extern ReferencesItem *getReferencesItem(int index);
 extern int getNextExistingReferencesItem(int index);
 extern void setReferencesItem(int index, ReferencesItem *item);
+extern void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer);
 
 #endif

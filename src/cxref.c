@@ -463,7 +463,7 @@ void changeMethodReferencesUsages(char *linkName, int category, int fnum,
     fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemoryIndexAtMethodBegin,
                               s_cps.cxMemoryIndexAtMethodEnd);
-    refTabMap2(&referenceTable, changeFieldRefUsages, &rr);
+    mapOverReferenceTableWithPointer(changeFieldRefUsages, &rr);
 }
 
 void changeClassReferencesUsages(char *linkName, int category, int fnum,
@@ -472,7 +472,7 @@ void changeClassReferencesUsages(char *linkName, int category, int fnum,
     fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemoryIndexAtClassBeginning,
                               s_cps.cxMemoryIndexAtClassEnd);
-    refTabMap2(&referenceTable, changeFieldRefUsages, &rr);
+    mapOverReferenceTableWithPointer(changeFieldRefUsages, &rr);
 }
 
 Reference * getDefinitionRef(Reference *rr) {
@@ -4038,7 +4038,7 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     rstack = sessionData.browserStack.top;
     rr.minMemi = minMemi;
     rr.maxMemi = maxMemi;
-    refTabMap2(&referenceTable, olPushAllReferencesInBetweenMapFun, &rr);
+    mapOverReferenceTableWithPointer(olPushAllReferencesInBetweenMapFun, &rr);
     olProcessSelectedReferences(rstack, genOnLineReferences);
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->menuSym);
 }

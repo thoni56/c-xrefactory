@@ -1882,7 +1882,7 @@ static void completeFromXrefFun(ReferencesItem *s, void *c) {
 }
 
 void completeYaccLexem(Completions *c) {
-    SymbolCompletionInfo ii;
-    fillCompletionSymInfo(&ii, c, TypeYaccSymbol);
-    refTabMap2(&referenceTable, completeFromXrefFun, (void*) &ii);
+    SymbolCompletionInfo info;
+    fillCompletionSymInfo(&info, c, TypeYaccSymbol);
+    mapOverReferenceTableWithPointer(completeFromXrefFun, (void*) &info);
 }
