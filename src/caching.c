@@ -218,7 +218,7 @@ static int cachedIncludedFilePass(int cpi) {
 static void recoverCxMemory(char *cxMemFreeBase) {
     CX_FREE_UNTIL(cxMemFreeBase);
     mapOverFileTableWithIndex(fileTabDeleteOutOfMemory);
-    refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
+    mapOverReferenceTableWithIndex(cxrefTabDeleteOutOfMemory);
 }
 
 static void fillCache(Cache *cache, char active, int cpi, int ibi, char *lbcc, char *lexcc, char *cc,
@@ -274,7 +274,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
         cxMemory->index = cp->cxMemoryIndex;
-        refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
+        mapOverReferenceTableWithIndex(cxrefTabDeleteOutOfMemory);
         mapOverFileTableWithIndex(fileTabDeleteOutOfMemory);
     }
     log_trace("recovering 0");

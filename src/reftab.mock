@@ -38,8 +38,8 @@ void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), voi
     mock(fun, pointer);
 }
 
-void refTabMap3(ReferenceTable *table, void(*fun)(int)) {
-    mock(table, fun);
+void mapOverReferenceTableWithIndex(void (*fun)(int)) {
+    mock(fun);
 }
 
 void refTabMap4(ReferenceTable *table, void(*fun)(ReferencesItem *, int), int i) {

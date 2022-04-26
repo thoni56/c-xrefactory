@@ -59,3 +59,7 @@ void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), voi
 void mapOverReferenceTable(void (*fun)(ReferencesItem *)) {
     refTabMap(&referenceTable, fun);
 }
+
+void mapOverReferenceTableWithIndex(void (*fun)(int index)) {
+    refTabMap3(&referenceTable, fun);
+}
