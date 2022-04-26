@@ -179,18 +179,6 @@ void CONCAT(HASH_FUN_PREFIX,Map3)(
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Map5)(
-    HASH_TAB_TYPE *table,
-    void (*fun)(HASH_ELEM_TYPE *, void *),
-    void *arg
-) {
-    for (int i=0; i<table->size; i++) {
-        for (HASH_ELEM_TYPE *e=table->tab[i]; e!=NULL; e=e->next)
-            (*fun)(e, arg);
-    }
-}
-
-
 #undef GLUE
 #undef CONCAT
 #undef HASH_TAB_TYPE

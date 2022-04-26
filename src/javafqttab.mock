@@ -59,10 +59,6 @@ void javaFqtTableMap3(struct javaFqtTable *table, void (*fun)(int)) {
     mock(table, fun);
 }
 
-void javaFqtTableMap5(struct javaFqtTable *table, void (*fun)(SymbolList *, void *), void *arg) {
-    mock(table, fun, arg);
-}
-
 void javaFqtTableStatistics(struct javaFqtTable *table, int *usedIndexes, int *elements, int *maxdepth) {
     mock(table, usedIndexes, elements, maxdepth);
 }

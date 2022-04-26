@@ -95,12 +95,6 @@ extern void CONCAT(HASH_FUN_PREFIX, Map3) (
     void (*fun) (int)
 );
 
-extern void CONCAT(HASH_FUN_PREFIX, Map5) (
-    HASH_TAB_TYPE *table,
-    void (*fun) (HASH_ELEM_TYPE *, void *),
-    void *arg
-);
-
 #undef GLUE
 #undef CONCAT
 #undef HASH_FUN_PREFIX

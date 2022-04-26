@@ -202,10 +202,10 @@ static int linearOrder(ProgramGraphNode *n1, ProgramGraphNode *n2) {
     return(n1->ref < n2->ref);
 }
 
-static ProgramGraphNode * extMakeProgramGraph(void) {
-    ProgramGraphNode *program,*p;
+static ProgramGraphNode *extMakeProgramGraph(void) {
+    ProgramGraphNode *program, *p;
     program = NULL;
-    refTabMap5(&referenceTable, extractFunGraphRef, ((void *) &program));
+    mapOverReferenceTableWithPointer(extractFunGraphRef, ((void *) &program));
     LIST_SORT(ProgramGraphNode, program, linearOrder);
     dumpProgram(program);
     for (p=program; p!=NULL; p=p->next) {
