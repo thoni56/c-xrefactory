@@ -1773,7 +1773,7 @@ endOfFile:
 /* **************************************************************** */
 
 static void addMacroBaseUsageRef(Symbol *mdef) {
-    int rr;
+    bool isMember;
     ReferencesItem ppp, *memb;
     Reference *r;
     Position basePos;
@@ -1784,16 +1784,16 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
                        noFileIndex, noFileIndex);
     fillReferencesItemBits(&ppp.bits,TypeMacro, StorageDefault, ScopeGlobal,
                            mdef->bits.access, CategoryGlobal);
-    rr = refTabIsMember(&referenceTable, &ppp, NULL, &memb);
+    isMember = refTabIsMember(&referenceTable, &ppp, NULL, &memb);
     r = NULL;
-    if (rr) {
+    if (isMember) {
         // this is optimization to avoid multiple base references
         for (r=memb->references; r!=NULL; r=r->next) {
             if (r->usage.kind == UsageMacroBaseFileUsage)
                 break;
         }
     }
-    if (rr==0 || r==NULL) {
+    if (isMember==0 || r==NULL) {
         addCxReference(mdef, &basePos, UsageMacroBaseFileUsage,
                        noFileIndex, noFileIndex);
     }
