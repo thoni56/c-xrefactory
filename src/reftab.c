@@ -60,14 +60,14 @@ bool isMemberInReferenceTable(ReferencesItem *element, int *position, References
     return refTabIsMember(&referenceTable, element, position, foundMemberPointer);
 }
 
-void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
-    refTabMap2(&referenceTable, fun, pointer);
-}
-
 void mapOverReferenceTable(void (*fun)(ReferencesItem *)) {
     refTabMap(&referenceTable, fun);
 }
 
+void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
+    refTabMapWithPointer(&referenceTable, fun, pointer);
+}
+
 void mapOverReferenceTableWithIndex(void (*fun)(int index)) {
-    refTabMap3(&referenceTable, fun);
+    refTabMapWithIndex(&referenceTable, fun);
 }

@@ -278,9 +278,9 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
         mapOverFileTableWithIndex(fileTabDeleteOutOfMemory);
     }
     log_trace("recovering 0");
-    symbolTableMap3(symbolTable, symbolTableDeleteOutOfMemory);
+    symbolTableMapWithIndex(symbolTable, symbolTableDeleteOutOfMemory);
     log_trace("recovering 1");
-    javaFqtTableMap3(&javaFqtTable, javaFqtTabDeleteOutOfMemory);
+    javaFqtTableMapWithIndex(&javaFqtTable, javaFqtTabDeleteOutOfMemory);
     log_trace("recovering 2");
 
     // do not forget that includes are listed in PP_MEMORY too.

@@ -59,14 +59,6 @@ void CONCAT(HASH_FUN_PREFIX, MapWithIndex)(
     (void)mock(table, fun);
 }
 
-void CONCAT(HASH_FUN_PREFIX, Map4)(
-            HASH_TAB_TYPE *table,
-            void (*fun)(int, void *, void *),
-            void *a,
-            void *b) {
-    (void)mock(table, fun, a, b);
-}
-
 #undef HASH_TAB_NAME
 #undef HASH_ELEM_TYPE
 #undef HASH_TAB_TYPE

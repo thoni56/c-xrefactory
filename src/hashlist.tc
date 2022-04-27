@@ -156,7 +156,7 @@ void CONCAT(HASH_FUN_PREFIX,Map)(
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Map2)(
+void CONCAT(HASH_FUN_PREFIX,MapWithPointer)(
     HASH_TAB_TYPE *table,
     void (*fun)(HASH_ELEM_TYPE *, void *),
     void *a
@@ -168,7 +168,7 @@ void CONCAT(HASH_FUN_PREFIX,Map2)(
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Map3)(
+void CONCAT(HASH_FUN_PREFIX,MapWithIndex)(
     HASH_TAB_TYPE *table,
     void (*fun)(int)
 ) {

@@ -55,7 +55,7 @@ void javaFqtTableMap2(struct javaFqtTable *table, void (*fun)(SymbolList *, void
     mock(table, fun);
 }
 
-void javaFqtTableMap3(struct javaFqtTable *table, void (*fun)(int)) {
+void javaFqtTableMapWithIndex(struct javaFqtTable *table, void (*fun)(int)) {
     mock(table, fun);
 }
 
