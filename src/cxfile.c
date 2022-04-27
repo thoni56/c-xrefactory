@@ -690,7 +690,6 @@ void genReferenceFile(bool updating, char *filename) {
             openInOutReferenceFile(updating, referenceFileName);
             genCxFileHead();
             scanCxFile(fullScanFunctionSequence);
-            //&refTabMap4(&referenceTable, genPartialRefItem, i);
             generateRefsFromMemory(i);
             closeReferenceFile(referenceFileName);
         }
@@ -961,7 +960,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                           vApplClass, vFunClass);
         fillReferencesItemBits(&memb->bits, symType, storage,
                               ScopeGlobal, accessFlags, CategoryGlobal);
-        refTabAdd(&referenceTable, memb);
+        addToReferencesTable(memb);
     }
     lastIncomingInfo.symbolTab[si] = memb;
     lastIncomingInfo.onLineReferencedSym = si;

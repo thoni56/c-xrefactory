@@ -21,12 +21,12 @@ bool refTabNextMember(ReferencesItem *element, ReferencesItem **original) {
     return (bool)mock(element, original);
 }
 
-void refTabPush(ReferenceTable *table, ReferencesItem *element, int position) {
-    mock(table, element, position);
+void pushReferences(ReferencesItem *element, int position) {
+    mock(element, position);
 }
 
-int refTabAdd(ReferenceTable *table, ReferencesItem *element) {
-    return mock(table, element);
+int addToReferencesTable(ReferencesItem *referencesItem) {
+    return mock(referencesItem);
 }
 
 void mapOverReferenceTable(void (*fun)(ReferencesItem *)) {
@@ -39,10 +39,6 @@ void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), voi
 
 void mapOverReferenceTableWithIndex(void (*fun)(int)) {
     mock(fun);
-}
-
-void refTabMap4(ReferenceTable *table, void(*fun)(ReferencesItem *, int), int i) {
-    mock(table, fun, i);
 }
 
 int getNextExistingReferencesItem(int index) {

@@ -10,8 +10,6 @@
 #include "hashlist.th"
 
 
-extern ReferenceTable referenceTable;
-
 #ifndef IN_REFTAB_C
 #undef HASH_TAB_NAME
 #undef HASH_TAB_TYPE
@@ -19,7 +17,8 @@ extern ReferenceTable referenceTable;
 #endif
 
 extern void initReferenceTable(int size);
-extern int addToReferencesTable(ReferencesItem *referencesItem);
+extern int  addToReferencesTable(ReferencesItem *referencesItem);
+extern void pushReferences(ReferencesItem *element, int position);
 extern ReferencesItem *getReferencesItem(int index);
 extern int getNextExistingReferencesItem(int index);
 extern void setReferencesItem(int index, ReferencesItem *item);

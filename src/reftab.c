@@ -8,7 +8,7 @@
 #include "memory.h"               /* For XX_ALLOCC */
 
 
-ReferenceTable referenceTable;
+static ReferenceTable referenceTable;
 
 static bool equalReferenceItems(ReferencesItem *e1, ReferencesItem *e2) {
     return e1->bits.symType==e2->bits.symType
@@ -48,10 +48,13 @@ int addToReferencesTable(ReferencesItem *referencesItem) {
     return refTabAdd(&referenceTable, referencesItem);
 }
 
+void pushReferences(ReferencesItem *element, int position) {
+    refTabPush(&referenceTable, element, position);
+}
+
 void setReferencesItem(int index, ReferencesItem *item) {
     referenceTable.tab[index] = item;
 }
-
 
 bool isMemberInReferenceTable(ReferencesItem *element, int *position, ReferencesItem **foundMemberPointer) {
     return refTabIsMember(&referenceTable, element, position, foundMemberPointer);
