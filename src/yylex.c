@@ -737,7 +737,7 @@ void processDefineDirective(bool hasArguments) {
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, parpos2, &length, true);
         *parpos1 = *parpos2;
         if (lexem != '(')
-            goto errorlab;
+            goto errorlabel;
         argumentCount++;
         lexem = getNonBlankLexem(&position, &lineNumber, &value, &length);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -755,7 +755,7 @@ void processDefineDirective(bool hasArguments) {
                     position = macroPosition;					// hack !!!
                     ellipsis = 1;
                 } else
-                    goto errorlab;
+                    goto errorlabel;
                 PPM_ALLOCC(mm, strlen(argumentName)+1, char);
                 strcpy(mm, argumentName);
                 sprintf(tmpBuff, "%x-%x%c%s", position.file, position.line,
@@ -871,7 +871,7 @@ endOfFile:
         goto endOfBody;
     return;
 
-errorlab:
+errorlabel:
     return;
 }
 
