@@ -730,7 +730,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         return NULL;
     }
     int index;
-    if (!refTabIsMember(&referenceTable, &ppp, &index, &memb)) {
+    if (!isMemberInReferenceTable(&ppp, &index, &memb)) {
         log_trace("allocating '%s'", symbol->linkName);
         CX_ALLOC(pp, ReferencesItem);
         CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);

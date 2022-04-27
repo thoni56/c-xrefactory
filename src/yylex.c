@@ -1784,7 +1784,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
                        noFileIndex, noFileIndex);
     fillReferencesItemBits(&ppp.bits,TypeMacro, StorageDefault, ScopeGlobal,
                            mdef->bits.access, CategoryGlobal);
-    isMember = refTabIsMember(&referenceTable, &ppp, NULL, &memb);
+    isMember = isMemberInReferenceTable(&ppp, NULL, &memb);
     r = NULL;
     if (isMember) {
         // this is optimization to avoid multiple base references

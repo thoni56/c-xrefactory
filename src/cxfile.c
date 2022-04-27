@@ -952,7 +952,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                       vApplClass, vFunClass);
     fillReferencesItemBits(&referenceItem->bits, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
 
-    if (!refTabIsMember(&referenceTable, referenceItem, NULL, &memb)) {
+    if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
         // TODO: This is more or less the body of newReferencesItem()
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
@@ -1041,7 +1041,7 @@ static void cxrfSymbolName(int size,
     fillReferencesItemBits(&referencesItem->bits, symType, storage, ScopeGlobal, accessFlags,
                           CategoryGlobal);
 
-    bool isMember = refTabIsMember(&referenceTable, referencesItem, NULL, &member);
+    bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);
     while (isMember && member->bits.category!=CategoryGlobal)
         isMember = refTabNextMember(referencesItem, &member);
 

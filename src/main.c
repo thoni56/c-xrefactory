@@ -2289,7 +2289,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                     fileItem->bits.fullUpdateIncludesProcessed = true;
                     bool isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
                     fillIncludeRefItem(&referenceItem, i);
-                    if (refTabIsMember(&referenceTable, &referenceItem, NULL, &member)) {
+                    if (isMemberInReferenceTable(&referenceItem, NULL, &member)) {
                         for (rr=member->references; rr!=NULL; rr=rr->next) {
                             FileItem *includer = getFileItem(rr->position.file);
                             if (!includer->bits.scheduledToUpdate) {

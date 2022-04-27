@@ -12,10 +12,9 @@ void refTabNoAllocInit(ReferenceTable *table, int size) {
     mock(table, size);
 }
 
-bool refTabIsMember(ReferenceTable *table, ReferencesItem *element,
-                    int *position, ReferencesItem **origin
+bool isMemberInReferenceTable(ReferencesItem *element, int *position, ReferencesItem **foundMemberPointer
 ) {
-    return (int)mock(table, element, position, origin);
+    return (bool)mock(element, position, foundMemberPointer);
 }
 
 bool refTabNextMember(ReferencesItem *element, ReferencesItem **original) {

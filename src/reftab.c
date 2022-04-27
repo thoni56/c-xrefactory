@@ -52,6 +52,11 @@ void setReferencesItem(int index, ReferencesItem *item) {
     referenceTable.tab[index] = item;
 }
 
+
+bool isMemberInReferenceTable(ReferencesItem *element, int *position, ReferencesItem **foundMemberPointer) {
+    return refTabIsMember(&referenceTable, element, position, foundMemberPointer);
+}
+
 void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
     refTabMap2(&referenceTable, fun, pointer);
 }
