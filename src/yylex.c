@@ -852,7 +852,7 @@ endOfBody:
     if (argumentCount > 0) {
         PPM_ALLOCC(argumentNames, argumentCount, char*);
         memset(argumentNames, 0, argumentCount*sizeof(char*));
-        macroArgumentTableMap2(&macroArgumentTable, setMacroArgumentName, argumentNames);
+        macroArgumentTableMapWithPointer(&macroArgumentTable, setMacroArgumentName, argumentNames);
     } else
         argumentNames = NULL;
     macroBody = newMacroBody(allocatedSize, argumentCount, macroName, body, argumentNames);

@@ -129,7 +129,7 @@ void mapOverFileTableWithIndex(void (*fun)(FileItem *, int)) {
 }
 
 void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer) {
-    fileTableMap2(&fileTable, fun, pointer);
+    fileTableMapWithPointer(&fileTable, fun, pointer);
 }
 
 int lookupFileTable(char *fileName) {

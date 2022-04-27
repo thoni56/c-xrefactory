@@ -51,15 +51,15 @@ extern void CONCAT(HASH_FUN_PREFIX, Map) (
     void (*fun) (HASH_ELEM_TYPE *)
 );
 
-extern void CONCAT(HASH_FUN_PREFIX, Map2) (
-    HASH_TAB_TYPE *table,
-    void (*fun) (HASH_ELEM_TYPE *, void *),
-    void *a
-);
-
 extern void CONCAT(HASH_FUN_PREFIX, MapWithIndex) (
     HASH_TAB_TYPE *table,
     void (*fun) (HASH_ELEM_TYPE *, int)
+);
+
+extern void CONCAT(HASH_FUN_PREFIX, MapWithPointer) (
+    HASH_TAB_TYPE *table,
+    void (*fun) (HASH_ELEM_TYPE *, void *),
+    void *a
 );
 
 #undef GLUE
