@@ -919,12 +919,12 @@ static bool processQOption(int *argi, int argc, char **argv) {
 }
 
 static void setXrefsFile(char *argvi) {
-    static int message=0;
+    static bool messageWritten=false;
 
-    if (options.taskRegime==RegimeXref && message==0 && ! isAbsolutePath(argvi)) {
+    if (options.taskRegime==RegimeXref && !messageWritten && !isAbsolutePath(argvi)) {
         char tmpBuff[TMP_BUFF_SIZE];
-        message = 1;
-        sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option",argvi);
+        messageWritten = true;
+        sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option", argvi);
         warningMessage(ERR_ST, tmpBuff);
     }
     createOptionString(&options.cxrefsLocation, normalizeFileName(argvi, cwd));
