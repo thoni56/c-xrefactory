@@ -102,3 +102,29 @@ Synopsis:
 
     covers.py <file> <line>
 
+== Modes
+
+- xref - batch mode reference generation
+- server - editor server
+- refactory - refactory browser
+
+=== Server & Refactory
+
+The editor extension communicates with the editor server (and refactory) using a protocol.
+
+==== Protocol Description
+
+==== Protocol Messages
+
+<goto>{position-off}</goto> -> editor;;
+Request the editor to move cursor to the indicated position (file, position).
+
+<precheck len={int}>{string}</precheck> -> editor;;
+Requests that the editor verifies that the text under the cursor matches the string.
+
+<replacement>{str}{str}</replacement>;;
+Requests that the editor replaces the string under the cursor, which should be 'string1', with 'string2'.
+
+<position-off off={int} len={int}>{absolute path to file}</position-off>;;
+Indicates a position in the given file. 'off' is the character position in the file.
+
