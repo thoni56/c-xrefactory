@@ -1716,25 +1716,67 @@ static void discoverBuiltinIncludePaths(void) {
     LEAVE();
 }
 
-#ifdef USE_COMPILER_DEPENDENT_DEFINES
 /* TODO: create tables that contains specific defines needed for each
  * supported compiler. For each set the first string is the compiler
  * identification. Search will consider all sets for which the
  * identification string is a substring of the
- * compiler_identification, so you can have a set specific for "Apple
+ * compiler_identification, so you can have a set specific for "clang"
  * clang version 12", then for "Apple clang", then "clang" */
 
+
+// TODO: Separate out "Apple clang"...
 static char *clang_defines[] = {
-    "__int64_t int",
+    "__int8_t int",
+    "__int16_t int",
     "__int32_t int",
+    "__int64_t int",
+    "__uint8_t int",
+    "__uint16_t int",
     "__uint32_t int",
     "__uint64_t int",
+    "int8_t int",
+    "int16_t int",
+    "int32_t int",
+    "int64_t int",
+    "uint8_t int",
+    "uint16_t int",
+    "uint32_t int",
+    "uint64_t int",
+    "u_int8_t int",
+    "u_int16_t int",
+    "u_int32_t int",
+    "u_int64_t int",
+    "__UINTPTR_TYPE__ int",
+    "__INTPTR_TYPE__ int",
+    "__INTMAX_TYPE__ int",
+    "__UINTMAX_TYPE__ int",
+
+    "wchar_t int",
+
+    "__darwin_clock_t int",
+    "__darwin_ct_rune_t int",
+    "__darwin_mode_t int",
+    "__darwin_natural_t int",
+    "__darwin_off_t int",
+    "__darwin_off_t int",
+    "__darwin_pid_t int",
+    "__darwin_pid_t int",
+    "__darwin_rune_t int",
+    "__darwin_sigset_t int",
+    "__darwin_size_t int",
+    "__darwin_ssize_t int",
+    "__darwin_suseconds_t int",
+    "__darwin_time_t int",
+    "__darwin_time_t int",
+    "__darwin_uid_t int",
+    "__darwin_useconds_t int",
+    "__darwin_va_list void*",
+    "__darwin_wint_t int",
     NULL
 };
 
 typedef struct {char *compiler; char **defines;} CompilerDependentDefines;
 static CompilerDependentDefines compiler_dependent_defines[] = {{"clang", clang_defines}};
-#endif
 
 
 static char *extra_defines[] = {
@@ -1796,15 +1838,15 @@ static void discoverStandardDefines(void) {
         addMacroDefinedByOption(extra_defines[i]);
     }
 
-    /* for (int c=0; c<sizeof(compiler_dependent_defines)/sizeof(CompilerDependentDefines); c++) { */
-    /*     if (strstr(compiler_dependent_defines[c].compiler, compiler_identification) != NULL) { */
-    /*         log_trace("Adding compiler specific defines for '%s'", compiler_dependent_defines[c].compiler); */
-    /*         for (char **d=compiler_dependent_defines[c].defines; d != NULL; d++) { */
-    /*             log_trace("Add definition '%s'", *d); */
-    /*             addMacroDefinedByOption(*d); */
-    /*         } */
-    /*     } */
-    /* } */
+    for (int c=0; c<sizeof(compiler_dependent_defines)/sizeof(CompilerDependentDefines); c++) {
+        if (strstr(compiler_dependent_defines[c].compiler, compiler_identification) != NULL) {
+            log_trace("Adding compiler specific defines for '%s'", compiler_dependent_defines[c].compiler);
+            for (char **d=compiler_dependent_defines[c].defines; *d != NULL; d++) {
+                log_trace("Add definition '%s'", *d);
+                addMacroDefinedByOption(*d);
+            }
+        }
+    }
 
     LEAVE();
  }
