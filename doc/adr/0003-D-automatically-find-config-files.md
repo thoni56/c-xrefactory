@@ -24,7 +24,7 @@ The current options, `-stdop`, `-no-stdop` `-xrefrc` creates a complicated set o
 In tests you probably want to say `-nostdop` and `-xrefrc ...`, but when this functionality is implemented you'd just remove those options and add a `.c-xrefrc` in the root of the test directory instead.
 
 Also, the location of the `.c-xrefrc` implicitly indicates the directory tree that will be analyzed.
-Probably a way to ignore particular subtrees has to be introduced.
+Probably a way to ignore particular subtrees has to be introduced, unless it already exists (`-prune`?).
 
 ## Considered Options
 
@@ -33,3 +33,17 @@ None.
 ## Decision Outcome
 
 To be implemented.
+
+## Decision Implications
+
+It has to be decided if such an "automatic" configuration file 
+
+- may allow multiple projects - probably not, this will be confusing
+- must have a project heading (initial line with "[projectname]") - again, probably not, it would be better to infere the projectname, if needed, from the last part of the path
+
+or if the "project concept" should be scrapped.
+
+`c-xref` will still be "project-based", it's just that the project is
+
+- contained in a directory tree defined by where the `.c-xrefrc` file exists
+- the `.c-xrefrc` file only contains one project and defines settings for that one project
