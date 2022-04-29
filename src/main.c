@@ -918,7 +918,7 @@ static bool processQOption(int *argi, int argc, char **argv) {
     return true;
 }
 
-static void setXrefsFile(char *argvi) {
+static void setXrefsLocation(char *argvi) {
     static bool messageWritten=false;
 
     if (options.taskRegime==RegimeXref && !messageWritten && !isAbsolutePath(argvi)) {
@@ -944,10 +944,10 @@ static bool processROption(int *argi, int argc, char **argv, int infilesFlag) {
     }
     else if (strcmp(argv[i], "-refs")==0)    {
         NEXT_FILE_ARG(i);
-        setXrefsFile(argv[i]);
+        setXrefsLocation(argv[i]);
     }
     else if (strncmp(argv[i], "-refs=",6)==0)    {
-        setXrefsFile(argv[i]+6);
+        setXrefsLocation(argv[i]+6);
     }
     else if (strcmp(argv[i], "-rlistwithoutsrc")==0) {
         options.referenceListWithoutSource = 1;
@@ -2924,9 +2924,8 @@ int main(int argc, char **argv) {
     initLogging(argc, argv);
     ENTER();
 
-    /* There is something interesting going on here, some mysterious
-       CX_ALLOCC always makes one longjmp back to here before we can
-       start processing for real ... Allocating initial memory? */
+    /* CX_ALLOCC always makes one longjmp back to here before we can
+       start processing for real ... Allocating initial memory */
     setjmp(memoryResizeJumpTarget);
     if (cxResizingBlocked) {
         fatalError(ERR_ST, "cx_memory resizing required, see file TROUBLES",
@@ -2937,12 +2936,16 @@ int main(int argc, char **argv) {
     mainTotalTaskEntryInitialisations();
     mainTaskEntryInitialisations(argc, argv);
 
-    char *configFileName = findConfigFile(cwd);
-    createOptionString(&options.xrefrc, configFileName);
-
+    // If there is no configuration file given auto-find it
+    if (options.xrefrc == NULL) {
+        char *configFileName = findConfigFile(cwd);
+        createOptionString(&options.xrefrc, configFileName);
+        // And then the storage will be parallel to that
+        strcpy(&configFileName[strlen(configFileName)-2], "db");
+        setXrefsLocation(configFileName);
+    }
 
     // Ok, so there were these five, now four, no three, main operating modes
-    /* TODO: Is there an underlying reason for not doing this as a switch()? */
     if (options.refactoringRegime == RegimeRefactory) mainRefactory();
     if (options.taskRegime == RegimeXref) mainXref(argc, argv);
     if (options.taskRegime == RegimeEditServer) mainEditServer(argc, argv);
