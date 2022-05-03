@@ -2422,20 +2422,20 @@ static void olcxMenuToggleSelect(void) {
 
 static void olcxMenuSelectOnly(void) {
     OlcxReferences *refs;
-    SymbolsMenu *sel;
+    SymbolsMenu *selection;
 
     if (!olcx_move_init(&sessionData, &refs, CHECK_NULL))
         return;
-    sel = NULL;
-    for (SymbolsMenu *ss=refs->menuSym; ss!=NULL; ss=ss->next) {
-        ss->selected = false;
-        int line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
+    selection = NULL;
+    for (SymbolsMenu *menu=refs->menuSym; menu!=NULL; menu=menu->next) {
+        menu->selected = false;
+        int line = SYMBOL_MENU_FIRST_LINE + menu->outOnLine;
         if (line == options.olcxMenuSelectLineNum) {
-            ss->selected = true;
-            sel = ss;
+            menu->selected = true;
+            selection = menu;
         }
     }
-    if (sel==NULL) {
+    if (selection==NULL) {
         if (options.xref2) {
             ppcBottomWarning("No Symbol");
         } else {
@@ -2449,14 +2449,14 @@ static void olcxMenuSelectOnly(void) {
         if (dref != NULL) refs->actual = dref;
         olcxPrintRefList(";", refs);
         if (dref == NULL) {
-            if (sel!=NULL && sel->s.vApplClass!=sel->s.vFunClass) {
+            if (selection!=NULL && selection->s.vApplClass!=selection->s.vFunClass) {
                 char ttt[MAX_CX_SYMBOL_SIZE];
                 char tmpBuff[TMP_BUFF_SIZE];
-                sprintfSymbolLinkName(ttt, sel);
-                sprintf(tmpBuff,"Class %s does not define %s", javaGetShortClassNameFromFileNum_st(sel->s.vApplClass), ttt);
+                sprintfSymbolLinkName(ttt, selection);
+                sprintf(tmpBuff,"Class %s does not define %s", javaGetShortClassNameFromFileNum_st(selection->s.vApplClass), ttt);
                 ppcBottomWarning(tmpBuff);
             } else {
-                if (!olcxBrowseSymbolInJavaDoc(&sel->s)) {  //& checkTheJavaDocBrowsing(refs);
+                if (!olcxBrowseSymbolInJavaDoc(&selection->s)) {  //& checkTheJavaDocBrowsing(refs);
                     ppcBottomWarning("Definition not found");
                 } else {
                     ppcBottomInformation("Definition not found, loading javadoc.");
@@ -2471,18 +2471,19 @@ static void olcxMenuSelectOnly(void) {
 }
 
 
-static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
+static void selectUnusedSymbols(SymbolsMenu *menu, void *vflp, void *p2) {
     bool atleastOneSelected;
     int filter, *flp;
 
     flp = (int *)vflp;
     filter = *flp;
-    for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-        ss->visible = true; ss->selected = false;
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        m->visible = true; m->selected = false;
     }
-    if (mm->s.bits.storage != StorageField && mm->s.bits.storage != StorageMethod) {
-        for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-            if (ss->defRefn!=0 && ss->refn==0) ss->selected = true;
+    if (menu->s.bits.storage != StorageField && menu->s.bits.storage != StorageMethod) {
+        for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+            if (m->defRefn!=0 && m->refn==0)
+                m->selected = true;
         }
         goto fini;
     }
@@ -2490,26 +2491,26 @@ static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
     while (atleastOneSelected) {
         atleastOneSelected = false;
         // O.K. find definition
-        for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-            if (!ss->selected && ss->defRefn!=0) {
-                assert(ss->s.vFunClass == ss->s.vApplClass);
+        for (SymbolsMenu *thisMenu=menu; thisMenu!=NULL; thisMenu=thisMenu->next) {
+            if (!thisMenu->selected && thisMenu->defRefn!=0) {
+                assert(thisMenu->s.vFunClass == thisMenu->s.vApplClass);
                 // O.K. is it potentially used?
                 bool used = false;
-                for (SymbolsMenu *s=mm; s!=NULL; s=s->next) {
-                    if (ss->s.vFunClass == s->s.vFunClass) {
-                        if (s->refn != 0) {
+                for (SymbolsMenu *otherMenu=menu; otherMenu!=NULL; otherMenu=otherMenu->next) {
+                    if (thisMenu->s.vFunClass == otherMenu->s.vFunClass) {
+                        if (otherMenu->refn != 0) {
                             used = true;
                             goto checked;
                         }
                     }
                 }
                 // for method, check if can be used in a superclass
-                if (ss->s.bits.storage == StorageMethod) {
-                    for (SymbolsMenu *s=mm; s!=NULL; s=s->next) {
-                        if (s->s.vFunClass == s->s.vApplClass       // it is a definition
-                            && ss->s.vApplClass != s->s.vApplClass  // not this one
-                            && !s->selected                         // used
-                            && isSmallerOrEqClass(ss->s.vApplClass, s->s.vApplClass)) {
+                if (thisMenu->s.bits.storage == StorageMethod) {
+                    for (SymbolsMenu *otherMenu=menu; otherMenu!=NULL; otherMenu=otherMenu->next) {
+                        if (otherMenu->s.vFunClass == otherMenu->s.vApplClass       // it is a definition
+                            && thisMenu->s.vApplClass != otherMenu->s.vApplClass  // not this one
+                            && !otherMenu->selected                         // used
+                            && isSmallerOrEqClass(thisMenu->s.vApplClass, otherMenu->s.vApplClass)) {
                             used = true;
                             goto checked;
                         }
@@ -2518,25 +2519,26 @@ static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
             checked:
                 if (!used) {
                     atleastOneSelected = true;
-                    ss->selected = true;
+                    thisMenu->selected = true;
                 }
             }
         }
     }
  fini:
-    for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-        if (ss->selected) goto fini2;
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        if (m->selected)
+            goto fini2;
     }
     //nothing selected, make the symbol unvisible
-    for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-        ss->visible = false;
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        m->visible = false;
     }
  fini2:
     if (filter>0) {
         // make all unselected unvisible
-        for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-            if (!ss->selected)
-                ss->visible = false;
+        for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+            if (!m->selected)
+                m->visible = false;
         }
     }
     return;
