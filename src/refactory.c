@@ -746,7 +746,7 @@ static void tpCheckFutureAccOfLocalReferences(ReferencesItem *ri, void *ddd) {
                 if ((!dm_isBetween(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi))
                     && OL_VIEWABLE_REFS(rr)) {
                     // yes there is a reference from outside to our symbol
-                    ss->selected = ss->visible = 1;
+                    ss->selected = true; ss->visible = true;
                     break;
                 }
             }
@@ -790,7 +790,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
     olCreateSelectionMenu(rstack->command);
     // mark all as unselected unvisible
     for (SymbolsMenu *ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
-        ss->selected = ss->visible = 0;
+        ss->selected = true; ss->visible = true;
     }
     // checks all references from within this file
     mapOverReferenceTableWithPointer(tpCheckFutureAccOfLocalReferences, &dd);
@@ -801,7 +801,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
             for (Reference *rr=mm->s.references; rr!=NULL; rr=rr->next) {
                 if (rr->position.file != inputFileNumber) {
                     // yes there is a reference from outside to our symbol
-                    ss->selected = ss->visible = 1;
+                    ss->selected = true; ss->visible = true;
                     goto nextsym;
                 }
             }
@@ -1320,7 +1320,7 @@ static bool refactoryHandleSafetyCheckDifferenceLists(
         //&editorDumpMarkerList(diff1);
         //&editorDumpMarkerList(diff2);
         for (SymbolsMenu *mm=diffrefs->menuSym; mm!=NULL; mm=mm->next) {
-            mm->selected = mm->visible = 1;
+            mm->selected = true; mm->visible = true;
             mm->ooBits = 07777777;
             // hack, freeing now all diffs computed by old method
             olcxFreeReferences(mm->s.references); mm->s.references = NULL;

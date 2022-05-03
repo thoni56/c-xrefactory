@@ -2420,7 +2420,7 @@ static int scheduleFileUsingTheMacro(void) {
     fillReferencesItemBits(&references.bits, TypeMacro, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal);
 
-    fillSymbolsMenu(&menu, references, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);
+    fillSymbolsMenu(&menu, references, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
     if (sessionData.browserStack.top==NULL) {
         olcxPushEmptyStackItem(&sessionData.browserStack);
         tmpc = sessionData.browserStack.top;

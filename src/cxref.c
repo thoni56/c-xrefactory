@@ -76,7 +76,7 @@ void fillReference(Reference *reference, Usage usage, Position position, Referen
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
                      ReferencesItem s,
                      char selected,
-                     char visible,
+                     bool visible,
                      unsigned ooBits,
                      char olUsage,
                      short int vlevel,
@@ -179,7 +179,7 @@ SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
                                 Position *defpos, int defusage) {
     SymbolsMenu *rr, **place, ddd;
 
-    fillSymbolsMenu(&ddd, *sym, 0,0,0, olusage, vlevel,0,0, UsageNone,noPosition,0, NULL, NULL);
+    fillSymbolsMenu(&ddd, *sym, 0, false, 0, olusage, vlevel, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
     SORTED_LIST_PLACE3(place, SymbolsMenu, (&ddd), list, olSymbolMenuIsLess);
     rr = *place;
     if (*place==NULL || olSymbolMenuIsLess(&ddd, *place)) {
@@ -1915,7 +1915,7 @@ static void olcxFindDefinitionAndGenGoto(ReferencesItem *sym) {
     // preserve poped items from browser first
     oldtop = olcxPushUserOnPhysicalTopOfStack();
     refs = sessionData.browserStack.top;
-    fillSymbolsMenu(&mmm, *sym, 1,1,0,UsageUsed,0,0,0,UsageNone,noPosition,0, NULL, NULL);
+    fillSymbolsMenu(&mmm, *sym, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
     //&oldrefs = *refs;
     refs->menuSym = &mmm;
     fullScanFor(sym->name);
@@ -2478,7 +2478,7 @@ static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
     flp = (int *)vflp;
     filter = *flp;
     for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-        ss->visible = 1; ss->selected = 0;
+        ss->visible = true; ss->selected = 0;
     }
     if (mm->s.bits.storage != StorageField && mm->s.bits.storage != StorageMethod) {
         for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
@@ -2529,13 +2529,14 @@ static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
     }
     //nothing selected, make the symbol unvisible
     for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-        ss->visible = 0;
+        ss->visible = false;
     }
  fini2:
     if (filter>0) {
         // make all unselected unvisible
         for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-            if (ss->selected == 0) ss->visible = 0;
+            if (ss->selected == 0)
+                ss->visible = false;
         }
     }
     return;
@@ -2553,7 +2554,8 @@ static void olcxMenuSelectAll(int val) {
         }
     }
     for (SymbolsMenu *ss=refs->menuSym; ss!=NULL; ss=ss->next) {
-        if (ss->visible) ss->selected = val;
+        if (ss->visible)
+            ss->selected = val;
     }
     olcxRecomputeSelRefs(refs);
     if (options.xref2) {
@@ -2605,28 +2607,28 @@ static bool isSpecialConstructorOnlySelectionCase(int command) {
 }
 
 static void handleConstructorSpecialsInSelectingSymbolInMenu(SymbolsMenu *menu, int command) {
-    SymbolsMenu *s1, *s2;
+    SymbolsMenu *m1, *m2;
     int ccc, sss, lll, vn;
 
     if (!LANGUAGE(LANG_JAVA))
         return;
     if (!isSpecialConstructorOnlySelectionCase(command))
         return;
-    s1 = NULL; s2 = NULL;
+    m1 = NULL; m2 = NULL;
     vn = 0;
-    for (SymbolsMenu *ss=menu; ss!=NULL; ss=ss->next) {
-        if (ss->visible) {
-            if (vn==0) s1 = ss;
-            else if (vn==1) s2 = ss;
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        if (m->visible) {
+            if (vn==0) m1 = m;
+            else if (vn==1) m2 = m;
             vn ++;
         }
     }
     if (vn == 2) {
         // exactly two visible items
-        assert(s1 && s2);
-        sss = s1->selected + s2->selected;
-        ccc = (s1->s.bits.storage==StorageConstructor) + (s2->s.bits.storage==StorageConstructor);
-        lll = (s1->s.bits.symType==TypeStruct) + (s2->s.bits.symType==TypeStruct);
+        assert(m1 && m2);
+        sss = m1->selected + m2->selected;
+        ccc = (m1->s.bits.storage==StorageConstructor) + (m2->s.bits.storage==StorageConstructor);
+        lll = (m1->s.bits.symType==TypeStruct) + (m2->s.bits.symType==TypeStruct);
         //&fprintf(dumpOut," sss,ccc,lll == %d %d %d\n",sss,ccc,lll);
         if (sss==2 && ccc==1 && lll==1) {
             //dr1 = getDefinitionRef(s1->s.refs);
@@ -2634,12 +2636,14 @@ static void handleConstructorSpecialsInSelectingSymbolInMenu(SymbolsMenu *menu, 
             // deselect class references, but only if constructor definition exists
             // it was not a good idea with def refs, because of browsing of
             // javadoc for standard constructors
-            if (s1->s.bits.symType==TypeStruct /*& && dr2!=NULL &*/) {
-                s1->selected = 0;
-                if (command == OLO_ARG_MANIP) s1->visible = 0;
-            } else if (s2->s.bits.symType==TypeStruct /*& && dr1!=NULL &*/) {
-                s2->selected = 0;
-                if (command == OLO_ARG_MANIP) s2->visible = 0;
+            if (m1->s.bits.symType==TypeStruct /*& && dr2!=NULL &*/) {
+                m1->selected = 0;
+                if (command == OLO_ARG_MANIP)
+                    m1->visible = false;
+            } else if (m2->s.bits.symType==TypeStruct /*& && dr1!=NULL &*/) {
+                m2->selected = 0;
+                if (command == OLO_ARG_MANIP)
+                    m2->visible = false;
             }
         }
     }
@@ -3961,7 +3965,7 @@ void olcxPushSpecial(char *fieldName, int command) {
         // object, so you have to select all
         refs = sessionData.browserStack.top;
         for (SymbolsMenu *ss=refs->menuSym; ss!=NULL; ss=ss->next) {
-            ss->visible = ss->selected = 1;
+            ss->visible = true; ss->selected = 1;
         }
         olProcessSelectedReferences(refs, genOnLineReferences);
         getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);

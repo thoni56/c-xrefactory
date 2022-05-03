@@ -244,7 +244,7 @@ static void olcxMenuPrintClassHierarchyLine(FILE *file, int fileIndex,
             else
                 fprintf(file,"*");
         }
-        menu->visible = 1;
+        menu->visible = true;
     }
     if (fileItem->bits.isInterface) {
         if (options.xref2)
@@ -413,7 +413,7 @@ static void genVirtualsGlobRefLists(    SymbolsMenu *rrr,
     ReferencesItem *p;
 
     // first count if there are some references at all
-    for(ss=rrr; ss!=NULL && ss->visible==0; ss=ss->next) ;
+    for(ss=rrr; ss!=NULL && !ss->visible; ss=ss->next) ;
     if (ss == NULL) return;
     assert(rrr!=NULL);
     p = &rrr->s;
@@ -431,7 +431,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *rrr,
     ReferencesItem *p;
 
     // first count if there are some references at all
-    for(ss=rrr; ss!=NULL && ss->visible==0; ss=ss->next) ;
+    for(ss=rrr; ss!=NULL && !ss->visible; ss=ss->next) ;
     if (ss == NULL) return;
     assert(rrr!=NULL);
     p = &rrr->s;

@@ -453,8 +453,8 @@ typedef struct olCompletion {
 
 typedef struct SymbolsMenu {
     struct referencesItem	s;
-    char					selected;
-    char					visible;
+    bool					selected;
+    bool					visible;
     unsigned				ooBits;
     char					olUsage;	/* usage of symbol under cursor */
     short int				vlevel;		/* virt. level of applClass <-> olsymbol*/
