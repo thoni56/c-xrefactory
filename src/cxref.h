@@ -15,7 +15,7 @@ extern void fillReferencesItemBits(ReferencesItemBits *symbolRefItemBits, unsign
                                   unsigned storage, unsigned scope, unsigned accessFlags,
                                   unsigned category);
 extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s,
-                            char selected, bool visible, unsigned ooBits, char olUsage,
+                            bool selected, bool visible, unsigned ooBits, char olUsage,
                             short int vlevel, short int refn, short int defRefn,
                             char defUsage, struct position defpos, int outOnLine,
                             struct editorMarkerList *markers,	/* for refactory only */

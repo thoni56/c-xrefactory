@@ -75,7 +75,7 @@ void fillReference(Reference *reference, Usage usage, Position position, Referen
 
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
                      ReferencesItem s,
-                     char selected,
+                     bool selected,
                      bool visible,
                      unsigned ooBits,
                      char olUsage,
@@ -2395,7 +2395,7 @@ static void olcxMenuToggleSelect(void) {
     for (ss=refs->menuSym; ss!=NULL; ss=ss->next) {
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
         if (line == options.olcxMenuSelectLineNum) {
-            ss->selected = ss->selected ^ 1;
+            ss->selected = !ss->selected; // WTF! Was: ss->selected = ss->selected ^ 1;
             olcxRecomputeSelRefs(refs);
             break;
         }
@@ -2428,10 +2428,10 @@ static void olcxMenuSelectOnly(void) {
         return;
     sel = NULL;
     for (SymbolsMenu *ss=refs->menuSym; ss!=NULL; ss=ss->next) {
-        ss->selected = 0;
+        ss->selected = false;
         int line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
         if (line == options.olcxMenuSelectLineNum) {
-            ss->selected = 1;
+            ss->selected = true;
             sel = ss;
         }
     }
@@ -2478,11 +2478,11 @@ static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
     flp = (int *)vflp;
     filter = *flp;
     for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-        ss->visible = true; ss->selected = 0;
+        ss->visible = true; ss->selected = false;
     }
     if (mm->s.bits.storage != StorageField && mm->s.bits.storage != StorageMethod) {
         for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-            if (ss->defRefn!=0 && ss->refn==0) ss->selected = 1;
+            if (ss->defRefn!=0 && ss->refn==0) ss->selected = true;
         }
         goto fini;
     }
@@ -2491,7 +2491,7 @@ static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
         atleastOneSelected = false;
         // O.K. find definition
         for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-            if (ss->selected==0 && ss->defRefn!=0) {
+            if (!ss->selected && ss->defRefn!=0) {
                 assert(ss->s.vFunClass == ss->s.vApplClass);
                 // O.K. is it potentially used?
                 bool used = false;
@@ -2508,7 +2508,7 @@ static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
                     for (SymbolsMenu *s=mm; s!=NULL; s=s->next) {
                         if (s->s.vFunClass == s->s.vApplClass       // it is a definition
                             && ss->s.vApplClass != s->s.vApplClass  // not this one
-                            && s->selected == 0                     // used
+                            && !s->selected                         // used
                             && isSmallerOrEqClass(ss->s.vApplClass, s->s.vApplClass)) {
                             used = true;
                             goto checked;
@@ -2518,7 +2518,7 @@ static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
             checked:
                 if (!used) {
                     atleastOneSelected = true;
-                    ss->selected = 1;
+                    ss->selected = true;
                 }
             }
         }
@@ -2535,7 +2535,7 @@ static void selectUnusedSymbols(SymbolsMenu *mm, void *vflp, void *p2) {
     if (filter>0) {
         // make all unselected unvisible
         for (SymbolsMenu *ss=mm; ss!=NULL; ss=ss->next) {
-            if (ss->selected == 0)
+            if (!ss->selected)
                 ss->visible = false;
         }
     }
@@ -2608,7 +2608,7 @@ static bool isSpecialConstructorOnlySelectionCase(int command) {
 
 static void handleConstructorSpecialsInSelectingSymbolInMenu(SymbolsMenu *menu, int command) {
     SymbolsMenu *m1, *m2;
-    int ccc, sss, lll, vn;
+    int ccc, selectedCount, lll, vn;
 
     if (!LANGUAGE(LANG_JAVA))
         return;
@@ -2626,22 +2626,22 @@ static void handleConstructorSpecialsInSelectingSymbolInMenu(SymbolsMenu *menu, 
     if (vn == 2) {
         // exactly two visible items
         assert(m1 && m2);
-        sss = m1->selected + m2->selected;
+        selectedCount = (m1->selected?1:0) + (m2->selected?1:0);
         ccc = (m1->s.bits.storage==StorageConstructor) + (m2->s.bits.storage==StorageConstructor);
         lll = (m1->s.bits.symType==TypeStruct) + (m2->s.bits.symType==TypeStruct);
-        //&fprintf(dumpOut," sss,ccc,lll == %d %d %d\n",sss,ccc,lll);
-        if (sss==2 && ccc==1 && lll==1) {
+        //&fprintf(dumpOut," sss,ccc,lll == %d %d %d\n",selectedCount,ccc,lll);
+        if (selectedCount==2 && ccc==1 && lll==1) {
             //dr1 = getDefinitionRef(s1->s.refs);
             //dr2 = getDefinitionRef(s2->s.refs);
             // deselect class references, but only if constructor definition exists
             // it was not a good idea with def refs, because of browsing of
             // javadoc for standard constructors
             if (m1->s.bits.symType==TypeStruct /*& && dr2!=NULL &*/) {
-                m1->selected = 0;
+                m1->selected = false;
                 if (command == OLO_ARG_MANIP)
                     m1->visible = false;
             } else if (m2->s.bits.symType==TypeStruct /*& && dr1!=NULL &*/) {
-                m2->selected = 0;
+                m2->selected = false;
                 if (command == OLO_ARG_MANIP)
                     m2->visible = false;
             }
@@ -3320,9 +3320,9 @@ static bool scCompareVirtualHierarchies(SymbolsMenu *origm,
     for (SymbolsMenu *ss=newm; ss!=NULL; ss=ss->next) {
         if (ss->selected) {
             SymbolsMenu *oss = safetyCheck2FindCorrMenuItem(ss, origm, command);
-            if (oss==NULL || oss->selected == 0) {
+            if (oss==NULL || !oss->selected) {
                 res = true;
-                ss->selected = 0;
+                ss->selected = false;
             }
         }
     }
@@ -3965,7 +3965,7 @@ void olcxPushSpecial(char *fieldName, int command) {
         // object, so you have to select all
         refs = sessionData.browserStack.top;
         for (SymbolsMenu *ss=refs->menuSym; ss!=NULL; ss=ss->next) {
-            ss->visible = true; ss->selected = 1;
+            ss->visible = true; ss->selected = true;
         }
         olProcessSelectedReferences(refs, genOnLineReferences);
         getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);

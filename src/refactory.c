@@ -797,7 +797,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
     // check references from outside
     for (SymbolsMenu *mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&mm->s);
-        if (ss!=NULL && (! ss->selected)) {
+        if (ss!=NULL && !ss->selected) {
             for (Reference *rr=mm->s.references; rr!=NULL; rr=rr->next) {
                 if (rr->position.file != inputFileNumber) {
                     // yes there is a reference from outside to our symbol
