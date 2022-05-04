@@ -45,7 +45,6 @@ static char oldOnLineClassPath[MAX_OPTION_LEN];
 static time_t oldStdopTime;
 static int oldLanguage;
 static int oldPass;
-static Options s_tmpOptions;
 
 static void usage() {
     fprintf(stdout, "c-xref - a C/Yacc/Java cross-referencer and refactoring tool\n\n");
@@ -1964,7 +1963,6 @@ static void mainFileProcessingInitialisations(bool *firstPass,
            must be set after .c-xrefrc file, but s_cachedOptions can't contain
            piped options, !!! berk.
         */
-        copyOptions(&s_tmpOptions, &options);
         processOptions(nargc, nargv, INFILES_DISABLED);
 
         reInitCwd(defaultOptionsFileName, defaultOptionsSectionName);
