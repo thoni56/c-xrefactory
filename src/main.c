@@ -1917,7 +1917,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
 ) {
     char defaultOptionsFileName[MAX_FILE_NAME_SIZE];
     char defaultOptionsSectionName[MAX_FILE_NAME_SIZE];
-    struct stat stat;
+    time_t modifiedTime;
     char *fileName;
     StringList *tmpIncludeDirs;
 
@@ -1928,9 +1928,9 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     initAllInputs();
 
     if (defaultOptionsFileName[0] != 0 )
-        fileStatus(defaultOptionsFileName, &stat);
+        modifiedTime = fileModificationTime(defaultOptionsFileName);
     else
-        stat.st_mtime = oldStdopTime;               // !!! just for now
+        modifiedTime = oldStdopTime;               // !!! just for now
 
     log_trace("Checking oldcp==%s", oldOnLineClassPath);
     log_trace("Checking newcp==%s", options.classpath);
@@ -1938,7 +1938,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         || oldPass != currentPass
         || strcmp(oldStdopFile,defaultOptionsFileName)
         || strcmp(oldStdopSection,defaultOptionsSectionName)
-        || oldStdopTime != stat.st_mtime
+        || oldStdopTime != modifiedTime
         || oldLanguage!= *outLanguage
         || strcmp(oldOnLineClassPath, options.classpath)
         || cache.cpi == 1     /* some kind of reset was made */
@@ -1984,7 +1984,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         *inputOpened = computeAndOpenInputFile();
         strcpy(oldStdopFile,defaultOptionsFileName);
         strcpy(oldStdopSection,defaultOptionsSectionName);
-        oldStdopTime = stat.st_mtime;
+        oldStdopTime = modifiedTime;
         oldLanguage = *outLanguage;
         oldPass = currentPass;
 
