@@ -10,9 +10,12 @@ $(TEST): CXrefs
 		echo "Tests in '$(TEST)': $(shell tput setaf 3)No JDK available, skipping$(shell tput sgr0)" ; \
 		exit 0 ; \
 	else \
-		$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp ; \
-		$(NORMALIZE) output.tmp > output ; \
-		$(VERIFY) ; \
+		if $(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp ; then \
+			$(NORMALIZE) output.tmp > output ; \
+			$(VERIFY) ; \
+		else \
+			cat output.tmp ; \
+		fi ; \
 	fi
 
 CXrefs: .c-xrefrc
