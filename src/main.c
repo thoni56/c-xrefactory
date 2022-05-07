@@ -1359,7 +1359,7 @@ static void schedulingUpdateToProcess(FileItem *fileItem) {
 }
 
 /* NOTE: Map-function */
-static void schedulingToUpdate(FileItem *fileItem, void *dummy) {
+static void schedulingToUpdate(FileItem *fileItem) {
     if (fileItem == getFileItem(noFileIndex))
         return;
 
@@ -1437,7 +1437,6 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
         }
     }
     options_filename[0]=0;
-    return;
 }
 
 static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
@@ -1512,7 +1511,6 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
 static void getOptionsFile(char *file, char *optionsFileName, char *sectionName, int errorMessage) {
     searchDefaultOptionsFile(file, optionsFileName, sectionName);
     handlePathologicProjectCases(file, optionsFileName, sectionName, errorMessage);
-    return;
 }
 
 static bool computeAndOpenInputFile(void) {
@@ -2350,31 +2348,31 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
 }
 
 static void scheduleModifiedFilesToUpdate(void) {
-    char        *filestab;
+    char        *fileListFileName;
     struct stat stat;
     char        *suffix;
 
     checkExactPositionUpdate(true);
 
-    // TODO: This seems to get the name of the file that contains the list of files...
+    // TODO: This gets the name of the file that contains the list of files...
     if (options.referenceFileCount <= 1) {
         suffix = "";
-        filestab = options.cxrefsLocation;
+        fileListFileName = options.cxrefsLocation;
     } else {
-        char ttt[MAX_FILE_NAME_SIZE];
+        char cxrefsFileName[MAX_FILE_NAME_SIZE];
         suffix = REFERENCE_FILENAME_FILES;
-        sprintf(ttt, "%s%s", options.cxrefsLocation, suffix);
-        assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
-        filestab = ttt;
+        sprintf(cxrefsFileName, "%s%s", options.cxrefsLocation, suffix);
+        assert(strlen(cxrefsFileName) < MAX_FILE_NAME_SIZE-1);
+        fileListFileName = cxrefsFileName;
     }
-    // ... then gets the stat for it but resets modification time to 0 ...
-    if (editorFileStatus(filestab, &stat))
+    // ... then gets the stat for it (and resets modification time to 0 if that failed...)
+    if (editorFileStatus(fileListFileName, &stat))
         stat.st_mtime = 0;
 
     normalScanReferenceFile(suffix);
 
     // ... but schedulingToUpdate() does not use the stat data !?!?!?
-    mapOverFileTableWithPointer(schedulingToUpdate, &stat);
+    mapOverFileTable(schedulingToUpdate);
     // TODO: ... so WTF??!?!?!?
 
     if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
