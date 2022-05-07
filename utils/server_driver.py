@@ -69,7 +69,7 @@ def wait_for_sync(p):
             eprint("Waiting for <sync>, got: '{0}'".format(line))
         line = p.stdout.readline().decode()[:-1]
     if line == '':
-        eprint("Broken input")
+        eprint("server-driver.py: Broken input")
         sys.exit(-1)
     print(line)
 
@@ -79,6 +79,9 @@ def read_output(filename):
         in_update_report = False
         for line in file:
             line = line[:-1]			# Remove newline
+            if line.endswith("</fatalError>"):
+                print(line)
+                sys.exit(-1)
             if not in_update_report:
                 print(line)
             if line == '<update-report>':
@@ -88,6 +91,8 @@ def read_output(filename):
                 in_update_report = False
     open(filename, 'w').close()                 # Erase content
 
+def read_command(file):
+    return file.readline().decode().rstrip()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Read c-xref commands from file and handle synchronization and file buffering")
@@ -102,7 +107,7 @@ if __name__ == "__main__":
         pass
 
     with open(args.command_file, 'rb') as file:
-        invocation = file.readline().decode().rstrip().replace("CURDIR", args.CURDIR)
+        invocation = read_command(file).replace("CURDIR", args.CURDIR)
         invocation += " -o "+args.server_buffer_filename
         print(invocation)
 
@@ -118,11 +123,11 @@ if __name__ == "__main__":
             wait_for_sync(p)
             read_output(args.server_buffer_filename)
 
-        command = file.readline().decode().rstrip()
+        command = read_command(file)
         while command != '':
             while command != '<sync>' and command != '<exit>' and command != '': #and not "-refactory" in command:
                 send_command(p, command.replace("CURDIR", args.CURDIR))
-                command = file.readline().decode().rstrip()
+                command = read_command(file)
 
             if command == '<exit>':
                 if p.poll() == None:	# no error code yet? So still alive...
@@ -134,12 +139,12 @@ if __name__ == "__main__":
                 end_of_options(p)
                 wait_for_sync(p)
                 read_output(args.server_buffer_filename)
-                command = file.readline().decode().rstrip()
+                command = read_command(file)
 
             if command == '<update-report>':
                 eprint(command)
                 while command != '</update-report>':
-                    command = file.readline().decode().rstrip()
+                    command = read_command(file)
                     eprint(command)
 
         line = p.stdout.readline()[:-1].decode()
