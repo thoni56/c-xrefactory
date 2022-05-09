@@ -1772,18 +1772,17 @@ endOfFile:
 
 /* **************************************************************** */
 
-static void addMacroBaseUsageRef(Symbol *mdef) {
+static void addMacroBaseUsageRef(Symbol *macroSymbol) {
     bool isMember;
     ReferencesItem ppp, *memb;
     Reference *r;
     Position basePos;
 
     basePos = makePosition(inputFileNumber, 0, 0);
-    fillReferencesItem(&ppp, mdef->linkName,
-                       cxFileHashNumber(mdef->linkName), // useless, put 0
-                       noFileIndex, noFileIndex);
-    fillReferencesItemBits(&ppp.bits,TypeMacro, StorageDefault, ScopeGlobal,
-                           mdef->bits.access, CategoryGlobal);
+    fillReferencesItem(&ppp, macroSymbol->linkName,
+                       cxFileHashNumber(macroSymbol->linkName), // useless, put 0
+                       noFileIndex, noFileIndex, TypeMacro, StorageDefault, ScopeGlobal,
+                       macroSymbol->bits.access, CategoryGlobal);
     isMember = isMemberInReferenceTable(&ppp, NULL, &memb);
     r = NULL;
     if (isMember) {
@@ -1794,7 +1793,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
         }
     }
     if (isMember==0 || r==NULL) {
-        addCxReference(mdef, &basePos, UsageMacroBaseFileUsage,
+        addCxReference(macroSymbol, &basePos, UsageMacroBaseFileUsage,
                        noFileIndex, noFileIndex);
     }
 }

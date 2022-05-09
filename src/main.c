@@ -2300,12 +2300,11 @@ void getPipedOptions(int *outNargc,char ***outNargv){
     }
 }
 
-static void fillIncludeRefItem(ReferencesItem *referenceItem, int fnum) {
-    fillReferencesItem(referenceItem, LINK_NAME_INCLUDE_REFS,
+static void fillIncludeRefItem(ReferencesItem *referencesItem, int fileIndex) {
+    fillReferencesItem(referencesItem, LINK_NAME_INCLUDE_REFS,
                        cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
-                       fnum, fnum);
-    fillReferencesItemBits(&referenceItem->bits, TypeCppInclude, StorageExtern,
-                           ScopeGlobal, AccessDefault, CategoryGlobal);
+                       fileIndex, fileIndex, TypeCppInclude, StorageExtern,
+                       ScopeGlobal, AccessDefault, CategoryGlobal);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
@@ -2411,10 +2410,9 @@ static int scheduleFileUsingTheMacro(void) {
     assert(s_olstringInMbody);
     tmpc = NULL;
     fillReferencesItem(&references, s_olstringInMbody,
-                                cxFileHashNumber(s_olstringInMbody),
-                                noFileIndex, noFileIndex);
-    fillReferencesItemBits(&references.bits, TypeMacro, StorageExtern,
-                           ScopeGlobal, AccessDefault, CategoryGlobal);
+                       cxFileHashNumber(s_olstringInMbody),
+                       noFileIndex, noFileIndex, TypeMacro, StorageExtern,
+                       ScopeGlobal, AccessDefault, CategoryGlobal);
 
     fillSymbolsMenu(&menu, references, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
     if (sessionData.browserStack.top==NULL) {

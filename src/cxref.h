@@ -7,23 +7,19 @@
 #include "session.h"
 #include "ppc.h"
 
-
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
-extern void fillReferencesItem(ReferencesItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
-                              int vFunClass);
-extern void fillReferencesItemBits(ReferencesItemBits *symbolRefItemBits, Type symType,
-                                   Storage storage, ReferenceScope scope, Access accessFlags,
-                                   ReferenceCategory category);
-extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s,
-                            bool selected, bool visible, unsigned ooBits, char olUsage,
-                            short int vlevel, short int refn, short int defRefn,
+extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+                               int vFunClass, Type symType, Storage storage, ReferenceScope scope,
+                               Access accessFlags, ReferenceCategory category);
+extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s, bool selected, bool visible,
+                            unsigned ooBits, char olUsage, short int vlevel, short int refn, short int defRefn,
                             char defUsage, struct position defpos, int outOnLine,
-                            struct editorMarkerList *markers,	/* for refactory only */
-                            SymbolsMenu *next);
-extern int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
+                            struct editorMarkerList *markers, /* for refactory only */
+                            SymbolsMenu             *next);
+extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern void tagSearchCompactShortResults(void);
 extern void printTagSearchResults(void);
-extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, int storage);
+extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);
 extern bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2);
 extern bool isSameCxSymbolIncludingFunctionClass(ReferencesItem *p1, ReferencesItem *p2);
 extern bool isSameCxSymbolIncludingApplicationClass(ReferencesItem *p1, ReferencesItem *p2);

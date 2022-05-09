@@ -526,13 +526,12 @@ static void genRefItem0(ReferencesItem *referenceItem, bool force) {
 
     strcpy(lastOutgoingInfo.cachedSymbolName[symbolIndex], referenceItem->name);
     fillReferencesItem(&lastOutgoingInfo.cachedReferencesItem[symbolIndex],
-                      lastOutgoingInfo.cachedSymbolName[symbolIndex],
-                      referenceItem->fileHash, // useless put 0
-                      referenceItem->vApplClass, referenceItem->vFunClass);
-    fillReferencesItemBits(&lastOutgoingInfo.cachedReferencesItem[symbolIndex].bits,
-                          referenceItem->bits.symType, referenceItem->bits.storage,
-                          referenceItem->bits.scope, referenceItem->bits.accessFlags, referenceItem->bits.category);
-    lastOutgoingInfo.symbolTab[symbolIndex] = &lastOutgoingInfo.cachedReferencesItem[symbolIndex];
+                       lastOutgoingInfo.cachedSymbolName[symbolIndex],
+                       referenceItem->fileHash, // useless put 0
+                       referenceItem->vApplClass, referenceItem->vFunClass, referenceItem->bits.symType,
+                       referenceItem->bits.storage, referenceItem->bits.scope, referenceItem->bits.accessFlags,
+                       referenceItem->bits.category);
+    lastOutgoingInfo.symbolTab[symbolIndex]       = &lastOutgoingInfo.cachedReferencesItem[symbolIndex];
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
 
     if (referenceItem->bits.category == CategoryLocal)
@@ -948,8 +947,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     ReferencesItem *referenceItem = &lastIncomingInfo.cachedReferencesItem[si];
     lastIncomingInfo.symbolTab[si] = referenceItem;
     fillReferencesItem(referenceItem, id, cxFileHashNumber(id), //useless, put 0
-                      vApplClass, vFunClass);
-    fillReferencesItemBits(&referenceItem->bits, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
+                       vApplClass, vFunClass, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
 
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
         // TODO: This is more or less the body of newReferencesItem()
@@ -957,9 +955,8 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         strcpy(ss,id);
         CX_ALLOC(memb, ReferencesItem);
         fillReferencesItem(memb, ss, cxFileHashNumber(ss),
-                          vApplClass, vFunClass);
-        fillReferencesItemBits(&memb->bits, symType, storage,
-                              ScopeGlobal, accessFlags, CategoryGlobal);
+                           vApplClass, vFunClass, symType, storage,
+                           ScopeGlobal, accessFlags, CategoryGlobal);
         addToReferencesTable(memb);
     }
     lastIncomingInfo.symbolTab[si] = memb;
@@ -1035,10 +1032,9 @@ static void cxrfSymbolName(int size,
     referencesItem = &lastIncomingInfo.cachedReferencesItem[symbolIndex];
     lastIncomingInfo.symbolTab[symbolIndex] = referencesItem;
     fillReferencesItem(referencesItem, id,
-                      cxFileHashNumber(id), // useless put 0
-                      vApplClass, vFunClass);
-    fillReferencesItemBits(&referencesItem->bits, symType, storage, ScopeGlobal, accessFlags,
-                          CategoryGlobal);
+                       cxFileHashNumber(id), // useless put 0
+                       vApplClass, vFunClass, symType, storage, ScopeGlobal, accessFlags,
+                       CategoryGlobal);
 
     bool isMember = isMemberInReferenceTable(referencesItem, NULL, &member);
     while (isMember && member->bits.category!=CategoryGlobal)

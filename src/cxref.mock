@@ -10,19 +10,13 @@ void fillReference(Reference *reference, Usage usage, Position position,
     mock(reference, next);
 }
 
-void fillReferencesItem(ReferencesItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
-                       int vFunClass) {
-    mock(symbolRefItem, name, fileHash, vApplClass, vFunClass);
+extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+                               int vFunClass, Type symType, Storage storage, ReferenceScope scope,
+                               Access accessFlags, ReferenceCategory category) {
+    mock(referencesItem, name, fileHash, vApplClass, vFunClass, symType, storage, scope, accessFlags, category);
 }
 
-void fillReferencesItemBits(ReferencesItemBits *symbolRefItemBits, Type symType,
-                            Storage storage, ReferenceScope scope, Access accessFlags,
-                            ReferenceCategory category) {
-    mock(symbolRefItemBits, symType, storage, scope, accessFlags, category);
-
-}
-
-void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s,
+void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem s,
                      bool selected, bool visible, unsigned ooBits, char olUsage,
                      short int vlevel, short int refn, short int defRefn,
                      char defUsage, struct position defpos, int outOnLine,
@@ -43,7 +37,7 @@ void printTagSearchResults(void) {
     mock();
 }
 
-SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, int storage) {
+SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) {
     return (SymbolsMenu *) mock(fieldName, cfi, storage);
 }
 

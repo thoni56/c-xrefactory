@@ -46,24 +46,20 @@ typedef struct ReferencesChangeData {
 
 /* *********************************************************************** */
 
-void fillReferencesItem(ReferencesItem *referencesItem, char *name,
-                        unsigned fileHash, int vApplClass, int vFunClass) {
+void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+                        int vFunClass, Type symType, Storage storage, ReferenceScope scope, Access accessFlags,
+                        ReferenceCategory category) {
     referencesItem->name = name;
     referencesItem->fileHash = fileHash;
     referencesItem->vApplClass = vApplClass;
     referencesItem->vFunClass = vFunClass;
     referencesItem->references = NULL;
     referencesItem->next = NULL;
-}
-
-void fillReferencesItemBits(ReferencesItemBits *referencesItemBits, Type symType,
-                            Storage storage, ReferenceScope scope, Access accessFlags,
-                            ReferenceCategory category) {
-    referencesItemBits->symType = symType;
-    referencesItemBits->storage = storage;
-    referencesItemBits->scope = scope;
-    referencesItemBits->accessFlags = accessFlags;
-    referencesItemBits->category = category;
+    referencesItem->bits.symType = symType;
+    referencesItem->bits.storage = storage;
+    referencesItem->bits.scope = scope;
+    referencesItem->bits.accessFlags = accessFlags;
+    referencesItem->bits.category = category;
 }
 
 void fillReference(Reference *reference, Usage usage, Position position, Reference *next) {
@@ -151,25 +147,22 @@ static char *olcxStringCopy(char *string) {
     return copy;
 }
 
-
-SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFunCl,
-                                     Position *defpos, int defusage,
-                                     int selected, int visible,
-                                     unsigned ooBits, int olusage, int vlevel) {
-    SymbolsMenu *symbolsMenu;
+SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFunCl, Position *defpos,
+                                 int defusage, int selected, int visible, unsigned ooBits, int olusage,
+                                 int vlevel) {
+    SymbolsMenu   *symbolsMenu;
     ReferencesItem refItem;
-    char *allocatedNameCopy;
+    char          *allocatedNameCopy;
 
     allocatedNameCopy = olcxStringCopy(symbol->name);
 
-    fillReferencesItem(&refItem, allocatedNameCopy,
-                                cxFileHashNumber(allocatedNameCopy),
-                                vApplClass, vFunCl);
-    refItem.bits = symbol->bits;
+    fillReferencesItem(&refItem, allocatedNameCopy, cxFileHashNumber(allocatedNameCopy), vApplClass, vFunCl,
+                       symbol->bits.symType, symbol->bits.storage, symbol->bits.scope, symbol->bits.accessFlags,
+                       symbol->bits.category);
 
     symbolsMenu = olcx_alloc(sizeof(SymbolsMenu));
-    fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage,
-                       vlevel, 0, 0, defusage, *defpos, 0, NULL, NULL);
+    fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, 0, 0, defusage, *defpos, 0,
+                    NULL, NULL);
     return symbolsMenu;
 }
 
@@ -395,11 +388,8 @@ static void changeFieldRefUsages(ReferencesItem *ri, void *rrcd) {
     ReferencesItem ddd;
 
     rcd = (ReferencesChangeData*) rrcd;
-    fillReferencesItem(&ddd,rcd->linkName,
-                                cxFileHashNumber(rcd->linkName),
-                                noFileIndex, noFileIndex);
-    fillReferencesItemBits(&ddd.bits, TypeDefault, StorageField,
-                           ScopeFile, AccessDefault, rcd->category);
+    fillReferencesItem(&ddd, rcd->linkName, cxFileHashNumber(rcd->linkName), noFileIndex, noFileIndex,
+                       TypeDefault, StorageField, ScopeFile, AccessDefault, rcd->category);
     if (isSameCxSymbol(ri, &ddd)) {
         //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
         for (Reference *rr = ri->references; rr!=NULL; rr=rr->next) {
@@ -720,9 +710,8 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         if (!fileItem->cxLoading)
             return NULL;
     }
-    fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl);
-    fillReferencesItemBits(&ppp.bits, symbol->bits.symbolType, storage, scope,
-                          symbol->bits.access, category);
+    fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl, symbol->bits.symbolType, storage, scope,
+                       symbol->bits.access, category);
     if (options.taskRegime==RegimeEditServer && options.serverOperation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
         fillUsage(&reference.usage, usage.kind, AccessDefault);
         fillReference(&reference, reference.usage, *position, NULL);
@@ -735,9 +724,8 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         CX_ALLOC(pp, ReferencesItem);
         CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);
         strcpy(linkName, symbol->linkName);
-        fillReferencesItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl);
-        fillReferencesItemBits(&pp->bits, symbol->bits.symbolType, storage, scope,
-                              symbol->bits.access, category);
+        fillReferencesItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl, symbol->bits.symbolType,
+                           storage, scope, symbol->bits.access, category);
         pushReferences(pp, index);
         memb = pp;
     } else {
@@ -975,9 +963,9 @@ static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
 
     res = olcx_alloc(sizeof(OlcxReferences));
     *res = (OlcxReferences){.references = NULL, .actual = NULL, .command = options.serverOperation, .language = s_language,
-                              .accessTime = fileProcessingStartTime, .callerPosition = noPosition, .completions = NULL, .hkSelectedSym = NULL,
-                              .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
-                              .previous = stack->top};
+                            .accessTime = fileProcessingStartTime, .callerPosition = noPosition, .completions = NULL, .hkSelectedSym = NULL,
+                            .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
+                            .previous = stack->top};
     return res;
 }
 
@@ -990,7 +978,7 @@ void olcxPushEmptyStackItem(OlcxReferencesStack *stack) {
 }
 
 static bool olcxVirtualyUsageAdequate(int vApplCl, int vFunCl,
-                                     int olUsage, int olApplCl, int olFunCl) {
+                                      int olUsage, int olApplCl, int olFunCl) {
     bool res = false;
 
     log_trace(":checking %s, %s, %s, <-> %s, %s", usageKindEnumName[olUsage], getFileItem(olFunCl)->name,
@@ -1080,7 +1068,7 @@ void olcxAddReferences(Reference *list, Reference **dlist,
 }
 
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
-                                     int bestFitFlag) {
+                                   int bestFitFlag) {
     Reference *added;
     added = olcxAddReference(&cms->s.references, rr, bestFitFlag);
     if (rr->usage.kind == UsageClassTreeDefinition) cms->defpos = rr->position;
@@ -1101,8 +1089,8 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
 }
 
 static void olcxAddReferencesToSymbolsMenu(SymbolsMenu  *cms,
-                                             Reference *rlist,
-                                             int bestFitFlag
+                                           Reference *rlist,
+                                           int bestFitFlag
 ) {
     for (Reference *rr=rlist; rr!=NULL; rr=rr->next) {
         olcxAddReferenceToSymbolsMenu(cms, rr, bestFitFlag);
@@ -1279,8 +1267,8 @@ bool htmlJdkDocAvailableForUrl(char *ss){
     cp = options.htmlJdkDocAvailable;
     while (*cp!=0) {
         for (ind=0;
-            cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR && cp[ind]!=':' ;
-            ind++) {
+             cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR && cp[ind]!=':' ;
+             ind++) {
             ttt[ind]=cp[ind];
             if (cp[ind]=='.')
                 ttt[ind] = '/';
@@ -1482,27 +1470,27 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
 }
 
 #define GetBufChar(cch, bbb) {                                          \
-        if ((bbb)->nextUnread >= (bbb)->end) {                                \
-            if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {               \
+        if ((bbb)->nextUnread >= (bbb)->end) {                          \
+            if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {             \
                 cch = EOF;                                              \
                 (bbb)->isAtEOF = true;                                  \
             } else {                                                    \
-                cch = * ((unsigned char*)(bbb)->nextUnread); (bbb)->nextUnread ++;  \
+                cch = * ((unsigned char*)(bbb)->nextUnread); (bbb)->nextUnread ++; \
             }                                                           \
         } else {                                                        \
-            cch = * ((unsigned char*)(bbb)->nextUnread); (bbb)->nextUnread++;       \
+            cch = * ((unsigned char*)(bbb)->nextUnread); (bbb)->nextUnread++; \
         }                                                               \
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
 
 static void getFileChar(int *chP, Position *position, CharacterBuffer *characterBuffer) {
-        if (*chP=='\n') {
-            position->line++;
-            position->col=0;
-        } else
-            position->col++;
-        GetBufChar(*chP, characterBuffer);
-    }
+    if (*chP=='\n') {
+        position->line++;
+        position->col=0;
+    } else
+        position->col++;
+    GetBufChar(*chP, characterBuffer);
+}
 
 int refCharCode(int usage) {
     switch (usage) {
@@ -1745,7 +1733,7 @@ static int getCurrentRefPosition(OlcxReferences *refs) {
         rlevel = s_refListFilters[refs->refsFilterLevel];
         for (rr=refs->references; rr!=NULL && rr!=refs->actual; rr=rr->next) {
             if (rr->usage.kind < rlevel)
-        actn++;
+                actn++;
         }
     }
     if (rr==NULL)
@@ -1784,7 +1772,7 @@ static void olcxPrintRefList(char *commandString, OlcxReferences *refs) {
             ttt[len]='\"';
             ttt[len+1]=0;
             ppcBeginWithNumericValueAndAttribute(PPC_REFERENCE_LIST, actn,
-                                            PPCA_SYMBOL, ttt);
+                                                 PPCA_SYMBOL, ttt);
         } else {
             ppcBeginWithNumericValue(PPC_REFERENCE_LIST, actn);
         }
@@ -2206,14 +2194,13 @@ static void olcxShowClassTree(void) {
     olcxPrintClassTree(sessionData.classTree.tree);
 }
 
-SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
+SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     SymbolsMenu     *res;
     ReferencesItem     ss;
 
     fillReferencesItem(&ss, fieldName, cxFileHashNumber(fieldName),
-                                cfi, cfi);
-    fillReferencesItemBits(&ss.bits, TypeDefault, storage, ScopeGlobal,
-                           AccessDefault, CategoryGlobal);
+                       cfi, cfi, TypeDefault, storage, ScopeGlobal,
+                       AccessDefault, CategoryGlobal);
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &noPosition, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
@@ -2305,15 +2292,14 @@ void olStackDeleteSymbol(OlcxReferences *refs) {
 }
 
 static void olcxGenInspectClassDefinitionRef(int classnum) {
-    ReferencesItem mmm;
-    char ccc[MAX_CX_SYMBOL_SIZE];
+    ReferencesItem references;
+    char className[MAX_CX_SYMBOL_SIZE];
 
-    javaGetClassNameFromFileIndex(classnum, ccc, KEEP_SLASHES);
-    fillReferencesItem(&mmm, ccc, cxFileHashNumber(ccc),
-                      noFileIndex, noFileIndex);
-    fillReferencesItemBits(&mmm.bits, TypeStruct, StorageExtern, ScopeGlobal,
-                          AccessDefault, CategoryGlobal);
-    olcxFindDefinitionAndGenGoto(&mmm);
+    javaGetClassNameFromFileIndex(classnum, className, KEEP_SLASHES);
+    fillReferencesItem(&references, className, cxFileHashNumber(className),
+                       noFileIndex, noFileIndex, TypeStruct, StorageExtern, ScopeGlobal,
+                       AccessDefault, CategoryGlobal);
+    olcxFindDefinitionAndGenGoto(&references);
 }
 
 static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
@@ -3382,7 +3368,7 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
     return fileIndex;
 }
 
-static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
+static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
     OlcxReferences    *rstack;
     SymbolsMenu     *ss;
     int                 clii;
@@ -3956,7 +3942,7 @@ void olcxPushSpecial(char *fieldName, int command) {
     OlcxReferences    *refs;
     Position          callerPos;
 
-    clii = olSpecialFieldCreateSelection(fieldName,StorageField);
+    clii = olSpecialFieldCreateSelection(fieldName, StorageField);
     olCreateSelectionMenu(sessionData.browserStack.top->command);
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
     if (clii == s_javaObjectSymbol->u.structSpec->classFileIndex
@@ -4852,17 +4838,16 @@ Completion *olCompletionListPrepend(char *name, char *fullText, char *vclass, in
         slen = strlen(referenceItem->name);
         ss = olcx_memory_allocc(slen+1, sizeof(char));
         strcpy(ss, referenceItem->name);
-        fillReferencesItem(&sri, ss, cxFileHashNumber(ss),
-                                    referenceItem->vApplClass, referenceItem->vFunClass);
-        sri.bits = referenceItem->bits;
+        fillReferencesItem(&sri, ss, cxFileHashNumber(ss), referenceItem->vApplClass, referenceItem->vFunClass,
+                           referenceItem->bits.symType, referenceItem->bits.storage, referenceItem->bits.scope,
+                           referenceItem->bits.accessFlags, referenceItem->bits.category);
 
         cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, referenceItem->bits.category, cType, *reference, sri);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
-        fillReferencesItem(&sri, "", cxFileHashNumber(""), noFileIndex, noFileIndex);
-        fillReferencesItemBits(&sri.bits, TypeUnknown, StorageNone,
-                               ScopeAuto, AccessDefault, CategoryLocal);
+        fillReferencesItem(&sri, "", cxFileHashNumber(""), noFileIndex, noFileIndex, TypeUnknown, StorageNone,
+                           ScopeAuto, AccessDefault, CategoryLocal);
         cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
     } else {
         Reference r;
@@ -4874,9 +4859,8 @@ Completion *olCompletionListPrepend(char *name, char *fullText, char *vclass, in
         fillUsage(&r.usage, UsageDefined, 0);
         fillReference(&r, r.usage, symbol->pos, NULL);
         fillReferencesItem(&sri, ss, cxFileHashNumber(ss),
-                                    vFunClass, vFunClass);
-        fillReferencesItemBits(&sri.bits, symbol->bits.symbolType, storage,
-                               scope, symbol->bits.access, category);
+                           vFunClass, vFunClass, symbol->bits.symbolType, storage,
+                           scope, symbol->bits.access, category);
         cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);
     }
     if (fullText!=NULL) {
