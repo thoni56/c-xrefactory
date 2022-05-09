@@ -21,7 +21,9 @@ $(TEST): CXrefs
 CXrefs: .c-xrefrc
 	@# Files in the jexercise subdir
 	@sed -e s:$(CURDIR)$$:$(CURDIR)/jexercise: .c-xrefrc > .c-xrefrc.tmp
-	@cat .c-xrefrc.tmp jdkhome.txt > .c-xrefrc
+	if ! grep jhome .c-xrefrc > /dev/null ; then \
+		cat .c-xrefrc.tmp jdkhome.txt > .c-xrefrc ; \
+	fi
 	@$(CXREF) -create -o $(TEST).log
 
 clean:
