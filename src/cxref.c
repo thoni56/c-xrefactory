@@ -56,9 +56,9 @@ void fillReferencesItem(ReferencesItem *referencesItem, char *name,
     referencesItem->next = NULL;
 }
 
-void fillReferencesItemBits(ReferencesItemBits *referencesItemBits, unsigned symType,
-                            unsigned storage, unsigned scope, unsigned accessFlags,
-                            unsigned category) {
+void fillReferencesItemBits(ReferencesItemBits *referencesItemBits, Type symType,
+                            Storage storage, ReferenceScope scope, Access accessFlags,
+                            ReferenceCategory category) {
     referencesItemBits->symType = symType;
     referencesItemBits->storage = storage;
     referencesItemBits->scope = scope;

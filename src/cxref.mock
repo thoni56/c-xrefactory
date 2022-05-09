@@ -15,9 +15,9 @@ void fillReferencesItem(ReferencesItem *symbolRefItem, char *name, unsigned file
     mock(symbolRefItem, name, fileHash, vApplClass, vFunClass);
 }
 
-void fillReferencesItemBits(ReferencesItemBits *symbolRefItemBits, unsigned symType,
-                           unsigned storage, unsigned scope, unsigned accessFlags,
-                           unsigned category) {
+void fillReferencesItemBits(ReferencesItemBits *symbolRefItemBits, Type symType,
+                            Storage storage, ReferenceScope scope, Access accessFlags,
+                            ReferenceCategory category) {
     mock(symbolRefItemBits, symType, storage, scope, accessFlags, category);
 
 }
