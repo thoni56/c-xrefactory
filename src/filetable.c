@@ -21,9 +21,9 @@ static FileTable fileTable;
 static void fillFileItem(FileItem *item, char *name) {
     memset(item, 0, sizeof(FileItem));
     item->name = name;
-    item->bits.commandLineEntered = false;
+    item->commandLineEntered = false;
     item->directEnclosingInstance = noFileIndex;
-    item->bits.sourceFileNumber = noFileIndex;
+    item->sourceFileNumber = noFileIndex;
 }
 
 

@@ -251,19 +251,17 @@ static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
 }
 
 void copyOptions(Options *dest, Options *src) {
-    StringPointerList    **ll;
     memcpy(dest, src, sizeof(Options));
-    for(ll= &src->allAllocatedStrings; *ll!=NULL; ll = &(*ll)->next) {
-        copyOptionShiftPointer((*ll)->destination, dest, src);
-        copyOptionShiftPointer(((char**)&(*ll)->destination), dest, src);
-        copyOptionShiftPointer(((char**)ll), dest, src);
+    for (StringPointerList **l= &src->allAllocatedStrings; *l!=NULL; l = &(*l)->next) {
+        copyOptionShiftPointer((*l)->destination, dest, src);
+        copyOptionShiftPointer(((char**)&(*l)->destination), dest, src);
+        copyOptionShiftPointer(((char**)l), dest, src);
     }
-    //&fprintf(dumpOut, "options copied\n");
 }
 
 void addStringListOption(StringList **optlist, char *string) {
     StringList **list;
-    for(list=optlist; *list!=NULL; list= &(*list)->next)
+    for (list=optlist; *list!=NULL; list= &(*list)->next)
         ;
 
     /* TODO refactor out to newOptionString()? */
@@ -278,11 +276,11 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     FileItem *fileItem = getFileItem(fileIndex);
     if (options.taskRegime!=RegimeEditServer) {
         // yes in edit server you process also headers, etc.
-        fileItem->bits.commandLineEntered = true;
+        fileItem->commandLineEntered = true;
     }
     log_trace("recursively process command line argument file #%d '%s'", fileIndex, fileItem->name);
     if (!options.updateOnlyModifiedFiles) {
-        fileItem->bits.scheduledToProcess = true;
+        fileItem->scheduledToProcess = true;
     }
     LEAVE();
 }

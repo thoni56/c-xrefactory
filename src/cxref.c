@@ -717,7 +717,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     if (options.taskRegime == RegimeXref) {
         if (category == CategoryLocal)
             return NULL; /* dont cxref local symbols */
-        if (!fileItem->bits.cxLoading)
+        if (!fileItem->cxLoading)
             return NULL;
     }
     fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl);
@@ -4073,7 +4073,7 @@ Symbol *getMoveTargetClass(void) {
 int javaGetSuperClassNumFromClassNum(int cn) {
     for (ClassHierarchyReference *cl = getFileItem(cn)->superClasses; cl!=NULL; cl=cl->next) {
         int superClass = cl->superClass;
-        if (!getFileItem(superClass)->bits.isInterface)
+        if (!getFileItem(superClass)->isInterface)
             return superClass;
     }
     return noFileIndex;

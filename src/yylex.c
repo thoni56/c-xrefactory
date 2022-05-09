@@ -179,32 +179,32 @@ static void setCurrentFileInfoFor(char *fileName) {
         FileItem *fileItem = getFileItem(number);
         name = fileItem->name;
         checkFileModifiedTime(number);
-        bool cxloading = fileItem->bits.cxLoading;
+        bool cxloading = fileItem->cxLoading;
         if (!existed) {
             cxloading = true;
         } else if (options.update==UPDATE_FAST) {
-            if (fileItem->bits.scheduledToProcess) {
+            if (fileItem->scheduledToProcess) {
                 // references from headers are not loaded on fast update !
                 cxloading = true;
             }
         } else if (options.update==UPDATE_FULL) {
-            if (fileItem->bits.scheduledToUpdate) {
+            if (fileItem->scheduledToUpdate) {
                 cxloading = true;
             }
         } else {
             cxloading = true;
         }
-        if (fileItem->bits.cxSaved) {
+        if (fileItem->cxSaved) {
             cxloading = false;
         }
         if (LANGUAGE(LANG_JAVA)) {
             if (s_jsl!=NULL || s_javaPreScanOnly) {
                 // do not load (and save) references from jsl loaded files
                 // nor during prescanning
-                cxloading = fileItem->bits.cxLoading;
+                cxloading = fileItem->cxLoading;
             }
         }
-        fileItem->bits.cxLoading = cxloading;
+        fileItem->cxLoading = cxloading;
     }
     currentFile.lexBuffer.buffer.fileNumber = number;
     currentFile.fileName = name;
@@ -433,8 +433,8 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
 
 void popInclude(void) {
     FileItem *fileItem = getFileItem(currentFile.lexBuffer.buffer.fileNumber);
-    if (fileItem->bits.cxLoading) {
-        fileItem->bits.cxLoaded = true;
+    if (fileItem->cxLoading) {
+        fileItem->cxLoaded = true;
     }
     closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     if (includeStackPointer != 0) {

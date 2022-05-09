@@ -1314,9 +1314,9 @@ static char *getNextInputFileFromFileTable(int *indexP, int flag) {
     for (i = getNextExistingFileIndex(*indexP); i != -1; i = getNextExistingFileIndex(i+1)) {
         fileItem = getFileItem(i);
         if (fileItem!=NULL) {
-            if (flag==FF_SCHEDULED_TO_PROCESS && fileItem->bits.scheduledToProcess)
+            if (flag==FF_SCHEDULED_TO_PROCESS && fileItem->scheduledToProcess)
                 break;
-            if (flag==FF_COMMAND_LINE_ENTERED && fileItem->bits.commandLineEntered)
+            if (flag==FF_COMMAND_LINE_ENTERED && fileItem->commandLineEntered)
                 break;
         }
     }
@@ -1353,8 +1353,8 @@ static void mainGenerateReferenceFile(void) {
 }
 
 static void schedulingUpdateToProcess(FileItem *fileItem) {
-    if (fileItem->bits.scheduledToUpdate && fileItem->bits.commandLineEntered) {
-        fileItem->bits.scheduledToProcess = true;
+    if (fileItem->scheduledToUpdate && fileItem->commandLineEntered) {
+        fileItem->scheduledToProcess = true;
     }
 }
 
@@ -1365,7 +1365,7 @@ static void schedulingToUpdate(FileItem *fileItem) {
 
     if (!editorFileExists(fileItem->name)) {
         // removed file, remove it from watched updates, load no reference
-        if (fileItem->bits.commandLineEntered) {
+        if (fileItem->commandLineEntered) {
             // no messages during refactorings
             if (refactoringOptions.refactoringRegime != RegimeRefactory) {
                 char tmpBuff[TMP_BUFF_SIZE];
@@ -1373,25 +1373,25 @@ static void schedulingToUpdate(FileItem *fileItem) {
                 warningMessage(ERR_ST, tmpBuff);
             }
         }
-        fileItem->bits.commandLineEntered = false;
-        fileItem->bits.scheduledToProcess = false;
-        fileItem->bits.scheduledToUpdate = false;
+        fileItem->commandLineEntered = false;
+        fileItem->scheduledToProcess = false;
+        fileItem->scheduledToUpdate = false;
         // (missing of following if) has caused that all class hierarchy items
         // as well as all cxreferences based in .class files were lost
         // on -update, a very serious bug !!!!
         if (fileItem->name[0] != ZIP_SEPARATOR_CHAR) {
-            fileItem->bits.cxLoading = true;     /* Hack, to remove references from file */
+            fileItem->cxLoading = true;     /* Hack, to remove references from file */
         }
     } else if (options.update == UPDATE_FULL) {
         if (editorFileModificationTime(fileItem->name) != fileItem->lastFullUpdateMtime) {
-            fileItem->bits.scheduledToUpdate = true;
+            fileItem->scheduledToUpdate = true;
         }
     } else {
         if (editorFileModificationTime(fileItem->name) != fileItem->lastUpdateMtime) {
-            fileItem->bits.scheduledToUpdate = true;
+            fileItem->scheduledToUpdate = true;
         }
     }
-    log_trace("Scheduling '%s' to update: %s", fileItem->name, fileItem->bits.scheduledToUpdate?"yes":"no");
+    log_trace("Scheduling '%s' to update: %s", fileItem->name, fileItem->scheduledToUpdate?"yes":"no");
 }
 
 void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
@@ -1430,7 +1430,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
         // it may happen that after deletion of the project, the request for active
         // project will return non-existent project. And then return "not found"?
         fileno = getFileNumberFromName(filename);
-        if (fileno != noFileIndex && getFileItem(fileno)->bits.isFromCxfile) {
+        if (fileno != noFileIndex && getFileItem(fileno)->isFromCxfile) {
             strcpy(options_filename, oldStdopFile);
             strcpy(section, oldStdopSection);
             return;
@@ -2084,10 +2084,10 @@ static void mainTotalTaskEntryInitialisations() {
 static void clearFileItem(FileItem *fileItem) {
     fileItem->inferiorClasses = fileItem->superClasses = NULL;
     fileItem->directEnclosingInstance = noFileIndex;
-    fileItem->bits.scheduledToProcess = false;
-    fileItem->bits.scheduledToUpdate = false;
-    fileItem->bits.fullUpdateIncludesProcessed = false;
-    fileItem->bits.cxLoaded = fileItem->bits.cxLoading = fileItem->bits.cxSaved = false;
+    fileItem->scheduledToProcess = false;
+    fileItem->scheduledToUpdate = false;
+    fileItem->fullUpdateIncludesProcessed = false;
+    fileItem->cxLoaded = fileItem->cxLoading = fileItem->cxSaved = false;
 }
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
@@ -2244,7 +2244,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         log_trace("inspecting include %d, fileNumber: %d", i, includeStack[i].lexBuffer.buffer.fileNumber);
         if (includeStack[i].lexBuffer.buffer.file != stdin) {
             int fileIndex = includeStack[i].lexBuffer.buffer.fileNumber;
-            getFileItem(fileIndex)->bits.cxLoading = false;
+            getFileItem(fileIndex)->cxLoading = false;
             if (includeStack[i].lexBuffer.buffer.file!=NULL)
                 closeCharacterBuffer(&includeStack[i].lexBuffer.buffer);
         }
@@ -2252,7 +2252,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     if (currentFile.lexBuffer.buffer.file != stdin) {
         log_trace("inspecting current file, fileNumber: %d", currentFile.lexBuffer.buffer.fileNumber);
         int fileIndex = currentFile.lexBuffer.buffer.fileNumber;
-        getFileItem(fileIndex)->bits.cxLoading = false;
+        getFileItem(fileIndex)->cxLoading = false;
         if (currentFile.lexBuffer.buffer.file!=NULL)
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
@@ -2264,10 +2264,10 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     bool savingFlag = false;
     for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
         FileItem *fileItem = getFileItem(i);
-        if (fileItem->bits.cxLoading) {
-            fileItem->bits.cxLoading = false;
-            fileItem->bits.cxSaved = true;
-            if (fileItem->bits.commandLineEntered)
+        if (fileItem->cxLoading) {
+            fileItem->cxLoading = false;
+            fileItem->cxSaved = true;
+            if (fileItem->commandLineEntered)
                 savingFlag = true;
             log_trace(" -># '%s'",fileItem->name);
         }
@@ -2322,20 +2322,20 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
         fileAddedFlag = false;
         for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
             FileItem *fileItem = getFileItem(i);
-            if (fileItem->bits.scheduledToUpdate)
-                if (!fileItem->bits.fullUpdateIncludesProcessed) {
-                    fileItem->bits.fullUpdateIncludesProcessed = true;
+            if (fileItem->scheduledToUpdate)
+                if (!fileItem->fullUpdateIncludesProcessed) {
+                    fileItem->fullUpdateIncludesProcessed = true;
                     bool isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
                     fillIncludeRefItem(&referenceItem, i);
                     if (isMemberInReferenceTable(&referenceItem, NULL, &member)) {
                         for (rr=member->references; rr!=NULL; rr=rr->next) {
                             FileItem *includer = getFileItem(rr->position.file);
-                            if (!includer->bits.scheduledToUpdate) {
-                                includer->bits.scheduledToUpdate = true;
+                            if (!includer->scheduledToUpdate) {
+                                includer->scheduledToUpdate = true;
                                 fileAddedFlag = true;
                                 if (isJavaFileFlag) {
                                     // no transitive closure for Java
-                                    includer->bits.fullUpdateIncludesProcessed = true;
+                                    includer->fullUpdateIncludesProcessed = true;
                                 }
                             }
                         }
@@ -2438,7 +2438,7 @@ static int scheduleFileUsingTheMacro(void) {
 
 // this is necessary to put new mtimes for header files
 static void setFullUpdateMtimesInFileTab(FileItem *fi) {
-    if (fi->bits.scheduledToUpdate || options.create) {
+    if (fi->scheduledToUpdate || options.create) {
         fi->lastFullUpdateMtime = fi->lastModified;
     }
 }
@@ -2488,8 +2488,8 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fileIndex) {
     // be not loaded from the TAG file (it expects they are loaded
     // by parsing).
     FileItem *fileItem = getFileItem(fileIndex);
-    log_trace("commandLineEntered %s == %d", fileItem->name, fileItem->bits.commandLineEntered);
-    if (fileItem->bits.commandLineEntered)
+    log_trace("commandLineEntered %s == %d", fileItem->name, fileItem->commandLineEntered);
+    if (fileItem->commandLineEntered)
         return false;
 
     // if references are not updated do not search it here
@@ -2570,7 +2570,7 @@ static void mainEditServerProcessFile(int argc, char **argv,
 ) {
     FileItem *fileItem = getFileItem(olOriginalComFileNumber);
 
-    assert(fileItem->bits.scheduledToProcess);
+    assert(fileItem->scheduledToProcess);
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFilename = fileItem->name;
@@ -2581,7 +2581,7 @@ static void mainEditServerProcessFile(int argc, char **argv,
         if (LANGUAGE(LANG_JAVA))
             break;
     }
-    fileItem->bits.scheduledToProcess = false;
+    fileItem->scheduledToProcess = false;
 }
 
 static char *presetEditServerFileDependingStatics(void) {
@@ -2602,9 +2602,9 @@ static char *presetEditServerFileDependingStatics(void) {
 
     /* TODO: This seems strange, we only assert that the first file is scheduled to process.
        Then reset all other files, why? */
-    assert(getFileItem(fileIndex)->bits.scheduledToProcess);
+    assert(getFileItem(fileIndex)->scheduledToProcess);
     for (int i=getNextExistingFileIndex(fileIndex+1); i != -1; i = getNextExistingFileIndex(i+1)) {
-        getFileItem(i)->bits.scheduledToProcess = false;
+        getFileItem(i)->scheduledToProcess = false;
     }
 
     olOriginalComFileNumber = fileIndex;
@@ -2788,8 +2788,8 @@ void mainCallXref(int argc, char **argv) {
             s_fileAbortionEnabled = 1;
             for(; ffc!=NULL; ffc=ffc->next) {
                 mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed);
-                ffc->bits.scheduledToProcess = false;
-                ffc->bits.scheduledToUpdate = false;
+                ffc->scheduledToProcess = false;
+                ffc->scheduledToUpdate = false;
                 if (options.xref2)
                     writeRelativeProgress(10+90*inputCounter/numberOfInputs);
                 inputCounter++;
@@ -2871,7 +2871,7 @@ void mainCallEditServer(int argc, char **argv,
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
-            getFileItem(olOriginalComFileNumber)->bits.scheduledToProcess = false;
+            getFileItem(olOriginalComFileNumber)->scheduledToProcess = false;
             // added [26.12.2002] because of loading options without input file
             inputFilename = NULL;
         }

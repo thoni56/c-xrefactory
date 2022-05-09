@@ -315,7 +315,7 @@ bool javaTypeFileExist(IdList *name) {
 
     if (existsInFileTable(fname+1)) {
         int fileIndex = lookupFileTable(fname+1);
-        if (getFileItem(fileIndex)->bits.sourceFileNumber != noFileIndex) {
+        if (getFileItem(fileIndex)->sourceFileNumber != noFileIndex) {
             return true;
         }
     }
@@ -438,7 +438,7 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
     sourceFound = javaFindSourceFile(slname, sourceFileNameP);
     assert(classSymbol->u.structSpec);
     FileItem *fileItem = getFileItem(classSymbol->u.structSpec->classFileIndex);
-    sourceIndex = fileItem->bits.sourceFileNumber;
+    sourceIndex = fileItem->sourceFileNumber;
 
     if (!sourceFound && sourceIndex!=-1 && sourceIndex!=noFileIndex) {
         // try the source indicated by source field of filetab
@@ -789,7 +789,7 @@ static void addJavaFileDependency(int file, char *onfile) {
     if (options.taskRegime != RegimeXref)
         return;
     // also do it only for source files
-    if (!getFileItem(file)->bits.commandLineEntered)
+    if (!getFileItem(file)->commandLineEntered)
         return;
     fileIndex = addFileNameToFileTable(onfile);
     pos = makePosition(file, 0, 0);
@@ -833,9 +833,9 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
             cfi = memb->u.structSpec->classFileIndex;
             FileItem *cfiFileItem = getFileItem(cfi);
             // set it to none, if class is inside jslparsing  will re-set it
-            cfiFileItem->bits.sourceFileNumber=noFileIndex;
+            cfiFileItem->sourceFileNumber=noFileIndex;
             javaReadSymbolsFromSourceFile(sourceName);
-            if (cfiFileItem->bits.sourceFileNumber == noFileIndex) {
+            if (cfiFileItem->sourceFileNumber == noFileIndex) {
                 // class definition not found in the source file,
                 // (moved inner class) retry searching for class file
                 findResult = javaFindFile(memb, &sourceName, &className);
@@ -2724,7 +2724,7 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
     }
     SPRINT_FILE_TAB_CLASS_NAME(className, fqt);
     fileIndex = addFileNameToFileTable(className);
-    getFileItem(fileIndex)->bits.sourceFileNumber = classId->position.file;
+    getFileItem(fileIndex)->sourceFileNumber = classId->position.file;
 }
 
 

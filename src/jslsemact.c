@@ -235,14 +235,15 @@ static int jslClassifySingleAmbigNameToTypeOrPack(IdList *name,
     return(TypePackage);
 }
 
-int jslClassifyAmbiguousTypeName(IdList *name, Symbol **str) {
-    int         pres;
+int jslClassifyAmbiguousTypeName(IdList *name, Symbol **symbolP) {
+    int        pres;
     Symbol    *pstr;
+
     assert(name);
-    *str = &s_errorSymbol;
+    *symbolP = &s_errorSymbol;
     if (name->next == NULL) {
         /* a single name */
-        jslClassifySingleAmbigNameToTypeOrPack( name, str);
+        jslClassifySingleAmbigNameToTypeOrPack(name, symbolP);
     } else {
         /* composed name */
         pres = jslClassifyAmbiguousTypeName(name->next, &pstr);
@@ -250,14 +251,14 @@ int jslClassifyAmbiguousTypeName(IdList *name, Symbol **str) {
         case TypePackage:
             if (javaTypeFileExist(name)) {
                 name->nameType = TypeStruct;
-                *str = jslTypeSymbolUsage(name->id.name, name->next);
+                *symbolP = jslTypeSymbolUsage(name->id.name, name->next);
             } else {
                 name->nameType = TypePackage;
             }
             break;
         case TypeStruct:
             name->nameType = TypeStruct;
-            *str = jslTypeSymbolUsage(name->id.name, name->next);
+            *symbolP = jslTypeSymbolUsage(name->id.name, name->next);
             break;
         default: assert(0);
         }
@@ -578,10 +579,10 @@ void jslNewClassDefinitionBegin(Id *name,
 
     classFileIndex = cc->u.structSpec->classFileIndex;
     FileItem *classFileItem = getFileItem(classFileIndex);
-    classFileItem->bits.sourceFileNumber = s_jsl->sourceFileNumber;
+    classFileItem->sourceFileNumber = s_jsl->sourceFileNumber;
 
     if (accFlags & AccessInterface)
-        classFileItem->bits.isInterface = true;
+        classFileItem->isInterface = true;
     addClassTreeHierarchyReference(classFileIndex, &inname->position,UsageClassTreeDefinition);
     if (inname->position.file != olOriginalFileIndex && options.serverOperation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
@@ -628,8 +629,8 @@ void jslNewClassDefinitionEnd(void) {
 
     cc = s_jsl->classStat->thisClass;
     FileItem *fileItem = getFileItem(cc->u.structSpec->classFileIndex);
-    if (fileItem->bits.cxLoading) {
-        fileItem->bits.cxLoaded = true;
+    if (fileItem->cxLoading) {
+        fileItem->cxLoaded = true;
     }
 
     s_jsl->classStat = s_jsl->classStat->next;
@@ -643,13 +644,13 @@ void jslAddDefaultConstructor(Symbol *cl) {
                     StorageConstructor, NULL);
 }
 
-void jslNewAnonClassDefinitionBegin(Id *interfName) {
-    IdList   ll;
-    Symbol        *interf,*str;
+void jslNewAnonClassDefinitionBegin(Id *interface) {
+    IdList   l;
+    Symbol   *interfaceSymbol, *str;
 
-    fillIdList(&ll, *interfName, interfName->name, TypeDefault, NULL);
-    jslClassifyAmbiguousTypeName(&ll, &str);
-    interf = jslTypeNameDefinition(&ll);
+    fillIdList(&l, *interface, interface->name, TypeDefault, NULL);
+    jslClassifyAmbiguousTypeName(&l, &str);
+    interfaceSymbol = jslTypeNameDefinition(&l);
     jslNewClassDefinitionBegin(&javaAnonymousClassName, AccessDefault,
-                               interf, CPOS_ST);
+                               interfaceSymbol, CPOS_ST);
 }

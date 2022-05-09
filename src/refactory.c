@@ -4359,7 +4359,7 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
         if (fn != o->marker->buffer->fileIndex) {
             multiFileRefsFlag = 1;
         }
-        if (!fileItem->bits.commandLineEntered) {
+        if (!fileItem->commandLineEntered) {
             hasHeaderReferenceFlag = 1;
         }
     }

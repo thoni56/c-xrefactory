@@ -64,9 +64,9 @@ bool classHierarchyClassNameLess(int classFileIndex1, int classFileIndex2) {
     FileItem *fileItem2 = getFileItem(classFileIndex2);
 
     // SMART, put interface as largest, so they will be at the end
-    if (fileItem2->bits.isInterface && ! fileItem1->bits.isInterface)
+    if (fileItem2->isInterface && ! fileItem1->isInterface)
         return true;
-    if (fileItem1->bits.isInterface && ! fileItem2->bits.isInterface)
+    if (fileItem1->isInterface && ! fileItem2->isInterface)
         return false;
     name = fileItem1->name;
     name = javaGetNudePreTypeName_static(getRealFileName_static(name), options.displayNestedClasses);
@@ -246,7 +246,7 @@ static void olcxMenuPrintClassHierarchyLine(FILE *file, int fileIndex,
         }
         menu->visible = true;
     }
-    if (fileItem->bits.isInterface) {
+    if (fileItem->isInterface) {
         if (options.xref2)
             fprintf(file, " %s=1", PPCA_INTERFACE);
         else
@@ -343,7 +343,7 @@ static bool genThisClassHierarchy(int vApplCl, int oldvFunCl,
             return false;
     }
     // yes I am on the top, recursively descent and print all subclasses
-    if (passNumber==FIRST_PASS && fileItem->bits.isInterface)
+    if (passNumber==FIRST_PASS && fileItem->isInterface)
         return false;
     descendTheClassHierarchy(file, vApplCl, oldvFunCl, menu, 0, NULL, passNumber);
     return true;
