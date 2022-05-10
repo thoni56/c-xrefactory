@@ -2441,7 +2441,7 @@ static int scheduleFileUsingTheMacro(void) {
 }
 
 // this is necessary to put new mtimes for header files
-static void setFullUpdateMtimesInFileTab(FileItem *fi) {
+static void setFullUpdateMtimesInFileItem(FileItem *fi) {
     if (fi->scheduledToUpdate || options.create) {
         fi->lastFullUpdateMtime = fi->lastModified;
     }
@@ -2806,7 +2806,7 @@ void mainCallXref(int argc, char **argv) {
     if (atLeastOneProcessed) {
         if (options.taskRegime==RegimeXref) {
             if (options.update==0 || options.update==UPDATE_FULL) {
-                mapOverFileTable(setFullUpdateMtimesInFileTab);
+                mapOverFileTable(setFullUpdateMtimesInFileItem);
             }
             if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];
