@@ -16,10 +16,10 @@
 
 #include "enums.h"
 #define ALL_STORAGE_ENUMS(ENUM)             \
+    ENUM(StorageDefault)                    \
     ENUM(StorageError)                      \
     ENUM(StorageAuto)                       \
     ENUM(StorageGlobal)                     \
-    ENUM(StorageDefault)                    \
     ENUM(StorageExtern)                     \
     ENUM(StorageConstant)                   \
     ENUM(StorageStatic)                     \
