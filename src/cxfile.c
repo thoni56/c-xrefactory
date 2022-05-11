@@ -186,7 +186,7 @@ static bool searchSingleStringEqual(char *s, char *c) {
     return false;
 }
 
-static bool searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
+static bool searchSingleStringMatch(char *cxtag, char *searchedStr, int len) {
     char *cc;
     int i, pilotc;
 
@@ -213,7 +213,7 @@ static bool searchStringNonWildcardFitness(char *cxtag, int len) {
     while (*ss) {
         while (*ss==' ' || *ss=='\t') ss++;
         if (*ss == 0) goto fini1;
-        r = searchSingleStringFitness(cxtag, ss, len);
+        r = searchSingleStringMatch(cxtag, ss, len);
         if (r==0)
             return false;
         while (*ss!=0 && *ss!=' ' && *ss!='\t')
@@ -223,7 +223,7 @@ static bool searchStringNonWildcardFitness(char *cxtag, int len) {
     return true;
 }
 
-bool searchStringFitness(char *cxtag, int len) {
+bool searchStringMatch(char *cxtag, int len) {
     if (containsWildcard(options.olcxSearchString))
         return shellMatch(cxtag, len, options.olcxSearchString, false);
     else
@@ -326,7 +326,7 @@ void searchSymbolCheckReference(ReferencesItem  *referenceItem, Reference *refer
         if (s!=NULL) sname = s+1;
     } while (s!=NULL);
     slen = strlen(sname);
-    if (searchStringFitness(sname, slen)) {
+    if (searchStringMatch(sname, slen)) {
         static int count = 0;
         olCompletionListPrepend(sname, NULL, NULL, 0, NULL, referenceItem, reference, referenceItem->bits.symType,
                                 referenceItem->vFunClass, sessionData.retrieverStack.top);

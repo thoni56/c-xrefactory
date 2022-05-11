@@ -19,7 +19,7 @@ extern void scanForSearch(char *cxrefFileName);
 extern void genReferenceFile(bool updating, char *filename);
 extern int cxFileHashNumber(char *symbol);
 extern bool smartReadReferences(void);
-extern bool searchStringFitness(char *cxtag, int slen);
+extern bool searchStringMatch(char *cxtag, int slen);
 extern char *createTagSearchLineStatic(char *name, Position *position,
                                        int *len1, int *len2, int *len3);
 extern bool symbolNameShouldBeHiddenFromReports(char *name);

@@ -761,37 +761,37 @@ static void completeName(char *name, CompletionLine *compLine, int orderFlag,
 }
 
 static void searchName(char *name, CompletionLine *compLine, int orderFlag,
-                       Completions *ci) {
+                       Completions *completions) {
     int l;
     if (name == NULL)
         return;
 
     if (options.olcxSearchString==NULL || *options.olcxSearchString==0) {
         // old fashioned search
-        if (stringContainsCaseInsensitive(name, ci->idToProcess) == 0)
+        if (stringContainsCaseInsensitive(name, completions->idToProcess) == 0)
             return;
     } else {
         // the new one
         // since 1.6.0 this may not work, because switching to
         // regular expressions
-        if (!searchStringFitness(name, strlen(name)))
+        if (!searchStringMatch(name, strlen(name)))
             return;
     }
     //&compLine->string = name;
     name = compLine->string;
-    if (ci->alternativeIndex == 0) {
-        ci->fullMatchFlag = false;
-        ci->comPrefix[0]=0;
-        ci->alternatives[ci->alternativeIndex] = *compLine;
-        ci->alternatives[ci->alternativeIndex].string = name;
-        ci->alternativeIndex++;
-        ci->maxLen = strlen(name);
+    if (completions->alternativeIndex == 0) {
+        completions->fullMatchFlag = false;
+        completions->comPrefix[0]=0;
+        completions->alternatives[completions->alternativeIndex] = *compLine;
+        completions->alternatives[completions->alternativeIndex].string = name;
+        completions->alternativeIndex++;
+        completions->maxLen = strlen(name);
     } else {
-        assert(ci->alternativeIndex < MAX_COMPLETIONS-1);
-        if (reallyInsert(ci->alternatives, &ci->alternativeIndex, name, compLine, 1)) {
-            ci->fullMatchFlag = false;
+        assert(completions->alternativeIndex < MAX_COMPLETIONS-1);
+        if (reallyInsert(completions->alternatives, &completions->alternativeIndex, name, compLine, 1)) {
+            completions->fullMatchFlag = false;
             l = strlen(name);
-            if (l > ci->maxLen) ci->maxLen = l;
+            if (l > completions->maxLen) completions->maxLen = l;
         }
     }
 }
