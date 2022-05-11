@@ -2349,27 +2349,30 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     recoverMemoriesAfterOverflow(cxFreeBase);
 }
 
+static void getCxrefFilesListName(char **fileListFileNameP, char **suffixP) {
+    if (options.referenceFileCount <= 1) {
+        *suffixP           = "";
+        *fileListFileNameP = options.cxrefsLocation;
+    } else {
+        char cxrefsFileName[MAX_FILE_NAME_SIZE];
+        *suffixP = REFERENCE_FILENAME_FILES;
+        sprintf(cxrefsFileName, "%s%s", options.cxrefsLocation, *suffixP);
+        assert(strlen(cxrefsFileName) < MAX_FILE_NAME_SIZE - 1);
+        *fileListFileNameP = cxrefsFileName;
+    }
+}
+
 static void scheduleModifiedFilesToUpdate(void) {
     char        *fileListFileName;
-    struct stat stat;
     char        *suffix;
 
     checkExactPositionUpdate(true);
 
-    // TODO: This gets the name of the file that contains the list of files...
-    if (options.referenceFileCount <= 1) {
-        suffix = "";
-        fileListFileName = options.cxrefsLocation;
-    } else {
-        char cxrefsFileName[MAX_FILE_NAME_SIZE];
-        suffix = REFERENCE_FILENAME_FILES;
-        sprintf(cxrefsFileName, "%s%s", options.cxrefsLocation, suffix);
-        assert(strlen(cxrefsFileName) < MAX_FILE_NAME_SIZE-1);
-        fileListFileName = cxrefsFileName;
-    }
-    // ... then gets the stat for it (and resets modification time to 0 if that failed...)
-    if (editorFileStatus(fileListFileName, &stat))
-        stat.st_mtime = 0;
+    getCxrefFilesListName(&fileListFileName, &suffix);
+    // TODO: This is probably to get modification time for the fileslist file
+    // and then consider that when schedule files to update, but it never did...
+    // if (editorFileStatus(fileListFileName, &stat))
+    //     stat.st_mtime = 0;
 
     normalScanReferenceFile(suffix);
 
