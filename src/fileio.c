@@ -74,7 +74,7 @@ int fileStatus(char *path, struct stat *statP) {
     struct stat st;
     int return_value;
 
-    return_value = stat(path, &st);
+    return_value = stat(path, &st); /* Returns 0 on success */
     if (statP != NULL)
         *statP = st;
     return return_value;

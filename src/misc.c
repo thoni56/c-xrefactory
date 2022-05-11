@@ -829,6 +829,7 @@ bool containsWildcard(char *string) {
     return false;
 }
 
+static void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *freeolen);
 
 static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
     char path[MAX_FILE_NAME_SIZE];
@@ -856,7 +857,7 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
 
 // Dont use this function!!!! what you need is: expandWildcardsInOnePath
 /* TODO: WTF, why? we *are* using it... */
-void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpaths, int *availableSpace) {
+static void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpaths, int *availableSpace) {
     struct stat stat;
 
     log_trace("expand wildcards(%s)", fileName);
