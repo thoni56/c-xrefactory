@@ -63,7 +63,8 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
     Symbol *s;
 
     s = newSymbol(name, name, noPosition);
-    fillSymbolBits(&s->bits, AccessDefault, TypeStruct, StorageNone);
+    s->bits.symbolType = TypeStruct;
+    s->bits.storage = StorageNone;
     fillJslSymbolList(ss, s, noPosition, false);
 }
 

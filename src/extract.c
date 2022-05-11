@@ -78,7 +78,8 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
         return NULL;
 
     s = newSymbolAsLabel(name, name, noPosition, labn);
-    fillSymbolBits(&s->bits, AccessDefault, TypeLabel, StorageAuto);
+    s->bits.symbolType = TypeLabel;
+    s->bits.storage = StorageAuto;
 
     addSymbolNoTrail(symbolTable, s);
     return(s);
@@ -86,47 +87,52 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 
 
 void deleteContinueBreakLabelSymbol(char *name) {
-    Symbol ss,*memb;
+    Symbol symbol, *foundSymbol;
 
     if (options.serverOperation != OLO_EXTRACT)
         return;
 
-    fillSymbolWithLabel(&ss, name, name, noPosition, 0);
-    fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
-    if (symbolTableIsMember(symbolTable, &ss, NULL, &memb)) {
-        deleteContinueBreakSymbol(memb);
+    fillSymbolWithLabel(&symbol, name, name, noPosition, 0);
+    symbol.bits.symbolType = TypeLabel;
+    symbol.bits.storage = StorageAuto;
+
+    if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
+        deleteContinueBreakSymbol(foundSymbol);
     } else {
         assert(0);
     }
 }
 
 void genContinueBreakReference(char *name) {
-    Symbol ss,*memb;
+    Symbol symbol, *foundSymbol;
 
     if (options.serverOperation != OLO_EXTRACT)
         return;
 
-    fillSymbolWithLabel(&ss, name, name, noPosition, 0);
-    fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
+    fillSymbolWithLabel(&symbol, name, name, noPosition, 0);
+    symbol.bits.symbolType = TypeLabel;
+    symbol.bits.storage = StorageAuto;
 
-    if (symbolTableIsMember(symbolTable, &ss, NULL, &memb)) {
-        generateInternalLabelReference(memb->u.labelIndex, UsageUsed);
+    if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
+        generateInternalLabelReference(foundSymbol->u.labelIndex, UsageUsed);
     }
 }
 
 void generateSwitchCaseFork(bool isLast) {
-    Symbol symbol, *found_member_pointer;
+    Symbol symbol, *foundSymbol;
 
     if (options.serverOperation != OLO_EXTRACT)
         return;
 
     fillSymbolWithLabel(&symbol, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, noPosition, 0);
-    fillSymbolBits(&symbol.bits, AccessDefault, TypeLabel, StorageAuto);
-    if (symbolTableIsMember(symbolTable, &symbol, NULL, &found_member_pointer)) {
-        generateInternalLabelReference(found_member_pointer->u.labelIndex, UsageDefined);
+    symbol.bits.symbolType = TypeLabel;
+    symbol.bits.storage = StorageAuto;
+
+    if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
+        generateInternalLabelReference(foundSymbol->u.labelIndex, UsageDefined);
         if (!isLast) {
-            found_member_pointer->u.labelIndex++;
-            generateInternalLabelReference(found_member_pointer->u.labelIndex, UsageFork);
+            foundSymbol->u.labelIndex++;
+            generateInternalLabelReference(foundSymbol->u.labelIndex, UsageFork);
         }
     }
 }

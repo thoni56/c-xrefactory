@@ -254,7 +254,7 @@ primary_expr
             $$.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
             d = newSymbolAsType($1.d->name, $1.d->name, $1.d->position, $$.d.typeModifier);
-            fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
+            d->bits.storage = StorageExtern;
 
             dd = addNewSymbolDefinition(symbolTable, d, StorageExtern, UsageUsed);
             $$.d.reference = addCxReference(dd, &$1.d->position, UsageUsed, noFileIndex, noFileIndex);
@@ -1147,7 +1147,7 @@ parameter_identifier_list
         Position pos = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", pos);
-        fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
+        symbol->bits.symbolType = TypeElipsis;
         $$.d = $1.d;
 
         LIST_APPEND(Symbol, $$.d.symbol, symbol);
@@ -1179,7 +1179,7 @@ parameter_type_list
         Position position = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", position);
-        fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
+        symbol->bits.symbolType = TypeElipsis;
         $$.d = $1.d;
 
         LIST_APPEND(Symbol, $$.d.symbol, symbol);

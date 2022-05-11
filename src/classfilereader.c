@@ -883,7 +883,8 @@ static void cfAddRecordToClass(char *name,
     /* TODO If this was allocated in "normal" memory we could use newSymbol() */
     CF_ALLOC(symbol, Symbol);
     fillSymbolWithTypeModifier(symbol, name, linkName, noPosition, tt);
-    fillSymbolBits(&symbol->bits, accessFlags, TypeDefault, storage);
+    symbol->bits.access = accessFlags;
+    symbol->bits.storage = storage;
 
     assert(clas->u.structSpec);
     LIST_APPEND(Symbol, clas->u.structSpec->records, symbol);

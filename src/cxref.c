@@ -813,7 +813,8 @@ void addTrivialCxReference(char *name, int symType, int storage, Position *pos, 
     Symbol symbol;
 
     fillSymbol(&symbol, name, name, *pos);
-    fillSymbolBits(&symbol.bits, AccessDefault, symType, storage);
+    symbol.bits.symbolType = symType;
+    symbol.bits.storage = storage;
     addCxReference(&symbol, pos, usageKind, noFileIndex, noFileIndex);
 }
 

@@ -2730,7 +2730,8 @@ static void addYaccSymbolReference(Id *name, int usage) {
     Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->position);
-    fillSymbolBits(&sss.bits, AccessDefault, TypeYaccSymbol, StorageNone);
+    sss.bits.symbolType = TypeYaccSymbol;
+    sss.bits.storage = StorageNone;
     addCxReference(&sss, &name->position, usage, noFileIndex, noFileIndex);
 }
 
@@ -2747,7 +2748,7 @@ static void addRuleLocalVariable(Id *name, int order) {
             if (order == 0) nn[1] = '$';
 
             ss = newSymbol(nn, nn, name->position);
-            fillSymbolBits(&ss->bits, AccessDefault, TypeDefault, StorageAuto);
+            ss->bits.storage = StorageAuto;
 
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
             addNewDeclaration(symbolTable, p, ss, NULL, StorageAuto);
@@ -2818,7 +2819,7 @@ void makeYaccCompletions(char *s, int len, Position *pos) {
         }
     }
 }
-#line 2822 "yacc_parser.tab.c"
+#line 2823 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -3010,7 +3011,7 @@ case 15:
             Symbol *ss;
 
             ss = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position);
-            fillSymbolBits(&ss->bits, AccessDefault, TypeDefault, StorageAuto);
+            ss->bits.storage = StorageAuto;
 
             addYaccSymbolReference(yyvsp[0].ast_id.d,UsageDeclared);
             if (l_currentType!=NULL) {
@@ -3135,7 +3136,7 @@ case 192:
             yyval.ast_expressionType.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
             d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position, yyval.ast_expressionType.d.typeModifier);
-            fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
+            d->bits.storage = StorageExtern;
 
             dd = addNewSymbolDefinition(symbolTable, d, StorageExtern, UsageUsed);
             yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->position, UsageUsed, noFileIndex, noFileIndex);
@@ -4272,7 +4273,7 @@ case 412:
         Position pos = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", pos);
-        fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
+        symbol->bits.symbolType = TypeElipsis;
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, symbol);
@@ -4309,7 +4310,7 @@ case 417:
         Position position = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", position);
-        fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
+        symbol->bits.symbolType = TypeElipsis;
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, symbol);
@@ -5025,7 +5026,7 @@ case 555:
 #line 1988 "yacc_parser.y"
 { endBlock(); }
 break;
-#line 5029 "yacc_parser.tab.c"
+#line 5030 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

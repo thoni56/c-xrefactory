@@ -206,7 +206,8 @@ static void javaAddNameCxReference(IdList *id, unsigned usage) {
     assert(id != NULL);
     cname = javaCreateComposedName(NULL, id, '/', NULL, tmpString, sizeof(tmpString));
     fillSymbol(&dd, id->id.name, cname, id->id.position);
-    fillSymbolBits(&dd.bits, AccessDefault, id->nameType, StorageNone);
+    dd.bits.symbolType = id->nameType;
+    dd.bits.storage = StorageNone;
 
     /* if you do something else do attention on the union initialisation */
     addCxReference(&dd, &id->id.position, usage, noFileIndex, noFileIndex);
@@ -536,7 +537,8 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name, char *fqName) {
 
     CF_ALLOC(memb, Symbol);
     fillSymbol(memb, sname, lname1, noPosition);
-    fillSymbolBits(&memb->bits, AccessDefault, TypeStruct, StorageNone);
+    memb->bits.symbolType = TypeStruct;
+    memb->bits.storage = StorageNone;
 
     CF_ALLOC(memb->u.structSpec, S_symStructSpec);
 
@@ -569,7 +571,8 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     /* This probably creates a SymbolList element so ..IsMember() can be used */
     /* TODO: create a function to check if a *Symbol* is member... */
     fillSymbol(&symbol, name, fqName, noPosition);
-    fillSymbolBits(&symbol.bits, AccessDefault, TypeStruct, StorageNone);
+    symbol.bits.symbolType = TypeStruct;
+    symbol.bits.storage = StorageNone;
 
     /* REPLACED: FILL_symbolList(&ppl, &symbol, NULL); with compound literal */
     ppl = (SymbolList){.d = &symbol, .next = NULL};
@@ -632,14 +635,16 @@ Symbol *javaTypeSymbolDefinition(IdList *tname,
                                  int accessFlags,
                                  int addType
 ){
-    Symbol pp,*typeSymbol;
+    Symbol symbol, *typeSymbol;
     char fqtName[MAX_FILE_NAME_SIZE];
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
 
-    fillSymbol(&pp, tname->id.name, tname->id.name, noPosition);
-    fillSymbolBits(&pp.bits, accessFlags, TypeStruct, StorageNone);
+    fillSymbol(&symbol, tname->id.name, tname->id.name, noPosition);
+    symbol.bits.access = accessFlags;
+    symbol.bits.symbolType = TypeStruct;
+    symbol.bits.storage = StorageNone;
 
     javaCreateComposedName(NULL, tname, '/', NULL, fqtName, MAX_FILE_NAME_SIZE);
     typeSymbol = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
@@ -657,7 +662,9 @@ Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
     assert(tname->nameType == TypeStruct);
 
     fillSymbol(&symbol, tname->id.name, tname->id.name, noPosition);
-    fillSymbolBits(&symbol.bits, accessFlags, TypeStruct, StorageNone);
+    symbol.bits.access = accessFlags;
+    symbol.bits.symbolType = TypeStruct;
+    symbol.bits.storage = StorageNone;
 
     if (tname->next==NULL && symbolTableIsMember(symbolTable, &symbol, NULL, &member)) {
         // get canonical copy
@@ -883,7 +890,7 @@ static int findTopLevelNameInternal(char *name,
     assert(visibilityCheck==VISIBILITY_CHECK_YES || visibilityCheck==VISIBILITY_CHECK_NO);
 
     fillSymbol(&symbol, name, name, noPosition);
-    fillSymbolBits(&symbol.bits, 0, TypeDefault, StorageNone);
+    symbol.bits.storage = StorageNone;
 
     result = RETURN_NOT_FOUND;
     for(cscope=startingScope;
@@ -1026,7 +1033,8 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
     Position *ipos;
 
     fillSymbol(&symbol, name->id.name, name->id.name, noPosition);
-    fillSymbolBits(&symbol.bits, AccessDefault, TypeStruct, StorageNone);
+    symbol.bits.symbolType = TypeStruct;
+    symbol.bits.storage = StorageNone;
 
     haveit = false;
     if (symbolTableIsMember(symbolTable, &symbol, NULL, &member)) {
@@ -2679,7 +2687,8 @@ void javaInitArrayObject(void) {
 
     fillSymbolWithStruct(&s_javaArrayObjectSymbol, "__arrayObject__", "__arrayObject__",
                          noPosition, &s_arraySpec);
-    fillSymbolBits(&s_javaArrayObjectSymbol.bits, AccessPublic, TypeStruct, StorageDefault);
+    s_javaArrayObjectSymbol.bits.access = AccessPublic;
+    s_javaArrayObjectSymbol.bits.symbolType = TypeStruct;
     s_javaArrayObjectSymbol.u.structSpec = &s_arraySpec;
 
     javaCreateClassFileItem(&s_javaArrayObjectSymbol);

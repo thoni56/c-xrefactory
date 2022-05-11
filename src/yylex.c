@@ -389,7 +389,7 @@ endOfFile:
 
 static void fillIncludeSymbolItem(Symbol *symbol, Position *pos){
     fillSymbol(symbol, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
-    fillSymbolBits(&symbol->bits, AccessDefault, TypeCppInclude, StorageDefault);
+    symbol->bits.symbolType = TypeCppInclude;
 }
 
 
@@ -527,7 +527,8 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
 
     fillSymbol(&ss, tmpBuff, tmpBuff, noPosition);
-    fillSymbolBits(&ss.bits, AccessDefault, TypeMacro, StorageNone);
+    ss.bits.symbolType = TypeMacro;
+    ss.bits.storage = StorageNone;
 
     if (symbolTableIsMember(symbolTable, &ss, NULL, &memb))
         return;
@@ -720,7 +721,8 @@ void processDefineDirective(bool hasArguments) {
 
     PPM_ALLOC(symbol, Symbol);
     fillSymbol(symbol, NULL, NULL, macroPosition);
-    fillSymbolBits(&symbol->bits, AccessDefault, TypeMacro, StorageNone);
+    symbol->bits.symbolType = TypeMacro;
+    symbol->bits.storage = StorageNone;
 
     /* TODO: this is the only call to setGlobalFileDepNames() that doesn't do it in XX memory, why?
        PP == PreProcessor? */

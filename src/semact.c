@@ -811,7 +811,7 @@ Symbol *createSimpleDefinition(Storage storage, Type type, Id *id) {
     } else {
         r = newSymbolAsType(NULL, NULL, noPosition, typeModifier);
     }
-    fillSymbolBits(&r->bits, AccessDefault, TypeDefault, storage);
+    r->bits.storage = storage;
 
     return r;
 }
@@ -878,11 +878,11 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         kind = TypeUnion;
 
     fillSymbol(&symbol, id->name, id->name, id->position);
-    fillSymbolBits(&symbol.bits, AccessDefault, kind, StorageNone);
+    symbol.bits.symbolType = kind;
+    symbol.bits.storage = StorageNone;
 
     if (!symbolTableIsMember(symbolTable, &symbol, NULL, &member)
         || (isMemoryFromPreviousBlock(member) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
-        //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         member = StackMemoryAlloc(Symbol);
         *member = symbol;
         member->u.structSpec = StackMemoryAlloc(S_symStructSpec);
@@ -966,7 +966,8 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     else type = TypeUnion;
 
     pp = newSymbol("", NULL, typeName->position);
-    fillSymbolBits(&pp->bits, AccessDefault, type, StorageNone);
+    pp->bits.symbolType = type;
+    pp->bits.storage = StorageNone;
 
     setGlobalFileDepNames("", pp, MEMORY_XX);
 
@@ -996,17 +997,17 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     for(dd=rec; dd!=NULL; dd=dd->next) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
-            dd->bits.isRecord = 1;
             addCxReference(dd,&dd->pos,UsageDefined,noFileIndex, noFileIndex);
         }
     }
 }
 
 TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
-    Symbol p,*pp;
+    Symbol p, *pp;
 
     fillSymbol(&p, id->name, id->name, id->position);
-    fillSymbolBits(&p.bits, AccessDefault, TypeEnum, StorageNone);
+    p.bits.symbolType = TypeEnum;
+    p.bits.storage = StorageNone;
 
     if (! symbolTableIsMember(symbolTable, &p, NULL, &pp)
         || (isMemoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
@@ -1023,7 +1024,8 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
     Symbol *symbol;
 
     symbol = newSymbolAsEnum("", "", noPosition, enums);
-    fillSymbolBits(&symbol->bits, AccessDefault, TypeEnum, StorageNone);
+    symbol->bits.symbolType = TypeEnum;
+    symbol->bits.storage = StorageNone;
 
     setGlobalFileDepNames("", symbol, MEMORY_XX);
     symbol->u.enums = enums;
