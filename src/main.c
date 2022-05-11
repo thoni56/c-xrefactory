@@ -38,6 +38,7 @@
 #include "macroargumenttable.h"
 
 #include "protocol.h"
+#include <stdbool.h>
 
 static char oldStdopFile[MAX_FILE_NAME_SIZE];
 static char oldStdopSection[MAX_FILE_NAME_SIZE];
@@ -2087,11 +2088,13 @@ static void clearFileItem(FileItem *fileItem) {
     fileItem->scheduledToProcess = false;
     fileItem->scheduledToUpdate = false;
     fileItem->fullUpdateIncludesProcessed = false;
-    fileItem->cxLoaded = fileItem->cxLoading = fileItem->cxSaved = false;
+    fileItem->cxLoaded = false;
+    fileItem->cxLoading = false;
+    fileItem->cxSaved = false;
 }
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
-    char tt[MAX_FILE_NAME_SIZE];
+    char temp[MAX_FILE_NAME_SIZE];
     char defaultOptionsFileName[MAX_FILE_NAME_SIZE];
     char defaultOptionsSection[MAX_FILE_NAME_SIZE];
     char *ss;
@@ -2172,15 +2175,15 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     argcount = 0;
     inputFilename = cmdlnInputFile = getNextCommandLineFile(&argcount);
     if (inputFilename==NULL) {
-        ss = strmcpy(tt, cwd);
-        if (ss!=tt && ss[-1] == FILE_PATH_SEPARATOR)
+        ss = strmcpy(temp, cwd);
+        if (ss!=temp && ss[-1] == FILE_PATH_SEPARATOR)
             ss[-1]=0;
-        assert(strlen(tt)+1<MAX_FILE_NAME_SIZE);
-        inputFilename=tt;
+        assert(strlen(temp)+1<MAX_FILE_NAME_SIZE);
+        inputFilename=temp;
     } else {
-        strcpy(tt, inputFilename);
+        strcpy(temp, inputFilename);
     }
-    getOptionsFile(tt, defaultOptionsFileName, defaultOptionsSection, NO_ERROR_MESSAGE);
+    getOptionsFile(temp, defaultOptionsFileName, defaultOptionsSection, NO_ERROR_MESSAGE);
     reInitCwd(defaultOptionsFileName, defaultOptionsSection);
     if (defaultOptionsFileName[0]!=0) {
         readOptionFile(defaultOptionsFileName, &dfargc, &dfargv, defaultOptionsSection, defaultOptionsSection);

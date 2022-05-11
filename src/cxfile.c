@@ -249,7 +249,7 @@ char *createTagSearchLineStatic(char *name, Position *position,
     assert(ffname);
     ffname = getRealFileName_static(ffname);
     fl = strlen(ffname);
-    l3 = strmcpy(file,simpleFileName(ffname)) - file;
+    l3 = strmcpy(file,simpleFileName(ffname)) - file; /* TODO: WTF - strcpy() and strlen() in same stmt! */
 
     dl = fl /*& - l3 &*/ ;
     strncpy(dir, ffname, dl);

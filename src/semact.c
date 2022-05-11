@@ -463,27 +463,27 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
 }
 
 void labelReference(Id *id, UsageKind usage) {
-    char ttt[TMP_STRING_SIZE];
-    char *tt;
+    char tempString[TMP_STRING_SIZE];
+    char *t;
     assert(id);
     if (LANGUAGE(LANG_JAVA)) {
         assert(s_javaStat&&s_javaStat->thisClass&&s_javaStat->thisClass->u.structSpec);
         if (s_cp.function!=NULL) {
-            sprintf(ttt,"%x-%s.%s",s_javaStat->thisClass->u.structSpec->classFileIndex,
+            sprintf(tempString,"%x-%s.%s",s_javaStat->thisClass->u.structSpec->classFileIndex,
                     s_cp.function->name, id->name);
         } else {
-            sprintf(ttt,"%x-.%s", s_javaStat->thisClass->u.structSpec->classFileIndex,
+            sprintf(tempString,"%x-.%s", s_javaStat->thisClass->u.structSpec->classFileIndex,
                     id->name);
         }
     } else if (s_cp.function!=NULL) {
-        tt = strmcpy(ttt, s_cp.function->name);
-        *tt = '.';
-        tt = strcpy(tt+1,id->name);
+        t = strmcpy(tempString, s_cp.function->name);
+        *t = '.';
+        t = strcpy(t+1,id->name);
     } else {
-        strcpy(ttt, id->name);
+        strcpy(tempString, id->name);
     }
-    assert(strlen(ttt)<TMP_STRING_SIZE-1);
-    addTrivialCxReference(ttt, TypeLabel,StorageDefault, &id->position, usage);
+    assert(strlen(tempString)<TMP_STRING_SIZE-1);
+    addTrivialCxReference(tempString, TypeLabel,StorageDefault, &id->position, usage);
 }
 
 void setLocalVariableLinkName(struct symbol *p) {

@@ -36,7 +36,7 @@
 #include "utils.h"
 
 #define RRF_CHARS_TO_PRE_CHECK_AROUND       1
-#define MAX_NARGV_OPTIONS_NUM               50
+#define MAX_NARGV_OPTIONS_COUNT               50
 
 typedef struct tpCheckSpecialReferencesData {
     struct pushAllInBetweenData	mm;
@@ -118,64 +118,64 @@ static bool filter0(Reference *reference, void *dummy) {
     return reference->usage.kind < UsageMaxOLUsages;
 }
 
-static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
-                              EditorBuffer *buf,
-                              char *project,
-                              EditorMarker *point,
-                              EditorMarker *mark
+static void refactorySetArguments(char *argv[MAX_NARGV_OPTIONS_COUNT],
+                                  EditorBuffer *buf,
+                                  char *project,
+                                  EditorMarker *point,
+                                  EditorMarker *mark
 ) {
     static char optPoint[TMP_STRING_SIZE];
     static char optMark[TMP_STRING_SIZE];
     static char optXrefrc[MAX_FILE_NAME_SIZE];
     int i;
     i = 0;
-    nargv[i] = "null";
+    argv[i] = "null";
     i++;
     if (refactoringOptions.xrefrc!=NULL) {
         sprintf(optXrefrc, "-xrefrc=%s", refactoringOptions.xrefrc);
         assert(strlen(optXrefrc)+1 < MAX_FILE_NAME_SIZE);
-        nargv[i] = optXrefrc;
+        argv[i] = optXrefrc;
         i++;
     }
     if (refactoringOptions.eolConversion & CR_LF_EOL_CONVERSION) {
-        nargv[i] = "-crlfconversion";
+        argv[i] = "-crlfconversion";
         i++;
     }
     if (refactoringOptions.eolConversion & CR_EOL_CONVERSION) {
-        nargv[i] = "-crconversion";
+        argv[i] = "-crconversion";
         i++;
     }
     if (project!=NULL) {
-        nargv[i] = "-p";
+        argv[i] = "-p";
         i++;
-        nargv[i] = project;
+        argv[i] = project;
         i++;
     }
-    assert(i < MAX_NARGV_OPTIONS_NUM);
+    assert(i < MAX_NARGV_OPTIONS_COUNT);
     if (point!=NULL) {
         sprintf(optPoint, "-olcursor=%d", point->offset);
-        nargv[i] = optPoint;
+        argv[i] = optPoint;
         i++;
     }
-    assert(i < MAX_NARGV_OPTIONS_NUM);
+    assert(i < MAX_NARGV_OPTIONS_COUNT);
     if (mark!=NULL) {
         sprintf(optMark, "-olmark=%d", mark->offset);
-        nargv[i] = optMark;
+        argv[i] = optMark;
         i++;
     }
-    assert(i < MAX_NARGV_OPTIONS_NUM);
+    assert(i < MAX_NARGV_OPTIONS_COUNT);
     if (buf!=NULL) {
         // if following assertion does not fail, you can delet buf parameter
         assert(buf == point->buffer);
-        nargv[i] = buf->name;
+        argv[i] = buf->name;
         i++;
     }
-    assert(i < MAX_NARGV_OPTIONS_NUM);
+    assert(i < MAX_NARGV_OPTIONS_COUNT);
 
     // finally mark end of options
-    nargv[i] = NULL;
+    argv[i] = NULL;
     i++;
-    assert(i < MAX_NARGV_OPTIONS_NUM);
+    assert(i < MAX_NARGV_OPTIONS_COUNT);
 }
 
 
@@ -187,7 +187,7 @@ static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
 // call to this function MUST be followed by a pushing action, to refresh options
 static void refactoryUpdateReferences(char *project) {
     int nargc, refactoryXrefInitOptionsNum;
-    char *nargv[MAX_NARGV_OPTIONS_NUM];
+    char *nargv[MAX_NARGV_OPTIONS_COUNT];
 
     // following would be too long to be allocated on stack
     static Options savedOptions;
@@ -203,7 +203,7 @@ static void refactoryUpdateReferences(char *project) {
 
     copyOptions(&savedOptions, &options);
 
-    refactorySetNargv(nargv, NULL, project, NULL, NULL);
+    refactorySetArguments(nargv, NULL, project, NULL, NULL);
     nargc = argument_count(nargv);
     refactoryXrefInitOptionsNum = argument_count(refactoryXrefInitOptions);
     for (int i=1; i<refactoryXrefInitOptionsNum; i++) {
@@ -231,14 +231,14 @@ static void refactoryEditServerParseBuffer(char *project,
                                            EditorMarker *point, EditorMarker *mark,
                                            char *pushOption, char *pushOption2
 ) {
-    char *nargv[MAX_NARGV_OPTIONS_NUM];
+    char *nargv[MAX_NARGV_OPTIONS_COUNT];
     int nargc;
 
     currentPass = ANY_PASS;
 
     assert(options.taskRegime == RegimeEditServer);
 
-    refactorySetNargv(nargv, buf, project, point, mark);
+    refactorySetArguments(nargv, buf, project, point, mark);
     nargc = argument_count(nargv);
     if (pushOption!=NULL) {
         nargv[nargc++] = pushOption;
@@ -1413,8 +1413,10 @@ static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, EditorMark
         // O.K. check also few characters around
         off1 = pos->offset - RRF_CHARS_TO_PRE_CHECK_AROUND;
         off2 = pos->offset + strlen(oldName) + RRF_CHARS_TO_PRE_CHECK_AROUND;
-        if (off1 < 0) off1 = 0;
-        if (off2 >= pos->buffer->allocation.bufferSize) off2 = pos->buffer->allocation.bufferSize-1;
+        if (off1 < 0)
+            off1 = 0;
+        if (off2 >= pos->buffer->allocation.bufferSize)
+            off2 = pos->buffer->allocation.bufferSize-1;
         pp = editorCreateNewMarker(pos->buffer, off1);
         ppcPreCheck(pp, off2-off1);
         editorFreeMarker(pp);
