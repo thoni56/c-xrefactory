@@ -26,21 +26,17 @@ typedef struct editorBufferAllocationData {
     int		allocatedSize;
 } EditorBufferAllocationData;
 
-typedef struct editorBufferBits {
-    bool textLoaded:1;
-    bool modified:1;
-    bool modifiedSinceLastQuasiSave:1;
-} EditorBufferBits;
-
 typedef struct editorBuffer {
-    char                *name;
-    int					fileIndex;
-    char				*fileName;
-    time_t              modificationTime;
-    size_t              size;
-    struct editorMarker	*markers;
+    char                             *name;
+    int                               fileIndex;
+    char                             *fileName;
+    time_t                            modificationTime;
+    bool                              textLoaded : 1;
+    bool                              modified : 1;
+    bool                              modifiedSinceLastQuasiSave : 1;
+    size_t                            size;
+    struct editorMarker              *markers;
     struct editorBufferAllocationData allocation;
-    struct editorBufferBits bits;
 } EditorBuffer;
 
 typedef struct editorBufferList {

@@ -491,7 +491,7 @@ static void editorFreeBuffer(EditorBufferList *list) {
         ED_FREE(m, sizeof(EditorMarker));
         m = next;
     }
-    if (list->buffer->bits.textLoaded) {
+    if (list->buffer->textLoaded) {
         log_trace("freeing %d of size %d", list->buffer->allocation.allocatedBlock,
                   list->buffer->allocation.allocatedSize);
         // check for magic
@@ -542,7 +542,7 @@ static void editorLoadFileIntoBufferText(EditorBuffer *buffer, time_t modificati
     editorPerformEncodingAdjustemets(buffer);
     buffer->modificationTime = modificationTime;
     buffer->size = fileSize;
-    buffer->bits.textLoaded = true;
+    buffer->textLoaded = true;
 }
 
 static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
@@ -570,12 +570,11 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
 }
 
 static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int ftnum, char *fileName) {
-    buffer->bits = (EditorBufferBits){.textLoaded = 0, .modified = 0, .modifiedSinceLastQuasiSave = 0};
     buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                                       .allocatedBlock = NULL, .allocatedIndex = 0,
                                                       .allocatedSize = 0};
     *buffer = (EditorBuffer){.name = name, .fileIndex = ftnum, .fileName = fileName, .markers = NULL,
-                             .allocation = buffer->allocation, .bits = buffer->bits};
+                             .allocation = buffer->allocation};
     buffer->modificationTime = 0;
     buffer->size = 0;
 }
@@ -614,8 +613,8 @@ static EditorBuffer *editorCreateNewBuffer(char *name, char *fileName, time_t mo
 }
 
 static void editorSetBufferModifiedFlag(EditorBuffer *buff) {
-    buff->bits.modified = true;
-    buff->bits.modifiedSinceLastQuasiSave = true;
+    buff->modified = true;
+    buff->modifiedSinceLastQuasiSave = true;
 }
 
 EditorBuffer *editorGetOpenedBuffer(char *name) {
@@ -633,7 +632,7 @@ EditorBuffer *editorGetOpenedBuffer(char *name) {
 EditorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
     EditorBuffer *res;
     res = editorGetOpenedBuffer(name);
-    if (res!=NULL && res->bits.textLoaded)
+    if (res!=NULL && res->textLoaded)
         return res;
     return NULL;
 }
@@ -731,7 +730,7 @@ void editorRenameBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     // of moving a package into an existing package).
     removed = editorCreateNewBuffer(oldName, oldName, buffer->modificationTime, buffer->size);
     allocNewEditorBufferTextSpace(removed, 0);
-    removed->bits.textLoaded = true;
+    removed->textLoaded = true;
     editorSetBufferModifiedFlag(removed);
 }
 
@@ -772,7 +771,7 @@ EditorBuffer *editorFindFileCreate(char *name) {
         buffer = editorCreateNewBuffer(name, name, time(NULL), 0);
         assert(buffer!=NULL);
         allocNewEditorBufferTextSpace(buffer, 0);
-        buffer->bits.textLoaded = true;
+        buffer->textLoaded = true;
     }
     return buffer;
 }
@@ -913,14 +912,14 @@ void editorDumpBuffers(void) {
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
             log_trace("%d : %s==%s, %d", i, ll->buffer->name, ll->buffer->fileName,
-                      ll->buffer->bits.textLoaded);
+                      ll->buffer->textLoaded);
         }
     }
     log_trace("[editorDumpBuffers] end");
 }
 
 static void editorQuasiSaveBuffer(EditorBuffer *buffer) {
-    buffer->bits.modifiedSinceLastQuasiSave = false;
+    buffer->modifiedSinceLastQuasiSave = false;
     buffer->modificationTime = time(NULL);
     FileItem *fileItem = getFileItem(buffer->fileIndex);
     fileItem->lastModified = buffer->modificationTime;
@@ -933,7 +932,7 @@ void editorQuasiSaveModifiedBuffers(void) {
 
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
-            if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
+            if (ll->buffer->modifiedSinceLastQuasiSave) {
                 saving = true;
                 goto cont;
             }
@@ -952,7 +951,7 @@ void editorQuasiSaveModifiedBuffers(void) {
     }
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
-            if (ll->buffer->bits.modifiedSinceLastQuasiSave) {
+            if (ll->buffer->modifiedSinceLastQuasiSave) {
                 editorQuasiSaveBuffer(ll->buffer);
             }
         }
@@ -963,7 +962,7 @@ void editorQuasiSaveModifiedBuffers(void) {
 void editorLoadAllOpenedBufferFiles(void) {
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *l = getEditorBuffer(i); l != NULL; l = l->next) {
-            if (!l->buffer->bits.textLoaded) {
+            if (!l->buffer->textLoaded) {
                 if (fileExists(l->buffer->fileName)) {
                     int size = fileSize(l->buffer->fileName);
                     allocNewEditorBufferTextSpace(l->buffer, size);
@@ -1550,10 +1549,10 @@ static void editorCloseBuffer(EditorBufferList *member, int index) {
     }
 }
 
-#define BUFFER_IS_CLOSABLE(buffer) (buffer->bits.textLoaded             \
+#define BUFFER_IS_CLOSABLE(buffer) (buffer->textLoaded             \
                                     && buffer->markers==NULL            \
                                     && buffer->name==buffer->fileName  /* not -preloaded */ \
-                                    && ! buffer->bits.modified          \
+                                    && ! buffer->modified          \
     )
 
 // be very carefull when using this function, because of interpretation
