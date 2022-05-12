@@ -2966,12 +2966,13 @@ int main(int argc, char **argv) {
     initLogging(argc, argv);
     ENTER();
 
-    /* CX_ALLOCC always makes one longjmp back to here before we can
-       start processing for real ... Allocating initial memory */
-    setjmp(memoryResizeJumpTarget);
-    if (cxResizingBlocked) {
-        fatalError(ERR_ST, "cx_memory resizing required, see file TROUBLES",
-                   XREF_EXIT_ERR);
+    if (setjmp(memoryResizeJumpTarget) != 0) {
+        /* CX_ALLOCC always makes one longjmp back to here before we can
+           start processing for real ... Allocating initial CX memory */
+        if (cxResizingBlocked) {
+            fatalError(ERR_ST, "cx_memory resizing required, see file TROUBLES",
+                       XREF_EXIT_ERR);
+        }
     }
 
     currentPass = ANY_PASS;
@@ -2979,6 +2980,8 @@ int main(int argc, char **argv) {
     mainTaskEntryInitialisations(argc, argv);
 
     // If there is no configuration file given auto-find it
+    // TODO: This should probably be done where all other config file
+    // discovery is done...
     if (options.xrefrc == NULL) {
         char *configFileName = findConfigFile(cwd);
         createOptionString(&options.xrefrc, configFileName);
@@ -2988,9 +2991,12 @@ int main(int argc, char **argv) {
     }
 
     // Ok, so there were these five, now four, no three, main operating modes
-    if (options.refactoringRegime == RegimeRefactory) mainRefactory();
-    if (options.taskRegime == RegimeXref) mainXref(argc, argv);
-    if (options.taskRegime == RegimeEditServer) mainEditServer(argc, argv);
+    if (options.refactoringRegime == RegimeRefactory)
+        mainRefactory();
+    if (options.taskRegime == RegimeXref)
+        mainXref(argc, argv);
+    if (options.taskRegime == RegimeEditServer)
+        mainEditServer(argc, argv);
 
     LEAVE();
     return 0;
