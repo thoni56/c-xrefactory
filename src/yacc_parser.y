@@ -454,7 +454,7 @@ primary_expr
         Symbol *p;
         Symbol *dd;
         p = $1.d->symbol;
-        if (p != NULL && p->bits.symbolType == TypeDefault) {
+        if (p != NULL && p->bits.type == TypeDefault) {
             assert(p && p);
             dd = p;
             assert(dd->bits.storage != StorageTypedef);
@@ -1088,9 +1088,9 @@ struct_or_union
 struct_declaration_list
     : struct_declaration                                /*& { $$.d = $1.d; } &*/
     | struct_declaration_list struct_declaration        {
-        if ($1.d == &s_errorSymbol || $1.d->bits.symbolType==TypeError) {
+        if ($1.d == &s_errorSymbol || $1.d->bits.type==TypeError) {
             $$.d = $2.d;
-        } else if ($2.d == &s_errorSymbol || $1.d->bits.symbolType==TypeError)  {
+        } else if ($2.d == &s_errorSymbol || $1.d->bits.type==TypeError)  {
             $$.d = $1.d;
         } else {
             $$.d = $1.d;
@@ -1364,7 +1364,7 @@ parameter_identifier_list
         Position pos = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", pos);
-        symbol->bits.symbolType = TypeElipsis;
+        symbol->bits.type = TypeElipsis;
         $$.d = $1.d;
 
         LIST_APPEND(Symbol, $$.d.symbol, symbol);
@@ -1396,7 +1396,7 @@ parameter_type_list
         Position position = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", position);
-        symbol->bits.symbolType = TypeElipsis;
+        symbol->bits.type = TypeElipsis;
         $$.d = $1.d;
 
         LIST_APPEND(Symbol, $$.d.symbol, symbol);
@@ -1879,7 +1879,7 @@ external_definition
         s_cp.function = $2.d;
         generateInternalLabelReference(-1, UsageDefined);
         for (p=$2.d->u.typeModifier->u.f.args, i=1; p!=NULL; p=p->next,i++) {
-            if (p->bits.symbolType == TypeElipsis)
+            if (p->bits.type == TypeElipsis)
                 continue;
             if (p->u.typeModifier == NULL)
                 p->u.typeModifier = &defaultIntModifier;
@@ -1999,7 +1999,7 @@ static void addYaccSymbolReference(Id *name, int usage) {
     Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->position);
-    sss.bits.symbolType = TypeYaccSymbol;
+    sss.bits.type = TypeYaccSymbol;
     sss.bits.storage = StorageNone;
     addCxReference(&sss, &name->position, usage, noFileIndex, noFileIndex);
 }
@@ -2010,7 +2010,7 @@ static void addRuleLocalVariable(Id *name, int order) {
 
     if (l_yaccUnion!=NULL) {
         p = name->symbol;
-        if (p != NULL && p->bits.symbolType == TypeDefault) {
+        if (p != NULL && p->bits.type == TypeDefault) {
             nn = stackMemoryAlloc(10*sizeof(char));
             assert(order>=0 && order < 10000);
             sprintf(nn,"$%d",order);

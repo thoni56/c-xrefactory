@@ -63,7 +63,7 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
     Symbol *s;
 
     s = newSymbol(name, name, noPosition);
-    s->bits.symbolType = TypeStruct;
+    s->bits.type = TypeStruct;
     s->bits.storage = StorageNone;
     fillJslSymbolList(ss, s, noPosition, false);
 }
@@ -115,7 +115,7 @@ TypeModifier *jslPrependComposedType(TypeModifier *d, Type type) {
 void jslCompleteDeclarator(Symbol *t, Symbol *d) {
     assert(t && d);
     if (t == &s_errorSymbol || d == &s_errorSymbol
-        || t->bits.symbolType==TypeError || d->bits.symbolType==TypeError) return;
+        || t->bits.type==TypeError || d->bits.type==TypeError) return;
     LIST_APPEND(TypeModifier, d->u.typeModifier, t->u.typeModifier);
     d->bits.storage = t->bits.storage;
 }
@@ -391,7 +391,7 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
                               int accessFlags) {
     int n;
 
-    assert(outer && outer->bits.symbolType==TypeStruct && outer->u.structSpec);
+    assert(outer && outer->bits.type==TypeStruct && outer->u.structSpec);
     n = outer->u.structSpec->nestedCount;
     log_debug("adding nested %s of %s(at %lx)[%d] --> %s to %s", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
     if (n == 0) {
@@ -473,7 +473,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     IdList oclassid;
     int i;
 
-    assert(str && str->bits.symbolType==TypeStruct);
+    assert(str && str->bits.type==TypeStruct);
     ss = str->u.structSpec;
     assert(ss);
     log_debug("appending %d nested classes of %s", ss->nestedCount, str->linkName);
@@ -556,7 +556,7 @@ void jslNewClassDefinitionBegin(Id *name,
                 // I am putting in comment just by prudence, but you can
                 // freely uncoment it
                 assert(s_jsl->classStat->thisClass && s_jsl->classStat->thisClass->u.structSpec);
-                assert(s_jsl->classStat->thisClass->bits.symbolType==TypeStruct);
+                assert(s_jsl->classStat->thisClass->bits.type==TypeStruct);
                 fileItem->directEnclosingInstance = s_jsl->classStat->thisClass->u.structSpec->classFileIndex;
                 log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.structSpec->classFileIndex,
                           fileItem->name, noFileIndex);

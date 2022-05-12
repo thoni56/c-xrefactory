@@ -1309,7 +1309,7 @@ Super_opt
     |	EXTENDS ExtendClassOrInterfaceType			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.typeModifier);
+                    assert($2.d && $2.d->bits.type == TypeDefault && $2.d->u.typeModifier);
                     assert($2.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass($2.d->u.typeModifier->u.t);
                 } else {
@@ -1317,7 +1317,7 @@ Super_opt
                 }
             }
             if (inSecondJslPass()) {
-                assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.typeModifier);
+                assert($2.d && $2.d->bits.type == TypeDefault && $2.d->u.typeModifier);
                 assert($2.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $2.d->u.typeModifier->u.t);
@@ -1337,7 +1337,7 @@ InterfaceTypeList
     :   InterfaceType							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($1.d && $1.d->bits.symbolType == TypeDefault && $1.d->u.typeModifier);
+                    assert($1.d && $1.d->bits.type == TypeDefault && $1.d->u.typeModifier);
                     assert($1.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass($1.d->u.typeModifier->u.t);
                 } else {
@@ -1345,7 +1345,7 @@ InterfaceTypeList
                 }
             }
             if (inSecondJslPass()) {
-                assert($1.d && $1.d->bits.symbolType == TypeDefault && $1.d->u.typeModifier);
+                assert($1.d && $1.d->bits.type == TypeDefault && $1.d->u.typeModifier);
                 assert($1.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $1.d->u.typeModifier->u.t);
@@ -1354,7 +1354,7 @@ InterfaceTypeList
     |	InterfaceTypeList ',' InterfaceType		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                    assert($3.d && $3.d->bits.type == TypeDefault && $3.d->u.typeModifier);
                     assert($3.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass($3.d->u.typeModifier->u.t);
                 } else {
@@ -1362,7 +1362,7 @@ InterfaceTypeList
                 }
             }
             if (inSecondJslPass()) {
-                assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                assert($3.d && $3.d->bits.type == TypeDefault && $3.d->u.typeModifier);
                 assert($3.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $3.d->u.typeModifier->u.t);
@@ -1484,8 +1484,8 @@ FieldDeclaration
                     for(p=$3.d; p!=NULL; p=pp) {
                         pp = p->next;
                         p->next = NULL;
-                        if (p->bits.symbolType == TypeError) continue;
-                        assert(p->bits.symbolType == TypeDefault);
+                        if (p->bits.type == TypeError) continue;
+                        assert(p->bits.type == TypeDefault);
                         completeDeclarator($2.d, p);
                         vClass = s_javaStat->classFileIndex;
                         p->bits.access = $1.d;
@@ -1531,8 +1531,8 @@ FieldDeclaration
                 for(p=$3.d; p!=NULL; p=pp) {
                     pp = p->next;
                     p->next = NULL;
-                    if (p->bits.symbolType == TypeError) continue;
-                    assert(p->bits.symbolType == TypeDefault);
+                    if (p->bits.type == TypeError) continue;
+                    assert(p->bits.type == TypeDefault);
                     assert(clas->u.structSpec);
                     vClass = clas->u.structSpec->classFileIndex;
                     jslCompleteDeclarator($2.d, p);
@@ -1560,7 +1560,7 @@ VariableDeclarators
             $$.d = $1.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($$.d->bits.symbolType == TypeDefault || $$.d->bits.symbolType == TypeError);
+                    assert($$.d->bits.type == TypeDefault || $$.d->bits.type == TypeError);
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -1576,7 +1576,7 @@ VariableDeclarators
                         $$.d = $3.d;
                         $$.d->next = $1.d;
                     }
-                    assert($$.d->bits.symbolType == TypeDefault || $$.d->bits.symbolType == TypeError);
+                    assert($$.d->bits.type == TypeDefault || $$.d->bits.type == TypeError);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -1589,7 +1589,7 @@ VariableDeclarators
                     $$.d = $3.d;
                     $$.d->next = $1.d;
                 }
-                assert($$.d->bits.symbolType==TypeDefault || $$.d->bits.symbolType==TypeError);
+                assert($$.d->bits.type==TypeDefault || $$.d->bits.type==TypeError);
             }
         }
     ;
@@ -1864,7 +1864,7 @@ ClassTypeList
     :   ClassType						{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
-                assert($1.d && $1.d->bits.symbolType == TypeDefault && $1.d->u.typeModifier);
+                assert($1.d && $1.d->bits.type == TypeDefault && $1.d->u.typeModifier);
                 assert($1.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC($$.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with compound literal */
@@ -1874,7 +1874,7 @@ ClassTypeList
     |	ClassTypeList ',' ClassType		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
             if (inSecondJslPass()) {
-                assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                assert($3.d && $3.d->bits.type == TypeDefault && $3.d->u.typeModifier);
                 assert($3.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC($$.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with compound literal */
@@ -2155,7 +2155,7 @@ ExtendsInterfaces
     :   EXTENDS ExtendClassOrInterfaceType		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.typeModifier);
+                    assert($2.d && $2.d->bits.type == TypeDefault && $2.d->u.typeModifier);
                     assert($2.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass($2.d->u.typeModifier->u.t);
                 } else {
@@ -2163,7 +2163,7 @@ ExtendsInterfaces
                 }
             }
             if (inSecondJslPass()) {
-                assert($2.d && $2.d->bits.symbolType == TypeDefault && $2.d->u.typeModifier);
+                assert($2.d && $2.d->bits.type == TypeDefault && $2.d->u.typeModifier);
                 assert($2.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $2.d->u.typeModifier->u.t);
@@ -2172,7 +2172,7 @@ ExtendsInterfaces
     |	ExtendsInterfaces ',' ExtendClassOrInterfaceType        {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                    assert($3.d && $3.d->bits.type == TypeDefault && $3.d->u.typeModifier);
                     assert($3.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass($3.d->u.typeModifier->u.t);
                 } else {
@@ -2180,7 +2180,7 @@ ExtendsInterfaces
                 }
             }
             if (inSecondJslPass()) {
-                assert($3.d && $3.d->bits.symbolType == TypeDefault && $3.d->u.typeModifier);
+                assert($3.d && $3.d->bits.type == TypeDefault && $3.d->u.typeModifier);
                 assert($3.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $3.d->u.typeModifier->u.t);
@@ -2313,7 +2313,7 @@ LocalVarDeclUntilInit
     |	LocalVariableDeclaration ',' VariableDeclaratorId	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.d->bits.symbolType != TypeError) {
+                    if ($1.d->bits.type != TypeError) {
                         addNewDeclaration(s_javaStat->locals, $1.d,$3.d,NULL,StorageAuto);
                     }
                     $$.d = $1.d;
@@ -2916,11 +2916,11 @@ CatchClause
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        if ($3.d->bits.symbolType != TypeError) {
+                        if ($3.d->bits.type != TypeError) {
                             addNewSymbolDefinition(s_javaStat->locals, $3.d, StorageAuto,
                                             UsageDefined);
                             if (options.serverOperation == OLO_EXTRACT) {
-                                assert($3.d->bits.symbolType==TypeDefault);
+                                assert($3.d->bits.type==TypeDefault);
                                 addCxReference($3.d->u.typeModifier->u.t, &$1.d->position, UsageCatched, noFileIndex, noFileIndex);
                             }
                         }
@@ -2941,7 +2941,7 @@ CatchClause
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (options.serverOperation == OLO_EXTRACT) {
-                        assert($3.d->bits.symbolType==TypeDefault);
+                        assert($3.d->bits.type==TypeDefault);
                         addCxReference($3.d->u.typeModifier->u.t, &$1.d->position, UsageCatched, noFileIndex, noFileIndex);
                     }
                 } else {
@@ -3502,7 +3502,7 @@ FieldAccess
                     $$.d.reference = NULL;
                     $$.d.position = &$1.d->position;
                     ss = javaCurrentSuperClass();
-                    if (ss != &s_errorSymbol && ss->bits.symbolType!=TypeError) {
+                    if (ss != &s_errorSymbol && ss->bits.type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         $$.d.reference = findStrRecordFromSymbol(ss, $3.d, &rec,
                                                                  CLASS_TO_EXPR, $1.d);
@@ -3526,7 +3526,7 @@ FieldAccess
                     Symbol *ss,*rec=NULL;
 
                     ss = javaQualifiedThis($1.d, $3.d);
-                    if (ss != &s_errorSymbol && ss->bits.symbolType!=TypeError) {
+                    if (ss != &s_errorSymbol && ss->bits.type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         ss = javaGetSuperClass(ss);
                         $$.d.reference = findStrRecordFromSymbol(ss, $5.d, &rec,

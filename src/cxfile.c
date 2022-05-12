@@ -506,7 +506,7 @@ void addSubClassItemToFileTab( int sup, int inf, int originFileIndex) {
 
 
 void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
-    if (symbol->bits.symbolType != TypeStruct)
+    if (symbol->bits.type != TypeStruct)
         return;
 
     log_trace("testing %s", symbol->name);
@@ -517,7 +517,7 @@ void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
 
     for (SymbolList *sups=symbol->u.structSpec->super; sups!=NULL; sups=sups->next) {
-        assert(sups->d && sups->d->bits.symbolType == TypeStruct);
+        assert(sups->d && sups->d->bits.type == TypeStruct);
         addSubClassItemToFileTab(sups->d->u.structSpec->classFileIndex, cf1, origin);
     }
 }

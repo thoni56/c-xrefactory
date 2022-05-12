@@ -1,12 +1,15 @@
 #include "symbol.h"
 
+#include "access.h"
 #include "memory.h"
+#include "storage.h"
+#include "type.h"
 
 
 /* Symbol bits */
 
 SymbolBits makeSymbolBits(Access access, Type symbolType, Storage storage) {
-    return (SymbolBits){.access = access, .symbolType = symbolType, .storage = storage};
+    return (SymbolBits){.access = access, .type = symbolType, .storage = storage};
 }
 
 void fillSymbol(Symbol *s, char *name, char *linkName, Position pos) {
@@ -15,18 +18,27 @@ void fillSymbol(Symbol *s, char *name, char *linkName, Position pos) {
     s->pos = pos;
     s->u.typeModifier = NULL;
     s->next = NULL;
-    s->bits = makeSymbolBits(AccessDefault, TypeDefault, StorageDefault);
+    s->bits.isExplicitlyImported = false;
+    s->bits.javaSourceIsLoaded = false;
+    s->bits.javaClassIsLoaded = false;
+    s->bits.access = AccessDefault;
+    s->bits.type = TypeDefault;
+    s->bits.storage = StorageDefault;
+    s->bits.npointers = 0;
 }
 
 Symbol makeSymbol(char *name, char *linkName, Position pos) {
-    Symbol symbol = (Symbol){.name = name, .linkName = linkName, .pos = pos, .next = NULL};
-    symbol.bits = makeSymbolBits(AccessDefault, TypeDefault, StorageDefault);
+    Symbol symbol;
+    fillSymbol(&symbol, name, linkName, pos);
     return symbol;
 }
 
 Symbol makeSymbolWithBits(char *name, char *linkName, Position pos, Access access, Type type, Storage storage) {
-    Symbol symbol = (Symbol){.name = name, .linkName = linkName, .pos = pos, .next = NULL};
-    symbol.bits = makeSymbolBits(access, type, storage);
+    Symbol symbol;
+    fillSymbol(&symbol, name, linkName, pos);
+    symbol.bits.access = access;
+    symbol.bits.type = type;
+    symbol.bits.storage = storage;
     return symbol;
 }
 

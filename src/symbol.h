@@ -12,22 +12,22 @@
 /*              symbol definition item in symbol table                */
 
 typedef struct symbolBits {
-    bool       isExplicitlyImported : 1; /* whether not imported by * import */
-    bool       javaSourceIsLoaded : 1;   /* is jsl source file loaded ? */
-    bool       javaClassIsLoaded : 1;     /* is class file loaded ? */
+    bool     isExplicitlyImported : 1; /* whether not imported by * import */
+    bool     javaSourceIsLoaded : 1;   /* is jsl source file loaded ? */
+    bool     javaClassIsLoaded : 1;    /* is class file loaded ? */
 
-    Access       access : 12;              /* java access bits */
-    enum type    symbolType : SYMTYPES_LN;
+    Access   access : 12;              /* java access bits */
+    Type     type : SYMTYPES_LN;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
-    enum storage storage : STORAGES_LN;
-    unsigned     npointers : 4; /* tmp. stored #of dcl. ptrs */
+    Storage  storage : STORAGES_LN;
+    unsigned npointers : 4; /* tmp. stored #of dcl. ptrs */
 } SymbolBits;
 
 typedef struct symbol {
-    char           *name;
-    char           *linkName; /* fully qualified name for cx */
-    struct position pos;      /* definition position for most syms;
-                                 import position for imported classes! */
+    char    *name;
+    char    *linkName; /* fully qualified name for cx */
+    Position pos;      /* definition position for most syms;
+                          import position for imported classes! */
     struct symbolBits bits;
     union {
         struct typeModifier  *typeModifier; /* if bits.symbolType == TypeDefault */

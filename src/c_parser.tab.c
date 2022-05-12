@@ -2277,7 +2277,7 @@ case 1:
         Symbol *p;
         Symbol *dd;
         p = yyvsp[0].ast_id.d->symbol;
-        if (p != NULL && p->bits.symbolType == TypeDefault) {
+        if (p != NULL && p->bits.type == TypeDefault) {
             assert(p && p);
             dd = p;
             assert(dd->bits.storage != StorageTypedef);
@@ -3097,9 +3097,9 @@ break;
 case 168:
 #line 873 "c_parser.y"
 {
-        if (yyvsp[-1].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.symbolType==TypeError) {
+        if (yyvsp[-1].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.type==TypeError) {
             yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
-        } else if (yyvsp[0].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.symbolType==TypeError)  {
+        } else if (yyvsp[0].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.type==TypeError)  {
             yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
         } else {
             yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
@@ -3431,7 +3431,7 @@ case 221:
         Position pos = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", pos);
-        symbol->bits.symbolType = TypeElipsis;
+        symbol->bits.type = TypeElipsis;
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, symbol);
@@ -3468,7 +3468,7 @@ case 226:
         Position position = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", position);
-        symbol->bits.symbolType = TypeElipsis;
+        symbol->bits.type = TypeElipsis;
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, symbol);
@@ -4033,7 +4033,7 @@ case 342:
         s_cp.function = yyvsp[0].ast_symbol.d;
         generateInternalLabelReference(-1, UsageDefined);
         for (p=yyvsp[0].ast_symbol.d->u.typeModifier->u.f.args, i=1; p!=NULL; p=p->next,i++) {
-            if (p->bits.symbolType == TypeElipsis)
+            if (p->bits.type == TypeElipsis)
                 continue;
             if (p->u.typeModifier == NULL)
                 p->u.typeModifier = &defaultIntModifier;

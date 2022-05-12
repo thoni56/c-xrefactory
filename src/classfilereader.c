@@ -971,7 +971,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             // if constructor, put there type name as constructor name
             // instead of <init>
             log_trace("constructor '%s' of '%s'", name, memb->name);
-            assert(memb && memb->bits.symbolType==TypeStruct && memb->u.structSpec);
+            assert(memb && memb->bits.type==TypeStruct && memb->u.structSpec);
             name = memb->name;
             storage = StorageConstructor;
             if (getFileItem(memb->u.structSpec->classFileIndex)->directEnclosingInstance != noFileIndex) {
@@ -1277,7 +1277,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
                 fill_nestedSpec(& symbol->u.structSpec->nest[rinners], inners, membFlag, modifs);
-                assert(inners && inners->bits.symbolType==TypeStruct && inners->u.structSpec);
+                assert(inners && inners->bits.type==TypeStruct && inners->u.structSpec);
                 int classFileIndex = inners->u.structSpec->classFileIndex;
                 FileItem *classFileItem = getFileItem(classFileIndex);
                 if (membFlag && ! (modifs & AccessStatic)) {

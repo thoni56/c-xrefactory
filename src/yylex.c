@@ -389,7 +389,7 @@ endOfFile:
 
 static void fillIncludeSymbolItem(Symbol *symbol, Position *pos){
     fillSymbol(symbol, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
-    symbol->bits.symbolType = TypeCppInclude;
+    symbol->bits.type = TypeCppInclude;
 }
 
 
@@ -527,7 +527,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
 
     fillSymbol(&ss, tmpBuff, tmpBuff, noPosition);
-    ss.bits.symbolType = TypeMacro;
+    ss.bits.type = TypeMacro;
     ss.bits.storage = StorageNone;
 
     if (symbolTableIsMember(symbolTable, &ss, NULL, &memb))
@@ -721,7 +721,7 @@ void processDefineDirective(bool hasArguments) {
 
     PPM_ALLOC(symbol, Symbol);
     fillSymbol(symbol, NULL, NULL, macroPosition);
-    symbol->bits.symbolType = TypeMacro;
+    symbol->bits.type = TypeMacro;
     symbol->bits.storage = StorageNone;
 
     /* TODO: this is the only call to setGlobalFileDepNames() that doesn't do it in XX memory, why?
@@ -923,7 +923,7 @@ static void processUndefineDirective(void) {
         log_debug(": undef macro %s", cc);
 
         fillSymbol(&symbol, cc, cc, position);
-        symbol.bits.symbolType = TypeMacro;
+        symbol.bits.type = TypeMacro;
         symbol.bits.storage = StorageNone;
 
         assert(options.taskRegime);
@@ -935,7 +935,7 @@ static void processUndefineDirective(void) {
 
             PPM_ALLOC(pp, Symbol);
             fillSymbol(pp, member->name, member->linkName, position);
-            pp->bits.symbolType = TypeMacro;
+            pp->bits.type = TypeMacro;
             pp->bits.storage = StorageNone;
 
             addMacroToTabs(pp, member->name);
@@ -1061,7 +1061,7 @@ static void processIfdefDirective(bool isIfdef) {
 
     Symbol symbol;
     fillSymbol(&symbol, cp, cp, noPosition);
-    symbol.bits.symbolType = TypeMacro;
+    symbol.bits.type = TypeMacro;
     symbol.bits.storage = StorageNone;
 
     Symbol *member;
@@ -1132,7 +1132,7 @@ int cexp_yylex(void) {
             return 0;
 
         fillSymbol(&symbol, cc, cc, noPosition);
-        symbol.bits.symbolType = TypeMacro;
+        symbol.bits.type = TypeMacro;
         symbol.bits.storage = StorageNone;
 
         log_debug("(%s)", symbol.name);
@@ -1197,7 +1197,7 @@ static void processPragmaDirective(void) {
 
         PPM_ALLOC(pp, Symbol);
         fillSymbol(pp, mname, mname, position);
-        pp->bits.symbolType = TypeMacro;
+        pp->bits.type = TypeMacro;
         pp->bits.storage = StorageNone;
 
         symbolTableAdd(symbolTable, pp);
@@ -1394,7 +1394,7 @@ static void expandMacroArgument(LexInput *argb) {
         failedMacroExpansion = false;
         if (lexem == IDENTIFIER) {
             fillSymbol(&sd, currentLexem, currentLexem, noPosition);
-            sd.bits.symbolType = TypeMacro;
+            sd.bits.type = TypeMacro;
             sd.bits.storage = StorageNone;
             if (symbolTableIsMember(symbolTable, &sd, NULL, &memb)) {
                 /* it is a macro, provide macro expansion */
@@ -1961,7 +1961,7 @@ static char charText[2]={0,0};
 static char constant[50];
 
 static bool isIdAKeyword(Symbol *symbol, Position position) {
-    if (symbol->bits.symbolType == TypeKeyword) {
+    if (symbol->bits.type == TypeKeyword) {
         setYylvalsForIdentifier(symbol->name, symbol, position);
         return true;
     }
@@ -1981,10 +1981,10 @@ static int lookupCIdentifier(char *id, Position position) {
                 symbol = s;
             if (isIdAKeyword(s, position))
                 return s->u.keyword;
-            if (s->bits.symbolType == TypeDefinedOp && s_ifEvaluation) {
+            if (s->bits.type == TypeDefinedOp && s_ifEvaluation) {
                 return CPP_DEFINED_OP;
             }
-            if (s->bits.symbolType == TypeDefault) {
+            if (s->bits.type == TypeDefault) {
                 setYylvalsForIdentifier(s->name, s, position);
                 if (s->bits.storage == StorageTypedef) {
                     return TYPE_NAME;
@@ -2014,7 +2014,7 @@ static int lookupJavaIdentifier(char *id, Position position) {
                 symbol = s;
             if (isIdAKeyword(s, position))
                 return s->u.keyword;
-            if (s->bits.symbolType == TypeDefault) {
+            if (s->bits.type == TypeDefault) {
                 setYylvalsForIdentifier(s->name, s, position);
                 return IDENTIFIER;
             }
@@ -2138,7 +2138,7 @@ int yylex(void) {
         }
         log_trace("id '%s' position %d, %d, %d", yytext, idpos.file, idpos.line, idpos.col);
         fillSymbol(&symbol, yytext, yytext, noPosition);
-        symbol.bits.symbolType = TypeMacro;
+        symbol.bits.type = TypeMacro;
         symbol.bits.storage = StorageNone;
 
         if ((!LANGUAGE(LANG_JAVA))

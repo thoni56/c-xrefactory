@@ -78,7 +78,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
         return NULL;
 
     s = newSymbolAsLabel(name, name, noPosition, labn);
-    s->bits.symbolType = TypeLabel;
+    s->bits.type = TypeLabel;
     s->bits.storage = StorageAuto;
 
     addSymbolNoTrail(symbolTable, s);
@@ -93,7 +93,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
         return;
 
     fillSymbolWithLabel(&symbol, name, name, noPosition, 0);
-    symbol.bits.symbolType = TypeLabel;
+    symbol.bits.type = TypeLabel;
     symbol.bits.storage = StorageAuto;
 
     if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
@@ -110,7 +110,7 @@ void genContinueBreakReference(char *name) {
         return;
 
     fillSymbolWithLabel(&symbol, name, name, noPosition, 0);
-    symbol.bits.symbolType = TypeLabel;
+    symbol.bits.type = TypeLabel;
     symbol.bits.storage = StorageAuto;
 
     if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
@@ -125,7 +125,7 @@ void generateSwitchCaseFork(bool isLast) {
         return;
 
     fillSymbolWithLabel(&symbol, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, noPosition, 0);
-    symbol.bits.symbolType = TypeLabel;
+    symbol.bits.type = TypeLabel;
     symbol.bits.storage = StorageAuto;
 
     if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {

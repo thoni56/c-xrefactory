@@ -3874,7 +3874,7 @@ case 121:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                     assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
                 } else {
@@ -3882,7 +3882,7 @@ case 121:
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                 assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
@@ -3906,7 +3906,7 @@ case 124:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                     assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
                 } else {
@@ -3914,7 +3914,7 @@ case 124:
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                 assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
@@ -3926,7 +3926,7 @@ case 125:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                     assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
                 } else {
@@ -3934,7 +3934,7 @@ case 125:
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                 assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
@@ -4066,8 +4066,8 @@ case 141:
                     for(p=yyvsp[-1].ast_symbol.d; p!=NULL; p=pp) {
                         pp = p->next;
                         p->next = NULL;
-                        if (p->bits.symbolType == TypeError) continue;
-                        assert(p->bits.symbolType == TypeDefault);
+                        if (p->bits.type == TypeError) continue;
+                        assert(p->bits.type == TypeDefault);
                         completeDeclarator(yyvsp[-2].ast_symbol.d, p);
                         vClass = s_javaStat->classFileIndex;
                         p->bits.access = yyvsp[-3].ast_unsigned.d;
@@ -4113,8 +4113,8 @@ case 141:
                 for(p=yyvsp[-1].ast_symbol.d; p!=NULL; p=pp) {
                     pp = p->next;
                     p->next = NULL;
-                    if (p->bits.symbolType == TypeError) continue;
-                    assert(p->bits.symbolType == TypeDefault);
+                    if (p->bits.type == TypeError) continue;
+                    assert(p->bits.type == TypeDefault);
                     assert(clas->u.structSpec);
                     vClass = clas->u.structSpec->classFileIndex;
                     jslCompleteDeclarator(yyvsp[-2].ast_symbol.d, p);
@@ -4142,7 +4142,7 @@ case 142:
             yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyval.ast_symbol.d->bits.symbolType == TypeDefault || yyval.ast_symbol.d->bits.symbolType == TypeError);
+                    assert(yyval.ast_symbol.d->bits.type == TypeDefault || yyval.ast_symbol.d->bits.type == TypeError);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
                 }
@@ -4161,7 +4161,7 @@ case 143:
                         yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
                         yyval.ast_symbol.d->next = yyvsp[-2].ast_symbol.d;
                     }
-                    assert(yyval.ast_symbol.d->bits.symbolType == TypeDefault || yyval.ast_symbol.d->bits.symbolType == TypeError);
+                    assert(yyval.ast_symbol.d->bits.type == TypeDefault || yyval.ast_symbol.d->bits.type == TypeError);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_symbol);
                 }
@@ -4174,7 +4174,7 @@ case 143:
                     yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
                     yyval.ast_symbol.d->next = yyvsp[-2].ast_symbol.d;
                 }
-                assert(yyval.ast_symbol.d->bits.symbolType==TypeDefault || yyval.ast_symbol.d->bits.symbolType==TypeError);
+                assert(yyval.ast_symbol.d->bits.type==TypeDefault || yyval.ast_symbol.d->bits.type==TypeError);
             }
         }
 break;
@@ -4477,7 +4477,7 @@ case 170:
 {
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
             if (inSecondJslPass()) {
-                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                 assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC(yyval.ast_symbolList.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with compound literal */
@@ -4490,7 +4490,7 @@ case 171:
 {
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[-2].ast_symbolList, yyvsp[0].ast_symbol);
             if (inSecondJslPass()) {
-                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                 assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC(yyval.ast_symbolList.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with compound literal */
@@ -4827,7 +4827,7 @@ case 204:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                     assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
                 } else {
@@ -4835,7 +4835,7 @@ case 204:
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                 assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
@@ -4847,7 +4847,7 @@ case 205:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                     assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
                 } else {
@@ -4855,7 +4855,7 @@ case 205:
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symbolType == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.type == TypeDefault && yyvsp[0].ast_symbol.d->u.typeModifier);
                 assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].ast_symbol.d->u.typeModifier->u.t);
@@ -5015,7 +5015,7 @@ case 236:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[-2].ast_symbol.d->bits.symbolType != TypeError) {
+                    if (yyvsp[-2].ast_symbol.d->bits.type != TypeError) {
                         addNewDeclaration(s_javaStat->locals, yyvsp[-2].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto);
                     }
                     yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
@@ -5677,11 +5677,11 @@ case 340:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        if (yyvsp[-3].ast_symbol.d->bits.symbolType != TypeError) {
+                        if (yyvsp[-3].ast_symbol.d->bits.type != TypeError) {
                             addNewSymbolDefinition(s_javaStat->locals, yyvsp[-3].ast_symbol.d, StorageAuto,
                                             UsageDefined);
                             if (options.serverOperation == OLO_EXTRACT) {
-                                assert(yyvsp[-3].ast_symbol.d->bits.symbolType==TypeDefault);
+                                assert(yyvsp[-3].ast_symbol.d->bits.type==TypeDefault);
                                 addCxReference(yyvsp[-3].ast_symbol.d->u.typeModifier->u.t, &yyvsp[-5].ast_id.d->position, UsageCatched, noFileIndex, noFileIndex);
                             }
                         }
@@ -5707,7 +5707,7 @@ case 342:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (options.serverOperation == OLO_EXTRACT) {
-                        assert(yyvsp[-2].ast_symbol.d->bits.symbolType==TypeDefault);
+                        assert(yyvsp[-2].ast_symbol.d->bits.type==TypeDefault);
                         addCxReference(yyvsp[-2].ast_symbol.d->u.typeModifier->u.t, &yyvsp[-4].ast_id.d->position, UsageCatched, noFileIndex, noFileIndex);
                     }
                 } else {
@@ -6332,7 +6332,7 @@ case 393:
                     yyval.ast_expressionType.d.reference = NULL;
                     yyval.ast_expressionType.d.position = &yyvsp[-2].ast_id.d->position;
                     ss = javaCurrentSuperClass();
-                    if (ss != &s_errorSymbol && ss->bits.symbolType!=TypeError) {
+                    if (ss != &s_errorSymbol && ss->bits.type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         yyval.ast_expressionType.d.reference = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec,
                                                                  CLASS_TO_EXPR, yyvsp[-2].ast_id.d);
@@ -6359,7 +6359,7 @@ case 394:
                     Symbol *ss,*rec=NULL;
 
                     ss = javaQualifiedThis(yyvsp[-4].ast_idList.d, yyvsp[-2].ast_id.d);
-                    if (ss != &s_errorSymbol && ss->bits.symbolType!=TypeError) {
+                    if (ss != &s_errorSymbol && ss->bits.type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         ss = javaGetSuperClass(ss);
                         yyval.ast_expressionType.d.reference = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec,
