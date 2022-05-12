@@ -5,6 +5,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
+* DOING Convert fillBits() with explicit setting of "properties" like access, storage etc.
 * DOING Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
 ** TODO Make "get project" lookup the directory tree for closest .c-xrefrc that covers the file
@@ -22,14 +23,11 @@ There are a *lot* of things to do to make c-xref into modern C.
   https://en.cppreference.com/w/c/types/integer
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
-** TODO Use compiler identification to set extra 
-* TODO Abstract refTab
-** TODO Implement table functions as per other tables (getReferenceItem
-* TODO Convert fillBits() with explicit setting of "properties" like access, storage etc.
+** TODO Use compiler identification to set extra needed definitions for clang
 * TODO Set xref2 to true as default and then convert all test cases that fail, remove the option
   Hmmm. We only want that when running as a server, right?
 * TODO ROADMAP
-** DOING LSP-like protocol (possibly also fulfill LSP functions)
+** TODO LSP-like protocol (possibly also fulfill LSP functions)
 ** TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
 ** TODO Cleaner interface Refactorer -> Server/Tag-generator
 *** TODO Separate refactory options into separate struct
@@ -112,7 +110,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   header file and try to compile it in isolation? It should include
   whatever other things it needs...)
 * TODO Ensure every file only includes what it needs so that dependencies
-  are a small as possible. This is why IWYU exists!! It means "Include
+  are as small as possible. This is why IWYU exists!! It means "Include
   What You Use" and is a Clang related project at
   https://github.com/include-what-you-use/include-what-you-use)
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
@@ -146,7 +144,9 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Modules. Better use of modules (Clean Code/Architecture/Hexagonal)
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
-** TODO Extract PPC-functions from misc.c into a ppc-module
+** DONE Extract PPC-functions from misc.c into a ppc-module
+* DONE Abstract refTab
+** DONE Implement table functions as per other tables (getReferenceItem
 * DONE Abstract editorBufferTable as per fileItemTable
 * DONE Abstract away struct stat - figure out which parts are actually used
   ... so we don't need to store the whole st struct...
