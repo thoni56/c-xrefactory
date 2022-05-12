@@ -923,7 +923,8 @@ static void processUndefineDirective(void) {
         log_debug(": undef macro %s", cc);
 
         fillSymbol(&symbol, cc, cc, position);
-        fillSymbolBits(&symbol.bits, AccessDefault, TypeMacro, StorageNone);
+        symbol.bits.symbolType = TypeMacro;
+        symbol.bits.storage = StorageNone;
 
         assert(options.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
@@ -934,7 +935,8 @@ static void processUndefineDirective(void) {
 
             PPM_ALLOC(pp, Symbol);
             fillSymbol(pp, member->name, member->linkName, position);
-            fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
+            pp->bits.symbolType = TypeMacro;
+            pp->bits.storage = StorageNone;
 
             addMacroToTabs(pp, member->name);
         }
@@ -1059,7 +1061,8 @@ static void processIfdefDirective(bool isIfdef) {
 
     Symbol symbol;
     fillSymbol(&symbol, cp, cp, noPosition);
-    fillSymbolBits(&symbol.bits, AccessDefault, TypeMacro, StorageNone);
+    symbol.bits.symbolType = TypeMacro;
+    symbol.bits.storage = StorageNone;
 
     Symbol *member;
     bool isMember = symbolTableIsMember(symbolTable, &symbol, NULL, &member);
@@ -1097,7 +1100,7 @@ int cexp_yylex(void) {
     int lineNumber, res, mm;
     Lexem lexem;
     char *cc;
-    Symbol dd, *memb;
+    Symbol symbol, *foundMember;
     Position position;
     bool haveParenthesis;
     int value, length;
@@ -1128,17 +1131,18 @@ int cexp_yylex(void) {
         if (!isIdentifierLexem(lexem))
             return 0;
 
-        fillSymbol(&dd, cc, cc, noPosition);
-        fillSymbolBits(&dd.bits, AccessDefault, TypeMacro, StorageNone);
+        fillSymbol(&symbol, cc, cc, noPosition);
+        symbol.bits.symbolType = TypeMacro;
+        symbol.bits.storage = StorageNone;
 
-        log_debug("(%s)", dd.name);
+        log_debug("(%s)", symbol.name);
 
-        mm = symbolTableIsMember(symbolTable, &dd, NULL, &memb);
-        if (mm && memb->u.mbody == NULL)
+        mm = symbolTableIsMember(symbolTable, &symbol, NULL, &foundMember);
+        if (mm && foundMember->u.mbody == NULL)
             mm = 0;   // undefined macro
         assert(options.taskRegime);
         if (mm)
-            addCxReference(&dd, &position, UsageUsed, noFileIndex, noFileIndex);
+            addCxReference(&symbol, &position, UsageUsed, noFileIndex, noFileIndex);
 
         /* following call sets uniyylval */
         res = cexpTranslateToken(CONSTANT, mm);
@@ -1193,7 +1197,8 @@ static void processPragmaDirective(void) {
 
         PPM_ALLOC(pp, Symbol);
         fillSymbol(pp, mname, mname, position);
-        fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
+        pp->bits.symbolType = TypeMacro;
+        pp->bits.storage = StorageNone;
 
         symbolTableAdd(symbolTable, pp);
     }
@@ -1355,7 +1360,8 @@ static void prependMacroInput(LexInput *argb) {
 static void expandMacroArgument(LexInput *argb) {
     Symbol sd, *memb;
     char *previousLexem, *currentLexem, *tbcc;
-    int length, lineNumber, failedMacroExpansion;
+    int length, lineNumber;
+    bool failedMacroExpansion;
     Lexem lexem;
     Position position;
     int value;
@@ -1385,14 +1391,17 @@ static void expandMacroArgument(LexInput *argb) {
         // a hack, it is copied, but bcc will be increased only if not
         // an expanding macro, this is because 'macroCallExpand' can
         // read new lexbuffer and destroy cInput, so copy it now.
-        failedMacroExpansion = 0;
+        failedMacroExpansion = false;
         if (lexem == IDENTIFIER) {
             fillSymbol(&sd, currentLexem, currentLexem, noPosition);
-            fillSymbolBits(&sd.bits, AccessDefault, TypeMacro, StorageNone);
+            sd.bits.symbolType = TypeMacro;
+            sd.bits.storage = StorageNone;
             if (symbolTableIsMember(symbolTable, &sd, NULL, &memb)) {
                 /* it is a macro, provide macro expansion */
-                if (expandMacroCall(memb,&position)) goto nextLexem;
-                else failedMacroExpansion = 1;
+                if (expandMacroCall(memb,&position))
+                    goto nextLexem;
+                else
+                    failedMacroExpansion = true;
             }
         }
         if (failedMacroExpansion) {
@@ -2129,7 +2138,8 @@ int yylex(void) {
         }
         log_trace("id '%s' position %d, %d, %d", yytext, idpos.file, idpos.line, idpos.col);
         fillSymbol(&symbol, yytext, yytext, noPosition);
-        fillSymbolBits(&symbol.bits, AccessDefault, TypeMacro, StorageNone);
+        symbol.bits.symbolType = TypeMacro;
+        symbol.bits.storage = StorageNone;
 
         if ((!LANGUAGE(LANG_JAVA))
             && lexem!=IDENT_NO_CPP_EXPAND
