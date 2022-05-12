@@ -510,8 +510,8 @@ void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
         return;
 
     log_trace("testing %s", symbol->name);
-    assert(symbol->bits.javaFileIsLoaded);
-    if (!symbol->bits.javaFileIsLoaded)
+    assert(symbol->bits.javaClassIsLoaded);
+    if (!symbol->bits.javaClassIsLoaded)
         return;
     int cf1 = symbol->u.structSpec->classFileIndex;
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);

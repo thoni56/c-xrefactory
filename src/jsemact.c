@@ -826,12 +826,12 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
 
     log_trace("!requesting class (%d)%s", memb, memb->linkName);
     sourceName = className = "";
-    if (!memb->bits.javaFileIsLoaded) {
-        memb->bits.javaFileIsLoaded = true;
+    if (!memb->bits.javaClassIsLoaded) {
+        memb->bits.javaClassIsLoaded = true;
         // following is a hack due to multiple items in symbol tab !!!
         cl = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
         if (cl!=NULL && cl!=memb)
-            cl->bits.javaFileIsLoaded = true;
+            cl->bits.javaClassIsLoaded = true;
         cInd = javaCreateClassFileItem(memb);
         addCfClassTreeHierarchyRef(cInd, UsageClassFileDefinition);
         findResult = javaFindFile(memb, &sourceName, &className);
@@ -2327,7 +2327,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
     if (ss == &s_errorSymbol || ss->bits.symbolType==TypeError)
         return NULL;
     assert(ss && ss->bits.symbolType == TypeStruct);
-    assert(ss->bits.javaFileIsLoaded);
+    assert(ss->bits.javaClassIsLoaded);
     erfs = StackMemoryAlloc(S_extRecFindStr);
     erfs->params = NULL;
 /*	I do not know, once will come the day I will know
@@ -2367,7 +2367,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     javaLoadClassSymbolsFromFile(clas);
     erfs = StackMemoryAlloc(S_extRecFindStr);
     erfs->params = NULL;
-    assert(clas->bits.javaFileIsLoaded);
+    assert(clas->bits.javaClassIsLoaded);
     rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
                         CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
     if (rr != RETURN_OK)

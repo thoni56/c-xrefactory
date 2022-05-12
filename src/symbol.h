@@ -13,14 +13,14 @@
 
 typedef struct symbolBits {
     bool       isExplicitlyImported : 1; /* whether not imported by * import */
-    Access access : 12;              /* java access bits */
     bool       javaSourceIsLoaded : 1;   /* is jsl source file loaded ? */
-    bool       javaFileIsLoaded : 1;     /* is class file loaded ? */
+    bool       javaClassIsLoaded : 1;     /* is class file loaded ? */
 
-    enum type symbolType : SYMTYPES_LN;
+    Access       access : 12;              /* java access bits */
+    enum type    symbolType : SYMTYPES_LN;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
     enum storage storage : STORAGES_LN;
-    unsigned     npointers : 4; /*tmp. stored #of dcl. ptrs*/
+    unsigned     npointers : 4; /* tmp. stored #of dcl. ptrs */
 } SymbolBits;
 
 typedef struct symbol {
