@@ -285,7 +285,7 @@ endif
 
 the-actual-coverage-report:
 	@mkdir -p ../coverage
-	$(LCOV) -d . -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info
+	$(LCOV) -d . -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
 	@echo "LCOV-ing done..."
 ifeq (, $(LCOV_EXCLUDES))
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
@@ -347,7 +347,7 @@ unittests: $(UNITTESTS)
 	make gcov
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
-		$(LCOV) -q -t unittests -d . -c -o unittests.info ; \
+		$(LCOV) -q -t unittests -d . -c -o unittests.info 2>&1 | grep -v "did not" 2>&1 | grep -v "did not produce any data" ; \
 		$(LCOV) -q --remove unittests.info $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.info ; \
 	fi
 endif
