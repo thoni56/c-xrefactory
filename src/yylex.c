@@ -1906,22 +1906,22 @@ int cachedInputPass(int cpoint, char **cfrom) {
     unsigned lexemLength;
     char *previousLexem, *cto;
     int value, length; UNUSED length; UNUSED value;
-    char *ccc;
+    char *cp;
     int res;
 
     assert(cpoint > 0);
     cto = cache.cp[cpoint].lbcc;
-    ccc = *cfrom;
+    cp = *cfrom;
     res = 1;
 
-    while (ccc < cto) {
+    while (cp < cto) {
         lexem = getLexemSavePrevious(&previousLexem);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
         lexemLength = currentInput.currentLexemP-previousLexem;
         assert(lexemLength >= 0);
-        if (memcmp(previousLexem, ccc, lexemLength)) {
+        if (memcmp(previousLexem, cp, lexemLength)) {
             currentInput.currentLexemP = previousLexem;			/* unget last lexem */
             res = 0;
             break;
@@ -1933,11 +1933,11 @@ int cachedInputPass(int cpoint, char **cfrom) {
                 break;
             }
         }
-        ccc += lexemLength;
+        cp += lexemLength;
     }
 endOfFile:
     setCFileConsistency();
-    *cfrom = ccc;
+    *cfrom = cp;
     return res;
 endOfMacroArgument:
     assert(0);
