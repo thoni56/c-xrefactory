@@ -2041,7 +2041,8 @@ static void mainTotalTaskEntryInitialisations() {
     s_fileAbortionEnabled = 0;
     cxOut = stdout;
     communicationChannel = stdout;
-    if (options.taskRegime == RegimeEditServer) errOut = stdout;
+    if (options.taskRegime == RegimeEditServer)
+        errOut = stdout;
 
     assert(MAX_TYPE < power(2,SYMTYPES_LN));
     assert(MAX_STORAGE_NAMES < power(2,STORAGES_LN));
@@ -2899,7 +2900,7 @@ static void mainEditServer(int argc, char **argv) {
         // message
         mainOpenOutputFile(options.outputFileName);
         //&dumpOptions(nargc, nargv);
-        log_trace("getting request");
+        log_trace("Server: Getting request");
         mainCallEditServerInit(nargc, nargv);
         if (communicationChannel==stdout && options.outputFileName!=NULL) {
             mainOpenOutputFile(options.outputFileName);
@@ -2916,8 +2917,9 @@ static void mainEditServer(int argc, char **argv) {
         closeMainOutputFile();
         if (options.serverOperation == OLO_EXTRACT)
             cache.cpi = 2; // !!!! no cache
-        if (options.xref2) ppcSynchronize();
-        /*fprintf(dumpOut, "request answered\n\n");fflush(dumpOut);*/
+        if (options.xref2)
+            ppcSynchronize();
+        log_trace("Server: Request answered");
     }
     LEAVE();
 }
