@@ -68,8 +68,6 @@ extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
 extern void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName,
                                  Position pos, struct symStructSpec *structSpec);
 
-extern void fillSymbolBits(SymbolBits *bits, Access access, Type type, Storage storage);
-
 extern Symbol makeSymbol(char *name, char *linkName, Position pos);
 extern Symbol makeSymbolWithBits(char *name, char *linkName, Position pos,
                                  Access access, Type type, Storage storage);

@@ -5,13 +5,6 @@
 
 /* Symbol bits */
 
-void fillSymbolBits(SymbolBits *bits, Access access, Type symType, Storage storage) {
-    memset(bits, 0, sizeof(SymbolBits));
-    bits->access = access;
-    bits->symbolType = symType;
-    bits->storage = storage;
-}
-
 SymbolBits makeSymbolBits(Access access, Type symbolType, Storage storage) {
     return (SymbolBits){.access = access, .symbolType = symbolType, .storage = storage};
 }
