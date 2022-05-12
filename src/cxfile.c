@@ -127,6 +127,8 @@ static unsigned decodeFileNumbers[MAX_FILES];
 
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
+static FILE *cxOut = NULL;
+
 
 typedef struct scanFileFunctionStep {
     int		recordCode;
@@ -350,15 +352,18 @@ static void get_version_string(char *string) {
 static void writeCompactRecord(char marker, int info, char *blankPrefix) {
     assert(marker >= 0 && marker < MAX_CHARS);
     assert(info >= 0);
-    if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
-    if (info != 0) fPutDecimal(cxOut, info);
+    if (*blankPrefix!=0)
+        fputs(blankPrefix, cxOut);
+    if (info != 0)
+        fPutDecimal(cxOut, info);
     fputc(marker, cxOut);
     lastOutgoingInfo.values[marker] = info;
 }
 
 static void writeOptionalCompactRecord(char marker, int info, char *blankPrefix) {
     assert(marker >= 0 && marker < MAX_CHARS);
-    if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
+    if (*blankPrefix!=0)
+        fputs(blankPrefix, cxOut);
 
     /* If value for marker is same as last, don't write anything */
     if (lastOutgoingInfo.values[marker] != info) {
@@ -374,7 +379,8 @@ static void writeOptionalCompactRecord(char marker, int info, char *blankPrefix)
 static void writeStringRecord(int marker, char *s, char *blankPrefix) {
     int rsize;
     rsize = strlen(s)+1;
-    if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
+    if (*blankPrefix!=0)
+        fputs(blankPrefix, cxOut);
     fPutDecimal(cxOut, rsize);
     fputc(marker, cxOut);
     fputs(s, cxOut);
@@ -621,7 +627,7 @@ static void closeReferenceFile(char *fname) {
         removeFile(tmpFileName);
     }
     closeFile(cxOut);
-    cxOut = stdout;
+    cxOut = NULL;
 }
 
 /* suffix contains '/' at the beginning */

@@ -165,7 +165,6 @@ char *s_javaThisPackageName = "";
 /* *********** once, the file starts to be parsed ************** */
 /* ************************************************************* */
 
-FILE *cxOut;
 FILE *inputFile;
 FILE *communicationChannel=NULL;
 FILE *dumpOut=NULL;

@@ -2039,7 +2039,6 @@ static void mainTotalTaskEntryInitialisations() {
     dumpOut = stdout;
 
     s_fileAbortionEnabled = 0;
-    cxOut = stdout;
     communicationChannel = stdout;
     if (options.taskRegime == RegimeEditServer)
         errOut = stdout;

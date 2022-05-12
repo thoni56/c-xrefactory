@@ -71,7 +71,6 @@ extern TypeModifier s_javaStringModifier;
 extern TypeModifier s_javaClassModifier;
 extern TypeModifier s_javaObjectModifier;
 
-extern FILE *cxOut;
 extern FILE *communicationChannel;
 
 extern int s_javaPreScanOnly;
