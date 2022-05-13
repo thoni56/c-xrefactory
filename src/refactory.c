@@ -1798,7 +1798,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE-1);
     occs = refactoryPushGetAndPreCheckReferences(buf, point, nameOnPoint, message,PPCV_BROWSER_TYPE_INFO);
     csym =  sessionData.browserStack.top->hkSelectedSym;
-    symtype = csym->s.bits.symType;
+    symtype = csym->s.bits.type;
     symLinkName = csym->s.name;
     undoStartPoint = editorUndo;
     if (!LANGUAGE(LANG_JAVA)) {
@@ -2657,7 +2657,7 @@ static void refactoryStaticMoveCheckCorrespondance(
         // nor local variables
         if (mm1->s.bits.storage == StorageAuto) goto cont;
         // nor labels
-        if (mm1->s.bits.symType == TypeLabel) goto cont;
+        if (mm1->s.bits.type == TypeLabel) goto cont;
         // do not check also any symbols from classes defined in inner scope
         if (isStrictlyEnclosingClass(mm1->s.vFunClass, theMethod->vFunClass)) goto cont;
         // (maybe I should not test any local symbols ???)
@@ -3935,7 +3935,7 @@ static SymbolsMenu *refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown
 
     // find corresponding reference
     for (mm2=menu2; mm2!=NULL; mm2=mm2->next) {
-        if (mm1->s.bits.symType!=mm2->s.bits.symType && mm2->s.bits.symType!=TypeInducedError) continue;
+        if (mm1->s.bits.type!=mm2->s.bits.type && mm2->s.bits.type!=TypeInducedError) continue;
         for (rr2=mm2->markers; rr2!=NULL; rr2=rr2->next) {
             if (MARKER_EQ(rr1->marker, rr2->marker)) goto breakrr2;
         }
@@ -4005,7 +4005,7 @@ static EditorMarkerList *refactoryPullUpPushDownDifferences(
         // nor local variables
         if (mm1->s.bits.storage == StorageAuto) goto cont;
         // nor labels
-        if (mm1->s.bits.symType == TypeLabel) goto cont;
+        if (mm1->s.bits.type == TypeLabel) goto cont;
         // do not check also any symbols from classes defined in inner scope
         if (isStrictlyEnclosingClass(mm1->s.vFunClass, theMethod->vFunClass)) goto cont;
         // (maybe I should not test any local symbols ???)
@@ -4346,7 +4346,7 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
     csym =  sessionData.browserStack.top->hkSelectedSym;
     scope = csym->s.bits.scope;
     cat = csym->s.bits.category;
-    symtype = csym->s.bits.symType;
+    symtype = csym->s.bits.type;
     storage = csym->s.bits.storage;
     accflags = csym->s.bits.accessFlags;
     if (occs == NULL) {

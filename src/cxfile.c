@@ -308,7 +308,7 @@ void searchSymbolCheckReference(ReferencesItem  *referenceItem, Reference *refer
     char *s, *sname;
     int slen;
 
-    if (referenceItem->bits.symType == TypeCppInclude)
+    if (referenceItem->bits.type == TypeCppInclude)
         return;   // no %%i symbols
     if (symbolNameShouldBeHiddenFromReports(referenceItem->name))
         return;
@@ -330,7 +330,7 @@ void searchSymbolCheckReference(ReferencesItem  *referenceItem, Reference *refer
     slen = strlen(sname);
     if (searchStringMatch(sname, slen)) {
         static int count = 0;
-        olCompletionListPrepend(sname, NULL, NULL, 0, NULL, referenceItem, reference, referenceItem->bits.symType,
+        olCompletionListPrepend(sname, NULL, NULL, 0, NULL, referenceItem, reference, referenceItem->bits.type,
                                 referenceItem->vFunClass, sessionData.retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time
@@ -395,7 +395,7 @@ static void writeSymbolItem(int symbolIndex) {
 
     /* Then the reference info */
     d = lastOutgoingInfo.symbolTab[symbolIndex];
-    writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, d->bits.symType, "\n"); /* Why newline in the middle of all this? */
+    writeOptionalCompactRecord(CXFI_SYMBOL_TYPE, d->bits.type, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_SUBCLASS, d->vApplClass, "");
     writeOptionalCompactRecord(CXFI_SUPERCLASS, d->vFunClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->bits.accessFlags, "");
@@ -534,7 +534,7 @@ static void genRefItem0(ReferencesItem *referenceItem, bool force) {
     fillReferencesItem(&lastOutgoingInfo.cachedReferencesItem[symbolIndex],
                        lastOutgoingInfo.cachedSymbolName[symbolIndex],
                        referenceItem->fileHash, // useless put 0
-                       referenceItem->vApplClass, referenceItem->vFunClass, referenceItem->bits.symType,
+                       referenceItem->vApplClass, referenceItem->vFunClass, referenceItem->bits.type,
                        referenceItem->bits.storage, referenceItem->bits.scope, referenceItem->bits.accessFlags,
                        referenceItem->bits.category);
     lastOutgoingInfo.symbolTab[symbolIndex]       = &lastOutgoingInfo.cachedReferencesItem[symbolIndex];
@@ -986,7 +986,7 @@ static bool symbolIsReportableAsUnused(ReferencesItem *referenceItem) {
 
     // you need to be strong here, in fact struct record can be used
     // without using struct explicitly
-    if (referenceItem->bits.symType == TypeStruct)
+    if (referenceItem->bits.type == TypeStruct)
         return false;
 
     // maybe I should collect also all toString() references?
@@ -994,7 +994,7 @@ static bool symbolIsReportableAsUnused(ReferencesItem *referenceItem) {
         return false;
 
     // in this first approach restrict this to variables and functions
-    if (referenceItem->bits.symType == TypeMacro)
+    if (referenceItem->bits.type == TypeMacro)
         return false;
     return true;
 }

@@ -200,8 +200,8 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
     if (options.xref2) {
         ppcIndent();
         fprintf(file,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, menu->outOnLine+SYMBOL_MENU_FIRST_LINE);
-        if (menu->s.bits.symType!=TypeDefault) {
-            fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->s.bits.symType]);
+        if (menu->s.bits.type!=TypeDefault) {
+            fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->s.bits.type]);
         }
         olcxPrintMenuItemPrefix(file, menu, 1);
 
@@ -212,8 +212,8 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
         fprintf(file,"\n");
         olcxPrintMenuItemPrefix(file, menu, 1);
         printSymbolLinkName(file, menu);
-        if (menu->s.bits.symType != TypeDefault) {
-            fprintf(file,"\t(%s)", typeNamesTable[menu->s.bits.symType]);
+        if (menu->s.bits.type != TypeDefault) {
+            fprintf(file,"\t(%s)", typeNamesTable[menu->s.bits.type]);
         }
         //&fprintf(file," ==%s %o (%s) at %x", menu->s.name, menu->ooBits, refCategoriesName[menu->s.bits.category], menu);
     }
