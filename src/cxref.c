@@ -55,11 +55,11 @@ void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fil
     referencesItem->vFunClass = vFunClass;
     referencesItem->references = NULL;
     referencesItem->next = NULL;
-    referencesItem->bits.type = symType;
-    referencesItem->bits.storage = storage;
-    referencesItem->bits.scope = scope;
-    referencesItem->bits.accessFlags = accessFlags;
-    referencesItem->bits.category = category;
+    referencesItem->type = symType;
+    referencesItem->storage = storage;
+    referencesItem->scope = scope;
+    referencesItem->access = accessFlags;
+    referencesItem->category = category;
 }
 
 void fillReference(Reference *reference, Usage usage, Position position, Reference *next) {
@@ -119,17 +119,17 @@ static bool olReferencesItemIsLess(ReferencesItem *s1, ReferencesItem *s2) {
         return true;
     else if (s1->vApplClass > s2->vApplClass)
         return false;
-    if (s1->bits.type < s2->bits.type)
+    if (s1->type < s2->type)
         return true;
-    else if (s1->bits.type > s2->bits.type)
+    else if (s1->type > s2->type)
         return false;
-    if (s1->bits.storage < s2->bits.storage)
+    if (s1->storage < s2->storage)
         return true;
-    else if (s1->bits.storage > s2->bits.storage)
+    else if (s1->storage > s2->storage)
         return false;
-    if (s1->bits.category < s2->bits.category)
+    if (s1->category < s2->category)
         return true;
-    else if (s1->bits.category > s2->bits.category)
+    else if (s1->category > s2->category)
         return false;
     return false;
 }
@@ -157,8 +157,8 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
     allocatedNameCopy = olcxStringCopy(symbol->name);
 
     fillReferencesItem(&refItem, allocatedNameCopy, cxFileHashNumber(allocatedNameCopy), vApplClass, vFunCl,
-                       symbol->bits.type, symbol->bits.storage, symbol->bits.scope, symbol->bits.accessFlags,
-                       symbol->bits.category);
+                       symbol->type, symbol->storage, symbol->scope, symbol->access,
+                       symbol->category);
 
     symbolsMenu = olcx_alloc(sizeof(SymbolsMenu));
     fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, 0, 0, defusage, *defpos, 0,
@@ -192,7 +192,7 @@ void renameCollationSymbols(SymbolsMenu *sss) {
     assert(sss);
     for (SymbolsMenu *ss=sss; ss!=NULL; ss=ss->next) {
         cs = strchr(ss->s.name, LINK_NAME_COLLATE_SYMBOL);
-        if (cs!=NULL && ss->s.bits.type==TypeCppCollate) {
+        if (cs!=NULL && ss->s.type==TypeCppCollate) {
             len = strlen(ss->s.name);
             assert(len>=2);
             nn = olcx_memory_allocc(len-1, sizeof(char));
@@ -732,7 +732,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         // at least reset some maybe new informations
         // sometimes classes were added from directory listing,
         // without knowing if it is an interface or not
-        memb->bits.accessFlags |= symbol->access;
+        memb->access |= symbol->access;
     }
     place = addToRefList(&memb->references, usage, *position);
     log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
@@ -1225,7 +1225,7 @@ char *getJavaDocUrl_st(ReferencesItem *rr) {
     char *tt;
     int len = MAX_REF_LEN;
     res[0] = 0;
-    if (rr->bits.type == TypeDefault) {
+    if (rr->type == TypeDefault) {
         if (rr->vFunClass==noFileIndex) {
             tt = strchr(rr->name, '.');
             if (tt==NULL) {
@@ -1251,9 +1251,9 @@ char *getJavaDocUrl_st(ReferencesItem *rr) {
                                     MAX_REF_LEN-len, LONG_NAME);
             }
         }
-    } else if (rr->bits.type == TypeStruct) {
+    } else if (rr->type == TypeStruct) {
         sprintf(res,"%s.html",rr->name);
-    } else if (rr->bits.type == TypePackage) {
+    } else if (rr->type == TypePackage) {
         sprintf(res,"%s/package-tree.html",rr->name);
     }
     assert(strlen(res)<MAX_REF_LEN-1);
@@ -2187,7 +2187,7 @@ static void olcxShowTopType(void) {
     if (mms==NULL) {
         olcxGenNoReferenceSignal();
     } else {
-        fprintf(communicationChannel, "*%s",typeNamesTable[mms->s.bits.type]);
+        fprintf(communicationChannel, "*%s",typeNamesTable[mms->s.type]);
     }
 }
 
@@ -2247,11 +2247,11 @@ static void olcxTopSymbolResolution(void) {
 bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     if (p1 == p2)
         return true;
-    if (p1->bits.category != p2->bits.category)
+    if (p1->category != p2->category)
         return false;
-    if (p1->bits.type!=TypeCppCollate && p2->bits.type!=TypeCppCollate && p1->bits.type!=p2->bits.type)
+    if (p1->type!=TypeCppCollate && p2->type!=TypeCppCollate && p1->type!=p2->type)
         return false;
-    if (p1->bits.storage!=p2->bits.storage)
+    if (p1->storage!=p2->storage)
         return false;
 
     if (strcmp(p1->name, p2->name) != 0)
@@ -2467,7 +2467,7 @@ static void selectUnusedSymbols(SymbolsMenu *menu, void *vflp, void *p2) {
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = true; m->selected = false;
     }
-    if (menu->s.bits.storage != StorageField && menu->s.bits.storage != StorageMethod) {
+    if (menu->s.storage != StorageField && menu->s.storage != StorageMethod) {
         for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
             if (m->defRefn!=0 && m->refn==0)
                 m->selected = true;
@@ -2492,7 +2492,7 @@ static void selectUnusedSymbols(SymbolsMenu *menu, void *vflp, void *p2) {
                     }
                 }
                 // for method, check if can be used in a superclass
-                if (thisMenu->s.bits.storage == StorageMethod) {
+                if (thisMenu->s.storage == StorageMethod) {
                     for (SymbolsMenu *otherMenu=menu; otherMenu!=NULL; otherMenu=otherMenu->next) {
                         if (otherMenu->s.vFunClass == otherMenu->s.vApplClass       // it is a definition
                             && thisMenu->s.vApplClass != otherMenu->s.vApplClass  // not this one
@@ -2567,7 +2567,7 @@ static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
         select = false;
         if (visible) {
             select=ooBitsGreaterOrEqual(ooBits, ooSelected);
-            if (ss->s.bits.type==TypeCppCollate)
+            if (ss->s.type==TypeCppCollate)
                 select=false;
         }
         ss->selected = select;
@@ -2616,8 +2616,8 @@ static void handleConstructorSpecialsInSelectingSymbolInMenu(SymbolsMenu *menu, 
         // exactly two visible items
         assert(m1 && m2);
         selectedCount = (m1->selected?1:0) + (m2->selected?1:0);
-        ccc = (m1->s.bits.storage==StorageConstructor) + (m2->s.bits.storage==StorageConstructor);
-        lll = (m1->s.bits.type==TypeStruct) + (m2->s.bits.type==TypeStruct);
+        ccc = (m1->s.storage==StorageConstructor) + (m2->s.storage==StorageConstructor);
+        lll = (m1->s.type==TypeStruct) + (m2->s.type==TypeStruct);
         //&fprintf(dumpOut," sss,ccc,lll == %d %d %d\n",selectedCount,ccc,lll);
         if (selectedCount==2 && ccc==1 && lll==1) {
             //dr1 = getDefinitionRef(s1->s.refs);
@@ -2625,11 +2625,11 @@ static void handleConstructorSpecialsInSelectingSymbolInMenu(SymbolsMenu *menu, 
             // deselect class references, but only if constructor definition exists
             // it was not a good idea with def refs, because of browsing of
             // javadoc for standard constructors
-            if (m1->s.bits.type==TypeStruct /*& && dr2!=NULL &*/) {
+            if (m1->s.type==TypeStruct /*& && dr2!=NULL &*/) {
                 m1->selected = false;
                 if (command == OLO_ARG_MANIP)
                     m1->visible = false;
-            } else if (m2->s.bits.type==TypeStruct /*& && dr1!=NULL &*/) {
+            } else if (m2->s.type==TypeStruct /*& && dr1!=NULL &*/) {
                 m2->selected = false;
                 if (command == OLO_ARG_MANIP)
                     m2->visible = false;
@@ -2666,7 +2666,7 @@ static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
                 if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_SUBCLASS_OF_RELATED) goto nextrs1;
                 for (SymbolsMenu *s2=menu; s2!=NULL; s2=s2->next) {
                     // do it only for virtuals
-                    st = JAVA_STATICALLY_LINKED(s2->s.bits.storage, s2->s.bits.accessFlags);
+                    st = JAVA_STATICALLY_LINKED(s2->s.storage, s2->s.access);
                     if (st) goto nextrs2;
                     oov = (s2->ooBits & OOC_VIRTUAL_MASK);
                     if(oov >= OOC_VIRT_SUBCLASS_OF_RELATED) goto nextrs2;
@@ -2691,7 +2691,7 @@ static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
             if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_RELATED) goto nexts1;
             for (SymbolsMenu *s2=menu; s2!=NULL; s2=s2->next) {
                 // do it only for virtuals
-                st = JAVA_STATICALLY_LINKED(s2->s.bits.storage, s2->s.bits.accessFlags);
+                st = JAVA_STATICALLY_LINKED(s2->s.storage, s2->s.access);
                 if (st) goto nexts2;
                 oov = (s2->ooBits & OOC_VIRTUAL_MASK);
                 if(oov >= OOC_VIRT_SUBCLASS_OF_RELATED) goto nexts2;
@@ -3191,7 +3191,7 @@ static SymbolsMenu *firstVisibleSymbol(SymbolsMenu *first) {
 static bool staticallyLinkedSymbolMenu(SymbolsMenu *menu) {
     SymbolsMenu *fv;
     fv = firstVisibleSymbol(menu);
-    if (JAVA_STATICALLY_LINKED(fv->s.bits.storage,fv->s.bits.accessFlags)) {
+    if (JAVA_STATICALLY_LINKED(fv->s.storage,fv->s.access)) {
         return true;
     } else {
         return false;
@@ -3229,8 +3229,8 @@ bool olcxShowSelectionMenu(void) {
         || options.serverOperation==OLO_RENAME
         || options.serverOperation==OLO_ARG_MANIP
         || options.serverOperation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK
-        || JAVA_STATICALLY_LINKED(fvisible->s.bits.storage,
-                                  fvisible->s.bits.accessFlags)) {
+        || JAVA_STATICALLY_LINKED(fvisible->s.storage,
+                                  fvisible->s.access)) {
         // manually only if different
         for (SymbolsMenu *ss=sessionData.browserStack.top->menuSym; ss!=NULL; ss=ss->next) {
             if (ss->selected) {
@@ -3284,8 +3284,8 @@ static SymbolsMenu *safetyCheck2FindCorrMenuItem(SymbolsMenu *item,
     for (SymbolsMenu *ss=menu; ss!=NULL; ss=ss->next) {
         if (ss->selected
             && ss->s.vApplClass == item->s.vApplClass
-            && ss->s.bits.type == item->s.bits.type
-            && ss->s.bits.storage == item->s.bits.storage
+            && ss->s.type == item->s.type
+            && ss->s.storage == item->s.storage
             && refactoringLinkNameCorrespondance(ss->s.name, item->s.name,
                                                  command)) {
             // here it is
@@ -3345,8 +3345,8 @@ static bool olMenuHashFileNumLess(SymbolsMenu *s1, SymbolsMenu *s2) {
     fi2 = cxFileHashNumber(s2->s.name);
     if (fi1 < fi2) return true;
     if (fi1 > fi2) return false;
-    if (s1->s.bits.category == CategoryLocal) return true;
-    if (s1->s.bits.category == CategoryLocal) return false;
+    if (s1->s.category == CategoryLocal) return true;
+    if (s1->s.category == CategoryLocal) return false;
     // both files and categories equals ?
     return false;
 }
@@ -3387,12 +3387,12 @@ static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
     if (ss!=NULL && ss->next!=NULL) {
         // several cursor selected fields
         // probably constructor, look for a class type
-        if (ss->next->s.bits.type == TypeStruct)
+        if (ss->next->s.type == TypeStruct)
             ss = ss->next;
     }
     if (ss != NULL) {
         //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typeNamesTable[ss->s.bits.type]);
-        if (ss->s.bits.type == TypeStruct) {
+        if (ss->s.type == TypeStruct) {
             clii = getClassNumFromClassLinkName(ss->s.name, clii);
         } else {
             if (options.serverOperation == OLO_CLASS_TREE) {
@@ -3552,8 +3552,8 @@ static SymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
         // do not check anything, but symbol type to avoid missresolution
         // of ambiguous references class <-> constructor
         //&fprintf(dumpOut,";looking for correspondance %s <-> %s\n", osym->s.name,mm->s.name);
-        if (mm->s.bits.type != osym->s.bits.type
-            && mm->s.bits.type != TypeInducedError) continue;
+        if (mm->s.type != osym->s.type
+            && mm->s.type != TypeInducedError) continue;
         // check also that maybe this references are not mixed with regular
         //&if (mm->s.name[0]==' ' || osym->s.name[0]==' ') {
         //& if (mm->s.name[0]!=' ' || osym->s.name[0]!=' ') continue;
@@ -3586,11 +3586,11 @@ bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
             if (osym->s.vApplClass == nsym->s.vApplClass) {
                 res = true;
             }
-            if (osym->s.bits.storage == StorageField
+            if (osym->s.storage == StorageField
                 && osym->s.vFunClass == nsym->s.vFunClass) {
                 res = true;
             }
-            if (osym->s.bits.storage == StorageMethod) {
+            if (osym->s.storage == StorageMethod) {
                 res = true;
             }
         }
@@ -3599,7 +3599,7 @@ bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
         assert(0);
     }
     // do not report misinterpretations induced by previous errors
-    if (nsym->s.bits.type == TypeInducedError)
+    if (nsym->s.type == TypeInducedError)
         res = true;
     return res;
 }
@@ -3629,9 +3629,9 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
         // do not check recursive calls
         if (osym == ofirstsym) goto cont;
         // nor local variables
-        if (osym->s.bits.storage == StorageAuto) goto cont;
+        if (osym->s.storage == StorageAuto) goto cont;
         // nor labels
-        if (osym->s.bits.type == TypeLabel) goto cont;
+        if (osym->s.type == TypeLabel) goto cont;
         // do not check also any symbols from classes defined in inner scope
         if (isStrictlyEnclosingClass(osym->s.vFunClass, ofirstsym->s.vFunClass)) goto cont;
         // (maybe I should not test any local symbols ???)
@@ -3973,7 +3973,7 @@ static void olcxListSpecial(char *fieldName) {
 bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
     if (ri->name[0]!=' ')
         return true;
-    if (ri->bits.type==TypeInducedError)
+    if (ri->type==TypeInducedError)
         return true;
     //& if (strcmp(ri->name, LINK_NAME_MAYBE_THIS_ITEM)==0) return true;
     return false;
@@ -4139,7 +4139,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferencesItem *ss) {
     bool used = false;
     Reference *definitionReference = NULL;
 
-    if (ss->bits.category != CategoryLocal)
+    if (ss->category != CategoryLocal)
         return;
     for (Reference *r = ss->references; r!=NULL; r=r->next) {
         if (IS_DEFINITION_OR_DECL_USAGE(r->usage.kind)) {
@@ -4584,8 +4584,8 @@ void mainAnswerEditAction(void) {
         assert(rstack!=NULL);
         if (rstack->hkSelectedSym == NULL ||
             (LANGUAGE(LANG_JAVA) &&
-             rstack->hkSelectedSym->s.bits.storage!=StorageMethod &&
-             rstack->hkSelectedSym->s.bits.storage!=StorageConstructor)) {
+             rstack->hkSelectedSym->s.storage!=StorageMethod &&
+             rstack->hkSelectedSym->s.storage!=StorageConstructor)) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or constructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (constructor) name and reinvoke the refactoring.");
             errorMessage(ERR_ST, tmpBuff);
@@ -4684,16 +4684,16 @@ static unsigned olcxOoBits(SymbolsMenu *ols, ReferencesItem *p) {
     olusage = ols->olUsage;
     vFunCl = p->vFunClass;
     vApplCl = p->vApplClass;
-    if (ols->s.bits.type!=TypeCppCollate) {
-        if (ols->s.bits.type != p->bits.type) goto fini;
-        if (ols->s.bits.storage != p->bits.storage) goto fini;
-        if (ols->s.bits.category != p->bits.category)  goto fini;
+    if (ols->s.type!=TypeCppCollate) {
+        if (ols->s.type != p->type) goto fini;
+        if (ols->s.storage != p->storage) goto fini;
+        if (ols->s.category != p->category)  goto fini;
     }
     if (strcmp(ols->s.name,p->name)==0) {
         ooBits |= OOC_PROFILE_EQUAL;
     }
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)
-        || JAVA_STATICALLY_LINKED(ols->s.bits.storage, ols->s.bits.accessFlags)) {
+        || JAVA_STATICALLY_LINKED(ols->s.storage, ols->s.access)) {
         if (vFunCl == olvFunCl) ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
     } else {
         // the following may be too strong, maybe only test FunCl ???
@@ -4840,10 +4840,10 @@ Completion *olCompletionListPrepend(char *name, char *fullText, char *vclass, in
         ss = olcx_memory_allocc(slen+1, sizeof(char));
         strcpy(ss, referenceItem->name);
         fillReferencesItem(&sri, ss, cxFileHashNumber(ss), referenceItem->vApplClass, referenceItem->vFunClass,
-                           referenceItem->bits.type, referenceItem->bits.storage, referenceItem->bits.scope,
-                           referenceItem->bits.accessFlags, referenceItem->bits.category);
+                           referenceItem->type, referenceItem->storage, referenceItem->scope,
+                           referenceItem->access, referenceItem->category);
 
-        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, referenceItem->bits.category, cType, *reference, sri);
+        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, referenceItem->category, cType, *reference, sri);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;

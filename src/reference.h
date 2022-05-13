@@ -32,21 +32,17 @@ typedef struct reference {
     struct reference *next;
 } Reference;
 
-typedef struct referencesItemBits {
-    Type              type : SYMTYPES_LN;
-    Storage           storage : STORAGES_LN;
-    ReferenceScope    scope : SCOPES_LN;
-    Access        accessFlags : 12; /* java access bits */
-    ReferenceCategory category : 2;     /* local/global */
-} ReferencesItemBits;
-
 // !!! if you add a pointer to this structure, then update olcxCopyRefItem!
 typedef struct referencesItem {
     char                     *name;
     unsigned                  fileHash;
     int                       vApplClass; /* appl class for java virtuals */
     int                       vFunClass;  /* fun class for java virtuals */
-    struct referencesItemBits bits;
+    Type                      type : SYMTYPES_LN;
+    Storage                   storage : STORAGES_LN;
+    Access                    access : 12; /* java access bits */
+    ReferenceScope            scope : SCOPES_LN;
+    ReferenceCategory         category : 2;     /* local/global */
     struct reference         *references;
     struct referencesItem    *next; /* TODO: Link only for hashlist? */
 } ReferencesItem;

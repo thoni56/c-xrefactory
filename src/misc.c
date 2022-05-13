@@ -64,8 +64,8 @@ void symbolRefItemDump(ReferencesItem *s) {
             s->name,
             getFileItem(s->vApplClass)->name,
             getFileItem(s->vFunClass)->name,
-            s->bits.type, s->bits.storage, s->bits.scope,
-            s->bits.accessFlags, s->bits.category);
+            s->type, s->storage, s->scope,
+            s->access, s->category);
 }
 
 /* *********************************************************************** */
@@ -548,7 +548,7 @@ void printClassFqtNameFromClassNum(FILE *file, int fnum) {
 }
 
 void sprintfSymbolLinkName(char *outString, SymbolsMenu *menu) {
-    if (menu->s.bits.type == TypeCppInclude) {
+    if (menu->s.type == TypeCppInclude) {
         sprintf(outString, "%s",
                 simpleFileName(getRealFileName_static(getFileItem(menu->s.vApplClass)->name)));
     } else {
