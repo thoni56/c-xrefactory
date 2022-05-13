@@ -301,7 +301,7 @@ symbol_to_type_seq
             Symbol *ss;
 
             ss = newSymbol($2.d->name, $2.d->name, $2.d->position);
-            ss->bits.storage = StorageAuto;
+            ss->storage = StorageAuto;
 
             addYaccSymbolReference($2.d,UsageDeclared);
             if (l_currentType!=NULL) {
@@ -454,10 +454,10 @@ primary_expr
         Symbol *p;
         Symbol *dd;
         p = $1.d->symbol;
-        if (p != NULL && p->bits.type == TypeDefault) {
+        if (p != NULL && p->type == TypeDefault) {
             assert(p && p);
             dd = p;
-            assert(dd->bits.storage != StorageTypedef);
+            assert(dd->storage != StorageTypedef);
             $$.d.typeModifier = dd->u.typeModifier;
             assert(options.taskRegime);
             $$.d.reference = addCxReference(p, &$1.d->position, UsageUsed, noFileIndex, noFileIndex);
@@ -471,7 +471,7 @@ primary_expr
             $$.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
             d = newSymbolAsType($1.d->name, $1.d->name, $1.d->position, $$.d.typeModifier);
-            d->bits.storage = StorageExtern;
+            d->storage = StorageExtern;
 
             dd = addNewSymbolDefinition(symbolTable, d, StorageExtern, UsageUsed);
             $$.d.reference = addCxReference(dd, &$1.d->position, UsageUsed, noFileIndex, noFileIndex);
@@ -946,7 +946,7 @@ declaration_specifiers0
     }
     | declaration_specifiers0 storage_class_specifier       {
         $$.d = $1.d;
-        $$.d->bits.storage = $2.d;
+        $$.d->storage = $2.d;
     }
     | declaration_specifiers0 function_specifier            {
         $$.d = $1.d;
@@ -962,11 +962,11 @@ declaration_specifiers0
 declaration_modality_specifiers
     : storage_class_specifier                               {
         $$.d  = typeSpecifier1(TypeDefault);
-        $$.d->bits.storage = $1.d;
+        $$.d->storage = $1.d;
     }
     | declaration_modality_specifiers storage_class_specifier       {
         $$.d = $1.d;
-        $$.d->bits.storage = $2.d;
+        $$.d->storage = $2.d;
     }
     | type_modality_specifier                               {
         $$.d  = typeSpecifier1($1.d);
@@ -1088,9 +1088,9 @@ struct_or_union
 struct_declaration_list
     : struct_declaration                                /*& { $$.d = $1.d; } &*/
     | struct_declaration_list struct_declaration        {
-        if ($1.d == &s_errorSymbol || $1.d->bits.type==TypeError) {
+        if ($1.d == &s_errorSymbol || $1.d->type==TypeError) {
             $$.d = $2.d;
-        } else if ($2.d == &s_errorSymbol || $1.d->bits.type==TypeError)  {
+        } else if ($2.d == &s_errorSymbol || $1.d->type==TypeError)  {
             $$.d = $1.d;
         } else {
             $$.d = $1.d;
@@ -1213,8 +1213,8 @@ declarator
     : declarator2                                       /*& { $$.d = $1.d; } &*/
     | pointer declarator2                               {
         $$.d = $2.d;
-        assert($$.d->bits.npointers == 0);
-        $$.d->bits.npointers = $1.d;
+        assert($$.d->npointers == 0);
+        $$.d->npointers = $1.d;
     }
     ;
 
@@ -1364,7 +1364,7 @@ parameter_identifier_list
         Position pos = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", pos);
-        symbol->bits.type = TypeElipsis;
+        symbol->type = TypeElipsis;
         $$.d = $1.d;
 
         LIST_APPEND(Symbol, $$.d.symbol, symbol);
@@ -1396,7 +1396,7 @@ parameter_type_list
         Position position = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", position);
-        symbol->bits.type = TypeElipsis;
+        symbol->type = TypeElipsis;
         $$.d = $1.d;
 
         LIST_APPEND(Symbol, $$.d.symbol, symbol);
@@ -1868,7 +1868,7 @@ external_definition
         assert($2.d);
         // I think that due to the following line sometimes
         // storage was not extern, see 'addNewSymbolDef'
-        /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
+        /*& if ($2.d->storage == StorageDefault) $2.d->storage = StorageExtern; &*/
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
         addNewSymbolDefinition(symbolTable, $2.d, StorageExtern, UsageDefined);
@@ -1879,7 +1879,7 @@ external_definition
         s_cp.function = $2.d;
         generateInternalLabelReference(-1, UsageDefined);
         for (p=$2.d->u.typeModifier->u.f.args, i=1; p!=NULL; p=p->next,i++) {
-            if (p->bits.type == TypeElipsis)
+            if (p->type == TypeElipsis)
                 continue;
             if (p->u.typeModifier == NULL)
                 p->u.typeModifier = &defaultIntModifier;
@@ -1999,8 +1999,8 @@ static void addYaccSymbolReference(Id *name, int usage) {
     Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->position);
-    sss.bits.type = TypeYaccSymbol;
-    sss.bits.storage = StorageNone;
+    sss.type = TypeYaccSymbol;
+    sss.storage = StorageNone;
     addCxReference(&sss, &name->position, usage, noFileIndex, noFileIndex);
 }
 
@@ -2010,14 +2010,14 @@ static void addRuleLocalVariable(Id *name, int order) {
 
     if (l_yaccUnion!=NULL) {
         p = name->symbol;
-        if (p != NULL && p->bits.type == TypeDefault) {
+        if (p != NULL && p->type == TypeDefault) {
             nn = stackMemoryAlloc(10*sizeof(char));
             assert(order>=0 && order < 10000);
             sprintf(nn,"$%d",order);
             if (order == 0) nn[1] = '$';
 
             ss = newSymbol(nn, nn, name->position);
-            ss->bits.storage = StorageAuto;
+            ss->storage = StorageAuto;
 
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
             addNewDeclaration(symbolTable, p, ss, NULL, StorageAuto);

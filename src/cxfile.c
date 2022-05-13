@@ -506,18 +506,18 @@ void addSubClassItemToFileTab( int sup, int inf, int originFileIndex) {
 
 
 void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
-    if (symbol->bits.type != TypeStruct)
+    if (symbol->type != TypeStruct)
         return;
 
     log_trace("testing %s", symbol->name);
-    assert(symbol->bits.javaClassIsLoaded);
-    if (!symbol->bits.javaClassIsLoaded)
+    assert(symbol->javaClassIsLoaded);
+    if (!symbol->javaClassIsLoaded)
         return;
     int cf1 = symbol->u.structSpec->classFileIndex;
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
 
     for (SymbolList *sups=symbol->u.structSpec->super; sups!=NULL; sups=sups->next) {
-        assert(sups->d && sups->d->bits.type == TypeStruct);
+        assert(sups->d && sups->d->type == TypeStruct);
         addSubClassItemToFileTab(sups->d->u.structSpec->classFileIndex, cf1, origin);
     }
 }

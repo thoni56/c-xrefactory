@@ -883,8 +883,8 @@ static void cfAddRecordToClass(char *name,
     /* TODO If this was allocated in "normal" memory we could use newSymbol() */
     CF_ALLOC(symbol, Symbol);
     fillSymbolWithTypeModifier(symbol, name, linkName, noPosition, tt);
-    symbol->bits.access = accessFlags;
-    symbol->bits.storage = storage;
+    symbol->access = accessFlags;
+    symbol->storage = storage;
 
     assert(clas->u.structSpec);
     LIST_APPEND(Symbol, clas->u.structSpec->records, symbol);
@@ -971,7 +971,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             // if constructor, put there type name as constructor name
             // instead of <init>
             log_trace("constructor '%s' of '%s'", name, memb->name);
-            assert(memb && memb->bits.type==TypeStruct && memb->u.structSpec);
+            assert(memb && memb->type==TypeStruct && memb->u.structSpec);
             name = memb->name;
             storage = StorageConstructor;
             if (getFileItem(memb->u.structSpec->classFileIndex)->directEnclosingInstance != noFileIndex) {
@@ -1147,7 +1147,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         goto endOfFile;
     }
 
-    symbol->bits.javaClassIsLoaded = true;
+    symbol->javaClassIsLoaded = true;
 
     /* Open the file, the name is prefixing the actual class name separated by separator, if any */
     zipSeparatorIndex = strchr(className, ZIP_SEPARATOR_CHAR);
@@ -1193,7 +1193,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     log_trace("version of '%s' is %d.%d", className, major, minor);
     constantPool = cfReadConstantPool(cb, &cpSize);
     GetU2(access, cb, exception);
-    symbol->bits.access = access;
+    symbol->access = access;
     log_trace("reading accessFlags %s == %x", className, access);
     if (access & AccessInterface)
         fileItem->isInterface = true;
@@ -1277,7 +1277,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
                 fill_nestedSpec(& symbol->u.structSpec->nest[rinners], inners, membFlag, modifs);
-                assert(inners && inners->bits.type==TypeStruct && inners->u.structSpec);
+                assert(inners && inners->type==TypeStruct && inners->u.structSpec);
                 int classFileIndex = inners->u.structSpec->classFileIndex;
                 FileItem *classFileItem = getFileItem(classFileIndex);
                 if (membFlag && ! (modifs & AccessStatic)) {

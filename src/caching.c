@@ -130,7 +130,7 @@ static void symbolTableDeleteOutOfMemory(int i) {
     Symbol **pp;
     pp = &symbolTable->tab[i];
     while (*pp!=NULL) {
-        switch ((*pp)->bits.type) {
+        switch ((*pp)->type) {
         case TypeMacro:
             if (PPM_FREED_POINTER(*pp)) {
                 *pp = (*pp)->next;

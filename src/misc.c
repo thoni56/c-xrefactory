@@ -146,10 +146,10 @@ void typeSPrint(char *buff, int *size, TypeModifier *t,
                 j += jj;
             } else {
                 for(dd=t->u.f.args; dd!=NULL; dd=dd->next) {
-                    if (dd->bits.type == TypeElipsis) ttm = "...";
+                    if (dd->type == TypeElipsis) ttm = "...";
                     else if (dd->name == NULL) ttm = "";
                     else ttm = dd->name;
-                    if (dd->bits.type == TypeDefault && dd->u.typeModifier!=NULL) {
+                    if (dd->type == TypeDefault && dd->u.typeModifier!=NULL) {
                         /* TODO ALL, for string overflow */
                         jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
                         typeSPrint(post+j,&jj,dd->u.typeModifier,ttm,' ',maxDeep-1,1,longOrShortName, NULL);

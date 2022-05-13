@@ -6,25 +6,19 @@
 #include "type.h"
 
 
-/* Symbol bits */
-
-SymbolBits makeSymbolBits(Access access, Type symbolType, Storage storage) {
-    return (SymbolBits){.access = access, .type = symbolType, .storage = storage};
-}
-
 void fillSymbol(Symbol *s, char *name, char *linkName, Position pos) {
     s->name = name;
     s->linkName = linkName;
     s->pos = pos;
     s->u.typeModifier = NULL;
     s->next = NULL;
-    s->bits.isExplicitlyImported = false;
-    s->bits.javaSourceIsLoaded = false;
-    s->bits.javaClassIsLoaded = false;
-    s->bits.access = AccessDefault;
-    s->bits.type = TypeDefault;
-    s->bits.storage = StorageDefault;
-    s->bits.npointers = 0;
+    s->isExplicitlyImported = false;
+    s->javaSourceIsLoaded = false;
+    s->javaClassIsLoaded = false;
+    s->access = AccessDefault;
+    s->type = TypeDefault;
+    s->storage = StorageDefault;
+    s->npointers = 0;
 }
 
 Symbol makeSymbol(char *name, char *linkName, Position pos) {
@@ -36,9 +30,9 @@ Symbol makeSymbol(char *name, char *linkName, Position pos) {
 Symbol makeSymbolWithBits(char *name, char *linkName, Position pos, Access access, Type type, Storage storage) {
     Symbol symbol;
     fillSymbol(&symbol, name, linkName, pos);
-    symbol.bits.access = access;
-    symbol.bits.type = type;
-    symbol.bits.storage = storage;
+    symbol.access = access;
+    symbol.type = type;
+    symbol.storage = storage;
     return symbol;
 }
 

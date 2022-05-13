@@ -11,24 +11,19 @@
 /* ****************************************************************** */
 /*              symbol definition item in symbol table                */
 
-typedef struct symbolBits {
-    bool     isExplicitlyImported : 1; /* whether not imported by * import */
-    bool     javaSourceIsLoaded : 1;   /* is jsl source file loaded ? */
-    bool     javaClassIsLoaded : 1;    /* is class file loaded ? */
-
-    Access   access : 12;              /* java access bits */
-    Type     type : SYMTYPES_LN;
-    /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
-    Storage  storage : STORAGES_LN;
-    unsigned npointers : 4; /* tmp. stored #of dcl. ptrs */
-} SymbolBits;
-
 typedef struct symbol {
     char    *name;
     char    *linkName; /* fully qualified name for cx */
     Position pos;      /* definition position for most syms;
                           import position for imported classes! */
-    struct symbolBits bits;
+    unsigned npointers : 4; /* tmp. stored #of dcl. ptrs */
+    bool     isExplicitlyImported : 1; /* whether not imported by * import */
+    bool     javaSourceIsLoaded : 1;   /* is jsl source file loaded ? */
+    bool     javaClassIsLoaded : 1;    /* is class file loaded ? */
+    Access   access : 12;              /* java access bits */
+    Storage  storage : STORAGES_LN;
+    Type     type : SYMTYPES_LN;
+    /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
     union {
         struct typeModifier  *typeModifier; /* if bits.symbolType == TypeDefault */
         struct symStructSpec *structSpec;   /* if bits.symbolType == Struct/Union */
@@ -71,7 +66,5 @@ extern void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName,
 extern Symbol makeSymbol(char *name, char *linkName, Position pos);
 extern Symbol makeSymbolWithBits(char *name, char *linkName, Position pos,
                                  Access access, Type type, Storage storage);
-
-extern SymbolBits makeSymbolBits(unsigned accessFlags, unsigned symbolType, unsigned storage);
 
 #endif

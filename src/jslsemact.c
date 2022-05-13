@@ -63,8 +63,8 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
     Symbol *s;
 
     s = newSymbol(name, name, noPosition);
-    s->bits.type = TypeStruct;
-    s->bits.storage = StorageNone;
+    s->type = TypeStruct;
+    s->storage = StorageNone;
     fillJslSymbolList(ss, s, noPosition, false);
 }
 
@@ -115,9 +115,9 @@ TypeModifier *jslPrependComposedType(TypeModifier *d, Type type) {
 void jslCompleteDeclarator(Symbol *t, Symbol *d) {
     assert(t && d);
     if (t == &s_errorSymbol || d == &s_errorSymbol
-        || t->bits.type==TypeError || d->bits.type==TypeError) return;
+        || t->type==TypeError || d->type==TypeError) return;
     LIST_APPEND(TypeModifier, d->u.typeModifier, t->u.typeModifier);
-    d->bits.storage = t->bits.storage;
+    d->storage = t->storage;
 }
 
 static void jslRemoveNestedClass(void  *ddv) {
@@ -277,13 +277,13 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
     int newFun;
 
     completeDeclarator(type,decl);
-    decl->bits.access = modif;
+    decl->access = modif;
     assert(s_jsl && s_jsl->classStat && s_jsl->classStat->thisClass);
-    if (s_jsl->classStat->thisClass->bits.access & AccessInterface) {
+    if (s_jsl->classStat->thisClass->access & AccessInterface) {
         // set interface default access flags
-        decl->bits.access |= (AccessPublic | AccessAbstract);
+        decl->access |= (AccessPublic | AccessAbstract);
     }
-    decl->bits.storage = storage;
+    decl->storage = storage;
     //& if (modif & AccessStatic) decl->bits.storage = StorageStaticMethod;
     newFun = javaSetFunctionLinkName(s_jsl->classStat->thisClass, decl, MEMORY_CF);
     if (decl->pos.file != olOriginalFileIndex && options.serverOperation == OLO_PUSH) {
@@ -391,7 +391,7 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
                               int accessFlags) {
     int n;
 
-    assert(outer && outer->bits.type==TypeStruct && outer->u.structSpec);
+    assert(outer && outer->type==TypeStruct && outer->u.structSpec);
     n = outer->u.structSpec->nestedCount;
     log_debug("adding nested %s of %s(at %lx)[%d] --> %s to %s", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
     if (n == 0) {
@@ -473,7 +473,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     IdList oclassid;
     int i;
 
-    assert(str && str->bits.type==TypeStruct);
+    assert(str && str->type==TypeStruct);
     ss = str->u.structSpec;
     assert(ss);
     log_debug("appending %d nested classes of %s", ss->nestedCount, str->linkName);
@@ -538,13 +538,13 @@ void jslNewClassDefinitionBegin(Id *name,
         cc = jslTypeSymbolDefinition(ttt,s_jsl->classStat->className,
                                      ADD_NO,ORDER_PREPEND, false);
     }
-    cc->bits.access = accFlags;
-    log_trace("reading class %s [%x] at %x", cc->linkName, cc->bits.access, cc);
+    cc->access = accFlags;
+    log_trace("reading class %s [%x] at %x", cc->linkName, cc->access, cc);
     if (s_jsl->classStat->next != NULL) {
         /* nested class, add it to its outer class list */
-        if (s_jsl->classStat->thisClass->bits.access & AccessInterface) {
+        if (s_jsl->classStat->thisClass->access & AccessInterface) {
             accFlags |= (AccessPublic | AccessStatic);
-            cc->bits.access = accFlags;
+            cc->access = accFlags;
         }
         membflag = (anonInterf==NULL && position!=CPOS_FUNCTION_INNER);
         if (s_jsl->pass==1) {
@@ -556,7 +556,7 @@ void jslNewClassDefinitionBegin(Id *name,
                 // I am putting in comment just by prudence, but you can
                 // freely uncoment it
                 assert(s_jsl->classStat->thisClass && s_jsl->classStat->thisClass->u.structSpec);
-                assert(s_jsl->classStat->thisClass->bits.type==TypeStruct);
+                assert(s_jsl->classStat->thisClass->type==TypeStruct);
                 fileItem->directEnclosingInstance = s_jsl->classStat->thisClass->u.structSpec->classFileIndex;
                 log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.structSpec->classFileIndex,
                           fileItem->name, noFileIndex);
@@ -606,13 +606,13 @@ void jslNewClassDefinitionBegin(Id *name,
                           s_jsl->classStat);
     s_jsl->classStat = nss;
     javaCreateClassFileItem(cc);
-    cc->bits.javaClassIsLoaded = true;
-    cc->bits.javaSourceIsLoaded = 1;
+    cc->javaClassIsLoaded = true;
+    cc->javaSourceIsLoaded = true;
     if (anonInterf!=NULL && s_jsl->pass==2) {
         /* anonymous implementing an interface, one more time */
         /* now put there object as superclass and its interface */
         // it was originally in reverse order, changed at 13/1/2001
-        if (anonInterf->bits.access&AccessInterface) {
+        if (anonInterf->access&AccessInterface) {
             jslAddSuperClassOrInterfaceByName(cc, s_javaLangObjectLinkName);
         }
         jslAddSuperClassOrInterfaceByName(cc, anonInterf->linkName);
@@ -641,7 +641,7 @@ void jslNewClassDefinitionEnd(void) {
 void jslAddDefaultConstructor(Symbol *cl) {
     Symbol *cc;
     cc = javaCreateNewMethod(cl->name, &noPosition, MEMORY_CF);
-    jslMethodHeader(cl->bits.access, &s_defaultVoidDefinition, cc,
+    jslMethodHeader(cl->access, &s_defaultVoidDefinition, cc,
                     StorageConstructor, NULL);
 }
 

@@ -2277,10 +2277,10 @@ case 1:
         Symbol *p;
         Symbol *dd;
         p = yyvsp[0].ast_id.d->symbol;
-        if (p != NULL && p->bits.type == TypeDefault) {
+        if (p != NULL && p->type == TypeDefault) {
             assert(p && p);
             dd = p;
-            assert(dd->bits.storage != StorageTypedef);
+            assert(dd->storage != StorageTypedef);
             yyval.ast_expressionType.d.typeModifier = dd->u.typeModifier;
             assert(options.taskRegime);
             yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->position, UsageUsed, noFileIndex, noFileIndex);
@@ -2294,7 +2294,7 @@ case 1:
             yyval.ast_expressionType.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
             d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->position, yyval.ast_expressionType.d.typeModifier);
-            d->bits.storage = StorageExtern;
+            d->storage = StorageExtern;
 
             dd = addNewSymbolDefinition(symbolTable, d, StorageExtern, UsageUsed);
             yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->position, UsageUsed, noFileIndex, noFileIndex);
@@ -2890,7 +2890,7 @@ case 116:
 #line 730 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
-        yyval.ast_symbol.d->bits.storage = yyvsp[0].ast_unsigned.d;
+        yyval.ast_symbol.d->storage = yyvsp[0].ast_unsigned.d;
     }
 break;
 case 117:
@@ -2915,14 +2915,14 @@ case 120:
 #line 746 "c_parser.y"
 {
         yyval.ast_symbol.d  = typeSpecifier1(TypeDefault);
-        yyval.ast_symbol.d->bits.storage = yyvsp[0].ast_unsigned.d;
+        yyval.ast_symbol.d->storage = yyvsp[0].ast_unsigned.d;
     }
 break;
 case 121:
 #line 750 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
-        yyval.ast_symbol.d->bits.storage = yyvsp[0].ast_unsigned.d;
+        yyval.ast_symbol.d->storage = yyvsp[0].ast_unsigned.d;
     }
 break;
 case 122:
@@ -3097,9 +3097,9 @@ break;
 case 168:
 #line 873 "c_parser.y"
 {
-        if (yyvsp[-1].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.type==TypeError) {
+        if (yyvsp[-1].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->type==TypeError) {
             yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
-        } else if (yyvsp[0].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->bits.type==TypeError)  {
+        } else if (yyvsp[0].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->type==TypeError)  {
             yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
         } else {
             yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
@@ -3240,8 +3240,8 @@ case 192:
 #line 997 "c_parser.y"
 {
         yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
-        assert(yyval.ast_symbol.d->bits.npointers == 0);
-        yyval.ast_symbol.d->bits.npointers = yyvsp[-1].ast_integer.d;
+        assert(yyval.ast_symbol.d->npointers == 0);
+        yyval.ast_symbol.d->npointers = yyvsp[-1].ast_integer.d;
     }
 break;
 case 193:
@@ -3431,7 +3431,7 @@ case 221:
         Position pos = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", pos);
-        symbol->bits.type = TypeElipsis;
+        symbol->type = TypeElipsis;
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, symbol);
@@ -3468,7 +3468,7 @@ case 226:
         Position position = makePosition(-1, 0, 0);
 
         symbol = newSymbol("", "", position);
-        symbol->bits.type = TypeElipsis;
+        symbol->type = TypeElipsis;
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.symbol, symbol);
@@ -4022,7 +4022,7 @@ case 342:
         assert(yyvsp[0].ast_symbol.d);
         /* I think that due to the following line sometimes*/
         /* storage was not extern, see 'addNewSymbolDef'*/
-        /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
+        /*& if ($2.d->storage == StorageDefault) $2.d->storage = StorageExtern; &*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
         addNewSymbolDefinition(symbolTable, yyvsp[0].ast_symbol.d, StorageExtern, UsageDefined);
@@ -4033,7 +4033,7 @@ case 342:
         s_cp.function = yyvsp[0].ast_symbol.d;
         generateInternalLabelReference(-1, UsageDefined);
         for (p=yyvsp[0].ast_symbol.d->u.typeModifier->u.f.args, i=1; p!=NULL; p=p->next,i++) {
-            if (p->bits.type == TypeElipsis)
+            if (p->type == TypeElipsis)
                 continue;
             if (p->u.typeModifier == NULL)
                 p->u.typeModifier = &defaultIntModifier;

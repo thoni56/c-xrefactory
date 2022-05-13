@@ -261,16 +261,16 @@ static void getSymbolCxrefProperties(Symbol *symbol,
     int category, scope, storage;
     category = CategoryLocal; scope = ScopeAuto; storage=StorageAuto;
     /* default */
-    if (symbol->bits.type==TypeDefault) {
-        storage = symbol->bits.storage;
-        if (    symbol->bits.storage==StorageExtern
-                ||  symbol->bits.storage==StorageDefault
-                ||  symbol->bits.storage==StorageTypedef
-                ||  symbol->bits.storage==StorageField
-                ||  symbol->bits.storage==StorageMethod
-                ||  symbol->bits.storage==StorageConstructor
-                ||  symbol->bits.storage==StorageStatic
-                ||  symbol->bits.storage==StorageThreadLocal
+    if (symbol->type==TypeDefault) {
+        storage = symbol->storage;
+        if (    symbol->storage==StorageExtern
+                ||  symbol->storage==StorageDefault
+                ||  symbol->storage==StorageTypedef
+                ||  symbol->storage==StorageField
+                ||  symbol->storage==StorageMethod
+                ||  symbol->storage==StorageConstructor
+                ||  symbol->storage==StorageStatic
+                ||  symbol->storage==StorageThreadLocal
                 ) {
             if (symbol->linkName[0]==' ' && symbol->linkName[1]==' ') {
                 // a special symbol local linkname
@@ -282,34 +282,34 @@ static void getSymbolCxrefProperties(Symbol *symbol,
         }
     }
     /* enumeration constants */
-    if (symbol->bits.type==TypeDefault && symbol->bits.storage==StorageConstant) {
+    if (symbol->type==TypeDefault && symbol->storage==StorageConstant) {
         category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
     /* struct, union, enum */
-    if ((symbol->bits.type==TypeStruct||symbol->bits.type==TypeUnion||symbol->bits.type==TypeEnum)){
+    if ((symbol->type==TypeStruct||symbol->type==TypeUnion||symbol->type==TypeEnum)){
         category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
     /* macros */
-    if (symbol->bits.type == TypeMacro) {
+    if (symbol->type == TypeMacro) {
         category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
-    if (symbol->bits.type == TypeLabel) {
+    if (symbol->type == TypeLabel) {
         category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
-    if (symbol->bits.type == TypeCppIfElse) {
+    if (symbol->type == TypeCppIfElse) {
         category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
-    if (symbol->bits.type == TypeCppInclude) {
+    if (symbol->type == TypeCppInclude) {
         category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
     }
-    if (symbol->bits.type == TypeCppCollate) {
+    if (symbol->type == TypeCppCollate) {
         category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
     }
-    if (symbol->bits.type == TypeYaccSymbol) {
+    if (symbol->type == TypeYaccSymbol) {
         category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
     /* JAVA packages */
-    if (symbol->bits.type == TypePackage) {
+    if (symbol->type == TypePackage) {
         category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
 
@@ -326,17 +326,17 @@ static void setClassTreeBaseType(ClassTreeData *ct, Symbol *p) {
     assert(ct);
     //&fprintf(dumpOut,"!looking for result of %s\n",p->linkName);fflush(dumpOut);
     ct->baseClassFileIndex = s_javaObjectSymbol->u.structSpec->classFileIndex;
-    if (p->bits.type == TypeStruct) {
+    if (p->type == TypeStruct) {
         assert(p->u.structSpec);
         ct->baseClassFileIndex = p->u.structSpec->classFileIndex;
-    } else if (p->bits.type == TypeDefault && p->bits.storage!=StorageConstructor) {
+    } else if (p->type == TypeDefault && p->storage!=StorageConstructor) {
         tt = p->u.typeModifier;
         assert(tt);
         if (tt->kind == TypeFunction) tt = tt->next;
         assert(tt);
         if (tt->kind == TypeStruct) {
             rtcls = tt->u.t;
-            assert(rtcls!=NULL && rtcls->bits.type==TypeStruct
+            assert(rtcls!=NULL && rtcls->type==TypeStruct
                    && rtcls->u.structSpec!=NULL);
             //&fprintf(dumpOut,"!resulting class is %s\n",rtcls->linkName);fflush(dumpOut);
             ct->baseClassFileIndex = rtcls->u.structSpec->classFileIndex;
@@ -485,7 +485,7 @@ static void setOlSymbolTypeForPrint(Symbol *p) {
     size = COMPLETION_STRING_SIZE;
     s_olSymbolType[0]=0;
     s_olSymbolClassType[0]=0;
-    if (p->bits.type == TypeDefault) {
+    if (p->type == TypeDefault) {
         tt = p->u.typeModifier;
         if (tt!=NULL && tt->kind==TypeFunction) tt = tt->next;
         typeSPrint(s_olSymbolType, &size, tt, "", ' ', 0, 1, LONG_NAME, NULL);
@@ -521,7 +521,7 @@ static void setOlAvailableRefactorings(Symbol *p, SymbolsMenu *mmi, int usage) {
         availableRefactorings[PPC_AVR_ADD_TO_IMPORT].available = 1;
         return;
     }
-    switch (p->bits.type) {
+    switch (p->type) {
     case TypePackage:
         availableRefactorings[PPC_AVR_RENAME_PACKAGE].available = true;
         CX_ALLOCC(opt, strlen(mmi->s.name)+1, char);
@@ -559,7 +559,7 @@ static void setOlAvailableRefactorings(Symbol *p, SymbolsMenu *mmi, int usage) {
         availableRefactorings[PPC_AVR_MOVE_PARAMETER].option = "macro";
         break;
     default:
-        if (p->bits.storage != StorageConstructor) {
+        if (p->storage != StorageConstructor) {
             availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
         }
         if (p->u.typeModifier->kind == TypeFunction || p->u.typeModifier->kind == TypeMacro) {
@@ -567,9 +567,9 @@ static void setOlAvailableRefactorings(Symbol *p, SymbolsMenu *mmi, int usage) {
             availableRefactorings[PPC_AVR_DEL_PARAMETER].available = true;
             availableRefactorings[PPC_AVR_MOVE_PARAMETER].available = true;
         }
-        if (p->bits.storage == StorageField) {
+        if (p->storage == StorageField) {
             if (IS_DEFINITION_USAGE(usage)) {
-                if (p->bits.access & AccessStatic) {
+                if (p->access & AccessStatic) {
                     availableRefactorings[PPC_AVR_MOVE_STATIC_FIELD].available = true;
                 } else {
                     // TODO! restrict this better
@@ -581,17 +581,17 @@ static void setOlAvailableRefactorings(Symbol *p, SymbolsMenu *mmi, int usage) {
                 availableRefactorings[PPC_AVR_SELF_ENCAPSULATE_FIELD].available = true;
             }
         }
-        if (p->bits.storage == StorageMethod || p->bits.storage == StorageConstructor) {
+        if (p->storage == StorageMethod || p->storage == StorageConstructor) {
             if (IS_DEFINITION_USAGE(usage)) {
                 //&availableRefactorings[PPC_AVR_EXPAND_NAMES].available = true;
                 //&availableRefactorings[PPC_AVR_REDUCE_NAMES].available = true;
-                if (p->bits.access & AccessStatic) {
+                if (p->access & AccessStatic) {
                     availableRefactorings[PPC_AVR_MOVE_STATIC_METHOD].available = true;
-                    if (p->bits.storage == StorageMethod) {
+                    if (p->storage == StorageMethod) {
                         availableRefactorings[PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC].available = true;
                     }
                 } else {
-                    if (p->bits.storage == StorageMethod) {
+                    if (p->storage == StorageMethod) {
                         // TODO! some restrictions
                         availableRefactorings[PPC_AVR_PULL_UP_METHOD].available = true;
                         availableRefactorings[PPC_AVR_PUSH_DOWN_METHOD].available = true;
@@ -674,7 +674,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         return NULL;
     if (* symbol->linkName == 0)
         return NULL;
-    if (symbol == &s_errorSymbol || symbol->bits.type==TypeError)
+    if (symbol == &s_errorSymbol || symbol->type==TypeError)
         return NULL;
     if (position->file == noFileIndex)
         return NULL;
@@ -687,14 +687,14 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
 
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
               vFunCl,vApplCl, position->file, position->line, position->col, category==CategoryGlobal?"Global":"Local",
-              usageKindEnumName[usage.kind], storageEnumName[symbol->bits.storage]);
+              usageKindEnumName[usage.kind], storageEnumName[symbol->storage]);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
         if (options.serverOperation == OLO_EXTRACT) {
             if (inputFileNumber != currentFile.lexBuffer.buffer.fileNumber)
                 return NULL;
         } else {
-            if (category==CategoryGlobal && symbol->bits.type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
+            if (category==CategoryGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
                 if (olOriginalFileIndex != position->file && options.noIncludeRefs)
                     return NULL;
@@ -710,8 +710,8 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         if (!fileItem->cxLoading)
             return NULL;
     }
-    fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl, symbol->bits.type, storage, scope,
-                       symbol->bits.access, category);
+    fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl, symbol->type, storage, scope,
+                       symbol->access, category);
     if (options.taskRegime==RegimeEditServer && options.serverOperation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
         fillUsage(&reference.usage, usage.kind, AccessDefault);
         fillReference(&reference, reference.usage, *position, NULL);
@@ -724,15 +724,15 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         CX_ALLOC(pp, ReferencesItem);
         CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);
         strcpy(linkName, symbol->linkName);
-        fillReferencesItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl, symbol->bits.type,
-                           storage, scope, symbol->bits.access, category);
+        fillReferencesItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl, symbol->type,
+                           storage, scope, symbol->access, category);
         pushReferences(pp, index);
         memb = pp;
     } else {
         // at least reset some maybe new informations
         // sometimes classes were added from directory listing,
         // without knowing if it is an interface or not
-        memb->bits.accessFlags |= symbol->bits.access;
+        memb->bits.accessFlags |= symbol->access;
     }
     place = addToRefList(&memb->references, usage, *position);
     log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
@@ -759,7 +759,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             olSetCallerPosition(position);
             defaultPosition = &noPosition;
             defaultUsage = NO_USAGE.kind;
-            if (symbol->bits.type==TypeMacro && ! options.exactPositionResolve) {
+            if (symbol->type==TypeMacro && ! options.exactPositionResolve) {
                 // a hack for macros
                 defaultPosition = &symbol->pos;
                 defaultUsage = UsageDefined;
@@ -813,8 +813,8 @@ void addTrivialCxReference(char *name, int symType, int storage, Position *pos, 
     Symbol symbol;
 
     fillSymbol(&symbol, name, name, *pos);
-    symbol.bits.type = symType;
-    symbol.bits.storage = storage;
+    symbol.type = symType;
+    symbol.storage = storage;
     addCxReference(&symbol, pos, usageKind, noFileIndex, noFileIndex);
 }
 
@@ -4860,8 +4860,8 @@ Completion *olCompletionListPrepend(char *name, char *fullText, char *vclass, in
         fillUsage(&r.usage, UsageDefined, 0);
         fillReference(&r, r.usage, symbol->pos, NULL);
         fillReferencesItem(&sri, ss, cxFileHashNumber(ss),
-                           vFunClass, vFunClass, symbol->bits.type, storage,
-                           scope, symbol->bits.access, category);
+                           vFunClass, vFunClass, symbol->type, storage,
+                           scope, symbol->access, category);
         cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);
     }
     if (fullText!=NULL) {

@@ -7,7 +7,7 @@
 
 
 #define HASH_FUN(elemp) hashFun(elemp->name)
-#define HASH_ELEM_EQUAL(e1,e2) (e1->bits.type==e2->bits.type && strcmp(e1->name,e2->name)==0)
+#define HASH_ELEM_EQUAL(e1,e2) (e1->type==e2->type && strcmp(e1->name,e2->name)==0)
 
 SymbolTable *symbolTable;
 

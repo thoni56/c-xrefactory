@@ -389,7 +389,7 @@ endOfFile:
 
 static void fillIncludeSymbolItem(Symbol *symbol, Position *pos){
     fillSymbol(symbol, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
-    symbol->bits.type = TypeCppInclude;
+    symbol->type = TypeCppInclude;
 }
 
 
@@ -527,8 +527,8 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
 
     fillSymbol(&ss, tmpBuff, tmpBuff, noPosition);
-    ss.bits.type = TypeMacro;
-    ss.bits.storage = StorageNone;
+    ss.type = TypeMacro;
+    ss.storage = StorageNone;
 
     if (symbolTableIsMember(symbolTable, &ss, NULL, &memb))
         return;
@@ -721,8 +721,8 @@ void processDefineDirective(bool hasArguments) {
 
     PPM_ALLOC(symbol, Symbol);
     fillSymbol(symbol, NULL, NULL, macroPosition);
-    symbol->bits.type = TypeMacro;
-    symbol->bits.storage = StorageNone;
+    symbol->type = TypeMacro;
+    symbol->storage = StorageNone;
 
     /* TODO: this is the only call to setGlobalFileDepNames() that doesn't do it in XX memory, why?
        PP == PreProcessor? */
@@ -923,8 +923,8 @@ static void processUndefineDirective(void) {
         log_debug(": undef macro %s", cc);
 
         fillSymbol(&symbol, cc, cc, position);
-        symbol.bits.type = TypeMacro;
-        symbol.bits.storage = StorageNone;
+        symbol.type = TypeMacro;
+        symbol.storage = StorageNone;
 
         assert(options.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
@@ -935,8 +935,8 @@ static void processUndefineDirective(void) {
 
             PPM_ALLOC(pp, Symbol);
             fillSymbol(pp, member->name, member->linkName, position);
-            pp->bits.type = TypeMacro;
-            pp->bits.storage = StorageNone;
+            pp->type = TypeMacro;
+            pp->storage = StorageNone;
 
             addMacroToTabs(pp, member->name);
         }
@@ -1061,8 +1061,8 @@ static void processIfdefDirective(bool isIfdef) {
 
     Symbol symbol;
     fillSymbol(&symbol, cp, cp, noPosition);
-    symbol.bits.type = TypeMacro;
-    symbol.bits.storage = StorageNone;
+    symbol.type = TypeMacro;
+    symbol.storage = StorageNone;
 
     Symbol *member;
     bool isMember = symbolTableIsMember(symbolTable, &symbol, NULL, &member);
@@ -1132,8 +1132,8 @@ int cexp_yylex(void) {
             return 0;
 
         fillSymbol(&symbol, cc, cc, noPosition);
-        symbol.bits.type = TypeMacro;
-        symbol.bits.storage = StorageNone;
+        symbol.type = TypeMacro;
+        symbol.storage = StorageNone;
 
         log_debug("(%s)", symbol.name);
 
@@ -1197,8 +1197,8 @@ static void processPragmaDirective(void) {
 
         PPM_ALLOC(pp, Symbol);
         fillSymbol(pp, mname, mname, position);
-        pp->bits.type = TypeMacro;
-        pp->bits.storage = StorageNone;
+        pp->type = TypeMacro;
+        pp->storage = StorageNone;
 
         symbolTableAdd(symbolTable, pp);
     }
@@ -1394,8 +1394,8 @@ static void expandMacroArgument(LexInput *argb) {
         failedMacroExpansion = false;
         if (lexem == IDENTIFIER) {
             fillSymbol(&sd, currentLexem, currentLexem, noPosition);
-            sd.bits.type = TypeMacro;
-            sd.bits.storage = StorageNone;
+            sd.type = TypeMacro;
+            sd.storage = StorageNone;
             if (symbolTableIsMember(symbolTable, &sd, NULL, &memb)) {
                 /* it is a macro, provide macro expansion */
                 if (expandMacroCall(memb,&position))
@@ -1793,7 +1793,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
     fillReferencesItem(&ppp, macroSymbol->linkName,
                        cxFileHashNumber(macroSymbol->linkName), // useless, put 0
                        noFileIndex, noFileIndex, TypeMacro, StorageDefault, ScopeGlobal,
-                       macroSymbol->bits.access, CategoryGlobal);
+                       macroSymbol->access, CategoryGlobal);
     isMember = isMemberInReferenceTable(&ppp, NULL, &memb);
     r = NULL;
     if (isMember) {
@@ -1961,7 +1961,7 @@ static char charText[2]={0,0};
 static char constant[50];
 
 static bool isIdAKeyword(Symbol *symbol, Position position) {
-    if (symbol->bits.type == TypeKeyword) {
+    if (symbol->type == TypeKeyword) {
         setYylvalsForIdentifier(symbol->name, symbol, position);
         return true;
     }
@@ -1981,12 +1981,12 @@ static int lookupCIdentifier(char *id, Position position) {
                 symbol = s;
             if (isIdAKeyword(s, position))
                 return s->u.keyword;
-            if (s->bits.type == TypeDefinedOp && s_ifEvaluation) {
+            if (s->type == TypeDefinedOp && s_ifEvaluation) {
                 return CPP_DEFINED_OP;
             }
-            if (s->bits.type == TypeDefault) {
+            if (s->type == TypeDefault) {
                 setYylvalsForIdentifier(s->name, s, position);
-                if (s->bits.storage == StorageTypedef) {
+                if (s->storage == StorageTypedef) {
                     return TYPE_NAME;
                 } else {
                     return IDENTIFIER;
@@ -2014,7 +2014,7 @@ static int lookupJavaIdentifier(char *id, Position position) {
                 symbol = s;
             if (isIdAKeyword(s, position))
                 return s->u.keyword;
-            if (s->bits.type == TypeDefault) {
+            if (s->type == TypeDefault) {
                 setYylvalsForIdentifier(s->name, s, position);
                 return IDENTIFIER;
             }
@@ -2138,8 +2138,8 @@ int yylex(void) {
         }
         log_trace("id '%s' position %d, %d, %d", yytext, idpos.file, idpos.line, idpos.col);
         fillSymbol(&symbol, yytext, yytext, noPosition);
-        symbol.bits.type = TypeMacro;
-        symbol.bits.storage = StorageNone;
+        symbol.type = TypeMacro;
+        symbol.storage = StorageNone;
 
         if ((!LANGUAGE(LANG_JAVA))
             && lexem!=IDENT_NO_CPP_EXPAND
