@@ -30,6 +30,9 @@
 #include "filetable.h"
 #include "log.h"
 
+static bool isProcessingPreprocessorIf = false;     /* flag for yylex, to not filter '\n' */
+
+
 
 static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position position) {
     uniyylval->ast_id.d = &s_yyIdentBuf[s_yyIdentBufi];
@@ -79,7 +82,6 @@ static int ppMemoryIndex=0;
 
 
 
-
 static bool isIdentifierLexem(Lexem lexem) {
     return lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND  || lexem==IDENT_TO_COMPLETE;
 }
@@ -94,7 +96,7 @@ void initAllInputs(void) {
     MB_INIT();
     includeStackPointer=0;
     macroStackIndex=0;
-    s_ifEvaluation = 0;
+    isProcessingPreprocessorIf = false;
     s_cxRefFlag = 0;
     macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
     ppMemoryIndex=0;
@@ -240,7 +242,7 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
     fillFileDescriptor(&currentFile, fileName, bufferStart, bufferSize, file, offset);
     setCurrentFileInfoFor(fileName);
     setCInputConsistency();
-    s_ifEvaluation = false;				/* TODO: WTF??? */
+    isProcessingPreprocessorIf = false;				/* TODO: WTF??? */
 }
 
 /* ***************************************************************** */
@@ -1168,11 +1170,11 @@ endOfFile:
 
 static void processIfDirective(void) {
     int res=1,lex;
-    s_ifEvaluation = 1;
+    isProcessingPreprocessorIf = true;
     log_debug(": #if");
     res = cexp_yyparse();
     do lex = yylex(); while (lex != '\n');
-    s_ifEvaluation = 0;
+    isProcessingPreprocessorIf = false;
     execCppIf(! res);
 }
 
@@ -1981,7 +1983,7 @@ static int lookupCIdentifier(char *id, Position position) {
                 symbol = s;
             if (isIdAKeyword(s, position))
                 return s->u.keyword;
-            if (s->type == TypeDefinedOp && s_ifEvaluation) {
+            if (s->type == TypeDefinedOp && isProcessingPreprocessorIf) {
                 return CPP_DEFINED_OP;
             }
             if (s->type == TypeDefault) {
@@ -2101,7 +2103,7 @@ int yylex(void) {
  contYylex:
     if (lexem < 256) {          /* First non-single character symbol is 257 */
         if (lexem == '\n') {
-            if (s_ifEvaluation) {
+            if (isProcessingPreprocessorIf) {
                 currentInput.currentLexemP = previousLexem;
             } else {
                 passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length,

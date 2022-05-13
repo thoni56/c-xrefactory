@@ -58,9 +58,6 @@ Completions s_completions;
 
 /* **************** cached symbols ********************** */
 
-bool s_ifEvaluation = false;     /* flag for yylex, to not filter '\n' TODO: move, duh!*/
-
-
 Position s_olcxByPassPos;
 Position s_cxRefPos;
 int s_cxRefFlag=0;

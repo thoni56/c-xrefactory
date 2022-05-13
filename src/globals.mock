@@ -57,8 +57,6 @@ int s_yyIdentBufi = 0;
 Symbol s_errorSymbol;
 TypeModifier s_errorModifier;
 
-bool s_ifEvaluation = false;     /* flag for yylex, to not filter '\n' */
-
 char *tokenNamesTable[LAST_TOKEN];
 int tokenNameLengthsTable[LAST_TOKEN];
 
