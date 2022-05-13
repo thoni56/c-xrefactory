@@ -375,7 +375,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     }
     if (options.taskRegime == RegimeEditServer
         || options.refactoringRegime == RegimeRefactory
-        || s_fileAbortionEnabled == 0
+        || !fileAbortEnabled
     ) {
         emergencyExit(XREF_EXIT_ERR);
     }

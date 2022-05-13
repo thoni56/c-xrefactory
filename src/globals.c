@@ -10,7 +10,7 @@
 #include "protocol.h"
 
 
-int s_fileAbortionEnabled;
+bool fileAbortEnabled;
 
 int s_lastReturnedLexem;
 

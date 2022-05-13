@@ -5,7 +5,7 @@
 
 char *s_editCommunicationString = "C@$./@mVeDitznAC";
 
-int s_fileAbortionEnabled;
+bool fileAbortEnabled;
 
 #include "lexem.h"
 

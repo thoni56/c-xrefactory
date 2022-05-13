@@ -2035,20 +2035,27 @@ static bool optionsOverflowHandler(int n) {
 }
 
 static void mainTotalTaskEntryInitialisations() {
+    // Outputs
     errOut = stderr;
     dumpOut = stdout;
 
-    s_fileAbortionEnabled = 0;
+    log_debug("Initialisations.");
+
     communicationChannel = stdout;
+    // TODO: how come it is not always Xref, as set in options?
     if (options.taskRegime == RegimeEditServer)
         errOut = stdout;
 
+    fileAbortEnabled = false;
+
+    // Limits
     assert(MAX_TYPE < power(2,SYMTYPES_LN));
     assert(MAX_STORAGE_NAMES < power(2,STORAGES_LN));
     assert(MAX_SCOPES < power(2,SCOPES_LN));
 
     assert(PPC_MAX_AVAILABLE_REFACTORINGS < MAX_AVAILABLE_REFACTORINGS);
 
+    // Memory
     // initialize cxMemory by trying to allocate one byte(?)
     int mm = cxMemoryOverflowHandler(1);
     assert(mm);
@@ -2061,12 +2068,11 @@ static void mainTotalTaskEntryInitialisations() {
     memoryUseFunctionForFatalError(fatalError);
     memoryUseFunctionForInternalCheckFail(internalCheckFail);
 
+    // Start time
     // just for very beginning
     fileProcessingStartTime = time(NULL);
 
-    // following will be displayed only at third pass or so, because
-    // s_opt.debug is set only after passing through option processing
-    log_debug("Initialisations.");
+    // Data structures
     memset(&counters, 0, sizeof(Counters));
     options.includeDirs = NULL;
     SM_INIT(ftMemory);
@@ -2076,7 +2082,7 @@ static void mainTotalTaskEntryInitialisations() {
 
     noPosition = makePosition(noFileIndex, 0, 0);
     inputFileNumber = noFileIndex;
-    javaAnonymousClassName.position   = noPosition;
+    javaAnonymousClassName.position = noPosition;
 
     olcxInit();
     editorInit();
@@ -2105,7 +2111,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     int inmode;
     bool previousNoErrorsOption;
 
-    s_fileAbortionEnabled = 0;
+    fileAbortEnabled = false;
 
     // supposing that file table is still here, but reinit it
     mapOverFileTable(clearFileItem);
@@ -2789,7 +2795,7 @@ void mainCallXref(int argc, char **argv) {
                 pinputCounter++;
             }
             s_javaPreScanOnly = 0;
-            s_fileAbortionEnabled = 1;
+            fileAbortEnabled = true;
             for(; ffc!=NULL; ffc=ffc->next) {
                 mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed);
                 ffc->scheduledToProcess = false;
@@ -2802,7 +2808,7 @@ void mainCallXref(int argc, char **argv) {
         }
     }
  regime1fini:
-    s_fileAbortionEnabled = 0;
+    fileAbortEnabled = false;
     if (atLeastOneProcessed) {
         if (options.taskRegime==RegimeXref) {
             if (options.update==0 || options.update==UPDATE_FULL) {

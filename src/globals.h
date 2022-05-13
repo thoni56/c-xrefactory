@@ -19,7 +19,7 @@ extern char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];
 extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
-extern int s_fileAbortionEnabled;
+extern bool fileAbortEnabled;
 
 extern int s_lastReturnedLexem;
 extern Position s_spp[SPP_MAX];
