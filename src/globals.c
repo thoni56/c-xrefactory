@@ -42,8 +42,8 @@ Position s_paramEndPosition;
 Position s_primaryStartPosition;
 Position s_staticPrefixStartPosition;
 
-Id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
-int s_yyIdentBufi = 0;
+Id yyIdBuffer[YYBUFFERED_ID_INDEX];
+int yyIdBufferIndex = 0;
 
 TypeModifier *s_structRecordCompletionType;
 TypeModifier *s_upLevelFunctionCompletionType;

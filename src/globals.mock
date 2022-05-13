@@ -52,8 +52,8 @@ uchar typeSignedChange[MAX_TYPE];
 uchar typeUnsignedChange[MAX_TYPE];
 
 char *yytext;
-Id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
-int s_yyIdentBufi = 0;
+Id yyIdBuffer[YYBUFFERED_ID_INDEX];
+int yyIdBufferIndex = 0;
 Symbol s_errorSymbol;
 TypeModifier s_errorModifier;
 
