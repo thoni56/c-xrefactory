@@ -44,7 +44,7 @@ extern Position s_paramBeginPosition;
 extern Position s_paramEndPosition;
 extern Position s_primaryStartPosition;
 extern Position s_staticPrefixStartPosition;
-extern Id yyIdBuffer[YYBUFFERED_ID_INDEX];
+extern Id yyIdBuffer[YYIDBUFFER_SIZE];
 extern int yyIdBufferIndex;
 
 extern char *s_cppVarArgsName;

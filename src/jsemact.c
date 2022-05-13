@@ -718,7 +718,7 @@ void javaReadSymbolFromSourceFileInit(int sourceFileNum,
                  uniyylval, (S_yyGlobalState*)yyg, yygsize, s_jsl);
     memcpy(njsl->savedYYstate, s_yygstate, yygsize);
     memcpy(njsl->yyIdentBuf, yyIdBuffer,
-           sizeof(Id[YYBUFFERED_ID_INDEX]));
+           sizeof(Id[YYIDBUFFER_SIZE]));
     s_jsl = njsl;
     s_language = LANG_JAVA;
 }
@@ -728,7 +728,7 @@ void javaReadSymbolFromSourceFileEnd(void) {
     uniyylval = s_jsl->savedyylval;
     memcpy(s_yygstate, s_jsl->savedYYstate, s_jsl->yyStateSize);
     memcpy(yyIdBuffer, s_jsl->yyIdentBuf,
-           sizeof(Id[YYBUFFERED_ID_INDEX]));
+           sizeof(Id[YYIDBUFFER_SIZE]));
     s_jsl = s_jsl->next;
 }
 

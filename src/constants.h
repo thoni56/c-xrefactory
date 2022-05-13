@@ -104,7 +104,7 @@
 #define MAX_LEXEM_SIZE MAX_FUN_NAME_SIZE /* max size of 1 lexem (string, ident)  */
                                          /* should be bigger, than MAX_FUN_NAME_SIZE */
 
-#define YYBUFFERED_ID_INDEX 128	/* number of buffered tokens       */
+#define YYIDBUFFER_SIZE 128	/* number of buffered tokens       */
   /* for C++ has to be larger because of backtracking parser       */
   /* it should be around 2048, but then workmemory will overflow   */
   /* when loading lot of sourcepath jsl modules                    */

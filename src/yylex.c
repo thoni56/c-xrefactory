@@ -36,7 +36,7 @@ static bool isProcessingPreprocessorIf = false;     /* flag for yylex, to not fi
 
 static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position position) {
     uniyylval->ast_id.d = &yyIdBuffer[yyIdBufferIndex];
-    yyIdBufferIndex ++; yyIdBufferIndex %= (YYBUFFERED_ID_INDEX);
+    yyIdBufferIndex ++; yyIdBufferIndex %= (YYIDBUFFER_SIZE);
     fillId(uniyylval->ast_id.d, name, symbol, position);
     yytext = name;
     uniyylval->ast_id.b = position;

@@ -30,7 +30,7 @@ typedef struct jslStat {
     void /*YYSTYPE*/                 *savedyylval;
     void /*struct yyGlobalState*/    *savedYYstate;
     int                              yyStateSize;
-    Id                               yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
+    Id                               yyIdentBuf[YYIDBUFFER_SIZE]; // pending idents
     struct jslStat                   *next;
 } S_jslStat;
 

@@ -42,7 +42,7 @@ Position s_paramEndPosition;
 Position s_primaryStartPosition;
 Position s_staticPrefixStartPosition;
 
-Id yyIdBuffer[YYBUFFERED_ID_INDEX];
+Id yyIdBuffer[YYIDBUFFER_SIZE];
 int yyIdBufferIndex = 0;
 
 TypeModifier *s_structRecordCompletionType;
