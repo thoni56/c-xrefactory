@@ -1273,7 +1273,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                     }
                 }
                 GetU2(modifs, cb, exception);
-                //& inners->bits.access |= modifs;
+                //& inners->access |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
                 fill_nestedSpec(& symbol->u.structSpec->nest[rinners], inners, membFlag, modifs);

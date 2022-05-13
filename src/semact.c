@@ -337,7 +337,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
                         goto nextRecord;
                 }
                 //&if(cclass!=NULL)fprintf(dumpOut,"name O.K., checking accesibility %xd
-                //%xd\n",cclass->bits.access,r->bits.access); fflush(dumpOut);
+                //%xd\n",cclass->access,r->access); fflush(dumpOut);
                 // I have it, check visibility and accessibility
                 assert(r);
                 if (visibilityCheck == VISIBILITY_CHECK_YES) {
@@ -931,7 +931,7 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
         fname = simpleFileName(getFileItem(fileIndex)->name);
         sprintf(tmp, "%s%c%d%c", fname, FILE_PATH_SEPARATOR, order, LINK_NAME_SEPARATOR);
         /*&     // macros will be identified by name only?
-          } else if (symbol->bits.type == TypeMacro) {
+          } else if (symbol->type == TypeMacro) {
           sprintf(tmp, "%x%c", symbol->pos.file, LINK_NAME_SEPARATOR);
           &*/
     } else {

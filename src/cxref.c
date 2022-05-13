@@ -700,7 +700,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
-                //&fprintf(dumpOut,"%s comm %d\n", fileItem->name, fileItem->bits.commandLineEntered);
+                //&fprintf(dumpOut,"%s comm %d\n", fileItem->name, fileItem->commandLineEntered);
             }
         }
     }
@@ -3391,7 +3391,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
             ss = ss->next;
     }
     if (ss != NULL) {
-        //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typeNamesTable[ss->s.bits.type]);
+        //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typeNamesTable[ss->s.type]);
         if (ss->s.type == TypeStruct) {
             clii = getClassNumFromClassLinkName(ss->s.name, clii);
         } else {

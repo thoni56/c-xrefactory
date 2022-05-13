@@ -32,7 +32,7 @@ typedef struct reference {
     struct reference *next;
 } Reference;
 
-// !!! if you add a pointer to this structure, then update olcxCopyRefItem!
+// !!! if you add a pointer to this structure, then update olcxCopyReference!
 typedef struct referencesItem {
     char                     *name;
     unsigned                  fileHash;

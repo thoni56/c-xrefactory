@@ -215,7 +215,7 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
         if (menu->s.type != TypeDefault) {
             fprintf(file,"\t(%s)", typeNamesTable[menu->s.type]);
         }
-        //&fprintf(file," ==%s %o (%s) at %x", menu->s.name, menu->ooBits, refCategoriesName[menu->s.bits.category], menu);
+        //&fprintf(file," ==%s %o (%s) at %x", menu->s.name, menu->ooBits, refCategoriesName[menu->s.category], menu);
     }
 }
 
@@ -418,7 +418,7 @@ static void genVirtualsGlobRefLists(    SymbolsMenu *rrr,
     assert(rrr!=NULL);
     p = &rrr->s;
     assert(p!=NULL);
-    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->bits.storage]);
+    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->storage]);
     if (isVirtualMenuItem(p)) {
         olcxMenuGenGlobRefsForVirtMethod( ff, rrr);
     }
@@ -436,7 +436,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *rrr,
     assert(rrr!=NULL);
     p = &rrr->s;
     assert(p!=NULL);
-    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->bits.storage]);
+    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->storage]);
     if (! isVirtualMenuItem(p)) {
         for(ss=rrr; ss!=NULL; ss=ss->next) {
             p = &ss->s;

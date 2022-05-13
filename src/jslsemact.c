@@ -284,7 +284,7 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
         decl->access |= (AccessPublic | AccessAbstract);
     }
     decl->storage = storage;
-    //& if (modif & AccessStatic) decl->bits.storage = StorageStaticMethod;
+    //& if (modif & AccessStatic) decl->storage = StorageStaticMethod;
     newFun = javaSetFunctionLinkName(s_jsl->classStat->thisClass, decl, MEMORY_CF);
     if (decl->pos.file != olOriginalFileIndex && options.serverOperation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
@@ -592,7 +592,7 @@ void jslNewClassDefinitionBegin(Id *name,
     // this is to update references affected to class file before
     // if you remove this, then remove also at class end
     // berk, this removes all usages to be loaded !!
-    //& getFileItem(classFileIndex)->bits.cxLoading = true;
+    //& getFileItem(classFileIndex)->cxLoading = true;
     // here reset the innerclasses number, so the next call will
     // surely allocate the table and will start from the first one
     // it is a little bit HACKED :)

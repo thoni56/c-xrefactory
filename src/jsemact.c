@@ -960,7 +960,7 @@ static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
                 // the following if makes problem, because when resolving
                 // a name Outer.Inner I do not care whether it is static
                 // or not. Why I have put this there????
-//&				if ((inners[i].cl->bits.access&AccessStatic)==0) {
+//&				if ((inners[i].cl->access&AccessStatic)==0) {
                     *innmemb = inners[i].cl;
                     return true;
 //&				}
@@ -1683,7 +1683,7 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
     if (decl->u.typeModifier->kind != TypeFunction)
         return res;
     ppi=0;
-//&	if (decl->bits.access & AccessStatic) {
+//&	if (decl->.access & AccessStatic) {
 //&		sprintf(pp+ppi,"%s.%s",clas->linkName, decl->name);
 //&	} else {
         sprintf(pp+ppi,"%s", decl->name);
@@ -2217,7 +2217,7 @@ static TypeModifier *javaMethodInvocation(
     assert(funCl[smallesti] != -1);
     vFunCl = funCl[smallesti];
     vApplCl = baseCl;
-//&	if (appl[smallesti]->bits.access & AccessStatic) {
+//&	if (appl[smallesti]->access & AccessStatic) {
 //&		vFunCl = vApplCl = noFileIndex;
 //&	}
     usedusage = UsageUsed;
