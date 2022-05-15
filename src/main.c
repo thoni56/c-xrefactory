@@ -1478,9 +1478,9 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
         }
     } else {
         if (*oldStdopFile == 0) {
-            static int messageYetWritten=0; /* TODO: bool! "yet" = "already"? */
-            if (errMessage!=NO_ERROR_MESSAGE && messageYetWritten == 0) {
-                messageYetWritten = 1;
+            static bool messageWritten = false;
+            if (errMessage!=NO_ERROR_MESSAGE && messageWritten == 0) {
+                messageWritten = true;
                 writeOptionsFileMessage(fileName, outFName, section);
             }
         } else {
