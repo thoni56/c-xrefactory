@@ -5,8 +5,15 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Convert fillBits() with explicit setting of "properties" like access, storage etc.
-* DOING Project local .c-xrefrc with relative file paths so it can be checked in to a repo
+* DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
+  Currently it is done using the argv vector, would probably be cleaner using a specific option struct
+* DOING BUG: Selecting automatic project selection after having set a specific does not seem to work
+* DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
+  https://en.cppreference.com/w/c/types/integer
+* DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
+** DONE clang definition table
+** TODO Use compiler identification to set extra needed definitions for clang
+* TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
 ** TODO Make "get project" lookup the directory tree for closest .c-xrefrc that covers the file
    Maybe it could return the path to the project file as the name of the project, then...
@@ -17,13 +24,6 @@ There are a *lot* of things to do to make c-xref into modern C.
    create we need to ask where to store it starting with current
    directory. This could enable storing non-absolute filenames in the
    xrefs, they should be relative to where the db is.
-* DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
-* DOING BUG: Selecting automatic project selection after having set a specific does not seem to work
-* DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
-  https://en.cppreference.com/w/c/types/integer
-* DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
-** DONE clang definition table
-** TODO Use compiler identification to set extra needed definitions for clang
 * TODO Set xref2 to true as default and then convert all test cases that fail, remove the option
   Hmmm. We only want that when running as a server, right?
 * TODO dumpOut, errOut - figure out how they should be set in various scenarios
@@ -58,9 +58,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO Don't do any default operation (currently 'complete') if none given on command line
 * TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
 * TODO REFACTOR: Extract storage module interface and implementation
-* TODO Architecture diagrams using C4-PlantUML (/design folder)
-* TODO Strange that <update-report> is put in the -o file since that output is probably meant to be synchronous
-Should really be sent synchronously so that the editor can display it.
+* TODO Architecture diagrams using C4-PlantUML - started in ...design.asciidoc
 * TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
 * TODO Better, and unified, options handling
@@ -146,6 +144,7 @@ and you can also get java.class.version=55 => java version without decoding dire
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** DONE Extract PPC-functions from misc.c into a ppc-module
+* DONE Convert fillBits() with explicit setting of "properties" like access, storage etc.
 * DONE Abstract refTab
 ** DONE Implement table functions as per other tables (getReferenceItem
 * DONE Abstract editorBufferTable as per fileItemTable
