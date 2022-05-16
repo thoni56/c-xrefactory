@@ -1,9 +1,8 @@
 #ifndef CXFILE_H_INCLUDED
 #define CXFILE_H_INCLUDED
 
-#include "proto.h"              /* for SymbolReferenceItem */
+#include "reference.h"
 #include "symbol.h"
-#include "characterreader.h"
 
 
 extern void normalScanReferenceFile(char *name);

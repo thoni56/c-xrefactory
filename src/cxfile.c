@@ -8,6 +8,7 @@
 #include "cxref.h"
 #include "reftab.h"
 #include "session.h"
+#include "characterreader.h"
 #include "classhierarchy.h"
 #include "fileio.h"
 #include "list.h"
