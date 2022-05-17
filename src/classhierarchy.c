@@ -349,13 +349,10 @@ static bool genThisClassHierarchy(int vApplCl, int oldvFunCl,
     return true;
 }
 
-void genClassHierarchies(FILE *file, SymbolsMenu *menuList,
-                         int virtualFlag, int passNumber) {
-    SymbolsMenu *menu;
-
+void genClassHierarchies(FILE *file, SymbolsMenu *menuList, int passNumber) {
     // mark the classes where the method is defined and used
     clearTmpChRelevant();
-    for(menu=menuList; menu!=NULL; menu=menu->next) {
+    for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
         assert(getFileItem(menu->s.vApplClass));
         if (menu->visible) {
             SETBIT(tmpChRelevant, menu->s.vApplClass);
@@ -364,12 +361,12 @@ void genClassHierarchies(FILE *file, SymbolsMenu *menuList,
     }
     // now, mark the relevant subtree of class tree
     clearTmpChMarkProcessed();
-    for(menu=menuList; menu!=NULL; menu=menu->next) {
+    for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
         markTransitiveRelevantSubs(menu->s.vFunClass, passNumber);
         markTransitiveRelevantSubs(menu->s.vApplClass, passNumber);
     }
     // and gen the class subhierarchy
-    for(menu=menuList; menu!=NULL; menu=menu->next) {
+    for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
         genThisClassHierarchy(menu->s.vFunClass, noFileIndex, file, menuList, passNumber);
         genThisClassHierarchy(menu->s.vApplClass, noFileIndex, file, menuList, passNumber);
     }
@@ -391,10 +388,10 @@ static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, SymbolsMenu *rrr) {
     }
     classHierarchyGenInit();
     setTmpClassBackPointersToMenu(rrr);
-    genClassHierarchies( ff, rrr, SINGLE_VIRT_ITEM, FIRST_PASS);
+    genClassHierarchies( ff, rrr, FIRST_PASS);
     //&fprintf(ff,"interfaces:\n");
     setTmpClassBackPointersToMenu(rrr);
-    genClassHierarchies( ff, rrr, SINGLE_VIRT_ITEM, SECOND_PASS);
+    genClassHierarchies( ff, rrr, SECOND_PASS);
     //& if (! options.xref2) fprintf(ff, "\n");
     //& s_symbolListOutputCurrentLine ++ ;
 }

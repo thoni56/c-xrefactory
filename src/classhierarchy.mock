@@ -22,8 +22,8 @@ void generateGlobalReferenceLists(SymbolsMenu *rrr, FILE *ff, char *fn) {
   mock(rrr, ff, fn);
 }
 
-void genClassHierarchies(FILE *ff, SymbolsMenu *rrr, int virtFlag, int pass) {
-  mock(ff, rrr, virtFlag, pass);
+void genClassHierarchies(FILE *ff, SymbolsMenu *rrr, int pass) {
+  mock(ff, rrr, pass);
 }
 
 bool classHierarchyClassNameLess(int c1, int c2) {
