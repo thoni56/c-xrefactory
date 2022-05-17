@@ -240,11 +240,14 @@ static void fillCache(Cache *cache, char active, int cpi, int ibi, char *lbcc, c
                                           && ppmMemoryIndex < (SIZE_ppmMemory/3)*2 \
     )
 
+static bool canContinueCachingClasses() {
+    return CACHING_CLASSES && LANGUAGE(LANG_JAVA)
+        && options.taskRegime == RegimeXref
+        && ppmMemoryIndex < (SIZE_ppmMemory/3)*2;
+}
 
 void recoverCachePointZero(void) {
-    //&if (CACHING_CLASSES) {
     ppmMemoryIndex = cache.cp[0].ppmMemoryIndex;
-    //&}
     recoverCachePoint(0,cache.cp[0].lbcc,0);
 }
 
@@ -259,9 +262,10 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
 
     log_trace("recovering cache point %d", i);
     cp = &cache.cp[i];
-    if (! CAN_CONTINUE_CACHING_CLASSES(cp)) {
+    if (!canContinueCachingClasses()) {
         ppmMemoryIndex = cp->ppmMemoryIndex;
-        //& if (CACHING_CLASSES) fprintf(dumpOut, "\nflushing classes\n\n");
+        if (CACHING_CLASSES)
+            log_debug("flushing classes");
     }
     mbMemoryIndex = cp->mbMemoryIndex;
     currentBlock = cp->topBlock;
