@@ -755,20 +755,21 @@ static void completionInsertName(char *name, CompletionLine *completionLine, int
 
 static void completeName(char *name, CompletionLine *compLine, int orderFlag,
                   Completions *ci) {
-    if (name == NULL) return;
-    if (completionTestPrefix(ci, name)) return;
+    if (name == NULL)
+        return;
+    if (completionTestPrefix(ci, name))
+        return;
     completionInsertName(name, compLine, orderFlag, ci);
 }
 
 static void searchName(char *name, CompletionLine *compLine, int orderFlag,
                        Completions *completions) {
-    int l;
     if (name == NULL)
         return;
 
     if (options.olcxSearchString==NULL || *options.olcxSearchString==0) {
         // old fashioned search
-        if (stringContainsCaseInsensitive(name, completions->idToProcess) == 0)
+        if (!stringContainsCaseInsensitive(name, completions->idToProcess))
             return;
     } else {
         // the new one
@@ -790,8 +791,9 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
         assert(completions->alternativeIndex < MAX_COMPLETIONS-1);
         if (reallyInsert(completions->alternatives, &completions->alternativeIndex, name, compLine, 1)) {
             completions->fullMatchFlag = false;
-            l = strlen(name);
-            if (l > completions->maxLen) completions->maxLen = l;
+            int l = strlen(name);
+            if (l > completions->maxLen)
+                completions->maxLen = l;
         }
     }
 }
