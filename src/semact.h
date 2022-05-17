@@ -37,7 +37,6 @@ extern Symbol *typeSpecifier1(unsigned t);
 extern void declTypeSpecifier1(Symbol *d, unsigned t);
 extern Symbol *typeSpecifier2(TypeModifier *t);
 extern void declTypeSpecifier2(Symbol *d, TypeModifier *t);
-extern void declTypeSpecifier21(TypeModifier *t, Symbol *d);
 extern TypeModifier *appendComposedType(TypeModifier **d, unsigned t);
 extern TypeModifier *prependComposedType(TypeModifier *d, unsigned t);
 extern void completeDeclarator(Symbol *t, Symbol *d);

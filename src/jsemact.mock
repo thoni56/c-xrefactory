@@ -122,10 +122,6 @@ Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
     return (Symbol *) mock(fieldLinkName, fieldAdr);
 }
 
-void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname, int accessFlags) {
-    mock(cc, oclassname, accessFlags);
-}
-
 bool javaTypeFileExist(IdList *name) {
     return (int) mock(name);
 }
@@ -208,10 +204,6 @@ void javaMethodBodyBeginning(Symbol *method) {
 
 void javaMethodBodyEnding(Position *pos) {
     mock(pos);
-}
-
-void javaAddMapedTypeName(char *file, char *path, char *pack, Completions *c, void *vdirid, int *storage) {
-    mock(file, path, pack, c, vdirid, storage);
 }
 
 Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {

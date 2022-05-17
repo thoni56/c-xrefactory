@@ -750,11 +750,6 @@ void declTypeSpecifier2(Symbol *d, TypeModifier *t) {
     d->u.typeModifier = mergeBaseModTypes(d->u.typeModifier, t);
 }
 
-void declTypeSpecifier21(TypeModifier *t, Symbol *d) {
-    assert(d && d->u.typeModifier);
-    d->u.typeModifier = mergeBaseModTypes(t, d->u.typeModifier);
-}
-
 TypeModifier *appendComposedType(TypeModifier **d, Type type) {
     TypeModifier *p;
     p = newTypeModifier(type, NULL, NULL);

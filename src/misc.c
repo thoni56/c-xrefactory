@@ -1126,18 +1126,6 @@ bool stringContainsSubstring(char *s, char *subs) {
     return false;
 }
 
-int substringIndexWithLimit(char *s, int limit, char *subs) {
-    int i, im;
-    int sl, sbl;
-    sl = limit;
-    sbl = strlen(subs);
-    im = sl-sbl;
-    for(i=0; i<=im; i++) {
-        if (strncmp(s+i, subs, sbl)==0) return(i);
-    }
-    return(-1);
-}
-
 int substringIndex(char *s, char *subs) {
     int i, im;
     int sl, sbl;
@@ -1169,8 +1157,6 @@ void javaMapDirectoryFiles1(char *packageFilename,
                             int *a3
 ){
     char            *fname;
-    // avoiding recursivity?
-    //&static bitArray fileMapped[BIT_ARR_DIM(MAX_FILES)];
 
     // Following can make that classes are added several times
     // makes things slow and memory consuming

@@ -78,12 +78,6 @@ void ppcBeginWithStringAttribute(char *kind, char *attr, char *val) {
     ppcIndentOffset++;
 }
 
-void ppcBeginWithNumericAttribute(char *kind, char *attr, int val) {
-    ppcIndent();
-    fprintf(communicationChannel, "<%s %s=%d>", kind, attr, val);
-    ppcIndentOffset++;
-}
-
 void ppcEnd(char *kind) {
     ppcIndentOffset--;
     ppcIndent();

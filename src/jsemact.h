@@ -87,8 +87,6 @@ extern int javaIsYetInTheClass(
                                );
 extern int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem);
 extern Symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr);
-extern void javaAddNestedClassesAsTypeDefs(Symbol *cc,
-                                           IdList *oclassname, int accessFlags);
 extern bool javaTypeFileExist(IdList *name);
 extern Symbol *javaTypeSymbolDefinition(IdList *tname, int accessFlags,int addType);
 extern Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags);
@@ -111,14 +109,6 @@ extern Symbol *javaMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int 
 extern void javaAddMethodParametersToSymTable(Symbol *method);
 extern void javaMethodBodyBeginning(Symbol *method);
 extern void javaMethodBodyEnding(Position *pos);
-extern void javaAddMapedTypeName(
-                                 char *file,
-                                 char *path,
-                                 char *pack,
-                                 Completions *c,
-                                 void *vdirid,
-                                 int  *storage
-                                 );
 extern Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);
 extern TypeModifier *javaClassNameType(IdList *typeName);
 extern TypeModifier *javaNewAfterName(IdList *name, Id *id, IdList *idl);

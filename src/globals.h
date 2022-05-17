@@ -50,10 +50,8 @@ extern int yyIdBufferIndex;
 extern char *s_cppVarArgsName;
 extern char defaultClassPath[];
 extern Id javaAnonymousClassName;
-extern Id s_javaConstructorName;
 extern StringList *javaClassPaths;
 extern char *javaSourcePaths;
-extern IdList *s_javaDefaultPackageName;
 extern IdList *s_javaLangName;
 extern IdList *s_javaLangStringName;
 extern IdList *s_javaLangCloneableName;
@@ -119,8 +117,6 @@ extern int inputFileNumber;
 extern int olOriginalFileIndex;     /* number of original file */
 extern int olOriginalComFileNumber;  /* number of original communication file */
 extern int olStringSecondProcessing; /* am I in macro body pass ? */
-
-extern time_t expirationTime;
 
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
 

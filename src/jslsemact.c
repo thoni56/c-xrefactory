@@ -267,11 +267,6 @@ int jslClassifyAmbiguousTypeName(IdList *name, Symbol **symbolP) {
     return name->nameType;
 }
 
-Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args) {
-    warningMessage(ERR_ST,"[jslPrependDirectEnclosingInstanceArgument] not yet implemented");
-    return(args);
-}
-
 Symbol *jslMethodHeader(unsigned modif, Symbol *type,
                           Symbol *decl, int storage, SymbolList *throws) {
     int newFun;

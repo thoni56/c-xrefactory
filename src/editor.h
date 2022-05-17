@@ -105,7 +105,6 @@ extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, Edit
 extern bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2);
-extern bool editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2);
 extern bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2);
 
@@ -145,7 +144,6 @@ extern void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList 
 extern void editorFreeMarker(EditorMarker *marker);
 extern void editorFreeMarkerListNotMarkers(EditorMarkerList *occs);
 extern void editorFreeMarkersAndRegionList(EditorRegionList *occs);
-extern void editorFreeRegionListNotMarkers(EditorRegionList *occs);
 extern void editorSortRegionsAndRemoveOverlaps(EditorRegionList **regions);
 extern void editorSplitMarkersWithRespectToRegions(EditorMarkerList  **inMarkers,
                                                    EditorRegionList  **inRegions,

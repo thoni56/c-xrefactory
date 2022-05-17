@@ -22,10 +22,6 @@ void ppcBeginWithStringAttribute(char *kind, char *attr, char *val) {
   mock(kind, attr, val);
 }
 
-void ppcBeginWithNumericAttribute(char *kind, char *attr, int val) {
-  mock(kind, attr, val);
-}
-
 void ppcEnd(char *kind) {
   mock(kind);
 }

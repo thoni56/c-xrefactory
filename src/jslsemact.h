@@ -49,7 +49,6 @@ extern Symbol *jslTypeSpecifier2(TypeModifier *t);
 extern void jslCompleteDeclarator(Symbol *t, Symbol *d);
 extern TypeModifier *jslPrependComposedType(TypeModifier *d, Type type);
 extern TypeModifier *jslAppendComposedType(TypeModifier **d, Type type);
-extern Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args);
 extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
 extern Symbol *jslTypeNameDefinition(IdList *tname);
 extern Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,

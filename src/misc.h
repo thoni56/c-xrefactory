@@ -64,7 +64,6 @@ extern bool shellMatch(char *string, int stringLen, char *pattern, bool caseSens
 extern void expandWildcardsInOnePath(char *fn, char *outpaths, int olen);
 extern void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen);
 extern char *getRealFileName_static(char *fn);
-extern int substringIndexWithLimit(char *s, int limit, char *subs);
 extern bool stringContainsSubstring(char *s, char *subs);
 extern void javaGetPackageNameFromSourceFileName(char *src, char *opack);
 extern void javaGetClassNameFromFileIndex(int nn, char *tmpOut, DotifyMode dotifyMode);

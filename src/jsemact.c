@@ -221,26 +221,6 @@ Symbol *javaAddType(IdList *class, Access access, Position *p) {
     return dd;
 }
 
-void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname,
-                                    int accessFlags) {
-    S_symStructSpec *ss;
-    IdList	ll;
-    Symbol        *nn;
-
-    assert(cc && cc->type==TypeStruct);
-    ss = cc->u.structSpec;
-    assert(ss);
-    for (int i=0; i<ss->nestedCount; i++) {
-        if (ss->nest[i].membFlag) {
-            nn = ss->nest[i].cl;
-            assert(nn);
-            fillId(&ll.id, nn->name, cc, noPosition);
-            fillIdList(&ll, ll.id, nn->name,TypeStruct,oclassname);
-            javaTypeSymbolDefinition(&ll, accessFlags, ADD_YES);
-        }
-    }
-}
-
 // resName can be NULL!!!
 static bool javaFindFile0(char *classPath, char *separator, char *name,
                           char *suffix, char **resultingName) {
@@ -1864,34 +1844,6 @@ void javaMethodBodyEnding(Position *endpos) {
     }
     // I rely that it is nil, for example in setmove target
     s_cp.function = NULL;
-}
-
-void javaAddMapedTypeName(
-                            char *file,
-                            char *path,
-                            char *pack,
-                            Completions *c,
-                            void *vdirid,
-                            int  *storage
-                        ) {
-    char				*p;
-    char                ttt2[MAX_FILE_NAME_SIZE];
-    int					len2;
-    IdList       dd2,*packid;
-    Symbol			*memb;
-
-    /*&fprintf(dumpOut,":import type %s %s %s\n", file, path, pack);&*/
-    packid = (IdList *) vdirid;
-    for(p=file; *p && *p!='.' && *p!='$'; p++) ;
-    if (*p != '.') return;
-    if (strcmp(p,".class")!=0 && strcmp(p,".java")!=0) return;
-    len2 = p - file;
-    strncpy(ttt2, file, len2);
-    assert(len2+1 < MAX_FILE_NAME_SIZE);
-    ttt2[len2] = 0;
-    fillfIdList(&dd2, ttt2, NULL, noPosition, ttt2, TypeStruct, packid);
-    memb = javaTypeSymbolDefinition(&dd2, AccessDefault, ADD_YES);
-    log_debug(":import type %s == %s", memb->name, memb->linkName);
 }
 
 TypeModifier *javaClassNameType(IdList *typeName) {

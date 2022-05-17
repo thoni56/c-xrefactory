@@ -16,7 +16,6 @@ extern void ppcReferencePreCheck(Reference *r, char *text);
 
 extern void ppcBegin(char *kind);
 extern void ppcBeginWithStringAttribute(char *kind, char *attr, char *val);
-extern void ppcBeginWithNumericAttribute(char *kind, char *attr, int val);
 extern void ppcBeginWithNumericValue(char *kind, int val);
 extern void ppcBeginWithTwoNumericAttributes(char *kind, char *attr1, int val1, char *attr2, int val2);
 extern void ppcBeginWithNumericValueAndAttribute(char *kind, int val, char *attr, char *attrVal);

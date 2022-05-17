@@ -93,12 +93,6 @@ StringList *javaClassPaths;
 char *javaSourcePaths;
 
 Id javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
-Id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
-
-static IdList s_javaDefaultPackageNameBody[] = {
-    {{"", NULL, {-1,0,0}, NULL}, "", TypePackage, NULL},
-};
-IdList *s_javaDefaultPackageName = s_javaDefaultPackageNameBody;
 
 static IdList s_javaLangNameBody[] = {
     {{"lang", NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangNameBody[1]},
@@ -173,8 +167,6 @@ int inputFileNumber          = -1;
 int olOriginalFileIndex     = -1;
 int olOriginalComFileNumber  = -1;
 int olStringSecondProcessing = 0;
-
-time_t expirationTime;
 
 TypeModifier defaultIntModifier;
 Symbol s_defaultIntDefinition;

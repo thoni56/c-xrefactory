@@ -404,10 +404,6 @@ bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2) {
     return editorMarkerLess(m2, m1);
 }
 
-bool editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
-    return editorMarkerLessOrEq(m2, m1);
-}
-
 bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2) {
     return editorMarkerLess(l1->marker, l2->marker);
 }
@@ -1187,15 +1183,6 @@ Reference *editorMarkersToReferences(EditorMarkerList **editorMarkerListP) {
     }
     LIST_MERGE_SORT(Reference, reference, olcxReferenceInternalLessFunction);
     return reference;
-}
-
-void editorFreeRegionListNotMarkers(EditorRegionList *occs) {
-    EditorRegionList  *o, *next;
-    for(o=occs; o!=NULL; ) {
-        next = o->next;
-        ED_FREE(o, sizeof(EditorRegionList));
-        o = next;
-    }
 }
 
 void editorFreeMarkersAndRegionList(EditorRegionList *occs) {
