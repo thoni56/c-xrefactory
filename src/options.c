@@ -138,7 +138,7 @@ Options presetOptions = {
 
     /* CXREF options  */
     0,                          /* show err */
-    UPDATE_CREATE,              /* create, update */
+    UPDATE_DEFAULT,             /* type of update */
     false,                      // updateOnlyModifiedFiles
     0,                          /* refnum */
 

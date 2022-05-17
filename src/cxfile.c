@@ -550,10 +550,10 @@ static void genRefItem0(ReferencesItem *referenceItem, bool force) {
         FileItem *fileItem = getFileItem(reference->position.file);
         log_trace("checking ref: loading=%d --< %s:%d", fileItem->cxLoading,
                   fileItem->name, reference->position.line);
-        if (options.update==UPDATE_CREATE || fileItem->cxLoading) {
+        if (options.update==UPDATE_DEFAULT || fileItem->cxLoading) {
             writeCxReference(reference, symbolIndex);
         } else {
-            log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
+            log_trace("Some kind of update (%d) or loading (%d), so don't writeCxReference()",
                       options.update, fileItem->cxLoading);
             assert(0);
         }

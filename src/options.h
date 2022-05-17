@@ -27,7 +27,7 @@ typedef struct setGetEnv {
 } S_setGetEnv;
 
 typedef enum updateType {
-    UPDATE_CREATE = 0,              // must be zero ! TODO: Why?
+    UPDATE_DEFAULT = 0,              // must be zero ! TODO: Why?
     UPDATE_FAST,
     UPDATE_FULL,
 } UpdateType;

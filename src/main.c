@@ -1345,7 +1345,7 @@ static void mainGenerateReferenceFile(void) {
 
     if (options.cxrefsLocation == NULL)
         return;
-    if (!updateFlag && options.update == UPDATE_CREATE) {
+    if (!updateFlag && options.update == UPDATE_DEFAULT) {
         genReferenceFile(false, options.cxrefsLocation);
         updateFlag = true;
     } else {
@@ -2197,7 +2197,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             inmode = INFILES_DISABLED;
         } else if (options.taskRegime==RegimeEditServer) {
             inmode = INFILES_DISABLED;
-        } else if (options.create || options.project!=NULL || options.update != UPDATE_CREATE) {
+        } else if (options.create || options.project!=NULL || options.update != UPDATE_DEFAULT) {
             inmode = INFILES_ENABLED;
         } else {
             inmode = INFILES_DISABLED;
@@ -2811,7 +2811,7 @@ void mainCallXref(int argc, char **argv) {
     fileAbortEnabled = false;
     if (atLeastOneProcessed) {
         if (options.taskRegime==RegimeXref) {
-            if (options.update==0 || options.update==UPDATE_FULL) {
+            if (options.update==UPDATE_DEFAULT || options.update==UPDATE_FULL) {
                 mapOverFileTable(setFullUpdateMtimesInFileItem);
             }
             if (options.xref2) {
@@ -2825,7 +2825,7 @@ void mainCallXref(int argc, char **argv) {
         }
     } else if (options.serverOperation == OLO_ABOUT) {
         aboutMessage();
-    } else if (!options.update)  {
+    } else if (options.update==UPDATE_DEFAULT)  {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "no input file");
         errorMessage(ERR_ST, tmpBuff);
