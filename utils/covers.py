@@ -16,6 +16,7 @@ dirs = map(os.path.dirname, glob.glob("../tests/*/.coverage"))
 basename = args.file.rsplit( ".", 1 )[ 0 ]
 linenumber = ":{0:>5}:".format(int(args.line))
 
+shutil.copy(os.path.join(".objects", basename+".gcda"), "/tmp")
 for d in dirs:
     f = os.path.join(d, ".coverage", basename+".gcda")
     shutil.copy(f, os.path.join(os.getcwd(), ".objects"))
@@ -29,3 +30,5 @@ for d in dirs:
             print(d)
         except ValueError:
             pass
+shutil.copy(os.path.join("/tmp", basename+".gcda"), ".objects")
+subprocess.run(["gcov", ".objects/"+basename+".o"], capture_output=True, text=True)
