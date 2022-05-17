@@ -76,7 +76,7 @@ static void cxrefTabDeleteOutOfMemory(int index) {
     setReferencesItem(index, item);
 }
 
-static void fileTabDeleteOutOfMemory(FileItem *fileItem, int index) {
+static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
     ClassHierarchyReference **h;
     h = &fileItem->superClasses;
     while (*h!=NULL) {
@@ -217,7 +217,7 @@ static int cachedIncludedFilePass(int cpi) {
 
 static void recoverCxMemory(char *cxMemFreeBase) {
     CX_FREE_UNTIL(cxMemFreeBase);
-    mapOverFileTableWithIndex(fileTabDeleteOutOfMemory);
+    mapOverFileTable(fileTabDeleteOutOfMemory);
     mapOverReferenceTableWithIndex(cxrefTabDeleteOutOfMemory);
 }
 
@@ -279,7 +279,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
         log_trace("removing references");
         cxMemory->index = cp->cxMemoryIndex;
         mapOverReferenceTableWithIndex(cxrefTabDeleteOutOfMemory);
-        mapOverFileTableWithIndex(fileTabDeleteOutOfMemory);
+        mapOverFileTable(fileTabDeleteOutOfMemory);
     }
     log_trace("recovering 0");
     symbolTableMapWithIndex(symbolTable, symbolTableDeleteOutOfMemory);
