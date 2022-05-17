@@ -930,7 +930,7 @@ static void setXrefsLocation(char *argvi) {
     createOptionString(&options.cxrefsLocation, normalizeFileName(argvi, cwd));
 }
 
-static bool processROption(int *argi, int argc, char **argv, int infilesFlag) {
+static bool processROption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strncmp(argv[i], "-refnum=",8)==0)  {
@@ -1260,7 +1260,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
                 break;
             case 'q': case 'Q': processed = processQOption(&i, argc, argv);
                 break;
-            case 'r': case 'R': processed = processROption(&i, argc, argv, infilesFlag);
+            case 'r': case 'R': processed = processROption(&i, argc, argv);
                 break;
             case 's': case 'S': processed = processSOption(&i, argc, argv);
                 break;
