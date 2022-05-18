@@ -16,7 +16,7 @@ typedef struct tpCheckMoveClassData {
     char		*tpack;
     int			transPackageMove;
     char		*sclass;
-} S_tpCheckMoveClassData;
+} TpCheckMoveClassData;
 
 
 extern void refactoryAskForReallyContinueConfirmation(void);
@@ -24,16 +24,5 @@ extern void refactoryDisplayResolutionDialog(char *message,int messageType, int 
 extern void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **undoundo, int gen);
 extern void editorUndoUntil(EditorUndo *until, EditorUndo **undoUndo);
 extern void mainRefactory();
-extern bool tpCheckSourceIsNotInnerClass(void);
-extern bool tpCheckMoveClassAccessibilities(void);
-extern bool tpCheckSuperMethodReferencesForDynToSt(void);
-extern bool tpCheckOuterScopeUsagesForDynToSt(void);
-extern bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void);
-extern bool tpCheckSuperMethodReferencesForPullUp(void);
-extern bool tpCheckSuperMethodReferencesAfterPushDown(void);
-extern void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack);
-extern bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper);
-extern bool tpPullUpFieldLastPreconditions(void);
-extern bool tpPushDownFieldLastPreconditions(void);
 
 #endif

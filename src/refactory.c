@@ -78,7 +78,7 @@ static char *refactoryXrefInitOptions[] = {
 static char *refactoryUpdateOption = "-fastupdate";
 
 
-static bool moveClassMapFunReturnOnUninterestingSymbols(ReferencesItem *ri, S_tpCheckMoveClassData *dd) {
+static bool moveClassMapFunReturnOnUninterestingSymbols(ReferencesItem *ri, TpCheckMoveClassData *dd) {
     if (!isPushAllMethodsValidRefItem(ri))
         return true;
     /* this is too strong, but check only fields and methods */
@@ -728,10 +728,10 @@ static SymbolsMenu *javaGetRelevantHkSelectedItem(ReferencesItem *ri) {
 }
 
 static void tpCheckFutureAccOfLocalReferences(ReferencesItem *ri, void *ddd) {
-    S_tpCheckMoveClassData *dd;
+    TpCheckMoveClassData *dd;
     SymbolsMenu *ss;
 
-    dd = (S_tpCheckMoveClassData *) ddd;
+    dd = (TpCheckMoveClassData *) ddd;
     log_trace("!mapping %s", ri->name);
     if (moveClassMapFunReturnOnUninterestingSymbols(ri, dd))
         return;
@@ -756,9 +756,9 @@ static void tpCheckFutureAccOfLocalReferences(ReferencesItem *ri, void *ddd) {
 
 static void tpCheckMoveClassPutClassDefaultSymbols(ReferencesItem *ri, void *ddd) {
     OlcxReferences *rstack;
-    S_tpCheckMoveClassData *dd;
+    TpCheckMoveClassData *dd;
 
-    dd = (S_tpCheckMoveClassData *) ddd;
+    dd = (TpCheckMoveClassData *) ddd;
     log_trace("!mapping %s", ri->name);
     if (moveClassMapFunReturnOnUninterestingSymbols(ri, dd))
         return;
@@ -778,7 +778,7 @@ static void tpCheckMoveClassPutClassDefaultSymbols(ReferencesItem *ri, void *ddd
     }
 }
 
-static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpCheckMoveClassData dd) {
+static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(TpCheckMoveClassData dd) {
     OlcxReferences *rstack;
     SymbolsMenu **sss;
 
@@ -822,11 +822,11 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(S_tpChe
 
 static void tpCheckDefaultAccessibilitiesMoveClass(ReferencesItem *ri, void *ddd) {
     OlcxReferences        *rstack;
-    S_tpCheckMoveClassData  *dd;
+    TpCheckMoveClassData  *dd;
     char                    symclass[MAX_FILE_NAME_SIZE];
     int                     sclen, symclen;
 
-    dd = (S_tpCheckMoveClassData *) ddd;
+    dd = (TpCheckMoveClassData *) ddd;
     //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
     if (moveClassMapFunReturnOnUninterestingSymbols(ri, dd))
         return;
@@ -849,7 +849,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(ReferencesItem *ri, void *ddd
     }
 }
 
-static void fillTpCheckMoveClassData(S_tpCheckMoveClassData *checkMoveClassData, int minMemi, int maxMemi,
+static void fillTpCheckMoveClassData(TpCheckMoveClassData *checkMoveClassData, int minMemi, int maxMemi,
                                        char *spack, char *tpack, int transPackageMove, char *sclass) {
     checkMoveClassData->mm.minMemi = minMemi;
     checkMoveClassData->mm.maxMemi = maxMemi;
@@ -860,7 +860,7 @@ static void fillTpCheckMoveClassData(S_tpCheckMoveClassData *checkMoveClassData,
 }
 
 
-void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack) {
+static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char *tpack) {
     OlcxReferences *rstack;
     SymbolsMenu *sclass;
     char *targetfile, *srcfile;
@@ -887,10 +887,10 @@ void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpa
 
 }
 
-bool tpCheckMoveClassAccessibilities(void) {
+static bool tpCheckMoveClassAccessibilities(void) {
     OlcxReferences *rstack;
     SymbolsMenu *ss;
-    S_tpCheckMoveClassData dd;
+    TpCheckMoveClassData dd;
     char spack[MAX_FILE_NAME_SIZE];
     char tpack[MAX_FILE_NAME_SIZE];
 
@@ -934,7 +934,7 @@ bool tpCheckMoveClassAccessibilities(void) {
     return true;
 }
 
-bool tpCheckSourceIsNotInnerClass(void) {
+static bool tpCheckSourceIsNotInnerClass(void) {
     OlcxReferences *rstack;
     SymbolsMenu *menu;
 
@@ -1026,7 +1026,7 @@ static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr)
     return true;
 }
 
-bool tpCheckSuperMethodReferencesForPullUp(void) {
+static bool tpCheckSuperMethodReferencesForPullUp(void) {
     S_tpCheckSpecialReferencesData      rr;
     OlcxReferences                    *rstack;
     SymbolsMenu                     *ss;
@@ -1055,7 +1055,7 @@ bool tpCheckSuperMethodReferencesForPullUp(void) {
     return true;
 }
 
-bool tpCheckSuperMethodReferencesAfterPushDown(void) {
+static bool tpCheckSuperMethodReferencesAfterPushDown(void) {
     S_tpCheckSpecialReferencesData rr;
     OlcxReferences *rstack;
     SymbolsMenu *ss;
@@ -1081,7 +1081,7 @@ bool tpCheckSuperMethodReferencesAfterPushDown(void) {
     return true;
 }
 
-bool tpCheckSuperMethodReferencesForDynToSt(void) {
+static bool tpCheckSuperMethodReferencesForDynToSt(void) {
     S_tpCheckSpecialReferencesData rr;
 
     if (!tpCheckSuperMethodReferencesInit(&rr))
@@ -1099,7 +1099,7 @@ bool tpCheckSuperMethodReferencesForDynToSt(void) {
     return true;
 }
 
-bool tpCheckOuterScopeUsagesForDynToSt(void) {
+static bool tpCheckOuterScopeUsagesForDynToSt(void) {
     S_tpCheckSpecialReferencesData  rr;
     SymbolsMenu                     *ss;
     OlcxReferences                    *rstack;
@@ -1129,7 +1129,7 @@ bool tpCheckOuterScopeUsagesForDynToSt(void) {
     return true;
 }
 
-bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
+static bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     // is there an application to original class or some of super types?
     // you should not consider any call from within the method,
     // when the method is invoked as single name, am I right?
@@ -1174,7 +1174,7 @@ bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     return true;
 }
 
-bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
+static bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     OlcxReferences *rstack;
     SymbolsMenu *ss;
     char ttt[TMP_STRING_SIZE];
@@ -3016,7 +3016,7 @@ static void refactoryPerformMoveClass(EditorMarker *point,
     int targetIsNestedInClass;
     EditorMarker *mstart, *mend;
     SymbolsMenu *ss;
-    S_tpCheckMoveClassData dd;
+    TpCheckMoveClassData dd;
 
     *outstart = *outend = NULL;
 

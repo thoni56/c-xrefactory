@@ -22,42 +22,6 @@ void mainRefactory() {
   mock();
 }
 
-bool tpCheckSourceIsNotInnerClass(void) {
-  return (bool) mock();
-}
-
-bool tpCheckMoveClassAccessibilities(void) {
-  return (bool) mock();
-}
-
-bool tpCheckSuperMethodReferencesForDynToSt(void) {
-  return (bool) mock();
-}
-
-bool tpCheckOuterScopeUsagesForDynToSt(void) {
-  return (bool) mock();
-}
-
-bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
-  return (bool) mock();
-}
-
-bool tpCheckSuperMethodReferencesForPullUp(void) {
-  return (bool) mock();
-}
-
-bool tpCheckSuperMethodReferencesAfterPushDown(void) {
-  return (bool) mock();
-}
-
-void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack) {
-  mock(dd, spack, tpack);
-}
-
-bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
-  return (bool) mock(flag, subOrSuper);
-}
-
 bool tpPullUpFieldLastPreconditions(void) {
   return (bool) mock();
 }
