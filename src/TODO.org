@@ -47,6 +47,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO BUG: an unterminated "assert(" (with the c-xref def of it: MACRO) breaks
   with error message "size of #macro_argument exceeded MACRO_UNIT_SIZE"
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
+* TODO Push options.xref2 into ppc...() functions or create if necessary
 * TODO All fillXXX() should not be mocked but have the same body as the real one
 * TODO Handle void as no parameters in formal argument lists, e.g. when refactoring them
 * TODO displayingErrorMessages() seems to be duplicated functionality
