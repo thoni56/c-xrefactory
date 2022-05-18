@@ -245,6 +245,17 @@ NOTE: This option might be removed in the future.
 -version::
 Print short or long help text or version information.
 
+====== Internal options
+
+NOTE: This should probably be in the design document instead.
+
+The refactorer internally calls the main c-xref indexing function and controls it by passing "command line options".
+Here is a list of those "options", which shall not be used from the command line.
+
+-olcxtrivialprecheck::
+Used to trigger some trivial(?) prechecks by refactorer when moving a class.
+Although it doesn't actually trigger any...
+
 ====== As yet unsorted options
 
 
@@ -275,8 +286,6 @@ Print short or long help text or version information.
 -filescasesensitive::
 
 -filescaseunsensitive::
-
--getlastimportline::
 
 -maxcompls::
 
@@ -477,8 +486,6 @@ Print short or long help text or version information.
 -olcxtops::
 
 -olcxtoptype::
-
--olcxtrivialprecheck::
 
 -olcxunmodified::
 
