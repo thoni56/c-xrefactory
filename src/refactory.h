@@ -5,11 +5,6 @@
 #include "editor.h"
 
 
-typedef enum trivialPreChecks {
-    TPC_NONE,                   /* Must be 0 because of initOpt in globals.h */
-    TPC_GET_LAST_IMPORT_LINE, // not really a check
-} TrivialPreChecks;
-
 typedef struct tpCheckMoveClassData {
     struct pushAllInBetweenData  mm;
     char		*spack;

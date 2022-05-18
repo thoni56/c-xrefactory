@@ -4082,15 +4082,6 @@ static void olTrivialRefactoringPreCheck(int refcode) {
     olCreateSelectionMenu(sessionData.browserStack.top->command);
     tpchsymbol = sessionData.browserStack.top;
     switch (refcode) {
-    case TPC_GET_LAST_IMPORT_LINE:
-        if (options.xref2) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "%d", s_cps.lastImportLine);
-            ppcGenRecord(PPC_SET_INFO, tmpBuff);
-        } else {
-            fprintf(communicationChannel,"*%d", s_cps.lastImportLine);
-        }
-        break;
     default:
         errorMessage(ERR_INTERNAL,"trivial precheck called with no valid check code");
     }

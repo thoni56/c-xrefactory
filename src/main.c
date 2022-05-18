@@ -374,9 +374,6 @@ static bool processFOption(int *argi, int argc, char **argv) {
 static bool processGOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
-    else if (strcmp(argv[i], "-getlastimportline")==0) {
-        options.trivialPreCheckCode = TPC_GET_LAST_IMPORT_LINE;
-    }
     else if (strcmp(argv[i], "-get")==0) {
         NEXT_ARG(i);
         createOptionString(&options.getValue, argv[i]);
