@@ -2287,54 +2287,53 @@ static EditorMarker *refactoryReplaceStaticPrefix(EditorMarker *d, char *npref) 
 
 // -------------------------------------- ReduceLongNames
 
-static void refactoryReduceLongReferencesInRegions(
-                                                   EditorMarker      *point,
+static void refactoryReduceLongReferencesInRegions(EditorMarker      *point,
                                                    EditorRegionList  **regions
 ) {
     EditorMarkerList *rli, *ri, *ro;
-    EditorMarker *pp;
-    int progressi, progressn;
+    int currentProgress, totalProgress;
 
     refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point,NULL,
                                    "-olcxuselesslongnames", "-olallchecks");
     olcxPushSpecial(LINK_NAME_IMPORTED_QUALIFIED_ITEM, OLO_USELESS_LONG_NAME);
     rli = editorReferencesToMarkers(sessionData.browserStack.top->references, filter0, NULL);
     editorSplitMarkersWithRespectToRegions(&rli, regions, &ri, &ro);
-    editorFreeMarkersAndMarkerList(ro); ro = NULL;
+    editorFreeMarkersAndMarkerList(ro);
 
     // a hack, as we cannot predict how many times this will be
     // invoked, adjust progress bar counter ratio
 
     progressFactor += 1;
-    LIST_LEN(progressn, EditorMarkerList, ri); progressi=0;
+    LIST_LEN(totalProgress, EditorMarkerList, ri);
+    currentProgress=0;
     for (EditorMarkerList *rr=ri; rr!=NULL; rr=rr->next) {
-        pp = refactoryReplaceStaticPrefix(rr->marker, "");
-        editorFreeMarker(pp);
-        writeRelativeProgress((((progressi++)*100/progressn)/10)*10);
+        EditorMarker *m = refactoryReplaceStaticPrefix(rr->marker, "");
+        editorFreeMarker(m);
+        writeRelativeProgress((((currentProgress++)*100/totalProgress)/10)*10);
     }
     writeRelativeProgress(100);
 }
 
 // ------------------------------------------------------ Reduce Long Names In The File
 
-static int refactoryIsTheImportUsed(EditorMarker *point, int line, int coll) {
-    char                isymName[TMP_STRING_SIZE];
-    int                 res;
+static bool refactoryIsTheImportUsed(EditorMarker *point, int line, int col) {
+    char importSymbolName[TMP_STRING_SIZE];
+    bool used;
 
-    strcpy(isymName, javaImportSymbolName_st(point->buffer->fileIndex, line, coll));
-    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point,NULL,
+    strcpy(importSymbolName, javaImportSymbolName_st(point->buffer->fileIndex, line, col));
+    refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL,
                                     "-olcxpushfileunused", "-olallchecks");
     pushLocalUnusedSymbolsAction();
-    res = 1;
-    for (SymbolsMenu *mm=sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
-        if (mm->visible && strcmp(mm->s.name, isymName)==0) {
-            res = 0;
-            goto fini1;
+    used = true;
+    for (SymbolsMenu *m=sessionData.browserStack.top->menuSym; m!=NULL; m=m->next) {
+        if (m->visible && strcmp(m->s.name, importSymbolName)==0) {
+            used = false;
+            goto finish;
         }
     }
- fini1:
+ finish:
     olcxPopOnly();
-    return res;
+    return used;
 }
 
 static int refactoryPushFileUnimportedFqts(EditorMarker *point, EditorRegionList **regions) {
