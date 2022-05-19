@@ -347,7 +347,7 @@ unittests: $(UNITTESTS)
 	make gcov
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
-		$(LCOV) -q -t unittests -d . -c -o unittests.info 2>&1 | grep -v "did not" 2>&1 | grep -v "did not produce any data" ; \
+		$(LCOV) -q -t unittests -d . -c -o unittests.info 2>&1 | grep -v "did not produce any data" ; \
 		$(LCOV) -q --remove unittests.info $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.info ; \
 	fi
 endif
