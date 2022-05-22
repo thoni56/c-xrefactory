@@ -24,7 +24,7 @@ static bitArray tmpChMarkProcessed[BIT_ARR_DIM(MAX_FILES)];
 
 static SymbolsMenu *tmpVApplClassBackPointersToMenu[MAX_FILES];
 
-static int s_symbolListOutputCurrentLine =0;
+static int currentOutputLineInSymbolList =0;
 
 
 static void clearTmpChRelevant(void) {
@@ -212,10 +212,10 @@ static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, int selectabl
 
 static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
 
-    if (s_symbolListOutputCurrentLine == 1)
-        s_symbolListOutputCurrentLine++; // first line irregularity
-    menu->outOnLine = s_symbolListOutputCurrentLine;
-    s_symbolListOutputCurrentLine++ ;
+    if (currentOutputLineInSymbolList == 1)
+        currentOutputLineInSymbolList++; // first line irregularity
+    menu->outOnLine = currentOutputLineInSymbolList;
+    currentOutputLineInSymbolList++ ;
     if (options.xref2) {
         ppcIndent();
         fprintf(file,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, menu->outOnLine+SYMBOL_MENU_FIRST_LINE);
@@ -317,9 +317,9 @@ static void descendTheClassHierarchy(FILE *file,
         vFunCl = itt->s.vFunClass;
     }
 
-    if (s_symbolListOutputCurrentLine == 1) s_symbolListOutputCurrentLine++; // first line irregularity
-    if (itt!=NULL && itt->outOnLine==0) itt->outOnLine = s_symbolListOutputCurrentLine;
-    s_symbolListOutputCurrentLine ++;
+    if (currentOutputLineInSymbolList == 1) currentOutputLineInSymbolList++; // first line irregularity
+    if (itt!=NULL && itt->outOnLine==0) itt->outOnLine = currentOutputLineInSymbolList;
+    currentOutputLineInSymbolList ++;
     olcxMenuPrintClassHierarchyLine(file, vApplCl, nextbars, itt);
 
     if (THEBIT(tmpChProcessed,vApplCl)==1)
@@ -398,12 +398,12 @@ static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, SymbolsMenu *rrr) {
     if (strcmp(rrr->s.name, LINK_NAME_CLASS_TREE_ITEM)==0) {
         /*&
           fprintf(ff, "\n");
-          s_symbolListOutputCurrentLine += 1 ;
+          currentOutputLineInSymbolList += 1 ;
           &*/
     } else {
         if (options.xref2) ppcGenRecord(PPC_VIRTUAL_SYMBOL, ln);
         else fprintf(ff, "\n== %s\n", ln);
-        s_symbolListOutputCurrentLine += 2 ;
+        currentOutputLineInSymbolList += 2 ;
     }
     classHierarchyGenInit();
     setTmpClassBackPointersToMenu(rrr);
@@ -412,7 +412,7 @@ static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, SymbolsMenu *rrr) {
     setTmpClassBackPointersToMenu(rrr);
     genClassHierarchies( ff, rrr, SECOND_PASS);
     //& if (! options.xref2) fprintf(ff, "\n");
-    //& s_symbolListOutputCurrentLine ++ ;
+    //& currentOutputLineInSymbolList ++ ;
 }
 
 static int isVirtualMenuItem(ReferencesItem *p) {
@@ -509,7 +509,7 @@ void generateGlobalReferenceLists(SymbolsMenu *rrr, FILE *ff, char *fn) {
     SymbolsMenu *rr;
 
     for(rr=rrr; rr!=NULL; rr=rr->next) rr->outOnLine = 0;
-    s_symbolListOutputCurrentLine = 1;
+    currentOutputLineInSymbolList = 1;
     splitMenuPerSymbolsAndMap(rrr, (void (*)(SymbolsMenu *, void *, void *))genNonVirtualsGlobRefLists,
                               ff, fn);
     splitMenuPerSymbolsAndMap(rrr, (void (*)(SymbolsMenu *, void *, void *))genVirtualsGlobRefLists,
