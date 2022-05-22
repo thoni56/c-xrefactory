@@ -155,37 +155,56 @@ static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, int selectabl
     if (options.serverOperation==OLO_CLASS_TREE || options.serverOperation==OLO_SHOW_CLASS_TREE) {
         ; // fprintf(file,"");
     } else if (! selectable) {
-        if (options.xref2) fprintf(file, " %s=2", PPCA_SELECTED);
-        else fprintf(file,"- ");
+        if (options.xref2)
+            fprintf(file, " %s=2", PPCA_SELECTED);
+        else
+            fprintf(file,"- ");
     } else if (menu!=NULL && menu->selected) {
-        if (options.xref2) fprintf(file, " %s=1", PPCA_SELECTED);
-        else fprintf(file,"+ ");
+        if (options.xref2)
+            fprintf(file, " %s=1", PPCA_SELECTED);
+        else
+            fprintf(file,"+ ");
     } else {
-        if (options.xref2) fprintf(file, " %s=0", PPCA_SELECTED);
-        else fprintf(file,"  ");
+        if (options.xref2)
+            fprintf(file, " %s=0", PPCA_SELECTED);
+        else
+            fprintf(file,"  ");
     }
     if (menu != NULL && menu->vlevel==1 && ooBitsGreaterOrEqual(menu->ooBits, OOC_PROFILE_APPLICABLE)) {
-        if (options.xref2) fprintf(file, " %s=1", PPCA_BASE);
-        else fprintf(file,">>");
+        if (options.xref2)
+            fprintf(file, " %s=1", PPCA_BASE);
+        else
+            fprintf(file,">>");
     } else {
-        if (options.xref2) fprintf(file, " %s=0", PPCA_BASE);
-        else fprintf(file,"  ");
+        if (options.xref2)
+            fprintf(file, " %s=0", PPCA_BASE);
+        else
+            fprintf(file,"  ");
     }
-    if (!options.xref2) fprintf(file," ");
+    if (!options.xref2)
+        fprintf(file," ");
     if (options.serverOperation==OLO_CLASS_TREE || options.serverOperation==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff, "");
     } else if (menu==NULL || (menu->defRefn==0 && menu->refn==0) || !selectable) {
-        if (options.xref2) fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
-        else fprintf(file, "  -/-  ");
+        if (options.xref2)
+            fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
+        else
+            fprintf(file, "  -/-  ");
     } else if (menu->defRefn==0) {
-        if (options.xref2) fprintf(file, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, menu->refn);
-        else fprintf(file, "  -/%-3d", menu->refn);
+        if (options.xref2)
+            fprintf(file, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, menu->refn);
+        else
+            fprintf(file, "  -/%-3d", menu->refn);
     } else if (menu->refn==0) {
-        if (options.xref2) fprintf(file, " %s=%d %s=0", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN);
-        else fprintf(file, "%3d/-  ", menu->defRefn);
+        if (options.xref2)
+            fprintf(file, " %s=%d %s=0", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN);
+        else
+            fprintf(file, "%3d/-  ", menu->defRefn);
     } else {
-        if (options.xref2) fprintf(file, " %s=%d %s=%d", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN, menu->refn);
-        else fprintf(file, "%3d/%-3d", menu->defRefn, menu->refn);
+        if (options.xref2)
+            fprintf(file, " %s=%d %s=%d", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN, menu->refn);
+        else
+            fprintf(file, "%3d/%-3d", menu->defRefn, menu->refn);
     }
     if (!options.xref2)
         fprintf(file,"    ");
