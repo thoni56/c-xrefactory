@@ -43,8 +43,7 @@ void ppcSynchronize(void) {
 }
 
 void ppcIndent(void) {
-    int i;
-    for(i=0; i<ppcIndentOffset; i++)
+    for (int i=0; i<ppcIndentOffset; i++)
         fputc(' ', communicationChannel);
 }
 
@@ -137,7 +136,7 @@ void ppcReplace(char *file, int offset, char *oldName, int oldLen, char *newName
     ppcBegin(PPC_REFACTORING_REPLACEMENT);
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%d>", PPC_STRING_VALUE, PPCA_LEN, oldLen);
-    for(int i=0; i<oldLen; i++)
+    for (int i=0; i<oldLen; i++)
         putc(oldName[i], communicationChannel);
     fprintf(communicationChannel, "</%s> ", PPC_STRING_VALUE);
     ppcGenRecord(PPC_STRING_VALUE, newName);
@@ -145,20 +144,21 @@ void ppcReplace(char *file, int offset, char *oldName, int oldLen, char *newName
 }
 
 void ppcPreCheck(EditorMarker *pos, int oldLen) {
-    int     i;
     char    *bufferedText;
     bufferedText = pos->buffer->allocation.text + pos->offset;
     ppcGotoMarker(pos);
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%d>", PPC_REFACTORING_PRECHECK, PPCA_LEN, oldLen);
-    for(i=0; i<oldLen; i++) putc(bufferedText[i], communicationChannel);
+    for (int i=0; i<oldLen; i++)
+        putc(bufferedText[i], communicationChannel);
     fprintf(communicationChannel, "</%s>\n", PPC_REFACTORING_PRECHECK);
 }
 
 void ppcReferencePreCheck(Reference *r, char *text) {
     ppcGotoPosition(&r->position);
     ppcIndent();
-    fprintf(communicationChannel, "<%s %s=%ld>", PPC_REFACTORING_PRECHECK, PPCA_LEN, (unsigned long)strlen(text));
+    fprintf(communicationChannel, "<%s %s=%ld>", PPC_REFACTORING_PRECHECK, PPCA_LEN,
+            (unsigned long)strlen(text));
     fprintf(communicationChannel, "%s", text);
     fprintf(communicationChannel, "</%s>\n", PPC_REFACTORING_PRECHECK);
 }
