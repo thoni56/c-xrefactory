@@ -637,9 +637,5 @@ For a detailed log of features, enhancements and bug fixes visit the projects re
 
 Thanks to
 
-- Marián Vittek, Bratislawa University, and his helpers that created this over many years (
-- Matt Hargett <plaztiksyke@gmail.com> - upgrading to the modern BDD-ish syntax
-- João Freitas <joaohf@gmail.com> - asciidoc documentation and Cmake build system
-- Thomas Nilefalk <thomas@junovagen.se> - cgreen-runner and current maintainer
+- Marián Vittek, Bratislawa University, and his helpers that created this over many years
 
-Thanks also go to @gardenia, @d-meiser, @stevemadsenblippar and others for their contributions.
