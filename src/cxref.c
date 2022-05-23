@@ -3670,7 +3670,7 @@ static void olcxMMPreCheck(void) {
     precheck = mmPreCheckMakeDifference(origrefs, newrefs, diffrefs);
     olStackDeleteSymbol(origrefs);
     olStackDeleteSymbol(newrefs);
-    if (precheck==0) {
+    if (!precheck) {
         if (diffrefs->menuSym!=NULL) {
             fillTrivialSpecialRefItem(&dri, "  references missinterpreted after refactoring");
             olAddBrowsedSymbol(&dri, &diffrefs->hkSelectedSym, 1, 1, 0,
