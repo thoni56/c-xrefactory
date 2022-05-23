@@ -4441,7 +4441,7 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_MM_PRE_CHECK:
     case OLO_PP_PRE_CHECK:
-        olcxMMPreCheck();   // the value of s_opt.cxrefsLocation is checked inside
+        olcxMMPreCheck();   // the value of options.cxrefsLocation is checked inside
         break;
     case OLO_INTERSECTION:
         olcxTopReferencesIntersection();
