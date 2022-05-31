@@ -135,7 +135,6 @@ typedef struct options {
     bool trace;
     ServerOperation serverOperation;
     int olcxGotoVal;
-    char *originalDir;
 
     bool no_stdoptions;
 

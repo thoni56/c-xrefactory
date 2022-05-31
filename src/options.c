@@ -130,17 +130,16 @@ Options presetOptions = {
     RegimeXref,                 /* taskRegime */
     false,                      /* debug */
     false,                      /* trace */
-    0,
-    0,
-    "",
+    0,                          /* serverOperation */
+    0,                          /* olcxGotoVal */
 
-    false,                      /* no stdoptions */
+    false,                      /* no_stdoptions */
 
     /* CXREF options  */
-    0,                          /* show err */
+    false,                      /* errors */
     UPDATE_DEFAULT,             /* type of update */
     false,                      // updateOnlyModifiedFiles
-    0,                          /* refnum */
+    0,                          /* referenceFileCount */
 
     // all the rest is initialized to zeros
     {0, },                      // get/set end
