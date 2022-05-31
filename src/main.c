@@ -1946,6 +1946,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     StringList *tmpIncludeDirs;
 
     ENTER();
+
     fileName = inputFilename;
     mainSetLanguage(fileName, outLanguage);
     getOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName, DEFAULT_VALUE);
@@ -2060,11 +2061,11 @@ static bool optionsOverflowHandler(int n) {
 }
 
 static void mainTotalTaskEntryInitialisations() {
+    ENTER();
+
     // Outputs
     errOut = stderr;
     dumpOut = stdout;
-
-    log_debug("Initialisations.");
 
     communicationChannel = stdout;
     // TODO: how come it is not always Xref, as set in options?
@@ -2111,6 +2112,8 @@ static void mainTotalTaskEntryInitialisations() {
 
     olcxInit();
     editorInit();
+
+    LEAVE();
 }
 
 static void clearFileItem(FileItem *fileItem) {
@@ -2135,6 +2138,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     char *sss,*cmdlnInputFile;
     int inmode;
     bool previousNoErrorsOption;
+
+    ENTER();
 
     fileAbortEnabled = false;
 
@@ -2256,7 +2261,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     initCaching();
 
-    log_debug("Leaving all task initialisations.");
+    LEAVE();
 }
 
 static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {

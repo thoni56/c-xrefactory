@@ -4216,7 +4216,8 @@ static void refactoryPushDownPullUp(EditorMarker *point, PushPullDirection direc
     UNUSED lines;
 
     target = getTargetFromOptions();
-    if (! validTargetPlace(target, "-olcxmmtarget")) return;
+    if (!validTargetPlace(target, "-olcxmmtarget"))
+        return;
 
     refactoryUpdateReferences(refactoringOptions.project);
 
