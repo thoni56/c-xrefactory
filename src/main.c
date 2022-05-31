@@ -514,7 +514,7 @@ static bool processNOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-no-stdoptions")==0)
         options.no_stdoptions = true;
     else if (strcmp(argv[i], "-no-autoupdatefromsrc")==0)
-        options.javaSlAllowed = 0;
+        options.javaSlAllowed = false;
     else if (strcmp(argv[i], "-no-errors")==0)
         options.noErrors = true;
     else return false;

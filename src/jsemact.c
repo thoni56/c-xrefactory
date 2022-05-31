@@ -438,7 +438,7 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
         *sourceFileNameP = NULL;
 
     log_trace("found source file: %s, found class file: %s)", sourceFound?"yes":"no", classFound?"yes":"no");
-    if (options.javaSlAllowed == 0) {
+    if (!options.javaSlAllowed) {
         if (classFound)
             return RESULT_IS_CLASS_FILE;
         else

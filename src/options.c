@@ -90,7 +90,7 @@ Options presetOptions = {
     0,                          // new line number of the first line
 
     "",                         // getValue
-    1,                          // javaSlAllowed (autoUpdateFromSrc)
+    true,                       // javaSlAllowed (autoUpdateFromSrc)
 
     /* JAVADOC: */
     "java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming",     // -htmljavadocavailable

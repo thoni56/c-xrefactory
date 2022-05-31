@@ -94,7 +94,7 @@ typedef struct options {
     int checkNewLineNumber;
 
     char *getValue;
-    int javaSlAllowed;          /* TODO: Boolify? */
+    bool javaSlAllowed;
 
     /* JAVADOC: */
     char *htmlJdkDocAvailable;
