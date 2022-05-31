@@ -1092,9 +1092,12 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
                                     PositionList *commas, Position *rpar,
                                     int hasParam
                                     ) {
-    if (options.taskRegime != RegimeEditServer) return;
-    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES) return;
-    if (positionsAreNotEqual(decl->pos, s_cxRefPos)) return;
+    if (options.taskRegime != RegimeEditServer)
+        return;
+    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
+        return;
+    if (positionsAreNotEqual(decl->pos, s_cxRefPos))
+        return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
 
@@ -1102,18 +1105,24 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                     PositionList *commas, Position *rpar,
                                     int hasParam
                                     ) {
-    if (options.taskRegime != RegimeEditServer) return;
-    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES) return;
-    if (ref==NULL || positionsAreNotEqual(ref->position, s_cxRefPos)) return;
+    if (options.taskRegime != RegimeEditServer)
+        return;
+    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
+        return;
+    if (ref==NULL || positionsAreNotEqual(ref->position, s_cxRefPos))
+        return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
 
 void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
                                         PositionList *commas, Position *rpar
                                         ) {
-    if (options.taskRegime != RegimeEditServer) return;
-    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES) return;
-    if (positionsAreNotEqual(*sym, s_cxRefPos)) return;
+    if (options.taskRegime != RegimeEditServer)
+        return;
+    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
+        return;
+    if (positionsAreNotEqual(*sym, s_cxRefPos))
+        return;
     if (commas==NULL) {
         handleParameterPositions(lpar, NULL, rpar, 0);
     } else {
