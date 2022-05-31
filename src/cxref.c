@@ -3764,9 +3764,9 @@ static void olcxRemoveRefWinFromRefList(Reference **r1,
 
 
 static void olcxTopReferencesRemoveWindow(void) {
-    OlcxReferences    *top1;
-    int                 wdfile;
-    Position          fp, tp;
+    OlcxReferences    *top;
+    int                wdfile;
+    Position           fp, tp;
 
     // in reality this is a hack, it takes references kept from
     // last file processing
@@ -3776,12 +3776,12 @@ static void olcxTopReferencesRemoveWindow(void) {
     wdfile = getFileNumberFromName(options.olcxWinDelFile);
     fp = makePosition(wdfile, options.olcxWinDelFromLine, options.olcxWinDelFromCol);
     tp = makePosition(wdfile, options.olcxWinDelToLine, options.olcxWinDelToCol);
-    top1 = sessionData.browserStack.top;
-    olcxRemoveRefWinFromRefList(&top1->references, wdfile, &fp, &tp);
-    for (SymbolsMenu *mm=top1->menuSym; mm!=NULL; mm=mm->next) {
+    top = sessionData.browserStack.top;
+    olcxRemoveRefWinFromRefList(&top->references, wdfile, &fp, &tp);
+    for (SymbolsMenu *mm=top->menuSym; mm!=NULL; mm=mm->next) {
         olcxRemoveRefWinFromRefList(&mm->s.references, wdfile, &fp, &tp);
     }
-    top1->actual = top1->references;
+    top->actual = top->references;
     fprintf(communicationChannel,"*");
 }
 
