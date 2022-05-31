@@ -4,7 +4,7 @@
 
 Options options;
 Options refactoringOptions;
-Options cachedOptions;
+Options savedOptions;
 Options presetOptions;
 
 void xrefSetenv(char *name, char *val) {

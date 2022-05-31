@@ -159,7 +159,7 @@ typedef struct options {
 /* PUBLIC DATA: */
 extern Options options;            // current options
 extern Options refactoringOptions; // xref -refactory command line options
-extern Options cachedOptions;
+extern Options savedOptions;
 extern Options presetOptions;
 
 /* FUNCTIONS */

@@ -256,11 +256,11 @@ static void refactoryBeInteractive(void) {
     int pargc;
     char **pargv;
 
-    copyOptions(&cachedOptions, &options);
+    copyOptions(&savedOptions, &options);
     for (;;) {
         closeMainOutputFile();
         ppcSynchronize();
-        copyOptions(&options, &cachedOptions);
+        copyOptions(&options, &savedOptions);
         processOptions(argument_count(refactoryEditServInitOptions),
                        refactoryEditServInitOptions, INFILES_DISABLED);
         getPipedOptions(&pargc, &pargv);
@@ -4429,7 +4429,7 @@ void mainRefactory() {
     // in general in this file:
     //   'refactoringOptions' are options passed to c-xrefactory
     //   'options' are options valid for interactive edit-server 'sub-task'
-    copyOptions(&cachedOptions, &options);
+    copyOptions(&savedOptions, &options);
 
     // MAGIC, set the server operation to anything that just refreshes
     // or generates xrefs since we will be calling the "main task"

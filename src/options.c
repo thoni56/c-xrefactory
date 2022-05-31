@@ -24,7 +24,7 @@
 
 Options options;               // current options
 Options refactoringOptions;    // xref -refactory command line options
-Options cachedOptions;
+Options savedOptions;
 Options presetOptions = {
                                 /* GENERAL */
     false,                      // exit

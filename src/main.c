@@ -1974,7 +1974,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
             *inputOpened = false;
             goto fini;
         }
-        copyOptions(&cachedOptions, &options);  // before getJavaClassPath, it modifies ???
+        copyOptions(&savedOptions, &options);  // before getJavaClassPath, it modifies ???
         processOptions(nargc, nargv, INFILES_DISABLED);
         getJavaClassAndSourcePath();
         *inputOpened = computeAndOpenInputFile();
@@ -1994,7 +1994,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         assert(cache.lbcc == cache.cp[0].lbcc);
         assert(cache.lbcc == cache.cp[1].lbcc);
     } else {
-        copyOptions(&options, &cachedOptions);
+        copyOptions(&options, &savedOptions);
         processOptions(nargc, nargv, INFILES_DISABLED); /* no include or define options */
         *inputOpened = computeAndOpenInputFile();
     }
@@ -2651,7 +2651,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPassP,
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         if (!*firstPassP)
-            copyOptions(&options, &cachedOptions);
+            copyOptions(&options, &savedOptions);
         mainFileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &inputOpened, &s_language);
         olOriginalFileIndex    = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileIndex;
@@ -2893,10 +2893,10 @@ static void mainEditServer(int argc, char **argv) {
     ENTER();
     cxResizingBlocked = 1;
     firstPass = true;
-    copyOptions(&cachedOptions, &options);
+    copyOptions(&savedOptions, &options);
     for(;;) {
         currentPass = ANY_PASS;
-        copyOptions(&options, &cachedOptions);
+        copyOptions(&options, &savedOptions);
         getPipedOptions(&nargc, &nargv);
         // O.K. -o option given on command line should catch also file not found
         // message
