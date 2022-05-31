@@ -5,11 +5,11 @@
 #include "symbol.h"
 
 
-enum extractModes {
+typedef enum extractModes {
     EXTRACT_FUNCTION,
     EXTRACT_FUNCTION_ADDRESS_ARGS,
     EXTRACT_MACRO,
-};
+} ExtractMode;
 
 /* Revealed publicly only to allow unittesting */
 typedef struct referencesItemList {

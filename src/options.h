@@ -10,6 +10,7 @@
 #include "stringlist.h"
 #include "refactorings.h"
 #include "server.h"
+#include "extract.h"
 
 
 /* Working regime in which the task is invoked */
@@ -122,7 +123,7 @@ typedef struct options {
     char *olcxSearchString;
     int olineLen;
     char *olExtractAddrParPrefix;
-    int extractMode;
+    ExtractMode extractMode;
     int maxCompletions;
     int editor;
     bool create;
