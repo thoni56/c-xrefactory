@@ -168,7 +168,7 @@ static char javaClassPathExpanded[MAX_OPTION_LEN];
 
 
 void xrefSetenv(char *name, char *val) {
-    S_setGetEnv *sge;
+    SetGetEnv *sge;
     int j, n;
 
     sge = &options.setGetEnv;
@@ -190,9 +190,9 @@ void xrefSetenv(char *name, char *val) {
     if (j==n || strcmp(sge->value[j], val)!=0) {
         createOptionString(&(sge->value[j]), val);
     }
-    //&fprintf(dumpOut, "setting '%s' to '%s'\n", name, val);
+    log_debug("setting xrefEnvVar '%s' to '%s'\n", name, val);
     if (j==n)
-        sge->num ++;
+        sge->num++;
 }
 
 

@@ -25,7 +25,7 @@ typedef struct setGetEnv {
     int num;
     char *name[MAX_SET_GET_OPTIONS];
     char *value[MAX_SET_GET_OPTIONS];
-} S_setGetEnv;
+} SetGetEnv;
 
 typedef enum updateType {
     UPDATE_DEFAULT = 0,              // must be zero ! TODO: Why?
