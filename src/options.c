@@ -57,11 +57,9 @@ Options presetOptions = {
 #if defined (__WIN32__)
     "c;C",                      // cFilesSuffixes
     "java;JAV",                 // javaFilesSuffixes
-    "C;cpp;CC;cc",              // c++FilesSuffixes
 #else
     "c:C",                      // cFilesSuffixes
     "java",                     // javaFilesSuffixes
-    "C:cpp:CC:cc",              // c++FilesSuffixes
 #endif
     true,                       // fileNamesCaseSensitive
     TSS_FULL_SEARCH,            // search Tag file specifics
