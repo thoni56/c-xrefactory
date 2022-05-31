@@ -549,7 +549,7 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     SymbolList ppl, *pppl;
 
     /* This probably creates a SymbolList element so ..IsMember() can be used */
-    /* TODO: create a function to check if a *Symbol* is member... */
+    /* TODO: SymbolList is here used as a FQT, create that type... */
     fillSymbol(&symbol, name, fqName, noPosition);
     symbol.type = TypeStruct;
     symbol.storage = StorageNone;
