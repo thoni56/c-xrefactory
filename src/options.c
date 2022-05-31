@@ -63,10 +63,10 @@ Options presetOptions = {
     "java",                     // javaFilesSuffixes
     "C:cpp:CC:cc",              // c++FilesSuffixes
 #endif
-    1,                      // fileNamesCaseSensitive
-    TSS_FULL_SEARCH,        // search Tag file specifics
-    "",                     // windel file
-    0,                      // following is windel line:col x line-col
+    true,                       // fileNamesCaseSensitive
+    TSS_FULL_SEARCH,            // search Tag file specifics
+    "",                         // windel file
+    0,                          // following is windel line:col x line-col
     0,
     0,
     0,

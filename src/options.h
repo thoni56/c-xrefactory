@@ -66,7 +66,7 @@ typedef struct options {
     char *cFilesSuffixes;
     char *javaFilesSuffixes;
     char *cppFilesSuffixes;
-    int fileNamesCaseSensitive;
+    bool fileNamesCaseSensitive;
     int tagSearchSpecif;
     char *olcxWinDelFile;
     int olcxWinDelFromLine;

@@ -107,7 +107,7 @@ char *normalizeFileName(char *name, char *relative_to) {
             l1 = -1;
         } else {
             strcpy(normalizedFileName,relative_to);
-            if (! options.fileNamesCaseSensitive) {
+            if (!options.fileNamesCaseSensitive) {
                 for(ss=normalizedFileName; *ss; ss++)
                     *ss = tolower(*ss);
             }
@@ -130,7 +130,7 @@ char *normalizeFileName(char *name, char *relative_to) {
                 normalizedFileName[j]=name[i];
                 if (normalizedFileName[j]==ZIP_SEPARATOR_CHAR)
                     inzip=1;
-                if ((!inzip) && ! options.fileNamesCaseSensitive) {
+                if (!inzip && !options.fileNamesCaseSensitive) {
                     normalizedFileName[j]=tolower(normalizedFileName[j]);
                 }
             }

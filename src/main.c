@@ -353,10 +353,10 @@ static bool processFOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-filescasesensitive")==0) {
-        options.fileNamesCaseSensitive = 1;
+        options.fileNamesCaseSensitive = true;
     }
     else if (strcmp(argv[i], "-filescaseunsensitive")==0) {
-        options.fileNamesCaseSensitive = 0;
+        options.fileNamesCaseSensitive = false;
     }
     else if (strcmp(argv[i], "-fastupdate")==0)  {
         options.update = UPDATE_FAST;
