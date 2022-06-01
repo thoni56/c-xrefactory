@@ -1688,11 +1688,10 @@ static void discoverBuiltinIncludePaths(void) {
 
     static bool messageWritten = false;
 
-    ENTER();
     if (!LANGUAGE(LANG_C) && !LANGUAGE(LANG_YACC)) {
-        LEAVE();
         return;
     }
+    ENTER();
 
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
@@ -1744,7 +1743,8 @@ static void discoverBuiltinIncludePaths(void) {
  * identification. Search will consider all sets for which the
  * identification string is a substring of the
  * compiler_identification, so you can have a set specific for "clang"
- * clang version 12", then for "Apple clang", then "clang" */
+ * clang version 12", then for "Apple clang", then "clang" in the
+ * order of "compiler_dependent_defines" */
 
 
 // TODO: Separate out "Apple clang"...
