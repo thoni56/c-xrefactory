@@ -24,8 +24,10 @@ There are a *lot* of things to do to make c-xref into modern C.
    create we need to ask where to store it starting with current
    directory. This could enable storing non-absolute filenames in the
    xrefs, they should be relative to where the db is.
+** TODO Do we even need the db? Probably, for very large projects it's too slow to always generate
 * TODO Set xref2 to true as default and then convert all test cases that fail, remove the option
   Hmmm. We only want that when running as a server, right?
+** TODO Figure out in which regime xref2 is relevant
 * TODO dumpOut, errOut - figure out how they should be set in various scenarios
 * TODO ROADMAP
 ** TODO LSP-like protocol (possibly also fulfill LSP functions)
