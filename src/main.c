@@ -517,7 +517,8 @@ static bool processNOption(int *argi, int argc, char **argv) {
         options.javaSlAllowed = false;
     else if (strcmp(argv[i], "-no-errors")==0)
         options.noErrors = true;
-    else return false;
+    else
+        return false;
     *argi = i;
     return true;
 }
@@ -1209,7 +1210,8 @@ static void mainProcessInFileOption(char *infile) {
 }
 
 void processOptions(int argc, char **argv, int infilesFlag) {
-    int i, processed;
+    int i;
+    bool processed;
 
     for (i=1; i<argc; i++) {
         if (options.taskRegime==RegimeEditServer &&
@@ -1220,73 +1222,100 @@ void processOptions(int argc, char **argv, int infilesFlag) {
         } else {
             log_trace("processing argument '%s'", argv[i]);
         }
-        processed = 0;
+        processed = false;
         if (argv[i][0] == '-') {
             switch (argv[i][1]) {
-            case 'a': case 'A': processed = processAOption(&i, argc, argv);
+            case 'a': case 'A':
+                processed = processAOption(&i, argc, argv);
                 break;
-            case 'b': case 'B': processed = processBOption(&i, argc, argv);
+            case 'b': case 'B':
+                processed = processBOption(&i, argc, argv);
                 break;
-            case 'c': case 'C': processed = processCOption(&i, argc, argv);
+            case 'c': case 'C':
+                processed = processCOption(&i, argc, argv);
                 break;
-            case 'd': case 'D': processed = processDOption(&i, argc, argv);
+            case 'd': case 'D':
+                processed = processDOption(&i, argc, argv);
                 break;
-            case 'e': case 'E': processed = processEOption(&i, argc, argv);
+            case 'e': case 'E':
+                processed = processEOption(&i, argc, argv);
                 break;
-            case 'f': case 'F': processed = processFOption(&i, argc, argv);
+            case 'f': case 'F':
+                processed = processFOption(&i, argc, argv);
                 break;
-            case 'g': case 'G': processed = processGOption(&i, argc, argv);
+            case 'g': case 'G':
+                processed = processGOption(&i, argc, argv);
                 break;
-            case 'h': case 'H': processed = processHOption(&i, argc, argv);
+            case 'h': case 'H':
+                processed = processHOption(&i, argc, argv);
                 break;
-            case 'i': case 'I': processed = processIOption(&i, argc, argv);
+            case 'i': case 'I':
+                processed = processIOption(&i, argc, argv);
                 break;
-            case 'j': case 'J': processed = processJOption(&i, argc, argv);
+            case 'j': case 'J':
+                processed = processJOption(&i, argc, argv);
                 break;
-            case 'k': case 'K': processed = processKOption(&i, argc, argv);
+            case 'k': case 'K':
+                processed = processKOption(&i, argc, argv);
                 break;
-            case 'l': case 'L': processed = processLOption(&i, argc, argv);
+            case 'l': case 'L':
+                processed = processLOption(&i, argc, argv);
                 break;
-            case 'm': case 'M': processed = processMOption(&i, argc, argv);
+            case 'm': case 'M':
+                processed = processMOption(&i, argc, argv);
                 break;
-            case 'n': case 'N': processed = processNOption(&i, argc, argv);
+            case 'n': case 'N':
+                processed = processNOption(&i, argc, argv);
                 break;
-            case 'o': case 'O': processed = processOOption(&i, argc, argv);
+            case 'o': case 'O':
+                processed = processOOption(&i, argc, argv);
                 break;
-            case 'p': case 'P': processed = processPOption(&i, argc, argv);
+            case 'p': case 'P':
+                processed = processPOption(&i, argc, argv);
                 break;
-            case 'q': case 'Q': processed = processQOption(&i, argc, argv);
+            case 'q': case 'Q':
+                processed = processQOption(&i, argc, argv);
                 break;
-            case 'r': case 'R': processed = processROption(&i, argc, argv);
+            case 'r': case 'R':
+                processed = processROption(&i, argc, argv);
                 break;
-            case 's': case 'S': processed = processSOption(&i, argc, argv);
+            case 's': case 'S':
+                processed = processSOption(&i, argc, argv);
                 break;
-            case 't': case 'T': processed = processTOption(&i, argc, argv);
+            case 't': case 'T':
+                processed = processTOption(&i, argc, argv);
                 break;
-            case 'u': case 'U': processed = processUOption(&i, argc, argv);
+            case 'u': case 'U':
+                processed = processUOption(&i, argc, argv);
                 break;
-            case 'v': case 'V': processed = processVOption(&i, argc, argv);
+            case 'v': case 'V':
+                processed = processVOption(&i, argc, argv);
                 break;
-            case 'w': case 'W': processed = processWOption(&i, argc, argv);
+            case 'w': case 'W':
+                processed = processWOption(&i, argc, argv);
                 break;
-            case 'x': case 'X': processed = processXOption(&i, argc, argv);
+            case 'x': case 'X':
+                processed = processXOption(&i, argc, argv);
                 break;
-            case 'y': case 'Y': processed = processYOption(&i, argc, argv);
+            case 'y': case 'Y':
+                processed = processYOption(&i, argc, argv);
                 break;
-            case 'z': case 'Z': processed = processZOption(&i, argc, argv);
+            case 'z': case 'Z':
+                processed = processZOption(&i, argc, argv);
                 break;
-            default: processed = 0;
+            default:
+                processed = false;
             }
         } else {
             /* input file */
-            processed = 1;
+            processed = true;
             if (infilesFlag == INFILES_ENABLED) {
                 addStringListOption(&options.inputFiles, argv[i]);
             }
         }
-        if (! processed) {
+        if (!processed) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "unknown option %s, (try c-xref -help)\n",argv[i]);
+            sprintf(tmpBuff, "unknown option %s, (try c-xref -help)\n", argv[i]);
             if (options.taskRegime==RegimeXref) {
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
             } else
@@ -1296,8 +1325,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
 }
 
 static void mainScheduleInputFilesFromOptionsToFileTable(void) {
-    StringList *ll;
-    for(ll=options.inputFiles; ll!=NULL; ll=ll->next) {
+    for (StringList *ll=options.inputFiles; ll!=NULL; ll=ll->next) {
         mainProcessInFileOption(ll->string);
     }
 }

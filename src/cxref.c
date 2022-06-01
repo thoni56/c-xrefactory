@@ -4319,7 +4319,7 @@ void mainAnswerEditAction(void) {
         jdkcp = getJavaHome();
         if (options.xref2) {
             if (jdkcp==NULL) {
-                if (! options.noErrors) {
+                if (!options.noErrors) {
                     ppcGenRecord(PPC_ERROR, "Can't infer Java home");
                 }
             } else {

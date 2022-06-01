@@ -776,7 +776,8 @@ void readOptionPipe(char *comm, int *nargc, char ***nargv, char *section) {
 static char *getClassPath(bool defaultCpAllowed) {
     char *cp;
     cp = options.classpath;
-    if (cp == NULL || *cp==0) cp = getenv("CLASSPATH");
+    if (cp == NULL || *cp==0)
+        cp = getenv("CLASSPATH");
     if (cp == NULL || *cp==0) {
         if (defaultCpAllowed)
             cp = defaultClassPath;
@@ -789,8 +790,10 @@ static char *getClassPath(bool defaultCpAllowed) {
 void javaSetSourcePath(bool defaultClassPathAllowed) {
     char *cp;
     cp = options.sourcePath;
-    if (cp == NULL || *cp==0) cp = getenv("SOURCEPATH");
-    if (cp == NULL || *cp==0) cp = getClassPath(defaultClassPathAllowed);
+    if (cp == NULL || *cp==0)
+        cp = getenv("SOURCEPATH");
+    if (cp == NULL || *cp==0)
+        cp = getClassPath(defaultClassPathAllowed);
     if (cp == NULL) {
         javaSourcePaths = NULL;
     } else {

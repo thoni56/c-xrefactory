@@ -1754,7 +1754,7 @@ static void refactoryCheckForMultipleReferencesInSamePlace(OlcxReferences *rstac
     pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
     log_trace(":checking %s to %s (%d)", p->name, sss->name, pushed);
-    if ((! pushed) && olcxIsSameCxSymbol(p, sss)) {
+    if (!pushed && olcxIsSameCxSymbol(p, sss)) {
         log_trace("checking %s references", p->name);
         for (Reference *r=p->references; r!=NULL; r=r->next) {
             if (refOccursInRefs(r, rstack->references)) {
@@ -1776,7 +1776,6 @@ static void refactoryMultipleOccurencesSafetyCheck(void) {
 static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     char nameOnPoint[TMP_STRING_SIZE];
     char *symLinkName, *message;
-    bool check;
     Type symtype;
     EditorMarkerList *occs;
     EditorUndo *undoStartPoint, *redoTrack;
@@ -1807,8 +1806,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     refactorySimpleRenaming(occs, point, nameOnPoint, symLinkName, symtype);
     //&editorDumpBuffers();
     redoTrack = NULL;
-    check = refactoryMakeSafetyCheckAndUndo(point, &occs, undoStartPoint, &redoTrack);
-    if (! check) {
+    if (!refactoryMakeSafetyCheckAndUndo(point, &occs, undoStartPoint, &redoTrack)) {
         refactoryAskForReallyContinueConfirmation();
     }
 
@@ -1817,9 +1815,6 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     // finish where you have started
     ppcGotoMarker(point);
 
-    // no messages, they make problem on extract method
-    //&if (check) ppcGenRecord(PPC_INFORMATION,"Symbol has been safely renamed");
-    //&else ppcGenRecord(PPC_INFORMATION,"Symbol has been renamed");
     editorFreeMarkersAndMarkerList(occs);  // O(n^2)!
 
     if (refactoringOptions.theRefactoring==AVR_RENAME_PACKAGE) {
