@@ -206,7 +206,7 @@ static bool processAOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-addimportdefault=",18)==0) {
         sscanf(argv[i]+18, "%d", &options.defaultAddImportStrategy);
     }
-    else if (strcmp(argv[i], "-version")==0 || strcmp(argv[i], "-about")==0){
+    else if (strcmp(argv[i], "-about")==0) {
         options.serverOperation = OLO_ABOUT;
     }
     else return false;
@@ -908,14 +908,6 @@ static bool processPOption(int *argi, int argc, char **argv) {
     return true;
 }
 
-static bool processQOption(int *argi, int argc, char **argv) {
-    int i = * argi;
-    if (0) {}
-    else return false;
-    *argi = i;
-    return true;
-}
-
 static void setXrefsLocation(char *argvi) {
     static bool messageWritten=false;
 
@@ -1116,7 +1108,7 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
 static bool processVOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
-    else if (strcmp(argv[i], "-version")==0||strcmp(argv[i], "-about")==0){
+    else if (strcmp(argv[i], "-version")==0) {
         options.serverOperation = OLO_ABOUT;
     }
     else return false;
@@ -1168,17 +1160,10 @@ static bool processYOption(int *argi, int argc, char **argv) {
     return true;
 }
 
-static bool processZOption(int *argi, int argc, char **argv) {
-    int i = * argi;
-    if (0) {}
-    else return false;
-    *argi = i;
-    return true;
-}
-
-static void mainScheduleInputFileOptionToFileTable(char *infile) {
+static void scheduleInputFileArgumentToFileTable(char *infile) {
     int topCallFlag;
     void *recurseFlag;
+
     javaSetSourcePath(true);      // for case of packages on command line
     topCallFlag = 1;
     recurseFlag = &topCallFlag;
@@ -1187,8 +1172,7 @@ static void mainScheduleInputFileOptionToFileTable(char *infile) {
         });
 }
 
-static void mainProcessInFileOption(char *infile) {
-    int i;
+static void processInFileArgument(char *infile) {
     if (infile[0]=='`' && infile[strlen(infile)-1]=='`') {
         int nargc;
         char **nargv, *pp;
@@ -1198,122 +1182,110 @@ static void mainProcessInFileOption(char *infile) {
         pp = strchr(command, '`');
         if (pp!=NULL) *pp = 0;
         readOptionPipe(command, &nargc, &nargv, "");
-        for(i=1; i<nargc; i++) {
+        for (int i=1; i<nargc; i++) {
             if (nargv[i][0]!='-' && nargv[i][0]!='`') {
-                mainScheduleInputFileOptionToFileTable(nargv[i]);
+                scheduleInputFileArgumentToFileTable(nargv[i]);
             }
         }
 
     } else {
-        mainScheduleInputFileOptionToFileTable(infile);
+        scheduleInputFileArgumentToFileTable(infile);
     }
 }
 
 void processOptions(int argc, char **argv, int infilesFlag) {
     int i;
-    bool processed;
+    bool matched;
 
     for (i=1; i<argc; i++) {
-        if (options.taskRegime==RegimeEditServer &&
-            strncmp(argv[i], "-last_message=",14)==0)
-        {
-            // because of emacs-debug
-            log_trace("processing argument '-lastmessage=...'");
-        } else {
-            log_trace("processing argument '%s'", argv[i]);
-        }
-        processed = false;
+        log_trace("processing argument '%s'", argv[i]);
+
+        matched = false;
         if (argv[i][0] == '-') {
             switch (argv[i][1]) {
             case 'a': case 'A':
-                processed = processAOption(&i, argc, argv);
+                matched = processAOption(&i, argc, argv);
                 break;
             case 'b': case 'B':
-                processed = processBOption(&i, argc, argv);
+                matched = processBOption(&i, argc, argv);
                 break;
             case 'c': case 'C':
-                processed = processCOption(&i, argc, argv);
+                matched = processCOption(&i, argc, argv);
                 break;
             case 'd': case 'D':
-                processed = processDOption(&i, argc, argv);
+                matched = processDOption(&i, argc, argv);
                 break;
             case 'e': case 'E':
-                processed = processEOption(&i, argc, argv);
+                matched = processEOption(&i, argc, argv);
                 break;
             case 'f': case 'F':
-                processed = processFOption(&i, argc, argv);
+                matched = processFOption(&i, argc, argv);
                 break;
             case 'g': case 'G':
-                processed = processGOption(&i, argc, argv);
+                matched = processGOption(&i, argc, argv);
                 break;
             case 'h': case 'H':
-                processed = processHOption(&i, argc, argv);
+                matched = processHOption(&i, argc, argv);
                 break;
             case 'i': case 'I':
-                processed = processIOption(&i, argc, argv);
+                matched = processIOption(&i, argc, argv);
                 break;
             case 'j': case 'J':
-                processed = processJOption(&i, argc, argv);
+                matched = processJOption(&i, argc, argv);
                 break;
             case 'k': case 'K':
-                processed = processKOption(&i, argc, argv);
+                matched = processKOption(&i, argc, argv);
                 break;
             case 'l': case 'L':
-                processed = processLOption(&i, argc, argv);
+                matched = processLOption(&i, argc, argv);
                 break;
             case 'm': case 'M':
-                processed = processMOption(&i, argc, argv);
+                matched = processMOption(&i, argc, argv);
                 break;
             case 'n': case 'N':
-                processed = processNOption(&i, argc, argv);
+                matched = processNOption(&i, argc, argv);
                 break;
             case 'o': case 'O':
-                processed = processOOption(&i, argc, argv);
+                matched = processOOption(&i, argc, argv);
                 break;
             case 'p': case 'P':
-                processed = processPOption(&i, argc, argv);
-                break;
-            case 'q': case 'Q':
-                processed = processQOption(&i, argc, argv);
+                matched = processPOption(&i, argc, argv);
                 break;
             case 'r': case 'R':
-                processed = processROption(&i, argc, argv);
+                matched = processROption(&i, argc, argv);
                 break;
             case 's': case 'S':
-                processed = processSOption(&i, argc, argv);
+                matched = processSOption(&i, argc, argv);
                 break;
             case 't': case 'T':
-                processed = processTOption(&i, argc, argv);
+                matched = processTOption(&i, argc, argv);
                 break;
             case 'u': case 'U':
-                processed = processUOption(&i, argc, argv);
+                matched = processUOption(&i, argc, argv);
                 break;
             case 'v': case 'V':
-                processed = processVOption(&i, argc, argv);
+                matched = processVOption(&i, argc, argv);
                 break;
             case 'w': case 'W':
-                processed = processWOption(&i, argc, argv);
+                matched = processWOption(&i, argc, argv);
                 break;
             case 'x': case 'X':
-                processed = processXOption(&i, argc, argv);
+                matched = processXOption(&i, argc, argv);
                 break;
             case 'y': case 'Y':
-                processed = processYOption(&i, argc, argv);
-                break;
-            case 'z': case 'Z':
-                processed = processZOption(&i, argc, argv);
+                matched = processYOption(&i, argc, argv);
                 break;
             default:
-                processed = false;
+                matched = false;
             }
         } else {
             /* input file */
-            processed = true;
+            matched = true;
             if (infilesFlag == INFILES_ENABLED) {
                 addStringListOption(&options.inputFiles, argv[i]);
             }
         }
-        if (!processed) {
+        if (!matched) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "unknown option %s, (try c-xref -help)\n", argv[i]);
             if (options.taskRegime==RegimeXref) {
@@ -1324,9 +1296,9 @@ void processOptions(int argc, char **argv, int infilesFlag) {
     }
 }
 
-static void mainScheduleInputFilesFromOptionsToFileTable(void) {
+static void scheduleInputFilesFromArgumentsToFileTable(void) {
     for (StringList *ll=options.inputFiles; ll!=NULL; ll=ll->next) {
-        mainProcessInFileOption(ll->string);
+        processInFileArgument(ll->string);
     }
 }
 
@@ -2168,25 +2140,31 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     s_javaStat = StackMemoryAlloc(S_javaStat);
     *s_javaStat = s_initJavaStat;
     javaFqtTableInit(&javaFqtTable, FQT_CLASS_TAB_SIZE);
+
     // initialize recursive java parsing
     s_yygstate = StackMemoryAlloc(struct yyGlobalState);
     memset(s_yygstate, 0, sizeof(struct yyGlobalState));
     s_initYygstate = s_yygstate;
 
     initAllInputs();
-    oldStdopFile[0] = 0;    oldStdopSection[0] = 0;
+    oldStdopFile[0] = 0;
+    oldStdopSection[0] = 0;
+
     initCwd();
     initTypeCharCodeTab();
-    //initTypeModifiersTabs();
+
     initJavaTypePCTIConvertIniTab();
     initTypeNames();
     initStorageNames();
+
     setupCaching();
     initArchaicTypes();
     oldStdopFile[0] = oldStdopSection[0] = 0;
+
     /* now pre-read the option file */
     processOptions(argc, argv, INFILES_ENABLED);
-    mainScheduleInputFilesFromOptionsToFileTable();
+    scheduleInputFilesFromArgumentsToFileTable();
+
     if (options.refactoringRegime == RegimeRefactory) {
         // some more memory for refactoring task
         assert(options.cxMemoryFactor>=1);
@@ -2205,9 +2183,11 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         CX_ALLOCC(sss, options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
         CX_FREE_UNTIL(sss);
     }
+
     // must be after processing command line options
     initCaching();
-    // enclosed in cache point, because of persistent #define in XrefEdit
+
+    // enclosed in cache point, because of persistent #define in XrefEdit. WTF?
     argcount = 0;
     inputFilename = cmdlnInputFile = getNextCommandLineFile(&argcount);
     if (inputFilename==NULL) {
@@ -2219,6 +2199,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     } else {
         strcpy(temp, inputFilename);
     }
+
     getOptionsFile(temp, defaultOptionsFileName, defaultOptionsSection, NO_ERROR_MESSAGE);
     reInitCwd(defaultOptionsFileName, defaultOptionsSection);
     if (defaultOptionsFileName[0]!=0) {
@@ -2255,7 +2236,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             options.noErrors = previousNoErrorsOption;
         checkExactPositionUpdate(false);
         if (inmode == INFILES_ENABLED)
-            mainScheduleInputFilesFromOptionsToFileTable();
+            scheduleInputFilesFromArgumentsToFileTable();
     }
     recoverCachePointZero();
 
@@ -2889,7 +2870,7 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     initAvailableRefactorings();
     options.classpath = "";
     processOptions(nargc, nargv, INFILES_ENABLED); /* no include or define options */
-    mainScheduleInputFilesFromOptionsToFileTable();
+    scheduleInputFilesFromArgumentsToFileTable();
     if (options.serverOperation == OLO_EXTRACT)
         cache.cpi = 2; // !!!! no cache, TODO why is 2 = no cache?
     initCompletions(&s_completions, 0, noPosition);
