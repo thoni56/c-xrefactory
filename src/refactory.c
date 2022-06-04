@@ -256,6 +256,7 @@ static void refactoryBeInteractive(void) {
     int pargc;
     char **pargv;
 
+    ENTER();
     copyOptions(&savedOptions, &options);
     for (;;) {
         closeMainOutputFile();
@@ -275,6 +276,7 @@ static void refactoryBeInteractive(void) {
                            pargc, pargv, &refactoryXrefEditServerSubTaskFirstPass);
         mainAnswerEditAction();
     }
+    LEAVE();
 }
 
 // -------------------- end of interface to edit server sub-task ----------------------
