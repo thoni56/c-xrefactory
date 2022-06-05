@@ -132,7 +132,6 @@ enum miscellaneous {						/* misc. constants */
     REGULAR_METHOD,
     SUPER_METHOD_INVOCATION,
     GLOBAL_ENV_ONLY,
-    NO_ERROR_MESSAGE,
     ORDER_PREPEND,
     ORDER_APPEND,
     MEMBER_CLASS,

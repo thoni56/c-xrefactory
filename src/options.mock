@@ -55,7 +55,7 @@ bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl, char *se
   return (bool) mock(ff, nargc, nargv, memFl, section, project, resSection);
 }
 
-void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project) {
+void readOptionsFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project) {
   mock(name, nargc, nargv, sectionFile, project);
 }
 

@@ -183,7 +183,7 @@ static int mainHandleIncludeOption(int argc, char **argv, int i) {
     char **nargv;
     NEXT_FILE_ARG(i);
 
-    readOptionFile(argv[i], &nargc, &nargv, "", NULL);
+    readOptionsFile(argv[i], &nargc, &nargv, "", NULL);
     processOptions(nargc, nargv, INFILES_DISABLED);
 
     return i;
@@ -1468,18 +1468,19 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
     }
 }
 
-static void handlePathologicProjectCases(char *fileName, char *outFName, char *section, int errMessage){
+static void handlePathologicProjectCases(char *fileName, char *outFName, char *section,
+                                         bool showErrorMessage){
     // all this stuff should be reworked, but be very careful when refactoring it
     // WTF? Why??!?!
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
-        if (errMessage!=NO_ERROR_MESSAGE) {
+        if (showErrorMessage) {
             writeOptionsFileMessage(fileName, outFName, section);
         }
     } else {
         if (*oldStdopFile == 0) {
             static bool messageWritten = false;
-            if (errMessage!=NO_ERROR_MESSAGE && messageWritten == 0) {
+            if (showErrorMessage && messageWritten == 0) {
                 messageWritten = true;
                 writeOptionsFileMessage(fileName, outFName, section);
             }
@@ -1506,9 +1507,10 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
     }
 }
 
-static void getOptionsFile(char *file, char *optionsFileName, char *sectionName, int errorMessage) {
+static void getOptionsFile(char *file, char *optionsFileName, char *sectionName,
+                           bool showErrorMessage) {
     searchDefaultOptionsFile(file, optionsFileName, sectionName);
-    handlePathologicProjectCases(file, optionsFileName, sectionName, errorMessage);
+    handlePathologicProjectCases(file, optionsFileName, sectionName, showErrorMessage);
 }
 
 static bool computeAndOpenInputFile(void) {
@@ -1850,7 +1852,7 @@ static void getAndProcessXrefrcOptions(char *dffname, char *dffsect, char *proje
     int dfargc;
     char **dfargv;
     if (*dffname != 0 && !options.no_stdoptions) {
-        readOptionFile(dffname, &dfargc, &dfargv, dffsect, project);
+        readOptionsFile(dffname, &dfargc, &dfargv, dffsect, project);
         // warning, the following can overwrite variables like
         // 's_cxref_file_name' allocated in PPM_MEMORY, then when memory
         // is got back by caching, it may provoke a problem
@@ -1921,7 +1923,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
 
     fileName = inputFilename;
     mainSetLanguage(fileName, outLanguage);
-    getOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName, DEFAULT_VALUE);
+    getOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName, true);
     initAllInputs();
 
     if (defaultOptionsFileName[0] != 0 )
@@ -1961,8 +1963,8 @@ static void mainFileProcessingInitialisations(bool *firstPass,
            piped options, !!! berk.
         */
         processOptions(nargc, nargv, INFILES_DISABLED);
-
         reInitCwd(defaultOptionsFileName, defaultOptionsSectionName);
+
         tmpIncludeDirs = options.includeDirs;
         options.includeDirs = NULL;
 
@@ -2200,10 +2202,11 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         strcpy(temp, inputFilename);
     }
 
-    getOptionsFile(temp, defaultOptionsFileName, defaultOptionsSection, NO_ERROR_MESSAGE);
+    getOptionsFile(temp, defaultOptionsFileName, defaultOptionsSection, false);
     reInitCwd(defaultOptionsFileName, defaultOptionsSection);
+
     if (defaultOptionsFileName[0]!=0) {
-        readOptionFile(defaultOptionsFileName, &dfargc, &dfargv, defaultOptionsSection, defaultOptionsSection);
+        readOptionsFile(defaultOptionsFileName, &dfargc, &dfargv, defaultOptionsSection, defaultOptionsSection);
         if (options.refactoringRegime == RegimeRefactory) {
             inmode = INFILES_DISABLED;
         } else if (options.taskRegime==RegimeEditServer) {

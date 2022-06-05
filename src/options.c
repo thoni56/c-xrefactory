@@ -751,7 +751,7 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
     return found;
 }
 
-void readOptionFile(char *name, int *nargc, char ***nargv, char *section, char *project) {
+void readOptionsFile(char *name, int *nargc, char ***nargv, char *section, char *project) {
     FILE *file;
     char realSection[MAX_FILE_NAME_SIZE];
 

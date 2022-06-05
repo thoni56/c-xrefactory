@@ -172,7 +172,7 @@ extern bool packageOnCommandLine(char *packageName);
 extern char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename);
 extern bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv,
                                int memFl, char *sectionFile, char *project, char *resSection);
-extern void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project);
+extern void readOptionsFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project);
 extern void readOptionPipe(char *command, int *nargc, char ***nargv, char *sectionFile);
 extern void javaSetSourcePath(bool defaultClassPathAllowed);
 extern bool checkReferenceFileCountOption(int newRefNum);
