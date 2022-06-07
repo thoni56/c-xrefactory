@@ -2969,9 +2969,9 @@ static void initLogging(int argc, char *argv[]) {
 
     /* Was there a filename, -log given? */
     if (fileName[0] != '\0') {
-        FILE *tempFile = openFile(fileName, "w");
-        if (tempFile != NULL)
-            log_add_fp(tempFile, log_level);
+        FILE *logFile = openFile(fileName, "w");
+        if (logFile != NULL)
+            log_add_fp(logFile, log_level);
     }
 
     /* Always log errors and above to console */
