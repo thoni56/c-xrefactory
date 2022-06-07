@@ -1,4 +1,6 @@
 #include "proto.h"
+#include "head.h"
+
 #define IN_REFTAB_C
 #include "reftab.h"
 
@@ -6,6 +8,7 @@
 #include "hash.h"
 
 #include "memory.h"               /* For XX_ALLOCC */
+#include "log.h"
 
 
 static ReferenceTable referenceTable;
@@ -61,7 +64,9 @@ bool isMemberInReferenceTable(ReferencesItem *element, int *position, References
 }
 
 void mapOverReferenceTable(void (*fun)(ReferencesItem *)) {
+    ENTER();
     refTabMap(&referenceTable, fun);
+    LEAVE();
 }
 
 void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
