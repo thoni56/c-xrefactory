@@ -223,7 +223,6 @@ static void ensureReferencesUpdated(char *project) {
     mainTaskEntryInitialisations(argument_count(refactoryEditServInitOptions),
                                  refactoryEditServInitOptions);
     refactoryXrefEditServerSubTaskFirstPass = true;
-    return;
 }
 
 static void refactoryEditServerParseBuffer(char *project,
@@ -315,7 +314,7 @@ static void refactoryPushReferences(EditorBuffer *buf, EditorMarker *point,
 static void refactorySafetyCheck(char *project, EditorBuffer *buf, EditorMarker *point) {
     // !!!!update references MUST be followed by a pushing action, to refresh options
     ensureReferencesUpdated(refactoringOptions.project);
-    refactoryEditServerParseBuffer(project, buf, point,NULL, "-olcxsafetycheck2",NULL);
+    refactoryEditServerParseBuffer(project, buf, point, NULL, "-olcxsafetycheck2", NULL);
 
     assert(sessionData.browserStack.top!=NULL);
     if (sessionData.browserStack.top->hkSelectedSym==NULL) {

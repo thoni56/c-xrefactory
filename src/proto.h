@@ -387,8 +387,6 @@ typedef struct jslSymbolList {
 /* ****************************************************************** */
 /*          symbol definition item in cross-reference table           */
 
-#include "usage.h"
-
 #include "reference.h"
 
 /* ***************** on - line cross referencing ***************** */
