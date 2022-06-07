@@ -283,7 +283,7 @@ static void refactoryBeInteractive(void) {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 
-void refactoryDisplayResolutionDialog(char *message,int messageType,int continuation) {
+static void displayResolutionDialog(char *message,int messageType,int continuation) {
     char buf[TMP_BUFF_SIZE];
     strcpy(buf, message);
     formatOutputLine(buf, ERROR_MESSAGE_STARTING_OFFSET);
@@ -308,7 +308,7 @@ static void refactoryPushReferences(EditorBuffer *buf, EditorMarker *point,
     }
     olCreateSelectionMenu(sessionData.browserStack.top->command);
     if (resolveMessage!=NULL && olcxShowSelectionMenu()) {
-        refactoryDisplayResolutionDialog(resolveMessage, messageType,CONTINUATION_ENABLED);
+        displayResolutionDialog(resolveMessage, messageType,CONTINUATION_ENABLED);
     }
 }
 
@@ -329,7 +329,7 @@ static void refactorySafetyCheck(char *project, EditorBuffer *buf, EditorMarker 
         } else {
             sprintf(tmpBuff, "These symbols will be refererred at this place after the refactoring. It is probable that the refactoring will not be behaviour preserving. If you are not sure about your action, you should abandon this refactoring!");
         }
-        refactoryDisplayResolutionDialog(tmpBuff, PPCV_BROWSER_TYPE_WARNING,CONTINUATION_ENABLED);
+        displayResolutionDialog(tmpBuff, PPCV_BROWSER_TYPE_WARNING,CONTINUATION_ENABLED);
     }
 }
 
@@ -404,7 +404,7 @@ static void editorFreeSingleUndo(EditorUndo *uu) {
     ED_FREE(uu, sizeof(EditorUndo));
 }
 
-void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
+static void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
                       EditorUndo **undoundo, int gen) {
     EditorUndo *uu, *next;
     EditorMarker *m1, *m2;
@@ -453,7 +453,7 @@ void editorApplyUndos(EditorUndo *undos, EditorUndo *until,
     assert(uu==until);
 }
 
-void editorUndoUntil(EditorUndo *until, EditorUndo **undoundo) {
+static void editorUndoUntil(EditorUndo *until, EditorUndo **undoundo) {
     editorApplyUndos(editorUndo, until, undoundo, GEN_NO_OUTPUT);
     editorUndo = until;
 }
@@ -889,6 +889,10 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
 
 }
 
+static void refactoryAskForReallyContinueConfirmation(void) {
+    ppcGenRecord(PPC_ASK_CONFIRMATION,"The refactoring may change program behaviour, really continue?");
+}
+
 static bool tpCheckMoveClassAccessibilities(void) {
     OlcxReferences *rstack;
     SymbolsMenu *ss;
@@ -908,7 +912,7 @@ static bool tpCheckMoveClassAccessibilities(void) {
         ss->references.references = olcxCopyRefList(rstack->references);
         rstack->actual = rstack->references;
         if (refactoringOptions.refactoringRegime==RegimeRefactory) {
-            refactoryDisplayResolutionDialog(
+            displayResolutionDialog(
                                              "These references inside moved class are refering to symbols which will be inaccessible at new class location. You should adjust their access first. (Each symbol is listed only once)",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
             refactoryAskForReallyContinueConfirmation();
@@ -925,7 +929,7 @@ static bool tpCheckMoveClassAccessibilities(void) {
         // TODO, synchronize this with emacs, but how?
         rstack->refsFilterLevel = RFilterDefinitions;
         if (refactoringOptions.refactoringRegime==RegimeRefactory) {
-            refactoryDisplayResolutionDialog(
+            displayResolutionDialog(
                                              "These symbols defined inside moved class and used outside the class will be inaccessible at new class location. You should adjust their access first.",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
             refactoryAskForReallyContinueConfirmation();
@@ -1222,7 +1226,7 @@ static bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     return false;
 }
 
-bool tpPullUpFieldLastPreconditions(void) {
+static bool tpPullUpFieldLastPreconditions(void) {
     OlcxReferences *rstack;
     SymbolsMenu *ss,*mm;
     char ttt[TMP_STRING_SIZE];
@@ -1262,7 +1266,7 @@ bool tpPullUpFieldLastPreconditions(void) {
     return false;
 }
 
-bool tpPushDownFieldLastPreconditions(void) {
+static bool tpPushDownFieldLastPreconditions(void) {
     OlcxReferences *rstack;
     SymbolsMenu *ss, *sourcesm, *targetsm;
     char ttt[TMP_STRING_SIZE];
@@ -1337,11 +1341,11 @@ static bool refactoryHandleSafetyCheckDifferenceLists(
         editorFreeMarkerListNotMarkers(diff2);
         olcxPopOnly();
         if (refactoringOptions.theRefactoring == AVR_RENAME_PACKAGE) {
-            refactoryDisplayResolutionDialog(
+            displayResolutionDialog(
                                              "The package exists and is referenced in the original project. Renaming will join two packages without possibility of inverse refactoring",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
         } else {
-            refactoryDisplayResolutionDialog(
+            displayResolutionDialog(
                                              "These references may be misinterpreted after refactoring",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
         }
@@ -1388,10 +1392,6 @@ static bool refactoryMakeSafetyCheckAndUndo(EditorMarker *point,
     assert(origrefs!=NULL && newrefs!=NULL && diffrefs!=NULL);
     result = refactoryHandleSafetyCheckDifferenceLists(diff1, diff2, diffrefs);
     return result;
-}
-
-void refactoryAskForReallyContinueConfirmation(void) {
-    ppcGenRecord(PPC_ASK_CONFIRMATION,"The refactoring may change program behaviour, really continue?");
 }
 
 static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *occs) {
@@ -2630,7 +2630,7 @@ static void refactoryShowSafetyCheckFailingDialog(EditorMarkerList **totalDiff, 
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     refactoryPushMarkersAsReferences(totalDiff, sessionData.browserStack.top,
                                      LINK_NAME_SAFETY_CHECK_MISSED);
-    refactoryDisplayResolutionDialog(message, PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
+    displayResolutionDialog(message, PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
     editorApplyUndos(redo, NULL, &editorUndo, GEN_NO_OUTPUT);
 }
 

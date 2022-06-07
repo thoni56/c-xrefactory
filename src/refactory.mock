@@ -2,30 +2,6 @@
 #include "refactory.h"
 #include <cgreen/mocks.h>
 
-void refactoryAskForReallyContinueConfirmation(void) {
-  mock();
-}
-
-void refactoryDisplayResolutionDialog(char *message, int messageType, int continuation) {
-  mock(message, messageType, continuation);
-}
-
-void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **undoundo, int gen) {
-  mock(undos, until, undoundo, gen);
-}
-
-void editorUndoUntil(EditorUndo *until, EditorUndo **undoUndo) {
-  mock(until, undoUndo);
-}
-
 void mainRefactory() {
   mock();
-}
-
-bool tpPullUpFieldLastPreconditions(void) {
-  return (bool) mock();
-}
-
-bool tpPushDownFieldLastPreconditions(void) {
-  return (bool) mock();
 }

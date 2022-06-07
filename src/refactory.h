@@ -14,10 +14,6 @@ typedef struct tpCheckMoveClassData {
 } TpCheckMoveClassData;
 
 
-extern void refactoryAskForReallyContinueConfirmation(void);
-extern void refactoryDisplayResolutionDialog(char *message,int messageType, int continuation);
-extern void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **undoundo, int gen);
-extern void editorUndoUntil(EditorUndo *until, EditorUndo **undoUndo);
 extern void mainRefactory();
 
 #endif
