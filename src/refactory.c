@@ -185,7 +185,7 @@ static void refactorySetArguments(char *argv[MAX_NARGV_OPTIONS_COUNT],
 // be very careful when calling this function as it is messing all static variables
 // including options in s_opt, ...
 // call to this function MUST be followed by a pushing action, to refresh options
-static void refactoryUpdateReferences(char *project) {
+static void ensureReferencesUpdated(char *project) {
     int nargc, refactoryXrefInitOptionsNum;
     char *nargv[MAX_NARGV_OPTIONS_COUNT];
 
@@ -314,7 +314,7 @@ static void refactoryPushReferences(EditorBuffer *buf, EditorMarker *point,
 
 static void refactorySafetyCheck(char *project, EditorBuffer *buf, EditorMarker *point) {
     // !!!!update references MUST be followed by a pushing action, to refresh options
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
     refactoryEditServerParseBuffer(project, buf, point,NULL, "-olcxsafetycheck2",NULL);
 
     assert(sessionData.browserStack.top!=NULL);
@@ -458,7 +458,7 @@ void editorUndoUntil(EditorUndo *until, EditorUndo **undoundo) {
     editorUndo = until;
 }
 
-static void refactoryApplyWholeRefactoringFromUndo(void) {
+static void applyWholeRefactoringFromUndo(void) {
     EditorUndo        *redoTrack;
     redoTrack = NULL;
     editorUndoUntil(refactoringStartingPoint, &redoTrack);
@@ -1712,7 +1712,7 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
     }
 
     // must update, because usualy they are out of date here
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
 
     refactoryPushReferences(point->buffer, point, "-olcxrename", NULL, 0);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->menuSym);
@@ -1787,7 +1787,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
         errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
     }
 
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
 
     if (LANGUAGE(LANG_JAVA)) {
         message = STANDARD_SELECT_SYMBOLS_MESSAGE;
@@ -2153,7 +2153,7 @@ static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker 
     EditorMarkerList *occs;
     EditorUndo *startPoint, *redoTrack;
 
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
 
     strcpy(nameOnPoint, refactoryGetIdentifierOnMarker_st(point));
     refactoryPushReferences(buf, point, "-olcxargmanip",STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
@@ -2182,7 +2182,7 @@ static void refactoryParameterManipulation(EditorBuffer *buf, EditorMarker *poin
                                            int manip, int argn1, int argn2) {
     refactoryApplyParameterManipulation(buf, point, manip, argn1, argn2);
     // and generate output
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
 }
 
@@ -2254,7 +2254,7 @@ static void refactoryApplyExpandShortNames(EditorBuffer *buf, EditorMarker *poin
 
 static void refactoryExpandShortNames(EditorBuffer *buf, EditorMarker *point) {
     refactoryApplyExpandShortNames(buf, point);
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
 }
 
@@ -2452,7 +2452,7 @@ static int refactoryInteractiveAskForAddImportAction(EditorMarkerList *ppp, int 
                                                      char *fqtName
                                                      ) {
     int action;
-    refactoryApplyWholeRefactoringFromUndo();  // make current state visible
+    applyWholeRefactoringFromUndo();  // make current state visible
     ppcGotoMarker(ppp->marker);
     ppcValueRecord(PPC_ADD_TO_IMPORTS_DIALOG,defaultAction,fqtName);
     refactoryBeInteractive();
@@ -2582,7 +2582,7 @@ static void refactoryReduceLongNamesInTheFile(EditorBuffer *buf, EditorMarker *p
     // for <add-import-dialog>
     refactoryPerformReduceNamesAndAddImportsInSingleFile(point, &wholeBuffer, INTERACTIVE_NO);
     editorFreeMarkersAndRegionList(wholeBuffer);wholeBuffer=NULL;
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
 }
 
@@ -2602,7 +2602,7 @@ static void refactoryAddToImports(EditorMarker *point) {
     editorFreeMarkersAndRegionList(regionList);
     regionList=NULL;
 
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
 }
 
@@ -2867,7 +2867,7 @@ static void refactoryMoveStaticFieldOrMethod(EditorMarker *point, int limitIndex
     target = getTargetFromOptions();
 
     if (! validTargetPlace(target, "-olcxmmtarget")) return;
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
     refactoryGetNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
     refactoryGetMethodLimitsForMoving(point, &mstart, &mend, limitIndex);
     lines = editorCountLinesBetweenMarkers(mstart, mend);
@@ -2880,7 +2880,7 @@ static void refactoryMoveStaticFieldOrMethod(EditorMarker *point, int limitIndex
     refactoryRestrictAccessibility(point, limitIndex, accFlags);
 
     // and generate output
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
     ppcValueRecord(PPC_INDENT, lines, "");
 }
@@ -2917,7 +2917,7 @@ static void refactoryMoveField(EditorMarker *point) {
     }
 
     if (! validTargetPlace(target, "-olcxmmtarget")) return;
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
     refactoryGetNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
     refactoryGetMethodLimitsForMoving(point, &mstart, &mend, SPP_FIELD_DECLARATION_BEGIN_POSITION);
     lines = editorCountLinesBetweenMarkers(mstart, mend);
@@ -3001,7 +3001,7 @@ static void refactorySetMovingPrecheckStandardEnvironment(EditorMarker *point, c
     assert(ss);
 }
 
-static void refactoryPerformMoveClass(EditorMarker *point,
+static void performMoveClass(EditorMarker *point,
                                       EditorMarker *target,
                                       EditorMarker **outstart,
                                       EditorMarker **outend
@@ -3063,7 +3063,7 @@ static void refactoryPerformMoveClass(EditorMarker *point,
     (*outend)->offset++;
 
     // finally fiddle modifiers
-    if (ss->s.access & AccessStatic) {
+    if (ss->references.access & AccessStatic) {
         if (! targetIsNestedInClass) {
             // nested -> top level
             //&sprintf(tmpBuff,"removing modifier"); ppcBottomInformation(tmpBuff);
@@ -3082,19 +3082,19 @@ static void refactoryPerformMoveClass(EditorMarker *point,
 }
 
 static void refactoryMoveClass(EditorMarker *point) {
-    EditorMarker          *target, *mstart, *mend;
-    int                     linenum;
+    EditorMarker          *target, *start, *end;
+    int                    linenum;
 
     target = getTargetFromOptions();
     if (! validTargetPlace(target, "-olcxmctarget")) return;
 
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
 
-    refactoryPerformMoveClass(point, target, &mstart, &mend);
-    linenum = editorCountLinesBetweenMarkers(mstart, mend);
+    performMoveClass(point, target, &start, &end);
+    linenum = editorCountLinesBetweenMarkers(start, end);
 
     // and generate output
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
     ppcValueRecord(PPC_INDENT, linenum, "");
 
@@ -3138,13 +3138,13 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
     int linenum;
 
     buff = point->buffer;
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
     target = getTargetFromOptions();
 
     // insert package statement
     refactoryInsertPackageStatToNewFile(target);
 
-    refactoryPerformMoveClass(point, target, &mstart, &mend);
+    performMoveClass(point, target, &mstart, &mend);
 
     if (mstart==NULL || mend==NULL) return;
     //&editorDumpMarker(mstart);
@@ -3152,7 +3152,7 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
     linenum = editorCountLinesBetweenMarkers(mstart, mend);
 
     // and generate output
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
 
     // indentation must be at the end (undo, redo does not work with)
     ppcGotoMarker(point);
@@ -3204,7 +3204,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     Usage defaultUsage;
 
     nparamdefpos = NULL;
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
     strcpy(nameOnPoint, refactoryGetIdentifierOnMarker_st(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE-1);
     occs = refactoryPushGetAndPreCheckReferences(point->buffer, point, nameOnPoint,
@@ -3376,7 +3376,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
 
     editorFreeMarkersAndMarkerList(allrefs); allrefs=NULL;
 
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
 }
 
@@ -3490,7 +3490,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     EditorMarkerList  *occs, *poccs;
     EditorUndo        *checkPoint;
 
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
 
     argn = 0;
     sscanf(refactoringOptions.refpar1, "%d", &argn);
@@ -3627,7 +3627,7 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
     }
 
     // and generate output
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
 
     // DONE!
@@ -3880,7 +3880,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     indlines = editorCountLinesBetweenMarkers(tbeg, tend);
 
     // and generate output
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
 
     // put it here, undo-redo sometimes shifts markers
     de->offset = indoffset;
@@ -3893,7 +3893,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
 static void refactorySelfEncapsulateField(EditorMarker *point) {
     EditorRegionList  *forbiddenRegions;
     forbiddenRegions = NULL;
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
     refactoryPerformEncapsulateField(point, &forbiddenRegions);
 }
 
@@ -3901,7 +3901,7 @@ static void refactoryEncapsulateField(EditorMarker *point) {
     EditorRegionList  *forbiddenRegions;
     EditorMarker      *cb, *ce;
 
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
 
     //&editorDumpMarker(point);
     refactoryMakeSyntaxPassOnSource(point);
@@ -4219,7 +4219,7 @@ static void refactoryPushDownPullUp(EditorMarker *point, PushPullDirection direc
     if (!validTargetPlace(target, "-olcxmmtarget"))
         return;
 
-    refactoryUpdateReferences(refactoringOptions.project);
+    ensureReferencesUpdated(refactoringOptions.project);
 
     refactoryGetNameOfTheClassAndSuperClass(point, sourceFqtName, superFqtName);
     refactoryGetNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
@@ -4304,7 +4304,7 @@ static void refactoryPushDownPullUp(EditorMarker *point, PushPullDirection direc
     refactoryPerformReduceNamesAndAddImports(&methodreg, INTERACTIVE_NO);
 
     // and generate output
-    refactoryApplyWholeRefactoringFromUndo();
+    applyWholeRefactoringFromUndo();
 }
 
 
@@ -4327,7 +4327,7 @@ static void refactoryPushDownMethod(EditorMarker *point) {
 // --------------------------------------------------------------------
 
 
-static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
+static char * computeUpdateOptionForSymbol(EditorMarker *point) {
     EditorMarkerList  *occs;
     SymbolsMenu     *csym;
     int                 hasHeaderReferenceFlag, scope, cat, multiFileRefsFlag, fn;
@@ -4476,7 +4476,7 @@ void mainRefactory() {
     case AVR_RENAME_CLASS:
     case AVR_RENAME_PACKAGE:
         progressFactor = 3;
-        refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
+        refactoryUpdateOption = computeUpdateOptionForSymbol(point);
         refactoryRename(buf, point);
         break;
     case AVR_EXPAND_NAMES:
@@ -4499,7 +4499,7 @@ void mainRefactory() {
     case AVR_DEL_PARAMETER:
     case AVR_MOVE_PARAMETER:
         progressFactor = 3;
-        refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
+        refactoryUpdateOption = computeUpdateOptionForSymbol(point);
         mainSetLanguage(file, &s_language);
         if (LANGUAGE(LANG_JAVA)) progressFactor++;
         refactoryParameterManipulation(buf, point, refactoringOptions.theRefactoring,
