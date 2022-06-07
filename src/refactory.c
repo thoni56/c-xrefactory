@@ -692,9 +692,9 @@ static void refactoryPushMarkersAsReferences(EditorMarkerList **markers,
 
     rr = editorMarkersToReferences(markers);
     for (SymbolsMenu *mm=refs->menuSym; mm!=NULL; mm=mm->next) {
-        if (strcmp(mm->s.name, sym)==0) {
+        if (strcmp(mm->references.name, sym)==0) {
             for (Reference *r=rr; r!=NULL; r=r->next) {
-                olcxAddReference(&mm->s.references, r, 0);
+                olcxAddReference(&mm->references.references, r, 0);
             }
         }
     }
@@ -721,7 +721,7 @@ static SymbolsMenu *javaGetRelevantHkSelectedItem(ReferencesItem *ri) {
 
     rstack = sessionData.browserStack.top;
     for (ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
-        if (isSameCxSymbol(ri, &ss->s) && ri->vFunClass == ss->s.vFunClass) {
+        if (isSameCxSymbol(ri, &ss->references) && ri->vFunClass == ss->references.vFunClass) {
             break;
         }
     }
@@ -798,9 +798,9 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(TpCheck
     mapOverReferenceTableWithPointer(tpCheckFutureAccOfLocalReferences, &dd);
     // check references from outside
     for (SymbolsMenu *mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
-        SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&mm->s);
+        SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&mm->references);
         if (ss!=NULL && !ss->selected) {
-            for (Reference *rr=mm->s.references; rr!=NULL; rr=rr->next) {
+            for (Reference *rr=mm->references.references; rr!=NULL; rr=rr->next) {
                 if (rr->position.file != inputFileNumber) {
                     // yes there is a reference from outside to our symbol
                     ss->selected = true; ss->visible = true;
@@ -813,7 +813,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(TpCheck
 
     sss= &rstack->menuSym;
     while (*sss!=NULL) {
-        SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&(*sss)->s);
+        SymbolsMenu *ss = javaGetRelevantHkSelectedItem(&(*sss)->references);
         if (ss!=NULL && ss->selected) {
             sss= &(*sss)->next;
         } else {
@@ -885,7 +885,7 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
     else transPackageMove = 1;
 
     fillTpCheckMoveClassData(dd, s_cps.cxMemoryIndexAtClassBeginning, s_cps.cxMemoryIndexAtClassEnd,
-                               spack, tpack, transPackageMove, sclass->s.name);
+                               spack, tpack, transPackageMove, sclass->references.name);
 
 }
 
@@ -905,7 +905,7 @@ static bool tpCheckMoveClassAccessibilities(void) {
     if (rstack->references!=NULL) {
         ss = rstack->menuSym;
         assert(ss);
-        ss->s.references = olcxCopyRefList(rstack->references);
+        ss->references.references = olcxCopyRefList(rstack->references);
         rstack->actual = rstack->references;
         if (refactoringOptions.refactoringRegime==RegimeRefactory) {
             refactoryDisplayResolutionDialog(
@@ -946,12 +946,12 @@ static bool tpCheckSourceIsNotInnerClass(void) {
     assert(menu);
 
     // I can rely that it is a class
-    int index = getClassNumFromClassLinkName(menu->s.name, noFileIndex);
+    int index = getClassNumFromClassLinkName(menu->references.name, noFileIndex);
     //& target = options.moveTargetClass;
     //& assert(target!=NULL);
 
     int directEnclosingInstanceIndex = getFileItem(index)->directEnclosingInstance;
-    if (directEnclosingInstanceIndex != -1 && directEnclosingInstanceIndex != noFileIndex && (menu->s.access&AccessInterface)==0) {
+    if (directEnclosingInstanceIndex != -1 && directEnclosingInstanceIndex != noFileIndex && (menu->references.access&AccessInterface)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         // If there exists a direct enclosing instance, it is an inner class
         sprintf(tmpBuff, "This is an inner class. Current version of C-xrefactory can only move top level classes and nested classes that are declared 'static'. If the class does not depend on its enclosing instances, you should declare it 'static' and then move it.");
@@ -1016,7 +1016,7 @@ static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr)
     rstack = sessionData.browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss);
-    scl = javaGetSuperClassNumFromClassNum(ss->s.vApplClass);
+    scl = javaGetSuperClassNumFromClassNum(ss->references.vApplClass);
     if (scl == noFileIndex) {
         errorMessage(ERR_ST, "no super class, something is going wrong");
         return false;;
@@ -1047,7 +1047,7 @@ static bool tpCheckSuperMethodReferencesForPullUp(void) {
     // synthetize an answer
     if (rr.foundRefToTestedClass!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
-        linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        linkNamePrettyPrint(ttt, ss->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         javaGetClassNameFromFileIndex(rr.foundRefToTestedClass->vFunClass, tt, DOTIFY_NAME);
         sprintf(tmpBuff,"'%s' invokes another method using the keyword \"super\" and this invocation is refering to class '%s', i.e. to the class where '%s' will be moved. In consequence, it is not possible to ensure behaviour preseving pulling-up of this method.", ttt, tt, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1073,7 +1073,7 @@ static bool tpCheckSuperMethodReferencesAfterPushDown(void) {
     // synthetize an answer
     if (rr.foundRefToTestedClass!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
-        linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        linkNamePrettyPrint(ttt, ss->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         sprintf(tmpBuff,"'%s' invokes another method using the keyword \"super\" and the invoked method is also defined in current class. After pushing down, the reference will be misrelated. In consequence, it is not possible to ensure behaviour preseving pushing-down of this method.", ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         fprintf(communicationChannel,":[warning] %s", tmpBuff);
@@ -1112,7 +1112,7 @@ static bool tpCheckOuterScopeUsagesForDynToSt(void) {
     assert(ss);
     initTpCheckSpecialReferencesData(&rr, s_cps.cxMemoryIndexAtMethodBegin,
                                      s_cps.cxMemoryIndexAtMethodEnd,
-                                     LINK_NAME_MAYBE_THIS_ITEM, ss->s.vApplClass);
+                                     LINK_NAME_MAYBE_THIS_ITEM, ss->references.vApplClass);
     mapOverReferenceTableWithPointer(tpCheckSpecialReferencesMapFun, &rr);
     if (rr.foundOuterScopeRef!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -1149,21 +1149,21 @@ static bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     rstack = sessionData.browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss);
-    srccn = ss->s.vApplClass;
+    srccn = ss->references.vApplClass;
     target = getMoveTargetClass();
     assert(target!=NULL && target->u.structSpec);
     targetcn = target->u.structSpec->classFileIndex;
     for (mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
-        if (isSameCxSymbol(&ss->s, &mm->s)) {
-            if (javaIsSuperClass(mm->s.vApplClass, srccn)) {
+        if (isSameCxSymbol(&ss->references, &mm->references)) {
+            if (javaIsSuperClass(mm->references.vApplClass, srccn)) {
                 // finally check there is some other reference than super.method()
                 // and definition
-                for (rr=mm->s.references; rr!=NULL; rr=rr->next) {
+                for (rr=mm->references.references; rr!=NULL; rr=rr->next) {
                     if ((! IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind))
                         && rr->usage.kind != UsageMethodInvokedViaSuper) {
                         // well there is, issue warning message and finish
                         char tmpBuff[TMP_BUFF_SIZE];
-                        linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+                        linkNamePrettyPrint(ttt, ss->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
                         sprintf(tmpBuff,"%s is defined also in superclass and there are invocations syntactically refering to one of superclasses. Under some circumstances this may cause that pulling up of this method will not be behaviour preserving.", ttt);
                         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
                         warningMessage(ERR_ST, tmpBuff);
@@ -1197,7 +1197,7 @@ static bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
 
     scanForClassHierarchy();
     assert(target->u.structSpec!=NULL&&target->u.structSpec->classFileIndex!=noFileIndex);
-    FileItem *fileItem = getFileItem(ss->s.vApplClass);
+    FileItem *fileItem = getFileItem(ss->references.vApplClass);
     if (flag == REQ_SUBCLASS)
         cl=fileItem->inferiorClasses;
     else
@@ -1214,7 +1214,7 @@ static bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
         return true;
 
     javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, tt, DOTIFY_NAME);
-    javaGetClassNameFromFileIndex(ss->s.vApplClass, ttt, DOTIFY_NAME);
+    javaGetClassNameFromFileIndex(ss->references.vApplClass, ttt, DOTIFY_NAME);
     char tmpBuff[TMP_BUFF_SIZE];
     sprintf(tmpBuff,"Class %s is not direct %s of %s. This refactoring provides moving to direct %ses only.", tt, subOrSuper, ttt, subOrSuper);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1239,24 +1239,24 @@ bool tpPullUpFieldLastPreconditions(void) {
     assert(target!=NULL);
     assert(target->u.structSpec!=NULL&&target->u.structSpec->classFileIndex!=noFileIndex);
     for (mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
-        if (isSameCxSymbol(&ss->s,&mm->s)
-            && mm->s.vApplClass == target->u.structSpec->classFileIndex) goto cont2;
+        if (isSameCxSymbol(&ss->references,&mm->references)
+            && mm->references.vApplClass == target->u.structSpec->classFileIndex) goto cont2;
     }
     // it is O.K. no item found
     return true;
  cont2:
     // an item found, it must be empty
-    if (mm->s.references == NULL)
+    if (mm->references.references == NULL)
         return true;
     javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
-    if (IS_DEFINITION_OR_DECL_USAGE(mm->s.references->usage.kind) && mm->s.references->next==NULL) {
+    if (IS_DEFINITION_OR_DECL_USAGE(mm->references.references->usage.kind) && mm->references.references->next==NULL) {
         if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
-        sprintf(tmpBuff, "%s is already defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should make sure that both fields are initialized to the same value.", mm->s.name, ttt);
+        sprintf(tmpBuff, "%s is already defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should make sure that both fields are initialized to the same value.", mm->references.name, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         warningMessage(ERR_ST, tmpBuff);
         return false;
     }
-    sprintf(tmpBuff,"There are already references of the field %s syntactically applied on the superclass %s, pulling up this field would cause confusion!", mm->s.name, ttt);
+    sprintf(tmpBuff,"There are already references of the field %s syntactically applied on the superclass %s, pulling up this field would cause confusion!", mm->references.name, ttt);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
     errorMessage(ERR_ST, tmpBuff);
     return false;
@@ -1277,33 +1277,33 @@ bool tpPushDownFieldLastPreconditions(void) {
     rstack = sessionData.browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss);
-    thisclassi = ss->s.vApplClass;
+    thisclassi = ss->references.vApplClass;
     target = getMoveTargetClass();
     assert(target!=NULL);
     assert(target->u.structSpec!=NULL&&target->u.structSpec->classFileIndex!=noFileIndex);
     sourcesm = targetsm = NULL;
     for (SymbolsMenu *mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
-        if (isSameCxSymbol(&ss->s,&mm->s)) {
-            if (mm->s.vApplClass == target->u.structSpec->classFileIndex) targetsm = mm;
-            if (mm->s.vApplClass == thisclassi) sourcesm = mm;
+        if (isSameCxSymbol(&ss->references,&mm->references)) {
+            if (mm->references.vApplClass == target->u.structSpec->classFileIndex) targetsm = mm;
+            if (mm->references.vApplClass == thisclassi) sourcesm = mm;
         }
     }
     if (targetsm != NULL) {
-        rr = getDefinitionRef(targetsm->s.references);
+        rr = getDefinitionRef(targetsm->references.references);
         if (rr!=NULL && IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
             javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
             sprintf(tmpBuff,"The field %s is already defined in %s!",
-                    targetsm->s.name, ttt);
+                    targetsm->references.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             errorMessage(ERR_ST, tmpBuff);
             return false;
         }
     }
     if (sourcesm != NULL) {
-        if (sourcesm->s.references!=NULL && sourcesm->s.references->next!=NULL) {
+        if (sourcesm->references.references!=NULL && sourcesm->references.references->next!=NULL) {
             //& if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
             javaGetClassNameFromFileIndex(thisclassi, ttt, DOTIFY_NAME);
-            sprintf(tmpBuff, "There are several references of %s syntactically applied on %s. This may cause that the refactoring will not be behaviour preserving!", sourcesm->s.name, ttt);
+            sprintf(tmpBuff, "There are several references of %s syntactically applied on %s. This may cause that the refactoring will not be behaviour preserving!", sourcesm->references.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             warningMessage(ERR_ST, tmpBuff);
             res = false;
@@ -1325,7 +1325,7 @@ static bool refactoryHandleSafetyCheckDifferenceLists(
             mm->selected = true; mm->visible = true;
             mm->ooBits = 07777777;
             // hack, freeing now all diffs computed by old method
-            olcxFreeReferences(mm->s.references); mm->s.references = NULL;
+            olcxFreeReferences(mm->references.references); mm->references.references = NULL;
         }
         //&editorDumpMarkerList(diff1);
         //& safetyCheckFailPrepareRefStack();
@@ -1750,9 +1750,9 @@ static void refactoryCheckForMultipleReferencesInSamePlace(OlcxReferences *rstac
     SymbolsMenu *cms;
     bool pushed;
 
-    p = &ccms->s;
+    p = &ccms->references;
     assert(rstack && rstack->menuSym);
-    sss = &rstack->menuSym->s;
+    sss = &rstack->menuSym->references;
     pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
     log_trace(":checking %s to %s (%d)", p->name, sss->name, pushed);
@@ -1799,8 +1799,8 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE-1);
     occs = refactoryPushGetAndPreCheckReferences(buf, point, nameOnPoint, message,PPCV_BROWSER_TYPE_INFO);
     csym =  sessionData.browserStack.top->hkSelectedSym;
-    symtype = csym->s.type;
-    symLinkName = csym->s.name;
+    symtype = csym->references.type;
+    symLinkName = csym->references.name;
     undoStartPoint = editorUndo;
     if (!LANGUAGE(LANG_JAVA)) {
         refactoryMultipleOccurencesSafetyCheck();
@@ -2193,7 +2193,7 @@ static int createMarkersForAllReferencesInRegions(SymbolsMenu *menu, EditorRegio
     for (SymbolsMenu *mm=menu; mm!=NULL; mm=mm->next) {
         assert(mm->markers==NULL);
         if (mm->selected && mm->visible) {
-            mm->markers = editorReferencesToMarkers(mm->s.references, filter0, NULL);
+            mm->markers = editorReferencesToMarkers(mm->references.references, filter0, NULL);
             if (regions != NULL) {
                 editorRestrictMarkersToRegions(&mm->markers, regions);
             }
@@ -2223,7 +2223,7 @@ static void refactoryApplyExpandShortNames(EditorBuffer *buf, EditorMarker *poin
     // Hmm. what if one reference will be twice ? Is it possible?
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            javaGetClassNameFromFileIndex(mm->s.vApplClass, fqtName, DOTIFY_NAME);
+            javaGetClassNameFromFileIndex(mm->references.vApplClass, fqtName, DOTIFY_NAME);
             javaDotifyClassName(fqtName);
             sprintf(fqtNameDot, "%s.", fqtName);
             shortName = javaGetShortClassName(fqtName);
@@ -2323,7 +2323,7 @@ static bool refactoryIsTheImportUsed(EditorMarker *point, int line, int col) {
     pushLocalUnusedSymbolsAction();
     used = true;
     for (SymbolsMenu *m=sessionData.browserStack.top->menuSym; m!=NULL; m=m->next) {
-        if (m->visible && strcmp(m->s.name, importSymbolName)==0) {
+        if (m->visible && strcmp(m->references.name, importSymbolName)==0) {
             used = false;
             goto finish;
         }
@@ -2351,7 +2351,7 @@ static int refactoryImportNeeded(EditorMarker *point, EditorRegionList **regions
     // check whether the symbol is reduced
     refactoryPushFileUnimportedFqts(point, regions);
     for (SymbolsMenu *mm=sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
-        if (mm->s.vApplClass == vApplCl) {
+        if (mm->references.vApplClass == vApplCl) {
             res = 1;
             goto fini;
         }
@@ -2464,7 +2464,7 @@ static S_disabledList *newDisabledList(SymbolsMenu *menu, int cfile, S_disabledL
     S_disabledList *dl;
 
     ED_ALLOC(dl, S_disabledList);
-    *dl = (S_disabledList){.file = cfile, .clas = menu->s.vApplClass, .next = disabled};
+    *dl = (S_disabledList){.file = cfile, .clas = menu->references.vApplClass, .next = disabled};
 
     return dl;
 }
@@ -2504,9 +2504,9 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(EditorMarker *p
             markers=menu->markers;
             int defaultImportAction = refactoringOptions.defaultAddImportStrategy;
             while (markers!=NULL && !keepAdding
-                   && !isInDisabledList(disabled, markers->marker->buffer->fileIndex, menu->s.vApplClass)) {
+                   && !isInDisabledList(disabled, markers->marker->buffer->fileIndex, menu->references.vApplClass)) {
                 fileIndex = markers->marker->buffer->fileIndex;
-                javaGetClassNameFromFileIndex(menu->s.vApplClass, fqtName, DOTIFY_NAME);
+                javaGetClassNameFromFileIndex(menu->references.vApplClass, fqtName, DOTIFY_NAME);
                 javaDotifyClassName(fqtName);
                 if (interactive == INTERACTIVE_YES) {
                     action = refactoryInteractiveAskForAddImportAction(markers, defaultImportAction, fqtName);
@@ -2521,14 +2521,14 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(EditorMarker *p
                     if (dd!=NULL) {
                         sprintf(dd, ".*");
                         keepAdding = refactoryAddImport(point, regions, starName,
-                                                        lastImportLine+1, menu->s.vApplClass,
+                                                        lastImportLine+1, menu->references.vApplClass,
                                                         interactive);
                     }
                     defaultImportAction = NID_IMPORT_ON_DEMAND;
                     break;
                 case RC_IMPORT_SINGLE_TYPE:
                     keepAdding = refactoryAddImport(point, regions, fqtName,
-                                                    lastImportLine+1, menu->s.vApplClass,
+                                                    lastImportLine+1, menu->references.vApplClass,
                                                     interactive);
                     defaultImportAction = NID_SINGLE_TYPE_IMPORT;
                     break;
@@ -2649,23 +2649,23 @@ static void refactoryStaticMoveCheckCorrespondance(
     mm1=menu1;
     while (mm1!=NULL) {
         // do not check recursive calls
-        if (isSameCxSymbolIncludingFunctionClass(&mm1->s, theMethod)) goto cont;
+        if (isSameCxSymbolIncludingFunctionClass(&mm1->references, theMethod)) goto cont;
         // nor local variables
-        if (mm1->s.storage == StorageAuto) goto cont;
+        if (mm1->references.storage == StorageAuto) goto cont;
         // nor labels
-        if (mm1->s.type == TypeLabel) goto cont;
+        if (mm1->references.type == TypeLabel) goto cont;
         // do not check also any symbols from classes defined in inner scope
-        if (isStrictlyEnclosingClass(mm1->s.vFunClass, theMethod->vFunClass)) goto cont;
+        if (isStrictlyEnclosingClass(mm1->references.vFunClass, theMethod->vFunClass)) goto cont;
         // (maybe I should not test any local symbols ???)
         // O.K. something to be checked, find correspondance in mm2
-        //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->s.name);
+        //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->references.name);
         for (mm2=menu2; mm2!=NULL; mm2=mm2->next) {
-            log_trace("Checking '%s'", mm2->s.name);
-            if (isSameCxSymbolIncludingApplicationClass(&mm1->s, &mm2->s)) break;
+            log_trace("Checking '%s'", mm2->references.name);
+            if (isSameCxSymbolIncludingApplicationClass(&mm1->references, &mm2->references)) break;
         }
         if (mm2==NULL) {
             // O(n^2) !!!
-            //&fprintf(dumpOut, "Did not find correspondance to %s\n", mm1->s.name);
+            //&fprintf(dumpOut, "Did not find correspondance to %s\n", mm1->references.name);
 #           ifdef EACH_SYMBOL_ONCE
             // if each symbol reported only once
             moveFirstElementOfMarkerList(&mm1->markers, &totalDiff);
@@ -2680,7 +2680,7 @@ static void refactoryStaticMoveCheckCorrespondance(
             // if each symbol reported only once
             if (diff1!=NULL) {
                 moveFirstElementOfMarkerList(&diff1, &totalDiff);
-                //&fprintf(dumpOut, "problem with symbol %s corr %s\n", mm1->s.name, mm2->s.name);
+                //&fprintf(dumpOut, "problem with symbol %s corr %s\n", mm1->references.name, mm2->references.name);
             } else {
                 // no, do not put there new symbols, only lost are problems
                 moveFirstElementOfMarkerList(&diff2, &totalDiff);
@@ -2756,7 +2756,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     occs = refactoryGetReferences(point->buffer, point,STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
     if (outAccessFlags!=NULL) {
-        *outAccessFlags = sessionData.browserStack.top->hkSelectedSym->s.access;
+        *outAccessFlags = sessionData.browserStack.top->hkSelectedSym->references.access;
     }
     //&refactoryEditServerParseBuffer(refactoringOptions.project, point->buffer, point, "-olcxrename");
 
@@ -2781,7 +2781,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
         refactoryChangeAccessModifier(point, limitIndex, "public");
     } else {
         assert(sessionData.browserStack.top!=NULL && sessionData.browserStack.top->hkSelectedSym!=NULL);
-        theMethod = &sessionData.browserStack.top->hkSelectedSym->s;
+        theMethod = &sessionData.browserStack.top->hkSelectedSym->references;
         refactoryPushAllReferencesOfMethod(point, "-olallchecks");
         createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
         editorMoveBlock(target, mstart, size, &editorUndo);
@@ -2943,7 +2943,7 @@ static void refactoryMoveField(EditorMarker *point) {
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE-1);
     occs = refactoryGetReferences(point->buffer, point,STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
-    accessFlags = sessionData.browserStack.top->hkSelectedSym->s.access;
+    accessFlags = sessionData.browserStack.top->hkSelectedSym->references.access;
 
     undoStartPoint = editorUndo;
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
@@ -3218,7 +3218,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     // Pass over all references and move primary prefix to first parameter
     // also insert new first parameter on definition
     csym =  sessionData.browserStack.top->hkSelectedSym;
-    javaGetClassNameFromFileIndex(csym->s.vFunClass, fqstaticname, DOTIFY_NAME);
+    javaGetClassNameFromFileIndex(csym->references.vFunClass, fqstaticname, DOTIFY_NAME);
     javaDotifyClassName(fqstaticname);
     sprintf(pardecl, "%s %s", fqstaticname, refactoringOptions.refpar1);
     sprintf(fqstaticname+strlen(fqstaticname), ".");
@@ -3226,7 +3226,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     progressn = progressi = 0;
     for (SymbolsMenu *mm=sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            mm->markers = editorReferencesToMarkers(mm->s.references, filter0, NULL);
+            mm->markers = editorReferencesToMarkers(mm->references.references, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             progressn += progressj;
@@ -3236,7 +3236,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     regions = NULL; reglast = &regions; allrefs = NULL;
     for (SymbolsMenu *mm=sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            javaGetClassNameFromFileIndex(mm->s.vApplClass, fqthis, DOTIFY_NAME);
+            javaGetClassNameFromFileIndex(mm->references.vApplClass, fqthis, DOTIFY_NAME);
             javaDotifyClassName(fqthis);
             sprintf(fqthis+strlen(fqthis), ".this");
             for (EditorMarkerList *ll=mm->markers; ll!=NULL; ll=ll->next) {
@@ -3259,7 +3259,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
                     if (plen>0) {
                         primary[plen-1] = 0;
                     } else {
-                        if (javaLinkNameIsAnnonymousClass(mm->s.name)) {
+                        if (javaLinkNameIsAnnonymousClass(mm->references.name)) {
                             strcpy(primary, "this");
                         } else {
                             strcpy(primary, fqthis);
@@ -3297,7 +3297,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
     for (SymbolsMenu *mm=sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
-            mm->markers = editorReferencesToMarkers(mm->s.references, filter0, NULL);
+            mm->markers = editorReferencesToMarkers(mm->references.references, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             progressn += progressj;
@@ -3413,9 +3413,9 @@ static int refactoryIsMethodPartRedundant(
     mm1 = sessionData.browserStack.top->menuSym;
     mm2 = sessionData.browserStack.top->previous->menuSym;
     while (mm1!=NULL && mm2!=NULL && res) {
-        //&symbolRefItemDump(&mm1->s); dumpReferences(mm1->s.references);
-        //&symbolRefItemDump(&mm2->s); dumpReferences(mm2->s.references);
-        olcxReferencesDiff(&mm1->s.references, &mm2->s.references, &diff);
+        //&symbolRefItemDump(&mm1->references); dumpReferences(mm1->references.references);
+        //&symbolRefItemDump(&mm2->references); dumpReferences(mm2->references.references);
+        olcxReferencesDiff(&mm1->references.references, &mm2->references.references, &diff);
         if (diff!=NULL) {
             lll = editorReferencesToMarkers(diff, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, lll, editorMarkerListLess);
@@ -3660,10 +3660,10 @@ static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *
     assert(sessionData.browserStack.top->menuSym);
     hk = sessionData.browserStack.top->hkSelectedSym;
     for (SymbolsMenu *mm=sessionData.browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
-        if (isSameCxSymbol(&mm->s, &hk->s) && mm->defRefn != 0) {
-            if (mm->s.vFunClass==hk->s.vFunClass) {
+        if (isSameCxSymbol(&mm->references, &hk->references) && mm->defRefn != 0) {
+            if (mm->references.vFunClass==hk->references.vFunClass) {
                 // find definition of another function
-                for (Reference *rr=mm->s.references; rr!=NULL; rr=rr->next) {
+                for (Reference *rr=mm->references.references; rr!=NULL; rr=rr->next) {
                     if (IS_DEFINITION_USAGE(rr->usage.kind)) {
                         if (positionsAreNotEqual(rr->position, hk->defpos)) {
                             anotherDefinition = rr;
@@ -3673,10 +3673,10 @@ static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *
                 }
             refbreak:;
             } else {
-                if (isSmallerOrEqClass(mm->s.vFunClass, hk->s.vFunClass)
-                    || isSmallerOrEqClass(hk->s.vFunClass, mm->s.vFunClass)) {
+                if (isSmallerOrEqClass(mm->references.vFunClass, hk->references.vFunClass)
+                    || isSmallerOrEqClass(hk->references.vFunClass, mm->references.vFunClass)) {
                     linkNamePrettyPrint(cn,
-                                        getShortClassNameFromClassNum_st(mm->s.vFunClass),
+                                        getShortClassNameFromClassNum_st(mm->references.vFunClass),
                                         TMP_STRING_SIZE,
                                         SHORT_NAME);
                     if (substringIndex(clist, cn) == -1) {
@@ -3755,7 +3755,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     }
 
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
-    accFlags = sessionData.browserStack.top->hkSelectedSym->s.access;
+    accFlags = sessionData.browserStack.top->hkSelectedSym->references.access;
 
     cclass[0] = 0; scclass = cclass;
     if (accFlags&AccessStatic) {
@@ -3931,7 +3931,7 @@ static SymbolsMenu *refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown
 
     // find corresponding reference
     for (mm2=menu2; mm2!=NULL; mm2=mm2->next) {
-        if (mm1->s.type!=mm2->s.type && mm2->s.type!=TypeInducedError) continue;
+        if (mm1->references.type!=mm2->references.type && mm2->references.type!=TypeInducedError) continue;
         for (rr2=mm2->markers; rr2!=NULL; rr2=rr2->next) {
             if (MARKER_EQ(rr1->marker, rr2->marker)) goto breakrr2;
         }
@@ -3940,7 +3940,7 @@ static SymbolsMenu *refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown
         if (rr2!=NULL && symbolsCorrespondWrtMoving(mm1, mm2, OLO_PP_PRE_CHECK)) {
             goto breakmm2;;
         }
-        //&fprintf(dumpOut, "Checking %s\n", mm2->s.name);
+        //&fprintf(dumpOut, "Checking %s\n", mm2->references.name);
     }
  breakmm2:
     return mm2;
@@ -3997,16 +3997,16 @@ static EditorMarkerList *refactoryPullUpPushDownDifferences(
     mm1 = menu1;
     while (mm1!=NULL) {
         // do not check recursive calls
-        if (isSameCxSymbolIncludingFunctionClass(&mm1->s, theMethod)) goto cont;
+        if (isSameCxSymbolIncludingFunctionClass(&mm1->references, theMethod)) goto cont;
         // nor local variables
-        if (mm1->s.storage == StorageAuto) goto cont;
+        if (mm1->references.storage == StorageAuto) goto cont;
         // nor labels
-        if (mm1->s.type == TypeLabel) goto cont;
+        if (mm1->references.type == TypeLabel) goto cont;
         // do not check also any symbols from classes defined in inner scope
-        if (isStrictlyEnclosingClass(mm1->s.vFunClass, theMethod->vFunClass)) goto cont;
+        if (isStrictlyEnclosingClass(mm1->references.vFunClass, theMethod->vFunClass)) goto cont;
         // (maybe I should not test any local symbols ???)
         // O.K. something to be checked, find correspondance in mm2
-        //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->s.name);
+        //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->references.name);
         for (EditorMarkerList *rr1=mm1->markers; rr1!=NULL; rr1=rr1->next) {
             mm2 = refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown(menu2, mm1, rr1);
             if (mm2==NULL) {
@@ -4269,7 +4269,7 @@ static void refactoryPushDownPullUp(EditorMarker *point, PushPullDirection direc
     refactoryPushAllReferencesOfMethod(point, "-olallchecks");
     createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
     assert(sessionData.browserStack.top!=NULL && sessionData.browserStack.top->hkSelectedSym!=NULL);
-    theMethod = &sessionData.browserStack.top->hkSelectedSym->s;
+    theMethod = &sessionData.browserStack.top->hkSelectedSym->references;
     editorMoveBlock(target, movedStart, size, &editorUndo);
 
     // recompute methodregion, maybe free old methodreg before!!
@@ -4341,11 +4341,11 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
     multiFileRefsFlag = 0;
     occs = refactoryGetReferences(point->buffer, point, NULL, PPCV_BROWSER_TYPE_WARNING);
     csym =  sessionData.browserStack.top->hkSelectedSym;
-    scope = csym->s.scope;
-    cat = csym->s.category;
-    symtype = csym->s.type;
-    storage = csym->s.storage;
-    accflags = csym->s.access;
+    scope = csym->references.scope;
+    cat = csym->references.category;
+    symtype = csym->references.type;
+    storage = csym->references.storage;
+    accflags = csym->references.access;
     if (occs == NULL) {
         fn = noFileIndex;
     } else {

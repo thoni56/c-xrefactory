@@ -548,11 +548,11 @@ void printClassFqtNameFromClassNum(FILE *file, int fnum) {
 }
 
 void sprintfSymbolLinkName(char *outString, SymbolsMenu *menu) {
-    if (menu->s.type == TypeCppInclude) {
+    if (menu->references.type == TypeCppInclude) {
         sprintf(outString, "%s",
-                simpleFileName(getRealFileName_static(getFileItem(menu->s.vApplClass)->name)));
+                simpleFileName(getRealFileName_static(getFileItem(menu->references.vApplClass)->name)));
     } else {
-        linkNamePrettyPrint(outString, menu->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        linkNamePrettyPrint(outString, menu->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     }
 }
 

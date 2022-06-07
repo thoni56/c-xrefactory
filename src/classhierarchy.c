@@ -119,7 +119,7 @@ void setTmpClassBackPointersToMenu(SymbolsMenu *menu) {
     SymbolsMenu *ss;
     clearTmpClassBackPointersToMenu();
     for(ss=menu; ss!=NULL; ss=ss->next) {
-        tmpVApplClassBackPointersToMenu[ss->s.vApplClass] = ss;
+        tmpVApplClassBackPointersToMenu[ss->references.vApplClass] = ss;
     }
 }
 
@@ -219,8 +219,8 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
     if (options.xref2) {
         ppcIndent();
         fprintf(file,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, menu->outOnLine+SYMBOL_MENU_FIRST_LINE);
-        if (menu->s.type!=TypeDefault) {
-            fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->s.type]);
+        if (menu->references.type!=TypeDefault) {
+            fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->references.type]);
         }
         olcxPrintMenuItemPrefix(file, menu, 1);
 
@@ -231,10 +231,10 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
         fprintf(file,"\n");
         olcxPrintMenuItemPrefix(file, menu, 1);
         printSymbolLinkName(file, menu);
-        if (menu->s.type != TypeDefault) {
-            fprintf(file,"\t(%s)", typeNamesTable[menu->s.type]);
+        if (menu->references.type != TypeDefault) {
+            fprintf(file,"\t(%s)", typeNamesTable[menu->references.type]);
         }
-        //&fprintf(file," ==%s %o (%s) at %x", menu->s.name, menu->ooBits, refCategoriesName[menu->s.category], menu);
+        //&fprintf(file," ==%s %o (%s) at %x", menu->references.name, menu->ooBits, refCategoriesName[menu->references.category], menu);
     }
 }
 
@@ -257,7 +257,7 @@ static void olcxMenuPrintClassHierarchyLine(FILE *file, int fileIndex,
 
     FileItem *fileItem = getFileItem(fileIndex);
     if (menu != NULL) {
-        if (menu->s.vApplClass == menu->s.vFunClass && options.serverOperation!=OLO_CLASS_TREE) {
+        if (menu->references.vApplClass == menu->references.vFunClass && options.serverOperation!=OLO_CLASS_TREE) {
             if (options.xref2)
                 fprintf(file, " %s=1", PPCA_DEFINITION);
             else
@@ -307,14 +307,14 @@ static void descendTheClassHierarchy(FILE *file,
         assert(menu);
         vFunCl = oldvFunCl;
         // O.K. create new item, so that browse class action will work
-        itt = olCreateNewMenuItem(&menu->s, vApplCl, vFunCl, &noPosition, UsageNone,
+        itt = olCreateNewMenuItem(&menu->references, vApplCl, vFunCl, &noPosition, UsageNone,
                                   0, 1, 0, UsageNone, 0);
         // insert it into the list, no matter where?
         itt->next = menu->next;
         menu->next = itt;
         tmpVApplClassBackPointersToMenu[vApplCl] = itt;
     } else {
-        vFunCl = itt->s.vFunClass;
+        vFunCl = itt->references.vFunClass;
     }
 
     if (currentOutputLineInSymbolList == 1) currentOutputLineInSymbolList++; // first line irregularity
@@ -372,30 +372,30 @@ void genClassHierarchies(FILE *file, SymbolsMenu *menuList, int passNumber) {
     // mark the classes where the method is defined and used
     clearTmpChRelevant();
     for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
-        assert(getFileItem(menu->s.vApplClass));
+        assert(getFileItem(menu->references.vApplClass));
         if (menu->visible) {
-            SETBIT(tmpChRelevant, menu->s.vApplClass);
-            SETBIT(tmpChRelevant, menu->s.vFunClass);
+            SETBIT(tmpChRelevant, menu->references.vApplClass);
+            SETBIT(tmpChRelevant, menu->references.vFunClass);
         }
     }
     // now, mark the relevant subtree of class tree
     clearTmpChMarkProcessed();
     for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
-        markTransitiveRelevantSubs(menu->s.vFunClass, passNumber);
-        markTransitiveRelevantSubs(menu->s.vApplClass, passNumber);
+        markTransitiveRelevantSubs(menu->references.vFunClass, passNumber);
+        markTransitiveRelevantSubs(menu->references.vApplClass, passNumber);
     }
     // and gen the class subhierarchy
     for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
-        genThisClassHierarchy(menu->s.vFunClass, noFileIndex, file, menuList, passNumber);
-        genThisClassHierarchy(menu->s.vApplClass, noFileIndex, file, menuList, passNumber);
+        genThisClassHierarchy(menu->references.vFunClass, noFileIndex, file, menuList, passNumber);
+        genThisClassHierarchy(menu->references.vApplClass, noFileIndex, file, menuList, passNumber);
     }
 }
 
 static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, SymbolsMenu *rrr) {
     char ln[MAX_REF_LEN];
 
-    linkNamePrettyPrint(ln,rrr->s.name,MAX_REF_LEN,SHORT_NAME);
-    if (strcmp(rrr->s.name, LINK_NAME_CLASS_TREE_ITEM)==0) {
+    linkNamePrettyPrint(ln,rrr->references.name,MAX_REF_LEN,SHORT_NAME);
+    if (strcmp(rrr->references.name, LINK_NAME_CLASS_TREE_ITEM)==0) {
         /*&
           fprintf(ff, "\n");
           currentOutputLineInSymbolList += 1 ;
@@ -432,7 +432,7 @@ static void genVirtualsGlobRefLists(    SymbolsMenu *rrr,
     for(ss=rrr; ss!=NULL && !ss->visible; ss=ss->next) ;
     if (ss == NULL) return;
     assert(rrr!=NULL);
-    p = &rrr->s;
+    p = &rrr->references;
     assert(p!=NULL);
     //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->storage]);
     if (isVirtualMenuItem(p)) {
@@ -450,12 +450,12 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *rrr,
     for(ss=rrr; ss!=NULL && !ss->visible; ss=ss->next) ;
     if (ss == NULL) return;
     assert(rrr!=NULL);
-    p = &rrr->s;
+    p = &rrr->references;
     assert(p!=NULL);
     //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->storage]);
     if (! isVirtualMenuItem(p)) {
         for(ss=rrr; ss!=NULL; ss=ss->next) {
-            p = &ss->s;
+            p = &ss->references;
             olcxMenuGenNonVirtualGlobSymList( ff, ss);
         }
     }
@@ -472,10 +472,10 @@ void splitMenuPerSymbolsAndMap(SymbolsMenu *rrr,
     rr = rrr;
     while (rr!=NULL) {
         mp = NULL;
-        ss= &rr; cs= &rr->s;
+        ss= &rr; cs= &rr->references;
         while (*ss!=NULL) {
             cc = *ss;
-            if (isSameCxSymbol(&cc->s, cs)) {
+            if (isSameCxSymbol(&cc->references, cs)) {
                 // move cc it into map list
                 *ss = (*ss)->next;
                 cc->next = mp;

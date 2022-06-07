@@ -407,7 +407,7 @@ typedef struct olCompletion {
 } Completion;
 
 typedef struct SymbolsMenu {
-    struct referencesItem	s;
+    struct referencesItem	references;
     bool					selected;
     bool					visible;
     unsigned				ooBits;
@@ -419,7 +419,7 @@ typedef struct SymbolsMenu {
     struct position         defpos;
     int                     outOnLine;
     struct editorMarkerList	*markers;	/* for refactory only */
-    struct SymbolsMenu	*next;
+    struct SymbolsMenu      *next;
 } SymbolsMenu;
 
 typedef struct olcxReferences {
@@ -441,7 +441,7 @@ typedef struct olcxReferences {
 
 typedef struct classTreeData {
     int						baseClassFileIndex;
-    struct SymbolsMenu	*tree;
+    struct SymbolsMenu	   *treeMenu;
 } ClassTreeData;
 
 typedef struct OlcxReferencesStack {
