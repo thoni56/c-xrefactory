@@ -16,7 +16,7 @@ $(TEST): clean
 		exit 0 ; \
 	fi
 
-trace: EXTRA = \'-trace\'
+trace: EXTRA = --extra "-trace -log=log"
 trace: $(TEST)
 
 clean:
@@ -25,4 +25,4 @@ clean:
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1
-	sudo gdb -pid `pgrep -a c-xref | grep -v emacs | awk { '{ print $$1 }'`
+	sudo gdb -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'`

@@ -21,9 +21,6 @@ $(TEST): clean
 		exit 0 ; \
 	fi
 
-trace: EXTRA = \'-trace\'
-trace: $(TEST)
-
 clean:
 	@-rm -rf CXrefs output.log output.tmp output
 
