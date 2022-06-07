@@ -313,7 +313,7 @@ typedef enum language {
 
 /* *********************************************************************** */
 
-#define ENTER() {log_trace("Entering: %s", __func__);}
-#define LEAVE() {log_trace("Leaving: %s", __func__);}
+#define ENTER() {log_trace("Entering: %s", __func__); log_indent();}
+#define LEAVE() {log_trace("Leaving: %s", __func__); log_outdent();}
 
 #endif

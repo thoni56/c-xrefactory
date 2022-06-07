@@ -69,12 +69,27 @@ static void stdout_callback(log_Event *ev) {
 }
 
 
+static char indent_string[1000] = "";
+static int  indentation         = 0;
+
+void log_indent(void) {
+    if (indentation < 1000) {
+        indent_string[indentation++] = ' ';
+        indent_string[indentation] = '\0';
+    }
+}
+
+void log_outdent(void) {
+    if (indentation > 0)
+        indent_string[--indentation] = '\0';
+}
+
 static void file_callback(log_Event *ev) {
   char buf[64];
   buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
   fprintf(
-    ev->udata, "%s %-5s %s:%d: ",
-    buf, level_strings[ev->level], ev->file, ev->line);
+    ev->udata, "%s %-5s %s%s:%d: ",
+    buf, level_strings[ev->level], indent_string, ev->file, ev->line);
   vfprintf(ev->udata, ev->fmt, ev->ap);
   fprintf(ev->udata, "\n");
   fflush(ev->udata);
