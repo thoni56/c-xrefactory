@@ -851,7 +851,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(ReferencesItem *ri, void *ddd
 }
 
 static void fillTpCheckMoveClassData(TpCheckMoveClassData *checkMoveClassData, int minMemi, int maxMemi,
-                                       char *spack, char *tpack, int transPackageMove, char *sclass) {
+                                       char *spack, char *tpack, bool transPackageMove, char *sclass) {
     checkMoveClassData->mm.minMemi = minMemi;
     checkMoveClassData->mm.maxMemi = maxMemi;
     checkMoveClassData->spack = spack;
@@ -865,7 +865,7 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
     OlcxReferences *rstack;
     SymbolsMenu *sclass;
     char *targetfile, *srcfile;
-    int transPackageMove;
+    bool transPackageMove;
 
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
@@ -880,8 +880,10 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
     javaGetPackageNameFromSourceFileName(targetfile, tpack);
 
     // O.K. moving from package spack to package tpack
-    if (compareFileNames(spack, tpack)==0) transPackageMove = 0;
-    else transPackageMove = 1;
+    if (compareFileNames(spack, tpack)==0)
+        transPackageMove = false;
+    else
+        transPackageMove = true;
 
     fillTpCheckMoveClassData(dd, s_cps.cxMemoryIndexAtClassBeginning, s_cps.cxMemoryIndexAtClassEnd,
                                spack, tpack, transPackageMove, sclass->references.name);
