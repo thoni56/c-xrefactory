@@ -888,7 +888,7 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
 
 }
 
-static void refactoryAskForReallyContinueConfirmation(void) {
+static void askForReallyContinueConfirmation(void) {
     ppcGenRecord(PPC_ASK_CONFIRMATION,"The refactoring may change program behaviour, really continue?");
 }
 
@@ -914,7 +914,7 @@ static bool tpCheckMoveClassAccessibilities(void) {
             displayResolutionDialog(
                                              "These references inside moved class are refering to symbols which will be inaccessible at new class location. You should adjust their access first. (Each symbol is listed only once)",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
-            refactoryAskForReallyContinueConfirmation();
+            askForReallyContinueConfirmation();
         }
         return false;
     }
@@ -931,7 +931,7 @@ static bool tpCheckMoveClassAccessibilities(void) {
             displayResolutionDialog(
                                              "These symbols defined inside moved class and used outside the class will be inaccessible at new class location. You should adjust their access first.",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
-            refactoryAskForReallyContinueConfirmation();
+            askForReallyContinueConfirmation();
         }
         return false;
     }
@@ -1808,7 +1808,7 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     //&editorDumpBuffers();
     redoTrack = NULL;
     if (!refactoryMakeSafetyCheckAndUndo(point, &occs, undoStartPoint, &redoTrack)) {
-        refactoryAskForReallyContinueConfirmation();
+        askForReallyContinueConfirmation();
     }
 
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
@@ -2171,7 +2171,7 @@ static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker 
                              );
     if (LANGUAGE(LANG_JAVA)) {
         check = refactoryMakeSafetyCheckAndUndo(point, &occs, startPoint, &redoTrack);
-        if (! check) refactoryAskForReallyContinueConfirmation();
+        if (! check) askForReallyContinueConfirmation();
         editorApplyUndos(redoTrack, NULL, &editorUndo, GEN_NO_OUTPUT);
     }
     editorFreeMarkersAndMarkerList(occs);  // O(n^2)!
@@ -2707,7 +2707,7 @@ static void refactoryStaticMoveCheckCorrespondance(
         refactoryShowSafetyCheckFailingDialog(&totalDiff, "These references will be  misinterpreted after refactoring");
 #       endif
         editorFreeMarkersAndMarkerList(totalDiff); totalDiff=NULL;
-        refactoryAskForReallyContinueConfirmation();
+        askForReallyContinueConfirmation();
     }
 }
 
@@ -2975,7 +2975,7 @@ static void refactoryMoveField(EditorMarker *point) {
     check = refactoryMakeSafetyCheckAndUndo(point, &occs,
                                             undoStartPoint, &redoTrack);
     if (! check) {
-        refactoryAskForReallyContinueConfirmation();
+        askForReallyContinueConfirmation();
     }
     // and generate output
     editorApplyUndos(redoTrack, NULL, NULL, GEN_FULL_OUTPUT);
@@ -4029,7 +4029,7 @@ static void refactoryPullUpPushDownCheckCorrespondance(
     if (diff!=NULL) {
         refactoryShowSafetyCheckFailingDialog(&diff, "These references will be  misinterpreted after refactoring");
         editorFreeMarkersAndMarkerList(diff); diff=NULL;
-        refactoryAskForReallyContinueConfirmation();
+        askForReallyContinueConfirmation();
     }
 }
 
