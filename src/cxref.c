@@ -104,6 +104,13 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return SORTED_LIST_LESS(r1, (*r2));
 }
 
+static bool javaStaticallyLinked(Storage storage, Access accessFlags) {
+    return storage==StorageField ||
+        ((storage==StorageMethod || storage==StorageConstructor)
+         && (accessFlags & AccessStatic));
+}
+
+
 static bool olReferencesItemIsLess(ReferencesItem *s1, ReferencesItem *s2) {
     int cmp;
     cmp = strcmp(s1->name, s2->name);
@@ -2666,7 +2673,7 @@ static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
                 if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_SUBCLASS_OF_RELATED) goto nextrs1;
                 for (SymbolsMenu *s2=menu; s2!=NULL; s2=s2->next) {
                     // do it only for virtuals
-                    st = JAVA_STATICALLY_LINKED(s2->references.storage, s2->references.access);
+                    st = javaStaticallyLinked(s2->references.storage, s2->references.access);
                     if (st) goto nextrs2;
                     oov = (s2->ooBits & OOC_VIRTUAL_MASK);
                     if(oov >= OOC_VIRT_SUBCLASS_OF_RELATED) goto nextrs2;
@@ -2691,7 +2698,7 @@ static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
             if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_RELATED) goto nexts1;
             for (SymbolsMenu *s2=menu; s2!=NULL; s2=s2->next) {
                 // do it only for virtuals
-                st = JAVA_STATICALLY_LINKED(s2->references.storage, s2->references.access);
+                st = javaStaticallyLinked(s2->references.storage, s2->references.access);
                 if (st) goto nexts2;
                 oov = (s2->ooBits & OOC_VIRTUAL_MASK);
                 if(oov >= OOC_VIRT_SUBCLASS_OF_RELATED) goto nexts2;
@@ -3191,7 +3198,7 @@ static SymbolsMenu *firstVisibleSymbol(SymbolsMenu *first) {
 static bool staticallyLinkedSymbolMenu(SymbolsMenu *menu) {
     SymbolsMenu *fv;
     fv = firstVisibleSymbol(menu);
-    if (JAVA_STATICALLY_LINKED(fv->references.storage,fv->references.access)) {
+    if (javaStaticallyLinked(fv->references.storage,fv->references.access)) {
         return true;
     } else {
         return false;
@@ -3229,7 +3236,7 @@ bool olcxShowSelectionMenu(void) {
         || options.serverOperation==OLO_RENAME
         || options.serverOperation==OLO_ARG_MANIP
         || options.serverOperation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK
-        || JAVA_STATICALLY_LINKED(fvisible->references.storage,
+        || javaStaticallyLinked(fvisible->references.storage,
                                   fvisible->references.access)) {
         // manually only if different
         for (SymbolsMenu *ss=sessionData.browserStack.top->menuSym; ss!=NULL; ss=ss->next) {
@@ -4684,7 +4691,7 @@ static unsigned olcxOoBits(SymbolsMenu *ols, ReferencesItem *p) {
         ooBits |= OOC_PROFILE_EQUAL;
     }
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)
-        || JAVA_STATICALLY_LINKED(ols->references.storage, ols->references.access)) {
+        || javaStaticallyLinked(ols->references.storage, ols->references.access)) {
         if (vFunCl == olvFunCl) ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
     } else {
         // the following may be too strong, maybe only test FunCl ???

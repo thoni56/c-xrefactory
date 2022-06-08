@@ -190,12 +190,6 @@ typedef enum language {
         len = _ss_ - start;                                 \
     }
 
-#define JAVA_STATICALLY_LINKED(storage, accessFlags) (                  \
-        (storage==StorageField                                          \
-         || ((storage==StorageMethod || storage==StorageConstructor)    \
-             && (accessFlags & AccessStatic)))                          \
-    )
-
 #define MapOnPaths(thePaths, COMMAND) {                                 \
         char *currentPath, *jmop_pp, *jmop_ecp;                         \
         int jmop_i, jmop_ind;                                           \
