@@ -4037,16 +4037,16 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
 }
 
 static Symbol *javaGetClassSymbolFromClassDotName(char *fqName) {
-    char *dd, *sn;
-    char ttt[MAX_CX_SYMBOL_SIZE];
+    char *delimiter, *lastComponent;
+    char slashDelimitedFQT[MAX_CX_SYMBOL_SIZE];
 
-    strcpy(ttt, fqName);
-    dd = sn = ttt;
-    while ((dd=strchr(dd,'.'))!=NULL) {
-        *dd = '/';
-        sn = dd+1;
+    strcpy(slashDelimitedFQT, fqName);
+    delimiter = lastComponent = slashDelimitedFQT;
+    while ((delimiter=strchr(delimiter,'.'))!=NULL) {
+        *delimiter = '/';
+        lastComponent = delimiter+1;
     }
-    return javaFQTypeSymbolDefinition(sn, ttt);
+    return javaFQTypeSymbolDefinition(lastComponent, slashDelimitedFQT);
 }
 
 Symbol *getMoveTargetClass(void) {
