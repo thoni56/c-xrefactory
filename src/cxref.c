@@ -3986,10 +3986,10 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri,
     Position              defpos;
     OlcxReferences        *rstack;
     SymbolsMenu         *mm;
-    S_pushAllInBetweenData  *dd;
+    PushAllInBetweenData  *dd;
     int                     defusage,select,visible,ooBits,vlevel;
 
-    dd = (S_pushAllInBetweenData *) ddd;
+    dd = (PushAllInBetweenData *) ddd;
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
     if (!isPushAllMethodsValidRefItem(ri)) return;
@@ -4025,7 +4025,7 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri,
 }
 
 void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
-    S_pushAllInBetweenData  rr;
+    PushAllInBetweenData  rr;
     OlcxReferences        *rstack;
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
