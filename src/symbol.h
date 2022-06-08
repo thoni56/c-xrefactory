@@ -36,7 +36,7 @@ typedef struct symbol {
 } Symbol;
 
 typedef struct symbolList {
-    struct symbol     *d;
+    struct symbol     *element;
     struct symbolList *next;
 } SymbolList;
 

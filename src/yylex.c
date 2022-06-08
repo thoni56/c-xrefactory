@@ -2078,8 +2078,8 @@ static void actionOnBlockMarker(void) {
                     assert(s_javaStat->thisClass->u.structSpec);
                     strcpy(s_cps.currentClassAnswer, s_javaStat->thisClass->linkName);
                     if (s_javaStat->thisClass->u.structSpec->super!=NULL) {
-                        assert(s_javaStat->thisClass->u.structSpec->super->d);
-                        strcpy(s_cps.currentSuperClassAnswer, s_javaStat->thisClass->u.structSpec->super->d->linkName);
+                        assert(s_javaStat->thisClass->u.structSpec->super->element);
+                        strcpy(s_cps.currentSuperClassAnswer, s_javaStat->thisClass->u.structSpec->super->element->linkName);
                     }
                 }
             }

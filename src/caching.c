@@ -172,11 +172,11 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
         if (PPM_FREED_POINTER(*symbolListP)) {
             *symbolListP = (*symbolListP)->next;
             continue;
-        } else if (freedPointer((*symbolListP)->d) || PPM_FREED_POINTER((*symbolListP)->d)) {
+        } else if (freedPointer((*symbolListP)->element) || PPM_FREED_POINTER((*symbolListP)->element)) {
             *symbolListP = (*symbolListP)->next;
             continue;
         } else {
-            structCachingFree((*symbolListP)->d);
+            structCachingFree((*symbolListP)->element);
         }
         symbolListP = &(*symbolListP)->next;
     }

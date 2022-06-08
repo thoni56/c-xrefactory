@@ -361,7 +361,7 @@ static void jslAddToLoadWaitList( Symbol *clas ) {
 
     CF_ALLOC(ll, SymbolList);
     /* REPLACED: FILL_symbolList(ll, clas, s_jsl->waitList); with compound literal */
-    *ll = (SymbolList){.d = clas, .next = s_jsl->waitList};
+    *ll = (SymbolList){.element = clas, .next = s_jsl->waitList};
     s_jsl->waitList = ll;
 }
 
@@ -488,7 +488,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
 void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc) {
     SymbolList *ss;
     for(ss=cc->u.structSpec->super; ss!=NULL; ss=ss->next) {
-        jslAddSuperNestedClassesToJslTypeTab(ss->d);
+        jslAddSuperNestedClassesToJslTypeTab(ss->element);
     }
     jslAddNestedClassesToJslTypeTab(cc, ORDER_PREPEND);
 }

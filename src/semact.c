@@ -201,10 +201,10 @@ static bool accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
             if (sups->next==rfs->st[i]) break;
         }
         if (sups!=NULL && sups->next == rfs->st[i]) {
-            if (! javaClassIsInCurrentPackage(sups->d))
+            if (! javaClassIsInCurrentPackage(sups->element))
                 return false;
         }
-        cc = sups->d;
+        cc = sups->element;
     }
     assert(cc==rfs->currClass);
     return true;
@@ -385,7 +385,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
                 return RETURN_NOT_FOUND;
             }
             sss                 = ss->st[ss->sti - 1];
-            s                   = sss->d;
+            s                   = sss->element;
             ss->st[ss->sti - 1] = sss->next;
             assert(s && (s->type == TypeStruct || s->type == TypeUnion));
             //&fprintf(dumpOut,":pass to super class %s(%d)\n",s->linkName,ss->sti); fflush(dumpOut);
@@ -817,7 +817,7 @@ SymbolList *createDefinitionList(Symbol *symbol) {
     assert(symbol);
     p = StackMemoryAlloc(SymbolList);
     /* REPLACED: FILL_symbolList(p, symbol, NULL); with compound literal */
-    *p = (SymbolList){.d = symbol, .next = NULL};
+    *p = (SymbolList){.element = symbol, .next = NULL};
 
     return p;
 }

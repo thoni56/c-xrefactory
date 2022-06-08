@@ -532,7 +532,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name, char *fqName) {
 
     CF_ALLOC(pppl, SymbolList);
     /* REPLACED: FILL_symbolList(pppl, memb, NULL); with compound literal */
-    *pppl = (SymbolList){.d = memb, .next = NULL};
+    *pppl = (SymbolList){.element = memb, .next = NULL};
 
     javaFqtTableAdd(&javaFqtTable, pppl);
 
@@ -555,10 +555,10 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     symbol.storage = StorageNone;
 
     /* REPLACED: FILL_symbolList(&ppl, &symbol, NULL); with compound literal */
-    ppl = (SymbolList){.d = &symbol, .next = NULL};
+    ppl = (SymbolList){.element = &symbol, .next = NULL};
 
     if (javaFqtTableIsMember(&javaFqtTable, &ppl, NULL, &pppl)) {
-        member = pppl->d;
+        member = pppl->element;
     } else {
         member = javaFQTypeSymbolDefinitionCreate(name, fqName);
     }
@@ -677,7 +677,7 @@ static void javaJslLoadSuperClasses(Symbol *cc, int currentParsedFile) {
         fatalError(ERR_INTERNAL, "unexpected cycle in class hierarchy", XREF_EXIT_ERR);
     }
     for(ss=cc->u.structSpec->super; ss!=NULL; ss=ss->next) {
-        cfAddCastsToModule(cc, ss->d);
+        cfAddCastsToModule(cc, ss->element);
     }
     nestingCount --;
 }
@@ -744,7 +744,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     }
 
     for (SymbolList *ll=s_jsl->waitList; ll!=NULL; ll=ll->next) {
-        javaJslLoadSuperClasses(ll->d, cfilenum);
+        javaJslLoadSuperClasses(ll->element, cfilenum);
     }
  fini:
     nestingDepth--;
@@ -930,7 +930,7 @@ static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
     // take just one super class, no interfaces, for speed reasons
     for(clas=tclas;
         clas!=NULL && clas->u.structSpec->super!=NULL;
-        clas=clas->u.structSpec->super->d) {
+        clas=clas->u.structSpec->super->element) {
         assert(clas->type == TypeStruct && clas->u.structSpec);
         n = clas->u.structSpec->nestedCount;
         inners = clas->u.structSpec->nest;
@@ -958,7 +958,7 @@ static int javaClassIsInnerNonStaticMemberClass(Symbol *tclas, Symbol *name) {
     // take just one super class, no interfaces, for speed reasons
     for(clas=tclas;
         clas!=NULL && clas->u.structSpec->super!=NULL;
-        clas=clas->u.structSpec->super->d) {
+        clas=clas->u.structSpec->super->element) {
         assert(clas->type == TypeStruct && clas->u.structSpec);
         n = clas->u.structSpec->nestedCount;
         inners = clas->u.structSpec->nest;
@@ -2073,7 +2073,7 @@ Symbol *javaGetSuperClass(Symbol *cc) {
     sups = cc->u.structSpec->super;
     if (sups == NULL)
         return &s_errorSymbol;	/* class Object only */
-    return sups->d;
+    return sups->element;
 }
 
 Symbol *javaCurrentSuperClass(void) {
@@ -2186,7 +2186,7 @@ static TypeModifier *javaMethodInvocation(
     addNewCxReference(appl[smallesti], &name->position, usage, vFunCl, vApplCl);
     if (options.serverOperation == OLO_EXTRACT) {
         for(ee=appl[smallesti]->u.typeModifier->u.m.exceptions; ee!=NULL; ee=ee->next) {
-            addCxReference(ee->d, &name->position, UsageThrown, noFileIndex, noFileIndex);
+            addCxReference(ee->element, &name->position, UsageThrown, noFileIndex, noFileIndex);
         }
     }
     return appl[smallesti]->u.typeModifier->next;
@@ -2528,7 +2528,7 @@ static void javaAddNestedClassToSymbolTab( Symbol *str ) {
 void javaAddSuperNestedClassToSymbolTab( Symbol *cc ) {
     SymbolList *ss;
     for(ss=cc->u.structSpec->super; ss != NULL; ss=ss->next) {
-        javaAddSuperNestedClassToSymbolTab(ss->d);
+        javaAddSuperNestedClassToSymbolTab(ss->element);
     }
     javaAddNestedClassToSymbolTab(cc);
 }
@@ -2664,7 +2664,7 @@ void javaParsedSuperClass(Symbol *symbol) {
     assert(s_javaStat->thisClass->u.structSpec);
     assert(symbol && symbol->type==TypeStruct && symbol->u.structSpec);
     for(pp=s_javaStat->thisClass->u.structSpec->super; pp!=NULL; pp=pp->next) {
-        if (pp->d == symbol) break;
+        if (pp->element == symbol) break;
     }
     if (pp==NULL) {
         log_trace("manual super class %s of %s == %s" ,symbol->linkName, s_javaStat->thisClass->linkName,

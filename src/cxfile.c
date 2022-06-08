@@ -518,8 +518,8 @@ void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
 
     for (SymbolList *sups=symbol->u.structSpec->super; sups!=NULL; sups=sups->next) {
-        assert(sups->d && sups->d->type == TypeStruct);
-        addSubClassItemToFileTab(sups->d->u.structSpec->classFileIndex, cf1, origin);
+        assert(sups->element && sups->element->type == TypeStruct);
+        addSubClassItemToFileTab(sups->element->u.structSpec->classFileIndex, cf1, origin);
     }
 }
 

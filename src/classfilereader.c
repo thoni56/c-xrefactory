@@ -1002,7 +1002,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
                     CF_ALLOC(ee, SymbolList);
                     /* REPLACED: FILL_symbolList(ee, exc, exclist); with compound literal */
-                    *ee = (SymbolList){.d = exc, .next = exclist};
+                    *ee = (SymbolList){.element = exc, .next = exclist};
                     exclist = ee;
                 }
             } else if (strcmp(cp[aname].utf8, "Code")==0) {
@@ -1068,9 +1068,9 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int originFileIndex
     char tmpBuff[TMP_BUFF_SIZE];
 
     super = javaFQTypeSymbolDefinition(super->name, super->linkName);
-    for(s = member->u.structSpec->super; s != NULL && s->d != super; s = s->next)
+    for(s = member->u.structSpec->super; s != NULL && s->element != super; s = s->next)
         ;
-    if (s != NULL && s->d == super)
+    if (s != NULL && s->element == super)
         return; // avoid multiple occurrences
     log_debug("adding superclass %s to %s", super->linkName, member->linkName);
     if (cctIsMember(&super->u.structSpec->casts, member, 1) || member == super) {
@@ -1084,7 +1084,7 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int originFileIndex
 
     /* TODO: three occurrences of CF_ALLOC(.. SymbolList) warrants 'newSymbolList()'... */
     /* REPLACED: FILL_symbolList(ssl, supp, NULL); with compound literal */
-    *symbolList = (SymbolList){.d = super, .next = NULL};
+    *symbolList = (SymbolList){.element = super, .next = NULL};
     LIST_APPEND(SymbolList, member->u.structSpec->super, symbolList);
     addSubClassItemToFileTab(super->u.structSpec->classFileIndex,
                              member->u.structSpec->classFileIndex,

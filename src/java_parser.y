@@ -1868,7 +1868,7 @@ ClassTypeList
                 assert($1.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC($$.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with compound literal */
-                *$$.d = (SymbolList){.d = $1.d->u.typeModifier->u.t, .next = NULL};
+                *$$.d = (SymbolList){.element = $1.d->u.typeModifier->u.t, .next = NULL};
             }
         }
     |	ClassTypeList ',' ClassType		{
@@ -1878,7 +1878,7 @@ ClassTypeList
                 assert($3.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC($$.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with compound literal */
-                *$$.d = (SymbolList){.d = $3.d->u.typeModifier->u.t, .next = $1.d};
+                *$$.d = (SymbolList){.element = $3.d->u.typeModifier->u.t, .next = $1.d};
             }
         }
     ;

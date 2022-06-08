@@ -1351,7 +1351,7 @@ static void javaCompleteNestedClasses(  Completions *c,
     // TODO count inheritance and virtual levels (at least for nested classes)
     for(str=cclas;
         str!=NULL && str->u.structSpec->super!=NULL;
-        str=str->u.structSpec->super->d) {
+        str=str->u.structSpec->super->element) {
         assert(str && str->u.structSpec);
         for(i=0; i<str->u.structSpec->nestedCount; i++) {
             if (str->u.structSpec->nest[i].membFlag) {

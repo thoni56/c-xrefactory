@@ -266,7 +266,7 @@ void throwsSprintf(char *out, int outsize, SymbolList *exceptions) {
         firstflag = 1;
         for(ee=exceptions; ee!=NULL; ee=ee->next) {
             if (outi-10 > outsize) break;
-            sprintf(out+outi, "%c%s", firstflag?' ':',', ee->d->name);
+            sprintf(out+outi, "%c%s", firstflag?' ':',', ee->element->name);
             outi += strlen(out+outi);
         }
         if (ee!=NULL) sprintf(out+outi, "...");

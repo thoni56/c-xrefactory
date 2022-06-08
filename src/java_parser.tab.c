@@ -4481,7 +4481,7 @@ case 170:
                 assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC(yyval.ast_symbolList.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with compound literal */
-                *yyval.ast_symbolList.d = (SymbolList){.d = yyvsp[0].ast_symbol.d->u.typeModifier->u.t, .next = NULL};
+                *yyval.ast_symbolList.d = (SymbolList){.element = yyvsp[0].ast_symbol.d->u.typeModifier->u.t, .next = NULL};
             }
         }
 break;
@@ -4494,7 +4494,7 @@ case 171:
                 assert(yyvsp[0].ast_symbol.d->u.typeModifier->kind == TypeStruct);
                 CF_ALLOC(yyval.ast_symbolList.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with compound literal */
-                *yyval.ast_symbolList.d = (SymbolList){.d = yyvsp[0].ast_symbol.d->u.typeModifier->u.t, .next = yyvsp[-2].ast_symbolList.d};
+                *yyval.ast_symbolList.d = (SymbolList){.element = yyvsp[0].ast_symbol.d->u.typeModifier->u.t, .next = yyvsp[-2].ast_symbolList.d};
             }
         }
 break;
