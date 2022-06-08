@@ -300,7 +300,10 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     char            wcPaths[MAX_OPTION_LEN];
     int             isTopDirectory;
 
-    dir = a1; fname = file; recurseFlag = a4; isTopDirectory = *a5;
+    dir = a1;
+    fname = file;
+    recurseFlag = a4;
+    isTopDirectory = *a5;
     if (isTopDirectory == 0) {
         if (strcmp(fname, ".")==0 || strcmp(fname, "..")==0)
             return;
