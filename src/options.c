@@ -296,8 +296,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     char            *dir,*fname, *suff;
     void            *recurseFlag;
     void            *nrecurseFlag;
-    char            fn[MAX_FILE_NAME_SIZE];
-    char            wcPaths[MAX_OPTION_LEN];
+    char            dirName[MAX_FILE_NAME_SIZE];
     int             isTopDirectory;
 
     dir = a1;
@@ -309,34 +308,35 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
             return;
         if (fileNameShouldBePruned(fname))
             return;
-        sprintf(fn, "%s%c%s", dir, FILE_PATH_SEPARATOR, fname);
-        strcpy(fn, normalizeFileName(fn, cwd));
-        if (fileNameShouldBePruned(fn))
+        sprintf(dirName, "%s%c%s", dir, FILE_PATH_SEPARATOR, fname);
+        strcpy(dirName, normalizeFileName(dirName, cwd));
+        if (fileNameShouldBePruned(dirName))
             return;
     } else {
-        strcpy(fn, normalizeFileName(fname, cwd));
+        strcpy(dirName, normalizeFileName(fname, cwd));
     }
-    if (strlen(fn) >= MAX_FILE_NAME_SIZE) {
+    if (strlen(dirName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "file name %s is too long", fn);
+        sprintf(tmpBuff, "file name %s is too long", dirName);
         fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
     }
     suff = getFileSuffix(fname);
     // Directories are never in editor buffers...
-    if (isDirectory(fn)) {
+    if (isDirectory(dirName)) {
         if (recurseFlag!=NULL) {
             isTopDirectory = 0;
             nrecurseFlag = &isTopDirectory;
-            mapDirectoryFiles(fn, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
-                              fn, NULL, NULL, nrecurseFlag, &isTopDirectory);
-            editorMapOnNonexistantFiles(fn, dirInputFile, DEPTH_ANY,
-                                        fn, NULL, NULL, nrecurseFlag, &isTopDirectory);
+            mapDirectoryFiles(dirName, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
+                              dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
+            editorMapOnNonexistantFiles(dirName, dirInputFile, DEPTH_ANY,
+                                        dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
         } else {
             // no error, let it be
-            //& sprintf(tmpBuff, "omitting directory %s, missing '-r' option ?",fn);
+            //& sprintf(tmpBuff, "omitting directory %s, missing '-r' option ?",dirName);
             //& warningMessage(ERR_ST,tmpBuff);
+            ;
         }
-    } else if (editorFileExists(fn)) {
+    } else if (editorFileExists(dirName)) {
         // .class can be inside a jar archive, but this makes problem on
         // recursive read of a directory, it attempts to read .class
         if (isTopDirectory==0
@@ -352,22 +352,20 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         ) {
             return;
         }
-        scheduleCommandLineEnteredFileToProcess(fn);
-    } else if (containsWildcard(fn)) {
-        expandWildcardsInOnePath(fn, wcPaths, MAX_OPTION_LEN);
-        //&fprintf(dumpOut, "wildcard path %s expanded to %s\n", fn, wcPaths);
-        MapOnPaths(wcPaths, {
+        scheduleCommandLineEnteredFileToProcess(dirName);
+    } else if (containsWildcard(dirName)) {
+        char wildcardPath[MAX_OPTION_LEN];
+        expandWildcardsInOnePath(dirName, wildcardPath, MAX_OPTION_LEN);
+        MapOnPaths(wildcardPath, {
                 dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory);
             });
-    } else if (isTopDirectory
-               && ((!options.allowPackagesOnCommandLine)
-                   || !packageOnCommandLine(fname))) {
+    } else if (isTopDirectory && (!options.allowPackagesOnCommandLine || !packageOnCommandLine(fname))) {
         if (options.taskRegime!=RegimeEditServer) {
-            errorMessage(ERR_CANT_OPEN, fn);
+            errorMessage(ERR_CANT_OPEN, dirName);
         } else {
             // hacked 16.4.2003 in order to can complete in buffers
             // without existing file
-            scheduleCommandLineEnteredFileToProcess(fn);
+            scheduleCommandLineEnteredFileToProcess(dirName);
         }
     }
 }
