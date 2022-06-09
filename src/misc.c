@@ -974,9 +974,8 @@ char *getRealFileName_static(char *fn) {
 static int mapPatternFiles(char *pattern ,
                            void (*fun)(MAP_FUN_SIGNATURE),
                            char *a1, char *a2,
-                           S_completions *a3,
+                           Completions *a3,
                            void *a4, int *a5) {
-#if defined (__WIN32__)
     WIN32_FIND_DATA     fdata;
     HANDLE              handle;
     int res;
@@ -994,24 +993,6 @@ static int mapPatternFiles(char *pattern ,
         FindClose(handle);
     }
     return(res);
-#else
-    FILEFINDBUF3 fdata = {0};
-    HDIR han = HDIR_CREATE;
-    ULONG nEntries = 1;
-    int res = 0;
-
-    if (!DosFindFirst (pattern, &han, FILE_NORMAL | FILE_DIRECTORY, &fdata, sizeof (FILEFINDBUF3), &nEntries, FIL_STANDARD)) {
-        do {
-            if ( strcmp(fdata.achName,".")!=0
-                 && strcmp(fdata.achName,"..")!=0) {
-                (*fun)(fdata.achName, a1, a2, a3, a4, a5);
-                res = 1;
-            }
-        } while (!DosFindNext (han, &fdata, sizeof (FILEFINDBUF3), &nEntries));
-        DosFindClose(han);
-    }
-    return(res);
-#endif
 }
 #endif
 
