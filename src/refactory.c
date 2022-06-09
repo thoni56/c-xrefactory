@@ -4416,7 +4416,7 @@ static char * computeUpdateOptionForSymbol(EditorMarker *point) {
 
 
 void mainRefactory() {
-    int fArgCount;
+    int argCount;
     char *file, *argumentFile;
     char inputFileName[MAX_FILE_NAME_SIZE];
     EditorBuffer *buf;
@@ -4445,8 +4445,8 @@ void mainRefactory() {
                    XREF_EXIT_ERR);
     }
 
-    fArgCount = 0;
-    argumentFile = getNextInputFile(&fArgCount);
+    argCount = 0;
+    argumentFile = getNextInputFile(&argCount);
     if (argumentFile==NULL) {
         file = NULL;
     } else {
