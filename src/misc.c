@@ -997,7 +997,7 @@ static int mapPatternFiles(char *pattern ,
 #endif
 
 
-int mapDirectoryFiles(char *dirname,
+void mapDirectoryFiles(char *dirname,
                       void (*fun)(MAP_FUN_SIGNATURE),
                       int allowEditorFilesFlag,
                       char *a1,
@@ -1006,7 +1006,6 @@ int mapDirectoryFiles(char *dirname,
                       void *a4,
                       int *a5
 ){
-    int res=0;
 #ifdef __WIN32__
     WIN32_FIND_DATA     fdata;
     HANDLE              handle;
@@ -1018,18 +1017,16 @@ int mapDirectoryFiles(char *dirname,
     }
     assert(d-ttt < MAX_FILE_NAME_SIZE-3);
     sprintf(d,"%c*",FILE_PATH_SEPARATOR);
-    res = mapPatternFiles(ttt, fun, a1, a2, a3, a4, a5);
+    mapPatternFiles(ttt, fun, a1, a2, a3, a4, a5);
 #else
     DIR             *fd;
     struct dirent   *dirbuf;
 
-    if (isDirectory(dirname) && (fd = opendir(dirname)) != NULL)
-    {
+    if (isDirectory(dirname) && (fd = opendir(dirname)) != NULL) {
         while ((dirbuf=readdir(fd)) != NULL) {
             if (dirbuf->d_ino != 0 && strcmp(dirbuf->d_name, ".") != 0 && strcmp(dirbuf->d_name, "..") != 0) {
                 log_trace("mapping file %s", dirbuf->d_name);
                 (*fun)(dirbuf->d_name, a1, a2, a3, a4, a5);
-                res = 1;
             }
         }
         closedir(fd);
@@ -1039,9 +1036,8 @@ int mapDirectoryFiles(char *dirname,
     // also files stored in renamed buffers
     if (refactoringOptions.refactoringRegime == RegimeRefactory
         && allowEditorFilesFlag==ALLOW_EDITOR_FILES) {
-        res |= editorMapOnNonexistantFiles(dirname, fun, DEPTH_ONE, a1, a2, a3, a4, a5);
+        editorMapOnNonexistantFiles(dirname, fun, DEPTH_ONE, a1, a2, a3, a4, a5);
     }
-    return(res);
 }
 
 

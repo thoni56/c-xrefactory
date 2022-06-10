@@ -73,7 +73,7 @@ extern char *javaGetShortClassName(char *inn);
 extern char *javaGetShortClassNameFromFileNum_st(int fnum);
 extern int substringIndex(char *string, char *substring);
 extern bool fileNameHasOneOfSuffixes(char *fname, char *suffs);
-extern int mapDirectoryFiles(
+extern void mapDirectoryFiles(
         char *dirname,
         void (*fun) (MAP_FUN_SIGNATURE),
         int allowEditorFilesFlag,

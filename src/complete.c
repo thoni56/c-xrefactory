@@ -1730,7 +1730,8 @@ void javaCompleteHintForConstructSingleName(Completions *c) {
         if (s_cps.lastAssignementStruct!=NULL) {
             name = s_cps.lastAssignementStruct->name;
             fillCompletionLine(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
-            processName(name, &compLine, 0, c);                 }
+            processName(name, &compLine, 0, c);
+        }
     }
 }
 
