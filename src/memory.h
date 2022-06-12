@@ -51,8 +51,8 @@ typedef struct codeBlock {
 /**********************************************************************
   SM = Static Memory? - once allocated cannot expand?
 
-  Have a separate int variable called mem##Index instead of the Memory
-  struct used by DM (merge?)
+  This have a separate int variable called mem##Index instead of the
+  Memory struct used by DM (can we merge them?)
 
 */
 
