@@ -659,11 +659,11 @@ static void processSectionMarker(char *optionText, int i, char *project, char *s
 }
 
 
-#define ALLOCATE_OPTION_SPACE(memFl,cc,num,type) {    \
+#define ALLOCATE_OPTION_SPACE(memFl, cc, num, type) { \
         if (memFl==ALLOCATE_IN_SM) {                  \
-            SM_ALLOCC(optMemory,cc,num,type);         \
+            SM_ALLOCC(optMemory, cc, num, type);      \
         } else if (memFl==ALLOCATE_IN_PP) {           \
-            PPM_ALLOCC(cc,num,type);                  \
+            PPM_ALLOCC(cc, num, type);                \
         } else {                                      \
             assert(0);                                \
         }                                             \

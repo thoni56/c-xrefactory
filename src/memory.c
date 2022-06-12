@@ -16,11 +16,13 @@ int olcxMemoryAllocatedBytes;
 CodeBlock *currentBlock;
 
 
-/* Memory types */
+/* Dynamic memory */
 Memory *cxMemory=NULL;
 
+/* Stack memory - in this we allocate blocks which have separate free indices */
 char stackMemory[SIZE_stackMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
+/* Static memory areas */
 char ftMemory[SIZE_ftMemory];
 int ftMemoryIndex = 0;
 

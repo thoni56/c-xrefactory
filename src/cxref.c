@@ -390,44 +390,41 @@ bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
 }
 
 // TODO, all this stuff should be done differently! Why?
+// NOTE This is a mapOverReferencesTableWithPointer()-function
 static void changeFieldRefUsages(ReferencesItem *ri, void *rrcd) {
-    ReferencesChangeData *rcd;
+    ReferencesChangeData *changeData;
     ReferencesItem ddd;
 
-    rcd = (ReferencesChangeData*) rrcd;
-    fillReferencesItem(&ddd, rcd->linkName, cxFileHashNumber(rcd->linkName), noFileIndex, noFileIndex,
-                       TypeDefault, StorageField, ScopeFile, AccessDefault, rcd->category);
+    changeData = (ReferencesChangeData*) rrcd;
+    fillReferencesItem(&ddd, changeData->linkName, cxFileHashNumber(changeData->linkName), noFileIndex, noFileIndex,
+                       TypeDefault, StorageField, ScopeFile, AccessDefault, changeData->category);
     if (isSameCxSymbol(ri, &ddd)) {
-        //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
-        for (Reference *rr = ri->references; rr!=NULL; rr=rr->next) {
-            //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->position.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
-            if (rr->position.file == rcd->fnum &&  /* I think it is used only for Java */
-                dm_isBetween(cxMemory,rr,rcd->cxMemBegin,rcd->cxMemEnd)) {
-                //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->position.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
-                switch(rr->usage.kind) {
+        for (Reference *r = ri->references; r!=NULL; r=r->next) {
+            if (r->position.file == changeData->fnum &&  /* I think it is used only for Java */
+                dm_isBetween(cxMemory,r,changeData->cxMemBegin,changeData->cxMemEnd)) {
+                switch(r->usage.kind) {
                 case UsageMaybeThis:
-                    assert(rcd->cclass->u.structSpec);
-                    if (isEnclosingClass(rcd->cclass->u.structSpec->classFileIndex, ri->vFunClass)) {
-                        rr->usage.kind = UsageMaybeThisInClassOrMethod;
+                    assert(changeData->cclass->u.structSpec);
+                    if (isEnclosingClass(changeData->cclass->u.structSpec->classFileIndex, ri->vFunClass)) {
+                        r->usage.kind = UsageMaybeThisInClassOrMethod;
                     }
                     break;
                 case UsageMaybeQualifiedThis:
-                    assert(rcd->cclass->u.structSpec);
-                    if (isEnclosingClass(rcd->cclass->u.structSpec->classFileIndex, ri->vFunClass)) {
-                        rr->usage.kind = UsageMaybeQualifThisInClassOrMethod;
+                    assert(changeData->cclass->u.structSpec);
+                    if (isEnclosingClass(changeData->cclass->u.structSpec->classFileIndex, ri->vFunClass)) {
+                        r->usage.kind = UsageMaybeQualifThisInClassOrMethod;
                     }
                     break;
-                case UsageNotFQType: rr->usage.kind = UsageNotFQTypeInClassOrMethod;
-                    //&sprintf(tmpBuff, "reseting %d:%d:%d at %d", rr->position.file, rr->position.line, rr->position.col, rr);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
+                case UsageNotFQType: r->usage.kind = UsageNotFQTypeInClassOrMethod;
                     break;
-                case UsageNotFQField: rr->usage.kind = UsageNotFQFieldInClassOrMethod;
+                case UsageNotFQField: r->usage.kind = UsageNotFQFieldInClassOrMethod;
                     break;
-                case UsageNonExpandableNotFQTName: rr->usage.kind = UsageNonExpandableNotFQTNameInClassOrMethod;
+                case UsageNonExpandableNotFQTName: r->usage.kind = UsageNonExpandableNotFQTNameInClassOrMethod;
                     break;
-                case UsageLastUseless: rr->usage.kind = UsageLastUselessInClassOrMethod;
+                case UsageLastUseless: r->usage.kind = UsageLastUselessInClassOrMethod;
                     break;
                 case UsageOtherUseless:
-                    //& rr->usage.kind = UsageOtherUselessInMethod;
+                    //& r->usage.kind = UsageOtherUselessInMethod;
                     break;
                 case UsageLastUselessInClassOrMethod:
                 case UsageNotFQFieldInClassOrMethod:
@@ -456,33 +453,33 @@ static void fillReferencesChangeData(ReferencesChangeData *referencesChangeData,
 
 void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                   Symbol *cclass){
-    ReferencesChangeData rr;
-    fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
+    ReferencesChangeData changeData;
+    fillReferencesChangeData(&changeData, linkName, fnum, cclass, category,
                               s_cps.cxMemoryIndexAtMethodBegin,
                               s_cps.cxMemoryIndexAtMethodEnd);
-    mapOverReferenceTableWithPointer(changeFieldRefUsages, &rr);
+    mapOverReferenceTableWithPointer(changeFieldRefUsages, &changeData);
 }
 
 void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                  Symbol *cclass){
-    ReferencesChangeData rr;
-    fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
+    ReferencesChangeData changeData;
+    fillReferencesChangeData(&changeData, linkName, fnum, cclass, category,
                               s_cps.cxMemoryIndexAtClassBeginning,
                               s_cps.cxMemoryIndexAtClassEnd);
-    mapOverReferenceTableWithPointer(changeFieldRefUsages, &rr);
+    mapOverReferenceTableWithPointer(changeFieldRefUsages, &changeData);
 }
 
-Reference * getDefinitionRef(Reference *rr) {
-    Reference *res = NULL;
+Reference * getDefinitionRef(Reference *reference) {
+    Reference *definitionReference = NULL;
 
-    for (Reference *r=rr; r!=NULL; r=r->next) {
+    for (Reference *r=reference; r!=NULL; r=r->next) {
         if (r->usage.kind==UsageDefined || r->usage.kind==UsageOLBestFitDefined) {
-            res = r;
+            definitionReference = r;
         }
-        if (r->usage.kind==UsageDeclared && res==NULL)
-            res = r;
+        if (definitionReference==NULL && r->usage.kind==UsageDeclared)
+            definitionReference = r;
     }
-    return res;
+    return definitionReference;
 }
 
 // used only with OLO_GET_SYMBOL_TYPE;
