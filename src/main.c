@@ -2149,19 +2149,17 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     s_initYygstate = s_yygstate;
 
     initAllInputs();
-    oldStdopFile[0] = 0;
-    oldStdopSection[0] = 0;
-
     initCwd();
-    initTypeCharCodeTab();
 
+    initTypeCharCodeTab();
     initJavaTypePCTIConvertIniTab();
     initTypeNames();
     initStorageNames();
 
     setupCaching();
     initArchaicTypes();
-    oldStdopFile[0] = oldStdopSection[0] = 0;
+    oldStdopFile[0] = 0;
+    oldStdopSection[0] = 0;
 
     /* now pre-read the option file */
     processOptions(argc, argv, INFILES_ENABLED);
