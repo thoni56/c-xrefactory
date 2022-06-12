@@ -656,22 +656,22 @@ static void processSectionMarker(char *optionText, int i, char *project, char *s
         //&strncpy(cwd, resSection, MAX_FILE_NAME_SIZE-1);
         //&cwd[MAX_FILE_NAME_SIZE-1] = 0;
     }
-
-
-#define OPTION_SPACE_ALLOCC(memFl,cc,num,type) {    \
-        if (memFl==MEM_ALLOC_ON_SM) {               \
-            SM_ALLOCC(optMemory,cc,num,type);       \
-        } else if (memFl==MEM_ALLOC_ON_PP) {        \
-            PPM_ALLOCC(cc,num,type);                \
-        } else {                                    \
-            assert(0);                              \
-        }                                           \
-    }
 }
 
-static int addOptionToArgs(int memFl, char optionText[], int argc, char *argv[]) {
+
+#define ALLOCATE_OPTION_SPACE(memFl,cc,num,type) {    \
+        if (memFl==ALLOCATE_IN_SM) {                  \
+            SM_ALLOCC(optMemory,cc,num,type);         \
+        } else if (memFl==ALLOCATE_IN_PP) {           \
+            PPM_ALLOCC(cc,num,type);                  \
+        } else {                                      \
+            assert(0);                                \
+        }                                             \
+    }
+
+static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, char *argv[]) {
     char *s;
-    OPTION_SPACE_ALLOCC(memFl, s, strlen(optionText) + 1, char);
+    ALLOCATE_OPTION_SPACE(memoryKind, s, strlen(optionText) + 1, char);
     assert(s);
     strcpy(s, optionText);
     log_trace("option %s read", s);
@@ -682,7 +682,7 @@ static int addOptionToArgs(int memFl, char optionText[], int argc, char *argv[])
     return argc;
 }
 
-bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, int memFl,
+bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
                         char *section, char *project, char *resSection) {
     char optionText[MAX_OPTION_LEN];
     int len, argc, c, passn=0;
@@ -696,7 +696,7 @@ bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, int memFl,
     isActiveSection = isActivePass = true;
     resSection[0]=0;
 
-    if (memFl==MEM_ALLOC_ON_SM)
+    if (memoryKind == ALLOCATE_IN_SM)
         SM_INIT(optMemory);
 
     c = 'a';                    /* Something not EOF */
@@ -718,21 +718,21 @@ bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, int memFl,
             isActivePass = passn==currentPass || currentPass==ANY_PASS;
             if (passn > maxPasses)
                 maxPasses = passn;
-        } else if (strcmp(optionText,"-set")==0 && (isActiveSection && isActivePass) && memFl!=MEM_NO_ALLOC) {
+        } else if (strcmp(optionText,"-set")==0 && (isActiveSection && isActivePass) && memoryKind!=DONT_ALLOCATE) {
             // pre-evaluation of -set
             found = true;
-            if (memFl != MEM_NO_ALLOC) {
-                argc = addOptionToArgs(memFl, optionText, argc, argv);
+            if (memoryKind != DONT_ALLOCATE) {
+                argc = addOptionToArgs(memoryKind, optionText, argc, argv);
             }
             c = getOptionFromFile(file, optionText, &len);
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
-            if (memFl != MEM_NO_ALLOC) {
-                argc = addOptionToArgs(memFl, optionText, argc, argv);
+            if (memoryKind != DONT_ALLOCATE) {
+                argc = addOptionToArgs(memoryKind, optionText, argc, argv);
             }
             c = getOptionFromFile(file, optionText, &len);
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
-            if (memFl != MEM_NO_ALLOC) {
-                argc = addOptionToArgs(memFl, optionText, argc, argv);
+            if (memoryKind != DONT_ALLOCATE) {
+                argc = addOptionToArgs(memoryKind, optionText, argc, argv);
             }
             if (argc < MAX_STD_ARGS) {
                 assert(argc >= 3);
@@ -741,16 +741,16 @@ bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, int memFl,
         } else if (c != EOF && (isActiveSection && isActivePass)) {
             found = true;
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
-            if (memFl != MEM_NO_ALLOC) {
-                argc = addOptionToArgs(memFl, optionText, argc, argv);
+            if (memoryKind != DONT_ALLOCATE) {
+                argc = addOptionToArgs(memoryKind, optionText, argc, argv);
             }
         }
     }
     if (argc >= MAX_STD_ARGS - 1)
         errorMessage(ERR_ST, "too many options");
-    if (found && memFl!=MEM_NO_ALLOC) {
+    if (found && memoryKind!=DONT_ALLOCATE) {
         // Allocate an array of correct size to return instead of local variable argv
-        OPTION_SPACE_ALLOCC(memFl, aargv, argc, char*);
+        ALLOCATE_OPTION_SPACE(memoryKind, aargv, argc, char*);
         for (int i=1; i<argc; i++)
             aargv[i] = argv[i];
     }
@@ -769,18 +769,18 @@ void readOptionsFile(char *fileName, int *nargc, char ***nargv, char *section, c
     file = openFile(fileName,"r");
     if (file==NULL)
         fatalError(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
-    readOptionFromFile(file, nargc, nargv, MEM_ALLOC_ON_PP, section, project, realSection);
+    readOptionFromFile(file, nargc, nargv, ALLOCATE_IN_PP, section, project, realSection);
     closeFile(file);
 }
 
-void readOptionPipe(char *comm, int *nargc, char ***nargv, char *section) {
+void readOptionPipe(char *command, int *outArgc, char ***outArgv, char *section) {
     FILE *file;
     char realSection[MAX_FILE_NAME_SIZE];
 
-    file = popen(comm, "r");
+    file = popen(command, "r");
     if (file==NULL)
-        fatalError(ERR_CANT_OPEN, comm, XREF_EXIT_ERR);
-    readOptionFromFile(file, nargc, nargv, MEM_ALLOC_ON_PP, section, NULL, realSection);
+        fatalError(ERR_CANT_OPEN, command, XREF_EXIT_ERR);
+    readOptionFromFile(file, outArgc, outArgv, ALLOCATE_IN_PP, section, NULL, realSection);
     closeFile(file);
 }
 

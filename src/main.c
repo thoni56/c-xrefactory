@@ -1409,7 +1409,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
     getXrefrcFileName(options_filename);
     options_file = openFile(options_filename, "r");
     if (options_file != NULL) {
-        found = readOptionFromFile(options_file, &nargc, &nargv, MEM_NO_ALLOC,filename, options.project, section);
+        found = readOptionFromFile(options_file, &nargc, &nargv, DONT_ALLOCATE, filename, options.project, section);
         if (found) {
             log_debug("options file '%s' section '%s' found", options_filename, section);
         }
@@ -2306,8 +2306,8 @@ void getPipedOptions(int *outNargc,char ***outNargv){
     *outNargc = 0;
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
-        readOptionFromFile(stdin,outNargc,outNargv,MEM_ALLOC_ON_SM,
-                           "",NULL,nsect);
+        readOptionFromFile(stdin,outNargc, outNargv, ALLOCATE_IN_SM,
+                           "", NULL, nsect);
         /* those options can't contain include or define options, */
         /* sections neither */
         c = getc(stdin);

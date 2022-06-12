@@ -89,18 +89,21 @@ typedef enum includeCxrefs {
     ADD_CX_REFS
 } IncludeCxrefs;
 
+typedef enum {
+    DONT_ALLOCATE = ADD_CX_REFS + 1,
+    ALLOCATE_IN_SM,
+    ALLOCATE_IN_PP
+} MemoryKind;
+
 
 enum miscellaneous {						/* misc. constants */
-    DEFAULT_VALUE = ADD_CX_REFS + 1,
+    DEFAULT_VALUE = ALLOCATE_IN_PP + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
     CLASS_TO_ANY,
     CX_FILE_ITEM_GEN,
     NO_CX_FILE_ITEM_GEN,
-    MEM_ALLOC_ON_SM,
-    MEM_ALLOC_ON_PP,
-    MEM_NO_ALLOC,
     INFILES_ENABLED,
     INFILES_DISABLED,
     LOADING_SYMBOL,

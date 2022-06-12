@@ -51,16 +51,17 @@ char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
   return (char *) mock(tt);
 }
 
-bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl, char *section, char *project, char *resSection) {
-  return (bool) mock(ff, nargc, nargv, memFl, section, project, resSection);
+bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
+                        char *section, char *project, char *resSection) {
+  return (bool) mock(file, outArgc, outArgv, memoryKind, section, project, resSection);
 }
 
-void readOptionsFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project) {
-  mock(name, nargc, nargv, sectionFile, project);
+void readOptionsFile(char *fileName, int *outArgc, char ***outArgv, char *sectionFile, char *project) {
+  mock(fileName, outArgc, outArgv, sectionFile, project);
 }
 
-void readOptionPipe(char *command, int *nargc, char ***nargv, char *sectionFile) {
-  mock(command, nargc, nargv, sectionFile);
+void readOptionPipe(char *command, int *outArgc, char ***outArgv, char *sectionFile) {
+  mock(command, outArgc, outArgv, sectionFile);
 }
 
 void javaSetSourcePath(bool defaultClassPathAllowed) {
