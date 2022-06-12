@@ -1411,7 +1411,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
     if (options_file != NULL) {
         found = readOptionFromFile(options_file, &nargc, &nargv, MEM_NO_ALLOC,filename, options.project, section);
         if (found) {
-            log_debug("options file '%s' section '%s'", options_filename, section);
+            log_debug("options file '%s' section '%s' found", options_filename, section);
         }
         closeFile(options_file);
     }
