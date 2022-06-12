@@ -752,13 +752,13 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
     return found;
 }
 
-void readOptionsFile(char *name, int *nargc, char ***nargv, char *section, char *project) {
+void readOptionsFile(char *fileName, int *nargc, char ***nargv, char *section, char *project) {
     FILE *file;
     char realSection[MAX_FILE_NAME_SIZE];
 
-    file = openFile(name,"r");
+    file = openFile(fileName,"r");
     if (file==NULL)
-        fatalError(ERR_CANT_OPEN,name, XREF_EXIT_ERR);
+        fatalError(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
     readOptionFromFile(file, nargc, nargv, MEM_ALLOC_ON_PP, section, project, realSection);
     closeFile(file);
 }
