@@ -491,8 +491,8 @@ typedef struct currentlyParsedCl {		// class local, nested for classes
 } S_currentlyParsedCl;
 
 typedef struct currentlyParsedStatics {
-    int             extractProcessedFlag;
-    int				marker1Flag;
+    bool            extractProcessedFlag;
+    bool			marker1Flag;
     int				marker2Flag;
     char			setTargetAnswerClass[TMP_STRING_SIZE];	// useless for xref2
     int				moveTargetApproved;
@@ -502,7 +502,7 @@ typedef struct currentlyParsedStatics {
     int				methodCoordEndLine;        // to be removed
     int				classCoordEndLine;
     struct codeBlock *workMemoryIndexAtBlockBegin;
-    struct codeBlock *workMemiAtBlockEnd;
+    struct codeBlock *workMemoryIndexAtBlockEnd;
     int             cxMemoryIndexAtBlockBegin;
     int             cxMemoryIndexAtBlockEnd;
     int				cxMemoryIndexAtMethodBegin;

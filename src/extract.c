@@ -1186,7 +1186,7 @@ static void makeExtraction(void) {
     if (s_cp.cxMemoryIndexAtFunctionBegin > s_cps.cxMemoryIndexAtBlockBegin
         || s_cps.cxMemoryIndexAtBlockBegin > s_cps.cxMemoryIndexAtBlockEnd
         || s_cps.cxMemoryIndexAtBlockEnd > s_cp.cxMemoryIndexAtFunctionEnd
-        || s_cps.workMemoryIndexAtBlockBegin != s_cps.workMemiAtBlockEnd) {
+        || s_cps.workMemoryIndexAtBlockBegin != s_cps.workMemoryIndexAtBlockEnd) {
         errorMessage(ERR_ST, "Region / program structure mismatch");
         return;
     }
@@ -1283,7 +1283,7 @@ void actionsBeforeAfterExternalDefinition(void) {
         // O.K. make extraction
         s_cp.cxMemoryIndexAtFunctionEnd = cxMemory->index;
         makeExtraction();
-        s_cps.extractProcessedFlag = 1;
+        s_cps.extractProcessedFlag = true;
         /* here should be a longjmp to stop file processing !!!! */
         /* No, all this extraction should be after parsing ! */
     }
@@ -1307,7 +1307,7 @@ void extractActionOnBlockMarker(void) {
     } else {
         assert(s_cps.cxMemoryIndexAtBlockEnd == 0);
         s_cps.cxMemoryIndexAtBlockEnd = cxMemory->index;
-        s_cps.workMemiAtBlockEnd = currentBlock->outerBlock;
+        s_cps.workMemoryIndexAtBlockEnd = currentBlock->outerBlock;
     }
     pos = makePosition(currentFile.lexBuffer.buffer.fileNumber, 0, 0);
     addTrivialCxReference("Block", TypeBlockMarker, StorageDefault, &pos, UsageUsed);
