@@ -71,7 +71,7 @@ static bool overflowHandler(int n) {
     return true;
 }
 
-Ensure(Memory, can_allocate_direct_memory) {
+Ensure(Memory, can_allocate_dynamic_memory) {
     char *character = NULL;
     Memory memory;
 
@@ -159,6 +159,4 @@ Ensure(Memory, can_handle_sm_memory) {
     fatalErrorAllowed = true;
     expect(fatalError);
     SM_ALLOCC(testMemory, pointer, SIZE_testMemory+1, char);
-
-
 }
