@@ -87,6 +87,20 @@ Reference : Position position
 Reference -> Reference : next
 ....
 
+== Configuration
+
+=== Options
+
+There are three possible sources for options.
+
+- Configuration files (~/.c-xrefrc)
+- Piped options sent to edit server
+- Command line options
+
+Not all options are relevant in all cases.
+
+All options sources uses exactly the same format so that the same code for decoding them can be used.
+
 == Development Practices
 
 === Utilities
