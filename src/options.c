@@ -669,27 +669,26 @@ static void processSectionMarker(char *optionText, int i, char *project, char *s
     }
 }
 
-#define ADD_OPTION_TO_ARGS(memFl,tt,len,argv,argc) {                    \
-        char *cc;                                                       \
-        cc=NULL;                                                        \
-        if (memFl!=MEM_NO_ALLOC) {                                      \
-            OPTION_SPACE_ALLOCC(memFl, cc, len+1, char);                \
-            assert(cc);                                                 \
-            strcpy(cc,tt);                                              \
-            /*&fprintf(dumpOut,"option %s readed\n",cc); fflush(dumpOut);&*/ \
-            argv[argc] = cc;                                            \
-            if (argc < MAX_STD_ARGS-1) argc++;                          \
-        }                                                               \
-    }
+static int addOptionToArgs(int memFl, char optionText[], int argc, char *argv[]) {
+    char *s;
+    OPTION_SPACE_ALLOCC(memFl, s, strlen(optionText) + 1, char);
+    assert(s);
+    strcpy(s, optionText);
+    log_trace("option %s read", s);
+    argv[argc] = s;
+    if (argc < MAX_STD_ARGS - 1)
+        argc++;
 
+    return argc;
+}
 
-bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
+bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, int memFl,
                         char *section, char *project, char *resSection) {
     char optionText[MAX_OPTION_LEN];
-    int len, argc, i, c, passn=0;
+    int len, argc, c, passn=0;
     bool isActiveSection, isActivePass;
     bool found = false;
-    char **aargv,*argv[MAX_STD_ARGS];
+    char **aargv, *argv[MAX_STD_ARGS];
 
     ENTER();
 
@@ -703,6 +702,7 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
     c = 'a';                    /* Something not EOF */
     while (c!=EOF) {
         c = getOptionFromFile(file, optionText, &len);
+        assert(strlen(optionText) == len);
         if (c==EOF) {
             log_trace("got option from file (@EOF): '%s'", optionText);
         } else {
@@ -721,31 +721,41 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
         } else if (strcmp(optionText,"-set")==0 && (isActiveSection && isActivePass) && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set
             found = true;
-            ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
-            c = getOptionFromFile(file,optionText,&len);
-            expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
-            ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
-            c = getOptionFromFile(file,optionText,&len);
-            expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
-            ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
-            if (argc < MAX_STD_ARGS) {
-                assert(argc>=3);
-                mainHandleSetOption(argc, argv, argc-3);
+            if (memFl != MEM_NO_ALLOC) {
+                argc = addOptionToArgs(memFl, optionText, argc, argv);
             }
-        } else if (c!=EOF && (isActiveSection && isActivePass)) {
+            c = getOptionFromFile(file, optionText, &len);
+            expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
+            if (memFl != MEM_NO_ALLOC) {
+                argc = addOptionToArgs(memFl, optionText, argc, argv);
+            }
+            c = getOptionFromFile(file, optionText, &len);
+            expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
+            if (memFl != MEM_NO_ALLOC) {
+                argc = addOptionToArgs(memFl, optionText, argc, argv);
+            }
+            if (argc < MAX_STD_ARGS) {
+                assert(argc >= 3);
+                mainHandleSetOption(argc, argv, argc - 3);
+            }
+        } else if (c != EOF && (isActiveSection && isActivePass)) {
             found = true;
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
-            ADD_OPTION_TO_ARGS(memFl, optionText, len, argv, argc);
+            if (memFl != MEM_NO_ALLOC) {
+                argc = addOptionToArgs(memFl, optionText, argc, argv);
+            }
         }
     }
-    if (argc >= MAX_STD_ARGS-1)
-        errorMessage(ERR_ST,"too many options");
+    if (argc >= MAX_STD_ARGS - 1)
+        errorMessage(ERR_ST, "too many options");
     if (found && memFl!=MEM_NO_ALLOC) {
+        // Allocate an array of correct size to return instead of local variable argv
         OPTION_SPACE_ALLOCC(memFl, aargv, argc, char*);
-        for(i=1; i<argc; i++) aargv[i] = argv[i];
+        for (int i=1; i<argc; i++)
+            aargv[i] = argv[i];
     }
-    *nargc = argc;
-    *nargv = aargv;
+    *outArgc = argc;
+    *outArgv = aargv;
 
     LEAVE();
 
