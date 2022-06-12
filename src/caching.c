@@ -28,7 +28,7 @@ bool checkFileModifiedTime(int fileIndex) {
         return true;
     }
     if (!editorFileExists(fileItem->name)) {
-        return true;
+        return false;
     }
 
     fileItem->lastInspected = now;
