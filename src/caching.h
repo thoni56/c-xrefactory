@@ -21,7 +21,7 @@ typedef struct cachePoint {
 
 typedef struct cache {
     bool              active; /* whether putting input to cache */
-    int               cpi;
+    int               cpIndex;
     struct cachePoint cp[MAX_CACHE_POINTS];
     int               ibi;
     int               ib[INCLUDE_CACHE_SIZE]; /* included files numbers */

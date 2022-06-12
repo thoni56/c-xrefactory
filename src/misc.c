@@ -1198,7 +1198,7 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
     log_trace("scanning %s ; %s", zip, file);
     suff = getFileSuffix(file);
     if (compareFileNames(suff, ".class")==0) {
-        cpi = cache.cpi;
+        cpi = cache.cpIndex;
         cache.active = true;
         log_trace("firstFreeIndex = %d", currentBlock->firstFreeIndex);
         placeCachePoint(false);

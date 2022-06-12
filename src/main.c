@@ -1940,7 +1940,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
         || oldStdopTime != modifiedTime
         || oldLanguage!= *outLanguage
         || strcmp(oldOnLineClassPath, options.classpath)
-        || cache.cpi == 1     /* some kind of reset was made */
+        || cache.cpIndex == 1     /* some kind of reset was made */
     ) {
         if (*firstPass) {
             initCaching();
@@ -2873,7 +2873,7 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     processOptions(nargc, nargv, INFILES_ENABLED); /* no include or define options */
     scheduleInputFilesFromArgumentsToFileTable();
     if (options.serverOperation == OLO_EXTRACT)
-        cache.cpi = 2; // !!!! no cache, TODO why is 2 = no cache?
+        cache.cpIndex = 2; // !!!! no cache, TODO why is 2 = no cache?
     initCompletions(&s_completions, 0, noPosition);
 }
 
@@ -2933,7 +2933,7 @@ static void mainEditServer(int argc, char **argv) {
         editorCloseAllBuffers();
         closeMainOutputFile();
         if (options.serverOperation == OLO_EXTRACT)
-            cache.cpi = 2; // !!!! no cache
+            cache.cpIndex = 2; // !!!! no cache
         if (options.xref2)
             ppcSynchronize();
         log_trace("Server: Request answered");

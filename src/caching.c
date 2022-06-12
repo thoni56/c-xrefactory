@@ -224,7 +224,7 @@ static void recoverCxMemory(char *cxMemFreeBase) {
 static void fillCache(Cache *cache, char active, int cpi, int ibi, char *lbcc, char *lexcc, char *cc,
                       char *cfin) {
     cache->active = active;
-    cache->cpi    = cpi;
+    cache->cpIndex    = cpi;
     cache->ibi    = ibi;
     cache->lbcc   = lbcc;
     cache->lexcc  = lexcc;
@@ -308,11 +308,11 @@ void recoverFromCache(void) {
     int i;
     char *readUntil;
 
-    assert(cache.cpi >= 1);
+    assert(cache.cpIndex >= 1);
     cache.active = false;
     log_debug("reading from cache");
     readUntil = cache.cp[0].lbcc;
-    for (i=1; i<cache.cpi; i++) {
+    for (i=1; i<cache.cpIndex; i++) {
         log_trace("trying to recover cache point %d", i);
         if (cachedInputPass(i, &readUntil) == 0)
             break;
@@ -399,12 +399,12 @@ static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmM
 }
 
 void placeCachePoint(bool inputCaching) {
-    CachePoint *pp;
+    CachePoint *cachePoint;
     if (!cache.active)
         return;
     if (includeStackPointer != 0 || macroStackIndex != 0)
         return;
-    if (cache.cpi >= MAX_CACHE_POINTS) {
+    if (cache.cpIndex >= MAX_CACHE_POINTS) {
         cache.active = false;
         return;
     }
@@ -412,10 +412,10 @@ void placeCachePoint(bool inputCaching) {
         cacheInput();
     if (!cache.active)
         return;
-    pp = &cache.cp[cache.cpi];
-    log_debug("placing cache point %d", cache.cpi);
-    fillCachePoint(pp, currentBlock, ppmMemoryIndex, cxMemory->index, mbMemoryIndex, cache.lbcc,
+    cachePoint = &cache.cp[cache.cpIndex];
+    log_debug("placing cache point %d", cache.cpIndex);
+    fillCachePoint(cachePoint, currentBlock, ppmMemoryIndex, cxMemory->index, mbMemoryIndex, cache.lbcc,
                    cache.ibi, currentFile.lineNumber, currentFile.ifDepth,
                    currentFile.ifStack, s_javaStat, counters);
-    cache.cpi ++;
+    cache.cpIndex++;
 }
