@@ -3481,7 +3481,7 @@ FieldAccess
                         $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $3.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
                         $$.d.typeModifier = rec->u.typeModifier;
-                    } else if (s_language == LANG_JAVA) {
+                    } else if (currentLanguage == LANG_JAVA) {
                         $$.d.typeModifier = javaArrayFieldAccess($3.d);
                     } else {
                         $$.d.typeModifier = &s_errorModifier;

@@ -64,7 +64,7 @@ int s_cxRefFlag=0;
 
 time_t fileProcessingStartTime;
 
-Language s_language;
+Language currentLanguage;
 int currentPass;
 int maxPasses;
 

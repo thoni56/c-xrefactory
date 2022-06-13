@@ -967,7 +967,7 @@ static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
     OlcxReferences *res;
 
     res = olcx_alloc(sizeof(OlcxReferences));
-    *res = (OlcxReferences){.references = NULL, .actual = NULL, .command = options.serverOperation, .language = s_language,
+    *res = (OlcxReferences){.references = NULL, .actual = NULL, .command = options.serverOperation, .language = currentLanguage,
                             .accessTime = fileProcessingStartTime, .callerPosition = noPosition, .completions = NULL, .hkSelectedSym = NULL,
                             .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
                             .previous = stack->top};

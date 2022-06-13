@@ -517,7 +517,7 @@ static bool isTheSameSymbol(CompletionLine *c1, CompletionLine *c2) {
     /*fprintf(dumpOut,"st %d %d\n",c1->symType,c2->symType);*/
     if (c1->symbolType != c2->symbolType)
         return false;
-    if (s_language != LANG_JAVA)
+    if (currentLanguage != LANG_JAVA)
         return true;
     if (c1->symbolType == TypeStruct) {
         if (c1->symbol!=NULL && c2->symbol!=NULL) {
@@ -662,7 +662,7 @@ static bool reallyInsert(
             c = completionOrderCmp(t, &a[x]);
             //&     c = strcmp(s, a[x].string);
             if (c==0) { /* identifier yet in completions */
-                if (s_language != LANG_JAVA)
+                if (currentLanguage != LANG_JAVA)
                     return false; /* no overloading, so ... */
                 if (symbolIsInTab(a, ai, &x, s, t))
                     return false;
@@ -904,7 +904,7 @@ void completeStructs(Completions *c) {
 static bool javaLinkable(Access access) {
 
     log_trace("testing linkability %x", access);
-    if (s_language != LANG_JAVA)
+    if (currentLanguage != LANG_JAVA)
         return true;
     if (access == AccessAll)
         return true;
@@ -956,7 +956,7 @@ static void completeRecordsNames(
     char *cname;
 
     if (symbol==NULL) return;
-    if (c->idToProcess[0] == 0 && s_language!=LANG_JAVA) {
+    if (c->idToProcess[0] == 0 && currentLanguage!=LANG_JAVA) {
         orderFlag = 0;
     } else {
         orderFlag = 1;
@@ -1020,7 +1020,7 @@ static void completeRecordsNames(
             }
         }
     }
-    if (c->idToProcess[0] == 0 && s_language!=LANG_JAVA)
+    if (c->idToProcess[0] == 0 && currentLanguage!=LANG_JAVA)
         c->comPrefix[0] = 0;  // no common prefix completed
 }
 
@@ -1044,7 +1044,7 @@ static void completeFromSymTab(Completions*c, unsigned storage){
     int                     vlevelOffset;
 
     fillCompletionSymFunInfo(&info, c, storage);
-    if (s_language == LANG_JAVA) {
+    if (currentLanguage == LANG_JAVA) {
         vlevelOffset = 0;
         for(cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL ;cs=cs->next) {
             symbolTableMapWithPointer(cs->locals, symbolCompletionFunction, (void*) &info);

@@ -397,7 +397,7 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
          * length, the rest have zero, so we can't replace this
          * strlen() with strlen()s of the tokenNamesTable entry */
         tokenNameLengthsTable[token] = strlen(name);
-        if ((isalpha(*name) || *name=='_') && (languages & s_language)) {
+        if ((isalpha(*name) || *name=='_') && (languages & currentLanguage)) {
             /* looks like a keyword */
             log_trace("adding keyword '%s' to symbol table", name);
             symbol = newSymbolAsKeyword(name, name, noPosition, token);

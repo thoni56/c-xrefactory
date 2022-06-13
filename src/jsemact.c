@@ -694,17 +694,17 @@ void javaReadSymbolFromSourceFileInit(int sourceFileNum,
     //yygsize = sizeof(struct yyGlobalState);
     yygsize = ((char*)(s_yygstate->gyyvsp+1)) - ((char *)s_yygstate);
     yyg = StackMemoryAllocC(yygsize, char);
-    fillJslStat(njsl, 0, sourceFileNum, s_language, typeTab, NULL, NULL,
+    fillJslStat(njsl, 0, sourceFileNum, currentLanguage, typeTab, NULL, NULL,
                  uniyylval, (S_yyGlobalState*)yyg, yygsize, s_jsl);
     memcpy(njsl->savedYYstate, s_yygstate, yygsize);
     memcpy(njsl->yyIdentBuf, yyIdBuffer,
            sizeof(Id[YYIDBUFFER_SIZE]));
     s_jsl = njsl;
-    s_language = LANG_JAVA;
+    currentLanguage = LANG_JAVA;
 }
 
 void javaReadSymbolFromSourceFileEnd(void) {
-    s_language = s_jsl->language;
+    currentLanguage = s_jsl->language;
     uniyylval = s_jsl->savedyylval;
     memcpy(s_yygstate, s_jsl->savedYYstate, s_jsl->yyStateSize);
     memcpy(yyIdBuffer, s_jsl->yyIdentBuf,

@@ -6308,7 +6308,7 @@ case 392:
                         yyval.ast_expressionType.d.reference = findStructureFieldFromType(yyvsp[-2].ast_expressionType.d.typeModifier, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
                         yyval.ast_expressionType.d.typeModifier = rec->u.typeModifier;
-                    } else if (s_language == LANG_JAVA) {
+                    } else if (currentLanguage == LANG_JAVA) {
                         yyval.ast_expressionType.d.typeModifier = javaArrayFieldAccess(yyvsp[0].ast_id.d);
                     } else {
                         yyval.ast_expressionType.d.typeModifier = &s_errorModifier;

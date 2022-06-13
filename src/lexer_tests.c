@@ -18,7 +18,7 @@
 
 Describe(Lexer);
 BeforeEach(Lexer) {
-    s_language = LANG_C;
+    currentLanguage = LANG_C;
     log_set_level(LOG_ERROR);
 }
 AfterEach(Lexer) {}

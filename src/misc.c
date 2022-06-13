@@ -77,7 +77,7 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
     i = 0;
     if (oNamePos!=NULL) *oNamePos = i;
     for(pp=str; *pp; pp++) {
-        if (    s_language == LANG_JAVA &&
+        if (    currentLanguage == LANG_JAVA &&
                 *pp == '.' &&
                 *(pp+1) == '<') {
             /* java constructor */
@@ -140,7 +140,7 @@ void typeSPrint(char *buff, int *size, TypeModifier *t,
             if (par) {pref[--i]='('; post[j++]=')'; }
             sprintf(post+j,"(");
             j += strlen(post+j);
-            if (s_language == LANG_JAVA) {
+            if (currentLanguage == LANG_JAVA) {
                 jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
                 javaSignatureSPrint(post+j, &jj, t->u.m.signature,longOrShortName);
                 j += jj;
@@ -167,13 +167,13 @@ void typeSPrint(char *buff, int *size, TypeModifier *t,
             break;
         case TypeStruct:
         case TypeUnion:
-            if (s_language != LANG_JAVA) {
+            if (currentLanguage != LANG_JAVA) {
                 if (t->kind == TypeStruct) sprintf(type,"struct ");
                 else sprintf(type,"union ");
                 r = strlen(type);
             } else r=0;
             if (t->u.t->name!=NULL) {
-                if (s_language == LANG_JAVA) {
+                if (currentLanguage == LANG_JAVA) {
                     r += javaTypeStringSPrint(type+r, t->u.t->linkName,longOrShortName, NULL);
                 } else {
                     sprintf(type+r,"%s ",t->u.t->name);

@@ -1517,7 +1517,7 @@ static bool computeAndOpenInputFile(void) {
     FILE *inputFile;
     EditorBuffer *inputBuffer;
 
-    assert(s_language);
+    assert(currentLanguage);
     inputBuffer = NULL;
     //!!!! hack for .jar files !!!
     if (LANGUAGE(LANG_JAR) || LANGUAGE(LANG_CLASS))
@@ -1580,11 +1580,11 @@ static void initializationsPerInvocation(void) {
 
 /*///////////////////////// parsing /////////////////////////////////// */
 static void mainParseInputFile(void) {
-    if (s_language == LANG_JAVA) {
+    if (currentLanguage == LANG_JAVA) {
         uniyylval = & s_yygstate->gyylval;
         java_yyparse();
     }
-    else if (s_language == LANG_YACC) {
+    else if (currentLanguage == LANG_YACC) {
         //printf("Parsing YACC-file\n");
         uniyylval = & yacc_yylval;
         yacc_yyparse();
@@ -2552,7 +2552,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
 
     olStringSecondProcessing = 0;
     mainFileProcessingInitialisations(firstPassP, argc, argv,
-                                      nargc, nargv, &inputOpened, &s_language);
+                                      nargc, nargv, &inputOpened, &currentLanguage);
     smartReadReferences();
     olOriginalFileIndex = inputFileNumber;
     if (mainSymbolCanBeIdentifiedByPosition(inputFileNumber)) {
@@ -2578,7 +2578,7 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
             inputOpened = false;
             olStringSecondProcessing = 1;
             mainFileProcessingInitialisations(firstPassP, argc, argv,
-                                              nargc, nargv, &inputOpened, &s_language);
+                                              nargc, nargv, &inputOpened, &currentLanguage);
             if (inputOpened)
                 mainEditSrvParseInputFile(firstPassP, inputOpened);
         }
@@ -2632,7 +2632,7 @@ static char *presetEditServerFileDependingStatics(void) {
     olOriginalComFileNumber = fileIndex;
 
     char *fileName = inputFilename;
-    mainSetLanguage(fileName, &s_language);
+    mainSetLanguage(fileName, &currentLanguage);
     // O.K. just to be sure, there is no other input file
     return fileName;
 }
@@ -2667,7 +2667,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPassP,
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         if (!*firstPassP)
             copyOptions(&options, &savedOptions);
-        mainFileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &inputOpened, &s_language);
+        mainFileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &inputOpened, &currentLanguage);
         olOriginalFileIndex    = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileIndex;
         if (inputOpened) {
@@ -2796,7 +2796,7 @@ void mainCallXref(int argc, char **argv) {
                     printPrescanningMessage();
                     messagePrinted = 1;
                 }
-                mainSetLanguage(pffc->name, &s_language);
+                mainSetLanguage(pffc->name, &currentLanguage);
                 if (LANGUAGE(LANG_JAVA)) {
                     /* TODO: problematic if a single file generates overflow, e.g. a JAR
                        Can we just reread from the last class file? */

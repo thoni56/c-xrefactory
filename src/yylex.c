@@ -343,10 +343,10 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
         if (lexem==IDENT_TO_COMPLETE) {
             cache.active = false;
             s_olstringServed = true;
-            if (s_language == LANG_JAVA) {
+            if (currentLanguage == LANG_JAVA) {
                 makeJavaCompletions(idd, strlen(idd), pos);
             }
-            else if (s_language == LANG_YACC) {
+            else if (currentLanguage == LANG_YACC) {
                 makeYaccCompletions(idd, strlen(idd), pos);
             }
             else {
