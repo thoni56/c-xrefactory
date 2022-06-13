@@ -332,10 +332,6 @@ void mainAnswerEditAction(void) {
     mock();
 }
 
-void freeOldestOlcx(void) {
-    mock();
-}
-
 SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll) {
     return (SymbolsMenu *) mock(ll);
 }

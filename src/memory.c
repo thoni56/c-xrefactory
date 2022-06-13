@@ -288,7 +288,7 @@ void *olcx_memory_soft_allocc(int count, size_t elementSize) {
 
 void *olcx_memory_allocc(int count, size_t elementSize) {
     void *pointer = olcx_memory_soft_allocc(count, elementSize);
-    while (pointer==NULL) {
+    if (pointer==NULL) {
         fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR);
     }
     return pointer;
