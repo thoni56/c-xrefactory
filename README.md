@@ -7,7 +7,7 @@
 ## TL;DR
 
 `c-xrefactory` is a free Emacs refactoring tool and code browser for
-_C_ (& _Java_ and _Yacc_).
+_C_ (& _Yacc_ and _Java_).
 
 > **BEWARE**: As `c-xrefactory` is undergoing radical refactorings and
 > changes and doesn't have tests for all features occasional hiccups
@@ -16,15 +16,16 @@ _C_ (& _Java_ and _Yacc_).
 
 ## Install
 
-Easiest way to install is using `el-get`:
+The easiest, and currently only supported, way to install is using
+`el-get`:
 
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
 
 > **NOTE**: You can easily install `el-get` in your running emacs using
 > a snippet from [`el-get`'s GitHub repo][el-get repo], but don't forget
-> to add the `el-get` pieces in your emacs init.
+> to add the `el-get` pieces to your emacs init.
 
-## Use
+## Example Use
 
 Place cursor on an identifier and `go to definition` (<kbd>F6</kbd>),
 navigate between occurrences (<kbd>F3</kbd>, <kbd>F4</kbd>), refactor
@@ -51,7 +52,7 @@ Then just follow the instructions for a quick walk-through of what
 
 ## Setup
 
-If your Emacs runs in a "standard" *ux-like environment with `bash`,
+If your Emacs runs in a "standard" *ix-like environment with `bash`,
 `make`, `cc` etc. you probably don't need anything in particular.
 
 Just make sure that you have a `zlib-devel` installed because the
@@ -69,7 +70,7 @@ run Emacs in a terminal window without any problems.
 To use Emacs in a graphical environment from WSL (in an X11 window) you
 need a Windows X11 server like [VcXsrv] (my recommendation), [X410]
 (from the Windows Store), [Xming] or, if you already have [MobaXterm],
-that also comes with an X11 server. Then set it the server according
+that also comes with an X11 server. Then setup the server according
 to [these instructions][X11 WSL2].
 
 ## Features and notes
@@ -112,10 +113,10 @@ standardized format (which was Jar-files with class files) so
 `c-xrefactory` cannot read it. You can still compile with Java &gt; 8
 and use `c-xrefactory` with a Java 8 JRE.
 
-As there are good Java tools available with refactoring support I'm
-thinking of removing all Java support from `c-xrefactory` since that
-complicates a lot of things. And some of the cool solutions don't work
-any longer, like navigating Java library symbols by loading the
+NOTE: As there are good Java tools available with refactoring support
+I'm thinking of removing all Java support from `c-xrefactory` since
+that complicates a lot of things. And some of the cool solutions don't
+work any longer, like navigating Java library symbols by loading the
 jar-files that were part of any Java install up to Java 8.
 
 ## Help!
@@ -125,10 +126,10 @@ world of copy-paste-hack-and-debug, there were no unit tests, or any
 tests at all for that matter.
 
 I'm on a long-time quest to resurrect this code to understandable,
-maintainable and developable standard. This is hard, difficult and
-time consuming, as it is almost impossible to understand what anything
-does. At this point we have reached almost 75% test coverage which
-makes me confident in refactoring many things.
+maintainable and developable standard. This is hard work, difficult
+and time consuming, as it is almost impossible to understand what
+anything does. At this point we have reached almost 75% test coverage
+which makes me confident in refactoring many things.
 
 If you think you can help, I'll be happy to take it, even if it is
 only adding one line of understanding in the wiki...
@@ -157,7 +158,7 @@ other Java refactoring tools available).
 ## About This Clone
 
 As I'm almost dependent on this and refactoring tools for C is sadly
-lacking, I decided to pick this up and work a bit on it, and maybe even
+missing, I decided to pick this up and work a bit on it, and maybe even
 [give it more visibility][c-xref], by moving it to GitHub.
 
 No-one would be more happy than me if the C++ version was also put
