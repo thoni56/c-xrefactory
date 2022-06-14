@@ -2859,7 +2859,8 @@ void olcxPopOnly(void) {
 
     if (!olcx_move_init(&sessionData, &refs, CHECK_NULL))
         return;
-    if (!options.xref2) fprintf(communicationChannel, "*");
+    if (!options.xref2)
+        fprintf(communicationChannel, "*");
     //& olStackDeleteSymbol(refs);
     sessionData.browserStack.top = refs->previous;
 }
