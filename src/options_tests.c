@@ -26,7 +26,7 @@ static bool optionsOverflowHandler() {
 Describe(Options);
 BeforeEach(Options) {
     log_set_level(LOG_ERROR);
-    initMemory(&options.memory, optionsOverflowHandler, SIZE_optMemory);
+    initMemory(&options.memory, "", optionsOverflowHandler, SIZE_optMemory);
 }
 AfterEach(Options) {}
 

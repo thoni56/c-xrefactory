@@ -63,11 +63,14 @@ void memoryResized(void) {
     longjmp(memoryResizeJumpTarget,1);
 }
 
-void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size) {
+void initMemory(Memory *memory, char *name, bool (*overflowHandler)(int n), int size) {
+    ENTER();
+    memory->name = name;
     memory->overflowHandler = overflowHandler;
     memory->index = 0;
     memory->size = size;
     memory->block = 0;
+    LEAVE();
 }
 
 /* ************************** Overflow Handlers ************************* */
@@ -95,7 +98,7 @@ bool cxMemoryOverflowHandler(int n) {
         free(oldcxMemory);
     cxMemory = malloc(newsize + sizeof(Memory));
     if (cxMemory!=NULL) {
-        initMemory(cxMemory, cxMemoryOverflowHandler, newsize);
+        initMemory(cxMemory, "", cxMemoryOverflowHandler, newsize);
     }
     log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
 
@@ -225,8 +228,11 @@ bool freedPointer(void *ptr) {
 }
 
 void dm_init(Memory *memory, char *name) {
+    ENTER();
     memory->name = name;
     memory->index = 0;
+    //memory->overflowHandler = NULL;
+    LEAVE();
 }
 
 

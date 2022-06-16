@@ -171,7 +171,7 @@ extern void *olcx_memory_allocc(int count, size_t size);
 extern void *olcx_alloc(size_t size);
 extern void olcx_memory_free(void *pointer, size_t size);
 
-extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);
+extern void initMemory(Memory *memory, char *name, bool (*overflowHandler)(int n), int size);
 extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
 

@@ -887,7 +887,7 @@ static void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpat
     } else if (editorFileStatus(fileName, &stat) == 0) {
         int len = strlen(fileName);
         strcpy(*outpaths, fileName);
-        log_trace("adding expandedpath==%s", fileName);
+        log_trace("adding expanded path==%s", fileName);
         *outpaths += len;
         *availableSpace -= len;
         *((*outpaths)++) = CLASS_PATH_SEPARATOR;

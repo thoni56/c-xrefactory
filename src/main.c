@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "constants.h"
 #include "globals.h"
+#include "memory.h"
 #include "refactory.h"
 #include "extract.h"
 #include "misc.h"
@@ -2056,12 +2057,16 @@ static void mainTotalTaskEntryInitialisations() {
     assert(PPC_MAX_AVAILABLE_REFACTORINGS < MAX_AVAILABLE_REFACTORINGS);
 
     // Memory
-    // initialize cxMemory by trying to allocate one byte(?)
+
+    // TODO: this initialize cxMemory by simulating overflow for one
+    // byte(?)
+    // NOTE: this is called multiple times at start up since
+    // we get more overflows later which cases longjmp's
     int mm = cxMemoryOverflowHandler(1);
     assert(mm);
 
     // init options memory
-    initMemory(((Memory*)&presetOptions.memory),
+    initMemory(((Memory*)&presetOptions.memory), "",
                optionsOverflowHandler, SIZE_optMemory);
 
     // Inject error handling functions
