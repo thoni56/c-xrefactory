@@ -2125,10 +2125,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // supposing that file table is still here, but reinit it
     mapOverFileTable(clearFileItem);
 
-    // the following causes long jump, berk.
-    CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
-    CX_FREE_UNTIL(sss);
-
     initReferenceTable(MAX_CXREF_ENTRIES);
 
     SM_INIT(ppmMemory);
