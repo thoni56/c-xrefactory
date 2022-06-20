@@ -1,7 +1,3 @@
-//////////////////////////////////////////////////////////////////////
-In this Asciidoc document we use the convention that one sentence is kept on a single line.
-This creates nice diffs.
-//////////////////////////////////////////////////////////////////////
 :source-highlighter: highlightjs
 :icons: font
 :numbered:
@@ -24,7 +20,9 @@ v{VERSION} - Generated {localdate}
 
 === What is C-xrefactory?
 
-`C-xrefactory` is a development tool for C (and Java) developers that allows browsing variables and functions in, as well as refactoring, C and Java code.
+`C-xrefactory` is a development tool for C (and Java) developers that
+allows browsing variables and functions, as well as refactoring, in C
+and Java code.
 
 Here is a list of features
 
@@ -45,6 +43,14 @@ Here is a list of features
 - Auto-detection of project
 - Full undo in Emacs
 
+=== About this document
+
+This document is a Work In Progress, as most things in this project at
+this stage.
+
+Things in this document might be out-dated, old, wrong or actually
+valid. Hopefully this will improve over time.
+
 === History
 
 === Installing
@@ -58,18 +64,22 @@ Here is a list of features
 ===== Use case
 
 Normally the `c-xref` program is controlled from an editor adapter.
-But sometimes running it from the command line, e.g. as part setting up a project, investigating problems with `c-xref` or as a part of the `c-xrefactory` test suite.
+But sometimes running it from the command line, e.g. as part setting
+up a project, investigating problems with `c-xref` or as a part of the
+`c-xrefactory` test suite, can be useful.
 
-Most options can be set in a configuration file to be effective for every execution of `c-xref` in a project.
+Most options can be set in a configuration file to be effective for
+every execution of `c-xref` in a project.
 
 
 Here follows a description of the various available command line options.
 
 ===== Command line options
 
-There is a large number of command line options.
-Some of them might seem very obscure since they are only intended for use by the editor server protocol.
-Below is a list of all of them grouped after their usage (grouping and descriptions is a Work In Progress).
+There is a large number of command line options.  Some of them might
+seem very obscure since they are only intended for use by the editor
+server protocol.  Below is a list of all of them grouped after their
+usage (grouping and descriptions is a Work In Progress).
 
 ====== Operating modes
 
@@ -99,7 +109,9 @@ NOTE: This option might be removed in the future.
 
 -p <project>:: 
 
-`c-xrefactory` has project-based configurations. The `-p` selects which of the projects available in the selected configuration file (see `-xrefrc` option) that should be applied.
+`c-xrefactory` has project-based configurations. The `-p` selects
+which of the projects available in the selected configuration file
+(see `-xrefrc` option) that should be applied.
 
 -stdop <file>::
 
@@ -637,5 +649,5 @@ For a detailed log of features, enhancements and bug fixes visit the projects re
 
 Thanks to
 
-- Marián Vittek, Bratislawa University, and his helpers that created this over many years
-
+- Marián Vittek, Bratislawa University, and his helpers that created
+  this tool over many years.
