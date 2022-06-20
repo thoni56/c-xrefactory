@@ -18,6 +18,5 @@ jobs:
       uses: manoelcampos/asciidoctor-ghpages-action@v2.2.4
       with:
         pdf_build: true
-	asciidoctor_params: -r asciidoctor-diagram
-	source_dir: doc
-      
+        asciidoctor_params: -r asciidoctor-diagram
+        source_dir: doc
