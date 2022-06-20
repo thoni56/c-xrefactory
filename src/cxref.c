@@ -206,7 +206,7 @@ void renameCollationSymbols(SymbolsMenu *sss) {
             len1 = cs-ss->references.name;
             strncpy(nn, ss->references.name, len1);
             strcpy(nn+len1, cs+2);
-            //&fprintf(dumpOut, "renaming %s to %s\n", ss->references.name, nn);
+            log_debug("renaming %s to %s", ss->references.name, nn);
             olcx_memory_free(ss->references.name, len+1);
             ss->references.name = nn;
         }
@@ -862,7 +862,7 @@ void olcxFreeReferences(Reference *r) {
     Reference *tmp;
     while (r!=NULL) {
         tmp = r->next;
-        olcx_memory_free((r), sizeof(Reference));
+        olcx_memory_free(r, sizeof(Reference));
         r = tmp;
     }
 }
