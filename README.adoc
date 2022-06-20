@@ -1,0 +1,3 @@
+# c-xrefactory Documentation
+
+Just a simple readme to make `asciidoctor-ghpages-action` happy...
