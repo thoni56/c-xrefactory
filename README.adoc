@@ -1,3 +1,7 @@
 # c-xrefactory Documentation
 
 Just a simple readme to make `asciidoctor-ghpages-action` happy...
+
+- [User Guide](docs/c-xrefactory/user-manual.html)
+- [Architecture](docs/c-xrefactory/user-design.html)
+
