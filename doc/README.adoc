@@ -1,0 +1,8 @@
+# c-xrefactory Documentation
+
+- link: doc/c-xrefactory.html[Quick User Guide]
+- link: doc/c-xrefactory-manual.html[User Manual]
+- link: doc/c-xrefactory-design.html[Architecture]
+- link: doc/adr/index.html[Architecture Decision Records]
+
+
