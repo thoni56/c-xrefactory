@@ -270,6 +270,11 @@ Rel(editorExtension, sourceCode, "extended c-xrefactory operations")
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
 !define SPRITESURL https://raw.githubusercontent.com/plantuml-stdlib/gilbarbara-plantuml-sprites/v1.0/sprites
+
+title
+  Emacs Extension Component Diagram
+end title
+
 Component(cxref, "c-xref.el")
 Component(cxrefactory, "c-xrefactory.el")
 ....
