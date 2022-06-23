@@ -68,7 +68,7 @@ void javaSetSourcePath(bool defaultClassPathAllowed) {
   mock(defaultClassPathAllowed);
 }
 
-bool checkReferenceFileCountOption(int newRefNum) {
+bool referenceFileCountMatches(int newRefNum) {
   return (int) mock(newRefNum);
 }
 

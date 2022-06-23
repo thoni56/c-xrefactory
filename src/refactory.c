@@ -2,7 +2,6 @@
 
 /* Main is currently needed for:
    writeRelativeProgress
-   copyOptions
    mainTaskEntryInitialisations
    mainCallXref
    mainCallEditServerInit

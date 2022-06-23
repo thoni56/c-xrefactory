@@ -2305,7 +2305,7 @@ void getPipedOptions(int *outNargc,char ***outNargv){
     *outNargc = 0;
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
-        readOptionFromFile(stdin,outNargc, outNargv, ALLOCATE_IN_SM,
+        readOptionFromFile(stdin, outNargc, outNargv, ALLOCATE_IN_SM,
                            "", NULL, nsect);
         /* those options can't contain include or define options, */
         /* sections neither */

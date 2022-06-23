@@ -1249,7 +1249,7 @@ static void cxrfReferenceFileCountCheck(int referenceFileCount,
                                         CharacterBuffer *cb,
                                         int additionalArg
 ) {
-    if (checkReferenceFileCountOption(referenceFileCount) == 0) {
+    if (!referenceFileCountMatches(referenceFileCount)) {
         assert(options.taskRegime);
         fatalError(ERR_ST,"Tag file was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
     }

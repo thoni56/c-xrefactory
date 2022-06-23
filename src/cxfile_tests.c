@@ -79,7 +79,7 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     options.referenceFileCount = 1;
 
 
-    expect(checkReferenceFileCountOption, will_return(10));
+    expect(referenceFileCountMatches, will_return(true));
 
     expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(xfilesFilePointer));
     expect(initCharacterBuffer, when(file, is_equal_to(xfilesFilePointer)));
