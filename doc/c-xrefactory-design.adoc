@@ -253,7 +253,7 @@ System_Boundary(cxref, "c-xrefactory Browser") {
 
 Rel(cxrefCore, settingsStore, "read")
 Rel(editorExtension, settingsStore, "writes", "new project wizard")
-Rel(editorExtension, cxrefCore, "API", "To request information and get modified code")
+Rel(editorExtension, cxrefCore, "API", "To request information and get commands to modify code")
 Rel(developer, editor, "GUI", "Usual editor/IDE operations")
 Rel(editor, editorExtension, "Extends", "Editors extension protocol")
 Rel(developer, settingsStore, "edit")
@@ -265,7 +265,7 @@ Rel(editorExtension, sourceCode, "extended c-xrefactory operations")
 
 === Components
 
-[plantuml, editor-extension, png]
+[plantuml, editor-extension-component, png]
 ....
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
@@ -279,12 +279,19 @@ Component(cxref, "c-xref.el")
 Component(cxrefactory, "c-xrefactory.el")
 ....
 
-[plantuml, c-xref, png]
+[plantuml, c-xref-component, png]
 ....
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
 !define SPRITESURL https://raw.githubusercontent.com/plantuml-stdlib/gilbarbara-plantuml-sprites/v1.0/sprites
 
+title
+  C-xref C program Component Diagram
+end title
+
+Component(main, main.c)
+Component(cxref, cxref.c)
+Component(cxfile, cxfile.c)
 ....
 
 === Code
