@@ -43,7 +43,7 @@ static bool falseValue = false;
 /* The string should not start with a space, but it is assumed that
  * this string is delimited by some leading whitespace so it always
  * expects a skipWhitespace() first */
-static void expect_string(char string[], bool eof) {
+static void expect_characters(char string[], bool eof) {
     int i;
 
     expect(skipWhiteSpace, will_return(string[0]));
@@ -84,20 +84,21 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     expect(initCharacterBuffer, when(file, is_equal_to(xfilesFilePointer)));
 
     /* Version marking always starts a file */
-    expect_string("34v", false);
+    expect_characters("34v", false);
     expect(skipCharacters, when(count, is_equal_to(33)));
     expect(getChar, will_return(' '));
 
     /* Generation setttings, file count, ... */
-    expect_string("21@mpfotulcsrhdeibnaAgk 10n 300000k ", false);
+    expect_characters("21@mpfotulcsrhdeibnaAgk 10n 300000k ", false);
 
     /* First and only file, no other symbols */
-    expect_string("49976f 1646087914m 10:source1.c ", true);
+    expect_characters("49976f 1646087914m 10: ", true);
+    expect(getString, will_set_contents_of_parameter(string, sourceFileName1, strlen(sourceFileName1)+1));
 
-    expect(existsInFileTable, when(fileName, is_equal_to_string("source1.c")),
+    expect(existsInFileTable, when(fileName, is_equal_to_string(sourceFileName1)),
            will_return(false));
 
-    expect(addFileNameToFileTable, when(name, is_equal_to_string("source1.c")),
+    expect(addFileNameToFileTable, when(name, is_equal_to_string(sourceFileName1)),
            will_return(sourceFileIndex1));
 
     expect(getFileItem, when(fileIndex, is_equal_to(sourceFileIndex1)),

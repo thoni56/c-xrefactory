@@ -812,9 +812,8 @@ static void scanFunction_ReadFileName(int size,
 ) {
     char id[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
-    int fileIndex, len, commandLineFlag, isInterface;
+    int fileIndex, commandLineFlag, isInterface;
     time_t fumtime, umtime;
-    char ch;
 
     assert(marker == CXFI_FILE_NAME);
     fumtime = (time_t) lastIncomingInfo.values[CXFI_FILE_FUMTIME];
@@ -822,14 +821,8 @@ static void scanFunction_ReadFileName(int size,
     commandLineFlag = lastIncomingInfo.values[CXFI_INPUT_FROM_COMMAND_LINE];
     isInterface=((lastIncomingInfo.values[CXFI_ACCESS_BITS] & AccessInterface)!=0);
 
-    int i;
-    for (i=0; i<size-1; i++) {
-        ch = getChar(cb);
-        id[i] = ch;
-    }
-    id[i] = 0;
-    len = i;
-    assert(len+1 < MAX_FILE_NAME_SIZE);
+    assert(size+1 < MAX_FILE_NAME_SIZE);
+    getString(id, size, cb);
 
     int lastIncomingFileIndex = lastIncomingInfo.values[CXFI_FILE_INDEX];
     assert(lastIncomingFileIndex>=0 && lastIncomingFileIndex<MAX_FILES);

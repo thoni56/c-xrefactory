@@ -79,6 +79,10 @@ void ungetChar(CharacterBuffer *cb, int ch) {
     (void)mock(cb, ch);
 }
 
+void getString(char *string, int length, CharacterBuffer *cb) {
+    (void)mock(string, length, cb);
+}
+
 void closeCharacterBuffer(CharacterBuffer *buffer) {
     mock(buffer);
 }

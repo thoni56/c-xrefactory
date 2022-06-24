@@ -53,7 +53,7 @@ extern void skipCharacters(CharacterBuffer *buffer, unsigned count);
 
 extern int getChar(CharacterBuffer *cb);
 extern void ungetChar(CharacterBuffer *cb, int ch);
-extern int getString(char *string, int length, CharacterBuffer *cb);
+extern void getString(char *string, int length, CharacterBuffer *cb);
 
 extern void closeCharacterBuffer(CharacterBuffer *buffer);
 
