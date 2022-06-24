@@ -364,7 +364,7 @@ $(1)_DEPENDENCIES = $(2)
 $(1)_DEPS = $$(patsubst %,$(OBJDIR)/%.o,$$($(1)_DEPENDENCIES))
 $(OBJDIR)/$(1)_tests.o: CFLAGS += $(CGREEN_INCLUDE)
 $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
-	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LIB)
+	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LIB) -lz
 endef
 
 
