@@ -888,21 +888,11 @@ static void scanFunction_SourceIndex(int size,
     }
 }
 
-static int scanSymNameString(int size,
-                             CharacterBuffer *cb,
-                             char *id) {
-    int i, len;
-    char ch;
+static int scanSymNameString(int size, CharacterBuffer *cb, char *id) {
+    assert(size < MAX_CX_SYMBOL_SIZE);
+    getString(id, size-1, cb);
 
-    for (i=0; i<size-1; i++) {
-        ch = getChar(cb);
-        id[i] = ch;
-    }
-    id[i] = 0;
-    len = i;
-    assert(len+1 < MAX_CX_SYMBOL_SIZE);
-
-    return len;
+    return size-1;
 }
 
 
