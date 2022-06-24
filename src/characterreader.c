@@ -245,7 +245,6 @@ int skipWhiteSpace(CharacterBuffer *cb, int ch) {
     return ch;
 }
 
-
 int getChar(CharacterBuffer *cb) {
     int ch;
     if (cb->nextUnread >= cb->end) {
@@ -268,6 +267,16 @@ int getChar(CharacterBuffer *cb) {
     return ch;
 }
 
+
+int getString(char *string, int length, CharacterBuffer *cb) {
+    char ch;
+
+    for (int i=0; i<length; i++) {
+        ch = getChar(cb);
+        string[i] = ch;
+    }
+    string[length] = 0;
+}
 
 void ungetChar(CharacterBuffer *cb, int ch) {
     if (ch == '\n')

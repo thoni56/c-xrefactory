@@ -370,6 +370,7 @@ endef
 
 $(eval $(call UNITTEST,classfilereader,log memory position))
 $(eval $(call UNITTEST,caching,log memory))
+$(eval $(call UNITTEST,characterreader,log))
 $(eval $(call UNITTEST,commons,log protocol stringlist))
 $(eval $(call UNITTEST,complete,log memory protocol type session))
 $(eval $(call UNITTEST,classhierarchy,log memory protocol))
