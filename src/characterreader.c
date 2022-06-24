@@ -203,7 +203,7 @@ void skipCharacters(CharacterBuffer *buffer, unsigned count) {
         int n;
         int max_size;
 
-        /*&fprintf(dumpOut,"seeking %d chars\n",count); fflush(dumpOut);&*/
+        log_trace("seeking over %d chars", count);
         fseek(buffer->file, count, SEEK_CUR);
         buffer->filePos += count;
         dd = buffer->chars + MAX_UNGET_CHARS;
