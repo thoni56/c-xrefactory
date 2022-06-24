@@ -128,7 +128,7 @@ static unsigned decodeFileNumbers[MAX_FILES];
 
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
-static FILE *cxOut = NULL;
+static FILE *cxFile = NULL;
 
 
 typedef struct scanFileFunctionStep {
@@ -354,24 +354,24 @@ static void writeCompactRecord(char marker, int info, char *blankPrefix) {
     assert(marker >= 0 && marker < MAX_CHARS);
     assert(info >= 0);
     if (*blankPrefix!=0)
-        fputs(blankPrefix, cxOut);
+        fputs(blankPrefix, cxFile);
     if (info != 0)
-        fPutDecimal(cxOut, info);
-    fputc(marker, cxOut);
+        fPutDecimal(cxFile, info);
+    fputc(marker, cxFile);
     lastOutgoingInfo.values[marker] = info;
 }
 
 static void writeOptionalCompactRecord(char marker, int info, char *blankPrefix) {
     assert(marker >= 0 && marker < MAX_CHARS);
     if (*blankPrefix!=0)
-        fputs(blankPrefix, cxOut);
+        fputs(blankPrefix, cxFile);
 
     /* If value for marker is same as last, don't write anything */
     if (lastOutgoingInfo.values[marker] != info) {
         /* If the info to write is not 0 then write it, else just write the marker */
         if (info != 0)
-            fPutDecimal(cxOut, info);
-        fputc(marker, cxOut);
+            fPutDecimal(cxFile, info);
+        fputc(marker, cxFile);
         lastOutgoingInfo.values[marker] = info;
     }
 }
@@ -381,10 +381,10 @@ static void writeStringRecord(int marker, char *s, char *blankPrefix) {
     int rsize;
     rsize = strlen(s)+1;
     if (*blankPrefix!=0)
-        fputs(blankPrefix, cxOut);
-    fPutDecimal(cxOut, rsize);
-    fputc(marker, cxOut);
-    fputs(s, cxOut);
+        fputs(blankPrefix, cxFile);
+    fPutDecimal(cxFile, rsize);
+    fputc(marker, cxFile);
+    fputs(s, cxFile);
 }
 
 /* Here we do the actual writing of the symbol */
@@ -404,7 +404,7 @@ static void writeSymbolItem(int symbolIndex) {
     lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex] = 0;
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = true;
     writeStringRecord(CXFI_SYMBOL_NAME, d->name, "\t");
-    fputc('\t', cxOut);
+    fputc('\t', cxFile);
 }
 
 static void writeSymbolItemIfNotWritten(int symbolIndex) {
@@ -578,22 +578,26 @@ static void genRefItem(ReferencesItem *referenceItem) {
     }
 
 static void genCxFileHead(void) {
-    char sr[MAX_CHARS];
-    char ttt[TMP_STRING_SIZE];
+    char stringRecord[MAX_CHARS];
+    char tempString[TMP_STRING_SIZE];
     int i;
+
     memset(&lastOutgoingInfo, 0, sizeof(lastOutgoingInfo));
     for (i=0; i<MAX_CHARS; i++) {
         lastOutgoingInfo.values[i] = -1;
     }
-    get_version_string(ttt);
-    writeStringRecord(CXFI_VERSION, ttt, "\n\n");
-    fprintf(cxOut,"\n\n\n");
+
+    get_version_string(tempString);
+    writeStringRecord(CXFI_VERSION, tempString, "\n\n");
+    fprintf(cxFile,"\n\n\n");
+
     for (i=0; i<MAX_CHARS && generatedFieldMarkersList[i] != -1; i++) {
-        sr[i] = generatedFieldMarkersList[i];
+        stringRecord[i] = generatedFieldMarkersList[i];
     }
+
     assert(i < MAX_CHARS);
-    sr[i]=0;
-    writeStringRecord(CXFI_MARKER_LIST, sr, "");
+    stringRecord[i]=0;
+    writeStringRecord(CXFI_MARKER_LIST, stringRecord, "");
     writeCompactRecord(CXFI_REFNUM, options.referenceFileCount, " ");
     writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(MAX_FILES,
                                                                  options.exactPositionResolve),
@@ -608,8 +612,8 @@ static void openInOutReferenceFile(int updateFlag, char *filename) {
     }
 
     assert(filename);
-    cxOut = openFile(filename,"w");
-    if (cxOut == NULL)
+    cxFile = openFile(filename,"w");
+    if (cxFile == NULL)
         fatalError(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
 
     if (updateFlag) {
@@ -627,8 +631,8 @@ static void closeReferenceFile(char *fname) {
         inputFile = NULL;
         removeFile(tmpFileName);
     }
-    closeFile(cxOut);
-    cxOut = NULL;
+    closeFile(cxFile);
+    cxFile = NULL;
 }
 
 /* suffix contains '/' at the beginning */
@@ -1438,7 +1442,7 @@ static void readOneAppropReferenceFile(char *symbolName,
 ) {
     if (options.cxrefsLocation == NULL)
         return;
-    cxOut = stdout;
+    cxFile = stdout;
     if (options.referenceFileCount <= 1) {
         scanReferenceFile(options.cxrefsLocation, "", "", scanFileFunctionTable);
     } else {
