@@ -806,9 +806,9 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
 }
 
 static void scanFunction_ReadFileName(int size,
-                           int marker,
-                           CharacterBuffer *cb,
-                           int additionalArg
+                                      int marker,
+                                      CharacterBuffer *cb,
+                                      int additionalArg
 ) {
     char id[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
@@ -821,8 +821,8 @@ static void scanFunction_ReadFileName(int size,
     commandLineFlag = lastIncomingInfo.values[CXFI_INPUT_FROM_COMMAND_LINE];
     isInterface=((lastIncomingInfo.values[CXFI_ACCESS_BITS] & AccessInterface)!=0);
 
-    assert(size+1 < MAX_FILE_NAME_SIZE);
-    getString(id, size, cb);
+    assert(size < MAX_FILE_NAME_SIZE);
+    getString(id, size-1, cb);
 
     int lastIncomingFileIndex = lastIncomingInfo.values[CXFI_FILE_INDEX];
     assert(lastIncomingFileIndex>=0 && lastIncomingFileIndex<MAX_FILES);
