@@ -115,7 +115,7 @@ typedef struct lastCxFileInfo {
     // following item can be used only via symbolTab,
     // it is just to simplify memory handling !!!!!!!!!!!!!!!!
     ReferencesItem     cachedReferencesItem[MAX_CX_SYMBOL_TAB];
-    char                cachedSymbolName[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
+    char               cachedSymbolName[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
 } LastCxFileInfo;
 
 static LastCxFileInfo lastIncomingInfo;
@@ -929,7 +929,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                                                 int additionalArg
 ) {
     ReferencesItem *memb;
-    int si, symType, len, vApplClass, vFunClass, accessFlags;
+    int symbolIndex, symType, len, vApplClass, vFunClass, accessFlags;
     int storage;
     char *id;
     char *ss;
@@ -937,9 +937,9 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     assert(marker == CXFI_SYMBOL_NAME);
     accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
     storage = lastIncomingInfo.values[CXFI_STORAGE];
-    si = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
-    assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
-    id = lastIncomingInfo.cachedSymbolName[si];
+    symbolIndex = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
+    assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
+    id = lastIncomingInfo.cachedSymbolName[symbolIndex];
     len = scanSymNameString(size, cb, id);
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,vFunClass);fflush(dumpOut);
@@ -948,8 +948,8 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
         return;
     }
 
-    ReferencesItem *referenceItem = &lastIncomingInfo.cachedReferencesItem[si];
-    lastIncomingInfo.symbolTab[si] = referenceItem;
+    ReferencesItem *referenceItem = &lastIncomingInfo.cachedReferencesItem[symbolIndex];
+    lastIncomingInfo.symbolTab[symbolIndex] = referenceItem;
     fillReferencesItem(referenceItem, id, cxFileHashNumber(id), //useless, put 0
                        vApplClass, vFunClass, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
 
@@ -963,8 +963,8 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                            ScopeGlobal, accessFlags, CategoryGlobal);
         addToReferencesTable(memb);
     }
-    lastIncomingInfo.symbolTab[si] = memb;
-    lastIncomingInfo.onLineReferencedSym = si;
+    lastIncomingInfo.symbolTab[symbolIndex] = memb;
+    lastIncomingInfo.onLineReferencedSym = symbolIndex;
 }
 
 static void cxfileCheckLastSymbolDeadness(void) {
