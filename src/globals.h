@@ -71,7 +71,7 @@ extern TypeModifier s_javaObjectModifier;
 
 extern FILE *communicationChannel;
 
-extern int s_javaPreScanOnly;
+extern bool javaPreScanOnly;
 
 extern S_currentlyParsedCl s_cp;
 extern S_currentlyParsedCl s_cpInit;

@@ -672,7 +672,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     // do not record references during prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
     // TODO: So is this relevant now that HTML is gone?
-    if (s_javaPreScanOnly)
+    if (javaPreScanOnly)
         return NULL;
     if (symbol->linkName == NULL)
         return NULL;
@@ -1611,7 +1611,7 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
         if (listableUsage(r, usages, usageFilter))
             return r;
     }
-    return r;                   /* TODO: Why return the last one? */
+    return NULL;                   /* TODO: Why return the last one? */
 }
 
 static void passRefsThroughSourceFile(Reference **in_out_references, Position *callerPosition,

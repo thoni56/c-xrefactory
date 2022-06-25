@@ -2006,7 +2006,7 @@ static void mainFileProcessingInitialisations(bool *firstPass,
     mainSetLanguage(fileName,  outLanguage);
     inputFileNumber = currentFile.lexBuffer.buffer.fileNumber;
     assert(options.taskRegime);
-    if (options.taskRegime==RegimeXref && !s_javaPreScanOnly) {
+    if (options.taskRegime==RegimeXref && !javaPreScanOnly) {
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION, getRealFileName_static(inputFilename));
         } else {
@@ -2789,7 +2789,7 @@ void mainCallXref(int argc, char **argv) {
                 else if (ffc!=NULL) ffc=ffc->next;
             }
         } else {
-            s_javaPreScanOnly = 1;
+            javaPreScanOnly = true;
             for(; pffc!=NULL; pffc=pffc->next) {
                 if (! messagePrinted) {
                     printPrescanningMessage();
@@ -2805,7 +2805,7 @@ void mainCallXref(int argc, char **argv) {
                     writeRelativeProgress(10*pinputCounter/numberOfInputs);
                 pinputCounter++;
             }
-            s_javaPreScanOnly = 0;
+            javaPreScanOnly = false;
             fileAbortEnabled = true;
             for(; ffc!=NULL; ffc=ffc->next) {
                 mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed);

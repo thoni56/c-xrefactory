@@ -28,7 +28,7 @@ S_currentlyParsedCl s_cpInit = {0,};
 S_currentlyParsedStatics s_cps;
 S_currentlyParsedStatics s_cpsInit = {0,};
 
-int s_javaPreScanOnly=0;
+bool javaPreScanOnly = false;
 
 
 /* *********** symbols excluded from cache ************** */

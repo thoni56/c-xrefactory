@@ -119,7 +119,7 @@ TypeModifier s_defaultPackedTypeModifier;
 Symbol *s_javaStringSymbol;
 char javaTypePCTIConvert[MAX_TYPE];
 char *s_javaThisPackageName = "";
-int s_javaPreScanOnly;
+bool javaPreScanOnly;
 char *javaSourcePaths;
 StringList *javaClassPaths;
 Symbol *s_javaObjectSymbol;

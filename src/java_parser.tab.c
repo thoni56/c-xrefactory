@@ -120,7 +120,7 @@ static bool inSecondJslPass() {
     return !regularPass() && s_jsl->pass==2;
 }
 
-#define SyntaxPassOnly() (options.serverOperation==OLO_GET_PRIMARY_START || options.serverOperation==OLO_GET_PARAM_COORDINATES || options.serverOperation==OLO_SYNTAX_PASS_ONLY || s_javaPreScanOnly)
+#define SyntaxPassOnly() (options.serverOperation==OLO_GET_PRIMARY_START || options.serverOperation==OLO_GET_PARAM_COORDINATES || options.serverOperation==OLO_SYNTAX_PASS_ONLY || javaPreScanOnly)
 
 #define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && options.taskRegime==RegimeEditServer && options.serverOperation==OLO_COMPLETION)
 

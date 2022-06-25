@@ -200,7 +200,7 @@ static void setCurrentFileInfoFor(char *fileName) {
             cxloading = false;
         }
         if (LANGUAGE(LANG_JAVA)) {
-            if (s_jsl!=NULL || s_javaPreScanOnly) {
+            if (s_jsl!=NULL || javaPreScanOnly) {
                 // do not load (and save) references from jsl loaded files
                 // nor during prescanning
                 cxloading = fileItem->cxLoading;
