@@ -2747,7 +2747,7 @@ static bool inputFileItemLess(FileItem *fileItem1, FileItem *fileItem2) {
     return false;
 }
 
-static FileItem *mainCreateListOfInputFiles(void) {
+static FileItem *createListOfInputFileItems(void) {
     FileItem *fileItem;
     int fileIndex;
 
@@ -2763,11 +2763,13 @@ static FileItem *mainCreateListOfInputFiles(void) {
 }
 
 void mainCallXref(int argc, char **argv) {
+    // These are static because of the longjmp() maybe happening
     static char *cxFreeBase;
     static bool firstPass, atLeastOneProcessed;
     static FileItem *ffc, *pffc;
-    static int messagePrinted = 0;
-    static int numberOfInputs, inputCounter, pinputCounter;
+    static bool messagePrinted = false;
+    static int numberOfInputs;
+
     LongjmpReason reason = LONGJMP_REASON_NONE;
 
     currentPass = ANY_PASS;
@@ -2775,9 +2777,8 @@ void mainCallXref(int argc, char **argv) {
     cxResizingBlocked = 1;
     if (options.update)
         scheduleModifiedFilesToUpdate();
-    atLeastOneProcessed = 0;
-    ffc = pffc = mainCreateListOfInputFiles();
-    inputCounter = pinputCounter = 0;
+    atLeastOneProcessed = false;
+    ffc = pffc = createListOfInputFileItems();
     LIST_LEN(numberOfInputs, FileItem, ffc);
     for(;;) {
         currentPass = ANY_PASS;
@@ -2785,15 +2786,19 @@ void mainCallXref(int argc, char **argv) {
         if ((reason=setjmp(cxmemOverflow))!=0) {
             mainReferencesOverflowed(cxFreeBase,reason);
             if (reason==LONGJMP_REASON_FILE_ABORT) {
-                if (pffc!=NULL) pffc=pffc->next;
-                else if (ffc!=NULL) ffc=ffc->next;
+                if (pffc!=NULL)
+                    pffc=pffc->next;
+                else if (ffc!=NULL)
+                    ffc=ffc->next;
             }
         } else {
+            int inputCounter = 0;
+
             javaPreScanOnly = true;
             for(; pffc!=NULL; pffc=pffc->next) {
-                if (! messagePrinted) {
+                if (!messagePrinted) {
                     printPrescanningMessage();
-                    messagePrinted = 1;
+                    messagePrinted = true;
                 }
                 mainSetLanguage(pffc->name, &currentLanguage);
                 if (LANGUAGE(LANG_JAVA)) {
@@ -2802,11 +2807,14 @@ void mainCallXref(int argc, char **argv) {
                     mainXrefOneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed);
                 }
                 if (options.xref2)
-                    writeRelativeProgress(10*pinputCounter/numberOfInputs);
-                pinputCounter++;
+                    writeRelativeProgress(10*inputCounter/numberOfInputs);
+                inputCounter++;
             }
+
             javaPreScanOnly = false;
             fileAbortEnabled = true;
+
+            inputCounter = 0;
             for(; ffc!=NULL; ffc=ffc->next) {
                 mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed);
                 ffc->scheduledToProcess = false;
@@ -2818,6 +2826,7 @@ void mainCallXref(int argc, char **argv) {
             goto regime1fini;
         }
     }
+
  regime1fini:
     fileAbortEnabled = false;
     if (atLeastOneProcessed) {
