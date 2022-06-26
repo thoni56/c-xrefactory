@@ -1306,7 +1306,7 @@ static void scheduleInputFilesFromArgumentsToFileTable(void) {
 /* *************************************************************************** */
 
 
-static char *getNextInputFileFromFileTable(int *indexP, int flag) {
+static char *getNextInputFileFromFileTable(int *indexP, FilesToProcess flag) {
     int         i;
     FileItem  *fileItem;
 
@@ -3019,7 +3019,7 @@ int main(int argc, char **argv) {
 
     // Ok, so there were these five, now four, no three, main operating modes
     if (options.refactoringRegime == RegimeRefactory)
-        mainRefactory();
+        refactory();
     if (options.taskRegime == RegimeXref)
         xref(argc, argv);
     if (options.taskRegime == RegimeEditServer)
