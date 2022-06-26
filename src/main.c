@@ -179,7 +179,7 @@ int mainHandleSetOption(int argc, char **argv, int i ) {
     return i;
 }
 
-static int mainHandleIncludeOption(int argc, char **argv, int i) {
+static int handleIncludeOption(int argc, char **argv, int i) {
     int nargc;
     char **nargv;
     NEXT_FILE_ARG(i);
@@ -856,7 +856,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+16, "%d",&options.filterValue);
     }
     else if (strcmp(argv[i], "-optinclude")==0) {
-        i = mainHandleIncludeOption(argc, argv, i);
+        i = handleIncludeOption(argc, argv, i);
     }
     else if (strcmp(argv[i], "-o")==0) {
         NEXT_FILE_ARG(i);
@@ -1048,7 +1048,7 @@ static bool processSOption(int *argi, int argc, char **argv) {
         xrefSetenv("-sourcepath", options.sourcePath);
     }
     else if (strcmp(argv[i], "-stdop")==0) {
-        i = mainHandleIncludeOption(argc, argv, i);
+        i = handleIncludeOption(argc, argv, i);
     }
     else if (strcmp(argv[i], "-set")==0) {
         i = mainHandleSetOption(argc, argv, i);
@@ -1334,7 +1334,7 @@ static char *getNextCommandLineFile(int *indexP) {
     return getNextInputFileFromFileTable(indexP, FF_COMMAND_LINE_ENTERED);
 }
 
-static void mainGenerateReferenceFile(void) {
+static void generateReferenceFile(void) {
     static bool updateFlag = false;  /* TODO: WTF - why do we need a
                                         static updateFlag? Maybe we
                                         need to know that we have
@@ -1580,7 +1580,7 @@ static void initializationsPerInvocation(void) {
 }
 
 /*///////////////////////// parsing /////////////////////////////////// */
-static void mainParseInputFile(void) {
+static void parseInputFile(void) {
     if (currentLanguage == LANG_JAVA) {
         uniyylval = & s_yygstate->gyylval;
         java_yyparse();
@@ -1908,7 +1908,7 @@ void writeRelativeProgress(int progress) {
         progressOffset++;
 }
 
-static void mainFileProcessingInitialisations(bool *firstPass,
+static void fileProcessingInitialisations(bool *firstPass,
                                               int argc, char **argv,      // command-line options
                                               int nargc, char **nargv,    // piped options
                                               bool *inputOpened,
@@ -2035,7 +2035,7 @@ static bool optionsOverflowHandler(int n) {
     return true;
 }
 
-static void mainTotalTaskEntryInitialisations() {
+static void totalTaskEntryInitialisations() {
     ENTER();
 
     // Outputs
@@ -2245,7 +2245,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     LEAVE();
 }
 
-static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
+static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     ENTER();
     if (mess != LONGJMP_REASON_NONE) {
         log_trace("swapping references to disk");
@@ -2277,7 +2277,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
     if (options.taskRegime==RegimeXref)
-        mainGenerateReferenceFile();
+        generateReferenceFile();
     recoverMemoriesAfterOverflow(cxMemFreeBase);
 
     /* ************ start with CXREFS and memories clean ************ */
@@ -2464,27 +2464,27 @@ static void setFullUpdateMtimesInFileItem(FileItem *fi) {
     }
 }
 
-static void mainCloseInputFile(void) {
+static void closeInputFile(void) {
     if (currentFile.lexBuffer.buffer.file!=stdin) {
         closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
 }
 
-static void mainEditSrvParseInputFile(bool *firstPass, bool inputIn) {
+static void editServerParseInputFile(bool *firstPass, bool inputIn) {
     if (inputIn) {
         if (options.serverOperation!=OLO_TAG_SEARCH && options.serverOperation!=OLO_PUSH_NAME) {
             log_trace("parse start");
             recoverFromCache();
-            mainParseInputFile();
+            parseInputFile();
             log_trace("parse end");
             *firstPass = false;
         }
         currentFile.lexBuffer.buffer.isAtEOF = false;
-        mainCloseInputFile();
+        closeInputFile();
     }
 }
 
-static bool mainSymbolCanBeIdentifiedByPosition(int fileIndex) {
+static bool symbolCanBeIdentifiedByPosition(int fileIndex) {
     int line,col;
 
     // there is a serious problem with options memory for options got from
@@ -2542,7 +2542,7 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fileIndex) {
     return true;
 }
 
-static void mainEditSrvFileSinglePass(int argc, char **argv,
+static void editServerFileSinglePass(int argc, char **argv,
                                       int nargc, char **nargv,
                                       bool *firstPassP
 ) {
@@ -2550,17 +2550,17 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
     int ol2procfile;
 
     olStringSecondProcessing = 0;
-    mainFileProcessingInitialisations(firstPassP, argc, argv,
+    fileProcessingInitialisations(firstPassP, argc, argv,
                                       nargc, nargv, &inputOpened, &currentLanguage);
     smartReadReferences();
     olOriginalFileIndex = inputFileNumber;
-    if (mainSymbolCanBeIdentifiedByPosition(inputFileNumber)) {
+    if (symbolCanBeIdentifiedByPosition(inputFileNumber)) {
         if (inputOpened)
-            mainCloseInputFile();
+            closeInputFile();
         return;
     }
     if (inputOpened)
-        mainEditSrvParseInputFile(firstPassP, inputOpened);
+        editServerParseInputFile(firstPassP, inputOpened);
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (creatingOlcxRefs()) {
@@ -2576,16 +2576,16 @@ static void mainEditSrvFileSinglePass(int argc, char **argv,
             inputFilename = getFileItem(ol2procfile)->name;
             inputOpened = false;
             olStringSecondProcessing = 1;
-            mainFileProcessingInitialisations(firstPassP, argc, argv,
+            fileProcessingInitialisations(firstPassP, argc, argv,
                                               nargc, nargv, &inputOpened, &currentLanguage);
             if (inputOpened)
-                mainEditSrvParseInputFile(firstPassP, inputOpened);
+                editServerParseInputFile(firstPassP, inputOpened);
         }
     }
 }
 
 
-static void mainEditServerProcessFile(int argc, char **argv,
+static void editServerProcessFile(int argc, char **argv,
                                       int nargc, char **nargv,
                                       bool *firstPass
 ) {
@@ -2596,7 +2596,7 @@ static void mainEditServerProcessFile(int argc, char **argv,
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFilename = fileItem->name;
         assert(inputFilename!=NULL);
-        mainEditSrvFileSinglePass(argc, argv, nargc, nargv, firstPass);
+        editServerFileSinglePass(argc, argv, nargc, nargv, firstPass);
         if (options.serverOperation==OLO_EXTRACT || (s_olstringServed && !creatingOlcxRefs()))
             break;
         if (LANGUAGE(LANG_JAVA))
@@ -2658,21 +2658,21 @@ static int needToProcessInputFile(void) {
 /* *************************************************************** */
 /*                          Xref regime                            */
 /* *************************************************************** */
-static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPassP,
-                                     bool *atLeastOneProcessedP) {
+static void xrefProcessInputFile(int argc, char **argv, bool *firstPassP,
+                                 bool *atLeastOneProcessedP) {
     bool inputOpened;
 
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         if (!*firstPassP)
             copyOptions(&options, &savedOptions);
-        mainFileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &inputOpened, &currentLanguage);
+        fileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &inputOpened, &currentLanguage);
         olOriginalFileIndex    = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileIndex;
         if (inputOpened) {
             recoverFromCache();
             cache.active = false;    /* no caching in cxref */
-            mainParseInputFile();
+            parseInputFile();
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
             inputOpened = false;
             currentFile.lexBuffer.buffer.file = stdin;
@@ -2695,8 +2695,8 @@ static void mainXrefProcessInputFile(int argc, char **argv, bool *firstPassP,
     }
 }
 
-static void mainXrefOneWholeFileProcessing(int argc, char **argv, FileItem *fileItem,
-                                           bool *firstPass, bool *atLeastOneProcessed) {
+static void xrefOneWholeFileProcessing(int argc, char **argv, FileItem *fileItem,
+                                       bool *firstPass, bool *atLeastOneProcessed) {
     inputFilename = fileItem->name;
     fileProcessingStartTime = time(NULL);
     // O.K. but this is missing all header files
@@ -2704,7 +2704,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv, FileItem *file
     if (options.update == UPDATE_FULL || options.create) {
         fileItem->lastFullUpdateMtime = fileItem->lastModified;
     }
-    mainXrefProcessInputFile(argc, argv, firstPass, atLeastOneProcessed);
+    xrefProcessInputFile(argc, argv, firstPass, atLeastOneProcessed);
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very carefull about this!!!
@@ -2784,7 +2784,7 @@ void mainCallXref(int argc, char **argv) {
         currentPass = ANY_PASS;
         firstPass = true;
         if ((reason=setjmp(cxmemOverflow))!=0) {
-            mainReferencesOverflowed(cxFreeBase,reason);
+            referencesOverflowed(cxFreeBase,reason);
             if (reason==LONGJMP_REASON_FILE_ABORT) {
                 if (pffc!=NULL)
                     pffc=pffc->next;
@@ -2804,7 +2804,7 @@ void mainCallXref(int argc, char **argv) {
                 if (LANGUAGE(LANG_JAVA)) {
                     /* TODO: problematic if a single file generates overflow, e.g. a JAR
                        Can we just reread from the last class file? */
-                    mainXrefOneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed);
+                    xrefOneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed);
                 }
                 if (options.xref2)
                     writeRelativeProgress(10*inputCounter/numberOfInputs);
@@ -2816,7 +2816,7 @@ void mainCallXref(int argc, char **argv) {
 
             inputCounter = 0;
             for(; ffc!=NULL; ffc=ffc->next) {
-                mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed);
+                xrefOneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed);
                 ffc->scheduledToProcess = false;
                 ffc->scheduledToUpdate = false;
                 if (options.xref2)
@@ -2841,7 +2841,7 @@ void mainCallXref(int argc, char **argv) {
             } else {
                 log_info("Generating '%s'",options.cxrefsLocation);
             }
-            mainGenerateReferenceFile();
+            generateReferenceFile();
         }
     } else if (options.serverOperation == OLO_ABOUT) {
         aboutMessage();
@@ -2856,7 +2856,7 @@ void mainCallXref(int argc, char **argv) {
 }
 
 
-static void mainXref(int argc, char **argv) {
+static void xref(int argc, char **argv) {
     ENTER();
     mainOpenOutputFile(options.outputFileName);
     editorLoadAllOpenedBufferFiles();
@@ -2897,7 +2897,7 @@ void mainCallEditServer(int argc, char **argv,
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");
         } else {
-            mainEditServerProcessFile(argc, argv, nargc, nargv, firstPass);
+            editServerProcessFile(argc, argv, nargc, nargv, firstPass);
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
@@ -2909,7 +2909,7 @@ void mainCallEditServer(int argc, char **argv,
     LEAVE();
 }
 
-static void mainEditServer(int argc, char **argv) {
+static void editServer(int argc, char **argv) {
     int nargc;  char **nargv;
     bool firstPass;
 
@@ -3003,7 +3003,7 @@ int main(int argc, char **argv) {
     }
 
     currentPass = ANY_PASS;
-    mainTotalTaskEntryInitialisations();
+    totalTaskEntryInitialisations();
     mainTaskEntryInitialisations(argc, argv);
 
     // If there is no configuration file given auto-find it
@@ -3021,9 +3021,9 @@ int main(int argc, char **argv) {
     if (options.refactoringRegime == RegimeRefactory)
         mainRefactory();
     if (options.taskRegime == RegimeXref)
-        mainXref(argc, argv);
+        xref(argc, argv);
     if (options.taskRegime == RegimeEditServer)
-        mainEditServer(argc, argv);
+        editServer(argc, argv);
 
     LEAVE();
     return 0;
