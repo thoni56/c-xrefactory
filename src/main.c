@@ -3014,13 +3014,13 @@ int main(int argc, char **argv) {
     // If there is no configuration file given auto-find it
     // TODO: This should probably be done where all other config file
     // discovery is done...
-    if (options.xrefrc == NULL) {
-        char *configFileName = findConfigFile(cwd);
-        createOptionString(&options.xrefrc, configFileName);
-        // And then the storage will be parallel to that
-        strcpy(&configFileName[strlen(configFileName)-2], "db");
-        setXrefsLocation(configFileName);
-    }
+    /* if (options.xrefrc == NULL) { */
+    /*     char *configFileName = findConfigFile(cwd); */
+    /*     createOptionString(&options.xrefrc, configFileName); */
+    /*     // And then the storage will be parallel to that */
+    /*     strcpy(&configFileName[strlen(configFileName)-2], "db"); */
+    /*     setXrefsLocation(configFileName); */
+    /* } */
 
     // Ok, so there were these five, now four, no three, main operating modes
     if (options.refactoringRegime == RegimeRefactory)
