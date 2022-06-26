@@ -1305,6 +1305,11 @@ static void scheduleInputFilesFromArgumentsToFileTable(void) {
 
 /* *************************************************************************** */
 
+typedef enum {
+    FF_SCHEDULED_TO_PROCESS,
+    FF_COMMAND_LINE_ENTERED
+} FilesToProcess;
+
 
 static char *getNextInputFileFromFileTable(int *indexP, FilesToProcess flag) {
     int         i;

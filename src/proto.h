@@ -95,11 +95,6 @@ typedef enum {
     ALLOCATE_IN_PP
 } MemoryKind;
 
-typedef enum {
-    FF_SCHEDULED_TO_PROCESS = ALLOCATE_IN_PP+1,
-    FF_COMMAND_LINE_ENTERED
-} FilesToProcess;
-
 
 enum miscellaneous {						/* misc. constants */
     DEFAULT_VALUE = ALLOCATE_IN_PP + 1,
