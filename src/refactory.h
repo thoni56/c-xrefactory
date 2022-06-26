@@ -14,6 +14,6 @@ typedef struct tpCheckMoveClassData {
 } TpCheckMoveClassData;
 
 
-extern void mainRefactory();
+extern void refactory();
 
 #endif

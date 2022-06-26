@@ -2,6 +2,6 @@
 #include "refactory.h"
 #include <cgreen/mocks.h>
 
-void mainRefactory() {
+void refactory() {
   mock();
 }

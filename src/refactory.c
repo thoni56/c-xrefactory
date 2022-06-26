@@ -4414,7 +4414,7 @@ static char * computeUpdateOptionForSymbol(EditorMarker *point) {
 // --------------------------------------------------------------------
 
 
-void mainRefactory() {
+void refactory() {
     int argCount;
     char *file, *argumentFile;
     char inputFileName[MAX_FILE_NAME_SIZE];
