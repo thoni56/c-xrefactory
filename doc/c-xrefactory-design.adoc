@@ -25,12 +25,12 @@ the foundation for a highly capable refactoring browser.
 
 It _is_ currently in working condition, so you can use it. For
 information about that, see the
-[README.md](https://github.com/thoni56/c-xrefactory/blob/main/README.md).
+https://github.com/thoni56/c-xrefactory/blob/main/README.md[README.md].
 
 === Caution
 
 As indicated by the
-[README.md](https://github.com/thoni56/c-xrefactory/blob/main/README.md),
+https://github.com/thoni56/c-xrefactory/blob/main/README.md[README.md],
 this is a long term restoration project. So anything you find in this
 document might be old, incorrect, guesses, temporary holders for
 thoughts or theories. Or actually true.
@@ -53,7 +53,7 @@ find.
 === Background
 
 You will find some background about the project in the
-[README.md](https://github.com/thoni56/c-xrefactory/blob/main/README.md).
+https://github.com/thoni56/c-xrefactory/blob/main/README.md[README.md].
 
 This document tries to collect the knowledge and understanding about
 how `c-xrefactory` actually works, plans for making it better, both in
@@ -88,7 +88,7 @@ there are also a lot of macros. Unfortunately macros are hard to
 refactor to functions. (But I'm making progress...)
 
 As there is no general way to refactor a macro to a function, various
-techniques must be applied. I wrote [a blog post](https://www.responsive.se/thomas/2020/05/14/refactoring-macros-to-functions/)
+techniques must be applied. I wrote https://www.responsive.se/thomas/2020/05/14/refactoring-macros-to-functions/[a blog post]
 about one that have been fairly successful.
 
 But actually it's rather fun to be able to make small changes and
@@ -101,7 +101,7 @@ develop `c-xrefactory` but until then here's a short list of what
 you need:
 
 - C development environment (GNU/Clang/Make/...)
-- Unittests are written using [`Cgreen`](https://github.com/cgreen-devs/cgreen)
+- Unittests are written using https://github.com/cgreen-devs/cgreen[`Cgreen`]
 - Clean code and refactoring knowledge (to drive the code to a better and cleaner state)
 
 Helpful would be:
