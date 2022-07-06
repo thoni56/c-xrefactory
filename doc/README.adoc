@@ -1,7 +1,7 @@
 # c-xrefactory Documentation
 
 - https://thoni56.github.io/c-xrefactory/c-xrefactory.html[Quick User Guide]
-- https://thoni56.github.io/c-xrefactory/c-xrefactory-manual.html[User Manual]
-- https://thoni56.github.io/c-xrefactory/c-xrefactory-design.html[Architecture]
+- https://thoni56.github.io/c-xrefactory/c-xrefactory-manual.html[User Manual] WORK IN PROGRESS!
+- https://thoni56.github.io/c-xrefactory/c-xrefactory-design.html[Architecture] WORK IN PROGRESS!
 - https://thoni56.github.io/c-xrefactory/adr/index.html[Architecture Decision Records]
 

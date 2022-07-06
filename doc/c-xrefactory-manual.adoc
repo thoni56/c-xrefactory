@@ -18,6 +18,8 @@ v{VERSION} - Generated {localdate}
 
 == C-xrefactory Intro
 
+WARNING: This document is very much a work in progress.
+
 === What is C-xrefactory?
 
 `C-xrefactory` is a development tool for C (and Java) developers that

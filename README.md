@@ -170,12 +170,12 @@ with others who might be interested.
 
 <!------------------------- REFERENCE LINKS -------------------------->
 
-[el-get repo]: https://github.com/dimitri/el-get "Visti el-get repository at GitHub"
+[el-get repo]: https://github.com/dimitri/el-get "Vist el-get repository at GitHub"
 [Language Server Protocol]: https://microsoft.github.io/language-server-protocol "LSP website"
 
 <!-- xrefactory -->
 
-[our docs]: https://github.com/thoni56/c-xrefactory/blob/main/doc/c-xrefactory.md "Read our C-xrefactory documentation"
+[our docs]: https://thoni56.github.io/c-xrefactory "Read our C-xrefactory documentation"
 
 ["Refactoring's Rubicon"]: http://martinfowler.com/articles/refactoringRubicon.html "Read the 'Crossing Refactoring's Rubicon' article, by Martin Fowler (2001)"
 [c-xref]: http://sourceforge.net/projects/c-xref/ "c-xref project at SourceForge"

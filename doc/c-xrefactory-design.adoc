@@ -17,6 +17,8 @@ v{VERSION} - Generated {localdate}
 
 == Intro
 
+WARNING: This document is very much a work in progress.
+
 `c-xrefactory` is a project aiming at restoring the sources of an old,
 but very useful, project to a state where they can be enhanced and be
 the foundation for a highly capable refactoring browser.
