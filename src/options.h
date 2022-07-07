@@ -47,8 +47,8 @@ typedef struct options {
     CommentMovingMode commentMovingMode;
     struct stringList *pruneNames;
     struct stringList *inputFiles;
-    int continueRefactoring;
-    int completionCaseSensitive;
+    ContinueRefactoringKind continueRefactoring;
+    bool completionCaseSensitive;
     char *xrefrc;
     int eolConversion;
     char *checkVersion;

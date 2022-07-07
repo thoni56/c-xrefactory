@@ -695,7 +695,7 @@ static bool reallyInsert(
 }
 
 static void computeComPrefix(char *d, char *s) {
-    while (*d == *s /*& && *s!='(' || (options.completionCaseSensitive==0 && tolower(*d)==tolower(*s)) &*/) {
+    while (*d == *s /*& && *s!='(' || (!options.completionCaseSensitive && tolower(*d)==tolower(*s)) &*/) {
         if (*d == 0) return;
         d++; s++;
     }
@@ -705,7 +705,7 @@ static void computeComPrefix(char *d, char *s) {
 static bool completionTestPrefix(Completions *ci, char *s) {
     char *d;
     d = ci->idToProcess;
-    while (*d == *s || (options.completionCaseSensitive==0 && tolower(*d)==tolower(*s))) {
+    while (*d == *s || (!options.completionCaseSensitive && tolower(*d)==tolower(*s))) {
         if (*d == 0) {
             ci->isCompleteFlag = true;    /* complete, but maybe not unique*/
             return 0;

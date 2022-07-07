@@ -239,7 +239,7 @@ static bool processCOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-crconversion")==0)
         options.eolConversion|=CR_EOL_CONVERSION;
     else if (strcmp(argv[i], "-completioncasesensitive")==0)
-        options.completionCaseSensitive=1;
+        options.completionCaseSensitive = true;
     else if (strcmp(argv[i], "-completeparenthesis")==0)
         options.completeParenthesis = true;
     else if (strncmp(argv[i], "-completionoverloadwizdeep=",27)==0)  {
