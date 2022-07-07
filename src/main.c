@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "globals.h"
 #include "memory.h"
+#include "proto.h"
 #include "refactory.h"
 #include "extract.h"
 #include "misc.h"
@@ -1175,6 +1176,7 @@ static void scheduleInputFileArgumentToFileTable(char *infile) {
 
 static void processInFileArgument(char *infile) {
     if (infile[0]=='`' && infile[strlen(infile)-1]=='`') {
+        // TODO: So what does backquoted filenames mean?
         int nargc;
         char **nargv, *pp;
         char command[MAX_OPTION_LEN];
@@ -1194,9 +1196,11 @@ static void processInFileArgument(char *infile) {
     }
 }
 
-void processOptions(int argc, char **argv, int infilesFlag) {
+void processOptions(int argc, char **argv, AllowInfiles infilesFlag) {
     int i;
     bool matched;
+
+    ENTER();
 
     for (i=1; i<argc; i++) {
         log_trace("processing argument '%s'", argv[i]);
@@ -1295,6 +1299,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
                 errorMessage(ERR_ST, tmpBuff);
         }
     }
+    LEAVE();
 }
 
 static void scheduleInputFilesFromArgumentsToFileTable(void) {

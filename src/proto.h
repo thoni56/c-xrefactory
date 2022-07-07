@@ -18,6 +18,8 @@ typedef unsigned char uchar;
    values they are started with a value higher than the last value in
    the previous.
 
+   TODO: should probably distribute these to where they needs to be defined...
+
 */
 
 typedef enum addYesNo {
@@ -95,17 +97,20 @@ typedef enum {
     ALLOCATE_IN_PP
 } MemoryKind;
 
+typedef enum {
+    INFILES_ENABLED = ALLOCATE_IN_PP,
+    INFILES_DISABLED
+} AllowInfiles;
+
 
 enum miscellaneous {						/* misc. constants */
-    DEFAULT_VALUE = ALLOCATE_IN_PP + 1,
+    DEFAULT_VALUE = INFILES_DISABLED + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
     CLASS_TO_ANY,
     CX_FILE_ITEM_GEN,
     NO_CX_FILE_ITEM_GEN,
-    INFILES_ENABLED,
-    INFILES_DISABLED,
     LOADING_SYMBOL,
     SEARCH_SYMBOL,
     SHORT_NAME,

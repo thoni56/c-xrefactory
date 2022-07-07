@@ -633,7 +633,7 @@ For a detailed log of features, enhancements and bug fixes visit the projects re
 
 === 1.6.15
 
-- Add support for for-loop initializers
+- Add support for for-loop initializers in C
 
 === 1.6.13
 
