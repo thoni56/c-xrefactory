@@ -186,7 +186,7 @@ static int handleIncludeOption(int argc, char **argv, int i) {
     NEXT_FILE_ARG(i);
 
     readOptionsFile(argv[i], &nargc, &nargv, "", NULL);
-    processOptions(nargc, nargv, INFILES_DISABLED);
+    processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
 
     return i;
 }
@@ -1196,7 +1196,7 @@ static void processInFileArgument(char *infile) {
     }
 }
 
-void processOptions(int argc, char **argv, AllowInfiles infilesFlag) {
+void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
     int i;
     bool matched;
 
@@ -1286,7 +1286,7 @@ void processOptions(int argc, char **argv, AllowInfiles infilesFlag) {
         } else {
             /* input file */
             matched = true;
-            if (infilesFlag == INFILES_ENABLED) {
+            if (infilesFlag == PROCESS_FILE_ARGUMENTS) {
                 addStringListOption(&options.inputFiles, argv[i]);
             }
         }
@@ -1867,7 +1867,7 @@ static void getAndProcessXrefrcOptions(char *dffname, char *dffsect, char *proje
         // warning, the following can overwrite variables like
         // 's_cxref_file_name' allocated in PPM_MEMORY, then when memory
         // is got back by caching, it may provoke a problem
-        processOptions(dfargc, dfargv, INFILES_DISABLED); /* .c-xrefrc opts*/
+        processOptions(dfargc, dfargv, DONT_PROCESS_FILE_ARGUMENTS); /* .c-xrefrc opts*/
     }
 }
 
@@ -1967,13 +1967,13 @@ static void fileProcessingInitialisations(bool *firstPass,
         initOptions();
         initDefaultCxrefFileName(fileName);
 
-        processOptions(argc, argv, INFILES_DISABLED);   /* command line opts */
+        processOptions(argc, argv, DONT_PROCESS_FILE_ARGUMENTS);   /* command line opts */
         /* piped options (no include or define options)
            must be before .xrefrc file options, but, the s_cachedOptions
            must be set after .c-xrefrc file, but s_cachedOptions can't contain
            piped options, !!! berk.
         */
-        processOptions(nargc, nargv, INFILES_DISABLED);
+        processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         reInitCwd(defaultOptionsFileName, defaultOptionsSectionName);
 
         tmpIncludeDirs = options.includeDirs;
@@ -1989,7 +1989,7 @@ static void fileProcessingInitialisations(bool *firstPass,
             goto fini;
         }
         copyOptions(&savedOptions, &options);  // before getJavaClassPath, it modifies ???
-        processOptions(nargc, nargv, INFILES_DISABLED);
+        processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         getJavaClassAndSourcePath();
         *inputOpened = computeAndOpenInputFile();
         strcpy(oldStdopFile,defaultOptionsFileName);
@@ -2009,7 +2009,7 @@ static void fileProcessingInitialisations(bool *firstPass,
         assert(cache.lbcc == cache.cp[1].lbcc);
     } else {
         copyOptions(&options, &savedOptions);
-        processOptions(nargc, nargv, INFILES_DISABLED); /* no include or define options */
+        processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
         *inputOpened = computeAndOpenInputFile();
     }
     // reset language once knowing all language suffixes
@@ -2171,7 +2171,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     oldStdopSection[0] = 0;
 
     /* now pre-read the option file */
-    processOptions(argc, argv, INFILES_ENABLED);
+    processOptions(argc, argv, PROCESS_FILE_ARGUMENTS);
     scheduleInputFilesFromArgumentsToFileTable();
 
     if (options.refactoringRegime == RegimeRefactory) {
@@ -2215,13 +2215,13 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     if (defaultOptionsFileName[0]!=0) {
         readOptionsFile(defaultOptionsFileName, &dfargc, &dfargv, defaultOptionsSection, defaultOptionsSection);
         if (options.refactoringRegime == RegimeRefactory) {
-            inmode = INFILES_DISABLED;
+            inmode = DONT_PROCESS_FILE_ARGUMENTS;
         } else if (options.taskRegime==RegimeEditServer) {
-            inmode = INFILES_DISABLED;
+            inmode = DONT_PROCESS_FILE_ARGUMENTS;
         } else if (options.create || options.project!=NULL || options.update != UPDATE_DEFAULT) {
-            inmode = INFILES_ENABLED;
+            inmode = PROCESS_FILE_ARGUMENTS;
         } else {
-            inmode = INFILES_DISABLED;
+            inmode = DONT_PROCESS_FILE_ARGUMENTS;
         }
         // disable error reporting on xref task on this pre-reading of .c-xrefrc
         previousNoErrorsOption = options.noErrors;
@@ -2230,14 +2230,14 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         }
         // there is a problem with INFILES_ENABLED (update for safetycheck),
         // It should first load cxref file, in order to protect file numbers.
-        if (inmode==INFILES_ENABLED && options.update && !options.create) { /* TODO: .update != UPDATE_CREATE?!?! */
+        if (inmode==PROCESS_FILE_ARGUMENTS && options.update && !options.create) { /* TODO: .update != UPDATE_CREATE?!?! */
             //&fprintf(dumpOut, "PREREADING !!!!!!!!!!!!!!!!\n");
             // this makes a problem: I need to preread cxref file before
             // reading input files in order to preserve hash numbers, but
             // I need to read options first in order to have the name
             // of cxref file.
             // I need to read fstab also to remove removed files on update
-            processOptions(dfargc, dfargv, INFILES_DISABLED);
+            processOptions(dfargc, dfargv, DONT_PROCESS_FILE_ARGUMENTS);
             smartReadReferences();
         }
         processOptions(dfargc, dfargv, inmode);
@@ -2245,7 +2245,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         if (options.taskRegime==RegimeEditServer)
             options.noErrors = previousNoErrorsOption;
         checkExactPositionUpdate(false);
-        if (inmode == INFILES_ENABLED)
+        if (inmode == PROCESS_FILE_ARGUMENTS)
             scheduleInputFilesFromArgumentsToFileTable();
     }
     recoverCachePointZero();
@@ -2888,7 +2888,7 @@ static void xref(int argc, char **argv) {
 void mainCallEditServerInit(int nargc, char **nargv) {
     initAvailableRefactorings();
     options.classpath = "";
-    processOptions(nargc, nargv, INFILES_ENABLED); /* no include or define options */
+    processOptions(nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
     scheduleInputFilesFromArgumentsToFileTable();
     if (options.serverOperation == OLO_EXTRACT)
         cache.cpIndex = 2; // !!!! no cache, TODO why is 2 = no cache?

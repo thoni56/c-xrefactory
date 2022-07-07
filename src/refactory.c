@@ -261,7 +261,7 @@ static void refactoryBeInteractive(void) {
         ppcSynchronize();
         copyOptions(&options, &savedOptions);
         processOptions(argument_count(refactoryEditServInitOptions),
-                       refactoryEditServInitOptions, INFILES_DISABLED);
+                       refactoryEditServInitOptions, DONT_PROCESS_FILE_ARGUMENTS);
         getPipedOptions(&pargc, &pargv);
         mainOpenOutputFile(refactoringOptions.outputFileName);
         if (pargc <= 1)

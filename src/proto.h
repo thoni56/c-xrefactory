@@ -98,13 +98,13 @@ typedef enum {
 } MemoryKind;
 
 typedef enum {
-    INFILES_ENABLED = ALLOCATE_IN_PP,
-    INFILES_DISABLED
-} AllowInfiles;
+    PROCESS_FILE_ARGUMENTS = ALLOCATE_IN_PP,
+    DONT_PROCESS_FILE_ARGUMENTS
+} ProcessFileArguments;
 
 
 enum miscellaneous {						/* misc. constants */
-    DEFAULT_VALUE = INFILES_DISABLED + 1,
+    DEFAULT_VALUE = DONT_PROCESS_FILE_ARGUMENTS + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
