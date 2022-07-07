@@ -40,7 +40,7 @@ typedef struct options {
     bool exit;
     char *compiler;
     int fileEncoding;
-    char completeParenthesis;
+    bool completeParenthesis;
     int defaultAddImportStrategy;
     char referenceListWithoutSource;
     int completionOverloadWizardDeep;

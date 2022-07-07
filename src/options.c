@@ -30,7 +30,7 @@ Options presetOptions = {
     false,                      // exit
     "gcc",                      // path to compiler to use for auto-discovering compiler and defines
     MULE_DEFAULT,               // encoding
-    0,                          // completeParenthesis
+    false,                      // completeParenthesis
     NID_IMPORT_ON_DEMAND,       // defaultAddImportStrategy
     0,                          // referenceListWithoutSource
     1,                          // completionOverloadWizardDeep

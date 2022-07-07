@@ -843,7 +843,7 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
     char            *cn, *cname, *psuff, *msig;
     cname = r->name;
     cnamelen = strlen(cname);
-    if (options.completeParenthesis == 0) {
+    if (!options.completeParenthesis) {
         cn = cname;
     } else {
         assert(r->u.typeModifier!=NULL);
