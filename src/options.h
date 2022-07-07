@@ -59,7 +59,7 @@ typedef struct options {
     char *refpar2;
     Refactorings theRefactoring;
     bool briefoutput;
-    int cacheIncludes;
+    bool cacheIncludes;
     char *renameTo;
     TaskRegimes refactoringRegime;
     bool xref2;
@@ -78,9 +78,9 @@ typedef struct options {
     char *moveTargetClass;
     int trivialPreCheckCode;
     bool urlGenTemporaryFile;
-    int urlAutoRedirect;
-    int javaFilesOnly;
-    int exactPositionResolve;
+    bool urlAutoRedirect;
+    bool javaFilesOnly;
+    bool exactPositionResolve;
     char *outputFileName;
     char *lineFileName;
     struct stringList *includeDirs;
@@ -101,7 +101,7 @@ typedef struct options {
 
     /* JAVA: */
     char *javaDocPath;
-    int allowPackagesOnCommandLine;
+    bool allowPackagesOnCommandLine;
     char *sourcePath;
     char *jdocTmpDir;
 

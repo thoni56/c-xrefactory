@@ -49,7 +49,7 @@ Options presetOptions = {
     "",                         // refactoring parameter 2
     AVR_NO_REFACTORING,         // refactoring
     false,                      // briefoutput
-    0,                          // cacheIncludes
+    false,                      // cacheIncludes
     NULL,                       // renameTo
     RegimeUndefined,            // refactoringRegime
     false,                      // xrefactory-II
@@ -72,10 +72,10 @@ Options presetOptions = {
     0,                          // fqtNameToCompletions
     NULL,                       // moveTargetClass
     0,                          // TPC_NONE, trivial pre-check
-    1,                          // urlGenTemporaryFile
-    1,                          // urlautoredirect
-    0,                          // javafilesonly
-    0,                          // exact position
+    true,                       // urlGenTemporaryFile
+    true,                       // urlautoredirect
+    false,                      // javafilesonly
+    false,                      // exact position
     NULL,                       // -o outputFileName
     NULL,                       // -line lineFileName
     NULL,                       // -I include dirs
@@ -96,7 +96,7 @@ Options presetOptions = {
 
     /* JAVA: */
     "",                         // javaDocPath
-    0,                          // allowPackagesOnCl
+    false,                      // allowPackagesOnCl
     NULL,                       // sourcepath
     "/tmp",                     // jdocTmpDir
 

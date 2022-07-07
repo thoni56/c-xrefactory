@@ -233,7 +233,7 @@ static bool processCOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-cacheincludes")==0)
-        options.cacheIncludes=1;
+        options.cacheIncludes = true;
     else if (strcmp(argv[i], "-crlfconversion")==0)
         options.eolConversion|=CR_LF_EOL_CONVERSION;
     else if (strcmp(argv[i], "-crconversion")==0)
@@ -315,7 +315,7 @@ static bool processEOption(int *argi, int argc, char **argv) {
         createOptionString(&options.olExtractAddrParPrefix, tmpString);
     }
     else if (strcmp(argv[i], "-exactpositionresolve")==0) {
-        options.exactPositionResolve = 1;
+        options.exactPositionResolve = true;
     }
     else if (strncmp(argv[i], "-encoding=", 10)==0) {
         if (options.fileEncoding == MULE_DEFAULT) {
@@ -449,7 +449,7 @@ static bool processJOption(int *argi, int argc, char **argv) {
         createOptionString(&options.javaFilesSuffixes, argv[i]+14);
     }
     else if (strcmp(argv[i], "-javafilesonly")==0) {
-        options.javaFilesOnly = 1;
+        options.javaFilesOnly = true;
     }
     else if (strcmp(argv[i], "-jdkclasspath")==0 || strcmp(argv[i], "-javaruntime")==0) {
         NEXT_FILE_ARG(i);
@@ -882,7 +882,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
         errorMessage(ERR_ST, "'-pass' option can't be entered from command line");
     }
     else if (strcmp(argv[i], "-packages")==0) {
-        options.allowPackagesOnCommandLine = 1;
+        options.allowPackagesOnCommandLine = true;
     }
     else if (strcmp(argv[i], "-p")==0) {
         NEXT_FILE_ARG(i);
@@ -1092,7 +1092,7 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
     int i = *argIndexP;
     if (0) {}
     else if (strcmp(argv[i], "-urlmanualredirect")==0)   {
-        options.urlAutoRedirect = 0;
+        options.urlAutoRedirect = false;
     }
     else if (strcmp(argv[i], "-urldirect")==0)   {
         options.urlGenTemporaryFile = false;
