@@ -15,9 +15,9 @@ endif::[]
 = C-xrefactory - a C/Yacc/Java refactoring and code browsing tool - Design Documentation
 v{VERSION} - Generated {localdate}
 
-== Intro
-
 WARNING: This document is very much a work in progress.
+
+== Intro
 
 `c-xrefactory` is a project aiming at restoring the sources of an old,
 but very useful, project to a state where they can be enhanced and be
@@ -33,7 +33,7 @@ As indicated by the
 https://github.com/thoni56/c-xrefactory/blob/main/README.md[README.md],
 this is a long term restoration project. So anything you find in this
 document might be old, incorrect, guesses, temporary holders for
-thoughts or theories. Or actually true.
+thoughts or theories. Or actually true and useful.
 
 Especially names of variables, functions and modules is prone to
 change as understanding of them increases. They might also be
@@ -1106,8 +1106,8 @@ update. This is a big improvement over the previous situation!
 
 ==== FILLs REMOVED!
 
-As indicated in [FILL_macros](https://github.com/thoni56/c-xrefactory/wiki/FILL_macros)
-the bootstrapping of FILL-macros has finally and fully been removed.
+As indicated in <<FILL macros]>> the bootstrapping of FILL-macros has
+finally and fully been removed.
 
 Gone is also the `compiler_defines.h`, which was just removed without
 any obvious adverse effects.  Maybe that will come back and bite me
@@ -1237,7 +1237,7 @@ DOT graph that shows those dependencies.
 Removal can be done in a couple of ways
 
 1. If it's a very small structure you can replace a call to a `FILL_XXX()` macro
-with a [compound literal](https://gcc.gnu.org/onlinedocs/gcc/Compound-Literals.html)
+with a https://gcc.gnu.org/onlinedocs/gcc/Compound-Literals.html[compound literal].
 
 2. A better approach is usually to replace it with a `fillXXX()` function, or even
 better, with a `newXXX()`, if it consistently is preceeded with an allocation

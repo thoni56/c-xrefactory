@@ -32,7 +32,7 @@ Here is a list of features
 - Browsing source code in C and Java supporting multiple pre-processing passes, resolving scope, accessibility, overloading and polymorphism
 - Designed to work with large projects (> millions of lines)
 - Update using only modified files
-- First tool to [Crossing Refactoring's Rubicon](https://www.martinfowler.com/articles/refactoringRubicon.html) as described by Martin Fowler
+- First tool to https://www.martinfowler.com/articles/refactoringRubicon.html[Crossing Refactoring's Rubicon] as described by Martin Fowler
 - Safe refactorings to
   - rename variables, functions etc.
   - extract function/method
