@@ -23,7 +23,7 @@
 #include "protocol.h"
 
 #include "hash.h"
-#include "utils.h"
+
 #include "macroargumenttable.h"
 #include "filedescriptor.h"
 #include "fileio.h"

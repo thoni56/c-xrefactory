@@ -17,7 +17,6 @@
 #include "fileio.mock"
 #include "yylex.mock"
 #include "ppc.mock"
-#include "utils.mock"
 
 
 static bool optionsOverflowHandler() {

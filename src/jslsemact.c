@@ -15,7 +15,6 @@
 #include "list.h"
 
 #include "log.h"
-#include "utils.h"
 #include "recyacc.h"
 
 S_jslStat *s_jsl;

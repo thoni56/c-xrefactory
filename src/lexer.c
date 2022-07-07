@@ -11,7 +11,7 @@
 #include "jslsemact.h"          /* s_jsl */
 
 #include "log.h"
-#include "utils.h"              /* creatingOlcxRefs() */
+#include "misc.h"              /* creatingOlcxRefs() */
 
 
 void gotOnLineCxRefs(Position *ps ) {

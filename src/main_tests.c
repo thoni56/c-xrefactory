@@ -37,7 +37,6 @@
 #include "type.mock"
 #include "recyacc.mock"
 #include "init.mock"
-#include "utils.mock"
 #include "lexer.mock"
 
 

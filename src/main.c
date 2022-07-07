@@ -8,7 +8,6 @@
 #include "refactory.h"
 #include "extract.h"
 #include "misc.h"
-#include "utils.h"
 #include "complete.h"
 #include "options.h"
 #include "init.h"

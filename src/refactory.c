@@ -32,7 +32,7 @@
 #include "filetable.h"
 
 #include "log.h"
-#include "utils.h"
+
 
 #define RRF_CHARS_TO_PRE_CHECK_AROUND       1
 #define MAX_NARGV_OPTIONS_COUNT               50

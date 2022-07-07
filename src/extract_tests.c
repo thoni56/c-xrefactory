@@ -21,7 +21,6 @@
 #include "commons.mock"
 #include "characterreader.mock"
 #include "jsemact.mock"
-#include "utils.mock"
 #include "reftab.mock"
 #include "symboltable.mock"
 #include "cxref.mock"

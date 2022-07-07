@@ -3,11 +3,11 @@
 
 #include "commons.h"
 
+#include "misc.mock"
 #include "globals.mock"
 #include "options.mock"
 #include "semact.mock"
 #include "fileio.mock"
-#include "misc.mock"
 #include "yylex.mock"
 #include "ppc.mock"
 

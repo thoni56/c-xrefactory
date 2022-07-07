@@ -113,4 +113,12 @@ extern void printClassFqtNameFromClassNum(FILE *ff, int fnum);
 extern void sprintfSymbolLinkName(char *ttt, SymbolsMenu *ss);
 extern void printSymbolLinkName( FILE *ff, SymbolsMenu *ss);
 
+#define UNUSED (void)
+
+/* Complement log.c with function to explicitly give file & line */
+#define log_with_explicit_file_and_line(level, file, line, ...) log_log(level, file, line, __VA_ARGS__)
+
+extern bool creatingOlcxRefs(void);
+extern void formatOutputLine(char *tt, int startingColumn);
+
 #endif

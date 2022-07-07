@@ -7,7 +7,7 @@
 #include "options.mock"
 #include "commons.mock"
 #include "caching.mock"
-#include "utils.mock"
+#include "misc.mock"
 #include "jslsemact.mock"
 #include "yylex.mock"
 #include "filetable.mock"

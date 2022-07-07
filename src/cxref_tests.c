@@ -24,7 +24,6 @@
 #include "commons.mock"
 #include "characterreader.mock"
 #include "jsemact.mock"
-#include "utils.mock"
 #include "reftab.mock"
 #include "fileio.mock"
 #include "classfilereader.mock"

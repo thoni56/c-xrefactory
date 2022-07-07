@@ -20,7 +20,7 @@
 #include "filetable.h"
 
 #include "log.h"
-#include "utils.h"
+
 
 /* This reads class files according to the Java Machine Specification,
  * https://docs.oracle.com/javase/specs/jvms/se8/jvms8.pdf */
