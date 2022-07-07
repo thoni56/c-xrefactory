@@ -446,7 +446,7 @@ static void writeFileIndexItem(FileItem *fileItem, int index) {
     writeOptionalCompactRecord(CXFI_FILE_INDEX, index, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
-    writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->commandLineEntered, "");
+    writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->isCommandLineArgument, "");
     if (fileItem->isInterface) {
         writeOptionalCompactRecord(CXFI_ACCESS_BITS, AccessInterface, "");
     } else {
@@ -829,7 +829,7 @@ static void scanFunction_ReadFileName(int size,
     if (!existsInFileTable(id)) {
         fileIndex = addFileNameToFileTable(id);
         fileItem = getFileItem(fileIndex);
-        fileItem->commandLineEntered = commandLineFlag;
+        fileItem->isCommandLineArgument = commandLineFlag;
         fileItem->isInterface = isInterface;
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
@@ -850,7 +850,7 @@ static void scanFunction_ReadFileName(int size,
             fileItem->sourceFileNumber = noFileIndex;
         }
         if (options.taskRegime == RegimeEditServer) {
-            fileItem->commandLineEntered = commandLineFlag;
+            fileItem->isCommandLineArgument = commandLineFlag;
         }
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
@@ -1167,7 +1167,7 @@ static void scanFunction_Reference(int size,
             if (OL_VIEWABLE_REFS(&reference)) {
                 // restrict reported symbols to those defined in project input file
                 if (IS_DEFINITION_USAGE(reference.usage.kind)
-                    && referenceFileItem->commandLineEntered
+                    && referenceFileItem->isCommandLineArgument
                 ) {
                     lastIncomingInfo.deadSymbolIsDefined = 1;
                 } else if (! IS_DEFINITION_OR_DECL_USAGE(reference.usage.kind)) {
@@ -1199,7 +1199,7 @@ static void scanFunction_Reference(int size,
                 if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     if (additionalArg == CXSF_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
-                        if (file != olOriginalFileIndex || !fileItem->commandLineEntered ||
+                        if (file != olOriginalFileIndex || !fileItem->isCommandLineArgument ||
                             options.serverOperation == OLO_GOTO || options.serverOperation == OLO_CGOTO ||
                             options.serverOperation == OLO_PUSH_NAME ||
                             options.serverOperation == OLO_PUSH_SPECIAL_NAME) {

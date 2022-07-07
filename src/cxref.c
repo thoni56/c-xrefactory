@@ -704,7 +704,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
-                //&fprintf(dumpOut,"%s comm %d\n", fileItem->name, fileItem->commandLineEntered);
+                //&fprintf(dumpOut,"%s comm %d\n", fileItem->name, fileItem->isCommandLineArgument);
             }
         }
     }

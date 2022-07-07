@@ -2438,14 +2438,14 @@ static bool isInDisabledList(S_disabledList *list, int file, int vApplCl) {
     return false;
 }
 
-static int translatePassToAddImportAction(int pass) {
+static ContinueRefactoringKind translatePassToAddImportAction(int pass) {
     switch (pass) {
     case 0: return RC_IMPORT_ON_DEMAND;
     case 1: return RC_IMPORT_SINGLE_TYPE;
     case 2: return RC_CONTINUE;
     default: errorMessage(ERR_INTERNAL, "wrong code for noninteractive add import");
     }
-    return 0;
+    return 0;                   /* Never happens */
 }
 
 static int refactoryInteractiveAskForAddImportAction(EditorMarkerList *ppp, int defaultAction,
@@ -4358,7 +4358,7 @@ static char * computeUpdateOptionForSymbol(EditorMarker *point) {
         if (fn != o->marker->buffer->fileIndex) {
             multiFileRefsFlag = 1;
         }
-        if (!fileItem->commandLineEntered) {
+        if (!fileItem->isCommandLineArgument) {
             hasHeaderReferenceFlag = 1;
         }
     }

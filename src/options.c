@@ -273,11 +273,11 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     FileItem *fileItem = getFileItem(fileIndex);
     if (options.taskRegime!=RegimeEditServer) {
         // yes in edit server you process also headers, etc.
-        fileItem->commandLineEntered = true;
+        fileItem->isCommandLineArgument = true;
     }
     log_trace("recursively process command line argument file #%d '%s'", fileIndex, fileItem->name);
     if (!options.updateOnlyModifiedFiles) {
-        fileItem->scheduledToProcess = true;
+        fileItem->isScheduledToProcess = true;
     }
     LEAVE();
 }

@@ -185,7 +185,7 @@ static void setCurrentFileInfoFor(char *fileName) {
         if (!existed) {
             cxloading = true;
         } else if (options.update==UPDATE_FAST) {
-            if (fileItem->scheduledToProcess) {
+            if (fileItem->isScheduledToProcess) {
                 // references from headers are not loaded on fast update !
                 cxloading = true;
             }
