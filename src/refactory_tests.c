@@ -19,6 +19,7 @@
 #include "cxfile.mock"
 #include "complete.mock"
 #include "jsemact.mock"
+#include "utils.mock"
 
 
 

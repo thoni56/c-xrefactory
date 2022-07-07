@@ -166,10 +166,6 @@ void olCompletionListInit(Position *originalPos) {
   mock(originalPos);
 }
 
-void formatOutputLine(char *tt, int startingColumn) {
-  mock(tt, startingColumn);
-}
-
 void printCompletionsList(int noFocus) {
   mock(noFocus);
 }

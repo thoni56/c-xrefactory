@@ -5,3 +5,7 @@
 bool creatingOlcxRefs(void) {
   return (bool) mock();
 }
+
+void formatOutputLine(char *tt, int startingColumn) {
+  mock(tt, startingColumn);
+}

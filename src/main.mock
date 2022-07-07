@@ -6,10 +6,6 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
   mock(filename, options_filename, section);
 }
 
-void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
-  mock(argc, argv, infilesFlag);
-}
-
 void getPipedOptions(int *outNargc, char ***outNargv) {
   mock(outNargc, outNargv);
 }

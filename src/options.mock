@@ -7,6 +7,10 @@ Options refactoringOptions;
 Options savedOptions;
 Options presetOptions;
 
+void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
+  mock(argc, argv, infilesFlag);
+}
+
 void xrefSetenv(char *name, char *val) {
   mock(name, val);
 }

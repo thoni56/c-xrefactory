@@ -54,7 +54,6 @@ extern void javaCompleteSuperNestedConstructor(Completions *c);
 extern void completeYaccLexem(Completions *c);
 
 extern void olCompletionListInit(Position *originalPos);
-extern void formatOutputLine(char *tt, int startingColumn);
 extern void printCompletionsList(int noFocus);
 extern void printCompletions(Completions *c);
 

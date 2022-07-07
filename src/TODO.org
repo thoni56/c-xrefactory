@@ -30,13 +30,13 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** TODO Figure out in which regime xref2 is relevant
 * TODO dumpOut, errOut - figure out how they should be set in various scenarios
 * TODO ROADMAP
-** TODO LSP-like protocol (possibly also fulfill LSP functions)
 ** TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
 ** TODO Cleaner interface Refactorer -> Server/Tag-generator
 *** TODO Separate refactory options into separate struct
 *** TODO Restructure option handling into -refactory, -server, -generate(?)
     those are main options, you can only have one, and selecting one
     will allow a set of separate options valid for that "mode"
+** TODO LSP-like protocol (possibly also fulfill LSP functions)
 * TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
   How to make this backwards compatible?
 * TODO Header files. There are a number of sections in the proto.h that

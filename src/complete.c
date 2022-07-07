@@ -108,35 +108,6 @@ static void formatFullCompletions(char *tt, int indent, int inipos) {
     return;
 }
 
-void formatOutputLine(char *line, int startingColumn) {
-    int pos, n;
-    char *nlp, *p;
-
-    pos = startingColumn; nlp=NULL;
-    assert(options.tabulator>1);
-    p = line;
-    for (;;) {
-        while (pos<options.olineLen || nlp==NULL) {
-            if (*p == 0)
-                return;
-            if (*p == ' ')
-                nlp = p;
-            if (*p == '\t') {
-                nlp = p;
-                n = options.tabulator-(pos-1)%options.tabulator-1;
-                pos += n;
-            } else {
-                pos++;
-            }
-            p++;
-        }
-        *nlp = '\n';
-        p = nlp+1;
-        nlp=NULL;
-        pos = 0;
-    }
-}
-
 /* STATIC except for unittests */
 int printJavaModifiers(char *buf, int *size, Access access) {
     int i = 0;

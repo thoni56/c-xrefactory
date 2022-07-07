@@ -42,3 +42,32 @@ bool creatingOlcxRefs(void) {
             ||  options.serverOperation==OLO_NOT_FQT_REFS_IN_CLASS
             );
 }
+
+void formatOutputLine(char *line, int startingColumn) {
+    int pos, n;
+    char *nlp, *p;
+
+    pos = startingColumn; nlp=NULL;
+    assert(options.tabulator>1);
+    p = line;
+    for (;;) {
+        while (pos<options.olineLen || nlp==NULL) {
+            if (*p == 0)
+                return;
+            if (*p == ' ')
+                nlp = p;
+            if (*p == '\t') {
+                nlp = p;
+                n = options.tabulator-(pos-1)%options.tabulator-1;
+                pos += n;
+            } else {
+                pos++;
+            }
+            p++;
+        }
+        *nlp = '\n';
+        p = nlp+1;
+        nlp=NULL;
+        pos = 0;
+    }
+}
