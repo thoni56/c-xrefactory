@@ -4358,7 +4358,7 @@ static char * computeUpdateOptionForSymbol(EditorMarker *point) {
         if (fn != o->marker->buffer->fileIndex) {
             multiFileRefsFlag = 1;
         }
-        if (!fileItem->isCommandLineArgument) {
+        if (!fileItem->isArgument) {
             hasHeaderReferenceFlag = 1;
         }
     }
@@ -4445,7 +4445,7 @@ void refactory() {
     }
 
     argCount = 0;
-    argumentFile = getNextInputFile(&argCount);
+    argumentFile = getNextScheduledFile(&argCount);
     if (argumentFile==NULL) {
         file = NULL;
     } else {

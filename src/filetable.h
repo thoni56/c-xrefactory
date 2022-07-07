@@ -31,8 +31,8 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     bool cxLoading : 1;
     bool cxLoaded : 1;
     bool cxSaved : 1;
-    bool isCommandLineArgument : 1;
-    bool isScheduledToProcess : 1;
+    bool isArgument : 1;
+    bool isScheduled : 1;
     bool scheduledToUpdate : 1;
     bool fullUpdateIncludesProcessed : 1;
     bool isInterface : 1;       // class/interface for .class

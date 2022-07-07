@@ -446,7 +446,7 @@ static void writeFileIndexItem(FileItem *fileItem, int index) {
     writeOptionalCompactRecord(CXFI_FILE_INDEX, index, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
-    writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->isCommandLineArgument, "");
+    writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->isArgument, "");
     if (fileItem->isInterface) {
         writeOptionalCompactRecord(CXFI_ACCESS_BITS, AccessInterface, "");
     } else {
@@ -811,13 +811,14 @@ static void scanFunction_ReadFileName(int size,
 ) {
     char id[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
-    int fileIndex, commandLineFlag, isInterface;
+    int fileIndex;
+    bool isArgument, isInterface;
     time_t fumtime, umtime;
 
     assert(marker == CXFI_FILE_NAME);
     fumtime = (time_t) lastIncomingInfo.values[CXFI_FILE_FUMTIME];
     umtime = (time_t) lastIncomingInfo.values[CXFI_FILE_UMTIME];
-    commandLineFlag = lastIncomingInfo.values[CXFI_INPUT_FROM_COMMAND_LINE];
+    isArgument = lastIncomingInfo.values[CXFI_INPUT_FROM_COMMAND_LINE];
     isInterface=((lastIncomingInfo.values[CXFI_ACCESS_BITS] & AccessInterface)!=0);
 
     assert(size < MAX_FILE_NAME_SIZE);
@@ -829,7 +830,7 @@ static void scanFunction_ReadFileName(int size,
     if (!existsInFileTable(id)) {
         fileIndex = addFileNameToFileTable(id);
         fileItem = getFileItem(fileIndex);
-        fileItem->isCommandLineArgument = commandLineFlag;
+        fileItem->isArgument = isArgument;
         fileItem->isInterface = isInterface;
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
@@ -850,7 +851,7 @@ static void scanFunction_ReadFileName(int size,
             fileItem->sourceFileNumber = noFileIndex;
         }
         if (options.taskRegime == RegimeEditServer) {
-            fileItem->isCommandLineArgument = commandLineFlag;
+            fileItem->isArgument = isArgument;
         }
         if (fileItem->lastFullUpdateMtime == 0)
             fileItem->lastFullUpdateMtime=fumtime;
@@ -1167,7 +1168,7 @@ static void scanFunction_Reference(int size,
             if (OL_VIEWABLE_REFS(&reference)) {
                 // restrict reported symbols to those defined in project input file
                 if (IS_DEFINITION_USAGE(reference.usage.kind)
-                    && referenceFileItem->isCommandLineArgument
+                    && referenceFileItem->isArgument
                 ) {
                     lastIncomingInfo.deadSymbolIsDefined = 1;
                 } else if (! IS_DEFINITION_OR_DECL_USAGE(reference.usage.kind)) {
@@ -1199,7 +1200,7 @@ static void scanFunction_Reference(int size,
                 if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     if (additionalArg == CXSF_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
-                        if (file != olOriginalFileIndex || !fileItem->isCommandLineArgument ||
+                        if (file != olOriginalFileIndex || !fileItem->isArgument ||
                             options.serverOperation == OLO_GOTO || options.serverOperation == OLO_CGOTO ||
                             options.serverOperation == OLO_PUSH_NAME ||
                             options.serverOperation == OLO_PUSH_SPECIAL_NAME) {

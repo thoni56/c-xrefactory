@@ -13,7 +13,7 @@ extern void searchDefaultOptionsFile(char *filename, char *options_filename, cha
 extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
 
-extern char *getNextInputFile(int *fArgCount);
+extern char *getNextScheduledFile(int *fArgCount);
 extern void writeRelativeProgress(int progress);
 
 extern int mainHandleSetOption(int argc, char **argv, int i );

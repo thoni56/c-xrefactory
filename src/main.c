@@ -1312,22 +1312,21 @@ static void scheduleInputFilesFromArgumentsToFileTable(void) {
 
 typedef enum {
     FILE_IS_SCHEDULED,
-    FILE_IS_COMMAND_LINE_ARGUMENT
-} FileProcessingSource;
+    FILE_IS_ARGUMENT
+} FileSource;
 
 
-static char *getNextInputFileFromFileTable(int *indexP, FileProcessingSource fileSource) {
+static char *getNextInputFileFromFileTable(int *indexP, FileSource wantedFileSource) {
     int         i;
     FileItem  *fileItem;
 
     for (i = getNextExistingFileIndex(*indexP); i != -1; i = getNextExistingFileIndex(i+1)) {
         fileItem = getFileItem(i);
-        if (fileItem!=NULL) {
-            if (fileSource==FILE_IS_SCHEDULED && fileItem->isScheduledToProcess)
-                break;
-            if (fileSource==FILE_IS_COMMAND_LINE_ARGUMENT && fileItem->isCommandLineArgument)
-                break;
-        }
+        assert(fileItem!=NULL);
+        if (wantedFileSource==FILE_IS_SCHEDULED && fileItem->isScheduled)
+            break;
+        if (wantedFileSource==FILE_IS_ARGUMENT && fileItem->isArgument)
+            break;
     }
     *indexP = i;
     if (i != -1)
@@ -1336,12 +1335,12 @@ static char *getNextInputFileFromFileTable(int *indexP, FileProcessingSource fil
         return NULL;
 }
 
-char *getNextInputFile(int *indexP) {
+char *getNextScheduledFile(int *indexP) {
     return getNextInputFileFromFileTable(indexP, FILE_IS_SCHEDULED);
 }
 
 static char *getNextCommandLineFile(int *indexP) {
-    return getNextInputFileFromFileTable(indexP, FILE_IS_COMMAND_LINE_ARGUMENT);
+    return getNextInputFileFromFileTable(indexP, FILE_IS_ARGUMENT);
 }
 
 static void generateReferenceFile(void) {
@@ -1362,8 +1361,8 @@ static void generateReferenceFile(void) {
 }
 
 static void schedulingUpdateToProcess(FileItem *fileItem) {
-    if (fileItem->scheduledToUpdate && fileItem->isCommandLineArgument) {
-        fileItem->isScheduledToProcess = true;
+    if (fileItem->scheduledToUpdate && fileItem->isArgument) {
+        fileItem->isScheduled = true;
     }
 }
 
@@ -1374,7 +1373,7 @@ static void schedulingToUpdate(FileItem *fileItem) {
 
     if (!editorFileExists(fileItem->name)) {
         // removed file, remove it from watched updates, load no reference
-        if (fileItem->isCommandLineArgument) {
+        if (fileItem->isArgument) {
             // no messages during refactorings
             if (refactoringOptions.refactoringRegime != RegimeRefactory) {
                 char tmpBuff[TMP_BUFF_SIZE];
@@ -1382,8 +1381,8 @@ static void schedulingToUpdate(FileItem *fileItem) {
                 warningMessage(ERR_ST, tmpBuff);
             }
         }
-        fileItem->isCommandLineArgument = false;
-        fileItem->isScheduledToProcess = false;
+        fileItem->isArgument = false;
+        fileItem->isScheduled = false;
         fileItem->scheduledToUpdate = false;
         // (missing of following if) has caused that all class hierarchy items
         // as well as all cxreferences based in .class files were lost
@@ -2108,7 +2107,7 @@ static void totalTaskEntryInitialisations() {
 static void clearFileItem(FileItem *fileItem) {
     fileItem->inferiorClasses = fileItem->superClasses = NULL;
     fileItem->directEnclosingInstance = noFileIndex;
-    fileItem->isScheduledToProcess = false;
+    fileItem->isScheduled = false;
     fileItem->scheduledToUpdate = false;
     fileItem->fullUpdateIncludesProcessed = false;
     fileItem->cxLoaded = false;
@@ -2297,7 +2296,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         if (fileItem->cxLoading) {
             fileItem->cxLoading = false;
             fileItem->cxSaved = true;
-            if (fileItem->isCommandLineArgument)
+            if (fileItem->isArgument)
                 savingFlag = true;
             log_trace(" -># '%s'",fileItem->name);
         }
@@ -2519,8 +2518,8 @@ static bool symbolCanBeIdentifiedByPosition(int fileIndex) {
     // be not loaded from the TAG file (it expects they are loaded
     // by parsing).
     FileItem *fileItem = getFileItem(fileIndex);
-    log_trace("commandLineEntered %s == %d", fileItem->name, fileItem->isCommandLineArgument);
-    if (fileItem->isCommandLineArgument)
+    log_trace("commandLineEntered %s == %d", fileItem->name, fileItem->isArgument);
+    if (fileItem->isArgument)
         return false;
 
     // if references are not updated do not search it here
@@ -2601,7 +2600,7 @@ static void editServerProcessFile(int argc, char **argv,
 ) {
     FileItem *fileItem = getFileItem(olOriginalComFileNumber);
 
-    assert(fileItem->isScheduledToProcess);
+    assert(fileItem->isScheduled);
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         inputFilename = fileItem->name;
@@ -2612,7 +2611,7 @@ static void editServerProcessFile(int argc, char **argv,
         if (LANGUAGE(LANG_JAVA))
             break;
     }
-    fileItem->isScheduledToProcess = false;
+    fileItem->isScheduled = false;
 }
 
 static char *presetEditServerFileDependingStatics(void) {
@@ -2624,7 +2623,7 @@ static char *presetEditServerFileDependingStatics(void) {
     // This is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an error
     int fileIndex = 0;
-    inputFilename = getNextInputFile(&fileIndex);
+    inputFilename = getNextScheduledFile(&fileIndex);
     if (fileIndex == -1) { /* No more input files... */
         // conservative message, probably macro invoked on nonsaved file, TODO: WTF?
         olOriginalComFileNumber = noFileIndex;
@@ -2633,9 +2632,9 @@ static char *presetEditServerFileDependingStatics(void) {
 
     /* TODO: This seems strange, we only assert that the first file is scheduled to process.
        Then reset all other files, why? */
-    assert(getFileItem(fileIndex)->isScheduledToProcess);
+    assert(getFileItem(fileIndex)->isScheduled);
     for (int i=getNextExistingFileIndex(fileIndex+1); i != -1; i = getNextExistingFileIndex(i+1)) {
-        getFileItem(i)->isScheduledToProcess = false;
+        getFileItem(i)->isScheduled = false;
     }
 
     olOriginalComFileNumber = fileIndex;
@@ -2763,7 +2762,7 @@ static FileItem *createListOfInputFileItems(void) {
 
     fileItem = NULL;
     fileIndex = 0;
-    for (char *fileName=getNextInputFile(&fileIndex); fileName!=NULL; fileIndex++,fileName=getNextInputFile(&fileIndex)) {
+    for (char *fileName=getNextScheduledFile(&fileIndex); fileName!=NULL; fileIndex++,fileName=getNextScheduledFile(&fileIndex)) {
         FileItem *current = getFileItem(fileIndex);
         current->next = fileItem;
         fileItem = current;
@@ -2827,7 +2826,7 @@ void mainCallXref(int argc, char **argv) {
             inputCounter = 0;
             for(; ffc!=NULL; ffc=ffc->next) {
                 xrefOneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed);
-                ffc->isScheduledToProcess = false;
+                ffc->isScheduled = false;
                 ffc->scheduledToUpdate = false;
                 if (options.xref2)
                     writeRelativeProgress(10+90*inputCounter/numberOfInputs);
@@ -2911,7 +2910,7 @@ void mainCallEditServer(int argc, char **argv,
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
-            getFileItem(olOriginalComFileNumber)->isScheduledToProcess = false;
+            getFileItem(olOriginalComFileNumber)->isScheduled = false;
             // added [26.12.2002] because of loading options without input file
             inputFilename = NULL;
         }

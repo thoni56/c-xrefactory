@@ -776,7 +776,7 @@ static void addJavaFileDependency(int file, char *onfile) {
     if (options.taskRegime != RegimeXref)
         return;
     // also do it only for source files
-    if (!getFileItem(file)->isCommandLineArgument)
+    if (!getFileItem(file)->isArgument)
         return;
     fileIndex = addFileNameToFileTable(onfile);
     pos = makePosition(file, 0, 0);
