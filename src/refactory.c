@@ -62,7 +62,7 @@ static char *refactoryEditServInitOptions[] = {
     "xref",
     "-xrefactory-II",
     //& "-debug",
-    "-task_regime_server",
+    "-server",
     NULL,
 };
 

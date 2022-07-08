@@ -8,7 +8,7 @@ public class BrowserTask extends XrefTask {
 		xrefOutputFile = s.getNewTmpFileName();
 		restartable = true;
 		startingOption.clear();
-		startingOption.add("-task_regime_server");
+		startingOption.add("-server");
 		// set line number for completion formatting to suffisient size
 		startingOption.add("-olinelen=10000");
 		// browse url via direct URL link.

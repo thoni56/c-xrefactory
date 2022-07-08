@@ -1715,7 +1715,7 @@ static void xref(int argc, char **argv) {
 }
 
 /* *************************************************************** */
-/*                          Edit Server Mode
+/*                          Edit Server Mode                       */
 /* *************************************************************** */
 
 void mainCallEditServerInit(int nargc, char **nargv) {

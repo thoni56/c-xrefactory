@@ -1181,8 +1181,8 @@ static void usage() {
     fprintf(stdout, "mode (one of):\n");
     fprintf(stdout, "\t-xref                     - generate cross-reference data in batch mode\n");
     fprintf(stdout, "\t-server                   - enter edit server mode with c-xref protocol\n");
-    fprintf(stdout, "\t-lsp                      - enter edit server mode with Language Server Protocol (LSP)\n");
     fprintf(stdout, "\t-refactor                 - make an automated refactoring\n");
+    fprintf(stdout, "\t-lsp                      - enter edit server mode with Language Server Protocol (LSP)\n");
     fprintf(stdout, "\n");
 #else
     fprintf(stdout, "Usage:\n\t\tc-xref <option>+ <input files>\n\n");
@@ -2147,6 +2147,9 @@ static bool processSOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-searchdefshortlist")==0) {
         options.tagSearchSpecif = TSS_SEARCH_DEFS_ONLY_SHORT;
     }
+    else if (strcmp(argv[i], "-server")==0) {
+        options.mode = ServerMode;
+    }
     else return false;
     *argi = i;
     return true;
@@ -2157,9 +2160,6 @@ static bool processTOption(int *argi, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i], "-trace")==0) {
         options.trace = true;
-    }
-    else if (strcmp(argv[i], "-task_regime_server")==0) {
-        options.mode = ServerMode;
     }
     else return false;
     *argi = i;

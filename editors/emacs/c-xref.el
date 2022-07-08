@@ -2354,11 +2354,11 @@ tries to delete C-xrefactory windows first.
   (let ((cbuffer))
     (setq cbuffer (current-buffer))
     (if (eq (eval proc) nil)
-	(c-xref-start-server-process '("-task_regime_server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
+	(c-xref-start-server-process '("-server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
       (if (not (eq (process-status (car (eval proc))) 'run))
 	  (progn
 	    (delete-process (car (eval proc)))
-	    (c-xref-start-server-process '("-task_regime_server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
+	    (c-xref-start-server-process '("-server") c-xref-server-tasks-ofile proc 'c-xref-server-filter)
 	    )))
     (if c-xref-debug-mode (message "sending: %s" data))
     (get-buffer-create " *c-xref-server-options*")
