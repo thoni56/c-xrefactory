@@ -682,8 +682,8 @@ static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, c
     return argc;
 }
 
-bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
-                        char *section, char *project, char *resSection) {
+bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
+                                 char *section, char *project, char *resSection) {
     char optionText[MAX_OPTION_LEN];
     int len, argc, c, passn=0;
     bool isActiveSection, isActivePass;
@@ -762,25 +762,25 @@ bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, MemoryKind me
     return found;
 }
 
-void readOptionsFile(char *fileName, int *nargc, char ***nargv, char *section, char *project) {
+void readOptionsFromFile(char *fileName, int *nargc, char ***nargv, char *section, char *project) {
     FILE *file;
     char realSection[MAX_FILE_NAME_SIZE];
 
     file = openFile(fileName,"r");
     if (file==NULL)
         fatalError(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
-    readOptionFromFile(file, nargc, nargv, ALLOCATE_IN_PP, section, project, realSection);
+    readOptionsFromFileIntoArgs(file, nargc, nargv, ALLOCATE_IN_PP, section, project, realSection);
     closeFile(file);
 }
 
-void readOptionPipe(char *command, int *outArgc, char ***outArgv, char *section) {
+void readOptionsFromCommand(char *command, int *outArgc, char ***outArgv, char *section) {
     FILE *file;
     char realSection[MAX_FILE_NAME_SIZE];
 
     file = popen(command, "r");
     if (file==NULL)
         fatalError(ERR_CANT_OPEN, command, XREF_EXIT_ERR);
-    readOptionFromFile(file, outArgc, outArgv, ALLOCATE_IN_PP, section, NULL, realSection);
+    readOptionsFromFileIntoArgs(file, outArgc, outArgv, ALLOCATE_IN_PP, section, NULL, realSection);
     closeFile(file);
 }
 
@@ -1265,7 +1265,7 @@ static int handleIncludeOption(int argc, char **argv, int i) {
     char **nargv;
     NEXT_FILE_ARG(i);
 
-    readOptionsFile(argv[i], &nargc, &nargv, "", NULL);
+    readOptionsFromFile(argv[i], &nargc, &nargv, "", NULL);
     processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
 
     return i;

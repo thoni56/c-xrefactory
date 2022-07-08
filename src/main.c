@@ -95,7 +95,7 @@ int mainHandleSetOption(int argc, char **argv, int i ) {
     return i;
 }
 
-static void scheduleInputFileArgumentToFileTable(char *infile) {
+static void scheduleFileArgumentToFileTable(char *infile) {
     int topCallFlag;
     void *recurseFlag;
 
@@ -107,32 +107,38 @@ static void scheduleInputFileArgumentToFileTable(char *infile) {
         });
 }
 
-static void processInFileArgument(char *infile) {
-    if (infile[0]=='`' && infile[strlen(infile)-1]=='`') {
+static void processFileArgument(char *fileArgument) {
+    if (fileArgument[0]=='`' && fileArgument[strlen(fileArgument)-1]=='`') {
         // TODO: So what does backquoted filenames mean?
+        // A command to be run that returns a set of files?
         int nargc;
         char **nargv, *pp;
         char command[MAX_OPTION_LEN];
 
-        strcpy(command, infile+1);
+        // Un-backtick the command
+        strcpy(command, fileArgument+1);
         pp = strchr(command, '`');
-        if (pp!=NULL) *pp = 0;
-        readOptionPipe(command, &nargc, &nargv, "");
+        if (pp!=NULL)
+            *pp = 0;
+
+        // Run the command and get options incl. more file arguments
+        readOptionsFromCommand(command, &nargc, &nargv, "");
         for (int i=1; i<nargc; i++) {
-            if (nargv[i][0]!='-' && nargv[i][0]!='`') {
-                scheduleInputFileArgumentToFileTable(nargv[i]);
+            // Only handle file names?
+            if (nargv[i][0] != '-' && nargv[i][0] != '`') {
+                scheduleFileArgumentToFileTable(nargv[i]);
             }
         }
 
     } else {
-        scheduleInputFileArgumentToFileTable(infile);
+        scheduleFileArgumentToFileTable(fileArgument);
     }
 }
 
 
-static void scheduleInputFilesFromArgumentsToFileTable(void) {
-    for (StringList *ll=options.inputFiles; ll!=NULL; ll=ll->next) {
-        processInFileArgument(ll->string);
+static void processFileArguments(void) {
+    for (StringList *l=options.inputFiles; l!=NULL; l=l->next) {
+        processFileArgument(l->string);
     }
 }
 
@@ -247,7 +253,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
     getXrefrcFileName(options_filename);
     options_file = openFile(options_filename, "r");
     if (options_file != NULL) {
-        found = readOptionFromFile(options_file, &nargc, &nargv, DONT_ALLOCATE, filename, options.project, section);
+        found = readOptionsFromFileIntoArgs(options_file, &nargc, &nargv, DONT_ALLOCATE, filename, options.project, section);
         if (found) {
             log_debug("options file '%s' section '%s' found", options_filename, section);
         }
@@ -690,7 +696,7 @@ static void getAndProcessXrefrcOptions(char *dffname, char *dffsect, char *proje
     int dfargc;
     char **dfargv;
     if (*dffname != 0 && !options.no_stdoptions) {
-        readOptionsFile(dffname, &dfargc, &dfargv, dffsect, project);
+        readOptionsFromFile(dffname, &dfargc, &dfargv, dffsect, project);
         // warning, the following can overwrite variables like
         // 's_cxref_file_name' allocated in PPM_MEMORY, then when memory
         // is got back by caching, it may provoke a problem
@@ -999,7 +1005,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     /* now pre-read the option file */
     processOptions(argc, argv, PROCESS_FILE_ARGUMENTS);
-    scheduleInputFilesFromArgumentsToFileTable();
+    processFileArguments();
 
     if (options.refactoringRegime == RegimeRefactory) {
         // some more memory for refactoring task
@@ -1040,7 +1046,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     reInitCwd(defaultOptionsFileName, defaultOptionsSection);
 
     if (defaultOptionsFileName[0]!=0) {
-        readOptionsFile(defaultOptionsFileName, &dfargc, &dfargv, defaultOptionsSection, defaultOptionsSection);
+        readOptionsFromFile(defaultOptionsFileName, &dfargc, &dfargv, defaultOptionsSection, defaultOptionsSection);
         if (options.refactoringRegime == RegimeRefactory) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;
         } else if (options.taskRegime==RegimeEditServer) {
@@ -1073,7 +1079,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             options.noErrors = previousNoErrorsOption;
         checkExactPositionUpdate(false);
         if (inmode == PROCESS_FILE_ARGUMENTS)
-            scheduleInputFilesFromArgumentsToFileTable();
+            processFileArguments();
     }
     recoverCachePointZero();
 
@@ -1142,7 +1148,7 @@ void getPipedOptions(int *outNargc,char ***outNargv){
     *outNargc = 0;
     assert(options.taskRegime);
     if (options.taskRegime == RegimeEditServer) {
-        readOptionFromFile(stdin, outNargc, outNargv, ALLOCATE_IN_SM,
+        readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM,
                            "", NULL, nsect);
         /* those options can't contain include or define options, */
         /* sections neither */
@@ -1716,7 +1722,7 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     initAvailableRefactorings();
     options.classpath = "";
     processOptions(nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
-    scheduleInputFilesFromArgumentsToFileTable();
+    processFileArguments();
     if (options.serverOperation == OLO_EXTRACT)
         cache.cpIndex = 2; // !!!! no cache, TODO why is 2 = no cache?
     initCompletions(&s_completions, 0, noPosition);

@@ -170,10 +170,10 @@ extern char *getJavaHome(void);
 extern void getJavaClassAndSourcePath(void);
 extern bool packageOnCommandLine(char *packageName);
 extern char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename);
-extern bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv,
+extern bool readOptionsFromFileIntoArgs(FILE *ff, int *nargc, char ***nargv,
                                MemoryKind memFl, char *sectionFile, char *project, char *resSection);
-extern void readOptionsFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project);
-extern void readOptionPipe(char *command, int *nargc, char ***nargv, char *sectionFile);
+extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project);
+extern void readOptionsFromCommand(char *command, int *nargc, char ***nargv, char *sectionFile);
 extern void javaSetSourcePath(bool defaultClassPathAllowed);
 extern bool referenceFileCountMatches(int newRefNum);
 

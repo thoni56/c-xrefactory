@@ -55,16 +55,16 @@ char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
   return (char *) mock(tt);
 }
 
-bool readOptionFromFile(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
+bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
                         char *section, char *project, char *resSection) {
   return (bool) mock(file, outArgc, outArgv, memoryKind, section, project, resSection);
 }
 
-void readOptionsFile(char *fileName, int *outArgc, char ***outArgv, char *sectionFile, char *project) {
+void readOptionsFromFile(char *fileName, int *outArgc, char ***outArgv, char *sectionFile, char *project) {
   mock(fileName, outArgc, outArgv, sectionFile, project);
 }
 
-void readOptionPipe(char *command, int *outArgc, char ***outArgv, char *sectionFile) {
+void readOptionsFromCommand(char *command, int *outArgc, char ***outArgv, char *sectionFile) {
   mock(command, outArgc, outArgv, sectionFile);
 }
 
