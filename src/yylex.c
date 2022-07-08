@@ -142,7 +142,7 @@ char *placeIdent(void) {
     char mm[MAX_REF_LEN];
     int s;
     if (currentFile.fileName!=NULL) {
-        if (options.xref2 && options.taskRegime!=RegimeEditServer) {
+        if (options.xref2 && options.mode!=ServerMode) {
             strcpy(fn, getRealFileName_static(normalizeFileName(currentFile.fileName, cwd)));
             assert(strlen(fn) < MAX_FILE_NAME_SIZE);
             sprintf(mm, "%s:%d", simpleFileName(fn),currentFile.lineNumber);
@@ -338,8 +338,8 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
     Lexem lexem;
 
     lexem = *out_lexem;
-    assert(options.taskRegime);
-    if (options.taskRegime == RegimeEditServer) {
+    assert(options.mode);
+    if (options.mode == ServerMode) {
         if (lexem==IDENT_TO_COMPLETE) {
             cache.active = false;
             s_olstringServed = true;
@@ -535,8 +535,8 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
     if (symbolTableIsMember(symbolTable, &ss, NULL, &memb))
         return;
     if (!openInclude(pchar, iname, &fname, is_include_next)) {
-        assert(options.taskRegime);
-        if (options.taskRegime!=RegimeEditServer)
+        assert(options.mode);
+        if (options.mode!=ServerMode)
             warningMessage(ERR_CANT_OPEN, iname);
         else
             log_error("Can't open file '%s'", fname);
@@ -863,7 +863,7 @@ endOfBody:
     symbol->u.mbody = macroBody;
 
     addMacroToTabs(symbol, macroName);
-    assert(options.taskRegime);
+    assert(options.mode);
     addCxReference(symbol, &macroPosition, UsageDefined, noFileIndex, noFileIndex);
     return;
 
@@ -928,7 +928,7 @@ static void processUndefineDirective(void) {
         symbol.type = TypeMacro;
         symbol.storage = StorageNone;
 
-        assert(options.taskRegime);
+        assert(options.mode);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
         if (symbolTableIsMember(symbolTable, &symbol, NULL, &member)) {
@@ -1022,7 +1022,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
 endOfMacroArgument:
     assert(0);
 endOfFile:;
-    if (options.taskRegime!=RegimeEditServer) {
+    if (options.mode!=ServerMode) {
         warningMessage(ERR_ST,"end of file in cpp conditional");
     }
     return UNTIL_ENDIF;
@@ -1142,7 +1142,7 @@ int cexp_yylex(void) {
         mm = symbolTableIsMember(symbolTable, &symbol, NULL, &foundMember);
         if (mm && foundMember->u.mbody == NULL)
             mm = 0;   // undefined macro
-        assert(options.taskRegime);
+        assert(options.mode);
         if (mm)
             addCxReference(&symbol, &position, UsageUsed, noFileIndex, noFileIndex);
 
@@ -1153,7 +1153,7 @@ int cexp_yylex(void) {
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
             passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
-            if (lexem != ')' && options.taskRegime!=RegimeEditServer) {
+            if (lexem != ')' && options.mode!=ServerMode) {
                 warningMessage(ERR_ST,"missing ')' after defined( ");
             }
         }
@@ -1263,7 +1263,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
             genCppIfElseReference(0, &position, UsageUsed);
             currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
-        } else if (options.taskRegime!=RegimeEditServer) {
+        } else if (options.mode!=ServerMode) {
             warningMessage(ERR_ST,"unmatched #elif");
         }
         break;
@@ -1273,7 +1273,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
             genCppIfElseReference(0, &position, UsageUsed);
             currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
-        } else if (options.taskRegime!=RegimeEditServer) {
+        } else if (options.mode!=ServerMode) {
             warningMessage(ERR_ST,"unmatched #else");
         }
         break;
@@ -1282,7 +1282,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         if (currentFile.ifDepth) {
             currentFile.ifDepth --;
             genCppIfElseReference(-1, &position, UsageUsed);
-        } else if (options.taskRegime!=RegimeEditServer) {
+        } else if (options.mode!=ServerMode) {
             warningMessage(ERR_ST,"unmatched #endif");
         }
         break;
@@ -1718,8 +1718,8 @@ static void getActualMacroArgument(
     if (0) {  /* skip the error message when finished normally */
 endOfFile:;
 endOfMacroArgument:;
-        assert(options.taskRegime);
-        if (options.taskRegime!=RegimeEditServer) {
+        assert(options.mode);
+        if (options.mode!=ServerMode) {
             warningMessage(ERR_ST,"[getActMacroArgument] unterminated macro call");
         }
     }
@@ -1776,8 +1776,8 @@ static struct lexInput *getActualMacroArguments(MacroBody *macroBody, Position *
 endOfMacroArgument:
     assert(0);
 endOfFile:
-    assert(options.taskRegime);
-    if (options.taskRegime!=RegimeEditServer) {
+    assert(options.mode);
+    if (options.mode!=ServerMode) {
         warningMessage(ERR_ST,"[getActualMacroArguments] unterminated macro call");
     }
     return NULL;
@@ -1851,9 +1851,9 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     } else {
         actualArgumentsInput = NULL;
     }
-    assert(options.taskRegime);
+    assert(options.mode);
     addCxReference(macroSymbol, macroPosition, UsageUsed, noFileIndex, noFileIndex);
-    if (options.taskRegime == RegimeXref)
+    if (options.mode == XrefMode)
         addMacroBaseUsageRef(macroSymbol);
     log_trace("create macro body '%s'", macroBody->name);
     createMacroBody(&macroBodyInput,macroBody,actualArgumentsInput,macroBody->argCount);
@@ -1870,8 +1870,8 @@ endOfMacroArgument:
     return false;
 
  endOfFile:
-    assert(options.taskRegime);
-    if (options.taskRegime!=RegimeEditServer) {
+    assert(options.mode);
+    if (options.mode!=ServerMode) {
         warningMessage(ERR_ST,"[macroCallExpand] unterminated macro call");
     }
     currentInput.currentLexemP = previousLexemP;
@@ -2133,8 +2133,8 @@ int yylex(void) {
 
         id = yytext = currentInput.currentLexemP;
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &idpos, &length, macroStackIndex == 0);
-        assert(options.taskRegime);
-        if (options.taskRegime == RegimeEditServer) {
+        assert(options.mode);
+        if (options.mode == ServerMode) {
 //			???????????? isn't this useless
             testCxrefCompletionId(&lexem,yytext,&idpos);
         }
@@ -2208,8 +2208,8 @@ int yylex(void) {
         yytext = constant;
         goto finish;
     }
-    assert(options.taskRegime);
-    if (options.taskRegime == RegimeEditServer) {
+    assert(options.mode);
+    if (options.mode == ServerMode) {
         yytext = currentInput.currentLexemP;
         passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, macroStackIndex == 0);
         if (lexem == IDENT_TO_COMPLETE) {

@@ -153,7 +153,7 @@ char *javaCreateComposedName(char *prefix,
 }
 
 void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
-    if (options.taskRegime != RegimeEditServer) return;
+    if (options.mode != ServerMode) return;
     if (positionsAreEqual(s_cxRefPos, *cpos)) {
         s_primaryStartPosition = *bpos;
     }
@@ -161,14 +161,14 @@ void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
 
 void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp) {
     IdList *ll;
-    if (options.taskRegime != RegimeEditServer) return;
+    if (options.mode != ServerMode) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
         javaCheckForPrimaryStart(&ll->id.position, pp);
     }
 }
 
 void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos) {
-    if (options.taskRegime != RegimeEditServer) return;
+    if (options.mode != ServerMode) return;
     if (positionsAreEqual(s_cxRefPos, *cpos)) {
         s_staticPrefixStartPosition = *bpos;
     }
@@ -176,7 +176,7 @@ void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos) {
 
 void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp) {
     IdList *ll;
-    if (options.taskRegime != RegimeEditServer) return;
+    if (options.mode != ServerMode) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
         javaCheckForStaticPrefixStart(&ll->id.position, pp);
     }
@@ -773,7 +773,7 @@ static void addJavaFileDependency(int file, char *onfile) {
     Position	pos;
 
     // do dependencies only when doing cross reference file
-    if (options.taskRegime != RegimeXref)
+    if (options.mode != XrefMode)
         return;
     // also do it only for source files
     if (!getFileItem(file)->isArgument)
@@ -1837,7 +1837,7 @@ void javaMethodBodyBeginning(Symbol *method) {
 
 // this should be merged with _bef_ token!
 void javaMethodBodyEnding(Position *endpos) {
-    if (options.taskRegime == RegimeEditServer) {
+    if (options.mode == ServerMode) {
         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
             s_cps.methodCoordEndLine = currentFile.lineNumber+1;
         }
@@ -2695,7 +2695,7 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
 void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
     char tmpBuff[TMP_BUFF_SIZE];
 
-    if (options.taskRegime == RegimeEditServer)
+    if (options.mode == ServerMode)
         return;
     for (StringList *pp=javaClassPaths; pp!=NULL; pp=pp->next) {
         if (compareFileNames(dir, pp->string)==0)

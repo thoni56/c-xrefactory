@@ -84,8 +84,8 @@ void deleteSymDef(void *p) {
     log_debug("deleting %s %s", pp->name, pp->linkName);
     if (symbolTableDelete(s_javaStat->locals,pp)) return;
     if (symbolTableDelete(symbolTable,pp)==0) {
-        assert(options.taskRegime);
-        if (options.taskRegime != RegimeEditServer) {
+        assert(options.mode);
+        if (options.mode != ServerMode) {
             errorMessage(ERR_INTERNAL,"symbol on deletion not found");
         }
     }
@@ -138,16 +138,16 @@ S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
 }
 
 void setDirectStructureCompletionType(TypeModifier *typeModifier) {
-    assert(options.taskRegime);
-    if (options.taskRegime == RegimeEditServer) {
+    assert(options.mode);
+    if (options.mode == ServerMode) {
         s_structRecordCompletionType = typeModifier;
         assert(s_structRecordCompletionType);
     }
 }
 
 void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
-    assert(options.taskRegime);
-    if (options.taskRegime == RegimeEditServer) {
+    assert(options.mode);
+    if (options.mode == ServerMode) {
         if (typeModifier->kind==TypePointer || typeModifier->kind==TypeArray) {
             s_structRecordCompletionType = typeModifier->next;
             assert(s_structRecordCompletionType);
@@ -1092,7 +1092,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
                                     PositionList *commas, Position *rpar,
                                     int hasParam
                                     ) {
-    if (options.taskRegime != RegimeEditServer)
+    if (options.mode != ServerMode)
         return;
     if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
         return;
@@ -1105,7 +1105,7 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                     PositionList *commas, Position *rpar,
                                     int hasParam
                                     ) {
-    if (options.taskRegime != RegimeEditServer)
+    if (options.mode != ServerMode)
         return;
     if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
         return;
@@ -1117,7 +1117,7 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
 void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
                                         PositionList *commas, Position *rpar
                                         ) {
-    if (options.taskRegime != RegimeEditServer)
+    if (options.mode != ServerMode)
         return;
     if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
         return;

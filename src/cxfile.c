@@ -489,8 +489,8 @@ static void createSubClassInfo(int superior, int inferior, int originFileIndex, 
     if (p==NULL) {
         p = newClassHierarchyReference(originFileIndex, superior, inferiorFile->superClasses);
         inferiorFile->superClasses = p;
-        assert(options.taskRegime);
-        if (options.taskRegime == RegimeXref) {
+        assert(options.mode);
+        if (options.mode == XrefMode) {
             if (genfl == CX_FILE_ITEM_GEN)
                 writeSubClassInfo(superior, inferior, originFileIndex);
         }
@@ -708,7 +708,7 @@ void genReferenceFile(bool updating, char *filename) {
 
 static void writeCxFileCompatibilityError(char *message) {
     static time_t lastMessageTime;
-    if (options.taskRegime == RegimeEditServer) {
+    if (options.mode == ServerMode) {
         if (lastMessageTime < fileProcessingStartTime) {
             errorMessage(ERR_ST, message);
             lastMessageTime = time(NULL);
@@ -783,14 +783,14 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
     bool updateFromCxFile = true;
 
     log_trace("re-read info from '%s' for '%s'?", options.cxrefsLocation, fileItem->name);
-    if (options.taskRegime == RegimeXref) {
+    if (options.mode == XrefMode) {
         if (fileItem->cxLoading && !fileItem->cxSaved) {
             updateFromCxFile = false;
         } else {
             updateFromCxFile = true;
         }
     }
-    if (options.taskRegime == RegimeEditServer) {
+    if (options.mode == ServerMode) {
         log_trace("last inspected == %d, start at %d\n", fileItem->lastInspected, fileProcessingStartTime);
         if (fileItem->lastInspected < fileProcessingStartTime) {
             updateFromCxFile = true;
@@ -836,8 +836,8 @@ static void scanFunction_ReadFileName(int size,
             fileItem->lastFullUpdateMtime=fumtime;
         if (fileItem->lastUpdateMtime == 0)
             fileItem->lastUpdateMtime=umtime;
-        assert(options.taskRegime);
-        if (options.taskRegime == RegimeXref) {
+        assert(options.mode);
+        if (options.mode == XrefMode) {
             if (additionalArg == CXSF_GENERATE_OUTPUT) {
                 writeFileIndexItem(fileItem, fileIndex);
             }
@@ -850,7 +850,7 @@ static void scanFunction_ReadFileName(int size,
             // Set it to none, it will be updated by source item
             fileItem->sourceFileNumber = noFileIndex;
         }
-        if (options.taskRegime == RegimeEditServer) {
+        if (options.mode == ServerMode) {
             fileItem->isArgument = isArgument;
         }
         if (fileItem->lastFullUpdateMtime == 0)
@@ -1007,7 +1007,7 @@ static void scanFunction_SymbolName(int size,
     char *id;
 
     assert(marker == CXFI_SYMBOL_NAME);
-    if (options.taskRegime==RegimeEditServer && additionalArg==CXSF_DEAD_CODE_DETECTION) {
+    if (options.mode==ServerMode && additionalArg==CXSF_DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
@@ -1030,15 +1030,15 @@ static void scanFunction_SymbolName(int size,
     while (isMember && member->category!=CategoryGlobal)
         isMember = refTabNextMember(referencesItem, &member);
 
-    assert(options.taskRegime);
-    if (options.taskRegime == RegimeXref) {
+    assert(options.mode);
+    if (options.mode == XrefMode) {
         if (member==NULL)
             member=referencesItem;
         genRefItem0(member, true);
         referencesItem->references = member->references; // note references to not generate multiple
         member->references = NULL;      // HACK, remove them, to not be regenerated
     }
-    if (options.taskRegime == RegimeEditServer) {
+    if (options.mode == ServerMode) {
         if (additionalArg == CXSF_DEAD_CODE_DETECTION) {
             if (symbolIsReportableAsUnused(lastIncomingInfo.symbolTab[symbolIndex])) {
                 lastIncomingInfo.symbolToCheckForDeadness = symbolIndex;
@@ -1146,8 +1146,8 @@ static void scanFunction_Reference(int size,
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
     col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
 
-    assert(options.taskRegime);
-    if (options.taskRegime == RegimeXref) {
+    assert(options.mode);
+    if (options.mode == XrefMode) {
         if (fileItem->cxLoading && fileItem->cxSaved) {
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
@@ -1159,7 +1159,7 @@ static void scanFunction_Reference(int size,
         }
         if (copyrefFl)
             writeCxReferenceBase(sym, usageKind, reqAcc, file, line, col);
-    } else if (options.taskRegime == RegimeEditServer) {
+    } else if (options.mode == ServerMode) {
         pos = makePosition(file, line, col);
         fillUsage(&usage, usageKind, reqAcc);
         fillReference(&reference, usage, pos, NULL);
@@ -1233,7 +1233,7 @@ static void scanFunction_ReferenceFileCountCheck(int referenceFileCount,
                                                  int additionalArg
 ) {
     if (!referenceFileCountMatches(referenceFileCount)) {
-        assert(options.taskRegime);
+        assert(options.mode);
         fatalError(ERR_ST,"Tag file was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
     }
 }
@@ -1260,15 +1260,15 @@ static void scanFunction_SubClass(int size,
     sub_class = decodeFileNumbers[sub_class];
     FileItem *subFileItem = getFileItem(sub_class);
 
-    assert(options.taskRegime);
-    switch (options.taskRegime) {
-    case RegimeXref:
+    assert(options.mode);
+    switch (options.mode) {
+    case XrefMode:
         if (!fileItem->cxLoading &&
             additionalArg==CXSF_GENERATE_OUTPUT) {
             writeSubClassInfo(super_class, sub_class, fileIndex);  // updating refs
         }
         break;
-    case RegimeEditServer:
+    case ServerMode:
         if (fileIndex != inputFileNumber) {
             log_trace("reading %s < %s", simpleFileName(subFileItem->name),
                       simpleFileName(superFileItem->name));
@@ -1344,7 +1344,7 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
     }
 
     /* TODO: This should be done outside this function... */
-    if (options.taskRegime==RegimeEditServer
+    if (options.mode==ServerMode
         && (options.serverOperation==OLO_LOCAL_UNUSED
             || options.serverOperation==OLO_GLOBAL_UNUSED)) {
         // check if last symbol was dead

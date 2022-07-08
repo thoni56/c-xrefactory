@@ -51,7 +51,7 @@ Options presetOptions = {
     false,                      // briefoutput
     false,                      // cacheIncludes
     NULL,                       // renameTo
-    RegimeUndefined,            // refactoringRegime
+    UndefinedMode,              // refactoringMode
     false,                      // xrefactory-II
     NULL,                       // moveTargetFile
 #if defined (__WIN32__)
@@ -125,7 +125,7 @@ Options presetOptions = {
     8,                          /* tabulator */
     -1,                         /* olCursorPos */
     -1,                         /* olMarkPos */
-    RegimeXref,                 /* taskRegime */
+    XrefMode,                   /* operating mode */
     false,                      /* debug */
     false,                      /* trace */
     0,                          /* serverOperation */
@@ -271,7 +271,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     ENTER();
     int fileIndex = addFileNameToFileTable(fn);
     FileItem *fileItem = getFileItem(fileIndex);
-    if (options.taskRegime!=RegimeEditServer) {
+    if (options.mode!=ServerMode) {
         // yes in edit server you process also headers, etc.
         fileItem->isArgument = true;
     }
@@ -346,7 +346,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         ) {
             return;
         }
-        if (options.javaFilesOnly && options.taskRegime != RegimeEditServer
+        if (options.javaFilesOnly && options.mode != ServerMode
             && !fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes)
             && !fileNameHasOneOfSuffixes(fname, "jar:class")
         ) {
@@ -360,7 +360,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
                 dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory);
             });
     } else if (isTopDirectory && (!options.allowPackagesOnCommandLine || !packageOnCommandLine(fname))) {
-        if (options.taskRegime!=RegimeEditServer) {
+        if (options.mode!=ServerMode) {
             errorMessage(ERR_CANT_OPEN, dirName);
         } else {
             // hacked 16.4.2003 in order to can complete in buffers
@@ -531,7 +531,7 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
                     text[i++]=c;
                 c=readChar(file);
             }
-            if (c!='\"' && options.taskRegime!=RegimeEditServer) {
+            if (c!='\"' && options.mode!=ServerMode) {
                 fatalError(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
             }
         } else if (c=='`') {
@@ -544,7 +544,7 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
             }
             if (i < MAX_OPTION_LEN-1)
                 text[i++]=c;
-            if (c!='`'  && options.taskRegime!=RegimeEditServer) {
+            if (c!='`'  && options.mode!=ServerMode) {
                 errorMessage(ERR_ST, "option string through end of line");
             }
         } else if (c=='[') {
@@ -567,7 +567,7 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
             }
         }
         text[i]=0;
-        if (quoteInOption && options.taskRegime!=RegimeEditServer) {
+        if (quoteInOption && options.mode!=ServerMode) {
             static bool messageWritten = false;
             if (! messageWritten) {
                 char tmpBuff[TMP_BUFF_SIZE];
@@ -1071,7 +1071,7 @@ void getJavaClassAndSourcePath(void) {
             processClassPathString( jdkcp);
         }
 
-        if (LANGUAGE(LANG_JAVA) && options.taskRegime != RegimeEditServer) {
+        if (LANGUAGE(LANG_JAVA) && options.mode != ServerMode) {
             static bool messageFlag=false;
             if (messageFlag && ! options.briefoutput) {
                 if (options.xref2) {
@@ -1991,7 +1991,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
 static void setXrefsLocation(char *argvi) {
     static bool messageWritten=false;
 
-    if (options.taskRegime==RegimeXref && !messageWritten && !isAbsolutePath(argvi)) {
+    if (options.mode==XrefMode && !messageWritten && !isAbsolutePath(argvi)) {
         char tmpBuff[TMP_BUFF_SIZE];
         messageWritten = true;
         sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option", argvi);
@@ -2023,7 +2023,7 @@ static bool processROption(int *argi, int argc, char **argv) {
         options.referenceListWithoutSource = 1;
     }
     else if (strcmp(argv[i], "-refactory")==0)   {
-        options.refactoringRegime = RegimeRefactory;
+        options.refactoringMode = RefactoryMode;
     }
     else if (strcmp(argv[i], "-rfct-rename")==0) {
         options.theRefactoring = AVR_RENAME_SYMBOL;
@@ -2159,7 +2159,7 @@ static bool processTOption(int *argi, int argc, char **argv) {
         options.trace = true;
     }
     else if (strcmp(argv[i], "-task_regime_server")==0) {
-        options.taskRegime = RegimeEditServer;
+        options.mode = ServerMode;
     }
     else return false;
     *argi = i;
@@ -2337,7 +2337,7 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
         if (!matched) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "unknown option %s, (try c-xref -help)\n", argv[i]);
-            if (options.taskRegime==RegimeXref) {
+            if (options.mode==XrefMode) {
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
             } else
                 errorMessage(ERR_ST, tmpBuff);

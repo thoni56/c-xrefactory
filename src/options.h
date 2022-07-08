@@ -13,13 +13,13 @@
 #include "extract.h"
 
 
-/* Working regime in which the task is invoked */
+/* Working mode in which the task is invoked */
 typedef enum {
-    RegimeUndefined = 0, /* Explicitly zero so we can assert(regime) */
-    RegimeXref,          /* Cross referencer called by user from command line */
-    RegimeEditServer,    /* editor server, called by on-line editing action */
-    RegimeRefactory      /* refactoring server, called by on-line editing */
-} TaskRegimes;
+    UndefinedMode = 0, /* Explicitly zero so we can assert(mode) */
+    XrefMode,          /* Cross referencer called by user from command line */
+    ServerMode,        /* editor server, called by on-line editing action */
+    RefactoryMode      /* refactoring server, called by on-line editing */
+} Mode;
 
 typedef struct setGetEnv {
     int num;
@@ -61,7 +61,7 @@ typedef struct options {
     bool briefoutput;
     bool cacheIncludes;
     char *renameTo;
-    TaskRegimes refactoringRegime;
+    Mode refactoringMode;
     bool xref2;
     char *moveTargetFile;
     char *cFilesSuffixes;
@@ -130,7 +130,7 @@ typedef struct options {
     int tabulator;
     int olCursorPos;
     int olMarkPos;
-    TaskRegimes taskRegime;
+    Mode mode;
     bool debug;
     bool trace;
     ServerOperation serverOperation;

@@ -234,15 +234,10 @@ static void fillCache(Cache *cache, char active, int cpi, int ibi, char *lbcc, c
 
 // before allowing it, fix problem when modifying .xrefrc during run!!!!
 #define CACHING_CLASSES 1
-#define CAN_CONTINUE_CACHING_CLASSES(cp) (CACHING_CLASSES               \
-                                          && LANGUAGE(LANG_JAVA)         \
-                                          && options.taskRegime == RegimeXref \
-                                          && ppmMemoryIndex < (SIZE_ppmMemory/3)*2 \
-    )
 
 static bool canContinueCachingClasses() {
     return CACHING_CLASSES && LANGUAGE(LANG_JAVA)
-        && options.taskRegime == RegimeXref
+        && options.mode == XrefMode
         && ppmMemoryIndex < (SIZE_ppmMemory/3)*2;
 }
 
@@ -273,8 +268,8 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     s_javaStat = cp->javaCached;
     counters = cp->counters;
     trailDeleteOutOfMemory();
-    assert(options.taskRegime);
-    if (options.taskRegime==RegimeEditServer && currentPass==1) {
+    assert(options.mode);
+    if (options.mode==ServerMode && currentPass==1) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
         cxMemory->index = cp->cxMemoryIndex;

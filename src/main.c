@@ -209,7 +209,7 @@ static void schedulingToUpdate(FileItem *fileItem) {
         // removed file, remove it from watched updates, load no reference
         if (fileItem->isArgument) {
             // no messages during refactorings
-            if (refactoringOptions.refactoringRegime != RegimeRefactory) {
+            if (refactoringOptions.refactoringMode != RefactoryMode) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff, "file %s not accessible", fileItem->name);
                 warningMessage(ERR_ST, tmpBuff);
@@ -284,13 +284,13 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
 static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
     char tmpBuff[TMP_BUFF_SIZE];
 
-    if (options.refactoringRegime==RegimeRefactory)
+    if (options.refactoringMode==RefactoryMode)
         return;
     if (outFName[0]==0) {
         if (options.project!=NULL) {
             sprintf(tmpBuff, "'%s' project options not found",
                     options.project);
-            if (options.taskRegime == RegimeEditServer) {
+            if (options.mode == ServerMode) {
                 errorMessage(ERR_ST, tmpBuff);
             } else {
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_NO_PROJECT);
@@ -301,7 +301,7 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
             sprintf(tmpBuff, "no project name covers '%s'",file);
             warningMessage(ERR_ST, tmpBuff);
         }
-    } else if (options.taskRegime==RegimeXref) {
+    } else if (options.mode==XrefMode) {
         if (options.xref2) {
             sprintf(tmpBuff, "C-xrefactory project: %s", outSect);
             ppcGenRecord(PPC_INFORMATION, tmpBuff);
@@ -316,8 +316,8 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
                                          bool showErrorMessage){
     // all this stuff should be reworked, but be very careful when refactoring it
     // WTF? Why??!?!
-    assert(options.taskRegime);
-    if (options.taskRegime == RegimeEditServer) {
+    assert(options.mode);
+    if (options.mode == ServerMode) {
         if (showErrorMessage) {
             writeOptionsFileMessage(fileName, outFName, section);
         }
@@ -338,7 +338,7 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
             if (outFName[0]==0) {
                 strcpy(outFName, oldStdopFile);
             }
-            if(strcmp(oldStdopFile,outFName)||strcmp(oldStdopSection,section)){
+            if (strcmp(oldStdopFile,outFName) || strcmp(oldStdopSection,section)) {
                 if (options.xref2) {
                     char tmpBuff[TMP_BUFF_SIZE];                        \
                     sprintf(tmpBuff, "[Xref] new project: '%s'", section);
@@ -817,7 +817,7 @@ static void fileProcessingInitialisations(bool *firstPass,
         discoverBuiltinIncludePaths();
 
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
-        if (options.taskRegime != RegimeEditServer && inputFilename == NULL) {
+        if (options.mode != ServerMode && inputFilename == NULL) {
             *inputOpened = false;
             goto fini;
         }
@@ -848,8 +848,8 @@ static void fileProcessingInitialisations(bool *firstPass,
     // reset language once knowing all language suffixes
     mainSetLanguage(fileName,  outLanguage);
     inputFileNumber = currentFile.lexBuffer.buffer.fileNumber;
-    assert(options.taskRegime);
-    if (options.taskRegime==RegimeXref && !javaPreScanOnly) {
+    assert(options.mode);
+    if (options.mode==XrefMode && !javaPreScanOnly) {
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION, getRealFileName_static(inputFilename));
         } else {
@@ -887,7 +887,7 @@ static void totalTaskEntryInitialisations() {
 
     communicationChannel = stdout;
     // TODO: how come it is not always Xref, as set in options?
-    if (options.taskRegime == RegimeEditServer)
+    if (options.mode == ServerMode)
         errOut = stdout;
 
     fileAbortEnabled = false;
@@ -1007,13 +1007,13 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     processOptions(argc, argv, PROCESS_FILE_ARGUMENTS);
     processFileArguments();
 
-    if (options.refactoringRegime == RegimeRefactory) {
+    if (options.refactoringMode == RefactoryMode) {
         // some more memory for refactoring task
         assert(options.cxMemoryFactor>=1);
         CX_ALLOCC(sss, 6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
         CX_FREE_UNTIL(sss);
     }
-    if (options.taskRegime==RegimeXref) {
+    if (options.mode==XrefMode) {
         // get some memory if cross referencing
         assert(options.cxMemoryFactor>=1);
         CX_ALLOCC(sss, 3*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
@@ -1047,9 +1047,9 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     if (defaultOptionsFileName[0]!=0) {
         readOptionsFromFile(defaultOptionsFileName, &dfargc, &dfargv, defaultOptionsSection, defaultOptionsSection);
-        if (options.refactoringRegime == RegimeRefactory) {
+        if (options.refactoringMode == RefactoryMode) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;
-        } else if (options.taskRegime==RegimeEditServer) {
+        } else if (options.mode==ServerMode) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;
         } else if (options.create || options.project!=NULL || options.update != UPDATE_DEFAULT) {
             inmode = PROCESS_FILE_ARGUMENTS;
@@ -1058,7 +1058,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         }
         // disable error reporting on xref task on this pre-reading of .c-xrefrc
         previousNoErrorsOption = options.noErrors;
-        if (options.taskRegime==RegimeEditServer) {
+        if (options.mode==ServerMode) {
             options.noErrors = true;
         }
         // there is a problem with INFILES_ENABLED (update for safetycheck),
@@ -1075,7 +1075,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         }
         processOptions(dfargc, dfargv, inmode);
         // recover value of errors messages
-        if (options.taskRegime==RegimeEditServer)
+        if (options.mode==ServerMode)
             options.noErrors = previousNoErrorsOption;
         checkExactPositionUpdate(false);
         if (inmode == PROCESS_FILE_ARGUMENTS)
@@ -1119,7 +1119,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         if (currentFile.lexBuffer.buffer.file!=NULL)
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
-    if (options.taskRegime==RegimeXref)
+    if (options.mode==XrefMode)
         generateReferenceFile();
     recoverMemoriesAfterOverflow(cxMemFreeBase);
 
@@ -1146,8 +1146,8 @@ void getPipedOptions(int *outNargc,char ***outNargv){
     char nsect[MAX_FILE_NAME_SIZE];
     int c;
     *outNargc = 0;
-    assert(options.taskRegime);
-    if (options.taskRegime == RegimeEditServer) {
+    assert(options.mode);
+    if (options.mode == ServerMode) {
         readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM,
                            "", NULL, nsect);
         /* those options can't contain include or define options, */
@@ -1499,7 +1499,7 @@ static int needToProcessInputFile(void) {
 
 
 /* *************************************************************** */
-/*                          Xref regime                            */
+/*                          Xref Mode                            */
 /* *************************************************************** */
 static void xrefProcessInputFile(int argc, char **argv, bool *firstPassP,
                                  bool *atLeastOneProcessedP) {
@@ -1551,7 +1551,7 @@ static void xrefOneWholeFileProcessing(int argc, char **argv, FileItem *fileItem
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very carefull about this!!!
-    if (refactoringOptions.refactoringRegime!=RegimeRefactory) {
+    if (refactoringOptions.refactoringMode!=RefactoryMode) {
         editorCloseBufferIfClosable(inputFilename);
         if (!options.cacheIncludes)
             editorCloseAllBuffersIfClosable();
@@ -1666,14 +1666,14 @@ void mainCallXref(int argc, char **argv) {
                     writeRelativeProgress(10+90*inputCounter/numberOfInputs);
                 inputCounter++;
             }
-            goto regime1fini;
+            goto finish;
         }
     }
 
- regime1fini:
+ finish:
     fileAbortEnabled = false;
     if (atLeastOneProcessed) {
-        if (options.taskRegime==RegimeXref) {
+        if (options.mode==XrefMode) {
             if (options.update==UPDATE_DEFAULT || options.update==UPDATE_FULL) {
                 mapOverFileTable(setFullUpdateMtimesInFileItem);
             }
@@ -1715,7 +1715,7 @@ static void xref(int argc, char **argv) {
 }
 
 /* *************************************************************** */
-/*                          Edit Server Regime                     */
+/*                          Edit Server Mode
 /* *************************************************************** */
 
 void mainCallEditServerInit(int nargc, char **nargv) {
@@ -1861,11 +1861,11 @@ int main(int argc, char **argv) {
     /* } */
 
     // Ok, so there were these five, now four, no three, main operating modes
-    if (options.refactoringRegime == RegimeRefactory)
+    if (options.refactoringMode == RefactoryMode)
         refactory();
-    if (options.taskRegime == RegimeXref)
+    if (options.mode == XrefMode)
         xref(argc, argv);
-    if (options.taskRegime == RegimeEditServer)
+    if (options.mode == ServerMode)
         editServer(argc, argv);
 
     LEAVE();

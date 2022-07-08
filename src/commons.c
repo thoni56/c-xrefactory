@@ -259,7 +259,7 @@ int extractPathInto(char *source, char *dest) {
 /*************************************************************************/
 
 static void formatMessage(char *out, int errCode, char *text) {
-    if (options.taskRegime != RegimeEditServer) {
+    if (options.mode != ServerMode) {
         sprintf(out, "%s ", placeIdent());
         out += strlen(out);
     }
@@ -364,7 +364,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     sprintf(msg,"'%s' is not true in '%s:%d'", expr, file, line);
     log_with_explicit_file_and_line(LOG_FATAL, file, line, "'%s' is not true",  expr);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
-    if (options.taskRegime == RegimeEditServer || options.refactoringRegime == RegimeRefactory) {
+    if (options.mode == ServerMode || options.refactoringMode == RefactoryMode) {
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION,"Exiting");
             closeMainOutputFile();
@@ -373,8 +373,8 @@ void internalCheckFail(char *expr, char *file, int line) {
             fprintf(errOut, "\t exiting!\n"); fflush(stderr);
         }
     }
-    if (options.taskRegime == RegimeEditServer
-        || options.refactoringRegime == RegimeRefactory
+    if (options.mode == ServerMode
+        || options.refactoringMode == RefactoryMode
         || !fileAbortEnabled
     ) {
         emergencyExit(XREF_EXIT_ERR);

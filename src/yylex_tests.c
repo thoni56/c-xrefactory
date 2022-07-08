@@ -42,7 +42,7 @@ BeforeEach(Yylex) {
     log_set_level(LOG_ERROR);
     initOuterCodeBlock();
 
-    options.taskRegime = RegimeEditServer;
+    options.mode = ServerMode;
     allocateMacroArgumentTable();
     initFileTable(100);
     initNoFileIndex();

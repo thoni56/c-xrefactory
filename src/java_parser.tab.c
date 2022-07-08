@@ -122,7 +122,7 @@ static bool inSecondJslPass() {
 
 #define SyntaxPassOnly() (options.serverOperation==OLO_GET_PRIMARY_START || options.serverOperation==OLO_GET_PARAM_COORDINATES || options.serverOperation==OLO_SYNTAX_PASS_ONLY || javaPreScanOnly)
 
-#define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && options.taskRegime==RegimeEditServer && options.serverOperation==OLO_COMPLETION)
+#define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && options.mode==ServerMode && options.serverOperation==OLO_COMPLETION)
 
 typedef struct whileExtractData {
     int				i1;
@@ -3357,7 +3357,7 @@ case 64:
                             s_javaStat->currentPackage = "";
                             javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                         } else {
-                            if (options.taskRegime != RegimeEditServer) {
+                            if (options.mode != ServerMode) {
                                 warningMessage(ERR_ST, "package name does not match directory name");
                             }
                         }
@@ -3371,8 +3371,8 @@ case 64:
                                                      jsltypeTab);
 
                     fname = getFileItem(olOriginalFileIndex)->name;
-                    if (options.taskRegime == RegimeEditServer
-                        && refactoringOptions.refactoringRegime!=RegimeRefactory) {
+                    if (options.mode == ServerMode
+                        && refactoringOptions.refactoringMode!=RefactoryMode) {
                         /* this must be before reading 's_olOriginalComFile' !!!*/
                         if (editorFileExists(fname)) {
                             javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
@@ -3947,7 +3947,7 @@ case 126:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     /* TODO, REDO all this stuff around class/method boundaries !!!!!!*/
-                    if (options.taskRegime == RegimeEditServer) {
+                    if (options.mode == ServerMode) {
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
                             s_cps.cxMemoryIndexAtMethodBegin = s_cp.cxMemoryIndexAtFunctionBegin;
                             s_cps.cxMemoryIndexAtMethodEnd = cxMemory->index;
@@ -4086,7 +4086,7 @@ case 141:
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
                     yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
-                    if (options.taskRegime == RegimeEditServer
+                    if (options.mode == ServerMode
                         && s_cp.parserPassedMarker
                         && !s_cp.thisMethodMemoriesStored){
                         s_cps.methodCoordEndLine = currentFile.lineNumber+1;
@@ -7074,7 +7074,7 @@ case 463:
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_expressionType);
-                    if (options.taskRegime == RegimeEditServer) {
+                    if (options.mode == ServerMode) {
                         if (positionIsBetween(yyvsp[-3].ast_expressionType.b, s_cxRefPos, yyvsp[-3].ast_expressionType.e)) {
                             s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION] = yyvsp[-1].ast_unsignedPositionPair.b;
                             s_spp[SPP_ASSIGNMENT_END_POSITION] = yyvsp[0].ast_expressionType.e;

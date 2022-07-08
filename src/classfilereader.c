@@ -186,7 +186,7 @@ static void compressionError(char *archivename, unsigned compressionMethod) {
 
     if (!compressionErrorWritten) {
         char tmpBuff[TMP_BUFF_SIZE];
-        assert(options.taskRegime);
+        assert(options.mode);
         strcpy(jar_filename, archivename);
         separator_position = strchr(jar_filename, ZIP_SEPARATOR_CHAR);
         if (separator_position != NULL)
@@ -210,7 +210,7 @@ static void corruptedError(char *archivename) {
                 "archive %s is corrupted or modified while c-xref task running",
                 archivename);
         errorMessage(ERR_ST, tmpBuff);
-        if (options.taskRegime == RegimeEditServer) {
+        if (options.mode == ServerMode) {
             fprintf(errOut,"\t\tplease, kill c-xref process and retry.\n");
         }
     }
@@ -412,8 +412,8 @@ static bool findEndOfCentralDirectory(CharacterBuffer *cb, int fileSize) {
     }
     if (ccc <= cb->chars) {
         found = false;
-        assert(options.taskRegime);
-        if (options.taskRegime!=RegimeEditServer) {
+        assert(options.mode);
+        if (options.mode!=ServerMode) {
             warningMessage(ERR_INTERNAL,"can't find end of central dir in archive");
         }
         goto fini;
@@ -525,8 +525,8 @@ int zipIndexArchive(char *name) {
         // new file into the table
         log_debug("adding %s into index ",name);
         if (fileStatus(name ,&stat)!=0) {
-            assert(options.taskRegime);
-            if (options.taskRegime!=RegimeEditServer) {
+            assert(options.mode);
+            if (options.mode!=ServerMode) {
                 static bool messageWritten = false;
                 if (!messageWritten)
                     warningMessage(ERR_CANT_OPEN, name);
@@ -540,8 +540,8 @@ int zipIndexArchive(char *name) {
         zipFile = openFile(name,"r");
 #endif
         if (zipFile == NULL) {
-            assert(options.taskRegime);
-            if (options.taskRegime!=RegimeEditServer) {
+            assert(options.mode);
+            if (options.mode!=ServerMode) {
                 warningMessage(ERR_CANT_OPEN, name);
             }
             return -1;

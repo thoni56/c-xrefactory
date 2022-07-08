@@ -2282,7 +2282,7 @@ case 1:
             dd = p;
             assert(dd->storage != StorageTypedef);
             yyval.ast_expressionType.d.typeModifier = dd->u.typeModifier;
-            assert(options.taskRegime);
+            assert(options.mode);
             yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->position, UsageUsed, noFileIndex, noFileIndex);
         } else {
             /* implicit function declaration */
@@ -2812,7 +2812,7 @@ case 106:
 {
         int usage;
         yyval.ast_id.d = yyvsp[0].ast_id.d;
-        assert(options.taskRegime);
+        assert(options.mode);
         assert(yyvsp[0].ast_id.d);
         assert(yyvsp[0].ast_id.d->symbol);
         if (nestingLevel() == 0)

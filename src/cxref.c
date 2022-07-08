@@ -692,8 +692,8 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
               vFunCl,vApplCl, position->file, position->line, position->col, category==CategoryGlobal?"Global":"Local",
               usageKindEnumName[usage.kind], storageEnumName[symbol->storage]);
-    assert(options.taskRegime);
-    if (options.taskRegime == RegimeEditServer) {
+    assert(options.mode);
+    if (options.mode == ServerMode) {
         if (options.serverOperation == OLO_EXTRACT) {
             if (inputFileNumber != currentFile.lexBuffer.buffer.fileNumber)
                 return NULL;
@@ -708,7 +708,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             }
         }
     }
-    if (options.taskRegime == RegimeXref) {
+    if (options.mode == XrefMode) {
         if (category == CategoryLocal)
             return NULL; /* dont cxref local symbols */
         if (!fileItem->cxLoading)
@@ -716,7 +716,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     }
     fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl, symbol->type, storage, scope,
                        symbol->access, category);
-    if (options.taskRegime==RegimeEditServer && options.serverOperation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
+    if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
         fillUsage(&reference.usage, usage.kind, AccessDefault);
         fillReference(&reference, reference.usage, *position, NULL);
         searchSymbolCheckReference(&ppp, &reference);
@@ -745,7 +745,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
               memcmp(&s_cxRefPos, position, sizeof(Position)), positionsAreEqual(s_cxRefPos, *position),
               usage.kind, symbol->linkName);
 
-    if (options.taskRegime == RegimeEditServer
+    if (options.mode == ServerMode
         && positionsAreEqual(s_cxRefPos, *position)
         && usage.kind<UsageMaxOLUsages) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
@@ -794,8 +794,8 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     }
 
     /* Test for available space */
-    assert(options.taskRegime);
-    if (options.taskRegime==RegimeXref) {
+    assert(options.mode);
+    if (options.mode==XrefMode) {
         if (!dm_enoughSpaceFor(cxMemory, CX_SPACE_RESERVE)) {
             longjmp(cxmemOverflow, LONGJUMP_REASON_REFERENCE_OVERFLOW);
         }

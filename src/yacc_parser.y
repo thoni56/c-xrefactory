@@ -459,7 +459,7 @@ primary_expr
             dd = p;
             assert(dd->storage != StorageTypedef);
             $$.d.typeModifier = dd->u.typeModifier;
-            assert(options.taskRegime);
+            assert(options.mode);
             $$.d.reference = addCxReference(p, &$1.d->position, UsageUsed, noFileIndex, noFileIndex);
         } else {
             /* implicit function declaration */
@@ -895,7 +895,7 @@ user_defined_type
     : TYPE_NAME                                             {
         int usage;
         $$.d = $1.d;
-        assert(options.taskRegime);
+        assert(options.mode);
         assert($1.d);
         assert($1.d->symbol);
         if (nestingLevel() == 0)

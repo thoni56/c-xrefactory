@@ -234,7 +234,7 @@ static void refactoryEditServerParseBuffer(char *project,
 
     currentPass = ANY_PASS;
 
-    assert(options.taskRegime == RegimeEditServer);
+    assert(options.mode == ServerMode);
 
     refactorySetArguments(nargv, buf, project, point, mark);
     nargc = argument_count(nargv);
@@ -911,7 +911,7 @@ static bool tpCheckMoveClassAccessibilities(void) {
         assert(ss);
         ss->references.references = olcxCopyRefList(rstack->references);
         rstack->actual = rstack->references;
-        if (refactoringOptions.refactoringRegime==RegimeRefactory) {
+        if (refactoringOptions.refactoringMode==RefactoryMode) {
             displayResolutionDialog(
                                              "These references inside moved class are refering to symbols which will be inaccessible at new class location. You should adjust their access first. (Each symbol is listed only once)",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
@@ -928,7 +928,7 @@ static bool tpCheckMoveClassAccessibilities(void) {
         olcxRecomputeSelRefs(rstack);
         // TODO, synchronize this with emacs, but how?
         rstack->refsFilterLevel = RFilterDefinitions;
-        if (refactoringOptions.refactoringRegime==RegimeRefactory) {
+        if (refactoringOptions.refactoringMode==RefactoryMode) {
             displayResolutionDialog(
                                              "These symbols defined inside moved class and used outside the class will be inaccessible at new class location. You should adjust their access first.",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
@@ -4592,7 +4592,7 @@ void refactory() {
     ppcSynchronize();
 
     // exiting, put undefined, so that main will finish
-    options.taskRegime = RegimeUndefined;
+    options.mode = UndefinedMode;
 
     LEAVE();
 }

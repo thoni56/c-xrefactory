@@ -582,7 +582,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     // are benchmarks making Xrefactory coredump if CR or LF
                     // is a part of strings
                 } while (ch != '\"' && (ch != '\n' || !options.strictAnsi) && ch != -1);
-                if (ch == -1 && options.taskRegime!=RegimeEditServer) {
+                if (ch == -1 && options.mode!=ServerMode) {
                     warningMessage(ERR_ST,"string constant through EOF");
                 }
                 putLexChar(0, &dd);
@@ -805,7 +805,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             }
         assert(0);
     nextLexem:
-        if (options.taskRegime == RegimeEditServer) {
+        if (options.mode == ServerMode) {
             int pi,len,lastlex,parChar,apos;
             Position *ps;
             int pos1,currentLexemPosition;

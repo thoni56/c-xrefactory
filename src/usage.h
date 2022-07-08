@@ -7,7 +7,7 @@
 
     UsageLvalUsed                       - == USAGE_EXTEND_USAGE
     UsageLastUselessInClassOrMethod     - last useless part of useless FQT name in
-                                          current method (only in regime server)
+                                          current method (only in server mode)
     UsageConstructorUsed                - can be put anywhere before 'Used'
     UsageMaybeThisInClassOrMethod       - reference inside current method
     UsageAddrUsed                       - == USAGE_TOP_LEVEL_USED
