@@ -139,14 +139,14 @@ What we'd like to do is partition the project into separate parts,
 each having a clear usage.
 
 As it happens, the things that `c-xref` can do is also the
-[.line-through]#five four# three "task regimes" that are declared in
-the sources:
+[.line-through]#five four# three modes (previously "task regimes") that are
+declared in the sources:
 
-  - RegimeXref
-  - [.line-through]#RegimeHtmlGenerate#
-  - RegimeEditServer
-  - RegimeRefactory
-  - [.line-through]#RegimeGenerate# (was removed when we finally managed to remove the bootstrap step)
+  - Xref
+  - [.line-through]#HtmlGenerate#
+  - Editor Server
+  - Refactory
+  - [.line-through]#Generate# (was removed when we finally managed to remove the bootstrap step)
 
 === Building
 
@@ -341,11 +341,13 @@ Reference -> Reference : next
 - server - editor server
 - refactory - refactory browser
 
-The command line options `-regime X` selects which mode to operate in,
-as shown in the final lines in `main()`.
+The default mode is "xref". The command line options `-server` and `-refactory`
+selects one of the other modes. Branching is done in the final lines in
+`main()`.
 
-They are intertwined, probably through re-use of already existing
-functionality when extending to a refactoring browser.
+The code for the modes are intertwined, probably through re-use of
+already existing functionality when extending to a refactoring
+browser.
 
 One evidence for this is that the refactory module calls the "main
 task" as a "sub-task".  This forces some intricate fiddling with the

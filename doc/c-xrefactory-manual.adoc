@@ -87,13 +87,13 @@ usage (grouping and descriptions is a Work In Progress).
 
 -refactory::
 
--task_regime_server::
+-server::
 
 `c-xrefactory` can operate in three different modes:
 
-- cross-referencer (default)
-- edit server - started by editor adapters
-- refactorer - normally called by editor adapters
+- xref - the cross-referencer (default)
+- server - editor server, started by editor adapters
+- refactory - refactoring editor, normally called by editor adapters
 
 ====== Cross-referencing options
 
