@@ -1553,8 +1553,7 @@ static void xrefOneWholeFileProcessing(int argc, char **argv, FileItem *fileItem
     // so be very carefull about this!!!
     if (refactoringOptions.refactoringMode!=RefactoryMode) {
         editorCloseBufferIfClosable(inputFilename);
-        if (!options.cacheIncludes)
-            editorCloseAllBuffersIfClosable();
+        editorCloseAllBuffersIfClosable();
     }
 }
 

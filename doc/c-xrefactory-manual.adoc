@@ -277,8 +277,6 @@ Although it doesn't actually trigger any...
 
 -browsedsym::
 
--cacheincludes::
-
 -commentmovinglevel::
 
 -completeparenthesis::

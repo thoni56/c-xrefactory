@@ -49,7 +49,6 @@ Options presetOptions = {
     "",                         // refactoring parameter 2
     AVR_NO_REFACTORING,         // refactoring
     false,                      // briefoutput
-    false,                      // cacheIncludes
     NULL,                       // renameTo
     UndefinedMode,              // refactoringMode
     false,                      // xrefactory-II
@@ -1310,8 +1309,6 @@ static bool processBOption(int *argi, int argc, char **argv) {
 static bool processCOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
-    else if (strcmp(argv[i], "-cacheincludes")==0)
-        options.cacheIncludes = true;
     else if (strcmp(argv[i], "-crlfconversion")==0)
         options.eolConversion|=CR_LF_EOL_CONVERSION;
     else if (strcmp(argv[i], "-crconversion")==0)
@@ -2023,6 +2020,7 @@ static bool processROption(int *argi, int argc, char **argv) {
         options.referenceListWithoutSource = 1;
     }
     else if (strcmp(argv[i], "-refactory")==0)   {
+        options.mode = RefactoryMode;
         options.refactoringMode = RefactoryMode;
     }
     else if (strcmp(argv[i], "-rfct-rename")==0) {

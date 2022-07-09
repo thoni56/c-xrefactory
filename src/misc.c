@@ -571,7 +571,7 @@ void fillTrivialSpecialRefItem(ReferencesItem *ddd , char *name) {
 
 /* ***************************************************************** */
 
-/* Can handle overlapping strings and returns a pointer to after the copy */
+/* Can handle overlapping strings and returns a pointer to position after the copy */
 char *strmcpy(char *dest, char *src) {
     char *p1,*p2;
     for (p1=dest,p2=src; *p2; p1++, p2++)
