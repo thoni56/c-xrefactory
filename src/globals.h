@@ -30,7 +30,7 @@ extern Position s_spp[SPP_MAX];
 extern int progressFactor;
 extern int progressOffset;
 
-extern int      cxResizingBlocked;
+extern bool cxResizingBlocked;
 extern Counters counters;
 extern unsigned s_recFindCl;
 
@@ -116,7 +116,7 @@ extern FILE *inputFile;
 extern int inputFileNumber;
 extern int olOriginalFileIndex;     /* number of original file */
 extern int olOriginalComFileNumber;  /* number of original communication file */
-extern int olStringSecondProcessing; /* am I in macro body pass ? */
+extern bool olStringSecondProcessing; /* am I in macro body pass ? */
 
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
 

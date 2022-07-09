@@ -14,8 +14,8 @@ TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 Symbol s_errorSymbol;
 char *s_javaLangObjectLinkName="java/lang/Object";
 
-int olStringSecondProcessing;
-int cxResizingBlocked;
+bool olStringSecondProcessing;
+bool cxResizingBlocked;
 
 Position s_spp[SPP_MAX];
 

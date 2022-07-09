@@ -161,12 +161,12 @@ FILE *communicationChannel=NULL;
 FILE *dumpOut=NULL;
 FILE *errOut=NULL;
 
-int cxResizingBlocked = 0;
+bool cxResizingBlocked = false;
 
 int inputFileNumber          = -1;
 int olOriginalFileIndex     = -1;
 int olOriginalComFileNumber  = -1;
-int olStringSecondProcessing = 0;
+bool olStringSecondProcessing = false;
 
 TypeModifier defaultIntModifier;
 Symbol s_defaultIntDefinition;

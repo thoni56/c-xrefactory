@@ -1392,7 +1392,7 @@ static void editServerFileSinglePass(int argc, char **argv,
     bool inputOpened = false;
     int ol2procfile;
 
-    olStringSecondProcessing = 0;
+    olStringSecondProcessing = false;
     fileProcessingInitialisations(firstPassP, argc, argv,
                                       nargc, nargv, &inputOpened, &currentLanguage);
     smartReadReferences();
@@ -1418,7 +1418,7 @@ static void editServerFileSinglePass(int argc, char **argv,
         if (ol2procfile!=noFileIndex) {
             inputFilename = getFileItem(ol2procfile)->name;
             inputOpened = false;
-            olStringSecondProcessing = 1;
+            olStringSecondProcessing = true;
             fileProcessingInitialisations(firstPassP, argc, argv,
                                               nargc, nargv, &inputOpened, &currentLanguage);
             if (inputOpened)
@@ -1617,7 +1617,7 @@ void mainCallXref(int argc, char **argv) {
 
     currentPass = ANY_PASS;
     CX_ALLOCC(cxFreeBase,0,char);
-    cxResizingBlocked = 1;
+    cxResizingBlocked = true;
     if (options.update)
         scheduleModifiedFilesToUpdate();
     atLeastOneProcessed = false;
@@ -1757,7 +1757,7 @@ static void editServer(int argc, char **argv) {
     bool firstPass;
 
     ENTER();
-    cxResizingBlocked = 1;
+    cxResizingBlocked = true;
     firstPass = true;
     copyOptions(&savedOptions, &options);
     for(;;) {
