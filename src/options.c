@@ -1177,7 +1177,7 @@ static bool isAbsolutePath(char *p) {
 static void usage() {
     fprintf(stdout, "c-xref - a C/Yacc/Java cross-referencer and refactoring tool\n\n");
 #if 0
-    fprintf(stdout, "Usage:\n\t\tc-xref <mode> <option>+ <input files>\n\n");
+    fprintf(stdout, "Usage:\n\tc-xref <mode> <option>+ <input files>\n\n");
     fprintf(stdout, "mode (one of):\n");
     fprintf(stdout, "\t-xref                     - generate cross-reference data in batch mode\n");
     fprintf(stdout, "\t-server                   - enter edit server mode with c-xref protocol\n");

@@ -1,7 +1,7 @@
 
 
 
-(defvar C_XREF_VERSION_NUMBER "1.6.17")
+(defvar C_XREF_VERSION_NUMBER "1.6.18")
 (defvar C_XREF_FILE_VERSION_NUMBER "1.6.0")
 
 (defvar PPC_NO_TAG "-- no tag --")
