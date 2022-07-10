@@ -1860,7 +1860,7 @@ int main(int argc, char **argv) {
     /* } */
 
     // Ok, so there were these five, now four, no three, main operating modes
-    if (options.refactoringMode == RefactoryMode)
+    if (options.mode == RefactoryMode)
         refactory();
     if (options.mode == XrefMode)
         xref(argc, argv);

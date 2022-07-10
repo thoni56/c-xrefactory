@@ -268,7 +268,7 @@ Here is a list of those "options", which shall not be used from the command line
 
 -olcxtrivialprecheck::
 Used to trigger some trivial(?) prechecks by refactorer when moving a class.
-Although it doesn't actually trigger any...
+Although it doesn't seem to actually trigger any...
 
 ====== As yet unsorted options
 
