@@ -730,7 +730,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         strcpy(linkName, symbol->linkName);
         fillReferencesItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl, symbol->type,
                            storage, scope, symbol->access, category);
-        pushReferences(pp, index);
+        pushReferencesItem(pp, index);
         memb = pp;
     } else {
         // at least reset some maybe new informations

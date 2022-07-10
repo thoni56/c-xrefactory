@@ -18,7 +18,7 @@
 
 extern void initReferenceTable(int size);
 extern int  addToReferencesTable(ReferencesItem *referencesItem);
-extern void pushReferences(ReferencesItem *element, int position);
+extern void pushReferencesItem(ReferencesItem *element, int position);
 extern ReferencesItem *getReferencesItem(int index);
 extern int getNextExistingReferencesItem(int index);
 extern void setReferencesItem(int index, ReferencesItem *item);

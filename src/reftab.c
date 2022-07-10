@@ -51,7 +51,7 @@ int addToReferencesTable(ReferencesItem *referencesItem) {
     return refTabAdd(&referenceTable, referencesItem);
 }
 
-void pushReferences(ReferencesItem *element, int position) {
+void pushReferencesItem(ReferencesItem *element, int position) {
     refTabPush(&referenceTable, element, position);
 }
 

@@ -21,7 +21,7 @@ bool refTabNextMember(ReferencesItem *element, ReferencesItem **original) {
     return (bool)mock(element, original);
 }
 
-void pushReferences(ReferencesItem *element, int position) {
+void pushReferencesItem(ReferencesItem *element, int position) {
     mock(element, position);
 }
 
