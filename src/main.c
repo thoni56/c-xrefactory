@@ -388,7 +388,7 @@ static bool computeAndOpenInputFile(void) {
 }
 
 static void initOptions(void) {
-    copyOptions(&options, &presetOptions);
+    copyOptionsFromTo(&presetOptions, &options);
 
     inputFileNumber   = noFileIndex;
 }
@@ -821,7 +821,7 @@ static void fileProcessingInitialisations(bool *firstPass,
             *inputOpened = false;
             goto fini;
         }
-        copyOptions(&savedOptions, &options);  // before getJavaClassPath, it modifies ???
+        copyOptionsFromTo(&options, &savedOptions);  // before getJavaClassPath, it modifies ???
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         getJavaClassAndSourcePath();
         *inputOpened = computeAndOpenInputFile();
@@ -841,7 +841,7 @@ static void fileProcessingInitialisations(bool *firstPass,
         assert(cache.lbcc == cache.cp[0].lbcc);
         assert(cache.lbcc == cache.cp[1].lbcc);
     } else {
-        copyOptions(&options, &savedOptions);
+        copyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
         *inputOpened = computeAndOpenInputFile();
     }
@@ -1508,7 +1508,7 @@ static void xrefProcessInputFile(int argc, char **argv, bool *firstPassP,
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         if (!*firstPassP)
-            copyOptions(&options, &savedOptions);
+            copyOptionsFromTo(&savedOptions, &options);
         fileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &inputOpened, &currentLanguage);
         olOriginalFileIndex    = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileIndex;
@@ -1758,10 +1758,10 @@ static void editServer(int argc, char **argv) {
     ENTER();
     cxResizingBlocked = true;
     firstPass = true;
-    copyOptions(&savedOptions, &options);
+    copyOptionsFromTo(&options, &savedOptions);
     for(;;) {
         currentPass = ANY_PASS;
-        copyOptions(&options, &savedOptions);
+        copyOptionsFromTo(&savedOptions, &options);
         getPipedOptions(&nargc, &nargv);
         // O.K. -o option given on command line should catch also file not found
         // message

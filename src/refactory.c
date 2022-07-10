@@ -200,7 +200,7 @@ static void ensureReferencesUpdated(char *project) {
 
     editorQuasiSaveModifiedBuffers();
 
-    copyOptions(&savedOptions, &options);
+    copyOptionsFromTo(&options, &savedOptions);
 
     refactorySetArguments(nargv, NULL, project, NULL, NULL);
     nargc = argument_count(nargv);
@@ -215,7 +215,7 @@ static void ensureReferencesUpdated(char *project) {
 
     mainCallXref(nargc, nargv);
 
-    copyOptions(&options, &savedOptions);
+    copyOptionsFromTo(&savedOptions, &options);
     ppcEnd(PPC_UPDATE_REPORT);
 
     // return into editSubTaskState
@@ -255,11 +255,11 @@ static void refactoryBeInteractive(void) {
     char **pargv;
 
     ENTER();
-    copyOptions(&savedOptions, &options);
+    copyOptionsFromTo(&options, &savedOptions);
     for (;;) {
         closeMainOutputFile();
         ppcSynchronize();
-        copyOptions(&options, &savedOptions);
+        copyOptionsFromTo(&savedOptions, &options);
         processOptions(argument_count(refactoryEditServInitOptions),
                        refactoryEditServInitOptions, DONT_PROCESS_FILE_ARGUMENTS);
         getPipedOptions(&pargc, &pargv);
@@ -2867,7 +2867,8 @@ static void refactoryMoveStaticFieldOrMethod(EditorMarker *point, int limitIndex
 
     target = getTargetFromOptions();
 
-    if (! validTargetPlace(target, "-olcxmmtarget")) return;
+    if (!validTargetPlace(target, "-olcxmmtarget"))
+        return;
     ensureReferencesUpdated(refactoringOptions.project);
     refactoryGetNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
     refactoryGetMethodLimitsForMoving(point, &mstart, &mend, limitIndex);
@@ -4424,11 +4425,11 @@ void refactory() {
 
     ENTER();
 
-    copyOptions(&refactoringOptions, &options);       // save command line options !!!!
+    copyOptionsFromTo(&options, &refactoringOptions);       // save command line options !!!!
     // in general in this file:
     //   'refactoringOptions' are options passed to c-xrefactory
     //   'options' are options valid for interactive edit-server 'sub-task'
-    copyOptions(&savedOptions, &options);
+    copyOptionsFromTo(&options, &savedOptions);
 
     // MAGIC, set the server operation to anything that just refreshes
     // or generates xrefs since we will be calling the "main task"

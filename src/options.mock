@@ -15,7 +15,7 @@ void xrefSetenv(char *name, char *val) {
   mock(name, val);
 }
 
-void copyOptions(Options *dest, Options *src) {
+void copyOptionsFromTo(Options *src, Options *dest) {
   mock(dest, src);
 }
 
