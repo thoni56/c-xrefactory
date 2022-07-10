@@ -4425,6 +4425,11 @@ void refactory() {
 
     ENTER();
 
+    if (options.project==NULL) {
+        fatalError(ERR_ST, "You have to specify active project with -p option",
+                   XREF_EXIT_ERR);
+    }
+
     copyOptionsFromTo(&options, &refactoringOptions);       // save command line options !!!!
     // in general in this file:
     //   'refactoringOptions' are options passed to c-xrefactory
@@ -4440,11 +4445,6 @@ void refactory() {
     editorLoadAllOpenedBufferFiles();
     // initialise lastQuasySaveTime
     editorQuasiSaveModifiedBuffers();
-
-    if (refactoringOptions.project==NULL) {
-        fatalError(ERR_ST, "You have to specify active project with -p option",
-                   XREF_EXIT_ERR);
-    }
 
     argCount = 0;
     argumentFile = getNextScheduledFile(&argCount);
