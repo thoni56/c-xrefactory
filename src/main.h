@@ -5,12 +5,7 @@
 #include "options.h"
 
 
-extern void dirInputFile(MAP_FUN_SIGNATURE);
-
-extern void createOptionString(char **optAddress, char *text);
-extern void copyOptions(Options *dest, Options *src);
 extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);
-extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
 
 extern char *getNextScheduledFile(int *fArgCount);
