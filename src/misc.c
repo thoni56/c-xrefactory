@@ -1009,15 +1009,16 @@ void mapDirectoryFiles(char *dirname,
 #ifdef __WIN32__
     WIN32_FIND_DATA     fdata;
     HANDLE              handle;
-    char                *s,*d;
-    char                ttt[MAX_FILE_NAME_SIZE];
-    for (s=dirname,d=ttt; *s; s++,d++) {
+    char                *d;
+    char                tempBuffer[MAX_FILE_NAME_SIZE];
+
+    for (char *s=dirname,d=tempBuffer; *s; s++,d++) {
         if (*s=='/') *d=FILE_PATH_SEPARATOR;
         else *d = *s;
     }
-    assert(d-ttt < MAX_FILE_NAME_SIZE-3);
+    assert(d-tempBuffer < MAX_FILE_NAME_SIZE-3);
     sprintf(d,"%c*",FILE_PATH_SEPARATOR);
-    mapPatternFiles(ttt, fun, a1, a2, a3, a4, a5);
+    mapPatternFiles(tempBuffer, fun, a1, a2, a3, a4, a5);
 #else
     DIR             *fd;
     struct dirent   *dirbuf;

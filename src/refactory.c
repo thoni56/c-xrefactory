@@ -2540,7 +2540,8 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(EditorMarker *p
                 default:
                     fatalError(ERR_INTERNAL, "wrong continuation code", XREF_EXIT_ERR);
                 }
-                if (defaultImportAction <= 1)  defaultImportAction ++;
+                if (defaultImportAction <= 1)
+                    defaultImportAction++;
             }
             editorFreeMarkersAndMarkerList(menu->markers);
             menu->markers = NULL;
