@@ -1176,11 +1176,9 @@ static bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     // when the method is invoked as single name, am I right?
     // No. Do not consider only invocations of form super.method().
     OlcxReferences *rstack;
-    Reference      *rr;
     SymbolsMenu    *ss, *mm;
     Symbol         *target;
     int             srccn;
-    char            ttt[MAX_CX_SYMBOL_SIZE];
     int             targetcn;
     UNUSED          targetcn;
 
@@ -1197,17 +1195,18 @@ static bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
             if (javaIsSuperClass(mm->references.vApplClass, srccn)) {
                 // finally check there is some other reference than super.method()
                 // and definition
-                for (rr = mm->references.references; rr != NULL; rr = rr->next) {
-                    if ((!IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) &&
-                        rr->usage.kind != UsageMethodInvokedViaSuper) {
+                for (Reference *r = mm->references.references; r != NULL; r = r->next) {
+                    if ((!IS_DEFINITION_OR_DECL_USAGE(r->usage.kind)) &&
+                        r->usage.kind != UsageMethodInvokedViaSuper) {
                         // well there is, issue warning message and finish
+                        char tempName[MAX_CX_SYMBOL_SIZE];
                         char tmpBuff[TMP_BUFF_SIZE];
-                        linkNamePrettyPrint(ttt, ss->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+                        linkNamePrettyPrint(tempName, ss->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
                         sprintf(tmpBuff,
                                 "%s is defined also in superclass and there are invocations syntactically "
                                 "refering to one of superclasses. Under some circumstances this may cause that "
                                 "pulling up of this method will not be behaviour preserving.",
-                                ttt);
+                                tempName);
                         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
                         warningMessage(ERR_ST, tmpBuff);
                         return false;
@@ -1223,7 +1222,7 @@ static bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     OlcxReferences          *rstack;
     SymbolsMenu             *ss;
     char                     ttt[TMP_STRING_SIZE];
-    char                     tt[TMP_STRING_SIZE];
+    char                     targetClassName[TMP_STRING_SIZE];
     ClassHierarchyReference *cl;
     Symbol                  *target;
     bool                     found = false;
@@ -1256,11 +1255,12 @@ static bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     if (found)
         return true;
 
-    javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, tt, DOTIFY_NAME);
+    javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, targetClassName, DOTIFY_NAME);
     javaGetClassNameFromFileIndex(ss->references.vApplClass, ttt, DOTIFY_NAME);
+
     char tmpBuff[TMP_BUFF_SIZE];
-    sprintf(tmpBuff, "Class %s is not direct %s of %s. This refactoring provides moving to direct %ses only.", tt,
-            subOrSuper, ttt, subOrSuper);
+    sprintf(tmpBuff, "Class %s is not direct %s of %s. This refactoring provides moving to direct %ses only.",
+            targetClassName, subOrSuper, ttt, subOrSuper);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
     errorMessage(ERR_ST, tmpBuff);
     return false;
