@@ -1876,7 +1876,7 @@ external_definition
         beginBlock();
         counters.localVar = 0;
         assert($2.d->u.typeModifier && $2.d->u.typeModifier->kind == TypeFunction);
-        s_cp.function = $2.d;
+        parsedClassInfo.function = $2.d;
         generateInternalLabelReference(-1, UsageDefined);
         for (p=$2.d->u.typeModifier->u.f.args, i=1; p!=NULL; p=p->next,i++) {
             if (p->type == TypeElipsis)
@@ -1887,7 +1887,7 @@ external_definition
         }
     } compound_statement {
         endBlock();
-        s_cp.function = NULL;
+        parsedClassInfo.function = NULL;
     }
     | Save_index EXTERN STRING_LITERAL  external_definition {
         savedWorkMemoryIndex = $1.d;

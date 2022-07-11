@@ -73,10 +73,9 @@ extern FILE *communicationChannel;
 
 extern bool javaPreScanOnly;
 
-extern S_currentlyParsedCl s_cp;
-extern S_currentlyParsedCl s_cpInit;
-extern S_currentlyParsedStatics s_cps;
-extern S_currentlyParsedStatics s_cpsInit;
+extern CurrentlyParsedClassInfo parsedClassInfo;
+extern CurrentlyParsedClassInfo parsedClassInfoInit;
+extern CurrentlyParsedInfo parsedInfo;
 
 extern TypeModifier defaultIntModifier;
 extern Symbol s_defaultIntDefinition;

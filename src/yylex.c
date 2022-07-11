@@ -2033,34 +2033,34 @@ static int lookupJavaIdentifier(char *id, Position position) {
 
 static void actionOnBlockMarker(void) {
     if (options.serverOperation == OLO_SET_MOVE_TARGET) {
-        s_cps.setTargetAnswerClass[0] = 0;
+        parsedInfo.setTargetAnswerClass[0] = 0;
         if (LANGUAGE(LANG_JAVA)) {
-            if (s_cp.function == NULL) {
+            if (parsedClassInfo.function == NULL) {
                 if (s_javaStat!=NULL) {
                     if (s_javaStat->thisClass==NULL) {
-                        sprintf(s_cps.setTargetAnswerClass, " %s", s_javaThisPackageName);
+                        sprintf(parsedInfo.setTargetAnswerClass, " %s", s_javaThisPackageName);
                     } else {
-                        strcpy(s_cps.setTargetAnswerClass, s_javaStat->thisClass->linkName);
+                        strcpy(parsedInfo.setTargetAnswerClass, s_javaStat->thisClass->linkName);
                     }
                 }
             }
         }
     } else if (options.serverOperation == OLO_SET_MOVE_CLASS_TARGET) {
-        s_cps.moveTargetApproved = 0;
+        parsedInfo.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
-            if (s_cp.function == NULL) {
+            if (parsedClassInfo.function == NULL) {
                 if (s_javaStat!=NULL) {
-                    s_cps.moveTargetApproved = 1;
+                    parsedInfo.moveTargetApproved = 1;
                 }
             }
         }
     } else if (options.serverOperation == OLO_SET_MOVE_METHOD_TARGET) {
-        s_cps.moveTargetApproved = 0;
+        parsedInfo.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
-            if (s_cp.function == NULL) {
+            if (parsedClassInfo.function == NULL) {
                 if (s_javaStat!=NULL) {
                     if (s_javaStat->thisClass!=NULL) {
-                        s_cps.moveTargetApproved = 1;
+                        parsedInfo.moveTargetApproved = 1;
                     }
                 }
             }
@@ -2068,23 +2068,23 @@ static void actionOnBlockMarker(void) {
     } else if (options.serverOperation == OLO_EXTRACT) {
         extractActionOnBlockMarker();
     } else {
-        s_cps.currentPackageAnswer[0] = 0;
-        s_cps.currentClassAnswer[0] = 0;
-        s_cps.currentSuperClassAnswer[0] = 0;
+        parsedInfo.currentPackageAnswer[0] = 0;
+        parsedInfo.currentClassAnswer[0] = 0;
+        parsedInfo.currentSuperClassAnswer[0] = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_javaStat!=NULL) {
-                strcpy(s_cps.currentPackageAnswer, s_javaThisPackageName);
+                strcpy(parsedInfo.currentPackageAnswer, s_javaThisPackageName);
                 if (s_javaStat->thisClass!=NULL) {
                     assert(s_javaStat->thisClass->u.structSpec);
-                    strcpy(s_cps.currentClassAnswer, s_javaStat->thisClass->linkName);
+                    strcpy(parsedInfo.currentClassAnswer, s_javaStat->thisClass->linkName);
                     if (s_javaStat->thisClass->u.structSpec->super!=NULL) {
                         assert(s_javaStat->thisClass->u.structSpec->super->element);
-                        strcpy(s_cps.currentSuperClassAnswer, s_javaStat->thisClass->u.structSpec->super->element->linkName);
+                        strcpy(parsedInfo.currentSuperClassAnswer, s_javaStat->thisClass->u.structSpec->super->element->linkName);
                     }
                 }
             }
         }
-        s_cp.parserPassedMarker = 1;
+        parsedClassInfo.parserPassedMarker = 1;
     }
 }
 

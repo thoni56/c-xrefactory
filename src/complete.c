@@ -1400,17 +1400,17 @@ void javaHintCompleteMethodParameters(Completions *c) {
 
     if (c->idToProcessLen != 0)
         return;
-    if (s_cp.erfsForParamsComplet==NULL)
+    if (parsedClassInfo.erfsForParameterCompletion==NULL)
         return;
-    r = s_cp.erfsForParamsComplet->memb;
-    rfs = &s_cp.erfsForParamsComplet->s;
+    r = parsedClassInfo.erfsForParameterCompletion->memb;
+    rfs = &parsedClassInfo.erfsForParameterCompletion->s;
     mname = r->name;
     visibilityCheck = VISIBILITY_CHECK_NO;
     accessCheck = calculateAccessCheckOption();
     // partial actual parameters
 
     *actArg = 0; actArgi = 0;
-    for(aaa=s_cp.erfsForParamsComplet->params; aaa!=NULL; aaa=aaa->next) {
+    for(aaa=parsedClassInfo.erfsForParameterCompletion->params; aaa!=NULL; aaa=aaa->next) {
         actArgi += javaTypeToString(aaa->d,actArg+actArgi,MAX_PROFILE_SIZE-actArgi);
     }
     do {
@@ -1698,8 +1698,8 @@ void javaCompleteHintForConstructSingleName(Completions *c) {
     char        *name;
     if (c->idToProcessLen == 0 && options.serverOperation == OLO_COMPLETION) {
         // O.K. wizard completion
-        if (s_cps.lastAssignementStruct!=NULL) {
-            name = s_cps.lastAssignementStruct->name;
+        if (parsedInfo.lastAssignementStruct!=NULL) {
+            name = parsedInfo.lastAssignementStruct->name;
             fillCompletionLine(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
             processName(name, &compLine, 0, c);
         }

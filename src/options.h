@@ -173,7 +173,7 @@ extern void addStringListOption(StringList **optlist, char *argvi);
 extern char *getJavaHome(void);
 extern void getJavaClassAndSourcePath(void);
 extern bool packageOnCommandLine(char *packageName);
-extern char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename);
+extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
 extern bool readOptionsFromFileIntoArgs(FILE *ff, int *nargc, char ***nargv,
                                MemoryKind memFl, char *sectionFile, char *project, char *resSection);
 extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project);

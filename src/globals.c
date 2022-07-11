@@ -22,11 +22,10 @@ int progressFactor=1;
 Counters counters;
 unsigned s_recFindCl = 1;
 
-S_currentlyParsedCl s_cp;
-S_currentlyParsedCl s_cpInit = {0,};
+CurrentlyParsedClassInfo parsedClassInfo;
+CurrentlyParsedClassInfo parsedClassInfoInit = {0,};
 
-S_currentlyParsedStatics s_cps;
-S_currentlyParsedStatics s_cpsInit = {0,};
+CurrentlyParsedInfo parsedInfo;
 
 bool javaPreScanOnly = false;
 

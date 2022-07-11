@@ -7,7 +7,6 @@
    mainCallEditServerInit
    mainCallEditServer
    mainCloseOutputFile
-   processOptions
    getPipedOptions
    mainOpenOutputFile
    mainSetLanguage
@@ -729,7 +728,7 @@ static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
     bool valid = true;
 
     editServerParseBuffer(refactoringOptions.project, target->buffer, target, NULL, checkOpt, NULL);
-    if (!s_cps.moveTargetApproved) {
+    if (!parsedInfo.moveTargetApproved) {
         valid = false;
         errorMessage(ERR_ST, "Invalid target place");
     }
@@ -910,7 +909,7 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
     else
         transPackageMove = true;
 
-    fillTpCheckMoveClassData(dd, s_cps.cxMemoryIndexAtClassBeginning, s_cps.cxMemoryIndexAtClassEnd, spack, tpack,
+    fillTpCheckMoveClassData(dd, parsedInfo.cxMemoryIndexAtClassBeginning, parsedInfo.cxMemoryIndexAtClassEnd, spack, tpack,
                              transPackageMove, sclass->references.name);
 }
 
@@ -1051,7 +1050,7 @@ static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr)
         return false;
         ;
     }
-    initTpCheckSpecialReferencesData(rr, s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd,
+    initTpCheckSpecialReferencesData(rr, parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd,
                                      LINK_NAME_SUPER_METHOD_ITEM, scl);
     mapOverReferenceTableWithPointer(tpCheckSpecialReferencesMapFun, rr);
     return true;
@@ -1149,7 +1148,7 @@ static bool tpCheckOuterScopeUsagesForDynToSt(void) {
     rstack = sessionData.browserStack.top;
     ss     = rstack->hkSelectedSym;
     assert(ss);
-    initTpCheckSpecialReferencesData(&rr, s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd,
+    initTpCheckSpecialReferencesData(&rr, parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd,
                                      LINK_NAME_MAYBE_THIS_ITEM, ss->references.vApplClass);
     mapOverReferenceTableWithPointer(tpCheckSpecialReferencesMapFun, &rr);
     if (rr.foundOuterScopeRef != NULL) {
@@ -2383,7 +2382,7 @@ static int pushFileUnimportedFqts(EditorMarker *point, EditorRegionList **region
 
     sprintf(pushOpt, "-olcxpushspecialname=%s", LINK_NAME_UNIMPORTED_QUALIFIED_ITEM);
     editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, pushOpt, "-olallchecks");
-    lastImportLine = s_cps.lastImportLine;
+    lastImportLine = parsedInfo.lastImportLine;
     olcxPushSpecial(LINK_NAME_UNIMPORTED_QUALIFIED_ITEM, OLO_PUSH_SPECIAL_NAME);
     createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, regions);
     return lastImportLine;
@@ -2657,7 +2656,7 @@ static void addToImports(EditorMarker *point) {
 
 static void pushAllReferencesOfMethod(EditorMarker *m1, char *specialOption) {
     editServerParseBuffer(refactoringOptions.project, m1->buffer, m1, NULL, "-olcxpushallinmethod", specialOption);
-    olPushAllReferencesInBetween(s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
+    olPushAllReferencesInBetween(parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
 }
 
 static void moveFirstElementOfMarkerList(EditorMarkerList **l1, EditorMarkerList **l2) {
@@ -2877,17 +2876,17 @@ static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **_mstart
 static void getNameOfTheClassAndSuperClass(EditorMarker *point, char *ccname, char *supercname) {
     editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxcurrentclass", NULL);
     if (ccname != NULL) {
-        if (s_cps.currentClassAnswer[0] == 0) {
+        if (parsedInfo.currentClassAnswer[0] == 0) {
             fatalError(ERR_ST, "can't get class on point", XREF_EXIT_ERR);
         }
-        strcpy(ccname, s_cps.currentClassAnswer);
+        strcpy(ccname, parsedInfo.currentClassAnswer);
         javaDotifyClassName(ccname);
     }
     if (supercname != NULL) {
-        if (s_cps.currentSuperClassAnswer[0] == 0) {
+        if (parsedInfo.currentSuperClassAnswer[0] == 0) {
             fatalError(ERR_ST, "can't get superclass of class on point", XREF_EXIT_ERR);
         }
-        strcpy(supercname, s_cps.currentSuperClassAnswer);
+        strcpy(supercname, parsedInfo.currentSuperClassAnswer);
         javaDotifyClassName(supercname);
     }
 }
@@ -3047,15 +3046,15 @@ static void performMoveClass(EditorMarker *point, EditorMarker *target, EditorMa
 
     // get target place
     editServerParseBuffer(refactoringOptions.project, target->buffer, target, NULL, "-olcxcurrentclass", NULL);
-    if (s_cps.currentPackageAnswer[0] == 0) {
+    if (parsedInfo.currentPackageAnswer[0] == 0) {
         errorMessage(ERR_ST, "Can't get target class or package");
         return;
     }
-    if (s_cps.currentClassAnswer[0] == 0) {
-        sprintf(targetFqtName, "%s", s_cps.currentPackageAnswer);
+    if (parsedInfo.currentClassAnswer[0] == 0) {
+        sprintf(targetFqtName, "%s", parsedInfo.currentPackageAnswer);
         targetIsNestedInClass = 0;
     } else {
-        sprintf(targetFqtName, "%s", s_cps.currentClassAnswer);
+        sprintf(targetFqtName, "%s", parsedInfo.currentClassAnswer);
         targetIsNestedInClass = 1;
     }
     javaDotifyClassName(targetFqtName);
@@ -3560,11 +3559,11 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
 
     // TODO!!! precheck
     editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxcurrentclass", NULL);
-    if (s_cps.currentClassAnswer[0] == 0) {
+    if (parsedInfo.currentClassAnswer[0] == 0) {
         errorMessage(ERR_INTERNAL, "Can't get current class");
         return;
     }
-    classnum = getClassNumFromClassLinkName(s_cps.currentClassAnswer, noFileIndex);
+    classnum = getClassNumFromClassLinkName(parsedInfo.currentClassAnswer, noFileIndex);
     if (classnum == noFileIndex) {
         errorMessage(ERR_INTERNAL, "Problem when getting current class");
         return;

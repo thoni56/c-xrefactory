@@ -2956,7 +2956,7 @@ case 11:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_symbol.d = typeSpecifier1(yyvsp[0].ast_unsignedPositionPair.d.u);
-                    s_cps.lastDeclaratorType = NULL;
+                    parsedInfo.lastDeclaratorType = NULL;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_unsignedPositionPair, yyvsp[0].ast_unsignedPositionPair);
                 }
@@ -3054,7 +3054,7 @@ case 26:
                     javaClassifyToTypeName(yyvsp[0].ast_idList.d,UsageUsed, &yyval.ast_symbol.d, USELESS_FQT_REFS_ALLOWED);
                     yyval.ast_symbol.d = javaTypeNameDefinition(yyvsp[0].ast_idList.d);
                     assert(yyval.ast_symbol.d->u.typeModifier);
-                    s_cps.lastDeclaratorType = yyval.ast_symbol.d->u.typeModifier->u.t;
+                    parsedInfo.lastDeclaratorType = yyval.ast_symbol.d->u.typeModifier->u.t;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
@@ -3103,7 +3103,7 @@ case 32:
                     PropagateBoundaries(yyval.ast_symbolPositionPair, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_position);
                 }
                 yyval.ast_symbolPositionPair.d.position = yyvsp[-2].ast_unsignedPositionPair.d.position;
-                s_cps.lastDeclaratorType = NULL;
+                parsedInfo.lastDeclaratorType = NULL;
             };
             if (inSecondJslPass()) {
                 yyval.ast_symbolPositionPair.d.symbol = jslTypeSpecifier1(yyvsp[-2].ast_unsignedPositionPair.d.u);
@@ -3119,7 +3119,7 @@ case 33:
                     javaClassifyToTypeName(yyvsp[-2].ast_idList.d,UsageUsed, &(yyval.ast_symbolPositionPair.d.symbol), USELESS_FQT_REFS_ALLOWED);
                     yyval.ast_symbolPositionPair.d.symbol = javaTypeNameDefinition(yyvsp[-2].ast_idList.d);
                     assert(yyval.ast_symbolPositionPair.d.symbol && yyval.ast_symbolPositionPair.d.symbol->u.typeModifier);
-                    s_cps.lastDeclaratorType = yyval.ast_symbolPositionPair.d.symbol->u.typeModifier->u.t;
+                    parsedInfo.lastDeclaratorType = yyval.ast_symbolPositionPair.d.symbol->u.typeModifier->u.t;
                     yyval.ast_symbolPositionPair.d.symbol->u.typeModifier = prependComposedType(yyval.ast_symbolPositionPair.d.symbol->u.typeModifier, TypeArray);
                 } else {
                     PropagateBoundaries(yyval.ast_symbolPositionPair, yyvsp[-2].ast_idList, yyvsp[0].ast_position);
@@ -3504,7 +3504,7 @@ case 74:
                     lastUselessRef = javaClassifyToTypeName(yyvsp[-1].ast_idList.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     /* last useless reference is not useless here!*/
                     if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
-                    s_cps.lastImportLine = yyvsp[-2].ast_id.d->position.line;
+                    parsedInfo.lastImportLine = yyvsp[-2].ast_id.d->position.line;
                     if (yyvsp[-1].ast_idList.d->next!=NULL) {
                         javaAddImportConstructionReference(&yyvsp[-1].ast_idList.d->next->id.position, &yyvsp[-2].ast_id.d->position, UsageDefined);
                     }
@@ -3536,7 +3536,7 @@ case 77:
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
                     if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
-                    s_cps.lastImportLine = yyvsp[-4].ast_id.d->position.line;
+                    parsedInfo.lastImportLine = yyvsp[-4].ast_id.d->position.line;
                     javaAddImportConstructionReference(&yyvsp[-3].ast_idList.d->id.position, &yyvsp[-4].ast_id.d->position, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_idList, yyvsp[-4].ast_id, yyvsp[0].ast_position);
@@ -3577,7 +3577,7 @@ case 83:
 {
             yyval.ast_idList.d = NULL;
             if (regularPass()) {
-                s_cps.lastImportLine = 0;
+                parsedInfo.lastImportLine = 0;
                 SetNullBoundariesFor(yyval.ast_idList);
             }
         }
@@ -3587,7 +3587,7 @@ case 84:
 {
             yyval.ast_idList.d = yyvsp[-1].ast_idList.d;
             if (regularPass()) {
-                s_cps.lastImportLine = yyvsp[-2].ast_id.d->position.line;
+                parsedInfo.lastImportLine = yyvsp[-2].ast_id.d->position.line;
                 PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_id, yyvsp[0].ast_position);
             }
         }
@@ -3597,7 +3597,7 @@ case 85:
 {
             yyval.ast_idList.d = NULL;
             if (regularPass()) {
-                s_cps.lastImportLine = yyvsp[-1].ast_id.d->position.line;
+                parsedInfo.lastImportLine = yyvsp[-1].ast_id.d->position.line;
                 PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-1].ast_id, yyvsp[-1].ast_id);
             }
         }
@@ -3948,15 +3948,15 @@ case 126:
                 if (! SyntaxPassOnly()) {
                     /* TODO, REDO all this stuff around class/method boundaries !!!!!!*/
                     if (options.mode == ServerMode) {
-                        if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
-                            s_cps.cxMemoryIndexAtMethodBegin = s_cp.cxMemoryIndexAtFunctionBegin;
-                            s_cps.cxMemoryIndexAtMethodEnd = cxMemory->index;
+                        if (parsedClassInfo.parserPassedMarker && !parsedClassInfo.thisMethodMemoriesStored){
+                            parsedInfo.cxMemoryIndexAtMethodBegin = parsedClassInfo.cxMemoryIndexAtFunctionBegin;
+                            parsedInfo.cxMemoryIndexAtMethodEnd = cxMemory->index;
                                  /*& sprintf(tmpBuff,"setting %s, %d,%d   %d,%d",
                                      olcxOptionsName[options.serverOperation],
-                                     s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored,
-                                     s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd),
+                                     parsedClassInfo.parserPassedMarker, parsedClassInfo.thisMethodMemoriesStored,
+                                     parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd),
                                      ppcBottomInformation(tmpBuff); &*/
-                            s_cp.thisMethodMemoriesStored = 1;
+                            parsedClassInfo.thisMethodMemoriesStored = 1;
                             if (options.serverOperation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
                                                              CategoryLocal, currentFile.lexBuffer.buffer.fileNumber,
@@ -3970,12 +3970,12 @@ case 126:
                                                              CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             }
-                            s_cps.cxMemoryIndexAtClassBeginning = s_cp.cxMemoryIndexdiAtClassBegin;
-                            s_cps.cxMemoryIndexAtClassEnd = cxMemory->index;
-                            s_cps.classCoordEndLine = currentFile.lineNumber+1;
+                            parsedInfo.cxMemoryIndexAtClassBeginning = parsedClassInfo.cxMemoryIndexdiAtClassBegin;
+                            parsedInfo.cxMemoryIndexAtClassEnd = cxMemory->index;
+                            parsedInfo.classCoordEndLine = currentFile.lineNumber+1;
                             /*& fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n",
-                              s_cps.classCoordEndLine, s_cps.cxMemoryIndexAtClassBeginning,
-                              s_cps.cxMemoryIndexAtClassEnd); &*/
+                              parsedInfo.classCoordEndLine, parsedInfo.cxMemoryIndexAtClassBeginning,
+                              parsedInfo.cxMemoryIndexAtClassEnd); &*/
                             if (options.serverOperation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                             CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
@@ -3987,9 +3987,9 @@ case 126:
                             }
                         }
                     }
-                    s_cp.cxMemoryIndexdiAtClassBegin = cxMemory->index;
+                    parsedClassInfo.cxMemoryIndexdiAtClassBegin = cxMemory->index;
                     /*& fprintf(dumpOut,"!setting class begin memory %d\n",
-                      s_cp.cxMemoryIndexdiAtClassBegin); &*/
+                      parsedClassInfo.cxMemoryIndexdiAtClassBegin); &*/
                     actionsBeforeAfterExternalDefinition();
                 }
             }
@@ -4045,7 +4045,7 @@ case 140:
             yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = yyvsp[0].ast_symbol.d;
+                    parsedInfo.lastAssignementStruct = yyvsp[0].ast_symbol.d;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
                 }
@@ -4060,7 +4060,7 @@ case 141:
                     Symbol *p,*pp,*memb,*clas;
                     int vClass;
                     S_recFindStr    rfs;
-                    s_cps.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignementStruct = NULL;
                     clas = s_javaStat->thisClass;
                     assert(clas != NULL);
                     for(p=yyvsp[-1].ast_symbol.d; p!=NULL; p=pp) {
@@ -4087,9 +4087,9 @@ case 141:
                     }
                     yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
                     if (options.mode == ServerMode
-                        && s_cp.parserPassedMarker
-                        && !s_cp.thisMethodMemoriesStored){
-                        s_cps.methodCoordEndLine = currentFile.lineNumber+1;
+                        && parsedClassInfo.parserPassedMarker
+                        && !parsedClassInfo.thisMethodMemoriesStored){
+                        parsedInfo.methodCoordEndLine = currentFile.lineNumber+1;
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_position);
@@ -4274,7 +4274,7 @@ case 154:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignementStruct = NULL;
                     yyval.ast_symbol.d = javaMethodHeader(yyvsp[-3].ast_unsigned.d,yyvsp[-2].ast_symbol.d,yyvsp[-1].ast_symbol.d, StorageMethod);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
@@ -4534,7 +4534,7 @@ case 176:
                         /* TODO! Merge this with 'javaMethodBodyBeginning'!*/
                         assert(mh->u.typeModifier && mh->u.typeModifier->kind == TypeFunction);
                         beginBlock();  /* in order to remove arguments*/
-                        s_cp.function = mh; /* added for set-target-position checks */
+                        parsedClassInfo.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
                         generateInternalLabelReference(-1, UsageDefined);
                         counters.localVar = 0;
@@ -4562,7 +4562,7 @@ case 177:
                     if (yyval.ast_position.b.file == noFileIndex)
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_symbol, yyval.ast_position);
                 }
-                s_cp.function = NULL; /* added for set-target-position checks */
+                parsedClassInfo.function = NULL; /* added for set-target-position checks */
             }
         }
 break;
@@ -4643,7 +4643,7 @@ case 184:
 #line 2018 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &yyvsp[-1].ast_id.d->position);
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &yyvsp[-1].ast_id.d->position);
                 }
             }
 break;
@@ -4653,7 +4653,7 @@ case 185:
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         javaConstructorInvocation(s_javaStat->thisClass, &(yyvsp[-5].ast_id.d->position), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
-                        s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                        parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->position, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
@@ -4665,7 +4665,7 @@ case 186:
 #line 2034 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &yyvsp[-1].ast_id.d->position);
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &yyvsp[-1].ast_id.d->position);
                 }
             }
 break;
@@ -4677,7 +4677,7 @@ case 187:
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
                         javaConstructorInvocation(ss, &(yyvsp[-5].ast_id.d->position), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
-                        s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                        parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->position, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
@@ -4689,7 +4689,7 @@ case 188:
 #line 2052 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &(yyvsp[-1].ast_id.d->position));
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &(yyvsp[-1].ast_id.d->position));
                 }
             }
 break;
@@ -4701,7 +4701,7 @@ case 189:
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
                         javaConstructorInvocation(ss, &(yyvsp[-5].ast_id.d->position), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
-                        s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                        parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->position, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
                         PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_expressionType, yyvsp[0].ast_position);
@@ -5037,7 +5037,7 @@ case 238:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = yyvsp[0].ast_symbol.d;
+                    parsedInfo.lastAssignementStruct = yyvsp[0].ast_symbol.d;
                 }
             }
         }
@@ -5047,7 +5047,7 @@ case 239:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignementStruct = NULL;
                     yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_symbol, yyvsp[0].ast_expressionType);
@@ -5873,7 +5873,7 @@ break;
 case 359:
 #line 3093 "java_parser.y"
 {
-            yyval.erfs = s_cp.erfsForParamsComplet;
+            yyval.erfs = parsedClassInfo.erfsForParameterCompletion;
         }
 break;
 case 360:
@@ -5881,11 +5881,11 @@ case 360:
 {
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
-                    s_cp.erfsForParamsComplet = NULL;
+                    parsedClassInfo.erfsForParameterCompletion = NULL;
                     if (yyvsp[-4].ast_expressionType.d.typeModifier->kind == TypeStruct) {
                         mm = javaNestedNewType(yyvsp[-4].ast_expressionType.d.typeModifier->u.t, yyvsp[-2].ast_id.d, yyvsp[-1].ast_idList.d);
                         if (mm->kind != TypeError) {
-                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].ast_idList.d->id.position));
+                            parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].ast_idList.d->id.position));
                         }
                     }
                 }
@@ -5896,7 +5896,7 @@ case 361:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                    parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     if (yyvsp[-8].ast_expressionType.d.typeModifier->kind == TypeStruct) {
                         yyval.ast_nestedConstrTokenType.d.typeModifier = javaNestedNewType(yyvsp[-8].ast_expressionType.d.typeModifier->u.t, yyvsp[-6].ast_id.d, yyvsp[-5].ast_idList.d);
                     } else {
@@ -5920,10 +5920,10 @@ case 362:
 {
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
-                    s_cp.erfsForParamsComplet = NULL;
+                    parsedClassInfo.erfsForParameterCompletion = NULL;
                     mm = javaNewAfterName(yyvsp[-4].ast_idList.d, yyvsp[-2].ast_id.d, yyvsp[-1].ast_idList.d);
                     if (mm->kind != TypeError) {
-                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].ast_idList.d->id.position));
+                        parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].ast_idList.d->id.position));
                     }
                 }
             }
@@ -5933,7 +5933,7 @@ case 363:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                    parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     yyval.ast_nestedConstrTokenType.d.typeModifier = javaNewAfterName(yyvsp[-8].ast_idList.d, yyvsp[-6].ast_id.d, yyvsp[-5].ast_idList.d);
                     yyval.ast_nestedConstrTokenType.d.idList = yyvsp[-5].ast_idList.d;
                     if (yyval.ast_nestedConstrTokenType.d.typeModifier->kind != TypeError) {
@@ -5959,7 +5959,7 @@ case 364:
                                           CLASS_TO_TYPE,UsageUsed);
                 yyvsp[0].ast_idList.d->nameType = TypeStruct;
                 ss = javaTypeSymbolUsage(yyvsp[0].ast_idList.d, AccessDefault);
-                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &(yyvsp[0].ast_idList.d->id.position));
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(ss, &(yyvsp[0].ast_idList.d->id.position));
             }
             yyval.ast_idList = yyvsp[0].ast_idList;
         }
@@ -5974,7 +5974,7 @@ case 365:
                     TypeModifier *expr;
                     Reference *rr, *lastUselessRef;
 
-                    s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                    parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     lastUselessRef = NULL;
                     javaClassifyAmbiguousName(yyvsp[-3].ast_idList.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                               CLASS_TO_TYPE,UsageUsed);
@@ -6022,7 +6022,7 @@ case 366:
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
-                        s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                        parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                         javaClassifyToTypeName(yyvsp[-3].ast_idList.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         yyval.symbol = javaTypeNameDefinition(yyvsp[-3].ast_idList.d);
                         ss = javaTypeSymbolUsage(yyvsp[-3].ast_idList.d, AccessDefault);
@@ -6145,8 +6145,8 @@ case 377:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_typeModifiersListPositionListPair.d.t = newTypeModifierList(yyvsp[0].ast_expressionType.d.typeModifier);
-                    if (s_cp.erfsForParamsComplet!=NULL) {
-                        s_cp.erfsForParamsComplet->params = yyval.ast_typeModifiersListPositionListPair.d.t;
+                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) {
+                        parsedClassInfo.erfsForParameterCompletion->params = yyval.ast_typeModifiersListPositionListPair.d.t;
                     }
                 } else {
                     yyval.ast_typeModifiersListPositionListPair.d.p = NULL;
@@ -6165,7 +6165,7 @@ case 378:
                     yyval.ast_typeModifiersListPositionListPair.d = yyvsp[-2].ast_typeModifiersListPositionListPair.d;
                     p = newTypeModifierList(yyvsp[0].ast_expressionType.d.typeModifier);
                     LIST_APPEND(S_typeModifierList, yyval.ast_typeModifiersListPositionListPair.d.t, p);
-                    if (s_cp.erfsForParamsComplet!=NULL) s_cp.erfsForParamsComplet->params = yyval.ast_typeModifiersListPositionListPair.d.t;
+                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) parsedClassInfo.erfsForParameterCompletion->params = yyval.ast_typeModifiersListPositionListPair.d.t;
                 } else {
                     appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.d.p, &yyvsp[-1].ast_position.d);
                     PropagateBoundaries(yyval.ast_typeModifiersListPositionListPair, yyvsp[-2].ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType);
@@ -6398,7 +6398,7 @@ case 398:
 #line 3557 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
-                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationN(yyvsp[-1].ast_idList.d);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationN(yyvsp[-1].ast_idList.d);
             }
         }
 break;
@@ -6409,7 +6409,7 @@ case 399:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaMethodInvocationN(yyvsp[-5].ast_idList.d,yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     yyval.ast_expressionType.d.reference = NULL;
-                    s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                    parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                 } else {
                     yyval.ast_expressionType.d.position = javaGetNameStartingPosition(yyvsp[-5].ast_idList.d);
                     javaCheckForPrimaryStartInNameList(yyvsp[-5].ast_idList.d, yyval.ast_expressionType.d.position);
@@ -6424,7 +6424,7 @@ case 400:
 #line 3576 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
-                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationT(yyvsp[-3].ast_expressionType.d.typeModifier, yyvsp[-1].ast_id.d);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationT(yyvsp[-3].ast_expressionType.d.typeModifier, yyvsp[-1].ast_id.d);
             }
         }
 break;
@@ -6435,7 +6435,7 @@ case 401:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaMethodInvocationT(yyvsp[-7].ast_expressionType.d.typeModifier, yyvsp[-5].ast_id.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     yyval.ast_expressionType.d.reference = NULL;
-                    s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                    parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                 } else {
                     yyval.ast_expressionType.d.position = yyvsp[-7].ast_expressionType.d.position;
                     javaCheckForPrimaryStart(&yyvsp[-5].ast_id.d->position, yyval.ast_expressionType.d.position);
@@ -6449,7 +6449,7 @@ case 402:
 #line 3594 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
-                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationS(yyvsp[-3].ast_id.d, yyvsp[-1].ast_id.d);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationS(yyvsp[-3].ast_id.d, yyvsp[-1].ast_id.d);
             }
         }
 break;
@@ -6460,7 +6460,7 @@ case 403:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaMethodInvocationS(yyvsp[-7].ast_id.d, yyvsp[-5].ast_id.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     yyval.ast_expressionType.d.reference = NULL;
-                    s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
+                    parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                 } else {
                     yyval.ast_expressionType.d.position = &yyvsp[-7].ast_id.d->position;
                     javaCheckForPrimaryStart(&yyvsp[-7].ast_id.d->position, yyval.ast_expressionType.d.position);
@@ -7034,7 +7034,7 @@ case 462:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[0].ast_expressionType.d.typeModifier!=NULL && yyvsp[0].ast_expressionType.d.typeModifier->kind == TypeStruct) {
-                        s_cps.lastAssignementStruct = yyvsp[0].ast_expressionType.d.typeModifier->u.t;
+                        parsedInfo.lastAssignementStruct = yyvsp[0].ast_expressionType.d.typeModifier->u.t;
                     }
                 }
                 yyval.ast_expressionType.d = yyvsp[0].ast_expressionType.d;
@@ -7046,7 +7046,7 @@ case 463:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignementStruct = NULL;
                     if (yyvsp[-3].ast_expressionType.d.reference != NULL && options.serverOperation == OLO_EXTRACT) {
                         Reference *rr;
                         rr = duplicateReference(yyvsp[-3].ast_expressionType.d.reference);

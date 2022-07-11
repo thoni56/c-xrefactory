@@ -51,7 +51,7 @@ bool packageOnCommandLine(char *packageName) {
   return (bool) mock(packageName);
 }
 
-char *expandSpecialFilePredefinedVariables_st(char *tt, char *inputFilename) {
+char *expandPredefinedSpecialVariables_static(char *tt, char *inputFilename) {
   return (char *) mock(tt);
 }
 

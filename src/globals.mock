@@ -26,10 +26,9 @@ Position s_staticPrefixStartPosition;
 
 jmp_buf cxmemOverflow;
 
-S_currentlyParsedCl s_cp;
-S_currentlyParsedCl s_cpInit;
-S_currentlyParsedStatics s_cps;
-S_currentlyParsedStatics s_cpsInit;
+CurrentlyParsedClassInfo parsedClassInfo;
+CurrentlyParsedClassInfo parsedClassInfoInit;
+CurrentlyParsedInfo parsedInfo;
 int currentPass;
 int maxPasses;
 char defaultClassPath[] = ".";
@@ -100,7 +99,7 @@ time_t fileProcessingStartTime;
 
 char cwd[MAX_FILE_NAME_SIZE];
 
-S_currentlyParsedStatics s_cps;
+CurrentlyParsedInfo parsedInfo;
 TypeModifier *s_upLevelFunctionCompletionType;
 Position s_primaryStartPosition;
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];

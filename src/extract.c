@@ -164,7 +164,7 @@ static void extractFunGraphRef(ReferencesItem *rr, void *prog) {
     ProgramGraphNode *p,**ap;
     ap = (ProgramGraphNode **) prog;
     for (r=rr->references; r!=NULL; r=r->next) {
-        if (dm_isBetween(cxMemory,r,s_cp.cxMemoryIndexAtFunctionBegin,s_cp.cxMemoryIndexAtFunctionEnd)){
+        if (dm_isBetween(cxMemory,r,parsedClassInfo.cxMemoryIndexAtFunctionBegin,parsedClassInfo.cxMemoryIndexAtFunctionEnd)){
             p = newProgramGraphNode(r, rr, NULL, 0, 0, EXTRACT_NONE, *ap);
             *ap = p;
         }
@@ -1183,18 +1183,18 @@ static void makeExtraction(void) {
     ProgramGraphNode *program;
     bool needToExtractNewClass = false;
 
-    if (s_cp.cxMemoryIndexAtFunctionBegin > s_cps.cxMemoryIndexAtBlockBegin
-        || s_cps.cxMemoryIndexAtBlockBegin > s_cps.cxMemoryIndexAtBlockEnd
-        || s_cps.cxMemoryIndexAtBlockEnd > s_cp.cxMemoryIndexAtFunctionEnd
-        || s_cps.workMemoryIndexAtBlockBegin != s_cps.workMemoryIndexAtBlockEnd) {
+    if (parsedClassInfo.cxMemoryIndexAtFunctionBegin > parsedInfo.cxMemoryIndexAtBlockBegin
+        || parsedInfo.cxMemoryIndexAtBlockBegin > parsedInfo.cxMemoryIndexAtBlockEnd
+        || parsedInfo.cxMemoryIndexAtBlockEnd > parsedClassInfo.cxMemoryIndexAtFunctionEnd
+        || parsedInfo.workMemoryIndexAtBlockBegin != parsedInfo.workMemoryIndexAtBlockEnd) {
         errorMessage(ERR_ST, "Region / program structure mismatch");
         return;
     }
-    log_trace("!cxMemories: funBeg, blockBeb, blockEnd, funEnd: %x, %x, %x, %x", s_cp.cxMemoryIndexAtFunctionBegin, s_cps.cxMemoryIndexAtBlockBegin, s_cps.cxMemoryIndexAtBlockEnd, s_cp.cxMemoryIndexAtFunctionEnd);
-    assert(s_cp.cxMemoryIndexAtFunctionBegin);
-    assert(s_cps.cxMemoryIndexAtBlockBegin);
-    assert(s_cps.cxMemoryIndexAtBlockEnd);
-    assert(s_cp.cxMemoryIndexAtFunctionEnd);
+    log_trace("!cxMemories: funBeg, blockBeb, blockEnd, funEnd: %x, %x, %x, %x", parsedClassInfo.cxMemoryIndexAtFunctionBegin, parsedInfo.cxMemoryIndexAtBlockBegin, parsedInfo.cxMemoryIndexAtBlockEnd, parsedClassInfo.cxMemoryIndexAtFunctionEnd);
+    assert(parsedClassInfo.cxMemoryIndexAtFunctionBegin);
+    assert(parsedInfo.cxMemoryIndexAtBlockBegin);
+    assert(parsedInfo.cxMemoryIndexAtBlockEnd);
+    assert(parsedClassInfo.cxMemoryIndexAtFunctionEnd);
 
     program = extMakeProgramGraph();
     extSetInOutBlockFields(program);
@@ -1259,9 +1259,9 @@ static void makeExtraction(void) {
         generateNewFunctionTail(program);
 
     if (options.xref2) {
-        ppcValueRecord(PPC_INT_VALUE, s_cp.funBegPosition, "");
+        ppcValueRecord(PPC_INT_VALUE, parsedClassInfo.functionBeginPosition, "");
     } else {
-        fprintf(communicationChannel,"!%d!\n", s_cp.funBegPosition);
+        fprintf(communicationChannel,"!%d!\n", parsedClassInfo.functionBeginPosition);
         fflush(communicationChannel);
     }
 
@@ -1271,43 +1271,43 @@ static void makeExtraction(void) {
 
 
 void actionsBeforeAfterExternalDefinition(void) {
-    if (s_cps.cxMemoryIndexAtBlockEnd != 0
+    if (parsedInfo.cxMemoryIndexAtBlockEnd != 0
         // you have to check for matching class method
         // i.e. for case 'void mmm() { //blockbeg; ...; //blockend; class X { mmm(){}!!}; }'
-        && s_cp.cxMemoryIndexAtFunctionBegin != 0
-        && s_cp.cxMemoryIndexAtFunctionBegin <= s_cps.cxMemoryIndexAtBlockBegin
+        && parsedClassInfo.cxMemoryIndexAtFunctionBegin != 0
+        && parsedClassInfo.cxMemoryIndexAtFunctionBegin <= parsedInfo.cxMemoryIndexAtBlockBegin
         // is it an extraction action ?
         && options.serverOperation == OLO_EXTRACT
-        && (! s_cps.extractProcessedFlag))
+        && (! parsedInfo.extractProcessedFlag))
     {
         // O.K. make extraction
-        s_cp.cxMemoryIndexAtFunctionEnd = cxMemory->index;
+        parsedClassInfo.cxMemoryIndexAtFunctionEnd = cxMemory->index;
         makeExtraction();
-        s_cps.extractProcessedFlag = true;
+        parsedInfo.extractProcessedFlag = true;
         /* here should be a longjmp to stop file processing !!!! */
         /* No, all this extraction should be after parsing ! */
     }
-    s_cp.cxMemoryIndexAtFunctionBegin = cxMemory->index;
+    parsedClassInfo.cxMemoryIndexAtFunctionBegin = cxMemory->index;
     if (includeStackPointer) {                     // ??????? burk ????
-        s_cp.funBegPosition = includeStack[0].lineNumber+1;
+        parsedClassInfo.functionBeginPosition = includeStack[0].lineNumber+1;
     } else {
-        s_cp.funBegPosition = currentFile.lineNumber+1;
+        parsedClassInfo.functionBeginPosition = currentFile.lineNumber+1;
     }
 }
 
 
 void extractActionOnBlockMarker(void) {
     Position pos;
-    if (s_cps.cxMemoryIndexAtBlockBegin == 0) {
-        s_cps.cxMemoryIndexAtBlockBegin = cxMemory->index;
-        s_cps.workMemoryIndexAtBlockBegin = currentBlock->outerBlock;
+    if (parsedInfo.cxMemoryIndexAtBlockBegin == 0) {
+        parsedInfo.cxMemoryIndexAtBlockBegin = cxMemory->index;
+        parsedInfo.workMemoryIndexAtBlockBegin = currentBlock->outerBlock;
         if (LANGUAGE(LANG_JAVA)) {
             s_javaExtractFromFunctionMods = s_javaStat->methodModifiers;
         }
     } else {
-        assert(s_cps.cxMemoryIndexAtBlockEnd == 0);
-        s_cps.cxMemoryIndexAtBlockEnd = cxMemory->index;
-        s_cps.workMemoryIndexAtBlockEnd = currentBlock->outerBlock;
+        assert(parsedInfo.cxMemoryIndexAtBlockEnd == 0);
+        parsedInfo.cxMemoryIndexAtBlockEnd = cxMemory->index;
+        parsedInfo.workMemoryIndexAtBlockEnd = currentBlock->outerBlock;
     }
     pos = makePosition(currentFile.lexBuffer.buffer.fileNumber, 0, 0);
     addTrivialCxReference("Block", TypeBlockMarker, StorageDefault, &pos, UsageUsed);

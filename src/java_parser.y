@@ -470,7 +470,7 @@ JavaType
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = typeSpecifier1($1.d.u);
-                    s_cps.lastDeclaratorType = NULL;
+                    parsedInfo.lastDeclaratorType = NULL;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -557,7 +557,7 @@ ClassOrInterfaceType
                     javaClassifyToTypeName($1.d,UsageUsed, &$$.d, USELESS_FQT_REFS_ALLOWED);
                     $$.d = javaTypeNameDefinition($1.d);
                     assert($$.d->u.typeModifier);
-                    s_cps.lastDeclaratorType = $$.d->u.typeModifier->u.t;
+                    parsedInfo.lastDeclaratorType = $$.d->u.typeModifier->u.t;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -609,7 +609,7 @@ ArrayType
                     PropagateBoundaries($$, $1, $3);
                 }
                 $$.d.position = $1.d.position;
-                s_cps.lastDeclaratorType = NULL;
+                parsedInfo.lastDeclaratorType = NULL;
             };
             if (inSecondJslPass()) {
                 $$.d.symbol = jslTypeSpecifier1($1.d.u);
@@ -622,7 +622,7 @@ ArrayType
                     javaClassifyToTypeName($1.d,UsageUsed, &($$.d.symbol), USELESS_FQT_REFS_ALLOWED);
                     $$.d.symbol = javaTypeNameDefinition($1.d);
                     assert($$.d.symbol && $$.d.symbol->u.typeModifier);
-                    s_cps.lastDeclaratorType = $$.d.symbol->u.typeModifier->u.t;
+                    parsedInfo.lastDeclaratorType = $$.d.symbol->u.typeModifier->u.t;
                     $$.d.symbol->u.typeModifier = prependComposedType($$.d.symbol->u.typeModifier, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -1011,7 +1011,7 @@ SingleTypeImportDeclaration
                     lastUselessRef = javaClassifyToTypeName($2.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     // last useless reference is not useless here!
                     if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
-                    s_cps.lastImportLine = $1.d->position.line;
+                    parsedInfo.lastImportLine = $1.d->position.line;
                     if ($2.d->next!=NULL) {
                         javaAddImportConstructionReference(&$2.d->next->id.position, &$1.d->position, UsageDefined);
                     }
@@ -1037,7 +1037,7 @@ TypeImportOnDemandDeclaration
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
                     if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
-                    s_cps.lastImportLine = $1.d->position.line;
+                    parsedInfo.lastImportLine = $1.d->position.line;
                     javaAddImportConstructionReference(&$2.d->id.position, &$1.d->position, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $5);
@@ -1067,21 +1067,21 @@ TypeDeclarations
 PackageDeclaration_opt:							{
             $$.d = NULL;
             if (regularPass()) {
-                s_cps.lastImportLine = 0;
+                parsedInfo.lastImportLine = 0;
                 SetNullBoundariesFor($$);
             }
         }
     |	Package Name ';'						{
             $$.d = $2.d;
             if (regularPass()) {
-                s_cps.lastImportLine = $1.d->position.line;
+                parsedInfo.lastImportLine = $1.d->position.line;
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
             }
         }
     |	Package error							{
             $$.d = NULL;
             if (regularPass()) {
-                s_cps.lastImportLine = $1.d->position.line;
+                parsedInfo.lastImportLine = $1.d->position.line;
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
@@ -1375,15 +1375,15 @@ _bef_:	{
                 if (! SyntaxPassOnly()) {
                     // TODO, REDO all this stuff around class/method boundaries !!!!!!
                     if (options.mode == ServerMode) {
-                        if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
-                            s_cps.cxMemoryIndexAtMethodBegin = s_cp.cxMemoryIndexAtFunctionBegin;
-                            s_cps.cxMemoryIndexAtMethodEnd = cxMemory->index;
+                        if (parsedClassInfo.parserPassedMarker && !parsedClassInfo.thisMethodMemoriesStored){
+                            parsedInfo.cxMemoryIndexAtMethodBegin = parsedClassInfo.cxMemoryIndexAtFunctionBegin;
+                            parsedInfo.cxMemoryIndexAtMethodEnd = cxMemory->index;
                                  /*& sprintf(tmpBuff,"setting %s, %d,%d   %d,%d",
                                      olcxOptionsName[options.serverOperation],
-                                     s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored,
-                                     s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd),
+                                     parsedClassInfo.parserPassedMarker, parsedClassInfo.thisMethodMemoriesStored,
+                                     parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd),
                                      ppcBottomInformation(tmpBuff); &*/
-                            s_cp.thisMethodMemoriesStored = 1;
+                            parsedClassInfo.thisMethodMemoriesStored = 1;
                             if (options.serverOperation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
                                                              CategoryLocal, currentFile.lexBuffer.buffer.fileNumber,
@@ -1397,12 +1397,12 @@ _bef_:	{
                                                              CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             }
-                            s_cps.cxMemoryIndexAtClassBeginning = s_cp.cxMemoryIndexdiAtClassBegin;
-                            s_cps.cxMemoryIndexAtClassEnd = cxMemory->index;
-                            s_cps.classCoordEndLine = currentFile.lineNumber+1;
+                            parsedInfo.cxMemoryIndexAtClassBeginning = parsedClassInfo.cxMemoryIndexdiAtClassBegin;
+                            parsedInfo.cxMemoryIndexAtClassEnd = cxMemory->index;
+                            parsedInfo.classCoordEndLine = currentFile.lineNumber+1;
                             /*& fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n",
-                              s_cps.classCoordEndLine, s_cps.cxMemoryIndexAtClassBeginning,
-                              s_cps.cxMemoryIndexAtClassEnd); &*/
+                              parsedInfo.classCoordEndLine, parsedInfo.cxMemoryIndexAtClassBeginning,
+                              parsedInfo.cxMemoryIndexAtClassEnd); &*/
                             if (options.serverOperation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                             CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
@@ -1414,9 +1414,9 @@ _bef_:	{
                             }
                         }
                     }
-                    s_cp.cxMemoryIndexdiAtClassBegin = cxMemory->index;
+                    parsedClassInfo.cxMemoryIndexdiAtClassBegin = cxMemory->index;
                     /*& fprintf(dumpOut,"!setting class begin memory %d\n",
-                      s_cp.cxMemoryIndexdiAtClassBegin); &*/
+                      parsedClassInfo.cxMemoryIndexdiAtClassBegin); &*/
                     actionsBeforeAfterExternalDefinition();
                 }
             }
@@ -1463,7 +1463,7 @@ AssignmentType
             $$.d = $1.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = $1.d;
+                    parsedInfo.lastAssignementStruct = $1.d;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -1478,7 +1478,7 @@ FieldDeclaration
                     Symbol *p,*pp,*memb,*clas;
                     int vClass;
                     S_recFindStr    rfs;
-                    s_cps.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignementStruct = NULL;
                     clas = s_javaStat->thisClass;
                     assert(clas != NULL);
                     for(p=$3.d; p!=NULL; p=pp) {
@@ -1505,9 +1505,9 @@ FieldDeclaration
                     }
                     $$.d = $3.d;
                     if (options.mode == ServerMode
-                        && s_cp.parserPassedMarker
-                        && !s_cp.thisMethodMemoriesStored){
-                        s_cps.methodCoordEndLine = currentFile.lineNumber+1;
+                        && parsedClassInfo.parserPassedMarker
+                        && !parsedClassInfo.thisMethodMemoriesStored){
+                        parsedInfo.methodCoordEndLine = currentFile.lineNumber+1;
                     }
                 } else {
                     PropagateBoundaries($$, $1, $4);
@@ -1687,7 +1687,7 @@ MethodHeader
     :   Modifiers_opt AssignmentType MethodDeclarator Throws_opt	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignementStruct = NULL;
                     $$.d = javaMethodHeader($1.d,$2.d,$3.d, StorageMethod);
                 } else {
                     PropagateBoundaries($$, $1, $4);
@@ -1919,7 +1919,7 @@ ConstructorDeclaration
                         // TODO! Merge this with 'javaMethodBodyBeginning'!
                         assert(mh->u.typeModifier && mh->u.typeModifier->kind == TypeFunction);
                         beginBlock();  // in order to remove arguments
-                        s_cp.function = mh; /* added for set-target-position checks */
+                        parsedClassInfo.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
                         generateInternalLabelReference(-1, UsageDefined);
                         counters.localVar = 0;
@@ -1944,7 +1944,7 @@ ConstructorDeclaration
                     if ($$.b.file == noFileIndex)
                         PropagateBoundaries($$, $2, $$);
                 }
-                s_cp.function = NULL; /* added for set-target-position checks */
+                parsedClassInfo.function = NULL; /* added for set-target-position checks */
             }
         }
     ;
@@ -2017,13 +2017,13 @@ ExplicitConstructorInvocation
     :   This _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &$1.d->position);
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &$1.d->position);
                 }
             } '(' ArgumentList_opt ')'			{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         javaConstructorInvocation(s_javaStat->thisClass, &($1.d->position), $5.d.t);
-                        s_cp.erfsForParamsComplet = $2;
+                        parsedClassInfo.erfsForParameterCompletion = $2;
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->position, &$4.d, $5.d.p, &$6.d);
                         PropagateBoundaries($$, $1, $6);
@@ -2033,7 +2033,7 @@ ExplicitConstructorInvocation
     |	Super _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &$1.d->position);
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &$1.d->position);
                 }
             }   '(' ArgumentList_opt ')'			{
                 if (regularPass()) {
@@ -2041,7 +2041,7 @@ ExplicitConstructorInvocation
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
                         javaConstructorInvocation(ss, &($1.d->position), $5.d.t);
-                        s_cp.erfsForParamsComplet = $2;
+                        parsedClassInfo.erfsForParameterCompletion = $2;
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->position, &$4.d, $5.d.p, &$6.d);
                         PropagateBoundaries($$, $1, $6);
@@ -2051,7 +2051,7 @@ ExplicitConstructorInvocation
     |	Primary  '.' Super _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &($3.d->position));
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &($3.d->position));
                 }
             } '(' ArgumentList_opt ')'		{
                 if (regularPass()) {
@@ -2059,7 +2059,7 @@ ExplicitConstructorInvocation
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
                         javaConstructorInvocation(ss, &($3.d->position), $7.d.t);
-                        s_cp.erfsForParamsComplet = $4;
+                        parsedClassInfo.erfsForParameterCompletion = $4;
                     } else {
                         javaHandleDeclaratorParamPositions(&$3.d->position, &$6.d, $7.d.p, &$8.d);
                         PropagateBoundaries($$, $1, $8);
@@ -2332,13 +2332,13 @@ LocalVariableDeclaration
     |	LocalVarDeclUntilInit {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = $1.d;
+                    parsedInfo.lastAssignementStruct = $1.d;
                 }
             }
         } '=' VariableInitializer		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignementStruct = NULL;
                     $$.d = $1.d;
                 } else {
                     PropagateBoundaries($$, $1, $4);
@@ -3091,7 +3091,7 @@ PrimaryNoNewArray
     ;
 
 _erfs_:		{
-            $$ = s_cp.erfsForParamsComplet;
+            $$ = parsedClassInfo.erfsForParameterCompletion;
         }
     ;
 
@@ -3100,11 +3100,11 @@ NestedConstructorInvocation
             {
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
-                    s_cp.erfsForParamsComplet = NULL;
+                    parsedClassInfo.erfsForParameterCompletion = NULL;
                     if ($1.d.typeModifier->kind == TypeStruct) {
                         mm = javaNestedNewType($1.d.typeModifier->u.t, $3.d, $4.d);
                         if (mm->kind != TypeError) {
-                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.position));
+                            parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.position));
                         }
                     }
                 }
@@ -3112,7 +3112,7 @@ NestedConstructorInvocation
         '(' ArgumentList_opt ')'				{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cp.erfsForParamsComplet = $5;
+                    parsedClassInfo.erfsForParameterCompletion = $5;
                     if ($1.d.typeModifier->kind == TypeStruct) {
                         $$.d.typeModifier = javaNestedNewType($1.d.typeModifier->u.t, $3.d, $4.d);
                     } else {
@@ -3134,17 +3134,17 @@ NestedConstructorInvocation
             {
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
-                    s_cp.erfsForParamsComplet = NULL;
+                    parsedClassInfo.erfsForParameterCompletion = NULL;
                     mm = javaNewAfterName($1.d, $3.d, $4.d);
                     if (mm->kind != TypeError) {
-                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.position));
+                        parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.position));
                     }
                 }
             }
         '(' ArgumentList_opt ')'				{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cp.erfsForParamsComplet = $5;
+                    parsedClassInfo.erfsForParameterCompletion = $5;
                     $$.d.typeModifier = javaNewAfterName($1.d, $3.d, $4.d);
                     $$.d.idList = $4.d;
                     if ($$.d.typeModifier->kind != TypeError) {
@@ -3170,7 +3170,7 @@ NewName
                                           CLASS_TO_TYPE,UsageUsed);
                 $1.d->nameType = TypeStruct;
                 ss = javaTypeSymbolUsage($1.d, AccessDefault);
-                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &($1.d->id.position));
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(ss, &($1.d->id.position));
             }
             $$ = $1;
         }
@@ -3185,7 +3185,7 @@ ClassInstanceCreationExpression
                     TypeModifier *expr;
                     Reference *rr, *lastUselessRef;
 
-                    s_cp.erfsForParamsComplet = $2;
+                    parsedClassInfo.erfsForParameterCompletion = $2;
                     lastUselessRef = NULL;
                     javaClassifyAmbiguousName($3.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                               CLASS_TO_TYPE,UsageUsed);
@@ -3231,7 +3231,7 @@ ClassInstanceCreationExpression
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
-                        s_cp.erfsForParamsComplet = $2;
+                        parsedClassInfo.erfsForParameterCompletion = $2;
                         javaClassifyToTypeName($3.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         $<symbol>$ = javaTypeNameDefinition($3.d);
                         ss = javaTypeSymbolUsage($3.d, AccessDefault);
@@ -3339,8 +3339,8 @@ ArgumentList
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.t = newTypeModifierList($1.d.typeModifier);
-                    if (s_cp.erfsForParamsComplet!=NULL) {
-                        s_cp.erfsForParamsComplet->params = $$.d.t;
+                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) {
+                        parsedClassInfo.erfsForParameterCompletion->params = $$.d.t;
                     }
                 } else {
                     $$.d.p = NULL;
@@ -3356,7 +3356,7 @@ ArgumentList
                     $$.d = $1.d;
                     p = newTypeModifierList($3.d.typeModifier);
                     LIST_APPEND(S_typeModifierList, $$.d.t, p);
-                    if (s_cp.erfsForParamsComplet!=NULL) s_cp.erfsForParamsComplet->params = $$.d.t;
+                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) parsedClassInfo.erfsForParameterCompletion->params = $$.d.t;
                 } else {
                     appendPositionToList(&$$.d.p, &$2.d);
                     PropagateBoundaries($$, $1, $3);
@@ -3556,14 +3556,14 @@ FieldAccess
 MethodInvocation
     :   Name _erfs_ {
             if (ComputingPossibleParameterCompletion()) {
-                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationN($1.d);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationN($1.d);
             }
         } '(' ArgumentList_opt ')'					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaMethodInvocationN($1.d,$5.d.t);
                     $$.d.reference = NULL;
-                    s_cp.erfsForParamsComplet = $2;
+                    parsedClassInfo.erfsForParameterCompletion = $2;
                 } else {
                     $$.d.position = javaGetNameStartingPosition($1.d);
                     javaCheckForPrimaryStartInNameList($1.d, $$.d.position);
@@ -3575,14 +3575,14 @@ MethodInvocation
         }
     |	Primary '.' Identifier _erfs_ {
             if (ComputingPossibleParameterCompletion()) {
-                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationT($1.d.typeModifier, $3.d);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationT($1.d.typeModifier, $3.d);
             }
         } '(' ArgumentList_opt ')'	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaMethodInvocationT($1.d.typeModifier, $3.d, $7.d.t);
                     $$.d.reference = NULL;
-                    s_cp.erfsForParamsComplet = $4;
+                    parsedClassInfo.erfsForParameterCompletion = $4;
                 } else {
                     $$.d.position = $1.d.position;
                     javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
@@ -3593,14 +3593,14 @@ MethodInvocation
         }
     |	Super '.' Identifier _erfs_ {
             if (ComputingPossibleParameterCompletion()) {
-                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationS($1.d, $3.d);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationS($1.d, $3.d);
             }
         } '(' ArgumentList_opt ')'	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaMethodInvocationS($1.d, $3.d, $7.d.t);
                     $$.d.reference = NULL;
-                    s_cp.erfsForParamsComplet = $4;
+                    parsedClassInfo.erfsForParameterCompletion = $4;
                 } else {
                     $$.d.position = &$1.d->position;
                     javaCheckForPrimaryStart(&$1.d->position, $$.d.position);
@@ -4164,7 +4164,7 @@ Assignment
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.d.typeModifier!=NULL && $1.d.typeModifier->kind == TypeStruct) {
-                        s_cps.lastAssignementStruct = $1.d.typeModifier->u.t;
+                        parsedInfo.lastAssignementStruct = $1.d.typeModifier->u.t;
                     }
                 }
                 $$.d = $1.d;
@@ -4172,7 +4172,7 @@ Assignment
         } AssignmentOperator AssignmentExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignementStruct = NULL;
                     if ($1.d.reference != NULL && options.serverOperation == OLO_EXTRACT) {
                         Reference *rr;
                         rr = duplicateReference($1.d.reference);

@@ -17,7 +17,7 @@ typedef struct javaStat {
     struct symbolTable      *locals;             /* args and local variables */
     struct idList           *lastParsedName;
     unsigned                 methodModifiers; /* currently parsed method modifs */
-    struct currentlyParsedCl cp;              /* some parsing positions */
+    struct currentlyParsedClassInfo cp;              /* some parsing positions */
     int                      classFileIndex;  /* this file class index */
     struct javaStat         *next;            /* outer class */
 } S_javaStat;
@@ -31,7 +31,7 @@ extern void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
 extern void fillJavaStat(S_javaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                          int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
                          char *namedPackageDir, SymbolTable *locals, IdList *lastParsedName,
-                         unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
+                         unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileIndex,
                          S_javaStat *next);
 extern void javaCheckForPrimaryStart(Position *cpos, Position *pp);
 extern void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp);

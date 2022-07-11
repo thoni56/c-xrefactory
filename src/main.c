@@ -409,8 +409,8 @@ static void initDefaultCxrefFileName(char *inputfile) {
 
 static void initializationsPerInvocation(void) {
     int i;
-    s_cp = s_cpInit;
-    s_cps = s_cpsInit;
+    parsedClassInfo = parsedClassInfoInit;
+    parsedInfo = (CurrentlyParsedInfo){0,};
     for(i=0; i<SPP_MAX; i++) s_spp[i] = noPosition;
     s_cxRefFlag=0;
     s_cxRefPos = noPosition;
@@ -981,7 +981,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initSymbolTable(MAX_SYMBOLS);
 
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
-                  symbolTable,NULL,AccessDefault,s_cpInit,noFileIndex,NULL);
+                  symbolTable,NULL,AccessDefault,parsedClassInfoInit,noFileIndex,NULL);
     s_javaStat = StackMemoryAlloc(S_javaStat);
     *s_javaStat = s_initJavaStat;
     javaFqtTableInit(&javaFqtTable, FQT_CLASS_TAB_SIZE);

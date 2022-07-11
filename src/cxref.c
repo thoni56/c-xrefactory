@@ -455,8 +455,8 @@ void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                   Symbol *cclass){
     ReferencesChangeData changeData;
     fillReferencesChangeData(&changeData, linkName, fnum, cclass, category,
-                              s_cps.cxMemoryIndexAtMethodBegin,
-                              s_cps.cxMemoryIndexAtMethodEnd);
+                              parsedInfo.cxMemoryIndexAtMethodBegin,
+                              parsedInfo.cxMemoryIndexAtMethodEnd);
     mapOverReferenceTableWithPointer(changeFieldRefUsages, &changeData);
 }
 
@@ -464,8 +464,8 @@ void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                  Symbol *cclass){
     ReferencesChangeData changeData;
     fillReferencesChangeData(&changeData, linkName, fnum, cclass, category,
-                              s_cps.cxMemoryIndexAtClassBeginning,
-                              s_cps.cxMemoryIndexAtClassEnd);
+                              parsedInfo.cxMemoryIndexAtClassBeginning,
+                              parsedInfo.cxMemoryIndexAtClassEnd);
     mapOverReferenceTableWithPointer(changeFieldRefUsages, &changeData);
 }
 
@@ -3814,9 +3814,9 @@ static void olcxProcessGetRequest(void) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
         if (options.xref2) {
-            ppcGenRecord(PPC_SET_INFO, expandSpecialFilePredefinedVariables_st(val, inputFilename));
+            ppcGenRecord(PPC_SET_INFO, expandPredefinedSpecialVariables_static(val, inputFilename));
         } else {
-            fprintf(communicationChannel,"*%s", expandSpecialFilePredefinedVariables_st(val, inputFilename));
+            fprintf(communicationChannel,"*%s", expandPredefinedSpecialVariables_static(val, inputFilename));
         }
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -4248,7 +4248,7 @@ void mainAnswerEditAction(void) {
         printCompletions(&s_completions);
         break;
     case OLO_EXTRACT:
-        if (! s_cps.extractProcessedFlag) {
+        if (! parsedInfo.extractProcessedFlag) {
             fprintf(communicationChannel,"*** No function/method enclosing selected block found **");
         }
         break;
@@ -4481,11 +4481,11 @@ void mainAnswerEditAction(void) {
     case OLO_SET_MOVE_TARGET:
         // xref1 target setting
         assert(!options.xref2);
-        if (*s_cps.setTargetAnswerClass!=0) {
+        if (*parsedInfo.setTargetAnswerClass!=0) {
             fprintf(communicationChannel,"*");
-            //&printSymbolLinkNameString(communicationChannel, s_cps.setTargetAnswerClass);
+            //&printSymbolLinkNameString(communicationChannel, parsedInfo.setTargetAnswerClass);
             // very risky, will need a lot of adjustements in xref.el
-            fprintf(communicationChannel, "%s", s_cps.setTargetAnswerClass);
+            fprintf(communicationChannel, "%s", parsedInfo.setTargetAnswerClass);
         } else {
             errorMessage(ERR_ST, "Not a valid target position. The cursor has to be on a place where a new field/method can be inserted.");
         }
@@ -4494,26 +4494,26 @@ void mainAnswerEditAction(void) {
     case OLO_SET_MOVE_METHOD_TARGET:
         // xref2 target
         assert(options.xref2);
-        if (!s_cps.moveTargetApproved) {
+        if (!parsedInfo.moveTargetApproved) {
             ppcGenRecord(PPC_ERROR, "Invalid target place");
         }
         break;
     case OLO_GET_CURRENT_CLASS:
-        answerClassName(s_cps.currentClassAnswer);
+        answerClassName(parsedInfo.currentClassAnswer);
         break;
     case OLO_GET_CURRENT_SUPER_CLASS:
-        answerClassName(s_cps.setTargetAnswerClass);
+        answerClassName(parsedInfo.setTargetAnswerClass);
         break;
     case OLO_GET_METHOD_COORD:
-        if (s_cps.methodCoordEndLine!=0) {
-            fprintf(communicationChannel,"*%d", s_cps.methodCoordEndLine);
+        if (parsedInfo.methodCoordEndLine!=0) {
+            fprintf(communicationChannel,"*%d", parsedInfo.methodCoordEndLine);
         } else {
             errorMessage(ERR_ST, "No method found.");
         }
         break;
     case OLO_GET_CLASS_COORD:
-        if (s_cps.classCoordEndLine!=0) {
-            fprintf(communicationChannel,"*%d", s_cps.classCoordEndLine);
+        if (parsedInfo.classCoordEndLine!=0) {
+            fprintf(communicationChannel,"*%d", parsedInfo.classCoordEndLine);
         } else {
             errorMessage(ERR_ST, "No class found.");
         }
@@ -4548,8 +4548,8 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_PUSH_ALL_IN_METHOD:
-        log_trace(":getting all references from begin=%d to end=%d", s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
-        olPushAllReferencesInBetween(s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
+        log_trace(":getting all references from begin=%d to end=%d", parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
+        olPushAllReferencesInBetween(parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
         olcxPrintPushingAction(options.serverOperation, 0);
         break;
     case OLO_TRIVIAL_PRECHECK:
@@ -4596,10 +4596,10 @@ void mainAnswerEditAction(void) {
     case OLO_GET_LAST_IMPORT_LINE:
         if (options.xref2) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "%d", s_cps.lastImportLine);
+            sprintf(tmpBuff, "%d", parsedInfo.lastImportLine);
             ppcGenRecord(PPC_SET_INFO, tmpBuff);
         } else {
-            fprintf(communicationChannel,"*%d", s_cps.lastImportLine);
+            fprintf(communicationChannel,"*%d", parsedInfo.lastImportLine);
         }
         break;
     case OLO_NOOP:

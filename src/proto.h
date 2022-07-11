@@ -483,10 +483,10 @@ typedef struct completions {
 } Completions;
 
 
-typedef struct currentlyParsedCl {		// class local, nested for classes
+typedef struct currentlyParsedClassInfo {		// class local, nested for classes
     struct symbol			*function;
-    struct extRecFindStr	*erfsForParamsComplet;			// curently parsed method for param completion
-    unsigned				funBegPosition;
+    struct extRecFindStr	*erfsForParameterCompletion;			// currently parsed method for param completion
+    unsigned				functionBeginPosition;
     int                     cxMemoryIndexAtFunctionBegin;
     int						cxMemoryIndexAtFunctionEnd;
     int                     cxMemoryIndexdiAtClassBegin;
@@ -494,18 +494,18 @@ typedef struct currentlyParsedCl {		// class local, nested for classes
     int						thisMethodMemoriesStored;
     int						thisClassMemoriesStored;
     int						parserPassedMarker;
-} S_currentlyParsedCl;
+} CurrentlyParsedClassInfo;
 
-typedef struct currentlyParsedStatics {
+typedef struct currentlyParsedInfo {
     bool            extractProcessedFlag;
     bool			marker1Flag;
     int				marker2Flag;
-    char			setTargetAnswerClass[TMP_STRING_SIZE];	// useless for xref2
+    char			setTargetAnswerClass[TMP_STRING_SIZE];
     int				moveTargetApproved;
     char			currentPackageAnswer[TMP_STRING_SIZE];
     char			currentClassAnswer[TMP_STRING_SIZE];
     char			currentSuperClassAnswer[TMP_STRING_SIZE];
-    int				methodCoordEndLine;        // to be removed
+    int				methodCoordEndLine;
     int				classCoordEndLine;
     struct codeBlock *workMemoryIndexAtBlockBegin;
     struct codeBlock *workMemoryIndexAtBlockEnd;
@@ -518,7 +518,7 @@ typedef struct currentlyParsedStatics {
     int				lastImportLine;
     struct symbol	*lastDeclaratorType;
     struct symbol	*lastAssignementStruct;
-} S_currentlyParsedStatics;
+} CurrentlyParsedInfo;
 
 
 /* ************************ PRE-PROCESSOR **************************** */

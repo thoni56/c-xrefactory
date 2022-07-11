@@ -468,15 +468,15 @@ void labelReference(Id *id, UsageKind usage) {
     assert(id);
     if (LANGUAGE(LANG_JAVA)) {
         assert(s_javaStat&&s_javaStat->thisClass&&s_javaStat->thisClass->u.structSpec);
-        if (s_cp.function!=NULL) {
+        if (parsedClassInfo.function!=NULL) {
             sprintf(tempString,"%x-%s.%s",s_javaStat->thisClass->u.structSpec->classFileIndex,
-                    s_cp.function->name, id->name);
+                    parsedClassInfo.function->name, id->name);
         } else {
             sprintf(tempString,"%x-.%s", s_javaStat->thisClass->u.structSpec->classFileIndex,
                     id->name);
         }
-    } else if (s_cp.function!=NULL) {
-        t = strmcpy(tempString, s_cp.function->name);
+    } else if (parsedClassInfo.function!=NULL) {
+        t = strmcpy(tempString, parsedClassInfo.function->name);
         *t = '.';
         t = strcpy(t+1,id->name);
     } else {

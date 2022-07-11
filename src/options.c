@@ -369,25 +369,27 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     }
 }
 
-char *expandSpecialFilePredefinedVariables_st(char *variable, char *inputFilename) {
+char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilename) {
     static char expanded[MAX_OPTION_LEN];
-    int i, j;
-    char *suffix;
-    char filename[MAX_FILE_NAME_SIZE];
-    char path[MAX_FILE_NAME_SIZE];
-    char name[MAX_FILE_NAME_SIZE];
-    char thisclass[MAX_FILE_NAME_SIZE];
-    char superclass[MAX_FILE_NAME_SIZE];
+    int         i, j;
+    char       *suffix;
+    char        filename[MAX_FILE_NAME_SIZE];
+    char        path[MAX_FILE_NAME_SIZE];
+    char        name[MAX_FILE_NAME_SIZE];
+    char        thisclass[MAX_FILE_NAME_SIZE];
+    char        superclass[MAX_FILE_NAME_SIZE];
 
     strcpy(filename, getRealFileName_static(inputFilename));
-    assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(filename) < MAX_FILE_NAME_SIZE - 1);
     strcpy(path, directoryName_st(filename));
     strcpy(name, simpleFileNameWithoutSuffix_st(filename));
     suffix = lastOccurenceInString(filename, '.');
-    if (suffix==NULL) suffix="";
-    else suffix++;
-    strcpy(thisclass, s_cps.currentClassAnswer);
-    strcpy(superclass, s_cps.currentSuperClassAnswer);
+    if (suffix == NULL)
+        suffix = "";
+    else
+        suffix++;
+    strcpy(thisclass, parsedInfo.currentClassAnswer);
+    strcpy(superclass, parsedInfo.currentSuperClassAnswer);
     javaDotifyFileName(thisclass);
     javaDotifyFileName(superclass);
 

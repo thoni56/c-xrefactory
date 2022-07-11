@@ -819,11 +819,11 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     pos1 = absoluteFilePosition(cb);
                     log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",pos1,options.olCursorPos,options.olMarkPos);
                     // all this is very, very HACK!!!
-                    if (pos1 >= options.olCursorPos && !s_cps.marker1Flag) {
+                    if (pos1 >= options.olCursorPos && !parsedInfo.marker1Flag) {
                         if (LANGUAGE(LANG_JAVA))
                             parChar = ';';
                         else {
-                            if (s_cps.marker2Flag)
+                            if (parsedInfo.marker2Flag)
                                 parChar='}';
                             else
                                 parChar = '{';
@@ -842,12 +842,12 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         putLexPosition(ps->file,ps->line,ps->col, &dd);
                         putLexToken(parChar, &dd);
                         putLexPosition(ps->file,ps->line,ps->col, &dd);
-                        s_cps.marker1Flag = true;
-                    } else if (pos1 >= options.olMarkPos && !s_cps.marker2Flag){
+                        parsedInfo.marker1Flag = true;
+                    } else if (pos1 >= options.olMarkPos && !parsedInfo.marker2Flag){
                         if (LANGUAGE(LANG_JAVA))
                             parChar = ';';
                         else {
-                            if (s_cps.marker1Flag)
+                            if (parsedInfo.marker1Flag)
                                 parChar='}';
                             else
                                 parChar = '{';
@@ -866,7 +866,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         putLexPosition(ps->file,ps->line,ps->col, &dd);
                         putLexToken(parChar, &dd);
                         putLexPosition(ps->file,ps->line,ps->col, &dd);
-                        s_cps.marker2Flag = true;
+                        parsedInfo.marker2Flag = true;
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
@@ -924,10 +924,10 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         // only for Java refactorings
                         ch = skipBlanks(cb, ch);
                         apos = absoluteFilePosition(cb);
-                        if (apos >= options.olCursorPos && !s_cps.marker1Flag) {
+                        if (apos >= options.olCursorPos && !parsedInfo.marker1Flag) {
                             putLexToken(OL_MARKER_TOKEN, &dd);
                             putLexPosition(ps->file,ps->line,ps->col, &dd);
-                            s_cps.marker1Flag = true;
+                            parsedInfo.marker1Flag = true;
                         }
                     }
                 }

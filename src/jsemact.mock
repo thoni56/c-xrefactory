@@ -13,7 +13,7 @@ void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
 void fillJavaStat(S_javaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
                   char *namedPackageDir, SymbolTable *locals, IdList *lastParsedName,
-                  unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
+                  unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileIndex,
                   S_javaStat *next) {
     mock();
 }

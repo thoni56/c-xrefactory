@@ -57,7 +57,7 @@ void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
 void fillJavaStat(S_javaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
                   char *namedPackagePath, SymbolTable *locals, IdList *lastParsedName,
-                  unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
+                  unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileIndex,
                   S_javaStat *next) {
 
     javaStat->className = className;
@@ -1827,7 +1827,7 @@ void javaAddMethodParametersToSymTable(Symbol *method) {
 
 void javaMethodBodyBeginning(Symbol *method) {
     assert(method->u.typeModifier && method->u.typeModifier->kind == TypeFunction);
-    s_cp.function = method;
+    parsedClassInfo.function = method;
     generateInternalLabelReference(-1, UsageDefined);
     counters.localVar = 0;
     javaAddMethodParametersToSymTable(method);
@@ -1838,12 +1838,12 @@ void javaMethodBodyBeginning(Symbol *method) {
 // this should be merged with _bef_ token!
 void javaMethodBodyEnding(Position *endpos) {
     if (options.mode == ServerMode) {
-        if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
-            s_cps.methodCoordEndLine = currentFile.lineNumber+1;
+        if (parsedClassInfo.parserPassedMarker && !parsedClassInfo.thisMethodMemoriesStored){
+            parsedInfo.methodCoordEndLine = currentFile.lineNumber+1;
         }
     }
     // I rely that it is nil, for example in setmove target
-    s_cp.function = NULL;
+    parsedClassInfo.function = NULL;
 }
 
 TypeModifier *javaClassNameType(IdList *typeName) {
@@ -2592,9 +2592,9 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
         classf = noFileIndex;
     fillJavaStat(s_javaStat,p,&dd->u.structSpec->stype,dd,0, oldStat->currentPackage,
                   oldStat->unnamedPackagePath, oldStat->namedPackagePath,
-                  locals, oldStat->lastParsedName,AccessDefault,s_cp,classf,oldStat);
+                  locals, oldStat->lastParsedName,AccessDefault,parsedClassInfo,classf,oldStat);
     // added 8/8/2001 for clearing s_cp.function for SET_TARGET_POSITION check
-    s_cp = s_cpInit;
+    parsedClassInfo = parsedClassInfoInit;
 //&fprintf(dumpOut,"clearing s_cp\n");
     return res;
 }
@@ -2618,9 +2618,9 @@ void newClassDefinitionEnd(FreeTrail *trail) {
     /* TODO: WTF?!??! */
     // the following line makes that method extraction does not work,
     // make attention with it, ? really
-    s_cp = s_javaStat->cp;
+    parsedClassInfo = s_javaStat->cp;
     s_javaStat = s_javaStat->next;
-    log_trace("recovering s_cp to %d", s_cp.cxMemoryIndexdiAtClassBegin);
+    log_trace("recovering s_cp to %d", parsedClassInfo.cxMemoryIndexdiAtClassBegin);
 }
 
 void javaInitArrayObject(void) {
