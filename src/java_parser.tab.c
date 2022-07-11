@@ -3737,11 +3737,11 @@ case 110:
                         PropagateBoundaries(yyval.ast_id, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
                         if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
                         if (positionIsBetween(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
-                            && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
-                            s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
-                            s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-6].ast_id.b;
-                            s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-6].ast_id.e;
-                            s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_id.e;
+                            && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
+                            parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
+                            parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-6].ast_id.b;
+                            parsedPositions[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-6].ast_id.e;
+                            parsedPositions[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_id.e;
                         }
                     }
                 } else {
@@ -3815,8 +3815,8 @@ case 116:
                         PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
                         if (yyval.ast_position.b.file == noFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_id, yyvsp[0].ast_position);
                         if (positionsAreEqual(s_cxRefPos, yyvsp[-5].ast_id.d->position)) {
-                            s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
-                            s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_position.e;
+                            parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
+                            parsedPositions[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_position.e;
                         }
                     }
                 } else {
@@ -4095,11 +4095,11 @@ case 141:
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_position);
                     if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                     if (positionIsBetween(yyval.ast_symbol.b, s_cxRefPos, yyval.ast_symbol.e)
-                        && s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==noFileIndex) {
-                        s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION] = yyval.ast_symbol.b;
-                        s_spp[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
-                        s_spp[SPP_FIELD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
-                        s_spp[SPP_FIELD_DECLARATION_END_POSITION] = yyval.ast_symbol.e;
+                        && parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==noFileIndex) {
+                        parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION] = yyval.ast_symbol.b;
+                        parsedPositions[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
+                        parsedPositions[SPP_FIELD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
+                        parsedPositions[SPP_FIELD_DECLARATION_END_POSITION] = yyval.ast_symbol.e;
                     }
                 }
             }
@@ -4262,8 +4262,8 @@ case 153:
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_symbol, yyvsp[-1].ast_position);
                         if (positionIsBetween(yyvsp[-4].ast_symbol.b, s_cxRefPos, yyvsp[-4].ast_symbol.e)) {
-                            s_spp[SPP_METHOD_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
-                            s_spp[SPP_METHOD_DECLARATION_END_POSITION] = yyval.ast_position.e;
+                            parsedPositions[SPP_METHOD_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
+                            parsedPositions[SPP_METHOD_DECLARATION_END_POSITION] = yyval.ast_position.e;
                         }
                     }
                 }
@@ -4281,8 +4281,8 @@ case 154:
                     if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
                     if (yyval.ast_symbol.e.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
                     if (positionIsBetween(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
-                        s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
-                        s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
+                        parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
+                        parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
                     }
                 }
             }
@@ -4302,8 +4302,8 @@ case 155:
                     if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
                     if (yyval.ast_symbol.e.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
                     if (positionIsBetween(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
-                        s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_id.b;
-                        s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_id.e;
+                        parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_id.b;
+                        parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_id.e;
                     }
                 }
             }
@@ -4768,11 +4768,11 @@ case 198:
                     PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_unsigned, yyvsp[0].ast_position);
                     if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
                     if (positionIsBetween(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
-                        && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
-                        s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
-                        s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-5].ast_position.b;
-                        s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-5].ast_position.e;
-                        s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_id.e;
+                        && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
+                        parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
+                        parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-5].ast_position.b;
+                        parsedPositions[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-5].ast_position.e;
+                        parsedPositions[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_id.e;
                     }
                 }
             } else {
@@ -5856,11 +5856,11 @@ case 353:
                     *yyval.ast_expressionType.d.position = yyvsp[-2].ast_position.d;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                     if (positionIsBetween(yyval.ast_expressionType.b, s_cxRefPos, yyval.ast_expressionType.e)
-                        && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == noFileIndex) {
-                        s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = yyvsp[-2].ast_position.b;
-                        s_spp[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = yyvsp[0].ast_position.b;
-                        s_spp[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION] = yyvsp[-1].ast_expressionType.b;
-                        s_spp[SPP_PARENTHESED_EXPRESSION_END_POSITION] = yyvsp[-1].ast_expressionType.e;
+                        && parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == noFileIndex) {
+                        parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = yyvsp[-2].ast_position.b;
+                        parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = yyvsp[0].ast_position.b;
+                        parsedPositions[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION] = yyvsp[-1].ast_expressionType.b;
+                        parsedPositions[SPP_PARENTHESED_EXPRESSION_END_POSITION] = yyvsp[-1].ast_expressionType.e;
                     }
                 }
             }
@@ -6654,13 +6654,13 @@ case 425:
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (positionIsBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
-                        && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
-                        s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
-                        s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
-                        s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbolPositionPair.b;
-                        s_spp[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].ast_symbolPositionPair.e;
-                        s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].ast_expressionType.b;
-                        s_spp[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].ast_expressionType.e;
+                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
+                        parsedPositions[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
+                        parsedPositions[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
+                        parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbolPositionPair.b;
+                        parsedPositions[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].ast_symbolPositionPair.e;
+                        parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].ast_expressionType.b;
+                        parsedPositions[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].ast_expressionType.e;
                     }
                 }
             }
@@ -6677,13 +6677,13 @@ case 426:
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (positionIsBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
-                        && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
-                        s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
-                        s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
-                        s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_unsignedPositionPair.b;
-                        s_spp[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].ast_unsignedPositionPair.e;
-                        s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].ast_expressionType.b;
-                        s_spp[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].ast_expressionType.e;
+                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
+                        parsedPositions[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
+                        parsedPositions[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
+                        parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_unsignedPositionPair.b;
+                        parsedPositions[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].ast_unsignedPositionPair.e;
+                        parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].ast_expressionType.b;
+                        parsedPositions[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].ast_expressionType.e;
                     }
                 }
             }
@@ -6700,13 +6700,13 @@ case 427:
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (positionIsBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
-                        && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
-                        s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
-                        s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
-                        s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_expressionType.b;
-                        s_spp[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].ast_expressionType.e;
-                        s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].ast_expressionType.b;
-                        s_spp[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].ast_expressionType.e;
+                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
+                        parsedPositions[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
+                        parsedPositions[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
+                        parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_expressionType.b;
+                        parsedPositions[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].ast_expressionType.e;
+                        parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].ast_expressionType.b;
+                        parsedPositions[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].ast_expressionType.e;
                     }
                 }
             }
@@ -7076,8 +7076,8 @@ case 463:
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_expressionType);
                     if (options.mode == ServerMode) {
                         if (positionIsBetween(yyvsp[-3].ast_expressionType.b, s_cxRefPos, yyvsp[-3].ast_expressionType.e)) {
-                            s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION] = yyvsp[-1].ast_unsignedPositionPair.b;
-                            s_spp[SPP_ASSIGNMENT_END_POSITION] = yyvsp[0].ast_expressionType.e;
+                            parsedPositions[SPP_ASSIGNMENT_OPERATOR_POSITION] = yyvsp[-1].ast_unsignedPositionPair.b;
+                            parsedPositions[SPP_ASSIGNMENT_END_POSITION] = yyvsp[0].ast_expressionType.e;
                         }
                     }
                     yyval.ast_expressionType.d.position = NULL_POS;

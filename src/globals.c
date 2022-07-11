@@ -14,7 +14,7 @@ bool fileAbortEnabled;
 
 int s_lastReturnedLexem;
 
-Position s_spp[SPP_MAX];
+Position parsedPositions[SPP_MAX];
 
 int progressOffset=0;
 int progressFactor=1;

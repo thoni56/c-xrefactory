@@ -22,7 +22,7 @@ extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 extern bool fileAbortEnabled;
 
 extern int s_lastReturnedLexem;
-extern Position s_spp[SPP_MAX];
+extern Position parsedPositions[SPP_MAX];
 
 // !!! if changing this, change also s_noRef!!!
 #define NO_USAGE (Usage){UsageNone, 0}

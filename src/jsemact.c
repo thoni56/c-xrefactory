@@ -2584,7 +2584,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
         fillIdList(p,*name,name->name,TypeStruct,s_javaStat->className);
         dd = javaAddType(p, access, &name->position);
         assert(dd->type == TypeStruct);
-        s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION] = name->position;
+        parsedPositions[SPP_LAST_TOP_LEVEL_CLASS_POSITION] = name->position;
     }
     res = currentBlock->trail;
     classf = dd->u.structSpec->classFileIndex;
