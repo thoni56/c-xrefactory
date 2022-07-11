@@ -17,7 +17,7 @@ AfterEach(LexemBuffer) {}
 Ensure(LexemBuffer, can_put_and_get_a_char) {
     LexemBuffer buffer;
     char        ch;
-    char *      next_after_put;
+    char       *next_after_put;
 
     initLexemBuffer(&buffer, NULL);
 
@@ -34,7 +34,7 @@ Ensure(LexemBuffer, can_put_and_get_a_char) {
 Ensure(LexemBuffer, can_put_and_get_a_short) {
     LexemBuffer buffer;
     int         shortValue;
-    char *      next_after_put;
+    char       *next_after_put;
 
     initLexemBuffer(&buffer, NULL);
 
@@ -51,7 +51,7 @@ Ensure(LexemBuffer, can_put_and_get_a_short) {
 Ensure(LexemBuffer, can_put_and_get_a_token) {
     LexemBuffer buffer;
     Lexem       lexem;
-    char *      next_after_put;
+    char       *next_after_put;
 
     initLexemBuffer(&buffer, NULL);
 
@@ -68,7 +68,7 @@ Ensure(LexemBuffer, can_put_and_get_a_token) {
 Ensure(LexemBuffer, can_put_and_get_an_int) {
     LexemBuffer buffer;
     int         integer;
-    char *      next_after_put;
+    char       *next_after_put;
 
     initLexemBuffer(&buffer, NULL);
 
@@ -85,7 +85,7 @@ Ensure(LexemBuffer, can_put_and_get_an_int) {
 Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
     LexemBuffer buffer;
     int         integer;
-    char *      next_after_put;
+    char       *next_after_put;
 
     initLexemBuffer(&buffer, NULL);
 
@@ -147,8 +147,8 @@ Ensure(LexemBuffer, can_put_and_get_lines) {
 
 Ensure(LexemBuffer, can_put_and_get_position) {
     char     lexems[10];
-    char *   lexemPointer      = lexems;
-    char *   pointer_after_put = NULL;
+    char    *lexemPointer      = lexems;
+    char    *pointer_after_put = NULL;
     Position initial_position  = {41, 42, 43};
     Position read_position;
 
@@ -164,7 +164,7 @@ Ensure(LexemBuffer, can_put_and_get_position) {
 
 xEnsure(LexemBuffer, can_peek_position) {
     char     lexems[10];
-    char *   lexemPointer     = lexems;
+    char    *lexemPointer     = lexems;
     Position initial_position = {91, 92, 93};
     Position read_position;
 

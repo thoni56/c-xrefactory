@@ -100,7 +100,7 @@ Ensure(Yylex, can_handle_a_line_directive_without_number) {
 
 Ensure(Yylex, can_process_include_directive) {
     Position position     = (Position){1, 2, 3};
-    char *   lexem_stream = "\303\001\"include.h";
+    char    *lexem_stream = "\303\001\"include.h";
     FILE     file;
     int      fileNumber;
 
@@ -132,7 +132,7 @@ Ensure(Yylex, can_process_include_directive) {
 
 Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) {
     Position position     = (Position){1, 2, 3};
-    char *   lexem_stream = "\303\001\"include.h";
+    char    *lexem_stream = "\303\001\"include.h";
     int      fileNumber   = 0;
     FILE     file;
 
@@ -193,7 +193,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
 
 Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     Position position     = (Position){1, 2, 3};
-    char *   lexem_stream = "\303\001\"include.h";
+    char    *lexem_stream = "\303\001\"include.h";
     int      fileNumber   = 0;
     FILE     file;
 

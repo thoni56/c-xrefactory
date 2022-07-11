@@ -51,10 +51,10 @@ Ensure(Misc, can_see_if_string_contains_wildcard) {
     assert_that(containsWildcard("abc[abc]"));
 }
 
-static char *      my_a1 = "a1";
-static char *      my_a2 = "a2";
+static char       *my_a1 = "a1";
+static char       *my_a2 = "a2";
 static Completions completions;
-static void *      my_a4 = &my_a4;
+static void       *my_a4 = &my_a4;
 static int         i     = 0;
 
 static void mapFunction(MAP_FUN_SIGNATURE) {

@@ -38,9 +38,9 @@ Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
 
 Ensure(Lexer, can_scan_a_floating_point_number) {
     LexemBuffer      lexemBuffer;
-    char *           lexemPointer = lexemBuffer.lexemStream;
+    char            *lexemPointer = lexemBuffer.lexemStream;
     CharacterBuffer *charBuffer   = &lexemBuffer.buffer;
-    char *           inputString  = "4.3f";
+    char            *inputString  = "4.3f";
 
     cache.active = false; /* ?? */
 
@@ -55,9 +55,9 @@ Ensure(Lexer, can_scan_a_floating_point_number) {
 
 Ensure(Lexer, can_scan_include_next) {
     LexemBuffer      lexemBuffer;
-    char *           lexemPointer = lexemBuffer.lexemStream;
+    char            *lexemPointer = lexemBuffer.lexemStream;
     CharacterBuffer *charBuffer   = &lexemBuffer.buffer;
-    char *           inputString  = "\n#include_next \"file\""; /* Directives must follow \n to be in column 1 */
+    char            *inputString  = "\n#include_next \"file\""; /* Directives must follow \n to be in column 1 */
 
     cache.active = false; /* ?? */
 

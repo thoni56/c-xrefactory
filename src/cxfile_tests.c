@@ -64,7 +64,7 @@ static void expect_characters(char string[], bool eof) {
 Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     FILE *xfilesFilePointer = (FILE *)4654654645;
 
-    char *   sourceFileName1  = "source1.c";
+    char    *sourceFileName1  = "source1.c";
     int      sourceFileIndex1 = 44;
     FileItem fileItem1        = {.name = sourceFileName1};
 
