@@ -5,10 +5,9 @@
 
 #include "memory.h"
 
-#include "misc.mock"
+#include "cxref.mock" /* For freeOldestOlcx() */
 #include "globals.mock"
-#include "cxref.mock"           /* For freeOldestOlcx() */
-
+#include "misc.mock"
 
 Describe(SymbolTable);
 BeforeEach(SymbolTable) {
@@ -16,7 +15,6 @@ BeforeEach(SymbolTable) {
     initSymbolTable(100);
 }
 AfterEach(SymbolTable) {}
-
 
 Ensure(SymbolTable, is_empty_after_init) {
     assert_that(getNextExistingSymbol(0), is_equal_to(-1));
@@ -28,7 +26,6 @@ Ensure(SymbolTable, can_retrieve_stored_symbol) {
     int index = addToSymbolTable(&symbol);
     assert_that(getSymbol(index), is_equal_to(&symbol));
 }
-
 
 Ensure(SymbolTable, can_retrieve_next_existing_symbol) {
     Symbol symbol = {"symbol"};

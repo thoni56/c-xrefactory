@@ -5,40 +5,39 @@
 
 #include "log.h"
 
-#include "commons.mock"
-#include "fileio.mock"
-#include "filedescriptor.mock"
 #include "characterreader.mock"
-#include "memory.h"
-#include "reftab.mock"
+#include "commons.mock"
+#include "filedescriptor.mock"
+#include "fileio.mock"
 #include "filetable.mock"
-#include "macroargumenttable.mock"
 #include "globals.mock"
+#include "macroargumenttable.mock"
+#include "memory.h"
 #include "misc.mock"
 #include "options.mock"
+#include "reftab.mock"
 
-#include "parsers.mock"
 #include "c_parser.mock"
-#include "yacc_parser.mock"
 #include "java_parser.mock"
+#include "parsers.mock"
+#include "yacc_parser.mock"
 
-#include "symboltable.mock"
-#include "cxref.mock"
-#include "cxfile.mock"
-#include "editor.mock"
-#include "jslsemact.mock"
 #include "caching.mock"
-#include "ppc.mock"
-#include "refactory.mock"
-#include "jsemact.mock"
-#include "yylex.mock"
-#include "javafqttab.mock"
 #include "complete.mock"
-#include "type.mock"
-#include "recyacc.mock"
+#include "cxfile.mock"
+#include "cxref.mock"
+#include "editor.mock"
 #include "init.mock"
+#include "javafqttab.mock"
+#include "jsemact.mock"
+#include "jslsemact.mock"
 #include "lexer.mock"
-
+#include "ppc.mock"
+#include "recyacc.mock"
+#include "refactory.mock"
+#include "symboltable.mock"
+#include "type.mock"
+#include "yylex.mock"
 
 Describe(Main);
 BeforeEach(Main) {
@@ -56,8 +55,8 @@ Ensure(Main, mainCallXref_without_input_files_gives_error_message) {
 }
 
 xEnsure(Main, can_handle_cxMemory_overflow) {
-    cxMemoryOverflowHandler(0); /* Implicitly allocate and init cxMemory */
-    cxMemory->index = cxMemory->size-10; /* Simulate memory almost out */
+    cxMemoryOverflowHandler(0);            /* Implicitly allocate and init cxMemory */
+    cxMemory->index = cxMemory->size - 10; /* Simulate memory almost out */
 
     mainCallXref(0, NULL);
 }

@@ -4,16 +4,15 @@
 
 #include "log.h"
 
-#include "globals.mock"
 #include "classfilereader.mock"
+#include "commons.mock"
+#include "globals.mock"
+#include "misc.mock"
 #include "options.mock"
+#include "symbol.mock"
 #include "symboltable.mock"
 #include "type.mock"
 #include "typemodifier.mock"
-#include "symbol.mock"
-#include "commons.mock"
-#include "misc.mock"
-
 
 Describe(Init);
 BeforeEach(Init) {
@@ -21,5 +20,4 @@ BeforeEach(Init) {
 }
 AfterEach(Init) {}
 
-Ensure(Init, can_run_empty_test) {
-}
+Ensure(Init, can_run_empty_test) {}

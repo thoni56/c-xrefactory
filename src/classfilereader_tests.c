@@ -3,23 +3,22 @@
 #include "classfilereader.h"
 #include "log.h"
 
-#include "globals.mock"
-#include "commons.mock"
-#include "misc.mock"
-#include "cxref.mock"
-#include "filetable.mock"
-#include "options.mock"
-#include "yylex.mock"
-#include "editor.mock"
 #include "characterreader.mock"
-#include "fileio.mock"
-#include "symbol.mock"
 #include "classcaster.mock"
-#include "jsemact.mock"
-#include "filedescriptor.mock"
-#include "typemodifier.mock"
+#include "commons.mock"
 #include "cxfile.mock"
-
+#include "cxref.mock"
+#include "editor.mock"
+#include "filedescriptor.mock"
+#include "fileio.mock"
+#include "filetable.mock"
+#include "globals.mock"
+#include "jsemact.mock"
+#include "misc.mock"
+#include "options.mock"
+#include "symbol.mock"
+#include "typemodifier.mock"
+#include "yylex.mock"
 
 Describe(Classfilereader);
 BeforeEach(Classfilereader) {
@@ -27,5 +26,4 @@ BeforeEach(Classfilereader) {
 }
 AfterEach(Classfilereader) {}
 
-Ensure(Classfilereader, can_run_empty_test) {
-}
+Ensure(Classfilereader, can_run_empty_test) {}

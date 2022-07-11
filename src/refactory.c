@@ -109,7 +109,9 @@ static int argument_count(char **argv) {
     return count;
 }
 
-static bool filter0(Reference *reference, void *dummy) { return reference->usage.kind < UsageMaxOLUsages; }
+static bool filter0(Reference *reference, void *dummy) {
+    return reference->usage.kind < UsageMaxOLUsages;
+}
 
 static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], EditorBuffer *buf, char *project,
                          EditorMarker *point, EditorMarker *mark) {
@@ -2558,7 +2560,7 @@ static void reduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegi
                     action = translatePassToAddImportAction(defaultImportAction);
                 }
                 //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(markers->marker->buffer->fileIndex),
-                //fqtName, action); ppcBottomInformation(tmpBuff);
+                // fqtName, action); ppcBottomInformation(tmpBuff);
                 switch (action) {
                 case RC_IMPORT_ON_DEMAND:
                     strcpy(starName, fqtName);
@@ -2725,7 +2727,7 @@ static void staticMoveCheckCorrespondance(SymbolsMenu *menu1, SymbolsMenu *menu2
             if (diff1 != NULL) {
                 moveFirstElementOfMarkerList(&diff1, &totalDiff);
                 //&fprintf(dumpOut, "problem with symbol %s corr %s\n", mm1->references.name,
-                //mm2->references.name);
+                // mm2->references.name);
             } else {
                 // no, do not put there new symbols, only lost are problems
                 moveFirstElementOfMarkerList(&diff2, &totalDiff);
@@ -3419,7 +3421,9 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     ppcGotoMarker(point);
 }
 
-static int noSpaceChar(int c) { return !isspace(c); }
+static int noSpaceChar(int c) {
+    return !isspace(c);
+}
 
 static void pushMethodSymbolsPlusThoseWithClearedRegion(EditorMarker *m1, EditorMarker *m2) {
     char        spaces[REFACTORING_TMP_STRING_SIZE];
@@ -3458,7 +3462,7 @@ static int isMethodPartRedundant(EditorMarker *m1, EditorMarker *m2) {
             for (ll = lll; ll != NULL; ll = ll->next) {
                 assert(ll->marker->buffer == m1->buffer);
                 //&sprintf(tmpBuff, "checking diff %d", ll->marker->offset); ppcGenRecord(PPC_INFORMATION,
-                //tmpBuff);
+                // tmpBuff);
                 if (editorMarkerLess(ll->marker, m1) || editorMarkerLessOrEq(m2, ll->marker)) {
                     res = false;
                 }
@@ -3484,7 +3488,9 @@ static void removeMethodPartIfRedundant(EditorMarker *m, int len) {
     editorFreeMarker(mm);
 }
 
-static int isMethodBegin(int c) { return c == '{'; }
+static int isMethodBegin(int c) {
+    return c == '{';
+}
 
 static bool staticToDynCanBeThisOccurence(EditorMarker *pp, char *param, int *rlen) {
     char         *pp2;

@@ -7,20 +7,19 @@
 
 #include "memory.h"
 
-#include "globals.mock"
-#include "options.mock"
 #include "caching.mock"
-#include "filetable.mock"
-#include "jsemact.mock"
 #include "classfilereader.mock"
-#include "cxref.mock"
-#include "cxfile.mock"
-#include "yylex.mock"
 #include "commons.mock"
+#include "cxfile.mock"
+#include "cxref.mock"
 #include "editor.mock"
-#include "ppc.mock"
 #include "fileio.mock"
-
+#include "filetable.mock"
+#include "globals.mock"
+#include "jsemact.mock"
+#include "options.mock"
+#include "ppc.mock"
+#include "yylex.mock"
 
 Describe(Misc);
 BeforeEach(Misc) {
@@ -28,20 +27,18 @@ BeforeEach(Misc) {
 }
 AfterEach(Misc) {}
 
-
 /* Protected */
 extern char *concatDirectoryWithFileName(char *result, char *directoryName, char *packageFilename);
 
 Ensure(Misc, can_concat_filename_with_directory) {
-    char *dirname = "dirname";
+    char *dirname  = "dirname";
     char *filename = "filename";
-    char buffer[1000];
+    char  buffer[1000];
     char *result = concatDirectoryWithFileName(buffer, dirname, filename);
 
     /* TODO: FILE_PATH_SEPARATOR might be '\\' */
     assert_that(result, is_equal_to_string("dirname/filename"));
 }
-
 
 Ensure(Misc, can_see_if_string_contains_wildcard) {
     assert_that(!containsWildcard(""));
@@ -54,11 +51,11 @@ Ensure(Misc, can_see_if_string_contains_wildcard) {
     assert_that(containsWildcard("abc[abc]"));
 }
 
-static char *my_a1 = "a1";
-static char *my_a2 = "a2";
+static char *      my_a1 = "a1";
+static char *      my_a2 = "a2";
 static Completions completions;
-static void        *my_a4 = &my_a4;
-static int i = 0;
+static void *      my_a4 = &my_a4;
+static int         i     = 0;
 
 static void mapFunction(MAP_FUN_SIGNATURE) {
     assert_that(a1, is_equal_to(my_a1));

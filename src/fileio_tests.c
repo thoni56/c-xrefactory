@@ -3,7 +3,6 @@
 #include "fileio.h"
 #include "log.h"
 
-
 Describe(Fileio);
 BeforeEach(Fileio) {
     log_set_level(LOG_ERROR);

@@ -2,24 +2,21 @@
 
 #include "filetable.mock"
 
-
 /* Mocks: */
-#include "globals.mock"
-#include "commons.mock"
-#include "options.mock"
 #include "classcaster.mock"
 #include "classfilereader.mock"
-#include "typemodifier.mock"
+#include "commons.mock"
 #include "cxref.mock"
+#include "globals.mock"
 #include "jsemact.mock"
 #include "jsltypetab.mock"
 #include "misc.mock"
+#include "options.mock"
 #include "semact.mock"
-
+#include "typemodifier.mock"
 
 Describe(JslSemAct);
 BeforeEach(JslSemAct) {}
 AfterEach(JslSemAct) {}
 
-Ensure(JslSemAct, something) {
-}
+Ensure(JslSemAct, something) {}

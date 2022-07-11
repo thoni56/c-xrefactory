@@ -4,15 +4,14 @@
 #include "log.h"
 #include "protocol.h"
 
-#include "options.mock"
-#include "globals.mock"
-#include "filetable.mock"
-#include "type.mock"
-#include "misc.mock"
-#include "cxref.mock"
-#include "ppc.mock"
 #include "commons.mock"
-
+#include "cxref.mock"
+#include "filetable.mock"
+#include "globals.mock"
+#include "misc.mock"
+#include "options.mock"
+#include "ppc.mock"
+#include "type.mock"
 
 Describe(ClassHierarchy);
 BeforeEach(ClassHierarchy) {
@@ -20,6 +19,4 @@ BeforeEach(ClassHierarchy) {
 }
 AfterEach(ClassHierarchy) {}
 
-
-Ensure(ClassHierarchy, can_run_emtpy_test) {
-}
+Ensure(ClassHierarchy, can_run_emtpy_test) {}

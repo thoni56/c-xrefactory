@@ -7,18 +7,15 @@
 #include "fileio.mock"
 #include "log.h"
 
-
-
 Describe(CharacterReader);
 BeforeEach(CharacterReader) {
     log_set_level(LOG_ERROR);
 }
 AfterEach(CharacterReader) {}
 
-
 Ensure(CharacterReader, can_get_string) {
     CharacterBuffer cb;
-    char read_string[100];
+    char            read_string[100];
 
     initCharacterBufferFromString(&cb, "the string");
 
@@ -35,7 +32,7 @@ Ensure(CharacterReader, can_read_and_unread) {
     int ch = getChar(&cb);
 
     assert_that(ch, is_equal_to('s'));
-    assert_that(cb.nextUnread, is_equal_to(cb.chars+1));
+    assert_that(cb.nextUnread, is_equal_to(cb.chars + 1));
 
     ungetChar(&cb, ch);
     assert_that(cb.nextUnread, is_equal_to(cb.chars));

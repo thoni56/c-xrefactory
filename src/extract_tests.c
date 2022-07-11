@@ -5,29 +5,27 @@
 #include "log.h"
 
 /* Dependencies: */
+#include "caching.mock"
+#include "characterreader.mock"
+#include "classhierarchy.mock"
+#include "commons.mock"
+#include "complete.mock"
+#include "cxfile.mock"
+#include "cxref.mock"
+#include "editor.mock"
 #include "filedescriptor.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "cxfile.mock"
-#include "editor.mock"
-#include "refactory.mock"
-#include "misc.mock"
-#include "classhierarchy.mock"
-#include "complete.mock"
-#include "caching.mock"
-#include "options.mock"
-#include "symbol.mock"
-#include "main.mock"
-#include "commons.mock"
-#include "characterreader.mock"
 #include "jsemact.mock"
-#include "reftab.mock"
-#include "symboltable.mock"
-#include "cxref.mock"
-#include "semact.mock"
+#include "main.mock"
+#include "misc.mock"
+#include "options.mock"
 #include "ppc.mock"
-
-
+#include "refactory.mock"
+#include "reftab.mock"
+#include "semact.mock"
+#include "symbol.mock"
+#include "symboltable.mock"
 
 void myFatalError(int errCode, char *mess, int exitStatus) {
     fail_test("Fatal Error");
@@ -40,7 +38,6 @@ void myInternalCheckFail(char *expr, char *file, int line) {
 void myError(int errCode, char *mess) {
     fail_test("Error");
 }
-
 
 Describe(Extract);
 BeforeEach(Extract) {
@@ -60,16 +57,16 @@ void addSymbolToSymRefList(ReferencesItemList **ll, ReferencesItem *s);
 
 Ensure(Extract, can_concat_symRefItemList_when_null) {
     ReferencesItemList *lp = NULL;
-    ReferencesItem s = {"s", 0, 0, 0, .references = NULL, NULL};
+    ReferencesItem      s  = {"s", 0, 0, 0, .references = NULL, NULL};
 
     addSymbolToSymRefList(&lp, &s);
     assert_that(lp->item, is_equal_to(&s));
 }
 
 Ensure(Extract, can_concat_symRefItemList_before_existing) {
-    ReferencesItem s1 = {"s1", 0, 0, 0, .references = NULL, NULL};
-    ReferencesItem s2 = {"s2", 0, 0, 0, .references = NULL, NULL};
-    ReferencesItemList l = {&s1, NULL};
+    ReferencesItem      s1 = {"s1", 0, 0, 0, .references = NULL, NULL};
+    ReferencesItem      s2 = {"s2", 0, 0, 0, .references = NULL, NULL};
+    ReferencesItemList  l  = {&s1, NULL};
     ReferencesItemList *lp = &l;
 
     expect(getClassNumFromClassLinkName, times(4));

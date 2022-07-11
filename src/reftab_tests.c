@@ -1,13 +1,12 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
 
+#include "log.h"
 #include "memory.h"
 #include "proto.h"
 #include "reftab.h"
-#include "log.h"
 
 #include "cxref.mock"
-
 
 Describe(ReferenceTable);
 BeforeEach(ReferenceTable) {
@@ -17,23 +16,22 @@ BeforeEach(ReferenceTable) {
 }
 AfterEach(ReferenceTable) {}
 
-
 Ensure(ReferenceTable, will_return_minus_one_for_no_more_entries) {
     assert_that(getNextExistingReferencesItem(0), is_equal_to(-1));
 }
 
 Ensure(ReferenceTable, will_return_index_to_next_entry) {
-    ReferencesItem r = (ReferencesItem){ .name = "name" };
+    ReferencesItem r = (ReferencesItem){.name = "name"};
 
     int index = addToReferencesTable(&r);
     assert_that(getNextExistingReferencesItem(0), is_equal_to(index));
-    assert_that(getNextExistingReferencesItem(index+1), is_equal_to(-1));
+    assert_that(getNextExistingReferencesItem(index + 1), is_equal_to(-1));
 }
 
 Ensure(ReferenceTable, can_retrieve_item_using_index) {
-    ReferencesItem r = (ReferencesItem){ .name = "name" };
+    ReferencesItem r = (ReferencesItem){.name = "name"};
 
-    int index = addToReferencesTable(&r);
-    ReferencesItem *item = getReferencesItem(index);
+    int             index = addToReferencesTable(&r);
+    ReferencesItem *item  = getReferencesItem(index);
     assert_that(item->name, is_equal_to_string(r.name));
 }

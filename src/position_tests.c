@@ -6,9 +6,8 @@ Describe(Position);
 BeforeEach(Position) {}
 AfterEach(Position) {}
 
-
 Ensure(Position, can_add_two_positions) {
-    Position pos = {0, 0, 0};
+    Position pos  = {0, 0, 0};
     Position pos1 = {1, 1, 1};
     Position pos2 = {2, 2, 2};
 
@@ -18,10 +17,9 @@ Ensure(Position, can_add_two_positions) {
     assert_that(pos.col, is_equal_to(3));
 }
 
-
 Ensure(Position, can_subtract_two_positions) {
     Position difference = {0, 0, 0};
-    Position minuend = {5, 5, 5};
+    Position minuend    = {5, 5, 5};
     Position subtrahend = {2, 2, 2};
 
     difference = subtractPositions(minuend, subtrahend);

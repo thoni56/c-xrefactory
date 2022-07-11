@@ -6,18 +6,17 @@
 
 #include "memory.h"
 
-#include "yylex.mock"
-#include "options.mock"
-#include "misc.mock"
-#include "globals.mock"
-#include "editorbuffertab.mock"
-#include "filetable.mock"
-#include "cxref.mock"
 #include "commons.mock"
+#include "cxref.mock"
+#include "editorbuffertab.mock"
 #include "fileio.mock"
-#include "ppc.mock"
+#include "filetable.mock"
+#include "globals.mock"
 #include "log.h"
-
+#include "misc.mock"
+#include "options.mock"
+#include "ppc.mock"
+#include "yylex.mock"
 
 Describe(Editor);
 BeforeEach(Editor) {
@@ -26,11 +25,10 @@ BeforeEach(Editor) {
 }
 AfterEach(Editor) {}
 
-
 Ensure(Editor, can_create_new_editor_region_list) {
-    EditorBuffer buffer;
-    EditorMarker *begin = newEditorMarker(&buffer, 1, NULL, NULL);
-    EditorMarker *end = newEditorMarker(&buffer, 10, begin, NULL);
+    EditorBuffer      buffer;
+    EditorMarker *    begin      = newEditorMarker(&buffer, 1, NULL, NULL);
+    EditorMarker *    end        = newEditorMarker(&buffer, 10, begin, NULL);
     EditorRegionList *regionList = newEditorRegionList(begin, end, NULL);
 
     assert_that(regionList->region.begin->buffer, is_equal_to(&buffer));

@@ -7,21 +7,20 @@
 #include "cxfile.h"
 #include "log.h"
 
+#include "caching.mock"
+#include "commons.mock"
 #include "globals.mock"
 #include "misc.mock"
 #include "options.h"
 #include "options.mock"
-#include "commons.mock"
-#include "caching.mock"
 
-#include "cxref.mock"
-#include "reftab.mock"
-#include "editor.mock"
 #include "characterreader.mock"
 #include "classhierarchy.mock"
+#include "cxref.mock"
+#include "editor.mock"
 #include "fileio.mock"
 #include "filetable.mock"
-
+#include "reftab.mock"
 
 Describe(CxFile);
 BeforeEach(CxFile) {
@@ -46,7 +45,7 @@ static void expect_characters(char string[], bool eof) {
     int i;
 
     expect(skipWhiteSpace, will_return(string[0]));
-    for (i = 1; string[i+1] != '\0'; i++) {
+    for (i = 1; string[i + 1] != '\0'; i++) {
         if (isspace(string[i])) {
             expect(getChar, will_return(' '));
             if (string[i + 1] != '\0')
@@ -56,26 +55,23 @@ static void expect_characters(char string[], bool eof) {
         }
     }
     if (eof)
-        expect(getChar, will_return(string[i]),
-               will_set_contents_of_parameter(isAtEOF, &trueValue, sizeof(bool)));
+        expect(getChar, will_return(string[i]), will_set_contents_of_parameter(isAtEOF, &trueValue, sizeof(bool)));
     else
         expect(getChar, will_return(string[i]),
                will_set_contents_of_parameter(isAtEOF, &falseValue, sizeof(bool)));
 }
 
-
 Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     FILE *xfilesFilePointer = (FILE *)4654654645;
 
-    char *sourceFileName1 = "source1.c";
-    int sourceFileIndex1 = 44;
-    FileItem fileItem1 = {.name = sourceFileName1};
+    char *   sourceFileName1  = "source1.c";
+    int      sourceFileIndex1 = 44;
+    FileItem fileItem1        = {.name = sourceFileName1};
 
-    //log_set_level(LOG_TRACE);
+    // log_set_level(LOG_TRACE);
 
-    options.cxrefsLocation = "./CXrefs";
+    options.cxrefsLocation     = "./CXrefs";
     options.referenceFileCount = 1;
-
 
     expect(referenceFileCountMatches, will_return(true));
 
@@ -92,16 +88,13 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
 
     /* First and only file, no other symbols */
     expect_characters("49976f 1646087914m 10: ", true);
-    expect(getString, will_set_contents_of_parameter(string, sourceFileName1, strlen(sourceFileName1)+1));
+    expect(getString, will_set_contents_of_parameter(string, sourceFileName1, strlen(sourceFileName1) + 1));
 
-    expect(existsInFileTable, when(fileName, is_equal_to_string(sourceFileName1)),
-           will_return(false));
+    expect(existsInFileTable, when(fileName, is_equal_to_string(sourceFileName1)), will_return(false));
 
-    expect(addFileNameToFileTable, when(name, is_equal_to_string(sourceFileName1)),
-           will_return(sourceFileIndex1));
+    expect(addFileNameToFileTable, when(name, is_equal_to_string(sourceFileName1)), will_return(sourceFileIndex1));
 
-    expect(getFileItem, when(fileIndex, is_equal_to(sourceFileIndex1)),
-           will_return(&fileItem1));
+    expect(getFileItem, when(fileIndex, is_equal_to(sourceFileIndex1)), will_return(&fileItem1));
 
     expect(closeFile, when(file, is_equal_to(xfilesFilePointer)));
 

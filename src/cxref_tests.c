@@ -8,28 +8,26 @@
 /* Dependencies: */
 #include "session.h"
 
-#include "filedescriptor.mock"
-#include "filetable.mock"
-#include "globals.mock"
+#include "caching.mock"
+#include "characterreader.mock"
+#include "classfilereader.mock"
+#include "classhierarchy.mock"
+#include "commons.mock"
+#include "complete.mock"
 #include "cxfile.mock"
 #include "editor.mock"
-#include "refactory.mock"
-#include "misc.mock"
-#include "classhierarchy.mock"
-#include "complete.mock"
-#include "caching.mock"
-#include "options.mock"
-#include "symbol.mock"
-#include "main.mock"
-#include "commons.mock"
-#include "characterreader.mock"
-#include "jsemact.mock"
-#include "reftab.mock"
+#include "filedescriptor.mock"
 #include "fileio.mock"
-#include "classfilereader.mock"
+#include "filetable.mock"
+#include "globals.mock"
+#include "jsemact.mock"
+#include "main.mock"
+#include "misc.mock"
+#include "options.mock"
 #include "ppc.mock"
-
-
+#include "refactory.mock"
+#include "reftab.mock"
+#include "symbol.mock"
 
 Describe(CxRef);
 BeforeEach(CxRef) {
@@ -38,15 +36,11 @@ BeforeEach(CxRef) {
 }
 AfterEach(CxRef) {}
 
-
 Ensure(CxRef, get_class_num_from_class_linkname_will_return_default_value_if_not_member) {
     int defaultValue = 14;
 
-    expect(existsInFileTable,
-           when(fileName, is_equal_to_string(";name.class")),
-           will_return(false));
-    expect(convertLinkNameToClassFileName,
-           when(linkName, is_equal_to_string("name")),
+    expect(existsInFileTable, when(fileName, is_equal_to_string(";name.class")), will_return(false));
+    expect(convertLinkNameToClassFileName, when(linkName, is_equal_to_string("name")),
            will_set_contents_of_parameter(classFileName, ";name.class", 12));
 
     assert_that(getClassNumFromClassLinkName("name", defaultValue), is_equal_to(defaultValue));
@@ -54,14 +48,11 @@ Ensure(CxRef, get_class_num_from_class_linkname_will_return_default_value_if_not
 
 Ensure(CxRef, get_class_num_from_class_linkname_will_return_filenumber_if_member) {
     int defaultValue = 14;
-    int position = 42;
+    int position     = 42;
 
-    expect(existsInFileTable,
-           when(fileName, is_equal_to_string(";name.class")),
-           will_return(true));
+    expect(existsInFileTable, when(fileName, is_equal_to_string(";name.class")), will_return(true));
     expect(lookupFileTable, will_return(position));
-    expect(convertLinkNameToClassFileName,
-           when(linkName, is_equal_to_string("name")),
+    expect(convertLinkNameToClassFileName, when(linkName, is_equal_to_string("name")),
            will_set_contents_of_parameter(classFileName, ";name.class", 12));
 
     assert_that(getClassNumFromClassLinkName("name", defaultValue), is_equal_to(position));

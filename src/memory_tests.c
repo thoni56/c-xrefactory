@@ -1,21 +1,19 @@
 #include <cgreen/cgreen.h>
 
-#include "memory.h"
 #include "log.h"
+#include "memory.h"
 
+#include "commons.mock" /* For fatalError() */
+#include "cxref.mock"   /* For freeOldestOlcx() */
 #include "globals.mock"
-#include "commons.mock"           /* For fatalError() */
-#include "cxref.mock"             /* For freeOldestOlcx() */
-
 
 static bool fatalErrorAllowed = false;
-static bool fatalErrorCalled = false;
+static bool fatalErrorCalled  = false;
 static void myFatalError(int errCode, char *mess, int exitStatus) {
     if (!fatalErrorAllowed)
         fail_test("FatalError() called");
     fatalErrorCalled = true;
 }
-
 
 Describe(Memory);
 BeforeEach(Memory) {
@@ -25,12 +23,11 @@ BeforeEach(Memory) {
 }
 AfterEach(Memory) {}
 
-
 Ensure(Memory, calls_fatalError_on_out_of_memory) {
     void *allocatedMemory = &allocatedMemory; /* Point to something initially */
 
     fatalErrorAllowed = true;
-    while(!fatalErrorCalled && allocatedMemory != NULL)
+    while (!fatalErrorCalled && allocatedMemory != NULL)
         allocatedMemory = stackMemoryAlloc(5);
 
     if (!fatalErrorCalled)
@@ -65,14 +62,14 @@ Ensure(Memory, can_calculate_nesting_level) {
     assert_that(nestingLevel(), is_equal_to(1));
 }
 
-static int overflowRequest = 0;
+static int  overflowRequest = 0;
 static bool overflowHandler(int n) {
     overflowRequest = n;
     return true;
 }
 
 Ensure(Memory, can_allocate_dynamic_memory_with_overflow_handler) {
-    char *character = NULL;
+    char * character = NULL;
     Memory memory;
 
     initMemory((&memory), "memory", overflowHandler, SIZE_optMemory);
@@ -81,7 +78,7 @@ Ensure(Memory, can_allocate_dynamic_memory_with_overflow_handler) {
 }
 
 Ensure(Memory, will_extend_direct_memory_when_next_allocation_will_fill_up) {
-    char *character = NULL;
+    char * character = NULL;
     Memory memory;
 
     /* NOTE: This test seems to indicate that overflow happens when there is one byte left */
@@ -100,7 +97,7 @@ Ensure(Memory, will_extend_direct_memory_when_next_allocation_will_fill_up) {
 }
 
 Ensure(Memory, has_functions_that_can_replace_DM_macros) {
-    Memory memory;
+    Memory  memory;
     Memory *variablep = NULL;
 
     memory.index = 42;
@@ -113,7 +110,7 @@ Ensure(Memory, has_functions_that_can_replace_DM_macros) {
 
     /* This will probably trigger overflow handling so... */
     fatalErrorAllowed = true;
-    variablep = dm_allocc(&memory, 1, sizeof(*variablep));
+    variablep         = dm_allocc(&memory, 1, sizeof(*variablep));
     assert_that(variablep, is_not_null);
     /* TODO This assumes that alignment is initially correct */
     assert_that(memory.index, is_equal_to(sizeof(*variablep)));
@@ -125,7 +122,6 @@ Ensure(Memory, can_handle_olcx_memory) {
 
     olcx_memory_init();
     assert_that(olcxMemoryAllocatedBytes, is_equal_to(0));
-
 
     pointer = NULL;
     pointer = olcx_memory_soft_allocc(1, sizeof(char));
@@ -142,9 +138,8 @@ Ensure(Memory, can_handle_olcx_memory) {
     assert_that(pointer, is_not_null);
 }
 
-
 #define SIZE_testMemory 12
-static int testMemoryIndex;
+static int  testMemoryIndex;
 static char testMemory[SIZE_testMemory];
 
 Ensure(Memory, can_handle_sm_memory) {
@@ -158,5 +153,5 @@ Ensure(Memory, can_handle_sm_memory) {
     /* Allocate more that size renders fatalError() */
     fatalErrorAllowed = true;
     expect(fatalError);
-    SM_ALLOCC(testMemory, pointer, SIZE_testMemory+1, char);
+    SM_ALLOCC(testMemory, pointer, SIZE_testMemory + 1, char);
 }

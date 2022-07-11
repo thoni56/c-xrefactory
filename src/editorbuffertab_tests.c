@@ -2,9 +2,8 @@
 
 #include "editor.h"
 #include "editorbuffertab.h"
-#include "log.h"
 #include "hash.h"
-
+#include "log.h"
 
 Describe(EditorBufferTab);
 BeforeEach(EditorBufferTab) {
@@ -13,16 +12,15 @@ BeforeEach(EditorBufferTab) {
 }
 AfterEach(EditorBufferTab) {}
 
-
 Ensure(EditorBufferTab, returns_minus_one_for_no_more_existing) {
     assert_that(getNextExistingEditorBufferIndex(0), is_equal_to(-1));
 }
 
 Ensure(EditorBufferTab, can_return_next_existing_file_index) {
-    EditorBuffer buffer = {.name = "item.c"};
+    EditorBuffer     buffer     = {.name = "item.c"};
     EditorBufferList bufferList = {.buffer = &buffer, .next = NULL};
-    int index = addEditorBuffer(&bufferList);
+    int              index      = addEditorBuffer(&bufferList);
 
     assert_that(getNextExistingEditorBufferIndex(0), is_equal_to(index));
-    assert_that(getNextExistingEditorBufferIndex(index+1), is_equal_to(-1));
+    assert_that(getNextExistingEditorBufferIndex(index + 1), is_equal_to(-1));
 }
