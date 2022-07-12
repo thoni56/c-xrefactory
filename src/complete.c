@@ -1203,32 +1203,23 @@ void completeForSpecial2(Completions* c) {
     }
 }
 
-void completeUpFunProfile(Completions* c) {
-    Symbol *dd;
-
-    if (s_upLevelFunctionCompletionType != NULL
-        && c->idToProcess[0] == 0
-        && c->alternativeIndex == 0
-        ) {
-        dd = newSymbolAsType("    ", "    ", noPosition, s_upLevelFunctionCompletionType);
+void completeUpFunProfile(Completions *c) {
+    if (s_upLevelFunctionCompletionType != NULL && c->idToProcess[0] == 0 && c->alternativeIndex == 0) {
+        Symbol *dd = newSymbolAsType("    ", "    ", noPosition, s_upLevelFunctionCompletionType);
 
         fillCompletionLine(&c->alternatives[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
         c->fullMatchFlag = true;
-        c->comPrefix[0]=0;
+        c->comPrefix[0]  = 0;
         c->alternativeIndex++;
     }
 }
 
 /* *************************** JAVA completions ********************** */
 
-static Symbol * javaGetFileNameClass(char *fname) {
-    char        *pp;
-    Symbol    *res;
-    pp = javaCutClassPathFromFileName(fname);
-    res = javaGetFieldClass(pp,NULL);
-    return res;
+static Symbol *javaGetFileNameClass(char *fileName) {
+    char *pp = javaCutClassPathFromFileName(fileName);
+    return javaGetFieldClass(pp, NULL);
 }
-
 
 static void completeConstructorsFromFile(Completions *c, char *fname) {
     Symbol *memb;
