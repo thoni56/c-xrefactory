@@ -769,12 +769,12 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
     }
 }
 
-void processName(char *name, CompletionLine *compLine, int orderFlag, Completions *c) {
+void processName(char *name, CompletionLine *line, int orderFlag, Completions *c) {
     Completions *ci = (Completions *) c;
     if (options.serverOperation == OLO_SEARCH) {
-        searchName(name, compLine, orderFlag, ci);
+        searchName(name, line, orderFlag, ci);
     } else {
-        completeName(name, compLine, orderFlag, ci);
+        completeName(name, line, orderFlag, ci);
     }
 }
 
