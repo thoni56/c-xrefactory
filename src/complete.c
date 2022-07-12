@@ -547,9 +547,9 @@ static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
         s2 = strchr(c2->string, '(');
         if (s2 == NULL) l2 = strlen(c2->string);
         else l2 = s2 - c2->string;
-        if (l1 == s_completions.idToProcessLen && l2 != s_completions.idToProcessLen)
+        if (l1 == collectedCompletions.idToProcessLen && l2 != collectedCompletions.idToProcessLen)
             return -1;
-        if (l1 != s_completions.idToProcessLen && l2 == s_completions.idToProcessLen)
+        if (l1 != collectedCompletions.idToProcessLen && l2 == collectedCompletions.idToProcessLen)
             return 1;
         return strcmp(c1->string, c2->string);
     } else {
@@ -581,9 +581,9 @@ static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
         // exact matches goes first
         l1 = strlen(c1->string);
         l2 = strlen(c2->string);
-        if (l1 == s_completions.idToProcessLen && l2 != s_completions.idToProcessLen)
+        if (l1 == collectedCompletions.idToProcessLen && l2 != collectedCompletions.idToProcessLen)
             return -1;
-        if (l1 != s_completions.idToProcessLen && l2 == s_completions.idToProcessLen)
+        if (l1 != collectedCompletions.idToProcessLen && l2 == collectedCompletions.idToProcessLen)
             return 1;
         if (c1->symbolType==TypeDefault && c2->symbolType==TypeDefault) {
             c = c1->virtLevel - c2->virtLevel;
@@ -1432,7 +1432,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
         c->noFocusOnCompletions = true;
     }
     if (options.serverOperation != OLO_SEARCH)
-        s_completions.abortFurtherCompletions = true;
+        collectedCompletions.abortFurtherCompletions = true;
 }
 
 

@@ -4245,7 +4245,7 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_COMPLETION:
     case OLO_SEARCH:
-        printCompletions(&s_completions);
+        printCompletions(&collectedCompletions);
         break;
     case OLO_EXTRACT:
         if (! parsedInfo.extractProcessedFlag) {

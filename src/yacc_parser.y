@@ -2057,16 +2057,16 @@ void makeYaccCompletions(char *s, int len, Position *pos) {
     CompletionLine compLine;
 
     log_trace("completing \"%s\"", s);
-    strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
-    s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
-    initCompletions(&s_completions, len, *pos);
+    strncpy(collectedCompletions.idToProcess, s, MAX_FUN_NAME_SIZE);
+    collectedCompletions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
+    initCompletions(&collectedCompletions, len, *pos);
 
     for (i=0; (token=completionsTab[i].token) != 0; i++) {
         log_trace("trying token %d", tokenNamesTable[token]);
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
-            (*completionsTab[i].fun)(&s_completions);
-            if (s_completions.abortFurtherCompletions)
+            (*completionsTab[i].fun)(&collectedCompletions);
+            if (collectedCompletions.abortFurtherCompletions)
                 return;
         }
     }
@@ -2083,7 +2083,7 @@ void makeYaccCompletions(char *s, int len, Position *pos) {
                         fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeToken, 0, 0, NULL, NULL);
                     }
                     log_trace("completing %d==%s(%s) in state %d", token, tokenNamesTable[token], tokenNamesTable[token], lastyystate);
-                    processName(tokenNamesTable[token], &compLine, 0, &s_completions);
+                    processName(tokenNamesTable[token], &compLine, 0, &collectedCompletions);
                 }
         }
     }

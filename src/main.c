@@ -1725,7 +1725,7 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     processFileArguments();
     if (options.serverOperation == OLO_EXTRACT)
         cache.cpIndex = 2; // !!!! no cache, TODO why is 2 = no cache?
-    initCompletions(&s_completions, 0, noPosition);
+    initCompletions(&collectedCompletions, 0, noPosition);
 }
 
 void mainCallEditServer(int argc, char **argv,

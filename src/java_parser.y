@@ -4415,28 +4415,28 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     CompletionLine compLine;
 
     log_trace("completing \"%s\" in state %d", s, lastyystate);
-    strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
-    s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
-    initCompletions(&s_completions, len, *pos);
+    strncpy(collectedCompletions.idToProcess, s, MAX_FUN_NAME_SIZE);
+    collectedCompletions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
+    initCompletions(&collectedCompletions, len, *pos);
 
     /* special wizard completions */
     for (int i=0;(token=spCompletionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
-            (*spCompletionsTab[i].fun)(&s_completions);
-            if (s_completions.abortFurtherCompletions)
+            (*spCompletionsTab[i].fun)(&collectedCompletions);
+            if (collectedCompletions.abortFurtherCompletions)
                 return;
         }
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.alternativeIndex != 0 && options.serverOperation != OLO_SEARCH)
+    if (collectedCompletions.alternativeIndex != 0 && options.serverOperation != OLO_SEARCH)
         return;
     for (int i=0;(token=completionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
-            (*completionsTab[i].fun)(&s_completions);
-            if (s_completions.abortFurtherCompletions)
+            (*completionsTab[i].fun)(&collectedCompletions);
+            if (collectedCompletions.abortFurtherCompletions)
                 return;
         }
     }
@@ -4449,7 +4449,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
             if (tokenNamesTable[token]!= NULL) {
                 if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
                     fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeKeyword,0, 0, NULL,NULL);
-                    processName(tokenNamesTable[token], &compLine, 0, &s_completions);
+                    processName(tokenNamesTable[token], &compLine, 0, &collectedCompletions);
                 } else {
                     /*& fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeToken,0, 0, NULL,NULL); &*/
                 }
@@ -4459,13 +4459,13 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
 
     /* If the completion window is shown, or there is no completion,
 <       add also hints (should be optionally) */
-    /*& if (s_completions.comPrefix[0]!=0  && (s_completions.alternativeIndex != 0) &*/
+    /*& if (collectedCompletions.comPrefix[0]!=0  && (collectedCompletions.alternativeIndex != 0) &*/
     /*&	&& options.serverOperation != OLO_SEARCH) return; &*/
 
     for (int i=0;(token=hintCompletionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
-            (*hintCompletionsTab[i].fun)(&s_completions);
-            if (s_completions.abortFurtherCompletions)
+            (*hintCompletionsTab[i].fun)(&collectedCompletions);
+            if (collectedCompletions.abortFurtherCompletions)
                 return;
         }
     }

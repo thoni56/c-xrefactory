@@ -131,7 +131,7 @@ extern Language currentLanguage;
 extern int currentPass;
 extern int maxPasses;
 
-extern Completions s_completions;
+extern Completions collectedCompletions;
 extern unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 extern int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 

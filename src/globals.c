@@ -53,7 +53,7 @@ struct yyGlobalState *s_yygstate;
 struct yyGlobalState *s_initYygstate;
 
 char *inputFilename="";
-Completions s_completions;
+Completions collectedCompletions;
 
 /* **************** cached symbols ********************** */
 
@@ -78,7 +78,7 @@ unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
 };
 
 // !!!! if you modify this, you will need to modify level# for
-//  Emacs, in xref.el !!!!!!!!!
+//  Emacs, in c-xref.el !!!!!!!!!
 int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL] = {
     UsageMaxOLUsages,
     UsageUsed,

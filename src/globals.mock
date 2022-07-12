@@ -79,7 +79,7 @@ Position noPosition = {-1, 0, 0};
 Language currentLanguage;
 
 TypeModifier *s_structRecordCompletionType;
-Completions s_completions;
+Completions collectedCompletions;
 
 char *storageNamesTable[MAX_STORAGE_NAMES];
 
