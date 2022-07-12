@@ -144,12 +144,6 @@ typedef enum language {
 
 /* ******************************************************************** */
 
-#define RESET_REFERENCE_USAGE(rrr,uuu) {\
-    if (rrr!=NULL && rrr->usage.kind > uuu) {\
-        rrr->usage.kind = uuu;\
-    }\
-}
-
 #define MARKER_EQ(mm1, mm2) (mm1->buffer==mm2->buffer && mm1->offset==mm2->offset)
 
 #define IS_DEFINITION_USAGE(usage) (\
@@ -163,10 +157,6 @@ typedef enum language {
 )
 
 #define OL_VIEWABLE_REFS(rrr) ((rrr)->usage.kind < UsageMaxOLUsages)
-
-#define SHOW_COMPLETION_WINDOW(ccc) (\
-   (ccc)->comPrefix[0]==0\
-)
 
 #define IS_BEST_FIT_MATCH(ss) (\
     (ss->ooBits&OOC_VIRTUAL_MASK)==OOC_VIRT_SAME_APPL_FUN_CLASS\

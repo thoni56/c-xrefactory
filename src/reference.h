@@ -47,4 +47,7 @@ typedef struct referencesItem {
     struct referencesItem    *next; /* TODO: Link only for hashlist? */
 } ReferencesItem;
 
+
+extern void reset_reference_usage(Reference *rrr, UsageKind uuu);
+
 #endif

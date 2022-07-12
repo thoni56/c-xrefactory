@@ -3674,7 +3674,7 @@ PostIncrementExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($1.d.typeModifier);
-                    RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
+                    reset_reference_usage($1.d.reference, UsageAddrUsed);
                 } else {
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
@@ -3688,7 +3688,7 @@ PostDecrementExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($1.d.typeModifier);
-                    RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
+                    reset_reference_usage($1.d.reference, UsageAddrUsed);
                 } else {
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
@@ -3730,7 +3730,7 @@ PreIncrementExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($2.d.typeModifier);
-                    RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
+                    reset_reference_usage($2.d.reference, UsageAddrUsed);
                 } else {
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
@@ -3744,7 +3744,7 @@ PreDecrementExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($2.d.typeModifier);
-                    RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
+                    reset_reference_usage($2.d.reference, UsageAddrUsed);
                 } else {
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
@@ -4178,15 +4178,15 @@ Assignment
                         rr = duplicateReference($1.d.reference);
                         $1.d.reference->usage = NO_USAGE;
                         if ($3.d.u == '=') {
-                            RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
+                            reset_reference_usage(rr, UsageLvalUsed);
                         } else {
-                            RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
+                            reset_reference_usage(rr, UsageAddrUsed);
                         }
                     } else {
                         if ($3.d.u == '=') {
-                            RESET_REFERENCE_USAGE($1.d.reference, UsageLvalUsed);
+                            reset_reference_usage($1.d.reference, UsageLvalUsed);
                         } else {
-                            RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
+                            reset_reference_usage($1.d.reference, UsageAddrUsed);
                         }
                         $$.d.typeModifier = $1.d.typeModifier;
                         $$.d.reference = NULL;

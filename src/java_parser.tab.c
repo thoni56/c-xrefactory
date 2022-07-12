@@ -6534,7 +6534,7 @@ case 412:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaCheckNumeric(yyvsp[-1].ast_expressionType.d.typeModifier);
-                    RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
+                    reset_reference_usage(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
@@ -6548,7 +6548,7 @@ case 413:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaCheckNumeric(yyvsp[-1].ast_expressionType.d.typeModifier);
-                    RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
+                    reset_reference_usage(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
@@ -6590,7 +6590,7 @@ case 419:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaCheckNumeric(yyvsp[0].ast_expressionType.d.typeModifier);
-                    RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
+                    reset_reference_usage(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -6604,7 +6604,7 @@ case 420:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaCheckNumeric(yyvsp[0].ast_expressionType.d.typeModifier);
-                    RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
+                    reset_reference_usage(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -7052,15 +7052,15 @@ case 463:
                         rr = duplicateReference(yyvsp[-3].ast_expressionType.d.reference);
                         yyvsp[-3].ast_expressionType.d.reference->usage = NO_USAGE;
                         if (yyvsp[-1].ast_unsignedPositionPair.d.u == '=') {
-                            RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
+                            reset_reference_usage(rr, UsageLvalUsed);
                         } else {
-                            RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
+                            reset_reference_usage(rr, UsageAddrUsed);
                         }
                     } else {
                         if (yyvsp[-1].ast_unsignedPositionPair.d.u == '=') {
-                            RESET_REFERENCE_USAGE(yyvsp[-3].ast_expressionType.d.reference, UsageLvalUsed);
+                            reset_reference_usage(yyvsp[-3].ast_expressionType.d.reference, UsageLvalUsed);
                         } else {
-                            RESET_REFERENCE_USAGE(yyvsp[-3].ast_expressionType.d.reference, UsageAddrUsed);
+                            reset_reference_usage(yyvsp[-3].ast_expressionType.d.reference, UsageAddrUsed);
                         }
                         yyval.ast_expressionType.d.typeModifier = yyvsp[-3].ast_expressionType.d.typeModifier;
                         yyval.ast_expressionType.d.reference = NULL;

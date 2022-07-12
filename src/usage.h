@@ -37,6 +37,8 @@
 // !!!!!!!!!!!!! All this stuff is to be removed, new way of defining usages
 // !!!!!!!!!!!!! is to set various bits in usg structure
 /* TODO: well, they are still used, so there must be more to this... */
+/* And they need to be monotonically ordered since
+ * reset_reference_usage() compares them... */
 
 #include "enums.h"
 #define ALL_USAGE_ENUMS(ENUM)                   \

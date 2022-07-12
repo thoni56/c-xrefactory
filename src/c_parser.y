@@ -347,11 +347,11 @@ postfix_expr
     }
     | postfix_expr INC_OP                       {
         $$.d.typeModifier = $1.d.typeModifier;
-        RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
+        reset_reference_usage($1.d.reference, UsageAddrUsed);
     }
     | postfix_expr DEC_OP                       {
         $$.d.typeModifier = $1.d.typeModifier;
-        RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
+        reset_reference_usage($1.d.reference, UsageAddrUsed);
     }
     | compound_literal
     ;
@@ -404,11 +404,11 @@ unary_expr
     : postfix_expr                  /*& { $$.d = $1.d; } &*/
     | INC_OP unary_expr             {
         $$.d.typeModifier = $2.d.typeModifier;
-        RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
+        reset_reference_usage($2.d.reference, UsageAddrUsed);
     }
     | DEC_OP unary_expr             {
         $$.d.typeModifier = $2.d.typeModifier;
-        RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
+        reset_reference_usage($2.d.reference, UsageAddrUsed);
     }
     | unary_operator cast_expr      {
         $$.d.typeModifier = $2.d.typeModifier;
@@ -416,7 +416,7 @@ unary_expr
     }
     | '&' cast_expr                 {
         $$.d.typeModifier = newPointerTypeModifier($2.d.typeModifier);
-        RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
+        reset_reference_usage($2.d.reference, UsageAddrUsed);
         $$.d.reference = NULL;
     }
     | '*' cast_expr                 {
@@ -589,15 +589,15 @@ assignment_expr
             rr = duplicateReference($1.d.reference);
             $1.d.reference->usage = NO_USAGE;
             if ($2.d == '=') {
-                RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
+                reset_reference_usage(rr, UsageLvalUsed);
             } else {
-                RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
+                reset_reference_usage(rr, UsageAddrUsed);
             }
         } else {
             if ($2.d == '=') {
-                RESET_REFERENCE_USAGE($1.d.reference, UsageLvalUsed);
+                reset_reference_usage($1.d.reference, UsageLvalUsed);
             } else {
-                RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
+                reset_reference_usage($1.d.reference, UsageAddrUsed);
             }
         }
         $$.d = $1.d;    /* $$.d.r will be used for FOR completions ! */

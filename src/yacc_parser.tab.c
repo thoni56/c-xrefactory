@@ -3259,14 +3259,14 @@ case 212:
 #line 565 "yacc_parser.y"
 {
         yyval.ast_expressionType.d.typeModifier = yyvsp[-1].ast_expressionType.d.typeModifier;
-        RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
+        reset_reference_usage(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
     }
 break;
 case 213:
 #line 569 "yacc_parser.y"
 {
         yyval.ast_expressionType.d.typeModifier = yyvsp[-1].ast_expressionType.d.typeModifier;
-        RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
+        reset_reference_usage(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
     }
 break;
 case 215:
@@ -3323,14 +3323,14 @@ case 227:
 #line 622 "yacc_parser.y"
 {
         yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier;
-        RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
+        reset_reference_usage(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
     }
 break;
 case 228:
 #line 626 "yacc_parser.y"
 {
         yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier;
-        RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
+        reset_reference_usage(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
     }
 break;
 case 229:
@@ -3344,7 +3344,7 @@ case 230:
 #line 634 "yacc_parser.y"
 {
         yyval.ast_expressionType.d.typeModifier = newPointerTypeModifier(yyvsp[0].ast_expressionType.d.typeModifier);
-        RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
+        reset_reference_usage(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
         yyval.ast_expressionType.d.reference = NULL;
     }
 break;
@@ -3534,15 +3534,15 @@ case 273:
             rr = duplicateReference(yyvsp[-2].ast_expressionType.d.reference);
             yyvsp[-2].ast_expressionType.d.reference->usage = NO_USAGE;
             if (yyvsp[-1].ast_integer.d == '=') {
-                RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
+                reset_reference_usage(rr, UsageLvalUsed);
             } else {
-                RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
+                reset_reference_usage(rr, UsageAddrUsed);
             }
         } else {
             if (yyvsp[-1].ast_integer.d == '=') {
-                RESET_REFERENCE_USAGE(yyvsp[-2].ast_expressionType.d.reference, UsageLvalUsed);
+                reset_reference_usage(yyvsp[-2].ast_expressionType.d.reference, UsageLvalUsed);
             } else {
-                RESET_REFERENCE_USAGE(yyvsp[-2].ast_expressionType.d.reference, UsageAddrUsed);
+                reset_reference_usage(yyvsp[-2].ast_expressionType.d.reference, UsageAddrUsed);
             }
         }
         yyval.ast_expressionType.d = yyvsp[-2].ast_expressionType.d;    /* $$.d.r will be used for FOR completions ! */
