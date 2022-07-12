@@ -8,7 +8,6 @@
 
 #include "head.h"
 
-
 typedef unsigned char uchar;
 
 /* ***********************************************************************
@@ -29,25 +28,25 @@ typedef enum addYesNo {
 } AddYesNo;
 
 typedef enum accessibilityCheckYesNo {
-    ACCESSIBILITY_CHECK_DEFAULT = ADD_NO+1,
+    ACCESSIBILITY_CHECK_DEFAULT = ADD_NO + 1,
     ACCESSIBILITY_CHECK_YES,
     ACCESSIBILITY_CHECK_NO
 } AccessibilityCheckYesNo;
 
 typedef enum visibilityCheckYesNo {
-    VISIBILITY_CHECK_DEFAULT = ACCESSIBILITY_CHECK_NO+1,
+    VISIBILITY_CHECK_DEFAULT = ACCESSIBILITY_CHECK_NO + 1,
     VISIBILITY_CHECK_YES,
     VISIBILITY_CHECK_NO
 } VisibilityCheckYesNo;
 
 typedef enum longjmpReason {
-    LONGJMP_REASON_NONE = VISIBILITY_CHECK_NO+1,
+    LONGJMP_REASON_NONE = VISIBILITY_CHECK_NO + 1,
     LONGJUMP_REASON_REFERENCE_OVERFLOW,
     LONGJMP_REASON_FILE_ABORT
 } LongjmpReason;
 
 typedef enum extractCategory {
-    EXTRACT_LOCAL_VAR = LONGJMP_REASON_FILE_ABORT+1,
+    EXTRACT_LOCAL_VAR = LONGJMP_REASON_FILE_ABORT + 1,
     EXTRACT_VALUE_ARGUMENT,
     EXTRACT_LOCAL_OUT_ARGUMENT,
     EXTRACT_OUT_ARGUMENT,
@@ -61,7 +60,7 @@ typedef enum extractCategory {
 } ExtractCategory;
 
 typedef enum pushPullDirection {
-    PULLING_UP = EXTRACT_ERROR+1,
+    PULLING_UP = EXTRACT_ERROR + 1,
     PUSHING_DOWN
 } PushPullDirection;
 
@@ -71,7 +70,7 @@ typedef enum loadSuperOrNot {
 } LoadSuperOrNot;
 
 typedef enum resolveDialog {
-    RESOLVE_DIALOG_DEFAULT = DO_NOT_LOAD_SUPER+1,
+    RESOLVE_DIALOG_DEFAULT = DO_NOT_LOAD_SUPER + 1,
     RESOLVE_DIALOG_ALWAYS,
     RESOLVE_DIALOG_NEVER,
 } ResolveDialog;
@@ -102,8 +101,7 @@ typedef enum {
     DONT_PROCESS_FILE_ARGUMENTS
 } ProcessFileArguments;
 
-
-enum miscellaneous {						/* misc. constants */
+enum miscellaneous { /* misc. constants */
     DEFAULT_VALUE = DONT_PROCESS_FILE_ARGUMENTS + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
@@ -191,15 +189,15 @@ enum miscellaneous {						/* misc. constants */
 /* *******************      encodings      *************** */
 
 enum fileEncodings {
-    MULE_DEFAULT,				// in fact utf-8 or utf-16
-    MULE_EUROPEAN,				// byte per char
-    MULE_EUC,					// euc
-    MULE_SJIS,					// Shift-JIS
-    MULE_UTF,					// utf-8 or utf-16
-    MULE_UTF_8,					// utf-8
-    MULE_UTF_16,				// utf-16
-    MULE_UTF_16LE,				// utf-16 little endian
-    MULE_UTF_16BE,				// utf-16 big endian
+    MULE_DEFAULT,  // in fact utf-8 or utf-16
+    MULE_EUROPEAN, // byte per char
+    MULE_EUC,      // euc
+    MULE_SJIS,     // Shift-JIS
+    MULE_UTF,      // utf-8 or utf-16
+    MULE_UTF_8,    // utf-8
+    MULE_UTF_16,   // utf-16
+    MULE_UTF_16LE, // utf-16 little endian
+    MULE_UTF_16BE, // utf-16 big endian
 };
 
 /* *******************      comment moving levels for refactoring      *************** */
@@ -226,8 +224,8 @@ enum addImportsDefault {
 /* *******************      refactoring continuations      *************** */
 
 typedef enum {
-    RC_NONE,				// do not continue, keep interactive
-    RC_CONTINUE,			// continue, no special info
+    RC_NONE,     // do not continue, keep interactive
+    RC_CONTINUE, // continue, no special info
     RC_IMPORT_SINGLE_TYPE,
     RC_IMPORT_ON_DEMAND,
 } ContinueRefactoringKind;
@@ -235,16 +233,15 @@ typedef enum {
 /* *******************      error messages type      *************** */
 
 enum {
-  ERR_ST,				/* standard, no pre-prepared message*/
-  ERR_CANT_OPEN,
-  ERR_CANT_OPEN_FOR_READ,
-  ERR_CANT_OPEN_FOR_WRITE,
-  ERR_NO_MEMORY,
-  ERR_INTERNAL,
-  ERR_INTERNAL_CHECK,
-  ERR_CFG,
+    ERR_ST, /* standard, no pre-prepared message*/
+    ERR_CANT_OPEN,
+    ERR_CANT_OPEN_FOR_READ,
+    ERR_CANT_OPEN_FOR_WRITE,
+    ERR_NO_MEMORY,
+    ERR_INTERNAL,
+    ERR_INTERNAL_CHECK,
+    ERR_CFG,
 };
-
 
 /* ************************** refactorings **************************** */
 
@@ -258,15 +255,15 @@ enum menuFilterLevels {
     FilterAllOfSameName,
     FilterSameProfile,
     FilterSameProfileRelatedClass,
-//&	FilterVirtualAdequate,
-//&	FilterVirtualSameAppl,
+    //&	FilterVirtualAdequate,
+    //&	FilterVirtualSameAppl,
     MAX_MENU_FILTER_LEVEL,
 };
 
 enum refsFilterLevels {
     RFilterAll,
-    RFilterAddrVal,			// also toplevel usage
-    RFilterLVal,			// also extend usage
+    RFilterAddrVal, // also toplevel usage
+    RFilterLVal,    // also extend usage
     RFilterDefinitions,
     MAX_REF_LIST_FILTER_LEVEL,
 };
@@ -274,8 +271,8 @@ enum refsFilterLevels {
 #include "storage.h"
 #include "type.h"
 
-enum javaPCTIndex {		/* java Primitive Conversion Table Indexes */
-    PCTIndexError=0,
+enum javaPCTIndex { /* java Primitive Conversion Table Indexes */
+    PCTIndexError = 0,
     PCTIndexByte,
     PCTIndexShort,
     PCTIndexChar,
@@ -340,55 +337,53 @@ enum syntaxPassParsedImportantPosition {
 #include "typemodifier.h"
 
 typedef struct recFindStr {
-    struct symbol			*baseClass;	/* class, application on which is looked*/
-    struct symbol			*currentClass;	/* current class, NULL for loc vars. */
-    struct symbol           *nextRecord;
-    unsigned                recsClassCounter;
-    int                     superClassesCount;
-    struct symbolList		*superClasses[MAX_INHERITANCE_DEEP];	/* super classes stack */
-    int                     anonymousUnionsCount;
-    struct symbol			*anonymousUnions[MAX_ANONYMOUS_FIELDS];	/* anonymous unions */
+    struct symbol     *baseClass;    /* class, application on which is looked*/
+    struct symbol     *currentClass; /* current class, NULL for loc vars. */
+    struct symbol     *nextRecord;
+    unsigned           recsClassCounter;
+    int                superClassesCount;
+    struct symbolList *superClasses[MAX_INHERITANCE_DEEP]; /* super classes stack */
+    int                anonymousUnionsCount;
+    struct symbol     *anonymousUnions[MAX_ANONYMOUS_FIELDS]; /* anonymous unions */
 } S_recFindStr;
 
 typedef struct extRecFindStr {
-    struct recFindStr			s;
-    struct symbol				*memb;
-    struct typeModifierList	*params;
+    struct recFindStr        s;
+    struct symbol           *memb;
+    struct typeModifierList *params;
 } S_extRecFindStr;
 
 typedef struct nestedSpec {
-    struct symbol		*cl;
-    bool membFlag;		/* flag whether it is nested in class */
-    short unsigned  accFlags;
+    struct symbol *cl;
+    bool           membFlag; /* flag whether it is nested in class */
+    short unsigned accFlags;
 } S_nestedSpec;
 
 #include "classcaster.h"
 
 typedef struct symStructSpec {
-    struct symbolList	*super;			/* list of super classes & interfaces */
-    struct symbol		*records;		/* str. records, should be a table of   */
-    struct cctNode		casts;			/* possible casts                       */
-    short int			nestedCount;	/* # of java nested classes     */
-    struct nestedSpec	*nest;			/* array of nested classes		*/
-    struct typeModifier	stype;          /* this structure type */
-    struct typeModifier	sptrtype;       /* this structure pointer type */
-    int					classFileIndex;		/* in java, my class file index
-                                               == -1 for none, TODO to change
-                                               it to s_noneFileIndex !!!
-                                            */
-    unsigned			recSearchCounter; /* tmp counter when looking for a record
-                                                it flags searched classes
-                                             */
+    struct symbolList  *super;          /* list of super classes & interfaces */
+    struct symbol      *records;        /* str. records, should be a table of   */
+    struct cctNode      casts;          /* possible casts                       */
+    short int           nestedCount;    /* # of java nested classes     */
+    struct nestedSpec  *nest;           /* array of nested classes		*/
+    struct typeModifier stype;          /* this structure type */
+    struct typeModifier sptrtype;       /* this structure pointer type */
+    int                 classFileIndex; /* in java, my class file index
+                                           == -1 for none, TODO to change
+                                           it to s_noneFileIndex !!!
+                                        */
+    unsigned recSearchCounter;          /* tmp counter when looking for a record
+                                              it flags searched classes
+                                           */
 } S_symStructSpec;
 
-
 typedef struct jslSymbolList {
-    struct symbol           *d;
-    struct position			position;
-    bool					isExplicitlyImported;
-    struct jslSymbolList	*next;
+    struct symbol        *d;
+    struct position       position;
+    bool                  isExplicitlyImported;
+    struct jslSymbolList *next;
 } JslSymbolList;
-
 
 /* ****************************************************************** */
 /*          symbol definition item in cross-reference table           */
@@ -411,151 +406,145 @@ typedef struct olCompletion {
 } Completion;
 
 typedef struct SymbolsMenu {
-    struct referencesItem	references;
-    bool					selected;
-    bool					visible;
-    unsigned				ooBits;
-    char					olUsage;	/* usage of symbol under cursor */
-    short int				vlevel;		/* virt. level of applClass <-> olsymbol*/
-    short int				refn;
-    short int				defRefn;
-    char					defUsage;   /* usage of definition reference */
-    struct position         defpos;
-    int                     outOnLine;
-    struct editorMarkerList	*markers;	/* for refactory only */
+    struct referencesItem    references;
+    bool                     selected;
+    bool                     visible;
+    unsigned                 ooBits;
+    char                     olUsage; /* usage of symbol under cursor */
+    short int                vlevel;  /* virt. level of applClass <-> olsymbol*/
+    short int                refn;
+    short int                defRefn;
+    char                     defUsage; /* usage of definition reference */
+    struct position          defpos;
+    int                      outOnLine;
+    struct editorMarkerList *markers; /* for refactory only */
     struct SymbolsMenu      *next;
 } SymbolsMenu;
 
 typedef struct olcxReferences {
-    struct reference        *references; /* list of references */
-    struct reference        *actual;     /* actual reference */
-    char					command;     /* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
-    char					language;    /* C/JAVA/YACC */
-    time_t					accessTime;	 /* last access time */
-    struct position			callerPosition; /* caller position */
-    struct olCompletion		*completions;       /* completions list for OLO_COMPLETION */
+    struct reference    *references;     /* list of references */
+    struct reference    *actual;         /* actual reference */
+    char                 command;        /* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
+    char                 language;       /* C/JAVA/YACC */
+    time_t               accessTime;     /* last access time */
+    struct position      callerPosition; /* caller position */
+    struct olCompletion *completions;    /* completions list for OLO_COMPLETION */
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
-    struct SymbolsMenu      *hkSelectedSym; /* resolved symbols under the cursor */
-    struct SymbolsMenu      *menuSym;		/* hkSelectedSyms plus same name */
-    int						menuFilterLevel;
-    int						refsFilterLevel;
-    struct olcxReferences	*previous;
+    struct SymbolsMenu    *hkSelectedSym; /* resolved symbols under the cursor */
+    struct SymbolsMenu    *menuSym;       /* hkSelectedSyms plus same name */
+    int                    menuFilterLevel;
+    int                    refsFilterLevel;
+    struct olcxReferences *previous;
 } OlcxReferences;
 
 typedef struct classTreeData {
-    int						baseClassFileIndex;
-    struct SymbolsMenu	   *treeMenu;
+    int                 baseClassFileIndex;
+    struct SymbolsMenu *treeMenu;
 } ClassTreeData;
 
 typedef struct OlcxReferencesStack {
-    struct olcxReferences	*top;
-    struct olcxReferences	*root;
+    struct olcxReferences *top;
+    struct olcxReferences *root;
 } OlcxReferencesStack;
-
-
 
 /* ***************** COMPLETION STRUCTURES ********************** */
 
-
 typedef struct completionLine {
-    char            *string;
-    struct symbol   *symbol;
-    Type			symbolType;
-    short int		virtLevel;
-    short int		margn;
-    char			**margs;
-    struct symbol	*vFunClass;
+    char          *string;
+    struct symbol *symbol;
+    Type           symbolType;
+    short int      virtLevel;
+    short int      margn;
+    char         **margs;
+    struct symbol *vFunClass;
 } CompletionLine;
 
 typedef struct completions {
-    char            idToProcess[MAX_FUN_NAME_SIZE];
-    int				idToProcessLen;
-    struct position	idToProcessPos;
-    bool fullMatchFlag;
-    bool isCompleteFlag;
-    bool noFocusOnCompletions;
-    bool abortFurtherCompletions;
-    char            comPrefix[TMP_STRING_SIZE];
-    int				maxLen;
-    struct completionLine    alternatives[MAX_COMPLETIONS];
-    int             alternativeIndex;
+    char                  idToProcess[MAX_FUN_NAME_SIZE];
+    int                   idToProcessLen;
+    struct position       idToProcessPos;
+    bool                  fullMatchFlag;
+    bool                  isCompleteFlag;
+    bool                  noFocusOnCompletions;
+    bool                  abortFurtherCompletions;
+    char                  comPrefix[TMP_STRING_SIZE];
+    int                   maxLen;
+    struct completionLine alternatives[MAX_COMPLETIONS];
+    int                   alternativeIndex;
 } Completions;
 
-
-typedef struct currentlyParsedClassInfo {		// class local, nested for classes
-    struct symbol			*function;
-    struct extRecFindStr	*erfsForParameterCompletion;			// currently parsed method for param completion
-    unsigned				functionBeginPosition;
-    int                     cxMemoryIndexAtFunctionBegin;
-    int						cxMemoryIndexAtFunctionEnd;
-    int                     cxMemoryIndexdiAtClassBegin;
-    int						cxMemoryIndexAtClassEnd;
-    int						thisMethodMemoriesStored;
-    int						thisClassMemoriesStored;
-    int						parserPassedMarker;
+typedef struct currentlyParsedClassInfo { // class local, nested for classes
+    struct symbol        *function;
+    struct extRecFindStr *erfsForParameterCompletion; // currently parsed method for param completion
+    unsigned              functionBeginPosition;
+    int                   cxMemoryIndexAtFunctionBegin;
+    int                   cxMemoryIndexAtFunctionEnd;
+    int                   cxMemoryIndexdiAtClassBegin;
+    int                   cxMemoryIndexAtClassEnd;
+    int                   thisMethodMemoriesStored;
+    int                   thisClassMemoriesStored;
+    int                   parserPassedMarker;
 } CurrentlyParsedClassInfo;
 
 typedef struct currentlyParsedInfo {
-    bool            extractProcessedFlag;
-    bool			marker1Flag;
-    int				marker2Flag;
-    char			setTargetAnswerClass[TMP_STRING_SIZE];
-    int				moveTargetApproved;
-    char			currentPackageAnswer[TMP_STRING_SIZE];
-    char			currentClassAnswer[TMP_STRING_SIZE];
-    char			currentSuperClassAnswer[TMP_STRING_SIZE];
-    int				methodCoordEndLine;
-    int				classCoordEndLine;
+    bool              extractProcessedFlag;
+    bool              marker1Flag;
+    int               marker2Flag;
+    char              setTargetAnswerClass[TMP_STRING_SIZE];
+    int               moveTargetApproved;
+    char              currentPackageAnswer[TMP_STRING_SIZE];
+    char              currentClassAnswer[TMP_STRING_SIZE];
+    char              currentSuperClassAnswer[TMP_STRING_SIZE];
+    int               methodCoordEndLine;
+    int               classCoordEndLine;
     struct codeBlock *workMemoryIndexAtBlockBegin;
     struct codeBlock *workMemoryIndexAtBlockEnd;
-    int             cxMemoryIndexAtBlockBegin;
-    int             cxMemoryIndexAtBlockEnd;
-    int				cxMemoryIndexAtMethodBegin;
-    int				cxMemoryIndexAtMethodEnd;
-    int				cxMemoryIndexAtClassBeginning;
-    int				cxMemoryIndexAtClassEnd;
-    int				lastImportLine;
-    struct symbol	*lastDeclaratorType;
-    struct symbol	*lastAssignementStruct;
+    int               cxMemoryIndexAtBlockBegin;
+    int               cxMemoryIndexAtBlockEnd;
+    int               cxMemoryIndexAtMethodBegin;
+    int               cxMemoryIndexAtMethodEnd;
+    int               cxMemoryIndexAtClassBeginning;
+    int               cxMemoryIndexAtClassEnd;
+    int               lastImportLine;
+    struct symbol    *lastDeclaratorType;
+    struct symbol    *lastAssignementStruct;
 } CurrentlyParsedInfo;
-
 
 /* ************************ PRE-PROCESSOR **************************** */
 
 typedef struct cppIfStack {
-    struct position position;
+    struct position    position;
     struct cppIfStack *next;
 } S_cppIfStack;
-
 
 /* *********************************************************** */
 
 typedef struct expressionTokenType {
-    struct typeModifier  *typeModifier;
-    struct reference     *reference;
-    struct position      *position;
+    struct typeModifier *typeModifier;
+    struct reference    *reference;
+    struct position     *position;
 } ExprTokenType;
 
 typedef struct nestedConstrTokenType {
-    struct typeModifier	*typeModifier;
-    struct idList *idList;
-    struct position *position;
+    struct typeModifier *typeModifier;
+    struct idList       *idList;
+    struct position     *position;
 } S_nestedConstrTokenType;
 
 typedef struct unsignedPositionPair {
-    unsigned		u;
-    struct position	*position;
+    unsigned         u;
+    struct position *position;
 } S_unsignedPositionPair;
 
 typedef struct symbolPositionPair {
-    struct symbol	*symbol;
-    struct position	*position;
+    struct symbol   *symbol;
+    struct position *position;
 } S_symbolPositionPair;
 
 typedef struct symbolPositionListPair {
-    struct symbol		*symbol;
-    struct positionList	*p;
+    struct symbol       *symbol;
+    struct positionList *p;
 } S_symbolPositionListPair;
 
 typedef struct intPair {
@@ -564,16 +553,14 @@ typedef struct intPair {
 } S_intPair;
 
 typedef struct typeModifiersListPositionListPair {
-    struct typeModifierList	*t;
-    struct positionList			*p;
+    struct typeModifierList *t;
+    struct positionList     *p;
 } S_typeModifiersListPositionListPair;
 
 typedef struct pushAllInBetweenData {
-    int			minMemi;
-    int			maxMemi;
+    int minMemi;
+    int maxMemi;
 } PushAllInBetweenData;
-
-
 
 /* *********************************************************** */
 
@@ -584,82 +571,81 @@ typedef struct pushAllInBetweenData {
 // node and additional data 'd' for parsing.
 
 typedef struct {
-    struct position  b, e;
-    int d;
+    struct position b, e;
+    int             d;
 } Ast_int;
 typedef struct {
     struct position b, e;
-    unsigned d;
+    unsigned        d;
 } Ast_unsigned;
 typedef struct {
     struct position b, e;
-    struct symbol *d;
+    struct symbol  *d;
 } Ast_symbol;
 typedef struct {
-    struct position b, e;
+    struct position    b, e;
     struct symbolList *d;
 } Ast_symbolList;
 typedef struct {
-    struct position          b, e;
-    struct typeModifier		*d;
+    struct position      b, e;
+    struct typeModifier *d;
 } Ast_typeModifiers;
 typedef struct {
-    struct position              b, e;
-    struct typeModifierList		*d;
+    struct position          b, e;
+    struct typeModifierList *d;
 } Ast_typeModifiersList;
 typedef struct {
-    struct position      b, e;
-    struct freeTrail		*d;
+    struct position   b, e;
+    struct freeTrail *d;
 } Ast_freeTrail;
 typedef struct {
-    struct position      b, e;
-    Id		*d;
+    struct position b, e;
+    Id             *d;
 } Ast_id;
 typedef struct {
-    struct position          b, e;
-    struct idList		*d;
+    struct position b, e;
+    struct idList  *d;
 } Ast_idList;
 typedef struct {
-    struct position          b, e;
-    struct expressionTokenType		d;
+    struct position            b, e;
+    struct expressionTokenType d;
 } Ast_exprTokenType;
 typedef struct {
-    struct position                  b, e;
-    struct nestedConstrTokenType		d;
+    struct position              b, e;
+    struct nestedConstrTokenType d;
 } Ast_nestedConstrTokenType;
 typedef struct {
-    struct position      b, e;
-    struct intPair		d;
+    struct position b, e;
+    struct intPair  d;
 } Ast_intPair;
 typedef struct {
-    struct position              b, e;
-    struct whileExtractData		*d;
+    struct position          b, e;
+    struct whileExtractData *d;
 } Ast_whileExtractData;
 typedef struct {
-    struct position      b, e;
-    struct position		d;
+    struct position b, e;
+    struct position d;
 } Ast_position;
 typedef struct {
-    struct position              b, e;
-    struct unsignedPositionPair		d;
+    struct position             b, e;
+    struct unsignedPositionPair d;
 } Ast_unsPositionPair;
 typedef struct {
-    struct position                  b, e;
-    struct symbolPositionPair		d;
+    struct position           b, e;
+    struct symbolPositionPair d;
 } Ast_symbolPositionPair;
 typedef struct {
-    struct position                  b, e;
-    struct symbolPositionListPair		d;
+    struct position               b, e;
+    struct symbolPositionListPair d;
 } Ast_symbolPositionListPair;
 typedef struct {
-    struct position          b, e;
-    struct positionList		*d;
+    struct position      b, e;
+    struct positionList *d;
 } Ast_positionList;
 typedef struct {
-    struct position                                  b, e;
-    struct typeModifiersListPositionListPair			d;
+    struct position                          b, e;
+    struct typeModifiersListPositionListPair d;
 } Ast_typeModifiersListPositionListPair;
-
 
 #include "refactorings.h"
 

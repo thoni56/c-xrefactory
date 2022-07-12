@@ -1314,7 +1314,7 @@ static Reference *javaCheckForUselessTypeName(IdList   *name,
     rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
                                       classif, UsageNone, NO_CX_REFS);
     assert(rfs && rfs->currentClass && rfs->currentClass->u.structSpec && name);
-    //&fprintf(dumpOut,"!checking rr == %s, %x\n", typeName[rr], localRfs.currentClass);
+    //& fprintf(dumpOut,"!checking rr == %s, %x\n", typeName[rr], localRfs.currentClass);
     if (rr == TypeExpression && localRfs.currentClass != NULL) {
         //&fprintf(dumpOut,"!checking %d(%s) ==
         //%d(%s)\n",rfs->currentClass->u.structSpec->classFileIndex,rfs->currentClass->linkName,localRfs.currentClass->u.structSpec->classFileIndex,localRfs.currentClass->linkName);
