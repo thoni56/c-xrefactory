@@ -2211,7 +2211,7 @@ static bool processXOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-xrefactory-II") == 0){
-        options.xref2 = 1;
+        options.xref2 = true;
     }
     else if (strncmp(argv[i], "-xrefrc=",8) == 0) {
         createOptionString(&options.xrefrc, argv[i]+8);
@@ -2235,6 +2235,17 @@ static bool processYOption(int *argi, int argc, char **argv) {
         java_yydebug = 1;
     }
 #endif
+    else return false;
+    *argi = i;
+    return true;
+}
+
+static bool processDashOption(int *argi, int argc, char **argv) {
+    int i = * argi;
+    if (0) {}
+    else if (strcmp(argv[i], "--version") == 0) {
+        options.serverOperation = OLO_ABOUT;
+    }
     else return false;
     *argi = i;
     return true;
@@ -2323,6 +2334,9 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
                 break;
             case 'y': case 'Y':
                 matched = processYOption(&i, argc, argv);
+                break;
+            case '-':
+                matched = processDashOption(&i, argc, argv);
                 break;
             default:
                 matched = false;

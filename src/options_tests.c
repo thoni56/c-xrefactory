@@ -207,6 +207,20 @@ Ensure(Options, can_parse_about_command_line_option) {
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
 }
 
+Ensure(Options, can_parse_version_command_line_option) {
+    char *argv[] = {"", "-version"};
+
+    processOptions(2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
+}
+
+Ensure(Options, can_parse_double_dash_version_command_line_option) {
+    char *argv[] = {"", "--version"};
+
+    processOptions(2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
+}
+
 Ensure(Options, can_parse_xrefrc_option_with_equals) {
     char *argv[] = {"", "-xrefrc=abc"};
 

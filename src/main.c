@@ -55,7 +55,7 @@ static int oldPass;
 static void aboutMessage(void) {
     char output[REFACTORING_TMP_STRING_SIZE];
     sprintf(output, "C-xrefactory version %s\n", C_XREF_VERSION_NUMBER);
-    sprintf(output, "Compiled at %s on %s\n",  __TIME__, __DATE__);
+    sprintf(output+strlen(output), "Compiled at %s on %s\n",  __TIME__, __DATE__);
     sprintf(output+strlen(output), "from git revision %s.\n", GIT_HASH);
     sprintf(output+strlen(output), "(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
     sprintf(output+strlen(output), "Released into GPL 2009 by Marian Vittek (SourceForge)\n");
