@@ -91,7 +91,6 @@ Position s_paramBeginPosition;
 Position s_paramEndPosition;
 
 Position s_cxRefPos;
-int s_cxRefFlag=0;
 
 int inputFileNumber;
 char *inputFilename;

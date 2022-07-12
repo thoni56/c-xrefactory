@@ -59,7 +59,6 @@ Completions collectedCompletions;
 
 Position s_olcxByPassPos;
 Position s_cxRefPos;
-int s_cxRefFlag=0;
 
 time_t fileProcessingStartTime;
 

@@ -97,7 +97,6 @@ void initAllInputs(void) {
     includeStackPointer=0;
     macroStackIndex=0;
     isProcessingPreprocessorIf = false;
-    s_cxRefFlag = 0;
     macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
     ppMemoryIndex=0;
     s_olstring[0]=0;

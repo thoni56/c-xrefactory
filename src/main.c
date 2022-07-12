@@ -412,7 +412,6 @@ static void initializationsPerInvocation(void) {
     parsedClassInfo = parsedClassInfoInit;
     parsedInfo = (CurrentlyParsedInfo){0,};
     for(i=0; i<SPP_MAX; i++) parsedPositions[i] = noPosition;
-    s_cxRefFlag=0;
     s_cxRefPos = noPosition;
     s_olstring[0]=0;
     s_olstringFound = false;

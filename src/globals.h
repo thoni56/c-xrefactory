@@ -108,7 +108,6 @@ extern char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1];
 
 extern Position s_olcxByPassPos;
 extern Position s_cxRefPos;
-extern int s_cxRefFlag;
 
 extern FILE *inputFile;
 
