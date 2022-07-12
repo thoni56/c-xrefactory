@@ -155,6 +155,8 @@ static int optMemoryIndex;
 static char javaSourcePathExpanded[MAX_OPTION_LEN];
 static char javaClassPathExpanded[MAX_OPTION_LEN];
 
+static char base[MAX_FILE_NAME_SIZE];
+
 
 #define ENV_DEFAULT_VAR_FILE            "${__file}"
 #define ENV_DEFAULT_VAR_PATH            "${__path}"
@@ -619,7 +621,7 @@ static void processSingleSectionMarker(char *path, char *section,
 }
 
 static void processSectionMarker(char *optionText, int i, char *project, char *section,
-                                 bool *writeFlagP, char *resSection) {
+                                 bool *writeFlagP, char *resultingSection) {
     char *tt;
     char firstPath[MAX_FILE_NAME_SIZE];
 
@@ -630,31 +632,32 @@ static void processSectionMarker(char *optionText, int i, char *project, char *s
 
     *writeFlagP = false;
     MapOnPaths(tt, {
-            if (firstPath[0]==0) strcpy(firstPath, currentPath);
-            if (project!=NULL) {
-                if (strcmp(currentPath, project)==0) {
-                    strcpy(resSection, currentPath);
-                    assert(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
-                    *writeFlagP = true;
-                    goto fini;
-                } else {
-                    *writeFlagP = false;
-                }
+        if (firstPath[0] == 0)
+            strcpy(firstPath, currentPath);
+        if (project != NULL) {
+            if (strcmp(currentPath, project) == 0) {
+                strcpy(resultingSection, currentPath);
+                assert(strlen(resultingSection) + 1 < MAX_FILE_NAME_SIZE);
+                *writeFlagP = true;
+                goto fini;
             } else {
-                processSingleSectionMarker(currentPath, section, writeFlagP, resSection);
-                if (*writeFlagP)
-                    goto fini;
+                *writeFlagP = false;
             }
-        });
- fini:;
+        } else {
+            processSingleSectionMarker(currentPath, section, writeFlagP, resultingSection);
+            if (*writeFlagP)
+                goto fini;
+        }
+    });
+fini:;
     if (*writeFlagP) {
         // TODO!!! YOU NEED TO ALLOCATE SPACE FOR THIS!!!
-        strcpy(s_base, resSection);
-        assert(strlen(resSection) < MAX_FILE_NAME_SIZE-1);
-        xrefSetenv("__BASE", s_base);
-        strcpy(resSection, firstPath);
+        strcpy(base, resultingSection);
+        assert(strlen(resultingSection) < MAX_FILE_NAME_SIZE-1);
+        xrefSetenv("__BASE", base);
+        strcpy(resultingSection, firstPath);
         // completely wrong, what about file names from command line ?
-        //&strncpy(cwd, resSection, MAX_FILE_NAME_SIZE-1);
+        //&strncpy(cwd, resultingSection, MAX_FILE_NAME_SIZE-1);
         //&cwd[MAX_FILE_NAME_SIZE-1] = 0;
     }
 }

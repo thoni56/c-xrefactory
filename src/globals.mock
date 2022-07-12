@@ -32,7 +32,6 @@ CurrentlyParsedInfo parsedInfo;
 int currentPass;
 int maxPasses;
 char defaultClassPath[] = ".";
-char s_base[MAX_FILE_NAME_SIZE];
 
 
 FILE *inputFile;

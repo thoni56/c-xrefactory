@@ -16,7 +16,6 @@ typedef struct counters {
 
 
 extern char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
-extern char s_base[MAX_FILE_NAME_SIZE];
 extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
 extern bool fileAbortEnabled;
