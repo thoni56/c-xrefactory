@@ -197,9 +197,26 @@ Ensure(Options, will_find_config_file_in_parent_directory) {
     assert_that(findConfigFile(cwd), is_equal_to_string("/home/c-xref/.c-xrefrc"));
 }
 
+
+// Some random options parsing tests...
+
 Ensure(Options, can_parse_about_command_line_option) {
     char *argv[] = {"", "-about"};
 
     processOptions(2, argv, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
+}
+
+Ensure(Options, can_parse_xrefrc_option_with_equals) {
+    char *argv[] = {"", "-xrefrc=abc"};
+
+    processOptions(2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    assert_that(options.xrefrc, is_equal_to_string("abc"));
+}
+
+Ensure(Options, can_parse_xrefrc_option_with_filename_separate) {
+    char *argv[] = {"", "-xrefrc", "abc"};
+
+    processOptions(3, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    assert_that(options.xrefrc, is_equal_to_string("abc"));
 }
