@@ -612,38 +612,38 @@ static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
     }
 }
 
-static bool reallyInsert(
-    CompletionLine *a,
-    int *aip,
-    char *s,
-    CompletionLine *t,
-    int orderFlag
-) {
+static bool reallyInsert(CompletionLine *a, int *aip, char *s, CompletionLine *t, int orderFlag) {
     int ai;
-    int l,r,x,c;
+    int l, r, x, c;
+
     ai = *aip;
-    l = 0; r = ai-1;
+    l  = 0;
+    r  = ai - 1;
     assert(t->string == s);
     if (orderFlag) {
         // binary search
-        while (l<=r) {
-            x = (l+r)/2;
+        while (l <= r) {
+            x = (l + r) / 2;
             c = completionOrderCmp(t, &a[x]);
             //&     c = strcmp(s, a[x].string);
-            if (c==0) { /* identifier yet in completions */
+            if (c == 0) { /* identifier still in completions */
                 if (currentLanguage != LANG_JAVA)
                     return false; /* no overloading, so ... */
                 if (symbolIsInTab(a, ai, &x, s, t))
                     return false;
-                r = x; l = x + 1;
+                r = x;
+                l = x + 1;
                 break;
             }
-            if (c<0) r=x-1; else l=x+1;
+            if (c < 0)
+                r = x - 1;
+            else
+                l = x + 1;
         }
-        assert(l==r+1);
+        assert(l == r + 1);
     } else {
         // linear search
-        for(l=0; l<ai; l++) {
+        for (l = 0; l < ai; l++) {
             if (isTheSameSymbol(t, &a[l]))
                 return false;
         }
@@ -651,15 +651,17 @@ static bool reallyInsert(
     if (orderFlag) {
         //& for(i=ai-1; i>=l; i--) a[i+1] = a[i];
         // should be faster, but frankly the weak point is not here.
-        memmove(a+l+1, a+l, sizeof(CompletionLine)*(ai-l));
+        memmove(a + l + 1, a + l, sizeof(CompletionLine) * (ai - l));
     } else {
         l = ai;
     }
 
-    a[l] = *t;
+    a[l]        = *t;
     a[l].string = s;
-    if (ai < MAX_COMPLETIONS-2) ai++;
+    if (ai < MAX_COMPLETIONS - 2)
+        ai++;
     *aip = ai;
+
     return true;
 }
 
@@ -812,6 +814,7 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
     CompletionLine         compLine;
     int             cnamelen;
     char            *cn, *cname, *psuff, *msig;
+
     cname = r->name;
     cnamelen = strlen(cname);
     if (!options.completeParenthesis) {
@@ -841,6 +844,7 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
     processName(cn, &compLine, orderFlag, c);
 }
 
+// NOTE: Mapping function
 static void symbolCompletionFunction(Symbol *symbol, void *c) {
     SymbolCompletionFunctionInfo *cc;
     CompletionLine completionLine;
