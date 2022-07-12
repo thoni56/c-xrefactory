@@ -468,7 +468,7 @@ typedef struct completions {
     bool                  isCompleteFlag;
     bool                  noFocusOnCompletions;
     bool                  abortFurtherCompletions;
-    char                  comPrefix[TMP_STRING_SIZE];
+    char                  prefix[TMP_STRING_SIZE];
     int                   maxLen;
     struct completionLine alternatives[MAX_COMPLETIONS];
     int                   alternativeIndex;

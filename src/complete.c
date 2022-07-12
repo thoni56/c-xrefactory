@@ -431,17 +431,17 @@ void printCompletions(Completions* c) {
             ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
         } else {
-            fprintf(communicationChannel,".%s", c->comPrefix+c->idToProcessLen);
+            fprintf(communicationChannel, ".%s", c->prefix + c->idToProcessLen);
         }
         goto finishWithoutMenu;
     }
-    if ((! c->fullMatchFlag) && strlen(c->comPrefix) > c->idToProcessLen) {
+    if (!c->fullMatchFlag && strlen(c->prefix) > c->idToProcessLen) {
         if (options.xref2) {
             ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
-            ppcGenRecord(PPC_SINGLE_COMPLETION, c->comPrefix);
+            ppcGenRecord(PPC_SINGLE_COMPLETION, c->prefix);
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         } else {
-            fprintf(communicationChannel,",%s", c->comPrefix+c->idToProcessLen);
+            fprintf(communicationChannel, ",%s", c->prefix + c->idToProcessLen);
         }
         goto finishWithoutMenu;
     }
@@ -705,7 +705,7 @@ static void completionInsertName(char *name, CompletionLine *completionLine, int
     name = completionLine->string;
     len = ci->idToProcessLen;
     if (ci->alternativeIndex == 0) {
-        strcpy(ci->comPrefix, name);
+        strcpy(ci->prefix, name);
         ci->alternatives[ci->alternativeIndex] = *completionLine;
         ci->alternatives[ci->alternativeIndex].string = name/*+len*/;
         ci->alternativeIndex++;
@@ -719,7 +719,7 @@ static void completionInsertName(char *name, CompletionLine *completionLine, int
             ci->fullMatchFlag = false;
             l = strlen(name/*+len*/);
             if (l > ci->maxLen) ci->maxLen = l;
-            computeComPrefix( ci->comPrefix, name);
+            computeComPrefix(ci->prefix, name);
         }
     }
 }
@@ -753,7 +753,7 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
     name = compLine->string;
     if (completions->alternativeIndex == 0) {
         completions->fullMatchFlag = false;
-        completions->comPrefix[0]=0;
+        completions->prefix[0]=0;
         completions->alternatives[completions->alternativeIndex] = *compLine;
         completions->alternatives[completions->alternativeIndex].string = name;
         completions->alternativeIndex++;
@@ -979,7 +979,7 @@ static void completeRecordsNames(
                     processSpecialInheritedFullCompletion(c,orderFlag,vlevel,
                                                           r, vFunCl, cname);
                 }
-                c->comPrefix[0]=0;
+                c->prefix[0] = 0;
             } else if (completionType == TypeSpecialConstructorCompletion) {
                 fillCompletionLine(&completionLine, c->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
                 completionInsertName(c->idToProcess, &completionLine, orderFlag, (void*) c);
@@ -993,7 +993,7 @@ static void completeRecordsNames(
         }
     }
     if (c->idToProcess[0] == 0 && currentLanguage!=LANG_JAVA)
-        c->comPrefix[0] = 0;  // no common prefix completed
+        c->prefix[0] = 0; // no common prefix completed
 }
 
 
@@ -1209,7 +1209,7 @@ void completeUpFunProfile(Completions *c) {
 
         fillCompletionLine(&c->alternatives[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
         c->fullMatchFlag = true;
-        c->comPrefix[0]  = 0;
+        c->prefix[0]  = 0;
         c->alternativeIndex++;
     }
 }
@@ -1419,7 +1419,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
         rr = findStrRecordSym(rfs, mname, &r, CLASS_TO_METHOD, accessCheck, visibilityCheck);
     } while (rr == RETURN_OK);
     if (c->alternativeIndex != 0) {
-        c->comPrefix[0]=0;
+        c->prefix[0]=0;
         c->fullMatchFlag = true;
         c->noFocusOnCompletions = true;
     }
@@ -1534,7 +1534,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
                     processName(sname, &compLine, 1, c);
                 }
                 // reset common prefix and full match in order to always show window
-                c->comPrefix[0] = 0;
+                c->prefix[0]     = 0;
                 c->fullMatchFlag = true;
             }
         }
@@ -1673,7 +1673,7 @@ void javaHintVariableName(Completions*c) {
     processName(affect2, &compLine, 0, c);
     fillCompletionLine(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
     processName(name, &compLine, 0, c);
-    c->comPrefix[0] = 0;
+    c->prefix[0] = 0;
 
 }
 

@@ -2675,7 +2675,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
 
     /* If the completion window is shown, or there is no completion,
 <       add also hints (should be optionally) */
-    /*& if (collectedCompletions.comPrefix[0]!=0  && (collectedCompletions.alternativeIndex != 0) &*/
+    /*& if (collectedCompletions.prefix[0]!=0  && (collectedCompletions.alternativeIndex != 0) &*/
     /*&	&& options.serverOperation != OLO_SEARCH) return; &*/
 
     for (int i=0;(token=hintCompletionsTab[i].token)!=0; i++) {
