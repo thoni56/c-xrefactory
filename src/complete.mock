@@ -6,7 +6,7 @@ void initCompletions(Completions *completions, int length, Position position) {
     mock(completions, length, (intptr_t)&position);
 }
 
-void processName(char *name, CompletionLine *t, int orderFlag, void *c) {
+void processName(char *name, CompletionLine *t, int orderFlag, Completions *c) {
   mock(name, t, orderFlag, c);
 }
 

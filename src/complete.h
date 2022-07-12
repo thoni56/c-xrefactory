@@ -13,7 +13,7 @@ extern void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symb
                                short int virtualLevel, short int margn, char **margs,
                                Symbol *vFunClass);
 extern void initCompletions(Completions *completions, int length, Position position);
-extern void processName(char *name, CompletionLine *t, int orderFlag, void *c);
+extern void processName(char *name, CompletionLine *t, int orderFlag, Completions *c);
 extern void completeForSpecial1(Completions *c);
 extern void completeForSpecial2(Completions *c);
 extern void completeUpFunProfile(Completions *c);

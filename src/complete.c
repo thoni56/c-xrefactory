@@ -769,9 +769,8 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
     }
 }
 
-void processName(char *name, CompletionLine *compLine, int orderFlag, void *c) {
-    Completions *ci;
-    ci = (Completions *) c;
+void processName(char *name, CompletionLine *compLine, int orderFlag, Completions *c) {
+    Completions *ci = (Completions *) c;
     if (options.serverOperation == OLO_SEARCH) {
         searchName(name, compLine, orderFlag, ci);
     } else {
@@ -838,7 +837,7 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
         strcpy(cn+cnamelen, psuff);
     }
     fillCompletionLine(&compLine, cn, r, TypeDefault, vlevel,0,NULL,vFunCl);
-    processName(cn, &compLine, orderFlag, (void*) c);
+    processName(cn, &compLine, orderFlag, c);
 }
 
 static void symbolCompletionFunction(Symbol *symbol, void *c) {
@@ -901,7 +900,7 @@ static void processSpecialInheritedFullCompletion( Completions *c, int orderFlag
     strcpy(fcc,tt);
     //&fprintf(dumpOut,":adding %s\n",fcc);fflush(dumpOut);
     fillCompletionLine(&compLine, fcc, r, TypeInheritedFullMethod, vlevel,0,NULL,vFunCl);
-    processName(fcc, &compLine, orderFlag, (void*) c);
+    processName(fcc, &compLine, orderFlag, c);
 }
 
 static AccessibilityCheckYesNo calculateAccessCheckOption(void) {
@@ -988,7 +987,7 @@ static void completeRecordsNames(
                 completeFunctionOrMethodName(c, orderFlag, vlevel, r, vFunCl);
             } else {
                 fillCompletionLine(&completionLine, cname, r, TypeDefault, vlevel, 0, NULL, vFunCl);
-                processName(cname, &completionLine, orderFlag, (void*) c);
+                processName(cname, &completionLine, orderFlag, c);
             }
         }
     }
@@ -1255,7 +1254,7 @@ static void javaPackageNameCompletion(
     cname = StackMemoryAllocC(strlen(fname)+1, char);
     strcpy(cname, fname);
     fillCompletionLine(&compLine, cname, NULL, TypePackage,0, 0 , NULL,NULL);
-    processName(cname, &compLine, 1, (void*) c);
+    processName(cname, &compLine, 1, c);
 }
 
 /* NOTE: Map-function */
@@ -1299,7 +1298,7 @@ static void javaTypeNameCompletion(
     strncpy(cname, fname, len);
     cname[len]=0;
     fillCompletionLine(&compLine, cname, memb, complType,0, 0 , NULL,NULL);
-    processName(cname, &compLine, 1, (void*) c);
+    processName(cname, &compLine, 1, c);
 }
 
 static void javaCompleteNestedClasses(  Completions *c,
@@ -1322,7 +1321,7 @@ static void javaCompleteNestedClasses(  Completions *c,
                 assert(memb);
                 memb->access |= str->u.structSpec->nest[i].accFlags;  // hack!!!
                 fillCompletionLine(&compLine, memb->name, memb, TypeStruct,0, 0 , NULL,NULL);
-                processName(memb->name, &compLine, 1, (void*) c);
+                processName(memb->name, &compLine, 1, c);
                 if (storage == StorageConstructor) {
                     javaLoadClassSymbolsFromFile(memb);
                     completeRecordsNames(c, memb, CLASS_TO_ANY, StorageConstructor, TypeDefault, 0);
@@ -1414,7 +1413,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
             }
             vlevel = rfs->superClassesCount;
             fillCompletionLine(&compLine, r->name, r, TypeDefault, vlevel,0,NULL,vFunCl);
-            processName(r->name, &compLine, 0, (void*) c);
+            processName(r->name, &compLine, 0, c);
         }
         rr = findStrRecordSym(rfs, mname, &r, CLASS_TO_METHOD, accessCheck, visibilityCheck);
     } while (rr == RETURN_OK);
@@ -1674,7 +1673,6 @@ void javaHintVariableName(Completions*c) {
     fillCompletionLine(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
     processName(name, &compLine, 0, c);
     c->prefix[0] = 0;
-
 }
 
 void javaCompleteTypeCompName(Completions *c) {
