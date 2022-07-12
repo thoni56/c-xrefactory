@@ -4,11 +4,11 @@
 
 void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord, unsigned recsClassCounter) {
     recFindStr->baseClass = baseClass;
-    recFindStr->currClass = currentClass;
+    recFindStr->currentClass = currentClass;
     recFindStr->nextRecord = nextRecord;
     recFindStr->recsClassCounter = recsClassCounter;
-    recFindStr->sti = 0;
-    recFindStr->aui = 0;
+    recFindStr->superClassesCount = 0;
+    recFindStr->anonymousUnionsCount = 0;
 }
 
 void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {

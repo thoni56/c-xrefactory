@@ -1115,17 +1115,16 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
 static void addAmbCxRef(int classif, Symbol *sym, Position *pos, UsageKind usageKind, int minacc, Reference **oref, S_recFindStr *rfs) {
     Usage usage;
     if (classif!=CLASS_TO_METHOD) {
-        if (rfs != NULL && rfs->currClass!=NULL) {
-            assert(rfs && rfs->currClass &&
-                   rfs->currClass->type==TypeStruct && rfs->currClass->u.structSpec);
+        if (rfs != NULL && rfs->currentClass != NULL) {
+            assert(rfs && rfs->currentClass && rfs->currentClass->type == TypeStruct &&
+                   rfs->currentClass->u.structSpec);
             assert(rfs && rfs->baseClass &&
                    rfs->baseClass->type==TypeStruct && rfs->baseClass->u.structSpec);
-            if (options.serverOperation!=OLO_ENCAPSULATE
-                || ! javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, sym, AccessPrivate)) {
+            if (options.serverOperation != OLO_ENCAPSULATE ||
+                !javaRecordAccessible(rfs, rfs->baseClass, rfs->currentClass, sym, AccessPrivate)) {
                 fillUsage(&usage, usageKind, minacc);
-                *oref=addNewCxReference(sym,pos, usage,
-                                       rfs->currClass->u.structSpec->classFileIndex,
-                                       rfs->baseClass->u.structSpec->classFileIndex);
+                *oref = addNewCxReference(sym, pos, usage, rfs->currentClass->u.structSpec->classFileIndex,
+                                          rfs->baseClass->u.structSpec->classFileIndex);
             }
         } else {
             *oref=addCxReference(sym, pos, usageKind, noFileIndex, noFileIndex);
@@ -1171,15 +1170,15 @@ static int javaClassifySingleAmbigName(IdList *name,
             if (cxrefFlag==ADD_CX_REFS) {
                 minacc = javaGetMinimalAccessibility(rfs, *str);
                 addAmbCxRef(classif,*str, &name->id.position, uusage, minacc, oref, rfs);
-                if (rfs!=NULL && rfs->currClass != NULL) {
+                if (rfs != NULL && rfs->currentClass != NULL) {
                     // the question is: is a reference to static field
                     // also reference to 'this'? If yes, it will
                     // prevent many methods from beeing turned static.
                     if ((*str)->access & AccessStatic) {
-                        nfqtusage = javaNotFqtUsageCorrection(rfs->currClass,UsageNotFQField);
-                        addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                                rfs->currClass->u.structSpec->classFileIndex,
-                                &name->id.position, nfqtusage);
+                        nfqtusage = javaNotFqtUsageCorrection(rfs->currentClass, UsageNotFQField);
+                        addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM, StorageField,
+                                                 rfs->currentClass->u.structSpec->classFileIndex,
+                                                 &name->id.position, nfqtusage);
                     } else {
                         addThisCxReferences(rfs->baseClass->u.structSpec->classFileIndex, &name->id.position);
                     }
@@ -1314,14 +1313,17 @@ static Reference *javaCheckForUselessTypeName(IdList   *name,
     sname.next = NULL;
     rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
                                       classif, UsageNone, NO_CX_REFS);
-    assert(rfs && rfs->currClass && rfs->currClass->u.structSpec && name);
-//&fprintf(dumpOut,"!checking rr == %s, %x\n", typeName[rr], localRfs.currClass);
-    if (rr==TypeExpression && localRfs.currClass!=NULL) {
-//&fprintf(dumpOut,"!checking %d(%s) == %d(%s)\n",rfs->currClass->u.structSpec->classFileIndex,rfs->currClass->linkName,localRfs.currClass->u.structSpec->classFileIndex,localRfs.currClass->linkName);
+    assert(rfs && rfs->currentClass && rfs->currentClass->u.structSpec && name);
+    //&fprintf(dumpOut,"!checking rr == %s, %x\n", typeName[rr], localRfs.currentClass);
+    if (rr == TypeExpression && localRfs.currentClass != NULL) {
+        //&fprintf(dumpOut,"!checking %d(%s) ==
+        //%d(%s)\n",rfs->currentClass->u.structSpec->classFileIndex,rfs->currentClass->linkName,localRfs.currentClass->u.structSpec->classFileIndex,localRfs.currentClass->linkName);
         // equality of pointers may be too strong ???
-        if(rfs->currClass->u.structSpec->classFileIndex==localRfs.currClass->u.structSpec->classFileIndex){
-            *oref = addUselessFQTReference(rfs->currClass->u.structSpec->classFileIndex, &name->id.position);
-//&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->id.position.line, name->id.position.col);
+        if (rfs->currentClass->u.structSpec->classFileIndex ==
+            localRfs.currentClass->u.structSpec->classFileIndex) {
+            *oref = addUselessFQTReference(rfs->currentClass->u.structSpec->classFileIndex, &name->id.position);
+            //&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->id.position.line,
+            //name->id.position.col);
             javaResetUselessReference(lref);
         }
     }
@@ -1434,8 +1436,8 @@ int javaClassifyAmbiguousName(
                 *expr = (*str)->u.typeModifier;
                 if (rf == RETURN_OK) {
                     name->nameType = TypeExpression;
-                    if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
-                        || javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, *str)) {
+                    if ((options.ooChecksBits & OOC_ALL_CHECKS) == 0 ||
+                        javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currentClass, *str)) {
                         minacc = javaGetMinimalAccessibility(rfs, *str);
                         addAmbCxRef(classif,*str,&name->id.position, uusage, minacc, oref, rfs);
                         if (allowUselesFqtRefs == USELESS_FQT_REFS_ALLOWED) {
@@ -1466,8 +1468,8 @@ int javaClassifyAmbiguousName(
                 rr = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->id.name,
                                       str, classif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
                 if (rr == RESULT_OK) {
-                    if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
-                        || javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, *str)) {
+                    if ((options.ooChecksBits & OOC_ALL_CHECKS) == 0 ||
+                        javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currentClass, *str)) {
                         minacc = javaGetMinimalAccessibility(rfs, *str);
                         addAmbCxRef(classif,*str,&name->id.position,uusage, minacc, oref, rfs);
                     }
@@ -2131,19 +2133,20 @@ static TypeModifier *javaMethodInvocation(
     do {
         assert(memb != NULL);
 //&sprintf(tmpBuff,"testing: %s\n",memb->linkName);ppcBottomInformation(tmpBuff);
-        if (javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, memb)
-            && javaMethodApplicability(memb,actArg) == PROFILE_APPLICABLE) {
+        if (javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currentClass, memb) &&
+            javaMethodApplicability(memb, actArg) == PROFILE_APPLICABLE) {
             appl[appli] = memb;
             minacc[appli] = javaGetMinimalAccessibility(rfs, memb);
-            assert(rfs && rfs->currClass && rfs->currClass->type==TypeStruct);
-            funCl[appli] = rfs->currClass->u.structSpec->classFileIndex;
+            assert(rfs && rfs->currentClass && rfs->currentClass->type == TypeStruct);
+            funCl[appli] = rfs->currentClass->u.structSpec->classFileIndex;
             assert(funCl[appli] != -1);
             appli++;
-//&sprintf(tmpBuff,"applicable: %s of %s\n",memb->linkName,rfs->currClass->linkName);ppcBottomInformation(tmpBuff);
+            //&sprintf(tmpBuff,"applicable: %s of
+            //%s\n",memb->linkName,rfs->currentClass->linkName);ppcBottomInformation(tmpBuff);
         }
         rr = findStrRecordSym(rfs, name->name, &memb,
                               CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
-        if(invocationType==CONSTRUCTOR_INVOCATION&&rfs->baseClass!=rfs->currClass){
+        if (invocationType == CONSTRUCTOR_INVOCATION && rfs->baseClass != rfs->currentClass) {
             // constructors are not inherited
             rr = RETURN_NOT_FOUND;
         }
@@ -2307,7 +2310,7 @@ TypeModifier *javaMethodInvocationS(Id *super,
     if (erfs==NULL)
         return &s_errorModifier;
     res = javaMethodInvocation(&erfs->s, erfs->memb, name, args, SUPER_METHOD_INVOCATION,&super->position);
-    assert(erfs->s.currClass && erfs->s.currClass->u.structSpec);
+    assert(erfs->s.currentClass && erfs->s.currentClass->u.structSpec);
     return res;
 }
 
@@ -2340,7 +2343,7 @@ TypeModifier *javaConstructorInvocation(Symbol *clas,
     erfs = javaCrErfsForConstructorInvocation(clas, pos);
     if (erfs == NULL)
         return &s_errorModifier;
-    if (erfs->s.baseClass != erfs->s.currClass)
+    if (erfs->s.baseClass != erfs->s.currentClass)
         return &s_errorModifier;
     fillId(&name, clas->name, NULL, *pos);
     res = javaMethodInvocation(&erfs->s, erfs->memb, &name, args,CONSTRUCTOR_INVOCATION,&noPosition);

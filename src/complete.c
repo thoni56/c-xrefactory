@@ -947,7 +947,8 @@ static void completeRecordsNames(
         //&}
         rr = findStrRecordSym(&rfs, NULL, &r, classification, accessCheck, visibilityCheck);
         if (rr != RETURN_OK) break;
-        if (constructorOpt==StorageConstructor && rfs.currClass!=symbol) break;
+        if (constructorOpt == StorageConstructor && rfs.currentClass != symbol)
+            break;
         /* because constructors are not inherited */
         assert(r);
         cname = r->name;
@@ -962,13 +963,13 @@ static void completeRecordsNames(
                 //  What is more natural ???
                 && javaLinkable(r->access)) {
             //&fprintf(dumpOut,"passed\n", cname);
-            assert(rfs.currClass && rfs.currClass->u.structSpec);
+            assert(rfs.currentClass && rfs.currentClass->u.structSpec);
             assert(r->type == TypeDefault);
-            vFunCl = rfs.currClass;
+            vFunCl = rfs.currentClass;
             if (vFunCl->u.structSpec->classFileIndex == -1) {
                 vFunCl = NULL;
             }
-            vlevel = rfs.sti + vlevelOffset;
+            vlevel = rfs.superClassesCount + vlevelOffset;
             if (completionType == TypeInheritedFullMethod) {
                 // TODO customizable completion level
                 if (vlevel > 1
@@ -1136,7 +1137,7 @@ static char *spComplFindNextRecord(ExprTokenType *tok) {
         cname = r->name;
         CONST_CONSTRUCT_NAME(StorageDefault, r->storage, &cname);
         if (cname!=NULL && javaLinkable(r->access)){
-            assert(rfs.currClass && rfs.currClass->u.structSpec);
+            assert(rfs.currentClass && rfs.currentClass->u.structSpec);
             assert(r->type == TypeDefault);
             if (isEqualType(r->u.typeModifier, tok->typeModifier)) {
                 // there is a record of the same type
@@ -1416,11 +1417,11 @@ void javaHintCompleteMethodParameters(Completions *c) {
     do {
         assert(r != NULL);
         if (*actArg==0 || javaMethodApplicability(r,actArg)==PROFILE_PARTIALLY_APPLICABLE) {
-            vFunCl = rfs->currClass;
+            vFunCl = rfs->currentClass;
             if (vFunCl->u.structSpec->classFileIndex == -1) {
                 vFunCl = NULL;
             }
-            vlevel = rfs->sti;
+            vlevel = rfs->superClassesCount;
             fillCompletionLine(&compLine, r->name, r, TypeDefault, vlevel,0,NULL,vFunCl);
             processName(r->name, &compLine, 0, (void*) c);
         }

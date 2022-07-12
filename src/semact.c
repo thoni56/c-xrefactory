@@ -21,12 +21,12 @@
 
 void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord,
                     unsigned recsClassCounter) {
-    recFindStr->baseClass = baseClass;
-    recFindStr->currClass = currentClass;
-    recFindStr->nextRecord = nextRecord;
-    recFindStr->recsClassCounter = recsClassCounter;
-    recFindStr->sti = 0;
-    recFindStr->aui = 0;
+    recFindStr->baseClass            = baseClass;
+    recFindStr->currentClass         = currentClass;
+    recFindStr->nextRecord           = nextRecord;
+    recFindStr->recsClassCounter     = recsClassCounter;
+    recFindStr->superClassesCount    = 0;
+    recFindStr->anonymousUnionsCount = 0;
 }
 
 bool displayingErrorMessages(void) {
@@ -121,10 +121,10 @@ void recFindPush(Symbol *str, S_recFindStr *rfs) {
     }
     ss = str->u.structSpec;
     rfs->nextRecord = ss->records;
-    rfs->currClass = str;
-    rfs->st[rfs->sti] = ss->super;
-    assert(rfs->sti < MAX_INHERITANCE_DEEP);
-    rfs->sti ++;
+    rfs->currentClass                         = str;
+    rfs->superClasses[rfs->superClassesCount] = ss->super;
+    assert(rfs->superClassesCount < MAX_INHERITANCE_DEEP);
+    rfs->superClassesCount++;
 }
 
 S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
@@ -195,18 +195,19 @@ static bool accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
         return false;
     }
     cc = rfs->baseClass;
-    for(i=0; i<rfs->sti-1; i++) {
+    for (i = 0; i < rfs->superClassesCount - 1; i++) {
         assert(cc);
         for(sups=cc->u.structSpec->super; sups!=NULL; sups=sups->next) {
-            if (sups->next==rfs->st[i]) break;
+            if (sups->next == rfs->superClasses[i])
+                break;
         }
-        if (sups!=NULL && sups->next == rfs->st[i]) {
+        if (sups != NULL && sups->next == rfs->superClasses[i]) {
             if (! javaClassIsInCurrentPackage(sups->element))
                 return false;
         }
         cc = sups->element;
     }
-    assert(cc==rfs->currClass);
+    assert(cc == rfs->currentClass);
     return true;
 }
 
@@ -270,16 +271,16 @@ bool javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbo
 }
 
 bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
-    return javaRecordVisible(rfs->baseClass, rfs->currClass, r->access)
-        && javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, r, r->access);
+    return javaRecordVisible(rfs->baseClass, rfs->currentClass, r->access) &&
+           javaRecordAccessible(rfs, rfs->baseClass, rfs->currentClass, r, r->access);
 }
 
 int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     int acc, i;
     for (i=MAX_REQUIRED_ACCESS; i>0; i--) {
         acc = javaRequiredAccessibilityTable[i];
-        if (javaRecordVisible(rfs->baseClass, rfs->currClass, acc)
-            && javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, r, acc)) {
+        if (javaRecordVisible(rfs->baseClass, rfs->currentClass, acc) &&
+            javaRecordAccessible(rfs, rfs->baseClass, rfs->currentClass, r, acc)) {
             return i;
         }
     }
@@ -301,22 +302,23 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
     //&fprintf(dumpOut,":\nNEW SEARCH\n"); fflush(dumpOut);
     for (;;) {
         assert(ss);
-        cclass = ss->currClass;
+        cclass = ss->currentClass;
         if (cclass != NULL && cclass->u.structSpec->recSearchCounter == ss->recsClassCounter) {
             // to avoid multiple pass through the same super-class ??
             //&fprintf(dumpOut,":%d==%d --> skipping class
             //%s\n",cclass->u.structSpec->recSearchCounter,ss->recsClassCounter,cclass->linkName);
             goto nextClass;
         }
-        //&if(cclass!=NULL)fprintf(dumpOut,":looking in class %s(%d)\n",cclass->linkName,ss->sti); fflush(dumpOut);
+        if (cclass != NULL)
+            log_trace(":looking in class %s(%d)", cclass->linkName, ss->superClassesCount);
         for (r = ss->nextRecord; r != NULL; r = r->next) {
             // special gcc extension of anonymous struct record
             if (r->name != NULL && *r->name == 0 && r->type == TypeDefault &&
                 r->u.typeModifier->kind == TypeAnonymousField && r->u.typeModifier->next != NULL &&
                 (r->u.typeModifier->next->kind == TypeUnion || r->u.typeModifier->next->kind == TypeStruct)) {
                 // put the anonymous union as 'super class'
-                if (ss->aui + 1 < MAX_ANONYMOUS_FIELDS) {
-                    ss->au[ss->aui++] = r->u.typeModifier->next->u.t;
+                if (ss->anonymousUnionsCount + 1 < MAX_ANONYMOUS_FIELDS) {
+                    ss->anonymousUnions[ss->anonymousUnionsCount++] = r->u.typeModifier->next->u.t;
                 }
             }
             //&fprintf(dumpOut,":checking %s\n",r->name); fflush(dumpOut);
@@ -368,27 +370,29 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
         nextRecord:;
         }
     nextClass:
-        if (ss->aui != 0) {
+        if (ss->anonymousUnionsCount != 0) {
             // O.K. try first to pas to anonymous record
-            s = ss->au[--ss->aui];
+            s = ss->anonymousUnions[--ss->anonymousUnionsCount];
         } else {
             // mark the class as processed
             if (cclass != NULL) {
                 cclass->u.structSpec->recSearchCounter = ss->recsClassCounter;
             }
 
-            while (ss->sti > 0 && ss->st[ss->sti - 1] == NULL)
-                ss->sti--;
-            if (ss->sti == 0) {
+            while (ss->superClassesCount > 0 && ss->superClasses[ss->superClassesCount - 1] == NULL)
+                ss->superClassesCount--;
+            if (ss->superClassesCount == 0) {
                 ss->nextRecord = NULL;
                 *res           = &s_errorSymbol;
                 return RETURN_NOT_FOUND;
             }
-            sss                 = ss->st[ss->sti - 1];
+            sss                 = ss->superClasses[ss->superClassesCount - 1];
             s                   = sss->element;
-            ss->st[ss->sti - 1] = sss->next;
+
+            ss->superClasses[ss->superClassesCount - 1] = sss->next;
             assert(s && (s->type == TypeStruct || s->type == TypeUnion));
-            //&fprintf(dumpOut,":pass to super class %s(%d)\n",s->linkName,ss->sti); fflush(dumpOut);
+            //& fprintf(dumpOut,":pass to super class %s(%d)\n",s->linkName,ss->superClassesCount);
+            //fflush(dumpOut);
         }
         recFindPush(s, ss);
     }
@@ -422,17 +426,15 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
     // are useless.
     rr = findStrRecordSym(iniFind(sym,&rfs),record->name,res,
                           javaClassif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
-    if (rr == RESULT_OK && rfs.currClass!=NULL &&
-        ((*res)->storage==StorageField
-         || (*res)->storage==StorageMethod
-         || (*res)->storage==StorageConstructor)){
-        assert(rfs.currClass->u.structSpec && rfs.baseClass && rfs.baseClass->u.structSpec);
-        if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
-            || javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currClass, *res)) {
+    if (rr == RESULT_OK && rfs.currentClass != NULL &&
+        ((*res)->storage == StorageField || (*res)->storage == StorageMethod ||
+         (*res)->storage == StorageConstructor)) {
+        assert(rfs.currentClass->u.structSpec && rfs.baseClass && rfs.baseClass->u.structSpec);
+        if ((options.ooChecksBits & OOC_ALL_CHECKS) == 0 ||
+            javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currentClass, *res)) {
             minacc = javaGetMinimalAccessibility(&rfs, *res);
             fillUsage(&usage, UsageUsed, minacc);
-            ref = addNewCxReference(*res,&record->position, usage,
-                                    rfs.currClass->u.structSpec->classFileIndex,
+            ref = addNewCxReference(*res, &record->position, usage, rfs.currentClass->u.structSpec->classFileIndex,
                                     rfs.baseClass->u.structSpec->classFileIndex);
             // this is adding reference to 'super', not to the field!
             // for pull-up/push-down

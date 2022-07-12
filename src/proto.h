@@ -341,13 +341,13 @@ enum syntaxPassParsedImportantPosition {
 
 typedef struct recFindStr {
     struct symbol			*baseClass;	/* class, application on which is looked*/
-    struct symbol			*currClass;	/* current class, NULL for loc vars. */
+    struct symbol			*currentClass;	/* current class, NULL for loc vars. */
     struct symbol           *nextRecord;
     unsigned                recsClassCounter;
-    int                     sti;
-    struct symbolList		*st[MAX_INHERITANCE_DEEP];	/* super classes stack */
-    int                     aui;
-    struct symbol			*au[MAX_ANONYMOUS_FIELDS];	/* anonymous unions */
+    int                     superClassesCount;
+    struct symbolList		*superClasses[MAX_INHERITANCE_DEEP];	/* super classes stack */
+    int                     anonymousUnionsCount;
+    struct symbol			*anonymousUnions[MAX_ANONYMOUS_FIELDS];	/* anonymous unions */
 } S_recFindStr;
 
 typedef struct extRecFindStr {
