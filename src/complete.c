@@ -422,11 +422,11 @@ void printCompletions(Completions* c) {
             else
                 ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
         } else {
-            fprintf(communicationChannel,"-");
+            fprintf(communicationChannel, "-");
         }
         goto finishWithoutMenu;
     }
-    if ((! c->fullMatchFlag) && c->alternativeIndex==1) {
+    if (!c->fullMatchFlag && c->alternativeIndex==1) {
         if (options.xref2) {
             ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
