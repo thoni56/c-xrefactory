@@ -1,23 +1,22 @@
 #include "complete.h"
 
-#include "globals.h"
-#include "options.h"
-#include "misc.h"
-#include "parsers.h"
-#include "protocol.h"
-#include "semact.h"
-#include "jsemact.h"
-#include "cxref.h"
-#include "cxfile.h"
 #include "classfilereader.h"
-#include "reftab.h"
-#include "list.h"
-#include "yylex.h"
-#include "log.h"
-#include "protocol.h"
+#include "cxfile.h"
+#include "cxref.h"
 #include "fileio.h"
 #include "filetable.h"
-
+#include "globals.h"
+#include "jsemact.h"
+#include "list.h"
+#include "log.h"
+#include "misc.h"
+#include "options.h"
+#include "parsers.h"
+#include "protocol.h"
+#include "reftab.h"
+#include "semact.h"
+#include "type.h"
+#include "yylex.h"
 
 #define FULL_COMPLETION_INDENT_CHARS 2
 
@@ -28,8 +27,8 @@ enum fqtCompletion {
 
 
 typedef struct {
-    struct completions *res;
-    Type symType;
+    struct completions *completions;
+    Type                type;
 } SymbolCompletionInfo;
 
 typedef struct {
@@ -65,10 +64,9 @@ void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Typ
     cline->vFunClass = vFunClass;                  \
 }
 
-static void fillCompletionSymInfo(SymbolCompletionInfo *completionSymInfo, Completions *completions,
-                                  unsigned symType) {
-    completionSymInfo->res = completions;
-    completionSymInfo->symType = symType;
+static void fillCompletionSymInfo(SymbolCompletionInfo *info, Completions *completions, Type type) {
+    info->completions = completions;
+    info->type        = type;
 }
 
 static void fillCompletionSymFunInfo(SymbolCompletionFunctionInfo *completionSymFunInfo, Completions *completions,
@@ -778,23 +776,26 @@ void processName(char *name, CompletionLine *line, int orderFlag, Completions *c
     }
 }
 
-static void completeFun(Symbol *s, void *c) {
-    SymbolCompletionInfo *cc;
+// NOTE: Mapping function
+static void completeFun(Symbol *symbol, void *c) {
+    SymbolCompletionInfo *completionInfo = (SymbolCompletionInfo *)c;
     CompletionLine compLine;
-    cc = (SymbolCompletionInfo *) c;
-    assert(s && cc);
-    if (s->type != cc->symType) return;
-    /*&fprintf(dumpOut,"testing %s\n",s->linkName);fflush(dumpOut);&*/
-    if (s->type != TypeMacro) {
-        fillCompletionLine(&compLine, s->name, s, s->type,0, 0, NULL,NULL);
+
+    assert(symbol && completionInfo);
+    if (symbol->type != completionInfo->type)
+        return;
+    log_trace("testing %s", symbol->linkName);
+    if (symbol->type != TypeMacro) {
+        fillCompletionLine(&compLine, symbol->name, symbol, symbol->type, 0, 0, NULL, NULL);
     } else {
-        if (s->u.mbody==NULL) {
-            fillCompletionLine(&compLine, s->name, s, TypeUndefMacro,0, 0, NULL,NULL);
+        if (symbol->u.mbody == NULL) {
+            fillCompletionLine(&compLine, symbol->name, symbol, TypeUndefMacro, 0, 0, NULL, NULL);
         } else {
-            fillCompletionLine(&compLine, s->name, s, s->type,0, s->u.mbody->argCount, s->u.mbody->argumentNames,NULL);
+            fillCompletionLine(&compLine, symbol->name, symbol, symbol->type, 0, symbol->u.mbody->argCount,
+                               symbol->u.mbody->argumentNames, NULL);
         }
     }
-    processName(s->name, &compLine, 1, cc->res);
+    processName(symbol->name, &compLine, 1, completionInfo->completions);
 }
 
 /* TODO: Meaning? Something about constructor... If either then clear completionN */
@@ -1838,11 +1839,11 @@ static void completeFromXrefFun(ReferencesItem *s, void *c) {
     CompletionLine compLine;
     cc = (SymbolCompletionInfo *) c;
     assert(s && cc);
-    if (s->type != cc->symType)
+    if (s->type != cc->type)
         return;
     /*&fprintf(dumpOut,"testing %s\n",s->name);fflush(dumpOut);&*/
     fillCompletionLine(&compLine, s->name, NULL, s->type,0, 0, NULL,NULL);
-    processName(s->name, &compLine, 1, cc->res);
+    processName(s->name, &compLine, 1, cc->completions);
 }
 
 void completeYaccLexem(Completions *c) {
