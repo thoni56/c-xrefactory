@@ -178,18 +178,6 @@ typedef enum language {
         || ch=='$'                                      \
     )
 
-#define GET_BARE_NAME(name, start, len) {                   \
-        register int _c_;                                   \
-        register char *_ss_;                                \
-        _ss_ = start = name;                                \
-        while ((_c_= *_ss_)) {                              \
-            if (_c_ == '(') break;                          \
-            if (LINK_NAME_MAYBE_START(_c_)) start = _ss_+1; \
-            _ss_++ ;                                        \
-        }                                                   \
-        len = _ss_ - start;                                 \
-    }
-
 #define MapOnPaths(thePaths, COMMAND) {                                 \
         char *currentPath, *jmop_pp, *jmop_ecp;                         \
         int jmop_i, jmop_ind;                                           \

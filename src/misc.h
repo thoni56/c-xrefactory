@@ -120,5 +120,6 @@ extern void printSymbolLinkName( FILE *ff, SymbolsMenu *ss);
 
 extern bool creatingOlcxRefs(void);
 extern void formatOutputLine(char *tt, int startingColumn);
+extern void get_bare_name(char *name, char **start, int *len);
 
 #endif

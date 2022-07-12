@@ -1331,3 +1331,17 @@ void formatOutputLine(char *line, int startingColumn) {
         pos = 0;
     }
 }
+
+void get_bare_name(char *name, char **start, int *len) {
+    int   _c_;
+    char *_ss_;
+    _ss_ = *start = name;
+    while ((_c_ = *_ss_)) {
+        if (_c_ == '(')
+            break;
+        if (LINK_NAME_MAYBE_START(_c_))
+            *start = _ss_ + 1;
+        _ss_++;
+    }
+    *len = _ss_ - *start;
+}

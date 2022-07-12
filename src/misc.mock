@@ -209,3 +209,7 @@ bool creatingOlcxRefs(void) {
 void formatOutputLine(char *tt, int startingColumn) {
   mock(tt, startingColumn);
 }
+
+void get_bare_name(char *name, char **start, int *len) {
+    mock(name, start, len);
+}
