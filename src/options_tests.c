@@ -196,3 +196,10 @@ Ensure(Options, will_find_config_file_in_parent_directory) {
 
     assert_that(findConfigFile(cwd), is_equal_to_string("/home/c-xref/.c-xrefrc"));
 }
+
+Ensure(Options, can_parse_about_command_line_option) {
+    char *argv[] = {"", "-about"};
+
+    processOptions(2, argv, DONT_PROCESS_FILE_ARGUMENTS);
+    assert_that(options.serverOperation, is_equal_to(OLO_ABOUT));
+}
