@@ -3962,6 +3962,10 @@ static void encapsulateField(EditorMarker *point) {
     performEncapsulateField(point, &forbiddenRegions);
 }
 
+static bool markersAreEqual(EditorMarker *m1, EditorMarker *m2) {
+    return m1->buffer == m2->buffer && m1->offset == m2->offset;
+}
+
 // -------------------------------------------------- pulling-up/pushing-down
 
 static SymbolsMenu *findSymbolCorrespondingToReferenceWrtPullUpPushDown(SymbolsMenu *menu2, SymbolsMenu *mm1,
@@ -3974,16 +3978,15 @@ static SymbolsMenu *findSymbolCorrespondingToReferenceWrtPullUpPushDown(SymbolsM
         if (mm1->references.type != mm2->references.type && mm2->references.type != TypeInducedError)
             continue;
         for (rr2 = mm2->markers; rr2 != NULL; rr2 = rr2->next) {
-            if (MARKER_EQ(rr1->marker, rr2->marker))
+            if (markersAreEqual(rr1->marker, rr2->marker))
                 goto breakrr2;
         }
     breakrr2:
         // check if symbols corresponds
         if (rr2 != NULL && symbolsCorrespondWrtMoving(mm1, mm2, OLO_PP_PRE_CHECK)) {
             goto breakmm2;
-            ;
         }
-        //&fprintf(dumpOut, "Checking %s\n", mm2->references.name);
+        log_trace("Checking %s", mm2->references.name);
     }
 breakmm2:
     return mm2;

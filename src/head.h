@@ -144,8 +144,6 @@ typedef enum language {
 
 /* ******************************************************************** */
 
-#define MARKER_EQ(mm1, mm2) (mm1->buffer==mm2->buffer && mm1->offset==mm2->offset)
-
 #define IS_DEFINITION_USAGE(usage) (\
   (usage)==UsageDefined \
   || (usage)==UsageOLBestFitDefined\
