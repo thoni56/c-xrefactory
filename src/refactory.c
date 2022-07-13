@@ -28,6 +28,7 @@
 #include "proto.h"
 #include "protocol.h"
 #include "reftab.h"
+#include "server.h"
 #include "yylex.h"
 
 #include "log.h"
