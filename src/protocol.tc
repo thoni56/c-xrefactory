@@ -102,7 +102,7 @@ PROTOCOL_ITEM(int, PPCV_BROWSER_TYPE_INFO,      0)
 PROTOCOL_ITEM(int, PPCV_BROWSER_TYPE_WARNING,   1)
 
 
-COMMENT("The constants for available refactorings are defined in refactoring.h")
+COMMENT("The constants for available refactorings are defined in refactorings.h")
 PROTOCOL_ITEM(int, PPC_AVR_NO_REFACTORING,                AVR_NO_REFACTORING)
 PROTOCOL_ITEM(int, PPC_AVR_RENAME_SYMBOL,                 AVR_RENAME_SYMBOL)
 PROTOCOL_ITEM(int, PPC_AVR_RENAME_CLASS,                  AVR_RENAME_CLASS)

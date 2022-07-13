@@ -1,0 +1,17 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-server" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" -o server-buffer
+"-olcursor=696" "CURDIR/cexercise/refactorings/rename.c" -olcxgetrefactorings -editor=emacs
+end-of-options
+
+<sync>
+<available-refactorings>
+  <int val=10 len=<n>></int>
+  <int val=40 len=<n>>macro</int>
+  <int val=50 len=<n>>macro</int>
+  <int val=60 len=<n>>macro</int>
+  <int val=230 len=<n>></int>
+  <int val=240 len=<n>></int>
+  <int val=290 len=<n>></int>
+</available-refactorings>
+-exit
+end-of-options
+
