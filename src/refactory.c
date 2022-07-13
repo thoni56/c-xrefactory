@@ -3994,7 +3994,7 @@ breakmm2:
 
 static bool isMethodPartRedundantWrtPullUpPushDown(EditorMarker *m1, EditorMarker *m2) {
     SymbolsMenu      *mm1, *mm2;
-    bool              res;
+    bool              isRedundant;
     EditorRegionList *regions;
     EditorBuffer     *buf;
 
@@ -4012,11 +4012,11 @@ static bool isMethodPartRedundantWrtPullUpPushDown(EditorMarker *m1, EditorMarke
     createMarkersForAllReferencesInRegions(mm1, &regions);
     createMarkersForAllReferencesInRegions(mm2, &regions);
 
-    res = true;
+    isRedundant = true;
     while (mm1 != NULL) {
         for (EditorMarkerList *rr1 = mm1->markers; rr1 != NULL; rr1 = rr1->next) {
             if (findSymbolCorrespondingToReferenceWrtPullUpPushDown(mm2, mm1, rr1) == NULL) {
-                res = false;
+                isRedundant = false;
                 goto fini;
             }
         }
@@ -4026,7 +4026,7 @@ fini:
     editorFreeMarkersAndRegionList(regions);
     olcxPopOnly();
     olcxPopOnly();
-    return res;
+    return isRedundant;
 }
 
 static EditorMarkerList *pullUpPushDownDifferences(SymbolsMenu *menu1, SymbolsMenu *menu2,
@@ -4169,7 +4169,7 @@ static void reduceCastedThis(EditorMarker *mm, char *superFqtName) {
 static bool isThereACastOfThis(EditorMarker *mm) {
     EditorMarker *eb, *ee;
     char         *ss;
-    bool          res = false;
+    bool          thereIsACast = false;
 
     ss = getIdentifierOnMarker_st(mm);
     if (strcmp(ss, "this") == 0) {
@@ -4181,13 +4181,13 @@ static bool isThereACastOfThis(EditorMarker *mm) {
             eb = editorCreateNewMarkerForPosition(&parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION]);
             ee = editorCreateNewMarkerForPosition(&parsedPositions[SPP_CAST_EXPRESSION_END_POSITION]);
             if (ee->offset - eb->offset == 4 /*strlen("this")*/) {
-                res = true;
+                thereIsACast = true;
             }
             editorFreeMarker(eb);
             editorFreeMarker(ee);
         }
     }
-    return res;
+    return thereIsACast;
 }
 
 static void reduceRedundantCastedThissInMethod(EditorMarker *point, EditorRegionList **methodreg) {
@@ -4373,7 +4373,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     SymbolsMenu      *csym;
     int               hasHeaderReferenceFlag, scope, cat, multiFileRefsFlag, fn;
     int               symtype, storage, accflags;
-    char             *res;
+    char             *selectedUpdateOption;
 
     assert(point != NULL && point->buffer != NULL);
     mainSetLanguage(point->buffer->name, &currentLanguage);
@@ -4407,39 +4407,39 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     if (LANGUAGE(LANG_JAVA)) {
         if (cat == CategoryLocal) {
             // useless to update when there is nothing about the symbol in Tags
-            res = "";
+            selectedUpdateOption = "";
         } else if (symtype == TypeDefault && (storage == StorageMethod || storage == StorageField) &&
                    ((accflags & AccessPrivate) != 0)) {
             // private field or method,
             // no update makes renaming after extract method much faster
-            res = "";
+            selectedUpdateOption = "";
         } else {
-            res = "-fastupdate";
+            selectedUpdateOption = "-fastupdate";
         }
     } else {
         if (cat == CategoryLocal) {
             // useless to update when there is nothing about the symbol in Tags
-            res = "";
+            selectedUpdateOption = "";
         } else if (hasHeaderReferenceFlag) {
             // once it is in a header, full update is required
-            res = "-update";
+            selectedUpdateOption = "-update";
         } else if (scope == ScopeAuto || scope == ScopeFile) {
             // for example a local var or a static function not used in any header
             if (multiFileRefsFlag) {
                 errorMessage(ERR_INTERNAL, "something goes wrong, a local symbol is used in several files");
-                res = "-update";
+                selectedUpdateOption = "-update";
             } else {
-                res = "";
+                selectedUpdateOption = "";
             }
         } else if (!multiFileRefsFlag) {
             // this is a little bit tricky. It may provoke a bug when
             // a new external function is not yet indexed, but used in another file.
             // But it is so practical, so take the risk.
-            res = "";
+            selectedUpdateOption = "";
         } else {
             // may seems too strong, but implicitly linked global functions
             // requires this (for example).
-            res = "-fastupdate";
+            selectedUpdateOption = "-fastupdate";
         }
     }
 
@@ -4447,7 +4447,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     occs = NULL;
     olcxPopOnly();
 
-    return res;
+    return selectedUpdateOption;
 }
 
 // --------------------------------------------------------------------
