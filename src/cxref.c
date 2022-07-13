@@ -619,9 +619,12 @@ static void olGetAvailableRefactorings(void) {
 
     count = 0;
     for (int i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
-        count += (availableRefactorings[i].available);
+        if (refactorings[i].available)
+            count++;
     }
-    if (count==0) availableRefactorings[PPC_AVR_SET_MOVE_TARGET].available = true;
+
+    if (count==0)
+        refactorings[PPC_AVR_SET_MOVE_TARGET].available = true;
     if (options.editor == EDITOR_EMACS) {
         availableRefactorings[PPC_AVR_UNDO].available = true;
     }
