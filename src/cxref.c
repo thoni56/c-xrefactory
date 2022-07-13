@@ -519,20 +519,21 @@ void initAvailableRefactorings(void) {
     }
 }
 
-static void setOlAvailableRefactorings(Symbol *p, SymbolsMenu *mmi, int usage) {
-    char *opt;
-    if (strcmp(p->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
+static void setOlAvailableRefactorings(Symbol *symbol, SymbolsMenu *menu, UsageKind usage) {
+    if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
         availableRefactorings[PPC_AVR_ADD_TO_IMPORT].available = 1;
         return;
     }
-    switch (p->type) {
-    case TypePackage:
+    switch (symbol->type) {
+    case TypePackage: {
+        char *opt;
         availableRefactorings[PPC_AVR_RENAME_PACKAGE].available = true;
-        CX_ALLOCC(opt, strlen(mmi->references.name)+1, char);
-        strcpy(opt, mmi->references.name);
+        CX_ALLOCC(opt, strlen(menu->references.name)+1, char);
+        strcpy(opt, menu->references.name);
         javaDotifyFileName(opt);
         availableRefactorings[PPC_AVR_RENAME_PACKAGE].option = opt;
         break;
+    }
     case TypeStruct:
         if (LANGUAGE(LANG_JAVA)) {
             if (IS_DEFINITION_USAGE(usage)) {
@@ -563,17 +564,17 @@ static void setOlAvailableRefactorings(Symbol *p, SymbolsMenu *mmi, int usage) {
         availableRefactorings[PPC_AVR_MOVE_PARAMETER].option = "macro";
         break;
     default:
-        if (p->storage != StorageConstructor) {
+        if (symbol->storage != StorageConstructor) {
             availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = true;
         }
-        if (p->u.typeModifier->kind == TypeFunction || p->u.typeModifier->kind == TypeMacro) {
+        if (symbol->u.typeModifier->kind == TypeFunction || symbol->u.typeModifier->kind == TypeMacro) {
             availableRefactorings[PPC_AVR_ADD_PARAMETER].available = true;
             availableRefactorings[PPC_AVR_DEL_PARAMETER].available = true;
             availableRefactorings[PPC_AVR_MOVE_PARAMETER].available = true;
         }
-        if (p->storage == StorageField) {
+        if (symbol->storage == StorageField) {
             if (IS_DEFINITION_USAGE(usage)) {
-                if (p->access & AccessStatic) {
+                if (symbol->access & AccessStatic) {
                     availableRefactorings[PPC_AVR_MOVE_STATIC_FIELD].available = true;
                 } else {
                     // TODO! restrict this better
@@ -585,17 +586,17 @@ static void setOlAvailableRefactorings(Symbol *p, SymbolsMenu *mmi, int usage) {
                 availableRefactorings[PPC_AVR_SELF_ENCAPSULATE_FIELD].available = true;
             }
         }
-        if (p->storage == StorageMethod || p->storage == StorageConstructor) {
+        if (symbol->storage == StorageMethod || symbol->storage == StorageConstructor) {
             if (IS_DEFINITION_USAGE(usage)) {
                 //&availableRefactorings[PPC_AVR_EXPAND_NAMES].available = true;
                 //&availableRefactorings[PPC_AVR_REDUCE_NAMES].available = true;
-                if (p->access & AccessStatic) {
+                if (symbol->access & AccessStatic) {
                     availableRefactorings[PPC_AVR_MOVE_STATIC_METHOD].available = true;
-                    if (p->storage == StorageMethod) {
+                    if (symbol->storage == StorageMethod) {
                         availableRefactorings[PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC].available = true;
                     }
                 } else {
-                    if (p->storage == StorageMethod) {
+                    if (symbol->storage == StorageMethod) {
                         // TODO! some restrictions
                         availableRefactorings[PPC_AVR_PULL_UP_METHOD].available = true;
                         availableRefactorings[PPC_AVR_PUSH_DOWN_METHOD].available = true;
@@ -625,7 +626,7 @@ static void olGetAvailableRefactorings(void) {
         availableRefactorings[PPC_AVR_UNDO].available = true;
     }
     if (options.olCursorPos != options.olMarkPos) {
-        // region selected, TODO!!! some more prechecks for extract method
+        // region selected, TODO!!! some more prechecks for extract method - Duh! Which ones!?!?!?!
         if (LANGUAGE(LANG_JAVA)) {
             availableRefactorings[PPC_AVR_EXTRACT_METHOD].available = true;
         } else {
