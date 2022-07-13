@@ -44,13 +44,13 @@ typedef struct tpCheckSpecialReferencesData {
     struct referencesItem      *foundRefToTestedClass;
     struct referencesItem      *foundRefNotToTestedClass;
     struct reference           *foundOuterScopeRef;
-} S_tpCheckSpecialReferencesData;
+} TpCheckSpecialReferencesData;
 
 typedef struct disabledList {
     int                  file;
     int                  clas;
     struct disabledList *next;
-} S_disabledList;
+} DisabledList;
 
 static EditorUndo *refactoringStartingPoint;
 
@@ -995,9 +995,9 @@ static bool tpCheckSourceIsNotInnerClass(void) {
 }
 
 static void tpCheckSpecialReferencesMapFun(ReferencesItem *ri, void *ddd) {
-    S_tpCheckSpecialReferencesData *dd;
+    TpCheckSpecialReferencesData *dd;
 
-    dd = (S_tpCheckSpecialReferencesData *)ddd;
+    dd = (TpCheckSpecialReferencesData *)ddd;
     assert(sessionData.browserStack.top);
     // todo make supermethod symbol special type
     //&fprintf(dumpOut,"! checking %s\n", ri->name);
@@ -1022,7 +1022,7 @@ static void tpCheckSpecialReferencesMapFun(ReferencesItem *ri, void *ddd) {
     }
 }
 
-static void initTpCheckSpecialReferencesData(S_tpCheckSpecialReferencesData *referencesData, int minMemi,
+static void initTpCheckSpecialReferencesData(TpCheckSpecialReferencesData *referencesData, int minMemi,
                                              int maxMemi, char *symbolToTest, int classToTest) {
     referencesData->mm.minMemi               = minMemi;
     referencesData->mm.maxMemi               = maxMemi;
@@ -1035,7 +1035,7 @@ static void initTpCheckSpecialReferencesData(S_tpCheckSpecialReferencesData *ref
     referencesData->foundOuterScopeRef       = NULL;
 }
 
-static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr) {
+static bool tpCheckSuperMethodReferencesInit(TpCheckSpecialReferencesData *rr) {
     SymbolsMenu    *ss;
     int             scl;
     OlcxReferences *rstack;
@@ -1057,7 +1057,7 @@ static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr)
 }
 
 static bool tpCheckSuperMethodReferencesForPullUp(void) {
-    S_tpCheckSpecialReferencesData rr;
+    TpCheckSpecialReferencesData rr;
     OlcxReferences                *rstack;
     SymbolsMenu                   *ss;
     int                            tmp;
@@ -1090,7 +1090,7 @@ static bool tpCheckSuperMethodReferencesForPullUp(void) {
 }
 
 static bool tpCheckSuperMethodReferencesAfterPushDown(void) {
-    S_tpCheckSpecialReferencesData rr;
+    TpCheckSpecialReferencesData rr;
     OlcxReferences                *rstack;
     SymbolsMenu                   *ss;
     char                           ttt[MAX_CX_SYMBOL_SIZE];
@@ -1120,7 +1120,7 @@ static bool tpCheckSuperMethodReferencesAfterPushDown(void) {
 }
 
 static bool tpCheckSuperMethodReferencesForDynToSt(void) {
-    S_tpCheckSpecialReferencesData rr;
+    TpCheckSpecialReferencesData rr;
 
     if (!tpCheckSuperMethodReferencesInit(&rr))
         return false;
@@ -1140,7 +1140,7 @@ static bool tpCheckSuperMethodReferencesForDynToSt(void) {
 }
 
 static bool tpCheckOuterScopeUsagesForDynToSt(void) {
-    S_tpCheckSpecialReferencesData rr;
+    TpCheckSpecialReferencesData rr;
     SymbolsMenu                   *ss;
     OlcxReferences                *rstack;
 
@@ -2473,8 +2473,8 @@ static bool addImport(EditorMarker *point, EditorRegionList **regions, char *ina
     return res;
 }
 
-static bool isInDisabledList(S_disabledList *list, int file, int vApplCl) {
-    for (S_disabledList *ll = list; ll != NULL; ll = ll->next) {
+static bool isInDisabledList(DisabledList *list, int file, int vApplCl) {
+    for (DisabledList *ll = list; ll != NULL; ll = ll->next) {
         if (ll->file == file && ll->clas == vApplCl)
             return true;
     }
@@ -2506,11 +2506,11 @@ static int interactiveAskForAddImportAction(EditorMarkerList *ppp, int defaultAc
     return action;
 }
 
-static S_disabledList *newDisabledList(SymbolsMenu *menu, int cfile, S_disabledList *disabled) {
-    S_disabledList *dl;
+static DisabledList *newDisabledList(SymbolsMenu *menu, int cfile, DisabledList *disabled) {
+    DisabledList *dl;
 
-    ED_ALLOC(dl, S_disabledList);
-    *dl = (S_disabledList){.file = cfile, .clas = menu->references.vApplClass, .next = disabled};
+    ED_ALLOC(dl, DisabledList);
+    *dl = (DisabledList){.file = cfile, .clas = menu->references.vApplClass, .next = disabled};
 
     return dl;
 }
@@ -2524,7 +2524,7 @@ static void reduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegi
     char            fqtName[MAX_FILE_NAME_SIZE];
     char            starName[MAX_FILE_NAME_SIZE];
     char           *dd;
-    S_disabledList *disabled, *dl;
+    DisabledList *disabled, *dl;
 
     // just verify that all references are from single file
     if (regions != NULL && *regions != NULL) {
