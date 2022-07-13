@@ -5,10 +5,17 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
+Current Mikado:
 * TRYING Break out server from main
-** TRIED Move mainCallEditServerInit() to server.c
-*** REQUIRED initAvailableRefactorings() to be accessible in server.c
-**** 
+** DONE Move mainCallEditServerInit() to server.c
+*** DONE initAvailableRefactorings() to be accessible in server.c
+**** DONE import cxref.h
+*** DONE processFileArguments() static in main
+**** DONE move processFileArguments() to options.c
+***** DONE scheduleFileArgumentsToFileTable()
+
+** TRY Move mainCallEditServer() to server.c
+
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct
 * DOING BUG: Selecting automatic project selection after having set a specific does not seem to work

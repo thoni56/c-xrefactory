@@ -165,6 +165,7 @@ extern void xrefSetenv(char *name, char *val);
 
 extern void dirInputFile(MAP_FUN_SIGNATURE);
 
+extern void processFileArguments(void);
 extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag);
 extern void createOptionString(char **optAddress, char *text);
 extern void copyOptionsFromTo(Options *src, Options *dest);

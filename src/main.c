@@ -96,53 +96,6 @@ int mainHandleSetOption(int argc, char **argv, int i ) {
     return i;
 }
 
-static void scheduleFileArgumentToFileTable(char *infile) {
-    int topCallFlag;
-    void *recurseFlag;
-
-    javaSetSourcePath(true);      // for case of packages on command line
-    topCallFlag = 1;
-    recurseFlag = &topCallFlag;
-    MapOnPaths(infile, {
-            dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag);
-        });
-}
-
-static void processFileArgument(char *fileArgument) {
-    if (fileArgument[0]=='`' && fileArgument[strlen(fileArgument)-1]=='`') {
-        // TODO: So what does backquoted filenames mean?
-        // A command to be run that returns a set of files?
-        int nargc;
-        char **nargv, *pp;
-        char command[MAX_OPTION_LEN];
-
-        // Un-backtick the command
-        strcpy(command, fileArgument+1);
-        pp = strchr(command, '`');
-        if (pp!=NULL)
-            *pp = 0;
-
-        // Run the command and get options incl. more file arguments
-        readOptionsFromCommand(command, &nargc, &nargv, "");
-        for (int i=1; i<nargc; i++) {
-            // Only handle file names?
-            if (nargv[i][0] != '-' && nargv[i][0] != '`') {
-                scheduleFileArgumentToFileTable(nargv[i]);
-            }
-        }
-
-    } else {
-        scheduleFileArgumentToFileTable(fileArgument);
-    }
-}
-
-
-static void processFileArguments(void) {
-    for (StringList *l=options.inputFiles; l!=NULL; l=l->next) {
-        processFileArgument(l->string);
-    }
-}
-
 /* *************************************************************************** */
 
 typedef enum {
@@ -1717,16 +1670,6 @@ static void xref(int argc, char **argv) {
 /*                          Edit Server Mode                       */
 /* *************************************************************** */
 
-void mainCallEditServerInit(int nargc, char **nargv) {
-    clearAvailableRefactorings();
-    options.classpath = "";
-    processOptions(nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
-    processFileArguments();
-    if (options.serverOperation == OLO_EXTRACT)
-        cache.cpIndex = 2; // !!!! no cache, TODO why is 2 = no cache?
-    initCompletions(&collectedCompletions, 0, noPosition);
-}
-
 void mainCallEditServer(int argc, char **argv,
                         int nargc, char **nargv,
                         bool *firstPass
@@ -1768,7 +1711,7 @@ static void editServer(int argc, char **argv) {
         mainOpenOutputFile(options.outputFileName);
         //&dumpOptions(nargc, nargv);
         log_trace("Server: Getting request");
-        mainCallEditServerInit(nargc, nargv);
+        initServer(nargc, nargv);
         if (communicationChannel==stdout && options.outputFileName!=NULL) {
             mainOpenOutputFile(options.outputFileName);
         }

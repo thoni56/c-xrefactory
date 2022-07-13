@@ -1,0 +1,7 @@
+/* -*- c -*-*/
+#include "c_parser.h"
+#include <cgreen/mocks.h>
+
+void initServer(int nargc, char **nargv) {
+  mock(nargc, nargv);
+}

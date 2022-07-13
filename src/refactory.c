@@ -231,7 +231,7 @@ static void editServerParseBuffer(char *project, EditorBuffer *buf, EditorMarker
     if (pushOption2 != NULL) {
         nargv[nargc++] = pushOption2;
     }
-    mainCallEditServerInit(nargc, nargv);
+    initServer(nargc, nargv);
     mainCallEditServer(argument_count(editServInitOptions), editServInitOptions, nargc, nargv,
                        &editServerSubTaskFirstPass);
 }
@@ -251,7 +251,7 @@ static void beInteractive(void) {
         mainOpenOutputFile(refactoringOptions.outputFileName);
         if (pargc <= 1)
             break;
-        mainCallEditServerInit(pargc, pargv);
+        initServer(pargc, pargv);
         if (options.continueRefactoring != RC_NONE)
             break;
         mainCallEditServer(argument_count(editServInitOptions), editServInitOptions, pargc, pargv,

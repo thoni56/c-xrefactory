@@ -304,6 +304,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     fname = file;
     recurseFlag = a4;
     isTopDirectory = *a5;
+
     if (isTopDirectory == 0) {
         if (strcmp(fname, ".")==0 || strcmp(fname, "..")==0)
             return;
@@ -2361,4 +2362,48 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
         }
     }
     LEAVE();
+}
+
+static void scheduleFileArgumentToFileTable(char *infile) {
+    int   topCallFlag;
+    void *recurseFlag;
+
+    javaSetSourcePath(true); // for case of packages on command line
+    topCallFlag = 1;
+    recurseFlag = &topCallFlag;
+    MapOnPaths(infile, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag); });
+}
+
+static void processFileArgument(char *fileArgument) {
+    if (fileArgument[0] == '`' && fileArgument[strlen(fileArgument) - 1] == '`') {
+        // TODO: So what does backquoted filenames mean?
+        // A command to be run that returns a set of files?
+        int    nargc;
+        char **nargv, *pp;
+        char   command[MAX_OPTION_LEN];
+
+        // Un-backtick the command
+        strcpy(command, fileArgument + 1);
+        pp = strchr(command, '`');
+        if (pp != NULL)
+            *pp = 0;
+
+        // Run the command and get options incl. more file arguments
+        readOptionsFromCommand(command, &nargc, &nargv, "");
+        for (int i = 1; i < nargc; i++) {
+            // Only handle file names?
+            if (nargv[i][0] != '-' && nargv[i][0] != '`') {
+                scheduleFileArgumentToFileTable(nargv[i]);
+            }
+        }
+
+    } else {
+        scheduleFileArgumentToFileTable(fileArgument);
+    }
+}
+
+void processFileArguments(void) {
+    for (StringList *l = options.inputFiles; l != NULL; l = l->next) {
+        processFileArgument(l->string);
+    }
 }

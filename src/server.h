@@ -168,4 +168,6 @@ typedef enum {
 
 extern const char* operationNamesTable[];
 
+extern void initServer(int nargc, char **nargv);
+
 #endif
