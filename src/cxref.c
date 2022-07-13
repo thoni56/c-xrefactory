@@ -519,19 +519,19 @@ void clearAvailableRefactorings(void) {
     }
 }
 
-static void setOlAvailableRefactorings(Symbol *symbol, SymbolsMenu *menu, UsageKind usage) {
+static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, UsageKind usage) {
     if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
         availableRefactorings[PPC_AVR_ADD_TO_IMPORT].available = 1;
         return;
     }
     switch (symbol->type) {
     case TypePackage: {
-        char *opt;
+        char *name;
         availableRefactorings[PPC_AVR_RENAME_PACKAGE].available = true;
-        CX_ALLOCC(opt, strlen(menu->references.name)+1, char);
-        strcpy(opt, menu->references.name);
-        javaDotifyFileName(opt);
-        availableRefactorings[PPC_AVR_RENAME_PACKAGE].option = opt;
+        CX_ALLOCC(name, strlen(menu->references.name)+1, char);
+        strcpy(name, menu->references.name);
+        javaDotifyFileName(name);
+        availableRefactorings[PPC_AVR_RENAME_PACKAGE].option = name;
         break;
     }
     case TypeStruct:
@@ -752,7 +752,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setOlAvailableRefactorings(symbol, NULL, usage.kind);
+                    setAvailableRefactoringsInMenu(NULL, symbol, usage.kind);
                 }
             }
         } else {
@@ -788,7 +788,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                     setOlSymbolTypeForPrint(symbol);
                 }
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
-                    setOlAvailableRefactorings(symbol, menu, usage.kind);
+                    setAvailableRefactoringsInMenu(menu, symbol, usage.kind);
                 }
             }
         }
