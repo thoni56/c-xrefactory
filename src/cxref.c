@@ -512,7 +512,7 @@ typedef struct availableRefactoring {
 
 static AvailableRefactoring availableRefactorings[MAX_AVAILABLE_REFACTORINGS];
 
-void initAvailableRefactorings(void) {
+void clearAvailableRefactorings(void) {
     for (int i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
         availableRefactorings[i].available = false;
         availableRefactorings[i].option = "";

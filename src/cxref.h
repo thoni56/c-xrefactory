@@ -125,6 +125,6 @@ extern SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll);
 extern void olcxFreeResolutionMenu( SymbolsMenu *sym );
 extern int refCharCode(int usage);
 
-extern void initAvailableRefactorings(void);
+extern void clearAvailableRefactorings(void);
 
 #endif

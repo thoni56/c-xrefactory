@@ -1718,7 +1718,7 @@ static void xref(int argc, char **argv) {
 /* *************************************************************** */
 
 void mainCallEditServerInit(int nargc, char **nargv) {
-    initAvailableRefactorings();
+    clearAvailableRefactorings();
     options.classpath = "";
     processOptions(nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
     processFileArguments();

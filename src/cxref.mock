@@ -344,6 +344,6 @@ int refCharCode(int usage) {
     return (int) mock(usage);
 }
 
-void initAvailableRefactorings(void) {
+void clearAvailableRefactorings(void) {
     mock();
 }
