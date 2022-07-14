@@ -169,5 +169,6 @@ typedef enum {
 extern const char* operationNamesTable[];
 
 extern void initServer(int nargc, char **nargv);
+extern void server(int argc, char **argv);
 
 #endif

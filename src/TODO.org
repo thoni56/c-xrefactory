@@ -14,7 +14,10 @@ Current Mikado:
 **** DONE move processFileArguments() to options.c
 ***** DONE scheduleFileArgumentsToFileTable()
 
-** TRY Move mainCallEditServer() to server.c
+** DONE Move mainCallEditServer() to server.c
+** DONE Move editServer() to server.c
+
+
 
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct

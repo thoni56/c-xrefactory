@@ -4,6 +4,9 @@
 #include "proto.h"
 #include "options.h"
 
+// TODO: Where does this belong?
+extern void aboutMessage(void);
+
 // TODO: move to server.c
 extern char *presetEditServerFileDependingStatics(void);
 extern void  editServerProcessFile(int argc, char **argv, int nargc, char **nargv, bool *firstPass);

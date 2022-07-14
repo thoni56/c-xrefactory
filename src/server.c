@@ -72,3 +72,43 @@ void mainCallEditServer(int argc, char **argv,
     }
     LEAVE();
 }
+
+void server(int argc, char **argv) {
+    int nargc;  char **nargv;
+    bool firstPass;
+
+    ENTER();
+    cxResizingBlocked = true;
+    firstPass = true;
+    copyOptionsFromTo(&options, &savedOptions);
+    for(;;) {
+        currentPass = ANY_PASS;
+        copyOptionsFromTo(&savedOptions, &options);
+        getPipedOptions(&nargc, &nargv);
+        // O.K. -o option given on command line should catch also file not found
+        // message
+        mainOpenOutputFile(options.outputFileName);
+        //&dumpOptions(nargc, nargv);
+        log_trace("Server: Getting request");
+        initServer(nargc, nargv);
+        if (communicationChannel==stdout && options.outputFileName!=NULL) {
+            mainOpenOutputFile(options.outputFileName);
+        }
+        mainCallEditServer(argc, argv, nargc, nargv, &firstPass);
+        if (options.serverOperation == OLO_ABOUT) {
+            aboutMessage();
+        } else {
+            mainAnswerEditAction();
+        }
+        //& options.outputFileName = NULL;  // why this was here ???
+        //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);
+        editorCloseAllBuffers();
+        closeMainOutputFile();
+        if (options.serverOperation == OLO_EXTRACT)
+            cache.cpIndex = 2; // !!!! no cache
+        if (options.xref2)
+            ppcSynchronize();
+        log_trace("Server: Request answered");
+    }
+    LEAVE();
+}

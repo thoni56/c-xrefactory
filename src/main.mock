@@ -2,6 +2,10 @@
 #include "main.h"
 #include <cgreen/mocks.h>
 
+void aboutMessage(void) {
+    mock();
+}
+
 void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
   mock(filename, options_filename, section);
 }

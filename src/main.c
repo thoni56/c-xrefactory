@@ -52,7 +52,7 @@ static int oldLanguage;
 static int oldPass;
 
 
-static void aboutMessage(void) {
+void aboutMessage(void) {
     char output[REFACTORING_TMP_STRING_SIZE];
     sprintf(output, "C-xrefactory version %s\n", C_XREF_VERSION_NUMBER);
     sprintf(output+strlen(output), "Compiled at %s on %s\n",  __TIME__, __DATE__);
@@ -1654,47 +1654,6 @@ static void xref(int argc, char **argv) {
 /*                          Edit Server Mode                       */
 /* *************************************************************** */
 
-static void editServer(int argc, char **argv) {
-    int nargc;  char **nargv;
-    bool firstPass;
-
-    ENTER();
-    cxResizingBlocked = true;
-    firstPass = true;
-    copyOptionsFromTo(&options, &savedOptions);
-    for(;;) {
-        currentPass = ANY_PASS;
-        copyOptionsFromTo(&savedOptions, &options);
-        getPipedOptions(&nargc, &nargv);
-        // O.K. -o option given on command line should catch also file not found
-        // message
-        mainOpenOutputFile(options.outputFileName);
-        //&dumpOptions(nargc, nargv);
-        log_trace("Server: Getting request");
-        initServer(nargc, nargv);
-        if (communicationChannel==stdout && options.outputFileName!=NULL) {
-            mainOpenOutputFile(options.outputFileName);
-        }
-        mainCallEditServer(argc, argv, nargc, nargv, &firstPass);
-        if (options.serverOperation == OLO_ABOUT) {
-            aboutMessage();
-        } else {
-            mainAnswerEditAction();
-        }
-        //& options.outputFileName = NULL;  // why this was here ???
-        //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);
-        editorCloseAllBuffers();
-        closeMainOutputFile();
-        if (options.serverOperation == OLO_EXTRACT)
-            cache.cpIndex = 2; // !!!! no cache
-        if (options.xref2)
-            ppcSynchronize();
-        log_trace("Server: Request answered");
-    }
-    LEAVE();
-}
-
-
 /* initLogging() is called as the first thing in main() so we look for log command line options here */
 static void initLogging(int argc, char *argv[]) {
     char fileName[MAX_FILE_NAME_SIZE+1] = "";
@@ -1768,7 +1727,7 @@ int main(int argc, char **argv) {
     if (options.mode == XrefMode)
         xref(argc, argv);
     if (options.mode == ServerMode)
-        editServer(argc, argv);
+        server(argc, argv);
 
     LEAVE();
     return 0;
