@@ -232,8 +232,8 @@ static void editServerParseBuffer(char *project, EditorBuffer *buf, EditorMarker
         nargv[nargc++] = pushOption2;
     }
     initServer(nargc, nargv);
-    mainCallEditServer(argument_count(editServInitOptions), editServInitOptions, nargc, nargv,
-                       &editServerSubTaskFirstPass);
+    callServer(argument_count(editServInitOptions), editServInitOptions, nargc, nargv,
+               &editServerSubTaskFirstPass);
 }
 
 static void beInteractive(void) {
@@ -254,8 +254,8 @@ static void beInteractive(void) {
         initServer(pargc, pargv);
         if (options.continueRefactoring != RC_NONE)
             break;
-        mainCallEditServer(argument_count(editServInitOptions), editServInitOptions, pargc, pargv,
-                           &editServerSubTaskFirstPass);
+        callServer(argument_count(editServInitOptions), editServInitOptions, pargc, pargv,
+                   &editServerSubTaskFirstPass);
         mainAnswerEditAction();
     }
     LEAVE();

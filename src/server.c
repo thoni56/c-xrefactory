@@ -249,10 +249,7 @@ static void processFile(int argc, char **argv,
     fileItem->isScheduled = false;
 }
 
-void mainCallEditServer(int argc, char **argv,
-                        int nargc, char **nargv,
-                        bool *firstPass
-) {
+void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass) {
     ENTER();
 
     editorLoadAllOpenedBufferFiles();
@@ -297,7 +294,7 @@ void server(int argc, char **argv) {
         if (communicationChannel==stdout && options.outputFileName!=NULL) {
             mainOpenOutputFile(options.outputFileName);
         }
-        mainCallEditServer(argc, argv, nargc, nargv, &firstPass);
+        callServer(argc, argv, nargc, nargv, &firstPass);
         if (options.serverOperation == OLO_ABOUT) {
             aboutMessage();
         } else {
