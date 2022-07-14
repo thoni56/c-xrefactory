@@ -1315,9 +1315,9 @@ static bool symbolCanBeIdentifiedByPosition(int fileIndex) {
     return true;
 }
 
-static void editServerFileSinglePass(int argc, char **argv,
-                                      int nargc, char **nargv,
-                                      bool *firstPassP
+void editServerFileSinglePass(int argc, char **argv,
+                              int nargc, char **nargv,
+                              bool *firstPassP
 ) {
     bool inputOpened = false;
     int ol2procfile;
@@ -1358,25 +1358,6 @@ static void editServerFileSinglePass(int argc, char **argv,
 }
 
 // TODO: move to server.c
-void editServerProcessFile(int argc, char **argv,
-                                      int nargc, char **nargv,
-                                      bool *firstPass
-) {
-    FileItem *fileItem = getFileItem(olOriginalComFileNumber);
-
-    assert(fileItem->isScheduled);
-    maxPasses = 1;
-    for (currentPass=1; currentPass<=maxPasses; currentPass++) {
-        inputFilename = fileItem->name;
-        assert(inputFilename!=NULL);
-        editServerFileSinglePass(argc, argv, nargc, nargv, firstPass);
-        if (options.serverOperation==OLO_EXTRACT || (s_olstringServed && !isCreatingRefs(options.serverOperation)))
-            break;
-        if (LANGUAGE(LANG_JAVA))
-            break;
-    }
-    fileItem->isScheduled = false;
-}
 
 /* *************************************************************** */
 /*                          Xref Mode                            */
@@ -1593,10 +1574,6 @@ static void xref(int argc, char **argv) {
     //& mapOverReferenceTable(symbolRefItemDump);
     LEAVE();
 }
-
-/* *************************************************************** */
-/*                          Edit Server Mode                       */
-/* *************************************************************** */
 
 /* initLogging() is called as the first thing in main() so we look for log command line options here */
 static void initLogging(int argc, char *argv[]) {

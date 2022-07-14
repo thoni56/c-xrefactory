@@ -79,6 +79,26 @@ void initServer(int nargc, char **nargv) {
     initCompletions(&collectedCompletions, 0, noPosition);
 }
 
+static void editServerProcessFile(int argc, char **argv,
+                                      int nargc, char **nargv,
+                                      bool *firstPass
+) {
+    FileItem *fileItem = getFileItem(olOriginalComFileNumber);
+
+    assert(fileItem->isScheduled);
+    maxPasses = 1;
+    for (currentPass=1; currentPass<=maxPasses; currentPass++) {
+        inputFilename = fileItem->name;
+        assert(inputFilename!=NULL);
+        editServerFileSinglePass(argc, argv, nargc, nargv, firstPass);
+        if (options.serverOperation==OLO_EXTRACT || (s_olstringServed && !isCreatingRefs(options.serverOperation)))
+            break;
+        if (LANGUAGE(LANG_JAVA))
+            break;
+    }
+    fileItem->isScheduled = false;
+}
+
 void mainCallEditServer(int argc, char **argv,
                         int nargc, char **nargv,
                         bool *firstPass

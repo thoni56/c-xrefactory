@@ -17,7 +17,8 @@ Current Mikado:
 ** DONE Move mainCallEditServer() to server.c
 ** DONE Move editServer() to server.c
 ** DONE Move presetEditServerFileDependingStatics() to server.c
-** TRY Move editServerProcessFile() to server.c
+** DONE Move editServerProcessFile() to server.c
+** TRY Move editServerSinglePass() to server.c
 
 
 
