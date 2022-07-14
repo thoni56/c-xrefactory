@@ -4,6 +4,9 @@
 #include "proto.h"
 #include "options.h"
 
+// TODO: move to server.c
+extern char *presetEditServerFileDependingStatics(void);
+extern void  editServerProcessFile(int argc, char **argv, int nargc, char **nargv, bool *firstPass);
 
 extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);
 extern void getPipedOptions(int *outNargc,char ***outNargv);

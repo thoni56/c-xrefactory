@@ -296,7 +296,7 @@ endif
 
 #########################################################################
 watch:
-	watchexec -e c,h,y,mock "make -j devel"
+	watchexec -e c,h,y,mock execnotify "make -j devel"
 
 #########################################################################
 #
@@ -395,7 +395,7 @@ $(eval $(call UNITTEST,position,log))
 $(eval $(call UNITTEST,refactory,protocol usage position log memory session))
 $(eval $(call UNITTEST,reftab,log memory hash))
 $(eval $(call UNITTEST,semact,memory log protocol usage hash position storage type))
-$(eval $(call UNITTEST,server,memory log))
+$(eval $(call UNITTEST,server,memory log session))
 $(eval $(call UNITTEST,symbol,memory log))
 $(eval $(call UNITTEST,symboltable,hash log memory))
 $(eval $(call UNITTEST,yylex,memory protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))

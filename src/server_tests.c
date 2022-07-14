@@ -34,6 +34,7 @@
 #include "jsemact.mock"
 #include "jslsemact.mock"
 #include "lexer.mock"
+#include "main.mock"
 #include "ppc.mock"
 #include "recyacc.mock"
 #include "refactory.mock"
