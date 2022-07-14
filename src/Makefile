@@ -285,14 +285,14 @@ endif
 
 the-actual-coverage-report:
 	@mkdir -p ../coverage
-	$(LCOV) -d . -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
+	@$(LCOV) -d . -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
 	@echo "LCOV-ing done..."
 ifeq (, $(LCOV_EXCLUDES))
-	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+	@$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 	@echo "LCOV --remove done..."
 endif
 	genhtml -q -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
-	@echo Coverage done
+	@echo Coverage done: `grep -m 1 coverPerMed ../coverage/index.html | tr -dc '0-9.'`
 
 #########################################################################
 watch:
