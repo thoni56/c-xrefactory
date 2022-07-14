@@ -48,6 +48,4 @@ extern int yacc_yydebug;
 
 extern YYSTYPE *uniyylval;
 
-extern void reset_reference_usage(Reference *reference, UsageKind usage);
-
 #endif

@@ -79,7 +79,7 @@ void initNoFileIndex(void) {
    fileTabIsMember() does. It can't be made into a hashtab macro since
    it knows about how filenames are stored and compared. So there is
    some duplication here, since this is also looking up things. */
-int fileTableLookup(FileTable *table, char *fileName) {
+static int fileTableLookup(FileTable *table, char *fileName) {
     unsigned posid;
 
     posid = hashFun(fileName);
