@@ -42,8 +42,18 @@ void editServerProcessFile(int argc, char **argv, int nargc, char **nargv, bool 
     mock(argc, argv, nargc, nargv, firstPass);
 }
 
-void editServerFileSinglePass(int argc, char **argv,
-                              int nargc, char **nargv,
-                              bool *firstPassP) {
-    mock(argc, argv, nargc, nargv, firstPassP);
+void closeInputFile(void) {
+    mock();
+}
+
+bool fileProcessingInitialisations(bool *firstPass,
+                                   int argc, char **argv,      // command-line options
+                                   int nargc, char **nargv,
+                                   Language *outLanguage
+) {
+    return (bool)mock(firstPass, argc, argv, nargc, nargv, outLanguage);
+}
+
+void parseInputFile(void) {
+    mock();
 }

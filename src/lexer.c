@@ -14,10 +14,10 @@
 #include "misc.h"              /* creatingOlcxRefs() */
 
 
-void gotOnLineCxRefs(Position *ps ) {
+void gotOnLineCxRefs(Position *position) {
     if (isCreatingRefs(options.serverOperation)) {
         cache.active = false;
-        s_cxRefPos = *ps;
+        s_cxRefPos = *position;
     }
 }
 

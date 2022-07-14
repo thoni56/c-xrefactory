@@ -18,15 +18,15 @@ Current Mikado:
 ** DONE Move editServer() to server.c
 ** DONE Move presetEditServerFileDependingStatics() to server.c
 ** DONE Move editServerProcessFile() to server.c
-** TRIED Move editServerSinglePass() to server.c
-*** REQUIRES fileProcessingInitialisations()
-*** REQUIRES smartReadReferences()
-*** REQUIRES symbolCanBeIdentifiedByPosition()
-*** REQUIRES closeInputFile()
-*** REQUIRES editServerParseInputFile()
-*** REQUIRES gotOnLineCxRefs()
-*** REQUIRES addThisFileDefineIncludeReference()
-*** REQUIRES scheduleFileUsingTheMacro()
+** DONE Move editServerSinglePass() to server.c
+*** DONE symbolCanBeIdentifiedByPosition()
+*** DONE scheduleFileUsingTheMacro()
+*** DONE editServerParseInputFile()
+*** DONE smartReadReferences()
+*** DONE fileProcessingInitialisations()
+*** DONE closeInputFile()
+*** DONE gotoOnLineCxRefs()
+*** DONE addThisFileDefineIncludeReference()
 
 
 
@@ -92,6 +92,10 @@ Current Mikado:
 * TODO Better, and unified, options handling
 There are both "-opt=value" and "-opt value" format options
 ** TODO If an option requires a value ('-<option>=..'), print an error message for '-<option>'
+* TODO Remove FULL/FAST update, we always want correct info?
+  There are a number of update modes available from the command line, 'fupdate',
+  'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
+* TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO MISSING TEST CASES:
 ** TODO Test case for Move Method
 ** TODO Test case for dead symbol detection
@@ -107,10 +111,6 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO FUTURE: Use clangd as backend - is that even possible
 ** TODO FUTURE: Implement LSP (Language Server Protocol)
 ** TODO New refactoring: move function for C
-* TODO Remove FULL/FAST update, we always want correct info?
-  There are a number of update modes available from the command line, 'fupdate',
-  'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
-* TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO BUGS:
 ** TODO Double free when swapping refs while reading jar file
 Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
@@ -118,6 +118,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
 ** TODO Bug: when extracting C function including declarations that are required
    by code left outside the extraction, that declaration is moved to the
    extracted function. This should probably trigger "structure error".
+** TODO Bug: translates a bool to int when completing arguments (probably elsewhere also)
 * TODO Separate the options into sections and move them to separate structures
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.

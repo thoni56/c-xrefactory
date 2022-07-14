@@ -21,6 +21,7 @@
 #include "filetable.mock"
 #include "globals.mock"
 #include "jsemact.mock"
+#include "lexer.mock"
 #include "main.mock"
 #include "misc.mock"
 #include "options.mock"
@@ -28,6 +29,8 @@
 #include "refactory.mock"
 #include "reftab.mock"
 #include "symbol.mock"
+#include "yylex.mock"
+
 
 Describe(CxRef);
 BeforeEach(CxRef) {

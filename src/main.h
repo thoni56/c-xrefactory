@@ -7,10 +7,11 @@
 // TODO: Where does this belong?
 extern void aboutMessage(void);
 
-// TODO: move to server.c
-extern void editServerFileSinglePass(int argc, char **argv,
-                                     int nargc, char **nargv,
-                                     bool *firstPassP);
+// Required for server.c extraction...
+bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
+                                   Language *outLanguage);
+void closeInputFile(void);
+void parseInputFile(void);
 //------
 
 extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);
