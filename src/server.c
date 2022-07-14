@@ -79,9 +79,9 @@ void initServer(int nargc, char **nargv) {
     initCompletions(&collectedCompletions, 0, noPosition);
 }
 
-static void editServerProcessFile(int argc, char **argv,
-                                      int nargc, char **nargv,
-                                      bool *firstPass
+static void processFile(int argc, char **argv,
+                        int nargc, char **nargv,
+                        bool *firstPass
 ) {
     FileItem *fileItem = getFileItem(olOriginalComFileNumber);
 
@@ -114,7 +114,7 @@ void mainCallEditServer(int argc, char **argv,
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");
         } else {
-            editServerProcessFile(argc, argv, nargc, nargv, firstPass);
+            processFile(argc, argv, nargc, nargv, firstPass);
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
