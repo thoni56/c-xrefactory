@@ -118,10 +118,12 @@ slow:
 	make -C ../tests slow
 	make gcov
 
-ci: unit build
+ci:
+	$(MAKE) -e -j unit
+	$(MAKE) -e -j build
 	$(MAKE) -e -C ../tests/systemd init
 	$(MAKE) -e -C ../tests/ffmpeg init
-	$(MAKE) -e -C ../tests all
+	$(MAKE) -e -j -C ../tests all
 	for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 
 
