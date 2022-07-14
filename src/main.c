@@ -707,17 +707,17 @@ void writeRelativeProgress(int progress) {
         progressOffset++;
 }
 
-static void fileProcessingInitialisations(bool *firstPass,
-                                              int argc, char **argv,      // command-line options
-                                              int nargc, char **nargv,    // piped options
-                                              bool *inputOpened,
-                                              Language *outLanguage
+static bool fileProcessingInitialisations(bool *firstPass,
+                                          int argc, char **argv,      // command-line options
+                                          int nargc, char **nargv,
+                                          Language *outLanguage
 ) {
     char defaultOptionsFileName[MAX_FILE_NAME_SIZE];
     char defaultOptionsSectionName[MAX_FILE_NAME_SIZE];
     time_t modifiedTime;
     char *fileName;
     StringList *tmpIncludeDirs;
+    bool inputOpened;
 
     ENTER();
 
@@ -774,13 +774,13 @@ static void fileProcessingInitialisations(bool *firstPass,
 
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
         if (options.mode != ServerMode && inputFilename == NULL) {
-            *inputOpened = false;
+            inputOpened = false;
             goto fini;
         }
         copyOptionsFromTo(&options, &savedOptions);  // before getJavaClassPath, it modifies ???
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         getJavaClassAndSourcePath();
-        *inputOpened = computeAndOpenInputFile();
+        inputOpened = computeAndOpenInputFile();
         strcpy(oldStdopFile,defaultOptionsFileName);
         strcpy(oldStdopSection,defaultOptionsSectionName);
         oldStdopTime = modifiedTime;
@@ -799,7 +799,7 @@ static void fileProcessingInitialisations(bool *firstPass,
     } else {
         copyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
-        *inputOpened = computeAndOpenInputFile();
+        inputOpened = computeAndOpenInputFile();
     }
     // reset language once knowing all language suffixes
     *outLanguage = getLanguageFor(fileName);
@@ -818,8 +818,10 @@ static void fileProcessingInitialisations(bool *firstPass,
     if (options.debug)
         errOut = dumpOut;
     checkExactPositionUpdate(false);
+
     // so s_input_file_number is not set if the file is not really opened!!!
     LEAVE();
+    return inputOpened;
 }
 
 static int power(int x, int y) {
@@ -1349,8 +1351,8 @@ static void editServerFileSinglePass(int argc, char **argv,
     int ol2procfile;
 
     olStringSecondProcessing = false;
-    fileProcessingInitialisations(firstPassP, argc, argv,
-                                      nargc, nargv, &inputOpened, &currentLanguage);
+    inputOpened = fileProcessingInitialisations(firstPassP, argc, argv,
+                                                nargc, nargv, &currentLanguage);
     smartReadReferences();
     olOriginalFileIndex = inputFileNumber;
     if (symbolCanBeIdentifiedByPosition(inputFileNumber)) {
@@ -1375,8 +1377,8 @@ static void editServerFileSinglePass(int argc, char **argv,
             inputFilename = getFileItem(ol2procfile)->name;
             inputOpened = false;
             olStringSecondProcessing = true;
-            fileProcessingInitialisations(firstPassP, argc, argv,
-                                              nargc, nargv, &inputOpened, &currentLanguage);
+            inputOpened = fileProcessingInitialisations(firstPassP, argc, argv,
+                                                        nargc, nargv, &currentLanguage);
             if (inputOpened)
                 editServerParseInputFile(firstPassP, inputOpened);
         }
@@ -1449,7 +1451,8 @@ static void xrefProcessInputFile(int argc, char **argv, bool *firstPassP,
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
         if (!*firstPassP)
             copyOptionsFromTo(&savedOptions, &options);
-        fileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &inputOpened, &currentLanguage);
+        inputOpened = fileProcessingInitialisations(firstPassP, argc, argv, 0, NULL,
+                                                    &currentLanguage);
         olOriginalFileIndex    = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileIndex;
         if (inputOpened) {
