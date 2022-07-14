@@ -25,6 +25,7 @@
 #include "main.mock"
 #include "misc.mock"
 #include "options.mock"
+#include "parsers.mock"
 #include "ppc.mock"
 #include "refactory.mock"
 #include "reftab.mock"

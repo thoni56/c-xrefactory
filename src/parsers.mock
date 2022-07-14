@@ -9,3 +9,7 @@ int java_yydebug;
 
 YYSTYPE yacc_yylval;
 YYSTYPE *uniyylval;
+
+void parseInputFile(void) {
+    mock();
+}

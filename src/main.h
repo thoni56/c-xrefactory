@@ -11,7 +11,6 @@ extern void aboutMessage(void);
 bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
                                    Language *outLanguage);
 void closeInputFile(void);
-void parseInputFile(void);
 //------
 
 extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);
