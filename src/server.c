@@ -18,19 +18,19 @@ const char *operationNamesTable[] = {
 
 
 
-static int needToProcessInputFile(void) {
-    return options.serverOperation==OLO_COMPLETION
-           || options.serverOperation==OLO_SEARCH
-           || options.serverOperation==OLO_EXTRACT
-           || options.serverOperation==OLO_TAG_SEARCH
-           || options.serverOperation==OLO_SET_MOVE_TARGET
-           || options.serverOperation==OLO_SET_MOVE_CLASS_TARGET
-           || options.serverOperation==OLO_SET_MOVE_METHOD_TARGET
-           || options.serverOperation==OLO_GET_CURRENT_CLASS
-           || options.serverOperation==OLO_GET_CURRENT_SUPER_CLASS
-           || options.serverOperation==OLO_GET_METHOD_COORD
-           || options.serverOperation==OLO_GET_CLASS_COORD
-           || options.serverOperation==OLO_GET_ENV_VALUE
+static bool requiresProcessingInputFile(ServerOperation operation) {
+    return operation==OLO_COMPLETION
+           || operation==OLO_SEARCH
+           || operation==OLO_EXTRACT
+           || operation==OLO_TAG_SEARCH
+           || operation==OLO_SET_MOVE_TARGET
+           || operation==OLO_SET_MOVE_CLASS_TARGET
+           || operation==OLO_SET_MOVE_METHOD_TARGET
+           || operation==OLO_GET_CURRENT_CLASS
+           || operation==OLO_GET_CURRENT_SUPER_CLASS
+           || operation==OLO_GET_METHOD_COORD
+           || operation==OLO_GET_CLASS_COORD
+           || operation==OLO_GET_ENV_VALUE
            || creatingOlcxRefs()
         ;
 }
@@ -54,7 +54,7 @@ void mainCallEditServer(int argc, char **argv,
     editorLoadAllOpenedBufferFiles();
     if (creatingOlcxRefs())
         olcxPushEmptyStackItem(&sessionData.browserStack);
-    if (needToProcessInputFile()) {
+    if (requiresProcessingInputFile(options.serverOperation)) {
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");
         } else {
