@@ -1,6 +1,8 @@
 #ifndef SERVER_H_INCLUDED
 #define SERVER_H_INCLUDED
 
+#include <stdbool.h>
+
 #include "enums.h"
 
 
@@ -169,6 +171,9 @@ typedef enum {
 extern const char* operationNamesTable[];
 
 extern void initServer(int nargc, char **nargv);
+extern void mainCallEditServer(int argc, char **argv,
+                               int nargc, char **nargv,
+                               bool *firstPass);
 extern void server(int argc, char **argv);
 
 #endif

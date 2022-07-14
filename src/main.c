@@ -1378,40 +1378,6 @@ void editServerProcessFile(int argc, char **argv,
     fileItem->isScheduled = false;
 }
 
-// TODO move to server.c
-char *presetEditServerFileDependingStatics(void) {
-    fileProcessingStartTime = time(NULL);
-
-    s_primaryStartPosition = noPosition;
-    s_staticPrefixStartPosition = noPosition;
-
-    // This is pretty stupid, there is always only one input file
-    // in edit server, otherwise it is an error
-    int fileIndex = 0;
-    inputFilename = getNextScheduledFile(&fileIndex);
-    if (fileIndex == -1) { /* No more input files... */
-        // conservative message, probably macro invoked on nonsaved file, TODO: WTF?
-        olOriginalComFileNumber = noFileIndex;
-        return NULL;
-    }
-
-    /* TODO: This seems strange, we only assert that the first file is scheduled to process.
-       Then reset all other files, why? */
-    assert(getFileItem(fileIndex)->isScheduled);
-    for (int i=getNextExistingFileIndex(fileIndex+1); i != -1; i = getNextExistingFileIndex(i+1)) {
-        getFileItem(i)->isScheduled = false;
-    }
-
-    olOriginalComFileNumber = fileIndex;
-
-    char *fileName = inputFilename;
-    currentLanguage = getLanguageFor(fileName);
-
-    // O.K. just to be sure, there is no other input file
-    return fileName;
-}
-
-
 /* *************************************************************** */
 /*                          Xref Mode                            */
 /* *************************************************************** */
