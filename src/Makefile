@@ -91,7 +91,7 @@ endif
 ifneq (, $(shell which $(GCOV_TOOL)))
     HAVE_GCOV_TOOL=yes
 else
-	HAVE_GCOV_TOOL=
+    HAVE_GCOV_TOOL=
 endif
 
 all: unit build
@@ -298,6 +298,17 @@ endif
 watch:
 	watchexec -e c,h,y,mock execnotify "make -j devel"
 
+watch-unit:
+	watchexec -e c,h,y,mock execnotify "make -j unit"
+
+watch-done:
+	watchexec -e .done "make -j system-tests"
+
+system-tests:
+	$(MAKE) -e build
+	$(MAKE) -e test
+	$(MAKE) coverage-report
+
 #########################################################################
 #
 # Trigger building our patched yacc if it doesn't exist
@@ -342,7 +353,7 @@ unittests:
 	@echo Cgreen not available, cannot run unittests
 else
 unittests: $(UNITTESTS)
-	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
+	$(MAKE) -e clean-coverage
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $^
 	make gcov
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
@@ -350,6 +361,7 @@ unittests: $(UNITTESTS)
 		$(LCOV) -q -t unittests -d . -c -o unittests.info 2>&1 | grep -v "did not produce any data" ; \
 		$(LCOV) -q --remove unittests.info $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.info ; \
 	fi
+	touch .unittests.done
 endif
 
 # A test lib for a module is built from its .o and the _test.o (and some extras)
