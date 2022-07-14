@@ -26,10 +26,6 @@ int mainHandleSetOption(int argc, char **argv, int i) {
   return (int) mock(argc, argv, i);
 }
 
-Language getLanguageFor(char *inFileName) {
-    return (Language)mock(inFileName);
-}
-
 void mainCallXref(int argc, char **argv) {
   mock(argc, argv);
 }

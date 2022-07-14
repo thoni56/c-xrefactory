@@ -395,34 +395,6 @@ static void parseInputFile(void) {
 }
 
 
-Language getLanguageFor(char *fileName) {
-    char *suffix;
-    Language language;
-
-    if (fileName == NULL
-        || fileNameHasOneOfSuffixes(fileName, options.javaFilesSuffixes)
-        || (filenameCompare(simpleFileName(fileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
-    ) {
-        language = LANG_JAVA;
-        typeNamesTable[TypeStruct] = "class";
-    } else {
-        suffix = getFileSuffix(fileName);
-        if (compareFileNames(suffix, ".zip")==0 || compareFileNames(suffix, ".jar")==0) {
-            language = LANG_JAR;
-        } else if (compareFileNames(suffix, ".class")==0) {
-            language = LANG_CLASS;
-        } else if (compareFileNames(suffix, ".y")==0) {
-            language = LANG_YACC;
-            typeNamesTable[TypeStruct] = "struct";
-        } else {
-            language = LANG_C;
-            typeNamesTable[TypeStruct] = "struct";
-        }
-    }
-    return language;
-}
-
-
 static int getLineFromFile(FILE *file, char *line, int max, int *outLength) {
     int i = 0;
     int ch;
