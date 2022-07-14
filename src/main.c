@@ -395,28 +395,31 @@ static void parseInputFile(void) {
 }
 
 
-void mainSetLanguage(char *inFileName, Language *outLanguage) {
-    char *suff;
-    if (inFileName == NULL
-        || fileNameHasOneOfSuffixes(inFileName, options.javaFilesSuffixes)
-        || (filenameCompare(simpleFileName(inFileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
+Language getLanguageFor(char *fileName) {
+    char *suffix;
+    Language language;
+
+    if (fileName == NULL
+        || fileNameHasOneOfSuffixes(fileName, options.javaFilesSuffixes)
+        || (filenameCompare(simpleFileName(fileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
     ) {
-        *outLanguage = LANG_JAVA;
+        language = LANG_JAVA;
         typeNamesTable[TypeStruct] = "class";
     } else {
-        suff = getFileSuffix(inFileName);
-        if (compareFileNames(suff, ".zip")==0 || compareFileNames(suff, ".jar")==0) {
-            *outLanguage = LANG_JAR;
-        } else if (compareFileNames(suff, ".class")==0) {
-            *outLanguage = LANG_CLASS;
-        } else if (compareFileNames(suff, ".y")==0) {
-            *outLanguage = LANG_YACC;
+        suffix = getFileSuffix(fileName);
+        if (compareFileNames(suffix, ".zip")==0 || compareFileNames(suffix, ".jar")==0) {
+            language = LANG_JAR;
+        } else if (compareFileNames(suffix, ".class")==0) {
+            language = LANG_CLASS;
+        } else if (compareFileNames(suffix, ".y")==0) {
+            language = LANG_YACC;
             typeNamesTable[TypeStruct] = "struct";
         } else {
-            *outLanguage = LANG_C;
+            language = LANG_C;
             typeNamesTable[TypeStruct] = "struct";
         }
     }
+    return language;
 }
 
 
@@ -719,7 +722,7 @@ static void fileProcessingInitialisations(bool *firstPass,
     ENTER();
 
     fileName = inputFilename;
-    mainSetLanguage(fileName, outLanguage);
+    *outLanguage = getLanguageFor(fileName);
     getOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName, true);
     initAllInputs();
 
@@ -799,7 +802,7 @@ static void fileProcessingInitialisations(bool *firstPass,
         *inputOpened = computeAndOpenInputFile();
     }
     // reset language once knowing all language suffixes
-    mainSetLanguage(fileName,  outLanguage);
+    *outLanguage = getLanguageFor(fileName);
     inputFileNumber = currentFile.lexBuffer.buffer.fileNumber;
     assert(options.mode);
     if (options.mode==XrefMode && !javaPreScanOnly) {
@@ -1428,7 +1431,7 @@ char *presetEditServerFileDependingStatics(void) {
     olOriginalComFileNumber = fileIndex;
 
     char *fileName = inputFilename;
-    mainSetLanguage(fileName, &currentLanguage);
+    currentLanguage = getLanguageFor(fileName);
 
     // O.K. just to be sure, there is no other input file
     return fileName;
@@ -1579,7 +1582,7 @@ void mainCallXref(int argc, char **argv) {
                     printPrescanningMessage();
                     messagePrinted = true;
                 }
-                mainSetLanguage(pffc->name, &currentLanguage);
+                currentLanguage = getLanguageFor(pffc->name);
                 if (LANGUAGE(LANG_JAVA)) {
                     /* TODO: problematic if a single file generates overflow, e.g. a JAR
                        Can we just reread from the last class file? */

@@ -4377,7 +4377,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     char             *selectedUpdateOption;
 
     assert(point != NULL && point->buffer != NULL);
-    mainSetLanguage(point->buffer->name, &currentLanguage);
+    currentLanguage = getLanguageFor(point->buffer->name);
 
     hasHeaderReferenceFlag = 0;
     multiFileRefsFlag      = 0;
@@ -4537,7 +4537,7 @@ void refactory() {
     case AVR_MOVE_PARAMETER:
         progressFactor = 3;
         updateOption   = computeUpdateOptionForSymbol(point);
-        mainSetLanguage(file, &currentLanguage);
+        currentLanguage = getLanguageFor(file);
         if (LANGUAGE(LANG_JAVA))
             progressFactor++;
         parameterManipulation(buf, point, refactoringOptions.theRefactoring, refactoringOptions.olcxGotoVal,
