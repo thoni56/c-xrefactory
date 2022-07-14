@@ -1,8 +1,0 @@
-/* -*- c -*-*/
-#include "fileitem.h"
-#include <cgreen/mocks.h>
-
-void fillFileItem(S_fileItem *item, char *name, bool fromCommandLine) { 
-  mock(item, name, fromCommandLine);
-}
-
