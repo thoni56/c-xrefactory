@@ -1288,7 +1288,7 @@ static bool symbolCanBeIdentifiedByPosition(int fileIndex) {
     // which problem ??????
     // seems that those options are somewhere in ppmMemory overwritten?
     //&return 0;
-    if (!creatingOlcxRefs())
+    if (!isCreatingRefs(options.serverOperation))
         return false;
     if (options.browsedSymName == NULL)
         return false;
@@ -1359,7 +1359,7 @@ static void editServerFileSinglePass(int argc, char **argv,
         editServerParseInputFile(firstPassP, inputOpened);
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
-        if (creatingOlcxRefs()) {
+        if (isCreatingRefs(options.serverOperation)) {
             Position dpos = makePosition(inputFileNumber, 1, 0);
             gotOnLineCxRefs(&dpos);
         }
@@ -1393,7 +1393,7 @@ void editServerProcessFile(int argc, char **argv,
         inputFilename = fileItem->name;
         assert(inputFilename!=NULL);
         editServerFileSinglePass(argc, argv, nargc, nargv, firstPass);
-        if (options.serverOperation==OLO_EXTRACT || (s_olstringServed && !creatingOlcxRefs()))
+        if (options.serverOperation==OLO_EXTRACT || (s_olstringServed && !isCreatingRefs(options.serverOperation)))
             break;
         if (LANGUAGE(LANG_JAVA))
             break;
@@ -1429,6 +1429,7 @@ char *presetEditServerFileDependingStatics(void) {
 
     char *fileName = inputFilename;
     mainSetLanguage(fileName, &currentLanguage);
+
     // O.K. just to be sure, there is no other input file
     return fileName;
 }

@@ -31,7 +31,7 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
            || operation==OLO_GET_METHOD_COORD
            || operation==OLO_GET_CLASS_COORD
            || operation==OLO_GET_ENV_VALUE
-           || creatingOlcxRefs()
+           || isCreatingRefs(operation)
         ;
 }
 
@@ -51,9 +51,12 @@ void mainCallEditServer(int argc, char **argv,
                         bool *firstPass
 ) {
     ENTER();
+
     editorLoadAllOpenedBufferFiles();
-    if (creatingOlcxRefs())
+
+    if (isCreatingRefs(options.serverOperation))
         olcxPushEmptyStackItem(&sessionData.browserStack);
+
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");

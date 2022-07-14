@@ -4,6 +4,7 @@
 #include "proto.h"
 #include "symbol.h"
 #include "editor.h"
+#include "server.h"
 
 /*  some constants depending on architercture	*/
 
@@ -118,7 +119,7 @@ extern void printSymbolLinkName( FILE *ff, SymbolsMenu *ss);
 /* Complement log.c with function to explicitly give file & line */
 #define log_with_explicit_file_and_line(level, file, line, ...) log_log(level, file, line, __VA_ARGS__)
 
-extern bool creatingOlcxRefs(void);
+extern bool isCreatingRefs(ServerOperation operation);
 extern void formatOutputLine(char *tt, int startingColumn);
 extern void get_bare_name(char *name, char **start, int *len);
 

@@ -4110,11 +4110,11 @@ static void olcxDumpSelectionMenu(SymbolsMenu *menu) {
 }
 #endif
 
-static void mainAnswerReferencePushingAction(int command) {
-    assert(creatingOlcxRefs());
+static void mainAnswerReferencePushingAction(ServerOperation operation) {
+    assert(isCreatingRefs(operation));
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->hkSelectedSym);
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->hkSelectedSym);
-    olCreateSelectionMenu(command);
+    olCreateSelectionMenu(operation);
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->hkSelectedSym);
 
 #ifdef DUMP_SELECTION_MENU

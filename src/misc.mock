@@ -202,8 +202,8 @@ void printSymbolLinkName(FILE *ff, SymbolsMenu *ss) {
   mock(ff, ss);
 }
 
-bool creatingOlcxRefs(void) {
-  return (bool) mock();
+bool isCreatingRefs(ServerOperation operation) {
+  return (bool) mock(operation);
 }
 
 void formatOutputLine(char *tt, int startingColumn) {

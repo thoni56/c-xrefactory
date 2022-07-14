@@ -15,7 +15,7 @@
 
 
 void gotOnLineCxRefs(Position *ps ) {
-    if (creatingOlcxRefs()) {
+    if (isCreatingRefs(options.serverOperation)) {
         cache.active = false;
         s_cxRefPos = *ps;
     }

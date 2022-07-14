@@ -1,5 +1,6 @@
 #include "misc.h"
 #include "proto.h"
+#include "server.h"
 
 #ifdef __WIN32__
 #include <direct.h>
@@ -1266,9 +1267,8 @@ void classFileParse(void) {
     scanClassFile(temp, t, NULL);
 }
 
-bool creatingOlcxRefs(void) {
-    /* TODO: what does this actually test? that we need to create refs?  */
-    return (
+bool isCreatingRefs(ServerOperation operation) {
+    return
             options.serverOperation==OLO_PUSH
             ||  options.serverOperation==OLO_PUSH_ONLY
             ||  options.serverOperation==OLO_PUSH_AND_CALL_MACRO
@@ -1300,7 +1300,7 @@ bool creatingOlcxRefs(void) {
             ||  options.serverOperation==OLO_MAYBE_THIS
             ||  options.serverOperation==OLO_NOT_FQT_REFS
             ||  options.serverOperation==OLO_NOT_FQT_REFS_IN_CLASS
-            );
+           ;
 }
 
 void formatOutputLine(char *line, int startingColumn) {
