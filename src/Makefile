@@ -49,7 +49,7 @@ export CC = cc
 
 MAKEFLAGS += --no-print-directory
 
-WARNINGS = -Wall -Wno-char-subscripts
+WARNINGS = -Wall -Wno-char-subscripts -Werror
 
 GIT_HASH = $(shell git describe --abbrev=5 --always --tags --dirty)
 

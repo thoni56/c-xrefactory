@@ -18,7 +18,15 @@ Current Mikado:
 ** DONE Move editServer() to server.c
 ** DONE Move presetEditServerFileDependingStatics() to server.c
 ** DONE Move editServerProcessFile() to server.c
-** TRY Move editServerSinglePass() to server.c
+** TRIED Move editServerSinglePass() to server.c
+*** REQUIRES fileProcessingInitialisations()
+*** REQUIRES smartReadReferences()
+*** REQUIRES symbolCanBeIdentifiedByPosition()
+*** REQUIRES closeInputFile()
+*** REQUIRES editServerParseInputFile()
+*** REQUIRES gotOnLineCxRefs()
+*** REQUIRES addThisFileDefineIncludeReference()
+*** REQUIRES scheduleFileUsingTheMacro()
 
 
 

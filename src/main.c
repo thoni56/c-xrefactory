@@ -1357,7 +1357,6 @@ void editServerFileSinglePass(int argc, char **argv,
     }
 }
 
-// TODO: move to server.c
 
 /* *************************************************************** */
 /*                          Xref Mode                            */
