@@ -1168,13 +1168,15 @@ endOfFile:
 }
 
 static void processIfDirective(void) {
-    int res=1,lex;
+    int parseError, lexem;
     isProcessingPreprocessorIf = true;
     log_debug(": #if");
-    res = cexp_yyparse();
-    do lex = yylex(); while (lex != '\n');
+    parseError = cexp_yyparse();
+    do
+        lexem = yylex();
+    while (lexem != '\n');
     isProcessingPreprocessorIf = false;
-    execCppIf(! res);
+    execCppIf(!parseError);
 }
 
 static void processPragmaDirective(void) {
