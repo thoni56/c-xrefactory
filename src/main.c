@@ -672,6 +672,7 @@ bool fileProcessingInitialisations(bool *firstPass,
     fileName = inputFilename;
     *outLanguage = getLanguageFor(fileName);
     getOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName, true);
+
     initAllInputs();
 
     if (defaultOptionsFileName[0] != 0 )

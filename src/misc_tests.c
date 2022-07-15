@@ -70,3 +70,18 @@ Ensure(Misc, can_map_over_directory_files) {
     mapDirectoryFiles("/", mapFunction, true, my_a1, my_a2, &completions, my_a4, &i);
     assert_that(i, is_greater_than(0));
 }
+
+Ensure(Misc, strmcpy_returns_pointer_to_after_copy) {
+    char src[100] = "hello world!";
+    char dest[100];
+
+    assert_that(strmcpy(dest, src), is_equal_to(dest+strlen(src)));
+}
+
+Ensure(Misc, strmcpy_can_copy_overlapping_strings) {
+    char src[100] = "hello world!";
+    char *dest = src;
+
+    strmcpy(dest, &src[1]);
+    assert_that(src, is_equal_to_string("ello world!"));
+}
