@@ -7,7 +7,7 @@ MODULES =  main globals misc semact commons \
 		javafqttab jsltypetab reftab memory characterreader hash \
 		symbol c_parser.tab cexp_parser.tab java_parser.tab yacc_parser.tab \
 		filedescriptor typemodifier position id parsers fileio stringlist ppc \
-		server reference
+		server reference xref
 
 modules:
 	@echo MODULES=$(MODULES)

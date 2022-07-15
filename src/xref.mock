@@ -1,0 +1,7 @@
+#include <cgreen/mocks.h>
+
+#include "xref.h"
+
+void xref(int argc, char **argv) {
+    mock(argc, argv);
+}

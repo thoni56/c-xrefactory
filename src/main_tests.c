@@ -36,7 +36,9 @@
 #include "symboltable.mock"
 #include "type.mock"
 #include "yacc_parser.mock"
+#include "xref.mock"
 #include "yylex.mock"
+
 
 Describe(Main);
 BeforeEach(Main) {

@@ -1,43 +1,44 @@
 #include "main.h"
 
+#include <stdbool.h>
+
+#include "c_parser.h"
+#include "caching.h"
+#include "characterreader.h"
 #include "commons.h"
-#include "constants.h"
-#include "globals.h"
-#include "memory.h"
-#include "proto.h"
-#include "refactory.h"
-#include "extract.h"
-#include "misc.h"
 #include "complete.h"
-#include "options.h"
-#include "init.h"
-#include "jslsemact.h"
+#include "constants.h"
+#include "cxfile.h"
+#include "cxref.h"
 #include "editor.h"
-#include "reftab.h"
-#include "javafqttab.h"
-#include "list.h"
-#include "jsemact.h"
+#include "extract.h"
+#include "filedescriptor.h"
 #include "fileio.h"
 #include "filetable.h"
+#include "globals.h"
+#include "init.h"
+#include "java_parser.h"
+#include "javafqttab.h"
+#include "jsemact.h"
+#include "jslsemact.h"
+#include "lexer.h"
+#include "list.h"
+#include "log.h"
+#include "macroargumenttable.h"
+#include "memory.h"
+#include "misc.h"
+#include "options.h"
+#include "parsers.h"
+#include "proto.h"
+#include "protocol.h"
+#include "recyacc.h"
+#include "refactory.h"
+#include "reftab.h"
 #include "server.h"
 #include "symboltable.h"
-#include "c_parser.h"
+#include "xref.h"
 #include "yacc_parser.h"
-#include "java_parser.h"
-#include "parsers.h"
-#include "recyacc.h"
 #include "yylex.h"
-#include "lexer.h"
-#include "characterreader.h"
-#include "cxref.h"
-#include "cxfile.h"
-#include "caching.h"
-#include "log.h"
-#include "filedescriptor.h"
-#include "macroargumenttable.h"
-#include "protocol.h"
-#include <stdbool.h>
-#include "parsers.h"
 
 static char oldStdopFile[MAX_FILE_NAME_SIZE];
 static char oldStdopSection[MAX_FILE_NAME_SIZE];
@@ -1386,22 +1387,6 @@ void mainCallXref(int argc, char **argv) {
     if (options.xref2) {
         writeRelativeProgress(100);
     }
-}
-
-
-static void xref(int argc, char **argv) {
-    ENTER();
-    mainOpenOutputFile(options.outputFileName);
-    editorLoadAllOpenedBufferFiles();
-
-    mainCallXref(argc, argv);
-    closeMainOutputFile();
-    if (options.xref2) {
-        ppcSynchronize();
-    }
-    //& fprintf(dumpOut, "\n\nDUMP\n\n"); fflush(dumpOut);
-    //& mapOverReferenceTable(symbolRefItemDump);
-    LEAVE();
 }
 
 /* initLogging() is called as the first thing in main() so we look for log command line options here */
