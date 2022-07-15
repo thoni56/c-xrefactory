@@ -29,5 +29,4 @@ void parseInputFile(void) {
         c_yyparse();
     }
     cache.active = false;
-    currentFile.fileName = NULL;
 }
