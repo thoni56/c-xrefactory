@@ -1097,7 +1097,7 @@ endOfFile:
 
 /* ********************************* #IF ************************** */
 
-int cexp_yylex(void) {
+Lexem cexp_yylex(void) {
     int lineNumber, res, mm;
     Lexem lexem;
     char *cc;
@@ -2090,7 +2090,7 @@ static void actionOnBlockMarker(void) {
 }
 
 
-int yylex(void) {
+Lexem yylex(void) {
     Lexem lexem;
     Position position, idpos;
     char *previousLexem;

@@ -3,7 +3,7 @@
 
 #include "proto.h"
 #include "editor.h"
-
+#include "lexem.h"
 
 typedef struct macroBody {
     short int argCount;
@@ -43,7 +43,7 @@ extern void popInclude(void);
 extern void addMacroDefinedByOption(char *opt);
 extern char *placeIdent(void);
 extern int cachedInputPass(int cpoint, char **cfromto);
-extern int cexp_yylex(void);
-extern int yylex(void);
+extern Lexem cexp_yylex(void);
+extern Lexem yylex(void);
 
 #endif

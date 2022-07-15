@@ -47,10 +47,10 @@ int cachedInputPass(int cpoint, char **cfromto) {
   return (int) mock(cpoint, cfromto);
 }
 
-int cexp_yylex(void) {
+Lexem cexp_yylex(void) {
   return (int) mock();
 }
 
-int yylex(void) {
+Lexem yylex(void) {
   return (int) mock();
 }
