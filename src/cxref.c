@@ -4946,3 +4946,20 @@ void printTagSearchResults(void) {
     if (options.xref2)
         ppcEnd(PPC_SYMBOL_LIST);
 }
+
+void generateReferences(void) {
+    static bool updateFlag = false;  /* TODO: WTF - why do we need a
+                                        static updateFlag? Maybe we
+                                        need to know that we have
+                                        generated from scratch so now
+                                        we can just update? */
+
+    if (options.cxrefsLocation == NULL)
+        return;
+    if (!updateFlag && options.update == UPDATE_DEFAULT) {
+        genReferenceFile(false, options.cxrefsLocation);
+        updateFlag = true;
+    } else {
+        genReferenceFile(true, options.cxrefsLocation);
+    }
+}

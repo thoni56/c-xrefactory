@@ -347,3 +347,7 @@ int refCharCode(int usage) {
 void clearAvailableRefactorings(void) {
     mock();
 }
+
+void generateReferences(void) {
+    mock();
+}

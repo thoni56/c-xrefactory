@@ -127,4 +127,6 @@ extern int refCharCode(int usage);
 
 extern void clearAvailableRefactorings(void);
 
+extern void generateReferences(void);
+
 #endif

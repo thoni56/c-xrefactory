@@ -58,7 +58,3 @@ void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
 void checkExactPositionUpdate(bool printMessage) {
     mock(printMessage);
 }
-
-void generateReferences(void) {
-    mock();
-}
