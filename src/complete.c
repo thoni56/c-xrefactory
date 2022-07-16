@@ -141,7 +141,7 @@ static char *getCompletionClassFieldString(CompletionLine *cl) {
         cname = javaGetShortClassName(cl->vFunClass->linkName);
     } else {
         assert(cl->symbol);
-        cname = javaGetNudePreTypeName_static(cl->symbol->linkName, CUT_OUTERS);
+        cname = javaGetNudePreTypeName_static(cl->symbol->linkName, DONT_DISPLAY_NESTED_CLASSES);
     }
     return cname;
 }

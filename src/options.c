@@ -42,7 +42,7 @@ Options presetOptions = {
     NULL,                       // xrefrc
     NO_EOL_CONVERSION,          // crlfConversion
     NULL,                       // checkVersion
-    CUT_OUTERS,                 // nestedClassDisplaying
+    DONT_DISPLAY_NESTED_CLASSES,                 // nestedClassDisplaying
     NULL,                       // pushName
     0,                          // parnum2
     "",                         // refactoring parameter 1
@@ -1365,7 +1365,7 @@ static bool processDOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-D",2)==0)
         addMacroDefinedByOption(argv[i]+2);
     else if (strcmp(argv[i], "-displaynestedwithouters")==0) {
-        options.displayNestedClasses = NO_OUTERS_CUT;
+        options.displayNestedClasses = DISPLAY_NESTED_CLASSES;
     }
     else return false;
 

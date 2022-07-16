@@ -28,7 +28,7 @@ typedef struct setGetEnv {
 } SetGetEnv;
 
 typedef enum updateType {
-    UPDATE_DEFAULT = 0,              // must be zero ! TODO: Why?
+    UPDATE_DEFAULT = 0,              // must be zero because of tests like 'if (options.update)...'
     UPDATE_FAST,
     UPDATE_FULL,
 } UpdateType;
@@ -52,7 +52,7 @@ typedef struct options {
     char *xrefrc;
     int eolConversion;
     char *checkVersion;
-    CutOuters displayNestedClasses;
+    NestedClassesDisplay displayNestedClasses;
     char *pushName;
     int parnum2;
     char *refpar1;

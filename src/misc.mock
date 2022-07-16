@@ -106,15 +106,15 @@ void javaDotifyFileName(char *ss) {
   mock(ss);
 }
 
-char *javaGetNudePreTypeName_static(char *inn, CutOuters cutMode) {
-  return (char *) mock(inn, cutMode);
+char *javaGetNudePreTypeName_static(char *name, NestedClassesDisplay displayMode) {
+  return (char *) mock(name, displayMode);
 }
 
 char *javaGetShortClassName(char *inn) {
   return (char *) mock(inn);
 }
 
-char *javaGetShortClassNameFromFileNum_st(int fnum) {
+char *javaGetShortClassNameFromFileNum_static(int fnum) {
   return (char *) mock(fnum);
 }
 

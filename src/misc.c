@@ -414,35 +414,37 @@ char *javaGetShortClassName(char *inn) {
     return(res);
 }
 
-char *javaGetShortClassNameFromFileNum_st(int fnum) {
+char *javaGetShortClassNameFromFileNum_static(int fnum) {
     static char res[TMP_STRING_SIZE];
     javaGetClassNameFromFileIndex(fnum, res, DOTIFY_NAME);
     return(javaGetShortClassName(res));
 }
 
-char *javaGetNudePreTypeName_static(char *inn, CutOuters cutMode) {
-    int             i,len;
-    char            *cut,*res,*res2;
-    static char     ttt[TMP_STRING_SIZE];
-    //&fprintf(dumpOut,"getting type name from %s\n", inn);
-    cut = strchr(inn, LINK_NAME_SEPARATOR);
-    if (cut==NULL) cut = inn;
-    else cut ++;
+char *javaGetNudePreTypeName_static(char *name, NestedClassesDisplay displayMode) {
+    int         i, len;
+    char       *cut, *res, *res2;
+    static char typeName_static[TMP_STRING_SIZE];
+
+    cut = strchr(name, LINK_NAME_SEPARATOR);
+    if (cut == NULL)
+        cut = name;
+    else
+        cut++;
     res = res2 = cut;
-    for(i=0; cut[i]; i++) {
-        if (cut[i]=='.' || cut[i]=='/' || cut[i]=='\\'
-            || cut[i] == ZIP_SEPARATOR_CHAR
-            || (cut[i]=='$' && cutMode==CUT_OUTERS)) {
-            res = res2;
-            res2 = cut+i+1;
+    for (i = 0; cut[i]; i++) {
+        if (cut[i] == '.' || cut[i] == '/' || cut[i] == '\\' || cut[i] == ZIP_SEPARATOR_CHAR
+            || (cut[i] == '$' && displayMode == DONT_DISPLAY_NESTED_CLASSES)) {
+            res  = res2;
+            res2 = cut + i + 1;
         }
     }
-    len = res2-res-1;
-    if (len<0) len=0;
-    strncpy(ttt, res, len);
-    ttt[len]=0;
-    //&fprintf(dumpOut,"result is %s\n", ttt);
-    return(ttt);
+    len = res2 - res - 1;
+    if (len < 0)
+        len = 0;
+    strncpy(typeName_static, res, len);
+    typeName_static[len] = 0;
+
+    return typeName_static;
 }
 
 void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {

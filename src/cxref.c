@@ -2449,7 +2449,7 @@ static void olcxMenuSelectOnly(void) {
                 char ttt[MAX_CX_SYMBOL_SIZE];
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintfSymbolLinkName(ttt, selection);
-                sprintf(tmpBuff,"Class %s does not define %s", javaGetShortClassNameFromFileNum_st(selection->references.vApplClass), ttt);
+                sprintf(tmpBuff,"Class %s does not define %s", javaGetShortClassNameFromFileNum_static(selection->references.vApplClass), ttt);
                 ppcBottomWarning(tmpBuff);
             } else {
                 if (!olcxBrowseSymbolInJavaDoc(&selection->references)) {  //& checkTheJavaDocBrowsing(refs);
