@@ -3,24 +3,31 @@
 /* LIST_CONS(i/o element, i/o list) */
 #define LIST_CONS(elem,list) {(elem)->next = (list); list = elem;}
 
-/* LIST_APPEND(type, i/o first list, i second list) */
-#define LIST_APPEND(type, first, second) {                      \
-        if ((first)==NULL) first = second;                      \
-        else {                                                  \
-            type *tempnsl; tempnsl = first;                     \
-            while (tempnsl->next!=NULL) tempnsl=tempnsl->next;  \
-            tempnsl->next = second;                             \
-        }                                                       \
+/* LIST_APPEND(type, in/out list1, in list2) */
+#define LIST_APPEND(type, list1, list2)                                                                           \
+    {                                                                                                             \
+        if ((list1) == NULL)                                                                                      \
+            list1 = list2;                                                                                        \
+        else {                                                                                                    \
+            type *tempnsl;                                                                                        \
+            tempnsl = list1;                                                                                      \
+            while (tempnsl->next != NULL)                                                                         \
+                tempnsl = tempnsl->next;                                                                          \
+            tempnsl->next = list2;                                                                                \
+        }                                                                                                         \
     }
 
-/* LIST_LEN(o int reslen, type, i list) */
-#define LIST_LEN(reslen, type, list) {                 \
-        type *tmp; int count=0; tmp = list;            \
-        while (tmp!=NULL) {                            \
-            ++count;                                   \
-            tmp = tmp->next;                           \
-        }                                              \
-        reslen = count;                                \
+/* LIST_LEN(out int length, type, in type list) */
+#define LIST_LEN(length, type, list)                                                                              \
+    {                                                                                                             \
+        type *tmp;                                                                                                \
+        int   count = 0;                                                                                          \
+        tmp         = list;                                                                                       \
+        while (tmp != NULL) {                                                                                     \
+            ++count;                                                                                              \
+            tmp = tmp->next;                                                                                      \
+        }                                                                                                         \
+        length = count;                                                                                           \
     }
 
 #define LIST_REVERSE(type, iolist) {                \
