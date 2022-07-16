@@ -21,10 +21,10 @@ void:
 all: quick slow
 
 .PHONY:quick
-quick: autodiscovered_tests
+quick: autodiscovered_tests c-xref-test
 
 .PHONY: slow
-slow: c-xref-test ffmpeg-test systemd-test
+slow: ffmpeg-test systemd-test
 
 c-xref-test:
 	$(MAKE) -C c-xref
