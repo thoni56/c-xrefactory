@@ -2,6 +2,8 @@
 
 #include "caching.h"
 #include "commons.h"
+#include "cxfile.h"
+#include "cxref.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
@@ -15,6 +17,7 @@
 #include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
+#include "reftab.h"
 
 static void printPrescanningMessage(void) {
     if (options.xref2) {
@@ -71,6 +74,94 @@ static FileItem *createListOfInputFileItems(void) {
     return fileItem;
 }
 
+static void fillIncludeRefItem(ReferencesItem *referencesItem, int fileIndex) {
+    fillReferencesItem(referencesItem, LINK_NAME_INCLUDE_REFS,
+                       cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
+                       fileIndex, fileIndex, TypeCppInclude, StorageExtern,
+                       ScopeGlobal, AccessDefault, CategoryGlobal);
+}
+
+static void makeIncludeClosureOfFilesToUpdate(void) {
+    char                *cxFreeBase;
+    int                 fileAddedFlag;
+    ReferencesItem referenceItem, *member;
+    Reference           *rr;
+
+    CX_ALLOCC(cxFreeBase,0,char);
+    fullScanFor(LINK_NAME_INCLUDE_REFS);
+    // iterate over scheduled files
+    fileAddedFlag = true;
+    while (fileAddedFlag) {
+        fileAddedFlag = false;
+        for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
+            FileItem *fileItem = getFileItem(i);
+            if (fileItem->scheduledToUpdate)
+                if (!fileItem->fullUpdateIncludesProcessed) {
+                    fileItem->fullUpdateIncludesProcessed = true;
+                    bool isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
+                    fillIncludeRefItem(&referenceItem, i);
+                    if (isMemberInReferenceTable(&referenceItem, NULL, &member)) {
+                        for (rr=member->references; rr!=NULL; rr=rr->next) {
+                            FileItem *includer = getFileItem(rr->position.file);
+                            if (!includer->scheduledToUpdate) {
+                                includer->scheduledToUpdate = true;
+                                fileAddedFlag = true;
+                                if (isJavaFileFlag) {
+                                    // no transitive closure for Java
+                                    includer->fullUpdateIncludesProcessed = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+        }
+    }
+    recoverMemoriesAfterOverflow(cxFreeBase);
+}
+
+static void schedulingUpdateToProcess(FileItem *fileItem) {
+    if (fileItem->scheduledToUpdate && fileItem->isArgument) {
+        fileItem->isScheduled = true;
+    }
+}
+
+/* NOTE: Map-function */
+static void schedulingToUpdate(FileItem *fileItem) {
+    if (fileItem == getFileItem(noFileIndex))
+        return;
+
+    if (!editorFileExists(fileItem->name)) {
+        // removed file, remove it from watched updates, load no reference
+        if (fileItem->isArgument) {
+            // no messages during refactorings
+            if (refactoringOptions.refactoringMode != RefactoryMode) {
+                char tmpBuff[TMP_BUFF_SIZE];
+                sprintf(tmpBuff, "file %s not accessible", fileItem->name);
+                warningMessage(ERR_ST, tmpBuff);
+            }
+        }
+        fileItem->isArgument = false;
+        fileItem->isScheduled = false;
+        fileItem->scheduledToUpdate = false;
+        // (missing of following if) has caused that all class hierarchy items
+        // as well as all cxreferences based in .class files were lost
+        // on -update, a very serious bug !!!!
+        if (fileItem->name[0] != ZIP_SEPARATOR_CHAR) {
+            fileItem->cxLoading = true;     /* Hack, to remove references from file */
+        }
+    } else if (options.update == UPDATE_FULL) {
+        if (editorFileModificationTime(fileItem->name) != fileItem->lastFullUpdateMtime) {
+            fileItem->scheduledToUpdate = true;
+        }
+    } else {
+        if (editorFileModificationTime(fileItem->name) != fileItem->lastUpdateMtime) {
+            fileItem->scheduledToUpdate = true;
+        }
+    }
+    log_trace("Scheduling '%s' to update: %s", fileItem->name, fileItem->scheduledToUpdate?"yes":"no");
+}
+
 static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLeastOneProcessedP) {
     bool inputOpened;
 
@@ -107,6 +198,19 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
     }
 }
 
+static void getCxrefFilesListName(char **fileListFileNameP, char **suffixP) {
+    if (options.referenceFileCount <= 1) {
+        *suffixP           = "";
+        *fileListFileNameP = options.cxrefsLocation;
+    } else {
+        char cxrefsFileName[MAX_FILE_NAME_SIZE];
+        *suffixP = REFERENCE_FILENAME_FILES;
+        sprintf(cxrefsFileName, "%s%s", options.cxrefsLocation, *suffixP);
+        assert(strlen(cxrefsFileName) < MAX_FILE_NAME_SIZE - 1);
+        *fileListFileNameP = cxrefsFileName;
+    }
+}
+
 static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bool *firstPass,
                                 bool *atLeastOneProcessed) {
     inputFilename           = fileItem->name;
@@ -125,6 +229,32 @@ static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bo
         editorCloseAllBuffersIfClosable();
     }
 }
+
+
+void scheduleModifiedFilesToUpdate(void) {
+    char        *fileListFileName;
+    char        *suffix;
+
+    checkExactPositionUpdate(true);
+
+    getCxrefFilesListName(&fileListFileName, &suffix);
+    // TODO: This is probably to get modification time for the fileslist file
+    // and then consider that when schedule files to update, but it never did...
+    // if (editorFileStatus(fileListFileName, &stat))
+    //     stat.st_mtime = 0;
+
+    normalScanReferenceFile(suffix);
+
+    // ... but schedulingToUpdate() does not use the stat data !?!?!?
+    mapOverFileTable(schedulingToUpdate);
+    // TODO: ... so WTF??!?!?!?
+
+    if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
+        makeIncludeClosureOfFilesToUpdate();
+    }
+    mapOverFileTable(schedulingUpdateToProcess);
+}
+
 
 void mainCallXref(int argc, char **argv) {
     // These are static because of the longjmp() maybe happening

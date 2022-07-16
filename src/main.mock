@@ -55,8 +55,8 @@ void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     mock(cxMemFreeBase, reason);
 }
 
-void scheduleModifiedFilesToUpdate(void) {
-    mock();
+void checkExactPositionUpdate(bool printMessage) {
+    mock(printMessage);
 }
 
 void generateReferenceFile(void) {

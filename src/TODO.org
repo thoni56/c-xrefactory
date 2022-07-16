@@ -10,6 +10,7 @@ Current Mikado:
 ** DONE Move xref() to new file xref.c
 ** DONE Move mainCallXref() to xref.c
 *** DONE scheduleModifiedFilesToUpdate(void) etc.
+** DONE Move scheduleModifiedFilesToUpdate() to xref.c
 
 
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'

@@ -12,11 +12,9 @@ extern bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv
                                           Language *outLanguage);
 extern void closeInputFile(void);
 //------
-
-// Requried for xref.c extraction
-extern void scheduleModifiedFilesToUpdate(void);
 #include "filetable.h"
 extern void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason);
+extern void checkExactPositionUpdate(bool printMessage);
 //------
 
 extern void generateReferenceFile(void);
