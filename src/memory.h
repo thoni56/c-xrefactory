@@ -62,7 +62,7 @@ typedef struct codeBlock {
         /* memset(mem+mem##Index,0,(n)*sizeof(t)); */                   \
         /* memory##Index = ((char*)ALIGNMENT(memory+memory##Index,STANDARD_ALIGNMENT)) - memory; */ \
         if (memory##Index+(count)*sizeof(type) >= SIZE_##memory) {      \
-            fatalError(ERR_NO_MEMORY,#memory, XREF_EXIT_ERR);           \
+            FATAL_ERROR(ERR_NO_MEMORY,#memory, XREF_EXIT_ERR);           \
         }                                                               \
         pointer = (type*) (memory + memory##Index);                     \
         /* memset(p,0,(n)*sizeof(t)); / * for detecting any bug */      \
@@ -151,7 +151,7 @@ extern int mbMemoryIndex;
 
 
 /* Inject some error functions to remove linkage dependency */
-extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus));
+extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus, char *file, int line));
 extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line));
 extern void memoryUseFunctionForError(void (*function)(int code, char *message));
 

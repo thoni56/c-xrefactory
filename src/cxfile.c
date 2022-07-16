@@ -614,7 +614,7 @@ static void openInOutReferenceFile(int updateFlag, char *filename) {
     assert(filename);
     cxFile = openFile(filename,"w");
     if (cxFile == NULL)
-        fatalError(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
 
     if (updateFlag) {
         inputFile = openFile(tmpFileName, "r");
@@ -714,7 +714,7 @@ static void writeCxFileCompatibilityError(char *message) {
             lastMessageTime = time(NULL);
         }
     } else {
-        fatalError(ERR_ST, message, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, message, XREF_EXIT_ERR);
     }
 }
 
@@ -1234,7 +1234,7 @@ static void scanFunction_ReferenceFileCountCheck(int referenceFileCount,
 ) {
     if (!referenceFileCountMatches(referenceFileCount)) {
         assert(options.mode);
-        fatalError(ERR_ST,"Tag file was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST,"Tag file was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
     }
 }
 

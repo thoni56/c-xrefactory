@@ -149,7 +149,7 @@ char *normalizeFileName(char *name, char *relative_to) {
     if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file name %s is too long", normalizedFileName);
-        fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
     }
     return normalizedFileName;  /* A static variable! */
 }
@@ -198,7 +198,7 @@ char *create_temporary_filename(void) {
 #endif
     log_trace("Created temporary filename: %s", temporary_name);
     if (strlen(temporary_name) == 0)
-        fatalError(ERR_ST, "couldn't create temporary file name", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "couldn't create temporary file name", XREF_EXIT_ERR);
 
     // Remember to remove this file at exit
     temporary_filenames = newStringList(temporary_name, temporary_filenames);
@@ -344,14 +344,14 @@ static void emergencyExit(int exitStatus) {
 }
 
 
-void fatalError(int errorCode, char *message, int exitStatus) {
+void fatalError(int errorCode, char *message, int exitStatus, char *file, int line) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
     formatMessage(buffer, errorCode, message);
     if (options.xref2) {
         ppcGenRecord(PPC_FATAL_ERROR, buffer);
     } else {
-        log_error(buffer);
+        log_with_explicit_file_and_line(LOG_ERROR, file, line, buffer);
     }
     emergencyExit(exitStatus);
 }

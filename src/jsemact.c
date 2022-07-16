@@ -674,7 +674,7 @@ static void javaJslLoadSuperClasses(Symbol *cc, int currentParsedFile) {
 
     nestingCount ++;
     if (nestingCount > MAX_CLASSES) {
-        fatalError(ERR_INTERNAL, "unexpected cycle in class hierarchy", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_INTERNAL, "unexpected cycle in class hierarchy", XREF_EXIT_ERR);
     }
     for(ss=cc->u.structSpec->super; ss!=NULL; ss=ss->next) {
         cfAddCastsToModule(cc, ss->element);

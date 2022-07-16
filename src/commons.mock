@@ -28,7 +28,7 @@ void errorMessage(int code, char *message) {
     mock(code, message);
 }
 
-void fatalError(int code, char *message, int exitCode) {
+void fatalError(int code, char *message, int exitCode, char *file, int line) {
     mock(code, message, exitCode);
 }
 

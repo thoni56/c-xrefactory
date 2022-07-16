@@ -34,14 +34,14 @@ int mbMemoryIndex=0;
 
 
 /* This is used unless the fatalError function is set */
-static void fallBackFatalError(int errorCode, char *message, int exitStatus) {
+static void fallBackFatalError(int errorCode, char *message, int exitStatus, char *file, int line) {
     log_fatal("Error code: %d, Message: '%s'", errorCode, message);
     exit(exitStatus);
 }
 
 /* Inject the function to call when fatalErrors occur */
-static void (*fatalError)(int errCode, char *mess, int exitStatus) = fallBackFatalError;
-void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus)) {
+static void (*fatalError)(int errCode, char *mess, int exitStatus, char *file, int line) = fallBackFatalError;
+void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus, char *file, int line)) {
     fatalError = function;
 }
 
@@ -167,7 +167,7 @@ void *stackMemoryAlloc(int size) {
         currentBlock->firstFreeIndex = i+size;
         return &stackMemory[i];
     } else {
-        fatalError(ERR_ST,"i+size > SIZE_stackMemory,\n\tstack memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR);
+        fatalError(ERR_ST,"i+size > SIZE_stackMemory,\n\tstack memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR, __FILE__, __LINE__);
         /* Should not return, but for testing and compilers sake return something */
         return NULL;
     }
@@ -250,7 +250,7 @@ void *dm_allocc(Memory *memory, int count, size_t size) {
         if (memory->overflowHandler != NULL && memory->overflowHandler(count))
             memoryResized();
         else
-            fatalError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR);
+            fatalError(ERR_NO_MEMORY, memory->name, XREF_EXIT_ERR, __FILE__, __LINE__);
     }
     previous_index = memory->index;
     memory->index += (count)*size;
@@ -295,7 +295,7 @@ void *olcx_memory_soft_allocc(int count, size_t elementSize) {
 void *olcx_memory_allocc(int count, size_t elementSize) {
     void *pointer = olcx_memory_soft_allocc(count, elementSize);
     if (pointer==NULL) {
-        fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR);
+        fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR, __FILE__, __LINE__);
     }
     return pointer;
 }

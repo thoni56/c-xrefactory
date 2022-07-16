@@ -459,7 +459,7 @@ static void fatalErrorOnPosition(EditorMarker *p, int errType, char *message) {
     redo = NULL;
     editorUndoUntil(refactoringStartingPoint, &redo);
     ppcGotoMarker(p);
-    fatalError(errType, message, XREF_EXIT_ERR);
+    FATAL_ERROR(errType, message, XREF_EXIT_ERR);
     // unreachable, but do the things properly
     editorApplyUndos(redo, NULL, &editorUndo, GEN_NO_OUTPUT);
 }
@@ -1992,7 +1992,7 @@ static int addStringAsParameter(EditorMarker *pos, EditorMarker *endm, char *fna
             sprintf(tmpBuff,
                     "Something goes wrong, probably different parameter coordinates at different cpp passes.");
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-            fatalError(ERR_INTERNAL, tmpBuff, XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_INTERNAL, tmpBuff, XREF_EXIT_ERR);
             assert(0);
         }
     } else {
@@ -2093,7 +2093,7 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
         } else if (text[m1->offset] == ')') {
             // beyond limite
         } else {
-            fatalError(ERR_INTERNAL,
+            FATAL_ERROR(ERR_INTERNAL,
                        "Something goes wrong, probably different parameter coordinates at different cpp passes.",
                        XREF_EXIT_ERR);
             assert(0);
@@ -2144,7 +2144,7 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
         } else if (text[m1->offset] == ')') {
             // beyond limite
         } else {
-            fatalError(ERR_INTERNAL,
+            FATAL_ERROR(ERR_INTERNAL,
                        "Something goes wrong, probably different parameter coordinates at different cpp passes.",
                        XREF_EXIT_ERR);
             assert(0);
@@ -2584,7 +2584,7 @@ static void reduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegi
                     defaultImportAction = NID_KEPP_FQT_NAME;
                     break;
                 default:
-                    fatalError(ERR_INTERNAL, "wrong continuation code", XREF_EXIT_ERR);
+                    FATAL_ERROR(ERR_INTERNAL, "wrong continuation code", XREF_EXIT_ERR);
                 }
                 if (defaultImportAction <= 1)
                     defaultImportAction++;
@@ -2864,7 +2864,7 @@ static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **_mstart
     // get method limites
     makeSyntaxPassOnSource(point);
     if (parsedPositions[limitIndex].file == noFileIndex || parsedPositions[limitIndex + 1].file == noFileIndex) {
-        fatalError(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
     mstart = editorCreateNewMarkerForPosition(&parsedPositions[limitIndex]);
     mend   = editorCreateNewMarkerForPosition(&parsedPositions[limitIndex + 1]);
@@ -2879,14 +2879,14 @@ static void getNameOfTheClassAndSuperClass(EditorMarker *point, char *ccname, ch
     editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxcurrentclass", NULL);
     if (ccname != NULL) {
         if (parsedInfo.currentClassAnswer[0] == 0) {
-            fatalError(ERR_ST, "can't get class on point", XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_ST, "can't get class on point", XREF_EXIT_ERR);
         }
         strcpy(ccname, parsedInfo.currentClassAnswer);
         javaDotifyClassName(ccname);
     }
     if (supercname != NULL) {
         if (parsedInfo.currentSuperClassAnswer[0] == 0) {
-            fatalError(ERR_ST, "can't get superclass of class on point", XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_ST, "can't get superclass of class on point", XREF_EXIT_ERR);
         }
         strcpy(supercname, parsedInfo.currentSuperClassAnswer);
         javaDotifyClassName(supercname);
@@ -3065,7 +3065,7 @@ static void performMoveClass(EditorMarker *point, EditorMarker *target, EditorMa
     makeSyntaxPassOnSource(point);
     if (parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex ||
         parsedPositions[SPP_CLASS_DECLARATION_END_POSITION].file == noFileIndex) {
-        fatalError(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
     mstart = editorCreateNewMarkerForPosition(&parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION]);
     mend   = editorCreateNewMarkerForPosition(&parsedPositions[SPP_CLASS_DECLARATION_END_POSITION]);
@@ -3952,7 +3952,7 @@ static void encapsulateField(EditorMarker *point) {
     //&editorDumpMarker(point);
     if (parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex ||
         parsedPositions[SPP_CLASS_DECLARATION_END_POSITION].file == noFileIndex) {
-        fatalError(ERR_INTERNAL, "can't deetrmine class coordinates", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_INTERNAL, "can't deetrmine class coordinates", XREF_EXIT_ERR);
     }
 
     cb = editorCreateNewMarkerForPosition(&parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION]);
@@ -4279,11 +4279,11 @@ static void pushDownPullUp(EditorMarker *point, PushPullDirection direction, int
             if (!(tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUPERCLASS, "superclass") &&
                   tpCheckSuperMethodReferencesForPullUp() &&
                   tpCheckMethodReferencesWithApplOnSuperClassForPullUp())) {
-                fatalError(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
             }
         } else {
             if (!(tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUBCLASS, "subclass"))) {
-                fatalError(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
             }
         }
     } else {
@@ -4291,12 +4291,12 @@ static void pushDownPullUp(EditorMarker *point, PushPullDirection direction, int
         if (direction == PULLING_UP) {
             if (!(tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUPERCLASS, "superclass") &&
                   tpPullUpFieldLastPreconditions())) {
-                fatalError(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
             }
         } else {
             if (!(tpCheckTargetToBeDirectSubOrSuperClass(REQ_SUBCLASS, "subclass") &&
                   tpPushDownFieldLastPreconditions())) {
-                fatalError(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
             }
         }
     }
@@ -4337,7 +4337,7 @@ static void pushDownPullUp(EditorMarker *point, PushPullDirection direction, int
         if (direction == PUSHING_DOWN) {
             setMovingPrecheckStandardEnvironment(point, targetFqtName);
             if (!tpCheckSuperMethodReferencesAfterPushDown()) {
-                fatalError(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_INTERNAL, "A trivial precondition failed", XREF_EXIT_ERR);
             }
         }
     }
@@ -4464,7 +4464,7 @@ void refactory() {
     ENTER();
 
     if (options.project == NULL) {
-        fatalError(ERR_ST, "You have to specify active project with -p option", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "You have to specify active project with -p option", XREF_EXIT_ERR);
     }
 
     copyOptionsFromTo(&options, &refactoringOptions); // save command line options !!!!
@@ -4494,7 +4494,7 @@ void refactory() {
 
     buf = NULL;
     if (file == NULL)
-        fatalError(ERR_ST, "no input file", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "no input file", XREF_EXIT_ERR);
 
     buf = editorFindFile(file);
 

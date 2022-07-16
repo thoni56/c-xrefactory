@@ -126,7 +126,7 @@ int CONCAT(HASH_FUN_PREFIX,Add) (
     }
     table->numberOfElements ++;
     if ((table->numberOfElements * 9) / 8 >= table->size) {
-        fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
     }
     table->tab[posid] = element;
     return posid;

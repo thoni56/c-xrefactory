@@ -397,7 +397,7 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
     fill_nestedSpec(&(outer->u.structSpec->nest[n]), inner, memb, accessFlags);
     outer->u.structSpec->nestedCount ++;
     if (outer->u.structSpec->nestedCount >= MAX_INNER_CLASSES) {
-        fatalError(ERR_ST,"number of nested classes overflowed MAX_INNER_CLASSES", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST,"number of nested classes overflowed MAX_INNER_CLASSES", XREF_EXIT_ERR);
     }
 }
 

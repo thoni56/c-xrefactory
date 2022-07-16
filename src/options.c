@@ -320,7 +320,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     if (strlen(dirName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file name %s is too long", dirName);
-        fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
     }
     suff = getFileSuffix(fname);
     // Directories are never in editor buffers...
@@ -536,7 +536,7 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
                 c=readChar(file);
             }
             if (c!='\"' && options.mode!=ServerMode) {
-                fatalError(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
             }
         } else if (c=='`') {
             text[i++]=c;
@@ -773,7 +773,7 @@ void readOptionsFromFile(char *fileName, int *nargc, char ***nargv, char *sectio
 
     file = openFile(fileName,"r");
     if (file==NULL)
-        fatalError(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
     readOptionsFromFileIntoArgs(file, nargc, nargv, ALLOCATE_IN_PP, section, project, realSection);
     closeFile(file);
 }
@@ -784,7 +784,7 @@ void readOptionsFromCommand(char *command, int *outArgc, char ***outArgv, char *
 
     file = popen(command, "r");
     if (file==NULL)
-        fatalError(ERR_CANT_OPEN, command, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, command, XREF_EXIT_ERR);
     readOptionsFromFileIntoArgs(file, outArgc, outArgv, ALLOCATE_IN_PP, section, NULL, realSection);
     closeFile(file);
 }
@@ -1567,7 +1567,7 @@ static bool processMOption(int *argi, int argc, char **argv) {
         int mf;
         sscanf(argv[i]+4, "%d", &mf);
         if (mf<0 || mf>=255) {
-            fatalError(ERR_ST, "memory factor out of range <1,255>", XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_ST, "memory factor out of range <1,255>", XREF_EXIT_ERR);
         }
         options.cxMemoryFactor = mf;
     }
@@ -2356,7 +2356,7 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "unknown option %s, (try c-xref -help)\n", argv[i]);
             if (options.mode==XrefMode) {
-                fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
             } else
                 errorMessage(ERR_ST, tmpBuff);
         }

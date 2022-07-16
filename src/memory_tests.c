@@ -9,7 +9,7 @@
 
 static bool fatalErrorAllowed = false;
 static bool fatalErrorCalled  = false;
-static void myFatalError(int errCode, char *mess, int exitStatus) {
+static void myFatalError(int errCode, char *mess, int exitStatus, char *file, int line) {
     if (!fatalErrorAllowed)
         fail_test("FatalError() called");
     fatalErrorCalled = true;

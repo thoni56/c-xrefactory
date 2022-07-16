@@ -184,7 +184,7 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
             if (options.mode == ServerMode) {
                 errorMessage(ERR_ST, tmpBuff);
             } else {
-                fatalError(ERR_ST, tmpBuff, XREF_EXIT_NO_PROJECT);
+                FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_NO_PROJECT);
             }
         } else if (options.xref2) {
             ppcGenRecord(PPC_NO_PROJECT,file);
@@ -723,7 +723,7 @@ static int power(int x, int y) {
 }
 
 static bool optionsOverflowHandler(int n) {
-    fatalError(ERR_NO_MEMORY, "opiMemory", XREF_EXIT_ERR);
+    FATAL_ERROR(ERR_NO_MEMORY, "opiMemory", XREF_EXIT_ERR);
     return true;
 }
 
@@ -951,7 +951,7 @@ void referencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         }
     }
     if (options.cxrefsLocation == NULL) {
-        fatalError(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
     for (int i=0; i<includeStackPointer; i++) {
         log_trace("inspecting include %d, fileNumber: %d", i, includeStack[i].lexBuffer.buffer.fileNumber);
@@ -987,7 +987,7 @@ void referencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     }
     if (!savingFlag && mess!=LONGJMP_REASON_FILE_ABORT) {
         /* references overflowed, but no whole file readed */
-        fatalError(ERR_NO_MEMORY, "cxMemory", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_NO_MEMORY, "cxMemory", XREF_EXIT_ERR);
     }
     LEAVE();
 }
@@ -1008,7 +1008,7 @@ void getPipedOptions(int *outNargc,char ***outNargv){
             /* We also want a clean exit() if we are going for coverage */
             log_error("Broken pipe");
             exit(-1);
-            fatalError(ERR_INTERNAL, "broken input pipe", XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_INTERNAL, "broken input pipe", XREF_EXIT_ERR);
         }
     }
 }
@@ -1087,7 +1087,7 @@ int main(int argc, char **argv) {
         /* CX_ALLOCC always makes one longjmp back to here before we can
            start processing for real ... Allocating initial CX memory */
         if (cxResizingBlocked) {
-            fatalError(ERR_ST, "cx_memory resizing required, see file TROUBLES",
+            FATAL_ERROR(ERR_ST, "cx_memory resizing required, see file TROUBLES",
                        XREF_EXIT_ERR);
         }
     }

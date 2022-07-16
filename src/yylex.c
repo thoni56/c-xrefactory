@@ -425,7 +425,7 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     }
     includeStack[includeStackPointer] = currentFile;		/* buffers are copied !!!!!!, burk */
     if (includeStackPointer+1 >= INCLUDE_STACK_SIZE) {
-        fatalError(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
     }
     includeStackPointer ++;
     initInput(file, buffer, prepend, name);

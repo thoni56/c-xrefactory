@@ -515,7 +515,7 @@ static void editorLoadFileIntoBufferText(EditorBuffer *buffer, time_t modificati
     file = openFile(fname, "r");
 #endif
     if (file == NULL) {
-        fatalError(ERR_CANT_OPEN, fname, XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_CANT_OPEN, fname, XREF_EXIT_ERR);
     }
     bb = space; ss = bufferSize;
     assert(bb != NULL);
@@ -553,7 +553,8 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
     space = (char *)editorMemory[allocIndex];
     if (space == NULL) {
         space = malloc(allocSize+1);
-        if (space == NULL) fatalError(ERR_NO_MEMORY, "global malloc", XREF_EXIT_ERR);
+        if (space == NULL)
+            FATAL_ERROR(ERR_NO_MEMORY, "global malloc", XREF_EXIT_ERR);
         // put magic
         space[allocSize] = 0x3b;
     } else {
@@ -940,7 +941,7 @@ void editorQuasiSaveModifiedBuffers(void) {
         // be at least one second, otherwise times will be wrong
         currentTime = time(NULL);
         if (lastQuazySaveTime > currentTime+5) {
-            fatalError(ERR_INTERNAL, "last save in the future, travelling in time?", XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_INTERNAL, "last save in the future, travelling in time?", XREF_EXIT_ERR);
         } else if (lastQuazySaveTime >= currentTime) {
             sleep(1+lastQuazySaveTime-currentTime);
         }

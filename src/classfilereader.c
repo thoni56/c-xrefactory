@@ -228,7 +228,7 @@ static void readLocalFileHeader(CharacterBuffer *cb, ZipFileInfo *info, jmp_buf 
     GetZU4(info->unCompressedSize, cb, exception);
     GetZU2(info->fileNameLength, cb, exception);
     if (info->fileNameLength >= MAX_FILE_NAME_SIZE) {
-        fatalError(ERR_INTERNAL, "file name too long", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_INTERNAL, "file name too long", XREF_EXIT_ERR);
     }
     GetZU2(info->extraFieldLength, cb, exception);
     for(int i=0; i<info->fileNameLength; i++) {
@@ -436,7 +436,7 @@ static void readCentralDirectoryFileHeader(CharacterBuffer *cb, ZipFileInfo *inf
     GetZU4(info->unCompressedSize, cb, exception);
     GetZU2(info->fileNameLength, cb, exception);
     if (info->fileNameLength >= MAX_FILE_NAME_SIZE) {
-        fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
+        FATAL_ERROR(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
     }
     GetZU2(info->extraFieldLength, cb, exception);
     GetZU2(info->fileCommentLength, cb, exception);
@@ -727,7 +727,7 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
         default: {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"unexpected tag %d in constant pool of %s", tag, currentFile.fileName);
-            fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+            FATAL_ERROR(ERR_ST, tmpBuff, XREF_EXIT_ERR);
         }
         }
     }
@@ -1244,7 +1244,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
             symbol->u.structSpec->nestedCount = inum;
             // TODO: replace the inner tab by inner list
             if (inum >= MAX_INNER_CLASSES) {
-                fatalError(ERR_ST,"number of nested classes overflowed over MAX_INNERS_CLASSES", XREF_EXIT_ERR);
+                FATAL_ERROR(ERR_ST,"number of nested classes overflowed over MAX_INNERS_CLASSES", XREF_EXIT_ERR);
             }
             symbol->u.structSpec->nest = NULL;
             if (inum > 0) {

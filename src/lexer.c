@@ -665,10 +665,10 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             case '\n':
                 column = columnPosition(cb);
                 if (column >= MAX_REFERENCABLE_COLUMN) {
-                    fatalError(ERR_ST, "position over MAX_REFERENCABLE_COLUMN, read TROUBLES in README file", XREF_EXIT_ERR);
+                    FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_COLUMN, read TROUBLES in README file", XREF_EXIT_ERR);
                 }
                 if (cb->lineNumber >= MAX_REFERENCABLE_LINE) {
-                    fatalError(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file", XREF_EXIT_ERR);
+                    FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file", XREF_EXIT_ERR);
                 }
                 cb->lineNumber ++;
                 cb->lineBegin = cb->nextUnread;

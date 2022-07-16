@@ -27,7 +27,7 @@
 #include "symbol.mock"
 #include "symboltable.mock"
 
-void myFatalError(int errCode, char *mess, int exitStatus) {
+void myFatalError(int errCode, char *mess, int exitStatus, char *file, int line) {
     fail_test("Fatal Error");
 }
 
