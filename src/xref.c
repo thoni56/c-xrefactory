@@ -335,7 +335,7 @@ finish:
             } else {
                 log_info("Generating '%s'", options.cxrefsLocation);
             }
-            generateReferenceFile();
+            generateReferences();
         }
     } else if (options.serverOperation == OLO_ABOUT) {
         aboutMessage();

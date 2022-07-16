@@ -17,7 +17,7 @@ extern void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason);
 extern void checkExactPositionUpdate(bool printMessage);
 //------
 
-extern void generateReferenceFile(void);
+extern void generateReferences(void);
 
 extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);
 extern void getPipedOptions(int *outNargc,char ***outNargv);

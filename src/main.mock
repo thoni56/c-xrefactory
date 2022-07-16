@@ -59,6 +59,6 @@ void checkExactPositionUpdate(bool printMessage) {
     mock(printMessage);
 }
 
-void generateReferenceFile(void) {
+void generateReferences(void) {
     mock();
 }

@@ -127,7 +127,7 @@ static char *getNextCommandLineFile(int *indexP) {
     return getNextInputFileFromFileTable(indexP, FILE_IS_ARGUMENT);
 }
 
-void generateReferenceFile(void) {
+void generateReferences(void) {
     static bool updateFlag = false;  /* TODO: WTF - why do we need a
                                         static updateFlag? Maybe we
                                         need to know that we have
@@ -987,7 +987,7 @@ void referencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
     if (options.mode==XrefMode)
-        generateReferenceFile();
+        generateReferences();
     recoverMemoriesAfterOverflow(cxMemFreeBase);
 
     /* ************ start with CXREFS and memories clean ************ */
