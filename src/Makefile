@@ -51,9 +51,7 @@ MAKEFLAGS += --no-print-directory
 
 WARNINGS = -Wall -Wno-char-subscripts -Werror
 
-GIT_HASH = $(shell git describe --abbrev=5 --always --tags --dirty)
-
-CFLAGS = -g -Og $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) -DGIT_HASH=\"$(GIT_HASH)\" $(EXTRA_CFLAGS)
+CFLAGS = -g -Og $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
 
 LDFLAGS = $(COVERAGE)
 
@@ -138,6 +136,9 @@ chcheck:
 #########################################################################
 include sources.mk
 
+GIT_HASH = $(shell git describe --abbrev=5 --always --tags --dirty)
+$(OBJDIR)/main.o: CFLAGS += -DGIT_HASH=\"$(GIT_HASH)\"
+
 .PHONY: build
 build: c-xref
 	$(MAKE) -C ../editors/emacs
@@ -213,9 +214,9 @@ java_parser.tokens: java_parser.y
 	cat java_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > java_parser.tokens
 
 # Ensure they are extracted by making the parser object files dependent on them
-$(OBJECTS)/c_parser.tab.o : c_parser.tokens
-$(OBJECTS)/yacc_parser.tab.o : yacc_parser.tokens
-$(OBJECTS)/java_parser.tab.o : java_parser.tokens
+$(OBJDIR)/c_parser.tab.o : c_parser.tokens
+$(OBJDIR)/yacc_parser.tab.o : yacc_parser.tokens
+$(OBJDIR)/java_parser.tab.o : java_parser.tokens
 
 # And compare the three token sections to ensure that they are exactly the same
 .PHONY: check-tokens
