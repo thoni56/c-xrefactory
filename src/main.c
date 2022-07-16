@@ -123,7 +123,7 @@ char *getNextScheduledFile(int *indexP) {
     return getNextInputFileFromFileTable(indexP, FILE_IS_SCHEDULED);
 }
 
-static char *getNextCommandLineFile(int *indexP) {
+static char *getNextArgumentFile(int *indexP) {
     return getNextInputFileFromFileTable(indexP, FILE_IS_ARGUMENT);
 }
 
@@ -880,7 +880,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     // enclosed in cache point, because of persistent #define in XrefEdit. WTF?
     argcount = 0;
-    inputFilename = cmdlnInputFile = getNextCommandLineFile(&argcount);
+    inputFilename = cmdlnInputFile = getNextArgumentFile(&argcount);
     if (inputFilename==NULL) {
         ss = strmcpy(temp, cwd);
         if (ss!=temp && ss[-1] == FILE_PATH_SEPARATOR)
