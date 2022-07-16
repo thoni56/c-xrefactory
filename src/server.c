@@ -163,6 +163,12 @@ static char *presetEditServerFileDependingStatics(void) {
     return fileName;
 }
 
+static void closeInputFile(void) {
+    if (currentFile.lexBuffer.buffer.file!=stdin) {
+        closeCharacterBuffer(&currentFile.lexBuffer.buffer);
+    }
+}
+
 static void editServerParseInputFile(bool *firstPass, bool inputIn) {
     if (inputIn) {
         if (options.serverOperation!=OLO_TAG_SEARCH && options.serverOperation!=OLO_PUSH_NAME) {

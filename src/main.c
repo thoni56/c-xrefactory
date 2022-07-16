@@ -550,6 +550,7 @@ static void getAndProcessXrefrcOptions(char *dffname, char *dffsect, char *proje
     }
 }
 
+// extern for xref.c extraction
 void checkExactPositionUpdate(bool printMessage) {
     if (options.update == UPDATE_FAST && options.exactPositionResolve) {
         options.update = UPDATE_FULL;
@@ -1032,12 +1033,6 @@ void mainOpenOutputFile(char *outfile) {
     }
     errOut = communicationChannel;
     dumpOut = communicationChannel;
-}
-
-void closeInputFile(void) {
-    if (currentFile.lexBuffer.buffer.file!=stdin) {
-        closeCharacterBuffer(&currentFile.lexBuffer.buffer);
-    }
 }
 
 /* initLogging() is called as the first thing in main() so we look for log command line options here */

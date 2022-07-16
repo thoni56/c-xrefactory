@@ -10,9 +10,9 @@ extern void aboutMessage(void);
 // Required for server.c extraction...
 extern bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
                                           Language *outLanguage);
-extern void closeInputFile(void);
 //------
-#include "filetable.h"
+
+// Required for xref.c extraction
 extern void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason);
 extern void checkExactPositionUpdate(bool printMessage);
 //------
