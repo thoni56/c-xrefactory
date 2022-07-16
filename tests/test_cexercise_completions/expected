@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <goto>
- <position-lc line=23 col=5 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+ <position-lc line=20 col=5 len=<n>>CURDIR/cexercise/index.c</position-lc>
 </goto>
 -xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=927 CURDIR/cexercise/completions.c
 end-of-options

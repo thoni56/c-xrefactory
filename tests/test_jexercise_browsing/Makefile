@@ -1,4 +1,5 @@
-# Automated tests for Java exercise: completions()
+# This test requires generating the refs before, wonder if this is
+# always the case with browsing operations?
 
 include ../Makefile.boilerplate
 

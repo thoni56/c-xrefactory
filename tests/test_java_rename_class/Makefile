@@ -2,7 +2,7 @@ include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
 
-$(TEST): CXrefs
+$(TEST): .c-xrefrc
 	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@$(VERIFY)
@@ -10,14 +10,8 @@ $(TEST): CXrefs
 gdb:
 	gdb --args `cat commands.input`
 
-CXrefs: .c-xrefrc
-	@# Files in the jexercise subdir
-	@sed -e s:$(CURDIR)$$:$(CURDIR)/jexercise: .c-xrefrc > .c-xrefrc.tmp
-	@mv .c-xrefrc.tmp .c-xrefrc
-	@$(CXREF) -create -o $(TEST).log
+run:
+	$(COMMAND) -o server-buffer
 
 clean:
 	rm -rf CXrefs .c-xrefrc
-
-run:
-	$(COMMAND) -o server-buffer
