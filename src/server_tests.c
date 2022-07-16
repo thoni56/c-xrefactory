@@ -38,6 +38,7 @@
 #include "symboltable.mock"
 #include "type.mock"
 #include "yylex.mock"
+#include "refactorings.mock"
 
 Describe(Server);
 BeforeEach(Server) {

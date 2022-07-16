@@ -127,8 +127,6 @@ typedef enum language {
 
 #define MAXIMAL_INT             ((int) (((unsigned) -2)>>1))
 
-#define MAX_AVAILABLE_REFACTORINGS 500
-
 /* ********************************************************************** */
 /*            common integer return values for cplex funs                 */
 /* TODO: Turn into an enum and change return types, also see RESULT_OK/ERR in proto.h */

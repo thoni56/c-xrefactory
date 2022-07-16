@@ -28,6 +28,7 @@
 #include "parsers.mock"
 #include "ppc.mock"
 #include "refactory.mock"
+#include "refactorings.mock"
 #include "reftab.mock"
 #include "symbol.mock"
 #include "yylex.mock"

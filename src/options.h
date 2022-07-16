@@ -57,7 +57,7 @@ typedef struct options {
     int parnum2;
     char *refpar1;
     char *refpar2;
-    Refactorings theRefactoring;
+    Refactoring theRefactoring;
     bool briefoutput;
     char *renameTo;
     Mode refactoringMode;

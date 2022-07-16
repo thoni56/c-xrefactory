@@ -1,6 +1,10 @@
 #ifndef REFACTORINGS_H_INCLUDED
 #define REFACTORINGS_H_INCLUDED
 
+#include <stdbool.h>
+
+#define MAX_AVAILABLE_REFACTORINGS 500
+
 typedef enum Refactorings {
     AVR_NO_REFACTORING = 0,
     AVR_RENAME_SYMBOL = 10,
@@ -33,6 +37,13 @@ typedef enum Refactorings {
     AVR_SET_MOVE_TARGET = 280,
     AVR_UNDO = 290,
     AVR_MAX_AVAILABLE_REFACTORINGS = 300
-} Refactorings;
+} Refactoring;
+
+
+extern void clearAvailableRefactorings(void);
+extern void makeRefactoringAvailable(Refactoring refactoring, char *option);
+extern bool isRefactoringAvailable(Refactoring refactoring);
+extern int  availableRefactoringsCount(void);
+extern char *availableRefactoringOptionFor(Refactoring refactoring);
 
 #endif
