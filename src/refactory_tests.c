@@ -20,6 +20,7 @@
 #include "ppc.mock"
 #include "reftab.mock"
 #include "server.mock"
+#include "xref.mock"
 
 Describe(Refactory);
 BeforeEach(Refactory) {

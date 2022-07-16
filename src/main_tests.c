@@ -46,15 +46,6 @@ BeforeEach(Main) {
 }
 AfterEach(Main) {}
 
-Ensure(Main, mainCallXref_without_input_files_gives_error_message) {
-    expect(getNextExistingFileIndex, will_return(-1));
-    expect(errorMessage);
-
-    cxMemoryOverflowHandler(0); /* Implicitly allocate and init cxMemory */
-
-    mainCallXref(0, NULL);
-}
-
 xEnsure(Main, can_handle_cxMemory_overflow) {
     cxMemoryOverflowHandler(0);            /* Implicitly allocate and init cxMemory */
     cxMemory->index = cxMemory->size - 10; /* Simulate memory almost out */

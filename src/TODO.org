@@ -8,7 +8,9 @@ There are a *lot* of things to do to make c-xref into modern C.
 Current Mikado:
 * TRYING Break out xref from main.c
 ** DONE Move xref() to new file xref.c
-** TRY Move mainCallXref() to xref.c
+** DONE Move mainCallXref() to xref.c
+*** DONE scheduleModifiedFilesToUpdate(void) etc.
+
 
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct

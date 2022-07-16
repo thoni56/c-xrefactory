@@ -26,10 +26,6 @@ int mainHandleSetOption(int argc, char **argv, int i) {
   return (int) mock(argc, argv, i);
 }
 
-void mainCallXref(int argc, char **argv) {
-  mock(argc, argv);
-}
-
 void mainTaskEntryInitialisations(int argc, char **argv) {
   mock(argc, argv);
 }
@@ -52,4 +48,17 @@ bool fileProcessingInitialisations(bool *firstPass,
                                    Language *outLanguage
 ) {
     return (bool)mock(firstPass, argc, argv, nargc, nargv, outLanguage);
+}
+
+// xref.c extraction
+void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
+    mock(cxMemFreeBase, reason);
+}
+
+void scheduleModifiedFilesToUpdate(void) {
+    mock();
+}
+
+void generateReferenceFile(void) {
+    mock();
 }

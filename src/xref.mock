@@ -2,6 +2,10 @@
 
 #include "xref.h"
 
+void mainCallXref(int argc, char **argv) {
+  mock(argc, argv);
+}
+
 void xref(int argc, char **argv) {
     mock(argc, argv);
 }

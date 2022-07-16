@@ -1,6 +1,4 @@
 #include <cgreen/cgreen.h>
-#include <cgreen/constraint_syntax_helpers.h>
-#include <linux/limits.h>
 
 #include "server.h"
 

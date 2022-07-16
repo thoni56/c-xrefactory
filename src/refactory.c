@@ -30,6 +30,7 @@
 #include "reftab.h"
 #include "server.h"
 #include "yylex.h"
+#include "xref.h"
 
 #include "log.h"
 
