@@ -505,72 +505,72 @@ static void expandEnvironmentVariables(char *original, int availableSize, int *l
    something else if not.  TODO: hide this fact from caller, return
    either text or EOF (probably as a bool return value instead) */
 int getOptionFromFile(FILE *file, char *text, int *chars_read) {
-    int i, c;
-    int res;
-    bool comment;
+    int count, ch;
+    int lastCharacter;
+    bool inComment;
     bool quoteInOption;
 
-    c = readChar(file);
+    ch = readChar(file);
     do {
         quoteInOption = false;
-        *chars_read = i = 0;
-        comment = false;
+        *chars_read = count = 0;
+        inComment = false;
 
         /* Skip all white space? */
-        while ((c>=0 && c<=' ') || c=='\n' || c=='\t')
-            c=readChar(file);
+        while ((ch>=0 && ch<=' ') || ch=='\n' || ch=='\t')
+            ch=readChar(file);
 
-        if (c==EOF) {
-            res = EOF;
+        if (ch==EOF) {
+            lastCharacter = EOF;
             goto fini;
         }
 
-        if (c=='\"') {
+        if (ch=='\"') {
             /* Read a double quoted string */
-            c=readChar(file);
+            ch=readChar(file);
             // Escaping the double quote (\") is not allowed, it creates problems
             // when someone finished a section name by \ reverse slash
-            while (c!=EOF && c!='\"') {
-                if (i < MAX_OPTION_LEN-1)
-                    text[i++]=c;
-                c=readChar(file);
+            while (ch!=EOF && ch!='\"') {
+                if (count < MAX_OPTION_LEN-1)
+                    text[count++]=ch;
+                ch=readChar(file);
             }
-            if (c!='\"' && options.mode!=ServerMode) {
+            if (ch!='\"' && options.mode!=ServerMode) {
                 FATAL_ERROR(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
             }
-        } else if (c=='`') {
-            text[i++]=c;
-            c=readChar(file);
-            while (c!=EOF && c!='\n' && c!='`') {
-                if (i < MAX_OPTION_LEN-1)
-                    text[i++]=c;
-                c=readChar(file);
+        } else if (ch=='`') {
+            text[count++]=ch;
+            ch=readChar(file);
+            while (ch!=EOF && ch!='\n' && ch!='`') {
+                if (count < MAX_OPTION_LEN-1)
+                    text[count++]=ch;
+                ch=readChar(file);
             }
-            if (i < MAX_OPTION_LEN-1)
-                text[i++]=c;
-            if (c!='`'  && options.mode!=ServerMode) {
+            if (count < MAX_OPTION_LEN-1)
+                text[count++]=ch;
+            if (ch!='`'  && options.mode!=ServerMode) {
                 errorMessage(ERR_ST, "option string through end of line");
             }
-        } else if (c=='[') {
-            text[i++] = c;
-            c=readChar(file);
-            while (c!=EOF && c!='\n' && c!=']') {
-                if (i < MAX_OPTION_LEN-1)
-                    text[i++]=c;
-                c=readChar(file);
+        } else if (ch=='[') {
+            text[count++] = ch;
+            ch=readChar(file);
+            while (ch!=EOF && ch!='\n' && ch!=']') {
+                if (count < MAX_OPTION_LEN-1)
+                    text[count++]=ch;
+                ch=readChar(file);
             }
-            if (c==']')
-                text[i++]=c;
+            if (ch==']')
+                text[count++]=ch;
         } else {
-            while (c!=EOF && c>' ') {
-                if (c=='\"')
+            while (ch!=EOF && ch>' ') {
+                if (ch=='\"')
                     quoteInOption = true;
-                if (i < MAX_OPTION_LEN-1)
-                    text[i++]=c;
-                c=readChar(file);
+                if (count < MAX_OPTION_LEN-1)
+                    text[count++]=ch;
+                ch=readChar(file);
             }
         }
-        text[i]=0;
+        text[count]=0;
         if (quoteInOption && options.mode!=ServerMode) {
             static bool messageWritten = false;
             if (! messageWritten) {
@@ -581,23 +581,23 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
             }
         }
         /* because QNX paths can start with // */
-        if (i>=2 && text[0]=='/' && text[1]=='/') {
-            while (c!=EOF && c!='\n')
-                c=readChar(file);
-            comment = true;
+        if (count>=2 && text[0]=='/' && text[1]=='/') {
+            while (ch!=EOF && ch!='\n')
+                ch=readChar(file);
+            inComment = true;
         }
-    } while (comment);
+    } while (inComment);
     if (strcmp(text, END_OF_OPTIONS_STRING)==0) {
-        i = 0; res = EOF;
+        count = 0; lastCharacter = EOF;
     } else {
-        res = 'A';
+        lastCharacter = 'A';
     }
 
  fini:
-    text[i] = 0;
-    *chars_read = i;
+    text[count] = 0;
+    *chars_read = count;
 
-    return res;
+    return lastCharacter;
 }
 
 static void processSingleSectionMarker(char *path, char *section,
@@ -688,27 +688,28 @@ static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, c
 }
 
 bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
-                                 char *section, char *project, char *resSection) {
+                                 char *section, char *project, char *resultingSection) {
     char optionText[MAX_OPTION_LEN];
-    int len, argc, c, passn=0;
+    int len, argc, ch, passNumber=0;
     bool isActiveSection, isActivePass;
     bool found = false;
     char **aargv, *argv[MAX_STD_ARGS];
 
     ENTER();
 
-    argc = 1; aargv=NULL;
+    argc = 1;
+    aargv=NULL;
     isActiveSection = isActivePass = true;
-    resSection[0]=0;
+    resultingSection[0]=0;
 
     if (memoryKind == ALLOCATE_IN_SM)
         SM_INIT(optMemory);
 
-    c = 'a';                    /* Something not EOF */
-    while (c!=EOF) {
-        c = getOptionFromFile(file, optionText, &len);
+    ch = 'a';                    /* Something not EOF */
+    while (ch!=EOF) {
+        ch = getOptionFromFile(file, optionText, &len);
         assert(strlen(optionText) == len);
-        if (c==EOF) {
+        if (ch==EOF) {
             log_trace("got option from file (@EOF): '%s'", optionText);
         } else {
             log_trace("got option from file: '%s'", optionText);
@@ -717,24 +718,24 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
             log_trace("checking '%s'", optionText);
             expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
             log_trace("expanded '%s'", optionText);
-            processSectionMarker(optionText, len+1, project, section, &isActiveSection, resSection);
+            processSectionMarker(optionText, len+1, project, section, &isActiveSection, resultingSection);
         } else if (isActiveSection && strncmp(optionText, "-pass", 5) == 0) {
-            sscanf(optionText+5, "%d", &passn);
-            isActivePass = passn==currentPass || currentPass==ANY_PASS;
-            if (passn > maxPasses)
-                maxPasses = passn;
+            sscanf(optionText+5, "%d", &passNumber);
+            isActivePass = passNumber==currentPass || currentPass==ANY_PASS;
+            if (passNumber > maxPasses)
+                maxPasses = passNumber;
         } else if (strcmp(optionText,"-set")==0 && (isActiveSection && isActivePass) && memoryKind!=DONT_ALLOCATE) {
             // pre-evaluation of -set
             found = true;
             if (memoryKind != DONT_ALLOCATE) {
                 argc = addOptionToArgs(memoryKind, optionText, argc, argv);
             }
-            c = getOptionFromFile(file, optionText, &len);
+            ch = getOptionFromFile(file, optionText, &len);
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             if (memoryKind != DONT_ALLOCATE) {
                 argc = addOptionToArgs(memoryKind, optionText, argc, argv);
             }
-            c = getOptionFromFile(file, optionText, &len);
+            ch = getOptionFromFile(file, optionText, &len);
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             if (memoryKind != DONT_ALLOCATE) {
                 argc = addOptionToArgs(memoryKind, optionText, argc, argv);
@@ -743,7 +744,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
                 assert(argc >= 3);
                 mainHandleSetOption(argc, argv, argc - 3);
             }
-        } else if (c != EOF && (isActiveSection && isActivePass)) {
+        } else if (ch != EOF && (isActiveSection && isActivePass)) {
             found = true;
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             if (memoryKind != DONT_ALLOCATE) {

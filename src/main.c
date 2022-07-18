@@ -144,6 +144,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
     getXrefrcFileName(options_filename);
     options_file = openFile(options_filename, "r");
     if (options_file != NULL) {
+        // TODO: This reads all arguments, when we only want to know if there is a matching project there?
         found = readOptionsFromFileIntoArgs(options_file, &nargc, &nargv, DONT_ALLOCATE, filename, options.project, section);
         if (found) {
             log_debug("options file '%s' section '%s' found", options_filename, section);

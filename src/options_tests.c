@@ -3,6 +3,7 @@
 #include <cgreen/mocks.h>
 
 #include "filetable.h"
+#include "globals.h"
 #include "log.h"
 #include "options.h"
 
@@ -16,6 +17,7 @@
 #include "main.mock"
 #include "misc.mock"
 #include "ppc.mock"
+#include "proto.h"
 #include "yylex.mock"
 
 static bool optionsOverflowHandler() {
@@ -71,8 +73,20 @@ Ensure(Options, can_get_java_class_and_source_paths) {
 
 extern int getOptionFromFile(FILE *file, char *text, int *chars_read);
 
-Ensure(Options, can_read_a_normal_option_string) {
-    char option_string[]         = "this is a double quoted option";
+Ensure(Options, will_return_eof_when_end_of_file_and_nothing_read) {
+    FILE *someFile = NULL;
+    char option_string_read[MAX_OPTION_LEN];
+    int chars_read;
+
+    expect(readChar, will_return(EOF));
+
+    assert_that(getOptionFromFile(someFile, option_string_read, &chars_read), is_equal_to(EOF));
+    assert_that(strlen(option_string_read), is_equal_to(0));
+    assert_that(chars_read, is_equal_to(0));
+}
+
+Ensure(Options, can_read_a_normal_option_string_delimited_by_a_space) {
+    char option_string[]         = "this <- is delimited by a space";
     char expected_option_value[] = "this";
     char option_string_read[MAX_OPTION_LEN];
     int  len;
@@ -80,8 +94,7 @@ Ensure(Options, can_read_a_normal_option_string) {
     for (int i = 0; i <= 4; i++)
         expect(readChar, will_return(option_string[i]));
 
-    getOptionFromFile(NULL, option_string_read, &len);
-
+    assert_that(getOptionFromFile(NULL, option_string_read, &len), is_not_equal_to(EOF));
     assert_that(len, is_equal_to(strlen(expected_option_value)));
     assert_that(option_string_read, is_equal_to_string(expected_option_value));
 }
@@ -233,4 +246,18 @@ Ensure(Options, can_parse_xrefrc_option_with_filename_separate) {
 
     processOptions(3, argv, DONT_PROCESS_FILE_ARGUMENTS);
     assert_that(options.xrefrc, is_equal_to_string("abc"));
+}
+
+Ensure(Options, can_call_readOptionsFromFileIntoArgs) {
+    FILE *file = NULL;
+    int nargc;
+    char **nargv[1000];
+    MemoryKind memFl = ALLOCATE_IN_SM;
+    char project[1000];
+    char section[1000];
+    char resSection[1000];
+
+    expect(readChar, will_return(EOF));
+
+    readOptionsFromFileIntoArgs(file, &nargc, nargv, memFl, section, project, resSection);
 }
