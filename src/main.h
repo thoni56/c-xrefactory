@@ -4,8 +4,6 @@
 #include "proto.h"
 #include "options.h"
 
-// TODO: Where does this belong?
-extern void aboutMessage(void);
 
 // Required for server.c extraction...
 extern bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
@@ -20,7 +18,6 @@ extern void checkExactPositionUpdate(bool printMessage);
 extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
 
-extern char *getNextScheduledFile(int *fArgCount);
 extern void writeRelativeProgress(int progress);
 
 extern int mainHandleSetOption(int argc, char **argv, int i );

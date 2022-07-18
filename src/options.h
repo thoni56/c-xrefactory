@@ -160,7 +160,11 @@ extern Options refactoringOptions; // xref -refactory command line options
 extern Options savedOptions;
 extern Options presetOptions;
 
+
 /* FUNCTIONS */
+
+extern void aboutMessage(void);
+
 extern void xrefSetenv(char *name, char *val);
 
 extern void dirInputFile(MAP_FUN_SIGNATURE);

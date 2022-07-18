@@ -137,7 +137,7 @@ chcheck:
 include sources.mk
 
 GIT_HASH = $(shell git describe --abbrev=5 --always --tags --dirty)
-$(OBJDIR)/main.o: CFLAGS += -DGIT_HASH=\"$(GIT_HASH)\"
+$(OBJDIR)/options.o: CFLAGS += -DGIT_HASH=\"$(GIT_HASH)\"
 
 .PHONY: build
 build: c-xref

@@ -45,6 +45,11 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
 } FileItem;
 
 
+typedef enum {
+    FILE_IS_SCHEDULED,
+    FILE_IS_ARGUMENT
+} FileSource;
+
 #define HASH_TAB_NAME fileTable
 #define HASH_TAB_TYPE FileTable
 #define HASH_ELEM_TYPE FileItem
@@ -80,5 +85,7 @@ extern void mapOverFileTable(void (*fun)(FileItem *));
 extern void mapOverFileTableWithIndex(void (*fun)(FileItem *, int));
 extern void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer);
 
+extern char *getNextScheduledFile(int *indexP);
+extern char *getNextArgumentFile(int *indexP);
 
 #endif

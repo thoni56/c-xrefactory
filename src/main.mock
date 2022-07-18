@@ -2,20 +2,12 @@
 #include "main.h"
 #include <cgreen/mocks.h>
 
-void aboutMessage(void) {
-    mock();
-}
-
 void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
   mock(filename, options_filename, section);
 }
 
 void getPipedOptions(int *outNargc, char ***outNargv) {
   mock(outNargc, outNargv);
-}
-
-char *getNextScheduledFile(int *fArgCount) {
-  return (char *) mock(fArgCount);
 }
 
 void writeRelativeProgress(int progress) {

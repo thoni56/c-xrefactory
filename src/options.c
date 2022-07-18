@@ -166,6 +166,28 @@ static char base[MAX_FILE_NAME_SIZE];
 #define ENV_DEFAULT_VAR_SUPER_CLASS     "${__super}"
 
 
+void aboutMessage(void) {
+    char output[REFACTORING_TMP_STRING_SIZE];
+    sprintf(output, "C-xrefactory version %s\n", C_XREF_VERSION_NUMBER);
+    sprintf(output+strlen(output), "Compiled at %s on %s\n",  __TIME__, __DATE__);
+    sprintf(output+strlen(output), "from git revision %s.\n", GIT_HASH);
+    sprintf(output+strlen(output), "(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
+    sprintf(output+strlen(output), "Released into GPL 2009 by Marian Vittek (SourceForge)\n");
+    sprintf(output+strlen(output), "Work resurrected and continued by Thomas Nilefalk 2015-\n");
+    sprintf(output+strlen(output), "(https://github.com/thoni56/c-xrefactory)\n");
+    if (options.exit) {
+        sprintf(output+strlen(output), "Exiting!");
+    }
+    if (options.xref2) {
+        ppcGenRecord(PPC_INFORMATION, output);
+    } else {
+        fprintf(stdout, "%s", output);
+    }
+    if (options.exit)
+        exit(XREF_EXIT_BASE);
+}
+
+
 void xrefSetenv(char *name, char *val) {
     SetGetEnv *sge;
     int j, n;
@@ -601,7 +623,7 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
 }
 
 static void processSingleSectionMarker(char *path, char *section,
-                                       bool *writeFlagP, char *resSection) {
+                                       bool *writeFlagP, char *resultingSection) {
     int length;
     bool casesensitivity=true;
 
@@ -611,9 +633,9 @@ static void processSingleSectionMarker(char *path, char *section,
 #endif
     if (pathncmp(path, section, length, casesensitivity)==0
         && (section[length]=='/' || section[length]=='\\' || section[length]==0)) {
-        if (length > strlen(resSection)) {
-            strcpy(resSection,path);
-            assert(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
+        if (length > strlen(resultingSection)) {
+            strcpy(resultingSection,path);
+            assert(strlen(resultingSection)+1 < MAX_FILE_NAME_SIZE);
         }
         *writeFlagP = true;
     } else {

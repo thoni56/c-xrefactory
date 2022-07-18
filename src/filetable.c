@@ -135,3 +135,30 @@ void mapOverFileTableWithPointer(void (*fun)(FileItem *, void *), void *pointer)
 int lookupFileTable(char *fileName) {
     return fileTableLookup(&fileTable, fileName);
 }
+
+static char *getNextInputFileFromFileTable(int *indexP, FileSource wantedFileSource) {
+    int         i;
+    FileItem  *fileItem;
+
+    for (i = getNextExistingFileIndex(*indexP); i != -1; i = getNextExistingFileIndex(i+1)) {
+        fileItem = getFileItem(i);
+        assert(fileItem!=NULL);
+        if (wantedFileSource==FILE_IS_SCHEDULED && fileItem->isScheduled)
+            break;
+        if (wantedFileSource==FILE_IS_ARGUMENT && fileItem->isArgument)
+            break;
+    }
+    *indexP = i;
+    if (i != -1)
+        return fileItem->name;
+    else
+        return NULL;
+}
+
+char *getNextScheduledFile(int *indexP) {
+    return getNextInputFileFromFileTable(indexP, FILE_IS_SCHEDULED);
+}
+
+char *getNextArgumentFile(int *indexP) {
+    return getNextInputFileFromFileTable(indexP, FILE_IS_ARGUMENT);
+}

@@ -48,28 +48,6 @@ static int oldLanguage;
 static int oldPass;
 
 
-void aboutMessage(void) {
-    char output[REFACTORING_TMP_STRING_SIZE];
-    sprintf(output, "C-xrefactory version %s\n", C_XREF_VERSION_NUMBER);
-    sprintf(output+strlen(output), "Compiled at %s on %s\n",  __TIME__, __DATE__);
-    sprintf(output+strlen(output), "from git revision %s.\n", GIT_HASH);
-    sprintf(output+strlen(output), "(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
-    sprintf(output+strlen(output), "Released into GPL 2009 by Marian Vittek (SourceForge)\n");
-    sprintf(output+strlen(output), "Work resurrected and continued by Thomas Nilefalk 2015-\n");
-    sprintf(output+strlen(output), "(https://github.com/thoni56/c-xrefactory)\n");
-    if (options.exit) {
-        sprintf(output+strlen(output), "Exiting!");
-    }
-    if (options.xref2) {
-        ppcGenRecord(PPC_INFORMATION, output);
-    } else {
-        fprintf(stdout, "%s", output);
-    }
-    if (options.exit)
-        exit(XREF_EXIT_BASE);
-}
-
-
 #define NEXT_ARG(i) {                                                   \
     char tmpBuff[TMP_BUFF_SIZE];                                        \
     i++;                                                                \
@@ -94,38 +72,6 @@ int mainHandleSetOption(int argc, char **argv, int i ) {
 
 /* *************************************************************************** */
 
-typedef enum {
-    FILE_IS_SCHEDULED,
-    FILE_IS_ARGUMENT
-} FileSource;
-
-
-static char *getNextInputFileFromFileTable(int *indexP, FileSource wantedFileSource) {
-    int         i;
-    FileItem  *fileItem;
-
-    for (i = getNextExistingFileIndex(*indexP); i != -1; i = getNextExistingFileIndex(i+1)) {
-        fileItem = getFileItem(i);
-        assert(fileItem!=NULL);
-        if (wantedFileSource==FILE_IS_SCHEDULED && fileItem->isScheduled)
-            break;
-        if (wantedFileSource==FILE_IS_ARGUMENT && fileItem->isArgument)
-            break;
-    }
-    *indexP = i;
-    if (i != -1)
-        return fileItem->name;
-    else
-        return NULL;
-}
-
-char *getNextScheduledFile(int *indexP) {
-    return getNextInputFileFromFileTable(indexP, FILE_IS_SCHEDULED);
-}
-
-static char *getNextArgumentFile(int *indexP) {
-    return getNextInputFileFromFileTable(indexP, FILE_IS_ARGUMENT);
-}
 
 void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
     int fileno;

@@ -34,6 +34,14 @@ int getNextExistingFileIndex(int index) {
     return (int)mock(index);
 }
 
+char *getNextScheduledFile(int *fArgCount) {
+  return (char *) mock(fArgCount);
+}
+
+char *getNextArgumentFile(int *fArgCount) {
+  return (char *) mock(fArgCount);
+}
+
 void mapOverFileTable(void (*fun)(FileItem *)) {
     mock(fun);
 }
