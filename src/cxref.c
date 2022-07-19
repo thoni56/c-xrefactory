@@ -4282,7 +4282,7 @@ void mainAnswerEditAction(void) {
             } else {
                 ifname = getFileItem(olOriginalComFileNumber)->name;
                 log_trace("ifname = %s", ifname);
-                searchDefaultOptionsFile(ifname, dffname, dffsect);
+                searchStandardOptionsFileFor(ifname, dffname, dffsect);
                 if (dffname[0]==0 || dffsect[0]==0) {
                     if (options.noErrors) {
                         if (!options.xref2)

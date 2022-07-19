@@ -2,7 +2,7 @@
 #include "main.h"
 #include <cgreen/mocks.h>
 
-void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
+void searchStandardOptionsFileFor(char *filename, char *options_filename, char *section) {
   mock(filename, options_filename, section);
 }
 

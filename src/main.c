@@ -73,27 +73,27 @@ int mainHandleSetOption(int argc, char **argv, int i ) {
 /* *************************************************************************** */
 
 
-void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
+void searchStandardOptionsFileFor(char *filename, char *optionsFilename, char *section) {
     int fileno;
     bool found=false;
     FILE *options_file;
     int nargc;
     char **nargv;
 
-    options_filename[0] = 0;
+    optionsFilename[0] = 0;
     section[0]=0;
 
     if (filename == NULL || options.no_stdoptions)
         return;
 
     /* Try to find section in HOME config. */
-    getXrefrcFileName(options_filename);
-    options_file = openFile(options_filename, "r");
+    getXrefrcFileName(optionsFilename);
+    options_file = openFile(optionsFilename, "r");
     if (options_file != NULL) {
         // TODO: This reads all arguments, when we only want to know if there is a matching project there?
         found = readOptionsFromFileIntoArgs(options_file, &nargc, &nargv, DONT_ALLOCATE, filename, options.project, section);
         if (found) {
-            log_debug("options file '%s' section '%s' found", options_filename, section);
+            log_debug("options file '%s' section '%s' found", optionsFilename, section);
         }
         closeFile(options_file);
     }
@@ -111,12 +111,12 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
         // project will return non-existent project. And then return "not found"?
         fileno = getFileNumberFromName(filename);
         if (fileno != noFileIndex && getFileItem(fileno)->isFromCxfile) {
-            strcpy(options_filename, oldStdopFile);
+            strcpy(optionsFilename, oldStdopFile);
             strcpy(section, oldStdopSection);
             return;
         }
     }
-    options_filename[0]=0;
+    optionsFilename[0]=0;
 }
 
 static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
@@ -225,17 +225,17 @@ static void initOptions(void) {
     inputFileNumber   = noFileIndex;
 }
 
-static void initDefaultCxrefFileName(char *inputfile) {
+static void initStandardCxrefFileName(char *inputfile) {
     int pathLength;
-    static char defaultCxrefFileName[MAX_FILE_NAME_SIZE];
+    static char standardCxrefFileName[MAX_FILE_NAME_SIZE];
 
-    pathLength = extractPathInto(normalizeFileName(inputfile, cwd), defaultCxrefFileName);
+    pathLength = extractPathInto(normalizeFileName(inputfile, cwd), standardCxrefFileName);
     assert(pathLength < MAX_FILE_NAME_SIZE);
-    strcpy(&defaultCxrefFileName[pathLength], DEFAULT_CXREF_FILE);
-    assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
-    strcpy(defaultCxrefFileName, getRealFileName_static(normalizeFileName(defaultCxrefFileName, cwd)));
-    assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
-    options.cxrefsLocation = defaultCxrefFileName;
+    strcpy(&standardCxrefFileName[pathLength], DEFAULT_CXREF_FILE);
+    assert(strlen(standardCxrefFileName) < MAX_FILE_NAME_SIZE);
+    strcpy(standardCxrefFileName, getRealFileName_static(normalizeFileName(standardCxrefFileName, cwd)));
+    assert(strlen(standardCxrefFileName) < MAX_FILE_NAME_SIZE);
+    options.cxrefsLocation = standardCxrefFileName;
 }
 
 static void initializationsPerInvocation(void) {
@@ -544,8 +544,8 @@ bool fileProcessingInitialisations(bool *firstPass,
                                    int nargc, char **nargv,
                                    Language *outLanguage
 ) {
-    char defaultOptionsFileName[MAX_FILE_NAME_SIZE];
-    char defaultOptionsSectionName[MAX_FILE_NAME_SIZE];
+    char standardOptionsFileName[MAX_FILE_NAME_SIZE];
+    char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
     time_t modifiedTime;
     char *fileName;
     StringList *tmpIncludeDirs;
@@ -555,13 +555,13 @@ bool fileProcessingInitialisations(bool *firstPass,
 
     fileName = inputFilename;
     *outLanguage = getLanguageFor(fileName);
-    searchDefaultOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName);
-    handlePathologicProjectCases(fileName, defaultOptionsFileName, defaultOptionsSectionName, true);
+    searchStandardOptionsFileFor(fileName, standardOptionsFileName, standardOptionsSectionName);
+    handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSectionName, true);
 
     initAllInputs();
 
-    if (defaultOptionsFileName[0] != 0 )
-        modifiedTime = fileModificationTime(defaultOptionsFileName);
+    if (standardOptionsFileName[0] != 0 )
+        modifiedTime = fileModificationTime(standardOptionsFileName);
     else
         modifiedTime = oldStdopTime;               // !!! just for now
 
@@ -569,8 +569,8 @@ bool fileProcessingInitialisations(bool *firstPass,
     log_trace("Checking newcp==%s", options.classpath);
     if (*firstPass
         || oldPass != currentPass
-        || strcmp(oldStdopFile,defaultOptionsFileName)
-        || strcmp(oldStdopSection,defaultOptionsSectionName)
+        || strcmp(oldStdopFile,standardOptionsFileName)
+        || strcmp(oldStdopSection,standardOptionsSectionName)
         || oldStdopTime != modifiedTime
         || oldLanguage!= *outLanguage
         || strcmp(oldOnLineClassPath, options.classpath)
@@ -588,7 +588,7 @@ bool fileProcessingInitialisations(bool *firstPass,
         initPreCreatedTypes();
         initCwd();
         initOptions();
-        initDefaultCxrefFileName(fileName);
+        initStandardCxrefFileName(fileName);
 
         processOptions(argc, argv, DONT_PROCESS_FILE_ARGUMENTS);   /* command line opts */
         /* piped options (no include or define options)
@@ -597,12 +597,12 @@ bool fileProcessingInitialisations(bool *firstPass,
            piped options, !!! berk.
         */
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
-        reInitCwd(defaultOptionsFileName, defaultOptionsSectionName);
+        reInitCwd(standardOptionsFileName, standardOptionsSectionName);
 
         tmpIncludeDirs = options.includeDirs;
         options.includeDirs = NULL;
 
-        getAndProcessXrefrcOptions(defaultOptionsFileName, defaultOptionsSectionName, defaultOptionsSectionName);
+        getAndProcessXrefrcOptions(standardOptionsFileName, standardOptionsSectionName, standardOptionsSectionName);
         discoverStandardDefines();
         discoverBuiltinIncludePaths();
 
@@ -615,8 +615,8 @@ bool fileProcessingInitialisations(bool *firstPass,
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         getJavaClassAndSourcePath();
         inputOpened = computeAndOpenInputFile();
-        strcpy(oldStdopFile,defaultOptionsFileName);
-        strcpy(oldStdopSection,defaultOptionsSectionName);
+        strcpy(oldStdopFile,standardOptionsFileName);
+        strcpy(oldStdopSection,standardOptionsSectionName);
         oldStdopTime = modifiedTime;
         oldLanguage = *outLanguage;
         oldPass = currentPass;
@@ -742,9 +742,9 @@ static void clearFileItem(FileItem *fileItem) {
 }
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
-    char temp[MAX_FILE_NAME_SIZE];
-    char defaultOptionsFileName[MAX_FILE_NAME_SIZE];
-    char defaultOptionsSection[MAX_FILE_NAME_SIZE];
+    char fileName[MAX_FILE_NAME_SIZE];
+    char standardOptionsFileName[MAX_FILE_NAME_SIZE];
+    char standardOptionsSection[MAX_FILE_NAME_SIZE];
     char *ss;
     int dfargc;
     char **dfargv;
@@ -825,22 +825,22 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     argcount = 0;
     inputFilename = cmdlnInputFile = getNextArgumentFile(&argcount);
     if (inputFilename==NULL) {
-        ss = strmcpy(temp, cwd);
-        if (ss!=temp && ss[-1] == FILE_PATH_SEPARATOR)
+        ss = strmcpy(fileName, cwd);
+        if (ss!=fileName && ss[-1] == FILE_PATH_SEPARATOR)
             ss[-1]=0;
-        assert(strlen(temp)+1<MAX_FILE_NAME_SIZE);
-        inputFilename=temp;
+        assert(strlen(fileName)+1<MAX_FILE_NAME_SIZE);
+        inputFilename=fileName;
     } else {
-        strcpy(temp, inputFilename);
+        strcpy(fileName, inputFilename);
     }
 
-    searchDefaultOptionsFile(temp, defaultOptionsFileName, defaultOptionsSection);
-    handlePathologicProjectCases(temp, defaultOptionsFileName, defaultOptionsSection, false);
+    searchStandardOptionsFileFor(fileName, standardOptionsFileName, standardOptionsSection);
+    handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSection, false);
 
-    reInitCwd(defaultOptionsFileName, defaultOptionsSection);
+    reInitCwd(standardOptionsFileName, standardOptionsSection);
 
-    if (defaultOptionsFileName[0]!=0) {
-        readOptionsFromFile(defaultOptionsFileName, &dfargc, &dfargv, defaultOptionsSection, defaultOptionsSection);
+    if (standardOptionsFileName[0]!=0) {
+        readOptionsFromFile(standardOptionsFileName, &dfargc, &dfargv, standardOptionsSection, standardOptionsSection);
         if (options.refactoringMode == RefactoryMode) {
             inmode = DONT_PROCESS_FILE_ARGUMENTS;
         } else if (options.mode==ServerMode) {
