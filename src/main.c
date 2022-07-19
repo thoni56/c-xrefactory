@@ -40,12 +40,12 @@
 #include "yacc_parser.h"
 #include "yylex.h"
 
-static char oldStdopFile[MAX_FILE_NAME_SIZE];
-static char oldStdopSection[MAX_FILE_NAME_SIZE];
-static char oldOnLineClassPath[MAX_OPTION_LEN];
-static time_t oldStdopTime;
-static int oldLanguage;
-static int oldPass;
+static char previousStandardOptionsFile[MAX_FILE_NAME_SIZE];
+static char previousStandardOptionsSection[MAX_FILE_NAME_SIZE];
+static char previousOnLineClassPath[MAX_OPTION_LEN];
+static time_t previousStdopTime;
+static int previousLanguage;
+static int previousPass;
 
 
 #define NEXT_ARG(i) {                                                   \
@@ -111,8 +111,8 @@ void searchStandardOptionsFileFor(char *filename, char *optionsFilename, char *s
         // project will return non-existent project. And then return "not found"?
         fileno = getFileNumberFromName(filename);
         if (fileno != noFileIndex && getFileItem(fileno)->isFromCxfile) {
-            strcpy(optionsFilename, oldStdopFile);
-            strcpy(section, oldStdopSection);
+            strcpy(optionsFilename, previousStandardOptionsFile);
+            strcpy(section, previousStandardOptionsSection);
             return;
         }
     }
@@ -160,7 +160,7 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
             writeOptionsFileMessage(fileName, outFName, section);
         }
     } else {
-        if (*oldStdopFile == 0) {
+        if (*previousStandardOptionsFile == 0) {
             static bool messageWritten = false;
             if (showErrorMessage && messageWritten == 0) {
                 messageWritten = true;
@@ -171,12 +171,12 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
                 warningMessage(ERR_ST, "no project name covers this file");
             }
             if (outFName[0]==0 && section[0]==0) {
-                strcpy(section, oldStdopSection);
+                strcpy(section, previousStandardOptionsSection);
             }
             if (outFName[0]==0) {
-                strcpy(outFName, oldStdopFile);
+                strcpy(outFName, previousStandardOptionsFile);
             }
-            if (strcmp(oldStdopFile,outFName) != 0 || strcmp(oldStdopSection,section) != 0) {
+            if (strcmp(previousStandardOptionsFile,outFName) != 0 || strcmp(previousStandardOptionsSection,section) != 0) {
                 if (options.xref2) {
                     char tmpBuff[TMP_BUFF_SIZE];                        \
                     sprintf(tmpBuff, "[C-xref] new project: '%s'", section);
@@ -563,17 +563,17 @@ bool fileProcessingInitialisations(bool *firstPass,
     if (standardOptionsFileName[0] != 0 )
         modifiedTime = fileModificationTime(standardOptionsFileName);
     else
-        modifiedTime = oldStdopTime;               // !!! just for now
+        modifiedTime = previousStdopTime;               // !!! just for now
 
-    log_trace("Checking oldcp==%s", oldOnLineClassPath);
+    log_trace("Checking previous cp==%s", previousOnLineClassPath);
     log_trace("Checking newcp==%s", options.classpath);
     if (*firstPass
-        || oldPass != currentPass
-        || strcmp(oldStdopFile,standardOptionsFileName)
-        || strcmp(oldStdopSection,standardOptionsSectionName)
-        || oldStdopTime != modifiedTime
-        || oldLanguage!= *outLanguage
-        || strcmp(oldOnLineClassPath, options.classpath)
+        || previousPass != currentPass
+        || strcmp(previousStandardOptionsFile, standardOptionsFileName)
+        || strcmp(previousStandardOptionsSection,standardOptionsSectionName)
+        || previousStdopTime != modifiedTime
+        || previousLanguage!= *outLanguage
+        || strcmp(previousOnLineClassPath, options.classpath)
         || cache.cpIndex == 1     /* some kind of reset was made */
     ) {
         if (*firstPass) {
@@ -582,8 +582,8 @@ bool fileProcessingInitialisations(bool *firstPass,
         } else {
             recoverCachePointZero();
         }
-        strcpy(oldOnLineClassPath, options.classpath);
-        assert(strlen(oldOnLineClassPath)<MAX_OPTION_LEN-1);
+        strcpy(previousOnLineClassPath, options.classpath);
+        assert(strlen(previousOnLineClassPath)<MAX_OPTION_LEN-1);
 
         initPreCreatedTypes();
         initCwd();
@@ -615,11 +615,11 @@ bool fileProcessingInitialisations(bool *firstPass,
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         getJavaClassAndSourcePath();
         inputOpened = computeAndOpenInputFile();
-        strcpy(oldStdopFile,standardOptionsFileName);
-        strcpy(oldStdopSection,standardOptionsSectionName);
-        oldStdopTime = modifiedTime;
-        oldLanguage = *outLanguage;
-        oldPass = currentPass;
+        strcpy(previousStandardOptionsFile,standardOptionsFileName);
+        strcpy(previousStandardOptionsSection,standardOptionsSectionName);
+        previousStdopTime = modifiedTime;
+        previousLanguage = *outLanguage;
+        previousPass = currentPass;
 
         // this was before 'getAndProcessXrefrcOptions(df...' I hope it will not cause
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
@@ -792,8 +792,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     setupCaching();
     initArchaicTypes();
-    oldStdopFile[0] = 0;
-    oldStdopSection[0] = 0;
+    previousStandardOptionsFile[0] = 0;
+    previousStandardOptionsSection[0] = 0;
 
     /* now pre-read the option file */
     processOptions(argc, argv, PROCESS_FILE_ARGUMENTS);
