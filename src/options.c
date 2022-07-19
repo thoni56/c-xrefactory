@@ -697,7 +697,7 @@ fini:;
     }
 
 static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, char *argv[]) {
-    char *s;
+    char *s = NULL;
     ALLOCATE_OPTION_SPACE(memoryKind, s, strlen(optionText) + 1, char);
     assert(s);
     strcpy(s, optionText);
