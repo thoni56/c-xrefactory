@@ -189,12 +189,6 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
     }
 }
 
-static void getOptionsFile(char *file, char *optionsFileName, char *sectionName,
-                           bool showErrorMessage) {
-    searchDefaultOptionsFile(file, optionsFileName, sectionName);
-    handlePathologicProjectCases(file, optionsFileName, sectionName, showErrorMessage);
-}
-
 static bool computeAndOpenInputFile(void) {
     FILE *inputFile;
     EditorBuffer *inputBuffer;
@@ -561,7 +555,8 @@ bool fileProcessingInitialisations(bool *firstPass,
 
     fileName = inputFilename;
     *outLanguage = getLanguageFor(fileName);
-    getOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName, true);
+    searchDefaultOptionsFile(fileName, defaultOptionsFileName, defaultOptionsSectionName);
+    handlePathologicProjectCases(fileName, defaultOptionsFileName, defaultOptionsSectionName, true);
 
     initAllInputs();
 
@@ -839,7 +834,9 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         strcpy(temp, inputFilename);
     }
 
-    getOptionsFile(temp, defaultOptionsFileName, defaultOptionsSection, false);
+    searchDefaultOptionsFile(temp, defaultOptionsFileName, defaultOptionsSection);
+    handlePathologicProjectCases(temp, defaultOptionsFileName, defaultOptionsSection, false);
+
     reInitCwd(defaultOptionsFileName, defaultOptionsSection);
 
     if (defaultOptionsFileName[0]!=0) {
