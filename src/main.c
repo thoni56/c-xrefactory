@@ -176,13 +176,13 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
             if (outFName[0]==0) {
                 strcpy(outFName, oldStdopFile);
             }
-            if (strcmp(oldStdopFile,outFName) || strcmp(oldStdopSection,section)) {
+            if (strcmp(oldStdopFile,outFName) != 0 || strcmp(oldStdopSection,section) != 0) {
                 if (options.xref2) {
                     char tmpBuff[TMP_BUFF_SIZE];                        \
-                    sprintf(tmpBuff, "[Xref] new project: '%s'", section);
+                    sprintf(tmpBuff, "[C-xref] new project: '%s'", section);
                     ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 } else {
-                    fprintf(dumpOut, "[Xref] new project: '%s'\n", section);
+                    fprintf(dumpOut, "[C-xref] new project: '%s'\n", section);
                 }
             }
         }
