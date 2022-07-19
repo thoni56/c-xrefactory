@@ -136,7 +136,7 @@
 #define MAX_STD_ARGS (MAX_FILES+20)
 #define END_OF_OPTIONS_STRING "end-of-options"
 
-#define DEFAULT_CXREF_FILE "CXrefs"
+#define DEFAULT_CXREF_FILENAME "CXrefs"
 
 #define MAX_COMPLETIONS_HISTORY_DEEP 10   /* maximal length of completion history */
 #define MIN_COMPLETION_INDENT_REST 40     /* minimal columns for symbol informations */

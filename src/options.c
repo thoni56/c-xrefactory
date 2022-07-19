@@ -78,7 +78,7 @@ Options presetOptions = {
     NULL,                       // -o outputFileName
     NULL,                       // -line lineFileName
     NULL,                       // -I include dirs
-    DEFAULT_CXREF_FILE,         // -refs
+    DEFAULT_CXREF_FILENAME,         // -refs
 
     NULL,                       // file move for safety check
     NULL,
