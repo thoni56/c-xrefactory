@@ -62,17 +62,17 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 # If there is no ZLIB on the system you can build it yourself, see sources.mk
 
-# On Darwin we want to use gcc-11 if available
+# On Darwin we can use gcc-11 if available
 OS := $(shell uname)
-ifeq ($(OS),Darwin)
-	ifneq (, $(shell which gcc-11))
-		CC=gcc-11
-	endif
-	ifeq ($(shell arch),arm64)
-		# And for Homebrew on M1
-		CC=cc
-	endif
-endif
+#ifeq ($(OS),Darwin)
+#	ifneq (, $(shell which gcc-11))
+#		CC=gcc-11
+#	endif
+#	ifeq ($(shell arch),arm64)
+#		# And for Homebrew on M1
+#		CC=cc
+#	endif
+#endif
 
 # We need to use compatible gcov (for Darwin/Brew we need to use GCC:s gcov)
 ifeq ("$(CC)", "gcc-11")
@@ -280,7 +280,7 @@ endif
 	@echo Doing the reporting in the background...
 	$(MAKE) the-actual-coverage-report &
 
-LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*'
+LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*' '/Applications/*'
 # NOTE: lcov < 1.14 don't have --exclude, need to use separate --remove step for compatibility
 ifeq ($(findstring 1.13, $(shell lcov -v)), 1.13)
 LCOV_EXCLUDES = `echo $(LCOV_IGNORE_COVERAGE_FOR) | xargs printf -- '--exclude %s\n'`
@@ -288,14 +288,14 @@ endif
 
 the-actual-coverage-report:
 	@mkdir -p ../coverage
-	@$(LCOV) -d . -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
+	$(LCOV) -d . -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
 	@echo "LCOV-ing done..."
 ifeq (, $(LCOV_EXCLUDES))
-	@$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 	@echo "LCOV --remove done..."
 endif
 	genhtml -q -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
-	@echo Coverage done: `grep -m 1 coverPerMed ../coverage/index.html | tr -dc '0-9.'`
+	@echo Coverage done: `grep -m 1 coverPerLo ../coverage/index.html | tr -dc '0-9.'`
 
 #########################################################################
 watch:
