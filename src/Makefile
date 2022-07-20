@@ -89,7 +89,7 @@ endif
 ifneq (, $(shell which $(GCOV_TOOL)))
     HAVE_GCOV_TOOL=yes
 else
-    HAVE_GCOV_TOOL=
+    HAVE_GCOV_TOOL=no
 endif
 
 all: unit build
@@ -286,13 +286,29 @@ ifeq ($(findstring 1.13, $(shell lcov -v)), 1.13)
 LCOV_EXCLUDES = `echo $(LCOV_IGNORE_COVERAGE_FOR) | xargs printf -- '--exclude %s\n'`
 endif
 
+LCOV_TEST_DIRS = `ls -d ../tests/*/.coverage | xargs printf -- '-d %s\n'`
+
 the-actual-coverage-report:
 	@mkdir -p ../coverage
-	$(LCOV) -d . -c -q $(LCOV_EXCLUDES) -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
+ifeq ($(HAVE_GCOV_TOOL),yes)
+	@echo "Don't have gcov-tool"
+else
+	# First ensure all .gcno files are available in the .coverage directories
+	@printf "Synching .gcno..."
+	@cd $(OBJDIR) ; \
+	for tc in ../../tests/*/.coverage ; do \
+		rsync -q -acv --filter='+ */' --filter='+ *.gcno' --filter='- *' . $$tc ; \
+	done
+	@printf "Done\n"
+	$(LCOV) $(LCOV_TEST_DIRS) -c -b . -q $(LCOV_EXCLUDES) -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
+endif
 	@echo "LCOV-ing done..."
 ifeq (, $(LCOV_EXCLUDES))
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 	@echo "LCOV --remove done..."
+endif
+ifeq ($(HAVE_GCOV_TOOL),no)
+	info2gcov -q ../coverage/total.info
 endif
 	genhtml -q -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
 	@echo Coverage done: `grep -m 1 coverPerLo ../coverage/index.html | tr -dc '0-9.'`
