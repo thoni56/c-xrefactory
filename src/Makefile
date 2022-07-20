@@ -64,7 +64,7 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 # On Darwin we can use gcc-11 if available
 OS := $(shell uname)
-#ifeq ($(OS),Darwin)
+ifeq ($(OS),Darwin)
 #	ifneq (, $(shell which gcc-11))
 #		CC=gcc-11
 #	endif
@@ -72,7 +72,10 @@ OS := $(shell uname)
 #		# And for Homebrew on M1
 #		CC=cc
 #	endif
-#endif
+# But we'd rather go with Apple Clang and generate fat binaries
+CFLAGS += -arch arm64 -arch x86_64
+LDFLAGS += -arch arm64 -arch x86_64
+endif
 
 # We need to use compatible gcov (for Darwin/Brew we need to use GCC:s gcov)
 ifeq ("$(CC)", "gcc-11")
