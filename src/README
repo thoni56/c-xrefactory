@@ -10,8 +10,29 @@ Development:
 First, you will need to build a special patched version of Berkeley
 yacc, which is stored in byacc-1.9 directory.
 
-From the src directory you can to development and coverage builds using
+From the src directory you can do development and coverage builds using
 
-  make debug unit test coverage-report
+    make unit test coverage-report
 
 Those should also work with -j (parallel builds).
+
+There are a number of convenience targets to. Try
+
+    make -j devel
+
+which will run all unittests, acceptance tests and then generate coverage both as gcov files to be used with Emacs cov-mode and ../coverage/index.html (as per usual genhtml output).
+
+Even more convenient is
+
+    make watch-done
+
+Then go to another terminal or in e.g. Emacs compile-mode and do
+
+    make watch-unit
+
+*then* touch or edit a file and on save see all unittests run
+automatically (with Emacs cov-mode giving you unittest coverage in the
+fringe) and then, again automatically, run all system/acceptance tests
+(again, in Emacs cov-mode show coverage for all current system tests
+in the fringe). Just wonderful!
+ 
