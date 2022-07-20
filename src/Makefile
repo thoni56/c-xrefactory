@@ -95,6 +95,15 @@ else
     HAVE_GCOV_TOOL=no
 endif
 
+# If we don't then we can generate .gcov from the .info but we need:
+ifneq (, $(shell which info2gcov))
+    HAVE_INFO2GCOV=yes
+else
+    HAVE_INFO2GCOV=no
+endif
+
+
+
 all: unit build
 
 #########################################################################
@@ -276,11 +285,16 @@ gcov:
 	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" | cat
 
 coverage-report:
+# We create separate coverage files for each test to be able to run them in parallel (see ../tests/Makefile)
 ifeq ($(HAVE_GCOV_TOOL),yes)
+# Then we can merge all .gcda for all tests into the .gcda in OBJDIR using it, which is very fast!
 	for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+# And then create .gcov for Emacs cov-mode
 	make gcov
+else
+# We need to collect all coverage before we can generate gcov...
 endif
-	@echo Doing the reporting in the background...
+	@echo Doing the actual reporting in the background...
 	$(MAKE) the-actual-coverage-report &
 
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*' '/Applications/*'
@@ -291,33 +305,40 @@ LCOV_TEST_COVERAGES = `ls ../tests/*/.coverage/coverage.info | xargs printf -- '
 the-actual-coverage-report:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_GCOV_TOOL),yes)
-	@echo "Don't have gcov-tool"
+# Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
+	$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
 else
-	# First ensure all .gcno files are available in the .coverage directories
+# We need to first ensure all .gcno files are available in the .coverage directories
 	@printf "Synching .gcno files ..."
-	# Run rsync for each test coverage directory in parallel using '( command )'
+# Run rsync for each test coverage directory in parallel using '( command )'
 	@cd $(OBJDIR) ; \
 	for tc in ../../tests/*/.coverage ; do \
 		( rsync -q -acv --filter='+ */' --filter='+ *.gcno' --filter='- *' . $$tc ) & \
 	done ; wait
 	@printf "Done\n"
-	# Now aggregate each tests coverage into a coverage.info... again in parallel...
+# Now aggregate each tests coverage into a coverage.info... again in parallel...
 	@printf "Create coverage.info in each test directory ..."
 	@for tc in ../tests/*/.coverage ; do \
 		( cd $$tc ; lcov -q -c -d . -b ../../../src -o coverage.info 2>&1 | grep -v "did not produce any data"  ) & \
 	done ; wait
 	@echo "Done"
-	# Now add each of the tests coverage.info to ../coverage/total.info using '-a ...'
-	$(LCOV) $(LCOV_TEST_COVERAGES) -q -o ../coverage/total.info 2>&1 #| grep -v "did not produce any data" | cat
+# Now add each of the tests coverage.info to ../coverage/total.info using '-a ...'
+	$(LCOV) $(ADD_ALL_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
 endif
 	@echo "LCOV-ing done..."
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 	@echo "LCOV --remove done..."
 ifeq ($(HAVE_GCOV_TOOL),no)
+# Then we have to wait until now to generate the gcov's for Emacs cov-mode...
+# And we need the info2gcov command (https://github.com/thoni56/info2gcov)
+ifeq ($(HAVE_INFO2GCOV),yes)
 	info2gcov -q ../coverage/total.info
+else
+# We have to do without the .gcov files, no Emacs coverage display sadly...
+endif
 endif
 	genhtml -q -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
-	@echo Coverage done: `grep -m 1 coverPerLo ../coverage/index.html | tr -dc '0-9.'`
+	@echo Coverage done: `grep -m 1 coverPer ../coverage/index.html | tr -dc '0-9.'`
 
 #########################################################################
 watch:
