@@ -416,9 +416,8 @@ static char *extra_defines[] = {
     "__typeof__(xxx) int",
     "__builtin_va_list void",
     "__leaf__",
-    "__restrict=",
-    "__restrict__=",
-    "__extension__="
+    "__restrict__",
+    "__extension__"
 };
 
 static void discoverStandardDefines(void) {
