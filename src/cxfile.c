@@ -462,7 +462,7 @@ static void writeFileSourceIndexItem(FileItem *fileItem, int index) {
     }
 }
 
-static void genClassHierarchyItems(FileItem *fileItem, int index) {
+static void writeClassHierarchyItems(FileItem *fileItem, int index) {
     ClassHierarchyReference *p;
     for (p=fileItem->superClasses; p!=NULL; p=p->next) {
         writeSubClassInfo(p->superClass, index, p->ofile);
@@ -571,7 +571,7 @@ static void writeReferenceItem(ReferencesItem *referenceItem) {
         filen = tmp;                                                    \
     }
 
-static void genCxFileHead(void) {
+static void writeCxFileHead(void) {
     char stringRecord[MAX_CHARS];
     char tempString[TMP_STRING_SIZE];
     int i;
@@ -630,7 +630,7 @@ static void closeReferenceFile(char *fname) {
 }
 
 /* suffix contains '/' at the beginning */
-static void genPartialFileTabRefFile(int updateFlag,
+static void writePartialReferenceFile(int updateFlag,
                                      char *dirname,
                                      char *suffix,
                                      void mapfun(FileItem *, int),
@@ -640,7 +640,7 @@ static void genPartialFileTabRefFile(int updateFlag,
     sprintf(filename, "%s%s", dirname, suffix);
     assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
     openInOutReferenceFile(updateFlag, filename);
-    genCxFileHead();
+    writeCxFileHead();
     mapOverFileTableWithIndex(mapfun);
     if (mapfun2!=NULL)
         mapOverFileTableWithIndex(mapfun2);
@@ -661,7 +661,7 @@ static void generateRefsFromMemory(int fileOrder) {
     }
 }
 
-void genReferenceFile(bool updating, char *filename) {
+void writeReferenceFile(bool updating, char *filename) {
     if (!updating)
         removeFile(filename);
 
@@ -670,10 +670,10 @@ void genReferenceFile(bool updating, char *filename) {
     if (options.referenceFileCount <= 1) {
         /* single reference file */
         openInOutReferenceFile(updating, filename);
-        genCxFileHead();
+        writeCxFileHead();
         mapOverFileTableWithIndex(writeFileIndexItem);
         mapOverFileTableWithIndex(writeFileSourceIndexItem);
-        mapOverFileTableWithIndex(genClassHierarchyItems);
+        mapOverFileTableWithIndex(writeClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
         mapOverReferenceTable(writeReferenceItem);
         closeReferenceFile(filename);
@@ -681,18 +681,17 @@ void genReferenceFile(bool updating, char *filename) {
         /* several reference files */
         char referenceFileName[MAX_FILE_NAME_SIZE];
         char *dirname = filename;
-        int i;
 
         createDirectory(dirname);
-        genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_FILES,
+        writePartialReferenceFile(updating,dirname,REFERENCE_FILENAME_FILES,
                                  writeFileIndexItem, writeFileSourceIndexItem);
-        genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_CLASSES,
-                                 genClassHierarchyItems, NULL);
-        for (i=0; i<options.referenceFileCount; i++) {
+        writePartialReferenceFile(updating,dirname,REFERENCE_FILENAME_CLASSES,
+                                 writeClassHierarchyItems, NULL);
+        for (int i=0; i<options.referenceFileCount; i++) {
             sprintf(referenceFileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
             assert(strlen(referenceFileName) < MAX_FILE_NAME_SIZE-1);
             openInOutReferenceFile(updating, referenceFileName);
-            genCxFileHead();
+            writeCxFileHead();
             scanCxFile(fullScanFunctionSequence);
             generateRefsFromMemory(i);
             closeReferenceFile(referenceFileName);

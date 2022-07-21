@@ -15,7 +15,7 @@ extern void scanForClassHierarchy(void);
 extern void scanForGlobalUnused(char *cxrefFileName);
 extern void scanForSearch(char *cxrefFileName);
 
-extern void genReferenceFile(bool updating, char *filename);
+extern void writeReferenceFile(bool updating, char *filename);
 extern int cxFileHashNumber(char *symbol);
 extern bool smartReadReferences(void);
 extern bool searchStringMatch(char *cxtag, int slen);

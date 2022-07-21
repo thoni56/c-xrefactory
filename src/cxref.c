@@ -4936,9 +4936,9 @@ void generateReferences(void) {
     if (options.cxrefsLocation == NULL)
         return;
     if (!updateFlag && options.update == UPDATE_DEFAULT) {
-        genReferenceFile(false, options.cxrefsLocation);
+        writeReferenceFile(false, options.cxrefsLocation);
         updateFlag = true;
     } else {
-        genReferenceFile(true, options.cxrefsLocation);
+        writeReferenceFile(true, options.cxrefsLocation);
     }
 }
