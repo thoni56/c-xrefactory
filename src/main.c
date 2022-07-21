@@ -882,9 +882,9 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 }
 
 // extern required by xref.c extraction
-void referencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
+void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     ENTER();
-    if (mess != LONGJMP_REASON_NONE) {
+    if (reason != LONGJMP_REASON_NONE) {
         log_trace("swapping references to disk");
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION, "swapping references to disk");
@@ -929,7 +929,7 @@ void referencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
             log_trace(" -># '%s'",fileItem->name);
         }
     }
-    if (!savingFlag && mess!=LONGJMP_REASON_FILE_ABORT) {
+    if (!savingFlag && reason!=LONGJMP_REASON_FILE_ABORT) {
         /* references overflowed, but no whole file readed */
         FATAL_ERROR(ERR_NO_MEMORY, "cxMemory", XREF_EXIT_ERR);
     }
