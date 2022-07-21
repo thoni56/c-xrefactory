@@ -300,7 +300,7 @@ endif
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*' '/Applications/*'
 
 LCOV_TEST_DIRS = `ls -d ../tests/*/.coverage | xargs printf -- '-d %s\n'`
-LCOV_TEST_COVERAGES = `ls ../tests/*/.coverage/coverage.info | xargs printf -- '-a %s\n'`
+ADD_ALL_TEST_COVERAGE_FILES = `ls ../tests/*/.coverage/coverage.info | xargs printf -- '-a %s\n'`
 
 the-actual-coverage-report:
 	@mkdir -p ../coverage
@@ -308,21 +308,8 @@ ifeq ($(HAVE_GCOV_TOOL),yes)
 # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
 	$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
 else
-# We need to first ensure all .gcno files are available in the .coverage directories
-	@printf "Synching .gcno files ..."
-# Run rsync for each test coverage directory in parallel using '( command )'
-	@cd $(OBJDIR) ; \
-	for tc in ../../tests/*/.coverage ; do \
-		( rsync -q -acv --filter='+ */' --filter='+ *.gcno' --filter='- *' . $$tc ) & \
-	done ; wait
-	@printf "Done\n"
-# Now aggregate each tests coverage into a coverage.info... again in parallel...
-	@printf "Create coverage.info in each test directory ..."
-	@for tc in ../tests/*/.coverage ; do \
-		( cd $$tc ; lcov -q -c -d . -b ../../../src -o coverage.info 2>&1 | grep -v "did not produce any data"  ) & \
-	done ; wait
-	@echo "Done"
-# Now add each of the tests coverage.info to ../coverage/total.info using '-a ...'
+# The run_test script in ../tests has created a coverage.info in each test directory
+# So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
 	$(LCOV) $(ADD_ALL_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
 endif
 	@echo "LCOV-ing done..."
@@ -422,7 +409,7 @@ $(1)_DEPENDENCIES = $(2)
 $(1)_DEPS = $$(patsubst %,$(OBJDIR)/%.o,$$($(1)_DEPENDENCIES))
 $(OBJDIR)/$(1)_tests.o: CFLAGS += $(CGREEN_INCLUDE)
 $(1)_tests.$(EXT): $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
-	$(CC) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LIB) -lz
+	$(CC) $(LDFLAGS) -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN_LIB) -lz
 endef
 
 
