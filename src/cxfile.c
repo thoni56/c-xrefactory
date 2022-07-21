@@ -130,6 +130,7 @@ static char tmpFileName[MAX_FILE_NAME_SIZE];
 
 static FILE *cxFile = NULL;
 
+static FILE *inputFile;
 
 typedef struct scanFileFunctionStep {
     int		recordCode;

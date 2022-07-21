@@ -154,7 +154,6 @@ char *s_javaThisPackageName = "";
 /* *********** once, the file starts to be parsed ************** */
 /* ************************************************************* */
 
-FILE *inputFile;
 FILE *communicationChannel=NULL;
 FILE *dumpOut=NULL;
 FILE *errOut=NULL;

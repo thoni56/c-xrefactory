@@ -33,8 +33,6 @@ int currentPass;
 int maxPasses;
 char defaultClassPath[] = ".";
 
-
-FILE *inputFile;
 FILE *communicationChannel;
 FILE *dumpOut = NULL;
 FILE *errOut=NULL;

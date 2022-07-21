@@ -108,12 +108,10 @@ extern char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1];
 extern Position s_olcxByPassPos;
 extern Position s_cxRefPos;
 
-extern FILE *inputFile;
-
 extern int inputFileNumber;
 extern int olOriginalFileIndex;     /* number of original file */
 extern int olOriginalComFileNumber;  /* number of original communication file */
-extern bool olStringSecondProcessing; /* am I in macro body pass ? */
+extern bool olStringSecondProcessing; /* am I in macro body pass ? WTF So why is it not called that?*/
 
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
 
