@@ -525,7 +525,7 @@ void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
 
 /* *************************************************************** */
 
-static void genRefItem0(ReferencesItem *referenceItem, bool force) {
+static void writeReferenceItem(ReferencesItem *referenceItem) {
     int symbolIndex = 0;
 
     log_trace("generate cxref for symbol '%s'", referenceItem->name);
@@ -543,8 +543,6 @@ static void genRefItem0(ReferencesItem *referenceItem, bool force) {
 
     if (referenceItem->category == CategoryLocal)
         return;
-    if (referenceItem->references == NULL && !force)
-        return;
 
     for (Reference *reference = referenceItem->references; reference != NULL; reference = reference->next) {
         FileItem *fileItem = getFileItem(reference->position.file);
@@ -558,10 +556,6 @@ static void genRefItem0(ReferencesItem *referenceItem, bool force) {
             assert(0);
         }
     }
-}
-
-static void genRefItem(ReferencesItem *referenceItem) {
-    genRefItem0(referenceItem, false);
 }
 
 #define COMPOSE_CXFI_CHECK_NUM(filen, exactPositionLinkFlag) (  \
@@ -662,7 +656,7 @@ static void generateRefsFromMemory(int fileOrder) {
             if (r->references == NULL)
                 continue;
             if (r->fileHash == fileOrder)
-                genRefItem0(r, false);
+                writeReferenceItem(r);
         }
     }
 }
@@ -681,7 +675,7 @@ void genReferenceFile(bool updating, char *filename) {
         mapOverFileTableWithIndex(writeFileSourceIndexItem);
         mapOverFileTableWithIndex(genClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
-        mapOverReferenceTable(genRefItem);
+        mapOverReferenceTable(writeReferenceItem);
         closeReferenceFile(filename);
     } else {
         /* several reference files */
@@ -1034,7 +1028,7 @@ static void scanFunction_SymbolName(int size,
     if (options.mode == XrefMode) {
         if (member==NULL)
             member=referencesItem;
-        genRefItem0(member, true);
+        writeReferenceItem(member);
         referencesItem->references = member->references; // note references to not generate multiple
         member->references = NULL;      // HACK, remove them, to not be regenerated
     }
