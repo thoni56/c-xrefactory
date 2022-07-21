@@ -11,7 +11,6 @@ extern bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv
 //------
 
 // Required for xref.c extraction
-extern void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason);
 extern void checkExactPositionUpdate(bool printMessage);
 //------
 

@@ -38,11 +38,6 @@ bool fileProcessingInitialisations(bool *firstPass,
     return (bool)mock(firstPass, argc, argv, nargc, nargv, outLanguage);
 }
 
-// xref.c extraction
-void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
-    mock(cxMemFreeBase, reason);
-}
-
 void checkExactPositionUpdate(bool printMessage) {
     mock(printMessage);
 }

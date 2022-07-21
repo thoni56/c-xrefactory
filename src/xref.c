@@ -256,6 +256,60 @@ void scheduleModifiedFilesToUpdate(void) {
 }
 
 
+static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
+    ENTER();
+    if (reason != LONGJMP_REASON_NONE) {
+        log_trace("swapping references to disk");
+        if (options.xref2) {
+            ppcGenRecord(PPC_INFORMATION, "swapping references to disk");
+            ppcGenRecord(PPC_INFORMATION, "");
+        } else {
+            fprintf(dumpOut, "swapping references to disk (please wait)\n");
+            fflush(dumpOut);
+        }
+    }
+    if (options.cxrefsLocation == NULL) {
+        FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
+    }
+    for (int i=0; i<includeStackPointer; i++) {
+        log_trace("inspecting include %d, fileNumber: %d", i, includeStack[i].lexBuffer.buffer.fileNumber);
+        if (includeStack[i].lexBuffer.buffer.file != stdin) {
+            int fileIndex = includeStack[i].lexBuffer.buffer.fileNumber;
+            getFileItem(fileIndex)->cxLoading = false;
+            if (includeStack[i].lexBuffer.buffer.file!=NULL)
+                closeCharacterBuffer(&includeStack[i].lexBuffer.buffer);
+        }
+    }
+    if (currentFile.lexBuffer.buffer.file != stdin) {
+        log_trace("inspecting current file, fileNumber: %d", currentFile.lexBuffer.buffer.fileNumber);
+        int fileIndex = currentFile.lexBuffer.buffer.fileNumber;
+        getFileItem(fileIndex)->cxLoading = false;
+        if (currentFile.lexBuffer.buffer.file!=NULL)
+            closeCharacterBuffer(&currentFile.lexBuffer.buffer);
+    }
+    if (options.mode==XrefMode)
+        generateReferences();
+    recoverMemoriesAfterOverflow(cxMemFreeBase);
+
+    /* ************ start with CXREFS and memories clean ************ */
+    bool savingFlag = false;
+    for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
+        FileItem *fileItem = getFileItem(i);
+        if (fileItem->cxLoading) {
+            fileItem->cxLoading = false;
+            fileItem->cxSaved = true;
+            if (fileItem->isArgument)
+                savingFlag = true;
+            log_trace(" -># '%s'",fileItem->name);
+        }
+    }
+    if (!savingFlag && reason!=LONGJMP_REASON_FILE_ABORT) {
+        /* references overflowed, but no whole file readed */
+        FATAL_ERROR(ERR_NO_MEMORY, "cxMemory", XREF_EXIT_ERR);
+    }
+    LEAVE();
+}
+
 void mainCallXref(int argc, char **argv) {
     // These are static because of the longjmp() maybe happening
     static char     *cxFreeBase;
