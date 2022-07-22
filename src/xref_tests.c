@@ -4,21 +4,22 @@
 
 #include "log.h"
 
-#include "cxref.mock"
-#include "cxfile.mock"
-#include "reftab.mock"
 #include "caching.mock"
 #include "characterreader.mock"
+#include "commons.mock"
+#include "cxfile.mock"
+#include "cxref.mock"
+#include "editor.mock"
 #include "filedescriptor.mock"
-#include "options.mock"
+#include "filetable.mock"
+#include "globals.mock"
 #include "main.mock"
+#include "misc.mock"
+#include "options.mock"
 #include "parsers.mock"
 #include "ppc.mock"
-#include "editor.mock"
-#include "misc.mock"
-#include "commons.mock"
-#include "globals.mock"
-#include "filetable.mock"
+#include "progress.mock"
+#include "reftab.mock"
 
 
 Describe(Xref);

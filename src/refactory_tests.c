@@ -18,9 +18,11 @@
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"
+#include "progress.mock"
 #include "reftab.mock"
 #include "server.mock"
 #include "xref.mock"
+
 
 Describe(Refactory);
 BeforeEach(Refactory) {

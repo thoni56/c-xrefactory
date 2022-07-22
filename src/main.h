@@ -17,8 +17,6 @@ extern void checkExactPositionUpdate(bool printMessage);
 extern void searchStandardOptionsFileFor(char *filename, char *options_filename, char *section);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
 
-extern void writeRelativeProgress(int progress);
-
 extern int mainHandleSetOption(int argc, char **argv, int i );
 extern void mainTaskEntryInitialisations(int argc, char **argv);
 extern void mainOpenOutputFile(char *ofile);

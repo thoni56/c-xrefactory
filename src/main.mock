@@ -10,10 +10,6 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
   mock(outNargc, outNargv);
 }
 
-void writeRelativeProgress(int progress) {
-  mock(progress);
-}
-
 int mainHandleSetOption(int argc, char **argv, int i) {
   return (int) mock(argc, argv, i);
 }

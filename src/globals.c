@@ -16,9 +16,6 @@ int s_lastReturnedLexem;
 
 Position parsedPositions[SPP_MAX];
 
-int progressOffset=0;
-int progressFactor=1;
-
 Counters counters;
 unsigned s_recFindCl = 1;
 

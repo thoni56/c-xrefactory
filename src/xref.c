@@ -14,6 +14,7 @@
 #include "misc.h"
 #include "options.h"
 #include "parsers.h"
+#include "progress.h"
 #include "ppc.h"
 #include "proto.h"
 #include "protocol.h"
@@ -354,8 +355,7 @@ void mainCallXref(int argc, char **argv) {
                        Can we just reread from the last class file? */
                     oneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed);
                 }
-                if (options.xref2)
-                    writeRelativeProgress(10 * inputCounter / numberOfInputs);
+                writeRelativeProgress(10 * inputCounter / numberOfInputs);
                 inputCounter++;
             }
 

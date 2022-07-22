@@ -25,6 +25,7 @@
 #include "main.h"
 #include "misc.h"
 #include "options.h"
+#include "progress.h"
 #include "proto.h"
 #include "protocol.h"
 #include "reftab.h"

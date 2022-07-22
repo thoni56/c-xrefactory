@@ -26,9 +26,6 @@ extern Position parsedPositions[SPP_MAX];
 // !!! if changing this, change also s_noRef!!!
 #define NO_USAGE (Usage){UsageNone, 0}
 
-extern int progressFactor;
-extern int progressOffset;
-
 extern bool cxResizingBlocked;
 extern Counters counters;
 extern unsigned s_recFindCl;

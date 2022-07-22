@@ -1,0 +1,5 @@
+#include <cgreen/mocks.h>
+
+void writeRelativeProgress(int progress) {
+  mock(progress);
+}
