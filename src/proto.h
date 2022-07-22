@@ -557,10 +557,6 @@ typedef struct typeModifiersListPositionListPair {
     struct positionList     *p;
 } S_typeModifiersListPositionListPair;
 
-typedef struct pushAllInBetweenData {
-    int minMemi;
-    int maxMemi;
-} PushAllInBetweenData;
 
 /* *********************************************************** */
 

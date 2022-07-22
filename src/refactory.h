@@ -4,6 +4,11 @@
 #include "editor.h"
 #include "proto.h"
 
+typedef struct pushAllInBetweenData {
+    int minMemi;
+    int maxMemi;
+} PushAllInBetweenData;
+
 typedef struct tpCheckMoveClassData {
     struct pushAllInBetweenData mm;
     char                       *spack;
