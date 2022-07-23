@@ -21,13 +21,12 @@
 #define LIST_LEN(length, type, list)                                                                              \
     {                                                                                                             \
         type *tmp;                                                                                                \
-        int   count = 0;                                                                                          \
-        tmp         = list;                                                                                       \
+        length = 0;                                                                                               \
+        tmp    = list;                                                                                            \
         while (tmp != NULL) {                                                                                     \
-            ++count;                                                                                              \
+            ++length;                                                                                             \
             tmp = tmp->next;                                                                                      \
         }                                                                                                         \
-        length = count;                                                                                           \
     }
 
 #define LIST_REVERSE(type, iolist) {                \
