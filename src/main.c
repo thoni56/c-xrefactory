@@ -837,18 +837,16 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     LEAVE();
 }
 
-void getPipedOptions(int *outNargc,char ***outNargv){
-    char nsect[MAX_FILE_NAME_SIZE];
-    int c;
+void getPipedOptions(int *outNargc, char ***outNargv) {
     *outNargc = 0;
     assert(options.mode);
     if (options.mode == ServerMode) {
-        readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM,
-                           "", NULL, nsect);
+        char nsect[MAX_FILE_NAME_SIZE];
+        readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM, "", NULL, nsect);
         /* those options can't contain include or define options, */
         /* sections neither */
-        c = getc(stdin);
-        if (c==EOF) {
+        int c = getc(stdin);
+        if (c == EOF) {
             /* Just log and exit since we don't know if there is someone there... */
             /* We also want a clean exit() if we are going for coverage */
             log_error("Broken pipe");
