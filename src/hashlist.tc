@@ -50,7 +50,8 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
             return true;
         }
     }
-    *foundMemberPointer = NULL;
+    if (foundMemberPointer)
+        *foundMemberPointer = NULL;
     return false;
 }
 
