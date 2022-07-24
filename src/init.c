@@ -469,17 +469,17 @@ void initArchaicTypes(void) {
     /* ******* some defaults and built-ins initialisations ********* */
 
     initTypeModifier(&defaultIntModifier, TypeInt);
-    fillSymbolWithTypeModifier(&s_defaultIntDefinition, NULL, NULL, noPosition, &defaultIntModifier);
+    fillSymbolWithTypeModifier(&defaultIntDefinition, NULL, NULL, noPosition, &defaultIntModifier);
 
-    initTypeModifier(&s_defaultPackedTypeModifier, TypePackedType);
+    initTypeModifier(&defaultPackedTypeModifier, TypePackedType);
 
-    initTypeModifier(&s_defaultVoidModifier,TypeVoid);
-    fillSymbolWithTypeModifier(&s_defaultVoidDefinition, NULL, NULL, noPosition, &s_defaultVoidModifier);
+    initTypeModifier(&defaultVoidModifier,TypeVoid);
+    fillSymbolWithTypeModifier(&defaultVoidDefinition, NULL, NULL, noPosition, &defaultVoidModifier);
 
-    initTypeModifier(&s_errorModifier, TypeError);
-    fillSymbolWithTypeModifier(&s_errorSymbol, "__ERROR__", "__ERROR__", noPosition, &s_errorModifier);
-    s_errorSymbol.type = TypeError;
-    s_errorSymbol.storage = StorageNone;
+    initTypeModifier(&errorModifier, TypeError);
+    fillSymbolWithTypeModifier(&errorSymbol, "__ERROR__", "__ERROR__", noPosition, &errorModifier);
+    errorSymbol.type = TypeError;
+    errorSymbol.storage = StorageNone;
 }
 
 void initPreCreatedTypes(void) {

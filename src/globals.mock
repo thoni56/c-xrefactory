@@ -11,7 +11,7 @@ bool fileAbortEnabled;
 
 Id javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
 TypeModifier *preCreatedTypesTable[MAX_TYPE];
-Symbol s_errorSymbol;
+Symbol errorSymbol;
 char *s_javaLangObjectLinkName="java/lang/Object";
 
 bool olStringSecondProcessing;
@@ -45,8 +45,8 @@ uchar typeUnsignedChange[MAX_TYPE];
 char *yytext;
 Id yyIdBuffer[YYIDBUFFER_SIZE];
 int yyIdBufferIndex = 0;
-Symbol s_errorSymbol;
-TypeModifier s_errorModifier;
+Symbol errorSymbol;
+TypeModifier errorModifier;
 
 char *tokenNamesTable[LAST_TOKEN];
 int tokenNameLengthsTable[LAST_TOKEN];
@@ -101,11 +101,11 @@ int s_lastReturnedLexem;
 int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 ExprTokenType s_forCompletionType;
 
-TypeModifier s_defaultVoidModifier;
-Symbol s_defaultVoidDefinition;
+TypeModifier defaultVoidModifier;
+Symbol defaultVoidDefinition;
 TypeModifier defaultIntModifier;
-Symbol s_defaultIntDefinition;
-TypeModifier s_defaultPackedTypeModifier;
+Symbol defaultIntDefinition;
+TypeModifier defaultPackedTypeModifier;
 
 Symbol *s_javaStringSymbol;
 char javaTypePCTIConvert[MAX_TYPE];

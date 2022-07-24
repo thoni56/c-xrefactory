@@ -1462,7 +1462,7 @@ int javaClassifyAmbiguousName(
 //&                                   &name->id.position, UsageUsed);
 //&			}
             if (pexpr->kind != TypeStruct) {
-                *str = &s_errorSymbol;
+                *str = &errorSymbol;
             } else {
                 javaLoadClassSymbolsFromFile(pexpr->u.t);
                 rr = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->id.name,
@@ -1497,7 +1497,7 @@ TypeModifier *javaClassifyToExpressionName(IdList *name,
         assert(str && str->u.structSpec);
         res = &str->u.structSpec->stype; /* because of casts & s_errorModifier;*/
         assert(res && res->kind == TypeStruct);
-    } else res = & s_errorModifier;
+    } else res = & errorModifier;
     return res;
 }
 
@@ -1548,7 +1548,7 @@ Symbol * javaQualifiedThis(IdList *tname, Id *thisid) {
             javaResetUselessReference(lastUselessRef);
         }
     } else {
-        str = &s_errorSymbol;
+        str = &errorSymbol;
     }
     tname->nameType = TypeStruct;
     return str;
@@ -1658,7 +1658,7 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
     Symbol *memb;
 
     res = 0;
-    if (decl == &s_errorSymbol || decl->type==TypeError)
+    if (decl == &errorSymbol || decl->type==TypeError)
         return res;
     assert(decl->type == TypeDefault);
     assert(decl->u.typeModifier);
@@ -1887,7 +1887,7 @@ TypeModifier *javaNestedNewType(Symbol *sym, Id *thenew,
                 addUselessFQTReference(res->u.t->u.structSpec->classFileIndex, &thenew->position);
             }
         } else {
-            res = &s_errorModifier;
+            res = &errorModifier;
         }
     }
     return res;
@@ -1901,13 +1901,13 @@ TypeModifier *javaNewAfterName(IdList *name, Id *thenew, IdList *idl) {
 
     atype = javaClassifyAmbiguousName(name,NULL,&str,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_EXPR,UsageUsed);
     if (atype == TypeExpression) {
-        if (expr->kind != TypeStruct) res = & s_errorModifier;
+        if (expr->kind != TypeStruct) res = & errorModifier;
         else res = javaNestedNewType(expr->u.t, thenew, idl);
     } else if (atype == TypeStruct) {
         assert(str);
         assert(str->type == TypeStruct);
         res = javaNestedNewType(str, thenew, idl);
-    } else res = & s_errorModifier;
+    } else res = & errorModifier;
     return res;
 }
 
@@ -2074,7 +2074,7 @@ Symbol *javaGetSuperClass(Symbol *cc) {
     assert(cc->type == TypeStruct && cc->u.structSpec);
     sups = cc->u.structSpec->super;
     if (sups == NULL)
-        return &s_errorSymbol;	/* class Object only */
+        return &errorSymbol;	/* class Object only */
     return sups->element;
 }
 
@@ -2121,7 +2121,7 @@ static TypeModifier *javaMethodInvocation(
 //&fprintf(dumpOut,"induced missinterpred at %d\n", name->position.line);
             addTrivialCxReference(LINK_NAME_INDUCED_ERROR,TypeInducedError,StorageDefault,
                                   &name->position, UsageUsed);
-            return &s_errorModifier;
+            return &errorModifier;
         }
     }
     *actArg = 0; actArgi = 0;
@@ -2152,7 +2152,7 @@ static TypeModifier *javaMethodInvocation(
         }
     } while (rr==RETURN_OK);
     if (appli == 0)
-        return &s_errorModifier;
+        return &errorModifier;
 //&sprintf(tmpBuff,"looking for smallest\n");ppcBottomInformation(tmpBuff);
     smallesti = 0;
     for (i=1; i<appli; i++) {
@@ -2164,7 +2164,7 @@ static TypeModifier *javaMethodInvocation(
     }
     for (i=0; i<appli; i++) {
         if (! javaSmallerProfile(appl[smallesti], appl[i]))
-            return &s_errorModifier;
+            return &errorModifier;
     }
     log_trace("the invoked method is %s of %s", appl[smallesti]->linkName, getFileItem(funCl[smallesti])->name);
     assert(appl[smallesti]->type == TypeDefault);
@@ -2224,7 +2224,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationN(IdList *name) {
         methodNameNotRecognized(name->id.name);
         return NULL;
     }
-    if (expr == &s_errorModifier)
+    if (expr == &errorModifier)
         return NULL;
     return erfs;
 }
@@ -2236,7 +2236,7 @@ TypeModifier *javaMethodInvocationN(	IdList *name,
     TypeModifier		*res;
     erfs = javaCrErfsForMethodInvocationN(name);
     if (erfs == NULL)
-        return &s_errorModifier;
+        return &errorModifier;
     res = javaMethodInvocation(&erfs->s, erfs->memb, &name->id, args,REGULAR_METHOD,&noPosition);
     return res;
 }
@@ -2272,7 +2272,7 @@ TypeModifier *javaMethodInvocationT(TypeModifier *tt,
     TypeModifier		*res;
     erfs = javaCrErfsForMethodInvocationT(tt, name);
     if (erfs == NULL)
-        return &s_errorModifier;
+        return &errorModifier;
     res = javaMethodInvocation(&erfs->s, erfs->memb, name, args,REGULAR_METHOD,&noPosition);
     return res;
 }
@@ -2282,7 +2282,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
     S_extRecFindStr		*erfs;
     int					rr;
     ss = javaCurrentSuperClass();
-    if (ss == &s_errorSymbol || ss->type==TypeError)
+    if (ss == &errorSymbol || ss->type==TypeError)
         return NULL;
     assert(ss && ss->type == TypeStruct);
     assert(ss->javaClassIsLoaded);
@@ -2308,7 +2308,7 @@ TypeModifier *javaMethodInvocationS(Id *super,
     TypeModifier		*res;
     erfs = javaCrErfsForMethodInvocationS(super, name);
     if (erfs==NULL)
-        return &s_errorModifier;
+        return &errorModifier;
     res = javaMethodInvocation(&erfs->s, erfs->memb, name, args, SUPER_METHOD_INVOCATION,&super->position);
     assert(erfs->s.currentClass && erfs->s.currentClass->u.structSpec);
     return res;
@@ -2319,7 +2319,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     ) {
     S_extRecFindStr		*erfs;
     int					rr;
-    if (clas == &s_errorSymbol || clas->type==TypeError)
+    if (clas == &errorSymbol || clas->type==TypeError)
         return NULL;
     assert(clas && clas->type == TypeStruct);
     javaLoadClassSymbolsFromFile(clas);
@@ -2342,9 +2342,9 @@ TypeModifier *javaConstructorInvocation(Symbol *clas,
     Id			name;
     erfs = javaCrErfsForConstructorInvocation(clas, pos);
     if (erfs == NULL)
-        return &s_errorModifier;
+        return &errorModifier;
     if (erfs->s.baseClass != erfs->s.currentClass)
-        return &s_errorModifier;
+        return &errorModifier;
     fillId(&name, clas->name, NULL, *pos);
     res = javaMethodInvocation(&erfs->s, erfs->memb, &name, args,CONSTRUCTOR_INVOCATION,&noPosition);
     return res;
@@ -2370,7 +2370,7 @@ TypeModifier *javaCheckNumeric(TypeModifier *tt) {
     if (javaIsNumeric(tt))
         return tt;
     else
-        return &s_errorModifier;
+        return &errorModifier;
 }
 
 TypeModifier *javaNumericPromotion(TypeModifier *tt) {
@@ -2386,7 +2386,7 @@ TypeModifier *javaNumericPromotion(TypeModifier *tt) {
     case TypeFloat:
         return tt;
     default:
-        return &s_errorModifier;
+        return &errorModifier;
     }
 }
 
@@ -2479,13 +2479,13 @@ TypeModifier *javaConditionalPromotion(	TypeModifier *t1,
     if (t2->kind == TypeNull && IsJavaReferenceType(t1->kind))
         return t1;
     if (! IsJavaReferenceType(t1->kind) || ! IsJavaReferenceType(t2->kind)) {
-        return &s_errorModifier;
+        return &errorModifier;
     }
     if (javaTypeConvertible(t1,t2))
         return t2;
     if (javaTypeConvertible(t2,t1))
         return t1;
-    return &s_errorModifier;
+    return &errorModifier;
 }
 
 void javaAddJslReadedTopLevelClasses(JslTypeTab  *jslTypeTab) {

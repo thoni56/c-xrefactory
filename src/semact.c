@@ -151,7 +151,7 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
         if (typeModifier->kind==TypePointer || typeModifier->kind==TypeArray) {
             s_structRecordCompletionType = typeModifier->next;
             assert(s_structRecordCompletionType);
-        } else s_structRecordCompletionType = &s_errorModifier;
+        } else s_structRecordCompletionType = &errorModifier;
     }
 }
 
@@ -348,7 +348,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
                         // Yes, definitely correct, in the first step determining
                         // class to search
                         ss->nextRecord = NULL;
-                        *res           = &s_errorSymbol;
+                        *res           = &errorSymbol;
                         return RETURN_NOT_FOUND;
                     }
                 }
@@ -356,7 +356,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
                     if (!javaRecordAccessible(ss, ss->baseClass, cclass, r, r->access)) {
                         if (visibilityCheck == VISIBILITY_CHECK_YES) {
                             ss->nextRecord = NULL;
-                            *res           = &s_errorSymbol;
+                            *res           = &errorSymbol;
                             return RETURN_NOT_FOUND;
                         } else {
                             goto nextRecord;
@@ -383,7 +383,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
                 ss->superClassesCount--;
             if (ss->superClassesCount == 0) {
                 ss->nextRecord = NULL;
-                *res           = &s_errorSymbol;
+                *res           = &errorSymbol;
                 return RETURN_NOT_FOUND;
             }
             sss                 = ss->superClasses[ss->superClassesCount - 1];
@@ -456,7 +456,7 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
 
     assert(structure);
     if (structure->kind != TypeStruct && structure->kind != TypeUnion) {
-        *resultingSymbol = &s_errorSymbol;
+        *resultingSymbol = &errorSymbol;
         goto fini;
     }
     reference = findStrRecordFromSymbol(structure->u.t, field, resultingSymbol, javaClassifier, NULL);
@@ -549,7 +549,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
 
 
 Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage theDefaultStorage, UsageKind usage) {
-    if (symbol == &s_errorSymbol || symbol->type == TypeError)
+    if (symbol == &errorSymbol || symbol->type == TypeError)
         return symbol;
     if (symbol->type == TypeError)
         return symbol;
@@ -602,7 +602,7 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
                           Storage storage) {
     UsageKind usageKind = UsageDefined;
 
-    if (declaration == &s_errorSymbol || baseType == &s_errorSymbol || declaration->type == TypeError ||
+    if (declaration == &errorSymbol || baseType == &errorSymbol || declaration->type == TypeError ||
         baseType->type == TypeError) {
         return declaration;
     }
@@ -767,7 +767,7 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
     TypeModifier *typeModifier, **declaratorModifier;
 
     assert(type && declarator);
-    if (type == &s_errorSymbol || declarator == &s_errorSymbol || type->type == TypeError
+    if (type == &errorSymbol || declarator == &errorSymbol || type->type == TypeError
         || declarator->type == TypeError)
         return;
     declarator->storage = type->storage;

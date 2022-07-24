@@ -162,12 +162,12 @@ int olOriginalComFileNumber  = -1;
 bool olStringSecondProcessing = false;
 
 TypeModifier defaultIntModifier;
-Symbol s_defaultIntDefinition;
-TypeModifier s_defaultPackedTypeModifier;
-TypeModifier s_defaultVoidModifier;
-Symbol s_defaultVoidDefinition;
-TypeModifier s_errorModifier;
-Symbol s_errorSymbol;
+Symbol defaultIntDefinition;
+TypeModifier defaultPackedTypeModifier;
+TypeModifier defaultVoidModifier;
+Symbol defaultVoidDefinition;
+TypeModifier errorModifier;
+Symbol errorSymbol;
 Position noPosition = {-1, 0, 0};
 
 Symbol s_javaArrayObjectSymbol;

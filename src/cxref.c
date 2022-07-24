@@ -662,7 +662,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         return NULL;
     if (* symbol->linkName == 0)
         return NULL;
-    if (symbol == &s_errorSymbol || symbol->type==TypeError)
+    if (symbol == &errorSymbol || symbol->type==TypeError)
         return NULL;
     if (position->file == noFileIndex)
         return NULL;

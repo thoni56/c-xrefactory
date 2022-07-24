@@ -1603,14 +1603,14 @@ VariableDeclarator
     |	error											{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+                    $$.d = newSymbolAsCopyOf(&errorSymbol);
                 } else {
                     SetNullBoundariesFor($$);
                 }
             }
             if (inSecondJslPass()) {
                 CF_ALLOC($$.d, Symbol);
-                *$$.d = s_errorSymbol;
+                *$$.d = errorSymbol;
             }
         }
     ;
@@ -1706,7 +1706,7 @@ MethodHeader
     |	Modifiers_opt VOID MethodDeclarator Throws_opt	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = javaMethodHeader($1.d,&s_defaultVoidDefinition,$3.d,StorageMethod);
+                    $$.d = javaMethodHeader($1.d,&defaultVoidDefinition,$3.d,StorageMethod);
                 } else {
                     PropagateBoundaries($$, $1, $4);
                     if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
@@ -1718,7 +1718,7 @@ MethodHeader
                 }
             }
             if (inSecondJslPass()) {
-                $$.d = jslMethodHeader($1.d,&s_defaultVoidDefinition,$3.d,StorageMethod, $4.d);
+                $$.d = jslMethodHeader($1.d,&defaultVoidDefinition,$3.d,StorageMethod, $4.d);
             }
         }
     |	COMPL_FULL_INHERITED_HEADER		{assert(0);}
@@ -1838,14 +1838,14 @@ FormalParameter
     |	error								{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+                    $$.d = newSymbolAsCopyOf(&errorSymbol);
                 } else {
                     SetNullBoundariesFor($$);
                 }
             }
             if (inSecondJslPass()) {
                 CF_ALLOC($$.d, Symbol);
-                *$$.d = s_errorSymbol;
+                *$$.d = errorSymbol;
             }
         }
     ;
@@ -1915,7 +1915,7 @@ ConstructorDeclaration
                               args = javaPrependDirectEnclosingInstanceArgument($2.d);
                           }
                           &*/
-                        mh=javaMethodHeader($1.d, &s_errorSymbol, args, StorageConstructor);
+                        mh=javaMethodHeader($1.d, &errorSymbol, args, StorageConstructor);
                         // TODO! Merge this with 'javaMethodBodyBeginning'!
                         assert(mh->u.typeModifier && mh->u.typeModifier->kind == TypeFunction);
                         beginBlock();  // in order to remove arguments
@@ -1932,7 +1932,7 @@ ConstructorDeclaration
                 if (inSecondJslPass()) {
                     Symbol *args;
                     args = $2.d;
-                    jslMethodHeader($1.d,&s_defaultVoidDefinition,args,
+                    jslMethodHeader($1.d,&defaultVoidDefinition,args,
                                     StorageConstructor, $3.d);
                 }
             }
@@ -3116,7 +3116,7 @@ NestedConstructorInvocation
                     if ($1.d.typeModifier->kind == TypeStruct) {
                         $$.d.typeModifier = javaNestedNewType($1.d.typeModifier->u.t, $3.d, $4.d);
                     } else {
-                        $$.d.typeModifier = &s_errorModifier;
+                        $$.d.typeModifier = &errorModifier;
                     }
                     javaHandleDeclaratorParamPositions(&$4.d->id.position, &$7.d, $8.d.p, &$9.d);
                     assert($$.d.typeModifier);
@@ -3484,7 +3484,7 @@ FieldAccess
                     } else if (currentLanguage == LANG_JAVA) {
                         $$.d.typeModifier = javaArrayFieldAccess($3.d);
                     } else {
-                        $$.d.typeModifier = &s_errorModifier;
+                        $$.d.typeModifier = &errorModifier;
                     }
                     assert($$.d.typeModifier);
                 } else {
@@ -3502,14 +3502,14 @@ FieldAccess
                     $$.d.reference = NULL;
                     $$.d.position = &$1.d->position;
                     ss = javaCurrentSuperClass();
-                    if (ss != &s_errorSymbol && ss->type!=TypeError) {
+                    if (ss != &errorSymbol && ss->type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         $$.d.reference = findStrRecordFromSymbol(ss, $3.d, &rec,
                                                                  CLASS_TO_EXPR, $1.d);
                         assert(rec);
                         $$.d.typeModifier = rec->u.typeModifier;
                     } else {
-                        $$.d.typeModifier = &s_errorModifier;
+                        $$.d.typeModifier = &errorModifier;
                     }
                     assert($$.d.typeModifier);
                 } else {
@@ -3526,7 +3526,7 @@ FieldAccess
                     Symbol *ss,*rec=NULL;
 
                     ss = javaQualifiedThis($1.d, $3.d);
-                    if (ss != &s_errorSymbol && ss->type!=TypeError) {
+                    if (ss != &errorSymbol && ss->type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         ss = javaGetSuperClass(ss);
                         $$.d.reference = findStrRecordFromSymbol(ss, $5.d, &rec,
@@ -3534,7 +3534,7 @@ FieldAccess
                         assert(rec);
                         $$.d.typeModifier = rec->u.typeModifier;
                     } else {
-                        $$.d.typeModifier = &s_errorModifier;
+                        $$.d.typeModifier = &errorModifier;
                     }
                     $$.d.reference = NULL;
                     assert($$.d.typeModifier);
@@ -3625,7 +3625,7 @@ ArrayAccess
                     TypeModifier *tt;
                     tt = javaClassifyToExpressionName($1.d, &($$.d.reference));
                     if (tt->kind==TypeArray) $$.d.typeModifier = tt->next;
-                    else $$.d.typeModifier = &s_errorModifier;
+                    else $$.d.typeModifier = &errorModifier;
                     assert($$.d.typeModifier);
                     $$.d.reference = NULL;
                 } else {
@@ -3638,7 +3638,7 @@ ArrayAccess
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.d.typeModifier->kind==TypeArray) $$.d.typeModifier = $1.d.typeModifier->next;
-                    else $$.d.typeModifier = &s_errorModifier;
+                    else $$.d.typeModifier = &errorModifier;
                     assert($$.d.typeModifier);
                     $$.d.reference = NULL;
                 } else {
@@ -3770,7 +3770,7 @@ UnaryExpressionNotPlusMinus
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($2.d.typeModifier->kind == TypeBoolean) $$.d.typeModifier = $2.d.typeModifier;
-                    else $$.d.typeModifier = &s_errorModifier;
+                    else $$.d.typeModifier = &errorModifier;
                     $$.d.reference = NULL;
                 } else {
                     $$.d.position = NULL_POS;
@@ -4279,7 +4279,7 @@ Expression
     |	error					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = &s_errorModifier;
+                    $$.d.typeModifier = &errorModifier;
                     $$.d.reference = NULL;
                 } else {
                     $$.d.position = NULL_POS;

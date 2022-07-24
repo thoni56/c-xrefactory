@@ -73,12 +73,12 @@ extern CurrentlyParsedClassInfo parsedClassInfoInit;
 extern CurrentlyParsedInfo parsedInfo;
 
 extern TypeModifier defaultIntModifier;
-extern Symbol s_defaultIntDefinition;
-extern TypeModifier s_defaultPackedTypeModifier;
-extern TypeModifier s_defaultVoidModifier;
-extern Symbol s_defaultVoidDefinition;
-extern TypeModifier s_errorModifier;
-extern Symbol s_errorSymbol;
+extern Symbol defaultIntDefinition;
+extern TypeModifier defaultPackedTypeModifier;
+extern TypeModifier defaultVoidModifier;
+extern Symbol defaultVoidDefinition;
+extern TypeModifier errorModifier;
+extern Symbol errorSymbol;
 extern Position noPosition;
 
 extern uchar typeLongChange[MAX_TYPE];

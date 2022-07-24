@@ -3181,7 +3181,7 @@ break;
 case 200:
 #line 494 "yacc_parser.y"
 {       /* GNU's shit */
-        yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+        yyval.ast_expressionType.d.typeModifier = &errorModifier;
         yyval.ast_expressionType.d.reference = NULL;
     }
 break;
@@ -3194,7 +3194,7 @@ case 205:
 {
         if (yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier=yyvsp[-3].ast_expressionType.d.typeModifier->next;
         else if (yyvsp[-1].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[-1].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier=yyvsp[-1].ast_expressionType.d.typeModifier->next;
-        else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+        else yyval.ast_expressionType.d.typeModifier = &errorModifier;
         yyval.ast_expressionType.d.reference = NULL;
         assert(yyval.ast_expressionType.d.typeModifier);
     }
@@ -3218,7 +3218,7 @@ case 207:
                 handleInvocationParamPositions(yyvsp[-4].ast_expressionType.d.reference, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_positionList.d->next, &yyvsp[0].ast_position.d, 1);
             }
         } else {
-            yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+            yyval.ast_expressionType.d.typeModifier = &errorModifier;
         }
         yyval.ast_expressionType.d.reference = NULL;
         assert(yyval.ast_expressionType.d.typeModifier);
@@ -3251,7 +3251,7 @@ case 211:
             yyval.ast_expressionType.d.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.d.typeModifier->next, yyvsp[0].ast_id.d, &rec, CLASS_TO_ANY);
             assert(rec);
             yyval.ast_expressionType.d.typeModifier = rec->u.typeModifier;
-        } else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+        } else yyval.ast_expressionType.d.typeModifier = &errorModifier;
         assert(yyval.ast_expressionType.d.typeModifier);
     }
 break;
@@ -3352,7 +3352,7 @@ case 231:
 #line 639 "yacc_parser.y"
 {
         if (yyvsp[0].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[0].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier=yyvsp[0].ast_expressionType.d.typeModifier->next;
-        else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+        else yyval.ast_expressionType.d.typeModifier = &errorModifier;
         assert(yyval.ast_expressionType.d.typeModifier);
         yyval.ast_expressionType.d.reference = NULL;
     }
@@ -3641,7 +3641,7 @@ case 294:
 #line 878 "yacc_parser.y"
 {
         /* $$.d = &s_errorSymbol; */
-        yyval.ast_symbol.d = typeSpecifier2(&s_errorModifier);
+        yyval.ast_symbol.d = typeSpecifier2(&errorModifier);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "error parsing init_declarations, near '%s'", yytext);
@@ -3939,9 +3939,9 @@ break;
 case 359:
 #line 1090 "yacc_parser.y"
 {
-        if (yyvsp[-1].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->type==TypeError) {
+        if (yyvsp[-1].ast_symbol.d == &errorSymbol || yyvsp[-1].ast_symbol.d->type==TypeError) {
             yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
-        } else if (yyvsp[0].ast_symbol.d == &s_errorSymbol || yyvsp[-1].ast_symbol.d->type==TypeError)  {
+        } else if (yyvsp[0].ast_symbol.d == &errorSymbol || yyvsp[-1].ast_symbol.d->type==TypeError)  {
             yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
         } else {
             yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
@@ -3963,7 +3963,7 @@ break;
 case 361:
 #line 1111 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'", yytext);
@@ -4066,7 +4066,7 @@ break;
 case 380:
 #line 1201 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing enumerator near '%s'", yytext);
@@ -4348,7 +4348,7 @@ break;
 case 422:
 #line 1428 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'", yytext);
@@ -4936,7 +4936,7 @@ break;
 case 542:
 #line 1917 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = & s_defaultIntDefinition;
+        yyval.ast_symbol.d = & defaultIntDefinition;
         addNewDeclaration(symbolTable, yyval.ast_symbol.d, yyvsp[-1].ast_symbol.d, yyvsp[0].ast_idList.d, StorageExtern);
     }
 break;
@@ -4951,7 +4951,7 @@ case 544:
 #line 1925 "yacc_parser.y"
 {
         /* $$.d = &s_errorSymbol; */
-        yyval.ast_symbol.d = typeSpecifier2(&s_errorModifier);
+        yyval.ast_symbol.d = typeSpecifier2(&errorModifier);
     }
 break;
 case 546:
@@ -5003,7 +5003,7 @@ break;
 case 552:
 #line 1970 "yacc_parser.y"
 {
-        completeDeclarator(&s_defaultIntDefinition, yyvsp[0].ast_symbol.d);
+        completeDeclarator(&defaultIntDefinition, yyvsp[0].ast_symbol.d);
         assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->u.typeModifier);
         if (yyvsp[0].ast_symbol.d->u.typeModifier->kind != TypeFunction) YYERROR;
         yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;

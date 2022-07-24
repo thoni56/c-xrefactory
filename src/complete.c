@@ -1011,7 +1011,7 @@ void completeRecNames(Completions *c) {
         assert(s);
         completeRecordsNames(c, s, CLASS_TO_ANY, StorageDefault, TypeDefault, 0);
     }
-    s_structRecordCompletionType = &s_errorModifier;
+    s_structRecordCompletionType = &errorModifier;
 }
 
 static void completeFromSymTab(Completions*c, unsigned storage){
@@ -1782,7 +1782,7 @@ void javaCompleteStrRecordPrimary(Completions *c) {
 void javaCompleteStrRecordSuper(Completions *c) {
     Symbol *memb;
     memb = javaCurrentSuperClass();
-    if (memb == &s_errorSymbol || memb->type==TypeError)
+    if (memb == &errorSymbol || memb->type==TypeError)
         return;
     assert(memb);
     javaLoadClassSymbolsFromFile(memb);
@@ -1802,7 +1802,7 @@ void javaCompleteStrRecordQualifiedSuper(Completions *c) {
         return;
     javaLoadClassSymbolsFromFile(str);
     str = javaGetSuperClass(str);
-    if (str == &s_errorSymbol || str->type==TypeError)
+    if (str == &errorSymbol || str->type==TypeError)
         return;
     assert(str);
     completeRecordsNames(c, str,CLASS_TO_ANY, StorageDefault,TypeDefault,0);

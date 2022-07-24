@@ -113,7 +113,7 @@ TypeModifier *jslPrependComposedType(TypeModifier *d, Type type) {
 
 void jslCompleteDeclarator(Symbol *t, Symbol *d) {
     assert(t && d);
-    if (t == &s_errorSymbol || d == &s_errorSymbol
+    if (t == &errorSymbol || d == &errorSymbol
         || t->type==TypeError || d->type==TypeError) return;
     LIST_APPEND(TypeModifier, d->u.typeModifier, t->u.typeModifier);
     d->storage = t->storage;
@@ -240,7 +240,7 @@ int jslClassifyAmbiguousTypeName(IdList *name, Symbol **symbolP) {
     Symbol    *pstr;
 
     assert(name);
-    *symbolP = &s_errorSymbol;
+    *symbolP = &errorSymbol;
     if (name->next == NULL) {
         /* a single name */
         jslClassifySingleAmbigNameToTypeOrPack(name, symbolP);
@@ -635,7 +635,7 @@ void jslNewClassDefinitionEnd(void) {
 void jslAddDefaultConstructor(Symbol *cl) {
     Symbol *cc;
     cc = javaCreateNewMethod(cl->name, &noPosition, MEMORY_CF);
-    jslMethodHeader(cl->access, &s_defaultVoidDefinition, cc,
+    jslMethodHeader(cl->access, &defaultVoidDefinition, cc,
                     StorageConstructor, NULL);
 }
 

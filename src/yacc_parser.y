@@ -492,7 +492,7 @@ primary_expr
         $$.d = $2.d;
     }
     | '(' compound_statement ')'            {       /* GNU's shit */
-        $$.d.typeModifier = &s_errorModifier;
+        $$.d.typeModifier = &errorModifier;
         $$.d.reference = NULL;
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
@@ -508,7 +508,7 @@ postfix_expr
     | postfix_expr '[' expr ']'                 {
         if ($1.d.typeModifier->kind==TypePointer || $1.d.typeModifier->kind==TypeArray) $$.d.typeModifier=$1.d.typeModifier->next;
         else if ($3.d.typeModifier->kind==TypePointer || $3.d.typeModifier->kind==TypeArray) $$.d.typeModifier=$3.d.typeModifier->next;
-        else $$.d.typeModifier = &s_errorModifier;
+        else $$.d.typeModifier = &errorModifier;
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
@@ -540,7 +540,7 @@ postfix_expr
                 handleInvocationParamPositions($1.d.reference, &$3.d, $4.d->next, &$5.d, 1);
             }
         } else {
-            $$.d.typeModifier = &s_errorModifier;
+            $$.d.typeModifier = &errorModifier;
         }
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
@@ -559,7 +559,7 @@ postfix_expr
             $$.d.reference = findStructureFieldFromType($1.d.typeModifier->next, $4.d, &rec, CLASS_TO_ANY);
             assert(rec);
             $$.d.typeModifier = rec->u.typeModifier;
-        } else $$.d.typeModifier = &s_errorModifier;
+        } else $$.d.typeModifier = &errorModifier;
         assert($$.d.typeModifier);
     }
     | postfix_expr INC_OP                       {
@@ -638,7 +638,7 @@ unary_expr
     }
     | '*' cast_expr                 {
         if ($2.d.typeModifier->kind==TypePointer || $2.d.typeModifier->kind==TypeArray) $$.d.typeModifier=$2.d.typeModifier->next;
-        else $$.d.typeModifier = &s_errorModifier;
+        else $$.d.typeModifier = &errorModifier;
         assert($$.d.typeModifier);
         $$.d.reference = NULL;
     }
@@ -877,7 +877,7 @@ init_declarations
     }
     | error                                             {
         /* $$.d = &s_errorSymbol; */
-        $$.d = typeSpecifier2(&s_errorModifier);
+        $$.d = typeSpecifier2(&errorModifier);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "error parsing init_declarations, near '%s'", yytext);
@@ -1088,9 +1088,9 @@ struct_or_union
 struct_declaration_list
     : struct_declaration                                /*& { $$.d = $1.d; } &*/
     | struct_declaration_list struct_declaration        {
-        if ($1.d == &s_errorSymbol || $1.d->type==TypeError) {
+        if ($1.d == &errorSymbol || $1.d->type==TypeError) {
             $$.d = $2.d;
-        } else if ($2.d == &s_errorSymbol || $1.d->type==TypeError)  {
+        } else if ($2.d == &errorSymbol || $1.d->type==TypeError)  {
             $$.d = $1.d;
         } else {
             $$.d = $1.d;
@@ -1109,7 +1109,7 @@ struct_declaration
         savedWorkMemoryIndex = $1.d;
     }
     | error                                             {
-        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'", yytext);
@@ -1199,7 +1199,7 @@ enumerator
         addNewSymbolDefinition(symbolTable, $$.d, StorageConstant, UsageDefined);
     }
     | error                                 {
-        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing enumerator near '%s'", yytext);
@@ -1426,7 +1426,7 @@ parameter_declaration
         $$.d = newSymbolAsType(NULL, NULL, noPosition, $1.d);
     }
     | error                                     {
-        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'", yytext);
@@ -1915,7 +1915,7 @@ top_init_declarations
         addNewDeclaration(symbolTable, $1.d, $2.d, $3.d, StorageExtern);
     }
     | init_declarator eq_initializer_opt                        {
-        $$.d = & s_defaultIntDefinition;
+        $$.d = & defaultIntDefinition;
         addNewDeclaration(symbolTable, $$.d, $1.d, $2.d, StorageExtern);
     }
     | top_init_declarations ',' init_declarator eq_initializer_opt          {
@@ -1924,7 +1924,7 @@ top_init_declarations
     }
     | error                                                     {
         /* $$.d = &s_errorSymbol; */
-        $$.d = typeSpecifier2(&s_errorModifier);
+        $$.d = typeSpecifier2(&errorModifier);
     }
     ;
 
@@ -1968,7 +1968,7 @@ fun_arg_init_declarations
 
 function_head_declaration
     : declarator                            {
-        completeDeclarator(&s_defaultIntDefinition, $1.d);
+        completeDeclarator(&defaultIntDefinition, $1.d);
         assert($1.d && $1.d->u.typeModifier);
         if ($1.d->u.typeModifier->kind != TypeFunction) YYERROR;
         $$.d = $1.d;

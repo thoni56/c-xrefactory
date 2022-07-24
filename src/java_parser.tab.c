@@ -4190,14 +4190,14 @@ case 146:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
+                    yyval.ast_symbol.d = newSymbolAsCopyOf(&errorSymbol);
                 } else {
                     SetNullBoundariesFor(yyval.ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
                 CF_ALLOC(yyval.ast_symbol.d, Symbol);
-                *yyval.ast_symbol.d = s_errorSymbol;
+                *yyval.ast_symbol.d = errorSymbol;
             }
         }
 break;
@@ -4296,7 +4296,7 @@ case 155:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_symbol.d = javaMethodHeader(yyvsp[-3].ast_unsigned.d,&s_defaultVoidDefinition,yyvsp[-1].ast_symbol.d,StorageMethod);
+                    yyval.ast_symbol.d = javaMethodHeader(yyvsp[-3].ast_unsigned.d,&defaultVoidDefinition,yyvsp[-1].ast_symbol.d,StorageMethod);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
                     if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
@@ -4308,7 +4308,7 @@ case 155:
                 }
             }
             if (inSecondJslPass()) {
-                yyval.ast_symbol.d = jslMethodHeader(yyvsp[-3].ast_unsigned.d,&s_defaultVoidDefinition,yyvsp[-1].ast_symbol.d,StorageMethod, yyvsp[0].ast_symbolList.d);
+                yyval.ast_symbol.d = jslMethodHeader(yyvsp[-3].ast_unsigned.d,&defaultVoidDefinition,yyvsp[-1].ast_symbol.d,StorageMethod, yyvsp[0].ast_symbolList.d);
             }
         }
 break;
@@ -4447,14 +4447,14 @@ case 167:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
+                    yyval.ast_symbol.d = newSymbolAsCopyOf(&errorSymbol);
                 } else {
                     SetNullBoundariesFor(yyval.ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
                 CF_ALLOC(yyval.ast_symbol.d, Symbol);
-                *yyval.ast_symbol.d = s_errorSymbol;
+                *yyval.ast_symbol.d = errorSymbol;
             }
         }
 break;
@@ -4530,7 +4530,7 @@ case 176:
                               args = javaPrependDirectEnclosingInstanceArgument($2.d);
                           }
                           &*/
-                        mh=javaMethodHeader(yyvsp[-2].ast_unsigned.d, &s_errorSymbol, args, StorageConstructor);
+                        mh=javaMethodHeader(yyvsp[-2].ast_unsigned.d, &errorSymbol, args, StorageConstructor);
                         /* TODO! Merge this with 'javaMethodBodyBeginning'!*/
                         assert(mh->u.typeModifier && mh->u.typeModifier->kind == TypeFunction);
                         beginBlock();  /* in order to remove arguments*/
@@ -4547,7 +4547,7 @@ case 176:
                 if (inSecondJslPass()) {
                     Symbol *args;
                     args = yyvsp[-1].ast_symbol.d;
-                    jslMethodHeader(yyvsp[-2].ast_unsigned.d,&s_defaultVoidDefinition,args,
+                    jslMethodHeader(yyvsp[-2].ast_unsigned.d,&defaultVoidDefinition,args,
                                     StorageConstructor, yyvsp[0].ast_symbolList.d);
                 }
             }
@@ -5900,7 +5900,7 @@ case 361:
                     if (yyvsp[-8].ast_expressionType.d.typeModifier->kind == TypeStruct) {
                         yyval.ast_nestedConstrTokenType.d.typeModifier = javaNestedNewType(yyvsp[-8].ast_expressionType.d.typeModifier->u.t, yyvsp[-6].ast_id.d, yyvsp[-5].ast_idList.d);
                     } else {
-                        yyval.ast_nestedConstrTokenType.d.typeModifier = &s_errorModifier;
+                        yyval.ast_nestedConstrTokenType.d.typeModifier = &errorModifier;
                     }
                     javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.d->id.position, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
                     assert(yyval.ast_nestedConstrTokenType.d.typeModifier);
@@ -6311,7 +6311,7 @@ case 392:
                     } else if (currentLanguage == LANG_JAVA) {
                         yyval.ast_expressionType.d.typeModifier = javaArrayFieldAccess(yyvsp[0].ast_id.d);
                     } else {
-                        yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+                        yyval.ast_expressionType.d.typeModifier = &errorModifier;
                     }
                     assert(yyval.ast_expressionType.d.typeModifier);
                 } else {
@@ -6332,14 +6332,14 @@ case 393:
                     yyval.ast_expressionType.d.reference = NULL;
                     yyval.ast_expressionType.d.position = &yyvsp[-2].ast_id.d->position;
                     ss = javaCurrentSuperClass();
-                    if (ss != &s_errorSymbol && ss->type!=TypeError) {
+                    if (ss != &errorSymbol && ss->type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         yyval.ast_expressionType.d.reference = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec,
                                                                  CLASS_TO_EXPR, yyvsp[-2].ast_id.d);
                         assert(rec);
                         yyval.ast_expressionType.d.typeModifier = rec->u.typeModifier;
                     } else {
-                        yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+                        yyval.ast_expressionType.d.typeModifier = &errorModifier;
                     }
                     assert(yyval.ast_expressionType.d.typeModifier);
                 } else {
@@ -6359,7 +6359,7 @@ case 394:
                     Symbol *ss,*rec=NULL;
 
                     ss = javaQualifiedThis(yyvsp[-4].ast_idList.d, yyvsp[-2].ast_id.d);
-                    if (ss != &s_errorSymbol && ss->type!=TypeError) {
+                    if (ss != &errorSymbol && ss->type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         ss = javaGetSuperClass(ss);
                         yyval.ast_expressionType.d.reference = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec,
@@ -6367,7 +6367,7 @@ case 394:
                         assert(rec);
                         yyval.ast_expressionType.d.typeModifier = rec->u.typeModifier;
                     } else {
-                        yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+                        yyval.ast_expressionType.d.typeModifier = &errorModifier;
                     }
                     yyval.ast_expressionType.d.reference = NULL;
                     assert(yyval.ast_expressionType.d.typeModifier);
@@ -6479,7 +6479,7 @@ case 404:
                     TypeModifier *tt;
                     tt = javaClassifyToExpressionName(yyvsp[-3].ast_idList.d, &(yyval.ast_expressionType.d.reference));
                     if (tt->kind==TypeArray) yyval.ast_expressionType.d.typeModifier = tt->next;
-                    else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+                    else yyval.ast_expressionType.d.typeModifier = &errorModifier;
                     assert(yyval.ast_expressionType.d.typeModifier);
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
@@ -6495,7 +6495,7 @@ case 405:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier = yyvsp[-3].ast_expressionType.d.typeModifier->next;
-                    else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+                    else yyval.ast_expressionType.d.typeModifier = &errorModifier;
                     assert(yyval.ast_expressionType.d.typeModifier);
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
@@ -6632,7 +6632,7 @@ case 423:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[0].ast_expressionType.d.typeModifier->kind == TypeBoolean) yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier;
-                    else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+                    else yyval.ast_expressionType.d.typeModifier = &errorModifier;
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
@@ -7186,7 +7186,7 @@ case 481:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+                    yyval.ast_expressionType.d.typeModifier = &errorModifier;
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
