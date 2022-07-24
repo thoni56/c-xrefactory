@@ -485,21 +485,24 @@ void initArchaicTypes(void) {
 }
 
 void initPreCreatedTypes(void) {
-    int i,t;
-
-    for(i=0; i<MAX_TYPE; i++) {
-        s_preCreatedTypesTable[i] = NULL;
-        s_preCrPtr1TypesTab[i] = NULL;
+    for (int i=0; i<MAX_TYPE; i++) {
+        preCreatedTypesTable[i] = NULL;
+        preCreatedPtr2TypeTable[i] = NULL;
     }
-    for(i=0; ; i++) {
-        t = preCreatedTypesInitTable[i];
-        if (t<0) break;
+
+    for (int i=0; ; i++) {
+        int t = preCreatedTypesInitTable[i];
+        if (t<0)
+            break;
+
         /* pre-create X */
         assert(t>=0 && t<MAX_TYPE);
-        s_preCreatedTypesTable[t] = newTypeModifier(t, NULL, NULL);
+        preCreatedTypesTable[t] = newTypeModifier(t, NULL, NULL);
+
         /* pre-create *X */
-        s_preCrPtr1TypesTab[t] = newTypeModifier(TypePointer, NULL, s_preCreatedTypesTable[t]);
+        preCreatedPtr2TypeTable[t] = newTypeModifier(TypePointer, NULL, preCreatedTypesTable[t]);
+
         /* pre-create **X */
-        s_preCrPtr2TypesTab[t] = newTypeModifier(TypePointer, NULL, s_preCrPtr1TypesTab[t]);
+        preCreatedPtr2Ptr2TypeTable[t] = newTypeModifier(TypePointer, NULL, preCreatedPtr2TypeTable[t]);
     }
 }

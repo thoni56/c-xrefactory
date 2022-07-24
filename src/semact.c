@@ -657,14 +657,14 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
 
     /* This seems to look first in pre-created types... */
     assert(type>=0 && type<MAX_TYPE);
-    if (s_preCreatedTypesTable[type] == NULL) {
+    if (preCreatedTypesTable[type] == NULL) {
         log_trace("creating simple type %d (='%s'), *not* found in pre-created types", type,
                   typeNamesTable[type]);
         p = newSimpleTypeModifier(type);
     } else {
         log_trace("creating simple type %d (='%s'), found in pre-created types", type,
                   typeNamesTable[type]);
-        p = s_preCreatedTypesTable[type];
+        p = preCreatedTypesTable[type];
     }
     assert(p->kind == type);
 
@@ -722,8 +722,8 @@ static TypeModifier * mergeBaseModTypes(TypeModifier *t1, TypeModifier *t2) {
     if (t2->kind == TypeDefault) return t1;
     assert(t1->kind >=0 && t1->kind<MAX_TYPE);
     assert(t2->kind >=0 && t2->kind<MAX_TYPE);
-    if (s_preCreatedTypesTable[t2->kind] == NULL) return t2;  /* not base type */
-    if (s_preCreatedTypesTable[t1->kind] == NULL) return t1;  /* not base type */
+    if (preCreatedTypesTable[t2->kind] == NULL) return t2;  /* not base type */
+    if (preCreatedTypesTable[t1->kind] == NULL) return t1;  /* not base type */
     return mergeBaseType(t1, t2);
 }
 
@@ -780,18 +780,18 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
             //if(d->b.npointers) {fprintf(dumpOut,"possible 2\n");fflush(dumpOut);}
             assert(tt->u.t && tt->u.t->type==tt->kind && tt->u.t->u.structSpec);
             tt = & tt->u.t->u.structSpec->sptrtype;
-        } else if (declarator->npointers>=2 && s_preCrPtr2TypesTab[tt->kind]!=NULL
+        } else if (declarator->npointers>=2 && preCreatedPtr2Ptr2TypeTable[tt->kind]!=NULL
                    && tt->typedefSymbol==NULL) {
             assert(tt->next==NULL); /* not a user defined type */
             //fprintf(dumpOut,"saving 2 pointer\n");fflush(dumpOut);
             declarator->npointers-=2;
-            tt = s_preCrPtr2TypesTab[tt->kind];
-        } else if (declarator->npointers>=1 && s_preCrPtr1TypesTab[tt->kind]!=NULL
+            tt = preCreatedPtr2Ptr2TypeTable[tt->kind];
+        } else if (declarator->npointers>=1 && preCreatedPtr2TypeTable[tt->kind]!=NULL
                    && tt->typedefSymbol==NULL) {
             assert(tt->next==NULL); /* not a user defined type */
             //fprintf(dumpOut,"saving 1 pointer\n");fflush(dumpOut);
             declarator->npointers--;
-            tt = s_preCrPtr1TypesTab[tt->kind];
+            tt = preCreatedPtr2TypeTable[tt->kind];
         }
     }
     unpackPointers(declarator);

@@ -226,8 +226,8 @@ char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
 char *tokenNamesTable[LAST_TOKEN];
 int tokenNameLengthsTable[LAST_TOKEN];
 
-TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
-TypeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
-TypeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
+TypeModifier *preCreatedTypesTable[MAX_TYPE];
+TypeModifier *preCreatedPtr2TypeTable[MAX_TYPE];
+TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
 
 char *storageNamesTable[MAX_STORAGE_NAMES];

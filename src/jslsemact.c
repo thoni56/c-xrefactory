@@ -80,11 +80,11 @@ static TypeModifier *jslCreateSimpleTypeModifier(Type type) {
     TypeModifier *p;
 
     assert(type>=0 && type<MAX_TYPE);
-    if (s_preCreatedTypesTable[type] == NULL) {
+    if (preCreatedTypesTable[type] == NULL) {
         CF_ALLOC(p, TypeModifier);
         initTypeModifier(p, type);
     } else {
-        p = s_preCreatedTypesTable[type];
+        p = preCreatedTypesTable[type];
     }
     assert(p->kind == type);
 
