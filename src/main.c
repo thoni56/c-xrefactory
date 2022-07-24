@@ -43,7 +43,7 @@
 static char previousStandardOptionsFile[MAX_FILE_NAME_SIZE];
 static char previousStandardOptionsSection[MAX_FILE_NAME_SIZE];
 static char previousOnLineClassPath[MAX_OPTION_LEN];
-static time_t previousStdopTime;
+static time_t previousStandardOptionsFileModificationTime;
 static int previousLanguage;
 static int previousPass;
 
@@ -524,17 +524,17 @@ bool fileProcessingInitialisations(bool *firstPass,
     if (standardOptionsFileName[0] != 0 )
         modifiedTime = fileModificationTime(standardOptionsFileName);
     else
-        modifiedTime = previousStdopTime;               // !!! just for now
+        modifiedTime = previousStandardOptionsFileModificationTime;               // !!! just for now
 
     log_trace("Checking previous cp==%s", previousOnLineClassPath);
     log_trace("Checking newcp==%s", options.classpath);
     if (*firstPass
         || previousPass != currentPass
-        || strcmp(previousStandardOptionsFile, standardOptionsFileName)
-        || strcmp(previousStandardOptionsSection,standardOptionsSectionName)
-        || previousStdopTime != modifiedTime
-        || previousLanguage!= *outLanguage
-        || strcmp(previousOnLineClassPath, options.classpath)
+        || strcmp(previousStandardOptionsFile, standardOptionsFileName) != 0 /* is not equal */
+        || strcmp(previousStandardOptionsSection,standardOptionsSectionName) != 0 /* is not equal */
+        || previousStandardOptionsFileModificationTime != modifiedTime
+        || previousLanguage != *outLanguage
+        || strcmp(previousOnLineClassPath, options.classpath) != 0 /* is not equal */
         || cache.cpIndex == 1     /* some kind of reset was made */
     ) {
         if (*firstPass) {
@@ -578,7 +578,7 @@ bool fileProcessingInitialisations(bool *firstPass,
         inputOpened = computeAndOpenInputFile();
         strcpy(previousStandardOptionsFile,standardOptionsFileName);
         strcpy(previousStandardOptionsSection,standardOptionsSectionName);
-        previousStdopTime = modifiedTime;
+        previousStandardOptionsFileModificationTime = modifiedTime;
         previousLanguage = *outLanguage;
         previousPass = currentPass;
 
