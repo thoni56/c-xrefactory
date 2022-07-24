@@ -7,10 +7,6 @@
 
 static int ppcIndentOffset = 0;
 
-#ifdef UNITTESTING
-#define fprintf mocked_fprintf
-extern int mocked_fprintf(FILE *stream, const char *format, ...);
-#endif
 
 static void ppcGenOffsetPosition(char *fn, int offset) {
     ppcIndent();

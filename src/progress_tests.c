@@ -11,5 +11,5 @@ BeforeEach(Progress) {
 }
 AfterEach(Progress) {}
 
-xEnsure(Progress, can_run_empty_test) {
+Ensure(Progress, can_run_empty_test) {
 }
