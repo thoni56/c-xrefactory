@@ -764,38 +764,36 @@ TypeModifier *prependComposedType(TypeModifier *d, Type type) {
 }
 
 void completeDeclarator(Symbol *type, Symbol *declarator) {
-    TypeModifier *tt,**dt;
-    //static int counter=0;
+    TypeModifier *typeModifier, **declaratorModifier;
+
     assert(type && declarator);
-    if (type == &s_errorSymbol || declarator == &s_errorSymbol
-        || type->type==TypeError || declarator->type==TypeError) return;
+    if (type == &s_errorSymbol || declarator == &s_errorSymbol || type->type == TypeError
+        || declarator->type == TypeError)
+        return;
     declarator->storage = type->storage;
-    assert(type->type==TypeDefault);
-    dt = &(declarator->u.typeModifier); tt = type->u.typeModifier;
+    assert(type->type == TypeDefault);
+    declaratorModifier = &(declarator->u.typeModifier);
+    typeModifier = type->u.typeModifier;
     if (declarator->npointers) {
-        if (declarator->npointers>=1 && (tt->kind==TypeStruct||tt->kind==TypeUnion)
-            && tt->typedefSymbol==NULL) {
-            //fprintf(dumpOut,"saving 1 str pointer:%d\n",counter++);fflush(dumpOut);
+        if (declarator->npointers >= 1 && (typeModifier->kind == TypeStruct || typeModifier->kind == TypeUnion)
+            && typeModifier->typedefSymbol == NULL) {
             declarator->npointers--;
-            //if(d->b.npointers) {fprintf(dumpOut,"possible 2\n");fflush(dumpOut);}
-            assert(tt->u.t && tt->u.t->type==tt->kind && tt->u.t->u.structSpec);
-            tt = & tt->u.t->u.structSpec->sptrtype;
-        } else if (declarator->npointers>=2 && preCreatedPtr2Ptr2TypeTable[tt->kind]!=NULL
-                   && tt->typedefSymbol==NULL) {
-            assert(tt->next==NULL); /* not a user defined type */
-            //fprintf(dumpOut,"saving 2 pointer\n");fflush(dumpOut);
-            declarator->npointers-=2;
-            tt = preCreatedPtr2Ptr2TypeTable[tt->kind];
-        } else if (declarator->npointers>=1 && preCreatedPtr2TypeTable[tt->kind]!=NULL
-                   && tt->typedefSymbol==NULL) {
-            assert(tt->next==NULL); /* not a user defined type */
-            //fprintf(dumpOut,"saving 1 pointer\n");fflush(dumpOut);
+            assert(typeModifier->u.t && typeModifier->u.t->type == typeModifier->kind && typeModifier->u.t->u.structSpec);
+            typeModifier = &typeModifier->u.t->u.structSpec->sptrtype;
+        } else if (declarator->npointers >= 2 && preCreatedPtr2Ptr2TypeTable[typeModifier->kind] != NULL
+                   && typeModifier->typedefSymbol == NULL) {
+            assert(typeModifier->next == NULL); /* not a user defined type */
+            declarator->npointers -= 2;
+            typeModifier = preCreatedPtr2Ptr2TypeTable[typeModifier->kind];
+        } else if (declarator->npointers >= 1 && preCreatedPtr2TypeTable[typeModifier->kind] != NULL
+                   && typeModifier->typedefSymbol == NULL) {
+            assert(typeModifier->next == NULL); /* not a user defined type */
             declarator->npointers--;
-            tt = preCreatedPtr2TypeTable[tt->kind];
+            typeModifier = preCreatedPtr2TypeTable[typeModifier->kind];
         }
     }
     unpackPointers(declarator);
-    LIST_APPEND(TypeModifier, *dt, tt);
+    LIST_APPEND(TypeModifier, *declaratorModifier, typeModifier);
 }
 
 Symbol *createSimpleDefinition(Storage storage, Type type, Id *id) {
