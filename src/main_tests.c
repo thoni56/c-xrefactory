@@ -46,9 +46,5 @@ BeforeEach(Main) {
 }
 AfterEach(Main) {}
 
-xEnsure(Main, can_handle_cxMemory_overflow) {
-    cxMemoryOverflowHandler(0);            /* Implicitly allocate and init cxMemory */
-    cxMemory->index = cxMemory->size - 10; /* Simulate memory almost out */
-
-    mainCallXref(0, NULL);
+Ensure(Main, can_run_empty_test) {
 }
