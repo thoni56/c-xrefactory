@@ -2025,7 +2025,7 @@ static void addRuleLocalVariable(Id *name, int order) {
     }
 }
 
-static CompletionFunctionsTable completionsTab[]  = {
+static CompletionFunctionsTable completionsTable[]  = {
     {COMPL_TYPE_NAME,       completeTypes},
     {COMPL_STRUCT_NAME,     completeStructs},
     {COMPL_STRUCT_REC_NAME, completeRecNames},
@@ -2052,38 +2052,38 @@ static bool exists_valid_parser_action_on(int token) {
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeYaccCompletions(char *s, int len, Position *pos) {
-    int token, i;
-    CompletionLine compLine;
+void makeYaccCompletions(char *string, int len, Position *pos) {
+    int token;
+    CompletionLine completionLine;
 
-    log_trace("completing \"%s\"", s);
-    strncpy(collectedCompletions.idToProcess, s, MAX_FUN_NAME_SIZE);
+    log_trace("completing \"%s\"", string);
+    strncpy(collectedCompletions.idToProcess, string, MAX_FUN_NAME_SIZE);
     collectedCompletions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     initCompletions(&collectedCompletions, len, *pos);
 
-    for (i=0; (token=completionsTab[i].token) != 0; i++) {
+    for (int i=0; (token=completionsTable[i].token) != 0; i++) {
         log_trace("trying token %d", tokenNamesTable[token]);
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
-            (*completionsTab[i].fun)(&collectedCompletions);
+            (*completionsTable[i].fun)(&collectedCompletions);
             if (collectedCompletions.abortFurtherCompletions)
                 return;
         }
     }
 
     /* basic language tokens */
-    for (token=0; token<LAST_TOKEN; token++) {
+    for (int token=0; token<LAST_TOKEN; token++) {
         if (token == IDENTIFIER)
             continue;
         if (exists_valid_parser_action_on(token)) {
                 if (tokenNamesTable[token] != NULL) {
                     if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
-                        fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
+                        fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
                     } else {
-                        fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeToken, 0, 0, NULL, NULL);
+                        fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeToken, 0, 0, NULL, NULL);
                     }
                     log_trace("completing %d==%s(%s) in state %d", token, tokenNamesTable[token], tokenNamesTable[token], lastyystate);
-                    processName(tokenNamesTable[token], &compLine, 0, &collectedCompletions);
+                    processName(tokenNamesTable[token], &completionLine, 0, &collectedCompletions);
                 }
         }
     }

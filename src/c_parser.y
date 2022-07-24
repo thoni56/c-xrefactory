@@ -1811,17 +1811,17 @@ static bool exists_valid_parser_action_on(int token) {
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeCCompletions(char *s, int len, Position *pos) {
-    int token, i;
+void makeCCompletions(char *string, int len, Position *pos) {
+    int token;
     CompletionLine compLine;
 
-    log_trace("completing \"%s\"", s);
-    strncpy(collectedCompletions.idToProcess, s, MAX_FUN_NAME_SIZE);
+    log_trace("completing \"%s\"", string);
+    strncpy(collectedCompletions.idToProcess, string, MAX_FUN_NAME_SIZE);
     collectedCompletions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     initCompletions(&collectedCompletions, len, *pos);
 
     /* special wizard completions */
-    for (i=0; (token=spCompletionsTab[i].token) != 0; i++) {
+    for (int i=0; (token=spCompletionsTab[i].token) != 0; i++) {
         log_trace("trying token %d", tokenNamesTable[token]);
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
@@ -1836,7 +1836,7 @@ void makeCCompletions(char *s, int len, Position *pos) {
         return;
 
     /* basic language tokens */
-    for (i=0; (token=completionsTab[i].token) != 0; i++) {
+    for (int i=0; (token=completionsTab[i].token) != 0; i++) {
         log_trace("trying token %d", tokenNamesTable[token]);
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
@@ -1847,7 +1847,7 @@ void makeCCompletions(char *s, int len, Position *pos) {
     }
 
     /* basic language tokens */
-    for (token=0; token<LAST_TOKEN; token++) {
+    for (int token=0; token<LAST_TOKEN; token++) {
         if (token == IDENTIFIER)
             continue;
         if (exists_valid_parser_action_on(token)) {

@@ -4347,7 +4347,7 @@ void javaParsingInitializations(void) {
     javaInitArrayObject();
 }
 
-static CompletionFunctionsTable spCompletionsTab[]  = {
+static CompletionFunctionsTable specialCompletionsTable[]  = {
     { COMPL_THIS_PACKAGE_SPECIAL,	javaCompleteThisPackageName },
     { COMPL_CLASS_DEF_NAME,			javaCompleteClassDefinitionNameSpecial },
     { COMPL_FULL_INHERITED_HEADER,	javaCompleteFullInheritedMethodHeader },
@@ -4357,7 +4357,7 @@ static CompletionFunctionsTable spCompletionsTab[]  = {
     {0,NULL}
 };
 
-static CompletionFunctionsTable completionsTab[]  = {
+static CompletionFunctionsTable completionsTable[]  = {
     { COMPL_TYPE_NAME0,				javaCompleteTypeSingleName },
     { COMPL_TYPE_NAME1,				javaCompleteTypeCompName },
     { COMPL_PACKAGE_NAME0,			javaCompletePackageSingleName },
@@ -4403,20 +4403,20 @@ static bool exists_valid_parser_action_on(int token) {
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeJavaCompletions(char *s, int len, Position *pos) {
+void makeJavaCompletions(char *string, int len, Position *pos) {
     int token;
-    CompletionLine compLine;
+    CompletionLine completionLine;
 
-    log_trace("completing \"%s\" in state %d", s, lastyystate);
-    strncpy(collectedCompletions.idToProcess, s, MAX_FUN_NAME_SIZE);
+    log_trace("completing \"%s\" in state %d", string, lastyystate);
+    strncpy(collectedCompletions.idToProcess, string, MAX_FUN_NAME_SIZE);
     collectedCompletions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     initCompletions(&collectedCompletions, len, *pos);
 
     /* special wizard completions */
-    for (int i=0;(token=spCompletionsTab[i].token)!=0; i++) {
+    for (int i=0;(token=specialCompletionsTable[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
-            (*spCompletionsTab[i].fun)(&collectedCompletions);
+            (*specialCompletionsTable[i].fun)(&collectedCompletions);
             if (collectedCompletions.abortFurtherCompletions)
                 return;
         }
@@ -4425,10 +4425,10 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     /* If there is a wizard completion, RETURN now */
     if (collectedCompletions.alternativeIndex != 0 && options.serverOperation != OLO_SEARCH)
         return;
-    for (int i=0;(token=completionsTab[i].token)!=0; i++) {
+    for (int i=0;(token=completionsTable[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, tokenNamesTable[token], lastyystate);
-            (*completionsTab[i].fun)(&collectedCompletions);
+            (*completionsTable[i].fun)(&collectedCompletions);
             if (collectedCompletions.abortFurtherCompletions)
                 return;
         }
@@ -4441,10 +4441,10 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
         if (exists_valid_parser_action_on(token)) {
             if (tokenNamesTable[token]!= NULL) {
                 if (isalpha(*tokenNamesTable[token]) || *tokenNamesTable[token]=='_') {
-                    fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeKeyword,0, 0, NULL,NULL);
-                    processName(tokenNamesTable[token], &compLine, 0, &collectedCompletions);
+                    fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeKeyword,0, 0, NULL,NULL);
+                    processName(tokenNamesTable[token], &completionLine, 0, &collectedCompletions);
                 } else {
-                    /*& fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeToken,0, 0, NULL,NULL); &*/
+                    /*& fillCompletionLine(&completionLine, tokenNamesTable[token], NULL, TypeToken,0, 0, NULL,NULL); &*/
                 }
             }
         }
