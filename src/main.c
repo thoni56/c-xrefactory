@@ -478,11 +478,11 @@ static void discoverStandardDefines(void) {
     LEAVE();
  }
 
-static void getAndProcessXrefrcOptions(char *dffname, char *dffsect, char *project) {
+static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSectionName, char *project) {
     int dfargc;
     char **dfargv;
-    if (*dffname != 0 && !options.no_stdoptions) {
-        readOptionsFromFile(dffname, &dfargc, &dfargv, dffsect, project);
+    if (*optionsFileName != 0 && !options.no_stdoptions) {
+        readOptionsFromFile(optionsFileName, &dfargc, &dfargv, optionsSectionName, project);
         // warning, the following can overwrite variables like
         // 's_cxref_file_name' allocated in PPM_MEMORY, then when memory
         // is got back by caching, it may provoke a problem
@@ -913,18 +913,6 @@ int main(int argc, char **argv) {
     totalTaskEntryInitialisations();
     mainTaskEntryInitialisations(argc, argv);
 
-    // If there is no configuration file given auto-find it
-    // TODO: This should probably be done where all other config file
-    // discovery is done...
-    /* if (options.xrefrc == NULL) { */
-    /*     char *configFileName = findConfigFile(cwd); */
-    /*     createOptionString(&options.xrefrc, configFileName); */
-    /*     // And then the storage will be parallel to that */
-    /*     strcpy(&configFileName[strlen(configFileName)-2], "db"); */
-    /*     setXrefsLocation(configFileName); */
-    /* } */
-
-    // Ok, so there were these five, now four, no three, main operating modes
     if (options.mode == RefactoryMode)
         refactory();
     if (options.mode == XrefMode)

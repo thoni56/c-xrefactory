@@ -10,7 +10,7 @@ bool fileAbortEnabled;
 #include "lexem.h"
 
 Id javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
-TypeModifier * preCreatedTypesTable[MAX_TYPE];
+TypeModifier *preCreatedTypesTable[MAX_TYPE];
 Symbol s_errorSymbol;
 char *s_javaLangObjectLinkName="java/lang/Object";
 

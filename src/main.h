@@ -5,12 +5,12 @@
 
 #include "head.h" /* For Language type */
 
-// Required for server.c extraction...
+// Used by server.c & xref.c but not main itself
 extern bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
                                           Language *outLanguage);
 //------
 
-// Required for xref.c extraction
+// Required for xref.c
 extern void checkExactPositionUpdate(bool printMessage);
 //------
 

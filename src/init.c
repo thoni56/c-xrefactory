@@ -455,12 +455,10 @@ void initTypeNames(void) {
 }
 
 void initStorageNames(void) {
-    Int2StringDictionary      *s;
-
     for (int i=0; i<MAX_STORAGE_NAMES; i++)
         storageNamesTable[i]="";
     for (int i=0; storageNamesInitTable[i].i != -1; i++) {
-        s = &storageNamesInitTable[i];
+        Int2StringDictionary *s = &storageNamesInitTable[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
         storageNamesTable[s->i] = s->string;
     }
