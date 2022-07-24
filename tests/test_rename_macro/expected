@@ -1,0 +1,126 @@
+<goto>
+ <position-off off=6785 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=8752 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=11336 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=17828 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=18234 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=35428 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=36160 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=36377 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=36478 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=38088 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=42181 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=44839 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<precheck len=<n>> NEXT_FILE_ARG(</precheck>
+<goto>
+ <position-off off=6788 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<goto>
+ <position-off off=6786 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=8743 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=11317 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=17799 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=18195 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=35379 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=36101 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=36308 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=36399 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=37999 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=42082 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=44730 len=<n>>CURDIR/main.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>NEXT_FILE_ARG</str>  <str len=<n>>VVV</str>
+</replacement>
+<goto>
+ <position-off off=6788 len=<n>>CURDIR/main.c</position-off>
+</goto>
