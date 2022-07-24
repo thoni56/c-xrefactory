@@ -87,3 +87,7 @@ bool referenceFileCountMatches(int newRefNum) {
 char *findConfigFile(char *cwd) {
     return (char *)mock(cwd);
 }
+
+void getPipedOptions(int *outNargc, char ***outNargv) {
+  mock(outNargc, outNargv);
+}

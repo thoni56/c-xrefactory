@@ -14,12 +14,8 @@ void checkExactPositionUpdate(bool printMessage) {
     mock(printMessage);
 }
 
-void searchStandardOptionsFileFor(char *filename, char *options_filename, char *section) {
-  mock(filename, options_filename, section);
-}
-
-void getPipedOptions(int *outNargc, char ***outNargv) {
-  mock(outNargc, outNargv);
+void searchStandardOptionsFileFor(char *filename, char *optionsFilename, char *section) {
+  mock(filename, optionsFilename, section);
 }
 
 int mainHandleSetOption(int argc, char **argv, int i) {

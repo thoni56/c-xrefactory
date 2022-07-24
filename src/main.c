@@ -837,25 +837,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     LEAVE();
 }
 
-void getPipedOptions(int *outNargc, char ***outNargv) {
-    *outNargc = 0;
-    assert(options.mode);
-    if (options.mode == ServerMode) {
-        char nsect[MAX_FILE_NAME_SIZE];
-        readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM, "", NULL, nsect);
-        /* those options can't contain include or define options, */
-        /* sections neither */
-        int c = getc(stdin);
-        if (c == EOF) {
-            /* Just log and exit since we don't know if there is someone there... */
-            /* We also want a clean exit() if we are going for coverage */
-            log_error("Broken pipe");
-            exit(-1);
-            FATAL_ERROR(ERR_INTERNAL, "broken input pipe", XREF_EXIT_ERR);
-        }
-    }
-}
-
 void mainOpenOutputFile(char *outfile) {
     closeMainOutputFile();
     if (outfile!=NULL) {
