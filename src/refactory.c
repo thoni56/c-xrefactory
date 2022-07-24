@@ -2170,10 +2170,10 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
 
 static void applyParameterManipulationToFunction(char *functionName, EditorMarkerList *occs, int manip, int argn1,
                                                  int argn2) {
-    int progressi, progressn;
+    int progress, count;
 
-    LIST_LEN(progressn, EditorMarkerList, occs);
-    progressi = 0;
+    LIST_LEN(count, EditorMarkerList, occs);
+    progress = 0;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
         if (ll->usage.kind != UsageUndefinedMacro) {
             if (manip == PPC_AVR_ADD_PARAMETER) {
@@ -2186,7 +2186,7 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
                 errorMessage(ERR_INTERNAL, "unknown parameter manipulation");
             }
         }
-        writeRelativeProgress((progressi++) * 100 / progressn);
+        writeRelativeProgress(progress++/count*100);
     }
     writeRelativeProgress(100);
 }
@@ -2334,7 +2334,7 @@ static EditorMarker *replaceStaticPrefix(EditorMarker *d, char *npref) {
 
 static void reduceLongReferencesInRegions(EditorMarker *point, EditorRegionList **regions) {
     EditorMarkerList *rli, *ri, *ro;
-    int               currentProgress, totalProgress;
+    int               progress, count;
 
     editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxuselesslongnames",
                           "-olallchecks");
@@ -2347,12 +2347,12 @@ static void reduceLongReferencesInRegions(EditorMarker *point, EditorRegionList 
     // invoked, adjust progress bar counter ratio
 
     progressFactor += 1;
-    LIST_LEN(totalProgress, EditorMarkerList, ri);
-    currentProgress = 0;
+    LIST_LEN(count, EditorMarkerList, ri);
+    progress = 0;
     for (EditorMarkerList *rr = ri; rr != NULL; rr = rr->next) {
         EditorMarker *m = replaceStaticPrefix(rr->marker, "");
         editorFreeMarker(m);
-        writeRelativeProgress((((currentProgress++) * 100 / totalProgress) / 10) * 10);
+        writeRelativeProgress(progress++/count*100);
     }
     writeRelativeProgress(100);
 }
@@ -2776,7 +2776,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     EditorMarkerList *occs;
     EditorRegionList *regions;
     ReferencesItem   *theMethod;
-    int               progressi, progressn;
+    int               progress, count;
 
     movedEnd = editorDuplicateMarker(mend);
     movedEnd->offset--;
@@ -2803,9 +2803,9 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     //&editServerParseBuffer(refactoringOptions.project, point->buffer, point, "-olcxrename");
 
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
-    LIST_LEN(progressn, EditorMarkerList, occs);
-    progressi = 0;
-    regions   = NULL;
+    LIST_LEN(count, EditorMarkerList, occs);
+    progress = 0;
+    regions  = NULL;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
         if ((!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) && ll->usage.kind != UsageConstructorDefinition) {
             pp  = replaceStaticPrefix(ll->marker, fqtname);
@@ -2813,7 +2813,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
             editorMoveMarkerBeyondIdentifier(ppp, 1);
             regions = newEditorRegionList(pp, ppp, regions);
         }
-        writeRelativeProgress((progressi++) * 100 / progressn);
+        writeRelativeProgress(progress++ / count * 100);
     }
     writeRelativeProgress(100);
 
@@ -2943,7 +2943,7 @@ static void moveField(EditorMarker *point) {
     EditorMarker     *pp, *ppp;
     EditorRegionList *regions;
     EditorUndo       *undoStartPoint, *redoTrack;
-    int               progressi, progressn;
+    int               progress, count;
 
     target = getTargetFromOptions();
     if (refactoringOptions.refpar2 != NULL && *refactoringOptions.refpar2 != 0) {
@@ -2983,8 +2983,8 @@ static void moveField(EditorMarker *point) {
 
     undoStartPoint = editorUndo;
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
-    LIST_LEN(progressn, EditorMarkerList, occs);
-    progressi = 0;
+    LIST_LEN(count, EditorMarkerList, occs);
+    progress = 0;
     regions   = NULL;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
         if (!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
@@ -2992,7 +2992,7 @@ static void moveField(EditorMarker *point) {
                 replaceString(ll->marker, 0, prefixDot);
             }
         }
-        writeRelativeProgress((progressi++) * 100 / progressn);
+        writeRelativeProgress(progress++ / count * 100);
     }
     writeRelativeProgress(100);
 
@@ -3226,7 +3226,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     char              parusage[REFACTORING_TMP_STRING_SIZE];
     char              cid[TMP_STRING_SIZE];
     int               plen, ppoffset, poffset;
-    int               progressi, progressj, progressn;
+    int               progress, progressj, count;
     EditorMarker     *pp, *ppp, *nparamdefpos;
     EditorMarkerList *occs, *allrefs;
     EditorMarkerList *npoccs, *npadded, *diff1, *diff2;
@@ -3262,13 +3262,13 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     sprintf(pardecl, "%s %s", fqstaticname, refactoringOptions.refpar1);
     sprintf(fqstaticname + strlen(fqstaticname), ".");
 
-    progressn = progressi = 0;
+    count = progress = 0;
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
         if (mm->selected && mm->visible) {
             mm->markers = editorReferencesToMarkers(mm->references.references, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
-            progressn += progressj;
+            count += progressj;
         }
     }
     undoStartPoint = editorUndo;
@@ -3319,7 +3319,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
                 lll      = newEditorRegionList(pp, ppp, NULL);
                 *reglast = lll;
                 reglast  = &lll->next;
-                writeRelativeProgress((progressi++) * 100 / progressn);
+                writeRelativeProgress(progress++ / count * 100);
             }
             editorFreeMarkersAndMarkerList(mm->markers);
             mm->markers = NULL;
@@ -3335,14 +3335,14 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxmaybethis", NULL);
     olcxPushSpecial(LINK_NAME_MAYBE_THIS_ITEM, OLO_MAYBE_THIS);
 
-    progressn = progressi = 0;
+    count = progress = 0;
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
         if (mm->selected && mm->visible) {
             mm->markers = editorReferencesToMarkers(mm->references.references, filter0, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
-            progressn += progressj;
+            count += progressj;
         }
     }
 
@@ -3376,7 +3376,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
                     ll->marker->offset = poffset;
                     addCopyOfMarkerToList(&npadded, ll->marker, ll->usage);
                 }
-                writeRelativeProgress((progressi++) * 100 / progressn);
+                writeRelativeProgress(progress++ / count * 100);
             }
         }
     }
@@ -3533,7 +3533,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     char              testi[2 * REFACTORING_TMP_STRING_SIZE];
     int               plen, tplen, rlen, res, argn, bi;
     int               classnum, parclassnum;
-    int               progressi, progressn;
+    int               progress, count;
     EditorMarker     *mm, *m1, *m2, *pp;
     EditorMarkerList *occs, *poccs;
     EditorUndo       *checkPoint;
@@ -3612,8 +3612,8 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     occs = pushGetAndPreCheckReferences(point->buffer, point, nameOnPoint, STANDARD_SELECT_SYMBOLS_MESSAGE,
                                         PPCV_BROWSER_TYPE_INFO);
 
-    LIST_LEN(progressn, EditorMarkerList, occs);
-    progressi = 0;
+    LIST_LEN(count, EditorMarkerList, occs);
+    progress = 0;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
         if (!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
             res = getParameterPosition(ll->marker, nameOnPoint, argn);
@@ -3640,7 +3640,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
                 editorFreeMarker(m1);
             }
         }
-        writeRelativeProgress((progressi++) * 100 / progressn);
+        writeRelativeProgress(progress++ / count * 100);
     }
     writeRelativeProgress(100);
     // you can remove 'static' now, hope it is not virtual symbol,
@@ -4620,7 +4620,7 @@ void refactory() {
 
     if (progressOffset != progressFactor) {
         char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "s_progressOffset (%d) != s_progressFactor (%d)", progressOffset, progressFactor);
+        sprintf(tmpBuff, "progressOffset (%d) != progressFactor (%d)", progressOffset, progressFactor);
         ppcGenRecord(PPC_DEBUG_INFORMATION, tmpBuff);
     }
 

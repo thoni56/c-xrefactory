@@ -355,7 +355,7 @@ void mainCallXref(int argc, char **argv) {
                        Can we just reread from the last class file? */
                     oneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed);
                 }
-                writeRelativeProgress(10 * inputCounter / numberOfInputs);
+                writeRelativeProgress(inputCounter / numberOfInputs * 10);
                 inputCounter++;
             }
 
@@ -368,7 +368,7 @@ void mainCallXref(int argc, char **argv) {
                 ffc->isScheduled       = false;
                 ffc->scheduledToUpdate = false;
                 if (options.xref2)
-                    writeRelativeProgress(10 + 90 * inputCounter / numberOfInputs);
+                    writeRelativeProgress(10 + inputCounter / numberOfInputs * 90);
                 inputCounter++;
             }
             goto finish;
