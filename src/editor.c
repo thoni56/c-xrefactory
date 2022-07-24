@@ -897,6 +897,7 @@ void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size,
     }
 }
 
+#if 0
 void editorDumpBuffer(EditorBuffer *buff) {
     /* TODO: Should really put this in log() */
     for (int i=0; i<buff->allocation.bufferSize; i++) {
@@ -914,6 +915,7 @@ void editorDumpBuffers(void) {
     }
     log_trace("[editorDumpBuffers] end");
 }
+#endif
 
 static void editorQuasiSaveBuffer(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = false;
