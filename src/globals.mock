@@ -31,7 +31,6 @@ int maxPasses;
 char defaultClassPath[] = ".";
 
 FILE *communicationChannel;
-FILE *dumpOut = NULL;
 FILE *errOut=NULL;
 
 TypeModifier *preCreatedTypesTable[MAX_TYPE];

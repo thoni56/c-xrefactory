@@ -306,10 +306,6 @@ int javaIsStringType(TypeModifier *tt) {
     return (int) mock(tt);
 }
 
-void javaTypeDump(TypeModifier *tt) {
-    mock(tt);
-}
-
 void javaAddJslReadedTopLevelClasses(JslTypeTab *typeTab) {
     mock(typeTab);
 }

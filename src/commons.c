@@ -24,7 +24,6 @@ void closeMainOutputFile(void) {
         communicationChannel = stdout;
     }
     errOut = communicationChannel;
-    dumpOut = communicationChannel;
 }
 
 void initCwd(void) {
@@ -370,7 +369,8 @@ void internalCheckFail(char *expr, char *file, int line) {
             closeMainOutputFile();
             ppcSynchronize();
         } else {
-            fprintf(errOut, "\t exiting!\n"); fflush(stderr);
+            fprintf(errOut, "\t exiting!\n");
+            fflush(errOut);
         }
     }
     if (options.mode == ServerMode
@@ -380,7 +380,8 @@ void internalCheckFail(char *expr, char *file, int line) {
         emergencyExit(XREF_EXIT_ERR);
     }
 
-    fprintf(errOut, "\t file aborted!\n"); fflush(errOut);
+    fprintf(errOut, "\t file aborted!\n");
+    fflush(errOut);
     // TODO: WAS: longjump is causing problems with refactory, the longjmp
     // is missplaced. Is it? Test for this case?
     longjmp(cxmemOverflow, LONGJMP_REASON_FILE_ABORT);

@@ -152,7 +152,6 @@ char *s_javaThisPackageName = "";
 /* ************************************************************* */
 
 FILE *communicationChannel=NULL;
-FILE *dumpOut=NULL;
 FILE *errOut=NULL;
 
 bool cxResizingBlocked = false;

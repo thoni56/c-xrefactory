@@ -31,7 +31,6 @@ extern Counters counters;
 extern unsigned s_recFindCl;
 
 extern FILE *errOut;
-extern FILE *dumpOut;
 
 extern char s_olSymbolType[COMPLETION_STRING_SIZE];
 extern char s_olSymbolClassType[COMPLETION_STRING_SIZE];

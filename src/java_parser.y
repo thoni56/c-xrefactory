@@ -4190,13 +4190,6 @@ Assignment
                         }
                         $$.d.typeModifier = $1.d.typeModifier;
                         $$.d.reference = NULL;
-                        /*
-                          fprintf(dumpOut,": java Type Dump\n"); fflush(dumpOut);
-                          javaTypeDump($1.d.t);
-                          fprintf(dumpOut,"\n = \n"); fflush(dumpOut);
-                          javaTypeDump($4.d.t);
-                          fprintf(dumpOut,"\ndump end\n"); fflush(dumpOut);
-                        */
                     }
                 } else {
                     PropagateBoundaries($$, $1, $4);

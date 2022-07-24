@@ -49,24 +49,24 @@ void dumpOptions(int nargc, char **nargv) {
  */
 
 void symDump(Symbol *s) {
-    fprintf(dumpOut,"[symbol] %s\n",s->name);
+    log_debug("[symbol] %s",s->name);
 }
 
 void typeDump(TypeModifier *t) {
-    fprintf(dumpOut,"dumpStart\n");
+    log_debug("dumpStart");
     for(; t!=NULL; t=t->next) {
-        fprintf(dumpOut," %x\n",t->kind);
+        log_debug(" %x",t->kind);
     }
-    fprintf(dumpOut,"dumpStop\n");
+    log_debug("dumpStop");
 }
 
 void symbolRefItemDump(ReferencesItem *s) {
-    fprintf(dumpOut,"%s\t%s %s %d %d %d %d %d\n",
-            s->name,
-            getFileItem(s->vApplClass)->name,
-            getFileItem(s->vFunClass)->name,
-            s->type, s->storage, s->scope,
-            s->access, s->category);
+    log_debug("%s\t%s %s %d %d %d %d %d",
+              s->name,
+              getFileItem(s->vApplClass)->name,
+              getFileItem(s->vFunClass)->name,
+              s->type, s->storage, s->scope,
+              s->access, s->category);
 }
 
 /* *********************************************************************** */

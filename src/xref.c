@@ -189,7 +189,7 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
             *atLeastOneProcessedP = true;
         } else {
             errorMessage(ERR_CANT_OPEN, inputFilename);
-            fprintf(dumpOut, "\tmaybe forgotten -p option?\n");
+            fprintf(errOut, "\tmaybe forgotten -p option?\n");
         }
         // no multiple passes for java programs
         *firstPassP                          = false;
@@ -265,8 +265,8 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
             ppcGenRecord(PPC_INFORMATION, "swapping references to disk");
             ppcGenRecord(PPC_INFORMATION, "");
         } else {
-            fprintf(dumpOut, "swapping references to disk (please wait)\n");
-            fflush(dumpOut);
+            fprintf(errOut, "swapping references to disk (please wait)\n");
+            fflush(errOut);
         }
     }
     if (options.cxrefsLocation == NULL) {

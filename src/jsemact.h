@@ -152,7 +152,6 @@ extern TypeModifier *javaConditionalPromotion(TypeModifier *t1,
                                                  TypeModifier *t2
                                                  );
 extern int javaIsStringType(TypeModifier *tt);
-extern void javaTypeDump(TypeModifier *tt);
 extern void javaAddJslReadedTopLevelClasses(JslTypeTab  *typeTab);
 extern struct freeTrail * newAnonClassDefinitionBegin(Id *interfName);
 extern void javaAddSuperNestedClassToSymbolTab( Symbol *cc);

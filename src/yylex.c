@@ -1880,32 +1880,31 @@ endOfMacroArgument:
     return false;
 }
 
-int dumpLexemBuffer(LexemBuffer *lb) {
+void dumpLexemBuffer(LexemBuffer *lb) {
     char *cc;
     int lineNumber;
     Lexem lexem;
     Position position; UNUSED position;
     int value,length; UNUSED length; UNUSED value;
 
-    fprintf(dumpOut,"\nlexbufdump [start] \n"); fflush(dumpOut);
+    log_debug("lexbufdump [start] ");
     cc = lb->next;
     while (cc < lb->end) {
         lexem = getLexToken(&cc);
         if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
-            fprintf(dumpOut,"%s ",cc);
+            log_debug("%s ",cc);
         } else if (lexem==IDENT_TO_COMPLETE) {
-            fprintf(dumpOut,"!%s! ",cc);
+            log_debug("!%s! ",cc);
         } else if (lexem < 256) {
-            fprintf(dumpOut,"%c ",lexem);fflush(dumpOut);
+            log_debug("%c ",lexem);
         } else if (tokenNamesTable[lexem]==NULL){
-            fprintf(dumpOut,"?%d? ",lexem);fflush(dumpOut);
+            log_debug("?%d? ",lexem);
         } else {
-            fprintf(dumpOut,"%s ",tokenNamesTable[lexem]);fflush(dumpOut);
+            log_debug("%s ",tokenNamesTable[lexem]);
         }
         passLexem(&cc, lexem, &lineNumber, &value, &position, &length, false);
     }
-    fprintf(dumpOut,"lexbufdump [stop]\n");fflush(dumpOut);
-    return 0;
+    log_debug("lexbufdump [stop]");
 }
 
 /* ************************************************************** */

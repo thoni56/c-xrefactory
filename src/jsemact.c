@@ -2488,18 +2488,6 @@ TypeModifier *javaConditionalPromotion(	TypeModifier *t1,
     return &s_errorModifier;
 }
 
-void javaTypeDump(TypeModifier *tt) {
-    assert(tt);
-    if (tt->kind == TypeArray) {
-        javaTypeDump(tt->next);
-        fprintf(dumpOut,"[]");
-    } else if (tt->kind == TypeStruct) {
-        fprintf(dumpOut,"%s",tt->u.t->linkName);
-    } else {
-        fprintf(dumpOut,"%s",typeNamesTable[tt->kind]);
-    }
-}
-
 void javaAddJslReadedTopLevelClasses(JslTypeTab  *jslTypeTab) {
     int					i;
     JslSymbolList     *ss;

@@ -898,9 +898,9 @@ void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size,
 }
 
 void editorDumpBuffer(EditorBuffer *buff) {
-    int i;
-    for(i=0; i<buff->allocation.bufferSize; i++) {
-        putc(buff->allocation.text[i], dumpOut);
+    /* TODO: Should really put this in log() */
+    for (int i=0; i<buff->allocation.bufferSize; i++) {
+        putc(buff->allocation.text[i], errOut);
     }
 }
 

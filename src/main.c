@@ -144,8 +144,8 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
             sprintf(tmpBuff, "C-xrefactory project: %s", outSect);
             ppcGenRecord(PPC_INFORMATION, tmpBuff);
         } else {
-            fprintf(dumpOut, "[C-xref] active project: '%s'\n", outSect);
-            fflush(dumpOut);
+            fprintf(errOut, "[C-xref] active project: '%s'\n", outSect);
+            fflush(errOut);
         }
     }
 }
@@ -182,7 +182,7 @@ static void handlePathologicProjectCases(char *fileName, char *outFName, char *s
                     sprintf(tmpBuff, "[C-xref] new project: '%s'", section);
                     ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 } else {
-                    fprintf(dumpOut, "[C-xref] new project: '%s'\n", section);
+                    fprintf(errOut, "[C-xref] new project: '%s'\n", section);
                 }
             }
         }
@@ -609,9 +609,7 @@ bool fileProcessingInitialisations(bool *firstPass,
     }
  fini:
     initializationsPerInvocation();
-    // some final touch to options
-    if (options.debug)
-        errOut = dumpOut;
+
     checkExactPositionUpdate(false);
 
     // so s_input_file_number is not set if the file is not really opened!!!
@@ -636,12 +634,8 @@ static void totalTaskEntryInitialisations() {
 
     // Outputs
     errOut = stderr;
-    dumpOut = stdout;
 
     communicationChannel = stdout;
-    // TODO: how come it is not always Xref, as set in options?
-    if (options.mode == ServerMode)
-        errOut = stdout;
 
     fileAbortEnabled = false;
 
@@ -882,7 +876,6 @@ void mainOpenOutputFile(char *outfile) {
         communicationChannel = stdout;
     }
     errOut = communicationChannel;
-    dumpOut = communicationChannel;
 }
 
 /* initLogging() is called as the first thing in main() so we look for log command line options here */

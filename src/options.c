@@ -264,7 +264,7 @@ static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
     // dlld is dest equivalent of *lld from src
     //&fprintf(dumpOut, "shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(Options));
     if (*dlld != *lld) {
-        fprintf(dumpOut, "problem %s\n", *lld);
+        fprintf(errOut, "problem %s\n", *lld);
     }
     assert(*dlld == *lld);
     *dlld = *lld + offset;
@@ -1114,11 +1114,10 @@ void getJavaClassAndSourcePath(void) {
                     ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 } else {
                     if (jdkcp!=NULL && *jdkcp!=0) {
-                        fprintf(dumpOut,"java runtime == %s\n", jdkcp);
+                        log_debug("java runtime == %s", jdkcp);
                     }
-                    fprintf(dumpOut,"classpath == %s\n", cp);
-                    fprintf(dumpOut,"sourcepath == %s\n", javaSourcePaths);
-                    fflush(dumpOut);
+                    log_debug("classpath == %s", cp);
+                    log_debug("sourcepath == %s", javaSourcePaths);
                 }
                 messageFlag = true;
             }
