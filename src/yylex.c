@@ -520,27 +520,27 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
     return true;
 }
 
-static void processInclude2(Position *ipos, char pchar, char *iname, bool is_include_next) {
-    char *fname;
-    Symbol ss,*memb;
+static void processInclude2(Position *includePosition, char pchar, char *includedName, bool is_include_next) {
+    char *actualFileName;
+    Symbol symbol;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    sprintf(tmpBuff, "PragmaOnce-%s", iname);
+    sprintf(tmpBuff, "PragmaOnce-%s", includedName);
 
-    fillSymbol(&ss, tmpBuff, tmpBuff, noPosition);
-    ss.type = TypeMacro;
-    ss.storage = StorageNone;
+    fillSymbol(&symbol, tmpBuff, tmpBuff, noPosition);
+    symbol.type = TypeMacro;
+    symbol.storage = StorageNone;
 
-    if (symbolTableIsMember(symbolTable, &ss, NULL, &memb))
+    if (symbolTableIsMember(symbolTable, &symbol, NULL, NULL))
         return;
-    if (!openInclude(pchar, iname, &fname, is_include_next)) {
+    if (!openInclude(pchar, includedName, &actualFileName, is_include_next)) {
         assert(options.mode);
         if (options.mode!=ServerMode)
-            warningMessage(ERR_CANT_OPEN, iname);
+            warningMessage(ERR_CANT_OPEN, includedName);
         else
-            log_error("Can't open file '%s'", iname);
+            log_error("Can't open file '%s'", includedName);
     } else {
-        addIncludeReferences(currentFile.lexBuffer.buffer.fileNumber, ipos);
+        addIncludeReferences(currentFile.lexBuffer.buffer.fileNumber, includePosition);
     }
 }
 
