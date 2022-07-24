@@ -538,7 +538,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname, bool is_inc
         if (options.mode!=ServerMode)
             warningMessage(ERR_CANT_OPEN, iname);
         else
-            log_error("Can't open file '%s'", fname);
+            log_error("Can't open file '%s'", iname);
     } else {
         addIncludeReferences(currentFile.lexBuffer.buffer.fileNumber, ipos);
     }
