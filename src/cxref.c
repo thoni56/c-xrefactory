@@ -4211,10 +4211,6 @@ static void pushSymbolByName(char *name) {
 
 void mainAnswerEditAction(void) {
     OlcxReferences *rstack, *nextrr;
-    Position opos;
-    char *ifname, *jdkcp;
-    char dffname[MAX_FILE_NAME_SIZE];
-    char dffsect[MAX_FILE_NAME_SIZE];
 
     ENTER();
     assert(communicationChannel);
@@ -4236,19 +4232,21 @@ void mainAnswerEditAction(void) {
             fprintf(communicationChannel,"*** No function/method enclosing selected block found **");
         }
         break;
-    case OLO_TAG_SEARCH:
-        getCallerPositionFromCommandLineOption(&opos);
-        //&olCompletionListInit(&opos);
+    case OLO_TAG_SEARCH: {
+        Position givenPosition;
+        getCallerPositionFromCommandLineOption(&givenPosition);
+        //&olCompletionListInit(&givenPosition);
         if (!options.xref2)
             fprintf(communicationChannel,";");
         olcxPushEmptyStackItem(&sessionData.retrieverStack);
-        sessionData.retrieverStack.top->callerPosition = opos;
+        sessionData.retrieverStack.top->callerPosition = givenPosition;
 
         if (options.tagSearchSpecif==TSS_FULL_SEARCH)
             scanJarFilesForTagSearch();
         scanForSearch(options.cxrefsLocation);
         printTagSearchResults();
         break;
+    }
     case OLO_TAG_SEARCH_BACK:
         if (sessionData.retrieverStack.top!=NULL &&
             sessionData.retrieverStack.top->previous!=NULL) {
@@ -4280,32 +4278,34 @@ void mainAnswerEditAction(void) {
                     fprintf(communicationChannel,"!** No source file to identify project");
                 }
             } else {
-                ifname = getFileItem(olOriginalComFileNumber)->name;
-                log_trace("ifname = %s", ifname);
-                searchStandardOptionsFileFor(ifname, dffname, dffsect);
-                if (dffname[0]==0 || dffsect[0]==0) {
+                char standardOptionsFileName[MAX_FILE_NAME_SIZE];
+                char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
+                char *inputFileName = getFileItem(olOriginalComFileNumber)->name;
+                log_trace("inputFileName = %s", inputFileName);
+                searchStandardOptionsFileFor(inputFileName, standardOptionsFileName, standardOptionsSectionName);
+                if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {
                     if (options.noErrors) {
                         if (!options.xref2)
                             fprintf(communicationChannel,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
                     } else {
                         if (options.xref2) {
-                            ppcGenRecord(PPC_NO_PROJECT, ifname);
+                            ppcGenRecord(PPC_NO_PROJECT, inputFileName);
                         } else {
-                            fprintf(communicationChannel,"!** No project name matches %s", ifname);
+                            fprintf(communicationChannel,"!** No project name matches %s", inputFileName);
                         }
                     }
                 } else {
                     if (options.xref2) {
-                        ppcGenRecord(PPC_SET_INFO, dffsect);
+                        ppcGenRecord(PPC_SET_INFO, standardOptionsSectionName);
                     } else {
-                        fprintf(communicationChannel,"*%s", dffsect);
+                        fprintf(communicationChannel,"*%s", standardOptionsSectionName);
                     }
                 }
             }
         }
         break;
-    case OLO_JAVA_HOME:
-        jdkcp = getJavaHome();
+    case OLO_JAVA_HOME: {
+        char *jdkcp = getJavaHome();
         if (options.xref2) {
             if (jdkcp==NULL) {
                 if (!options.noErrors) {
@@ -4326,6 +4326,7 @@ void mainAnswerEditAction(void) {
             }
         }
         break;
+    }
     case OLO_GET_ENV_VALUE:
         olcxProcessGetRequest();
         break;
