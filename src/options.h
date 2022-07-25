@@ -188,5 +188,6 @@ extern void javaSetSourcePath(bool defaultClassPathAllowed);
 extern bool referenceFileCountMatches(int newRefNum);
 
 extern char *findConfigFile(char *cwd);
+extern void searchStandardOptionsFileAndSectionForFile(char *filename, char *optionsFilename, char *section);
 
 #endif

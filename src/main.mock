@@ -14,10 +14,6 @@ void checkExactPositionUpdate(bool printMessage) {
     mock(printMessage);
 }
 
-void searchStandardOptionsFileFor(char *filename, char *optionsFilename, char *section) {
-  mock(filename, optionsFilename, section);
-}
-
 int mainHandleSetOption(int argc, char **argv, int i) {
   return (int) mock(argc, argv, i);
 }

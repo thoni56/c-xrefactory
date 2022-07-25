@@ -14,8 +14,6 @@ extern bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv
 extern void checkExactPositionUpdate(bool printMessage);
 //------
 
-extern void searchStandardOptionsFileFor(char *filename, char *optionsFilename, char *section);
-
 extern int mainHandleSetOption(int argc, char **argv, int i );
 extern void mainTaskEntryInitialisations(int argc, char **argv);
 extern void mainOpenOutputFile(char *ofile);

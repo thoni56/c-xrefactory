@@ -154,6 +154,9 @@ static char javaClassPathExpanded[MAX_OPTION_LEN];
 
 static char base[MAX_FILE_NAME_SIZE];
 
+static char previousStandardOptionsFile[MAX_FILE_NAME_SIZE];
+static char previousStandardOptionsSection[MAX_FILE_NAME_SIZE];
+
 
 #define ENV_DEFAULT_VAR_FILE            "${__file}"
 #define ENV_DEFAULT_VAR_PATH            "${__path}"
@@ -2444,4 +2447,50 @@ void processFileArguments(void) {
     for (StringList *l = options.inputFiles; l != NULL; l = l->next) {
         processFileArgument(l->string);
     }
+}
+
+void searchStandardOptionsFileAndSectionForFile(char *filename, char *optionsFilename, char *section) {
+    int fileno;
+    bool found=false;
+    FILE *options_file;
+    int nargc;
+    char **nargv;
+
+    optionsFilename[0] = 0;
+    section[0]=0;
+
+    if (filename == NULL || options.no_stdoptions)
+        return;
+
+    /* Try to find section in HOME config. */
+    getXrefrcFileName(optionsFilename);
+    options_file = openFile(optionsFilename, "r");
+    if (options_file != NULL) {
+        // TODO: This reads all arguments, when we only want to know if there is a matching project there?
+        found = readOptionsFromFileIntoArgs(options_file, &nargc, &nargv, DONT_ALLOCATE, filename, options.project, section);
+        if (found) {
+            log_debug("options file '%s' section '%s' found", optionsFilename, section);
+        }
+        closeFile(options_file);
+    }
+    if (found)
+        return;
+
+    // If automatic selection did not find project, keep previous one
+    if (options.project==NULL) {
+        // but do this only if file is from cxfile, would be better to
+        // check if it is from active project, but nothing is perfect
+        // TODO: Where else could it come from (Xref.opt is not used anymore)?
+
+        // TODO: check whether the project still exists in the .c-xrefrc file
+        // it may happen that after deletion of the project, the request for active
+        // project will return non-existent project. And then return "not found"?
+        fileno = getFileNumberFromName(filename);
+        if (fileno != noFileIndex && getFileItem(fileno)->isFromCxfile) {
+            strcpy(optionsFilename, previousStandardOptionsFile);
+            strcpy(section, previousStandardOptionsSection);
+            return;
+        }
+    }
+    optionsFilename[0]=0;
 }

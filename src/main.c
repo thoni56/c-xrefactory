@@ -72,53 +72,6 @@ int mainHandleSetOption(int argc, char **argv, int i ) {
 
 /* *************************************************************************** */
 
-
-void searchStandardOptionsFileFor(char *filename, char *optionsFilename, char *section) {
-    int fileno;
-    bool found=false;
-    FILE *options_file;
-    int nargc;
-    char **nargv;
-
-    optionsFilename[0] = 0;
-    section[0]=0;
-
-    if (filename == NULL || options.no_stdoptions)
-        return;
-
-    /* Try to find section in HOME config. */
-    getXrefrcFileName(optionsFilename);
-    options_file = openFile(optionsFilename, "r");
-    if (options_file != NULL) {
-        // TODO: This reads all arguments, when we only want to know if there is a matching project there?
-        found = readOptionsFromFileIntoArgs(options_file, &nargc, &nargv, DONT_ALLOCATE, filename, options.project, section);
-        if (found) {
-            log_debug("options file '%s' section '%s' found", optionsFilename, section);
-        }
-        closeFile(options_file);
-    }
-    if (found)
-        return;
-
-    // If automatic selection did not find project, keep previous one
-    if (options.project==NULL) {
-        // but do this only if file is from cxfile, would be better to
-        // check if it is from active project, but nothing is perfect
-        // TODO: Where else could it come from (Xref.opt is not used anymore)?
-
-        // TODO: check whether the project still exists in the .c-xrefrc file
-        // it may happen that after deletion of the project, the request for active
-        // project will return non-existent project. And then return "not found"?
-        fileno = getFileNumberFromName(filename);
-        if (fileno != noFileIndex && getFileItem(fileno)->isFromCxfile) {
-            strcpy(optionsFilename, previousStandardOptionsFile);
-            strcpy(section, previousStandardOptionsSection);
-            return;
-        }
-    }
-    optionsFilename[0]=0;
-}
-
 static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {
     char tmpBuff[TMP_BUFF_SIZE];
 
@@ -516,7 +469,7 @@ bool fileProcessingInitialisations(bool *firstPass,
 
     fileName = inputFilename;
     *outLanguage = getLanguageFor(fileName);
-    searchStandardOptionsFileFor(fileName, standardOptionsFileName, standardOptionsSectionName);
+    searchStandardOptionsFileAndSectionForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
     handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSectionName, true);
 
     initAllInputs();
@@ -789,7 +742,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         strcpy(fileName, inputFilename);
     }
 
-    searchStandardOptionsFileFor(fileName, standardOptionsFileName, standardOptionsSection);
+    searchStandardOptionsFileAndSectionForFile(fileName, standardOptionsFileName, standardOptionsSection);
     handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSection, false);
 
     reInitCwd(standardOptionsFileName, standardOptionsSection);

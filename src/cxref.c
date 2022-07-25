@@ -4282,7 +4282,7 @@ void mainAnswerEditAction(void) {
                 char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
                 char *inputFileName = getFileItem(olOriginalComFileNumber)->name;
                 log_trace("inputFileName = %s", inputFileName);
-                searchStandardOptionsFileFor(inputFileName, standardOptionsFileName, standardOptionsSectionName);
+                searchStandardOptionsFileAndSectionForFile(inputFileName, standardOptionsFileName, standardOptionsSectionName);
                 if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {
                     if (options.noErrors) {
                         if (!options.xref2)
