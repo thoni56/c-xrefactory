@@ -95,133 +95,144 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
     return(i);
 }
 
-#define CHECK_TYPEDEF(t,type,typedefexp,typebreak) {    \
-        if (t->typedefSymbol != NULL && typedefexp) {       \
-            assert(t->typedefSymbol->name);                 \
-            strcpy(type, t->typedefSymbol->name);           \
-            goto typebreak;                             \
-        }                                               \
-        typedefexp = 1;                                 \
+#define CHECK_TYPEDEF(t, type, typedefexp, typebreak)                                                             \
+    {                                                                                                             \
+        if (t->typedefSymbol != NULL && typedefexp) {                                                             \
+            assert(t->typedefSymbol->name);                                                                       \
+            strcpy(type, t->typedefSymbol->name);                                                                 \
+            goto typebreak;                                                                                       \
+        }                                                                                                         \
+        typedefexp = 1;                                                                                           \
     }
 
-
-void typeSPrint(char *buff, int *size, TypeModifier *t,
-                char *name, int dclSepChar, int maxDeep, int typedefexp,
+void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepChar, int maxDeep, int typedefexp,
                 int longOrShortName, int *oNamePos) {
-    Symbol *dd;   Symbol *ddd;
-    char pref[COMPLETION_STRING_SIZE];
-    char post[COMPLETION_STRING_SIZE];
-    char type[COMPLETION_STRING_SIZE];
-    char *ttm;
-    int i,j,par,realsize,r,rr,jj,minInfi,typedefexpFlag;
+    Symbol *dd;
+    Symbol *ddd;
+    char    pref[COMPLETION_STRING_SIZE];
+    char    post[COMPLETION_STRING_SIZE];
+    char    type[COMPLETION_STRING_SIZE];
+    char   *ttm;
+    int     i, j, par, realsize, r, rr, jj, minInfi, typedefexpFlag;
     typedefexpFlag = typedefexp;
-    type[0] = 0;
-    i = COMPLETION_STRING_SIZE-1;
-    pref[i]=0;
-    j=0;
-    for(;t!=NULL;t=t->next) {
+    type[0]        = 0;
+    i              = COMPLETION_STRING_SIZE - 1;
+    pref[i]        = 0;
+    j              = 0;
+    for (; t != NULL; t = t->next) {
         par = 0;
-        for (;t!=NULL && t->kind==TypePointer;t=t->next) {
-            CHECK_TYPEDEF(t,type,typedefexpFlag,typebreak);
-            pref[--i]='*'; par=1;
+        for (; t != NULL && t->kind == TypePointer; t = t->next) {
+            CHECK_TYPEDEF(t, type, typedefexpFlag, typebreak);
+            pref[--i] = '*';
+            par       = 1;
         }
-        assert(i>2);
-        if (t==NULL) goto typebreak;
-        CHECK_TYPEDEF(t,type,typedefexpFlag,typebreak);
+        assert(i > 2);
+        if (t == NULL)
+            goto typebreak;
+        CHECK_TYPEDEF(t, type, typedefexpFlag, typebreak);
         switch (t->kind) {
         case TypeArray:
-            if (par) {pref[--i]='('; post[j++]=')'; }
+            if (par) {
+                pref[--i] = '(';
+                post[j++] = ')';
+            }
             if (LANGUAGE(LANG_JAVA)) {
-                pref[--i]=' '; pref[--i]=']'; pref[--i]='[';
+                pref[--i] = ' ';
+                pref[--i] = ']';
+                pref[--i] = '[';
             } else {
-                post[j++]='['; post[j++]=']';
+                post[j++] = '[';
+                post[j++] = ']';
             }
             break;
         case TypeFunction:
-            if (par) {pref[--i]='('; post[j++]=')'; }
-            sprintf(post+j,"(");
-            j += strlen(post+j);
+            if (par) {
+                pref[--i] = '(';
+                post[j++] = ')';
+            }
+            sprintf(post + j, "(");
+            j += strlen(post + j);
             if (currentLanguage == LANG_JAVA) {
                 jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                javaSignatureSPrint(post+j, &jj, t->u.m.signature,longOrShortName);
+                javaSignatureSPrint(post + j, &jj, t->u.m.signature, longOrShortName);
                 j += jj;
             } else {
-                for(dd=t->u.f.args; dd!=NULL; dd=dd->next) {
-                    if (dd->type == TypeElipsis) ttm = "...";
-                    else if (dd->name == NULL) ttm = "";
-                    else ttm = dd->name;
-                    if (dd->type == TypeDefault && dd->u.typeModifier!=NULL) {
+                for (dd = t->u.f.args; dd != NULL; dd = dd->next) {
+                    if (dd->type == TypeElipsis)
+                        ttm = "...";
+                    else if (dd->name == NULL)
+                        ttm = "";
+                    else
+                        ttm = dd->name;
+                    if (dd->type == TypeDefault && dd->u.typeModifier != NULL) {
                         /* TODO ALL, for string overflow */
                         jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                        typeSPrint(post+j,&jj,dd->u.typeModifier,ttm,' ',maxDeep-1,1,longOrShortName, NULL);
+                        typeSPrint(post + j, &jj, dd->u.typeModifier, ttm, ' ', maxDeep - 1, 1, longOrShortName,
+                                   NULL);
                         j += jj;
                     } else {
-                        sprintf(post+j,"%s",ttm);
-                        j += strlen(post+j);
+                        sprintf(post + j, "%s", ttm);
+                        j += strlen(post + j);
                     }
-                    if (dd->next!=NULL && j<COMPLETION_STRING_SIZE)
-                        sprintf(post+j,", ");
-                    j += strlen(post+j);
+                    if (dd->next != NULL && j < COMPLETION_STRING_SIZE)
+                        sprintf(post + j, ", ");
+                    j += strlen(post + j);
                 }
             }
-            post[j++]=')';
+            post[j++] = ')';
             break;
         case TypeStruct:
         case TypeUnion:
             if (currentLanguage != LANG_JAVA) {
-                if (t->kind == TypeStruct) sprintf(type,"struct ");
-                else sprintf(type,"union ");
+                if (t->kind == TypeStruct)
+                    sprintf(type, "struct ");
+                else
+                    sprintf(type, "union ");
                 r = strlen(type);
-            } else r=0;
-            if (t->u.t->name!=NULL) {
+            } else
+                r = 0;
+            if (t->u.t->name != NULL) {
                 if (currentLanguage == LANG_JAVA) {
-                    r += javaTypeStringSPrint(type+r, t->u.t->linkName,longOrShortName, NULL);
+                    r += javaTypeStringSPrint(type + r, t->u.t->linkName, longOrShortName, NULL);
                 } else {
-                    sprintf(type+r,"%s ",t->u.t->name);
-                    r += strlen(type+r);
+                    sprintf(type + r, "%s ", t->u.t->name);
+                    r += strlen(type + r);
                 }
             }
-            if (maxDeep>0) {
+            if (maxDeep > 0) {
                 minInfi = r;
-                sprintf(type+r,"{ ");
-                r += strlen(type+r);
+                sprintf(type + r, "{ ");
+                r += strlen(type + r);
                 assert(t->u.t->u.structSpec);
-                for(ddd=t->u.t->u.structSpec->records; ddd!=NULL; ddd=ddd->next) {
-                    if (ddd->name == NULL) ttm = "";
-                    else ttm = ddd->name;
+                for (ddd = t->u.t->u.structSpec->records; ddd != NULL; ddd = ddd->next) {
+                    if (ddd->name == NULL)
+                        ttm = "";
+                    else
+                        ttm = ddd->name;
                     rr = COMPLETION_STRING_SIZE - r - TYPE_STR_RESERVE;
                     assert(ddd->u.typeModifier);
-                    typeSPrint(type+r, &rr, ddd->u.typeModifier, ttm,' ', maxDeep-1,1,longOrShortName, NULL);
+                    typeSPrint(type + r, &rr, ddd->u.typeModifier, ttm, ' ', maxDeep - 1, 1, longOrShortName,
+                               NULL);
                     r += rr;
-                    if (ddd->next!=NULL && r<COMPLETION_STRING_SIZE) {
-                        sprintf(type+r,"; ");
-                        r += strlen(type+r);
+                    if (ddd->next != NULL && r < COMPLETION_STRING_SIZE) {
+                        sprintf(type + r, "; ");
+                        r += strlen(type + r);
                     }
                 }
-                sprintf(type+r,"}");
-                r += strlen(type+r);
+                sprintf(type + r, "}");
+                r += strlen(type + r);
                 if (r > *size - TYPE_STR_RESERVE) {
-                    r = minInfi;
+                    r       = minInfi;
                     type[r] = 0;
                 }
             }
             break;
         case TypeEnum:
-            if (t->u.t->name==NULL) sprintf(type,"enum ");
-            else sprintf(type,"enum %s",t->u.t->linkName);
+            if (t->u.t->name == NULL)
+                sprintf(type, "enum ");
+            else
+                sprintf(type, "enum %s", t->u.t->linkName);
             r = strlen(type);
-            /*
-              r += SLEN(sprintf(type+r," {"));
-              for(dd=t->u.t->u.enums; dd!=NULL; dd=dd->next) {
-              if (dd->d->name == NULL) ttm = "";
-              else ttm = dd->d->name;
-              if (r < COMPLETION_STRING_SIZE - TYPE_STR_RESERVE) {
-              r += SLEN(sprintf(type+r,"%s",ttm));
-              }
-              if (dd->next!=NULL) r += SLEN(sprintf(type+r,", "));
-              }
-              r += SLEN(sprintf(type+r,"}"));
-            */
             break;
         default:
             assert(t->kind >= 0 && t->kind < MAX_TYPE);
@@ -230,28 +241,29 @@ void typeSPrint(char *buff, int *size, TypeModifier *t,
             r = strlen(type);
             break;
         }
-        assert(i>2 && j<COMPLETION_STRING_SIZE-3);
+        assert(i > 2 && j < COMPLETION_STRING_SIZE - 3);
     }
- typebreak:
-    post[j]=0;
-    realsize = strlen(type) + strlen(pref+i) +
-        strlen(name) + strlen(post) +2;
+typebreak:
+    post[j]  = 0;
+    realsize = strlen(type) + strlen(pref + i) + strlen(name) + strlen(post) + 2;
     if (realsize < *size) {
-        if (dclSepChar==' ') {
-            sprintf(buff,"%s %s", type, pref+i);
+        if (dclSepChar == ' ') {
+            sprintf(buff, "%s %s", type, pref + i);
         } else {
-            sprintf(buff,"%s%c %s", type, dclSepChar, pref+i);
+            sprintf(buff, "%s%c %s", type, dclSepChar, pref + i);
         }
         *size = strlen(buff);
-        if (oNamePos!=NULL) *oNamePos = *size;
-            sprintf(buff+ *size,"%s", name);
-            *size += strlen(buff+ *size);
-        sprintf(buff+ *size,"%s", post);
-        *size += strlen(buff+ *size);
+        if (oNamePos != NULL)
+            *oNamePos = *size;
+        sprintf(buff + *size, "%s", name);
+        *size += strlen(buff + *size);
+        sprintf(buff + *size, "%s", post);
+        *size += strlen(buff + *size);
     } else {
         *size = 0;
-        if (oNamePos!=NULL) *oNamePos = *size;
-        buff[0]=0;
+        if (oNamePos != NULL)
+            *oNamePos = *size;
+        buff[0] = 0;
     }
 }
 

@@ -147,45 +147,45 @@ static char *getCompletionClassFieldString(CompletionLine *cl) {
 }
 
 
-static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
-    int size, ll, tdexpFlag, vFunCl, cindent, ttlen;
-    char tt[COMPLETION_STRING_SIZE];
-    char *pname,*cname;
+static void sprintFullCompletionInfo(Completions* completions, int index, int indent) {
+    int size, l, vFunCl, cindent, tempLength;
+    bool tdexpFlag;
+    char tempString[COMPLETION_STRING_SIZE];
     char *ppc;
 
     ppc = ppcTmpBuff;
-    if (c->alternatives[ii].symbolType == TypeUndefMacro)
+    if (completions->alternatives[index].symbolType == TypeUndefMacro)
         return;
 
     // remove parenthesis (if any)
-    strcpy(tt, c->alternatives[ii].string);
-    ttlen = strlen(tt);
-    if (ttlen>0 && tt[ttlen-1]==')' && c->alternatives[ii].symbolType!=TypeInheritedFullMethod) {
-        ttlen--;
-        tt[ttlen]=0;
+    strcpy(tempString, completions->alternatives[index].string);
+    tempLength = strlen(tempString);
+    if (tempLength>0 && tempString[tempLength-1]==')' && completions->alternatives[index].symbolType!=TypeInheritedFullMethod) {
+        tempLength--;
+        tempString[tempLength]=0;
     }
-    if (ttlen>0 && tt[ttlen-1]=='(') {
-        ttlen--;
-        tt[ttlen]=0;
+    if (tempLength>0 && tempString[tempLength-1]=='(') {
+        tempLength--;
+        tempString[tempLength]=0;
     }
-    sprintf(ppc, "%-*s:", indent+FULL_COMPLETION_INDENT_CHARS, tt);
+    sprintf(ppc, "%-*s:", indent+FULL_COMPLETION_INDENT_CHARS, tempString);
     cindent = strlen(ppc);
     ppc += strlen(ppc);
     vFunCl = noFileIndex;
     size = COMPLETION_STRING_SIZE;
-    ll = 0;
-    if (c->alternatives[ii].symbolType==TypeDefault) {
-        assert(c->alternatives[ii].symbol && c->alternatives[ii].symbol->u.typeModifier);
+    l = 0;
+    if (completions->alternatives[index].symbolType==TypeDefault) {
+        assert(completions->alternatives[index].symbol && completions->alternatives[index].symbol->u.typeModifier);
         if (LANGUAGE(LANG_JAVA)) {
             char tmpBuff[TMP_BUFF_SIZE];
-            cname = getCompletionClassFieldString(&c->alternatives[ii]);
-            if (c->alternatives[ii].virtLevel>NEST_VIRT_COMPL_OFFSET) {
+            char *cname = getCompletionClassFieldString(&completions->alternatives[index]);
+            if (completions->alternatives[index].virtLevel>NEST_VIRT_COMPL_OFFSET) {
                 sprintf(tmpBuff,"(%d.%d)%s: ",
-                        c->alternatives[ii].virtLevel/NEST_VIRT_COMPL_OFFSET,
-                        c->alternatives[ii].virtLevel%NEST_VIRT_COMPL_OFFSET,
+                        completions->alternatives[index].virtLevel/NEST_VIRT_COMPL_OFFSET,
+                        completions->alternatives[index].virtLevel%NEST_VIRT_COMPL_OFFSET,
                         cname);
-            } else if (c->alternatives[ii].virtLevel>0) {
-                sprintf(tmpBuff,"(%d)%s: ", c->alternatives[ii].virtLevel, cname);
+            } else if (completions->alternatives[index].virtLevel>0) {
+                sprintf(tmpBuff,"(%d)%s: ", completions->alternatives[index].virtLevel, cname);
             } else {
                 sprintf(tmpBuff,"   : ");
             }
@@ -194,60 +194,60 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
             ppc += strlen(ppc);
         }
         tdexpFlag = 1;
-        if (c->alternatives[ii].symbol->storage == StorageTypedef) {
-            sprintf(tt, "typedef ");
-            ll = strlen(tt);
-            size -= ll;
+        if (completions->alternatives[index].symbol->storage == StorageTypedef) {
+            sprintf(tempString, "typedef ");
+            l = strlen(tempString);
+            size -= l;
             tdexpFlag = 0;
         }
-        pname = c->alternatives[ii].symbol->name;
+        char *pname = completions->alternatives[index].symbol->name;
         if (LANGUAGE(LANG_JAVA)) {
-            ll += printJavaModifiers(tt+ll, &size, c->alternatives[ii].symbol->access);
-            if (c->alternatives[ii].vFunClass!=NULL) {
-                vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFileIndex;
+            l += printJavaModifiers(tempString+l, &size, completions->alternatives[index].symbol->access);
+            if (completions->alternatives[index].vFunClass!=NULL) {
+                vFunCl = completions->alternatives[index].vFunClass->u.structSpec->classFileIndex;
                 if (vFunCl == -1) vFunCl = noFileIndex;
             }
         }
-        typeSPrint(tt+ll, &size, c->alternatives[ii].symbol->u.typeModifier, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
+        typeSPrint(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
         if (LANGUAGE(LANG_JAVA)
-            && (c->alternatives[ii].symbol->storage == StorageMethod
-                || c->alternatives[ii].symbol->storage == StorageConstructor)) {
-            throwsSprintf(tt+ll+size, COMPLETION_STRING_SIZE-ll-size, c->alternatives[ii].symbol->u.typeModifier->u.m.exceptions);
+            && (completions->alternatives[index].symbol->storage == StorageMethod
+                || completions->alternatives[index].symbol->storage == StorageConstructor)) {
+            throwsSprintf(tempString+l+size, COMPLETION_STRING_SIZE-l-size, completions->alternatives[index].symbol->u.typeModifier->u.m.exceptions);
         }
-    } else if (c->alternatives[ii].symbolType==TypeMacro) {
-        macDefSPrintf(tt, &size, "", c->alternatives[ii].string,
-                      c->alternatives[ii].margn, c->alternatives[ii].margs, NULL);
-    } else if (LANGUAGE(LANG_JAVA) && c->alternatives[ii].symbolType==TypeStruct ) {
-        if (c->alternatives[ii].symbol!=NULL) {
-            ll += printJavaModifiers(tt+ll, &size, c->alternatives[ii].symbol->access);
-            if (c->alternatives[ii].symbol->access & AccessInterface) {
-                sprintf(tt+ll,"interface ");
+    } else if (completions->alternatives[index].symbolType==TypeMacro) {
+        macDefSPrintf(tempString, &size, "", completions->alternatives[index].string,
+                      completions->alternatives[index].margn, completions->alternatives[index].margs, NULL);
+    } else if (LANGUAGE(LANG_JAVA) && completions->alternatives[index].symbolType==TypeStruct ) {
+        if (completions->alternatives[index].symbol!=NULL) {
+            l += printJavaModifiers(tempString+l, &size, completions->alternatives[index].symbol->access);
+            if (completions->alternatives[index].symbol->access & AccessInterface) {
+                sprintf(tempString+l,"interface ");
             } else {
-                sprintf(tt+ll,"class ");
+                sprintf(tempString+l,"class ");
             }
-            ll = strlen(tt);
-            javaTypeStringSPrint(tt+ll, c->alternatives[ii].symbol->linkName,LONG_NAME, NULL);
+            l = strlen(tempString);
+            javaTypeStringSPrint(tempString+l, completions->alternatives[index].symbol->linkName,LONG_NAME, NULL);
         } else {
-            sprintf(tt,"class ");
+            sprintf(tempString,"class ");
         }
-    } else if (c->alternatives[ii].symbolType == TypeInheritedFullMethod) {
-        if (c->alternatives[ii].vFunClass!=NULL) {
-            sprintf(tt,"%s \t:%s", c->alternatives[ii].vFunClass->name, typeNamesTable[c->alternatives[ii].symbolType]);
-            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFileIndex;
+    } else if (completions->alternatives[index].symbolType == TypeInheritedFullMethod) {
+        if (completions->alternatives[index].vFunClass!=NULL) {
+            sprintf(tempString,"%s \t:%s", completions->alternatives[index].vFunClass->name, typeNamesTable[completions->alternatives[index].symbolType]);
+            vFunCl = completions->alternatives[index].vFunClass->u.structSpec->classFileIndex;
             if (vFunCl == -1) vFunCl = noFileIndex;
         } else {
-            sprintf(tt,"%s", typeNamesTable[c->alternatives[ii].symbolType]);
+            sprintf(tempString,"%s", typeNamesTable[completions->alternatives[index].symbolType]);
         }
     } else {
-        assert(c->alternatives[ii].symbolType>=0 && c->alternatives[ii].symbolType<MAX_TYPE);
-        sprintf(tt,"%s", typeNamesTable[c->alternatives[ii].symbolType]);
+        assert(completions->alternatives[index].symbolType>=0 && completions->alternatives[index].symbolType<MAX_TYPE);
+        sprintf(tempString,"%s", typeNamesTable[completions->alternatives[index].symbolType]);
     }
 
-    formatFullCompletions(tt, indent+FULL_COMPLETION_INDENT_CHARS+2, cindent);
-    for (int i=0; tt[i]; i++) {
-        sprintf(ppc,"%c",tt[i]);
+    formatFullCompletions(tempString, indent+FULL_COMPLETION_INDENT_CHARS+2, cindent);
+    for (int i=0; tempString[i]; i++) {
+        sprintf(ppc,"%c",tempString[i]);
         ppc += strlen(ppc);
-        if (tt[i] == '\n') {
+        if (tempString[i] == '\n') {
             sprintf(ppc,"%-*s ",indent+FULL_COMPLETION_INDENT_CHARS, " ");
             ppc += strlen(ppc);
         }
