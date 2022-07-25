@@ -10,10 +10,7 @@
 #include "fileio.h"
 #include "filetable.h"
 
-/* The following are currently needed from main:
-   mainHandleSetOption
- */
-#include "main.h"
+#include "main.h" /* For mainHandleSetOption() */
 
 #include "protocol.h"
 

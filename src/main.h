@@ -1,9 +1,9 @@
 #ifndef MAIN_H_INCLUDED
 #define MAIN_H_INCLUDED
 
-#include "proto.h"
-#include "options.h"
+#include <stdbool.h>
 
+#include "head.h" /* For Language type */
 
 // Required for server.c extraction...
 extern bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
