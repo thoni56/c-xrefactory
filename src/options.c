@@ -643,18 +643,18 @@ static void processSingleSectionMarker(char *path, char *section,
     }
 }
 
-static void processSectionMarker(char *optionText, int i, char *project, char *section,
+static void processSectionMarker(char *markerText, int markerLength, char *project, char *section,
                                  bool *writeFlagP, char *resultingSection) {
-    char *tt;
-    char firstPath[MAX_FILE_NAME_SIZE];
+    char *projectName;
+    char firstPath[MAX_FILE_NAME_SIZE] = "";
 
-    optionText[i-1]=0;
-    tt = optionText+1;
-    firstPath[0]=0;
-    log_debug("processing %s for file %s project==%s", tt, section, project);
+    /* Remove surrounding brackets */
+    markerText[markerLength-1]=0;
+    projectName = &markerText[1];
+    log_debug("processing %s for file %s project==%s", projectName, section, project);
 
     *writeFlagP = false;
-    MapOnPaths(tt, {
+    MapOnPaths(projectName, {
         if (firstPath[0] == 0)
             strcpy(firstPath, currentPath);
         if (project != NULL) {
