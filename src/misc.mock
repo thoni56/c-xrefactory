@@ -162,8 +162,8 @@ char *javaCutSourcePathFromFileName(char *fname) {
   return (char *) mock(fname);
 }
 
-int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive) {
-  return (int) mock(ss1, ss2, n, caseSensitive);
+int pathncmp(char *path1, char *path2, int length, bool caseSensitive) {
+  return (int) mock(path1, path2, length, caseSensitive);
 }
 
 int compareFileNames(char *ss1, char *ss2) {

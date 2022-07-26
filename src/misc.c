@@ -651,33 +651,33 @@ char *directoryName_st(char *fullFileName) {
     return res;
 }
 
-int pathncmp(char *path1, char *path2, int n, bool caseSensitive) {
-    char *s1,*s2;
-    int i;
-    int res;
+int pathncmp(char *path1, char *path2, int length, bool caseSensitive) {
+    char *s1, *s2;
+    int   i;
+    int   cmp;
 
-    res = 0;
-#if (!defined (__WIN32__))
+    cmp = 0;
+#if (!defined(__WIN32__))
     if (caseSensitive)
-        return strncmp(path1,path2,n);
+        return strncmp(path1, path2, length);
 #endif
-    if (n<=0)
+    if (length <= 0)
         return 0;
-#if defined (__WIN32__)
-    // there is also problem of drive name on windows
-    if (path1[0]!=0 && tolower(path1[0])==tolower(path2[0]) && path1[1]==':' && path2[1]==':') {
-        path1+=2;
-        path2+=2;
-        n -= 2;
+#if defined(__WIN32__)
+    // there is also problem with drive name on windows
+    // TODO: And why don't we include the drive letter in the comparison?
+    if (path1[0] != 0 && tolower(path1[0]) == tolower(path2[0]) && path1[1] == ':' && path2[1] == ':') {
+        path1 += 2;
+        path2 += 2;
+        length -= 2;
     }
-#endif
-    if (n<=0)
+    if (length <= 0)
         return 0;
+#endif
 
-    for (s1=path1,s2=path2,i=1; *s1 && *s2 && i<n; s1++,s2++,i++) {
-#if defined (__WIN32__)
-        if ((*s1 == '/' || *s1 == '\\')
-            &&  (*s2 == '/' || *s2 == '\\'))
+    for (s1 = path1, s2 = path2, i = 1; *s1 && *s2 && i < length; s1++, s2++, i++) {
+#if defined(__WIN32__)
+        if ((*s1 == '/' || *s1 == '\\') && (*s2 == '/' || *s2 == '\\'))
             continue;
 #endif
         if (caseSensitive) {
@@ -688,18 +688,17 @@ int pathncmp(char *path1, char *path2, int n, bool caseSensitive) {
                 break;
         }
     }
-#if defined (__WIN32__)
-    if (    (*s1 == '/' || *s1 == '\\')
-            &&  (*s2 == '/' || *s2 == '\\')) {
-        res = 0;
+#if defined(__WIN32__)
+    if ((*s1 == '/' || *s1 == '\\') && (*s2 == '/' || *s2 == '\\')) {
+        cmp = 0;
     } else
 #endif
         if (caseSensitive) {
-            res = *s1 - *s2;
-        } else {
-            res = tolower(*s1) - tolower(*s2);
-        }
-    return res;
+        cmp = *s1 - *s2;
+    } else {
+        cmp = tolower(*s1) - tolower(*s2);
+    }
+    return cmp;
 }
 
 int filenameCompare(char *ss1, char *ss2, int n) {
