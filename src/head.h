@@ -164,25 +164,26 @@ typedef enum language {
         || ch=='$'                                      \
     )
 
-#define MapOnPaths(thePaths, COMMAND) {                                 \
-        char *currentPath, *jmop_pp, *jmop_ecp;                         \
-        int jmop_i, jmop_ind;                                           \
-        char sourcepaths[MAX_SOURCE_PATH_SIZE];                         \
-        assert(thePaths!=NULL);                                         \
-        jmop_pp = thePaths;                                             \
-        strcpy(sourcepaths, jmop_pp);                                   \
-        currentPath = sourcepaths;                                      \
-        jmop_ecp = currentPath+strlen(currentPath);                     \
-        while (currentPath<jmop_ecp) {                                  \
-            for(jmop_ind=0;                                             \
-                currentPath[jmop_ind]!=0 && currentPath[jmop_ind]!=CLASS_PATH_SEPARATOR; \
-                jmop_ind++) ;                                           \
-            currentPath[jmop_ind] = 0;                                  \
-            jmop_i = jmop_ind;                                          \
-            if (jmop_i>0 && currentPath[jmop_i-1]==FILE_PATH_SEPARATOR) \
-                currentPath[--jmop_i] = 0;                              \
+#define MapOnPaths(/* const char * */ thePathsToMapOver, /* block of code */ COMMAND) \
+    {                                                                   \
+        char *currentPath; /* "public" to COMMAND */                    \
+        char *mop_pathPointer, *mop_endOfPaths;                         \
+        int mop_index;                                                  \
+        char mop_paths[MAX_SOURCE_PATH_SIZE]; /* Must be writable which parameter might not be */    \
+        assert(thePathsToMapOver!=NULL);                                \
+        mop_pathPointer = thePathsToMapOver;                            \
+        strcpy(mop_paths, mop_pathPointer);                             \
+        currentPath = mop_paths;                                        \
+        mop_endOfPaths = currentPath+strlen(currentPath);               \
+        while (currentPath<mop_endOfPaths) {                            \
+            for (mop_index=0;                                           \
+                currentPath[mop_index]!=0 && currentPath[mop_index]!=CLASS_PATH_SEPARATOR; \
+                 mop_index++) ;                                         \
+            currentPath[mop_index] = 0;                                 \
+            if (mop_index>0 && currentPath[mop_index-1]==FILE_PATH_SEPARATOR) \
+                currentPath[mop_index-1] = 0;                           \
             COMMAND;                                                    \
-            currentPath += jmop_ind;                                    \
+            currentPath += mop_index;                                   \
             currentPath++;                                              \
         }                                                               \
     }
