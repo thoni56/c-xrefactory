@@ -261,3 +261,24 @@ Ensure(Options, can_call_readOptionsFromFileIntoArgs) {
 
     readOptionsFromFileIntoArgs(file, &nargc, nargv, memFl, section, project, resSection);
 }
+
+xEnsure(Options, can_find_standard_options_file) {
+    FILE optionsFile;
+    char optionsFilename[1000];
+    char section[1000];
+    FileItem fileItem;
+
+    expect(openFile, will_return(&optionsFile));
+    expect(getFileNumberFromName, when(name, is_equal_to_string("sourcefile.c")),
+           will_return(42));
+    expect(getFileItem, when(fileIndex, is_equal_to(42)),
+           will_return(&fileItem));
+    expect(readChar, when(file, is_equal_to(&optionsFile)),
+           will_return(EOF));
+    expect(closeFile);
+
+
+    searchStandardOptionsFileAndSectionForFile("sourcefile.c", optionsFilename, section);
+
+    assert_that(optionsFilename, is_equal_to_string(".c-xrefrc"));
+}
