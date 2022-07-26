@@ -2449,35 +2449,36 @@ void processFileArguments(void) {
     }
 }
 
-void searchStandardOptionsFileAndSectionForFile(char *filename, char *optionsFilename, char *section) {
-    int fileno;
-    bool found=false;
-    FILE *options_file;
-    int nargc;
+void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFileName, char *section) {
+    int    fileno;
+    bool   found = false;
+    FILE  *optionsFile;
+    int    nargc;
     char **nargv;
 
-    optionsFilename[0] = 0;
-    section[0]=0;
+    optionsFileName[0] = 0;
+    section[0]         = 0;
 
-    if (filename == NULL || options.no_stdoptions)
+    if (fileName == NULL || options.no_stdoptions)
         return;
 
     /* Try to find section in HOME config. */
-    getXrefrcFileName(optionsFilename);
-    options_file = openFile(optionsFilename, "r");
-    if (options_file != NULL) {
+    getXrefrcFileName(optionsFileName);
+    optionsFile = openFile(optionsFileName, "r");
+    if (optionsFile != NULL) {
         // TODO: This reads all arguments, when we only want to know if there is a matching project there?
-        found = readOptionsFromFileIntoArgs(options_file, &nargc, &nargv, DONT_ALLOCATE, filename, options.project, section);
+        found = readOptionsFromFileIntoArgs(optionsFile, &nargc, &nargv, DONT_ALLOCATE, fileName, options.project,
+                                            section);
         if (found) {
-            log_debug("options file '%s' section '%s' found", optionsFilename, section);
+            log_debug("options file '%s' section '%s' found", optionsFileName, section);
         }
-        closeFile(options_file);
+        closeFile(optionsFile);
     }
     if (found)
         return;
 
     // If automatic selection did not find project, keep previous one
-    if (options.project==NULL) {
+    if (options.project == NULL) {
         // but do this only if file is from cxfile, would be better to
         // check if it is from active project, but nothing is perfect
         // TODO: Where else could it come from (Xref.opt is not used anymore)?
@@ -2485,12 +2486,12 @@ void searchStandardOptionsFileAndSectionForFile(char *filename, char *optionsFil
         // TODO: check whether the project still exists in the .c-xrefrc file
         // it may happen that after deletion of the project, the request for active
         // project will return non-existent project. And then return "not found"?
-        fileno = getFileNumberFromName(filename);
+        fileno = getFileNumberFromName(fileName);
         if (fileno != noFileIndex && getFileItem(fileno)->isFromCxfile) {
-            strcpy(optionsFilename, previousStandardOptionsFile);
+            strcpy(optionsFileName, previousStandardOptionsFile);
             strcpy(section, previousStandardOptionsSection);
             return;
         }
     }
-    optionsFilename[0]=0;
+    optionsFileName[0] = 0;
 }

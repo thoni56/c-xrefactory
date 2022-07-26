@@ -92,6 +92,6 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
   mock(outNargc, outNargv);
 }
 
-void searchStandardOptionsFileAndSectionForFile(char *filename, char *optionsFilename, char *section) {
-  mock(filename, optionsFilename, section);
+void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFilename, char *section) {
+  mock(fileName, optionsFilename, section);
 }
