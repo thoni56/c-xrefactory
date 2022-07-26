@@ -65,7 +65,7 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     FILE *xfilesFilePointer = (FILE *)4654654645;
 
     char    *sourceFileName1  = "source1.c";
-    int      sourceFileIndex1 = 44;
+    int      sourceFileNumber1 = 44;
     FileItem fileItem1        = {.name = sourceFileName1};
 
     // log_set_level(LOG_TRACE);
@@ -92,9 +92,9 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
 
     expect(existsInFileTable, when(fileName, is_equal_to_string(sourceFileName1)), will_return(false));
 
-    expect(addFileNameToFileTable, when(name, is_equal_to_string(sourceFileName1)), will_return(sourceFileIndex1));
+    expect(addFileNameToFileTable, when(name, is_equal_to_string(sourceFileName1)), will_return(sourceFileNumber1));
 
-    expect(getFileItem, when(fileIndex, is_equal_to(sourceFileIndex1)), will_return(&fileItem1));
+    expect(getFileItem, when(fileIndex, is_equal_to(sourceFileNumber1)), will_return(&fileItem1));
 
     expect(closeFile, when(file, is_equal_to(xfilesFilePointer)));
 
