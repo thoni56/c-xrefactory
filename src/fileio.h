@@ -23,5 +23,6 @@ extern size_t writeFile(void *buffer, size_t size, size_t count, FILE *file);
 extern int readChar(FILE *file);
 
 extern char *getEnv(const char *variable);
+extern char *getCwd(char *buf, size_t size);
 
 #endif

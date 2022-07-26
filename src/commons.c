@@ -29,7 +29,7 @@ void closeMainOutputFile(void) {
 void initCwd(void) {
     char *returnedCwd;
 
-    returnedCwd = getcwd(cwd, MAX_FILE_NAME_SIZE);
+    returnedCwd = getCwd(cwd, MAX_FILE_NAME_SIZE);
     if (returnedCwd==NULL) {
         // Then try with getenv, on some linuxes the statically linked
         // getcwd does not work. TODO: Probably not nowadays

@@ -129,3 +129,7 @@ int readChar(FILE *file) {
 char *getEnv(const char *variable) {
     return getenv(variable);
 }
+
+char *getCwd(char *buffer, size_t size) {
+    return getcwd(buffer, size);
+}

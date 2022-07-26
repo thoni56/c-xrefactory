@@ -62,3 +62,7 @@ int readChar(FILE *file) {
 char *getEnv(const char *variable) {
     return (char *)mock(variable);
 }
+
+char *getCwd(char *buffer, size_t size) {
+    return (char *)mock(buffer, size);
+}
