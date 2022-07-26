@@ -493,21 +493,21 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
         strcpy(normalizedName, normalizeFileName(includeDirP->string, cwd));
         expandWildcardsInOnePath(normalizedName, wildcardExpandedPaths, MAX_OPTION_LEN);
         MapOverPaths(wildcardExpandedPaths, {
-                int length;
-                strcpy(normalizedName, currentPath);
-                length = strlen(normalizedName);
-                if (length > 0 && normalizedName[length-1] != FILE_PATH_SEPARATOR) {
-                    normalizedName[length] = FILE_PATH_SEPARATOR;
-                    length++;
-                }
-                strcpy(normalizedName+length, name);
-                log_trace("trying to open '%s'", normalizedName);
-                editorBuffer = editorFindFile(normalizedName);
-                if (editorBuffer == NULL)
-                    file = openFile(normalizedName, "r");
-                if (editorBuffer != NULL || file != NULL)
-                    goto found;
-            });
+            int length;
+            strcpy(normalizedName, currentPath);
+            length = strlen(normalizedName);
+            if (length > 0 && normalizedName[length - 1] != FILE_PATH_SEPARATOR) {
+                normalizedName[length] = FILE_PATH_SEPARATOR;
+                length++;
+            }
+            strcpy(normalizedName + length, name);
+            log_trace("trying to open '%s'", normalizedName);
+            editorBuffer = editorFindFile(normalizedName);
+            if (editorBuffer == NULL)
+                file = openFile(normalizedName, "r");
+            if (editorBuffer != NULL || file != NULL)
+                goto found;
+        });
     }
     if (editorBuffer==NULL && file==NULL) {
         log_trace("failed to open '%s'", name);

@@ -1304,26 +1304,26 @@ static char *getExpandedLocalJavaDocFile_st(char *expandedPath, char *prefix, ch
     int             cplen;
 
     MapOverPaths(expandedPath, {
-            cplen = strlen(currentPath);
-            if (cplen>0 && currentPath[cplen-1]==FILE_PATH_SEPARATOR) {
-                if (prefix == NULL) {
-                    sprintf(fullurl, "%s%s", currentPath, tmpfname);
-                } else {
-                    sprintf(fullurl, "%sapi%c%s", currentPath, FILE_PATH_SEPARATOR, tmpfname);
-                }
+        cplen = strlen(currentPath);
+        if (cplen > 0 && currentPath[cplen - 1] == FILE_PATH_SEPARATOR) {
+            if (prefix == NULL) {
+                sprintf(fullurl, "%s%s", currentPath, tmpfname);
             } else {
-                if (prefix == NULL) {
-                    sprintf(fullurl, "%s%c%s", currentPath, FILE_PATH_SEPARATOR, tmpfname);
-                } else {
-                    sprintf(fullurl, "%s%capi%c%s", currentPath, FILE_PATH_SEPARATOR, FILE_PATH_SEPARATOR, tmpfname);
-                }
+                sprintf(fullurl, "%sapi%c%s", currentPath, FILE_PATH_SEPARATOR, tmpfname);
             }
-            strcpy(fullfname, fullurl);
-            if ((s=strchr(fullfname, '#'))!=NULL)
-                *s = 0;
-            if (fileStatus(fullfname, NULL)==0)
-                return fullurl;
-        });
+        } else {
+            if (prefix == NULL) {
+                sprintf(fullurl, "%s%c%s", currentPath, FILE_PATH_SEPARATOR, tmpfname);
+            } else {
+                sprintf(fullurl, "%s%capi%c%s", currentPath, FILE_PATH_SEPARATOR, FILE_PATH_SEPARATOR, tmpfname);
+            }
+        }
+        strcpy(fullfname, fullurl);
+        if ((s = strchr(fullfname, '#')) != NULL)
+            *s = 0;
+        if (fileStatus(fullfname, NULL) == 0)
+            return fullurl;
+    });
     return NULL;
 }
 

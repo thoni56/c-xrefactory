@@ -308,9 +308,9 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
 static bool fileNameShouldBePruned(char *fn) {
     for (StringList *s=options.pruneNames; s!=NULL; s=s->next) {
         MapOverPaths(s->string, {
-                if (compareFileNames(currentPath, fn)==0)
-                    return true;
-            });
+            if (compareFileNames(currentPath, fn) == 0)
+                return true;
+        });
     }
     return false;
 }
@@ -380,9 +380,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     } else if (containsWildcard(dirName)) {
         char wildcardPath[MAX_OPTION_LEN];
         expandWildcardsInOnePath(dirName, wildcardPath, MAX_OPTION_LEN);
-        MapOverPaths(wildcardPath, {
-                dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory);
-            });
+        MapOverPaths(wildcardPath, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory); });
     } else if (isTopDirectory && (!options.allowPackagesOnCommandLine || !packageOnCommandLine(fname))) {
         if (options.mode!=ServerMode) {
             errorMessage(ERR_CANT_OPEN, dirName);
@@ -1022,10 +1020,10 @@ static char *getJdkClassPathFromJavaHomeOrPath(void) {
     path = getEnv("PATH");
     if (path != NULL) {
         MapOverPaths(path, {
-                dir = canItBeJavaBinPath(currentPath);
-                if (dir != NULL)
-                    return dir;
-            });
+            dir = canItBeJavaBinPath(currentPath);
+            if (dir != NULL)
+                return dir;
+        });
     }
     return NULL;
 }

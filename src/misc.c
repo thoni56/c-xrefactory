@@ -366,12 +366,12 @@ char *javaCutSourcePathFromFileName(char *fname) {
     ss = strchr(fname, ZIP_SEPARATOR_CHAR);
     if (ss!=NULL) return(ss+1);         // .zip archive symbol
     MapOverPaths(javaSourcePaths, {
-            len = strlen(currentPath);
-            if (filenameCompare(currentPath, fname, len) == 0) {
-                res = fname+len;
-                goto fini;
-            }
-        });
+        len = strlen(currentPath);
+        if (filenameCompare(currentPath, fname, len) == 0) {
+            res = fname + len;
+            goto fini;
+        }
+    });
     // cut auto-detected source-path
     if (s_javaStat!=NULL && s_javaStat->namedPackagePath != NULL) {
         len = strlen(s_javaStat->namedPackagePath);
@@ -931,9 +931,7 @@ void expandWildcardsInPaths(char *paths, char *outpaths, int availableSpace) {
     int     olen;
     assert(availableSpace == MAX_OPTION_LEN);
     oop = opaths = outpaths; olen = availableSpace;
-    MapOverPaths(paths, {
-            expandWildcardsInOnePathRecursiveMaybe(currentPath, &opaths, &olen);
-        });
+    MapOverPaths(paths, { expandWildcardsInOnePathRecursiveMaybe(currentPath, &opaths, &olen); });
     *opaths = 0;
     if (opaths != oop) *(opaths-1) = 0;
 }
@@ -1075,12 +1073,12 @@ char *concatDirectoryWithFileName(char *output, char *directoryName, char *fileN
 
 static bool pathsStringContainsPath(char *paths, char *path) {
     MapOverPaths(paths, {
-            //&fprintf(dumpOut,"[sp]checking %s<->%s\n", currentPath, path);
-            if (compareFileNames(currentPath, path)==0) {
-                //&fprintf(dumpOut,"[sp] saving of mapping %s\n", path);
-                return true;
-            }
-        });
+        //&fprintf(dumpOut,"[sp]checking %s<->%s\n", currentPath, path);
+        if (compareFileNames(currentPath, path) == 0) {
+            //&fprintf(dumpOut,"[sp] saving of mapping %s\n", path);
+            return true;
+        }
+    });
     return false;
 }
 
@@ -1158,10 +1156,10 @@ void javaMapDirectoryFiles1(char *packageFilename,
 
     // source paths
     MapOverPaths(javaSourcePaths, {
-            char tmpString[MAX_SOURCE_PATH_SIZE];
-            fname = concatDirectoryWithFileName(tmpString, currentPath, packageFilename);
-            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,currentPath,packageFilename,a1,a2,a3);
-        });
+        char tmpString[MAX_SOURCE_PATH_SIZE];
+        fname = concatDirectoryWithFileName(tmpString, currentPath, packageFilename);
+        mapDirectoryFiles(fname, fun, ALLOW_EDITOR_FILES, currentPath, packageFilename, a1, a2, a3);
+    });
     // class paths
     for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         char tmpString[MAX_SOURCE_PATH_SIZE];
