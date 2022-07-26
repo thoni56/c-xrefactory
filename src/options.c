@@ -497,10 +497,10 @@ static void expandEnvironmentVariables(char *original, int availableSize, int *l
                     value = getXrefEnvironmentValue(variableName);
                 }
                 if (value==NULL)
-                    value = getenv(variableName);
+                    value = getEnv(variableName);
 #if (!defined (__WIN32__))
                 if (tilde)
-                    value = getenv("HOME");
+                    value = getEnv("HOME");
 #endif
                 if (value != NULL) {
                     strcpy(&temporary[d], value);
@@ -835,7 +835,7 @@ static char *getClassPath(bool defaultCpAllowed) {
     char *cp;
     cp = options.classpath;
     if (cp == NULL || *cp==0)
-        cp = getenv("CLASSPATH");
+        cp = getEnv("CLASSPATH");
     if (cp == NULL || *cp==0) {
         if (defaultCpAllowed)
             cp = defaultClassPath;
@@ -849,7 +849,7 @@ void javaSetSourcePath(bool defaultClassPathAllowed) {
     char *cp;
     cp = options.sourcePath;
     if (cp == NULL || *cp==0)
-        cp = getenv("SOURCEPATH");
+        cp = getEnv("SOURCEPATH");
     if (cp == NULL || *cp==0)
         cp = getClassPath(defaultClassPathAllowed);
     if (cp == NULL) {
@@ -1008,7 +1008,7 @@ static char *getJdkClassPathFromJavaHomeOrPath(void) {
     int len;
     char *dir;
 
-    path = getenv("JAVA_HOME");
+    path = getEnv("JAVA_HOME");
     if (path != NULL) {
         strcpy(dirname, path);
         len = strlen(dirname);
@@ -1019,7 +1019,7 @@ static char *getJdkClassPathFromJavaHomeOrPath(void) {
         if (dir != NULL)
             return dir;
     }
-    path = getenv("PATH");
+    path = getEnv("PATH");
     if (path != NULL) {
         MapOnPaths(path, {
                 dir = canItBeJavaBinPath(currentPath);
@@ -1033,7 +1033,7 @@ static char *getJdkClassPathFromJavaHomeOrPath(void) {
 static char *getJdkClassPathQuickly(void) {
     char *jdkcp;
     jdkcp = options.jdkClassPath;
-    if (jdkcp == NULL || *jdkcp==0) jdkcp = getenv("JDKCLASSPATH");
+    if (jdkcp == NULL || *jdkcp==0) jdkcp = getEnv("JDKCLASSPATH");
     if (jdkcp == NULL || *jdkcp==0) jdkcp = getJdkClassPathFromJavaHomeOrPath();
     return(jdkcp);
 }
@@ -1093,7 +1093,7 @@ void getJavaClassAndSourcePath(void) {
     }
 
     // Keeping this comment as a historical artefact:
-    // optimize wild char expand and getenv [5.2.2003]
+    // optimize wild char expand and getEnv [5.2.2003]
     javaClassPaths = NULL;
 
     if (LANGUAGE(LANG_JAVA)) {
@@ -1110,11 +1110,11 @@ void getJavaClassAndSourcePath(void) {
         expandWildcardsInPaths(cp, javaClassPathExpanded, MAX_OPTION_LEN);
         cp = javaClassPathExpanded;
 
-        createOptionString(&options.classpath, cp);  //??? why is this, only optimisation of getenv?
+        createOptionString(&options.classpath, cp);  //??? why is this, only optimisation of getEnv?
         processClassPathString(cp);
         jdkcp = getJdkClassPathQuickly();
         if (jdkcp != NULL && *jdkcp!=0) {
-            createOptionString(&options.jdkClassPath, jdkcp);  //only optimisation of getenv?
+            createOptionString(&options.jdkClassPath, jdkcp);  //only optimisation of getEnv?
             processClassPathString( jdkcp);
         }
 
@@ -1165,7 +1165,7 @@ void getXrefrcFileName(char *fileName) {
         sprintf(fileName, "%s", normalizeFileName(options.xrefrc, cwd));
         return;
     }
-    home = getenv("HOME");
+    home = getEnv("HOME");
 #ifdef __WIN32__
     if (home == NULL) home = "c:\\";
 #else

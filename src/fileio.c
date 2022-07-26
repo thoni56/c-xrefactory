@@ -125,3 +125,7 @@ size_t writeFile(void *buffer, size_t size, size_t count, FILE *file) {
 int readChar(FILE *file) {
     return getc(file);
 }
+
+char *getEnv(const char *variable) {
+    return getenv(variable);
+}

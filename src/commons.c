@@ -33,7 +33,7 @@ void initCwd(void) {
     if (returnedCwd==NULL) {
         // Then try with getenv, on some linuxes the statically linked
         // getcwd does not work. TODO: Probably not nowadays
-        returnedCwd = getenv("PWD");
+        returnedCwd = getEnv("PWD");
         if (returnedCwd==NULL) {
             errorMessage(ERR_ST, "can't get current working directory");
             sprintf(cwd, ".");
@@ -170,7 +170,7 @@ char *create_temporary_filename(void) {
 
     // under Windows tmpnam returns file names in \ root.
     static int count = 0;
-    temp_dir = getenv("TEMP");
+    temp_dir = getEnv("TEMP");
     if (temp_dir == NULL) {
         temp_dir = tmpnam(NULL);
         strcpy(temporary_name, temp_dir);
@@ -180,10 +180,10 @@ char *create_temporary_filename(void) {
     }
     assert(strlen(temporary_name)+1 < MAX_FILE_NAME_SIZE);
 #else
-    if (getenv("TMPDIR") == NULL)
+    if (getEnv("TMPDIR") == NULL)
         strcpy(temporary_name, "/tmp/c-xref-temp-XXXXXX");
     else
-        sprintf(temporary_name, "%s/c-xref-temp-XXXXXX", getenv("TMPDIR"));
+        sprintf(temporary_name, "%s/c-xref-temp-XXXXXX", getEnv("TMPDIR"));
 
     /* Create and open a temporary file with safe mkstemp(), then
        close it in order to stay with the semantics of this

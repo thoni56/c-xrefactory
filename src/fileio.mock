@@ -56,5 +56,9 @@ size_t writeFile(void *buffer, size_t size, size_t count, FILE *file) {
 }
 
 int readChar(FILE *file) {
-    return mock(file);
+    return (int)mock(file);
+}
+
+char *getEnv(const char *variable) {
+    return (char *)mock(variable);
 }

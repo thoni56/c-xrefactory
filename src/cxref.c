@@ -1388,12 +1388,12 @@ static bool olcxBrowseSymbolInJavaDoc(ReferencesItem *rr) {
         }
     } else {
 #ifdef __WIN32__
-        tmd = getenv("TEMP");
+        tmd = getEnv("TEMP");
         assert(tmd);
         sprintf(tmpfname, "%s/xrefjdoc.html", tmd);
         unBackslashifyUrl(tmpfname);
 #else
-        tmd = getenv("LOGNAME");
+        tmd = getEnv("LOGNAME");
         assert(tmd);
         sprintf(tmpfname, "/tmp/%sxref.html", tmd);
 #endif

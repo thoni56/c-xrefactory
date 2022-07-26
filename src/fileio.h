@@ -22,4 +22,6 @@ extern size_t readFile(void *buffer, size_t size, size_t count, FILE *file);
 extern size_t writeFile(void *buffer, size_t size, size_t count, FILE *file);
 extern int readChar(FILE *file);
 
+extern char *getEnv(const char *variable);
+
 #endif
