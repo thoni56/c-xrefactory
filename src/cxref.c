@@ -1303,7 +1303,7 @@ static char *getExpandedLocalJavaDocFile_st(char *expandedPath, char *prefix, ch
     char            *s;
     int             cplen;
 
-    MapOnPaths(expandedPath, {
+    MapOverPaths(expandedPath, {
             cplen = strlen(currentPath);
             if (cplen>0 && currentPath[cplen-1]==FILE_PATH_SEPARATOR) {
                 if (prefix == NULL) {

@@ -307,7 +307,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
 
 static bool fileNameShouldBePruned(char *fn) {
     for (StringList *s=options.pruneNames; s!=NULL; s=s->next) {
-        MapOnPaths(s->string, {
+        MapOverPaths(s->string, {
                 if (compareFileNames(currentPath, fn)==0)
                     return true;
             });
@@ -380,7 +380,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     } else if (containsWildcard(dirName)) {
         char wildcardPath[MAX_OPTION_LEN];
         expandWildcardsInOnePath(dirName, wildcardPath, MAX_OPTION_LEN);
-        MapOnPaths(wildcardPath, {
+        MapOverPaths(wildcardPath, {
                 dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory);
             });
     } else if (isTopDirectory && (!options.allowPackagesOnCommandLine || !packageOnCommandLine(fname))) {
@@ -654,7 +654,7 @@ static void processSectionMarker(char *markerText, int markerLength, char *proje
     log_debug("processing %s for file %s project==%s", projectName, section, project);
 
     *writeFlagP = false;
-    MapOnPaths(projectName, {
+    MapOverPaths(projectName, {
         if (firstPath[0] == 0)
             strcpy(firstPath, currentPath);
         if (project != NULL) {
@@ -1021,7 +1021,7 @@ static char *getJdkClassPathFromJavaHomeOrPath(void) {
     }
     path = getEnv("PATH");
     if (path != NULL) {
-        MapOnPaths(path, {
+        MapOverPaths(path, {
                 dir = canItBeJavaBinPath(currentPath);
                 if (dir != NULL)
                     return dir;
@@ -2412,7 +2412,7 @@ static void scheduleFileArgumentToFileTable(char *infile) {
     javaSetSourcePath(true); // for case of packages on command line
     topCallFlag = 1;
     recurseFlag = &topCallFlag;
-    MapOnPaths(infile, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag); });
+    MapOverPaths(infile, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag); });
 }
 
 static void processFileArgument(char *fileArgument) {

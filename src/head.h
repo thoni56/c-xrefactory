@@ -164,7 +164,7 @@ typedef enum language {
         || ch=='$'                                      \
     )
 
-#define MapOnPaths(/* const char * */ thePathsToMapOver, /* block of code */ COMMAND) \
+#define MapOverPaths(/* const char * */ thePathsToMapOver, /* block of code */ COMMAND) \
     {                                                                   \
         char *currentPath; /* "public" to COMMAND */                    \
         char *mop_pathPointer, *mop_endOfPaths;                         \

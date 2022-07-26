@@ -1595,7 +1595,7 @@ static void simplePackageRename(EditorMarkerList *occs, char *symname, char *sym
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
         if (ll->next == NULL || ll->next->marker->buffer != ll->marker->buffer) {
             // O.K. verify whether I should move the file
-            MapOnPaths(javaSourcePaths, {
+            MapOverPaths(javaSourcePaths, {
                 mvfile = renamePackageFileMove(currentPath, ll, symLinkName, slnlen);
                 if (mvfile)
                     goto moved;

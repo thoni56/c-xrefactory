@@ -308,7 +308,7 @@ bool javaTypeFileExist(IdList *name) {
         if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
             return true;
     }
-    MapOnPaths(javaSourcePaths, {
+    MapOverPaths(javaSourcePaths, {
             fname = javaCreateComposedName(currentPath, &tname, FILE_PATH_SEPARATOR, "java",
                                            tmpString, sizeof(tmpString));
             log_trace("testing existence of file '%s'", fname);
@@ -374,7 +374,7 @@ static int javaFindSourceFile(char *name, char **resultingName) {
             return true;
     }
     // sourcepaths
-    MapOnPaths(javaSourcePaths, {
+    MapOverPaths(javaSourcePaths, {
         if (javaFindFile0(currentPath, "/", name, ".java", resultingName))
             return true;
     });
@@ -2692,7 +2692,7 @@ void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
         if (compareFileNames(dir, pp->string)==0)
             return;
     }
-    MapOnPaths(javaSourcePaths, {
+    MapOverPaths(javaSourcePaths, {
             if (compareFileNames(dir, currentPath)==0)
                 return;
         });

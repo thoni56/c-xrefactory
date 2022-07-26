@@ -1633,10 +1633,10 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
         return;
 
     // fqt from sourcepath
-    MapOnPaths(javaSourcePaths, {
-            mapDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
-                              currentPath, currentPath, NULL, &info, NULL);
-        });
+    MapOverPaths(javaSourcePaths, {
+        mapDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
+                          currentPath, currentPath, NULL, &info, NULL);
+    });
 }
 
 void javaHintCompleteNonImportedTypes(Completions*c) {
