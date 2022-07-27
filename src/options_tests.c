@@ -252,33 +252,45 @@ Ensure(Options, can_call_readOptionsFromFileIntoArgs) {
     FILE *file = NULL;
     int nargc;
     char **nargv[1000];
-    MemoryKind memFl = ALLOCATE_IN_SM;
     char project[1000];
-    char section[1000];
     char resSection[1000];
 
     expect(readChar, will_return(EOF));
 
-    readOptionsFromFileIntoArgs(file, &nargc, nargv, memFl, section, project, resSection);
+    readOptionsFromFileIntoArgs(file, &nargc, nargv, ALLOCATE_IN_SM, "", project, resSection);
+
+    assert_that(nargc, is_equal_to(1)); /* Which is actually no arguments... */
 }
 
-xEnsure(Options, can_find_standard_options_file) {
+static void expect_characters(char string[], bool eof) {
+    int i;
+
+    for (i = 0; string[i] != '\0'; i++) {
+        expect(readChar, will_return(string[i]));
+    }
+    if (eof)
+        expect(readChar, will_return(EOF));
+}
+
+xEnsure(Options, can_find_standard_options_file_from_sourcefile_path) {
     FILE optionsFile;
     char optionsFilename[1000];
     char section[1000];
-    FileItem fileItem;
+    FileItem fileItem = { .name = "/home/project/sourcefile.c" };
 
+    expect(getEnv, when(variable, is_equal_to_string("HOME")),
+           will_return("HOME"));
     expect(openFile, will_return(&optionsFile));
-    expect(getFileNumberFromName, when(name, is_equal_to_string("sourcefile.c")),
+    expect(getFileNumberFromName, when(name, is_equal_to_string("/home/project/sourcefile.c")),
            will_return(42));
     expect(getFileItem, when(fileIndex, is_equal_to(42)),
            will_return(&fileItem));
-    expect(readChar, when(file, is_equal_to(&optionsFile)),
-           will_return(EOF));
+    expect_characters("[/home/project]", true);
+    expect(pathncmp, when(path1, is_equal_to_string("/home/project")),
+           will_return(0));
     expect(closeFile);
 
-
-    searchStandardOptionsFileAndSectionForFile("sourcefile.c", optionsFilename, section);
+    searchStandardOptionsFileAndSectionForFile("/home/project/sourcefile.c", optionsFilename, section);
 
     assert_that(optionsFilename, is_equal_to_string(".c-xrefrc"));
 }
