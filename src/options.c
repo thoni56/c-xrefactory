@@ -623,13 +623,14 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
 static void processSingleSectionMarker(char *path, char *section,
                                        bool *writeFlagP, char *resultingSection) {
     int length;
-    bool casesensitivity=true;
+#if defined (__WIN32__)
+    bool caseSensitivity = false;
+#else
+    bool caseSensitivity = true;
+#endif
 
     length = strlen(path);
-#if defined (__WIN32__)
-    casesensitivity = false;
-#endif
-    if (pathncmp(path, section, length, casesensitivity)==0
+    if (pathncmp(path, section, length, caseSensitivity)==0
         && (section[length]=='/' || section[length]=='\\' || section[length]==0)) {
         if (length > strlen(resultingSection)) {
             strcpy(resultingSection,path);
