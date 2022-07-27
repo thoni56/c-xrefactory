@@ -64,8 +64,8 @@ char *expandPredefinedSpecialVariables_static(char *tt, char *inputFilename) {
 }
 
 bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
-                        char *section, char *project, char *resSection) {
-  return (bool) mock(file, outArgc, outArgv, memoryKind, section, project, resSection);
+                                 char *fileName, char *project, char *section) {
+  return (bool) mock(file, outArgc, outArgv, memoryKind, fileName, project, section);
 }
 
 void readOptionsFromFile(char *fileName, int *outArgc, char ***outArgv, char *sectionFile, char *project) {

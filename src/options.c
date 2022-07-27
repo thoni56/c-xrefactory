@@ -620,8 +620,8 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
     return lastCharacter;
 }
 
-static void processSingleSectionMarker(char *path, char *section,
-                                       bool *writeFlagP, char *resultingSection) {
+static void processSingleSectionMarker(char *path, char *fileName,
+                                       bool *sectionUpdated, char *section) {
     int length;
 #if defined (__WIN32__)
     bool caseSensitivity = false;
@@ -630,60 +630,47 @@ static void processSingleSectionMarker(char *path, char *section,
 #endif
 
     length = strlen(path);
-    if (pathncmp(path, section, length, caseSensitivity)==0
-        && (section[length]=='/' || section[length]=='\\' || section[length]==0)) {
-        if (length > strlen(resultingSection)) {
-            strcpy(resultingSection,path);
-            assert(strlen(resultingSection)+1 < MAX_FILE_NAME_SIZE);
-        }
-        *writeFlagP = true;
+    if (pathncmp(path, fileName, length, caseSensitivity)==0
+        && (fileName[length]=='/' || fileName[length]=='\\' || fileName[length]==0)) {
+        strcpy(section,path);
+        assert(strlen(section)+1 < MAX_FILE_NAME_SIZE);
+        *sectionUpdated = true;
     } else {
-        *writeFlagP = false;
+        *sectionUpdated = false;
     }
 }
 
-static void processSectionMarker(char *markerText, int markerLength, char *project, char *section,
-                                 bool *writeFlagP, char *resultingSection) {
-    char *projectName;
-    char firstPath[MAX_FILE_NAME_SIZE] = "";
+static void processSectionMarker(char *markerText, int markerLength, char *currentProject, char *fileName,
+                                 bool *sectionUpdated, char *section) {
+    char *projectMarker;
 
     /* Remove surrounding brackets */
-    markerText[markerLength-1]=0;
-    projectName = &markerText[1];
-    log_debug("processing %s for file %s project==%s", projectName, section, project);
+    markerText[markerLength - 1] = 0;
+    projectMarker                = &markerText[1];
+    log_debug("processing %s for file %s project==%s", projectMarker, fileName, currentProject);
 
-    *writeFlagP = false;
-    MapOverPaths(projectName, {
-        if (firstPath[0] == 0)
-            strcpy(firstPath, currentPath);
-        if (project != NULL) {
-            if (strcmp(currentPath, project) == 0) {
-                strcpy(resultingSection, currentPath);
-                assert(strlen(resultingSection) + 1 < MAX_FILE_NAME_SIZE);
-                *writeFlagP = true;
-                goto fini;
-            } else {
-                *writeFlagP = false;
-            }
-        } else {
-            processSingleSectionMarker(currentPath, section, writeFlagP, resultingSection);
-            if (*writeFlagP)
-                goto fini;
+    *sectionUpdated = false;
+    if (currentProject != NULL) {
+        if (strcmp(projectMarker, currentProject) == 0) {
+            strcpy(section, projectMarker);
+            assert(strlen(section) + 1 < MAX_FILE_NAME_SIZE);
+            *sectionUpdated = true;
         }
-    });
-fini:;
-    if (*writeFlagP) {
+    } else {
+        processSingleSectionMarker(projectMarker, fileName, sectionUpdated, section);
+    }
+    if (*sectionUpdated) {
         // TODO!!! YOU NEED TO ALLOCATE SPACE FOR THIS!!!
-        strcpy(base, resultingSection);
-        assert(strlen(resultingSection) < MAX_FILE_NAME_SIZE-1);
+        // WTF? For "base"? It already is an array...
+        strcpy(base, section);
+        assert(strlen(section) < MAX_FILE_NAME_SIZE - 1);
         xrefSetenv("__BASE", base);
-        strcpy(resultingSection, firstPath);
+        strcpy(section, projectMarker);
         // completely wrong, what about file names from command line ?
-        //&strncpy(cwd, resultingSection, MAX_FILE_NAME_SIZE-1);
+        //&strncpy(cwd, section, MAX_FILE_NAME_SIZE-1);
         //&cwd[MAX_FILE_NAME_SIZE-1] = 0;
     }
 }
-
 
 #define ALLOCATE_OPTION_SPACE(memFl, cc, num, type) { \
         if (memFl==ALLOCATE_IN_SM) {                  \
@@ -709,10 +696,10 @@ static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, c
 }
 
 bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
-                                 char *section, char *project, char *resultingSection) {
+                                 char *fileName, char *project, char *section) {
     char optionText[MAX_OPTION_LEN];
     int len, argc, ch, passNumber=0;
-    bool isActiveSection, isActivePass;
+    bool sectionUpdated, isActivePass;
     bool found = false;
     char **aargv, *argv[MAX_STD_ARGS];
 
@@ -720,8 +707,8 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
 
     argc = 1;
     aargv=NULL;
-    isActiveSection = isActivePass = true;
-    resultingSection[0]=0;
+    sectionUpdated = isActivePass = true;
+    section[0]=0;
 
     if (memoryKind == ALLOCATE_IN_SM)
         SM_INIT(optMemory);
@@ -732,6 +719,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
         assert(strlen(optionText) == len);
         if (ch==EOF) {
             log_trace("got option from file (@EOF): '%s'", optionText);
+            break;
         } else {
             log_trace("got option from file: '%s'", optionText);
         }
@@ -739,13 +727,13 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
             log_trace("checking '%s'", optionText);
             expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
             log_trace("expanded '%s'", optionText);
-            processSectionMarker(optionText, len+1, project, section, &isActiveSection, resultingSection);
-        } else if (isActiveSection && strncmp(optionText, "-pass", 5) == 0) {
+            processSectionMarker(optionText, len+1, project, fileName, &sectionUpdated, section);
+        } else if (sectionUpdated && strncmp(optionText, "-pass", 5) == 0) {
             sscanf(optionText+5, "%d", &passNumber);
             isActivePass = passNumber==currentPass || currentPass==ANY_PASS;
             if (passNumber > maxPasses)
                 maxPasses = passNumber;
-        } else if (strcmp(optionText,"-set")==0 && (isActiveSection && isActivePass) && memoryKind!=DONT_ALLOCATE) {
+        } else if (strcmp(optionText,"-set")==0 && (sectionUpdated && isActivePass) && memoryKind!=DONT_ALLOCATE) {
             // pre-evaluation of -set
             found = true;
             if (memoryKind != DONT_ALLOCATE) {
@@ -765,7 +753,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
                 assert(argc >= 3);
                 mainHandleSetOption(argc, argv, argc - 3);
             }
-        } else if (ch != EOF && (isActiveSection && isActivePass)) {
+        } else if (ch != EOF && (sectionUpdated && isActivePass)) {
             found = true;
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             if (memoryKind != DONT_ALLOCATE) {
