@@ -86,6 +86,17 @@ Ensure(Misc, strmcpy_can_copy_overlapping_strings) {
     assert_that(src, is_equal_to_string("ello world!"));
 }
 
+Ensure(Misc, pathncmp_can_compare_paths) {
+    assert_that(pathncmp("abc", "abc", 3, true), is_equal_to(0));
+    assert_that(pathncmp("abcd", "abc", 3, true), is_equal_to(0));
+    assert_that(pathncmp("abc", "abcd", 3, true), is_equal_to(0));
+
+    assert_that(pathncmp("AbC", "abc", 3, false), is_equal_to(0));
+    assert_that(pathncmp("abcd", "AbC", 3, false), is_equal_to(0));
+    assert_that(pathncmp("AbC", "aBcd", 3, false), is_equal_to(0));
+}
+
+
 Ensure(Misc, will_map_over_paths_for_each_entry_setting_currentPath) {
     char *paths = "a:b:c";      /* TODO Windows path separator */
     int count = 0;

@@ -661,11 +661,14 @@ int pathncmp(char *path1, char *path2, int length, bool caseSensitive) {
     if (caseSensitive)
         return strncmp(path1, path2, length);
 #endif
+
     if (length <= 0)
         return 0;
+
 #if defined(__WIN32__)
     // there is also problem with drive name on windows
     // TODO: And why don't we include the drive letter in the comparison?
+    // Because they are always case-insensitive?
     if (path1[0] != 0 && tolower(path1[0]) == tolower(path2[0]) && path1[1] == ':' && path2[1] == ':') {
         path1 += 2;
         path2 += 2;
@@ -677,6 +680,7 @@ int pathncmp(char *path1, char *path2, int length, bool caseSensitive) {
 
     for (s1 = path1, s2 = path2, i = 1; *s1 && *s2 && i < length; s1++, s2++, i++) {
 #if defined(__WIN32__)
+        /* For Win32 we also consider path separators equal */
         if ((*s1 == '/' || *s1 == '\\') && (*s2 == '/' || *s2 == '\\'))
             continue;
 #endif
@@ -689,11 +693,12 @@ int pathncmp(char *path1, char *path2, int length, bool caseSensitive) {
         }
     }
 #if defined(__WIN32__)
+    /* For Win32 we also consider path separators equal */
     if ((*s1 == '/' || *s1 == '\\') && (*s2 == '/' || *s2 == '\\')) {
         cmp = 0;
     } else
 #endif
-        if (caseSensitive) {
+    if (caseSensitive) {
         cmp = *s1 - *s2;
     } else {
         cmp = tolower(*s1) - tolower(*s2);
