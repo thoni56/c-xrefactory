@@ -37,6 +37,31 @@ typedef unsigned bitArray;
 #define NULLBIT(bitarr,s) {bitarr[BIT_ARR_DIVNBITS(s)] &= ~(BIT_ARR_N_TH_BIT(s));}
 
 
+#define MapOverPaths(/* const char * */ thePathsToMapOver, /* block of code */ COMMAND) \
+    {                                                                   \
+        char *currentPath; /* "public" to COMMAND */                    \
+        char *mop_pathPointer, *mop_endOfPaths;                         \
+        int mop_index;                                                  \
+        char mop_paths[MAX_SOURCE_PATH_SIZE]; /* Must be writable which parameter might not be */    \
+        assert(thePathsToMapOver!=NULL);                                \
+        mop_pathPointer = thePathsToMapOver;                            \
+        strcpy(mop_paths, mop_pathPointer);                             \
+        currentPath = mop_paths;                                        \
+        mop_endOfPaths = currentPath+strlen(currentPath);               \
+        while (currentPath<mop_endOfPaths) {                            \
+            for (mop_index=0;                                           \
+                currentPath[mop_index]!=0 && currentPath[mop_index]!=CLASS_PATH_SEPARATOR; \
+                 mop_index++) ;                                         \
+            currentPath[mop_index] = 0;                                 \
+            if (mop_index>0 && currentPath[mop_index-1]==FILE_PATH_SEPARATOR) \
+                currentPath[mop_index-1] = 0;                           \
+            COMMAND;                                                    \
+            currentPath += mop_index;                                   \
+            currentPath++;                                              \
+        }                                                               \
+    }
+
+
 extern void jarFileParse(char *file_name);
 extern void scanJarFilesForTagSearch(void);
 extern void classFileParse(void);

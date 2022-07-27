@@ -85,3 +85,18 @@ Ensure(Misc, strmcpy_can_copy_overlapping_strings) {
     strmcpy(dest, &src[1]);
     assert_that(src, is_equal_to_string("ello world!"));
 }
+
+Ensure(Misc, will_map_over_paths_for_each_entry_setting_currentPath) {
+    char *paths = "a:b:c";      /* TODO Windows path separator */
+    int count = 0;
+    char mappedPaths[3][2];
+
+    MapOverPaths(paths, {
+            strcpy(mappedPaths[count++], currentPath);
+        });
+
+    assert_that(count, is_equal_to(3));
+    assert_that(mappedPaths[0], is_equal_to_string("a"));
+    assert_that(mappedPaths[1], is_equal_to_string("b"));
+    assert_that(mappedPaths[2], is_equal_to_string("c"));
+}

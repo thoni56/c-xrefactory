@@ -164,30 +164,6 @@ typedef enum language {
         || ch=='$'                                      \
     )
 
-#define MapOverPaths(/* const char * */ thePathsToMapOver, /* block of code */ COMMAND) \
-    {                                                                   \
-        char *currentPath; /* "public" to COMMAND */                    \
-        char *mop_pathPointer, *mop_endOfPaths;                         \
-        int mop_index;                                                  \
-        char mop_paths[MAX_SOURCE_PATH_SIZE]; /* Must be writable which parameter might not be */    \
-        assert(thePathsToMapOver!=NULL);                                \
-        mop_pathPointer = thePathsToMapOver;                            \
-        strcpy(mop_paths, mop_pathPointer);                             \
-        currentPath = mop_paths;                                        \
-        mop_endOfPaths = currentPath+strlen(currentPath);               \
-        while (currentPath<mop_endOfPaths) {                            \
-            for (mop_index=0;                                           \
-                currentPath[mop_index]!=0 && currentPath[mop_index]!=CLASS_PATH_SEPARATOR; \
-                 mop_index++) ;                                         \
-            currentPath[mop_index] = 0;                                 \
-            if (mop_index>0 && currentPath[mop_index-1]==FILE_PATH_SEPARATOR) \
-                currentPath[mop_index-1] = 0;                           \
-            COMMAND;                                                    \
-            currentPath += mop_index;                                   \
-            currentPath++;                                              \
-        }                                                               \
-    }
-
 #define SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs,pbflag) {\
     refs = sessionData.browserStack.top;\
     if (refs==NULL || refs->previous==NULL || refs->previous->previous==NULL){\
