@@ -1,0 +1,19 @@
+<goto>
+ <position-off off=36 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<goto>
+ <position-off off=41 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>void</str>  <str len=<n>>int arg</str>
+</replacement>
+<goto>
+ <position-off off=107 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>42</str>
+</replacement>
+<goto>
+ <position-off off=36 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<sync>
