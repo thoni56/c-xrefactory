@@ -914,6 +914,18 @@ Not all options are relevant in all cases.
 
 All options sources uses exactly the same format so that the same code for decoding them can be used.
 
+=== Logic
+
+When the editor has a file open it needs to "belong" to a project. The
+logic for finding which is very intricate and complicated.
+
+In this code there is also checks for things like if the file is
+already in the index, if the configuration file has changed since last
+time, indicating there are scenarios that are more complicated (the
+server, obviously).
+
+But I also think this code should be simplified a lot.
+
 == Development Practices
 
 === Setup

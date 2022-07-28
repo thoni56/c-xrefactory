@@ -272,25 +272,22 @@ static void expect_characters(char string[], bool eof) {
         expect(readChar, will_return(EOF));
 }
 
-xEnsure(Options, can_find_standard_options_file_from_sourcefile_path) {
+Ensure(Options, can_find_standard_options_file_from_sourcefile_path) {
     FILE optionsFile;
     char optionsFilename[1000];
-    char section[1000];
-    FileItem fileItem = { .name = "/home/project/sourcefile.c" };
+    char section[1000] = "/home/project";
 
     expect(getEnv, when(variable, is_equal_to_string("HOME")),
            will_return("HOME"));
     expect(openFile, will_return(&optionsFile));
-    expect(getFileNumberFromName, when(name, is_equal_to_string("/home/project/sourcefile.c")),
-           will_return(42));
-    expect(getFileItem, when(fileIndex, is_equal_to(42)),
-           will_return(&fileItem));
-    expect_characters("[/home/project]", true);
+    expect_characters("[/home/project]\n", false);
+    expect_characters("  /home/project\n", true);
     expect(pathncmp, when(path1, is_equal_to_string("/home/project")),
            will_return(0));
     expect(closeFile);
 
     searchStandardOptionsFileAndSectionForFile("/home/project/sourcefile.c", optionsFilename, section);
 
-    assert_that(optionsFilename, is_equal_to_string(".c-xrefrc"));
+    assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
+    assert_that(section, is_equal_to_string("/home/project"));
 }
