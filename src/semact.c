@@ -646,9 +646,9 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
     }
     if (options.serverOperation == OLO_GOTO_PARAM_NAME
         && position == options.olcxGotoVal
-        && positionsAreEqual(function->pos, s_cxRefPos))
+        && positionsAreEqual(function->pos, cxRefPosition))
     {
-        s_paramPosition = parameter->pos;
+        parameterPosition = parameter->pos;
     }
 }
 
@@ -1035,18 +1035,18 @@ void appendPositionToList(PositionList **list, Position *pos) {
 }
 
 void setParamPositionForFunctionWithoutParams(Position *lpar) {
-    s_paramBeginPosition = *lpar;
-    s_paramEndPosition = *lpar;
+    parameterBeginPosition = *lpar;
+    parameterEndPosition = *lpar;
 }
 
 void setParamPositionForParameter0(Position *lpar) {
-    s_paramBeginPosition = *lpar;
-    s_paramEndPosition = *lpar;
+    parameterBeginPosition = *lpar;
+    parameterEndPosition = *lpar;
 }
 
 void setParamPositionForParameterBeyondRange(Position *rpar) {
-    s_paramBeginPosition = *rpar;
-    s_paramEndPosition = *rpar;
+    parameterBeginPosition = *rpar;
+    parameterEndPosition = *rpar;
 }
 
 static void handleParameterPositions(Position *lpar, PositionList *commas,
@@ -1075,8 +1075,8 @@ static void handleParameterPositions(Position *lpar, PositionList *commas,
         if (pp==NULL && i<=argn) {
             setParamPositionForParameterBeyondRange(rpar);
         } else {
-            s_paramBeginPosition = *p1;
-            s_paramEndPosition = *p2;
+            parameterBeginPosition = *p1;
+            parameterEndPosition = *p2;
         }
     }
 }
@@ -1096,7 +1096,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
         return;
     if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
         return;
-    if (positionsAreNotEqual(decl->pos, s_cxRefPos))
+    if (positionsAreNotEqual(decl->pos, cxRefPosition))
         return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
@@ -1109,7 +1109,7 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
         return;
     if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
         return;
-    if (ref==NULL || positionsAreNotEqual(ref->position, s_cxRefPos))
+    if (ref==NULL || positionsAreNotEqual(ref->position, cxRefPosition))
         return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
@@ -1121,7 +1121,7 @@ void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
         return;
     if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
         return;
-    if (positionsAreNotEqual(*sym, s_cxRefPos))
+    if (positionsAreNotEqual(*sym, cxRefPosition))
         return;
     if (commas==NULL) {
         handleParameterPositions(lpar, NULL, rpar, 0);

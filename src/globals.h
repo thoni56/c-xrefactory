@@ -34,9 +34,9 @@ extern FILE *errOut;
 
 extern char s_olSymbolType[COMPLETION_STRING_SIZE];
 extern char s_olSymbolClassType[COMPLETION_STRING_SIZE];
-extern Position s_paramPosition;
-extern Position s_paramBeginPosition;
-extern Position s_paramEndPosition;
+extern Position parameterPosition;
+extern Position parameterBeginPosition;
+extern Position parameterEndPosition;
 extern Position s_primaryStartPosition;
 extern Position s_staticPrefixStartPosition;
 extern Id yyIdBuffer[YYIDBUFFER_SIZE];
@@ -103,7 +103,7 @@ extern char javaTypePCTIConvert[MAX_TYPE];
 extern char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1];
 
 extern Position s_olcxByPassPos;
-extern Position s_cxRefPos;
+extern Position cxRefPosition;
 
 extern int inputFileNumber;
 extern int olOriginalFileIndex;     /* number of original file */

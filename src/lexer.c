@@ -17,7 +17,7 @@
 void gotOnLineCxRefs(Position *position) {
     if (isCreatingRefs(options.serverOperation)) {
         cache.active = false;
-        s_cxRefPos = *position;
+        cxRefPosition = *position;
     }
 }
 
@@ -138,7 +138,7 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
                     ch = getChar(cb);                                   \
                 } else if (ch == CC_CXREF) {                            \
                     cache.active = false;                        \
-                    s_cxRefPos = makePosition(cb->fileNumber, cb->lineNumber, idcol); \
+                    cxRefPosition = makePosition(cb->fileNumber, cb->lineNumber, idcol); \
                     goto identCont##labelSuffix;                        \
                 } else errorMessage(ERR_INTERNAL, "unknown communication char"); \
             } else {                                                    \

@@ -79,11 +79,11 @@ char *storageNamesTable[MAX_STORAGE_NAMES];
 Counters counters;
 unsigned s_recFindCl = 1;
 
-Position s_paramPosition;
-Position s_paramBeginPosition;
-Position s_paramEndPosition;
+Position parameterPosition;
+Position parameterBeginPosition;
+Position parameterEndPosition;
 
-Position s_cxRefPos;
+Position cxRefPosition;
 
 int inputFileNumber;
 char *inputFilename;

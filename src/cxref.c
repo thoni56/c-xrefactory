@@ -724,13 +724,13 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     }
     place = addToRefList(&memb->references, usage, *position);
     log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
-              getFileItem(s_cxRefPos.file)->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col,
+              getFileItem(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line, cxRefPosition.col,
               fileItem->name, position->file, position->line, position->col,
-              memcmp(&s_cxRefPos, position, sizeof(Position)), positionsAreEqual(s_cxRefPos, *position),
+              memcmp(&cxRefPosition, position, sizeof(Position)), positionsAreEqual(cxRefPosition, *position),
               usage.kind, symbol->linkName);
 
     if (options.mode == ServerMode
-        && positionsAreEqual(s_cxRefPos, *position)
+        && positionsAreEqual(cxRefPosition, *position)
         && usage.kind<UsageMaxOLUsages) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
@@ -4515,8 +4515,8 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_GOTO_PARAM_NAME:
         // I hope this is not used anymore, put there assert(0);
-        if (s_olstringServed && s_paramPosition.file != noFileIndex) {
-            gotoOnlineCxref(&s_paramPosition, UsageDefined, "");
+        if (s_olstringServed && parameterPosition.file != noFileIndex) {
+            gotoOnlineCxref(&parameterPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {
             char tmpBuff[TMP_BUFF_SIZE];

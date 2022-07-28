@@ -611,7 +611,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
                                                     Position *pos, Position *parpos2,
                                                     int final) {
     if ((options.serverOperation == OLO_GOTO_PARAM_NAME || options.serverOperation == OLO_GET_PARAM_COORDINATES)
-        && positionsAreEqual(*macpos, s_cxRefPos)) {
+        && positionsAreEqual(*macpos, cxRefPosition)) {
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(parpos1);
@@ -619,19 +619,19 @@ static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
                 setParamPositionForParameterBeyondRange(parpos2);
             }
         } else if (argi == options.olcxGotoVal) {
-            s_paramPosition = *pos;
-            s_paramBeginPosition = *parpos1;
-            s_paramEndPosition = *parpos2;
+            parameterPosition = *pos;
+            parameterBeginPosition = *parpos1;
+            parameterEndPosition = *parpos2;
         }
     }
 }
 
-static void handleMacroUsageParameterPositions(int argi, Position *macpos,
+static void handleMacroUsageParameterPositions(int argi, Position *macroPosition,
                                                Position *parpos1, Position *parpos2,
                                                int final
     ) {
     if (options.serverOperation == OLO_GET_PARAM_COORDINATES
-        && positionsAreEqual(*macpos, s_cxRefPos)) {
+        && positionsAreEqual(*macroPosition, cxRefPosition)) {
         log_trace("checking param %d at %d,%d, final==%d", argi, parpos1->col, parpos2->col, final);
         if (final) {
             if (argi==0) {
@@ -640,8 +640,8 @@ static void handleMacroUsageParameterPositions(int argi, Position *macpos,
                 setParamPositionForParameterBeyondRange(parpos2);
             }
         } else if (argi == options.olcxGotoVal) {
-            s_paramBeginPosition = *parpos1;
-            s_paramEndPosition = *parpos2;
+            parameterBeginPosition = *parpos1;
+            parameterEndPosition = *parpos2;
 //&fprintf(dumpOut,"regular setting to %d - %d\n", parpos1->col, parpos2->col);
         }
     }
@@ -824,7 +824,7 @@ void processDefineDirective(bool hasArguments) {
                 macroSize = destination - body;
             } else {
                 if (lexem==IDENT_TO_COMPLETE
-                    || (lexem == IDENTIFIER && positionsAreEqual(position, s_cxRefPos))) {
+                    || (lexem == IDENTIFIER && positionsAreEqual(position, cxRefPosition))) {
                     cache.active = false;
                     s_olstringFound = true;
                     s_olstringInMbody = symbol->linkName;
@@ -1938,7 +1938,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
             break;
         }
         if (isIdentifierLexem(lexem) || isPreprocessorToken(lexem)) {
-            if (onSameLine(position, s_cxRefPos)) {
+            if (onSameLine(position, cxRefPosition)) {
                 currentInput.currentLexemP = previousLexem;			/* unget last lexem */
                 res = 0;
                 break;

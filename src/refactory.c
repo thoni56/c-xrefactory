@@ -1871,9 +1871,9 @@ static void renameAtPoint(EditorBuffer *buf, EditorMarker *point) {
 }
 
 static void clearParamPositions(void) {
-    s_paramPosition      = noPosition;
-    s_paramBeginPosition = noPosition;
-    s_paramEndPosition   = noPosition;
+    parameterPosition      = noPosition;
+    parameterBeginPosition = noPosition;
+    parameterEndPosition   = noPosition;
 }
 
 static int getParameterNamePosition(EditorMarker *pos, char *fname, int argn) {
@@ -1886,7 +1886,7 @@ static int getParameterNamePosition(EditorMarker *pos, char *fname, int argn) {
     sprintf(pushOpt, "-olcxgotoparname%d", argn);
     editServerParseBuffer(refactoringOptions.project, pos->buffer, pos, NULL, pushOpt, NULL);
     olcxPopOnly();
-    if (s_paramPosition.file != noFileIndex) {
+    if (parameterPosition.file != noFileIndex) {
         res = RETURN_OK;
     } else {
         res = RETURN_ERROR;
@@ -1915,17 +1915,17 @@ static int getParameterPosition(EditorMarker *pos, char *fname, int argn) {
     olcxPopOnly();
 
     res = RETURN_OK;
-    if (s_paramBeginPosition.file == noFileIndex || s_paramEndPosition.file == noFileIndex ||
-        s_paramBeginPosition.file == -1 || s_paramEndPosition.file == -1) {
+    if (parameterBeginPosition.file == noFileIndex || parameterEndPosition.file == noFileIndex ||
+        parameterBeginPosition.file == -1 || parameterEndPosition.file == -1) {
         ppcGotoMarker(pos);
         errorMessage(ERR_INTERNAL, "Can't get end of parameter");
         res = RETURN_ERROR;
     }
     // check some logical preconditions,
-    if (s_paramBeginPosition.file != s_paramEndPosition.file ||
-        s_paramBeginPosition.line > s_paramEndPosition.line ||
-        (s_paramBeginPosition.line == s_paramEndPosition.line &&
-         s_paramBeginPosition.col > s_paramEndPosition.col)) {
+    if (parameterBeginPosition.file != parameterEndPosition.file ||
+        parameterBeginPosition.line > parameterEndPosition.line ||
+        (parameterBeginPosition.line == parameterEndPosition.line &&
+         parameterBeginPosition.col > parameterEndPosition.col)) {
         ppcGotoMarker(pos);
         sprintf(tmpBuff, "Something goes wrong at this occurence, can't get reasonable parameter limites");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1960,16 +1960,16 @@ static int addStringAsParameter(EditorMarker *pos, EditorMarker *endm, char *fna
     text = pos->buffer->allocation.text;
 
     if (endm == NULL) {
-        mm = editorCreateNewMarkerForPosition(&s_paramBeginPosition);
+        mm = editorCreateNewMarkerForPosition(&parameterBeginPosition);
     } else {
         mm = endm;
-        assert(mm->buffer->fileIndex == s_paramBeginPosition.file);
-        editorMoveMarkerToLineCol(mm, s_paramBeginPosition.line, s_paramBeginPosition.col);
+        assert(mm->buffer->fileIndex == parameterBeginPosition.file);
+        editorMoveMarkerToLineCol(mm, parameterBeginPosition.line, parameterBeginPosition.col);
     }
 
     sep1 = "";
     sep2 = "";
-    if (positionsAreEqual(s_paramBeginPosition, s_paramEndPosition)) {
+    if (positionsAreEqual(parameterBeginPosition, parameterEndPosition)) {
         if (text[mm->offset] == '(') {
             // function with no parameter
             mm->offset++;
@@ -2036,7 +2036,7 @@ static void checkThatParameterIsUnused(EditorMarker *pos, char *fname, int argn,
         return;
     }
 
-    mm = editorCreateNewMarkerForPosition(&s_paramPosition);
+    mm = editorCreateNewMarkerForPosition(&parameterPosition);
     strncpy(pname, getIdentifierOnMarker_st(mm), TMP_STRING_SIZE);
     pname[TMP_STRING_SIZE - 1] = 0;
     if (isParameterUsedExceptRecursiveCalls(mm, pos)) {
@@ -2075,12 +2075,12 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
     if (res != RETURN_OK)
         return;
 
-    m1 = editorCreateNewMarkerForPosition(&s_paramBeginPosition);
-    m2 = editorCreateNewMarkerForPosition(&s_paramEndPosition);
+    m1 = editorCreateNewMarkerForPosition(&parameterBeginPosition);
+    m2 = editorCreateNewMarkerForPosition(&parameterEndPosition);
 
     text = pos->buffer->allocation.text;
 
-    if (positionsAreEqual(s_paramBeginPosition, s_paramEndPosition)) {
+    if (positionsAreEqual(parameterBeginPosition, parameterEndPosition)) {
         if (text[m1->offset] == '(') {
             // function with no parameter
         } else if (text[m1->offset] == ')') {
@@ -2124,14 +2124,14 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
     if (res != RETURN_OK)
         return;
 
-    m1 = editorCreateNewMarkerForPosition(&s_paramBeginPosition);
-    m2 = editorCreateNewMarkerForPosition(&s_paramEndPosition);
+    m1 = editorCreateNewMarkerForPosition(&parameterBeginPosition);
+    m2 = editorCreateNewMarkerForPosition(&parameterEndPosition);
 
     text      = pos->buffer->allocation.text;
     plen      = 0;
     par[plen] = 0;
 
-    if (positionsAreEqual(s_paramBeginPosition, s_paramEndPosition)) {
+    if (positionsAreEqual(parameterBeginPosition, parameterEndPosition)) {
         if (text[m1->offset] == '(') {
             // function with no parameter
         } else if (text[m1->offset] == ')') {
@@ -3544,7 +3544,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
         errorMessage(ERR_INTERNAL, "Can't determine position of parameter");
         return;
     }
-    mm = editorCreateNewMarkerForPosition(&s_paramPosition);
+    mm = editorCreateNewMarkerForPosition(&parameterPosition);
     if (refactoringOptions.refpar2[0] != 0) {
         sprintf(param, "%s.%s", getIdentifierOnMarker_st(mm), refactoringOptions.refpar2);
     } else {
@@ -3610,10 +3610,10 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
         if (!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
             res = getParameterPosition(ll->marker, nameOnPoint, argn);
             if (res == RETURN_OK) {
-                m1 = editorCreateNewMarkerForPosition(&s_paramBeginPosition);
+                m1 = editorCreateNewMarkerForPosition(&parameterBeginPosition);
                 m1->offset++;
                 editorRunWithMarkerUntil(m1, noSpaceChar, 1);
-                m2 = editorCreateNewMarkerForPosition(&s_paramEndPosition);
+                m2 = editorCreateNewMarkerForPosition(&parameterEndPosition);
                 m2->offset--;
                 editorRunWithMarkerUntil(m2, noSpaceChar, -1);
                 m2->offset++;

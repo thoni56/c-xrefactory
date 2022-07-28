@@ -32,9 +32,9 @@ bool javaPreScanOnly = false;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
 char s_olSymbolClassType[COMPLETION_STRING_SIZE];
 
-Position s_paramPosition;
-Position s_paramBeginPosition;
-Position s_paramEndPosition;
+Position parameterPosition;
+Position parameterBeginPosition;
+Position parameterEndPosition;
 Position s_primaryStartPosition;
 Position s_staticPrefixStartPosition;
 
@@ -55,7 +55,7 @@ Completions collectedCompletions;
 /* **************** cached symbols ********************** */
 
 Position s_olcxByPassPos;
-Position s_cxRefPos;
+Position cxRefPosition;
 
 time_t fileProcessingStartTime;
 

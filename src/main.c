@@ -196,7 +196,7 @@ static void initializationsPerInvocation(void) {
     parsedInfo = (CurrentlyParsedInfo){0,};
     for (int i=0; i<SPP_MAX; i++)
         parsedPositions[i] = noPosition;
-    s_cxRefPos = noPosition;
+    cxRefPosition = noPosition;
     s_olstring[0]=0;
     s_olstringFound = false;
     s_olstringServed = false;

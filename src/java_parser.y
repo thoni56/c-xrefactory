@@ -1193,7 +1193,7 @@ ClassDeclaration
                     } else {
                         PropagateBoundaries($$, $1, $8);
                         if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
-                        if (positionIsBetween($$.b, s_cxRefPos, $$.e)
+                        if (positionIsBetween($$.b, cxRefPosition, $$.e)
                             && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
                             parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                             parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
@@ -1257,7 +1257,7 @@ FunctionInnerClassDeclaration
                     } else {
                         PropagateBoundaries($$, $1, $8);
                         if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $8);
-                        if (positionsAreEqual(s_cxRefPos, $3.d->position)) {
+                        if (positionsAreEqual(cxRefPosition, $3.d->position)) {
                             parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                             parsedPositions[SPP_CLASS_DECLARATION_END_POSITION] = $$.e;
                         }
@@ -1512,7 +1512,7 @@ FieldDeclaration
                 } else {
                     PropagateBoundaries($$, $1, $4);
                     if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $4);
-                    if (positionIsBetween($$.b, s_cxRefPos, $$.e)
+                    if (positionIsBetween($$.b, cxRefPosition, $$.e)
                         && parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==noFileIndex) {
                         parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION] = $$.b;
                         parsedPositions[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
@@ -1674,7 +1674,7 @@ MethodDeclaration
                         javaMethodBodyEnding(&$4.d);
                     } else {
                         PropagateBoundaries($$, $1, $4);
-                        if (positionIsBetween($1.b, s_cxRefPos, $1.e)) {
+                        if (positionIsBetween($1.b, cxRefPosition, $1.e)) {
                             parsedPositions[SPP_METHOD_DECLARATION_BEGIN_POSITION] = $$.b;
                             parsedPositions[SPP_METHOD_DECLARATION_END_POSITION] = $$.e;
                         }
@@ -1693,7 +1693,7 @@ MethodHeader
                     PropagateBoundaries($$, $1, $4);
                     if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
                     if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $3);
-                    if (positionIsBetween($$.b, s_cxRefPos, $3.e)) {
+                    if (positionIsBetween($$.b, cxRefPosition, $3.e)) {
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = $2.e;
                     }
@@ -1711,7 +1711,7 @@ MethodHeader
                     PropagateBoundaries($$, $1, $4);
                     if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
                     if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $3);
-                    if (positionIsBetween($$.b, s_cxRefPos, $3.e)) {
+                    if (positionIsBetween($$.b, cxRefPosition, $3.e)) {
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = $2.e;
                     }
@@ -2102,7 +2102,7 @@ InterfaceDeclaration
                 } else {
                     PropagateBoundaries($$, $1, $7);
                     if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
-                    if (positionIsBetween($$.b, s_cxRefPos, $$.e)
+                    if (positionIsBetween($$.b, cxRefPosition, $$.e)
                         && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
                         parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                         parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
@@ -3071,7 +3071,7 @@ PrimaryNoNewArray
                     $$.d.position = StackMemoryAlloc(Position);
                     *$$.d.position = $1.d;
                     PropagateBoundaries($$, $1, $3);
-                    if (positionIsBetween($$.b, s_cxRefPos, $$.e)
+                    if (positionIsBetween($$.b, cxRefPosition, $$.e)
                         && parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == noFileIndex) {
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = $1.b;
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = $3.b;
@@ -3792,7 +3792,7 @@ CastExpression
                 } else {
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
-                    if (positionIsBetween($4.b, s_cxRefPos, $4.e)
+                    if (positionIsBetween($4.b, cxRefPosition, $4.e)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = $1.b;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = $3.b;
@@ -3812,7 +3812,7 @@ CastExpression
                 } else {
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
-                    if (positionIsBetween($4.b, s_cxRefPos, $4.e)
+                    if (positionIsBetween($4.b, cxRefPosition, $4.e)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = $1.b;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = $3.b;
@@ -3832,7 +3832,7 @@ CastExpression
                 } else {
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
-                    if (positionIsBetween($4.b, s_cxRefPos, $4.e)
+                    if (positionIsBetween($4.b, cxRefPosition, $4.e)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = $1.b;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = $3.b;
@@ -4194,7 +4194,7 @@ Assignment
                 } else {
                     PropagateBoundaries($$, $1, $4);
                     if (options.mode == ServerMode) {
-                        if (positionIsBetween($1.b, s_cxRefPos, $1.e)) {
+                        if (positionIsBetween($1.b, cxRefPosition, $1.e)) {
                             parsedPositions[SPP_ASSIGNMENT_OPERATOR_POSITION] = $3.b;
                             parsedPositions[SPP_ASSIGNMENT_END_POSITION] = $4.e;
                         }
