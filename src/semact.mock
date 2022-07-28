@@ -101,6 +101,10 @@ void declTypeSpecifier2(Symbol *d, TypeModifier *t) {
     mock(d, t);
 }
 
+TypeModifier *addComposedType(Symbol *symbol, Type type) {
+    return (TypeModifier *)mock(symbol, type);
+}
+
 TypeModifier *appendComposedType(TypeModifier **d, unsigned t) {
     return (TypeModifier *) mock(d, t);
 }

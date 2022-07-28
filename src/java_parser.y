@@ -83,9 +83,6 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
 
 #define NULL_POS NULL
 
-#define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.typeModifier, ttt)
-
-
 static bool regularPass(void) { return s_jsl == NULL; }
 static bool inSecondJslPass() {
     return !regularPass() && s_jsl->pass==2;
@@ -1637,7 +1634,7 @@ VariableDeclaratorId
                 if (! SyntaxPassOnly()) {
                     assert($1.d);
                     $$.d = $1.d;
-                    AddComposedType($$.d, TypeArray);
+                    addComposedType($$.d, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -1758,7 +1755,7 @@ MethodDeclarator
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = $1.d;
-                    AddComposedType($$.d, TypeArray);
+                    addComposedType($$.d, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }

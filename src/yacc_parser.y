@@ -42,8 +42,6 @@
 #define yyErrorRecovery styyErrorRecovery
 
 
-#define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.typeModifier, ttt)
-
 static Symbol *l_yaccUnion = NULL;
 static Symbol *l_currentType = NULL;
 
@@ -1229,18 +1227,18 @@ declarator2
     | declarator2 '[' ']'                               {
         assert($1.d);
         $$.d = $1.d;
-        AddComposedType($$.d, TypeArray);
+        addComposedType($$.d, TypeArray);
     }
     | declarator2 '[' constant_expr ']'                 {
         assert($1.d);
         $$.d = $1.d;
-        AddComposedType($$.d, TypeArray);
+        addComposedType($$.d, TypeArray);
     }
     | declarator2 '(' ')'                               {
         TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
-        p = AddComposedType($$.d, TypeFunction);
+        p = addComposedType($$.d, TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
         handleDeclaratorParamPositions($1.d, &$2.d, NULL, &$3.d, 0);
     }
@@ -1248,7 +1246,7 @@ declarator2
         TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
-        p = AddComposedType($$.d, TypeFunction);
+        p = addComposedType($$.d, TypeFunction);
         initFunctionTypeModifier(&p->u.f , $3.d.symbol);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
@@ -1256,7 +1254,7 @@ declarator2
         TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
-        p = AddComposedType($$.d, TypeFunction);
+        p = addComposedType($$.d, TypeFunction);
         initFunctionTypeModifier(&p->u.f , $3.d.symbol);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
