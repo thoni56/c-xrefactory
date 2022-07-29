@@ -1636,7 +1636,7 @@ VariableDeclaratorId
                 if (! SyntaxPassOnly()) {
                     assert($1.data);
                     $$.data = $1.data;
-                    addComposedType($$.data, TypeArray);
+                    addComposedTypeToSymbol($$.data, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -1757,7 +1757,7 @@ MethodDeclarator
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.data = $1.data;
-                    addComposedType($$.data, TypeArray);
+                    addComposedTypeToSymbol($$.data, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }

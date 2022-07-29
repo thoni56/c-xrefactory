@@ -4226,7 +4226,7 @@ case 148:
                 if (! SyntaxPassOnly()) {
                     assert(yyvsp[-2].ast_symbol.data);
                     yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
-                    addComposedType(yyval.ast_symbol.data, TypeArray);
+                    addComposedTypeToSymbol(yyval.ast_symbol.data, TypeArray);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                 }
@@ -4354,7 +4354,7 @@ case 159:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
-                    addComposedType(yyval.ast_symbol.data, TypeArray);
+                    addComposedTypeToSymbol(yyval.ast_symbol.data, TypeArray);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                 }

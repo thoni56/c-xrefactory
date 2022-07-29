@@ -4103,7 +4103,7 @@ case 386:
 {
         assert(yyvsp[-2].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
-        addComposedType(yyval.ast_symbol.data, TypeArray);
+        addComposedTypeToSymbol(yyval.ast_symbol.data, TypeArray);
     }
 break;
 case 387:
@@ -4111,7 +4111,7 @@ case 387:
 {
         assert(yyvsp[-3].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
-        addComposedType(yyval.ast_symbol.data, TypeArray);
+        addComposedTypeToSymbol(yyval.ast_symbol.data, TypeArray);
     }
 break;
 case 388:
@@ -4120,7 +4120,7 @@ case 388:
         TypeModifier *p;
         assert(yyvsp[-2].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
-        p = addComposedType(yyval.ast_symbol.data, TypeFunction);
+        p = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
         handleDeclaratorParamPositions(yyvsp[-2].ast_symbol.data, &yyvsp[-1].ast_position.data, NULL, &yyvsp[0].ast_position.data, 0);
     }
@@ -4131,7 +4131,7 @@ case 389:
         TypeModifier *p;
         assert(yyvsp[-3].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
-        p = addComposedType(yyval.ast_symbol.data, TypeFunction);
+        p = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
         initFunctionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, &yyvsp[0].ast_position.data, 1);
     }
@@ -4142,7 +4142,7 @@ case 390:
         TypeModifier *p;
         assert(yyvsp[-3].ast_symbol.data);
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
-        p = addComposedType(yyval.ast_symbol.data, TypeFunction);
+        p = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
         initFunctionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, &yyvsp[0].ast_position.data, 1);
     }

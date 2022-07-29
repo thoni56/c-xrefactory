@@ -1228,18 +1228,18 @@ declarator2
     | declarator2 '[' ']'                               {
         assert($1.data);
         $$.data = $1.data;
-        addComposedType($$.data, TypeArray);
+        addComposedTypeToSymbol($$.data, TypeArray);
     }
     | declarator2 '[' constant_expr ']'                 {
         assert($1.data);
         $$.data = $1.data;
-        addComposedType($$.data, TypeArray);
+        addComposedTypeToSymbol($$.data, TypeArray);
     }
     | declarator2 '(' ')'                               {
         TypeModifier *p;
         assert($1.data);
         $$.data = $1.data;
-        p = addComposedType($$.data, TypeFunction);
+        p = addComposedTypeToSymbol($$.data, TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
         handleDeclaratorParamPositions($1.data, &$2.data, NULL, &$3.data, 0);
     }
@@ -1247,7 +1247,7 @@ declarator2
         TypeModifier *p;
         assert($1.data);
         $$.data = $1.data;
-        p = addComposedType($$.data, TypeFunction);
+        p = addComposedTypeToSymbol($$.data, TypeFunction);
         initFunctionTypeModifier(&p->u.f , $3.data.symbol);
         handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, 1);
     }
@@ -1255,7 +1255,7 @@ declarator2
         TypeModifier *p;
         assert($1.data);
         $$.data = $1.data;
-        p = addComposedType($$.data, TypeFunction);
+        p = addComposedTypeToSymbol($$.data, TypeFunction);
         initFunctionTypeModifier(&p->u.f , $3.data.symbol);
         handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, 1);
     }
