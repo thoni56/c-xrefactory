@@ -1693,8 +1693,8 @@ void javaCompleteHintForConstructSingleName(Completions *c) {
     char        *name;
     if (c->idToProcessLen == 0 && options.serverOperation == OLO_COMPLETION) {
         // O.K. wizard completion
-        if (parsedInfo.lastAssignementStruct!=NULL) {
-            name = parsedInfo.lastAssignementStruct->name;
+        if (parsedInfo.lastAssignmentStruct!=NULL) {
+            name = parsedInfo.lastAssignmentStruct->name;
             fillCompletionLine(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
             processName(name, &compLine, 0, c);
         }

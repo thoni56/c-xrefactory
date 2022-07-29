@@ -508,7 +508,7 @@ typedef struct currentlyParsedInfo {
     int               cxMemoryIndexAtClassEnd;
     int               lastImportLine;
     struct symbol    *lastDeclaratorType;
-    struct symbol    *lastAssignementStruct;
+    struct symbol    *lastAssignmentStruct;
 } CurrentlyParsedInfo;
 
 /* *********************************************************** */

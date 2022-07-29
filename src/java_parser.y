@@ -1462,7 +1462,7 @@ AssignmentType
             $$.data = $1.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = $1.data;
+                    parsedInfo.lastAssignmentStruct = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -1477,7 +1477,7 @@ FieldDeclaration
                     Symbol *p,*pp,*memb,*clas;
                     int vClass;
                     S_recFindStr    rfs;
-                    parsedInfo.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignmentStruct = NULL;
                     clas = s_javaStat->thisClass;
                     assert(clas != NULL);
                     for(p=$3.data; p!=NULL; p=pp) {
@@ -1686,7 +1686,7 @@ MethodHeader
     :   Modifiers_opt AssignmentType MethodDeclarator Throws_opt	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignmentStruct = NULL;
                     $$.data = javaMethodHeader($1.data,$2.data,$3.data, StorageMethod);
                 } else {
                     PropagateBoundaries($$, $1, $4);
@@ -2331,13 +2331,13 @@ LocalVariableDeclaration
     |	LocalVarDeclUntilInit {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = $1.data;
+                    parsedInfo.lastAssignmentStruct = $1.data;
                 }
             }
         } '=' VariableInitializer		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignmentStruct = NULL;
                     $$.data = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $4);
@@ -4163,7 +4163,7 @@ Assignment
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.data.typeModifier!=NULL && $1.data.typeModifier->kind == TypeStruct) {
-                        parsedInfo.lastAssignementStruct = $1.data.typeModifier->u.t;
+                        parsedInfo.lastAssignmentStruct = $1.data.typeModifier->u.t;
                     }
                 }
                 $$.data = $1.data;
@@ -4171,7 +4171,7 @@ Assignment
         } AssignmentOperator AssignmentExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignmentStruct = NULL;
                     if ($1.data.reference != NULL && options.serverOperation == OLO_EXTRACT) {
                         Reference *rr;
                         rr = duplicateReference($1.data.reference);

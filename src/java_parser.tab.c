@@ -4044,7 +4044,7 @@ case 140:
             yyval.ast_symbol.data = yyvsp[0].ast_symbol.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = yyvsp[0].ast_symbol.data;
+                    parsedInfo.lastAssignmentStruct = yyvsp[0].ast_symbol.data;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
                 }
@@ -4059,7 +4059,7 @@ case 141:
                     Symbol *p,*pp,*memb,*clas;
                     int vClass;
                     S_recFindStr    rfs;
-                    parsedInfo.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignmentStruct = NULL;
                     clas = s_javaStat->thisClass;
                     assert(clas != NULL);
                     for(p=yyvsp[-1].ast_symbol.data; p!=NULL; p=pp) {
@@ -4273,7 +4273,7 @@ case 154:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignmentStruct = NULL;
                     yyval.ast_symbol.data = javaMethodHeader(yyvsp[-3].ast_unsigned.data,yyvsp[-2].ast_symbol.data,yyvsp[-1].ast_symbol.data, StorageMethod);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
@@ -5036,7 +5036,7 @@ case 238:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = yyvsp[0].ast_symbol.data;
+                    parsedInfo.lastAssignmentStruct = yyvsp[0].ast_symbol.data;
                 }
             }
         }
@@ -5046,7 +5046,7 @@ case 239:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignmentStruct = NULL;
                     yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_symbol, yyvsp[0].ast_expressionType);
@@ -7033,7 +7033,7 @@ case 462:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[0].ast_expressionType.data.typeModifier!=NULL && yyvsp[0].ast_expressionType.data.typeModifier->kind == TypeStruct) {
-                        parsedInfo.lastAssignementStruct = yyvsp[0].ast_expressionType.data.typeModifier->u.t;
+                        parsedInfo.lastAssignmentStruct = yyvsp[0].ast_expressionType.data.typeModifier->u.t;
                     }
                 }
                 yyval.ast_expressionType.data = yyvsp[0].ast_expressionType.data;
@@ -7045,7 +7045,7 @@ case 463:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = NULL;
+                    parsedInfo.lastAssignmentStruct = NULL;
                     if (yyvsp[-3].ast_expressionType.data.reference != NULL && options.serverOperation == OLO_EXTRACT) {
                         Reference *rr;
                         rr = duplicateReference(yyvsp[-3].ast_expressionType.data.reference);
