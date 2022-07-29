@@ -557,7 +557,4 @@ typedef struct typeModifiersListPositionListPair {
     struct positionList     *p;
 } S_typeModifiersListPositionListPair;
 
-
-#include "refactorings.h"
-
 #endif
