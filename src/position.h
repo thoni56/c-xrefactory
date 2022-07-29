@@ -15,9 +15,10 @@ typedef struct positionList {
     struct positionList *next;
 } PositionList;
 
+extern void fillPositionList(PositionList *positionList, Position p, PositionList *next);
+extern PositionList *newPositionList(Position position, PositionList *next);
 
 extern Position makePosition(int file, int line, int col);
-extern void fillPositionList(PositionList *positionList, Position p, PositionList *next);
 extern bool onSameLine(Position pos1, Position pos2);
 
 extern Position addPositions(Position p1, Position p2);
