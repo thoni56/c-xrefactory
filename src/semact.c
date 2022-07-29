@@ -1054,7 +1054,7 @@ void setParamPositionForParameterBeyondRange(Position *rpar) {
 }
 
 static void handleParameterPositions(Position *lpar, PositionList *commas,
-                                     Position *rpar, int hasParam) {
+                                     Position *rpar, bool hasParam) {
     int i, argn;
     Position *p1, *p2;
     PositionList *pp;
@@ -1094,7 +1094,7 @@ Symbol *createEmptyField(void) {
 
 void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
                                     PositionList *commas, Position *rpar,
-                                    int hasParam
+                                    bool hasParam
                                     ) {
     if (options.mode != ServerMode)
         return;
@@ -1107,7 +1107,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
 
 void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                     PositionList *commas, Position *rpar,
-                                    int hasParam
+                                    bool hasParam
                                     ) {
     if (options.mode != ServerMode)
         return;
@@ -1128,8 +1128,8 @@ void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
     if (positionsAreNotEqual(*sym, cxRefPosition))
         return;
     if (commas==NULL) {
-        handleParameterPositions(lpar, NULL, rpar, 0);
+        handleParameterPositions(lpar, NULL, rpar, false);
     } else {
-        handleParameterPositions(lpar, commas->next, rpar, 1);
+        handleParameterPositions(lpar, commas->next, rpar, true);
     }
 }

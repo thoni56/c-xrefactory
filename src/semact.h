@@ -73,10 +73,10 @@ extern void setParamPositionForParameterBeyondRange(Position *rpar);
 extern Symbol *createEmptyField(void);
 extern void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
                                            PositionList *commas, Position *rpar,
-                                           int hasParam);
+                                           bool hasParam);
 extern void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                            PositionList *commas, Position *rpar,
-                                           int hasParam);
+                                           bool hasParam);
 extern void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
                                                PositionList *commas, Position *rpar);
 extern void setLocalVariableLinkName(struct symbol *p);
