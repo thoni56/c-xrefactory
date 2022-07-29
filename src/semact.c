@@ -1053,12 +1053,11 @@ void setParamPositionForParameterBeyondRange(Position *rpar) {
     parameterEndPosition = *rpar;
 }
 
-static void handleParameterPositions(Position *lpar, PositionList *commas,
-                                     Position *rpar, bool hasParam) {
-    int i, argn;
-    Position *p1, *p2;
+static void handleParameterPositions(Position *lpar, PositionList *commas, Position *rpar, bool hasParam) {
+    int           i, argn;
+    Position     *p1, *p2;
     PositionList *pp;
-    if (! hasParam) {
+    if (!hasParam) {
         setParamPositionForFunctionWithoutParams(lpar);
         return;
     }
@@ -1068,19 +1067,23 @@ static void handleParameterPositions(Position *lpar, PositionList *commas,
     } else {
         pp = commas;
         p1 = lpar;
-        i = 1;
-        if (pp != NULL) p2 = &pp->p;
-        else p2 = rpar;
-        for(i++; pp!=NULL && i<=argn; pp=pp->next,i++) {
+        i  = 1;
+        if (pp != NULL)
+            p2 = &pp->p;
+        else
+            p2 = rpar;
+        for (i++; pp != NULL && i <= argn; pp = pp->next, i++) {
             p1 = &pp->p;
-            if (pp->next != NULL) p2 = &pp->next->p;
-            else p2 = rpar;
+            if (pp->next != NULL)
+                p2 = &pp->next->p;
+            else
+                p2 = rpar;
         }
-        if (pp==NULL && i<=argn) {
+        if (pp == NULL && i <= argn) {
             setParamPositionForParameterBeyondRange(rpar);
         } else {
             parameterBeginPosition = *p1;
-            parameterEndPosition = *p2;
+            parameterEndPosition   = *p2;
         }
     }
 }
