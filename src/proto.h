@@ -562,85 +562,85 @@ typedef struct typeModifiersListPositionListPair {
 
 /* **************     parse tree with positions    *********** */
 
-// following structures are used in yacc parser, they always
+// The following structures are used in the parsers, they always
 // contain 'b','e' records for begin and end position of parse tree
-// node and additional data 'd' for parsing.
+// node and additional 'data' for semantic actions.
 
 typedef struct {
     struct position b, e;
-    int             d;
+    int             data;
 } Ast_int;
 typedef struct {
     struct position b, e;
-    unsigned        d;
+    unsigned        data;
 } Ast_unsigned;
 typedef struct {
     struct position b, e;
-    struct symbol  *d;
+    struct symbol  *data;
 } Ast_symbol;
 typedef struct {
     struct position    b, e;
-    struct symbolList *d;
+    struct symbolList *data;
 } Ast_symbolList;
 typedef struct {
     struct position      b, e;
-    struct typeModifier *d;
+    struct typeModifier *data;
 } Ast_typeModifiers;
 typedef struct {
     struct position          b, e;
-    struct typeModifierList *d;
+    struct typeModifierList *data;
 } Ast_typeModifiersList;
 typedef struct {
     struct position   b, e;
-    struct freeTrail *d;
+    struct freeTrail *data;
 } Ast_freeTrail;
 typedef struct {
     struct position b, e;
-    Id             *d;
+    Id             *data;
 } Ast_id;
 typedef struct {
     struct position b, e;
-    struct idList  *d;
+    struct idList  *data;
 } Ast_idList;
 typedef struct {
     struct position            b, e;
-    struct expressionTokenType d;
+    struct expressionTokenType data;
 } Ast_exprTokenType;
 typedef struct {
     struct position              b, e;
-    struct nestedConstrTokenType d;
+    struct nestedConstrTokenType data;
 } Ast_nestedConstrTokenType;
 typedef struct {
     struct position b, e;
-    struct intPair  d;
+    struct intPair  data;
 } Ast_intPair;
 typedef struct {
     struct position          b, e;
-    struct whileExtractData *d;
+    struct whileExtractData *data;
 } Ast_whileExtractData;
 typedef struct {
     struct position b, e;
-    struct position d;
+    struct position data;
 } Ast_position;
 typedef struct {
     struct position             b, e;
-    struct unsignedPositionPair d;
+    struct unsignedPositionPair data;
 } Ast_unsPositionPair;
 typedef struct {
     struct position           b, e;
-    struct symbolPositionPair d;
+    struct symbolPositionPair data;
 } Ast_symbolPositionPair;
 typedef struct {
     struct position               b, e;
-    struct symbolPositionListPair d;
+    struct symbolPositionListPair data;
 } Ast_symbolPositionListPair;
 typedef struct {
     struct position      b, e;
-    struct positionList *d;
+    struct positionList *data;
 } Ast_positionList;
 typedef struct {
     struct position                          b, e;
-    struct typeModifiersListPositionListPair d;
+    struct typeModifiersListPositionListPair data;
 } Ast_typeModifiersListPositionListPair;
 
 #include "refactorings.h"

@@ -35,9 +35,9 @@ static bool isProcessingPreprocessorIf = false;     /* flag for yylex, to not fi
 
 
 static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position position) {
-    uniyylval->ast_id.d = &yyIdBuffer[yyIdBufferIndex];
+    uniyylval->ast_id.data = &yyIdBuffer[yyIdBufferIndex];
     yyIdBufferIndex ++; yyIdBufferIndex %= (YYIDBUFFER_SIZE);
-    fillId(uniyylval->ast_id.d, name, symbol, position);
+    fillId(uniyylval->ast_id.data, name, symbol, position);
     yytext = name;
     uniyylval->ast_id.b = position;
     uniyylval->ast_id.e = position;
@@ -45,14 +45,14 @@ static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position positio
 }
 
 static void setYylvalsForPosition(Position position, int length) {
-        uniyylval->ast_position.d = position;
+        uniyylval->ast_position.data = position;
         uniyylval->ast_position.b = position;
         uniyylval->ast_position.e = position;
         uniyylval->ast_position.e.col += length;
 }
 
 static void setYylvalsForInteger(int val, Position position, int length) {
-    uniyylval->ast_integer.d = val;
+    uniyylval->ast_integer.data = val;
     uniyylval->ast_integer.b = position;
     uniyylval->ast_integer.e = position;
     uniyylval->ast_integer.e.col += length;
@@ -1158,7 +1158,7 @@ Lexem cexp_yylex(void) {
         }
         lexem = res;
     } else {
-        lexem = cexpTranslateToken(lexem, uniyylval->ast_integer.d);
+        lexem = cexpTranslateToken(lexem, uniyylval->ast_integer.data);
     }
     return lexem;
 endOfMacroArgument:

@@ -363,10 +363,10 @@ Literal
     :   TRUE_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &noPosition;
+                    $$.data.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -374,10 +374,10 @@ Literal
     |	FALSE_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &noPosition;
+                    $$.data.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -385,10 +385,10 @@ Literal
     |	CONSTANT			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeInt);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeInt);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &noPosition;
+                    $$.data.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -396,10 +396,10 @@ Literal
     |	LONG_CONSTANT		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeLong);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeLong);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &noPosition;
+                    $$.data.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -407,29 +407,29 @@ Literal
     |	FLOAT_CONSTANT		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeFloat);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeFloat);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &noPosition;
+                    $$.data.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
         }
     |	DOUBLE_CONSTANT		{
             if (regularPass()) {
-                $$.d.typeModifier = newSimpleTypeModifier(TypeDouble);
-                $$.d.reference = NULL;
-                $$.d.position = &noPosition;
+                $$.data.typeModifier = newSimpleTypeModifier(TypeDouble);
+                $$.data.reference = NULL;
+                $$.data.position = &noPosition;
                 if (SyntaxPassOnly()) {PropagateBoundaries($$, $1, $1);}
             }
         }
     |	CHAR_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeChar);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeChar);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &noPosition;
+                    $$.data.position = &noPosition;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -437,11 +437,11 @@ Literal
     |	STRING_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = &s_javaStringModifier;
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = &s_javaStringModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = StackMemoryAlloc(Position);
-                    *$$.d.position = $1.d;
+                    $$.data.position = StackMemoryAlloc(Position);
+                    *$$.data.position = $1.data;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -449,11 +449,11 @@ Literal
     |	NULL_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeNull);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeNull);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = StackMemoryAlloc(Position);
-                    *$$.d.position = $1.d->position;
+                    $$.data.position = StackMemoryAlloc(Position);
+                    *$$.data.position = $1.data->position;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -466,18 +466,18 @@ JavaType
     :   PrimitiveType	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = typeSpecifier1($1.d.u);
+                    $$.data = typeSpecifier1($1.data.u);
                     parsedInfo.lastDeclaratorType = NULL;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
             };
             if (inSecondJslPass()) {
-                $$.d = jslTypeSpecifier1($1.d.u);
+                $$.data = jslTypeSpecifier1($1.data.u);
             }
         }
     |	ReferenceType	{
-            $$.d = $1.d;
+            $$.data = $1.data;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -485,9 +485,9 @@ JavaType
 PrimitiveType
     :   NumericType		/* $$ = $1 */
     |	BOOLEAN			{
-            $$.d.u  = TypeBoolean;
+            $$.data.u  = TypeBoolean;
             if (regularPass()) {
-                SetPrimitiveTypePos($$.d.position, $1.d);
+                SetPrimitiveTypePos($$.data.position, $1.data);
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
@@ -500,49 +500,49 @@ NumericType
 
 IntegralType
     :   BYTE			{
-            $$.d.u  = TypeByte;
-            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
+            $$.data.u  = TypeByte;
+            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	SHORT			{
-            $$.d.u  = TypeShort;
-            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
+            $$.data.u  = TypeShort;
+            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	INT				{
-            $$.d.u  = TypeInt;
-            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
+            $$.data.u  = TypeInt;
+            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	LONG			{
-            $$.d.u  = TypeLong;
-            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
+            $$.data.u  = TypeLong;
+            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	CHAR			{
-            $$.d.u  = TypeChar;
-            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
+            $$.data.u  = TypeChar;
+            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
 FloatingPointType
     :   FLOAT			{
-            $$.d.u  = TypeFloat;
-            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
+            $$.data.u  = TypeFloat;
+            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	DOUBLE			{
-            $$.d.u  = TypeDouble;
-            if (regularPass()) SetPrimitiveTypePos($$.d.position, $1.d);
+            $$.data.u  = TypeDouble;
+            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
 ReferenceType
-    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } &*/
+    :   ClassOrInterfaceType		/*& { $$.data = $1.data; } &*/
     |	ArrayType					{
-            $$.d = $1.d.symbol;
+            $$.data = $1.data.symbol;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -551,18 +551,18 @@ ClassOrInterfaceType
     :   Name			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaClassifyToTypeName($1.d,UsageUsed, &$$.d, USELESS_FQT_REFS_ALLOWED);
-                    $$.d = javaTypeNameDefinition($1.d);
-                    assert($$.d->u.typeModifier);
-                    parsedInfo.lastDeclaratorType = $$.d->u.typeModifier->u.t;
+                    javaClassifyToTypeName($1.data,UsageUsed, &$$.data, USELESS_FQT_REFS_ALLOWED);
+                    $$.data = javaTypeNameDefinition($1.data);
+                    assert($$.data->u.typeModifier);
+                    parsedInfo.lastDeclaratorType = $$.data->u.typeModifier->u.t;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
             };
             if (inSecondJslPass()) {
                 Symbol *str;
-                jslClassifyAmbiguousTypeName($1.d, &str);
-                $$.d = jslTypeNameDefinition($1.d);
+                jslClassifyAmbiguousTypeName($1.data, &str);
+                $$.data = jslTypeNameDefinition($1.data);
             }
         }
     |	CompletionTypeName	{ /* rule never reduced */ }
@@ -573,78 +573,78 @@ ExtendClassOrInterfaceType
     :   Name			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaClassifyToTypeName($1.d, USAGE_EXTEND_USAGE, &$$.d, USELESS_FQT_REFS_ALLOWED);
-                    $$.d = javaTypeNameDefinition($1.d);
+                    javaClassifyToTypeName($1.data, USAGE_EXTEND_USAGE, &$$.data, USELESS_FQT_REFS_ALLOWED);
+                    $$.data = javaTypeNameDefinition($1.data);
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
             };
             if (inSecondJslPass()) {
                 Symbol *str;
-                jslClassifyAmbiguousTypeName($1.d, &str);
-                $$.d = jslTypeNameDefinition($1.d);
+                jslClassifyAmbiguousTypeName($1.data, &str);
+                $$.data = jslTypeNameDefinition($1.data);
             }
         }
     |	CompletionTypeName	{ /* rule never reduced */ }
     ;
 
 ClassType
-    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } &*/
+    :   ClassOrInterfaceType		/*& { $$.data = $1.data; } &*/
     ;
 
 InterfaceType
-    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } &*/
+    :   ClassOrInterfaceType		/*& { $$.data = $1.data; } &*/
     ;
 
 ArrayType
     :   PrimitiveType '[' ']'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.symbol = typeSpecifier1($1.d.u);
-                    $$.d.symbol->u.typeModifier = prependComposedType($$.d.symbol->u.typeModifier, TypeArray);
+                    $$.data.symbol = typeSpecifier1($1.data.u);
+                    $$.data.symbol->u.typeModifier = prependComposedType($$.data.symbol->u.typeModifier, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
-                $$.d.position = $1.d.position;
+                $$.data.position = $1.data.position;
                 parsedInfo.lastDeclaratorType = NULL;
             };
             if (inSecondJslPass()) {
-                $$.d.symbol = jslTypeSpecifier1($1.d.u);
-                $$.d.symbol->u.typeModifier = jslPrependComposedType($$.d.symbol->u.typeModifier, TypeArray);
+                $$.data.symbol = jslTypeSpecifier1($1.data.u);
+                $$.data.symbol->u.typeModifier = jslPrependComposedType($$.data.symbol->u.typeModifier, TypeArray);
             }
         }
     |	Name '[' ']'				{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaClassifyToTypeName($1.d,UsageUsed, &($$.d.symbol), USELESS_FQT_REFS_ALLOWED);
-                    $$.d.symbol = javaTypeNameDefinition($1.d);
-                    assert($$.d.symbol && $$.d.symbol->u.typeModifier);
-                    parsedInfo.lastDeclaratorType = $$.d.symbol->u.typeModifier->u.t;
-                    $$.d.symbol->u.typeModifier = prependComposedType($$.d.symbol->u.typeModifier, TypeArray);
+                    javaClassifyToTypeName($1.data,UsageUsed, &($$.data.symbol), USELESS_FQT_REFS_ALLOWED);
+                    $$.data.symbol = javaTypeNameDefinition($1.data);
+                    assert($$.data.symbol && $$.data.symbol->u.typeModifier);
+                    parsedInfo.lastDeclaratorType = $$.data.symbol->u.typeModifier->u.t;
+                    $$.data.symbol->u.typeModifier = prependComposedType($$.data.symbol->u.typeModifier, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
-                $$.d.position = javaGetNameStartingPosition($1.d);
+                $$.data.position = javaGetNameStartingPosition($1.data);
             };
             if (inSecondJslPass()) {
                 Symbol *ss;
-                jslClassifyAmbiguousTypeName($1.d, &ss);
-                $$.d.symbol = jslTypeNameDefinition($1.d);
-                $$.d.symbol->u.typeModifier = jslPrependComposedType($$.d.symbol->u.typeModifier, TypeArray);
+                jslClassifyAmbiguousTypeName($1.data, &ss);
+                $$.data.symbol = jslTypeNameDefinition($1.data);
+                $$.data.symbol->u.typeModifier = jslPrependComposedType($$.data.symbol->u.typeModifier, TypeArray);
             }
         }
     |	ArrayType '[' ']'			{
             if (regularPass()) {
-                $$.d = $1.d;
+                $$.data = $1.data;
                 if (! SyntaxPassOnly()) {
-                    $$.d.symbol->u.typeModifier = prependComposedType($$.d.symbol->u.typeModifier, TypeArray);
+                    $$.data.symbol->u.typeModifier = prependComposedType($$.data.symbol->u.typeModifier, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             };
             if (inSecondJslPass()) {
-                $$.d = $1.d;
-                $$.d.symbol->u.typeModifier = jslPrependComposedType($$.d.symbol->u.typeModifier, TypeArray);
+                $$.data = $1.data;
+                $$.data.symbol->u.typeModifier = jslPrependComposedType($$.data.symbol->u.typeModifier, TypeArray);
             }
         }
     |   CompletionTypeName '[' ']'	{ /* rule never used */ }
@@ -653,75 +653,75 @@ ArrayType
 /* ****************************** Names **************************** */
 
 Identifier:	IDENTIFIER			{
-            if (regularPass()) $$.d = newCopyOfId($1.d);
+            if (regularPass()) $$.data = newCopyOfId($1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 This:		THIS				{
-            if (regularPass()) $$.d = newCopyOfId($1.d);
+            if (regularPass()) $$.data = newCopyOfId($1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 Super:		SUPER				{
-            if (regularPass()) $$.d = newCopyOfId($1.d);
+            if (regularPass()) $$.data = newCopyOfId($1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 New:		NEW					{
-            if (regularPass()) $$.d = newCopyOfId($1.d);
+            if (regularPass()) $$.data = newCopyOfId($1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 Import:		IMPORT				{
-            if (regularPass()) $$.d = newCopyOfId($1.d);
+            if (regularPass()) $$.data = newCopyOfId($1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 Package:	PACKAGE				{
-            if (regularPass()) $$.d = newCopyOfId($1.d);
+            if (regularPass()) $$.data = newCopyOfId($1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 Throw:		THROW				{
-            if (regularPass()) $$.d = newCopyOfId($1.d);
+            if (regularPass()) $$.data = newCopyOfId($1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 Try:		TRY					{
-            if (regularPass()) $$.d = newCopyOfId($1.d);
+            if (regularPass()) $$.data = newCopyOfId($1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 Catch:		CATCH				{
-            if (regularPass()) $$.d = newCopyOfId($1.d);
+            if (regularPass()) $$.data = newCopyOfId($1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
 Name
     :   SimpleName				{
-            $$.d = $1.d;
+            $$.data = $1.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(s_javaStat);
-                    s_javaStat->lastParsedName = $1.d;
+                    s_javaStat->lastParsedName = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $1);
-                    javaCheckForPrimaryStart(&$1.d->id.position, &$1.d->id.position);
-                    javaCheckForStaticPrefixStart(&$1.d->id.position, &$1.d->id.position);
+                    javaCheckForPrimaryStart(&$1.data->id.position, &$1.data->id.position);
+                    javaCheckForStaticPrefixStart(&$1.data->id.position, &$1.data->id.position);
                 }
             };
         }
     |	QualifiedName			{
-            $$.d = $1.d;
+            $$.data = $1.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(s_javaStat);
-                    s_javaStat->lastParsedName = $1.d;
+                    s_javaStat->lastParsedName = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $1);
-                    javaCheckForPrimaryStartInNameList($1.d, javaGetNameStartingPosition($1.d));
-                    javaCheckForStaticPrefixInNameList($1.d, javaGetNameStartingPosition($1.d));
+                    javaCheckForPrimaryStartInNameList($1.data, javaGetNameStartingPosition($1.data));
+                    javaCheckForStaticPrefixInNameList($1.data, javaGetNameStartingPosition($1.data));
                 }
             };
         }
@@ -729,16 +729,16 @@ Name
 
 SimpleName
     :   IDENTIFIER				{
-            $$.d = StackMemoryAlloc(IdList);
-            fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
+            $$.data = StackMemoryAlloc(IdList);
+            fillIdList($$.data, *$1.data, $1.data->name, TypeDefault, NULL);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
 QualifiedName
     :   Name '.' IDENTIFIER		{
-            $$.d = StackMemoryAlloc(IdList);
-            fillIdList($$.d, *$3.d, $3.d->name, TypeDefault, $1.d);
+            $$.data = StackMemoryAlloc(IdList);
+            fillIdList($$.data, *$3.data, $3.data->name, TypeDefault, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
@@ -781,7 +781,7 @@ LabelDefininigIdentifier
     :   IDENTIFIER          {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    labelReference($1.d,UsageDefined);
+                    labelReference($1.data,UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -794,7 +794,7 @@ LabelUseIdentifier
     :   IDENTIFIER          {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    labelReference($1.d,UsageUsed);
+                    labelReference($1.data,UsageUsed);
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -813,11 +813,11 @@ CompilationUnit: {
             };
         } PackageDeclaration_opt {
             if (regularPass()) {
-                if ($2.d == NULL) {	/* anonymous package */
+                if ($2.data == NULL) {	/* anonymous package */
                     s_javaThisPackageName = "";
                 } else {
-                    javaClassifyToPackageName($2.d);
-                    s_javaThisPackageName = javaCreateComposedName(NULL,$2.d,'/',
+                    javaClassifyToPackageName($2.data);
+                    s_javaThisPackageName = javaCreateComposedName(NULL,$2.data,'/',
                                                                    NULL,NULL,0);
                 }
                 s_javaStat->currentPackage = s_javaThisPackageName;
@@ -831,7 +831,7 @@ CompilationUnit: {
                     // else, as it must be set on class adding in order to set
                     // isinCurrentPackage field. !!!!!!!!!!!!!!!!
                     // this may be problem for CACHING !!!!
-                    if ($2.d == NULL) {	/* anonymous package */
+                    if ($2.data == NULL) {	/* anonymous package */
                         int j = 0;
                         s_javaStat->className = NULL;
                         for (int i=0; currentFile.fileName[i]; i++) {
@@ -843,8 +843,8 @@ CompilationUnit: {
                         s_javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                     } else {
-                        javaAddPackageDefinition($2.d);
-                        s_javaStat->className = $2.d;
+                        javaAddPackageDefinition($2.data);
+                        s_javaStat->className = $2.data;
                         int j = 0;
                         for (int i=0; currentFile.fileName[i]; i++) {
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR)
@@ -899,19 +899,19 @@ CompilationUnit: {
                 char			ppp[MAX_FILE_NAME_SIZE];
 
                 s_jsl->waitList = NULL;
-                if ($2.d != NULL) {
-                    javaClassifyToPackageName($2.d);
+                if ($2.data != NULL) {
+                    javaClassifyToPackageName($2.data);
                 }
-                javaCreateComposedName(NULL,$2.d,'/',NULL,ppp,MAX_FILE_NAME_SIZE);
+                javaCreateComposedName(NULL,$2.data,'/',NULL,ppp,MAX_FILE_NAME_SIZE);
                 pname = StackMemoryAllocC(strlen(ppp)+1, char);
                 strcpy(pname, ppp);
-                s_jsl->classStat = newJslClassStat($2.d, NULL, pname, NULL);
+                s_jsl->classStat = newJslClassStat($2.data, NULL, pname, NULL);
                 if (inSecondJslPass()) {
                     char        cdir[MAX_FILE_NAME_SIZE];
                     int         i;
                     int			j;
                     /* add this package types */
-                    if ($2.d == NULL) {	/* anonymous package */
+                    if ($2.data == NULL) {	/* anonymous package */
                         for(i=0,j=0; currentFile.fileName[i]; i++) {
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
@@ -924,12 +924,12 @@ CompilationUnit: {
                         // [2/8/2003] Maybe I should put it out
                         jslAddAllPackageClassesFromFileTab(NULL);
                     } else {
-                        javaMapDirectoryFiles2($2.d,jslAddMapedImportTypeName,
-                                                NULL,$2.d,NULL);
+                        javaMapDirectoryFiles2($2.data,jslAddMapedImportTypeName,
+                                                NULL,$2.data,NULL);
                         // why this is there, it makes problem when moving a class
                         // it stays in fileTab and there is a clash!
                         // [2/8/2003] Maybe I should put it out
-                        jslAddAllPackageClassesFromFileTab($2.d);
+                        jslAddAllPackageClassesFromFileTab($2.data);
                     }
                     /* add java/lang package types */
                     javaMapDirectoryFiles2(s_javaLangName,
@@ -960,25 +960,25 @@ ImportDeclarations
     :   SingleTypeImportDeclaration			{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
-                JslImportSingleDeclaration($1.d);
+                JslImportSingleDeclaration($1.data);
             }
         }
     |	TypeImportOnDemandDeclaration			{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
-                jslImportOnDemandDeclaration($1.d);
+                jslImportOnDemandDeclaration($1.data);
             }
         }
     |	ImportDeclarations SingleTypeImportDeclaration			{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
             if (inSecondJslPass()) {
-                JslImportSingleDeclaration($2.d);
+                JslImportSingleDeclaration($2.data);
             }
         }
     |	ImportDeclarations TypeImportOnDemandDeclaration		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
             if (inSecondJslPass()) {
-                jslImportOnDemandDeclaration($2.d);
+                jslImportOnDemandDeclaration($2.data);
             }
         }
     ;
@@ -999,18 +999,18 @@ ImportDeclaration
 
 SingleTypeImportDeclaration
     :   Import Name ';'						{
-            $$.d = $2.d;
+            $$.data = $2.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Reference *lastUselessRef;
                     Symbol *str;
                     // it was type or packege, but I thing this would be better
-                    lastUselessRef = javaClassifyToTypeName($2.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
+                    lastUselessRef = javaClassifyToTypeName($2.data, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     // last useless reference is not useless here!
                     if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
-                    parsedInfo.lastImportLine = $1.d->position.line;
-                    if ($2.d->next!=NULL) {
-                        javaAddImportConstructionReference(&$2.d->next->id.position, &$1.d->position, UsageDefined);
+                    parsedInfo.lastImportLine = $1.data->position.line;
+                    if ($2.data->next!=NULL) {
+                        javaAddImportConstructionReference(&$2.data->next->id.position, &$1.data->position, UsageDefined);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -1023,19 +1023,19 @@ SingleTypeImportDeclaration
 
 TypeImportOnDemandDeclaration
     :   Import Name '.' '*' ';'				{
-            $$.d = $2.d;
+            $$.data = $2.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
                     TypeModifier *expr;
                     Reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
-                    st = javaClassifyAmbiguousName($2.d, NULL,&str,&expr,&rr,
+                    st = javaClassifyAmbiguousName($2.data, NULL,&str,&expr,&rr,
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
                     if (lastUselessRef!=NULL) lastUselessRef->usage = NO_USAGE;
-                    parsedInfo.lastImportLine = $1.d->position.line;
-                    javaAddImportConstructionReference(&$2.d->id.position, &$1.d->position, UsageDefined);
+                    parsedInfo.lastImportLine = $1.data->position.line;
+                    javaAddImportConstructionReference(&$2.data->id.position, &$1.data->position, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $5);
                 }
@@ -1062,23 +1062,23 @@ TypeDeclarations
     ;
 
 PackageDeclaration_opt:							{
-            $$.d = NULL;
+            $$.data = NULL;
             if (regularPass()) {
                 parsedInfo.lastImportLine = 0;
                 SetNullBoundariesFor($$);
             }
         }
     |	Package Name ';'						{
-            $$.d = $2.d;
+            $$.data = $2.data;
             if (regularPass()) {
-                parsedInfo.lastImportLine = $1.d->position.line;
+                parsedInfo.lastImportLine = $1.data->position.line;
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
             }
         }
     |	Package error							{
-            $$.d = NULL;
+            $$.data = NULL;
             if (regularPass()) {
-                parsedInfo.lastImportLine = $1.d->position.line;
+                parsedInfo.lastImportLine = $1.data->position.line;
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
@@ -1089,13 +1089,13 @@ PackageDeclaration_opt:							{
 TypeDeclaration
     :   ClassDeclaration		{
             if (regularPass()) {
-                javaSetClassSourceInformation(s_javaThisPackageName, $1.d);
+                javaSetClassSourceInformation(s_javaThisPackageName, $1.data);
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
     |	InterfaceDeclaration	{
             if (regularPass()) {
-                javaSetClassSourceInformation(s_javaThisPackageName, $1.d);
+                javaSetClassSourceInformation(s_javaThisPackageName, $1.data);
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
@@ -1106,11 +1106,11 @@ TypeDeclaration
 /* ************************ LALR special ************************** */
 
 Modifiers_opt:					{
-            $$.d = AccessDefault;
+            $$.data = AccessDefault;
             SetNullBoundariesFor($$);
         }
     |	Modifiers				{
-            $$.d = $1.d;
+            $$.data = $1.data;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -1118,23 +1118,23 @@ Modifiers_opt:					{
 Modifiers
     :   Modifier				/*& { $$ = $1; } &*/
     |	Modifiers Modifier		{
-            $$.d = $1.d | $2.d;
+            $$.data = $1.data | $2.data;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
 Modifier
-    :   PUBLIC			{ $$.d = AccessPublic; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	PROTECTED		{ $$.d = AccessProtected; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	PRIVATE			{ $$.d = AccessPrivate; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	STATIC			{ $$.d = AccessStatic; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	ABSTRACT		{ $$.d = AccessAbstract; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	FINAL			{ $$.d = AccessFinal; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	NATIVE			{ $$.d = AccessNative; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	SYNCHRONIZED	{ $$.d = AccessSynchronized; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	STRICTFP		{ $$.d = 0; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	TRANSIENT		{ $$.d = AccessTransient; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	VOLATILE		{ $$.d = 0; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    :   PUBLIC			{ $$.data = AccessPublic; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	PROTECTED		{ $$.data = AccessProtected; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	PRIVATE			{ $$.data = AccessPrivate; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	STATIC			{ $$.data = AccessStatic; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	ABSTRACT		{ $$.data = AccessAbstract; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	FINAL			{ $$.data = AccessFinal; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	NATIVE			{ $$.data = AccessNative; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	SYNCHRONIZED	{ $$.data = AccessSynchronized; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	STRICTFP		{ $$.data = 0; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	TRANSIENT		{ $$.data = AccessTransient; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	VOLATILE		{ $$.data = 0; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     ;
 
 /* *************************** Classes *************************** */
@@ -1168,10 +1168,10 @@ ClassDeclaration
     :   Modifiers_opt CLASS Identifier {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin($3.d, $1.d, NULL);
+                        $<trail>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin($3.d, $1.d, NULL, CPOS_ST);
+                    jslNewClassDefinitionBegin($3.data, $1.data, NULL, CPOS_ST);
                     jslAddDefaultConstructor(s_jsl->classStat->thisClass);
                 }
             } Super_opt Interfaces_opt {
@@ -1184,7 +1184,7 @@ ClassDeclaration
                 }
             } ClassBody {
                 if (regularPass()) {
-                    $$.d = $3.d;
+                    $$.data = $3.data;
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd($<trail>4);
                     } else {
@@ -1206,16 +1206,16 @@ ClassDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin($3.d, $1.d, NULL);
+                        $<trail>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin($3.d, $1.d, NULL, CPOS_ST);
+                    jslNewClassDefinitionBegin($3.data, $1.data, NULL, CPOS_ST);
                 }
             }
         error ClassBody
             {
                 if (regularPass()) {
-                    $$.d = $3.d;
+                    $$.data = $3.data;
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd($<trail>4);
                     } else {
@@ -1234,10 +1234,10 @@ FunctionInnerClassDeclaration
     :   Modifiers_opt CLASS Identifier {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin($3.d, $1.d, NULL);
+                        $<trail>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin($3.d, $1.d, NULL, CPOS_FUNCTION_INNER);
+                    jslNewClassDefinitionBegin($3.data, $1.data, NULL, CPOS_FUNCTION_INNER);
                 }
             } Super_opt Interfaces_opt {
                 if (regularPass()) {
@@ -1254,7 +1254,7 @@ FunctionInnerClassDeclaration
                     } else {
                         PropagateBoundaries($$, $1, $8);
                         if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $8);
-                        if (positionsAreEqual(cxRefPosition, $3.d->position)) {
+                        if (positionsAreEqual(cxRefPosition, $3.data->position)) {
                             parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                             parsedPositions[SPP_CLASS_DECLARATION_END_POSITION] = $$.e;
                         }
@@ -1267,10 +1267,10 @@ FunctionInnerClassDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin($3.d, $1.d, NULL);
+                        $<trail>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin($3.d, $1.d, NULL, CPOS_FUNCTION_INNER);
+                    jslNewClassDefinitionBegin($3.data, $1.data, NULL, CPOS_FUNCTION_INNER);
                 }
             }
         error ClassBody
@@ -1306,18 +1306,18 @@ Super_opt
     |	EXTENDS ExtendClassOrInterfaceType			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($2.d && $2.d->type == TypeDefault && $2.d->u.typeModifier);
-                    assert($2.d->u.typeModifier->kind == TypeStruct);
-                    javaParsedSuperClass($2.d->u.typeModifier->u.t);
+                    assert($2.data && $2.data->type == TypeDefault && $2.data->u.typeModifier);
+                    assert($2.data->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($2.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
             }
             if (inSecondJslPass()) {
-                assert($2.d && $2.d->type == TypeDefault && $2.d->u.typeModifier);
-                assert($2.d->u.typeModifier->kind == TypeStruct);
+                assert($2.data && $2.data->type == TypeDefault && $2.data->u.typeModifier);
+                assert($2.data->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $2.d->u.typeModifier->u.t);
+                                            $2.data->u.typeModifier->u.t);
             }
         }
     ;
@@ -1334,35 +1334,35 @@ InterfaceTypeList
     :   InterfaceType							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($1.d && $1.d->type == TypeDefault && $1.d->u.typeModifier);
-                    assert($1.d->u.typeModifier->kind == TypeStruct);
-                    javaParsedSuperClass($1.d->u.typeModifier->u.t);
+                    assert($1.data && $1.data->type == TypeDefault && $1.data->u.typeModifier);
+                    assert($1.data->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($1.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
             }
             if (inSecondJslPass()) {
-                assert($1.d && $1.d->type == TypeDefault && $1.d->u.typeModifier);
-                assert($1.d->u.typeModifier->kind == TypeStruct);
+                assert($1.data && $1.data->type == TypeDefault && $1.data->u.typeModifier);
+                assert($1.data->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $1.d->u.typeModifier->u.t);
+                                            $1.data->u.typeModifier->u.t);
             }
         }
     |	InterfaceTypeList ',' InterfaceType		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($3.d && $3.d->type == TypeDefault && $3.d->u.typeModifier);
-                    assert($3.d->u.typeModifier->kind == TypeStruct);
-                    javaParsedSuperClass($3.d->u.typeModifier->u.t);
+                    assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
+                    assert($3.data->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($3.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
-                assert($3.d && $3.d->type == TypeDefault && $3.d->u.typeModifier);
-                assert($3.d->u.typeModifier->kind == TypeStruct);
+                assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
+                assert($3.data->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $3.d->u.typeModifier->u.t);
+                                            $3.data->u.typeModifier->u.t);
             }
         }
     ;
@@ -1457,10 +1457,10 @@ ClassMemberDeclaration
 
 AssignmentType
     :   JavaType					{
-            $$.d = $1.d;
+            $$.data = $1.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = $1.d;
+                    parsedInfo.lastAssignementStruct = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -1478,14 +1478,14 @@ FieldDeclaration
                     parsedInfo.lastAssignementStruct = NULL;
                     clas = s_javaStat->thisClass;
                     assert(clas != NULL);
-                    for(p=$3.d; p!=NULL; p=pp) {
+                    for(p=$3.data; p!=NULL; p=pp) {
                         pp = p->next;
                         p->next = NULL;
                         if (p->type == TypeError) continue;
                         assert(p->type == TypeDefault);
-                        completeDeclarator($2.d, p);
+                        completeDeclarator($2.data, p);
                         vClass = s_javaStat->classFileIndex;
-                        p->access = $1.d;
+                        p->access = $1.data;
                         p->storage = StorageField;
                         if (clas->access&AccessInterface) {
                             // set interface default access flags
@@ -1500,7 +1500,7 @@ FieldDeclaration
                         }
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
-                    $$.d = $3.d;
+                    $$.data = $3.data;
                     if (options.mode == ServerMode
                         && parsedClassInfo.parserPassedMarker
                         && !parsedClassInfo.thisMethodMemoriesStored){
@@ -1525,15 +1525,15 @@ FieldDeclaration
                 int		vClass;
                 clas = s_jsl->classStat->thisClass;
                 assert(clas != NULL);
-                for(p=$3.d; p!=NULL; p=pp) {
+                for(p=$3.data; p!=NULL; p=pp) {
                     pp = p->next;
                     p->next = NULL;
                     if (p->type == TypeError) continue;
                     assert(p->type == TypeDefault);
                     assert(clas->u.structSpec);
                     vClass = clas->u.structSpec->classFileIndex;
-                    jslCompleteDeclarator($2.d, p);
-                    p->access = $1.d;
+                    jslCompleteDeclarator($2.data, p);
+                    p->access = $1.data;
                     p->storage = StorageField;
                     if (clas->access&AccessInterface) {
                         // set interface default access flags
@@ -1547,17 +1547,17 @@ FieldDeclaration
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
                 }
-                $$.d = $3.d;
+                $$.data = $3.data;
             }
         }
     ;
 
 VariableDeclarators
     :   VariableDeclarator								{
-            $$.d = $1.d;
+            $$.data = $1.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($$.d->type == TypeDefault || $$.d->type == TypeError);
+                    assert($$.data->type == TypeDefault || $$.data->type == TypeError);
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -1566,27 +1566,27 @@ VariableDeclarators
     |	VariableDeclarators ',' VariableDeclarator		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($1.d && $3.d);
-                    if ($3.d->storage == StorageError) {
-                        $$.d = $1.d;
+                    assert($1.data && $3.data);
+                    if ($3.data->storage == StorageError) {
+                        $$.data = $1.data;
                     } else {
-                        $$.d = $3.d;
-                        $$.d->next = $1.d;
+                        $$.data = $3.data;
+                        $$.data->next = $1.data;
                     }
-                    assert($$.d->type == TypeDefault || $$.d->type == TypeError);
+                    assert($$.data->type == TypeDefault || $$.data->type == TypeError);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
-                assert($1.d && $3.d);
-                if ($3.d->storage == StorageError) {
-                    $$.d = $1.d;
+                assert($1.data && $3.data);
+                if ($3.data->storage == StorageError) {
+                    $$.data = $1.data;
                 } else {
-                    $$.d = $3.d;
-                    $$.d->next = $1.d;
+                    $$.data = $3.data;
+                    $$.data->next = $1.data;
                 }
-                assert($$.d->type==TypeDefault || $$.d->type==TypeError);
+                assert($$.data->type==TypeDefault || $$.data->type==TypeError);
             }
         }
     ;
@@ -1594,20 +1594,20 @@ VariableDeclarators
 VariableDeclarator
     :   VariableDeclaratorId							/*	{ $$ = $1; } */
     |	VariableDeclaratorId '=' VariableInitializer	{
-            $$.d = $1.d;
+            $$.data = $1.data;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	error											{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = newSymbolAsCopyOf(&errorSymbol);
+                    $$.data = newSymbolAsCopyOf(&errorSymbol);
                 } else {
                     SetNullBoundariesFor($$);
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC($$.d, Symbol);
-                *$$.d = errorSymbol;
+                CF_ALLOC($$.data, Symbol);
+                *$$.data = errorSymbol;
             }
         }
     ;
@@ -1616,33 +1616,33 @@ VariableDeclaratorId
     :   Identifier							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = newSymbol($1.d->name, $1.d->name, $1.d->position);
+                    $$.data = newSymbol($1.data->name, $1.data->name, $1.data->position);
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
             }
             if (inSecondJslPass()) {
                 char *name;
-                CF_ALLOCC(name, strlen($1.d->name)+1, char);
-                strcpy(name, $1.d->name);
-                CF_ALLOC($$.d, Symbol);
-                fillSymbol($$.d, name, name, $1.d->position);
+                CF_ALLOCC(name, strlen($1.data->name)+1, char);
+                strcpy(name, $1.data->name);
+                CF_ALLOC($$.data, Symbol);
+                fillSymbol($$.data, name, name, $1.data->position);
             }
         }
     |	VariableDeclaratorId '[' ']'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($1.d);
-                    $$.d = $1.d;
-                    addComposedType($$.d, TypeArray);
+                    assert($1.data);
+                    $$.data = $1.data;
+                    addComposedType($$.data, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
-                assert($1.d);
-                $$.d = $1.d;
-                JslAddComposedType($$.d, TypeArray);
+                assert($1.data);
+                $$.data = $1.data;
+                JslAddComposedType($$.data, TypeArray);
             }
         }
     |	COMPL_VARIABLE_NAME_HINT {/* rule never used */}
@@ -1660,7 +1660,7 @@ MethodDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaMethodBodyBeginning($1.d);
+                        javaMethodBodyBeginning($1.data);
                     }
                 }
             }
@@ -1668,7 +1668,7 @@ MethodDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaMethodBodyEnding(&$4.d);
+                        javaMethodBodyEnding(&$4.data);
                     } else {
                         PropagateBoundaries($$, $1, $4);
                         if (positionIsBetween($1.b, cxRefPosition, $1.e)) {
@@ -1685,7 +1685,7 @@ MethodHeader
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     parsedInfo.lastAssignementStruct = NULL;
-                    $$.d = javaMethodHeader($1.d,$2.d,$3.d, StorageMethod);
+                    $$.data = javaMethodHeader($1.data,$2.data,$3.data, StorageMethod);
                 } else {
                     PropagateBoundaries($$, $1, $4);
                     if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
@@ -1697,13 +1697,13 @@ MethodHeader
                 }
             }
             if (inSecondJslPass()) {
-                $$.d = jslMethodHeader($1.d,$2.d,$3.d,StorageMethod, $4.d);
+                $$.data = jslMethodHeader($1.data,$2.data,$3.data,StorageMethod, $4.data);
             }
         }
     |	Modifiers_opt VOID MethodDeclarator Throws_opt	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = javaMethodHeader($1.d,&defaultVoidDefinition,$3.d,StorageMethod);
+                    $$.data = javaMethodHeader($1.data,&defaultVoidDefinition,$3.data,StorageMethod);
                 } else {
                     PropagateBoundaries($$, $1, $4);
                     if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
@@ -1715,7 +1715,7 @@ MethodHeader
                 }
             }
             if (inSecondJslPass()) {
-                $$.d = jslMethodHeader($1.d,&defaultVoidDefinition,$3.d,StorageMethod, $4.d);
+                $$.data = jslMethodHeader($1.data,&defaultVoidDefinition,$3.data,StorageMethod, $4.data);
             }
         }
     |	COMPL_FULL_INHERITED_HEADER		{assert(0);}
@@ -1726,51 +1726,51 @@ MethodDeclarator
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->position), MEMORY_XX);
+                        $<symbol>$ = javaCreateNewMethod($1.data->name, &($1.data->position), MEMORY_XX);
                     }
                 }
                 if (inSecondJslPass()) {
-                    $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->position), MEMORY_CF);
+                    $<symbol>$ = javaCreateNewMethod($1.data->name,&($1.data->position), MEMORY_CF);
                 }
             }
         '(' FormalParameterList_opt ')'
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $$.d = $<symbol>2;
-                        assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
-                        initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
+                        $$.data = $<symbol>2;
+                        assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
+                        initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.d->position, &$3.d, $4.d.p, &$5.d);
+                        javaHandleDeclaratorParamPositions(&$1.data->position, &$3.data, $4.data.p, &$5.data);
                         PropagateBoundaries($$, $1, $5);
                     }
                 }
                 if (inSecondJslPass()) {
-                    $$.d = $<symbol>2;
-                    assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
-                    initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
+                    $$.data = $<symbol>2;
+                    assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
+                    initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                 }
             }
     |	MethodDeclarator '[' ']'						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = $1.d;
-                    addComposedType($$.d, TypeArray);
+                    $$.data = $1.data;
+                    addComposedType($$.data, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
-                $$.d = $1.d;
-                JslAddComposedType($$.d, TypeArray);
+                $$.data = $1.data;
+                JslAddComposedType($$.data, TypeArray);
             }
         }
     |	COMPL_METHOD_NAME0					{ assert(0);}
     ;
 
 FormalParameterList_opt:					{
-            $$.d.symbol = NULL;
-            $$.d.p = NULL;
+            $$.data.symbol = NULL;
+            $$.data.p = NULL;
             SetNullBoundariesFor($$);
         }
     |	FormalParameterList					/*& {$$ = $1;} &*/
@@ -1779,26 +1779,26 @@ FormalParameterList_opt:					{
 FormalParameterList
     :   FormalParameter								{
             if (! SyntaxPassOnly()) {
-                $$.d.symbol = $1.d;
+                $$.data.symbol = $1.data;
             } else {
-                $$.d.p = NULL;
-                appendPositionToList(&$$.d.p, &noPosition);
+                $$.data.p = NULL;
+                appendPositionToList(&$$.data.p, &noPosition);
                 PropagateBoundaries($$, $1, $1);
             }
         }
     |	FormalParameterList ',' FormalParameter		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = $1.d;
-                    LIST_APPEND(Symbol, $$.d.symbol, $3.d);
+                    $$.data = $1.data;
+                    LIST_APPEND(Symbol, $$.data.symbol, $3.data);
                 } else {
-                    appendPositionToList(&$$.d.p, &$2.d);
+                    appendPositionToList(&$$.data.p, &$2.data);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
-                $$.d = $1.d;
-                LIST_APPEND(Symbol, $$.d.symbol, $3.d);
+                $$.data = $1.data;
+                LIST_APPEND(Symbol, $$.data.symbol, $3.data);
             }
         }
     ;
@@ -1807,52 +1807,52 @@ FormalParameter
     :   JavaType VariableDeclaratorId			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = $2.d;
-                    completeDeclarator($1.d, $2.d);
+                    $$.data = $2.data;
+                    completeDeclarator($1.data, $2.data);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
             }
             if (inSecondJslPass()) {
-                $$.d = $2.d;
-                completeDeclarator($1.d, $2.d);
+                $$.data = $2.data;
+                completeDeclarator($1.data, $2.data);
             }
         }
     |	FINAL JavaType VariableDeclaratorId		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = $3.d;
-                    completeDeclarator($2.d, $3.d);
+                    $$.data = $3.data;
+                    completeDeclarator($2.data, $3.data);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
-                $$.d = $3.d;
-                completeDeclarator($2.d, $3.d);
+                $$.data = $3.data;
+                completeDeclarator($2.data, $3.data);
             }
         }
     |	error								{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = newSymbolAsCopyOf(&errorSymbol);
+                    $$.data = newSymbolAsCopyOf(&errorSymbol);
                 } else {
                     SetNullBoundariesFor($$);
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC($$.d, Symbol);
-                *$$.d = errorSymbol;
+                CF_ALLOC($$.data, Symbol);
+                *$$.data = errorSymbol;
             }
         }
     ;
 
 Throws_opt:								{
-            $$.d = NULL;
+            $$.data = NULL;
             SetNullBoundariesFor($$);
         }
     |	THROWS ClassTypeList			{
-            $$.d = $2.d;
+            $$.data = $2.data;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
@@ -1861,21 +1861,21 @@ ClassTypeList
     :   ClassType						{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
-                assert($1.d && $1.d->type == TypeDefault && $1.d->u.typeModifier);
-                assert($1.d->u.typeModifier->kind == TypeStruct);
-                CF_ALLOC($$.d, SymbolList);
+                assert($1.data && $1.data->type == TypeDefault && $1.data->u.typeModifier);
+                assert($1.data->u.typeModifier->kind == TypeStruct);
+                CF_ALLOC($$.data, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with compound literal */
-                *$$.d = (SymbolList){.element = $1.d->u.typeModifier->u.t, .next = NULL};
+                *$$.data = (SymbolList){.element = $1.data->u.typeModifier->u.t, .next = NULL};
             }
         }
     |	ClassTypeList ',' ClassType		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
             if (inSecondJslPass()) {
-                assert($3.d && $3.d->type == TypeDefault && $3.d->u.typeModifier);
-                assert($3.d->u.typeModifier->kind == TypeStruct);
-                CF_ALLOC($$.d, SymbolList);
+                assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
+                assert($3.data->u.typeModifier->kind == TypeStruct);
+                CF_ALLOC($$.data, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with compound literal */
-                *$$.d = (SymbolList){.element = $3.d->u.typeModifier->u.t, .next = $1.d};
+                *$$.data = (SymbolList){.element = $3.data->u.typeModifier->u.t, .next = $1.data};
             }
         }
     ;
@@ -1883,7 +1883,7 @@ ClassTypeList
 MethodBody
     :   Block				/*& { $$ = $1; } &*/
     |	';'					{
-            $$.d = $1.d;
+            $$.data = $1.data;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -1906,13 +1906,13 @@ ConstructorDeclaration
                     if (! SyntaxPassOnly()) {
                         Symbol *mh, *args;
 
-                        args = $2.d;
+                        args = $2.data;
                         /*&
-                          if (! ($1.d & AccessStatic)) {
-                              args = javaPrependDirectEnclosingInstanceArgument($2.d);
+                          if (! ($1.data & AccessStatic)) {
+                              args = javaPrependDirectEnclosingInstanceArgument($2.data);
                           }
                           &*/
-                        mh=javaMethodHeader($1.d, &errorSymbol, args, StorageConstructor);
+                        mh=javaMethodHeader($1.data, &errorSymbol, args, StorageConstructor);
                         // TODO! Merge this with 'javaMethodBodyBeginning'!
                         assert(mh->u.typeModifier && mh->u.typeModifier->kind == TypeFunction);
                         beginBlock();  // in order to remove arguments
@@ -1920,17 +1920,17 @@ ConstructorDeclaration
                         /* also needed for pushing label reference */
                         generateInternalLabelReference(-1, UsageDefined);
                         counters.localVar = 0;
-                        assert($2.d && $2.d->u.typeModifier);
-                        javaAddMethodParametersToSymTable($2.d);
+                        assert($2.data && $2.data->u.typeModifier);
+                        javaAddMethodParametersToSymTable($2.data);
                         mh->u.typeModifier->u.m.signature = strchr(mh->linkName, '(');
-                        s_javaStat->methodModifiers = $1.d;
+                        s_javaStat->methodModifiers = $1.data;
                     }
                 }
                 if (inSecondJslPass()) {
                     Symbol *args;
-                    args = $2.d;
-                    jslMethodHeader($1.d,&defaultVoidDefinition,args,
-                                    StorageConstructor, $3.d);
+                    args = $2.data;
+                    jslMethodHeader($1.data,&defaultVoidDefinition,args,
+                                    StorageConstructor, $3.data);
                 }
             }
          Start_block ConstructorBody End_block {
@@ -1951,26 +1951,26 @@ ConstructorDeclarator
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        if (strcmp($1.d->name, s_javaStat->thisClass->name)==0) {
-                            addCxReference(s_javaStat->thisClass, &$1.d->position,
+                        if (strcmp($1.data->name, s_javaStat->thisClass->name)==0) {
+                            addCxReference(s_javaStat->thisClass, &$1.data->position,
                                            UsageConstructorDefinition,noFileIndex, noFileIndex);
-                            $<symbol>$ = javaCreateNewMethod($1.d->name,//JAVA_CONSTRUCTOR_NAME1,
-                                                             &($1.d->position), MEMORY_XX);
+                            $<symbol>$ = javaCreateNewMethod($1.data->name,//JAVA_CONSTRUCTOR_NAME1,
+                                                             &($1.data->position), MEMORY_XX);
                         } else {
                             // a type forgotten for a method?
-                            $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->position),MEMORY_XX);
+                            $<symbol>$ = javaCreateNewMethod($1.data->name,&($1.data->position),MEMORY_XX);
                         }
                     }
                 }
                 if (inSecondJslPass()) {
-                    if (strcmp($1.d->name, s_jsl->classStat->thisClass->name)==0) {
+                    if (strcmp($1.data->name, s_jsl->classStat->thisClass->name)==0) {
                         $<symbol>$ = javaCreateNewMethod(
-                                        $1.d->name, //JAVA_CONSTRUCTOR_NAME1,
-                                        &($1.d->position),
+                                        $1.data->name, //JAVA_CONSTRUCTOR_NAME1,
+                                        &($1.data->position),
                                         MEMORY_CF);
                     } else {
                         // a type forgotten for a method?
-                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->position), MEMORY_CF);
+                        $<symbol>$ = javaCreateNewMethod($1.data->name, &($1.data->position), MEMORY_CF);
                     }
                 }
             }
@@ -1978,18 +1978,18 @@ ConstructorDeclarator
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $$.d = $<symbol>2;
-                        assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
-                        initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
+                        $$.data = $<symbol>2;
+                        assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
+                        initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.d->position, &$3.d, $4.d.p, &$5.d);
+                        javaHandleDeclaratorParamPositions(&$1.data->position, &$3.data, $4.data.p, &$5.data);
                         PropagateBoundaries($$, $1, $5);
                     }
                 }
                 if (inSecondJslPass()) {
-                    $$.d = $<symbol>2;
-                    assert($$.d && $$.d->u.typeModifier && $$.d->u.typeModifier->kind == TypeFunction);
-                    initFunctionTypeModifier(&$$.d->u.typeModifier->u.f , $4.d.symbol);
+                    $$.data = $<symbol>2;
+                    assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
+                    initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                 };
             }
     ;
@@ -2014,15 +2014,15 @@ ExplicitConstructorInvocation
     :   This _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &$1.d->position);
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &$1.data->position);
                 }
             } '(' ArgumentList_opt ')'			{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaConstructorInvocation(s_javaStat->thisClass, &($1.d->position), $5.d.t);
+                        javaConstructorInvocation(s_javaStat->thisClass, &($1.data->position), $5.data.t);
                         parsedClassInfo.erfsForParameterCompletion = $2;
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.d->position, &$4.d, $5.d.p, &$6.d);
+                        javaHandleDeclaratorParamPositions(&$1.data->position, &$4.data, $5.data.p, &$6.data);
                         PropagateBoundaries($$, $1, $6);
                     }
                 }
@@ -2030,17 +2030,17 @@ ExplicitConstructorInvocation
     |	Super _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &$1.d->position);
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &$1.data->position);
                 }
             }   '(' ArgumentList_opt ')'			{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &($1.d->position), $5.d.t);
+                        javaConstructorInvocation(ss, &($1.data->position), $5.data.t);
                         parsedClassInfo.erfsForParameterCompletion = $2;
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.d->position, &$4.d, $5.d.p, &$6.d);
+                        javaHandleDeclaratorParamPositions(&$1.data->position, &$4.data, $5.data.p, &$6.data);
                         PropagateBoundaries($$, $1, $6);
                     }
                 }
@@ -2048,17 +2048,17 @@ ExplicitConstructorInvocation
     |	Primary  '.' Super _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &($3.d->position));
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &($3.data->position));
                 }
             } '(' ArgumentList_opt ')'		{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &($3.d->position), $7.d.t);
+                        javaConstructorInvocation(ss, &($3.data->position), $7.data.t);
                         parsedClassInfo.erfsForParameterCompletion = $4;
                     } else {
-                        javaHandleDeclaratorParamPositions(&$3.d->position, &$6.d, $7.d.p, &$8.d);
+                        javaHandleDeclaratorParamPositions(&$3.data->position, &$6.data, $7.data.p, &$8.data);
                         PropagateBoundaries($$, $1, $8);
                     }
                 }
@@ -2078,10 +2078,10 @@ InterfaceDeclaration
     :   Modifiers_opt INTERFACE Identifier          {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<trail>$=newClassDefinitionBegin($3.d,($1.d|AccessInterface),NULL);
+                    $<trail>$=newClassDefinitionBegin($3.data,($1.data|AccessInterface),NULL);
                 }
             } else {
-                jslNewClassDefinitionBegin($3.d, ($1.d|AccessInterface), NULL, CPOS_ST);
+                jslNewClassDefinitionBegin($3.data, ($1.data|AccessInterface), NULL, CPOS_ST);
             }
         } ExtendsInterfaces_opt {
             if (regularPass()) {
@@ -2093,7 +2093,7 @@ InterfaceDeclaration
             }
         } InterfaceBody {
             if (regularPass()) {
-                $$.d = $3.d;
+                $$.data = $3.data;
                 if (! SyntaxPassOnly()) {
                     newClassDefinitionEnd($<trail>4);
                 } else {
@@ -2115,16 +2115,16 @@ InterfaceDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$=newClassDefinitionBegin($3.d,($1.d|AccessInterface),NULL);
+                        $<trail>$=newClassDefinitionBegin($3.data,($1.data|AccessInterface),NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin($3.d, ($1.d|AccessInterface), NULL, CPOS_ST);
+                    jslNewClassDefinitionBegin($3.data, ($1.data|AccessInterface), NULL, CPOS_ST);
                 }
             }
         error InterfaceBody
             {
                 if (regularPass()) {
-                    $$.d = $3.d;
+                    $$.data = $3.data;
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd($<trail>4);
                     } else {
@@ -2152,35 +2152,35 @@ ExtendsInterfaces
     :   EXTENDS ExtendClassOrInterfaceType		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($2.d && $2.d->type == TypeDefault && $2.d->u.typeModifier);
-                    assert($2.d->u.typeModifier->kind == TypeStruct);
-                    javaParsedSuperClass($2.d->u.typeModifier->u.t);
+                    assert($2.data && $2.data->type == TypeDefault && $2.data->u.typeModifier);
+                    assert($2.data->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($2.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
             }
             if (inSecondJslPass()) {
-                assert($2.d && $2.d->type == TypeDefault && $2.d->u.typeModifier);
-                assert($2.d->u.typeModifier->kind == TypeStruct);
+                assert($2.data && $2.data->type == TypeDefault && $2.data->u.typeModifier);
+                assert($2.data->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $2.d->u.typeModifier->u.t);
+                                            $2.data->u.typeModifier->u.t);
             }
         }
     |	ExtendsInterfaces ',' ExtendClassOrInterfaceType        {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($3.d && $3.d->type == TypeDefault && $3.d->u.typeModifier);
-                    assert($3.d->u.typeModifier->kind == TypeStruct);
-                    javaParsedSuperClass($3.d->u.typeModifier->u.t);
+                    assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
+                    assert($3.data->u.typeModifier->kind == TypeStruct);
+                    javaParsedSuperClass($3.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
-                assert($3.d && $3.d->type == TypeDefault && $3.d->u.typeModifier);
-                assert($3.d->u.typeModifier->kind == TypeStruct);
+                assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
+                assert($3.data->u.typeModifier->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            $3.d->u.typeModifier->u.t);
+                                            $3.data->u.typeModifier->u.t);
             }
         }
     ;
@@ -2219,7 +2219,7 @@ AbstractMethodDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaMethodBodyBeginning($1.d);
+                        javaMethodBodyBeginning($1.data);
                     }
                 }
             }
@@ -2227,7 +2227,7 @@ AbstractMethodDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaMethodBodyEnding(&$4.d);
+                        javaMethodBodyEnding(&$4.data);
                     } else {
                         PropagateBoundaries($$, $1, $4);
                     }
@@ -2257,11 +2257,11 @@ VariableInitializers
 
 Block
     :   '{' Start_block BlockStatements End_block '}'		{
-            $$.d = $5.d;
+            $$.data = $5.data;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     |	'{' '}'												{
-            $$.d = $2.d;
+            $$.data = $2.data;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
@@ -2290,8 +2290,8 @@ LocalVarDeclUntilInit
     :   JavaType VariableDeclaratorId							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(s_javaStat->locals, $1.d,$2.d,NULL,StorageAuto);
-                    $$.d = $1.d;
+                    addNewDeclaration(s_javaStat->locals, $1.data,$2.data,NULL,StorageAuto);
+                    $$.data = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2300,8 +2300,8 @@ LocalVarDeclUntilInit
     |	FINAL JavaType VariableDeclaratorId						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(s_javaStat->locals, $2.d,$3.d,NULL,StorageAuto);
-                    $$.d = $2.d;
+                    addNewDeclaration(s_javaStat->locals, $2.data,$3.data,NULL,StorageAuto);
+                    $$.data = $2.data;
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -2310,10 +2310,10 @@ LocalVarDeclUntilInit
     |	LocalVariableDeclaration ',' VariableDeclaratorId	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.d->type != TypeError) {
-                        addNewDeclaration(s_javaStat->locals, $1.d,$3.d,NULL,StorageAuto);
+                    if ($1.data->type != TypeError) {
+                        addNewDeclaration(s_javaStat->locals, $1.data,$3.data,NULL,StorageAuto);
                     }
-                    $$.d = $1.d;
+                    $$.data = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -2323,20 +2323,20 @@ LocalVarDeclUntilInit
 
 LocalVariableDeclaration
     :   LocalVarDeclUntilInit								{
-            if (regularPass()) $$.d = $1.d;
+            if (regularPass()) $$.data = $1.data;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	LocalVarDeclUntilInit {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    parsedInfo.lastAssignementStruct = $1.d;
+                    parsedInfo.lastAssignementStruct = $1.data;
                 }
             }
         } '=' VariableInitializer		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     parsedInfo.lastAssignementStruct = NULL;
-                    $$.d = $1.d;
+                    $$.data = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $4);
                 }
@@ -2425,16 +2425,16 @@ StatementExpression
     |	ClassInstanceCreationExpression	{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     ;
 
-_ncounter_:  {if (regularPass()) $$.d = nextGeneratedLocalSymbol();}
+_ncounter_:  {if (regularPass()) $$.data = nextGeneratedLocalSymbol();}
     ;
 
-_nlabel_:	{if (regularPass()) $$.d = nextGeneratedLabelSymbol();}
+_nlabel_:	{if (regularPass()) $$.data = nextGeneratedLabelSymbol();}
     ;
 
-_ngoto_:	{if (regularPass()) $$.d = nextGeneratedGotoSymbol();}
+_ngoto_:	{if (regularPass()) $$.data = nextGeneratedGotoSymbol();}
     ;
 
-_nfork_:	{if (regularPass()) $$.d = nextGeneratedForkSymbol();}
+_nfork_:	{if (regularPass()) $$.data = nextGeneratedForkSymbol();}
     ;
 
 
@@ -2442,7 +2442,7 @@ IfThenStatement
     :   IF '(' Expression ')' _nfork_ Statement                     {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    generateInternalLabelReference($5.d, UsageDefined);
+                    generateInternalLabelReference($5.data, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $6);
                 }
@@ -2454,8 +2454,8 @@ IfThenElseStatementPrefix
     :   IF '(' Expression ')' _nfork_ StatementNoShortIf ELSE _ngoto_ {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    generateInternalLabelReference($5.d, UsageDefined);
-                    $$.d = $8.d;
+                    generateInternalLabelReference($5.data, UsageDefined);
+                    $$.data = $8.data;
                 } else {
                     PropagateBoundaries($$, $1, $7);
                 }
@@ -2467,7 +2467,7 @@ IfThenElseStatement
     :   IfThenElseStatementPrefix Statement {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    generateInternalLabelReference($1.d, UsageDefined);
+                    generateInternalLabelReference($1.data, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2479,7 +2479,7 @@ IfThenElseStatementNoShortIf
     :   IfThenElseStatementPrefix StatementNoShortIf {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    generateInternalLabelReference($1.d, UsageDefined);
+                    generateInternalLabelReference($1.data, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2491,14 +2491,14 @@ SwitchStatement
     :   SWITCH '(' Expression ')' /*5*/ _ncounter_  {/*6*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.d,SWITCH_LABEL_NAME);
+                    $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.data,SWITCH_LABEL_NAME);
                 }
             }
         } {/*7*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<symbol>$ = addContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME);
-                    generateInternalLabelReference($5.d, UsageFork);
+                    $<symbol>$ = addContinueBreakLabelSymbol($5.data, BREAK_LABEL_NAME);
+                    generateInternalLabelReference($5.data, UsageFork);
                 }
             }
         }   SwitchBlock                     {
@@ -2507,7 +2507,7 @@ SwitchStatement
                     generateSwitchCaseFork(true);
                     deleteContinueBreakSymbol($<symbol>7);
                     deleteContinueBreakSymbol($<symbol>6);
-                    generateInternalLabelReference($5.d, UsageDefined);
+                    generateInternalLabelReference($5.data, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $8);
                 }
@@ -2575,11 +2575,11 @@ WhileStatementPrefix
                     if (options.serverOperation == OLO_EXTRACT) {
                         Symbol *cl, *bl;
                         cl = bl = NULL;        // just to avoid warning message
-                        cl = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
-                        bl = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
-                        $$.d = newWhileExtractData($2.d, $6.d, cl, bl);
+                        cl = addContinueBreakLabelSymbol($2.data, CONTINUE_LABEL_NAME);
+                        bl = addContinueBreakLabelSymbol($6.data, BREAK_LABEL_NAME);
+                        $$.data = newWhileExtractData($2.data, $6.data, cl, bl);
                     } else {
-                        $$.d = NULL;
+                        $$.data = NULL;
                     }
                 } else {
                     PropagateBoundaries($$, $1, $5);
@@ -2592,11 +2592,11 @@ WhileStatement
     :   WhileStatementPrefix Statement					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.d != NULL) {
-                        deleteContinueBreakSymbol($1.d->i4);
-                        deleteContinueBreakSymbol($1.d->i3);
-                        generateInternalLabelReference($1.d->i1, UsageUsed);
-                        generateInternalLabelReference($1.d->i2, UsageDefined);
+                    if ($1.data != NULL) {
+                        deleteContinueBreakSymbol($1.data->i4);
+                        deleteContinueBreakSymbol($1.data->i3);
+                        generateInternalLabelReference($1.data->i1, UsageUsed);
+                        generateInternalLabelReference($1.data->i2, UsageDefined);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $2);
@@ -2609,11 +2609,11 @@ WhileStatementNoShortIf
     :   WhileStatementPrefix StatementNoShortIf			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.d != NULL) {
-                        deleteContinueBreakSymbol($1.d->i4);
-                        deleteContinueBreakSymbol($1.d->i3);
-                        generateInternalLabelReference($1.d->i1, UsageUsed);
-                        generateInternalLabelReference($1.d->i2, UsageDefined);
+                    if ($1.data != NULL) {
+                        deleteContinueBreakSymbol($1.data->i4);
+                        deleteContinueBreakSymbol($1.data->i3);
+                        generateInternalLabelReference($1.data->i1, UsageUsed);
+                        generateInternalLabelReference($1.data->i2, UsageDefined);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $2);
@@ -2626,13 +2626,13 @@ DoStatement
     :   DO _nlabel_ _ncounter_ _ncounter_ { /*5*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<symbol>$ = addContinueBreakLabelSymbol($3.d, CONTINUE_LABEL_NAME);
+                    $<symbol>$ = addContinueBreakLabelSymbol($3.data, CONTINUE_LABEL_NAME);
                 }
             }
         } {/*6*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<symbol>$ = addContinueBreakLabelSymbol($4.d, BREAK_LABEL_NAME);
+                    $<symbol>$ = addContinueBreakLabelSymbol($4.data, BREAK_LABEL_NAME);
                 }
             }
         } Statement WHILE {
@@ -2640,14 +2640,14 @@ DoStatement
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakSymbol($<symbol>6);
                     deleteContinueBreakSymbol($<symbol>5);
-                    generateInternalLabelReference($3.d, UsageDefined);
+                    generateInternalLabelReference($3.data, UsageDefined);
                 }
             }
         } '(' Expression ')' ';'			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    generateInternalLabelReference($2.d, UsageFork);
-                    generateInternalLabelReference($4.d, UsageDefined);
+                    generateInternalLabelReference($2.data, UsageFork);
+                    generateInternalLabelReference($4.data, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $13);
                 }
@@ -2682,12 +2682,12 @@ ForStatementPrefix
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *ss __attribute__((unused));
-                    generateInternalLabelReference($4.d, UsageUsed);
-                    generateInternalLabelReference($7.d, UsageDefined);
-                    ss = addContinueBreakLabelSymbol($8.d, CONTINUE_LABEL_NAME);
-                    ss = addContinueBreakLabelSymbol($11.d, BREAK_LABEL_NAME);
-                    $$.d.i1 = $8.d;
-                    $$.d.i2 = $11.d;
+                    generateInternalLabelReference($4.data, UsageUsed);
+                    generateInternalLabelReference($7.data, UsageDefined);
+                    ss = addContinueBreakLabelSymbol($8.data, CONTINUE_LABEL_NAME);
+                    ss = addContinueBreakLabelSymbol($11.data, BREAK_LABEL_NAME);
+                    $$.data.i1 = $8.data;
+                    $$.data.i2 = $11.data;
                 } else {
                     PropagateBoundaries($$, $1, $10);
                 }
@@ -2701,8 +2701,8 @@ ForStatementBody
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
                     deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    generateInternalLabelReference($1.d.i1, UsageUsed);
-                    generateInternalLabelReference($1.d.i2, UsageDefined);
+                    generateInternalLabelReference($1.data.i1, UsageUsed);
+                    generateInternalLabelReference($1.data.i2, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2716,8 +2716,8 @@ ForStatementNoShortIfBody
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
                     deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    generateInternalLabelReference($1.d.i1, UsageUsed);
-                    generateInternalLabelReference($1.d.i2, UsageDefined);
+                    generateInternalLabelReference($1.data.i1, UsageUsed);
+                    generateInternalLabelReference($1.data.i2, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2852,7 +2852,7 @@ ThrowStatement
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (options.serverOperation==OLO_EXTRACT) {
-                        addCxReference($2.d.typeModifier->u.t, &$1.d->position, UsageThrown, noFileIndex, noFileIndex);
+                        addCxReference($2.data.typeModifier->u.t, &$1.data->position, UsageThrown, noFileIndex, noFileIndex);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -2880,14 +2880,14 @@ TryStatement
             {
                 if (options.serverOperation == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                            &$1.d->position, UsageTryCatchBegin);
+                                            &$1.data->position, UsageTryCatchBegin);
                 }
             }
         Block
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        generateInternalLabelReference($2.d, UsageDefined);
+                        generateInternalLabelReference($2.data, UsageDefined);
                     }
                 }
             }
@@ -2895,7 +2895,7 @@ TryStatement
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
             if (options.serverOperation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                        &$1.d->position, UsageTryCatchEnd);
+                                        &$1.data->position, UsageTryCatchEnd);
             }
         }
 
@@ -2913,12 +2913,12 @@ CatchClause
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        if ($3.d->type != TypeError) {
-                            addNewSymbolDefinition(s_javaStat->locals, $3.d, StorageAuto,
+                        if ($3.data->type != TypeError) {
+                            addNewSymbolDefinition(s_javaStat->locals, $3.data, StorageAuto,
                                             UsageDefined);
                             if (options.serverOperation == OLO_EXTRACT) {
-                                assert($3.d->type==TypeDefault);
-                                addCxReference($3.d->u.typeModifier->u.t, &$1.d->position, UsageCatched, noFileIndex, noFileIndex);
+                                assert($3.data->type==TypeDefault);
+                                addCxReference($3.data->u.typeModifier->u.t, &$1.data->position, UsageCatched, noFileIndex, noFileIndex);
                             }
                         }
                     }
@@ -2928,7 +2928,7 @@ CatchClause
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        generateInternalLabelReference($5.d, UsageDefined);
+                        generateInternalLabelReference($5.data, UsageDefined);
                     } else {
                         PropagateBoundaries($$, $1, $8);
                     }
@@ -2938,8 +2938,8 @@ CatchClause
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (options.serverOperation == OLO_EXTRACT) {
-                        assert($3.d->type==TypeDefault);
-                        addCxReference($3.d->u.typeModifier->u.t, &$1.d->position, UsageCatched, noFileIndex, noFileIndex);
+                        assert($3.data->type==TypeDefault);
+                        addCxReference($3.data->u.typeModifier->u.t, &$1.data->position, UsageCatched, noFileIndex, noFileIndex);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $5);
@@ -2952,7 +2952,7 @@ Finally
     :   FINALLY _nfork_ Block {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    generateInternalLabelReference($2.d, UsageDefined);
+                    generateInternalLabelReference($2.data, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -2965,9 +2965,9 @@ Finally
 Primary
     :   PrimaryNoNewArray					{
             if (regularPass()) {
-                $$.d = $1.d;
+                $$.data = $1.data;
                 if (! SyntaxPassOnly()) {
-                    s_javaCompletionLastPrimary = s_structRecordCompletionType = $$.d.typeModifier;
+                    s_javaCompletionLastPrimary = s_structRecordCompletionType = $$.data.typeModifier;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -2975,9 +2975,9 @@ Primary
         }
     |	ArrayCreationExpression				{
             if (regularPass()) {
-                $$.d = $1.d;
+                $$.data = $1.data;
                 if (! SyntaxPassOnly()) {
-                    s_javaCompletionLastPrimary = s_structRecordCompletionType = $$.d.typeModifier;
+                    s_javaCompletionLastPrimary = s_structRecordCompletionType = $$.data.typeModifier;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -2992,12 +2992,12 @@ PrimaryNoNewArray
                 if (! SyntaxPassOnly()) {
                     assert(s_javaStat && s_javaStat->thisType);
 //fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);
-                    $$.d.typeModifier = s_javaStat->thisType;
-                    addThisCxReferences(s_javaStat->classFileIndex, &$1.d->position);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = s_javaStat->thisType;
+                    addThisCxReferences(s_javaStat->classFileIndex, &$1.data->position);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->position;
-                    javaCheckForStaticPrefixStart(&$1.d->position, &$1.d->position);
+                    $$.data.position = &$1.data->position;
+                    javaCheckForStaticPrefixStart(&$1.data->position, &$1.data->position);
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -3005,12 +3005,12 @@ PrimaryNoNewArray
     |	Name '.' THIS						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaQualifiedThis($1.d, $3.d);
-                    $$.d.typeModifier = javaClassNameType($1.d);
-                    $$.d.reference = NULL;
+                    javaQualifiedThis($1.data, $3.data);
+                    $$.data.typeModifier = javaClassNameType($1.data);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = javaGetNameStartingPosition($1.d);
-                    javaCheckForStaticPrefixStart(&$3.d->position, javaGetNameStartingPosition($1.d));
+                    $$.data.position = javaGetNameStartingPosition($1.data);
+                    javaCheckForStaticPrefixStart(&$3.data->position, javaGetNameStartingPosition($1.data));
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3018,10 +3018,10 @@ PrimaryNoNewArray
     |	PrimitiveType '.' CLASS				{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = &s_javaClassModifier;
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = &s_javaClassModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = $1.d.position;
+                    $$.data.position = $1.data.position;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3030,11 +3030,11 @@ PrimaryNoNewArray
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
-                    javaClassifyToTypeName($1.d,UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
-                    $$.d.typeModifier = &s_javaClassModifier;
-                    $$.d.reference = NULL;
+                    javaClassifyToTypeName($1.data,UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
+                    $$.data.typeModifier = &s_javaClassModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = javaGetNameStartingPosition($1.d);
+                    $$.data.position = javaGetNameStartingPosition($1.data);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3042,10 +3042,10 @@ PrimaryNoNewArray
     |	ArrayType '.' CLASS					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = &s_javaClassModifier;
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = &s_javaClassModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = $1.d.position;
+                    $$.data.position = $1.data.position;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3053,20 +3053,20 @@ PrimaryNoNewArray
     |	VOID '.' CLASS						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = &s_javaClassModifier;
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = &s_javaClassModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    SetPrimitiveTypePos($$.d.position, $1.d);
+                    SetPrimitiveTypePos($$.data.position, $1.data);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
         }
     |	'(' Expression ')'					{
             if (regularPass()) {
-                $$.d = $2.d;
+                $$.data = $2.data;
                 if (SyntaxPassOnly()) {
-                    $$.d.position = StackMemoryAlloc(Position);
-                    *$$.d.position = $1.d;
+                    $$.data.position = StackMemoryAlloc(Position);
+                    *$$.data.position = $1.data;
                     PropagateBoundaries($$, $1, $3);
                     if (positionIsBetween($$.b, cxRefPosition, $$.e)
                         && parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == noFileIndex) {
@@ -3078,12 +3078,12 @@ PrimaryNoNewArray
                 }
             }
         }
-    |	ClassInstanceCreationExpression		/*& { $$.d = $1.d } &*/
+    |	ClassInstanceCreationExpression		/*& { $$.data = $1.data } &*/
         /* TODO: Here c-xref parsing/analysis stops, anything beyond
            this point does not register */
-    |	FieldAccess							/*& { $$.d = $1.d } &*/
-    |	MethodInvocation					/*& { $$.d = $1.d } &*/
-    |	ArrayAccess							/*& { $$.d = $1.d } &*/
+    |	FieldAccess							/*& { $$.data = $1.data } &*/
+    |	MethodInvocation					/*& { $$.data = $1.data } &*/
+    |	ArrayAccess							/*& { $$.data = $1.data } &*/
     |	CompletionTypeName '.'		{ assert(0); /* rule never used */ }
     ;
 
@@ -3098,10 +3098,10 @@ NestedConstructorInvocation
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
                     parsedClassInfo.erfsForParameterCompletion = NULL;
-                    if ($1.d.typeModifier->kind == TypeStruct) {
-                        mm = javaNestedNewType($1.d.typeModifier->u.t, $3.d, $4.d);
+                    if ($1.data.typeModifier->kind == TypeStruct) {
+                        mm = javaNestedNewType($1.data.typeModifier->u.t, $3.data, $4.data);
                         if (mm->kind != TypeError) {
-                            parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.position));
+                            parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &($4.data->id.position));
                         }
                     }
                 }
@@ -3110,19 +3110,19 @@ NestedConstructorInvocation
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     parsedClassInfo.erfsForParameterCompletion = $5;
-                    if ($1.d.typeModifier->kind == TypeStruct) {
-                        $$.d.typeModifier = javaNestedNewType($1.d.typeModifier->u.t, $3.d, $4.d);
+                    if ($1.data.typeModifier->kind == TypeStruct) {
+                        $$.data.typeModifier = javaNestedNewType($1.data.typeModifier->u.t, $3.data, $4.data);
                     } else {
-                        $$.d.typeModifier = &errorModifier;
+                        $$.data.typeModifier = &errorModifier;
                     }
-                    javaHandleDeclaratorParamPositions(&$4.d->id.position, &$7.d, $8.d.p, &$9.d);
-                    assert($$.d.typeModifier);
-                    $$.d.idList = $4.d;
-                    if ($$.d.typeModifier->kind != TypeError) {
-                        javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.position), $8.d.t);
+                    javaHandleDeclaratorParamPositions(&$4.data->id.position, &$7.data, $8.data.p, &$9.data);
+                    assert($$.data.typeModifier);
+                    $$.data.idList = $4.data;
+                    if ($$.data.typeModifier->kind != TypeError) {
+                        javaConstructorInvocation($$.data.typeModifier->u.t, &($4.data->id.position), $8.data.t);
                     }
                 } else {
-                    $$.d.position = $1.d.position;
+                    $$.data.position = $1.data.position;
                     PropagateBoundaries($$, $1, $9);
                 }
             }
@@ -3132,9 +3132,9 @@ NestedConstructorInvocation
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
                     parsedClassInfo.erfsForParameterCompletion = NULL;
-                    mm = javaNewAfterName($1.d, $3.d, $4.d);
+                    mm = javaNewAfterName($1.data, $3.data, $4.data);
                     if (mm->kind != TypeError) {
-                        parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.position));
+                        parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &($4.data->id.position));
                     }
                 }
             }
@@ -3142,14 +3142,14 @@ NestedConstructorInvocation
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     parsedClassInfo.erfsForParameterCompletion = $5;
-                    $$.d.typeModifier = javaNewAfterName($1.d, $3.d, $4.d);
-                    $$.d.idList = $4.d;
-                    if ($$.d.typeModifier->kind != TypeError) {
-                        javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.position), $8.d.t);
+                    $$.data.typeModifier = javaNewAfterName($1.data, $3.data, $4.data);
+                    $$.data.idList = $4.data;
+                    if ($$.data.typeModifier->kind != TypeError) {
+                        javaConstructorInvocation($$.data.typeModifier->u.t, &($4.data->id.position), $8.data.t);
                     }
                 } else {
-                    $$.d.position = javaGetNameStartingPosition($1.d);
-                    javaHandleDeclaratorParamPositions(&$4.d->id.position, &$7.d, $8.d.p, &$9.d);
+                    $$.data.position = javaGetNameStartingPosition($1.data);
+                    javaHandleDeclaratorParamPositions(&$4.data->id.position, &$7.data, $8.data.p, &$9.data);
                     PropagateBoundaries($$, $1, $9);
                 }
             }
@@ -3163,11 +3163,11 @@ NewName
                 Symbol			*str;
                 TypeModifier		*expr;
                 Reference			*rr, *lastUselessRef;
-                javaClassifyAmbiguousName($1.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
+                javaClassifyAmbiguousName($1.data, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
-                $1.d->nameType = TypeStruct;
-                ss = javaTypeSymbolUsage($1.d, AccessDefault);
-                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(ss, &($1.d->id.position));
+                $1.data->nameType = TypeStruct;
+                ss = javaTypeSymbolUsage($1.data, AccessDefault);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(ss, &($1.data->id.position));
             }
             $$ = $1;
         }
@@ -3184,20 +3184,20 @@ ClassInstanceCreationExpression
 
                     parsedClassInfo.erfsForParameterCompletion = $2;
                     lastUselessRef = NULL;
-                    javaClassifyAmbiguousName($3.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
+                    javaClassifyAmbiguousName($3.data, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                               CLASS_TO_TYPE,UsageUsed);
-                    $3.d->nameType = TypeStruct;
-                    ss = javaTypeSymbolUsage($3.d, AccessDefault);
+                    $3.data->nameType = TypeStruct;
+                    ss = javaTypeSymbolUsage($3.data, AccessDefault);
                     if (isANestedClass(ss)) {
                         if (javaIsInnerAndCanGetUnnamedEnclosingInstance(ss, &ei)) {
                             // MARIAN(?): before it was s_javaStat->classFileIndex, but be more precise
                             // in reality you should keep both to discover references
                             // to original class from class nested in method.
-                            addThisCxReferences(ei->u.structSpec->classFileIndex, &$1.d->position);
+                            addThisCxReferences(ei->u.structSpec->classFileIndex, &$1.data->position);
                             // MARIAN(?): I have removed following because it makes problems when
                             // expanding to FQT names, WHY IT WAS HERE ???
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                                         s_javaStat->classFileIndex, &$1.d->position,
+                                         s_javaStat->classFileIndex, &$1.data->position,
                                          UsageNotFQField); &*/
                         } else {
                             // MARIAN(?): here I should annulate class reference, as it is an error
@@ -3212,13 +3212,13 @@ ClassInstanceCreationExpression
                                 } &*/
                         }
                     }
-                    javaConstructorInvocation(ss, &($3.d->id.position), $5.d.t);
-                    tt = javaTypeNameDefinition($3.d);
-                    $$.d.typeModifier = tt->u.typeModifier;
-                    $$.d.reference = NULL;
+                    javaConstructorInvocation(ss, &($3.data->id.position), $5.data.t);
+                    tt = javaTypeNameDefinition($3.data);
+                    $$.data.typeModifier = tt->u.typeModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    javaHandleDeclaratorParamPositions(&$3.d->id.position, &$4.d, $5.d.p, &$6.d);
-                    $$.d.position = &$1.d->position;
+                    javaHandleDeclaratorParamPositions(&$3.data->id.position, &$4.data, $5.data.p, &$6.data);
+                    $$.data.position = &$1.data->position;
                     PropagateBoundaries($$, $1, $6);
                 }
             }
@@ -3229,19 +3229,19 @@ ClassInstanceCreationExpression
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         parsedClassInfo.erfsForParameterCompletion = $2;
-                        javaClassifyToTypeName($3.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
-                        $<symbol>$ = javaTypeNameDefinition($3.d);
-                        ss = javaTypeSymbolUsage($3.d, AccessDefault);
-                        javaConstructorInvocation(ss, &($3.d->id.position), $5.d.t);
+                        javaClassifyToTypeName($3.data,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
+                        $<symbol>$ = javaTypeNameDefinition($3.data);
+                        ss = javaTypeSymbolUsage($3.data, AccessDefault);
+                        javaConstructorInvocation(ss, &($3.data->id.position), $5.data.t);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$3.d->id.position, &$4.d, $5.d.p, &$6.d);
+                        javaHandleDeclaratorParamPositions(&$3.data->id.position, &$4.data, $5.data.p, &$6.data);
                         // seems that there is no problem like in previous case,
                         // interfaces are never inner.
                     }
                 } else {
                     Symbol *str, *cls;
-                    jslClassifyAmbiguousTypeName($3.d, &str);
-                    cls = jslTypeNameDefinition($3.d);
+                    jslClassifyAmbiguousTypeName($3.data, &str);
+                    cls = jslTypeNameDefinition($3.data);
                     jslNewClassDefinitionBegin(&javaAnonymousClassName,
                                                 AccessDefault, cls, CPOS_ST);
                 }
@@ -3258,10 +3258,10 @@ ClassInstanceCreationExpression
                 if (! SyntaxPassOnly()) {
                     newClassDefinitionEnd($<trail>8);
                     assert($<symbol>7 && $<symbol>7->u.typeModifier);
-                    $$.d.typeModifier = $<symbol>7->u.typeModifier;
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = $<symbol>7->u.typeModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->position;
+                    $$.data.position = &$1.data->position;
                     PropagateBoundaries($$, $1, $9);
                 }
             } else {
@@ -3269,28 +3269,28 @@ ClassInstanceCreationExpression
             }
         }
     |	NestedConstructorInvocation								{
-            $$.d.typeModifier = $1.d.typeModifier;
-            $$.d.position = $1.d.position;
-            $$.d.reference = NULL;
+            $$.data.typeModifier = $1.data.typeModifier;
+            $$.data.position = $1.data.position;
+            $$.data.reference = NULL;
             PropagateBoundaries($$, $1, $1);
         }
     |	NestedConstructorInvocation
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $$.d.typeModifier = $1.d.typeModifier;
-                        $$.d.position = $1.d.position;
-                        $$.d.reference = NULL;
-                        if ($$.d.typeModifier->kind != TypeError) {
-                            $<trail>$ = newClassDefinitionBegin(&javaAnonymousClassName, AccessDefault, $$.d.typeModifier->u.t);
+                        $$.data.typeModifier = $1.data.typeModifier;
+                        $$.data.position = $1.data.position;
+                        $$.data.reference = NULL;
+                        if ($$.data.typeModifier->kind != TypeError) {
+                            $<trail>$ = newClassDefinitionBegin(&javaAnonymousClassName, AccessDefault, $$.data.typeModifier->u.t);
                         } else {
-                            $<trail>$ = newAnonClassDefinitionBegin(& $1.d.idList->id);
+                            $<trail>$ = newAnonClassDefinitionBegin(& $1.data.idList->id);
                         }
                     } else {
-                        $$.d.position = $1.d.position;
+                        $$.data.position = $1.data.position;
                     }
                 } else {
-                    jslNewAnonClassDefinitionBegin(&$1.d.idList->id);
+                    jslNewAnonClassDefinitionBegin(&$1.data.idList->id);
                 }
             }
         ClassBody
@@ -3324,24 +3324,24 @@ ClassInstanceCreationExpression
     ;
 
 ArgumentList_opt:				{
-            $$.d.t = NULL;
-            $$.d.p = NULL;
+            $$.data.t = NULL;
+            $$.data.p = NULL;
             SetNullBoundariesFor($$);
         }
-    | ArgumentList				/*& { $$.d = $1.d; } &*/
+    | ArgumentList				/*& { $$.data = $1.data; } &*/
     ;
 
 ArgumentList
     :   Expression									{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.t = newTypeModifierList($1.d.typeModifier);
+                    $$.data.t = newTypeModifierList($1.data.typeModifier);
                     if (parsedClassInfo.erfsForParameterCompletion!=NULL) {
-                        parsedClassInfo.erfsForParameterCompletion->params = $$.d.t;
+                        parsedClassInfo.erfsForParameterCompletion->params = $$.data.t;
                     }
                 } else {
-                    $$.d.p = NULL;
-                    appendPositionToList(&$$.d.p, &noPosition);
+                    $$.data.p = NULL;
+                    appendPositionToList(&$$.data.p, &noPosition);
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -3350,12 +3350,12 @@ ArgumentList
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_typeModifierList *p;
-                    $$.d = $1.d;
-                    p = newTypeModifierList($3.d.typeModifier);
-                    LIST_APPEND(S_typeModifierList, $$.d.t, p);
-                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) parsedClassInfo.erfsForParameterCompletion->params = $$.d.t;
+                    $$.data = $1.data;
+                    p = newTypeModifierList($3.data.typeModifier);
+                    LIST_APPEND(S_typeModifierList, $$.data.t, p);
+                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) parsedClassInfo.erfsForParameterCompletion->params = $$.data.t;
                 } else {
-                    appendPositionToList(&$$.d.p, &$2.d);
+                    appendPositionToList(&$$.data.p, &$2.data);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3370,12 +3370,12 @@ ArrayCreationExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    $$.d.typeModifier = newSimpleTypeModifier($3.d.u);
-                    for(i=0; i<$4.d; i++)
-                        prependTypeModifierWith($$.d.typeModifier, TypeArray);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier($3.data.u);
+                    for(i=0; i<$4.data; i++)
+                        prependTypeModifierWith($$.data.typeModifier, TypeArray);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->position;
+                    $$.data.position = &$1.data->position;
                     PropagateBoundaries($$, $1, $5);
                     if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $4);
                 }
@@ -3385,12 +3385,12 @@ ArrayCreationExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    $$.d.typeModifier = newSimpleTypeModifier($3.d.u);
-                    for(i=0; i<$4.d; i++)
-                        prependTypeModifierWith($$.d.typeModifier, TypeArray);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier($3.data.u);
+                    for(i=0; i<$4.data; i++)
+                        prependTypeModifierWith($$.data.typeModifier, TypeArray);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->position;
+                    $$.data.position = &$1.data->position;
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -3399,13 +3399,13 @@ ArrayCreationExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    assert($3.d && $3.d->u.typeModifier);
-                    $$.d.typeModifier = $3.d->u.typeModifier;
-                    for(i=0; i<$4.d; i++)
-                        prependTypeModifierWith($$.d.typeModifier, TypeArray);
-                    $$.d.reference = NULL;
+                    assert($3.data && $3.data->u.typeModifier);
+                    $$.data.typeModifier = $3.data->u.typeModifier;
+                    for(i=0; i<$4.data; i++)
+                        prependTypeModifierWith($$.data.typeModifier, TypeArray);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->position;
+                    $$.data.position = &$1.data->position;
                     PropagateBoundaries($$, $1, $5);
                     if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $4);
                 }
@@ -3415,13 +3415,13 @@ ArrayCreationExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    assert($3.d && $3.d->u.typeModifier);
-                    $$.d.typeModifier = $3.d->u.typeModifier;
-                    for(i=0; i<$4.d; i++)
-                        prependTypeModifierWith($$.d.typeModifier, TypeArray);
-                    $$.d.reference = NULL;
+                    assert($3.data && $3.data->u.typeModifier);
+                    $$.data.typeModifier = $3.data->u.typeModifier;
+                    for(i=0; i<$4.data; i++)
+                        prependTypeModifierWith($$.data.typeModifier, TypeArray);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = &$1.d->position;
+                    $$.data.position = &$1.data->position;
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -3431,11 +3431,11 @@ ArrayCreationExpression
 
 DimExprs
     :   DimExpr						{
-            if (regularPass()) $$.d = 1;
+            if (regularPass()) $$.data = 1;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	DimExprs DimExpr			{
-            if (regularPass()) $$.d = $1.d+1;
+            if (regularPass()) $$.data = $1.data+1;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
@@ -3448,7 +3448,7 @@ DimExpr
 
 Dims_opt
     :							{
-        if (regularPass()) $$.d = 0;
+        if (regularPass()) $$.data = 0;
             SetNullBoundariesFor($$);
         }
     |	Dims						/*& { $$ = $1; } &*/
@@ -3456,11 +3456,11 @@ Dims_opt
 
 Dims
     :   '[' ']'						{
-            if (regularPass()) $$.d = 1;
+            if (regularPass()) $$.data = 1;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     |	Dims '[' ']'				{
-            if (regularPass()) $$.d = $1.d+1;
+            if (regularPass()) $$.data = $1.data+1;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
@@ -3470,23 +3470,23 @@ FieldAccess
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *rec=NULL;
-                    assert($1.d.typeModifier);
-                    $$.d.reference = NULL;
-                    $$.d.position = $1.d.position;
-                    if ($1.d.typeModifier->kind == TypeStruct) {
-                        javaLoadClassSymbolsFromFile($1.d.typeModifier->u.t);
-                        $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $3.d, &rec, CLASS_TO_EXPR);
+                    assert($1.data.typeModifier);
+                    $$.data.reference = NULL;
+                    $$.data.position = $1.data.position;
+                    if ($1.data.typeModifier->kind == TypeStruct) {
+                        javaLoadClassSymbolsFromFile($1.data.typeModifier->u.t);
+                        $$.data.reference = findStructureFieldFromType($1.data.typeModifier, $3.data, &rec, CLASS_TO_EXPR);
                         assert(rec);
-                        $$.d.typeModifier = rec->u.typeModifier;
+                        $$.data.typeModifier = rec->u.typeModifier;
                     } else if (currentLanguage == LANG_JAVA) {
-                        $$.d.typeModifier = javaArrayFieldAccess($3.d);
+                        $$.data.typeModifier = javaArrayFieldAccess($3.data);
                     } else {
-                        $$.d.typeModifier = &errorModifier;
+                        $$.data.typeModifier = &errorModifier;
                     }
-                    assert($$.d.typeModifier);
+                    assert($$.data.typeModifier);
                 } else {
-                    $$.d.position = $1.d.position;
-                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
+                    $$.data.position = $1.data.position;
+                    javaCheckForPrimaryStart(&$3.data->position, $$.data.position);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3496,23 +3496,23 @@ FieldAccess
                 if (! SyntaxPassOnly()) {
                     Symbol *ss,*rec=NULL;
 
-                    $$.d.reference = NULL;
-                    $$.d.position = &$1.d->position;
+                    $$.data.reference = NULL;
+                    $$.data.position = &$1.data->position;
                     ss = javaCurrentSuperClass();
                     if (ss != &errorSymbol && ss->type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
-                        $$.d.reference = findStrRecordFromSymbol(ss, $3.d, &rec,
-                                                                 CLASS_TO_EXPR, $1.d);
+                        $$.data.reference = findStrRecordFromSymbol(ss, $3.data, &rec,
+                                                                 CLASS_TO_EXPR, $1.data);
                         assert(rec);
-                        $$.d.typeModifier = rec->u.typeModifier;
+                        $$.data.typeModifier = rec->u.typeModifier;
                     } else {
-                        $$.d.typeModifier = &errorModifier;
+                        $$.data.typeModifier = &errorModifier;
                     }
-                    assert($$.d.typeModifier);
+                    assert($$.data.typeModifier);
                 } else {
-                    $$.d.position = &$1.d->position;
-                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
-                    javaCheckForStaticPrefixStart(&$3.d->position, $$.d.position);
+                    $$.data.position = &$1.data->position;
+                    javaCheckForPrimaryStart(&$3.data->position, $$.data.position);
+                    javaCheckForStaticPrefixStart(&$3.data->position, $$.data.position);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3522,25 +3522,25 @@ FieldAccess
                 if (! SyntaxPassOnly()) {
                     Symbol *ss,*rec=NULL;
 
-                    ss = javaQualifiedThis($1.d, $3.d);
+                    ss = javaQualifiedThis($1.data, $3.data);
                     if (ss != &errorSymbol && ss->type!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         ss = javaGetSuperClass(ss);
-                        $$.d.reference = findStrRecordFromSymbol(ss, $5.d, &rec,
+                        $$.data.reference = findStrRecordFromSymbol(ss, $5.data, &rec,
                                                                  CLASS_TO_EXPR, NULL);
                         assert(rec);
-                        $$.d.typeModifier = rec->u.typeModifier;
+                        $$.data.typeModifier = rec->u.typeModifier;
                     } else {
-                        $$.d.typeModifier = &errorModifier;
+                        $$.data.typeModifier = &errorModifier;
                     }
-                    $$.d.reference = NULL;
-                    assert($$.d.typeModifier);
+                    $$.data.reference = NULL;
+                    assert($$.data.typeModifier);
                 } else {
-                    $$.d.position = javaGetNameStartingPosition($1.d);
-                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
-                    javaCheckForPrimaryStart(&$5.d->position, $$.d.position);
-                    javaCheckForStaticPrefixStart(&$3.d->position, $$.d.position);
-                    javaCheckForStaticPrefixStart(&$5.d->position, $$.d.position);
+                    $$.data.position = javaGetNameStartingPosition($1.data);
+                    javaCheckForPrimaryStart(&$3.data->position, $$.data.position);
+                    javaCheckForPrimaryStart(&$5.data->position, $$.data.position);
+                    javaCheckForStaticPrefixStart(&$3.data->position, $$.data.position);
+                    javaCheckForStaticPrefixStart(&$5.data->position, $$.data.position);
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -3553,56 +3553,56 @@ FieldAccess
 MethodInvocation
     :   Name _erfs_ {
             if (ComputingPossibleParameterCompletion()) {
-                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationN($1.d);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationN($1.data);
             }
         } '(' ArgumentList_opt ')'					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaMethodInvocationN($1.d,$5.d.t);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaMethodInvocationN($1.data,$5.data.t);
+                    $$.data.reference = NULL;
                     parsedClassInfo.erfsForParameterCompletion = $2;
                 } else {
-                    $$.d.position = javaGetNameStartingPosition($1.d);
-                    javaCheckForPrimaryStartInNameList($1.d, $$.d.position);
-                    javaCheckForStaticPrefixInNameList($1.d, $$.d.position);
-                    javaHandleDeclaratorParamPositions(&$1.d->id.position, &$4.d, $5.d.p, &$6.d);
+                    $$.data.position = javaGetNameStartingPosition($1.data);
+                    javaCheckForPrimaryStartInNameList($1.data, $$.data.position);
+                    javaCheckForStaticPrefixInNameList($1.data, $$.data.position);
+                    javaHandleDeclaratorParamPositions(&$1.data->id.position, &$4.data, $5.data.p, &$6.data);
                     PropagateBoundaries($$, $1, $6);
                 }
             }
         }
     |	Primary '.' Identifier _erfs_ {
             if (ComputingPossibleParameterCompletion()) {
-                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationT($1.d.typeModifier, $3.d);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationT($1.data.typeModifier, $3.data);
             }
         } '(' ArgumentList_opt ')'	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaMethodInvocationT($1.d.typeModifier, $3.d, $7.d.t);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaMethodInvocationT($1.data.typeModifier, $3.data, $7.data.t);
+                    $$.data.reference = NULL;
                     parsedClassInfo.erfsForParameterCompletion = $4;
                 } else {
-                    $$.d.position = $1.d.position;
-                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
-                    javaHandleDeclaratorParamPositions(&$3.d->position, &$6.d, $7.d.p, &$8.d);
+                    $$.data.position = $1.data.position;
+                    javaCheckForPrimaryStart(&$3.data->position, $$.data.position);
+                    javaHandleDeclaratorParamPositions(&$3.data->position, &$6.data, $7.data.p, &$8.data);
                     PropagateBoundaries($$, $1, $8);
                 }
             }
         }
     |	Super '.' Identifier _erfs_ {
             if (ComputingPossibleParameterCompletion()) {
-                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationS($1.d, $3.d);
+                parsedClassInfo.erfsForParameterCompletion = javaCrErfsForMethodInvocationS($1.data, $3.data);
             }
         } '(' ArgumentList_opt ')'	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaMethodInvocationS($1.d, $3.d, $7.d.t);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaMethodInvocationS($1.data, $3.data, $7.data.t);
+                    $$.data.reference = NULL;
                     parsedClassInfo.erfsForParameterCompletion = $4;
                 } else {
-                    $$.d.position = &$1.d->position;
-                    javaCheckForPrimaryStart(&$1.d->position, $$.d.position);
-                    javaCheckForPrimaryStart(&$3.d->position, $$.d.position);
-                    javaHandleDeclaratorParamPositions(&$3.d->position, &$6.d, $7.d.p, &$8.d);
+                    $$.data.position = &$1.data->position;
+                    javaCheckForPrimaryStart(&$1.data->position, $$.data.position);
+                    javaCheckForPrimaryStart(&$3.data->position, $$.data.position);
+                    javaHandleDeclaratorParamPositions(&$3.data->position, &$6.data, $7.data.p, &$8.data);
                     PropagateBoundaries($$, $1, $8);
                 }
             }
@@ -3620,13 +3620,13 @@ ArrayAccess
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     TypeModifier *tt;
-                    tt = javaClassifyToExpressionName($1.d, &($$.d.reference));
-                    if (tt->kind==TypeArray) $$.d.typeModifier = tt->next;
-                    else $$.d.typeModifier = &errorModifier;
-                    assert($$.d.typeModifier);
-                    $$.d.reference = NULL;
+                    tt = javaClassifyToExpressionName($1.data, &($$.data.reference));
+                    if (tt->kind==TypeArray) $$.data.typeModifier = tt->next;
+                    else $$.data.typeModifier = &errorModifier;
+                    assert($$.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = javaGetNameStartingPosition($1.d);
+                    $$.data.position = javaGetNameStartingPosition($1.data);
                     PropagateBoundaries($$, $1, $4);
                 }
             }
@@ -3634,12 +3634,12 @@ ArrayAccess
     |	PrimaryNoNewArray '[' Expression ']'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.d.typeModifier->kind==TypeArray) $$.d.typeModifier = $1.d.typeModifier->next;
-                    else $$.d.typeModifier = &errorModifier;
-                    assert($$.d.typeModifier);
-                    $$.d.reference = NULL;
+                    if ($1.data.typeModifier->kind==TypeArray) $$.data.typeModifier = $1.data.typeModifier->next;
+                    else $$.data.typeModifier = &errorModifier;
+                    assert($$.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = $1.d.position;
+                    $$.data.position = $1.data.position;
                     PropagateBoundaries($$, $1, $4);
                 }
             }
@@ -3652,11 +3652,11 @@ PostfixExpression
     |	Name											{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaClassifyToExpressionName($1.d, &($$.d.reference));
+                    $$.data.typeModifier = javaClassifyToExpressionName($1.data, &($$.data.reference));
                 } else {
-                    $$.d.position = javaGetNameStartingPosition($1.d);
-                    javaCheckForPrimaryStartInNameList($1.d, $$.d.position);
-                    javaCheckForStaticPrefixInNameList($1.d, $$.d.position);
+                    $$.data.position = javaGetNameStartingPosition($1.data);
+                    javaCheckForPrimaryStartInNameList($1.data, $$.data.position);
+                    javaCheckForStaticPrefixInNameList($1.data, $$.data.position);
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -3670,10 +3670,10 @@ PostIncrementExpression
     :   PostfixExpression INC_OP		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaCheckNumeric($1.d.typeModifier);
-                    reset_reference_usage($1.d.reference, UsageAddrUsed);
+                    $$.data.typeModifier = javaCheckNumeric($1.data.typeModifier);
+                    reset_reference_usage($1.data.reference, UsageAddrUsed);
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3684,10 +3684,10 @@ PostDecrementExpression
     :   PostfixExpression DEC_OP		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaCheckNumeric($1.d.typeModifier);
-                    reset_reference_usage($1.d.reference, UsageAddrUsed);
+                    $$.data.typeModifier = javaCheckNumeric($1.data.typeModifier);
+                    reset_reference_usage($1.data.reference, UsageAddrUsed);
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3700,10 +3700,10 @@ UnaryExpression
     |	'+' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaNumericPromotion($2.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaNumericPromotion($2.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3711,10 +3711,10 @@ UnaryExpression
     |	'-' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaNumericPromotion($2.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaNumericPromotion($2.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3726,10 +3726,10 @@ PreIncrementExpression
     :   INC_OP UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaCheckNumeric($2.d.typeModifier);
-                    reset_reference_usage($2.d.reference, UsageAddrUsed);
+                    $$.data.typeModifier = javaCheckNumeric($2.data.typeModifier);
+                    reset_reference_usage($2.data.reference, UsageAddrUsed);
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3740,10 +3740,10 @@ PreDecrementExpression
     :   DEC_OP UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaCheckNumeric($2.d.typeModifier);
-                    reset_reference_usage($2.d.reference, UsageAddrUsed);
+                    $$.data.typeModifier = javaCheckNumeric($2.data.typeModifier);
+                    reset_reference_usage($2.data.reference, UsageAddrUsed);
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3755,10 +3755,10 @@ UnaryExpressionNotPlusMinus
     |	'~' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaNumericPromotion($2.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaNumericPromotion($2.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3766,11 +3766,11 @@ UnaryExpressionNotPlusMinus
     |	'!' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($2.d.typeModifier->kind == TypeBoolean) $$.d.typeModifier = $2.d.typeModifier;
-                    else $$.d.typeModifier = &errorModifier;
-                    $$.d.reference = NULL;
+                    if ($2.data.typeModifier->kind == TypeBoolean) $$.data.typeModifier = $2.data.typeModifier;
+                    else $$.data.typeModifier = &errorModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3782,12 +3782,12 @@ CastExpression
     :   '(' ArrayType ')' UnaryExpression					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($2.d.symbol && $2.d.symbol->u.typeModifier);
-                    $$.d.typeModifier = $2.d.symbol->u.typeModifier;
-                    $$.d.reference = NULL;
-                    assert($$.d.typeModifier->kind == TypeArray);
+                    assert($2.data.symbol && $2.data.symbol->u.typeModifier);
+                    $$.data.typeModifier = $2.data.symbol->u.typeModifier;
+                    $$.data.reference = NULL;
+                    assert($$.data.typeModifier->kind == TypeArray);
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsBetween($4.b, cxRefPosition, $4.e)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
@@ -3804,10 +3804,10 @@ CastExpression
     |	'(' PrimitiveType ')' UnaryExpression				{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newTypeModifier($2.d.u, NULL, NULL);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newTypeModifier($2.data.u, NULL, NULL);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsBetween($4.b, cxRefPosition, $4.e)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
@@ -3824,10 +3824,10 @@ CastExpression
     |	'(' Expression ')' UnaryExpressionNotPlusMinus		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = $2.d.typeModifier;
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = $2.data.typeModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsBetween($4.b, cxRefPosition, $4.e)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
@@ -3859,11 +3859,11 @@ MultiplicativeExpression
     |	MultiplicativeExpression '*' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
-                                                                   $3.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaBinaryNumericPromotion($1.data.typeModifier,
+                                                                   $3.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3871,11 +3871,11 @@ MultiplicativeExpression
     |	MultiplicativeExpression '/' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
-                                                                   $3.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaBinaryNumericPromotion($1.data.typeModifier,
+                                                                   $3.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3883,11 +3883,11 @@ MultiplicativeExpression
     |	MultiplicativeExpression '%' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
-                                                                   $3.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaBinaryNumericPromotion($1.data.typeModifier,
+                                                                   $3.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3900,23 +3900,23 @@ AdditiveExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int st1, st2;
-                    st1 = javaIsStringType($1.d.typeModifier);
-                    st2 = javaIsStringType($3.d.typeModifier);
+                    st1 = javaIsStringType($1.data.typeModifier);
+                    st2 = javaIsStringType($3.data.typeModifier);
                     if (st1 && st2) {
-                        $$.d.typeModifier = $1.d.typeModifier;
+                        $$.data.typeModifier = $1.data.typeModifier;
                     } else if (st1) {
-                        $$.d.typeModifier = $1.d.typeModifier;
+                        $$.data.typeModifier = $1.data.typeModifier;
                         // TODO add reference to 'toString' on $3.d
                     } else if (st2) {
-                        $$.d.typeModifier = $3.d.typeModifier;
+                        $$.data.typeModifier = $3.data.typeModifier;
                         // TODO add reference to 'toString' on $1.d
                     } else {
-                        $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
-                                                                       $3.d.typeModifier);
+                        $$.data.typeModifier = javaBinaryNumericPromotion($1.data.typeModifier,
+                                                                       $3.data.typeModifier);
                     }
-                    $$.d.reference = NULL;
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3924,11 +3924,11 @@ AdditiveExpression
     |	AdditiveExpression '-' MultiplicativeExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
-                                                                   $3.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaBinaryNumericPromotion($1.data.typeModifier,
+                                                                   $3.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3940,10 +3940,10 @@ ShiftExpression
     |	ShiftExpression LEFT_OP AdditiveExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaNumericPromotion($1.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaNumericPromotion($1.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3951,10 +3951,10 @@ ShiftExpression
     |	ShiftExpression RIGHT_OP AdditiveExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaNumericPromotion($1.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaNumericPromotion($1.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3962,10 +3962,10 @@ ShiftExpression
     |	ShiftExpression URIGHT_OP AdditiveExpression	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaNumericPromotion($1.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaNumericPromotion($1.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3977,10 +3977,10 @@ RelationalExpression
     |	RelationalExpression '<' ShiftExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3988,10 +3988,10 @@ RelationalExpression
     |	RelationalExpression '>' ShiftExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3999,10 +3999,10 @@ RelationalExpression
     |	RelationalExpression LE_OP ShiftExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4010,10 +4010,10 @@ RelationalExpression
     |	RelationalExpression GE_OP ShiftExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4021,10 +4021,10 @@ RelationalExpression
     |	RelationalExpression INSTANCEOF ReferenceType		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4036,10 +4036,10 @@ EqualityExpression
     |	EqualityExpression EQ_OP RelationalExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4047,10 +4047,10 @@ EqualityExpression
     |	EqualityExpression NE_OP RelationalExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4062,11 +4062,11 @@ AndExpression
     |	AndExpression '&' EqualityExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaBitwiseLogicalPromotion($1.d.typeModifier,
-                                                                    $3.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaBitwiseLogicalPromotion($1.data.typeModifier,
+                                                                    $3.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4078,11 +4078,11 @@ ExclusiveOrExpression
     |	ExclusiveOrExpression '^' AndExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaBitwiseLogicalPromotion($1.d.typeModifier,
-                                                                    $3.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaBitwiseLogicalPromotion($1.data.typeModifier,
+                                                                    $3.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4094,11 +4094,11 @@ InclusiveOrExpression
     |	InclusiveOrExpression '|' ExclusiveOrExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaBitwiseLogicalPromotion($1.d.typeModifier,
-                                                                    $3.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaBitwiseLogicalPromotion($1.data.typeModifier,
+                                                                    $3.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4110,10 +4110,10 @@ ConditionalAndExpression
     |	ConditionalAndExpression AND_OP InclusiveOrExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4125,10 +4125,10 @@ ConditionalOrExpression
     |	ConditionalOrExpression OR_OP ConditionalAndExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = newSimpleTypeModifier(TypeBoolean);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4140,11 +4140,11 @@ ConditionalExpression
     |	ConditionalOrExpression '?' Expression ':' ConditionalExpression	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaConditionalPromotion($3.d.typeModifier,
-                                                                 $5.d.typeModifier);
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = javaConditionalPromotion($3.data.typeModifier,
+                                                                 $5.data.typeModifier);
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -4160,33 +4160,33 @@ Assignment
     :   LeftHandSide {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.d.typeModifier!=NULL && $1.d.typeModifier->kind == TypeStruct) {
-                        parsedInfo.lastAssignementStruct = $1.d.typeModifier->u.t;
+                    if ($1.data.typeModifier!=NULL && $1.data.typeModifier->kind == TypeStruct) {
+                        parsedInfo.lastAssignementStruct = $1.data.typeModifier->u.t;
                     }
                 }
-                $$.d = $1.d;
+                $$.data = $1.data;
             }
         } AssignmentOperator AssignmentExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     parsedInfo.lastAssignementStruct = NULL;
-                    if ($1.d.reference != NULL && options.serverOperation == OLO_EXTRACT) {
+                    if ($1.data.reference != NULL && options.serverOperation == OLO_EXTRACT) {
                         Reference *rr;
-                        rr = duplicateReference($1.d.reference);
-                        $1.d.reference->usage = NO_USAGE;
-                        if ($3.d.u == '=') {
+                        rr = duplicateReference($1.data.reference);
+                        $1.data.reference->usage = NO_USAGE;
+                        if ($3.data.u == '=') {
                             reset_reference_usage(rr, UsageLvalUsed);
                         } else {
                             reset_reference_usage(rr, UsageAddrUsed);
                         }
                     } else {
-                        if ($3.d.u == '=') {
-                            reset_reference_usage($1.d.reference, UsageLvalUsed);
+                        if ($3.data.u == '=') {
+                            reset_reference_usage($1.data.reference, UsageLvalUsed);
                         } else {
-                            reset_reference_usage($1.d.reference, UsageAddrUsed);
+                            reset_reference_usage($1.data.reference, UsageAddrUsed);
                         }
-                        $$.d.typeModifier = $1.d.typeModifier;
-                        $$.d.reference = NULL;
+                        $$.data.typeModifier = $1.data.typeModifier;
+                        $$.data.reference = NULL;
                     }
                 } else {
                     PropagateBoundaries($$, $1, $4);
@@ -4196,7 +4196,7 @@ Assignment
                             parsedPositions[SPP_ASSIGNMENT_END_POSITION] = $4.e;
                         }
                     }
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                 }
             }
         }
@@ -4205,11 +4205,11 @@ Assignment
 LeftHandSide
     :   Name					{
             if (regularPass()) {
-                $$.d.position = javaGetNameStartingPosition($1.d);
+                $$.data.position = javaGetNameStartingPosition($1.data);
                 if (! SyntaxPassOnly()) {
                     Reference *rr;
-                    $$.d.typeModifier = javaClassifyToExpressionName($1.d, &rr);
-                    $$.d.reference = rr;
+                    $$.data.typeModifier = javaClassifyToExpressionName($1.data, &rr);
+                    $$.data.reference = rr;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -4222,51 +4222,51 @@ LeftHandSide
 
 AssignmentOperator
     :   '='					{
-            if (regularPass()) $$.d.u = '=';
+            if (regularPass()) $$.data.u = '=';
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   MUL_ASSIGN          {
-            if (regularPass()) $$.d.u = MUL_ASSIGN;
+            if (regularPass()) $$.data.u = MUL_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   DIV_ASSIGN			{
-            if (regularPass()) $$.d.u = DIV_ASSIGN;
+            if (regularPass()) $$.data.u = DIV_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   MOD_ASSIGN			{
-            if (regularPass()) $$.d.u = MOD_ASSIGN;
+            if (regularPass()) $$.data.u = MOD_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   ADD_ASSIGN			{
-            if (regularPass()) $$.d.u = ADD_ASSIGN;
+            if (regularPass()) $$.data.u = ADD_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   SUB_ASSIGN			{
-            if (regularPass()) $$.d.u = SUB_ASSIGN;
+            if (regularPass()) $$.data.u = SUB_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   LEFT_ASSIGN			{
-            if (regularPass()) $$.d.u = LEFT_ASSIGN;
+            if (regularPass()) $$.data.u = LEFT_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   RIGHT_ASSIGN		{
-            if (regularPass()) $$.d.u = RIGHT_ASSIGN;
+            if (regularPass()) $$.data.u = RIGHT_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   URIGHT_ASSIGN		{
-            if (regularPass()) $$.d.u = URIGHT_ASSIGN;
+            if (regularPass()) $$.data.u = URIGHT_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   AND_ASSIGN			{
-            if (regularPass()) $$.d.u = AND_ASSIGN;
+            if (regularPass()) $$.data.u = AND_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   XOR_ASSIGN			{
-            if (regularPass()) $$.d.u = XOR_ASSIGN;
+            if (regularPass()) $$.data.u = XOR_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   OR_ASSIGN			{
-            if (regularPass()) $$.d.u = OR_ASSIGN;
+            if (regularPass()) $$.data.u = OR_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -4276,10 +4276,10 @@ Expression
     |	error					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = &errorModifier;
-                    $$.d.reference = NULL;
+                    $$.data.typeModifier = &errorModifier;
+                    $$.data.reference = NULL;
                 } else {
-                    $$.d.position = NULL_POS;
+                    $$.data.position = NULL_POS;
                     SetNullBoundariesFor($$);
                 }
             }

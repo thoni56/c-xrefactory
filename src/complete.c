@@ -1659,12 +1659,12 @@ void javaHintVariableName(Completions*c) {
     if (s_lastReturnedLexem != IDENTIFIER)
         return;
 
-    sprintf(ss, "%s", uniyylval->ast_id.d->name);
+    sprintf(ss, "%s", uniyylval->ast_id.data->name);
     //&sprintf(ss, "%s", yytext);
     if (ss[0]!=0) ss[0] = tolower(ss[0]);
     name = StackMemoryAllocC(strlen(ss)+1, char);
     strcpy(name, ss);
-    sprintf(ss, "%s = new %s", name, uniyylval->ast_id.d->name);
+    sprintf(ss, "%s = new %s", name, uniyylval->ast_id.data->name);
     //&sprintf(ss, "%s = new %s", name, yytext);
     affect1 = StackMemoryAllocC(strlen(ss)+1, char);
     strcpy(affect1, ss);
