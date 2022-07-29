@@ -523,31 +523,31 @@ typedef struct nestedConstrTokenType {
     struct typeModifier *typeModifier;
     struct idList       *idList;
     struct position     *position;
-} S_nestedConstrTokenType;
+} NestedConstrTokenType;
 
 typedef struct unsignedPositionPair {
     unsigned         u;
     struct position *position;
-} S_unsignedPositionPair;
+} UnsignedPositionPair;
 
 typedef struct symbolPositionPair {
     struct symbol   *symbol;
     struct position *position;
-} S_symbolPositionPair;
+} SymbolPositionPair;
 
 typedef struct symbolPositionListPair {
     struct symbol       *symbol;
-    struct positionList *p;
-} S_symbolPositionListPair;
+    struct positionList *positionList;
+} SymbolPositionListPair;
 
 typedef struct intPair {
     int i1;
     int i2;
-} S_intPair;
+} IntPair;
 
 typedef struct typeModifiersListPositionListPair {
-    struct typeModifierList *t;
-    struct positionList     *p;
-} S_typeModifiersListPositionListPair;
+    struct typeModifierList *typeModifierList;
+    struct positionList     *positionList;
+} TypeModifiersListPositionListPair;
 
 #endif

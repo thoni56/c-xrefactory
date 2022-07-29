@@ -1743,7 +1743,7 @@ MethodDeclarator
                         assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
                         initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.data->position, &$3.data, $4.data.p, &$5.data);
+                        javaHandleDeclaratorParamPositions(&$1.data->position, &$3.data, $4.data.positionList, &$5.data);
                         PropagateBoundaries($$, $1, $5);
                     }
                 }
@@ -1772,7 +1772,7 @@ MethodDeclarator
 
 FormalParameterList_opt:					{
             $$.data.symbol = NULL;
-            $$.data.p = NULL;
+            $$.data.positionList = NULL;
             SetNullBoundariesFor($$);
         }
     |	FormalParameterList					/*& {$$ = $1;} &*/
@@ -1783,8 +1783,8 @@ FormalParameterList
             if (! SyntaxPassOnly()) {
                 $$.data.symbol = $1.data;
             } else {
-                $$.data.p = NULL;
-                appendPositionToList(&$$.data.p, &noPosition);
+                $$.data.positionList = NULL;
+                appendPositionToList(&$$.data.positionList, &noPosition);
                 PropagateBoundaries($$, $1, $1);
             }
         }
@@ -1794,7 +1794,7 @@ FormalParameterList
                     $$.data = $1.data;
                     LIST_APPEND(Symbol, $$.data.symbol, $3.data);
                 } else {
-                    appendPositionToList(&$$.data.p, &$2.data);
+                    appendPositionToList(&$$.data.positionList, &$2.data);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -1984,7 +1984,7 @@ ConstructorDeclarator
                         assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
                         initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.data->position, &$3.data, $4.data.p, &$5.data);
+                        javaHandleDeclaratorParamPositions(&$1.data->position, &$3.data, $4.data.positionList, &$5.data);
                         PropagateBoundaries($$, $1, $5);
                     }
                 }
@@ -2021,10 +2021,10 @@ ExplicitConstructorInvocation
             } '(' ArgumentList_opt ')'			{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaConstructorInvocation(s_javaStat->thisClass, &($1.data->position), $5.data.t);
+                        javaConstructorInvocation(s_javaStat->thisClass, &($1.data->position), $5.data.typeModifierList);
                         parsedClassInfo.erfsForParameterCompletion = $2;
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.data->position, &$4.data, $5.data.p, &$6.data);
+                        javaHandleDeclaratorParamPositions(&$1.data->position, &$4.data, $5.data.positionList, &$6.data);
                         PropagateBoundaries($$, $1, $6);
                     }
                 }
@@ -2039,10 +2039,10 @@ ExplicitConstructorInvocation
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &($1.data->position), $5.data.t);
+                        javaConstructorInvocation(ss, &($1.data->position), $5.data.typeModifierList);
                         parsedClassInfo.erfsForParameterCompletion = $2;
                     } else {
-                        javaHandleDeclaratorParamPositions(&$1.data->position, &$4.data, $5.data.p, &$6.data);
+                        javaHandleDeclaratorParamPositions(&$1.data->position, &$4.data, $5.data.positionList, &$6.data);
                         PropagateBoundaries($$, $1, $6);
                     }
                 }
@@ -2057,10 +2057,10 @@ ExplicitConstructorInvocation
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &($3.data->position), $7.data.t);
+                        javaConstructorInvocation(ss, &($3.data->position), $7.data.typeModifierList);
                         parsedClassInfo.erfsForParameterCompletion = $4;
                     } else {
-                        javaHandleDeclaratorParamPositions(&$3.data->position, &$6.data, $7.data.p, &$8.data);
+                        javaHandleDeclaratorParamPositions(&$3.data->position, &$6.data, $7.data.positionList, &$8.data);
                         PropagateBoundaries($$, $1, $8);
                     }
                 }
@@ -3117,11 +3117,11 @@ NestedConstructorInvocation
                     } else {
                         $$.data.typeModifier = &errorModifier;
                     }
-                    javaHandleDeclaratorParamPositions(&$4.data->id.position, &$7.data, $8.data.p, &$9.data);
+                    javaHandleDeclaratorParamPositions(&$4.data->id.position, &$7.data, $8.data.positionList, &$9.data);
                     assert($$.data.typeModifier);
                     $$.data.idList = $4.data;
                     if ($$.data.typeModifier->kind != TypeError) {
-                        javaConstructorInvocation($$.data.typeModifier->u.t, &($4.data->id.position), $8.data.t);
+                        javaConstructorInvocation($$.data.typeModifier->u.t, &($4.data->id.position), $8.data.typeModifierList);
                     }
                 } else {
                     $$.data.position = $1.data.position;
@@ -3147,11 +3147,11 @@ NestedConstructorInvocation
                     $$.data.typeModifier = javaNewAfterName($1.data, $3.data, $4.data);
                     $$.data.idList = $4.data;
                     if ($$.data.typeModifier->kind != TypeError) {
-                        javaConstructorInvocation($$.data.typeModifier->u.t, &($4.data->id.position), $8.data.t);
+                        javaConstructorInvocation($$.data.typeModifier->u.t, &($4.data->id.position), $8.data.typeModifierList);
                     }
                 } else {
                     $$.data.position = javaGetNameStartingPosition($1.data);
-                    javaHandleDeclaratorParamPositions(&$4.data->id.position, &$7.data, $8.data.p, &$9.data);
+                    javaHandleDeclaratorParamPositions(&$4.data->id.position, &$7.data, $8.data.positionList, &$9.data);
                     PropagateBoundaries($$, $1, $9);
                 }
             }
@@ -3214,12 +3214,12 @@ ClassInstanceCreationExpression
                                 } &*/
                         }
                     }
-                    javaConstructorInvocation(ss, &($3.data->id.position), $5.data.t);
+                    javaConstructorInvocation(ss, &($3.data->id.position), $5.data.typeModifierList);
                     tt = javaTypeNameDefinition($3.data);
                     $$.data.typeModifier = tt->u.typeModifier;
                     $$.data.reference = NULL;
                 } else {
-                    javaHandleDeclaratorParamPositions(&$3.data->id.position, &$4.data, $5.data.p, &$6.data);
+                    javaHandleDeclaratorParamPositions(&$3.data->id.position, &$4.data, $5.data.positionList, &$6.data);
                     $$.data.position = &$1.data->position;
                     PropagateBoundaries($$, $1, $6);
                 }
@@ -3234,9 +3234,9 @@ ClassInstanceCreationExpression
                         javaClassifyToTypeName($3.data,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         $<symbol>$ = javaTypeNameDefinition($3.data);
                         ss = javaTypeSymbolUsage($3.data, AccessDefault);
-                        javaConstructorInvocation(ss, &($3.data->id.position), $5.data.t);
+                        javaConstructorInvocation(ss, &($3.data->id.position), $5.data.typeModifierList);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$3.data->id.position, &$4.data, $5.data.p, &$6.data);
+                        javaHandleDeclaratorParamPositions(&$3.data->id.position, &$4.data, $5.data.positionList, &$6.data);
                         // seems that there is no problem like in previous case,
                         // interfaces are never inner.
                     }
@@ -3326,8 +3326,8 @@ ClassInstanceCreationExpression
     ;
 
 ArgumentList_opt:				{
-            $$.data.t = NULL;
-            $$.data.p = NULL;
+            $$.data.typeModifierList = NULL;
+            $$.data.positionList = NULL;
             SetNullBoundariesFor($$);
         }
     | ArgumentList				/*& { $$.data = $1.data; } &*/
@@ -3337,13 +3337,13 @@ ArgumentList
     :   Expression									{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.data.t = newTypeModifierList($1.data.typeModifier);
+                    $$.data.typeModifierList = newTypeModifierList($1.data.typeModifier);
                     if (parsedClassInfo.erfsForParameterCompletion!=NULL) {
-                        parsedClassInfo.erfsForParameterCompletion->params = $$.data.t;
+                        parsedClassInfo.erfsForParameterCompletion->params = $$.data.typeModifierList;
                     }
                 } else {
-                    $$.data.p = NULL;
-                    appendPositionToList(&$$.data.p, &noPosition);
+                    $$.data.positionList = NULL;
+                    appendPositionToList(&$$.data.positionList, &noPosition);
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -3354,10 +3354,10 @@ ArgumentList
                     S_typeModifierList *p;
                     $$.data = $1.data;
                     p = newTypeModifierList($3.data.typeModifier);
-                    LIST_APPEND(S_typeModifierList, $$.data.t, p);
-                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) parsedClassInfo.erfsForParameterCompletion->params = $$.data.t;
+                    LIST_APPEND(S_typeModifierList, $$.data.typeModifierList, p);
+                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) parsedClassInfo.erfsForParameterCompletion->params = $$.data.typeModifierList;
                 } else {
-                    appendPositionToList(&$$.data.p, &$2.data);
+                    appendPositionToList(&$$.data.positionList, &$2.data);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3560,14 +3560,14 @@ MethodInvocation
         } '(' ArgumentList_opt ')'					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.data.typeModifier = javaMethodInvocationN($1.data,$5.data.t);
+                    $$.data.typeModifier = javaMethodInvocationN($1.data,$5.data.typeModifierList);
                     $$.data.reference = NULL;
                     parsedClassInfo.erfsForParameterCompletion = $2;
                 } else {
                     $$.data.position = javaGetNameStartingPosition($1.data);
                     javaCheckForPrimaryStartInNameList($1.data, $$.data.position);
                     javaCheckForStaticPrefixInNameList($1.data, $$.data.position);
-                    javaHandleDeclaratorParamPositions(&$1.data->id.position, &$4.data, $5.data.p, &$6.data);
+                    javaHandleDeclaratorParamPositions(&$1.data->id.position, &$4.data, $5.data.positionList, &$6.data);
                     PropagateBoundaries($$, $1, $6);
                 }
             }
@@ -3579,13 +3579,13 @@ MethodInvocation
         } '(' ArgumentList_opt ')'	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.data.typeModifier = javaMethodInvocationT($1.data.typeModifier, $3.data, $7.data.t);
+                    $$.data.typeModifier = javaMethodInvocationT($1.data.typeModifier, $3.data, $7.data.typeModifierList);
                     $$.data.reference = NULL;
                     parsedClassInfo.erfsForParameterCompletion = $4;
                 } else {
                     $$.data.position = $1.data.position;
                     javaCheckForPrimaryStart(&$3.data->position, $$.data.position);
-                    javaHandleDeclaratorParamPositions(&$3.data->position, &$6.data, $7.data.p, &$8.data);
+                    javaHandleDeclaratorParamPositions(&$3.data->position, &$6.data, $7.data.positionList, &$8.data);
                     PropagateBoundaries($$, $1, $8);
                 }
             }
@@ -3597,14 +3597,14 @@ MethodInvocation
         } '(' ArgumentList_opt ')'	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.data.typeModifier = javaMethodInvocationS($1.data, $3.data, $7.data.t);
+                    $$.data.typeModifier = javaMethodInvocationS($1.data, $3.data, $7.data.typeModifierList);
                     $$.data.reference = NULL;
                     parsedClassInfo.erfsForParameterCompletion = $4;
                 } else {
                     $$.data.position = &$1.data->position;
                     javaCheckForPrimaryStart(&$1.data->position, $$.data.position);
                     javaCheckForPrimaryStart(&$3.data->position, $$.data.position);
-                    javaHandleDeclaratorParamPositions(&$3.data->position, &$6.data, $7.data.p, &$8.data);
+                    javaHandleDeclaratorParamPositions(&$3.data->position, &$6.data, $7.data.positionList, &$8.data);
                     PropagateBoundaries($$, $1, $8);
                 }
             }

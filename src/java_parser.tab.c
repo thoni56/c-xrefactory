@@ -4337,7 +4337,7 @@ case 158:
                         assert(yyval.ast_symbol.data && yyval.ast_symbol.data->u.typeModifier && yyval.ast_symbol.data->u.typeModifier->kind == TypeFunction);
                         initFunctionTypeModifier(&yyval.ast_symbol.data->u.typeModifier->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                         PropagateBoundaries(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 }
@@ -4373,7 +4373,7 @@ case 161:
 #line 1773 "java_parser.y"
 {
             yyval.ast_symbolPositionListPair.data.symbol = NULL;
-            yyval.ast_symbolPositionListPair.data.p = NULL;
+            yyval.ast_symbolPositionListPair.data.positionList = NULL;
             SetNullBoundariesFor(yyval.ast_symbolPositionListPair);
         }
 break;
@@ -4383,8 +4383,8 @@ case 163:
             if (! SyntaxPassOnly()) {
                 yyval.ast_symbolPositionListPair.data.symbol = yyvsp[0].ast_symbol.data;
             } else {
-                yyval.ast_symbolPositionListPair.data.p = NULL;
-                appendPositionToList(&yyval.ast_symbolPositionListPair.data.p, &noPosition);
+                yyval.ast_symbolPositionListPair.data.positionList = NULL;
+                appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &noPosition);
                 PropagateBoundaries(yyval.ast_symbolPositionListPair, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
             }
         }
@@ -4397,7 +4397,7 @@ case 164:
                     yyval.ast_symbolPositionListPair.data = yyvsp[-2].ast_symbolPositionListPair.data;
                     LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.data.symbol, yyvsp[0].ast_symbol.data);
                 } else {
-                    appendPositionToList(&yyval.ast_symbolPositionListPair.data.p, &yyvsp[-1].ast_position.data);
+                    appendPositionToList(&yyval.ast_symbolPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
                     PropagateBoundaries(yyval.ast_symbolPositionListPair, yyvsp[-2].ast_symbolPositionListPair, yyvsp[0].ast_symbol);
                 }
             }
@@ -4603,7 +4603,7 @@ case 179:
                         assert(yyval.ast_symbol.data && yyval.ast_symbol.data->u.typeModifier && yyval.ast_symbol.data->u.typeModifier->kind == TypeFunction);
                         initFunctionTypeModifier(&yyval.ast_symbol.data->u.typeModifier->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                         PropagateBoundaries(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 }
@@ -4651,10 +4651,10 @@ case 185:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaConstructorInvocation(s_javaStat->thisClass, &(yyvsp[-5].ast_id.data->position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                        javaConstructorInvocation(s_javaStat->thisClass, &(yyvsp[-5].ast_id.data->position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                         parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
                     }
                 }
@@ -4675,10 +4675,10 @@ case 187:
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &(yyvsp[-5].ast_id.data->position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                        javaConstructorInvocation(ss, &(yyvsp[-5].ast_id.data->position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                         parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
                     }
                 }
@@ -4699,10 +4699,10 @@ case 189:
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &(yyvsp[-5].ast_id.data->position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                        javaConstructorInvocation(ss, &(yyvsp[-5].ast_id.data->position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                         parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                         PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_expressionType, yyvsp[0].ast_position);
                     }
                 }
@@ -5901,11 +5901,11 @@ case 361:
                     } else {
                         yyval.ast_nestedConstrTokenType.data.typeModifier = &errorModifier;
                     }
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                     assert(yyval.ast_nestedConstrTokenType.data.typeModifier);
                     yyval.ast_nestedConstrTokenType.data.idList = yyvsp[-5].ast_idList.data;
                     if (yyval.ast_nestedConstrTokenType.data.typeModifier->kind != TypeError) {
-                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.data.typeModifier->u.t, &(yyvsp[-5].ast_idList.data->id.position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.data.typeModifier->u.t, &(yyvsp[-5].ast_idList.data->id.position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                     }
                 } else {
                     yyval.ast_nestedConstrTokenType.data.position = yyvsp[-8].ast_expressionType.data.position;
@@ -5936,11 +5936,11 @@ case 363:
                     yyval.ast_nestedConstrTokenType.data.typeModifier = javaNewAfterName(yyvsp[-8].ast_idList.data, yyvsp[-6].ast_id.data, yyvsp[-5].ast_idList.data);
                     yyval.ast_nestedConstrTokenType.data.idList = yyvsp[-5].ast_idList.data;
                     if (yyval.ast_nestedConstrTokenType.data.typeModifier->kind != TypeError) {
-                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.data.typeModifier->u.t, &(yyvsp[-5].ast_idList.data->id.position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.data.typeModifier->u.t, &(yyvsp[-5].ast_idList.data->id.position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                     }
                 } else {
                     yyval.ast_nestedConstrTokenType.data.position = javaGetNameStartingPosition(yyvsp[-8].ast_idList.data);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                     PropagateBoundaries(yyval.ast_nestedConstrTokenType, yyvsp[-8].ast_idList, yyvsp[0].ast_position);
                 }
             }
@@ -6003,12 +6003,12 @@ case 365:
                                 } &*/
                         }
                     }
-                    javaConstructorInvocation(ss, &(yyvsp[-3].ast_idList.data->id.position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                    javaConstructorInvocation(ss, &(yyvsp[-3].ast_idList.data->id.position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                     tt = javaTypeNameDefinition(yyvsp[-3].ast_idList.data);
                     yyval.ast_expressionType.data.typeModifier = tt->u.typeModifier;
                     yyval.ast_expressionType.data.reference = NULL;
                 } else {
-                    javaHandleDeclaratorParamPositions(&yyvsp[-3].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-3].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                     yyval.ast_expressionType.data.position = &yyvsp[-5].ast_id.data->position;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-5].ast_id, yyvsp[0].ast_position);
                 }
@@ -6025,9 +6025,9 @@ case 366:
                         javaClassifyToTypeName(yyvsp[-3].ast_idList.data,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         yyval.symbol = javaTypeNameDefinition(yyvsp[-3].ast_idList.data);
                         ss = javaTypeSymbolUsage(yyvsp[-3].ast_idList.data, AccessDefault);
-                        javaConstructorInvocation(ss, &(yyvsp[-3].ast_idList.data->id.position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                        javaConstructorInvocation(ss, &(yyvsp[-3].ast_idList.data->id.position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-3].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-3].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                         /* seems that there is no problem like in previous case,*/
                         /* interfaces are never inner.*/
                     }
@@ -6133,8 +6133,8 @@ break;
 case 375:
 #line 3328 "java_parser.y"
 {
-            yyval.ast_typeModifiersListPositionListPair.data.t = NULL;
-            yyval.ast_typeModifiersListPositionListPair.data.p = NULL;
+            yyval.ast_typeModifiersListPositionListPair.data.typeModifierList = NULL;
+            yyval.ast_typeModifiersListPositionListPair.data.positionList = NULL;
             SetNullBoundariesFor(yyval.ast_typeModifiersListPositionListPair);
         }
 break;
@@ -6143,13 +6143,13 @@ case 377:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_typeModifiersListPositionListPair.data.t = newTypeModifierList(yyvsp[0].ast_expressionType.data.typeModifier);
+                    yyval.ast_typeModifiersListPositionListPair.data.typeModifierList = newTypeModifierList(yyvsp[0].ast_expressionType.data.typeModifier);
                     if (parsedClassInfo.erfsForParameterCompletion!=NULL) {
-                        parsedClassInfo.erfsForParameterCompletion->params = yyval.ast_typeModifiersListPositionListPair.data.t;
+                        parsedClassInfo.erfsForParameterCompletion->params = yyval.ast_typeModifiersListPositionListPair.data.typeModifierList;
                     }
                 } else {
-                    yyval.ast_typeModifiersListPositionListPair.data.p = NULL;
-                    appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.data.p, &noPosition);
+                    yyval.ast_typeModifiersListPositionListPair.data.positionList = NULL;
+                    appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.data.positionList, &noPosition);
                     PropagateBoundaries(yyval.ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
@@ -6163,10 +6163,10 @@ case 378:
                     S_typeModifierList *p;
                     yyval.ast_typeModifiersListPositionListPair.data = yyvsp[-2].ast_typeModifiersListPositionListPair.data;
                     p = newTypeModifierList(yyvsp[0].ast_expressionType.data.typeModifier);
-                    LIST_APPEND(S_typeModifierList, yyval.ast_typeModifiersListPositionListPair.data.t, p);
-                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) parsedClassInfo.erfsForParameterCompletion->params = yyval.ast_typeModifiersListPositionListPair.data.t;
+                    LIST_APPEND(S_typeModifierList, yyval.ast_typeModifiersListPositionListPair.data.typeModifierList, p);
+                    if (parsedClassInfo.erfsForParameterCompletion!=NULL) parsedClassInfo.erfsForParameterCompletion->params = yyval.ast_typeModifiersListPositionListPair.data.typeModifierList;
                 } else {
-                    appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.data.p, &yyvsp[-1].ast_position.data);
+                    appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[-1].ast_position.data);
                     PropagateBoundaries(yyval.ast_typeModifiersListPositionListPair, yyvsp[-2].ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType);
                 }
             }
@@ -6406,14 +6406,14 @@ case 399:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_expressionType.data.typeModifier = javaMethodInvocationN(yyvsp[-5].ast_idList.data,yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                    yyval.ast_expressionType.data.typeModifier = javaMethodInvocationN(yyvsp[-5].ast_idList.data,yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                     yyval.ast_expressionType.data.reference = NULL;
                     parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                 } else {
                     yyval.ast_expressionType.data.position = javaGetNameStartingPosition(yyvsp[-5].ast_idList.data);
                     javaCheckForPrimaryStartInNameList(yyvsp[-5].ast_idList.data, yyval.ast_expressionType.data.position);
                     javaCheckForStaticPrefixInNameList(yyvsp[-5].ast_idList.data, yyval.ast_expressionType.data.position);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.data->id.position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-5].ast_idList, yyvsp[0].ast_position);
                 }
             }
@@ -6432,13 +6432,13 @@ case 401:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_expressionType.data.typeModifier = javaMethodInvocationT(yyvsp[-7].ast_expressionType.data.typeModifier, yyvsp[-5].ast_id.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                    yyval.ast_expressionType.data.typeModifier = javaMethodInvocationT(yyvsp[-7].ast_expressionType.data.typeModifier, yyvsp[-5].ast_id.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                     yyval.ast_expressionType.data.reference = NULL;
                     parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                 } else {
                     yyval.ast_expressionType.data.position = yyvsp[-7].ast_expressionType.data.position;
                     javaCheckForPrimaryStart(&yyvsp[-5].ast_id.data->position, yyval.ast_expressionType.data.position);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-7].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
@@ -6457,14 +6457,14 @@ case 403:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_expressionType.data.typeModifier = javaMethodInvocationS(yyvsp[-7].ast_id.data, yyvsp[-5].ast_id.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.t);
+                    yyval.ast_expressionType.data.typeModifier = javaMethodInvocationS(yyvsp[-7].ast_id.data, yyvsp[-5].ast_id.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                     yyval.ast_expressionType.data.reference = NULL;
                     parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                 } else {
                     yyval.ast_expressionType.data.position = &yyvsp[-7].ast_id.data->position;
                     javaCheckForPrimaryStart(&yyvsp[-7].ast_id.data->position, yyval.ast_expressionType.data.position);
                     javaCheckForPrimaryStart(&yyvsp[-5].ast_id.data->position, yyval.ast_expressionType.data.position);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.p, &yyvsp[0].ast_position.data);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-7].ast_id, yyvsp[0].ast_position);
                 }
             }

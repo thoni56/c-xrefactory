@@ -1249,7 +1249,7 @@ declarator2
         $$.data = $1.data;
         p = addComposedType($$.data, TypeFunction);
         initFunctionTypeModifier(&p->u.f , $3.data.symbol);
-        handleDeclaratorParamPositions($1.data, &$2.data, $3.data.p, &$4.data, 1);
+        handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, 1);
     }
     | declarator2 '(' parameter_identifier_list ')'     {
         TypeModifier *p;
@@ -1257,7 +1257,7 @@ declarator2
         $$.data = $1.data;
         p = addComposedType($$.data, TypeFunction);
         initFunctionTypeModifier(&p->u.f , $3.data.symbol);
-        handleDeclaratorParamPositions($1.data, &$2.data, $3.data.p, &$4.data, 1);
+        handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, 1);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;
@@ -1367,7 +1367,7 @@ parameter_identifier_list
         $$.data = $1.data;
 
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
-        appendPositionToList(&$$.data.p, &$2.data);
+        appendPositionToList(&$$.data.positionList, &$2.data);
     }
     ;
 
@@ -1376,14 +1376,14 @@ identifier_list
         Symbol *p;
         p = newSymbol($1.data->name, $1.data->name, $1.data->position);
         $$.data.symbol = p;
-        $$.data.p = NULL;
+        $$.data.positionList = NULL;
     }
     | identifier_list ',' identifier            {
         Symbol        *p;
         p = newSymbol($3.data->name, $3.data->name, $3.data->position);
         $$.data = $1.data;
         LIST_APPEND(Symbol, $$.data.symbol, p);
-        appendPositionToList(&$$.data.p, &$2.data);
+        appendPositionToList(&$$.data.positionList, &$2.data);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;
@@ -1399,19 +1399,19 @@ parameter_type_list
         $$.data = $1.data;
 
         LIST_APPEND(Symbol, $$.data.symbol, symbol);
-        appendPositionToList(&$$.data.p, &$2.data);
+        appendPositionToList(&$$.data.positionList, &$2.data);
     }
     ;
 
 parameter_list
     : parameter_declaration                         {
         $$.data.symbol = $1.data;
-        $$.data.p = NULL;
+        $$.data.positionList = NULL;
     }
     | parameter_list ',' parameter_declaration      {
         $$.data = $1.data;
         LIST_APPEND(Symbol, $1.data.symbol, $3.data);
-        appendPositionToList(&$$.data.p, &$2.data);
+        appendPositionToList(&$$.data.positionList, &$2.data);
     }
     ;
 
