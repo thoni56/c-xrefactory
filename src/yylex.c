@@ -968,9 +968,9 @@ enum deleteUntilReturn {
 static void genCppIfElseReference(int level, Position *pos, int usage) {
     char                ttt[TMP_STRING_SIZE];
     Position			dp;
-    S_cppIfStack       *ss;
+    CppIfStack       *ss;
     if (level > 0) {
-      PPM_ALLOC(ss, S_cppIfStack);
+      PPM_ALLOC(ss, CppIfStack);
       ss->position = *pos;
       ss->next = currentFile.ifStack;
       currentFile.ifStack = ss;

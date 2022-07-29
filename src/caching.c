@@ -377,7 +377,7 @@ void cacheInclude(int fileNum) {
 
 static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmMemoryIndex,
                            int cxMemoryIndex, int mbMemoryIndex, char *lbcc, short int ibi,
-                           short int lineNumber, short int ifDepth, S_cppIfStack *ifStack,
+                           short int lineNumber, short int ifDepth, CppIfStack *ifStack,
                            S_javaStat *javaCached, Counters counters) {
     cachePoint->topBlock = topBlock;
     cachePoint->topBlockContent = *topBlock;

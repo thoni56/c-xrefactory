@@ -511,13 +511,6 @@ typedef struct currentlyParsedInfo {
     struct symbol    *lastAssignementStruct;
 } CurrentlyParsedInfo;
 
-/* ************************ PRE-PROCESSOR **************************** */
-
-typedef struct cppIfStack {
-    struct position    position;
-    struct cppIfStack *next;
-} S_cppIfStack;
-
 /* *********************************************************** */
 
 typedef struct expressionTokenType {

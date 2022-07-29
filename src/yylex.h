@@ -5,6 +5,13 @@
 #include "editor.h"
 #include "lexem.h"
 
+/* ************************ PRE-PROCESSOR **************************** */
+
+typedef struct cppIfStack {
+    struct position    position;
+    struct cppIfStack *next;
+} CppIfStack;
+
 typedef struct macroBody {
     short int argCount;
     int size;
