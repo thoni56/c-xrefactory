@@ -7,6 +7,8 @@
 #include "semact.h"
 #include "log.h"
 
+#include "ast.h"
+
 #define YYSTYPE CEXPYYSTYPE
 #include "c_parser.tab.h"				/* tokens from grammars and overridden YYSTYPE */
 #undef  YYSTYPE

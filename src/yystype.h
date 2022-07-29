@@ -23,7 +23,7 @@ Ast_exprTokenType                      ast_expressionType;
 Ast_intPair                            ast_intPair;
 Ast_whileExtractData                   ast_whileData;
 Ast_position                           ast_position;
-Ast_unsPositionPair                    ast_unsignedPositionPair;
+Ast_unsignedPositionPair                    ast_unsignedPositionPair;
 Ast_symbolPositionPair                 ast_symbolPositionPair;
 Ast_symbolPositionListPair             ast_symbolPositionListPair;
 Ast_positionList                       ast_positionList;

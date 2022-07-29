@@ -32,6 +32,8 @@
 #include "symbol.h"
 #include "yylex.h"
 
+#include "ast.h"
+
 #include "log.h"
 
 

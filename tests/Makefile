@@ -21,7 +21,7 @@ void:
 all: quick slow
 
 .PHONY:quick
-quick: autodiscovered_tests c-xref-test
+quick: autodiscovered_tests #c-xref-test
 
 .PHONY: slow
 slow: ffmpeg-test systemd-test

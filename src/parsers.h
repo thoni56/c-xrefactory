@@ -22,6 +22,7 @@
 #endif
 
 #include "proto.h"
+#include "ast.h"
 
 #include "lexem.h"
 typedef union {

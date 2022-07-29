@@ -60,6 +60,8 @@
 #include "filetable.h"
 #include "typemodifier.h"
 
+#include "ast.h"
+
 #include "log.h"
 
 
