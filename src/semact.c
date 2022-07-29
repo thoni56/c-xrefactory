@@ -1056,30 +1056,32 @@ void setParamPositionForParameterBeyondRange(Position *rpar) {
 static void handleParameterPositions(Position *lpar, PositionList *commas, Position *rpar, bool hasParam) {
     int           i, argn;
     Position     *p1, *p2;
-    PositionList *pp;
+    PositionList *list;
+
     if (!hasParam) {
         setParamPositionForFunctionWithoutParams(lpar);
         return;
     }
+
     argn = options.olcxGotoVal;
     if (argn == 0) {
         setParamPositionForParameter0(lpar);
     } else {
-        pp = commas;
+        list = commas;
         p1 = lpar;
         i  = 1;
-        if (pp != NULL)
-            p2 = &pp->p;
+        if (list != NULL)
+            p2 = &list->p;
         else
             p2 = rpar;
-        for (i++; pp != NULL && i <= argn; pp = pp->next, i++) {
-            p1 = &pp->p;
-            if (pp->next != NULL)
-                p2 = &pp->next->p;
+        for (i++; list != NULL && i <= argn; list = list->next, i++) {
+            p1 = &list->p;
+            if (list->next != NULL)
+                p2 = &list->next->p;
             else
                 p2 = rpar;
         }
-        if (pp == NULL && i <= argn) {
+        if (list == NULL && i <= argn) {
             setParamPositionForParameterBeyondRange(rpar);
         } else {
             parameterBeginPosition = *p1;
