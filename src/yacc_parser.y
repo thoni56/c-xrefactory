@@ -598,8 +598,7 @@ argument_expr_list_opt
         $$.d = NULL;
     }
     |   argument_expr_list          {
-            $$.d = StackMemoryAlloc(PositionList);
-            fillPositionList($$.d, noPosition, $1.d);
+            $$.d = newPositionList(noPosition, $1.d);
         }
     ;
 

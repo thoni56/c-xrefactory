@@ -1033,8 +1033,7 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
 
 void appendPositionToList(PositionList **list, Position *pos) {
     PositionList *ppl;
-    ppl = StackMemoryAlloc(PositionList);
-    fillPositionList(ppl, *pos, NULL);
+    ppl = newPositionList(*pos, NULL);
     LIST_APPEND(PositionList, (*list), ppl);
 }
 

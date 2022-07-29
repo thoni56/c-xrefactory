@@ -15,7 +15,6 @@ typedef struct positionList {
     struct positionList *next;
 } PositionList;
 
-extern void fillPositionList(PositionList *positionList, Position p, PositionList *next);
 extern PositionList *newPositionList(Position position, PositionList *next);
 
 extern Position makePosition(int file, int line, int col);

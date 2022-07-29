@@ -5,11 +5,6 @@ Position makePosition(int file, int line, int col) {
     return (Position){.file = file, .line = line, .col = col};
 }
 
-void fillPositionList(PositionList *positionList, Position p, PositionList *next) {
-    positionList->position = p;
-    positionList->next = next;
-}
-
 PositionList *newPositionList(Position position, PositionList *next) {
     PositionList *new = StackMemoryAlloc(PositionList);
     new->position = position;
