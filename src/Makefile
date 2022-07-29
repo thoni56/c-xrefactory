@@ -51,7 +51,7 @@ MAKEFLAGS += --no-print-directory
 
 WARNINGS = -Wall -Wno-char-subscripts -Werror
 
-CFLAGS = -g -O0 $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
+CFLAGS = -g -Og $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
 
 LDFLAGS = $(COVERAGE)
 
