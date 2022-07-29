@@ -5,7 +5,7 @@ Position makePosition(int file, int line, int col) {
 }
 
 void fillPositionList(PositionList *positionList, Position p, PositionList *next) {
-    positionList->p = p;
+    positionList->position = p;
     positionList->next = next;
 }
 

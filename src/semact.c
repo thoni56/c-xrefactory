@@ -1071,13 +1071,13 @@ static void handleParameterPositions(Position *lpar, PositionList *commas, Posit
         p1 = lpar;
         i  = 1;
         if (list != NULL)
-            p2 = &list->p;
+            p2 = &list->position;
         else
             p2 = rpar;
         for (i++; list != NULL && i <= argn; list = list->next, i++) {
-            p1 = &list->p;
+            p1 = &list->position;
             if (list->next != NULL)
-                p2 = &list->next->p;
+                p2 = &list->next->position;
             else
                 p2 = rpar;
         }

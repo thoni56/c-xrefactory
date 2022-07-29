@@ -11,7 +11,7 @@ typedef struct position {
 } Position;
 
 typedef struct positionList {
-    struct position     p;
+    struct position     position;
     struct positionList *next;
 } PositionList;
 
