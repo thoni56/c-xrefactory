@@ -276,6 +276,7 @@ clean:
 
 .PHONY: clean-coverage
 clean-coverage:
+	-rm ../coverage/total.info
 	-if command -v $(LCOV) > /dev/null 2>&1 ; then \
 		$(LCOV) -q -z -d .. ; \
 	fi
