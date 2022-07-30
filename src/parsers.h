@@ -49,6 +49,6 @@ extern int yacc_yydebug;
 
 extern YYSTYPE *uniyylval;
 
-void parseInputFile(void);
+void parseInputFile(Language language);
 
 #endif

@@ -174,7 +174,7 @@ static void editServerParseInputFile(bool *firstPass, bool inputIn) {
         if (options.serverOperation!=OLO_TAG_SEARCH && options.serverOperation!=OLO_PUSH_NAME) {
             log_trace("parse start");
             recoverFromCache();
-            parseInputFile();
+            parseInputFile(currentLanguage);
             log_trace("parse end");
             *firstPass = false;
         }

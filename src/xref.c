@@ -176,7 +176,7 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         if (inputOpened) {
             recoverFromCache();
             cache.active = false; /* no caching in cxref */
-            parseInputFile();
+            parseInputFile(currentLanguage);
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
             inputOpened                       = false;
             currentFile.lexBuffer.buffer.file = stdin;
