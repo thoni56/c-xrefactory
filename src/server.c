@@ -169,18 +169,16 @@ static void closeInputFile(void) {
     }
 }
 
-static void editServerParseInputFile(bool *firstPass, bool inputIn) {
-    if (inputIn) {
-        if (options.serverOperation!=OLO_TAG_SEARCH && options.serverOperation!=OLO_PUSH_NAME) {
-            log_trace("parse start");
-            recoverFromCache();
-            parseInputFile(currentLanguage);
-            log_trace("parse end");
-            *firstPass = false;
-        }
-        currentFile.lexBuffer.buffer.isAtEOF = false;
-        closeInputFile();
+static void editServerParseInputFile(bool *firstPass) {
+    if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
+        log_trace("parse start");
+        recoverFromCache();
+        parseInputFile(currentLanguage);
+        log_trace("parse end");
+        *firstPass = false;
     }
+    currentFile.lexBuffer.buffer.isAtEOF = false;
+    closeInputFile();
 }
 
 void initServer(int nargc, char **nargv) {
@@ -211,7 +209,7 @@ void editServerFileSinglePass(int argc, char **argv,
         return;
     }
     if (inputOpened)
-        editServerParseInputFile(firstPassP, inputOpened);
+        editServerParseInputFile(firstPassP);
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (isCreatingRefs(options.serverOperation)) {
@@ -230,7 +228,7 @@ void editServerFileSinglePass(int argc, char **argv,
             inputOpened = fileProcessingInitialisations(firstPassP, argc, argv,
                                                         nargc, nargv, &currentLanguage);
             if (inputOpened)
-                editServerParseInputFile(firstPassP, inputOpened);
+                editServerParseInputFile(firstPassP);
         }
     }
 }
