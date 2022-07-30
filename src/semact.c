@@ -534,7 +534,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     if (usage==UsageDefined && ! options.exactPositionResolve) {
         basefname=getFileItem(p->pos.file)->name;
     } else {
-        basefname=inputFilename;
+        basefname=inputFileName;
     }
     sprintf(ttt,"%s!%s", simpleFileName(basefname), p->name);
     len = strlen(ttt);

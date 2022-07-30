@@ -86,7 +86,7 @@ Position parameterEndPosition;
 Position cxRefPosition;
 
 int inputFileNumber;
-char *inputFilename;
+char *inputFileName;
 time_t fileProcessingStartTime;
 
 char cwd[MAX_FILE_NAME_SIZE];

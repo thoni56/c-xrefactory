@@ -131,6 +131,7 @@ static int scheduleFileUsingTheMacro(void) {
     return s_olMacro2PassFile;
 }
 
+// WTF does "DependingStatics" mean?
 static char *presetEditServerFileDependingStatics(void) {
     fileProcessingStartTime = time(NULL);
 
@@ -140,7 +141,7 @@ static char *presetEditServerFileDependingStatics(void) {
     // This is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an error
     int fileIndex = 0;
-    inputFilename = getNextScheduledFile(&fileIndex);
+    inputFileName = getNextScheduledFile(&fileIndex);
     if (fileIndex == -1) { /* No more input files... */
         // conservative message, probably macro invoked on nonsaved file, TODO: WTF?
         olOriginalComFileNumber = noFileIndex;
@@ -156,7 +157,7 @@ static char *presetEditServerFileDependingStatics(void) {
 
     olOriginalComFileNumber = fileIndex;
 
-    char *fileName = inputFilename;
+    char *fileName = inputFileName;
     currentLanguage = getLanguageFor(fileName);
 
     // O.K. just to be sure, there is no other input file
@@ -169,14 +170,14 @@ static void closeInputFile(void) {
     }
 }
 
-static void editServerParseInputFile(bool *firstPass) {
+static void parseInputFile(bool *firstPassP) {
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_trace("parse start");
         recoverFromCache();
-        parseInputFile(currentLanguage);
+        parseCurrentInputFile(currentLanguage);
         log_trace("parse end");
-        *firstPass = false;
-    }
+    } else
+        log_trace("Not parsing input because of server operation TAG_SEARCH or PUSH_NAME");
     currentFile.lexBuffer.buffer.isAtEOF = false;
     closeInputFile();
 }
@@ -191,9 +192,9 @@ void initServer(int nargc, char **nargv) {
     initCompletions(&collectedCompletions, 0, noPosition);
 }
 
-void editServerFileSinglePass(int argc, char **argv,
-                              int nargc, char **nargv,
-                              bool *firstPassP
+void singlePass(int argc, char **argv,
+                int nargc, char **nargv,
+                bool *firstPassP
 ) {
     bool inputOpened = false;
     int ol2procfile;
@@ -208,8 +209,10 @@ void editServerFileSinglePass(int argc, char **argv,
             closeInputFile();
         return;
     }
-    if (inputOpened)
-        editServerParseInputFile(firstPassP);
+    if (inputOpened) {
+        parseInputFile(firstPassP);
+        *firstPassP = false;
+    }
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (isCreatingRefs(options.serverOperation)) {
@@ -222,29 +225,31 @@ void editServerFileSinglePass(int argc, char **argv,
         // on-line action with cursor in an un-used macro body ???
         ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=noFileIndex) {
-            inputFilename = getFileItem(ol2procfile)->name;
+            inputFileName = getFileItem(ol2procfile)->name;
             inputOpened = false;
             olStringSecondProcessing = true;
             inputOpened = fileProcessingInitialisations(firstPassP, argc, argv,
                                                         nargc, nargv, &currentLanguage);
-            if (inputOpened)
-                editServerParseInputFile(firstPassP);
+            if (inputOpened) {
+                parseInputFile(firstPassP);
+                *firstPassP = false;
+            }
         }
     }
 }
 
 static void processFile(int argc, char **argv,
                         int nargc, char **nargv,
-                        bool *firstPass
+                        bool *firstPassP
 ) {
     FileItem *fileItem = getFileItem(olOriginalComFileNumber);
 
     assert(fileItem->isScheduled);
     maxPasses = 1;
     for (currentPass=1; currentPass<=maxPasses; currentPass++) {
-        inputFilename = fileItem->name;
-        assert(inputFilename!=NULL);
-        editServerFileSinglePass(argc, argv, nargc, nargv, firstPass);
+        inputFileName = fileItem->name;
+        assert(inputFileName!=NULL);
+        singlePass(argc, argv, nargc, nargv, firstPassP);
         if (options.serverOperation==OLO_EXTRACT || (s_olstringServed && !isCreatingRefs(options.serverOperation)))
             break;
         if (LANGUAGE(LANG_JAVA))
@@ -271,7 +276,7 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
         if (presetEditServerFileDependingStatics() != NULL) {
             getFileItem(olOriginalComFileNumber)->isScheduled = false;
             // added [26.12.2002] because of loading options without input file
-            inputFilename = NULL;
+            inputFileName = NULL;
         }
     }
     LEAVE();

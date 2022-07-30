@@ -49,7 +49,7 @@ TypeModifier *s_javaCompletionLastPrimary;
 struct yyGlobalState *s_yygstate;
 struct yyGlobalState *s_initYygstate;
 
-char *inputFilename="";
+char *inputFileName="";
 Completions collectedCompletions;
 
 /* **************** cached symbols ********************** */

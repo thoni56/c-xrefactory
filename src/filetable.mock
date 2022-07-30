@@ -34,8 +34,8 @@ int getNextExistingFileIndex(int index) {
     return (int)mock(index);
 }
 
-char *getNextScheduledFile(int *fArgCount) {
-  return (char *) mock(fArgCount);
+char *getNextScheduledFile(int *beginIndex) {
+  return (char *) mock(beginIndex);
 }
 
 char *getNextArgumentFile(int *fArgCount) {

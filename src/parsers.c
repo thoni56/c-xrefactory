@@ -13,7 +13,7 @@ int java_yydebug = 0;
 YYSTYPE *uniyylval = &c_yylval;
 
 
-void parseInputFile(Language language) {
+void parseCurrentInputFile(Language language) {
     if (language == LANG_JAVA) {
         uniyylval = &s_yygstate->gyylval;
         java_yyparse();

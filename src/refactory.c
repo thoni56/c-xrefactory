@@ -892,7 +892,7 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
     assert(sclass);
     targetfile = options.moveTargetFile;
     assert(targetfile);
-    srcfile = inputFilename;
+    srcfile = inputFileName;
     assert(srcfile);
 
     javaGetPackageNameFromSourceFileName(srcfile, spack);

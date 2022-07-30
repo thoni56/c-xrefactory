@@ -3798,9 +3798,9 @@ static void olcxProcessGetRequest(void) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
         if (options.xref2) {
-            ppcGenRecord(PPC_SET_INFO, expandPredefinedSpecialVariables_static(val, inputFilename));
+            ppcGenRecord(PPC_SET_INFO, expandPredefinedSpecialVariables_static(val, inputFileName));
         } else {
-            fprintf(communicationChannel,"*%s", expandPredefinedSpecialVariables_static(val, inputFilename));
+            fprintf(communicationChannel,"*%s", expandPredefinedSpecialVariables_static(val, inputFileName));
         }
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -4594,7 +4594,7 @@ void mainAnswerEditAction(void) {
     } // switch
 
     fflush(communicationChannel);
-    inputFilename = NULL;
+    inputFileName = NULL;
     //&RLM_FREE_COUNT(olcxMemory);
     LEAVE();
 }

@@ -10,6 +10,6 @@ int java_yydebug;
 YYSTYPE yacc_yylval;
 YYSTYPE *uniyylval;
 
-void parseInputFile(Language language) {
+void parseCurrentInputFile(Language language) {
     mock();
 }

@@ -1245,7 +1245,7 @@ void jarFileParse(char *file_name) {
 
     archive = zipIndexArchive(file_name);
     assert(existsInFileTable(file_name)); /* Filename has to exist in the table */
-    fileIndex = addFileNameToFileTable(inputFilename);
+    fileIndex = addFileNameToFileTable(inputFileName);
     checkFileModifiedTime(fileIndex);
     // set loading to true, no matter whether saved (by overflow) or not
     // the following may create a loop, but it is very unprobable
@@ -1268,15 +1268,15 @@ void scanJarFilesForTagSearch(void) {
 void classFileParse(void) {
     char    temp[MAX_FILE_NAME_SIZE];
     char    *t,*tt;
-    assert(strlen(inputFilename) < MAX_FILE_NAME_SIZE-1);
-    strcpy(temp, inputFilename);
+    assert(strlen(inputFileName) < MAX_FILE_NAME_SIZE-1);
+    strcpy(temp, inputFileName);
     tt = strchr(temp, ';');
     if (tt==NULL) {
         temp[0]=0;
-        t = inputFilename;
+        t = inputFileName;
     } else {
         *(tt+1) = 0;
-        t = strchr(inputFilename, ';');
+        t = strchr(inputFileName, ';');
         assert(t!=NULL);
         t ++;
     }

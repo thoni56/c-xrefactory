@@ -176,19 +176,19 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         if (inputOpened) {
             recoverFromCache();
             cache.active = false; /* no caching in cxref */
-            parseInputFile(currentLanguage);
+            parseCurrentInputFile(currentLanguage);
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
             inputOpened                       = false;
             currentFile.lexBuffer.buffer.file = stdin;
             *atLeastOneProcessedP             = true;
         } else if (LANGUAGE(LANG_JAR)) {
-            jarFileParse(inputFilename);
+            jarFileParse(inputFileName);
             *atLeastOneProcessedP = true;
         } else if (LANGUAGE(LANG_CLASS)) {
             classFileParse();
             *atLeastOneProcessedP = true;
         } else {
-            errorMessage(ERR_CANT_OPEN, inputFilename);
+            errorMessage(ERR_CANT_OPEN, inputFileName);
             fprintf(errOut, "\tmaybe forgotten -p option?\n");
         }
         // no multiple passes for java programs
@@ -214,7 +214,7 @@ static void getCxrefFilesListName(char **fileListFileNameP, char **suffixP) {
 
 static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bool *firstPass,
                                 bool *atLeastOneProcessed) {
-    inputFilename           = fileItem->name;
+    inputFileName           = fileItem->name;
     fileProcessingStartTime = time(NULL);
     // O.K. but this is missing all header files
     fileItem->lastUpdateMtime = fileItem->lastModified;
@@ -226,7 +226,7 @@ static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bo
     // but I can not free it when refactoring, nor when preloaded,
     // so be very carefull about this!!!
     if (refactoringOptions.refactoringMode != RefactoryMode) {
-        editorCloseBufferIfClosable(inputFilename);
+        editorCloseBufferIfClosable(inputFileName);
         editorCloseAllBuffersIfClosable();
     }
 }

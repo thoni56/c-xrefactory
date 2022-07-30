@@ -116,7 +116,7 @@ extern char *s_editCommunicationString;
 
 extern jmp_buf cxmemOverflow;
 
-extern char *inputFilename;
+extern char *inputFileName;
 
 extern time_t fileProcessingStartTime;
 

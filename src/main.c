@@ -153,18 +153,18 @@ static bool computeAndOpenInputFile(void) {
         return false;
 
     inputFile = NULL;
-    inputBuffer = editorFindFile(inputFilename);
+    inputBuffer = editorFindFile(inputFileName);
     if (inputBuffer == NULL) {
 #if defined (__WIN32__)
-        inputFile = openFile(inputFilename, "rb");
+        inputFile = openFile(inputFileName, "rb");
 #else
-        inputFile = openFile(inputFilename, "r");
+        inputFile = openFile(inputFileName, "r");
 #endif
         if (inputFile == NULL) {
-            errorMessage(ERR_CANT_OPEN, inputFilename);
+            errorMessage(ERR_CANT_OPEN, inputFileName);
         }
     }
-    initInput(inputFile, inputBuffer, "\n", inputFilename);
+    initInput(inputFile, inputBuffer, "\n", inputFileName);
     if (inputFile==NULL && inputBuffer==NULL) {
         return false;
     } else {
@@ -467,7 +467,7 @@ bool fileProcessingInitialisations(bool *firstPass,
 
     ENTER();
 
-    fileName = inputFilename;
+    fileName = inputFileName;
     *outLanguage = getLanguageFor(fileName);
     searchStandardOptionsFileAndSectionForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
     handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSectionName, true);
@@ -521,7 +521,7 @@ bool fileProcessingInitialisations(bool *firstPass,
         discoverBuiltinIncludePaths();
 
         LIST_APPEND(StringList, options.includeDirs, tmpIncludeDirs);
-        if (options.mode != ServerMode && inputFilename == NULL) {
+        if (options.mode != ServerMode && inputFileName == NULL) {
             inputOpened = false;
             goto fini;
         }
@@ -555,9 +555,9 @@ bool fileProcessingInitialisations(bool *firstPass,
     assert(options.mode);
     if (options.mode==XrefMode && !javaPreScanOnly) {
         if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION, getRealFileName_static(inputFilename));
+            ppcGenRecord(PPC_INFORMATION, getRealFileName_static(inputFileName));
         } else {
-            log_info("Processing '%s'", getRealFileName_static(inputFilename));
+            log_info("Processing '%s'", getRealFileName_static(inputFileName));
         }
     }
  fini:
@@ -731,15 +731,15 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     // enclosed in cache point, because of persistent #define in XrefEdit. WTF?
     argcount = 0;
-    inputFilename = cmdlnInputFile = getNextArgumentFile(&argcount);
-    if (inputFilename==NULL) {
+    inputFileName = cmdlnInputFile = getNextArgumentFile(&argcount);
+    if (inputFileName==NULL) {
         ss = strmcpy(fileName, cwd);
         if (ss!=fileName && ss[-1] == FILE_PATH_SEPARATOR)
             ss[-1]=0;
         assert(strlen(fileName)+1<MAX_FILE_NAME_SIZE);
-        inputFilename=fileName;
+        inputFileName=fileName;
     } else {
-        strcpy(fileName, inputFilename);
+        strcpy(fileName, inputFileName);
     }
 
     searchStandardOptionsFileAndSectionForFile(fileName, standardOptionsFileName, standardOptionsSection);
