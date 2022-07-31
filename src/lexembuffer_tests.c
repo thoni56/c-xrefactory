@@ -15,53 +15,53 @@ BeforeEach(LexemBuffer) {
 AfterEach(LexemBuffer) {}
 
 Ensure(LexemBuffer, can_put_and_get_a_char) {
-    LexemBuffer buffer;
+    LexemBuffer lb;
     char        ch;
     char       *next_after_put;
 
-    initLexemBuffer(&buffer, NULL);
+    initLexemBuffer(&lb, NULL);
 
-    putLexChar('x', &buffer.next);
-    next_after_put = buffer.next;
+    putLexChar('x', &lb.next);
+    next_after_put = lb.next;
 
-    buffer.next = buffer.lexemStream;
-    ch          = getLexChar(&buffer.next);
+    lb.next = lb.lexemStream;
+    ch      = getLexChar(&lb.next);
 
-    assert_that(buffer.next, is_equal_to(next_after_put));
+    assert_that(lb.next, is_equal_to(next_after_put));
     assert_that(ch, is_equal_to('x'));
 }
 
 Ensure(LexemBuffer, can_put_and_get_a_short) {
-    LexemBuffer buffer;
+    LexemBuffer lb;
     int         shortValue;
     char       *next_after_put;
 
-    initLexemBuffer(&buffer, NULL);
+    initLexemBuffer(&lb, NULL);
 
-    putLexShort(433, &buffer.next);
-    next_after_put = buffer.next;
+    putLexShort(433, &lb.next);
+    next_after_put = lb.next;
 
-    buffer.next = buffer.lexemStream;
-    shortValue  = getLexShort(&buffer.next);
+    lb.next = lb.lexemStream;
+    shortValue  = getLexShort(&lb.next);
 
-    assert_that(buffer.next, is_equal_to(next_after_put));
+    assert_that(lb.next, is_equal_to(next_after_put));
     assert_that(shortValue, is_equal_to(433));
 }
 
 Ensure(LexemBuffer, can_put_and_get_a_token) {
-    LexemBuffer buffer;
+    LexemBuffer lb;
     Lexem       lexem;
     char       *next_after_put;
 
-    initLexemBuffer(&buffer, NULL);
+    initLexemBuffer(&lb, NULL);
 
-    putLexToken(DOUBLE_CONSTANT, &buffer.next);
-    next_after_put = buffer.next;
+    putLexToken(DOUBLE_CONSTANT, &lb.next);
+    next_after_put = lb.next;
 
-    buffer.next = buffer.lexemStream;
-    lexem       = getLexToken(&buffer.next);
+    lb.next = lb.lexemStream;
+    lexem       = getLexToken(&lb.next);
 
-    assert_that(buffer.next, is_equal_to(next_after_put));
+    assert_that(lb.next, is_equal_to(next_after_put));
     assert_that(lexem, is_equal_to(DOUBLE_CONSTANT));
 }
 
