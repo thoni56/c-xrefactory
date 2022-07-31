@@ -153,7 +153,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         cache.lexcc = lb->lexemStream;
     }
 
-    lmax = lb->lexemStream + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;
+    lmax = lb->lexemStream + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
     dd = lb->lexemStream;
     for (char *cc = lb->next; cc < lb->end; cc++, dd++)
         *dd = *cc;

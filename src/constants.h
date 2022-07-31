@@ -98,7 +98,7 @@
 /* **************  size of file reading buffers ***************** */
 
 #define CHAR_BUFF_SIZE 1024
-#define LEX_BUFF_SIZE (1024 + MAX_LEXEM_SIZE) /* must be bigger than MAX_LEXEM_SIZE */
+#define LEXEM_BUFFER_SIZE (1024 + MAX_LEXEM_SIZE) /* must be bigger than MAX_LEXEM_SIZE */
 
 #define MAX_UNGET_CHARS 20		/* reserve for ungetChar in char buffer */
 #define MAX_LEXEM_SIZE MAX_FUN_NAME_SIZE /* max size of 1 lexem (string, ident)  */
