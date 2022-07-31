@@ -561,7 +561,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 }
                 putLexChar(0, &dd);
                 putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
-                putLexLines(cb->lineNumber-line, &dd);
+                putLexLines(cb->lineNumber-line, &dd, lb);
                 ch = getChar(cb);
                 goto nextLexem;
 
@@ -585,7 +585,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
 
                     int line = cb->lineNumber;
                     passComment(cb);
-                    putLexLines(cb->lineNumber-line, &dd);
+                    putLexLines(cb->lineNumber-line, &dd, lb);
                     ch = getChar(cb);
                     goto nextLexem;
 
@@ -610,7 +610,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             ch = getChar(cb);
                         }
                     }
-                    putLexLines(cb->lineNumber-line, &dd);
+                    putLexLines(cb->lineNumber-line, &dd, lb);
                 } else {
                     putLexToken('/', &dd);
                     putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
@@ -623,7 +623,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     cb->lineNumber ++;
                     cb->lineBegin = cb->nextUnread;
                     cb->columnOffset = 0;
-                    putLexLines(1, &dd);
+                    putLexLines(1, &dd, lb);
                     ch = getChar(cb);
                 } else {
                     putLexToken('\\', &dd);
@@ -656,7 +656,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             ch = '*';
                             int line = cb->lineNumber;
                             passComment(cb);
-                            putLexLines(cb->lineNumber-line, &dd);
+                            putLexLines(cb->lineNumber-line, &dd, lb);
                             ch = getChar(cb);
                             ch = skipBlanks(cb, ch);
                         }

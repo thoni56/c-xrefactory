@@ -123,7 +123,7 @@ int getLexCompacted(char **readPointer) {
 }
 
 /* Lines */
-void putLexLines(int lines, char **writePointer) {
+void putLexLines(int lines, char **writePointer, LexemBuffer *lb) {
     putLexToken(LINE_TOKEN, writePointer);
     putLexToken(lines, writePointer);
 }
