@@ -453,11 +453,8 @@ void checkExactPositionUpdate(bool printMessage) {
     }
 }
 
-bool fileProcessingInitialisations(bool *firstPass,
-                                   int argc, char **argv,      // command-line options
-                                   int nargc, char **nargv,
-                                   Language *outLanguage
-) {
+bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command-line options
+                              int nargc, char **nargv, Language *outLanguage) {
     char standardOptionsFileName[MAX_FILE_NAME_SIZE];
     char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
     time_t modifiedTime;
@@ -568,7 +565,7 @@ bool fileProcessingInitialisations(bool *firstPass,
     // so s_input_file_number is not set if the file is not really opened!!!
     LEAVE();
     return inputOpened;
-}
+ }
 
 static int power(int x, int y) {
     int res = 1;

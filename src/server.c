@@ -178,7 +178,7 @@ static void parseInputFile(bool *firstPassP) {
         log_trace("parse end");
     } else
         log_trace("Not parsing input because of server operation TAG_SEARCH or PUSH_NAME");
-    currentFile.lexBuffer.buffer.isAtEOF = false;
+    currentFile.lexBuffer.buffer.isAtEOF = false; /* Why? */
     closeInputFile();
 }
 
@@ -197,11 +197,11 @@ void singlePass(int argc, char **argv,
                 bool *firstPassP
 ) {
     bool inputOpened = false;
-    int ol2procfile;
 
     olStringSecondProcessing = false;
-    inputOpened = fileProcessingInitialisations(firstPassP, argc, argv,
-                                                nargc, nargv, &currentLanguage);
+
+    inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
+
     smartReadReferences();
     olOriginalFileIndex = inputFileNumber;
     if (symbolCanBeIdentifiedByPosition(inputFileNumber)) {
@@ -223,13 +223,12 @@ void singlePass(int argc, char **argv,
     }
     if (s_olstringFound && !s_olstringServed) {
         // on-line action with cursor in an un-used macro body ???
-        ol2procfile = scheduleFileUsingTheMacro();
+        int ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=noFileIndex) {
             inputFileName = getFileItem(ol2procfile)->name;
             inputOpened = false;
             olStringSecondProcessing = true;
-            inputOpened = fileProcessingInitialisations(firstPassP, argc, argv,
-                                                        nargc, nargv, &currentLanguage);
+            inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
             if (inputOpened) {
                 parseInputFile(firstPassP);
                 *firstPassP = false;

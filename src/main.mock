@@ -2,7 +2,7 @@
 #include "main.h"
 #include <cgreen/mocks.h>
 
-bool fileProcessingInitialisations(bool *firstPass,
+bool initializeFileProcessing(bool *firstPass,
                                    int argc, char **argv,      // command-line options
                                    int nargc, char **nargv,
                                    Language *outLanguage

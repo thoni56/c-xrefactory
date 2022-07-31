@@ -170,7 +170,7 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
     for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
         if (!*firstPassP)
             copyOptionsFromTo(&savedOptions, &options);
-        inputOpened             = fileProcessingInitialisations(firstPassP, argc, argv, 0, NULL, &currentLanguage);
+        inputOpened             = initializeFileProcessing(firstPassP, argc, argv, 0, NULL, &currentLanguage);
         olOriginalFileIndex     = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileIndex;
         if (inputOpened) {

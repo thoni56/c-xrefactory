@@ -6,8 +6,8 @@
 #include "head.h" /* For Language type */
 
 // Used by server.c & xref.c but not main itself
-extern bool fileProcessingInitialisations(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
-                                          Language *outLanguage);
+extern bool initializeFileProcessing(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
+                                     Language *outLanguage);
 //------
 
 // Required for xref.c
