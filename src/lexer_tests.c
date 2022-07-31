@@ -1,5 +1,6 @@
 #include <cgreen/cgreen.h>
 
+#include "lexembuffer.h"
 #include "lexer.h"
 #include "log.h"
 
@@ -21,6 +22,37 @@ BeforeEach(Lexer) {
     log_set_level(LOG_ERROR);
 }
 AfterEach(Lexer) {}
+
+protected void shiftRemainingLexems(LexemBuffer *lb);
+
+Ensure(Lexer, can_shift_remaining_lexems) {
+    LexemBuffer lb = { .end = lb.lexemStream, .next = lb.lexemStream };
+
+    shiftRemainingLexems(&lb);
+
+    assert_that(lb.next, is_equal_to(lb.lexemStream));
+    assert_that(lb.end, is_equal_to(lb.lexemStream));
+
+    lb.lexemStream[1] = '1';
+    lb.next = &lb.lexemStream[1];
+    lb.end  = &lb.lexemStream[2];
+
+    shiftRemainingLexems(&lb);
+
+    assert_that(lb.next, is_equal_to(lb.lexemStream));
+    assert_that(lb.end, is_equal_to(&lb.lexemStream[1]));
+    assert_that(lb.lexemStream[0], is_equal_to('1'));
+
+    strcpy(&lb.lexemStream[2], "abcdefg");
+    lb.next = &lb.lexemStream[2];
+    lb.end  = &lb.lexemStream[9];
+
+    shiftRemainingLexems(&lb);
+
+    assert_that(lb.next, is_equal_to(lb.lexemStream));
+    assert_that(lb.end, is_equal_to(&lb.lexemStream[7]));
+    assert_that(strncmp(lb.lexemStream, "abcdefg", 7), is_equal_to(0));
+}
 
 Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
     LexemBuffer lexemBuffer;

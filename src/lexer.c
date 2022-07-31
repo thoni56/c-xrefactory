@@ -137,11 +137,23 @@ static void put_empty_completion_id(CharacterBuffer *cb, char **destinationP, in
                    columnPosition(cb) - len, destinationP);
 }
 
+protected void shiftRemainingLexems(LexemBuffer *lb) {
+    int remaining = lb->end - lb->next;
+    char *src = lb->next;
+    char *dest = lb->lexemStream;
+
+    for (int i = 0; i < remaining; i++)
+        *dest++ = *src++;
+
+    lb->next = lb->lexemStream;
+    lb->end = &lb->lexemStream[remaining];
+}
+
 bool getLexemFromLexer(LexemBuffer *lb) {
     int ch;
     CharacterBuffer *cb;
     char *lmax, *lexStartDd;
-    char *dd;                   /* TODO: Destination, a.k.a where to put lexems? Maybe? */
+    char *dd;                   /* TODO: It works to replace this with #define dd (lb->end) */
     Lexem lexem;
     int line, column, size;
     int lexemStartingColumn, lexStartFilePos;
@@ -154,11 +166,10 @@ bool getLexemFromLexer(LexemBuffer *lb) {
     }
 
     lmax = lb->lexemStream + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
-    dd = lb->lexemStream;
-    for (char *cc = lb->next; cc < lb->end; cc++, dd++)
-        *dd = *cc;
-    lb->next = lb->lexemStream;
 
+    shiftRemainingLexems(lb);
+
+    dd = lb->lexemStream;
     cb = &lb->buffer;
     ch = getChar(cb);
     do {
@@ -173,7 +184,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            // ProcessIdentifier(ch, cb, dd, lab2);
             processIdentifier(&ch, cb, &dd);
             goto nextLexem;
         } else if (isdigit(ch)) {
