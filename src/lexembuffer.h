@@ -23,6 +23,8 @@ typedef struct lexemBuffer {
 
 
 /* Lexer functions for passing compressed tokens to the parser */
+extern int fileNumberFrom(LexemBuffer *lb);
+extern int lineNumberFrom(LexemBuffer *lb);
 
 extern void putLexChar(char ch, char **writePointer);
 extern void putLexShort(int shortValue, char **writePointer);
