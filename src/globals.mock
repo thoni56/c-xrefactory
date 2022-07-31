@@ -3,8 +3,6 @@
 
 #include "globals.h"
 
-char *s_editCommunicationString = "C@$./@mVeDitznAC";
-
 bool fileAbortEnabled;
 
 #include "lexem.h"

@@ -111,8 +111,6 @@ extern int olOriginalComFileNumber;  /* number of original communication file */
 
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
 
-extern char *s_editCommunicationString;
-
 extern jmp_buf cxmemOverflow;
 
 extern char *inputFileName;

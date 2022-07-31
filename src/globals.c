@@ -195,8 +195,6 @@ Access javaRequiredAccessibilityTable[MAX_REQUIRED_ACCESS+1] = {
     AccessPrivate,
 };
 
-char *s_editCommunicationString = "C@$./@mVeDitznAC";
-
 uchar typeShortChange[MAX_TYPE];
 uchar typeLongChange[MAX_TYPE];
 uchar typeSignedChange[MAX_TYPE];
