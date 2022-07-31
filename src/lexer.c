@@ -120,12 +120,12 @@ static void processIdentifier(int *chP, CharacterBuffer *cb, char **destinationP
     putLexPosition(cb->fileNumber, cb->lineNumber, column, destinationP);
 }
 
-static void noteNewLexemPosition(LexemBuffer *lb, CharacterBuffer *cb) {
+static void noteNewLexemPosition(LexemBuffer *lb) {
     int index = lb->index % LEX_POSITIONS_RING_SIZE;
-    lb->fileOffsetRing[index] = absoluteFilePosition(cb);
-    lb->positionRing[index].file = cb->fileNumber;
-    lb->positionRing[index].line = cb->lineNumber;
-    lb->positionRing[index].col = columnPosition(cb);
+    lb->fileOffsetRing[index] = absoluteFilePosition(&lb->buffer);
+    lb->positionRing[index].file = lb->buffer.fileNumber;
+    lb->positionRing[index].line = lb->buffer.lineNumber;
+    lb->positionRing[index].col = columnPosition(&lb->buffer);
     lb->index++;
 }
 
@@ -179,7 +179,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             ungetChar(cb, ch);
             break;
         }
-        noteNewLexemPosition(lb, cb);
+        noteNewLexemPosition(lb);
         lexStartDd = dd;
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
@@ -670,7 +670,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 if (ch == '#' && LANGUAGE(LANG_C | LANG_YACC)) {
                     char preprocessorWord[30];
                     int  i, column, scol;
-                    noteNewLexemPosition(lb, cb);
+                    noteNewLexemPosition(lb);
                     column = columnPosition(cb);
                     ch     = getChar(cb);
                     ch     = skipBlanks(cb, ch);
@@ -731,7 +731,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         putLexToken(CPP_DEFINE0, &dd);
                         putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
                         ch = skipBlanks(cb, ch);
-                        noteNewLexemPosition(lb, cb);
+                        noteNewLexemPosition(lb);
                         processIdentifier(&ch, cb, &dd);
                         if (ch == '(') {
                             putLexToken(CPP_DEFINE, &savedDd);
