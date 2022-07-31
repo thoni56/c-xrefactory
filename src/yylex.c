@@ -362,7 +362,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
 
 /* ********************************** #LINE *********************** */
 /* non-static only for unittesting */
-void processLineDirective(void) {
+protected void processLineDirective(void) {
     Lexem lexem;
     int lineNumber, value, length; UNUSED length; UNUSED value; UNUSED lineNumber;
     Position position; UNUSED position;
@@ -1569,7 +1569,7 @@ static void macArgsToString(char *res, struct lexInput *lb) {
 
 static void createMacroBody(LexInput *macroBody,
                             MacroBody *mb,
-                            struct lexInput *actArgs,
+                            LexInput *actArgs,
                             int actArgn
 ) {
     char *cc,*cc0,*cfin,*bcc,*lbcc;

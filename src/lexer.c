@@ -120,7 +120,7 @@ static void processIdentifier(int *chP, CharacterBuffer *cb, char **destinationP
     putLexPosition(cb->fileNumber, cb->lineNumber, column, destinationP);
 }
 
-static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
+static void noteNewLexemPosition(LexemBuffer *lb, CharacterBuffer *cb) {
     int index = lb->index % LEX_POSITIONS_RING_SIZE;
     lb->fileOffsetRing[index] = absoluteFilePosition(cb);
     lb->positionRing[index].file = cb->fileNumber;
@@ -152,7 +152,7 @@ protected void shiftRemainingLexems(LexemBuffer *lb) {
 bool getLexemFromLexer(LexemBuffer *lb) {
     int ch;
     CharacterBuffer *cb;
-    char *lmax, *lexStartDd;
+    char *lexemLimit, *lexStartDd;
     char *dd;                   /* TODO: It works to replace this with #define dd (lb->end) */
     Lexem lexem;
     int line, column, size;
@@ -165,21 +165,21 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         cache.lexcc = lb->lexemStream;
     }
 
-    lmax = lb->lexemStream + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
-
     shiftRemainingLexems(lb);
 
-    dd = lb->lexemStream;
+    lexemLimit = lb->end + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
+
+    dd = lb->end;
     cb = &lb->buffer;
     ch = getChar(cb);
     do {
         ch = skipBlanks(cb, ch);
-        if (dd >= lmax) {
+        /* Space for more lexems? */
+        if (dd >= lexemLimit) {
             ungetChar(cb, ch);
             break;
         }
-        noteNewLexemPosition(cb, lb);
-        /*  yytext = ccc; */
+        noteNewLexemPosition(lb, cb);
         lexStartDd = dd;
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
@@ -667,81 +667,81 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 }
                 putLexToken('\n', &dd);
                 putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
-                if (ch == '#' && LANGUAGE(LANG_C|LANG_YACC)) {
-                    noteNewLexemPosition(cb, lb);
-                    //&        HandleCppToken(ch, cb, dd, cb->nextUnread, cb->fileNumber, cb->lineNumber, cb->lineBegin);
-                    // #define HandleCppToken(ch, cb, dd, cb->next, cb->fileNumber, cb->lineNumber, cb->lineBegin) {
-                    {
-                        char *ddd, tt[30];
-                        int i, lcoll, scol;
-                        lcoll = columnPosition(cb);
-                        ch = getChar(cb);
+                if (ch == '#' && LANGUAGE(LANG_C | LANG_YACC)) {
+                    char preprocessorWord[30];
+                    int  i, column, scol;
+                    noteNewLexemPosition(lb, cb);
+                    column = columnPosition(cb);
+                    ch     = getChar(cb);
+                    ch     = skipBlanks(cb, ch);
+                    for (i = 0; i < sizeof(preprocessorWord) - 1 && (isalpha(ch) || isdigit(ch) || ch == '_');
+                         i++) {
+                        preprocessorWord[i] = ch;
+                        ch                  = getChar(cb);
+                    }
+                    preprocessorWord[i] = 0;
+                    if (strcmp(preprocessorWord, "ifdef") == 0) {
+                        putLexToken(CPP_IFDEF, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
+                    } else if (strcmp(preprocessorWord, "ifndef") == 0) {
+                        putLexToken(CPP_IFNDEF, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
+                    } else if (strcmp(preprocessorWord, "if") == 0) {
+                        putLexToken(CPP_IF, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
+                    } else if (strcmp(preprocessorWord, "elif") == 0) {
+                        putLexToken(CPP_ELIF, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
+                    } else if (strcmp(preprocessorWord, "undef") == 0) {
+                        putLexToken(CPP_UNDEF, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
+                    } else if (strcmp(preprocessorWord, "else") == 0) {
+                        putLexToken(CPP_ELSE, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
+                    } else if (strcmp(preprocessorWord, "endif") == 0) {
+                        putLexToken(CPP_ENDIF, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
+                    } else if (strcmp(preprocessorWord, "include") == 0
+                               || strcmp(preprocessorWord, "include_next") == 0) {
+                        char endCh;
+                        if (strcmp(preprocessorWord, "include") == 0)
+                            putLexToken(CPP_INCLUDE, &dd);
+                        else
+                            putLexToken(CPP_INCLUDE_NEXT, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
                         ch = skipBlanks(cb, ch);
-                        for(i=0; i<sizeof(tt)-1 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) {
-                            tt[i] = ch;
-                            ch = getChar(cb);
-                        }
-                        tt[i]=0;
-                        if (strcmp(tt,"ifdef") == 0) {
-                            putLexToken(CPP_IFDEF, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
-                        } else if (strcmp(tt,"ifndef") == 0) {
-                            putLexToken(CPP_IFNDEF, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
-                        } else if (strcmp(tt,"if") == 0) {
-                            putLexToken(CPP_IF, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
-                        } else if (strcmp(tt,"elif") == 0) {
-                            putLexToken(CPP_ELIF, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
-                        } else if (strcmp(tt,"undef") == 0) {
-                            putLexToken(CPP_UNDEF, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd); \
-                        } else if (strcmp(tt,"else") == 0) {
-                            putLexToken(CPP_ELSE, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd); \
-                        } else if (strcmp(tt,"endif") == 0) {
-                            putLexToken(CPP_ENDIF, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd); \
-                        } else if (strcmp(tt,"include") == 0 || strcmp(tt, "include_next") == 0) {
-                            char endCh;
-                            if (strcmp(tt, "include") == 0)
-                                putLexToken(CPP_INCLUDE, &dd);
+                        if (ch == '\"' || ch == '<') {
+                            if (ch == '\"')
+                                endCh = '\"';
                             else
-                                putLexToken(CPP_INCLUDE_NEXT, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
-                            ch = skipBlanks(cb, ch);
-                            if (ch == '\"' || ch == '<') {
-                                if (ch == '\"') endCh = '\"';
-                                else endCh = '>';
-                                scol = columnPosition(cb);
-                                putLexToken(STRING_LITERAL, &dd);
-                                do {
-                                    putLexChar(ch, &dd);
-                                    ch = getChar(cb);
-                                } while (ch!=endCh && ch!='\n');
-                                putLexChar(0, &dd);
-                                putLexPosition(cb->fileNumber,cb->lineNumber,scol, &dd);
-                                if (ch == endCh)
-                                    ch = getChar(cb);
-                            }
-                        } else if (strcmp(tt,"define") == 0) {
-                            ddd = dd;
-                            putLexToken(CPP_DEFINE0, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
-                            ch = skipBlanks(cb, ch);
-                            noteNewLexemPosition(cb, lb);
-                            processIdentifier(&ch, cb, &dd);
-                            if (ch == '(') {
-                                putLexToken(CPP_DEFINE, &ddd);
-                            }
-                        } else if (strcmp(tt,"pragma") == 0) {
-                            putLexToken(CPP_PRAGMA, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
-                        } else {
-                            putLexToken(CPP_LINE, &dd);
-                            putLexPosition(cb->fileNumber,cb->lineNumber,lcoll, &dd);
+                                endCh = '>';
+                            scol = columnPosition(cb);
+                            putLexToken(STRING_LITERAL, &dd);
+                            do {
+                                putLexChar(ch, &dd);
+                                ch = getChar(cb);
+                            } while (ch != endCh && ch != '\n');
+                            putLexChar(0, &dd);
+                            putLexPosition(cb->fileNumber, cb->lineNumber, scol, &dd);
+                            if (ch == endCh)
+                                ch = getChar(cb);
                         }
+                    } else if (strcmp(preprocessorWord, "define") == 0) {
+                        char *savedDd = dd;
+                        putLexToken(CPP_DEFINE0, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
+                        ch = skipBlanks(cb, ch);
+                        noteNewLexemPosition(lb, cb);
+                        processIdentifier(&ch, cb, &dd);
+                        if (ch == '(') {
+                            putLexToken(CPP_DEFINE, &savedDd);
+                        }
+                    } else if (strcmp(preprocessorWord, "pragma") == 0) {
+                        putLexToken(CPP_PRAGMA, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
+                    } else {
+                        putLexToken(CPP_LINE, &dd);
+                        putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
                     }
                 }
                 goto nextLexem;
@@ -842,7 +842,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     if (currentLexemPosition < options.olCursorPos
                         && (apos >= options.olCursorPos
                             || (ch == -1 && apos+1 == options.olCursorPos))) {
-                        log_trace("currentLexemPosition, s_opt.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",currentLexemPosition, options.olCursorPos, apos, ch);
+                        log_trace("currentLexemPosition, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",currentLexemPosition, options.olCursorPos, apos, ch);
                         lastlex = nextLexToken(&lexStartDd);
                         if (lastlex == IDENTIFIER) {
                             len = options.olCursorPos-currentLexemPosition;
