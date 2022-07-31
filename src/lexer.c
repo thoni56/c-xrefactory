@@ -106,22 +106,18 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 }
 
 
-static void processIdentifier(int *_ch, CharacterBuffer *cb, char **_dd) {
-    int   ch = *_ch;
-    char *dd = *_dd;
-    int   column;
+static void processIdentifier(int *chP, CharacterBuffer *cb, char **destinationP) {
+    int column;
 
     column = columnPosition(cb);
-    putLexToken(IDENTIFIER, &dd);
+    putLexToken(IDENTIFIER, destinationP);
     do {
-        putLexChar(ch, &dd);
-        ch = getChar(cb);
-    } while (isalpha(ch) || isdigit(ch) || ch == '_'
-             || (ch == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
-    putLexChar(0, &dd);
-    putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
-    *_ch = ch;
-    *_dd = dd;
+        putLexChar(*chP, destinationP);
+        *chP = getChar(cb);
+    } while (isalpha(*chP) || isdigit(*chP) || *chP == '_'
+             || (*chP == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
+    putLexChar(0, destinationP);
+    putLexPosition(cb->fileNumber, cb->lineNumber, column, destinationP);
 }
 
 static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
