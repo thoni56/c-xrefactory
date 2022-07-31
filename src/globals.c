@@ -135,8 +135,8 @@ char *s_javaLangObjectLinkName="java/lang/Object";
 /* ********* vars for on-line additions after EOF ****** */
 
 char s_olstring[MAX_FUN_NAME_SIZE];
-bool s_olstringFound = false;
-bool s_olstringServed = false;
+bool olstringFound = false;
+bool olstringServed = false;
 int s_olstringUsage = 0;
 char *s_olstringInMbody = NULL;
 int s_olMacro2PassFile;

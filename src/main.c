@@ -198,8 +198,8 @@ static void initializationsPerInvocation(void) {
         parsedPositions[i] = noPosition;
     cxRefPosition = noPosition;
     s_olstring[0]=0;
-    s_olstringFound = false;
-    s_olstringServed = false;
+    olstringFound = false;
+    olstringServed = false;
     s_olstringInMbody = NULL;
     s_yygstate = s_initYygstate;
     s_jsl = NULL;

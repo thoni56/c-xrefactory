@@ -219,12 +219,11 @@ void singlePass(int argc, char **argv,
         }
         addThisFileDefineIncludeReference(inputFileNumber);
     }
-    if (s_olstringFound && !s_olstringServed) {
+    if (olstringFound && !olstringServed) {
         // on-line action with cursor in an un-used macro body ???
         int ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=noFileIndex) {
             inputFileName = getFileItem(ol2procfile)->name;
-            inputOpened = false;
             inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
             if (inputOpened) {
                 parseInputFile(firstPassP);
@@ -246,7 +245,7 @@ static void processFile(int argc, char **argv,
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
         singlePass(argc, argv, nargc, nargv, firstPassP);
-        if (options.serverOperation==OLO_EXTRACT || (s_olstringServed && !isCreatingRefs(options.serverOperation)))
+        if (options.serverOperation==OLO_EXTRACT || (olstringServed && !isCreatingRefs(options.serverOperation)))
             break;
         if (LANGUAGE(LANG_JAVA))
             break;

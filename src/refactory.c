@@ -3579,7 +3579,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     editServerParseBuffer(refactoringOptions.project, pp->buffer, pp, NULL, "-olcxgetsymboltype", "-no-errors");
     // -no-errors is basically very dangerous in this context, recover it in s_opt
     options.noErrors = 0;
-    if (!s_olstringServed) {
+    if (!olstringServed) {
         errorMessage(ERR_ST, "Can't infer type for parameter/field");
         return;
     }

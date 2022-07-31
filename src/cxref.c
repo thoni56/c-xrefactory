@@ -741,7 +741,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         } else {
             /* an on - line cxref action ?*/
             //&fprintf(dumpOut,"!got it %s !!!!!!!\n", memb->name);
-            s_olstringServed = true;       /* olstring will be served */
+            olstringServed = true;       /* olstring will be served */
             s_olstringUsage = usage.kind;
             assert(sessionData.browserStack.top);
             olSetCallerPosition(position);
@@ -2722,7 +2722,7 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
         oovisible = options.ooChecksBits;
         ooselected = RENAME_SELECTION_OO_BITS;
     } else {
-        if (s_olstringServed && s_olstringUsage == UsageMethodInvokedViaSuper) {
+        if (olstringServed && s_olstringUsage == UsageMethodInvokedViaSuper) {
             //&oovisible = options.ooChecksBits;
             oovisible = s_menuFilterOoBits[filterLevel];
             ooselected = METHOD_VIA_SUPER_SELECTION_OO_BITS;
@@ -4504,7 +4504,7 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_GET_SYMBOL_TYPE:
-        if (s_olstringServed) {
+        if (olstringServed) {
             fprintf(communicationChannel,"*%s", s_olSymbolType);
         } else if (options.noErrors) {
             fprintf(communicationChannel,"*");
@@ -4515,7 +4515,7 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_GOTO_PARAM_NAME:
         // I hope this is not used anymore, put there assert(0);
-        if (s_olstringServed && parameterPosition.file != noFileIndex) {
+        if (olstringServed && parameterPosition.file != noFileIndex) {
             gotoOnlineCxref(&parameterPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {
@@ -4525,7 +4525,7 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_GET_PRIMARY_START:
-        if (s_olstringServed && s_primaryStartPosition.file != noFileIndex) {
+        if (olstringServed && s_primaryStartPosition.file != noFileIndex) {
             gotoOnlineCxref(&s_primaryStartPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {
