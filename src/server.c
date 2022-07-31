@@ -216,8 +216,8 @@ void singlePass(int argc, char **argv,
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (isCreatingRefs(options.serverOperation)) {
-            Position dpos = makePosition(inputFileNumber, 1, 0);
-            gotOnLineCxRefs(&dpos);
+            Position position = makePosition(inputFileNumber, 1, 0);
+            gotOnLineCxRefs(&position);
         }
         addThisFileDefineIncludeReference(inputFileNumber);
     }
