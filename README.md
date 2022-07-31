@@ -134,6 +134,20 @@ which makes me confident in refactoring many things.
 If you think you can help, I'll be happy to take it, even if it is
 only adding one line of understanding in the wiki...
 
+## Development and Documentation
+
+There are some information about my current understanding of this
+beast in the design documentation. And there is a budding user
+manual. Those documents are continually published into the
+[C-xrefactory documentation site](https://thoni56.github.com/c-xrefactory).
+
+These documents are in no means complete, or perhaps not even
+readable, but are attempts to continually collect bits and pieces of
+information from old documents and newly found knowledge.
+
+The information stored in the wiki has been transferred into these
+documents and the wiki has been removed.
+
 ## The Story
 
 Once apon a time there was [www.xref.sk], a site promoting possibly the

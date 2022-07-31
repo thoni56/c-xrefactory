@@ -292,15 +292,23 @@ title
 end title
 
 Component(main, main.c)
+Component(xref, xref.c)
+Component(server, server.c)
+Component(refactory, refactory.c)
 Component(cxref, cxref.c)
 Component(cxfile, cxfile.c)
+
+Rel(main, xref, "dispatches to", call)
+Rel(main, server, "dispatches to", call)
+Rel(main, refactory, "dispatches to", call)
+
 ....
 
 === Code
 
 == Data Structures
 
-There is a lot of different data structures used in `c-xrefactory`.
+There are a lot of different data structures used in `c-xrefactory`.
 This is a first step towards visualising them.
 
 === Symbols and References
