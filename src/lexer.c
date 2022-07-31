@@ -107,50 +107,52 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 
 
 // TODO: un-macrofy ProcessIdentifier
-#define ProcessIdentifier(ch, cb, dd, labelSuffix) {                    \
-        int idcol;                                                     \
-        char *ddd;                                                      \
-        /* ***************  identifier ****************************  */ \
-        ddd = dd;                                                       \
-        idcol = columnPosition(cb);                                     \
-        putLexToken(IDENTIFIER, &dd);                                   \
-        do {                                                            \
-            putLexChar(ch, &dd);                                        \
-        identCont##labelSuffix:                                         \
-            ch = getChar(cb);                                           \
-        } while (isalpha(ch) || isdigit(ch) || ch=='_' || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))); \
-        if (ch == '@' && *(dd-1)=='C') {                                \
-            int i,len;                                                  \
-            /* NO TEST COVERAGE FOR THIS... Don't know what it is...*/  \
-            assert(0);                                                  \
-            len = strlen(s_editCommunicationString);                    \
-            for (i=2;i<len;i++) {                                       \
-                ch = getChar(cb);                                       \
-                if (ch != s_editCommunicationString[i])                 \
-                    break;                                              \
-            }                                                           \
-            if (i>=len) {                                               \
-                /* it is the place marker */                            \
-                dd--; /* delete the C */                                \
-                ch = getChar(cb);                                       \
-                if (ch == CC_COMPLETION) {                              \
-                    putLexToken(IDENT_TO_COMPLETE, &ddd);               \
-                    ch = getChar(cb);                                   \
-                } else if (ch == CC_CXREF) {                            \
-                    cache.active = false;                        \
-                    cxRefPosition = makePosition(cb->fileNumber, cb->lineNumber, idcol); \
-                    goto identCont##labelSuffix;                        \
-                } else errorMessage(ERR_INTERNAL, "unknown communication char"); \
-            } else {                                                    \
-                /* not a place marker, undo reading */                  \
-                for(i--;i>=1;i--) {                                     \
-                    ungetChar(cb, ch);                                  \
-                    ch = s_editCommunicationString[i];                  \
-                }                                                       \
-            }                                                           \
-        }                                                               \
-        putLexChar(0, &dd);                                             \
-        putLexPosition(cb->fileNumber, cb->lineNumber, idcol, &dd);     \
+#define ProcessIdentifier(ch, cb, dd, labelSuffix)                                                                \
+    {                                                                                                             \
+        int   idcol;                                                                                              \
+        char *ddd;                                                                                                \
+        /* ***************  identifier ****************************  */                                           \
+        ddd   = dd;                                                                                               \
+        idcol = columnPosition(cb);                                                                               \
+        putLexToken(IDENTIFIER, &dd);                                                                             \
+        do {                                                                                                      \
+            putLexChar(ch, &dd);                                                                                  \
+            identCont##labelSuffix : ch = getChar(cb);                                                            \
+        } while (isalpha(ch) || isdigit(ch) || ch == '_'                                                          \
+                 || (ch == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));                                 \
+        if (ch == '@' && *(dd - 1) == 'C') {                                                                      \
+            int i, len;                                                                                           \
+            /* NO TEST COVERAGE FOR THIS... Don't know what it is...*/                                            \
+            assert(0);                                                                                            \
+            len = strlen(s_editCommunicationString);                                                              \
+            for (i = 2; i < len; i++) {                                                                           \
+                ch = getChar(cb);                                                                                 \
+                if (ch != s_editCommunicationString[i])                                                           \
+                    break;                                                                                        \
+            }                                                                                                     \
+            if (i >= len) {                                                                                       \
+                /* it is the place marker */                                                                      \
+                dd--; /* delete the C */                                                                          \
+                ch = getChar(cb);                                                                                 \
+                if (ch == CC_COMPLETION) {                                                                        \
+                    putLexToken(IDENT_TO_COMPLETE, &ddd);                                                         \
+                    ch = getChar(cb);                                                                             \
+                } else if (ch == CC_CXREF) {                                                                      \
+                    cache.active  = false;                                                                        \
+                    cxRefPosition = makePosition(cb->fileNumber, cb->lineNumber, idcol);                          \
+                    goto identCont##labelSuffix;                                                                  \
+                } else                                                                                            \
+                    errorMessage(ERR_INTERNAL, "unknown communication char");                                     \
+            } else {                                                                                              \
+                /* not a place marker, undo reading */                                                            \
+                for (i--; i >= 1; i--) {                                                                          \
+                    ungetChar(cb, ch);                                                                            \
+                    ch = s_editCommunicationString[i];                                                            \
+                }                                                                                                 \
+            }                                                                                                     \
+        }                                                                                                         \
+        putLexChar(0, &dd);                                                                                       \
+        putLexPosition(cb->fileNumber, cb->lineNumber, idcol, &dd);                                               \
     }
 
 #define CommentBeginReference(cb) {                                     \
