@@ -124,12 +124,6 @@ static void processIdentifier(int *_ch, CharacterBuffer *cb, char **_dd) {
     *_dd = dd;
 }
 
-#define CommentBeginReference(cb) {                                     \
-    }
-
-#define CommentEndReference(cb, jdoc) {                                 \
-    }
-
 static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
     int index = lb->index % LEX_POSITIONS_RING_SIZE;
     lb->fileOffsetRing[index] = absoluteFilePosition(cb);
@@ -426,7 +420,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     if (ch == '/') {
                         /* a code comment, ignore */
                         ch = getChar(cb);
-                        CommentEndReference(cb, 0);
                         goto nextLexem;
                     } else {
                         ungetChar(cb, ch);
@@ -570,7 +563,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='*') {
-                    CommentBeginReference(cb);
                     ch = getChar(cb);
                     if (ch == '&') {
                         /* a program comment, ignore and continue with next lexem */
@@ -585,17 +577,14 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     passComment(cb);
                     putLexLines(cb->lineNumber-line, &dd);
                     ch = getChar(cb);
-                    CommentEndReference(cb, isJavadoc);
                     goto nextLexem;
 
                 } else if (ch=='/') {
                     /*  ******* a // comment ******* */
-                    CommentBeginReference(cb);
                     ch = getChar(cb);
                     if (ch == '&') {
                         /* ****** a program comment, ignore */
                         ch = getChar(cb);
-                        CommentEndReference(cb, 0);
                         goto nextLexem;
                     }
                     line = cb->lineNumber;
@@ -611,7 +600,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             ch = getChar(cb);
                         }
                     }
-                    CommentEndReference(cb, 0);
                     putLexLines(cb->lineNumber-line, &dd);
                 } else {
                     putLexToken('/', &dd);
@@ -649,7 +637,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 if (ch == '/') {
                     ch = getChar(cb);
                     if (ch == '*') {
-                        CommentBeginReference(cb);
                         ch = getChar(cb);
                         if (ch == '&') {
                             /* ****** a code comment, ignore */
@@ -661,7 +648,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             passComment(cb);
                             putLexLines(cb->lineNumber-line, &dd);
                             ch = getChar(cb);
-                            CommentEndReference(cb, javadoc);
                             ch = skipBlanks(cb, ch);
                         }
                     } else {
