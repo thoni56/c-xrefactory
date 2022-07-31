@@ -119,60 +119,43 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
 }
 
 Ensure(LexemBuffer, can_peek_next_token) {
-    char  lexems[10];
-    char *lexemPointer = lexems;
-    Lexem any_lexem    = CHAR_LITERAL;
+    LexemBuffer lb;
+    Lexem any_lexem = CHAR_LITERAL;
 
-    putLexToken(any_lexem, &lexemPointer);
-    lexemPointer = lexems;
+    initLexemBuffer(&lb, NULL);
 
-    assert_that(nextLexToken(&lexemPointer), is_equal_to(any_lexem));
-    assert_that(lexemPointer, is_equal_to(&lexems));
+    putLexToken(any_lexem, &lb.end);
+
+    assert_that(nextLexToken(&lb.next), is_equal_to(any_lexem));
+    assert_that(lb.next, is_equal_to(&lb.lexemStream)); /* Should not have moved */
 }
 
 Ensure(LexemBuffer, can_put_and_get_lines) {
-    char  lexems[10];
-    char *lexemPointer      = lexems;
+    LexemBuffer lb;
     char *pointer_after_put = NULL;
 
-    putLexLines(13, &lexemPointer);
-    pointer_after_put = lexemPointer;
+    initLexemBuffer(&lb, NULL);
 
-    lexemPointer = lexems;
+    putLexLines(13, &lb.end);
+    pointer_after_put = lb.end;
 
-    assert_that(getLexToken(&lexemPointer), is_equal_to(LINE_TOKEN));
-    assert_that(getLexToken(&lexemPointer), is_equal_to(13));
-    assert_that(lexemPointer, is_equal_to(pointer_after_put));
+    assert_that(getLexToken(&lb.next), is_equal_to(LINE_TOKEN));
+    assert_that(getLexToken(&lb.next), is_equal_to(13));
+    assert_that(lb.next, is_equal_to(pointer_after_put));
 }
 
 Ensure(LexemBuffer, can_put_and_get_position) {
-    char     lexems[10];
-    char    *lexemPointer      = lexems;
+    LexemBuffer lb;
     char    *pointer_after_put = NULL;
     Position initial_position  = {41, 42, 43};
     Position read_position;
 
-    putLexPosition(initial_position.file, initial_position.line, initial_position.col, &lexemPointer);
-    pointer_after_put = lexemPointer;
+    initLexemBuffer(&lb, NULL);
 
-    lexemPointer = lexems;
+    putLexPosition(initial_position.file, initial_position.line, initial_position.col, &lb.end);
+    pointer_after_put = lb.end;
 
-    read_position = getLexPosition(&lexemPointer);
+    read_position = getLexPosition(&lb.next);
     assert_that(positionsAreEqual(read_position, initial_position));
-    assert_that(lexemPointer, is_equal_to(pointer_after_put));
-}
-
-xEnsure(LexemBuffer, can_peek_position) {
-    char     lexems[10];
-    char    *lexemPointer     = lexems;
-    Position initial_position = {91, 92, 93};
-    Position read_position;
-
-    putLexPosition(initial_position.file, initial_position.line, initial_position.col, &lexemPointer);
-
-    lexemPointer = lexems;
-
-    read_position = getLexPosition(&lexemPointer);
-    assert_that(positionsAreEqual(read_position, initial_position));
-    assert_that(lexemPointer, is_equal_to(lexems));
+    assert_that(lb.next, is_equal_to(pointer_after_put));
 }
