@@ -130,21 +130,21 @@ static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
 }
 
 
-static void put_empty_completion_id(CharacterBuffer *cb, char **dd, int len) {
-    putLexToken(IDENT_TO_COMPLETE, dd);
-    putLexChar(0, dd);
+static void put_empty_completion_id(CharacterBuffer *cb, char **destinationP, int len) {
+    putLexToken(IDENT_TO_COMPLETE, destinationP);
+    putLexChar(0, destinationP);
     putLexPosition(cb->fileNumber, cb->lineNumber,
-                   columnPosition(cb) - len, dd);
+                   columnPosition(cb) - len, destinationP);
 }
 
 bool getLexemFromLexer(LexemBuffer *lb) {
     int ch;
     CharacterBuffer *cb;
-    char *cc, *lmax, *lexStartDd;
+    char *lmax, *lexStartDd;
     char *dd;                   /* TODO: Destination, a.k.a where to put lexems? Maybe? */
-    unsigned chval=0;
-    Lexem rlex;
-    int line, size, lexemStartingColumn, lexStartFilePos, column;
+    Lexem lexem;
+    int line, column, size;
+    int lexemStartingColumn, lexStartFilePos;
 
     /* first test whether the input is cached */
     /* TODO: why do we need to know this? */
@@ -154,7 +154,8 @@ bool getLexemFromLexer(LexemBuffer *lb) {
     }
 
     lmax = lb->lexemStream + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;
-    for(dd=lb->lexemStream,cc=lb->next; cc<lb->end; cc++,dd++)
+    dd = lb->lexemStream;
+    for (char *cc = lb->next; cc < lb->end; cc++, dd++)
         *dd = *cc;
     lb->next = lb->lexemStream;
 
@@ -207,15 +208,15 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             if (ch == '.' || ch=='e' || ch=='E'
                 || ((ch=='d' || ch=='D'|| ch=='f' || ch=='F') && LANGUAGE(LANG_JAVA))) {
                 /* floating point */
-                rlex = floatingPointConstant(cb, &ch);
-                putLexToken(rlex, &dd);
+                lexem = floatingPointConstant(cb, &ch);
+                putLexToken(lexem, &dd);
                 putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
                 putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
                 goto nextLexem;
             }
             /* integer */
-            rlex = constantType(cb, &ch);
-            putLexToken(rlex, &dd);
+            lexem = constantType(cb, &ch);
+            putLexToken(lexem, &dd);
             putLexInt(val, &dd);
             putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
             putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
@@ -243,8 +244,8 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     /* floating point constant */
                     ungetChar(cb, ch);
                     ch = '.';
-                    rlex = floatingPointConstant(cb, &ch);
-                    putLexToken(rlex, &dd);
+                    lexem = floatingPointConstant(cb, &ch);
+                    putLexToken(lexem, &dd);
                     putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
                     putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
                     goto nextLexem;
@@ -488,26 +489,29 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
                 goto nextLexem;
 
-            case '\'':
-                chval = 0;
+            case '\'': {
+                unsigned chval = 0;
+
                 lexStartFilePos = absoluteFilePosition(cb);
                 do {
                     ch = getChar(cb);
-                    while (ch=='\\') {
+                    while (ch == '\\') {
                         ch = getChar(cb);
                         /* TODO escape sequences */
                         ch = getChar(cb);
                     }
-                    if (ch != '\'') chval = chval * 256 + ch;
+                    if (ch != '\'')
+                        chval = chval * 256 + ch;
                 } while (ch != '\'' && ch != '\n');
-                if (ch=='\'') {
+                if (ch == '\'') {
                     putLexToken(CHAR_LITERAL, &dd);
                     putLexInt(chval, &dd);
                     putLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, &dd);
-                    putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
+                    putLexInt(absoluteFilePosition(cb) - lexStartFilePos, &dd);
                     ch = getChar(cb);
                 }
                 goto nextLexem;
+            }
 
             case '\"':
                 line = cb->lineNumber;
