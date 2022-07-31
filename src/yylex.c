@@ -674,7 +674,7 @@ static Lexem getNonBlankLexem(Position *position, int *lineNumber, int *value, i
 
 
 /* Public only for unittesting */
-void processDefineDirective(bool hasArguments) {
+protected void processDefineDirective(bool hasArguments) {
     Lexem lexem;
     int foundIndex;
     int ellipsis;
@@ -1410,7 +1410,8 @@ static void expandMacroArgument(LexInput *argb) {
         if (failedMacroExpansion) {
             tbcc = bcc;
             assert(memb!=NULL);
-            if (memb->u.mbody!=NULL && cyclicCall(memb->u.mbody)) putLexToken(IDENT_NO_CPP_EXPAND, &tbcc);
+            if (memb->u.mbody!=NULL && cyclicCall(memb->u.mbody))
+                putLexToken(IDENT_NO_CPP_EXPAND, &tbcc);
             //& else putLexToken(IDENT_NO_CPP_EXPAND, &tbcc);
         }
         bcc += length;

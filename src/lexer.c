@@ -130,11 +130,11 @@ static void noteNewLexemPosition(LexemBuffer *lb) {
 }
 
 
-static void put_empty_completion_id(CharacterBuffer *cb, char **destinationP, int len) {
+static void putEmptyCompletionId(LexemBuffer *lb, char **destinationP, int len) {
     putLexToken(IDENT_TO_COMPLETE, destinationP);
     putLexChar(0, destinationP);
-    putLexPosition(cb->fileNumber, cb->lineNumber,
-                   columnPosition(cb) - len, destinationP);
+    putLexPosition(lb->buffer.fileNumber, lb->buffer.lineNumber,
+                   columnPosition(&lb->buffer) - len, destinationP);
 }
 
 protected void shiftRemainingLexems(LexemBuffer *lb) {
@@ -862,7 +862,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                                 log_trace(":ress %s", lexStartDd+TOKEN_SIZE);
                             } else {
                                 // completion after an identifier
-                                put_empty_completion_id(cb, &dd,
+                                putEmptyCompletionId(lb, &dd,
                                                         apos-options.olCursorPos);
                             }
                         } else if ((lastlex == LINE_TOKEN || lastlex == STRING_LITERAL)
@@ -871,7 +871,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             // NO COMPLETION
                         } else {
                             // completion after another lexem
-                            put_empty_completion_id(cb, &dd,
+                            putEmptyCompletionId(lb, &dd,
                                                     apos-options.olCursorPos);
                         }
                     }
