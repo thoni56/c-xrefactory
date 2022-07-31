@@ -9,7 +9,7 @@ Current Mikado:
 * TRYING to use LexemBuffer as argument to all putLexXXX() functions
 ** TRY to add a LexemBuffer as argument to putLexToken()
 *** DONE LexemBuffer as argument to putLexLines()
-**** DONE to add LexemBuffer as argument to putLexLines()
+*** DONE LexemBuffer as argument to processIdentifier()
 
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct

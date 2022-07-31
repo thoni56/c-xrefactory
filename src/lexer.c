@@ -106,18 +106,18 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 }
 
 
-static void processIdentifier(int *chP, CharacterBuffer *cb, char **destinationP) {
+static void processIdentifier(int *chP, char **destinationP, LexemBuffer *lb) {
     int column;
 
-    column = columnPosition(cb);
+    column = columnPosition(&lb->buffer);
     putLexToken(IDENTIFIER, destinationP);
     do {
         putLexChar(*chP, destinationP);
-        *chP = getChar(cb);
+        *chP = getChar(&lb->buffer);
     } while (isalpha(*chP) || isdigit(*chP) || *chP == '_'
              || (*chP == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
     putLexChar(0, destinationP);
-    putLexPosition(cb->fileNumber, cb->lineNumber, column, destinationP);
+    putLexPosition(lb->buffer.fileNumber, lb->buffer.lineNumber, column, destinationP);
 }
 
 static void noteNewLexemPosition(LexemBuffer *lb) {
@@ -184,7 +184,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            processIdentifier(&ch, cb, &dd);
+            processIdentifier(&ch, &dd, lb);
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
@@ -732,7 +732,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         putLexPosition(cb->fileNumber, cb->lineNumber, column, &dd);
                         ch = skipBlanks(cb, ch);
                         noteNewLexemPosition(lb);
-                        processIdentifier(&ch, cb, &dd);
+                        processIdentifier(&ch, &dd, lb);
                         if (ch == '(') {
                             putLexToken(CPP_DEFINE, &savedDd);
                         }
