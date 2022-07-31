@@ -198,8 +198,6 @@ void singlePass(int argc, char **argv,
 ) {
     bool inputOpened = false;
 
-    olStringSecondProcessing = false;
-
     inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
 
     smartReadReferences();
@@ -227,7 +225,6 @@ void singlePass(int argc, char **argv,
         if (ol2procfile!=noFileIndex) {
             inputFileName = getFileItem(ol2procfile)->name;
             inputOpened = false;
-            olStringSecondProcessing = true;
             inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
             if (inputOpened) {
                 parseInputFile(firstPassP);

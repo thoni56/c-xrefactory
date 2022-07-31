@@ -108,7 +108,6 @@ extern Position cxRefPosition;
 extern int inputFileNumber;
 extern int olOriginalFileIndex;     /* number of original file */
 extern int olOriginalComFileNumber;  /* number of original communication file */
-extern bool olStringSecondProcessing; /* am I in macro body pass ? WTF So why is it not called that?*/
 
 extern char *storageNamesTable[MAX_STORAGE_NAMES];
 

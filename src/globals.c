@@ -159,7 +159,6 @@ bool cxResizingBlocked = false;
 int inputFileNumber          = -1;
 int olOriginalFileIndex     = -1;
 int olOriginalComFileNumber  = -1;
-bool olStringSecondProcessing = false;
 
 TypeModifier defaultIntModifier;
 Symbol defaultIntDefinition;
