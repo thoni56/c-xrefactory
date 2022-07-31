@@ -1,6 +1,10 @@
 #ifndef HEAD_H_INCLUDED
 #define HEAD_H_INCLUDED
 
+/* An empty "keyword" for non-public functions that should be able to unittest */
+#define protected
+
+
 #include "constants.h"
 
 #include "memory.h"
