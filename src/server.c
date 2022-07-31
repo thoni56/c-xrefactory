@@ -36,7 +36,7 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
            || operation==OLO_GET_METHOD_COORD
            || operation==OLO_GET_CLASS_COORD
            || operation==OLO_GET_ENV_VALUE
-           || isCreatingRefs(operation)
+           || requiresCreatingRefs(operation)
         ;
 }
 
@@ -49,7 +49,7 @@ static bool symbolCanBeIdentifiedByPosition(int fileIndex) {
     // which problem ??????
     // seems that those options are somewhere in ppmMemory overwritten?
     //&return 0;
-    if (!isCreatingRefs(options.serverOperation))
+    if (!requiresCreatingRefs(options.serverOperation))
         return false;
     if (options.browsedSymName == NULL)
         return false;
@@ -213,7 +213,7 @@ void singlePass(int argc, char **argv,
     }
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
-        if (isCreatingRefs(options.serverOperation)) {
+        if (requiresCreatingRefs(options.serverOperation)) {
             Position position = makePosition(inputFileNumber, 1, 0);
             gotOnLineCxRefs(&position);
         }
@@ -245,7 +245,7 @@ static void processFile(int argc, char **argv,
         inputFileName = fileItem->name;
         assert(inputFileName!=NULL);
         singlePass(argc, argv, nargc, nargv, firstPassP);
-        if (options.serverOperation==OLO_EXTRACT || (olstringServed && !isCreatingRefs(options.serverOperation)))
+        if (options.serverOperation==OLO_EXTRACT || (olstringServed && !requiresCreatingRefs(options.serverOperation)))
             break;
         if (LANGUAGE(LANG_JAVA))
             break;
@@ -258,7 +258,7 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
 
     editorLoadAllOpenedBufferFiles();
 
-    if (isCreatingRefs(options.serverOperation))
+    if (requiresCreatingRefs(options.serverOperation))
         olcxPushEmptyStackItem(&sessionData.browserStack);
 
     if (requiresProcessingInputFile(options.serverOperation)) {

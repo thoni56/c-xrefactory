@@ -4090,7 +4090,7 @@ static void olcxDumpSelectionMenu(SymbolsMenu *menu) {
 #endif
 
 static void mainAnswerReferencePushingAction(ServerOperation operation) {
-    assert(isCreatingRefs(operation));
+    assert(requiresCreatingRefs(operation));
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->hkSelectedSym);
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->hkSelectedSym);
     olCreateSelectionMenu(operation);

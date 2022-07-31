@@ -1283,7 +1283,7 @@ void classFileParse(void) {
     scanClassFile(temp, t, NULL);
 }
 
-bool isCreatingRefs(ServerOperation operation) {
+bool requiresCreatingRefs(ServerOperation operation) {
     return
             options.serverOperation==OLO_PUSH
             ||  options.serverOperation==OLO_PUSH_ONLY

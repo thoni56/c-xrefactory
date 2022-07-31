@@ -202,7 +202,7 @@ void printSymbolLinkName(FILE *ff, SymbolsMenu *ss) {
   mock(ff, ss);
 }
 
-bool isCreatingRefs(ServerOperation operation) {
+bool requiresCreatingRefs(ServerOperation operation) {
   return (bool) mock(operation);
 }
 
