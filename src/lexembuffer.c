@@ -159,6 +159,13 @@ void putLexPosition(int file, int line, int column, char **writePointer) {
     putLexCompacted(column, writePointer);
 }
 
+void putLexPosition2(Position position, char **writePointer) {
+    assert(position.file>=0 && position.file<MAX_FILES);
+    putLexCompacted(position.file, writePointer);
+    putLexCompacted(position.line, writePointer);
+    putLexCompacted(position.col, writePointer);
+}
+
 Position getLexPosition(char **readPointer) {
     Position pos;
     pos.file = getLexCompacted(readPointer);

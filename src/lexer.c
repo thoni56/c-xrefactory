@@ -825,13 +825,13 @@ bool getLexemFromLexer(LexemBuffer *lb) {
     nextLexem:
         if (options.mode == ServerMode) {
             int pi, parChar;
-            Position *position;
+            Position position;
             int currentLexemPosition;
 
             /* Since lb->index is incremented *after* adding, we need to subtract 1 to get current */
             pi = (lb->index-1) % LEX_POSITIONS_RING_SIZE;
             currentLexemPosition = lb->fileOffsetRing[pi];
-            position = &lb->positionRing[pi];
+            position = lb->positionRing[pi];
 
             if (fileNumberFrom(lb) == olOriginalFileIndex && fileNumberFrom(lb) != noFileIndex
                 && fileNumberFrom(lb) != -1 && s_jsl == NULL) {
@@ -850,19 +850,19 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                                 parChar = '{';
                         }
                         putLexToken(parChar, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(parChar, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(';', &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(';', &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(OL_MARKER_TOKEN, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(parChar, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(parChar, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         parsedInfo.marker1Flag = true;
                     } else if (apos >= options.olMarkPos && !parsedInfo.marker2Flag){
                         if (LANGUAGE(LANG_JAVA))
@@ -874,28 +874,28 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                                 parChar = '{';
                         }
                         putLexToken(parChar, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(parChar, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(';', &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(';', &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(OL_MARKER_TOKEN, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(parChar, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         putLexToken(parChar, &dd);
-                        putLexPosition(position->file,position->line,position->col, &dd);
+                        putLexPosition2(position, &dd);
                         parsedInfo.marker2Flag = true;
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
-                    handleCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemPosition, &ch, &dd);
+                    handleCompletionOrSearch(lb, startOfCurrentLexem, &position, currentLexemPosition, &ch, &dd);
                 } else {
                     if (currentLexemPosition <= options.olCursorPos
                         && absoluteFilePosition(cb) >= options.olCursorPos) {
-                        gotOnLineCxRefs(position);
+                        gotOnLineCxRefs(&position);
                         Lexem lastlex = nextLexToken(&startOfCurrentLexem);
                         if (lastlex == IDENTIFIER) {
                             strcpy(s_olstring, startOfCurrentLexem+TOKEN_SIZE);
@@ -909,7 +909,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         int apos = absoluteFilePosition(cb);
                         if (apos >= options.olCursorPos && !parsedInfo.marker1Flag) {
                             putLexToken(OL_MARKER_TOKEN, &dd);
-                            putLexPosition(position->file,position->line,position->col, &dd);
+                            putLexPosition2(position, &dd);
                             parsedInfo.marker1Flag = true;
                         }
                     }
