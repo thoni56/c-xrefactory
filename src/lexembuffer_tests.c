@@ -181,3 +181,15 @@ Ensure(LexemBuffer, can_backpatch_lexem) {
     assert_that(lb_end, is_equal_to(lb.end));
     assert_that(lb_next, is_equal_to(lb.next));
 }
+
+Ensure(LexemBuffer, can_set_next_write_position) {
+    LexemBuffer lb;
+
+    initLexemBuffer(&lb, NULL);
+
+    putLexToken(IDENTIFIER, &lb.end);
+    assert_that(lb.end, is_not_equal_to(lb.lexemStream));
+
+    setLexemStreamEnd(&lb, 0);
+    assert_that(lb.end, is_equal_to(lb.lexemStream));
+}

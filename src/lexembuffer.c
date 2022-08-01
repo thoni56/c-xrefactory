@@ -25,6 +25,11 @@ void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem) {
     putLexToken(lexem, &writePointer);
 }
 
+void setLexemStreamEnd(LexemBuffer *lb, int index) {
+    lb->end = &lb->lexemStream[index];
+}
+
+
 /* Char */
 void putLexChar(char ch, char **writePointerP) {
     **writePointerP = ch;

@@ -22,12 +22,15 @@ typedef struct lexemBuffer {
 } LexemBuffer;
 
 
+/* New API with lb + index instead of writePointerP */
+extern int getBackpatchLexemIndex(LexemBuffer *lb);
+extern void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem);
+
+extern void setLexemStreamEnd(LexemBuffer *lb, int index);
+
 /* Lexer functions for passing compressed tokens to the parser */
 extern int fileNumberFrom(LexemBuffer *lb);
 extern int lineNumberFrom(LexemBuffer *lb);
-
-extern int getBackpatchLexemIndex(LexemBuffer *lb);
-extern void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem);
 
 extern void putLexChar(char ch, char **writePointer);
 extern void putLexShort(int shortValue, char **writePointer);
