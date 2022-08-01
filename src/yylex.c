@@ -694,8 +694,6 @@ protected void processDefineDirective(bool hasArguments) {
     Symbol *symbol = NULL;
     char *body = NULL;
 
-    //symbol=NULL;macroBody=NULL;macroName=body=NULL; // to calm compiler
-
     argumentCount=0;
     macroSize = -1;
 
