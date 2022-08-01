@@ -26,5 +26,4 @@ clean:
 
 debug: DEBUGGER=gdb
 debug:
-	echo run $(ARGUMENTS)
-	$(DEBUGGER) $(CXREF)
+	$(DEBUGGER) $(CXREF) -ex 'br main' -ex 'run $(ARGUMENTS)'

@@ -23,5 +23,4 @@ clean:
 DEBUGGER = gdb
 debug: TRACE = -trace
 debug:
-	@echo run $(ARGUMENTS)
-	$(DEBUGGER) $(COMMAND)
+	$(DEBUGGER) $(COMMAND) -ex 'br main' -ex 'run $(ARGUMENTS)'

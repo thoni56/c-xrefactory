@@ -41,5 +41,4 @@ clean:
 DEBUGGER = gdb
 debug: TRACE = -trace
 debug:
-	echo run $(ARGUMENTS)
-	$(DEBUGGER) $(CXREF)
+	$(DEBUGGER) $(CXREF) -ex 'br main' -ex 'run $(ARGUMENTS)'
