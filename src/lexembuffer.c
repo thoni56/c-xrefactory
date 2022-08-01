@@ -16,7 +16,7 @@ Lexem getLexemAt(LexemBuffer *lb, int index) {
     return nextLexToken(&readPointer);
 }
 
-int getBackpatchLexemIndex(LexemBuffer *lb) {
+int getCurrentLexemIndexForBackpatching(LexemBuffer *lb) {
     return lb->next - lb->lexemStream;
 }
 

@@ -23,7 +23,7 @@ typedef struct lexemBuffer {
 
 
 /* New API with lb + index instead of writePointerP */
-extern int getBackpatchLexemIndex(LexemBuffer *lb);
+extern int getCurrentLexemIndexForBackpatching(LexemBuffer *lb);
 extern void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem);
 extern void setLexemStreamEnd(LexemBuffer *lb, int index);
 

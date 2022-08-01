@@ -167,7 +167,7 @@ Ensure(LexemBuffer, can_backpatch_lexem) {
 
     initLexemBuffer(&lb, NULL);
 
-    int backpatchIndex = getBackpatchLexemIndex(&lb);
+    int backpatchIndex = getCurrentLexemIndexForBackpatching(&lb);
     putLexToken(CPP_LINE, &lb.end);
 
     char *lb_end = lb.end;
