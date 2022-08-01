@@ -23,13 +23,13 @@ BeforeEach(Lexer) {
 }
 AfterEach(Lexer) {}
 
-protected void shiftRemainingLexems(LexemBuffer *lb);
+protected void shiftAnyRemainingLexems(LexemBuffer *lb);
 
 Ensure(Lexer, can_shift_remaining_lexems) {
     LexemBuffer lb = { .end = lb.lexemStream, .next = lb.lexemStream };
     char *test_string = "abcdefg";
 
-    shiftRemainingLexems(&lb);
+    shiftAnyRemainingLexems(&lb);
 
     assert_that(lb.next, is_equal_to(lb.lexemStream));
     assert_that(lb.end, is_equal_to(lb.lexemStream));
@@ -38,7 +38,7 @@ Ensure(Lexer, can_shift_remaining_lexems) {
     lb.next = &lb.lexemStream[1];
     lb.end  = &lb.lexemStream[2];
 
-    shiftRemainingLexems(&lb);
+    shiftAnyRemainingLexems(&lb);
 
     assert_that(lb.next, is_equal_to(lb.lexemStream));
     assert_that(lb.end, is_equal_to(&lb.lexemStream[1]));
@@ -48,7 +48,7 @@ Ensure(Lexer, can_shift_remaining_lexems) {
     lb.next = &lb.lexemStream[2];
     lb.end  = &lb.lexemStream[9];
 
-    shiftRemainingLexems(&lb);
+    shiftAnyRemainingLexems(&lb);
 
     assert_that(lb.next, is_equal_to(lb.lexemStream));
     assert_that(lb.end, is_equal_to(&lb.lexemStream[strlen(test_string)]));

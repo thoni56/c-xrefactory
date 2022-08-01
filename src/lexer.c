@@ -137,7 +137,7 @@ static void putEmptyCompletionId(LexemBuffer *lb, char **destinationP, int len) 
                    columnPosition(&lb->buffer) - len, destinationP);
 }
 
-protected void shiftRemainingLexems(LexemBuffer *lb) {
+protected void shiftAnyRemainingLexems(LexemBuffer *lb) {
     int remaining = lb->end - lb->next;
     char *src = lb->next;
     char *dest = lb->lexemStream;
@@ -292,7 +292,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         cache.lexcc = lb->lexemStream;
     }
 
-    shiftRemainingLexems(lb);
+    shiftAnyRemainingLexems(lb);
 
     lexemLimit = lb->end + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
 
