@@ -248,11 +248,9 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
             if (len <= strlen(startOfCurrentLexem + TOKEN_SIZE)) {
                 /* Need to backpatch the current lexem */
                 char *backpatchP = startOfCurrentLexem;
-                if (options.serverOperation == OLO_SEARCH) {
-                    putLexToken(IDENT_TO_COMPLETE, &backpatchP);
-                } else { /* OLO_COMPLETION */
-                    /* Backpatch current lexem */
-                    putLexToken(IDENT_TO_COMPLETE, &backpatchP);
+                putLexToken(IDENT_TO_COMPLETE, &backpatchP);
+                if (options.serverOperation == OLO_COMPLETION) {
+                    /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in already written identifier */
                     backpatchP += len;
                     /* Terminate identifier here */
@@ -266,7 +264,7 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                 putEmptyCompletionId(lb, writePositionP, apos - options.olCursorPos);
             }
         } else if ((thisLexToken == LINE_TOKEN || thisLexToken == STRING_LITERAL)
-                   && (apos - options.olCursorPos != 0)) {
+                   && (apos != options.olCursorPos)) {
             // completion inside special lexems, do
             // NO COMPLETION
         } else {
