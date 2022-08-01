@@ -231,6 +231,53 @@ static int handleCppToken(LexemBuffer *lb, char **writePositionP) {
     return ch;
 }
 
+static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position *position,
+                                     int currentLexemPosition, int *_ch, char **_dd) {
+    int   ch = *_ch;
+    char *dd = *_dd;
+    ch       = skipBlanks(&lb->buffer, ch);
+    int apos = absoluteFilePosition(&lb->buffer);
+
+    if (currentLexemPosition < options.olCursorPos
+        && (apos >= options.olCursorPos || (ch == -1 && apos + 1 == options.olCursorPos))) {
+        log_trace("currentLexemPosition, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
+                  currentLexemPosition, options.olCursorPos, apos, ch);
+        Lexem thisLexToken = nextLexToken(&startOfCurrentLexem);
+        if (thisLexToken == IDENTIFIER) {
+            int len = options.olCursorPos - currentLexemPosition;
+            log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + TOKEN_SIZE, len,
+                      strlen(startOfCurrentLexem + TOKEN_SIZE));
+            if (len <= strlen(startOfCurrentLexem + TOKEN_SIZE)) {
+                /* Need to backpatch the current lexem */
+                if (options.serverOperation == OLO_SEARCH) {
+                    char *ddd;
+                    ddd = startOfCurrentLexem;
+                    putLexToken(IDENT_TO_COMPLETE, &ddd);
+                } else { /* OLO_COMPLETION */
+                    dd = startOfCurrentLexem;
+                    putLexToken(IDENT_TO_COMPLETE, &dd);
+                    dd += len;
+                    putLexChar(0, &dd);
+                    putLexPosition(position->file, position->line, position->col, &dd);
+                }
+                log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
+            } else {
+                // completion after an identifier
+                putEmptyCompletionId(lb, &dd, apos - options.olCursorPos);
+            }
+        } else if ((thisLexToken == LINE_TOKEN || thisLexToken == STRING_LITERAL)
+                   && (apos - options.olCursorPos != 0)) {
+            // completion inside special lexems, do
+            // NO COMPLETION
+        } else {
+            // completion after another lexem
+            putEmptyCompletionId(lb, &dd, apos - options.olCursorPos);
+        }
+    }
+    *_ch = ch;
+    *_dd = dd;
+}
+
 bool getLexemFromLexer(LexemBuffer *lb) {
     int ch;
     char *lexemLimit, *startOfCurrentLexem;
@@ -848,45 +895,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
-                    ch = skipBlanks(cb, ch);
-                    int apos = absoluteFilePosition(cb);
-                    if (currentLexemPosition < options.olCursorPos
-                        && (apos >= options.olCursorPos
-                            || (ch == -1 && apos+1 == options.olCursorPos))) {
-                        log_trace("currentLexemPosition, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",currentLexemPosition, options.olCursorPos, apos, ch);
-                        Lexem lastlex = nextLexToken(&startOfCurrentLexem);
-                        if (lastlex == IDENTIFIER) {
-                            int len = options.olCursorPos-currentLexemPosition;
-                            log_trace(":check %s[%d] <-> %d", startOfCurrentLexem+TOKEN_SIZE, len,strlen(startOfCurrentLexem+TOKEN_SIZE));
-                            if (len <= strlen(startOfCurrentLexem+TOKEN_SIZE)) {
-                                if (options.serverOperation == OLO_SEARCH) {
-                                    char *ddd;
-                                    ddd = startOfCurrentLexem;
-                                    putLexToken(IDENT_TO_COMPLETE, &ddd);
-                                } else {
-                                    dd = startOfCurrentLexem;
-                                    putLexToken(IDENT_TO_COMPLETE, &dd);
-                                    dd += len;
-                                    putLexChar(0, &dd);
-                                    putLexPosition(position->file,position->line,position->col, &dd);
-                                }
-                                log_trace(":ress %s", startOfCurrentLexem+TOKEN_SIZE);
-                            } else {
-                                // completion after an identifier
-                                putEmptyCompletionId(lb, &dd,
-                                                     apos-options.olCursorPos);
-                            }
-                        } else if ((lastlex == LINE_TOKEN || lastlex == STRING_LITERAL)
-                                   && (apos-options.olCursorPos != 0)) {
-                            // completion inside special lexems, do
-                            // NO COMPLETION
-                        } else {
-                            // completion after another lexem
-                            putEmptyCompletionId(lb, &dd,
-                                                    apos-options.olCursorPos);
-                        }
-                    }
-                    // TODO, make this in a more standard way, !!!
+                    handleCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemPosition, &ch, &dd);
                 } else {
                     if (currentLexemPosition <= options.olCursorPos
                         && absoluteFilePosition(cb) >= options.olCursorPos) {
