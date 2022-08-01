@@ -26,111 +26,111 @@ void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem) {
 }
 
 /* Char */
-void putLexChar(char ch, char **writePointer) {
-    **writePointer = ch;
-    (*writePointer)++;
+void putLexChar(char ch, char **writePointerP) {
+    **writePointerP = ch;
+    (*writePointerP)++;
 }
 
-unsigned char getLexChar(char **readPointer) {
-    unsigned char ch = **readPointer;
-    (*readPointer)++;
+unsigned char getLexChar(char **readPointerP) {
+    unsigned char ch = **readPointerP;
+    (*readPointerP)++;
     return ch;
 }
 
 /* Short */
-void putLexShort(int shortValue, char **writePointer) {
+void putLexShort(int shortValue, char **writePointerP) {
     assert(shortValue <= 65535);
-    **writePointer = ((unsigned)shortValue)%256;
-    (*writePointer)++;
-    **writePointer = ((unsigned)shortValue)/256;
-    (*writePointer)++;
+    **writePointerP = ((unsigned)shortValue)%256;
+    (*writePointerP)++;
+    **writePointerP = ((unsigned)shortValue)/256;
+    (*writePointerP)++;
 }
 
-int getLexShort(char **readPointer) {
-    int value = *(unsigned char*)(*readPointer);
-    (*readPointer)++;
-    value += 256 * *(unsigned char*)(*readPointer);
-    (*readPointer)++;
+int getLexShort(char **readPointerP) {
+    int value = *(unsigned char*)(*readPointerP);
+    (*readPointerP)++;
+    value += 256 * *(unsigned char*)(*readPointerP);
+    (*readPointerP)++;
     return value;
 }
 
-static int nextLexShort(char **readPointer) {
-    int first = *(unsigned char*)(*readPointer);
-    int second = *((unsigned char*)(*readPointer)+1);
+static int nextLexShort(char **readPointerP) {
+    int first = *(unsigned char*)(*readPointerP);
+    int second = *((unsigned char*)(*readPointerP)+1);
 
     return first + 256*second;
 }
 
 /* Token */
-void putLexToken(Lexem lexem, char **writePointer) {
-    putLexShort(lexem, writePointer);
+void putLexToken(Lexem lexem, char **writePointerP) {
+    putLexShort(lexem, writePointerP);
 }
 
-Lexem getLexToken(char **readPointer) {
-    return (Lexem)getLexShort(readPointer);
+Lexem getLexToken(char **readPointerP) {
+    return (Lexem)getLexShort(readPointerP);
 }
 
-Lexem nextLexToken(char **readPointer) {
-    return (Lexem)nextLexShort(readPointer);
+Lexem nextLexToken(char **readPointerP) {
+    return (Lexem)nextLexShort(readPointerP);
 }
 
 /* Int */
-void putLexInt(int value, char **writePointer) {
+void putLexInt(int value, char **writePointerP) {
         unsigned tmp;
         tmp = value;
-        *(*writePointer)++ = tmp%256; tmp /= 256;
-        *(*writePointer)++ = tmp%256; tmp /= 256;
-        *(*writePointer)++ = tmp%256; tmp /= 256;
-        *(*writePointer)++ = tmp%256; tmp /= 256;
+        *(*writePointerP)++ = tmp%256; tmp /= 256;
+        *(*writePointerP)++ = tmp%256; tmp /= 256;
+        *(*writePointerP)++ = tmp%256; tmp /= 256;
+        *(*writePointerP)++ = tmp%256; tmp /= 256;
     }
 
-int getLexInt(char **readPointer) {
+int getLexInt(char **readPointerP) {
     unsigned int value;
-    value = **(unsigned char**)readPointer;
-    (*readPointer)++;
-    value += 256 * **(unsigned char**)readPointer;
-    (*readPointer)++;
-    value += 256 * 256 * **(unsigned char**)readPointer;
-    (*readPointer)++;
-    value += 256 * 256 * 256 * **(unsigned char**)readPointer;
-    (*readPointer)++;
+    value = **(unsigned char**)readPointerP;
+    (*readPointerP)++;
+    value += 256 * **(unsigned char**)readPointerP;
+    (*readPointerP)++;
+    value += 256 * 256 * **(unsigned char**)readPointerP;
+    (*readPointerP)++;
+    value += 256 * 256 * 256 * **(unsigned char**)readPointerP;
+    (*readPointerP)++;
     return value;
 }
 
 /* Compacted */
-void putLexCompacted(int value, char **writePointer) {
+void putLexCompacted(int value, char **writePointerP) {
     assert(((unsigned) value)<4194304);
     if (((unsigned)value) < 128) {
-        **writePointer = ((unsigned char)value);
-        (*writePointer)++;
+        **writePointerP = ((unsigned char)value);
+        (*writePointerP)++;
     } else if (((unsigned)value) < 16384) {
-        **writePointer = ((unsigned)value)%128+128;
-        (*writePointer)++;
-        **writePointer = ((unsigned)value)/128;
-        (*writePointer)++;
+        **writePointerP = ((unsigned)value)%128+128;
+        (*writePointerP)++;
+        **writePointerP = ((unsigned)value)/128;
+        (*writePointerP)++;
     } else {
-        **writePointer = ((unsigned)value)%128+128;
-        (*writePointer)++;
-        **writePointer = ((unsigned)value)/128%128+128;
-        (*writePointer)++;
-        **writePointer = ((unsigned)value)/16384;
-        (*writePointer)++;
+        **writePointerP = ((unsigned)value)%128+128;
+        (*writePointerP)++;
+        **writePointerP = ((unsigned)value)/128%128+128;
+        (*writePointerP)++;
+        **writePointerP = ((unsigned)value)/16384;
+        (*writePointerP)++;
     }
 }
 
-int getLexCompacted(char **readPointer) {
+int getLexCompacted(char **readPointerP) {
     unsigned value;
 
-    value = **(unsigned char**)readPointer;
-    (*readPointer)++;
+    value = **(unsigned char**)readPointerP;
+    (*readPointerP)++;
     if (value >= 128) {
-        unsigned secondPart = **(unsigned char**)readPointer;
-        (*readPointer)++;
+        unsigned secondPart = **(unsigned char**)readPointerP;
+        (*readPointerP)++;
         if (secondPart < 128) {
             value = ((unsigned)value)-128 + 128 * secondPart;
         } else {
-            unsigned thirdPart = **(unsigned char**)readPointer;
-            (*readPointer)++;
+            unsigned thirdPart = **(unsigned char**)readPointerP;
+            (*readPointerP)++;
             value = ((unsigned)value)-128 + 128 * (secondPart-128) + 16384 * thirdPart;
         }
     }
@@ -146,36 +146,36 @@ int lineNumberFrom(LexemBuffer *lb) {
 }
 
 /* Lines */
-void putLexLines(int lines, char **writePointer, LexemBuffer *lb) {
-    putLexToken(LINE_TOKEN, writePointer);
-    putLexToken(lines, writePointer);
+void putLexLines(int lines, char **writePointerP, LexemBuffer *lb) {
+    putLexToken(LINE_TOKEN, writePointerP);
+    putLexToken(lines, writePointerP);
 }
 
 /* Position */
-void putLexPosition(int file, int line, int column, char **writePointer) {
+void putLexPosition(int file, int line, int column, char **writePointerP) {
     assert(file>=0 && file<MAX_FILES);
-    putLexCompacted(file, writePointer);
-    putLexCompacted(line, writePointer);
-    putLexCompacted(column, writePointer);
+    putLexCompacted(file, writePointerP);
+    putLexCompacted(line, writePointerP);
+    putLexCompacted(column, writePointerP);
 }
 
-void putLexPosition2(Position position, char **writePointer) {
+void putLexPosition2(Position position, char **writePointerP) {
     assert(position.file>=0 && position.file<MAX_FILES);
-    putLexCompacted(position.file, writePointer);
-    putLexCompacted(position.line, writePointer);
-    putLexCompacted(position.col, writePointer);
+    putLexCompacted(position.file, writePointerP);
+    putLexCompacted(position.line, writePointerP);
+    putLexCompacted(position.col, writePointerP);
 }
 
-Position getLexPosition(char **readPointer) {
+Position getLexPosition(char **readPointerP) {
     Position pos;
-    pos.file = getLexCompacted(readPointer);
-    pos.line = getLexCompacted(readPointer);
-    pos.col = getLexCompacted(readPointer);
+    pos.file = getLexCompacted(readPointerP);
+    pos.line = getLexCompacted(readPointerP);
+    pos.col = getLexCompacted(readPointerP);
     return pos;
 }
 
-Position nextLexPosition(char **readPointer) {
-    char *tmptmpcc = *readPointer;
+Position nextLexPosition(char **readPointerP) {
+    char *tmptmpcc = *readPointerP;
     Position pos;
     pos = getLexPosition(&tmptmpcc);
     return pos;
