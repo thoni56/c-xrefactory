@@ -210,7 +210,7 @@ static int handleCppToken(LexemBuffer *lb, char **writePositionP) {
                 ch = getChar(&lb->buffer);
         }
     } else if (strcmp(preprocessorWord, "define") == 0) {
-        char *savedWritePosition = *writePositionP;
+        char *backpatchLexemP = *writePositionP;
         putLexToken(CPP_DEFINE0, writePositionP);
         putLexPosition(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
         ch = skipBlanks(&lb->buffer, ch);
@@ -218,7 +218,7 @@ static int handleCppToken(LexemBuffer *lb, char **writePositionP) {
         processIdentifier(&ch, writePositionP, lb);
         if (ch == '(') {
             /* Backpatch the current lexem code (CPP_DEFINE0) with discovered CPP_DEFINE */
-            putLexToken(CPP_DEFINE, &savedWritePosition);
+            putLexToken(CPP_DEFINE, &backpatchLexemP);
         }
     } else if (strcmp(preprocessorWord, "pragma") == 0) {
         putLexToken(CPP_PRAGMA, writePositionP);
