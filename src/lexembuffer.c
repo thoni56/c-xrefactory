@@ -10,6 +10,21 @@ void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
     initCharacterBuffer(&buffer->buffer, file);
 }
 
+/* New API with index: */
+Lexem getLexemAt(LexemBuffer *lb, int index) {
+    char *readPointer = &lb->lexemStream[index];
+    return nextLexToken(&readPointer);
+}
+
+int getBackpatchLexemIndex(LexemBuffer *lb) {
+    return lb->next - lb->lexemStream;
+}
+
+void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem) {
+    char *writePointer = &lb->lexemStream[index];
+    putLexToken(lexem, &writePointer);
+}
+
 /* Char */
 void putLexChar(char ch, char **writePointer) {
     **writePointer = ch;

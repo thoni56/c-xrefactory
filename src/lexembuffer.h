@@ -26,12 +26,17 @@ typedef struct lexemBuffer {
 extern int fileNumberFrom(LexemBuffer *lb);
 extern int lineNumberFrom(LexemBuffer *lb);
 
+extern int getBackpatchLexemIndex(LexemBuffer *lb);
+extern void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem);
+
 extern void putLexChar(char ch, char **writePointer);
 extern void putLexShort(int shortValue, char **writePointer);
 extern void putLexToken(Lexem lexem, char **writePointer);
 extern void putLexInt(int value, char **writePointer);
 extern void putLexCompacted(int value, char **writePointer);
 extern void putLexLines(int lines, char **writePointer, LexemBuffer *lb);
+
+extern Lexem getLexemAt(LexemBuffer *lb, int index);
 
 extern unsigned char getLexChar(char **readPointer);
 extern int getLexShort(char **readPointer);

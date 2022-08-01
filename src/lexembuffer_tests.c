@@ -1,4 +1,5 @@
 #include <cgreen/cgreen.h>
+#include <cgreen/constraint_syntax_helpers.h>
 
 #include "lexem.h"
 #include "lexembuffer.h"
@@ -158,4 +159,25 @@ Ensure(LexemBuffer, can_put_and_get_position) {
     read_position = getLexPosition(&lb.next);
     assert_that(positionsAreEqual(read_position, initial_position));
     assert_that(lb.next, is_equal_to(pointer_after_put));
+}
+
+Ensure(LexemBuffer, can_backpatch_lexem) {
+    LexemBuffer lb;
+    Lexem backpatched_lexem = STRING_LITERAL;
+
+    initLexemBuffer(&lb, NULL);
+
+    int backpatchIndex = getBackpatchLexemIndex(&lb);
+    putLexToken(CPP_LINE, &lb.end);
+
+    char *lb_end = lb.end;
+    char *lb_next = lb.next;
+
+    backpatchLexem(&lb, backpatchIndex, backpatched_lexem);
+
+    assert_that(getLexemAt(&lb, backpatchIndex), is_equal_to(backpatched_lexem));
+
+    /* lb pointers should not have moved */
+    assert_that(lb_end, is_equal_to(lb.end));
+    assert_that(lb_next, is_equal_to(lb.next));
 }
