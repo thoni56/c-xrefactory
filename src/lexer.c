@@ -233,12 +233,12 @@ static int handleCppToken(LexemBuffer *lb, char **writePositionP) {
 
 bool getLexemFromLexer(LexemBuffer *lb) {
     int ch;
-    CharacterBuffer *cb;
     char *lexemLimit, *startOfCurrentLexem;
     char *dd;                   /* TODO: It works to replace this with #define dd (lb->end) */
     Lexem lexem;
     int line, column, size;
     int lexemStartingColumn, lexStartFilePos;
+    CharacterBuffer *cb = &lb->buffer;
 
     /* first test whether the input is cached */
     /* TODO: why do we need to know this? */
@@ -252,7 +252,6 @@ bool getLexemFromLexer(LexemBuffer *lb) {
     lexemLimit = lb->end + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
 
     dd = lb->end;
-    cb = &lb->buffer;
     ch = getChar(cb);
     do {
         ch = skipBlanks(cb, ch);
@@ -782,20 +781,23 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         assert(0);
     nextLexem:
         if (options.mode == ServerMode) {
-            int pi,len,lastlex,parChar,apos;
+            int pi, parChar;
             Position *position;
-            int pos1,currentLexemPosition;
+            int currentLexemPosition;
+
+            /* Since lb->index is incremented *after* adding, we need to subtract 1 to get current */
             pi = (lb->index-1) % LEX_POSITIONS_RING_SIZE;
-            position = &lb->positionRing[pi];
             currentLexemPosition = lb->fileOffsetRing[pi];
+            position = &lb->positionRing[pi];
+
             if (fileNumberFrom(lb) == olOriginalFileIndex && fileNumberFrom(lb) != noFileIndex
                 && fileNumberFrom(lb) != -1 && s_jsl == NULL) {
                 if (options.serverOperation == OLO_EXTRACT && lb->index>=2) { /* TODO: WTF does "lb->index >= 2" mean? */
                     ch = skipBlanks(cb, ch);
-                    pos1 = absoluteFilePosition(cb);
-                    log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",pos1,options.olCursorPos,options.olMarkPos);
+                    int apos = absoluteFilePosition(cb);
+                    log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",apos,options.olCursorPos,options.olMarkPos);
                     // all this is very, very HACK!!!
-                    if (pos1 >= options.olCursorPos && !parsedInfo.marker1Flag) {
+                    if (apos >= options.olCursorPos && !parsedInfo.marker1Flag) {
                         if (LANGUAGE(LANG_JAVA))
                             parChar = ';';
                         else {
@@ -819,7 +821,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         putLexToken(parChar, &dd);
                         putLexPosition(position->file,position->line,position->col, &dd);
                         parsedInfo.marker1Flag = true;
-                    } else if (pos1 >= options.olMarkPos && !parsedInfo.marker2Flag){
+                    } else if (apos >= options.olMarkPos && !parsedInfo.marker2Flag){
                         if (LANGUAGE(LANG_JAVA))
                             parChar = ';';
                         else {
@@ -847,14 +849,14 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
                     ch = skipBlanks(cb, ch);
-                    apos = absoluteFilePosition(cb);
+                    int apos = absoluteFilePosition(cb);
                     if (currentLexemPosition < options.olCursorPos
                         && (apos >= options.olCursorPos
                             || (ch == -1 && apos+1 == options.olCursorPos))) {
                         log_trace("currentLexemPosition, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",currentLexemPosition, options.olCursorPos, apos, ch);
-                        lastlex = nextLexToken(&startOfCurrentLexem);
+                        Lexem lastlex = nextLexToken(&startOfCurrentLexem);
                         if (lastlex == IDENTIFIER) {
-                            len = options.olCursorPos-currentLexemPosition;
+                            int len = options.olCursorPos-currentLexemPosition;
                             log_trace(":check %s[%d] <-> %d", startOfCurrentLexem+TOKEN_SIZE, len,strlen(startOfCurrentLexem+TOKEN_SIZE));
                             if (len <= strlen(startOfCurrentLexem+TOKEN_SIZE)) {
                                 if (options.serverOperation == OLO_SEARCH) {
@@ -872,7 +874,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             } else {
                                 // completion after an identifier
                                 putEmptyCompletionId(lb, &dd,
-                                                        apos-options.olCursorPos);
+                                                     apos-options.olCursorPos);
                             }
                         } else if ((lastlex == LINE_TOKEN || lastlex == STRING_LITERAL)
                                    && (apos-options.olCursorPos != 0)) {
@@ -889,7 +891,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     if (currentLexemPosition <= options.olCursorPos
                         && absoluteFilePosition(cb) >= options.olCursorPos) {
                         gotOnLineCxRefs(position);
-                        lastlex = nextLexToken(&startOfCurrentLexem);
+                        Lexem lastlex = nextLexToken(&startOfCurrentLexem);
                         if (lastlex == IDENTIFIER) {
                             strcpy(s_olstring, startOfCurrentLexem+TOKEN_SIZE);
                         }
@@ -899,7 +901,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         // that is why I restrict it to Java language! It is usefull
                         // only for Java refactorings
                         ch = skipBlanks(cb, ch);
-                        apos = absoluteFilePosition(cb);
+                        int apos = absoluteFilePosition(cb);
                         if (apos >= options.olCursorPos && !parsedInfo.marker1Flag) {
                             putLexToken(OL_MARKER_TOKEN, &dd);
                             putLexPosition(position->file,position->line,position->col, &dd);
