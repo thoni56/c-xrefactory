@@ -231,7 +231,7 @@ static int handleCppToken(LexemBuffer *lb, char **writePositionP) {
     return ch;
 }
 
-static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position *position,
+static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position position,
                                      int currentLexemPosition, int *chP, char **writePositionP) {
     *chP     = skipBlanks(&lb->buffer, *chP);
     int apos = absoluteFilePosition(&lb->buffer);
@@ -256,7 +256,7 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                     /* Terminate identifier here */
                     putLexChar(0, &backpatchP);
                     /* And write the position */
-                    putLexPosition(position->file, position->line, position->col, &backpatchP);
+                    putLexPosition2(position, &backpatchP);
                 }
                 log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
             } else {
@@ -891,7 +891,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
-                    handleCompletionOrSearch(lb, startOfCurrentLexem, &position, currentLexemPosition, &ch, &dd);
+                    handleCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemPosition, &ch, &dd);
                 } else {
                     if (currentLexemPosition <= options.olCursorPos
                         && absoluteFilePosition(cb) >= options.olCursorPos) {
