@@ -152,14 +152,14 @@ void putLexLines(int lines, char **writePointerP, LexemBuffer *lb) {
 }
 
 /* Position */
-void putLexPosition(int file, int line, int column, char **writePointerP) {
+void putLexPositionFields(int file, int line, int column, char **writePointerP) {
     assert(file>=0 && file<MAX_FILES);
     putLexCompacted(file, writePointerP);
     putLexCompacted(line, writePointerP);
     putLexCompacted(column, writePointerP);
 }
 
-void putLexPosition2(Position position, char **writePointerP) {
+void putLexPosition(Position position, char **writePointerP) {
     assert(position.file>=0 && position.file<MAX_FILES);
     putLexCompacted(position.file, writePointerP);
     putLexCompacted(position.line, writePointerP);

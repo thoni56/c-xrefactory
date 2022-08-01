@@ -153,7 +153,7 @@ Ensure(LexemBuffer, can_put_and_get_position) {
 
     initLexemBuffer(&lb, NULL);
 
-    putLexPosition(initial_position.file, initial_position.line, initial_position.col, &lb.end);
+    putLexPositionFields(initial_position.file, initial_position.line, initial_position.col, &lb.end);
     pointer_after_put = lb.end;
 
     read_position = getLexPosition(&lb.next);
