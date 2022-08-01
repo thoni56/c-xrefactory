@@ -27,6 +27,7 @@ protected void shiftRemainingLexems(LexemBuffer *lb);
 
 Ensure(Lexer, can_shift_remaining_lexems) {
     LexemBuffer lb = { .end = lb.lexemStream, .next = lb.lexemStream };
+    char *test_string = "abcdefg";
 
     shiftRemainingLexems(&lb);
 
@@ -43,15 +44,15 @@ Ensure(Lexer, can_shift_remaining_lexems) {
     assert_that(lb.end, is_equal_to(&lb.lexemStream[1]));
     assert_that(lb.lexemStream[0], is_equal_to('1'));
 
-    strcpy(&lb.lexemStream[2], "abcdefg");
+    strcpy(&lb.lexemStream[2], test_string);
     lb.next = &lb.lexemStream[2];
     lb.end  = &lb.lexemStream[9];
 
     shiftRemainingLexems(&lb);
 
     assert_that(lb.next, is_equal_to(lb.lexemStream));
-    assert_that(lb.end, is_equal_to(&lb.lexemStream[7]));
-    assert_that(strncmp(lb.lexemStream, "abcdefg", 7), is_equal_to(0));
+    assert_that(lb.end, is_equal_to(&lb.lexemStream[strlen(test_string)]));
+    assert_that(strncmp(lb.lexemStream, test_string, strlen(test_string)), is_equal_to(0));
 }
 
 Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
