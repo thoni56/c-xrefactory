@@ -252,11 +252,11 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in already written identifier */
-                    backpatchP += len;
+                    *writePositionP = backpatchP + len;
                     /* Terminate identifier here */
-                    putLexChar(0, &backpatchP);
+                    putLexChar(0, writePositionP);
                     /* And write the position */
-                    putLexPosition2(position, &backpatchP);
+                    putLexPosition2(position, writePositionP);
                 }
                 log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
             } else {
