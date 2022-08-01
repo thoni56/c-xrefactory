@@ -6,7 +6,7 @@
 void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
     buffer->next = buffer->lexemStream;
     buffer->end = buffer->lexemStream;
-    buffer->index = 0;
+    buffer->ringIndex = 0;
     initCharacterBuffer(&buffer->buffer, file);
 }
 

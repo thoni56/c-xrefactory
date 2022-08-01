@@ -61,7 +61,7 @@ Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
     cache.active = false; /* ?? */
 
     lexemBuffer.next = lexemBuffer.end = lexemBuffer.lexemStream;
-    lexemBuffer.index = 0;
+    lexemBuffer.ringIndex = 0;
 
     initCharacterBuffer(&lexemBuffer.buffer, NULL);
 

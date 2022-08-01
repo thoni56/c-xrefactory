@@ -121,12 +121,12 @@ static void processIdentifier(int *chP, char **destinationP, LexemBuffer *lb) {
 }
 
 static void noteNewLexemPosition(LexemBuffer *lb) {
-    int index = lb->index % LEX_POSITIONS_RING_SIZE;
+    int index = lb->ringIndex % LEX_POSITIONS_RING_SIZE;
     lb->fileOffsetRing[index] = absoluteFilePosition(&lb->buffer);
     lb->positionRing[index].file = lb->buffer.fileNumber;
     lb->positionRing[index].line = lb->buffer.lineNumber;
     lb->positionRing[index].col = columnPosition(&lb->buffer);
-    lb->index++;
+    lb->ringIndex++;
 }
 
 
@@ -830,13 +830,13 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             int currentLexemPosition;
 
             /* Since lb->index is incremented *after* adding, we need to subtract 1 to get current */
-            pi = (lb->index-1) % LEX_POSITIONS_RING_SIZE;
+            pi = (lb->ringIndex-1) % LEX_POSITIONS_RING_SIZE;
             currentLexemPosition = lb->fileOffsetRing[pi];
             position = lb->positionRing[pi];
 
             if (fileNumberFrom(lb) == olOriginalFileIndex && fileNumberFrom(lb) != noFileIndex
                 && fileNumberFrom(lb) != -1 && s_jsl == NULL) {
-                if (options.serverOperation == OLO_EXTRACT && lb->index>=2) { /* TODO: WTF does "lb->index >= 2" mean? */
+                if (options.serverOperation == OLO_EXTRACT && lb->ringIndex>=2) { /* TODO: WTF does "lb->index >= 2" mean? */
                     ch = skipBlanks(cb, ch);
                     int apos = absoluteFilePosition(cb);
                     log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",apos,options.olCursorPos,options.olMarkPos);

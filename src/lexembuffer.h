@@ -17,7 +17,7 @@ typedef struct lexemBuffer {
     char lexemStream[LEXEM_BUFFER_SIZE];
     Position positionRing[LEX_POSITIONS_RING_SIZE];
     unsigned fileOffsetRing[LEX_POSITIONS_RING_SIZE];
-    int index;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
+    int ringIndex;           /* ...Ring[ringIndex%LEX_POSITIONS_RING_SIZE] */
     CharacterBuffer buffer;
 } LexemBuffer;
 
@@ -25,7 +25,6 @@ typedef struct lexemBuffer {
 /* New API with lb + index instead of writePointerP */
 extern int getBackpatchLexemIndex(LexemBuffer *lb);
 extern void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem);
-
 extern void setLexemStreamEnd(LexemBuffer *lb, int index);
 
 /* Lexer functions for passing compressed tokens to the parser */
