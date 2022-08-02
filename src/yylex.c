@@ -294,8 +294,7 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
     Lexem lexem;
 
     while (currentInput.currentLexemP >= currentInput.endOfBuffer) {
-        InputType inputType;
-        inputType = currentInput.inputType;
+        InputType inputType = currentInput.inputType;
         if (macroStackIndex > 0) {
             if (inputType == INPUT_MACRO_ARGUMENT) {
                 return END_OF_MACRO_ARGUMENT_EXCEPTION;
@@ -676,10 +675,7 @@ static Lexem getNonBlankLexem(Position *position, int *lineNumber, int *value, i
 /* Public only for unittesting */
 protected void processDefineDirective(bool hasArguments) {
     Lexem lexem;
-    int foundIndex;
-    int ellipsis;
     MacroArgumentTableElement *maca, mmaca;
-    MacroBody *macroBody;
     Position position, macroPosition, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
     char *currentLexemStart, *argumentName;
     char *mm;
@@ -748,13 +744,13 @@ protected void processDefineDirective(bool hasArguments) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 currentLexemStart = argumentName = currentInput.currentLexemP;
                 passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, &position, &length, true);
-                ellipsis = 0;
+                bool ellipsis = false;
                 if (lexem == IDENTIFIER ) {
                     argumentName = currentLexemStart;
                 } else if (lexem == ELLIPSIS) {
                     argumentName = s_cppVarArgsName;
                     position = macroPosition;					// hack !!!
-                    ellipsis = 1;
+                    ellipsis = true;
                 } else
                     goto errorlabel;
                 PPM_ALLOCC(mm, strlen(argumentName)+1, char);
@@ -765,7 +761,7 @@ protected void processDefineDirective(bool hasArguments) {
                 strcpy(argLinkName, tmpBuff);
                 SM_ALLOC(ppMemory, maca, MacroArgumentTableElement);
                 fillMacroArgTabElem(maca, mm, argLinkName, argumentCount);
-                foundIndex = macroArgumentTableAdd(&macroArgumentTable, maca);
+                int argumentIndex = macroArgumentTableAdd(&macroArgumentTable, maca);
                 argumentCount++;
                 lexem = getNonBlankLexem(&position, &lineNumber, &value, &length);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -773,7 +769,7 @@ protected void processDefineDirective(bool hasArguments) {
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
                 passLexem(&currentInput.currentLexemP, lexem, &lineNumber, &value, parpos2, &length, true);
                 if (!ellipsis) {
-                    addTrivialCxReference(macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
+                    addTrivialCxReference(macroArgumentTable.tab[argumentIndex]->linkName, TypeMacroArg,StorageDefault,
                                           &position, UsageDefined);
                     handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &position, parpos2, 0);
                 }
@@ -810,6 +806,7 @@ protected void processDefineDirective(bool hasArguments) {
     while (lexem != '\n') {
         while(macroSize<allocatedSize && lexem != '\n') {
             char *destination;
+            int foundIndex;
             fillMacroArgTabElem(&mmaca,currentLexemStart,NULL,0);
             if (lexem==IDENTIFIER && macroArgumentTableIsMember(&macroArgumentTable,&mmaca,&foundIndex)){
                 /* macro argument */
@@ -856,7 +853,7 @@ endOfBody:
         macroArgumentTableMapWithPointer(&macroArgumentTable, setMacroArgumentName, argumentNames);
     } else
         argumentNames = NULL;
-    macroBody = newMacroBody(allocatedSize, argumentCount, macroName, body, argumentNames);
+    MacroBody *macroBody = newMacroBody(allocatedSize, argumentCount, macroName, body, argumentNames);
     symbol->u.mbody = macroBody;
 
     addMacroToTabs(symbol, macroName);
