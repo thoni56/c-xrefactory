@@ -1,12 +1,23 @@
-# -*- org-todo-keyword-faces: (("DOING" . "orange")) -*-
-#+TODO: TODO(t) DOING(i) | DONE(d)
-
-There are a *lot* of things to do to make c-xref into modern C.
+# -*- org-todo-keyword-faces: (("DOING" . "orange") ("REQUIRES" . "dark orange")) -*-
+#+TODO: TODO(t) TRY(y) REQUIRES(r) DOING(i) | DONE(d)
 
 (This file is structured for Emacs org-mode...)
 
+Some useful commands:
+
+  <C-S-return>	org-insert-todo-heading-respect-content
+  <C-c C-t>     select state
+  <S-Right>     next state
+  <S-Left>      previous state
+  <M-Left>      promote heading
+  <M-S-Left>    promote subtree
+  <M-Right>     demote heading
+  <M-S-Right>   demote subtree
+
+There are a *lot* of things to do to make c-xref into modern C.
+
 Current Mikado:
-* TRYING to use LexemBuffer as argument to all putLexXXX() functions
+* TRY to use LexemBuffer as argument to all putLexXXX() functions
 ** TRY to add a LexemBuffer as argument to putLexToken()
 *** DONE LexemBuffer as argument to putLexLines()
 *** DONE LexemBuffer as argument to processIdentifier()
@@ -20,6 +31,7 @@ Current Mikado:
 **** REQUIRES setting next write position in lexemStream in handleCompletionOrSearch()
 ***** DONE function to set lb->end (setLexemStreamEnd())
 
+* DOING FEATURE: Handle void as no parameters in formal argument lists, e.g. when refactoring them
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct
 * DOING BUG: Selecting automatic project selection after having set a specific does not seem to work
@@ -43,7 +55,7 @@ Current Mikado:
 * TODO Set xref2 to true as default and then convert all test cases that fail, remove the option
   Hmmm. We only want that when running as a server, right?
 ** TODO Figure out in which regime xref2 is relevant
-* TODO dumpOut, errOut - figure out how they should be set in various scenarios
+* TODO errOut - figure out how they should be set in various scenarios
 * TODO ROADMAP
 ** TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
 ** TODO Cleaner interface Refactorer -> Server/Tag-generator
@@ -64,7 +76,6 @@ Current Mikado:
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO Push options.xref2 into ppc...() functions or create if necessary?
 * TODO All fillXXX() should not be mocked but have the same body as the real one
-* TODO FEATURE: Handle void as no parameters in formal argument lists, e.g. when refactoring them
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
 * TODO Turn lexembuffer functions into methods on the buffer
@@ -160,6 +171,8 @@ and you can also get java.class.version=55 => java version without decoding dire
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** DONE Extract PPC-functions from misc.c into a ppc-module
+* DONE Unmacrofy NEXT_.._ARG()
+* DONE Move mainHandleSetOption() to options.c
 * DONE Architecture diagrams using C4-PlantUML - started in ...design.asciidoc
 * DONE Convert fillBits() with explicit setting of "properties" like access, storage etc.
 * DONE Abstract refTab
