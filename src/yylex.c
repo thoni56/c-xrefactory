@@ -127,10 +127,10 @@ void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,
 static void setCacheConsistency(void) {
     cache.cc = currentInput.currentLexemP;
 }
-static void setCFileConsistency(void) {
+static void setCurrentFileConsistency(void) {
     currentFile.lexBuffer.next = currentInput.currentLexemP;
 }
-static void setCInputConsistency(void) {
+static void setCurrentInputConsistency(void) {
     fillLexInput(&currentInput, currentFile.lexBuffer.next, currentFile.lexBuffer.end,
                  currentFile.lexBuffer.lexemStream, NULL, INPUT_NORMAL);
 }
@@ -240,7 +240,7 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
     }
     fillFileDescriptor(&currentFile, fileName, bufferStart, bufferSize, file, offset);
     setCurrentFileInfoFor(fileName);
-    setCInputConsistency();
+    setCurrentInputConsistency();
     isProcessingPreprocessorIf = false;				/* TODO: WTF??? */
 }
 
@@ -302,16 +302,16 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
             MB_FREE_UNTIL(currentInput.beginningOfBuffer);
             currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
-            setCFileConsistency();
+            setCurrentFileConsistency();
             if (!getLexemFromLexer(&currentFile.lexBuffer)) {
                 return END_OF_FILE_EXCEPTION;
             }
-            setCInputConsistency();
+            setCurrentInputConsistency();
         } else {
             cache.cc = cache.cfin = NULL;
             cacheInput();
             cache.lexcc = currentFile.lexBuffer.next;
-            setCInputConsistency();
+            setCurrentInputConsistency();
         }
         *previousLexem = currentInput.currentLexemP;
     }
@@ -420,7 +420,7 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     if (currentInput.inputType == INPUT_CACHE) {
         setCacheConsistency();
     } else {
-        setCFileConsistency();
+        setCurrentFileConsistency();
     }
     includeStack[includeStackPointer] = currentFile;		/* buffers are copied !!!!!!, burk */
     if (includeStackPointer+1 >= INCLUDE_STACK_SIZE) {
@@ -442,7 +442,7 @@ void popInclude(void) {
         if (includeStackPointer == 0 && cache.cc!=NULL) {
             fillLexInput(&currentInput, cache.cc, cache.cfin, cache.lb, NULL, INPUT_CACHE);
         } else {
-            setCInputConsistency();
+            setCurrentInputConsistency();
         }
     }
 }
@@ -1943,7 +1943,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
         cp += lexemLength;
     }
 endOfFile:
-    setCFileConsistency();
+    setCurrentFileConsistency();
     *cfrom = cp;
     return res;
 endOfMacroArgument:

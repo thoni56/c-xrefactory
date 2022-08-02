@@ -18,7 +18,7 @@ Current Mikado:
 **** REQUIRES backpatch lexem token in handleCppToken()
 ***** DONE functions to backpatch lexem token
 **** REQUIRES setting next write position in lexemStream in handleCompletionOrSearch()
-***** DONE function to set lb->end
+***** DONE function to set lb->end (setLexemStreamEnd())
 
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct
