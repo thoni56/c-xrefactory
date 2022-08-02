@@ -13,7 +13,6 @@ CXREF = ../../src/c-xref -no-stdoptions
 ARGUMENTS = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -rfct-add-param -olcxparnum=2 -rfct-param1=int\ arg -rfct-param2=42 -olcursor=36 $(CURDIR)/test_source/hello-extracted.c
 
 $(TEST): clean
-	@# First do the extract
 	$(CXREF) $(ARGUMENTS) -log=log $(EXTRA) > output.tmp
 	@$(NORMALIZE) output.tmp | grep -v progress > output
 	@$(VERIFY)
