@@ -1270,15 +1270,15 @@ static void usage() {
 }
 
 
-#define NEXT_FILE_ARG(i) {                                              \
-    char tmpBuff[TMP_BUFF_SIZE];                                        \
-    i++;                                                                \
-    if (i >= argc) {                                                    \
-        sprintf(tmpBuff, "file name expected after %s", argv[i-1]);     \
-        errorMessage(ERR_ST,tmpBuff);                                   \
-        usage();                                                        \
-        exit(1);                                                        \
-    }                                                                   \
+static void ensureNextArgumentIsAFileName(int *i, int argc, char *argv[]) {
+    (*i)++;
+    if (*i >= argc) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff, "file name expected after %s", argv[*i - 1]);
+        errorMessage(ERR_ST, tmpBuff);
+        usage();
+        exit(1);
+    }
 }
 
 #define NEXT_ARG(i) {                                                   \
@@ -1296,7 +1296,7 @@ static void usage() {
 static int handleIncludeOption(int argc, char **argv, int i) {
     int nargc;
     char **nargv;
-    NEXT_FILE_ARG(i);
+    ensureNextArgumentIsAFileName(&i, argc, argv);
 
     readOptionsFromFile(argv[i], &nargc, &nargv, "", NULL);
     processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
@@ -1367,7 +1367,7 @@ static bool processCOption(int *argi, int argc, char **argv) {
         options.continueRefactoring = RC_IMPORT_ON_DEMAND;
     }
     else if (strcmp(argv[i], "-classpath")==0) {
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         createOptionString(&options.classpath, argv[i]);
     }
     else if (strncmp(argv[i], "-csuffixes=",11)==0) {
@@ -1551,7 +1551,7 @@ static bool processJOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-javadocpath=",13)==0)    {
         createOptionString(&options.javaDocPath, argv[i]+13);
     } else if (strcmp(argv[i], "-javadocpath")==0)   {
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         createOptionString(&options.javaDocPath, argv[i]);
     }
     else if (strncmp(argv[i], "-javasuffixes=",14)==0) {
@@ -1561,7 +1561,7 @@ static bool processJOption(int *argi, int argc, char **argv) {
         options.javaFilesOnly = true;
     }
     else if (strcmp(argv[i], "-jdkclasspath")==0 || strcmp(argv[i], "-javaruntime")==0) {
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         createOptionString(&options.jdkClassPath, argv[i]);
     }
     else return false;
@@ -1969,7 +1969,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         i = handleIncludeOption(argc, argv, i);
     }
     else if (strcmp(argv[i], "-o")==0) {
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         createOptionString(&options.outputFileName, argv[i]);
     }
     else return false;
@@ -1994,16 +1994,16 @@ static bool processPOption(int *argi, int argc, char **argv) {
         options.allowPackagesOnCommandLine = true;
     }
     else if (strcmp(argv[i], "-p")==0) {
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         log_trace("Current project '%s'", argv[i]);
         createOptionString(&options.project, argv[i]);
     }
     else if (strcmp(argv[i], "-preload")==0) {
         char *file, *fromFile;
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         file = argv[i];
         strcpy(ttt, normalizeFileName(file, cwd));
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         fromFile = argv[i];
         // TODO, maybe do this also through allocated list of options
         // and serve them later ?
@@ -2044,7 +2044,7 @@ static bool processROption(int *argi, int argc, char **argv) {
         options.includeDirs = NULL;
     }
     else if (strcmp(argv[i], "-refs")==0)    {
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         setXrefsLocation(argv[i]);
     }
     else if (strncmp(argv[i], "-refs=",6)==0)    {
@@ -2154,7 +2154,7 @@ static bool processSOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-strict")==0)
         options.strictAnsi = true;
     else if (strcmp(argv[i], "-sourcepath")==0) {
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         createOptionString(&options.sourcePath, argv[i]);
         xrefSetenv("-sourcepath", options.sourcePath);
     }
@@ -2249,7 +2249,7 @@ static bool processXOption(int *argi, int argc, char **argv) {
         createOptionString(&options.xrefrc, argv[i]+8);
     }
     else if (strcmp(argv[i], "-xrefrc") == 0) {
-        NEXT_FILE_ARG(i);
+        ensureNextArgumentIsAFileName(&i, argc, argv);
         createOptionString(&options.xrefrc, argv[i]);
     }
     else return false;
