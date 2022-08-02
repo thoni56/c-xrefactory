@@ -170,7 +170,7 @@ static void closeInputFile(void) {
     }
 }
 
-static void parseInputFile(bool *firstPassP) {
+static void parseInputFile(void) {
     if (options.serverOperation != OLO_TAG_SEARCH && options.serverOperation != OLO_PUSH_NAME) {
         log_trace("parse start");
         recoverFromCache();
@@ -208,7 +208,7 @@ void singlePass(int argc, char **argv,
         return;
     }
     if (inputOpened) {
-        parseInputFile(firstPassP);
+        parseInputFile();
         *firstPassP = false;
     }
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
@@ -226,7 +226,7 @@ void singlePass(int argc, char **argv,
             inputFileName = getFileItem(ol2procfile)->name;
             inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
             if (inputOpened) {
-                parseInputFile(firstPassP);
+                parseInputFile();
                 *firstPassP = false;
             }
         }
