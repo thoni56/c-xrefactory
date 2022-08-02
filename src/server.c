@@ -178,7 +178,6 @@ static void parseInputFile(void) {
         log_trace("parse end");
     } else
         log_trace("Not parsing input because of server operation TAG_SEARCH or PUSH_NAME");
-    currentFile.lexBuffer.buffer.isAtEOF = false; /* Why? */
     closeInputFile();
 }
 
