@@ -188,6 +188,72 @@ void aboutMessage(void) {
 }
 
 
+/* *************************************************************************** */
+/*                                      OPTIONS                                */
+
+static void usage() {
+    fprintf(stdout, "c-xref - a C/Yacc/Java cross-referencer and refactoring tool\n\n");
+#if 0
+    fprintf(stdout, "Usage:\n\tc-xref <mode> <option>+ <input files>\n\n");
+    fprintf(stdout, "mode (one of):\n");
+    fprintf(stdout, "\t-xref                     - generate cross-reference data in batch mode\n");
+    fprintf(stdout, "\t-server                   - enter edit server mode with c-xref protocol\n");
+    fprintf(stdout, "\t-refactor                 - make an automated refactoring\n");
+    fprintf(stdout, "\t-lsp                      - enter edit server mode with Language Server Protocol (LSP)\n");
+    fprintf(stdout, "\n");
+#else
+    fprintf(stdout, "Usage:\n\t\tc-xref <option>+ <input files>\n\n");
+#endif
+    fprintf(stdout, "options:\n");
+    fprintf(stdout, "\t-javadocurl=<http>        - url to existing Java API docs\n");
+    fprintf(stdout, "\t-javadocpath=<path>       - paths to existing Java API docs\n");
+    fprintf(stdout, "\t-javadocavailable=<packs> - packages for which javadoc is available\n");
+    fprintf(stdout, "\t-p <project>              - read options from <project> section\n");
+    fprintf(stdout, "\t-I <dir>                  - search for includes in <dir>\n");
+    fprintf(stdout, "\t-D<macro>[=<body>]        - define macro <macro> with body <body>\n");
+    fprintf(stdout, "\t-packages                 - allow packages as input files\n");
+    fprintf(stdout, "\t-sourcepath <path>        - set java sources paths\n");
+    fprintf(stdout, "\t-classpath <path>         - set java class path\n");
+    fprintf(stdout, "\t-filescasesensitive       - file names are case sensitive\n");
+    fprintf(stdout, "\t-filescaseunsensitive     - file names are case unsensitive\n");
+    fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')\n");
+    fprintf(stdout, "\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by ':' (or ';')\n");
+    fprintf(stdout, "\t-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc\n");
+    fprintf(stdout, "\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file\n");
+#if 0
+    fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
+    fprintf(stdout, "\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
+    fprintf(stdout, "\t-olcxsearch               - search info about identifier\n");
+    fprintf(stdout, "\t-olcxpush                 - generate and push on-line cxrefs\n");
+    fprintf(stdout, "\t-olcxrename               - generate and push xrfs for rename\n");
+    fprintf(stdout, "\t-olcxlist                 - generate, push and list on-line cxrefs\n");
+    fprintf(stdout, "\t-olcxpop                  - pop on-line cxrefs\n");
+    fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
+    fprintf(stdout, "\t-olcxprevious             - previous on-line reference\n");
+    fprintf(stdout, "\t-olcxgoto<n>              - go to the n-th on-line reference\n");
+    fprintf(stdout, "\t-o <file>                 - write output to <file>\n");
+    fprintf(stdout, "\t-file <file>              - name of the file given to stdin\n");
+#endif
+    fprintf(stdout, "\t-refs <file>              - name of file with cxrefs, or directory if refnum > 1\n");
+    fprintf(stdout, "\t-refnum=<n>               - number of cxref files\n");
+    fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
+    fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
+    fprintf(stdout, "\t-errors                   - report all error messages on the console\n");
+    fprintf(stdout, "\t                            (by default only fatal errors are shown)\n");
+    fprintf(stdout, "\t-warnings                 - also report warning messages on the console\n");
+    fprintf(stdout, "\t-infos                    - also report informational & warning messages on the console\n");
+    fprintf(stdout, "\t-log=<file>               - log all fatal/error/warnings/informational messages to <file>\n");
+    fprintf(stdout, "\t-debug                    - also log debug messages in log\n");
+    fprintf(stdout, "\t-trace                    - also log trace & debug messages in log\n");
+    fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
+    fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
+    fprintf(stdout, "\t-update                   - update existing references database\n");
+    fprintf(stdout, "\t-fastupdate               - fast update (modified files only)\n");
+    fprintf(stdout, "\t-fullupdate               - full update (all files)\n");
+    fprintf(stdout, "\t-version                  - print version information\n");
+}
+
+
 void xrefSetenv(char *name, char *val) {
     SetGetEnv *sge;
     int j, n;
@@ -695,6 +761,41 @@ static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, c
     return argc;
 }
 
+static void ensureNextArgumentIsAFileName(int *i, int argc, char *argv[]) {
+    (*i)++;
+    if (*i >= argc) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff, "file name expected after %s", argv[*i - 1]);
+        errorMessage(ERR_ST, tmpBuff);
+        usage();
+        exit(1);
+    }
+}
+
+static void ensureThereIsAnotherArgument(int *i, int argc, char *argv[]) {
+    (*i)++;
+    if (*i >= argc) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff, "further argument(s) expected after %s", argv[*i-1]);
+        errorMessage(ERR_ST, tmpBuff);
+        usage();
+        exit(1);
+    }
+}
+
+
+static int handleSetOption(int argc, char **argv, int i ) {
+    char *name, *val;
+
+    ensureThereIsAnotherArgument(&i, argc, argv);
+    name = argv[i];
+    assert(name);
+    ensureThereIsAnotherArgument(&i, argc, argv);
+    val = argv[i];
+    xrefSetenv(name, val);
+    return i;
+}
+
 bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
                                  char *fileName, char *project, char *section) {
     char optionText[MAX_OPTION_LEN];
@@ -751,7 +852,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
             }
             if (argc < MAX_STD_ARGS) {
                 assert(argc >= 3);
-                mainHandleSetOption(argc, argv, argc - 3);
+                handleSetOption(argc, argv, argc - 3);
             }
         } else if (ch != EOF && (sectionUpdated && isActivePass)) {
             found = true;
@@ -1204,95 +1305,6 @@ static bool isAbsolutePath(char *p) {
 #endif
 
 
-/* *************************************************************************** */
-/*                                      OPTIONS                                */
-
-static void usage() {
-    fprintf(stdout, "c-xref - a C/Yacc/Java cross-referencer and refactoring tool\n\n");
-#if 0
-    fprintf(stdout, "Usage:\n\tc-xref <mode> <option>+ <input files>\n\n");
-    fprintf(stdout, "mode (one of):\n");
-    fprintf(stdout, "\t-xref                     - generate cross-reference data in batch mode\n");
-    fprintf(stdout, "\t-server                   - enter edit server mode with c-xref protocol\n");
-    fprintf(stdout, "\t-refactor                 - make an automated refactoring\n");
-    fprintf(stdout, "\t-lsp                      - enter edit server mode with Language Server Protocol (LSP)\n");
-    fprintf(stdout, "\n");
-#else
-    fprintf(stdout, "Usage:\n\t\tc-xref <option>+ <input files>\n\n");
-#endif
-    fprintf(stdout, "options:\n");
-    fprintf(stdout, "\t-javadocurl=<http>        - url to existing Java API docs\n");
-    fprintf(stdout, "\t-javadocpath=<path>       - paths to existing Java API docs\n");
-    fprintf(stdout, "\t-javadocavailable=<packs> - packages for which javadoc is available\n");
-    fprintf(stdout, "\t-p <project>              - read options from <project> section\n");
-    fprintf(stdout, "\t-I <dir>                  - search for includes in <dir>\n");
-    fprintf(stdout, "\t-D<macro>[=<body>]        - define macro <macro> with body <body>\n");
-    fprintf(stdout, "\t-packages                 - allow packages as input files\n");
-    fprintf(stdout, "\t-sourcepath <path>        - set java sources paths\n");
-    fprintf(stdout, "\t-classpath <path>         - set java class path\n");
-    fprintf(stdout, "\t-filescasesensitive       - file names are case sensitive\n");
-    fprintf(stdout, "\t-filescaseunsensitive     - file names are case unsensitive\n");
-    fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')\n");
-    fprintf(stdout, "\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by ':' (or ';')\n");
-    fprintf(stdout, "\t-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc\n");
-    fprintf(stdout, "\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file\n");
-#if 0
-    fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
-    fprintf(stdout, "\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
-    fprintf(stdout, "\t-olcxsearch               - search info about identifier\n");
-    fprintf(stdout, "\t-olcxpush                 - generate and push on-line cxrefs\n");
-    fprintf(stdout, "\t-olcxrename               - generate and push xrfs for rename\n");
-    fprintf(stdout, "\t-olcxlist                 - generate, push and list on-line cxrefs\n");
-    fprintf(stdout, "\t-olcxpop                  - pop on-line cxrefs\n");
-    fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
-    fprintf(stdout, "\t-olcxprevious             - previous on-line reference\n");
-    fprintf(stdout, "\t-olcxgoto<n>              - go to the n-th on-line reference\n");
-    fprintf(stdout, "\t-o <file>                 - write output to <file>\n");
-    fprintf(stdout, "\t-file <file>              - name of the file given to stdin\n");
-#endif
-    fprintf(stdout, "\t-refs <file>              - name of file with cxrefs, or directory if refnum > 1\n");
-    fprintf(stdout, "\t-refnum=<n>               - number of cxref files\n");
-    fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
-    fprintf(stdout, "\t-mf<n>                    - factor increasing cxMemory\n");
-    fprintf(stdout, "\t-errors                   - report all error messages on the console\n");
-    fprintf(stdout, "\t                            (by default only fatal errors are shown)\n");
-    fprintf(stdout, "\t-warnings                 - also report warning messages on the console\n");
-    fprintf(stdout, "\t-infos                    - also report informational & warning messages on the console\n");
-    fprintf(stdout, "\t-log=<file>               - log all fatal/error/warnings/informational messages to <file>\n");
-    fprintf(stdout, "\t-debug                    - also log debug messages in log\n");
-    fprintf(stdout, "\t-trace                    - also log trace & debug messages in log\n");
-    fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
-    fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
-    fprintf(stdout, "\t-update                   - update existing references database\n");
-    fprintf(stdout, "\t-fastupdate               - fast update (modified files only)\n");
-    fprintf(stdout, "\t-fullupdate               - full update (all files)\n");
-    fprintf(stdout, "\t-version                  - print version information\n");
-}
-
-
-static void ensureNextArgumentIsAFileName(int *i, int argc, char *argv[]) {
-    (*i)++;
-    if (*i >= argc) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "file name expected after %s", argv[*i - 1]);
-        errorMessage(ERR_ST, tmpBuff);
-        usage();
-        exit(1);
-    }
-}
-
-#define NEXT_ARG(i) {                                                   \
-    char tmpBuff[TMP_BUFF_SIZE];                                        \
-    i++;                                                                \
-    if (i >= argc) {                                                    \
-        sprintf(tmpBuff, "further argument(s) expected after %s", argv[i-1]); \
-        errorMessage(ERR_ST,tmpBuff);                                   \
-        usage();                                                        \
-        exit(1);                                                        \
-    }                                                                   \
-}
-
-
 static int handleIncludeOption(int argc, char **argv, int i) {
     int nargc;
     char **nargv;
@@ -1486,7 +1498,7 @@ static bool processGOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
     else if (strcmp(argv[i], "-get")==0) {
-        NEXT_ARG(i);
+        ensureThereIsAnotherArgument(&i, argc, argv);
         createOptionString(&options.getValue, argv[i]);
         options.serverOperation = OLO_GET_ENV_VALUE;
     }
@@ -1712,16 +1724,16 @@ static bool processOOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-olcxintersection")==0)
         options.serverOperation = OLO_INTERSECTION;
     else if (strcmp(argv[i], "-olcxsafetycheckmovedfile")==0) {
-        NEXT_ARG(i);
+        ensureThereIsAnotherArgument(&i, argc, argv);
         createOptionString(&options.checkFileMovedFrom, argv[i]);
-        NEXT_ARG(i);
+        ensureThereIsAnotherArgument(&i, argc, argv);
         createOptionString(&options.checkFileMovedTo, argv[i]);
     }
     else if (strcmp(argv[i], "-olcxwindel")==0) {
         options.serverOperation = OLO_REMOVE_WIN;
     }
     else if (strcmp(argv[i], "-olcxwindelfile")==0) {
-        NEXT_ARG(i);
+        ensureThereIsAnotherArgument(&i, argc, argv);
         createOptionString(&options.olcxWinDelFile, argv[i]);
     }
     else if (strncmp(argv[i], "-olcxwindelwin=",15)==0) {
@@ -1984,7 +1996,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
     if (0) {}
     else if (strncmp(argv[i], "-pause",5)==0) {
         /* Pause to be able to attach with debugger... */
-        NEXT_ARG(i);
+        ensureThereIsAnotherArgument(&i, argc, argv);
         sleep(atoi(argv[i]));
     }
     else if (strncmp(argv[i], "-pass",5)==0) {
@@ -2011,7 +2023,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
         editorOpenBufferNoFileLoad(ttt, fromFile);
     }
     else if (strcmp(argv[i], "-prune")==0) {
-        NEXT_ARG(i);
+        ensureThereIsAnotherArgument(&i, argc, argv);
         addStringListOption(&options.pruneNames, argv[i]);
     }
     else return false;
@@ -2162,11 +2174,11 @@ static bool processSOption(int *argi, int argc, char **argv) {
         i = handleIncludeOption(argc, argv, i);
     }
     else if (strcmp(argv[i], "-set")==0) {
-        i = mainHandleSetOption(argc, argv, i);
+        i = handleSetOption(argc, argv, i);
     }
     else if (strncmp(argv[i], "-set",4)==0) {
         name = argv[i]+4;
-        NEXT_ARG(i);
+        ensureThereIsAnotherArgument(&i, argc, argv);
         val = argv[i];
         xrefSetenv(name, val);
     }

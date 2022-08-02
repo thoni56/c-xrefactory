@@ -48,28 +48,6 @@ static int previousLanguage;
 static int previousPass;
 
 
-#define NEXT_ARG(i) {                                                   \
-    char tmpBuff[TMP_BUFF_SIZE];                                        \
-    i++;                                                                \
-    if (i >= argc) {                                                    \
-        sprintf(tmpBuff, "further argument(s) expected after %s", argv[i-1]); \
-        errorMessage(ERR_ST,tmpBuff);                                   \
-        exit(1);                                                        \
-    }                                                                   \
-}
-
-int mainHandleSetOption(int argc, char **argv, int i ) {
-    char *name, *val;
-
-    NEXT_ARG(i);
-    name = argv[i];
-    assert(name);
-    NEXT_ARG(i);
-    val = argv[i];
-    xrefSetenv(name, val);
-    return i;
-}
-
 /* *************************************************************************** */
 
 static void writeOptionsFileMessage(char *file, char *outFName, char *outSect) {

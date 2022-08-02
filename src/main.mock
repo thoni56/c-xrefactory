@@ -14,10 +14,6 @@ void checkExactPositionUpdate(bool printMessage) {
     mock(printMessage);
 }
 
-int mainHandleSetOption(int argc, char **argv, int i) {
-  return (int) mock(argc, argv, i);
-}
-
 void mainTaskEntryInitialisations(int argc, char **argv) {
   mock(argc, argv);
 }

@@ -14,7 +14,6 @@ extern bool initializeFileProcessing(bool *firstPass, int argc, char **argv, int
 extern void checkExactPositionUpdate(bool printMessage);
 //------
 
-extern int mainHandleSetOption(int argc, char **argv, int i );
 extern void mainTaskEntryInitialisations(int argc, char **argv);
 extern void mainOpenOutputFile(char *ofile);
 
