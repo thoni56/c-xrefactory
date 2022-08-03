@@ -32,6 +32,7 @@ Current Mikado:
 ***** DONE function to set lb->end (setLexemStreamEnd())
 
 * DOING FEATURE: Handle void as no parameters in formal argument lists, e.g. when refactoring them
+  test_remove_void_parameter & test_add_parameter_to_void
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct
 * DOING BUG: Selecting automatic project selection after having set a specific does not seem to work
