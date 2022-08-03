@@ -107,13 +107,13 @@ static bool filter0(Reference *reference, void *dummy) {
     return reference->usage.kind < UsageMaxOLUsages;
 }
 
-static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], EditorBuffer *buf, char *project,
+static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
                          EditorMarker *point, EditorMarker *mark) {
     static char optPoint[TMP_STRING_SIZE];
     static char optMark[TMP_STRING_SIZE];
     static char optXrefrc[MAX_FILE_NAME_SIZE];
-    int         i;
-    i       = 0;
+    int         i = 0;
+
     argv[i] = "null";
     i++;
     if (refactoringOptions.xrefrc != NULL) {
@@ -149,10 +149,9 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], EditorBuffer *buf,
         i++;
     }
     assert(i < MAX_NARGV_OPTIONS_COUNT);
-    if (buf != NULL) {
-        // if following assertion does not fail, you can delet buf parameter
-        assert(buf == point->buffer);
-        argv[i] = buf->name;
+
+    if (point) {
+        argv[i] = point->buffer->name;
         i++;
     }
     assert(i < MAX_NARGV_OPTIONS_COUNT);
@@ -187,7 +186,7 @@ static void ensureReferencesUpdated(char *project) {
 
     copyOptionsFromTo(&options, &savedOptions);
 
-    setArguments(nargv, NULL, project, NULL, NULL);
+    setArguments(nargv, project, NULL, NULL);
     nargc                       = argument_count(nargv);
     refactoryXrefInitOptionsNum = argument_count(xrefInitOptions);
     for (int i = 1; i < refactoryXrefInitOptionsNum; i++) {
@@ -212,13 +211,12 @@ static void editServerParseBuffer(char *project, EditorMarker *point, EditorMark
                                   char *pushOption, char *pushOption2) {
     char *nargv[MAX_NARGV_OPTIONS_COUNT];
     int   nargc;
-    EditorBuffer *buf = point->buffer;
 
     currentPass = ANY_PASS;
 
     assert(options.mode == ServerMode);
 
-    setArguments(nargv, buf, project, point, mark);
+    setArguments(nargv, project, point, mark);
     nargc = argument_count(nargv);
     if (pushOption != NULL) {
         nargv[nargc++] = pushOption;
