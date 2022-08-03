@@ -160,8 +160,6 @@ enum miscellaneous { /* misc. constants */
     GEN_FULL_OUTPUT,
     GEN_PRECHECKS,
     GEN_NO_OUTPUT,
-    CHECK_FOR_ADD_PARAM,
-    CHECK_FOR_DEL_PARAM,
     GET_PRIMARY_START,
     GET_STATIC_PREFIX_START,
     APPLY_CHECKS,

@@ -2026,6 +2026,11 @@ static int isParameterUsedExceptRecursiveCalls(EditorMarker *ppos, EditorMarker 
 }
 
 static void checkThatParameterIsUnused(EditorMarker *pos, char *fname, int argn, int checkfor) {
+typedef enum {
+    CHECK_FOR_ADD_PARAM,
+    CHECK_FOR_DEL_PARAM
+} ParameterCheckKind;
+
     char          pname[TMP_STRING_SIZE];
     int           rr;
     EditorMarker *mm;
