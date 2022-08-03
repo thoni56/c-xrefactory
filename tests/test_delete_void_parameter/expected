@@ -1,0 +1,11 @@
+<goto>
+ <position-off off=36 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<error len=<n>>Parameter out of limit
+</error>
+<error len=<n>>Parameter out of limit
+</error>
+<goto>
+ <position-off off=36 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<sync>
