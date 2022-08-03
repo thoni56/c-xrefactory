@@ -208,10 +208,11 @@ static void ensureReferencesUpdated(char *project) {
     editServerSubTaskFirstPass = true;
 }
 
-static void editServerParseBuffer(char *project, EditorBuffer *buf, EditorMarker *point, EditorMarker *mark,
+static void editServerParseBuffer(char *project, EditorMarker *point, EditorMarker *mark,
                                   char *pushOption, char *pushOption2) {
     char *nargv[MAX_NARGV_OPTIONS_COUNT];
     int   nargc;
+    EditorBuffer *buf = point->buffer;
 
     currentPass = ANY_PASS;
 
@@ -277,10 +278,10 @@ static void displayResolutionDialog(char *message, int messageType, int continua
     "If you see this message, then probably something is going wrong. You are refactoring a virtual method when " \
     "only statically linked symbol is required. It is strongly recommended to cancel the refactoring."
 
-static void pushReferences(EditorBuffer *buf, EditorMarker *point, char *pushOption, char *resolveMessage,
+static void pushReferences(EditorMarker *point, char *pushOption, char *resolveMessage,
                            int messageType) {
     /* now remake task initialisation as for edit server */
-    editServerParseBuffer(refactoringOptions.project, buf, point, NULL, pushOption, NULL);
+    editServerParseBuffer(refactoringOptions.project, point, NULL, pushOption, NULL);
 
     assert(sessionData.browserStack.top != NULL);
     if (sessionData.browserStack.top->hkSelectedSym == NULL) {
@@ -292,10 +293,10 @@ static void pushReferences(EditorBuffer *buf, EditorMarker *point, char *pushOpt
     }
 }
 
-static void safetyCheck(char *project, EditorBuffer *buf, EditorMarker *point) {
+static void safetyCheck(char *project, EditorMarker *point) {
     // !!!!update references MUST be followed by a pushing action, to refresh options
     ensureReferencesUpdated(refactoringOptions.project);
-    editServerParseBuffer(project, buf, point, NULL, "-olcxsafetycheck2", NULL);
+    editServerParseBuffer(project, point, NULL, "-olcxsafetycheck2", NULL);
 
     assert(sessionData.browserStack.top != NULL);
     if (sessionData.browserStack.top->hkSelectedSym == NULL) {
@@ -722,7 +723,7 @@ static void pushMarkersAsReferences(EditorMarkerList **markers, OlcxReferences *
 static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
     bool valid = true;
 
-    editServerParseBuffer(refactoringOptions.project, target->buffer, target, NULL, checkOpt, NULL);
+    editServerParseBuffer(refactoringOptions.project, target, NULL, checkOpt, NULL);
     if (!parsedInfo.moveTargetApproved) {
         valid = false;
         errorMessage(ERR_ST, "Invalid target place");
@@ -1423,7 +1424,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     //&if (dd != NULL) defin = dd->d;
 
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
-    safetyCheck(refactoringOptions.project, defin->buffer, defin);
+    safetyCheck(refactoringOptions.project, defin);
 
     chks = editorReferencesToMarkers(sessionData.browserStack.top->references, filter0, NULL);
 
@@ -1470,13 +1471,13 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
 }
 
 static void makeSyntaxPassOnSource(EditorMarker *point) {
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxsyntaxpass", NULL);
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxsyntaxpass", NULL);
     olStackDeleteSymbol(sessionData.browserStack.top);
 }
 
 static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, int kind) {
     Position *pos;
-    editServerParseBuffer(refactoringOptions.project, marker->buffer, marker, NULL, "-olcxprimarystart", NULL);
+    editServerParseBuffer(refactoringOptions.project, marker, NULL, "-olcxprimarystart", NULL);
     olStackDeleteSymbol(sessionData.browserStack.top);
     if (kind == GET_PRIMARY_START) {
         pos = &s_primaryStartPosition;
@@ -1647,7 +1648,7 @@ static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symn
 static EditorMarkerList *getReferences(EditorBuffer *buf, EditorMarker *point, char *resolveMessage,
                                        int messageType) {
     EditorMarkerList *occs;
-    pushReferences(buf, point, "-olcxrename", resolveMessage, messageType);
+    pushReferences(point, "-olcxrename", resolveMessage, messageType);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
     occs = editorReferencesToMarkers(sessionData.browserStack.top->references, filter0, NULL);
     return occs;
@@ -1752,7 +1753,7 @@ static void restrictAccessibility(EditorMarker *point, int limitIndex, int minAc
     // must update, because usualy they are out of date here
     ensureReferencesUpdated(refactoringOptions.project);
 
-    pushReferences(point->buffer, point, "-olcxrename", NULL, 0);
+    pushReferences(point, "-olcxrename", NULL, 0);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->menuSym);
 
     for (Reference *rr = sessionData.browserStack.top->references; rr != NULL; rr = rr->next) {
@@ -1885,7 +1886,7 @@ static Result getParameterNamePosition(EditorMarker *pos, char *fname, int argn)
     clearParamPositions();
     assert(strcmp(actName, fname) == 0);
     sprintf(pushOpt, "-olcxgotoparname%d", argn);
-    editServerParseBuffer(refactoringOptions.project, pos->buffer, pos, NULL, pushOpt, NULL);
+    editServerParseBuffer(refactoringOptions.project, pos, NULL, pushOpt, NULL);
     olcxPopOnly();
     if (parameterPosition.file != noFileIndex) {
         res = RESULT_OK;
@@ -1911,7 +1912,7 @@ static Result getParameterPosition(EditorMarker *pos, char *fname, int argn) {
 
     clearParamPositions();
     sprintf(pushOpt, "-olcxgetparamcoord%d", argn);
-    editServerParseBuffer(refactoringOptions.project, pos->buffer, pos, NULL, pushOpt, NULL);
+    editServerParseBuffer(refactoringOptions.project, pos, NULL, pushOpt, NULL);
     olcxPopOnly();
 
     Result res = RESULT_OK;
@@ -2014,7 +2015,7 @@ static int addStringAsParameter(EditorMarker *pos, EditorMarker *endm, char *fna
 
 static int isThisSymbolUsed(EditorMarker *pos) {
     int refn;
-    pushReferences(pos->buffer, pos, "-olcxpushforlm", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    pushReferences(pos, "-olcxpushforlm", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     LIST_LEN(refn, Reference, sessionData.browserStack.top->references);
     olcxPopOnly();
     return refn > 1;
@@ -2087,7 +2088,7 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
         if (text[m1->offset] == '(') {
             // function with no parameter
         } else if (text[m1->offset] == ')') {
-            // beyond limite
+            // beyond limit
         } else {
             FATAL_ERROR(ERR_INTERNAL,
                        "Something goes wrong, probably different parameter coordinates at different cpp passes.",
@@ -2138,7 +2139,7 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
         if (text[m1->offset] == '(') {
             // function with no parameter
         } else if (text[m1->offset] == ')') {
-            // beyond limite
+            // beyond limit
         } else {
             FATAL_ERROR(ERR_INTERNAL,
                        "Something goes wrong, probably different parameter coordinates at different cpp passes.",
@@ -2197,7 +2198,7 @@ static void applyParameterManipulation(EditorBuffer *buf, EditorMarker *point, i
     ensureReferencesUpdated(refactoringOptions.project);
 
     strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
-    pushReferences(buf, point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     occs       = editorReferencesToMarkers(sessionData.browserStack.top->references, filter0, NULL);
     startPoint = editorUndo;
     // first just check that loaded files are up to date
@@ -2246,13 +2247,13 @@ static int createMarkersForAllReferencesInRegions(SymbolsMenu *menu, EditorRegio
 
 // --------------------------------------- ExpandShortNames
 
-static void applyExpandShortNames(EditorBuffer *buf, EditorMarker *point) {
+static void applyExpandShortNames(EditorMarker *point) {
     char  fqtName[MAX_FILE_NAME_SIZE];
     char  fqtNameDot[2 * MAX_FILE_NAME_SIZE];
     char *shortName;
     int   shortNameLen;
 
-    editServerParseBuffer(refactoringOptions.project, buf, point, NULL, "-olcxnotfqt", NULL);
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxnotfqt", NULL);
     olcxPushSpecial(LINK_NAME_NOT_FQT_ITEM, OLO_NOT_FQT_REFS);
 
     // Do it in two steps because when changing file the references
@@ -2291,11 +2292,10 @@ static void applyExpandShortNames(EditorBuffer *buf, EditorMarker *point) {
         editorFreeMarkerListNotMarkers(mm->markers);
         mm->markers = NULL;
     }
-    //&editorDumpBuffer(buf);
 }
 
 static void expandShortNames(EditorBuffer *buf, EditorMarker *point) {
-    applyExpandShortNames(buf, point);
+    applyExpandShortNames(point);
     applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
 }
@@ -2331,7 +2331,7 @@ static void reduceLongReferencesInRegions(EditorMarker *point, EditorRegionList 
     EditorMarkerList *rli, *ri, *ro;
     int               progress, count;
 
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxuselesslongnames",
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxuselesslongnames",
                           "-olallchecks");
     olcxPushSpecial(LINK_NAME_IMPORTED_QUALIFIED_ITEM, OLO_USELESS_LONG_NAME);
     rli = editorReferencesToMarkers(sessionData.browserStack.top->references, filter0, NULL);
@@ -2359,7 +2359,7 @@ static bool isTheImportUsed(EditorMarker *point, int line, int col) {
     bool used;
 
     strcpy(importSymbolName, javaImportSymbolName_st(point->buffer->fileIndex, line, col));
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxpushfileunused",
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxpushfileunused",
                           "-olallchecks");
     pushLocalUnusedSymbolsAction();
     used = true;
@@ -2379,7 +2379,7 @@ static int pushFileUnimportedFqts(EditorMarker *point, EditorRegionList **region
     int  lastImportLine;
 
     sprintf(pushOpt, "-olcxpushspecialname=%s", LINK_NAME_UNIMPORTED_QUALIFIED_ITEM);
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, pushOpt, "-olallchecks");
+    editServerParseBuffer(refactoringOptions.project, point, NULL, pushOpt, "-olallchecks");
     lastImportLine = parsedInfo.lastImportLine;
     olcxPushSpecial(LINK_NAME_UNIMPORTED_QUALIFIED_ITEM, OLO_PUSH_SPECIAL_NAME);
     createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, regions);
@@ -2653,7 +2653,7 @@ static void addToImports(EditorMarker *point) {
 }
 
 static void pushAllReferencesOfMethod(EditorMarker *m1, char *specialOption) {
-    editServerParseBuffer(refactoringOptions.project, m1->buffer, m1, NULL, "-olcxpushallinmethod", specialOption);
+    editServerParseBuffer(refactoringOptions.project, m1, NULL, "-olcxpushallinmethod", specialOption);
     olPushAllReferencesInBetween(parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
 }
 
@@ -2787,7 +2787,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     }
 
     // O.K. move
-    applyExpandShortNames(point->buffer, point);
+    applyExpandShortNames(point);
     strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs = getReferences(point->buffer, point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
@@ -2795,7 +2795,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     if (outAccessFlags != NULL) {
         *outAccessFlags = sessionData.browserStack.top->hkSelectedSym->references.access;
     }
-    //&editServerParseBuffer(refactoringOptions.project, point->buffer, point, "-olcxrename");
+    //&editServerParseBuffer(refactoringOptions.project, point, "-olcxrename");
 
     LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
     LIST_LEN(count, EditorMarkerList, occs);
@@ -2872,7 +2872,7 @@ static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **_mstart
 }
 
 static void getNameOfTheClassAndSuperClass(EditorMarker *point, char *ccname, char *supercname) {
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxcurrentclass", NULL);
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxcurrentclass", NULL);
     if (ccname != NULL) {
         if (parsedInfo.currentClassAnswer[0] == 0) {
             FATAL_ERROR(ERR_ST, "can't get class on point", XREF_EXIT_ERR);
@@ -2969,7 +2969,7 @@ static void moveField(EditorMarker *point) {
     }
 
     // O.K. move
-    applyExpandShortNames(point->buffer, point);
+    applyExpandShortNames(point);
     strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs = getReferences(point->buffer, point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
@@ -3020,7 +3020,7 @@ static void moveField(EditorMarker *point) {
 
 static void setMovingPrecheckStandardEnvironment(EditorMarker *point, char *targetFqtName) {
     SymbolsMenu *ss;
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxtrivialprecheck", NULL);
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxtrivialprecheck", NULL);
     assert(sessionData.browserStack.top);
     olCreateSelectionMenu(sessionData.browserStack.top->command);
     options.moveTargetFile  = refactoringOptions.moveTargetFile;
@@ -3043,7 +3043,7 @@ static void performMoveClass(EditorMarker *point, EditorMarker *target, EditorMa
     *outstart = *outend = NULL;
 
     // get target place
-    editServerParseBuffer(refactoringOptions.project, target->buffer, target, NULL, "-olcxcurrentclass", NULL);
+    editServerParseBuffer(refactoringOptions.project, target, NULL, "-olcxcurrentclass", NULL);
     if (parsedInfo.currentPackageAnswer[0] == 0) {
         errorMessage(ERR_ST, "Can't get target class or package");
         return;
@@ -3188,7 +3188,7 @@ static void moveClassToNewFile(EditorMarker *point) {
     // TODO check whether the original class was the only class in the file
     npoint = editorCreateNewMarker(buff, 0);
     // just to parse the file
-    editServerParseBuffer(refactoringOptions.project, npoint->buffer, npoint, NULL, "-olcxpushspecialname=", NULL);
+    editServerParseBuffer(refactoringOptions.project, npoint, NULL, "-olcxpushspecialname=", NULL);
     if (parsedPositions[SPP_LAST_TOP_LEVEL_CLASS_POSITION].file == noFileIndex) {
         ppcGotoMarker(npoint);
         ppcGenRecord(PPC_KILL_BUFFER_REMOVE_FILE, "This file does not contain classes anymore, can I remove it?");
@@ -3327,7 +3327,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
 
     sprintf(parusage, "%s.", refactoringOptions.refpar1);
 
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxmaybethis", NULL);
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxmaybethis", NULL);
     olcxPushSpecial(LINK_NAME_MAYBE_THIS_ITEM, OLO_MAYBE_THIS);
 
     count = progress = 0;
@@ -3556,7 +3556,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     plen = strlen(param);
 
     // TODO!!! precheck
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxcurrentclass", NULL);
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxcurrentclass", NULL);
     if (parsedInfo.currentClassAnswer[0] == 0) {
         errorMessage(ERR_INTERNAL, "Can't get current class");
         return;
@@ -3578,7 +3578,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     bi = pp->offset + 3 + plen;
     editorReplaceString(pp->buffer, pp->offset, 0, testi, strlen(testi), &editorUndo);
     pp->offset = bi;
-    editServerParseBuffer(refactoringOptions.project, pp->buffer, pp, NULL, "-olcxgetsymboltype", "-no-errors");
+    editServerParseBuffer(refactoringOptions.project, pp, NULL, "-olcxgetsymboltype", "-no-errors");
     // -no-errors is basically very dangerous in this context, recover it in s_opt
     options.noErrors = 0;
     if (!olstringServed) {
@@ -3674,11 +3674,11 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
 // ------------------------------------------------------ ExtractMethod
 
 static void extractMethod(EditorMarker *point, EditorMarker *mark) {
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, mark, "-olcxextract", NULL);
+    editServerParseBuffer(refactoringOptions.project, point, mark, "-olcxextract", NULL);
 }
 
 static void extractMacro(EditorMarker *point, EditorMarker *mark) {
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, mark, "-olcxextract", "-olexmacro");
+    editServerParseBuffer(refactoringOptions.project, point, mark, "-olcxextract", "-olexmacro");
 }
 
 // ------------------------------------------------------- Encapsulate
@@ -3849,11 +3849,11 @@ static void performEncapsulateField(EditorMarker *point, EditorRegionList **forb
 
     // check if not yet defined or used
     anotherGetter = anotherSetter = NULL;
-    pushReferences(getterm->buffer, getterm, "-olcxrename", NULL, 0);
+    pushReferences(getterm, "-olcxrename", NULL, 0);
     anotherGetter = checkEncapsulateGetterSetterForExistingMethods(getter);
     editorFreeMarker(getterm);
     if ((accFlags & AccessFinal) == 0) {
-        pushReferences(setterm->buffer, setterm, "-olcxrename", NULL, 0);
+        pushReferences(setterm, "-olcxrename", NULL, 0);
         anotherSetter = checkEncapsulateGetterSetterForExistingMethods(setter);
         editorFreeMarker(setterm);
     }
@@ -4192,7 +4192,7 @@ static void reduceRedundantCastedThissInMethod(EditorMarker *point, EditorRegion
     char *ss;
 
     getNameOfTheClassAndSuperClass(point, NULL, superFqtName);
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxmaybethis", NULL);
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxmaybethis", NULL);
     olcxPushSpecial(LINK_NAME_MAYBE_THIS_ITEM, OLO_MAYBE_THIS);
 
     createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, methodreg);
@@ -4220,7 +4220,7 @@ static void expandThissToCastedThisInTheMethod(EditorMarker *point, char *thiscF
     sprintf(thisCast, "((%s)this)", thiscFqtName);
     sprintf(superCast, "((%s)this)", supercFqtName);
 
-    editServerParseBuffer(refactoringOptions.project, point->buffer, point, NULL, "-olcxmaybethis", NULL);
+    editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxmaybethis", NULL);
     olcxPushSpecial(LINK_NAME_MAYBE_THIS_ITEM, OLO_MAYBE_THIS);
     createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, &methodreg);
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
@@ -4304,7 +4304,7 @@ static void pushDownPullUp(EditorMarker *point, PushPullDirection direction, int
     movedEnd->offset--;
 
     // perform moving
-    applyExpandShortNames(point->buffer, point);
+    applyExpandShortNames(point);
     size = mend->offset - movedStart->offset;
     pushAllReferencesOfMethod(point, "-olallchecks");
     createMarkersForAllReferencesInRegions(sessionData.browserStack.top->menuSym, NULL);
