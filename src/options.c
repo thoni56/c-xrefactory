@@ -10,8 +10,6 @@
 #include "fileio.h"
 #include "filetable.h"
 
-#include "main.h" /* For mainHandleSetOption() */
-
 #include "protocol.h"
 
 #include "log.h"
