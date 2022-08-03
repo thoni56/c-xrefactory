@@ -13,12 +13,11 @@ typedef struct Id {
 } Id;
 
 typedef struct idList {
-    Id      id;
-    char *         fqtname;  /* fqt name for java */
-    enum type      nameType; /* type of name segment for java */
+    Id             id;
+    char          *fqtname;  /* fqt name for java */
+    Type           nameType; /* type of name segment for java */
     struct idList *next;
 } IdList;
-
 
 extern void fillId(Id *id, char *name, Symbol *symbol, Position position);
 

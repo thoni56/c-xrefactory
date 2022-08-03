@@ -854,7 +854,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
 }
 
 
-static int findTopLevelNameInternal(char *name,
+static Result findTopLevelNameInternal(char *name,
                                     S_recFindStr *resRfs,
                                     Symbol **resultingMemberP,
                                     int classif,
@@ -863,7 +863,7 @@ static int findTopLevelNameInternal(char *name,
                                     int visibilityCheck,
                                     S_javaStat **rscope
 ) {
-    int result;
+    Result result;
     Symbol symbol;
     S_javaStat *cscope;
 
@@ -875,9 +875,9 @@ static int findTopLevelNameInternal(char *name,
     fillSymbol(&symbol, name, name, noPosition);
     symbol.storage = StorageNone;
 
-    result = RETURN_NOT_FOUND;
+    result = RESULT_NOT_FOUND;
     for(cscope=startingScope;
-        cscope!=NULL && cscope->thisClass!=NULL && result!=RETURN_OK;
+        cscope!=NULL && cscope->thisClass!=NULL && result!=RESULT_OK;
         cscope=cscope->next
     ) {
         assert(cscope->thisClass);
@@ -900,26 +900,26 @@ static int findTopLevelNameInternal(char *name,
     return result;
 }
 
-int findTopLevelName(char *name, S_recFindStr *resRfs,
+Result findTopLevelName(char *name, S_recFindStr *resRfs,
                      Symbol **resMemb, int classif) {
-    int res;
+    Result result;
     S_javaStat *scopeToSearch, *resultScope;
 
-    res = findTopLevelNameInternal(name, resRfs, resMemb, classif,
+    result = findTopLevelNameInternal(name, resRfs, resMemb, classif,
                                    s_javaStat, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES,
                                    &scopeToSearch);
     // O.K. determine class to search
-    if (res != RETURN_OK) {
+    if (result != RESULT_OK) {
         // no class to search find, anyway this is a compiler error,
         scopeToSearch = s_javaStat;
     }
     if (scopeToSearch!=NULL) {
         log_trace("relooking for %s in %s", name, scopeToSearch->thisClass->name);
-        res = findTopLevelNameInternal(name, resRfs, resMemb, classif,
+        result = findTopLevelNameInternal(name, resRfs, resMemb, classif,
                                        scopeToSearch, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO,
                                        &resultScope);
     }
-    return res;
+    return result;
 }
 
 static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
@@ -1164,7 +1164,7 @@ static int javaClassifySingleAmbigName(IdList *name,
 
     if (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD) {
         /* argument, local variable or class record */
-        if (findTopLevelName(name->id.name,rfs,str,classif)==RETURN_OK) {
+        if (findTopLevelName(name->id.name,rfs,str,classif)==RESULT_OK) {
             *expr = (*str)->u.typeModifier;
             name->nameType = TypeExpression;
             if (cxrefFlag==ADD_CX_REFS) {
@@ -1356,7 +1356,7 @@ static void classifiedToNestedClass(IdList *name, Symbol **str, Reference **oref
 }
 
 
-int javaClassifyAmbiguousName(
+Type javaClassifyAmbiguousName(
         IdList *name,
         S_recFindStr *rfs,	// can be NULL
         Symbol **str,
@@ -1366,12 +1366,14 @@ int javaClassifyAmbiguousName(
         int allowUselesFqtRefs,
         int classif,
         int usage) {
-    int			pres,rf,classif2,rr;
+    int			pres,rf,classif2;
+    Result result;
     int			uusage, minacc;
     Symbol    *pstr;
     S_recFindStr localRfs;
     TypeModifier     *pexpr;
     Reference			*poref, *localrdref, *prdtoref;
+
     assert(classif==CLASS_TO_TYPE || classif==CLASS_TO_EXPR ||
            classif==CLASS_TO_METHOD);
     uusage = usage;
@@ -1434,7 +1436,7 @@ int javaClassifyAmbiguousName(
                 rf = findStrRecordSym(iniFind(pstr,rfs), name->id.name, str,
                                       classif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
                 *expr = (*str)->u.typeModifier;
-                if (rf == RETURN_OK) {
+                if (rf == RESULT_OK) {
                     name->nameType = TypeExpression;
                     if ((options.ooChecksBits & OOC_ALL_CHECKS) == 0 ||
                         javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currentClass, *str)) {
@@ -1465,9 +1467,9 @@ int javaClassifyAmbiguousName(
                 *str = &errorSymbol;
             } else {
                 javaLoadClassSymbolsFromFile(pexpr->u.t);
-                rr = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->id.name,
+                result = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->id.name,
                                       str, classif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
-                if (rr == RESULT_OK) {
+                if (result == RESULT_OK) {
                     if ((options.ooChecksBits & OOC_ALL_CHECKS) == 0 ||
                         javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currentClass, *str)) {
                         minacc = javaGetMinimalAccessibility(rfs, *str);
@@ -2148,9 +2150,9 @@ static TypeModifier *javaMethodInvocation(
                               CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
         if (invocationType == CONSTRUCTOR_INVOCATION && rfs->baseClass != rfs->currentClass) {
             // constructors are not inherited
-            rr = RETURN_NOT_FOUND;
+            rr = RESULT_NOT_FOUND;
         }
-    } while (rr==RETURN_OK);
+    } while (rr==RESULT_OK);
     if (appli == 0)
         return &errorModifier;
 //&sprintf(tmpBuff,"looking for smallest\n");ppcBottomInformation(tmpBuff);
@@ -2257,7 +2259,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
     javaLoadClassSymbolsFromFile(tt->u.t);
     rr = findStrRecordSym(iniFind(tt->u.t,&erfs->s), name->name, &erfs->memb,
                         CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
-    if (rr != RETURN_OK) {
+    if (rr != RESULT_OK) {
         noSuchFieldError(name->name);
         return NULL;
     }
@@ -2295,7 +2297,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
 */
     rr = findStrRecordSym(iniFind(ss, &erfs->s), name->name, &erfs->memb,
                         CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
-    if (rr != RETURN_OK)
+    if (rr != RESULT_OK)
         return NULL;
     return erfs;
 }
@@ -2328,7 +2330,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     assert(clas->javaClassIsLoaded);
     rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
                         CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
-    if (rr != RETURN_OK)
+    if (rr != RESULT_OK)
         return NULL;
     return erfs;
 }

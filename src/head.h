@@ -131,14 +131,6 @@ typedef enum language {
 
 #define MAXIMAL_INT             ((int) (((unsigned) -2)>>1))
 
-/* ********************************************************************** */
-/*            common integer return values for cplex funs                 */
-/* TODO: Turn into an enum and change return types, also see RESULT_OK/ERR in proto.h */
-
-#define RETURN_OK           0
-#define RETURN_NOT_FOUND	1
-#define RETURN_ERROR		2
-
 /* ******************************************************************** */
 
 #define USAGE_TOP_LEVEL_USED UsageAddrUsed	/* type name at top-level */

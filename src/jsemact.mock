@@ -42,8 +42,8 @@ char *javaCreateComposedName(char *prefix, IdList *className, int classNameSepar
     return (char *) mock(prefix, className, classNameSeparator, name, resBuff, resBufSize);
 }
 
-int findTopLevelName(char *name, S_recFindStr *resRfs, Symbol **resMemb, int classif) {
-    return (int) mock(name, resRfs, resMemb, classif);
+Result findTopLevelName(char *name, S_recFindStr *resRfs, Symbol **resMemb, int classif) {
+    return (Result) mock(name, resRfs, resMemb, classif);
 }
 
 int javaClassifySingleAmbigNameToTypeOrPack(IdList *name, Symbol **str, IncludeCxrefs cxrefFlag) {
@@ -54,8 +54,8 @@ void javaAddImportConstructionReference(Position *importPos, Position *pos, int 
     mock(importPos, pos, usage);
 }
 
-int javaClassifyAmbiguousName(IdList *name, S_recFindStr *rfs, Symbol **str, TypeModifier **expr, Reference **oref, Reference **rdtoref, int allowUselesFqtRefs, int classif, int usage) {
-    return (int) mock(name, rfs, str, expr, oref, rdtoref, allowUselesFqtRefs, classif, usage);
+Type javaClassifyAmbiguousName(IdList *name, S_recFindStr *rfs, Symbol **str, TypeModifier **expr, Reference **oref, Reference **rdtoref, int allowUselesFqtRefs, int classif, int usage) {
+    return (Type) mock(name, rfs, str, expr, oref, rdtoref, allowUselesFqtRefs, classif, usage);
 }
 
 Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {

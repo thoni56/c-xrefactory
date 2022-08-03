@@ -1887,9 +1887,9 @@ static int getParameterNamePosition(EditorMarker *pos, char *fname, int argn) {
     editServerParseBuffer(refactoringOptions.project, pos->buffer, pos, NULL, pushOpt, NULL);
     olcxPopOnly();
     if (parameterPosition.file != noFileIndex) {
-        res = RETURN_OK;
+        res = RESULT_OK;
     } else {
-        res = RETURN_ERROR;
+        res = RESULT_ERR;
     }
     return res;
 }
@@ -1914,12 +1914,12 @@ static int getParameterPosition(EditorMarker *pos, char *fname, int argn) {
     editServerParseBuffer(refactoringOptions.project, pos->buffer, pos, NULL, pushOpt, NULL);
     olcxPopOnly();
 
-    res = RETURN_OK;
+    res = RESULT_OK;
     if (parameterBeginPosition.file == noFileIndex || parameterEndPosition.file == noFileIndex ||
         parameterBeginPosition.file == -1 || parameterEndPosition.file == -1) {
         ppcGotoMarker(pos);
         errorMessage(ERR_INTERNAL, "Can't get end of parameter");
-        res = RETURN_ERROR;
+        res = RESULT_ERR;
     }
     // check some logical preconditions,
     if (parameterBeginPosition.file != parameterEndPosition.file ||
@@ -1930,7 +1930,7 @@ static int getParameterPosition(EditorMarker *pos, char *fname, int argn) {
         sprintf(tmpBuff, "Something goes wrong at this occurence, can't get reasonable parameter limites");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
-        res = RETURN_ERROR;
+        res = RESULT_ERR;
     }
     if (!LANGUAGE(LANG_JAVA)) {
         // check preconditions to avoid cases like
@@ -1953,7 +1953,7 @@ static int addStringAsParameter(EditorMarker *pos, EditorMarker *endm, char *fna
 
     insertionOffset = -1;
     rr              = getParameterPosition(pos, fname, argn);
-    if (rr != RETURN_OK) {
+    if (rr != RESULT_OK) {
         errorMessage(ERR_INTERNAL, "Problem while adding parameter");
         return insertionOffset;
     }
@@ -2036,7 +2036,7 @@ static void checkThatParameterIsUnused(EditorMarker *pos, char *functionName, in
     EditorMarker *mm;
 
     rr = getParameterNamePosition(pos, functionName, argn);
-    if (rr != RETURN_OK) {
+    if (rr != RESULT_OK) {
         ppcGenRecord(PPC_ASK_CONFIRMATION, "Can not parse parameter definition, continue anyway?");
         return;
     }
@@ -2077,7 +2077,7 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
     EditorMarker *m1, *m2;
 
     res = getParameterPosition(pos, fname, argn);
-    if (res != RETURN_OK)
+    if (res != RESULT_OK)
         return;
 
     m1 = editorCreateNewMarkerForPosition(&parameterBeginPosition);
@@ -2126,7 +2126,7 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
     EditorMarker *m1, *m2;
 
     res = getParameterPosition(pos, fname, argFrom);
-    if (res != RETURN_OK)
+    if (res != RESULT_OK)
         return;
 
     m1 = editorCreateNewMarkerForPosition(&parameterBeginPosition);
@@ -3544,7 +3544,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
 
     strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
     res = getParameterNamePosition(point, nameOnPoint, argn);
-    if (res != RETURN_OK) {
+    if (res != RESULT_OK) {
         ppcGotoMarker(point);
         errorMessage(ERR_INTERNAL, "Can't determine position of parameter");
         return;
@@ -3614,7 +3614,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
         if (!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
             res = getParameterPosition(ll->marker, nameOnPoint, argn);
-            if (res == RETURN_OK) {
+            if (res == RESULT_OK) {
                 m1 = editorCreateNewMarkerForPosition(&parameterBeginPosition);
                 m1->offset++;
                 editorRunWithMarkerUntil(m1, noSpaceChar, 1);

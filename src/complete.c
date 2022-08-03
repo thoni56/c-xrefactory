@@ -950,7 +950,7 @@ static void completeRecordsNames(
         //& visibilityCheck = VISIBILITY_CHECK_NO;
         //&}
         rr = findStrRecordSym(&rfs, NULL, &r, classification, accessCheck, visibilityCheck);
-        if (rr != RETURN_OK) break;
+        if (rr != RESULT_OK) break;
         if (constructorOpt == StorageConstructor && rfs.currentClass != symbol)
             break;
         /* because constructors are not inherited */
@@ -1136,7 +1136,7 @@ static char *spComplFindNextRecord(ExprTokenType *tok) {
     iniFind(s, &rfs);
     for(;;) {
         rr = findStrRecordSym(&rfs, NULL, &r, CLASS_TO_ANY, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
-        if (rr != RETURN_OK) break;
+        if (rr != RESULT_OK) break;
         assert(r);
         cname = r->name;
         CONST_CONSTRUCT_NAME(StorageDefault, r->storage, &cname);
@@ -1421,7 +1421,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
             processName(r->name, &compLine, 0, c);
         }
         rr = findStrRecordSym(rfs, mname, &r, CLASS_TO_METHOD, accessCheck, visibilityCheck);
-    } while (rr == RETURN_OK);
+    } while (rr == RESULT_OK);
     if (c->alternativeIndex != 0) {
         c->prefix[0]=0;
         c->fullMatchFlag = true;

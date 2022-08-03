@@ -326,7 +326,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
                 if (!LANGUAGE(LANG_JAVA)) {
                     *res           = r;
                     ss->nextRecord = r->next;
-                    return RETURN_OK;
+                    return RESULT_OK;
                 }
                 //&fprintf(dumpOut,"acc O.K., checking classif %d\n",javaClassif);fflush(dumpOut);
                 if (javaClassif != CLASS_TO_ANY) {
@@ -349,7 +349,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
                         // class to search
                         ss->nextRecord = NULL;
                         *res           = &errorSymbol;
-                        return RETURN_NOT_FOUND;
+                        return RESULT_NOT_FOUND;
                     }
                 }
                 if (accessibilityCheck == ACCESSIBILITY_CHECK_YES) {
@@ -357,7 +357,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
                         if (visibilityCheck == VISIBILITY_CHECK_YES) {
                             ss->nextRecord = NULL;
                             *res           = &errorSymbol;
-                            return RETURN_NOT_FOUND;
+                            return RESULT_NOT_FOUND;
                         } else {
                             goto nextRecord;
                         }
@@ -365,7 +365,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
                 }
                 *res           = r;
                 ss->nextRecord = r->next;
-                return RETURN_OK;
+                return RESULT_OK;
             }
         nextRecord:;
         }
@@ -384,7 +384,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL 
             if (ss->superClassesCount == 0) {
                 ss->nextRecord = NULL;
                 *res           = &errorSymbol;
-                return RETURN_NOT_FOUND;
+                return RESULT_NOT_FOUND;
             }
             sss                 = ss->superClasses[ss->superClassesCount - 1];
             s                   = sss->element;

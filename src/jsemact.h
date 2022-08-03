@@ -46,7 +46,7 @@ extern char *javaCreateComposedName(
                                     char			*resBuff,
                                     int				resBufSize
                                     );
-extern int findTopLevelName(
+extern Result findTopLevelName(
                             char                *name,
                             S_recFindStr        *resRfs,
                             Symbol			**resMemb,
@@ -57,7 +57,7 @@ extern int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                                    IncludeCxrefs cxrefFlag
                                                    );
 extern void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage);
-extern int javaClassifyAmbiguousName(
+extern Type javaClassifyAmbiguousName(
                                      IdList *name,
                                      S_recFindStr *rfs,
                                      Symbol **str,

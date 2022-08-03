@@ -281,10 +281,11 @@ enum javaPCTIndex { /* java Primitive Conversion Table Indexes */
     MAX_PCTIndex
 };
 
-enum sFunResult {
+typedef enum result {
     RESULT_OK,
+    RESULT_NOT_FOUND,
     RESULT_ERR
-};
+} Result;
 
 typedef enum inputType {
     INPUT_NORMAL,
