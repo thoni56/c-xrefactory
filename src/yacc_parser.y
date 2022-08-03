@@ -1930,9 +1930,8 @@ top_init_declarations
 function_definition_head
     : function_head_declaration                         /*& { $$.data = $1.data; } &*/
     | function_definition_head fun_arg_declaration      {
-        int r;
         assert($1.data->u.typeModifier && $1.data->u.typeModifier->kind == TypeFunction);
-        r = mergeArguments($1.data->u.typeModifier->u.f.args, $2.data);
+        Result r = mergeArguments($1.data->u.typeModifier->u.f.args, $2.data);
         if (r == RESULT_ERR) YYERROR;
         $$.data = $1.data;
     }

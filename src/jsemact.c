@@ -1366,8 +1366,7 @@ Type javaClassifyAmbiguousName(
         int allowUselesFqtRefs,
         int classif,
         int usage) {
-    int			pres,rf,classif2;
-    Result result;
+    int			pres,classif2;
     int			uusage, minacc;
     Symbol    *pstr;
     S_recFindStr localRfs;
@@ -1433,7 +1432,7 @@ Type javaClassifyAmbiguousName(
                 }
             } else {
                 javaLoadClassSymbolsFromFile(pstr);
-                rf = findStrRecordSym(iniFind(pstr,rfs), name->id.name, str,
+                Result rf = findStrRecordSym(iniFind(pstr,rfs), name->id.name, str,
                                       classif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
                 *expr = (*str)->u.typeModifier;
                 if (rf == RESULT_OK) {
@@ -1467,7 +1466,7 @@ Type javaClassifyAmbiguousName(
                 *str = &errorSymbol;
             } else {
                 javaLoadClassSymbolsFromFile(pexpr->u.t);
-                result = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->id.name,
+                Result result = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->id.name,
                                       str, classif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
                 if (result == RESULT_OK) {
                     if ((options.ooChecksBits & OOC_ALL_CHECKS) == 0 ||
@@ -2108,7 +2107,8 @@ static TypeModifier *javaMethodInvocation(
     S_typeModifierList *aaa;
     Usage			usage;
     int					smallesti, baseCl, vApplCl, vFunCl, usedusage;
-    int					i,appli,actArgi,rr;
+    int					i,appli,actArgi;
+    Result rr;
 
     assert(rfs->baseClass);  // method must be inside a class
     assert(rfs->baseClass->type == TypeStruct);
@@ -2247,7 +2247,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
                                                 Id *name
     ) {
     S_extRecFindStr		*erfs;
-    int					rr;
+
     log_trace("invocation of %s", name->name);
     if (tt->kind == TypeArray) tt = &s_javaArrayObjectSymbol.u.structSpec->stype;
     if (tt->kind != TypeStruct) {
@@ -2257,7 +2257,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
     erfs = StackMemoryAlloc(S_extRecFindStr);
     erfs->params = NULL;
     javaLoadClassSymbolsFromFile(tt->u.t);
-    rr = findStrRecordSym(iniFind(tt->u.t,&erfs->s), name->name, &erfs->memb,
+    Result rr = findStrRecordSym(iniFind(tt->u.t,&erfs->s), name->name, &erfs->memb,
                         CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
     if (rr != RESULT_OK) {
         noSuchFieldError(name->name);
@@ -2282,7 +2282,7 @@ TypeModifier *javaMethodInvocationT(TypeModifier *tt,
 S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
     Symbol            *ss;
     S_extRecFindStr		*erfs;
-    int					rr;
+
     ss = javaCurrentSuperClass();
     if (ss == &errorSymbol || ss->type==TypeError)
         return NULL;
@@ -2295,7 +2295,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
         erfs->s.accessed = s_javaStat->cpMethod->b.accessFlags;
     }
 */
-    rr = findStrRecordSym(iniFind(ss, &erfs->s), name->name, &erfs->memb,
+    Result rr = findStrRecordSym(iniFind(ss, &erfs->s), name->name, &erfs->memb,
                         CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
     if (rr != RESULT_OK)
         return NULL;
@@ -2320,7 +2320,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
                                                     Position *pos
     ) {
     S_extRecFindStr		*erfs;
-    int					rr;
+
     if (clas == &errorSymbol || clas->type==TypeError)
         return NULL;
     assert(clas && clas->type == TypeStruct);
@@ -2328,7 +2328,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     erfs = StackMemoryAlloc(S_extRecFindStr);
     erfs->params = NULL;
     assert(clas->javaClassIsLoaded);
-    rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
+    Result rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
                         CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
     if (rr != RESULT_OK)
         return NULL;

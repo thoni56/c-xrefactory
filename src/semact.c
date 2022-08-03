@@ -287,7 +287,7 @@ int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     return i;
 }
 
-int findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL */
+Result findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL */
                      Symbol **res, int javaClassif,              /* classify to method/field*/
                      AccessibilityCheckYesNo accessibilityCheck, /* java check accessibility */
                      VisibilityCheckYesNo    visibilityCheck     /* redundant, always equal to accCheck? */
@@ -420,11 +420,12 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
     S_recFindStr    rfs;
     Reference     *ref;
     Usage     usage;
-    int rr, minacc;
+    int minacc;
+
     ref = NULL;
     // when in java, then always in qualified name, so access and visibility checks
     // are useless.
-    rr = findStrRecordSym(iniFind(sym,&rfs),record->name,res,
+    Result rr = findStrRecordSym(iniFind(sym,&rfs),record->name,res,
                           javaClassif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
     if (rr == RESULT_OK && rfs.currentClass != NULL &&
         ((*res)->storage == StorageField || (*res)->storage == StorageMethod ||
@@ -826,8 +827,8 @@ SymbolList *createDefinitionList(Symbol *symbol) {
     return p;
 }
 
-int mergeArguments(Symbol *id, Symbol *ty) {
-    int res = RESULT_OK;
+Result mergeArguments(Symbol *id, Symbol *ty) {
+    Result res = RESULT_OK;
     /* if a type of non-exist. argument is declared, it is probably */
     /* only a missing ';', so syntax error should be raised */
     for (; ty != NULL; ty = ty->next) {

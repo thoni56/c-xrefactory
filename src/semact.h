@@ -21,7 +21,7 @@ extern bool javaOuterClassAccessible(Symbol *cl);
 extern bool javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags);
 extern bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r);
 extern int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r);
-extern int findStrRecordSym(S_recFindStr *ss,
+extern Result findStrRecordSym(S_recFindStr *ss,
                             char *recname,
                             Symbol **res,
                             int javaClassif,
@@ -57,7 +57,7 @@ extern Reference *findStructureFieldFromType(TypeModifier *structure,
                                              Id *field,
                                              Symbol **resultingSymbol,
                                              int javaClassifier);
-extern int mergeArguments(Symbol *id, Symbol *ty);
+extern Result mergeArguments(Symbol *id, Symbol *ty);
 extern TypeModifier *simpleStrUnionSpecifier(Id *typeName,
                                              Id *id,
                                              UsageKind usage);

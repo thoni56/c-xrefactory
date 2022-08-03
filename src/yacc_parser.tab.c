@@ -2724,7 +2724,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #include "recyacc.h"
 #endif
 #define yystacksize YYSTACKSIZE
-#line 1996 "yacc_parser.y"
+#line 1995 "yacc_parser.y"
 
 static void addYaccSymbolReference(Id *name, int usage) {
     Symbol sss;
@@ -4956,21 +4956,20 @@ break;
 case 546:
 #line 1932 "yacc_parser.y"
 {
-        int r;
         assert(yyvsp[-1].ast_symbol.data->u.typeModifier && yyvsp[-1].ast_symbol.data->u.typeModifier->kind == TypeFunction);
-        r = mergeArguments(yyvsp[-1].ast_symbol.data->u.typeModifier->u.f.args, yyvsp[0].ast_symbol.data);
+        Result r = mergeArguments(yyvsp[-1].ast_symbol.data->u.typeModifier->u.f.args, yyvsp[0].ast_symbol.data);
         if (r == RESULT_ERR) YYERROR;
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
 break;
 case 547:
-#line 1942 "yacc_parser.y"
+#line 1941 "yacc_parser.y"
 {
         yyval.ast_symbol.data = NULL;
     }
 break;
 case 548:
-#line 1945 "yacc_parser.y"
+#line 1944 "yacc_parser.y"
 {
         Symbol *p;
         assert(yyvsp[-2].ast_symbol.data && yyvsp[-1].ast_symbol.data);
@@ -4981,26 +4980,26 @@ case 548:
     }
 break;
 case 549:
-#line 1956 "yacc_parser.y"
+#line 1955 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
 break;
 case 550:
-#line 1959 "yacc_parser.y"
+#line 1958 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         LIST_APPEND(Symbol, yyval.ast_symbol.data, yyvsp[-1].ast_symbol.data);
     }
 break;
 case 551:
-#line 1963 "yacc_parser.y"
+#line 1962 "yacc_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
     }
 break;
 case 552:
-#line 1969 "yacc_parser.y"
+#line 1968 "yacc_parser.y"
 {
         completeDeclarator(&defaultIntDefinition, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->u.typeModifier);
@@ -5009,7 +5008,7 @@ case 552:
     }
 break;
 case 553:
-#line 1975 "yacc_parser.y"
+#line 1974 "yacc_parser.y"
 {
         completeDeclarator(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->u.typeModifier);
@@ -5018,14 +5017,14 @@ case 553:
     }
 break;
 case 554:
-#line 1984 "yacc_parser.y"
+#line 1983 "yacc_parser.y"
 { beginBlock(); }
 break;
 case 555:
-#line 1987 "yacc_parser.y"
+#line 1986 "yacc_parser.y"
 { endBlock(); }
 break;
-#line 5029 "yacc_parser.tab.c"
+#line 5028 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

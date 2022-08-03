@@ -1876,10 +1876,11 @@ static void clearParamPositions(void) {
     parameterEndPosition   = noPosition;
 }
 
-static int getParameterNamePosition(EditorMarker *pos, char *fname, int argn) {
+static Result getParameterNamePosition(EditorMarker *pos, char *fname, int argn) {
     char  pushOpt[TMP_STRING_SIZE];
     char *actName;
-    int   res;
+    Result res;
+
     actName = getIdentifierOnMarker_st(pos);
     clearParamPositions();
     assert(strcmp(actName, fname) == 0);
@@ -1894,10 +1895,9 @@ static int getParameterNamePosition(EditorMarker *pos, char *fname, int argn) {
     return res;
 }
 
-static int getParameterPosition(EditorMarker *pos, char *fname, int argn) {
+static Result getParameterPosition(EditorMarker *pos, char *fname, int argn) {
     char  pushOpt[TMP_STRING_SIZE];
     char *actName;
-    int   res;
     char  tmpBuff[TMP_BUFF_SIZE];
 
     actName = getIdentifierOnMarker_st(pos);
@@ -1914,7 +1914,7 @@ static int getParameterPosition(EditorMarker *pos, char *fname, int argn) {
     editServerParseBuffer(refactoringOptions.project, pos->buffer, pos, NULL, pushOpt, NULL);
     olcxPopOnly();
 
-    res = RESULT_OK;
+    Result res = RESULT_OK;
     if (parameterBeginPosition.file == noFileIndex || parameterEndPosition.file == noFileIndex ||
         parameterBeginPosition.file == -1 || parameterEndPosition.file == -1) {
         ppcGotoMarker(pos);
@@ -1948,11 +1948,11 @@ static int addStringAsParameter(EditorMarker *pos, EditorMarker *endm, char *fna
     char         *text;
     char          par[REFACTORING_TMP_STRING_SIZE];
     char         *sep1, *sep2;
-    int           rr, insertionOffset;
+    int          insertionOffset;
     EditorMarker *mm;
 
     insertionOffset = -1;
-    rr              = getParameterPosition(pos, fname, argn);
+    Result rr = getParameterPosition(pos, fname, argn);
     if (rr != RESULT_OK) {
         errorMessage(ERR_INTERNAL, "Problem while adding parameter");
         return insertionOffset;
@@ -2032,10 +2032,9 @@ typedef enum {
 
 static void checkThatParameterIsUnused(EditorMarker *pos, char *functionName, int argn, ParameterCheckKind checkKind) {
     char          pname[TMP_STRING_SIZE];
-    int           rr;
     EditorMarker *mm;
 
-    rr = getParameterNamePosition(pos, functionName, argn);
+    Result rr = getParameterNamePosition(pos, functionName, argn);
     if (rr != RESULT_OK) {
         ppcGenRecord(PPC_ASK_CONFIRMATION, "Can not parse parameter definition, continue anyway?");
         return;
@@ -2073,10 +2072,9 @@ static void addParameter(EditorMarker *pos, char *fname, int argn, int usage) {
 
 static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage) {
     char         *text;
-    int           res;
     EditorMarker *m1, *m2;
 
-    res = getParameterPosition(pos, fname, argn);
+    Result res = getParameterPosition(pos, fname, argn);
     if (res != RESULT_OK)
         return;
 
@@ -2122,10 +2120,10 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
 static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo) {
     char         *text;
     char          par[REFACTORING_TMP_STRING_SIZE];
-    int           res, plen;
+    int           plen;
     EditorMarker *m1, *m2;
 
-    res = getParameterPosition(pos, fname, argFrom);
+    Result res = getParameterPosition(pos, fname, argFrom);
     if (res != RESULT_OK)
         return;
 
@@ -3528,7 +3526,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     char              param[REFACTORING_TMP_STRING_SIZE];
     char              tparam[REFACTORING_TMP_STRING_SIZE];
     char              testi[2 * REFACTORING_TMP_STRING_SIZE];
-    int               plen, tplen, rlen, res, argn, bi;
+    int               plen, tplen, rlen, argn, bi;
     int               classnum, parclassnum;
     int               progress, count;
     EditorMarker     *mm, *m1, *m2, *pp;
@@ -3543,7 +3541,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     assert(argn != 0);
 
     strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
-    res = getParameterNamePosition(point, nameOnPoint, argn);
+    Result res = getParameterNamePosition(point, nameOnPoint, argn);
     if (res != RESULT_OK) {
         ppcGotoMarker(point);
         errorMessage(ERR_INTERNAL, "Can't determine position of parameter");
@@ -3571,8 +3569,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
 
     checkPoint = editorUndo;
     pp         = editorCreateNewMarker(point->buffer, point->offset);
-    res        = editorRunWithMarkerUntil(pp, isMethodBegin, 1);
-    if (!res) {
+    if (!editorRunWithMarkerUntil(pp, isMethodBegin, 1)) {
         errorMessage(ERR_INTERNAL, "Can't find beginning of method");
         return;
     }

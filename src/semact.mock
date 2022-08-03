@@ -60,9 +60,9 @@ int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     return (int) mock(rfs, r);
 }
 
-int findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClassif,
+Result findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClassif,
                      AccessibilityCheckYesNo accessibilityCheck, VisibilityCheckYesNo visibilityCheck) {
-    return (int) mock(ss, recname, res, javaClassif, accessibilityCheck, visibilityCheck);
+    return (Result) mock(ss, recname, res, javaClassif, accessibilityCheck, visibilityCheck);
 }
 
 Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage storage, UsageKind usage) {
@@ -141,8 +141,8 @@ Reference *findStructureFieldFromType(TypeModifier *structure, Id *field, Symbol
     return (Reference *) mock(structure, field, resultingSymbol, javaClassifier);
 }
 
-int mergeArguments(Symbol *id, Symbol *ty) {
-    return (int) mock(id, ty);
+Result mergeArguments(Symbol *id, Symbol *ty) {
+    return (Result) mock(id, ty);
 }
 
 TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, UsageKind usage) {

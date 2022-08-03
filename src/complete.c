@@ -925,7 +925,7 @@ static void completeRecordsNames(
     int vlevelOffset
 ) {
     CompletionLine completionLine;
-    int orderFlag, rr, vlevel, accessCheck, visibilityCheck;
+    int orderFlag, vlevel, accessCheck, visibilityCheck;
     Symbol *r, *vFunCl;
     S_recFindStr rfs;
     char *cname;
@@ -949,7 +949,7 @@ static void completeRecordsNames(
         //&} else {
         //& visibilityCheck = VISIBILITY_CHECK_NO;
         //&}
-        rr = findStrRecordSym(&rfs, NULL, &r, classification, accessCheck, visibilityCheck);
+        Result rr = findStrRecordSym(&rfs, NULL, &r, classification, accessCheck, visibilityCheck);
         if (rr != RESULT_OK) break;
         if (constructorOpt == StorageConstructor && rfs.currentClass != symbol)
             break;
@@ -1125,17 +1125,18 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
 
 static char *spComplFindNextRecord(ExprTokenType *tok) {
     S_recFindStr    rfs;
-    int             rr;
     Symbol        *r,*s;
-    char            *cname,*res;
+    char *res;
+    char            *cname;
     static char     *cnext="next";
     static char     *cprevious="previous";
+
     s = tok->typeModifier->next->u.t;
     res = NULL;
     assert(s->u.structSpec);
     iniFind(s, &rfs);
     for(;;) {
-        rr = findStrRecordSym(&rfs, NULL, &r, CLASS_TO_ANY, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
+        Result rr = findStrRecordSym(&rfs, NULL, &r, CLASS_TO_ANY, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
         if (rr != RESULT_OK) break;
         assert(r);
         cname = r->name;
@@ -1147,7 +1148,7 @@ static char *spComplFindNextRecord(ExprTokenType *tok) {
                 // there is a record of the same type
                 if (res == NULL) res = cname;
                 else if (strcmp(cname,cnext)==0) res = cnext;
-                else if (res!=cnext&&strcmp(cname,"previous")==0)res=cprevious;
+                else if (res!=cnext&&strcmp(cname,"previous")==0) res=cprevious;
             }
         }
     }
@@ -1390,7 +1391,8 @@ void javaHintCompleteMethodParameters(Completions *c) {
     Symbol             *r, *vFunCl;
     S_recFindStr       *rfs;
     S_typeModifierList *aaa;
-    int                visibilityCheck, accessCheck, vlevel, rr, actArgi;
+    int                visibilityCheck, accessCheck, vlevel, actArgi;
+    Result rr;
     char               *mname;
     char               actArg[MAX_PROFILE_SIZE];
 

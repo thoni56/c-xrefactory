@@ -2045,7 +2045,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #include "recyacc.h"
 #endif
 #define yystacksize YYSTACKSIZE
-#line 1779 "c_parser.y"
+#line 1778 "c_parser.y"
 
 static CompletionFunctionsTable spCompletionsTab[]  = {
     {COMPL_FOR_SPECIAL1,    completeForSpecial1},
@@ -4114,21 +4114,20 @@ break;
 case 355:
 #line 1715 "c_parser.y"
 {
-        int r;
         assert(yyvsp[-1].ast_symbol.data->u.typeModifier && yyvsp[-1].ast_symbol.data->u.typeModifier->kind == TypeFunction);
-        r = mergeArguments(yyvsp[-1].ast_symbol.data->u.typeModifier->u.f.args, yyvsp[0].ast_symbol.data);
+        Result r = mergeArguments(yyvsp[-1].ast_symbol.data->u.typeModifier->u.f.args, yyvsp[0].ast_symbol.data);
         if (r == RESULT_ERR) YYERROR;
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
 break;
 case 356:
-#line 1725 "c_parser.y"
+#line 1724 "c_parser.y"
 {
         yyval.ast_symbol.data = NULL;
     }
 break;
 case 357:
-#line 1728 "c_parser.y"
+#line 1727 "c_parser.y"
 {
         Symbol *p;
         assert(yyvsp[-2].ast_symbol.data && yyvsp[-1].ast_symbol.data);
@@ -4139,26 +4138,26 @@ case 357:
     }
 break;
 case 358:
-#line 1739 "c_parser.y"
+#line 1738 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
     }
 break;
 case 359:
-#line 1742 "c_parser.y"
+#line 1741 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         LIST_APPEND(Symbol, yyval.ast_symbol.data, yyvsp[-1].ast_symbol.data);
     }
 break;
 case 360:
-#line 1746 "c_parser.y"
+#line 1745 "c_parser.y"
 {
         yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
     }
 break;
 case 361:
-#line 1752 "c_parser.y"
+#line 1751 "c_parser.y"
 {
         completeDeclarator(&defaultIntDefinition, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->u.typeModifier);
@@ -4167,7 +4166,7 @@ case 361:
     }
 break;
 case 362:
-#line 1758 "c_parser.y"
+#line 1757 "c_parser.y"
 {
         completeDeclarator(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->u.typeModifier);
@@ -4176,14 +4175,14 @@ case 362:
     }
 break;
 case 363:
-#line 1767 "c_parser.y"
+#line 1766 "c_parser.y"
 { beginBlock(); }
 break;
 case 364:
-#line 1770 "c_parser.y"
+#line 1769 "c_parser.y"
 { endBlock(); }
 break;
-#line 4187 "c_parser.tab.c"
+#line 4186 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
