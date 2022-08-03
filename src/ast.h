@@ -3,6 +3,7 @@
 
 #include "symbol.h"
 #include "id.h"
+#include "proto.h"              /* Because some AST nodes need types */
 
 
 /* **************     parse tree with positions    *********** */

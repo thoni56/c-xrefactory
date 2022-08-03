@@ -21,8 +21,8 @@
 
 #endif
 
-#include "proto.h"
 #include "ast.h"
+#include "head.h"               /* For Language type */
 
 #include "lexem.h"
 typedef union {
