@@ -10,6 +10,11 @@ int java_yydebug;
 YYSTYPE yacc_yylval;
 YYSTYPE *uniyylval;
 
+int c_yydebug;
+int yacc_yydebug;
+int java_yydebug;
+
+
 void parseCurrentInputFile(Language language) {
     mock();
 }

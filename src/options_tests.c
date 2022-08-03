@@ -16,6 +16,7 @@
 #include "globals.mock"
 #include "main.mock"
 #include "misc.mock"
+#include "parsers.mock"
 #include "ppc.mock"
 #include "proto.h"
 #include "yylex.mock"
