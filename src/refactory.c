@@ -2025,17 +2025,17 @@ static int isParameterUsedExceptRecursiveCalls(EditorMarker *ppos, EditorMarker 
     return isThisSymbolUsed(ppos);
 }
 
-static void checkThatParameterIsUnused(EditorMarker *pos, char *fname, int argn, int checkfor) {
 typedef enum {
     CHECK_FOR_ADD_PARAM,
     CHECK_FOR_DEL_PARAM
 } ParameterCheckKind;
 
+static void checkThatParameterIsUnused(EditorMarker *pos, char *functionName, int argn, ParameterCheckKind checkKind) {
     char          pname[TMP_STRING_SIZE];
     int           rr;
     EditorMarker *mm;
 
-    rr = getParameterNamePosition(pos, fname, argn);
+    rr = getParameterNamePosition(pos, functionName, argn);
     if (rr != RETURN_OK) {
         ppcGenRecord(PPC_ASK_CONFIRMATION, "Can not parse parameter definition, continue anyway?");
         return;
@@ -2046,10 +2046,10 @@ typedef enum {
     pname[TMP_STRING_SIZE - 1] = 0;
     if (isParameterUsedExceptRecursiveCalls(mm, pos)) {
         char tmpBuff[TMP_BUFF_SIZE];
-        if (checkfor == CHECK_FOR_ADD_PARAM) {
+        if (checkKind == CHECK_FOR_ADD_PARAM) {
             sprintf(tmpBuff, "parameter '%s' clashes with an existing symbol, continue anyway?", pname);
             ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
-        } else if (checkfor == CHECK_FOR_DEL_PARAM) {
+        } else if (checkKind == CHECK_FOR_DEL_PARAM) {
             sprintf(tmpBuff, "parameter '%s' is used, delete it anyway?", pname);
             ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
         } else {
