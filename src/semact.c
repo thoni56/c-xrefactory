@@ -38,16 +38,21 @@ bool displayingErrorMessages(void) {
     return false;
 }
 
-int styyerror(char *s) {
+int styyerror(char *message) {
     char tmpBuff[TMP_BUFF_SIZE];
 
-    if (strcmp(s, "syntax error") != 0) {
-        sprintf(tmpBuff,"YACC error: %s", s);
+    if (strcmp(message, "syntax error") == 0) {
+        if (displayingErrorMessages()) {
+            log_trace("Syntax error on: '%s'", yytext);
+            sprintf(tmpBuff, "Syntax error on: %s", yytext);
+            errorMessage(ERR_ST, tmpBuff);
+        }
+    } else if (strncmp(message, "DEBUG:", 6) == 0) {
+        if (displayingErrorMessages())
+            errorMessage(ERR_ST, message);
+    } else {
+        sprintf(tmpBuff,"YACC error: %s", message);
         errorMessage(ERR_INTERNAL, tmpBuff);
-    } else if (displayingErrorMessages()) {
-        log_trace("Syntax error on: '%s'", yytext);
-        sprintf(tmpBuff, "Syntax error on: %s", yytext);
-        errorMessage(ERR_ST, tmpBuff);
     }
     return 0;
 }

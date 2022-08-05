@@ -7,6 +7,7 @@ static void function(void) {
        parameter_declaration : type_name
        parameter_list : parameter_declaration
        parameter_type_list : parameter_list
+       declarator2 : declarator2 '(' parameter_type_list ')'
     */
 }
 

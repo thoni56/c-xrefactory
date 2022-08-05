@@ -3617,7 +3617,7 @@ case 291:
 {
 #if YYDEBUG
             char buffer[100];
-            sprintf(buffer, "error parsing declaration, near '%s'", yytext);
+            sprintf(buffer, "DEBUG: error parsing declaration, near '%s'", yytext);
             yyerror(buffer);
 #endif
         }
@@ -3643,7 +3643,7 @@ case 294:
         yyval.ast_symbol.data = typeSpecifier2(&errorModifier);
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "error parsing init_declarations, near '%s'", yytext);
+        sprintf(buffer, "DEBUG: error parsing init_declarations, near '%s'", yytext);
         yyerror(buffer);
 #endif
     }
@@ -4479,7 +4479,7 @@ case 440:
         yyval.ast_idList.data = NULL;
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "error parsing initializer, near '%s'", yytext);
+        sprintf(buffer, "DEBUG: error parsing initializer, near '%s'", yytext);
         yyerror(buffer);
 #endif
     }

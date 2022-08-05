@@ -77,7 +77,7 @@ CFLAGS += -arch arm64 -arch x86_64
 LDFLAGS += -arch arm64 -arch x86_64
 endif
 
-# We need to use compatible gcov (for Darwin/Brew we need to use GCC:s gcov)
+# We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-11 we need to use GCC:s gcov)
 ifeq ("$(CC)", "gcc-11")
 	LCOV = lcov --gcov-tool gcov-11
 	GCOV = gcov-11
@@ -101,7 +101,6 @@ ifneq (, $(shell which info2gcov))
 else
     HAVE_INFO2GCOV=no
 endif
-
 
 
 all: unit build
@@ -138,7 +137,7 @@ ci:
 
 
 yydebug: CFLAGS += -DYYDEBUG
-yydebug: all
+yydebug: devel
 
 chcheck:
 	for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
@@ -152,7 +151,10 @@ GIT_HASH = $(shell git describe --abbrev=5 --always --tags --dirty)
 $(OBJDIR)/options.o: CFLAGS += -DGIT_HASH=\"$(GIT_HASH)\"
 
 .PHONY: build
-build: c-xref
+build: CFLAGS += -DYYDEBUG
+build: build-proper
+
+build-proper: c-xref
 	$(MAKE) -C ../editors/emacs
 
 .PHONY: c-xref

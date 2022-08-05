@@ -642,7 +642,7 @@ declaration
         {
 #if YYDEBUG
             char buffer[100];
-            sprintf(buffer, "error parsing declaration, near '%s'", yytext);
+            sprintf(buffer, "DEBUG: error parsing declaration, near '%s'", yytext);
             yyerror(buffer);
 #endif
         }
@@ -662,7 +662,7 @@ init_declarations
         $$.data = typeSpecifier2(&errorModifier);
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "error parsing init_declarations, near '%s'", yytext);
+        sprintf(buffer, "DEBUG: error parsing init_declarations, near '%s'", yytext);
         yyerror(buffer);
 #endif
     }
@@ -1299,7 +1299,7 @@ initializer
         $$.data = NULL;
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "error parsing initializer, near '%s'", yytext);
+        sprintf(buffer, "DEBUG: error parsing initializer, near '%s'", yytext);
         yyerror(buffer);
 #endif
     }
