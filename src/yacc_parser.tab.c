@@ -3616,7 +3616,7 @@ case 291:
 #line 859 "yacc_parser.y"
 {
 #if YYDEBUG
-            char buffer[100];
+            char buffer[1000];
             sprintf(buffer, "DEBUG: error parsing declaration, near '%s'", yytext);
             yyerror(buffer);
 #endif
@@ -3642,7 +3642,7 @@ case 294:
         /* $$.d = &s_errorSymbol; */
         yyval.ast_symbol.data = typeSpecifier2(&errorModifier);
 #if YYDEBUG
-        char buffer[100];
+        char buffer[1000];
         sprintf(buffer, "DEBUG: error parsing init_declarations, near '%s'", yytext);
         yyerror(buffer);
 #endif
@@ -3964,7 +3964,7 @@ case 361:
 {
         yyval.ast_symbol.data = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
-        char buffer[100];
+        char buffer[1000];
         sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'", yytext);
         yyerror(buffer);
 #endif
@@ -4067,7 +4067,7 @@ case 380:
 {
         yyval.ast_symbol.data = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
-        char buffer[100];
+        char buffer[1000];
         sprintf(buffer, "DEBUG: error parsing enumerator near '%s'", yytext);
         yyerror(buffer);
 #endif
@@ -4349,7 +4349,7 @@ case 422:
 {
         yyval.ast_symbol.data = newSymbolAsCopyOf(&errorSymbol);
 #if YYDEBUG
-        char buffer[100];
+        char buffer[1000];
         sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'", yytext);
         yyerror(buffer);
 #endif
@@ -4478,7 +4478,7 @@ case 440:
 {
         yyval.ast_idList.data = NULL;
 #if YYDEBUG
-        char buffer[100];
+        char buffer[1000];
         sprintf(buffer, "DEBUG: error parsing initializer, near '%s'", yytext);
         yyerror(buffer);
 #endif
