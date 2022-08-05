@@ -270,6 +270,16 @@ Here is a list of those "options", which shall not be used from the command line
 Used to trigger some trivial(?) prechecks by refactorer when moving a class.
 Although it doesn't seem to actually trigger any...
 
+-exactpositionresolve::
+If a symbol is defined in multiple places, like it can be in C, using this flag will consider those instances different based on them being in different locations.
+
+What you want or need is unfortunately depending on your situation.
+If you don't use this option then navigation and refactorings will affect all occurrences.
+
+One particular scenario is if you have mocked some functions (like with Cgreen) then you have at least two symbols with the same name and parameter lists.
+In this case you really want refactorings like renames and parameter changes to also affect the mocks, although they are not actually the "same" symbol.
+If `-exactpositionresolve` is used then the actual function and its mock version would be considered different symbols and a refactoring would only affect the selected one, leaving you to sync up the other manually.
+
 ====== As yet unsorted options
 
 
@@ -288,8 +298,6 @@ Although it doesn't seem to actually trigger any...
 -continuerefactoring::
 
 -displaynestedwithouters::
-
--exactpositionresolve::
 
 -exit::
 
