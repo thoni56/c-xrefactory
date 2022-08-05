@@ -234,30 +234,26 @@ static int savedWorkMemoryIndex = 0;
 
 primary_expr
     : IDENTIFIER            {
-        Symbol *p;
-        Symbol *dd;
-        p = $1.data->symbol;
-        if (p != NULL && p->type == TypeDefault) {
-            assert(p && p);
-            dd = p;
-            assert(dd->storage != StorageTypedef);
-            $$.data.typeModifier = dd->u.typeModifier;
+        Symbol *symbol = $1.data->symbol;
+        if (symbol != NULL && symbol->type == TypeDefault) {
+            assert(symbol->storage != StorageTypedef);
+            $$.data.typeModifier = symbol->u.typeModifier;
             assert(options.mode);
-            $$.data.reference = addCxReference(p, &$1.data->position, UsageUsed, noFileIndex, noFileIndex);
+            $$.data.reference = addCxReference(symbol, &$1.data->position, UsageUsed, noFileIndex, noFileIndex);
         } else {
             /* implicit function declaration */
-            TypeModifier *p;
-            Symbol *d;
-            Symbol *dd;
+            TypeModifier *modifier;
+            Symbol *newSymbol;
+            Symbol *definitionSymbol;
 
-            p = newTypeModifier(TypeInt, NULL, NULL);
-            $$.data.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
+            modifier = newTypeModifier(TypeInt, NULL, NULL);
+            $$.data.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, modifier);
 
-            d = newSymbolAsType($1.data->name, $1.data->name, $1.data->position, $$.data.typeModifier);
-            d->storage = StorageExtern;
+            newSymbol = newSymbolAsType($1.data->name, $1.data->name, $1.data->position, $$.data.typeModifier);
+            newSymbol->storage = StorageExtern;
 
-            dd = addNewSymbolDefinition(symbolTable, d, StorageExtern, UsageUsed);
-            $$.data.reference = addCxReference(dd, &$1.data->position, UsageUsed, noFileIndex, noFileIndex);
+            definitionSymbol = addNewSymbolDefinition(symbolTable, newSymbol, StorageExtern, UsageUsed);
+            $$.data.reference = addCxReference(definitionSymbol, &$1.data->position, UsageUsed, noFileIndex, noFileIndex);
         }
     }
     | CHAR_LITERAL          { $$.data.typeModifier = newSimpleTypeModifier(TypeInt); $$.data.reference = NULL;}
@@ -266,9 +262,9 @@ primary_expr
     | FLOAT_CONSTANT        { $$.data.typeModifier = newSimpleTypeModifier(TypeFloat); $$.data.reference = NULL;}
     | DOUBLE_CONSTANT       { $$.data.typeModifier = newSimpleTypeModifier(TypeDouble); $$.data.reference = NULL;}
     | string_literals       {
-        TypeModifier *p;
-        p = newSimpleTypeModifier(TypeChar);
-        $$.data.typeModifier = newPointerTypeModifier(p);
+        TypeModifier *modifier;
+        modifier = newSimpleTypeModifier(TypeChar);
+        $$.data.typeModifier = newPointerTypeModifier(modifier);
         $$.data.reference = NULL;
     }
     | '(' expr ')'          {
@@ -1019,27 +1015,27 @@ declarator2
         addComposedTypeToSymbol($$.data, TypeArray);
     }
     | declarator2 '(' ')'                               {
-        TypeModifier *p;
+        TypeModifier *modifier;
         assert($1.data);
         $$.data = $1.data;
-        p = addComposedTypeToSymbol($$.data, TypeFunction);
-        initFunctionTypeModifier(&p->u.f , NULL);
+        modifier = addComposedTypeToSymbol($$.data, TypeFunction);
+        initFunctionTypeModifier(&modifier->u.f , NULL);
         handleDeclaratorParamPositions($1.data, &$2.data, NULL, &$3.data, 0);
     }
     | declarator2 '(' parameter_type_list ')'           {
-        TypeModifier *p;
+        TypeModifier *modifier;
         assert($1.data);
         $$.data = $1.data;
-        p = addComposedTypeToSymbol($$.data, TypeFunction);
-        initFunctionTypeModifier(&p->u.f , $3.data.symbol);
+        modifier = addComposedTypeToSymbol($$.data, TypeFunction);
+        initFunctionTypeModifier(&modifier->u.f , $3.data.symbol);
         handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, 1);
     }
     | declarator2 '(' parameter_identifier_list ')'     {
-        TypeModifier *p;
+        TypeModifier *modifier;
         assert($1.data);
         $$.data = $1.data;
-        p = addComposedTypeToSymbol($$.data, TypeFunction);
-        initFunctionTypeModifier(&p->u.f , $3.data.symbol);
+        modifier = addComposedTypeToSymbol($$.data, TypeFunction);
+        initFunctionTypeModifier(&modifier->u.f , $3.data.symbol);
         handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, 1);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
@@ -1156,16 +1152,16 @@ parameter_identifier_list
 
 identifier_list
     : IDENTIFIER                                {
-        Symbol *p;
-        p = newSymbol($1.data->name, $1.data->name, $1.data->position);
-        $$.data.symbol = p;
+        Symbol *symbol;
+        symbol = newSymbol($1.data->name, $1.data->name, $1.data->position);
+        $$.data.symbol = symbol;
         $$.data.positionList = NULL;
     }
     | identifier_list ',' identifier            {
-        Symbol        *p;
-        p = newSymbol($3.data->name, $3.data->name, $3.data->position);
+        Symbol *symbol;
+        symbol = newSymbol($3.data->name, $3.data->name, $3.data->position);
         $$.data = $1.data;
-        LIST_APPEND(Symbol, $$.data.symbol, p);
+        LIST_APPEND(Symbol, $$.data.symbol, symbol);
         appendPositionToList(&$$.data.positionList, &$2.data);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
@@ -1268,19 +1264,19 @@ abstract_declarator2
         $$.data = newFunctionTypeModifier($2.data.symbol, NULL, NULL, NULL);
     }
     | abstract_declarator2 '(' ')'                  {
-        TypeModifier *p;
+        TypeModifier *modifier;
         $$.data = $1.data;
-        p = appendComposedType(&($$.data), TypeFunction);
-        initFunctionTypeModifier(&p->u.f , NULL);
+        modifier = appendComposedType(&($$.data), TypeFunction);
+        initFunctionTypeModifier(&modifier->u.f , NULL);
     }
     | abstract_declarator2 '(' parameter_type_list ')'          {
-        TypeModifier *p;
+        TypeModifier *modifier;
         $$.data = $1.data;
-        p = appendComposedType(&($$.data), TypeFunction);
+        modifier = appendComposedType(&($$.data), TypeFunction);
         // I think there should be the following, but in abstract
         // declarator it does not matter
-        /*& initFunctionTypeModifier(&p->u.f , $3.data.symbol); &*/
-        initFunctionTypeModifier(&p->u.f , NULL);
+        /*& initFunctionTypeModifier(&modifier->u.f , $3.data.symbol); &*/
+        initFunctionTypeModifier(&modifier->u.f , NULL);
     }
     ;
 
@@ -1645,7 +1641,7 @@ external_definition
         savedWorkMemoryIndex = $1.data;
     }
     | Save_index function_definition_head {
-        Symbol *p;
+        Symbol *symbol;
         int i;
         assert($2.data);
         // I think that due to the following line sometimes
@@ -1660,12 +1656,12 @@ external_definition
         assert($2.data->u.typeModifier && $2.data->u.typeModifier->kind == TypeFunction);
         parsedClassInfo.function = $2.data;
         generateInternalLabelReference(-1, UsageDefined);
-        for (p=$2.data->u.typeModifier->u.f.args, i=1; p!=NULL; p=p->next,i++) {
-            if (p->type == TypeElipsis)
+        for (symbol=$2.data->u.typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
+            if (symbol->type == TypeElipsis)
                 continue;
-            if (p->u.typeModifier == NULL)
-                p->u.typeModifier = &defaultIntModifier;
-            addFunctionParameterToSymTable(symbolTable, $2.data, p, i);
+            if (symbol->u.typeModifier == NULL)
+                symbol->u.typeModifier = &defaultIntModifier;
+            addFunctionParameterToSymTable(symbolTable, $2.data, symbol, i);
         }
     } compound_statement {
         endBlock();
@@ -1725,10 +1721,10 @@ fun_arg_declaration
         $$.data = NULL;
     }
     | declaration_specifiers fun_arg_init_declarations ';'      {
-        Symbol *p;
+        Symbol *symbol;
         assert($1.data && $2.data);
-        for(p=$2.data; p!=NULL; p=p->next) {
-            completeDeclarator($1.data, p);
+        for(symbol=$2.data; symbol!=NULL; symbol=symbol->next) {
+            completeDeclarator($1.data, symbol);
         }
         $$.data = $2.data;
     }
