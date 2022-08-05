@@ -440,7 +440,7 @@ EditorMarker *editorCreateNewMarkerForPosition(Position *position) {
     EditorMarker *marker;
 
     if (position->file==noFileIndex || position->file<0) {
-        errorMessage(ERR_INTERNAL, "[editor] creating marker for nonexistant position");
+        errorMessage(ERR_INTERNAL, "[editor] creating marker for non-existent position");
     }
     buffer = editorFindFile(getFileItem(position->file)->name);
     marker = editorCreateNewMarker(buffer, 0);

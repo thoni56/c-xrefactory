@@ -1875,23 +1875,21 @@ static void clearParamPositions(void) {
     parameterEndPosition   = noPosition;
 }
 
-static Result getParameterNamePosition(EditorMarker *pos, char *fname, int argn) {
+static Result getParameterNamePosition(EditorMarker *marker, char *fname, int argn) {
     char  pushOpt[TMP_STRING_SIZE];
-    char *actName;
-    Result res;
+    char *actualName;
 
-    actName = getIdentifierOnMarker_st(pos);
+    actualName = getIdentifierOnMarker_st(marker);
     clearParamPositions();
-    assert(strcmp(actName, fname) == 0);
+    assert(strcmp(actualName, fname) == 0);
     sprintf(pushOpt, "-olcxgotoparname%d", argn);
-    editServerParseBuffer(refactoringOptions.project, pos, NULL, pushOpt, NULL);
+    editServerParseBuffer(refactoringOptions.project, marker, NULL, pushOpt, NULL);
     olcxPopOnly();
     if (parameterPosition.file != noFileIndex) {
-        res = RESULT_OK;
+        return RESULT_OK;
     } else {
-        res = RESULT_ERR;
+        return RESULT_ERR;
     }
-    return res;
 }
 
 static Result getParameterPosition(EditorMarker *pos, char *fname, int argn) {
