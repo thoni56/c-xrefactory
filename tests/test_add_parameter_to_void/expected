@@ -8,7 +8,7 @@
  <str len=<n>>void</str>  <str len=<n>>int arg</str>
 </replacement>
 <goto>
- <position-off off=107 len=<n>>CURDIR/hello.c</position-off>
+ <position-off off=103 len=<n>>CURDIR/hello.c</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>42</str>

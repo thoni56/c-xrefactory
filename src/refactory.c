@@ -1999,18 +1999,22 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
         beginMarker->offset++;
     }
 
-    int length = 0;
+    int replacementLength = 0;
+
+    if (strncmp(&text[beginMarker->offset], "void", 4) == 0) {
+        separator2 = "";
+        replacementLength = 4;
+    }
 
     sprintf(insertionText, "%s%s%s", separator1, parameterDeclaration, separator2);
     assert(strlen(parameterDeclaration) < REFACTORING_TMP_STRING_SIZE - 1);
 
     insertionOffset = beginMarker->offset;
-    replaceString(beginMarker, length, insertionText);
+    replaceString(beginMarker, replacementLength, insertionText);
     if (endMarkerOrMark == NULL) {
         editorFreeMarker(beginMarker);
     }
-    // O.K. I hope that mm == endp is moved to
-    // end of inserted parameter
+
     return insertionOffset;
 }
 
