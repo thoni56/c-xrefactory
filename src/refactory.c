@@ -2160,22 +2160,24 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
     editorFreeMarker(m2);
 }
 
-static void applyParameterManipulationToFunction(char *functionName, EditorMarkerList *occs, int manip, int argn1,
-                                                 int argn2) {
+static void applyParameterManipulationToFunction(char *functionName, EditorMarkerList *occurences,
+                                                 int manipulation, int argn1, int argn2) {
     int progress, count;
 
-    LIST_LEN(count, EditorMarkerList, occs);
+    LIST_LEN(count, EditorMarkerList, occurences);
     progress = 0;
-    for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
+    for (EditorMarkerList *ll = occurences; ll != NULL; ll = ll->next) {
         if (ll->usage.kind != UsageUndefinedMacro) {
-            if (manip == PPC_AVR_ADD_PARAMETER) {
+            /* TODO: Should we not abort if any of the occurrences fail? */
+            if (manipulation == PPC_AVR_ADD_PARAMETER) {
                 addParameter(ll->marker, functionName, argn1, ll->usage.kind);
-            } else if (manip == PPC_AVR_DEL_PARAMETER) {
+            } else if (manipulation == PPC_AVR_DEL_PARAMETER) {
                 deleteParameter(ll->marker, functionName, argn1, ll->usage.kind);
-            } else if (manip == PPC_AVR_MOVE_PARAMETER) {
+            } else if (manipulation == PPC_AVR_MOVE_PARAMETER) {
                 moveParameter(ll->marker, functionName, argn1, argn2);
             } else {
                 errorMessage(ERR_INTERNAL, "unknown parameter manipulation");
+                break;
             }
         }
         writeRelativeProgress(progress++/count*100);
@@ -2185,34 +2187,35 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
 
 // -------------------------------------- ParameterManipulations
 
-static void applyParameterManipulation(EditorBuffer *buf, EditorMarker *point, int manip, int argn1, int argn2) {
+static void applyParameterManipulation(EditorBuffer *buf, EditorMarker *point, int manipulation, int argn1,
+                                       int argn2) {
     char              nameOnPoint[TMP_STRING_SIZE];
     int               check;
-    EditorMarkerList *occs;
+    EditorMarkerList *occurrences;
     EditorUndo       *startPoint, *redoTrack;
 
     ensureReferencesUpdated(refactoringOptions.project);
 
     strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
-    occs       = editorReferencesToMarkers(sessionData.browserStack.top->references, filter0, NULL);
+    occurrences       = editorReferencesToMarkers(sessionData.browserStack.top->references, filter0, NULL);
     startPoint = editorUndo;
     // first just check that loaded files are up to date
-    //& precheckThatSymbolRefsCorresponds(nameOnPoint, occs);
+    //& precheckThatSymbolRefsCorresponds(nameOnPoint, occurrences);
 
-    //&editorDumpBuffer(occs->marker->buffer);
-    //&editorDumpMarkerList(occs);
+    //&editorDumpBuffer(occurrences->marker->buffer);
+    //&editorDumpMarkerList(occurrences);
     // for some error mesages it is more natural that cursor does not move
     ppcGotoMarker(point);
     redoTrack = NULL;
-    applyParameterManipulationToFunction(nameOnPoint, occs, manip, argn1, argn2);
+    applyParameterManipulationToFunction(nameOnPoint, occurrences, manipulation, argn1, argn2);
     if (LANGUAGE(LANG_JAVA)) {
-        check = makeSafetyCheckAndUndo(point, &occs, startPoint, &redoTrack);
+        check = makeSafetyCheckAndUndo(point, &occurrences, startPoint, &redoTrack);
         if (!check)
             askForReallyContinueConfirmation();
         editorApplyUndos(redoTrack, NULL, &editorUndo, GEN_NO_OUTPUT);
     }
-    editorFreeMarkersAndMarkerList(occs); // O(n^2)!
+    editorFreeMarkersAndMarkerList(occurrences); // O(n^2)!
 }
 
 static void parameterManipulation(EditorBuffer *buf, EditorMarker *point, int manip, int argn1, int argn2) {
