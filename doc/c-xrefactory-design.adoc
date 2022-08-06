@@ -405,6 +405,20 @@ TODO?: Should we just scrap the Java support and focus on C since a)
 the Java support is for ancient Java versions and b) there are more
 mature Java refactoring support available?
 
+=== Refactoring and the parsers
+
+Some refactorings need more detailed information about the code, maybe all do?
+
+One example, at least, is parameter manipulation.  Then the refactorer
+calls the appropriate parser (`serverEditParseBuffer()`) which
+collects information in the corresponding semantic actions.  This
+information is stored in various global variables, like
+`parameterBeginPosition`.
+
+NOTE: At this point I don't understand exactly how this interaction is
+performed, nor if the whole file is parsed or if there is some way to
+just parse appropriate parts.
+
 
 == Reading Files
 
@@ -438,16 +452,20 @@ by `yylex.c`. `lexembuffer` defines some functions to put and get
 lexems, chars (identifiers and file names?) as well as integers and
 positions.
 
-Previously a HUGE model was also available (by re-compilation) to
-reach file numbers, lines and columns above 22 bits. But if you have
-more than 4 million lines (or columns!) you should probably do
-something radical before attempting cross referencing and refactoring.
-
 At this point the put/get lexem functions take a pointer to a pointer
 to chars (which presumably is the lexem stream in the lexembuffer)
-which it also advances. It would be much better to call them with a
+which it also advances. This requires the caller to manage the
+LexemBuffer's internal pointers outside and finally set them right
+when done.
+
+It would be much better to call the "putLexem()"-functions with a
 lexemBuffer but there seems to be a few cases where the destination
 (often `dd`) is not a lexem stream inside a lexemBuffer.
+
+NOTE: This is a work-in-progress.
+Currently most of the "normal" usages are prepared to use the LexemBuffer's pointers.
+But the handling of macros and defines are cases where the lexems are not put in a LexemBuffer.
+See the TODO.org for current status of this Mikado sequence.
 
 
 == Reference Database
@@ -954,10 +972,10 @@ naming legacy to remember.
 Here are some of the conventions in naming that are being used:
 
 olcx::
-"On-line CX" (Cross-reference)
+"On-line CX" (Cross-reference) ?
 
 OLO::
-"On-line option" - some kind of options for the server
+"On-line option" - some kind of option for the server
 
 ==== Modules and Include Files ====
 
@@ -980,6 +998,8 @@ still a work in progress.
 === Debugging
 
 TBD. Attachning `gdb`, `server-driver`...
+
+`yaccp` from `src/.gdbinit` can ease the printing of Yacc semantic data fields...
 
 === Testing
 
@@ -1113,6 +1133,14 @@ In this section you can find some descriptions and saved texts that
 described how things were before. They are no longer true, since that
 quirk, magic or bad coding is gone. But it is kept here as an archive
 for those wanting to do backtracking to original sources.
+
+=== HUGE Memory ===
+
+Previously a HUGE model was also available (by re-compilation) to
+reach file numbers, lines and columns above 22 bits. But if you have
+more than 4 million lines (or columns!) you should probably do
+something radical before attempting cross referencing and refactoring.
+
 
 === Bootstrapping
 
