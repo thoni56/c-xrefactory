@@ -1911,12 +1911,12 @@ static Result getParameterPosition(EditorMarker *point, char *fileName, int argn
     editServerParseBuffer(refactoringOptions.project, point, NULL, pushOptions, NULL);
     olcxPopOnly();
 
-    Result res = RESULT_OK;
+    Result result = RESULT_OK;
     if (parameterBeginPosition.file == noFileIndex || parameterEndPosition.file == noFileIndex ||
         parameterBeginPosition.file == -1 || parameterEndPosition.file == -1) {
         ppcGotoMarker(point);
         errorMessage(ERR_INTERNAL, "Can't get end of parameter");
-        res = RESULT_ERR;
+        result = RESULT_ERR;
     }
     // check some logical preconditions,
     if (parameterBeginPosition.file != parameterEndPosition.file ||
@@ -1928,7 +1928,7 @@ static Result getParameterPosition(EditorMarker *point, char *fileName, int argn
         sprintf(tmpBuff, "Something goes wrong at this occurence, can't get reasonable parameter limits");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
-        res = RESULT_ERR;
+        result = RESULT_ERR;
     }
     if (!LANGUAGE(LANG_JAVA)) {
         // check preconditions to avoid cases like
@@ -1938,10 +1938,10 @@ static Result getParameterPosition(EditorMarker *point, char *fileName, int argn
         //    function(PAR1 PAR2 0);
         // Hmmm, but how to do it? TODO!!!!
     }
-    return res;
+    return result;
 }
 
-// !!!!!!!!! pos and endm can be the same marker !!!!!!
+// !!!!!!!!! point and endMarker can be the same marker !!!!!!
 static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMark, char *fileName, int argn,
                                 char *parameterDeclaration) {
     char         *text;
@@ -2001,8 +2001,9 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
 
     int replacementLength = 0;
 
+    /* TODO We should handle cases like "( void )" */
     if (strncmp(&text[beginMarker->offset], "void", 4) == 0) {
-        separator2 = "";
+        separator2        = "";
         replacementLength = 4;
     }
 
@@ -2011,6 +2012,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
 
     insertionOffset = beginMarker->offset;
     replaceString(beginMarker, replacementLength, insertionText);
+
     if (endMarkerOrMark == NULL) {
         editorFreeMarker(beginMarker);
     }
