@@ -1,19 +1,19 @@
 <goto>
- <position-off off=36 len=<n>>CURDIR/test_source/hello-extracted.c</position-off>
+ <position-off off=17 len=<n>>CURDIR/source.c</position-off>
 </goto>
 <goto>
- <position-off off=55 len=<n>>CURDIR/test_source/hello-extracted.c</position-off>
+ <position-off off=35 len=<n>>CURDIR/source.c</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>, int arg</str>
 </replacement>
 <goto>
- <position-off off=197 len=<n>>CURDIR/test_source/hello-extracted.c</position-off>
+ <position-off off=123 len=<n>>CURDIR/source.c</position-off>
 </goto>
 <replacement>
  <str len=<n>></str>  <str len=<n>>, 42</str>
 </replacement>
 <goto>
- <position-off off=36 len=<n>>CURDIR/test_source/hello-extracted.c</position-off>
+ <position-off off=17 len=<n>>CURDIR/source.c</position-off>
 </goto>
 <sync>
