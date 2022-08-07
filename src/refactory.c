@@ -1646,7 +1646,7 @@ static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symn
 static EditorMarkerList *getReferences(EditorBuffer *buf, EditorMarker *point, char *resolveMessage,
                                        int messageType) {
     EditorMarkerList *occs;
-    pushReferences(point, "-olcxrename", resolveMessage, messageType);
+    pushReferences(point, "-olcxrename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
     occs = editorReferencesToMarkers(sessionData.browserStack.top->references, filter0, NULL);
     return occs;
@@ -2001,10 +2001,10 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
 
     int replacementLength = 0;
 
-    /* TODO We should handle cases like "( void )" */
-    if (strncmp(&text[beginMarker->offset], "void", 4) == 0) {
-        separator2        = "";
-        replacementLength = 4;
+    if (parameterListIsVoid) {
+        /* Then we neeed to remove the "void", or rather everything between the "()" */
+        replacementLength = parameterEndPosition.col - parameterBeginPosition.col - 1;
+        separator2        = ""; /* And there should be no separator after the new parameter */
     }
 
     sprintf(insertionText, "%s%s%s", separator1, parameterDeclaration, separator2);

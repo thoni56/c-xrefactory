@@ -34,9 +34,13 @@ extern FILE *errOut;
 
 extern char s_olSymbolType[COMPLETION_STRING_SIZE];
 extern char s_olSymbolClassType[COMPLETION_STRING_SIZE];
+
+/* Variables for capturing parameter positions */
+extern bool parameterListIsVoid;           /* Is what looks like a parameter declaration actually "void" */
 extern Position parameterPosition;
 extern Position parameterBeginPosition;
 extern Position parameterEndPosition;
+
 extern Position s_primaryStartPosition;
 extern Position s_staticPrefixStartPosition;
 extern Id yyIdBuffer[YYIDBUFFER_SIZE];

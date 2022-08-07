@@ -1058,15 +1058,23 @@ void setParamPositionForParameterBeyondRange(Position *rpar) {
     parameterEndPosition = *rpar;
 }
 
-static void handleParameterPositions(Position *lpar, PositionList *commas, Position *rpar, bool hasParam) {
+static void handleParameterPositions(Position *lpar, PositionList *commas, Position *rpar, bool hasParam, bool isVoid) {
     int           i, argn;
     Position     *p1, *p2;
     PositionList *list;
+
+    /* Sets the following global variables as "answer":
+       - parameterListIsVoid
+       - parameterBeginPosition
+       - parameterEndPosition
+    */
 
     if (!hasParam) {
         setParamPositionForFunctionWithoutParams(lpar);
         return;
     }
+
+    parameterListIsVoid = isVoid;
 
     argn = options.olcxGotoVal;
 
@@ -1106,7 +1114,7 @@ Symbol *createEmptyField(void) {
 
 void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
                                     PositionList *commas, Position *rpar,
-                                    bool hasParam
+                                    bool hasParam, bool isVoid
                                     ) {
     if (options.mode != ServerMode)
         return;
@@ -1114,7 +1122,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
         return;
     if (positionsAreNotEqual(decl->pos, cxRefPosition))
         return;
-    handleParameterPositions(lpar, commas, rpar, hasParam);
+    handleParameterPositions(lpar, commas, rpar, hasParam, isVoid);
 }
 
 void handleInvocationParamPositions(Reference *ref, Position *lpar,
@@ -1127,7 +1135,7 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
         return;
     if (ref==NULL || positionsAreNotEqual(ref->position, cxRefPosition))
         return;
-    handleParameterPositions(lpar, commas, rpar, hasParam);
+    handleParameterPositions(lpar, commas, rpar, hasParam, false);
 }
 
 void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
@@ -1140,8 +1148,8 @@ void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
     if (positionsAreNotEqual(*sym, cxRefPosition))
         return;
     if (commas==NULL) {
-        handleParameterPositions(lpar, NULL, rpar, false);
+        handleParameterPositions(lpar, NULL, rpar, false, false);
     } else {
-        handleParameterPositions(lpar, commas->next, rpar, true);
+        handleParameterPositions(lpar, commas->next, rpar, true, false);
     }
 }

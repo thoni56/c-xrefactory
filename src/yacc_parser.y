@@ -1237,7 +1237,7 @@ declarator2
         $$.data = $1.data;
         modifier = addComposedTypeToSymbol($$.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , NULL);
-        handleDeclaratorParamPositions($1.data, &$2.data, NULL, &$3.data, 0);
+        handleDeclaratorParamPositions($1.data, &$2.data, NULL, &$3.data, false, false);
     }
     | declarator2 '(' parameter_type_list ')'           {
         TypeModifier *modifier;
@@ -1245,7 +1245,8 @@ declarator2
         $$.data = $1.data;
         modifier = addComposedTypeToSymbol($$.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , $3.data.symbol);
-        handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, 1);
+        bool isVoid = $3.data.symbol->u.typeModifier->kind == TypeVoid;
+        handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, true, isVoid);
     }
     | declarator2 '(' parameter_identifier_list ')'     {
         TypeModifier *modifier;
@@ -1253,7 +1254,7 @@ declarator2
         $$.data = $1.data;
         modifier = addComposedTypeToSymbol($$.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , $3.data.symbol);
-        handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, 1);
+        handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, true, false);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;

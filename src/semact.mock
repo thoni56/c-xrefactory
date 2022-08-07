@@ -190,8 +190,8 @@ Symbol *createEmptyField(void) {
     return (Symbol *) mock();
 }
 
-void handleDeclaratorParamPositions(Symbol *decl, Position *lpar, PositionList *commas, Position *rpar, bool hasParam) {
-    mock(decl, lpar, commas, rpar, hasParam);
+void handleDeclaratorParamPositions(Symbol *decl, Position *lpar, PositionList *commas, Position *rpar, bool hasParam, bool isVoid) {
+    mock(decl, lpar, commas, rpar, hasParam, isVoid);
 }
 
 void handleInvocationParamPositions(Reference *ref, Position *lpar, PositionList *commas, Position *rpar, bool hasParam) {
