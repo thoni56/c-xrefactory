@@ -9,14 +9,6 @@ typedef struct pushAllInBetweenData {
     int maxMemi;
 } PushAllInBetweenData;
 
-typedef struct tpCheckMoveClassData {
-    struct pushAllInBetweenData mm;
-    char                       *spack;
-    char                       *tpack;
-    int                         transPackageMove;
-    char                       *sclass;
-} TpCheckMoveClassData;
-
 extern void refactory();
 
 #endif

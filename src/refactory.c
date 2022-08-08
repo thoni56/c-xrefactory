@@ -31,6 +31,15 @@
 #define RRF_CHARS_TO_PRE_CHECK_AROUND 1
 #define MAX_NARGV_OPTIONS_COUNT 50
 
+
+typedef struct tpCheckMoveClassData {
+    struct pushAllInBetweenData mm;
+    char                       *spack;
+    char                       *tpack;
+    int                         transPackageMove;
+    char                       *sclass;
+} TpCheckMoveClassData;
+
 typedef struct tpCheckSpecialReferencesData {
     struct pushAllInBetweenData mm;
     char                       *symbolToTest;
