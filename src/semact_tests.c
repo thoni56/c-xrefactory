@@ -56,6 +56,7 @@ Ensure(Semact, can_capture_positions_for_empty_parameter_list) {
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
     assert_that(positionsAreEqual(parameterEndPosition, lpar));
     assert_that(!parameterListIsVoid);
+    assert_that(parameterCount, is_equal_to(0));
 }
 
 Ensure(Semact, can_capture_positions_for_one_parameter) {
@@ -74,6 +75,7 @@ Ensure(Semact, can_capture_positions_for_one_parameter) {
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
     assert_that(positionsAreEqual(parameterEndPosition, rpar));
     assert_that(!parameterListIsVoid);
+    assert_that(parameterCount, is_equal_to(1));
 }
 
 Ensure(Semact, can_capture_positions_for_two_parameters) {
@@ -94,6 +96,7 @@ Ensure(Semact, can_capture_positions_for_two_parameters) {
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
     assert_that(positionsAreEqual(parameterEndPosition, comma));
     assert_that(!parameterListIsVoid);
+    assert_that(parameterCount, is_equal_to(2));
 }
 
 Ensure(Semact, can_capture_positions_for_void_parameter_list) {
@@ -112,4 +115,5 @@ Ensure(Semact, can_capture_positions_for_void_parameter_list) {
     assert_that(positionsAreEqual(parameterBeginPosition, lpar));
     assert_that(positionsAreEqual(parameterEndPosition, rpar));
     assert_that(parameterListIsVoid);
+    assert_that(parameterCount, is_equal_to(0));
 }

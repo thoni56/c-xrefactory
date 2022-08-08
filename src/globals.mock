@@ -78,6 +78,7 @@ Counters counters;
 unsigned s_recFindCl = 1;
 
 bool parameterListIsVoid;           /* Is what looks like a parameter actually "void" */
+int parameterCount;
 Position parameterPosition;
 Position parameterBeginPosition;
 Position parameterEndPosition;

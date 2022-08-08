@@ -1956,6 +1956,11 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
         errorMessage(ERR_INTERNAL, "Problem while adding parameter");
         return insertionOffset;
     }
+    if (argn > parameterCount + 1) {
+        errorMessage(ERR_ST, "Parameter number out of limits");
+        return insertionOffset;
+    }
+
 
     text = point->buffer->allocation.text;
 
@@ -2068,11 +2073,10 @@ static void checkThatParameterIsUnused(EditorMarker *pos, char *functionName, in
 
 static void addParameter(EditorMarker *pos, char *fname, int argn, int usage) {
     if (IS_DEFINITION_OR_DECL_USAGE(usage)) {
-        addStringAsParameter(pos, NULL, fname, argn, refactoringOptions.refpar1);
-        // now check that there is no conflict
-        if (IS_DEFINITION_USAGE(usage)) {
-            checkThatParameterIsUnused(pos, fname, argn, CHECK_FOR_ADD_PARAM);
-        }
+        if (addStringAsParameter(pos, NULL, fname, argn, refactoringOptions.refpar1) != -1)
+            // now check that there is no conflict
+            if (IS_DEFINITION_USAGE(usage))
+                checkThatParameterIsUnused(pos, fname, argn, CHECK_FOR_ADD_PARAM);
     } else {
         addStringAsParameter(pos, NULL, fname, argn, refactoringOptions.refpar2);
     }

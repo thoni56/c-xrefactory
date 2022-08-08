@@ -1065,18 +1065,25 @@ static void handleParameterPositions(Position *lpar, PositionList *commas, Posit
 
     /* Sets the following global variables as "answer":
        - parameterListIsVoid
+       - parameterCount
        - parameterBeginPosition
        - parameterEndPosition
     */
+
+    parameterListIsVoid = isVoid;
+    parameterCount = 0;
+
+    argn = options.olcxGotoVal;
 
     if (!hasParam) {
         setParamPositionForFunctionWithoutParams(lpar);
         return;
     }
 
-    parameterListIsVoid = isVoid;
-
-    argn = options.olcxGotoVal;
+    if (!isVoid) {
+        LIST_LEN(parameterCount, PositionList, commas);
+        parameterCount++;
+    }
 
     assert(argn > 0);           /* TODO: WTF is Parameter0 and when is it used? */
     if (argn == 0) {
@@ -1084,12 +1091,11 @@ static void handleParameterPositions(Position *lpar, PositionList *commas, Posit
     } else {
         list = commas;
         p1 = lpar;
-        i  = 1;
         if (list != NULL)
             p2 = &list->position;
         else
             p2 = rpar;
-        for (i++; list != NULL && i <= argn; list = list->next, i++) {
+        for (i=2; list != NULL && i <= argn; list = list->next, i++) {
             p1 = &list->position;
             if (list->next != NULL)
                 p2 = &list->next->position;

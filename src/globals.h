@@ -36,7 +36,8 @@ extern char s_olSymbolType[COMPLETION_STRING_SIZE];
 extern char s_olSymbolClassType[COMPLETION_STRING_SIZE];
 
 /* Variables for capturing parameter positions */
-extern bool parameterListIsVoid;           /* Is what looks like a parameter declaration actually "void" */
+extern bool parameterListIsVoid; /* Is what looks like a parameter declaration actually "void" */
+extern int parameterCount;
 extern Position parameterPosition;
 extern Position parameterBeginPosition;
 extern Position parameterEndPosition;

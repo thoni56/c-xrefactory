@@ -4,10 +4,49 @@
 <goto>
  <position-off off=866 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
 </goto>
-<ask-confirmation len=<n>>parameter 'proj' is used, delete it anyway?</ask-confirmation>
 <update-report>
  <information len=<n>>Prescanning classes, please wait.</information>
  <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=874 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>int arg, </str>
+</replacement>
+<goto>
+ <position-off off=1366 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>0, </str>
+</replacement>
+<goto>
+ <position-off off=1441 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>0, </str>
+</replacement>
+<goto>
+ <position-off off=866 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<sync>
+<update-report>
+ <information len=<n>>Prescanning classes, please wait.</information>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=866 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<ask-confirmation len=<n>>parameter 'proj' is used, delete it anyway?</ask-confirmation>
+<update-report>
  <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
  <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
 </warning>
@@ -30,63 +69,6 @@
 </goto>
 <replacement>
  <str len=<n>>pp</str>  <str len=<n>></str>
-</replacement>
-<goto>
- <position-off off=866 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
-</goto>
-<sync>
-<update-report>
- <information len=<n>>Prescanning classes, please wait.</information>
- <information len=<n>>C-xrefactory project: CURDIR</information>
- <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
- <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
-</warning>
- <information len=<n>>Generating 'CURDIR/CXrefs'</information>
-</update-report>
-<goto>
- <position-off off=866 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
-</goto>
-<update-report>
- <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
- <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
-</warning>
- <information len=<n>>Generating 'CURDIR/CXrefs'</information>
-</update-report>
-<goto>
- <position-off off=874 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
-</goto>
-<replacement>
- <str len=<n>>Project proj</str>  <str len=<n>></str>
-</replacement>
-<goto>
- <position-off off=874 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
-</goto>
-<replacement>
- <str len=<n>></str>  <str len=<n>>Project proj</str>
-</replacement>
-<goto>
- <position-off off=1357 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
-</goto>
-<replacement>
- <str len=<n>>pp</str>  <str len=<n>></str>
-</replacement>
-<goto>
- <position-off off=1357 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
-</goto>
-<replacement>
- <str len=<n>></str>  <str len=<n>>pp</str>
-</replacement>
-<goto>
- <position-off off=1429 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
-</goto>
-<replacement>
- <str len=<n>>pp</str>  <str len=<n>></str>
-</replacement>
-<goto>
- <position-off off=1429 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
-</goto>
-<replacement>
- <str len=<n>></str>  <str len=<n>>pp</str>
 </replacement>
 <goto>
  <position-off off=866 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
