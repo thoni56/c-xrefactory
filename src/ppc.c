@@ -172,3 +172,7 @@ void ppcBottomInformation(char *message) {
     //&ppcGenRecord(PPC_INFORMATION,message);
     fflush(communicationChannel);
 }
+
+void ppcAskConfirmation(char *message) {
+    ppcGenRecord(PPC_ASK_CONFIRMATION, message);
+}

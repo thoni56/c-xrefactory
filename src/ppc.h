@@ -22,11 +22,14 @@ extern void ppcBeginWithNumericValueAndAttribute(char *kind, int val, char *attr
 extern void ppcBeginAllCompletions(int nofocus, int len);
 extern void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message);
 extern void ppcValueRecord(char *kind, int val, char *message);
-extern void ppcGenRecord(char *kind, char *message);
 extern void ppcEnd(char *kind);
 
 extern void ppcBottomInformation(char *string);
 extern void ppcWarning(char *message);
 extern void ppcBottomWarning(char *message);
+
+extern void ppcAskConfirmation(char *message);
+
+extern void ppcGenRecord(char *kind, char *message);
 
 #endif

@@ -17,6 +17,7 @@
 #include "main.h"
 #include "misc.h"
 #include "options.h"
+#include "ppc.h"
 #include "progress.h"
 #include "proto.h"
 #include "protocol.h"
@@ -908,7 +909,7 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
 }
 
 static void askForReallyContinueConfirmation(void) {
-    ppcGenRecord(PPC_ASK_CONFIRMATION, "The refactoring may change program behaviour, really continue?");
+    ppcAskConfirmation("The refactoring may change program behaviour, really continue?");
 }
 
 static bool tpCheckMoveClassAccessibilities(void) {
@@ -1509,7 +1510,7 @@ static void checkedRenameBuffer(EditorBuffer *buff, char *newName, EditorUndo **
     if (editorFileStatus(newName, &stat) == 0) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buff->name);
-        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
+        ppcAskConfirmation(tmpBuff);
     }
     editorRenameBuffer(buff, newName, undo);
 }
@@ -1784,7 +1785,7 @@ static void multipleReferencesInSamePlaceMessage(Reference *r) {
     sprintf(tmpBuff, "The reference at this place refers to multiple symbols. The refactoring will probably "
                      "damage your program. Do you really want to continue?");
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-    ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
+    ppcAskConfirmation(tmpBuff);
 }
 
 static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, SymbolsMenu *ccms) {
@@ -2049,7 +2050,7 @@ static void checkThatParameterIsUnused(EditorMarker *pos, char *functionName, in
 
     Result rr = getParameterNamePosition(pos, functionName, argn);
     if (rr != RESULT_OK) {
-        ppcGenRecord(PPC_ASK_CONFIRMATION, "Can not parse parameter definition, continue anyway?");
+        ppcAskConfirmation("Can not parse parameter definition, continue anyway?");
         return;
     }
 
@@ -2060,10 +2061,10 @@ static void checkThatParameterIsUnused(EditorMarker *pos, char *functionName, in
         char tmpBuff[TMP_BUFF_SIZE];
         if (checkKind == CHECK_FOR_ADD_PARAM) {
             sprintf(tmpBuff, "parameter '%s' clashes with an existing symbol, continue anyway?", pname);
-            ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
+            ppcAskConfirmation(tmpBuff);
         } else if (checkKind == CHECK_FOR_DEL_PARAM) {
             sprintf(tmpBuff, "parameter '%s' is used, delete it anyway?", pname);
-            ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
+            ppcAskConfirmation(tmpBuff);
         } else {
             assert(0);
         }
@@ -3747,7 +3748,7 @@ static Reference *checkEncapsulateGetterSetterForExistingMethods(char *mname) {
                 "continue with this refactoring?",
                 mname, clist);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
+        ppcAskConfirmation(tmpBuff);
     }
     if (anotherDefinition != NULL) {
         sprintf(tmpBuff,
@@ -3755,7 +3756,7 @@ static Reference *checkEncapsulateGetterSetterForExistingMethods(char *mname) {
                 "anyway?",
                 mname);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
+        ppcAskConfirmation(tmpBuff);
     }
     return anotherDefinition;
 }

@@ -97,3 +97,7 @@ void ppcGotoPosition(Position *p) {
 void ppcGenOffsetPosition(char *fn, int offset) {
   mock(fn, offset);
 }
+
+void ppcAskConfirmation(char *message) {
+    mock(message);
+}
