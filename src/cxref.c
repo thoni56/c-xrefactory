@@ -3968,23 +3968,21 @@ bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
     return false;
 }
 
-static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri,
-                                               void *ddd
-                                               ) {
-    Reference             *rr, *defRef;
+static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri, void *voidDataP) {
+    Reference            *rr, *defRef;
     Position              defpos;
-    OlcxReferences        *rstack;
-    SymbolsMenu         *mm;
-    PushAllInBetweenData  *dd;
-    int                     defusage,select,visible,ooBits,vlevel;
+    OlcxReferences       *rstack;
+    SymbolsMenu          *mm;
+    PushAllInBetweenData *pushAllData;
+    int                   defusage, select, visible, ooBits, vlevel;
 
-    dd = (PushAllInBetweenData *) ddd;
+    pushAllData = (PushAllInBetweenData *) voidDataP;
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
     if (!isPushAllMethodsValidRefItem(ri)) return;
     for (rr=ri->references; rr!=NULL; rr=rr->next) {
         log_trace("checking %d.%d ref of %s", rr->position.line,rr->position.col,ri->name);
-        if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd)) {
+        if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, pushAllData)) {
             defRef = getDefinitionRef(ri->references);
             if (defRef!=NULL && IS_DEFINITION_OR_DECL_USAGE(defRef->usage.kind)) {
                 defpos = defRef->position;
@@ -4001,7 +3999,7 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri,
             assert(mm!=NULL);
             for (; rr!=NULL; rr=rr->next) {
                 log_trace("checking reference of line %d, usage %s", rr->position.line, usageKindEnumName[rr->usage.kind]);
-                if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr,dd)) {
+                if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr,pushAllData)) {
                     //& olcxAddReferenceToSymbolsMenu(mm, rr, 0);
                     log_trace("adding reference of line %d",rr->position.line);
                     olcxAddReferenceNoUsageCheck(&mm->references.references, rr, 0);
@@ -4010,7 +4008,7 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri,
             goto fini;
         }
     }
- fini:;
+fini:;
 }
 
 void olPushAllReferencesInBetween(int minMemi, int maxMemi) {

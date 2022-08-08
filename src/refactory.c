@@ -33,7 +33,7 @@
 
 
 typedef struct tpCheckMoveClassData {
-    struct pushAllInBetweenData mm;
+    PushAllInBetweenData mm;
     char                       *spack;
     char                       *tpack;
     int                         transPackageMove;
@@ -41,7 +41,7 @@ typedef struct tpCheckMoveClassData {
 } TpCheckMoveClassData;
 
 typedef struct tpCheckSpecialReferencesData {
-    struct pushAllInBetweenData mm;
+    PushAllInBetweenData mm;
     char                       *symbolToTest;
     int                         classToTest;
     struct referencesItem      *foundSpecialRefItem;
@@ -998,10 +998,10 @@ static bool tpCheckSourceIsNotInnerClass(void) {
     return true;
 }
 
-static void tpCheckSpecialReferencesMapFun(ReferencesItem *ri, void *ddd) {
+static void tpCheckSpecialReferencesMapFun(ReferencesItem *ri, void *voidDataP) {
     TpCheckSpecialReferencesData *dd;
 
-    dd = (TpCheckSpecialReferencesData *)ddd;
+    dd = (TpCheckSpecialReferencesData *)voidDataP;
     assert(sessionData.browserStack.top);
     // todo make supermethod symbol special type
     //&fprintf(dumpOut,"! checking %s\n", ri->name);
@@ -4479,7 +4479,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
 
 // --------------------------------------------------------------------
 
-void refactory() {
+void refactory(void) {
     int           argCount;
     char         *file, *argumentFile;
     char          inputFileName[MAX_FILE_NAME_SIZE];

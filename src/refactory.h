@@ -7,8 +7,10 @@
 typedef struct pushAllInBetweenData {
     int minMemi;
     int maxMemi;
-} PushAllInBetweenData;
+} PushAllInBetweenData; /* WTF is this, memory indices, but why
+ "pushAllInBetween"?  Shared between refactory.c and cxref.c */
 
-extern void refactory();
+
+extern void refactory(void);
 
 #endif
