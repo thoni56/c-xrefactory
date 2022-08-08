@@ -2181,21 +2181,22 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
     editorFreeMarker(m2);
 }
 
-static void applyParameterManipulationToFunction(char *functionName, EditorMarkerList *occurences,
+static void applyParameterManipulationToFunction(char *functionName, EditorMarkerList *occurrences,
                                                  int manipulation, int argn1, int argn2) {
     int progress, count;
 
-    LIST_LEN(count, EditorMarkerList, occurences);
+    /* TODO Is it guaranteed that the occurrences always starts with Defined/Declared? */
+    LIST_LEN(count, EditorMarkerList, occurrences);
     progress = 0;
-    for (EditorMarkerList *ll = occurences; ll != NULL; ll = ll->next) {
-        if (ll->usage.kind != UsageUndefinedMacro) {
+    for (EditorMarkerList *l = occurrences; l != NULL; l = l->next) {
+        if (l->usage.kind != UsageUndefinedMacro) {
             /* TODO: Should we not abort if any of the occurrences fail? */
             if (manipulation == PPC_AVR_ADD_PARAMETER) {
-                addParameter(ll->marker, functionName, argn1, ll->usage.kind);
+                addParameter(l->marker, functionName, argn1, l->usage.kind);
             } else if (manipulation == PPC_AVR_DEL_PARAMETER) {
-                deleteParameter(ll->marker, functionName, argn1, ll->usage.kind);
+                deleteParameter(l->marker, functionName, argn1, l->usage.kind);
             } else if (manipulation == PPC_AVR_MOVE_PARAMETER) {
-                moveParameter(ll->marker, functionName, argn1, argn2);
+                moveParameter(l->marker, functionName, argn1, argn2);
             } else {
                 errorMessage(ERR_INTERNAL, "unknown parameter manipulation");
                 break;
