@@ -874,8 +874,7 @@ CompilationUnit: {
                                                      jsltypeTab);
 
                     fname = getFileItem(olOriginalFileIndex)->name;
-                    if (options.mode == ServerMode
-                        && refactoringOptions.refactoringMode!=RefactoryMode) {
+                    if (options.mode == ServerMode) {
                         // this must be before reading 's_olOriginalComFile' !!!
                         if (editorFileExists(fname)) {
                             javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
