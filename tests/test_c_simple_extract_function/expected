@@ -16,7 +16,7 @@
 </goto>
 <precheck len=<n>> newFunction_(</precheck>
 <goto>
- <position-off off=171 len=<n>>CURDIR/test_source/hello.c</position-off>
+ <position-off off=170 len=<n>>CURDIR/test_source/hello.c</position-off>
 </goto>
 <precheck len=<n>> newFunction_(</precheck>
 <goto>
@@ -29,7 +29,7 @@
  <str len=<n>>newFunction_</str>  <str len=<n>>extracted</str>
 </replacement>
 <goto>
- <position-off off=169 len=<n>>CURDIR/test_source/hello.c</position-off>
+ <position-off off=168 len=<n>>CURDIR/test_source/hello.c</position-off>
 </goto>
 <replacement>
  <str len=<n>>newFunction_</str>  <str len=<n>>extracted</str>
