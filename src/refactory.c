@@ -198,7 +198,7 @@ static void ensureReferencesUpdated(char *project) {
     currentPass = ANY_PASS;
     mainTaskEntryInitialisations(nargc, nargv);
 
-    mainCallXref(nargc, nargv);
+    callXref(nargc, nargv);
 
     copyOptionsFromTo(&savedOptions, &options);
     ppcEnd(PPC_UPDATE_REPORT);

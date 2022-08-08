@@ -311,7 +311,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     LEAVE();
 }
 
-void mainCallXref(int argc, char **argv) {
+void callXref(int argc, char **argv) {
     // These are static because of the longjmp() maybe happening
     static char     *cxFreeBase;
     static bool      firstPass, atLeastOneProcessed;
@@ -408,7 +408,7 @@ void xref(int argc, char **argv) {
     mainOpenOutputFile(options.outputFileName);
     editorLoadAllOpenedBufferFiles();
 
-    mainCallXref(argc, argv);
+    callXref(argc, argv);
     closeMainOutputFile();
     if (options.xref2) {
         ppcSynchronize();

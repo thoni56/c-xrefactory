@@ -34,5 +34,5 @@ Ensure(Xref, mainCallXref_without_input_files_gives_error_message) {
 
     cxMemoryOverflowHandler(0); /* Implicitly allocate and init cxMemory */
 
-    mainCallXref(0, NULL);
+    callXref(0, NULL);
 }
