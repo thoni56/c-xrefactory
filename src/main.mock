@@ -3,9 +3,9 @@
 #include <cgreen/mocks.h>
 
 bool initializeFileProcessing(bool *firstPass,
-                                   int argc, char **argv,      // command-line options
-                                   int nargc, char **nargv,
-                                   Language *outLanguage
+                              int argc, char **argv,      // command-line options
+                              int nargc, char **nargv,
+                              Language *outLanguage
 ) {
     return (bool)mock(firstPass, argc, argv, nargc, nargv, outLanguage);
 }

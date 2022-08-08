@@ -5,16 +5,18 @@
 
 #include "head.h" /* For Language type */
 
-// Used by server.c & xref.c but not main itself
+
+// xref.c, server.c
 extern bool initializeFileProcessing(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
                                      Language *outLanguage);
-//------
-
-// Required for xref.c
-extern void checkExactPositionUpdate(bool printMessage);
-//------
-
-extern void mainTaskEntryInitialisations(int argc, char **argv);
+// xref.c, server.c and refactory.c
 extern void mainOpenOutputFile(char *ofile);
+
+
+// main.c, refactory.c
+extern void mainTaskEntryInitialisations(int argc, char **argv);
+
+// main.c, xref.c
+extern void checkExactPositionUpdate(bool printMessage);
 
 #endif
