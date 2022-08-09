@@ -4220,7 +4220,7 @@ static void pushSymbolByName(char *name) {
     getCallerPositionFromCommandLineOption(&rstack->callerPosition);
 }
 
-void mainAnswerEditAction(void) {
+void answerEditAction(void) {
     OlcxReferences *rstack, *nextrr;
 
     ENTER();

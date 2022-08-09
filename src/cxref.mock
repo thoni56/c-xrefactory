@@ -328,7 +328,7 @@ void pushLocalUnusedSymbolsAction(void) {
     mock();
 }
 
-void mainAnswerEditAction(void) {
+void answerEditAction(void) {
     mock();
 }
 

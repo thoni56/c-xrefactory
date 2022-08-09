@@ -301,7 +301,7 @@ void server(int argc, char **argv) {
         if (options.serverOperation == OLO_ABOUT) {
             aboutMessage();
         } else {
-            mainAnswerEditAction();
+            answerEditAction();
         }
         //& options.outputFileName = NULL;  // why this was here ???
         //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);
