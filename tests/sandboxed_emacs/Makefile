@@ -22,8 +22,8 @@ all:
 
 # Run a sandboxed emacs using the spy to log interaction
 spy: clean bin/c-xref .emacs.d/el-get/c-xrefactory
-	@$(ENV) $(TARGET) $(LOG) emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
-	@echo Interaction saved in $(LOGFILE)
+	$(ENV) $(TARGET) $(LOG) emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
+	@echo Interaction saved in $(CURDIR)/$(LOGFILE)
 
 bin/c-xref: pipe-spy
 	-rm bin/c-xref
