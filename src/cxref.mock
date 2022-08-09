@@ -300,8 +300,8 @@ bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
     return (bool) mock(ri);
 }
 
-bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym, int command) {
-    return (bool) mock(osym, nsym, command);
+bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym, ServerOperation operation) {
+    return (bool) mock(osym, nsym, operation);
 }
 
 void olcxPrintPushingAction(int opt, int afterMenu) {

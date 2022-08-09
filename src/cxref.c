@@ -897,15 +897,14 @@ void olcxFreeResolutionMenu(SymbolsMenu *sym ) {
     }
 }
 
-static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
-    OlcxReferences    *refs;
-    refs = *rrefs;
-    /*fprintf(ccOut,": pop 2\n"); fflush(ccOut);*/
+static void deleteOlcxRefs(OlcxReferences **refsP, OlcxReferencesStack *stack) {
+    OlcxReferences    *refs = *refsP;
+
     olcxFreeReferences(refs->references);
     olcxFreeCompletions(refs->completions);
     olcxFreeResolutionMenu(refs->hkSelectedSym);
     olcxFreeResolutionMenu(refs->menuSym);
-    /*fprintf(ccOut,": pop 3\n"); fflush(ccOut);*/
+
     // if deleting second entry point, update it
     if (refs==stack->top) {
         stack->top = refs->previous;
@@ -914,7 +913,7 @@ static void deleteOlcxRefs(OlcxReferences **rrefs, OlcxReferencesStack *stack) {
     if (refs==stack->root) {
         stack->root = refs->previous;
     }
-    *rrefs = refs->previous;
+    *refsP = refs->previous;
     olcx_memory_free(refs, sizeof(OlcxReferences));
 }
 
@@ -950,14 +949,20 @@ static void olcxFreePopedStackItems(OlcxReferencesStack *stack) {
 static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
     OlcxReferences *res;
 
-    res = olcx_alloc(sizeof(OlcxReferences));
-    *res = (OlcxReferences){.references = NULL, .actual = NULL, .command = options.serverOperation, .language = currentLanguage,
-                            .accessTime = fileProcessingStartTime, .callerPosition = noPosition, .completions = NULL, .hkSelectedSym = NULL,
-                            .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
-                            .previous = stack->top};
+    res  = olcx_alloc(sizeof(OlcxReferences));
+    *res = (OlcxReferences){.references      = NULL,
+                            .actual          = NULL,
+                            .command         = options.serverOperation,
+                            .language        = currentLanguage,
+                            .accessTime      = fileProcessingStartTime,
+                            .callerPosition  = noPosition,
+                            .completions     = NULL,
+                            .hkSelectedSym   = NULL,
+                            .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL,
+                            .refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
+                            .previous        = stack->top};
     return res;
 }
-
 
 void olcxPushEmptyStackItem(OlcxReferencesStack *stack) {
     OlcxReferences *res;
@@ -3559,11 +3564,11 @@ static SymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
 }
 
 bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
-                                int command
+                                ServerOperation operation
 ) {
     bool res = false;
 
-    switch (command) {
+    switch (operation) {
     case OLO_MM_PRE_CHECK:
         if (isSameCxSymbol(&osym->references, &nsym->references)
             && osym->references.vApplClass == nsym->references.vApplClass) {
@@ -3804,11 +3809,7 @@ static void olcxProcessGetRequest(void) {
         }
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
-        if (options.xref2) {
-            sprintf(tmpBuff,"No \"-set %s <command>\" option specified for active project", name);
-        } else {
-            sprintf(tmpBuff,"No \"-set %s <command>\" option specified for active project", name);
-        }
+        sprintf(tmpBuff,"No \"-set %s <command>\" option specified for active project", name);
         errorMessage(ERR_ST, tmpBuff);
     }
 }
@@ -3835,7 +3836,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
         }
         break;
     case OLO_PUSH_SPECIAL_NAME:
-        assert(0);      // called only from refactory
+        assert(0); // called only from refactory
         break;
     case OLO_MENU_GO:
         if (olcxCheckSymbolExists()) {
@@ -3879,23 +3880,34 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
         }
         break;
     case OLO_PUSH_FOR_LOCALM:
-        if (olcxCheckSymbolExists()) olcxPushOnly();
-        else olcxNoSymbolFoundErrorMessage();
+        if (olcxCheckSymbolExists())
+            olcxPushOnly();
+        else
+            olcxNoSymbolFoundErrorMessage();
         break;
     case OLO_MAYBE_THIS:
-    case OLO_NOT_FQT_REFS: case OLO_NOT_FQT_REFS_IN_CLASS:
+    case OLO_NOT_FQT_REFS:
+    case OLO_NOT_FQT_REFS_IN_CLASS:
     case OLO_PUSH_ALL_IN_METHOD:
-        if (olcxCheckSymbolExists()) olcxPushOnly();
-        else olcxNoSymbolFoundErrorMessage();
+        if (olcxCheckSymbolExists())
+            olcxPushOnly();
+        else
+            olcxNoSymbolFoundErrorMessage();
         break;
-    case OLO_RENAME: case OLO_VIRTUAL2STATIC_PUSH:
-    case OLO_ARG_MANIP: case OLO_ENCAPSULATE:
-        if (olcxCheckSymbolExists()) olcxRenameInit();
-        else olcxNoSymbolFoundErrorMessage();
+    case OLO_RENAME:
+    case OLO_VIRTUAL2STATIC_PUSH:
+    case OLO_ARG_MANIP:
+    case OLO_ENCAPSULATE:
+        if (olcxCheckSymbolExists())
+            olcxRenameInit();
+        else
+            olcxNoSymbolFoundErrorMessage();
         break;
     case OLO_SAFETY_CHECK2:
-        if (olcxCheckSymbolExists()) olcxSafetyCheck2();
-        else olcxNoSymbolFoundErrorMessage();
+        if (olcxCheckSymbolExists())
+            olcxSafetyCheck2();
+        else
+            olcxNoSymbolFoundErrorMessage();
         break;
     default:
         assert(0);

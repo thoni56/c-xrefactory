@@ -2,6 +2,7 @@
 #define CXREF_H_INCLUDED
 
 #include "proto.h"
+#include "server.h"
 #include "usage.h"
 #include "symbol.h"
 #include "session.h"
@@ -113,7 +114,7 @@ extern void olcxCheck1CxFileReference(ReferencesItem *ss, Reference *r);
 extern void olcxPushSpecial(char *fieldName, int command);
 extern bool isPushAllMethodsValidRefItem(ReferencesItem *ri);
 extern bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
-                                      int command);
+                                       ServerOperation operation);
 extern void olcxPrintPushingAction(int opt, int afterMenu);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
 extern Symbol *getMoveTargetClass(void);
