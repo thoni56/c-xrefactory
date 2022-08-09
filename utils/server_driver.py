@@ -33,7 +33,7 @@
 #
 # A very special case is if the invocation contains '-refactory'. Then
 # it is a refactoring "command" which actually sends output even on
-# the the first command, without "end-of-options". So then we need to
+# the first command, without "end-of-options". So then we need to
 # wait for a sync and read the output. However, more commands may
 # follow.
 
