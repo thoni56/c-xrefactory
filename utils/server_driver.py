@@ -92,7 +92,10 @@ def read_output(filename):
     open(filename, 'w').close()                 # Erase content
 
 def read_command(file):
-    return file.readline().decode().rstrip()
+    line = file.readline()
+    #while len(line) == 0 or (len(line) > 0 and line[0] == '#'):
+    #    line = file.readline()
+    return line.decode().rstrip()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Read c-xref commands from file and handle synchronization and file buffering")
