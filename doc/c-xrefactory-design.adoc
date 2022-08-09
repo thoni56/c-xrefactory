@@ -1169,7 +1169,18 @@ Position position
 
 ....
 
+=== Trivial Prechecks ===
 
+The refactorer can call the server using `parseBufferUsingServer()` and add some extra options (in text form).
+One example is `setMovingPrecheckStandardEnvironment()` where it calls the server with `-olcxtrivialprecheck`.
+
+However `parseBufferUsingServer()` uses `callServer()` which never `answerEditAction()`.
+
+In `answerEditAction()` the call to (unused) `olTrivialRefactoringPreCheck()` also requires an `options.trivialPreCheckCode` which is neither send by `setMovingPrecheckStandardEnvironment()` nor parsed by `processOptions()`.
+
+The only guess I have is that previously all prechecks where handled by the `-olcxtrivialprecheck` option in calls to the server, and have now moved to their respective refactorings.
+
+NOTE: This theory should be checked by looking at the original source of the precheck functions and compare that with any possible checks in the corresponding refactoring code.
 
 == Archive
 

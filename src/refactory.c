@@ -3050,6 +3050,13 @@ static void moveField(EditorMarker *point) {
 
 static void setMovingPrecheckStandardEnvironment(EditorMarker *point, char *targetFqtName) {
     SymbolsMenu *ss;
+
+    /* TODO: WTF... There must be some huge gap in the logic
+     * here. editServerParseBuffer() does not call answerEditAction()
+     * where the case for OLO_TRIVIAL_PRECHECK is triggered. Also the
+     * call to olTrivialRefactoringPreCheck() in cxref.c is expecting
+     * a precheck code which doesn't get sent here, nor is it parsed
+     * by handleOptions()... */
     editServerParseBuffer(refactoringOptions.project, point, NULL, "-olcxtrivialprecheck", NULL);
     assert(sessionData.browserStack.top);
     olCreateSelectionMenu(sessionData.browserStack.top->command);

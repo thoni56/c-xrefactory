@@ -4075,6 +4075,7 @@ bool javaIsSuperClass(int superclas, int clas) {
     return false;
 }
 
+/* TODO: See comment for setMovingPrecheckStandardEnvironment */
 static void olTrivialRefactoringPreCheck(int refcode) {
     OlcxReferences *tpchsymbol;
 
@@ -4548,6 +4549,7 @@ void mainAnswerEditAction(void) {
         olcxPrintPushingAction(options.serverOperation, 0);
         break;
     case OLO_TRIVIAL_PRECHECK:
+        /* TODO: See comment for setMovingPrecheckStandardEnvironment */
         olTrivialRefactoringPreCheck(options.trivialPreCheckCode);
         break;
     case OLO_ENCAPSULATE_SAFETY_CHECK:
