@@ -4689,7 +4689,7 @@ will be deleted.
 			sourcepath
 			javadocpath classdir
 			apfiles javahome ifiles
-			rest refs htmlopt exactp)
+			rest refs exactp)
   (let ((comment) (dlen) (cldopt) (tdq))
     (setq comment (or (equal pcomments "y") (equal pcomments "Y")))
     (goto-char (point-max))
@@ -4707,16 +4707,11 @@ will be deleted.
 	(insert "  //  directory where tag files are stored\n")
       )
     (insert (format "  -refs %s\n" (c-xref-optionify-string refs "\"")))
-    (if (equal htmlopt "")
-	(progn
-	  (insert "  //  number of tag files\n")
-	  (if (or (equal exactp "y") (equal exactp "Y"))
-	      (insert "  -refnum=100\n")
-	    (insert "  -refnum=10\n")
-	    )
-	  )
+    (insert "  //  number of tag files\n")
+    (if (or (equal exactp "y") (equal exactp "Y"))
+	(insert "  -refnum=100\n")
+      (insert "  -refnum=10\n")
       )
-
     (if (or (equal planguage "c") (equal planguage "C")
 	    (equal planguage "b") (equal planguage "B"))
 	(progn
@@ -4806,9 +4801,6 @@ will be deleted.
 	    (if comment (insert "  //  set default to runthis\n"))
 	    (insert "  -set run ${runthis}\n")
 	  )))
-    (if (not (equal htmlopt ""))
-	(insert (format "%s\n" htmlopt))
-      )
     (if (not (equal rest ""))
 	(insert (format "%s\n" rest))
       )
@@ -4970,7 +4962,7 @@ part belonging to this project.
 	(classpath) (sourcepath) (classdir nil) (spcp) (ljd) (javadocpath)
 	(inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat) (jdkcp nil)
 	(javahome) (ptdef) (if) (ifiles "") (ifloop) (iff) (ifmess) (rest "")
-	(aaa) (rrr) (pasi) (pasn) (hom) (htmlopt) (exactp))
+	(aaa) (rrr) (pasi) (pasn) (hom) (exactp))
     (c-xref-soft-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data)
     ;; no entry point initialisations, it calls get-active-project
     (c-xref-entry-point-make-initialisations-no-project-required)
@@ -5187,7 +5179,7 @@ part belonging to this project.
 				     pfiles mclass
 				     classpath sourcepath javadocpath
 				     classdir apfiles javahome ifiles
-				     rest refs htmlopt exactp)
+				     rest refs exactp)
     ;;
     (save-buffer)
     (search-backward (concat "[" pname "]"))
