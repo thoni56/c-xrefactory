@@ -1,0 +1,21 @@
+#########################################################################
+CC= gcc
+COMCFLAGS= $(INCLUDES) -DDEBUG $(ZLIB_OPT) \
+			-DBIN_RELEASE -DPRESERVE_C_ARGS -D__mygnulinux__
+CFLAGS= -c -O $(COMCFLAGS) -Wno-long-double
+EDGCFLAGS= -O -Wno-long-double
+LDFLAGS=
+BIN=$(HOME)/bin
+LEX=flex
+YACC=$(ROOTDIR)/../byacc-1.9/yacc
+RANLIB=ranlib
+ROOTDIR=..
+#########################################################################
+
+
+include Makefile.common
+include Makefile.dependencies
+
+
+#########################################################################
+

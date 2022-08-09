@@ -1,0 +1,1 @@
+ls *.c *.h *.y ../env/emacs/xref.el ../env/emacs/xrefactory.el | grep -v "\(enumTxt.c\|cccgram.c\|cccgram.h\|strFill.h\|cgram.c\|cgram.h\|cexp.c\|cexp.h\|yaccgram.c\|yaccgram.h\|javagram.c\|javagram.h\|gram.h\|strTdef.h\|xrefspeller.c\|wwwsrv.c\|javaslgram.c\)" | xargs wc

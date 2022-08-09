@@ -1,0 +1,309 @@
+/* .c template for hashed table*/
+/* requires macros:
+	HASH_TAB_TYPE
+	HASH_ELEM_TYPE
+	HASH_FUN_PREFIX
+	HASH_FUN(elem)
+	HASH_ELEM_EQUAL(e1,e2)
+*/
+/* form of include:
+
+#define HASH_TAB_TYPE struct
+#define HASH_ELEM_TYPE
+#define HASH_FUN_PREFIX
+#define HASH_FUN(elem) 
+#define HASH_ELEM_EQUAL(e1,e2)
+
+#include "hashTab.tc"
+
+#undef HASH_TAB_TYPE
+#undef HASH_ELEM_TYPE
+#undef HASH_FUN_PREFIX
+#undef HASH_FUN
+#undef HASH_ELEM_EQUAL
+*/
+
+#define GLUE1(a,b) a ## b
+#define GLUE2(a,b) GLUE1(a,b)
+
+
+void GLUE2(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *t, int size) {
+	register int i;
+	t->size = size;
+	memset(t->tab, 0, sizeof(HASH_ELEM_TYPE *)*t->size);
+}
+
+
+void GLUE2(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *t, int size) {
+	register int i;
+	XX_ALLOCC(t->tab, size, HASH_ELEM_TYPE *);
+	GLUE2(HASH_FUN_PREFIX,NAInit)(t, size);
+}
+
+
+int GLUE2(HASH_FUN_PREFIX,IsMember)(
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int *position,
+					HASH_ELEM_TYPE **original
+			) {
+	unsigned posid;
+	HASH_ELEM_TYPE *pp;
+	posid = HASH_FUN(elem);
+	posid = posid % t->size;
+	*position = posid;
+	assert(t->tab!=NULL);
+/*fprintf(dumpOut,"new comp %d: ",posid);fflush(dumpOut);*/
+	for (pp=t->tab[posid]; pp!=NULL; pp=pp->next) {
+/*fprintf(dumpOut," %d ",pp);fflush(dumpOut);*/
+/*fprintf(dumpOut,"%s to %s\n",elem->name, pp->name);fflush(dumpOut);*/
+		if (HASH_ELEM_EQUAL(pp, elem)) {
+			*original = pp;
+/*fprintf(dumpOut,"found\n");fflush(dumpOut);*/
+			return(1);
+		}
+	}
+	*original = NULL;
+/*fprintf(dumpOut,"not found\n");fflush(dumpOut);*/
+	return(0);
+}
+
+
+int GLUE2(HASH_FUN_PREFIX,NextMember)(
+					HASH_ELEM_TYPE *elem,
+					HASH_ELEM_TYPE **original
+			) {
+	HASH_ELEM_TYPE *pp;
+	assert(*original);
+	for (pp= (*original)->next; pp!=NULL; pp=pp->next) {
+		if (HASH_ELEM_EQUAL(pp, elem)) {
+			*original = pp;
+			return(1);
+		}
+	}
+	*original = NULL;
+	return(0);
+}
+
+
+int GLUE2(HASH_FUN_PREFIX,MembEqual)(
+					HASH_ELEM_TYPE *e1,
+					HASH_ELEM_TYPE *e2
+			) {
+	assert(e1 && e2);
+	return(HASH_ELEM_EQUAL(e1, e2));
+}
+
+
+int GLUE2(HASH_FUN_PREFIX,Delete)(
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem
+			) {
+	unsigned posid;
+	HASH_ELEM_TYPE **pp;
+	posid = HASH_FUN(elem);
+	posid = posid % t->size;
+	assert(t->tab!=NULL);
+	for (pp= &(t->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
+		if (HASH_ELEM_EQUAL((*pp), elem)) {
+			*pp = (*pp)->next;
+			return(1);
+		}
+	}
+	return(0);
+}
+
+
+int GLUE2(HASH_FUN_PREFIX,DeleteExact)(
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem
+			) {
+	unsigned posid;
+	HASH_ELEM_TYPE **pp;
+	posid = HASH_FUN(elem);
+	posid = posid % t->size;
+	assert(t->tab!=NULL);
+	for (pp= &(t->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
+		if ((*pp) == elem) {
+			*pp = (*pp)->next;
+			return(1);
+		}
+	}
+	return(0);
+}
+
+
+int GLUE2(HASH_FUN_PREFIX,DeleteLast)(
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem
+			) {
+	unsigned posid;
+	HASH_ELEM_TYPE **pp, **dd;
+	posid = HASH_FUN(elem);
+	posid = posid % t->size;
+	assert(t->tab!=NULL);
+	dd = NULL;
+	for (pp= &(t->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
+		if (HASH_ELEM_EQUAL((*pp), elem)) {
+			dd = pp;
+		}
+	}
+	if (dd!=NULL) {
+		*dd = (*dd)->next;
+		return(1);
+	}
+	return(0);
+}
+
+void GLUE2(HASH_FUN_PREFIX,Set) (
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int position
+				) {
+	elem->next = t->tab[position];
+    t->tab[position] = elem;
+}
+
+void GLUE2(HASH_FUN_PREFIX,SetLast) (
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int position
+				) {
+	HASH_ELEM_TYPE **pp;
+	for (pp= &(t->tab[position]); *pp!=NULL; pp= &((*pp)->next)) ;
+    *pp = elem;
+	elem->next = NULL;
+}
+
+void GLUE2(HASH_FUN_PREFIX,Add) (
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int *position
+				) {
+  HASH_ELEM_TYPE *origin;
+  if (! GLUE2(HASH_FUN_PREFIX,IsMember)(t,elem,position,&origin)) {
+	GLUE2(HASH_FUN_PREFIX,Set) (t,elem,*position);
+  }
+}
+
+
+void GLUE2(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *t) {
+	XX_FREE(t->tab);
+}
+
+
+void GLUE2(HASH_FUN_PREFIX,Map)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(HASH_ELEM_TYPE *)
+				) {
+	int i;
+	HASH_ELEM_TYPE *pp;
+	for(i=0; i<t->size; i++) {
+		for(pp=t->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp);
+	}
+}
+
+
+void GLUE2(HASH_FUN_PREFIX,Map2)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(HASH_ELEM_TYPE *, void *),
+					void *a
+				) {
+	int i;
+	HASH_ELEM_TYPE *pp;
+	for(i=0; i<t->size; i++) {
+		for(pp=t->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, a);
+	}
+}
+
+
+void GLUE2(HASH_FUN_PREFIX,Map3)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(int)
+				) {
+	int i;
+	for(i=0; i<t->size; i++) {
+		if (t->tab[i] != NULL) (*fun)(i);
+	}
+}
+
+
+void GLUE2(HASH_FUN_PREFIX,Map31)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(int, void *, void *),
+					void *arg1, void *arg2
+				) {
+	int i;
+	for(i=0; i<t->size; i++) {
+		if (t->tab[i] != NULL) (*fun)(i,arg1,arg2);
+	}
+}
+
+void GLUE2(HASH_FUN_PREFIX,Map32)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(int, void *, void *, void *),
+					void *arg1, void *arg2, void *arg3
+				) {
+	int i;
+	for(i=0; i<t->size; i++) {
+		if (t->tab[i] != NULL) (*fun)(i,arg1,arg2,arg3);
+	}
+}
+
+
+void GLUE2(HASH_FUN_PREFIX,Map4)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(HASH_ELEM_TYPE *, int),
+					int a
+				) {
+	int i;
+	HASH_ELEM_TYPE *pp;
+	for(i=0; i<t->size; i++) {
+		for(pp=t->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, a);
+	}
+}
+
+
+void GLUE2(HASH_FUN_PREFIX,Map5)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(HASH_ELEM_TYPE *, void *),
+					void *arg
+				) {
+	int i;
+	HASH_ELEM_TYPE *pp;
+	for(i=0; i<t->size; i++) {
+		for(pp=t->tab[i]; pp!=NULL; pp=pp->next) (*fun)(pp, arg);
+	}
+}
+
+
+void GLUE2(HASH_FUN_PREFIX,Statistics)(
+					HASH_TAB_TYPE *t, 
+					int *usedIndexes,
+					int *elements,
+					int *maxdeep
+				) {
+	int i,ui,el,dp,mdp,mdpi;
+	HASH_ELEM_TYPE *pp;
+	ui= el = dp = mdp = 0;
+	mdpi = -1;
+	for(i=0; i<t->size; i++) {
+		if (t->tab[i]!=NULL) ui ++;
+		dp = el;
+		for(pp=t->tab[i]; pp!=NULL; pp=pp->next) {
+			el++;
+		}
+		if (mdp < el-dp) {mdp = el-dp; mdpi = i;}
+	}
+	*usedIndexes = ui;
+	*elements = el;
+	*maxdeep = mdp;
+}
+
+
+#undef GLUE1
+#undef GLUE2
+
+
+
+

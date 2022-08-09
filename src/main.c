@@ -643,6 +643,13 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // supposing that file table is still here, but reinit it
     mapOverFileTable(clearFileItem);
 
+    // TODO: the following causes long jump, berk.
+    // And it can't be removed because of tests in tests/orig.c-xref
+    // failing with "cx_memory resizing required, see file TROUBLES"
+    // This just shows how impenetrable the memory management is...
+    CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
+    CX_FREE_UNTIL(sss);
+
     initReferenceTable(MAX_CXREF_ENTRIES);
 
     SM_INIT(ppmMemory);

@@ -1,0 +1,26 @@
+#########################################################################
+CC= gcc
+COMCFLAGS= $(INCLUDES) -DDEBUG -DCORE_DUMP \
+                -DSMALL_OLCX_MEMORY $(ZLIB_OPT) \
+                -DBIN_RELEASE -DPRESERVE_C_ARGS -D__mygnulinux__
+CFLAGS= -c -O $(COMCFLAGS) \
+                -Waggregate-return -Wpointer-arith \
+                -Wimplicit -Wreturn-type -Wuninitialized \
+                -Wparentheses
+#               -Wall
+EDGCFLAGS= -O
+LDFLAGS= -O
+#LDFLAGS= -g -Xlinker -Map -Xlinker map.txt
+BIN=$(HOME)/bin
+LEX=flex
+YACC=$(ROOTDIR)/../byacc-1.9/yacc
+RANLIB=echo
+ROOTDIR=..
+#########################################################################
+
+
+include Makefile.common
+include Makefile.dependencies
+
+
+#########################################################################

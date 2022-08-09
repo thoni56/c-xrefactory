@@ -1,0 +1,25 @@
+#########################################################################
+CC= gcc
+COMCFLAGS= $(INCLUDES) -DDEBUG $(ZLIB_OPT) \
+                -DBIN_RELEASE -DPRESERVE_C_ARGS
+CFLAGS= -c -O $(COMCFLAGS) 
+EDGCFLAGS= -O
+LDFLAGS= -static
+CPP_ONLY_FLAG= -E $(COMCFLAGS)
+BIN=$(HOME)/bin
+LEX=flex
+YACC=$(ROOTDIR)/../byacc-1.9/yacc
+RANLIB=echo
+ROOTDIR=..
+#########################################################################
+
+
+include Makefile.common
+include Makefile.dependencies
+
+xrefw: $(OBJS)
+	$(CC) $(LDFLAGS) -mwindows -o xrefw $(OBJS)
+
+#########################################################################
+
+
