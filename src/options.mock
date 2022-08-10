@@ -3,7 +3,6 @@
 #include <cgreen/mocks.h>
 
 Options options;
-Options refactoringOptions;
 Options savedOptions;
 Options presetOptions;
 

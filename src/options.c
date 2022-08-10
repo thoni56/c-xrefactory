@@ -18,7 +18,6 @@
 /* PUBLIC DATA: */
 
 Options options;               // current options
-Options refactoringOptions;    // xref -refactory command line options
 Options savedOptions;
 Options presetOptions = {
                                 /* GENERAL */

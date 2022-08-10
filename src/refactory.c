@@ -77,6 +77,8 @@ static char *xrefInitOptions[] = {
     NULL,
 };
 
+static Options refactoringOptions;
+
 static char *updateOption = "-fastupdate";
 
 static bool moveClassMapFunReturnOnUninterestingSymbols(ReferencesItem *ri, TpCheckMoveClassData *dd) {
