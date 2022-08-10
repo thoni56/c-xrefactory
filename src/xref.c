@@ -127,6 +127,9 @@ static void schedulingUpdateToProcess(FileItem *fileItem) {
     }
 }
 
+/* Saved by scheduleModifiedFilesToUpdate() since we cannot send it as an argument to a Map function */
+static bool calledDuringRefactoring;
+
 /* NOTE: Map-function */
 static void schedulingToUpdate(FileItem *fileItem) {
     if (fileItem == getFileItem(noFileIndex))
@@ -135,8 +138,7 @@ static void schedulingToUpdate(FileItem *fileItem) {
     if (!editorFileExists(fileItem->name)) {
         // removed file, remove it from watched updates, load no reference
         if (fileItem->isArgument) {
-            // no messages during refactorings
-            if (refactoringOptions.refactoringMode != RefactoryMode) {
+            if (!calledDuringRefactoring) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff, "file %s not accessible", fileItem->name);
                 warningMessage(ERR_ST, tmpBuff);
@@ -232,7 +234,7 @@ static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bo
 }
 
 
-void scheduleModifiedFilesToUpdate(void) {
+void scheduleModifiedFilesToUpdate(bool isRefactoring) {
     char        *fileListFileName;
     char        *suffix;
 
@@ -248,6 +250,8 @@ void scheduleModifiedFilesToUpdate(void) {
     // We should look at original sources (main.c) and try to figure out the mistake in logic
     normalScanReferenceFile(suffix);
 
+    /* As schedulingToUpdate() is a mapped function we cannot send it as argument, so we save it here */
+    calledDuringRefactoring = isRefactoring;
     mapOverFileTable(schedulingToUpdate);
 
     if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
@@ -311,7 +315,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     LEAVE();
 }
 
-void callXref(int argc, char **argv) {
+void callXref(int argc, char **argv, bool isRefactoring) {
     // These are static because of the longjmp() maybe happening
     static char     *cxFreeBase;
     static bool      firstPass, atLeastOneProcessed;
@@ -325,7 +329,7 @@ void callXref(int argc, char **argv) {
     CX_ALLOCC(cxFreeBase, 0, char);
     cxResizingBlocked = true;
     if (options.update)
-        scheduleModifiedFilesToUpdate();
+        scheduleModifiedFilesToUpdate(isRefactoring);
     atLeastOneProcessed = false;
     ffc = pffc = createListOfInputFileItems();
     LIST_LEN(numberOfInputs, FileItem, ffc);
@@ -408,7 +412,7 @@ void xref(int argc, char **argv) {
     mainOpenOutputFile(options.outputFileName);
     editorLoadAllOpenedBufferFiles();
 
-    callXref(argc, argv);
+    callXref(argc, argv, false);
     closeMainOutputFile();
     if (options.xref2) {
         ppcSynchronize();
