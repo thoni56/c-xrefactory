@@ -215,7 +215,7 @@ static void getCxrefFilesListName(char **fileListFileNameP, char **suffixP) {
 }
 
 static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bool *firstPass,
-                                bool *atLeastOneProcessed) {
+                                   bool *atLeastOneProcessed, bool isRefactoring) {
     inputFileName           = fileItem->name;
     fileProcessingStartTime = time(NULL);
     // O.K. but this is missing all header files
@@ -226,8 +226,9 @@ static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bo
     processInputFile(argc, argv, firstPass, atLeastOneProcessed);
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
-    // so be very carefull about this!!!
-    if (refactoringOptions.refactoringMode != RefactoryMode) {
+    // so be very careful about this!!!
+    // TODO: WTF? All test still passes if we reverse this comparison...
+    if (!isRefactoring) {
         editorCloseBufferIfClosable(inputFileName);
         editorCloseAllBuffersIfClosable();
     }
@@ -357,7 +358,7 @@ void callXref(int argc, char **argv, bool isRefactoring) {
                 if (LANGUAGE(LANG_JAVA)) {
                     /* TODO: problematic if a single file generates overflow, e.g. a JAR
                        Can we just reread from the last class file? */
-                    oneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed);
+                    oneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed, isRefactoring);
                 }
                 writeRelativeProgress(inputCounter / numberOfInputs * 10);
                 inputCounter++;
@@ -368,7 +369,7 @@ void callXref(int argc, char **argv, bool isRefactoring) {
 
             inputCounter = 0;
             for (; ffc != NULL; ffc = ffc->next) {
-                oneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed);
+                oneWholeFileProcessing(argc, argv, ffc, &firstPass, &atLeastOneProcessed, isRefactoring);
                 ffc->isScheduled       = false;
                 ffc->scheduledToUpdate = false;
                 if (options.xref2)
