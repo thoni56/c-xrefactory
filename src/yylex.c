@@ -1876,6 +1876,7 @@ endOfMacroArgument:
     return false;
 }
 
+#if DUMP
 void dumpLexemBuffer(LexemBuffer *lb) {
     char *cc;
     int lineNumber;
@@ -1902,6 +1903,7 @@ void dumpLexemBuffer(LexemBuffer *lb) {
     }
     log_debug("lexbufdump [stop]");
 }
+#endif
 
 /* ************************************************************** */
 /*                   caching of input                             */
