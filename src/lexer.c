@@ -106,18 +106,18 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 }
 
 
-static void processIdentifier(int *chP, char **destinationP, LexemBuffer *lb) {
+static void processIdentifier(int *chP, LexemBuffer *lb) {
     int column;
 
     column = columnPosition(&lb->buffer);
-    putLexToken(IDENTIFIER, destinationP);
+    putLexToken(IDENTIFIER, &(lb->end));
     do {
-        putLexChar(*chP, destinationP);
+        putLexChar(*chP, &(lb->end));
         *chP = getChar(&lb->buffer);
     } while (isalpha(*chP) || isdigit(*chP) || *chP == '_'
              || (*chP == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
-    putLexChar(0, destinationP);
-    putLexPositionFields(lb->buffer.fileNumber, lb->buffer.lineNumber, column, destinationP);
+    putLexChar(0, &(lb->end));
+    putLexPositionFields(lb->buffer.fileNumber, lb->buffer.lineNumber, column, &(lb->end));
 }
 
 static void noteNewLexemPosition(LexemBuffer *lb) {
@@ -215,7 +215,7 @@ static int handleCppToken(LexemBuffer *lb) {
         putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
         ch = skipBlanks(&lb->buffer, ch);
         noteNewLexemPosition(lb);
-        processIdentifier(&ch, &(lb->end), lb);
+        processIdentifier(&ch, lb);
         if (ch == '(') {
             /* Backpatch the current lexem code (CPP_DEFINE0) with discovered CPP_DEFINE */
             putLexToken(CPP_DEFINE, &backpatchLexemP);
@@ -309,7 +309,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            processIdentifier(&ch, &dd, lb);
+            processIdentifier(&ch, lb);
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
