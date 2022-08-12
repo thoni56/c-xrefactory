@@ -10,10 +10,6 @@ bool initializeFileProcessing(bool *firstPass,
     return (bool)mock(firstPass, argc, argv, nargc, nargv, outLanguage);
 }
 
-void checkExactPositionUpdate(bool printMessage) {
-    mock(printMessage);
-}
-
 void mainTaskEntryInitialisations(int argc, char **argv) {
   mock(argc, argv);
 }

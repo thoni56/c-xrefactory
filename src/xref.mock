@@ -2,6 +2,10 @@
 
 #include "xref.h"
 
+void checkExactPositionUpdate(bool printMessage) {
+    mock(printMessage);
+}
+
 void callXref(int argc, char **argv, bool isRefactoring) {
     mock(argc, argv, isRefactoring);
 }

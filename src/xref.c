@@ -235,6 +235,15 @@ static void oneWholeFileProcessing(int argc, char **argv, FileItem *fileItem, bo
 }
 
 
+void checkExactPositionUpdate(bool printMessage) {
+    if (options.update == UPDATE_FAST && options.exactPositionResolve) {
+        options.update = UPDATE_FULL;
+        if (printMessage) {
+            warningMessage(ERR_ST, "-exactpositionresolve implies full update");
+        }
+    }
+}
+
 void scheduleModifiedFilesToUpdate(bool isRefactoring) {
     char        *fileListFileName;
     char        *suffix;

@@ -421,16 +421,6 @@ static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSecti
     }
 }
 
-// extern for xref.c extraction
-void checkExactPositionUpdate(bool printMessage) {
-    if (options.update == UPDATE_FAST && options.exactPositionResolve) {
-        options.update = UPDATE_FULL;
-        if (printMessage) {
-            warningMessage(ERR_ST, "-exactpositionresolve implies full update");
-        }
-    }
-}
-
 bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command-line options
                               int nargc, char **nargv, Language *outLanguage) {
     char standardOptionsFileName[MAX_FILE_NAME_SIZE];

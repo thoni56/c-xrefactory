@@ -31,9 +31,6 @@ Current Mikado:
 **** REQUIRES setting next write position in lexemStream in handleCompletionOrSearch()
 ***** DONE function to set lb->end (setLexemStreamEnd())
 
-* DOING FEATURE: Handle void as no parameters in formal argument lists, e.g. when refactoring them
-** DONE test_remove_void_parameter -> parameter number out of limits
-** DOING test_add_parameter_to_void
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct
 * DOING BUG: Selecting automatic project selection after having set a specific does not seem to work
@@ -92,12 +89,12 @@ Current Mikado:
 * TODO Better, and unified, options handling
 There are both "-opt=value" and "-opt value" format options
 ** TODO If an option requires a value ('-<option>=..'), print an error message for '-<option>'
-* TODO Remove FULL/FAST update, we always want correct info?
+* TODO Clean up update modes
   There are a number of update modes available from the command line, 'fupdate',
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO MISSING TEST CASES:
-** TODO Test case for Move Method
+** DONE Test case for Move Method
 ** TODO Test case for dead symbol detection
 ** TODO Test case for Move Parameter
 ** TODO Test case for Push Down Method
@@ -173,6 +170,9 @@ and you can also get java.class.version=55 => java version without decoding dire
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** DONE Extract PPC-functions from misc.c into a ppc-module
+* DONE FEATURE: Handle void as no parameters in formal argument lists, e.g. when refactoring them
+** DONE test_remove_void_parameter -> parameter number out of limits
+** DONE test_add_parameter_to_void
 * DONE Unmacrofy NEXT_.._ARG()
 * DONE Move mainHandleSetOption() to options.c
 * DONE Architecture diagrams using C4-PlantUML - started in ...design.asciidoc

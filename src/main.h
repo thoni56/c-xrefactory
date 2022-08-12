@@ -16,7 +16,4 @@ extern void mainOpenOutputFile(char *ofile);
 // main.c, refactory.c
 extern void mainTaskEntryInitialisations(int argc, char **argv);
 
-// main.c, xref.c
-extern void checkExactPositionUpdate(bool printMessage);
-
 #endif
