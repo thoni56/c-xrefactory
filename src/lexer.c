@@ -149,7 +149,7 @@ protected void shiftAnyRemainingLexems(LexemBuffer *lb) {
     lb->end = &lb->lexemStream[remaining];
 }
 
-static int handleCppToken(LexemBuffer *lb, char **writePositionP) {
+static int handleCppToken(LexemBuffer *lb) {
     int   ch;
     char  preprocessorWord[30];
     int   i, column;
@@ -164,33 +164,33 @@ static int handleCppToken(LexemBuffer *lb, char **writePositionP) {
     }
     preprocessorWord[i] = 0;
     if (strcmp(preprocessorWord, "ifdef") == 0) {
-        putLexToken(CPP_IFDEF, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        putLexToken(CPP_IFDEF, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
     } else if (strcmp(preprocessorWord, "ifndef") == 0) {
-        putLexToken(CPP_IFNDEF, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        putLexToken(CPP_IFNDEF, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
     } else if (strcmp(preprocessorWord, "if") == 0) {
-        putLexToken(CPP_IF, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        putLexToken(CPP_IF, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
     } else if (strcmp(preprocessorWord, "elif") == 0) {
-        putLexToken(CPP_ELIF, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        putLexToken(CPP_ELIF, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
     } else if (strcmp(preprocessorWord, "undef") == 0) {
-        putLexToken(CPP_UNDEF, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        putLexToken(CPP_UNDEF, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
     } else if (strcmp(preprocessorWord, "else") == 0) {
-        putLexToken(CPP_ELSE, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        putLexToken(CPP_ELSE, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
     } else if (strcmp(preprocessorWord, "endif") == 0) {
-        putLexToken(CPP_ENDIF, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        putLexToken(CPP_ENDIF, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
     } else if (strcmp(preprocessorWord, "include") == 0 || strcmp(preprocessorWord, "include_next") == 0) {
         char endCh;
         if (strcmp(preprocessorWord, "include") == 0)
-            putLexToken(CPP_INCLUDE, writePositionP);
+            putLexToken(CPP_INCLUDE, &(lb->end));
         else
-            putLexToken(CPP_INCLUDE_NEXT, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+            putLexToken(CPP_INCLUDE_NEXT, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
         ch = skipBlanks(&lb->buffer, ch);
         if (ch == '\"' || ch == '<') {
             int scol;
@@ -199,33 +199,33 @@ static int handleCppToken(LexemBuffer *lb, char **writePositionP) {
             else
                 endCh = '>';
             scol = columnPosition(&lb->buffer);
-            putLexToken(STRING_LITERAL, writePositionP);
+            putLexToken(STRING_LITERAL, &(lb->end));
             do {
-                putLexChar(ch, writePositionP);
+                putLexChar(ch, &(lb->end));
                 ch = getChar(&lb->buffer);
             } while (ch != endCh && ch != '\n');
-            putLexChar(0, writePositionP);
-            putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), scol, writePositionP);
+            putLexChar(0, &(lb->end));
+            putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), scol, &(lb->end));
             if (ch == endCh)
                 ch = getChar(&lb->buffer);
         }
     } else if (strcmp(preprocessorWord, "define") == 0) {
-        char *backpatchLexemP = *writePositionP;
-        putLexToken(CPP_DEFINE0, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        char *backpatchLexemP = *&(lb->end);
+        putLexToken(CPP_DEFINE0, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
         ch = skipBlanks(&lb->buffer, ch);
         noteNewLexemPosition(lb);
-        processIdentifier(&ch, writePositionP, lb);
+        processIdentifier(&ch, &(lb->end), lb);
         if (ch == '(') {
             /* Backpatch the current lexem code (CPP_DEFINE0) with discovered CPP_DEFINE */
             putLexToken(CPP_DEFINE, &backpatchLexemP);
         }
     } else if (strcmp(preprocessorWord, "pragma") == 0) {
-        putLexToken(CPP_PRAGMA, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        putLexToken(CPP_PRAGMA, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
     } else {
-        putLexToken(CPP_LINE, writePositionP);
-        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, writePositionP);
+        putLexToken(CPP_LINE, &(lb->end));
+        putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), column, &(lb->end));
     }
 
     return ch;
@@ -794,7 +794,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 putLexToken('\n', &dd);
                 putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn, &dd);
                 if (ch == '#' && LANGUAGE(LANG_C | LANG_YACC)) {
-                    ch = handleCppToken(lb, &dd);
+                    ch = handleCppToken(lb);
                 }
                 goto nextLexem;
 
