@@ -31,6 +31,7 @@ Current Mikado:
 ***** REQUIRES LexemBuffer as parameter to putLexToken()
 ****** DONE lb->end instead of writePositionP in handleCppToken()
 ****** DONE lb->end instead of extra parameter in processIdentifier()
+****** DONE lb->end instead of extra parameter in getLexemFromLexer()
 **** REQUIRES setting next write position in lexemStream in handleCompletionOrSearch()
 ***** DONE function to set lb->end (setLexemStreamEnd())
 
