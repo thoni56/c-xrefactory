@@ -687,7 +687,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 }
                 putLexChar(lb, 0);
                 putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn, &(lb->end));
-                putLexLines(lineNumberFrom(lb)-line, lb);
+                putLexLines(lb, lineNumberFrom(lb)-line);
                 ch = getChar(cb);
                 goto nextLexem;
 
@@ -711,7 +711,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
 
                     int line = lineNumberFrom(lb);
                     passComment(cb);
-                    putLexLines(lineNumberFrom(lb)-line, lb);
+                    putLexLines(lb, lineNumberFrom(lb)-line);
                     ch = getChar(cb);
                     goto nextLexem;
 
@@ -736,7 +736,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             ch = getChar(cb);
                         }
                     }
-                    putLexLines(lineNumberFrom(lb)-line, lb);
+                    putLexLines(lb, lineNumberFrom(lb)-line);
                 } else {
                     putLexToken('/', &(lb->end));
                     putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn, &(lb->end));
@@ -749,7 +749,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     lb->buffer.lineNumber++;
                     cb->lineBegin = cb->nextUnread;
                     cb->columnOffset = 0;
-                    putLexLines(1, lb);
+                    putLexLines(lb, 1);
                     ch = getChar(cb);
                 } else {
                     putLexToken('\\', &(lb->end));
@@ -782,7 +782,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             ch = '*';
                             int line = lineNumberFrom(lb);
                             passComment(cb);
-                            putLexLines(lineNumberFrom(lb)-line, lb);
+                            putLexLines(lb, lineNumberFrom(lb)-line);
                             ch = getChar(cb);
                             ch = skipBlanks(cb, ch);
                         }

@@ -150,7 +150,7 @@ int lineNumberFrom(LexemBuffer *lb) {
 }
 
 /* Lines */
-void putLexLines(int lines, LexemBuffer *lb) {
+void putLexLines(LexemBuffer *lb, int lines) {
     putLexToken(LINE_TOKEN, &(lb->end));
     putLexToken(lines, &(lb->end));
 }

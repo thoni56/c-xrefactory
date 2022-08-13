@@ -31,12 +31,12 @@ extern void setLexemStreamEnd(LexemBuffer *lb, int index);
 extern int fileNumberFrom(LexemBuffer *lb);
 extern int lineNumberFrom(LexemBuffer *lb);
 
-extern void putLexChar(char ch, char **writePointer);
+extern void putLexChar(LexemBuffer *lb, char ch);
 extern void putLexShort(int shortValue, char **writePointer);
 extern void putLexToken(Lexem lexem, char **writePointer);
 extern void putLexInt(int value, char **writePointer);
 extern void putLexCompacted(int value, char **writePointer);
-extern void putLexLines(int lines, LexemBuffer *lb);
+extern void putLexLines(LexemBuffer *lb, int lines);
 
 extern Lexem getLexemAt(LexemBuffer *lb, int index);
 

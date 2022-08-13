@@ -23,7 +23,7 @@ Ensure(LexemBuffer, can_put_and_get_a_char) {
     char        ch;
     char       *expected_next_after_get;
 
-    putLexChar('x', &lb.end);
+    putLexChar(&lb, 'x');
     expected_next_after_get = lb.end;
 
     ch = getLexChar(&lb.next);
@@ -110,7 +110,7 @@ Ensure(LexemBuffer, can_peek_next_token) {
 Ensure(LexemBuffer, can_put_and_get_lines) {
     char *pointer_after_put = NULL;
 
-    putLexLines(13, &lb);
+    putLexLines(&lb, 13);
     pointer_after_put = lb.end;
 
     assert_that(getLexToken(&lb.next), is_equal_to(LINE_TOKEN));

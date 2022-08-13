@@ -17,7 +17,7 @@ Some useful commands:
 There are a *lot* of things to do to make c-xref into modern C.
 
 Current Mikado:
-* TRY to make LexemBuffer interface just take LexemBuuffer
+* TRY to make LexemBuffer interface just take LexemBuffer
 ** TRY to use LexemBuffer as argument to all putLexXXX() functions
 *** TRY to add a LexemBuffer as argument to putLexToken()
 **** DONE LexemBuffer as argument to putLexLines()
@@ -45,10 +45,15 @@ Current Mikado:
 **** DONE Use lb->end instead of writePositionP in handleCompletionOrSearch()
 *** DONE Use LexemBuffer as argument to putLexChar()
 *** TRY Use LexemBuffer as argument to putLexShort()
+**** REQUIRES LexemBuffer as argument to putLexToken()
 *** TRY Use LexemBuffer as argument to putLexInt()
+**** REQUIRES lb->end instead of local variable destination in processDefineDirective()
 *** TRY Use LexemBuffer as argument to putLexCompacted()
+**** REQUIRES LexemBuffer as argument to putLexPositionFields()
 ** TRY to use LexemBuffer as argument to all getLexXXX() functions
-* DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
+* DOING Turn lexembuffer functions into methods on the buffer
+  get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
+  When do we point to something not a lexembuffer?* DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct
 * DOING BUG: Selecting automatic project selection after having set a specific does not seem to work
 * DOING Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
@@ -56,6 +61,9 @@ Current Mikado:
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra needed definitions for clang
+* TODO BUG: Progress now (b7c1d) shows fewer of the numbers
+This may have been trashed when hiding refactoringOptions in refactory.c. E.g. a "create" on c-xrefactory itself
+now only shows "10%" and then nothing until it's done.
 * TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
 ** TODO Make "get project" lookup the directory tree for closest .c-xrefrc that covers the file
@@ -94,9 +102,7 @@ Current Mikado:
 * TODO All fillXXX() should not be mocked but have the same body as the real one
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
-* TODO Turn lexembuffer functions into methods on the buffer
-  get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
-  When do we point to something not a lexembuffer?
+
 * TODO Add yacc parser construct for field in yystype ('$<field>$')
 * TODO Don't do any default operation (currently 'complete') if none given on command line
 * TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
