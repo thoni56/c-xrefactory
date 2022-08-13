@@ -35,6 +35,13 @@ Current Mikado:
 ****** REQUIRES lb->end instead of local variable destination in processDefineDirective()
 **** REQUIRES setting next write position in lexemStream in handleCompletionOrSearch()
 ***** DONE function to set lb->end (setLexemStreamEnd())
+** DONE Use LexemBuffer as argument to putLexLine()
+** TRY Use LexemBuffer as argument to putLexPositionFields()
+*** REQUIRES LexemBuffer instead of local destination in processDefineDirective()
+*** REQUIRES LexemBuffer instead of local variables in collate()
+*** REQUIRES LexemBuffer instead of local variables in createMacroBody()
+** TRY Use LexemBuffer as argument to putLexPosition()
+*** DONE Use lb->end instead of writePositionP in handleCompletionOrSearch()
 
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct

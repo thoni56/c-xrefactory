@@ -232,7 +232,7 @@ static int handleCppToken(LexemBuffer *lb) {
 }
 
 static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position position,
-                                     int currentLexemPosition, int *chP, char **writePositionP) {
+                                     int currentLexemPosition, int *chP) {
     *chP     = skipBlanks(&lb->buffer, *chP);
     int apos = absoluteFilePosition(&lb->buffer);
 
@@ -252,16 +252,16 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in already written identifier */
-                    *writePositionP = backpatchP + len;
+                    lb->end = backpatchP + len;
                     /* Terminate identifier here */
-                    putLexChar(0, writePositionP);
+                    putLexChar(0, &(lb->end));
                     /* And write the position */
-                    putLexPosition(position, writePositionP);
+                    putLexPosition(position, &(lb->end));
                 }
                 log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
             } else {
                 // completion after an identifier
-                putEmptyCompletionId(lb, writePositionP, apos - options.olCursorPos);
+                putEmptyCompletionId(lb, &(lb->end), apos - options.olCursorPos);
             }
         } else if ((thisLexToken == LINE_TOKEN || thisLexToken == STRING_LITERAL)
                    && (apos != options.olCursorPos)) {
@@ -269,7 +269,7 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
             // NO COMPLETION
         } else {
             // completion after another lexem
-            putEmptyCompletionId(lb, writePositionP, apos - options.olCursorPos);
+            putEmptyCompletionId(lb, &(lb->end), apos - options.olCursorPos);
         }
     }
 }
@@ -889,7 +889,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
-                    handleCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemPosition, &ch, &(lb->end));
+                    handleCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemPosition, &ch);
                 } else {
                     if (currentLexemPosition <= options.olCursorPos
                         && absoluteFilePosition(cb) >= options.olCursorPos) {
