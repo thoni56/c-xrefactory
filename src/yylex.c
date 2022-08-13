@@ -1438,7 +1438,7 @@ static void cxAddCollateReference( char *sym, char *cs, Position *pos ) {
 static void collate(char **albcc, char **abcc, char *buf, int *absize,
                     char **ancc, LexInput *actArgs) {
     char *lbcc,*bcc,*cc,*ccfin,*cc0,*ncc,*occ;
-    int lineNumber, value, nlex, len1, bsize;
+    int lineNumber, value, nextLexem, len1, bsize;
     Lexem lexem;
     Position respos;
     Position position; UNUSED position;
@@ -1479,51 +1479,49 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     }
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
-    if (lbcc!=NULL && cc < ccfin && isIdentifierLexem(nextLexToken(&lbcc))) {
-        nlex = nextLexToken(&cc);
-        if (isIdentifierLexem(nlex) || nlex == CONSTANT
-                    || nlex == LONG_CONSTANT || nlex == FLOAT_CONSTANT
-                    || nlex == DOUBLE_CONSTANT ) {
+    if (lbcc != NULL && cc < ccfin && isIdentifierLexem(nextLexToken(&lbcc))) {
+        nextLexem = nextLexToken(&cc);
+        if (isIdentifierLexem(nextLexem) || nextLexem == CONSTANT || nextLexem == LONG_CONSTANT
+            || nextLexem == FLOAT_CONSTANT || nextLexem == DOUBLE_CONSTANT) {
             /* TODO collation of all lexem pairs */
-            len1 = strlen(lbcc+IDENT_TOKEN_SIZE);
+            len1  = strlen(lbcc + IDENT_TOKEN_SIZE);
             lexem = getLexToken(&cc);
-            occ = cc;
+            occ   = cc;
             passLexem(&cc, lexem, &lineNumber, &value, &respos, &length, false);
             bcc = lbcc + IDENT_TOKEN_SIZE + len1;
-            assert(*bcc==0);
+            assert(*bcc == 0);
             if (isIdentifierLexem(lexem)) {
-/*				NextLexPosition(respos,bcc+1);	*/ /* new identifier position*/
-                strcpy(bcc,occ);
+                strcpy(bcc, occ);
                 // the following is a hack as # is part of ## symbols
-                respos.col --;
-                assert(respos.col>=0);
-                cxAddCollateReference( lbcc+IDENT_TOKEN_SIZE, bcc, &respos);
-                respos.col ++;
+                respos.col--;
+                assert(respos.col >= 0);
+                cxAddCollateReference(lbcc + IDENT_TOKEN_SIZE, bcc, &respos);
+                respos.col++;
             } else {
-                NextLexPosition(respos,bcc+1);	/* new identifier position*/
-                sprintf(bcc,"%d",value);
-                cxAddCollateReference( lbcc+IDENT_TOKEN_SIZE, bcc, &respos);
+                NextLexPosition(respos, bcc + 1); /* new identifier position*/
+                sprintf(bcc, "%d", value);
+                cxAddCollateReference(lbcc + IDENT_TOKEN_SIZE, bcc, &respos);
             }
             bcc += strlen(bcc);
-            assert(*bcc==0);
+            assert(*bcc == 0);
             bcc++;
-            putLexPositionFields(respos.file,respos.line,respos.col, &bcc);
+            putLexPositionFields(respos.file, respos.line, respos.col, &bcc);
         }
     }
-    TestPPBufOverflow(bcc,buf,bsize);
-    while (cc<ccfin) {
-        cc0 = cc;
+    TestPPBufOverflow(bcc, buf, bsize);
+    while (cc < ccfin) {
+        cc0   = cc;
         lexem = getLexToken(&cc);
         passLexem(&cc, lexem, &lineNumber, &value, &position, &length, false);
         lbcc = bcc;
-        assert(cc>=cc0);
-        memcpy(bcc, cc0, cc-cc0);
-        bcc += cc-cc0;
-        TestPPBufOverflow(bcc,buf,bsize);
+        assert(cc >= cc0);
+        memcpy(bcc, cc0, cc - cc0);
+        bcc += cc - cc0;
+        TestPPBufOverflow(bcc, buf, bsize);
     }
-    *albcc = lbcc;
-    *abcc = bcc;
-    *ancc = ncc;
+    *albcc  = lbcc;
+    *abcc   = bcc;
+    *ancc   = ncc;
     *absize = bsize;
 }
 

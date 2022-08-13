@@ -56,8 +56,7 @@ extern void putLexPositionFields(int file, int line, int col, char **writePointe
 extern void putLexPosition(LexemBuffer *lb, Position position);
 extern Position getLexPosition(char **readPointer);
 
-
-/* TODO: cannot replace NextLexPosition yet, as the only call has "bcc+1" as tmpcc */
+/* TODO: cannot replace NextLexPosition macro with this yet, as the only call has "bcc+1" as tmpcc */
 extern Position nextLexPosition(char **readPointer);
 
 #define NextLexPosition(pos,tmpcc) {            \
