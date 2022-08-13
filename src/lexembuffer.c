@@ -31,9 +31,8 @@ void setLexemStreamEnd(LexemBuffer *lb, int index) {
 
 
 /* Char */
-void putLexChar(char ch, char **writePointerP) {
-    **writePointerP = ch;
-    (*writePointerP)++;
+void putLexChar(LexemBuffer *lb, char ch) {
+    *(lb->end++) = ch;
 }
 
 unsigned char getLexChar(char **readPointerP) {

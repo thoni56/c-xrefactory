@@ -112,11 +112,11 @@ static void processIdentifier(int *chP, LexemBuffer *lb) {
     column = columnPosition(&lb->buffer);
     putLexToken(IDENTIFIER, &(lb->end));
     do {
-        putLexChar(*chP, &(lb->end));
+        putLexChar(lb, *chP);
         *chP = getChar(&lb->buffer);
     } while (isalpha(*chP) || isdigit(*chP) || *chP == '_'
              || (*chP == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
-    putLexChar(0, &(lb->end));
+    putLexChar(lb, 0);
     putLexPositionFields(lb->buffer.fileNumber, lb->buffer.lineNumber, column, &(lb->end));
 }
 
@@ -132,7 +132,7 @@ static void noteNewLexemPosition(LexemBuffer *lb) {
 
 static void putEmptyCompletionId(LexemBuffer *lb, char **destinationP, int len) {
     putLexToken(IDENT_TO_COMPLETE, destinationP);
-    putLexChar(0, destinationP);
+    putLexChar(lb, 0);
     putLexPositionFields(lb->buffer.fileNumber, lb->buffer.lineNumber,
                    columnPosition(&lb->buffer) - len, destinationP);
 }
@@ -201,10 +201,10 @@ static int handleCppToken(LexemBuffer *lb) {
             scol = columnPosition(&lb->buffer);
             putLexToken(STRING_LITERAL, &(lb->end));
             do {
-                putLexChar(ch, &(lb->end));
+                putLexChar(lb, ch);
                 ch = getChar(&lb->buffer);
             } while (ch != endCh && ch != '\n');
-            putLexChar(0, &(lb->end));
+            putLexChar(lb, 0);
             putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), scol, &(lb->end));
             if (ch == endCh)
                 ch = getChar(&lb->buffer);
@@ -246,15 +246,18 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
             log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + TOKEN_SIZE, len,
                       strlen(startOfCurrentLexem + TOKEN_SIZE));
             if (len <= strlen(startOfCurrentLexem + TOKEN_SIZE)) {
-                /* Need to backpatch the current lexem */
+                /* Need to backpatch the current lexem to a COMPLETE lexem */
                 char *backpatchP = startOfCurrentLexem;
                 putLexToken(IDENT_TO_COMPLETE, &backpatchP);
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in already written identifier */
+                    /* TODO: here we should use setLexemStreamEnd(), but what is the index?
+                       Maybe the interface to setLexemStreamEnd() is wrong, should have pointer instead?
+                    */
                     lb->end = backpatchP + len;
                     /* Terminate identifier here */
-                    putLexChar(0, &(lb->end));
+                    putLexChar(lb, 0);
                     /* And write the position */
                     putLexPosition(lb, position);
                 }
@@ -653,12 +656,12 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     ch = getChar(cb);
                     size ++;
                     if (ch!='\"' && size<MAX_LEXEM_SIZE-10)
-                        putLexChar(ch, &(lb->end));
+                        putLexChar(lb, ch);
                     if (ch=='\\') {
                         ch = getChar(cb);
                         size ++;
                         if (size < MAX_LEXEM_SIZE-10)
-                            putLexChar(ch, &(lb->end));
+                            putLexChar(lb, ch);
                         /* TODO escape sequences */
                         if (ch == '\n') {
                             lb->buffer.lineNumber++;
@@ -682,7 +685,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 if (ch == -1 && options.mode!=ServerMode) {
                     warningMessage(ERR_ST,"string constant through EOF");
                 }
-                putLexChar(0, &(lb->end));
+                putLexChar(lb, 0);
                 putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn, &(lb->end));
                 putLexLines(lineNumberFrom(lb)-line, lb);
                 ch = getChar(cb);
