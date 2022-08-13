@@ -1492,6 +1492,9 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
             bcc = lbcc + IDENT_TOKEN_SIZE + len1;
             assert(*bcc == 0);
             if (isIdentifierLexem(lexem)) {
+                /* TODO: WTF Here was a out-commented call to
+                 * NextLexPosition(), maybe the following "hack"
+                 * replaced that macro */
                 strcpy(bcc, occ);
                 // the following is a hack as # is part of ## symbols
                 respos.col--;
@@ -1499,6 +1502,10 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
                 cxAddCollateReference(lbcc + IDENT_TOKEN_SIZE, bcc, &respos);
                 respos.col++;
             } else {
+                /* TODO: We should replace the NextLexPosition() macro
+                 * with the C function nextLexPosition(). But the
+                 * parameters here is weird (bcc+1). Also we have no
+                 * coverage for this code. Why is that? */
                 NextLexPosition(respos, bcc + 1); /* new identifier position*/
                 sprintf(bcc, "%d", value);
                 cxAddCollateReference(lbcc + IDENT_TOKEN_SIZE, bcc, &respos);
