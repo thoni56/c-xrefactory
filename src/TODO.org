@@ -17,32 +17,37 @@ Some useful commands:
 There are a *lot* of things to do to make c-xref into modern C.
 
 Current Mikado:
-* TRY to use LexemBuffer as argument to all putLexXXX() functions
-** TRY to add a LexemBuffer as argument to putLexToken()
-*** DONE LexemBuffer as argument to putLexLines()
-*** DONE LexemBuffer as argument to processIdentifier()
-*** DONE LexemBuffer as argument to putEmptyCompletionId()
-*** REQUIRES LexemBuffer instead of body in processDefineDirective()
-*** REQUIRES LexemBuffer instead of buf/bcc/tbcc in expandMacroArgument()
-*** REQUIRES LexemBuffer instead of buf/bcc in createMacroBody()
-*** REQUIRES backpatching of lexems
-**** REQUIRES backpatch lexem token in handleCppToken()
-***** DONE functions to backpatch lexem token
-***** REQUIRES LexemBuffer as parameter to putLexToken()
-****** DONE lb->end instead of writePositionP in handleCppToken()
-****** DONE lb->end instead of extra parameter in processIdentifier()
-****** DONE lb->end instead of extra parameter in getLexemFromLexer()
-****** REQUIRES lb->end instead of local variable destination in processDefineDirective()
-**** REQUIRES setting next write position in lexemStream in handleCompletionOrSearch()
-***** DONE function to set lb->end (setLexemStreamEnd())
-** DONE Use LexemBuffer as argument to putLexLine()
-** TRY Use LexemBuffer as argument to putLexPositionFields()
-*** REQUIRES LexemBuffer instead of local destination in processDefineDirective()
-*** REQUIRES LexemBuffer instead of local variables in collate()
-*** REQUIRES LexemBuffer instead of local variables in createMacroBody()
-** DONE Use LexemBuffer as argument to putLexPosition()
-*** DONE Use lb->end instead of writePositionP in handleCompletionOrSearch()
-
+* TRY to make LexemBuffer interface just take LexemBuuffer
+** TRY to use LexemBuffer as argument to all putLexXXX() functions
+*** TRY to add a LexemBuffer as argument to putLexToken()
+**** DONE LexemBuffer as argument to putLexLines()
+**** DONE LexemBuffer as argument to processIdentifier()
+**** DONE LexemBuffer as argument to putEmptyCompletionId()
+**** REQUIRES LexemBuffer instead of body in processDefineDirective()
+**** REQUIRES LexemBuffer instead of buf/bcc/tbcc in expandMacroArgument()
+**** REQUIRES LexemBuffer instead of buf/bcc in createMacroBody()
+**** REQUIRES backpatching of lexems
+***** REQUIRES backpatch lexem token in handleCppToken()
+****** DONE functions to backpatch lexem token
+****** REQUIRES LexemBuffer as parameter to putLexToken()
+******* DONE lb->end instead of writePositionP in handleCppToken()
+******* DONE lb->end instead of extra parameter in processIdentifier()
+******* DONE lb->end instead of extra parameter in getLexemFromLexer()
+******* REQUIRES lb->end instead of local variable destination in processDefineDirective()
+***** REQUIRES setting next write position in lexemStream in handleCompletionOrSearch()
+****** DONE function to set lb->end (setLexemStreamEnd())
+*** DONE Use LexemBuffer as argument to putLexLine()
+*** TRY Use LexemBuffer as argument to putLexPositionFields()
+**** REQUIRES LexemBuffer instead of local destination in processDefineDirective()
+**** REQUIRES LexemBuffer instead of local variables in collate()
+**** REQUIRES LexemBuffer instead of local variables in createMacroBody()
+*** DONE Use LexemBuffer as argument to putLexPosition()
+**** DONE Use lb->end instead of writePositionP in handleCompletionOrSearch()
+*** DONE Use LexemBuffer as argument to putLexChar()
+*** TRY Use LexemBuffer as argument to putLexShort()
+*** TRY Use LexemBuffer as argument to putLexInt()
+*** TRY Use LexemBuffer as argument to putLexCompacted()
+** TRY to use LexemBuffer as argument to all getLexXXX() functions
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
   Currently it is done using the argv vector, would probably be cleaner using a specific option struct
 * DOING BUG: Selecting automatic project selection after having set a specific does not seem to work
