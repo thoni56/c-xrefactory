@@ -1537,7 +1537,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     *absize = bsize;
 }
 
-static void macArgsToString(char *res, struct lexInput *lb) {
+static void macroArgumentsToString(char *res, struct lexInput *lb) {
     char *cc, *lcc, *bcc;
     int value,lineNumber;
     Lexem lexem;
@@ -1574,7 +1574,7 @@ static void macArgsToString(char *res, struct lexInput *lb) {
 
 static void createMacroBody(LexInput *macroBody,
                             MacroBody *mb,
-                            LexInput *actArgs,
+                            LexInput *actualArguments,
                             int actArgn
 ) {
     char *cc,*cc0,*cfin,*bcc,*lbcc;
@@ -1597,7 +1597,7 @@ static void createMacroBody(LexInput *macroBody,
         lexem = getLexToken(&cc);
         passLexem(&cc, lexem, &lineNumber, &value, NULL, &length, false);
         if (lexem==CPP_COLLATION && lbcc!=NULL && cc<cfin) {
-            collate(&lbcc,&bcc,buf,&bsize,&cc,actArgs);
+            collate(&lbcc,&bcc,buf,&bsize,&cc,actualArguments);
         } else {
             lbcc = bcc;
             assert(cc>=cc0);
@@ -1611,7 +1611,7 @@ static void createMacroBody(LexInput *macroBody,
 
     /* expand arguments */
     for(i=0;i<actArgn; i++) {
-        expandMacroArgument(&actArgs[i]);
+        expandMacroArgument(&actualArguments[i]);
     }
 
     /* replace arguments */
@@ -1625,9 +1625,9 @@ static void createMacroBody(LexInput *macroBody,
         lexem = getLexToken(&cc);
         passLexem(&cc, lexem, &lineNumber, &value, &hpos, &length, false);
         if (lexem == CPP_MACRO_ARGUMENT) {
-            len = actArgs[value].endOfBuffer - actArgs[value].beginningOfBuffer;
+            len = actualArguments[value].endOfBuffer - actualArguments[value].beginningOfBuffer;
             TestMBBufOverflow(bcc,len,buf2,bsize);
-            memcpy(bcc, actArgs[value].beginningOfBuffer, len);
+            memcpy(bcc, actualArguments[value].beginningOfBuffer, len);
             bcc += len;
         } else if (lexem=='#' && cc<cfin && nextLexToken(&cc)==CPP_MACRO_ARGUMENT) {
             lexem = getLexToken(&cc);
@@ -1635,7 +1635,7 @@ static void createMacroBody(LexInput *macroBody,
             assert(lexem == CPP_MACRO_ARGUMENT);
             putLexToken(STRING_LITERAL, &bcc);
             TestMBBufOverflow(bcc,MACRO_UNIT_SIZE,buf2,bsize);
-            macArgsToString(bcc, &actArgs[value]);
+            macroArgumentsToString(bcc, &actualArguments[value]);
             len = strlen(bcc)+1;
             bcc += len;
             /* TODO: This should really be putLexPosition() but that takes a LexemBuffer... */
