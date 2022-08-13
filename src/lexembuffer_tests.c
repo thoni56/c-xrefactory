@@ -9,121 +9,97 @@
 #include "fileio.mock"
 #include "zlib.mock"
 
+
+LexemBuffer lb;
+
 Describe(LexemBuffer);
 BeforeEach(LexemBuffer) {
     log_set_level(LOG_ERROR);
+    initLexemBuffer(&lb, NULL);
 }
 AfterEach(LexemBuffer) {}
 
 Ensure(LexemBuffer, can_put_and_get_a_char) {
-    LexemBuffer lb;
     char        ch;
-    char       *next_after_put;
+    char       *expected_next_after_get;
 
-    initLexemBuffer(&lb, NULL);
+    putLexChar('x', &lb.end);
+    expected_next_after_get = lb.end;
 
-    putLexChar('x', &lb.next);
-    next_after_put = lb.next;
+    ch = getLexChar(&lb.next);
 
-    lb.next = lb.lexemStream;
-    ch      = getLexChar(&lb.next);
-
-    assert_that(lb.next, is_equal_to(next_after_put));
+    assert_that(lb.next, is_equal_to(expected_next_after_get));
     assert_that(ch, is_equal_to('x'));
 }
 
 Ensure(LexemBuffer, can_put_and_get_a_short) {
-    LexemBuffer lb;
     int         shortValue;
-    char       *next_after_put;
+    char       *expected_next_after_get;
 
-    initLexemBuffer(&lb, NULL);
+    putLexShort(433, &lb.end);
+    expected_next_after_get = lb.end;
 
-    putLexShort(433, &lb.next);
-    next_after_put = lb.next;
-
-    lb.next = lb.lexemStream;
     shortValue  = getLexShort(&lb.next);
 
-    assert_that(lb.next, is_equal_to(next_after_put));
+    assert_that(lb.next, is_equal_to(expected_next_after_get));
     assert_that(shortValue, is_equal_to(433));
 }
 
 Ensure(LexemBuffer, can_put_and_get_a_token) {
-    LexemBuffer lb;
     Lexem       lexem;
-    char       *next_after_put;
+    char       *expected_next_after_get;
 
-    initLexemBuffer(&lb, NULL);
+    putLexToken(DOUBLE_CONSTANT, &lb.end);
+    expected_next_after_get = lb.end;
 
-    putLexToken(DOUBLE_CONSTANT, &lb.next);
-    next_after_put = lb.next;
+    lexem = getLexToken(&lb.next);
 
-    lb.next = lb.lexemStream;
-    lexem       = getLexToken(&lb.next);
-
-    assert_that(lb.next, is_equal_to(next_after_put));
+    assert_that(lb.next, is_equal_to(expected_next_after_get));
     assert_that(lexem, is_equal_to(DOUBLE_CONSTANT));
 }
 
 Ensure(LexemBuffer, can_put_and_get_an_int) {
-    LexemBuffer buffer;
     int         integer;
-    char       *next_after_put;
+    char       *expected_next_after_get;
 
-    initLexemBuffer(&buffer, NULL);
+    putLexInt(34581, &lb.end);
+    expected_next_after_get = lb.end;
 
-    putLexInt(34581, &buffer.next);
-    next_after_put = buffer.next;
+    integer     = getLexInt(&lb.next);
 
-    buffer.next = buffer.lexemStream;
-    integer     = getLexInt(&buffer.next);
-
-    assert_that(buffer.next, is_equal_to(next_after_put));
+    assert_that(lb.next, is_equal_to(expected_next_after_get));
     assert_that(integer, is_equal_to(34581));
 }
 
 Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
-    LexemBuffer buffer;
     int         integer;
-    char       *next_after_put;
-
-    initLexemBuffer(&buffer, NULL);
+    char       *expected_next_after_get;
 
     /* Test values across the 128 boundry, 1 or 2 "slots" */
     for (int i = 0; i < 150; i++) {
-        buffer.next = buffer.lexemStream;
+        putLexCompacted(i, &lb.end);
+        expected_next_after_get = lb.end;
 
-        putLexCompacted(i, &buffer.next);
-        next_after_put = buffer.next;
+        integer     = getLexCompacted(&lb.next);
 
-        buffer.next = buffer.lexemStream;
-        integer     = getLexCompacted(&buffer.next);
-
-        assert_that(buffer.next, is_equal_to(next_after_put));
+        assert_that(lb.next, is_equal_to(expected_next_after_get));
         assert_that(integer, is_equal_to(i));
     }
 
     /* Test values across the 16384 boundry, 2 or 3 "slots" */
     for (int i = 16300; i < 16500; i++) {
-        buffer.next = buffer.lexemStream;
+        putLexCompacted(i, &lb.end);
+        expected_next_after_get = lb.end;
 
-        putLexCompacted(i, &buffer.next);
-        next_after_put = buffer.next;
+        integer     = getLexCompacted(&lb.next);
 
-        buffer.next = buffer.lexemStream;
-        integer     = getLexCompacted(&buffer.next);
-
-        assert_that(buffer.next, is_equal_to(next_after_put));
+        assert_that(lb.next, is_equal_to(expected_next_after_get));
         assert_that(integer, is_equal_to(i));
     }
 }
 
 Ensure(LexemBuffer, can_peek_next_token) {
-    LexemBuffer lb;
     Lexem any_lexem = CHAR_LITERAL;
-
-    initLexemBuffer(&lb, NULL);
 
     putLexToken(any_lexem, &lb.end);
 
@@ -132,10 +108,7 @@ Ensure(LexemBuffer, can_peek_next_token) {
 }
 
 Ensure(LexemBuffer, can_put_and_get_lines) {
-    LexemBuffer lb;
     char *pointer_after_put = NULL;
-
-    initLexemBuffer(&lb, NULL);
 
     putLexLines(13, &lb);
     pointer_after_put = lb.end;
@@ -146,13 +119,10 @@ Ensure(LexemBuffer, can_put_and_get_lines) {
 }
 
 Ensure(LexemBuffer, can_put_and_get_position) {
-    LexemBuffer lb;
     char    *pointer_after_put = NULL;
     Position first_position  = {41, 42, 43};
     Position second_position  = {44, 45, 46};
     Position read_position;
-
-    initLexemBuffer(&lb, NULL);
 
     putLexPositionFields(first_position.file, first_position.line, first_position.col, &lb.end);
     putLexPosition(&lb, second_position);
@@ -166,10 +136,7 @@ Ensure(LexemBuffer, can_put_and_get_position) {
 }
 
 Ensure(LexemBuffer, can_backpatch_lexem) {
-    LexemBuffer lb;
     Lexem backpatched_lexem = STRING_LITERAL;
-
-    initLexemBuffer(&lb, NULL);
 
     int backpatchIndex = getCurrentLexemIndexForBackpatching(&lb);
     putLexToken(CPP_LINE, &lb.end);
@@ -187,10 +154,6 @@ Ensure(LexemBuffer, can_backpatch_lexem) {
 }
 
 Ensure(LexemBuffer, can_set_next_write_position) {
-    LexemBuffer lb;
-
-    initLexemBuffer(&lb, NULL);
-
     putLexToken(IDENTIFIER, &lb.end);
     assert_that(lb.end, is_not_equal_to(lb.lexemStream));
 
