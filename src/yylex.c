@@ -250,43 +250,44 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
 
 /* maybe too complex/general, long argument list, when lex is known */
 /* could be broken into parts for specific lexem types */
-static void passLexem(char **input, Lexem lexem, int *lineNumberP, int *valueP, Position *positionP, int *lengthP, bool countLines) {
+static void passLexem(char **input, Lexem lexem, int *outLineNumber, int *outValue, Position *outPosition,
+                      int *outLength, bool countLines) {
     if (lexem > MULTI_TOKENS_START) {
         if (isIdentifierLexem(lexem)){
             *input = strchr(*input, '\0')+1;
-            *positionP = getLexPosition(input);
+            *outPosition = getLexPosition(input);
         } else if (lexem == STRING_LITERAL) {
             *input = strchr(*input, '\0')+1;
-            *positionP = getLexPosition(input);
+            *outPosition = getLexPosition(input);
         } else if (lexem == LINE_TOKEN) {
-            *lineNumberP = getLexToken(input);
+            *outLineNumber = getLexToken(input);
             if (countLines) {
-                traceNewline(*lineNumberP);
-                currentFile.lineNumber += *lineNumberP;
+                traceNewline(*outLineNumber);
+                currentFile.lineNumber += *outLineNumber;
             }
         } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
-            *valueP = getLexInt(input);
-            *positionP = getLexPosition(input);
-            *lengthP = getLexInt(input);
+            *outValue = getLexInt(input);
+            *outPosition = getLexPosition(input);
+            *outLength = getLexInt(input);
         } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) {
-            *positionP = getLexPosition(input);
-            *lengthP = getLexInt(input);
+            *outPosition = getLexPosition(input);
+            *outLength = getLexInt(input);
         } else if (lexem == CPP_MACRO_ARGUMENT) {
-            *valueP = getLexInt(input);
-            *positionP = getLexPosition(input);
+            *outValue = getLexInt(input);
+            *outPosition = getLexPosition(input);
         } else if (lexem == CHAR_LITERAL) {
-            *valueP = getLexInt(input);
-            *positionP = getLexPosition(input);
-            *lengthP = getLexInt(input);
+            *outValue = getLexInt(input);
+            *outPosition = getLexPosition(input);
+            *outLength = getLexInt(input);
         }
     } else if (isPreprocessorToken(lexem)) {
-        *positionP = getLexPosition(input);
+        *outPosition = getLexPosition(input);
     } else if (lexem == '\n' && (countLines)) {
-        *positionP = getLexPosition(input);
+        *outPosition = getLexPosition(input);
         traceNewline(1);
         currentFile.lineNumber ++;
     } else {
-        *positionP = getLexPosition(input);
+        *outPosition = getLexPosition(input);
     }
 }
 
