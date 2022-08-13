@@ -244,6 +244,13 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
     isProcessingPreprocessorIf = false;				/* TODO: WTF??? */
 }
 
+static void getLexPositionIfRequired(char **input, Position *outPosition) {
+    if (outPosition != NULL)
+        *outPosition = getLexPosition(input);
+    else
+        getLexPosition(input);
+}
+
 /* ***************************************************************** */
 /*                                                                   */
 /* ***************************************************************** */
@@ -255,16 +262,10 @@ static void passLexem(char **input, Lexem lexem, int *outLineNumber, int *outVal
     if (lexem > MULTI_TOKENS_START) {
         if (isIdentifierLexem(lexem)) {
             *input = strchr(*input, '\0') + 1;
-            if (outPosition != NULL)
-                *outPosition = getLexPosition(input);
-            else
-                getLexPosition(input);
+            getLexPositionIfRequired(input, outPosition);
         } else if (lexem == STRING_LITERAL) {
             *input = strchr(*input, '\0') + 1;
-            if (outPosition != NULL)
-                *outPosition = getLexPosition(input);
-            else
-                getLexPosition(input);
+            getLexPositionIfRequired(input, outPosition);
         } else if (lexem == LINE_TOKEN) {
             *outLineNumber = getLexToken(input);
             if (countLines) {
@@ -273,48 +274,27 @@ static void passLexem(char **input, Lexem lexem, int *outLineNumber, int *outVal
             }
         } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
             *outValue = getLexInt(input);
-            if (outPosition != NULL)
-                *outPosition = getLexPosition(input);
-            else
-                getLexPosition(input);
+            getLexPositionIfRequired(input, outPosition);
             *outLength = getLexInt(input);
         } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) {
-            if (outPosition != NULL)
-                *outPosition = getLexPosition(input);
-            else
-                getLexPosition(input);
+            getLexPositionIfRequired(input, outPosition);
             *outLength = getLexInt(input);
         } else if (lexem == CPP_MACRO_ARGUMENT) {
             *outValue = getLexInt(input);
-            if (outPosition != NULL)
-                *outPosition = getLexPosition(input);
-            else
-                getLexPosition(input);
+            getLexPositionIfRequired(input, outPosition);
         } else if (lexem == CHAR_LITERAL) {
             *outValue = getLexInt(input);
-            if (outPosition != NULL)
-                *outPosition = getLexPosition(input);
-            else
-                getLexPosition(input);
+            getLexPositionIfRequired(input, outPosition);
             *outLength = getLexInt(input);
         }
     } else if (isPreprocessorToken(lexem)) {
-        if (outPosition != NULL)
-            *outPosition = getLexPosition(input);
-        else
-            getLexPosition(input);
+        getLexPositionIfRequired(input, outPosition);
     } else if (lexem == '\n' && (countLines)) {
-        if (outPosition != NULL)
-            *outPosition = getLexPosition(input);
-        else
-            getLexPosition(input);
+        getLexPositionIfRequired(input, outPosition);
         traceNewline(1);
         currentFile.lineNumber++;
     } else {
-        if (outPosition != NULL)
-            *outPosition = getLexPosition(input);
-        else
-            getLexPosition(input);
+        getLexPositionIfRequired(input, outPosition);
     }
 }
 
