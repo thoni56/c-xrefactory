@@ -36,7 +36,7 @@ extern void putLexShort(int shortValue, char **writePointer);
 extern void putLexToken(Lexem lexem, char **writePointer);
 extern void putLexInt(int value, char **writePointer);
 extern void putLexCompacted(int value, char **writePointer);
-extern void putLexLines(int lines, char **writePointer, LexemBuffer *lb);
+extern void putLexLines(int lines, LexemBuffer *lb);
 
 extern Lexem getLexemAt(LexemBuffer *lb, int index);
 

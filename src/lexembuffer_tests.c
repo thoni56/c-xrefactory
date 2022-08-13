@@ -137,7 +137,7 @@ Ensure(LexemBuffer, can_put_and_get_lines) {
 
     initLexemBuffer(&lb, NULL);
 
-    putLexLines(13, &lb.end, &lb);
+    putLexLines(13, &lb);
     pointer_after_put = lb.end;
 
     assert_that(getLexToken(&lb.next), is_equal_to(LINE_TOKEN));

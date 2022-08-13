@@ -32,6 +32,7 @@ Current Mikado:
 ****** DONE lb->end instead of writePositionP in handleCppToken()
 ****** DONE lb->end instead of extra parameter in processIdentifier()
 ****** DONE lb->end instead of extra parameter in getLexemFromLexer()
+****** REQUIRES lb->end instead of local variable destination in processDefineDirective()
 **** REQUIRES setting next write position in lexemStream in handleCompletionOrSearch()
 ***** DONE function to set lb->end (setLexemStreamEnd())
 

@@ -684,7 +684,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 }
                 putLexChar(0, &(lb->end));
                 putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn, &(lb->end));
-                putLexLines(lineNumberFrom(lb)-line, &(lb->end), lb);
+                putLexLines(lineNumberFrom(lb)-line, lb);
                 ch = getChar(cb);
                 goto nextLexem;
 
@@ -708,7 +708,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
 
                     int line = lineNumberFrom(lb);
                     passComment(cb);
-                    putLexLines(lineNumberFrom(lb)-line, &(lb->end), lb);
+                    putLexLines(lineNumberFrom(lb)-line, lb);
                     ch = getChar(cb);
                     goto nextLexem;
 
@@ -733,7 +733,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             ch = getChar(cb);
                         }
                     }
-                    putLexLines(lineNumberFrom(lb)-line, &(lb->end), lb);
+                    putLexLines(lineNumberFrom(lb)-line, lb);
                 } else {
                     putLexToken('/', &(lb->end));
                     putLexPositionFields(fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn, &(lb->end));
@@ -746,7 +746,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     lb->buffer.lineNumber++;
                     cb->lineBegin = cb->nextUnread;
                     cb->columnOffset = 0;
-                    putLexLines(1, &(lb->end), lb);
+                    putLexLines(1, lb);
                     ch = getChar(cb);
                 } else {
                     putLexToken('\\', &(lb->end));
@@ -779,7 +779,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             ch = '*';
                             int line = lineNumberFrom(lb);
                             passComment(cb);
-                            putLexLines(lineNumberFrom(lb)-line, &(lb->end), lb);
+                            putLexLines(lineNumberFrom(lb)-line, lb);
                             ch = getChar(cb);
                             ch = skipBlanks(cb, ch);
                         }

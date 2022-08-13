@@ -151,9 +151,9 @@ int lineNumberFrom(LexemBuffer *lb) {
 }
 
 /* Lines */
-void putLexLines(int lines, char **writePointerP, LexemBuffer *lb) {
-    putLexToken(LINE_TOKEN, writePointerP);
-    putLexToken(lines, writePointerP);
+void putLexLines(int lines, LexemBuffer *lb) {
+    putLexToken(LINE_TOKEN, &(lb->end));
+    putLexToken(lines, &(lb->end));
 }
 
 /* Position */
