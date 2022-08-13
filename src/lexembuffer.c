@@ -164,11 +164,11 @@ void putLexPositionFields(int file, int line, int column, char **writePointerP) 
     putLexCompacted(column, writePointerP);
 }
 
-void putLexPosition(Position position, char **writePointerP) {
+void putLexPosition(LexemBuffer *lb, Position position) {
     assert(position.file>=0 && position.file<MAX_FILES);
-    putLexCompacted(position.file, writePointerP);
-    putLexCompacted(position.line, writePointerP);
-    putLexCompacted(position.col, writePointerP);
+    putLexCompacted(position.file, &(lb->end));
+    putLexCompacted(position.line, &(lb->end));
+    putLexCompacted(position.col, &(lb->end));
 }
 
 Position getLexPosition(char **readPointerP) {

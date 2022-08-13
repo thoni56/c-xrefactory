@@ -148,16 +148,20 @@ Ensure(LexemBuffer, can_put_and_get_lines) {
 Ensure(LexemBuffer, can_put_and_get_position) {
     LexemBuffer lb;
     char    *pointer_after_put = NULL;
-    Position initial_position  = {41, 42, 43};
+    Position first_position  = {41, 42, 43};
+    Position second_position  = {44, 45, 46};
     Position read_position;
 
     initLexemBuffer(&lb, NULL);
 
-    putLexPositionFields(initial_position.file, initial_position.line, initial_position.col, &lb.end);
+    putLexPositionFields(first_position.file, first_position.line, first_position.col, &lb.end);
+    putLexPosition(&lb, second_position);
     pointer_after_put = lb.end;
 
     read_position = getLexPosition(&lb.next);
-    assert_that(positionsAreEqual(read_position, initial_position));
+    assert_that(positionsAreEqual(read_position, first_position));
+    read_position = getLexPosition(&lb.next);
+    assert_that(positionsAreEqual(read_position, second_position));
     assert_that(lb.next, is_equal_to(pointer_after_put));
 }
 

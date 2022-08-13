@@ -40,7 +40,7 @@ Current Mikado:
 *** REQUIRES LexemBuffer instead of local destination in processDefineDirective()
 *** REQUIRES LexemBuffer instead of local variables in collate()
 *** REQUIRES LexemBuffer instead of local variables in createMacroBody()
-** TRY Use LexemBuffer as argument to putLexPosition()
+** DONE Use LexemBuffer as argument to putLexPosition()
 *** DONE Use lb->end instead of writePositionP in handleCompletionOrSearch()
 
 * DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'

@@ -256,7 +256,7 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                     /* Terminate identifier here */
                     putLexChar(0, &(lb->end));
                     /* And write the position */
-                    putLexPosition(position, &(lb->end));
+                    putLexPosition(lb, position);
                 }
                 log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
             } else {
@@ -848,19 +848,19 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                                 parChar = '{';
                         }
                         putLexToken(parChar, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(parChar, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(';', &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(';', &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(OL_MARKER_TOKEN, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(parChar, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(parChar, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         parsedInfo.marker1Flag = true;
                     } else if (apos >= options.olMarkPos && !parsedInfo.marker2Flag){
                         if (LANGUAGE(LANG_JAVA))
@@ -872,19 +872,19 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                                 parChar = '{';
                         }
                         putLexToken(parChar, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(parChar, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(';', &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(';', &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(OL_MARKER_TOKEN, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(parChar, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         putLexToken(parChar, &(lb->end));
-                        putLexPosition(position, &(lb->end));
+                        putLexPosition(lb, position);
                         parsedInfo.marker2Flag = true;
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
@@ -907,7 +907,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         int apos = absoluteFilePosition(cb);
                         if (apos >= options.olCursorPos && !parsedInfo.marker1Flag) {
                             putLexToken(OL_MARKER_TOKEN, &(lb->end));
-                            putLexPosition(position, &(lb->end));
+                            putLexPosition(lb, position);
                             parsedInfo.marker1Flag = true;
                         }
                     }

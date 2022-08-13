@@ -53,7 +53,7 @@ extern Lexem nextLexToken(char **readPointer);
    sufficient for any reasonable case. */
 
 extern void putLexPositionFields(int file, int line, int col, char **writePointer);
-extern void putLexPosition(Position position, char **writePointer);
+extern void putLexPosition(LexemBuffer *lb, Position position);
 extern Position getLexPosition(char **readPointer);
 
 
