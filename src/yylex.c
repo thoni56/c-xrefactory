@@ -253,12 +253,18 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
 static void passLexem(char **input, Lexem lexem, int *outLineNumber, int *outValue, Position *outPosition,
                       int *outLength, bool countLines) {
     if (lexem > MULTI_TOKENS_START) {
-        if (isIdentifierLexem(lexem)){
-            *input = strchr(*input, '\0')+1;
-            *outPosition = getLexPosition(input);
+        if (isIdentifierLexem(lexem)) {
+            *input = strchr(*input, '\0') + 1;
+            if (outPosition != NULL)
+                *outPosition = getLexPosition(input);
+            else
+                getLexPosition(input);
         } else if (lexem == STRING_LITERAL) {
-            *input = strchr(*input, '\0')+1;
-            *outPosition = getLexPosition(input);
+            *input = strchr(*input, '\0') + 1;
+            if (outPosition != NULL)
+                *outPosition = getLexPosition(input);
+            else
+                getLexPosition(input);
         } else if (lexem == LINE_TOKEN) {
             *outLineNumber = getLexToken(input);
             if (countLines) {
@@ -267,27 +273,48 @@ static void passLexem(char **input, Lexem lexem, int *outLineNumber, int *outVal
             }
         } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
             *outValue = getLexInt(input);
-            *outPosition = getLexPosition(input);
+            if (outPosition != NULL)
+                *outPosition = getLexPosition(input);
+            else
+                getLexPosition(input);
             *outLength = getLexInt(input);
         } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) {
-            *outPosition = getLexPosition(input);
+            if (outPosition != NULL)
+                *outPosition = getLexPosition(input);
+            else
+                getLexPosition(input);
             *outLength = getLexInt(input);
         } else if (lexem == CPP_MACRO_ARGUMENT) {
             *outValue = getLexInt(input);
-            *outPosition = getLexPosition(input);
+            if (outPosition != NULL)
+                *outPosition = getLexPosition(input);
+            else
+                getLexPosition(input);
         } else if (lexem == CHAR_LITERAL) {
             *outValue = getLexInt(input);
-            *outPosition = getLexPosition(input);
+            if (outPosition != NULL)
+                *outPosition = getLexPosition(input);
+            else
+                getLexPosition(input);
             *outLength = getLexInt(input);
         }
     } else if (isPreprocessorToken(lexem)) {
-        *outPosition = getLexPosition(input);
+        if (outPosition != NULL)
+            *outPosition = getLexPosition(input);
+        else
+            getLexPosition(input);
     } else if (lexem == '\n' && (countLines)) {
-        *outPosition = getLexPosition(input);
+        if (outPosition != NULL)
+            *outPosition = getLexPosition(input);
+        else
+            getLexPosition(input);
         traceNewline(1);
-        currentFile.lineNumber ++;
+        currentFile.lineNumber++;
     } else {
-        *outPosition = getLexPosition(input);
+        if (outPosition != NULL)
+            *outPosition = getLexPosition(input);
+        else
+            getLexPosition(input);
     }
 }
 
@@ -1579,7 +1606,6 @@ static void createMacroBody(LexInput *macroBody,
     Lexem lexem;
     Position hpos;
     char *buf,*buf2;
-    Position position; UNUSED position;
     int length; UNUSED length;
 
     value=0; //compiler
@@ -1593,7 +1619,7 @@ static void createMacroBody(LexInput *macroBody,
     while (cc < cfin) {
         cc0 = cc;
         lexem = getLexToken(&cc);
-        passLexem(&cc, lexem, &lineNumber, &value, &position, &length, false);
+        passLexem(&cc, lexem, &lineNumber, &value, NULL, &length, false);
         if (lexem==CPP_COLLATION && lbcc!=NULL && cc<cfin) {
             collate(&lbcc,&bcc,buf,&bsize,&cc,actArgs);
         } else {
@@ -1629,7 +1655,7 @@ static void createMacroBody(LexInput *macroBody,
             bcc += len;
         } else if (lexem=='#' && cc<cfin && nextLexToken(&cc)==CPP_MACRO_ARGUMENT) {
             lexem = getLexToken(&cc);
-            passLexem(&cc, lexem, &lineNumber, &value, &position, &length, false);
+            passLexem(&cc, lexem, &lineNumber, &value, NULL, &length, false);
             assert(lexem == CPP_MACRO_ARGUMENT);
             putLexToken(STRING_LITERAL, &bcc);
             TestMBBufOverflow(bcc,MACRO_UNIT_SIZE,buf2,bsize);
