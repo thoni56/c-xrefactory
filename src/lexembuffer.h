@@ -22,8 +22,6 @@ typedef struct lexemBuffer {
 } LexemBuffer;
 
 
-extern int getCurrentLexemIndexForBackpatching(LexemBuffer *lb);
-extern void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem);
 extern void setLexemStreamEnd(LexemBuffer *lb, void *end);
 extern void *getLexemStreamEnd(LexemBuffer *lb);
 

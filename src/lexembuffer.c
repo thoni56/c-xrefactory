@@ -16,15 +16,6 @@ Lexem getLexemAt(LexemBuffer *lb, void *readPointer) {
     return nextLexToken(&pointer);
 }
 
-int getCurrentLexemIndexForBackpatching(LexemBuffer *lb) {
-    return lb->next - lb->lexemStream;
-}
-
-void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem) {
-    char *writePointer = &lb->lexemStream[index];
-    putLexToken(lexem, &writePointer);
-}
-
 void setLexemStreamEnd(LexemBuffer *lb, void *end) {
     lb->end = end;
 }
