@@ -335,7 +335,7 @@ watch:
 	watchexec -e c,h,y,mock -- execnotify -t Development make -j devel
 
 watch-unit:
-	watchexec -e c,h,y,mock --execnotify -t Unittests make -j unit
+	watchexec -e c,h,y,mock -- execnotify -t Unittests make -j unit
 
 watch-system:
 	watchexec -e .done -- execnotify -t Systemtests make -j system-tests
