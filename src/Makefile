@@ -332,13 +332,13 @@ endif
 
 #########################################################################
 watch:
-	watchexec -e c,h,y,mock execnotify "make -j devel"
+	watchexec -e c,h,y,mock -- execnotify -t Development make -j devel
 
 watch-unit:
-	watchexec -e c,h,y,mock execnotify "make -j unit"
+	watchexec -e c,h,y,mock --execnotify -t Unittests make -j unit
 
-watch-done:
-	watchexec -e .done "make -j system-tests"
+watch-system:
+	watchexec -e .done -- execnotify -t Systemtests make -j system-tests
 
 system-tests:
 	$(MAKE) -e build
@@ -394,8 +394,9 @@ unittests: $(UNITTESTS)
 	make gcov
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
-		$(LCOV) -q -t unittests -d . -c -o unittests.info 2>&1 | grep -v "did not produce any data" ; \
-		$(LCOV) -q --remove unittests.info $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.info ; \
+		$(LCOV) -q -t unittests -d . -c -o unittests.i 2>&1 | grep -v "did not produce any data" ; \
+		$(LCOV) -q --remove unittests.i $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.i ; \
+		mv unittests.i unittests.info ; \
 	fi
 	touch .unittests.done
 endif
