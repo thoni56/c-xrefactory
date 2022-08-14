@@ -1339,8 +1339,8 @@ endOfFile:
 
 /* *********************************************************** */
 
-static bool cyclicCall(MacroBody *mb) {
-    char *name = mb->name;
+static bool cyclicCall(MacroBody *macroBody) {
+    char *name = macroBody->name;
     log_debug("Testing for cyclic call, '%s' against curr '%s'", name, currentInput.macroName);
     if (currentInput.macroName != NULL && strcmp(name,currentInput.macroName)==0)
         return true;
@@ -1354,16 +1354,16 @@ static bool cyclicCall(MacroBody *mb) {
 }
 
 
-static void prependMacroInput(LexInput *argb) {
+static void prependMacroInput(LexInput *argumentBuffer) {
     assert(macroStackIndex < MACRO_INPUT_STACK_SIZE-1);
     macroInputStack[macroStackIndex++] = currentInput;
-    currentInput = *argb;
+    currentInput = *argumentBuffer;
     currentInput.currentLexemP = currentInput.beginningOfBuffer;
     currentInput.inputType = INPUT_MACRO;
 }
 
 
-static void expandMacroArgument(LexInput *argb) {
+static void expandMacroArgument(LexInput *argumentBuffer) {
     Symbol sd, *memb;
     char *previousLexem, *currentLexem, *tbcc;
     bool failedMacroExpansion;
@@ -1375,7 +1375,7 @@ static void expandMacroArgument(LexInput *argb) {
 
     bsize = MACRO_UNIT_SIZE;
 
-    prependMacroInput(argb);
+    prependMacroInput(argumentBuffer);
 
     currentInput.inputType = INPUT_MACRO_ARGUMENT;
     PPM_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
@@ -1420,7 +1420,7 @@ static void expandMacroArgument(LexInput *argb) {
 endOfMacroArgument:
     currentInput = macroInputStack[--macroStackIndex];
     PPM_REALLOCC(buf, bcc-buf, char, bsize+MAX_LEXEM_SIZE);
-    fillLexInput(argb, buf, bcc, buf, NULL, INPUT_NORMAL);
+    fillLexInput(argumentBuffer, buf, bcc, buf, NULL, INPUT_NORMAL);
     return;
 endOfFile:
     assert(0);
