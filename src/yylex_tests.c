@@ -1,5 +1,6 @@
 #include <cgreen/cgreen.h>
 
+#include "lexembuffer.h"
 #include "yylex.h"
 /* Declare semi-private functions */
 void processDefineDirective(bool hasArguments);
@@ -54,13 +55,18 @@ AfterEach(Yylex) {}
 
 static void setup_lexBuffer_for_reading_identifier(void *data) {
     char *lexemStreamP = currentFile.lexBuffer.lexemStream;
-    putLexToken(IDENTIFIER, &lexemStreamP);
+
+    /* TODO: yylex does a lot of fishy stuff with the lexems instead
+     * of using a LexemBuffer, so here we do as yylex does, although
+     * mis-using the LexemBuffer interface */
+    putLexTokenWithPointer(IDENTIFIER, &lexemStreamP);
+
     strcpy(lexemStreamP, currentFile.lexBuffer.buffer.chars);
     /* TODO: WTF This is mostly guesswork, no idea if this is how they are connected... */
     *strchr(&currentFile.lexBuffer.lexemStream[2], ' ') = '\0';
     currentFile.lexBuffer.next                          = currentFile.lexBuffer.lexemStream;
     currentFile.lexBuffer.end                           = strchr(currentFile.lexBuffer.lexemStream, '\0');
-    currentFile.lexBuffer.ringIndex                         = 2;
+    currentFile.lexBuffer.ringIndex                     = 2;
 }
 
 Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {

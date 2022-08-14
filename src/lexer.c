@@ -1,6 +1,7 @@
 #include "lexer.h"
 
 #include "globals.h"
+#include "lexembuffer.h"
 #include "options.h"
 #include "commons.h"
 #include "yylex.h"
@@ -248,7 +249,10 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
             if (len <= strlen(startOfCurrentLexem + TOKEN_SIZE)) {
                 /* Need to backpatch the current lexem to a COMPLETE lexem */
                 char *backpatchP = startOfCurrentLexem;
-                putLexToken(IDENT_TO_COMPLETE, &backpatchP);
+                putLexTokenWithPointer(IDENT_TO_COMPLETE, &backpatchP);
+                /* backpatchP has now advanced beyond the
+                 * IDENT_TO_COMPLETE, but lb->end is still where it
+                 * was... */
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in already written identifier */

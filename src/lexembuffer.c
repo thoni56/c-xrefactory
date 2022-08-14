@@ -11,9 +11,9 @@ void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
 }
 
 /* New API with index: */
-Lexem getLexemAt(LexemBuffer *lb, int index) {
-    char *readPointer = &lb->lexemStream[index];
-    return nextLexToken(&readPointer);
+Lexem getLexemAt(LexemBuffer *lb, void *readPointer) {
+    char *pointer = (char *)readPointer;
+    return nextLexToken(&pointer);
 }
 
 int getCurrentLexemIndexForBackpatching(LexemBuffer *lb) {
@@ -73,8 +73,14 @@ void putLexToken(Lexem lexem, char **writePointerP) {
     putLexShort(lexem, writePointerP);
 }
 
-void putLexTokenAtPointer(Lexem lexem, char **writePointerP) {
+/* Writes at where writePointer points to and advances it - DEPRECATED*/
+void putLexTokenWithPointer(Lexem lexem, char **writePointerP) {
     putLexShort(lexem, writePointerP);
+}
+
+void putLexTokenAtPointer(Lexem lexem, void *writePointer) {
+    char *pointer = (char *)writePointer;
+    putLexShort(lexem, &pointer);
 }
 
 Lexem getLexToken(char **readPointerP) {

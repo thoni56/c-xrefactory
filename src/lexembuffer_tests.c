@@ -138,15 +138,15 @@ Ensure(LexemBuffer, can_put_and_get_position) {
 Ensure(LexemBuffer, can_backpatch_lexem) {
     Lexem backpatched_lexem = STRING_LITERAL;
 
-    int backpatchIndex = getCurrentLexemIndexForBackpatching(&lb);
-    putLexToken(CPP_LINE, &lb.end);
+    void *backpatchPointer = getLexemStreamEnd(&lb);
+    putLexChar(&lb, 'x');
 
     char *lb_end = lb.end;
     char *lb_next = lb.next;
 
-    backpatchLexem(&lb, backpatchIndex, backpatched_lexem);
+    putLexTokenAtPointer(backpatched_lexem, backpatchPointer);
 
-    assert_that(getLexemAt(&lb, backpatchIndex), is_equal_to(backpatched_lexem));
+    assert_that(getLexemAt(&lb, backpatchPointer), is_equal_to(backpatched_lexem));
 
     /* lb pointers should not have moved */
     assert_that(lb_end, is_equal_to(lb.end));

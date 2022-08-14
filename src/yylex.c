@@ -1,6 +1,7 @@
 #include "yylex.h"
 
 #include "commons.h"
+#include "lexembuffer.h"
 #include "lexer.h"
 #include "globals.h"
 #include "options.h"
@@ -832,7 +833,7 @@ protected void processDefineDirective(bool hasArguments) {
                 addTrivialCxReference(macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                       &position, UsageUsed);
                 destination = body+macroSize;
-                putLexToken(CPP_MACRO_ARGUMENT, &destination);
+                putLexTokenWithPointer(CPP_MACRO_ARGUMENT, &destination);
                 putLexInt(macroArgumentTable.tab[foundIndex]->order, &destination);
                 putLexPositionFields(position.file, position.line,position.col, &destination);
                 macroSize = destination - body;
@@ -844,7 +845,7 @@ protected void processDefineDirective(bool hasArguments) {
                     s_olstringInMbody = symbol->linkName;
                 }
                 destination = body+macroSize;
-                putLexToken(lexem, &destination);
+                putLexTokenWithPointer(lexem, &destination);
                 for (; currentLexemStart<currentInput.currentLexemP; destination++,currentLexemStart++)
                     *destination = *currentLexemStart;
                 macroSize = destination - body;
@@ -1411,8 +1412,7 @@ static void expandMacroArgument(LexInput *argumentBuffer) {
             tbcc = bcc;
             assert(memb!=NULL);
             if (memb->u.mbody!=NULL && cyclicCall(memb->u.mbody))
-                putLexToken(IDENT_NO_CPP_EXPAND, &tbcc);
-            //& else putLexToken(IDENT_NO_CPP_EXPAND, &tbcc);
+                putLexTokenWithPointer(IDENT_NO_CPP_EXPAND, &tbcc);
         }
         bcc += length;
         TestPPBufOverflow(bcc, buf, bsize);
@@ -1625,7 +1625,7 @@ static void createMacroBody(LexInput *macroBody,
             lexem = getLexToken(&cc);
             passLexem(&cc, lexem, NULL, &value, NULL, NULL, false);
             assert(lexem == CPP_MACRO_ARGUMENT);
-            putLexToken(STRING_LITERAL, &bcc);
+            putLexTokenWithPointer(STRING_LITERAL, &bcc);
             TestMBBufOverflow(bcc,MACRO_UNIT_SIZE,buf2,bsize);
             macroArgumentsToString(bcc, &actualArguments[value]);
             len = strlen(bcc)+1;

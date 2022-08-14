@@ -38,9 +38,12 @@ extern void putLexInt(int value, char **writePointer);
 extern void putLexChar(LexemBuffer *lb, char ch);
 extern void putLexLines(LexemBuffer *lb, int lines);
 extern void putLexToken(Lexem lexem, char **writePointer);
-extern void putLexTokenAtPointer(Lexem lexem, char **writePointerP);
+extern void putLexTokenAtPointer(Lexem lexem, void *writePointer);
 
-extern Lexem getLexemAt(LexemBuffer *lb, int index);
+/* Writes at where writePointer points to and advances it - DEPRECATED*/
+extern void putLexTokenWithPointer(Lexem lexem, char **writePointerP);
+
+extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer);
 
 extern unsigned char getLexChar(char **readPointer);
 extern int getLexShort(char **readPointer);
