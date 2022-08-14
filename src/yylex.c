@@ -1366,7 +1366,6 @@ static void prependMacroInput(LexInput *argb) {
 static void expandMacroArgument(LexInput *argb) {
     Symbol sd, *memb;
     char *previousLexem, *currentLexem, *tbcc;
-    int length, lineNumber;
     bool failedMacroExpansion;
     Lexem lexem;
     Position position;
@@ -1388,8 +1387,8 @@ static void expandMacroArgument(LexInput *argb) {
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         currentLexem = currentInput.currentLexemP;
-        passLexem(&currentInput.currentLexemP, lexem, &lineNumber, NULL, &position, &length, macroStackIndex == 0);
-        length = ((char*)currentInput.currentLexemP) - previousLexem;
+        passLexem(&currentInput.currentLexemP, lexem, NULL, NULL, &position, NULL, macroStackIndex == 0);
+        int length = ((char*)currentInput.currentLexemP) - previousLexem;
         assert(length >= 0);
         memcpy(bcc, previousLexem, length);
         // a hack, it is copied, but bcc will be increased only if not
