@@ -178,3 +178,13 @@ Ensure(LexemBuffer, can_write_lexem_at_position_without_changing_pointer) {
     assert_that(writePointer, is_equal_to(savedWritePointer));
     assert_that(getLexToken(&(lb.next)), is_equal_to(IDENTIFIER));
 }
+
+Ensure(LexemBuffer, can_write_position_with_pointer) {
+    Position position = { .file = 1, .line = 2, .col = 3 };
+
+    putLexPositionWithPointer(position, &(lb.end));
+
+    Position expected_position = getLexPosition(&(lb.next));
+
+    assert_that(positionsAreEqual(position, expected_position));
+}

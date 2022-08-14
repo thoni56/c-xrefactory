@@ -45,6 +45,7 @@ extern void putLexPosition(LexemBuffer *lb, Position position);
 
 /* Writes at where writePointer points to and advances it - DEPRECATED*/
 extern void putLexTokenWithPointer(Lexem lexem, char **writePointerP);
+extern void putLexPositionWithPointer(Position position, char **writePointerP);
 
 extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer);
 

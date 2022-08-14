@@ -73,11 +73,6 @@ void putLexToken(Lexem lexem, char **writePointerP) {
     putLexShort(lexem, writePointerP);
 }
 
-/* Writes at where writePointer points to and advances it - DEPRECATED*/
-void putLexTokenWithPointer(Lexem lexem, char **writePointerP) {
-    putLexShort(lexem, writePointerP);
-}
-
 void putLexTokenAtPointer(Lexem lexem, void *writePointer) {
     char *pointer = (char *)writePointer;
     putLexShort(lexem, &pointer);
@@ -196,4 +191,16 @@ Position nextLexPosition(char **readPointerP) {
     Position pos;
     pos = getLexPosition(&tmptmpcc);
     return pos;
+}
+
+/* DEPRECATED - writing with pointer to pointer that it advances, a
+ * lot of code in yylex.c still uses this bad interface */
+void putLexTokenWithPointer(Lexem lexem, char **writePointerP) {
+    putLexShort(lexem, writePointerP);
+}
+
+void putLexPositionWithPointer(Position position, char **writePointerP) {
+    putLexCompacted(position.file, writePointerP);
+    putLexCompacted(position.line, writePointerP);
+    putLexCompacted(position.col, writePointerP);
 }
