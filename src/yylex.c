@@ -835,7 +835,7 @@ protected void processDefineDirective(bool hasArguments) {
                 destination = body+macroSize;
                 putLexTokenWithPointer(CPP_MACRO_ARGUMENT, &destination);
                 putLexInt(macroArgumentTable.tab[foundIndex]->order, &destination);
-                putLexPositionFields(position.file, position.line,position.col, &destination);
+                putLexPositionWithPointer(position, &destination);
                 macroSize = destination - body;
             } else {
                 if (lexem==IDENT_TO_COMPLETE
@@ -1514,7 +1514,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
             bcc += strlen(bcc);
             assert(*bcc == 0);
             bcc++;
-            putLexPositionFields(respos.file, respos.line, respos.col, &bcc);
+            putLexPositionWithPointer(respos, &bcc);
         }
     }
     TestPPBufOverflow(bcc, buf, bsize);
@@ -1631,7 +1631,7 @@ static void createMacroBody(LexInput *macroBody,
             len = strlen(bcc)+1;
             bcc += len;
             /* TODO: This should really be putLexPosition() but that takes a LexemBuffer... */
-            putLexPositionFields(hpos.file, hpos.line, hpos.col, &bcc);
+            putLexPositionWithPointer(hpos, &bcc);
             if (len >= MACRO_UNIT_SIZE-15) {
                 errorMessage(ERR_INTERNAL,"size of #macro_argument exceeded MACRO_UNIT_SIZE");
             }
