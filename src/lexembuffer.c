@@ -25,8 +25,8 @@ void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem) {
     putLexToken(lexem, &writePointer);
 }
 
-void setLexemStreamEnd(LexemBuffer *lb, int index) {
-    lb->end = &lb->lexemStream[index];
+void setLexemStreamEnd(LexemBuffer *lb, void *end) {
+    lb->end = end;
 }
 
 void *getLexemStreamEnd(LexemBuffer *lb) {

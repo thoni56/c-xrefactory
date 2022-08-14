@@ -157,7 +157,7 @@ Ensure(LexemBuffer, can_set_next_write_position) {
     putLexToken(IDENTIFIER, &lb.end);
     assert_that(lb.end, is_not_equal_to(lb.lexemStream));
 
-    setLexemStreamEnd(&lb, 0);
+    setLexemStreamEnd(&lb, &lb.lexemStream);
     assert_that(lb.end, is_equal_to(lb.lexemStream));
 }
 
@@ -167,4 +167,14 @@ Ensure(LexemBuffer, can_get_current_write_position) {
     putLexChar(&lb, 'x');
 
     assert_that(getLexemStreamEnd(&lb), is_equal_to(previous+1));
+}
+
+Ensure(LexemBuffer, can_write_lexem_at_position_without_changing_pointer) {
+    void *writePointer = getLexemStreamEnd(&lb);
+    void *savedWritePointer = writePointer;
+
+    putLexTokenAtPointer(IDENTIFIER, writePointer);
+
+    assert_that(writePointer, is_equal_to(savedWritePointer));
+    assert_that(getLexToken(&(lb.next)), is_equal_to(IDENTIFIER));
 }

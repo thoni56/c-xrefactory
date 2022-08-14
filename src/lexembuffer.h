@@ -22,10 +22,9 @@ typedef struct lexemBuffer {
 } LexemBuffer;
 
 
-/* New API with lb + index instead of writePointerP */
 extern int getCurrentLexemIndexForBackpatching(LexemBuffer *lb);
 extern void backpatchLexem(LexemBuffer *lb, int index, Lexem lexem);
-extern void setLexemStreamEnd(LexemBuffer *lb, int index);
+extern void setLexemStreamEnd(LexemBuffer *lb, void *end);
 extern void *getLexemStreamEnd(LexemBuffer *lb);
 
 /* Lexer functions for passing compressed tokens to the parser */
@@ -37,8 +36,12 @@ extern void putLexShort(int shortValue, char **writePointer);
 extern void putLexInt(int value, char **writePointer);
 extern void putLexChar(LexemBuffer *lb, char ch);
 extern void putLexLines(LexemBuffer *lb, int lines);
+
 extern void putLexToken(Lexem lexem, char **writePointer);
 extern void putLexTokenAtPointer(Lexem lexem, void *writePointer);
+
+extern void putLexPositionFields(int file, int line, int col, char **writePointer);
+extern void putLexPosition(LexemBuffer *lb, Position position);
 
 /* Writes at where writePointer points to and advances it - DEPRECATED*/
 extern void putLexTokenWithPointer(Lexem lexem, char **writePointerP);
@@ -53,12 +56,6 @@ extern int getLexCompacted(char **readPointer);
 
 extern Lexem nextLexToken(char **readPointer);
 
-/* NORMAL compacted tokens, HUGE mode also existed originally. NORMAL
-   can only store file, line, column < 22 bits which should be
-   sufficient for any reasonable case. */
-
-extern void putLexPositionFields(int file, int line, int col, char **writePointer);
-extern void putLexPosition(LexemBuffer *lb, Position position);
 extern Position getLexPosition(char **readPointer);
 
 /* TODO: cannot replace NextLexPosition macro with this yet, as the only call has "bcc+1" as tmpcc */
