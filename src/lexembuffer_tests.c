@@ -49,7 +49,7 @@ Ensure(LexemBuffer, can_put_and_get_a_token) {
     Lexem       lexem;
     char       *expected_next_after_get;
 
-    putLexToken(DOUBLE_CONSTANT, &lb.end);
+    putLexToken(&lb, DOUBLE_CONSTANT);
     expected_next_after_get = lb.end;
 
     lexem = getLexToken(&lb.next);
@@ -101,9 +101,9 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
 Ensure(LexemBuffer, can_peek_next_token) {
     Lexem any_lexem = CHAR_LITERAL;
 
-    putLexToken(any_lexem, &lb.end);
+    putLexToken(&lb, any_lexem);
 
-    assert_that(nextLexToken(&lb.next), is_equal_to(any_lexem));
+    assert_that(peekLexToken(&lb.next), is_equal_to(any_lexem));
     assert_that(lb.next, is_equal_to(&lb.lexemStream)); /* Should not have moved */
 }
 
@@ -124,7 +124,7 @@ Ensure(LexemBuffer, can_put_and_get_position) {
     Position second_position  = {44, 45, 46};
     Position read_position;
 
-    putLexPositionFields(first_position.file, first_position.line, first_position.col, &lb.end);
+    putLexPositionFields(&lb, first_position.file, first_position.line, first_position.col);
     putLexPosition(&lb, second_position);
     pointer_after_put = lb.end;
 
@@ -154,7 +154,7 @@ Ensure(LexemBuffer, can_backpatch_lexem) {
 }
 
 Ensure(LexemBuffer, can_set_next_write_position) {
-    putLexToken(IDENTIFIER, &lb.end);
+    putLexToken(&lb, IDENTIFIER);
     assert_that(lb.end, is_not_equal_to(lb.lexemStream));
 
     setLexemStreamEnd(&lb, &lb.lexemStream);

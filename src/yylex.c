@@ -1451,12 +1451,13 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     lbcc = *albcc;
     bcc = *abcc;
     bsize = *absize;
-    if (nextLexToken(&lbcc) == CPP_MACRO_ARGUMENT) {
+    if (peekLexToken(&lbcc) == CPP_MACRO_ARGUMENT) {
         bcc = lbcc;
         lexem = getLexToken(&lbcc);
         assert(lexem==CPP_MACRO_ARGUMENT);
         passLexem(&lbcc, lexem, NULL, &value, &respos, NULL, false);
-        cc = actArgs[value].beginningOfBuffer; ccfin = actArgs[value].endOfBuffer;
+        cc = actArgs[value].beginningOfBuffer;
+        ccfin = actArgs[value].endOfBuffer;
         lbcc = NULL;
         while (cc < ccfin) {
             cc0 = cc;
@@ -1469,10 +1470,11 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
             TestPPBufOverflow(bcc,buf,bsize);
         }
     }
-    if (nextLexToken(&ncc) == CPP_MACRO_ARGUMENT) {
+    if (peekLexToken(&ncc) == CPP_MACRO_ARGUMENT) {
         lexem = getLexToken(&ncc);
         passLexem(&ncc, lexem, NULL, &value, NULL, NULL, false);
-        cc = actArgs[value].beginningOfBuffer; ccfin = actArgs[value].endOfBuffer;
+        cc = actArgs[value].beginningOfBuffer;
+        ccfin = actArgs[value].endOfBuffer;
     } else {
         cc = ncc;
         lexem = getLexToken(&ncc);
@@ -1481,8 +1483,8 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     }
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
-    if (lbcc != NULL && cc < ccfin && isIdentifierLexem(nextLexToken(&lbcc))) {
-        nextLexem = nextLexToken(&cc);
+    if (lbcc != NULL && cc < ccfin && isIdentifierLexem(peekLexToken(&lbcc))) {
+        nextLexem = peekLexToken(&cc);
         if (isIdentifierLexem(nextLexem) || nextLexem == CONSTANT || nextLexem == LONG_CONSTANT
             || nextLexem == FLOAT_CONSTANT || nextLexem == DOUBLE_CONSTANT) {
             /* TODO collation of all lexem pairs */
@@ -1621,7 +1623,7 @@ static void createMacroBody(LexInput *macroBody,
             TestMBBufOverflow(bcc,len,buf2,bsize);
             memcpy(bcc, actualArguments[value].beginningOfBuffer, len);
             bcc += len;
-        } else if (lexem=='#' && cc<cfin && nextLexToken(&cc)==CPP_MACRO_ARGUMENT) {
+        } else if (lexem=='#' && cc<cfin && peekLexToken(&cc)==CPP_MACRO_ARGUMENT) {
             lexem = getLexToken(&cc);
             passLexem(&cc, lexem, NULL, &value, NULL, NULL, false);
             assert(lexem == CPP_MACRO_ARGUMENT);

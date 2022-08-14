@@ -35,10 +35,10 @@ extern void putLexInt(int value, char **writePointer);
 extern void putLexChar(LexemBuffer *lb, char ch);
 extern void putLexLines(LexemBuffer *lb, int lines);
 
-extern void putLexToken(Lexem lexem, char **writePointer);
+extern void putLexToken(LexemBuffer *lb, Lexem lexem);
 extern void putLexTokenAtPointer(Lexem lexem, void *writePointer);
 
-extern void putLexPositionFields(int file, int line, int col, char **writePointer);
+extern void putLexPositionFields(LexemBuffer *lb, int file, int line, int col);
 extern void putLexPosition(LexemBuffer *lb, Position position);
 
 /* Writes at where writePointer points to and advances it - DEPRECATED*/
@@ -53,12 +53,12 @@ extern Lexem getLexToken(char **readPointer);
 extern int getLexInt(char **readPointer);
 extern int getLexCompacted(char **readPointer);
 
-extern Lexem nextLexToken(char **readPointer);
+extern Lexem peekLexToken(char **readPointer);
 
 extern Position getLexPosition(char **readPointer);
 
 /* TODO: cannot replace NextLexPosition macro with this yet, as the only call has "bcc+1" as tmpcc */
-extern Position nextLexPosition(char **readPointer);
+extern Position peekLexPosition(char **readPointer);
 
 #define NextLexPosition(pos,tmpcc) {            \
         char *tmptmpcc = tmpcc;                 \

@@ -10,10 +10,9 @@ void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
     initCharacterBuffer(&buffer->buffer, file);
 }
 
-/* New API with index: */
 Lexem getLexemAt(LexemBuffer *lb, void *readPointer) {
     char *pointer = (char *)readPointer;
-    return nextLexToken(&pointer);
+    return peekLexToken(&pointer);
 }
 
 void setLexemStreamEnd(LexemBuffer *lb, void *end) {
@@ -60,8 +59,8 @@ static int nextLexShort(char **readPointerP) {
 }
 
 /* Token */
-void putLexToken(Lexem lexem, char **writePointerP) {
-    putLexShort(lexem, writePointerP);
+void putLexToken(LexemBuffer *lb, Lexem lexem) {
+    putLexShort(lexem, &(lb->end));
 }
 
 void putLexTokenAtPointer(Lexem lexem, void *writePointer) {
@@ -73,8 +72,9 @@ Lexem getLexToken(char **readPointerP) {
     return (Lexem)getLexShort(readPointerP);
 }
 
-Lexem nextLexToken(char **readPointerP) {
-    return (Lexem)nextLexShort(readPointerP);
+Lexem peekLexToken(char **readPointerP) {
+    char **pointer = readPointerP;
+    return (Lexem)nextLexShort(pointer);
 }
 
 /* Int */
@@ -150,16 +150,16 @@ int lineNumberFrom(LexemBuffer *lb) {
 
 /* Lines */
 void putLexLines(LexemBuffer *lb, int lines) {
-    putLexToken(LINE_TOKEN, &(lb->end));
-    putLexToken(lines, &(lb->end));
+    putLexToken(lb, LINE_TOKEN);
+    putLexToken(lb, lines);
 }
 
 /* Position */
-void putLexPositionFields(int file, int line, int column, char **writePointerP) {
+void putLexPositionFields(LexemBuffer *lb, int file, int line, int column) {
     assert(file>=0 && file<MAX_FILES);
-    putLexCompacted(file, writePointerP);
-    putLexCompacted(line, writePointerP);
-    putLexCompacted(column, writePointerP);
+    putLexCompacted(file, &(lb->end));
+    putLexCompacted(line, &(lb->end));
+    putLexCompacted(column, &(lb->end));
 }
 
 void putLexPosition(LexemBuffer *lb, Position position) {
@@ -177,11 +177,9 @@ Position getLexPosition(char **readPointerP) {
     return pos;
 }
 
-Position nextLexPosition(char **readPointerP) {
-    char *tmptmpcc = *readPointerP;
-    Position pos;
-    pos = getLexPosition(&tmptmpcc);
-    return pos;
+Position peekLexPosition(char **readPointerP) {
+    char *pointer = *readPointerP;
+    return getLexPosition(&pointer);
 }
 
 /* DEPRECATED - writing with pointer to pointer that it advances, a
