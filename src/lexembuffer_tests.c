@@ -160,3 +160,11 @@ Ensure(LexemBuffer, can_set_next_write_position) {
     setLexemStreamEnd(&lb, 0);
     assert_that(lb.end, is_equal_to(lb.lexemStream));
 }
+
+Ensure(LexemBuffer, can_get_current_write_position) {
+    void *previous = getLexemStreamEnd(&lb);
+
+    putLexChar(&lb, 'x');
+
+    assert_that(getLexemStreamEnd(&lb), is_equal_to(previous+1));
+}

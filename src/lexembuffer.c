@@ -29,6 +29,9 @@ void setLexemStreamEnd(LexemBuffer *lb, int index) {
     lb->end = &lb->lexemStream[index];
 }
 
+void *getLexemStreamEnd(LexemBuffer *lb) {
+    return (void *)(lb->end);
+}
 
 /* Char */
 void putLexChar(LexemBuffer *lb, char ch) {
@@ -67,6 +70,10 @@ static int nextLexShort(char **readPointerP) {
 
 /* Token */
 void putLexToken(Lexem lexem, char **writePointerP) {
+    putLexShort(lexem, writePointerP);
+}
+
+void putLexTokenAtPointer(Lexem lexem, char **writePointerP) {
     putLexShort(lexem, writePointerP);
 }
 
