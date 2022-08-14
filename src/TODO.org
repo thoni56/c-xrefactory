@@ -34,7 +34,7 @@ Current Mikado:
 ******* DONE lb->end instead of extra parameter in processIdentifier()
 ******* DONE lb->end instead of extra parameter in getLexemFromLexer()
 ******* REQUIRES lb->end instead of local variable destination in processDefineDirective()
-***** REQUIRES setting next write position in lexemStream in handleCompletionOrSearch()
+***** DONE setting next write position in lexemStream in handleCompletionOrSearch()
 ****** DONE function to set lb->end (setLexemStreamEnd())
 *** DONE Use LexemBuffer as argument to putLexLine()
 *** TRY Use LexemBuffer as argument to putLexPositionFields()

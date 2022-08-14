@@ -249,17 +249,15 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
             if (len <= strlen(startOfCurrentLexem + TOKEN_SIZE)) {
                 /* Need to backpatch the current lexem to a COMPLETE lexem */
                 char *backpatchP = startOfCurrentLexem;
+                /* We want to overwrite with an IDENT_TO_COMPLETE,
+                 * which we don't want to know how many bytes it
+                 * takes, so we use ...WithPointer() which advances... */
                 putLexTokenWithPointer(IDENT_TO_COMPLETE, &backpatchP);
-                /* backpatchP has now advanced beyond the
-                 * IDENT_TO_COMPLETE, but lb->end is still where it
-                 * was... */
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in already written identifier */
-                    /* TODO: here we should use setLexemStreamEnd(), but what is the index?
-                       Maybe the interface to setLexemStreamEnd() is wrong, should have pointer instead?
-                    */
-                    lb->end = backpatchP + len;
+                    /* We can use the backpatchP since it has moved to begining of string */
+                    setLexemStreamEnd(lb, backpatchP + len);
                     /* Terminate identifier here */
                     putLexChar(lb, 0);
                     /* And write the position */
