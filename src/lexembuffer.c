@@ -1,5 +1,6 @@
 #include "lexembuffer.h"
 
+#include "head.h"
 #include "commons.h"
 
 
@@ -35,7 +36,7 @@ unsigned char getLexChar(char **readPointerP) {
 }
 
 /* Short */
-void putLexShort(int shortValue, char **writePointerP) {
+protected void putLexShort(int shortValue, char **writePointerP) {
     assert(shortValue <= 65535);
     **writePointerP = ((unsigned)shortValue)%256;
     (*writePointerP)++;
@@ -43,7 +44,7 @@ void putLexShort(int shortValue, char **writePointerP) {
     (*writePointerP)++;
 }
 
-int getLexShort(char **readPointerP) {
+protected int getLexShort(char **readPointerP) {
     int value = *(unsigned char*)(*readPointerP);
     (*readPointerP)++;
     value += 256 * *(unsigned char*)(*readPointerP);
@@ -101,7 +102,7 @@ int getLexInt(char **readPointerP) {
 }
 
 /* Compacted */
-void putLexCompacted(int value, char **writePointerP) {
+protected void putLexCompacted(int value, char **writePointerP) {
     assert(((unsigned) value)<4194304);
     if (((unsigned)value) < 128) {
         **writePointerP = ((unsigned char)value);
@@ -121,7 +122,7 @@ void putLexCompacted(int value, char **writePointerP) {
     }
 }
 
-int getLexCompacted(char **readPointerP) {
+protected int getLexCompacted(char **readPointerP) {
     unsigned value;
 
     value = **(unsigned char**)readPointerP;

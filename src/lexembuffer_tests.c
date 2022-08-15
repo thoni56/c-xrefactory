@@ -32,6 +32,8 @@ Ensure(LexemBuffer, can_put_and_get_a_char) {
     assert_that(ch, is_equal_to('x'));
 }
 
+extern void putLexShort(int shortValue, char **writePointer);
+extern int getLexShort(char **readPointer);
 Ensure(LexemBuffer, can_put_and_get_a_short) {
     int         shortValue;
     char       *expected_next_after_get;
@@ -71,6 +73,8 @@ Ensure(LexemBuffer, can_put_and_get_an_int) {
     assert_that(integer, is_equal_to(34581));
 }
 
+extern void putLexCompacted(int value, char **writePointer);
+extern int getLexCompacted(char **readPointer);
 Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
     int         integer;
     char       *expected_next_after_get;

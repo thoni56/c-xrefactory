@@ -29,8 +29,6 @@ extern void *getLexemStreamEnd(LexemBuffer *lb);
 extern int fileNumberFrom(LexemBuffer *lb);
 extern int lineNumberFrom(LexemBuffer *lb);
 
-extern void putLexCompacted(int value, char **writePointer);
-extern void putLexShort(int shortValue, char **writePointer);
 extern void putLexInt(int value, char **writePointer);
 extern void putLexChar(LexemBuffer *lb, char ch);
 extern void putLexLines(LexemBuffer *lb, int lines);
@@ -41,17 +39,16 @@ extern void putLexTokenAtPointer(Lexem lexem, void *writePointer);
 extern void putLexPositionFields(LexemBuffer *lb, int file, int line, int col);
 extern void putLexPosition(LexemBuffer *lb, Position position);
 
-/* Writes at where writePointer points to and advances it - DEPRECATED*/
+/* DEPRECATED - Writes at where writePointer points to and advances it */
 extern void putLexTokenWithPointer(Lexem lexem, char **writePointerP);
 extern void putLexPositionWithPointer(Position position, char **writePointerP);
+
 
 extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer);
 
 extern unsigned char getLexChar(char **readPointer);
-extern int getLexShort(char **readPointer);
 extern Lexem getLexToken(char **readPointer);
 extern int getLexInt(char **readPointer);
-extern int getLexCompacted(char **readPointer);
 
 extern Lexem peekLexToken(char **readPointer);
 
