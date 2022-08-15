@@ -19,19 +19,6 @@ BeforeEach(LexemBuffer) {
 }
 AfterEach(LexemBuffer) {}
 
-Ensure(LexemBuffer, can_put_and_get_a_char) {
-    char        ch;
-    char       *expected_next_after_get;
-
-    putLexChar(&lb, 'x');
-    expected_next_after_get = lb.end;
-
-    ch = getLexChar(&lb.next);
-
-    assert_that(lb.next, is_equal_to(expected_next_after_get));
-    assert_that(ch, is_equal_to('x'));
-}
-
 extern void putLexShort(int shortValue, char **writePointer);
 extern int getLexShort(char **readPointer);
 Ensure(LexemBuffer, can_put_and_get_a_short) {

@@ -29,12 +29,6 @@ void putLexChar(LexemBuffer *lb, char ch) {
     *(lb->end++) = ch;
 }
 
-unsigned char getLexChar(char **readPointerP) {
-    unsigned char ch = **readPointerP;
-    (*readPointerP)++;
-    return ch;
-}
-
 /* Short */
 protected void putLexShort(int shortValue, char **writePointerP) {
     assert(shortValue <= 65535);
@@ -52,7 +46,7 @@ protected int getLexShort(char **readPointerP) {
     return value;
 }
 
-static int nextLexShort(char **readPointerP) {
+static int peekLexShort(char **readPointerP) {
     int first = *(unsigned char*)(*readPointerP);
     int second = *((unsigned char*)(*readPointerP)+1);
 
@@ -64,6 +58,7 @@ void putLexToken(LexemBuffer *lb, Lexem lexem) {
     putLexShort(lexem, &(lb->end));
 }
 
+/* For backpatching */
 void putLexTokenAtPointer(Lexem lexem, void *writePointer) {
     char *pointer = (char *)writePointer;
     putLexShort(lexem, &pointer);
@@ -75,7 +70,7 @@ Lexem getLexToken(char **readPointerP) {
 
 Lexem peekLexToken(char **readPointerP) {
     char **pointer = readPointerP;
-    return (Lexem)nextLexShort(pointer);
+    return (Lexem)peekLexShort(pointer);
 }
 
 /* Int */
