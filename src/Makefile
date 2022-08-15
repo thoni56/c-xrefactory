@@ -65,7 +65,7 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 # On Darwin we can use gcc-11 if available
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
-#	ifneq (, $(shell which gcc-11))
+#	ifneq (, $(shell command -v gcc-11))
 #		CC=gcc-11
 #	endif
 #	ifeq ($(shell arch),arm64)
@@ -89,14 +89,14 @@ else
 endif
 
 # We might not have gcov-tool available
-ifneq (, $(shell which $(GCOV_TOOL)))
+ifneq (, $(shell command -v $(GCOV_TOOL)))
     HAVE_GCOV_TOOL=yes
 else
     HAVE_GCOV_TOOL=no
 endif
 
 # If we don't then we can generate .gcov from the .info but we need:
-ifneq (, $(shell which info2gcov))
+ifneq (, $(shell command -v info2gcov))
     HAVE_INFO2GCOV=yes
 else
     HAVE_INFO2GCOV=no
@@ -384,7 +384,7 @@ ifeq ($(OS),Darwin)
 endif
 
 .PHONY: unittests
-ifeq ($(shell which cgreen-runner),)
+ifeq ($(shell command -v cgreen-runner),)
 unittests:
 	@echo Cgreen not available, cannot run unittests
 else
