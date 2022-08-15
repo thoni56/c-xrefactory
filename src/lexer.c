@@ -348,15 +348,15 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 lexem = floatingPointConstant(cb, &ch);
                 putLexToken(lb, lexem);
                 putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn);
-                putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &(lb->end));
+                putLexInt(lb, absoluteFilePosition(cb)-lexStartFilePos);
                 goto nextLexem;
             }
             /* integer */
             lexem = constantType(cb, &ch);
             putLexToken(lb, lexem);
-            putLexInt(val, &(lb->end));
+            putLexInt(lb, val);
             putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn);
-            putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &(lb->end));
+            putLexInt(lb, absoluteFilePosition(cb)-lexStartFilePos);
             goto nextLexem;
         } else switch (ch) {
                 /* ************   special character *********************  */
@@ -384,7 +384,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     lexem = floatingPointConstant(cb, &ch);
                     putLexToken(lb, lexem);
                     putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn);
-                    putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &(lb->end));
+                    putLexInt(lb, absoluteFilePosition(cb)-lexStartFilePos);
                     goto nextLexem;
                 } else {
                     putLexToken(lb, '.');
@@ -642,9 +642,9 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 } while (ch != '\'' && ch != '\n');
                 if (ch == '\'') {
                     putLexToken(lb, CHAR_LITERAL);
-                    putLexInt(chval, &(lb->end));
+                    putLexInt(lb, chval);
                     putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn);
-                    putLexInt(absoluteFilePosition(cb) - lexStartFilePos, &(lb->end));
+                    putLexInt(lb, absoluteFilePosition(cb) - lexStartFilePos);
                     ch = getChar(cb);
                 }
                 goto nextLexem;

@@ -64,7 +64,7 @@ Ensure(LexemBuffer, can_put_and_get_an_int) {
     int         integer;
     char       *expected_next_after_get;
 
-    putLexInt(34581, &lb.end);
+    putLexInt(&lb, 34581);
     expected_next_after_get = lb.end;
 
     integer     = getLexInt(&lb.next);
@@ -191,4 +191,14 @@ Ensure(LexemBuffer, can_write_position_with_pointer) {
     Position expected_position = getLexPosition(&(lb.next));
 
     assert_that(positionsAreEqual(position, expected_position));
+}
+
+Ensure(LexemBuffer, can_write_int_with_pointer) {
+    int integer = 144;
+
+    putLexIntWithPointer(integer, &(lb.end));
+
+    int expected_integer = getLexInt(&(lb.next));
+
+    assert_that(expected_integer, is_equal_to(integer));
 }

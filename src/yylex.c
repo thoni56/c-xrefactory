@@ -834,7 +834,7 @@ protected void processDefineDirective(bool hasArguments) {
                                       &position, UsageUsed);
                 destination = body+macroSize;
                 putLexTokenWithPointer(CPP_MACRO_ARGUMENT, &destination);
-                putLexInt(macroArgumentTable.tab[foundIndex]->order, &destination);
+                putLexIntWithPointer(macroArgumentTable.tab[foundIndex]->order, &destination);
                 putLexPositionWithPointer(position, &destination);
                 macroSize = destination - body;
             } else {

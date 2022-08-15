@@ -79,14 +79,14 @@ Lexem peekLexToken(char **readPointerP) {
 }
 
 /* Int */
-void putLexInt(int value, char **writePointerP) {
-        unsigned tmp;
-        tmp = value;
-        *(*writePointerP)++ = tmp%256; tmp /= 256;
-        *(*writePointerP)++ = tmp%256; tmp /= 256;
-        *(*writePointerP)++ = tmp%256; tmp /= 256;
-        *(*writePointerP)++ = tmp%256; tmp /= 256;
-    }
+void putLexInt(LexemBuffer *lb, int value) {
+    unsigned tmp;
+    tmp = value;
+    *lb->end++ = tmp%256; tmp /= 256;
+    *lb->end++ = tmp%256; tmp /= 256;
+    *lb->end++ = tmp%256; tmp /= 256;
+    *lb->end++ = tmp%256; tmp /= 256;
+}
 
 int getLexInt(char **readPointerP) {
     unsigned int value;
@@ -193,4 +193,13 @@ void putLexPositionWithPointer(Position position, char **writePointerP) {
     putLexCompacted(position.file, writePointerP);
     putLexCompacted(position.line, writePointerP);
     putLexCompacted(position.col, writePointerP);
+}
+
+void putLexIntWithPointer(int integer, char **writePointerP) {
+    unsigned tmp;
+    tmp = integer;
+    *(*writePointerP)++ = tmp%256; tmp /= 256;
+    *(*writePointerP)++ = tmp%256; tmp /= 256;
+    *(*writePointerP)++ = tmp%256; tmp /= 256;
+    *(*writePointerP)++ = tmp%256; tmp /= 256;
 }
