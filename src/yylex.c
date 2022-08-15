@@ -245,25 +245,25 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
     isProcessingPreprocessorIf = false;				/* TODO: WTF??? */
 }
 
-static void getAndSetOutPositionIfRequired(char **input, Position *outPosition) {
+static void getAndSetOutPositionIfRequired(char **readPointerP, Position *outPosition) {
     if (outPosition != NULL)
-        *outPosition = getLexPosition(input);
+        *outPosition = getLexPosition(readPointerP);
     else
-        getLexPosition(input);
+        getLexPosition(readPointerP);
 }
 
-static void getAndSetOutLengthIfRequired(char **input, int *outLength) {
+static void getAndSetOutLengthIfRequired(char **readPointerP, int *outLength) {
     if (outLength != NULL)
-        *outLength = getLexInt(input);
+        *outLength = getLexInt(readPointerP);
     else
-        getLexInt(input);
+        getLexInt(readPointerP);
 }
 
-static void getAndSetOutValueIfRequired(char **input, int *outValue) {
+static void getAndSetOutValueIfRequired(char **readPointerP, int *outValue) {
     if (outValue != NULL)
-        *outValue = getLexInt(input);
+        *outValue = getLexInt(readPointerP);
     else
-        getLexInt(input);
+        getLexInt(readPointerP);
 }
 
 /* ***************************************************************** */
@@ -272,17 +272,17 @@ static void getAndSetOutValueIfRequired(char **input, int *outValue) {
 
 /* maybe too complex/general, long argument list, when lex is known */
 /* could be broken into parts for specific lexem types */
-static void passLexem(char **input, Lexem lexem, int *outLineNumber, int *outValue, Position *outPosition,
+static void passLexem(char **readPointerP, Lexem lexem, int *outLineNumber, int *outValue, Position *outPosition,
                       int *outLength, bool countLines) {
     if (lexem > MULTI_TOKENS_START) {
         if (isIdentifierLexem(lexem)) {
-            *input = strchr(*input, '\0') + 1;
-            getAndSetOutPositionIfRequired(input, outPosition);
+            *readPointerP = strchr(*readPointerP, '\0') + 1;
+            getAndSetOutPositionIfRequired(readPointerP, outPosition);
         } else if (lexem == STRING_LITERAL) {
-            *input = strchr(*input, '\0') + 1;
-            getAndSetOutPositionIfRequired(input, outPosition);
+            *readPointerP = strchr(*readPointerP, '\0') + 1;
+            getAndSetOutPositionIfRequired(readPointerP, outPosition);
         } else if (lexem == LINE_TOKEN) {
-            Lexem lineNumber = getLexToken(input);
+            Lexem lineNumber = getLexToken(readPointerP);
             if (countLines) {
                 traceNewline(lineNumber);
                 currentFile.lineNumber += lineNumber;
@@ -290,28 +290,28 @@ static void passLexem(char **input, Lexem lexem, int *outLineNumber, int *outVal
             if (outLineNumber != NULL)
                 *outLineNumber = lineNumber;
         } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
-            getAndSetOutValueIfRequired(input, outValue);
-            getAndSetOutPositionIfRequired(input, outPosition);
-            getAndSetOutLengthIfRequired(input, outLength);
+            getAndSetOutValueIfRequired(readPointerP, outValue);
+            getAndSetOutPositionIfRequired(readPointerP, outPosition);
+            getAndSetOutLengthIfRequired(readPointerP, outLength);
         } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) {
-            getAndSetOutPositionIfRequired(input, outPosition);
-            getAndSetOutLengthIfRequired(input, outLength);
+            getAndSetOutPositionIfRequired(readPointerP, outPosition);
+            getAndSetOutLengthIfRequired(readPointerP, outLength);
         } else if (lexem == CPP_MACRO_ARGUMENT) {
-            getAndSetOutValueIfRequired(input, outValue);
-            getAndSetOutPositionIfRequired(input, outPosition);
+            getAndSetOutValueIfRequired(readPointerP, outValue);
+            getAndSetOutPositionIfRequired(readPointerP, outPosition);
         } else if (lexem == CHAR_LITERAL) {
-            getAndSetOutValueIfRequired(input, outValue);
-            getAndSetOutPositionIfRequired(input, outPosition);
-            getAndSetOutLengthIfRequired(input, outLength);
+            getAndSetOutValueIfRequired(readPointerP, outValue);
+            getAndSetOutPositionIfRequired(readPointerP, outPosition);
+            getAndSetOutLengthIfRequired(readPointerP, outLength);
         }
     } else if (isPreprocessorToken(lexem)) {
-        getAndSetOutPositionIfRequired(input, outPosition);
+        getAndSetOutPositionIfRequired(readPointerP, outPosition);
     } else if (lexem == '\n' && (countLines)) {
-        getAndSetOutPositionIfRequired(input, outPosition);
+        getAndSetOutPositionIfRequired(readPointerP, outPosition);
         traceNewline(1);
         currentFile.lineNumber++;
     } else {
-        getAndSetOutPositionIfRequired(input, outPosition);
+        getAndSetOutPositionIfRequired(readPointerP, outPosition);
     }
 }
 
@@ -345,7 +345,7 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
     return lexem;
 }
 
-static int getLexem() {
+static Lexem getLexem(void) {
     char *previousLexem;
     UNUSED previousLexem;
     Lexem lexem = getLexemSavePrevious(&previousLexem);
@@ -1536,14 +1536,14 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     *absize = bsize;
 }
 
-static void macroArgumentsToString(char *res, struct lexInput *lb) {
+static void macroArgumentsToString(char *res, LexInput *lexInput) {
     char *cc, *lcc, *bcc;
     int value;
 
     bcc = res;
     *bcc = 0;
-    cc = lb->beginningOfBuffer;
-    while (cc < lb->endOfBuffer) {
+    cc = lexInput->beginningOfBuffer;
+    while (cc < lexInput->endOfBuffer) {
         Lexem lexem = getLexToken(&cc);
         lcc = cc;
         passLexem(&cc, lexem, NULL, &value, NULL, NULL, false);

@@ -18,39 +18,53 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 Current Mikado:
 * TRY to make LexemBuffer interface just take LexemBuffer
-** TRY to use LexemBuffer as argument to all putLexXXX() functions
-*** TRY to add a LexemBuffer as argument to putLexToken()
+** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
+*** DONE to add a LexemBuffer as argument to putLexToken()
 **** DONE LexemBuffer as argument to putLexLines()
 **** DONE LexemBuffer as argument to processIdentifier()
 **** DONE LexemBuffer as argument to putEmptyCompletionId()
-**** REQUIRES LexemBuffer instead of body in processDefineDirective()
-**** REQUIRES LexemBuffer instead of buf/bcc/tbcc in expandMacroArgument()
-**** REQUIRES LexemBuffer instead of buf/bcc in createMacroBody()
-**** REQUIRES backpatching of lexems
-***** REQUIRES backpatch lexem token in handleCppToken()
+**** DONE LexemBuffer instead of body in processDefineDirective() - yylex.c
+***** DONE Use putLexXXXWithPointer() for now
+**** DONE LexemBuffer instead of buf/bcc/tbcc in expandMacroArgument()
+***** DONE Use putLexXXXWithPointer() for now
+**** DONE LexemBuffer instead of buf/bcc in createMacroBody()
+***** DONE Use putLexXXXWithPointer() for now
+**** DONE backpatching of lexems
+***** DONE backpatch lexem token in handleCppToken()
 ****** DONE functions to backpatch lexem token
-****** REQUIRES LexemBuffer as parameter to putLexToken()
+****** DONE LexemBuffer as parameter to putLexToken()
 ******* DONE lb->end instead of writePositionP in handleCppToken()
 ******* DONE lb->end instead of extra parameter in processIdentifier()
 ******* DONE lb->end instead of extra parameter in getLexemFromLexer()
-******* REQUIRES lb->end instead of local variable destination in processDefineDirective()
+******* DONE lb->end instead of local variable destination in processDefineDirective()
+******** DONE Use putLexTokenWithPointer() instead
 ***** DONE setting next write position in lexemStream in handleCompletionOrSearch()
 ****** DONE function to set lb->end (setLexemStreamEnd())
 *** DONE Use LexemBuffer as argument to putLexLine()
-*** TRY Use LexemBuffer as argument to putLexPositionFields()
-**** REQUIRES LexemBuffer instead of local destination in processDefineDirective()
-**** REQUIRES LexemBuffer instead of local variables in collate()
-**** REQUIRES LexemBuffer instead of local variables in createMacroBody()
+*** DONE Use LexemBuffer as argument to putLexPositionFields()
+**** DONE LexemBuffer instead of local destination in processDefineDirective()
+***** DONE Use putLexXXXWithPointer() for now
+**** DONE LexemBuffer instead of local variables in collate()
+***** DONE Use putLexXXXWithPointer() for now
+**** DONE LexemBuffer instead of local variables in createMacroBody()
+***** DONE Use putLexXXXWithPointer() for now
 *** DONE Use LexemBuffer as argument to putLexPosition()
 **** DONE Use lb->end instead of writePositionP in handleCompletionOrSearch()
 *** DONE Use LexemBuffer as argument to putLexChar()
-*** TRY Use LexemBuffer as argument to putLexShort()
-**** REQUIRES LexemBuffer as argument to putLexToken()
-*** TRY Use LexemBuffer as argument to putLexInt()
-**** REQUIRES lb->end instead of local variable destination in processDefineDirective()
-*** TRY Use LexemBuffer as argument to putLexCompacted()
-**** REQUIRES LexemBuffer as argument to putLexPositionFields()
+*** DONE Use LexemBuffer as argument to putLexInt()
+**** DONE lb->end instead of local variable destination in processDefineDirective()
+***** DONE Use putLexXXXWithPointer() for now
 ** TRY to use LexemBuffer as argument to all getLexXXX() functions
+*** TRY to use LexemBuffer in getLexInt()
+**** REQUIRES passLex() to send LexemBuffer instead of pointer
+***** REQUIRES currentInput to contain LexemBuffer instead of currentLexemP
+*** TRY to use LexemBuffer in getLexToken()
+**** REQUIRES passLex() to send LexemBuffer instead of pointer
+**** REQUIRES getLexem() and getLexemSavePrevious() to use LexemBuffer instead of pointer
+**** REQUIRES collate() to work with LexemBuffer instead of pointers
+**** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
+*** TRY to use LexemBuffer in getLexPosition()
+** TRY to replace putLexXXXWithPointer() in yylex.c
 * DOING Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?* DOING Figure out, and if possible, clean up, how 'refactory' calls 'server'
