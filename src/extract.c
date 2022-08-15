@@ -22,9 +22,9 @@ typedef struct programGraphNode {
     struct reference            *ref;		/* original reference of node */
     struct referencesItem  *symRef;
     struct programGraphNode		*jump;
-    char						posBits;		/* INSIDE/OUSIDE block */
-    char						stateBits;		/* visited + where setted */
-    char						classifBits;	/* resulting classification */
+    char posBits;		/* INSIDE/OUSIDE block */
+    char stateBits;		/* visited + where setted */
+    char classifBits;	/* resulting classification */
     struct programGraphNode		*next;
 } ProgramGraphNode;
 
@@ -754,7 +754,7 @@ static void extractSprintThrownExceptions(char *nhead, ProgramGraphNode *program
 }
 
 static void generateNewFunctionHead(ProgramGraphNode *program) {
-    char nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
+    char nhead[MAX_EXTRACT_FUN_HEAD_SIZE+2];
     int nhi, ldclaLen;
     char ldcla[TMP_STRING_SIZE];
     char dcla[TMP_STRING_SIZE];
@@ -1000,7 +1000,7 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
 }
 
 static void extJavaGenNewClassHead(ProgramGraphNode *program) {
-    char nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
+    char nhead[MAX_EXTRACT_FUN_HEAD_SIZE+2];
     int nhi, ldclaLen;
     char ldcla[TMP_STRING_SIZE];
     char dcla[TMP_STRING_SIZE];
