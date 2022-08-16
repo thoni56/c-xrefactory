@@ -116,9 +116,9 @@ static void fillMacroArgTabElem(MacroArgumentTableElement *macroArgTabElem, char
     macroArgTabElem->order = order;
 }
 
-void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,
+void fillLexInput(LexInput *lexInput, char *currentLexemP, char *endOfBuffer,
                   char *beginningOfBuffer, char *macroName, InputType margExpFlag) {
-    lexInput->currentLexemP = currentLexem;
+    lexInput->currentLexemP = currentLexemP;
     lexInput->endOfBuffer = endOfBuffer;
     lexInput->beginningOfBuffer = beginningOfBuffer;
     lexInput->macroName = macroName;
@@ -1909,7 +1909,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
     int res;
 
     assert(cpoint > 0);
-    cto = cache.cp[cpoint].lbcc;
+    cto = cache.cachePoints[cpoint].lbcc;
     cp = *cfrom;
     res = 1;
 
@@ -2024,11 +2024,11 @@ static void actionOnBlockMarker(void) {
         parsedInfo.setTargetAnswerClass[0] = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (parsedClassInfo.function == NULL) {
-                if (s_javaStat!=NULL) {
-                    if (s_javaStat->thisClass==NULL) {
+                if (javaStat!=NULL) {
+                    if (javaStat->thisClass==NULL) {
                         sprintf(parsedInfo.setTargetAnswerClass, " %s", s_javaThisPackageName);
                     } else {
-                        strcpy(parsedInfo.setTargetAnswerClass, s_javaStat->thisClass->linkName);
+                        strcpy(parsedInfo.setTargetAnswerClass, javaStat->thisClass->linkName);
                     }
                 }
             }
@@ -2037,7 +2037,7 @@ static void actionOnBlockMarker(void) {
         parsedInfo.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (parsedClassInfo.function == NULL) {
-                if (s_javaStat!=NULL) {
+                if (javaStat!=NULL) {
                     parsedInfo.moveTargetApproved = 1;
                 }
             }
@@ -2046,8 +2046,8 @@ static void actionOnBlockMarker(void) {
         parsedInfo.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (parsedClassInfo.function == NULL) {
-                if (s_javaStat!=NULL) {
-                    if (s_javaStat->thisClass!=NULL) {
+                if (javaStat!=NULL) {
+                    if (javaStat->thisClass!=NULL) {
                         parsedInfo.moveTargetApproved = 1;
                     }
                 }
@@ -2060,14 +2060,14 @@ static void actionOnBlockMarker(void) {
         parsedInfo.currentClassAnswer[0] = 0;
         parsedInfo.currentSuperClassAnswer[0] = 0;
         if (LANGUAGE(LANG_JAVA)) {
-            if (s_javaStat!=NULL) {
+            if (javaStat!=NULL) {
                 strcpy(parsedInfo.currentPackageAnswer, s_javaThisPackageName);
-                if (s_javaStat->thisClass!=NULL) {
-                    assert(s_javaStat->thisClass->u.structSpec);
-                    strcpy(parsedInfo.currentClassAnswer, s_javaStat->thisClass->linkName);
-                    if (s_javaStat->thisClass->u.structSpec->super!=NULL) {
-                        assert(s_javaStat->thisClass->u.structSpec->super->element);
-                        strcpy(parsedInfo.currentSuperClassAnswer, s_javaStat->thisClass->u.structSpec->super->element->linkName);
+                if (javaStat->thisClass!=NULL) {
+                    assert(javaStat->thisClass->u.structSpec);
+                    strcpy(parsedInfo.currentClassAnswer, javaStat->thisClass->linkName);
+                    if (javaStat->thisClass->u.structSpec->super!=NULL) {
+                        assert(javaStat->thisClass->u.structSpec->super->element);
+                        strcpy(parsedInfo.currentSuperClassAnswer, javaStat->thisClass->u.structSpec->super->element->linkName);
                     }
                 }
             }

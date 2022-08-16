@@ -87,7 +87,7 @@ void deleteSymDef(void *p) {
 
     pp = (Symbol *) p;
     log_debug("deleting %s %s", pp->name, pp->linkName);
-    if (symbolTableDelete(s_javaStat->locals,pp)) return;
+    if (symbolTableDelete(javaStat->locals,pp)) return;
     if (symbolTableDelete(symbolTable,pp)==0) {
         assert(options.mode);
         if (options.mode != ServerMode) {
@@ -167,7 +167,7 @@ bool javaOuterClassAccessible(Symbol *cl) {
         return true;
     }
     /* default access, check whether it is in current package */
-    assert(s_javaStat);
+    assert(javaStat);
     if (javaClassIsInCurrentPackage(cl)) {
         log_trace("return true for default protection in current package");
         return true;
@@ -221,12 +221,12 @@ static bool accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
 // when modifying this, you will need to change it there too
 // So, why don't we extract this common functionality?!?!?!?
 bool javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags) {
-    S_javaStat          *cs, *lcs;
+    JavaStat          *cs, *lcs;
     int                 len;
     if (funcl == NULL)
         return true;  /* argument or local variable */
     log_trace("testing accessibility %s . %s of x%x",funcl->linkName,rec->linkName, recAccessFlags);
-    assert(s_javaStat);
+    assert(javaStat);
     if (recAccessFlags & AccessPublic) {
         log_trace("return true for access public");
         return true;
@@ -237,7 +237,7 @@ bool javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbo
             log_trace("return true for protected in current package");
             return true;
         }
-        for (cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
+        for (cs=javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
             if (cs->thisClass == funcl) {
                 log_trace("return true for inside class");
                 return true;
@@ -251,7 +251,7 @@ bool javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbo
         return false;
     }
     if (recAccessFlags & AccessPrivate) {
-        for(lcs=cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
+        for(lcs=cs=javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
             lcs = cs;
         }
         if (lcs!=NULL && lcs->thisClass!=NULL) {
@@ -444,7 +444,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
                                     rfs.baseClass->u.structSpec->classFileIndex);
             // this is adding reference to 'super', not to the field!
             // for pull-up/push-down
-            if (super!=NULL) addThisCxReferences(s_javaStat->classFileIndex,&super->position);
+            if (super!=NULL) addThisCxReferences(javaStat->classFileIndex,&super->position);
         }
     } else if (rr == RESULT_OK) {
         ref = addCxReference(*res,&record->position,UsageUsed, noFileIndex, noFileIndex);
@@ -475,12 +475,12 @@ void labelReference(Id *id, UsageKind usage) {
     char *t;
     assert(id);
     if (LANGUAGE(LANG_JAVA)) {
-        assert(s_javaStat&&s_javaStat->thisClass&&s_javaStat->thisClass->u.structSpec);
+        assert(javaStat&&javaStat->thisClass&&javaStat->thisClass->u.structSpec);
         if (parsedClassInfo.function!=NULL) {
-            sprintf(tempString,"%x-%s.%s",s_javaStat->thisClass->u.structSpec->classFileIndex,
+            sprintf(tempString,"%x-%s.%s",javaStat->thisClass->u.structSpec->classFileIndex,
                     parsedClassInfo.function->name, id->name);
         } else {
-            sprintf(tempString,"%x-.%s", s_javaStat->thisClass->u.structSpec->classFileIndex,
+            sprintf(tempString,"%x-.%s", javaStat->thisClass->u.structSpec->classFileIndex,
                     id->name);
         }
     } else if (parsedClassInfo.function!=NULL) {
@@ -626,7 +626,7 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
 
 void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol *parameter, int position) {
     if (parameter->name != NULL && parameter->type!=TypeError) {
-        assert(s_javaStat->locals!=NULL);
+        assert(javaStat->locals!=NULL);
         Symbol *parameterCopy = newSymbolAsCopyOf(parameter);
         Symbol *pp;
 

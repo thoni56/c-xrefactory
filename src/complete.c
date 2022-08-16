@@ -1016,13 +1016,13 @@ void completeRecNames(Completions *c) {
 
 static void completeFromSymTab(Completions*c, unsigned storage){
     SymbolCompletionFunctionInfo  info;
-    S_javaStat              *cs;
+    JavaStat              *cs;
     int                     vlevelOffset;
 
     fillCompletionSymFunInfo(&info, c, storage);
     if (currentLanguage == LANG_JAVA) {
         vlevelOffset = 0;
-        for(cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL ;cs=cs->next) {
+        for(cs=javaStat; cs!=NULL && cs->thisClass!=NULL ;cs=cs->next) {
             symbolTableMapWithPointer(cs->locals, symbolCompletionFunction, (void*) &info);
             completeRecordsNames(c, cs->thisClass, CLASS_TO_ANY, storage, TypeDefault, vlevelOffset);
             vlevelOffset += NEST_VIRT_COMPL_OFFSET;
@@ -1338,9 +1338,9 @@ static void javaCompleteNestedClasses(  Completions *c,
 }
 
 static void javaCompleteNestedClSingleName(Completions *cc) {
-    S_javaStat  *cs;
+    JavaStat  *cs;
 
-    for(cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
+    for(cs=javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
         javaCompleteNestedClasses(cc, cs->thisClass, StorageDefault);
     }
 }
@@ -1357,7 +1357,7 @@ static void javaCompleteComposedName(Completions *c,
     char packageName[MAX_FILE_NAME_SIZE];
     Reference *orr;
 
-    nameType = javaClassifyAmbiguousName(s_javaStat->lastParsedName,NULL,&str,
+    nameType = javaClassifyAmbiguousName(javaStat->lastParsedName,NULL,&str,
                                          &expr,&orr,NULL, USELESS_FQT_REFS_ALLOWED,classif,UsageUsed);
     if (innerConstruct && nameType != TypeExpression)
         return;
@@ -1369,9 +1369,9 @@ static void javaCompleteComposedName(Completions *c,
     }
     /* complete packages and classes from file system */
     if (nameType==TypePackage) {
-        javaCreateComposedName(NULL,s_javaStat->lastParsedName,'/',NULL,packageName,MAX_FILE_NAME_SIZE);
+        javaCreateComposedName(NULL,javaStat->lastParsedName,'/',NULL,packageName,MAX_FILE_NAME_SIZE);
         javaMapDirectoryFiles1(packageName, javaTypeNameCompletion,
-                               c,s_javaStat->lastParsedName, &storage);
+                               c,javaStat->lastParsedName, &storage);
     }
     /* complete inner classes */
     if (nameType==TypeStruct || innerConstruct){
@@ -1487,9 +1487,9 @@ void javaCompleteClassDefinitionName(Completions*c) {
 }
 
 void javaCompletePackageCompName(Completions*c) {
-    javaClassifyToPackageNameAndAddRefs(s_javaStat->lastParsedName, UsageUsed);
-    javaMapDirectoryFiles2(s_javaStat->lastParsedName,
-                           javaPackageNameCompletion, c, s_javaStat->lastParsedName, NULL);
+    javaClassifyToPackageNameAndAddRefs(javaStat->lastParsedName, UsageUsed);
+    javaMapDirectoryFiles2(javaStat->lastParsedName,
+                           javaPackageNameCompletion, c, javaStat->lastParsedName, NULL);
 }
 
 void javaCompleteTypeSingleName(Completions*c) {
@@ -1737,7 +1737,7 @@ void javaCompleteThisConstructor (Completions *c) {
         return;
     if (options.serverOperation == OLO_SEARCH)
         return;
-    memb = s_javaStat->thisClass;
+    memb = javaStat->thisClass;
     javaLoadClassSymbolsFromFile(memb);
     completeRecordsNames(c, memb, CLASS_TO_ANY, StorageConstructor,
                          TypeSpecialConstructorCompletion,0);
@@ -1798,7 +1798,7 @@ void javaCompleteStrRecordQualifiedSuper(Completions *c) {
     int ttype;
 
     lastUselessRef = NULL;
-    ttype = javaClassifyAmbiguousName(s_javaStat->lastParsedName, NULL, &str, &expr, &rr,
+    ttype = javaClassifyAmbiguousName(javaStat->lastParsedName, NULL, &str, &expr, &rr,
                                       &lastUselessRef, USELESS_FQT_REFS_ALLOWED, CLASS_TO_TYPE, UsageUsed);
     if (ttype != TypeStruct)
         return;
@@ -1811,16 +1811,16 @@ void javaCompleteStrRecordQualifiedSuper(Completions *c) {
 }
 
 void javaCompleteUpMethodSingleName(Completions *c) {
-    if (s_javaStat!=NULL) {
-        completeRecordsNames(c, s_javaStat->thisClass,CLASS_TO_ANY,
+    if (javaStat!=NULL) {
+        completeRecordsNames(c, javaStat->thisClass,CLASS_TO_ANY,
                              StorageDefault,TypeDefault,0);
     }
 }
 
 void javaCompleteFullInheritedMethodHeader(Completions *c) {
     if (c->idToProcessLen != 0) return;
-    if (s_javaStat!=NULL) {
-        completeRecordsNames(c,s_javaStat->thisClass,CLASS_TO_METHOD,
+    if (javaStat!=NULL) {
+        completeRecordsNames(c,javaStat->thisClass,CLASS_TO_METHOD,
                              StorageDefault,TypeInheritedFullMethod,0);
     }
 #if ZERO

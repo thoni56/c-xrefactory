@@ -45,7 +45,7 @@ extern void initAllInputs(void);
 extern void initInput(FILE *file, EditorBuffer *buffer, char *prepend, char *fileName);
 extern void addIncludeReference(int filenum, Position *pos);
 extern void addThisFileDefineIncludeReference(int filenum);
-extern void pushInclude(FILE *f, EditorBuffer *buff, char *name, char *prepend);
+extern void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend);
 extern void popInclude(void);
 extern void addMacroDefinedByOption(char *opt);
 extern char *placeIdent(void);

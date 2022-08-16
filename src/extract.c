@@ -1302,7 +1302,7 @@ void extractActionOnBlockMarker(void) {
         parsedInfo.cxMemoryIndexAtBlockBegin = cxMemory->index;
         parsedInfo.workMemoryIndexAtBlockBegin = currentBlock->outerBlock;
         if (LANGUAGE(LANG_JAVA)) {
-            s_javaExtractFromFunctionMods = s_javaStat->methodModifiers;
+            s_javaExtractFromFunctionMods = javaStat->methodModifiers;
         }
     } else {
         assert(parsedInfo.cxMemoryIndexAtBlockEnd == 0);

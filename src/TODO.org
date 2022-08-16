@@ -145,6 +145,8 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO FUTURE: Use clangd as backend - is that even possible
 ** TODO FUTURE: Implement LSP (Language Server Protocol)
 ** TODO FEATURE: New refactoring: move function for C
+** TODO FEATURE: Rename "module" in C
+   Prompt for new "module name", rename both .c & .h if they exist, and change all includes
 * TODO BUGS:
 ** TODO Double free when swapping refs while reading jar file
 Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading

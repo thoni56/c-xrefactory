@@ -373,9 +373,9 @@ char *javaCutSourcePathFromFileName(char *fname) {
         }
     });
     // cut auto-detected source-path
-    if (s_javaStat!=NULL && s_javaStat->namedPackagePath != NULL) {
-        len = strlen(s_javaStat->namedPackagePath);
-        if (filenameCompare(s_javaStat->namedPackagePath, fname, len) == 0) {
+    if (javaStat!=NULL && javaStat->namedPackagePath != NULL) {
+        len = strlen(javaStat->namedPackagePath);
+        if (filenameCompare(javaStat->namedPackagePath, fname, len) == 0) {
             res = fname+len;
             goto fini;
         }
@@ -1180,12 +1180,12 @@ void javaMapDirectoryFiles1(char *packageFilename,
                           zipArchiveTable[i].fn,packageFilename);
     }
     // auto-inferred source path
-    if (s_javaStat->namedPackagePath != NULL) {
-        if (!pathsStringContainsPath(javaSourcePaths, s_javaStat->namedPackagePath)
-            && !classPathContainsPath(s_javaStat->namedPackagePath)) {
+    if (javaStat->namedPackagePath != NULL) {
+        if (!pathsStringContainsPath(javaSourcePaths, javaStat->namedPackagePath)
+            && !classPathContainsPath(javaStat->namedPackagePath)) {
             char tmpString[MAX_SOURCE_PATH_SIZE];
-            fname = concatDirectoryWithFileName(tmpString, s_javaStat->namedPackagePath, packageFilename);
-            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,s_javaStat->namedPackagePath,packageFilename,a1,a2,a3);
+            fname = concatDirectoryWithFileName(tmpString, javaStat->namedPackagePath, packageFilename);
+            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,javaStat->namedPackagePath,packageFilename,a1,a2,a3);
         }
     }
 }
@@ -1233,7 +1233,7 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
         }
         // following is to free CF_MEMORY taken by scan, only
         // cross references in CX_MEMORY are interesting in this case.
-        recoverCachePoint(cpi-1, cache.cp[cpi-1].lbcc, 0);
+        recoverCachePoint(cpi-1, cache.cachePoints[cpi-1].lbcc, false);
         log_trace("firstFreeIndex = %d", currentBlock->firstFreeIndex);
         log_trace(":ppmmem == %d/%d %x-%x", ppmMemoryIndex, SIZE_ppmMemory, ppmMemory, ppmMemory+SIZE_ppmMemory);
     }

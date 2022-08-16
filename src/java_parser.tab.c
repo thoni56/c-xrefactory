@@ -3223,8 +3223,8 @@ case 45:
             yyval.ast_idList.data = yyvsp[0].ast_idList.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(s_javaStat);
-                    s_javaStat->lastParsedName = yyvsp[0].ast_idList.data;
+                    assert(javaStat);
+                    javaStat->lastParsedName = yyvsp[0].ast_idList.data;
                 } else {
                     PropagateBoundaries(yyval.ast_idList, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                     javaCheckForPrimaryStart(&yyvsp[0].ast_idList.data->id.position, &yyvsp[0].ast_idList.data->id.position);
@@ -3239,8 +3239,8 @@ case 46:
             yyval.ast_idList.data = yyvsp[0].ast_idList.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(s_javaStat);
-                    s_javaStat->lastParsedName = yyvsp[0].ast_idList.data;
+                    assert(javaStat);
+                    javaStat->lastParsedName = yyvsp[0].ast_idList.data;
                 } else {
                     PropagateBoundaries(yyval.ast_idList, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                     javaCheckForPrimaryStartInNameList(yyvsp[0].ast_idList.data, javaGetNameStartingPosition(yyvsp[0].ast_idList.data));
@@ -3301,8 +3301,8 @@ case 63:
 #line 810 "java_parser.y"
 {
             if (regularPass()) {
-                assert(s_javaStat);
-                *s_javaStat = s_initJavaStat;
+                assert(javaStat);
+                *javaStat = s_initJavaStat;
                 s_javaThisPackageName = "";      /* preset for case if copied somewhere*/
             };
         }
@@ -3318,7 +3318,7 @@ case 64:
                     s_javaThisPackageName = javaCreateComposedName(NULL,yyvsp[0].ast_idList.data,'/',
                                                                    NULL,NULL,0);
                 }
-                s_javaStat->currentPackage = s_javaThisPackageName;
+                javaStat->currentPackage = s_javaThisPackageName;
                 if (! SyntaxPassOnly()) {
 
                     int             packlen;
@@ -3331,18 +3331,18 @@ case 64:
                     /* this may be problem for CACHING !!!!*/
                     if (yyvsp[0].ast_idList.data == NULL) {	/* anonymous package */
                         int j = 0;
-                        s_javaStat->className = NULL;
+                        javaStat->className = NULL;
                         for (int i=0; currentFile.fileName[i]; i++) {
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR)
                                 j=i;
                         }
                         cdir = StackMemoryAllocC(j+1, char);
                         strncpy(cdir,currentFile.fileName,j); cdir[j]=0;
-                        s_javaStat->unnamedPackagePath = cdir;
+                        javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                     } else {
                         javaAddPackageDefinition(yyvsp[0].ast_idList.data);
-                        s_javaStat->className = yyvsp[0].ast_idList.data;
+                        javaStat->className = yyvsp[0].ast_idList.data;
                         int j = 0;
                         for (int i=0; currentFile.fileName[i]; i++) {
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR)
@@ -3352,8 +3352,8 @@ case 64:
                         if (j>packlen && filenameCompare(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
                             cdir = StackMemoryAllocC(j-packlen, char);
                             strncpy(cdir, currentFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
-                            s_javaStat->namedPackagePath = cdir;
-                            s_javaStat->currentPackage = "";
+                            javaStat->namedPackagePath = cdir;
+                            javaStat->currentPackage = "";
                             javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                         } else {
                             if (options.mode != ServerMode) {
@@ -3717,7 +3717,7 @@ case 109:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaAddSuperNestedClassToSymbolTab(s_javaStat->thisClass);
+                        javaAddSuperNestedClassToSymbolTab(javaStat->thisClass);
                     }
                 } else {
                     jslAddSuperNestedClassesToJslTypeTab(s_jsl->classStat->thisClass);
@@ -3796,7 +3796,7 @@ case 115:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaAddSuperNestedClassToSymbolTab(s_javaStat->thisClass);
+                        javaAddSuperNestedClassToSymbolTab(javaStat->thisClass);
                     }
                 } else {
                     jslAddSuperNestedClassesToJslTypeTab(s_jsl->classStat->thisClass);
@@ -3958,15 +3958,15 @@ case 126:
                             if (options.serverOperation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
                                                              CategoryLocal, currentFile.lexBuffer.buffer.fileNumber,
-                                                             s_javaStat->thisClass);
+                                                             javaStat->thisClass);
                             } else if (options.serverOperation == OLO_NOT_FQT_REFS) {
                                 changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                              CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
-                                                             s_javaStat->thisClass);
+                                                             javaStat->thisClass);
                             } else if (options.serverOperation == OLO_USELESS_LONG_NAME) {
                                 changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                              CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
-                                                             s_javaStat->thisClass);
+                                                             javaStat->thisClass);
                             }
                             parsedInfo.cxMemoryIndexAtClassBeginning = parsedClassInfo.cxMemoryIndexdiAtClassBegin;
                             parsedInfo.cxMemoryIndexAtClassEnd = cxMemory->index;
@@ -3977,11 +3977,11 @@ case 126:
                             if (options.serverOperation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                             CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
-                                                            s_javaStat->thisClass);
+                                                            javaStat->thisClass);
                             } else if (options.serverOperation == OLO_USELESS_LONG_NAME_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                             CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
-                                                            s_javaStat->thisClass);
+                                                            javaStat->thisClass);
                             }
                         }
                     }
@@ -4059,7 +4059,7 @@ case 141:
                     int vClass;
                     S_recFindStr    rfs;
                     parsedInfo.lastAssignmentStruct = NULL;
-                    clas = s_javaStat->thisClass;
+                    clas = javaStat->thisClass;
                     assert(clas != NULL);
                     for(p=yyvsp[-1].ast_symbol.data; p!=NULL; p=pp) {
                         pp = p->next;
@@ -4067,7 +4067,7 @@ case 141:
                         if (p->type == TypeError) continue;
                         assert(p->type == TypeDefault);
                         completeDeclarator(yyvsp[-2].ast_symbol.data, p);
-                        vClass = s_javaStat->classFileIndex;
+                        vClass = javaStat->classFileIndex;
                         p->access = yyvsp[-3].ast_unsigned.data;
                         p->storage = StorageField;
                         if (clas->access&AccessInterface) {
@@ -4539,7 +4539,7 @@ case 176:
                         assert(yyvsp[-1].ast_symbol.data && yyvsp[-1].ast_symbol.data->u.typeModifier);
                         javaAddMethodParametersToSymTable(yyvsp[-1].ast_symbol.data);
                         mh->u.typeModifier->u.m.signature = strchr(mh->linkName, '(');
-                        s_javaStat->methodModifiers = yyvsp[-2].ast_unsigned.data;
+                        javaStat->methodModifiers = yyvsp[-2].ast_unsigned.data;
                     }
                 }
                 if (inSecondJslPass()) {
@@ -4569,8 +4569,8 @@ case 178:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        if (strcmp(yyvsp[0].ast_id.data->name, s_javaStat->thisClass->name)==0) {
-                            addCxReference(s_javaStat->thisClass, &yyvsp[0].ast_id.data->position,
+                        if (strcmp(yyvsp[0].ast_id.data->name, javaStat->thisClass->name)==0) {
+                            addCxReference(javaStat->thisClass, &yyvsp[0].ast_id.data->position,
                                            UsageConstructorDefinition,noFileIndex, noFileIndex);
                             yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.data->name,/*JAVA_CONSTRUCTOR_NAME1,*/
                                                              &(yyvsp[0].ast_id.data->position), MEMORY_XX);
@@ -4641,7 +4641,7 @@ case 184:
 #line 2016 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &yyvsp[-1].ast_id.data->position);
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaStat->thisClass, &yyvsp[-1].ast_id.data->position);
                 }
             }
 break;
@@ -4650,7 +4650,7 @@ case 185:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaConstructorInvocation(s_javaStat->thisClass, &(yyvsp[-5].ast_id.data->position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
+                        javaConstructorInvocation(javaStat->thisClass, &(yyvsp[-5].ast_id.data->position), yyvsp[-1].ast_typeModifiersListPositionListPair.data.typeModifierList);
                         parsedClassInfo.erfsForParameterCompletion = yyvsp[-4].erfs;
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.data->position, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_typeModifiersListPositionListPair.data.positionList, &yyvsp[0].ast_position.data);
@@ -4748,7 +4748,7 @@ case 197:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaAddSuperNestedClassToSymbolTab(s_javaStat->thisClass);
+                    javaAddSuperNestedClassToSymbolTab(javaStat->thisClass);
                 }
             } else {
                 jslAddSuperNestedClassesToJslTypeTab(s_jsl->classStat->thisClass);
@@ -4987,7 +4987,7 @@ case 234:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(s_javaStat->locals, yyvsp[-1].ast_symbol.data,yyvsp[0].ast_symbol.data,NULL,StorageAuto);
+                    addNewDeclaration(javaStat->locals, yyvsp[-1].ast_symbol.data,yyvsp[0].ast_symbol.data,NULL,StorageAuto);
                     yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-1].ast_symbol, yyvsp[0].ast_symbol);
@@ -5000,7 +5000,7 @@ case 235:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(s_javaStat->locals, yyvsp[-1].ast_symbol.data,yyvsp[0].ast_symbol.data,NULL,StorageAuto);
+                    addNewDeclaration(javaStat->locals, yyvsp[-1].ast_symbol.data,yyvsp[0].ast_symbol.data,NULL,StorageAuto);
                     yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
@@ -5014,7 +5014,7 @@ case 236:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[-2].ast_symbol.data->type != TypeError) {
-                        addNewDeclaration(s_javaStat->locals, yyvsp[-2].ast_symbol.data,yyvsp[0].ast_symbol.data,NULL,StorageAuto);
+                        addNewDeclaration(javaStat->locals, yyvsp[-2].ast_symbol.data,yyvsp[0].ast_symbol.data,NULL,StorageAuto);
                     }
                     yyval.ast_symbol.data = yyvsp[-2].ast_symbol.data;
                 } else {
@@ -5676,7 +5676,7 @@ case 340:
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         if (yyvsp[-3].ast_symbol.data->type != TypeError) {
-                            addNewSymbolDefinition(s_javaStat->locals, yyvsp[-3].ast_symbol.data, StorageAuto,
+                            addNewSymbolDefinition(javaStat->locals, yyvsp[-3].ast_symbol.data, StorageAuto,
                                             UsageDefined);
                             if (options.serverOperation == OLO_EXTRACT) {
                                 assert(yyvsp[-3].ast_symbol.data->type==TypeDefault);
@@ -5757,10 +5757,10 @@ case 347:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(s_javaStat && s_javaStat->thisType);
+                    assert(javaStat && javaStat->thisType);
 /*fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);*/
-                    yyval.ast_expressionType.data.typeModifier = s_javaStat->thisType;
-                    addThisCxReferences(s_javaStat->classFileIndex, &yyvsp[0].ast_id.data->position);
+                    yyval.ast_expressionType.data.typeModifier = javaStat->thisType;
+                    addThisCxReferences(javaStat->classFileIndex, &yyvsp[0].ast_id.data->position);
                     yyval.ast_expressionType.data.reference = NULL;
                 } else {
                     yyval.ast_expressionType.data.position = &yyvsp[0].ast_id.data->position;
@@ -5987,7 +5987,7 @@ case 365:
                             /* MARIAN(?): I have removed following because it makes problems when*/
                             /* expanding to FQT names, WHY IT WAS HERE ???*/
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                                         s_javaStat->classFileIndex, &$1.data->position,
+                                         javaStat->classFileIndex, &$1.data->position,
                                          UsageNotFQField); &*/
                         } else {
                             /* MARIAN(?): here I should annulate class reference, as it is an error*/

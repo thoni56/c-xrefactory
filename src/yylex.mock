@@ -27,8 +27,8 @@ void addThisFileDefineIncludeReference(int filenum) {
   mock(filenum);
 }
 
-void pushInclude(FILE *f, EditorBuffer *buff, char *name, char *prepend) {
-  mock(f, buff, name, prepend);
+void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend) {
+  mock(file, buff, name, prepend);
 }
 
 void popInclude(void) {

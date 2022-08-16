@@ -705,8 +705,8 @@ Name
             $$.data = $1.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(s_javaStat);
-                    s_javaStat->lastParsedName = $1.data;
+                    assert(javaStat);
+                    javaStat->lastParsedName = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                     javaCheckForPrimaryStart(&$1.data->id.position, &$1.data->id.position);
@@ -718,8 +718,8 @@ Name
             $$.data = $1.data;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(s_javaStat);
-                    s_javaStat->lastParsedName = $1.data;
+                    assert(javaStat);
+                    javaStat->lastParsedName = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                     javaCheckForPrimaryStartInNameList($1.data, javaGetNameStartingPosition($1.data));
@@ -809,8 +809,8 @@ LabelUseIdentifier
 
 CompilationUnit: {
             if (regularPass()) {
-                assert(s_javaStat);
-                *s_javaStat = s_initJavaStat;
+                assert(javaStat);
+                *javaStat = s_initJavaStat;
                 s_javaThisPackageName = "";      // preset for case if copied somewhere
             };
         } PackageDeclaration_opt {
@@ -822,7 +822,7 @@ CompilationUnit: {
                     s_javaThisPackageName = javaCreateComposedName(NULL,$2.data,'/',
                                                                    NULL,NULL,0);
                 }
-                s_javaStat->currentPackage = s_javaThisPackageName;
+                javaStat->currentPackage = s_javaThisPackageName;
                 if (! SyntaxPassOnly()) {
 
                     int             packlen;
@@ -835,18 +835,18 @@ CompilationUnit: {
                     // this may be problem for CACHING !!!!
                     if ($2.data == NULL) {	/* anonymous package */
                         int j = 0;
-                        s_javaStat->className = NULL;
+                        javaStat->className = NULL;
                         for (int i=0; currentFile.fileName[i]; i++) {
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR)
                                 j=i;
                         }
                         cdir = StackMemoryAllocC(j+1, char);
                         strncpy(cdir,currentFile.fileName,j); cdir[j]=0;
-                        s_javaStat->unnamedPackagePath = cdir;
+                        javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                     } else {
                         javaAddPackageDefinition($2.data);
-                        s_javaStat->className = $2.data;
+                        javaStat->className = $2.data;
                         int j = 0;
                         for (int i=0; currentFile.fileName[i]; i++) {
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR)
@@ -856,8 +856,8 @@ CompilationUnit: {
                         if (j>packlen && filenameCompare(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
                             cdir = StackMemoryAllocC(j-packlen, char);
                             strncpy(cdir, currentFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
-                            s_javaStat->namedPackagePath = cdir;
-                            s_javaStat->currentPackage = "";
+                            javaStat->namedPackagePath = cdir;
+                            javaStat->currentPackage = "";
                             javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                         } else {
                             if (options.mode != ServerMode) {
@@ -1178,7 +1178,7 @@ ClassDeclaration
             } Super_opt Interfaces_opt {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaAddSuperNestedClassToSymbolTab(s_javaStat->thisClass);
+                        javaAddSuperNestedClassToSymbolTab(javaStat->thisClass);
                     }
                 } else {
                     jslAddSuperNestedClassesToJslTypeTab(s_jsl->classStat->thisClass);
@@ -1243,7 +1243,7 @@ FunctionInnerClassDeclaration
             } Super_opt Interfaces_opt {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaAddSuperNestedClassToSymbolTab(s_javaStat->thisClass);
+                        javaAddSuperNestedClassToSymbolTab(javaStat->thisClass);
                     }
                 } else {
                     jslAddSuperNestedClassesToJslTypeTab(s_jsl->classStat->thisClass);
@@ -1385,15 +1385,15 @@ _bef_:	{
                             if (options.serverOperation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
                                                              CategoryLocal, currentFile.lexBuffer.buffer.fileNumber,
-                                                             s_javaStat->thisClass);
+                                                             javaStat->thisClass);
                             } else if (options.serverOperation == OLO_NOT_FQT_REFS) {
                                 changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                              CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
-                                                             s_javaStat->thisClass);
+                                                             javaStat->thisClass);
                             } else if (options.serverOperation == OLO_USELESS_LONG_NAME) {
                                 changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                              CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
-                                                             s_javaStat->thisClass);
+                                                             javaStat->thisClass);
                             }
                             parsedInfo.cxMemoryIndexAtClassBeginning = parsedClassInfo.cxMemoryIndexdiAtClassBegin;
                             parsedInfo.cxMemoryIndexAtClassEnd = cxMemory->index;
@@ -1404,11 +1404,11 @@ _bef_:	{
                             if (options.serverOperation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                             CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
-                                                            s_javaStat->thisClass);
+                                                            javaStat->thisClass);
                             } else if (options.serverOperation == OLO_USELESS_LONG_NAME_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                             CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
-                                                            s_javaStat->thisClass);
+                                                            javaStat->thisClass);
                             }
                         }
                     }
@@ -1477,7 +1477,7 @@ FieldDeclaration
                     int vClass;
                     S_recFindStr    rfs;
                     parsedInfo.lastAssignmentStruct = NULL;
-                    clas = s_javaStat->thisClass;
+                    clas = javaStat->thisClass;
                     assert(clas != NULL);
                     for(p=$3.data; p!=NULL; p=pp) {
                         pp = p->next;
@@ -1485,7 +1485,7 @@ FieldDeclaration
                         if (p->type == TypeError) continue;
                         assert(p->type == TypeDefault);
                         completeDeclarator($2.data, p);
-                        vClass = s_javaStat->classFileIndex;
+                        vClass = javaStat->classFileIndex;
                         p->access = $1.data;
                         p->storage = StorageField;
                         if (clas->access&AccessInterface) {
@@ -1924,7 +1924,7 @@ ConstructorDeclaration
                         assert($2.data && $2.data->u.typeModifier);
                         javaAddMethodParametersToSymTable($2.data);
                         mh->u.typeModifier->u.m.signature = strchr(mh->linkName, '(');
-                        s_javaStat->methodModifiers = $1.data;
+                        javaStat->methodModifiers = $1.data;
                     }
                 }
                 if (inSecondJslPass()) {
@@ -1952,8 +1952,8 @@ ConstructorDeclarator
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        if (strcmp($1.data->name, s_javaStat->thisClass->name)==0) {
-                            addCxReference(s_javaStat->thisClass, &$1.data->position,
+                        if (strcmp($1.data->name, javaStat->thisClass->name)==0) {
+                            addCxReference(javaStat->thisClass, &$1.data->position,
                                            UsageConstructorDefinition,noFileIndex, noFileIndex);
                             $<symbol>$ = javaCreateNewMethod($1.data->name,//JAVA_CONSTRUCTOR_NAME1,
                                                              &($1.data->position), MEMORY_XX);
@@ -2015,12 +2015,12 @@ ExplicitConstructorInvocation
     :   This _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &$1.data->position);
+                    parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(javaStat->thisClass, &$1.data->position);
                 }
             } '(' ArgumentList_opt ')'			{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaConstructorInvocation(s_javaStat->thisClass, &($1.data->position), $5.data.typeModifierList);
+                        javaConstructorInvocation(javaStat->thisClass, &($1.data->position), $5.data.typeModifierList);
                         parsedClassInfo.erfsForParameterCompletion = $2;
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.data->position, &$4.data, $5.data.positionList, &$6.data);
@@ -2087,7 +2087,7 @@ InterfaceDeclaration
         } ExtendsInterfaces_opt {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaAddSuperNestedClassToSymbolTab(s_javaStat->thisClass);
+                    javaAddSuperNestedClassToSymbolTab(javaStat->thisClass);
                 }
             } else {
                 jslAddSuperNestedClassesToJslTypeTab(s_jsl->classStat->thisClass);
@@ -2291,7 +2291,7 @@ LocalVarDeclUntilInit
     :   JavaType VariableDeclaratorId							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(s_javaStat->locals, $1.data,$2.data,NULL,StorageAuto);
+                    addNewDeclaration(javaStat->locals, $1.data,$2.data,NULL,StorageAuto);
                     $$.data = $1.data;
                 } else {
                     PropagateBoundaries($$, $1, $2);
@@ -2301,7 +2301,7 @@ LocalVarDeclUntilInit
     |	FINAL JavaType VariableDeclaratorId						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(s_javaStat->locals, $2.data,$3.data,NULL,StorageAuto);
+                    addNewDeclaration(javaStat->locals, $2.data,$3.data,NULL,StorageAuto);
                     $$.data = $2.data;
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -2312,7 +2312,7 @@ LocalVarDeclUntilInit
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.data->type != TypeError) {
-                        addNewDeclaration(s_javaStat->locals, $1.data,$3.data,NULL,StorageAuto);
+                        addNewDeclaration(javaStat->locals, $1.data,$3.data,NULL,StorageAuto);
                     }
                     $$.data = $1.data;
                 } else {
@@ -2915,7 +2915,7 @@ CatchClause
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         if ($3.data->type != TypeError) {
-                            addNewSymbolDefinition(s_javaStat->locals, $3.data, StorageAuto,
+                            addNewSymbolDefinition(javaStat->locals, $3.data, StorageAuto,
                                             UsageDefined);
                             if (options.serverOperation == OLO_EXTRACT) {
                                 assert($3.data->type==TypeDefault);
@@ -2991,10 +2991,10 @@ PrimaryNoNewArray
     |	This								{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(s_javaStat && s_javaStat->thisType);
+                    assert(javaStat && javaStat->thisType);
 //fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);
-                    $$.data.typeModifier = s_javaStat->thisType;
-                    addThisCxReferences(s_javaStat->classFileIndex, &$1.data->position);
+                    $$.data.typeModifier = javaStat->thisType;
+                    addThisCxReferences(javaStat->classFileIndex, &$1.data->position);
                     $$.data.reference = NULL;
                 } else {
                     $$.data.position = &$1.data->position;
@@ -3198,7 +3198,7 @@ ClassInstanceCreationExpression
                             // MARIAN(?): I have removed following because it makes problems when
                             // expanding to FQT names, WHY IT WAS HERE ???
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                                         s_javaStat->classFileIndex, &$1.data->position,
+                                         javaStat->classFileIndex, &$1.data->position,
                                          UsageNotFQField); &*/
                         } else {
                             // MARIAN(?): here I should annulate class reference, as it is an error

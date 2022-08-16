@@ -20,19 +20,19 @@ typedef struct javaStat {
     struct currentlyParsedClassInfo cp;              /* some parsing positions */
     int                      classFileIndex;  /* this file class index */
     struct javaStat         *next;            /* outer class */
-} S_javaStat;
+} JavaStat;
 
-extern S_javaStat *s_javaStat;
-extern S_javaStat s_initJavaStat;
+extern JavaStat *javaStat;
+extern JavaStat s_initJavaStat;
 
 
 extern void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
                             char membFlag, short unsigned  accFlags);
-extern void fillJavaStat(S_javaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
+extern void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                          int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
                          char *namedPackageDir, SymbolTable *locals, IdList *lastParsedName,
                          unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileIndex,
-                         S_javaStat *next);
+                         JavaStat *next);
 extern void javaCheckForPrimaryStart(Position *cpos, Position *pp);
 extern void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp);
 extern void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos);

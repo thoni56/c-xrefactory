@@ -38,8 +38,8 @@ typedef enum {
 } FindJavaFileResult;
 
 
-S_javaStat *s_javaStat;
-S_javaStat s_initJavaStat;
+JavaStat *javaStat;
+JavaStat s_initJavaStat;
 
 
 #define IsJavaReferenceType(m) (m==TypeStruct || m==TypeArray)
@@ -54,11 +54,11 @@ void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
     nestedSpec->accFlags = accFlags;
 }
 
-void fillJavaStat(S_javaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
+void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
                   char *namedPackagePath, SymbolTable *locals, IdList *lastParsedName,
                   unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileIndex,
-                  S_javaStat *next) {
+                  JavaStat *next) {
 
     javaStat->className = className;
     javaStat->thisType = thisType;
@@ -301,7 +301,7 @@ bool javaTypeFileExist(IdList *name) {
         }
     }
 
-    if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
+    if (javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
         fname = javaCreateComposedName(NULL, &tname, FILE_PATH_SEPARATOR, "java",
                                        tmpString, sizeof(tmpString));
         log_trace("testing existence of file '%s'", fname);
@@ -329,8 +329,8 @@ bool javaTypeFileExist(IdList *name) {
             return true;
     }
     // auto-inferred source-path
-    if (s_javaStat->namedPackagePath != NULL) {
-        fname = javaCreateComposedName(s_javaStat->namedPackagePath, &tname, FILE_PATH_SEPARATOR, "java",
+    if (javaStat->namedPackagePath != NULL) {
+        fname = javaCreateComposedName(javaStat->namedPackagePath, &tname, FILE_PATH_SEPARATOR, "java",
                                        tmpString, sizeof(tmpString));
         if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
             return true;
@@ -340,8 +340,8 @@ bool javaTypeFileExist(IdList *name) {
 
 static bool javaFindClassFile(char *name, char **resultingName, time_t *modifiedTimeP) {
     struct stat stat;
-    if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
-        if (javaFindFile0(s_javaStat->unnamedPackagePath, "/", name, ".class", resultingName)) {
+    if (javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
+        if (javaFindFile0(javaStat->unnamedPackagePath, "/", name, ".class", resultingName)) {
             *modifiedTimeP = editorFileModificationTime(*resultingName);
             return true;
         }
@@ -369,8 +369,8 @@ static bool javaFindClassFile(char *name, char **resultingName, time_t *modified
 static int javaFindSourceFile(char *name, char **resultingName) {
     StringList	*cp;
 
-    if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
-        if (javaFindFile0(s_javaStat->unnamedPackagePath, "/", name, ".java", resultingName))
+    if (javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
+        if (javaFindFile0(javaStat->unnamedPackagePath, "/", name, ".java", resultingName))
             return true;
     }
     // sourcepaths
@@ -384,8 +384,8 @@ static int javaFindSourceFile(char *name, char **resultingName) {
             return true;
     }
     // auto-inferred source-path
-    if (s_javaStat->namedPackagePath != NULL) {
-        if (javaFindFile0(s_javaStat->namedPackagePath, "/", name, ".java", resultingName))
+    if (javaStat->namedPackagePath != NULL) {
+        if (javaFindFile0(javaStat->namedPackagePath, "/", name, ".java", resultingName))
             return true;
     }
     return false;
@@ -493,13 +493,13 @@ int javaClassIsInCurrentPackage(Symbol *cl) {
                                                      s_jsl->classStat->thisClass->linkName);
         }
     } else {
-        if (s_javaStat->thisClass == NULL) {
+        if (javaStat->thisClass == NULL) {
             // probably import class.*; (nested subclasses)
-            return javaFqtNameIsFromThePackage(s_javaStat->currentPackage,
+            return javaFqtNameIsFromThePackage(javaStat->currentPackage,
                                                cl->linkName);
         } else {
             return javaFqtNamesAreFromTheSamePackage(cl->linkName,
-                                                     s_javaStat->thisClass->linkName);
+                                                     javaStat->thisClass->linkName);
         }
     }
 }
@@ -858,14 +858,14 @@ static Result findTopLevelNameInternal(char *name,
                                     S_recFindStr *resRfs,
                                     Symbol **resultingMemberP,
                                     int classif,
-                                    S_javaStat *startingScope,
+                                    JavaStat *startingScope,
                                     int accessibilityCheck,
                                     int visibilityCheck,
-                                    S_javaStat **rscope
+                                    JavaStat **rscope
 ) {
     Result result;
     Symbol symbol;
-    S_javaStat *cscope;
+    JavaStat *cscope;
 
     assert((!LANGUAGE(LANG_JAVA)) ||
         (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD));
@@ -903,15 +903,15 @@ static Result findTopLevelNameInternal(char *name,
 Result findTopLevelName(char *name, S_recFindStr *resRfs,
                      Symbol **resMemb, int classif) {
     Result result;
-    S_javaStat *scopeToSearch, *resultScope;
+    JavaStat *scopeToSearch, *resultScope;
 
     result = findTopLevelNameInternal(name, resRfs, resMemb, classif,
-                                   s_javaStat, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES,
+                                   javaStat, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES,
                                    &scopeToSearch);
     // O.K. determine class to search
     if (result != RESULT_OK) {
         // no class to search find, anyway this is a compiler error,
-        scopeToSearch = s_javaStat;
+        scopeToSearch = javaStat;
     }
     if (scopeToSearch!=NULL) {
         log_trace("relooking for %s in %s", name, scopeToSearch->thisClass->name);
@@ -991,9 +991,9 @@ static int javaSimpleNameIsInnerMemberClass(char *name, S_symbol **innmemb) {
 #endif
 
 int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi) {
-    S_javaStat		*cscope;
+    JavaStat		*cscope;
 //&fprintf(dumpOut,"looking for inner class %s\n",name);
-    for(	cscope=s_javaStat;
+    for(	cscope=javaStat;
             cscope!=NULL && cscope->thisClass!=NULL;
             cscope=cscope->next
         ) {
@@ -1542,7 +1542,7 @@ Symbol * javaQualifiedThis(IdList *tname, Id *thisid) {
                                  str->u.structSpec->classFileIndex, &thisid->position,
                                  UsageMaybeThis);
 &*/
-        if (str->u.structSpec->classFileIndex == s_javaStat->classFileIndex) {
+        if (str->u.structSpec->classFileIndex == javaStat->classFileIndex) {
             // redundant qualified this prefix
             addUselessFQTReference(str->u.structSpec->classFileIndex, &thisid->position);
 //&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->idi.p.line, name->idi.p.coll);
@@ -1572,8 +1572,8 @@ void javaAddPackageDefinition(IdList *id) {
 
 void javaSetFieldLinkName(Symbol *field) {
     char *ln;
-    assert(s_javaStat);
-    ln = javaCreateComposedName(NULL,s_javaStat->className,'/', field->name, NULL, 0);
+    assert(javaStat);
+    ln = javaCreateComposedName(NULL,javaStat->className,'/', field->name, NULL, 0);
     field->linkName = ln;
 }
 
@@ -1756,7 +1756,7 @@ int javaLinkNameIsAnnonymousClass(char *linkname) {
 
 void addThisCxReferences(int classIndex, Position *pos) {
     int usage;
-    if (classIndex == s_javaStat->classFileIndex) {
+    if (classIndex == javaStat->classFileIndex) {
         usage = UsageMaybeThis;
     } else {
         usage = UsageMaybeQualifiedThis;
@@ -1808,14 +1808,14 @@ Symbol *javaMethodHeader(unsigned modif, Symbol *type,
     completeDeclarator(type, decl);
     decl->access = modif;
     decl->storage = storage;
-    if (s_javaStat->thisClass->access & AccessInterface) {
+    if (javaStat->thisClass->access & AccessInterface) {
         // set interface default access flags
         decl->access |= (AccessPublic | AccessAbstract);
     }
-    newFun = javaSetFunctionLinkName(s_javaStat->thisClass, decl, MEMORY_XX);
-    addMethodCxReferences(modif, decl, s_javaStat->thisClass);
+    newFun = javaSetFunctionLinkName(javaStat->thisClass, decl, MEMORY_XX);
+    addMethodCxReferences(modif, decl, javaStat->thisClass);
     if (newFun) {
-        LIST_APPEND(Symbol, s_javaStat->thisClass->u.structSpec->records, decl);
+        LIST_APPEND(Symbol, javaStat->thisClass->u.structSpec->records, decl);
     }
     return decl;
 }
@@ -1824,7 +1824,7 @@ void javaAddMethodParametersToSymTable(Symbol *method) {
     Symbol *p;
     int i;
     for(p=method->u.typeModifier->u.f.args,i=1; p!=NULL; p=p->next,i++) {
-        addFunctionParameterToSymTable(s_javaStat->locals, method, p, i);
+        addFunctionParameterToSymTable(javaStat->locals, method, p, i);
     }
 }
 
@@ -1835,7 +1835,7 @@ void javaMethodBodyBeginning(Symbol *method) {
     counters.localVar = 0;
     javaAddMethodParametersToSymTable(method);
     method->u.typeModifier->u.m.signature = strchr(method->linkName, '(');
-    s_javaStat->methodModifiers = method->access;
+    javaStat->methodModifiers = method->access;
 }
 
 // this should be merged with _bef_ token!
@@ -2083,8 +2083,8 @@ Symbol *javaCurrentSuperClass(void) {
     TypeModifier     *tt;
     Symbol			*cc;
 
-    assert(s_javaStat);
-    tt = s_javaStat->thisType;
+    assert(javaStat);
+    tt = javaStat->thisType;
     assert(tt->kind == TypeStruct);
     cc = tt->u.t;
     return javaGetSuperClass(cc);
@@ -2533,17 +2533,17 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
     IdList   *p;
     Symbol        *dd,*ddd;
     FreeTrail     *res;
-    S_javaStat      *oldStat;
+    JavaStat      *oldStat;
     int             nnest,noff,classf;
     S_nestedSpec	*nst,*nn;
     SymbolTable	*locals;
     Id		idi;
 
-    assert(s_javaStat);
-    oldStat = s_javaStat;
-    s_javaStat = StackMemoryAlloc(S_javaStat);
-    *s_javaStat = *oldStat;
-    s_javaStat->next = oldStat;
+    assert(javaStat);
+    oldStat = javaStat;
+    javaStat = StackMemoryAlloc(JavaStat);
+    *javaStat = *oldStat;
+    javaStat->next = oldStat;
     locals = StackMemoryAlloc(SymbolTable);
     symbolTableInit(locals, MAX_CL_SYMBOLS);
 /*&fprintf(dumpOut,"adding new class %s\n",name->name);fflush(dumpOut);&*/
@@ -2574,7 +2574,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
     } else {
         /* probably base class */
         p = StackMemoryAlloc(IdList);
-        fillIdList(p,*name,name->name,TypeStruct,s_javaStat->className);
+        fillIdList(p,*name,name->name,TypeStruct,javaStat->className);
         dd = javaAddType(p, access, &name->position);
         assert(dd->type == TypeStruct);
         parsedPositions[SPP_LAST_TOP_LEVEL_CLASS_POSITION] = name->position;
@@ -2583,7 +2583,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
     classf = dd->u.structSpec->classFileIndex;
     if (classf == -1)
         classf = noFileIndex;
-    fillJavaStat(s_javaStat,p,&dd->u.structSpec->stype,dd,0, oldStat->currentPackage,
+    fillJavaStat(javaStat,p,&dd->u.structSpec->stype,dd,0, oldStat->currentPackage,
                   oldStat->unnamedPackagePath, oldStat->namedPackagePath,
                   locals, oldStat->lastParsedName,AccessDefault,parsedClassInfo,classf,oldStat);
     // added 8/8/2001 for clearing s_cp.function for SET_TARGET_POSITION check
@@ -2606,13 +2606,13 @@ struct freeTrail *newAnonClassDefinitionBegin(Id *interfName) {
 }
 
 void newClassDefinitionEnd(FreeTrail *trail) {
-    assert(s_javaStat && s_javaStat->next);
+    assert(javaStat && javaStat->next);
     removeFromTrailUntil(trail);
     /* TODO: WTF?!??! */
     // the following line makes that method extraction does not work,
     // make attention with it, ? really
-    parsedClassInfo = s_javaStat->cp;
-    s_javaStat = s_javaStat->next;
+    parsedClassInfo = javaStat->cp;
+    javaStat = javaStat->next;
     log_trace("recovering s_cp to %d", parsedClassInfo.cxMemoryIndexdiAtClassBegin);
 }
 
@@ -2653,17 +2653,17 @@ TypeModifier *javaArrayFieldAccess(Id *id) {
 
 void javaParsedSuperClass(Symbol *symbol) {
     SymbolList *pp;
-    assert(s_javaStat->thisClass && s_javaStat->thisClass->type==TypeStruct);
-    assert(s_javaStat->thisClass->u.structSpec);
+    assert(javaStat->thisClass && javaStat->thisClass->type==TypeStruct);
+    assert(javaStat->thisClass->u.structSpec);
     assert(symbol && symbol->type==TypeStruct && symbol->u.structSpec);
-    for(pp=s_javaStat->thisClass->u.structSpec->super; pp!=NULL; pp=pp->next) {
+    for(pp=javaStat->thisClass->u.structSpec->super; pp!=NULL; pp=pp->next) {
         if (pp->element == symbol) break;
     }
     if (pp==NULL) {
-        log_trace("manual super class %s of %s == %s" ,symbol->linkName, s_javaStat->thisClass->linkName,
-                  getFileItem(s_javaStat->thisClass->u.structSpec->classFileIndex)->name);
+        log_trace("manual super class %s of %s == %s" ,symbol->linkName, javaStat->thisClass->linkName,
+                  getFileItem(javaStat->thisClass->u.structSpec->classFileIndex)->name);
         javaLoadClassSymbolsFromFile(symbol);
-        addSuperClassOrInterface(s_javaStat->thisClass, symbol,
+        addSuperClassOrInterface(javaStat->thisClass, symbol,
                                  currentFile.lexBuffer.buffer.fileNumber);
     }
 }

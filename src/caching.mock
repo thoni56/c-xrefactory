@@ -17,8 +17,8 @@ void initCaching(void) {
   mock();
 }
 
-void recoverCachePoint(int i, char *readUntil, int activeCaching) {
-  mock(i, readUntil, activeCaching);
+void recoverCachePoint(int cachePointIndex, char *readUntil, bool activeCaching) {
+  mock(cachePointIndex, readUntil, activeCaching);
 }
 
 void recoverFromCache(void) {

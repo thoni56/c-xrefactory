@@ -15,14 +15,14 @@ typedef struct cachePoint {
     short int          lineNumber;
     short int          ifDepth;
     struct cppIfStack *ifStack;
-    struct javaStat   *javaCached;
+    struct javaStat   *javaStat;
     struct counters    counters;
 } CachePoint;
 
 typedef struct cache {
     bool              active; /* whether putting input to cache */
     int               cpIndex;
-    struct cachePoint cp[MAX_CACHE_POINTS];
+    struct cachePoint cachePoints[MAX_CACHE_POINTS];
     int               ibi;
     int               ib[INCLUDE_CACHE_SIZE]; /* included files numbers */
     char             *lbcc;                   /* first free of lb */
@@ -36,7 +36,7 @@ extern Cache cache;
 
 extern void setupCaching(void);
 extern void initCaching(void);
-extern void recoverCachePoint(int i, char *readUntil, int activeCaching);
+extern void recoverCachePoint(int cachePointIndex, char *readUntil, bool activeCaching);
 extern void recoverFromCache(void);
 extern void cacheInput(void);
 extern void cacheInclude(int fileNum);

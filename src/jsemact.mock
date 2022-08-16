@@ -2,19 +2,19 @@
 #include "jsemact.h"
 #include <cgreen/mocks.h>
 
-S_javaStat *s_javaStat;
-S_javaStat s_initJavaStat;
+JavaStat *javaStat;
+JavaStat s_initJavaStat;
 
 void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
                      char membFlag, short unsigned  accFlags) {
     mock(nestedSpec, cl, membFlag, accFlags);
 }
 
-void fillJavaStat(S_javaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
+void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
                   char *namedPackageDir, SymbolTable *locals, IdList *lastParsedName,
                   unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileIndex,
-                  S_javaStat *next) {
+                  JavaStat *next) {
     mock();
 }
 

@@ -507,8 +507,8 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         cache.active = true;
         placeCachePoint(false);
         cache.active = false;
-        assert(cache.lbcc == cache.cp[0].lbcc);
-        assert(cache.lbcc == cache.cp[1].lbcc);
+        assert(cache.lbcc == cache.cachePoints[0].lbcc);
+        assert(cache.lbcc == cache.cachePoints[1].lbcc);
     } else {
         copyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
@@ -653,8 +653,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
                   symbolTable,NULL,AccessDefault,parsedClassInfoInit,noFileIndex,NULL);
-    s_javaStat = StackMemoryAlloc(S_javaStat);
-    *s_javaStat = s_initJavaStat;
+    javaStat = StackMemoryAlloc(JavaStat);
+    *javaStat = s_initJavaStat;
     javaFqtTableInit(&javaFqtTable, FQT_CLASS_TAB_SIZE);
 
     // initialize recursive java parsing
