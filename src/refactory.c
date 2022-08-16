@@ -2213,7 +2213,7 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
                 break;
             }
         }
-        writeRelativeProgress(progress++/count*100);
+        writeRelativeProgress((100 * progress++)/count);
     }
     writeRelativeProgress(100);
 }
@@ -2379,7 +2379,7 @@ static void reduceLongReferencesInRegions(EditorMarker *point, EditorRegionList 
     for (EditorMarkerList *rr = ri; rr != NULL; rr = rr->next) {
         EditorMarker *m = replaceStaticPrefix(rr->marker, "");
         editorFreeMarker(m);
-        writeRelativeProgress(progress++/count*100);
+        writeRelativeProgress((100*progress++)/count);
     }
     writeRelativeProgress(100);
 }
@@ -2840,7 +2840,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
             editorMoveMarkerBeyondIdentifier(ppp, 1);
             regions = newEditorRegionList(pp, ppp, regions);
         }
-        writeRelativeProgress(progress++ / count * 100);
+        writeRelativeProgress((100*progress++) / count);
     }
     writeRelativeProgress(100);
 
@@ -3019,7 +3019,7 @@ static void moveField(EditorMarker *point) {
                 replaceString(ll->marker, 0, prefixDot);
             }
         }
-        writeRelativeProgress(progress++ / count * 100);
+        writeRelativeProgress((100*progress++) / count);
     }
     writeRelativeProgress(100);
 
@@ -3353,7 +3353,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
                 lll      = newEditorRegionList(pp, ppp, NULL);
                 *reglast = lll;
                 reglast  = &lll->next;
-                writeRelativeProgress(progress++ / count * 100);
+                writeRelativeProgress((100*progress++) / count);
             }
             editorFreeMarkersAndMarkerList(mm->markers);
             mm->markers = NULL;
@@ -3410,7 +3410,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
                     ll->marker->offset = poffset;
                     addCopyOfMarkerToList(&npadded, ll->marker, ll->usage);
                 }
-                writeRelativeProgress(progress++ / count * 100);
+                writeRelativeProgress((100*progress++) / count);
             }
         }
     }
@@ -3673,7 +3673,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
                 editorFreeMarker(m1);
             }
         }
-        writeRelativeProgress(progress++ / count * 100);
+        writeRelativeProgress((100*progress++) / count);
     }
     writeRelativeProgress(100);
     // you can remove 'static' now, hope it is not virtual symbol,

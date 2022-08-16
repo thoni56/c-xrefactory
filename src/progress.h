@@ -4,6 +4,6 @@
 extern int progressFactor;
 extern int progressOffset;
 
-extern void writeRelativeProgress(int progress);
+extern void writeRelativeProgress(int progress); /* Take care with integer division when calculation percentage */
 
 #endif
