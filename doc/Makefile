@@ -1,7 +1,7 @@
-all: c-xrefactory-manual.html c-xrefactory-design.html
+all: manual.html design.html
 
-c-xrefactory-manual.html: c-xrefactory-manual.adoc
-	asciidoctor c-xrefactory-manual.adoc
+manual.html: manual.adoc
+	asciidoctor manual.adoc
 
-c-xrefactory-design.html: c-xrefactory-design.adoc
-	asciidoctor -r asciidoctor-diagram c-xrefactory-design.adoc
+design.html: design.adoc
+	asciidoctor -r asciidoctor-diagram design.adoc

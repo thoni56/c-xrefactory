@@ -344,6 +344,44 @@ Reference o-- Reference : next
 
 ....
 
+=== Files and Buffers
+
+There is many strange things going on with reading files that is not completely understood yet.
+
+(There should probably be a section caching and one on lexing...)
+
+Here is an initial attempt at illustrating how some of the file and text/lexem buffers are related.
+
+[plantuml, buffer, png]
+....
+class FileDescriptor {
+}
+FileDescriptor o-- LexemBuffer : lexemBuffer
+
+class LexemBuffer {
+  Lexem[] lexemStream
+}
+LexemBuffer o-- CharacterBuffer : buffer
+
+class CharacterBuffer {
+  char[] : chars
+}
+
+class LexInput {
+  Lexem* : currentLexemP
+  Lexem* : beginningOfBuffer
+  Lexem* : endOfBuffer
+  char* : macroName
+  InputType : inputType
+}
+....
+
+It would be nice if the `LexInput` structure could point to a
+`LexemBuffer` instead of holding separate pointers which are
+impossible to know what they actually point to...
+
+This could be achieved if we could remove the CharacterBuffer from
+LexemBuffer and make that a reference instead of a composition.
 
 === Modes
 
