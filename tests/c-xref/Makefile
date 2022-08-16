@@ -5,7 +5,6 @@ include ../Makefile.boilerplate
 $(TEST): .c-xrefrc
 	@sed 's%  $(CURDIR)%  ../../src%' .c-xrefrc > .c-xrefrc.tmp
 	@sed 's/=10/=1/' .c-xrefrc.tmp > .c-xrefrc
-	@printf "  -I../../src" >> .c-xrefrc
 	@../run-c-xref -p $(CURDIR) $(TRACE) -o c-xref.log
 	@$(NO_TESTS)
 	@exit 0
