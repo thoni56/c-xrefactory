@@ -329,6 +329,9 @@ endif
 endif
 	genhtml -q -o ../coverage/$(COVERAGE_CASE) ../coverage/total.info
 	@echo Coverage done: `grep -m 1 coverPer ../coverage/index.html | tr -dc '0-9.'`
+ifneq ($(shell command -v cloc 2> /dev/null),)
+	@cloc --quiet *.[chy] *.t? | grep SUM: | awk '{print "Lines:", $$5}'
+endif
 
 #########################################################################
 watch:
