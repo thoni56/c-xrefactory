@@ -13,7 +13,7 @@ all: .c-xrefrc
 	@if [ ! -d ffmpeg ] ; then \
 		echo "Tests in 'ffmpeg': not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
-		../run-c-xref -p ffmpeg -o ffmpeg.log ; \
+		../run-c-xref -p ffmpeg -create -o ffmpeg.log ; \
 		if ! grep Generating ffmpeg.log > /dev/null ; then \
 			$(FAIL) "(ffmpeg.log)" ; \
 			exit 1 ; \
