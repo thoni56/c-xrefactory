@@ -6,10 +6,13 @@ $(TEST): .c-xrefrc
 	@sed 's%  $(CURDIR)%  ../../src%' .c-xrefrc > .c-xrefrc.tmp
 	@sed 's/=10/=1/' .c-xrefrc.tmp > .c-xrefrc
 	@../run-c-xref -p $(CURDIR) -create $(TRACE) -o c-xref.log
-	@cp output output.tmp
-	@grep '<progress>' output.tmp > output
-	@$(VERIFY)
-	@exit 0
+	if [ "`grep '<progress>' output | wc -l`" -gt 50 ] ; then \
+	  $(OK) ; \
+	  exit 0 ; \
+	else \
+	  $(FAIL) ; \
+	  exit 1 ; \
+	fi
 
 trace: TRACE=-trace
 trace: $(TEST)
