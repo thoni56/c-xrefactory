@@ -7,8 +7,8 @@ int macroStackIndex=0;
 
 
 void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,
-                  char *beginningOfBuffer, char *macroName, InputType margExpFlag) {
-    mock(lexInput, currentLexem, endOfBuffer, beginningOfBuffer, macroName, margExpFlag);
+                  char *beginningOfBuffer, char *macroName, InputType inputType) {
+    mock(lexInput, currentLexem, endOfBuffer, beginningOfBuffer, macroName, inputType);
 }
 
 void initAllInputs(void) {

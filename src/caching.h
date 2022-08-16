@@ -10,7 +10,7 @@ typedef struct cachePoint {
     int                ppmMemoryIndex;
     int                cxMemoryIndex;
     int                mbMemoryIndex;
-    char              *lbcc; /* caching lbcc */
+    char              *currentLexemP; /* caching lbcc */
     short int          ibi;  /* caching ibi */
     short int          lineNumber;
     short int          ifDepth;
@@ -20,8 +20,8 @@ typedef struct cachePoint {
 } CachePoint;
 
 typedef struct cache {
-    bool              active; /* whether putting input to cache */
-    int               cpIndex;
+    bool              cachingActive; /* whether putting input to cache */
+    int               cachePointIndex;
     struct cachePoint cachePoints[MAX_CACHE_POINTS];
     int               ibi;
     int               ib[INCLUDE_CACHE_SIZE]; /* included files numbers */

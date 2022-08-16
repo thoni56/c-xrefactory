@@ -61,7 +61,7 @@ void generateInternalLabelReference(int counter, int usage) {
 
     snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);
 
-    position = (Position){.file = currentFile.lexBuffer.buffer.fileNumber, .line = 0, .col = 0};
+    position = (Position){.file = currentFile.lexemBuffer.buffer.fileNumber, .line = 0, .col = 0};
     fillId(&labelId, labelName, NULL, position);
 
     if (usage != UsageDefined)
@@ -1309,7 +1309,7 @@ void extractActionOnBlockMarker(void) {
         parsedInfo.cxMemoryIndexAtBlockEnd = cxMemory->index;
         parsedInfo.workMemoryIndexAtBlockEnd = currentBlock->outerBlock;
     }
-    pos = makePosition(currentFile.lexBuffer.buffer.fileNumber, 0, 0);
+    pos = makePosition(currentFile.lexemBuffer.buffer.fileNumber, 0, 0);
     addTrivialCxReference("Block", TypeBlockMarker, StorageDefault, &pos, UsageUsed);
 }
 

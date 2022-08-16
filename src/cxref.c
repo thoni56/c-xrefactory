@@ -679,7 +679,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     assert(options.mode);
     if (options.mode == ServerMode) {
         if (options.serverOperation == OLO_EXTRACT) {
-            if (inputFileNumber != currentFile.lexBuffer.buffer.fileNumber)
+            if (inputFileNumber != currentFile.lexemBuffer.buffer.fileNumber)
                 return NULL;
         } else {
             if (category==CategoryGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
@@ -4209,7 +4209,7 @@ static void answerClassName(char *name) {
 
 static void pushSymbolByName(char *name) {
     OlcxReferences *rstack;
-    if (cache.cpIndex>0) {
+    if (cache.cachePointIndex > 0) {
         int spass;
         spass = currentPass; currentPass=1;
         recoverCachePointZero();

@@ -54,19 +54,19 @@ BeforeEach(Yylex) {
 AfterEach(Yylex) {}
 
 static void setup_lexBuffer_for_reading_identifier(void *data) {
-    char *lexemStreamP = currentFile.lexBuffer.lexemStream;
+    char *lexemStreamP = currentFile.lexemBuffer.lexemStream;
 
     /* TODO: yylex does a lot of fishy stuff with the lexems instead
      * of using a LexemBuffer, so here we do as yylex does, although
      * mis-using the LexemBuffer interface */
     putLexTokenWithPointer(IDENTIFIER, &lexemStreamP);
 
-    strcpy(lexemStreamP, currentFile.lexBuffer.buffer.chars);
+    strcpy(lexemStreamP, currentFile.lexemBuffer.buffer.chars);
     /* TODO: WTF This is mostly guesswork, no idea if this is how they are connected... */
-    *strchr(&currentFile.lexBuffer.lexemStream[2], ' ') = '\0';
-    currentFile.lexBuffer.next                          = currentFile.lexBuffer.lexemStream;
-    currentFile.lexBuffer.end                           = strchr(currentFile.lexBuffer.lexemStream, '\0');
-    currentFile.lexBuffer.ringIndex                     = 2;
+    *strchr(&currentFile.lexemBuffer.lexemStream[2], ' ') = '\0';
+    currentFile.lexemBuffer.next                          = currentFile.lexemBuffer.lexemStream;
+    currentFile.lexemBuffer.end                           = strchr(currentFile.lexemBuffer.lexemStream, '\0');
+    currentFile.lexemBuffer.ringIndex                     = 2;
 }
 
 Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
@@ -74,11 +74,11 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     char *definition = (char *)malloc(strlen(DEFINE) + 1);
     strcpy(definition, DEFINE);
 
-    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexBuffer)), will_return(true),
+    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexemBuffer)), will_return(true),
            with_side_effect(setup_lexBuffer_for_reading_identifier, NULL));
     expect(setGlobalFileDepNames, when(iname, is_equal_to_string(definition)),
            will_set_contents_of_parameter(pp_name, &definition, sizeof(char *)));
-    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexBuffer)), will_return(false));
+    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexemBuffer)), will_return(false));
 
     /* This is the confirmation that there is a symbol p with a
      * field with name equal to DEFINE
@@ -92,7 +92,7 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
 }
 
 Ensure(Yylex, can_handle_a_line_directive_without_number) {
-    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexBuffer)), will_return(false));
+    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexemBuffer)), will_return(false));
 
     initInput(NULL, NULL, "", NULL);
     currentFile.lineNumber = 1;
@@ -110,9 +110,9 @@ Ensure(Yylex, can_process_include_directive) {
     FILE     file;
     int      fileNumber;
 
-    strcpy(currentFile.lexBuffer.lexemStream, lexem_stream);
-    currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
-    currentFile.lexBuffer.end  = currentFile.lexBuffer.lexemStream + strlen(lexem_stream);
+    strcpy(currentFile.lexemBuffer.lexemStream, lexem_stream);
+    currentFile.lexemBuffer.next = currentFile.lexemBuffer.lexemStream;
+    currentFile.lexemBuffer.end  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
     currentInput.endOfBuffer = currentInput.beginningOfBuffer + strlen(lexem_stream);
@@ -144,9 +144,9 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
 
     strcpy(cwd, "cwd");
 
-    strcpy(currentFile.lexBuffer.lexemStream, lexem_stream);
-    currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
-    currentFile.lexBuffer.end  = currentFile.lexBuffer.lexemStream + strlen(lexem_stream);
+    strcpy(currentFile.lexemBuffer.lexemStream, lexem_stream);
+    currentFile.lexemBuffer.next = currentFile.lexemBuffer.lexemStream;
+    currentFile.lexemBuffer.end  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
     currentInput.endOfBuffer = currentInput.beginningOfBuffer + strlen(lexem_stream);
@@ -205,9 +205,9 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
 
     strcpy(cwd, "cwd");
 
-    strcpy(currentFile.lexBuffer.lexemStream, lexem_stream);
-    currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
-    currentFile.lexBuffer.end  = currentFile.lexBuffer.lexemStream + strlen(lexem_stream);
+    strcpy(currentFile.lexemBuffer.lexemStream, lexem_stream);
+    currentFile.lexemBuffer.next = currentFile.lexemBuffer.lexemStream;
+    currentFile.lexemBuffer.end  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
     currentInput.endOfBuffer = currentInput.beginningOfBuffer + strlen(lexem_stream);

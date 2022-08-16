@@ -116,24 +116,24 @@ static void fillMacroArgTabElem(MacroArgumentTableElement *macroArgTabElem, char
     macroArgTabElem->order = order;
 }
 
-void fillLexInput(LexInput *lexInput, char *currentLexemP, char *endOfBuffer,
-                  char *beginningOfBuffer, char *macroName, InputType margExpFlag) {
+void fillLexInput(LexInput *lexInput, char *currentLexemP, char *endOfBuffer, char *beginningOfBuffer,
+                  char *macroName, InputType inputType) {
     lexInput->currentLexemP = currentLexemP;
     lexInput->endOfBuffer = endOfBuffer;
     lexInput->beginningOfBuffer = beginningOfBuffer;
     lexInput->macroName = macroName;
-    lexInput->inputType = margExpFlag;
+    lexInput->inputType         = inputType;
 }
 
 static void setCacheConsistency(Cache *cache, LexInput *input) {
     cache->cc = input->currentLexemP;
 }
 static void setCurrentFileConsistency(FileDescriptor *file, LexInput *input) {
-    file->lexBuffer.next = input->currentLexemP;
+    file->lexemBuffer.next = input->currentLexemP;
 }
 static void setCurrentInputConsistency(LexInput *input, FileDescriptor *file) {
-    fillLexInput(input, file->lexBuffer.next, file->lexBuffer.end,
-                 file->lexBuffer.lexemStream, NULL, INPUT_NORMAL);
+    fillLexInput(input, file->lexemBuffer.next, file->lexemBuffer.end, file->lexemBuffer.lexemStream, NULL,
+                 INPUT_NORMAL);
 }
 
 char *placeIdent(void) {
@@ -208,7 +208,7 @@ static void setCurrentFileInfoFor(char *fileName) {
         }
         fileItem->cxLoading = cxloading;
     }
-    currentFile.lexBuffer.buffer.fileNumber = number;
+    currentFile.lexemBuffer.buffer.fileNumber = number;
     currentFile.fileName = name;
 }
 
@@ -234,8 +234,8 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
     } else {
         // read file
         assert(prefixLength < CHAR_BUFF_SIZE);
-        strcpy(currentFile.lexBuffer.buffer.chars, prefix);
-        bufferStart = currentFile.lexBuffer.buffer.chars;
+        strcpy(currentFile.lexemBuffer.buffer.chars, prefix);
+        bufferStart = currentFile.lexemBuffer.buffer.chars;
         bufferSize = prefixLength;
         offset = 0;
     }
@@ -328,14 +328,14 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
             currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCurrentFileConsistency(&currentFile, &currentInput);
-            if (!getLexemFromLexer(&currentFile.lexBuffer)) {
+            if (!getLexemFromLexer(&currentFile.lexemBuffer)) {
                 return END_OF_FILE_EXCEPTION;
             }
             setCurrentInputConsistency(&currentInput, &currentFile);
         } else {
             cache.cc = cache.cfin = NULL;
             cacheInput();
-            cache.lexcc = currentFile.lexBuffer.next;
+            cache.lexcc = currentFile.lexemBuffer.next;
             setCurrentInputConsistency(&currentInput, &currentFile);
         }
         *previousLexem = currentInput.currentLexemP;
@@ -364,7 +364,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
     assert(options.mode);
     if (options.mode == ServerMode) {
         if (lexem==IDENT_TO_COMPLETE) {
-            cache.active = false;
+            cache.cachingActive = false;
             olstringServed = true;
             if (currentLanguage == LANG_JAVA) {
                 makeJavaCompletions(idd, strlen(idd), pos);
@@ -451,15 +451,15 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     }
     includeStackPointer ++;
     initInput(file, buffer, prepend, name);
-    cacheInclude(currentFile.lexBuffer.buffer.fileNumber);
+    cacheInclude(currentFile.lexemBuffer.buffer.fileNumber);
 }
 
 void popInclude(void) {
-    FileItem *fileItem = getFileItem(currentFile.lexBuffer.buffer.fileNumber);
+    FileItem *fileItem = getFileItem(currentFile.lexemBuffer.buffer.fileNumber);
     if (fileItem->cxLoading) {
         fileItem->cxLoaded = true;
     }
-    closeCharacterBuffer(&currentFile.lexBuffer.buffer);
+    closeCharacterBuffer(&currentFile.lexemBuffer.buffer);
     if (includeStackPointer != 0) {
         currentFile = includeStack[--includeStackPointer];	/* buffers are copied !!!!!!, burk */
         if (includeStackPointer == 0 && cache.cc!=NULL) {
@@ -562,7 +562,7 @@ static void processInclude2(Position *includePosition, char pchar, char *include
         else
             log_error("Can't open file '%s'", includedName);
     } else {
-        addIncludeReferences(currentFile.lexBuffer.buffer.fileNumber, includePosition);
+        addIncludeReferences(currentFile.lexemBuffer.buffer.fileNumber, includePosition);
     }
 }
 
@@ -840,7 +840,7 @@ protected void processDefineDirective(bool hasArguments) {
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, cxRefPosition))) {
-                    cache.active = false;
+                    cache.cachingActive = false;
                     olstringFound = true;
                     s_olstringInMbody = symbol->linkName;
                 }
@@ -1909,7 +1909,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
     int res;
 
     assert(cpoint > 0);
-    cto = cache.cachePoints[cpoint].lbcc;
+    cto = cache.cachePoints[cpoint].currentLexemP;
     cp = *cfrom;
     res = 1;
 

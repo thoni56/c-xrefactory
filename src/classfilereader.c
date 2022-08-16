@@ -1176,7 +1176,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
 
     log_debug("reading file '%s'", className);
 
-    cb = &currentFile.lexBuffer.buffer;
+    cb = &currentFile.lexemBuffer.buffer;
     if (zipSeparatorIndex != NULL) {
         if (!zipSeekToFile(cb, className))
             goto finish;
@@ -1229,10 +1229,10 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
 
     cfReadFieldInfos(cb, symbol, constantPool);
 
-    if (currentFile.lexBuffer.buffer.isAtEOF)
+    if (currentFile.lexemBuffer.buffer.isAtEOF)
         goto endOfFile;
     cfReadMethodInfos(cb, symbol, constantPool);
-    if (currentFile.lexBuffer.buffer.isAtEOF)
+    if (currentFile.lexemBuffer.buffer.isAtEOF)
         goto endOfFile;
 
     GetU2(count, cb, exception);

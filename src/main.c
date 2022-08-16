@@ -446,14 +446,12 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
 
     log_trace("Checking previous cp==%s", previousOnLineClassPath);
     log_trace("Checking newcp==%s", options.classpath);
-    if (*firstPass
-        || previousPass != currentPass
-        || strcmp(previousStandardOptionsFile, standardOptionsFileName) != 0 /* is not equal */
-        || strcmp(previousStandardOptionsSection,standardOptionsSectionName) != 0 /* is not equal */
-        || previousStandardOptionsFileModificationTime != modifiedTime
-        || previousLanguage != *outLanguage
+    if (*firstPass || previousPass != currentPass
+        || strcmp(previousStandardOptionsFile, standardOptionsFileName) != 0       /* is not equal */
+        || strcmp(previousStandardOptionsSection, standardOptionsSectionName) != 0 /* is not equal */
+        || previousStandardOptionsFileModificationTime != modifiedTime || previousLanguage != *outLanguage
         || strcmp(previousOnLineClassPath, options.classpath) != 0 /* is not equal */
-        || cache.cpIndex == 1     /* some kind of reset was made */
+        || cache.cachePointIndex == 1                              /* some kind of reset was made */
     ) {
         if (*firstPass) {
             initCaching();
@@ -504,11 +502,11 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
         initTokenNamesTables();
 
-        cache.active = true;
+        cache.cachingActive = true;
         placeCachePoint(false);
-        cache.active = false;
-        assert(cache.lbcc == cache.cachePoints[0].lbcc);
-        assert(cache.lbcc == cache.cachePoints[1].lbcc);
+        cache.cachingActive = false;
+        assert(cache.lbcc == cache.cachePoints[0].currentLexemP);
+        assert(cache.lbcc == cache.cachePoints[1].currentLexemP);
     } else {
         copyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
@@ -516,7 +514,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
     }
     // reset language once knowing all language suffixes
     *outLanguage = getLanguageFor(fileName);
-    inputFileNumber = currentFile.lexBuffer.buffer.fileNumber;
+    inputFileNumber = currentFile.lexemBuffer.buffer.fileNumber;
     assert(options.mode);
     if (options.mode==XrefMode && !javaPreScanOnly) {
         if (options.xref2) {

@@ -26,5 +26,5 @@ void parseCurrentInputFile(Language language) {
         uniyylval = &c_yylval;
         c_yyparse();
     }
-    cache.active = false;
+    cache.cachingActive = false;
 }
