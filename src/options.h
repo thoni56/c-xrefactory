@@ -127,7 +127,7 @@ typedef struct options {
     bool create;
     char *classpath;
     int tabulator;
-    int olCursorPos;
+    int olCursorPosition;
     int olMarkPos;
     Mode mode;
     bool debug;

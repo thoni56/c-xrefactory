@@ -210,7 +210,7 @@ void singlePass(int argc, char **argv,
         parseInputFile();
         *firstPassP = false;
     }
-    if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
+    if (options.olCursorPosition==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (requiresCreatingRefs(options.serverOperation)) {
             Position position = makePosition(inputFileNumber, 1, 0);

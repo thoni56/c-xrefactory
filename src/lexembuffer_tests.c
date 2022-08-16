@@ -10,7 +10,7 @@
 #include "zlib.mock"
 
 
-LexemBuffer lb;
+static LexemBuffer lb;
 
 Describe(LexemBuffer);
 BeforeEach(LexemBuffer) {

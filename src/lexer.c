@@ -233,17 +233,17 @@ static int handleCppToken(LexemBuffer *lb) {
 }
 
 static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position position,
-                                     int currentLexemPosition, int *chP) {
+                                     int filePositionForCurrentLexem, int *chP) {
     *chP     = skipBlanks(&lb->buffer, *chP);
     int apos = absoluteFilePosition(&lb->buffer);
 
-    if (currentLexemPosition < options.olCursorPos
-        && (apos >= options.olCursorPos || (*chP == -1 && apos + 1 == options.olCursorPos))) {
+    if (filePositionForCurrentLexem < options.olCursorPosition
+        && (apos >= options.olCursorPosition || (*chP == -1 && apos + 1 == options.olCursorPosition))) {
         log_trace("currentLexemPosition, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
-                  currentLexemPosition, options.olCursorPos, apos, *chP);
+                  filePositionForCurrentLexem, options.olCursorPosition, apos, *chP);
         Lexem thisLexToken = peekLexToken(&startOfCurrentLexem);
         if (thisLexToken == IDENTIFIER) {
-            int len = options.olCursorPos - currentLexemPosition;
+            int len = options.olCursorPosition - filePositionForCurrentLexem;
             log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + TOKEN_SIZE, len,
                       strlen(startOfCurrentLexem + TOKEN_SIZE));
             if (len <= strlen(startOfCurrentLexem + TOKEN_SIZE)) {
@@ -266,15 +266,15 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                 log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
             } else {
                 // completion after an identifier
-                putEmptyCompletionId(lb, apos - options.olCursorPos);
+                putEmptyCompletionId(lb, apos - options.olCursorPosition);
             }
         } else if ((thisLexToken == LINE_TOKEN || thisLexToken == STRING_LITERAL)
-                   && (apos != options.olCursorPos)) {
+                   && (apos != options.olCursorPosition)) {
             // completion inside special lexems, do
             // NO COMPLETION
         } else {
             // completion after another lexem
-            putEmptyCompletionId(lb, apos - options.olCursorPos);
+            putEmptyCompletionId(lb, apos - options.olCursorPosition);
         }
     }
 }
@@ -841,9 +841,9 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 if (options.serverOperation == OLO_EXTRACT && lb->ringIndex>=2) { /* TODO: WTF does "lb->index >= 2" mean? */
                     ch = skipBlanks(cb, ch);
                     int apos = absoluteFilePosition(cb);
-                    log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",apos,options.olCursorPos,options.olMarkPos);
+                    log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",apos,options.olCursorPosition,options.olMarkPos);
                     // all this is very, very HACK!!!
-                    if (apos >= options.olCursorPos && !parsedInfo.marker1Flag) {
+                    if (apos >= options.olCursorPosition && !parsedInfo.marker1Flag) {
                         if (LANGUAGE(LANG_JAVA))
                             parChar = ';';
                         else {
@@ -896,8 +896,8 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                            ||  options.serverOperation == OLO_SEARCH) {
                     handleCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemPosition, &ch);
                 } else {
-                    if (currentLexemPosition <= options.olCursorPos
-                        && absoluteFilePosition(cb) >= options.olCursorPos) {
+                    if (currentLexemPosition <= options.olCursorPosition
+                        && absoluteFilePosition(cb) >= options.olCursorPosition) {
                         gotOnLineCxRefs(&position);
                         Lexem lastlex = peekLexToken(&startOfCurrentLexem);
                         if (lastlex == IDENTIFIER) {
@@ -910,7 +910,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         // only for Java refactorings
                         ch = skipBlanks(cb, ch);
                         int apos = absoluteFilePosition(cb);
-                        if (apos >= options.olCursorPos && !parsedInfo.marker1Flag) {
+                        if (apos >= options.olCursorPosition && !parsedInfo.marker1Flag) {
                             putLexToken(lb, OL_MARKER_TOKEN);
                             putLexPosition(lb, position);
                             parsedInfo.marker1Flag = true;

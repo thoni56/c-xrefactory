@@ -608,7 +608,7 @@ static void olGetAvailableRefactorings(void) {
         makeRefactoringAvailable(PPC_AVR_UNDO, "");
     }
 
-    if (options.olCursorPos != options.olMarkPos) {
+    if (options.olCursorPosition != options.olMarkPos) {
         // region selected, TODO!!! some more prechecks for extract method - Duh! Which ones!?!?!?!
         if (LANGUAGE(LANG_JAVA)) {
             makeRefactoringAvailable(PPC_AVR_EXTRACT_METHOD, "");

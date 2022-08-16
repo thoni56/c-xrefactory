@@ -1656,7 +1656,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         else options.olineLen--;
     }
     else if (strncmp(argv[i], "-olcursor=",10)==0) {
-        sscanf(argv[i]+10, "%d",&options.olCursorPos);
+        sscanf(argv[i]+10, "%d",&options.olCursorPosition);
     }
     else if (strncmp(argv[i], "-olmark=",8)==0) {
         sscanf(argv[i]+8, "%d",&options.olMarkPos);
