@@ -75,9 +75,6 @@ Current Mikado:
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra needed definitions for clang
-* TODO BUG: Progress now (b7c1d) shows fewer of the numbers
-This may have been trashed when hiding refactoringOptions in refactory.c. E.g. a "create" on c-xrefactory itself
-now only shows "10%" and then nothing until it's done.
 * TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
 ** TODO Make "get project" lookup the directory tree for closest .c-xrefrc that covers the file
@@ -205,10 +202,13 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
 
-* TODO Modules. Better use of modules (Clean Code/Architecture/Hexagonal)
+* DONE Modules. Better use of modules (Clean Code/Architecture/Hexagonal)
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** DONE Extract PPC-functions from misc.c into a ppc-module
+* DONE BUG: Progress now (b7c1d) shows fewer of the numbers
+This may have been trashed when hiding refactoringOptions in refactory.c. E.g. a "create" on c-xrefactory itself
+now only shows "10%" and then nothing until it's done.
 * DONE FEATURE: Handle void as no parameters in formal argument lists, e.g. when refactoring them
 ** DONE test_remove_void_parameter -> parameter number out of limits
 ** DONE test_add_parameter_to_void
