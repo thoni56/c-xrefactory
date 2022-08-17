@@ -227,7 +227,7 @@ static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int
     cache->cachePointIndex = cachePointIndex;
     cache->ibi             = ibi;
     cache->lbcc            = lbcc;
-    cache->lexcc           = lexcc;
+    cache->lexemBufferNext           = lexcc;
     cache->cc              = cc;
     cache->cfin            = cfin;
 }
@@ -347,7 +347,7 @@ void cacheInput(void) {
         LEAVE();
         return;
     }
-    size = currentInput.currentLexemP - cache.lexcc;
+    size = currentInput.currentLexemP - cache.lexemBufferNext;
     if (cache.lbcc - cache.lb + size >= LEX_BUF_CACHE_SIZE) {
         cache.cachingActive = false;
         LEAVE();
@@ -355,9 +355,9 @@ void cacheInput(void) {
     }
     /* if from cache, don't copy on the same place */
     if (currentInput.inputType != INPUT_CACHE)
-        memcpy(cache.lbcc, cache.lexcc, size);
+        memcpy(cache.lbcc, cache.lexemBufferNext, size);
     cache.lbcc += size;
-    cache.lexcc = currentInput.currentLexemP;
+    cache.lexemBufferNext = currentInput.currentLexemP;
     LEAVE();
 }
 

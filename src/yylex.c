@@ -335,7 +335,7 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
         } else {
             cache.cc = cache.cfin = NULL;
             cacheInput();
-            cache.lexcc = currentFile.lexemBuffer.next;
+            cache.lexemBufferNext = currentFile.lexemBuffer.next;
             setCurrentInputConsistency(&currentInput, &currentFile);
         }
         *previousLexem = currentInput.currentLexemP;

@@ -291,7 +291,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
     /* TODO: why do we need to know this? */
     if (cache.cachingActive && includeStackPointer == 0 && macroStackIndex == 0) {
         cacheInput();
-        cache.lexcc = lb->lexemStream;
+        cache.lexemBufferNext = lb->lexemStream;
     }
 
     shiftAnyRemainingLexems(lb);
