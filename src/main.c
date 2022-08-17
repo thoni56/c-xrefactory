@@ -505,8 +505,8 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         cache.cachingActive = true;
         placeCachePoint(false);
         cache.cachingActive = false;
-        assert(cache.lbcc == cache.cachePoints[0].currentLexemP);
-        assert(cache.lbcc == cache.cachePoints[1].currentLexemP);
+        assert(cache.lexemStreamEnd == cache.cachePoints[0].currentLexemP);
+        assert(cache.lexemStreamEnd == cache.cachePoints[1].currentLexemP);
     } else {
         copyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */

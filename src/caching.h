@@ -19,24 +19,24 @@ typedef struct cachePoint {
     struct counters    counters;
 } CachePoint;
 
-typedef struct cache {
-    bool              cachingActive; /* whether putting input to cache */
-    int               cachePointIndex;
-    struct cachePoint cachePoints[MAX_CACHE_POINTS];
-    int               ibi;
-    int               ib[INCLUDE_CACHE_SIZE]; /* included files numbers */
-    char             *lbcc;                   /* first free of lb */
-    char              beginningOfBuffer[LEX_BUF_CACHE_SIZE]; /* lexems buffer */
-    char             *lexcc;                  /* first not yet cached lexem */
-    char             *currentLexemP;          /* cc when input from cache */
-    char             *endOfBuffer;            /* end of cc, when input ... */
+typedef struct {
+    bool       cachingActive; /* whether putting input to cache */
+    int        cachePointIndex;
+    CachePoint cachePoints[MAX_CACHE_POINTS];
+    int        includeStackTop;
+    int        includeStack[INCLUDE_STACK_CACHE_SIZE]; /* included files numbers */
+    char      *lexemStreamEnd;                         /* first free in lexemStream */
+    char       lexemStream[LEXEM_STREAM_CACHE_SIZE];   /* lexems buffer */
+    char      *lexcc;                                  /* first not yet cached lexem */
+    char      *currentLexemP;                          /* cc when input from cache */
+    char      *endOfLexemStreamBuffer;                 /* end of cc, when input ... */
 } Cache;
 
 extern Cache cache;
 
 extern void setupCaching(void);
 extern void initCaching(void);
-extern void recoverCachePoint(int cachePointIndex, char *readUntil, bool activeCaching);
+extern void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive);
 extern void recoverFromCache(void);
 extern void cacheInput(void);
 extern void cacheInclude(int fileNum);

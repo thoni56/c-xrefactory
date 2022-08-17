@@ -333,7 +333,7 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
             }
             setCurrentInputConsistency(&currentInput, &currentFile);
         } else {
-            cache.currentLexemP = cache.endOfBuffer = NULL;
+            cache.currentLexemP = cache.endOfLexemStreamBuffer = NULL;
             cacheInput();
             cache.lexcc = currentFile.lexemBuffer.next;
             setCurrentInputConsistency(&currentInput, &currentFile);
@@ -463,7 +463,7 @@ void popInclude(void) {
     if (includeStackPointer != 0) {
         currentFile = includeStack[--includeStackPointer];	/* buffers are copied !!!!!!, burk */
         if (includeStackPointer == 0 && cache.currentLexemP != NULL) {
-            fillLexInput(&currentInput, cache.currentLexemP, cache.endOfBuffer, cache.beginningOfBuffer, NULL,
+            fillLexInput(&currentInput, cache.currentLexemP, cache.endOfLexemStreamBuffer, cache.lexemStream, NULL,
                          INPUT_CACHE);
         } else {
             setCurrentInputConsistency(&currentInput, &currentFile);

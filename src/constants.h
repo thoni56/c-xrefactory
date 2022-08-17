@@ -115,9 +115,9 @@
 
 /* ***************************** caching ******************************** */
 
-#define LEX_BUF_CACHE_SIZE      300000
+#define LEXEM_STREAM_CACHE_SIZE      300000
 #define MAX_CACHE_POINTS        500
-#define INCLUDE_CACHE_SIZE		1000
+#define INCLUDE_STACK_CACHE_SIZE		1000
 
 
 /* *************************************************************** */
