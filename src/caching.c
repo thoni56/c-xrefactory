@@ -228,8 +228,8 @@ static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int
     cache->ibi             = ibi;
     cache->lbcc            = lbcc;
     cache->lexcc           = lexcc;
-    cache->cc              = cc;
-    cache->cfin            = cfin;
+    cache->currentLexemP   = cc;
+    cache->endOfBuffer     = cfin;
 }
 
 // before allowing it, fix problem when modifying .xrefrc during run!!!!
@@ -288,7 +288,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool activeCaching)
     currentFile.lineNumber = cachePoint->lineNumber;
     currentFile.ifDepth = cachePoint->ifDepth;
     currentFile.ifStack = cachePoint->ifStack;
-    fillLexInput(&currentInput, cachePoint->currentLexemP, readUntil, cache.lb, NULL, INPUT_CACHE);
+    fillLexInput(&currentInput, cachePoint->currentLexemP, readUntil, cache.beginningOfBuffer, NULL, INPUT_CACHE);
     fillCache(&cache, activeCaching, cachePointIndex + 1, cachePoint->ibi, cachePoint->currentLexemP,
               currentInput.currentLexemP, currentInput.currentLexemP, currentInput.endOfBuffer);
     log_trace("finished recovering");
@@ -324,7 +324,7 @@ void setupCaching(void) {
 }
 
 void initCaching(void) {
-    fillCache(&cache, 1, 0, 0, cache.lb, currentFile.lexemBuffer.next, NULL, NULL);
+    fillCache(&cache, 1, 0, 0, cache.beginningOfBuffer, currentFile.lexemBuffer.next, NULL, NULL);
     placeCachePoint(false);
     cache.cachingActive = false;
 }
@@ -348,7 +348,7 @@ void cacheInput(void) {
         return;
     }
     size = currentInput.currentLexemP - cache.lexcc;
-    if (cache.lbcc - cache.lb + size >= LEX_BUF_CACHE_SIZE) {
+    if (cache.lbcc - cache.beginningOfBuffer + size >= LEX_BUF_CACHE_SIZE) {
         cache.cachingActive = false;
         LEAVE();
         return;

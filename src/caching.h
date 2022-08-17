@@ -26,10 +26,10 @@ typedef struct cache {
     int               ibi;
     int               ib[INCLUDE_CACHE_SIZE]; /* included files numbers */
     char             *lbcc;                   /* first free of lb */
-    char              lb[LEX_BUF_CACHE_SIZE]; /* lexems buffer */
+    char              beginningOfBuffer[LEX_BUF_CACHE_SIZE]; /* lexems buffer */
     char             *lexcc;                  /* first not yet cached lexem */
-    char             *cc;                     /* cc when input from cache */
-    char             *cfin;                   /* end of cc, when input ... */
+    char             *currentLexemP;          /* cc when input from cache */
+    char             *endOfBuffer;            /* end of cc, when input ... */
 } Cache;
 
 extern Cache cache;
