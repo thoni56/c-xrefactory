@@ -346,7 +346,7 @@ Reference o-- Reference : next
 
 === Files and Buffers
 
-There is many strange things going on with reading files that is not completely understood yet.
+Many strange things are going on with reading files so that is not completely understood yet.
 
 (There should probably be a section caching and one on lexing...)
 
@@ -368,20 +368,20 @@ class CharacterBuffer {
 }
 
 class LexInput {
-  Lexem* : currentLexemP
-  Lexem* : beginningOfBuffer
-  Lexem* : endOfBuffer
   char* : macroName
   InputType : inputType
 }
+LexInput --> LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)
 ....
 
-It would be nice if the `LexInput` structure could point to a
+NOTE: It would be nice if the `LexInput` structure could point to a
 `LexemBuffer` instead of holding separate pointers which are
 impossible to know what they actually point to...
 
-This could be achieved if we could remove the CharacterBuffer from
-LexemBuffer and make that a reference instead of a composition.
+NOTE: This could be achieved if we could remove the CharacterBuffer
+from LexemBuffer and make that a reference instead of a
+composition. Then we'd need to add a CharacterBuffer to the structures
+that has a LexemBuffer as a component (if they use it).
 
 === Modes
 
@@ -470,8 +470,7 @@ Here are some speculations about how the complex file reading is structured.
 Each file is identified by a filenumber, which is an index into the
 file table, and seems to have a `lexBuffer` tied to it so that you can
 just continue from where ever you were. That in turn contains a
-`CharacterBuffer` (renamed from `charBuf`) that handles the actual
-character reading.
+`CharacterBuffer` that handles the actual character reading.
 
 And there is also an "editorBuffer"...
 
