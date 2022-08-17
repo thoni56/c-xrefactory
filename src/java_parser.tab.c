@@ -3956,16 +3956,16 @@ case 126:
                                      ppcBottomInformation(tmpBuff); &*/
                             parsedClassInfo.thisMethodMemoriesStored = 1;
                             if (options.serverOperation == OLO_MAYBE_THIS) {
-                                changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
-                                                             CategoryLocal, currentFile.lexemBuffer.buffer.fileNumber,
+                                changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM, CategoryLocal,
+                                                             currentFile.lexemBuffer.characterBuffer.fileNumber,
                                                              javaStat->thisClass);
                             } else if (options.serverOperation == OLO_NOT_FQT_REFS) {
-                                changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                             CategoryLocal,currentFile.lexemBuffer.buffer.fileNumber,
+                                changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM, CategoryLocal,
+                                                             currentFile.lexemBuffer.characterBuffer.fileNumber,
                                                              javaStat->thisClass);
                             } else if (options.serverOperation == OLO_USELESS_LONG_NAME) {
-                                changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                             CategoryGlobal,currentFile.lexemBuffer.buffer.fileNumber,
+                                changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM, CategoryGlobal,
+                                                             currentFile.lexemBuffer.characterBuffer.fileNumber,
                                                              javaStat->thisClass);
                             }
                             parsedInfo.cxMemoryIndexAtClassBeginning = parsedClassInfo.cxMemoryIndexdiAtClassBegin;
@@ -3975,12 +3975,12 @@ case 126:
                               parsedInfo.classCoordEndLine, parsedInfo.cxMemoryIndexAtClassBeginning,
                               parsedInfo.cxMemoryIndexAtClassEnd); &*/
                             if (options.serverOperation == OLO_NOT_FQT_REFS_IN_CLASS) {
-                                changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                            CategoryLocal,currentFile.lexemBuffer.buffer.fileNumber,
+                                changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM, CategoryLocal,
+                                                            currentFile.lexemBuffer.characterBuffer.fileNumber,
                                                             javaStat->thisClass);
                             } else if (options.serverOperation == OLO_USELESS_LONG_NAME_IN_CLASS) {
-                                changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                            CategoryGlobal,currentFile.lexemBuffer.buffer.fileNumber,
+                                changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM, CategoryGlobal,
+                                                            currentFile.lexemBuffer.characterBuffer.fileNumber,
                                                             javaStat->thisClass);
                             }
                         }

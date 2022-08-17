@@ -179,9 +179,9 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
             recoverFromCache();
             cache.cachingActive = false; /* no caching in cxref */
             parseCurrentInputFile(currentLanguage);
-            closeCharacterBuffer(&currentFile.lexemBuffer.buffer);
+            closeCharacterBuffer(&currentFile.lexemBuffer.characterBuffer);
             inputOpened                       = false;
-            currentFile.lexemBuffer.buffer.file = stdin;
+            currentFile.lexemBuffer.characterBuffer.file = stdin;
             *atLeastOneProcessedP             = true;
         } else if (LANGUAGE(LANG_JAR)) {
             jarFileParse(inputFileName);
@@ -195,7 +195,7 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         }
         // no multiple passes for java programs
         *firstPassP                          = false;
-        currentFile.lexemBuffer.buffer.isAtEOF = false;
+        currentFile.lexemBuffer.characterBuffer.isAtEOF = false;
         if (LANGUAGE(LANG_JAVA))
             break;
     }
@@ -287,20 +287,21 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
         FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
     for (int i=0; i<includeStackPointer; i++) {
-        log_trace("inspecting include %d, fileNumber: %d", i, includeStack[i].lexemBuffer.buffer.fileNumber);
-        if (includeStack[i].lexemBuffer.buffer.file != stdin) {
-            int fileIndex                     = includeStack[i].lexemBuffer.buffer.fileNumber;
+        log_trace("inspecting include %d, fileNumber: %d", i,
+                  includeStack[i].lexemBuffer.characterBuffer.fileNumber);
+        if (includeStack[i].lexemBuffer.characterBuffer.file != stdin) {
+            int fileIndex                     = includeStack[i].lexemBuffer.characterBuffer.fileNumber;
             getFileItem(fileIndex)->cxLoading = false;
-            if (includeStack[i].lexemBuffer.buffer.file != NULL)
-                closeCharacterBuffer(&includeStack[i].lexemBuffer.buffer);
+            if (includeStack[i].lexemBuffer.characterBuffer.file != NULL)
+                closeCharacterBuffer(&includeStack[i].lexemBuffer.characterBuffer);
         }
     }
-    if (currentFile.lexemBuffer.buffer.file != stdin) {
-        log_trace("inspecting current file, fileNumber: %d", currentFile.lexemBuffer.buffer.fileNumber);
-        int fileIndex                     = currentFile.lexemBuffer.buffer.fileNumber;
+    if (currentFile.lexemBuffer.characterBuffer.file != stdin) {
+        log_trace("inspecting current file, fileNumber: %d", currentFile.lexemBuffer.characterBuffer.fileNumber);
+        int fileIndex                     = currentFile.lexemBuffer.characterBuffer.fileNumber;
         getFileItem(fileIndex)->cxLoading = false;
-        if (currentFile.lexemBuffer.buffer.file != NULL)
-            closeCharacterBuffer(&currentFile.lexemBuffer.buffer);
+        if (currentFile.lexemBuffer.characterBuffer.file != NULL)
+            closeCharacterBuffer(&currentFile.lexemBuffer.characterBuffer);
     }
     if (options.mode==XrefMode)
         generateReferences();

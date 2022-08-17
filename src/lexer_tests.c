@@ -63,7 +63,7 @@ Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
     lexemBuffer.next = lexemBuffer.end = lexemBuffer.lexemStream;
     lexemBuffer.ringIndex = 0;
 
-    initCharacterBuffer(&lexemBuffer.buffer, NULL);
+    initCharacterBuffer(&lexemBuffer.characterBuffer, NULL);
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_false);
 }
@@ -71,7 +71,7 @@ Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
 Ensure(Lexer, can_scan_a_floating_point_number) {
     LexemBuffer      lexemBuffer;
     char            *lexemPointer = lexemBuffer.lexemStream;
-    CharacterBuffer *charBuffer   = &lexemBuffer.buffer;
+    CharacterBuffer *charBuffer   = &lexemBuffer.characterBuffer;
     char            *inputString  = "4.3f";
 
     cache.cachingActive = false; /* ?? */
@@ -79,7 +79,7 @@ Ensure(Lexer, can_scan_a_floating_point_number) {
     initLexemBuffer(&lexemBuffer, NULL);
     charBuffer->fileNumber = 0;
 
-    initCharacterBufferFromString(&lexemBuffer.buffer, inputString);
+    initCharacterBufferFromString(&lexemBuffer.characterBuffer, inputString);
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_true);
     assert_that(getLexToken(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
@@ -88,7 +88,7 @@ Ensure(Lexer, can_scan_a_floating_point_number) {
 Ensure(Lexer, can_scan_include_next) {
     LexemBuffer      lexemBuffer;
     char            *lexemPointer = lexemBuffer.lexemStream;
-    CharacterBuffer *charBuffer   = &lexemBuffer.buffer;
+    CharacterBuffer *charBuffer   = &lexemBuffer.characterBuffer;
     char            *inputString  = "\n#include_next \"file\""; /* Directives must follow \n to be in column 1 */
 
     cache.cachingActive = false; /* ?? */
@@ -96,7 +96,7 @@ Ensure(Lexer, can_scan_include_next) {
     initLexemBuffer(&lexemBuffer, NULL);
     charBuffer->fileNumber = 0;
 
-    initCharacterBufferFromString(&lexemBuffer.buffer, inputString);
+    initCharacterBufferFromString(&lexemBuffer.characterBuffer, inputString);
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_true);
     getLexToken(&lexemPointer);

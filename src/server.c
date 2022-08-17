@@ -165,8 +165,8 @@ static char *presetEditServerFileDependingStatics(void) {
 }
 
 static void closeInputFile(void) {
-    if (currentFile.lexemBuffer.buffer.file != stdin) {
-        closeCharacterBuffer(&currentFile.lexemBuffer.buffer);
+    if (currentFile.lexemBuffer.characterBuffer.file != stdin) {
+        closeCharacterBuffer(&currentFile.lexemBuffer.characterBuffer);
     }
 }
 

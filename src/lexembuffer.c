@@ -8,7 +8,7 @@ void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
     buffer->next = buffer->lexemStream;
     buffer->end = buffer->lexemStream;
     buffer->ringIndex = 0;
-    initCharacterBuffer(&buffer->buffer, file);
+    initCharacterBuffer(&buffer->characterBuffer, file);
 }
 
 Lexem getLexemAt(LexemBuffer *lb, void *readPointer) {
@@ -137,11 +137,11 @@ protected int getLexCompacted(char **readPointerP) {
 }
 
 int fileNumberFrom(LexemBuffer *lb) {
-    return lb->buffer.fileNumber;
+    return lb->characterBuffer.fileNumber;
 }
 
 int lineNumberFrom(LexemBuffer *lb) {
-    return lb->buffer.lineNumber;
+    return lb->characterBuffer.lineNumber;
 }
 
 /* Lines */

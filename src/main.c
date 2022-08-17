@@ -514,7 +514,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
     }
     // reset language once knowing all language suffixes
     *outLanguage = getLanguageFor(fileName);
-    inputFileNumber = currentFile.lexemBuffer.buffer.fileNumber;
+    inputFileNumber = currentFile.lexemBuffer.characterBuffer.fileNumber;
     assert(options.mode);
     if (options.mode==XrefMode && !javaPreScanOnly) {
         if (options.xref2) {
