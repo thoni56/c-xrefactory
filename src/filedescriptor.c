@@ -1,5 +1,6 @@
 #include "filedescriptor.h"
 
+#include "characterreader.h"
 #include "filetable.h"
 
 
@@ -15,7 +16,8 @@ void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bu
     fileDescriptor->lineNumber = 0;
     fileDescriptor->ifDepth = 0;
     fileDescriptor->ifStack = NULL;
-    initLexemBuffer(&fileDescriptor->lexemBuffer, file);
-    fillCharacterBuffer(&fileDescriptor->lexemBuffer.characterBuffer, bufferStart, bufferStart + bufferSize, file,
+    initLexemBuffer(&fileDescriptor->lexemBuffer, &fileDescriptor->characterBuffer);
+    initCharacterBuffer(&fileDescriptor->characterBuffer, file);
+    fillCharacterBuffer(&fileDescriptor->characterBuffer, bufferStart, bufferStart + bufferSize, file,
                         offset, noFileIndex, bufferStart);
 }

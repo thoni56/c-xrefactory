@@ -208,7 +208,7 @@ static void setCurrentFileInfoFor(char *fileName) {
         }
         fileItem->cxLoading = cxloading;
     }
-    currentFile.lexemBuffer.characterBuffer.fileNumber = number;
+    currentFile.characterBuffer.fileNumber = number;
     currentFile.fileName = name;
 }
 
@@ -234,8 +234,8 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
     } else {
         // read file
         assert(prefixLength < CHAR_BUFF_SIZE);
-        strcpy(currentFile.lexemBuffer.characterBuffer.chars, prefix);
-        bufferStart = currentFile.lexemBuffer.characterBuffer.chars;
+        strcpy(currentFile.characterBuffer.chars, prefix);
+        bufferStart = currentFile.characterBuffer.chars;
         bufferSize = prefixLength;
         offset = 0;
     }
@@ -451,15 +451,15 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     }
     includeStackPointer ++;
     initInput(file, buffer, prepend, name);
-    cacheInclude(currentFile.lexemBuffer.characterBuffer.fileNumber);
+    cacheInclude(currentFile.characterBuffer.fileNumber);
 }
 
 void popInclude(void) {
-    FileItem *fileItem = getFileItem(currentFile.lexemBuffer.characterBuffer.fileNumber);
+    FileItem *fileItem = getFileItem(currentFile.characterBuffer.fileNumber);
     if (fileItem->cxLoading) {
         fileItem->cxLoaded = true;
     }
-    closeCharacterBuffer(&currentFile.lexemBuffer.characterBuffer);
+    closeCharacterBuffer(&currentFile.characterBuffer);
     if (includeStackPointer != 0) {
         currentFile = includeStack[--includeStackPointer];	/* buffers are copied !!!!!!, burk */
         if (includeStackPointer == 0 && cache.currentLexemP != NULL) {
@@ -563,7 +563,7 @@ static void processInclude2(Position *includePosition, char pchar, char *include
         else
             log_error("Can't open file '%s'", includedName);
     } else {
-        addIncludeReferences(currentFile.lexemBuffer.characterBuffer.fileNumber, includePosition);
+        addIncludeReferences(currentFile.characterBuffer.fileNumber, includePosition);
     }
 }
 

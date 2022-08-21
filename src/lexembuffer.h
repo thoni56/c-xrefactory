@@ -18,7 +18,7 @@ typedef struct {
     Position positionRing[LEX_POSITIONS_RING_SIZE];
     unsigned fileOffsetRing[LEX_POSITIONS_RING_SIZE];
     int ringIndex;           /* ...Ring[ringIndex%LEX_POSITIONS_RING_SIZE] */
-    CharacterBuffer characterBuffer;
+    CharacterBuffer *characterBuffer;
 } LexemBuffer;
 
 
@@ -63,6 +63,6 @@ extern Position peekLexPosition(char **readPointerP);
         pos = getLexPosition(&tmptmpcc);        \
     }
 
-extern void initLexemBuffer(LexemBuffer *buffer, FILE *file);
+extern void initLexemBuffer(LexemBuffer *buffer, CharacterBuffer *characterBuffer);
 
 #endif

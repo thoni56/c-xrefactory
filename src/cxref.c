@@ -679,7 +679,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     assert(options.mode);
     if (options.mode == ServerMode) {
         if (options.serverOperation == OLO_EXTRACT) {
-            if (inputFileNumber != currentFile.lexemBuffer.characterBuffer.fileNumber)
+            if (inputFileNumber != currentFile.characterBuffer.fileNumber)
                 return NULL;
         } else {
             if (category==CategoryGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {

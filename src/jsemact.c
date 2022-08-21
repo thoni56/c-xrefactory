@@ -736,7 +736,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
             }
         }
         pushInclude(file, buffer, asfname, "\n");
-        cfilenum    = currentFile.lexemBuffer.characterBuffer.fileNumber;
+        cfilenum    = currentFile.characterBuffer.fileNumber;
         s_jsl->pass = pass;
         java_yyparse();
         popInclude();      // this will close the file
@@ -2663,7 +2663,7 @@ void javaParsedSuperClass(Symbol *symbol) {
         log_trace("manual super class %s of %s == %s" ,symbol->linkName, javaStat->thisClass->linkName,
                   getFileItem(javaStat->thisClass->u.structSpec->classFileIndex)->name);
         javaLoadClassSymbolsFromFile(symbol);
-        addSuperClassOrInterface(javaStat->thisClass, symbol, currentFile.lexemBuffer.characterBuffer.fileNumber);
+        addSuperClassOrInterface(javaStat->thisClass, symbol, currentFile.characterBuffer.fileNumber);
     }
 }
 

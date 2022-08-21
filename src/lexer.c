@@ -110,23 +110,23 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 static void processIdentifier(LexemBuffer *lb, int *chP) {
     int column;
 
-    column = columnPosition(&lb->characterBuffer);
+    column = columnPosition(lb->characterBuffer);
     putLexToken(lb, IDENTIFIER);
     do {
         putLexChar(lb, *chP);
-        *chP = getChar(&lb->characterBuffer);
+        *chP = getChar(lb->characterBuffer);
     } while (isalpha(*chP) || isdigit(*chP) || *chP == '_'
              || (*chP == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
     putLexChar(lb, 0);
-    putLexPositionFields(lb, lb->characterBuffer.fileNumber, lb->characterBuffer.lineNumber, column);
+    putLexPositionFields(lb, lb->characterBuffer->fileNumber, lb->characterBuffer->lineNumber, column);
 }
 
 static void noteNewLexemPosition(LexemBuffer *lb) {
     int index = lb->ringIndex % LEX_POSITIONS_RING_SIZE;
-    lb->fileOffsetRing[index]    = absoluteFilePosition(&lb->characterBuffer);
-    lb->positionRing[index].file = lb->characterBuffer.fileNumber;
-    lb->positionRing[index].line = lb->characterBuffer.lineNumber;
-    lb->positionRing[index].col  = columnPosition(&lb->characterBuffer);
+    lb->fileOffsetRing[index]    = absoluteFilePosition(lb->characterBuffer);
+    lb->positionRing[index].file = lb->characterBuffer->fileNumber;
+    lb->positionRing[index].line = lb->characterBuffer->lineNumber;
+    lb->positionRing[index].col  = columnPosition(lb->characterBuffer);
     lb->ringIndex++;
 }
 
@@ -134,8 +134,8 @@ static void noteNewLexemPosition(LexemBuffer *lb) {
 static void putEmptyCompletionId(LexemBuffer *lb, int len) {
     putLexToken(lb, IDENT_TO_COMPLETE);
     putLexChar(lb, 0);
-    putLexPositionFields(lb, lb->characterBuffer.fileNumber, lb->characterBuffer.lineNumber,
-                         columnPosition(&lb->characterBuffer) - len);
+    putLexPositionFields(lb, lb->characterBuffer->fileNumber, lb->characterBuffer->lineNumber,
+                         columnPosition(lb->characterBuffer) - len);
 }
 
 protected void shiftAnyRemainingLexems(LexemBuffer *lb) {
@@ -156,12 +156,12 @@ static int handleCppToken(LexemBuffer *lb) {
     int   i, column;
 
     noteNewLexemPosition(lb);
-    column = columnPosition(&lb->characterBuffer);
-    ch     = getChar(&lb->characterBuffer);
-    ch     = skipBlanks(&lb->characterBuffer, ch);
+    column = columnPosition(lb->characterBuffer);
+    ch     = getChar(lb->characterBuffer);
+    ch     = skipBlanks(lb->characterBuffer, ch);
     for (i = 0; i < sizeof(preprocessorWord) - 1 && (isalpha(ch) || isdigit(ch) || ch == '_'); i++) {
         preprocessorWord[i] = ch;
-        ch                  = getChar(&lb->characterBuffer);
+        ch                  = getChar(lb->characterBuffer);
     }
     preprocessorWord[i] = 0;
     if (strcmp(preprocessorWord, "ifdef") == 0) {
@@ -192,29 +192,29 @@ static int handleCppToken(LexemBuffer *lb) {
         else
             putLexToken(lb, CPP_INCLUDE_NEXT);
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
-        ch = skipBlanks(&lb->characterBuffer, ch);
+        ch = skipBlanks(lb->characterBuffer, ch);
         if (ch == '\"' || ch == '<') {
             int scol;
             if (ch == '\"')
                 endCh = '\"';
             else
                 endCh = '>';
-            scol = columnPosition(&lb->characterBuffer);
+            scol = columnPosition(lb->characterBuffer);
             putLexToken(lb, STRING_LITERAL);
             do {
                 putLexChar(lb, ch);
-                ch = getChar(&lb->characterBuffer);
+                ch = getChar(lb->characterBuffer);
             } while (ch != endCh && ch != '\n');
             putLexChar(lb, 0);
             putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), scol);
             if (ch == endCh)
-                ch = getChar(&lb->characterBuffer);
+                ch = getChar(lb->characterBuffer);
         }
     } else if (strcmp(preprocessorWord, "define") == 0) {
         void *backpatchLexemP = getLexemStreamEnd(lb);
         putLexToken(lb, CPP_DEFINE0);
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
-        ch = skipBlanks(&lb->characterBuffer, ch);
+        ch = skipBlanks(lb->characterBuffer, ch);
         noteNewLexemPosition(lb);
         processIdentifier(lb, &ch);
         if (ch == '(') {
@@ -234,8 +234,8 @@ static int handleCppToken(LexemBuffer *lb) {
 
 static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position position,
                                      int filePositionForCurrentLexem, int *chP) {
-    *chP     = skipBlanks(&lb->characterBuffer, *chP);
-    int apos = absoluteFilePosition(&lb->characterBuffer);
+    *chP     = skipBlanks(lb->characterBuffer, *chP);
+    int apos = absoluteFilePosition(lb->characterBuffer);
 
     if (filePositionForCurrentLexem < options.olCursorPosition
         && (apos >= options.olCursorPosition || (*chP == -1 && apos + 1 == options.olCursorPosition))) {
@@ -285,7 +285,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
     Lexem lexem;
     int line, column, size;
     int lexemStartingColumn, lexStartFilePos;
-    CharacterBuffer *cb = &lb->characterBuffer;
+    CharacterBuffer *cb = lb->characterBuffer;
 
     /* first test whether the input is cached */
     /* TODO: why do we need to know this? */
@@ -666,14 +666,14 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                             putLexChar(lb, ch);
                         /* TODO escape sequences */
                         if (ch == '\n') {
-                            lb->characterBuffer.lineNumber++;
+                            lb->characterBuffer->lineNumber++;
                             cb->lineBegin = cb->nextUnread;
                             cb->columnOffset = 0;
                         }
                         ch = 0;
                     }
                     if (ch == '\n') {
-                        lb->characterBuffer.lineNumber++;
+                        lb->characterBuffer->lineNumber++;
                         cb->lineBegin = cb->nextUnread;
                         cb->columnOffset = 0;
                         if (options.strictAnsi && (options.debug || options.errors)) {
@@ -731,7 +731,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         if (ch == '\\') {
                             ch = getChar(cb);
                             if (ch=='\n') {
-                                lb->characterBuffer.lineNumber++;
+                                lb->characterBuffer->lineNumber++;
                                 cb->lineBegin = cb->nextUnread;
                                 cb->columnOffset = 0;
                             }
@@ -748,7 +748,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             case '\\':
                 ch = getChar(cb);
                 if (ch == '\n') {
-                    lb->characterBuffer.lineNumber++;
+                    lb->characterBuffer->lineNumber++;
                     cb->lineBegin = cb->nextUnread;
                     cb->columnOffset = 0;
                     putLexLines(lb, 1);
@@ -767,7 +767,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 if (lineNumberFrom(lb) >= MAX_REFERENCABLE_LINE) {
                     FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file", XREF_EXIT_ERR);
                 }
-                lb->characterBuffer.lineNumber++;
+                lb->characterBuffer->lineNumber++;
                 cb->lineBegin = cb->nextUnread;
                 cb->columnOffset = 0;
                 ch = getChar(cb);

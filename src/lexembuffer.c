@@ -1,14 +1,15 @@
 #include "lexembuffer.h"
 
+#include "characterreader.h"
 #include "head.h"
 #include "commons.h"
 
 
-void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
+void initLexemBuffer(LexemBuffer *buffer, CharacterBuffer *characterBuffer) {
     buffer->next = buffer->lexemStream;
     buffer->end = buffer->lexemStream;
     buffer->ringIndex = 0;
-    initCharacterBuffer(&buffer->characterBuffer, file);
+    buffer->characterBuffer = characterBuffer;
 }
 
 Lexem getLexemAt(LexemBuffer *lb, void *readPointer) {
@@ -137,11 +138,11 @@ protected int getLexCompacted(char **readPointerP) {
 }
 
 int fileNumberFrom(LexemBuffer *lb) {
-    return lb->characterBuffer.fileNumber;
+    return lb->characterBuffer->fileNumber;
 }
 
 int lineNumberFrom(LexemBuffer *lb) {
-    return lb->characterBuffer.lineNumber;
+    return lb->characterBuffer->lineNumber;
 }
 
 /* Lines */

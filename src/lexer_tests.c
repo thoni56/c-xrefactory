@@ -1,5 +1,6 @@
 #include <cgreen/cgreen.h>
 
+#include "characterreader.h"
 #include "lexembuffer.h"
 #include "lexer.h"
 #include "log.h"
@@ -56,47 +57,36 @@ Ensure(Lexer, can_shift_remaining_lexems) {
 }
 
 Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
+    CharacterBuffer characterBuffer;
     LexemBuffer lexemBuffer;
 
-    cache.cachingActive = false; /* ?? */
-
-    lexemBuffer.next = lexemBuffer.end = lexemBuffer.lexemStream;
-    lexemBuffer.ringIndex = 0;
-
-    initCharacterBuffer(&lexemBuffer.characterBuffer, NULL);
+    initCharacterBuffer(&characterBuffer, NULL);
+    initLexemBuffer(&lexemBuffer, &characterBuffer);
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_false);
 }
 
 Ensure(Lexer, can_scan_a_floating_point_number) {
+    CharacterBuffer  characterBuffer;
     LexemBuffer      lexemBuffer;
     char            *lexemPointer = lexemBuffer.lexemStream;
-    CharacterBuffer *charBuffer   = &lexemBuffer.characterBuffer;
     char            *inputString  = "4.3f";
 
-    cache.cachingActive = false; /* ?? */
-
-    initLexemBuffer(&lexemBuffer, NULL);
-    charBuffer->fileNumber = 0;
-
-    initCharacterBufferFromString(&lexemBuffer.characterBuffer, inputString);
+    initLexemBuffer(&lexemBuffer, &characterBuffer);
+    initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_true);
     assert_that(getLexToken(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
 }
 
 Ensure(Lexer, can_scan_include_next) {
+    CharacterBuffer  charBuffer;
     LexemBuffer      lexemBuffer;
     char            *lexemPointer = lexemBuffer.lexemStream;
-    CharacterBuffer *charBuffer   = &lexemBuffer.characterBuffer;
     char            *inputString  = "\n#include_next \"file\""; /* Directives must follow \n to be in column 1 */
 
-    cache.cachingActive = false; /* ?? */
-
-    initLexemBuffer(&lexemBuffer, NULL);
-    charBuffer->fileNumber = 0;
-
-    initCharacterBufferFromString(&lexemBuffer.characterBuffer, inputString);
+    initLexemBuffer(&lexemBuffer, &charBuffer);
+    initCharacterBufferFromString(lexemBuffer.characterBuffer, inputString);
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_true);
     getLexToken(&lexemPointer);

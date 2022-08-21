@@ -11,11 +11,12 @@
 
 
 static LexemBuffer lb;
+static CharacterBuffer cb;
 
 Describe(LexemBuffer);
 BeforeEach(LexemBuffer) {
     log_set_level(LOG_ERROR);
-    initLexemBuffer(&lb, NULL);
+    initLexemBuffer(&lb, &cb);
 }
 AfterEach(LexemBuffer) {}
 

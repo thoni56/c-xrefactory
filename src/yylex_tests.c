@@ -61,7 +61,7 @@ static void setup_lexBuffer_for_reading_identifier(void *data) {
      * mis-using the LexemBuffer interface */
     putLexTokenWithPointer(IDENTIFIER, &lexemStreamP);
 
-    strcpy(lexemStreamP, currentFile.lexemBuffer.characterBuffer.chars);
+    strcpy(lexemStreamP, currentFile.characterBuffer.chars);
     /* TODO: WTF This is mostly guesswork, no idea if this is how they are connected... */
     *strchr(&currentFile.lexemBuffer.lexemStream[2], ' ') = '\0';
     currentFile.lexemBuffer.next                          = currentFile.lexemBuffer.lexemStream;
