@@ -17,31 +17,27 @@
 #include "yylex.mock"
 #include "zlib.mock"
 
+static CharacterBuffer characterBuffer;
+static LexemBuffer     lexemBuffer;
+
 Describe(Lexer);
 BeforeEach(Lexer) {
     currentLanguage = LANG_C;
     log_set_level(LOG_ERROR);
+    initLexemBuffer(&lexemBuffer, &characterBuffer);
 }
 AfterEach(Lexer) {}
 
-
 Ensure(Lexer, will_signal_false_for_empty_lexbuffer) {
-    CharacterBuffer characterBuffer;
-    LexemBuffer lexemBuffer;
-
     initCharacterBuffer(&characterBuffer, NULL);
-    initLexemBuffer(&lexemBuffer, &characterBuffer);
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_false);
 }
 
 Ensure(Lexer, can_scan_a_floating_point_number) {
-    CharacterBuffer  characterBuffer;
-    LexemBuffer      lexemBuffer;
-    char            *lexemPointer = lexemBuffer.lexemStream;
-    char            *inputString  = "4.3f";
+    char *lexemPointer = lexemBuffer.lexemStream;
+    char *inputString  = "4.3f";
 
-    initLexemBuffer(&lexemBuffer, &characterBuffer);
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_true);
@@ -49,12 +45,9 @@ Ensure(Lexer, can_scan_a_floating_point_number) {
 }
 
 Ensure(Lexer, can_scan_include_next) {
-    CharacterBuffer  charBuffer;
-    LexemBuffer      lexemBuffer;
-    char            *lexemPointer = lexemBuffer.lexemStream;
-    char            *inputString  = "\n#include_next \"file\""; /* Directives must follow \n to be in column 1 */
+    char *lexemPointer = lexemBuffer.lexemStream;
+    char *inputString  = "\n#include_next \"file\""; /* Directives must follow \n to be in column 1 */
 
-    initLexemBuffer(&lexemBuffer, &charBuffer);
     initCharacterBufferFromString(lexemBuffer.characterBuffer, inputString);
 
     assert_that(getLexemFromLexer(&lexemBuffer), is_true);
