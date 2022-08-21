@@ -199,3 +199,15 @@ void putLexIntWithPointer(int integer, char **writePointerP) {
     *(*writePointerP)++ = tmp%256; tmp /= 256;
     *(*writePointerP)++ = tmp%256; tmp /= 256;
 }
+
+void shiftAnyRemainingLexems(LexemBuffer *lb) {
+    int remaining = lb->end - lb->next;
+    char *src = lb->next;
+    char *dest = lb->lexemStream;
+
+    for (int i = 0; i < remaining; i++)
+        *dest++ = *src++;
+
+    lb->next = lb->lexemStream;
+    lb->end = &lb->lexemStream[remaining];
+}

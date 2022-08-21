@@ -22,6 +22,8 @@ typedef struct {
 } LexemBuffer;
 
 
+extern void shiftAnyRemainingLexems(LexemBuffer *lb);
+
 extern void setLexemStreamEnd(LexemBuffer *lb, void *end);
 extern void *getLexemStreamEnd(LexemBuffer *lb);
 

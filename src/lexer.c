@@ -138,18 +138,6 @@ static void putEmptyCompletionId(LexemBuffer *lb, int len) {
                          columnPosition(lb->characterBuffer) - len);
 }
 
-protected void shiftAnyRemainingLexems(LexemBuffer *lb) {
-    int remaining = lb->end - lb->next;
-    char *src = lb->next;
-    char *dest = lb->lexemStream;
-
-    for (int i = 0; i < remaining; i++)
-        *dest++ = *src++;
-
-    lb->next = lb->lexemStream;
-    lb->end = &lb->lexemStream[remaining];
-}
-
 static int handleCppToken(LexemBuffer *lb) {
     int   ch;
     char  preprocessorWord[30];

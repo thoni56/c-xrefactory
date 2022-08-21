@@ -20,6 +20,37 @@ BeforeEach(LexemBuffer) {
 }
 AfterEach(LexemBuffer) {}
 
+
+Ensure(LexemBuffer, can_shift_remaining_lexems) {
+    LexemBuffer lb = { .end = lb.lexemStream, .next = lb.lexemStream };
+    char *test_string = "abcdefg";
+
+    shiftAnyRemainingLexems(&lb);
+
+    assert_that(lb.next, is_equal_to(lb.lexemStream));
+    assert_that(lb.end, is_equal_to(lb.lexemStream));
+
+    lb.lexemStream[1] = '1';
+    lb.next = &lb.lexemStream[1];
+    lb.end  = &lb.lexemStream[2];
+
+    shiftAnyRemainingLexems(&lb);
+
+    assert_that(lb.next, is_equal_to(lb.lexemStream));
+    assert_that(lb.end, is_equal_to(&lb.lexemStream[1]));
+    assert_that(lb.lexemStream[0], is_equal_to('1'));
+
+    strcpy(&lb.lexemStream[2], test_string);
+    lb.next = &lb.lexemStream[2];
+    lb.end  = &lb.lexemStream[9];
+
+    shiftAnyRemainingLexems(&lb);
+
+    assert_that(lb.next, is_equal_to(lb.lexemStream));
+    assert_that(lb.end, is_equal_to(&lb.lexemStream[strlen(test_string)]));
+    assert_that(strncmp(lb.lexemStream, test_string, strlen(test_string)), is_equal_to(0));
+}
+
 extern void putLexShort(int shortValue, char **writePointer);
 extern int getLexShort(char **readPointer);
 Ensure(LexemBuffer, can_put_and_get_a_short) {
