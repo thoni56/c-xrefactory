@@ -1879,7 +1879,7 @@ void dumpLexemBuffer(LexemBuffer *lb) {
 
     log_debug("lexbufdump [start] ");
     cc = lb->next;
-    while (cc < lb->end) {
+    while (cc < (char *)getLexemStreamEnd(lb)) {
         lexem = getLexToken(&cc);
         if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
             log_debug("%s ",cc);

@@ -269,7 +269,8 @@ static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
 
 bool getLexemFromLexer(LexemBuffer *lb) {
     int ch;
-    char *lexemLimit, *startOfCurrentLexem;
+    char *lexemLimit;
+    char *startOfCurrentLexem;
     Lexem lexem;
     int line, column, size;
     int lexemStartingColumn, lexStartFilePos;
@@ -284,18 +285,18 @@ bool getLexemFromLexer(LexemBuffer *lb) {
 
     shiftAnyRemainingLexems(lb);
 
-    lexemLimit = lb->end + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
+    lexemLimit = getLexemStreamEnd(lb) + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
 
     ch = getChar(cb);
     do {
         ch = skipBlanks(cb, ch);
         /* Space for more lexems? */
-        if (lb->end >= lexemLimit) {
+        if ((char *)getLexemStreamEnd(lb) >= lexemLimit) {
             ungetChar(cb, ch);
             break;
         }
         noteNewLexemPosition(lb);
-        startOfCurrentLexem = lb->end;
+        startOfCurrentLexem = getLexemStreamEnd(lb);
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
@@ -909,7 +910,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         }
     } while (ch != -1);
 
-    if (lb->end == lb->lexemStream)
+    if ((char *)getLexemStreamEnd(lb) == lb->lexemStream)
         return false;
     else
         return true;
