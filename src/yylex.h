@@ -20,16 +20,16 @@ typedef struct macroBody {
     char *body;
 } MacroBody;
 
-typedef struct macroArgumentTableElement {
+typedef struct {
     char *name;
     char *linkName;
     int order;
 } MacroArgumentTableElement;
 
-typedef struct lexInput {
+typedef struct {
     char *currentLexemP;
-    char *endOfBuffer;
-    char *beginningOfBuffer;
+    char *lexemStreamEnd;
+    char *lexemStreamStart;
     char *macroName;
     InputType inputType;
 } LexInput;
@@ -39,8 +39,8 @@ extern int macroStackIndex;
 extern LexInput currentInput;
 
 
-extern void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,
-                         char *beginningOfBuffer, char *macroName, InputType margExpFlag);
+extern void fillLexInput(LexInput *lexInput, char *currentLexem,
+                         char *beginningOfBuffer, char *endOfBuffer, char *macroName, InputType margExpFlag);
 extern void initAllInputs(void);
 extern void initInput(FILE *file, EditorBuffer *buffer, char *prepend, char *fileName);
 extern void addIncludeReference(int filenum, Position *pos);

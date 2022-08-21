@@ -3,7 +3,7 @@
 
 #include "proto.h"
 
-typedef struct completionFunctionsTable {
+typedef struct {
     int token;
     void (*fun)(Completions*);
 } CompletionFunctionsTable;

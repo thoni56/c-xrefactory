@@ -13,7 +13,7 @@ typedef enum {
     INPUT_VIA_EDITOR
 } InputMethod;
 
-typedef struct characterBuffer {
+typedef struct {
     char        *nextUnread;				/* first unread */
     char        *end;				/* pointing after valid characters */
     char        chars[CHAR_BUFF_SIZE];

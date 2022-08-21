@@ -4,14 +4,14 @@
 #include "globals.h" /* For Counters */
 #include "memory.h"
 
-typedef struct cachePoint {
+typedef struct {
     struct codeBlock  *topBlock;
     struct codeBlock   topBlockContent;
     int                ppmMemoryIndex;
     int                cxMemoryIndex;
     int                mbMemoryIndex;
     char              *currentLexemP; /* caching lbcc */
-    short int          ibi;  /* caching ibi */
+    short int          includeStackTop;  /* caching ibi */
     short int          lineNumber;
     short int          ifDepth;
     struct cppIfStack *ifStack;
@@ -21,15 +21,15 @@ typedef struct cachePoint {
 
 typedef struct {
     bool       cachingActive; /* whether putting input to cache */
-    int        cachePointIndex;
     CachePoint cachePoints[MAX_CACHE_POINTS];
-    int        includeStackTop;
+    int        cachePointIndex;
     int        includeStack[INCLUDE_STACK_CACHE_SIZE]; /* included files numbers */
-    char      *lexemStreamEnd;                         /* first free in lexemStream */
-    char       lexemStream[LEXEM_STREAM_CACHE_SIZE];   /* lexems buffer */
-    char      *lexcc;                                  /* first not yet cached lexem */
-    char      *currentLexemP;                          /* cc when input from cache */
-    char      *endOfLexemStreamBuffer;                 /* end of cc, when input ... */
+    int        includeStackTop;
+    char       lexemStream[LEXEM_STREAM_CACHE_SIZE]; /* lexems buffer */
+    char      *lexemStreamFree;                      /* first free in lexemStream */
+    char      *lexemStreamNext;                      /* first not yet cached lexem */
+    char      *currentLexemP;                        /* cc when input from cache */
+    char      *lexemStreamEnd;                       /* end of cc, when input ... */
 } Cache;
 
 extern Cache cache;

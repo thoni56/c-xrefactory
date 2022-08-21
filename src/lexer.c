@@ -107,7 +107,7 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 }
 
 
-static void processIdentifier(int *chP, LexemBuffer *lb) {
+static void processIdentifier(LexemBuffer *lb, int *chP) {
     int column;
 
     column = columnPosition(&lb->characterBuffer);
@@ -216,7 +216,7 @@ static int handleCppToken(LexemBuffer *lb) {
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
         ch = skipBlanks(&lb->characterBuffer, ch);
         noteNewLexemPosition(lb);
-        processIdentifier(&ch, lb);
+        processIdentifier(lb, &ch);
         if (ch == '(') {
             /* Backpatch the current lexem code (CPP_DEFINE0) with discovered CPP_DEFINE */
             putLexTokenAtPointer(CPP_DEFINE, backpatchLexemP);
@@ -291,7 +291,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
     /* TODO: why do we need to know this? */
     if (cache.cachingActive && includeStackPointer == 0 && macroStackIndex == 0) {
         cacheInput();
-        cache.lexcc = lb->lexemStream;
+        cache.lexemStreamNext = lb->lexemStream;
     }
 
     shiftAnyRemainingLexems(lb);
@@ -311,7 +311,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            processIdentifier(&ch, lb);
+            processIdentifier(lb, &ch);
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
@@ -829,11 +829,11 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         if (options.mode == ServerMode) {
             int pi, parChar;
             Position position;
-            int currentLexemPosition;
+            int currentLexemOffset;
 
             /* Since lb->index is incremented *after* adding, we need to subtract 1 to get current */
             pi = (lb->ringIndex-1) % LEX_POSITIONS_RING_SIZE;
-            currentLexemPosition = lb->fileOffsetRing[pi];
+            currentLexemOffset = lb->fileOffsetRing[pi];
             position = lb->positionRing[pi];
 
             if (fileNumberFrom(lb) == olOriginalFileIndex && fileNumberFrom(lb) != noFileIndex
@@ -894,9 +894,9 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
-                    handleCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemPosition, &ch);
+                    handleCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemOffset, &ch);
                 } else {
-                    if (currentLexemPosition <= options.olCursorPosition
+                    if (currentLexemOffset <= options.olCursorPosition
                         && absoluteFilePosition(cb) >= options.olCursorPosition) {
                         gotOnLineCxRefs(&position);
                         Lexem lastlex = peekLexToken(&startOfCurrentLexem);

@@ -13,7 +13,7 @@ typedef struct zipArchiveDir {
     char name[1];			/* array of char */
 } ZipArchiveDir;
 
-typedef struct zipFileTableItem {
+typedef struct {
     char                    fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
     struct stat				stat;                   /* status of the archive file */
     struct zipArchiveDir	*dir;

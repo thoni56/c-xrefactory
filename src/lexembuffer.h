@@ -11,7 +11,7 @@
 #define IDENT_TOKEN_SIZE 2
 
 
-typedef struct lexemBuffer {
+typedef struct {
     char *next;				/* next to read */
     char *end;				/* pointing *after* last valid lexem */
     char lexemStream[LEXEM_BUFFER_SIZE];
