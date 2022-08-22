@@ -1463,16 +1463,16 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
     orderRefsAndGotoDefinition(refs, afterMenuFlag);
 }
 
-#define GetBufChar(cch, bbb) {                                          \
-        if ((bbb)->nextUnread >= (bbb)->end) {                          \
-            if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {             \
+#define GetBufChar(cch, characterBuffer) {                              \
+        if ((characterBuffer)->nextUnread >= (characterBuffer)->end) {  \
+            if ((characterBuffer)->isAtEOF || refillBuffer(characterBuffer) == 0) { \
                 cch = EOF;                                              \
-                (bbb)->isAtEOF = true;                                  \
+                (characterBuffer)->isAtEOF = true;                      \
             } else {                                                    \
-                cch = * ((unsigned char*)(bbb)->nextUnread); (bbb)->nextUnread ++; \
+                cch = * ((unsigned char*)(characterBuffer)->nextUnread); (characterBuffer)->nextUnread ++; \
             }                                                           \
         } else {                                                        \
-            cch = * ((unsigned char*)(bbb)->nextUnread); (bbb)->nextUnread++; \
+            cch = * ((unsigned char*)(characterBuffer)->nextUnread); (characterBuffer)->nextUnread++; \
         }                                                               \
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
@@ -1603,16 +1603,16 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
     return NULL;                   /* TODO: Why return the last one? */
 }
 
-static void passRefsThroughSourceFile(Reference **in_out_references, Position *callerPosition,
+static void passRefsThroughSourceFile(Reference **inOutReferences, Position *callerPosition,
                                       FILE *outputFile, int usages, int usageFilter) {
-    Reference *references,*oldrr;
+    Reference *references;
     int ch, fileIndex;
     EditorBuffer *ebuf;
     char *cofileName;
     Position position;
     CharacterBuffer cxfBuf;
 
-    references = *in_out_references;
+    references = *inOutReferences;
     if (references==NULL)
         goto fin;
     fileIndex = references->position.file;
@@ -1643,9 +1643,10 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
         getFileChar(&ch, &position, &cxfBuf);
     }
     position = makePosition(references->position.file, 1, 0);
-    oldrr=NULL;
+    Reference *oldrr=NULL;
     while (references!=NULL && references->position.file==position.file && references->position.line>=position.line) {
-        assert(oldrr!=references); oldrr=references;    // because it is a dangerous loop
+        assert(oldrr!=references);
+        oldrr=references;    // because it is a dangerous loop
         while ((! cxfBuf.isAtEOF) && position.line<references->position.line) {
             while (ch!='\n' && ch!=EOF)
                 GetBufChar(ch, &cxfBuf);
@@ -1656,7 +1657,7 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
     }
     //&if (cofile != NULL) closeFile(cofile);
  fin:
-    *in_out_references = references;
+    *inOutReferences = references;
 }
 
 /* ******************************************************************** */
