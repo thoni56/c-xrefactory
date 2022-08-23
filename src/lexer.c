@@ -221,17 +221,17 @@ static int handleCppToken(LexemBuffer *lb) {
 }
 
 static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position position,
-                                     int filePositionForCurrentLexem, int *chP) {
+                                     int fileOffsetForCurrentLexem, int *chP) {
     *chP     = skipBlanks(lb->characterBuffer, *chP);
     int apos = absoluteFilePosition(lb->characterBuffer);
 
-    if (filePositionForCurrentLexem < options.olCursorPosition
+    if (fileOffsetForCurrentLexem < options.olCursorPosition
         && (apos >= options.olCursorPosition || (*chP == -1 && apos + 1 == options.olCursorPosition))) {
-        log_trace("currentLexemPosition, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
-                  filePositionForCurrentLexem, options.olCursorPosition, apos, *chP);
+        log_trace("offset for current lexem, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
+                  fileOffsetForCurrentLexem, options.olCursorPosition, apos, *chP);
         Lexem thisLexToken = peekLexToken(&startOfCurrentLexem);
         if (thisLexToken == IDENTIFIER) {
-            int len = options.olCursorPosition - filePositionForCurrentLexem;
+            int len = options.olCursorPosition - fileOffsetForCurrentLexem;
             log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + TOKEN_SIZE, len,
                       strlen(startOfCurrentLexem + TOKEN_SIZE));
             if (len <= strlen(startOfCurrentLexem + TOKEN_SIZE)) {

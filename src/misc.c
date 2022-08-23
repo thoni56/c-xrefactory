@@ -1233,7 +1233,7 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
         }
         // following is to free CF_MEMORY taken by scan, only
         // cross references in CX_MEMORY are interesting in this case.
-        recoverCachePoint(cpi - 1, cache.cachePoints[cpi - 1].currentLexemP, false);
+        recoverCachePoint(cpi - 1, cache.cachePoints[cpi - 1].nextLexemP, false);
         log_trace("firstFreeIndex = %d", currentBlock->firstFreeIndex);
         log_trace(":ppmmem == %d/%d %x-%x", ppmMemoryIndex, SIZE_ppmMemory, ppmMemory, ppmMemory+SIZE_ppmMemory);
     }

@@ -222,13 +222,13 @@ static void recoverCxMemory(char *cxMemFreeBase) {
 }
 
 static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int includeStackTop,
-                      char *lexemStreamFree, char *lexemStreamNext, char *currentLexemP, char *lexemStreamEnd) {
+                      char *lexemStreamFree, char *lexemStreamNext, char *nextLexemP, char *lexemStreamEnd) {
     cache->cachingActive   = cachingActive;
     cache->cachePointIndex = cachePointIndex;
     cache->includeStackTop = includeStackTop;
     cache->lexemStreamFree = lexemStreamFree;
     cache->lexemStreamNext = lexemStreamNext;
-    cache->currentLexemP   = currentLexemP;
+    cache->nextLexemP      = nextLexemP;
     cache->lexemStreamEnd  = lexemStreamEnd;
 }
 
@@ -243,7 +243,7 @@ static bool canContinueCachingClasses() {
 
 void recoverCachePointZero(void) {
     ppmMemoryIndex = cache.cachePoints[0].ppmMemoryIndex;
-    recoverCachePoint(0, cache.cachePoints[0].currentLexemP, false);
+    recoverCachePoint(0, cache.cachePoints[0].nextLexemP, false);
 }
 
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
@@ -288,9 +288,9 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     currentFile.lineNumber = cachePoint->lineNumber;
     currentFile.ifDepth = cachePoint->ifDepth;
     currentFile.ifStack = cachePoint->ifStack;
-    fillLexInput(&currentInput, cachePoint->currentLexemP, cache.lexemStream, readUntil, NULL, INPUT_CACHE);
-    fillCache(&cache, cachingActive, cachePointIndex + 1, cachePoint->includeStackTop, cachePoint->currentLexemP,
-              currentInput.currentLexemP, currentInput.currentLexemP, currentInput.lexemStreamEnd);
+    fillLexInput(&currentInput, cachePoint->nextLexemP, cache.lexemStream, readUntil, NULL, INPUT_CACHE);
+    fillCache(&cache, cachingActive, cachePointIndex + 1, cachePoint->includeStackTop, cachePoint->nextLexemP,
+              currentInput.nextLexemP, currentInput.nextLexemP, currentInput.lexemStreamEnd);
     log_trace("finished recovering");
 }
 
@@ -305,7 +305,7 @@ void recoverFromCache(void) {
     assert(cache.cachePointIndex >= 1);
     cache.cachingActive = false;
     log_debug("reading from cache");
-    readUntil = cache.cachePoints[0].currentLexemP;
+    readUntil = cache.cachePoints[0].nextLexemP;
     for (i = 1; i < cache.cachePointIndex; i++) {
         log_trace("trying to recover cache point %d", i);
         if (cachedInputPass(i, &readUntil) == 0)
@@ -347,7 +347,7 @@ void cacheInput(void) {
         LEAVE();
         return;
     }
-    size = currentInput.currentLexemP - cache.lexemStreamNext;
+    size = currentInput.nextLexemP - cache.lexemStreamNext;
     if (cache.lexemStreamFree - cache.lexemStream + size >= LEXEM_STREAM_CACHE_SIZE) {
         cache.cachingActive = false;
         LEAVE();
@@ -357,7 +357,7 @@ void cacheInput(void) {
     if (currentInput.inputType != INPUT_CACHE)
         memcpy(cache.lexemStreamFree, cache.lexemStreamNext, size);
     cache.lexemStreamFree += size;
-    cache.lexemStreamNext = currentInput.currentLexemP;
+    cache.lexemStreamNext = currentInput.nextLexemP;
     LEAVE();
 }
 
@@ -383,7 +383,7 @@ static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmM
     cachePoint->ppmMemoryIndex = ppmMemoryIndex;
     cachePoint->cxMemoryIndex = cxMemoryIndex;
     cachePoint->mbMemoryIndex = mbMemoryIndex;
-    cachePoint->currentLexemP   = lbcc;
+    cachePoint->nextLexemP   = lbcc;
     cachePoint->includeStackTop = includeStackTop;
     cachePoint->lineNumber = lineNumber;
     cachePoint->ifDepth = ifDepth;

@@ -10,7 +10,7 @@ typedef struct {
     int                ppmMemoryIndex;
     int                cxMemoryIndex;
     int                mbMemoryIndex;
-    char              *currentLexemP; /* caching lbcc */
+    char              *nextLexemP; /* caching lbcc */
     short int          includeStackTop;  /* caching ibi */
     short int          lineNumber;
     short int          ifDepth;
@@ -28,7 +28,7 @@ typedef struct {
     char       lexemStream[LEXEM_STREAM_CACHE_SIZE]; /* lexems buffer */
     char      *lexemStreamFree;                      /* first free in lexemStream */
     char      *lexemStreamNext;                      /* first not yet cached lexem */
-    char      *currentLexemP;                        /* cc when input from cache */
+    char      *nextLexemP;                        /* cc when input from cache */
     char      *lexemStreamEnd;                       /* end of cc, when input ... */
 } Cache;
 
