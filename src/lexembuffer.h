@@ -49,6 +49,7 @@ extern void putLexIntWithPointer(int integer, char **writePointerP);
 
 extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer);
 
+extern int getLexShort(char **readPointer);
 extern Lexem getLexToken(char **readPointer);
 extern int getLexInt(char **readPointer);
 extern Position getLexPosition(char **readPointer);

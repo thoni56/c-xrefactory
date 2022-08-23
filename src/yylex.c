@@ -1,6 +1,7 @@
 #include "yylex.h"
 
 #include "commons.h"
+#include "lexem.h"
 #include "lexembuffer.h"
 #include "lexer.h"
 #include "globals.h"
@@ -270,29 +271,26 @@ static void getAndSetOutValueIfRequired(char **readPointerP, int *outValue) {
 /*                                                                   */
 /* ***************************************************************** */
 
-/* TODO: maybe too complex/general, long argument list, when lex is known */
-/* could be broken into parts for specific lexem types */
-
-/* Depending on the passed Lexem will get known subsequent lexems like
- * position, and advance the readPointerP. Allows any of the out
- * parameters to be NULL to ignore it */
+/* Depending on the passed Lexem will get/pass over subsequent lexems
+ * like position, and advance the readPointerP. Allows any of the out
+ * parameters to be NULL to ignore it. Might be too complex/general,
+ * long argument list, when lex is known could be broken into parts
+ * for specific lexem types. */
 static void passLexem(char **readPointerP, Lexem lexem, int *outLineNumber, int *outValue, Position *outPosition,
                       int *outLength, bool countLines) {
     if (lexem > MULTI_TOKENS_START) {
-        if (isIdentifierLexem(lexem)) {
-            *readPointerP = strchr(*readPointerP, '\0') + 1;
-            getAndSetOutPositionIfRequired(readPointerP, outPosition);
-        } else if (lexem == STRING_LITERAL) {
+        if (isIdentifierLexem(lexem) || lexem == STRING_LITERAL) {
+            /* Both are followed by a string and a position */
             *readPointerP = strchr(*readPointerP, '\0') + 1;
             getAndSetOutPositionIfRequired(readPointerP, outPosition);
         } else if (lexem == LINE_TOKEN) {
-            Lexem lineNumber = getLexToken(readPointerP);
+            int noOfLines = getLexShort(readPointerP);
             if (countLines) {
-                traceNewline(lineNumber);
-                currentFile.lineNumber += lineNumber;
+                traceNewline(noOfLines);
+                currentFile.lineNumber += noOfLines;
             }
             if (outLineNumber != NULL)
-                *outLineNumber = lineNumber;
+                *outLineNumber = noOfLines;
         } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
             getAndSetOutValueIfRequired(readPointerP, outValue);
             getAndSetOutPositionIfRequired(readPointerP, outPosition);
@@ -729,10 +727,6 @@ protected void processDefineDirective(bool hasArguments) {
 
     currentLexemStart = currentInput.nextLexemP;
 
-    /* There are "symbols" in the lexBuffer, like "\275\001".  Those
-     * are compacted converted lexem codes. See lexembuffer.h for
-     * explanation and functions.
-     */
     passLexem(&currentInput.nextLexemP, lexem, NULL, NULL, &macroPosition, NULL, true);
 
     testCxrefCompletionId(&lexem, currentLexemStart, &macroPosition);    /* for cross-referencing */

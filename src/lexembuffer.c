@@ -39,7 +39,7 @@ protected void putLexShort(int shortValue, char **writePointerP) {
     (*writePointerP)++;
 }
 
-protected int getLexShort(char **readPointerP) {
+int getLexShort(char **readPointerP) {
     int value = *(unsigned char*)(*readPointerP);
     (*readPointerP)++;
     value += 256 * *(unsigned char*)(*readPointerP);
