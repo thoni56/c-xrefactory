@@ -56,10 +56,10 @@ Current Mikado:
 ***** DONE Use putLexXXXWithPointer() for now
 ** TRY to use LexemBuffer as argument to all getLexXXX() functions
 *** TRY to use LexemBuffer in getLexInt()
-**** REQUIRES passLex() to send LexemBuffer instead of pointer
+**** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer
 ***** REQUIRES currentInput to contain LexemBuffer instead of currentLexemP
 *** TRY to use LexemBuffer in getLexToken()
-**** REQUIRES passLex() to send LexemBuffer instead of pointer
+**** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer
 **** REQUIRES getLexem() and getLexemSavePrevious() to use LexemBuffer instead of pointer
 **** REQUIRES collate() to work with LexemBuffer instead of pointers
 **** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
