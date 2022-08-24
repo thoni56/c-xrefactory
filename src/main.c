@@ -668,7 +668,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initTypeNames();
     initStorageNames();
 
-    setupCaching();
     initArchaicTypes();
     previousStandardOptionsFile[0] = 0;
     previousStandardOptionsSection[0] = 0;

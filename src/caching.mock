@@ -5,10 +5,6 @@
 Cache cache;
 
 
-void setupCaching(void) {
-    mock();
-}
-
 bool checkFileModifiedTime(int fileIndex) {
   return (bool) mock(fileIndex);
 }

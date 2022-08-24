@@ -34,7 +34,6 @@ typedef struct {
 
 extern Cache cache;
 
-extern void setupCaching(void);
 extern void initCaching(void);
 extern void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive);
 extern void recoverFromCache(void);
