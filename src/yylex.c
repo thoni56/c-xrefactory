@@ -1960,7 +1960,7 @@ static bool isIdAKeyword(Symbol *symbol, Position position) {
 
 /* TODO: Lookup for C and Java are similar, C has check for CPP and Typedef. Merge? */
 /* And probably move to symboltable.c... */
-static int lookupCIdentifier(char *id, Position position) {
+static Lexem lookupCIdentifier(char *id, Position position) {
     Symbol *symbol = NULL;
     unsigned hash = hashFun(id) % symbolTable->size;
 
@@ -1993,7 +1993,7 @@ static int lookupCIdentifier(char *id, Position position) {
 }
 
 
-static int lookupJavaIdentifier(char *id, Position position) {
+static Lexem lookupJavaIdentifier(char *id, Position position) {
     Symbol *symbol = NULL;
     unsigned hash = hashFun(id) % symbolTable->size;
 
@@ -2076,6 +2076,16 @@ static void actionOnBlockMarker(void) {
     }
 }
 
+static Lexem lookupIdentifier(char *id, Position position) {
+    if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC))
+        return lookupCIdentifier(id, position);
+    else if (LANGUAGE(LANG_JAVA))
+        return lookupJavaIdentifier(id, position);
+    else {
+        assert(0);
+        return -1;              /* Will never happen */
+    }
+}
 
 Lexem yylex(void) {
     Lexem lexem;
@@ -2142,13 +2152,7 @@ Lexem yylex(void) {
                 goto nextYylex;
         }
 
-        /* TODO: Push down language check into a common lookupIdentifier() */
-        if (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC))
-            lexem=lookupCIdentifier(id, position);
-        else if (LANGUAGE(LANG_JAVA))
-            lexem = lookupJavaIdentifier(id, position);
-        else
-            assert(0);
+        lexem = lookupIdentifier(id, position);
         goto finish;
     }
     if (lexem == OL_MARKER_TOKEN) {
