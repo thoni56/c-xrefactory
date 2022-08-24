@@ -359,7 +359,7 @@ static Lexem getLexem(void) {
 /*                                                                   */
 /* ***************************************************************** */
 
-static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
+static void testCxrefCompletionId(Lexem *out_lexem, char *id, Position *pos) {
     Lexem lexem;
 
     lexem = *out_lexem;
@@ -369,13 +369,13 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
             cache.cachingActive = false;
             olstringServed = true;
             if (currentLanguage == LANG_JAVA) {
-                makeJavaCompletions(idd, strlen(idd), pos);
+                makeJavaCompletions(id, strlen(id), pos);
             }
             else if (currentLanguage == LANG_YACC) {
-                makeYaccCompletions(idd, strlen(idd), pos);
+                makeYaccCompletions(id, strlen(id), pos);
             }
             else {
-                makeCCompletions(idd, strlen(idd), pos);
+                makeCCompletions(id, strlen(id), pos);
             }
             /* here should be a longjmp to stop file processing !!!! */
             lexem = IDENTIFIER;
@@ -383,8 +383,6 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
     }
     *out_lexem = lexem;
 }
-
-
 
 /* ********************************** #LINE *********************** */
 /* non-static only for unittesting */
@@ -1445,24 +1443,24 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     char *lbcc,*bcc,*cc,*ccfin,*cc0,*ncc,*occ;
     int value, nextLexem, len1, bsize;
     Lexem lexem;
-    Position respos;
 
     ncc = *ancc;
     lbcc = *albcc;
     bcc = *abcc;
     bsize = *absize;
     if (peekLexToken(&lbcc) == CPP_MACRO_ARGUMENT) {
+        Position position;
         bcc = lbcc;
         lexem = getLexToken(&lbcc);
         assert(lexem==CPP_MACRO_ARGUMENT);
-        getExtraLexemInformationFor(lexem, &lbcc, NULL, &value, &respos, NULL, false);
+        getExtraLexemInformationFor(lexem, &lbcc, NULL, &value, &position, NULL, false);
         cc = actArgs[value].lexemStreamStart;
         ccfin = actArgs[value].lexemStreamEnd;
         lbcc = NULL;
         while (cc < ccfin) {
             cc0 = cc;
             lexem = getLexToken(&cc);
-            getExtraLexemInformationFor(lexem, &cc, NULL, &value, &respos, NULL, false);
+            getExtraLexemInformationFor(lexem, &cc, NULL, &value, &position, NULL, false);
             lbcc = bcc;
             assert(cc>=cc0);
             memcpy(bcc, cc0, cc-cc0);
@@ -1487,11 +1485,12 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
         nextLexem = peekLexToken(&cc);
         if (isIdentifierLexem(nextLexem) || nextLexem == CONSTANT || nextLexem == LONG_CONSTANT
             || nextLexem == FLOAT_CONSTANT || nextLexem == DOUBLE_CONSTANT) {
+            Position position;
             /* TODO collation of all lexem pairs */
             len1  = strlen(lbcc + IDENT_TOKEN_SIZE);
             lexem = getLexToken(&cc);
             occ   = cc;
-            getExtraLexemInformationFor(lexem, &cc, NULL, &value, &respos, NULL, false);
+            getExtraLexemInformationFor(lexem, &cc, NULL, &value, &position, NULL, false);
             bcc = lbcc + IDENT_TOKEN_SIZE + len1;
             assert(*bcc == 0);
             if (isIdentifierLexem(lexem)) {
@@ -1500,23 +1499,23 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
                  * replaced that macro */
                 strcpy(bcc, occ);
                 // the following is a hack as # is part of ## symbols
-                respos.col--;
-                assert(respos.col >= 0);
-                cxAddCollateReference(lbcc + IDENT_TOKEN_SIZE, bcc, &respos);
-                respos.col++;
+                position.col--;
+                assert(position.col >= 0);
+                cxAddCollateReference(lbcc + IDENT_TOKEN_SIZE, bcc, &position);
+                position.col++;
             } else {
                 /* TODO: We should replace the NextLexPosition() macro
                  * with the C function nextLexPosition(). But the
                  * parameters here is weird (bcc+1). Also we have no
                  * coverage for this code. Why is that? */
-                NextLexPosition(respos, bcc + 1); /* new identifier position*/
+                NextLexPosition(position, bcc + 1); /* new identifier position*/
                 sprintf(bcc, "%d", value);
-                cxAddCollateReference(lbcc + IDENT_TOKEN_SIZE, bcc, &respos);
+                cxAddCollateReference(lbcc + IDENT_TOKEN_SIZE, bcc, &position);
             }
             bcc += strlen(bcc);
             assert(*bcc == 0);
             bcc++;
-            putLexPositionWithPointer(respos, &bcc);
+            putLexPositionWithPointer(position, &bcc);
         }
     }
     TestPPBufOverflow(bcc, buf, bsize);
@@ -2080,10 +2079,7 @@ static void actionOnBlockMarker(void) {
 
 Lexem yylex(void) {
     Lexem lexem;
-    Position position, idpos;
     char *previousLexem;
-    int lineNumber, value;
-    int length = 0;
 
  nextYylex:
     lexem = getLexemSavePrevious(&previousLexem);
@@ -2095,8 +2091,8 @@ Lexem yylex(void) {
             if (isProcessingPreprocessorIf) {
                 currentInput.nextLexemP = previousLexem;
             } else {
-                getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position,
-                                            &length, macroStackIndex == 0);
+                getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, NULL, NULL,
+                                            macroStackIndex == 0);
                 for(;;) {
                     lexem = getLexem();
                     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -2108,7 +2104,8 @@ Lexem yylex(void) {
                 }
             }
         } else {
-            getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position, &length,
+            Position position;
+            getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL,
                                         macroStackIndex == 0);
             setYylvalsForPosition(position, tokenNameLengthsTable[lexem]);
         }
@@ -2118,17 +2115,18 @@ Lexem yylex(void) {
     }
     if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
         char *id;
+        Position position;
         Symbol symbol, *memberP;
 
         id = yytext = currentInput.nextLexemP;
-        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &idpos, &length,
+        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         assert(options.mode);
         if (options.mode == ServerMode) {
-//			???????????? isn't this useless
-            testCxrefCompletionId(&lexem,yytext,&idpos);
+            // TODO: ???????????? isn't this useless
+            testCxrefCompletionId(&lexem,yytext,&position);
         }
-        log_trace("id '%s' position %d, %d, %d", yytext, idpos.file, idpos.line, idpos.col);
+        log_trace("id '%s' position %d, %d, %d", yytext, position.file, position.line, position.col);
         fillSymbol(&symbol, yytext, yytext, noPosition);
         symbol.type = TypeMacro;
         symbol.storage = StorageNone;
@@ -2140,41 +2138,41 @@ Lexem yylex(void) {
             // so id would be destroyed
             //&assert(strcmp(id,memberP->name)==0);
             id = memberP->name;
-            if (expandMacroCall(memberP,&idpos))
+            if (expandMacroCall(memberP,&position))
                 goto nextYylex;
         }
 
         /* TODO: Push down language check into a common lookupIdentifier() */
         if (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC))
-            lexem=lookupCIdentifier(id, idpos);
+            lexem=lookupCIdentifier(id, position);
         else if (LANGUAGE(LANG_JAVA))
-            lexem = lookupJavaIdentifier(id, idpos);
+            lexem = lookupJavaIdentifier(id, position);
         else
             assert(0);
-
-        position = idpos;            /* To simplify debug - pos is always current at finish: */
         goto finish;
     }
     if (lexem == OL_MARKER_TOKEN) {
-        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position, &length,
-                                    macroStackIndex == 0);
+        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, NULL, NULL, macroStackIndex == 0);
         actionOnBlockMarker();
         goto nextYylex;
     }
     if (lexem < MULTI_TOKENS_START) {
+        Position position;
         yytext = tokenNamesTable[lexem];
-        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position, &length,
+        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         setYylvalsForPosition(position, tokenNameLengthsTable[lexem]);
         goto finish;
     }
     if (lexem == LINE_TOKEN) {
-        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position, &length,
-                                    macroStackIndex == 0);
+        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, NULL, NULL, macroStackIndex == 0);
         goto nextYylex;
     }
     if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
-        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position, &length,
+        int value;
+        int length;
+        Position position;
+        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, &value, &position, &length,
                                     macroStackIndex == 0);
         sprintf(constant,"%d",value);
         setYylvalsForInteger(value, position, length);
@@ -2182,21 +2180,27 @@ Lexem yylex(void) {
         goto finish;
     }
     if (lexem == FLOAT_CONSTANT || lexem == DOUBLE_CONSTANT) {
+        int length;
+        Position position;
         yytext = "'fltp constant'";
-        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position, &length,
+        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, &length,
                                     macroStackIndex == 0);
         setYylvalsForPosition(position, length);
         goto finish;
     }
     if (lexem == STRING_LITERAL) {
+        Position position;
         yytext = currentInput.nextLexemP;
-        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position, &length,
+        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         setYylvalsForPosition(position, strlen(yytext));
         goto finish;
     }
     if (lexem == CHAR_LITERAL) {
-        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position, &length,
+        int value;
+        int length;
+        Position position;
+        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, &value, &position, &length,
                                     macroStackIndex == 0);
         sprintf(constant,"'%c'",value);
         setYylvalsForInteger(value, position, length);
@@ -2205,8 +2209,9 @@ Lexem yylex(void) {
     }
     assert(options.mode);
     if (options.mode == ServerMode) {
+        Position position;
         yytext = currentInput.nextLexemP;
-        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, &lineNumber, &value, &position, &length,
+        getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         if (lexem == IDENT_TO_COMPLETE) {
             testCxrefCompletionId(&lexem,yytext,&position);
