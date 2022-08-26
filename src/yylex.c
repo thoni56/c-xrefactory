@@ -577,10 +577,11 @@ protected void processIncludeDirective(Position *includePosition, bool is_includ
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     nextLexemP = currentInput.nextLexemP;
-    if (lexem == STRING_LITERAL) {
+    if (lexem == STRING_LITERAL) {         /* Also "<something>" */
         getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, NULL, NULL, true);
         processInclude2(includePosition, *nextLexemP, nextLexemP+1, is_include_next);
     } else {
+        // Not "abc" nor <abc>...
         currentInput.nextLexemP = previousLexemP;		/* unget lexem */
         lexem = yylex();
         if (lexem == STRING_LITERAL) {
@@ -588,10 +589,9 @@ protected void processIncludeDirective(Position *includePosition, bool is_includ
             macroStackIndex = 0;
             processInclude2(includePosition, '\"', yytext, is_include_next);
         } else if (lexem == '<') {
-            // TODO!!!!
+            // TODO!!!! Don't know why this is needed since STRING_LITERAL also covers bracketed strings...
             warningMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
         }
-        //do lex = yylex(); while (lex != '\n');
     }
     return;
 
