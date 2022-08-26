@@ -579,12 +579,6 @@ protected void processIncludeDirective(Position *includePosition, bool is_includ
     nextLexemP = currentInput.nextLexemP;
     if (lexem == STRING_LITERAL) {
         getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, NULL, NULL, true);
-        if (macroStackIndex != 0) {
-            errorMessage(ERR_INTERNAL,"include directive in macro body?");
-assert(0);
-            currentInput = macroInputStack[0];
-            macroStackIndex = 0;
-        }
         processInclude2(includePosition, *nextLexemP, nextLexemP+1, is_include_next);
     } else {
         currentInput.nextLexemP = previousLexemP;		/* unget lexem */
