@@ -317,9 +317,11 @@ static void getExtraLexemInformationFor(Lexem lexem, char **readPointerP, int *o
     }
 }
 
-static Lexem getLexemSavePrevious(char **previousLexem) {
+static Lexem getLexemSavePrevious(char **previousLexemP) {
     Lexem lexem;
 
+    /* TODO This is weird, shouldn't this test for next @ end? Seems
+     * backwards... */
     while (currentInput.nextLexemP >= currentInput.lexemStreamEnd) {
         InputType inputType = currentInput.inputType;
         if (macroStackIndex > 0) {
@@ -340,18 +342,17 @@ static Lexem getLexemSavePrevious(char **previousLexem) {
             cache.lexemStreamNext = currentFile.lexemBuffer.next;
             setCurrentInputConsistency(&currentInput, &currentFile);
         }
-        *previousLexem = currentInput.nextLexemP;
+        if (previousLexemP != NULL)
+            *previousLexemP = currentInput.nextLexemP;
     }
-    *previousLexem = currentInput.nextLexemP;
+    if (previousLexemP != NULL)
+        *previousLexemP = currentInput.nextLexemP;
     lexem = getLexToken(&currentInput.nextLexemP);
     return lexem;
 }
 
 static Lexem getLexem(void) {
-    char *previousLexem;
-    UNUSED previousLexem;
-    Lexem lexem = getLexemSavePrevious(&previousLexem);
-    return lexem;
+    return getLexemSavePrevious(NULL);
 }
 
 
@@ -567,8 +568,8 @@ static void processInclude2(Position *includePosition, char pchar, char *include
     }
 }
 
-/* Public only for unittests */
-void processIncludeDirective(Position *includePosition, bool is_include_next) {
+/* Non-static only for unittests */
+protected void processIncludeDirective(Position *includePosition, bool is_include_next) {
     char *nextLexemP, *previousLexemP;
     Lexem lexem;
 
@@ -1239,10 +1240,10 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         processIncludeDirective(&position, true);
         break;
     case CPP_DEFINE0:
-        processDefineDirective(0);
+        processDefineDirective(false);
         break;
     case CPP_DEFINE:
-        processDefineDirective(1);
+        processDefineDirective(true);
         break;
     case CPP_UNDEF:
         processUndefineDirective();
