@@ -585,6 +585,7 @@ protected void processIncludeDirective(Position *includePosition, bool is_includ
         currentInput.nextLexemP = previousLexemP;		/* unget lexem */
         lexem = yylex();
         if (lexem == STRING_LITERAL) {
+            // TODO: Why do we think we would get a STRING_LITERAL this time?
             currentInput = macroInputStack[0];		// hack, cut everything pending
             macroStackIndex = 0;
             processInclude2(includePosition, '\"', yytext, is_include_next);
@@ -604,9 +605,8 @@ protected void processIncludeDirective(Position *includePosition, bool is_includ
 static void addMacroToTabs(Symbol *pp, char *name) {
     int index;
     bool isMember;
-    Symbol *memb;
 
-    isMember = symbolTableIsMember(symbolTable, pp, &index, &memb);
+    isMember = symbolTableIsMember(symbolTable, pp, &index, NULL);
     if (isMember) {
         log_trace(": masking macro %s", name);
     } else {
