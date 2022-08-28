@@ -107,18 +107,23 @@ static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 }
 
 
-static void processIdentifier(LexemBuffer *lb, int *chP) {
+/* Scans an identifier from CharacterBuffer and stores it in
+ * LexemBuffer. 'ch' is the first character in the identifier. Returns
+ * first character not part of the identifier */
+static int processIdentifier(CharacterBuffer *characterBuffer, int ch, LexemBuffer *lexemBuffer) {
     int column;
 
-    column = columnPosition(lb->characterBuffer);
-    putLexToken(lb, IDENTIFIER);
+    column = columnPosition(characterBuffer);
+    putLexToken(lexemBuffer, IDENTIFIER);
     do {
-        putLexChar(lb, *chP);
-        *chP = getChar(lb->characterBuffer);
-    } while (isalpha(*chP) || isdigit(*chP) || *chP == '_'
-             || (*chP == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
-    putLexChar(lb, 0);
-    putLexPositionFields(lb, lb->characterBuffer->fileNumber, lb->characterBuffer->lineNumber, column);
+        putLexChar(lexemBuffer, ch);
+        ch = getChar(characterBuffer);
+    } while (isalpha(ch) || isdigit(ch) || ch == '_'
+             || (ch == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
+    putLexChar(lexemBuffer, 0);
+    putLexPositionFields(lexemBuffer, characterBuffer->fileNumber, characterBuffer->lineNumber, column);
+
+    return ch;
 }
 
 static void noteNewLexemPosition(LexemBuffer *lb) {
@@ -204,7 +209,7 @@ static int handleCppToken(LexemBuffer *lb) {
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
         ch = skipBlanks(lb->characterBuffer, ch);
         noteNewLexemPosition(lb);
-        processIdentifier(lb, &ch);
+        ch = processIdentifier(lb->characterBuffer, ch, lb);
         if (ch == '(') {
             /* Backpatch the current lexem code (CPP_DEFINE0) with discovered CPP_DEFINE */
             putLexTokenAtPointer(CPP_DEFINE, backpatchLexemP);
@@ -300,7 +305,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            processIdentifier(lb, &ch);
+            ch = processIdentifier(cb, ch, lb);
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
@@ -309,7 +314,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             if (ch=='0') {
                 ch = getChar(cb);
                 if (ch=='x' || ch=='X') {
-                    /* hexa */
+                    /* hexadecimal */
                     ch = getChar(cb);
                     while (isdigit(ch)||(ch>='a'&&ch<='f')||(ch>='A'&&ch<='F')) {
                         if (ch>='a') val = val*16+ch-'a'+10;
