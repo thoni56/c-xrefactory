@@ -14,22 +14,20 @@ typedef enum {
 } InputMethod;
 
 typedef struct {
-    char        *nextUnread;				/* first unread */
-    char        *end;				/* pointing after valid characters */
+    char       *nextUnread; /* first unread */
+    char       *end;        /* pointing after valid characters */
     char        chars[CHAR_BUFF_SIZE];
-    FILE        *file;
-    unsigned	filePos;			/* how many chars was read from file */
-    int			fileNumber;
+    FILE       *file;
+    unsigned    filePos; /* how many chars was read from file */
+    int         fileNumber;
     int         lineNumber;
-    char        *lineBegin;
-    int         columnOffset;		/* column == cc-lineBegin + columnOffset */
-    bool		isAtEOF;
-    InputMethod	inputMethod;		/* unzip/direct */
-    char        z[CHAR_BUFF_SIZE];  /* zip input buffer */
-    z_stream	zipStream;
+    char       *lineBegin;
+    int         columnOffset; /* column == cc-lineBegin + columnOffset */
+    bool        isAtEOF;
+    InputMethod inputMethod;       /* unzip/direct */
+    char        z[CHAR_BUFF_SIZE]; /* zip input buffer */
+    z_stream    zipStream;
 } CharacterBuffer;
-
-
 
 extern void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file);
 extern void initCharacterBufferFromString(CharacterBuffer *characterbuffer, char *string);
