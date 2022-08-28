@@ -225,15 +225,16 @@ static int processCppToken(LexemBuffer *lb) {
     return ch;
 }
 
-static void handleCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position position,
-                                     int fileOffsetForCurrentLexem, int *chP) {
-    *chP     = skipBlanks(lb->characterBuffer, *chP);
+/* Turn an identifier into a COMPLETE-lexem, return next character to process */
+static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position position,
+                                     int fileOffsetForCurrentLexem, int startingCh) {
+    int ch   = skipBlanks(lb->characterBuffer, startingCh);
     int apos = absoluteFilePosition(lb->characterBuffer);
 
     if (fileOffsetForCurrentLexem < options.olCursorPosition
-        && (apos >= options.olCursorPosition || (*chP == -1 && apos + 1 == options.olCursorPosition))) {
+        && (apos >= options.olCursorPosition || (ch == -1 && apos + 1 == options.olCursorPosition))) {
         log_trace("offset for current lexem, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
-                  fileOffsetForCurrentLexem, options.olCursorPosition, apos, *chP);
+                  fileOffsetForCurrentLexem, options.olCursorPosition, apos, ch);
         Lexem thisLexToken = peekLexToken(&startOfCurrentLexem);
         if (thisLexToken == IDENTIFIER) {
             int len = options.olCursorPosition - fileOffsetForCurrentLexem;
@@ -890,7 +891,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
-                    handleCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemOffset, &ch);
+                    ch = processCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemOffset, ch);
                 } else {
                     if (currentLexemOffset <= options.olCursorPosition
                         && absoluteFilePosition(cb) >= options.olCursorPosition) {
