@@ -245,6 +245,7 @@ int skipWhiteSpace(CharacterBuffer *cb, int ch) {
     return ch;
 }
 
+/* Return next unread character from CharacterBuffer and advance */
 int getChar(CharacterBuffer *cb) {
     int ch;
     if (cb->nextUnread >= cb->end) {
@@ -260,7 +261,7 @@ int getChar(CharacterBuffer *cb) {
             cb->nextUnread++;
         }
     } else {
-        ch = * ((unsigned char *)cb->nextUnread);
+        ch = *((unsigned char *)cb->nextUnread);
         cb->nextUnread++;
     }
 

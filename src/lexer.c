@@ -136,11 +136,11 @@ static void noteNewLexemPosition(LexemBuffer *lb) {
 }
 
 
-static void processEmptyCompletionId(LexemBuffer *lb, int len) {
+static void processEmptyCompletionId(CharacterBuffer *characterBuffer, LexemBuffer *lb, int len) {
     putLexToken(lb, IDENT_TO_COMPLETE);
     putLexChar(lb, 0);
-    putLexPositionFields(lb, lb->characterBuffer->fileNumber, lb->characterBuffer->lineNumber,
-                         columnPosition(lb->characterBuffer) - len);
+    putLexPositionFields(lb, characterBuffer->fileNumber, characterBuffer->lineNumber,
+                         columnPosition(characterBuffer) - len);
 }
 
 static int processCppToken(LexemBuffer *lb) {
@@ -260,7 +260,7 @@ static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                 log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
             } else {
                 // completion after an identifier
-                processEmptyCompletionId(lb, apos - options.olCursorPosition);
+                processEmptyCompletionId(lb->characterBuffer, lb, apos - options.olCursorPosition);
             }
         } else if ((thisLexToken == LINE_TOKEN || thisLexToken == STRING_LITERAL)
                    && (apos != options.olCursorPosition)) {
@@ -268,7 +268,7 @@ static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
             // NO COMPLETION
         } else {
             // completion after another lexem
-            processEmptyCompletionId(lb, apos - options.olCursorPosition);
+            processEmptyCompletionId(lb->characterBuffer, lb, apos - options.olCursorPosition);
         }
     }
 
