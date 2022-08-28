@@ -1,5 +1,3 @@
-# Automated tests for C exercise : completions()
-
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
@@ -12,6 +10,11 @@ $(TEST): .c-xrefrc
 
 trace: EXTRA = \'-trace\'
 trace: $(TEST)
+
+debug:
+	@$(EDIT_SERVER_DRIVER) commands.input --delay 5 > output.tmp &
+	sleep 1
+	sudo gdb -pid `pgrep -a c-xref | grep -v .emacs | awk '{ print $$1 }'` -ex 'br main'
 
 clean:
 	rm -rf CXrefs .c-xrefrc
