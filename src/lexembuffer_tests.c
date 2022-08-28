@@ -73,7 +73,7 @@ Ensure(LexemBuffer, can_put_and_get_a_token) {
     putLexToken(&lb, DOUBLE_CONSTANT);
     expected_next_after_get = lb.end;
 
-    lexem = getLexToken(&lb.next);
+    lexem = getLexTokenAtPointer(&lb.next);
 
     assert_that(lb.next, is_equal_to(expected_next_after_get));
     assert_that(lexem, is_equal_to(DOUBLE_CONSTANT));
@@ -126,7 +126,7 @@ Ensure(LexemBuffer, can_peek_next_token) {
 
     putLexToken(&lb, any_lexem);
 
-    assert_that(peekLexToken(&lb.next), is_equal_to(any_lexem));
+    assert_that(peekLexTokenAt(&lb.next), is_equal_to(any_lexem));
     assert_that(lb.next, is_equal_to(&lb.lexemStream)); /* Should not have moved */
 }
 
@@ -136,8 +136,8 @@ Ensure(LexemBuffer, can_put_and_get_lines) {
     putLexLines(&lb, 13);
     pointer_after_put = lb.end;
 
-    assert_that(getLexToken(&lb.next), is_equal_to(LINE_TOKEN));
-    assert_that(getLexToken(&lb.next), is_equal_to(13));
+    assert_that(getLexTokenAtPointer(&lb.next), is_equal_to(LINE_TOKEN));
+    assert_that(getLexTokenAtPointer(&lb.next), is_equal_to(13));
     assert_that(lb.next, is_equal_to(pointer_after_put));
 }
 
@@ -199,7 +199,7 @@ Ensure(LexemBuffer, can_write_lexem_at_position_without_changing_pointer) {
     putLexTokenAtPointer(IDENTIFIER, writePointer);
 
     assert_that(writePointer, is_equal_to(savedWritePointer));
-    assert_that(getLexToken(&(lb.next)), is_equal_to(IDENTIFIER));
+    assert_that(getLexTokenAtPointer(&(lb.next)), is_equal_to(IDENTIFIER));
 }
 
 Ensure(LexemBuffer, can_write_position_with_pointer) {

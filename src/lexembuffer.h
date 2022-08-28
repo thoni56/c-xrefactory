@@ -50,11 +50,11 @@ extern void putLexIntWithPointer(int integer, char **writePointerP);
 extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer);
 
 extern int getLexShort(char **readPointer);
-extern Lexem getLexToken(char **readPointer);
+extern Lexem getLexTokenAtPointer(char **readPointer);
 extern int getLexInt(char **readPointer);
 extern Position getLexPosition(char **readPointer);
 
-extern Lexem peekLexToken(char **readPointer);
+extern Lexem peekLexTokenAt(char **readPointer);
 
 /* TODO: cannot replace NextLexPosition macro with this yet, as the
  * only call has "bcc+1" as tmpcc. Need to understand that

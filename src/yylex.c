@@ -347,7 +347,7 @@ static Lexem getLexemSavePrevious(char **previousLexemP) {
     }
     if (previousLexemP != NULL)
         *previousLexemP = currentInput.nextLexemP;
-    lexem = getLexToken(&currentInput.nextLexemP);
+    lexem = getLexTokenAtPointer(&currentInput.nextLexemP);
     return lexem;
 }
 
@@ -1443,10 +1443,10 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     lbcc = *albcc;
     bcc = *abcc;
     bsize = *absize;
-    if (peekLexToken(&lbcc) == CPP_MACRO_ARGUMENT) {
+    if (peekLexTokenAt(&lbcc) == CPP_MACRO_ARGUMENT) {
         Position position;
         bcc = lbcc;
-        lexem = getLexToken(&lbcc);
+        lexem = getLexTokenAtPointer(&lbcc);
         assert(lexem==CPP_MACRO_ARGUMENT);
         getExtraLexemInformationFor(lexem, &lbcc, NULL, &value, &position, NULL, false);
         cc = actArgs[value].lexemStreamStart;
@@ -1454,7 +1454,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
         lbcc = NULL;
         while (cc < ccfin) {
             cc0 = cc;
-            lexem = getLexToken(&cc);
+            lexem = getLexTokenAtPointer(&cc);
             getExtraLexemInformationFor(lexem, &cc, NULL, &value, &position, NULL, false);
             lbcc = bcc;
             assert(cc>=cc0);
@@ -1463,27 +1463,27 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
             TestPPBufOverflow(bcc,buf,bsize);
         }
     }
-    if (peekLexToken(&ncc) == CPP_MACRO_ARGUMENT) {
-        lexem = getLexToken(&ncc);
+    if (peekLexTokenAt(&ncc) == CPP_MACRO_ARGUMENT) {
+        lexem = getLexTokenAtPointer(&ncc);
         getExtraLexemInformationFor(lexem, &ncc, NULL, &value, NULL, NULL, false);
         cc = actArgs[value].lexemStreamStart;
         ccfin = actArgs[value].lexemStreamEnd;
     } else {
         cc = ncc;
-        lexem = getLexToken(&ncc);
+        lexem = getLexTokenAtPointer(&ncc);
         getExtraLexemInformationFor(lexem, &ncc, NULL, &value, NULL, NULL, false);
         ccfin = ncc;
     }
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
-    if (lbcc != NULL && cc < ccfin && isIdentifierLexem(peekLexToken(&lbcc))) {
-        nextLexem = peekLexToken(&cc);
+    if (lbcc != NULL && cc < ccfin && isIdentifierLexem(peekLexTokenAt(&lbcc))) {
+        nextLexem = peekLexTokenAt(&cc);
         if (isIdentifierLexem(nextLexem) || nextLexem == CONSTANT || nextLexem == LONG_CONSTANT
             || nextLexem == FLOAT_CONSTANT || nextLexem == DOUBLE_CONSTANT) {
             Position position;
             /* TODO collation of all lexem pairs */
             len1  = strlen(lbcc + IDENT_TOKEN_SIZE);
-            lexem = getLexToken(&cc);
+            lexem = getLexTokenAtPointer(&cc);
             occ   = cc;
             getExtraLexemInformationFor(lexem, &cc, NULL, &value, &position, NULL, false);
             bcc = lbcc + IDENT_TOKEN_SIZE + len1;
@@ -1516,7 +1516,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     TestPPBufOverflow(bcc, buf, bsize);
     while (cc < ccfin) {
         cc0   = cc;
-        lexem = getLexToken(&cc);
+        lexem = getLexTokenAtPointer(&cc);
         getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
         lbcc = bcc;
         assert(cc >= cc0);
@@ -1538,7 +1538,7 @@ static void macroArgumentsToString(char *res, LexInput *lexInput) {
     *bcc = 0;
     cc = lexInput->lexemStreamStart;
     while (cc < lexInput->lexemStreamEnd) {
-        Lexem lexem = getLexToken(&cc);
+        Lexem lexem = getLexTokenAtPointer(&cc);
         lcc = cc;
         getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
         if (isIdentifierLexem(lexem)) {
@@ -1582,7 +1582,7 @@ static void createMacroBody(LexInput *macroBody,
     lbcc = NULL;
     while (cc < cfin) {
         cc0 = cc;
-        lexem = getLexToken(&cc);
+        lexem = getLexTokenAtPointer(&cc);
         getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
         if (lexem==CPP_COLLATION && lbcc!=NULL && cc<cfin) {
             collate(&lbcc,&bcc,buf,&bsize,&cc,actualArguments);
@@ -1610,15 +1610,15 @@ static void createMacroBody(LexInput *macroBody,
     bcc = buf2;
     while (cc < cfin) {
         cc0 = cc;
-        lexem = getLexToken(&cc);
+        lexem = getLexTokenAtPointer(&cc);
         getExtraLexemInformationFor(lexem, &cc, NULL, &value, &hpos, NULL, false);
         if (lexem == CPP_MACRO_ARGUMENT) {
             len = actualArguments[value].lexemStreamEnd - actualArguments[value].lexemStreamStart;
             TestMBBufOverflow(bcc,len,buf2,bsize);
             memcpy(bcc, actualArguments[value].lexemStreamStart, len);
             bcc += len;
-        } else if (lexem=='#' && cc<cfin && peekLexToken(&cc)==CPP_MACRO_ARGUMENT) {
-            lexem = getLexToken(&cc);
+        } else if (lexem=='#' && cc<cfin && peekLexTokenAt(&cc)==CPP_MACRO_ARGUMENT) {
+            lexem = getLexTokenAtPointer(&cc);
             getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
             assert(lexem == CPP_MACRO_ARGUMENT);
             putLexTokenWithPointer(STRING_LITERAL, &bcc);
@@ -1874,7 +1874,7 @@ void dumpLexemBuffer(LexemBuffer *lb) {
     log_debug("lexbufdump [start] ");
     cc = lb->next;
     while (cc < (char *)getLexemStreamEnd(lb)) {
-        lexem = getLexToken(&cc);
+        lexem = getLexTokenAtPointer(&cc);
         if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
             log_debug("%s ",cc);
         } else if (lexem==IDENT_TO_COMPLETE) {
