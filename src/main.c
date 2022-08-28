@@ -178,7 +178,7 @@ static void initializationsPerInvocation(void) {
     s_olstring[0]=0;
     olstringFound = false;
     olstringServed = false;
-    s_olstringInMbody = NULL;
+    olstringInMacroBody = NULL;
     s_yygstate = s_initYygstate;
     s_jsl = NULL;
     s_javaObjectSymbol = NULL;

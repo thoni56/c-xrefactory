@@ -104,10 +104,10 @@ static int scheduleFileUsingTheMacro(void) {
     SymbolsMenu     menu, *oldMenu;
     OlcxReferences *tmpc;
 
-    assert(s_olstringInMbody);
+    assert(olstringInMacroBody);
     tmpc = NULL;
-    fillReferencesItem(&references, s_olstringInMbody,
-                       cxFileHashNumber(s_olstringInMbody),
+    fillReferencesItem(&references, olstringInMacroBody,
+                       cxFileHashNumber(olstringInMacroBody),
                        noFileIndex, noFileIndex, TypeMacro, StorageExtern,
                        ScopeGlobal, AccessDefault, CategoryGlobal);
 
@@ -120,7 +120,7 @@ static int scheduleFileUsingTheMacro(void) {
     oldMenu = sessionData.browserStack.top->menuSym;
     sessionData.browserStack.top->menuSym = &menu;
     s_olMacro2PassFile = noFileIndex;
-    scanForMacroUsage(s_olstringInMbody);
+    scanForMacroUsage(olstringInMacroBody);
     sessionData.browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);

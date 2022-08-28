@@ -104,7 +104,7 @@ void initAllInputs(void) {
     s_olstring[0]=0;
     olstringFound = false;
     olstringServed = false;
-    s_olstringInMbody = NULL;
+    olstringInMacroBody = NULL;
     s_upLevelFunctionCompletionType = NULL;
     s_structRecordCompletionType = NULL;
 }
@@ -677,7 +677,7 @@ static MacroBody *newMacroBody(int macroSize, int argCount, char *name, char *bo
 }
 
 
-static Lexem getNonBlankLexem(Position *position, int *lineNumber, int *value, int *length) {
+static Lexem getNonBlankLexemAndData(Position *position, int *lineNumber, int *value, int *length) {
     Lexem lexem;
 
     lexem = getLexem();
@@ -740,7 +740,7 @@ protected void processDefineDirective(bool hasArguments) {
     argumentCount = -1;
 
     if (hasArguments) {
-        lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, parpos2, NULL, true);
@@ -748,7 +748,7 @@ protected void processDefineDirective(bool hasArguments) {
         if (lexem != '(')
             goto errorlabel;
         argumentCount++;
-        lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         if (lexem != ')') {
@@ -775,7 +775,7 @@ protected void processDefineDirective(bool hasArguments) {
                 fillMacroArgTabElem(maca, mm, argLinkName, argumentCount);
                 int argumentIndex = macroArgumentTableAdd(&macroArgumentTable, maca);
                 argumentCount++;
-                lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+                lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
@@ -786,7 +786,7 @@ protected void processDefineDirective(bool hasArguments) {
                     handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &position, parpos2, 0);
                 }
                 if (lexem == ELLIPSIS) {
-                    lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+                    lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
                     getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, parpos2, NULL, true);
                 }
@@ -795,7 +795,7 @@ protected void processDefineDirective(bool hasArguments) {
                 if (lexem != ',')
                     break;
 
-                lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+                lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             }
             handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, 1);
@@ -805,53 +805,50 @@ protected void processDefineDirective(bool hasArguments) {
         }
     }
     /* process macro body */
-    allocatedSize = MACRO_UNIT_SIZE;
+    allocatedSize = MACRO_BODY_BUFFER_SIZE;
     macroSize = 0;
     PPM_ALLOCC(body, allocatedSize+MAX_LEXEM_SIZE, char);
     isReadingBody = true;
 
-    lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+    lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     currentLexemStart = currentInput.nextLexemP;
     getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL, true);
     while (lexem != '\n') {
         while(macroSize<allocatedSize && lexem != '\n') {
-            char *destination;
+            char *lexemDestination = body+macroSize; /* TODO WTF Are we storing the lexems after the body?!?! */
             int foundIndex;
             fillMacroArgTabElem(&mmaca,currentLexemStart,NULL,0);
             if (lexem==IDENTIFIER && macroArgumentTableIsMember(&macroArgumentTable,&mmaca,&foundIndex)){
                 /* macro argument */
                 addTrivialCxReference(macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                       &position, UsageUsed);
-                destination = body+macroSize;
-                putLexTokenWithPointer(CPP_MACRO_ARGUMENT, &destination);
-                putLexIntWithPointer(macroArgumentTable.tab[foundIndex]->order, &destination);
-                putLexPositionWithPointer(position, &destination);
-                macroSize = destination - body;
+                putLexTokenWithPointer(CPP_MACRO_ARGUMENT, &lexemDestination);
+                putLexIntWithPointer(macroArgumentTable.tab[foundIndex]->order, &lexemDestination);
+                putLexPositionWithPointer(position, &lexemDestination);
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, cxRefPosition))) {
                     cache.cachingActive = false;
                     olstringFound = true;
-                    s_olstringInMbody = symbol->linkName;
+                    olstringInMacroBody = symbol->linkName;
                 }
-                destination = body+macroSize;
-                putLexTokenWithPointer(lexem, &destination);
-                for (; currentLexemStart<currentInput.nextLexemP; destination++,currentLexemStart++)
-                    *destination = *currentLexemStart;
-                macroSize = destination - body;
+                putLexTokenWithPointer(lexem, &lexemDestination);
+                for (; currentLexemStart<currentInput.nextLexemP; lexemDestination++,currentLexemStart++)
+                    *lexemDestination = *currentLexemStart;
             }
-            lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+            macroSize = lexemDestination - body;
+            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
             currentLexemStart = currentInput.nextLexemP;
             getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL, true);
         }
         if (lexem != '\n') {
-            allocatedSize += MACRO_UNIT_SIZE;
+            allocatedSize += MACRO_BODY_BUFFER_SIZE;
             PPM_REALLOCC(body, allocatedSize+MAX_LEXEM_SIZE, char,
-                        allocatedSize+MAX_LEXEM_SIZE-MACRO_UNIT_SIZE);
+                        allocatedSize+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);
         }
     }
 
@@ -1112,7 +1109,7 @@ Lexem cexp_yylex(void) {
         // this is useless, as it would be set to 0 anyway
         lexem = cexpTranslateToken(CONSTANT, 0);
     } else if (lexem == CPP_DEFINED_OP) {
-        lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+        lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         cc = currentInput.nextLexemP;
@@ -1120,7 +1117,7 @@ Lexem cexp_yylex(void) {
         if (lexem == '(') {
             haveParenthesis = true;
 
-            lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
             cc = currentInput.nextLexemP;
@@ -1148,7 +1145,7 @@ Lexem cexp_yylex(void) {
         /* following call sets uniyylval */
         res = cexpTranslateToken(CONSTANT, mm);
         if (haveParenthesis) {
-            lexem = getNonBlankLexem(&position, NULL, NULL, NULL);
+            lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
             getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL, true);
@@ -1317,16 +1314,16 @@ endOfFile:
 
 #define TestPPBufOverflow(bcc,buf,bsize) {                      \
         if (bcc >= buf+bsize) {                                 \
-            bsize += MACRO_UNIT_SIZE;                           \
+            bsize += MACRO_BODY_BUFFER_SIZE;                           \
             PPM_REALLOCC(buf,bsize+MAX_LEXEM_SIZE,char,         \
-                         bsize+MAX_LEXEM_SIZE-MACRO_UNIT_SIZE); \
+                         bsize+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE); \
         }                                                       \
     }
 #define TestMBBufOverflow(bcc,len,buf2,bsize) {                 \
         while (bcc + len >= buf2 + bsize) {                     \
-            bsize += MACRO_UNIT_SIZE;                           \
+            bsize += MACRO_BODY_BUFFER_SIZE;                           \
             MB_REALLOCC(buf2,bsize+MAX_LEXEM_SIZE,char,         \
-                        bsize+MAX_LEXEM_SIZE-MACRO_UNIT_SIZE);  \
+                        bsize+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);  \
         }                                                       \
     }
 
@@ -1366,7 +1363,7 @@ static void expandMacroArgument(LexInput *argumentBuffer) {
     char *bcc;
     int bsize;
 
-    bsize = MACRO_UNIT_SIZE;
+    bsize = MACRO_BODY_BUFFER_SIZE;
 
     prependMacroInput(argumentBuffer);
 
@@ -1434,10 +1431,9 @@ static void cxAddCollateReference( char *sym, char *cs, Position *pos ) {
 /* **************************************************************** */
 
 static void collate(char **albcc, char **abcc, char *buf, int *absize,
-                    char **ancc, LexInput *actArgs) {
+                    char **ancc, LexInput *actualArgumentsInput) {
     char *lbcc,*bcc,*cc,*ccfin,*cc0,*ncc,*occ;
-    int value, nextLexem, len1, bsize;
-    Lexem lexem;
+    int value, len1, bsize;
 
     ncc = *ancc;
     lbcc = *albcc;
@@ -1446,11 +1442,11 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     if (peekLexTokenAt(&lbcc) == CPP_MACRO_ARGUMENT) {
         Position position;
         bcc = lbcc;
-        lexem = getLexTokenAtPointer(&lbcc);
+        Lexem lexem = getLexTokenAtPointer(&lbcc);
         assert(lexem==CPP_MACRO_ARGUMENT);
         getExtraLexemInformationFor(lexem, &lbcc, NULL, &value, &position, NULL, false);
-        cc = actArgs[value].lexemStreamStart;
-        ccfin = actArgs[value].lexemStreamEnd;
+        cc = actualArgumentsInput[value].lexemStreamStart;
+        ccfin = actualArgumentsInput[value].lexemStreamEnd;
         lbcc = NULL;
         while (cc < ccfin) {
             cc0 = cc;
@@ -1464,26 +1460,26 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
         }
     }
     if (peekLexTokenAt(&ncc) == CPP_MACRO_ARGUMENT) {
-        lexem = getLexTokenAtPointer(&ncc);
+        Lexem lexem = getLexTokenAtPointer(&ncc);
         getExtraLexemInformationFor(lexem, &ncc, NULL, &value, NULL, NULL, false);
-        cc = actArgs[value].lexemStreamStart;
-        ccfin = actArgs[value].lexemStreamEnd;
+        cc = actualArgumentsInput[value].lexemStreamStart;
+        ccfin = actualArgumentsInput[value].lexemStreamEnd;
     } else {
         cc = ncc;
-        lexem = getLexTokenAtPointer(&ncc);
+        Lexem lexem = getLexTokenAtPointer(&ncc);
         getExtraLexemInformationFor(lexem, &ncc, NULL, &value, NULL, NULL, false);
         ccfin = ncc;
     }
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
     if (lbcc != NULL && cc < ccfin && isIdentifierLexem(peekLexTokenAt(&lbcc))) {
-        nextLexem = peekLexTokenAt(&cc);
+        Lexem nextLexem = peekLexTokenAt(&cc);
         if (isIdentifierLexem(nextLexem) || nextLexem == CONSTANT || nextLexem == LONG_CONSTANT
             || nextLexem == FLOAT_CONSTANT || nextLexem == DOUBLE_CONSTANT) {
             Position position;
             /* TODO collation of all lexem pairs */
             len1  = strlen(lbcc + IDENT_TOKEN_SIZE);
-            lexem = getLexTokenAtPointer(&cc);
+            Lexem lexem = getLexTokenAtPointer(&cc);
             occ   = cc;
             getExtraLexemInformationFor(lexem, &cc, NULL, &value, &position, NULL, false);
             bcc = lbcc + IDENT_TOKEN_SIZE + len1;
@@ -1516,7 +1512,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     TestPPBufOverflow(bcc, buf, bsize);
     while (cc < ccfin) {
         cc0   = cc;
-        lexem = getLexTokenAtPointer(&cc);
+        Lexem lexem = getLexTokenAtPointer(&cc);
         getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
         lbcc = bcc;
         assert(cc >= cc0);
@@ -1562,86 +1558,89 @@ static void macroArgumentsToString(char *res, LexInput *lexInput) {
 /* ********************* macro body replacement ***************** */
 /* ************************************************************** */
 
-static void createMacroBody(LexInput *macroBody,
-                            MacroBody *mb,
-                            LexInput *actualArguments,
-                            int actArgn
-) {
-    char *cc,*cc0,*cfin,*bcc,*lbcc;
-    int i, value,len,bsize;
-    Lexem lexem;
-    Position hpos;
-    char *buf,*buf2;
+static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBody, LexInput *actualArgumentsInput,
+                                      int actualArgumentCount) {
+    char    *cc, *cc0, *cfin;
+    char    *bcc, *lbcc;
+    int      bufferSize;
+    char    *buf, *buf2;
 
     /* first make ## collations */
-    bsize = MACRO_UNIT_SIZE;
-    PPM_ALLOCC(buf,bsize+MAX_LEXEM_SIZE, char);
-    cc = mb->body;
-    cfin = mb->body + mb->size;
+    bufferSize = MACRO_BODY_BUFFER_SIZE;
+    PPM_ALLOCC(buf,bufferSize+MAX_LEXEM_SIZE, char);
+    cc = macroBody->body;
+    cfin = macroBody->body + macroBody->size;
     bcc = buf;
     lbcc = NULL;
     while (cc < cfin) {
         cc0 = cc;
-        lexem = getLexTokenAtPointer(&cc);
-        getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
+        Lexem lexem = getLexTokenAtPointer(&cc);
+        getExtraLexemInformationFor(lexem, &cc, NULL, NULL, NULL, NULL, false);
         if (lexem==CPP_COLLATION && lbcc!=NULL && cc<cfin) {
-            collate(&lbcc,&bcc,buf,&bsize,&cc,actualArguments);
+            collate(&lbcc,&bcc,buf,&bufferSize,&cc,actualArgumentsInput);
         } else {
             lbcc = bcc;
             assert(cc>=cc0);
             memcpy(bcc, cc0, cc-cc0);
             bcc += cc-cc0;
         }
-        TestPPBufOverflow(bcc,buf,bsize);
+        TestPPBufOverflow(bcc,buf,bufferSize);
     }
-    PPM_REALLOCC(buf,bcc-buf,char,bsize+MAX_LEXEM_SIZE);
+    PPM_REALLOCC(buf,bcc-buf,char,bufferSize+MAX_LEXEM_SIZE);
 
 
     /* expand arguments */
-    for(i=0;i<actArgn; i++) {
-        expandMacroArgument(&actualArguments[i]);
+    for (int i=0; i<actualArgumentCount; i++) {
+        expandMacroArgument(&actualArgumentsInput[i]);
     }
 
     /* replace arguments */
-    bsize = MACRO_UNIT_SIZE;
-    MB_ALLOCC(buf2,bsize+MAX_LEXEM_SIZE,char);
+    bufferSize = MACRO_BODY_BUFFER_SIZE;
+    MB_ALLOCC(buf2,bufferSize+MAX_LEXEM_SIZE,char);
     cc = buf;
     cfin = bcc;
     bcc = buf2;
     while (cc < cfin) {
+        int value;
+        Position hpos;
+        Lexem lexem;
+
         cc0 = cc;
         lexem = getLexTokenAtPointer(&cc);
         getExtraLexemInformationFor(lexem, &cc, NULL, &value, &hpos, NULL, false);
         if (lexem == CPP_MACRO_ARGUMENT) {
-            len = actualArguments[value].lexemStreamEnd - actualArguments[value].lexemStreamStart;
-            TestMBBufOverflow(bcc,len,buf2,bsize);
-            memcpy(bcc, actualArguments[value].lexemStreamStart, len);
+            int len = actualArgumentsInput[value].lexemStreamEnd - actualArgumentsInput[value].lexemStreamStart;
+            TestMBBufOverflow(bcc,len,buf2,bufferSize);
+            memcpy(bcc, actualArgumentsInput[value].lexemStreamStart, len);
             bcc += len;
         } else if (lexem=='#' && cc<cfin && peekLexTokenAt(&cc)==CPP_MACRO_ARGUMENT) {
             lexem = getLexTokenAtPointer(&cc);
             getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
             assert(lexem == CPP_MACRO_ARGUMENT);
             putLexTokenWithPointer(STRING_LITERAL, &bcc);
-            TestMBBufOverflow(bcc,MACRO_UNIT_SIZE,buf2,bsize);
-            macroArgumentsToString(bcc, &actualArguments[value]);
-            len = strlen(bcc)+1;
+            TestMBBufOverflow(bcc,MACRO_BODY_BUFFER_SIZE,buf2,bufferSize);
+            macroArgumentsToString(bcc, &actualArgumentsInput[value]);
+
+            /* Move over something that looks like a string... */
+            int len = strlen(bcc)+1;
             bcc += len;
+
             /* TODO: This should really be putLexPosition() but that takes a LexemBuffer... */
             putLexPositionWithPointer(hpos, &bcc);
-            if (len >= MACRO_UNIT_SIZE-15) {
-                errorMessage(ERR_INTERNAL,"size of #macro_argument exceeded MACRO_UNIT_SIZE");
+            if (len >= MACRO_BODY_BUFFER_SIZE-15) {
+                errorMessage(ERR_INTERNAL,"size of #macro_argument exceeded MACRO_BODY_ALLOCATION_UNIT_SIZE");
             }
         } else {
-            TestMBBufOverflow(bcc,(cc0-cc),buf2,bsize);
+            TestMBBufOverflow(bcc,(cc0-cc),buf2,bufferSize);
             assert(cc>=cc0);
             memcpy(bcc, cc0, cc-cc0);
             bcc += cc-cc0;
         }
-        TestMBBufOverflow(bcc,0,buf2,bsize);
+        TestMBBufOverflow(bcc,0,buf2,bufferSize);
     }
-    MB_REALLOCC(buf2,bcc-buf2,char,bsize+MAX_LEXEM_SIZE);
+    MB_REALLOCC(buf2,bcc-buf2,char,bufferSize+MAX_LEXEM_SIZE);
 
-    fillLexInput(macroBody,buf2,buf2, bcc,mb->name,INPUT_MACRO);
+    fillLexInput(inputToSetup,buf2,buf2, bcc,macroBody->name,INPUT_MACRO);
 }
 
 /* *************************************************************** */
@@ -1661,11 +1660,11 @@ static Lexem getLexSkippingLines(char **previousLexemP, int *lineNumberP,
 
 static void getActualMacroArgument(
     char *previousLexem,
-    Lexem *out_lexem,
+    Lexem *inOutLexem,
     Position *mpos,
     Position **positionOfFirstParenthesis,
     Position **positionOfSecondParenthesis,
-    LexInput *actArg,
+    LexInput *actualArgumentsInput,
     MacroBody *macroBody,
     int actualArgumentIndex
 ) {
@@ -1674,12 +1673,12 @@ static void getActualMacroArgument(
     Lexem lexem;
     char *buf;
     char *bcc;
-    int bufsize;
+    int bufferSize;
 
-    lexem = *out_lexem;
-    bufsize = MACRO_ARG_UNIT_SIZE;
+    lexem = *inOutLexem;
+    bufferSize = MACRO_ARGUMENTS_BUFFER_SIZE;
     depth = 0;
-    PPM_ALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char);
+    PPM_ALLOCC(buf, bufferSize+MAX_LEXEM_SIZE, char);
     bcc = buf;
     /* if lastArgument, collect everything there */
     poffset = 0;
@@ -1691,10 +1690,10 @@ static void getActualMacroArgument(
         if (lexem == ')') depth --;
         for(;previousLexem < currentInput.nextLexemP; previousLexem++, bcc++)
             *bcc = *previousLexem;
-        if (bcc-buf >= bufsize) {
-            bufsize += MACRO_ARG_UNIT_SIZE;
-            PPM_REALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char,
-                    bufsize+MAX_LEXEM_SIZE-MACRO_ARG_UNIT_SIZE);
+        if (bcc-buf >= bufferSize) {
+            bufferSize += MACRO_ARGUMENTS_BUFFER_SIZE;
+            PPM_REALLOCC(buf, bufferSize+MAX_LEXEM_SIZE, char,
+                    bufferSize+MAX_LEXEM_SIZE-MACRO_ARGUMENTS_BUFFER_SIZE);
         }
         lexem = getLexSkippingLines(&previousLexem, NULL, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -1715,14 +1714,14 @@ endOfMacroArgument:;
             warningMessage(ERR_ST,"[getActMacroArgument] unterminated macro call");
         }
     }
-    PPM_REALLOCC(buf, bcc-buf, char, bufsize+MAX_LEXEM_SIZE);
-    fillLexInput(actArg, buf, buf, bcc, currentInput.macroName, INPUT_NORMAL);
-    *out_lexem = lexem;
+    PPM_REALLOCC(buf, bcc-buf, char, bufferSize+MAX_LEXEM_SIZE);
+    fillLexInput(actualArgumentsInput, buf, buf, bcc, currentInput.macroName, INPUT_NORMAL);
+    *inOutLexem = lexem;
     return;
 }
 
 static LexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPosition,
-                                                Position lparPosition) {
+                                         Position lparPosition) {
     char *previousLexem;
     Lexem lexem;
     Position position, ppb1, ppb2, *parpos1, *parpos2;
@@ -1844,7 +1843,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     if (options.mode == XrefMode)
         addMacroBaseUsageRef(macroSymbol);
     log_trace("create macro body '%s'", macroBody->name);
-    createMacroBody(&macroBodyInput,macroBody,actualArgumentsInput,macroBody->argCount);
+    createMacroBodyAsNewInput(&macroBodyInput,macroBody,actualArgumentsInput,macroBody->argCount);
     prependMacroInput(&macroBodyInput);
     log_trace("expanding macro '%s'", macroBody->name);
     PPM_FREE_UNTIL(freeBase);

@@ -136,7 +136,7 @@ extern char s_olstring[MAX_FUN_NAME_SIZE];
 extern bool olstringFound;
 extern bool olstringServed;
 extern int s_olstringUsage;
-extern char *s_olstringInMbody;
+extern char *olstringInMacroBody;
 extern int s_olMacro2PassFile;
 
 /* **************** variables due to cpp **************** */

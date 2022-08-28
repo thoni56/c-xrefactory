@@ -143,7 +143,7 @@ char s_olstring[MAX_FUN_NAME_SIZE];
 bool olstringFound = false;
 bool olstringServed = false;
 int s_olstringUsage = 0;
-char *s_olstringInMbody = NULL;
+char *olstringInMacroBody = NULL;
 int s_olMacro2PassFile;
 
 /* ******************* yytext for yacc ****************** */

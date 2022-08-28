@@ -54,7 +54,7 @@ char *s_cppVarArgsName = "__VA_ARGS__";
 char s_olstring[MAX_FUN_NAME_SIZE];
 bool olstringFound = false;
 bool olstringServed = false;
-char *s_olstringInMbody = NULL;
+char *olstringInMacroBody = NULL;
 int s_olstringUsage = 0;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
 char s_olSymbolClassType[COMPLETION_STRING_SIZE];
