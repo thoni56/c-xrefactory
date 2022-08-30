@@ -1430,63 +1430,68 @@ static void cxAddCollateReference(char *sym, char *cs, Position *position) {
 
 static void collate(char **_lbcc, char **_currentBufferP, char *buffer, int *_bufferSize,
                     char **_currentBodyLexemP, LexInput *actualArgumentsInput) {
-    char *lbcc,*currentBufferP,*currentLexemP,*endOfInputLexems,*lexemStart,*currentBodyLexemP,*occ;
-    int value, len1, bufferSize;
+    char *lbcc,*currentBufferP,*currentInputLexemP,*endOfInputLexems,*currentBodyLexemP;
+    int bufferSize;
 
     currentBodyLexemP = *_currentBodyLexemP;
     lbcc = *_lbcc;
     currentBufferP = *_currentBufferP;
     bufferSize = *_bufferSize;
+
     if (peekLexTokenAt(&lbcc) == CPP_MACRO_ARGUMENT) {
-        Position position;
         currentBufferP = lbcc;
         Lexem lexem = getLexTokenAtPointer(&lbcc);
+        int value;
         assert(lexem==CPP_MACRO_ARGUMENT);
-        getExtraLexemInformationFor(lexem, &lbcc, NULL, &value, &position, NULL, false);
-        currentLexemP = actualArgumentsInput[value].lexemStreamStart;
+        getExtraLexemInformationFor(lexem, &lbcc, NULL, &value, NULL, NULL, false);
+        currentInputLexemP = actualArgumentsInput[value].lexemStreamStart;
         endOfInputLexems = actualArgumentsInput[value].lexemStreamEnd;
         lbcc = NULL;
-        while (currentLexemP < endOfInputLexems) {
-            lexemStart = currentLexemP;
-            lexem = getLexTokenAtPointer(&currentLexemP);
-            getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &value, &position, NULL, false);
+        while (currentInputLexemP < endOfInputLexems) {
+            char *lexemStart = currentInputLexemP;
+            Lexem lexem = getLexTokenAtPointer(&currentInputLexemP);
+            getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
             lbcc = currentBufferP;
-            assert(currentLexemP>=lexemStart);
-            memcpy(currentBufferP, lexemStart, currentLexemP-lexemStart);
-            currentBufferP += currentLexemP-lexemStart;
+            assert(currentInputLexemP>=lexemStart);
+            memcpy(currentBufferP, lexemStart, currentInputLexemP-lexemStart);
+            currentBufferP += currentInputLexemP-lexemStart;
             ExpandPreprocessorBufferIfOverflow(currentBufferP,buffer,bufferSize);
         }
     }
+
     if (peekLexTokenAt(&currentBodyLexemP) == CPP_MACRO_ARGUMENT) {
         Lexem lexem = getLexTokenAtPointer(&currentBodyLexemP);
+        int value;
         getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, &value, NULL, NULL, false);
-        currentLexemP = actualArgumentsInput[value].lexemStreamStart;
+        currentInputLexemP = actualArgumentsInput[value].lexemStreamStart;
         endOfInputLexems = actualArgumentsInput[value].lexemStreamEnd;
     } else {
-        currentLexemP = currentBodyLexemP;
+        currentInputLexemP = currentBodyLexemP;
         Lexem lexem = getLexTokenAtPointer(&currentBodyLexemP);
-        getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, &value, NULL, NULL, false);
+        getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, NULL, NULL, NULL, false);
         endOfInputLexems = currentBodyLexemP;
     }
+
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
-    if (lbcc != NULL && currentLexemP < endOfInputLexems && isIdentifierLexem(peekLexTokenAt(&lbcc))) {
-        Lexem nextLexem = peekLexTokenAt(&currentLexemP);
+    if (lbcc != NULL && currentInputLexemP < endOfInputLexems && isIdentifierLexem(peekLexTokenAt(&lbcc))) {
+        Lexem nextLexem = peekLexTokenAt(&currentInputLexemP);
         if (isIdentifierLexem(nextLexem) || nextLexem == CONSTANT || nextLexem == LONG_CONSTANT
             || nextLexem == FLOAT_CONSTANT || nextLexem == DOUBLE_CONSTANT) {
             Position position;
             /* TODO collation of all lexem pairs */
-            len1  = strlen(lbcc + IDENT_TOKEN_SIZE);
-            Lexem lexem = getLexTokenAtPointer(&currentLexemP);
-            occ   = currentLexemP;
-            getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &value, &position, NULL, false);
-            currentBufferP = lbcc + IDENT_TOKEN_SIZE + len1;
+            int len  = strlen(lbcc + IDENT_TOKEN_SIZE);
+            Lexem lexem = getLexTokenAtPointer(&currentInputLexemP);
+            int value;
+            char *previousInputLexemP = currentInputLexemP;
+            getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, &value, &position, NULL, false);
+            currentBufferP = lbcc + IDENT_TOKEN_SIZE + len;
             assert(*currentBufferP == 0);
             if (isIdentifierLexem(lexem)) {
                 /* TODO: WTF Here was a out-commented call to
                  * NextLexPosition(), maybe the following "hack"
                  * replaced that macro */
-                strcpy(currentBufferP, occ);
+                strcpy(currentBufferP, previousInputLexemP);
                 // the following is a hack as # is part of ## symbols
                 position.col--;
                 assert(position.col >= 0);
@@ -1508,16 +1513,17 @@ static void collate(char **_lbcc, char **_currentBufferP, char *buffer, int *_bu
         }
     }
     ExpandPreprocessorBufferIfOverflow(currentBufferP, buffer, bufferSize);
-    while (currentLexemP < endOfInputLexems) {
-        lexemStart   = currentLexemP;
-        Lexem lexem = getLexTokenAtPointer(&currentLexemP);
-        getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &value, NULL, NULL, false);
+    while (currentInputLexemP < endOfInputLexems) {
+        char *lexemStart   = currentInputLexemP;
+        Lexem lexem = getLexTokenAtPointer(&currentInputLexemP);
+        getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
         lbcc = currentBufferP;
-        assert(currentLexemP >= lexemStart);
-        memcpy(currentBufferP, lexemStart, currentLexemP - lexemStart);
-        currentBufferP += currentLexemP - lexemStart;
+        assert(currentInputLexemP >= lexemStart);
+        memcpy(currentBufferP, lexemStart, currentInputLexemP - lexemStart);
+        currentBufferP += currentInputLexemP - lexemStart;
         ExpandPreprocessorBufferIfOverflow(currentBufferP, buffer, bufferSize);
     }
+
     *_lbcc  = lbcc;
     *_currentBufferP   = currentBufferP;
     *_currentBodyLexemP   = currentBodyLexemP;
