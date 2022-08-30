@@ -12,6 +12,7 @@ void initLexemBuffer(LexemBuffer *buffer, CharacterBuffer *characterBuffer) {
     buffer->characterBuffer = characterBuffer;
 }
 
+/* Should use LexemBuffer, but doesn't yet... */
 Lexem getLexemAt(LexemBuffer *lb, void *readPointer) {
     char *pointer = (char *)readPointer;
     return peekLexTokenAt(&pointer);
