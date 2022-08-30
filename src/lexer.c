@@ -235,7 +235,7 @@ static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
         && (apos >= options.olCursorPosition || (ch == -1 && apos + 1 == options.olCursorPosition))) {
         log_trace("offset for current lexem, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
                   fileOffsetForCurrentLexem, options.olCursorPosition, apos, ch);
-        Lexem thisLexToken = peekLexTokenAt(&startOfCurrentLexem);
+        Lexem thisLexToken = peekLexTokenAt(startOfCurrentLexem);
         if (thisLexToken == IDENTIFIER) {
             int len = options.olCursorPosition - fileOffsetForCurrentLexem;
             log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + TOKEN_SIZE, len,
@@ -896,7 +896,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                     if (currentLexemOffset <= options.olCursorPosition
                         && absoluteFilePosition(cb) >= options.olCursorPosition) {
                         gotOnLineCxRefs(&position);
-                        Lexem lastlex = peekLexTokenAt(&startOfCurrentLexem);
+                        Lexem lastlex = peekLexTokenAt(startOfCurrentLexem);
                         if (lastlex == IDENTIFIER) {
                             strcpy(s_olstring, startOfCurrentLexem+TOKEN_SIZE);
                         }

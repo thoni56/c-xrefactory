@@ -126,8 +126,7 @@ Ensure(LexemBuffer, can_peek_next_token) {
 
     putLexToken(&lb, any_lexem);
 
-    assert_that(peekLexTokenAt(&lb.next), is_equal_to(any_lexem));
-    assert_that(lb.next, is_equal_to(&lb.lexemStream)); /* Should not have moved */
+    assert_that(peekLexTokenAt(lb.next), is_equal_to(any_lexem));
 }
 
 Ensure(LexemBuffer, can_put_and_get_lines) {

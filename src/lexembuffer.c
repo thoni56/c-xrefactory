@@ -14,8 +14,7 @@ void initLexemBuffer(LexemBuffer *buffer, CharacterBuffer *characterBuffer) {
 
 /* Should use LexemBuffer, but doesn't yet... */
 Lexem getLexemAt(LexemBuffer *lb, void *readPointer) {
-    char *pointer = (char *)readPointer;
-    return peekLexTokenAt(&pointer);
+    return peekLexTokenAt(readPointer);
 }
 
 void setLexemStreamEnd(LexemBuffer *lb, void *end) {
@@ -74,9 +73,9 @@ Lexem getLexToken(LexemBuffer *lb) {
     return (Lexem)getLexShort(&lb->next);
 }
 
-Lexem peekLexTokenAt(char **readPointerP) {
-    char **pointer = readPointerP;
-    return (Lexem)peekLexShort(pointer);
+Lexem peekLexTokenAt(char *readPointer) {
+    char *pointer = readPointer;
+    return (Lexem)peekLexShort(&pointer);
 }
 
 /* Int */
