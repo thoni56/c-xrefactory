@@ -238,7 +238,7 @@ Rel(main, refactory, "dispatches to", call)
 ....
 
 == Code ==
-== Passes
+=== Passes ===
 
 There is a variable in `main()` called `firstPassing` which is set and passed
 down through `mainEditServer()` until it is reset in
@@ -251,7 +251,7 @@ sources indicate this, e.g the loops in `mainEditServerProcessFile()`
 and `mainXrefProcessInputFile()` (which are both strangely limited by
 setting the maxPass variable to 1 before entering the loop...).
 
-== Parsers
+=== Parsers ===
 
 _C-xref_ uses a patched version of Berkley yacc to generate
 parsers. There are a number of parsers
@@ -277,7 +277,7 @@ TODO?: Should we just scrap the Java support and focus on C since a)
 the Java support is for ancient Java versions and b) there are more
 mature Java refactoring support available?
 
-=== Refactoring and the parsers
+==== Refactoring and the parsers ====
 
 Some refactorings need more detailed information about the code, maybe all do?
 
@@ -292,7 +292,7 @@ performed, nor if the whole file is parsed or if there is some way to
 just parse appropriate parts.
 
 
-== Reading Files
+=== Reading Files ===
 
 Here are some speculations about how the complex file reading is structured.
 
@@ -314,7 +314,7 @@ call to `fillFileDescriptor()` is made. But you might wonder why this
 function does some initial reading, this should be pushed down to the
 buffers in the file descriptor.
 
-=== Lexing/scanning
+==== Lexing/scanning ====
 
 Lexing/scanning is performed in two layers, one in `lexer.c` which
 seems to be doing the actual lexing into lexems which are put in a
@@ -339,7 +339,7 @@ But the handling of macros and defines are cases where the lexems are not put in
 See the TODO.org for current status of this Mikado sequence.
 
 
-== Reference Database
+=== Reference Database ===
 
 `c-xref` creates a database of references for all symbols it encounters. There is limited
 support to automatically update these in the edit-compile cycle, you might have to
@@ -387,7 +387,7 @@ TODO: Build a tool to decipher this so that tests can query the
 generated data for expected data. This is now partly ongoing in the
 'utils' directory.
 
-== Editor Interface
+=== Editor Interface ===
 
 I've been focusing on the Emacs interface since `Jedit` is not so
 popular anymore and I'm an Emacs-guy.
@@ -411,12 +411,12 @@ will also not delete the temporary files it creates so that you can
 inspect them afterwards.
 
 When the server has finished the command and placed the output in the
-output file it sends a `<sync>` reply.
+output file it sends a ``<sync>`` reply.
 
 The editor can then pick the result from the output file and do what
 it needs to do with it ("dispatching:").
 
-=== Invocations
+==== Invocations ====
 
 The editor invokes a new `c-xref` process for the following cases:
 
@@ -430,7 +430,7 @@ When a `c-xref` function is executed in the editor and there is no
 project covering that file, an interactive "create project" session is
 started, which is run by a separate `c-xref` process.
 
-=== Buffers
+==== Buffers ====
 
 There is some magical editor buffer management happening inside of
 `c-xref` which is not clear to me at this point. Basically it looks
@@ -445,7 +445,7 @@ This is essential when doing refactoring since the version of the file
 most likely only exists in the editor, so the editor has to tell the
 server the current content somehow, this is the `-preload` option.
 
-== Editor Server
+=== Editor Server ===
 
 When serving an editor the c-xrefactory application is divided into
 the server, _c-xref_ and the editor part, at this point only emacs:en
@@ -453,7 +453,7 @@ are supported so that's implemented in the env/emacs-packages. (The
 jEdit source is now also resurrected, but it is completely untested.)
 
 
-=== Interaction
+==== Interaction ====
 
 The initial invocation of the edit server creates a process with which
 communication is over stdin/stdout using a protocol which from the editor
@@ -461,7 +461,7 @@ is basically a version of the command line options.
 
 When the editor has delivered all information to the server it sends
 'end-of-option' as a command and the edit server processes whatever it
-has and responds with '\<sync\>' which means that the editor can fetch
+has and responds with ``<sync>`` which means that the editor can fetch
 the result in the file it named as the output file using the '-o'
 option.
 
@@ -484,7 +484,7 @@ separately, such as r_opt, which is a separate copy of the options
 structure used only when refactoring.
 
 
-=== Protocol
+==== Protocol ====
 
 Communication between the editor and the server is performed using
 text through standard input/output to/from _c-xref_. The protocol is
@@ -500,13 +500,13 @@ using some macros.
 
 There is a similar structure with _c-xrefprotocol.elt_ which
 includes _protocol.tc_ to wrap the PROTOCOL_ITEMs into
-`defvar`s.
+``defvar``s.
 
 There is also some Makefile trickery that ensures that the C and elisp
 impementation are in sync.
 
 
-=== Invocation of server
+==== Invocation of server ====
 
 The editor fires up a server and keeps talking over the established
 channel (elisp function 'c-xref-start-server-process'). This probably
@@ -527,7 +527,7 @@ FINDINGS:
 - c-xref-server-call-refactoring-task in c-xref.el
 
 
-=== Communication Protocol
+==== Communication Protocol ====
 
 The editor server is started using the appropriate command line option
 and then it keeps the communication over stdin/stdout open.
@@ -559,39 +559,18 @@ operation, which is what a user would do with the command line
 options.
 
 
-=== Debugging the protocol
-
-There is a "pipe spy" in `tests/sandboxed_emacs`. You can build the
-spy using
-
-    make spy
-
-and then start a sandboxed Emacs which invokes the spy using
-
-    make
-
-This Emacs will be sandboxed to use its own .emacs-files and have HOME
-set to this directory.
-
-The spy will log the communication between Emacs and the *real*
-`c-xref` (`src/c-xref`) in log files in `/tmp`.
-
-NOTE that Emacs will invoke several instanced of what it believes is
-the real `c-xref` so there will be several log files to inspect.
-
-
-=== OLCX Naming
+==== OLCX Naming ====
 
 It seems that all on-line editing server functions have an `olcx`
 prefix, "On-Line C-Xrefactory", maybe...
 
 
 
-== Refactoring ==
+=== Refactoring ===
 
 This is of course, the core in why I want to restore this, to get at its refactoring capabilities. So far, much is not understood, but here are some bits and pieces.
 
-=== Editor interface ===
+==== Editor interface ====
 
 One thing that really confused me in the beginning was that the editor, primarily Emacs, don't use the actual server that it has started for refactoring operations (and perhaps for other things also?). Instead it creates a separate instance with which it talks to about one refactoring.
 
@@ -609,12 +588,12 @@ Based on this learning it seems that a refactoring typically is a single invocat
 </replacement>
 ```
 
-=== Interactions
+==== Interactions ====
 
 I haven't investigated the internal flow of such a sequence, but it is starting to look like `c-xref` is internally re-reading the initialization, I'm not at this point sure what this means, I hope it's not internal recursion...
 
 
-=== Extraction
+==== Extraction ====
 
 Each type of refactoring has it's own little "language". E.g. extracting a method/function using `-refactory -rfct-extract-method` will return something like
 
@@ -640,7 +619,7 @@ If this is correct then all extractions copy the region verbatim and then the se
 
 As a side note the editor asks for a new name for the function and then calls the edit server with a rename request (having preloaded the new source file(s) of course).
 
-=== Protocol
+==== Protocol ====
 
 Dechiffrering the interaction between an editor and the edit server in
 `c-xrefactory` isn't easy. The protocol isn't very clear or
@@ -654,7 +633,7 @@ more details.
 All of these require a `-p` (project) option to know which c-xref
 project options to read.
 
-==== General Principles
+===== General Principles =====
 
 Refactorings are done using a separate invocation, the edit server
 mode cannot handle refactorings. At least that is how the Emacs client
@@ -677,7 +656,7 @@ like presenting some menu selection.
 My guess at this point is that it is the refactoring
 server that closes the connection when it is done...
 
-==== Rename
+===== Rename =====
 
 *Invocation:* `-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE`
 
@@ -701,7 +680,7 @@ followed by sequence of
 </replacement>
 ```
 
-==== Protocol Messages
+===== Protocol Messages =====
 
 <goto>{position-off}</goto> -> editor;;
 Request the editor to move cursor to the indicated position (file, position).
@@ -715,7 +694,7 @@ Requests that the editor replaces the string under the cursor, which should be '
 <position-off off={int} len={int}>{absolute path to file}</position-off>;;
 Indicates a position in the given file. 'off' is the character position in the file.
 
-== Memory Management
+=== Memory Management ===
 
 There are multiple levels of memory management.
 
@@ -728,12 +707,12 @@ model)?
 There is obviously some caching going on. Don't know of what at this
 point. Tag data?
 
-=== Memory "types" ===
+==== Memory "types" ====
 
 Mostly `c-xrefactory` does its own memory management. It uses a number
 of different strategies, which has/had its own macros.
 
-=== Static memory allocation
+==== Static memory allocation ====
 
 Static memory (SM_ prefix) are static areas allocated by the compiler
 which is then indexed using a similarly named index variable
@@ -752,9 +731,9 @@ the outermost CodeBlock
 
 These areas cannot be extended, when it overruns the program stops.
 
-=== Dynamic memory allocation
+==== Dynamic memory allocation ====
 
-==== Using the Memory structure
+===== Using the Memory structure =====
 
 This structure is used for one of the two dynamic memory allocation
 schemes, one where overflow handling can be triggered. The structure
@@ -785,7 +764,7 @@ and an empty area to allocate from.
 It is strange that `optMemory` is using the Memory structure, it could
 easily have been managed as a static area...
 
-==== Using malloc()
+===== Using malloc() =====
 
 There is a second type of dynamic memory, of which there is only one,
 the `olcxMemory`. In fact, this is not actually an area, more like a
@@ -797,9 +776,9 @@ This memory allocation is used for temporary areas during refactorings
 for example. So `olcx_memory_free()` also exist and is used.
 
 
-== Configuration
+=== Configuration ===
 
-=== Options
+==== Options ====
 
 There are three possible sources for options.
 
@@ -811,7 +790,7 @@ Not all options are relevant in all cases.
 
 All options sources uses exactly the same format so that the same code for decoding them can be used.
 
-=== Logic
+==== Logic ====
 
 When the editor has a file open it needs to "belong" to a project. The
 logic for finding which is very intricate and complicated.
@@ -928,6 +907,7 @@ and handle options differently.
 
 
 == Deployment
+
 == Development Environment
 
 === Developing, here be dragons...
@@ -1192,8 +1172,31 @@ Synopsis:
 
     covers.py <file> <line>
 
+=== Debugging the protocol
+
+There is a "pipe spy" in `tests/sandboxed_emacs`. You can build the
+spy using
+
+    make spy
+
+and then start a sandboxed Emacs which invokes the spy using
+
+    make
+
+This Emacs will be sandboxed to use its own .emacs-files and have HOME
+set to this directory.
+
+The spy will log the communication between Emacs and the *real*
+`c-xref` (`src/c-xref`) in log files in `/tmp`.
+
+NOTE that Emacs will invoke several instanced of what it believes is
+the real `c-xref` so there will be several log files to inspect.
+
 
 == Decison Log
+
+Here we log all design and architectural decisions. Currently they are stored separately. Most of the actual, historic, decisons are of course lost.
+
 == Insights
 This chapter contains notes of all insights, large and small, that I make as I work on this project.
 These insights should at some point be moved to some other, more structured, part of this document.
