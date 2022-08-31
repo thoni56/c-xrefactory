@@ -67,8 +67,8 @@ and useful piece of software.
 
 Ultimately `c-xrefactory` could become _the_ refactoring browser for C
 (but probably not for Java), the one that everybody uses. As suggested
-by @tajmone in #39, by switching to a general protocol, we could
-possibly plug this in to many editors.
+by @tajmone in GitHub issue #39, by switching to a general protocol,
+we could possibly plug this in to many editors.
 
 However, to do that we need to refactor out the protocol parts. And to
 do that we need a better structure, and to dare to change that, we
@@ -79,37 +79,34 @@ Test coverage is starting to look good, coming up to about 80% at the
 time of writing this. But that is mostly "application level"
 execution, rather than actual tests.
 
-=== Developing, here be dragons...
+== Context
 
-First the code is *terrible*, lost of single and double character
-variables (`cc`, `ccc`, ..) and lost of administration on local
-variables rather than the structures that are actually there. And
-there are also a lot of macros. Unfortunately macros are hard to
-refactor to functions. (But I'm making progress...)
+`c-xrefactory` is designed to be an aid for programmers as they write,
+edit, inspect, read and improve the code they are working on. The
+following is a context-diagram of that situation.
 
-As there is no general way to refactor a macro to a function, various
-techniques must be applied. I wrote https://www.responsive.se/thomas/2020/05/14/refactoring-macros-to-functions/[a blog post]
-about one that have been fairly successful.
+[plantuml, context-diagram, png]
+....
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
-But actually it's rather fun to be able to make small changes and
-see the structure emerge, hone your refactoring and design skills,
-and working on a project that started 20 years ago which still is
-valuable, to me, and I hope, to others.
+!define SPRITESURL https://raw.githubusercontent.com/plantuml-stdlib/gilbarbara-plantuml-sprites/v1.0/sprites
+!include SPRITESURL/emacs.puml
 
-There should probably be a whole section on how to contribute and
-develop `c-xrefactory` but until then here's a short list of what
-you need:
+LAYOUT_WITH_LEGEND()
 
-- C development environment (GNU/Clang/Make/...)
-- Unittests are written using https://github.com/cgreen-devs/cgreen[`Cgreen`]
-- Clean code and refactoring knowledge (to drive the code to a better and cleaner state)
+Person_Ext(developer, "Developer", "Edits source code using an editor")
+System_Ext(editor, "Editor", "Allows Developer to modify source code and perform refactoring operations", $sprite="emacs")
+SystemDb_Ext(sourceCode, "Source Code")
+System(cxref, "c-xrefactory", "Analyses source code, receives and processes requests for navigation and refactoring")
 
-Helpful would be:
+Rel(developer, editor, "GUI", "Usual editor/IDE operations")
+Rel(cxref, sourceCode, "read/analyze")
+Rel(editor, sourceCode, "normal editing operations")
+Rel(editor, cxref, "navigation and refactoring requests")
+Rel(cxref, editor, "positioning and editing responses")
+....
 
-- Compiler building knowledge (in the general sense, Yacc, but AST:s and symbol table stuff are heavily used)
-- Java knowledge to be able to bring the Java support up to modern versions (probably not going to happen...)
-
-=== Overall Functionality
+== Functional Overview ==
 
 The _c-xref_ program is actually a mish-mash of a multitude of
 features baked into one program. This is the major cause of the mess
@@ -148,87 +145,23 @@ declared in the sources:
   - Refactory
   - [.line-through]#Generate# (was removed when we finally managed to remove the bootstrap step)
 
-=== Building
+== Quality Attributes
 
-You should be able build `c-xref` using something like (may have changed over time...)
+The most important quality attributes are
 
-    cd src
-    make
-    make unit
-    make test
+- correctness - a refactoring should never alter the behaviour of the refactored code
+- completness - no reference to a symbol should ever be missed
+- performance - a refactoring should be sufficiently quick so the user keeps focus on the task at hand
 
-But since the details of the building process are somewhat contrieved
-and not so easy to see through, here's the place where that should be
-described.
+== Constraints
 
-One step in the build process was generating initialization information
-for all the things in standard include files, which of course became
-very dependent on the system you are running this on. This has now moved
-into functions inside `c-xref` itself, like finding DEFINEs and include
-paths.
+TBD.
 
-The initial recovered c-xrefactory relied on having a working _c-xref_
-for the current system. I don't really know how they managed to do
-that for all the various systems they were supporting.
+== Principles
 
-Modern thinking is that you should always be able to build from
-source, so this is something that needed change. We also want to
-distribute _c-xref_ as an el-get library which requires building from
-source and should generate a version specific for the current system.
+TBD.
 
-[.line-through]#The strategy selected, until some better idea comes along, is to try
-to build a _c-xref.bs_, if there isn't one already, from the sources in
-the repository and then use that to re-generate the definitions and
-rebuild a proper _c-xref_. See Bootstrapping.#
-
-We have managed to remove the complete bootstrapping step, so `c-xrefactory`
-now builds like any other project.
-
-=== Versions
-
-The current sources are in 1.6.X range. This is the same as the orginal
-xrefactory and probably also the proprietary C++ supporting version.
-
-There is an option, "-xrefactory-II", that might indicate that
-something was going on. But currently the only difference seems to be
-if the edit server protocol output is in the form of non-structured
-fprintf:s or using functions in the `ppc`-family (either calling
-`ppcGenRecord()` or `fprint`ing using some PPC-symbol). This, and
-hinted to in how the emacs-part starts the server and some initial
-server option variables in refactory.c, indicates that the
-communication from the editor and the refactory server is using
-this. It does *not* look like this is a forward to next generation
-attempt.
-
-What we should do is investigate if this switch actually is used
-anywhere but in the editor server context, and if so, if it can be
-made the default and the 'non-xrefactory-II' communication removed.
-
-== Architecture
-
-=== Context
-
-[plantuml, context-diagram, png]
-....
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
-
-!define SPRITESURL https://raw.githubusercontent.com/plantuml-stdlib/gilbarbara-plantuml-sprites/v1.0/sprites
-!include SPRITESURL/emacs.puml
-
-LAYOUT_WITH_LEGEND()
-
-Person_Ext(developer, "Developer", "Edits source code using an editor")
-System_Ext(editor, "Editor", "Allows Developer to modify source code and perform refactoring operations", $sprite="emacs")
-SystemDb_Ext(sourceCode, "Source Code")
-System(cxref, "c-xrefactory", "Analyses source code, receives and processes requests for navigation and refactoring")
-
-Rel(developer, editor, "GUI", "Usual editor/IDE operations")
-Rel(cxref, sourceCode, "read/analyze")
-Rel(editor, sourceCode, "normal editing operations")
-Rel(editor, cxref, "navigation and refactoring requests")
-Rel(cxref, editor, "positioning and editing responses")
-....
-
+== Software Architecture ==
 
 === Containers
 
@@ -304,111 +237,7 @@ Rel(main, refactory, "dispatches to", call)
 
 ....
 
-=== Code
-
-== Data Structures
-
-There are a lot of different data structures used in `c-xrefactory`.
-This is a first step towards visualising them.
-
-=== Symbols and References
-
-So, why is there no connection between the symbols and the references?!?
-
-[plantuml, structures, png]
-....
-class Symbol {
-char *name
-Position position
-SymbolBits bits
-}
-Symbol o-- Symbol : next
-
-class SymbolList {
-}
-SymbolList o-- Symbol : symbol
-SymbolList o-- SymbolList : next
-
-class ReferencesItem {
-char *name
-ReferencesBits bits
-}
-ReferencesItem o-- Reference : references
-ReferencesItem o-- ReferencesItem : next
-
-class Reference {
-Usage usage
-Position position
-}
-Reference o-- Reference : next
-
-....
-
-=== Files and Buffers
-
-Many strange things are going on with reading files so that is not completely understood yet.
-
-(There should probably be a section caching and one on lexing...)
-
-Here is an initial attempt at illustrating how some of the file and text/lexem buffers are related.
-
-[plantuml, buffer, png]
-....
-class FileDescriptor {
-}
-FileDescriptor o-- LexemBuffer : lexemBuffer
-
-class LexemBuffer {
-  Lexem[] lexemStream
-}
-LexemBuffer o-- CharacterBuffer : buffer
-
-class CharacterBuffer {
-  char[] : chars
-}
-
-class LexInput {
-  char* : macroName
-  InputType : inputType
-}
-LexInput --> LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)
-....
-
-NOTE: It would be nice if the `LexInput` structure could point to a
-`LexemBuffer` instead of holding separate pointers which are
-impossible to know what they actually point to...
-
-NOTE: This could be achieved if we could remove the CharacterBuffer
-from LexemBuffer and make that a reference instead of a
-composition. Then we'd need to add a CharacterBuffer to the structures
-that has a LexemBuffer as a component (if they use it).
-
-=== Modes
-
-`c-xrefactory` operates in different modes ("regimes" in original
-`c-xref` parlance):
-
-- xref - batch mode reference generation
-- server - editor server
-- refactory - refactory browser
-
-The default mode is "xref". The command line options `-server` and `-refactory`
-selects one of the other modes. Branching is done in the final lines in
-`main()`.
-
-The code for the modes are intertwined, probably through re-use of
-already existing functionality when extending to a refactoring
-browser.
-
-One evidence for this is that the refactory module calls the "main
-task" as a "sub-task".  This forces some intricate fiddling with the
-options data structure, like copying and caching it.  Which I don't
-fully understand yet.
-
-TODO?: Strip away the various "regimes" into more separated concerns
-and handle options differently.
-
-
+== Code ==
 == Passes
 
 There is a variable in `main()` called `firstPassing` which is set and passed
@@ -994,11 +823,202 @@ server, obviously).
 
 But I also think this code should be simplified a lot.
 
-== Development Practices
+
+== Data Structures
+
+There are a lot of different data structures used in `c-xrefactory`.
+This is a first step towards visualising them.
+
+=== Symbols and References
+
+So, why is there no connection between the symbols and the references?!?
+
+[plantuml, structures, png]
+....
+class Symbol {
+char *name
+Position position
+SymbolBits bits
+}
+Symbol o-- Symbol : next
+
+class SymbolList {
+}
+SymbolList o-- Symbol : symbol
+SymbolList o-- SymbolList : next
+
+class ReferencesItem {
+char *name
+ReferencesBits bits
+}
+ReferencesItem o-- Reference : references
+ReferencesItem o-- ReferencesItem : next
+
+class Reference {
+Usage usage
+Position position
+}
+Reference o-- Reference : next
+
+....
+
+=== Files and Buffers
+
+Many strange things are going on with reading files so that is not completely understood yet.
+
+(There should probably be a section caching and one on lexing...)
+
+Here is an initial attempt at illustrating how some of the file and text/lexem buffers are related.
+
+[plantuml, buffer, png]
+....
+class FileDescriptor {
+}
+FileDescriptor o-- LexemBuffer : lexemBuffer
+
+class LexemBuffer {
+  Lexem[] lexemStream
+}
+LexemBuffer o-- CharacterBuffer : buffer
+
+class CharacterBuffer {
+  char[] : chars
+}
+
+class LexInput {
+  char* : macroName
+  InputType : inputType
+}
+LexInput --> LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)
+....
+
+NOTE: It would be nice if the `LexInput` structure could point to a
+`LexemBuffer` instead of holding separate pointers which are
+impossible to know what they actually point to...
+
+NOTE: This could be achieved if we could remove the CharacterBuffer
+from LexemBuffer and make that a reference instead of a
+composition. Then we'd need to add a CharacterBuffer to the structures
+that has a LexemBuffer as a component (if they use it).
+
+=== Modes
+
+`c-xrefactory` operates in different modes ("regimes" in original
+`c-xref` parlance):
+
+- xref - batch mode reference generation
+- server - editor server
+- refactory - refactory browser
+
+The default mode is "xref". The command line options `-server` and `-refactory`
+selects one of the other modes. Branching is done in the final lines in
+`main()`.
+
+The code for the modes are intertwined, probably through re-use of
+already existing functionality when extending to a refactoring
+browser.
+
+One evidence for this is that the refactory module calls the "main
+task" as a "sub-task".  This forces some intricate fiddling with the
+options data structure, like copying and caching it.  Which I don't
+fully understand yet.
+
+TODO?: Strip away the various "regimes" into more separated concerns
+and handle options differently.
+
+
+== Deployment
+== Development Environment
+
+=== Developing, here be dragons...
+
+First the code is *terrible*, lost of single and double character
+variables (`cc`, `ccc`, ..) and lost of administration on local
+variables rather than the structures that are actually there. And
+there are also a lot of macros. Unfortunately macros are hard to
+refactor to functions. (But I'm making progress...)
+
+As there is no general way to refactor a macro to a function, various
+techniques must be applied. I wrote https://www.responsive.se/thomas/2020/05/14/refactoring-macros-to-functions/[a blog post]
+about one that have been fairly successful.
+
+But actually it's rather fun to be able to make small changes and
+see the structure emerge, hone your refactoring and design skills,
+and working on a project that started 20 years ago which still is
+valuable, to me, and I hope, to others.
+
+There should probably be a whole section on how to contribute and
+develop `c-xrefactory` but until then here's a short list of what
+you need:
+
+- C development environment (GNU/Clang/Make/...)
+- Unittests are written using https://github.com/cgreen-devs/cgreen[`Cgreen`]
+- Clean code and refactoring knowledge (to drive the code to a better and cleaner state)
+
+Helpful would be:
+
+- Compiler building knowledge (in the general sense, Yacc, but AST:s and symbol table stuff are heavily used)
+- Java knowledge to be able to bring the Java support up to modern versions (probably not going to happen...)
 
 === Setup
 
 TBD.
+
+=== Building
+
+You should be able build `c-xref` using something like (may have changed over time...)
+
+    cd src
+    make
+    make unit
+    make test
+
+But since the details of the building process are somewhat contrieved
+and not so easy to see through, here's the place where that should be
+described.
+
+One step in the build process was generating initialization information
+for all the things in standard include files, which of course became
+very dependent on the system you are running this on. This has now moved
+into functions inside `c-xref` itself, like finding DEFINEs and include
+paths.
+
+The initial recovered c-xrefactory relied on having a working _c-xref_
+for the current system. I don't really know how they managed to do
+that for all the various systems they were supporting.
+
+Modern thinking is that you should always be able to build from
+source, so this is something that needed change. We also want to
+distribute _c-xref_ as an el-get library which requires building from
+source and should generate a version specific for the current system.
+
+[.line-through]#The strategy selected, until some better idea comes along, is to try
+to build a _c-xref.bs_, if there isn't one already, from the sources in
+the repository and then use that to re-generate the definitions and
+rebuild a proper _c-xref_. See Bootstrapping.#
+
+We have managed to remove the complete bootstrapping step, so `c-xrefactory`
+now builds like any other project.
+
+=== Versions
+
+The current sources are in 1.6.X range. This is the same as the orginal
+xrefactory and probably also the proprietary C++ supporting version.
+
+There is an option, "-xrefactory-II", that might indicate that
+something was going on. But currently the only difference seems to be
+if the edit server protocol output is in the form of non-structured
+fprintf:s or using functions in the `ppc`-family (either calling
+`ppcGenRecord()` or `fprint`ing using some PPC-symbol). This, and
+hinted to in how the emacs-part starts the server and some initial
+server option variables in refactory.c, indicates that the
+communication from the editor and the refactory server is using
+this. It does *not* look like this is a forward to next generation
+attempt.
+
+What we should do is investigate if this switch actually is used
+anywhere but in the editor server context, and if so, if it can be
+made the default and the 'non-xrefactory-II' communication removed.
 
 === Coding ===
 
@@ -1173,6 +1193,7 @@ Synopsis:
     covers.py <file> <line>
 
 
+== Decison Log
 == Insights
 This chapter contains notes of all insights, large and small, that I make as I work on this project.
 These insights should at some point be moved to some other, more structured, part of this document.
