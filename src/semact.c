@@ -491,7 +491,7 @@ void labelReference(Id *id, UsageKind usage) {
         strcpy(tempString, id->name);
     }
     assert(strlen(tempString)<TMP_STRING_SIZE-1);
-    addTrivialCxReference(tempString, TypeLabel,StorageDefault, &id->position, usage);
+    addTrivialCxReference(tempString, TypeLabel,StorageDefault, id->position, usage);
 }
 
 void setLocalVariableLinkName(struct symbol *p) {

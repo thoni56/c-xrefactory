@@ -1460,7 +1460,7 @@ Type javaClassifyAmbiguousName(
             if (pexpr->kind == TypeArray) pexpr = &s_javaArrayObjectSymbol.u.structSpec->stype;
 //&			if (pexpr->kind == TypeError) {
 //&				addTrivialCxReference(LINK_NAME_INDUCED_ERROR,TypeInducedError,StorageDefault,
-//&                                   &name->id.position, UsageUsed);
+//&                                   name->id.position, UsageUsed);
 //&			}
             if (pexpr->kind != TypeStruct) {
                 *str = &errorSymbol;
@@ -1727,7 +1727,7 @@ static void addNativeMethodCxReference(Symbol *decl, Symbol *clas) {
     }
     *d = 0;
     assert(d-nlname < MAX_CX_SYMBOL_SIZE-1);
-    addTrivialCxReference(nlname, TypeDefault,StorageExtern, &decl->pos,
+    addTrivialCxReference(nlname, TypeDefault,StorageExtern, decl->pos,
                           UsageJavaNativeDeclared);
 }
 
@@ -2122,7 +2122,7 @@ static TypeModifier *javaMethodInvocation(
         if (aaa->d->kind == TypeError) {
 //&fprintf(dumpOut,"induced missinterpred at %d\n", name->position.line);
             addTrivialCxReference(LINK_NAME_INDUCED_ERROR,TypeInducedError,StorageDefault,
-                                  &name->position, UsageUsed);
+                                  name->position, UsageUsed);
             return &errorModifier;
         }
     }

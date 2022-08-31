@@ -56,7 +56,7 @@ extern Reference *addSpecialFieldReference(char *name, int storage,
 extern void addClassTreeHierarchyReference(int fnum, Position *p, int usage);
 extern void addCfClassTreeHierarchyRef(int fnum, int usage);
 extern void addTrivialCxReference (char *name, int symType, int storage,
-                                   Position *pos, UsageKind usageKind);
+                                   Position position, UsageKind usageKind);
 extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
                               int bestMatchFlag);
 extern void olSetCallerPosition(Position *pos);

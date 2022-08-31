@@ -797,13 +797,13 @@ Reference *addCxReference(Symbol *symbol, Position *position, UsageKind usageKin
     return addNewCxReference(symbol, position, usage, vFunClass, vApplClass);
 }
 
-void addTrivialCxReference(char *name, int symType, int storage, Position *position, UsageKind usageKind) {
+void addTrivialCxReference(char *name, int symType, int storage, Position position, UsageKind usageKind) {
     Symbol symbol;
 
-    fillSymbol(&symbol, name, name, *position);
+    fillSymbol(&symbol, name, name, position);
     symbol.type = symType;
     symbol.storage = storage;
-    addCxReference(&symbol, position, usageKind, noFileIndex, noFileIndex);
+    addCxReference(&symbol, &position, usageKind, noFileIndex, noFileIndex);
 }
 
 void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {

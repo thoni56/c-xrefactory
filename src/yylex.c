@@ -785,7 +785,7 @@ protected void processDefineDirective(bool hasArguments) {
                 getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, parpos2, NULL, true);
                 if (!ellipsis) {
                     addTrivialCxReference(macroArgumentTable.tab[argumentIndex]->linkName, TypeMacroArg,StorageDefault,
-                                          &position, UsageDefined);
+                                          position, UsageDefined);
                     handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &position, parpos2, 0);
                 }
                 if (lexem == ELLIPSIS) {
@@ -818,6 +818,7 @@ protected void processDefineDirective(bool hasArguments) {
 
     currentLexemStart = currentInput.nextLexemP;
     getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL, true);
+
     while (lexem != '\n') {
         while(macroSize<allocatedSize && lexem != '\n') {
             char *lexemDestination = body+macroSize; /* TODO WTF Are we storing the lexems after the body?!?! */
@@ -825,8 +826,8 @@ protected void processDefineDirective(bool hasArguments) {
             fillMacroArgTabElem(&mmaca,currentLexemStart,NULL,0);
             if (lexem==IDENTIFIER && macroArgumentTableIsMember(&macroArgumentTable,&mmaca,&foundIndex)){
                 /* macro argument */
-                addTrivialCxReference(macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
-                                      &position, UsageUsed);
+                addTrivialCxReference(macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg, StorageDefault,
+                                      position, UsageUsed);
                 putLexTokenWithPointer(CPP_MACRO_ARGUMENT, &lexemDestination);
                 putLexIntWithPointer(macroArgumentTable.tab[foundIndex]->order, &lexemDestination);
                 putLexPositionWithPointer(position, &lexemDestination);
@@ -838,6 +839,7 @@ protected void processDefineDirective(bool hasArguments) {
                     olstringInMacroBody = symbol->linkName;
                 }
                 putLexTokenWithPointer(lexem, &lexemDestination);
+                /* Copy from input to destination (which is in the body buffer...) */
                 for (; currentLexemStart<currentInput.nextLexemP; lexemDestination++,currentLexemStart++)
                     *lexemDestination = *currentLexemStart;
             }
@@ -983,7 +985,7 @@ static void genCppIfElseReference(int level, Position *pos, int usage) {
     if (currentFile.ifStack!=NULL) {
       dp = currentFile.ifStack->position;
       sprintf(ttt,"CppIf%x-%x-%d", dp.file, dp.col, dp.line);
-      addTrivialCxReference(ttt, TypeCppIfElse,StorageDefault, pos, usage);
+      addTrivialCxReference(ttt, TypeCppIfElse, StorageDefault, *pos, usage);
       if (level < 0) currentFile.ifStack = currentFile.ifStack->next;
     }
 }
@@ -1425,7 +1427,7 @@ static void cxAddCollateReference(char *sym, char *cs, Position *position) {
     assert(cs>=sym && cs-sym<TMP_STRING_SIZE);
     sprintf(tempString+(cs-sym), "%c%c%s", LINK_NAME_COLLATE_SYMBOL,
             LINK_NAME_COLLATE_SYMBOL, cs);
-    addTrivialCxReference(tempString, TypeCppCollate,StorageDefault, position, UsageDefined);
+    addTrivialCxReference(tempString, TypeCppCollate,StorageDefault, *position, UsageDefined);
 }
 
 

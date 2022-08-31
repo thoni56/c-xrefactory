@@ -5640,7 +5640,7 @@ case 335:
 {
                 if (options.serverOperation == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                            &yyvsp[-1].ast_id.data->position, UsageTryCatchBegin);
+                                            yyvsp[-1].ast_id.data->position, UsageTryCatchBegin);
                 }
             }
 break;
@@ -5660,7 +5660,7 @@ case 337:
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
             if (options.serverOperation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                        &yyvsp[-5].ast_id.data->position, UsageTryCatchEnd);
+                                        yyvsp[-5].ast_id.data->position, UsageTryCatchEnd);
             }
         }
 break;

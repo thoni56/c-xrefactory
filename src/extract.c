@@ -1310,7 +1310,7 @@ void extractActionOnBlockMarker(void) {
         parsedInfo.workMemoryIndexAtBlockEnd = currentBlock->outerBlock;
     }
     pos = makePosition(currentFile.characterBuffer.fileNumber, 0, 0);
-    addTrivialCxReference("Block", TypeBlockMarker, StorageDefault, &pos, UsageUsed);
+    addTrivialCxReference("Block", TypeBlockMarker, StorageDefault, pos, UsageUsed);
 }
 
 void deleteContinueBreakSymbol(Symbol *symbol) {

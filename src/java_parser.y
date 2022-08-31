@@ -2881,7 +2881,7 @@ TryStatement
             {
                 if (options.serverOperation == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                            &$1.data->position, UsageTryCatchBegin);
+                                            $1.data->position, UsageTryCatchBegin);
                 }
             }
         Block
@@ -2896,7 +2896,7 @@ TryStatement
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
             if (options.serverOperation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                        &$1.data->position, UsageTryCatchEnd);
+                                        $1.data->position, UsageTryCatchEnd);
             }
         }
 
