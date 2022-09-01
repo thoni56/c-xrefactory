@@ -228,16 +228,30 @@ Component(main, main.c)
 Component(xref, xref.c)
 Component(server, server.c)
 Component(refactory, refactory.c)
+
 Component(cxref, cxref.c)
 Component(cxfile, cxfile.c)
+Rel(cxref, cxfile, "stores tags using", call)
 
 Rel(main, xref, "dispatches to", call)
 Rel(main, server, "dispatches to", call)
 Rel(main, refactory, "dispatches to", call)
+Rel(refactory, server, "uses", call)
+Rel(xref, cxref, "handles references using", call)
+Rel(server, cxref, "handles references using", call)
+Rel(refactory, cxref, "handles references using", call)
 
+Component(lexer, yylex.c)
+Component(parser, parsers.c)
+
+Rel(parser, lexer, "reads tokenized source", buffering)
+
+Rel(xref, parser, "parses source", call)
+Rel(server, parser, "parses source", call)
 ....
 
 == Code ==
+
 === Passes ===
 
 There is a variable in `main()` called `firstPassing` which is set and passed
