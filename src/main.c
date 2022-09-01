@@ -2,7 +2,6 @@
 
 #include <stdbool.h>
 
-#include "c_parser.h"
 #include "caching.h"
 #include "characterreader.h"
 #include "commons.h"
@@ -17,7 +16,6 @@
 #include "filetable.h"
 #include "globals.h"
 #include "init.h"
-#include "java_parser.h"
 #include "javafqttab.h"
 #include "jsemact.h"
 #include "jslsemact.h"
@@ -37,7 +35,6 @@
 #include "server.h"
 #include "symboltable.h"
 #include "xref.h"
-#include "yacc_parser.h"
 #include "yylex.h"
 
 static char previousStandardOptionsFile[MAX_FILE_NAME_SIZE];
