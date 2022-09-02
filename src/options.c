@@ -2270,7 +2270,7 @@ static bool processYOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
 #ifdef YYDEBUG
-    else if (strcmp(argv[i], "-yydebug") == 0){
+    else if (strcmp(argv[i], "-yydebug") == 0) {
         c_yydebug = 1;
         yacc_yydebug = 1;
         java_yydebug = 1;

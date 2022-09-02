@@ -114,6 +114,7 @@ prod:
 
 #########################################################################
 # For development - various ways to build
+devel: CFLAGS += -DYYDEBUG
 devel: check-tokens
 	$(MAKE) -C ../editors/emacs
 	$(MAKE) -e clean-coverage

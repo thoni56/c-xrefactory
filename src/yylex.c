@@ -547,7 +547,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
     return true;
 }
 
-static void processInclude2(Position *includePosition, char pchar, char *includedName, bool is_include_next) {
+static void processInclude2(Position *includePosition, char includeType, char *includedName, bool is_include_next) {
     char *actualFileName;
     Symbol symbol;
     char tmpBuff[TMP_BUFF_SIZE];
@@ -560,7 +560,7 @@ static void processInclude2(Position *includePosition, char pchar, char *include
 
     if (symbolTableIsMember(symbolTable, &symbol, NULL, NULL))
         return;
-    if (!openInclude(pchar, includedName, &actualFileName, is_include_next)) {
+    if (!openInclude(includeType, includedName, &actualFileName, is_include_next)) {
         assert(options.mode);
         if (options.mode!=ServerMode)
             warningMessage(ERR_CANT_OPEN, includedName);
@@ -573,27 +573,30 @@ static void processInclude2(Position *includePosition, char pchar, char *include
 
 /* Non-static only for unittests */
 protected void processIncludeDirective(Position *includePosition, bool is_include_next) {
-    char *nextLexemP, *previousLexemP;
+    char *beginningOfLexem, *previousLexemP;
     Lexem lexem;
 
     lexem = getLexemSavePrevious(&previousLexemP);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    nextLexemP = currentInput.nextLexemP;
-    if (lexem == STRING_LITERAL) {         /* Also "<something>" */
+    beginningOfLexem = currentInput.nextLexemP;
+    if (lexem == STRING_LITERAL) {         /* Also bracketed "<something>" */
         getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, NULL, NULL, true);
-        processInclude2(includePosition, *nextLexemP, nextLexemP+1, is_include_next);
+        processInclude2(includePosition, *beginningOfLexem, beginningOfLexem+1, is_include_next);
     } else {
-        // Not "abc" nor <abc>...
+        // Not "abc" nor <abc>... Possibly a macro id that needs to be expanded?
         currentInput.nextLexemP = previousLexemP;		/* unget lexem */
         lexem = yylex();
+        // TODO Do yylex() expand macros? If so we can get almost anything here...
         if (lexem == STRING_LITERAL) {
-            // TODO: Why do we think we would get a STRING_LITERAL this time?
+            /* But it was a string, so try to include that file... */
             currentInput = macroInputStack[0];		// hack, cut everything pending
             macroStackIndex = 0;
             processInclude2(includePosition, '\"', yytext, is_include_next);
         } else if (lexem == '<') {
-            // TODO!!!! Don't know why this is needed since STRING_LITERAL also covers bracketed strings...
+            /* Or possibly a bracketed include, don't know why
+             * STRING_LITERAL doesn't cover this here as it normally
+             * does... */
             warningMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
         }
     }
@@ -696,23 +699,19 @@ static Lexem getNonBlankLexemAndData(Position *position, int *lineNumber, int *v
 protected void processDefineDirective(bool hasArguments) {
     Lexem lexem;
     MacroArgumentTableElement *maca, mmaca;
-    Position position, macroPosition, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
+    Position macroPosition, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
     char *currentLexemStart, *argumentName;
     char *mm;
     char **argumentNames, *argLinkName;
 
-    int argumentCount = 0;
     bool isReadingBody = false;
-    int macroSize = 0;
     char *macroName = NULL;
     int allocatedSize = 0;
     Symbol *symbol = NULL;
     char *body = NULL;
 
-    argumentCount=0;
-    macroSize = -1;
-
     SM_INIT(ppMemory);
+
     ppb1 = noPosition;
     ppb2 = noPosition;
     parpos1 = &ppb1;
@@ -740,9 +739,10 @@ protected void processDefineDirective(bool hasArguments) {
     macroName = symbol->name;
     /* process arguments */
     macroArgumentTableNoAllocInit(&macroArgumentTable, macroArgumentTable.size);
-    argumentCount = -1;
+    int argumentCount = -1;
 
     if (hasArguments) {
+        Position position;
         lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
@@ -757,6 +757,7 @@ protected void processDefineDirective(bool hasArguments) {
         if (lexem != ')') {
             for(;;) {
                 char tmpBuff[TMP_BUFF_SIZE];
+                Position position;
                 currentLexemStart = argumentName = currentInput.nextLexemP;
                 getExtraLexemInformationFor(lexem, &currentInput.nextLexemP, NULL, NULL, &position, NULL, true);
                 bool ellipsis = false;
@@ -807,12 +808,15 @@ protected void processDefineDirective(bool hasArguments) {
             handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, 1);
         }
     }
+
     /* process macro body */
     allocatedSize = MACRO_BODY_BUFFER_SIZE;
-    macroSize = 0;
+    int macroSize = 0;
     PPM_ALLOCC(body, allocatedSize+MAX_LEXEM_SIZE, char);
+
     isReadingBody = true;
 
+    Position position;
     lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 

@@ -179,7 +179,6 @@ static int processCppToken(LexemBuffer *lb) {
         putLexToken(lb, CPP_ENDIF);
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
     } else if (strcmp(preprocessorWord, "include") == 0 || strcmp(preprocessorWord, "include_next") == 0) {
-        char endCh;
         if (strcmp(preprocessorWord, "include") == 0)
             putLexToken(lb, CPP_INCLUDE);
         else
@@ -187,20 +186,16 @@ static int processCppToken(LexemBuffer *lb) {
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
         ch = skipBlanks(lb->characterBuffer, ch);
         if (ch == '\"' || ch == '<') {
-            int scol;
-            if (ch == '\"')
-                endCh = '\"';
-            else
-                endCh = '>';
-            scol = columnPosition(lb->characterBuffer);
+            char terminator = ch == '\"'? '\"' : '>';
+            int scol = columnPosition(lb->characterBuffer);
             putLexToken(lb, STRING_LITERAL);
             do {
                 putLexChar(lb, ch);
                 ch = getChar(lb->characterBuffer);
-            } while (ch != endCh && ch != '\n');
+            } while (ch != terminator && ch != '\n');
             putLexChar(lb, 0);
             putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), scol);
-            if (ch == endCh)
+            if (ch == terminator)
                 ch = getChar(lb->characterBuffer);
         }
     } else if (strcmp(preprocessorWord, "define") == 0) {
