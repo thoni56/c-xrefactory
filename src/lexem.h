@@ -1,9 +1,15 @@
 #ifndef LEXEM_H_INCLUDED
 #define LEXEM_H_INCLUDED
 
-/**** DO NOT EDIT - generated from c_parser.tab.h by Makefile ****/
+/**** DO NOT EDIT - generated from c_parser.tab.h & character_lexems.txt by Makefile ****/
 
 typedef enum lexem {
+LT = '<',
+GT = '>',
+LPAR = '(',
+RPAR = ')',
+EQ = '=',
+
 TYPE_NAME = 257,
 CLASS_NAME = 258,
 TEMPLATE_NAME = 259,

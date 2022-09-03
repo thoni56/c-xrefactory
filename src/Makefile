@@ -252,13 +252,14 @@ check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
 
 # Create an enum of the %token define's in c_parser.tab.h so that
 # we don't need to use c_parser.tab.h to define tokens
-lexem.h: c_parser.tab.h
+lexem.h: c_parser.tab.h character_lexems.txt
 	echo "#ifndef LEXEM_H_INCLUDED" > lexem.h.tmp
 	echo "#define LEXEM_H_INCLUDED" >> lexem.h.tmp
 	echo >> lexem.h.tmp
-	echo "/**** DO NOT EDIT - generated from c_parser.tab.h by Makefile ****/" >> lexem.h.tmp
+	echo "/**** DO NOT EDIT - generated from c_parser.tab.h & character_lexems.txt by Makefile ****/" >> lexem.h.tmp
 	echo >> lexem.h.tmp
 	echo "typedef enum lexem {" >> lexem.h.tmp
+	cat character_lexems.txt >> lexem.h.tmp
 	grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" >> lexem.h.tmp
 	echo "} Lexem;" >> lexem.h.tmp
 	echo >> lexem.h.tmp
