@@ -43,7 +43,7 @@ BeforeEach(Yylex) {
     initOuterCodeBlock();
 
     options.mode = ServerMode;
-    allocateMacroArgumentTable();
+    allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initFileTable(100);
     initNoFileIndex();
 

@@ -19,6 +19,12 @@ extern MacroArgumentTable macroArgumentTable;
 #undef HASH_ELEM_TYPE
 #endif
 
-extern void allocateMacroArgumentTable(void);
+extern void allocateMacroArgumentTable(int count);
+extern MacroArgumentTableElement *getMacroArgument(int index);
+extern int addMacroArgument(MacroArgumentTableElement *element);
+extern bool isMemberInMacroArguments(MacroArgumentTableElement *element, int *foundIndex);
+extern void mapOverMacroArgumentsWithPointer(void (*fun)(MacroArgumentTableElement *element,
+                                                         void *pointer),
+                                             void *pointer);
 
 #endif

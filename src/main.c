@@ -638,7 +638,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initReferenceTable(MAX_CXREF_ENTRIES);
 
     SM_INIT(ppmMemory);
-    allocateMacroArgumentTable();
+    allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initOuterCodeBlock();
 
     // init options as soon as possible! for exampl initCwd needs them
