@@ -401,10 +401,10 @@ static bool findEndOfCentralDirectory(CharacterBuffer *cb, int fileSize) {
     char *ccc, *ffin;
     bool found = true;
 
-    if (fileSize < CHAR_BUFF_SIZE)
+    if (fileSize < CHARARACTER_BUFFER_SIZE)
         offset = 0;
     else
-        offset = fileSize-(CHAR_BUFF_SIZE-MAX_UNGET_CHARS);
+        offset = fileSize-(CHARARACTER_BUFFER_SIZE-MAX_UNGET_CHARS);
     seekToPosition(cb, offset);
     refillBuffer(cb);
     ccc = ffin = cb->end;

@@ -91,7 +91,7 @@ static int readFromUnzipFilterToBuffer(CharacterBuffer *buffer, char *outBuffer,
 #ifdef HAVE_ZLIB
     do {
         if (buffer->zipStream.avail_in == 0) {
-            fn = readFromFileToBuffer(buffer, buffer->z, CHAR_BUFF_SIZE);
+            fn = readFromFileToBuffer(buffer, buffer->z, CHARARACTER_BUFFER_SIZE);
             buffer->zipStream.next_in = (unsigned char *)buffer->z;
             buffer->zipStream.avail_in = fn;
         }
@@ -130,7 +130,7 @@ bool refillBuffer(CharacterBuffer *buffer) {
     for(cp=buffer->chars+MAX_UNGET_CHARS; next<end; next++,cp++)
         *cp = *next;
 
-    max_size = CHAR_BUFF_SIZE - (cp - buffer->chars);
+    max_size = CHARARACTER_BUFFER_SIZE - (cp - buffer->chars);
     if (buffer->inputMethod == INPUT_DIRECT) {
         charactersRead = readFromFileToBuffer(buffer, cp, max_size);
     } else {
@@ -153,7 +153,7 @@ static void fillZipStreamFromBuffer(CharacterBuffer  *buffer, char *dd) {
     buffer->zipStream.next_in = (Bytef*)buffer->z;
     buffer->zipStream.avail_in = dd-buffer->z;
     buffer->zipStream.next_out = (Bytef*)buffer->chars;
-    buffer->zipStream.avail_out = CHAR_BUFF_SIZE;
+    buffer->zipStream.avail_out = CHARARACTER_BUFFER_SIZE;
     buffer->zipStream.zalloc = zlibAlloc;
     buffer->zipStream.zfree = zlibFree;
 }
@@ -207,7 +207,7 @@ void skipCharacters(CharacterBuffer *buffer, unsigned count) {
         fseek(buffer->file, count, SEEK_CUR);
         buffer->filePos += count;
         dd = buffer->chars + MAX_UNGET_CHARS;
-        max_size = CHAR_BUFF_SIZE - (dd - buffer->chars);
+        max_size = CHARARACTER_BUFFER_SIZE - (dd - buffer->chars);
         if (buffer->file == NULL)
             n = 0;
         else

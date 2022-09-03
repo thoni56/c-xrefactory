@@ -16,7 +16,7 @@ typedef enum {
 typedef struct {
     char       *nextUnread; /* first unread */
     char       *end;        /* pointing after valid characters */
-    char        chars[CHAR_BUFF_SIZE];
+    char        chars[CHARARACTER_BUFFER_SIZE];
     FILE       *file;
     unsigned    filePos; /* how many chars was read from file */
     int         fileNumber;
@@ -25,7 +25,7 @@ typedef struct {
     int         columnOffset; /* column == cc-lineBegin + columnOffset */
     bool        isAtEOF;
     InputMethod inputMethod;       /* unzip/direct */
-    char        z[CHAR_BUFF_SIZE]; /* zip input buffer */
+    char        z[CHARARACTER_BUFFER_SIZE]; /* zip input buffer */
     z_stream    zipStream;
 } CharacterBuffer;
 
