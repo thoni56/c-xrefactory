@@ -698,7 +698,6 @@ static Lexem getNonBlankLexemAndData(Position *position, int *lineNumber, int *v
 /* Public only for unittesting */
 protected void processDefineDirective(bool hasArguments) {
     Lexem lexem;
-    MacroArgumentTableElement *maca, mmaca;
     Position macroPosition, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
     char *currentLexemStart, *argumentName;
     char *mm;
@@ -775,9 +774,10 @@ protected void processDefineDirective(bool hasArguments) {
                         LINK_NAME_SEPARATOR, argumentName);
                 PPM_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
-                SM_ALLOC(ppMemory, maca, MacroArgumentTableElement);
-                fillMacroArgTabElem(maca, mm, argLinkName, argumentCount);
-                int argumentIndex = macroArgumentTableAdd(&macroArgumentTable, maca);
+                MacroArgumentTableElement *macroArgumentTableElement;
+                SM_ALLOC(ppMemory, macroArgumentTableElement, MacroArgumentTableElement);
+                fillMacroArgTabElem(macroArgumentTableElement, mm, argLinkName, argumentCount);
+                int argumentIndex = macroArgumentTableAdd(&macroArgumentTable, macroArgumentTableElement);
                 argumentCount++;
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
@@ -826,9 +826,12 @@ protected void processDefineDirective(bool hasArguments) {
     while (lexem != '\n') {
         while(macroSize<allocatedSize && lexem != '\n') {
             char *lexemDestination = body+macroSize; /* TODO WTF Are we storing the lexems after the body?!?! */
+            /* Create a MATE to be able to run ..IsMember() */
+            MacroArgumentTableElement macroArgumentTableElement;
+            fillMacroArgTabElem(&macroArgumentTableElement,currentLexemStart,NULL,0);
+
             int foundIndex;
-            fillMacroArgTabElem(&mmaca,currentLexemStart,NULL,0);
-            if (lexem==IDENTIFIER && macroArgumentTableIsMember(&macroArgumentTable,&mmaca,&foundIndex)){
+            if (lexem==IDENTIFIER && macroArgumentTableIsMember(&macroArgumentTable,&macroArgumentTableElement,&foundIndex)){
                 /* macro argument */
                 addTrivialCxReference(macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg, StorageDefault,
                                       position, UsageUsed);
