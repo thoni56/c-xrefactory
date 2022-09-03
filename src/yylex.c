@@ -113,7 +113,7 @@ void initAllInputs(void) {
 }
 
 
-static void fillMacroArgTabElem(MacroArgumentTableElement *macroArgTabElem, char *name, char *linkName,
+static void fillMacroArgumentTableElement(MacroArgumentTableElement *macroArgTabElem, char *name, char *linkName,
                                 int order) {
     macroArgTabElem->name = name;
     macroArgTabElem->linkName = linkName;
@@ -776,7 +776,7 @@ protected void processDefineDirective(bool hasArguments) {
                 strcpy(argLinkName, tmpBuff);
                 MacroArgumentTableElement *macroArgumentTableElement;
                 SM_ALLOC(ppMemory, macroArgumentTableElement, MacroArgumentTableElement);
-                fillMacroArgTabElem(macroArgumentTableElement, mm, argLinkName, argumentCount);
+                fillMacroArgumentTableElement(macroArgumentTableElement, mm, argLinkName, argumentCount);
                 int argumentIndex = macroArgumentTableAdd(&macroArgumentTable, macroArgumentTableElement);
                 argumentCount++;
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
@@ -828,7 +828,7 @@ protected void processDefineDirective(bool hasArguments) {
             char *lexemDestination = body+macroSize; /* TODO WTF Are we storing the lexems after the body?!?! */
             /* Create a MATE to be able to run ..IsMember() */
             MacroArgumentTableElement macroArgumentTableElement;
-            fillMacroArgTabElem(&macroArgumentTableElement,currentLexemStart,NULL,0);
+            fillMacroArgumentTableElement(&macroArgumentTableElement,currentLexemStart,NULL,0);
 
             int foundIndex;
             if (lexem==IDENTIFIER && macroArgumentTableIsMember(&macroArgumentTable,&macroArgumentTableElement,&foundIndex)){
