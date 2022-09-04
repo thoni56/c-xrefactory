@@ -12,9 +12,9 @@
 
 
 typedef struct {
-    char *next;				/* next to read */
+    char *read;				/* next to read */
     char *begin;
-    char *end;				/* pointing *after* last valid lexem */
+    char *write;				/* pointing *after* last valid lexem */
     char lexemStream[LEXEM_BUFFER_SIZE];
     Position positionRing[LEX_POSITIONS_RING_SIZE];
     unsigned fileOffsetRing[LEX_POSITIONS_RING_SIZE];
@@ -25,8 +25,8 @@ typedef struct {
 
 extern void shiftAnyRemainingLexems(LexemBuffer *lb);
 
-extern void setLexemStreamEnd(LexemBuffer *lb, void *end);
-extern void *getLexemStreamEnd(LexemBuffer *lb);
+extern void setLexemStreamWrite(LexemBuffer *lb, void *end);
+extern void *getLexemStreamWrite(LexemBuffer *lb);
 
 /* Lexer functions for passing compressed tokens to the parser */
 extern int fileNumberFrom(LexemBuffer *lb);
@@ -53,7 +53,7 @@ extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer);
 extern int getLexShort(char **readPointerP);
 extern Lexem getLexTokenAtPointer(char **readPointerP);
 extern int getLexInt(char **readPointerP);
-extern Position getLexPosition(char **readPointerP);
+extern Position getLexPositionAt(char **readPointerP);
 
 extern Lexem peekLexTokenAt(char *readPointer);
 
@@ -64,7 +64,7 @@ extern Position peekLexPosition(char **readPointerP);
 
 #define NextLexPosition(pos,tmpcc) {            \
         char *tmptmpcc = tmpcc;                 \
-        pos = getLexPosition(&tmptmpcc);        \
+        pos = getLexPositionAt(&tmptmpcc);        \
     }
 
 extern void initLexemBuffer(LexemBuffer *buffer, CharacterBuffer *characterBuffer);

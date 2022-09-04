@@ -133,11 +133,11 @@ static void setCacheConsistency(Cache *cache, LexInput *input) {
     cache->nextLexemP = input->next;
 }
 static void setCurrentFileConsistency(FileDescriptor *file, LexInput *input) {
-    file->lexemBuffer.next = input->next;
+    file->lexemBuffer.read = input->next;
 }
 static void setCurrentInputConsistency(LexInput *input, FileDescriptor *file) {
-    fillLexInput(input, file->lexemBuffer.next, file->lexemBuffer.lexemStream, file->lexemBuffer.end, NULL,
-                 INPUT_NORMAL);
+    fillLexInput(input, file->lexemBuffer.read, file->lexemBuffer.lexemStream, file->lexemBuffer.write,
+                 NULL, INPUT_NORMAL);
 }
 
 char *placeIdent(void) {
@@ -251,9 +251,9 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
 
 static void getAndSetOutPositionIfRequired(char **readPointerP, Position *outPosition) {
     if (outPosition != NULL)
-        *outPosition = getLexPosition(readPointerP);
+        *outPosition = getLexPositionAt(readPointerP);
     else
-        getLexPosition(readPointerP);
+        getLexPositionAt(readPointerP);
 }
 
 static void getAndSetOutLengthIfRequired(char **readPointerP, int *outLength) {
@@ -342,7 +342,7 @@ static Lexem getLexemSavePrevious(char **previousLexemP) {
         } else {
             cache.nextLexemP = cache.lexemStreamEnd = NULL;
             cacheInput();
-            cache.lexemStreamNext = currentFile.lexemBuffer.next;
+            cache.lexemStreamNext = currentFile.lexemBuffer.read;
             setCurrentInputConsistency(&currentInput, &currentFile);
         }
         if (previousLexemP != NULL)
@@ -1902,8 +1902,8 @@ void dumpLexemBuffer(LexemBuffer *lb) {
     Lexem lexem;
 
     log_debug("lexbufdump [start] ");
-    cc = lb->next;
-    while (cc < (char *)getLexemStreamEnd(lb)) {
+    cc = lb->read;
+    while (cc < (char *)getLexemStreamWrite(lb)) {
         lexem = getLexTokenAtPointer(&cc);
         if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
             log_debug("%s ",cc);

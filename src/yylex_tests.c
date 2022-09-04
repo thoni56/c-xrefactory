@@ -64,8 +64,8 @@ static void setup_lexBuffer_for_reading_identifier(void *data) {
     strcpy(lexemStreamP, currentFile.characterBuffer.chars);
     /* TODO: WTF This is mostly guesswork, no idea if this is how they are connected... */
     *strchr(&currentFile.lexemBuffer.lexemStream[2], ' ') = '\0';
-    currentFile.lexemBuffer.next                          = currentFile.lexemBuffer.lexemStream;
-    currentFile.lexemBuffer.end                           = strchr(currentFile.lexemBuffer.lexemStream, '\0');
+    currentFile.lexemBuffer.read                          = currentFile.lexemBuffer.lexemStream;
+    currentFile.lexemBuffer.write                           = strchr(currentFile.lexemBuffer.lexemStream, '\0');
     currentFile.lexemBuffer.ringIndex                     = 2;
 }
 
@@ -111,8 +111,8 @@ Ensure(Yylex, can_process_include_directive) {
     int      fileNumber;
 
     strcpy(currentFile.lexemBuffer.lexemStream, lexem_stream);
-    currentFile.lexemBuffer.next = currentFile.lexemBuffer.lexemStream;
-    currentFile.lexemBuffer.end  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
+    currentFile.lexemBuffer.read = currentFile.lexemBuffer.lexemStream;
+    currentFile.lexemBuffer.write  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
     currentInput.end = currentInput.begin + strlen(lexem_stream);
@@ -145,8 +145,8 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     strcpy(cwd, "cwd");
 
     strcpy(currentFile.lexemBuffer.lexemStream, lexem_stream);
-    currentFile.lexemBuffer.next = currentFile.lexemBuffer.lexemStream;
-    currentFile.lexemBuffer.end  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
+    currentFile.lexemBuffer.read = currentFile.lexemBuffer.lexemStream;
+    currentFile.lexemBuffer.write  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
     currentInput.end = currentInput.begin + strlen(lexem_stream);
@@ -206,8 +206,8 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     strcpy(cwd, "cwd");
 
     strcpy(currentFile.lexemBuffer.lexemStream, lexem_stream);
-    currentFile.lexemBuffer.next = currentFile.lexemBuffer.lexemStream;
-    currentFile.lexemBuffer.end  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
+    currentFile.lexemBuffer.read = currentFile.lexemBuffer.lexemStream;
+    currentFile.lexemBuffer.write  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
     currentInput.end = currentInput.begin + strlen(lexem_stream);

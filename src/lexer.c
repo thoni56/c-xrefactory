@@ -199,7 +199,7 @@ static int processCppToken(LexemBuffer *lb) {
                 ch = getChar(lb->characterBuffer);
         }
     } else if (strcmp(preprocessorWord, "define") == 0) {
-        void *backpatchLexemP = getLexemStreamEnd(lb);
+        void *backpatchLexemP = getLexemStreamWrite(lb);
         putLexToken(lb, CPP_DEFINE0);
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
         ch = skipBlanks(lb->characterBuffer, ch);
@@ -246,7 +246,7 @@ static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in already written identifier */
                     /* We can use the backpatchP since it has moved to begining of string */
-                    setLexemStreamEnd(lb, backpatchP + len);
+                    setLexemStreamWrite(lb, backpatchP + len);
                     /* Terminate identifier here */
                     putLexChar(lb, 0);
                     /* And write the position */
@@ -288,18 +288,18 @@ bool getLexemFromLexer(LexemBuffer *lb) {
 
     shiftAnyRemainingLexems(lb);
 
-    lexemLimit = getLexemStreamEnd(lb) + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
+    lexemLimit = getLexemStreamWrite(lb) + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
 
     ch = getChar(cb);
     do {
         ch = skipBlanks(cb, ch);
         /* Space for more lexems? */
-        if ((char *)getLexemStreamEnd(lb) >= lexemLimit) {
+        if ((char *)getLexemStreamWrite(lb) >= lexemLimit) {
             ungetChar(cb, ch);
             break;
         }
         noteNewLexemPosition(lb);
-        startOfCurrentLexem = getLexemStreamEnd(lb);
+        startOfCurrentLexem = getLexemStreamWrite(lb);
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
@@ -913,7 +913,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
         }
     } while (ch != -1);
 
-    if ((char *)getLexemStreamEnd(lb) == lb->lexemStream)
+    if ((char *)getLexemStreamWrite(lb) == lb->lexemStream)
         return false;
     else
         return true;

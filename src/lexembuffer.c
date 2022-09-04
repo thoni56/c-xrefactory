@@ -6,9 +6,9 @@
 
 
 void initLexemBuffer(LexemBuffer *buffer, CharacterBuffer *characterBuffer) {
-    buffer->next = buffer->lexemStream;
+    buffer->read = buffer->lexemStream;
     buffer->begin = buffer->lexemStream;
-    buffer->end = buffer->lexemStream;
+    buffer->write = buffer->lexemStream;
     buffer->ringIndex = 0;
     buffer->characterBuffer = characterBuffer;
 }
@@ -18,17 +18,17 @@ Lexem getLexemAt(LexemBuffer *lb, void *readPointer) {
     return peekLexTokenAt(readPointer);
 }
 
-void setLexemStreamEnd(LexemBuffer *lb, void *end) {
-    lb->end = end;
+void setLexemStreamWrite(LexemBuffer *lb, void *write) {
+    lb->write = write;
 }
 
-void *getLexemStreamEnd(LexemBuffer *lb) {
-    return (void *)(lb->end);
+void *getLexemStreamWrite(LexemBuffer *lb) {
+    return (void *)(lb->write);
 }
 
 /* Char */
 void putLexChar(LexemBuffer *lb, char ch) {
-    *(lb->end++) = ch;
+    *(lb->write++) = ch;
 }
 
 /* Short */
@@ -57,7 +57,7 @@ static int peekLexShort(char **readPointerP) {
 
 /* Token */
 void putLexToken(LexemBuffer *lb, Lexem lexem) {
-    putLexShort(lexem, &(lb->end));
+    putLexShort(lexem, &(lb->write));
 }
 
 /* For backpatching */
@@ -71,7 +71,7 @@ Lexem getLexTokenAtPointer(char **readPointerP) {
 }
 
 Lexem getLexToken(LexemBuffer *lb) {
-    return (Lexem)getLexShort(&lb->next);
+    return (Lexem)getLexShort(&lb->read);
 }
 
 Lexem peekLexTokenAt(char *readPointer) {
@@ -83,10 +83,10 @@ Lexem peekLexTokenAt(char *readPointer) {
 void putLexInt(LexemBuffer *lb, int value) {
     unsigned tmp;
     tmp = value;
-    *lb->end++ = tmp%256; tmp /= 256;
-    *lb->end++ = tmp%256; tmp /= 256;
-    *lb->end++ = tmp%256; tmp /= 256;
-    *lb->end++ = tmp%256; tmp /= 256;
+    *lb->write++ = tmp%256; tmp /= 256;
+    *lb->write++ = tmp%256; tmp /= 256;
+    *lb->write++ = tmp%256; tmp /= 256;
+    *lb->write++ = tmp%256; tmp /= 256;
 }
 
 int getLexInt(char **readPointerP) {
@@ -159,19 +159,19 @@ void putLexLines(LexemBuffer *lb, int lines) {
 /* Position */
 void putLexPositionFields(LexemBuffer *lb, int file, int line, int column) {
     assert(file>=0 && file<MAX_FILES);
-    putLexCompacted(file, &(lb->end));
-    putLexCompacted(line, &(lb->end));
-    putLexCompacted(column, &(lb->end));
+    putLexCompacted(file, &(lb->write));
+    putLexCompacted(line, &(lb->write));
+    putLexCompacted(column, &(lb->write));
 }
 
 void putLexPosition(LexemBuffer *lb, Position position) {
     assert(position.file>=0 && position.file<MAX_FILES);
-    putLexCompacted(position.file, &(lb->end));
-    putLexCompacted(position.line, &(lb->end));
-    putLexCompacted(position.col, &(lb->end));
+    putLexCompacted(position.file, &(lb->write));
+    putLexCompacted(position.line, &(lb->write));
+    putLexCompacted(position.col, &(lb->write));
 }
 
-Position getLexPosition(char **readPointerP) {
+Position getLexPositionAt(char **readPointerP) {
     Position pos;
     pos.file = getLexCompacted(readPointerP);
     pos.line = getLexCompacted(readPointerP);
@@ -181,7 +181,7 @@ Position getLexPosition(char **readPointerP) {
 
 Position peekLexPosition(char **readPointerP) {
     char *pointer = *readPointerP;
-    return getLexPosition(&pointer);
+    return getLexPositionAt(&pointer);
 }
 
 /* DEPRECATED - writing with pointer to pointer that it advances, a
@@ -206,13 +206,13 @@ void putLexIntWithPointer(int integer, char **writePointerP) {
 }
 
 void shiftAnyRemainingLexems(LexemBuffer *lb) {
-    int remaining = lb->end - lb->next;
-    char *src = lb->next;
+    int remaining = lb->write - lb->read;
+    char *src = lb->read;
     char *dest = lb->lexemStream;
 
     for (int i = 0; i < remaining; i++)
         *dest++ = *src++;
 
-    lb->next = lb->lexemStream;
-    lb->end = &lb->lexemStream[remaining];
+    lb->read = lb->lexemStream;
+    lb->write = &lb->lexemStream[remaining];
 }

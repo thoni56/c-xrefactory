@@ -320,7 +320,7 @@ void recoverFromCache(void) {
 }
 
 void initCaching(void) {
-    fillCache(&cache, true, 0, 0, cache.lexemStream, currentFile.lexemBuffer.next, NULL, NULL);
+    fillCache(&cache, true, 0, 0, cache.lexemStream, currentFile.lexemBuffer.read, NULL, NULL);
     placeCachePoint(false);
     cache.cachingActive = false;
 }
