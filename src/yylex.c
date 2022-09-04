@@ -120,20 +120,20 @@ static void fillMacroArgumentTableElement(MacroArgumentTableElement *macroArgTab
     macroArgTabElem->order = order;
 }
 
-void fillLexInput(LexInput *lexInput, char *next, char *begin, char *end, char *macroName,
+void fillLexInput(LexInput *input, char *read, char *begin, char *write, char *macroName,
                   InputType inputType) {
-    lexInput->next      = next;
-    lexInput->begin     = begin;
-    lexInput->end       = end;
-    lexInput->macroName = macroName;
-    lexInput->inputType = inputType;
+    input->read      = read;
+    input->begin     = begin;
+    input->write     = write;
+    input->macroName = macroName;
+    input->inputType = inputType;
 }
 
 static void setCacheConsistency(Cache *cache, LexInput *input) {
-    cache->nextLexemP = input->next;
+    cache->nextLexemP = input->read;
 }
 static void setCurrentFileConsistency(FileDescriptor *file, LexInput *input) {
-    file->lexemBuffer.read = input->next;
+    file->lexemBuffer.read = input->read;
 }
 static void setCurrentInputConsistency(LexInput *input, FileDescriptor *file) {
     fillLexInput(input, file->lexemBuffer.read, file->lexemBuffer.lexemStream, file->lexemBuffer.write,
@@ -325,7 +325,7 @@ static Lexem getLexemSavePrevious(char **previousLexemP) {
 
     /* TODO This is weird, shouldn't this test for next @ end? Seems
      * backwards... */
-    while (currentInput.next >= currentInput.end) {
+    while (currentInput.read >= currentInput.write) {
         InputType inputType = currentInput.inputType;
         if (macroStackIndex > 0) {
             if (inputType == INPUT_MACRO_ARGUMENT) {
@@ -346,11 +346,11 @@ static Lexem getLexemSavePrevious(char **previousLexemP) {
             setCurrentInputConsistency(&currentInput, &currentFile);
         }
         if (previousLexemP != NULL)
-            *previousLexemP = currentInput.next;
+            *previousLexemP = currentInput.read;
     }
     if (previousLexemP != NULL)
-        *previousLexemP = currentInput.next;
-    lexem = getLexTokenAt(&currentInput.next);
+        *previousLexemP = currentInput.read;
+    lexem = getLexTokenAt(&currentInput.read);
     return lexem;
 }
 
@@ -396,14 +396,14 @@ protected void processLineDirective(void) {
     lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, NULL, NULL, true);
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, true);
     if (lexem != CONSTANT)
         return;
 
     lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, NULL, NULL, true);
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, true);
     return;
 
 endOfMacroArgument:
@@ -579,13 +579,13 @@ protected void processIncludeDirective(Position *includePosition, bool is_includ
     lexem = getLexemSavePrevious(&previousLexemP);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    beginningOfLexem = currentInput.next;
+    beginningOfLexem = currentInput.read;
     if (lexem == STRING_LITERAL) {         /* Also bracketed "<something>" */
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, NULL, NULL, true);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, true);
         processInclude2(includePosition, *beginningOfLexem, beginningOfLexem+1, is_include_next);
     } else {
         // Not "abc" nor <abc>... Possibly a macro id that needs to be expanded?
-        currentInput.next = previousLexemP;		/* unget lexem */
+        currentInput.read = previousLexemP;		/* unget lexem */
         lexem = yylex();
         // TODO Do yylex() expand macros? If so we can get almost anything here...
         if (lexem == STRING_LITERAL) {
@@ -688,7 +688,7 @@ static Lexem getNonBlankLexemAndData(Position *position, int *lineNumber, int *v
 
     lexem = getLexem();
     while (lexem == LINE_TOKEN) {
-        getExtraLexemInformationFor(lexem, &currentInput.next, lineNumber, value, position, length, true);
+        getExtraLexemInformationFor(lexem, &currentInput.read, lineNumber, value, position, length, true);
         lexem = getLexem();
     }
     return lexem;
@@ -718,9 +718,9 @@ protected void processDefineDirective(bool hasArguments) {
     lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    currentLexemStart = currentInput.next;
+    currentLexemStart = currentInput.read;
 
-    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &macroPosition, NULL, true);
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &macroPosition, NULL, true);
 
     testCxrefCompletionId(&lexem, currentLexemStart, &macroPosition);    /* for cross-referencing */
     if (lexem != IDENTIFIER)
@@ -745,7 +745,7 @@ protected void processDefineDirective(bool hasArguments) {
         lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, parpos2, NULL, true);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
         *parpos1 = *parpos2;
         if (lexem != '(')
             goto errorlabel;
@@ -756,8 +756,8 @@ protected void processDefineDirective(bool hasArguments) {
         if (lexem != ')') {
             for(;;) {
                 Position position;
-                currentLexemStart = argumentName = currentInput.next;
-                getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+                currentLexemStart = argumentName = currentInput.read;
+                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
                 bool ellipsis = false;
                 if (lexem == IDENTIFIER ) {
                     argumentName = currentLexemStart;
@@ -787,7 +787,7 @@ protected void processDefineDirective(bool hasArguments) {
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
-                getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, parpos2, NULL, true);
+                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
                 if (!ellipsis) {
                     addTrivialCxReference(getMacroArgument(argumentIndex)->linkName, TypeMacroArg,StorageDefault,
                                           position, UsageDefined);
@@ -796,7 +796,7 @@ protected void processDefineDirective(bool hasArguments) {
                 if (lexem == ELLIPSIS) {
                     lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-                    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, parpos2, NULL, true);
+                    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
                 }
                 if (lexem == ')')
                     break;
@@ -808,7 +808,7 @@ protected void processDefineDirective(bool hasArguments) {
             }
             handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, 1);
         } else {
-            getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, parpos2, NULL, true);
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
             handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, 1);
         }
     }
@@ -824,8 +824,8 @@ protected void processDefineDirective(bool hasArguments) {
     lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    currentLexemStart = currentInput.next;
-    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+    currentLexemStart = currentInput.read;
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
 
     while (lexem != '\n') {
         while(macroSize<allocatedSize && lexem != '\n') {
@@ -851,15 +851,15 @@ protected void processDefineDirective(bool hasArguments) {
                 }
                 putLexTokenAt(lexem, &lexemDestination);
                 /* Copy from input to destination (which is in the body buffer...) */
-                for (; currentLexemStart<currentInput.next; lexemDestination++,currentLexemStart++)
+                for (; currentLexemStart<currentInput.read; lexemDestination++,currentLexemStart++)
                     *lexemDestination = *currentLexemStart;
             }
             macroSize = lexemDestination - body;
             lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-            currentLexemStart = currentInput.next;
-            getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+            currentLexemStart = currentInput.read;
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         }
         if (lexem != '\n') {
             allocatedSize += MACRO_BODY_BUFFER_SIZE;
@@ -932,8 +932,8 @@ static void processUndefineDirective(void) {
     lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    cc = currentInput.next;
-    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+    cc = currentInput.read;
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
     testCxrefCompletionId(&lexem, cc, &position);
     if (isIdentifierLexem(lexem)) {
         Symbol symbol;
@@ -963,7 +963,7 @@ static void processUndefineDirective(void) {
     while (lexem != '\n') {
         lexem = getLexem();
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
     }
     return;
 endOfMacroArgument:
@@ -1011,7 +1011,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
         lexem = getLexem();
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         if (lexem==CPP_IF || lexem==CPP_IFDEF || lexem==CPP_IFNDEF) {
             genCppIfElseReference(1, &position, UsageDefined);
             depth++;
@@ -1068,8 +1068,8 @@ static void processIfdefDirective(bool isIfdef) {
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     /* Then we are probably looking at the id... */
-    cp = currentInput.next;
-    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+    cp = currentInput.read;
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
     testCxrefCompletionId(&lexem, cp, &position);
 
     if (!isIdentifierLexem(lexem))
@@ -1128,16 +1128,16 @@ Lexem cexp_yylex(void) {
         lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        cc = currentInput.next;
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+        cc = currentInput.read;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         if (lexem == '(') {
             haveParenthesis = true;
 
             lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-            cc = currentInput.next;
-            getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+            cc = currentInput.read;
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         } else {
             haveParenthesis = false;
         }
@@ -1164,7 +1164,7 @@ Lexem cexp_yylex(void) {
             lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-            getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
             if (lexem != ')' && options.mode!=ServerMode) {
                 warningMessage(ERR_ST,"missing ')' after defined( ");
             }
@@ -1201,9 +1201,9 @@ static void processPragmaDirective(void) {
     lexem = getLexem();
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    if (lexem == IDENTIFIER && strcmp(currentInput.next, "once")==0) {
+    if (lexem == IDENTIFIER && strcmp(currentInput.read, "once")==0) {
         char tmpBuff[TMP_BUFF_SIZE];
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         fname = simpleFileName(getFileItem(position.file)->name);
         sprintf(tmpBuff, "PragmaOnce-%s", fname);
         PPM_ALLOCC(mname, strlen(tmpBuff)+1, char);
@@ -1217,11 +1217,11 @@ static void processPragmaDirective(void) {
         symbolTableAdd(symbolTable, pp);
     }
     while (lexem != '\n') {
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         lexem = getLexem();
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
     }
-    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
     return;
 
 endOfMacroArgument:
@@ -1237,7 +1237,7 @@ endOfFile:
 static bool processPreprocessorConstruct(Lexem lexem) {
     Position position;
 
-    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
     log_debug("processing cpp-construct '%s' ", tokenNamesTable[lexem]);
     switch (lexem) {
     case CPP_INCLUDE:
@@ -1306,11 +1306,11 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         lexem = getLexem();
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
         while (lexem != '\n') {
-            getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
             lexem = getLexem();
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
         }
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL, true);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL, true);
         break;
     }
     default:
@@ -1364,7 +1364,7 @@ static void prependMacroInput(LexInput *argumentBuffer) {
     assert(macroStackIndex < MACRO_INPUT_STACK_SIZE-1);
     macroInputStack[macroStackIndex++] = currentInput;
     currentInput = *argumentBuffer;
-    currentInput.next = currentInput.begin;
+    currentInput.read = currentInput.begin;
     currentInput.inputType = INPUT_MACRO;
 }
 
@@ -1392,10 +1392,10 @@ static void expandMacroArgument(LexInput *argumentBuffer) {
         lexem = getLexemSavePrevious(&previousLexem);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        nextLexemP = currentInput.next;
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL,
+        nextLexemP = currentInput.read;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
-        int length = ((char*)currentInput.next) - previousLexem;
+        int length = ((char*)currentInput.read) - previousLexem;
         assert(length >= 0);
         memcpy(bcc, previousLexem, length);
         // a hack, it is copied, but bcc will be increased only if not
@@ -1461,7 +1461,7 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
         assert(lexem==CPP_MACRO_ARGUMENT);
         getExtraLexemInformationFor(lexem, &lastBufferP, NULL, &value, NULL, NULL, false);
         currentInputLexemP = actualArgumentsInput[value].begin;
-        endOfInputLexems = actualArgumentsInput[value].end;
+        endOfInputLexems = actualArgumentsInput[value].write;
         lastBufferP = NULL;
         while (currentInputLexemP < endOfInputLexems) {
             char *lexemStart = currentInputLexemP;
@@ -1481,7 +1481,7 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
         int value;
         getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, &value, NULL, NULL, false);
         currentInputLexemP = actualArgumentsInput[value].begin;
-        endOfInputLexems = actualArgumentsInput[value].end;
+        endOfInputLexems = actualArgumentsInput[value].write;
     } else {
         currentInputLexemP = currentBodyLexemP;
         Lexem lexem = getLexTokenAt(&currentBodyLexemP);
@@ -1554,7 +1554,7 @@ static void macroArgumentsToString(char *res, LexInput *lexInput) {
     bcc = res;
     *bcc = 0;
     cc = lexInput->begin;
-    while (cc < lexInput->end) {
+    while (cc < lexInput->write) {
         Lexem lexem = getLexTokenAt(&cc);
         lcc = cc;
         getExtraLexemInformationFor(lexem, &cc, NULL, &value, NULL, NULL, false);
@@ -1593,7 +1593,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
         lexem = getLexTokenAt(&currentLexemP);
         getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &value, &position, NULL, false);
         if (lexem == CPP_MACRO_ARGUMENT) {
-            int len = actualArgumentsInput[value].end - actualArgumentsInput[value].begin;
+            int len = actualArgumentsInput[value].write - actualArgumentsInput[value].begin;
             ExpandMacroBodyBufferIfOverflow(writePointer, len, writeBuffer, bufferSize);
             memcpy(writePointer, actualArgumentsInput[value].begin, len);
             writePointer += len;
@@ -1682,7 +1682,7 @@ static Lexem getLexSkippingLines(char **previousLexemP, int *lineNumberP,
                                 int *valueP, Position *positionP, int *lengthP) {
     Lexem lexem = getLexemSavePrevious(previousLexemP);
     while (lexem == LINE_TOKEN || lexem == '\n') {
-        getExtraLexemInformationFor(lexem, &currentInput.next, lineNumberP, valueP, positionP, lengthP,
+        getExtraLexemInformationFor(lexem, &currentInput.read, lineNumberP, valueP, positionP, lengthP,
                                     macroStackIndex == 0);
         lexem = getLexemSavePrevious(previousLexemP);
     }
@@ -1719,7 +1719,7 @@ static void getActualMacroArgument(
         //& if (lexem == ',' && depth <= 0 && ! lastArgument) break;
         if (lexem == '(') depth ++;
         if (lexem == ')') depth --;
-        for(;previousLexem < currentInput.next; previousLexem++, bcc++)
+        for(;previousLexem < currentInput.read; previousLexem++, bcc++)
             *bcc = *previousLexem;
         if (bcc-buf >= bufferSize) {
             bufferSize += MACRO_ARGUMENTS_BUFFER_SIZE;
@@ -1729,7 +1729,7 @@ static void getActualMacroArgument(
         lexem = getLexSkippingLines(&previousLexem, NULL, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, (*positionOfSecondParenthesis),
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, (*positionOfSecondParenthesis),
                                     NULL, macroStackIndex == 0);
         if ((lexem == ',' || lexem == ')') && depth == 0) {
             poffset ++;
@@ -1767,7 +1767,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPo
     lexem = getLexSkippingLines(&previousLexem, NULL, NULL, &position, NULL);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-    getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL,
+    getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                 macroStackIndex == 0);
     if (lexem == ')') {
         *parpos2 = position;
@@ -1781,7 +1781,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPo
                 break;
             lexem = getLexSkippingLines(&previousLexem, NULL, NULL, &position, NULL);
             ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
-            getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL,
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                         macroStackIndex == 0);
         }
     }
@@ -1852,7 +1852,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
         return false;
 
     /* Make sure these are initialized */
-    previousLexemP = currentInput.next;
+    previousLexemP = currentInput.read;
     PPM_ALLOCC(freeBase, 0, char);
 
     if (macroBody->argCount >= 0) {
@@ -1860,10 +1860,10 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         if (lexem != '(') {
-            currentInput.next = previousLexemP;		/* unget lexem */
+            currentInput.read = previousLexemP;		/* unget lexem */
             return false;
         }
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &lparPosition, NULL,
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &lparPosition, NULL,
                                     macroStackIndex == 0);
         actualArgumentsInput = getActualMacroArguments(macroBody, macroPosition, lparPosition);
     } else {
@@ -1883,7 +1883,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
 endOfMacroArgument:
     /* unterminated macro call in argument */
     /* TODO unread the argument that was read */
-    currentInput.next = previousLexemP;
+    currentInput.read = previousLexemP;
     PPM_FREE_UNTIL(freeBase);
     return false;
 
@@ -1892,7 +1892,7 @@ endOfMacroArgument:
     if (options.mode!=ServerMode) {
         warningMessage(ERR_ST,"[macroCallExpand] unterminated macro call");
     }
-    currentInput.next = previousLexemP;
+    currentInput.read = previousLexemP;
     PPM_FREE_UNTIL(freeBase);
     return false;
 }
@@ -1942,17 +1942,17 @@ int cachedInputPass(int cpoint, char **cfrom) {
         lexem = getLexemSavePrevious(&previousLexem);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        getExtraLexemInformationFor(lexem, &currentInput.next, &lineNumber, NULL, &position, NULL, true);
-        lexemLength = currentInput.next-previousLexem;
+        getExtraLexemInformationFor(lexem, &currentInput.read, &lineNumber, NULL, &position, NULL, true);
+        lexemLength = currentInput.read-previousLexem;
         assert(lexemLength >= 0);
         if (memcmp(previousLexem, cp, lexemLength)) {
-            currentInput.next = previousLexem;			/* unget last lexem */
+            currentInput.read = previousLexem;			/* unget last lexem */
             res = 0;
             break;
         }
         if (isIdentifierLexem(lexem) || isPreprocessorToken(lexem)) {
             if (onSameLine(position, cxRefPosition)) {
-                currentInput.next = previousLexem;			/* unget last lexem */
+                currentInput.read = previousLexem;			/* unget last lexem */
                 res = 0;
                 break;
             }
@@ -2124,9 +2124,9 @@ Lexem yylex(void) {
     if (lexem < 256) {          /* First non-single character symbol is 257 */
         if (lexem == '\n') {
             if (isProcessingPreprocessorIf) {
-                currentInput.next = previousLexem;
+                currentInput.read = previousLexem;
             } else {
-                getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, NULL, NULL,
+                getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL,
                                             macroStackIndex == 0);
                 for(;;) {
                     lexem = getLexem();
@@ -2140,7 +2140,7 @@ Lexem yylex(void) {
             }
         } else {
             Position position;
-            getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL,
+            getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                         macroStackIndex == 0);
             setYylvalsForPosition(position, tokenNameLengthsTable[lexem]);
         }
@@ -2153,8 +2153,8 @@ Lexem yylex(void) {
         Position position;
         Symbol symbol, *memberP;
 
-        id = yytext = currentInput.next;
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL,
+        id = yytext = currentInput.read;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         assert(options.mode);
         if (options.mode == ServerMode) {
@@ -2181,27 +2181,27 @@ Lexem yylex(void) {
         goto finish;
     }
     if (lexem == OL_MARKER_TOKEN) {
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, NULL, NULL, macroStackIndex == 0);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, macroStackIndex == 0);
         actionOnBlockMarker();
         goto nextYylex;
     }
     if (lexem < MULTI_TOKENS_START) {
         Position position;
         yytext = tokenNamesTable[lexem];
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL,
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         setYylvalsForPosition(position, tokenNameLengthsTable[lexem]);
         goto finish;
     }
     if (lexem == LINE_TOKEN) {
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, NULL, NULL, macroStackIndex == 0);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, macroStackIndex == 0);
         goto nextYylex;
     }
     if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
         int value;
         int length;
         Position position;
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, &value, &position, &length,
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, &value, &position, &length,
                                     macroStackIndex == 0);
         sprintf(constant,"%d",value);
         setYylvalsForInteger(value, position, length);
@@ -2212,15 +2212,15 @@ Lexem yylex(void) {
         int length;
         Position position;
         yytext = "'fltp constant'";
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, &length,
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, &length,
                                     macroStackIndex == 0);
         setYylvalsForPosition(position, length);
         goto finish;
     }
     if (lexem == STRING_LITERAL) {
         Position position;
-        yytext = currentInput.next;
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL,
+        yytext = currentInput.read;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         setYylvalsForPosition(position, strlen(yytext));
         goto finish;
@@ -2229,7 +2229,7 @@ Lexem yylex(void) {
         int value;
         int length;
         Position position;
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, &value, &position, &length,
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, &value, &position, &length,
                                     macroStackIndex == 0);
         sprintf(constant,"'%c'",value);
         setYylvalsForInteger(value, position, length);
@@ -2239,8 +2239,8 @@ Lexem yylex(void) {
     assert(options.mode);
     if (options.mode == ServerMode) {
         Position position;
-        yytext = currentInput.next;
-        getExtraLexemInformationFor(lexem, &currentInput.next, NULL, NULL, &position, NULL,
+        yytext = currentInput.read;
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         if (lexem == IDENT_TO_COMPLETE) {
             testCxrefCompletionId(&lexem,yytext,&position);

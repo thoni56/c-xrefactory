@@ -27,9 +27,9 @@ typedef struct {
 } MacroArgumentTableElement;
 
 typedef struct {
-    char *next;
+    char *read;
     char *begin;
-    char *end;
+    char *write;
     char *macroName;
     InputType inputType;
 } LexInput;
@@ -38,7 +38,7 @@ extern char *yytext;
 extern int macroStackIndex;
 extern LexInput currentInput;
 
-extern void fillLexInput(LexInput *lexInput, char *next, char *begin, char *end, char *macroName,
+extern void fillLexInput(LexInput *lexInput, char *read, char *begin, char *write, char *macroName,
                          InputType inputType);
 extern void initAllInputs(void);
 extern void initInput(FILE *file, EditorBuffer *buffer, char *prepend, char *fileName);

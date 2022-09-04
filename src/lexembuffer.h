@@ -12,9 +12,9 @@
 
 
 typedef struct {
-    char *read;				/* next to read */
+    char *read;                 /* next to read */
     char *begin;
-    char *write;				/* pointing *after* last valid lexem */
+    char *write;				/* where to write lexem */
     char lexemStream[LEXEM_BUFFER_SIZE];
     Position positionRing[LEX_POSITIONS_RING_SIZE];
     unsigned fileOffsetRing[LEX_POSITIONS_RING_SIZE];

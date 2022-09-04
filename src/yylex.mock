@@ -3,53 +3,53 @@
 #include <cgreen/mocks.h>
 
 LexInput currentInput;
-int macroStackIndex=0;
+int      macroStackIndex = 0;
 
-void fillLexInput(LexInput *lexInput, char *nextLexemP, char *beginningOfBuffer, char *endOfBuffer,
-                  char *macroName, InputType inputType) {
-    mock(lexInput, nextLexemP, endOfBuffer, beginningOfBuffer, macroName, inputType);
+void fillLexInput(LexInput *lexInput, char *read, char *begin, char *write, char *macroName,
+                  InputType inputType) {
+    mock(lexInput, read, begin, write, macroName, inputType);
 }
 
 void initAllInputs(void) {
-  mock();
+    mock();
 }
 
 void initInput(FILE *file, EditorBuffer *buffer, char *prefix, char *fileName) {
-  mock(file, buffer, prefix, fileName);
+    mock(file, buffer, prefix, fileName);
 }
 
 void addIncludeReference(int filenum, Position *pos) {
-  mock(filenum, pos);
+    mock(filenum, pos);
 }
 
 void addThisFileDefineIncludeReference(int filenum) {
-  mock(filenum);
+    mock(filenum);
 }
 
 void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend) {
-  mock(file, buff, name, prepend);
+    mock(file, buff, name, prepend);
 }
 
 void popInclude(void) {
-  mock();
+    mock();
 }
 
 void addMacroDefinedByOption(char *opt) {
-  mock(opt);
+    mock(opt);
 }
 
 char *placeIdent(void) {
-  return (char *) mock();
+    return (char *)mock();
 }
 
 int cachedInputPass(int cpoint, char **cfromto) {
-  return (int) mock(cpoint, cfromto);
+    return (int)mock(cpoint, cfromto);
 }
 
 Lexem cexp_yylex(void) {
-  return (int) mock();
+    return (int)mock();
 }
 
 Lexem yylex(void) {
-  return (int) mock();
+    return (int)mock();
 }
