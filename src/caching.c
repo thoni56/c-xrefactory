@@ -290,7 +290,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     currentFile.ifStack = cachePoint->ifStack;
     fillLexInput(&currentInput, cachePoint->nextLexemP, cache.lexemStream, readUntil, NULL, INPUT_CACHE);
     fillCache(&cache, cachingActive, cachePointIndex + 1, cachePoint->includeStackTop, cachePoint->nextLexemP,
-              currentInput.nextLexemP, currentInput.nextLexemP, currentInput.lexemStreamEnd);
+              currentInput.next, currentInput.next, currentInput.end);
     log_trace("finished recovering");
 }
 
@@ -343,7 +343,7 @@ void cacheInput(void) {
         LEAVE();
         return;
     }
-    size = currentInput.nextLexemP - cache.lexemStreamNext;
+    size = currentInput.next - cache.lexemStreamNext;
     if (cache.lexemStreamFree - cache.lexemStream + size >= LEXEM_STREAM_CACHE_SIZE) {
         cache.cachingActive = false;
         LEAVE();
@@ -353,7 +353,7 @@ void cacheInput(void) {
     if (currentInput.inputType != INPUT_CACHE)
         memcpy(cache.lexemStreamFree, cache.lexemStreamNext, size);
     cache.lexemStreamFree += size;
-    cache.lexemStreamNext = currentInput.nextLexemP;
+    cache.lexemStreamNext = currentInput.next;
     LEAVE();
 }
 

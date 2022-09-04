@@ -13,6 +13,7 @@
 
 typedef struct {
     char *next;				/* next to read */
+    char *begin;
     char *end;				/* pointing *after* last valid lexem */
     char lexemStream[LEXEM_BUFFER_SIZE];
     Position positionRing[LEX_POSITIONS_RING_SIZE];

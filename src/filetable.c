@@ -36,7 +36,7 @@ static void fillFileItem(FileItem *item, char *name) {
 
 static struct fileItem *newFileItem(char *normalizedFileName) {
     int              len;
-    char *           fname;
+    char            *fname;
     struct fileItem *createdFileItem;
     len = strlen(normalizedFileName);
     FT_ALLOCC(fname, len + 1, char);

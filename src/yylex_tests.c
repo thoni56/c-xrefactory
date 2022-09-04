@@ -115,7 +115,7 @@ Ensure(Yylex, can_process_include_directive) {
     currentFile.lexemBuffer.end  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
-    currentInput.lexemStreamEnd = currentInput.lexemStreamStart + strlen(lexem_stream);
+    currentInput.end = currentInput.begin + strlen(lexem_stream);
 
     expect(extractPathInto, will_set_contents_of_parameter(dest, "some/path", 10));
     always_expect(normalizeFileName, will_return("some/path/include.h"));
@@ -149,7 +149,7 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
     currentFile.lexemBuffer.end  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
-    currentInput.lexemStreamEnd = currentInput.lexemStreamStart + strlen(lexem_stream);
+    currentInput.end = currentInput.begin + strlen(lexem_stream);
 
     /* Setup include paths */
     options.includeDirs = newStringList("path1", newStringList("path2", NULL));
@@ -210,7 +210,7 @@ Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     currentFile.lexemBuffer.end  = currentFile.lexemBuffer.lexemStream + strlen(lexem_stream);
 
     initInput(NULL, NULL, "", NULL);
-    currentInput.lexemStreamEnd = currentInput.lexemStreamStart + strlen(lexem_stream);
+    currentInput.end = currentInput.begin + strlen(lexem_stream);
 
     /* Setup include paths */
     options.includeDirs = newStringList("path1", newStringList("path2", newStringList("path3", NULL)));
