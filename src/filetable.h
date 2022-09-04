@@ -50,18 +50,6 @@ typedef enum {
     FILE_IS_ARGUMENT
 } FileSource;
 
-#define HASH_TAB_NAME fileTable
-#define HASH_TAB_TYPE FileTable
-#define HASH_ELEM_TYPE FileItem
-
-#include "hashtab.th"
-
-#ifndef IN_FILETAB_C
-#undef HASH_TAB_NAME
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#endif
-
 #define NO_FILE_NAME "___None___"
 
 

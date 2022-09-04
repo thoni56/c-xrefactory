@@ -4,9 +4,16 @@
 #include "globals.h"            /* For cwd */
 #include "caching.h"            /* For checkFileModifiedTime() */
 
-#define IN_FILETAB_C
 #include "filetable.h"
 
+/* Define the hashtab: */
+#define HASH_TAB_NAME fileTable
+#define HASH_TAB_TYPE FileTable
+#define HASH_ELEM_TYPE FileItem
+
+#include "hashtab.th"
+
+/* Define hashtab functions: */
 #define HASH_FUN(elemp) hashFun(elemp->name)
 #define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->name,e2->name)==0)
 
