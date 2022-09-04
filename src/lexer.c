@@ -241,7 +241,7 @@ static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                 /* We want to overwrite with an IDENT_TO_COMPLETE,
                  * which we don't want to know how many bytes it
                  * takes, so we use ...WithPointer() which advances... */
-                putLexTokenWithPointer(IDENT_TO_COMPLETE, &backpatchP);
+                putLexTokenAt(IDENT_TO_COMPLETE, &backpatchP);
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in already written identifier */

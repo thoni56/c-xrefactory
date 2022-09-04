@@ -32,6 +32,7 @@ extern void *getLexemStreamWrite(LexemBuffer *lb);
 extern int fileNumberFrom(LexemBuffer *lb);
 extern int lineNumberFrom(LexemBuffer *lb);
 
+/* WRITE */
 extern void putLexInt(LexemBuffer *lb, int value);
 extern void putLexChar(LexemBuffer *lb, char ch);
 extern void putLexLines(LexemBuffer *lb, int lines);
@@ -43,16 +44,18 @@ extern void putLexPositionFields(LexemBuffer *lb, int file, int line, int col);
 extern void putLexPosition(LexemBuffer *lb, Position position);
 
 /* DEPRECATED - Writes at where writePointer points to and advances it */
-extern void putLexTokenWithPointer(Lexem lexem, char **writePointerP);
-extern void putLexPositionWithPointer(Position position, char **writePointerP);
-extern void putLexIntWithPointer(int integer, char **writePointerP);
+extern void putLexTokenAt(Lexem lexem, char **writePointerP);
+extern void putLexPositionAt(Position position, char **writePointerP);
+extern void putLexIntAt(int integer, char **writePointerP);
 
+/* READ */
+extern Position getLexPosition(LexemBuffer *lb);
 
-extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer);
-
-extern int getLexShort(char **readPointerP);
-extern Lexem getLexTokenAtPointer(char **readPointerP);
-extern int getLexInt(char **readPointerP);
+/* DEPRECATED - Reads where a readPointer points and advances it */
+extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer); /* TODO - remove readPointeP */
+extern Lexem getLexTokenAt(char **readPointerP);
+extern int getLexIntAt(char **readPointerP);
+extern int getLexShortAt(char **readPointer);
 extern Position getLexPositionAt(char **readPointerP);
 
 extern Lexem peekLexTokenAt(char *readPointer);
@@ -60,7 +63,7 @@ extern Lexem peekLexTokenAt(char *readPointer);
 /* TODO: cannot replace NextLexPosition macro with this yet, as the
  * only call has "bcc+1" as tmpcc. Need to understand that
  * better and refactor it first. */
-extern Position peekLexPosition(char **readPointerP);
+extern Position peekLexPositionAt(char **readPointerP);
 
 #define NextLexPosition(pos,tmpcc) {            \
         char *tmptmpcc = tmpcc;                 \

@@ -51,16 +51,16 @@ Ensure(LexemBuffer, can_shift_remaining_lexems) {
     assert_that(strncmp(lb.lexemStream, test_string, strlen(test_string)), is_equal_to(0));
 }
 
-extern void putLexShort(int shortValue, char **writePointer);
-extern int getLexShort(char **readPointer);
+extern void putLexShortAt(int shortValue, char **writePointer);
+extern int getLexShortAt(char **readPointer);
 Ensure(LexemBuffer, can_put_and_get_a_short) {
-    int         shortValue;
-    char       *expected_next_after_get;
+    int   shortValue;
+    char *expected_next_after_get;
 
-    putLexShort(433, &lb.write);
+    putLexShortAt(433, &lb.write);
     expected_next_after_get = lb.write;
 
-    shortValue  = getLexShort(&lb.read);
+    shortValue  = getLexShortAt(&lb.read);
 
     assert_that(lb.read, is_equal_to(expected_next_after_get));
     assert_that(shortValue, is_equal_to(433));
@@ -73,7 +73,7 @@ Ensure(LexemBuffer, can_put_and_get_a_token) {
     putLexToken(&lb, DOUBLE_CONSTANT);
     expected_next_after_get = lb.write;
 
-    lexem = getLexTokenAtPointer(&lb.read);
+    lexem = getLexTokenAt(&lb.read);
 
     assert_that(lb.read, is_equal_to(expected_next_after_get));
     assert_that(lexem, is_equal_to(DOUBLE_CONSTANT));
@@ -86,7 +86,7 @@ Ensure(LexemBuffer, can_put_and_get_an_int) {
     putLexInt(&lb, 34581);
     expected_next_after_get = lb.write;
 
-    integer     = getLexInt(&lb.read);
+    integer     = getLexIntAt(&lb.read);
 
     assert_that(lb.read, is_equal_to(expected_next_after_get));
     assert_that(integer, is_equal_to(34581));
@@ -135,8 +135,25 @@ Ensure(LexemBuffer, can_put_and_get_lines) {
     putLexLines(&lb, 13);
     pointer_after_put = lb.write;
 
-    assert_that(getLexTokenAtPointer(&lb.read), is_equal_to(LINE_TOKEN));
-    assert_that(getLexTokenAtPointer(&lb.read), is_equal_to(13));
+    assert_that(getLexTokenAt(&lb.read), is_equal_to(LINE_TOKEN));
+    assert_that(getLexTokenAt(&lb.read), is_equal_to(13));
+    assert_that(lb.read, is_equal_to(pointer_after_put));
+}
+
+Ensure(LexemBuffer, can_put_and_get_position_with_pointer) {
+    char    *pointer_after_put = NULL;
+    Position first_position  = {41, 42, 43};
+    Position second_position  = {44, 45, 46};
+    Position read_position;
+
+    putLexPositionFields(&lb, first_position.file, first_position.line, first_position.col);
+    putLexPosition(&lb, second_position);
+    pointer_after_put = lb.write;
+
+    read_position = getLexPositionAt(&lb.read);
+    assert_that(positionsAreEqual(read_position, first_position));
+    read_position = getLexPositionAt(&lb.read);
+    assert_that(positionsAreEqual(read_position, second_position));
     assert_that(lb.read, is_equal_to(pointer_after_put));
 }
 
@@ -150,7 +167,7 @@ Ensure(LexemBuffer, can_put_and_get_position) {
     putLexPosition(&lb, second_position);
     pointer_after_put = lb.write;
 
-    read_position = getLexPositionAt(&lb.read);
+    read_position = getLexPosition(&lb);
     assert_that(positionsAreEqual(read_position, first_position));
     read_position = getLexPositionAt(&lb.read);
     assert_that(positionsAreEqual(read_position, second_position));
@@ -198,13 +215,13 @@ Ensure(LexemBuffer, can_write_lexem_at_position_without_changing_pointer) {
     putLexTokenAtPointer(IDENTIFIER, writePointer);
 
     assert_that(writePointer, is_equal_to(savedWritePointer));
-    assert_that(getLexTokenAtPointer(&(lb.read)), is_equal_to(IDENTIFIER));
+    assert_that(getLexTokenAt(&(lb.read)), is_equal_to(IDENTIFIER));
 }
 
 Ensure(LexemBuffer, can_write_position_with_pointer) {
     Position position = { .file = 1, .line = 2, .col = 3 };
 
-    putLexPositionWithPointer(position, &(lb.write));
+    putLexPositionAt(position, &(lb.write));
 
     Position expected_position = getLexPositionAt(&(lb.read));
 
@@ -214,9 +231,9 @@ Ensure(LexemBuffer, can_write_position_with_pointer) {
 Ensure(LexemBuffer, can_write_int_with_pointer) {
     int integer = 144;
 
-    putLexIntWithPointer(integer, &(lb.write));
+    putLexIntAt(integer, &(lb.write));
 
-    int expected_integer = getLexInt(&(lb.read));
+    int expected_integer = getLexIntAt(&(lb.read));
 
     assert_that(expected_integer, is_equal_to(integer));
 }

@@ -32,7 +32,7 @@ void putLexChar(LexemBuffer *lb, char ch) {
 }
 
 /* Short */
-protected void putLexShort(int shortValue, char **writePointerP) {
+protected void putLexShortAt(int shortValue, char **writePointerP) {
     assert(shortValue <= 65535);
     **writePointerP = ((unsigned)shortValue)%256;
     (*writePointerP)++;
@@ -40,7 +40,7 @@ protected void putLexShort(int shortValue, char **writePointerP) {
     (*writePointerP)++;
 }
 
-int getLexShort(char **readPointerP) {
+int getLexShortAt(char **readPointerP) {
     int value = *(unsigned char*)(*readPointerP);
     (*readPointerP)++;
     value += 256 * *(unsigned char*)(*readPointerP);
@@ -57,21 +57,21 @@ static int peekLexShort(char **readPointerP) {
 
 /* Token */
 void putLexToken(LexemBuffer *lb, Lexem lexem) {
-    putLexShort(lexem, &(lb->write));
+    putLexShortAt(lexem, &(lb->write));
 }
 
 /* For backpatching */
 void putLexTokenAtPointer(Lexem lexem, void *writePointer) {
     char *pointer = (char *)writePointer;
-    putLexShort(lexem, &pointer);
+    putLexShortAt(lexem, &pointer);
 }
 
-Lexem getLexTokenAtPointer(char **readPointerP) {
-    return (Lexem)getLexShort(readPointerP);
+Lexem getLexTokenAt(char **readPointerP) {
+    return (Lexem)getLexShortAt(readPointerP);
 }
 
 Lexem getLexToken(LexemBuffer *lb) {
-    return (Lexem)getLexShort(&lb->read);
+    return (Lexem)getLexShortAt(&lb->read);
 }
 
 Lexem peekLexTokenAt(char *readPointer) {
@@ -89,7 +89,7 @@ void putLexInt(LexemBuffer *lb, int value) {
     *lb->write++ = tmp%256; tmp /= 256;
 }
 
-int getLexInt(char **readPointerP) {
+int getLexIntAt(char **readPointerP) {
     unsigned int value;
     value = **(unsigned char**)readPointerP;
     (*readPointerP)++;
@@ -179,24 +179,32 @@ Position getLexPositionAt(char **readPointerP) {
     return pos;
 }
 
-Position peekLexPosition(char **readPointerP) {
+Position getLexPosition(LexemBuffer *lb) {
+    Position pos;
+    pos.file = getLexCompacted(&lb->read);
+    pos.line = getLexCompacted(&lb->read);
+    pos.col = getLexCompacted(&lb->read);
+    return pos;
+}
+
+Position peekLexPositionAt(char **readPointerP) {
     char *pointer = *readPointerP;
     return getLexPositionAt(&pointer);
 }
 
 /* DEPRECATED - writing with pointer to pointer that it advances, a
  * lot of code in yylex.c still uses this bad interface */
-void putLexTokenWithPointer(Lexem lexem, char **writePointerP) {
-    putLexShort(lexem, writePointerP);
+void putLexTokenAt(Lexem lexem, char **writePointerP) {
+    putLexShortAt(lexem, writePointerP);
 }
 
-void putLexPositionWithPointer(Position position, char **writePointerP) {
+void putLexPositionAt(Position position, char **writePointerP) {
     putLexCompacted(position.file, writePointerP);
     putLexCompacted(position.line, writePointerP);
     putLexCompacted(position.col, writePointerP);
 }
 
-void putLexIntWithPointer(int integer, char **writePointerP) {
+void putLexIntAt(int integer, char **writePointerP) {
     unsigned tmp;
     tmp = integer;
     *(*writePointerP)++ = tmp%256; tmp /= 256;
