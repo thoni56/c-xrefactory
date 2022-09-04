@@ -202,7 +202,7 @@ static void includeListDeleteOutOfMemory(void) {
     }
 }
 
-static int cachedIncludedFilePass(int cpi) {
+static bool cachedIncludedFilePass(int cpi) {
     int mi,mt;
     assert (cpi > 0);
     mi = cache.cachePoints[cpi].includeStackTop;
@@ -210,9 +210,9 @@ static int cachedIncludedFilePass(int cpi) {
         mt = checkFileModifiedTime(cache.includeStack[i]);
         log_debug("mtime of %s eval to %d", getFileItem(cache.includeStack[i])->name, mt);
         if (mt == 0)
-            return 0;
+            return false;
     }
-    return 1;
+    return true;
 }
 
 static void recoverCxMemory(char *cxMemFreeBase) {
@@ -310,7 +310,7 @@ void recoverFromCache(void) {
         log_trace("trying to recover cache point %d", i);
         if (cachedInputPass(i, &readUntil) == 0)
             break;
-        if (cachedIncludedFilePass(i) == 0)
+        if (!cachedIncludedFilePass(i))
             break;
     }
     assert(i > 1);
