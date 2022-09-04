@@ -5,21 +5,8 @@
 
 #include "yylex.h"
 
-#define HASH_TAB_NAME macroArgumentTable
-#define HASH_TAB_TYPE MacroArgumentTable
-#define HASH_ELEM_TYPE MacroArgumentTableElement
-
-#include "hashtab.th"
-
-extern MacroArgumentTable macroArgumentTable;
-
-#ifndef _MACROARGUMENTTABLE_
-#undef HASH_TAB_NAME
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#endif
-
 extern void allocateMacroArgumentTable(int count);
+extern void resetMacroArgumentTable(void);
 extern MacroArgumentTableElement *getMacroArgument(int index);
 extern int addMacroArgument(MacroArgumentTableElement *element);
 extern bool isMemberInMacroArguments(MacroArgumentTableElement *element, int *foundIndex);

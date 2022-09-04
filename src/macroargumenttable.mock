@@ -3,67 +3,11 @@
 
 #include "macroargumenttable.h"
 
-MacroArgumentTable s_macroArgumentTable;
-
-/* Repeated from macroargumenttable.h since that undef's them */
-#define HASH_TAB_NAME macroArgumentTable
-#define HASH_ELEM_TYPE MacroArgumentTableElement
-
-/* Copied from hashtab.th to work here */
-#define HASH_TAB_TYPE struct HASH_TAB_NAME
-#define HASH_FUN_PREFIX HASH_TAB_NAME
-#define GLUE(a,b) a ## b
-#define CONCAT(a,b) GLUE(a,b)
-
-void CONCAT(HASH_FUN_PREFIX, Init)(		/* Init */
-            HASH_TAB_TYPE *table,
-            int size) {
-     (void)mock(table, size);
-}
-
-void CONCAT(HASH_FUN_PREFIX, NoAllocInit)(	/* No Allocation Init */
-            HASH_TAB_TYPE *table,
-            int size) {
-    (void)mock(table, size);
-}
-
-bool CONCAT(HASH_FUN_PREFIX, IsMember) (	/* IsMember */
-            HASH_TAB_TYPE *table,
-            HASH_ELEM_TYPE *element,
-            int *position) {
-    return (bool)mock(table, element, position);
-}
-
-int CONCAT(HASH_FUN_PREFIX, Add) (		/* Add, returns position */
-           HASH_TAB_TYPE *table,
-           HASH_ELEM_TYPE *element) {
-    return (int)mock(table, element);
-}
-
-void CONCAT(HASH_FUN_PREFIX, Map)(
-            HASH_TAB_TYPE *table,
-            void (*fun)(HASH_ELEM_TYPE *)) {
-    (void)mock(table, fun);
-}
-
-void CONCAT(HASH_FUN_PREFIX, Map2)(
-            HASH_TAB_TYPE *table,
-            void (*fun)(HASH_ELEM_TYPE *, void *),
-            void *a) {
-    (void)mock(table, fun, a);
-}
-
-void CONCAT(HASH_FUN_PREFIX, MapWithIndex)(
-            HASH_TAB_TYPE *table,
-            void (*fun)(HASH_ELEM_TYPE *, int)) {
-    (void)mock(table, fun);
-}
-
-#undef HASH_TAB_NAME
-#undef HASH_ELEM_TYPE
-#undef HASH_TAB_TYPE
-#undef HASH_FUN_PREFIX
 
 void allocateMacroArgumentTable(int count) {
-  mock();
+    mock();
+}
+
+void resetMacroArgumentTable(void) {
+    mock();
 }

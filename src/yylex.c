@@ -102,7 +102,7 @@ void initAllInputs(void) {
     includeStackPointer=0;
     macroStackIndex=0;
     isProcessingPreprocessorIf = false;
-    macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
+    resetMacroArgumentTable();
     ppMemoryIndex=0;
     s_olstring[0]=0;
     olstringFound = false;
@@ -735,8 +735,9 @@ protected void processDefineDirective(bool hasArguments) {
        PP == PreProcessor? */
     setGlobalFileDepNames(currentLexemStart, symbol, MEMORY_PP);
     macroName = symbol->name;
+
     /* process arguments */
-    macroArgumentTableNoAllocInit(&macroArgumentTable, macroArgumentTable.size);
+    resetMacroArgumentTable();
     int argumentCount = -1;
 
     if (hasArguments) {

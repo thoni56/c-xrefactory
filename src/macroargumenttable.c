@@ -1,7 +1,13 @@
-#include "yylex.h"
-#define _MACROARGUMENTTABLE_
 #include "macroargumenttable.h"
 
+/* Define the hashtab: */
+#define HASH_TAB_NAME macroArgumentTable
+#define HASH_TAB_TYPE MacroArgumentTable
+#define HASH_ELEM_TYPE MacroArgumentTableElement
+
+#include "hashtab.th"
+
+/* Define hashtab functions: */
 #include "hash.h"
 #include "commons.h"
 
@@ -10,11 +16,17 @@
 
 #include "hashtab.tc"
 
-MacroArgumentTable macroArgumentTable;
+static MacroArgumentTable macroArgumentTable;
+
 
 void allocateMacroArgumentTable(int count) {
     PPM_ALLOCC(macroArgumentTable.tab, MAX_MACRO_ARGS, MacroArgumentTableElement *);
     macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
+}
+
+void resetMacroArgumentTable(void) {
+    assert(macroArgumentTable.size > 0);
+    macroArgumentTableNoAllocInit(&macroArgumentTable, macroArgumentTable.size);
 }
 
 MacroArgumentTableElement *getMacroArgument(int index) {
