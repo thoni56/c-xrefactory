@@ -222,14 +222,14 @@ static void recoverCxMemory(char *cxMemFreeBase) {
 }
 
 static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int includeStackTop,
-                      char *lexemStreamFree, char *lexemStreamNext, char *nextLexemP, char *lexemStreamEnd) {
+                      char *lexemStreamFree, char *lexemStreamNext, char *read, char *write) {
     cache->cachingActive   = cachingActive;
     cache->cachePointIndex = cachePointIndex;
     cache->includeStackTop = includeStackTop;
     cache->lexemStreamFree = lexemStreamFree;
     cache->lexemStreamNext = lexemStreamNext;
-    cache->nextLexemP      = nextLexemP;
-    cache->lexemStreamEnd  = lexemStreamEnd;
+    cache->read   = read;
+    cache->write  = write;
 }
 
 // before allowing it, fix problem when modifying .xrefrc during run!!!!

@@ -28,8 +28,8 @@ typedef struct {
     char       lexemStream[LEXEM_STREAM_CACHE_SIZE]; /* lexems buffer */
     char      *lexemStreamFree;                      /* first free in lexemStream */
     char      *lexemStreamNext;                      /* first not yet cached lexem */
-    char      *nextLexemP;                        /* cc when input from cache */
-    char      *lexemStreamEnd;                       /* end of cc, when input ... */
+    char      *read;                        /* cc when input from cache */
+    char      *write;                       /* end of cc, when input ... */
 } Cache;
 
 extern Cache cache;

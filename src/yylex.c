@@ -130,7 +130,7 @@ void fillLexInput(LexInput *input, char *read, char *begin, char *write, char *m
 }
 
 static void setCacheConsistency(Cache *cache, LexInput *input) {
-    cache->nextLexemP = input->read;
+    cache->read = input->read;
 }
 static void setCurrentFileConsistency(FileDescriptor *file, LexInput *input) {
     file->lexemBuffer.read = input->read;
@@ -340,7 +340,7 @@ static Lexem getLexemSavePrevious(char **previousLexemP) {
             }
             setCurrentInputConsistency(&currentInput, &currentFile);
         } else {
-            cache.nextLexemP = cache.lexemStreamEnd = NULL;
+            cache.read = cache.write = NULL;
             cacheInput();
             cache.lexemStreamNext = currentFile.lexemBuffer.read;
             setCurrentInputConsistency(&currentInput, &currentFile);
@@ -466,8 +466,8 @@ void popInclude(void) {
     closeCharacterBuffer(&currentFile.characterBuffer);
     if (includeStackPointer != 0) {
         currentFile = includeStack[--includeStackPointer];	/* buffers are copied !!!!!!, burk */
-        if (includeStackPointer == 0 && cache.nextLexemP != NULL) {
-            fillLexInput(&currentInput, cache.nextLexemP, cache.lexemStream, cache.lexemStreamEnd, NULL,
+        if (includeStackPointer == 0 && cache.read != NULL) {
+            fillLexInput(&currentInput, cache.read, cache.lexemStream, cache.write, NULL,
                          INPUT_CACHE);
         } else {
             setCurrentInputConsistency(&currentInput, &currentFile);
