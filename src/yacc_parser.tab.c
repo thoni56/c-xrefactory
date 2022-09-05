@@ -2961,10 +2961,10 @@ yyreduce:
 case 1:
 #line 248 "yacc_parser.y"
 {
-            cache.cachingActive = false;    /* no caching in yacc_parser */
-            /* initialize locals*/
-            l_yaccUnion = NULL;
-            l_currentType = NULL;
+        cache.active = false; /* no caching in yacc_parser */
+        /* initialize locals*/
+        l_yaccUnion   = NULL;
+        l_currentType = NULL;
         }
 break;
 case 2:

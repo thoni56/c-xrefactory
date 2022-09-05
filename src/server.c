@@ -187,7 +187,7 @@ void initServer(int nargc, char **nargv) {
     processOptions(nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
     processFileArguments();
     if (options.serverOperation == OLO_EXTRACT)
-        cache.cachePointIndex = 2; // !!!! no cache, TODO why is 2 = no cache?
+        cache.index = 2; // !!!! no cache, TODO why is 2 = no cache?
     initCompletions(&collectedCompletions, 0, noPosition);
 }
 
@@ -308,7 +308,7 @@ void server(int argc, char **argv) {
         editorCloseAllBuffers();
         closeMainOutputFile();
         if (options.serverOperation == OLO_EXTRACT)
-            cache.cachePointIndex = 2; // !!!! no cache
+            cache.index = 2; // !!!! no cache
         if (options.xref2)
             ppcSynchronize();
         log_trace("Server: Request answered");

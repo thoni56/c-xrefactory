@@ -342,7 +342,7 @@ static Lexem getLexemSavePrevious(char **previousLexemP) {
         } else {
             cache.read = cache.write = NULL;
             cacheInput();
-            cache.lexemStreamNext = currentFile.lexemBuffer.read;
+            cache.nextToCache = currentFile.lexemBuffer.read;
             setCurrentInputConsistency(&currentInput, &currentFile);
         }
         if (previousLexemP != NULL)
@@ -370,7 +370,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *id, Position *pos) {
     assert(options.mode);
     if (options.mode == ServerMode) {
         if (lexem==IDENT_TO_COMPLETE) {
-            cache.cachingActive = false;
+            cache.active   = false;
             olstringServed = true;
             if (currentLanguage == LANG_JAVA) {
                 makeJavaCompletions(id, strlen(id), pos);
@@ -845,7 +845,7 @@ protected void processDefineDirective(bool hasArguments) {
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, cxRefPosition))) {
-                    cache.cachingActive = false;
+                    cache.active        = false;
                     olstringFound = true;
                     olstringInMacroBody = symbol->linkName;
                 }
@@ -1934,7 +1934,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
     int res;
 
     assert(cpoint > 0);
-    cto = cache.cachePoints[cpoint].nextLexemP;
+    cto = cache.points[cpoint].nextLexemP;
     cp = *cfrom;
     res = 1;
 

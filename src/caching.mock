@@ -29,8 +29,8 @@ void cacheInclude(int fileNum) {
   mock(fileNum);
 }
 
-void placeCachePoint(bool inputCacheFlag) {
-  mock(inputCacheFlag);
+void placeCachePoint(bool inputCaching) {
+  mock(inputCaching);
 }
 
 void recoverCachePointZero(void) {

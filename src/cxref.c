@@ -4210,7 +4210,7 @@ static void answerClassName(char *name) {
 
 static void pushSymbolByName(char *name) {
     OlcxReferences *rstack;
-    if (cache.cachePointIndex > 0) {
+    if (cache.index > 0) {
         int spass;
         spass = currentPass; currentPass=1;
         recoverCachePointZero();

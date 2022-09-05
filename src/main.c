@@ -448,7 +448,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         || strcmp(previousStandardOptionsSection, standardOptionsSectionName) != 0 /* is not equal */
         || previousStandardOptionsFileModificationTime != modifiedTime || previousLanguage != *outLanguage
         || strcmp(previousOnLineClassPath, options.classpath) != 0 /* is not equal */
-        || cache.cachePointIndex == 1                              /* some kind of reset was made */
+        || cache.index == 1                                        /* some kind of reset was made */
     ) {
         if (*firstPass) {
             initCaching();
@@ -499,11 +499,11 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
         initTokenNamesTables();
 
-        cache.cachingActive = true;
+        cache.active = true;
         placeCachePoint(false);
-        cache.cachingActive = false;
-        assert(cache.lexemStreamFree == cache.cachePoints[0].nextLexemP);
-        assert(cache.lexemStreamFree == cache.cachePoints[1].nextLexemP);
+        cache.active = false;
+        assert(cache.free == cache.points[0].nextLexemP);
+        assert(cache.free == cache.points[1].nextLexemP);
     } else {
         copyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */

@@ -202,14 +202,15 @@ static void includeListDeleteOutOfMemory(void) {
     }
 }
 
-static bool cachedIncludedFilePass(int cpi) {
-    int mi,mt;
-    assert (cpi > 0);
-    mi = cache.cachePoints[cpi].includeStackTop;
-    for (int i=cache.cachePoints[cpi-1].includeStackTop; i<mi; i++) {
-        mt = checkFileModifiedTime(cache.includeStack[i]);
-        log_debug("mtime of %s eval to %d", getFileItem(cache.includeStack[i])->name, mt);
-        if (mt == 0)
+static bool cachedIncludedFilePass(int index) {
+    int includeTop;
+    assert(index > 0);
+    includeTop = cache.points[index].includeStackTop;
+    for (int i = cache.points[index - 1].includeStackTop; i < includeTop; i++) {
+        bool fileIsCurrent = checkFileModifiedTime(cache.includeStack[i]);
+        log_debug("mtime of %s eval to %s", getFileItem(cache.includeStack[i])->name,
+                  fileIsCurrent ? "true" : "false");
+        if (!fileIsCurrent)
             return false;
     }
     return true;
@@ -221,13 +222,13 @@ static void recoverCxMemory(char *cxMemFreeBase) {
     mapOverReferenceTableWithIndex(cxrefTabDeleteOutOfMemory);
 }
 
-static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int includeStackTop,
-                      char *lexemStreamFree, char *lexemStreamNext, char *read, char *write) {
-    cache->cachingActive   = cachingActive;
-    cache->cachePointIndex = cachePointIndex;
+static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int includeStackTop, char *free,
+                      char *next, char *read, char *write) {
+    cache->active          = cachingActive;
+    cache->index           = cachePointIndex;
     cache->includeStackTop = includeStackTop;
-    cache->lexemStreamFree = lexemStreamFree;
-    cache->lexemStreamNext = lexemStreamNext;
+    cache->free            = free;
+    cache->nextToCache     = next;
     cache->read   = read;
     cache->write  = write;
 }
@@ -242,8 +243,8 @@ static bool canContinueCachingClasses() {
 }
 
 void recoverCachePointZero(void) {
-    ppmMemoryIndex = cache.cachePoints[0].ppmMemoryIndex;
-    recoverCachePoint(0, cache.cachePoints[0].nextLexemP, false);
+    ppmMemoryIndex = cache.points[0].ppmMemoryIndex;
+    recoverCachePoint(0, cache.points[0].nextLexemP, false);
 }
 
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
@@ -256,7 +257,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     CachePoint *cachePoint;
 
     log_trace("recovering cache point %d", cachePointIndex);
-    cachePoint = &cache.cachePoints[cachePointIndex];
+    cachePoint = &cache.points[cachePointIndex];
     if (!canContinueCachingClasses()) {
         ppmMemoryIndex = cachePoint->ppmMemoryIndex;
         if (CACHING_CLASSES)
@@ -302,11 +303,11 @@ void recoverFromCache(void) {
     int i;
     char *readUntil;
 
-    assert(cache.cachePointIndex >= 1);
-    cache.cachingActive = false;
+    assert(cache.index >= 1);
+    cache.active = false;
     log_debug("reading from cache");
-    readUntil = cache.cachePoints[0].nextLexemP;
-    for (i = 1; i < cache.cachePointIndex; i++) {
+    readUntil = cache.points[0].nextLexemP;
+    for (i = 1; i < cache.index; i++) {
         log_trace("trying to recover cache point %d", i);
         if (cachedInputPass(i, &readUntil) == 0)
             break;
@@ -322,43 +323,48 @@ void recoverFromCache(void) {
 void initCaching(void) {
     fillCache(&cache, true, 0, 0, cache.lexemStream, currentFile.lexemBuffer.read, NULL, NULL);
     placeCachePoint(false);
-    cache.cachingActive = false;
+    cache.active = false;
 }
 
 /* ****************************************************************** */
-/*        caching of input from 'cache.lexcc' to 'cInput.cc'          */
+/*        Caching of input from LexemBuffer to LexInput               */
 /* ****************************************************************** */
 
 void cacheInput(void) {
     int size;
 
     ENTER();
-    if (!cache.cachingActive) {
+    if (!cache.active) {
         log_trace("Caching is not active");
         LEAVE();
         return;
     }
     if (includeStackPointer != 0 || macroStackIndex != 0) {
-        log_trace("In include or macro");
+        log_trace("In include or macro, will not cache now");
         LEAVE();
         return;
     }
-    size = currentInput.read - cache.lexemStreamNext;
-    if (cache.lexemStreamFree - cache.lexemStream + size >= LEXEM_STREAM_CACHE_SIZE) {
-        cache.cachingActive = false;
+    /* How much needs to be cached? currentInput vs. cache?!? */
+    size = currentInput.read - cache.nextToCache;
+
+    /* Is there space enough */
+    if (cache.free - cache.lexemStream + size >= LEXEM_STREAM_CACHE_SIZE) {
+        cache.active = false;
         LEAVE();
         return;
     }
-    /* if from cache, don't copy on the same place */
+
+    /* Avoid copying if we are already reading from cached data */
     if (currentInput.inputType != INPUT_CACHE)
-        memcpy(cache.lexemStreamFree, cache.lexemStreamNext, size);
-    cache.lexemStreamFree += size;
-    cache.lexemStreamNext = currentInput.read;
+        /* Copy from next un-cached to the free area of the cache buffer */
+        memcpy(cache.free, cache.nextToCache, size);
+    cache.free += size;
+    cache.nextToCache = currentInput.read;
     LEAVE();
 }
 
 void cacheInclude(int fileNum) {
-    if (!cache.cachingActive)
+    if (!cache.active)
         return;
     log_debug("caching include of file %d: %s",
               cache.includeStackTop, getFileItem(fileNum)->name);
@@ -367,7 +373,7 @@ void cacheInclude(int fileNum) {
     cache.includeStack[cache.includeStackTop] = fileNum;
     cache.includeStackTop ++;
     if (cache.includeStackTop >= INCLUDE_STACK_CACHE_SIZE)
-        cache.cachingActive = false;
+        cache.active = false;
 }
 
 static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmMemoryIndex,
@@ -390,22 +396,22 @@ static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmM
 
 void placeCachePoint(bool inputCaching) {
     CachePoint *cachePoint;
-    if (!cache.cachingActive)
+    if (!cache.active)
         return;
     if (includeStackPointer != 0 || macroStackIndex != 0)
         return;
-    if (cache.cachePointIndex >= MAX_CACHE_POINTS) {
-        cache.cachingActive = false;
+    if (cache.index >= MAX_CACHE_POINTS) {
+        cache.active = false;
         return;
     }
     if (inputCaching)
         cacheInput();
-    if (!cache.cachingActive)
+    if (!cache.active)
         return;
-    cachePoint = &cache.cachePoints[cache.cachePointIndex];
-    log_debug("placing cache point %d", cache.cachePointIndex);
-    fillCachePoint(cachePoint, currentBlock, ppmMemoryIndex, cxMemory->index, mbMemoryIndex, cache.lexemStreamFree,
-                   cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth,
-                   currentFile.ifStack, javaStat, counters);
-    cache.cachePointIndex++;
+    cachePoint = &cache.points[cache.index];
+    log_debug("placing cache point %d", cache.index);
+    fillCachePoint(cachePoint, currentBlock, ppmMemoryIndex, cxMemory->index, mbMemoryIndex, cache.free,
+                   cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack,
+                   javaStat, counters);
+    cache.index++;
 }

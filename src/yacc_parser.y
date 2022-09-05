@@ -246,7 +246,7 @@ static int savedWorkMemoryIndex = 0;
 
 yaccfile
     : Start_block {
-            cache.cachingActive = false;    /* no caching in yacc_parser */
+            cache.active = false;    /* no caching in yacc_parser */
             // initialize locals
             l_yaccUnion = NULL;
             l_currentType = NULL;
