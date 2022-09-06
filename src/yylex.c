@@ -32,7 +32,7 @@
 #include "filetable.h"
 #include "log.h"
 
-static bool isProcessingPreprocessorIf = false;     /* flag for yylex, to not filter '\n' */
+static bool isProcessingPreprocessorIf; /* Flag for yylex, to not filter '\n' */
 
 
 
@@ -220,15 +220,16 @@ static void setCurrentFileInfoFor(char *fileName) {
 /*                             Init Reading                          */
 /* ***************************************************************** */
 
-// it is supposed that one of file or buffer is NULL
+/* Init input from file, editor buffer and/or prefix */
 void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileName) {
     int     prefixLength, bufferSize, offset;
     char	*bufferStart;
 
-    /* This can be called from various context where one or both are NULL, or we don't know which... */
+    /* This can be called from various context where one or both are
+     * NULL, and we don't know which... */
     prefixLength = strlen(prefix);
     if (editorBuffer != NULL) {
-        // read buffer
+        // Reading from buffer, prepare prefix
         assert(prefixLength < editorBuffer->allocation.allocatedFreePrefixSize);
         strncpy(editorBuffer->allocation.text-prefixLength, prefix, prefixLength);
         bufferStart = editorBuffer->allocation.text-prefixLength;
@@ -236,17 +237,19 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
         offset = editorBuffer->allocation.bufferSize;
         assert(bufferStart > editorBuffer->allocation.allocatedBlock);
     } else {
-        // read file
+        // Reading from file or just a prefix
         assert(prefixLength < CHARARACTER_BUFFER_SIZE);
         strcpy(currentFile.characterBuffer.chars, prefix);
         bufferStart = currentFile.characterBuffer.chars;
         bufferSize = prefixLength;
         offset = 0;
     }
+
     fillFileDescriptor(&currentFile, fileName, bufferStart, bufferSize, file, offset);
     setCurrentFileInfoFor(fileName);
     setCurrentInputConsistency(&currentInput, &currentFile);
-    isProcessingPreprocessorIf = false;				/* TODO: WTF??? */
+
+    isProcessingPreprocessorIf = false;
 }
 
 static void getAndSetOutPositionIfRequired(char **readPointerP, Position *outPosition) {

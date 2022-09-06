@@ -20,8 +20,8 @@ typedef enum {
 
 typedef struct {
     int   bufferSize;
-    char *text;
-    int   allocatedFreePrefixSize;
+    char *text;                 /* Where is the actual buffer? */
+    int   allocatedFreePrefixSize; /* How much space have we allocated *before* text? */
     char *allocatedBlock;
     int   allocatedIndex;
     int   allocatedSize;
