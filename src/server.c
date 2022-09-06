@@ -255,7 +255,7 @@ static void processFile(int argc, char **argv,
 void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass) {
     ENTER();
 
-    editorLoadAllOpenedBufferFiles();
+    loadAllOpenedEditorBuffers();
 
     if (requiresCreatingRefs(options.serverOperation))
         olcxPushEmptyStackItem(&sessionData.browserStack);
@@ -305,7 +305,7 @@ void server(int argc, char **argv) {
         }
         //& options.outputFileName = NULL;  // why this was here ???
         //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);
-        editorCloseAllBuffers();
+        closeAllEditorBuffers();
         closeMainOutputFile();
         if (options.serverOperation == OLO_EXTRACT)
             cache.index = 2; // !!!! no cache

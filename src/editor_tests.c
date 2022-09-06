@@ -52,7 +52,7 @@ Ensure(Editor, can_create_buffer_for_non_existing_file) {
     expect(addFileNameToFileTable, when(name, is_equal_to_string("non-existant.c")));
 
     // When...
-    EditorBuffer *buffer = editorFindFileCreate("non-existant.c");
+    EditorBuffer *buffer = findEditorBufferForFileOrCreate("non-existant.c");
 
     // Then...
     assert_that(buffer->name, is_equal_to_string("non-existant.c"));

@@ -2017,7 +2017,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
         // TODO, maybe do this also through allocated list of options
         // and serve them later ?
         //&sprintf(tmpBuff, "-preload %s %s\n", ttt, fromFile); ppcGenRecord(PPC_IGNORE, tmpBuff);
-        editorOpenBufferNoFileLoad(ttt, fromFile);
+        openEditorBufferNoFileLoad(ttt, fromFile);
     }
     else if (strcmp(argv[i], "-prune")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);

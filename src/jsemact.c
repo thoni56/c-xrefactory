@@ -252,7 +252,7 @@ static int specialFileNameCasesCheck(char *fname) {
     char				*ss;
     EditorBuffer		*buff;
     // first check if the file is from editor
-    buff = editorGetOpenedBuffer(fname);
+    buff = getOpenedEditorBuffer(fname);
     if (buff != NULL)
         return true;
     // there is only drive name before the first slash, copy it.
@@ -727,7 +727,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     for (int pass=1; pass<=2; pass++) {
         log_debug("[jsl] PASS %d through %s level %d", pass, fname, nestingDepth);
         file = NULL;
-        buffer = editorFindFile(fname);
+        buffer = findEditorBufferForFile(fname);
         if (buffer==NULL) {
             file = openFile(fname, "r");
             if (file==NULL) {

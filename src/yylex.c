@@ -512,7 +512,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
     if (includeType != '<') {
         strcpy(normalizedName, normalizeFileName(name, path));
         log_trace("trying to open %s", normalizedName);
-        editorBuffer = editorFindFile(normalizedName);
+        editorBuffer = findEditorBufferForFile(normalizedName);
         if (editorBuffer == NULL)
             file = openFile(normalizedName, "r");
     }
@@ -532,7 +532,7 @@ static bool openInclude(char includeType, char *name, char **fileName, bool is_i
             }
             strcpy(normalizedName + length, name);
             log_trace("trying to open '%s'", normalizedName);
-            editorBuffer = editorFindFile(normalizedName);
+            editorBuffer = findEditorBufferForFile(normalizedName);
             if (editorBuffer == NULL)
                 file = openFile(normalizedName, "r");
             if (editorBuffer != NULL || file != NULL)

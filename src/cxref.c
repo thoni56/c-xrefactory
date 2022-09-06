@@ -1624,7 +1624,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences, Position *cal
     if (options.referenceListWithoutSource) {
         ebuf = NULL;
     } else {
-        ebuf = editorFindFile(cofileName);
+        ebuf = findEditorBufferForFile(cofileName);
         if (ebuf==NULL) {
             if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];
