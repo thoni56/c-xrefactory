@@ -476,23 +476,27 @@ static void editorFreeTextSpace(char *space, int index) {
     editorMemory[index] = sp;
 }
 
+static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
+    assert(allocation->allocatedBlock[allocation->allocatedSize] == 0x3b);
+}
+
 static void editorFreeBuffer(EditorBufferList *list) {
     log_trace("freeing buffer %s==%s", list->buffer->name, list->buffer->fileName);
     if (list->buffer->fileName != list->buffer->name) {
         ED_FREE(list->buffer->fileName, strlen(list->buffer->fileName)+1);
     }
     ED_FREE(list->buffer->name, strlen(list->buffer->name)+1);
-    for (EditorMarker *m=list->buffer->markers; m!=NULL;) {
-        EditorMarker *next = m->next;
-        ED_FREE(m, sizeof(EditorMarker));
-        m = next;
+    for (EditorMarker *marker=list->buffer->markers; marker!=NULL;) {
+        EditorMarker *next = marker->next;
+        ED_FREE(marker, sizeof(EditorMarker));
+        marker = next;
     }
     if (list->buffer->textLoaded) {
         log_trace("freeing %d of size %d", list->buffer->allocation.allocatedBlock,
                   list->buffer->allocation.allocatedSize);
-        // check for magic
-        assert(list->buffer->allocation.allocatedBlock[list->buffer->allocation.allocatedSize] == 0x3b);
-        editorFreeTextSpace(list->buffer->allocation.allocatedBlock,list->buffer->allocation.allocatedIndex);
+        checkForMagicMarker(&list->buffer->allocation);
+        editorFreeTextSpace(list->buffer->allocation.allocatedBlock,
+                            list->buffer->allocation.allocatedIndex);
     }
     ED_FREE(list->buffer, sizeof(EditorBuffer));
     ED_FREE(list, sizeof(EditorBufferList));
