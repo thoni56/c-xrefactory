@@ -93,113 +93,113 @@ static EditorMemoryBlock *editorMemory[MAX_EDITOR_MEMORY_BLOCK];
         *d++ = *s;                              \
     }
 
-static void applyCrLfCrConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyCrLfCrConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
-static void applyCrLfConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyCrLfConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
-static void applyCrConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyCrConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_CR_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
-static void applyUtf8CrLfCrConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyUtf8CrLfCrConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
-static void applyUtf8CrLfConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyUtf8CrLfConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
-static void applyUtf8CrConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyUtf8CrConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
-static void applyUtf8Conversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyUtf8Conversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
-static void applyEucCrLfCrConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyEucCrLfCrConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
-static void applyEucCrLfConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyEucCrLfConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
-static void applyEucCrConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyEucCrConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
-static void applyEucConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applyEucConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
-static void applySjisCrLfCrConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applySjisCrLfCrConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
-static void applySjisCrLfConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applySjisCrLfConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
-static void applySjisCrConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applySjisCrConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
-static void applySjisConversion(EditorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
+static void applySjisConversion(EditorBuffer *buffer) {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buffer, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
-static void applyUtf16Conversion(EditorBuffer *buff) {
+static void applyUtf16Conversion(EditorBuffer *buffer) {
     unsigned char  *s, *d, *maxs;
     unsigned int cb, cb2;
     int little_endian;
     unsigned char *space;
 
-    space = (unsigned char *)buff->allocation.text;
-    maxs = space + buff->allocation.bufferSize;
+    space = (unsigned char *)buffer->allocation.text;
+    maxs = space + buffer->allocation.bufferSize;
     s = space;
     // determine endian first
     cb = (*s << 8) + *(s+1);
@@ -234,77 +234,76 @@ static void applyUtf16Conversion(EditorBuffer *buff) {
             }
         }
     }
-    buff->allocation.bufferSize = d - space;
+    buffer->allocation.bufferSize = d - space;
 }
 
-static bool bufferStartsWithUtf16Bom(EditorBuffer *buff) {
+static bool bufferStartsWithUtf16Bom(EditorBuffer *buffer) {
     unsigned char *s;
-    unsigned cb;
 
-    s = (unsigned char *)buff->allocation.text;
-    if (buff->allocation.bufferSize >= 2) {
-        cb = (*s << 8) + *(s+1);
+    s = (unsigned char *)buffer->allocation.text;
+    if (buffer->allocation.bufferSize >= 2) {
+        unsigned cb = (*s << 8) + *(s+1);
         if (cb == 0xfeff || cb == 0xfffe)
             return true;
     }
     return false;
 }
 
-static void performSimpleLineFeedConversion(EditorBuffer *buff) {
+static void performSimpleLineFeedConversion(EditorBuffer *buffer) {
     if ((options.eolConversion&CR_LF_EOL_CONVERSION)
         && (options.eolConversion & CR_EOL_CONVERSION)) {
-        applyCrLfCrConversion(buff);
+        applyCrLfCrConversion(buffer);
     } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-        applyCrLfConversion(buff);
+        applyCrLfConversion(buffer);
     } else if (options.eolConversion & CR_EOL_CONVERSION) {
-        applyCrConversion(buff);
+        applyCrConversion(buffer);
     }
 }
 
-static void performEncodingAdjustments(EditorBuffer *buff) {
+static void performEncodingAdjustments(EditorBuffer *buffer) {
     // do different loops for efficiency reasons
     if (options.fileEncoding == MULE_EUROPEAN) {
-        performSimpleLineFeedConversion(buff);
+        performSimpleLineFeedConversion(buffer);
     } else if (options.fileEncoding == MULE_EUC) {
         if ((options.eolConversion&CR_LF_EOL_CONVERSION)
             && (options.eolConversion & CR_EOL_CONVERSION)) {
-            applyEucCrLfCrConversion(buff);
+            applyEucCrLfCrConversion(buffer);
         } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-            applyEucCrLfConversion(buff);
+            applyEucCrLfConversion(buffer);
         } else if (options.eolConversion & CR_EOL_CONVERSION) {
-            applyEucCrConversion(buff);
+            applyEucCrConversion(buffer);
         } else {
-            applyEucConversion(buff);
+            applyEucConversion(buffer);
         }
     } else if (options.fileEncoding == MULE_SJIS) {
         if ((options.eolConversion&CR_LF_EOL_CONVERSION)
             && (options.eolConversion & CR_EOL_CONVERSION)) {
-            applySjisCrLfCrConversion(buff);
+            applySjisCrLfCrConversion(buffer);
         } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-            applySjisCrLfConversion(buff);
+            applySjisCrLfConversion(buffer);
         } else if (options.eolConversion & CR_EOL_CONVERSION) {
-            applySjisCrConversion(buff);
+            applySjisCrConversion(buffer);
         } else {
-            applySjisConversion(buff);
+            applySjisConversion(buffer);
         }
     } else {
         // default == utf
-        if ((options.fileEncoding != MULE_UTF_8 && bufferStartsWithUtf16Bom(buff))
+        if ((options.fileEncoding != MULE_UTF_8 && bufferStartsWithUtf16Bom(buffer))
             || options.fileEncoding == MULE_UTF_16 || options.fileEncoding == MULE_UTF_16LE
             || options.fileEncoding == MULE_UTF_16BE) {
-            applyUtf16Conversion(buff);
-            performSimpleLineFeedConversion(buff);
+            applyUtf16Conversion(buffer);
+            performSimpleLineFeedConversion(buffer);
         } else {
             // utf-8
             if ((options.eolConversion&CR_LF_EOL_CONVERSION)
                 && (options.eolConversion & CR_EOL_CONVERSION)) {
-                applyUtf8CrLfCrConversion(buff);
+                applyUtf8CrLfCrConversion(buffer);
             } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
-                applyUtf8CrLfConversion(buff);
+                applyUtf8CrLfConversion(buffer);
             } else if (options.eolConversion & CR_EOL_CONVERSION) {
-                applyUtf8CrConversion(buff);
+                applyUtf8CrConversion(buffer);
             } else {
-                applyUtf8Conversion(buff);
+                applyUtf8Conversion(buffer);
             }
         }
     }
@@ -532,10 +531,10 @@ static void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTi
         // this is possible, due to <CR><LF> conversion under MS-DOS
         buffer->allocation.bufferSize -= size;
         if (size < 0) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "File %s: read %d chars of %d", fname, bufferSize - size,
+            char tmpBuffer[TMP_BUFF_SIZE];
+            sprintf(tmpBuffer, "File %s: read %d chars of %d", fname, bufferSize - size,
                     bufferSize);
-            editorError(ERR_INTERNAL, tmpBuff);
+            editorError(ERR_INTERNAL, tmpBuffer);
         }
     }
     performEncodingAdjustments(buffer);
@@ -544,7 +543,7 @@ static void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTi
     buffer->textLoaded = true;
 }
 
-static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
+static void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
     int minSize, allocIndex, allocSize;
     char *space;
     minSize = size + EDITOR_ALLOCATION_RESERVE + EDITOR_FREE_PREFIX_SIZE;
@@ -563,7 +562,7 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *ff, int size) {
     } else {
         editorMemory[allocIndex] = editorMemory[allocIndex]->next;
     }
-    ff->allocation = (EditorBufferAllocationData){.bufferSize = size, .text = space+EDITOR_FREE_PREFIX_SIZE,
+    buffer->allocation = (EditorBufferAllocationData){.bufferSize = size, .text = space+EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedFreePrefixSize = EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedBlock = space, .allocatedIndex = allocIndex,
                                            .allocatedSize = allocSize};
@@ -613,9 +612,9 @@ static EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t mo
     return buffer;
 }
 
-static void setEditorBufferModified(EditorBuffer *buff) {
-    buff->modified = true;
-    buff->modifiedSinceLastQuasiSave = true;
+static void setEditorBufferModified(EditorBuffer *buffer) {
+    buffer->modified = true;
+    buffer->modifiedSinceLastQuasiSave = true;
 }
 
 EditorBuffer *getOpenedEditorBuffer(char *name) {
@@ -696,9 +695,9 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     fillEmptyEditorBuffer(&dd, buffer->name, 0, buffer->name);
     ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
     if (!editorBufferIsMember(&ddl, NULL, &memb)) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "Trying to rename non existing buffer %s", buffer->name);
-        errorMessage(ERR_INTERNAL, tmpBuff);
+        char tmpBuffer[TMP_BUFF_SIZE];
+        sprintf(tmpBuffer, "Trying to rename non existing buffer %s", buffer->name);
+        errorMessage(ERR_INTERNAL, tmpBuffer);
         return;
     }
     assert(memb->buffer == buffer);
@@ -779,59 +778,59 @@ EditorBuffer *findEditorBufferForFileOrCreate(char *name) {
     return buffer;
 }
 
-void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str,
+void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize, char *str,
                                  int strlength, EditorUndo **undo) {
     int nsize, oldsize, index, undosize, pattractor;
     char *text, *space, *undotext;
     EditorMarker *m;
     EditorUndo *uu;
 
-    assert(position >=0 && position <= buff->allocation.bufferSize);
+    assert(position >=0 && position <= buffer->allocation.bufferSize);
     assert(delsize >= 0);
     assert(strlength >= 0);
-    oldsize = buff->allocation.bufferSize;
+    oldsize = buffer->allocation.bufferSize;
     if (delsize+position > oldsize) {
         // deleting over end of buffer,
         // delete only until end of buffer
         delsize = oldsize - position;
     }
-    log_trace("replacing string in buffer %d (%s)", buff, buff->name);
+    log_trace("replacing string in buffer %d (%s)", buffer, buffer->name);
     nsize = oldsize + strlength - delsize;
     // prepare operation
-    if (nsize >= buff->allocation.allocatedSize - buff->allocation.allocatedFreePrefixSize) {
+    if (nsize >= buffer->allocation.allocatedSize - buffer->allocation.allocatedFreePrefixSize) {
         // resize buffer
-        log_trace("resizing %s from %d(%d) to %d", buff->name, buff->allocation.bufferSize,
-                  buff->allocation.allocatedSize, nsize);
-        text = buff->allocation.text;
-        space = buff->allocation.allocatedBlock; index = buff->allocation.allocatedIndex;
-        allocNewEditorBufferTextSpace(buff, nsize);
-        memcpy(buff->allocation.text, text, oldsize);
-        buff->allocation.bufferSize = oldsize;
+        log_trace("resizing %s from %d(%d) to %d", buffer->name, buffer->allocation.bufferSize,
+                  buffer->allocation.allocatedSize, nsize);
+        text = buffer->allocation.text;
+        space = buffer->allocation.allocatedBlock; index = buffer->allocation.allocatedIndex;
+        allocNewEditorBufferTextSpace(buffer, nsize);
+        memcpy(buffer->allocation.text, text, oldsize);
+        buffer->allocation.bufferSize = oldsize;
         freeTextSpace(space, index);
     }
-    assert(nsize < buff->allocation.allocatedSize - buff->allocation.allocatedFreePrefixSize);
+    assert(nsize < buffer->allocation.allocatedSize - buffer->allocation.allocatedFreePrefixSize);
     if (undo!=NULL) {
         // note undo information
         undosize = strlength;
         assert(delsize >= 0);
         // O.K. allocate also 0 at the end
         ED_ALLOCC(undotext, delsize+1, char);
-        memcpy(undotext, buff->allocation.text+position, delsize);
+        memcpy(undotext, buffer->allocation.text+position, delsize);
         undotext[delsize]=0;
-        uu = newEditorUndoReplace(buff, position, undosize, delsize, undotext, *undo);
+        uu = newEditorUndoReplace(buffer, position, undosize, delsize, undotext, *undo);
         *undo = uu;
     }
     // edit text
-    memmove(buff->allocation.text+position+strlength, buff->allocation.text+position+delsize,
-            buff->allocation.bufferSize - position - delsize);
-    memcpy(buff->allocation.text+position, str, strlength);
-    buff->allocation.bufferSize = buff->allocation.bufferSize - delsize + strlength;
-    //&sprintf(tmpBuff,"setting buffersize of  %s to %d\n", buff->name, buff->allocation.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(communicationChannel);
+    memmove(buffer->allocation.text+position+strlength, buffer->allocation.text+position+delsize,
+            buffer->allocation.bufferSize - position - delsize);
+    memcpy(buffer->allocation.text+position, str, strlength);
+    buffer->allocation.bufferSize = buffer->allocation.bufferSize - delsize + strlength;
+    //&sprintf(tmpBuffer,"setting buffersize of  %s to %d\n", buffer->name, buffer->allocation.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuffer);fflush(communicationChannel);
     // update markers
     if (delsize > strlength) {
         if (strlength > 0) pattractor = position + strlength - 1;
         else pattractor = position + strlength;
-        for(m=buff->markers; m!=NULL; m=m->next) {
+        for(m=buffer->markers; m!=NULL; m=m->next) {
             if (m->offset >= position + strlength) {
                 if (m->offset < position+delsize) {
                     m->offset = pattractor;
@@ -841,13 +840,13 @@ void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, 
             }
         }
     } else {
-        for(m=buff->markers; m!=NULL; m=m->next) {
+        for(m=buffer->markers; m!=NULL; m=m->next) {
             if (m->offset >= position + delsize) {
                 m->offset = m->offset - delsize + strlength;
             }
         }
     }
-    setEditorBufferModified(buff);
+    setEditorBufferModified(buffer);
 }
 
 void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size,
@@ -903,26 +902,6 @@ void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size,
         *undo = newEditorUndoMove(db, src->offset, off2-off1, sb, undodoffset, *undo);
     }
 }
-
-#if 0
-void editorDumpBuffer(EditorBuffer *buff) {
-    /* TODO: Should really put this in log() */
-    for (int i=0; i<buff->allocation.bufferSize; i++) {
-        putc(buff->allocation.text[i], errOut);
-    }
-}
-
-void editorDumpBuffers(void) {
-    log_trace("[editorDumpBuffers] start");
-    for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
-        for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
-            log_trace("%d : %s==%s, %d", i, ll->buffer->name, ll->buffer->fileName,
-                      ll->buffer->textLoaded);
-        }
-    }
-    log_trace("[editorDumpBuffers] end");
-}
-#endif
 
 static void quasiSaveEditorBuffer(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = false;
@@ -1231,6 +1210,24 @@ void freeEditorMarkersAndMarkerList(EditorMarkerList *occs) {
 }
 
 #if 0
+void editorDumpBuffer(EditorBuffer *buff) {
+    /* TODO: Should really put this in log() */
+    for (int i=0; i<buff->allocation.bufferSize; i++) {
+        putc(buff->allocation.text[i], errOut);
+    }
+}
+
+void editorDumpBuffers(void) {
+    log_trace("[editorDumpBuffers] start");
+    for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
+        for (EditorBufferList *ll = getEditorBuffer(i); ll != NULL; ll = ll->next) {
+            log_trace("%d : %s==%s, %d", i, ll->buffer->name, ll->buffer->fileName,
+                      ll->buffer->textLoaded);
+        }
+    }
+    log_trace("[editorDumpBuffers] end");
+}
+
 void editorDumpMarker(EditorMarker *mm) {
     char tmpBuff[TMP_BUFF_SIZE];
 
@@ -1493,7 +1490,7 @@ int editorMapOnNonexistantFiles(char *dirname,
     bl   = computeListOfAllEditorBuffers();
     LIST_MERGE_SORT(EditorBufferList, bl, editorBufferNameLess);
     ll = bl;
-    //&sprintf(tmpBuff, "ENTER!!!"); ppcGenRecord(PPC_IGNORE,tmpBuff);
+    //&sprintf(tmpBuffer, "ENTER!!!"); ppcGenRecord(PPC_IGNORE,tmpBuffer);
     while(ll!=NULL) {
         if (filenameCompare(ll->buffer->name, dirname, dlen)==0
             && (ll->buffer->name[dlen]=='/' || ll->buffer->name[dlen]=='\\')) {
@@ -1515,7 +1512,7 @@ int editorMapOnNonexistantFiles(char *dirname,
             // Only map on nonexistant files
             if (!fileExists(ll->buffer->name)) {
                 // get file name
-                //&sprintf(tmpBuff, "MAPPING %s as %s in %s", ll->buffer->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuff);
+                //&sprintf(tmpBuffer, "MAPPING %s as %s in %s", ll->buffer->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuffer);
                 (*fun)(fname, a1, a2, a3, a4, a5);
                 res = 1;
                 // skip all files in the same directory
@@ -1525,7 +1522,7 @@ int editorMapOnNonexistantFiles(char *dirname,
                 while (ll!=NULL
                        && filenameCompare(ll->buffer->name, lastMapped, lastMappedLen)==0
                        && (ll->buffer->name[lastMappedLen]=='/' || ll->buffer->name[lastMappedLen]=='\\')) {
-                    //&sprintf(tmpBuff, "SKIPPING %s", ll->buffer->name); ppcGenRecord(PPC_IGNORE,tmpBuff);
+                    //&sprintf(tmpBuffer, "SKIPPING %s", ll->buffer->name); ppcGenRecord(PPC_IGNORE,tmpBuffer);
                     ll = ll->next;
                 }
             } else {
@@ -1536,7 +1533,7 @@ int editorMapOnNonexistantFiles(char *dirname,
         }
     }
     freeEditorBufferListButNotBuffers(bl);
-    //&sprintf(tmpBuff, "QUIT!!!"); ppcGenRecord(PPC_IGNORE,tmpBuff);
+    //&sprintf(tmpBuffer, "QUIT!!!"); ppcGenRecord(PPC_IGNORE,tmpBuffer);
     return res;
 }
 
