@@ -456,7 +456,7 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     if (includeStackPointer+1 >= INCLUDE_STACK_SIZE) {
         FATAL_ERROR(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
     }
-    includeStackPointer ++;
+    includeStackPointer++;
     initInput(file, buffer, prepend, name);
     cacheInclude(currentFile.characterBuffer.fileNumber);
 }
@@ -634,7 +634,7 @@ static void setMacroArgumentName(MacroArgumentTableElement *arg, void *at) {
 static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
                                                     Position *parpos1,
                                                     Position *pos, Position *parpos2,
-                                                    int final) {
+                                                    bool final) {
     if ((options.serverOperation == OLO_GOTO_PARAM_NAME || options.serverOperation == OLO_GET_PARAM_COORDINATES)
         && positionsAreEqual(*macpos, cxRefPosition)) {
         if (final) {
@@ -794,7 +794,7 @@ protected void processDefineDirective(bool hasArguments) {
                 if (!ellipsis) {
                     addTrivialCxReference(getMacroArgument(argumentIndex)->linkName, TypeMacroArg,StorageDefault,
                                           position, UsageDefined);
-                    handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &position, parpos2, 0);
+                    handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &position, parpos2, false);
                 }
                 if (lexem == ELLIPSIS) {
                     lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
@@ -809,10 +809,10 @@ protected void processDefineDirective(bool hasArguments) {
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
             }
-            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, 1);
+            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, true);
         } else {
             getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
-            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, 1);
+            handleMacroDefinitionParameterPositions(argumentCount, &macroPosition, parpos1, &noPosition, parpos2, true);
         }
     }
 
