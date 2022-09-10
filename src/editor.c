@@ -1289,42 +1289,49 @@ void editorDumpUndoList(EditorUndo *undo) {
 }
 #endif
 
+static EditorMarkerList *concatEditorMarkerList(EditorMarkerList **diff, EditorMarkerList *list) {
+    EditorMarker     *marker = createNewEditorMarker(list->marker->buffer, list->marker->offset);
+    EditorMarkerList *l;
+
+    ED_ALLOC(l, EditorMarkerList);
+    *l    = (EditorMarkerList){.marker = marker, .usage = list->usage, .next = *diff};
+    *diff = l;
+    list  = list->next;
+
+    return list;
+}
+
 void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2,
                               EditorMarkerList **diff1, EditorMarkerList **diff2) {
-    EditorMarkerList *l1, *l2, *ll;
-    EditorMarker *m;
+    EditorMarkerList *l1, *l2;
+
     LIST_MERGE_SORT(EditorMarkerList, *list1, editorMarkerListLess);
     LIST_MERGE_SORT(EditorMarkerList, *list2, editorMarkerListLess);
     *diff1 = *diff2 = NULL;
     for(l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
         if (editorMarkerListLess(l1, l2)) {
-            m = createNewEditorMarker(l1->marker->buffer, l1->marker->offset);
-            ED_ALLOC(ll, EditorMarkerList);
-            *ll = (EditorMarkerList){.marker = m, .usage = l1->usage, .next = *diff1};
-            *diff1 = ll;
+            EditorMarker *marker = createNewEditorMarker(l1->marker->buffer, l1->marker->offset);
+            EditorMarkerList *l;
+            ED_ALLOC(l, EditorMarkerList);
+            *l = (EditorMarkerList){.marker = marker, .usage = l1->usage, .next = *diff1};
+            *diff1 = l;
             l1 = l1->next;
         } else if (editorMarkerListLess(l2, l1)) {
-            m = createNewEditorMarker(l2->marker->buffer, l2->marker->offset);
-            ED_ALLOC(ll, EditorMarkerList);
-            *ll = (EditorMarkerList){.marker = m, .usage = l2->usage, .next = *diff2};
-            *diff2 = ll;
-            l2 = l2->next;
+            l2 = concatEditorMarkerList(diff2, l2);
         } else {
-            l1 = l1->next; l2 = l2->next;
+            l1 = l1->next;
+            l2 = l2->next;
         }
     }
     while (l1 != NULL) {
-        m = createNewEditorMarker(l1->marker->buffer, l1->marker->offset);
-        ED_ALLOC(ll, EditorMarkerList);
-        *ll = (EditorMarkerList){.marker = m, .usage = l1->usage, .next = *diff1};
-        *diff1 = ll;
-        l1 = l1->next;
+        l1 = concatEditorMarkerList(diff1, l1);
     }
     while (l2 != NULL) {
-        m = createNewEditorMarker(l2->marker->buffer, l2->marker->offset);
-        ED_ALLOC(ll, EditorMarkerList);
-        *ll = (EditorMarkerList){.marker = m, .usage = l2->usage, .next = *diff2};
-        *diff2 = ll;
+        EditorMarker *marker = createNewEditorMarker(l2->marker->buffer, l2->marker->offset);
+        EditorMarkerList *l;
+        ED_ALLOC(l, EditorMarkerList);
+        *l = (EditorMarkerList){.marker = marker, .usage = l2->usage, .next = *diff2};
+        *diff2 = l;
         l2 = l2->next;
     }
 }
@@ -1366,8 +1373,8 @@ void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
                                             EditorRegionList **inRegions,
                                             EditorMarkerList **outInsiders,
                                             EditorMarkerList **outOutsiders) {
-    EditorMarkerList *mm, *nn;
-    EditorRegionList *rr;
+    EditorMarkerList *markers1, *markers2;
+    EditorRegionList *regions;
 
     *outInsiders = NULL;
     *outOutsiders = NULL;
@@ -1381,21 +1388,22 @@ void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
     //&editorDumpRegionList(*inRegions);
     //&editorDumpMarkerList(*inMarkers);
 
-    rr = *inRegions;
-    mm= *inMarkers;
-    while (mm!=NULL) {
-        nn = mm->next;
-        while (rr!=NULL && editorMarkerGreater(rr->region.begin, mm->marker)) rr = rr->next;
-        if (rr!=NULL && editorMarkerGreater(rr->region.end, mm->marker)) {
+    regions = *inRegions;
+    markers1= *inMarkers;
+    while (markers1!=NULL) {
+        markers2 = markers1->next;
+        while (regions!=NULL && editorMarkerGreater(regions->region.begin, markers1->marker))
+            regions = regions->next;
+        if (regions!=NULL && editorMarkerGreater(regions->region.end, markers1->marker)) {
             // is inside
-            mm->next = *outInsiders;
-            *outInsiders = mm;
+            markers1->next = *outInsiders;
+            *outInsiders = markers1;
         } else {
             // is outside
-            mm->next = *outOutsiders;
-            *outOutsiders = mm;
+            markers1->next = *outOutsiders;
+            *outOutsiders = markers1;
         }
-        mm = nn;
+        markers1 = markers2;
     }
 
     *inMarkers = NULL;
