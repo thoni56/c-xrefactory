@@ -34,32 +34,30 @@
 
 static bool isProcessingPreprocessorIf; /* Flag for yylex, to not filter '\n' */
 
-
-
 static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position position) {
     uniyylval->ast_id.data = &yyIdBuffer[yyIdBufferIndex];
-    yyIdBufferIndex ++; yyIdBufferIndex %= (YYIDBUFFER_SIZE);
+    yyIdBufferIndex++;
+    yyIdBufferIndex %= (YYIDBUFFER_SIZE);
     fillId(uniyylval->ast_id.data, name, symbol, position);
-    yytext = name;
+    yytext              = name;
     uniyylval->ast_id.b = position;
     uniyylval->ast_id.e = position;
     uniyylval->ast_id.e.col += strlen(yytext);
 }
 
 static void setYylvalsForPosition(Position position, int length) {
-        uniyylval->ast_position.data = position;
-        uniyylval->ast_position.b = position;
-        uniyylval->ast_position.e = position;
-        uniyylval->ast_position.e.col += length;
+    uniyylval->ast_position.data = position;
+    uniyylval->ast_position.b    = position;
+    uniyylval->ast_position.e    = position;
+    uniyylval->ast_position.e.col += length;
 }
 
 static void setYylvalsForInteger(int val, Position position, int length) {
     uniyylval->ast_integer.data = val;
-    uniyylval->ast_integer.b = position;
-    uniyylval->ast_integer.e = position;
+    uniyylval->ast_integer.b    = position;
+    uniyylval->ast_integer.e    = position;
     uniyylval->ast_integer.e.col += length;
 }
-
 
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
 
@@ -1692,61 +1690,70 @@ static Lexem getLexSkippingLines(char **previousLexemP, int *lineNumberP,
 static void getActualMacroArgument(
     char *previousLexem,
     Lexem *inOutLexem,
-    Position *mpos,
-    Position **positionOfFirstParenthesis,
-    Position **positionOfSecondParenthesis,
+    Position *macroPosition,
+    Position **firstParenthesisPosition,
+    Position **secondParenthesisPosition,
     LexInput *actualArgumentsInput,
     MacroBody *macroBody,
     int actualArgumentIndex
 ) {
-    int poffset;
-    int depth;
+    int   offset;
+    int   depth;
     Lexem lexem;
-    char *buf;
     char *bcc;
-    int bufferSize;
+    char *buffer;
+    int   bufferSize;
 
-    lexem = *inOutLexem;
+    lexem      = *inOutLexem;
     bufferSize = MACRO_ARGUMENTS_BUFFER_SIZE;
-    depth = 0;
-    PPM_ALLOCC(buf, bufferSize+MAX_LEXEM_SIZE, char);
-    bcc = buf;
+    depth      = 0;
+    PPM_ALLOCC(buffer, bufferSize + MAX_LEXEM_SIZE, char);
+    bcc = buffer;
     /* if lastArgument, collect everything there */
-    poffset = 0;
-    while (((lexem != ',' || actualArgumentIndex+1==macroBody->argCount) && lexem != ')') || depth > 0) {
+    offset = 0;
+    while (((lexem != ',' || actualArgumentIndex + 1 == macroBody->argCount) && lexem != ')')
+           || depth > 0) {
         // The following should be equivalent to the loop condition:
         //& if (lexem == ')' && depth <= 0) break;
         //& if (lexem == ',' && depth <= 0 && ! lastArgument) break;
-        if (lexem == '(') depth ++;
-        if (lexem == ')') depth --;
-        for(;previousLexem < currentInput.read; previousLexem++, bcc++)
+        if (lexem == '(')
+            depth++;
+        if (lexem == ')')
+            depth--;
+        for (; previousLexem < currentInput.read; previousLexem++, bcc++)
             *bcc = *previousLexem;
-        if (bcc-buf >= bufferSize) {
+        if (bcc - buffer >= bufferSize) {
             bufferSize += MACRO_ARGUMENTS_BUFFER_SIZE;
-            PPM_REALLOCC(buf, bufferSize+MAX_LEXEM_SIZE, char,
-                    bufferSize+MAX_LEXEM_SIZE-MACRO_ARGUMENTS_BUFFER_SIZE);
+            PPM_REALLOCC(buffer, bufferSize + MAX_LEXEM_SIZE, char,
+                         bufferSize + MAX_LEXEM_SIZE - MACRO_ARGUMENTS_BUFFER_SIZE);
         }
         lexem = getLexSkippingLines(&previousLexem, NULL, NULL, NULL, NULL);
-        ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
+        ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile,
+                                endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, (*positionOfSecondParenthesis),
-                                    NULL, macroStackIndex == 0);
+        getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL,
+                                    *secondParenthesisPosition, NULL, macroStackIndex == 0);
         if ((lexem == ',' || lexem == ')') && depth == 0) {
-            poffset ++;
-            handleMacroUsageParameterPositions(actualArgumentIndex+poffset, mpos, *positionOfFirstParenthesis, *positionOfSecondParenthesis, 0);
-            **positionOfFirstParenthesis= **positionOfSecondParenthesis;
+            offset++;
+            handleMacroUsageParameterPositions(actualArgumentIndex + offset, macroPosition,
+                                               *firstParenthesisPosition,
+                                               *secondParenthesisPosition, 0);
+            **firstParenthesisPosition = **secondParenthesisPosition;
         }
     }
-    if (0) {  /* skip the error message when finished normally */
+    goto end;
+
 endOfFile:;
 endOfMacroArgument:;
-        assert(options.mode);
-        if (options.mode!=ServerMode) {
-            warningMessage(ERR_ST,"[getActMacroArgument] unterminated macro call");
-        }
+    assert(options.mode);
+    if (options.mode != ServerMode) {
+        warningMessage(ERR_ST, "[getActMacroArgument] unterminated macro call");
     }
-    PPM_REALLOCC(buf, bcc-buf, char, bufferSize+MAX_LEXEM_SIZE);
-    fillLexInput(actualArgumentsInput, buf, buf, bcc, currentInput.macroName, INPUT_NORMAL);
+
+end:
+    PPM_REALLOCC(buffer, bcc - buffer, char, bufferSize + MAX_LEXEM_SIZE);
+    fillLexInput(actualArgumentsInput, buffer, buffer, bcc, currentInput.macroName,
+                 INPUT_NORMAL);
     *inOutLexem = lexem;
     return;
 }
