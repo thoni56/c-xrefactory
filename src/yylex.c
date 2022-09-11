@@ -1331,20 +1331,21 @@ endOfFile:
 /* *********************   MACRO CALL EXPANSION *********************** */
 /* ******************************************************************** */
 
-#define ExpandPreprocessorBufferIfOverflow(bcc,buf,size) {              \
-        if (bcc >= buf+size) {                                          \
-            size += MACRO_BODY_BUFFER_SIZE;                             \
-            PPM_REALLOCC(buf,size+MAX_LEXEM_SIZE,char,                  \
-                         size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);   \
-        }                                                               \
+static void expandPreprocessorBufferIfOverflow(char *bcc, char *buf, int *size) {
+        if (bcc >= buf+*size) {
+            *size += MACRO_BODY_BUFFER_SIZE;
+            PPM_REALLOCC(buf, *size+MAX_LEXEM_SIZE, char,
+                         *size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);
+        }
     }
-#define ExpandMacroBodyBufferIfOverflow(bcc,len,buf,size) {             \
-        while (bcc + len >= buf + size) {                               \
-            size += MACRO_BODY_BUFFER_SIZE;                             \
-            MB_REALLOCC(buf,size+MAX_LEXEM_SIZE,char,                   \
-                        size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);    \
-        }                                                               \
+
+static void expandMacroBodyBufferIfOverflow(char *bcc, int len, char *buf, int *size) {
+    while (bcc + len >= buf + *size) {
+        *size += MACRO_BODY_BUFFER_SIZE;
+        MB_REALLOCC(buf, *size+MAX_LEXEM_SIZE, char,
+                    *size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);
     }
+}
 
 /* *********************************************************** */
 
@@ -1380,14 +1381,14 @@ static void expandMacroArgument(LexInput *argumentBuffer) {
     Position position;
     char *buf;
     char *bcc;
-    int bsize;
+    int bufferSize;
 
-    bsize = MACRO_BODY_BUFFER_SIZE;
+    bufferSize = MACRO_BODY_BUFFER_SIZE;
 
     prependMacroInput(argumentBuffer);
 
     currentInput.inputType = INPUT_MACRO_ARGUMENT;
-    PPM_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
+    PPM_ALLOCC(buf,bufferSize+MAX_LEXEM_SIZE,char);
     bcc = buf;
 
     for(;;) {
@@ -1424,11 +1425,11 @@ static void expandMacroArgument(LexInput *argumentBuffer) {
                 putLexTokenAt(IDENT_NO_CPP_EXPAND, &tbcc);
         }
         bcc += length;
-        ExpandPreprocessorBufferIfOverflow(bcc, buf, bsize);
+        expandPreprocessorBufferIfOverflow(bcc, buf, &bufferSize);
     }
 endOfMacroArgument:
     currentInput = macroInputStack[--macroStackIndex];
-    PPM_REALLOCC(buf, bcc-buf, char, bsize+MAX_LEXEM_SIZE);
+    PPM_REALLOCC(buf, bcc-buf, char, bufferSize+MAX_LEXEM_SIZE);
     fillLexInput(argumentBuffer, buf, buf, bcc, NULL, INPUT_NORMAL);
     return;
 endOfFile:
@@ -1475,7 +1476,7 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
             int lexemLength = currentInputLexemP-lexemStart;
             memcpy(currentBufferP, lexemStart, lexemLength);
             currentBufferP += lexemLength;
-            ExpandPreprocessorBufferIfOverflow(currentBufferP,buffer,bufferSize);
+            expandPreprocessorBufferIfOverflow(currentBufferP, buffer, &bufferSize);
         }
     }
 
@@ -1532,16 +1533,17 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
             putLexPositionAt(position, &currentBufferP);
         }
     }
-    ExpandPreprocessorBufferIfOverflow(currentBufferP, buffer, bufferSize);
+    expandPreprocessorBufferIfOverflow(currentBufferP, buffer, &bufferSize);
     while (currentInputLexemP < endOfInputLexems) {
         char *lexemStart   = currentInputLexemP;
         Lexem lexem = getLexTokenAt(&currentInputLexemP);
         getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, NULL, NULL, NULL, false);
         lastBufferP = currentBufferP;
         assert(currentInputLexemP >= lexemStart);
-        memcpy(currentBufferP, lexemStart, currentInputLexemP - lexemStart);
-        currentBufferP += currentInputLexemP - lexemStart;
-        ExpandPreprocessorBufferIfOverflow(currentBufferP, buffer, bufferSize);
+        int lexemLength = currentInputLexemP - lexemStart;
+        memcpy(currentBufferP, lexemStart, lexemLength);
+        currentBufferP += lexemLength;
+        expandPreprocessorBufferIfOverflow(currentBufferP, buffer, &bufferSize);
     }
 
     *_lastBufferP  = lastBufferP;
@@ -1597,7 +1599,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
         getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &value, &position, NULL, false);
         if (lexem == CPP_MACRO_ARGUMENT) {
             int len = actualArgumentsInput[value].write - actualArgumentsInput[value].begin;
-            ExpandMacroBodyBufferIfOverflow(writePointer, len, writeBuffer, bufferSize);
+            expandMacroBodyBufferIfOverflow(writePointer, len, writeBuffer, &bufferSize);
             memcpy(writePointer, actualArgumentsInput[value].begin, len);
             writePointer += len;
         } else if (lexem == '#' && currentLexemP < endOfLexems
@@ -1606,7 +1608,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
             assert(lexem == CPP_MACRO_ARGUMENT);
             getExtraLexemInformationFor(lexem, &currentLexemP, NULL, &value, NULL, NULL, false);
             putLexTokenAt(STRING_LITERAL, &writePointer);
-            ExpandMacroBodyBufferIfOverflow(writePointer, MACRO_BODY_BUFFER_SIZE, writeBuffer, bufferSize);
+            expandMacroBodyBufferIfOverflow(writePointer, MACRO_BODY_BUFFER_SIZE, writeBuffer, &bufferSize);
             macroArgumentsToString(writePointer, &actualArgumentsInput[value]);
 
             /* Move over something that looks like a string... */
@@ -1619,12 +1621,12 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
                 errorMessage(ERR_INTERNAL, "size of #macro_argument exceeded MACRO_BODY_BUFFER_SIZE");
             }
         } else {
-            ExpandMacroBodyBufferIfOverflow(writePointer, (currentLexemStart - currentLexemP), writeBuffer, bufferSize);
+            expandMacroBodyBufferIfOverflow(writePointer, (currentLexemStart - currentLexemP), writeBuffer, &bufferSize);
             assert(currentLexemP >= currentLexemStart);
             memcpy(writePointer, currentLexemStart, currentLexemP - currentLexemStart);
             writePointer += currentLexemP - currentLexemStart;
         }
-        ExpandMacroBodyBufferIfOverflow(writePointer, 0, writeBuffer, bufferSize);
+        expandMacroBodyBufferIfOverflow(writePointer, 0, writeBuffer, &bufferSize);
     }
     MB_REALLOCC(writeBuffer, writePointer - writeBuffer, char, bufferSize + MAX_LEXEM_SIZE);
     *_bcc = writePointer;
@@ -1662,7 +1664,7 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
             memcpy(currentBufferP, lexemStart, lexemLength);
             currentBufferP += lexemLength;
         }
-        ExpandPreprocessorBufferIfOverflow(currentBufferP, buffer, bufferSize);
+        expandPreprocessorBufferIfOverflow(currentBufferP, buffer, &bufferSize);
     }
     PPM_REALLOCC(buffer, currentBufferP - buffer, char, bufferSize + MAX_LEXEM_SIZE);
 
