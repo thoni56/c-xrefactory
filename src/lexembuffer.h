@@ -43,7 +43,7 @@ extern void putLexTokenAtPointer(Lexem lexem, void *writePointer);
 extern void putLexPositionFields(LexemBuffer *lb, int file, int line, int col);
 extern void putLexPosition(LexemBuffer *lb, Position position);
 
-/* DEPRECATED - Writes at where writePointer points to and advances it */
+/* DEPRECATED? - Writes at where writePointer points to and advances it */
 extern void putLexTokenAt(Lexem lexem, char **writePointerP);
 extern void putLexPositionAt(Position position, char **writePointerP);
 extern void putLexIntAt(int integer, char **writePointerP);
@@ -51,7 +51,7 @@ extern void putLexIntAt(int integer, char **writePointerP);
 /* READ */
 extern Position getLexPosition(LexemBuffer *lb);
 
-/* DEPRECATED - Reads where a readPointer points and advances it */
+/* DEPRECATED? - Reads where a readPointer points and advances it */
 extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer); /* TODO - remove readPointeP */
 extern Lexem getLexTokenAt(char **readPointerP);
 extern int getLexIntAt(char **readPointerP);
@@ -60,15 +60,7 @@ extern Position getLexPositionAt(char **readPointerP);
 
 extern Lexem peekLexTokenAt(char *readPointer);
 
-/* TODO: cannot replace NextLexPosition macro with this yet, as the
- * only call has "bcc+1" as tmpcc. Need to understand that
- * better and refactor it first. */
-extern Position peekLexPositionAt(char **readPointerP);
-
-#define NextLexPosition(pos,tmpcc) {            \
-        char *tmptmpcc = tmpcc;                 \
-        pos = getLexPositionAt(&tmptmpcc);        \
-    }
+extern Position peekLexPositionAt(char *readPointer);
 
 extern void initLexemBuffer(LexemBuffer *buffer, CharacterBuffer *characterBuffer);
 

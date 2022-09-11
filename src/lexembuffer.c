@@ -187,8 +187,8 @@ Position getLexPosition(LexemBuffer *lb) {
     return pos;
 }
 
-Position peekLexPositionAt(char **readPointerP) {
-    char *pointer = *readPointerP;
+Position peekLexPositionAt(char *readPointer) {
+    char *pointer = readPointer;
     return getLexPositionAt(&pointer);
 }
 

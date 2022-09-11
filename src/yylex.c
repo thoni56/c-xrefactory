@@ -1461,11 +1461,11 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
     if (peekLexTokenAt(lastBufferP) == CPP_MACRO_ARGUMENT) {
         currentBufferP = lastBufferP;
         Lexem lexem = getLexTokenAt(&lastBufferP);
-        int value;
+        int argumentIndex;
         assert(lexem==CPP_MACRO_ARGUMENT);
-        getExtraLexemInformationFor(lexem, &lastBufferP, NULL, &value, NULL, NULL, false);
-        currentInputLexemP = actualArgumentsInput[value].begin;
-        endOfInputLexems = actualArgumentsInput[value].write;
+        getExtraLexemInformationFor(lexem, &lastBufferP, NULL, &argumentIndex, NULL, NULL, false);
+        currentInputLexemP = actualArgumentsInput[argumentIndex].begin;
+        endOfInputLexems = actualArgumentsInput[argumentIndex].write;
         lastBufferP = NULL;
         while (currentInputLexemP < endOfInputLexems) {
             char *lexemStart = currentInputLexemP;
@@ -1518,12 +1518,7 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
                 cxAddCollateReference(lastBufferP + IDENT_TOKEN_SIZE, currentBufferP, &position);
                 position.col++;
             } else /* isConstantLexem() */ {
-                /* TODO: We should replace the NextLexPosition() macro
-                 * with the C function nextLexPosition(). But the
-                 * parameters here is weird (bcc+1). Also we have no
-                 * coverage for this code. Why is that? Because we
-                 * never have a constant in this position... */
-                NextLexPosition(position, currentBufferP + 1); /* new identifier position*/
+                position = peekLexPositionAt(currentBufferP + 1); /* new identifier position */
                 sprintf(currentBufferP, "%d", value);
                 cxAddCollateReference(lastBufferP + IDENT_TOKEN_SIZE, currentBufferP, &position);
             }
