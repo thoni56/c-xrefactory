@@ -3985,7 +3985,7 @@ break;
 case 337:
 #line 1624 "c_parser.y"
 {
-        if (includeStackPointer == 0) {
+        if (includeStack.pointer == 0) {
             placeCachePoint(true);
         }
     }
@@ -3993,7 +3993,7 @@ break;
 case 338:
 #line 1629 "c_parser.y"
 {
-        if (includeStackPointer == 0) {
+        if (includeStack.pointer == 0) {
             placeCachePoint(true);
         }
     }

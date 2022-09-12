@@ -286,14 +286,14 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
     if (options.cxrefsLocation == NULL) {
         FATAL_ERROR(ERR_ST, "sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
-    for (int i=0; i<includeStackPointer; i++) {
+    for (int i=0; i < includeStack.pointer; i++) {
         log_trace("inspecting include %d, fileNumber: %d", i,
-                  includeStack[i].characterBuffer.fileNumber);
-        if (includeStack[i].characterBuffer.file != stdin) {
-            int fileIndex                     = includeStack[i].characterBuffer.fileNumber;
+                  includeStack.stack[i].characterBuffer.fileNumber);
+        if (includeStack.stack[i].characterBuffer.file != stdin) {
+            int fileIndex = includeStack.stack[i].characterBuffer.fileNumber;
             getFileItem(fileIndex)->cxLoading = false;
-            if (includeStack[i].characterBuffer.file != NULL)
-                closeCharacterBuffer(&includeStack[i].characterBuffer);
+            if (includeStack.stack[i].characterBuffer.file != NULL)
+                closeCharacterBuffer(&includeStack.stack[i].characterBuffer);
         }
     }
     if (currentFile.characterBuffer.file != stdin) {

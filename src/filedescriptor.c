@@ -6,8 +6,7 @@
 
 FileDescriptor currentFile = {0};
 
-FileDescriptor includeStack[INCLUDE_STACK_SIZE];
-int includeStackPointer = 0;
+IncludeStack includeStack;
 
 
 void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bufferStart,

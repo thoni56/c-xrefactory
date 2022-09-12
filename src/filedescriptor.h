@@ -16,11 +16,15 @@ typedef struct fileDescriptor {
     CharacterBuffer    characterBuffer;
 } FileDescriptor;
 
+typedef struct {
+    FileDescriptor stack[INCLUDE_STACK_SIZE];
+    int pointer;
+} IncludeStack;
+
 
 extern FileDescriptor currentFile;
 
-extern FileDescriptor includeStack[INCLUDE_STACK_SIZE];
-extern int includeStackPointer;
+extern IncludeStack includeStack;
 
 
 extern void fillFileDescriptor(FileDescriptor *fileDescriptor, char *name, char *bbase, int bsize,

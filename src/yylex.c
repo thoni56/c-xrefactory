@@ -97,7 +97,7 @@ static bool expandMacroCall(Symbol *mdef, Position *mpos);
 
 void initAllInputs(void) {
     MB_INIT();
-    includeStackPointer=0;
+    includeStack.pointer=0;
     macroStackIndex=0;
     isProcessingPreprocessorIf = false;
     resetMacroArgumentTable();
@@ -442,11 +442,11 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     } else {
         setCurrentFileConsistency(&currentFile, &currentInput);
     }
-    includeStack[includeStackPointer] = currentFile;		/* buffers are copied !!!!!!, burk */
-    if (includeStackPointer+1 >= INCLUDE_STACK_SIZE) {
+    includeStack.stack[includeStack.pointer] = currentFile;		/* buffers are copied !!!!!!, burk */
+    if (includeStack.pointer+1 >= INCLUDE_STACK_SIZE) {
         FATAL_ERROR(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
     }
-    includeStackPointer++;
+    includeStack.pointer++;
     initInput(file, buffer, prepend, name);
     cacheInclude(currentFile.characterBuffer.fileNumber);
 }
@@ -457,9 +457,9 @@ void popInclude(void) {
         fileItem->cxLoaded = true;
     }
     closeCharacterBuffer(&currentFile.characterBuffer);
-    if (includeStackPointer != 0) {
-        currentFile = includeStack[--includeStackPointer];	/* buffers are copied !!!!!!, burk */
-        if (includeStackPointer == 0 && cache.read != NULL) {
+    if (includeStack.pointer != 0) {
+        currentFile = includeStack.stack[--includeStack.pointer];	/* buffers are copied !!!!!!, burk */
+        if (includeStack.pointer == 0 && cache.read != NULL) {
             fillLexInput(&currentInput, cache.read, cache.lexemStream, cache.write, NULL,
                          INPUT_CACHE);
         } else {
@@ -2248,7 +2248,7 @@ Lexem yylex(void) {
                                     macroStackIndex == 0);
         if (lexem == IDENT_TO_COMPLETE) {
             testCxrefCompletionId(&lexem,yytext,&position);
-            while (includeStackPointer != 0)
+            while (includeStack.pointer != 0)
                 popInclude();
             /* while (getLexBuf(&cFile.lb)) cFile.lb.cc = cFile.lb.fin;*/
             goto endOfFile;
@@ -2266,7 +2266,7 @@ Lexem yylex(void) {
     assert(0);
 
  endOfFile:
-    if ((!LANGUAGE(LANG_JAVA)) && includeStackPointer != 0) {
+    if ((!LANGUAGE(LANG_JAVA)) && includeStack.pointer != 0) {
         popInclude();
         placeCachePoint(true);
         goto nextYylex;

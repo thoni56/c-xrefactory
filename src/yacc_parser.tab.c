@@ -2961,10 +2961,10 @@ yyreduce:
 case 1:
 #line 248 "yacc_parser.y"
 {
-        cache.active = false; /* no caching in yacc_parser */
-        /* initialize locals*/
-        l_yaccUnion   = NULL;
-        l_currentType = NULL;
+            cache.active = false;    /* no caching in yacc_parser */
+            /* initialize locals*/
+            l_yaccUnion = NULL;
+            l_currentType = NULL;
         }
 break;
 case 2:
@@ -4827,7 +4827,7 @@ break;
 case 528:
 #line 1841 "yacc_parser.y"
 {
-        if (includeStackPointer == 0) {
+        if (includeStack.pointer == 0) {
             placeCachePoint(true);
         }
     }
@@ -4835,7 +4835,7 @@ break;
 case 529:
 #line 1846 "yacc_parser.y"
 {
-        if (includeStackPointer == 0) {
+        if (includeStack.pointer == 0) {
             placeCachePoint(true);
         }
     }

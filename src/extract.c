@@ -1288,8 +1288,8 @@ void actionsBeforeAfterExternalDefinition(void) {
         /* No, all this extraction should be after parsing ! */
     }
     parsedClassInfo.cxMemoryIndexAtFunctionBegin = cxMemory->index;
-    if (includeStackPointer) {                     // ??????? burk ????
-        parsedClassInfo.functionBeginPosition = includeStack[0].lineNumber+1;
+    if (includeStack.pointer > 0) {
+        parsedClassInfo.functionBeginPosition = includeStack.stack[0].lineNumber+1;
     } else {
         parsedClassInfo.functionBeginPosition = currentFile.lineNumber+1;
     }

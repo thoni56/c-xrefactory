@@ -345,8 +345,8 @@ void cacheInput(LexInput *input) {
         LEAVE();
         return;
     }
-    /* How much needs to be cached? currentInput vs. cache?!? */
-    size = currentInput.read - cache.nextToCache;
+    /* How much needs to be cached? input vs. cache?!? */
+    size = input->read - cache.nextToCache;
 
     /* Is there space enough? */
     if (cache.free - cache.lexemStream + size >= LEXEM_STREAM_CACHE_SIZE) {
@@ -356,11 +356,11 @@ void cacheInput(LexInput *input) {
     }
 
     /* Avoid copying if we are already reading from cached data */
-    if (currentInput.inputType != INPUT_CACHE)
+    if (input->inputType != INPUT_CACHE)
         /* Copy from next un-cached to the free area of the cache buffer */
         memcpy(cache.free, cache.nextToCache, size);
     cache.free += size;
-    cache.nextToCache = currentInput.read;
+    cache.nextToCache = input->read;
     LEAVE();
 }
 
@@ -399,7 +399,7 @@ void placeCachePoint(bool inputCaching) {
     CachePoint *cachePoint;
     if (!cache.active)
         return;
-    if (includeStackPointer != 0 || macroStackIndex != 0)
+    if (includeStack.pointer != 0 || macroStackIndex != 0)
         return;
     if (cache.index >= MAX_CACHE_POINTS) {
         cache.active = false;
