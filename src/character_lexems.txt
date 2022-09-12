@@ -3,4 +3,7 @@ GT = '>',
 LPAR = '(',
 RPAR = ')',
 EQ = '=',
+NL = '\n',
+DQUOTE = '"',
+SQUOTE = '\'',
 
