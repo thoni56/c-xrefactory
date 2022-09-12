@@ -331,7 +331,7 @@ void initCaching(void) {
 /*        Caching of input from LexemBuffer to LexInput               */
 /* ****************************************************************** */
 
-void cacheInput(void) {
+void cacheInput(LexInput *input) {
     int size;
 
     ENTER();
@@ -340,7 +340,7 @@ void cacheInput(void) {
         LEAVE();
         return;
     }
-    if (includeStackPointer != 0 || macroStackIndex != 0) {
+    if (includeStack.pointer != 0 || macroStackIndex != 0) {
         log_trace("In include or macro, will not cache now");
         LEAVE();
         return;
@@ -406,7 +406,7 @@ void placeCachePoint(bool inputCaching) {
         return;
     }
     if (inputCaching)
-        cacheInput();
+        cacheInput(&currentInput);
     if (!cache.active)
         return;
     cachePoint = &cache.points[cache.index];

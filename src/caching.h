@@ -3,6 +3,7 @@
 
 #include "globals.h" /* For Counters */
 #include "memory.h"
+#include "input.h"
 
 typedef struct {
     struct codeBlock  *topBlock;
@@ -37,7 +38,7 @@ extern Cache cache;
 extern void initCaching(void);
 extern void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive);
 extern void recoverFromCache(void);
-extern void cacheInput(void);
+extern void cacheInput(LexInput *input);
 extern void cacheInclude(int fileNum);
 extern void placeCachePoint(bool inputCaching);
 extern void recoverCachePointZero(void);

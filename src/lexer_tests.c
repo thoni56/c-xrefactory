@@ -11,6 +11,7 @@
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"
+#include "input.mock"
 #include "jslsemact.mock"
 #include "misc.mock"
 #include "options.mock"

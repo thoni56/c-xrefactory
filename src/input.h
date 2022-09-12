@@ -14,7 +14,7 @@ typedef struct {
 
 extern LexInput currentInput;
 
-extern void fillLexInput(LexInput *lexInput, char *read, char *begin, char *write, char *macroName,
+extern void fillLexInput(LexInput *input, char *read, char *begin, char *write, char *macroName,
                          InputType inputType);
 
 #endif

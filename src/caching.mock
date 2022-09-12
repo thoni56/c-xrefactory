@@ -21,7 +21,7 @@ void recoverFromCache(void) {
   mock();
 }
 
-void cacheInput(void) {
+void cacheInput(LexInput *input) {
   mock();
 }
 
