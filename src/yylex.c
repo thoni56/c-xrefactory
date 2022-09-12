@@ -321,7 +321,8 @@ static void getExtraLexemInformationFor(Lexem lexem, char **readPointerP, int *o
     }
 }
 
-static Lexem getLexemSavePrevious(char **previousLexemP) {
+/* Returns next lexem from currentInput and saves a pointer to the previous lexem */
+static Lexem getLexemAndSavePointerToPrevious(char **previousLexemP) {
     Lexem lexem;
 
     /* TODO This is weird, shouldn't this test for next @ end? Seems
@@ -356,7 +357,7 @@ static Lexem getLexemSavePrevious(char **previousLexemP) {
 }
 
 static Lexem getLexem(void) {
-    return getLexemSavePrevious(NULL);
+    return getLexemAndSavePointerToPrevious(NULL);
 }
 
 
@@ -577,7 +578,7 @@ protected void processIncludeDirective(Position *includePosition, bool is_includ
     char *beginningOfLexem, *previousLexemP;
     Lexem lexem;
 
-    lexem = getLexemSavePrevious(&previousLexemP);
+    lexem = getLexemAndSavePointerToPrevious(&previousLexemP);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     beginningOfLexem = currentInput.read;
@@ -1391,7 +1392,7 @@ static void expandMacroArgument(LexInput *argumentBuffer) {
 
     for(;;) {
     nextLexem:
-        lexem = getLexemSavePrevious(&previousLexem);
+        lexem = getLexemAndSavePointerToPrevious(&previousLexem);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         nextLexemP = currentInput.read;
@@ -1676,19 +1677,19 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
 /* ******************* MACRO CALL PROCESS ************************ */
 /* *************************************************************** */
 
-static Lexem getLexSkippingLines(char **previousLexemP, int *lineNumberP,
+static Lexem getLexSkippingLines(char **saveLexemP, int *lineNumberP,
                                 int *valueP, Position *positionP, int *lengthP) {
-    Lexem lexem = getLexemSavePrevious(previousLexemP);
+    Lexem lexem = getLexemAndSavePointerToPrevious(saveLexemP);
     while (lexem == LINE_TOKEN || lexem == '\n') {
         getExtraLexemInformationFor(lexem, &currentInput.read, lineNumberP, valueP, positionP, lengthP,
                                     macroStackIndex == 0);
-        lexem = getLexemSavePrevious(previousLexemP);
+        lexem = getLexemAndSavePointerToPrevious(saveLexemP);
     }
     return lexem;
 }
 
 static void getActualMacroArgument(
-    char *previousLexem,
+    char *previousLexemP,
     Lexem *inOutLexem,
     Position *macroPosition,
     Position **firstParenthesisPosition,
@@ -1700,15 +1701,17 @@ static void getActualMacroArgument(
     int   offset;
     int   depth;
     Lexem lexem;
-    char *bcc;
+    char *bufferP;
     char *buffer;
     int   bufferSize;
 
     lexem      = *inOutLexem;
+
     bufferSize = MACRO_ARGUMENTS_BUFFER_SIZE;
     depth      = 0;
     PPM_ALLOCC(buffer, bufferSize + MAX_LEXEM_SIZE, char);
-    bcc = buffer;
+    bufferP = buffer;
+
     /* if lastArgument, collect everything there */
     offset = 0;
     while (((lexem != ',' || actualArgumentIndex + 1 == macroBody->argCount) && lexem != ')')
@@ -1720,14 +1723,17 @@ static void getActualMacroArgument(
             depth++;
         if (lexem == ')')
             depth--;
-        for (; previousLexem < currentInput.read; previousLexem++, bcc++)
-            *bcc = *previousLexem;
-        if (bcc - buffer >= bufferSize) {
+
+        /* Copy from source to the new buffer? */
+        for (; previousLexemP < currentInput.read; previousLexemP++, bufferP++)
+            *bufferP = *previousLexemP;
+
+        if (bufferP - buffer >= bufferSize) {
             bufferSize += MACRO_ARGUMENTS_BUFFER_SIZE;
             PPM_REALLOCC(buffer, bufferSize + MAX_LEXEM_SIZE, char,
                          bufferSize + MAX_LEXEM_SIZE - MACRO_ARGUMENTS_BUFFER_SIZE);
         }
-        lexem = getLexSkippingLines(&previousLexem, NULL, NULL, NULL, NULL);
+        lexem = getLexSkippingLines(&previousLexemP, NULL, NULL, NULL, NULL);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile,
                                 endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
@@ -1751,8 +1757,8 @@ endOfMacroArgument:;
     }
 
 end:
-    PPM_REALLOCC(buffer, bcc - buffer, char, bufferSize + MAX_LEXEM_SIZE);
-    fillLexInput(actualArgumentsInput, buffer, buffer, bcc, currentInput.macroName,
+    PPM_REALLOCC(buffer, bufferP - buffer, char, bufferSize + MAX_LEXEM_SIZE);
+    fillLexInput(actualArgumentsInput, buffer, buffer, bufferP, currentInput.macroName,
                  INPUT_NORMAL);
     *inOutLexem = lexem;
     return;
@@ -1946,7 +1952,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
     res = 1;
 
     while (cp < cto) {
-        lexem = getLexemSavePrevious(&previousLexem);
+        lexem = getLexemAndSavePointerToPrevious(&previousLexem);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
         getExtraLexemInformationFor(lexem, &currentInput.read, &lineNumber, NULL, &position, NULL, true);
@@ -2124,7 +2130,7 @@ Lexem yylex(void) {
     char *previousLexem;
 
  nextYylex:
-    lexem = getLexemSavePrevious(&previousLexem);
+    lexem = getLexemAndSavePointerToPrevious(&previousLexem);
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
  contYylex:

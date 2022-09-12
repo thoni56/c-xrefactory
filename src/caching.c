@@ -347,7 +347,7 @@ void cacheInput(void) {
     /* How much needs to be cached? currentInput vs. cache?!? */
     size = currentInput.read - cache.nextToCache;
 
-    /* Is there space enough */
+    /* Is there space enough? */
     if (cache.free - cache.lexemStream + size >= LEXEM_STREAM_CACHE_SIZE) {
         cache.active = false;
         LEAVE();
