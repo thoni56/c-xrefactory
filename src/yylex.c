@@ -1,20 +1,21 @@
 #include "yylex.h"
 
+#include "caching.h"
 #include "commons.h"
+#include "cxfile.h"
+#include "cxref.h"
+#include "extract.h"
+#include "globals.h"
+#include "input.h"
+#include "jsemact.h"   /* For s_javaStat */
+#include "jslsemact.h" /* For s_jsl */
 #include "lexem.h"
 #include "lexembuffer.h"
 #include "lexer.h"
-#include "globals.h"
-#include "options.h"
-#include "caching.h"
-#include "extract.h"
 #include "misc.h"
-#include "semact.h"
-#include "cxref.h"
-#include "cxfile.h"
-#include "jslsemact.h"          /* For s_jsl */
+#include "options.h"
 #include "reftab.h"
-#include "jsemact.h"            /* For s_javaStat */
+#include "semact.h"
 
 #include "c_parser.h"
 #include "cexp_parser.h"
@@ -73,7 +74,6 @@ static void setYylvalsForInteger(int val, Position position, int length) {
     }
 
 
-LexInput currentInput;
 int macroStackIndex=0;
 static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 
@@ -116,15 +116,6 @@ static void fillMacroArgumentTableElement(MacroArgumentTableElement *macroArgTab
     macroArgTabElem->name = name;
     macroArgTabElem->linkName = linkName;
     macroArgTabElem->order = order;
-}
-
-void fillLexInput(LexInput *input, char *read, char *begin, char *write, char *macroName,
-                  InputType inputType) {
-    input->read      = read;
-    input->begin     = begin;
-    input->write     = write;
-    input->macroName = macroName;
-    input->inputType = inputType;
 }
 
 static void setCacheConsistency(Cache *cache, LexInput *input) {

@@ -8,6 +8,7 @@
 #include "filedescriptor.mock"
 #include "filetable.mock"
 #include "globals.mock"
+#include "input.mock"
 #include "javafqttab.mock"
 #include "jsemact.mock"
 #include "options.mock"

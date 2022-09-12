@@ -4,6 +4,7 @@
 #include "globals.h"
 #include "options.h"
 #include "protocol.h"
+#include "input.h"
 #include "yylex.h"
 #include "editor.h"
 #include "reftab.h"

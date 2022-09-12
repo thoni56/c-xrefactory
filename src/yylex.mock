@@ -2,13 +2,7 @@
 #include "yylex.h"
 #include <cgreen/mocks.h>
 
-LexInput currentInput;
 int      macroStackIndex = 0;
-
-void fillLexInput(LexInput *lexInput, char *read, char *begin, char *write, char *macroName,
-                  InputType inputType) {
-    mock(lexInput, read, begin, write, macroName, inputType);
-}
 
 void initAllInputs(void) {
     mock();
