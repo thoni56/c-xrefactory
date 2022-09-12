@@ -23,4 +23,4 @@ debug: DEBUGGER = gdb
 debug:
 	@$(EDIT_SERVER_DRIVER_COMMAND) --delay 5 > output.tmp &
 	sleep 1
-	sudo $(DEBUGGER) ../../src/c-xref -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'` -ex 'br mainRefactory'
+	sudo $(DEBUGGER) ../../src/c-xref -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'` -ex 'br refactory'
