@@ -442,11 +442,10 @@ void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
     } else {
         setCurrentFileConsistency(&currentFile, &currentInput);
     }
-    includeStack.stack[includeStack.pointer] = currentFile;		/* buffers are copied !!!!!!, burk */
-    if (includeStack.pointer+1 >= INCLUDE_STACK_SIZE) {
+    includeStack.stack[includeStack.pointer++] = currentFile;		/* buffers are copied !!!!!!, burk */
+    if (includeStack.pointer >= INCLUDE_STACK_SIZE) {
         FATAL_ERROR(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
     }
-    includeStack.pointer++;
     initInput(file, buffer, prepend, name);
     cacheInclude(currentFile.characterBuffer.fileNumber);
 }
