@@ -80,6 +80,16 @@ static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 static char ppMemory[SIZE_ppMemory];
 static int ppMemoryIndex=0;
 
+static char mbMemory[SIZE_mbMemory];
+int mbMemoryIndex=0;
+
+
+/* macro bodies */
+#define MB_INIT()                       {SM_INIT(mbMemory);}
+#define MB_ALLOCC(pointer, count, type) {SM_ALLOCC(mbMemory, pointer, count, type);}
+#define MB_REALLOCC(pointer, count, type, oldCount)	{SM_REALLOCC(mbMemory, pointer, count, type, oldCount);}
+
+#define MB_FREE_UNTIL(pointer)          {SM_FREE_UNTIL(mbMemory, pointer);}
 
 
 static bool isIdentifierLexem(Lexem lexem) {

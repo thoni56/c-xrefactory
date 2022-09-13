@@ -97,12 +97,6 @@ typedef struct codeBlock {
 #define FT_ALLOC(pointer, type)         {SM_ALLOC(ftMemory, pointer, type);}
 #define FT_ALLOCC(pointer, count, type) {SM_ALLOCC(ftMemory, pointer, count, type);}
 
-/* macro bodies */
-#define MB_INIT()                       {SM_INIT(mbMemory);}
-#define MB_ALLOCC(pointer, count, type) {SM_ALLOCC(mbMemory, pointer, count, type);}
-#define MB_REALLOCC(pointer, count, type, oldCount)	{SM_REALLOCC(mbMemory, pointer, count, type, oldCount);}
-#define MB_FREE_UNTIL(pointer)          {SM_FREE_UNTIL(mbMemory, pointer);}
-
 
 /**********************************************************************
    DM = Dynamic Memory - can expand using overflow handler
@@ -145,9 +139,6 @@ extern int ftMemoryIndex;
 
 extern char ppmMemory[];
 extern int ppmMemoryIndex;
-
-extern char mbMemory[];
-extern int mbMemoryIndex;
 
 
 /* Inject some error functions to remove linkage dependency */

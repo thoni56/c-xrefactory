@@ -2,7 +2,8 @@
 #include "yylex.h"
 #include <cgreen/mocks.h>
 
-int      macroStackIndex = 0;
+int macroStackIndex = 0;
+int mbMemoryIndex = 0;
 
 void initAllInputs(void) {
     mock();
