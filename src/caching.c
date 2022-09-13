@@ -82,21 +82,17 @@ static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
     ClassHierarchyReference **h;
     h = &fileItem->superClasses;
     while (*h!=NULL) {
-        if (isFreedCxMemory(*h)) {
+        if (isFreedCxMemory(*h))
             *h = (*h)->next;
-            goto contlabel;     /* TODO: continue? */
-        }
-        h= &(*h)->next;       /* TODO: else? */
-    contlabel:;
+        else
+            h = &(*h)->next;
     }
     h = &fileItem->inferiorClasses;
     while (*h!=NULL) {
-        if (isFreedCxMemory(*h)) {
+        if (isFreedCxMemory(*h))
             *h = (*h)->next;
-            goto contlabel2;    /* TODO: continue? */
-        }
-        h= &(*h)->next;       /* TODO: else? */
-    contlabel2:;
+        else
+            h= &(*h)->next;
     }
 }
 
