@@ -275,6 +275,18 @@ void dm_freeUntil(Memory *memory, void *pointer) {
 }
 
 
+void *cxAlloc(size_t size) {
+    return dm_alloc(cxMemory, size);
+}
+
+void cxFreeUntil(void *until) {
+    dm_freeUntil(cxMemory, until);
+}
+
+bool isFreedCxMemory(void *pointer) {
+    return dm_isFreedPointer(cxMemory, pointer);
+}
+
 void olcx_memory_init() {
     olcxMemoryAllocatedBytes = 0;
 }

@@ -912,7 +912,6 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     int symbolIndex, symType, len, vApplClass, vFunClass, accessFlags;
     int storage;
     char *id;
-    char *ss;
 
     assert(marker == CXFI_SYMBOL_NAME);
     accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
@@ -934,10 +933,10 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                        vApplClass, vFunClass, symType, storage, ScopeGlobal, accessFlags, CategoryGlobal);
 
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
-        // TODO: This is more or less the body of newReferencesItem()
-        CX_ALLOCC(ss, len+1, char);
+        // TODO: This is more or less the body of a newReferencesItem()
+        char *ss = (char *)cxAlloc(len+1);
         strcpy(ss,id);
-        CX_ALLOC(memb, ReferencesItem);
+        memb = (ReferencesItem *)cxAlloc(sizeof(ReferencesItem));
         fillReferencesItem(memb, ss, cxFileHashNumber(ss),
                            vApplClass, vFunClass, symType, storage,
                            ScopeGlobal, accessFlags, CategoryGlobal);

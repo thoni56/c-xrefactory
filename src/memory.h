@@ -102,18 +102,13 @@ typedef struct codeBlock {
    DM = Dynamic Memory - can expand using overflow handler
 */
 
-/* cross-references global symbols allocations */
-#define CX_ALLOC(pointer, type)         pointer = dm_alloc(cxMemory, sizeof(type));
-#define CX_ALLOCC(pointer, count, type) pointer = dm_allocc(cxMemory, count, sizeof(type));
-#define CX_FREE_UNTIL(pointer)          {dm_freeUntil(cxMemory, pointer);}
-#define CX_FREED_POINTER(pointer)       dm_isFreedPointer(cxMemory, pointer)
 
 /* options allocations */
 #define OPT_ALLOC(pointer, type)         pointer = dm_alloc(&options.memory, sizeof(type));
 #define OPT_ALLOCC(pointer, count, type) pointer = dm_allocc(&options.memory, count, sizeof(type));
 
 /* editor allocations, for now, store it in olcxmemory */
-#define ED_ALLOCC(pointer, count, type) { pointer = olcx_memory_allocc(count, sizeof(type)); }
+#define ED_ALLOCC(pointer, count, type) pointer = olcx_memory_allocc(count, sizeof(type));
 #define ED_ALLOC(pointer, type) ED_ALLOCC(pointer, 1, type)
 #define ED_FREE(pointer, size) olcx_memory_free(pointer, size)
 
@@ -146,6 +141,7 @@ extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *m
 extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line));
 extern void memoryUseFunctionForError(void (*function)(int code, char *message));
 
+/* DM - Dynamic Memory */
 extern void dm_init(Memory *memory, char *name);
 extern void *dm_alloc(Memory *memory, size_t size);
 extern void *dm_allocc(Memory *memory, int count, size_t size);
@@ -153,6 +149,11 @@ extern bool dm_enoughSpaceFor(Memory *memory, size_t bytes);
 extern bool dm_isBetween(Memory *memory, void *pointer, int low, int high);
 extern bool dm_isFreedPointer(Memory *memory, void *pointer);
 extern void dm_freeUntil(Memory *memory, void *pointer);
+
+/* cross-references global symbols allocations */
+extern void *cxAlloc(size_t size);
+extern void cxFreeUntil(void *until);
+extern bool isFreedCxMemory(void *pointer);
 
 
 /* on-line dialogs allocation */

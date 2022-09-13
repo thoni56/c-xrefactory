@@ -617,7 +617,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     int dfargc;
     char **dfargv;
     int argcount;
-    char *sss,*cmdlnInputFile;
+    char *cmdlnInputFile;
     int inmode;
     bool previousNoErrorsOption;
 
@@ -629,11 +629,11 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     mapOverFileTable(clearFileItem);
 
     // TODO: the following causes long jump, berk.
-    // And it can't be removed because of tests in tests/orig.c-xref
+    // And it can't be removed because of multiple tests
     // failing with "cx_memory resizing required, see file TROUBLES"
     // This just shows how impenetrable the memory management is...
-    CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
-    CX_FREE_UNTIL(sss);
+    char *sss = (char *)cxAlloc(CX_MEMORY_CHUNK_SIZE);
+    cxFreeUntil(sss);
 
     initReferenceTable(MAX_CXREF_ENTRIES);
 
@@ -673,24 +673,26 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     processOptions(argc, argv, PROCESS_FILE_ARGUMENTS);
     processFileArguments();
 
+#if 0
     if (options.refactoringMode == RefactoryMode) {
         // some more memory for refactoring task
         assert(options.cxMemoryFactor>=1);
-        CX_ALLOCC(sss, 6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
+        sss = (char *)cxAlloc(6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
         CX_FREE_UNTIL(sss);
     }
     if (options.mode==XrefMode) {
         // get some memory if cross referencing
         assert(options.cxMemoryFactor>=1);
-        CX_ALLOCC(sss, 3*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
+        sss = (char *)cxAlloc(3*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
         CX_FREE_UNTIL(sss);
     }
     if (options.cxMemoryFactor > 1) {
         // reinit cxmemory taking into account -mf
         // just make an allocation provoking resizing
-        CX_ALLOCC(sss, options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
+        sss = (char *)cxAlloc(options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
         CX_FREE_UNTIL(sss);
     }
+#endif
 
     // must be after processing command line options
     initCaching();

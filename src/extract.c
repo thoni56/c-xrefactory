@@ -146,7 +146,7 @@ static ProgramGraphNode *newProgramGraphNode(
 ) {
     ProgramGraphNode *programGraph;
 
-    CX_ALLOC(programGraph, ProgramGraphNode);
+    programGraph = (ProgramGraphNode *)cxAlloc(sizeof(ProgramGraphNode));
 
     programGraph->ref = ref;
     programGraph->symRef = symRef;
@@ -653,31 +653,30 @@ static void removeSymbolFromSymRefList(ReferencesItemList **ll, ReferencesItem *
     }
 }
 
-static ReferencesItemList *concatRefItemList(ReferencesItemList **ll, ReferencesItem *s) {
-    ReferencesItemList *refItemList;
-    CX_ALLOC(refItemList, ReferencesItemList);
-    refItemList->item = s;
-    refItemList->next = *ll;
+static ReferencesItemList *concatRefItemList(ReferencesItemList **list, ReferencesItem *items) {
+    ReferencesItemList *refItemList = (ReferencesItemList *)cxAlloc(sizeof(ReferencesItemList));
+    refItemList->item = items;
+    refItemList->next = *list;
     return refItemList;
 }
 
 
 /* Public for unittesting */
-void addSymbolToSymRefList(ReferencesItemList **ll, ReferencesItem *s) {
-    ReferencesItemList *r;
+void addSymbolToSymRefList(ReferencesItemList **list, ReferencesItem *items) {
+    ReferencesItemList *l;
 
-    r = *ll;
-    while (r!=NULL) {
-        if (isSmallerOrEqClass(getClassNumFromClassLinkName(s->name, noFileIndex),
-                               getClassNumFromClassLinkName(r->item->name, noFileIndex))) {
+    l = *list;
+    while (l!=NULL) {
+        if (isSmallerOrEqClass(getClassNumFromClassLinkName(items->name, noFileIndex),
+                               getClassNumFromClassLinkName(l->item->name, noFileIndex))) {
             return;
         }
-        r= r->next;
+        l= l->next;
     }
     // first remove all superceeded by this one
     /* TODO: WTF, what does superceed mean here and why should we remove them? */
-    removeSymbolFromSymRefList(ll, s);
-    *ll = concatRefItemList(ll, s);
+    removeSymbolFromSymRefList(list, items);
+    *list = concatRefItemList(list, items);
 }
 
 static ReferencesItemList *computeExceptionsThrownBetween(ProgramGraphNode *bb,
@@ -1221,7 +1220,7 @@ static void makeExtraction(void) {
     if (options.xref2)
         ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
 
-    CX_ALLOCC(rb, EXTRACT_GEN_BUFFER_SIZE, char);
+    rb = (char *)cxAlloc(EXTRACT_GEN_BUFFER_SIZE);
 
     if (!options.xref2) {
         fprintf(communicationChannel,

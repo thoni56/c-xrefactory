@@ -2,6 +2,7 @@
 
 #include "commons.h"
 #include "globals.h"
+#include "memory.h"
 #include "options.h"
 #include "misc.h"
 #include "cxref.h"
@@ -46,7 +47,7 @@ ClassHierarchyReference *newClassHierarchyReference(int originFileIndex, int sup
                                                     ClassHierarchyReference *next) {
     ClassHierarchyReference *p;
 
-    CX_ALLOC(p, ClassHierarchyReference);
+    p = (ClassHierarchyReference *)cxAlloc(sizeof(ClassHierarchyReference));
     p->ofile = originFileIndex;
     p->superClass = superClass;
     p->next = next;

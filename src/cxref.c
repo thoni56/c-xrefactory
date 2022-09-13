@@ -231,16 +231,16 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 Reference **addToRefList(Reference **list,
                          Usage usage,
                          Position pos) {
-    Reference *rr, **place;
+    Reference **place;
     Reference reference;
 
     fillReference(&reference, usage, pos, NULL);
     SORTED_LIST_PLACE2(place,reference,list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
         || options.serverOperation==OLO_EXTRACT) {
-        CX_ALLOC(rr, Reference);
-        fillReference(rr, usage, pos, NULL);
-        LIST_CONS(rr, (*place));
+        Reference *r = (Reference *)cxAlloc(sizeof(Reference));
+        fillReference(r, usage, pos, NULL);
+        LIST_CONS(r, (*place));
     } else {
         assert(*place);
         (*place)->usage = usage;
@@ -249,15 +249,14 @@ Reference **addToRefList(Reference **list,
 }
 
 
-Reference *duplicateReference(Reference *r) {
+Reference *duplicateReference(Reference *original) {
     // this is used in extract x=x+2; to re-arrange order of references
     // i.e. usage must be first, lValue second.
-    Reference *rr;
-    r->usage = NO_USAGE;
-    CX_ALLOC(rr, Reference);
-    *rr = *r;
-    r->next = rr;
-    return rr;
+    original->usage = NO_USAGE;
+    Reference *copy = (Reference *)cxAlloc(sizeof(Reference));
+    *copy = *original;
+    original->next = copy;
+    return copy;
 }
 
 
@@ -512,8 +511,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
     }
     switch (symbol->type) {
     case TypePackage: {
-        char *name;
-        CX_ALLOCC(name, strlen(menu->references.name)+1, char);
+        char *name = (char *)cxAlloc(strlen(menu->references.name)+1);
         strcpy(name, menu->references.name);
         javaDotifyFileName(name);
         makeRefactoringAvailable(PPC_AVR_RENAME_PACKAGE, name);
@@ -644,12 +642,10 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     int             scope;
     int             storage;
     int             defaultUsage;
-    char           *linkName;
     Reference       reference;
     Reference     **place;
     Position       *defaultPosition;
     ReferencesItem *memb;
-    ReferencesItem *pp;
     ReferencesItem  ppp;
     SymbolsMenu    *menu;
 
@@ -709,13 +705,13 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     int index;
     if (!isMemberInReferenceTable(&ppp, &index, &memb)) {
         log_trace("allocating '%s'", symbol->linkName);
-        CX_ALLOC(pp, ReferencesItem);
-        CX_ALLOCC(linkName, strlen(symbol->linkName)+1, char);
+        char *linkName = (char *)cxAlloc(strlen(symbol->linkName)+1);
         strcpy(linkName, symbol->linkName);
-        fillReferencesItem(pp, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl, symbol->type,
+        ReferencesItem *r = (ReferencesItem *)cxAlloc(sizeof(ReferencesItem));
+        fillReferencesItem(r, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl, symbol->type,
                            storage, scope, symbol->access, category);
-        pushReferencesItem(pp, index);
-        memb = pp;
+        pushReferencesItem(r, index);
+        memb = r;
     } else {
         // at least reset some maybe new informations
         // sometimes classes were added from directory listing,

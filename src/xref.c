@@ -83,12 +83,10 @@ static void fillIncludeRefItem(ReferencesItem *referencesItem, int fileIndex) {
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
-    char                *cxFreeBase;
-    int                 fileAddedFlag;
-    ReferencesItem referenceItem, *member;
-    Reference           *rr;
+    char *cxFreeBase;
+    bool  fileAddedFlag;
 
-    CX_ALLOCC(cxFreeBase,0,char);
+    cxFreeBase = (char *)cxAlloc(0);
     fullScanFor(LINK_NAME_INCLUDE_REFS);
     // iterate over scheduled files
     fileAddedFlag = true;
@@ -100,10 +98,11 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                 if (!fileItem->fullUpdateIncludesProcessed) {
                     fileItem->fullUpdateIncludesProcessed = true;
                     bool isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
+                    ReferencesItem referenceItem, *member;
                     fillIncludeRefItem(&referenceItem, i);
                     if (isMemberInReferenceTable(&referenceItem, NULL, &member)) {
-                        for (rr=member->references; rr!=NULL; rr=rr->next) {
-                            FileItem *includer = getFileItem(rr->position.file);
+                        for (Reference *r=member->references; r!=NULL; r=r->next) {
+                            FileItem *includer = getFileItem(r->position.file);
                             if (!includer->scheduledToUpdate) {
                                 includer->scheduledToUpdate = true;
                                 fileAddedFlag = true;
@@ -331,13 +330,12 @@ void callXref(int argc, char **argv, bool isRefactoring) {
     static char     *cxFreeBase;
     static bool      firstPass, atLeastOneProcessed;
     static FileItem *ffc, *pffc;
-    static bool      messagePrinted = false;
     static int       numberOfInputs;
 
     LongjmpReason reason = LONGJMP_REASON_NONE;
 
     currentPass = ANY_PASS;
-    CX_ALLOCC(cxFreeBase, 0, char);
+    cxFreeBase = (char *)cxAlloc(0);
     cxResizingBlocked = true;
     if (options.update)
         scheduleModifiedFilesToUpdate(isRefactoring);
@@ -357,6 +355,7 @@ void callXref(int argc, char **argv, bool isRefactoring) {
             }
         } else {
             int inputCounter = 0;
+            static bool messagePrinted = false;
 
             javaPreScanOnly = true;
             for (; pffc != NULL; pffc = pffc->next) {

@@ -2,6 +2,7 @@
 
 #include "commons.h"
 #include "globals.h"
+#include "memory.h"
 #include "options.h"
 #include "protocol.h"
 #include "input.h"
@@ -45,7 +46,7 @@ bool checkFileModifiedTime(int fileIndex) {
 
 static void deleteReferencesOutOfMemory(Reference **referenceP) {
     while (*referenceP!=NULL) {
-        if (CX_FREED_POINTER(*referenceP)) {
+        if (isFreedCxMemory(*referenceP)) {
             log_trace("deleting reference on %s:%d", getFileItem((*referenceP)->position.file)->name,
                       (*referenceP)->position.line);
             *referenceP = (*referenceP)->next;
@@ -63,7 +64,7 @@ static void cxrefTabDeleteOutOfMemory(int index) {
     itemP = &item;
 
     while (*itemP!=NULL) {
-        if (CX_FREED_POINTER(*itemP)) {
+        if (isFreedCxMemory(*itemP)) {
             /* out of memory, delete it */
             log_trace("deleting all references on %s", (*itemP)->name);
             *itemP = (*itemP)->next;  /* Unlink it and look at next */
@@ -81,7 +82,7 @@ static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
     ClassHierarchyReference **h;
     h = &fileItem->superClasses;
     while (*h!=NULL) {
-        if (CX_FREED_POINTER(*h)) {
+        if (isFreedCxMemory(*h)) {
             *h = (*h)->next;
             goto contlabel;     /* TODO: continue? */
         }
@@ -90,7 +91,7 @@ static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
     }
     h = &fileItem->inferiorClasses;
     while (*h!=NULL) {
-        if (CX_FREED_POINTER(*h)) {
+        if (isFreedCxMemory(*h)) {
             *h = (*h)->next;
             goto contlabel2;    /* TODO: continue? */
         }
@@ -218,7 +219,7 @@ static bool cachedIncludedFilePass(int index) {
 }
 
 static void recoverCxMemory(char *cxMemFreeBase) {
-    CX_FREE_UNTIL(cxMemFreeBase);
+    cxFreeUntil(cxMemFreeBase);
     mapOverFileTable(fileTabDeleteOutOfMemory);
     mapOverReferenceTableWithIndex(cxrefTabDeleteOutOfMemory);
 }
