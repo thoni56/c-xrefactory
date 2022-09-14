@@ -1,18 +1,10 @@
 <goto>
  <position-off off=16 len=<n>>CURDIR/hello.c</position-off>
 </goto>
-<goto>
- <position-off off=25 len=<n>>CURDIR/hello.c</position-off>
-</goto>
-<replacement>
- <str len=<n>>void</str>  <str len=<n>>int arg</str>
-</replacement>
-<goto>
- <position-off off=89 len=<n>>CURDIR/hello.c</position-off>
-</goto>
-<replacement>
- <str len=<n>></str>  <str len=<n>>42</str>
-</replacement>
+<error len=<n>>Parameter number out of limits
+</error>
+<error len=<n>>Parameter number out of limits
+</error>
 <goto>
  <position-off off=16 len=<n>>CURDIR/hello.c</position-off>
 </goto>
