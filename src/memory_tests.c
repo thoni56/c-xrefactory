@@ -19,7 +19,7 @@ Describe(Memory);
 BeforeEach(Memory) {
     log_set_level(LOG_ERROR);
     initOuterCodeBlock();
-    memoryUseFunctionForFatalError(myFatalError);
+    setFatalErrorHandlerForMemory(myFatalError);
 }
 AfterEach(Memory) {}
 

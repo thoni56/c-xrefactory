@@ -573,8 +573,8 @@ static void totalTaskEntryInitialisations() {
                optionsOverflowHandler, SIZE_optMemory);
 
     // Inject error handling functions
-    memoryUseFunctionForFatalError(fatalError);
-    memoryUseFunctionForInternalCheckFail(internalCheckFail);
+    setFatalErrorHandlerForMemory(fatalError);
+    setInternalCheckFailHandlerForMemory(internalCheckFail);
 
     // Start time
     // just for very beginning

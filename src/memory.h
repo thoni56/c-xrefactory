@@ -133,9 +133,10 @@ extern int ppmMemoryIndex;
 
 
 /* Inject some error functions to remove linkage dependency */
-extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus, char *file, int line));
-extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line));
-extern void memoryUseFunctionForError(void (*function)(int code, char *message));
+extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus,
+                                                           char *file, int line));
+extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
+extern void setErrorHandlerForMemory(void (*function)(int code, char *message));
 
 /* DM - Dynamic Memory - multiple uses, see below */
 extern void dm_init(Memory *memory, char *name);

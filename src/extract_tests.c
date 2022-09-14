@@ -41,9 +41,9 @@ void myError(int errCode, char *mess) {
 Describe(Extract);
 BeforeEach(Extract) {
     log_set_level(LOG_ERROR);
-    memoryUseFunctionForError(myError);
-    memoryUseFunctionForInternalCheckFail(myInternalCheckFail);
-    memoryUseFunctionForFatalError(myFatalError);
+    setErrorHandlerForMemory(myError);
+    setInternalCheckFailHandlerForMemory(myInternalCheckFail);
+    setFatalErrorHandlerForMemory(myFatalError);
     options.cxMemoryFactor = 2;
     if (!cxMemoryOverflowHandler(1))
         fail_test("cxMemoryOverflowHandler() returned false");
