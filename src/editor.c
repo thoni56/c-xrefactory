@@ -332,6 +332,19 @@ EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset) {
     return marker;
 }
 
+EditorMarker *newEditorMarkerForPosition(Position *position) {
+    EditorBuffer *buffer;
+    EditorMarker *marker;
+
+    if (position->file==noFileIndex || position->file<0) {
+        errorMessage(ERR_INTERNAL, "[editor] creating marker for non-existent position");
+    }
+    buffer = findEditorBufferForFile(getFileItem(position->file)->name);
+    marker = newEditorMarker(buffer, 0);
+    moveEditorMarkerToLineAndColumn(marker, position->line, position->col);
+    return marker;
+}
+
 EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
     EditorRegionList *regionList;
 
@@ -423,19 +436,6 @@ bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2) {
     if (editorMarkerLess(l1->region.end, l2->region.end)) return true;
     if (editorMarkerLess(l2->region.end, l1->region.end)) return false;
     return false;
-}
-
-EditorMarker *newEditorMarkerForPosition(Position *position) {
-    EditorBuffer *buffer;
-    EditorMarker *marker;
-
-    if (position->file==noFileIndex || position->file<0) {
-        errorMessage(ERR_INTERNAL, "[editor] creating marker for non-existent position");
-    }
-    buffer = findEditorBufferForFile(getFileItem(position->file)->name);
-    marker = newEditorMarker(buffer, 0);
-    moveEditorMarkerToLineAndColumn(marker, position->line, position->col);
-    return marker;
 }
 
 EditorMarker *duplicateEditorMarker(EditorMarker *marker) {
