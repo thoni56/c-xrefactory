@@ -414,7 +414,7 @@ bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2) {
     return false;
 }
 
-static void affectMarkerToBuffer(EditorBuffer *buffer, EditorMarker *marker) {
+static void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer) {
     marker->buffer = buffer;
     marker->next = buffer->markers;
     buffer->markers = marker;
@@ -428,7 +428,7 @@ EditorMarker *createNewEditorMarker(EditorBuffer *buffer, int offset) {
 
     marker = editorAlloc(sizeof(EditorMarker));
     *marker = (EditorMarker){.buffer = NULL, .offset = offset, .previous = NULL, .next = NULL};
-    affectMarkerToBuffer(buffer, marker);
+    attachMarkerToBuffer(marker, buffer);
     return marker;
 }
 
@@ -813,7 +813,6 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize
         // note undo information
         undosize = strlength;
         assert(delsize >= 0);
-        // O.K. allocate also 0 at the end
         undotext = editorAlloc(delsize+1);
         memcpy(undotext, buffer->allocation.text+position, delsize);
         undotext[delsize]=0;
@@ -888,7 +887,7 @@ void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size,
         if (mm->offset>=off1 && mm->offset<off2) {
             removeEditorMarkerFromBufferWithoutFreeing(mm);
             mm->offset = offd + (mm->offset-off1);
-            affectMarkerToBuffer(db, mm);
+            attachMarkerToBuffer(mm, db);
         }
         mm = tmp;
     }
@@ -1289,7 +1288,7 @@ void editorDumpUndoList(EditorUndo *undo) {
 }
 #endif
 
-static EditorMarkerList *concatEditorMarkerList(EditorMarkerList **diff, EditorMarkerList *list) { /* TODO1 Rename to combine..Lists() */
+static EditorMarkerList *combineEditorMarkerLists(EditorMarkerList **diff, EditorMarkerList *list) {
     EditorMarker     *marker = createNewEditorMarker(list->marker->buffer, list->marker->offset);
     EditorMarkerList *l;
 
@@ -1317,14 +1316,14 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
             *diff1 = l;
             l1 = l1->next;
         } else if (editorMarkerListLess(l2, l1)) {
-            l2 = concatEditorMarkerList(diff2, l2);
+            l2 = combineEditorMarkerLists(diff2, l2);
         } else {
             l1 = l1->next;
             l2 = l2->next;
         }
     }
     while (l1 != NULL) {
-        l1 = concatEditorMarkerList(diff1, l1);
+        l1 = combineEditorMarkerLists(diff1, l1);
     }
     while (l2 != NULL) {
         EditorMarker *marker = createNewEditorMarker(l2->marker->buffer, l2->marker->offset);
