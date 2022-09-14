@@ -312,7 +312,7 @@ static void performEncodingAdjustments(EditorBuffer *buffer) {
 EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous, EditorMarker *next) {
     EditorMarker *editorMarker;
 
-    ED_ALLOC(editorMarker, EditorMarker);
+    editorMarker = editorAlloc(sizeof(EditorMarker));
     editorMarker->buffer = buffer;
     editorMarker->offset = offset;
     editorMarker->previous = previous;
@@ -324,7 +324,7 @@ EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarke
 EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
     EditorRegionList *regionList;
 
-    ED_ALLOC(regionList, EditorRegionList);
+    regionList = editorAlloc(sizeof(EditorRegionList));
     regionList->region.begin = begin;
     regionList->region.end = end;
     regionList->next = next;
@@ -426,7 +426,7 @@ static void affectMarkerToBuffer(EditorBuffer *buffer, EditorMarker *marker) {
 EditorMarker *createNewEditorMarker(EditorBuffer *buffer, int offset) {
     EditorMarker *marker;
 
-    ED_ALLOC(marker, EditorMarker);
+    marker = editorAlloc(sizeof(EditorMarker));
     *marker = (EditorMarker){.buffer = NULL, .offset = offset, .previous = NULL, .next = NULL};
     affectMarkerToBuffer(buffer, marker);
     return marker;
@@ -463,7 +463,7 @@ void freeEditorMarker(EditorMarker *marker) {
     if (marker == NULL)
         return;
     removeEditorMarkerFromBufferWithoutFreeing(marker);
-    ED_FREE(marker, sizeof(EditorMarker));
+    editorFree(marker, sizeof(EditorMarker));
 }
 
 static void freeTextSpace(char *space, int index) {
@@ -480,12 +480,12 @@ static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
 static void freeEditorBuffer(EditorBufferList *list) {
     log_trace("freeing buffer %s==%s", list->buffer->name, list->buffer->fileName);
     if (list->buffer->fileName != list->buffer->name) {
-        ED_FREE(list->buffer->fileName, strlen(list->buffer->fileName)+1);
+        editorFree(list->buffer->fileName, strlen(list->buffer->fileName)+1);
     }
-    ED_FREE(list->buffer->name, strlen(list->buffer->name)+1);
+    editorFree(list->buffer->name, strlen(list->buffer->name)+1);
     for (EditorMarker *marker=list->buffer->markers; marker!=NULL;) {
         EditorMarker *next = marker->next;
-        ED_FREE(marker, sizeof(EditorMarker));
+        editorFree(marker, sizeof(EditorMarker));
         marker = next;
     }
     if (list->buffer->textLoaded) {
@@ -495,8 +495,8 @@ static void freeEditorBuffer(EditorBufferList *list) {
         freeTextSpace(list->buffer->allocation.allocatedBlock,
                       list->buffer->allocation.allocatedIndex);
     }
-    ED_FREE(list->buffer, sizeof(EditorBuffer));
-    ED_FREE(list, sizeof(EditorBufferList));
+    editorFree(list->buffer, sizeof(EditorBuffer));
+    editorFree(list, sizeof(EditorBufferList));
 }
 
 static void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime,
@@ -585,21 +585,21 @@ static EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t mo
     EditorBufferList *bufferList;
 
     normalizedName = normalizeFileName(name, cwd);
-    ED_ALLOCC(allocatedName, strlen(normalizedName)+1, char);
+    allocatedName = editorAlloc(strlen(normalizedName)+1);
     strcpy(allocatedName, normalizedName);
     normalizedFileName = normalizeFileName(fileName, cwd);
     if (strcmp(normalizedFileName, allocatedName)==0) {
         afname = allocatedName;
     } else {
-        ED_ALLOCC(afname, strlen(normalizedFileName)+1, char);
+        afname = editorAlloc(strlen(normalizedFileName)+1);
         strcpy(afname, normalizedFileName);
     }
-    ED_ALLOC(buffer, EditorBuffer);
+    buffer = editorAlloc(sizeof(EditorBuffer));
     fillEmptyEditorBuffer(buffer, allocatedName, 0, afname);
     buffer->modificationTime = modificationTime;
     buffer->size = size;
 
-    ED_ALLOC(bufferList, EditorBufferList);
+    bufferList = editorAlloc(sizeof(EditorBufferList));
     *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
     log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
 
@@ -641,7 +641,7 @@ static EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, u
                                           unsigned length, char *str, struct editorUndo *next) {
     EditorUndo *undo;
 
-    ED_ALLOC(undo, EditorUndo);
+    undo = editorAlloc(sizeof(EditorUndo));
     undo->buffer = buffer;
     undo->operation = UNDO_REPLACE_STRING;
     undo->u.replace.offset = offset;
@@ -657,7 +657,7 @@ static EditorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
                                          struct editorUndo *next) {
     EditorUndo *undo;
 
-    ED_ALLOC(undo, EditorUndo);
+    undo = editorAlloc(sizeof(EditorUndo));
     undo->buffer = buffer;
     undo->operation = UNDO_RENAME_BUFFER;
     undo->u.rename.name = name;
@@ -671,7 +671,7 @@ static EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsi
                                      struct editorUndo *next) {
     EditorUndo *undo;
 
-    ED_ALLOC(undo, EditorUndo);
+    undo = editorAlloc(sizeof(EditorUndo));
     undo->buffer = buffer;
     undo->operation = UNDO_MOVE_BLOCK;
     undo->u.moveBlock.offset = offset;
@@ -704,7 +704,7 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     deleted = deleteEditorBuffer(memb);
     assert(deleted);
     oldName = buffer->name;
-    ED_ALLOCC(buffer->name, strlen(newName)+1, char);
+    buffer->name = editorAlloc(strlen(newName)+1);
     strcpy(buffer->name, newName);
     // update also ftnum
     fileIndex = addFileNameToFileTable(newName);
@@ -814,7 +814,7 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize
         undosize = strlength;
         assert(delsize >= 0);
         // O.K. allocate also 0 at the end
-        ED_ALLOCC(undotext, delsize+1, char);
+        undotext = editorAlloc(delsize+1);
         memcpy(undotext, buffer->allocation.text+position, delsize);
         undotext[delsize]=0;
         uu = newEditorUndoReplace(buffer, position, undosize, delsize, undotext, *undo);
@@ -1108,7 +1108,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs,
                 for(; s<smax; s++, c++) {
                     if (ln==line && c==col) {
                         m = createNewEditorMarker(buff, s - buff->allocation.text);
-                        ED_ALLOC(rrr, EditorMarkerList);
+                        rrr = editorAlloc(sizeof(EditorMarkerList));
                         *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
                         res = rrr;
                         r = r->next;
@@ -1122,7 +1122,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs,
                 // references beyond end of buffer
                 while (r!=NULL && file == r->position.file) {
                     m = createNewEditorMarker(buff, maxoffset);
-                    ED_ALLOC(rrr, EditorMarkerList);
+                    rrr = editorAlloc(sizeof(EditorMarkerList));
                     *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
                     res = rrr;
                     r = r->next;
@@ -1187,7 +1187,7 @@ void freeEditorMarkersAndRegionList(EditorRegionList *occs) {
         EditorRegionList *next = o->next; /* Save next as we are freeing 'o' */
         freeEditorMarker(o->region.begin);
         freeEditorMarker(o->region.end);
-        ED_FREE(o, sizeof(EditorRegionList));
+        editorFree(o, sizeof(EditorRegionList));
         o = next;
     }
 }
@@ -1195,7 +1195,7 @@ void freeEditorMarkersAndRegionList(EditorRegionList *occs) {
 void freeEditorMarkerListButNotMarkers(EditorMarkerList *occs) {
     for (EditorMarkerList *o = occs; o != NULL;) {
         EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
-        ED_FREE(o, sizeof(EditorMarkerList));
+        editorFree(o, sizeof(EditorMarkerList));
         o = next;
     }
 }
@@ -1204,7 +1204,7 @@ void freeEditorMarkersAndMarkerList(EditorMarkerList *occs) {
     for (EditorMarkerList *o = occs; o != NULL;) {
         EditorMarkerList *next = o->next; /* Save next as we are freeing 'o' */
         freeEditorMarker(o->marker);
-        ED_FREE(o, sizeof(EditorMarkerList));
+        editorFree(o, sizeof(EditorMarkerList));
         o = next;
     }
 }
@@ -1289,11 +1289,11 @@ void editorDumpUndoList(EditorUndo *undo) {
 }
 #endif
 
-static EditorMarkerList *concatEditorMarkerList(EditorMarkerList **diff, EditorMarkerList *list) {
+static EditorMarkerList *concatEditorMarkerList(EditorMarkerList **diff, EditorMarkerList *list) { /* TODO1 Rename to combine..Lists() */
     EditorMarker     *marker = createNewEditorMarker(list->marker->buffer, list->marker->offset);
     EditorMarkerList *l;
 
-    ED_ALLOC(l, EditorMarkerList);
+    l = editorAlloc(sizeof(EditorMarkerList));
     *l    = (EditorMarkerList){.marker = marker, .usage = list->usage, .next = *diff};
     *diff = l;
     list  = list->next;
@@ -1312,7 +1312,7 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
         if (editorMarkerListLess(l1, l2)) {
             EditorMarker *marker = createNewEditorMarker(l1->marker->buffer, l1->marker->offset);
             EditorMarkerList *l;
-            ED_ALLOC(l, EditorMarkerList);
+            l = editorAlloc(sizeof(EditorMarkerList)); /* TODO1 */
             *l = (EditorMarkerList){.marker = marker, .usage = l1->usage, .next = *diff1};
             *diff1 = l;
             l1 = l1->next;
@@ -1329,7 +1329,7 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
     while (l2 != NULL) {
         EditorMarker *marker = createNewEditorMarker(l2->marker->buffer, l2->marker->offset);
         EditorMarkerList *l;
-        ED_ALLOC(l, EditorMarkerList);
+        l = editorAlloc(sizeof(EditorMarkerList));
         *l = (EditorMarkerList){.marker = marker, .usage = l2->usage, .next = *diff2};
         *diff2 = l;
         l2 = l2->next;
@@ -1361,7 +1361,7 @@ void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions) {
             if (newEnd != NULL) {
                 region->region.end = newEnd;
                 region->next       = next->next;
-                ED_FREE(next, sizeof(EditorRegionList));
+                editorFree(next, sizeof(EditorRegionList));
                 next = NULL;
                 continue;
             }
@@ -1437,7 +1437,7 @@ EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {
     bufferBegin     = createEditorMarkerForBufferBegin(buffer);
     bufferEnd       = createEditorMarkerForBufferEnd(buffer);
     theBufferRegion = (EditorRegion){.begin = bufferBegin, .end = bufferEnd};
-    ED_ALLOC(theBufferRegionList, EditorRegionList);
+    theBufferRegionList = editorAlloc(sizeof(EditorRegionList));
     *theBufferRegionList = (EditorRegionList){.region = theBufferRegion, .next = NULL};
 
     return theBufferRegionList;
@@ -1450,7 +1450,7 @@ static EditorBufferList *computeListOfAllEditorBuffers(void) {
     for (int i=0; i != -1 ; i = getNextExistingEditorBufferIndex(i+1)) {
         for (EditorBufferList *l = getEditorBuffer(i); l != NULL; l = l->next) {
             EditorBufferList *element;
-            ED_ALLOC(element, EditorBufferList);
+            element = editorAlloc(sizeof(EditorBufferList));
             *element = (EditorBufferList){.buffer = l->buffer, .next = list};
             list     = element;
         }
@@ -1464,7 +1464,7 @@ static void freeEditorBufferListButNotBuffers(EditorBufferList *list) {
     l=list;
     while (l!=NULL) {
         n = l->next;
-        ED_FREE(l, sizeof(EditorBufferList));
+        editorFree(l, sizeof(EditorBufferList));
         l = n;
     }
 }

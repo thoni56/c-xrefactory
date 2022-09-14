@@ -107,10 +107,6 @@ typedef struct codeBlock {
 #define OPT_ALLOC(pointer, type)         pointer = dm_alloc(&options.memory, sizeof(type));
 #define OPT_ALLOCC(pointer, count, type) pointer = dm_allocc(&options.memory, count, sizeof(type));
 
-/* editor allocations, for now, store it in olcxmemory */
-#define ED_ALLOCC(pointer, count, type) pointer = olcx_memory_allocc(count, sizeof(type));
-#define ED_ALLOC(pointer, type) ED_ALLOCC(pointer, 1, type)
-#define ED_FREE(pointer, size) olcx_memory_free(pointer, size)
 
 
 /***********************************************************************/
@@ -141,7 +137,7 @@ extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *m
 extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line));
 extern void memoryUseFunctionForError(void (*function)(int code, char *message));
 
-/* DM - Dynamic Memory */
+/* DM - Dynamic Memory - multiple uses, see below */
 extern void dm_init(Memory *memory, char *name);
 extern void *dm_alloc(Memory *memory, size_t size);
 extern void *dm_allocc(Memory *memory, int count, size_t size);
@@ -149,6 +145,7 @@ extern bool dm_enoughSpaceFor(Memory *memory, size_t bytes);
 extern bool dm_isBetween(Memory *memory, void *pointer, int low, int high);
 extern bool dm_isFreedPointer(Memory *memory, void *pointer);
 extern void dm_freeUntil(Memory *memory, void *pointer);
+
 
 /* cross-references global symbols allocations */
 extern void *cxAlloc(size_t size);
@@ -162,6 +159,12 @@ extern void *olcx_memory_soft_allocc(int count, size_t size);
 extern void *olcx_memory_allocc(int count, size_t size);
 extern void *olcx_alloc(size_t size);
 extern void olcx_memory_free(void *pointer, size_t size);
+
+
+/* editor allocations, for now, store it in olcxmemory */
+extern void *editorAlloc(size_t size);
+extern void  editorFree(void *pointer, size_t size);
+
 
 extern void initMemory(Memory *memory, char *name, bool (*overflowHandler)(int n), int size);
 extern void memoryResized(void);

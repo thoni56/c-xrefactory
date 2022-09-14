@@ -274,7 +274,7 @@ void dm_freeUntil(Memory *memory, void *pointer) {
     memory->index = (void *)pointer - (void *)&memory->block;
 }
 
-
+/* CX */
 void *cxAlloc(size_t size) {
     return dm_alloc(cxMemory, size);
 }
@@ -287,6 +287,7 @@ bool isFreedCxMemory(void *pointer) {
     return dm_isFreedPointer(cxMemory, pointer);
 }
 
+/* OLCX */
 void olcx_memory_init() {
     olcxMemoryAllocatedBytes = 0;
 }
@@ -317,4 +318,13 @@ void *olcx_alloc(size_t size) {
 void olcx_memory_free(void *pointer, size_t size) {
     olcxMemoryAllocatedBytes -= size;
     free(pointer);
+}
+
+/* EDITOR */
+void *editorAlloc(size_t size) {
+    return olcx_memory_allocc(1, size);
+}
+
+void editorFree(void *pointer, size_t size) {
+    olcx_memory_free(pointer, size);
 }

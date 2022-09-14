@@ -385,10 +385,10 @@ static void editorFreeSingleUndo(EditorUndo *uu) {
     if (uu->u.replace.str != NULL && uu->u.replace.strlen != 0) {
         switch (uu->operation) {
         case UNDO_REPLACE_STRING:
-            ED_FREE(uu->u.replace.str, uu->u.replace.strlen + 1);
+            editorFree(uu->u.replace.str, uu->u.replace.strlen + 1);
             break;
         case UNDO_RENAME_BUFFER:
-            ED_FREE(uu->u.rename.name, strlen(uu->u.rename.name) + 1);
+            editorFree(uu->u.rename.name, strlen(uu->u.rename.name) + 1);
             break;
         case UNDO_MOVE_BLOCK:
             break;
@@ -396,7 +396,7 @@ static void editorFreeSingleUndo(EditorUndo *uu) {
             errorMessage(ERR_INTERNAL, "Unknown operation to undo");
         }
     }
-    ED_FREE(uu, sizeof(EditorUndo));
+    editorFree(uu, sizeof(EditorUndo));
 }
 
 static void editorApplyUndos(EditorUndo *undos, EditorUndo *until, EditorUndo **undoundo, int gen) {
@@ -2546,7 +2546,7 @@ static int interactiveAskForAddImportAction(EditorMarkerList *ppp, int defaultAc
 static DisabledList *newDisabledList(SymbolsMenu *menu, int cfile, DisabledList *disabled) {
     DisabledList *dl;
 
-    ED_ALLOC(dl, DisabledList);
+    dl = editorAlloc(sizeof(DisabledList));
     *dl = (DisabledList){.file = cfile, .clas = menu->references.vApplClass, .next = disabled};
 
     return dl;
@@ -3254,7 +3254,7 @@ static void addCopyOfMarkerToList(EditorMarkerList **ll, EditorMarker *mm, Usage
     EditorMarker     *nn;
     EditorMarkerList *lll;
     nn = createNewEditorMarker(mm->buffer, mm->offset);
-    ED_ALLOC(lll, EditorMarkerList);
+    lll = editorAlloc(sizeof(EditorMarkerList));
     *lll = (EditorMarkerList){.marker = nn, .usage = usage, .next = *ll};
     *ll  = lll;
 }
@@ -4116,7 +4116,8 @@ static EditorMarkerList *pullUpPushDownDifferences(SymbolsMenu *menu1, SymbolsMe
         for (EditorMarkerList *rr1 = mm1->markers; rr1 != NULL; rr1 = rr1->next) {
             mm2 = findSymbolCorrespondingToReferenceWrtPullUpPushDown(menu2, mm1, rr1);
             if (mm2 == NULL) {
-                ED_ALLOC(rr, EditorMarkerList);
+                /* TODO Extract to newEditorMarkerList() */
+                rr = editorAlloc(sizeof(EditorMarkerList));
                 *rr  = (EditorMarkerList){.marker = duplicateEditorMarker(rr1->marker),
                                           .usage  = rr1->usage,
                                           .next   = diff};
