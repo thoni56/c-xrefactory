@@ -1691,9 +1691,9 @@ static EditorMarker *findModifierAndCreateMarker(EditorMarker *point, char *modi
             mini--;
         i = point->offset;
     } else {
-        mb = createNewEditorMarkerForPosition(&parsedPositions[limitIndex]);
+        mb = newEditorMarkerForPosition(&parsedPositions[limitIndex]);
         // TODO, this limitIndex+2 should be done more semantically
-        me   = createNewEditorMarkerForPosition(&parsedPositions[limitIndex + 2]);
+        me   = newEditorMarkerForPosition(&parsedPositions[limitIndex + 2]);
         mini = mb->offset;
         i    = me->offset;
         freeEditorMarker(mb);
@@ -1734,7 +1734,7 @@ static void addModifier(EditorMarker *point, int limit, char *modifier) {
     if (parsedPositions[limit].file == noFileIndex) {
         errorMessage(ERR_INTERNAL, "cant find beginning of field declaration");
     }
-    mm = createNewEditorMarkerForPosition(&parsedPositions[limit]);
+    mm = newEditorMarkerForPosition(&parsedPositions[limit]);
     sprintf(modifSpace, "%s ", modifier);
     replaceString(mm, 0, modifSpace);
     freeEditorMarker(mm);
@@ -1980,7 +1980,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
     text = point->buffer->allocation.text;
 
     if (endMarkerOrMark == NULL) {
-        beginMarker = createNewEditorMarkerForPosition(&parameterBeginPosition);
+        beginMarker = newEditorMarkerForPosition(&parameterBeginPosition);
     } else {
         beginMarker = endMarkerOrMark;
         assert(beginMarker->buffer->fileIndex == parameterBeginPosition.file);
@@ -2069,7 +2069,7 @@ static void checkThatParameterIsUnused(EditorMarker *pos, char *functionName, in
         return;
     }
 
-    mm = createNewEditorMarkerForPosition(&parameterPosition);
+    mm = newEditorMarkerForPosition(&parameterPosition);
     strncpy(pname, getIdentifierOnMarker_st(mm), TMP_STRING_SIZE);
     pname[TMP_STRING_SIZE - 1] = 0;
     if (isParameterUsedExceptRecursiveCalls(mm, pos)) {
@@ -2106,8 +2106,8 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
     if (res != RESULT_OK)
         return;
 
-    m1 = createNewEditorMarkerForPosition(&parameterBeginPosition);
-    m2 = createNewEditorMarkerForPosition(&parameterEndPosition);
+    m1 = newEditorMarkerForPosition(&parameterBeginPosition);
+    m2 = newEditorMarkerForPosition(&parameterEndPosition);
 
     text = pos->buffer->allocation.text;
 
@@ -2160,8 +2160,8 @@ static void moveParameter(EditorMarker *pos, char *fname, int argFrom, int argTo
     if (res != RESULT_OK)
         return;
 
-    m1 = createNewEditorMarkerForPosition(&parameterBeginPosition);
-    m2 = createNewEditorMarkerForPosition(&parameterEndPosition);
+    m1 = newEditorMarkerForPosition(&parameterBeginPosition);
+    m2 = newEditorMarkerForPosition(&parameterEndPosition);
 
     text      = pos->buffer->allocation.text;
     plen      = 0;
@@ -2902,8 +2902,8 @@ static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **_mstart
     if (parsedPositions[limitIndex].file == noFileIndex || parsedPositions[limitIndex + 1].file == noFileIndex) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
-    mstart = createNewEditorMarkerForPosition(&parsedPositions[limitIndex]);
-    mend   = createNewEditorMarkerForPosition(&parsedPositions[limitIndex + 1]);
+    mstart = newEditorMarkerForPosition(&parsedPositions[limitIndex]);
+    mend   = newEditorMarkerForPosition(&parsedPositions[limitIndex + 1]);
     moveMarkerToTheBeginOfDefinitionScope(mstart);
     moveMarkerToTheEndOfDefinitionScope(mend);
     assert(mstart->buffer == mend->buffer);
@@ -3110,10 +3110,10 @@ static void performMoveClass(EditorMarker *point, EditorMarker *target, EditorMa
         parsedPositions[SPP_CLASS_DECLARATION_END_POSITION].file == noFileIndex) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
-    mstart = createNewEditorMarkerForPosition(
+    mstart = newEditorMarkerForPosition(
         &parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION]);
     mend =
-        createNewEditorMarkerForPosition(&parsedPositions[SPP_CLASS_DECLARATION_END_POSITION]);
+        newEditorMarkerForPosition(&parsedPositions[SPP_CLASS_DECLARATION_END_POSITION]);
     moveMarkerToTheBeginOfDefinitionScope(mstart);
     moveMarkerToTheEndOfDefinitionScope(mend);
 
@@ -3599,7 +3599,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
         errorMessage(ERR_INTERNAL, "Can't determine position of parameter");
         return;
     }
-    mm = createNewEditorMarkerForPosition(&parameterPosition);
+    mm = newEditorMarkerForPosition(&parameterPosition);
     if (refactoringOptions.refpar2[0] != 0) {
         sprintf(param, "%s.%s", getIdentifierOnMarker_st(mm), refactoringOptions.refpar2);
     } else {
@@ -3664,10 +3664,10 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
         if (!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
             res = getParameterPosition(ll->marker, nameOnPoint, argn);
             if (res == RESULT_OK) {
-                m1 = createNewEditorMarkerForPosition(&parameterBeginPosition);
+                m1 = newEditorMarkerForPosition(&parameterBeginPosition);
                 m1->offset++;
                 runWithEditorMarkerUntil(m1, noSpaceChar, 1);
-                m2 = createNewEditorMarkerForPosition(&parameterEndPosition);
+                m2 = newEditorMarkerForPosition(&parameterEndPosition);
                 m2->offset--;
                 runWithEditorMarkerUntil(m2, noSpaceChar, -1);
                 m2->offset++;
@@ -3796,11 +3796,11 @@ static Reference *checkEncapsulateGetterSetterForExistingMethods(char *mname) {
 static void addMethodToForbiddenRegions(Reference *methodRef, EditorRegionList **forbiddenRegions) {
     EditorMarker *mm, *mb, *me;
 
-    mm = createNewEditorMarkerForPosition(&methodRef->position);
+    mm = newEditorMarkerForPosition(&methodRef->position);
     makeSyntaxPassOnSource(mm);
-    mb = createNewEditorMarkerForPosition(
+    mb = newEditorMarkerForPosition(
         &parsedPositions[SPP_METHOD_DECLARATION_BEGIN_POSITION]);
-    me = createNewEditorMarkerForPosition(
+    me = newEditorMarkerForPosition(
         &parsedPositions[SPP_METHOD_DECLARATION_END_POSITION]);
     *forbiddenRegions = newEditorRegionList(mb, me, *forbiddenRegions);
     freeEditorMarker(mm);
@@ -3865,14 +3865,14 @@ static void performEncapsulateField(EditorMarker *point, EditorRegionList **forb
 
     // generate getter and setter bodies
     makeSyntaxPassOnSource(point);
-    db = createNewEditorMarkerForPosition(
+    db = newEditorMarkerForPosition(
         &parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION]);
-    dtb = createNewEditorMarkerForPosition(
+    dtb = newEditorMarkerForPosition(
         &parsedPositions[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION]);
-    dte = createNewEditorMarkerForPosition(
+    dte = newEditorMarkerForPosition(
         &parsedPositions[SPP_FIELD_DECLARATION_TYPE_END_POSITION]);
     de =
-        createNewEditorMarkerForPosition(&parsedPositions[SPP_FIELD_DECLARATION_END_POSITION]);
+        newEditorMarkerForPosition(&parsedPositions[SPP_FIELD_DECLARATION_END_POSITION]);
     moveMarkerToTheEndOfDefinitionScope(de);
     assert(dtb->buffer == dte->buffer);
     assert(dtb->offset <= dte->offset);
@@ -3949,9 +3949,9 @@ static void performEncapsulateField(EditorMarker *point, EditorRegionList **forb
             if (parsedPositions[SPP_ASSIGNMENT_OPERATOR_POSITION].file == noFileIndex) {
                 errorMessage(ERR_INTERNAL, "Can't get assignment coordinates");
             } else {
-                eqm = createNewEditorMarkerForPosition(
+                eqm = newEditorMarkerForPosition(
                     &parsedPositions[SPP_ASSIGNMENT_OPERATOR_POSITION]);
-                ee = createNewEditorMarkerForPosition(
+                ee = newEditorMarkerForPosition(
                     &parsedPositions[SPP_ASSIGNMENT_END_POSITION]);
                 // make it in two steps to move the ll->d marker to the end
                 checkedReplaceString(ll->marker, nameOnPointLen, nameOnPoint, "");
@@ -4010,10 +4010,10 @@ static void encapsulateField(EditorMarker *point) {
         FATAL_ERROR(ERR_INTERNAL, "can't deetrmine class coordinates", XREF_EXIT_ERR);
     }
 
-    cb = createNewEditorMarkerForPosition(
+    cb = newEditorMarkerForPosition(
         &parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION]);
     ce =
-        createNewEditorMarkerForPosition(&parsedPositions[SPP_CLASS_DECLARATION_END_POSITION]);
+        newEditorMarkerForPosition(&parsedPositions[SPP_CLASS_DECLARATION_END_POSITION]);
 
     forbiddenRegions = newEditorRegionList(cb, ce, NULL);
 
@@ -4151,13 +4151,13 @@ static void reduceParenthesesAroundExpression(EditorMarker *mm, char *expression
         assert(parsedPositions[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION].file != noFileIndex);
         assert(parsedPositions[SPP_PARENTHESED_EXPRESSION_END_POSITION].file != noFileIndex);
         elen = strlen(expression);
-        lp   = createNewEditorMarkerForPosition(
+        lp   = newEditorMarkerForPosition(
             &parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION]);
-        rp = createNewEditorMarkerForPosition(
+        rp = newEditorMarkerForPosition(
             &parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION]);
-        eb = createNewEditorMarkerForPosition(
+        eb = newEditorMarkerForPosition(
             &parsedPositions[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION]);
-        ee = createNewEditorMarkerForPosition(
+        ee = newEditorMarkerForPosition(
             &parsedPositions[SPP_PARENTHESED_EXPRESSION_END_POSITION]);
         if (ee->offset - eb->offset == elen && strncmp(MARKER_TO_POINTER(eb), expression, elen) == 0) {
             replaceString(lp, 1, "");
@@ -4192,15 +4192,15 @@ static void reduceCastedThis(EditorMarker *mm, char *superFqtName) {
             assert(parsedPositions[SPP_CAST_RPAR_POSITION].file != noFileIndex);
             assert(parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != noFileIndex);
             assert(parsedPositions[SPP_CAST_EXPRESSION_END_POSITION].file != noFileIndex);
-            lp = createNewEditorMarkerForPosition(&parsedPositions[SPP_CAST_LPAR_POSITION]);
-            rp = createNewEditorMarkerForPosition(&parsedPositions[SPP_CAST_RPAR_POSITION]);
-            tb = createNewEditorMarkerForPosition(
+            lp = newEditorMarkerForPosition(&parsedPositions[SPP_CAST_LPAR_POSITION]);
+            rp = newEditorMarkerForPosition(&parsedPositions[SPP_CAST_RPAR_POSITION]);
+            tb = newEditorMarkerForPosition(
                 &parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION]);
             te =
-                createNewEditorMarkerForPosition(&parsedPositions[SPP_CAST_TYPE_END_POSITION]);
-            eb = createNewEditorMarkerForPosition(
+                newEditorMarkerForPosition(&parsedPositions[SPP_CAST_TYPE_END_POSITION]);
+            eb = newEditorMarkerForPosition(
                 &parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION]);
-            ee = createNewEditorMarkerForPosition(
+            ee = newEditorMarkerForPosition(
                 &parsedPositions[SPP_CAST_EXPRESSION_END_POSITION]);
             rp->offset++;
             if (ee->offset - eb->offset == 4 /*strlen("this")*/) {
@@ -4249,9 +4249,9 @@ static bool isThereACastOfThis(EditorMarker *mm) {
             assert(parsedPositions[SPP_CAST_RPAR_POSITION].file != noFileIndex);
             assert(parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != noFileIndex);
             assert(parsedPositions[SPP_CAST_EXPRESSION_END_POSITION].file != noFileIndex);
-            eb = createNewEditorMarkerForPosition(
+            eb = newEditorMarkerForPosition(
                 &parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION]);
-            ee = createNewEditorMarkerForPosition(
+            ee = newEditorMarkerForPosition(
                 &parsedPositions[SPP_CAST_EXPRESSION_END_POSITION]);
             if (ee->offset - eb->offset == 4 /*strlen("this")*/) {
                 thereIsACast = true;

@@ -108,7 +108,7 @@ extern bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2);
 
 extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous,
                                      EditorMarker *next);
-extern EditorMarker     *createNewEditorMarkerForPosition(Position *pos);
+extern EditorMarker     *newEditorMarkerForPosition(Position *pos);
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
 extern EditorBuffer     *openEditorBufferNoFileLoad(char *name, char *fileName);

@@ -73,7 +73,7 @@ EditorBuffer *findEditorBufferForFileOrCreate(char *name) {
   return (EditorBuffer *) mock(name);
 }
 
-EditorMarker *createNewEditorMarkerForPosition(Position *pos) {
+EditorMarker *newEditorMarkerForPosition(Position *pos) {
   return (EditorMarker *) mock(pos);
 }
 

@@ -425,7 +425,7 @@ bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2) {
     return false;
 }
 
-EditorMarker *createNewEditorMarkerForPosition(Position *position) {
+EditorMarker *newEditorMarkerForPosition(Position *position) {
     EditorBuffer *buffer;
     EditorMarker *marker;
 
