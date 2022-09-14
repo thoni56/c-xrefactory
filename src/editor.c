@@ -309,16 +309,27 @@ static void performEncodingAdjustments(EditorBuffer *buffer) {
     }
 }
 
+static void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer) {
+    marker->buffer = buffer;
+    marker->next = buffer->markers;
+    buffer->markers = marker;
+    marker->previous = NULL;
+    if (marker->next!=NULL)
+        marker->next->previous = marker;
+}
+
 EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous, EditorMarker *next) {
-    EditorMarker *editorMarker;
+    EditorMarker *marker;
 
-    editorMarker = editorAlloc(sizeof(EditorMarker));
-    editorMarker->buffer = buffer;
-    editorMarker->offset = offset;
-    editorMarker->previous = previous;
-    editorMarker->next = next;
+    marker = editorAlloc(sizeof(EditorMarker));
+    marker->buffer = buffer;
+    marker->offset = offset;
+    marker->previous = previous;
+    marker->next = next;
 
-    return editorMarker;
+    attachMarkerToBuffer(marker, buffer);
+
+    return marker;
 }
 
 EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {
@@ -414,24 +425,6 @@ bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2) {
     return false;
 }
 
-static void attachMarkerToBuffer(EditorMarker *marker, EditorBuffer *buffer) {
-    marker->buffer = buffer;
-    marker->next = buffer->markers;
-    buffer->markers = marker;
-    marker->previous = NULL;
-    if (marker->next!=NULL)
-        marker->next->previous = marker;
-}
-
-EditorMarker *createNewEditorMarker(EditorBuffer *buffer, int offset) {
-    EditorMarker *marker;
-
-    marker = editorAlloc(sizeof(EditorMarker));
-    *marker = (EditorMarker){.buffer = NULL, .offset = offset, .previous = NULL, .next = NULL};
-    attachMarkerToBuffer(marker, buffer);
-    return marker;
-}
-
 EditorMarker *createNewEditorMarkerForPosition(Position *position) {
     EditorBuffer *buffer;
     EditorMarker *marker;
@@ -440,13 +433,13 @@ EditorMarker *createNewEditorMarkerForPosition(Position *position) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for non-existent position");
     }
     buffer = findEditorBufferForFile(getFileItem(position->file)->name);
-    marker = createNewEditorMarker(buffer, 0);
+    marker = newEditorMarker(buffer, 0, NULL, NULL);
     moveEditorMarkerToLineAndColumn(marker, position->line, position->col);
     return marker;
 }
 
 EditorMarker *duplicateEditorMarker(EditorMarker *marker) {
-    return createNewEditorMarker(marker->buffer, marker->offset);
+    return newEditorMarker(marker->buffer, marker->offset, NULL, NULL);
 }
 
 static void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker) {
@@ -1106,7 +1099,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs,
                 ln = 1; c = 0;
                 for(; s<smax; s++, c++) {
                     if (ln==line && c==col) {
-                        m = createNewEditorMarker(buff, s - buff->allocation.text);
+                        m = newEditorMarker(buff, s - buff->allocation.text, NULL, NULL);
                         rrr = editorAlloc(sizeof(EditorMarkerList));
                         *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
                         res = rrr;
@@ -1120,7 +1113,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs,
                 }
                 // references beyond end of buffer
                 while (r!=NULL && file == r->position.file) {
-                    m = createNewEditorMarker(buff, maxoffset);
+                    m = newEditorMarker(buff, maxoffset, NULL, NULL);
                     rrr = editorAlloc(sizeof(EditorMarkerList));
                     *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
                     res = rrr;
@@ -1289,7 +1282,7 @@ void editorDumpUndoList(EditorUndo *undo) {
 #endif
 
 static EditorMarkerList *combineEditorMarkerLists(EditorMarkerList **diff, EditorMarkerList *list) {
-    EditorMarker     *marker = createNewEditorMarker(list->marker->buffer, list->marker->offset);
+    EditorMarker     *marker = newEditorMarker(list->marker->buffer, list->marker->offset, NULL, NULL);
     EditorMarkerList *l;
 
     l = editorAlloc(sizeof(EditorMarkerList));
@@ -1309,7 +1302,7 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
     *diff1 = *diff2 = NULL;
     for(l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
         if (editorMarkerListLess(l1, l2)) {
-            EditorMarker *marker = createNewEditorMarker(l1->marker->buffer, l1->marker->offset);
+            EditorMarker *marker = newEditorMarker(l1->marker->buffer, l1->marker->offset, NULL, NULL);
             EditorMarkerList *l;
             l = editorAlloc(sizeof(EditorMarkerList)); /* TODO1 */
             *l = (EditorMarkerList){.marker = marker, .usage = l1->usage, .next = *diff1};
@@ -1326,7 +1319,7 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
         l1 = combineEditorMarkerLists(diff1, l1);
     }
     while (l2 != NULL) {
-        EditorMarker *marker = createNewEditorMarker(l2->marker->buffer, l2->marker->offset);
+        EditorMarker *marker = newEditorMarker(l2->marker->buffer, l2->marker->offset, NULL, NULL);
         EditorMarkerList *l;
         l = editorAlloc(sizeof(EditorMarkerList));
         *l = (EditorMarkerList){.marker = marker, .usage = l2->usage, .next = *diff2};
@@ -1421,11 +1414,11 @@ void restrictEditorMarkersToRegions(EditorMarkerList **mm, EditorRegionList **re
 }
 
 EditorMarker *createEditorMarkerForBufferBegin(EditorBuffer *buffer) {
-    return createNewEditorMarker(buffer, 0);
+    return newEditorMarker(buffer, 0, NULL, NULL);
 }
 
 EditorMarker *createEditorMarkerForBufferEnd(EditorBuffer *buffer) {
-    return createNewEditorMarker(buffer, buffer->allocation.bufferSize);
+    return newEditorMarker(buffer, buffer->allocation.bufferSize, NULL, NULL);
 }
 
 EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer) {

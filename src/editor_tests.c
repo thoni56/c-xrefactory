@@ -26,7 +26,7 @@ BeforeEach(Editor) {
 AfterEach(Editor) {}
 
 Ensure(Editor, can_create_new_editor_region_list) {
-    EditorBuffer      buffer;
+    EditorBuffer      buffer     = (EditorBuffer){.markers = NULL};
     EditorMarker     *begin      = newEditorMarker(&buffer, 1, NULL, NULL);
     EditorMarker     *end        = newEditorMarker(&buffer, 10, begin, NULL);
     EditorRegionList *regionList = newEditorRegionList(begin, end, NULL);

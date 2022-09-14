@@ -100,15 +100,15 @@ extern size_t editorFileSize(char *path);
 extern time_t editorFileModificationTime(char *path);
 extern int    editorFileStatus(char *path, struct stat *statP);
 
-extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous,
-                                     EditorMarker *next);
-
 extern bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2);
 extern bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2);
 
+extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous,
+                                     EditorMarker *next);
+extern EditorMarker     *createNewEditorMarkerForPosition(Position *pos);
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
 extern EditorBuffer     *openEditorBufferNoFileLoad(char *name, char *fileName);
@@ -116,7 +116,6 @@ extern EditorBuffer     *getOpenedEditorBuffer(char *name);
 extern EditorBuffer     *getOpenedAndLoadedEditorBuffer(char *name);
 extern EditorBuffer     *findEditorBufferForFile(char *name);
 extern EditorBuffer     *findEditorBufferForFileOrCreate(char *name);
-extern EditorMarker     *createNewEditorMarkerForPosition(Position *pos);
 extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs,
                                                           bool (*filter)(Reference *, void *),
                                                           void *filterParam);
@@ -133,7 +132,6 @@ extern void          editorDumpMarkerList(EditorMarkerList *mml);
 extern void          editorDumpRegionList(EditorRegionList *mml);
 extern void          quasiSaveModifiedEditorBuffers(void);
 extern void          loadAllOpenedEditorBuffers(void);
-extern EditorMarker *createNewEditorMarker(EditorBuffer *buff, int offset);
 extern EditorMarker *duplicateEditorMarker(EditorMarker *mm);
 extern int           countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2);
 extern bool          runWithEditorMarkerUntil(EditorMarker *m, int (*until)(int), int step);
