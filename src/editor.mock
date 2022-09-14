@@ -9,8 +9,8 @@ void editorInit(void) {
   mock();
 }
 
-EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous, EditorMarker *next) {
-    return (EditorMarker *)mock(buffer, offset, previous, next);
+EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset) {
+    return (EditorMarker *)mock(buffer, offset);
 }
 
 EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next) {

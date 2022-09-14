@@ -27,9 +27,11 @@ AfterEach(Editor) {}
 
 Ensure(Editor, can_create_new_editor_region_list) {
     EditorBuffer      buffer     = (EditorBuffer){.markers = NULL};
-    EditorMarker     *begin      = newEditorMarker(&buffer, 1, NULL, NULL);
-    EditorMarker     *end        = newEditorMarker(&buffer, 10, begin, NULL);
+    EditorMarker     *begin      = newEditorMarker(&buffer, 1);
+    EditorMarker     *end        = newEditorMarker(&buffer, 10);
     EditorRegionList *regionList = newEditorRegionList(begin, end, NULL);
+
+    end->previous = begin;
 
     assert_that(regionList->region.begin->buffer, is_equal_to(&buffer));
     assert_that(regionList->region.end->buffer, is_equal_to(&buffer));

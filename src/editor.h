@@ -106,8 +106,7 @@ extern bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2);
 extern bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2);
 extern bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2);
 
-extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous,
-                                     EditorMarker *next);
+extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
 extern EditorMarker     *newEditorMarkerForPosition(Position *pos);
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
