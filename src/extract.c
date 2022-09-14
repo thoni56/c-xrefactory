@@ -146,7 +146,7 @@ static ProgramGraphNode *newProgramGraphNode(
 ) {
     ProgramGraphNode *programGraph;
 
-    programGraph = (ProgramGraphNode *)cxAlloc(sizeof(ProgramGraphNode));
+    programGraph = cxAlloc(sizeof(ProgramGraphNode));
 
     programGraph->ref = ref;
     programGraph->symRef = symRef;
@@ -654,7 +654,7 @@ static void removeSymbolFromSymRefList(ReferencesItemList **ll, ReferencesItem *
 }
 
 static ReferencesItemList *concatRefItemList(ReferencesItemList **list, ReferencesItem *items) {
-    ReferencesItemList *refItemList = (ReferencesItemList *)cxAlloc(sizeof(ReferencesItemList));
+    ReferencesItemList *refItemList = cxAlloc(sizeof(ReferencesItemList));
     refItemList->item = items;
     refItemList->next = *list;
     return refItemList;
@@ -1220,7 +1220,7 @@ static void makeExtraction(void) {
     if (options.xref2)
         ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
 
-    rb = (char *)cxAlloc(EXTRACT_GEN_BUFFER_SIZE);
+    rb = cxAlloc(EXTRACT_GEN_BUFFER_SIZE);
 
     if (!options.xref2) {
         fprintf(communicationChannel,

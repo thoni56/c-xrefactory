@@ -632,7 +632,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // And it can't be removed because of multiple tests
     // failing with "cx_memory resizing required, see file TROUBLES"
     // This just shows how impenetrable the memory management is...
-    char *sss = (char *)cxAlloc(CX_MEMORY_CHUNK_SIZE);
+    char *sss = cxAlloc(CX_MEMORY_CHUNK_SIZE);
     cxFreeUntil(sss);
 
     initReferenceTable(MAX_CXREF_ENTRIES);

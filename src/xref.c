@@ -86,7 +86,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     char *cxFreeBase;
     bool  fileAddedFlag;
 
-    cxFreeBase = (char *)cxAlloc(0);
+    cxFreeBase = cxAlloc(0);
     fullScanFor(LINK_NAME_INCLUDE_REFS);
     // iterate over scheduled files
     fileAddedFlag = true;
@@ -335,7 +335,7 @@ void callXref(int argc, char **argv, bool isRefactoring) {
     LongjmpReason reason = LONGJMP_REASON_NONE;
 
     currentPass = ANY_PASS;
-    cxFreeBase = (char *)cxAlloc(0);
+    cxFreeBase = cxAlloc(0);
     cxResizingBlocked = true;
     if (options.update)
         scheduleModifiedFilesToUpdate(isRefactoring);

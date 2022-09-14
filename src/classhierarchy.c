@@ -47,7 +47,7 @@ ClassHierarchyReference *newClassHierarchyReference(int originFileIndex, int sup
                                                     ClassHierarchyReference *next) {
     ClassHierarchyReference *p;
 
-    p = (ClassHierarchyReference *)cxAlloc(sizeof(ClassHierarchyReference));
+    p = cxAlloc(sizeof(ClassHierarchyReference));
     p->ofile = originFileIndex;
     p->superClass = superClass;
     p->next = next;

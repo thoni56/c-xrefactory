@@ -934,9 +934,9 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
 
     if (!isMemberInReferenceTable(referenceItem, NULL, &memb)) {
         // TODO: This is more or less the body of a newReferencesItem()
-        char *ss = (char *)cxAlloc(len+1);
+        char *ss = cxAlloc(len+1);
         strcpy(ss,id);
-        memb = (ReferencesItem *)cxAlloc(sizeof(ReferencesItem));
+        memb = cxAlloc(sizeof(ReferencesItem));
         fillReferencesItem(memb, ss, cxFileHashNumber(ss),
                            vApplClass, vFunClass, symType, storage,
                            ScopeGlobal, accessFlags, CategoryGlobal);

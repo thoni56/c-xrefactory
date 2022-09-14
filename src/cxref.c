@@ -238,7 +238,7 @@ Reference **addToRefList(Reference **list,
     SORTED_LIST_PLACE2(place,reference,list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
         || options.serverOperation==OLO_EXTRACT) {
-        Reference *r = (Reference *)cxAlloc(sizeof(Reference));
+        Reference *r = cxAlloc(sizeof(Reference));
         fillReference(r, usage, pos, NULL);
         LIST_CONS(r, (*place));
     } else {
@@ -253,7 +253,7 @@ Reference *duplicateReference(Reference *original) {
     // this is used in extract x=x+2; to re-arrange order of references
     // i.e. usage must be first, lValue second.
     original->usage = NO_USAGE;
-    Reference *copy = (Reference *)cxAlloc(sizeof(Reference));
+    Reference *copy = cxAlloc(sizeof(Reference));
     *copy = *original;
     original->next = copy;
     return copy;
@@ -511,7 +511,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
     }
     switch (symbol->type) {
     case TypePackage: {
-        char *name = (char *)cxAlloc(strlen(menu->references.name)+1);
+        char *name = cxAlloc(strlen(menu->references.name)+1);
         strcpy(name, menu->references.name);
         javaDotifyFileName(name);
         makeRefactoringAvailable(PPC_AVR_RENAME_PACKAGE, name);
@@ -705,9 +705,9 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     int index;
     if (!isMemberInReferenceTable(&ppp, &index, &memb)) {
         log_trace("allocating '%s'", symbol->linkName);
-        char *linkName = (char *)cxAlloc(strlen(symbol->linkName)+1);
+        char *linkName = cxAlloc(strlen(symbol->linkName)+1);
         strcpy(linkName, symbol->linkName);
-        ReferencesItem *r = (ReferencesItem *)cxAlloc(sizeof(ReferencesItem));
+        ReferencesItem *r = cxAlloc(sizeof(ReferencesItem));
         fillReferencesItem(r, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl, symbol->type,
                            storage, scope, symbol->access, category);
         pushReferencesItem(r, index);
