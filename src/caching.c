@@ -99,22 +99,22 @@ static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
 static void structCachingFree(Symbol *symbol) {
     SymbolList **superList;
     assert(symbol->u.structSpec);
-    if (freedPointer(symbol->u.structSpec->records) ||
+    if (isFreedPointer(symbol->u.structSpec->records) ||
         PPM_FREED_POINTER(symbol->u.structSpec->records)) {
         symbol->u.structSpec->records = NULL;
     }
-    if (freedPointer(symbol->u.structSpec->casts.node) ||
+    if (isFreedPointer(symbol->u.structSpec->casts.node) ||
         PPM_FREED_POINTER(symbol->u.structSpec->casts.node)) {
         symbol->u.structSpec->casts.node = NULL;
     }
-    if (freedPointer(symbol->u.structSpec->casts.sub) ||
+    if (isFreedPointer(symbol->u.structSpec->casts.sub) ||
         PPM_FREED_POINTER(symbol->u.structSpec->casts.sub)) {
         symbol->u.structSpec->casts.sub = NULL;
     }
 
     superList = &symbol->u.structSpec->super;
     while (*superList!=NULL) {
-        if (freedPointer(*superList) ||
+        if (isFreedPointer(*superList) ||
             PPM_FREED_POINTER(*superList)) {
             *superList = (*superList)->next;
             goto contlabel;
@@ -137,7 +137,7 @@ static void symbolTableDeleteOutOfMemory(int i) {
             break;
         case TypeStruct:
         case TypeUnion:
-            if (freedPointer(*pp) || PPM_FREED_POINTER(*pp)) {
+            if (isFreedPointer(*pp) || PPM_FREED_POINTER(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             } else {
@@ -145,15 +145,15 @@ static void symbolTableDeleteOutOfMemory(int i) {
             }
             break;
         case TypeEnum:
-            if (freedPointer(*pp)) {
+            if (isFreedPointer(*pp)) {
                 *pp = (*pp)->next;
                 continue;
-            } else if (freedPointer((*pp)->u.enums)) {
+            } else if (isFreedPointer((*pp)->u.enums)) {
                 (*pp)->u.enums = NULL;
             }
             break;
         default:
-            if (freedPointer(*pp)) {
+            if (isFreedPointer(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             }
@@ -170,7 +170,7 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
         if (PPM_FREED_POINTER(*symbolListP)) {
             *symbolListP = (*symbolListP)->next;
             continue;
-        } else if (freedPointer((*symbolListP)->element) || PPM_FREED_POINTER((*symbolListP)->element)) {
+        } else if (isFreedPointer((*symbolListP)->element) || PPM_FREED_POINTER((*symbolListP)->element)) {
             *symbolListP = (*symbolListP)->next;
             continue;
         } else {
@@ -183,7 +183,7 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
 static void trailDeleteOutOfMemory(void) {
     FreeTrail **pp;
     pp = &currentBlock->trail;
-    while (freedPointer(*pp)) {
+    while (isFreedPointer(*pp)) {
         *pp = (*pp)->next;
     }
 }

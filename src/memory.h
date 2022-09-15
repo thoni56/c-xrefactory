@@ -183,6 +183,6 @@ extern void endBlock(void);
 extern int nestingLevel(void);
 
 extern bool isMemoryFromPreviousBlock(void *ppp);
-extern bool freedPointer(void *ptr);
+extern bool isFreedPointer(void *ptr);
 
 #endif
