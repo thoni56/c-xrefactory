@@ -155,3 +155,19 @@ Ensure(Memory, can_handle_sm_memory) {
     expect(fatalError);
     SM_ALLOCC(testMemory, pointer, SIZE_testMemory + 1, char);
 }
+
+
+Memory2 testMemory2;
+
+Ensure(Memory, can_handle_new_sm_memory) {
+    smInit(&testMemory2, SIZE_testMemory);
+
+    char *pointer = smAllocc(&testMemory2, 1, sizeof(char));
+    assert_that(pointer, is_not_null);
+    assert_that(pointer, is_equal_to(testMemory2.area)); /* First allocated item in testMemory */
+
+    /* Allocate more that size renders fatalError() */
+    fatalErrorAllowed = true;
+    pointer = smAllocc(&testMemory2, SIZE_testMemory + 1, sizeof(char));
+    assert_that(fatalErrorCalled);
+}

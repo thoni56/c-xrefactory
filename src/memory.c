@@ -328,3 +328,26 @@ void *editorAlloc(size_t size) {
 void editorFree(void *pointer, size_t size) {
     olcx_memory_free(pointer, size);
 }
+
+void smInit(Memory2 *memory, size_t size) {
+    if (size != memory->size) {
+        free(memory->area);
+        memory->area = NULL;
+    }
+    memory->size = size;
+    if (memory->area == NULL)
+        memory->area = malloc(size);
+    memory->index = 0;
+}
+
+void *smAllocc(Memory2 *memory, int count, size_t size) {
+    void *pointer = &memory->area[memory->index];
+    memory->index += count*size;
+    if (memory->index > memory->size)
+        fatalError(ERR_ST, "Memory overflow.", XREF_EXIT_ERR, __FILE__, __LINE__);
+    return pointer;
+}
+
+void *smAlloc(Memory2 *memory, size_t size) {
+    return smAllocc(memory, 1, size);
+}

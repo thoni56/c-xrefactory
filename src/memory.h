@@ -109,6 +109,20 @@ typedef struct codeBlock {
 
 
 
+/* ************************************************************************** */
+/* EXPERIMENT - New type of static memory - so far unused */
+typedef struct {
+    size_t size;
+    int index;
+    char *area;
+} Memory2;
+
+extern void smInit(Memory2 *memory, size_t size);
+extern void *smAllocc(Memory2 *memory, int count, size_t size);
+extern void *smAlloc(Memory2 *memory, size_t size);
+
+
+
 /***********************************************************************/
 
 /* DM (Dynamic Memory) areas */
