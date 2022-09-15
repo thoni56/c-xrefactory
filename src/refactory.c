@@ -3707,7 +3707,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
         }
     }
 
-    // STEP3) remove the parameter if not used anymore
+    // STEP 3) remove the parameter if not used anymore
     if (!isThisSymbolUsed(mm)) {
         applyParameterManipulation(point->buffer, point, PPC_AVR_DEL_PARAMETER, argn, 0);
     } else {

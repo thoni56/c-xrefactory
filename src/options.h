@@ -149,8 +149,8 @@ typedef struct options {
     // list of strings
     struct stringPointerList *allAllocatedStrings;
     // Memory area
-    struct memory			 memory; /* TODO: WTF: this structs last field is used to overrun... */
-    char					 pendingFreeSpace[SIZE_optMemory]; /* ... into this area! */
+    Memory memory; /* TODO: WTF: this structs last field is used to overrun... */
+    char   pendingFreeSpace[SIZE_optMemory]; /* ... into this area! */
 } Options;
 
 

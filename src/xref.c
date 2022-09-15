@@ -369,7 +369,8 @@ void callXref(int argc, char **argv, bool isRefactoring) {
                        Can we just reread from the last class file? */
                     oneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed, isRefactoring);
                 }
-                writeRelativeProgress((10*inputCounter) / numberOfInputs);
+                if (options.xref2)
+                    writeRelativeProgress((10*inputCounter) / numberOfInputs);
                 inputCounter++;
             }
 
