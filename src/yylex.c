@@ -77,8 +77,7 @@ static void setYylvalsForInteger(int val, Position position, int length) {
 int macroStackIndex=0;
 static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 
-static char ppMemory[SIZE_ppMemory];
-static int ppMemoryIndex=0;
+static Memory2 macroArgumentsMemory;
 
 static char mbMemory[SIZE_mbMemory];
 int mbMemoryIndex=0;
@@ -111,7 +110,6 @@ void initAllInputs(void) {
     macroStackIndex=0;
     isProcessingPreprocessorIf = false;
     resetMacroArgumentTable();
-    ppMemoryIndex=0;
     s_olstring[0]=0;
     olstringFound = false;
     olstringServed = false;
@@ -710,7 +708,7 @@ protected void processDefineDirective(bool hasArguments) {
     Symbol *symbol = NULL;
     char *body = NULL;
 
-    SM_INIT(ppMemory);
+    smInit(&macroArgumentsMemory, SIZE_ppMemory);
 
     ppb1 = noPosition;
     ppb2 = noPosition;
@@ -780,8 +778,7 @@ protected void processDefineDirective(bool hasArguments) {
                 PPM_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
 
-                MacroArgumentTableElement *macroArgumentTableElement;
-                SM_ALLOC(ppMemory, macroArgumentTableElement, MacroArgumentTableElement);
+                MacroArgumentTableElement *macroArgumentTableElement = smAlloc(&macroArgumentsMemory, sizeof(MacroArgumentTableElement));
                 fillMacroArgumentTableElement(macroArgumentTableElement, name, argLinkName, argumentCount);
                 int argumentIndex = addMacroArgument(macroArgumentTableElement);
                 argumentCount++;
