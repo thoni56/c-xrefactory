@@ -109,6 +109,13 @@ static Memory2 macroBodyMemory;
 
 #endif
 
+int getMacroBodyMemoryIndex(void) {
+    return mbMemoryIndex;
+}
+
+void setMacroBodyMemoryIndex(int index) {
+    mbMemoryIndex = index;
+}
 
 static bool isIdentifierLexem(Lexem lexem) {
     return lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND  || lexem==IDENT_TO_COMPLETE;

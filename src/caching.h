@@ -10,7 +10,7 @@ typedef struct {
     struct codeBlock   topBlockContent;
     int                ppmMemoryIndex;
     int                cxMemoryIndex;
-    int                mbMemoryIndex;
+    int                macroBodyMemoryIndex;
     char              *nextLexemP;
     short int          includeStackTop;
     short int          lineNumber;

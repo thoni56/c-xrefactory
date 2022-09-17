@@ -261,7 +261,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
         if (CACHING_CLASSES)
             log_debug("flushing classes");
     }
-    mbMemoryIndex = cachePoint->mbMemoryIndex;
+    setMacroBodyMemoryIndex(cachePoint->macroBodyMemoryIndex);
     currentBlock = cachePoint->topBlock;
     *currentBlock = cachePoint->topBlockContent;
     javaStat = cachePoint->javaStat;
@@ -375,14 +375,14 @@ void cacheInclude(int fileNum) {
 }
 
 static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmMemoryIndex,
-                           int cxMemoryIndex, int mbMemoryIndex, char *lbcc, short int includeStackTop,
+                           int cxMemoryIndex, int macroBodyMemoryIndex, char *lbcc, short int includeStackTop,
                            short int lineNumber, short int ifDepth, CppIfStack *ifStack,
                            JavaStat *javaCached, Counters counters) {
     cachePoint->topBlock = topBlock;
     cachePoint->topBlockContent = *topBlock;
     cachePoint->ppmMemoryIndex = ppmMemoryIndex;
     cachePoint->cxMemoryIndex = cxMemoryIndex;
-    cachePoint->mbMemoryIndex = mbMemoryIndex;
+    cachePoint->macroBodyMemoryIndex = macroBodyMemoryIndex;
     cachePoint->nextLexemP   = lbcc;
     cachePoint->includeStackTop = includeStackTop;
     cachePoint->lineNumber = lineNumber;
@@ -408,7 +408,7 @@ void placeCachePoint(bool inputCaching) {
         return;
     cachePoint = &cache.points[cache.index];
     log_debug("placing cache point %d", cache.index);
-    fillCachePoint(cachePoint, currentBlock, ppmMemoryIndex, cxMemory->index, mbMemoryIndex, cache.free,
+    fillCachePoint(cachePoint, currentBlock, ppmMemoryIndex, cxMemory->index, getMacroBodyMemoryIndex(), cache.free,
                    cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack,
                    javaStat, counters);
     cache.index++;

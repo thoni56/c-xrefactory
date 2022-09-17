@@ -30,7 +30,8 @@ typedef struct {
 extern char *yytext;
 extern int macroStackIndex;
 
-extern int mbMemoryIndex;       /* Needed by caching.c */
+extern int getMacroBodyMemoryIndex(void);
+extern void setMacroBodyMemoryIndex(int index);
 
 extern void initAllInputs(void);
 extern void initInput(FILE *file, EditorBuffer *buffer, char *prepend, char *fileName);

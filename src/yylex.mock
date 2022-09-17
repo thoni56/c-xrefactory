@@ -3,7 +3,6 @@
 #include <cgreen/mocks.h>
 
 int macroStackIndex = 0;
-int mbMemoryIndex = 0;
 
 void initAllInputs(void) {
     mock();
@@ -11,6 +10,14 @@ void initAllInputs(void) {
 
 void initInput(FILE *file, EditorBuffer *buffer, char *prefix, char *fileName) {
     mock(file, buffer, prefix, fileName);
+}
+
+int getMacroBodyMemoryIndex(void) {
+    return (int)mock();
+}
+
+void setMacroBodyMemoryIndex(int index) {
+    mock(index);
 }
 
 void addIncludeReference(int filenum, Position *pos) {
