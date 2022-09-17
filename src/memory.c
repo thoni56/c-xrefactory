@@ -1,4 +1,5 @@
 #include "memory.h"
+
 #include "log.h"
 
 #include "constants.h"
@@ -43,10 +44,16 @@ void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int
     fatalError = function;
 }
 
+/* Copy of defines in commons.h to avoid dependency on other stuff... */
+#undef assert
+#define assert(expr)                                                                                    \
+    if (!(expr))                                                                                        \
+        internalCheckFailForMemory(#expr, __FILE__, __LINE__)
+
 /* Inject the function to call when assert() fails, a.k.a internalCheckFail() */
-static void (*internalCheckFail)(char *expr, char *file, int line);
+static void (*internalCheckFailForMemory)(char *expr, char *file, int line);
 void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line)) {
-    internalCheckFail = function;
+    internalCheckFailForMemory = function;
 }
 
 /* Inject the function to call for error() */
@@ -329,6 +336,10 @@ void editorFree(void *pointer, size_t size) {
     olcx_memory_free(pointer, size);
 }
 
+static bool isInMemory(void *pointer, Memory2 *memory) {
+    return pointer >= (void *)memory->area && pointer <= (void *)&memory->area[memory->size];
+}
+
 void smInit(Memory2 *memory, size_t size) {
     if (size != memory->size) {
         free(memory->area);
@@ -350,4 +361,16 @@ void *smAllocc(Memory2 *memory, int count, size_t size) {
 
 void *smAlloc(Memory2 *memory, size_t size) {
     return smAllocc(memory, 1, size);
+}
+
+void smFreeUntil(Memory2 *memory, void *pointer) {
+    assert(isInMemory(pointer, memory));
+    memory->index = memory->area - (char *)pointer;
+}
+
+/* Reallocates the last allocated area in 'memory' to be different size */
+void *smRealloc(Memory2 *memory, void *pointer, size_t oldSize, size_t newSize) {
+    assert(pointer == &memory->area[memory->index-oldSize]);
+    memory->index += newSize - oldSize;
+    return pointer;
 }

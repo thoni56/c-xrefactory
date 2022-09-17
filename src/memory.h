@@ -120,7 +120,8 @@ typedef struct {
 extern void smInit(Memory2 *memory, size_t size);
 extern void *smAllocc(Memory2 *memory, int count, size_t size);
 extern void *smAlloc(Memory2 *memory, size_t size);
-
+extern void *smRealloc(Memory2 *memory, void *pointer, size_t oldSize, size_t newSize);
+extern void smFreeUntil(Memory2 *memory, void *pointer);
 
 
 /***********************************************************************/
