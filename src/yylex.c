@@ -2,6 +2,7 @@
 
 #include "caching.h"
 #include "commons.h"
+#include "constants.h"
 #include "cxfile.h"
 #include "cxref.h"
 #include "extract.h"
@@ -79,16 +80,34 @@ static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 
 static Memory2 macroArgumentsMemory;
 
+
+/* Macro bodies */
+#if 1
+
+/* Old style memory handling */
+
 static char mbMemory[SIZE_mbMemory];
 int mbMemoryIndex=0;
 
-
-/* macro bodies */
-#define MB_INIT()                       {SM_INIT(mbMemory);}
-#define MB_ALLOCC(pointer, count, type) {SM_ALLOCC(mbMemory, pointer, count, type);}
+#define MB_INIT()                               \
+    { SM_INIT(mbMemory); }
+#define MB_ALLOCC(pointer, count, type)                                                                 \
+    { SM_ALLOCC(mbMemory, pointer, count, type); }
 #define MB_REALLOCC(pointer, count, type, oldCount)	{SM_REALLOCC(mbMemory, pointer, count, type, oldCount);}
-
 #define MB_FREE_UNTIL(pointer)          {SM_FREE_UNTIL(mbMemory, pointer);}
+
+#else
+
+/* New style memory handling, we cannot switch to this unless caching can get and set the index */
+
+static Memory2 macroBodyMemory;
+
+#define MB_INIT() smInit(&macroBodyMemory, SIZE_mbMemory)
+#define MB_ALLOCC(pointer, count, type) pointer = smAllocc(&macroBodyMemory, count, sizeof(type))
+#define MB_REALLOCC(pointer, count, type, oldCount) pointer = smRealloc(&macroBodyMemory, pointer, (oldCount)*sizeof(type), (count)*sizeof(type))
+#define MB_FREE_UNTIL(pointer) smFreeUntil(&macroBodyMemory, pointer)
+
+#endif
 
 
 static bool isIdentifierLexem(Lexem lexem) {
