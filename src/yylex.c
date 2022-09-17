@@ -80,13 +80,21 @@ static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 
 static Memory2 macroArgumentsMemory;
 
+static void initMacroArgumentsMemory(void) {
+    smInit(&macroArgumentsMemory, MacroArgumentsMemorySize);
+}
+
+static void *mamAlloc(size_t size) {
+    return smAlloc(&macroArgumentsMemory, size);
+}
+
 
 /* Macro body memory - MBM */
 
 static Memory2 macroBodyMemory;
 
 static void mbmInit(void) {
-    smInit(&macroBodyMemory, SIZE_mbMemory);
+    smInit(&macroBodyMemory, MacroBodyMemorySize);
 }
 
 static void *mbmAlloc(size_t size) {
@@ -727,7 +735,7 @@ protected void processDefineDirective(bool hasArguments) {
     Symbol *symbol = NULL;
     char *body = NULL;
 
-    smInit(&macroArgumentsMemory, SIZE_ppMemory);
+    initMacroArgumentsMemory();
 
     ppb1 = noPosition;
     ppb2 = noPosition;
@@ -797,7 +805,7 @@ protected void processDefineDirective(bool hasArguments) {
                 PPM_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
 
-                MacroArgumentTableElement *macroArgumentTableElement = smAlloc(&macroArgumentsMemory, sizeof(MacroArgumentTableElement));
+                MacroArgumentTableElement *macroArgumentTableElement = mamAlloc(sizeof(MacroArgumentTableElement));
                 fillMacroArgumentTableElement(macroArgumentTableElement, name, argLinkName, argumentCount);
                 int argumentIndex = addMacroArgument(macroArgumentTableElement);
                 argumentCount++;

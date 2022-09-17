@@ -21,10 +21,10 @@
 
 #define SIZE_TMP_MEM               5000	/* temporary strings, not error messages */
 
-#define SIZE_ppMemory             20000	/* macro args name in define */
-#define SIZE_mbMemory           2000000	/* pending macro expansions */
+#define MacroArgumentsMemorySize  20000	/* macro args name in define */
+#define MacroBodyMemorySize     2000000	/* macro expansions */
 #define SIZE_optMemory           150000	/* memory used to store options strings */
-#define SIZE_stackMemory        30000000	/* parsing stack memory */
+#define SIZE_stackMemory       30000000	/* parsing stack memory */
 #define SIZE_tmpWorkMemory       400000	/* additional tmp parsing stack memory */
 #define SIZE_ftMemory           8000000	/* memory for file (and class) table */
 
