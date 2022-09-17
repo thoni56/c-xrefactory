@@ -81,41 +81,34 @@ static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 static Memory2 macroArgumentsMemory;
 
 
-/* Macro bodies */
-#if 1
-
-/* Old style memory handling */
-
-static char mbMemory[SIZE_mbMemory];
-int mbMemoryIndex=0;
-
-#define MB_INIT()                               \
-    { SM_INIT(mbMemory); }
-#define MB_ALLOCC(pointer, count, type)                                                                 \
-    { SM_ALLOCC(mbMemory, pointer, count, type); }
-#define MB_REALLOCC(pointer, count, type, oldCount)	{SM_REALLOCC(mbMemory, pointer, count, type, oldCount);}
-#define MB_FREE_UNTIL(pointer)          {SM_FREE_UNTIL(mbMemory, pointer);}
-
-#else
-
-/* New style memory handling, we cannot switch to this unless caching can get and set the index */
+/* Macro body memory - MBM */
 
 static Memory2 macroBodyMemory;
 
-#define MB_INIT() smInit(&macroBodyMemory, SIZE_mbMemory)
-#define MB_ALLOCC(pointer, count, type) pointer = smAllocc(&macroBodyMemory, count, sizeof(type))
-#define MB_REALLOCC(pointer, count, type, oldCount) pointer = smRealloc(&macroBodyMemory, pointer, (oldCount)*sizeof(type), (count)*sizeof(type))
-#define MB_FREE_UNTIL(pointer) smFreeUntil(&macroBodyMemory, pointer)
+static void mbmInit(void) {
+    smInit(&macroBodyMemory, SIZE_mbMemory);
+}
 
-#endif
+static void *mbmAlloc(size_t size) {
+    return smAlloc(&macroBodyMemory, size);
+}
+
+static void *mbmExpand(void *pointer, size_t oldSize, size_t newSize) {
+    return smRealloc(&macroBodyMemory, pointer, oldSize, newSize);
+}
+
+static void mbmFreeUntil(void *pointer) {
+    smFreeUntil(&macroBodyMemory, pointer);
+}
 
 int getMacroBodyMemoryIndex(void) {
-    return mbMemoryIndex;
+    return macroBodyMemory.index;
 }
 
 void setMacroBodyMemoryIndex(int index) {
-    mbMemoryIndex = index;
+    macroBodyMemory.index = index;
 }
+
 
 static bool isIdentifierLexem(Lexem lexem) {
     return lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND  || lexem==IDENT_TO_COMPLETE;
@@ -131,7 +124,7 @@ static bool expandMacroCall(Symbol *mdef, Position *mpos);
 /* ************************************************************ */
 
 void initAllInputs(void) {
-    MB_INIT();
+    mbmInit();
     includeStack.pointer=0;
     macroStackIndex=0;
     isProcessingPreprocessorIf = false;
@@ -358,7 +351,7 @@ static Lexem getLexemAndSavePointerToPrevious(char **previousLexemP) {
             if (inputType == INPUT_MACRO_ARGUMENT) {
                 return END_OF_MACRO_ARGUMENT_EXCEPTION;
             }
-            MB_FREE_UNTIL(currentInput.begin);
+            mbmFreeUntil(currentInput.begin);
             currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCurrentFileConsistency(&currentFile, &currentInput);
@@ -1364,8 +1357,8 @@ static void expandPreprocessorBufferIfOverflow(char *bcc, char *buf, int *size) 
 static void expandMacroBodyBufferIfOverflow(char *bcc, int len, char *buf, int *size) {
     while (bcc + len >= buf + *size) {
         *size += MACRO_BODY_BUFFER_SIZE;
-        MB_REALLOCC(buf, *size+MAX_LEXEM_SIZE, char,
-                    *size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE);
+        mbmExpand(buf,
+                    *size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE, *size+MAX_LEXEM_SIZE);
     }
 }
 
@@ -1604,7 +1597,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
     char *currentLexemP = readBuffer;
     char *endOfLexems   = writePointer;
     bufferSize          = MACRO_BODY_BUFFER_SIZE;
-    MB_ALLOCC(writeBuffer, bufferSize + MAX_LEXEM_SIZE, char);
+    writeBuffer = mbmAlloc(bufferSize + MAX_LEXEM_SIZE);
     writePointer = writeBuffer;
     while (currentLexemP < endOfLexems) {
         int      value;
@@ -1645,7 +1638,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
         }
         expandMacroBodyBufferIfOverflow(writePointer, 0, writeBuffer, &bufferSize);
     }
-    MB_REALLOCC(writeBuffer, writePointer - writeBuffer, char, bufferSize + MAX_LEXEM_SIZE);
+    mbmExpand(writeBuffer, bufferSize + MAX_LEXEM_SIZE, writePointer - writeBuffer);
     *_bcc = writePointer;
 
     return writeBuffer;
@@ -1881,7 +1874,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     if (macroBody == NULL)
         return false;	/* !!!!!         tricky,  undefined macro */
     if (macroStackIndex == 0) { /* call from source, init mem */
-        MB_INIT();
+        mbmInit();
     }
     log_trace("trying to expand macro '%s'", macroBody->name);
     if (cyclicCall(macroBody))

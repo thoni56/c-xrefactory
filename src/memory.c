@@ -344,15 +344,19 @@ void smInit(Memory2 *memory, size_t size) {
     if (size != memory->size) {
         free(memory->area);
         memory->area = NULL;
+        memory->size = 0;
     }
-    memory->size = size;
-    if (memory->area == NULL)
+    if (memory->area == NULL) {
         memory->area = malloc(size);
+        memory->size = size;
+    }
     memory->index = 0;
 }
 
 void *smAllocc(Memory2 *memory, int count, size_t size) {
     void *pointer = &memory->area[memory->index];
+    assert(size > 0);
+    assert(count > 0);
     memory->index += count*size;
     if (memory->index > memory->size)
         fatalError(ERR_ST, "Memory overflow.", XREF_EXIT_ERR, __FILE__, __LINE__);
@@ -365,7 +369,8 @@ void *smAlloc(Memory2 *memory, size_t size) {
 
 void smFreeUntil(Memory2 *memory, void *pointer) {
     assert(isInMemory(pointer, memory));
-    memory->index = memory->area - (char *)pointer;
+    memory->index = (char *)pointer - memory->area;
+    pointer = pointer;
 }
 
 /* Reallocates the last allocated area in 'memory' to be different size */

@@ -196,10 +196,12 @@ Ensure(Memory, can_free_until_in_new_sm_memory) {
     smInit(&testMemory2, SIZE_testMemory);
 
     /* Allocate some memory */
-    void *pointer = smAlloc(&testMemory2, 2);
+    void *pointer1 = smAlloc(&testMemory2, 2);
     assert_that(testMemory2.index, is_not_equal_to(0));
 
-    smFreeUntil(&testMemory2, pointer);
+    smAlloc(&testMemory2, 4);
+
+    smFreeUntil(&testMemory2, pointer1);
     assert_that(testMemory2.index, is_equal_to(0));
 }
 
