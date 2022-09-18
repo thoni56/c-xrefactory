@@ -20,6 +20,10 @@
 #include "hashtab.tc"
 
 
+static char ftMemory[SIZE_ftMemory];
+static int ftMemoryIndex = 0;
+
+
 int noFileIndex;                /* Initialized to an actual index in initNoFile() which needs
                                    to be called early */
 

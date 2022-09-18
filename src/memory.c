@@ -24,9 +24,6 @@ Memory *cxMemory=NULL;
 char stackMemory[SIZE_stackMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
 /* Static memory areas */
-char ftMemory[SIZE_ftMemory];
-int ftMemoryIndex = 0;
-
 char ppmMemory[SIZE_ppmMemory];
 int ppmMemoryIndex=0;
 
