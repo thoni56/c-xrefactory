@@ -583,7 +583,6 @@ static void totalTaskEntryInitialisations() {
     // Data structures
     memset(&counters, 0, sizeof(Counters));
     options.includeDirs = NULL;
-    SM_INIT(ftMemory);
 
     initFileTable(MAX_FILES);
     initNoFileIndex();             /* Sets noFileIndex to something real */
