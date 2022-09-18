@@ -26,7 +26,7 @@
 #define SIZE_optMemory           150000	/* memory used to store options strings */
 #define SIZE_stackMemory       30000000	/* parsing stack memory */
 #define SIZE_tmpWorkMemory       400000	/* additional tmp parsing stack memory */
-#define SIZE_ftMemory           8000000	/* memory for file (and class) table */
+#define FileTableMemorySize     8000000	/* memory for file (and class) table */
 
 #define SIZE_ppmMemory         15000000	/* macro definitions or java class files */
 #define SIZE_olcxMemory        50000000	/* memory for browsing symbol stack */

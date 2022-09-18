@@ -20,8 +20,16 @@
 #include "hashtab.tc"
 
 
-static char ftMemory[SIZE_ftMemory];
-static int ftMemoryIndex = 0;
+/* Filetable allocations */
+static Memory2 fileTableMemory;
+
+static void ftInit(void) {
+    smInit(&fileTableMemory, FileTableMemorySize);
+}
+
+static void *ftAlloc(size_t size) {
+    return smAlloc(&fileTableMemory, size);
+}
 
 
 int noFileIndex;                /* Initialized to an actual index in initNoFile() which needs
@@ -41,12 +49,13 @@ static void fillFileItem(FileItem *item, char *name) {
 static struct fileItem *newFileItem(char *normalizedFileName) {
     int              len;
     char            *fname;
-    struct fileItem *createdFileItem;
+    FileItem *createdFileItem;
+
     len = strlen(normalizedFileName);
-    FT_ALLOCC(fname, len + 1, char);
+    fname = ftAlloc(len + 1);
     strcpy(fname, normalizedFileName);
 
-    FT_ALLOC(createdFileItem, FileItem);
+    createdFileItem = ftAlloc(sizeof(FileItem));
     fillFileItem(createdFileItem, fname);
 
     return createdFileItem;
@@ -71,11 +80,10 @@ int getNextExistingFileIndex(int index) {
 }
 
 
-void initFileTable(int size) {
-    SM_INIT(ftMemory);
-    FT_ALLOCC(fileTable.tab, size, struct fileItem *);
-
-    fileTableNoAllocInit(&fileTable, size);
+void initFileTable(int count) {
+    ftInit();
+    fileTable.tab = ftAlloc(count*sizeof(FileItem *));
+    fileTableNoAllocInit(&fileTable, count);
 }
 
 void initNoFileIndex(void) {

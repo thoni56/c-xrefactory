@@ -93,10 +93,6 @@ typedef struct codeBlock {
 #define CF_ALLOC(pointer, type)         {SM_ALLOC(ppmMemory, pointer, type);}
 #define CF_ALLOCC(pointer, count, type) {SM_ALLOCC(ppmMemory, pointer, count, type);}
 
-/* file table allocations */
-#define FT_ALLOC(pointer, type)         {SM_ALLOC(ftMemory, pointer, type);}
-#define FT_ALLOCC(pointer, count, type) {SM_ALLOCC(ftMemory, pointer, count, type);}
-
 
 /**********************************************************************
    DM = Dynamic Memory - can expand using overflow handler
