@@ -721,6 +721,11 @@ static Lexem getNonBlankLexemAndData(Position *position, int *lineNumber, int *v
     return lexem;
 }
 
+static MacroArgumentTableElement *newMacroArgumentTableElement(char *argLinkName, int argumentCount, char *name) {
+    MacroArgumentTableElement *macroArgumentTableElement = mamAlloc(sizeof(MacroArgumentTableElement));
+    fillMacroArgumentTableElement(macroArgumentTableElement, name, argLinkName, argumentCount);
+    return macroArgumentTableElement;
+}
 
 /* Public only for unittesting */
 protected void processDefineDirective(bool hasArguments) {
@@ -805,8 +810,7 @@ protected void processDefineDirective(bool hasArguments) {
                 PPM_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
 
-                MacroArgumentTableElement *macroArgumentTableElement = mamAlloc(sizeof(MacroArgumentTableElement));
-                fillMacroArgumentTableElement(macroArgumentTableElement, name, argLinkName, argumentCount);
+                MacroArgumentTableElement *macroArgumentTableElement = newMacroArgumentTableElement(argLinkName, argumentCount, name);
                 int argumentIndex = addMacroArgument(macroArgumentTableElement);
                 argumentCount++;
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
