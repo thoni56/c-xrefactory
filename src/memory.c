@@ -33,7 +33,7 @@ int ppmMemoryIndex=0;
 
 /* This is used unless the fatalError function is set */
 static void fallBackFatalError(int errorCode, char *message, int exitStatus, char *file, int line) {
-    log_fatal("Error code: %d, Message: '%s'", errorCode, message);
+    log_fatal("Error code: %d, Message: '%s' in file %s", errorCode, message, file);
     exit(exitStatus);
 }
 
@@ -370,7 +370,6 @@ void *smAlloc(Memory2 *memory, size_t size) {
 void smFreeUntil(Memory2 *memory, void *pointer) {
     assert(isInMemory(pointer, memory));
     memory->index = (char *)pointer - memory->area;
-    pointer = pointer;
 }
 
 /* Reallocates the last allocated area in 'memory' to be different size */

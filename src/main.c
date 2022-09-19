@@ -388,7 +388,7 @@ static void discoverStandardDefines(void) {
     }
 
     /* Also define some faked standard base types and GNU-isms */
-    for (int i=0; i<sizeof(extra_defines)/sizeof(extra_defines[0]); i++) {
+    for (int i=0; i<(int)sizeof(extra_defines)/sizeof(extra_defines[0]); i++) {
         log_trace("Add definition '%s'", extra_defines[i]);
         addMacroDefinedByOption(extra_defines[i]);
     }

@@ -29,7 +29,7 @@ void errorMessage(int code, char *message) {
 }
 
 void fatalError(int code, char *message, int exitCode, char *file, int line) {
-    mock(code, message, exitCode);
+    mock(code, message, exitCode, file, line);
 }
 
 void internalCheckFail(char *expr, char *file, int line) {

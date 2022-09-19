@@ -49,7 +49,7 @@ export CC = cc
 
 MAKEFLAGS += --no-print-directory
 
-WARNINGS = -Wall -Wno-char-subscripts -Werror
+WARNINGS = -Wall -Wno-char-subscripts -Werror -Wimplicit-fallthrough
 
 CFLAGS = -g -Og $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
 

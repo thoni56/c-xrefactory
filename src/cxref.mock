@@ -7,7 +7,7 @@
 void fillReference(Reference *reference, Usage usage, Position position,
                     Reference *next) {
     /* NOTE can't mock UsageBits or Position */
-    mock(reference, next);
+    mock(reference, next, usage.kind);
 }
 
 extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
