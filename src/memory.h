@@ -106,7 +106,7 @@ typedef struct codeBlock {
 
 
 /* ************************************************************************** */
-/* EXPERIMENT - New type of static memory - so far unused */
+/* New type of static memory */
 typedef struct {
     size_t size;
     int index;

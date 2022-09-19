@@ -20,7 +20,9 @@ static MacroArgumentTable macroArgumentTable;
 
 
 void allocateMacroArgumentTable(int count) {
-    PPM_ALLOCC(macroArgumentTable.tab, MAX_MACRO_ARGS, MacroArgumentTableElement *);
+    if (macroArgumentTable.tab != NULL)
+        free(macroArgumentTable.tab);
+    macroArgumentTable.tab = malloc(MAX_MACRO_ARGS*sizeof(MacroArgumentTableElement *));
     macroArgumentTableNoAllocInit(&macroArgumentTable, MAX_MACRO_ARGS);
 }
 
