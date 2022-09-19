@@ -618,12 +618,12 @@ void jslNewClassDefinitionBegin(Id *name,
 }
 
 void jslNewClassDefinitionEnd(void) {
-    Symbol *cc;
+    Symbol *clas;
 
     assert(s_jsl->classStat && s_jsl->classStat->next);
 
-    cc = s_jsl->classStat->thisClass;
-    FileItem *fileItem = getFileItem(cc->u.structSpec->classFileIndex);
+    clas = s_jsl->classStat->thisClass;
+    FileItem *fileItem = getFileItem(clas->u.structSpec->classFileIndex);
     if (fileItem->cxLoading) {
         fileItem->cxLoaded = true;
     }
@@ -632,10 +632,9 @@ void jslNewClassDefinitionEnd(void) {
     endBlock();
 }
 
-void jslAddDefaultConstructor(Symbol *cl) {
-    Symbol *cc;
-    cc = javaCreateNewMethod(cl->name, &noPosition, MEMORY_CF);
-    jslMethodHeader(cl->access, &defaultVoidDefinition, cc,
+void jslAddDefaultConstructor(Symbol *clas) {
+    Symbol *method = javaCreateNewMethod(clas->name, &noPosition, MEMORY_CF);
+    jslMethodHeader(clas->access, &defaultVoidDefinition, method,
                     StorageConstructor, NULL);
 }
 

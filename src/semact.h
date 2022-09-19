@@ -64,7 +64,7 @@ extern TypeModifier *simpleStrUnionSpecifier(Id *typeName,
 extern TypeModifier *createNewAnonymousStructOrUnion(Id *typeName);
 extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
 extern TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage);
-extern void setGlobalFileDepNames(char *iname, Symbol *pp, int memory);
+extern void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory);
 extern TypeModifier *createNewAnonymousEnum(SymbolList *enums);
 extern void appendPositionToList(PositionList **list, Position *pos);
 extern void setParamPositionForFunctionWithoutParams(Position *lpar);

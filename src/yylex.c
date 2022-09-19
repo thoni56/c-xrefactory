@@ -730,7 +730,7 @@ static MacroArgumentTableElement *newMacroArgumentTableElement(char *argLinkName
 /* Public only for unittesting */
 protected void processDefineDirective(bool hasArguments) {
     Lexem lexem;
-    Position macroPosition, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
+    Position macroPosition, ppb1, ppb2, *parpos1, *parpos2;
     char *currentLexemStart, *argumentName;
     char **argumentNames, *argLinkName;
 
@@ -764,7 +764,7 @@ protected void processDefineDirective(bool hasArguments) {
     symbol->storage = StorageNone;
 
     /* TODO: this is the only call to setGlobalFileDepNames() that doesn't do it in XX memory, why?
-       PP == PreProcessor? */
+       PPM == PreProcessor, but it's still a symbol... */
     setGlobalFileDepNames(currentLexemStart, symbol, MEMORY_PPM);
     macroName = symbol->name;
 
@@ -813,10 +813,15 @@ protected void processDefineDirective(bool hasArguments) {
                 MacroArgumentTableElement *macroArgumentTableElement = newMacroArgumentTableElement(argLinkName, argumentCount, name);
                 int argumentIndex = addMacroArgument(macroArgumentTableElement);
                 argumentCount++;
+
                 lexem = getNonBlankLexemAndData(&position, NULL, NULL, NULL);
                 ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-                tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
+                /* Swap position pointers */
+                Position *tmppos = parpos1;
+                parpos1=parpos2;
+                parpos2=tmppos;
+
                 getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, parpos2, NULL, true);
                 if (!ellipsis) {
                     addTrivialCxReference(getMacroArgument(argumentIndex)->linkName, TypeMacroArg,StorageDefault,
