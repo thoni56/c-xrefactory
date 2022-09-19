@@ -948,6 +948,7 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
     if (memory == MEMORY_XX) {
         mname = StackMemoryAllocC(len2+1, char);
     } else {
+        mname = "for debugging";
         PPM_ALLOCC(mname, len2+1, char);
     }
     strcpy(mname, tmp);

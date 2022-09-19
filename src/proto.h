@@ -246,7 +246,7 @@ enum {
 enum memoryClass {
     MEMORY_CF,
     MEMORY_XX,
-    MEMORY_PP,
+    MEMORY_PPM,
 };
 
 enum menuFilterLevels {

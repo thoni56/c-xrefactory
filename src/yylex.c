@@ -765,7 +765,7 @@ protected void processDefineDirective(bool hasArguments) {
 
     /* TODO: this is the only call to setGlobalFileDepNames() that doesn't do it in XX memory, why?
        PP == PreProcessor? */
-    setGlobalFileDepNames(currentLexemStart, symbol, MEMORY_PP);
+    setGlobalFileDepNames(currentLexemStart, symbol, MEMORY_PPM);
     macroName = symbol->name;
 
     /* process arguments */
