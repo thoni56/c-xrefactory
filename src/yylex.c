@@ -363,7 +363,7 @@ static Lexem getLexemAndSavePointerToPrevious(char **previousLexemP) {
             currentInput = macroInputStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCurrentFileConsistency(&currentFile, &currentInput);
-            if (!getLexemFromLexer(&currentFile.lexemBuffer)) {
+            if (!getLexemFromLexer(currentFile.lexemBuffer.characterBuffer, &currentFile.lexemBuffer)) {
                 return END_OF_FILE_EXCEPTION;
             }
             setCurrentInputConsistency(&currentInput, &currentFile);

@@ -2,7 +2,7 @@
 #include "lexer.h"
 #include <cgreen/mocks.h>
 
-bool getLexemFromLexer(LexemBuffer *buffer) {
+bool getLexemFromLexer(CharacterBuffer *cb, LexemBuffer *buffer) {
   return (bool) mock(buffer);
 }
 

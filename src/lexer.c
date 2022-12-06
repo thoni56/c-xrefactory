@@ -270,14 +270,13 @@ static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
     return ch;
 }
 
-bool getLexemFromLexer(LexemBuffer *lb) {
+bool getLexemFromLexer(CharacterBuffer *cb, LexemBuffer *lb) {
     int ch;
     char *lexemLimit;
     char *startOfCurrentLexem;
     Lexem lexem;
     int line, column, size;
     int lexemStartingColumn, lexStartFilePos;
-    CharacterBuffer *cb = lb->characterBuffer;
 
     /* first test whether the input is cached */
     /* TODO: why do we need to know this? */
