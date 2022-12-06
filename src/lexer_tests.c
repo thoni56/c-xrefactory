@@ -25,7 +25,7 @@ Describe(Lexer);
 BeforeEach(Lexer) {
     currentLanguage = LANG_C;
     log_set_level(LOG_ERROR);
-    initLexemBuffer(&lexemBuffer, &characterBuffer);
+    initLexemBuffer(&lexemBuffer);
 }
 AfterEach(Lexer) {}
 
