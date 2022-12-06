@@ -126,12 +126,12 @@ static int processIdentifier(CharacterBuffer *characterBuffer, int ch, LexemBuff
     return ch;
 }
 
-static void noteNewLexemPosition(LexemBuffer *lb) {
+static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
     int index = lb->ringIndex % LEX_POSITIONS_RING_SIZE;
-    lb->fileOffsetRing[index]    = absoluteFilePosition(lb->characterBuffer);
-    lb->positionRing[index].file = lb->characterBuffer->fileNumber;
-    lb->positionRing[index].line = lb->characterBuffer->lineNumber;
-    lb->positionRing[index].col  = columnPosition(lb->characterBuffer);
+    lb->fileOffsetRing[index]    = absoluteFilePosition(cb);
+    lb->positionRing[index].file = cb->fileNumber;
+    lb->positionRing[index].line = cb->lineNumber;
+    lb->positionRing[index].col  = columnPosition(cb);
     lb->ringIndex++;
 }
 
@@ -148,7 +148,7 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
     char  preprocessorWord[30];
     int   i, column;
 
-    noteNewLexemPosition(lb);
+    noteNewLexemPosition(cb, lb);
     column = columnPosition(cb);
     ch     = getChar(cb);
     ch     = skipBlanks(cb, ch);
@@ -203,7 +203,7 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
         putLexToken(lb, CPP_DEFINE0);
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
         ch = skipBlanks(cb, ch);
-        noteNewLexemPosition(lb);
+        noteNewLexemPosition(cb, lb);
         ch = processIdentifier(cb, ch, lb);
         if (ch == '(') {
             /* Backpatch the current lexem code (CPP_DEFINE0) with discovered CPP_DEFINE */
@@ -297,7 +297,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             ungetChar(cb, ch);
             break;
         }
-        noteNewLexemPosition(lb);
+        noteNewLexemPosition(cb, lb);
         startOfCurrentLexem = getLexemStreamWrite(lb);
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
