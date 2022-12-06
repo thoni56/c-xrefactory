@@ -75,11 +75,11 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     char *definition = (char *)malloc(strlen(DEFINE) + 1);
     strcpy(definition, DEFINE);
 
-    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexemBuffer)), will_return(true),
+    expect(buildLexemFromCharacters, when(buffer, is_equal_to(&currentFile.lexemBuffer)), will_return(true),
            with_side_effect(setup_lexBuffer_for_reading_identifier, NULL));
     expect(setGlobalFileDepNames, when(iname, is_equal_to_string(definition)),
            will_set_contents_of_parameter(pp_name, &definition, sizeof(char *)));
-    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexemBuffer)), will_return(false));
+    expect(buildLexemFromCharacters, when(buffer, is_equal_to(&currentFile.lexemBuffer)), will_return(false));
 
     /* This is the confirmation that there is a symbol p with a
      * field with name equal to DEFINE
@@ -93,7 +93,7 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
 }
 
 Ensure(Yylex, can_handle_a_line_directive_without_number) {
-    expect(getLexemFromLexer, when(buffer, is_equal_to(&currentFile.lexemBuffer)), will_return(false));
+    expect(buildLexemFromCharacters, when(buffer, is_equal_to(&currentFile.lexemBuffer)), will_return(false));
 
     initInput(NULL, NULL, "", NULL);
     currentFile.lineNumber = 1;

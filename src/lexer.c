@@ -270,7 +270,7 @@ static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
     return ch;
 }
 
-bool getLexemFromLexer(CharacterBuffer *cb, LexemBuffer *lb) {
+bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
     int ch;
     char *lexemLimit;
     char *startOfCurrentLexem;
