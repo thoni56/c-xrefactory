@@ -143,18 +143,18 @@ static void processEmptyCompletionId(CharacterBuffer *characterBuffer, LexemBuff
                          columnPosition(characterBuffer) - len);
 }
 
-static int processCppToken(LexemBuffer *lb) {
+static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
     int   ch;
     char  preprocessorWord[30];
     int   i, column;
 
     noteNewLexemPosition(lb);
-    column = columnPosition(lb->characterBuffer);
-    ch     = getChar(lb->characterBuffer);
-    ch     = skipBlanks(lb->characterBuffer, ch);
+    column = columnPosition(cb);
+    ch     = getChar(cb);
+    ch     = skipBlanks(cb, ch);
     for (i = 0; i < sizeof(preprocessorWord) - 1 && (isalpha(ch) || isdigit(ch) || ch == '_'); i++) {
         preprocessorWord[i] = ch;
-        ch                  = getChar(lb->characterBuffer);
+        ch                  = getChar(cb);
     }
     preprocessorWord[i] = 0;
     if (strcmp(preprocessorWord, "ifdef") == 0) {
@@ -184,27 +184,27 @@ static int processCppToken(LexemBuffer *lb) {
         else
             putLexToken(lb, CPP_INCLUDE_NEXT);
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
-        ch = skipBlanks(lb->characterBuffer, ch);
+        ch = skipBlanks(cb, ch);
         if (ch == '\"' || ch == '<') {
             char terminator = ch == '\"'? '\"' : '>';
-            int scol = columnPosition(lb->characterBuffer);
+            int scol = columnPosition(cb);
             putLexToken(lb, STRING_LITERAL);
             do {
                 putLexChar(lb, ch);
-                ch = getChar(lb->characterBuffer);
+                ch = getChar(cb);
             } while (ch != terminator && ch != '\n');
             putLexChar(lb, 0);
             putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), scol);
             if (ch == terminator)
-                ch = getChar(lb->characterBuffer);
+                ch = getChar(cb);
         }
     } else if (strcmp(preprocessorWord, "define") == 0) {
         void *backpatchLexemP = getLexemStreamWrite(lb);
         putLexToken(lb, CPP_DEFINE0);
         putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), column);
-        ch = skipBlanks(lb->characterBuffer, ch);
+        ch = skipBlanks(cb, ch);
         noteNewLexemPosition(lb);
-        ch = processIdentifier(lb->characterBuffer, ch, lb);
+        ch = processIdentifier(cb, ch, lb);
         if (ch == '(') {
             /* Backpatch the current lexem code (CPP_DEFINE0) with discovered CPP_DEFINE */
             putLexTokenAtPointer(CPP_DEFINE, backpatchLexemP);
@@ -723,7 +723,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                         if (ch == '\\') {
                             ch = getChar(cb);
                             if (ch=='\n') {
-                                lb->characterBuffer->lineNumber++;
+                                cb->lineNumber++;
                                 cb->lineBegin = cb->nextUnread;
                                 cb->columnOffset = 0;
                             }
@@ -740,7 +740,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
             case '\\':
                 ch = getChar(cb);
                 if (ch == '\n') {
-                    lb->characterBuffer->lineNumber++;
+                    cb->lineNumber++;
                     cb->lineBegin = cb->nextUnread;
                     cb->columnOffset = 0;
                     putLexLines(lb, 1);
@@ -759,7 +759,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 if (lineNumberFrom(lb) >= MAX_REFERENCABLE_LINE) {
                     FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file", XREF_EXIT_ERR);
                 }
-                lb->characterBuffer->lineNumber++;
+                cb->lineNumber++;
                 cb->lineBegin = cb->nextUnread;
                 cb->columnOffset = 0;
                 ch = getChar(cb);
@@ -788,7 +788,7 @@ bool getLexemFromLexer(LexemBuffer *lb) {
                 putLexToken(lb, '\n');
                 putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn);
                 if (ch == '#' && LANGUAGE(LANG_C | LANG_YACC)) {
-                    ch = processCppToken(lb);
+                    ch = processCppToken(lb->characterBuffer, lb);
                 }
                 goto nextLexem;
 
