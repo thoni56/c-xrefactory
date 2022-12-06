@@ -28,10 +28,6 @@ extern void shiftAnyRemainingLexems(LexemBuffer *lb);
 extern void setLexemStreamWrite(LexemBuffer *lb, void *end);
 extern void *getLexemStreamWrite(LexemBuffer *lb);
 
-/* Lexer functions for passing compressed tokens to the parser */
-extern int fileNumberFrom(LexemBuffer *lb);
-extern int lineNumberFrom(LexemBuffer *lb);
-
 /* WRITE */
 extern void putLexInt(LexemBuffer *lb, int value);
 extern void putLexChar(LexemBuffer *lb, char ch);

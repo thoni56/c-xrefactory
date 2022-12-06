@@ -35,6 +35,10 @@ void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file) {
 
 /* Here be mocks... */
 
+int fileNumberFrom(CharacterBuffer *cb) { return (int)mock(cb); }
+int lineNumberFrom(CharacterBuffer *cb) { return (int)mock(cb); }
+
+
 bool refillBuffer(CharacterBuffer *buffer) {
     return (int) mock(buffer);
 }

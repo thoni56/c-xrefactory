@@ -142,14 +142,6 @@ protected int getLexCompacted(char **readPointerP) {
     return value;
 }
 
-int fileNumberFrom(LexemBuffer *lb) {
-    return lb->characterBuffer->fileNumber;
-}
-
-int lineNumberFrom(LexemBuffer *lb) {
-    return lb->characterBuffer->lineNumber;
-}
-
 /* Lines */
 void putLexLines(LexemBuffer *lb, int lines) {
     putLexToken(lb, LINE_TOKEN);

@@ -47,6 +47,14 @@ void initCharacterBufferFromString(CharacterBuffer *characterbuffer, char *strin
 }
 
 
+int fileNumberFrom(CharacterBuffer *cb) {
+    return cb->fileNumber;
+}
+
+int lineNumberFrom(CharacterBuffer *cb) {
+    return cb->lineNumber;
+}
+
 /* ***************************************************************** */
 /*                        Character reading                          */
 /* ***************************************************************** */

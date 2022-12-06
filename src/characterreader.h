@@ -42,6 +42,10 @@ extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
 extern bool refillBuffer(CharacterBuffer *buffer);
 extern void switchToZippedCharBuff(CharacterBuffer *buffer);
 
+/* Lexer functions for passing compressed tokens to the parser */
+extern int fileNumberFrom(CharacterBuffer *cb);
+extern int lineNumberFrom(CharacterBuffer *cb);
+
 extern int columnPosition(CharacterBuffer *cb);
 extern int absoluteFilePosition(CharacterBuffer *cb);
 
