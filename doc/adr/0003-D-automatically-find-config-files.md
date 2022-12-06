@@ -1,8 +1,8 @@
 ---
-title: "3. Automatically find configuration files
+title: "3. Automatically find configuration files"
 ---
 
-* Status: Current
+* Status: Proposed
 * Deciders: Thomas Nilefalk
 * Date: 2022-04-06
 
@@ -11,9 +11,9 @@ title: "3. Automatically find configuration files
 ## Y-Statement
 
 _In the context of_ finding and reading .c-xrefrc files with configuration options
-_facing the fact_ that it should be possible to store in a repo and avoid sending various command line options to c-xref
-_we decided for_ searching the directory tree upwards from the indicated file or current working directory for a .c-xrefrc
-_and neglected_ -
+_facing the fact_ that it should be possible to store configurations in a repo and avoid sending various command line options to c-xref
+_we decided for_ searching the directory tree upwards from the indicated file starting with the current working directory for a .c-xrefrc
+_and neglected_ problems with keeping total backwards compatibility
 _to achieve_ ease of configuration and possibility to share settings when working on different machines with a shared repo
 _accepting_ the incompatibility that this might introduce for some users
 _because_ this is similar to what many other tools do (gdb/.gdbinit, git/.git, lsp/.lspconfig, ...)
@@ -32,7 +32,7 @@ None.
 
 ## Decision Outcome
 
-To be implemented.
+Yet to be decided.
 
 ## Decision Implications
 

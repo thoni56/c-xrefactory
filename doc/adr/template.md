@@ -17,9 +17,12 @@ _facing_ <concern c>
 _we decided for_ <option o>
 _and neglected_ <other options>, 
 _to achieve_ <system qualities/desired consequences>, 
-_accepting_ <downside d/undesired consequences>, 
+_accepting_ <downside/undesired consequences>, 
 _because_ <additional rationale>.
 
+## Context and Problem Statement
+
+[Describe the context and problem statement, e.g., in free form using two to three sentences. You may want to articulate the problem in form of a question.]
 
 ## Decision Drivers <!-- optional -->
 
@@ -36,16 +39,14 @@ _because_ <additional rationale>.
 
 ## Decision Outcome
 
-Chosen option: "[option 1]", because [justification. e.g., only
-option, which meets k.o. criterion decision driver | which resolves
-force force | … | comes out best (see below)].
+Chosen option: "[option 1]", because [justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force force | … | comes out best (see below)].
 
 ### Positive Consequences <!-- optional -->
 
 * [e.g., improvement of quality attribute satisfaction, follow-up decisions required, …]
 * …
 
-### Negative Consequences <!-- optional -->
+### Negative consequences <!-- optional -->
 
 * [e.g., compromising quality attribute, follow-up decisions required, …]
 * …
