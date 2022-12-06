@@ -90,13 +90,13 @@ Ensure(Options, can_read_a_normal_option_string_delimited_by_a_space) {
     char option_string[]         = "this <- is delimited by a space";
     char expected_option_value[] = "this";
     char option_string_read[MAX_OPTION_LEN];
-    int  len;
+    int  length;
 
     for (int i = 0; i <= 4; i++)
         expect(readChar, will_return(option_string[i]));
 
-    assert_that(getOptionFromFile(NULL, option_string_read, &len), is_not_equal_to(EOF));
-    assert_that(len, is_equal_to(strlen(expected_option_value)));
+    assert_that(getOptionFromFile(NULL, option_string_read, &length), is_not_equal_to(EOF));
+    assert_that(length, is_equal_to(strlen(expected_option_value)));
     assert_that(option_string_read, is_equal_to_string(expected_option_value));
 }
 
