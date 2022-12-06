@@ -136,11 +136,11 @@ static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
 }
 
 
-static void processEmptyCompletionId(CharacterBuffer *characterBuffer, LexemBuffer *lb, int len) {
+static void processEmptyCompletionId(CharacterBuffer *cb, LexemBuffer *lb, int len) {
     putLexToken(lb, IDENT_TO_COMPLETE);
-    putLexChar(lb, 0);
-    putLexPositionFields(lb, characterBuffer->fileNumber, characterBuffer->lineNumber,
-                         columnPosition(characterBuffer) - len);
+    putLexChar(lb, '\0');
+    putLexPositionFields(lb, cb->fileNumber, cb->lineNumber,
+                         columnPosition(cb) - len);
 }
 
 static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
@@ -221,10 +221,10 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
 }
 
 /* Turn an identifier into a COMPLETE-lexem, return next character to process */
-static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem, Position position,
+static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, char *startOfCurrentLexem, Position position,
                                      int fileOffsetForCurrentLexem, int startingCh) {
-    int ch   = skipBlanks(lb->characterBuffer, startingCh);
-    int apos = absoluteFilePosition(lb->characterBuffer);
+    int ch   = skipBlanks(characterBuffer, startingCh);
+    int apos = absoluteFilePosition(characterBuffer);
 
     if (fileOffsetForCurrentLexem < options.olCursorPosition
         && (apos >= options.olCursorPosition || (ch == -1 && apos + 1 == options.olCursorPosition))) {
@@ -255,7 +255,7 @@ static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
                 log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
             } else {
                 // completion after an identifier
-                processEmptyCompletionId(lb->characterBuffer, lb, apos - options.olCursorPosition);
+                processEmptyCompletionId(characterBuffer, lb, apos - options.olCursorPosition);
             }
         } else if ((thisLexToken == LINE_TOKEN || thisLexToken == STRING_LITERAL)
                    && (apos != options.olCursorPosition)) {
@@ -263,7 +263,7 @@ static int processCompletionOrSearch(LexemBuffer *lb, char *startOfCurrentLexem,
             // NO COMPLETION
         } else {
             // completion after another lexem
-            processEmptyCompletionId(lb->characterBuffer, lb, apos - options.olCursorPosition);
+            processEmptyCompletionId(characterBuffer, lb, apos - options.olCursorPosition);
         }
     }
 
@@ -657,14 +657,14 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                             putLexChar(lb, ch);
                         /* TODO escape sequences */
                         if (ch == '\n') {
-                            lb->characterBuffer->lineNumber++;
+                            cb->lineNumber++;
                             cb->lineBegin = cb->nextUnread;
                             cb->columnOffset = 0;
                         }
                         ch = 0;
                     }
                     if (ch == '\n') {
-                        lb->characterBuffer->lineNumber++;
+                        cb->lineNumber++;
                         cb->lineBegin = cb->nextUnread;
                         cb->columnOffset = 0;
                         if (options.strictAnsi && (options.debug || options.errors)) {
@@ -787,7 +787,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 putLexToken(lb, '\n');
                 putLexPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn);
                 if (ch == '#' && LANGUAGE(LANG_C | LANG_YACC)) {
-                    ch = processCppToken(lb->characterBuffer, lb);
+                    ch = processCppToken(cb, lb);
                 }
                 goto nextLexem;
 
@@ -885,7 +885,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
-                    ch = processCompletionOrSearch(lb, startOfCurrentLexem, position, currentLexemOffset, ch);
+                    ch = processCompletionOrSearch(cb, lb, startOfCurrentLexem, position, currentLexemOffset, ch);
                 } else {
                     if (currentLexemOffset <= options.olCursorPosition
                         && absoluteFilePosition(cb) >= options.olCursorPosition) {
