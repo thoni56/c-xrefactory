@@ -11,3 +11,7 @@
             )
          )
  )
+
+;; cov-mode (https://github.com/AdamNiederer/cov)
+;; Ignore all coverage data except in gcov files
+(setq cov-coverage-file-paths '("."))
