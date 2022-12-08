@@ -292,3 +292,25 @@ Ensure(Options, can_find_standard_options_file_from_sourcefile_path) {
     assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
     assert_that(section, is_equal_to_string("/home/project"));
 }
+
+static bool errorMessageCalled;
+static void errorMessageCallback(void *ignored) {
+    errorMessageCalled = true;
+}
+Ensure(Options, should_error_when_environment_storage_is_exhausted) {
+    char name[100];
+    char value[] = "some value of 20 characters";
+    int i = 1;
+    void *data_pointer = NULL;
+
+    expect(errorMessage, with_side_effect(errorMessageCallback, data_pointer));
+
+    /* We should probably calculate sizes to verify exactly when it overflows */
+    errorMessageCalled = false;
+    while (!errorMessageCalled) {
+        sprintf(name, "name%d", i++);
+        xrefSetenv(name, value);
+        printf("%s\n", name);
+    }
+    assert_that(true);          /* Will probably crash if it doesn't call errorMessage()  */
+}
