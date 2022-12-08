@@ -11,7 +11,6 @@
 
 
 static LexemBuffer lb;
-static CharacterBuffer cb;
 
 Describe(LexemBuffer);
 BeforeEach(LexemBuffer) {
