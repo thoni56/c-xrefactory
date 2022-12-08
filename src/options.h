@@ -22,9 +22,8 @@ typedef enum {
 } Mode;
 
 typedef struct variable {
-    int count;
-    char *name[MAX_SET_GET_OPTIONS];
-    char *value[MAX_SET_GET_OPTIONS];
+    char *name;
+    char *value;
 } Variable;
 
 typedef enum updateType {
@@ -143,8 +142,8 @@ typedef struct options {
     bool updateOnlyModifiedFiles;
     int referenceFileCount;
 
-    // all the rest initialized to zeros by default
-    struct variable variables;
+    int variablesCount;
+    Variable variables[MAX_SET_GET_OPTIONS];
 
     // list of strings
     struct stringPointerList *allAllocatedStrings;

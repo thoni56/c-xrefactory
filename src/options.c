@@ -132,12 +132,14 @@ Options presetOptions = {
     false,                      // updateOnlyModifiedFiles
     0,                          /* referenceFileCount */
 
-    // all the rest is initialized to zeros
-    {0, },                      // get/set end
+    0,                          // variablesCount
+    {},                         // variables
+
 
     // pending memory for string values
     NULL,                       /* allAllocatedStrings */
-    {0, },                      /* pendingMemory */
+
+    {0, },                      /* memory - options string storage */
 };
 
 
@@ -253,41 +255,41 @@ static void usage() {
 void setVariableValue(char *name, char *value) {
     int j;
 
-    if (options.variables.count+1>=MAX_SET_GET_OPTIONS) {
+    if (options.variablesCount+1>=MAX_SET_GET_OPTIONS) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "maximum of %d -set options reached", MAX_SET_GET_OPTIONS);
         errorMessage(ERR_ST, tmpBuff);
-        options.variables.count--;
+        options.variablesCount--;
     }
 
     bool found = false;
-    for (j=0; j<options.variables.count; j++) {
-        assert(options.variables.name[j]);
-        if (strcmp(options.variables.name[j], name)==0) {
+    for (j=0; j<options.variablesCount; j++) {
+        assert(options.variables[j].name);
+        if (strcmp(options.variables[j].name, name)==0) {
             found = true;
             break;
         }
     }
     if (!found) {
-        createOptionString(&options.variables.name[j], name);
+        createOptionString(&options.variables[j].name, name);
     }
-    if (!found || strcmp(options.variables.value[j], value)!=0) {
-        createOptionString(&options.variables.value[j], value);
+    if (!found || strcmp(options.variables[j].value, value)!=0) {
+        createOptionString(&options.variables[j].value, value);
     }
-    log_debug("setting xrefEnvVar '%s' to '%s'\n", name, value);
+    log_debug("setting variable '%s' to '%s'", name, value);
     if (!found)
-        options.variables.count++;
+        options.variablesCount++;
 }
 
 
 char *getVariableValue(char *name) {
     char *value = NULL;
-    int n = options.variables.count;
+    int n = options.variablesCount;
 
     for (int i=0; i<n; i++) {
         //&fprintf(dumpOut,"checking (%s) %s\n",options.variables.name[i], options.variables.value[i]);
-        if (strcmp(options.variables.name[i], name)==0) {
-            value = options.variables.value[i];
+        if (strcmp(options.variables[i].name, name)==0) {
+            value = options.variables[i].value;
             break;
         }
     }
