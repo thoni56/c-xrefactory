@@ -22,7 +22,7 @@ typedef enum {
 } Mode;
 
 typedef struct setGetEnv {
-    int num;
+    int count;
     char *name[MAX_SET_GET_OPTIONS];
     char *value[MAX_SET_GET_OPTIONS];
 } SetGetEnv;

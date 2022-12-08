@@ -253,15 +253,15 @@ static void usage() {
 void xrefSetenv(char *name, char *value) {
     int j;
 
-    if (options.setGetEnv.num+1>=MAX_SET_GET_OPTIONS) {
+    if (options.setGetEnv.count+1>=MAX_SET_GET_OPTIONS) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "maximum of %d -set options reached", MAX_SET_GET_OPTIONS);
         errorMessage(ERR_ST, tmpBuff);
-        options.setGetEnv.num--;
+        options.setGetEnv.count--;
     }
 
     bool found = false;
-    for (j=0; j<options.setGetEnv.num; j++) {
+    for (j=0; j<options.setGetEnv.count; j++) {
         assert(options.setGetEnv.name[j]);
         if (strcmp(options.setGetEnv.name[j], name)==0) {
             found = true;
@@ -276,7 +276,7 @@ void xrefSetenv(char *name, char *value) {
     }
     log_debug("setting xrefEnvVar '%s' to '%s'\n", name, value);
     if (!found)
-        options.setGetEnv.num++;
+        options.setGetEnv.count++;
 }
 
 

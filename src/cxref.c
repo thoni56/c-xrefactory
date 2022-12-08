@@ -3778,7 +3778,7 @@ static void olcxTopReferencesRemoveWindow(void) {
 
 char *getXrefEnvironmentValue(char *name ) {
     char *val = NULL;
-    int n = options.setGetEnv.num;
+    int n = options.setGetEnv.count;
 
     for (int i=0; i<n; i++) {
         //&fprintf(dumpOut,"checking (%s) %s\n",options.setGetEnv.name[i], options.setGetEnv.value[i]);
