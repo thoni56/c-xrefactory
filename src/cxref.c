@@ -3781,7 +3781,7 @@ static void olcxProcessGetRequest(void) {
 
     name = options.variableToGet;
     //&fprintf(dumpOut,"![get] looking for %s\n", name);
-    value = getVariableValue(name);
+    value = getOptionVariable(name);
     if (value != NULL) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements

@@ -309,7 +309,7 @@ Ensure(Options, should_error_when_environment_storage_is_exhausted) {
     errorMessageCalled = false;
     while (!errorMessageCalled) {
         sprintf(name, "name%d", i++);
-        setVariableValue(name, value);
+        setOptionVariable(name, value);
     }
     assert_that(true);          /* Will probably crash if it doesn't call errorMessage()  */
 }
@@ -318,6 +318,6 @@ Ensure(Options, should_get_back_stored_option_variable_value) {
     char *name = "name";
     char *value = "value";
 
-    setVariableValue(name, value);
-    assert_that(getVariableValue(name), is_equal_to_string(value));
+    setOptionVariable(name, value);
+    assert_that(getOptionVariable(name), is_equal_to_string(value));
 }

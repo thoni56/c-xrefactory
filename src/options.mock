@@ -18,11 +18,11 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
   mock(argc, argv, infilesFlag);
 }
 
-void setVariableValue(char *name, char *val) {
+void setOptionVariable(char *name, char *val) {
   mock(name, val);
 }
 
-char *getVariableValue(char *name) {
+char *getOptionVariable(char *name) {
     return (char *)mock(name);
 }
 

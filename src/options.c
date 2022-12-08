@@ -252,9 +252,7 @@ static void usage() {
 }
 
 
-void setVariableValue(char *name, char *value) {
-    int j;
-
+void setOptionVariable(char *name, char *value) {
     if (options.variablesCount+1>=MAX_SET_GET_OPTIONS) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "maximum of %d -set options reached", MAX_SET_GET_OPTIONS);
@@ -263,18 +261,19 @@ void setVariableValue(char *name, char *value) {
     }
 
     bool found = false;
-    for (j=0; j<options.variablesCount; j++) {
-        assert(options.variables[j].name);
-        if (strcmp(options.variables[j].name, name)==0) {
+    int i;
+    for (i=0; i<options.variablesCount; i++) {
+        assert(options.variables[i].name);
+        if (strcmp(options.variables[i].name, name)==0) {
             found = true;
             break;
         }
     }
     if (!found) {
-        createOptionString(&options.variables[j].name, name);
+        createOptionString(&options.variables[i].name, name);
     }
-    if (!found || strcmp(options.variables[j].value, value)!=0) {
-        createOptionString(&options.variables[j].value, value);
+    if (!found || strcmp(options.variables[i].value, value)!=0) {
+        createOptionString(&options.variables[i].value, value);
     }
     log_debug("setting variable '%s' to '%s'", name, value);
     if (!found)
@@ -282,7 +281,7 @@ void setVariableValue(char *name, char *value) {
 }
 
 
-char *getVariableValue(char *name) {
+char *getOptionVariable(char *name) {
     char *value = NULL;
     int n = options.variablesCount;
 
@@ -571,7 +570,7 @@ static void expandEnvironmentVariables(char *original, int availableSize, int *l
                 variableName[len]=0;
                 value = NULL;
                 if (!global_environment_only) {
-                    value = getVariableValue(variableName);
+                    value = getOptionVariable(variableName);
                 }
                 if (value==NULL)
                     value = getEnv(variableName);
@@ -743,7 +742,7 @@ static void processSectionMarker(char *markerText, int markerLength, char *curre
         // WTF? For "base"? It already is an array...
         strcpy(base, section);
         assert(strlen(section) < MAX_FILE_NAME_SIZE - 1);
-        setVariableValue("__BASE", base);
+        setOptionVariable("__BASE", base);
         strcpy(section, projectMarker);
         // completely wrong, what about file names from command line ?
         //&strncpy(cwd, section, MAX_FILE_NAME_SIZE-1);
@@ -805,7 +804,7 @@ static int handleSetOption(int argc, char **argv, int i ) {
     assert(name);
     ensureThereIsAnotherArgument(&i, argc, argv);
     val = argv[i];
-    setVariableValue(name, val);
+    setOptionVariable(name, val);
     return i;
 }
 
@@ -2181,7 +2180,7 @@ static bool processSOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-sourcepath")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);
         createOptionString(&options.sourcePath, argv[i]);
-        setVariableValue("-sourcepath", options.sourcePath);
+        setOptionVariable("-sourcepath", options.sourcePath);
     }
     else if (strcmp(argv[i], "-stdop")==0) {
         i = handleIncludeOption(argc, argv, i);
@@ -2193,7 +2192,7 @@ static bool processSOption(int *argi, int argc, char **argv) {
         name = argv[i]+4;
         ensureThereIsAnotherArgument(&i, argc, argv);
         val = argv[i];
-        setVariableValue(name, val);
+        setOptionVariable(name, val);
     }
     else if (strcmp(argv[i], "-searchdef")==0) {
         options.tagSearchSpecif = TSS_SEARCH_DEFS_ONLY;
