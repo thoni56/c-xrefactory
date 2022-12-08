@@ -3777,18 +3777,18 @@ static void olcxTopReferencesRemoveWindow(void) {
 }
 
 static void olcxProcessGetRequest(void) {
-    char *name, *val;
+    char *name, *value;
 
-    name = options.getValue;
+    name = options.variableToGet;
     //&fprintf(dumpOut,"![get] looking for %s\n", name);
-    val = getVariable(name);
-    if (val != NULL) {
+    value = getVariable(name);
+    if (value != NULL) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
         if (options.xref2) {
-            ppcGenRecord(PPC_SET_INFO, expandPredefinedSpecialVariables_static(val, inputFileName));
+            ppcGenRecord(PPC_SET_INFO, expandPredefinedSpecialVariables_static(value, inputFileName));
         } else {
-            fprintf(communicationChannel,"*%s", expandPredefinedSpecialVariables_static(val, inputFileName));
+            fprintf(communicationChannel,"*%s", expandPredefinedSpecialVariables_static(value, inputFileName));
         }
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
