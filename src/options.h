@@ -170,7 +170,7 @@ extern void dirInputFile(MAP_FUN_SIGNATURE);
 
 extern void processFileArguments(void);
 extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag);
-extern void createOptionString(char **optAddress, char *text);
+extern char *createOptionString(char **optAddress, char *text);
 extern void copyOptionsFromTo(Options *src, Options *dest);
 extern void getXrefrcFileName(char *ttt);
 extern void addStringListOption(StringList **optlist, char *argvi);

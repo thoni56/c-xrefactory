@@ -30,8 +30,8 @@ void copyOptionsFromTo(Options *src, Options *dest) {
   mock(dest, src);
 }
 
-void createOptionString(char **dest, char *text) {
-  mock(dest, text);
+char *createOptionString(char **dest, char *text) {
+    return (char *)mock(dest, text);
 }
 
 void addSourcePathsCut(void) {
