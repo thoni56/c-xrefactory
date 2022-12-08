@@ -250,32 +250,33 @@ static void usage() {
 }
 
 
-void xrefSetenv(char *name, char *val) {
-    SetGetEnv *sge;
-    int j, n;
+void xrefSetenv(char *name, char *value) {
+    int j;
 
-    sge = &options.setGetEnv;
-    n = sge->num;
-    if (n+1>=MAX_SET_GET_OPTIONS) {
+    if (options.setGetEnv.num+1>=MAX_SET_GET_OPTIONS) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "maximum of %d -set options reached", MAX_SET_GET_OPTIONS);
         errorMessage(ERR_ST, tmpBuff);
-        sge->num--; n--;
+        options.setGetEnv.num--;
     }
 
-    for(j=0; j<n; j++) {
-        assert(sge->name[j]);
-        if (strcmp(sge->name[j], name)==0)
+    bool found = false;
+    for (j=0; j<options.setGetEnv.num; j++) {
+        assert(options.setGetEnv.name[j]);
+        if (strcmp(options.setGetEnv.name[j], name)==0) {
+            found = true;
             break;
+        }
     }
-    if (j==n)
-        createOptionString(&(sge->name[j]), name);
-    if (j==n || strcmp(sge->value[j], val)!=0) {
-        createOptionString(&(sge->value[j]), val);
+    if (!found) {
+        createOptionString(&options.setGetEnv.name[j], name);
     }
-    log_debug("setting xrefEnvVar '%s' to '%s'\n", name, val);
-    if (j==n)
-        sge->num++;
+    if (!found || strcmp(options.setGetEnv.value[j], value)!=0) {
+        createOptionString(&options.setGetEnv.value[j], value);
+    }
+    log_debug("setting xrefEnvVar '%s' to '%s'\n", name, value);
+    if (!found)
+        options.setGetEnv.num++;
 }
 
 
