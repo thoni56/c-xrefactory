@@ -555,7 +555,7 @@ static void expandEnvironmentVariables(char *original, int availableSize, int *l
                 variableName[len]=0;
                 value = NULL;
                 if (!global_environment_only) {
-                    value = getXrefEnvironmentValue(variableName);
+                    value = getVariable(variableName);
                 }
                 if (value==NULL)
                     value = getEnv(variableName);

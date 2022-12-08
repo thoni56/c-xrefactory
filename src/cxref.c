@@ -3776,18 +3776,18 @@ static void olcxTopReferencesRemoveWindow(void) {
     fprintf(communicationChannel,"*");
 }
 
-char *getXrefEnvironmentValue(char *name ) {
-    char *val = NULL;
-    int n = options.setGetEnv.count;
+char *getVariable(char *name) {
+    char *value = NULL;
+    int n = options.variables.count;
 
     for (int i=0; i<n; i++) {
-        //&fprintf(dumpOut,"checking (%s) %s\n",options.setGetEnv.name[i], options.setGetEnv.value[i]);
-        if (strcmp(options.setGetEnv.name[i], name)==0) {
-            val = options.setGetEnv.value[i];
+        //&fprintf(dumpOut,"checking (%s) %s\n",options.variables.name[i], options.variables.value[i]);
+        if (strcmp(options.variables.name[i], name)==0) {
+            value = options.variables.value[i];
             break;
         }
     }
-    return val;
+    return value;
 }
 
 static void olcxProcessGetRequest(void) {
@@ -3795,7 +3795,7 @@ static void olcxProcessGetRequest(void) {
 
     name = options.getValue;
     //&fprintf(dumpOut,"![get] looking for %s\n", name);
-    val = getXrefEnvironmentValue(name);
+    val = getVariable(name);
     if (val != NULL) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
