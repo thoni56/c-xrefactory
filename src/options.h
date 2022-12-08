@@ -21,11 +21,11 @@ typedef enum {
     RefactoryMode      /* refactoring server, called by on-line editing */
 } Mode;
 
-typedef struct setGetEnv {
+typedef struct variable {
     int count;
     char *name[MAX_SET_GET_OPTIONS];
     char *value[MAX_SET_GET_OPTIONS];
-} SetGetEnv;
+} Variable;
 
 typedef enum updateType {
     UPDATE_DEFAULT = 0,              // must be zero because of tests like 'if (options.update)...'
@@ -144,7 +144,7 @@ typedef struct options {
     int referenceFileCount;
 
     // all the rest initialized to zeros by default
-    struct setGetEnv setGetEnv;
+    struct variable variables;
 
     // list of strings
     struct stringPointerList *allAllocatedStrings;
