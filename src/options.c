@@ -138,7 +138,6 @@ Options presetOptions = {
     // pending memory for string values
     NULL,                       /* allAllocatedStrings */
     {0, },                      /* pendingMemory */
-    {0, },                      /* pendingFreeSpace[] */
 };
 
 

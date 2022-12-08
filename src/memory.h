@@ -2,6 +2,7 @@
 #define MEMORY_H_INCLUDED
 
 #include "stdinc.h"
+#include "constants.h"
 
 
 /* ************************ Types ******************************** */
@@ -11,11 +12,7 @@ typedef struct memory {
     bool	(*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
     int     index;
     int		size;
-    double  block;		//  double in order to get it properly aligned
-    /* WTF: TODO It seems like the actual area is in the array *after*
-     * this struct, so it overruns into the memory after, this won't
-     * work in all compilers (re-arranging declarations) or
-     * architectures... */
+    double  block[SIZE_optMemory];	//  double in order to get it properly aligned
 } Memory;
 
 /* The "trail" seems to only be used for Java so ignore it for now... */
@@ -95,7 +92,7 @@ typedef struct codeBlock {
 
 
 /**********************************************************************
-   DM = Dynamic Memory - can expand using overflow handler
+   DM = Dynamic Memory - can possibly expand using overflow handler
 */
 
 
