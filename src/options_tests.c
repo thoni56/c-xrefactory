@@ -310,7 +310,6 @@ Ensure(Options, should_error_when_environment_storage_is_exhausted) {
     while (!errorMessageCalled) {
         sprintf(name, "name%d", i++);
         xrefSetenv(name, value);
-        printf("%s\n", name);
     }
     assert_that(true);          /* Will probably crash if it doesn't call errorMessage()  */
 }

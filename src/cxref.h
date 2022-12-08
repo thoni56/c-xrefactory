@@ -79,7 +79,6 @@ extern void olCompletionListReverse(void);
 extern Reference **addToRefList(Reference **list,
                                 Usage usage,
                                 Position pos);
-extern char *getVariable(char *name);
 extern int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack,
                                       SymbolsMenu **rss, int checkSelFlag);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,

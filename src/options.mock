@@ -22,6 +22,10 @@ void xrefSetenv(char *name, char *val) {
   mock(name, val);
 }
 
+char *getVariable(char *name) {
+    return (char *)mock(name);
+}
+
 void copyOptionsFromTo(Options *src, Options *dest) {
   mock(dest, src);
 }

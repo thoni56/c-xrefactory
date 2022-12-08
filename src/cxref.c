@@ -3776,20 +3776,6 @@ static void olcxTopReferencesRemoveWindow(void) {
     fprintf(communicationChannel,"*");
 }
 
-char *getVariable(char *name) {
-    char *value = NULL;
-    int n = options.variables.count;
-
-    for (int i=0; i<n; i++) {
-        //&fprintf(dumpOut,"checking (%s) %s\n",options.variables.name[i], options.variables.value[i]);
-        if (strcmp(options.variables.name[i], name)==0) {
-            value = options.variables.value[i];
-            break;
-        }
-    }
-    return value;
-}
-
 static void olcxProcessGetRequest(void) {
     char *name, *val;
 
