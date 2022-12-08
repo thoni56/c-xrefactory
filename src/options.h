@@ -91,7 +91,7 @@ typedef struct options {
     int checkLinesMoved;
     int checkNewLineNumber;
 
-    char *getValue;
+    char *variableToGet;
     bool javaSlAllowed;
 
     /* JAVADOC: */

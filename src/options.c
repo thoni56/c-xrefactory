@@ -1510,7 +1510,7 @@ static bool processGOption(int *argi, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i], "-get")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);
-        createOptionString(&options.getValue, argv[i]);
+        createOptionString(&options.variableToGet, argv[i]);
         options.serverOperation = OLO_GET_ENV_VALUE;
     }
     else return false;
