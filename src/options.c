@@ -250,7 +250,7 @@ static void usage() {
 }
 
 
-void xrefSetenv(char *name, char *value) {
+void setVariableValue(char *name, char *value) {
     int j;
 
     if (options.variables.count+1>=MAX_SET_GET_OPTIONS) {
@@ -280,7 +280,7 @@ void xrefSetenv(char *name, char *value) {
 }
 
 
-char *getVariable(char *name) {
+char *getVariableValue(char *name) {
     char *value = NULL;
     int n = options.variables.count;
 
@@ -569,7 +569,7 @@ static void expandEnvironmentVariables(char *original, int availableSize, int *l
                 variableName[len]=0;
                 value = NULL;
                 if (!global_environment_only) {
-                    value = getVariable(variableName);
+                    value = getVariableValue(variableName);
                 }
                 if (value==NULL)
                     value = getEnv(variableName);
@@ -741,7 +741,7 @@ static void processSectionMarker(char *markerText, int markerLength, char *curre
         // WTF? For "base"? It already is an array...
         strcpy(base, section);
         assert(strlen(section) < MAX_FILE_NAME_SIZE - 1);
-        xrefSetenv("__BASE", base);
+        setVariableValue("__BASE", base);
         strcpy(section, projectMarker);
         // completely wrong, what about file names from command line ?
         //&strncpy(cwd, section, MAX_FILE_NAME_SIZE-1);
@@ -803,7 +803,7 @@ static int handleSetOption(int argc, char **argv, int i ) {
     assert(name);
     ensureThereIsAnotherArgument(&i, argc, argv);
     val = argv[i];
-    xrefSetenv(name, val);
+    setVariableValue(name, val);
     return i;
 }
 
@@ -2179,7 +2179,7 @@ static bool processSOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-sourcepath")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);
         createOptionString(&options.sourcePath, argv[i]);
-        xrefSetenv("-sourcepath", options.sourcePath);
+        setVariableValue("-sourcepath", options.sourcePath);
     }
     else if (strcmp(argv[i], "-stdop")==0) {
         i = handleIncludeOption(argc, argv, i);
@@ -2191,7 +2191,7 @@ static bool processSOption(int *argi, int argc, char **argv) {
         name = argv[i]+4;
         ensureThereIsAnotherArgument(&i, argc, argv);
         val = argv[i];
-        xrefSetenv(name, val);
+        setVariableValue(name, val);
     }
     else if (strcmp(argv[i], "-searchdef")==0) {
         options.tagSearchSpecif = TSS_SEARCH_DEFS_ONLY;

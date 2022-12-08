@@ -18,11 +18,11 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
   mock(argc, argv, infilesFlag);
 }
 
-void xrefSetenv(char *name, char *val) {
+void setVariableValue(char *name, char *val) {
   mock(name, val);
 }
 
-char *getVariable(char *name) {
+char *getVariableValue(char *name) {
     return (char *)mock(name);
 }
 

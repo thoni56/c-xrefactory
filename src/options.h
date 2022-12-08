@@ -164,8 +164,8 @@ extern Options presetOptions;
 
 extern void aboutMessage(void);
 
-extern void xrefSetenv(char *name, char *val);
-extern char *getVariable(char *name);
+extern void setVariableValue(char *name, char *val);
+extern char *getVariableValue(char *name);
 
 extern void dirInputFile(MAP_FUN_SIGNATURE);
 

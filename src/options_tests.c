@@ -309,7 +309,7 @@ Ensure(Options, should_error_when_environment_storage_is_exhausted) {
     errorMessageCalled = false;
     while (!errorMessageCalled) {
         sprintf(name, "name%d", i++);
-        xrefSetenv(name, value);
+        setVariableValue(name, value);
     }
     assert_that(true);          /* Will probably crash if it doesn't call errorMessage()  */
 }
