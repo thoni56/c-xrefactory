@@ -22,4 +22,5 @@ clean:
 
 DEBUGGER=gdb
 debug:
+	@echo $(COMMAND)
 	$(DEBUGGER) --args $(COMMAND)

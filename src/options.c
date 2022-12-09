@@ -1215,7 +1215,7 @@ void getJavaClassAndSourcePath(void) {
         jdkcp = getJdkClassPathQuickly();
         if (jdkcp != NULL && *jdkcp!=0) {
             options.jdkClassPath = createOptionString(&options.jdkClassPath, jdkcp);  //only optimisation of getEnv?
-            processClassPathString( jdkcp);
+            processClassPathString(jdkcp);
         }
 
         if (LANGUAGE(LANG_JAVA) && options.mode != ServerMode) {
