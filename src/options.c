@@ -295,6 +295,11 @@ char *getOptionVariable(char *name) {
     return value;
 }
 
+static void *optAlloc(size_t size) {
+    return dm_alloc(&options.memory, size);
+}
+
+
 typedef struct stringPointerLocationList {
     char **location;
     struct stringPointerLocationList *next;
@@ -302,7 +307,7 @@ typedef struct stringPointerLocationList {
 
 static StringPointerLocationList *concatStringPointerLocation(char **location, StringPointerLocationList *next) {
     StringPointerLocationList *list;
-    OPT_ALLOC(list, StringPointerLocationList);
+    list = optAlloc(sizeof(StringPointerLocationList));
     list->location = location;
     list->next = next;
     return list;
@@ -325,7 +330,7 @@ static void addStringAddressToAllocatedList(char **location) {
 static void allocOptionString(void **locationVoid, int size) {
     char **location;
     location = (char**)locationVoid;
-    OPT_ALLOCC((*location), size, char); /* Write address to allocated area into the location pointed out */
+    *location = optAlloc(size);
     addStringAddressToAllocatedList(location);
 }
 

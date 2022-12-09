@@ -96,12 +96,6 @@ typedef struct codeBlock {
 */
 
 
-/* options allocations */
-#define OPT_ALLOC(pointer, type)         pointer = dm_alloc(&options.memory, sizeof(type));
-#define OPT_ALLOCC(pointer, count, type) pointer = dm_allocc(&options.memory, count, sizeof(type));
-
-
-
 /* ************************************************************************** */
 /* New type of static memory */
 typedef struct {
