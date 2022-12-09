@@ -324,17 +324,17 @@ static void addStringAddressToAllocatedList(char **location) {
     }
 }
 
-static void allocOptionString(void **locationVoid, int size) {
+static void allocateOptionSpace(void **locationVoid, int size) {
     char **location;
     location = (char**)locationVoid;
     *location = optAlloc(size);
     addStringAddressToAllocatedList(location);
 }
 
-char *createOptionString(char **optAddress, char *text) {
-    allocOptionString((void**)optAddress, strlen(text)+1);
-    strcpy(*optAddress, text);
-    return *optAddress;
+char *createOptionString(char **address, char *text) {
+    allocateOptionSpace((void**)address, strlen(text)+1);
+    strcpy(*address, text);
+    return *address;
 }
 
 static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
@@ -361,13 +361,13 @@ void copyOptionsFromTo(Options *src, Options *dest) {
     }
 }
 
-void addStringListOption(StringList **optlist, char *string) {
+void addStringListOption(StringList **stringList, char *string) {
     StringList **list;
-    for (list=optlist; *list!=NULL; list= &(*list)->next)
+    for (list=stringList; *list!=NULL; list= &(*list)->next)
         ;
 
     /* TODO refactor out to newOptionString()? */
-    allocOptionString((void**)list, sizeof(StringList));
+    allocateOptionSpace((void**)list, sizeof(StringList));
     (*list)->string = createOptionString(&(*list)->string, string);
     (*list)->next = NULL;
 }
