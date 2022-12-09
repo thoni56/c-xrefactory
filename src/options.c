@@ -352,7 +352,7 @@ static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
     *dlld = *lld + offset;
 }
 
-void copyOptionsFromTo(Options *src, Options *dest) {
+void deepCopyOptionsFromTo(Options *src, Options *dest) {
     memcpy(dest, src, sizeof(Options));
     for (StringPointerLocationList **l= &src->allAllocatedStrings; *l!=NULL; l = &(*l)->next) {
         copyOptionShiftPointer((*l)->location, dest, src);

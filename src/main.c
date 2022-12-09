@@ -148,7 +148,7 @@ static bool computeAndOpenInputFile(void) {
 }
 
 static void initOptions(void) {
-    copyOptionsFromTo(&presetOptions, &options);
+    deepCopyOptionsFromTo(&presetOptions, &options);
 
     inputFileNumber   = noFileIndex;
 }
@@ -485,7 +485,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
             inputOpened = false;
             goto fini;
         }
-        copyOptionsFromTo(&options, &savedOptions);  // before getJavaClassPath, it modifies ???
+        deepCopyOptionsFromTo(&options, &savedOptions);  // before getJavaClassPath, it modifies ???
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         getJavaClassAndSourcePath();
         inputOpened = computeAndOpenInputFile();
@@ -505,7 +505,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         assert(cache.free == cache.points[0].nextLexemP);
         assert(cache.free == cache.points[1].nextLexemP);
     } else {
-        copyOptionsFromTo(&savedOptions, &options);
+        deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
         inputOpened = computeAndOpenInputFile();
     }
