@@ -295,36 +295,38 @@ char *getOptionVariable(char *name) {
     return value;
 }
 
-typedef struct stringPointerList {
-    char **destination;
-    struct stringPointerList *next;
-} StringPointerList;
+typedef struct stringPointerLocationList {
+    char **location;
+    struct stringPointerLocationList *next;
+} StringPointerLocationList;
 
-static StringPointerList *newStringPointerList(char **destination, StringPointerList *next) {
-    StringPointerList *list;
-    OPT_ALLOC(list, StringPointerList);
-    list->destination = destination;
+static StringPointerLocationList *concatStringPointerLocation(char **location, StringPointerLocationList *next) {
+    StringPointerLocationList *list;
+    OPT_ALLOC(list, StringPointerLocationList);
+    list->location = location;
     list->next = next;
     return list;
 }
 
-static void optionAddStringToAllocatedList(char **destination) {
-    StringPointerList *ll;
-    for (ll=options.allAllocatedStrings; ll!=NULL; ll=ll->next) {
+static void addStringAddressToAllocatedList(char **location) {
+    bool exists = false;
+    for (StringPointerLocationList *ll=options.allAllocatedStrings; ll!=NULL; ll=ll->next) {
         // reassignement, do not keep two copies
-        if (ll->destination == destination) break;
+        if (ll->location == location) {
+            exists = true;
+            break;
+        }
     }
-    if (ll==NULL) {
-        ll = newStringPointerList(destination, options.allAllocatedStrings);
-        options.allAllocatedStrings = ll;
+    if (!exists) {
+        options.allAllocatedStrings = concatStringPointerLocation(location, options.allAllocatedStrings);
     }
 }
 
-static void allocOptionString(void **optAddress, int size) {
-    char **res;
-    res = (char**)optAddress;
-    OPT_ALLOCC((*res), size, char); /* TODO: WTF what side effects does this have?! */
-    optionAddStringToAllocatedList(res);
+static void allocOptionString(void **locationVoid, int size) {
+    char **location;
+    location = (char**)locationVoid;
+    OPT_ALLOCC((*location), size, char); /* Write address to allocated area into the location pointed out */
+    addStringAddressToAllocatedList(location);
 }
 
 char *createOptionString(char **optAddress, char *text) {
@@ -350,9 +352,9 @@ static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
 
 void copyOptionsFromTo(Options *src, Options *dest) {
     memcpy(dest, src, sizeof(Options));
-    for (StringPointerList **l= &src->allAllocatedStrings; *l!=NULL; l = &(*l)->next) {
-        copyOptionShiftPointer((*l)->destination, dest, src);
-        copyOptionShiftPointer(((char**)&(*l)->destination), dest, src);
+    for (StringPointerLocationList **l= &src->allAllocatedStrings; *l!=NULL; l = &(*l)->next) {
+        copyOptionShiftPointer((*l)->location, dest, src);
+        copyOptionShiftPointer(((char**)&(*l)->location), dest, src);
         copyOptionShiftPointer(((char**)l), dest, src);
     }
 }
