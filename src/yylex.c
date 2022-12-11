@@ -146,11 +146,11 @@ void initAllInputs(void) {
 }
 
 
-static void fillMacroArgumentTableElement(MacroArgumentTableElement *macroArgTabElem, char *name, char *linkName,
+static void fillMacroArgumentTableElement(MacroArgumentTableElement *element, char *name, char *linkName,
                                 int order) {
-    macroArgTabElem->name = name;
-    macroArgTabElem->linkName = linkName;
-    macroArgTabElem->order = order;
+    element->name = name;
+    element->linkName = linkName;
+    element->order = order;
 }
 
 static void setCacheConsistency(Cache *cache, LexInput *input) {
