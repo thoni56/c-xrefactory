@@ -1,4 +1,4 @@
-== Functional Overview
+## Functional Overview
 
 The _c-xref_ program is actually a mish-mash of a multitude of
 features baked into one program. This is the major cause of the mess
@@ -9,8 +9,8 @@ It was
 - a generator for persistent cross-reference data
 - a reference server for editors, serving cross-reference, navigational and completion data over a protocol
 - a refactoring server (the worlds first to cross the Refactoring Rubicon)
-- [.line-through]#an HTML cross-reference generator (probably the root of the project)#
-- [.line-through]#a C macro generator for structure fill (and other) functions#
+- ~~an HTML cross-reference generator (probably the root of the project)~~
+- ~~a C macro generator for structure fill (and other) functions~~
 
 It is the first three that are unique and constitutes the great value
 of this project. The last two have been removed from the source, the
@@ -28,12 +28,12 @@ What we'd like to do is partition the project into separate parts,
 each having a clear usage.
 
 As it happens, the things that `c-xref` can do is also the
-[.line-through]#five four# three modes (previously "task regimes") that are
+~~five four~~ three modes (previously "task regimes") that are
 declared in the sources:
 
   - Xref
-  - [.line-through]#HtmlGenerate#
+  - ~~HtmlGenerate~~
   - Editor Server
   - Refactory
-  - [.line-through]#Generate# (was removed when we finally managed to remove the bootstrap step)
+  - ~~Generate~~ (was removed when we finally managed to remove the bootstrap step)
 
