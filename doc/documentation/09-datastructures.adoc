@@ -1,0 +1,103 @@
+== Data Structures
+
+There are a lot of different data structures used in `c-xrefactory`.
+This is a first step towards visualising them.
+
+=== Symbols and References
+
+So, why is there no connection between the symbols and the references?!?
+
+[plantuml, structures, png]
+....
+class Symbol {
+char *name
+Position position
+SymbolBits bits
+}
+Symbol o-- Symbol : next
+
+class SymbolList {
+}
+SymbolList o-- Symbol : symbol
+SymbolList o-- SymbolList : next
+
+class ReferencesItem {
+char *name
+ReferencesBits bits
+}
+ReferencesItem o-- Reference : references
+ReferencesItem o-- ReferencesItem : next
+
+class Reference {
+Usage usage
+Position position
+}
+Reference o-- Reference : next
+
+....
+
+=== Files and Buffers
+
+Many strange things are going on with reading files so that is not completely understood yet.
+
+(There should probably be a section caching and one on lexing...)
+
+Here is an initial attempt at illustrating how some of the file and text/lexem buffers are related.
+
+[plantuml, buffer, png]
+....
+class FileDescriptor {
+}
+FileDescriptor o-- LexemBuffer : lexemBuffer
+
+class LexemBuffer {
+  Lexem[] lexemStream
+}
+LexemBuffer o-- CharacterBuffer : buffer
+
+class CharacterBuffer {
+  char[] : chars
+}
+
+class LexInput {
+  char* : macroName
+  InputType : inputType
+}
+LexInput --> LexemBuffer : beginningOfBuffer, endOfBuffer, currentLexemP (into .lexemStream)
+....
+
+NOTE: It would be nice if the `LexInput` structure could point to a
+`LexemBuffer` instead of holding separate pointers which are
+impossible to know what they actually point to...
+
+NOTE: This could be achieved if we could remove the CharacterBuffer
+from LexemBuffer and make that a reference instead of a
+composition. Then we'd need to add a CharacterBuffer to the structures
+that has a LexemBuffer as a component (if they use it).
+
+=== Modes
+
+`c-xrefactory` operates in different modes ("regimes" in original
+`c-xref` parlance):
+
+- xref - batch mode reference generation
+- server - editor server
+- refactory - refactory browser
+
+The default mode is "xref". The command line options `-server` and `-refactory`
+selects one of the other modes. Branching is done in the final lines in
+`main()`.
+
+The code for the modes are intertwined, probably through re-use of
+already existing functionality when extending to a refactoring
+browser.
+
+One evidence for this is that the refactory module calls the "main
+task" as a "sub-task".  This forces some intricate fiddling with the
+options data structure, like copying and caching it.  Which I don't
+fully understand yet.
+
+TODO?: Strip away the various "regimes" into more separated concerns
+and handle options differently.
+
+

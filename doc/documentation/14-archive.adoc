@@ -1,0 +1,261 @@
+== Archive
+
+In this section you can find some descriptions and saved texts that
+described how things were before. They are no longer true, since that
+quirk, magic or bad coding is gone. But it is kept here as an archive
+for those wanting to do backtracking to original sources.
+
+=== HUGE Memory ===
+
+Previously a HUGE model was also available (by re-compilation) to
+reach file numbers, lines and columns above 22 bits. But if you have
+more than 4 million lines (or columns!) you should probably do
+something radical before attempting cross referencing and refactoring.
+
+
+=== Bootstrapping
+
+==== BOOTSTRAP REMOVED!
+
+Once the FILL-macros was removed, we could move the enum-generation to
+use the actual `c-xref`. So from now on we build `c-xref` directly
+from the sources in the repo. Changes to any enums will trigger a
+re-generation of the enumTxt-files but since the enumTxt-files are
+only conversion of enum values to strings any mismatch will not
+prevent compilation, and it would even be possible to a manual
+update. This is a big improvement over the previous situation!
+
+==== FILLs REMOVED!
+
+As indicated in <<FILL macros>> the bootstrapping of FILL-macros has
+finally and fully been removed.
+
+Gone is also the `compiler_defines.h`, which was just removed without
+any obvious adverse effects.  Maybe that will come back and bite me
+when we move to more platforms other than linux and MacOS...
+
+Left is, at this point, only the `enumTxt` generation, so most of the
+text below is kept for historical reasons.
+
+==== Rationale
+
+_c-xref_ uses a load of structures, and lists of them, that need to be
+created and initialized in a lot of places (such as the parsers). To
+make this somewhat manageable, _c-xref_ itself parses the strucures
+and generates macros that can be used to fill them with one call.
+
+_c-xref_ is also bootstrapped into reading in a lot of predefined
+header files to get system definitions as "preloaded
+definitions".
+
+Why this pre-loading was necessary, I don't exactly know. It
+might be an optimization, or an idea that was born early and then just
+kept on and on. In any case it creates an extra complexity
+building and maintaining and to the structure of _c-xref_.
+
+So this must be removed, see below.
+
+==== Mechanism
+
+The bootstrapping uses _c-xref_'s own capability to parse C-code and
+parse those structures and spit out filling macros, and some other
+stuff.
+
+This is done using options like `-task_regime_generate' which prints a
+lot of data structures on the standard output which is then fed into
+generated versions of _strFill_, _strTdef_(no longer exists) and
+_enumTxt_ by the Makefile.
+
+The process starts with building a _c-xref.bs_ executable from checked
+in sources. This compile uses a BOOTSTRAP define that causes some
+header files to include pre-generated versions of the generated files
+(currently _strFill.bs.h_ and _enumTxt.bs.h_) which should work in all
+environments.
+
+NOTE: if you change the name of a field in a structure that is subject
+to FILL-generation you will need to manually update the
+_strFill.bs.h_, but a "make cleaner all" will show you where those are.
+
+After the _c-xref.bs_ has been built, it is used to generate _strFill_
+and _enumTxt_ which might include specific structures for the current
+environment.
+
+HOWEVER: if FILL macros are used for structures which are different on
+some platforms, say a FILE structure, that FILL macro will have
+difference number of arguments, so I'm not sure how smart this "smart"
+generation technique actually is.
+
+TODO: Investigate alternative approaches to this generate "regime",
+perhaps move to a "class"-oriented structure with initialization
+functions for each "class" instead of macros.
+
+==== Compiler defines ====
+
+In _options.h_ there are a number of definitions which somehow are
+sent to the compiler/preprocessor or used so that standard settings
+are the same as if a program will be compiled using the standard
+compiler on the platform. At this point I don't know exactly how this
+conversion from C declarations to compile time definitions is done,
+maybe just entered as symbols in one of the many symboltables?
+
+Typical examples include "__linux" but also on some platforms things
+like "fpos_t=long".
+
+I've implemented a mechanism that uses "gcc -E -mD" to print out and
+catch all compiler defines in `compiler_defines.h`. This was necessary
+because of such definitions on Darwin which where not in the
+"pre-programmed" ones.
+
+TODO?: As this is a more general approach it should possibly
+completely replace the "programmed" ones in `options.c`?
+
+==== EnumTxt generation REMOVED! ====
+
+To be able to print the string values of enums the module generate.c
+(called when regime was RegimeGenerate) could also generate string
+arrays for all enums. By replacing that with some pre-processor magic
+for the few that was actually needed (mostly in log_trace() calls) we
+could do away with that whole "generate" functionality too.
+
+(Last commit with enum generation intact is https://github.com/thoni56/c-xrefactory/commit/aafd7b1f813f2c17c684ea87ac87a0be31cdd4c4.)
+
+==== enumTxt
+
+For some cases the string representing the value of an Enum is needed.
+`c-xref` handles this using the "usual" 'parse code and generate' method.
+The module `generate.c` does this generation too.
+
+==== Include paths
+
+Also in _options.h_ some standard-like include paths are added, but
+there is a better attempt in _getAndProcessGccOptions()_ which uses
+the compiler/preprocessor itself to figure out those paths.
+
+TODO?: This is much better and should really be the only way, I think.
+
+==== Problems
+
+Since at bootstrap there must exist FILL-macros with the correct field
+names this strategy is an obstacle to cleaning up the code since every
+field is referenced in the FILL macros. When a field (in a structure
+which *are* filled using the FILL macro) changes name, this will make
+initial compilation impossible until the names of that field is also
+changed in the `strFill.bs.h` file.
+
+One way to handle this is of course to use `c-xrefactory` itself and
+rename fields. This requires that the project settings also include a
+pass with BOOTSTRAP set, which it does.
+
+==== Removing
+
+I've started removing this step. In TODO.org I keep a hierarchical list
+of the actions to take (in a Mikado kind of style).
+
+The basic strategy is to start with structures that no other structure
+depends on. Using the script `utils/struct2dot.py` you can generate a
+DOT graph that shows those dependencies.
+
+Removal can be done in a couple of ways
+
+1. If it's a very small structure you can replace a call to a `FILL_XXX()` macro
+with a https://gcc.gnu.org/onlinedocs/gcc/Compound-Literals.html[compound literal].
+
+2. A better approach is usually to replace it with a `fillXXX()` function, or even
+better, with a `newXXX()`, if it consistently is preceeded with an allocation
+(in the same memory!). To see what fields vary you can grep all such calls, make a
+CSV-file from that, and compare all rows.
+
+==== strTdef.h
+
+The `strTdef.h` was generated using the option `-typedefs` as a part
+of the old `-task_regime_generate` strategy and generated typedef
+declarations for all types found in the parsed files.
+
+I also think that you could actually merge the struct definition with
+the typedef so that _strTdef.h_ would not be needed. But it seems that
+this design is because the structures in _proto.h_ are not a directed
+graph, so loops makes that impossible. Instead the typedefs are
+included before the structs:
+
+    #include "strTdef.h"
+
+    struct someNode {
+        S_someOtherNode *this;
+        ...
+
+    struct someOtherNode {
+        S_someNode *that;
+        ...
+
+This is now ideomatically solved using the structs themselves:
+
+    struct someNode {
+        struct someOtherNode *this;
+        ...
+
+    struct someOtherNode {
+        struct someNode *that;
+        ...
+
+=== FILL macros
+
+_**The FILL macros are now fully replaced by native functions or some other,**_
+_**more refactoring-friendly, mechanism. Yeah!**_***
+
+During bootstrapping a large number of macros named ____FILL_xxxx__ is
+created. The intent is that you can fill a complete structure with one
+call, somewhat like a constructor, but here it's used more generally
+every time a complex struct needs to be initialized.
+
+There are even ___FILLF_xxx__ macros which allows filling fields in
+sub-structures at the same time.
+
+This is, in my mind, another catastrophic hack that makes
+understanding, and refactoring, `c-xrefactory` such a pain. Not to
+mention the extra bootstrap step.
+
+I just discovered the compound literals of C99. And I'll experiment
+with replacing some of the FILL macros with compound literals assignments
+instead.
+
+    FILL_symbolList(memb, pdd, NULL);
+
+could become (I think):
+
+    memb = (SymbolList){.d = pdd, .next = NULL};
+
+
+If successful, it would be much better, since we could probably get
+rid of the bootstrap, but primarily it would be more explicit about
+which fields are actually necessary to set.
+
+=== Users
+
+**The `-user` option has now been removed, both in the tool and the
+  editor adaptors, and with it one instance of a hashlist, the
+  `olcxTab`, which now is a single structure, the `sessionData`.**
+
+There is an option called `-user` which Emacs sets to the frame-id. To
+me that indicates that the concept is that for each frame you create
+you get a different "user" with the `c-xref` server that you (Emacs)
+created.
+
+The jedit adapter seems to do something similar:
+
+    options.add("-user");
+    Options.add(s.getViewParameter(data.viewId));
+
+Looking at the sources to find when the function
+`olcxSetCurrentUser()` is called it seems that you could have
+different completion, refactorings, etc. going on at the same time in
+different frames.
+
+Completions etc. requires user interaction so they are not controlled
+by the editor in itself only. At first glance though, the editor
+(Emacs) seems to block multiple refactorings and tag maintenance tasks
+running at the same time.
+
+This leaves just a few use cases for multiple "users", and I think it
+adds unnecessary complexity. Going for a more "one user" approach,
+like the model in the language server protocol, this could really be
+removed.

@@ -1,0 +1,565 @@
+== Code
+
+=== Passes
+
+There is a variable in `main()` called `firstPassing` which is set and passed
+down through `mainEditServer()` until it is reset in
+`mainFileProcessingInitialisations()` after `initCaching()`.
+
+This is probably connected to the fact that `c-xref` allows for passing
+over the analyzed source multiple passes in case you compile the
+project sources with different C defines. Variables in the `c-xref`
+sources indicate this, e.g the loops in `mainEditServerProcessFile()`
+and `mainXrefProcessInputFile()` (which are both strangely limited by
+setting the maxPass variable to 1 before entering the loop...).
+
+=== Parsers
+
+_C-xref_ uses a patched version of Berkley yacc to generate
+parsers. There are a number of parsers
+
+- C
+- Yacc
+- Java
+- C expressions
+
+There are also small traces of calls to the C++ parser that existed
+but was proprietary.
+
+The patch to byacc is mainly to the skeleton and seems to relate
+mostly to handling of errors and adding a recursive parsing feature
+that is required for Java. It is not impossible that the change can be
+adapted to other versions of yacc, but this has not be tried.
+
+Some changes are also made to be able to accomodate multiple parsers
+in the same executable. The Makefile generates the parsers and renames
+them as appropriate.
+
+NOTE: Should we just scrap the Java support and focus on C since a)
+the Java support is for ancient Java versions and b) there are more
+mature Java refactoring support available?
+
+=== Refactoring and the parsers
+
+Some refactorings need more detailed information about the code, maybe all do?
+
+One example, at least, is parameter manipulation.  Then the refactorer
+calls the appropriate parser (`serverEditParseBuffer()`) which
+collects information in the corresponding semantic actions.  This
+information is stored in various global variables, like
+`parameterBeginPosition`.
+
+NOTE: At this point I don't understand exactly how this interaction is
+performed, nor if the whole file is parsed or if there is some way to
+just parse appropriate parts.
+
+
+=== Reading Files
+
+Here are some speculations about how the complex file reading is structured.
+
+Each file is identified by a filenumber, which is an index into the
+file table, and seems to have a `lexBuffer` tied to it so that you can
+just continue from where ever you were. That in turn contains a
+`CharacterBuffer` that handles the actual character reading.
+
+And there is also an "editorBuffer"...
+
+The intricate interactions between these are hard to follow as the code
+here are littered with short character names which are copies of fields
+in the structures, and infested with many macros, probably in an ignorant
+attempt at optimizing. ("The root of all evil is premature optimization" and
+"Make it work, make it right, make it fast".)
+
+It seems to all start in `initInput()` in `yylex.c` where the only
+call to `fillFileDescriptor()` is made. But you might wonder why this
+function does some initial reading, this should be pushed down to the
+buffers in the file descriptor.
+
+==== Lexing/scanning
+
+Lexing/scanning is performed in two layers, one in `lexer.c` which
+seems to be doing the actual lexing into lexems which are put in a
+lexembuffer. The higher level "scanning" is performed, as per ususal,
+by `yylex.c`. `lexembuffer` defines some functions to put and get
+lexems, chars (identifiers and file names?) as well as integers and
+positions.
+
+At this point the put/get lexem functions take a pointer to a pointer
+to chars (which presumably is the lexem stream in the lexembuffer)
+which it also advances. This requires the caller to manage the
+LexemBuffer's internal pointers outside and finally set them right
+when done.
+
+It would be much better to call the "putLexem()"-functions with a
+lexemBuffer but there seems to be a few cases where the destination
+(often `dd`) is not a lexem stream inside a lexemBuffer.
+
+NOTE: This is a work-in-progress.
+Currently most of the "normal" usages are prepared to use the LexemBuffer's pointers.
+But the handling of macros and defines are cases where the lexems are not put in a LexemBuffer.
+See the TODO.org for current status of this Mikado sequence.
+
+
+=== Reference Database
+
+`c-xref` creates a database of references for all symbols it encounters. There is limited
+support to automatically update these in the edit-compile cycle, you might have to
+update manually now and then.
+
+The project settings (or command line options) indicate where the file(s) are created
+and one option controls the number of files to be used, `-refnum`.
+
+This file (or files) contains compact, but textual representations of
+the cross-reference information. Format is somewhat complex, but here
+are somethings that I think I have found out:
+
+- the encoding has one character markers which are listed at the top
+  of cxfile.c
+
+- the coding seems to often start with a number and then a character,
+  such as '4l' (4 ell) means line 4, 23c mean column 23
+
+- references seems to be optimized to not repeat information if it
+  would be a repetition, such as '15l3cr7cr' means that there are two
+  references on line 15, one in column 3 the other in column 7
+
+- so there is a notion of "current" for all values which need not be
+  repeated
+
+- e.g. references all use 'fsulc' fields, i.e. file, symbol index,
+  usage, line and column, but do not repeat a 'fsulc' as long as it is
+  the same
+
+- some "fields" have a length indicator before, such as filenames
+  ('6:/abc.c') indicated by ':' and version information ('34v file
+  format: C-xrefactory 1.6.0 ') indicated by 'v'.
+
+So a line might say
+
+    12205f 1522108169p m1ia 84:/home/...
+
+The line identifies the file with id 12205. The file was last included
+in an update of refs at sometime which is identified by 1522108169
+(mtime), has not been part of a full update of xrefs, was mentioned on
+the command line. (I don't know what the 'a' means...) Finally, the
+file name itself is 84 characters long.
+
+TODO: Build a tool to decipher this so that tests can query the
+generated data for expected data. This is now partly ongoing in the
+'utils' directory.
+
+=== Editor Interface
+
+I've been focusing on the Emacs interface since `Jedit` is not so
+popular anymore and I'm an Emacs-guy.
+
+Basically Emacs (and probably other editors) starts `c-xref` in
+"server-mode" using `-task_regime_server` which connects the editor
+with `c-xref` through stdout/stdin. If you have `(setq
+c-xref-debug-mode t)` this command is logged in the `\*Messages*` buffer
+with the prefix "calling:".
+
+Commands are sent from the editor to the server on its standard input.
+They looks very much like normal command line options, and in fact
+`c-xref` will parse that input in the same way using the same
+code. When the editor sends an `end-of-options` line, the server will
+start executing whatever was sent, and return some information in the
+file given as an `-o` option when the editor starts the `c-xref`
+server process. The file is named and created by the editor and
+usually resides in `/tmp`. With `c-xref-debug-mode` on this is logged
+as "sending:". If you `(setq c-xref-debug-preserve-tmp-files t)` Emacs
+will also not delete the temporary files it creates so that you can
+inspect them afterwards.
+
+When the server has finished the command and placed the output in the
+output file it sends a ``<sync>`` reply.
+
+The editor can then pick the result from the output file and do what
+it needs to do with it ("dispatching:").
+
+==== Invocations
+
+The editor invokes a new `c-xref` process for the following cases:
+
+- Refactoring
++
+Each refactoring operation calls a new instance of `c-xref`.
+
+- Create Project
++
+When a `c-xref` function is executed in the editor and there is no
+project covering that file, an interactive "create project" session is
+started, which is run by a separate `c-xref` process.
+
+==== Buffers
+
+There is some magical editor buffer management happening inside of
+`c-xref` which is not clear to me at this point. Basically it looks
+like the editor-side tries to keep the server in sync with which
+buffers are opened with what file...
+
+At this point I suspect that `-preload <file1> <file2>` means that the
+editor has saved a copy `<file1>` in `<file2>` and requests the server
+to set up a "buffer" describing that file.
+
+This is essential when doing refactoring since the version of the file
+most likely only exists in the editor, so the editor has to tell the
+server the current content somehow, this is the `-preload` option.
+
+=== Editor Server
+
+When serving an editor the c-xrefactory application is divided into
+the server, _c-xref_ and the editor part, at this point only emacs:en
+are supported so that's implemented in the env/emacs-packages. (The
+jEdit source is now also resurrected, but it is completely untested.)
+
+
+==== Interaction
+
+The initial invocation of the edit server creates a process with which
+communication is over stdin/stdout using a protocol which from the editor
+is basically a version of the command line options.
+
+When the editor has delivered all information to the server it sends
+'end-of-option' as a command and the edit server processes whatever it
+has and responds with ``<sync>`` which means that the editor can fetch
+the result in the file it named as the output file using the '-o'
+option.
+
+NOTE: As long as the communication between the editor and the server
+is open, the same output file will be used. This makes it hard to
+catch some interactions, since an editor operation might result in
+multiple interactions, and the output file is then re-used.
+
+Setting the emacs variable `c-xref-debug-mode` forces the editor to
+copy the content of such an output file to a separate temporary file
+before re-using it.
+
+For some interactions the editor starts a completely new and fresh
+`c-xref` process, see below. And actually you can't do refactorings
+using the server, they have to be separate calls. I have yet to
+discover why this design choice was made.
+
+NOTE: There are many things in the sources that handles refactorings
+separately, such as r_opt, which is a separate copy of the options
+structure used only when refactoring.
+
+
+==== Protocol
+
+Communication between the editor and the server is performed using
+text through standard input/output to/from _c-xref_. The protocol is
+defined in src/protocol.tc and must match env/emacs/c-xrefprotocol.el.
+
+The definition of the protocol only caters for the server->editor part,
+the editor->server part consists of command lines resembling the command
+line options and arguments, and actually is handled by the same code.
+
+The file `protocol.tc` is included in `protocol.h` and `protocol.c`
+which generates definitions and declarations for the elements through
+using some macros.
+
+There is a similar structure with _c-xrefprotocol.elt_ which
+includes _protocol.tc_ to wrap the PROTOCOL_ITEMs into
+``defvar``s.
+
+There is also some Makefile trickery that ensures that the C and elisp
+impementation are in sync.
+
+
+==== Invocation of server
+
+The editor fires up a server and keeps talking over the established
+channel (elisp function 'c-xref-start-server-process'). This probably
+puts extra demands on the memory management in the server, since it
+might need to handle multiple information sets and options (as read
+from a .cxrefrc-file) for multiple projects simultaneously over a
+longer period of time. (E.g. if the user enters the editor starting
+with one project and then continues to work on another then new
+project options need to be read, and new tag information be generated,
+read and cached.)
+
+TODO: Figure out and describe how this works by looking at the
+elisp-sources.
+
+FINDINGS:
+- c-xref-start-server-process in c-xref.el
+- c-xref-send-data-to-running-process in c-xref.el
+- c-xref-server-call-refactoring-task in c-xref.el
+
+
+==== Communication Protocol
+
+The editor server is started using the appropriate command line option
+and then it keeps the communication over stdin/stdout open.
+
+The editor part sends command line options to the server, which looks
+something like (from the read_xrefs test case):
+
+    -encoding=european -olcxpush -urldirect  "-preload" "<file>" "-olmark=0" "-olcursor=6" "<file>" -xrefrc ".c-xrefrc" -p "<project>"
+    end-of-options
+
+In this case the "-olcxpush" is the operative command which results in
+the following output
+
+    <goto>
+     <position-lc line=1 col=4 len=66>CURDIR/single_int1.c</position-lc>
+    </goto>
+
+As we can see from this interaction, the server will handle (all?)
+input as a command line and manage the options as if it was a command
+line invocation.
+
+This explains the intricate interactions between the main program and
+the option handling.
+
+The reason behind this might be that a user of the editor might be
+editing files on multiple projects at once, so every
+interrogation/operation needs to clearly set the context of that
+operation, which is what a user would do with the command line
+options.
+
+
+==== OLCX Naming
+
+It seems that all on-line editing server functions have an `olcx`
+prefix, "On-Line C-Xrefactory", maybe...
+
+
+
+=== Refactoring
+
+This is of course, the core in why I want to restore this, to get at its refactoring capabilities. So far, much is not understood, but here are some bits and pieces.
+
+==== Editor interface
+
+One thing that really confused me in the beginning was that the editor, primarily Emacs, don't use the actual server that it has started for refactoring operations (and perhaps for other things also?). Instead it creates a separate instance with which it talks to about one refactoring.
+
+I've just managed to create the first automatic test for refactorings, `olcx_refactory_rename`. It was created by running the sandboxed emacs to record the communication and thus finding the commands to use.
+
+Based on this learning it seems that a refactoring typically is a single invocation of `c-xref` with appropriate arguments (start & stop markers, the operation, and so on) and the server then answers with a sequence of operations, like
+
+```
+<goto>
+ <position-off off=3 len=<n>>CURDIR/test_source/single_int1.c</position-off>
+</goto>
+<precheck len=<n>> single_int_on_line_1_col_4;</precheck>
+<replacement>
+ <str len=<n>>single_int_on_line_1_col_4</str>  <str len=<n>>single_int_on_line_1_col_44</str>
+</replacement>
+```
+
+==== Interactions
+
+I haven't investigated the internal flow of such a sequence, but it is starting to look like `c-xref` is internally re-reading the initialization, I'm not at this point sure what this means, I hope it's not internal recursion...
+
+
+==== Extraction
+
+Each type of refactoring has it's own little "language". E.g. extracting a method/function using `-refactory -rfct-extract-method` will return something like
+
+```
+<extraction-dialog type=newFunction_> <str len=20>	newFunction_(str);
+</str>
+ <str len=39>static void newFunction_(char str[]) {
+</str>
+ <str len=3>}
+
+</str>
+  <int val=2 len=0></int>
+</extraction-dialog>
+```
+
+So there is much logic in the editor for this. I suspect that the three `<str>` parts are
+
+- what to replace the current region with
+- what to place before the current region
+- what to place after the current region
+
+If this is correct then all extractions copy the region verbatim and then the server only have to figure out how to "glue" that to a semantically correct call/argument list.
+
+As a side note the editor asks for a new name for the function and then calls the edit server with a rename request (having preloaded the new source file(s) of course).
+
+==== Protocol
+
+Dechiffrering the interaction between an editor and the edit server in
+`c-xrefactory` isn't easy. The protocol isn't very clear or
+concise. Here I'm starting to collect the important bits of the
+invocation, the required and relevant options and the returned
+information.
+
+The test cases for various refactoring operations should give you some
+more details.
+
+All of these require a `-p` (project) option to know which c-xref
+project options to read.
+
+===== General Principles
+
+Refactorings are done using a separate invocation, the edit server
+mode cannot handle refactorings. At least that is how the Emacs client
+does it (haven't looked at the Jedit version).
+
+I suspect that it once was a single server that did both the symbol
+management and the refactoring as there are remnants of a separate
+instance of the option structure named "refactoringOptions". Also the
+check for the refactoring mode is done using
+`options.refactoringRegime == RegimeRefactory` which seems strange.
+
+Anyway, if the refactoring succeeds the suggested edits is as per usual
+in the communications buffer.
+
+However, there are a couple of cases where the communcation does not
+end there. Possibly because the client needs to communicate some
+information back before the refactoring server can finish the job,
+like presenting some menu selection.
+
+My guess at this point is that it is the refactoring
+server that closes the connection when it is done...
+
+===== Rename
+
+*Invocation:* `-rfct-rename -renameto=NEW_NAME -olcursor=POSITION FILE`
+
+*Semantics:* The symbol under the cursor (at POSITION in FILE) should
+be renamed (replaced at all occurrences) by NEW_NAME.
+
+*Result:* sequence of
+```
+<goto>
+ <position-off off=POSITION len=N>FILE</position-off>
+</goto>
+<precheck len=N>STRING</precheck>
+```
+followed by sequence of
+```
+<goto>
+ <position-off off=POSITION len=N>FILE</position-off>
+</goto>
+<replacement>
+ <str len=N>ORIGINAL</str>  <str len=N>REPLACEMENT</str>
+</replacement>
+```
+
+===== Protocol Messages
+
+<goto>{position-off}</goto> -> editor;;
+Request the editor to move cursor to the indicated position (file, position).
+
+<precheck len={int}>{string}</precheck> -> editor;;
+Requests that the editor verifies that the text under the cursor matches the string.
+
+<replacement>{str}{str}</replacement>;;
+Requests that the editor replaces the string under the cursor, which should be 'string1', with 'string2'.
+
+<position-off off={int} len={int}>{absolute path to file}</position-off>;;
+Indicates a position in the given file. 'off' is the character position in the file.
+
+=== Memory Management
+
+There are multiple levels of memory management.
+
+- Why is this required (possibly because of the long running server
+model)?
+- Exactly how is this memory allocated?
+- Why handle this allocation in disparate spaces?
+- Why does not standard malloc()/free() suffice?
+
+There is obviously some caching going on. Don't know of what at this
+point. Tag data?
+
+==== Memory "types"
+
+Mostly `c-xrefactory` does its own memory management. It uses a number
+of different strategies, which has/had its own macros.
+
+==== Static memory allocation
+
+Static memory (SM_ prefix) are static areas allocated by the compiler
+which is then indexed using a similarly named index variable
+(e.g. `ftMemory` and `ftMemoryIndex`), something the macros took
+advantage of. These are
+
+- `ftMemory`
+- `ppmMemory`
+- `mbMemory`
+
+One special case of static memory also exist:
+
+- `stackMemory` - synchronous with program structure and has CodeBlock
+markers, so there is a special `stackMemoryInit()` that initializes
+the outermost CodeBlock 
+
+These areas cannot be extended, when it overruns the program stops.
+
+==== Dynamic memory allocation
+
+===== Using the Memory structure
+
+This structure is used for one of the two dynamic memory allocation
+schemes, one where overflow handling can be triggered. The structure
+contains a function pointer that can be invoked when overflow occurs.
+
+The scary part of this is that it assumes that directly after it,
+there is a area of some arbitrary size that can be used for
+allocation. `dm_alloc()`, previously a macro, returns pointers into
+that area.
+
+(Not all compilers and/or architectures are happy with this, so it is
+a priority to do away with this.)
+
+There are two instances of this type of memory:
+
+- `cxMemory` - the crossreference data, which can actually expand using
+  the `cxMemoryOverflowHandler()`
+  
+- `optMemory` - which is part of the options structure that is saved,
+  copied and what not, cannot expand as the overflow handler calls
+  `fatalError()`.
+  
+  
+`cxMemoryOverflowHandler()` just throws all cxMemory away and
+allocates a new area containing a fresh Memory structure as the head
+and an empty area to allocate from.
+
+It is strange that `optMemory` is using the Memory structure, it could
+easily have been managed as a static area...
+
+===== Using malloc()
+
+There is a second type of dynamic memory, of which there is only one,
+the `olcxMemory`. In fact, this is not actually an area, more like a
+normal dynamic allocation. Each area is just `malloc()`-ed, but the
+size is tallied and when the maximum is reached the
+`olcx_memory_alloc()` will do a fatal exit.
+
+This memory allocation is used for temporary areas during refactorings
+for example. So `olcx_memory_free()` also exist and is used.
+
+
+=== Configuration
+
+==== Options
+
+There are three possible sources for options.
+
+- Configuration files (~/.c-xrefrc)
+- Piped options sent to edit server
+- Command line options
+
+Not all options are relevant in all cases.
+
+All options sources uses exactly the same format so that the same code for decoding them can be used.
+
+==== Logic
+
+When the editor has a file open it needs to "belong" to a project. The
+logic for finding which is very intricate and complicated.
+
+In this code there is also checks for things like if the file is
+already in the index, if the configuration file has changed since last
+time, indicating there are scenarios that are more complicated (the
+server, obviously).
+
+But I also think this code should be simplified a lot.

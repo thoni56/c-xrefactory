@@ -1,4 +1,4 @@
-workspace {
+workspace "C-xrefactory" {
     !adrs decisions
     !docs documentation
     model {
@@ -37,6 +37,11 @@ workspace {
 	}
 
 	container cxrefactory "ContainerView" {
+	    include *
+	    autolayout
+	}
+
+	component editorExtension "EditorExtension" {
 	    include *
 	    autolayout
 	}

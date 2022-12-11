@@ -1,0 +1,283 @@
+== Development Environment
+
+=== Developing, here be dragons...
+
+First the code is *terrible*, lots of single and double character
+variables (`cc`, `ccc`, ..) and lost of administration on local
+variables rather than the structures that are actually there. And
+there are also a lot of macros. Unfortunately macros are hard to
+refactor to functions. (But I'm making progress...)
+
+As there is no general way to refactor a macro to a function, various
+techniques must be applied. I wrote https://www.responsive.se/thomas/2020/05/14/refactoring-macros-to-functions/[a blog post]
+about one that have been fairly successful.
+
+But actually it's rather fun to be able to make small changes and
+see the structure emerge, hone your refactoring and design skills,
+and working on a project that started 20 years ago which still is
+valuable, to me, and I hope, to others.
+
+There should probably be a whole section on how to contribute and
+develop `c-xrefactory` but until then here's a short list of what
+you need:
+
+- C development environment (GNU/Clang/Make/...)
+- Unittests are written using https://github.com/cgreen-devs/cgreen[`Cgreen`]
+- Clean code and refactoring knowledge (to drive the code to a better and cleaner state)
+
+Helpful would be:
+
+- Compiler building knowledge (in the general sense, Yacc, but AST:s and symbol table stuff are heavily used)
+- Java knowledge to be able to bring the Java support up to modern versions (probably not going to happen...)
+
+=== Setup
+
+TBD.
+
+=== Building
+
+You should be able build `c-xref` using something like (may have changed over time...)
+
+    cd src
+    make
+    make unit
+    make test
+
+But since the details of the building process are somewhat contrieved
+and not so easy to see through, here's the place where that should be
+described.
+
+One step in the build process was generating initialization information
+for all the things in standard include files, which of course became
+very dependent on the system you are running this on. This has now moved
+into functions inside `c-xref` itself, like finding DEFINEs and include
+paths.
+
+The initial recovered c-xrefactory relied on having a working _c-xref_
+for the current system. I don't really know how they managed to do
+that for all the various systems they were supporting.
+
+Modern thinking is that you should always be able to build from
+source, so this is something that needed change. We also want to
+distribute _c-xref_ as an el-get library which requires building from
+source and should generate a version specific for the current system.
+
+[.line-through]#The strategy selected, until some better idea comes along, is to try
+to build a _c-xref.bs_, if there isn't one already, from the sources in
+the repository and then use that to re-generate the definitions and
+rebuild a proper _c-xref_. See Bootstrapping.#
+
+We have managed to remove the complete bootstrapping step, so `c-xrefactory`
+now builds like any other project.
+
+=== Versions
+
+The current sources are in 1.6.X range. This is the same as the orginal
+xrefactory and probably also the proprietary C++ supporting version.
+
+There is an option, "-xrefactory-II", that might indicate that
+something was going on. But currently the only difference seems to be
+if the edit server protocol output is in the form of non-structured
+fprintf:s or using functions in the `ppc`-family (either calling
+`ppcGenRecord()` or `fprint`ing using some PPC-symbol). This, and
+hinted to in how the emacs-part starts the server and some initial
+server option variables in refactory.c, indicates that the
+communication from the editor and the refactory server is using
+this. It does *not* look like this is a forward to next generation
+attempt.
+
+What we should do is investigate if this switch actually is used
+anywhere but in the editor server context, and if so, if it can be
+made the default and the 'non-xrefactory-II' communication removed.
+
+=== Coding ===
+
+==== Naming ====
+
+_C-xref_ started (probably) as a cross-referencer for the languages
+supported (C, Java, C++), orginally had the name "xref" which became
+"xrefactory" when refactoring support was added. And when Mariàn
+released a "C only" version in 2009 some of all "xref" references was
+changed to "c-xref". So, as most software, there is a history and a
+naming legacy to remember.
+
+Here are some of the conventions in naming that are being used:
+
+olcx::
+"On-line CX" (Cross-reference) ?
+
+OLO::
+"On-line option" - some kind of option for the server
+
+==== Modules and Include Files ====
+
+The source code for `c-xrefactory` was using a very old C style with a
+separate `proto.h` where all prototypes for all externally visible
+functions were placed. Definitions are all over the place and it was
+hard to see where data is actually declared. This must change into
+module-oriented include-strategy.
+
+Of course this will have to change into the modern x.h/x.c externally
+visible interface model so that we get clean modules that can be
+unittested.
+
+The function prototypes have been now moved out to header files for
+each "module". Some of the types have also done that, but this is
+still a work in progress.
+
+
+
+=== Debugging
+
+TBD. Attachning `gdb`, `server-driver`...
+
+`yaccp` from `src/.gdbinit` can ease the printing of Yacc semantic data fields...
+
+=== Testing
+
+==== Unittests ====
+
+There are very few unittests at this point, only covering single digit
+percent of the code. The "units" in this project are unclear and
+entangled so creating unittests is hard since it was not build to be
+tested, test driven or even clearly modularized.
+
+All unittests use `Cgreen` as the unittest framework. If you are
+unfamiliar with it the most important point is that it can mock
+functions, so you will find mock implementations of all external
+functions for a module in a corresponding `<module>.mock` file.
+
+Many modules are at least under test, meaning there is a
+<module>_tests.c in the unittest directory. Often only containing an
+empty test.
+
+==== Acceptance Tests
+
+In the `tests` directory you will find tests that exercise the external
+behaviour of `c-xref`. Some tests actually do only that, they wouldn't
+really count as tests.
+
+Most acceptance tests are hacks at this point, Make-scripts tweaked
+until it produces some expected output. But at least they get the
+coverage up (working our way up to the mid 60%), and more are added as
+bugs are found so they provide increasing confidence when developing.
+
+There are two basic strategies for the tests:
+
+- run a `c-xref` command, catch its output and verify
+- run a series of command using the EDIT_SERVER_DRIVER, collect output and results and verify
+
+Some tests do not even test its output and only provide coverage.
+
+Some tests do a very bad job at verifying, either because my
+understanding at that time was very low, or because it is hard to
+verify the output. E.g. the "test" for generate references are only
+grepping the CXrefs files for some strings, not verifying that they
+actually point to the correct place.
+
+Hopefully this will change as the code gets into a better state and
+the understanding grows.
+
+==== General Setup
+
+Since all(?) `c-xref` operation rely on an options file which must
+contain absolute file paths (because the server runs as a separate
+process) it must be generated whenever the tests are to be run in a
+different location (new clone, test was renamed, ...).
+
+This is performed by using a common template in `tests` and a target
+in `tests/Maefile.boilerplate`.
+
+Each test should have a `clean` target that removes any temporary and
+generated files, including the `.c-xrefrc` file and generated
+references. This way it is easy to ensure that all tests have updated
+`.c-xrefrc` files.
+
+==== Edit Server Driver Tests
+
+Since many operations are performed from the editor, and the editor
+starts an "edit server" process, many tests need to emulate this
+behaviour.
+
+The edit server session is mostly used for navigation. Refactorings
+are actually performed as separate invocations of `c-xref`.
+
+In `utils` there is a `server_driver.py` script, which will take as
+input a file containing a sequence of commands. You can use this to
+start an edit, refactory or tag server session and then feed it with
+commands in the same fashion as an editor would do. The script also
+handles the communication through the buffer file (see [Editor
+Interface](./Design:-Editor-Interface)).
+
+==== Creating More Edit Server Tests
+
+You can relatively easy re-create a sequence of interactions by using the
+sandboxed Emacs in `tests/sandboxed_emacs`.
+
+There are two ways to use it, "make spy" or "make pure". With the
+"spy" an intermediate spy is injected between the editor and the edit
+server, capturing the interaction to a file.
+
+With "pure" you just get the editor setup with `c-xref-debug-mode` and
+`c-xref-debug-preserve-tmp-files` on. This means that you can do what
+ever editor interactions you want and see the communication in the
+`\*Messages*` buffer. See [Editor Interface](./Design:-Editor-Interface)
+for details.
+
+Once you have figure out which part of the `\*Messages*` buffer are
+interesting you can copy that out to a file and run
+`utils/messages2commands.py` on it to get a file formatted for input
+to `server_driver.py`.
+
+NOTE: the `messages2commands` script converts all occurrences of the
+current directory to CURDIR so it is handy to be in the same directory
+as the sources when you run the conversion.
+
+NOTE: the `messages2commands` script removes any `-preload` so you
+need to take care that the positions inside the buffers are not
+changed between interactions lest the `-olcursor` and `-olmark` will
+be wrong. (You can just undo the change after a refactoring or
+rename). Of course this also applies if you want to mimic a sequence
+of refactorings, like the `jexercise` move method example. Sources will
+then change so the next refactoring works from content of buffers, so you
+have to handle this specifically.
+
+NOTE: `-preload` is the mechanism where the editor can send modified
+buffers to `c-xref` so thay you don't have to save between
+refactorings, which is particularly important in the case of extract
+since the extraction creates a default name which the editor then does
+a rename of.
+
+
+=== Utilities
+
+==== Covers
+
+`utils/covers.py` is a Python script that, in some enviroments, can list which test cases execute a particular line.
+
+This is handy when you want to debug or step through a particular part of the code.
+Find a test that covers that particular line and run it using the debugger (usually `make debug` in the test directory).
+
+Synopsis:
+
+    covers.py <file> <line>
+
+=== Debugging the protocol
+
+There is a "pipe spy" in `tests/sandboxed_emacs`. You can build the
+spy using
+
+    make spy
+
+and then start a sandboxed Emacs which invokes the spy using
+
+    make
+
+This Emacs will be sandboxed to use its own .emacs-files and have HOME
+set to this directory.
+
+The spy will log the communication between Emacs and the *real*
+`c-xref` (`src/c-xref`) in log files in `/tmp`.
+
+NOTE that Emacs will invoke several instanced of what it believes is
+the real `c-xref` so there will be several log files to inspect.
