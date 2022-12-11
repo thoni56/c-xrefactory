@@ -364,14 +364,22 @@ void *smAlloc(Memory2 *memory, size_t size) {
     return smAllocc(memory, 1, size);
 }
 
-void smFreeUntil(Memory2 *memory, void *pointer) {
-    assert(isInMemory(pointer, memory));
-    memory->index = (char *)pointer - memory->area;
-}
-
 /* Reallocates the last allocated area in 'memory' to be different size */
 void *smRealloc(Memory2 *memory, void *pointer, size_t oldSize, size_t newSize) {
     assert(pointer == &memory->area[memory->index-oldSize]);
     memory->index += newSize - oldSize;
     return pointer;
+}
+
+void smFreeUntil(Memory2 *memory, void *pointer) {
+    assert(isInMemory(pointer, memory));
+    memory->index = (char *)pointer - memory->area;
+}
+
+static bool smIsBetween(Memory2 *memory, void *pointer, int low, int high) {
+    return pointer >= (void *)&memory->area + low && pointer < (void *)&memory->area + high;
+}
+
+bool smIsFreedPointer(Memory2 *memory, void *pointer) {
+    return smIsBetween(memory, pointer, memory->index, memory->size);
 }
