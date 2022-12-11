@@ -1606,8 +1606,8 @@ static void macroArgumentsToString(char *res, LexInput *lexInput) {
     }
 }
 
-static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuffer, char **_bcc) {
-    char *currentLexemStart, *writePointer = *_bcc;
+static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuffer, char **_writePointerP) {
+    char *currentLexemStart, *writePointer = *_writePointerP;
     int   bufferSize;
     char *writeBuffer;
 
@@ -1656,7 +1656,7 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
         expandMacroBodyBufferIfOverflow(writePointer, 0, writeBuffer, &bufferSize);
     }
     mbmExpand(writeBuffer, bufferSize + MAX_LEXEM_SIZE, writePointer - writeBuffer);
-    *_bcc = writePointer;
+    *_writePointerP = writePointer;
 
     return writeBuffer;
 }
