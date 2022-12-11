@@ -7,6 +7,7 @@
 
 /* ************************ Types ******************************** */
 
+/* Two uses: cxMemory & options... */
 typedef struct memory {
     char    *name;              /* String representing the name of the memory */
     bool	(*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
@@ -91,11 +92,6 @@ typedef struct codeBlock {
 #define CF_ALLOCC(pointer, count, type) {SM_ALLOCC(ppmMemory, pointer, count, type);}
 
 
-/**********************************************************************
-   DM = Dynamic Memory - can possibly expand using overflow handler
-*/
-
-
 /* ************************************************************************** */
 /* New type of static memory */
 typedef struct {
@@ -113,7 +109,9 @@ extern void smFreeUntil(Memory2 *memory, void *pointer);
 
 /***********************************************************************/
 
-/* DM (Dynamic Memory) areas */
+/* DM (Dynamic Memory) areas, can possibly expand using overflow handler */
+
+
 
 extern CodeBlock *currentBlock;
 
@@ -136,6 +134,7 @@ extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *me
                                                            char *file, int line));
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
 extern void setErrorHandlerForMemory(void (*function)(int code, char *message));
+
 
 /* DM - Dynamic Memory - multiple uses, see below */
 extern void dm_init(Memory *memory, char *name);

@@ -538,7 +538,7 @@ static int power(int x, int y) {
 }
 
 static bool optionsOverflowHandler(int n) {
-    FATAL_ERROR(ERR_NO_MEMORY, "opiMemory", XREF_EXIT_ERR);
+    FATAL_ERROR(ERR_NO_MEMORY, "options memory", XREF_EXIT_ERR);
     return true;
 }
 
@@ -569,8 +569,7 @@ static void totalTaskEntryInitialisations() {
     assert(mm);
 
     // init options memory
-    initMemory(((Memory*)&presetOptions.memory), "",
-               optionsOverflowHandler, SIZE_optMemory);
+    initMemory(((Memory*)&presetOptions.memory), "", optionsOverflowHandler, SIZE_optMemory);
 
     // Inject error handling functions
     setFatalErrorHandlerForMemory(fatalError);

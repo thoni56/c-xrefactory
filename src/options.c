@@ -366,7 +366,6 @@ void addStringListOption(StringList **stringList, char *string) {
     for (list=stringList; *list!=NULL; list= &(*list)->next)
         ;
 
-    /* TODO refactor out to newOptionString()? */
     allocateOptionSpace((void**)list, sizeof(StringList));
     (*list)->string = createOptionString(&(*list)->string, string);
     (*list)->next = NULL;
@@ -922,8 +921,7 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
     if (options.mode == ServerMode) {
         char nsect[MAX_FILE_NAME_SIZE];
         readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM, "", NULL, nsect);
-        /* those options can't contain include or define options, */
-        /* sections neither */
+        /* those options can't contain include or define options, sections neither */
         int c = getc(stdin);
         if (c == EOF) {
             /* Just log and exit since we don't know if there is someone there... */
@@ -935,13 +933,13 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
     }
 }
 
-static char *getClassPath(bool defaultCpAllowed) {
+static char *getClassPath(bool defaultClassPathAllowed) {
     char *cp;
     cp = options.classpath;
     if (cp == NULL || *cp==0)
         cp = getEnv("CLASSPATH");
     if (cp == NULL || *cp==0) {
-        if (defaultCpAllowed)
+        if (defaultClassPathAllowed)
             cp = defaultClassPath;
         else
             cp = NULL;
@@ -1002,22 +1000,24 @@ static void processClassPathString(char *cp) {
 static void convertPackageNameToPath(char *name, char *path) {
     char *np, *pp;
 
-    for(pp=path,np=name; *np; pp++,np++) {
-        if (*np == '.') *pp = FILE_PATH_SEPARATOR;
-        else *pp = *np;
+    for (pp=path,np=name; *np; pp++,np++) {
+        if (*np == '.')
+            *pp = FILE_PATH_SEPARATOR;
+        else
+            *pp = *np;
     }
     *pp = 0;
 }
 
 
 static int copyPathSegment(char *cp, char path[]) {
-    int ind;
-    for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
-        path[ind]=cp[ind];
+    int index;
+    for (index=0; cp[index]!=0 && cp[index]!=CLASS_PATH_SEPARATOR; index++) {
+        path[index]=cp[index];
     }
-    path[ind] = 0;
+    path[index] = 0;
 
-    return ind;
+    return index;
 }
 
 

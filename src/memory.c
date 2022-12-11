@@ -41,7 +41,7 @@ void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int
     fatalError = function;
 }
 
-/* Copy of defines in commons.h to avoid dependency on other stuff... */
+/* Copy of a few defines from commons.h to avoid dependency on other stuff... */
 #undef assert
 #define assert(expr)                                                                                    \
     if (!(expr))                                                                                        \
