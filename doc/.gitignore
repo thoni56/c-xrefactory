@@ -3,3 +3,4 @@
 *.png
 .structurizr
 workspace.json
+structurizr.properties
