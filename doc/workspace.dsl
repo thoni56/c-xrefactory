@@ -3,14 +3,54 @@ workspace "C-xrefactory" "A C/Java refactoring browser in C" {
     !docs documentation
     model {
 	developer = Person "Developer" "Edits source code using an editor" Ext
+
 	editor = SoftwareSystem "Editor" "Allows Developer to modify source code and perform refactoring operations" Editor,Ext
+
 	source = Element "Source Code" "a set of files stored on disk" "" DB
 
 	cxrefactory = SoftwareSystem "C-xrefactory" "Analyses source code, receives and processes requests for navigation and refactoring" Cxrefactory {
-	    editorExtension = container editorExtension "Extends the Editor with c-xref operations and interfaces to the c-xrefactory API" "Plugin"
-	    cxrefCore = container cxrefCore "C Language program" "Refactoring Browser core"
+
+	    editorExtension = container editorExtension "Extends the Editor with c-xref operations and interfaces to the c-xrefactory API" "Plugin" {
+	        cxref_el = Component cxref.el "" elisp
+	        cxrefactory_el = Component cxrefactory.el "" elisp
+	    }
+
+	    editor -> cxref_el "extends functionality using" plugin
+
+	    cxrefCore = container cxrefCore "C Language program" "Refactoring Browser core" {
+	        main = Component main "Main program" C
+		xref = Component xref "Cross-referencer" C
+		server = Component server "Editor Server" C
+		refactory = Component refactory "Refactory" C
+
+		main -> xref "dispatches to" call
+		main -> server "dispatches to" call
+		main -> refactory "dispatches to" call
+		refactory -> server "uses" call
+
+		cxref = Component cxref "" C
+		cxfile = Component cxfile "" C
+		cxref -> cxfile "stores references using" call
+
+		xref -> cxref "handles references using" call
+		server -> cxref "handles references using" call
+		refactory -> cxref "handles references using" call
+
+		lexer = Component yylex "Lexical Analyser" C
+		parser = Component parser "Parser" C
+		parser -> lexer "reads tokenized source using" buffering
+
+		xref -> parser "parses source code using" call
+		server -> parser "parses source code using" call
+
+		lexer -> source "reads source code from" "file I/O"
+	    }
+	    
 	    settingsStore = container settingsStore "Non-standard format settings file" "Configuration file for project settings" DB
+
 	    referencesDb = container referencesDb "Source code information storage" "Stores all information about the source code in the project which is updated by scanning all or parts of the source when required" DB
+
+	    cxfile -> referencesDb "reads from and writes to" "file I/O"
 
 	    editorExtension -> settingsStore "writes" "new project wizard"
 	    cxrefCore -> settingsStore "read"
@@ -31,14 +71,24 @@ workspace "C-xrefactory" "A C/Java refactoring browser in C" {
     }
 
     views {
-	systemContext cxrefactory "SystemContext" {
+	systemContext cxrefactory SystemContext {
 	    include *
-	    autolayout
+	    autolayout lr
 	}
 
-	container cxrefactory "ContainerView" {
+	container cxrefactory ContainerView {
 	    include *
-	    autolayout
+	    autolayout lr
+	}
+
+	component editorExtension EditorExtension {
+	    include *
+	    autolayout lr
+	}
+
+	component cxrefCore CxrefCore {
+	    include *
+	    autolayout lr
 	}
 
 	theme default
