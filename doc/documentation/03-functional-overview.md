@@ -32,8 +32,8 @@ As it happens, the things that `c-xref` can do is also the
 declared in the sources:
 
   - Xref
-  - ~~HtmlGenerate~~
   - Editor Server
   - Refactory
+  - ~~HtmlGenerate~~
   - ~~Generate~~ (was removed when we finally managed to remove the bootstrap step)
 
