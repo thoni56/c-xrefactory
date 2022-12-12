@@ -409,7 +409,7 @@ static void discoverStandardDefines(void) {
 static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSectionName, char *project) {
     int argc;
     char **argv;
-    if (*optionsFileName != 0 && !options.no_stdoptions) {
+    if (*optionsFileName != 0) {
         readOptionsFromFile(optionsFileName, &argc, &argv, optionsSectionName, project);
         // warning, the following can overwrite variables like
         // 'cxref_file_name' allocated in PPM_MEMORY, then when memory

@@ -124,8 +124,6 @@ Options presetOptions = {
     0,                          /* serverOperation */
     0,                          /* olcxGotoVal */
 
-    false,                      /* no_stdoptions */
-
     /* CXREF options  */
     false,                      /* errors */
     UPDATE_DEFAULT,             /* type of update */
@@ -217,7 +215,6 @@ static void usage() {
     fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')\n");
     fprintf(stdout, "\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by ':' (or ';')\n");
     fprintf(stdout, "\t-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc\n");
-    fprintf(stdout, "\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file\n");
 #if 0
     fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
     fprintf(stdout, "\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
@@ -1653,8 +1650,6 @@ static bool processNOption(int *argi, int argc, char **argv) {
         options.noIncludeRefs=true;
     else if (strcmp(argv[i], "-no-classfiles")==0)
         options.allowClassFileRefs = false;
-    else if (strcmp(argv[i], "-no-stdoptions")==0)
-        options.no_stdoptions = true;
     else if (strcmp(argv[i], "-no-autoupdatefromsrc")==0)
         options.javaSlAllowed = false;
     else if (strcmp(argv[i], "-no-errors")==0)
@@ -2477,7 +2472,7 @@ void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFil
     optionsFileName[0] = 0;
     section[0]         = 0;
 
-    if (fileName == NULL || options.no_stdoptions)
+    if (fileName == NULL)
         return;
 
     /* Try to find section in HOME config. */

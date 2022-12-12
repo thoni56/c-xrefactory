@@ -134,8 +134,6 @@ typedef struct options {
     ServerOperation serverOperation;
     int olcxGotoVal;
 
-    bool no_stdoptions;
-
     /* CXREF options  */
     bool errors;
     UpdateType update;
