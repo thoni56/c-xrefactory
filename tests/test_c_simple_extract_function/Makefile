@@ -1,6 +1,6 @@
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref -no-stdoptions
+CXREF = ../../src/c-xref
 
 # TODO: merge the two commands.input into one sequence
 $(TEST): clean

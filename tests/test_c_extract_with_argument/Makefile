@@ -1,6 +1,6 @@
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref -no-stdoptions
+CXREF = ../../src/c-xref
 
 $(TEST):
 	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
