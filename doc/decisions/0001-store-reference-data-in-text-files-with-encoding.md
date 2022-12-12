@@ -1,4 +1,4 @@
-# 2. Store Reference Data in Text Files with compacting encoding
+# Store Reference Data in Text Files with compacting encoding
 
 Date: 1990-01-01
 

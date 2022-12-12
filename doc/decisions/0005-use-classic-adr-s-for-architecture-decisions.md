@@ -1,4 +1,4 @@
-# 5. Use classic ADR:s for Architecture Decisions
+# Use classic ADR:s for Architecture Decisions
 
 Date: 2022-12-11
 
@@ -6,7 +6,7 @@ Date: 2022-12-11
 
 Accepted
 
-Supersedes [Use Markdown Architectural Decision Records](0001-I-use-markdown-architectural-decision-records.md)
+Supersedes [Use Markdown Architectural Decision Records](0002-use-markdown-architectural-decision-records.md)
 
 ## Context
 

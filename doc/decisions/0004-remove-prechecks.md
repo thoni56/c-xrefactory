@@ -1,4 +1,4 @@
-# 4. Remove pre-check functions
+# Remove pre-check functions
 
 Date: 2022-04-14
 

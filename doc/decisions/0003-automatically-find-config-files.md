@@ -1,4 +1,4 @@
-# 3. Automatically find configuration files
+# Automatically find configuration files
 
 Date: 2022-04-06
 
