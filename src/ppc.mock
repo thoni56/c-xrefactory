@@ -1,5 +1,6 @@
 #include <cgreen/mocks.h>
-#include "editor.h"
+
+#include "ppc.h"
 
 
 void ppcSynchronize(void) {

@@ -4280,7 +4280,7 @@ void answerEditAction(void) {
                 if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {
                     if (options.noErrors) {
                         if (!options.xref2)
-                            fprintf(communicationChannel,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
+                            fprintf(communicationChannel,"^"); // WTF: was "fprintf(ccOut,"^", ifname);"
                     } else {
                         if (options.xref2) {
                             ppcGenRecord(PPC_NO_PROJECT, inputFileName);
@@ -4585,7 +4585,7 @@ void answerEditAction(void) {
     case OLO_NOOP:
         break;
     default:
-        log_fatal("unexpected default case for %s\n", operationNamesTable[options.serverOperation]);
+        log_fatal("unexpected default case for server operation %s", operationNamesTable[options.serverOperation]);
     } // switch
 
     fflush(communicationChannel);

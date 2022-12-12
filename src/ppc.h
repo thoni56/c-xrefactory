@@ -1,6 +1,8 @@
 #ifndef PPC_INCLUDED
 #define PPC_INCLUDED
 
+#include "protocol.h"
+
 #include "editor.h"
 
 
