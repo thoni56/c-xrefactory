@@ -70,3 +70,20 @@ Ensure(CxRef, can_parse_line_and_col_from_command_line_option) {
     assert_that(line, is_equal_to(54));
     assert_that(column, is_equal_to(33));
 }
+
+Ensure(CxRef, can_get_active_project) {
+    FileItem fileItem = {.name = "file.c"};
+
+    options.xref2 = true;
+    communicationChannel = stdout;
+    options.serverOperation = OLO_ACTIVE_PROJECT;
+
+    expect(getFileItem, when(fileIndex, is_equal_to(0)),
+           will_return(&fileItem));
+    expect(searchStandardOptionsFileAndSectionForFile, when(fileName, is_equal_to_string("file.c")));
+    expect(ppcGenRecord,
+           when(kind, is_equal_to(PPC_NO_PROJECT)),
+           when(message, contains_string("file.c")));
+
+    answerEditAction();
+}
