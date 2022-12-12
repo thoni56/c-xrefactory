@@ -80,7 +80,8 @@ Current Mikado:
    We could start with having same format but how to handle project names?
 ** TODO Make "get project" lookup the directory tree for closest .c-xrefrc that covers the file
    Maybe it could return the path to the project file as the name of the project, then...
-   NOTE: any -prune should be considered too
+   NOTE: any -prune should be considered too, how? why? example?
+** TODO Make all filenames relative in the options file
 ** TODO A "-p" should first look at the path of the "project name" to see if there is a .c-xrefrc there
 ** TODO Change to having reference file in the project tree?
    This needs some thinking. Find it by looking upwards in the dir, on
@@ -101,7 +102,7 @@ Current Mikado:
     will allow a set of separate options valid for that "mode"
 ** TODO LSP-like protocol (possibly also fulfill LSP functions)
 * TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
-  How to make this backwards compatible?
+  How to make this backwards compatible? We don't need to... If it is empty it will be regenerated
 * TODO Header files. There are a number of sections in the proto.h that
   indicates which file/module it declares an externa interface for. We
   should move that to a <module>.h file instead.
@@ -114,7 +115,6 @@ Current Mikado:
 * TODO All fillXXX() should not be mocked but have the same body as the real one
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
-
 * TODO Add yacc parser construct for field in yystype ('$<field>$')
 * TODO Don't do any default operation (currently 'complete') if none given on command line
 * TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
