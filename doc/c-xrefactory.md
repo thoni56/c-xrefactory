@@ -53,18 +53,18 @@ information line of the editor.
 > projects.
 
 
-## Tags
+## ReferenceDB
 
-The main part of C-xrefactory are the 'Tags'.  Each project has its
-Tags stored in files specified by the user.  Tags contain information
-about your project sources.  In particular, information about all
-symbols, their linking properties, place(s) of definition and all
-usages.  Tags can be split into any number of files.  The number of
-tag files is specified by user.  A larger number of files makes
-browsing faster, but makes creation and update of Tags slower.  The
-maintenance of tags is to a large extent part automatic.  However it
-may happens that tags will become inconsistent.  Then it is
-recommended to re-create tags manually.
+The main part of C-xrefactory are the 'ReferenceDB'.  Each project has
+its references stored in special files specified by the user.  They
+contain information about your project sources.  In particular,
+information about all symbols, their linking properties, place(s) of
+definition and all usages.  The ReferenceDB can be split into any
+number of files.  The number of files is specified by user.  A larger
+number of files makes browsing faster, but makes creation and update
+slower.  The maintenance of the ReferenceDB is to a large extent part
+automatic.  However they may become inconsistent, and when it does it
+is recommended to re-create the ReferenceDB manually.
 
 
 ## C-xref task
@@ -153,13 +153,13 @@ browser stack in the Browser Dialog.
 
 Another way how to push references onto browser stack is the function:
 'Browser &gt; Push Name and Goto Definition'. This function takes a
-string pointed by the caret, scans the Tag file and pushes ALL symbols
+string pointed by the caret, scans the ReferenceDB and pushes ALL symbols
 having this name. No semantic information such as scopes or
 overloading resolution is taken into account. This is why this
 function is useful to find definition of a known symbol rather than to
 browse an existing code.  Also this function does not permit browsing
 of local symbols, such as local variables, parameters and labels, as
-they are not recorded in global Tag file.
+they are not recorded in global ReferenceDB.
 
 ## Browser Dialog
 
@@ -197,7 +197,7 @@ stack.
     parameters, but also labels and import statements, so this
     function can be used to purge imports.
 
-- **Browse Global Unused Symbols**. This functions scans Tags and
+- **Browse Global Unused Symbols**. This functions scans references and
     pushes them onto the browser stack.
 
 
@@ -274,9 +274,9 @@ Meaning of **filters for variables**:
 
 C-xrefactory symbol retriever is useful for finding forgotten symbol
 names and for finding symbols from third parties libraries.  You enter
-a string to search and C-xrefactory scans Tags (optionally also jar
-archives from the class path). All symbols matching entered string are
-reported.
+a string to search and C-xrefactory scans the references (optionally
+also jar archives from the class path) for matches. All symbols
+matching entered string are reported.
 
 
 Entered strings are interpreted as shell expressions and are composed

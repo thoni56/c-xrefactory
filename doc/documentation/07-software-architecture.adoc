@@ -8,53 +8,5 @@ image::embed:ContainerView[]
 
 image::embed:EditorExtension[]
 
-[plantuml, editor-extension-component, png]
-....
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
-
-!define SPRITESURL https://raw.githubusercontent.com/plantuml-stdlib/gilbarbara-plantuml-sprites/v1.0/sprites
-
-title
-  Emacs Extension Component Diagram
-end title
-
-Component(cxref, "c-xref.el")
-Component(cxrefactory, "c-xrefactory.el")
-....
-
-[plantuml, c-xref-component, png]
-....
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
-
-!define SPRITESURL https://raw.githubusercontent.com/plantuml-stdlib/gilbarbara-plantuml-sprites/v1.0/sprites
-
-title
-  C-xref C program Component Diagram
-end title
-
-Component(main, main.c)
-Component(xref, xref.c)
-Component(server, server.c)
-Component(refactory, refactory.c)
-
-Component(cxref, cxref.c)
-Component(cxfile, cxfile.c)
-Rel(cxref, cxfile, "stores tags using", call)
-
-Rel(main, xref, "dispatches to", call)
-Rel(main, server, "dispatches to", call)
-Rel(main, refactory, "dispatches to", call)
-Rel(refactory, server, "uses", call)
-Rel(xref, cxref, "handles references using", call)
-Rel(server, cxref, "handles references using", call)
-Rel(refactory, cxref, "handles references using", call)
-
-Component(lexer, yylex.c)
-Component(parser, parsers.c)
-
-Rel(parser, lexer, "reads tokenized source", buffering)
-
-Rel(xref, parser, "parses source", call)
-Rel(server, parser, "parses source", call)
-....
+image::embed:CxrefCore[]
 

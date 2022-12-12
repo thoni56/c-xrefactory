@@ -252,8 +252,8 @@ different frames.
 
 Completions etc. requires user interaction so they are not controlled
 by the editor in itself only. At first glance though, the editor
-(Emacs) seems to block multiple refactorings and tag maintenance tasks
-running at the same time.
+(Emacs) seems to block multiple refactorings and referencs maintenance
+tasks running at the same time.
 
 This leaves just a few use cases for multiple "users", and I think it
 adds unnecessary complexity. Going for a more "one user" approach,

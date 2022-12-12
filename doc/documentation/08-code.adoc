@@ -277,8 +277,8 @@ might need to handle multiple information sets and options (as read
 from a .cxrefrc-file) for multiple projects simultaneously over a
 longer period of time. (E.g. if the user enters the editor starting
 with one project and then continues to work on another then new
-project options need to be read, and new tag information be generated,
-read and cached.)
+project options need to be read, and new reference information be
+generated, read and cached.)
 
 TODO: Figure out and describe how this works by looking at the
 elisp-sources.

@@ -204,9 +204,9 @@ are actually performed as separate invocations of `c-xref`.
 
 In `utils` there is a `server_driver.py` script, which will take as
 input a file containing a sequence of commands. You can use this to
-start an edit, refactory or tag server session and then feed it with
-commands in the same fashion as an editor would do. The script also
-handles the communication through the buffer file (see [Editor
+start an edit, refactory or reference server session and then feed it
+with commands in the same fashion as an editor would do. The script
+also handles the communication through the buffer file (see [Editor
 Interface](./Design:-Editor-Interface)).
 
 ==== Creating More Edit Server Tests
