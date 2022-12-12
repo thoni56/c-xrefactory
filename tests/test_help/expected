@@ -18,7 +18,6 @@ options:
 	-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')
 	-javasuffixes=<suffixes>  - list of Java files suffixes separated by ':' (or ';')
 	-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc
-	-no-stdoptions            - don't read the '~/.c-xrefrc' option file
 	-refs <file>              - name of file with cxrefs, or directory if refnum > 1
 	-refnum=<n>               - number of cxref files
 	-exactpositionresolve     - resolve symbols by def. position
