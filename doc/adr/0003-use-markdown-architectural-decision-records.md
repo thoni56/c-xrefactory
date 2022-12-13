@@ -4,7 +4,7 @@ Date: 2021-06-13
 
 ## Status
 
-Superseded by [5. Use classic ADR:s for Architecture Decisions](0005-use-classic-adr-s-for-architecture-decisions.md)
+Superseded by [Use classic ADR:s for Architecture Decisions](0007-use-classic-adr-s-for-architecture-decisions.md)
 
 ## Context and Problem Statement
 

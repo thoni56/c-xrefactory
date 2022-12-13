@@ -6,7 +6,7 @@ Date: 2022-12-11
 
 Accepted
 
-Supersedes [Use Markdown Architectural Decision Records](0002-use-markdown-architectural-decision-records.md)
+Supersedes [Use Markdown Architectural Decision Records](0003-use-markdown-architectural-decision-records.md)
 
 ## Context
 
