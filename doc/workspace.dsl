@@ -1,6 +1,6 @@
 workspace "C-xrefactory" "A C/Java refactoring browser in C" {
-    !adrs decisions
-    !docs documentation
+    !adrs adr
+    !docs docs
     model {
 	developer = Person "Developer" "Edits source code using an editor" Ext
 
