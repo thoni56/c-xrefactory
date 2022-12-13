@@ -9,8 +9,8 @@ It was
 - a generator for persistent cross-reference data
 - a reference server for editors, serving cross-reference, navigational and completion data over a protocol
 - a refactoring server (the worlds first to cross the Refactoring Rubicon)
-- ~~an HTML cross-reference generator (probably the root of the project)~~
-- ~~a C macro generator for structure fill (and other) functions~~
+- ~~an HTML cross-reference generator (probably the root of the project)~~ (REMOVED)
+- ~~a C macro generator for structure fill (and other) functions~~ (REMOVED)
 
 It is the first three that are unique and constitutes the great value
 of this project. The last two have been removed from the source, the
@@ -26,14 +26,4 @@ only bolted on top without much re-architecting the C sources.
 
 What we'd like to do is partition the project into separate parts,
 each having a clear usage.
-
-As it happens, the things that `c-xref` can do is also the
-~~five four~~ three modes (previously "task regimes") that are
-declared in the sources:
-
-  - Xref
-  - Editor Server
-  - Refactory
-  - ~~HtmlGenerate~~
-  - ~~Generate~~ (was removed when we finally managed to remove the bootstrap step)
 

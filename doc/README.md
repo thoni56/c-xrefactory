@@ -1,7 +1,7 @@
 # Documentation
 
 We document architecture using Structurizr (cd to this directory and run
-`../utils/structurizr`).
+`../utils/structurizr`, then open http://localhost:8080).
 
 The documentation consists of three elements
 
