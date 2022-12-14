@@ -2463,8 +2463,8 @@ void processFileArguments(void) {
 }
 
 
-
-PROTECTED bool projectExistsInOptionsFile(char *projectName, FILE *optionsFile) {
+/* Non-static for unittesting */
+bool projectExistsInOptionsFile(char *projectName, FILE *optionsFile) {
     int ch = ' ';              /* Something not EOF */
 
     while (ch != EOF) {

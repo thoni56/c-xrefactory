@@ -661,7 +661,7 @@ static ReferencesItemList *concatRefItemList(ReferencesItemList **list, Referenc
 }
 
 
-/* Public for unittesting */
+/* Non-static for unittesting */
 void addSymbolToSymRefList(ReferencesItemList **list, ReferencesItem *items) {
     ReferencesItemList *l;
 
