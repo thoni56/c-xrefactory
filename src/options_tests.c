@@ -322,7 +322,7 @@ Ensure(Options, should_get_back_stored_option_variable_value) {
     assert_that(getOptionVariable(name), is_equal_to_string(value));
 }
 
-Ensure(Options, can_get_options_file_from_filename) {
+Ensure(Options, can_get_options_file_from_filename_using_searchStandardOptionsFileAndSectionForFile) {
     char optionsFilename[100];
     char sectionName[100];
     FILE file;
@@ -345,4 +345,49 @@ Ensure(Options, can_get_options_file_from_filename) {
 
     assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
     assert_that(sectionName, is_equal_to_string("/path"));
+}
+
+
+extern bool projectExistsInOptionsFile(char *projectName, FILE *optionsFile);
+
+Ensure(Options, can_see_if_a_project_doesnt_exist_in_configuration_file) {
+    FILE file;
+    FILE *optionsFile = &file;
+
+    expect(readChar, will_return(EOF));
+
+    assert_that(!projectExistsInOptionsFile("non-existing-project", optionsFile));
+}
+
+Ensure(Options, can_see_if_a_project_exist_in_configuration_file_with_a_single_project_on_first_line) {
+    char *projectName = "/usr/user/project";
+    FILE file;
+    FILE *optionsFile = &file;
+
+    expect_characters("[/usr/user/project]\n", true);
+
+    assert_that(!projectExistsInOptionsFile(projectName, optionsFile));
+}
+
+Ensure(Options, can_see_if_a_project_exist_in_configuration_file_with_a_single_project_preceeded_by_whitespace) {
+    char *projectName = "/usr/user/project";
+    FILE file;
+    FILE *optionsFile = &file;
+
+    expect_characters("\n        [/usr/user/project]\n", true);
+
+    assert_that(!projectExistsInOptionsFile(projectName, optionsFile));
+}
+
+Ensure(Options, can_see_if_a_project_exist_in_configuration_file_with_other_project_before) {
+    char *projectName = "/usr/user/project";
+    FILE file;
+    FILE *optionsFile = &file;
+
+    expect_characters("[/usr/user/otherproject]\n", false);
+    expect_characters("  -set X Y\n", false);
+    expect_characters("  /usr/user/project\n", false);
+    expect_characters("[/usr/user/project]\n", true);
+
+    assert_that(!projectExistsInOptionsFile(projectName, optionsFile));
 }

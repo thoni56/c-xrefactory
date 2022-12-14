@@ -2462,6 +2462,27 @@ void processFileArguments(void) {
     }
 }
 
+
+
+PROTECTED bool projectExistsInOptionsFile(char *projectName, FILE *optionsFile) {
+    int ch = ' ';              /* Something not EOF */
+
+    while (ch != EOF) {
+        while (ch == ' ' || ch == '\t' || ch == '\n')
+            ch = readChar(optionsFile);
+        if (ch == '[') {
+            char buffer[TMP_STRING_SIZE];
+            while (ch != ']' && ch != EOF)
+                ch = readChar(optionsFile);
+            if (strcmp(projectName, buffer) == 0)
+                return true;
+        } else
+            while (ch != '\n' && ch != EOF)
+                ch = readChar(optionsFile);
+    }
+    return false;
+}
+
 void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFileName, char *section) {
     int    fileno;
     bool   found = false;
