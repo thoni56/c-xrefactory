@@ -2480,8 +2480,8 @@ void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFil
     optionsFile = openFile(optionsFileName, "r");
     if (optionsFile != NULL) {
         // TODO: This reads all arguments, when we only want to know if there is a matching project there?
-        found = readOptionsFromFileIntoArgs(optionsFile, &nargc, &nargv, DONT_ALLOCATE, fileName, options.project,
-                                            section);
+        found = readOptionsFromFileIntoArgs(optionsFile, &nargc, &nargv, DONT_ALLOCATE, fileName,
+                                            options.project, section);
         if (found) {
             log_debug("options file '%s' section '%s' found", optionsFileName, section);
         }

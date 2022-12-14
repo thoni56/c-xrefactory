@@ -321,3 +321,28 @@ Ensure(Options, should_get_back_stored_option_variable_value) {
     setOptionVariable(name, value);
     assert_that(getOptionVariable(name), is_equal_to_string(value));
 }
+
+Ensure(Options, can_get_options_file_from_filename) {
+    char optionsFilename[100];
+    char sectionName[100];
+    FILE file;
+
+    expect(getEnv, when(variable, is_equal_to_string("HOME")),
+           will_return("HOME"));
+    expect(openFile, when(fileName, is_equal_to_string("HOME/.c-xrefrc")),
+           will_return(&file));
+
+    expect_characters("[/path]\n", false);
+    expect_characters("-set X Y\n", true); /* WTF: a -set is needed for the project section to be found...
+                                            see readOptionsFromFileIntoArgs() */
+
+    expect(pathncmp, when(path1, is_equal_to_string("/path")), when(length, is_equal_to(5)),
+           will_return(0)); // 0 means equal
+
+    expect(closeFile, when(file, is_equal_to(&file)));
+
+    searchStandardOptionsFileAndSectionForFile("/path/filename.c", optionsFilename, sectionName);
+
+    assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
+    assert_that(sectionName, is_equal_to_string("/path"));
+}
