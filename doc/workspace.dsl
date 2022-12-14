@@ -28,8 +28,8 @@ workspace "C-xrefactory" "A C/Java refactoring browser in C" {
 		main -> refactory "dispatches to" call
 		refactory -> server "uses" call
 
-		cxref = Component cxref "" C
-		cxfile = Component cxfile "" C
+		cxref = Component cxref "Reference handler" C
+		cxfile = Component cxfile "Reference Storage using text files" C
 		cxref -> cxfile "stores references using" call
 
 		xref -> cxref "handles references using" call
