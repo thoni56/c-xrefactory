@@ -273,7 +273,7 @@ static void expect_characters(char string[], bool eof) {
         expect(readChar, will_return(EOF));
 }
 
-Ensure(Options, can_find_standard_options_file_from_sourcefile_path) {
+xEnsure(Options, can_find_standard_options_file_from_sourcefile_path) {
     FILE optionsFile;
     char optionsFilename[1000];
     char section[1000] = "/home/project";
@@ -322,7 +322,7 @@ Ensure(Options, should_get_back_stored_option_variable_value) {
     assert_that(getOptionVariable(name), is_equal_to_string(value));
 }
 
-Ensure(Options, can_get_options_file_from_filename_using_searchStandardOptionsFileAndSectionForFile) {
+xEnsure(Options, can_get_options_file_from_filename_using_searchStandardOptionsFileAndSectionForFile) {
     char optionsFilename[100];
     char sectionName[100];
     FILE file;
@@ -348,46 +348,56 @@ Ensure(Options, can_get_options_file_from_filename_using_searchStandardOptionsFi
 }
 
 
-extern bool projectExistsInOptionsFile(char *projectName, FILE *optionsFile);
+extern bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out */ char *projectName);
 
-Ensure(Options, can_see_if_a_project_doesnt_exist_in_configuration_file) {
+Ensure(Options, can_see_if_a_project_doesnt_cover_file) {
     FILE file;
     FILE *optionsFile = &file;
+    char projectName[PATH_MAX];
 
     expect(readChar, will_return(EOF));
 
-    assert_that(!projectExistsInOptionsFile("non-existing-project", optionsFile));
+    assert_that(!projectCoveringFileInOptionsFile("/usr/user/project/file.c", optionsFile, projectName));
 }
 
-Ensure(Options, can_see_if_a_project_exist_in_configuration_file_with_a_single_project_on_first_line) {
-    char *projectName = "/usr/user/project";
+Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_a_single_project_on_first_line_covers_file) {
     FILE file;
     FILE *optionsFile = &file;
+    char projectName[PATH_MAX];
 
-    expect_characters("[/usr/user/project]\n", true);
+    expect_characters("[/usr/user/project", false);
+    expect(readChar, will_return(']'));
+    expect(pathncmp, will_return(0));
 
-    assert_that(!projectExistsInOptionsFile(projectName, optionsFile));
+    assert_that(projectCoveringFileInOptionsFile("/usr/user/project/file.c", optionsFile, projectName));
+    assert_that(projectName, is_equal_to_string("/usr/user/project"));
 }
 
-Ensure(Options, can_see_if_a_project_exist_in_configuration_file_with_a_single_project_preceeded_by_whitespace) {
-    char *projectName = "/usr/user/project";
+Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_a_single_project_preceeded_by_whitespace_covers_file) {
     FILE file;
     FILE *optionsFile = &file;
+    char projectName[PATH_MAX];
 
-    expect_characters("\n        [/usr/user/project]\n", true);
+    expect_characters("\n        [/usr/user/project", false);
+    expect(readChar, will_return(']'));
+    expect(pathncmp, will_return(0));
 
-    assert_that(!projectExistsInOptionsFile(projectName, optionsFile));
+    assert_that(projectCoveringFileInOptionsFile("/usr/user/project/file.c", optionsFile, projectName));
 }
 
-Ensure(Options, can_see_if_a_project_exist_in_configuration_file_with_other_project_before) {
-    char *projectName = "/usr/user/project";
+Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_other_project_before_covers_file) {
     FILE file;
     FILE *optionsFile = &file;
+    char projectName[PATH_MAX];
 
     expect_characters("[/usr/user/otherproject]\n", false);
     expect_characters("  -set X Y\n", false);
     expect_characters("  /usr/user/project\n", false);
-    expect_characters("[/usr/user/project]\n", true);
+    expect_characters("[/usr/user/project", false);
+    expect(readChar, will_return(']'));
 
-    assert_that(!projectExistsInOptionsFile(projectName, optionsFile));
+    expect(pathncmp, will_return(1)); /* Not a match */
+    expect(pathncmp, will_return(0)); /* A match */
+
+    assert_that(projectCoveringFileInOptionsFile("/usr/user/project/file.c", optionsFile, projectName));
 }

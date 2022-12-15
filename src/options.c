@@ -2464,18 +2464,26 @@ void processFileArguments(void) {
 
 
 /* Non-static for unittesting */
-bool projectExistsInOptionsFile(char *projectName, FILE *optionsFile) {
-    int ch = ' ';              /* Something not EOF */
+/* Return a project name if found, else NULL */
+/* Only handles cases where the file path is included in the project name/section */
+bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out */ char *projectName) {
+    int ch = ' ';              /* Something to get started */
 
     while (ch != EOF) {
         while (ch == ' ' || ch == '\t' || ch == '\n')
             ch = readChar(optionsFile);
         if (ch == '[') {
-            char buffer[TMP_STRING_SIZE];
-            while (ch != ']' && ch != EOF)
+            char buffer[TMP_BUFF_SIZE];
+            int i=0;
+            while (ch != ']' && ch != EOF) {
                 ch = readChar(optionsFile);
-            if (strcmp(projectName, buffer) == 0)
+                buffer[i++] = ch;
+            }
+            buffer[i-1] = '\0';
+            if (pathncmp(projectName, fileName, strlen(projectName), true)==0) {
+                strcpy(projectName, buffer);
                 return true;
+            }
         } else
             while (ch != '\n' && ch != EOF)
                 ch = readChar(optionsFile);
@@ -2487,8 +2495,6 @@ void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFil
     int    fileno;
     bool   found = false;
     FILE  *optionsFile;
-    int    nargc;
-    char **nargv;
 
     optionsFileName[0] = 0;
     section[0]         = 0;
@@ -2501,6 +2507,9 @@ void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFil
     optionsFile = openFile(optionsFileName, "r");
     if (optionsFile != NULL) {
         // TODO: This reads all arguments, when we only want to know if there is a matching project there?
+        int    nargc;
+        char **nargv;
+        //found = projectCoveringFileInOptionsFile(fileName, optionsFile, section);
         found = readOptionsFromFileIntoArgs(optionsFile, &nargc, &nargv, DONT_ALLOCATE, fileName,
                                             options.project, section);
         if (found) {
