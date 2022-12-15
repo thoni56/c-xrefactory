@@ -2480,7 +2480,7 @@ bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out 
                 buffer[i++] = ch;
             }
             buffer[i-1] = '\0';
-            if (pathncmp(projectName, fileName, strlen(projectName), true)==0) {
+            if (pathncmp(buffer, fileName, strlen(buffer), true)==0) {
                 strcpy(projectName, buffer);
                 return true;
             }
@@ -2491,13 +2491,13 @@ bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out 
     return false;
 }
 
-void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFileName, char *section) {
+void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFileName, char *foundProjectName) {
     int    fileno;
     bool   found = false;
     FILE  *optionsFile;
 
     optionsFileName[0] = 0;
-    section[0]         = 0;
+    foundProjectName[0]         = 0;
 
     if (fileName == NULL)
         return;
@@ -2506,14 +2506,9 @@ void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFil
     getXrefrcFileName(optionsFileName);
     optionsFile = openFile(optionsFileName, "r");
     if (optionsFile != NULL) {
-        // TODO: This reads all arguments, when we only want to know if there is a matching project there?
-        int    nargc;
-        char **nargv;
-        //found = projectCoveringFileInOptionsFile(fileName, optionsFile, section);
-        found = readOptionsFromFileIntoArgs(optionsFile, &nargc, &nargv, DONT_ALLOCATE, fileName,
-                                            options.project, section);
+        found = projectCoveringFileInOptionsFile(fileName, optionsFile, foundProjectName);
         if (found) {
-            log_debug("options file '%s' section '%s' found", optionsFileName, section);
+            log_debug("options file '%s', project '%s' found", optionsFileName, foundProjectName);
         }
         closeFile(optionsFile);
     }
@@ -2532,7 +2527,7 @@ void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFil
         fileno = getFileNumberFromName(fileName);
         if (fileno != noFileIndex && getFileItem(fileno)->isFromCxfile) {
             strcpy(optionsFileName, previousStandardOptionsFile);
-            strcpy(section, previousStandardOptionsSection);
+            strcpy(foundProjectName, previousStandardOptionsSection);
             return;
         }
     }
