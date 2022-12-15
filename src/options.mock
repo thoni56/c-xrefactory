@@ -62,13 +62,13 @@ bool packageOnCommandLine(char *packageName) {
   return (bool) mock(packageName);
 }
 
-char *expandPredefinedSpecialVariables_static(char *tt, char *inputFilename) {
-  return (char *) mock(tt);
+char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilename) {
+  return (char *) mock(variable);
 }
 
 bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
-                                 char *fileName, char *project, char *section) {
-  return (bool) mock(file, outArgc, outArgv, memoryKind, fileName, project, section);
+                                 char *fileName, char *project, char *unused) {
+  return (bool) mock(file, outArgc, outArgv, memoryKind, fileName, project);
 }
 
 void readOptionsFromFile(char *fileName, int *outArgc, char ***outArgv, char *sectionFile, char *project) {

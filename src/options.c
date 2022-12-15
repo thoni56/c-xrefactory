@@ -812,7 +812,7 @@ static int handleSetOption(int argc, char **argv, int i ) {
 }
 
 bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
-                                 char *fileName, char *project, char *foundProjectName) {
+                                 char *fileName, char *project, char *unused) {
     char optionText[MAX_OPTION_LEN];
     int len, argc, ch, passNumber=0;
     bool projectUpdated, isActivePass;
@@ -824,7 +824,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
     argc = 1;
     aargv=NULL;
     projectUpdated = isActivePass = true;
-    foundProjectName[0]=0;
+    unused[0]=0;
 
     if (memoryKind == ALLOCATE_IN_SM)
         SM_INIT(optMemory);
@@ -843,7 +843,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
             log_trace("checking '%s'", optionText);
             expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
             log_trace("expanded '%s'", optionText);
-            processProjectMarker(optionText, len+1, project, fileName, &projectUpdated, foundProjectName);
+            processProjectMarker(optionText, len+1, project, fileName, &projectUpdated, unused);
         } else if (projectUpdated && strncmp(optionText, "-pass", 5) == 0) {
             sscanf(optionText+5, "%d", &passNumber);
             isActivePass = passNumber==currentPass || currentPass==ANY_PASS;

@@ -254,11 +254,11 @@ Ensure(Options, can_call_readOptionsFromFileIntoArgs) {
     int nargc;
     char **nargv[1000];
     char project[1000];
-    char resSection[1000];
+    char unused[1000];
 
     expect(readChar, will_return(EOF));
 
-    readOptionsFromFileIntoArgs(file, &nargc, nargv, ALLOCATE_IN_SM, "", project, resSection);
+    readOptionsFromFileIntoArgs(file, &nargc, nargv, ALLOCATE_IN_SM, "", project, unused);
 
     assert_that(nargc, is_equal_to(1)); /* Which is actually no arguments... */
 }
