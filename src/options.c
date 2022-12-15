@@ -151,7 +151,7 @@ static char javaClassPathExpanded[MAX_OPTION_LEN];
 static char base[MAX_FILE_NAME_SIZE];
 
 static char previousStandardOptionsFile[MAX_FILE_NAME_SIZE];
-static char previousStandardOptionsSection[MAX_FILE_NAME_SIZE];
+static char previousStandardOptionsProject[MAX_FILE_NAME_SIZE];
 
 
 #define ENV_DEFAULT_VAR_FILE            "${__file}"
@@ -701,8 +701,8 @@ int getOptionFromFile(FILE *file, char *text, int *chars_read) {
     return lastCharacter;
 }
 
-static void processSingleSectionMarker(char *path, char *fileName,
-                                       bool *sectionUpdated, char *section) {
+static void processSingleProjectMarker(char *path, char *fileName,
+                                       bool *projectUpdated, char *foundProjectName) {
     int length;
 #if defined (__WIN32__)
     bool caseSensitivity = false;
@@ -713,16 +713,16 @@ static void processSingleSectionMarker(char *path, char *fileName,
     length = strlen(path);
     if (pathncmp(path, fileName, length, caseSensitivity)==0
         && (fileName[length]=='/' || fileName[length]=='\\' || fileName[length]==0)) {
-        strcpy(section,path);
-        assert(strlen(section)+1 < MAX_FILE_NAME_SIZE);
-        *sectionUpdated = true;
+        strcpy(foundProjectName,path);
+        assert(strlen(foundProjectName)+1 < MAX_FILE_NAME_SIZE);
+        *projectUpdated = true;
     } else {
-        *sectionUpdated = false;
+        *projectUpdated = false;
     }
 }
 
-static void processSectionMarker(char *markerText, int markerLength, char *currentProject, char *fileName,
-                                 bool *sectionUpdated, char *section) {
+static void processProjectMarker(char *markerText, int markerLength, char *currentProject, char *fileName,
+                                 bool *projectUpdated, char *foundProjectName) {
     char *projectMarker;
 
     /* Remove surrounding brackets */
@@ -730,25 +730,25 @@ static void processSectionMarker(char *markerText, int markerLength, char *curre
     projectMarker                = &markerText[1];
     log_debug("processing %s for file %s project==%s", projectMarker, fileName, currentProject);
 
-    *sectionUpdated = false;
+    *projectUpdated = false;
     if (currentProject != NULL) {
         if (strcmp(projectMarker, currentProject) == 0) {
-            strcpy(section, projectMarker);
-            assert(strlen(section) + 1 < MAX_FILE_NAME_SIZE);
-            *sectionUpdated = true;
+            strcpy(foundProjectName, projectMarker);
+            assert(strlen(foundProjectName) + 1 < MAX_FILE_NAME_SIZE);
+            *projectUpdated = true;
         }
     } else {
-        processSingleSectionMarker(projectMarker, fileName, sectionUpdated, section);
+        processSingleProjectMarker(projectMarker, fileName, projectUpdated, foundProjectName);
     }
-    if (*sectionUpdated) {
+    if (*projectUpdated) {
         // TODO!!! YOU NEED TO ALLOCATE SPACE FOR THIS!!!
         // WTF? For "base"? It already is an array...
-        strcpy(base, section);
-        assert(strlen(section) < MAX_FILE_NAME_SIZE - 1);
+        strcpy(base, foundProjectName);
+        assert(strlen(foundProjectName) < MAX_FILE_NAME_SIZE - 1);
         setOptionVariable("__BASE", base);
-        strcpy(section, projectMarker);
+        strcpy(foundProjectName, projectMarker);
         // completely wrong, what about file names from command line ?
-        //&strncpy(cwd, section, MAX_FILE_NAME_SIZE-1);
+        //&strncpy(cwd, foundProjectName, MAX_FILE_NAME_SIZE-1);
         //&cwd[MAX_FILE_NAME_SIZE-1] = 0;
     }
 }
@@ -812,10 +812,10 @@ static int handleSetOption(int argc, char **argv, int i ) {
 }
 
 bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, MemoryKind memoryKind,
-                                 char *fileName, char *project, char *section) {
+                                 char *fileName, char *project, char *foundProjectName) {
     char optionText[MAX_OPTION_LEN];
     int len, argc, ch, passNumber=0;
-    bool sectionUpdated, isActivePass;
+    bool projectUpdated, isActivePass;
     bool found = false;
     char **aargv, *argv[MAX_STD_ARGS];
 
@@ -823,8 +823,8 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
 
     argc = 1;
     aargv=NULL;
-    sectionUpdated = isActivePass = true;
-    section[0]=0;
+    projectUpdated = isActivePass = true;
+    foundProjectName[0]=0;
 
     if (memoryKind == ALLOCATE_IN_SM)
         SM_INIT(optMemory);
@@ -843,13 +843,13 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
             log_trace("checking '%s'", optionText);
             expandEnvironmentVariables(optionText+1, MAX_OPTION_LEN, &len, true);
             log_trace("expanded '%s'", optionText);
-            processSectionMarker(optionText, len+1, project, fileName, &sectionUpdated, section);
-        } else if (sectionUpdated && strncmp(optionText, "-pass", 5) == 0) {
+            processProjectMarker(optionText, len+1, project, fileName, &projectUpdated, foundProjectName);
+        } else if (projectUpdated && strncmp(optionText, "-pass", 5) == 0) {
             sscanf(optionText+5, "%d", &passNumber);
             isActivePass = passNumber==currentPass || currentPass==ANY_PASS;
             if (passNumber > maxPasses)
                 maxPasses = passNumber;
-        } else if (strcmp(optionText,"-set")==0 && (sectionUpdated && isActivePass) && memoryKind!=DONT_ALLOCATE) {
+        } else if (strcmp(optionText,"-set")==0 && (projectUpdated && isActivePass) && memoryKind!=DONT_ALLOCATE) {
             // pre-evaluation of -set
             found = true;
             if (memoryKind != DONT_ALLOCATE) {
@@ -869,7 +869,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
                 assert(argc >= 3);
                 handleSetOption(argc, argv, argc - 3);
             }
-        } else if (ch != EOF && (sectionUpdated && isActivePass)) {
+        } else if (ch != EOF && (projectUpdated && isActivePass)) {
             found = true;
             expandEnvironmentVariables(optionText, MAX_OPTION_LEN, &len, false);
             if (memoryKind != DONT_ALLOCATE) {
@@ -895,23 +895,23 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
 
 void readOptionsFromFile(char *fileName, int *nargc, char ***nargv, char *section, char *project) {
     FILE *file;
-    char realSection[MAX_FILE_NAME_SIZE];
+    char unused[MAX_FILE_NAME_SIZE];
 
     file = openFile(fileName,"r");
     if (file==NULL)
         FATAL_ERROR(ERR_CANT_OPEN, fileName, XREF_EXIT_ERR);
-    readOptionsFromFileIntoArgs(file, nargc, nargv, ALLOCATE_IN_PP, section, project, realSection);
+    readOptionsFromFileIntoArgs(file, nargc, nargv, ALLOCATE_IN_PP, section, project, unused);
     closeFile(file);
 }
 
 void readOptionsFromCommand(char *command, int *outArgc, char ***outArgv, char *section) {
     FILE *file;
-    char realSection[MAX_FILE_NAME_SIZE];
+    char unused[MAX_FILE_NAME_SIZE];
 
     file = popen(command, "r");
     if (file==NULL)
         FATAL_ERROR(ERR_CANT_OPEN, command, XREF_EXIT_ERR);
-    readOptionsFromFileIntoArgs(file, outArgc, outArgv, ALLOCATE_IN_PP, section, NULL, realSection);
+    readOptionsFromFileIntoArgs(file, outArgc, outArgv, ALLOCATE_IN_PP, section, NULL, unused);
     closeFile(file);
 }
 
@@ -919,8 +919,8 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
     *outNargc = 0;
     assert(options.mode);
     if (options.mode == ServerMode) {
-        char nsect[MAX_FILE_NAME_SIZE];
-        readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM, "", NULL, nsect);
+        char unused[MAX_FILE_NAME_SIZE];
+        readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM, "", NULL, unused);
         /* those options can't contain include or define options, sections neither */
         int c = getc(stdin);
         if (c == EOF) {
@@ -2491,7 +2491,7 @@ bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out 
     return false;
 }
 
-void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFileName, char *foundProjectName) {
+void searchStandardOptionsFileAndProjectForFile(char *fileName, char *optionsFileName, char *foundProjectName) {
     int    fileno;
     bool   found = false;
     FILE  *optionsFile;
@@ -2527,7 +2527,7 @@ void searchStandardOptionsFileAndSectionForFile(char *fileName, char *optionsFil
         fileno = getFileNumberFromName(fileName);
         if (fileno != noFileIndex && getFileItem(fileno)->isFromCxfile) {
             strcpy(optionsFileName, previousStandardOptionsFile);
-            strcpy(foundProjectName, previousStandardOptionsSection);
+            strcpy(foundProjectName, previousStandardOptionsProject);
             return;
         }
     }

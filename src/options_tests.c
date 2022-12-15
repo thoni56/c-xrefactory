@@ -287,7 +287,7 @@ xEnsure(Options, can_find_standard_options_file_from_sourcefile_path) {
            will_return(0));
     expect(closeFile);
 
-    searchStandardOptionsFileAndSectionForFile("/home/project/sourcefile.c", optionsFilename, section);
+    searchStandardOptionsFileAndProjectForFile("/home/project/sourcefile.c", optionsFilename, section);
 
     assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
     assert_that(section, is_equal_to_string("/home/project"));
@@ -341,7 +341,7 @@ xEnsure(Options, can_get_options_file_from_filename_using_searchStandardOptionsF
 
     expect(closeFile, when(file, is_equal_to(&file)));
 
-    searchStandardOptionsFileAndSectionForFile("/path/filename.c", optionsFilename, sectionName);
+    searchStandardOptionsFileAndProjectForFile("/path/filename.c", optionsFilename, sectionName);
 
     assert_that(optionsFilename, is_equal_to_string("HOME/.c-xrefrc"));
     assert_that(sectionName, is_equal_to_string("/path"));

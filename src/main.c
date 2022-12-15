@@ -431,7 +431,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
 
     fileName = inputFileName;
     *outLanguage = getLanguageFor(fileName);
-    searchStandardOptionsFileAndSectionForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
+    searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSectionName);
     handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSectionName, true);
 
     initAllInputs();
@@ -708,7 +708,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         strcpy(fileName, inputFileName);
     }
 
-    searchStandardOptionsFileAndSectionForFile(fileName, standardOptionsFileName, standardOptionsSection);
+    searchStandardOptionsFileAndProjectForFile(fileName, standardOptionsFileName, standardOptionsSection);
     handlePathologicProjectCases(fileName, standardOptionsFileName, standardOptionsSection, false);
 
     reInitCwd(standardOptionsFileName, standardOptionsSection);

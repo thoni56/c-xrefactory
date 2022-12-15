@@ -178,13 +178,13 @@ extern bool packageOnCommandLine(char *packageName);
 extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
 extern bool readOptionsFromFileIntoArgs(FILE *ff, int *nargc, char ***nargv,
                                MemoryKind memFl, char *sectionFile, char *project, char *resSection);
-extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project);
+extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *project, char *foundProjectName);
 extern void readOptionsFromCommand(char *command, int *nargc, char ***nargv, char *sectionFile);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
 extern void javaSetSourcePath(bool defaultClassPathAllowed);
 extern bool referenceFileCountMatches(int newRefNum);
 
 extern char *findConfigFile(char *cwd);
-extern void searchStandardOptionsFileAndSectionForFile(char *filename, char *optionsFilename, char *section);
+extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *optionsFilename, char *foundProjectName);
 
 #endif

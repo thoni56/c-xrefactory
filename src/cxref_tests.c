@@ -80,7 +80,7 @@ Ensure(CxRef, can_get_active_project) {
 
     expect(getFileItem, when(fileIndex, is_equal_to(0)),
            will_return(&fileItem));
-    expect(searchStandardOptionsFileAndSectionForFile, when(fileName, is_equal_to_string("file.c")));
+    expect(searchStandardOptionsFileAndProjectForFile, when(fileName, is_equal_to_string("file.c")));
     expect(ppcGenRecord,
            when(kind, is_equal_to(PPC_NO_PROJECT)),
            when(message, contains_string("file.c")));
