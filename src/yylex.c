@@ -1645,7 +1645,10 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
             /* TODO: This should really be putLexPosition() but that takes a LexemBuffer... */
             putLexPositionAt(position, &writePointer);
             if (len >= MACRO_BODY_BUFFER_SIZE - 15) {
-                errorMessage(ERR_INTERNAL, "size of #macro_argument exceeded MACRO_BODY_BUFFER_SIZE");
+                char tmpBuffer[TMP_BUFF_SIZE];
+                sprintf(tmpBuffer, "size of #macro_argument exceeded MACRO_BODY_BUFFER_SIZE @%d:%d:%d",
+                        position.file, position.line, position.col);
+                errorMessage(ERR_INTERNAL, tmpBuffer);
             }
         } else {
             expandMacroBodyBufferIfOverflow(writePointer, (currentLexemStart - currentLexemP), writeBuffer, &bufferSize);
