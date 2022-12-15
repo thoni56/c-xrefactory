@@ -1646,8 +1646,8 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
             putLexPositionAt(position, &writePointer);
             if (len >= MACRO_BODY_BUFFER_SIZE - 15) {
                 char tmpBuffer[TMP_BUFF_SIZE];
-                sprintf(tmpBuffer, "size of #macro_argument exceeded MACRO_BODY_BUFFER_SIZE @%d:%d:%d",
-                        position.file, position.line, position.col);
+                sprintf(tmpBuffer, "size of #macro_argument exceeded MACRO_BODY_BUFFER_SIZE @%s:%d:%d",
+                        getFileItem(position.file)->name, position.line, position.col);
                 errorMessage(ERR_INTERNAL, tmpBuffer);
             }
         } else {
