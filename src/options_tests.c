@@ -2,6 +2,8 @@
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/mocks.h>
 
+#include "constants.h"
+
 #include "filetable.h"
 #include "globals.h"
 #include "log.h"
@@ -352,7 +354,7 @@ extern bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, 
 Ensure(Options, can_see_if_a_project_doesnt_cover_file) {
     FILE file;
     FILE *optionsFile = &file;
-    char projectName[PATH_MAX];
+    char projectName[MAX_SOURCE_PATH_SIZE];
 
     expect(readChar, will_return(EOF));
 
@@ -362,7 +364,7 @@ Ensure(Options, can_see_if_a_project_doesnt_cover_file) {
 Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_a_single_project_on_first_line_covers_file) {
     FILE file;
     FILE *optionsFile = &file;
-    char projectName[PATH_MAX];
+    char projectName[MAX_SOURCE_PATH_SIZE];
 
     expect_characters("[/usr/user/project", false);
     expect(readChar, will_return(']'));
@@ -375,7 +377,7 @@ Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_a_single_proje
 Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_a_single_project_preceeded_by_whitespace_covers_file) {
     FILE file;
     FILE *optionsFile = &file;
-    char projectName[PATH_MAX];
+    char projectName[MAX_SOURCE_PATH_SIZE];
 
     expect_characters("\n        [/usr/user/project", false);
     expect(readChar, will_return(']'));
@@ -387,7 +389,7 @@ Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_a_single_proje
 Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_other_project_before_covers_file) {
     FILE file;
     FILE *optionsFile = &file;
-    char projectName[PATH_MAX];
+    char projectName[MAX_SOURCE_PATH_SIZE];
 
     expect_characters("[/usr/user/otherproject]\n", false);
     expect_characters("  -set X Y\n", false);
