@@ -311,7 +311,11 @@ endif
 LCOV_IGNORE_COVERAGE_FOR = 'log.c' '*.mock' '*.tab.c' '/usr/*' '/Library/*' '/Applications/*'
 
 LCOV_TEST_DIRS = `ls -d ../tests/*/.coverage | xargs printf -- '-d %s\n'`
-ADD_ALL_TEST_COVERAGE_FILES = `ls ../tests/*/.coverage/coverage.info | xargs printf -- '-a %s\n'`
+ifeq ($(OS),Darwin)
+SYSTEM_TEST_COVERAGE_FILES = `find ../tests -name coverage.info | xargs stat -f "%N %z" | grep -v " 0" | awk '{print $$1}' | xargs printf -- '-a %s\n'`
+else
+SYSTEM_TEST_COVERAGE_FILES = `ls ../tests/*/.coverage/coverage.info | xargs printf -- '-a %s\n'`
+endif
 
 the-actual-coverage-report:
 	@mkdir -p ../coverage
@@ -321,7 +325,7 @@ ifeq ($(HAVE_GCOV_TOOL),yes)
 else
 # The run_test script in ../tests has created a coverage.info in each test directory
 # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
-	$(LCOV) $(ADD_ALL_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
+	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
 endif
 	@echo "LCOV-ing done..."
 	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
