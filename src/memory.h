@@ -43,33 +43,6 @@ typedef struct codeBlock {
 #define StackMemoryAllocC(n, t) ((t*) stackMemoryAlloc((n)*sizeof(t)))
 
 
-/**********************************************************************
-  SM = Static Memory? - once allocated cannot expand?
-
-  This have a separate int variable called mem##Index instead of the
-  Memory struct used by DM (can we merge them?)
-
-*/
-
-#define SM_INIT(memory) {memory##Index = 0;}
-#define SM_ALLOCC(memory, pointer, count, type) {                       \
-        assert( (count) >= 0);                                          \
-        if (memory##Index+(count)*sizeof(type) >= SIZE_##memory) {      \
-            FATAL_ERROR(ERR_NO_MEMORY, #memory, XREF_EXIT_ERR);         \
-        }                                                               \
-        pointer = (type*) (memory + memory##Index);                     \
-        memory##Index += (count)*sizeof(type);                          \
-    }
-#define SM_REALLOCC(memory, pointer, count, type, oldCount) {           \
-        assert(((char *)(pointer)) + (oldCount)*sizeof(type) == memory + memory##Index); \
-        memory##Index = ((char*)pointer) - memory;                      \
-        SM_ALLOCC(memory,pointer,count,type);                           \
-    }
-#define SM_FREE_UNTIL(memory, pointer) {                                \
-        assert((pointer)>=memory && (pointer)<= memory+memory##Index);  \
-        memory##Index = ((char*)(pointer))-memory;                      \
-    }
-
 
 /* pre-processor macro definitions allocations */
 extern void *ppmAlloc(size_t size);

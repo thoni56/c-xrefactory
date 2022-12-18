@@ -5,6 +5,32 @@ described how things were before. They are no longer true, since that
 quirk, magic or bad coding is gone. But it is kept here as an archive
 for those wanting to do backtracking to original sources.
 
+=== Memory strategies ===
+
+There where a multitude of specialized memory allocation functions. In
+principle there where to types, static and dynamic. The dynamic could
+be exteded using a overflow handler.
+
+==== Static memory allocation
+
+Static memory (SM_ prefix) are static areas allocated by the compiler
+which is then indexed using a similarly named index variable
+(e.g. `ftMemory` and `ftMemoryIndex`), something the macros took
+advantage of. These are
+
+- `ftMemory`
+- `ppmMemory`
+- `mbMemory`
+
+One special case of static memory also exist:
+
+- `stackMemory` - synchronous with program structure and has CodeBlock
+markers, so there is a special `stackMemoryInit()` that initializes
+the outermost CodeBlock 
+
+These areas cannot be extended, when it overruns the program stops.
+
+
 === Trivial Prechecks ===
 
 The refactorer can call the server using `parseBufferUsingServer()` and add some extra options (in text form).

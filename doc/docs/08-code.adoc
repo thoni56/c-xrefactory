@@ -474,25 +474,6 @@ point. Tag data?
 Mostly `c-xrefactory` does its own memory management. It uses a number
 of different strategies, which has/had its own macros.
 
-==== Static memory allocation
-
-Static memory (SM_ prefix) are static areas allocated by the compiler
-which is then indexed using a similarly named index variable
-(e.g. `ftMemory` and `ftMemoryIndex`), something the macros took
-advantage of. These are
-
-- `ftMemory`
-- `ppmMemory`
-- `mbMemory`
-
-One special case of static memory also exist:
-
-- `stackMemory` - synchronous with program structure and has CodeBlock
-markers, so there is a special `stackMemoryInit()` that initializes
-the outermost CodeBlock 
-
-These areas cannot be extended, when it overruns the program stops.
-
 ==== Dynamic memory allocation
 
 ===== Using the Memory structure
