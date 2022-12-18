@@ -399,5 +399,30 @@ Ensure(Options, can_see_if_a_project_in_a_configuration_file_with_other_project_
     expect(pathncmp, will_return(1)); /* Not a match */
     expect(pathncmp, will_return(0)); /* A match */
 
-    assert_that(projectCoveringFileInOptionsFile("/usr/user/project/file.c", optionsFile, projectName));
+    assert_that(projectCoveringFileInOptionsFile("/usr/user/project/file.c",
+                                                 optionsFile, projectName));
+}
+
+
+Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) {
+    char optionsFilename[1000];
+    char sectionName[1000];
+    FILE file;
+
+    expect(getEnv, when(variable, is_equal_to_string("HOME")),
+           will_return("HOME"));
+    expect(openFile, when(fileName, is_equal_to_string("HOME/.c-xrefrc")),
+           will_return(&file));
+
+    expect_characters("[ffmpeg]\n", false);
+    expect_characters(" /home/thoni/Utveckling/c-xrefactory/tests/ffmpeg/ffmpeg\n", false);
+    expect_characters(" -I/home/thoni/Utveckling/c-xrefactory/tests/ffmpeg/ffmpeg\n", true);
+
+    expect(closeFile);
+
+    options.project = "ffmpeg";
+    searchStandardOptionsFileAndProjectForFile("/home/thoni/Utveckling/c-xrefactory/tests/ffmpeg",
+                                               optionsFilename, sectionName);
+
+    assert_that(sectionName, is_equal_to_string("ffmpeg"));
 }

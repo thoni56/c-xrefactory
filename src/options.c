@@ -533,7 +533,8 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
     return(expanded);
 }
 
-static void expandEnvironmentVariables(char *original, int availableSize, int *len, bool global_environment_only) {
+static void expandEnvironmentVariables(char *original, int availableSize, int *len,
+                                       bool global_environment_only) {
     char temporary[MAX_OPTION_LEN];
     char variableName[MAX_OPTION_LEN];
     char *value;
@@ -731,18 +732,17 @@ static void processProjectMarker(char *markerText, int markerLength, char *curre
     log_debug("processing %s for file %s project==%s", projectMarker, fileName, currentProject);
 
     *projectUpdated = false;
-    if (currentProject != NULL) {
-        if (strcmp(projectMarker, currentProject) == 0) {
-            strcpy(foundProjectName, projectMarker);
-            assert(strlen(foundProjectName) + 1 < MAX_FILE_NAME_SIZE);
-            *projectUpdated = true;
-        }
+    if (currentProject != NULL && strcmp(projectMarker, currentProject) == 0) {
+        /* TODO This is kind a silly, if we found the project
+         * marker for the current project, copy it and say it was
+         * updated? So what will the caller do when "updated"? */
+        strcpy(foundProjectName, projectMarker);
+        assert(strlen(foundProjectName) + 1 < MAX_FILE_NAME_SIZE);
+        *projectUpdated = true;
     } else {
         processSingleProjectMarker(projectMarker, fileName, projectUpdated, foundProjectName);
     }
     if (*projectUpdated) {
-        // TODO!!! YOU NEED TO ALLOCATE SPACE FOR THIS!!!
-        // WTF? For "base"? It already is an array...
         strcpy(base, foundProjectName);
         assert(strlen(foundProjectName) < MAX_FILE_NAME_SIZE - 1);
         setOptionVariable("__BASE", base);
@@ -753,14 +753,14 @@ static void processProjectMarker(char *markerText, int markerLength, char *curre
     }
 }
 
-#define ALLOCATE_OPTION_SPACE(memFl, cc, num, type) { \
-        if (memFl==ALLOCATE_IN_SM) {                  \
-            SM_ALLOCC(optMemory, cc, num, type);      \
-        } else if (memFl==ALLOCATE_IN_PP) {           \
-            PPM_ALLOCC(cc, num, type);                \
-        } else {                                      \
-            assert(0);                                \
-        }                                             \
+#define ALLOCATE_OPTION_SPACE(memoryKind, target, count, type) {    \
+        if (memoryKind==ALLOCATE_IN_SM) {                           \
+            SM_ALLOCC(optMemory, target, count, type);              \
+        } else if (memoryKind==ALLOCATE_IN_PP) {                    \
+            PPM_ALLOCC(target, count, type);                        \
+        } else {                                                    \
+            assert(0);                                              \
+        }                                                           \
     }
 
 static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, char *argv[]) {
@@ -2506,7 +2506,13 @@ void searchStandardOptionsFileAndProjectForFile(char *fileName, char *optionsFil
     getXrefrcFileName(optionsFileName);
     optionsFile = openFile(optionsFileName, "r");
     if (optionsFile != NULL) {
-        found = projectCoveringFileInOptionsFile(fileName, optionsFile, foundProjectName);
+        // TODO: This does not work since a project (section) name does not define which sources
+        // are used. This is done with the '-I' option in the project/section...
+        //found = projectCoveringFileInOptionsFile(fileName, optionsFile, section);
+        int    nargc;
+        char **nargv;
+        found = readOptionsFromFileIntoArgs(optionsFile, &nargc, &nargv, DONT_ALLOCATE, fileName,
+                                            options.project, foundProjectName);
         if (found) {
             log_debug("options file '%s', project '%s' found", optionsFileName, foundProjectName);
         }
