@@ -6,14 +6,20 @@ But rather than trying to find a structure where each new finding fits, I'm maki
 We can refactor these into a better and better structure as we go.
 
 === Yacc semantic data
-As per usual a Yacc grammar requires each non-terminal to have a type.
-Those types are named after which types of data they collect and propagate.
-The names always starts with `ast_` and then comes the data type.
-For example if some non-terminal needs to propagate a Symbol and a Position that structure would be called `ast_symbolParameterPair` ("Pair" being thrown in there for good measure...).
 
-Each of those structures also always carries a begin and end position for that structure.
-That means that any "ast" struct has three fields, `begin`, `end` and the data.
-The data are sometimes a struct, like in this case, but can also be a single value, like an `int` or a pointer to a `Symbol`.
+As per usual a Yacc grammar requires each non-terminal to have a type.
+Those types are named after which types of data they collect and
+propagate.  The names always starts with `ast_` and then comes the
+data type.  For example if some non-terminal needs to propagate a
+Symbol and a Position that structure would be called
+`ast_symbolParameterPair` ("Pair" being thrown in there for good
+measure...).
+
+Each of those structures also always carries a begin and end position
+for that structure.  That means that any "ast" struct has three
+fields, `begin`, `end` and the data.  The data are sometimes a struct,
+like in this case, but can also be a single value, like an `int` or a
+pointer to a `Symbol`.
 
 [plantuml, ast, png]
 ....
@@ -32,15 +38,3 @@ Position position
 
 ....
 
-=== Trivial Prechecks ===
-
-The refactorer can call the server using `parseBufferUsingServer()` and add some extra options (in text form).
-One example is `setMovingPrecheckStandardEnvironment()` where it calls the server with `-olcxtrivialprecheck`.
-
-However `parseBufferUsingServer()` uses `callServer()` which never `answerEditAction()`.
-
-In `answerEditAction()` the call to (unused) `olTrivialRefactoringPreCheck()` also requires an `options.trivialPreCheckCode` which is neither send by `setMovingPrecheckStandardEnvironment()` nor parsed by `processOptions()`.
-
-The only guess I have is that previously all prechecks where handled by the `-olcxtrivialprecheck` option in calls to the server, and have now moved to their respective refactorings.
-
-NOTE: This theory should be checked by looking at the original source of the precheck functions and compare that with any possible checks in the corresponding refactoring code.

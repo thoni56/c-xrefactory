@@ -27,3 +27,25 @@ only bolted on top without much re-architecting the C sources.
 What we'd like to do is partition the project into separate parts,
 each having a clear usage.
 
+The following sections are aimed at describing various features of
+`c-xrefactory`.
+
+### Options, option files and configuration
+
+The current version of C-xrefactory allows only two possible sets of
+configuration/options.
+
+The primary storage is (currently) the file `$HOME/.c-xrefrc`
+which stores the "standard" options for all projects. Each project has
+a separate section which is started with a section marker, the project
+name surrounded by square brackets, `[project1]`.
+
+When you start `c-xref` you can use the command line option `-xrefrc`
+to request that a particular option file should be used instead of the
+"standard options".
+
+NOTE: When running the edit server there seems to be no way to
+indicate a different options files for different
+projects/files. Although you can start the server with `-xrefrc` you
+will be stuck with that in the whole session and for all projects.
+
