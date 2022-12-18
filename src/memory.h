@@ -32,9 +32,6 @@ typedef struct codeBlock {
 
 /* ******************** a simple memory handler ************************ */
 
-#define ALIGNMENT_PADDING(xxx,align) (align-1-((((uintptr_t)(xxx))-1) & (align-1)))
-#define ALIGNMENT(xxx,align) (((char*)(xxx))+ALIGNMENT_PADDING(xxx,align))
-
 
 /**********************************************************************
 
@@ -57,17 +54,13 @@ typedef struct codeBlock {
 #define SM_INIT(memory) {memory##Index = 0;}
 #define SM_ALLOCC(memory, pointer, count, type) {                       \
         assert( (count) >= 0);                                          \
-        /* memset(mem+mem##Index,0,(n)*sizeof(t)); */                   \
-        /* memory##Index = ((char*)ALIGNMENT(memory+memory##Index,STANDARD_ALIGNMENT)) - memory; */ \
         if (memory##Index+(count)*sizeof(type) >= SIZE_##memory) {      \
-            FATAL_ERROR(ERR_NO_MEMORY,#memory, XREF_EXIT_ERR);           \
+            FATAL_ERROR(ERR_NO_MEMORY, #memory, XREF_EXIT_ERR);         \
         }                                                               \
         pointer = (type*) (memory + memory##Index);                     \
-        /* memset(p,0,(n)*sizeof(t)); / * for detecting any bug */      \
         memory##Index += (count)*sizeof(type);                          \
     }
-#define SM_ALLOC(memory, pointer, type) {SM_ALLOCC(memory,pointer,1,type);}
-#define SM_REALLOCC(memory, pointer, count, type, oldCount) {            \
+#define SM_REALLOCC(memory, pointer, count, type, oldCount) {           \
         assert(((char *)(pointer)) + (oldCount)*sizeof(type) == memory + memory##Index); \
         memory##Index = ((char*)pointer) - memory;                      \
         SM_ALLOCC(memory,pointer,count,type);                           \

@@ -153,7 +153,7 @@ Ensure(Memory, can_handle_olcx_memory) {
 static int  testMemoryIndex;
 static char testMemory[SIZE_testMemory];
 
-Ensure(Memory, can_handle_sm_memory) {
+Ensure(Memory, can_handle_obsolete_style_sm_memory) {
     SM_INIT(testMemory);
 
     char *pointer = NULL;

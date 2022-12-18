@@ -10,12 +10,6 @@
 #define __WIN32__ 1
 #endif
 
-/*	STANDARD_ALIGNMENT must be larger than void* !!!!!!!!!! */
-#ifdef __i386__
-#define STANDARD_ALIGNMENT sizeof(void*)
-#else
-#define STANDARD_ALIGNMENT sizeof(long int)
-#endif
 
 /* ***********************   memory sizes ******************************  */
 

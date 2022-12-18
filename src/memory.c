@@ -162,7 +162,6 @@ void *stackMemoryAlloc(int size) {
     assert(currentBlock);
     mem_trace("stackMemoryAlloc: allocating %d bytes", size);
     i = currentBlock->firstFreeIndex;
-    i = ((char *)ALIGNMENT(stackMemory+i,STANDARD_ALIGNMENT))-stackMemory;
     if (i+size < SIZE_stackMemory) {
         currentBlock->firstFreeIndex = i+size;
         return &stackMemory[i];
@@ -236,16 +235,10 @@ void dm_init(Memory *memory, char *name) {
 }
 
 
-static void align(Memory *memory) {
-    memory->index = ((char*)ALIGNMENT(((char*)&memory->block)+memory->index,STANDARD_ALIGNMENT)) - ((char*)&memory->block);
-}
-
-
 void *dm_allocc(Memory *memory, int count, size_t size) {
     int previous_index;
 
     assert(count >= 0);
-    align(memory);
     if (memory->index+count*size >= memory->size) {
         if (memory->overflowHandler != NULL && memory->overflowHandler(count))
             memoryResized();
