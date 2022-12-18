@@ -142,8 +142,7 @@ Options presetOptions = {
 
 
 /* memory where on-line given options are stored */
-static char optMemory[SIZE_optMemory];
-static int optMemoryIndex;
+static Memory2 optMemory;
 
 static char javaSourcePathExpanded[MAX_OPTION_LEN];
 static char javaClassPathExpanded[MAX_OPTION_LEN];
@@ -755,7 +754,7 @@ static void processProjectMarker(char *markerText, int markerLength, char *curre
 
 #define ALLOCATE_OPTION_SPACE(memoryKind, target, count, type) {    \
         if (memoryKind==ALLOCATE_IN_SM) {                           \
-            SM_ALLOCC(optMemory, target, count, type);              \
+            target = smAllocc(&optMemory, count, sizeof(type));     \
         } else if (memoryKind==ALLOCATE_IN_PP) {                    \
             target = ppmAllocc(count, sizeof(type));                \
         } else {                                                    \
@@ -827,7 +826,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
     unused[0]=0;
 
     if (memoryKind == ALLOCATE_IN_SM)
-        SM_INIT(optMemory);
+        smInit(&optMemory, SIZE_optMemory);
 
     ch = 'a';                    /* Something not EOF */
     while (ch!=EOF) {
