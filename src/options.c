@@ -752,19 +752,21 @@ static void processProjectMarker(char *markerText, int markerLength, char *curre
     }
 }
 
-#define ALLOCATE_OPTION_SPACE(memoryKind, target, count, type) {    \
-        if (memoryKind==ALLOCATE_IN_SM) {                           \
-            target = smAllocc(&optMemory, count, sizeof(type));     \
-        } else if (memoryKind==ALLOCATE_IN_PP) {                    \
-            target = ppmAllocc(count, sizeof(type));                \
-        } else {                                                    \
-            assert(0);                                              \
-        }                                                           \
+
+static void *allocateSpaceForOption(MemoryKind memoryKind, int count, size_t size) {
+    if (memoryKind==ALLOCATE_IN_SM) {
+        return smAllocc(&optMemory, count, size);
+    } else if (memoryKind==ALLOCATE_IN_PP) {
+        return ppmAllocc(count, size);
+    } else {
+        assert(0);
+        return NULL;
     }
+}
 
 static int addOptionToArgs(MemoryKind memoryKind, char optionText[], int argc, char *argv[]) {
     char *s = NULL;
-    ALLOCATE_OPTION_SPACE(memoryKind, s, strlen(optionText) + 1, char);
+    s = allocateSpaceForOption(memoryKind, strlen(optionText) + 1, sizeof(char));
     assert(s);
     strcpy(s, optionText);
     log_trace("option %s read", s);
@@ -880,7 +882,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
         errorMessage(ERR_ST, "too many options");
     if (found && memoryKind!=DONT_ALLOCATE) {
         // Allocate an array of correct size to return instead of local variable argv
-        ALLOCATE_OPTION_SPACE(memoryKind, aargv, argc, char*);
+        aargv = allocateSpaceForOption(memoryKind, argc, sizeof(char*));
         for (int i=1; i<argc; i++)
             aargv[i] = argv[i];
     }
