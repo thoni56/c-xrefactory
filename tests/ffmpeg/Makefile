@@ -37,3 +37,6 @@ ffmpeg:
 
 clean:
 	rm -rf CXrefs c-xref .c-xrefrc ffmpeg ffmpeg.log
+
+gdb:
+	gdb --args ../../src/c-xref -xrefrc .c-xrefrc -xrefactory-II -crlfconversion -crconversion -encoding=default -exactpositionresolve -p ffmpeg -create
