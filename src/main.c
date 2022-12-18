@@ -412,7 +412,7 @@ static void getAndProcessXrefrcOptions(char *optionsFileName, char *optionsSecti
     if (*optionsFileName != 0) {
         readOptionsFromFile(optionsFileName, &argc, &argv, optionsSectionName, project);
         // warning, the following can overwrite variables like
-        // 'cxref_file_name' allocated in PPM_MEMORY, then when memory
+        // 'cxref_file_name' allocated in ppmMemory, then when memory
         // is got back by caching, it may provoke a problem
         processOptions(argc, argv, DONT_PROCESS_FILE_ARGUMENTS); /* .c-xrefrc opts*/
     }
@@ -635,7 +635,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     initReferenceTable(MAX_CXREF_ENTRIES);
 
-    SM_INIT(ppmMemory);
+    smInit(&ppmMemory, SIZE_ppmMemory);
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initOuterCodeBlock();
 

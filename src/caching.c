@@ -99,23 +99,23 @@ static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
 static void structCachingFree(Symbol *symbol) {
     SymbolList **superList;
     assert(symbol->u.structSpec);
-    if (isFreedPointer(symbol->u.structSpec->records) ||
-        PPM_FREED_POINTER(symbol->u.structSpec->records)) {
+    if (isFreedPointer(symbol->u.structSpec->records)
+        || ppmIsFreedPointer(symbol->u.structSpec->records)) {
         symbol->u.structSpec->records = NULL;
     }
-    if (isFreedPointer(symbol->u.structSpec->casts.node) ||
-        PPM_FREED_POINTER(symbol->u.structSpec->casts.node)) {
+    if (isFreedPointer(symbol->u.structSpec->casts.node)
+        || ppmIsFreedPointer(symbol->u.structSpec->casts.node)) {
         symbol->u.structSpec->casts.node = NULL;
     }
-    if (isFreedPointer(symbol->u.structSpec->casts.sub) ||
-        PPM_FREED_POINTER(symbol->u.structSpec->casts.sub)) {
+    if (isFreedPointer(symbol->u.structSpec->casts.sub)
+        || ppmIsFreedPointer(symbol->u.structSpec->casts.sub)) {
         symbol->u.structSpec->casts.sub = NULL;
     }
 
     superList = &symbol->u.structSpec->super;
     while (*superList!=NULL) {
-        if (isFreedPointer(*superList) ||
-            PPM_FREED_POINTER(*superList)) {
+        if (isFreedPointer(*superList)
+            || ppmIsFreedPointer(*superList)) {
             *superList = (*superList)->next;
             goto contlabel;
         }
@@ -130,14 +130,14 @@ static void symbolTableDeleteOutOfMemory(int i) {
     while (*pp!=NULL) {
         switch ((*pp)->type) {
         case TypeMacro:
-            if (PPM_FREED_POINTER(*pp)) {
+            if (ppmIsFreedPointer(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             }
             break;
         case TypeStruct:
         case TypeUnion:
-            if (isFreedPointer(*pp) || PPM_FREED_POINTER(*pp)) {
+            if (isFreedPointer(*pp) || ppmIsFreedPointer(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             } else {
@@ -167,10 +167,10 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
     SymbolList **symbolListP;
     symbolListP = &javaFqtTable.tab[i];
     while (*symbolListP != NULL) {
-        if (PPM_FREED_POINTER(*symbolListP)) {
+        if (ppmIsFreedPointer(*symbolListP)) {
             *symbolListP = (*symbolListP)->next;
             continue;
-        } else if (isFreedPointer((*symbolListP)->element) || PPM_FREED_POINTER((*symbolListP)->element)) {
+        } else if (isFreedPointer((*symbolListP)->element) || ppmIsFreedPointer((*symbolListP)->element)) {
             *symbolListP = (*symbolListP)->next;
             continue;
         } else {
@@ -192,7 +192,7 @@ static void includeListDeleteOutOfMemory(void) {
     StringList **pp;
     pp = & options.includeDirs;
     while (*pp!=NULL) {
-        if (PPM_FREED_POINTER(*pp)) {
+        if (ppmIsFreedPointer(*pp)) {
             *pp = (*pp)->next;
             continue;
         }
@@ -237,11 +237,11 @@ static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int
 static bool canContinueCachingClasses() {
     return CACHING_CLASSES && LANGUAGE(LANG_JAVA)
         && options.mode == XrefMode
-        && ppmMemoryIndex < (SIZE_ppmMemory/3)*2;
+        && ppmMemory.index < (SIZE_ppmMemory/3)*2;
 }
 
 void recoverCachePointZero(void) {
-    ppmMemoryIndex = cache.points[0].ppmMemoryIndex;
+    ppmMemory.index = cache.points[0].ppmMemoryIndex;
     recoverCachePoint(0, cache.points[0].nextLexemP, false);
 }
 
@@ -257,7 +257,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     log_trace("recovering cache point %d", cachePointIndex);
     cachePoint = &cache.points[cachePointIndex];
     if (!canContinueCachingClasses()) {
-        ppmMemoryIndex = cachePoint->ppmMemoryIndex;
+        ppmMemory.index = cachePoint->ppmMemoryIndex;
         if (CACHING_CLASSES)
             log_debug("flushing classes");
     }
@@ -408,7 +408,7 @@ void placeCachePoint(bool inputCaching) {
         return;
     cachePoint = &cache.points[cache.index];
     log_debug("placing cache point %d", cache.index);
-    fillCachePoint(cachePoint, currentBlock, ppmMemoryIndex, cxMemory->index, getMacroBodyMemoryIndex(), cache.free,
+    fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory->index, getMacroBodyMemoryIndex(), cache.free,
                    cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack,
                    javaStat, counters);
     cache.index++;

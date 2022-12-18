@@ -24,8 +24,7 @@ Memory *cxMemory=NULL;
 char stackMemory[SIZE_stackMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
 /* Static memory areas */
-char ppmMemory[SIZE_ppmMemory];
-int ppmMemoryIndex=0;
+Memory2 ppmMemory;
 
 
 /* This is used unless the fatalError function is set */
@@ -353,7 +352,7 @@ void smInit(Memory2 *memory, size_t size) {
 void *smAllocc(Memory2 *memory, int count, size_t size) {
     void *pointer = &memory->area[memory->index];
     assert(size > 0);
-    assert(count > 0);
+    assert(count >= 0);
     memory->index += count*size;
     if (memory->index > memory->size)
         fatalError(ERR_ST, "Memory overflow.", XREF_EXIT_ERR, __FILE__, __LINE__);
@@ -364,12 +363,17 @@ void *smAlloc(Memory2 *memory, size_t size) {
     return smAllocc(memory, 1, size);
 }
 
-/* Reallocates the last allocated area in 'memory' to be different size */
+/* Reallocates the most recently allocated area in 'memory' to be different size */
 void *smRealloc(Memory2 *memory, void *pointer, size_t oldSize, size_t newSize) {
     assert(pointer == &memory->area[memory->index-oldSize]);
     memory->index += newSize - oldSize;
     return pointer;
 }
+
+void *smReallocc(Memory2 *memory, void *pointer, int newCount, size_t size, int oldCount) {
+    return smRealloc(memory, pointer, oldCount*size, newCount*size);
+}
+
 
 void smFreeUntil(Memory2 *memory, void *pointer) {
     assert(isInMemory(pointer, memory));
@@ -377,9 +381,30 @@ void smFreeUntil(Memory2 *memory, void *pointer) {
 }
 
 static bool smIsBetween(Memory2 *memory, void *pointer, int low, int high) {
-    return pointer >= (void *)&memory->area + low && pointer < (void *)&memory->area + high;
+    return pointer >= (void *)&memory->area[low] && pointer < (void *)&memory->area[high];
 }
 
 bool smIsFreedPointer(Memory2 *memory, void *pointer) {
     return smIsBetween(memory, pointer, memory->index, memory->size);
+}
+
+/* Preprocessor Macro Memory */
+void *ppmAlloc(size_t size) {
+    return smAlloc(&ppmMemory, size);
+}
+
+void *ppmAllocc(int count, size_t size) {
+    return smAllocc(&ppmMemory, count, size);
+}
+
+void *ppmReallocc(void *pointer, int newCount, size_t size, int oldCount) {
+    return smReallocc(&ppmMemory, pointer, newCount, size, oldCount);
+}
+
+void ppmFreeUntil(void *pointer) {
+    smFreeUntil(&ppmMemory, pointer);
+}
+
+bool ppmIsFreedPointer(void *pointer) {
+    return smIsFreedPointer(&ppmMemory, pointer);
 }

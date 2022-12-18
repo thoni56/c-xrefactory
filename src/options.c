@@ -757,7 +757,7 @@ static void processProjectMarker(char *markerText, int markerLength, char *curre
         if (memoryKind==ALLOCATE_IN_SM) {                           \
             SM_ALLOCC(optMemory, target, count, type);              \
         } else if (memoryKind==ALLOCATE_IN_PP) {                    \
-            PPM_ALLOCC(target, count, type);                        \
+            target = ppmAllocc(count, sizeof(type));                \
         } else {                                                    \
             assert(0);                                              \
         }                                                           \
@@ -985,9 +985,9 @@ static void processClassPathString(char *cp) {
             log_debug("Done.");
         } else {
             // just path
-            PPM_ALLOCC(nn, strlen(np)+1, char);
+            nn = ppmAllocc(strlen(np)+1, sizeof(char));
             strcpy(nn,np);
-            PPM_ALLOC(*ll, StringList);
+            *ll = ppmAlloc(sizeof(StringList));
             **ll = (StringList){.string = nn, .next = NULL};
             ll = &(*ll)->next;
         }

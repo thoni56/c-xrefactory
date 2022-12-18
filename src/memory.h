@@ -79,17 +79,16 @@ typedef struct codeBlock {
 
 
 /* pre-processor macro definitions allocations */
-#define PPM_ALLOC(pointer, type)         {SM_ALLOC(ppmMemory, pointer, type);}
-#define PPM_ALLOCC(pointer, count, type) {SM_ALLOCC(ppmMemory, pointer, count, type);}
-#define PPM_REALLOCC(pointer, count, type, oldCount)	{SM_REALLOCC(ppmMemory, pointer, count, type, oldCount);}
-#define PPM_FREE_UNTIL(pointer)          {SM_FREE_UNTIL(ppmMemory, pointer);}
-#define PPM_FREED_POINTER(pointer) (                                     \
-        ((char*)pointer) >= ppmMemory + ppmMemoryIndex && ((char*)pointer) < ppmMemory + SIZE_ppmMemory \
-    )
+extern void *ppmAlloc(size_t size);
+extern void *ppmAllocc(int count, size_t size);
+extern void *ppmRealloc(int count, size_t newSize, size_t oldSize);
+extern void *ppmReallocc(void *pointer, int newCount, size_t size, int oldCount);
+extern void  ppmFreeUntil(void *pointer);
+extern bool ppmIsFreedPointer(void *pointer);
 
 /* java class-file read allocations ( same memory as cpp !!!!!!!! ) */
-#define CF_ALLOC(pointer, type)         {SM_ALLOC(ppmMemory, pointer, type);}
-#define CF_ALLOCC(pointer, count, type) {SM_ALLOCC(ppmMemory, pointer, count, type);}
+#define CF_ALLOC(pointer, type)         {pointer = smAlloc(&ppmMemory, sizeof(type));}
+#define CF_ALLOCC(pointer, count, type) {pointer = smAllocc(&ppmMemory, count, sizeof(type));}
 
 
 /* ************************************************************************** */
@@ -104,8 +103,9 @@ extern void smInit(Memory2 *memory, size_t size);
 extern void *smAllocc(Memory2 *memory, int count, size_t size);
 extern void *smAlloc(Memory2 *memory, size_t size);
 extern void *smRealloc(Memory2 *memory, void *pointer, size_t oldSize, size_t newSize);
+extern void *smReallocc(Memory2 *memory, void *pointer, int newCount, size_t size, int oldCount);
 extern void smFreeUntil(Memory2 *memory, void *pointer);
-
+extern bool smIsFreedPointer(Memory2 *memory, void *pointer);
 
 /***********************************************************************/
 
@@ -125,8 +125,7 @@ extern int olcxMemoryAllocatedBytes;
 /* SM (Static memory) areas */
 extern char stackMemory[];
 
-extern char ppmMemory[];
-extern int ppmMemoryIndex;
+extern Memory2 ppmMemory;
 
 
 /* Inject some error functions to remove linkage dependency */

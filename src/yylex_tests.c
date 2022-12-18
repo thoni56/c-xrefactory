@@ -1,6 +1,8 @@
 #include <cgreen/cgreen.h>
 
+#include "constants.h"
 #include "lexembuffer.h"
+#include "memory.h"
 #include "yylex.h"
 /* Declare semi-private functions */
 void processDefineDirective(bool hasArguments);
@@ -49,6 +51,8 @@ BeforeEach(Yylex) {
     initNoFileIndex();
 
     initSymbolTable(100);
+
+    smInit(&ppmMemory, SIZE_ppmMemory);
 
     always_expect(initCharacterBuffer);
 }
