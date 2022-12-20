@@ -153,6 +153,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
    by code left outside the extraction, that declaration is moved to the
    extracted function. This should probably trigger "structure error".
 ** TODO Bug: translates a bool to int when completing arguments (probably elsewhere also)
+** TODO Bug: with g7871f and renaming options.allAllocatedStrings generates "cx_memory resizing required"
 * TODO Separate the options into sections and move them to separate structures
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
