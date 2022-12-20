@@ -1405,7 +1405,7 @@ static bool processCOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-create")==0)
         options.create = true;
     else if (strncmp(argv[i], "-compiler=", 10)==0) {
-        options.compiler = &argv[i][10];
+        options.compiler = createOptionString(&options.compiler, &argv[i][10]);
     } else return false;
     *argi = i;
     return true;
