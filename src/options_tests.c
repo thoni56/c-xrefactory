@@ -5,6 +5,7 @@
 #include "filetable.h"
 #include "globals.h"
 #include "log.h"
+#include "memory.h"
 #include "options.h"
 
 #include "classfilereader.mock"
@@ -425,4 +426,15 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
                                                optionsFilename, sectionName);
 
     assert_that(sectionName, is_equal_to_string("ffmpeg"));
+}
+
+Ensure(Options, makes_note_of_option_with_allocated_string) {
+    createOptionString(&options.compiler, "compiler");
+
+    assert_that(options.allAllocatedStrings, is_not_null);
+    assert_that(stringPointerLocationOf(options.allAllocatedStrings), is_equal_to(&options.compiler));
+    assert_that(nextStringPointerLocationList(options.allAllocatedStrings), is_null);
+
+    assert_that(dm_isBetween(&options.memory, *stringPointerLocationOf(options.allAllocatedStrings), 0, SIZE_optMemory));
+    assert_that(dm_isBetween(&options.memory, options.allAllocatedStrings, 0, SIZE_optMemory));
 }
