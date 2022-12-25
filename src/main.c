@@ -630,8 +630,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // And it can't be removed because of multiple tests
     // failing with "cx_memory resizing required, see file TROUBLES"
     // This just shows how impenetrable the memory management is...
-    char *sss = cxAlloc(CX_MEMORY_CHUNK_SIZE);
-    cxFreeUntil(sss);
+    char *tempAllocated = cxAlloc(CX_MEMORY_CHUNK_SIZE);
+    cxFreeUntil(tempAllocated);
 
     initReferenceTable(MAX_CXREF_ENTRIES);
 
@@ -678,20 +678,20 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     if (options.refactoringMode == RefactoryMode) {
         // some more memory for refactoring task
         assert(options.cxMemoryFactor>=1);
-        sss = (char *)cxAlloc(6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
-        cxFreeUntil(sss);
+        tempAllocated = (char *)cxAlloc(6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
+        cxFreeUntil(tempAllocated);
     }
     if (options.mode==XrefMode) {
         // get some memory if cross referencing
         assert(options.cxMemoryFactor>=1);
-        sss = (char *)cxAlloc(3*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
-        cxFreeUntil(sss);
+        tempAllocated = (char *)cxAlloc(3*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
+        cxFreeUntil(tempAllocated);
     }
     if (options.cxMemoryFactor > 1) {
         // reinit cxmemory taking into account -mf
         // just make an allocation provoking resizing
-        sss = (char *)cxAlloc(options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
-        cxFreeUntil(sss);
+        tempAllocated = (char *)cxAlloc(options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
+        cxFreeUntil(tempAllocated);
     }
 
     // must be after processing command line options

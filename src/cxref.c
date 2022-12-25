@@ -3646,6 +3646,12 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
     return false;
 }
 
+static void fillTrivialSpecialRefItem(ReferencesItem *ddd , char *name) {
+    fillReferencesItem(ddd, name, cxFileHashNumber(name),
+                       noFileIndex, noFileIndex, TypeUnknown, StorageAuto,
+                       ScopeAuto, AccessDefault, CategoryLocal);
+}
+
 static void olcxMMPreCheck(void) {
     OlcxReferences    *diffrefs, *origrefs, *newrefs;
     ReferencesItem     dri;

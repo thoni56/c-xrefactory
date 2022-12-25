@@ -578,12 +578,6 @@ void printSymbolLinkName(FILE *ff, SymbolsMenu *ss) {
     fprintf(ff, "%s", ttt);
 }
 
-void fillTrivialSpecialRefItem(ReferencesItem *ddd , char *name) {
-    fillReferencesItem(ddd, name, cxFileHashNumber(name),
-                       noFileIndex, noFileIndex, TypeUnknown, StorageAuto,
-                       ScopeAuto, AccessDefault, CategoryLocal);
-}
-
 /* ***************************************************************** */
 
 /* Can handle overlapping strings and returns a pointer to position after the copy */

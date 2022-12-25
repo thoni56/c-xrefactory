@@ -14,10 +14,6 @@ void classFileParse(void) {
   mock();
 }
 
-void fillTrivialSpecialRefItem(ReferencesItem *ddd, char *name) {
-  mock(ddd, name);
-}
-
 void dumpOptions(int nargc, char **nargv) {
   mock(nargc, nargv);
 }
