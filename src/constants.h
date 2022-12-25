@@ -87,7 +87,7 @@
 #define MACRO_INPUT_STACK_SIZE	500		/* max depth of macro bodies nesting */
 
 #define MACRO_BODY_BUFFER_SIZE		20000		/* allocation unit for macro body */
-#define MACRO_ARGUMENTS_BUFFER_SIZE	20000		/* allocation unit for macro act arg */
+#define MACRO_ARGUMENTS_BUFFER_SIZE	 2000		/* allocation unit for macro act arg */
 
 /* **************  size of file reading buffers ***************** */
 

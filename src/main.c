@@ -671,26 +671,28 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     processOptions(argc, argv, PROCESS_FILE_ARGUMENTS);
     processFileArguments();
 
-#if 0
+    /* Ensure CX-memory has room enough for things by invocing memory resize if not */
+    /* TODO Is this because CX-memory is just discarded and
+     * reallocated empty when resizing is necessary? And the various
+     * modes need some initial amount of memory? */
     if (options.refactoringMode == RefactoryMode) {
         // some more memory for refactoring task
         assert(options.cxMemoryFactor>=1);
         sss = (char *)cxAlloc(6*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
-        CX_FREE_UNTIL(sss);
+        cxFreeUntil(sss);
     }
     if (options.mode==XrefMode) {
         // get some memory if cross referencing
         assert(options.cxMemoryFactor>=1);
         sss = (char *)cxAlloc(3*options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
-        CX_FREE_UNTIL(sss);
+        cxFreeUntil(sss);
     }
     if (options.cxMemoryFactor > 1) {
         // reinit cxmemory taking into account -mf
         // just make an allocation provoking resizing
         sss = (char *)cxAlloc(options.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE);
-        CX_FREE_UNTIL(sss);
+        cxFreeUntil(sss);
     }
-#endif
 
     // must be after processing command line options
     initCaching();
