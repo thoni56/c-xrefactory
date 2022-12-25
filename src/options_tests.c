@@ -431,10 +431,10 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
 Ensure(Options, makes_note_of_option_with_allocated_string) {
     createOptionString(&options.compiler, "compiler");
 
-    assert_that(options.allAllocatedStrings, is_not_null);
-    assert_that(stringPointerLocationOf(options.allAllocatedStrings), is_equal_to(&options.compiler));
-    assert_that(nextStringPointerLocationList(options.allAllocatedStrings), is_null);
+    assert_that(options.allPointersToAllocatedAreas, is_not_null);
+    assert_that(stringPointerLocationOf(options.allPointersToAllocatedAreas), is_equal_to(&options.compiler));
+    assert_that(nextStringPointerLocationList(options.allPointersToAllocatedAreas), is_null);
 
-    assert_that(dm_isBetween(&options.memory, *stringPointerLocationOf(options.allAllocatedStrings), 0, SIZE_optMemory));
-    assert_that(dm_isBetween(&options.memory, options.allAllocatedStrings, 0, SIZE_optMemory));
+    assert_that(dm_isBetween(&options.memory, *stringPointerLocationOf(options.allPointersToAllocatedAreas), 0, SIZE_optMemory));
+    assert_that(dm_isBetween(&options.memory, options.allPointersToAllocatedAreas, 0, SIZE_optMemory));
 }

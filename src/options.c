@@ -319,7 +319,7 @@ static StringPointerLocationList *concatStringPointerLocation(char **location, S
 
 static void addStringAddressToAllocatedList(char **location) {
     bool exists = false;
-    for (StringPointerLocationList *ll=options.allAllocatedStrings; ll!=NULL; ll=ll->next) {
+    for (StringPointerLocationList *ll=options.allPointersToAllocatedAreas; ll!=NULL; ll=ll->next) {
         // reassignement, do not keep two copies
         if (ll->location == location) {
             exists = true;
@@ -327,7 +327,7 @@ static void addStringAddressToAllocatedList(char **location) {
         }
     }
     if (!exists) {
-        options.allAllocatedStrings = concatStringPointerLocation(location, options.allAllocatedStrings);
+        options.allPointersToAllocatedAreas = concatStringPointerLocation(location, options.allPointersToAllocatedAreas);
     }
 }
 
@@ -361,7 +361,7 @@ static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
 
 void deepCopyOptionsFromTo(Options *src, Options *dest) {
     memcpy(dest, src, sizeof(Options));
-    for (StringPointerLocationList **l= &src->allAllocatedStrings; *l!=NULL; l = &(*l)->next) {
+    for (StringPointerLocationList **l= &src->allPointersToAllocatedAreas; *l!=NULL; l = &(*l)->next) {
         copyOptionShiftPointer((*l)->location, dest, src);
         copyOptionShiftPointer(((char**)&(*l)->location), dest, src);
         copyOptionShiftPointer(((char**)l), dest, src);

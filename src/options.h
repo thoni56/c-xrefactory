@@ -151,7 +151,7 @@ typedef struct options {
     Variable variables[MAX_SET_GET_OPTIONS];
 
     // list of strings
-    StringPointerLocationList *allAllocatedStrings;
+    StringPointerLocationList *allPointersToAllocatedAreas;
 
     // Memory area for option strings
     Memory memory;
