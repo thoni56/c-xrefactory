@@ -1,4 +1,4 @@
-PROTOCOL_ITEM(String, C_XREF_VERSION_NUMBER,            "1.6.19")
+PROTOCOL_ITEM(String, C_XREF_VERSION_NUMBER,            "1.6.20")
 PROTOCOL_ITEM(String, C_XREF_FILE_VERSION_NUMBER,       "1.6.0")
 
 PROTOCOL_ITEM(String, PPC_NO_TAG,                       "-- no tag --")
