@@ -474,21 +474,31 @@ point. Tag data?
 Mostly `c-xrefactory` does its own memory management. It uses a number
 of different strategies, which has/had its own macros.
 
-==== Dynamic memory allocation
+===== "Static" memory
 
-===== Using the Memory structure
+For the memory usages where the size of the total area is static all
+memory handling macros have been refactored int functions using the
+`Memory2` struct for administration.
 
-This structure is used for one of the two dynamic memory allocation
-schemes, one where overflow handling can be triggered. The structure
-contains a function pointer that can be invoked when overflow occurs.
+For `ft` (file table), `ppm` (pre-processor macro) and `cf` (class
+file) memory usages all uses the new `Memory2` for their memory
+administration. Functions with the mentioned prefixes are just
+convenience functions that works on the corresponding memory
+administraion structure.
 
-The scary part of this is that it assumes that directly after it,
-there is a area of some arbitrary size that can be used for
-allocation. `dm_alloc()`, previously a macro, returns pointers into
-that area.
+===== Dynamic memory allocation
 
-(Not all compilers and/or architectures are happy with this, so it is
-a priority to do away with this.)
+The `Memory` structure is used for one of the two dynamic memory
+allocation schemes, where overflow handling can be triggered. The
+structure contains a function pointer that can be invoked when
+overflow occurs.
+
+The scary part here is that it assumes that directly after it, there
+is a area of some arbitrary size that can be used for allocation. (Not
+all compilers and/or architectures are happy with this, so it is a
+priority to do away with this.)
+
+`dm_alloc()`, previously a macro, returns pointers into that area.
 
 There are two instances of this type of memory:
 
@@ -498,25 +508,45 @@ There are two instances of this type of memory:
 - `optMemory` - which is part of the options structure that is saved,
   copied and what not, cannot expand as the overflow handler calls
   `fatalError()`.
-  
-  
-`cxMemoryOverflowHandler()` just throws all cxMemory away and
-allocates a new area containing a fresh Memory structure as the head
-and an empty area to allocate from.
+ 
+`cxMemoryOverflowHandler()` on the other hand, just throws all
+cxMemory away and allocates a new, larger, area containing a fresh
+Memory structure as the head and an empty area to allocate from.
 
-It is strange that `optMemory` is using the Memory structure, it could
-easily have been managed as a static area...
 
 ===== Using malloc()
 
 There is a second type of dynamic memory, of which there is only one,
 the `olcxMemory`. In fact, this is not actually an area, more like a
 normal dynamic allocation. Each area is just `malloc()`-ed, but the
-size is tallied and when the maximum is reached the
-`olcx_memory_alloc()` will do a fatal exit.
+size is tallied and when the maximum is reached `olcx_memory_alloc()`
+will do a fatal exit.
 
 This memory allocation is used for temporary areas during refactorings
 for example. So `olcx_memory_free()` also exist and is used.
+
+==== Option Memory
+
+The memory handling for options deserves special explanation and attention.
+
+When defining options, from the command line, options file or piped
+from an editor process, the strings need to be preserved and
+stored. This is done by "dynamically" allocating such areas in the
+"options memory", `optMemory`.
+
+But since this is a integral part of the options structure, whenever
+an `Options` structure is copied, special care has to be taken so that
+the fields in the target structure points into the memory area of the
+target structure and not, as they did in the original structure, into
+the memory of the source structure.
+
+There are functions that, through tricky memory arithmetic, adjust all
+pointers to point correctly. To this end, all memory locations in an
+`Options` structure are collected in a linked list which can be
+traversed.
+
+NOTE: the nodes in the linked list are also allocated in the "dynamic"
+memory of the Options structure.
 
 
 === Configuration

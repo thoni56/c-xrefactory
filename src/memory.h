@@ -38,6 +38,7 @@ typedef struct codeBlock {
     Stack memory synchronized with program block structure. New block
     with stackMemoryBlockStart();
 
+    Convenience functions:
 */
 #define StackMemoryAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
 #define StackMemoryAllocC(n, t) ((t*) stackMemoryAlloc((n)*sizeof(t)))
@@ -73,11 +74,10 @@ extern void *smReallocc(Memory2 *memory, void *pointer, int newCount, size_t siz
 extern void smFreeUntil(Memory2 *memory, void *pointer);
 extern bool smIsFreedPointer(Memory2 *memory, void *pointer);
 
+
 /***********************************************************************/
 
 /* DM (Dynamic Memory) areas, can possibly expand using overflow handler */
-
-
 
 extern CodeBlock *currentBlock;
 
@@ -96,7 +96,7 @@ extern Memory2 ppmMemory;
 
 /* Inject some error functions to remove linkage dependency */
 extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus,
-                                                           char *file, int line));
+							   char *file, int line));
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
 extern void setErrorHandlerForMemory(void (*function)(int code, char *message));
 
