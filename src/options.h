@@ -33,6 +33,13 @@ typedef enum updateType {
 } UpdateType;
 
 
+/* protected data type */
+typedef struct stringPointerLocationList StringPointerLocationList;
+
+extern char **stringPointerLocationOf(StringPointerLocationList *list);
+extern StringPointerLocationList *nextStringPointerLocationList(StringPointerLocationList *list);
+
+
 
 typedef struct options {
     /* GENERAL */
@@ -144,7 +151,7 @@ typedef struct options {
     Variable variables[MAX_SET_GET_OPTIONS];
 
     // list of strings
-    struct stringPointerLocationList *allAllocatedStrings;
+    StringPointerLocationList *allAllocatedStrings;
 
     // Memory area for option strings
     Memory memory;

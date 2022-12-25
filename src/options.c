@@ -295,11 +295,19 @@ static void *optAlloc(size_t size) {
     return dm_alloc(&options.memory, size);
 }
 
-
+/* Protected type */
 typedef struct stringPointerLocationList {
     char **location;
     struct stringPointerLocationList *next;
 } StringPointerLocationList;
+
+char **stringPointerLocationOf(StringPointerLocationList *list) {
+    return list->location;
+}
+
+StringPointerLocationList *nextStringPointerLocationList(StringPointerLocationList *list) {
+    return list->next;
+}
 
 static StringPointerLocationList *concatStringPointerLocation(char **location, StringPointerLocationList *next) {
     StringPointerLocationList *list;
