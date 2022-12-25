@@ -7,15 +7,29 @@ JavaStat s_initJavaStat;
 
 void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
                      char membFlag, short unsigned  accFlags) {
-    mock(nestedSpec, cl, membFlag, accFlags);
+    nestedSpec->cl = cl;
+    nestedSpec->membFlag = membFlag;
+    nestedSpec->accFlags = accFlags;
 }
 
 void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
-                  int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
-                  char *namedPackageDir, SymbolTable *locals, IdList *lastParsedName,
+                  int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
+                  char *namedPackagePath, SymbolTable *locals, IdList *lastParsedName,
                   unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileIndex,
                   JavaStat *next) {
-    mock();
+    javaStat->className = className;
+    javaStat->thisType = thisType;
+    javaStat->thisClass = thisClass;
+    javaStat->currentNestedIndex = currentNestedIndex;
+    javaStat->currentPackage = currentPackage;
+    javaStat->unnamedPackagePath = unnamedPackagePath;
+    javaStat->namedPackagePath = namedPackagePath;
+    javaStat->locals = locals;
+    javaStat->lastParsedName = lastParsedName;
+    javaStat->methodModifiers = methodModifiers;
+    javaStat->cp = parsingPositions;
+    javaStat->classFileIndex = classFileIndex;
+    javaStat->next = next;
 }
 
 void javaCheckForPrimaryStart(Position *cpos, Position *pp) {

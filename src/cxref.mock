@@ -6,14 +6,25 @@
 
 void fillReference(Reference *reference, Usage usage, Position position,
                     Reference *next) {
-    /* NOTE can't mock UsageBits or Position */
-    mock(reference, next, usage.kind);
+    reference->usage = usage;
+    reference->position = position;
+    reference->next = next;
 }
 
-extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
-                               int vFunClass, Type symType, Storage storage, ReferenceScope scope,
-                               Access accessFlags, ReferenceCategory category) {
-    mock(referencesItem, name, fileHash, vApplClass, vFunClass, symType, storage, scope, accessFlags, category);
+void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+                        int vFunClass, Type symType, Storage storage, ReferenceScope scope,
+                        Access accessFlags, ReferenceCategory category) {
+    referencesItem->name = name;
+    referencesItem->fileHash = fileHash;
+    referencesItem->vApplClass = vApplClass;
+    referencesItem->vFunClass = vFunClass;
+    referencesItem->references = NULL;
+    referencesItem->next = NULL;
+    referencesItem->type = symType;
+    referencesItem->storage = storage;
+    referencesItem->scope = scope;
+    referencesItem->access = accessFlags;
+    referencesItem->category = category;
 }
 
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem s,
@@ -22,7 +33,19 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem s,
                      char defUsage, struct position defpos, int outOnLine,
                      struct editorMarkerList *markers,	/* for refactory only */
                      SymbolsMenu *next) {
-    mock();
+    symbolsMenu->references = s;
+    symbolsMenu->selected = selected;
+    symbolsMenu->visible = visible;
+    symbolsMenu->ooBits = ooBits;
+    symbolsMenu->olUsage = olUsage;
+    symbolsMenu->vlevel = vlevel;
+    symbolsMenu->refn = refn;
+    symbolsMenu->defRefn = defRefn;
+    symbolsMenu->defUsage = defUsage;
+    symbolsMenu->defpos = defpos;
+    symbolsMenu->outOnLine = outOnLine;
+    symbolsMenu->markers = markers;
+    symbolsMenu->next= next;
 }
 
 int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {

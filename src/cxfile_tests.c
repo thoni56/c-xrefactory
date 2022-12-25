@@ -76,7 +76,6 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     expect(referenceFileCountMatches, will_return(true));
 
     expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(xfilesFilePointer));
-    expect(initCharacterBuffer, when(file, is_equal_to(xfilesFilePointer)));
 
     /* Version marking always starts a file */
     expect_characters("34v", false);

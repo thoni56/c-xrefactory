@@ -112,7 +112,6 @@ Current Mikado:
   with error message "size of #macro_argument exceeded MACRO_UNIT_SIZE"
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
 * TODO Push options.xref2 into ppc...() functions or create if necessary?
-* TODO All fillXXX() should not be mocked but have the same body as the real one
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
 * TODO Add yacc parser construct for field in yystype ('$<field>$')
@@ -153,7 +152,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
    by code left outside the extraction, that declaration is moved to the
    extracted function. This should probably trigger "structure error".
 ** TODO Bug: translates a bool to int when completing arguments (probably elsewhere also)
-** TODO Bug: with g7871f and renaming options.allAllocatedStrings generates "cx_memory resizing required"
+** DONE Bug: with g7871f and renaming options.allAllocatedStrings generates "cx_memory resizing required"
 * TODO Separate the options into sections and move them to separate structures
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
@@ -204,6 +203,7 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
 
+* DONE All fillXXX() should not be mocked but have the same body as the real one
 * DONE Modules. Better use of modules (Clean Code/Architecture/Hexagonal)
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
