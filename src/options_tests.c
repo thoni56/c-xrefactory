@@ -457,6 +457,19 @@ Ensure(Options, collects_option_field_that_allocate_a_string_in_options_space) {
     assert_that(dm_isBetween(&options.memory, options.compiler, 0, options.memory.index));
 }
 
+Ensure(Options, collects_variable_as_allocating_two_strings_in_options_space) {
+    setOptionVariable("ENV", "env");
+
+    assert_that(containsPointerLocation(options.allOptionFieldsPointingToAllocatedAreas,
+                                        (void **)&options.variables[options.variablesCount-1].name));
+    assert_that(containsPointerLocation(options.allOptionFieldsPointingToAllocatedAreas,
+                                        (void **)&options.variables[options.variablesCount-1].value));
+    assert_that(dm_isBetween(&options.memory, options.variables[0].name, 0, options.memory.index));
+    assert_that(dm_isBetween(&options.memory, options.variables[0].value, 0, options.memory.index));
+    assert_that(getOptionVariable("ENV"), is_equal_to_string("env"));
+}
+
+
 Ensure(Options, collects_option_field_that_allocate_a_string_list_in_options_space) {
     addToStringListOption(&options.includeDirs, "includeDir1");
 

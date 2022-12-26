@@ -250,49 +250,6 @@ static void usage() {
 }
 
 
-void setOptionVariable(char *name, char *value) {
-    if (options.variablesCount+1>=MAX_SET_GET_OPTIONS) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff, "maximum of %d -set options reached", MAX_SET_GET_OPTIONS);
-        errorMessage(ERR_ST, tmpBuff);
-        options.variablesCount--;
-    }
-
-    bool found = false;
-    int i;
-    for (i=0; i<options.variablesCount; i++) {
-        assert(options.variables[i].name);
-        if (strcmp(options.variables[i].name, name)==0) {
-            found = true;
-            break;
-        }
-    }
-    if (!found) {
-        options.variables[i].name = createOptionString(&options.variables[i].name, name);
-    }
-    if (!found || strcmp(options.variables[i].value, value)!=0) {
-        options.variables[i].value = createOptionString(&options.variables[i].value, value);
-    }
-    log_debug("setting variable '%s' to '%s'", name, value);
-    if (!found)
-        options.variablesCount++;
-}
-
-
-char *getOptionVariable(char *name) {
-    char *value = NULL;
-    int n = options.variablesCount;
-
-    for (int i=0; i<n; i++) {
-        //&fprintf(dumpOut,"checking (%s) %s\n",options.variables.name[i], options.variables.value[i]);
-        if (strcmp(options.variables[i].name, name)==0) {
-            value = options.variables[i].value;
-            break;
-        }
-    }
-    return value;
-}
-
 static void *optAlloc(size_t size) {
     return dm_alloc(&options.memory, size);
 }
@@ -336,6 +293,16 @@ static void addPointerToAllocatedList(void **location) {
 
 }
 
+static void addOptionToAllocatedList(void **location) {
+    for (PointerLocationList *l=options.allOptionFieldsPointingToAllocatedAreas; l!=NULL; l=l->next) {
+        // reassignement, do not keep two copies
+        if (l->location == location)
+            return;
+    }
+    options.allOptionFieldsPointingToAllocatedAreas = concatPointerLocation(location, options.allOptionFieldsPointingToAllocatedAreas);
+
+}
+
 static void allocateOptionSpace(void **location, int size) {
     *location = optAlloc(size);
     addPointerToAllocatedList(location);
@@ -343,7 +310,7 @@ static void allocateOptionSpace(void **location, int size) {
 
 /* New functions for allocating, and registering, strings for options */
 void allocateStringForOption(void **pointerToOption, char *string) {
-    options.allOptionFieldsPointingToAllocatedAreas = concatPointerLocation(pointerToOption, options.allPointersToAllocatedAreas);
+    addOptionToAllocatedList(pointerToOption);
     char *allocated = optAlloc(strlen(string)+1);
     strcpy(allocated, string);
     *pointerToOption = allocated;
@@ -369,8 +336,7 @@ static StringList *concatStringList(StringList *list, char *string) {
 
 void addToStringListOption(StringList **pointerToOption, char *string) {
     if (*pointerToOption == NULL) {
-        options.allOptionFieldsPointingToAllocatedAreas = concatPointerLocation((void **)pointerToOption,
-                                                                          options.allPointersToAllocatedAreas);
+        addOptionToAllocatedList((void **)pointerToOption);
         *pointerToOption = concatStringList(*pointerToOption, string);
     } else
         concatStringList(*pointerToOption, string);
@@ -414,6 +380,51 @@ void addStringListOption(StringList **stringListOptionP, char *string) {
     allocateOptionSpace((void**)list, sizeof(StringList));
     (*list)->string = createOptionString(&(*list)->string, string);
     (*list)->next = NULL;
+}
+
+void setOptionVariable(char *name, char *value) {
+    if (options.variablesCount+1>=MAX_SET_GET_OPTIONS) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff, "maximum of %d -set options reached", MAX_SET_GET_OPTIONS);
+        errorMessage(ERR_ST, tmpBuff);
+        options.variablesCount--;
+    }
+
+    bool found = false;
+    int i;
+    for (i=0; i<options.variablesCount; i++) {
+        assert(options.variables[i].name);
+        if (strcmp(options.variables[i].name, name)==0) {
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        options.variables[i].name = createOptionString(&options.variables[i].name, name);
+        addOptionToAllocatedList((void *)&options.variables[i].name);
+    }
+    if (!found || strcmp(options.variables[i].value, value)!=0) {
+        options.variables[i].value = createOptionString(&options.variables[i].value, value);
+        addOptionToAllocatedList((void *)&options.variables[i].value);
+    }
+    log_debug("setting variable '%s' to '%s'", name, value);
+    if (!found)
+        options.variablesCount++;
+}
+
+
+char *getOptionVariable(char *name) {
+    char *value = NULL;
+    int n = options.variablesCount;
+
+    for (int i=0; i<n; i++) {
+        //&fprintf(dumpOut,"checking (%s) %s\n",options.variables.name[i], options.variables.value[i]);
+        if (strcmp(options.variables[i].name, name)==0) {
+            value = options.variables[i].value;
+            break;
+        }
+    }
+    return value;
 }
 
 static void scheduleCommandLineEnteredFileToProcess(char *fn) {
