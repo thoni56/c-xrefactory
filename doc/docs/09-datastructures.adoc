@@ -100,4 +100,29 @@ fully understand yet.
 TODO?: Strip away the various "regimes" into more separated concerns
 and handle options differently.
 
+=== Options
 
+The `Options` datastructure is used to collect options from the
+command line as well as from options/configuration files and piped
+options from the editor client using process-to-process
+communication.
+
+It consists of a collection of fields of the types
+
+- elementary types (bool, int, ...)
+- string (pointers to strings)
+- lists of strings (linked lists of pointers to strings)
+
+==== Allocation & Copying
+
+It has its own allocation using `optAlloc` which allocates in a
+separate area, currently part of the options structure and utilizing
+"dynamic allocation" (`dm_` functions on the `Memory` structure).
+
+The Options structure are copied multiple times during a session, both
+as a backup (`savedOptions`) and into a separate options structure
+used by the Refactorer (`refactoringOptions`).
+
+Since the options memory is then also copied, all pointers into the
+options memory need to be updated. To be able to do this, the options
+structure contains lists of addresses that needs to by "shifted".

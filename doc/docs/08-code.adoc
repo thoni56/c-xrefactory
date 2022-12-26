@@ -493,11 +493,6 @@ allocation schemes, where overflow handling can be triggered. The
 structure contains a function pointer that can be invoked when
 overflow occurs.
 
-The scary part here is that it assumes that directly after it, there
-is a area of some arbitrary size that can be used for allocation. (Not
-all compilers and/or architectures are happy with this, so it is a
-priority to do away with this.)
-
 `dm_alloc()`, previously a macro, returns pointers into that area.
 
 There are two instances of this type of memory:
