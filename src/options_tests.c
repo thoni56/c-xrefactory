@@ -514,7 +514,7 @@ Ensure(Options, can_deep_copy_options_with_two_string_options) {
     assert_that(dm_isBetween(&copy.memory, copy.classpath, 0, copy.memory.index)); /* ... in the copy's memory */
 }
 
-xEnsure(Options, can_deep_copy_options_with_one_stringlist_option) {
+Ensure(Options, can_deep_copy_options_with_one_stringlist_option_with_one_string) {
     addToStringListOption(&options.includeDirs, ".");
 
     Options copy;
@@ -522,8 +522,40 @@ xEnsure(Options, can_deep_copy_options_with_one_stringlist_option) {
 
     /* Strings are the same */
     assert_that(options.includeDirs->string, is_equal_to_string(copy.includeDirs->string));
-    /* But they are stored in different locations... */
+    /* And they are stored in different locations... */
     assert_that(options.includeDirs->string, is_not_equal_to(copy.includeDirs->string));
     /* ... in the copy's memory */
     assert_that(dm_isBetween(&copy.memory, copy.includeDirs->string, 0, copy.memory.index));
+}
+
+Ensure(Options, can_deep_copy_options_with_one_stringlist_option_with_two_strings) {
+    addToStringListOption(&options.includeDirs, ".");
+    addToStringListOption(&options.includeDirs, "include");
+
+    Options copy;
+    deepCopyOptionsFromTo_New(&options, &copy);
+
+    /* Strings are the same */
+    assert_that(options.includeDirs->next->string, is_equal_to_string(copy.includeDirs->next->string));
+    /* And they are stored in different locations... */
+    assert_that(options.includeDirs->next->string, is_not_equal_to(copy.includeDirs->next->string));
+    /* ... in the copy's memory */
+    assert_that(dm_isBetween(&copy.memory, copy.includeDirs->next->string, 0, copy.memory.index));
+}
+
+Ensure(Options, can_deep_copy_options_with_two_stringlist_option_with_two_strings) {
+    addToStringListOption(&options.includeDirs, ".");
+    addToStringListOption(&options.includeDirs, "include");
+    addToStringListOption(&options.pruneNames, "prune1");
+    addToStringListOption(&options.pruneNames, "prune2");
+
+    Options copy;
+    deepCopyOptionsFromTo_New(&options, &copy);
+
+    /* Strings are the same */
+    assert_that(options.pruneNames->next->string, is_equal_to_string(copy.pruneNames->next->string));
+    /* And they are stored in different locations... */
+    assert_that(options.pruneNames->next->string, is_not_equal_to(copy.pruneNames->next->string));
+    /* ... in the copy's memory */
+    assert_that(dm_isBetween(&copy.memory, copy.pruneNames->next->string, 0, copy.memory.index));
 }

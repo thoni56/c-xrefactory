@@ -383,6 +383,22 @@ static void shiftOptions(LocationList *list, Options *src, Options *dst) {
     }
 }
 
+static void shiftStringList(StringList *list, Options *src, Options *dst) {
+    for (StringList *l = list; l != NULL; l = l->next) {
+        assert(dm_isBetween(&dst->memory, l, 0, dst->memory.index));
+        shiftPointer((void **)&l->string, &src->memory.block, &dst->memory.block);
+        assert(dm_isBetween(&dst->memory, l->string, 0, dst->memory.index));
+        shiftPointer((void **)&l->next, &src->memory.block, &dst->memory.block);
+    }
+}
+
+static void shiftStringLists(LocationList *list, Options *src, Options *dst) {
+    for (LocationList *l = list; l != NULL; l = l->next) {
+        shiftPointer((void **)l->location, src, dst);
+        shiftStringList((StringList *)*l->location, src, dst);
+    }
+}
+
 
 void deepCopyOptionsFromTo_New(Options *src, Options *dst) {
     memcpy(dst, src, sizeof(Options));
@@ -398,7 +414,7 @@ void deepCopyOptionsFromTo_New(Options *src, Options *dst) {
     /* Now we can shift the list... */
     shiftLocationList(dst->allUsedStringListOptions, src, dst);
     /* ... and the StringLists */
-    // shiftStringLists(dst->allUsedStringListOptions, src, dst);
+    shiftStringLists(dst->allUsedStringListOptions, src, dst);
 }
 
 
