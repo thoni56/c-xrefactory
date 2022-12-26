@@ -428,7 +428,7 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
     assert_that(sectionName, is_equal_to_string("ffmpeg"));
 }
 
-Ensure(Options, makes_note_of_option_with_allocated_string) {
+Ensure(Options, collects_address_to_option_with_allocated_string) {
     createOptionString(&options.compiler, "compiler");
 
     assert_that(options.allPointersToAllocatedAreas, is_not_null);
@@ -437,4 +437,19 @@ Ensure(Options, makes_note_of_option_with_allocated_string) {
 
     assert_that(dm_isBetween(&options.memory, *pointerLocationOf(options.allPointersToAllocatedAreas), 0, SIZE_optMemory));
     assert_that(dm_isBetween(&options.memory, options.allPointersToAllocatedAreas, 0, SIZE_optMemory));
+}
+
+/* We need new functionality that registers only option fields that
+ * needs to be "shifted" as they need to be shifted wrt. to the
+ * Options structure, as opposed to pointer into the options memory
+ * which needs to be shifted wrt. that memory. (Which will be
+ * allocated and not a part of the options structure at some point
+ * when we move to Memory2 for options.memory) */
+Ensure(Options, collects_all_option_fields_that_allocate_in_options_space) {
+    allocateStringForOption((void **)&options.classpath, "classpath");
+
+    assert_that(options.allOptionFieldsWithAllocatedAreas, is_not_null);
+    assert_that(options.classpath, is_not_null);
+    assert_that(options.classpath, is_equal_to_string("classpath"));
+    assert_that(dm_isBetween(&options.memory, options.classpath, 0, options.memory.index));
 }

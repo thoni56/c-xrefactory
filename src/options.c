@@ -137,6 +137,8 @@ Options presetOptions = {
     // pending memory for string values
     NULL,                       /* allAllocatedStrings */
 
+    NULL,                       /* allOptionFieldsWithAllocatedAreas */
+
     {0, },                      /* memory - options string storage */
 };
 
@@ -297,11 +299,11 @@ static void *optAlloc(size_t size) {
 
 /* Protected type */
 typedef struct pointerLocationList {
-    char **location;
+    void **location;
     struct pointerLocationList *next;
 } PointerLocationList;
 
-char **pointerLocationOf(PointerLocationList *list) {
+void **pointerLocationOf(PointerLocationList *list) {
     return list->location;
 }
 
@@ -309,7 +311,7 @@ PointerLocationList *nextPointerLocationList(PointerLocationList *list) {
     return list->next;
 }
 
-static PointerLocationList *concatPointerLocation(char **location, PointerLocationList *next) {
+static PointerLocationList *concatPointerLocation(void **location, PointerLocationList *next) {
     PointerLocationList *list;
     list = optAlloc(sizeof(PointerLocationList));
     list->location = location;
@@ -317,7 +319,7 @@ static PointerLocationList *concatPointerLocation(char **location, PointerLocati
     return list;
 }
 
-static void addPointerToAllocatedList(char **location) {
+static void addPointerToAllocatedList(void **location) {
     for (PointerLocationList *l=options.allPointersToAllocatedAreas; l!=NULL; l=l->next) {
         // reassignement, do not keep two copies
         if (l->location == location)
@@ -327,12 +329,19 @@ static void addPointerToAllocatedList(char **location) {
 
 }
 
-static void allocateOptionSpace(void **locationVoid, int size) {
-    char **location;
-    location = (char**)locationVoid;
+static void allocateOptionSpace(void **location, int size) {
     *location = optAlloc(size);
     addPointerToAllocatedList(location);
 }
+
+/* New functions for allocating, and registering, strings for options */
+void allocateStringForOption(void **pointerToOption, char *string) {
+    options.allOptionFieldsWithAllocatedAreas = concatPointerLocation(pointerToOption, options.allPointersToAllocatedAreas);
+    char *allocated = optAlloc(strlen(string)+1);
+    strcpy(allocated, string);
+    *pointerToOption = allocated;
+}
+
 
 char *createOptionString(char **address, char *text) {
     allocateOptionSpace((void**)address, strlen(text)+1);
@@ -348,9 +357,6 @@ static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
     dlld = ((char**) (((char*)dest) + localOffset));
     // dlld is dest equivalent of *lld from src
     //&fprintf(dumpOut, "shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(Options));
-    if (*dlld != *lld) {
-        fprintf(errOut, "problem %s\n", *lld);
-    }
     assert(*dlld == *lld);
     *dlld = *lld + offset;
 }
@@ -358,15 +364,16 @@ static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
 void deepCopyOptionsFromTo(Options *src, Options *dest) {
     memcpy(dest, src, sizeof(Options));
     for (PointerLocationList **l= &src->allPointersToAllocatedAreas; *l!=NULL; l = &(*l)->next) {
-        copyOptionShiftPointer((*l)->location, dest, src);
-        copyOptionShiftPointer(((char**)&(*l)->location), dest, src);
-        copyOptionShiftPointer(((char**)l), dest, src);
+        copyOptionShiftPointer((char **)(*l)->location, dest, src);
+        copyOptionShiftPointer(((char **)&(*l)->location), dest, src);
+        copyOptionShiftPointer(((char **)l), dest, src);
     }
 }
 
-void addStringListOption(StringList **stringList, char *string) {
+void addStringListOption(StringList **stringListOptionP, char *string) {
     StringList **list;
-    for (list=stringList; *list!=NULL; list= &(*list)->next)
+    addPointerToAllocatedList((void *)stringListOptionP);
+    for (list=stringListOptionP; *list!=NULL; list= &(*list)->next)
         ;
 
     allocateOptionSpace((void**)list, sizeof(StringList));

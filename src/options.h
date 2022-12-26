@@ -36,7 +36,7 @@ typedef enum updateType {
 /* protected data type */
 typedef struct pointerLocationList PointerLocationList;
 
-extern char **pointerLocationOf(PointerLocationList *list);
+extern void **pointerLocationOf(PointerLocationList *list);
 extern PointerLocationList *nextPointerLocationList(PointerLocationList *list);
 
 
@@ -150,10 +150,12 @@ typedef struct options {
     int variablesCount;
     Variable variables[MAX_SET_GET_OPTIONS];
 
-    // list of strings
+    // list of strings - well actually allocated areas
     PointerLocationList *allPointersToAllocatedAreas;
 
-    // Memory area for option strings
+    PointerLocationList *allOptionFieldsWithAllocatedAreas;
+
+    // Memory for allocated option strings and lists
     Memory memory;
 } Options;
 
@@ -175,16 +177,23 @@ extern void dirInputFile(MAP_FUN_SIGNATURE);
 
 extern void processFileArguments(void);
 extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag);
+
+/* Handling of string and string list options that need to be allocated and "shifted" on deep copy */
 extern char *createOptionString(char **optAddress, char *text);
-extern void deepCopyOptionsFromTo(Options *src, Options *dest);
-extern void getXrefrcFileName(char *ttt);
 extern void addStringListOption(StringList **optlist, char *argvi);
+extern void deepCopyOptionsFromTo(Options *src, Options *dest);
+
+/* ... and new versions of those... */
+extern void allocateStringForOption(void **pointerToOption, char *string);
+
+
+extern void getXrefrcFileName(char *ttt);
 extern char *getJavaHome(void);
 extern void getJavaClassAndSourcePath(void);
 extern bool packageOnCommandLine(char *packageName);
 extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
 extern bool readOptionsFromFileIntoArgs(FILE *ff, int *nargc, char ***nargv,
-                               MemoryKind memFl, char *sectionFile, char *project, char *resSection);
+                                        MemoryKind memFl, char *sectionFile, char *project, char *resSection);
 extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *project, char *foundProjectName);
 extern void readOptionsFromCommand(char *command, int *nargc, char ***nargv, char *sectionFile);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
@@ -192,6 +201,7 @@ extern void javaSetSourcePath(bool defaultClassPathAllowed);
 extern bool referenceFileCountMatches(int newRefNum);
 
 extern char *findConfigFile(char *cwd);
-extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *optionsFilename, char *foundProjectName);
+extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
+                                                       char *foundProjectName);
 
 #endif
