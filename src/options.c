@@ -259,26 +259,26 @@ static void *optAlloc(size_t size) {
 typedef struct pointerLocationList {
     void **location;
     struct pointerLocationList *next;
-} PointerLocationList;
+} LocationList;
 
-void **pointerLocationOf(PointerLocationList *list) {
+void **pointerLocationOf(LocationList *list) {
     return list->location;
 }
 
-PointerLocationList *nextPointerLocationList(PointerLocationList *list) {
+LocationList *nextPointerLocationList(LocationList *list) {
     return list->next;
 }
 
-bool containsPointerLocation(PointerLocationList *list, void **location) {
-    for (PointerLocationList *l = list; l != NULL; l = l->next)
+bool containsPointerLocation(LocationList *list, void **location) {
+    for (LocationList *l = list; l != NULL; l = l->next)
         if (l->location == location)
             return true;
     return false;
 }
 
-static PointerLocationList *concatPointerLocation(void **location, PointerLocationList *next) {
-    PointerLocationList *list;
-    list = optAlloc(sizeof(PointerLocationList));
+static LocationList *concatPointerLocation(void **location, LocationList *next) {
+    LocationList *list;
+    list = optAlloc(sizeof(LocationList));
     list->location = location;
     list->next = next;
     return list;
@@ -286,7 +286,7 @@ static PointerLocationList *concatPointerLocation(void **location, PointerLocati
 
 /* deprecated */
 static void addPointerToAllocatedList(void **location) {
-    for (PointerLocationList *l=options.allPointersToAllocatedAreas; l!=NULL; l=l->next) {
+    for (LocationList *l=options.allPointersToAllocatedAreas; l!=NULL; l=l->next) {
         // reassignement, do not keep two copies
         if (l->location == location)
             return;
@@ -296,7 +296,7 @@ static void addPointerToAllocatedList(void **location) {
 }
 
 static void addStringOptionToUsedList(char **location) {
-    for (PointerLocationList *l=options.allUsedStringOptions; l!=NULL; l=l->next) {
+    for (LocationList *l=options.allUsedStringOptions; l!=NULL; l=l->next) {
         // reassignement, do not keep two copies
         if (l->location == (void **)location)
             return;
@@ -306,7 +306,7 @@ static void addStringOptionToUsedList(char **location) {
 }
 
 static void addStringListOptionToUsedList(StringList **location) {
-    for (PointerLocationList *l=options.allUsedStringListOptions; l!=NULL; l=l->next) {
+    for (LocationList *l=options.allUsedStringListOptions; l!=NULL; l=l->next) {
         // reassignement, do not keep two copies
         if (l->location == (void **)location)
             return;
@@ -360,8 +360,8 @@ static void shiftPointer(void **location, void *src, void *dst) {
     }
 }
 
-static void shiftOptionList(PointerLocationList *list, Options *src, Options *dst) {
-    for (PointerLocationList *l = list; l != NULL; l = l->next) {
+static void shiftLocationList(LocationList *list, Options *src, Options *dst) {
+    for (LocationList *l = list; l != NULL; l = l->next) {
         /* This node should be in dst memory */
         assert(dm_isBetween(&dst->memory, l, 0, dst->memory.index));
 
@@ -375,8 +375,8 @@ static void shiftOptionList(PointerLocationList *list, Options *src, Options *ds
     }
 }
 
-static void shiftOptions(PointerLocationList *list, Options *src, Options *dst) {
-    for (PointerLocationList *l = list; l != NULL; l = l->next) {
+static void shiftOptions(LocationList *list, Options *src, Options *dst) {
+    for (LocationList *l = list; l != NULL; l = l->next) {
         /* The string value is in options memory area */
         shiftPointer(l->location, &src->memory.block, &dst->memory.block);
         assert(dm_isBetween(&dst->memory, *l->location, 0, dst->memory.index));
@@ -390,13 +390,13 @@ void deepCopyOptionsFromTo_New(Options *src, Options *dst) {
     /* Shift the pointer to the list of all String valued options to point to new memory area */
     shiftPointer((void **)&dst->allUsedStringOptions, &src->memory.block, &dst->memory.block);
     /* Now we can shift all such option fields and the linked list in the dst and dst.memory */
-    shiftOptionList(dst->allUsedStringOptions, src, dst);
+    shiftLocationList(dst->allUsedStringOptions, src, dst);
     shiftOptions(dst->allUsedStringOptions, src, dst);
 
     /* Shift the pointer to the list of all StringList valued options to point to new memory area */
     shiftPointer((void **)&dst->allUsedStringListOptions, &src->memory.block, &dst->memory.block);
     /* Now we can shift the list... */
-    shiftOptionList(dst->allUsedStringListOptions, src, dst);
+    shiftLocationList(dst->allUsedStringListOptions, src, dst);
     /* ... and the StringLists */
     // shiftStringLists(dst->allUsedStringListOptions, src, dst);
 }
@@ -423,7 +423,7 @@ static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
 
 void deepCopyOptionsFromTo(Options *src, Options *dest) {
     memcpy(dest, src, sizeof(Options));
-    for (PointerLocationList **l= &src->allPointersToAllocatedAreas; *l!=NULL; l = &(*l)->next) {
+    for (LocationList **l= &src->allPointersToAllocatedAreas; *l!=NULL; l = &(*l)->next) {
         copyOptionShiftPointer((char **)(*l)->location, dest, src);
         copyOptionShiftPointer(((char **)&(*l)->location), dest, src);
         copyOptionShiftPointer(((char **)l), dest, src);
