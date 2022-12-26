@@ -311,6 +311,13 @@ PointerLocationList *nextPointerLocationList(PointerLocationList *list) {
     return list->next;
 }
 
+bool containsPointerLocation(PointerLocationList *list, void **location) {
+    for (PointerLocationList *l = list; l != NULL; l = l->next)
+        if (l->location == location)
+            return true;
+    return false;
+}
+
 static PointerLocationList *concatPointerLocation(void **location, PointerLocationList *next) {
     PointerLocationList *list;
     list = optAlloc(sizeof(PointerLocationList));
@@ -342,7 +349,35 @@ void allocateStringForOption(void **pointerToOption, char *string) {
     *pointerToOption = allocated;
 }
 
+static StringList *concatStringList(StringList *list, char *string) {
+    StringList *l = list;
 
+    if (l == NULL) {
+        l = optAlloc(sizeof(StringList));
+    } else {
+        while (l->next != NULL)
+            l = l->next;
+        l->next = optAlloc(sizeof(StringList));
+        l = l->next;
+    }
+    l->string = optAlloc(strlen(string)+1);
+    addPointerToAllocatedList((void **)&l->string);
+
+    strcpy(l->string, string);
+    return l;
+}
+
+void addToStringListOption(StringList **pointerToOption, char *string) {
+    if (*pointerToOption == NULL) {
+        options.allOptionFieldsWithAllocatedAreas = concatPointerLocation((void **)pointerToOption,
+                                                                          options.allPointersToAllocatedAreas);
+        *pointerToOption = concatStringList(*pointerToOption, string);
+    } else
+        concatStringList(*pointerToOption, string);
+}
+
+
+/* And old... */
 char *createOptionString(char **address, char *text) {
     allocateOptionSpace((void**)address, strlen(text)+1);
     strcpy(*address, text);

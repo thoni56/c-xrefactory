@@ -445,11 +445,29 @@ Ensure(Options, collects_address_to_option_with_allocated_string) {
  * which needs to be shifted wrt. that memory. (Which will be
  * allocated and not a part of the options structure at some point
  * when we move to Memory2 for options.memory) */
-Ensure(Options, collects_all_option_fields_that_allocate_in_options_space) {
+Ensure(Options, collects_option_field_that_allocate_a_string_in_options_space) {
     allocateStringForOption((void **)&options.classpath, "classpath");
 
-    assert_that(options.allOptionFieldsWithAllocatedAreas, is_not_null);
-    assert_that(options.classpath, is_not_null);
+    assert_that(containsPointerLocation(options.allOptionFieldsWithAllocatedAreas, (void **)&options.classpath));
     assert_that(options.classpath, is_equal_to_string("classpath"));
     assert_that(dm_isBetween(&options.memory, options.classpath, 0, options.memory.index));
+
+    allocateStringForOption((void **)&options.compiler, "compiler");
+    assert_that(containsPointerLocation(options.allOptionFieldsWithAllocatedAreas, (void **)&options.compiler));
+    assert_that(dm_isBetween(&options.memory, options.compiler, 0, options.memory.index));
+}
+
+Ensure(Options, collects_option_field_that_allocate_a_string_list_in_options_space) {
+    addToStringListOption(&options.includeDirs, "includeDir1");
+
+    assert_that(containsPointerLocation(options.allOptionFieldsWithAllocatedAreas, (void **)&options.includeDirs));
+    assert_that(options.includeDirs->string, is_equal_to_string("includeDir1"));
+    assert_that(dm_isBetween(&options.memory, options.includeDirs, 0, options.memory.index));
+    assert_that(dm_isBetween(&options.memory, options.includeDirs->string, 0, options.memory.index));
+
+    addToStringListOption(&options.includeDirs, "includeDir2");
+    assert_that(pointerLocationOf(options.allOptionFieldsWithAllocatedAreas), is_equal_to(&options.includeDirs));
+    /* Order of strings is important in options */
+    assert_that(options.includeDirs->string, is_equal_to_string("includeDir1"));
+    assert_that(options.includeDirs->next->string, is_equal_to_string("includeDir2"));
 }

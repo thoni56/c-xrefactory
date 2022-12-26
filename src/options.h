@@ -38,7 +38,7 @@ typedef struct pointerLocationList PointerLocationList;
 
 extern void **pointerLocationOf(PointerLocationList *list);
 extern PointerLocationList *nextPointerLocationList(PointerLocationList *list);
-
+extern bool containsPointerLocation(PointerLocationList *list, void **location);
 
 
 typedef struct options {
@@ -88,7 +88,7 @@ typedef struct options {
     bool exactPositionResolve;
     char *outputFileName;
     char *lineFileName;
-    struct stringList *includeDirs;
+    StringList *includeDirs;
     char *cxrefsLocation;
 
     char *checkFileMovedFrom;
@@ -185,6 +185,7 @@ extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
 /* ... and new versions of those... */
 extern void allocateStringForOption(void **pointerToOption, char *string);
+extern void addToStringListOption(StringList **pointerToOption, char *string);
 
 
 extern void getXrefrcFileName(char *ttt);
