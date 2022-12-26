@@ -183,11 +183,11 @@ extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFl
 extern char *createOptionString(char **optAddress, char *text);
 extern void addStringListOption(StringList **optlist, char *argvi);
 extern void deepCopyOptionsFromTo(Options *src, Options *dest);
-extern void deepCopyOptionsFromTo_New(Options *src, Options *dest);
 
 /* ... and new versions of those... */
 extern void allocateStringForOption(char **pointerToOption, char *string);
 extern void addToStringListOption(StringList **pointerToOption, char *string);
+extern void deepCopyOptionsFromTo_New(Options *src, Options *dest);
 
 
 extern void getXrefrcFileName(char *ttt);

@@ -491,7 +491,7 @@ Ensure(Options, collects_option_field_that_allocate_a_string_list_in_options_spa
     assert_that(options.includeDirs->next->string, is_equal_to_string("includeDir2"));
 }
 
-Ensure(Options, can_deep_copy_options) {
+Ensure(Options, can_deep_copy_options_with_one_string_option) {
     allocateStringForOption(&options.compiler, "compiler");
 
     Options copy;
@@ -500,4 +500,30 @@ Ensure(Options, can_deep_copy_options) {
     assert_that(options.compiler, is_equal_to_string(copy.compiler)); /* Strings are the same */
     assert_that(options.compiler, is_not_equal_to(copy.compiler)); /* But they are stored in different locations... */
     assert_that(dm_isBetween(&copy.memory, copy.compiler, 0, copy.memory.index)); /* ... in the copy's memory */
+}
+
+Ensure(Options, can_deep_copy_options_with_two_string_options) {
+    allocateStringForOption(&options.compiler, "compiler");
+    allocateStringForOption(&options.classpath, "classpath");
+
+    Options copy;
+    deepCopyOptionsFromTo_New(&options, &copy);
+
+    assert_that(options.classpath, is_equal_to_string(copy.classpath)); /* Strings are the same */
+    assert_that(options.classpath, is_not_equal_to(copy.classpath)); /* But they are stored in different locations... */
+    assert_that(dm_isBetween(&copy.memory, copy.classpath, 0, copy.memory.index)); /* ... in the copy's memory */
+}
+
+xEnsure(Options, can_deep_copy_options_with_one_stringlist_option) {
+    addToStringListOption(&options.includeDirs, ".");
+
+    Options copy;
+    deepCopyOptionsFromTo_New(&options, &copy);
+
+    /* Strings are the same */
+    assert_that(options.includeDirs->string, is_equal_to_string(copy.includeDirs->string));
+    /* But they are stored in different locations... */
+    assert_that(options.includeDirs->string, is_not_equal_to(copy.includeDirs->string));
+    /* ... in the copy's memory */
+    assert_that(dm_isBetween(&copy.memory, copy.includeDirs->string, 0, copy.memory.index));
 }

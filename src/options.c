@@ -353,6 +353,54 @@ void addToStringListOption(StringList **pointerToOption, char *string) {
         concatStringList(*pointerToOption, string);
 }
 
+static void shiftPointer(void **location, void *src, void *dst) {
+    if (location != NULL && *location != NULL) {
+        size_t offset = dst - src;
+        *location += offset;
+    }
+}
+
+static void shiftOptionList(PointerLocationList *list, Options *src, Options *dst) {
+    for (PointerLocationList *l = list; l != NULL; l = l->next) {
+        /* This node should be in dst memory */
+        assert(dm_isBetween(&dst->memory, l, 0, dst->memory.index));
+
+        /* Location is in options structure */
+        shiftPointer((void **)&l->location, src, dst);
+        assert((void *)l->location > (void *)dst && (void *)l->location < (void *)dst+((void *)&dst->memory-(void *)dst));
+
+        /* Next node is in options memory area */
+        shiftPointer((void **)&l->next, &src->memory.block, &dst->memory.block);
+        assert(l->next == NULL || dm_isBetween(&dst->memory, l->next, 0, dst->memory.index));
+    }
+}
+
+static void shiftOptions(PointerLocationList *list, Options *src, Options *dst) {
+    for (PointerLocationList *l = list; l != NULL; l = l->next) {
+        /* The string value is in options memory area */
+        shiftPointer(l->location, &src->memory.block, &dst->memory.block);
+        assert(dm_isBetween(&dst->memory, *l->location, 0, dst->memory.index));
+    }
+}
+
+
+void deepCopyOptionsFromTo_New(Options *src, Options *dst) {
+    memcpy(dst, src, sizeof(Options));
+
+    /* Shift the pointer to the list of all String valued options to point to new memory area */
+    shiftPointer((void **)&dst->allUsedStringOptions, &src->memory.block, &dst->memory.block);
+    /* Now we can shift all such option fields and the linked list in the dst and dst.memory */
+    shiftOptionList(dst->allUsedStringOptions, src, dst);
+    shiftOptions(dst->allUsedStringOptions, src, dst);
+
+    /* Shift the pointer to the list of all StringList valued options to point to new memory area */
+    shiftPointer((void **)&dst->allUsedStringListOptions, &src->memory.block, &dst->memory.block);
+    /* Now we can shift the list... */
+    shiftOptionList(dst->allUsedStringListOptions, src, dst);
+    /* ... and the StringLists */
+    // shiftStringLists(dst->allUsedStringListOptions, src, dst);
+}
+
 
 /* And old... */
 char *createOptionString(char **address, char *text) {
@@ -380,43 +428,6 @@ void deepCopyOptionsFromTo(Options *src, Options *dest) {
         copyOptionShiftPointer(((char **)&(*l)->location), dest, src);
         copyOptionShiftPointer(((char **)l), dest, src);
     }
-}
-
-static void shiftPointer(void **location, void *src, void *dst) {
-    if (location != NULL && *location != NULL) {
-        size_t offset = dst - src;
-        *location += offset;
-    }
-}
-
-static void shiftOptionList(PointerLocationList *list, Options *src, Options *dst) {
-    for (PointerLocationList *l = list; l != NULL; l = l->next) {
-        /* This node should be in dst memory */
-        assert(dm_isBetween(&dst->memory, l, 0, dst->memory.index));
-
-        /* Location is in options structure */
-        shiftPointer((void **)&l->location, src, dst);
-        assert((void *)l->location > (void *)dst && (void *)l->location < (void *)dst+((void *)&dst->memory-(void *)dst));
-
-        /* Next node is in options memory area */
-        shiftPointer((void **)&l->next, &src->memory.block, &dst->memory.block);
-        assert(l->next == NULL || dm_isBetween(&dst->memory, l->next, 0, dst->memory.index));
-
-        /* The string value is in options memory area */
-        shiftPointer(l->location, &src->memory.block, &dst->memory.block);
-        assert(dm_isBetween(&dst->memory, *l->location, 0, dst->memory.index));
-    }
-}
-
-
-void deepCopyOptionsFromTo_New(Options *src, Options *dst) {
-    memcpy(dst, src, sizeof(Options));
-
-    /* Shift the pointer to the list of all options to point to new memory area */
-    shiftPointer((void **)&dst->allUsedStringOptions,
-                 &src->memory.block, &dst->memory.block);
-    /* Now shift all option fields and the linked list in the dst and dst.memory */
-    shiftOptionList(dst->allUsedStringOptions, src, dst);
 }
 
 /* deprecated in favour of addToStringListOption() */
