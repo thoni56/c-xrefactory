@@ -153,7 +153,7 @@ typedef struct options {
     // list of strings - well actually allocated areas
     PointerLocationList *allPointersToAllocatedAreas;
 
-    PointerLocationList *allOptionFieldsWithAllocatedAreas;
+    PointerLocationList *allOptionFieldsPointingToAllocatedAreas;
 
     // Memory for allocated option strings and lists
     Memory memory;

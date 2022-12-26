@@ -343,7 +343,7 @@ static void allocateOptionSpace(void **location, int size) {
 
 /* New functions for allocating, and registering, strings for options */
 void allocateStringForOption(void **pointerToOption, char *string) {
-    options.allOptionFieldsWithAllocatedAreas = concatPointerLocation(pointerToOption, options.allPointersToAllocatedAreas);
+    options.allOptionFieldsPointingToAllocatedAreas = concatPointerLocation(pointerToOption, options.allPointersToAllocatedAreas);
     char *allocated = optAlloc(strlen(string)+1);
     strcpy(allocated, string);
     *pointerToOption = allocated;
@@ -369,7 +369,7 @@ static StringList *concatStringList(StringList *list, char *string) {
 
 void addToStringListOption(StringList **pointerToOption, char *string) {
     if (*pointerToOption == NULL) {
-        options.allOptionFieldsWithAllocatedAreas = concatPointerLocation((void **)pointerToOption,
+        options.allOptionFieldsPointingToAllocatedAreas = concatPointerLocation((void **)pointerToOption,
                                                                           options.allPointersToAllocatedAreas);
         *pointerToOption = concatStringList(*pointerToOption, string);
     } else
