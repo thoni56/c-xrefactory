@@ -137,7 +137,8 @@ Options presetOptions = {
     // pending memory for string values
     NULL,                       /* allAllocatedStrings */
 
-    NULL,                       /* allOptionFieldsWithAllocatedAreas */
+    NULL,                       /* allUsedStringOptions */
+    NULL,                       /* allUsedStringListOptions */
 
     {0, },                      /* memory - options string storage */
 };
@@ -283,6 +284,7 @@ static PointerLocationList *concatPointerLocation(void **location, PointerLocati
     return list;
 }
 
+/* deprecated */
 static void addPointerToAllocatedList(void **location) {
     for (PointerLocationList *l=options.allPointersToAllocatedAreas; l!=NULL; l=l->next) {
         // reassignement, do not keep two copies
@@ -293,14 +295,24 @@ static void addPointerToAllocatedList(void **location) {
 
 }
 
-static void addOptionToAllocatedList(void **location) {
-    for (PointerLocationList *l=options.allOptionFieldsPointingToAllocatedAreas; l!=NULL; l=l->next) {
+static void addStringOptionToUsedList(char **location) {
+    for (PointerLocationList *l=options.allUsedStringOptions; l!=NULL; l=l->next) {
         // reassignement, do not keep two copies
-        if (l->location == location)
+        if (l->location == (void **)location)
             return;
     }
-    options.allOptionFieldsPointingToAllocatedAreas = concatPointerLocation(location, options.allOptionFieldsPointingToAllocatedAreas);
+    options.allUsedStringOptions = concatPointerLocation((void **)location,
+                                                         options.allUsedStringOptions);
+}
 
+static void addStringListOptionToUsedList(StringList **location) {
+    for (PointerLocationList *l=options.allUsedStringListOptions; l!=NULL; l=l->next) {
+        // reassignement, do not keep two copies
+        if (l->location == (void **)location)
+            return;
+    }
+    options.allUsedStringListOptions = concatPointerLocation((void **)location,
+                                                             options.allUsedStringListOptions);
 }
 
 static void allocateOptionSpace(void **location, int size) {
@@ -309,8 +321,8 @@ static void allocateOptionSpace(void **location, int size) {
 }
 
 /* New functions for allocating, and registering, strings for options */
-void allocateStringForOption(void **pointerToOption, char *string) {
-    addOptionToAllocatedList(pointerToOption);
+void allocateStringForOption(char **pointerToOption, char *string) {
+    addStringOptionToUsedList(pointerToOption);
     char *allocated = optAlloc(strlen(string)+1);
     strcpy(allocated, string);
     *pointerToOption = allocated;
@@ -328,7 +340,6 @@ static StringList *concatStringList(StringList *list, char *string) {
         l = l->next;
     }
     l->string = optAlloc(strlen(string)+1);
-    addPointerToAllocatedList((void **)&l->string);
 
     strcpy(l->string, string);
     return l;
@@ -336,8 +347,8 @@ static StringList *concatStringList(StringList *list, char *string) {
 
 void addToStringListOption(StringList **pointerToOption, char *string) {
     if (*pointerToOption == NULL) {
-        addOptionToAllocatedList((void **)pointerToOption);
         *pointerToOption = concatStringList(*pointerToOption, string);
+        addStringListOptionToUsedList(pointerToOption);
     } else
         concatStringList(*pointerToOption, string);
 }
@@ -371,6 +382,44 @@ void deepCopyOptionsFromTo(Options *src, Options *dest) {
     }
 }
 
+static void shiftPointer(void **location, void *src, void *dst) {
+    if (location != NULL && *location != NULL) {
+        size_t offset = dst - src;
+        *location += offset;
+    }
+}
+
+static void shiftOptionList(PointerLocationList *list, Options *src, Options *dst) {
+    for (PointerLocationList *l = list; l != NULL; l = l->next) {
+        /* This node should be in dst memory */
+        assert(dm_isBetween(&dst->memory, l, 0, dst->memory.index));
+
+        /* Location is in options structure */
+        shiftPointer((void **)&l->location, src, dst);
+        assert((void *)l->location > (void *)dst && (void *)l->location < (void *)dst+((void *)&dst->memory-(void *)dst));
+
+        /* Next node is in options memory area */
+        shiftPointer((void **)&l->next, &src->memory.block, &dst->memory.block);
+        assert(l->next == NULL || dm_isBetween(&dst->memory, l->next, 0, dst->memory.index));
+
+        /* The string value is in options memory area */
+        shiftPointer(l->location, &src->memory.block, &dst->memory.block);
+        assert(dm_isBetween(&dst->memory, *l->location, 0, dst->memory.index));
+    }
+}
+
+
+void deepCopyOptionsFromTo_New(Options *src, Options *dst) {
+    memcpy(dst, src, sizeof(Options));
+
+    /* Shift the pointer to the list of all options to point to new memory area */
+    shiftPointer((void **)&dst->allUsedStringOptions,
+                 &src->memory.block, &dst->memory.block);
+    /* Now shift all option fields and the linked list in the dst and dst.memory */
+    shiftOptionList(dst->allUsedStringOptions, src, dst);
+}
+
+/* deprecated in favour of addToStringListOption() */
 void addStringListOption(StringList **stringListOptionP, char *string) {
     StringList **list;
     addPointerToAllocatedList((void *)stringListOptionP);
@@ -401,11 +450,11 @@ void setOptionVariable(char *name, char *value) {
     }
     if (!found) {
         options.variables[i].name = createOptionString(&options.variables[i].name, name);
-        addOptionToAllocatedList((void *)&options.variables[i].name);
+        addStringOptionToUsedList((void *)&options.variables[i].name);
     }
     if (!found || strcmp(options.variables[i].value, value)!=0) {
         options.variables[i].value = createOptionString(&options.variables[i].value, value);
-        addOptionToAllocatedList((void *)&options.variables[i].value);
+        addStringOptionToUsedList((void *)&options.variables[i].value);
     }
     log_debug("setting variable '%s' to '%s'", name, value);
     if (!found)

@@ -33,7 +33,7 @@ void fatalError(int code, char *message, int exitCode, char *file, int line) {
 }
 
 void internalCheckFail(char *expr, char *file, int line) {
-    char message[100];
+    char message[10000];
     sprintf(message, "COMMONS MOCK: *** INTERNAL CHECK FAILED: %s in line %s:%d\n", expr, file, line);
     /* NOTE: This uses internal cgreen functions to point to the calling location, may not be forward compatible... */
     (*get_test_reporter()->assert_true)(get_test_reporter(), file, line, (false), message, NULL);
