@@ -176,7 +176,7 @@ Ensure(Options, can_allocate_a_string) {
     char *allocatedString;
 
     assert_that(options.memory.index, is_equal_to(0));
-    allocatedString = allocateStringForOption_old(&allocatedString, "allocated string");
+    allocatedString = allocateStringForOption(&allocatedString, "allocated string");
     assert_that(allocatedString, is_equal_to_string("allocated string"));
     assert_that(options.memory.index, is_greater_than(0));
 }
@@ -426,17 +426,6 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
                                                optionsFilename, sectionName);
 
     assert_that(sectionName, is_equal_to_string("ffmpeg"));
-}
-
-Ensure(Options, collects_address_to_option_with_allocated_string) {
-    allocateStringForOption_old(&options.compiler, "compiler");
-
-    assert_that(options.allPointersToAllocatedAreas, is_not_null);
-    assert_that(pointerLocationOf(options.allPointersToAllocatedAreas), is_equal_to(&options.compiler));
-    assert_that(nextPointerLocationList(options.allPointersToAllocatedAreas), is_null);
-
-    assert_that(dm_isBetween(&options.memory, *pointerLocationOf(options.allPointersToAllocatedAreas), 0, SIZE_optMemory));
-    assert_that(dm_isBetween(&options.memory, options.allPointersToAllocatedAreas, 0, SIZE_optMemory));
 }
 
 /* We need new functionality that registers only option fields that

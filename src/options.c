@@ -284,17 +284,6 @@ static LocationList *concatPointerLocation(void **location, LocationList *next) 
     return list;
 }
 
-/* deprecated */
-static void addPointerToAllocatedList(void **location) {
-    for (LocationList *l=options.allPointersToAllocatedAreas; l!=NULL; l=l->next) {
-        // reassignement, do not keep two copies
-        if (l->location == location)
-            return;
-    }
-    options.allPointersToAllocatedAreas = concatPointerLocation(location, options.allPointersToAllocatedAreas);
-
-}
-
 static void addStringOptionToUsedList(char **location) {
     for (LocationList *l=options.allUsedStringOptions; l!=NULL; l=l->next) {
         // reassignement, do not keep two copies
@@ -315,12 +304,7 @@ static void addStringListOptionToUsedList(StringList **location) {
                                                              options.allUsedStringListOptions);
 }
 
-static void allocateOptionSpace(void **location, int size) {
-    *location = optAlloc(size);
-    addPointerToAllocatedList(location);
-}
 
-/* New functions for allocating, and registering, strings for options */
 char *allocateStringForOption(char **pointerToOption, char *string) {
     addStringOptionToUsedList(pointerToOption);
     char *allocated = optAlloc(strlen(string)+1);
@@ -379,6 +363,7 @@ static void shiftLocationList(LocationList *list, Options *src, Options *dst) {
 static void shiftOptions(LocationList *list, Options *src, Options *dst) {
     for (LocationList *l = list; l != NULL; l = l->next) {
         /* The string value is in options memory area */
+        assert(dm_isBetween(&src->memory, *l->location, 0, src->memory.index));
         shiftPointer(l->location, &src->memory.block, &dst->memory.block);
         assert(dm_isBetween(&dst->memory, *l->location, 0, dst->memory.index));
     }
@@ -419,46 +404,6 @@ void deepCopyOptionsFromTo(Options *src, Options *dst) {
 }
 
 
-/* And old... */
-char *allocateStringForOption_old(char **address, char *text) {
-    allocateOptionSpace((void**)address, strlen(text)+1);
-    strcpy(*address, text);
-    return *address;
-}
-
-static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
-    char    **dlld;
-    int     offset, localOffset;
-    offset = ((char*)dest) - ((char*)src);
-    localOffset = ((char*)lld) - ((char*)src);
-    dlld = ((char**) (((char*)dest) + localOffset));
-    // dlld is dest equivalent of *lld from src
-    //&fprintf(dumpOut, "shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(Options));
-    assert(*dlld == *lld);
-    *dlld = *lld + offset;
-}
-
-void deepCopyOptionsFromTo_old(Options *src, Options *dest) {
-    memcpy(dest, src, sizeof(Options));
-    for (LocationList **l= &src->allPointersToAllocatedAreas; *l!=NULL; l = &(*l)->next) {
-        copyOptionShiftPointer((char **)(*l)->location, dest, src);
-        copyOptionShiftPointer(((char **)&(*l)->location), dest, src);
-        copyOptionShiftPointer(((char **)l), dest, src);
-    }
-}
-
-/* deprecated in favour of addToStringListOption() */
-void addToStringListOption_old(StringList **stringListOptionP, char *string) {
-    StringList **list;
-    addPointerToAllocatedList((void *)stringListOptionP);
-    for (list=stringListOptionP; *list!=NULL; list= &(*list)->next)
-        ;
-
-    allocateOptionSpace((void**)list, sizeof(StringList));
-    (*list)->string = allocateStringForOption_old(&(*list)->string, string);
-    (*list)->next = NULL;
-}
-
 void setOptionVariable(char *name, char *value) {
     if (options.variablesCount+1>=MAX_SET_GET_OPTIONS) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -477,11 +422,11 @@ void setOptionVariable(char *name, char *value) {
         }
     }
     if (!found) {
-        options.variables[i].name = allocateStringForOption_old(&options.variables[i].name, name);
+        options.variables[i].name = allocateStringForOption(&options.variables[i].name, name);
         addStringOptionToUsedList((void *)&options.variables[i].name);
     }
     if (!found || strcmp(options.variables[i].value, value)!=0) {
-        options.variables[i].value = allocateStringForOption_old(&options.variables[i].value, value);
+        options.variables[i].value = allocateStringForOption(&options.variables[i].value, value);
         addStringOptionToUsedList((void *)&options.variables[i].value);
     }
     log_debug("setting variable '%s' to '%s'", name, value);
@@ -1349,11 +1294,11 @@ void getJavaClassAndSourcePath(void) {
         expandWildcardsInPaths(cp, javaClassPathExpanded, MAX_OPTION_LEN);
         cp = javaClassPathExpanded;
 
-        options.classpath = allocateStringForOption_old(&options.classpath, cp);  //??? why is this, only optimisation of getEnv?
+        options.classpath = allocateStringForOption(&options.classpath, cp);  //??? why is this, only optimisation of getEnv?
         processClassPathString(cp);
         jdkcp = getJdkClassPathQuickly();
         if (jdkcp != NULL && *jdkcp!=0) {
-            options.jdkClassPath = allocateStringForOption_old(&options.jdkClassPath, jdkcp);  //only optimisation of getEnv?
+            options.jdkClassPath = allocateStringForOption(&options.jdkClassPath, jdkcp);  //only optimisation of getEnv?
             processClassPathString(jdkcp);
         }
 
@@ -1496,7 +1441,7 @@ static bool processBOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-briefoutput")==0)
         options.briefoutput = true;
     else if (strncmp(argv[i], "-browsedsym=",12)==0)     {
-        options.browsedSymName = allocateStringForOption_old(&options.browsedSymName, argv[i]+12);
+        options.browsedSymName = allocateStringForOption(&options.browsedSymName, argv[i]+12);
     }
     else return false;
     *argi = i;
@@ -1531,15 +1476,15 @@ static bool processCOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-classpath")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.classpath = allocateStringForOption_old(&options.classpath, argv[i]);
+        options.classpath = allocateStringForOption(&options.classpath, argv[i]);
     }
     else if (strncmp(argv[i], "-csuffixes=",11)==0) {
-        options.cFilesSuffixes = allocateStringForOption_old(&options.cFilesSuffixes, argv[i]+11);
+        options.cFilesSuffixes = allocateStringForOption(&options.cFilesSuffixes, argv[i]+11);
     }
     else if (strcmp(argv[i], "-create")==0)
         options.create = true;
     else if (strncmp(argv[i], "-compiler=", 10)==0) {
-        options.compiler = allocateStringForOption_old(&options.compiler, &argv[i][10]);
+        options.compiler = allocateStringForOption(&options.compiler, &argv[i][10]);
     } else return false;
     *argi = i;
     return true;
@@ -1584,7 +1529,7 @@ static bool processEOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-extractAddrParPrefix=",22)==0) {
         char tmpString[TMP_STRING_SIZE];
         sprintf(tmpString, "*%s", argv[i]+22);
-        options.olExtractAddrParPrefix = allocateStringForOption_old(&options.olExtractAddrParPrefix, tmpString);
+        options.olExtractAddrParPrefix = allocateStringForOption(&options.olExtractAddrParPrefix, tmpString);
     }
     else if (strcmp(argv[i], "-exactpositionresolve")==0) {
         options.exactPositionResolve = true;
@@ -1650,7 +1595,7 @@ static bool processGOption(int *argi, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i], "-get")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);
-        options.variableToGet = allocateStringForOption_old(&options.variableToGet, argv[i]);
+        options.variableToGet = allocateStringForOption(&options.variableToGet, argv[i]);
         options.serverOperation = OLO_GET_ENV_VALUE;
     }
     else return false;
@@ -1682,10 +1627,10 @@ static bool processIOption(int *argi, int argc, char **argv) {
             errorMessage(ERR_ST,tmpBuff);
             usage();
         }
-        addToStringListOption_old(&options.includeDirs, argv[i]);
+        addToStringListOption(&options.includeDirs, argv[i]);
     }
     else if (strncmp(argv[i], "-I", 2)==0 && argv[i][2]!=0) {
-        addToStringListOption_old(&options.includeDirs, argv[i]+2);
+        addToStringListOption(&options.includeDirs, argv[i]+2);
     }
     else if (strcmp(argv[i], "-infos")==0) {
         logging_selected.infos = true;
@@ -1703,29 +1648,29 @@ static bool processJOption(int *argi, int argc, char **argv) {
         if (len>13 && argv[i][len-1] == FILE_PATH_SEPARATOR) {
             warningMessage(ERR_ST, "slash at the end of -jdoctmpdir path");
         }
-        options.jdocTmpDir = allocateStringForOption_old(&options.jdocTmpDir, argv[i]+12);
+        options.jdocTmpDir = allocateStringForOption(&options.jdocTmpDir, argv[i]+12);
     }
     else if (strncmp(argv[i], "-javadocavailable=",18)==0)   {
-        options.htmlJdkDocAvailable = allocateStringForOption_old(&options.htmlJdkDocAvailable, argv[i]+18);
+        options.htmlJdkDocAvailable = allocateStringForOption(&options.htmlJdkDocAvailable, argv[i]+18);
     }
     else if (strncmp(argv[i], "-javadocurl=",12)==0) {
-        options.htmlJdkDocUrl = allocateStringForOption_old(&options.htmlJdkDocUrl, argv[i]+12);
+        options.htmlJdkDocUrl = allocateStringForOption(&options.htmlJdkDocUrl, argv[i]+12);
     }
     else if (strncmp(argv[i], "-javadocpath=",13)==0)    {
-        options.javaDocPath = allocateStringForOption_old(&options.javaDocPath, argv[i]+13);
+        options.javaDocPath = allocateStringForOption(&options.javaDocPath, argv[i]+13);
     } else if (strcmp(argv[i], "-javadocpath")==0)   {
         ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.javaDocPath = allocateStringForOption_old(&options.javaDocPath, argv[i]);
+        options.javaDocPath = allocateStringForOption(&options.javaDocPath, argv[i]);
     }
     else if (strncmp(argv[i], "-javasuffixes=",14)==0) {
-        options.javaFilesSuffixes = allocateStringForOption_old(&options.javaFilesSuffixes, argv[i]+14);
+        options.javaFilesSuffixes = allocateStringForOption(&options.javaFilesSuffixes, argv[i]+14);
     }
     else if (strcmp(argv[i], "-javafilesonly")==0) {
         options.javaFilesOnly = true;
     }
     else if (strcmp(argv[i], "-jdkclasspath")==0 || strcmp(argv[i], "-javaruntime")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.jdkClassPath = allocateStringForOption_old(&options.jdkClassPath, argv[i]);
+        options.jdkClassPath = allocateStringForOption(&options.jdkClassPath, argv[i]);
     }
     else return false;
     *argi = i;
@@ -1766,10 +1711,10 @@ static bool processMOption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+11, "%d", &options.maxCompletions);
     }
     else if (strncmp(argv[i], "-movetargetclass=",17)==0) {
-        options.moveTargetClass = allocateStringForOption_old(&options.moveTargetClass, argv[i]+17);
+        options.moveTargetClass = allocateStringForOption(&options.moveTargetClass, argv[i]+17);
     }
     else if (strncmp(argv[i], "-movetargetfile=",16)==0) {
-        options.moveTargetFile = allocateStringForOption_old(&options.moveTargetFile, argv[i]+16);
+        options.moveTargetFile = allocateStringForOption(&options.moveTargetFile, argv[i]+16);
     }
     else return false;
     *argi = i;
@@ -1814,7 +1759,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+8, "%d",&options.olMarkPos);
     }
     else if (strncmp(argv[i], "-olcheckversion=",16)==0) {
-        options.checkVersion = allocateStringForOption_old(&options.checkVersion, argv[i]+16);
+        options.checkVersion = allocateStringForOption(&options.checkVersion, argv[i]+16);
         options.serverOperation = OLO_CHECK_VERSION;
     }
     else if (strcmp(argv[i], "-olcxextract")==0) {
@@ -1874,16 +1819,16 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_INTERSECTION;
     else if (strcmp(argv[i], "-olcxsafetycheckmovedfile")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);
-        options.checkFileMovedFrom = allocateStringForOption_old(&options.checkFileMovedFrom, argv[i]);
+        options.checkFileMovedFrom = allocateStringForOption(&options.checkFileMovedFrom, argv[i]);
         ensureThereIsAnotherArgument(&i, argc, argv);
-        options.checkFileMovedTo = allocateStringForOption_old(&options.checkFileMovedTo, argv[i]);
+        options.checkFileMovedTo = allocateStringForOption(&options.checkFileMovedTo, argv[i]);
     }
     else if (strcmp(argv[i], "-olcxwindel")==0) {
         options.serverOperation = OLO_REMOVE_WIN;
     }
     else if (strcmp(argv[i], "-olcxwindelfile")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);
-        options.olcxWinDelFile = allocateStringForOption_old(&options.olcxWinDelFile, argv[i]);
+        options.olcxWinDelFile = allocateStringForOption(&options.olcxWinDelFile, argv[i]);
     }
     else if (strncmp(argv[i], "-olcxwindelwin=",15)==0) {
         options.olcxWinDelFromLine = options.olcxWinDelToLine = 0;
@@ -2022,17 +1967,17 @@ static bool processOOption(int *argi, int argc, char **argv) {
     }
     else if (strncmp(argv[i], "-olcxlccursor=",14)==0) {
         // position of the cursor in line:column format
-        options.olcxlccursor = allocateStringForOption_old(&options.olcxlccursor, argv[i]+14);
+        options.olcxlccursor = allocateStringForOption(&options.olcxlccursor, argv[i]+14);
     }
     else if (strcmp(argv[i], "-olcxsearch")==0)
         options.serverOperation = OLO_SEARCH;
     else if (strncmp(argv[i], "-olcxcplsearch=",15)==0) {
         options.serverOperation=OLO_SEARCH;
-        options.olcxSearchString = allocateStringForOption_old(&options.olcxSearchString, argv[i]+15);
+        options.olcxSearchString = allocateStringForOption(&options.olcxSearchString, argv[i]+15);
     }
     else if (strncmp(argv[i], "-olcxtagsearch=",15)==0) {
         options.serverOperation=OLO_TAG_SEARCH;
-        options.olcxSearchString = allocateStringForOption_old(&options.olcxSearchString, argv[i]+15);
+        options.olcxSearchString = allocateStringForOption(&options.olcxSearchString, argv[i]+15);
     }
     else if (strcmp(argv[i], "-olcxtagsearchforward")==0) {
         options.serverOperation=OLO_TAG_SEARCH_FORWARD;
@@ -2042,11 +1987,11 @@ static bool processOOption(int *argi, int argc, char **argv) {
     }
     else if (strncmp(argv[i], "-olcxpushname=",14)==0)   {
         options.serverOperation = OLO_PUSH_NAME;
-        options.pushName = allocateStringForOption_old(&options.pushName, argv[i]+14);
+        options.pushName = allocateStringForOption(&options.pushName, argv[i]+14);
     }
     else if (strncmp(argv[i], "-olcxpushspecialname=",21)==0)    {
         options.serverOperation = OLO_PUSH_SPECIAL_NAME;
-        options.pushName = allocateStringForOption_old(&options.pushName, argv[i]+21);
+        options.pushName = allocateStringForOption(&options.pushName, argv[i]+21);
     }
     else if (strncmp(argv[i], "-olcomplselect",14)==0) {
         options.serverOperation=OLO_CSELECT;
@@ -2131,7 +2076,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-o")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.outputFileName = allocateStringForOption_old(&options.outputFileName, argv[i]);
+        options.outputFileName = allocateStringForOption(&options.outputFileName, argv[i]);
     }
     else return false;
     *argi = i;
@@ -2157,7 +2102,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-p")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);
         log_trace("Current project '%s'", argv[i]);
-        options.project = allocateStringForOption_old(&options.project, argv[i]);
+        options.project = allocateStringForOption(&options.project, argv[i]);
     }
     else if (strcmp(argv[i], "-preload")==0) {
         char *file, *fromFile;
@@ -2173,7 +2118,7 @@ static bool processPOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-prune")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);
-        addToStringListOption_old(&options.pruneNames, argv[i]);
+        addToStringListOption(&options.pruneNames, argv[i]);
     }
     else return false;
     *argi = i;
@@ -2189,7 +2134,7 @@ static void setXrefsLocation(char *argvi) {
         sprintf(tmpBuff, "'%s' is not an absolute path, correct -refs option", argvi);
         warningMessage(ERR_ST, tmpBuff);
     }
-    options.cxrefsLocation = allocateStringForOption_old(&options.cxrefsLocation, normalizeFileName(argvi, cwd));
+    options.cxrefsLocation = allocateStringForOption(&options.cxrefsLocation, normalizeFileName(argvi, cwd));
 }
 
 static bool processROption(int *argi, int argc, char **argv) {
@@ -2199,7 +2144,7 @@ static bool processROption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+8, "%d", &options.referenceFileCount);
     }
     else if (strncmp(argv[i], "-renameto=", 10)==0) {
-        options.renameTo = allocateStringForOption_old(&options.renameTo, argv[i]+10);
+        options.renameTo = allocateStringForOption(&options.renameTo, argv[i]+10);
     }
     else if (strcmp(argv[i], "-resetIncludeDirs")==0) {
         options.includeDirs = NULL;
@@ -2297,10 +2242,10 @@ static bool processROption(int *argi, int argc, char **argv) {
         options.theRefactoring = AVR_PULL_UP_METHOD;
     }
     else if (strncmp(argv[i], "-rfct-param1=", 13)==0)  {
-        options.refpar1 = allocateStringForOption_old(&options.refpar1, argv[i]+13);
+        options.refpar1 = allocateStringForOption(&options.refpar1, argv[i]+13);
     }
     else if (strncmp(argv[i], "-rfct-param2=", 13)==0)  {
-        options.refpar2 = allocateStringForOption_old(&options.refpar2, argv[i]+13);
+        options.refpar2 = allocateStringForOption(&options.refpar2, argv[i]+13);
     }
     else return false;
     *argi = i;
@@ -2316,7 +2261,7 @@ static bool processSOption(int *argi, int argc, char **argv) {
         options.strictAnsi = true;
     else if (strcmp(argv[i], "-sourcepath")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.sourcePath = allocateStringForOption_old(&options.sourcePath, argv[i]);
+        options.sourcePath = allocateStringForOption(&options.sourcePath, argv[i]);
         setOptionVariable("-sourcepath", options.sourcePath);
     }
     else if (strcmp(argv[i], "-stdop")==0) {
@@ -2407,11 +2352,11 @@ static bool processXOption(int *argi, int argc, char **argv) {
         options.xref2 = true;
     }
     else if (strncmp(argv[i], "-xrefrc=",8) == 0) {
-        options.xrefrc = allocateStringForOption_old(&options.xrefrc, argv[i]+8);
+        options.xrefrc = allocateStringForOption(&options.xrefrc, argv[i]+8);
     }
     else if (strcmp(argv[i], "-xrefrc") == 0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.xrefrc = allocateStringForOption_old(&options.xrefrc, argv[i]);
+        options.xrefrc = allocateStringForOption(&options.xrefrc, argv[i]);
     }
     else return false;
     *argi = i;
@@ -2538,7 +2483,7 @@ void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag) {
             /* input file */
             matched = true;
             if (infilesFlag == PROCESS_FILE_ARGUMENTS) {
-                addToStringListOption_old(&options.inputFiles, argv[i]);
+                addToStringListOption(&options.inputFiles, argv[i]);
             }
         }
         if (!matched) {

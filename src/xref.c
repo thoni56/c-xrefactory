@@ -170,7 +170,7 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
     maxPasses = 1;
     for (currentPass = 1; currentPass <= maxPasses; currentPass++) {
         if (!*firstPassP)
-            deepCopyOptionsFromTo_old(&savedOptions, &options);
+            deepCopyOptionsFromTo(&savedOptions, &options);
         inputOpened             = initializeFileProcessing(firstPassP, argc, argv, 0, NULL, &currentLanguage);
         olOriginalFileIndex     = inputFileNumber;
         olOriginalComFileNumber = olOriginalFileIndex;

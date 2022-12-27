@@ -196,7 +196,7 @@ static void ensureReferencesUpdated(char *project) {
 
     quasiSaveModifiedEditorBuffers();
 
-    deepCopyOptionsFromTo_old(&options, &savedOptions);
+    deepCopyOptionsFromTo(&options, &savedOptions);
 
     setArguments(nargv, project, NULL, NULL);
     nargc                       = argument_count(nargv);
@@ -211,7 +211,7 @@ static void ensureReferencesUpdated(char *project) {
 
     callXref(nargc, nargv, true);
 
-    deepCopyOptionsFromTo_old(&savedOptions, &options);
+    deepCopyOptionsFromTo(&savedOptions, &options);
     ppcEnd(PPC_UPDATE_REPORT);
 
     // return into editSubTaskState
@@ -246,11 +246,11 @@ static void beInteractive(void) {
     char **pargv;
 
     ENTER();
-    deepCopyOptionsFromTo_old(&options, &savedOptions);
+    deepCopyOptionsFromTo(&options, &savedOptions);
     for (;;) {
         closeMainOutputFile();
         ppcSynchronize();
-        deepCopyOptionsFromTo_old(&savedOptions, &options);
+        deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(argument_count(editServInitOptions), editServInitOptions, DONT_PROCESS_FILE_ARGUMENTS);
         getPipedOptions(&pargc, &pargv);
         mainOpenOutputFile(refactoringOptions.outputFileName);
@@ -4537,11 +4537,11 @@ void refactory(void) {
         FATAL_ERROR(ERR_ST, "You have to specify active project with -p option", XREF_EXIT_ERR);
     }
 
-    deepCopyOptionsFromTo_old(&options, &refactoringOptions); // save command line options !!!!
+    deepCopyOptionsFromTo(&options, &refactoringOptions); // save command line options !!!!
     // in general in this file:
     //   'refactoringOptions' are options passed to c-xrefactory
     //   'options' are options valid for interactive edit-server 'sub-task'
-    deepCopyOptionsFromTo_old(&options, &savedOptions);
+    deepCopyOptionsFromTo(&options, &savedOptions);
 
     // MAGIC, set the server operation to anything that just refreshes
     // or generates xrefs since we will be calling the "main task"

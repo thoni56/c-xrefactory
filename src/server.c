@@ -183,7 +183,7 @@ static void parseInputFile(void) {
 
 void initServer(int nargc, char **nargv) {
     clearAvailableRefactorings();
-    options.classpath = "";
+    options.classpath = allocateStringForOption(&options.classpath, "");
     processOptions(nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
     processFileArguments();
     if (options.serverOperation == OLO_EXTRACT)
@@ -283,10 +283,10 @@ void server(int argc, char **argv) {
     ENTER();
     cxResizingBlocked = true;
     firstPass = true;
-    deepCopyOptionsFromTo_old(&options, &savedOptions);
+    deepCopyOptionsFromTo(&options, &savedOptions);
     for(;;) {
         currentPass = ANY_PASS;
-        deepCopyOptionsFromTo_old(&savedOptions, &options);
+        deepCopyOptionsFromTo(&savedOptions, &options);
         getPipedOptions(&nargc, &nargv);
         // O.K. -o option given on command line should catch also file not found
         // message
