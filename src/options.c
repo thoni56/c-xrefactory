@@ -133,10 +133,6 @@ Options presetOptions = {
     0,                          // variablesCount
     {},                         // variables
 
-
-    // pending memory for string values
-    NULL,                       /* allAllocatedStrings */
-
     NULL,                       /* allUsedStringOptions */
     NULL,                       /* allUsedStringListOptions */
 

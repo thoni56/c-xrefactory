@@ -151,8 +151,6 @@ typedef struct options {
     Variable variables[MAX_SET_GET_OPTIONS];
 
     // list of strings - well actually allocated areas
-    LocationList *allPointersToAllocatedAreas;
-
     LocationList *allUsedStringOptions;
     LocationList *allUsedStringListOptions;
 
@@ -179,12 +177,7 @@ extern void dirInputFile(MAP_FUN_SIGNATURE);
 extern void processFileArguments(void);
 extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag);
 
-/* Handling of string and string list options that need to be allocated and "shifted" on deep copy */
-//extern char *allocateStringForOption_old(char **optAddress, char *text);
-//extern void addToStringListOption_old(StringList **optlist, char *argvi);
-//extern void deepCopyOptionsFromTo_old(Options *src, Options *dest);
-
-/* ... and new versions of those... */
+/* Handling of allocated string and string list options that need to be "shifted" on deep copy */
 extern char *allocateStringForOption(char **pointerToOption, char *string);
 extern void addToStringListOption(StringList **pointerToOption, char *string);
 extern void deepCopyOptionsFromTo(Options *src, Options *dest);
