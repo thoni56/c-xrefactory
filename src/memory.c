@@ -325,7 +325,7 @@ void editorFree(void *pointer, size_t size) {
     olcx_memory_free(pointer, size);
 }
 
-static bool isInMemory(void *pointer, Memory2 *memory) {
+static bool isInMemory(Memory2 *memory, void *pointer) {
     return pointer >= (void *)memory->area && pointer <= (void *)&memory->area[memory->size];
 }
 
@@ -369,7 +369,7 @@ void *smReallocc(Memory2 *memory, void *pointer, int newCount, size_t size, int 
 
 
 void smFreeUntil(Memory2 *memory, void *pointer) {
-    assert(isInMemory(pointer, memory));
+    assert(isInMemory(memory, pointer));
     memory->index = (char *)pointer - memory->area;
 }
 

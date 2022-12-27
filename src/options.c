@@ -818,9 +818,9 @@ static void processProjectMarker(char *markerText, int markerLength, char *curre
         processSingleProjectMarker(projectMarker, fileName, projectUpdated, foundProjectName);
     }
     if (*projectUpdated) {
-        strcpy(base, foundProjectName);
+        strcpy(base, foundProjectName); /* Keep for debugging... */
         assert(strlen(foundProjectName) < MAX_FILE_NAME_SIZE - 1);
-        setOptionVariable("__BASE", base);
+        setOptionVariable("__BASE", foundProjectName);
         strcpy(foundProjectName, projectMarker);
         // completely wrong, what about file names from command line ?
         //&strncpy(cwd, foundProjectName, MAX_FILE_NAME_SIZE-1);
