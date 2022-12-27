@@ -1,10 +1,15 @@
 <goto>
  <position-off off=17 len=<n>>CURDIR/hello.c</position-off>
 </goto>
+<ask-confirmation len=<n>>Can not parse parameter definition, continue anyway?</ask-confirmation>
 <error len=<n>>Parameter number out of limits
 </error>
-<error len=<n>>Parameter number out of limits
-</error>
+<goto>
+ <position-off off=21 len=<n>>CURDIR/hello.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>void</str>  <str len=<n>></str>
+</replacement>
 <goto>
  <position-off off=17 len=<n>>CURDIR/hello.c</position-off>
 </goto>

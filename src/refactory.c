@@ -2126,11 +2126,7 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
     } else {
         if (text[m1->offset] == '(') {
             m1->offset++;
-            if (strncmp(&text[m1->offset], "void", 4) == 0) {
-                // void is not a parameter, so out of limits
-                errorMessage(ERR_ST, "Parameter number out of limits");
-                goto error;
-            } else if (text[m2->offset] == ',') {
+            if (text[m2->offset] == ',') {
                 m2->offset++;
                 // here pass also blank symbols
             }
@@ -2145,7 +2141,6 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
         assert(m1->offset <= m2->offset);
         replaceString(m1, m2->offset - m1->offset, "");
     }
- error:
     freeEditorMarker(m1);
     freeEditorMarker(m2);
 }

@@ -1,0 +1,31 @@
+<goto>
+ <position-off off=17 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<goto>
+ <position-off off=25 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>void *ptr, </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=35 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>, void *ptr</str>
+</replacement>
+<goto>
+ <position-off off=142 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>&str1, </str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=146 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>, &str1</str>
+</replacement>
+<goto>
+ <position-off off=17 len=<n>>CURDIR/source.c</position-off>
+</goto>
+<sync>
