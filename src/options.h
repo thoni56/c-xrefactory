@@ -51,8 +51,8 @@ typedef struct options {
     char referenceListWithoutSource;
     int completionOverloadWizardDeep;
     CommentMovingMode commentMovingMode;
-    struct stringList *pruneNames;
-    struct stringList *inputFiles;
+    StringList *pruneNames;
+    StringList *inputFiles;
     ContinueRefactoringKind continueRefactoring;
     bool completionCaseSensitive;
     char *xrefrc;
