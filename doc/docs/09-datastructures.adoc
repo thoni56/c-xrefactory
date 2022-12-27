@@ -115,7 +115,7 @@ It consists of a collection of fields of the types
 
 ==== Allocation & Copying
 
-It has its own allocation using `optAlloc` which allocates in a
+Options has its own allocation using `optAlloc` which allocates in a
 separate area, currently part of the options structure and utilizing
 "dynamic allocation" (`dm_` functions on the `Memory` structure).
 
@@ -126,3 +126,22 @@ used by the Refactorer (`refactoringOptions`).
 Since the options memory is then also copied, all pointers into the
 options memory need to be updated. To be able to do this, the options
 structure contains lists of addresses that needs to by "shifted".
+
+When an option with a string or string list value is modified the
+option is registered in either the list of string valued options or
+the list of string list valued options. When an options structure is
+copied it must be performed using a deep copy function which "shifts"
+those options and their values (areas in the options memory) in the
+copy so that they point into the memory area of the copy, not the
+original.
+
+After the deep copy the following point into the option memory of the
+copy
+
+- the lists of string and string list valued options (option fields)
+- all string and string valued option fields that are used (allocated)
+- all list nodes for the used option (allocated)
+- all list nodes for the string lists (allocated)
+
+
+
