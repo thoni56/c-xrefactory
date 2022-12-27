@@ -165,12 +165,12 @@ void aboutMessage(void) {
     sprintf(output, "C-xrefactory version %s\n", C_XREF_VERSION_NUMBER);
     sprintf(output+strlen(output), "Compiled at %s on %s\n",  __TIME__, __DATE__);
     sprintf(output+strlen(output), "from git revision %s.\n", GIT_HASH);
-    sprintf(output+strlen(output), "(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
-    sprintf(output+strlen(output), "Released into GPL 2009 by Marian Vittek (SourceForge)\n");
-    sprintf(output+strlen(output), "Work resurrected and continued by Thomas Nilefalk 2015-\n");
-    sprintf(output+strlen(output), "(https://github.com/thoni56/c-xrefactory)\n");
+    strcat(output,                 "(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
+    strcat(output,                 "Released into GPL 2009 by Marian Vittek (SourceForge)\n");
+    strcat(output,                 "Work resurrected and continued by Thomas Nilefalk 2015-\n");
+    strcat(output,                 "(https://github.com/thoni56/c-xrefactory)\n");
     if (options.exit) {
-        sprintf(output+strlen(output), "Exiting!");
+        strcat(output, "Exiting!");
     }
     if (options.xref2) {
         ppcGenRecord(PPC_INFORMATION, output);
