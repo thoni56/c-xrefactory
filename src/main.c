@@ -148,7 +148,7 @@ static bool computeAndOpenInputFile(void) {
 }
 
 static void initOptions(void) {
-    deepCopyOptionsFromTo(&presetOptions, &options);
+    deepCopyOptionsFromTo_old(&presetOptions, &options);
 
     inputFileNumber   = noFileIndex;
 }
@@ -249,7 +249,7 @@ static void discoverBuiltinIncludePaths(void) {
                 break;
             if (directoryExists(line)) {
                 log_trace("Add include '%s'", line);
-                addStringListOption(&options.includeDirs, line);
+                addToStringListOption_old(&options.includeDirs, line);
             }
         } while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF);
 
@@ -485,7 +485,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
             inputOpened = false;
             goto fini;
         }
-        deepCopyOptionsFromTo(&options, &savedOptions);  // before getJavaClassPath, it modifies ???
+        deepCopyOptionsFromTo_old(&options, &savedOptions);  // before getJavaClassPath, it modifies ???
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
         getJavaClassAndSourcePath();
         inputOpened = computeAndOpenInputFile();
@@ -505,7 +505,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         assert(cache.free == cache.points[0].nextLexemP);
         assert(cache.free == cache.points[1].nextLexemP);
     } else {
-        deepCopyOptionsFromTo(&savedOptions, &options);
+        deepCopyOptionsFromTo_old(&savedOptions, &options);
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS); /* no include or define options */
         inputOpened = computeAndOpenInputFile();
     }

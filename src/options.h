@@ -180,14 +180,14 @@ extern void processFileArguments(void);
 extern void processOptions(int argc, char **argv, ProcessFileArguments infilesFlag);
 
 /* Handling of string and string list options that need to be allocated and "shifted" on deep copy */
-extern char *createOptionString(char **optAddress, char *text);
-extern void addStringListOption(StringList **optlist, char *argvi);
-extern void deepCopyOptionsFromTo(Options *src, Options *dest);
+extern char *allocateStringForOption_old(char **optAddress, char *text);
+extern void addToStringListOption_old(StringList **optlist, char *argvi);
+extern void deepCopyOptionsFromTo_old(Options *src, Options *dest);
 
 /* ... and new versions of those... */
-extern void allocateStringForOption(char **pointerToOption, char *string);
+extern char *allocateStringForOption(char **pointerToOption, char *string);
 extern void addToStringListOption(StringList **pointerToOption, char *string);
-extern void deepCopyOptionsFromTo_New(Options *src, Options *dest);
+extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
 
 extern void getXrefrcFileName(char *ttt);

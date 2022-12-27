@@ -176,7 +176,7 @@ Ensure(Options, can_allocate_a_string) {
     char *allocatedString;
 
     assert_that(options.memory.index, is_equal_to(0));
-    allocatedString = createOptionString(&allocatedString, "allocated string");
+    allocatedString = allocateStringForOption_old(&allocatedString, "allocated string");
     assert_that(allocatedString, is_equal_to_string("allocated string"));
     assert_that(options.memory.index, is_greater_than(0));
 }
@@ -429,7 +429,7 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
 }
 
 Ensure(Options, collects_address_to_option_with_allocated_string) {
-    createOptionString(&options.compiler, "compiler");
+    allocateStringForOption_old(&options.compiler, "compiler");
 
     assert_that(options.allPointersToAllocatedAreas, is_not_null);
     assert_that(pointerLocationOf(options.allPointersToAllocatedAreas), is_equal_to(&options.compiler));
@@ -495,7 +495,7 @@ Ensure(Options, can_deep_copy_options_with_one_string_option) {
     allocateStringForOption(&options.compiler, "compiler");
 
     Options copy;
-    deepCopyOptionsFromTo_New(&options, &copy);
+    deepCopyOptionsFromTo(&options, &copy);
 
     assert_that(options.compiler, is_equal_to_string(copy.compiler)); /* Strings are the same */
     assert_that(options.compiler, is_not_equal_to(copy.compiler)); /* But they are stored in different locations... */
@@ -507,7 +507,7 @@ Ensure(Options, can_deep_copy_options_with_two_string_options) {
     allocateStringForOption(&options.classpath, "classpath");
 
     Options copy;
-    deepCopyOptionsFromTo_New(&options, &copy);
+    deepCopyOptionsFromTo(&options, &copy);
 
     assert_that(options.classpath, is_equal_to_string(copy.classpath)); /* Strings are the same */
     assert_that(options.classpath, is_not_equal_to(copy.classpath)); /* But they are stored in different locations... */
@@ -518,7 +518,7 @@ Ensure(Options, can_deep_copy_options_with_one_stringlist_option_with_one_string
     addToStringListOption(&options.includeDirs, ".");
 
     Options copy;
-    deepCopyOptionsFromTo_New(&options, &copy);
+    deepCopyOptionsFromTo(&options, &copy);
 
     /* Strings are the same */
     assert_that(options.includeDirs->string, is_equal_to_string(copy.includeDirs->string));
@@ -533,7 +533,7 @@ Ensure(Options, can_deep_copy_options_with_one_stringlist_option_with_two_string
     addToStringListOption(&options.includeDirs, "include");
 
     Options copy;
-    deepCopyOptionsFromTo_New(&options, &copy);
+    deepCopyOptionsFromTo(&options, &copy);
 
     /* Strings are the same */
     assert_that(options.includeDirs->next->string, is_equal_to_string(copy.includeDirs->next->string));
@@ -550,7 +550,7 @@ Ensure(Options, can_deep_copy_options_with_two_stringlist_option_with_two_string
     addToStringListOption(&options.pruneNames, "prune2");
 
     Options copy;
-    deepCopyOptionsFromTo_New(&options, &copy);
+    deepCopyOptionsFromTo(&options, &copy);
 
     /* Strings are the same */
     assert_that(options.pruneNames->next->string, is_equal_to_string(copy.pruneNames->next->string));

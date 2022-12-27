@@ -26,11 +26,11 @@ char *getOptionVariable(char *name) {
     return (char *)mock(name);
 }
 
-void deepCopyOptionsFromTo(Options *src, Options *dest) {
+void deepCopyOptionsFromTo_old(Options *src, Options *dest) {
   mock(dest, src);
 }
 
-char *createOptionString(char **dest, char *text) {
+char *allocateStringForOption_old(char **dest, char *text) {
     return (char *)mock(dest, text);
 }
 
@@ -38,7 +38,7 @@ void addSourcePathsCut(void) {
   mock();
 }
 
-void addStringListOption(StringList **optlist, char *argvi) {
+void addToStringListOption_old(StringList **optlist, char *argvi) {
     mock(optlist, argvi);
 }
 

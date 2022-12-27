@@ -283,10 +283,10 @@ void server(int argc, char **argv) {
     ENTER();
     cxResizingBlocked = true;
     firstPass = true;
-    deepCopyOptionsFromTo(&options, &savedOptions);
+    deepCopyOptionsFromTo_old(&options, &savedOptions);
     for(;;) {
         currentPass = ANY_PASS;
-        deepCopyOptionsFromTo(&savedOptions, &options);
+        deepCopyOptionsFromTo_old(&savedOptions, &options);
         getPipedOptions(&nargc, &nargv);
         // O.K. -o option given on command line should catch also file not found
         // message
