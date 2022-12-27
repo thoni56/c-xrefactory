@@ -569,7 +569,7 @@ static void totalTaskEntryInitialisations() {
     assert(mm);
 
     // init options memory
-    initMemory(((Memory*)&presetOptions.memory), "", optionsOverflowHandler, SIZE_optMemory);
+    initMemory((Memory*)&presetOptions.memory, "", optionsOverflowHandler, SIZE_optMemory);
 
     // Inject error handling functions
     setFatalErrorHandlerForMemory(fatalError);

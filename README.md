@@ -75,7 +75,9 @@ to [these instructions][X11 WSL2].
 
 ## Features and notes
 
-TBD. Some documentation can be found [here][our docs].
+TBD. Some documentation can be found [here][our docs]. We are also
+trying out [Structurizr](https://structurizr.com/share/51829) for the
+documentation.
 
 ### Yacc special features
 

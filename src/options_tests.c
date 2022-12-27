@@ -250,7 +250,7 @@ Ensure(Options, can_parse_xrefrc_option_with_filename_separate) {
     assert_that(options.xrefrc, is_equal_to_string("abc"));
 }
 
-Ensure(Options, can_call_readOptionsFromFileIntoArgs) {
+Ensure(Options, can_readOptionsFromFileIntoArgs) {
     FILE *file = NULL;
     int nargc;
     char **nargv[1000];

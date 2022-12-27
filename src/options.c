@@ -312,6 +312,7 @@ char *allocateStringForOption(char **pointerToOption, char *string) {
 static StringList *concatStringList(StringList *list, char *string) {
     StringList *l = list;
 
+    /* Order is important so concat at the end */
     if (l == NULL) {
         l = optAlloc(sizeof(StringList));
     } else {

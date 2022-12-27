@@ -196,8 +196,10 @@ extern void getPipedOptions(int *outNargc,char ***outNargv);
 extern void javaSetSourcePath(bool defaultClassPathAllowed);
 extern bool referenceFileCountMatches(int newRefNum);
 
-extern char *findConfigFile(char *cwd);
 extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
                                                        char *foundProjectName);
+
+/* Experimental */
+extern char *findConfigFile(char *cwd);
 
 #endif
