@@ -329,7 +329,7 @@ static bool isInMemory(Memory2 *memory, void *pointer) {
     return pointer >= (void *)memory->area && pointer <= (void *)&memory->area[memory->size];
 }
 
-void smInit(Memory2 *memory, size_t size) {
+void smInit(Memory2 *memory, char *name, size_t size) {
     if (size != memory->size) {
         free(memory->area);
         memory->area = NULL;
@@ -340,6 +340,7 @@ void smInit(Memory2 *memory, size_t size) {
         memory->size = size;
     }
     memory->index = 0;
+    memory->name = name;
 }
 
 void *smAllocc(Memory2 *memory, int count, size_t size) {

@@ -61,12 +61,13 @@ extern bool ppmIsFreedPointer(void *pointer);
 /* ************************************************************************** */
 /* New type of static memory */
 typedef struct {
+    char *name;
     size_t size;
     int index;
     char *area;
 } Memory2;
 
-extern void smInit(Memory2 *memory, size_t size);
+extern void smInit(Memory2 *memory, char *name, size_t size);
 extern void *smAllocc(Memory2 *memory, int count, size_t size);
 extern void *smAlloc(Memory2 *memory, size_t size);
 extern void *smRealloc(Memory2 *memory, void *pointer, size_t oldSize, size_t newSize);
@@ -96,7 +97,7 @@ extern Memory2 ppmMemory;
 
 /* Inject some error functions to remove linkage dependency */
 extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus,
-							   char *file, int line));
+                               char *file, int line));
 extern void setInternalCheckFailHandlerForMemory(void (*function)(char *expr, char *file, int line));
 extern void setErrorHandlerForMemory(void (*function)(int code, char *message));
 

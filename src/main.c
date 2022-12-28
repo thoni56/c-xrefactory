@@ -634,7 +634,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
     initReferenceTable(MAX_CXREF_ENTRIES);
 
-    smInit(&ppmMemory, SIZE_ppmMemory);
+    smInit(&ppmMemory, "pre-processor macros", SIZE_ppmMemory);
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initOuterCodeBlock();
 

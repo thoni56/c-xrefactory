@@ -154,7 +154,7 @@ Ensure(Memory, can_handle_olcx_memory) {
 Memory2 testMemory2;
 
 Ensure(Memory, can_allocate_with_new_sm_memory) {
-    smInit(&testMemory2, SIZE_testMemory);
+    smInit(&testMemory2, "", SIZE_testMemory);
 
     char *pointer = smAllocc(&testMemory2, 1, sizeof(char));
     assert_that(pointer, is_not_null);
@@ -167,7 +167,7 @@ Ensure(Memory, can_allocate_with_new_sm_memory) {
 }
 
 Ensure(Memory, will_fatal_on_overflow_in_new_sm_memory) {
-    smInit(&testMemory2, SIZE_testMemory);
+    smInit(&testMemory2, "", SIZE_testMemory);
 
     /* Allocate more that size renders fatalError() */
     fatalErrorAllowed = true;
@@ -176,7 +176,7 @@ Ensure(Memory, will_fatal_on_overflow_in_new_sm_memory) {
 }
 
 Ensure(Memory, can_free_until_in_new_sm_memory) {
-    smInit(&testMemory2, SIZE_testMemory);
+    smInit(&testMemory2, "", SIZE_testMemory);
 
     /* Allocate some memory */
     void *pointer1 = smAlloc(&testMemory2, 2);
@@ -192,7 +192,7 @@ Ensure(Memory, can_realloc_in_new_sm_memory) {
     int initialSize = 2;
     int newSize = 4;
 
-    smInit(&testMemory2, SIZE_testMemory);
+    smInit(&testMemory2, "", SIZE_testMemory);
 
     /* Allocate some memory */
     void *pointer1 = smAlloc(&testMemory2, initialSize);
@@ -204,7 +204,7 @@ Ensure(Memory, can_realloc_in_new_sm_memory) {
 }
 
 Ensure(Memory, will_fatal_if_freeing_not_in_memory) {
-    smInit(&testMemory2, SIZE_testMemory);
+    smInit(&testMemory2, "", SIZE_testMemory);
 
     void *pointer = &testMemory2.area+1;
 
@@ -215,7 +215,7 @@ Ensure(Memory, will_fatal_if_freeing_not_in_memory) {
 }
 
 Ensure(Memory, will_fatal_if_reallocing_not_last_allocated) {
-    smInit(&testMemory2, SIZE_testMemory);
+    smInit(&testMemory2, "", SIZE_testMemory);
 
     void *pointer = smAlloc(&testMemory2, 5);
 

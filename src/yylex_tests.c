@@ -52,7 +52,7 @@ BeforeEach(Yylex) {
 
     initSymbolTable(100);
 
-    smInit(&ppmMemory, SIZE_ppmMemory);
+    smInit(&ppmMemory, "", SIZE_ppmMemory);
 
     always_expect(initCharacterBuffer);
 }

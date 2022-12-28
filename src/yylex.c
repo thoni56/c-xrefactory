@@ -81,7 +81,7 @@ static LexInput macroInputStack[MACRO_INPUT_STACK_SIZE];
 static Memory2 macroArgumentsMemory;
 
 static void initMacroArgumentsMemory(void) {
-    smInit(&macroArgumentsMemory, MacroArgumentsMemorySize);
+    smInit(&macroArgumentsMemory, "macro arguments", MacroArgumentsMemorySize);
 }
 
 static void *mamAlloc(size_t size) {
@@ -94,7 +94,7 @@ static void *mamAlloc(size_t size) {
 static Memory2 macroBodyMemory;
 
 static void mbmInit(void) {
-    smInit(&macroBodyMemory, MacroBodyMemorySize);
+    smInit(&macroBodyMemory, "macro body", MacroBodyMemorySize);
 }
 
 static void *mbmAlloc(size_t size) {
