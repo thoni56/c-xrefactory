@@ -568,8 +568,7 @@ static void totalTaskEntryInitialisations() {
     int mm = cxMemoryOverflowHandler(1);
     assert(mm);
 
-    // init options memory
-    initMemory((Memory*)&presetOptions.memory, "", optionsOverflowHandler, SIZE_optMemory);
+    initMemory(&presetOptions.memory, "options memory", optionsOverflowHandler, SIZE_optMemory);
 
     // Inject error handling functions
     setFatalErrorHandlerForMemory(fatalError);
