@@ -7,7 +7,7 @@
 
 /* ************************ Types ******************************** */
 
-/* Two uses: cxMemory & options... */
+/* Only use: cxMemory */
 typedef struct memory {
     char    *name;              /* String representing the name of the memory */
     bool	(*overflowHandler)(int n); /* Should return true if more memory was possible to acquire */
@@ -72,6 +72,7 @@ extern void *smAllocc(Memory2 *memory, int count, size_t size);
 extern void *smAlloc(Memory2 *memory, size_t size);
 extern void *smRealloc(Memory2 *memory, void *pointer, size_t oldSize, size_t newSize);
 extern void *smReallocc(Memory2 *memory, void *pointer, int newCount, size_t size, int oldCount);
+extern bool smIsBetween(Memory2 *memory, void *pointer, int low, int high);
 extern void smFreeUntil(Memory2 *memory, void *pointer);
 extern bool smIsFreedPointer(Memory2 *memory, void *pointer);
 

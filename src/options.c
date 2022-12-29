@@ -136,7 +136,7 @@ Options presetOptions = {
     NULL,                       /* allUsedStringOptions */
     NULL,                       /* allUsedStringListOptions */
 
-    {0, },                      /* memory - options string storage */
+    {.area = NULL, .size = 0},  /* memory - options string storage */
 };
 
 
@@ -248,7 +248,7 @@ static void usage() {
 
 
 static void *optAlloc(size_t size) {
-    return dm_alloc(&options.memory, size);
+    return smAlloc(&options.memory, size);
 }
 
 /* Protected type */
@@ -342,62 +342,84 @@ static void shiftPointer(void **location, void *src, void *dst) {
     }
 }
 
+static void assertLocationIsInOptionsStructure(void *location, Options *options) {
+    assert(location > (void *)options
+           && location < (void *)options + ((void *)&options->memory - (void *)options));
+}
+
+static void assertLocationIsInMemory(void *l, Options *options) {
+    assert(l == NULL || smIsBetween(&options->memory, l, 0, options->memory.index));
+}
+
 static void shiftLocationList(LocationList *list, Options *src, Options *dst) {
     for (LocationList *l = list; l != NULL; l = l->next) {
-        /* This node should be in dst memory */
-        assert(dm_isBetween(&dst->memory, l, 0, dst->memory.index));
+        assertLocationIsInMemory(l, dst);
 
-        /* Location is in options structure */
+        /* Location itself is in options structure */
+        assertLocationIsInOptionsStructure(l->location, src);
         shiftPointer((void **)&l->location, src, dst);
-        assert((void *)l->location > (void *)dst && (void *)l->location < (void *)dst+((void *)&dst->memory-(void *)dst));
+        assertLocationIsInOptionsStructure(l->location, dst);
 
-        /* Next node is in options memory area */
-        shiftPointer((void **)&l->next, &src->memory.block, &dst->memory.block);
-        assert(l->next == NULL || dm_isBetween(&dst->memory, l->next, 0, dst->memory.index));
+        /* Next node, if any, is in options memory area */
+        shiftPointer((void **)&l->next, src->memory.area, dst->memory.area);
+        assertLocationIsInMemory(l, dst);
     }
 }
 
-static void shiftOptions(LocationList *list, Options *src, Options *dst) {
+static void shiftStringOptions(LocationList *list, Options *src, Options *dst) {
     for (LocationList *l = list; l != NULL; l = l->next) {
         /* The string value is in options memory area */
-        assert(dm_isBetween(&src->memory, *l->location, 0, src->memory.index));
-        shiftPointer(l->location, &src->memory.block, &dst->memory.block);
-        assert(dm_isBetween(&dst->memory, *l->location, 0, dst->memory.index));
+        assertLocationIsInMemory(*l->location, src);
+        shiftPointer(l->location, src->memory.area, dst->memory.area);
+        assertLocationIsInMemory(*l->location, dst);
     }
 }
 
 static void shiftStringList(StringList *list, Options *src, Options *dst) {
     for (StringList *l = list; l != NULL; l = l->next) {
-        assert(dm_isBetween(&dst->memory, l, 0, dst->memory.index));
-        shiftPointer((void **)&l->string, &src->memory.block, &dst->memory.block);
-        assert(dm_isBetween(&dst->memory, l->string, 0, dst->memory.index));
-        shiftPointer((void **)&l->next, &src->memory.block, &dst->memory.block);
+        assertLocationIsInMemory(l, dst);
+        shiftPointer((void **)&l->string, src->memory.area, dst->memory.area);
+        assertLocationIsInMemory(l->string, dst);
+
+        shiftPointer((void **)&l->next, src->memory.area, dst->memory.area);
+        assertLocationIsInMemory(l->next, dst);
     }
 }
 
-static void shiftStringLists(LocationList *list, Options *src, Options *dst) {
+static void shiftStringListOptions(LocationList *list, Options *src, Options *dst) {
     for (LocationList *l = list; l != NULL; l = l->next) {
-        shiftPointer((void **)l->location, src, dst);
+        assertLocationIsInOptionsStructure(l->location, dst);
+
+        assertLocationIsInMemory(*l->location, src);
+        shiftPointer((void **)l->location, src->memory.area, dst->memory.area);
+        assertLocationIsInMemory(*l->location, dst);
+
         shiftStringList((StringList *)*l->location, src, dst);
     }
 }
 
 
 void deepCopyOptionsFromTo(Options *src, Options *dst) {
+    if (dst->memory.area)
+        free(dst->memory.area);
+
     memcpy(dst, src, sizeof(Options));
 
+    dst->memory.area = malloc(dst->memory.size);
+    memcpy(dst->memory.area, src->memory.area, dst->memory.size);
+
     /* Shift the pointer to the list of all String valued options to point to new memory area */
-    shiftPointer((void **)&dst->allUsedStringOptions, &src->memory.block, &dst->memory.block);
+    shiftPointer((void **)&dst->allUsedStringOptions, src->memory.area, dst->memory.area);
     /* Now we can shift all such option fields and the linked list in the dst and dst.memory */
     shiftLocationList(dst->allUsedStringOptions, src, dst);
-    shiftOptions(dst->allUsedStringOptions, src, dst);
+    shiftStringOptions(dst->allUsedStringOptions, src, dst);
 
     /* Shift the pointer to the list of all StringList valued options to point to new memory area */
-    shiftPointer((void **)&dst->allUsedStringListOptions, &src->memory.block, &dst->memory.block);
-    /* Now we can shift the list... */
+    shiftPointer((void **)&dst->allUsedStringListOptions, src->memory.area, dst->memory.area);
+    /* Now we can shift that list... */
     shiftLocationList(dst->allUsedStringListOptions, src, dst);
     /* ... and the StringLists */
-    shiftStringLists(dst->allUsedStringListOptions, src, dst);
+    shiftStringListOptions(dst->allUsedStringListOptions, src, dst);
 }
 
 

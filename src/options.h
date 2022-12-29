@@ -155,7 +155,7 @@ typedef struct options {
     LocationList *allUsedStringListOptions;
 
     // Memory for allocated option strings and lists
-    Memory memory;
+    Memory2 memory;
 } Options;
 
 

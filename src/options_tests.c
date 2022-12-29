@@ -22,14 +22,11 @@
 #include "proto.h"
 #include "yylex.mock"
 
-static bool optionsOverflowHandler() {
-    return false;
-}
 
 Describe(Options);
 BeforeEach(Options) {
     log_set_level(LOG_ERROR);
-    initMemory(&options.memory, "", optionsOverflowHandler, SIZE_optMemory);
+    smInit(&options.memory, "", SIZE_optMemory);
 }
 AfterEach(Options) {}
 
@@ -439,17 +436,17 @@ Ensure(Options, collects_option_field_that_allocate_a_string_in_options_space) {
 
     assert_that(containsPointerLocation(options.allUsedStringOptions, (void **)&options.classpath));
     assert_that(options.classpath, is_equal_to_string("classpath"));
-    assert_that(dm_isBetween(&options.memory, options.classpath, 0, options.memory.index));
+    assert_that(smIsBetween(&options.memory, options.classpath, 0, options.memory.index));
 
     /* Add another option and ensure that the string is allocated in option memory... */
     allocateStringForOption(&options.compiler, "compiler");
-    assert_that(dm_isBetween(&options.memory, options.compiler, 0, options.memory.index));
+    assert_that(smIsBetween(&options.memory, options.compiler, 0, options.memory.index));
     /* ... and that the option is collected ...*/
     assert_that(containsPointerLocation(options.allUsedStringOptions, (void **)&options.compiler));
 
     /* ... and finally that the list nodes for allOptionFieldsPointingToAllocatedAreas are also in options memory. */
-    assert_that(dm_isBetween(&options.memory, options.allUsedStringOptions, 0, options.memory.index));
-    assert_that(dm_isBetween(&options.memory, nextPointerLocationList(options.allUsedStringOptions), 0, options.memory.index));
+    assert_that(smIsBetween(&options.memory, options.allUsedStringOptions, 0, options.memory.index));
+    assert_that(smIsBetween(&options.memory, nextPointerLocationList(options.allUsedStringOptions), 0, options.memory.index));
 }
 
 Ensure(Options, collects_variable_as_allocating_two_strings_in_options_space) {
@@ -459,8 +456,8 @@ Ensure(Options, collects_variable_as_allocating_two_strings_in_options_space) {
                                         (void **)&options.variables[options.variablesCount-1].name));
     assert_that(containsPointerLocation(options.allUsedStringOptions,
                                         (void **)&options.variables[options.variablesCount-1].value));
-    assert_that(dm_isBetween(&options.memory, options.variables[0].name, 0, options.memory.index));
-    assert_that(dm_isBetween(&options.memory, options.variables[0].value, 0, options.memory.index));
+    assert_that(smIsBetween(&options.memory, options.variables[0].name, 0, options.memory.index));
+    assert_that(smIsBetween(&options.memory, options.variables[0].value, 0, options.memory.index));
     assert_that(getOptionVariable("ENV"), is_equal_to_string("env"));
 }
 
@@ -470,8 +467,8 @@ Ensure(Options, collects_option_field_that_allocate_a_string_list_in_options_spa
 
     assert_that(containsPointerLocation(options.allUsedStringListOptions, (void **)&options.includeDirs));
     assert_that(options.includeDirs->string, is_equal_to_string("includeDir1"));
-    assert_that(dm_isBetween(&options.memory, options.includeDirs, 0, options.memory.index));
-    assert_that(dm_isBetween(&options.memory, options.includeDirs->string, 0, options.memory.index));
+    assert_that(smIsBetween(&options.memory, options.includeDirs, 0, options.memory.index));
+    assert_that(smIsBetween(&options.memory, options.includeDirs->string, 0, options.memory.index));
 
     addToStringListOption(&options.includeDirs, "includeDir2");
     assert_that(pointerLocationOf(options.allUsedStringListOptions), is_equal_to(&options.includeDirs));
@@ -483,30 +480,30 @@ Ensure(Options, collects_option_field_that_allocate_a_string_list_in_options_spa
 Ensure(Options, can_deep_copy_options_with_one_string_option) {
     allocateStringForOption(&options.compiler, "compiler");
 
-    Options copy;
+    Options copy = {.memory = {.area = NULL, .size = 0}};
     deepCopyOptionsFromTo(&options, &copy);
 
     assert_that(options.compiler, is_equal_to_string(copy.compiler)); /* Strings are the same */
     assert_that(options.compiler, is_not_equal_to(copy.compiler)); /* But they are stored in different locations... */
-    assert_that(dm_isBetween(&copy.memory, copy.compiler, 0, copy.memory.index)); /* ... in the copy's memory */
+    assert_that(smIsBetween(&copy.memory, copy.compiler, 0, copy.memory.index)); /* ... in the copy's memory */
 }
 
 Ensure(Options, can_deep_copy_options_with_two_string_options) {
     allocateStringForOption(&options.compiler, "compiler");
     allocateStringForOption(&options.classpath, "classpath");
 
-    Options copy;
+    Options copy = {.memory = {.area = NULL, .size = 0}};
     deepCopyOptionsFromTo(&options, &copy);
 
     assert_that(options.classpath, is_equal_to_string(copy.classpath)); /* Strings are the same */
     assert_that(options.classpath, is_not_equal_to(copy.classpath)); /* But they are stored in different locations... */
-    assert_that(dm_isBetween(&copy.memory, copy.classpath, 0, copy.memory.index)); /* ... in the copy's memory */
+    assert_that(smIsBetween(&copy.memory, copy.classpath, 0, copy.memory.index)); /* ... in the copy's memory */
 }
 
 Ensure(Options, can_deep_copy_options_with_one_stringlist_option_with_one_string) {
     addToStringListOption(&options.includeDirs, ".");
 
-    Options copy;
+    Options copy = {.memory = {.area = NULL, .size = 0}};
     deepCopyOptionsFromTo(&options, &copy);
 
     /* Strings are the same */
@@ -514,14 +511,14 @@ Ensure(Options, can_deep_copy_options_with_one_stringlist_option_with_one_string
     /* And they are stored in different locations... */
     assert_that(options.includeDirs->string, is_not_equal_to(copy.includeDirs->string));
     /* ... in the copy's memory */
-    assert_that(dm_isBetween(&copy.memory, copy.includeDirs->string, 0, copy.memory.index));
+    assert_that(smIsBetween(&copy.memory, copy.includeDirs->string, 0, copy.memory.index));
 }
 
 Ensure(Options, can_deep_copy_options_with_one_stringlist_option_with_two_strings) {
     addToStringListOption(&options.includeDirs, ".");
     addToStringListOption(&options.includeDirs, "include");
 
-    Options copy;
+    Options copy = {.memory = {.area = NULL, .size = 0}};
     deepCopyOptionsFromTo(&options, &copy);
 
     /* Strings are the same */
@@ -529,7 +526,7 @@ Ensure(Options, can_deep_copy_options_with_one_stringlist_option_with_two_string
     /* And they are stored in different locations... */
     assert_that(options.includeDirs->next->string, is_not_equal_to(copy.includeDirs->next->string));
     /* ... in the copy's memory */
-    assert_that(dm_isBetween(&copy.memory, copy.includeDirs->next->string, 0, copy.memory.index));
+    assert_that(smIsBetween(&copy.memory, copy.includeDirs->next->string, 0, copy.memory.index));
 }
 
 Ensure(Options, can_deep_copy_options_with_two_stringlist_option_with_two_strings) {
@@ -538,7 +535,7 @@ Ensure(Options, can_deep_copy_options_with_two_stringlist_option_with_two_string
     addToStringListOption(&options.pruneNames, "prune1");
     addToStringListOption(&options.pruneNames, "prune2");
 
-    Options copy;
+    Options copy = {.memory = {.area = NULL, .size = 0}};
     deepCopyOptionsFromTo(&options, &copy);
 
     /* Strings are the same */
@@ -546,5 +543,5 @@ Ensure(Options, can_deep_copy_options_with_two_stringlist_option_with_two_string
     /* And they are stored in different locations... */
     assert_that(options.pruneNames->next->string, is_not_equal_to(copy.pruneNames->next->string));
     /* ... in the copy's memory */
-    assert_that(dm_isBetween(&copy.memory, copy.pruneNames->next->string, 0, copy.memory.index));
+    assert_that(smIsBetween(&copy.memory, copy.pruneNames->next->string, 0, copy.memory.index));
 }

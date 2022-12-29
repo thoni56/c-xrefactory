@@ -348,8 +348,11 @@ void *smAllocc(Memory2 *memory, int count, size_t size) {
     assert(size > 0);
     assert(count >= 0);
     memory->index += count*size;
-    if (memory->index > memory->size)
-        fatalError(ERR_ST, "Memory overflow.", XREF_EXIT_ERR, __FILE__, __LINE__);
+    if (memory->index > memory->size) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff, "%s memory overflow", memory->name);
+        fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR, __FILE__, __LINE__);
+    }
     return pointer;
 }
 
@@ -374,7 +377,7 @@ void smFreeUntil(Memory2 *memory, void *pointer) {
     memory->index = (char *)pointer - memory->area;
 }
 
-static bool smIsBetween(Memory2 *memory, void *pointer, int low, int high) {
+bool smIsBetween(Memory2 *memory, void *pointer, int low, int high) {
     return pointer >= (void *)&memory->area[low] && pointer < (void *)&memory->area[high];
 }
 
