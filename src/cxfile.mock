@@ -30,10 +30,6 @@ bool searchStringMatch(char *cxtag, int slen) {
   return (int) mock(cxtag, slen);
 }
 
-char *createTagSearchLineStatic(char *name, Position *p, int *len1, int *len2, int *len3) {
-  return (char *) mock(name, p, len1, len2, len3);
-}
-
 bool symbolNameShouldBeHiddenFromReports(char *name) {
   return (bool) mock(name);
 }

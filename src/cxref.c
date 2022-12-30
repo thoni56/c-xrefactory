@@ -4877,6 +4877,43 @@ void tagSearchCompactShortResults(void) {
     }
 }
 
+#define maxOf(a, b) (((a) > (b)) ? (a) : (b))
+
+static char *createTagSearchLine_static(char *name, Position *position,
+                                        int *len1, int *len2, int *len3) {
+    static char line[2*COMPLETION_STRING_SIZE];
+    char file[TMP_STRING_SIZE];
+    char dir[TMP_STRING_SIZE];
+    char *ffname;
+    int l1,l2,l3,fl, dl;
+
+    l1 = l2 = l3 = 0;
+    l1 = strlen(name);
+
+    FileItem *fileItem = getFileItem(position->file);
+    ffname = fileItem->name;
+    assert(ffname);
+    ffname = getRealFileName_static(ffname);
+    fl = strlen(ffname);
+    l3 = strmcpy(file,simpleFileName(ffname)) - file;
+
+    dl = fl /*& - l3 &*/ ;
+    strncpy(dir, ffname, dl);
+    dir[dl]=0;
+
+    *len1 = maxOf(*len1, l1);
+    *len2 = maxOf(*len2, l2);
+    *len3 = maxOf(*len3, l3);
+
+    if (options.tagSearchSpecif == TSS_SEARCH_DEFS_ONLY_SHORT
+        || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
+        sprintf(line, "%s", name);
+    } else {
+        sprintf(line, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);
+    }
+    return line;                /* static! */
+}
+
 void printTagSearchResults(void) {
     int len1, len2, len3, len;
     char *ls;
@@ -4887,7 +4924,7 @@ void printTagSearchResults(void) {
     // the first loop is counting the length of fields
     assert(sessionData.retrieverStack.top);
     for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLineStatic(cc->name, &cc->ref.position,
+        ls = createTagSearchLine_static(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
     }
     if (options.olineLen >= 50000) {
@@ -4906,7 +4943,7 @@ void printTagSearchResults(void) {
         ppcBegin(PPC_SYMBOL_LIST);
     assert(sessionData.retrieverStack.top);
     for (Completion *cc=sessionData.retrieverStack.top->completions; cc!=NULL; cc=cc->next) {
-        ls = createTagSearchLineStatic(cc->name, &cc->ref.position,
+        ls = createTagSearchLine_static(cc->name, &cc->ref.position,
                                    &len1, &len2, &len3);
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);

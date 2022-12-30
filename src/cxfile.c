@@ -235,43 +235,6 @@ bool searchStringMatch(char *cxtag, int len) {
 }
 
 
-#define maxOf(a, b) (((a) > (b)) ? (a) : (b))
-
-char *createTagSearchLineStatic(char *name, Position *position,
-                                int *len1, int *len2, int *len3) {
-    static char line[2*COMPLETION_STRING_SIZE];
-    char file[TMP_STRING_SIZE];
-    char dir[TMP_STRING_SIZE];
-    char *ffname;
-    int l1,l2,l3,fl, dl;
-
-    l1 = l2 = l3 = 0;
-    l1 = strlen(name);
-
-    FileItem *fileItem = getFileItem(position->file);
-    ffname = fileItem->name;
-    assert(ffname);
-    ffname = getRealFileName_static(ffname);
-    fl = strlen(ffname);
-    l3 = strmcpy(file,simpleFileName(ffname)) - file; /* TODO: WTF - strcpy() and strlen() in same stmt! */
-
-    dl = fl /*& - l3 &*/ ;
-    strncpy(dir, ffname, dl);
-    dir[dl]=0;
-
-    *len1 = maxOf(*len1, l1);
-    *len2 = maxOf(*len2, l2);
-    *len3 = maxOf(*len3, l3);
-
-    if (options.tagSearchSpecif == TSS_SEARCH_DEFS_ONLY_SHORT
-        || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
-        sprintf(line, "%s", name);
-    } else {
-        sprintf(line, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);
-    }
-    return line;                /* static! */
-}
-
 // Filter out symbols which pollute search reports
 bool symbolNameShouldBeHiddenFromReports(char *name) {
     char *s;
