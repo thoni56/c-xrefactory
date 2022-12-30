@@ -126,8 +126,6 @@ static CharacterBuffer cxFileCharacterBuffer;
 
 static unsigned decodeFileNumbers[MAX_FILES];
 
-static char tmpFileName[MAX_FILE_NAME_SIZE];
-
 static FILE *cxFile = NULL;
 
 static FILE *inputFile;
@@ -561,6 +559,8 @@ static void writeCxFileHead(void) {
                                                                  options.exactPositionResolve),
                        " ");
 }
+
+static char tmpFileName[MAX_FILE_NAME_SIZE];
 
 static void openInOutReferenceFile(int updateFlag, char *filename) {
     if (updateFlag) {
