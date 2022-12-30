@@ -1459,19 +1459,15 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
     orderRefsAndGotoDefinition(refs, afterMenuFlag);
 }
 
-#define GetBufChar(cch, characterBuffer) {                              \
-        if ((characterBuffer)->nextUnread >= (characterBuffer)->end) {  \
-            if ((characterBuffer)->isAtEOF || refillBuffer(characterBuffer) == 0) { \
-                cch = EOF;                                              \
-                (characterBuffer)->isAtEOF = true;                      \
-            } else {                                                    \
-                cch = * ((unsigned char*)(characterBuffer)->nextUnread); (characterBuffer)->nextUnread ++; \
-            }                                                           \
-        } else {                                                        \
-            cch = * ((unsigned char*)(characterBuffer)->nextUnread); (characterBuffer)->nextUnread++; \
-        }                                                               \
-        /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
-    }
+static int getBufChar(CharacterBuffer *characterBuffer) {
+        if (characterBuffer->nextUnread >= characterBuffer->end &&
+            (characterBuffer->isAtEOF || refillBuffer(characterBuffer) == 0)) {
+                characterBuffer->isAtEOF = true;
+                return EOF;
+        } else {
+            return *characterBuffer->nextUnread++;
+        }
+}
 
 static void getFileChar(int *chP, Position *position, CharacterBuffer *characterBuffer) {
     if (*chP=='\n') {
@@ -1479,7 +1475,7 @@ static void getFileChar(int *chP, Position *position, CharacterBuffer *character
         position->col=0;
     } else
         position->col++;
-    GetBufChar(*chP, characterBuffer);
+    *chP = getBufChar(characterBuffer);
 }
 
 int refCharCode(int usage) {
@@ -1645,7 +1641,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences, Position *cal
         oldrr=references;    // because it is a dangerous loop
         while ((! cxfBuf.isAtEOF) && position.line<references->position.line) {
             while (ch!='\n' && ch!=EOF)
-                GetBufChar(ch, &cxfBuf);
+                ch = getBufChar(&cxfBuf);
             getFileChar(&ch, &position, &cxfBuf);
         }
         linePosProcess(outputFile, usages, usageFilter, cofileName,
