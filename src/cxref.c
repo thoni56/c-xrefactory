@@ -1521,15 +1521,16 @@ static void linePosProcess(FILE *outFile,
                            int *chP,
                            CharacterBuffer *cxfBuf
 ) {
-    int             ch, pendingRefFlag, linerefn;
+    int             ch, linerefn;
+    bool pendingRefFlag;
     Reference      *rr, *r;
     char           *fn;
 
     rr = *rrr;
     ch = *chP;
     fn = simpleFileName(getRealFileName_static(fname));
-    //& fn = getRealFileName_static(fname);
-    r = NULL; pendingRefFlag = 0;
+    r = NULL;
+    pendingRefFlag = false;
     linerefn = 0;
     listLineIndex = 0;
     listLine[listLineIndex] = 0;
@@ -1552,7 +1553,7 @@ static void linePosProcess(FILE *outFile,
                         rr->position.line);
             }
             linerefn++;
-            pendingRefFlag = 1;
+            pendingRefFlag = true;
         }
         rr=rr->next;
     } while (rr!=NULL && ((rr->position.file == positionP->file && rr->position.line == positionP->line)
