@@ -1426,22 +1426,26 @@ static bool checkTheJavaDocBrowsing(OlcxReferences *refs) {
 
 
 static void orderRefsAndGotoDefinition(OlcxReferences *refs, int afterMenuFlag) {
-    int res;
+    bool res;
     olcxNaturalReorder(refs);
     if (refs->references == NULL) {
         refs->actual = refs->references;
-        if (afterMenuFlag==PUSH_AFTER_MENU) res=0;
-        else res = checkTheJavaDocBrowsing(refs);
-        if (res==0) {
+        if (afterMenuFlag==PUSH_AFTER_MENU)
+            res=false;
+        else
+            res = checkTheJavaDocBrowsing(refs);
+        if (!res) {
             olcxGenNoReferenceSignal();
         }
     } else if (refs->references->usage.kind<=UsageDeclared) {
         refs->actual = refs->references;
         gotoOnlineCxref(&refs->actual->position, refs->actual->usage.kind, "");
     } else {
-        if (afterMenuFlag==PUSH_AFTER_MENU) res=0;
-        else res = checkTheJavaDocBrowsing(refs);
-        if (res==0) {
+        if (afterMenuFlag==PUSH_AFTER_MENU)
+            res=false;
+        else
+            res = checkTheJavaDocBrowsing(refs);
+        if (!res) {
             if (options.xref2) {
                 ppcWarning("Definition not found");
             } else {
