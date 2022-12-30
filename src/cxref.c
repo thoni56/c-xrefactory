@@ -1459,23 +1459,13 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
     orderRefsAndGotoDefinition(refs, afterMenuFlag);
 }
 
-static int getBufChar(CharacterBuffer *characterBuffer) {
-        if (characterBuffer->nextUnread >= characterBuffer->end &&
-            (characterBuffer->isAtEOF || refillBuffer(characterBuffer) == 0)) {
-                characterBuffer->isAtEOF = true;
-                return EOF;
-        } else {
-            return *characterBuffer->nextUnread++;
-        }
-}
-
 static void getFileChar(int *chP, Position *position, CharacterBuffer *characterBuffer) {
     if (*chP=='\n') {
         position->line++;
         position->col=0;
     } else
         position->col++;
-    *chP = getBufChar(characterBuffer);
+    *chP = getChar(characterBuffer);
 }
 
 int refCharCode(int usage) {
@@ -1641,7 +1631,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences, Position *cal
         oldrr=references;    // because it is a dangerous loop
         while ((! cxfBuf.isAtEOF) && position.line<references->position.line) {
             while (ch!='\n' && ch!=EOF)
-                ch = getBufChar(&cxfBuf);
+                ch = getChar(&cxfBuf);
             getFileChar(&ch, &position, &cxfBuf);
         }
         linePosProcess(outputFile, usages, usageFilter, cofileName,

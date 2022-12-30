@@ -255,25 +255,13 @@ int skipWhiteSpace(CharacterBuffer *cb, int ch) {
 
 /* Return next unread character from CharacterBuffer and advance */
 int getChar(CharacterBuffer *cb) {
-    int ch;
-    if (cb->nextUnread >= cb->end) {
-        /* No more characters in buffer? */
-        if (cb->isAtEOF) {
-            ch = -1;
-        } else if (!refillBuffer(cb)) {
-            ch = -1;
-            cb->isAtEOF = true;
+        if (cb->nextUnread >= cb->end &&
+            (cb->isAtEOF || refillBuffer(cb) == 0)) {
+                cb->isAtEOF = true;
+                return EOF;
         } else {
-            cb->lineBegin = cb->nextUnread;
-            ch = *((unsigned char *)cb->nextUnread);
-            cb->nextUnread++;
+            return *cb->nextUnread++;
         }
-    } else {
-        ch = *((unsigned char *)cb->nextUnread);
-        cb->nextUnread++;
-    }
-
-    return ch;
 }
 
 
