@@ -962,7 +962,7 @@ static void completeRecordsNames(
                 && *cname != 0
                 && r->type != TypeError
                 // Hmm. I hope it will not filter out something important
-                && (! symbolNameShouldBeHiddenFromReports(r->linkName))
+                && (! symbolShouldBeHiddenFromSearchResults(r->linkName))
                 //  I do not know whether to check linkability or not
                 //  What is more natural ???
                 && javaLinkable(r->access)) {

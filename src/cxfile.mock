@@ -30,7 +30,7 @@ bool searchStringMatch(char *cxtag, int slen) {
   return (int) mock(cxtag, slen);
 }
 
-bool symbolNameShouldBeHiddenFromReports(char *name) {
+bool symbolShouldBeHiddenFromSearchResults(char *name) {
   return (bool) mock(name);
 }
 

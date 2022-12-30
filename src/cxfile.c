@@ -235,8 +235,8 @@ bool searchStringMatch(char *cxtag, int len) {
 }
 
 
-// Filter out symbols which pollute search reports
-bool symbolNameShouldBeHiddenFromReports(char *name) {
+// Filter out symbols which pollute search results
+bool symbolShouldBeHiddenFromSearchResults(char *name) {
     char *s;
 
     // internal xref symbol?
@@ -275,7 +275,7 @@ void searchSymbolCheckReference(ReferencesItem  *referenceItem, Reference *refer
 
     if (referenceItem->type == TypeCppInclude)
         return;   // no %%i symbols
-    if (symbolNameShouldBeHiddenFromReports(referenceItem->name))
+    if (symbolShouldBeHiddenFromSearchResults(referenceItem->name))
         return;
 
     linkNamePrettyPrint(ssname, referenceItem->name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
