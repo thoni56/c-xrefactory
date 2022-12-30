@@ -93,7 +93,7 @@ extern void olcxInit(void);
 extern Reference * getDefinitionRef(Reference *rr);
 extern bool safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);
-extern void olcxPushEmptyStackItem(OlcxReferencesStack *stack);
+extern void pushEmptySession(OlcxReferencesStack *stack);
 extern void olcxPrintSelectionMenu(SymbolsMenu *sss);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void olcxPrintClassTree(SymbolsMenu *sss);

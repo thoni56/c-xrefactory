@@ -933,7 +933,7 @@ void olcxInit(void) {
 }
 
 
-static void olcxFreePopedStackItems(OlcxReferencesStack *stack) {
+static void freePopedBrowserStackItems(OlcxReferencesStack *stack) {
     assert(stack);
     // delete all after top
     while (stack->root != stack->top) {
@@ -960,9 +960,9 @@ static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
     return res;
 }
 
-void olcxPushEmptyStackItem(OlcxReferencesStack *stack) {
+void pushEmptySession(OlcxReferencesStack *stack) {
     OlcxReferences *res;
-    olcxFreePopedStackItems(stack);
+    freePopedBrowserStackItems(stack);
     res = pushOlcxReference(stack);
     stack->top = stack->root = res;
 }
@@ -1853,37 +1853,37 @@ static Completion *olCompletionNthLineRef(Completion *cpls, int refn) {
     return rr;
 }
 
-static void olcxPopUser(void) {
+static void popSession(void) {
     sessionData.browserStack.top = sessionData.browserStack.top->previous;
 }
 
-static void olcxPopUserAndFreePoped(void) {
-    olcxPopUser();
-    olcxFreePopedStackItems(&sessionData.browserStack);
+static void popAndFreeSession(void) {
+    popSession();
+    freePopedBrowserStackItems(&sessionData.browserStack);
 }
 
-static OlcxReferences *olcxPushUserOnPhysicalTopOfStack(void) {
+static OlcxReferences *pushSession(void) {
     OlcxReferences *oldtop;
     oldtop = sessionData.browserStack.top;
     sessionData.browserStack.top = sessionData.browserStack.root;
-    olcxPushEmptyStackItem(&sessionData.browserStack);
+    pushEmptySession(&sessionData.browserStack);
     return oldtop;
 }
 
-static void olcxPopAndFreeAndPopsUntil(OlcxReferences *oldtop) {
-    olcxPopUserAndFreePoped();
+static void popAndFreeSessionsUntil(OlcxReferences *oldtop) {
+    popAndFreeSession();
     // recover old top, but what if it was freed, hmm
     while (sessionData.browserStack.top!=NULL && sessionData.browserStack.top!=oldtop) {
-        olcxPopUser();
+        popSession();
     }
 }
 
-static void olcxFindDefinitionAndGenGoto(ReferencesItem *sym) {
+static void findAndGotoDefinition(ReferencesItem *sym) {
     OlcxReferences *refs, *oldtop;
     SymbolsMenu mmm;
 
     // preserve poped items from browser first
-    oldtop = olcxPushUserOnPhysicalTopOfStack();
+    oldtop = pushSession();
     refs = sessionData.browserStack.top;
     fillSymbolsMenu(&mmm, *sym, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
     //&oldrefs = *refs;
@@ -1894,7 +1894,7 @@ static void olcxFindDefinitionAndGenGoto(ReferencesItem *sym) {
     //&*refs = oldrefs;
     refs->menuSym = NULL;
     // recover stack
-    olcxPopAndFreeAndPopsUntil(oldtop);
+    popAndFreeSessionsUntil(oldtop);
 }
 
 static void olcxReferenceGotoCompletion(int refn) {
@@ -1916,7 +1916,7 @@ static void olcxReferenceGotoCompletion(int refn) {
                     olcxGenNoReferenceSignal();
             }
         } else {
-            olcxFindDefinitionAndGenGoto(&rr->sym);
+            findAndGotoDefinition(&rr->sym);
         }
     } else {
         olcxGenNoReferenceSignal();
@@ -2281,7 +2281,7 @@ static void olcxGenInspectClassDefinitionRef(int classnum) {
     fillReferencesItem(&references, className, cxFileHashNumber(className),
                        noFileIndex, noFileIndex, TypeStruct, StorageExtern, ScopeGlobal,
                        AccessDefault, CategoryGlobal);
-    olcxFindDefinitionAndGenGoto(&references);
+    findAndGotoDefinition(&references);
 }
 
 static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
@@ -2346,7 +2346,7 @@ void olProcessSelectedReferences(
 void olcxRecomputeSelRefs(OlcxReferences *refs) {
     // [28/12] putting it into comment, just to see, if it works
     // otherwise it clears stack on pop on empty stack
-    //& olcxFreePopedStackItems(&sessionData->browserStack);
+    //& freePopedBrowserStackItems(&sessionData->browserStack);
     olcxFreeReferences(refs->references); refs->references = NULL;
     olProcessSelectedReferences(refs, genOnLineReferences);
 }
@@ -3493,7 +3493,7 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, Symbol
 void olcxPushSpecialCheckMenuSym(char *symname) {
     OlcxReferences *rstack;
 
-    olcxPushEmptyStackItem(&sessionData.browserStack);
+    pushEmptySession(&sessionData.browserStack);
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(symname, noFileIndex, StorageDefault);
@@ -3648,7 +3648,7 @@ static void olcxMMPreCheck(void) {
     ReferencesItem     dri;
     bool precheck;
 
-    olcxPushEmptyStackItem(&sessionData.browserStack);
+    pushEmptySession(&sessionData.browserStack);
     assert(sessionData.browserStack.top);
     assert(options.serverOperation == OLO_MM_PRE_CHECK || options.serverOperation == OLO_PP_PRE_CHECK);
     diffrefs = sessionData.browserStack.top;
@@ -4229,7 +4229,7 @@ void answerEditAction(void) {
         //&olCompletionListInit(&givenPosition);
         if (!options.xref2)
             fprintf(communicationChannel,";");
-        olcxPushEmptyStackItem(&sessionData.retrieverStack);
+        pushEmptySession(&sessionData.retrieverStack);
         sessionData.retrieverStack.top->callerPosition = givenPosition;
 
         if (options.tagSearchSpecif==TSS_FULL_SEARCH)

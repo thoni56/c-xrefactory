@@ -113,7 +113,7 @@ static int scheduleFileUsingTheMacro(void) {
 
     fillSymbolsMenu(&menu, references, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
     if (sessionData.browserStack.top==NULL) {
-        olcxPushEmptyStackItem(&sessionData.browserStack);
+        pushEmptySession(&sessionData.browserStack);
         tmpc = sessionData.browserStack.top;
     }
     assert(sessionData.browserStack.top);
@@ -258,7 +258,7 @@ void callServer(int argc, char **argv, int nargc, char **nargv, bool *firstPass)
     loadAllOpenedEditorBuffers();
 
     if (requiresCreatingRefs(options.serverOperation))
-        olcxPushEmptyStackItem(&sessionData.browserStack);
+        pushEmptySession(&sessionData.browserStack);
 
     if (requiresProcessingInputFile(options.serverOperation)) {
         if (presetEditServerFileDependingStatics() == NULL) {

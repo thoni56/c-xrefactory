@@ -256,7 +256,7 @@ void olCreateSelectionMenu(int command) {
     mock(command);
 }
 
-void olcxPushEmptyStackItem(OlcxReferencesStack *stack) {
+void pushEmptySession(OlcxReferencesStack *stack) {
     mock(stack);
 }
 

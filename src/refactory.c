@@ -953,7 +953,7 @@ static bool tpCheckMoveClassAccessibilities(void) {
     }
     olStackDeleteSymbol(sessionData.browserStack.top);
     // O.K. now check symbols defined inside the class
-    olcxPushEmptyStackItem(&sessionData.browserStack);
+    pushEmptySession(&sessionData.browserStack);
     tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(dd);
     rstack = sessionData.browserStack.top;
     if (rstack->menuSym != NULL) {
