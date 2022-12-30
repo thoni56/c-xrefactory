@@ -5,7 +5,6 @@
    so here are some descriptions of some of the Usage values
    (duplication so remember to change in here too):
 
-   StorageGlobal         - not used anymore, backward compatibility
    StorageConstant       - enumerator definition
    // some "artificial" Java storages
    StorageConstructor    - storage for class constructors
@@ -19,7 +18,6 @@
     ENUM(StorageDefault)                    \
     ENUM(StorageError)                      \
     ENUM(StorageAuto)                       \
-    ENUM(StorageGlobal)                     \
     ENUM(StorageExtern)                     \
     ENUM(StorageConstant)                   \
     ENUM(StorageStatic)                     \
