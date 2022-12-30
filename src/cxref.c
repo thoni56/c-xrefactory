@@ -1880,14 +1880,14 @@ static void popAndFreeSessionsUntil(OlcxReferences *oldtop) {
 
 static void findAndGotoDefinition(ReferencesItem *sym) {
     OlcxReferences *refs, *oldtop;
-    SymbolsMenu mmm;
+    SymbolsMenu menu;
 
     // preserve poped items from browser first
     oldtop = pushSession();
     refs = sessionData.browserStack.top;
-    fillSymbolsMenu(&mmm, *sym, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
+    fillSymbolsMenu(&menu, *sym, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
     //&oldrefs = *refs;
-    refs->menuSym = &mmm;
+    refs->menuSym = &menu;
     fullScanFor(sym->name);
     orderRefsAndGotoDefinition(refs, DEFAULT_VALUE);
     //&olcxFreeReferences(refs->references);
