@@ -924,7 +924,7 @@ static void askForReallyContinueConfirmation(void) {
     ppcAskConfirmation("The refactoring may change program behaviour, really continue?");
 }
 
-static bool tpCheckMoveClassAccessibilities(void) {
+static bool checkMoveClassAccessibilities(void) {
     OlcxReferences      *rstack;
     SymbolsMenu         *ss;
     TpCheckMoveClassData dd;
@@ -972,7 +972,7 @@ static bool tpCheckMoveClassAccessibilities(void) {
     return true;
 }
 
-static bool tpCheckSourceIsNotInnerClass(void) {
+static bool checkSourceIsNotInnerClass(void) {
     OlcxReferences *rstack;
     SymbolsMenu    *menu;
 
@@ -3122,8 +3122,8 @@ static void performMoveClass(EditorMarker *point, EditorMarker *target, EditorMa
     setMovingPrecheckStandardEnvironment(point, targetFqtName);
     ss = sessionData.browserStack.top->hkSelectedSym;
     tpCheckFillMoveClassData(&dd, spack, tpack);
-    tpCheckSourceIsNotInnerClass();
-    tpCheckMoveClassAccessibilities();
+    checkSourceIsNotInnerClass();
+    checkMoveClassAccessibilities();
 
     // O.K. Now STARTING!
     moveStaticObjectAndMakeItPublic(mstart, point, mend, target, targetFqtName, NULL, NO_CHECKS,
