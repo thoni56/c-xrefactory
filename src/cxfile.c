@@ -58,7 +58,7 @@
 
 
 typedef enum {
-    CXSF_UNUSED = DO_NOT_LOAD_SUPER + 1,
+    CXSF_NOP,
     CXSF_DEFAULT,
     CXSF_JUST_READ,
     CXSF_GENERATE_OUTPUT,
@@ -105,7 +105,7 @@ typedef struct lastCxFileInfo {
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                markers[MAX_CHARS];
     int                 values[MAX_CHARS];
-    void                (*fun[MAX_CHARS])(int size, int marker, CharacterBuffer *cb, int additional);
+    void                (*fun[MAX_CHARS])(int size, int marker, CharacterBuffer *cb, CxScanFileOperation operation);
     int                 additional[MAX_CHARS];
 
     // dead code detection vars
@@ -132,7 +132,7 @@ static FILE *inputFile;
 
 typedef struct scanFileFunctionStep {
     int		recordCode;
-    void    (*handleFun)(int size, int ri, CharacterBuffer *cb, int additionalArg); /* TODO: Break out a type */
+    void    (*handleFun)(int size, int ri, CharacterBuffer *cb, CxScanFileOperation operation); /* TODO: Break out a type */
     int		additionalArg;
 } ScanFileFunctionStep;
 
@@ -147,7 +147,7 @@ static ScanFileFunctionStep classHierarchyFunctionSequence[];
 static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[];
 static ScanFileFunctionStep symbolSearchFunctionSequence[];
 
-static void scanCxFile(ScanFileFunctionStep *scanFuns);
+static void scanCxFile(ScanFileFunctionStep *scanFunctionTable);
 
 
 static void fPutDecimal(FILE *file, int num) {
@@ -679,9 +679,9 @@ static void writeCxFileCompatibilityError(char *message) {
 /* ************************* READ **************************** */
 
 static void scanFunction_ReadRecordMarkers(int size,
-                                  int marker,
-                                  CharacterBuffer *cb,
-                                  int additionalArg
+                                           int marker,
+                                           CharacterBuffer *cb,
+                                           CxScanFileOperation operation
 ) {
     assert(marker == CXFI_MARKER_LIST);
     for (int i=0; i<size-1; i++) {
@@ -694,7 +694,7 @@ static void scanFunction_ReadRecordMarkers(int size,
 static void scanFunction_VersionCheck(int size,
                                       int marker,
                                       CharacterBuffer *cb,
-                                      int additionalArg
+                                      CxScanFileOperation operation
 ) {
     char versionString[TMP_STRING_SIZE];
     char thisVersionString[TMP_STRING_SIZE];
@@ -710,7 +710,7 @@ static void scanFunction_VersionCheck(int size,
 static void scanFunction_CheckNumber(int size,
                             int marker,
                             CharacterBuffer *cb,
-                            int additionalArg
+                            CxScanFileOperation operation
 ) {
     int magicn, filen, exactPositionLinkFlag;
     char tmpBuff[TMP_BUFF_SIZE];
@@ -764,7 +764,7 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
 static void scanFunction_ReadFileName(int fileNameLength,
                                       int marker,
                                       CharacterBuffer *cb,
-                                      int additionalArg
+                                      CxScanFileOperation operation
 ) {
     char id[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
@@ -795,7 +795,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
             fileItem->lastUpdateMtime=umtime;
         assert(options.mode);
         if (options.mode == XrefMode) {
-            if (additionalArg == CXSF_GENERATE_OUTPUT) {
+            if (operation == CXSF_GENERATE_OUTPUT) {
                 writeFileIndexItem(fileItem, fileIndex);
             }
         }
@@ -825,7 +825,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
 static void scanFunction_SourceIndex(int size,
                             int marker,
                             CharacterBuffer *cb,
-                            int additionalArg
+                            CxScanFileOperation operation
 ) {
     int file, sfile;
 
@@ -869,7 +869,7 @@ static void getSymTypeAndClasses(int *symType, int *vApplClass, int *vFunClass) 
 static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
                                                 int marker,
                                                 CharacterBuffer *cb,
-                                                int additionalArg
+                                                CxScanFileOperation operation
 ) {
     ReferencesItem *memb;
     int symbolIndex, symType, len, vApplClass, vFunClass, accessFlags;
@@ -953,9 +953,9 @@ static bool canBypassAcceptableSymbol(ReferencesItem *symbol) {
 }
 
 static void scanFunction_SymbolName(int size,
-                           int marker,
-                           CharacterBuffer *cb,
-                           int argument
+                                    int marker,
+                                    CharacterBuffer *cb,
+                                    CxScanFileOperation operation
 ) {
     ReferencesItem *referencesItem, *member;
     SymbolsMenu *cms;
@@ -963,7 +963,7 @@ static void scanFunction_SymbolName(int size,
     char *id;
 
     assert(marker == CXFI_SYMBOL_NAME);
-    if (options.mode==ServerMode && argument==CXSF_DEAD_CODE_DETECTION) {
+    if (options.mode==ServerMode && operation==CXSF_DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
@@ -995,7 +995,7 @@ static void scanFunction_SymbolName(int size,
         member->references = NULL;      // HACK, remove them, to not be regenerated
     }
     if (options.mode == ServerMode) {
-        if (argument == CXSF_DEAD_CODE_DETECTION) {
+        if (operation == CXSF_DEAD_CODE_DETECTION) {
             if (symbolIsReportableAsUnused(lastIncomingInfo.symbolTab[symbolIndex])) {
                 lastIncomingInfo.symbolToCheckForDeadness = symbolIndex;
                 lastIncomingInfo.deadSymbolIsDefined = 0;
@@ -1004,7 +1004,7 @@ static void scanFunction_SymbolName(int size,
             }
         } else if (options.serverOperation!=OLO_TAG_SEARCH) {
             cms = NULL; ols = 0;
-            if (argument == CXSF_MENU_CREATION) {
+            if (operation == CXSF_MENU_CREATION) {
                 cms = createSelectionMenu(referencesItem);
                 if (cms == NULL) {
                     ols = 0;
@@ -1012,12 +1012,12 @@ static void scanFunction_SymbolName(int size,
                     if (IS_BEST_FIT_MATCH(cms)) ols = 2;
                     else ols = 1;
                 }
-            } else if (argument!=CXSF_BY_PASS) {
+            } else if (operation!=CXSF_BY_PASS) {
                 ols=itIsSymbolToPushOlReferences(referencesItem, sessionData.browserStack.top, &cms,
                                                  DEFAULT_VALUE);
             }
             lastIncomingInfo.onLineRefMenuItem = cms;
-            if (ols || (argument==CXSF_BY_PASS && canBypassAcceptableSymbol(referencesItem))) {
+            if (ols || (operation==CXSF_BY_PASS && canBypassAcceptableSymbol(referencesItem))) {
                 lastIncomingInfo.onLineReferencedSym = symbolIndex;
                 lastIncomingInfo.onLineRefIsBestMatchFlag = (ols == 2);
                 log_trace("symbol %s is O.K. for %s (ols==%d)", referencesItem->name, options.browsedSymName, ols);
@@ -1033,7 +1033,7 @@ static void scanFunction_SymbolName(int size,
 static void scanFunction_ReferenceForFullUpdateSchedule(int size,
                                                int marker,
                                                CharacterBuffer *cb,
-                                               int additionalArg
+                                               CxScanFileOperation operation
 ) {
     Position pos;
     int      file, line, col, sym, vApplClass, vFunClass;
@@ -1080,7 +1080,7 @@ static bool isInRefList(Reference *list,
 static void scanFunction_Reference(int size,
                           int marker,
                           CharacterBuffer *cb,
-                          int additionalArg
+                          CxScanFileOperation operation
 ) {
     Position pos;
     Reference reference;
@@ -1120,7 +1120,7 @@ static void scanFunction_Reference(int size,
         fillUsage(&usage, usageKind, reqAcc);
         fillReference(&reference, usage, pos, NULL);
         FileItem *referenceFileItem = getFileItem(reference.position.file);
-        if (additionalArg == CXSF_DEAD_CODE_DETECTION) {
+        if (operation == CXSF_DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&reference)) {
                 // restrict reported symbols to those defined in project input file
                 if (IS_DEFINITION_USAGE(reference.usage.kind)
@@ -1131,7 +1131,7 @@ static void scanFunction_Reference(int size,
                     lastIncomingInfo.symbolToCheckForDeadness = -1;
                 }
             }
-        } else if (additionalArg == CXSF_PASS_MACRO_USAGE) {
+        } else if (operation == CXSF_PASS_MACRO_USAGE) {
             if (lastIncomingInfo.onLineReferencedSym ==
                 lastIncomingInfo.values[CXFI_SYMBOL_INDEX]
                 && reference.usage.kind == UsageMacroBaseFileUsage
@@ -1154,7 +1154,7 @@ static void scanFunction_Reference(int size,
                 }
             } else {
                 if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
-                    if (additionalArg == CXSF_MENU_CREATION) {
+                    if (operation == CXSF_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
                         if (file != olOriginalFileIndex || !fileItem->isArgument ||
                             options.serverOperation == OLO_GOTO || options.serverOperation == OLO_CGOTO ||
@@ -1164,7 +1164,7 @@ static void scanFunction_Reference(int size,
                             olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &reference,
                                                           lastIncomingInfo.onLineRefIsBestMatchFlag);
                         }
-                    } else if (additionalArg == CXSF_BY_PASS) {
+                    } else if (operation == CXSF_BY_PASS) {
                         if (positionsAreEqual(s_olcxByPassPos,reference.position)) {
                             // got the bypass reference
                             log_trace(":adding bypass selected symbol %s", lastIncomingInfo.symbolTab[sym]->name);
@@ -1186,7 +1186,7 @@ static void scanFunction_Reference(int size,
 static void scanFunction_ReferenceFileCountCheck(int referenceFileCount,
                                                  int marker,
                                                  CharacterBuffer *cb,
-                                                 int additionalArg
+                                                 CxScanFileOperation operation
 ) {
     if (!referenceFileCountMatches(referenceFileCount)) {
         assert(options.mode);
@@ -1197,7 +1197,7 @@ static void scanFunction_ReferenceFileCountCheck(int referenceFileCount,
 static void scanFunction_SubClass(int size,
                          int marker,
                          CharacterBuffer *cb,
-                         int additionalArg
+                         CxScanFileOperation operation
 ) {
     int fileIndex;
     int super_class, sub_class;
@@ -1220,7 +1220,7 @@ static void scanFunction_SubClass(int size,
     switch (options.mode) {
     case XrefMode:
         if (!fileItem->cxLoading &&
-            additionalArg==CXSF_GENERATE_OUTPUT) {
+            operation==CXSF_GENERATE_OUTPUT) {
             writeSubClassInfo(super_class, sub_class, fileIndex);  // updating refs
         }
         break;
@@ -1444,86 +1444,86 @@ void scanForSearch(char *cxrefLocation) {
 /* ************************************************************ */
 
 static ScanFileFunctionStep normalScanFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_UNUSED},
+    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
-    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_UNUSED},
+    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_UNUSED},
+    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
 static ScanFileFunctionStep fullScanFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_UNUSED},
-    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_UNUSED},
-    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_UNUSED},
+    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
+    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
+    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_GENERATE_OUTPUT},
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_GENERATE_OUTPUT},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEFAULT},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
     {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_GENERATE_OUTPUT},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_UNUSED},
+    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
 static ScanFileFunctionStep byPassFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_UNUSED},
-    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_UNUSED},
+    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
+    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_BY_PASS},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_BY_PASS},
     {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_UNUSED},
+    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
 static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_UNUSED},
-    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_UNUSED},
-    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_UNUSED},
+    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
+    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
+    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_MENU_CREATION},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_MENU_CREATION},
     {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_UNUSED},
+    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
 static ScanFileFunctionStep fullUpdateFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_UNUSED},
-    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_UNUSED},
-    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_UNUSED},
+    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
+    {CXFI_VERSION, scanFunction_VersionCheck, CXSF_NOP},
+    {CXFI_CHECK_NUMBER, scanFunction_CheckNumber, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
-    {CXFI_SYMBOL_NAME, scanFunction_SymbolNameForFullUpdateSchedule, CXSF_UNUSED},
-    {CXFI_REFERENCE, scanFunction_ReferenceForFullUpdateSchedule, CXSF_UNUSED},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_UNUSED},
+    {CXFI_SYMBOL_NAME, scanFunction_SymbolNameForFullUpdateSchedule, CXSF_NOP},
+    {CXFI_REFERENCE, scanFunction_ReferenceForFullUpdateSchedule, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
 static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_UNUSED},
+    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_PASS_MACRO_USAGE},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_PASS_MACRO_USAGE},
     {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_UNUSED},
+    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
 static ScanFileFunctionStep classHierarchyFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_UNUSED},
+    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_UNUSED},
+    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
 
 static ScanFileFunctionStep symbolSearchFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_UNUSED},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_UNUSED},
+    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, SEARCH_SYMBOL},
@@ -1532,8 +1532,8 @@ static ScanFileFunctionStep symbolSearchFunctionSequence[]={
 };
 
 static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, 0},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_UNUSED},
+    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
+    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEAD_CODE_DETECTION},
