@@ -22,7 +22,8 @@ trace: $(TEST)
 clean:
 	@-rm -rf CXrefs output.log output.tmp output
 
+DEBUGGER = gdb
 debug:
 	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
 	sleep 1
-	sudo gdb -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'`
+	sudo $(DEBUGGER) -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'` -ex 'br cxref.c:4547' -ex 'br scanForGlobalUnused' -ex 'continue'
