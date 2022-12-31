@@ -2344,9 +2344,6 @@ void olProcessSelectedReferences(
 }
 
 void olcxRecomputeSelRefs(OlcxReferences *refs) {
-    // [28/12] putting it into comment, just to see, if it works
-    // otherwise it clears stack on pop on empty stack
-    //& freePopedBrowserStackItems(&sessionData->browserStack);
     olcxFreeReferences(refs->references); refs->references = NULL;
     olProcessSelectedReferences(refs, genOnLineReferences);
 }

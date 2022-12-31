@@ -761,7 +761,7 @@ static int fileItemShouldBeUpdatedFromCxFile(FileItem *fileItem) {
     return updateFromCxFile;
 }
 
-static void scanFunction_ReadFileName(int size,
+static void scanFunction_ReadFileName(int fileNameLength,
                                       int marker,
                                       CharacterBuffer *cb,
                                       int additionalArg
@@ -778,8 +778,8 @@ static void scanFunction_ReadFileName(int size,
     isArgument = lastIncomingInfo.values[CXFI_INPUT_FROM_COMMAND_LINE];
     isInterface=((lastIncomingInfo.values[CXFI_ACCESS_BITS] & AccessInterface)!=0);
 
-    assert(size < MAX_FILE_NAME_SIZE);
-    getString(id, size-1, cb);
+    assert(fileNameLength < MAX_FILE_NAME_SIZE);
+    getString(id, fileNameLength-1, cb);
 
     int lastIncomingFileIndex = lastIncomingInfo.values[CXFI_FILE_INDEX];
     assert(lastIncomingFileIndex>=0 && lastIncomingFileIndex<MAX_FILES);
@@ -955,7 +955,7 @@ static bool canBypassAcceptableSymbol(ReferencesItem *symbol) {
 static void scanFunction_SymbolName(int size,
                            int marker,
                            CharacterBuffer *cb,
-                           int additionalArg
+                           int argument
 ) {
     ReferencesItem *referencesItem, *member;
     SymbolsMenu *cms;
@@ -963,7 +963,7 @@ static void scanFunction_SymbolName(int size,
     char *id;
 
     assert(marker == CXFI_SYMBOL_NAME);
-    if (options.mode==ServerMode && additionalArg==CXSF_DEAD_CODE_DETECTION) {
+    if (options.mode==ServerMode && argument==CXSF_DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
@@ -995,7 +995,7 @@ static void scanFunction_SymbolName(int size,
         member->references = NULL;      // HACK, remove them, to not be regenerated
     }
     if (options.mode == ServerMode) {
-        if (additionalArg == CXSF_DEAD_CODE_DETECTION) {
+        if (argument == CXSF_DEAD_CODE_DETECTION) {
             if (symbolIsReportableAsUnused(lastIncomingInfo.symbolTab[symbolIndex])) {
                 lastIncomingInfo.symbolToCheckForDeadness = symbolIndex;
                 lastIncomingInfo.deadSymbolIsDefined = 0;
@@ -1004,7 +1004,7 @@ static void scanFunction_SymbolName(int size,
             }
         } else if (options.serverOperation!=OLO_TAG_SEARCH) {
             cms = NULL; ols = 0;
-            if (additionalArg == CXSF_MENU_CREATION) {
+            if (argument == CXSF_MENU_CREATION) {
                 cms = createSelectionMenu(referencesItem);
                 if (cms == NULL) {
                     ols = 0;
@@ -1012,12 +1012,12 @@ static void scanFunction_SymbolName(int size,
                     if (IS_BEST_FIT_MATCH(cms)) ols = 2;
                     else ols = 1;
                 }
-            } else if (additionalArg!=CXSF_BY_PASS) {
+            } else if (argument!=CXSF_BY_PASS) {
                 ols=itIsSymbolToPushOlReferences(referencesItem, sessionData.browserStack.top, &cms,
                                                  DEFAULT_VALUE);
             }
             lastIncomingInfo.onLineRefMenuItem = cms;
-            if (ols || (additionalArg==CXSF_BY_PASS && canBypassAcceptableSymbol(referencesItem))) {
+            if (ols || (argument==CXSF_BY_PASS && canBypassAcceptableSymbol(referencesItem))) {
                 lastIncomingInfo.onLineReferencedSym = symbolIndex;
                 lastIncomingInfo.onLineRefIsBestMatchFlag = (ols == 2);
                 log_trace("symbol %s is O.K. for %s (ols==%d)", referencesItem->name, options.browsedSymName, ols);
