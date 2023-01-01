@@ -17,6 +17,7 @@ Some useful commands:
 There are a *lot* of things to do to make c-xref into modern C.
 
 Current Mikado:
+* DOING A switch that creates a list of commands given to c-xref so that they can be replayed exactly later
 * TRY to make LexemBuffer interface just take LexemBuffer
 ** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
 *** DONE to add a LexemBuffer as argument to putLexToken()
