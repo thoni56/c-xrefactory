@@ -29,6 +29,7 @@ options:
 	-log=<file>               - log all fatal/error/warnings/informational messages to <file>
 	-debug                    - also log debug messages in log
 	-trace                    - also log trace & debug messages in log
+	-commandlog               - write all commands to /tmp/c-xref-command-log (experimental)
 	-no-classfiles            - Don't collect references from class files
 	-compiler=<path>          - path to compiler to use for autodiscovered includes and defines
 	-update                   - update existing references database

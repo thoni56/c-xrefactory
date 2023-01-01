@@ -22,6 +22,7 @@ Options options;               // current options
 Options savedOptions;
 Options presetOptions = {
                                 /* GENERAL */
+    false,                      // command log to /tmp file
     false,                      // exit
     "gcc",                      // path to compiler to use for auto-discovering compiler and defines
     MULE_DEFAULT,               // encoding
@@ -239,6 +240,7 @@ static void usage() {
     fprintf(stdout, "\t-log=<file>               - log all fatal/error/warnings/informational messages to <file>\n");
     fprintf(stdout, "\t-debug                    - also log debug messages in log\n");
     fprintf(stdout, "\t-trace                    - also log trace & debug messages in log\n");
+    fprintf(stdout, "\t-commandlog               - write all commands to /tmp/c-xref-command-log (experimental)\n");
     fprintf(stdout, "\t-no-classfiles            - Don't collect references from class files\n");
     fprintf(stdout, "\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
     fprintf(stdout, "\t-update                   - update existing references database\n");
@@ -1473,6 +1475,8 @@ static bool processBOption(int *argi, int argc, char **argv) {
 static bool processCOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
+    else if (strcmp(argv[i], "-commandlog")==0)
+        options.commandlog=true;
     else if (strcmp(argv[i], "-crlfconversion")==0)
         options.eolConversion|=CR_LF_EOL_CONVERSION;
     else if (strcmp(argv[i], "-crconversion")==0)

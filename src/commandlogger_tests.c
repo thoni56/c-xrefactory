@@ -4,6 +4,7 @@
 
 #include "commandlogger.h"
 #include "fileio.mock"
+#include "options.mock"
 
 
 #if CGREEN_VERSION_MINOR < 5
@@ -12,7 +13,9 @@
 
 
 Describe(CommandsLogger);
-BeforeEach(CommandsLogger) {}
+BeforeEach(CommandsLogger) {
+    options.commandlog = true;
+}
 AfterEach(CommandsLogger) {}
 
 Ensure(CommandsLogger, can_log_a_single_argument) {

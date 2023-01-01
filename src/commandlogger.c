@@ -4,12 +4,17 @@
 
 #include <string.h>
 
+#include "options.h"
+
 
 static FILE *commandsLogfile = NULL;
 
 void logCommands(int argc, char *argv[]) {
+    if (!options.commandlog)
+        return;
+
     if (commandsLogfile == NULL)
-        commandsLogfile = openFile("/tmp/c-xref-commands-log", "w");
+        commandsLogfile = openFile("/tmp/c-xref-command-log", "w");
 
     for (int i=0; i<argc-1; i++) {
         if (argv[i] != NULL) {
