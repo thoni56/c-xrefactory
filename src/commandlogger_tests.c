@@ -25,7 +25,7 @@ Ensure(CommandsLogger, can_log_a_single_argument) {
 
     logCommands(1, argv);
 
-    assert_that(size*count, is_equal_to(strlen(argv[0])+1));
+    assert_that(size*count, is_equal_to(strlen(argv[0])));
     assert_that(buffer, is_equal_to_string("command"));
 }
 
@@ -33,7 +33,7 @@ static char buffer[1000] = "";
 static void concat_output(void *string) {
     strcat(buffer, *(char **)string);
 }
-
+    
 Ensure(CommandsLogger, can_log_multiple_arguments) {
     char *argv[] = {"command", "arg1", "arg2"};
     char *output;
