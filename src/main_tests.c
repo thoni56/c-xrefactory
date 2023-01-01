@@ -8,6 +8,7 @@
 #include "c_parser.mock"
 #include "caching.mock"
 #include "characterreader.mock"
+#include "commandlogger.mock"
 #include "commons.mock"
 #include "complete.mock"
 #include "cxfile.mock"

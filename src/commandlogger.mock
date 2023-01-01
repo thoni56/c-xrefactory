@@ -1,0 +1,7 @@
+/* -*- c -*-*/
+#include "commandlogger.h"
+#include <cgreen/mocks.h>
+
+void logCommands(int argc, char *argv[]) {
+    mock(argc, argv);
+}

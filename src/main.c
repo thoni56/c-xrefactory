@@ -4,6 +4,7 @@
 
 #include "caching.h"
 #include "characterreader.h"
+#include "commandlogger.h"
 #include "commons.h"
 #include "complete.h"
 #include "constants.h"
@@ -810,7 +811,9 @@ static void initLogging(int argc, char *argv[]) {
 /* **************************       MAIN      **************************** */
 /* *********************************************************************** */
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
+    logCommands(argc, argv);
+
     /* Options are read very late down below, so we need to setup logging before then */
     initLogging(argc, argv);
     ENTER();
