@@ -6,6 +6,11 @@
 #include "fileio.mock"
 
 
+#if CGREEN_VERSION_MINOR < 5
+#include "cgreen_capture_parameter.c"
+#endif
+
+
 Describe(CommandsLogger);
 BeforeEach(CommandsLogger) {}
 AfterEach(CommandsLogger) {}
@@ -33,7 +38,7 @@ static char buffer[1000] = "";
 static void concat_output(void *string) {
     strcat(buffer, *(char **)string);
 }
-    
+
 Ensure(CommandsLogger, can_log_multiple_arguments) {
     char *argv[] = {"command", "arg1", "arg2"};
     char *output;
