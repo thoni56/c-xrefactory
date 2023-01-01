@@ -12,9 +12,11 @@ void logCommands(int argc, char *argv[]) {
         commandsLogfile = openFile("/tmp/c-xref-commands-log", "w");
 
     for (int i=0; i<argc-1; i++) {
-        writeFile(argv[i], strlen(argv[i])+1, 1, commandsLogfile);
-        writeFile(" ", 1, 1, commandsLogfile);
+        if (argv[i] != NULL) {
+            writeFile(argv[i], strlen(argv[i]), 1, commandsLogfile);
+            writeFile(" ", 1, 1, commandsLogfile);
+        }
     }
-    writeFile(argv[argc-1], strlen(argv[argc-1])+1, 1, commandsLogfile);
+    writeFile(argv[argc-1], strlen(argv[argc-1]), 1, commandsLogfile);
     writeFile("\n", 1, 1, commandsLogfile);
 }

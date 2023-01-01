@@ -1,5 +1,6 @@
 #include "options.h"
 
+#include "commandlogger.h"
 #include "commons.h"
 #include "globals.h"
 #include "misc.h"
@@ -981,6 +982,7 @@ bool readOptionsFromFileIntoArgs(FILE *file, int *outArgc, char ***outArgv, Memo
     if (found && memoryKind!=DONT_ALLOCATE) {
         // Allocate an array of correct size to return instead of local variable argv
         aargv = allocateSpaceForOption(memoryKind, argc, sizeof(char*));
+        aargv[0] = NULL;        /* Not used, ensure NULL */
         for (int i=1; i<argc; i++)
             aargv[i] = argv[i];
     }
@@ -1020,6 +1022,7 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
     if (options.mode == ServerMode) {
         char unused[MAX_FILE_NAME_SIZE];
         readOptionsFromFileIntoArgs(stdin, outNargc, outNargv, ALLOCATE_IN_SM, "", NULL, unused);
+        logCommands(*outNargc, *outNargv);
         /* those options can't contain include or define options, sections neither */
         int c = getc(stdin);
         if (c == EOF) {
