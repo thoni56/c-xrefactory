@@ -33,7 +33,7 @@ static char buffer[1000] = "";
 static void concat_output(void *string) {
     strcat(buffer, *(char **)string);
 }
-    
+
 Ensure(CommandsLogger, can_log_multiple_arguments) {
     char *argv[] = {"command", "arg1", "arg2"};
     char *output;
@@ -59,5 +59,5 @@ Ensure(CommandsLogger, can_handle_null_argv0) {
 
     logCommands(3, argv);
 
-    assert_that(buffer, is_equal_to_string("arg1 arg2\n<sync>\n"));
+    assert_that(buffer, is_equal_to_string("arg1 arg2\n"));
 }
