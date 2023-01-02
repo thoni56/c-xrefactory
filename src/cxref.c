@@ -4710,30 +4710,23 @@ void mapCreateSelectionMenu(ReferencesItem *p) {
 
 /* ********************************************************************** */
 
-static Completion *newOlCompletion(char *name,
-                                       char *fullName,
-                                       char *vclass,
-                                       short int jindent,
-                                       short int lineCount,
-                                       char category,
-                                       char csymType,
-                                       struct reference ref,
-                                       struct referencesItem sym
-) {
-    Completion *olCompletion = olcx_alloc(sizeof(Completion));
+static Completion *newOlCompletion(char *name, char *fullName, char *vclass, short int jindent,
+                                   short int lineCount, char category, char csymType,
+                                   struct reference ref, struct referencesItem sym) {
+    Completion *completion = olcx_alloc(sizeof(Completion));
 
-    olCompletion->name = name;
-    olCompletion->fullName = fullName;
-    olCompletion->vclass = vclass;
-    olCompletion->jindent = jindent;
-    olCompletion->lineCount = lineCount;
-    olCompletion->category = category;
-    olCompletion->csymType = csymType;
-    olCompletion->ref = ref;
-    olCompletion->sym = sym;
-    olCompletion->next = NULL;
+    completion->name = name;
+    completion->fullName = fullName;
+    completion->vclass = vclass;
+    completion->jindent = jindent;
+    completion->lineCount = lineCount;
+    completion->category = category;
+    completion->csymType = csymType;
+    completion->ref = ref;
+    completion->sym = sym;
+    completion->next = NULL;
 
-    return olCompletion;
+    return completion;
 }
 
 void olSetCallerPosition(Position *pos) {
@@ -4747,7 +4740,7 @@ void olSetCallerPosition(Position *pos) {
 Completion *olCompletionListPrepend(OlcxReferences *stack, char *name, char *fullText, char *vclass,
                                     int jindent, Symbol *symbol, ReferencesItem *referenceItem,
                                     Reference *reference, int cType, int vFunClass) {
-    Completion    *cc;
+    Completion    *completion;
     char *ss,*nn, *fullnn, *vclnn;
     int category, scope, storage, slen, nlen;
     ReferencesItem sri;
@@ -4774,13 +4767,13 @@ Completion *olCompletionListPrepend(OlcxReferences *stack, char *name, char *ful
                            referenceItem->type, referenceItem->storage, referenceItem->scope,
                            referenceItem->access, referenceItem->category);
 
-        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, referenceItem->category, cType, *reference, sri);
+        completion = newOlCompletion(nn, fullnn, vclnn, jindent, 1, referenceItem->category, cType, *reference, sri);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
         fillReferencesItem(&sri, "", cxFileHashNumber(""), noFileIndex, noFileIndex, TypeUnknown, StorageNone,
                            ScopeAuto, AccessDefault, CategoryLocal);
-        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
+        completion = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
     } else {
         Reference r;
         getSymbolCxrefProperties(symbol, &category, &scope, &storage);
@@ -4793,17 +4786,17 @@ Completion *olCompletionListPrepend(OlcxReferences *stack, char *name, char *ful
         fillReferencesItem(&sri, ss, cxFileHashNumber(ss),
                            vFunClass, vFunClass, symbol->type, storage,
                            scope, symbol->access, category);
-        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);
+        completion = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);
     }
     if (fullText!=NULL) {
         for (int i=0; fullText[i]; i++) {
             if (fullText[i] == '\n')
-                cc->lineCount++;
+                completion->lineCount++;
         }
     }
-    cc->next = stack->completions;
-    stack->completions = cc;
-    return cc;
+    completion->next = stack->completions;
+    stack->completions = completion;
+    return completion;
 }
 
 void olCompletionListReverse(void) {
