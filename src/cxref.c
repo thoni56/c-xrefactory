@@ -698,7 +698,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             /* an on - line cxref action ?*/
             //&fprintf(dumpOut,"!got it %s !!!!!!!\n", foundMember->name);
             olstringServed = true;       /* olstring will be served */
-            s_olstringUsage = usage.kind;
+            olstringUsageKind = usage.kind;
             assert(sessionData.browserStack.top);
             olSetCallerPosition(position);
             defaultPosition = &noPosition;
@@ -2673,7 +2673,7 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
         oovisible = options.ooChecksBits;
         ooselected = RENAME_SELECTION_OO_BITS;
     } else {
-        if (olstringServed && s_olstringUsage == UsageMethodInvokedViaSuper) {
+        if (olstringServed && olstringUsageKind == UsageMethodInvokedViaSuper) {
             //&oovisible = options.ooChecksBits;
             oovisible = s_menuFilterOoBits[filterLevel];
             ooselected = METHOD_VIA_SUPER_SELECTION_OO_BITS;

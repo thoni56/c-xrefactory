@@ -142,7 +142,7 @@ char *s_javaLangObjectLinkName="java/lang/Object";
 char s_olstring[MAX_FUN_NAME_SIZE];
 bool olstringFound = false;
 bool olstringServed = false;
-int s_olstringUsage = 0;
+int olstringUsageKind = 0;
 char *olstringInMacroBody = NULL;
 int s_olMacro2PassFile;
 
