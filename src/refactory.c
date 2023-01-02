@@ -329,30 +329,30 @@ static void safetyCheck(char *project, EditorMarker *point) {
     }
 }
 
-static char *getIdentifierOnMarker_st(EditorMarker *pos) {
-    EditorBuffer *buff;
-    char         *s, *e, *smax, *smin;
-    static char   res[TMP_STRING_SIZE];
-    int           reslen;
-    buff = pos->buffer;
-    assert(buff && buff->allocation.text && pos->offset <= buff->allocation.bufferSize);
-    s    = buff->allocation.text + pos->offset;
-    smin = buff->allocation.text;
-    smax = buff->allocation.text + buff->allocation.bufferSize;
+static char *getIdentifierOnMarker_static(EditorMarker *marker) {
+    EditorBuffer *buffer;
+    char         *start, *end, *smax, *smin;
+    static char   identifier[TMP_STRING_SIZE];
+
+    buffer = marker->buffer;
+    assert(buffer && buffer->allocation.text && marker->offset <= buffer->allocation.bufferSize);
+    start    = buffer->allocation.text + marker->offset;
+    smin = buffer->allocation.text;
+    smax = buffer->allocation.text + buffer->allocation.bufferSize;
     // move to the beginning of identifier
-    for (; s >= smin && (isalpha(*s) || isdigit(*s) || *s == '_' || *s == '$'); s--)
+    for (; start >= smin && (isalpha(*start) || isdigit(*start) || *start == '_' || *start == '$'); start--)
         ;
-    for (s++; s < smax && isdigit(*s); s++)
+    for (start++; start < smax && isdigit(*start); start++)
         ;
     // now get it
-    for (e = s; e < smax && (isalpha(*e) || isdigit(*e) || *e == '_' || *e == '$'); e++)
+    for (end = start; end < smax && (isalpha(*end) || isdigit(*end) || *end == '_' || *end == '$'); end++)
         ;
-    reslen = e - s;
-    assert(reslen < TMP_STRING_SIZE - 1);
-    strncpy(res, s, reslen);
-    res[reslen] = 0;
+    int length = end - start;
+    assert(length < TMP_STRING_SIZE - 1);
+    strncpy(identifier, start, length);
+    identifier[length] = 0;
 
-    return res;
+    return identifier;
 }
 
 static void replaceString(EditorMarker *marker, int len, char *newString) {
@@ -692,7 +692,7 @@ static void renameFromTo(EditorMarker *pos, char *oldName, char *newName) {
     char *actName;
     int   nlen;
     nlen    = strlen(oldName);
-    actName = getIdentifierOnMarker_st(pos);
+    actName = getIdentifierOnMarker_static(pos);
     assert(strcmp(actName, oldName) == 0);
     checkedReplaceString(pos, nlen, oldName, newName);
 }
@@ -1461,7 +1461,7 @@ static void precheckThatSymbolRefsCorresponds(char *oldName, EditorMarkerList *o
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
         pos = ll->marker;
         // first check that I have updated reference
-        cid = getIdentifierOnMarker_st(pos);
+        cid = getIdentifierOnMarker_static(pos);
         if (strcmp(cid, oldName) != 0) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "something goes wrong: expecting %s instead of %s at %s, offset:%d", oldName, cid,
@@ -1852,7 +1852,7 @@ static void renameAtPoint(EditorBuffer *buf, EditorMarker *point) {
         message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
     }
     // rename
-    strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
+    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs           = pushGetAndPreCheckReferences(buf, point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
     csym           = sessionData.browserStack.top->hkSelectedSym;
@@ -1894,7 +1894,7 @@ static Result getParameterNamePosition(EditorMarker *point, char *fileName, int 
     char  pushOptions[TMP_STRING_SIZE];
     char *nameOnPoint;
 
-    nameOnPoint = getIdentifierOnMarker_st(point);
+    nameOnPoint = getIdentifierOnMarker_static(point);
     clearParamPositions();
     assert(strcmp(nameOnPoint, fileName) == 0);
     sprintf(pushOptions, "-olcxgotoparname%d", argn);
@@ -1911,7 +1911,7 @@ static Result getParameterPosition(EditorMarker *point, char *fileName, int argn
     char  pushOptions[TMP_STRING_SIZE];
     char *nameOnPoint;
 
-    nameOnPoint = getIdentifierOnMarker_st(point);
+    nameOnPoint = getIdentifierOnMarker_static(point);
     if (!(strcmp(nameOnPoint, fileName) == 0 || strcmp(nameOnPoint, "this") == 0 || strcmp(nameOnPoint, "super") == 0)) {
         char tmpBuff[TMP_BUFF_SIZE];
         ppcGotoMarker(point);
@@ -2041,17 +2041,17 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
     return insertionOffset;
 }
 
-static int isThisSymbolUsed(EditorMarker *pos) {
+static int isThisSymbolUsed(EditorMarker *marker) {
     int refn;
-    pushReferences(pos, "-olcxpushforlm", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    pushReferences(marker, "-olcxpushforlm", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     LIST_LEN(refn, Reference, sessionData.browserStack.top->references);
     olcxPopOnly();
     return refn > 1;
 }
 
-static int isParameterUsedExceptRecursiveCalls(EditorMarker *ppos, EditorMarker *fpos) {
+static int isParameterUsedExceptRecursiveCalls(EditorMarker *pmarker, EditorMarker *fmarker) {
     // for the moment
-    return isThisSymbolUsed(ppos);
+    return isThisSymbolUsed(pmarker);
 }
 
 typedef enum {
@@ -2059,32 +2059,32 @@ typedef enum {
     CHECK_FOR_DEL_PARAM
 } ParameterCheckKind;
 
-static void checkThatParameterIsUnused(EditorMarker *pos, char *functionName, int argn, ParameterCheckKind checkKind) {
-    char          pname[TMP_STRING_SIZE];
-    EditorMarker *mm;
+static void checkThatParameterIsUnused(EditorMarker *marker, char *functionName, int argn,
+                                       ParameterCheckKind checkKind) {
+    char          parameterName[TMP_STRING_SIZE];
 
-    Result rr = getParameterNamePosition(pos, functionName, argn);
-    if (rr != RESULT_OK) {
+    Result result = getParameterNamePosition(marker, functionName, argn);
+    if (result != RESULT_OK) {
         ppcAskConfirmation("Can not parse parameter definition, continue anyway?");
         return;
     }
 
-    mm = newEditorMarkerForPosition(&parameterPosition);
-    strncpy(pname, getIdentifierOnMarker_st(mm), TMP_STRING_SIZE);
-    pname[TMP_STRING_SIZE - 1] = 0;
-    if (isParameterUsedExceptRecursiveCalls(mm, pos)) {
+    EditorMarker *positionMarker = newEditorMarkerForPosition(&parameterPosition);
+    strncpy(parameterName, getIdentifierOnMarker_static(positionMarker), TMP_STRING_SIZE);
+    parameterName[TMP_STRING_SIZE - 1] = 0;
+    if (isParameterUsedExceptRecursiveCalls(positionMarker, marker)) {
         char tmpBuff[TMP_BUFF_SIZE];
         if (checkKind == CHECK_FOR_ADD_PARAM) {
-            sprintf(tmpBuff, "parameter '%s' clashes with an existing symbol, continue anyway?", pname);
+            sprintf(tmpBuff, "parameter '%s' clashes with an existing symbol, continue anyway?", parameterName);
             ppcAskConfirmation(tmpBuff);
         } else if (checkKind == CHECK_FOR_DEL_PARAM) {
-            sprintf(tmpBuff, "parameter '%s' is used, delete it anyway?", pname);
+            sprintf(tmpBuff, "parameter '%s' is used, delete it anyway?", parameterName);
             ppcAskConfirmation(tmpBuff);
         } else {
             assert(0);
         }
     }
-    freeEditorMarker(mm);
+    freeEditorMarker(positionMarker);
 }
 
 static void addParameter(EditorMarker *pos, char *fname, int argn, int usage) {
@@ -2228,7 +2228,7 @@ static void applyParameterManipulation(EditorBuffer *buf, EditorMarker *point, i
 
     ensureReferencesUpdated(refactoringOptions.project);
 
-    strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
+    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     occurrences = convertReferencesToEditorMarkers(sessionData.browserStack.top->references,
                                                    filter0, NULL);
@@ -2822,7 +2822,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
 
     // O.K. move
     applyExpandShortNames(point);
-    strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
+    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs = getReferences(point->buffer, point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
@@ -3005,7 +3005,7 @@ static void moveField(EditorMarker *point) {
 
     // O.K. move
     applyExpandShortNames(point);
-    strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
+    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs = getReferences(point->buffer, point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
@@ -3276,7 +3276,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
 
     nparamdefpos = NULL;
     ensureReferencesUpdated(refactoringOptions.project);
-    strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
+    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs = pushGetAndPreCheckReferences(
         point->buffer, point, nameOnPoint,
@@ -3402,7 +3402,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
                                          "know how to make it static.");
                     return;
                 } else if (ll->usage.kind == UsageMaybeThisInClassOrMethod) {
-                    strncpy(cid, getIdentifierOnMarker_st(ll->marker), TMP_STRING_SIZE);
+                    strncpy(cid, getIdentifierOnMarker_static(ll->marker), TMP_STRING_SIZE);
                     cid[TMP_STRING_SIZE - 1] = 0;
                     poffset                  = ll->marker->offset;
                     //&sprintf(tmpBuff, "Checking %s", cid); ppcGenRecord(PPC_INFORMATION, tmpBuff);
@@ -3544,11 +3544,11 @@ static bool staticToDynCanBeThisOccurence(EditorMarker *pp, char *param, int *rl
     pp2 = strchr(param, '.');
     if (pp2 == NULL) {
         *rlen = strlen(param);
-        res   = strcmp(getIdentifierOnMarker_st(pp), param) == 0;
+        res   = strcmp(getIdentifierOnMarker_static(pp), param) == 0;
         goto fini;
     }
     // param.field so parse it
-    if (strncmp(getIdentifierOnMarker_st(mm), param, pp2 - param) != 0)
+    if (strncmp(getIdentifierOnMarker_static(mm), param, pp2 - param) != 0)
         goto fini;
     mm->offset += (pp2 - param);
     editorMoveMarkerToNonBlank(mm, 1);
@@ -3556,7 +3556,7 @@ static bool staticToDynCanBeThisOccurence(EditorMarker *pp, char *param, int *rl
         goto fini;
     mm->offset++;
     editorMoveMarkerToNonBlank(mm, 1);
-    if (strcmp(getIdentifierOnMarker_st(mm), pp2 + 1) != 0)
+    if (strcmp(getIdentifierOnMarker_static(mm), pp2 + 1) != 0)
         goto fini;
     *rlen = mm->offset - pp->offset + strlen(pp2 + 1);
     res   = true;
@@ -3586,7 +3586,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
 
     assert(argn != 0);
 
-    strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
+    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     Result res = getParameterNamePosition(point, nameOnPoint, argn);
     if (res != RESULT_OK) {
         ppcGotoMarker(point);
@@ -3595,9 +3595,9 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     }
     mm = newEditorMarkerForPosition(&parameterPosition);
     if (refactoringOptions.refpar2[0] != 0) {
-        sprintf(param, "%s.%s", getIdentifierOnMarker_st(mm), refactoringOptions.refpar2);
+        sprintf(param, "%s.%s", getIdentifierOnMarker_static(mm), refactoringOptions.refpar2);
     } else {
-        sprintf(param, "%s", getIdentifierOnMarker_st(mm));
+        sprintf(param, "%s", getIdentifierOnMarker_static(mm));
     }
     plen = strlen(param);
 
@@ -3647,7 +3647,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     // O.K. turn it virtual
 
     // STEP 1) inspect all references and copy the parameter to application object
-    strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
+    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs = pushGetAndPreCheckReferences(point->buffer, point, nameOnPoint, STANDARD_SELECT_SYMBOLS_MESSAGE,
                                         PPCV_BROWSER_TYPE_INFO);
@@ -3820,7 +3820,7 @@ static void performEncapsulateField(EditorMarker *point, EditorRegionList **forb
     EditorMarker     *eqm, *ee, *db;
     UNUSED            db;
 
-    strcpy(nameOnPoint, getIdentifierOnMarker_st(point));
+    strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     nameOnPointLen = strlen(nameOnPoint);
     assert(nameOnPointLen < TMP_STRING_SIZE - 1);
     occs = pushGetAndPreCheckReferences(point->buffer, point, nameOnPoint, ERROR_SELECT_SYMBOLS_MESSAGE,
@@ -4167,7 +4167,7 @@ static void reduceParenthesesAroundExpression(EditorMarker *mm, char *expression
 static void removeRedundantParenthesesAroundThisOrSuper(EditorMarker *mm, char *keyword) {
     char *ss;
 
-    ss = getIdentifierOnMarker_st(mm);
+    ss = getIdentifierOnMarker_static(mm);
     if (strcmp(ss, keyword) == 0) {
         reduceParenthesesAroundExpression(mm, keyword);
     }
@@ -4179,7 +4179,7 @@ static void reduceCastedThis(EditorMarker *mm, char *superFqtName) {
     int           superFqtLen, castExprLen;
     char          castExpr[MAX_FILE_NAME_SIZE];
     superFqtLen = strlen(superFqtName);
-    ss          = getIdentifierOnMarker_st(mm);
+    ss          = getIdentifierOnMarker_static(mm);
     if (strcmp(ss, "this") == 0) {
         makeSyntaxPassOnSource(mm);
         if (parsedPositions[SPP_CAST_LPAR_POSITION].file != noFileIndex) {
@@ -4236,7 +4236,7 @@ static bool isThereACastOfThis(EditorMarker *mm) {
     char         *ss;
     bool          thereIsACast = false;
 
-    ss = getIdentifierOnMarker_st(mm);
+    ss = getIdentifierOnMarker_static(mm);
     if (strcmp(ss, "this") == 0) {
         makeSyntaxPassOnSource(mm);
         if (parsedPositions[SPP_CAST_LPAR_POSITION].file != noFileIndex) {
@@ -4271,7 +4271,7 @@ static void reduceRedundantCastedThissInMethod(EditorMarker *point, EditorRegion
             for (EditorMarkerList *ll = mm->markers; ll != NULL; ll = ll->next) {
                 // casted expression "((cast)this) -> this"
                 // casted expression "((cast)this) -> super"
-                ss = getIdentifierOnMarker_st(ll->marker);
+                ss = getIdentifierOnMarker_static(ll->marker);
                 if (strcmp(ss, "this") == 0) {
                     reduceCastedThis(ll->marker, superFqtName);
                     removeRedundantParenthesesAroundThisOrSuper(ll->marker, "this");
@@ -4296,7 +4296,7 @@ static void expandThissToCastedThisInTheMethod(EditorMarker *point, char *thiscF
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
         if (mm->selected && mm->visible) {
             for (EditorMarkerList *ll = mm->markers; ll != NULL; ll = ll->next) {
-                char *ss = getIdentifierOnMarker_st(ll->marker);
+                char *ss = getIdentifierOnMarker_static(ll->marker);
                 // add casts only if there is yet this or super
                 if (strcmp(ss, "this") == 0) {
                     // check whether there is yet a casted this
