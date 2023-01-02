@@ -4710,9 +4710,9 @@ void mapCreateSelectionMenu(ReferencesItem *p) {
 
 /* ********************************************************************** */
 
-static Completion *newOlCompletion(char *name, char *fullName, char *vclass, short int jindent,
-                                   short int lineCount, char category, char csymType,
-                                   struct reference ref, struct referencesItem sym) {
+static Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
+                                 short int lineCount, char category, char csymType,
+                                 struct reference ref, struct referencesItem sym) {
     Completion *completion = olcx_alloc(sizeof(Completion));
 
     completion->name = name;
@@ -4767,13 +4767,13 @@ Completion *olCompletionListPrepend(OlcxReferences *stack, char *name, char *ful
                            referenceItem->type, referenceItem->storage, referenceItem->scope,
                            referenceItem->access, referenceItem->category);
 
-        completion = newOlCompletion(nn, fullnn, vclnn, jindent, 1, referenceItem->category, cType, *reference, sri);
+        completion = newCompletion(nn, fullnn, vclnn, jindent, 1, referenceItem->category, cType, *reference, sri);
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
         fillReferencesItem(&sri, "", cxFileHashNumber(""), noFileIndex, noFileIndex, TypeUnknown, StorageNone,
                            ScopeAuto, AccessDefault, CategoryLocal);
-        completion = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
+        completion = newCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
     } else {
         Reference r;
         getSymbolCxrefProperties(symbol, &category, &scope, &storage);
@@ -4786,7 +4786,7 @@ Completion *olCompletionListPrepend(OlcxReferences *stack, char *name, char *ful
         fillReferencesItem(&sri, ss, cxFileHashNumber(ss),
                            vFunClass, vFunClass, symbol->type, storage,
                            scope, symbol->access, category);
-        completion = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);
+        completion = newCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);
     }
     if (fullText!=NULL) {
         for (int i=0; fullText[i]; i++) {
