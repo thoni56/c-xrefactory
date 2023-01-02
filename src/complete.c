@@ -465,8 +465,10 @@ void printCompletions(Completions* c) {
             if (vFunCl == -1) vFunCl = noFileIndex;
         }
         Reference ref;
-        olCompletionListPrepend(sessionData.completionsStack.top, c->alternatives[ii].string, ppcTmpBuff, vclass, jindent,
-                                c->alternatives[ii].symbol, NULL, &ref, c->alternatives[ii].symbolType, vFunCl);
+        sessionData.completionsStack.top->completions = completionListPrepend(
+            sessionData.completionsStack.top->completions, c->alternatives[ii].string, ppcTmpBuff,
+            vclass, jindent, c->alternatives[ii].symbol, NULL, &ref, c->alternatives[ii].symbolType,
+            vFunCl);
     }
     olCompletionListReverse();
     printCompletionsList(c->noFocusOnCompletions);

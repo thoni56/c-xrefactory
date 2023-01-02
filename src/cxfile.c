@@ -293,8 +293,9 @@ void searchSymbolCheckReference(ReferencesItem  *referenceItem, Reference *refer
     slen = strlen(sname);
     if (searchStringMatch(sname, slen)) {
         static int count = 0;
-        olCompletionListPrepend(sessionData.retrieverStack.top, sname, NULL, NULL, 0, NULL, referenceItem, reference, referenceItem->type,
-                                referenceItem->vFunClass);
+        sessionData.retrieverStack.top->completions = completionListPrepend(
+            sessionData.retrieverStack.top->completions, sname, NULL, NULL, 0, NULL, referenceItem,
+            reference, referenceItem->type, referenceItem->vFunClass);
         // this is a hack for memory reduction
         // compact completions from time to time
         count ++;
