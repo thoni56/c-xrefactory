@@ -59,16 +59,12 @@ extern void addTrivialCxReference (char *name, int symType, int storage,
 extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
                               int bestMatchFlag);
 extern void olSetCallerPosition(Position *pos);
-extern Completion * olCompletionListPrepend(char *name, char *fullText,
-                                                char *vclass, int jindent, Symbol *s,
-                                                ReferencesItem *ri, Reference *dfpos,
-                                                int symType, int vFunClass,
-                                                OlcxReferences *stack);
-extern SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass,
-                                            int vFunCl, Position *defpos, int defusage,
-                                            int selected, int visible,
-                                            unsigned ooBits, int olusage, int vlevel
-                                            );
+extern Completion  *olCompletionListPrepend(OlcxReferences *stack, char *name, char *fullText,
+                                            char *vclass, int jindent, Symbol *s, ReferencesItem *ri,
+                                            Reference *dfpos, int symType, int vFunClass);
+extern SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl,
+                                        Position *defpos, int defusage, int selected, int visible,
+                                        unsigned ooBits, int olusage, int vlevel);
 extern SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
                                            int selected, int visible, unsigned ooBits,
                                            int olusage, int vlevel,

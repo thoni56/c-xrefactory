@@ -4744,10 +4744,10 @@ void olSetCallerPosition(Position *pos) {
 // if s==NULL, then the pos is taken as default position of this ref !!!
 
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
-Completion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *symbol,
-                                        ReferencesItem *referenceItem, Reference *reference, int cType,
-                                        int vFunClass, OlcxReferences *stack) {
-    Completion *cc;
+Completion *olCompletionListPrepend(OlcxReferences *stack, char *name, char *fullText, char *vclass,
+                                    int jindent, Symbol *symbol, ReferencesItem *referenceItem,
+                                    Reference *reference, int cType, int vFunClass) {
+    Completion    *cc;
     char *ss,*nn, *fullnn, *vclnn;
     int category, scope, storage, slen, nlen;
     ReferencesItem sri;
