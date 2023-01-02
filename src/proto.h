@@ -414,7 +414,7 @@ typedef struct olcxReferences {
     char                 language;       /* C/JAVA/YACC */
     time_t               accessTime;     /* last access time */
     struct position      callerPosition; /* caller position */
-    struct olCompletion *completions;    /* completions list for OLO_COMPLETION */
+    struct completion *completions;    /* completions list for OLO_COMPLETION */
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
     struct SymbolsMenu    *hkSelectedSym; /* resolved symbols under the cursor */

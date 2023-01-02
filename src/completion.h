@@ -4,7 +4,7 @@
 #include "reference.h"
 #include "type.h"
 
-typedef struct olCompletion {
+typedef struct completion {
     char                 *name;
     char                 *fullName;
     char                 *vclass;
@@ -14,7 +14,7 @@ typedef struct olCompletion {
     Type                  csymType; /* symtype of completion */
     struct reference      ref;
     struct referencesItem sym;
-    struct olCompletion  *next;
+    struct completion  *next;
 } Completion;
 
 
