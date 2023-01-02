@@ -958,8 +958,7 @@ static void scanFunction_SymbolName(int size,
                                     CxScanFileOperation operation
 ) {
     ReferencesItem *referencesItem, *member;
-    SymbolsMenu *cms;
-    int symbolIndex, symType, vApplClass, vFunClass, ols, accessFlags, storage;
+    int symbolIndex, symType, vApplClass, vFunClass, accessFlags, storage;
     char *id;
 
     assert(marker == CXFI_SYMBOL_NAME);
@@ -1003,14 +1002,17 @@ static void scanFunction_SymbolName(int size,
                 lastIncomingInfo.symbolToCheckForDeadness = -1;
             }
         } else if (options.serverOperation!=OLO_TAG_SEARCH) {
-            cms = NULL; ols = 0;
+            int ols = 0;
+            SymbolsMenu *cms = NULL;
             if (operation == CXSF_MENU_CREATION) {
                 cms = createSelectionMenu(referencesItem);
                 if (cms == NULL) {
                     ols = 0;
                 } else {
-                    if (IS_BEST_FIT_MATCH(cms)) ols = 2;
-                    else ols = 1;
+                    if (IS_BEST_FIT_MATCH(cms))
+                        ols = 2;
+                    else
+                        ols = 1;
                 }
             } else if (operation!=CXSF_BY_PASS) {
                 ols=itIsSymbolToPushOlReferences(referencesItem, sessionData.browserStack.top, &cms,
