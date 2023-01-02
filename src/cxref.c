@@ -672,8 +672,10 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", symbol->linkName,
               vFunCl,vApplCl, position->file, position->line, position->col, category==CategoryGlobal?"Global":"Local",
               usageKindEnumName[usage.kind], storageEnumName[symbol->storage]);
+
     assert(options.mode);
-    if (options.mode == ServerMode) {
+    switch (options.mode) {
+    case ServerMode:
         if (options.serverOperation == OLO_EXTRACT) {
             if (inputFileNumber != currentFile.characterBuffer.fileNumber)
                 return NULL;
@@ -687,12 +689,16 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                 //&fprintf(dumpOut,"%s comm %d\n", fileItem->name, fileItem->isArgument);
             }
         }
-    }
-    if (options.mode == XrefMode) {
+        break;
+    case XrefMode:
         if (category == CategoryLocal)
             return NULL; /* dont cxref local symbols */
         if (!fileItem->cxLoading)
             return NULL;
+        break;
+    default:
+        assert(0);              /* Should not happen */
+        break;
     }
     fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl, symbol->type, storage, scope,
                        symbol->access, category);
