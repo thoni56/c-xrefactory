@@ -39,6 +39,7 @@ Ensure(CommandsLogger, can_log_a_single_argument) {
 
 static char buffer[1000] = "";
 static void concat_output(void *string) {
+    printf("'%s'\n", buffer);
     strcat(buffer, *(char **)string);
 }
 
@@ -46,7 +47,6 @@ Ensure(CommandsLogger, can_log_multiple_arguments) {
     char *argv[] = {"command", "arg1", "arg2"};
     char *output;
 
-    buffer[0] = '\0';
     expect(openFile);
     always_expect(writeFile,
                   will_capture_parameter(buffer, output),
