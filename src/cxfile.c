@@ -854,8 +854,8 @@ static int scanSymNameString(int size, CharacterBuffer *cb, char *id) {
 }
 
 
-static void getSymbolTypeAndClasses(int *symType, int *vApplClass, int *vFunClass) {
-    *symType = lastIncomingInfo.values[CXFI_SYMBOL_TYPE];
+static void getSymbolTypeAndClasses(int *symbolType, int *vApplClass, int *vFunClass) {
+    *symbolType = lastIncomingInfo.values[CXFI_SYMBOL_TYPE];
 
     *vApplClass = decodeFileNumbers[lastIncomingInfo.values[CXFI_SUBCLASS]];
     assert(getFileItem(*vApplClass) != NULL);
