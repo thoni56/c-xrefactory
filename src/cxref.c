@@ -1093,7 +1093,7 @@ static void olcxAddReferencesToSymbolsMenu(SymbolsMenu  *cms,
     }
 }
 
-static int refCharCode(int usage) {
+static int characterCodeForUsage(UsageKind usage) {
     switch (usage) {
     case UsageOLBestFitDefined: return '!';
     case UsageDefined:  return '*';
@@ -1117,7 +1117,7 @@ void gotoOnlineCxref(Position *p, int usage, char *suffix)
     } else {
         fprintf(communicationChannel,"%s%s#*+*#%d %d :%c%s ;;\n", COLCX_GOTO_REFERENCE,
                 getRealFileName_static(getFileItem(p->file)->name),
-                p->line, p->col, refCharCode(usage), suffix);
+                p->line, p->col, characterCodeForUsage(usage), suffix);
     }
 }
 
@@ -1556,7 +1556,7 @@ static void linePosProcess(FILE *outFile,
             } else {
                 if (positionsAreNotEqual(*callerPosition, rr->position)) fprintf(outFile, " ");
                 else fprintf(outFile, ">");
-                fprintf(outFile,"%c%s:%d:",refCharCode(rr->usage.kind),fn,
+                fprintf(outFile,"%c%s:%d:",characterCodeForUsage(rr->usage.kind),fn,
                         rr->position.line);
             }
             linerefn++;
