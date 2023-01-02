@@ -1,5 +1,6 @@
-// This file implements an upcoming Cgreen constraint, will_capture_parameter, as a custom
-// constraint. Include this file in the ..._tests.c file to use it
+// This file implements the Cgreen constraint "will_capture_parameter" as a custom
+// constraint. Include this file in the ..._tests.c file to use it with tests before
+// Cgreen 1.5 where it was introduced
 
 #include <cgreen/cgreen.h>
 #include <cgreen/mocks.h>
