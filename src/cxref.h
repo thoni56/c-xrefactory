@@ -75,9 +75,6 @@ extern SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
                                            Position *defpos, int defusage);
 extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
-extern Reference **addToRefList(Reference **list,
-                                Usage usage,
-                                Position pos);
 extern int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack,
                                       SymbolsMenu **rss, int checkSelFlag);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,

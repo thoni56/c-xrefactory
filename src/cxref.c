@@ -221,27 +221,6 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 */
 
 
-Reference **addToRefList(Reference **list,
-                         Usage usage,
-                         Position pos) {
-    Reference **place;
-    Reference reference;
-
-    fillReference(&reference, usage, pos, NULL);
-    SORTED_LIST_PLACE2(place,reference,list);
-    if (*place==NULL || SORTED_LIST_NEQ((*place),reference)
-        || options.serverOperation==OLO_EXTRACT) {
-        Reference *r = cxAlloc(sizeof(Reference));
-        fillReference(r, usage, pos, NULL);
-        LIST_CONS(r, (*place));
-    } else {
-        assert(*place);
-        (*place)->usage = usage;
-    }
-    return place;
-}
-
-
 Reference *duplicateReference(Reference *original) {
     // this is used in extract x=x+2; to re-arrange order of references
     // i.e. usage must be first, lValue second.
