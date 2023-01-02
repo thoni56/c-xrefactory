@@ -1,6 +1,9 @@
 #ifndef USAGE_H_INCLUDED
 #define USAGE_H_INCLUDED
 
+// !!! if changing this, change also s_noRef!!!
+#define NO_USAGE (Usage){UsageNone, 0}
+
 /* Because of the macro magic we can't comment near the actual values
    so here are some descriptions of some of the Usage values
    (duplication so remember to change in here too):

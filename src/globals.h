@@ -23,9 +23,6 @@ extern bool fileAbortEnabled;
 extern int s_lastReturnedLexem;
 extern Position parsedPositions[SPP_MAX];
 
-// !!! if changing this, change also s_noRef!!!
-#define NO_USAGE (Usage){UsageNone, 0}
-
 extern bool cxResizingBlocked;
 extern Counters counters;
 extern unsigned s_recFindCl;
