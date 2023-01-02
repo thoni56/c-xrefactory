@@ -48,6 +48,7 @@ typedef struct referencesItem {
 } ReferencesItem;
 
 
+extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
 extern void reset_reference_usage(Reference *rrr, UsageKind uuu);
 
 #endif

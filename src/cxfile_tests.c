@@ -8,19 +8,19 @@
 #include "log.h"
 
 #include "caching.mock"
-#include "commons.mock"
-#include "globals.mock"
-#include "misc.mock"
-#include "options.h"
-#include "options.mock"
-
 #include "characterreader.mock"
 #include "classhierarchy.mock"
+#include "commons.mock"
 #include "cxref.mock"
 #include "editor.mock"
 #include "fileio.mock"
 #include "filetable.mock"
+#include "globals.mock"
+#include "misc.mock"
+#include "options.mock"
+#include "reference.mock"
 #include "reftab.mock"
+
 
 Describe(CxFile);
 BeforeEach(CxFile) {

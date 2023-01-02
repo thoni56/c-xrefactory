@@ -29,6 +29,7 @@
 #include "ppc.mock"
 #include "refactory.mock"
 #include "refactorings.mock"
+#include "reference.mock"
 #include "reftab.mock"
 #include "symbol.mock"
 #include "yylex.mock"

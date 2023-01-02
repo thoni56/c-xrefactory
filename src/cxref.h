@@ -8,7 +8,6 @@
 #include "session.h"
 #include "ppc.h"
 
-extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
 extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
                                int vFunClass, Type symType, Storage storage, ReferenceScope scope,
                                Access accessFlags, ReferenceCategory category);

@@ -16,7 +16,9 @@
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"
+#include "reference.mock"
 #include "yylex.mock"
+
 
 Describe(Editor);
 BeforeEach(Editor) {
