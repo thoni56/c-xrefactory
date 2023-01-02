@@ -3,41 +3,47 @@
 #
 # This makefile supports the following use cases
 #
-# 1: production - simple straight forward build of c-xref for use when
-# installing c-xref using el-get. Works:
+# 1: production - simple straight forward build of c-xref for production
+#    use when installing c-xref using el-get:
 #	make prod
 #
 # 2: ci - build unittests & c-xref and run all tests with coverage
-# and create coverage report. Works:
+#    and create coverage report:
 #	make ci
 #
-# 3: all (or no target) - build and run unittests & build the c-xref exe.
-# Works:
+# 3: all (or no target) - build and run unittests & build the c-xref exe:
 #	make
 #
 # 4: build and run unittests with coverage and produce gcov files for
-# cov-mode in Emacs. Works:
+#    cov-mode in Emacs:
 #	make unit
 #
-# 5: build c-xref with coverage, run all "quick" tests and produce gcov. Works:
+# 5: build c-xref with coverage, run all "quick" tests and produce gcov:
 #	make devel
 #
-# 6: build c-xref with coverage, run one test and produce gcov files
-# Works:
-#   make
+# 6: build c-xref with coverage, run one test and produce gcov files:
+#       make
 #	make clean-coverage
 #	<run test>
 #	make coverage-report
 #
-# 6: run another test and produce aggregated gcov files
-# Works:
+# 6: run another test and produce aggregated gcov files:
 #	<run another test>
 #	make coverage-report
 #
-# 7: produce coverage report for current collected coverage
-# Works:
+# 7: produce coverage report for current collected coverage:
 #	make coverage-report
-
+#
+# 8: watch sources to build and run all tests:
+#	make watch
+#
+# 9: watch sources to build and run unittests (use as compile command in Emacs):
+#	make watch-for-unittests
+#
+# 10: watch unitests completion and run all systemtests (use in a separate
+#     terminal):
+#	make watch-for-systemtests
+#
 #########################################################################
 # Always export following variables to environment of sub-makes (to use you need "-e")
 
@@ -339,10 +345,10 @@ endif
 watch:
 	watchexec -e c,h,y,mock -- execnotify -t Development make -j devel
 
-watch-unit:
+watch-for-unittests:
 	watchexec -e c,h,y,mock -- execnotify -t Unittests make -j unit
 
-watch-system:
+watch-for-systemtests:
 	watchexec -e .done -- execnotify -t Systemtests make -j system-tests
 
 system-tests:
