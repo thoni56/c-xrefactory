@@ -391,19 +391,6 @@ typedef struct jslSymbolList {
 
 /* ***************** on - line cross referencing ***************** */
 
-typedef struct olCompletion {
-    char                 *name;
-    char                 *fullName;
-    char                 *vclass;
-    short int             jindent;
-    short int             lineCount;
-    char                  category; /* Global/Local TODO: enum!*/
-    Type                  csymType; /* symtype of completion */
-    struct reference      ref;
-    struct referencesItem sym;
-    struct olCompletion  *next;
-} Completion;
-
 typedef struct SymbolsMenu {
     struct referencesItem    references;
     bool                     selected;

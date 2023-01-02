@@ -1,12 +1,14 @@
 #ifndef CXREF_H_INCLUDED
 #define CXREF_H_INCLUDED
 
+#include "completion.h"
+#include "ppc.h"
 #include "proto.h"
 #include "server.h"
-#include "usage.h"
-#include "symbol.h"
 #include "session.h"
-#include "ppc.h"
+#include "symbol.h"
+#include "usage.h"
+
 
 extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
                                int vFunClass, Type symType, Storage storage, ReferenceScope scope,
