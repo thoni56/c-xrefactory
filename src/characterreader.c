@@ -265,7 +265,7 @@ int getChar(CharacterBuffer *cb) {
 }
 
 
-void getString(char *string, int length, CharacterBuffer *cb) {
+void getString(CharacterBuffer *cb, char *string, int length) {
     char ch;
 
     for (int i=0; i<length; i++) {

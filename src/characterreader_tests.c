@@ -21,7 +21,7 @@ Ensure(CharacterReader, can_get_string) {
 
     initCharacterBufferFromString(&cb, expected_string);
 
-    getString(read_string, strlen(expected_string), &cb);
+    getString(&cb, read_string, strlen(expected_string));
 
     assert_that(read_string, is_equal_to_string(expected_string));
 }
