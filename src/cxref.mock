@@ -360,10 +360,6 @@ void olcxFreeResolutionMenu(SymbolsMenu *sym) {
     mock(sym);
 }
 
-int refCharCode(int usage) {
-    return (int) mock(usage);
-}
-
 void generateReferences(void) {
     mock();
 }

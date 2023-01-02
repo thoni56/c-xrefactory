@@ -1093,6 +1093,23 @@ static void olcxAddReferencesToSymbolsMenu(SymbolsMenu  *cms,
     }
 }
 
+static int refCharCode(int usage) {
+    switch (usage) {
+    case UsageOLBestFitDefined: return '!';
+    case UsageDefined:  return '*';
+    case UsageDeclared: return '+';
+    case UsageLvalUsed: return ',';
+    case UsageAddrUsed: return '.';
+        /* some specials for refactorings now */
+    case UsageNotFQFieldInClassOrMethod: return '.';
+        // Usage Constructor definition is for move class to not expand
+        // and move constructor definition references
+    case UsageConstructorDefinition: return '-';
+    default: return ' ';
+    }
+    assert(0);
+}
+
 void gotoOnlineCxref(Position *p, int usage, char *suffix)
 {
     if (options.xref2) {
@@ -1478,22 +1495,6 @@ static void getFileChar(int *chP, Position *position, CharacterBuffer *character
     *chP = getChar(characterBuffer);
 }
 
-int refCharCode(int usage) {
-    switch (usage) {
-    case UsageOLBestFitDefined: return '!';
-    case UsageDefined:  return '*';
-    case UsageDeclared: return '+';
-    case UsageLvalUsed: return ',';
-    case UsageAddrUsed: return '.';
-        /* some specials for refactorings now */
-    case UsageNotFQFieldInClassOrMethod: return '.';
-        // Usage Constructor definition is for move class to not expand
-        // and move constructor definition references
-    case UsageConstructorDefinition: return '-';
-    default: return ' ';
-    }
-    assert(0);
-}
 
 static char listLine[MAX_REF_LIST_LINE_LEN+5];
 static int listLineIndex = 0;

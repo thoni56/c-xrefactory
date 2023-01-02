@@ -123,7 +123,6 @@ extern void pushLocalUnusedSymbolsAction(void);
 extern void answerEditAction(void);
 extern SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll);
 extern void olcxFreeResolutionMenu( SymbolsMenu *sym );
-extern int refCharCode(int usage);
 
 extern void clearAvailableRefactorings(void);
 
