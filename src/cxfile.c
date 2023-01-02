@@ -1064,7 +1064,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
     pos = makePosition(file, line, col);
     if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
-        addToRefList(&lastIncomingInfo.symbolTab[symbolIndex]->references, usage, pos);
+        addToReferenceList(&lastIncomingInfo.symbolTab[symbolIndex]->references, usage, pos);
     }
 }
 

@@ -50,6 +50,6 @@ typedef struct referencesItem {
 
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
 extern void reset_reference_usage(Reference *reference, UsageKind usageKind);
-extern Reference **addToRefList(Reference **list, Usage usage, Position pos);
+extern Reference **addToReferenceList(Reference **list, Usage usage, Position pos);
 
 #endif

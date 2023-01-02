@@ -30,7 +30,7 @@ void reset_reference_usage(Reference *reference, UsageKind usageKind) {
     }
 }
 
-Reference **addToRefList(Reference **list,
+Reference **addToReferenceList(Reference **list,
                          Usage usage,
                          Position pos) {
     Reference **place;

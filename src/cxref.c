@@ -674,7 +674,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         // without knowing if it is an interface or not
         memb->access |= symbol->access;
     }
-    place = addToRefList(&memb->references, usage, *position);
+    place = addToReferenceList(&memb->references, usage, *position);
     log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
               getFileItem(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line, cxRefPosition.col,
               fileItem->name, position->file, position->line, position->col,
