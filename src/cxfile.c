@@ -854,7 +854,7 @@ static int scanSymNameString(int size, CharacterBuffer *cb, char *id) {
 }
 
 
-static void getSymTypeAndClasses(int *symType, int *vApplClass, int *vFunClass) {
+static void getSymbolTypeAndClasses(int *symType, int *vApplClass, int *vFunClass) {
     *symType = lastIncomingInfo.values[CXFI_SYMBOL_TYPE];
 
     *vApplClass = decodeFileNumbers[lastIncomingInfo.values[CXFI_SUBCLASS]];
@@ -883,7 +883,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
     id = lastIncomingInfo.cachedSymbolName[symbolIndex];
     len = scanSymNameString(size, cb, id);
-    getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
+    getSymbolTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,vFunClass);fflush(dumpOut);
     if (symType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
         lastIncomingInfo.onLineReferencedSym = -1;
@@ -972,7 +972,7 @@ static void scanFunction_SymbolName(int size,
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
     id = lastIncomingInfo.cachedSymbolName[symbolIndex];
     scanSymNameString(size, cb, id);
-    getSymTypeAndClasses(&symType, &vApplClass, &vFunClass);
+    getSymbolTypeAndClasses(&symType, &vApplClass, &vFunClass);
 
     referencesItem = &lastIncomingInfo.cachedReferencesItem[symbolIndex];
     lastIncomingInfo.symbolTab[symbolIndex] = referencesItem;
@@ -1041,7 +1041,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
     int      file, line, col, sym, vApplClass, vFunClass;
     UsageKind usageKind;
     Usage usage;
-    int symType,reqAcc;
+    int symbolType,reqAcc;
 
     assert(marker == CXFI_REFERENCE);
 
@@ -1056,7 +1056,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
     col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
-    getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
+    getSymbolTypeAndClasses(&symbolType, &vApplClass, &vFunClass);
     log_trace("%d %d->%d %d", usageKind, file, decodeFileNumbers[file], line);
 
     pos = makePosition(file, line, col);
