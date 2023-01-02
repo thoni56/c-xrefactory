@@ -887,7 +887,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     symbol.storage = StorageNone;
 
     if (!symbolTableIsMember(symbolTable, &symbol, NULL, &member)
-        || (isMemoryFromPreviousBlock(member) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
+        || (isMemoryFromPreviousBlock(member) && isDefinitionOrDeclarationUsage(usage))) {
         member = StackMemoryAlloc(Symbol);
         *member = symbol;
         member->u.structSpec = StackMemoryAlloc(S_symStructSpec);
@@ -1015,7 +1015,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
     p.storage = StorageNone;
 
     if (! symbolTableIsMember(symbolTable, &p, NULL, &pp)
-        || (isMemoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
+        || (isMemoryFromPreviousBlock(pp) && isDefinitionOrDeclarationUsage(usage))) {
         pp = StackMemoryAlloc(Symbol);
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);

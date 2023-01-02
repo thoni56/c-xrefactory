@@ -1,8 +1,12 @@
 #ifndef USAGE_H_INCLUDED
 #define USAGE_H_INCLUDED
 
+#include <stdbool.h>
+
+
 // !!! if changing this, change also s_noRef!!!
 #define NO_USAGE (Usage){UsageNone, 0}
+
 
 /* Because of the macro magic we can't comment near the actual values
    so here are some descriptions of some of the Usage values
@@ -121,5 +125,7 @@ typedef struct usage {
 extern const char *usageKindEnumName[];
 
 extern void fillUsage(Usage *usage, UsageKind kind, Access requiredAccess);
+extern bool isDefinitionUsage(UsageKind usageKind);
+extern bool isDefinitionOrDeclarationUsage(UsageKind usage);
 
 #endif

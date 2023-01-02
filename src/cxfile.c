@@ -1126,11 +1126,11 @@ static void scanFunction_Reference(int size,
         if (operation == CXSF_DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&reference)) {
                 // restrict reported symbols to those defined in project input file
-                if (IS_DEFINITION_USAGE(reference.usage.kind)
+                if (isDefinitionUsage(reference.usage.kind)
                     && referenceFileItem->isArgument
                 ) {
                     lastIncomingInfo.deadSymbolIsDefined = 1;
-                } else if (! IS_DEFINITION_OR_DECL_USAGE(reference.usage.kind)) {
+                } else if (! isDefinitionOrDeclarationUsage(reference.usage.kind)) {
                     lastIncomingInfo.symbolToCheckForDeadness = -1;
                 }
             }

@@ -469,7 +469,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
     }
     case TypeStruct:
         if (LANGUAGE(LANG_JAVA)) {
-            if (IS_DEFINITION_USAGE(usage)) {
+            if (isDefinitionUsage(usage)) {
                 makeRefactoringAvailable(PPC_AVR_RENAME_CLASS, "");
                 makeRefactoringAvailable(PPC_AVR_MOVE_CLASS, "");
                 makeRefactoringAvailable(PPC_AVR_MOVE_CLASS_TO_NEW_FILE, "");
@@ -503,7 +503,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
             makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "");
         }
         if (symbol->storage == StorageField) {
-            if (IS_DEFINITION_USAGE(usage)) {
+            if (isDefinitionUsage(usage)) {
                 if (symbol->access & AccessStatic) {
                     makeRefactoringAvailable(PPC_AVR_MOVE_STATIC_FIELD, "");
                 } else {
@@ -517,7 +517,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
             }
         }
         if (symbol->storage == StorageMethod || symbol->storage == StorageConstructor) {
-            if (IS_DEFINITION_USAGE(usage)) {
+            if (isDefinitionUsage(usage)) {
                 //& makeRefactoringAvailable(PPC_AVR_EXPAND_NAMES, "");
                 //& makeRefactoringAvailabld(PPC_AVR_REDUCE_NAMES, "");
                 if (symbol->access & AccessStatic) {
@@ -715,7 +715,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                                           1,1,0,usage.kind,0, defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
-                if (IS_DEFINITION_USAGE(usage.kind)) {
+                if (isDefinitionUsage(usage.kind)) {
                     menu->defpos = *position;
                     menu->defUsage = usage.kind;
                 }
@@ -933,7 +933,7 @@ static bool olcxVirtualyUsageAdequate(int vApplCl, int vFunCl,
 
     log_trace(":checking %s, %s, %s, <-> %s, %s", usageKindEnumName[olUsage], getFileItem(olFunCl)->name,
               getFileItem(olApplCl)->name, getFileItem(vFunCl)->name, getFileItem(vApplCl)->name);
-    if (IS_DEFINITION_OR_DECL_USAGE(olUsage)) {
+    if (isDefinitionOrDeclarationUsage(olUsage)) {
         if (vFunCl == olFunCl) res = 1;
         if (isSmallerOrEqClass(olFunCl, vApplCl))
             res = true;
@@ -1023,7 +1023,7 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
     added = olcxAddReference(&cms->references.references, rr, bestFitFlag);
     if (rr->usage.kind == UsageClassTreeDefinition) cms->defpos = rr->position;
     if (added!=NULL) {
-        if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
+        if (isDefinitionOrDeclarationUsage(rr->usage.kind)) {
             if (rr->usage.kind==UsageDefined && positionsAreEqual(rr->position, cms->defpos)) {
                 added->usage.kind = UsageOLBestFitDefined;
             }
@@ -2996,7 +2996,7 @@ static bool olRemoveCallerReference(OlcxReferences *refs) {
     }
     if (rr == NULL)
         return false;
-    if (!IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind))
+    if (!isDefinitionOrDeclarationUsage(rr->usage.kind))
         return false;
     log_trace("!removing reference on %d", rr->position.line);
     *rrr = rr->next;
@@ -3470,7 +3470,7 @@ static SymbolsMenu *mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(
     SymbolsMenu *res = NULL;
 
     for (SymbolsMenu *mm=menuSym; mm!=NULL; mm=mm->next) {
-        if (mm->references.references!=NULL && IS_DEFINITION_OR_DECL_USAGE(mm->references.references->usage.kind) &&
+        if (mm->references.references!=NULL && isDefinitionOrDeclarationUsage(mm->references.references->usage.kind) &&
             (res==NULL || positionIsLessThan(mm->references.references->position, res->references.references->position))) {
             res = mm;
         }
@@ -3934,7 +3934,7 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri, void *voidDat
         log_trace("checking %d.%d ref of %s", rr->position.line,rr->position.col,ri->name);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, pushAllData)) {
             defRef = getDefinitionRef(ri->references);
-            if (defRef!=NULL && IS_DEFINITION_OR_DECL_USAGE(defRef->usage.kind)) {
+            if (defRef!=NULL && isDefinitionOrDeclarationUsage(defRef->usage.kind)) {
                 defpos = defRef->position;
                 defusage = defRef->usage.kind;
             } else {
@@ -4071,9 +4071,9 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferencesItem *ss) {
     if (ss->category != CategoryLocal)
         return;
     for (Reference *r = ss->references; r!=NULL; r=r->next) {
-        if (IS_DEFINITION_OR_DECL_USAGE(r->usage.kind)) {
+        if (isDefinitionOrDeclarationUsage(r->usage.kind)) {
             if (r->position.file == inputFileNumber) {
-                if (IS_DEFINITION_USAGE(r->usage.kind)) {
+                if (isDefinitionUsage(r->usage.kind)) {
                     definitionReference = r;
                 }
                 if (definitionReference == NULL)

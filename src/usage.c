@@ -10,3 +10,12 @@ void fillUsage(Usage *usage, UsageKind kind, Access requiredAccess) {
     usage->kind = kind;
     usage->requiredAccess = requiredAccess;
 }
+
+
+bool isDefinitionUsage(UsageKind usageKind) {
+    return usageKind == UsageDefined || usageKind == UsageOLBestFitDefined;
+}
+
+bool isDefinitionOrDeclarationUsage(UsageKind usageKind) {
+    return isDefinitionUsage(usageKind) || usageKind == UsageDeclared;
+}

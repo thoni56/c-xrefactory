@@ -138,16 +138,6 @@ typedef enum language {
 
 /* ******************************************************************** */
 
-#define IS_DEFINITION_USAGE(usage) (\
-  (usage)==UsageDefined \
-  || (usage)==UsageOLBestFitDefined\
-)
-
-#define IS_DEFINITION_OR_DECL_USAGE(usage) (\
-  IS_DEFINITION_USAGE(usage) \
-  || (usage)==UsageDeclared \
-)
-
 #define OL_VIEWABLE_REFS(rrr) ((rrr)->usage.kind < UsageMaxOLUsages)
 
 #define IS_BEST_FIT_MATCH(ss) (\

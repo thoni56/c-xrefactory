@@ -798,7 +798,7 @@ static void tpCheckMoveClassPutClassDefaultSymbols(ReferencesItem *ri, void *ddd
     for (Reference *rr = ri->references; rr != NULL; rr = rr->next) {
         log_trace("Checking %d.%d ref of %s", rr->position.line, rr->position.col, ri->name);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
-            if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
+            if (isDefinitionOrDeclarationUsage(rr->usage.kind)) {
                 // definition inside class, default or private acces to be checked
                 rstack = sessionData.browserStack.top;
                 olAddBrowsedSymbol(ri, &rstack->hkSelectedSym, 1, 1, 0, UsageUsed, 0, &rr->position,
@@ -1202,7 +1202,7 @@ static bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
                 // finally check there is some other reference than super.method()
                 // and definition
                 for (Reference *r = mm->references.references; r != NULL; r = r->next) {
-                    if ((!IS_DEFINITION_OR_DECL_USAGE(r->usage.kind)) &&
+                    if ((!isDefinitionOrDeclarationUsage(r->usage.kind)) &&
                         r->usage.kind != UsageMethodInvokedViaSuper) {
                         // well there is, issue warning message and finish
                         char tempName[MAX_CX_SYMBOL_SIZE];
@@ -1300,7 +1300,7 @@ cont2:
     if (mm->references.references == NULL)
         return true;
     javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
-    if (IS_DEFINITION_OR_DECL_USAGE(mm->references.references->usage.kind) &&
+    if (isDefinitionOrDeclarationUsage(mm->references.references->usage.kind) &&
         mm->references.references->next == NULL) {
         if (pcharFlag == 0) {
             pcharFlag = 1;
@@ -1354,7 +1354,7 @@ static bool tpPushDownFieldLastPreconditions(void) {
     }
     if (targetsm != NULL) {
         rr = getDefinitionRef(targetsm->references.references);
-        if (rr != NULL && IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
+        if (rr != NULL && isDefinitionOrDeclarationUsage(rr->usage.kind)) {
             javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
             sprintf(tmpBuff, "The field %s is already defined in %s!", targetsm->references.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1430,7 +1430,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     defin = point;
     // find definition reference? why this was there?
     //&for(dd= *occs; dd!=NULL; dd=dd->next) {
-    //& if (IS_DEFINITION_USAGE(dd->usg.base)) break;
+    //& if (isDefinitionUsage(dd->usg.base)) break;
     //&}
     //&if (dd != NULL) defin = dd->d;
 
@@ -1770,7 +1770,7 @@ static void restrictAccessibility(EditorMarker *point, int limitIndex, int minAc
     assert(sessionData.browserStack.top && sessionData.browserStack.top->menuSym);
 
     for (Reference *rr = sessionData.browserStack.top->references; rr != NULL; rr = rr->next) {
-        if (!IS_DEFINITION_OR_DECL_USAGE(rr->usage.kind)) {
+        if (!isDefinitionOrDeclarationUsage(rr->usage.kind)) {
             if (rr->usage.requiredAccess < accessIndex) {
                 accessIndex = rr->usage.requiredAccess;
             }
@@ -2088,10 +2088,10 @@ static void checkThatParameterIsUnused(EditorMarker *pos, char *functionName, in
 }
 
 static void addParameter(EditorMarker *pos, char *fname, int argn, int usage) {
-    if (IS_DEFINITION_OR_DECL_USAGE(usage)) {
+    if (isDefinitionOrDeclarationUsage(usage)) {
         if (addStringAsParameter(pos, NULL, fname, argn, refactoringOptions.refpar1) != -1)
             // now check that there is no conflict
-            if (IS_DEFINITION_USAGE(usage))
+            if (isDefinitionUsage(usage))
                 checkThatParameterIsUnused(pos, fname, argn, CHECK_FOR_ADD_PARAM);
     } else {
         addStringAsParameter(pos, NULL, fname, argn, refactoringOptions.refpar2);
@@ -2132,7 +2132,7 @@ static void deleteParameter(EditorMarker *pos, char *fname, int argn, int usage)
             }
             editorMoveMarkerToNonBlank(m2, 1);
         }
-        if (IS_DEFINITION_USAGE(usage)) {
+        if (isDefinitionUsage(usage)) {
             // this must be at the end, because it discards values
             // of s_paramBeginPosition and s_paramEndPosition
             checkThatParameterIsUnused(pos, fname, argn, CHECK_FOR_DEL_PARAM);
@@ -2836,7 +2836,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     progress = 0;
     regions  = NULL;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-        if ((!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) && ll->usage.kind != UsageConstructorDefinition) {
+        if ((!isDefinitionOrDeclarationUsage(ll->usage.kind)) && ll->usage.kind != UsageConstructorDefinition) {
             pp  = replaceStaticPrefix(ll->marker, fqtname);
             ppp = newEditorMarker(ll->marker->buffer, ll->marker->offset);
             moveEditorMarkerBeyondIdentifier(ppp, 1);
@@ -3017,7 +3017,7 @@ static void moveField(EditorMarker *point) {
     progress = 0;
     regions   = NULL;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-        if (!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
+        if (!isDefinitionOrDeclarationUsage(ll->usage.kind)) {
             if (*prefixDot != 0) {
                 replaceString(ll->marker, 0, prefixDot);
             }
@@ -3323,7 +3323,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
             for (EditorMarkerList *ll = mm->markers; ll != NULL; ll = ll->next) {
                 addCopyOfMarkerToList(&allrefs, ll->marker, ll->usage);
                 pp = NULL;
-                if (IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
+                if (isDefinitionOrDeclarationUsage(ll->usage.kind)) {
                     pp = newEditorMarker(ll->marker->buffer, ll->marker->offset);
                     pp->offset = addStringAsParameter(ll->marker, ll->marker, nameOnPoint, 1, pardecl);
                     // remember definition position of new parameter
@@ -3448,7 +3448,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
         // but check it for being sure
         // maybe you should update references and delete the parameter
         // after, but for now, use computed references, it should work.
-        if (IS_DEFINITION_USAGE(npoccs->usage.kind)) {
+        if (isDefinitionUsage(npoccs->usage.kind)) {
             applyParameterManipulationToFunction(nameOnPoint, allrefs, PPC_AVR_DEL_PARAMETER, 1, 1);
             //& deleteParameter(point, nameOnPoint, 1, UsageDefined);
         }
@@ -3655,7 +3655,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     LIST_LEN(count, EditorMarkerList, occs);
     progress = 0;
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-        if (!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
+        if (!isDefinitionOrDeclarationUsage(ll->usage.kind)) {
             res = getParameterPosition(ll->marker, nameOnPoint, argn);
             if (res == RESULT_OK) {
                 m1 = newEditorMarkerForPosition(&parameterBeginPosition);
@@ -3692,7 +3692,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     // remove this this if useless
     poccs = getReferences(mm->buffer, mm, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     for (EditorMarkerList *ll = poccs; ll != NULL; ll = ll->next) {
-        if (!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
+        if (!isDefinitionOrDeclarationUsage(ll->usage.kind)) {
             if (ll->marker->offset + plen <= ll->marker->buffer->allocation.bufferSize
                 // TODO! do this at least little bit better, by skipping spaces, etc.
                 && staticToDynCanBeThisOccurence(ll->marker, param, &rlen)) {
@@ -3745,7 +3745,7 @@ static Reference *checkEncapsulateGetterSetterForExistingMethods(char *mname) {
             if (mm->references.vFunClass == hk->references.vFunClass) {
                 // find definition of another function
                 for (Reference *rr = mm->references.references; rr != NULL; rr = rr->next) {
-                    if (IS_DEFINITION_USAGE(rr->usage.kind)) {
+                    if (isDefinitionUsage(rr->usage.kind)) {
                         if (positionsAreNotEqual(rr->position, hk->defpos)) {
                             anotherDefinition = rr;
                             goto refbreak;
@@ -3960,7 +3960,7 @@ static void performEncapsulateField(EditorMarker *point, EditorRegionList **forb
                 freeEditorMarker(eqm);
                 freeEditorMarker(ee);
             }
-        } else if (!IS_DEFINITION_OR_DECL_USAGE(ll->usage.kind)) {
+        } else if (!isDefinitionOrDeclarationUsage(ll->usage.kind)) {
             checkedReplaceString(ll->marker, nameOnPointLen, nameOnPoint, "");
             replaceString(ll->marker, 0, getter);
             replaceString(ll->marker, 0, "()");
