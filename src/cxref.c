@@ -210,28 +210,6 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 /* *********************************************************************** */
 
 
-/*
-  void deleteFromRefList(void *p) {
-  S_reference **pp, *ff;
-  pp = (S_reference **) p;
-  ff = *pp;
-  *pp = (*pp)->next;
-  CX_FREE(ff);
-  }
-*/
-
-
-Reference *duplicateReference(Reference *original) {
-    // this is used in extract x=x+2; to re-arrange order of references
-    // i.e. usage must be first, lValue second.
-    original->usage = NO_USAGE;
-    Reference *copy = cxAlloc(sizeof(Reference));
-    *copy = *original;
-    original->next = copy;
-    return copy;
-}
-
-
 static void getSymbolCxrefProperties(Symbol *symbol,
                                      int *p_category,
                                      int *p_scope,

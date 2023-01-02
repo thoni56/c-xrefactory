@@ -4,6 +4,7 @@
 
 #include "options.h"
 #include "list.h"
+#include "usage.h"
 
 
 void fillReference(Reference *reference, Usage usage, Position position, Reference *next) {
@@ -11,6 +12,17 @@ void fillReference(Reference *reference, Usage usage, Position position, Referen
     reference->position = position;
     reference->next = next;
 }
+
+Reference *duplicateReference(Reference *original) {
+    // this is used in extract x=x+2; to re-arrange order of references
+    // i.e. usage must be first, lValue second.
+    original->usage = NO_USAGE;
+    Reference *copy = cxAlloc(sizeof(Reference));
+    *copy = *original;
+    original->next = copy;
+    return copy;
+}
+
 
 void reset_reference_usage(Reference *reference, UsageKind usageKind) {
     if (reference != NULL && reference->usage.kind > usageKind) {
@@ -37,3 +49,13 @@ Reference **addToRefList(Reference **list,
     }
     return place;
 }
+
+/*&
+void deleteFromRefList(void *p) {
+  Reference **pp, *ff;
+  pp = (S_reference **) p;
+  ff = *pp;
+  *pp = (*pp)->next;
+  CX_FREE(ff);
+}
+&*/
