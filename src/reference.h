@@ -49,6 +49,9 @@ typedef struct referencesItem {
 
 
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
+extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+                               int vFunClass, Type symType, Storage storage, ReferenceScope scope,
+                               Access accessFlags, ReferenceCategory category);
 extern void reset_reference_usage(Reference *reference, UsageKind usageKind);
 extern Reference **addToReferenceList(Reference **list, Usage usage, Position pos);
 

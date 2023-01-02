@@ -15,7 +15,7 @@
 #include "misc.mock"
 #include "options.mock"
 #include "reftab.mock"
-
+#include "reference.mock"
 #include "c_parser.mock"
 #include "java_parser.mock"
 #include "parsers.mock"

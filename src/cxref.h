@@ -10,9 +10,6 @@
 #include "usage.h"
 
 
-extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
-                               int vFunClass, Type symType, Storage storage, ReferenceScope scope,
-                               Access accessFlags, ReferenceCategory category);
 extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s, bool selected, bool visible,
                             unsigned ooBits, char olUsage, short int vlevel, short int refn, short int defRefn,
                             char defUsage, struct position defpos, int outOnLine,

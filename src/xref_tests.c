@@ -20,6 +20,7 @@
 #include "ppc.mock"
 #include "progress.mock"
 #include "reftab.mock"
+#include "reference.mock"
 
 
 Describe(Xref);

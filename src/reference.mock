@@ -1,3 +1,5 @@
+#include <cgreen/mocks.h>
+
 #include "reference.h"
 
 
@@ -7,6 +9,23 @@ void fillReference(Reference *reference, Usage usage, Position position,
     reference->position = position;
     reference->next = next;
 }
+
+void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+                        int vFunClass, Type symType, Storage storage, ReferenceScope scope, Access accessFlags,
+                        ReferenceCategory category) {
+    referencesItem->name = name;
+    referencesItem->fileHash = fileHash;
+    referencesItem->vApplClass = vApplClass;
+    referencesItem->vFunClass = vFunClass;
+    referencesItem->references = NULL;
+    referencesItem->next = NULL;
+    referencesItem->type = symType;
+    referencesItem->storage = storage;
+    referencesItem->scope = scope;
+    referencesItem->access = accessFlags;
+    referencesItem->category = category;
+}
+
 
 Reference **addToReferenceList(Reference **list, Usage usage_arg, Position pos_arg) {
     Position *pos = &pos_arg;

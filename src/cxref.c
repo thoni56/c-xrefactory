@@ -46,22 +46,6 @@ typedef struct ReferencesChangeData {
 
 /* *********************************************************************** */
 
-void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
-                        int vFunClass, Type symType, Storage storage, ReferenceScope scope, Access accessFlags,
-                        ReferenceCategory category) {
-    referencesItem->name = name;
-    referencesItem->fileHash = fileHash;
-    referencesItem->vApplClass = vApplClass;
-    referencesItem->vFunClass = vFunClass;
-    referencesItem->references = NULL;
-    referencesItem->next = NULL;
-    referencesItem->type = symType;
-    referencesItem->storage = storage;
-    referencesItem->scope = scope;
-    referencesItem->access = accessFlags;
-    referencesItem->category = category;
-}
-
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
                      ReferencesItem s,
                      bool selected,
