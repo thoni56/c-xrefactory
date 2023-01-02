@@ -1065,9 +1065,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
     }
 }
 
-static bool isInRefList(Reference *list,
-                        Usage usage,
-                        Position position) {
+static bool isInReferenceList(Reference *list, Usage usage, Position position) {
     Reference *foundReference;
     Reference reference;
 
@@ -1110,7 +1108,7 @@ static void scanFunction_Reference(int size,
             /* if we repass refs after overflow */
             pos = makePosition(file, line, col);
             fillUsage(&usage, usageKind, reqAcc);
-            copyrefFl = !isInRefList(lastIncomingInfo.symbolTab[sym]->references,
+            copyrefFl = !isInReferenceList(lastIncomingInfo.symbolTab[sym]->references,
                                      usage, pos);
         } else {
             copyrefFl = !fileItem->cxLoading;
