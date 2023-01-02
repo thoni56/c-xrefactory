@@ -39,7 +39,6 @@ Ensure(CommandsLogger, can_log_a_single_argument) {
 
 static char buffer[1000] = "";
 static void concat_output(void *string) {
-    printf("'%s'\n", buffer);
     strcat(buffer, *(char **)string);
 }
 
