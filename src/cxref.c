@@ -595,8 +595,6 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     Reference       reference;
     Reference     **place;
     Position       *defaultPosition;
-    ReferencesItem *memb;
-    ReferencesItem  ppp;
     SymbolsMenu    *menu;
 
     // do not record references during prescanning
@@ -650,16 +648,21 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         assert(0);              /* Should not happen */
         break;
     }
-    fillReferencesItem(&ppp, symbol->linkName, 0, vApplCl, vFunCl, symbol->type, storage, scope,
+
+    ReferencesItem  referenceItem;
+    ReferencesItem *foundMember;
+
+    fillReferencesItem(&referenceItem, symbol->linkName, 0, vApplCl, vFunCl, symbol->type, storage, scope,
                        symbol->access, category);
     if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
         fillUsage(&reference.usage, usage.kind, AccessDefault);
         fillReference(&reference, reference.usage, *position, NULL);
-        searchSymbolCheckReference(&ppp, &reference);
+        searchSymbolCheckReference(&referenceItem, &reference);
         return NULL;
     }
+
     int index;
-    if (!isMemberInReferenceTable(&ppp, &index, &memb)) {
+    if (!isMemberInReferenceTable(&referenceItem, &index, &foundMember)) {
         log_trace("allocating '%s'", symbol->linkName);
         char *linkName = cxAlloc(strlen(symbol->linkName)+1);
         strcpy(linkName, symbol->linkName);
@@ -667,14 +670,15 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         fillReferencesItem(r, linkName, cxFileHashNumber(linkName), vApplCl, vFunCl, symbol->type,
                            storage, scope, symbol->access, category);
         pushReferencesItem(r, index);
-        memb = r;
+        foundMember = r;
     } else {
         // at least reset some maybe new informations
         // sometimes classes were added from directory listing,
         // without knowing if it is an interface or not
-        memb->access |= symbol->access;
+        foundMember->access |= symbol->access;
     }
-    place = addToReferenceList(&memb->references, usage, *position);
+
+    place = addToReferenceList(&foundMember->references, usage, *position);
     log_trace("checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s",
               getFileItem(cxRefPosition.file)->name, cxRefPosition.file, cxRefPosition.line, cxRefPosition.col,
               fileItem->name, position->file, position->line, position->col,
@@ -692,7 +696,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             }
         } else {
             /* an on - line cxref action ?*/
-            //&fprintf(dumpOut,"!got it %s !!!!!!!\n", memb->name);
+            //&fprintf(dumpOut,"!got it %s !!!!!!!\n", foundMember->name);
             olstringServed = true;       /* olstring will be served */
             s_olstringUsage = usage.kind;
             assert(sessionData.browserStack.top);
@@ -707,7 +711,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             if (defaultPosition->file!=noFileIndex)
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition->line);
             if (! olcxOnlyParseNoPushing(options.serverOperation)) {
-                menu = olAddBrowsedSymbol(memb,&sessionData.browserStack.top->hkSelectedSym,
+                menu = olAddBrowsedSymbol(foundMember,&sessionData.browserStack.top->hkSelectedSym,
                                           1,1,0,usage.kind,0, defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
