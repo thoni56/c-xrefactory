@@ -4694,7 +4694,7 @@ void mapCreateSelectionMenu(ReferencesItem *p) {
 
 /* ********************************************************************** */
 
-static Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
+Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
                                  short int lineCount, char category, char csymType,
                                  struct reference ref, struct referencesItem sym) {
     Completion *completion = olcx_alloc(sizeof(Completion));

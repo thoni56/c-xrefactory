@@ -18,4 +18,8 @@ typedef struct completion {
 } Completion;
 
 
+extern Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
+                                 short int lineCount, char category, char csymType,
+                                 struct reference ref, struct referencesItem sym);
+
 #endif

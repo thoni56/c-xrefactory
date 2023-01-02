@@ -14,6 +14,7 @@
 #include "classhierarchy.mock"
 #include "commons.mock"
 #include "complete.mock"
+#include "completion.mock"
 #include "cxfile.mock"
 #include "editor.mock"
 #include "filedescriptor.mock"
