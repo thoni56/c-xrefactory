@@ -846,7 +846,7 @@ static void scanFunction_SourceIndex(int size,
     }
 }
 
-static int scanSymNameString(int size, CharacterBuffer *cb, char *id) {
+static int scanSymNameString(CharacterBuffer *cb, char *id, int size) {
     assert(size < MAX_CX_SYMBOL_SIZE);
     getString(cb, id, size-1);
 
@@ -882,7 +882,7 @@ static void scanFunction_SymbolNameForFullUpdateSchedule(int size,
     symbolIndex = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
     id = lastIncomingInfo.cachedSymbolName[symbolIndex];
-    len = scanSymNameString(size, cb, id);
+    len = scanSymNameString(cb, id, size);
     getSymbolTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,vFunClass);fflush(dumpOut);
     if (symType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
@@ -971,7 +971,7 @@ static void scanFunction_SymbolName(int size,
     symbolIndex = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
     assert(symbolIndex>=0 && symbolIndex<MAX_CX_SYMBOL_TAB);
     id = lastIncomingInfo.cachedSymbolName[symbolIndex];
-    scanSymNameString(size, cb, id);
+    scanSymNameString(cb, id, size);
     getSymbolTypeAndClasses(&symType, &vApplClass, &vFunClass);
 
     referencesItem = &lastIncomingInfo.cachedReferencesItem[symbolIndex];
