@@ -9,6 +9,13 @@ Completion *newCompletion(char *name, char *fullName, char *vclass, short jinden
     return (Completion *)mock(name, fullName, vclass, jindent, lineCount, category, csymType, refP, refsP);
 }
 
+void olcxFreeCompletion(Completion *completion) {
+    mock(completion);
+}
+void olcxFreeCompletions(Completion *completions) {
+    mock(completions);
+}
+
 Completion *completionListPrepend(Completion *completions, char *name, char *fullText, char *vclass,
                                     int jindent, Symbol *s, ReferencesItem *ri, Reference *dfpos,
                                     int symType, int vFunClass) {

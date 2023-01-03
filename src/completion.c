@@ -4,11 +4,14 @@
 #include <string.h>
 
 #include "cxfile.h"
-#include "memory.h"
-#include "reference.h"
-#include "symbol.h"
 #include "filetable.h"
+#include "list.h"
 #include "log.h"
+#include "memory.h"
+#include "options.h"
+#include "reference.h"
+#include "session.h"
+#include "symbol.h"
 
 
 Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
@@ -95,3 +98,54 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     completion->next = completions;
     return completion;
 }
+
+void olcxFreeCompletion(Completion *r) {
+    olcx_memory_free(r->name, strlen(r->name)+1);
+    if (r->fullName!=NULL)
+        olcx_memory_free(r->fullName, strlen(r->fullName)+1);
+    if (r->vclass!=NULL)
+        olcx_memory_free(r->vclass, strlen(r->vclass)+1);
+    if (r->category == CategoryGlobal) {
+        assert(r->sym.name);
+        olcx_memory_free(r->sym.name, strlen(r->sym.name)+1);
+    }
+    olcx_memory_free(r, sizeof(Completion));
+}
+
+
+void olcxFreeCompletions(Completion *r) {
+    Completion *tmp;
+
+    while (r!=NULL) {
+        tmp = r->next;
+        olcxFreeCompletion(r);
+        r = tmp;
+    }
+}
+
+#if 0
+static void tagSearchShortRemoveMultipleLines(Completion *list) {
+    for (Completion *l=list; l!=NULL; l=l->next) {
+    again:
+        if (l->next!=NULL && strcmp(l->name, l->next->name)==0) {
+            // O.K. remove redundant one
+            Completion *tmp = l->next;
+            l->next = l->next->next;
+            olcxFreeCompletion(tmp);
+            goto again;          /* Again, but don't advance */
+        }
+    }
+}
+
+static int olTagSearchSortFunction(Completion *c1, Completion *c2) {
+    return strcmp(c1->name, c2->name) < 0;
+}
+
+void tagSearchCompactShortResults(void) {
+    LIST_MERGE_SORT(Completion, sessionData.retrieverStack.top->completions, olTagSearchSortFunction);
+    if (options.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
+        || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
+        tagSearchShortRemoveMultipleLines(sessionData.retrieverStack.top->completions);
+    }
+}
+#endif

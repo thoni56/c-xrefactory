@@ -728,30 +728,6 @@ void olcxFreeReferences(Reference *r) {
     }
 }
 
-static void olcxFreeCompletion(Completion *r) {
-    olcx_memory_free(r->name, strlen(r->name)+1);
-    if (r->fullName!=NULL)
-        olcx_memory_free(r->fullName, strlen(r->fullName)+1);
-    if (r->vclass!=NULL)
-        olcx_memory_free(r->vclass, strlen(r->vclass)+1);
-    if (r->category == CategoryGlobal) {
-        assert(r->sym.name);
-        olcx_memory_free(r->sym.name, strlen(r->sym.name)+1);
-    }
-    olcx_memory_free(r, sizeof(Completion));
-}
-
-
-static void olcxFreeCompletions(Completion *r ) {
-    Completion *tmp;
-
-    while (r!=NULL) {
-        tmp = r->next;
-        olcxFreeCompletion(r);
-        r = tmp;
-    }
-}
-
 SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll) {
     int nlen;
     SymbolsMenu *tt;
