@@ -4694,25 +4694,6 @@ void mapCreateSelectionMenu(ReferencesItem *p) {
 
 /* ********************************************************************** */
 
-Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
-                                 short int lineCount, char category, char csymType,
-                                 struct reference ref, struct referencesItem sym) {
-    Completion *completion = olcx_alloc(sizeof(Completion));
-
-    completion->name = name;
-    completion->fullName = fullName;
-    completion->vclass = vclass;
-    completion->jindent = jindent;
-    completion->lineCount = lineCount;
-    completion->category = category;
-    completion->csymType = csymType;
-    completion->ref = ref;
-    completion->sym = sym;
-    completion->next = NULL;
-
-    return completion;
-}
-
 void olSetCallerPosition(Position *pos) {
     assert(sessionData.browserStack.top);
     sessionData.browserStack.top->callerPosition = *pos;

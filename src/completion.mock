@@ -1,0 +1,10 @@
+#include <cgreen/mocks.h>
+
+#include "completion.h"
+
+
+Completion *newCompletion(char *name, char *fullName, char *vclass, short jindent, short lineCount, char category, char csymType, struct reference ref, struct referencesItem refs) {
+    struct reference *refP = &ref;
+    struct referencesItem *refsP = &refs;
+    return (Completion *)mock(name, fullName, vclass, jindent, lineCount, category, csymType, refP, refsP);
+}
