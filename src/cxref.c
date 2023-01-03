@@ -4617,30 +4617,6 @@ void olCompletionListReverse(void) {
     LIST_REVERSE(Completion, sessionData.completionsStack.top->completions);
 }
 
-static int olTagSearchSortFunction(Completion *c1, Completion *c2) {
-    return strcmp(c1->name, c2->name) < 0;
-}
-
-static void tagSearchShortRemoveMultipleLines(Completion *list) {
-    for (Completion *l=list; l!=NULL; l=l->next) {
-    again:
-        if (l->next!=NULL && strcmp(l->name, l->next->name)==0) {
-            // O.K. remove redundant one
-            Completion *tmp = l->next;
-            l->next = l->next->next;
-            olcxFreeCompletion(tmp);
-            goto again;          /* Again, but don't advance */
-        }
-    }
-}
-
-void tagSearchCompactShortResults(void) {
-    LIST_MERGE_SORT(Completion, sessionData.retrieverStack.top->completions, olTagSearchSortFunction);
-    if (options.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
-        || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
-        tagSearchShortRemoveMultipleLines(sessionData.retrieverStack.top->completions);
-    }
-}
 
 #define maxOf(a, b) (((a) > (b)) ? (a) : (b))
 

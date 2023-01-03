@@ -123,7 +123,10 @@ void olcxFreeCompletions(Completion *r) {
     }
 }
 
-#if 0
+static int olTagSearchSortFunction(Completion *c1, Completion *c2) {
+    return strcmp(c1->name, c2->name) < 0;
+}
+
 static void tagSearchShortRemoveMultipleLines(Completion *list) {
     for (Completion *l=list; l!=NULL; l=l->next) {
     again:
@@ -137,10 +140,6 @@ static void tagSearchShortRemoveMultipleLines(Completion *list) {
     }
 }
 
-static int olTagSearchSortFunction(Completion *c1, Completion *c2) {
-    return strcmp(c1->name, c2->name) < 0;
-}
-
 void tagSearchCompactShortResults(void) {
     LIST_MERGE_SORT(Completion, sessionData.retrieverStack.top->completions, olTagSearchSortFunction);
     if (options.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
@@ -148,4 +147,3 @@ void tagSearchCompactShortResults(void) {
         tagSearchShortRemoveMultipleLines(sessionData.retrieverStack.top->completions);
     }
 }
-#endif

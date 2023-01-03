@@ -3,6 +3,7 @@
 
 #include "filetable.mock"
 #include "cxfile.mock"
+#include "options.mock"
 #include "reference.mock"
 #include "symbol.mock"
 

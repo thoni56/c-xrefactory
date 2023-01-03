@@ -30,10 +30,6 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
 }
 
-void tagSearchCompactShortResults(void) {
-    mock();
-}
-
 void printTagSearchResults(void) {
     mock();
 }

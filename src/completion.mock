@@ -21,3 +21,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
                                     int symType, int vFunClass) {
     return (Completion *)mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, completions);
 }
+
+void tagSearchCompactShortResults(void) {
+    mock();
+}
