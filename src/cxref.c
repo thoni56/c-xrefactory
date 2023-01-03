@@ -512,11 +512,11 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     ReferenceCategory category;
     ReferenceScope    scope;
     Storage           storage;
-    int             defaultUsage;
-    Reference       reference;
-    Reference     **place;
-    Position       *defaultPosition;
-    SymbolsMenu    *menu;
+    UsageKind         defaultUsage;
+    Reference         reference;
+    Reference       **place;
+    Position         *defaultPosition;
+    SymbolsMenu      *menu;
 
     // do not record references during prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
