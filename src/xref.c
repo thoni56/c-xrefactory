@@ -37,7 +37,7 @@ static void setFullUpdateMtimesInFileItem(FileItem *fi) {
     }
 }
 
-static bool inputFileItemLess(FileItem *fileItem1, FileItem *fileItem2) {
+static bool isFileItemLess(FileItem *fileItem1, FileItem *fileItem2) {
     int  comparison;
     char directoryName1[MAX_FILE_NAME_SIZE];
     char directoryName2[MAX_FILE_NAME_SIZE];
@@ -59,20 +59,25 @@ static bool inputFileItemLess(FileItem *fileItem1, FileItem *fileItem2) {
     return false;
 }
 
+static void sortFileItemList(FileItem **fileItemsP,
+                             bool (*compareFunction)(FileItem *fileItem1, FileItem *fileItem2)) {
+    LIST_MERGE_SORT(FileItem, *fileItemsP, compareFunction);
+}
+
 static FileItem *createListOfInputFileItems(void) {
-    FileItem *fileItem;
+    FileItem *fileItems;
     int       fileIndex;
 
-    fileItem  = NULL;
+    fileItems  = NULL;
     fileIndex = 0;
     for (char *fileName = getNextScheduledFile(&fileIndex); fileName != NULL;
          fileIndex++, fileName = getNextScheduledFile(&fileIndex)) {
         FileItem *current = getFileItem(fileIndex);
-        current->next     = fileItem;
-        fileItem          = current;
+        current->next     = fileItems;
+        fileItems          = current;
     }
-    LIST_MERGE_SORT(FileItem, fileItem, inputFileItemLess);
-    return fileItem;
+    sortFileItemList(&fileItems, isFileItemLess);
+    return fileItems;
 }
 
 static void fillIncludeRefItem(ReferencesItem *referencesItem, int fileIndex) {
