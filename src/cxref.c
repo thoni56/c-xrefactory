@@ -193,12 +193,9 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 
 /* *********************************************************************** */
 
-
-static void getSymbolCxrefProperties(Symbol *symbol,
-                                     int *p_category,
-                                     int *p_scope,
-                                     int *p_storage) {
+static void getSymbolCxrefProperties(Symbol *symbol, int *categoryP, int *scopeP, int *storageP) {
     int category, scope, storage;
+
     category = CategoryLocal; scope = ScopeAuto; storage=StorageAuto;
     /* default */
     if (symbol->type==TypeDefault) {
@@ -253,11 +250,10 @@ static void getSymbolCxrefProperties(Symbol *symbol,
         category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
 
-    *p_category = category;
-    *p_scope = scope;
-    *p_storage = storage;
+    *categoryP = category;
+    *scopeP = scope;
+    *storageP = storage;
 }
-
 
 static void setClassTreeBaseType(ClassTreeData *ct, Symbol *p) {
     Symbol        *rtcls;

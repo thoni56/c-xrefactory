@@ -3,8 +3,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "cxfile.h"
 #include "memory.h"
 #include "reference.h"
+#include "symbol.h"
+#include "filetable.h"
+#include "log.h"
 
 
 Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
@@ -28,7 +32,6 @@ Completion *newCompletion(char *name, char *fullName, char *vclass, short int ji
 
 #if 0
 // if s==NULL, then the pos is taken as default position of this ref !!!
-
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
 Completion *completionListPrepend(Completion *completions, char *name, char *fullText, char *vclass,
                                     int jindent, Symbol *symbol, ReferencesItem *referenceItem,
