@@ -91,7 +91,7 @@ Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelInde
     return s;
 }
 
-void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, ReferenceScope *scopeP, int *storageP) {
+void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, ReferenceScope *scopeP, Storage *storageP) {
     int category, scope, storage;
 
     category = CategoryLocal; scope = ScopeAuto; storage=StorageAuto;

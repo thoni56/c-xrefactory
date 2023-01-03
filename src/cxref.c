@@ -5,6 +5,7 @@
 #include "commons.h"
 #include "scope.h"
 #include "server.h"
+#include "storage.h"
 #include "usage.h"
 #include "yylex.h"
 #include "classhierarchy.h"
@@ -510,7 +511,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                              int vFunCl, int vApplCl) {
     ReferenceCategory category;
     ReferenceScope    scope;
-    int             storage;
+    Storage           storage;
     int             defaultUsage;
     Reference       reference;
     Reference     **place;
@@ -4645,7 +4646,8 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     char *ss,*nn, *fullnn, *vclnn;
     ReferenceCategory category;
     ReferenceScope scope;
-    int storage, slen, nlen;
+    Storage storage;
+    int slen, nlen;
     ReferencesItem sri;
 
     nlen = strlen(name);
