@@ -5,19 +5,20 @@
 #include "options.h"
 #include "protocol.h"           /* C_XREF_FILE_VERSION_NUMBER */
 
-#include "cxref.h"
-#include "reftab.h"
-#include "session.h"
+
 #include "characterreader.h"
 #include "classhierarchy.h"
+#include "completion.h"
+#include "cxref.h"
 #include "fileio.h"
-#include "list.h"
 #include "filetable.h"
-
-#include "misc.h"
 #include "hash.h"
-#include "usage.h"
+#include "list.h"
 #include "log.h"
+#include "misc.h"
+#include "reftab.h"
+#include "session.h"
+#include "usage.h"
 
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */

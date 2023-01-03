@@ -30,7 +30,6 @@ Completion *newCompletion(char *name, char *fullName, char *vclass, short int ji
     return completion;
 }
 
-#if 0
 // if s==NULL, then the pos is taken as default position of this ref !!!
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
 Completion *completionListPrepend(Completion *completions, char *name, char *fullText, char *vclass,
@@ -38,7 +37,10 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
                                     Reference *reference, int cType, int vFunClass) {
     Completion    *completion;
     char *ss,*nn, *fullnn, *vclnn;
-    int category, scope, storage, slen, nlen;
+    ReferenceCategory category;
+    ReferenceScope scope;
+    Storage storage;
+    int slen, nlen;
     ReferencesItem sri;
 
     nlen = strlen(name);
@@ -93,4 +95,3 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     completion->next = completions;
     return completion;
 }
-#endif

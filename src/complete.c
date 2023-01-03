@@ -1,6 +1,7 @@
 #include "complete.h"
 
 #include "classfilereader.h"
+#include "completion.h"
 #include "cxfile.h"
 #include "cxref.h"
 #include "fileio.h"
@@ -17,6 +18,7 @@
 #include "semact.h"
 #include "type.h"
 #include "yylex.h"
+
 
 #define FULL_COMPLETION_INDENT_CHARS 2
 

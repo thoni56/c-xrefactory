@@ -2,6 +2,7 @@
 #define COMPLETION_H_INCLUDED
 
 #include "reference.h"
+#include "symbol.h"
 #include "type.h"
 
 typedef struct completion {
@@ -21,5 +22,8 @@ typedef struct completion {
 extern Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
                                  short int lineCount, char category, char csymType,
                                  struct reference ref, struct referencesItem sym);
+extern Completion  *completionListPrepend(Completion *completions, char *name, char *fullText,
+                                          char *vclass, int jindent, Symbol *s, ReferencesItem *ri,
+                                          Reference *dfpos, int symType, int vFunClass);
 
 #endif

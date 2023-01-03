@@ -11,6 +11,7 @@
 #include "characterreader.mock"
 #include "classhierarchy.mock"
 #include "commons.mock"
+#include "completion.mock"
 #include "cxref.mock"
 #include "editor.mock"
 #include "fileio.mock"
