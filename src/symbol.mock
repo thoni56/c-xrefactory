@@ -66,3 +66,7 @@ Symbol makeSymbolWithBits(char *name, char *linkName, Position pos,
     free(symbolP);
     return symbol;
 }
+
+void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, ReferenceScope *scopeP, int *storageP) {
+    mock(symbol, categoryP, scopeP, storageP);
+}

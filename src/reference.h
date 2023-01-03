@@ -1,28 +1,19 @@
 #ifndef REFERENCE_H_INCLUDED
 #define REFERENCE_H_INCLUDED
 
+#include "category.h"
 #include "position.h"
-#include "usage.h"
-#include "type.h"
+#include "scope.h"
 #include "storage.h"
+#include "type.h"
+#include "usage.h"
+
+
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
 // A *reference* is a position with a particular usage
 #define NO_REFERENCE (Reference) {NO_USAGE, no_Position, NULL)
 
-typedef enum referenceCategory {
-    CategoryGlobal,
-    CategoryLocal,
-    MAX_CATEGORIES
-} ReferenceCategory;
-
-typedef enum referenceScope {
-    ScopeDefault,
-    ScopeGlobal,
-    ScopeFile,
-    ScopeAuto,
-    MAX_SCOPES
-} ReferenceScope;
 
 #define SCOPES_LN 3
 

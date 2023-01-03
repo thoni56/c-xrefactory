@@ -1,7 +1,9 @@
 #include "cxref.h"
 
 #include "access.h"
+#include "category.h"
 #include "commons.h"
+#include "scope.h"
 #include "server.h"
 #include "usage.h"
 #include "yylex.h"
@@ -192,68 +194,6 @@ void renameCollationSymbols(SymbolsMenu *sss) {
 
 
 /* *********************************************************************** */
-
-static void getSymbolCxrefProperties(Symbol *symbol, int *categoryP, int *scopeP, int *storageP) {
-    int category, scope, storage;
-
-    category = CategoryLocal; scope = ScopeAuto; storage=StorageAuto;
-    /* default */
-    if (symbol->type==TypeDefault) {
-        storage = symbol->storage;
-        if (    symbol->storage==StorageExtern
-                ||  symbol->storage==StorageDefault
-                ||  symbol->storage==StorageTypedef
-                ||  symbol->storage==StorageField
-                ||  symbol->storage==StorageMethod
-                ||  symbol->storage==StorageConstructor
-                ||  symbol->storage==StorageStatic
-                ||  symbol->storage==StorageThreadLocal
-                ) {
-            if (symbol->linkName[0]==' ' && symbol->linkName[1]==' ') {
-                // a special symbol local linkname
-                category = CategoryLocal;
-            } else {
-                category = CategoryGlobal;
-            }
-            scope = ScopeGlobal;
-        }
-    }
-    /* enumeration constants */
-    if (symbol->type==TypeDefault && symbol->storage==StorageConstant) {
-        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
-    }
-    /* struct, union, enum */
-    if ((symbol->type==TypeStruct||symbol->type==TypeUnion||symbol->type==TypeEnum)){
-        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
-    }
-    /* macros */
-    if (symbol->type == TypeMacro) {
-        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
-    }
-    if (symbol->type == TypeLabel) {
-        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
-    }
-    if (symbol->type == TypeCppIfElse) {
-        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
-    }
-    if (symbol->type == TypeCppInclude) {
-        category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
-    }
-    if (symbol->type == TypeCppCollate) {
-        category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
-    }
-    if (symbol->type == TypeYaccSymbol) {
-        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
-    }
-    /* JAVA packages */
-    if (symbol->type == TypePackage) {
-        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
-    }
-
-    *categoryP = category;
-    *scopeP = scope;
-    *storageP = storage;
-}
 
 static void setClassTreeBaseType(ClassTreeData *ct, Symbol *p) {
     Symbol        *rtcls;
@@ -568,8 +508,8 @@ static bool olcxOnlyParseNoPushing(int opt) {
 /*                                                                       */
 Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                              int vFunCl, int vApplCl) {
-    int             category;
-    int             scope;
+    ReferenceCategory category;
+    ReferenceScope    scope;
     int             storage;
     int             defaultUsage;
     Reference       reference;
@@ -4703,7 +4643,9 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
                                     Reference *reference, int cType, int vFunClass) {
     Completion    *completion;
     char *ss,*nn, *fullnn, *vclnn;
-    int category, scope, storage, slen, nlen;
+    ReferenceCategory category;
+    ReferenceScope scope;
+    int storage, slen, nlen;
     ReferencesItem sri;
 
     nlen = strlen(name);

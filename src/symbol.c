@@ -1,7 +1,9 @@
 #include "symbol.h"
 
 #include "access.h"
+#include "category.h"
 #include "memory.h"
+#include "scope.h"
 #include "storage.h"
 #include "type.h"
 
@@ -87,4 +89,66 @@ Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelInde
     Symbol *s = newSymbol(name, linkName, pos);
     s->u.labelIndex = labelIndex;
     return s;
+}
+
+void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, ReferenceScope *scopeP, int *storageP) {
+    int category, scope, storage;
+
+    category = CategoryLocal; scope = ScopeAuto; storage=StorageAuto;
+    /* default */
+    if (symbol->type==TypeDefault) {
+        storage = symbol->storage;
+        if (    symbol->storage==StorageExtern
+                ||  symbol->storage==StorageDefault
+                ||  symbol->storage==StorageTypedef
+                ||  symbol->storage==StorageField
+                ||  symbol->storage==StorageMethod
+                ||  symbol->storage==StorageConstructor
+                ||  symbol->storage==StorageStatic
+                ||  symbol->storage==StorageThreadLocal
+                ) {
+            if (symbol->linkName[0]==' ' && symbol->linkName[1]==' ') {
+                // a special symbol local linkname
+                category = CategoryLocal;
+            } else {
+                category = CategoryGlobal;
+            }
+            scope = ScopeGlobal;
+        }
+    }
+    /* enumeration constants */
+    if (symbol->type==TypeDefault && symbol->storage==StorageConstant) {
+        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+    }
+    /* struct, union, enum */
+    if ((symbol->type==TypeStruct||symbol->type==TypeUnion||symbol->type==TypeEnum)){
+        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+    }
+    /* macros */
+    if (symbol->type == TypeMacro) {
+        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+    }
+    if (symbol->type == TypeLabel) {
+        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
+    }
+    if (symbol->type == TypeCppIfElse) {
+        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
+    }
+    if (symbol->type == TypeCppInclude) {
+        category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
+    }
+    if (symbol->type == TypeCppCollate) {
+        category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
+    }
+    if (symbol->type == TypeYaccSymbol) {
+        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
+    }
+    /* JAVA packages */
+    if (symbol->type == TypePackage) {
+        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+    }
+
+    *categoryP = category;
+    *scopeP = scope;
+    *storageP = storage;
 }
