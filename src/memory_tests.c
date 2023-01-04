@@ -127,25 +127,27 @@ Ensure(Memory, has_functions_that_can_replace_DM_macros) {
     assert_that(memory.index, is_equal_to(sizeof(*variablep)));
 }
 
+protected void *olcxSoftAllocc(int count, size_t size);
+
 Ensure(Memory, can_handle_olcx_memory) {
     char *pointer;
     olcxMemoryAllocatedBytes = 42;
 
-    olcx_memory_init();
+    olcxMemoryInit();
     assert_that(olcxMemoryAllocatedBytes, is_equal_to(0));
 
     pointer = NULL;
-    pointer = olcx_memory_soft_allocc(1, sizeof(char));
+    pointer = olcxSoftAllocc(1, sizeof(char));
     assert_that(pointer, is_not_null);
 
-    olcx_memory_free(pointer, sizeof(*pointer));
+    olcxFree(pointer, sizeof(*pointer));
 
     pointer = NULL;
-    pointer = olcx_memory_allocc(1, sizeof(char));
+    pointer = olcxAllocc(1, sizeof(char));
     assert_that(pointer, is_not_null);
 
     pointer = NULL;
-    pointer = olcx_alloc(sizeof(char));
+    pointer = olcxAlloc(sizeof(char));
     assert_that(pointer, is_not_null);
 }
 

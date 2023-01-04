@@ -1148,7 +1148,7 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
         line = 1; col = 0;
         for (; s<smax; s++, col++) {
             if (s == offset) {
-                Reference *r = olcx_alloc(sizeof(Reference));
+                Reference *r = olcxAlloc(sizeof(Reference));
                 r->position = makePosition(buf->fileIndex, line, col);
                 fillReference(r, markers->usage, r->position, reference);
                 reference = r;
@@ -1163,7 +1163,7 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
             }
         }
         while (markers!=NULL && markers->marker->buffer==buf) {
-            Reference *r = olcx_alloc(sizeof(Reference));
+            Reference *r = olcxAlloc(sizeof(Reference));
             r->position = makePosition(buf->fileIndex, line, 0);
             fillReference(r, markers->usage, r->position, reference);
             reference = r;

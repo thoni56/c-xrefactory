@@ -17,7 +17,7 @@
 Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
                           short int lineCount, char category, char csymType,
                           struct reference ref, struct referencesItem sym) {
-    Completion *completion = olcx_alloc(sizeof(Completion));
+    Completion *completion = olcxAlloc(sizeof(Completion));
 
     completion->name = name;
     completion->fullName = fullName;
@@ -47,22 +47,22 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     ReferencesItem sri;
 
     nlen = strlen(name);
-    nn = olcx_memory_allocc(nlen+1, sizeof(char));
+    nn = olcxAllocc(nlen+1, sizeof(char));
     strcpy(nn, name);
     fullnn = NULL;
     if (fullText!=NULL) {
-        fullnn = olcx_memory_allocc(strlen(fullText)+1, sizeof(char));
+        fullnn = olcxAllocc(strlen(fullText)+1, sizeof(char));
         strcpy(fullnn, fullText);
     }
     vclnn = NULL;
     if (vclass!=NULL) {
-        vclnn = olcx_memory_allocc(strlen(vclass)+1, sizeof(char));
+        vclnn = olcxAllocc(strlen(vclass)+1, sizeof(char));
         strcpy(vclnn, vclass);
     }
     if (referenceItem!=NULL) {
         // probably a 'search in tag' file item
         slen = strlen(referenceItem->name);
-        ss = olcx_memory_allocc(slen+1, sizeof(char));
+        ss = olcxAllocc(slen+1, sizeof(char));
         strcpy(ss, referenceItem->name);
         fillReferencesItem(&sri, ss, cxFileHashNumber(ss), referenceItem->vApplClass, referenceItem->vFunClass,
                            referenceItem->type, referenceItem->storage, referenceItem->scope,
@@ -80,7 +80,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         getSymbolCxrefProperties(symbol, &category, &scope, &storage);
         log_trace(":adding sym '%s' %d", symbol->linkName, category);
         slen = strlen(symbol->linkName);
-        ss = olcx_memory_allocc(slen+1, sizeof(char));
+        ss = olcxAllocc(slen+1, sizeof(char));
         strcpy(ss, symbol->linkName);
         fillUsage(&r.usage, UsageDefined, 0);
         fillReference(&r, r.usage, symbol->pos, NULL);
@@ -100,16 +100,16 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
 }
 
 void olcxFreeCompletion(Completion *r) {
-    olcx_memory_free(r->name, strlen(r->name)+1);
+    olcxFree(r->name, strlen(r->name)+1);
     if (r->fullName!=NULL)
-        olcx_memory_free(r->fullName, strlen(r->fullName)+1);
+        olcxFree(r->fullName, strlen(r->fullName)+1);
     if (r->vclass!=NULL)
-        olcx_memory_free(r->vclass, strlen(r->vclass)+1);
+        olcxFree(r->vclass, strlen(r->vclass)+1);
     if (r->category == CategoryGlobal) {
         assert(r->sym.name);
-        olcx_memory_free(r->sym.name, strlen(r->sym.name)+1);
+        olcxFree(r->sym.name, strlen(r->sym.name)+1);
     }
-    olcx_memory_free(r, sizeof(Completion));
+    olcxFree(r, sizeof(Completion));
 }
 
 

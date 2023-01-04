@@ -23,7 +23,7 @@
 Describe(Editor);
 BeforeEach(Editor) {
     log_set_level(LOG_ERROR);
-    olcx_memory_init();
+    olcxMemoryInit();
 }
 AfterEach(Editor) {}
 

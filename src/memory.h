@@ -120,11 +120,10 @@ extern bool isFreedCxMemory(void *pointer);
 
 
 /* on-line dialogs allocation */
-extern void olcx_memory_init();
-extern void *olcx_memory_soft_allocc(int count, size_t size);
-extern void *olcx_memory_allocc(int count, size_t size);
-extern void *olcx_alloc(size_t size);
-extern void olcx_memory_free(void *pointer, size_t size);
+extern void olcxMemoryInit(void);
+extern void *olcxAllocc(int count, size_t size);
+extern void *olcxAlloc(size_t size);
+extern void olcxFree(void *pointer, size_t size);
 
 
 /* editor allocations, for now, store it in olcxmemory */

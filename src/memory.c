@@ -284,11 +284,11 @@ bool isFreedCxMemory(void *pointer) {
 }
 
 /* OLCX */
-void olcx_memory_init() {
+void olcxMemoryInit(void) {
     olcxMemoryAllocatedBytes = 0;
 }
 
-void *olcx_memory_soft_allocc(int count, size_t elementSize) {
+protected void *olcxSoftAllocc(int count, size_t elementSize) {
     int size = count*elementSize;
     if (size+olcxMemoryAllocatedBytes > SIZE_olcxMemory) {
         return NULL;
@@ -298,31 +298,31 @@ void *olcx_memory_soft_allocc(int count, size_t elementSize) {
     }
 }
 
-void *olcx_memory_allocc(int count, size_t elementSize) {
-    void *pointer = olcx_memory_soft_allocc(count, elementSize);
+void *olcxAllocc(int count, size_t elementSize) {
+    void *pointer = olcxSoftAllocc(count, elementSize);
     if (pointer==NULL) {
         fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR, __FILE__, __LINE__);
     }
     return pointer;
 }
 
-void *olcx_alloc(size_t size) {
-    return olcx_memory_allocc(1, size);
+void *olcxAlloc(size_t size) {
+    return olcxAllocc(1, size);
 }
 
 
-void olcx_memory_free(void *pointer, size_t size) {
+void olcxFree(void *pointer, size_t size) {
     olcxMemoryAllocatedBytes -= size;
     free(pointer);
 }
 
 /* EDITOR */
 void *editorAlloc(size_t size) {
-    return olcx_memory_allocc(1, size);
+    return olcxAllocc(1, size);
 }
 
 void editorFree(void *pointer, size_t size) {
-    olcx_memory_free(pointer, size);
+    olcxFree(pointer, size);
 }
 
 static bool isInMemory(Memory2 *memory, void *pointer) {

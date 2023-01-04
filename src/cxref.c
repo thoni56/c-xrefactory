@@ -129,7 +129,7 @@ static char *olcxStringCopy(char *string) {
     int length;
     char *copy;
     length = strlen(string);
-    copy = olcx_memory_allocc(length+1, sizeof(char));
+    copy = olcxAllocc(length+1, sizeof(char));
     strcpy(copy, string);
     return copy;
 }
@@ -147,7 +147,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
                        symbol->type, symbol->storage, symbol->scope, symbol->access,
                        symbol->category);
 
-    symbolsMenu = olcx_alloc(sizeof(SymbolsMenu));
+    symbolsMenu = olcxAlloc(sizeof(SymbolsMenu));
     fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, 0, 0, defusage, *defpos, 0,
                     NULL, NULL);
     return symbolsMenu;
@@ -182,12 +182,12 @@ void renameCollationSymbols(SymbolsMenu *sss) {
         if (cs!=NULL && ss->references.type==TypeCppCollate) {
             len = strlen(ss->references.name);
             assert(len>=2);
-            nn = olcx_memory_allocc(len-1, sizeof(char));
+            nn = olcxAllocc(len-1, sizeof(char));
             len1 = cs-ss->references.name;
             strncpy(nn, ss->references.name, len1);
             strcpy(nn+len1, cs+2);
             log_debug("renaming %s to %s", ss->references.name, nn);
-            olcx_memory_free(ss->references.name, len+1);
+            olcxFree(ss->references.name, len+1);
             ss->references.name = nn;
         }
     }
@@ -723,7 +723,7 @@ void olcxFreeReferences(Reference *r) {
     Reference *tmp;
     while (r!=NULL) {
         tmp = r->next;
-        olcx_memory_free(r, sizeof(Reference));
+        olcxFree(r, sizeof(Reference));
         r = tmp;
     }
 }
@@ -732,10 +732,10 @@ SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll) {
     int nlen;
     SymbolsMenu *tt;
     nlen = strlen(ll->references.name);
-    olcx_memory_free(ll->references.name, nlen+1);
+    olcxFree(ll->references.name, nlen+1);
     olcxFreeReferences(ll->references.references);
     tt = ll->next;
-    olcx_memory_free(ll, sizeof(*ll));
+    olcxFree(ll, sizeof(*ll));
     ll = tt;
     return ll;
 }
@@ -767,7 +767,7 @@ static void deleteOlcxRefs(OlcxReferences **refsP, OlcxReferencesStack *stack) {
         stack->root = refs->previous;
     }
     *refsP = refs->previous;
-    olcx_memory_free(refs, sizeof(OlcxReferences));
+    olcxFree(refs, sizeof(OlcxReferences));
 }
 
 
@@ -786,7 +786,7 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
 }
 
 void olcxInit(void) {
-    olcx_memory_init();
+    olcxMemoryInit();
 }
 
 
@@ -802,7 +802,7 @@ static void freePopedBrowserStackItems(OlcxReferencesStack *stack) {
 static OlcxReferences *pushOlcxReference(OlcxReferencesStack *stack) {
     OlcxReferences *res;
 
-    res  = olcx_alloc(sizeof(OlcxReferences));
+    res  = olcxAlloc(sizeof(OlcxReferences));
     *res = (OlcxReferences){.references      = NULL,
                             .actual          = NULL,
                             .command         = options.serverOperation,
@@ -852,7 +852,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int b
     rr = NULL;
     SORTED_LIST_PLACE2(place, *ref, rlist);
     if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
-        rr = olcx_alloc(sizeof(Reference));
+        rr = olcxAlloc(sizeof(Reference));
         *rr = *ref;
         if (LANGUAGE(LANG_JAVA)) {
             if (ref->usage.kind==UsageDefined &&  bestMatchFlag) {
@@ -877,7 +877,7 @@ Reference *olcxAddReference(Reference **rlist, Reference *ref, int bestMatchFlag
 
 static Reference *olcxCopyReference(Reference *reference) {
     Reference *r;
-    r = olcx_alloc(sizeof(Reference));
+    r = olcxAlloc(sizeof(Reference));
     *r = *reference;
     r->next = NULL;
     return r;
@@ -2701,7 +2701,7 @@ Reference * olcxCopyRefList(Reference *ll) {
     Reference *res, *a, **aa;
     res = NULL; aa= &res;
     for (Reference *rr=ll; rr!=NULL; rr=rr->next) {
-        a = olcx_alloc(sizeof(Reference));
+        a = olcxAlloc(sizeof(Reference));
         *a = *rr;
         a->next = NULL;
         *aa = a;
@@ -2840,7 +2840,7 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *rr) {
     lmline = options.checkFirstMovedLine + options.checkLinesMoved;
     res = NULL; resa = &res;
     for (Reference *r=rr; r!=NULL; r=r->next) {
-        Reference *tt = olcx_alloc(sizeof(Reference));
+        Reference *tt = olcxAlloc(sizeof(Reference));
         *tt = *r;
         if (tt->position.file==ofn && tt->position.line>=fmline && tt->position.line<lmline) {
             tt->position.file = nfn;
@@ -2897,7 +2897,7 @@ static bool olRemoveCallerReference(OlcxReferences *refs) {
         return false;
     log_trace("!removing reference on %d", rr->position.line);
     *rrr = rr->next;
-    olcx_memory_free(rr, sizeof(Reference));
+    olcxFree(rr, sizeof(Reference));
 
     return true;
 }
@@ -3575,7 +3575,7 @@ static void olcxTopReferencesIntersection(void) {
         if (!refOccursInRefsCompareFileAndLineOnly(*r, top2->references)) {
             // remove the reference
             nr = *r1;
-            olcx_memory_free(*r, sizeof(Reference));
+            olcxFree(*r, sizeof(Reference));
             *r = nr;
             r1 = r;
         }
@@ -3597,7 +3597,7 @@ static void olcxRemoveRefWinFromRefList(Reference **r1,
             && positionIsLessThan(*fp, cr->position) && positionIsLessThan(cr->position, *tp)) {
             // remove the reference
             nr = *r1;
-            olcx_memory_free(*r, sizeof(Reference));
+            olcxFree(*r, sizeof(Reference));
             *r = nr;
             r1 = r;
             //&fprintf(dumpOut,"! removing reference %d:%d\n", cr->position.line, cr->position.col);
