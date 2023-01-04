@@ -1584,7 +1584,7 @@ static int getCurrentRefPosition(OlcxReferences *refs) {
 static void symbolHighlighNameSprint(char *output, SymbolsMenu *ss) {
     char *bb, *cc;
     int len, llen;
-    sprintfSymbolLinkName(output, ss);
+    sprintfSymbolLinkName(ss, output);
     cc = strchr(output, '(');
     if (cc != NULL) *cc = 0;
     len = strlen(output);
@@ -1966,11 +1966,11 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
         if (options.xref2) {
             sprintf(ttt, "Current top symbol: ");
             assert(strlen(ttt) < MAX_SYMBOL_MESSAGE_LEN);
-            sprintfSymbolLinkName(ttt+strlen(ttt), ss);
+            sprintfSymbolLinkName(ss, ttt+strlen(ttt));
             ppcBottomInformation(ttt);
         } else {
             fprintf(communicationChannel, "*Current top symbol: ");
-            printSymbolLinkName(communicationChannel, ss);
+            printSymbolLinkName(ss, communicationChannel);
         }
     }
 }
@@ -2275,7 +2275,7 @@ static void olcxMenuSelectOnly(void) {
             if (selection!=NULL && selection->references.vApplClass!=selection->references.vFunClass) {
                 char ttt[MAX_CX_SYMBOL_SIZE];
                 char tmpBuff[TMP_BUFF_SIZE];
-                sprintfSymbolLinkName(ttt, selection);
+                sprintfSymbolLinkName(selection, ttt);
                 sprintf(tmpBuff,"Class %s does not define %s", javaGetShortClassNameFromFileNum_static(selection->references.vApplClass), ttt);
                 ppcBottomWarning(tmpBuff);
             } else {

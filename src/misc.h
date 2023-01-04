@@ -135,8 +135,8 @@ extern char *simpleFileNameFromFileNum(int fnum);
 extern char *getShortClassNameFromClassNum_st(int fnum);
 extern void printSymbolLinkNameString( FILE *ff, char *linkName);
 extern void printClassFqtNameFromClassNum(FILE *ff, int fnum);
-extern void sprintfSymbolLinkName(char *ttt, SymbolsMenu *ss);
-extern void printSymbolLinkName( FILE *ff, SymbolsMenu *ss);
+extern void sprintfSymbolLinkName(SymbolsMenu *ss, char *ttt);
+extern void printSymbolLinkName(SymbolsMenu *ss, FILE *ff);
 
 #define UNUSED (void)
 

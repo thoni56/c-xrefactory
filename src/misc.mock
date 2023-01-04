@@ -190,11 +190,11 @@ void printClassFqtNameFromClassNum(FILE *ff, int fnum) {
   mock(ff, fnum);
 }
 
-void sprintfSymbolLinkName(char *ttt, SymbolsMenu *ss) {
+void sprintfSymbolLinkName(SymbolsMenu *ss, char *ttt) {
   mock(ttt, ss);
 }
 
-void printSymbolLinkName(FILE *ff, SymbolsMenu *ss) {
+void printSymbolLinkName(SymbolsMenu *ss, FILE *ff) {
   mock(ff, ss);
 }
 

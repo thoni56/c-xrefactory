@@ -562,19 +562,19 @@ void printClassFqtNameFromClassNum(FILE *file, int fnum) {
     printSymbolLinkNameString(file, temp);
 }
 
-void sprintfSymbolLinkName(char *outString, SymbolsMenu *menu) {
+void sprintfSymbolLinkName(SymbolsMenu *menu, char *name) {
     if (menu->references.type == TypeCppInclude) {
-        sprintf(outString, "%s",
+        sprintf(name, "%s",
                 simpleFileName(getRealFileName_static(getFileItem(menu->references.vApplClass)->name)));
     } else {
-        linkNamePrettyPrint(outString, menu->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        linkNamePrettyPrint(name, menu->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     }
 }
 
 // this is just to print to file, make any change into sprint...
-void printSymbolLinkName(FILE *ff, SymbolsMenu *ss) {
+void printSymbolLinkName(SymbolsMenu *ss, FILE *ff) {
     char ttt[MAX_CX_SYMBOL_SIZE];
-    sprintfSymbolLinkName(ttt, ss);
+    sprintfSymbolLinkName(ss, ttt);
     fprintf(ff, "%s", ttt);
 }
 

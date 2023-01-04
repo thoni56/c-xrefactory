@@ -226,12 +226,12 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
         olcxPrintMenuItemPrefix(file, menu, 1);
 
         char tempString[MAX_CX_SYMBOL_SIZE];
-        sprintfSymbolLinkName(tempString, menu);
+        sprintfSymbolLinkName(menu, tempString);
         fprintf(file," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(tempString), tempString, PPC_SYMBOL);
     } else {
         fprintf(file,"\n");
         olcxPrintMenuItemPrefix(file, menu, 1);
-        printSymbolLinkName(file, menu);
+        printSymbolLinkName(menu, file);
         if (menu->references.type != TypeDefault) {
             fprintf(file,"\t(%s)", typeNamesTable[menu->references.type]);
         }
