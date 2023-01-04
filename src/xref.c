@@ -80,11 +80,15 @@ static FileItem *createListOfInputFileItems(void) {
     return fileItems;
 }
 
-static void fillIncludeRefItem(ReferencesItem *referencesItem, int fileIndex) {
+static void fillReferencesItemForIncludeFile(ReferencesItem *referencesItem, int fileIndex) {
     fillReferencesItem(referencesItem, LINK_NAME_INCLUDE_REFS,
                        cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
                        fileIndex, fileIndex, TypeCppInclude, StorageExtern,
                        ScopeGlobal, AccessDefault, CategoryGlobal);
+}
+
+static bool isJavaFile(FileItem *fileItem) {
+    return fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
@@ -102,16 +106,15 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
             if (fileItem->scheduledToUpdate)
                 if (!fileItem->fullUpdateIncludesProcessed) {
                     fileItem->fullUpdateIncludesProcessed = true;
-                    bool isJavaFileFlag = fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
                     ReferencesItem referenceItem, *member;
-                    fillIncludeRefItem(&referenceItem, i);
+                    fillReferencesItemForIncludeFile(&referenceItem, i);
                     if (isMemberInReferenceTable(&referenceItem, NULL, &member)) {
                         for (Reference *r=member->references; r!=NULL; r=r->next) {
                             FileItem *includer = getFileItem(r->position.file);
                             if (!includer->scheduledToUpdate) {
                                 includer->scheduledToUpdate = true;
                                 fileAddedFlag = true;
-                                if (isJavaFileFlag) {
+                                if (isJavaFile(fileItem)) {
                                     // no transitive closure for Java
                                     includer->fullUpdateIncludesProcessed = true;
                                 }
