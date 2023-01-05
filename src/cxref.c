@@ -50,7 +50,7 @@ typedef struct ReferencesChangeData {
 /* *********************************************************************** */
 
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
-                     ReferencesItem s,
+                     ReferencesItem references,
                      bool selected,
                      bool visible,
                      unsigned ooBits,
@@ -64,7 +64,7 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
                      EditorMarkerList *markers,	/* for refactory only */
                      SymbolsMenu *next
 ) {
-    symbolsMenu->references = s;
+    symbolsMenu->references = references;
     symbolsMenu->selected = selected;
     symbolsMenu->visible = visible;
     symbolsMenu->ooBits = ooBits;
@@ -914,33 +914,29 @@ void olcxAddReferences(Reference *list, Reference **dlist,
     list = revlist;
 }
 
-void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
-                                   int bestFitFlag) {
+void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag) {
     Reference *added;
-    added = olcxAddReference(&cms->references.references, rr, bestFitFlag);
-    if (rr->usage.kind == UsageClassTreeDefinition) cms->defpos = rr->position;
+    added = olcxAddReference(&menu->references.references, reference, bestFitFlag);
+    if (reference->usage.kind == UsageClassTreeDefinition) menu->defpos = reference->position;
     if (added!=NULL) {
-        if (isDefinitionOrDeclarationUsage(rr->usage.kind)) {
-            if (rr->usage.kind==UsageDefined && positionsAreEqual(rr->position, cms->defpos)) {
+        if (isDefinitionOrDeclarationUsage(reference->usage.kind)) {
+            if (reference->usage.kind==UsageDefined && positionsAreEqual(reference->position, menu->defpos)) {
                 added->usage.kind = UsageOLBestFitDefined;
             }
-            if (rr->usage.kind < cms->defUsage) {
-                cms->defUsage = rr->usage.kind;
-                cms->defpos = rr->position;
+            if (reference->usage.kind < menu->defUsage) {
+                menu->defUsage = reference->usage.kind;
+                menu->defpos = reference->position;
             }
-            cms->defRefn ++;
+            menu->defRefn ++;
         } else {
-            cms->refn ++;
+            menu->refn ++;
         }
     }
 }
 
-static void olcxAddReferencesToSymbolsMenu(SymbolsMenu  *cms,
-                                           Reference *rlist,
-                                           int bestFitFlag
-) {
-    for (Reference *rr=rlist; rr!=NULL; rr=rr->next) {
-        olcxAddReferenceToSymbolsMenu(cms, rr, bestFitFlag);
+static void olcxAddReferencesToSymbolsMenu(SymbolsMenu *menu, Reference *references, int bestFitFlag) {
+    for (Reference *rr = references; rr != NULL; rr = rr->next) {
+        olcxAddReferenceToSymbolsMenu(menu, rr, bestFitFlag);
     }
 }
 
@@ -961,14 +957,14 @@ static int characterCodeForUsage(UsageKind usage) {
     assert(0);
 }
 
-void gotoOnlineCxref(Position *p, int usage, char *suffix)
+void gotoOnlineCxref(Position *pos, UsageKind usageKind, char *suffix)
 {
     if (options.xref2) {
-        ppcGotoPosition(p);
+        ppcGotoPosition(pos);
     } else {
         fprintf(communicationChannel,"%s%s#*+*#%d %d :%c%s ;;\n", COLCX_GOTO_REFERENCE,
-                getRealFileName_static(getFileItem(p->file)->name),
-                p->line, p->col, characterCodeForUsage(usage), suffix);
+                getRealFileName_static(getFileItem(pos->file)->name),
+                pos->line, pos->col, characterCodeForUsage(usageKind), suffix);
     }
 }
 

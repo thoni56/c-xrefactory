@@ -31,7 +31,7 @@ extern void olcxPopOnly(void);
 extern Reference * olcxCopyRefList(Reference *ll);
 extern void olStackDeleteSymbol(OlcxReferences *refs);
 extern int getFileNumberFromName(char *name);
-extern void gotoOnlineCxref(Position *p, int usage, char *suffix);
+extern void gotoOnlineCxref(Position *p, UsageKind usageKind, char *suffix);
 extern Reference *olcxAddReferenceNoUsageCheck(Reference **rlist,
                                                Reference *ref,
                                                int bestMatchFlag);

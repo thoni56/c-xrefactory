@@ -79,8 +79,8 @@ int getFileNumberFromName(char *name) {
     return (int) mock(name);
 }
 
-void gotoOnlineCxref(Position *p, int usage, char *suffix) {
-    mock(p, usage, suffix);
+void gotoOnlineCxref(Position *pos, UsageKind usageKind, char *suffix) {
+    mock(pos, usageKind, suffix);
 }
 
 Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int bestMatchFlag) {
