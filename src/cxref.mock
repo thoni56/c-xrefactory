@@ -178,10 +178,6 @@ int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack, Symb
     return (int) mock(p, rstack, rss, checkSelFlag);
 }
 
-void olcxAddReferenceToSymbolsMenu(SymbolsMenu *cms, Reference *rr, int bestFitFlag) {
-    mock(cms, rr, bestFitFlag);
-}
-
 void putOnLineLoadedReferences(ReferencesItem *p) {
     mock(p);
 }

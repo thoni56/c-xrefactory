@@ -391,22 +391,6 @@ typedef struct jslSymbolList {
 
 /* ***************** on - line cross referencing ***************** */
 
-typedef struct SymbolsMenu {
-    struct referencesItem    references;
-    bool                     selected;
-    bool                     visible;
-    unsigned                 ooBits;
-    char                     olUsage; /* usage of symbol under cursor */
-    short int                vlevel;  /* virt. level of applClass <-> olsymbol*/
-    short int                refn;
-    short int                defRefn;
-    char                     defUsage; /* usage of definition reference */
-    struct position          defpos;
-    int                      outOnLine;
-    struct editorMarkerList *markers; /* for refactory only */
-    struct SymbolsMenu      *next;
-} SymbolsMenu;
-
 typedef struct olcxReferences {
     struct reference    *references;     /* list of references */
     struct reference    *actual;         /* actual reference */

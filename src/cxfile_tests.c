@@ -17,6 +17,7 @@
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"
+#include "menu.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "reference.mock"

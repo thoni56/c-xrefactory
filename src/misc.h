@@ -5,6 +5,8 @@
 #include "symbol.h"
 #include "editor.h"
 #include "server.h"
+#include "menu.h"
+
 
 /*  some constants depending on architercture	*/
 

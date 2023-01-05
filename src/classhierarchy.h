@@ -1,7 +1,10 @@
 #ifndef CLASSHIERARCHY_H_INCLUDED
 #define CLASSHIERARCHY_H_INCLUDED
 
-#include "proto.h"
+#include <stdio.h>
+
+#include "menu.h"
+
 
 /* ************* class hierarchy cross referencing ************** */
 

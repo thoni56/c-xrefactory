@@ -2,6 +2,7 @@
 #define CXREF_H_INCLUDED
 
 #include "completion.h"
+#include "menu.h"
 #include "ppc.h"
 #include "proto.h"
 #include "server.h"
@@ -69,8 +70,6 @@ extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack,
                                       SymbolsMenu **rss, int checkSelFlag);
-extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu  *cms, Reference *rr,
-                                            int bestFitFlag);
 extern void putOnLineLoadedReferences(ReferencesItem *p);
 extern void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms);
 extern SymbolsMenu *createSelectionMenu(ReferencesItem *dd);

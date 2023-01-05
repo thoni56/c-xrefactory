@@ -24,6 +24,7 @@
 #include "jsemact.mock"
 #include "lexer.mock"
 #include "main.mock"
+#include "menu.h"
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"
