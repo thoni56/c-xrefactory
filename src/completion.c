@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "cxfile.h"
+#include "cxfile.h"             /* for cxFileHashnumber() */
 #include "filetable.h"
 #include "list.h"
 #include "log.h"

@@ -29,4 +29,6 @@ extern Completion  *completionListPrepend(Completion *completions, char *name, c
                                           char *vclass, int jindent, Symbol *s, ReferencesItem *ri,
                                           Reference *dfpos, int symType, int vFunClass);
 
+void tagSearchCompactShortResults(void);
+
 #endif

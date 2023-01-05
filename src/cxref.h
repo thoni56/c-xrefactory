@@ -17,7 +17,6 @@ extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s, b
                             struct editorMarkerList *markers, /* for refactory only */
                             SymbolsMenu             *next);
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
-extern void tagSearchCompactShortResults(void);
 extern void printTagSearchResults(void);
 extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);
 extern bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2);
