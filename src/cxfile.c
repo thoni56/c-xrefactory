@@ -15,6 +15,7 @@
 #include "hash.h"
 #include "list.h"
 #include "log.h"
+#include "menu.h"
 #include "misc.h"
 #include "reftab.h"
 #include "session.h"
