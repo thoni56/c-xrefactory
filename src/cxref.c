@@ -3199,9 +3199,14 @@ void olCreateSelectionMenu(int command) {
     int                 fnum;
 
     // I think this ordering is useless
+
+    // The above comment was in the original code, by Marian perhaps?
+    // At least the tests pass if this sorting is removed but I'm
+    // unsure we have all tests required to be sure
     LIST_MERGE_SORT(SymbolsMenu,
                     sessionData.browserStack.top->hkSelectedSym,
                     refItemsOrderLess);
+
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
     ss = rstack->hkSelectedSym;
@@ -3220,7 +3225,12 @@ void olCreateSelectionMenu(int command) {
     setSelectedVisibleItems(rstack->menuSym, command, rstack->menuFilterLevel);
     assert(rstack->references==NULL);
     olProcessSelectedReferences(rstack, genOnLineReferences);
+
     // isn't ordering useless ?
+    // Again, the above comment was in the original code, by Marian
+    // perhaps?  But here some test fail if this sorting is removed
+    // because they come out in the wrong order, but if the editor
+    // client sorts them anyway (does it?) that would not matter
     LIST_MERGE_SORT(SymbolsMenu,
                     sessionData.browserStack.top->menuSym,
                     refItemsOrderLess);
