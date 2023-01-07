@@ -45,5 +45,11 @@ extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsig
                                Access accessFlags, ReferenceCategory category);
 extern void reset_reference_usage(Reference *reference, UsageKind usageKind);
 extern Reference **addToReferenceList(Reference **list, Usage usage, Position pos);
+extern Reference *olcxAddReferenceNoUsageCheck(Reference **rlist,
+                                               Reference *ref,
+                                               int bestMatchFlag);
+extern Reference *olcxAddReference(Reference **rlist,
+                                   Reference *ref,
+                                   int bestMatchFlag);
 
 #endif

@@ -32,12 +32,6 @@ extern Reference * olcxCopyRefList(Reference *ll);
 extern void olStackDeleteSymbol(OlcxReferences *refs);
 extern int getFileNumberFromName(char *name);
 extern void gotoOnlineCxref(Position *p, UsageKind usageKind, char *suffix);
-extern Reference *olcxAddReferenceNoUsageCheck(Reference **rlist,
-                                               Reference *ref,
-                                               int bestMatchFlag);
-extern Reference *olcxAddReference(Reference **rlist,
-                                   Reference *ref,
-                                   int bestMatchFlag);
 extern void olcxFreeReferences(Reference *r);
 extern bool isSmallerOrEqClass(int inf, int sup);
 extern char *getJavaDocUrl_st(ReferencesItem *rr);

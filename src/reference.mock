@@ -32,3 +32,11 @@ Reference **addToReferenceList(Reference **list, Usage usage_arg, Position pos_a
     Usage *usage = &usage_arg;
     return (Reference **) mock(list, usage, pos);
 }
+
+Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int bestMatchFlag) {
+    return (Reference *) mock(rlist, ref, bestMatchFlag);
+}
+
+Reference *olcxAddReference(Reference **rlist, Reference *ref, int bestMatchFlag) {
+    return (Reference *) mock(rlist, ref, bestMatchFlag);
+}

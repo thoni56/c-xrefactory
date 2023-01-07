@@ -58,6 +58,7 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int 
     }
 }
 
+// Checking if this can be moved here...
 #if 0
 void olCreateSelectionMenu(int command) {
     OlcxReferences    *rstack;

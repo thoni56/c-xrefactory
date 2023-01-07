@@ -2,9 +2,14 @@
 
 #include <stdio.h>
 
-#include "options.h"
+#include "filetable.h"
+#include "globals.h"
 #include "list.h"
+#include "log.h"
+#include "misc.h"
+#include "options.h"
 #include "usage.h"
+
 
 
 void fillReference(Reference *reference, Usage usage, Position position, Reference *next) {
@@ -74,3 +79,31 @@ void deleteFromRefList(void *p) {
   CX_FREE(ff);
 }
 &*/
+
+Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int bestMatchFlag) {
+    Reference **place, *rr;
+    rr = NULL;
+    SORTED_LIST_PLACE2(place, *ref, rlist);
+    if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
+        rr = olcxAlloc(sizeof(Reference));
+        *rr = *ref;
+        if (LANGUAGE(LANG_JAVA)) {
+            if (ref->usage.kind==UsageDefined &&  bestMatchFlag) {
+                rr->usage.kind = UsageOLBestFitDefined;
+            }
+        }
+        LIST_CONS(rr,(*place));
+        log_trace("olcx adding %s %s:%d:%d", usageKindEnumName[ref->usage.kind],
+                  getFileItem(ref->position.file)->name, ref->position.line,ref->position.col);
+    }
+    return rr;
+}
+
+
+Reference *olcxAddReference(Reference **rlist, Reference *ref, int bestMatchFlag) {
+    log_trace("checking ref %s %s:%d:%d at %d", usageKindEnumName[ref->usage.kind],
+              simpleFileName(getFileItem(ref->position.file)->name), ref->position.line, ref->position.col, ref);
+    if (!OL_VIEWABLE_REFS(ref))
+        return NULL; // no regular on-line refs
+    return olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
+}

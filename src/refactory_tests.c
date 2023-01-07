@@ -19,6 +19,7 @@
 #include "options.mock"
 #include "ppc.mock"
 #include "progress.mock"
+#include "reference.mock"
 #include "reftab.mock"
 #include "server.mock"
 #include "xref.mock"
