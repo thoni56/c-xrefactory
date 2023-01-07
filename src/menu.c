@@ -1,6 +1,9 @@
 #include "menu.h"
 
 #include "cxref.h"
+#include "globals.h"
+#include "filetable.h"
+#include "log.h"
 
 
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
