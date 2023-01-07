@@ -42,6 +42,9 @@ static void concat_output(void *string) {
     strcat(buffer, *(char **)string);
 }
 
+// NOTE: these two tests will fail unless Cgreen has a version below
+// 1.6.1. In this version `with_side_effect()` executes *after* all
+// other constraints.
 Ensure(CommandsLogger, can_log_multiple_arguments) {
     char *argv[] = {"command", "arg1", "arg2"};
     char *output;
