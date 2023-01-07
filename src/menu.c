@@ -3,6 +3,7 @@
 #include "cxref.h"
 #include "globals.h"
 #include "filetable.h"
+#include "list.h"
 #include "log.h"
 
 
@@ -56,3 +57,39 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int 
         }
     }
 }
+
+#if 0
+void olCreateSelectionMenu(int command) {
+    OlcxReferences    *rstack;
+    SymbolsMenu     *ss;
+    int                 fnum;
+
+    // I think this ordering is useless
+    LIST_MERGE_SORT(SymbolsMenu,
+                    sessionData.browserStack.top->hkSelectedSym,
+                    refItemsOrderLess);
+    assert(sessionData.browserStack.top);
+    rstack = sessionData.browserStack.top;
+    ss = rstack->hkSelectedSym;
+    if (ss == NULL) return;
+    renameCollationSymbols(ss);
+    LIST_SORT(SymbolsMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
+    ss = rstack->hkSelectedSym;
+    while (ss!=NULL) {
+        scanReferencesToCreateMenu(ss->references.name);
+        fnum = cxFileHashNumber(ss->references.name);
+        while (ss!=NULL && fnum==cxFileHashNumber(ss->references.name))
+            ss = ss->next;
+    }
+    mapOverReferenceTable(mapCreateSelectionMenu);
+    mapOverReferenceTable(putOnLineLoadedReferences);
+    setSelectedVisibleItems(rstack->menuSym, command, rstack->menuFilterLevel);
+    assert(rstack->references==NULL);
+    olProcessSelectedReferences(rstack, genOnLineReferences);
+    // isn't ordering useless ?
+    LIST_MERGE_SORT(SymbolsMenu,
+                    sessionData.browserStack.top->menuSym,
+                    refItemsOrderLess);
+}
+
+#endif

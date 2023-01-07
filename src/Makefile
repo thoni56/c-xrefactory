@@ -7,7 +7,7 @@
 #    use when installing c-xref using el-get:
 #	make prod
 #
-# 2: ci - build unittests & c-xref and run all tests with coverage
+# 2: ci - build s & c-xref and run all tests with coverage
 #    and create coverage report:
 #	make ci
 #
@@ -452,6 +452,7 @@ $(eval $(call UNITTEST,lexer,log lexembuffer characterreader position memory))
 $(eval $(call UNITTEST,macroargumenttable,memory log hash))
 $(eval $(call UNITTEST,main,memory log protocol position memory session))
 $(eval $(call UNITTEST,memory,log))
+$(eval $(call UNITTEST,menu,log position memory usage))
 $(eval $(call UNITTEST,misc,protocol log type memory))
 $(eval $(call UNITTEST,options,protocol log position memory))
 $(eval $(call UNITTEST,position,log memory))
