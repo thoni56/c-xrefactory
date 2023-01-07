@@ -1,0 +1,29 @@
+/* -*- c -*-*/
+#include "menu.h"
+#include <cgreen/mocks.h>
+
+
+void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem s,
+                     bool selected, bool visible, unsigned ooBits, char olUsage,
+                     short int vlevel, short int refn, short int defRefn,
+                     char defUsage, struct position defpos, int outOnLine,
+                     struct editorMarkerList *markers,	/* for refactory only */
+                     SymbolsMenu *next) {
+    symbolsMenu->references = s;
+    symbolsMenu->selected = selected;
+    symbolsMenu->visible = visible;
+    symbolsMenu->ooBits = ooBits;
+    symbolsMenu->olUsage = olUsage;
+    symbolsMenu->vlevel = vlevel;
+    symbolsMenu->refn = refn;
+    symbolsMenu->defRefn = defRefn;
+    symbolsMenu->defUsage = defUsage;
+    symbolsMenu->defpos = defpos;
+    symbolsMenu->outOnLine = outOnLine;
+    symbolsMenu->markers = markers;
+    symbolsMenu->next= next;
+}
+
+void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag) {
+    mock(menu, reference, bestFitFlag);
+}
