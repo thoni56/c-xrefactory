@@ -33,7 +33,6 @@ extern void olStackDeleteSymbol(OlcxReferences *refs);
 extern int getFileNumberFromName(char *name);
 extern void gotoOnlineCxref(Position *p, UsageKind usageKind, char *suffix);
 extern void olcxFreeReferences(Reference *r);
-extern bool isSmallerOrEqClass(int inf, int sup);
 extern char *getJavaDocUrl_st(ReferencesItem *rr);
 extern char *getLocalJavaDocFile_st(char *fileUrl);
 extern char *getFullUrlOfJavaDoc_st(char *fileUrl);

@@ -8,6 +8,7 @@
 #include "log.h"
 #include "misc.h"
 #include "options.h"
+#include "session.h"
 #include "usage.h"
 
 
@@ -107,3 +108,22 @@ Reference *olcxAddReference(Reference **rlist, Reference *ref, int bestMatchFlag
         return NULL; // no regular on-line refs
     return olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
 }
+
+#if 0
+void olcxCheck1CxFileReference(ReferencesItem *referenceItem, Reference *reference) {
+    ReferencesItem     *sss;
+    OlcxReferences    *rstack;
+    SymbolsMenu     *cms;
+    int pushedKind;
+
+    assert(sessionData.browserStack.top);
+    rstack = sessionData.browserStack.top->previous;
+    assert(rstack && rstack->menuSym);
+    sss = &rstack->menuSym->references;
+    pushedKind = itIsSymbolToPushOlReferences(referenceItem, rstack, &cms, DEFAULT_VALUE);
+    // this is very slow to check the symbol name for each reference
+    if (pushedKind == 0 && olcxIsSameCxSymbol(referenceItem, sss)) {
+        olcxSingleReferenceCheck1(referenceItem, rstack, reference);
+    }
+}
+#endif

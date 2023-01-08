@@ -1,19 +1,20 @@
 #include "extract.h"
 
+#include "classhierarchy.h"
 #include "commons.h"
-#include "globals.h"
-#include "options.h"
-#include "misc.h"
-#include "protocol.h"
-#include "semact.h"
 #include "cxref.h"
-#include "reftab.h"
-#include "list.h"
-#include "jsemact.h"
 #include "filedescriptor.h"
 #include "filetable.h"
+#include "globals.h"
+#include "jsemact.h"
+#include "list.h"
 #include "log.h"
+#include "misc.h"
+#include "options.h"
 #include "protocol.h"
+#include "protocol.h"
+#include "reftab.h"
+#include "semact.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000

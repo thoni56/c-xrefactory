@@ -665,30 +665,6 @@ void addCfClassTreeHierarchyRef(int fnum, int usage) {
 
 /* ***************************************************************** */
 
-static int isSmallerOrEqClassR(int inferior, int superior, int level) {
-    assert(level>0);
-    if (inferior == superior)
-        return level;
-
-    FileItem *fileItem = getFileItem(inferior);
-    for (ClassHierarchyReference *s=fileItem->superClasses; s!=NULL; s=s->next) {
-        if (s->superClass == superior) {
-            return level+1;
-        }
-    }
-    for (ClassHierarchyReference *s=fileItem->superClasses; s!=NULL; s=s->next) {
-        int smallerLevel = isSmallerOrEqClassR(s->superClass, superior, level+1);
-        if (smallerLevel) {
-            return smallerLevel;
-        }
-    }
-    return 0;
-}
-
-bool isSmallerOrEqClass(int inf, int sup) {
-    return isSmallerOrEqClassR(inf, sup, 1) != 0;
-}
-
 void olcxFreeReferences(Reference *r) {
     Reference *tmp;
     while (r!=NULL) {
@@ -4415,17 +4391,6 @@ void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
         olcxAddReferences(cms->references.references, &rstack->references, ANY_FILE,
                           IS_BEST_FIT_MATCH(cms));
     }
-}
-
-static int classCmp(int cl1, int cl2) {
-    int res;
-
-    log_trace("classCMP %s <-> %s", getFileItem(cl1)->name, getFileItem(cl2)->name);
-    res = isSmallerOrEqClassR(cl2, cl1, 1);
-    if (res == 0) {
-        res = -isSmallerOrEqClassR(cl1, cl2, 1);
-    }
-    return res;
 }
 
 static unsigned olcxOoBits(SymbolsMenu *ols, ReferencesItem *p) {

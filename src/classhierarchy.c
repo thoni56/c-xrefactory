@@ -56,6 +56,41 @@ ClassHierarchyReference *newClassHierarchyReference(int originFileIndex, int sup
 }
 
 
+static int isSmallerOrEqClassR(int inferior, int superior, int level) {
+    assert(level>0);
+    if (inferior == superior)
+        return level;
+
+    FileItem *fileItem = getFileItem(inferior);
+    for (ClassHierarchyReference *s=fileItem->superClasses; s!=NULL; s=s->next) {
+        if (s->superClass == superior) {
+            return level+1;
+        }
+    }
+    for (ClassHierarchyReference *s=fileItem->superClasses; s!=NULL; s=s->next) {
+        int smallerLevel = isSmallerOrEqClassR(s->superClass, superior, level+1);
+        if (smallerLevel) {
+            return smallerLevel;
+        }
+    }
+    return 0;
+}
+
+bool isSmallerOrEqClass(int inf, int sup) {
+    return isSmallerOrEqClassR(inf, sup, 1) != 0;
+}
+
+int classCmp(int class1, int class2) {
+    int res;
+
+    log_trace("classCMP %s <-> %s", getFileItem(class1)->name, getFileItem(class2)->name);
+    res = isSmallerOrEqClassR(class2, class1, 1);
+    if (res == 0) {
+        res = -isSmallerOrEqClassR(class1, class2, 1);
+    }
+    return res;
+}
+
 bool classHierarchyClassNameLess(int classFileIndex1, int classFileIndex2) {
     char *name;
     int comparison;

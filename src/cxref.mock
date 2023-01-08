@@ -66,10 +66,6 @@ void olcxFreeReferences(Reference *r) {
     mock(r);
 }
 
-bool isSmallerOrEqClass(int inf, int sup) {
-    return (bool) mock(inf, sup);
-}
-
 char *getJavaDocUrl_st(ReferencesItem *rr) {
     return (char *) mock(rr);
 }
