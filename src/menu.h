@@ -20,6 +20,10 @@ typedef struct SymbolsMenu {
 } SymbolsMenu;
 
 
+extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s, bool selected, bool visible,
+                            unsigned ooBits, char olUsage, short int vlevel,
+                            char defUsage, struct position defpos);
+
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag);
 
 #endif

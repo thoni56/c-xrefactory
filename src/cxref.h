@@ -11,9 +11,6 @@
 #include "usage.h"
 
 
-extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s, bool selected, bool visible,
-                            unsigned ooBits, char olUsage, short int vlevel,
-                            char defUsage, struct position defpos);
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern void printTagSearchResults(void);
 extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);
