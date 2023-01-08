@@ -127,8 +127,8 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl
     return (SymbolsMenu *) mock(sym, vApplClass, vFunCl, defpos, defusage, selected, visible, ooBits, olusage, vlevel);
 }
 
-SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list, int selected, int visible,
-                                    unsigned ooBits, int olusage, int vlevel, Position *defpos, int defusage) {
+SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list, bool selected, bool visible,
+                                unsigned ooBits, int olusage, int vlevel, Position *defpos, int defusage) {
     return (SymbolsMenu *) mock(sym, list, selected, visible, ooBits, olusage, vlevel, defpos, defusage);
 }
 

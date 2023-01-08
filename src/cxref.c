@@ -123,7 +123,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
 }
 
 SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
-                                int selected, int visible, unsigned ooBits,
+                                bool selected, bool visible, unsigned ooBits,
                                 int olusage, int vlevel,
                                 Position *defpos, int defusage) {
     SymbolsMenu *rr, **place, ddd;
@@ -602,7 +602,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition->line);
             if (! olcxOnlyParseNoPushing(options.serverOperation)) {
                 menu = olAddBrowsedSymbol(foundMember,&sessionData.browserStack.top->hkSelectedSym,
-                                          1,1,0,usage.kind,0, defaultPosition, defaultUsage);
+                                          true, true, 0, usage.kind, 0, defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
                 if (isDefinitionUsage(usage.kind)) {
@@ -3356,8 +3356,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
             nsym = mmFindSymWithCorrespondingRef(rr,osym,newrefs,&moveOffset);
             if (nsym==NULL || !symbolsCorrespondWrtMoving(osym, nsym, options.serverOperation)) {
                 if (diffsym == NULL) {
-                    diffsym = olAddBrowsedSymbol(
-                                                 &osym->references, &diffrefs->menuSym, 1, 1,
+                    diffsym = olAddBrowsedSymbol(&osym->references, &diffrefs->menuSym, true, true,
                                                  (OOC_PROFILE_EQUAL|OOC_VIRT_SAME_FUN_CLASS),
                                                  USAGE_ANY, 0, &noPosition, UsageNone);
                 }
@@ -3393,7 +3392,7 @@ static void olcxMMPreCheck(void) {
     if (!precheck) {
         if (diffrefs->menuSym!=NULL) {
             fillTrivialSpecialRefItem(&dri, "  references missinterpreted after refactoring");
-            olAddBrowsedSymbol(&dri, &diffrefs->hkSelectedSym, 1, 1, 0,
+            olAddBrowsedSymbol(&dri, &diffrefs->hkSelectedSym, true, true, 0,
                                USAGE_ANY, 0, &noPosition, UsageNone);
             olProcessSelectedReferences(diffrefs, genOnLineReferences);
             //&olcxPrintSelectionMenu(diffrefs->menuSym);
@@ -3698,7 +3697,8 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri, void *voidDat
     OlcxReferences       *rstack;
     SymbolsMenu          *mm;
     PushAllInBetweenData *pushAllData;
-    int                   defusage, select, visible, ooBits, vlevel;
+    int                   defusage, ooBits, vlevel;
+    bool                  selected, visible;
 
     pushAllData = (PushAllInBetweenData *) voidDataP;
     assert(sessionData.browserStack.top);
@@ -3715,11 +3715,12 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri, void *voidDat
                 defpos = noPosition;
                 defusage = UsageNone;
             }
-            select = visible = 1;
+            selected = visible = true;
             vlevel = 0;
             ooBits = (OOC_PROFILE_EQUAL | OOC_VIRT_SAME_FUN_CLASS);
             log_trace("adding symbol %s", ri->name);
-            mm = olAddBrowsedSymbol(ri, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, &defpos, defusage);
+            mm = olAddBrowsedSymbol(ri, &rstack->menuSym, selected, visible, ooBits, USAGE_ANY, vlevel, &defpos,
+                                    defusage);
             assert(mm!=NULL);
             for (; rr!=NULL; rr=rr->next) {
                 log_trace("checking reference of line %d, usage %s", rr->position.line, usageKindEnumName[rr->usage.kind]);
@@ -3859,8 +3860,9 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferencesItem *ss) {
         }
     }
     if (!used && definitionReference!=NULL) {
-        olAddBrowsedSymbol(ss,&sessionData.browserStack.top->hkSelectedSym,
-                           1,1,0,UsageDefined,0, &definitionReference->position, definitionReference->usage.kind);
+        olAddBrowsedSymbol(ss, &sessionData.browserStack.top->hkSelectedSym,
+                           true, true, 0, UsageDefined, 0, &definitionReference->position,
+                           definitionReference->usage.kind);
     }
 }
 

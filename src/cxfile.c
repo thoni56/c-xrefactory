@@ -919,7 +919,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
     ) {
         olAddBrowsedSymbol(lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness],
                            &sessionData.browserStack.top->hkSelectedSym,
-                           1,1,0,UsageDefined,0, &noPosition, UsageDefined);
+                           true, true, 0, UsageDefined, 0, &noPosition, UsageDefined);
     }
 }
 
@@ -1176,7 +1176,7 @@ static void scanFunction_Reference(int size,
                             log_trace(":adding bypass selected symbol %s", lastIncomingInfo.symbolTab[sym]->name);
                             olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],
                                                &sessionData.browserStack.top->hkSelectedSym,
-                                               1, 1, 0, usageKind,0,&noPosition, UsageNone);
+                                               true, true, 0, usageKind,0,&noPosition, UsageNone);
                         }
                     } else {
                         olcxAddReference(&sessionData.browserStack.top->references, &reference,

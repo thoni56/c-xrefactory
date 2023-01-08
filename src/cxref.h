@@ -52,10 +52,10 @@ extern void olSetCallerPosition(Position *pos);
 extern SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl,
                                         Position *defpos, int defusage, int selected, int visible,
                                         unsigned ooBits, int olusage, int vlevel);
-extern SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
-                                           int selected, int visible, unsigned ooBits,
-                                           int olusage, int vlevel,
-                                           Position *defpos, int defusage);
+extern SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *reference, SymbolsMenu **list,
+                                       bool selected, bool visible, unsigned ooBits,
+                                       int olusage, int vlevel,
+                                       Position *defpos, int defusage);
 extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack,
