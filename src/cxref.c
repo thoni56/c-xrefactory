@@ -142,22 +142,22 @@ SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
     return rr;
 }
 
-void renameCollationSymbols(SymbolsMenu *sss) {
+void renameCollationSymbols(SymbolsMenu *menu) {
     int                 len,len1;
     char                *nn, *cs;
-    assert(sss);
-    for (SymbolsMenu *ss=sss; ss!=NULL; ss=ss->next) {
-        cs = strchr(ss->references.name, LINK_NAME_COLLATE_SYMBOL);
-        if (cs!=NULL && ss->references.type==TypeCppCollate) {
-            len = strlen(ss->references.name);
+    assert(menu);
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        cs = strchr(m->references.name, LINK_NAME_COLLATE_SYMBOL);
+        if (cs!=NULL && m->references.type==TypeCppCollate) {
+            len = strlen(m->references.name);
             assert(len>=2);
             nn = olcxAllocc(len-1, sizeof(char));
-            len1 = cs-ss->references.name;
-            strncpy(nn, ss->references.name, len1);
+            len1 = cs-m->references.name;
+            strncpy(nn, m->references.name, len1);
             strcpy(nn+len1, cs+2);
-            log_debug("renaming %s to %s", ss->references.name, nn);
-            olcxFree(ss->references.name, len+1);
-            ss->references.name = nn;
+            log_debug("renaming %s to %s", m->references.name, nn);
+            olcxFree(m->references.name, len+1);
+            m->references.name = nn;
         }
     }
 }
