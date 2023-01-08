@@ -118,8 +118,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
                        symbol->category);
 
     symbolsMenu = olcxAlloc(sizeof(SymbolsMenu));
-    fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, 0, 0, defusage, *defpos, 0,
-                    NULL, NULL);
+    fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, 0, 0, defusage, *defpos, 0);
     return symbolsMenu;
 }
 
@@ -129,7 +128,7 @@ SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
                                 Position *defpos, int defusage) {
     SymbolsMenu *rr, **place, ddd;
 
-    fillSymbolsMenu(&ddd, *sym, 0, false, 0, olusage, vlevel, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
+    fillSymbolsMenu(&ddd, *sym, 0, false, 0, olusage, vlevel, 0, 0, UsageNone, noPosition, 0);
     SORTED_LIST_PLACE3(place, SymbolsMenu, (&ddd), list, olSymbolMenuIsLess);
     rr = *place;
     if (*place==NULL || olSymbolMenuIsLess(&ddd, *place)) {
@@ -1636,7 +1635,7 @@ static void findAndGotoDefinition(ReferencesItem *sym) {
     // preserve poped items from browser first
     oldtop = pushSession();
     refs = sessionData.browserStack.top;
-    fillSymbolsMenu(&menu, *sym, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
+    fillSymbolsMenu(&menu, *sym, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0);
     //&oldrefs = *refs;
     refs->menuSym = &menu;
     fullScanFor(sym->name);

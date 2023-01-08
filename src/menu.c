@@ -18,10 +18,7 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
                      short int defRefn,
                      char defUsage,
                      Position defpos,
-                     int outOnLine,
-                     EditorMarkerList *markers,	/* for refactory only */
-                     SymbolsMenu *next
-) {
+                     int outOnLine) {
     symbolsMenu->references = references;
     symbolsMenu->selected = selected;
     symbolsMenu->visible = visible;
@@ -33,8 +30,8 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
     symbolsMenu->defUsage = defUsage;
     symbolsMenu->defpos = defpos;
     symbolsMenu->outOnLine = outOnLine;
-    symbolsMenu->markers = markers;
-    symbolsMenu->next= next;
+    symbolsMenu->markers = NULL;
+    symbolsMenu->next = NULL;
 }
 
 

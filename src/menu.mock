@@ -6,9 +6,7 @@
 void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem s,
                      bool selected, bool visible, unsigned ooBits, char olUsage,
                      short int vlevel, short int refn, short int defRefn,
-                     char defUsage, struct position defpos, int outOnLine,
-                     struct editorMarkerList *markers,	/* for refactory only */
-                     SymbolsMenu *next) {
+                     char defUsage, struct position defpos, int outOnLine) {
     symbolsMenu->references = s;
     symbolsMenu->selected = selected;
     symbolsMenu->visible = visible;
@@ -20,8 +18,8 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem s,
     symbolsMenu->defUsage = defUsage;
     symbolsMenu->defpos = defpos;
     symbolsMenu->outOnLine = outOnLine;
-    symbolsMenu->markers = markers;
-    symbolsMenu->next= next;
+    symbolsMenu->markers = NULL;
+    symbolsMenu->next = NULL;
 }
 
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag) {

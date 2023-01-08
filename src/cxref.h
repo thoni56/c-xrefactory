@@ -13,9 +13,7 @@
 
 extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s, bool selected, bool visible,
                             unsigned ooBits, char olUsage, short int vlevel, short int refn, short int defRefn,
-                            char defUsage, struct position defpos, int outOnLine,
-                            struct editorMarkerList *markers, /* for refactory only */
-                            SymbolsMenu             *next);
+                            char defUsage, struct position defpos, int outOnLine);
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern void printTagSearchResults(void);
 extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);

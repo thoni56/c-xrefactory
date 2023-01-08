@@ -111,7 +111,7 @@ static int scheduleFileUsingTheMacro(void) {
                        noFileIndex, noFileIndex, TypeMacro, StorageExtern,
                        ScopeGlobal, AccessDefault, CategoryGlobal);
 
-    fillSymbolsMenu(&menu, references, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0, NULL, NULL);
+    fillSymbolsMenu(&menu, references, 1, true, 0, UsageUsed, 0, 0, 0, UsageNone, noPosition, 0);
     if (sessionData.browserStack.top==NULL) {
         pushEmptySession(&sessionData.browserStack);
         tmpc = sessionData.browserStack.top;
