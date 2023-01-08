@@ -94,8 +94,6 @@ extern void answerEditAction(void);
 extern SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll);
 extern void olcxFreeResolutionMenu( SymbolsMenu *sym );
 
-extern void clearAvailableRefactorings(void);
-
 extern void generateReferences(void);
 
 #endif
