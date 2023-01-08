@@ -6,7 +6,7 @@ ClassHierarchyReference *newClassHierarchyReference(int origin, int superClass, 
     return (ClassHierarchyReference *)mock(origin, superClass, next);
 }
 
-void classHierarchyGenInit(void) {
+void initClassHierarchyGeneration(void) {
   mock();
 }
 
@@ -14,16 +14,16 @@ void setTmpClassBackPointersToMenu(SymbolsMenu *menu) {
   mock(menu);
 }
 
-void splitMenuPerSymbolsAndMap(SymbolsMenu *rrr, void (*fun)(SymbolsMenu *, void *, void *), void *p1, char *p2) {
-  mock(rrr, fun, p1, p2);
+void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, void *, void *), void *p1, char *p2) {
+  mock(menu, fun, p1, p2);
 }
 
-void generateGlobalReferenceLists(SymbolsMenu *rrr, FILE *ff, char *fn) {
-  mock(rrr, ff, fn);
+void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file, char *fn) {
+  mock(menu, file, fn);
 }
 
-void genClassHierarchies(FILE *ff, SymbolsMenu *rrr, int pass) {
-  mock(ff, rrr, pass);
+void genClassHierarchies(SymbolsMenu *menu, FILE *file, int pass) {
+  mock(file, menu, pass);
 }
 
 bool isSmallerOrEqClass(int inferior, int superior) {

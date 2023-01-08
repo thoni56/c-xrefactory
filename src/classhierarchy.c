@@ -146,7 +146,7 @@ static void markTransitiveRelevantSubs(int cind, int passNumber) {
     markTransitiveRelevantSubsRec(cind, passNumber);
 }
 
-void classHierarchyGenInit(void) {
+void initClassHierarchyGeneration(void) {
     clearTmpChRelevant();
     clearTmpChProcessed();
 }
@@ -274,9 +274,8 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
     }
 }
 
-static void olcxMenuPrintClassHierarchyLine(FILE *file, int fileIndex,
-                                            IntegerList *nextbars,
-                                            SymbolsMenu *menu) {
+static void printClassHierarchyLineForMenu(SymbolsMenu *menu, FILE *file, int fileIndex,
+                                           IntegerList *nextbars) {
     bool alreadyProcessed = THEBIT(tmpChProcessed, fileIndex);
     if (options.xref2) {
         ppcIndent();
@@ -323,9 +322,8 @@ static void olcxMenuPrintClassHierarchyLine(FILE *file, int fileIndex,
 }
 
 
-static void descendTheClassHierarchy(FILE *file,
+static void descendTheClassHierarchy(SymbolsMenu *menu, FILE *file,
                                      int vApplCl, int oldvFunCl,
-                                     SymbolsMenu *menu,
                                      int level,
                                      IntegerList *nextbars,
                                      int passNumber
@@ -356,7 +354,7 @@ static void descendTheClassHierarchy(FILE *file,
     if (currentOutputLineInSymbolList == 1) currentOutputLineInSymbolList++; // first line irregularity
     if (itt!=NULL && itt->outOnLine==0) itt->outOnLine = currentOutputLineInSymbolList;
     currentOutputLineInSymbolList ++;
-    olcxMenuPrintClassHierarchyLine(file, vApplCl, nextbars, itt);
+    printClassHierarchyLineForMenu(itt, file, vApplCl, nextbars);
 
     if (THEBIT(tmpChProcessed,vApplCl)==1)
         return;
@@ -375,16 +373,14 @@ static void descendTheClassHierarchy(FILE *file,
             snext = snext->next;
         }
         snextbar = (IntegerList) {.integer = (snext!=NULL), .next = nextbars};
-        descendTheClassHierarchy(file, s->superClass, vFunCl, menu, level+1,
+        descendTheClassHierarchy(menu, file, s->superClass, vFunCl, level+1,
                                  &snextbar, passNumber);
         s = snext;
     }
 }
 
-static bool genThisClassHierarchy(int vApplCl, int oldvFunCl,
-                                 FILE *file,
-                                 SymbolsMenu *menu,
-                                 int passNumber) {
+static bool genThisClassHierarchy(SymbolsMenu *menu, int vApplCl, int oldvFunCl, FILE *file,
+                                  int passNumber) {
     FileItem *fileItem = getFileItem(vApplCl);
     if (fileItem==NULL)
         return false;
@@ -400,11 +396,11 @@ static bool genThisClassHierarchy(int vApplCl, int oldvFunCl,
     // yes I am on the top, recursively descent and print all subclasses
     if (passNumber==FIRST_PASS && fileItem->isInterface)
         return false;
-    descendTheClassHierarchy(file, vApplCl, oldvFunCl, menu, 0, NULL, passNumber);
+    descendTheClassHierarchy(menu, file, vApplCl, oldvFunCl, 0, NULL, passNumber);
     return true;
 }
 
-void genClassHierarchies(FILE *file, SymbolsMenu *menuList, int passNumber) {
+void genClassHierarchies(SymbolsMenu *menuList, FILE *file, int passNumber) {
     // mark the classes where the method is defined and used
     clearTmpChRelevant();
     for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
@@ -422,90 +418,84 @@ void genClassHierarchies(FILE *file, SymbolsMenu *menuList, int passNumber) {
     }
     // and gen the class subhierarchy
     for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
-        genThisClassHierarchy(menu->references.vFunClass, noFileIndex, file, menuList, passNumber);
-        genThisClassHierarchy(menu->references.vApplClass, noFileIndex, file, menuList, passNumber);
+        genThisClassHierarchy(menuList, menu->references.vFunClass, noFileIndex, file, passNumber);
+        genThisClassHierarchy(menuList, menu->references.vApplClass, noFileIndex, file, passNumber);
     }
 }
 
-static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, SymbolsMenu *rrr) {
+static void olcxMenuGenGlobRefsForVirtMethod(SymbolsMenu *menu, FILE *file) {
     char ln[MAX_REF_LEN];
 
-    linkNamePrettyPrint(ln,rrr->references.name,MAX_REF_LEN,SHORT_NAME);
-    if (strcmp(rrr->references.name, LINK_NAME_CLASS_TREE_ITEM)==0) {
+    linkNamePrettyPrint(ln,menu->references.name,MAX_REF_LEN,SHORT_NAME);
+    if (strcmp(menu->references.name, LINK_NAME_CLASS_TREE_ITEM)==0) {
         /*&
-          fprintf(ff, "\n");
+          fprintf(file, "\n");
           currentOutputLineInSymbolList += 1 ;
           &*/
     } else {
         if (options.xref2) ppcGenRecord(PPC_VIRTUAL_SYMBOL, ln);
-        else fprintf(ff, "\n== %s\n", ln);
+        else fprintf(file, "\n== %s\n", ln);
         currentOutputLineInSymbolList += 2 ;
     }
-    classHierarchyGenInit();
-    setTmpClassBackPointersToMenu(rrr);
-    genClassHierarchies( ff, rrr, FIRST_PASS);
-    //&fprintf(ff,"interfaces:\n");
-    setTmpClassBackPointersToMenu(rrr);
-    genClassHierarchies( ff, rrr, SECOND_PASS);
-    //& if (! options.xref2) fprintf(ff, "\n");
+    initClassHierarchyGeneration();
+    setTmpClassBackPointersToMenu(menu);
+    genClassHierarchies(menu, file, FIRST_PASS);
+    //&fprintf(file,"interfaces:\n");
+    setTmpClassBackPointersToMenu(menu);
+    genClassHierarchies(menu, file, SECOND_PASS);
+    //& if (! options.xref2) fprintf(file, "\n");
     //& currentOutputLineInSymbolList ++ ;
 }
 
-static int isVirtualMenuItem(ReferencesItem *p) {
-    return (p->storage == StorageField
-            || p->storage == StorageMethod
-            || p->storage == StorageConstructor);
+static int isVirtualMenuItem(ReferencesItem *r) {
+    return (r->storage == StorageField
+            || r->storage == StorageMethod
+            || r->storage == StorageConstructor);
 }
 
-static void genVirtualsGlobRefLists(    SymbolsMenu *rrr,
-                                        FILE *ff,
-                                        char *fn
-                                        ) {
-    SymbolsMenu *ss;
-    ReferencesItem *p;
+static void genVirtualsGlobRefLists(SymbolsMenu *menu, FILE *file, char *fn) {
+    SymbolsMenu    *s;
+    ReferencesItem *r;
 
     // first count if there are some references at all
-    for(ss=rrr; ss!=NULL && !ss->visible; ss=ss->next) ;
-    if (ss == NULL) return;
-    assert(rrr!=NULL);
-    p = &rrr->references;
-    assert(p!=NULL);
-    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->storage]);
-    if (isVirtualMenuItem(p)) {
-        olcxMenuGenGlobRefsForVirtMethod( ff, rrr);
+    for (s = menu; s != NULL && !s->visible; s = s->next)
+        ;
+    if (s == NULL)
+        return;
+    assert(menu != NULL);
+    r = &menu->references;
+    assert(r != NULL);
+    //&fprintf(dumpOut,"storage of %s == %s\n",r->name,storagesName[r->storage]);
+    if (isVirtualMenuItem(r)) {
+        olcxMenuGenGlobRefsForVirtMethod(menu, file);
     }
 }
 
-static void genNonVirtualsGlobRefLists(SymbolsMenu *rrr,
-                                       FILE *ff,
-                                       char *fn) {
-    SymbolsMenu *ss;
-    ReferencesItem *p;
+static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, FILE *file, char *fn) {
+    SymbolsMenu    *s;
+    ReferencesItem *r;
 
     // first count if there are some references at all
-    for(ss=rrr; ss!=NULL && !ss->visible; ss=ss->next) ;
-    if (ss == NULL) return;
-    assert(rrr!=NULL);
-    p = &rrr->references;
-    assert(p!=NULL);
-    //&fprintf(dumpOut,"storage of %s == %s\n",p->name,storagesName[p->storage]);
-    if (! isVirtualMenuItem(p)) {
-        for(ss=rrr; ss!=NULL; ss=ss->next) {
-            p = &ss->references;
-            olcxMenuGenNonVirtualGlobSymList( ff, ss);
+    for (s=menu; s!=NULL && !s->visible; s=s->next) ;
+    if (s == NULL) return;
+    assert(menu!=NULL);
+    r = &menu->references;
+    assert(r!=NULL);
+    //&fprintf(dumpOut,"storage of %s == %s\n",r->name,storagesName[r->storage]);
+    if (! isVirtualMenuItem(r)) {
+        for(s=menu; s!=NULL; s=s->next) {
+            r = &s->references;
+            olcxMenuGenNonVirtualGlobSymList( file, s);
         }
     }
 }
 
-void splitMenuPerSymbolsAndMap(SymbolsMenu *rrr,
-                               void (*fun)(SymbolsMenu *, void *, void *),
-                               void *p1,
-                               char *p2
-                               ) {
-    SymbolsMenu *rr, *mp, **ss, *cc, *all;
+void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, void *, void *), void *p1,
+                               char *p2) {
+    SymbolsMenu    *rr, *mp, **ss, *cc, *all;
     ReferencesItem *cs;
     all = NULL;
-    rr = rrr;
+    rr = menu;
     while (rr!=NULL) {
         mp = NULL;
         ss= &rr; cs= &rr->references;
@@ -529,25 +519,24 @@ void splitMenuPerSymbolsAndMap(SymbolsMenu *rrr,
     // now find the original head and make it head,
     // berk, TODO do this by passing pointer to pointer to rrr
     // as parameter
-    if (all!=rrr) {
+    if (all!=menu) {
         ss = &all;
-        while (*ss!=rrr && *ss!=NULL)
+        while (*ss!=menu && *ss!=NULL)
             ss = &(*ss)->next;
         assert(*ss!=NULL);
         assert (*ss != all);
-        *ss = rrr->next;
-        rrr->next = all;
+        *ss = menu->next;
+        menu->next = all;
     }
 }
 
-
-void generateGlobalReferenceLists(SymbolsMenu *rrr, FILE *ff, char *fn) {
+void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file, char *fn) {
     SymbolsMenu *rr;
 
-    for(rr=rrr; rr!=NULL; rr=rr->next) rr->outOnLine = 0;
+    for(rr=menu; rr!=NULL; rr=rr->next) rr->outOnLine = 0;
     currentOutputLineInSymbolList = 1;
-    splitMenuPerSymbolsAndMap(rrr, (void (*)(SymbolsMenu *, void *, void *))genNonVirtualsGlobRefLists,
-                              ff, fn);
-    splitMenuPerSymbolsAndMap(rrr, (void (*)(SymbolsMenu *, void *, void *))genVirtualsGlobRefLists,
-                              ff, fn);
+    splitMenuPerSymbolsAndMap(menu, (void (*)(SymbolsMenu *, void *, void *))genNonVirtualsGlobRefLists,
+                              file, fn);
+    splitMenuPerSymbolsAndMap(menu, (void (*)(SymbolsMenu *, void *, void *))genVirtualsGlobRefLists,
+                              file, fn);
 }

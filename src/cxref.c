@@ -1940,25 +1940,23 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     return res;
 }
 
-static bool refItemsOrderLess(SymbolsMenu *ss1, SymbolsMenu *ss2) {
-    ReferencesItem *s1, *s2;
-    int r;
-    char *n1, *n2;
-    int len1;
-    int len2;
-    UNUSED len1;
-    UNUSED len2;
+static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
+    ReferencesItem *r1, *r2;
+    char *name1, *name2;
+    int len1; UNUSED len1;
+    int len2; UNUSED len2;
 
-    s1 = &ss1->references; s2 = &ss2->references;
-    get_bare_name(s1->name, &n1, &len1);
-    get_bare_name(s2->name, &n2, &len2);
-    r = strcmp(n1, n2);
-    if (r!=0)
-        return r<0;
-    r = strcmp(s1->name, s2->name);
-    if (r!=0)
-        return r<0;
-    return classHierarchyClassNameLess(ss1->references.vApplClass,ss2->references.vApplClass);
+    r1 = &menu1->references;
+    r2 = &menu2->references;
+    get_bare_name(r1->name, &name1, &len1);
+    get_bare_name(r2->name, &name2, &len2);
+    int cmp = strcmp(name1, name2);
+    if (cmp!=0)
+        return cmp<0;
+    cmp = strcmp(r1->name, r2->name);
+    if (cmp!=0)
+        return cmp<0;
+    return classHierarchyClassNameLess(menu1->references.vApplClass, menu2->references.vApplClass);
 }
 
 static void olcxTopSymbolResolution(void) {
