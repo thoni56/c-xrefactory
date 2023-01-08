@@ -1959,21 +1959,6 @@ static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
     return classHierarchyClassNameLess(menu1->references.vApplClass, menu2->references.vApplClass);
 }
 
-static void olcxTopSymbolResolution(void) {
-    OlcxReferences    *refs;
-    SymbolsMenu     *ss;
-    if (!olcx_move_init(&sessionData, &refs, DEFAULT_VALUE))
-        return;
-    ss = NULL;
-    if (refs!=NULL) {
-        LIST_MERGE_SORT(SymbolsMenu,
-                        refs->menuSym,
-                        refItemsOrderLess);
-        ss = refs->menuSym;
-    }
-    olcxPrintSelectionMenu(ss);
-}
-
 bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     if (p1 == p2)
         return true;
@@ -4109,9 +4094,6 @@ void answerEditAction(void) {
         break;
     case OLO_SHOW_CLASS_TREE:
         olcxShowClassTree();
-        break;
-    case OLO_TOP_SYMBOL_RES:
-        olcxTopSymbolResolution();
         break;
     case OLO_CSELECT:
         olCompletionSelect();

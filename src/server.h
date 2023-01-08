@@ -73,7 +73,6 @@
         ENUM(OLO_SHOW_TOP_APPL_CLASS)                                   \
         ENUM(OLO_SHOW_TOP_TYPE)                                         \
         ENUM(OLO_SHOW_CLASS_TREE)                                       \
-        ENUM(OLO_TOP_SYMBOL_RES)                                        \
         ENUM(OLO_ACTIVE_PROJECT)                                        \
         ENUM(OLO_JAVA_HOME)                                             \
         ENUM(OLO_REPUSH)                                                \
