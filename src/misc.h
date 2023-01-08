@@ -147,7 +147,7 @@ extern void printSymbolLinkName(SymbolsMenu *ss, FILE *ff);
 
 extern bool requiresCreatingRefs(ServerOperation operation);
 extern void formatOutputLine(char *tt, int startingColumn);
-extern void get_bare_name(char *name, char **start, int *len);
+extern void getBareName(char *name, char **start, int *len);
 extern Language getLanguageFor(char *inFileName);
 
 #endif

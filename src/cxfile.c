@@ -947,8 +947,8 @@ static bool canBypassAcceptableSymbol(ReferencesItem *symbol) {
     int nlen,len;
     char *nn, *nnn;
 
-    get_bare_name(symbol->name, &nn, &len);
-    get_bare_name(options.browsedSymName, &nnn, &nlen);
+    getBareName(symbol->name, &nn, &len);
+    getBareName(options.browsedSymName, &nnn, &nlen);
     if (len != nlen)
         return false;
     if (strncmp(nn, nnn, len))

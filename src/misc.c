@@ -1341,7 +1341,7 @@ void formatOutputLine(char *line, int startingColumn) {
     }
 }
 
-void get_bare_name(char *name, char **start, int *len) {
+void getBareName(char *name, char **start, int *len) {
     int   _c_;
     char *_ss_;
     _ss_ = *start = name;

@@ -1948,8 +1948,8 @@ static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
 
     r1 = &menu1->references;
     r2 = &menu2->references;
-    get_bare_name(r1->name, &name1, &len1);
-    get_bare_name(r2->name, &name2, &len2);
+    getBareName(r1->name, &name1, &len1);
+    getBareName(r2->name, &name2, &len2);
     int cmp = strcmp(name1, name2);
     if (cmp!=0)
         return cmp<0;
@@ -2005,8 +2005,8 @@ bool olcxIsSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
 
-    get_bare_name(p1->name, &n1start, &n1len);
-    get_bare_name(p2->name, &n2start, &n2len);
+    getBareName(p1->name, &n1start, &n1len);
+    getBareName(p2->name, &n2start, &n2len);
     if (n1len != n2len)
         return false;
     if (strncmp(n1start, n2start, n1len))
