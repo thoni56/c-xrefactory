@@ -531,9 +531,8 @@ void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, voi
 }
 
 void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file, char *fn) {
-    SymbolsMenu *rr;
-
-    for(rr=menu; rr!=NULL; rr=rr->next) rr->outOnLine = 0;
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next)
+        m->outOnLine = 0;
     currentOutputLineInSymbolList = 1;
     splitMenuPerSymbolsAndMap(menu, (void (*)(SymbolsMenu *, void *, void *))genNonVirtualsGlobRefLists,
                               file, fn);
