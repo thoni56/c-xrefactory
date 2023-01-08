@@ -58,10 +58,6 @@ void gotoOnlineCxref(Position *pos, UsageKind usageKind, char *suffix) {
     mock(pos, usageKind, suffix);
 }
 
-void olcxFreeReferences(Reference *r) {
-    mock(r);
-}
-
 char *getJavaDocUrl_st(ReferencesItem *rr) {
     return (char *) mock(rr);
 }

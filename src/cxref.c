@@ -664,21 +664,12 @@ void addCfClassTreeHierarchyRef(int fnum, int usage) {
 
 /* ***************************************************************** */
 
-void olcxFreeReferences(Reference *r) {
-    Reference *tmp;
-    while (r!=NULL) {
-        tmp = r->next;
-        olcxFree(r, sizeof(Reference));
-        r = tmp;
-    }
-}
-
 SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll) {
     int nlen;
     SymbolsMenu *tt;
     nlen = strlen(ll->references.name);
     olcxFree(ll->references.name, nlen+1);
-    olcxFreeReferences(ll->references.references);
+    freeReferences(ll->references.references);
     tt = ll->next;
     olcxFree(ll, sizeof(*ll));
     ll = tt;
@@ -698,7 +689,7 @@ void olcxFreeResolutionMenu(SymbolsMenu *sym ) {
 static void deleteOlcxRefs(OlcxReferences **refsP, OlcxReferencesStack *stack) {
     OlcxReferences    *refs = *refsP;
 
-    olcxFreeReferences(refs->references);
+    freeReferences(refs->references);
     olcxFreeCompletions(refs->completions);
     olcxFreeResolutionMenu(refs->hkSelectedSym);
     olcxFreeResolutionMenu(refs->menuSym);
@@ -1640,7 +1631,7 @@ static void findAndGotoDefinition(ReferencesItem *sym) {
     refs->menuSym = &menu;
     fullScanFor(sym->name);
     orderRefsAndGotoDefinition(refs, DEFAULT_VALUE);
-    //&olcxFreeReferences(refs->references);
+    //&freeReferences(refs->references);
     //&*refs = oldrefs;
     refs->menuSym = NULL;
     // recover stack
@@ -2058,7 +2049,7 @@ void olProcessSelectedReferences(
 }
 
 void olcxRecomputeSelRefs(OlcxReferences *refs) {
-    olcxFreeReferences(refs->references); refs->references = NULL;
+    freeReferences(refs->references); refs->references = NULL;
     olProcessSelectedReferences(refs, genOnLineReferences);
 }
 
@@ -2707,7 +2698,7 @@ static void olcxSafetyCheck2(void) {
     shifted = olcxCreateFileShiftedRefListForCheck(origrefs->references);
     if (shifted != NULL) {
         safetyCheckDiff(&newrefs->references, &shifted, diffrefs);
-        olcxFreeReferences(shifted);
+        freeReferences(shifted);
     } else {
         safetyCheckDiff(&newrefs->references, &origrefs->references, diffrefs);
     }
@@ -3629,7 +3620,7 @@ static void olcxCreateClassTree(void) {
 
     // now free special references, which will never be used
     for (SymbolsMenu *menu=sessionData.classTree.treeMenu; menu!=NULL; menu=menu->next) {
-        olcxFreeReferences(menu->references.references);
+        freeReferences(menu->references.references);
         menu->references.references = NULL;
     }
     // delete it as last command, because the top command is tested

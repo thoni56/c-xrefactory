@@ -45,6 +45,14 @@ void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fil
     referencesItem->category = category;
 }
 
+void freeReferences(Reference *references) {
+    while (references != NULL) {
+        Reference *next = references->next;
+        olcxFree(references, sizeof(Reference));
+        references = next;
+    }
+}
+
 void resetReferenceUsage(Reference *reference, UsageKind usageKind) {
     if (reference != NULL && reference->usage.kind > usageKind) {
         reference->usage.kind = usageKind;

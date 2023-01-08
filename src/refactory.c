@@ -727,7 +727,7 @@ static void pushMarkersAsReferences(EditorMarkerList **markers, OlcxReferences *
             }
         }
     }
-    olcxFreeReferences(rr);
+    freeReferences(rr);
     olcxRecomputeSelRefs(refs);
 }
 
@@ -1403,7 +1403,7 @@ static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMark
             mm->visible  = true;
             mm->ooBits   = 07777777;
             // hack, freeing now all diffs computed by old method
-            olcxFreeReferences(mm->references.references);
+            freeReferences(mm->references.references);
             mm->references.references = NULL;
         }
         //&editorDumpMarkerList(diff1);
@@ -3524,7 +3524,7 @@ static int isMethodPartRedundant(EditorMarker *m1, EditorMarker *m2) {
                 }
             }
             freeEditorMarkersAndMarkerList(lll);
-            olcxFreeReferences(diff);
+            freeReferences(diff);
         }
         mm1 = mm1->next;
         mm2 = mm2->next;
