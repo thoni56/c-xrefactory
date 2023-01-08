@@ -1940,25 +1940,6 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     return res;
 }
 
-static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
-    ReferencesItem *r1, *r2;
-    char *name1, *name2;
-    int len1; UNUSED len1;
-    int len2; UNUSED len2;
-
-    r1 = &menu1->references;
-    r2 = &menu2->references;
-    getBareName(r1->name, &name1, &len1);
-    getBareName(r2->name, &name2, &len2);
-    int cmp = strcmp(name1, name2);
-    if (cmp!=0)
-        return cmp<0;
-    cmp = strcmp(r1->name, r2->name);
-    if (cmp!=0)
-        return cmp<0;
-    return classHierarchyClassNameLess(menu1->references.vApplClass, menu2->references.vApplClass);
-}
-
 bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     if (p1 == p2)
         return true;
@@ -3122,6 +3103,25 @@ static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
     return clii;
 }
 
+
+static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
+    ReferencesItem *r1, *r2;
+    char *name1, *name2;
+    int len1; UNUSED len1;
+    int len2; UNUSED len2;
+
+    r1 = &menu1->references;
+    r2 = &menu2->references;
+    getBareName(r1->name, &name1, &len1);
+    getBareName(r2->name, &name2, &len2);
+    int cmp = strcmp(name1, name2);
+    if (cmp!=0)
+        return cmp<0;
+    cmp = strcmp(r1->name, r2->name);
+    if (cmp!=0)
+        return cmp<0;
+    return classHierarchyClassNameLess(menu1->references.vApplClass, menu2->references.vApplClass);
+}
 
 void olCreateSelectionMenu(int command) {
     OlcxReferences    *rstack;
