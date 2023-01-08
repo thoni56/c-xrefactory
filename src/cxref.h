@@ -23,7 +23,6 @@ extern void olProcessSelectedReferences(OlcxReferences *rstack,
                                         void (*referencesMapFun)(OlcxReferences *rstack,
                                                                  SymbolsMenu *ss));
 extern void olcxPopOnly(void);
-extern Reference * olcxCopyRefList(Reference *ll);
 extern void olStackDeleteSymbol(OlcxReferences *refs);
 extern int getFileNumberFromName(char *name);
 extern void gotoOnlineCxref(Position *p, UsageKind usageKind, char *suffix);

@@ -2553,19 +2553,6 @@ void olcxPopOnly(void) {
     sessionData.browserStack.top = refs->previous;
 }
 
-Reference * olcxCopyRefList(Reference *ll) {
-    Reference *res, *a, **aa;
-    res = NULL; aa= &res;
-    for (Reference *rr=ll; rr!=NULL; rr=rr->next) {
-        a = olcxAlloc(sizeof(Reference));
-        *a = *rr;
-        a->next = NULL;
-        *aa = a;
-        aa = &(a->next);
-    }
-    return res;
-}
-
 static void safetyCheckAddDiffRef(Reference *r, OlcxReferences *diffrefs,
                                   int mode) {
     int prefixchar;

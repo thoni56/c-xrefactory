@@ -46,10 +46,6 @@ void olcxPopOnly(void) {
     mock();
 }
 
-Reference *olcxCopyRefList(Reference *ll) {
-    return (Reference *) mock(ll);
-}
-
 void olStackDeleteSymbol(OlcxReferences *refs) {
     mock(refs);
 }

@@ -924,6 +924,19 @@ static void askForReallyContinueConfirmation(void) {
     ppcAskConfirmation("The refactoring may change program behaviour, really continue?");
 }
 
+static Reference * olcxCopyRefList(Reference *references) {
+    Reference *res, *a, **aa;
+    res = NULL; aa= &res;
+    for (Reference *rr=references; rr!=NULL; rr=rr->next) {
+        a = olcxAlloc(sizeof(Reference));
+        *a = *rr;
+        a->next = NULL;
+        *aa = a;
+        aa = &(a->next);
+    }
+    return res;
+}
+
 static bool checkMoveClassAccessibilities(void) {
     OlcxReferences      *rstack;
     SymbolsMenu         *ss;
