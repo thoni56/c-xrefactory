@@ -298,7 +298,7 @@ protected void *olcxSoftAllocc(int count, size_t elementSize) {
     }
 }
 
-void *olcxAllocc(int count, size_t elementSize) {
+static void *olcxAllocc(int count, size_t elementSize) {
     void *pointer = olcxSoftAllocc(count, elementSize);
     if (pointer==NULL) {
         fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR, __FILE__, __LINE__);
@@ -318,7 +318,7 @@ void olcxFree(void *pointer, size_t size) {
 
 /* EDITOR */
 void *editorAlloc(size_t size) {
-    return olcxAllocc(1, size);
+    return olcxAlloc(size);
 }
 
 void editorFree(void *pointer, size_t size) {

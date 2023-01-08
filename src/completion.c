@@ -47,22 +47,22 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     ReferencesItem sri;
 
     nlen = strlen(name);
-    nn = olcxAllocc(nlen+1, sizeof(char));
+    nn = olcxAlloc(nlen+1);
     strcpy(nn, name);
     fullnn = NULL;
     if (fullText!=NULL) {
-        fullnn = olcxAllocc(strlen(fullText)+1, sizeof(char));
+        fullnn = olcxAlloc(strlen(fullText)+1);
         strcpy(fullnn, fullText);
     }
     vclnn = NULL;
     if (vclass!=NULL) {
-        vclnn = olcxAllocc(strlen(vclass)+1, sizeof(char));
+        vclnn = olcxAlloc(strlen(vclass)+1);
         strcpy(vclnn, vclass);
     }
     if (referenceItem!=NULL) {
         // probably a 'search in tag' file item
         slen = strlen(referenceItem->name);
-        ss = olcxAllocc(slen+1, sizeof(char));
+        ss = olcxAlloc(slen+1);
         strcpy(ss, referenceItem->name);
         fillReferencesItem(&sri, ss, cxFileHashNumber(ss), referenceItem->vApplClass, referenceItem->vFunClass,
                            referenceItem->type, referenceItem->storage, referenceItem->scope,
@@ -80,7 +80,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         getSymbolCxrefProperties(symbol, &category, &scope, &storage);
         log_trace(":adding sym '%s' %d", symbol->linkName, category);
         slen = strlen(symbol->linkName);
-        ss = olcxAllocc(slen+1, sizeof(char));
+        ss = olcxAlloc(slen+1);
         strcpy(ss, symbol->linkName);
         fillUsage(&r.usage, UsageDefined, 0);
         fillReference(&r, r.usage, symbol->pos, NULL);

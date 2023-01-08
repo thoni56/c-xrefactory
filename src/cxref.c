@@ -99,7 +99,7 @@ static char *olcxStringCopy(char *string) {
     int length;
     char *copy;
     length = strlen(string);
-    copy = olcxAllocc(length+1, sizeof(char));
+    copy = olcxAlloc(length+1);
     strcpy(copy, string);
     return copy;
 }
@@ -151,7 +151,7 @@ void renameCollationSymbols(SymbolsMenu *menu) {
         if (cs!=NULL && m->references.type==TypeCppCollate) {
             len = strlen(m->references.name);
             assert(len>=2);
-            nn = olcxAllocc(len-1, sizeof(char));
+            nn = olcxAlloc(len-1);
             len1 = cs-m->references.name;
             strncpy(nn, m->references.name, len1);
             strcpy(nn+len1, cs+2);

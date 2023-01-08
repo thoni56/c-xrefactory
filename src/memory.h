@@ -121,7 +121,6 @@ extern bool isFreedCxMemory(void *pointer);
 
 /* on-line dialogs allocation */
 extern void olcxMemoryInit(void);
-extern void *olcxAllocc(int count, size_t size);
 extern void *olcxAlloc(size_t size);
 extern void olcxFree(void *pointer, size_t size);
 
