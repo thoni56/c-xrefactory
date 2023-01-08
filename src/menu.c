@@ -6,34 +6,24 @@
 #include "list.h"
 #include "log.h"
 
-
-void fillSymbolsMenu(SymbolsMenu *symbolsMenu,
-                     ReferencesItem references,
-                     bool selected,
-                     bool visible,
-                     unsigned ooBits,
-                     char olUsage,
-                     short int vlevel,
-                     short int refn,
-                     short int defRefn,
-                     char defUsage,
-                     Position defpos,
-                     int outOnLine) {
+void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem references, bool selected, bool visible,
+                     unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
     symbolsMenu->references = references;
-    symbolsMenu->selected = selected;
-    symbolsMenu->visible = visible;
-    symbolsMenu->ooBits = ooBits;
-    symbolsMenu->olUsage = olUsage;
-    symbolsMenu->vlevel = vlevel;
-    symbolsMenu->refn = refn;
-    symbolsMenu->defRefn = defRefn;
-    symbolsMenu->defUsage = defUsage;
-    symbolsMenu->defpos = defpos;
-    symbolsMenu->outOnLine = outOnLine;
-    symbolsMenu->markers = NULL;
-    symbolsMenu->next = NULL;
-}
+    symbolsMenu->selected   = selected;
+    symbolsMenu->visible    = visible;
+    symbolsMenu->ooBits     = ooBits;
+    symbolsMenu->olUsage    = olUsage;
+    symbolsMenu->vlevel     = vlevel;
+    symbolsMenu->defUsage   = defUsage;
+    symbolsMenu->defpos     = defpos;
 
+    /* Default values */
+    symbolsMenu->refn      = 0;
+    symbolsMenu->defRefn   = 0;
+    symbolsMenu->outOnLine = 0;
+    symbolsMenu->markers   = NULL;
+    symbolsMenu->next      = NULL;
+}
 
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag) {
     Reference *added;
