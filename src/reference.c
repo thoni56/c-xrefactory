@@ -81,6 +81,14 @@ void deleteFromRefList(void *p) {
 }
 &*/
 
+bool isReferenceInList(Reference *reference, Reference *list) {
+    Reference *place;
+    SORTED_LIST_FIND2(place,Reference, (*reference),list);
+    if (place==NULL || SORTED_LIST_NEQ(place, *reference))
+        return false;
+    return true;
+}
+
 Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int bestMatchFlag) {
     Reference **place, *rr;
     rr = NULL;

@@ -87,7 +87,6 @@ extern bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
 extern void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                          Symbol *cclass);
 extern void olcxPushSpecialCheckMenuSym(char *symname);
-extern bool refOccursInRefs(Reference *r, Reference *list);
 extern void olcxCheck1CxFileReference(ReferencesItem *ss, Reference *r);
 extern void olcxPushSpecial(char *fieldName, int command);
 extern bool isPushAllMethodsValidRefItem(ReferencesItem *ri);

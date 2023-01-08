@@ -1816,7 +1816,7 @@ static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, Symbol
     if (!pushed && olcxIsSameCxSymbol(p, sss)) {
         log_trace("checking %s references", p->name);
         for (Reference *r = p->references; r != NULL; r = r->next) {
-            if (refOccursInRefs(r, rstack->references)) {
+            if (isReferenceInList(r, rstack->references)) {
                 multipleReferencesInSamePlaceMessage(r);
             }
         }

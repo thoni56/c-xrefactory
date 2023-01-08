@@ -229,10 +229,6 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
     mock(symname);
 }
 
-bool refOccursInRefs(Reference *r, Reference *list) {
-    return (bool) mock(r, list);
-}
-
 void olcxCheck1CxFileReference(ReferencesItem *ss, Reference *r) {
     mock(ss, r);
 }

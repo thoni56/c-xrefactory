@@ -3166,21 +3166,13 @@ void olCreateSelectionMenu(int command) {
                     refItemsOrderLess);
 }
 
-bool refOccursInRefs(Reference *reference, Reference *list) {
-    Reference *place;
-    SORTED_LIST_FIND2(place,Reference, (*reference),list);
-    if (place==NULL || SORTED_LIST_NEQ(place, *reference))
-        return false;
-    return true;
-}
-
 static void olcxSingleReferenceCheck1(ReferencesItem *referenceItem,
                                       OlcxReferences *rstack,
                                       Reference *reference
 ) {
     int prefixchar;
 
-    if (refOccursInRefs(reference, rstack->references)) {
+    if (isReferenceInList(reference, rstack->references)) {
         prefixchar = ' ';
         if (sessionData.browserStack.top->references == NULL) {
             fprintf(communicationChannel,"%s",COLCX_LIST);

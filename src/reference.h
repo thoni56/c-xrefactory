@@ -48,6 +48,7 @@ extern Reference **addToReferenceList(Reference **list, Usage usage, Position po
 extern Reference *olcxAddReferenceNoUsageCheck(Reference **rlist,
                                                Reference *ref,
                                                int bestMatchFlag);
+extern bool isReferenceInList(Reference *r, Reference *list);
 extern Reference *olcxAddReference(Reference **rlist,
                                    Reference *ref,
                                    int bestMatchFlag);
