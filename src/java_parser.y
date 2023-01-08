@@ -3672,7 +3672,7 @@ PostIncrementExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.data.typeModifier = javaCheckNumeric($1.data.typeModifier);
-                    reset_reference_usage($1.data.reference, UsageAddrUsed);
+                    resetReferenceUsage($1.data.reference, UsageAddrUsed);
                 } else {
                     $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
@@ -3686,7 +3686,7 @@ PostDecrementExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.data.typeModifier = javaCheckNumeric($1.data.typeModifier);
-                    reset_reference_usage($1.data.reference, UsageAddrUsed);
+                    resetReferenceUsage($1.data.reference, UsageAddrUsed);
                 } else {
                     $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
@@ -3728,7 +3728,7 @@ PreIncrementExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.data.typeModifier = javaCheckNumeric($2.data.typeModifier);
-                    reset_reference_usage($2.data.reference, UsageAddrUsed);
+                    resetReferenceUsage($2.data.reference, UsageAddrUsed);
                 } else {
                     $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
@@ -3742,7 +3742,7 @@ PreDecrementExpression
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.data.typeModifier = javaCheckNumeric($2.data.typeModifier);
-                    reset_reference_usage($2.data.reference, UsageAddrUsed);
+                    resetReferenceUsage($2.data.reference, UsageAddrUsed);
                 } else {
                     $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
@@ -4176,15 +4176,15 @@ Assignment
                         rr = duplicateReference($1.data.reference);
                         $1.data.reference->usage = NO_USAGE;
                         if ($3.data.u == '=') {
-                            reset_reference_usage(rr, UsageLvalUsed);
+                            resetReferenceUsage(rr, UsageLvalUsed);
                         } else {
-                            reset_reference_usage(rr, UsageAddrUsed);
+                            resetReferenceUsage(rr, UsageAddrUsed);
                         }
                     } else {
                         if ($3.data.u == '=') {
-                            reset_reference_usage($1.data.reference, UsageLvalUsed);
+                            resetReferenceUsage($1.data.reference, UsageLvalUsed);
                         } else {
-                            reset_reference_usage($1.data.reference, UsageAddrUsed);
+                            resetReferenceUsage($1.data.reference, UsageAddrUsed);
                         }
                         $$.data.typeModifier = $1.data.typeModifier;
                         $$.data.reference = NULL;

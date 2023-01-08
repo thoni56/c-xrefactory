@@ -6532,7 +6532,7 @@ case 412:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.data.typeModifier = javaCheckNumeric(yyvsp[-1].ast_expressionType.data.typeModifier);
-                    reset_reference_usage(yyvsp[-1].ast_expressionType.data.reference, UsageAddrUsed);
+                    resetReferenceUsage(yyvsp[-1].ast_expressionType.data.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
@@ -6546,7 +6546,7 @@ case 413:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.data.typeModifier = javaCheckNumeric(yyvsp[-1].ast_expressionType.data.typeModifier);
-                    reset_reference_usage(yyvsp[-1].ast_expressionType.data.reference, UsageAddrUsed);
+                    resetReferenceUsage(yyvsp[-1].ast_expressionType.data.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
@@ -6588,7 +6588,7 @@ case 419:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.data.typeModifier = javaCheckNumeric(yyvsp[0].ast_expressionType.data.typeModifier);
-                    reset_reference_usage(yyvsp[0].ast_expressionType.data.reference, UsageAddrUsed);
+                    resetReferenceUsage(yyvsp[0].ast_expressionType.data.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -6602,7 +6602,7 @@ case 420:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.data.typeModifier = javaCheckNumeric(yyvsp[0].ast_expressionType.data.typeModifier);
-                    reset_reference_usage(yyvsp[0].ast_expressionType.data.reference, UsageAddrUsed);
+                    resetReferenceUsage(yyvsp[0].ast_expressionType.data.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -7050,15 +7050,15 @@ case 463:
                         rr = duplicateReference(yyvsp[-3].ast_expressionType.data.reference);
                         yyvsp[-3].ast_expressionType.data.reference->usage = NO_USAGE;
                         if (yyvsp[-1].ast_unsignedPositionPair.data.u == '=') {
-                            reset_reference_usage(rr, UsageLvalUsed);
+                            resetReferenceUsage(rr, UsageLvalUsed);
                         } else {
-                            reset_reference_usage(rr, UsageAddrUsed);
+                            resetReferenceUsage(rr, UsageAddrUsed);
                         }
                     } else {
                         if (yyvsp[-1].ast_unsignedPositionPair.data.u == '=') {
-                            reset_reference_usage(yyvsp[-3].ast_expressionType.data.reference, UsageLvalUsed);
+                            resetReferenceUsage(yyvsp[-3].ast_expressionType.data.reference, UsageLvalUsed);
                         } else {
-                            reset_reference_usage(yyvsp[-3].ast_expressionType.data.reference, UsageAddrUsed);
+                            resetReferenceUsage(yyvsp[-3].ast_expressionType.data.reference, UsageAddrUsed);
                         }
                         yyval.ast_expressionType.data.typeModifier = yyvsp[-3].ast_expressionType.data.typeModifier;
                         yyval.ast_expressionType.data.reference = NULL;

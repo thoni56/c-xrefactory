@@ -45,7 +45,7 @@ void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fil
     referencesItem->category = category;
 }
 
-void reset_reference_usage(Reference *reference, UsageKind usageKind) {
+void resetReferenceUsage(Reference *reference, UsageKind usageKind) {
     if (reference != NULL && reference->usage.kind > usageKind) {
         reference->usage.kind = usageKind;
     }
