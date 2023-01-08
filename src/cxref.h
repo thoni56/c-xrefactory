@@ -30,7 +30,6 @@ extern char *getJavaDocUrl_st(ReferencesItem *rr);
 extern char *getLocalJavaDocFile_st(char *fileUrl);
 extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
 extern bool htmlJdkDocAvailableForUrl(char *ss);
-extern Reference *duplicateReference(Reference *r);
 extern Reference * addNewCxReference(Symbol *symbol, Position *pos,
                                      Usage usage, int vFunClass, int vApplClass);
 extern Reference * addCxReference(Symbol *symbol, Position *pos, UsageKind usage,

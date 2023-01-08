@@ -27,6 +27,10 @@ void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fil
 }
 
 
+Reference *duplicateReference(Reference *r) {
+    return (Reference *) mock(r);
+}
+
 void freeReferences(Reference *references) {
     mock(references);
 }

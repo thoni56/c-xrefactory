@@ -74,10 +74,6 @@ bool htmlJdkDocAvailableForUrl(char *ss) {
     return (bool) mock(ss);
 }
 
-Reference *duplicateReference(Reference *r) {
-    return (Reference *) mock(r);
-}
-
 Reference *addNewCxReference(Symbol *symbol, Position *pos, Usage usage_arg, int vFunClass, int vApplClass) {
     Usage *usage = &usage_arg;
     return (Reference *) mock(symbol, pos, usage, vFunClass, vApplClass);

@@ -43,6 +43,7 @@ extern void fillReference(Reference *reference, Usage usage, Position position, 
 extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
                                int vFunClass, Type symType, Storage storage, ReferenceScope scope,
                                Access accessFlags, ReferenceCategory category);
+extern Reference *duplicateReference(Reference *r);
 extern void freeReferences(Reference *references);
 extern void resetReferenceUsage(Reference *reference, UsageKind usageKind);
 extern Reference **addToReferenceList(Reference **list, Usage usage, Position pos);
