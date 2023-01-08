@@ -135,7 +135,7 @@
     }                                                           \
 
 /*
-  LIST_INSERTSORT(listType, i/o ioList, lessfunction)
+  LIST_MERGE_SORT(listType, i/o ioList, lessfunction)
 */
 #define LIST_MERGE_SORT(listType, ioList, lessfunction) {               \
         listType *_macrores;                                            \
