@@ -462,7 +462,7 @@ typedef struct currentlyParsedInfo {
     bool              marker1Flag;
     int               marker2Flag;
     char              setTargetAnswerClass[TMP_STRING_SIZE];
-    int               moveTargetApproved;
+    bool              moveTargetApproved;
     char              currentPackageAnswer[TMP_STRING_SIZE];
     char              currentClassAnswer[TMP_STRING_SIZE];
     char              currentSuperClassAnswer[TMP_STRING_SIZE];

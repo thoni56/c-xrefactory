@@ -2108,21 +2108,21 @@ static void actionOnBlockMarker(void) {
             }
         }
     } else if (options.serverOperation == OLO_SET_MOVE_CLASS_TARGET) {
-        parsedInfo.moveTargetApproved = 0;
+        parsedInfo.moveTargetApproved = false;
         if (LANGUAGE(LANG_JAVA)) {
             if (parsedClassInfo.function == NULL) {
                 if (javaStat!=NULL) {
-                    parsedInfo.moveTargetApproved = 1;
+                    parsedInfo.moveTargetApproved = true;
                 }
             }
         }
     } else if (options.serverOperation == OLO_SET_MOVE_METHOD_TARGET) {
-        parsedInfo.moveTargetApproved = 0;
+        parsedInfo.moveTargetApproved = false;
         if (LANGUAGE(LANG_JAVA)) {
             if (parsedClassInfo.function == NULL) {
                 if (javaStat!=NULL) {
                     if (javaStat->thisClass!=NULL) {
-                        parsedInfo.moveTargetApproved = 1;
+                        parsedInfo.moveTargetApproved = true;
                     }
                 }
             }
