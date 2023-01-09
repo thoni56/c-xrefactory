@@ -1378,15 +1378,16 @@ bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
     return true;
 }
 
-void olcxPrintClassTree(SymbolsMenu *sss) {
+void olcxPrintClassTree(SymbolsMenu *menu) {
     if (options.xref2) {
         ppcBegin(PPC_DISPLAY_CLASS_TREE);
     } else {
         fprintf(communicationChannel, "<");
     }
     scanForClassHierarchy();
-    generateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
-    if (options.xref2) ppcEnd(PPC_DISPLAY_CLASS_TREE);
+    generateGlobalReferenceLists(menu, communicationChannel, "__NO_HTML_FILE_NAME!__");
+    if (options.xref2)
+        ppcEnd(PPC_DISPLAY_CLASS_TREE);
 }
 
 void olcxPrintSelectionMenu(SymbolsMenu *sss) {
@@ -2011,16 +2012,14 @@ static void olcxClassTreeInspectDef(void) {
     olcxMenuInspectDef(sessionData.classTree.treeMenu, INSPECT_CLASS);
 }
 
-void olProcessSelectedReferences(
-                                 OlcxReferences    *rstack,
-                                 void (*referencesMapFun)(OlcxReferences *rstack, SymbolsMenu *ss)
-                                 ) {
+void olProcessSelectedReferences(OlcxReferences *rstack,
+                                 void (*referencesMapFun)(OlcxReferences *rstack, SymbolsMenu *menu)) {
     if (rstack->menuSym == NULL)
         return;
 
     LIST_MERGE_SORT(Reference, rstack->references, olcxReferenceInternalLessFunction);
-    for (SymbolsMenu *ss=rstack->menuSym; ss!=NULL; ss=ss->next) {
-        referencesMapFun(rstack, ss);
+    for (SymbolsMenu *m = rstack->menuSym; m != NULL; m = m->next) {
+        referencesMapFun(rstack, m);
     }
     olcxSetCurrentRefsOnCaller(rstack);
     LIST_MERGE_SORT(Reference, rstack->references, referenceIsLessThan);

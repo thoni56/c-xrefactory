@@ -1385,7 +1385,7 @@ bool smartReadReferences(void) {
 }
 
 // symbolName can be NULL !!!!!!
-static void readOneAppropReferenceFile(char *symbolName,
+static void readOneAppropiateReferenceFile(char *symbolName,
                                        ScanFileFunctionStep  scanFileFunctionTable[]
 ) {
     if (options.cxrefsLocation == NULL)
@@ -1419,23 +1419,23 @@ void normalScanReferenceFile(char *name) {
 }
 
 void scanForClassHierarchy(void) {
-    readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
+    readOneAppropiateReferenceFile(NULL, classHierarchyFunctionSequence);
 }
 
 void fullScanFor(char *symbolName) {
-    readOneAppropReferenceFile(symbolName, fullUpdateFunctionSequence);
+    readOneAppropiateReferenceFile(symbolName, fullUpdateFunctionSequence);
 }
 
 void scanForBypass(char *symbolName) {
-    readOneAppropReferenceFile(symbolName, byPassFunctionSequence);
+    readOneAppropiateReferenceFile(symbolName, byPassFunctionSequence);
 }
 
 void scanReferencesToCreateMenu(char *symbolName){
-    readOneAppropReferenceFile(symbolName, symbolMenuCreationFunctionSequence);
+    readOneAppropiateReferenceFile(symbolName, symbolMenuCreationFunctionSequence);
 }
 
 void scanForMacroUsage(char *symbolName) {
-    readOneAppropReferenceFile(symbolName, secondPassMacroUsageFunctionSequence);
+    readOneAppropiateReferenceFile(symbolName, secondPassMacroUsageFunctionSequence);
 }
 
 void scanForGlobalUnused(char *cxrefLocation) {
