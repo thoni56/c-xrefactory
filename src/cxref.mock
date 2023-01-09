@@ -173,10 +173,6 @@ void pushEmptySession(OlcxReferencesStack *stack) {
     mock(stack);
 }
 
-void olcxPrintSelectionMenu(SymbolsMenu *sss) {
-    mock(sss);
-}
-
 bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
     return (bool) mock(oo1, oo2);
 }

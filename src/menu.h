@@ -28,5 +28,6 @@ extern SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu);
 extern void freeSymbolsMenuList(SymbolsMenu *menu);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag);
 extern void olcxPrintClassTree(SymbolsMenu *menu);
+extern void olcxPrintSelectionMenu(SymbolsMenu *menu);
 
 #endif

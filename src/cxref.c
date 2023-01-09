@@ -1378,42 +1378,6 @@ bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
     return true;
 }
 
-void olcxPrintSelectionMenu(SymbolsMenu *sss) {
-    if (options.xref2) {
-        ppcBegin(PPC_SYMBOL_RESOLUTION);
-    } else {
-        fprintf(communicationChannel, ">");
-    }
-    if (sss!=NULL) {
-        scanForClassHierarchy();
-        generateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
-    }
-    if (options.xref2) {
-        ppcEnd(PPC_SYMBOL_RESOLUTION);
-    } else {
-        if (options.serverOperation==OLO_RENAME || options.serverOperation==OLO_ARG_MANIP || options.serverOperation==OLO_ENCAPSULATE) {
-            if (LANGUAGE(LANG_JAVA)) {
-                fprintf(communicationChannel, "-![Warning] It is highly recommended to process the whole hierarchy of related classes at once. Unselection of any class of applications above (and its exclusion from refactoring process) may cause changes in your program behavior. Press <return> to continue.\n");
-            } else {
-                fprintf(communicationChannel, "-![Warning] It is highly recommended to process all symbols at once. Unselection of any symbols and its exclusion from refactoring process may cause changes in your program behavior. Press <return> to continue.\n");
-            }
-        }
-        if (options.serverOperation==OLO_VIRTUAL2STATIC_PUSH) {
-            fprintf(communicationChannel, "-![Warning] If you see this message it is highly probable that turning this virtual method into static will not be behaviour preserving! This refactoring is behaviour preserving only if the method does not use mechanism of virtual invocations. On this screen you should select the application classes which are refering to the method which will become static. If you can't unambiguously determine those references do not continue in this refactoring!\n");
-        }
-        if (options.serverOperation==OLO_SAFETY_CHECK2) {
-            if (LANGUAGE(LANG_JAVA)) {
-                fprintf(communicationChannel, "-![Warning] There are differences between original class hierarchy and the new one, those name clashes may cause that the refactoring will not be behavior preserving!\n");
-            } else {
-                fprintf(communicationChannel, "-![Error] There is differences between original and new symbols referenced at this position. The difference is due to name clashes and may cause changes in the behaviour of the program. Please, undo last refactoring!");
-            }
-        }
-        if (options.serverOperation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK) {
-            fprintf(communicationChannel, "-![Warning] A method (getter or setter) created during the encapsulation has the same name as an existing method, so it will be inserted into this (existing) inheritance hierarchy. This may cause that the refactoring will not be behaviour preserving. Please, select applications unambiguously reporting to the newly created method. If you can't do this, you should undo the refactoring and rename the field first!\n");
-        }
-    }
-}
-
 static int getCurrentRefPosition(OlcxReferences *refs) {
     Reference     *rr;
     int             rlevel;
@@ -2917,15 +2881,15 @@ static SymbolsMenu *safetyCheck2FindCorrMenuItem(SymbolsMenu *item,
                                                  SymbolsMenu *menu,
                                                  int command
 ) {
-    for (SymbolsMenu *ss=menu; ss!=NULL; ss=ss->next) {
-        if (ss->selected
-            && ss->references.vApplClass == item->references.vApplClass
-            && ss->references.type == item->references.type
-            && ss->references.storage == item->references.storage
-            && refactoringLinkNameCorrespondance(ss->references.name, item->references.name,
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        if (m->selected
+            && m->references.vApplClass == item->references.vApplClass
+            && m->references.type == item->references.type
+            && m->references.storage == item->references.storage
+            && refactoringLinkNameCorrespondance(m->references.name, item->references.name,
                                                  command)) {
             // here it is
-            return ss;
+            return m;
         }
     }
     return NULL;
@@ -2942,12 +2906,12 @@ static bool scCompareVirtualHierarchies(SymbolsMenu *origm,
     //&fprintf(dumpOut,":COMPARING\n");olcxPrintSelectionMenu(origm);fprintf(dumpOut,":TO\n");olcxPrintSelectionMenu(newm);fprintf(dumpOut,":END\n");
     if (count1 != count2)
         res = true;
-    for (SymbolsMenu *ss=newm; ss!=NULL; ss=ss->next) {
-        if (ss->selected) {
-            SymbolsMenu *oss = safetyCheck2FindCorrMenuItem(ss, origm, command);
+    for (SymbolsMenu *m=newm; m!=NULL; m=m->next) {
+        if (m->selected) {
+            SymbolsMenu *oss = safetyCheck2FindCorrMenuItem(m, origm, command);
             if (oss==NULL || !oss->selected) {
                 res = true;
-                ss->selected = false;
+                m->selected = false;
             }
         }
     }

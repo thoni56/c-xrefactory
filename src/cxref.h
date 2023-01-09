@@ -65,7 +65,6 @@ extern Reference * getDefinitionRef(Reference *rr);
 extern bool safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);
 extern void pushEmptySession(OlcxReferencesStack *stack);
-extern void olcxPrintSelectionMenu(SymbolsMenu *sss);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
                                Reference **diff);
