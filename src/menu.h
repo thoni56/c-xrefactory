@@ -24,6 +24,8 @@ extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s, b
                             unsigned ooBits, char olUsage, short int vlevel,
                             char defUsage, struct position defpos);
 
+extern SymbolsMenu *freeSymbolsMenu(SymbolsMenu *ll);
+extern void freeSymbolsMenuList(SymbolsMenu *sym );
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag);
 
 #endif

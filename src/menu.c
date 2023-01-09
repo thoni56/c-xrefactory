@@ -25,6 +25,24 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem references, bool s
     symbolsMenu->next      = NULL;
 }
 
+SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu) {
+    olcxFree(menu->references.name, strlen(menu->references.name)+1);
+    freeReferences(menu->references.references);
+    SymbolsMenu *next = menu->next;
+    olcxFree(menu, sizeof(*menu));
+    return next;
+}
+
+
+void freeSymbolsMenuList(SymbolsMenu *menuList) {
+    SymbolsMenu *l;
+
+    l = menuList;
+    while (l != NULL) {
+        l = freeSymbolsMenu(l);
+    }
+}
+
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag) {
     Reference *added;
     added = olcxAddReference(&menu->references.references, reference, bestFitFlag);

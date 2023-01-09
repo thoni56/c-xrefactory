@@ -261,14 +261,6 @@ void answerEditAction(void) {
     mock();
 }
 
-SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll) {
-    return (SymbolsMenu *) mock(ll);
-}
-
-void olcxFreeResolutionMenu(SymbolsMenu *sym) {
-    mock(sym);
-}
-
 void generateReferences(void) {
     mock();
 }

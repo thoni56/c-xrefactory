@@ -91,8 +91,6 @@ extern int javaGetSuperClassNumFromClassNum(int cn);
 extern bool javaIsSuperClass(int superclas, int clas);
 extern void pushLocalUnusedSymbolsAction(void);
 extern void answerEditAction(void);
-extern SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll);
-extern void olcxFreeResolutionMenu( SymbolsMenu *sym );
 
 extern void generateReferences(void);
 

@@ -664,35 +664,13 @@ void addCfClassTreeHierarchyRef(int fnum, int usage) {
 
 /* ***************************************************************** */
 
-SymbolsMenu *olcxFreeSymbolMenuItem(SymbolsMenu *ll) {
-    int nlen;
-    SymbolsMenu *tt;
-    nlen = strlen(ll->references.name);
-    olcxFree(ll->references.name, nlen+1);
-    freeReferences(ll->references.references);
-    tt = ll->next;
-    olcxFree(ll, sizeof(*ll));
-    ll = tt;
-    return ll;
-}
-
-
-void olcxFreeResolutionMenu(SymbolsMenu *sym ) {
-    SymbolsMenu *ll;
-
-    ll = sym;
-    while (ll!=NULL) {
-        ll = olcxFreeSymbolMenuItem(ll);
-    }
-}
-
 static void deleteOlcxRefs(OlcxReferences **refsP, OlcxReferencesStack *stack) {
     OlcxReferences    *refs = *refsP;
 
     freeReferences(refs->references);
     olcxFreeCompletions(refs->completions);
-    olcxFreeResolutionMenu(refs->hkSelectedSym);
-    olcxFreeResolutionMenu(refs->menuSym);
+    freeSymbolsMenuList(refs->hkSelectedSym);
+    freeSymbolsMenuList(refs->menuSym);
 
     // if deleting second entry point, update it
     if (refs==stack->top) {
@@ -3075,7 +3053,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
         }
     }
 
-    olcxFreeResolutionMenu(ss);
+    freeSymbolsMenuList(ss);
     rstack->hkSelectedSym = olCreateSpecialMenuItem(fieldName, clii, storage);
     return clii;
 }
@@ -3606,7 +3584,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
 static void olcxCreateClassTree(void) {
     OlcxReferences    *rstack;
 
-    olcxFreeResolutionMenu(sessionData.classTree.treeMenu);
+    freeSymbolsMenuList(sessionData.classTree.treeMenu);
     sessionData.classTree.treeMenu = NULL;
     olSpecialFieldCreateSelection(LINK_NAME_CLASS_TREE_ITEM, StorageMethod);
     options.ooChecksBits = (options.ooChecksBits & ~OOC_VIRTUAL_MASK);

@@ -15,6 +15,7 @@
 #include "globals.mock"
 #include "jsemact.mock"
 #include "main.mock"
+#include "menu.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"

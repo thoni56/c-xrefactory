@@ -21,6 +21,14 @@ void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem s, bool selected, 
     symbolsMenu->next = NULL;
 }
 
+SymbolsMenu *freeSymbolsMenu(SymbolsMenu *ll) {
+    return (SymbolsMenu *) mock(ll);
+}
+
+void freeSymbolsMenuList(SymbolsMenu *sym) {
+    mock(sym);
+}
+
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag) {
     mock(menu, reference, bestFitFlag);
 }

@@ -848,7 +848,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(TpCheck
         if (ss != NULL && ss->selected) {
             sss = &(*sss)->next;
         } else {
-            *sss = olcxFreeSymbolMenuItem(*sss);
+            *sss = freeSymbolsMenu(*sss);
         }
     }
 }
