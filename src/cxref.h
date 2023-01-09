@@ -67,7 +67,6 @@ extern void olCreateSelectionMenu(int command);
 extern void pushEmptySession(OlcxReferencesStack *stack);
 extern void olcxPrintSelectionMenu(SymbolsMenu *sss);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
-extern void olcxPrintClassTree(SymbolsMenu *sss);
 extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
                                Reference **diff);
 extern bool olcxShowSelectionMenu(void);

@@ -4,6 +4,11 @@
 
 #include "log.h"
 
+#include "classhierarchy.mock"
+#include "cxfile.mock"
+#include "globals.mock"
+#include "options.mock"
+#include "ppc.mock"
 #include "reference.mock"
 
 

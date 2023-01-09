@@ -2,33 +2,37 @@
 #include "menu.h"
 #include <cgreen/mocks.h>
 
-void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem s, bool selected, bool visible,
+void fillSymbolsMenu(SymbolsMenu *menu, ReferencesItem s, bool selected, bool visible,
                      unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
-    symbolsMenu->references = s;
-    symbolsMenu->selected = selected;
-    symbolsMenu->visible = visible;
-    symbolsMenu->ooBits = ooBits;
-    symbolsMenu->olUsage = olUsage;
-    symbolsMenu->vlevel = vlevel;
-    symbolsMenu->defUsage = defUsage;
-    symbolsMenu->defpos = defpos;
+    menu->references = s;
+    menu->selected = selected;
+    menu->visible = visible;
+    menu->ooBits = ooBits;
+    menu->olUsage = olUsage;
+    menu->vlevel = vlevel;
+    menu->defUsage = defUsage;
+    menu->defpos = defpos;
 
     /* Default values */
-    symbolsMenu->refn = 0;
-    symbolsMenu->defRefn = 0;
-    symbolsMenu->outOnLine = 0;
-    symbolsMenu->markers = NULL;
-    symbolsMenu->next = NULL;
+    menu->refn = 0;
+    menu->defRefn = 0;
+    menu->outOnLine = 0;
+    menu->markers = NULL;
+    menu->next = NULL;
 }
 
-SymbolsMenu *freeSymbolsMenu(SymbolsMenu *ll) {
-    return (SymbolsMenu *) mock(ll);
+SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu) {
+    return (SymbolsMenu *) mock(menu);
 }
 
-void freeSymbolsMenuList(SymbolsMenu *sym) {
-    mock(sym);
+void freeSymbolsMenuList(SymbolsMenu *menu) {
+    mock(menu);
 }
 
 void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag) {
     mock(menu, reference, bestFitFlag);
+}
+
+void olcxPrintClassTree(SymbolsMenu *menu) {
+    mock(menu);
 }

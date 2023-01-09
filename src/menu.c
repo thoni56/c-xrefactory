@@ -1,28 +1,32 @@
 #include "menu.h"
 
+#include "classhierarchy.h"
+#include "cxfile.h"
 #include "cxref.h"
 #include "globals.h"
 #include "filetable.h"
 #include "list.h"
 #include "log.h"
+#include "options.h"
 
-void fillSymbolsMenu(SymbolsMenu *symbolsMenu, ReferencesItem references, bool selected, bool visible,
+
+void fillSymbolsMenu(SymbolsMenu *menu, ReferencesItem references, bool selected, bool visible,
                      unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
-    symbolsMenu->references = references;
-    symbolsMenu->selected   = selected;
-    symbolsMenu->visible    = visible;
-    symbolsMenu->ooBits     = ooBits;
-    symbolsMenu->olUsage    = olUsage;
-    symbolsMenu->vlevel     = vlevel;
-    symbolsMenu->defUsage   = defUsage;
-    symbolsMenu->defpos     = defpos;
+    menu->references = references;
+    menu->selected   = selected;
+    menu->visible    = visible;
+    menu->ooBits     = ooBits;
+    menu->olUsage    = olUsage;
+    menu->vlevel     = vlevel;
+    menu->defUsage   = defUsage;
+    menu->defpos     = defpos;
 
     /* Default values */
-    symbolsMenu->refn      = 0;
-    symbolsMenu->defRefn   = 0;
-    symbolsMenu->outOnLine = 0;
-    symbolsMenu->markers   = NULL;
-    symbolsMenu->next      = NULL;
+    menu->refn      = 0;
+    menu->defRefn   = 0;
+    menu->outOnLine = 0;
+    menu->markers   = NULL;
+    menu->next      = NULL;
 }
 
 SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu) {
@@ -61,4 +65,16 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int 
             menu->refn ++;
         }
     }
+}
+
+void olcxPrintClassTree(SymbolsMenu *menu) {
+    if (options.xref2) {
+        ppcBegin(PPC_DISPLAY_CLASS_TREE);
+    } else {
+        fprintf(communicationChannel, "<");
+    }
+    scanForClassHierarchy();
+    generateGlobalReferenceLists(menu, communicationChannel, "__NO_HTML_FILE_NAME!__");
+    if (options.xref2)
+        ppcEnd(PPC_DISPLAY_CLASS_TREE);
 }

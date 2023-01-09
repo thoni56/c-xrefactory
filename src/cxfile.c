@@ -1386,7 +1386,7 @@ bool smartReadReferences(void) {
 
 // symbolName can be NULL !!!!!!
 static void readOneAppropiateReferenceFile(char *symbolName,
-                                       ScanFileFunctionStep  scanFileFunctionTable[]
+                                           ScanFileFunctionStep  scanFileFunctionTable[]
 ) {
     if (options.cxrefsLocation == NULL)
         return;

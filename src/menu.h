@@ -20,12 +20,13 @@ typedef struct SymbolsMenu {
 } SymbolsMenu;
 
 
-extern void fillSymbolsMenu(SymbolsMenu *symbolsMenu, struct referencesItem s, bool selected, bool visible,
+extern void fillSymbolsMenu(SymbolsMenu *menu, struct referencesItem s, bool selected, bool visible,
                             unsigned ooBits, char olUsage, short int vlevel,
                             char defUsage, struct position defpos);
 
-extern SymbolsMenu *freeSymbolsMenu(SymbolsMenu *ll);
-extern void freeSymbolsMenuList(SymbolsMenu *sym );
+extern SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu);
+extern void freeSymbolsMenuList(SymbolsMenu *menu);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag);
+extern void olcxPrintClassTree(SymbolsMenu *menu);
 
 #endif

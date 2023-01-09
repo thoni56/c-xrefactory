@@ -1378,18 +1378,6 @@ bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
     return true;
 }
 
-void olcxPrintClassTree(SymbolsMenu *menu) {
-    if (options.xref2) {
-        ppcBegin(PPC_DISPLAY_CLASS_TREE);
-    } else {
-        fprintf(communicationChannel, "<");
-    }
-    scanForClassHierarchy();
-    generateGlobalReferenceLists(menu, communicationChannel, "__NO_HTML_FILE_NAME!__");
-    if (options.xref2)
-        ppcEnd(PPC_DISPLAY_CLASS_TREE);
-}
-
 void olcxPrintSelectionMenu(SymbolsMenu *sss) {
     if (options.xref2) {
         ppcBegin(PPC_SYMBOL_RESOLUTION);
