@@ -3,45 +3,58 @@
 #
 # This makefile supports the following use cases
 #
-# 1: production - simple straight forward build of c-xref for production
-#    use when installing c-xref using el-get:
+# 1: production - simple straight forward build of c-xref for
+#    production use when installing c-xref using el-get:
+#
 #	make prod
 #
-# 2: ci - build s & c-xref and run all tests with coverage
-#    and create coverage report:
+# 2: ci - build c-xref and run all tests with coverage and create
+#    coverage report:
+#
 #	make ci
 #
-# 3: all (or no target) - build and run unittests & build the c-xref exe:
+# 3: all (or no target) - build and run unittests & build the c-xref
+# exe:
+#
 #	make
 #
 # 4: build and run unittests with coverage and produce gcov files for
 #    cov-mode in Emacs:
+#
 #	make unit
 #
-# 5: build c-xref with coverage, run all "quick" tests and produce gcov:
+# 5: build c-xref with coverage, run all "quick" tests and produce
+# gcov:
+#
 #	make devel
 #
 # 6: build c-xref with coverage, run one test and produce gcov files:
+#
 #       make
 #	make clean-coverage
 #	<run test>
 #	make coverage-report
 #
 # 6: run another test and produce aggregated gcov files:
+#
 #	<run another test>
 #	make coverage-report
 #
 # 7: produce coverage report for current collected coverage:
+#
 #	make coverage-report
 #
 # 8: watch sources to build and run all tests:
+#
 #	make watch
 #
-# 9: watch sources to build and run unittests (use as compile command in Emacs):
+# 9: watch sources to build and run unittests (use as compile command in Emacs!):
+#
 #	make watch-for-unittests
 #
 # 10: watch unitests completion and run all systemtests (use in a separate
 #     terminal):
+#
 #	make watch-for-systemtests
 #
 #########################################################################
@@ -299,7 +312,7 @@ coverage-report:
 # We create separate coverage files for each test to be able to run them in parallel (see ../tests/Makefile)
 ifeq ($(HAVE_GCOV_TOOL),yes)
 # Then we can merge all .gcda for all tests into the .gcda in OBJDIR using it, which is very fast!
-	for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
+	-for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 # And then create .gcov for Emacs cov-mode
 	make gcov
 else
