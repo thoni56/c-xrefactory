@@ -388,14 +388,16 @@ typedef struct jslSymbolList {
 /*          symbol definition item in cross-reference table           */
 
 #include "reference.h"
+#include "server.h"
+
 
 /* ***************** on - line cross referencing ***************** */
 
 typedef struct olcxReferences {
     struct reference    *references;     /* list of references */
     struct reference    *actual;         /* actual reference */
-    char                 command;        /* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
-    char                 language;       /* C/JAVA/YACC */
+    ServerOperation      command;        /* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
+    Language             language;       /* C/JAVA/YACC */
     time_t               accessTime;     /* last access time */
     struct position      callerPosition; /* caller position */
     struct completion *completions;    /* completions list for OLO_COMPLETION */
@@ -414,8 +416,8 @@ typedef struct classTreeData {
 } ClassTreeData;
 
 typedef struct OlcxReferencesStack {
-    struct olcxReferences *top;
-    struct olcxReferences *root;
+    OlcxReferences *top;
+    OlcxReferences *root;
 } OlcxReferencesStack;
 
 /* ***************** COMPLETION STRUCTURES ********************** */

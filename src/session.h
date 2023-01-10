@@ -4,10 +4,10 @@
 #include "proto.h"
 
 typedef struct SessionData {
-    struct OlcxReferencesStack	browserStack;
-    struct OlcxReferencesStack	completionsStack;
-    struct OlcxReferencesStack	retrieverStack;
-    struct classTreeData		classTree;
+    OlcxReferencesStack	browserStack;
+    OlcxReferencesStack	completionsStack;
+    OlcxReferencesStack	retrieverStack;
+    ClassTreeData		classTree;
 } SessionData;
 
 
