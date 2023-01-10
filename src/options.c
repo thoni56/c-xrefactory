@@ -226,9 +226,9 @@ static void usage() {
     fprintf(stdout, "\t-olcxnext                 - next on-line reference\n");
     fprintf(stdout, "\t-olcxprevious             - previous on-line reference\n");
     fprintf(stdout, "\t-olcxgoto<n>              - go to the n-th on-line reference\n");
-    fprintf(stdout, "\t-o <file>                 - write output to <file>\n");
     fprintf(stdout, "\t-file <file>              - name of the file given to stdin\n");
 #endif
+    fprintf(stdout, "\t-o <file>                 - write output to <file>\n");
     fprintf(stdout, "\t-refs <file>              - name of file with cxrefs, or directory if refnum > 1\n");
     fprintf(stdout, "\t-refnum=<n>               - number of cxref files\n");
     fprintf(stdout, "\t-exactpositionresolve     - resolve symbols by def. position\n");
