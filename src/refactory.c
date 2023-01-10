@@ -2901,8 +2901,8 @@ static EditorMarker *getTargetFromOptions(void) {
     return target;
 }
 
-static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **_mstart, EditorMarker **_mend,
-                                     int limitIndex) {
+static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **methodStartP, EditorMarker **methodEndP,
+                                     SyntaxPassParsedImportantPosition limitIndex) {
     EditorMarker *mstart, *mend;
 
     // get method limites
@@ -2915,8 +2915,8 @@ static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **_mstart
     moveMarkerToTheBeginOfDefinitionScope(mstart);
     moveMarkerToTheEndOfDefinitionScope(mend);
     assert(mstart->buffer == mend->buffer);
-    *_mstart = mstart;
-    *_mend   = mend;
+    *methodStartP = mstart;
+    *methodEndP   = mend;
 }
 
 static void getNameOfTheClassAndSuperClass(EditorMarker *point, char *ccname, char *supercname) {
@@ -2939,7 +2939,7 @@ static void getNameOfTheClassAndSuperClass(EditorMarker *point, char *ccname, ch
 
 // ---------------------------------------------------- MoveStaticMethod
 
-static void moveStaticFieldOrMethod(EditorMarker *point, int limitIndex) {
+static void moveStaticFieldOrMethod(EditorMarker *point, SyntaxPassParsedImportantPosition limitIndex) {
     char          targetFqtName[MAX_FILE_NAME_SIZE];
     int           lines;
     unsigned      accFlags;

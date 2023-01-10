@@ -294,7 +294,7 @@ typedef enum inputType {
     INPUT_CACHE,
 } InputType;
 
-enum syntaxPassParsedImportantPosition {
+typedef enum syntaxPassParsedImportantPosition {
     SPP_LAST_TOP_LEVEL_CLASS_POSITION,
     SPP_ASSIGNMENT_OPERATOR_POSITION,
     SPP_ASSIGNMENT_END_POSITION,
@@ -321,7 +321,7 @@ enum syntaxPassParsedImportantPosition {
     SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION,
     SPP_PARENTHESED_EXPRESSION_END_POSITION,
     SPP_MAX,
-};
+} SyntaxPassParsedImportantPosition;
 
 /* ******************************************************************** */
 /*                               STRUCTURES                             */
