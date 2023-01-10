@@ -1,15 +1,14 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-ARGUMENTS = -xrefactory-II -refactory -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -rfct-move-static-method -movetargetfile=$(CURDIR)/source/Target.java -rfct-param1=4 -olmark=59 -olcursor=59 -addimportdefault=0 $(CURDIR)/source/Source.java
+ARGUMENTS = -xrefactory-II -refactory -xrefrc .c-xrefrc -p $(CURDIR) -rfct-move-static-method -movetargetfile=$(CURDIR)/source/Target.java -rfct-param1=4 -olmark=59 -olcursor=59 $(CURDIR)/source/Source.java -trace -log=log
 
-$(TEST): CXrefs
+$(TEST): .c-xrefrc
+	-rm -rf CXrefs
+	../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc -sourcepath sources -create source > CXrefs.output
 	$(CXREF) $(ARGUMENTS) > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
-
-CXrefs: .c-xrefrc
-	@../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc sources -sourcepath $(CURDIR)/sources -o CXrefs.output
 
 clean:
 	@-rm -rf .c-xrefrc CXrefs output.tmp output log
