@@ -1,8 +1,11 @@
 <update-report>
-</update-report>
-<update-report>
  <information len=<n>>Prescanning classes, please wait.</information>
  <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>CURDIR/source/Source.java</information>
+ <information len=<n>>CURDIR/source/Target.java</information>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+</update-report>
+<update-report>
  <information len=<n>>CURDIR/source/Source.java</information>
  <information len=<n>>CURDIR/source/Target.java</information>
  <information len=<n>>Generating 'CURDIR/CXrefs'</information>

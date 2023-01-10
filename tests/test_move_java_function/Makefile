@@ -9,7 +9,7 @@ $(TEST): CXrefs
 	$(VERIFY)
 
 CXrefs: .c-xrefrc
-	@../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc test_sources -sourcepath $(CURDIR)/test_sources -o CXrefs.output
+	@../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc sources -sourcepath $(CURDIR)/sources -o CXrefs.output
 
 clean:
 	@-rm -rf .c-xrefrc CXrefs output.tmp output log
