@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-ARGUMENTS = -xrefactory-II -refactory -xrefrc .c-xrefrc -p $(CURDIR) -rfct-move-static-method -movetargetfile=$(CURDIR)/source/Target.java -rfct-param1=4 -olmark=59 -olcursor=59 $(CURDIR)/source/Source.java -trace -log=log
+ARGUMENTS = -xrefactory-II -refactory -xrefrc .c-xrefrc -p $(CURDIR) -rfct-move-static-method -movetargetfile=$(CURDIR)/source/Target.java -rfct-param1=4 -olmark=59 -olcursor=59 $(CURDIR)/source/Source.java
 
 $(TEST): .c-xrefrc
 	-rm -rf CXrefs
