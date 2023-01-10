@@ -12,6 +12,7 @@
 #include "editor.h"
 #include "filetable.h"
 #include "globals.h"
+#include "head.h"
 #include "jsemact.h"
 #include "list.h"
 #include "main.h"
@@ -2950,7 +2951,8 @@ static void moveStaticFieldOrMethod(EditorMarker *point, SyntaxPassParsedImporta
     if (!validTargetPlace(target, "-olcxmmtarget"))
         return;
     ensureReferencesUpdated(refactoringOptions.project);
-    getNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
+    if (LANGUAGE(LANG_JAVA))
+        getNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
     getMethodLimitsForMoving(point, &mstart, &mend, limitIndex);
     lines = countLinesBetweenEditorMarkers(mstart, mend);
 

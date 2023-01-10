@@ -895,6 +895,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                             strcpy(s_olstring, startOfCurrentLexem+TOKEN_SIZE);
                         }
                     }
+                    // TODO: Figure out what the problem was with this for C
                     if (LANGUAGE(LANG_JAVA)) {
                         // there is a problem with this, when browsing at CPP construction
                         // that is why I restrict it to Java language! It is usefull
