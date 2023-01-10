@@ -2126,6 +2126,10 @@ static void actionOnBlockMarker(void) {
                     }
                 }
             }
+        } else if (LANGUAGE(LANG_C)) {
+            if (parsedClassInfo.function == NULL) {
+                parsedInfo.moveTargetApproved = true;
+            }
         }
     } else if (options.serverOperation == OLO_EXTRACT) {
         extractActionOnBlockMarker();
