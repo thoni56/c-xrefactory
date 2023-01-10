@@ -11,5 +11,6 @@ $(TEST):
 clean:
 	@-rm -rf .c-xrefrc CXrefs output.tmp output log
 
+DEBUGGER = gdb
 gdb debug:
-	gdb --args $(CXREF) $(ARGUMENTS)
+	$(DEBUGGER) --args $(CXREF) $(ARGUMENTS)
