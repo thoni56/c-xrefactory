@@ -53,6 +53,25 @@ NOTE: At this point I don't understand exactly how this interaction is
 performed, nor if the whole file is parsed or if there is some way to
 just parse appropriate parts.
 
+Findings:
+
+- some global variables are set as a result of command line
+and arguments parsing, depending on which "command" the server is
+acting on
+
+- the semantic rules in the parser(s) contains code that matches these
+  global variables and then inserts special lexems in the lexem stream
+
+One example is how a Java 'move static method' is performed. It
+requires a target position. That position is transferred from command
+line options to global variables. When the Java parser is parsing a
+class or similar it (or rather the lexer) looks at that "target
+position information" and inserts a `OL_MARKER_TOKEN` in the stream.
+
+TODO: What extra "operation" the parsing should perform and return
+data for should be packaged into some type of "command" or parameter
+object that should be passed to the parser, rather than relying on
+global variables.
 
 === Reading Files
 
