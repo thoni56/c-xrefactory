@@ -1,9 +1,8 @@
 /* -*- mode: text -*- */
 workspace "C-xrefactory" "A C/Java refactoring browser in C" {
-  !adrs adr
-  !docs docs
-
-  model {
+	!adrs adr
+	!docs docs
+	model {
 		developer = Person "Developer" "Edits source code using an editor" Ext
 
 		editor = SoftwareSystem "Editor" "Allows Developer to modify source code and perform refactoring operations" Editor,Ext
