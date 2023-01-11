@@ -1,6 +1,8 @@
+/* -*- mode: text -*- */
 workspace "C-xrefactory" "A C/Java refactoring browser in C" {
   !adrs adr
   !docs docs
+
   model {
 		developer = Person "Developer" "Edits source code using an editor" Ext
 
@@ -45,7 +47,7 @@ workspace "C-xrefactory" "A C/Java refactoring browser in C" {
 
 				lexer -> source "reads source code from" "file I/O"
 			}
-				
+
 			settingsStore = container settingsStore "Non-standard format settings file" "Configuration file for project settings" DB
 
 			referencesDb = container referencesDb "Source code information storage" "Stores all information about the source code in the project which is updated by scanning all or parts of the source when required" DB
@@ -78,7 +80,7 @@ workspace "C-xrefactory" "A C/Java refactoring browser in C" {
 
 		container cxrefactory ContainerView {
 			include *
-	  	autolayout lr
+		autolayout lr
 		}
 
 		component editorExtension EditorExtension {
