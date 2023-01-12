@@ -22,7 +22,7 @@ $(VERBOSE).SILENT:
 # All tests that uses a server driver should use this
 EDIT_SERVER_DRIVER = ../../utils/server_driver.py
 
-# Since absolute paths are abundant we need to...
+# Convert any (absolute) reference to current directory to CURDIR
 NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g" -e "s+/.*/usr/+/usr/+g"
 
 # Do we need date normalization too?

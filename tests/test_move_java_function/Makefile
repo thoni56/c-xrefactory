@@ -7,7 +7,7 @@ $(TEST): .c-xrefrc
 	-rm -rf CXrefs
 	../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc -sourcepath sources -create source > CXrefs.output
 	$(CXREF) $(ARGUMENTS) > output.tmp
-	$(NORMALIZE) output.tmp > output
+	$(NORMALIZE) output.tmp | grep -v '<progress>' > output
 	$(VERIFY)
 
 clean:
