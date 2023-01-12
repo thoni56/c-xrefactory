@@ -379,6 +379,7 @@ static Lexem getLexemAndSavePointerToPrevious(char **previousLexemP) {
     if (previousLexemP != NULL)
         *previousLexemP = currentInput.read;
     lexem = getLexTokenAt(&currentInput.read);
+    log_trace("LEXEM read: %s", "");
     return lexem;
 }
 
@@ -402,11 +403,9 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *id, Position *pos) {
             olstringServed = true;
             if (currentLanguage == LANG_JAVA) {
                 makeJavaCompletions(id, strlen(id), pos);
-            }
-            else if (currentLanguage == LANG_YACC) {
+            } else if (currentLanguage == LANG_YACC) {
                 makeYaccCompletions(id, strlen(id), pos);
-            }
-            else {
+            } else {
                 makeCCompletions(id, strlen(id), pos);
             }
             /* here should be a longjmp to stop file processing !!!! */

@@ -216,4 +216,8 @@ CHAR_LITERAL = 456,
 LAST_TOKEN = 457,
 } Lexem;
 
+extern char *lexemEnumNames[LAST_TOKEN];
+
+extern void initLexemEnumNames(void);
+
 #endif
