@@ -23,6 +23,7 @@
 #include "javafqttab.mock"
 #include "jsemact.mock"
 #include "jslsemact.mock"
+#include "lexem.mock"
 #include "lexer.mock"
 #include "macroargumenttable.mock"
 #include "memory.h"

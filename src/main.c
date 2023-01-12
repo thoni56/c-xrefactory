@@ -20,6 +20,7 @@
 #include "javafqttab.h"
 #include "jsemact.h"
 #include "jslsemact.h"
+#include "lexem.h"
 #include "lexer.h"
 #include "list.h"
 #include "log.h"
@@ -615,6 +616,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     bool previousNoErrorsOption;
 
     ENTER();
+
+    initLexemEnumNames();
 
     fileAbortEnabled = false;
 
