@@ -211,5 +211,4 @@ void initLexemEnumNames(void) {
     lexemEnumNames[454] = "CPP_MACRO_ARGUMENT";
     lexemEnumNames[455] = "IDENT_NO_CPP_EXPAND";
     lexemEnumNames[456] = "CHAR_LITERAL";
-    lexemEnumNames[457] = "LAST_TOKEN";
 }

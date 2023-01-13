@@ -282,24 +282,32 @@ lexem.h: c_parser.tab.h character_lexems.txt Makefile
 	grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" >> lexem.h.tmp
 	echo "} Lexem;" >> lexem.h.tmp
 	echo >> lexem.h.tmp
-	echo "extern char *lexemEnumNames[LAST_TOKEN];" >> lexem.h.tmp
+	echo "extern char *lexemEnumNames[];" >> lexem.h.tmp
 	echo >> lexem.h.tmp
 	echo "extern void initLexemEnumNames(void);" >> lexem.h.tmp
 	echo >> lexem.h.tmp
 	echo "#endif" >> lexem.h.tmp
 	# Sanity check for content, otherwise yacc errored out probably
 	if grep " = " lexem.h.tmp > /dev/null ; then \
-		cp lexem.h.tmp lexem.h ; \
+		mv lexem.h.tmp lexem.h ; \
+	else \
+		rm lexem.h.tmp ; \
 	fi
 
+# Generate an init function for lexem names from lexem.h
 lexem.c: lexem.h Makefile
-	echo "#include \"lexem.h\"" > lexem.c
-	echo >> lexem.c
-	echo "char *lexemEnumNames[LAST_TOKEN];" >> lexem.c
-	echo >> lexem.c
-	echo "void initLexemEnumNames(void) {" >> lexem.c
-	grep = lexem.h | awk '{ printf "    lexemEnumNames[%s] = \"%s\";\n", $$3, $$1}' | sed 's/,//g' >> lexem.c
-	echo "}" >> lexem.c
+	echo "#include \"lexem.h\"" > lexem.c.tmp
+	echo >> lexem.c.tmp
+	echo "char *lexemEnumNames[LAST_TOKEN];" >> lexem.c.tmp
+	echo >> lexem.c.tmp
+	echo "void initLexemEnumNames(void) {" >> lexem.c.tmp
+	grep = lexem.h | grep -v LAST_TOKEN | awk '{ printf "    lexemEnumNames[%s] = \"%s\";\n", $$3, $$1}' | sed 's/,//g' >> lexem.c.tmp
+	echo "}" >> lexem.c.tmp
+	if ! cmp lexem.c lexem.c.tmp ; then \
+		mv lexem.c.tmp lexem.c ; \
+	else \
+		rm lexem.c.tmp ; \
+	fi
 
 
 #########################################################################
