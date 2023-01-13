@@ -8,7 +8,7 @@ COMMAND = $(CXREF)
 
 $(TEST): CXrefs
 	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
-	@$(NORMALIZE) output.tmp > output
+	@$(NORMALIZE) output.tmp | sed 's/ refn=[0-9]/ refn=<n>/g' > output
 	@$(VERIFY)
 
 CXrefs: .c-xrefrc
