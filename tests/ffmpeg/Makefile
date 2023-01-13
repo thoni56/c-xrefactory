@@ -18,7 +18,7 @@ all: .c-xrefrc
 			$(FAIL) "(ffmpeg.log)" ; \
 			exit 1 ; \
 		else \
-			if grep -i "<error " out > /dev/null ; then \
+			if grep -i "<error " output > /dev/null ; then \
 				$(FAIL) "(out)" ; \
 				exit 1 ; \
 			else \
