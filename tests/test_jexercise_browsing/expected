@@ -263,14 +263,15 @@ end-of-options
 
 <sync>
 <resolution>
- <symbol line=2 type=package selected=1 base=1 drefn=0 refn=<n> len=<n>>JButton</symbol>
+ <symbol line=2 type=package selected=1 base=1 drefn=0 refn=3 len=<n>>JButton</symbol>
 </resolution>
 -olcxfilter=0  "-olmark=0" "-olcursor=29" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
 <reference-list val=0 symbol="JButton">
-<src-line refn=<n> len=<n>>Browsing.java:55:        JButton bb = new JButton("foo");</src-line>
+<src-line refn=2 len=<n>>Browsing.java:55:        JButton bb = new JButton("foo");</src-line>
+<src-line refn=1 len=<n>>Completion.java:74:        class Nested extends JButton implements ActionListener {</src-line>
 </reference-list>
 -olcxmenusingleselect3  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
