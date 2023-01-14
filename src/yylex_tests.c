@@ -34,6 +34,7 @@ void processIncludeNextDirective(Position *includePosition);
 #include "jsemact.mock"
 #include "jslsemact.mock"
 #include "lexer.mock"
+#include "lexem.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"

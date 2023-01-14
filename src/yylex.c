@@ -379,7 +379,7 @@ static Lexem getLexemAndSavePointerToPrevious(char **previousLexemP) {
     if (previousLexemP != NULL)
         *previousLexemP = currentInput.read;
     lexem = getLexTokenAt(&currentInput.read);
-    log_trace("LEXEM read: %s", "");
+    log_trace("LEXEM read: %s", lexemEnumNames[lexem]);
     return lexem;
 }
 
