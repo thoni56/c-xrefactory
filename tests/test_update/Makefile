@@ -1,10 +1,11 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-COMMAND = $(CXREF)  -xrefrc $(CURDIR)/.c-xrefrc -update -p $(CURDIR) -trace -log=log
+COMMAND = $(CXREF)  -xrefrc $(CURDIR)/.c-xrefrc -update -p $(CURDIR)/cexercise -trace -log=log
 
 $(TEST): CXrefs
 	touch cexercise/*
+	echo $(COMMAND)
 	$(COMMAND) > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
@@ -23,4 +24,5 @@ clean:
 
 DEBUGGER=gdb
 debug:
+	touch cexercise/*
 	$(DEBUGGER) --args $(COMMAND)
