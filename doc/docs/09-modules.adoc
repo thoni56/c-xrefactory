@@ -1,0 +1,41 @@
+== Modules
+
+The current state of `c-xrefactory` is not such that clean modules can
+easily be identified and located. This is obviously one important goal
+of the continuing refactoring work.
+
+To be able to do that we need to understand the functionality enough
+so that clusters of code can be refactored to be more and more clear
+in terms of responsibilities and interfaces.
+
+This section makes a stab at identifying some candidated to modules,
+as illustrated by the component diagram for `cxrefCore`.
+
+=== Yylex
+
+==== Responsibilities
+
+- Transform source text to sequences of lexems and additional
+  information
+- Register and apply C pre-processor macros and defines as well as
+  defines made as command line options (`-D`)
+- Handle include files by pushing and poping read contexts
+
+==== Interface
+
+The `yylex` module has the standard interface required by any
+`yacc`-based parser, which is a simple `yylex(void)` function.
+
+=== Parser
+
+=== Xref
+
+=== Server
+
+=== Refactory
+
+=== Cxref
+
+=== Main
+
+=== Cxfile
