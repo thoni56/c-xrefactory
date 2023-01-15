@@ -301,7 +301,7 @@ lexem.c: lexem.h Makefile
 	echo "char *lexemEnumNames[LAST_TOKEN];" >> lexem.c.tmp
 	echo >> lexem.c.tmp
 	echo "void initLexemEnumNames(void) {" >> lexem.c.tmp
-	grep = lexem.h | grep -v LAST_TOKEN | awk '{ printf "    lexemEnumNames[%s] = \"%s\";\n", $$3, $$1}' | sed 's/,//g' >> lexem.c.tmp
+	grep = lexem.h | grep -v LAST_TOKEN | awk '{ printf "    lexemEnumNames[%s] = \"%s\";\n", $$3, $$1}' | sed 's/,]/]/g' >> lexem.c.tmp
 	echo "}" >> lexem.c.tmp
 	if ! cmp lexem.c lexem.c.tmp ; then \
 		mv lexem.c.tmp lexem.c ; \

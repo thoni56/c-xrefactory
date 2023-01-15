@@ -33,6 +33,7 @@
 #include "fileio.h"
 #include "filetable.h"
 #include "log.h"
+#include <ctype.h>
 
 static bool isProcessingPreprocessorIf; /* Flag for yylex, to not filter '\n' */
 
@@ -311,6 +312,7 @@ static void getExtraLexemInformationFor(Lexem lexem, char **readPointerP, int *o
     if (lexem > MULTI_TOKENS_START) {
         if (isIdentifierLexem(lexem) || lexem == STRING_LITERAL) {
             /* Both are followed by a string and a position */
+            log_trace("LEXEM '%s'", *readPointerP);
             *readPointerP = strchr(*readPointerP, '\0') + 1;
             getAndSetOutPositionIfRequired(readPointerP, outPosition);
         } else if (lexem == LINE_TOKEN) {
