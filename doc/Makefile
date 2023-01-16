@@ -3,8 +3,7 @@ all:
 
 start:
 	docker pull structurizr/lite
-	docker run -it --rm -p 8080:8080 -v $(PWD):/usr/local/structurizr structurizr/lite &
-	xdg-open http://localhost:8080
+	docker run -it --rm -p 8080:8080 -v $(PWD):/usr/local/structurizr structurizr/lite
 
 html: manual.html guidebook.html
 
