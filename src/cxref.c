@@ -25,6 +25,7 @@
 #include "reftab.h"
 #include "scope.h"
 #include "server.h"
+#include "session.h"
 #include "storage.h"
 #include "symbol.h"
 #include "usage.h"
@@ -42,11 +43,13 @@ typedef struct ReferencesChangeData {
     int     cxMemEnd;
 } ReferencesChangeData;
 
-#define OLCX_USER_RESERVE 30
 
-/* ************************************************************** */
 
-#include "session.h"
+/* *********** symbols excluded from cache ************** */
+
+char olSymbolType[COMPLETION_STRING_SIZE];
+char olSymbolClassType[COMPLETION_STRING_SIZE];
+
 
 /* *********************************************************************** */
 
@@ -122,10 +125,10 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
     return symbolsMenu;
 }
 
-SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list,
-                                bool selected, bool visible, unsigned ooBits,
-                                int olusage, int vlevel,
-                                Position *defpos, int defusage) {
+SymbolsMenu *olAddBrowsedSymbolToMenu(ReferencesItem *sym, SymbolsMenu **list,
+                                      bool selected, bool visible, unsigned ooBits,
+                                      int olusage, int vlevel,
+                                      Position *defpos, int defusage) {
     SymbolsMenu *rr, **place, ddd;
 
     fillSymbolsMenu(&ddd, *sym, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
@@ -326,20 +329,20 @@ static void setOlSymbolTypeForPrint(Symbol *p) {
     int             size, len;
     TypeModifier *tt;
     size = COMPLETION_STRING_SIZE;
-    s_olSymbolType[0]=0;
-    s_olSymbolClassType[0]=0;
+    olSymbolType[0]=0;
+    olSymbolClassType[0]=0;
     if (p->type == TypeDefault) {
         tt = p->u.typeModifier;
         if (tt!=NULL && tt->kind==TypeFunction) tt = tt->next;
-        typeSPrint(s_olSymbolType, &size, tt, "", ' ', 0, 1, LONG_NAME, NULL);
+        typeSPrint(olSymbolType, &size, tt, "", ' ', 0, 1, LONG_NAME, NULL);
         if (tt->kind == TypeStruct && tt->u.t!=NULL) {
-            strcpy(s_olSymbolClassType, tt->u.t->linkName);
-            assert(strlen(s_olSymbolClassType)+1 < COMPLETION_STRING_SIZE);
+            strcpy(olSymbolClassType, tt->u.t->linkName);
+            assert(strlen(olSymbolClassType)+1 < COMPLETION_STRING_SIZE);
         }
         // remove pending spaces
-        len = strlen(s_olSymbolType);
-        while (len > 0 && s_olSymbolType[len-1] == ' ') len--;
-        s_olSymbolType[len]=0;
+        len = strlen(olSymbolType);
+        while (len > 0 && olSymbolType[len-1] == ' ') len--;
+        olSymbolType[len]=0;
     }
 }
 
@@ -601,8 +604,8 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             if (defaultPosition->file!=noFileIndex)
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition->line);
             if (! olcxOnlyParseNoPushing(options.serverOperation)) {
-                menu = olAddBrowsedSymbol(foundMember,&sessionData.browserStack.top->hkSelectedSym,
-                                          true, true, 0, usage.kind, 0, defaultPosition, defaultUsage);
+                menu = olAddBrowsedSymbolToMenu(foundMember,&sessionData.browserStack.top->hkSelectedSym,
+                                                true, true, 0, usage.kind, 0, defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
                 if (isDefinitionUsage(usage.kind)) {
@@ -3263,9 +3266,9 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
             nsym = mmFindSymWithCorrespondingRef(rr,osym,newrefs,&moveOffset);
             if (nsym==NULL || !symbolsCorrespondWrtMoving(osym, nsym, options.serverOperation)) {
                 if (diffsym == NULL) {
-                    diffsym = olAddBrowsedSymbol(&osym->references, &diffrefs->menuSym, true, true,
-                                                 (OOC_PROFILE_EQUAL|OOC_VIRT_SAME_FUN_CLASS),
-                                                 USAGE_ANY, 0, &noPosition, UsageNone);
+                    diffsym = olAddBrowsedSymbolToMenu(&osym->references, &diffrefs->menuSym, true, true,
+                                                       (OOC_PROFILE_EQUAL|OOC_VIRT_SAME_FUN_CLASS),
+                                                       USAGE_ANY, 0, &noPosition, UsageNone);
                 }
                 olcxAddReferenceToSymbolsMenu(diffsym, rr, 0);
             }
@@ -3299,8 +3302,8 @@ static void olcxMMPreCheck(void) {
     if (!precheck) {
         if (diffrefs->menuSym!=NULL) {
             fillTrivialSpecialRefItem(&dri, "  references missinterpreted after refactoring");
-            olAddBrowsedSymbol(&dri, &diffrefs->hkSelectedSym, true, true, 0,
-                               USAGE_ANY, 0, &noPosition, UsageNone);
+            olAddBrowsedSymbolToMenu(&dri, &diffrefs->hkSelectedSym, true, true, 0,
+                                     USAGE_ANY, 0, &noPosition, UsageNone);
             olProcessSelectedReferences(diffrefs, genOnLineReferences);
             //&olcxPrintSelectionMenu(diffrefs->menuSym);
             olcxPrintRefList(";", diffrefs);
@@ -3626,8 +3629,8 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri, void *voidDat
             vlevel = 0;
             ooBits = (OOC_PROFILE_EQUAL | OOC_VIRT_SAME_FUN_CLASS);
             log_trace("adding symbol %s", ri->name);
-            mm = olAddBrowsedSymbol(ri, &rstack->menuSym, selected, visible, ooBits, USAGE_ANY, vlevel, &defpos,
-                                    defusage);
+            mm = olAddBrowsedSymbolToMenu(ri, &rstack->menuSym, selected, visible, ooBits, USAGE_ANY, vlevel, &defpos,
+                                          defusage);
             assert(mm!=NULL);
             for (; rr!=NULL; rr=rr->next) {
                 log_trace("checking reference of line %d, usage %s", rr->position.line, usageKindEnumName[rr->usage.kind]);
@@ -3767,9 +3770,9 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferencesItem *ss) {
         }
     }
     if (!used && definitionReference!=NULL) {
-        olAddBrowsedSymbol(ss, &sessionData.browserStack.top->hkSelectedSym,
-                           true, true, 0, UsageDefined, 0, &definitionReference->position,
-                           definitionReference->usage.kind);
+        olAddBrowsedSymbolToMenu(ss, &sessionData.browserStack.top->hkSelectedSym,
+                                 true, true, 0, UsageDefined, 0, &definitionReference->position,
+                                 definitionReference->usage.kind);
     }
 }
 
@@ -4134,7 +4137,7 @@ void answerEditAction(void) {
         break;
     case OLO_GET_SYMBOL_TYPE:
         if (olstringServed) {
-            fprintf(communicationChannel,"*%s", s_olSymbolType);
+            fprintf(communicationChannel,"*%s", olSymbolType);
         } else if (options.noErrors) {
             fprintf(communicationChannel,"*");
         } else {
@@ -4367,7 +4370,8 @@ SymbolsMenu *createSelectionMenu(ReferencesItem *references) {
     }
     if (found) {
         int select = 0, visible = 0;  // for debug would be better 1 !
-        result = olAddBrowsedSymbol(references, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, defpos, defusage);
+        result = olAddBrowsedSymbolToMenu(references, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, defpos,
+                                          defusage);
     }
     return result;
 }

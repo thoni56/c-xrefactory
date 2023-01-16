@@ -802,8 +802,8 @@ static void tpCheckMoveClassPutClassDefaultSymbols(ReferencesItem *ri, void *ddd
             if (isDefinitionOrDeclarationUsage(rr->usage.kind)) {
                 // definition inside class, default or private acces to be checked
                 rstack = sessionData.browserStack.top;
-                olAddBrowsedSymbol(ri, &rstack->hkSelectedSym, 1, 1, 0, UsageUsed, 0, &rr->position,
-                                   rr->usage.kind);
+                olAddBrowsedSymbolToMenu(ri, &rstack->hkSelectedSym, 1, 1, 0, UsageUsed, 0, &rr->position,
+                                         rr->usage.kind);
                 break;
             }
         }
@@ -3646,7 +3646,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
         errorMessage(ERR_ST, "Can't infer type for parameter/field");
         return;
     }
-    parclassnum = getClassNumFromClassLinkName(s_olSymbolClassType, noFileIndex);
+    parclassnum = getClassNumFromClassLinkName(olSymbolClassType, noFileIndex);
     if (parclassnum == noFileIndex) {
         errorMessage(ERR_INTERNAL, "Problem when getting parameter/field class");
         return;

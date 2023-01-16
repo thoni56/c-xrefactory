@@ -11,6 +11,10 @@
 #include "usage.h"
 
 
+extern char olSymbolType[COMPLETION_STRING_SIZE];
+extern char olSymbolClassType[COMPLETION_STRING_SIZE];
+
+
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern void printTagSearchResults(void);
 extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);
@@ -46,10 +50,10 @@ extern void olSetCallerPosition(Position *pos);
 extern SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl,
                                         Position *defpos, int defusage, int selected, int visible,
                                         unsigned ooBits, int olusage, int vlevel);
-extern SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *reference, SymbolsMenu **list,
-                                       bool selected, bool visible, unsigned ooBits,
-                                       int olusage, int vlevel,
-                                       Position *defpos, int defusage);
+extern SymbolsMenu *olAddBrowsedSymbolToMenu(ReferencesItem *reference, SymbolsMenu **list,
+                                             bool selected, bool visible, unsigned ooBits,
+                                             int olusage, int vlevel,
+                                             Position *defpos, int defusage);
 extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack,

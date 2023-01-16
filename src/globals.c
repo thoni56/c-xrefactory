@@ -27,11 +27,6 @@ CurrentlyParsedInfo parsedInfo;
 bool javaPreScanOnly = false;
 
 
-/* *********** symbols excluded from cache ************** */
-
-char s_olSymbolType[COMPLETION_STRING_SIZE];
-char s_olSymbolClassType[COMPLETION_STRING_SIZE];
-
 /* Variables for capturing parameter positions */
 bool parameterListIsVoid; /* Is what looks like a parameter declaration actually "void" */
 int parameterCount;

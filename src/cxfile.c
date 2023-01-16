@@ -917,7 +917,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
     if (lastIncomingInfo.symbolToCheckForDeadness != -1
         && lastIncomingInfo.deadSymbolIsDefined
     ) {
-        olAddBrowsedSymbol(lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness],
+        olAddBrowsedSymbolToMenu(lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness],
                            &sessionData.browserStack.top->hkSelectedSym,
                            true, true, 0, UsageDefined, 0, &noPosition, UsageDefined);
     }
@@ -1174,7 +1174,7 @@ static void scanFunction_Reference(int size,
                         if (positionsAreEqual(s_olcxByPassPos,reference.position)) {
                             // got the bypass reference
                             log_trace(":adding bypass selected symbol %s", lastIncomingInfo.symbolTab[sym]->name);
-                            olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],
+                            olAddBrowsedSymbolToMenu(lastIncomingInfo.symbolTab[sym],
                                                &sessionData.browserStack.top->hkSelectedSym,
                                                true, true, 0, usageKind,0,&noPosition, UsageNone);
                         }

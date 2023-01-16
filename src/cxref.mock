@@ -1,8 +1,11 @@
 /* -*- c -*-*/
-#include "cxref.h"
 #include <cgreen/mocks.h>
 
-#include "session.h"
+#include "cxref.h"
+
+
+char olSymbolType[COMPLETION_STRING_SIZE];
+char olSymbolClassType[COMPLETION_STRING_SIZE];
 
 
 int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
@@ -115,8 +118,8 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl
     return (SymbolsMenu *) mock(sym, vApplClass, vFunCl, defpos, defusage, selected, visible, ooBits, olusage, vlevel);
 }
 
-SymbolsMenu *olAddBrowsedSymbol(ReferencesItem *sym, SymbolsMenu **list, bool selected, bool visible,
-                                unsigned ooBits, int olusage, int vlevel, Position *defpos, int defusage) {
+SymbolsMenu *olAddBrowsedSymbolToMenu(ReferencesItem *sym, SymbolsMenu **list, bool selected, bool visible,
+                                      unsigned ooBits, int olusage, int vlevel, Position *defpos, int defusage) {
     return (SymbolsMenu *) mock(sym, list, selected, visible, ooBits, olusage, vlevel, defpos, defusage);
 }
 

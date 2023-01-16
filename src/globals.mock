@@ -56,8 +56,6 @@ bool olstringFound = false;
 bool olstringServed = false;
 char *olstringInMacroBody = NULL;
 int olstringUsageKind = 0;
-char s_olSymbolType[COMPLETION_STRING_SIZE];
-char s_olSymbolClassType[COMPLETION_STRING_SIZE];
 int olOriginalFileIndex = -1;
 int olstringUsageKind;
 int olOriginalComFileNumber;
