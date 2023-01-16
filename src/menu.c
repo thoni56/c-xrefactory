@@ -114,3 +114,57 @@ void olcxPrintSelectionMenu(SymbolsMenu *menu) {
         }
     }
 }
+
+static bool olReferencesItemIsLess(ReferencesItem *s1, ReferencesItem *s2) {
+    int cmp;
+    cmp = strcmp(s1->name, s2->name);
+    if (cmp < 0)
+        return true;
+    else if (cmp > 0)
+        return false;
+    if (s1->vFunClass < s2->vFunClass)
+        return true;
+    else if (s1->vFunClass > s2->vFunClass)
+        return false;
+    if (s1->vApplClass < s2->vApplClass)
+        return true;
+    else if (s1->vApplClass > s2->vApplClass)
+        return false;
+    if (s1->type < s2->type)
+        return true;
+    else if (s1->type > s2->type)
+        return false;
+    if (s1->storage < s2->storage)
+        return true;
+    else if (s1->storage > s2->storage)
+        return false;
+    if (s1->category < s2->category)
+        return true;
+    else if (s1->category > s2->category)
+        return false;
+    return false;
+}
+
+static bool olSymbolMenuIsLess(SymbolsMenu *s1, SymbolsMenu *s2) {
+    return olReferencesItemIsLess(&s1->references, &s2->references);
+}
+
+SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferencesItem *symbol,
+                                      bool selected, bool visible, unsigned ooBits,
+                                      int olusage, int vlevel,
+                                      Position *defpos, int defusage) {
+    SymbolsMenu *new, **place, dummyMenu;
+
+    fillSymbolsMenu(&dummyMenu, *symbol, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
+    SORTED_LIST_PLACE3(place, SymbolsMenu, &dummyMenu, menuP, olSymbolMenuIsLess);
+    new = *place;
+    if (*place==NULL || olSymbolMenuIsLess(&dummyMenu, *place)) {
+        assert(symbol);
+        new = olCreateNewMenuItem(symbol, symbol->vApplClass, symbol->vFunClass, defpos, defusage,
+                                selected, visible, ooBits,
+                                olusage, vlevel);
+        LIST_CONS(new, *place);
+        log_trace(":adding browsed symbol '%s'", symbol->name);
+    }
+    return new;
+}

@@ -6,6 +6,7 @@
 
 #include "classhierarchy.mock"
 #include "cxfile.mock"
+#include "cxref.mock"
 #include "globals.mock"
 #include "options.mock"
 #include "ppc.mock"
