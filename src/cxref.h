@@ -79,7 +79,7 @@ extern void olcxPushSpecial(char *fieldName, int command);
 extern bool isPushAllMethodsValidRefItem(ReferencesItem *ri);
 extern bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
                                        ServerOperation operation);
-extern void olcxPrintPushingAction(int opt, int afterMenu);
+extern void olcxPrintPushingAction(ServerOperation operation, int afterMenu);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
 extern Symbol *getMoveTargetClass(void);
 extern int javaGetSuperClassNumFromClassNum(int cn);

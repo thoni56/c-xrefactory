@@ -3354,8 +3354,8 @@ static void olcxProcessGetRequest(void) {
     }
 }
 
-void olcxPrintPushingAction(int opt, int afterMenu) {
-    switch (opt) {
+void olcxPrintPushingAction(ServerOperation operation, int afterMenu) {
+    switch (operation) {
     case OLO_PUSH:
         if (olcxCheckSymbolExists()) {
             olcxOrderRefsAndGotoDefinition(afterMenu);
