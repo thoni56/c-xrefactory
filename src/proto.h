@@ -106,8 +106,13 @@ typedef enum {
     PUSH_AFTER_MENU
 } PushAfterMenu;
 
+typedef enum {
+    DONT_CHECK_NULL = PUSH_AFTER_MENU + 1,
+    CHECK_NULL
+} CheckNull;
+
 enum miscellaneous { /* misc. constants */
-    DEFAULT_VALUE = PUSH_AFTER_MENU + 1,
+    DEFAULT_VALUE = CHECK_NULL + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
@@ -127,7 +132,6 @@ enum miscellaneous { /* misc. constants */
     FIRST_PASS,
     SECOND_PASS,
     DO_NOT_CHECK_IF_SELECTED,
-    CHECK_NULL,
     TRAILED_YES,
     TRAILED_NO,
     CPOS_FUNCTION_INNER,

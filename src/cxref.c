@@ -756,7 +756,7 @@ void gotoOnlineCxref(Position *pos, UsageKind usageKind, char *suffix)
     }
 }
 
-static bool olcxMoveInit(SessionData *olcxuser, OlcxReferences **refs, int checkFlag) {
+static bool olcxMoveInit(SessionData *olcxuser, OlcxReferences **refs, CheckNull checkNull) {
     assert(olcxuser);
     if (options.serverOperation==OLO_COMPLETION || options.serverOperation==OLO_CSELECT
         ||  options.serverOperation==OLO_CGOTO || options.serverOperation==OLO_CBROWSE
@@ -765,7 +765,7 @@ static bool olcxMoveInit(SessionData *olcxuser, OlcxReferences **refs, int check
     } else {
         *refs = olcxuser->browserStack.top;
     }
-    if (checkFlag==CHECK_NULL && *refs == NULL) {
+    if (checkNull==CHECK_NULL && *refs == NULL) {
         if (options.xref2) {
             ppcBottomWarning("Empty stack");
         } else {
@@ -1381,7 +1381,7 @@ static void olcxReferenceList(char *commandString) {
 
 static void olcxListTopReferences(char *commandString) {
     OlcxReferences    *refs;
-    if (!olcxMoveInit(&sessionData, &refs, DEFAULT_VALUE))
+    if (!olcxMoveInit(&sessionData, &refs, DONT_CHECK_NULL))
         return;
     olcxPrintRefList(commandString, refs);
 }
@@ -1714,7 +1714,7 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
 static void olcxShowTopSymbol(void) {
     OlcxReferences    *refs;
 
-    if (!olcxMoveInit(&sessionData, &refs, DEFAULT_VALUE))
+    if (!olcxMoveInit(&sessionData, &refs, DONT_CHECK_NULL))
         return;
     olcxPrintSymbolName(refs);
 }
@@ -1910,7 +1910,7 @@ static void olcxMenuToggleSelect(void) {
     char                ln[MAX_REF_LEN];
     char                *cname;
 
-    if (!olcxMoveInit(&sessionData, &refs,CHECK_NULL))
+    if (!olcxMoveInit(&sessionData, &refs, CHECK_NULL))
         return;
     for (ss=refs->menuSym; ss!=NULL; ss=ss->next) {
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
@@ -2068,7 +2068,7 @@ static void selectUnusedSymbols(SymbolsMenu *menu, void *vflp, void *p2) {
 static void olcxMenuSelectAll(int val) {
     OlcxReferences *refs;
 
-    if (!olcxMoveInit(&sessionData, &refs,CHECK_NULL))
+    if (!olcxMoveInit(&sessionData, &refs, CHECK_NULL))
         return;
     if (refs->command == OLO_GLOBAL_UNUSED) {
         if (options.xref2) {
@@ -2288,7 +2288,7 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
 static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     OlcxReferences    *refs;
 
-    if (!olcxMoveInit(&sessionData, &refs, DEFAULT_VALUE))
+    if (!olcxMoveInit(&sessionData, &refs, DONT_CHECK_NULL))
         return;
     if (refs!=NULL && flevel < MAX_MENU_FILTER_LEVEL && flevel >= 0) {
         if (refs->menuFilterLevel != flevel) {
@@ -2319,7 +2319,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
 static void olcxReferenceFilterSet(int flevel) {
     OlcxReferences    *refs;
 
-    if (!olcxMoveInit(&sessionData,  &refs, DEFAULT_VALUE))
+    if (!olcxMoveInit(&sessionData,  &refs, DONT_CHECK_NULL))
         return;
     if (refs!=NULL && flevel < MAX_REF_LIST_FILTER_LEVEL && flevel >= 0) {
         refs->refsFilterLevel = flevel;
@@ -2351,7 +2351,7 @@ static OlcxReferences *getNextTopStackItem(OlcxReferencesStack *stack) {
 static void olcxReferenceRePush(void) {
     OlcxReferences *refs, *nextrr;
 
-    if (!olcxMoveInit(&sessionData, &refs, DEFAULT_VALUE))
+    if (!olcxMoveInit(&sessionData, &refs, DONT_CHECK_NULL))
         return;
     nextrr = getNextTopStackItem(&sessionData.browserStack);
     if (nextrr != NULL) {
