@@ -1,10 +1,11 @@
+#include "filetable.h"
+
 #include "commons.h"            /* For fatalError() */
 #include "hash.h"
 #include "memory.h"
 #include "globals.h"            /* For cwd */
 #include "caching.h"            /* For checkFileModifiedTime() */
 
-#include "filetable.h"
 
 /* Define the hashtab: */
 #define HASH_TAB_NAME fileTable

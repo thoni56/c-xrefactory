@@ -12,7 +12,7 @@
 #include "jslsemact.h"          /* s_jsl */
 
 #include "log.h"
-#include "misc.h"              /* creatingOlcxRefs() */
+#include "misc.h"              /* requiresCreatingRefs() */
 
 
 void gotOnLineCxRefs(Position *position) {
