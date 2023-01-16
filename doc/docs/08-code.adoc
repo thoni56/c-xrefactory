@@ -68,7 +68,7 @@ line options to global variables. When the Java parser is parsing a
 class or similar it (or rather the lexer) looks at that "target
 position information" and inserts a `OL_MARKER_TOKEN` in the stream.
 
-TODO: What extra "operation" the parsing should perform and return
+NOTE: TODO: What extra "operation" the parsing should perform and return
 data for should be packaged into some type of "command" or parameter
 object that should be passed to the parser, rather than relying on
 global variables.
@@ -164,7 +164,7 @@ in an update of refs at sometime which is identified by 1522108169
 the command line. (I don't know what the 'a' means...) Finally, the
 file name itself is 84 characters long.
 
-TODO: Build a tool to decipher this so that tests can query the
+NOTE: TODO: Build a tool to decipher this so that tests can query the
 generated data for expected data. This is now partly ongoing in the
 'utils' directory.
 
@@ -174,7 +174,7 @@ I've been focusing on the Emacs interface since `Jedit` is not so
 popular anymore and I'm an Emacs-guy.
 
 Basically Emacs (and probably other editors) starts `c-xref` in
-"server-mode" using `-task_regime_server` which connects the editor
+"server-mode" using `-server` which connects the editor
 with `c-xref` through stdout/stdin. If you have `(setq
 c-xref-debug-mode t)` this command is logged in the `\*Messages*` buffer
 with the prefix "calling:".
@@ -186,16 +186,16 @@ code. When the editor sends an `end-of-options` line, the server will
 start executing whatever was sent, and return some information in the
 file given as an `-o` option when the editor starts the `c-xref`
 server process. The file is named and created by the editor and
-usually resides in `/tmp`. With `c-xref-debug-mode` on this is logged
-as "sending:". If you `(setq c-xref-debug-preserve-tmp-files t)` Emacs
-will also not delete the temporary files it creates so that you can
-inspect them afterwards.
+usually resides in `/tmp`. With `c-xref-debug-mode` set to on this is
+logged as "sending:". If you `(setq c-xref-debug-preserve-tmp-files
+t)` Emacs will also not delete the temporary files it creates so that
+you can inspect them afterwards.
 
-When the server has finished the command and placed the output in the
-output file it sends a ``<sync>`` reply.
+When the server has finished processing the command and placed the
+output in the output file it sends a ``<sync>`` reply.
 
-The editor can then pick the result from the output file and do what
-it needs to do with it ("dispatching:").
+The editor can then pick up the result from the output file and do
+what it needs to do with it ("dispatching:").
 
 ==== Invocations
 
@@ -220,7 +220,8 @@ buffers are opened with what file...
 
 At this point I suspect that `-preload <file1> <file2>` means that the
 editor has saved a copy `<file1>` in `<file2>` and requests the server
-to set up a "buffer" describing that file.
+to set up a "buffer" describing that file and use it instead of the
+`<file1>` that recides on disk.
 
 This is essential when doing refactoring since the version of the file
 most likely only exists in the editor, so the editor has to tell the
@@ -229,9 +230,12 @@ server the current content somehow, this is the `-preload` option.
 === Editor Server
 
 When serving an editor the c-xrefactory application is divided into
-the server, _c-xref_ and the editor part, at this point only emacs:en
-are supported so that's implemented in the env/emacs-packages. (The
-jEdit source is now also resurrected, but it is completely untested.)
+the server, _c-xref_ and the editor part, at this point only Emacs:en
+are supported so that's implemented in the
+`editor/Emacs`-packages. (The jEdit source is now also resurrected,
+but it is completely untested and probably will be. It is resurrected
+so that it can be inspected when investigating use of various server
+options and features.)
 
 
 ==== Interaction
@@ -257,19 +261,19 @@ before re-using it.
 
 For some interactions the editor starts a completely new and fresh
 `c-xref` process, see below. And actually you can't do refactorings
-using the server, they have to be separate calls. I have yet to
+using the server, they have to be separate calls. (Yes?) I have yet to
 discover why this design choice was made.
 
 NOTE: There are many things in the sources that handles refactorings
-separately, such as r_opt, which is a separate copy of the options
-structure used only when refactoring.
+separately, such as `refactoring_options`, which is a separate copy of
+the options structure used only when refactoring.
 
 
 ==== Protocol
 
 Communication between the editor and the server is performed using
 text through standard input/output to/from _c-xref_. The protocol is
-defined in src/protocol.tc and must match env/emacs/c-xrefprotocol.el.
+defined in src/protocol.tc and must match `editor/emacs/c-xrefprotocol.el`.
 
 The definition of the protocol only caters for the server->editor part,
 the editor->server part consists of command lines resembling the command
@@ -284,7 +288,7 @@ includes _protocol.tc_ to wrap the PROTOCOL_ITEMs into
 ``defvar``s.
 
 There is also some Makefile trickery that ensures that the C and elisp
-impementation are in sync.
+impementations are in sync.
 
 
 ==== Invocation of server
@@ -299,12 +303,15 @@ with one project and then continues to work on another then new
 project options need to be read, and new reference information be
 generated, read and cached.)
 
-TODO: Figure out and describe how this works by looking at the
+NOTE: TODO: Figure out and describe how this works by looking at the
 elisp-sources.
 
 FINDINGS:
+
 - c-xref-start-server-process in c-xref.el
+
 - c-xref-send-data-to-running-process in c-xref.el
+
 - c-xref-server-call-refactoring-task in c-xref.el
 
 
