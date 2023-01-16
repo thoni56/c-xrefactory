@@ -15,6 +15,7 @@ extern char olSymbolType[COMPLETION_STRING_SIZE];
 extern char olSymbolClassType[COMPLETION_STRING_SIZE];
 
 
+extern void olcxInit(void);
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern void printTagSearchResults(void);
 extern bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2);
@@ -35,8 +36,6 @@ extern Reference *addCxReference(Symbol *symbol, Position *pos, UsageKind usage,
                                  int vFunClass,int vApplClass);
 extern Reference *addSpecialFieldReference(char *name, int storage,
                                            int fnum, Position *p, int usage);
-extern void addClassTreeHierarchyReference(int fnum, Position *p, int usage);
-extern void addCfClassTreeHierarchyRef(int fnum, int usage);
 extern void addTrivialCxReference (char *name, int symType, int storage,
                                    Position position, UsageKind usageKind);
 extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
@@ -53,8 +52,7 @@ extern SymbolsMenu *createSelectionMenu(ReferencesItem *dd);
 extern void mapCreateSelectionMenu(ReferencesItem *dd);
 extern void olcxFreeOldCompletionItems(OlcxReferencesStack *stack);
 
-extern void olcxInit(void);
-extern Reference * getDefinitionRef(Reference *rr);
+extern Reference *getDefinitionRef(Reference *rr);
 extern bool safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);
 extern bool olcxShowSelectionMenu(void);
@@ -62,11 +60,7 @@ extern void pushEmptySession(OlcxReferencesStack *stack);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
                                Reference **diff);
-extern int getClassNumFromClassLinkName(char *name, int defaultResult);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
-extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
-                                        Symbol *cclass);
-extern bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
 extern void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                          Symbol *cclass);
 extern void olcxPushSpecialCheckMenuSym(char *symname);
@@ -75,11 +69,19 @@ extern void olcxPushSpecial(char *fieldName, int command);
 extern bool isPushAllMethodsValidRefItem(ReferencesItem *ri);
 extern bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
                                        ServerOperation operation);
-extern void olcxPrintPushingAction(ServerOperation operation, PushAfterMenu pushAfterMenu);
+extern void olcxPrintPushingAction(ServerOperation operation);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
+
+extern void addClassTreeHierarchyReference(int fnum, Position *p, int usage);
+extern void addCfClassTreeHierarchyRef(int fnum, int usage);
+extern int getClassNumFromClassLinkName(char *name, int defaultResult);
+extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
+                                        Symbol *cclass);
 extern Symbol *getMoveTargetClass(void);
 extern int javaGetSuperClassNumFromClassNum(int cn);
 extern bool javaIsSuperClass(int superclas, int clas);
+extern bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
+
 extern void pushLocalUnusedSymbolsAction(void);
 extern void answerEditAction(void);
 

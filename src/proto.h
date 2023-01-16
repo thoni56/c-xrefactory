@@ -97,17 +97,12 @@ typedef enum {
 } MemoryKind;
 
 typedef enum {
-    PROCESS_FILE_ARGUMENTS = ALLOCATE_IN_PP,
-    DONT_PROCESS_FILE_ARGUMENTS
+    DONT_PROCESS_FILE_ARGUMENTS = ALLOCATE_IN_PP,
+    PROCESS_FILE_ARGUMENTS
 } ProcessFileArguments;
 
 typedef enum {
-    DONT_PUSH_AFTER_MENU = DONT_PROCESS_FILE_ARGUMENTS + 1,
-    PUSH_AFTER_MENU
-} PushAfterMenu;
-
-typedef enum {
-    DONT_CHECK_NULL = PUSH_AFTER_MENU + 1,
+    DONT_CHECK_NULL = PROCESS_FILE_ARGUMENTS + 1,
     CHECK_NULL
 } CheckNull;
 

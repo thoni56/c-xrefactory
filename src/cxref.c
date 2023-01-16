@@ -128,7 +128,7 @@ static bool isEnclosingClass(int enclosedClass, int enclosingClass) {
     int slow;
     int cc = 0;
 
-    /* TODO: Yes, this is very strange, what is "slow"? */
+    /* TODO: Yes, this is very strange, what is "slow"? Maybe s-low?*/
     for (int currentClass = slow = enclosedClass; currentClass!=NO_FILE_NUMBER && currentClass!=-1;
          currentClass=getFileItem(currentClass)->directEnclosingInstance) {
         if (currentClass == enclosingClass)
@@ -867,7 +867,7 @@ static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
     }
 }
 
-static void orderRefsAndGotoDefinition(OlcxReferences *refs, PushAfterMenu pushAfterMenu) {
+static void orderRefsAndGotoDefinition(OlcxReferences *refs) {
     olcxNaturalReorder(refs);
     if (refs->references == NULL) {
         refs->actual = refs->references;
@@ -884,12 +884,12 @@ static void orderRefsAndGotoDefinition(OlcxReferences *refs, PushAfterMenu pushA
     }
 }
 
-static void olcxOrderRefsAndGotoDefinition(PushAfterMenu pushAfterMenu) {
+static void olcxOrderRefsAndGotoDefinition(void) {
     OlcxReferences *refs;
 
     if (!olcxMoveInit(&sessionData, &refs, CHECK_NULL))
         return;
-    orderRefsAndGotoDefinition(refs, pushAfterMenu);
+    orderRefsAndGotoDefinition(refs);
 }
 
 static void getFileChar(int *chP, Position *position, CharacterBuffer *characterBuffer) {
@@ -1254,7 +1254,7 @@ static void findAndGotoDefinition(ReferencesItem *sym) {
     fillSymbolsMenu(&menu, *sym, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
     refs->menuSym = &menu;
     fullScanFor(sym->name);
-    orderRefsAndGotoDefinition(refs, DONT_PUSH_AFTER_MENU);
+    orderRefsAndGotoDefinition(refs);
     refs->menuSym = NULL;
     // recover stack
     popAndFreeSessionsUntil(oldtop);
@@ -3098,11 +3098,11 @@ static void olcxProcessGetRequest(void) {
     }
 }
 
-void olcxPrintPushingAction(ServerOperation operation, PushAfterMenu pushAfterMenu) {
+void olcxPrintPushingAction(ServerOperation operation) {
     switch (operation) {
     case OLO_PUSH:
         if (olcxCheckSymbolExists()) {
-            olcxOrderRefsAndGotoDefinition(pushAfterMenu);
+            olcxOrderRefsAndGotoDefinition();
         } else {
             // to auto repush symbol by name, but I do not like it.
             //& if (options.xref2) ppcGenRecord(PPC_NO_SYMBOL, "");
@@ -3113,7 +3113,7 @@ void olcxPrintPushingAction(ServerOperation operation, PushAfterMenu pushAfterMe
         break;
     case OLO_PUSH_NAME:
         if (olcxCheckSymbolExists()) {
-            olcxOrderRefsAndGotoDefinition(pushAfterMenu);
+            olcxOrderRefsAndGotoDefinition();
         } else {
             olcxNoSymbolFoundErrorMessage();
             olStackDeleteSymbol(sessionData.browserStack.top);
@@ -3253,7 +3253,7 @@ static void olcxListSpecial(char *fieldName) {
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->menuSym);
     // previous do not work, because of automatic reduction in moving
     // WTF Huh?
-    olcxPrintPushingAction(options.serverOperation, DONT_PUSH_AFTER_MENU);
+    olcxPrintPushingAction(options.serverOperation);
 }
 
 bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
@@ -3409,7 +3409,7 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
     } else {
         assert(sessionData.browserStack.top);
         //&olProcessSelectedReferences(sessionData->browserStack.top, genOnLineReferences);
-        olcxPrintPushingAction(options.serverOperation, DONT_PUSH_AFTER_MENU);
+        olcxPrintPushingAction(options.serverOperation);
     }
 }
 
@@ -3739,8 +3739,7 @@ void answerEditAction(void) {
         assert(sessionData.browserStack.top);
         rstack = sessionData.browserStack.top;
         //&olProcessSelectedReferences(rstack, genOnLineReferences);
-        olcxPrintPushingAction(sessionData.browserStack.top->command,
-                               PUSH_AFTER_MENU);
+        olcxPrintPushingAction(sessionData.browserStack.top->command);
         break;
     case OLO_CT_INSPECT_DEF:
         olcxClassTreeInspectDef();
@@ -3831,7 +3830,7 @@ void answerEditAction(void) {
     case OLO_PUSH_ALL_IN_METHOD:
         log_trace(":getting all references from begin=%d to end=%d", parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
         olPushAllReferencesInBetween(parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
-        olcxPrintPushingAction(options.serverOperation, DONT_PUSH_AFTER_MENU);
+        olcxPrintPushingAction(options.serverOperation);
         break;
     case OLO_TRIVIAL_PRECHECK:
         /* TODO: See comment for setMovingPrecheckStandardEnvironment */
