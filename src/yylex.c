@@ -180,7 +180,7 @@ static void setCurrentFileInfoFor(char *fileName) {
     int number;
 
     if (fileName==NULL) {
-        number = noFileIndex;
+        number = NO_FILE_NUMBER;
         name = getFileItem(number)->name;
     } else {
         bool existed = existsInFileTable(fileName);
@@ -427,27 +427,27 @@ static void fillIncludeSymbolItem(Symbol *symbol, Position *pos){
 }
 
 
-void addFileAsIncludeReference(int fileIndex) {
+void addFileAsIncludeReference(int fileNumber) {
     Position position;
     Symbol symbol;
 
-    position = makePosition(fileIndex, 1, 0);
+    position = makePosition(fileNumber, 1, 0);
     fillIncludeSymbolItem(&symbol, &position);
-    log_trace("adding reference on file %d==%s", fileIndex, getFileItem(fileIndex)->name);
-    addCxReference(&symbol, &position, UsageDefined, fileIndex, fileIndex);
+    log_trace("adding reference on file %d==%s", fileNumber, getFileItem(fileNumber)->name);
+    addCxReference(&symbol, &position, UsageDefined, fileNumber, fileNumber);
 }
 
-void addIncludeReference(int fileIndex, Position *position) {
+void addIncludeReference(int fileNumber, Position *position) {
     Symbol symbol;
 
-    log_trace("adding reference on file %d==%s", fileIndex, getFileItem(fileIndex)->name);
+    log_trace("adding reference on file %d==%s", fileNumber, getFileItem(fileNumber)->name);
     fillIncludeSymbolItem(&symbol, position);
-    addCxReference(&symbol, position, UsageUsed, fileIndex, fileIndex);
+    addCxReference(&symbol, position, UsageUsed, fileNumber, fileNumber);
 }
 
-static void addIncludeReferences(int fileIndex, Position *position) {
-    addIncludeReference(fileIndex, position);
-    addFileAsIncludeReference(fileIndex);
+static void addIncludeReferences(int fileNumber, Position *position) {
+    addIncludeReference(fileNumber, position);
+    addFileAsIncludeReference(fileNumber);
 }
 
 void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
@@ -897,7 +897,7 @@ endOfBody:
 
     addMacroToTabs(symbol, macroName);
     assert(options.mode);
-    addCxReference(symbol, &macroPosition, UsageDefined, noFileIndex, noFileIndex);
+    addCxReference(symbol, &macroPosition, UsageDefined, NO_FILE_NUMBER, NO_FILE_NUMBER);
     return;
 
 endOfMacroArgument:
@@ -964,7 +964,7 @@ static void processUndefineDirective(void) {
         /* this is because of monotonicity for caching, just adding symbol */
         if (symbolTableIsMember(symbolTable, &symbol, NULL, &member)) {
             Symbol *pp;
-            addCxReference(member, &position, UsageUndefinedMacro, noFileIndex, noFileIndex);
+            addCxReference(member, &position, UsageUndefinedMacro, NO_FILE_NUMBER, NO_FILE_NUMBER);
 
             pp = ppmAlloc(sizeof(Symbol));
             fillSymbol(pp, member->name, member->linkName, position);
@@ -1099,7 +1099,7 @@ static void processIfdefDirective(bool isIfdef) {
     if (isMember && member->u.mbody==NULL)
         isMember = false;	// undefined macro
     if (isMember) {
-        addCxReference(member, &position, UsageUsed, noFileIndex, noFileIndex);
+        addCxReference(member, &position, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
         if (isIfdef) {
             log_debug("#ifdef (true)");
             deleteSrc = false;
@@ -1170,7 +1170,7 @@ Lexem cexp_yylex(void) {
             mm = 0;   // undefined macro
         assert(options.mode);
         if (mm)
-            addCxReference(&symbol, &position, UsageUsed, noFileIndex, noFileIndex);
+            addCxReference(&symbol, &position, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
 
         /* following call sets uniyylval */
         res = cexpTranslateToken(CONSTANT, mm);
@@ -1843,7 +1843,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
     basePos = makePosition(inputFileNumber, 0, 0);
     fillReferencesItem(&ppp, macroSymbol->linkName,
                        cxFileHashNumber(macroSymbol->linkName), // useless, put 0
-                       noFileIndex, noFileIndex, TypeMacro, StorageDefault, ScopeGlobal,
+                       NO_FILE_NUMBER, NO_FILE_NUMBER, TypeMacro, StorageDefault, ScopeGlobal,
                        macroSymbol->access, CategoryGlobal);
     isMember = isMemberInReferenceTable(&ppp, NULL, &memb);
     r = NULL;
@@ -1856,7 +1856,7 @@ static void addMacroBaseUsageRef(Symbol *macroSymbol) {
     }
     if (isMember==0 || r==NULL) {
         addCxReference(macroSymbol, &basePos, UsageMacroBaseFileUsage,
-                       noFileIndex, noFileIndex);
+                       NO_FILE_NUMBER, NO_FILE_NUMBER);
     }
 }
 
@@ -1898,7 +1898,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
         actualArgumentsInput = NULL;
     }
     assert(options.mode);
-    addCxReference(macroSymbol, macroPosition, UsageUsed, noFileIndex, noFileIndex);
+    addCxReference(macroSymbol, macroPosition, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
     if (options.mode == XrefMode)
         addMacroBaseUsageRef(macroSymbol);
     log_trace("create macro body '%s'", macroBody->name);

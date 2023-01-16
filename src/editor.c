@@ -336,7 +336,7 @@ EditorMarker *newEditorMarkerForPosition(Position *position) {
     EditorBuffer *buffer;
     EditorMarker *marker;
 
-    if (position->file==noFileIndex || position->file<0) {
+    if (position->file==NO_FILE_NUMBER || position->file<0) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for non-existent position");
     }
     buffer = findEditorBufferForFile(getFileItem(position->file)->name);
@@ -565,7 +565,7 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int ftnum, c
     buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                                       .allocatedBlock = NULL, .allocatedIndex = 0,
                                                       .allocatedSize = 0};
-    *buffer = (EditorBuffer){.name = name, .fileIndex = ftnum, .fileName = fileName, .markers = NULL,
+    *buffer = (EditorBuffer){.name = name, .fileNumber = ftnum, .fileName = fileName, .markers = NULL,
                              .allocation = buffer->allocation};
     buffer->modificationTime = 0;
     buffer->size = 0;
@@ -600,7 +600,7 @@ static EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t mo
 
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
-    buffer->fileIndex = addFileNameToFileTable(allocatedName);
+    buffer->fileNumber = addFileNameToFileTable(allocatedName);
 
     return buffer;
 }
@@ -678,7 +678,7 @@ static EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsi
 
 void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
-    int fileIndex, deleted;
+    int fileNumber, deleted;
     EditorBuffer dd, *removed;
     EditorBufferList ddl, *memb, *memb2;
     char *oldName;
@@ -700,9 +700,9 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     buffer->name = editorAlloc(strlen(newName)+1);
     strcpy(buffer->name, newName);
     // update also ftnum
-    fileIndex = addFileNameToFileTable(newName);
-    getFileItem(fileIndex)->isArgument = getFileItem(buffer->fileIndex)->isArgument;
-    buffer->fileIndex = fileIndex;
+    fileNumber = addFileNameToFileTable(newName);
+    getFileItem(fileNumber)->isArgument = getFileItem(buffer->fileNumber)->isArgument;
+    buffer->fileNumber = fileNumber;
 
     *memb = (EditorBufferList){.buffer = buffer, .next = NULL};
     if (editorBufferIsMember(memb, NULL, &memb2)) {
@@ -898,7 +898,7 @@ void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size,
 static void quasiSaveEditorBuffer(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = false;
     buffer->modificationTime = time(NULL);
-    FileItem *fileItem = getFileItem(buffer->fileIndex);
+    FileItem *fileItem = getFileItem(buffer->fileNumber);
     fileItem->lastModified = buffer->modificationTime;
 }
 
@@ -1149,7 +1149,7 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
         for (; s<smax; s++, col++) {
             if (s == offset) {
                 Reference *r = olcxAlloc(sizeof(Reference));
-                r->position = makePosition(buf->fileIndex, line, col);
+                r->position = makePosition(buf->fileNumber, line, col);
                 fillReference(r, markers->usage, r->position, reference);
                 reference = r;
                 markers = markers->next;
@@ -1164,7 +1164,7 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
         }
         while (markers!=NULL && markers->marker->buffer==buf) {
             Reference *r = olcxAlloc(sizeof(Reference));
-            r->position = makePosition(buf->fileIndex, line, 0);
+            r->position = makePosition(buf->fileNumber, line, 0);
             fillReference(r, markers->usage, r->position, reference);
             reference = r;
             markers = markers->next;

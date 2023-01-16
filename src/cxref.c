@@ -94,10 +94,10 @@ static void setClassTreeBaseType(ClassTreeData *ct, Symbol *p) {
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
     assert(ct);
     //&fprintf(dumpOut,"!looking for result of %s\n",p->linkName);fflush(dumpOut);
-    ct->baseClassFileIndex = s_javaObjectSymbol->u.structSpec->classFileIndex;
+    ct->baseClassFileNumber = s_javaObjectSymbol->u.structSpec->classFileNumber;
     if (p->type == TypeStruct) {
         assert(p->u.structSpec);
-        ct->baseClassFileIndex = p->u.structSpec->classFileIndex;
+        ct->baseClassFileNumber = p->u.structSpec->classFileNumber;
     } else if (p->type == TypeDefault && p->storage!=StorageConstructor) {
         tt = p->u.typeModifier;
         assert(tt);
@@ -108,7 +108,7 @@ static void setClassTreeBaseType(ClassTreeData *ct, Symbol *p) {
             assert(rtcls!=NULL && rtcls->type==TypeStruct
                    && rtcls->u.structSpec!=NULL);
             //&fprintf(dumpOut,"!resulting class is %s\n",rtcls->linkName);fflush(dumpOut);
-            ct->baseClassFileIndex = rtcls->u.structSpec->classFileIndex;
+            ct->baseClassFileNumber = rtcls->u.structSpec->classFileNumber;
         }
     }
 }
@@ -129,7 +129,7 @@ static bool isEnclosingClass(int enclosedClass, int enclosingClass) {
     int cc = 0;
 
     /* TODO: Yes, this is very strange, what is "slow"? */
-    for (int currentClass = slow = enclosedClass; currentClass!=noFileIndex && currentClass!=-1;
+    for (int currentClass = slow = enclosedClass; currentClass!=NO_FILE_NUMBER && currentClass!=-1;
          currentClass=getFileItem(currentClass)->directEnclosingInstance) {
         if (currentClass == enclosingClass)
             return true;
@@ -158,7 +158,7 @@ static void changeFieldRefUsages(ReferencesItem *ri, void *rrcd) {
     ReferencesItem ddd;
 
     changeData = (ReferencesChangeData*) rrcd;
-    fillReferencesItem(&ddd, changeData->linkName, cxFileHashNumber(changeData->linkName), noFileIndex, noFileIndex,
+    fillReferencesItem(&ddd, changeData->linkName, cxFileHashNumber(changeData->linkName), NO_FILE_NUMBER, NO_FILE_NUMBER,
                        TypeDefault, StorageField, ScopeFile, AccessDefault, changeData->category);
     if (isSameCxSymbol(ri, &ddd)) {
         for (Reference *r = ri->references; r!=NULL; r=r->next) {
@@ -167,13 +167,13 @@ static void changeFieldRefUsages(ReferencesItem *ri, void *rrcd) {
                 switch(r->usage.kind) {
                 case UsageMaybeThis:
                     assert(changeData->cclass->u.structSpec);
-                    if (isEnclosingClass(changeData->cclass->u.structSpec->classFileIndex, ri->vFunClass)) {
+                    if (isEnclosingClass(changeData->cclass->u.structSpec->classFileNumber, ri->vFunClass)) {
                         r->usage.kind = UsageMaybeThisInClassOrMethod;
                     }
                     break;
                 case UsageMaybeQualifiedThis:
                     assert(changeData->cclass->u.structSpec);
-                    if (isEnclosingClass(changeData->cclass->u.structSpec->classFileIndex, ri->vFunClass)) {
+                    if (isEnclosingClass(changeData->cclass->u.structSpec->classFileNumber, ri->vFunClass)) {
                         r->usage.kind = UsageMaybeQualifThisInClassOrMethod;
                     }
                     break;
@@ -397,7 +397,7 @@ static bool olcxOnlyParseNoPushing(int opt) {
 
 /* ********************************************************************* */
 /* ********************************************************************* */
-/* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
+/* default vappClass == vFunClass == NO_FILE_NUMBER  !!!!!!!             */
 /*                                                                       */
 Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                              int vFunCl, int vApplCl) {
@@ -421,7 +421,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         return NULL;
     if (symbol == &errorSymbol || symbol->type==TypeError)
         return NULL;
-    if (position->file == noFileIndex)
+    if (position->file == NO_FILE_NUMBER)
         return NULL;
 
     assert(position->file<MAX_FILES);
@@ -443,7 +443,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
         } else {
             if (category==CategoryGlobal && symbol->type!=TypeCppInclude && options.serverOperation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
-                if (olOriginalFileIndex != position->file && options.noIncludeRefs)
+                if (olOriginalFileNumber != position->file && options.noIncludeRefs)
                     return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
@@ -521,7 +521,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                 defaultPosition = &symbol->pos;
                 defaultUsage = UsageDefined;
             }
-            if (defaultPosition->file!=noFileIndex)
+            if (defaultPosition->file!=NO_FILE_NUMBER)
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition->line);
             if (! olcxOnlyParseNoPushing(options.serverOperation)) {
                 menu = olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
@@ -572,7 +572,7 @@ void addTrivialCxReference(char *name, int symType, int storage, Position positi
     fillSymbol(&symbol, name, name, position);
     symbol.type = symType;
     symbol.storage = storage;
-    addCxReference(&symbol, &position, usageKind, noFileIndex, noFileIndex);
+    addCxReference(&symbol, &position, usageKind, NO_FILE_NUMBER, NO_FILE_NUMBER);
 }
 
 void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {
@@ -873,7 +873,7 @@ char *getJavaDocUrl_st(ReferencesItem *rr) {
     int len = MAX_REF_LEN;
     res[0] = 0;
     if (rr->type == TypeDefault) {
-        if (rr->vFunClass==noFileIndex) {
+        if (rr->vFunClass==NO_FILE_NUMBER) {
             tt = strchr(rr->name, '.');
             if (tt==NULL) {
                 sprintf(res,"packages.html#xrefproblem");
@@ -886,7 +886,7 @@ char *getJavaDocUrl_st(ReferencesItem *rr) {
                                     MAX_REF_LEN-len, LONG_NAME);
             }
         } else {
-            javaGetClassNameFromFileIndex(rr->vFunClass, res, KEEP_SLASHES);
+            javaGetClassNameFromFileNumber(rr->vFunClass, res, KEEP_SLASHES);
             for (tt=res; *tt; tt++) if (*tt=='$') *tt = '.';
             len = strlen(res);
             sprintf(res+len, ".html");
@@ -1236,7 +1236,7 @@ static Reference *passNonPrintableRefsForFile(Reference *references,
 static void passRefsThroughSourceFile(Reference **inOutReferences, Position *callerPosition,
                                       FILE *outputFile, int usages, int usageFilter) {
     Reference *references;
-    int ch, fileIndex;
+    int ch, fileNumber;
     EditorBuffer *ebuf;
     char *cofileName;
     Position position;
@@ -1245,11 +1245,11 @@ static void passRefsThroughSourceFile(Reference **inOutReferences, Position *cal
     references = *inOutReferences;
     if (references==NULL)
         goto fin;
-    fileIndex = references->position.file;
+    fileNumber = references->position.file;
 
-    cofileName = getFileItem(fileIndex)->name;
-    references = passNonPrintableRefsForFile(references, fileIndex, usages, usageFilter);
-    if (references==NULL || references->position.file != fileIndex)
+    cofileName = getFileItem(fileNumber)->name;
+    references = passNonPrintableRefsForFile(references, fileNumber, usages, usageFilter);
+    if (references==NULL || references->position.file != fileNumber)
         goto fin;
     if (options.referenceListWithoutSource) {
         ebuf = NULL;
@@ -1269,7 +1269,7 @@ static void passRefsThroughSourceFile(Reference **inOutReferences, Position *cal
     if (ebuf==NULL) {
         cxfBuf.isAtEOF = true;
     } else {
-        fillCharacterBuffer(&cxfBuf, ebuf->allocation.text, ebuf->allocation.text+ebuf->allocation.bufferSize, NULL, ebuf->allocation.bufferSize, noFileIndex, ebuf->allocation.text);
+        fillCharacterBuffer(&cxfBuf, ebuf->allocation.text, ebuf->allocation.text+ebuf->allocation.bufferSize, NULL, ebuf->allocation.bufferSize, NO_FILE_NUMBER, ebuf->allocation.text);
         getFileChar(&ch, &position, &cxfBuf);
     }
     position = makePosition(references->position.file, 1, 0);
@@ -1670,7 +1670,7 @@ static void olcxReferenceGotoCaller(void) {
     OlcxReferences    *refs;
     if (!olcxMoveInit(&sessionData, &refs,CHECK_NULL))
         return;
-    if (refs->callerPosition.file != noFileIndex) {
+    if (refs->callerPosition.file != NO_FILE_NUMBER) {
         gotoOnlineCxref(&refs->callerPosition, UsageUsed, "");
 
     } else {
@@ -1834,9 +1834,9 @@ static void olcxGenInspectClassDefinitionRef(int classnum) {
     ReferencesItem references;
     char className[MAX_CX_SYMBOL_SIZE];
 
-    javaGetClassNameFromFileIndex(classnum, className, KEEP_SLASHES);
+    javaGetClassNameFromFileNumber(classnum, className, KEEP_SLASHES);
     fillReferencesItem(&references, className, cxFileHashNumber(className),
-                       noFileIndex, noFileIndex, TypeStruct, StorageExtern, ScopeGlobal,
+                       NO_FILE_NUMBER, NO_FILE_NUMBER, TypeStruct, StorageExtern, ScopeGlobal,
                        AccessDefault, CategoryGlobal);
     findAndGotoDefinition(&references);
 }
@@ -1855,7 +1855,7 @@ static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
         indicateNoReference();
     } else {
         if (inspect == INSPECT_DEF) {
-            if (ss->defpos.file>=0 && ss->defpos.file!=noFileIndex) {
+            if (ss->defpos.file>=0 && ss->defpos.file!=NO_FILE_NUMBER) {
                 gotoOnlineCxref(&ss->defpos, UsageDefined, "");
             } else if (!olcxBrowseSymbolInJavaDoc(&ss->references)) {
                 indicateNoReference();
@@ -2373,7 +2373,7 @@ static void olcxReferencePop(void) {
     OlcxReferences *refs;
     if (!olcxMoveInit(&sessionData, &refs, CHECK_NULL))
         return;
-    if (refs->callerPosition.file != noFileIndex) {
+    if (refs->callerPosition.file != NO_FILE_NUMBER) {
         gotoOnlineCxref(&refs->callerPosition, UsageUsed, "");
     } else {
         indicateNoReference();
@@ -2497,13 +2497,13 @@ static void safetyCheckDiff(Reference **anr1,
 
 int getFileNumberFromName(char *name) {
     char *normalizedName;
-    int fileIndex;
+    int fileNumber;
 
     normalizedName = normalizeFileName(name, cwd);
-    if ((fileIndex = lookupFileTable(normalizedName)) != -1) {
-        return fileIndex;
+    if ((fileNumber = lookupFileTable(normalizedName)) != -1) {
+        return fileNumber;
     } else {
-        return noFileIndex;
+        return NO_FILE_NUMBER;
     }
 }
 
@@ -2518,8 +2518,8 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *rr) {
     ofn = getFileNumberFromName(options.checkFileMovedFrom);
     nfn = getFileNumberFromName(options.checkFileMovedTo);
     //&fprintf(dumpOut,"!shifting %d --> %d\n", ofn, nfn);
-    if (ofn==noFileIndex) return NULL;
-    if (nfn==noFileIndex) return NULL;
+    if (ofn==NO_FILE_NUMBER) return NULL;
+    if (nfn==NO_FILE_NUMBER) return NULL;
     fmline = options.checkFirstMovedLine;
     lmline = options.checkFirstMovedLine + options.checkLinesMoved;
     res = NULL; resa = &res;
@@ -2878,16 +2878,16 @@ void getLineAndColumnCursorPositionFromCommandLineOptions(int *l, int *c) {
 }
 
 int getClassNumFromClassLinkName(char *name, int defaultResult) {
-    int fileIndex;
+    int fileNumber;
     char classFileName[MAX_FILE_NAME_SIZE];
 
-    fileIndex = defaultResult;
+    fileNumber = defaultResult;
     convertLinkNameToClassFileName(classFileName, name);
     log_trace("Looking for class file '%s'", classFileName);
     if (existsInFileTable(classFileName))
-        fileIndex = lookupFileTable(classFileName);
+        fileNumber = lookupFileTable(classFileName);
 
-    return fileIndex;
+    return fileNumber;
 }
 
 static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
@@ -2899,10 +2899,10 @@ static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
     if (!LANGUAGE(LANG_JAVA)) {
         rstack->hkSelectedSym = NULL;
         errorMessage(ERR_ST,"This function is available only in Java language");
-        return noFileIndex;
+        return NO_FILE_NUMBER;
     }
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
-    clii = s_javaObjectSymbol->u.structSpec->classFileIndex;
+    clii = s_javaObjectSymbol->u.structSpec->classFileNumber;
     log_trace("class clii==%d==%s", clii, getFileItem(clii)->name);
     ss = rstack->hkSelectedSym;
     if (ss!=NULL && ss->next!=NULL) {
@@ -2917,10 +2917,10 @@ static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
             clii = getClassNumFromClassLinkName(ss->references.name, clii);
         } else {
             if (options.serverOperation == OLO_CLASS_TREE) {
-                assert(sessionData.classTree.baseClassFileIndex!=noFileIndex);
-                clii = sessionData.classTree.baseClassFileIndex;
+                assert(sessionData.classTree.baseClassFileNumber!=NO_FILE_NUMBER);
+                clii = sessionData.classTree.baseClassFileNumber;
             } else {
-                if (ss->references.vApplClass!=noFileIndex) clii = ss->references.vApplClass;
+                if (ss->references.vApplClass!=NO_FILE_NUMBER) clii = ss->references.vApplClass;
             }
         }
     }
@@ -3056,8 +3056,8 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
     pushEmptySession(&sessionData.browserStack);
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
-    rstack->hkSelectedSym = olCreateSpecialMenuItem(symname, noFileIndex, StorageDefault);
-    rstack->menuSym = olCreateSpecialMenuItem(symname, noFileIndex, StorageDefault);
+    rstack->hkSelectedSym = olCreateSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
+    rstack->menuSym = olCreateSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
 }
 
 static void olcxSafetyCheckInit(void) {
@@ -3198,7 +3198,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
 
 static void fillTrivialSpecialRefItem(ReferencesItem *ddd , char *name) {
     fillReferencesItem(ddd, name, cxFileHashNumber(name),
-                       noFileIndex, noFileIndex, TypeUnknown, StorageAuto,
+                       NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageAuto,
                        ScopeAuto, AccessDefault, CategoryLocal);
 }
 
@@ -3486,7 +3486,7 @@ void olcxPushSpecial(char *fieldName, int command) {
     clii = olSpecialFieldCreateSelection(fieldName, StorageField);
     olCreateSelectionMenu(sessionData.browserStack.top->command);
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
-    if (clii == s_javaObjectSymbol->u.structSpec->classFileIndex
+    if (clii == s_javaObjectSymbol->u.structSpec->classFileNumber
         || command == OLO_MAYBE_THIS
         || command == OLO_NOT_FQT_REFS
         || command == OLO_NOT_FQT_REFS_IN_CLASS
@@ -3604,13 +3604,13 @@ int javaGetSuperClassNumFromClassNum(int cn) {
         if (!getFileItem(superClass)->isInterface)
             return superClass;
     }
-    return noFileIndex;
+    return NO_FILE_NUMBER;
 }
 
 bool javaIsSuperClass(int superclas, int clas) {
     int ss;
     for (ss=javaGetSuperClassNumFromClassNum(clas);
-         ss!=noFileIndex && ss!=superclas;
+         ss!=NO_FILE_NUMBER && ss!=superclas;
          ss=javaGetSuperClassNumFromClassNum(ss))
         ;
     if (ss == superclas) return true;
@@ -3731,7 +3731,7 @@ static void getCallerPositionFromCommandLineOption(Position *opos) {
     int file, line, col;
 
     assert(opos != NULL);
-    file = olOriginalFileIndex;
+    file = olOriginalFileNumber;
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
     *opos = makePosition(file, line, col);
 }
@@ -3759,7 +3759,7 @@ static void pushSymbolByName(char *name) {
         currentPass = spass;
     }
     rstack = sessionData.browserStack.top;
-    rstack->hkSelectedSym = olCreateSpecialMenuItem(name, noFileIndex, StorageDefault);
+    rstack->hkSelectedSym = olCreateSpecialMenuItem(name, NO_FILE_NUMBER, StorageDefault);
     getCallerPositionFromCommandLineOption(&rstack->callerPosition);
 }
 
@@ -3825,7 +3825,7 @@ void answerEditAction(void) {
                 fprintf(communicationChannel,"*%s", options.project);
             }
         } else {
-            if (olOriginalComFileNumber == noFileIndex) {
+            if (olOriginalComFileNumber == NO_FILE_NUMBER) {
                 if (options.xref2) {
                     ppcGenRecord(PPC_ERROR, "No source file to identify project");
                 } else {
@@ -4066,7 +4066,7 @@ void answerEditAction(void) {
         break;
     case OLO_GOTO_PARAM_NAME:
         // I hope this is not used anymore, put there assert(0);
-        if (olstringServed && parameterPosition.file != noFileIndex) {
+        if (olstringServed && parameterPosition.file != NO_FILE_NUMBER) {
             gotoOnlineCxref(&parameterPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {
@@ -4076,7 +4076,7 @@ void answerEditAction(void) {
         }
         break;
     case OLO_GET_PRIMARY_START:
-        if (olstringServed && s_primaryStartPosition.file != noFileIndex) {
+        if (olstringServed && s_primaryStartPosition.file != NO_FILE_NUMBER) {
             gotoOnlineCxref(&s_primaryStartPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
         } else {
@@ -4272,7 +4272,7 @@ SymbolsMenu *createSelectionMenu(ReferencesItem *references) {
             found = true;
             oo = olcxOoBits(menu, references);
             ooBits = ooBitsMax(oo, ooBits);
-            if (defpos->file == noFileIndex) {
+            if (defpos->file == NO_FILE_NUMBER) {
                 defpos = &menu->defpos;
                 defusage = menu->defUsage;
                 log_trace(": propagating defpos (line %d) to menusym", defpos->line);

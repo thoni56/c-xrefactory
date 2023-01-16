@@ -72,7 +72,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
-        fillReferencesItem(&sri, "", cxFileHashNumber(""), noFileIndex, noFileIndex, TypeUnknown, StorageNone,
+        fillReferencesItem(&sri, "", cxFileHashNumber(""), NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageNone,
                            ScopeAuto, AccessDefault, CategoryLocal);
         completion = newCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
     } else {

@@ -56,7 +56,7 @@ bool olstringFound = false;
 bool olstringServed = false;
 char *olstringInMacroBody = NULL;
 int olstringUsageKind = 0;
-int olOriginalFileIndex = -1;
+int olOriginalFileNumber = -1;
 int olstringUsageKind;
 int olOriginalComFileNumber;
 Position s_olcxByPassPos;

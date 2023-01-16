@@ -47,7 +47,7 @@ Ensure(Options, will_return_true_if_package_structure_exists) {
 
     expect(addFileNameToFileTable, will_return(42));
     FileItem fileItem = {"./org/existant"};
-    expect(getFileItem, when(fileIndex, is_equal_to(42)), will_return(&fileItem));
+    expect(getFileItem, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
 
     assert_that(packageOnCommandLine("org.existant"));
 }
@@ -64,7 +64,7 @@ Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
 
     expect(addFileNameToFileTable, will_return(42));
     FileItem fileItem = {"but/this/path/org/existant"};
-    expect(getFileItem, when(fileIndex, is_equal_to(42)), will_return(&fileItem));
+    expect(getFileItem, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
 
     assert_that(packageOnCommandLine("org.existant"));
 }

@@ -43,12 +43,12 @@ static void clearTmpClassBackPointersToMenu(void) {
 }
 
 
-ClassHierarchyReference *newClassHierarchyReference(int originFileIndex, int superClass,
+ClassHierarchyReference *newClassHierarchyReference(int originFileNumber, int superClass,
                                                     ClassHierarchyReference *next) {
     ClassHierarchyReference *p;
 
     p = cxAlloc(sizeof(ClassHierarchyReference));
-    p->ofile = originFileIndex;
+    p->ofile = originFileNumber;
     p->superClass = superClass;
     p->next = next;
 
@@ -91,13 +91,13 @@ int classCmp(int class1, int class2) {
     return res;
 }
 
-bool classHierarchyClassNameLess(int classFileIndex1, int classFileIndex2) {
+bool classHierarchyClassNameLess(int classFileNumber1, int classFileNumber2) {
     char *name;
     int comparison;
     char name1[MAX_FILE_NAME_SIZE];
 
-    FileItem *fileItem1 = getFileItem(classFileIndex1);
-    FileItem *fileItem2 = getFileItem(classFileIndex2);
+    FileItem *fileItem1 = getFileItem(classFileNumber1);
+    FileItem *fileItem2 = getFileItem(classFileNumber2);
 
     // SMART, put interface as largest, so they will be at the end
     if (fileItem2->isInterface && ! fileItem1->isInterface)
@@ -121,11 +121,11 @@ static int classHierarchySuperClassNameLess(ClassHierarchyReference *c1, ClassHi
     return classHierarchyClassNameLess(c1->superClass, c2->superClass);
 }
 
-static int markTransitiveRelevantSubsRec(int fileIndex, int passNumber) {
-    FileItem *fileItem = getFileItem(fileIndex);
-    if (THEBIT(tmpChMarkProcessed,fileIndex))
-        return THEBIT(tmpChRelevant,fileIndex);
-    SETBIT(tmpChMarkProcessed, fileIndex);
+static int markTransitiveRelevantSubsRec(int fileNumber, int passNumber) {
+    FileItem *fileItem = getFileItem(fileNumber);
+    if (THEBIT(tmpChMarkProcessed,fileNumber))
+        return THEBIT(tmpChRelevant,fileNumber);
+    SETBIT(tmpChMarkProcessed, fileNumber);
     for (ClassHierarchyReference *s = fileItem->inferiorClasses; s!=NULL; s=s->next) {
         // do not descend from class to an
         // interface, because of Object -> interface lapsus ?
@@ -134,10 +134,10 @@ static int markTransitiveRelevantSubsRec(int fileIndex, int passNumber) {
         //&     if (passNumber==FIRST_PASS && temp->b.isInterface) continue;
         if (markTransitiveRelevantSubsRec(s->superClass, passNumber)) {
             //&fprintf(dumpOut,"setting %s relevant\n",fileItem->name);
-            SETBIT(tmpChRelevant, fileIndex);
+            SETBIT(tmpChRelevant, fileNumber);
         }
     }
-    return THEBIT(tmpChRelevant, fileIndex);
+    return THEBIT(tmpChRelevant, fileNumber);
 }
 
 static void markTransitiveRelevantSubs(int cind, int passNumber) {
@@ -180,11 +180,11 @@ static void genClassHierarchyVerticalBars(FILE *file, IntegerList *nextbars) {
 }
 
 
-static SymbolsMenu *itemInOriginalList(int fileIndex) {
-    if (fileIndex == -1)
+static SymbolsMenu *itemInOriginalList(int fileNumber) {
+    if (fileNumber == -1)
         return NULL;
-    assert(fileIndex>=0 && fileIndex<MAX_FILES);
-    return tmpVApplClassBackPointersToMenu[fileIndex];
+    assert(fileNumber>=0 && fileNumber<MAX_FILES);
+    return tmpVApplClassBackPointersToMenu[fileNumber];
 }
 
 static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, int selectable) {
@@ -274,9 +274,9 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
     }
 }
 
-static void printClassHierarchyLineForMenu(SymbolsMenu *menu, FILE *file, int fileIndex,
+static void printClassHierarchyLineForMenu(SymbolsMenu *menu, FILE *file, int fileNumber,
                                            IntegerList *nextbars) {
-    bool alreadyProcessed = THEBIT(tmpChProcessed, fileIndex);
+    bool alreadyProcessed = THEBIT(tmpChProcessed, fileNumber);
     if (options.xref2) {
         ppcIndent();
         fprintf(file, "<%s %s=%d", PPC_CLASS, PPCA_LINE,
@@ -290,7 +290,7 @@ static void printClassHierarchyLineForMenu(SymbolsMenu *menu, FILE *file, int fi
     }
     genClassHierarchyVerticalBars(file, nextbars);
 
-    FileItem *fileItem = getFileItem(fileIndex);
+    FileItem *fileItem = getFileItem(fileNumber);
     if (menu != NULL) {
         if (menu->references.vApplClass == menu->references.vFunClass && options.serverOperation!=OLO_CLASS_TREE) {
             if (options.xref2)
@@ -309,11 +309,11 @@ static void printClassHierarchyLineForMenu(SymbolsMenu *menu, FILE *file, int fi
     char *typeName = javaGetNudePreTypeName_static(getRealFileName_static(fileItem->name),
                                                    options.displayNestedClasses);
     if (options.xref2) {
-        if (THEBIT(tmpChProcessed,fileIndex))
+        if (THEBIT(tmpChProcessed,fileNumber))
             fprintf(file," %s=1", PPCA_TREE_UP);
         fprintf(file, " %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(typeName), typeName, PPC_CLASS);
     } else {
-        if (THEBIT(tmpChProcessed,fileIndex))
+        if (THEBIT(tmpChProcessed,fileNumber))
             fprintf(file,"(%s) -> up", typeName);
         else
             fprintf(file,"%s", typeName);
@@ -418,8 +418,8 @@ void genClassHierarchies(SymbolsMenu *menuList, FILE *file, int passNumber) {
     }
     // and gen the class subhierarchy
     for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
-        genThisClassHierarchy(menuList, menu->references.vFunClass, noFileIndex, file, passNumber);
-        genThisClassHierarchy(menuList, menu->references.vApplClass, noFileIndex, file, passNumber);
+        genThisClassHierarchy(menuList, menu->references.vFunClass, NO_FILE_NUMBER, file, passNumber);
+        genThisClassHierarchy(menuList, menu->references.vApplClass, NO_FILE_NUMBER, file, passNumber);
     }
 }
 

@@ -3366,10 +3366,10 @@ case 64:
                     assert(s_jsl == NULL); /* no nesting*/
                     jsltypeTab = StackMemoryAlloc(JslTypeTab);
                     jslTypeTabInit(jsltypeTab, MAX_JSL_SYMBOLS);
-                    javaReadSymbolFromSourceFileInit(olOriginalFileIndex,
+                    javaReadSymbolFromSourceFileInit(olOriginalFileNumber,
                                                      jsltypeTab);
 
-                    fname = getFileItem(olOriginalFileIndex)->name;
+                    fname = getFileItem(olOriginalFileNumber)->name;
                     if (options.mode == ServerMode) {
                         /* this must be before reading 's_olOriginalComFile' !!!*/
                         if (editorFileExists(fname)) {
@@ -3733,9 +3733,9 @@ case 110:
                         newClassDefinitionEnd(yyvsp[-4].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
+                        if (yyval.ast_id.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
                         if (positionIsBetween(yyval.ast_id.b, cxRefPosition, yyval.ast_id.e)
-                            && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
+                            && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == NO_FILE_NUMBER) {
                             parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
                             parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-6].ast_id.b;
                             parsedPositions[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-6].ast_id.e;
@@ -3768,7 +3768,7 @@ case 112:
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                        if (yyval.ast_id.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -3811,7 +3811,7 @@ case 116:
                         newClassDefinitionEnd(yyvsp[-4].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_position.b.file == noFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_id, yyvsp[0].ast_position);
+                        if (yyval.ast_position.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_id, yyvsp[0].ast_position);
                         if (positionsAreEqual(cxRefPosition, yyvsp[-5].ast_id.data->position)) {
                             parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
                             parsedPositions[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_position.e;
@@ -3842,7 +3842,7 @@ case 118:
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_position.b.file == noFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                        if (yyval.ast_position.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -4067,7 +4067,7 @@ case 141:
                         if (p->type == TypeError) continue;
                         assert(p->type == TypeDefault);
                         completeDeclarator(yyvsp[-2].ast_symbol.data, p);
-                        vClass = javaStat->classFileIndex;
+                        vClass = javaStat->classFileNumber;
                         p->access = yyvsp[-3].ast_unsigned.data;
                         p->storage = StorageField;
                         if (clas->access&AccessInterface) {
@@ -4091,9 +4091,9 @@ case 141:
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_position);
-                    if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
+                    if (yyval.ast_symbol.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                     if (positionIsBetween(yyval.ast_symbol.b, cxRefPosition, yyval.ast_symbol.e)
-                        && parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==noFileIndex) {
+                        && parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==NO_FILE_NUMBER) {
                         parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION] = yyval.ast_symbol.b;
                         parsedPositions[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
                         parsedPositions[SPP_FIELD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
@@ -4114,7 +4114,7 @@ case 141:
                     if (p->type == TypeError) continue;
                     assert(p->type == TypeDefault);
                     assert(clas->u.structSpec);
-                    vClass = clas->u.structSpec->classFileIndex;
+                    vClass = clas->u.structSpec->classFileNumber;
                     jslCompleteDeclarator(yyvsp[-2].ast_symbol.data, p);
                     p->access = yyvsp[-3].ast_unsigned.data;
                     p->storage = StorageField;
@@ -4124,8 +4124,8 @@ case 141:
                     }
                     log_debug("[jsl] adding field %s to %s", p->name,clas->linkName);
                     LIST_APPEND(Symbol, clas->u.structSpec->records, p);
-                    assert(vClass!=noFileIndex);
-                    if (p->pos.file!=olOriginalFileIndex && options.serverOperation==OLO_PUSH) {
+                    assert(vClass!=NO_FILE_NUMBER);
+                    if (p->pos.file!=olOriginalFileNumber && options.serverOperation==OLO_PUSH) {
                         /* pre load of saved file akes problem on move field/method, ...*/
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
@@ -4276,8 +4276,8 @@ case 154:
                     yyval.ast_symbol.data = javaMethodHeader(yyvsp[-3].ast_unsigned.data,yyvsp[-2].ast_symbol.data,yyvsp[-1].ast_symbol.data, StorageMethod);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
-                    if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
-                    if (yyval.ast_symbol.e.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
+                    if (yyval.ast_symbol.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
+                    if (yyval.ast_symbol.e.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
                     if (positionIsBetween(yyval.ast_symbol.b, cxRefPosition, yyvsp[-1].ast_symbol.e)) {
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
@@ -4297,8 +4297,8 @@ case 155:
                     yyval.ast_symbol.data = javaMethodHeader(yyvsp[-3].ast_unsigned.data,&defaultVoidDefinition,yyvsp[-1].ast_symbol.data,StorageMethod);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
-                    if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
-                    if (yyval.ast_symbol.e.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
+                    if (yyval.ast_symbol.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
+                    if (yyval.ast_symbol.e.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
                     if (positionIsBetween(yyval.ast_symbol.b, cxRefPosition, yyvsp[-1].ast_symbol.e)) {
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_id.b;
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_id.e;
@@ -4557,7 +4557,7 @@ case 177:
                 if (! SyntaxPassOnly()) {
                     endBlock();
                     PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_unsigned, yyvsp[-1].ast_position);
-                    if (yyval.ast_position.b.file == noFileIndex)
+                    if (yyval.ast_position.b.file == NO_FILE_NUMBER)
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_symbol, yyval.ast_position);
                 }
                 parsedClassInfo.function = NULL; /* added for set-target-position checks */
@@ -4571,7 +4571,7 @@ case 178:
                     if (! SyntaxPassOnly()) {
                         if (strcmp(yyvsp[0].ast_id.data->name, javaStat->thisClass->name)==0) {
                             addCxReference(javaStat->thisClass, &yyvsp[0].ast_id.data->position,
-                                           UsageConstructorDefinition,noFileIndex, noFileIndex);
+                                           UsageConstructorDefinition,NO_FILE_NUMBER, NO_FILE_NUMBER);
                             yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.data->name,/*JAVA_CONSTRUCTOR_NAME1,*/
                                                              &(yyvsp[0].ast_id.data->position), MEMORY_XX);
                         } else {
@@ -4764,9 +4764,9 @@ case 198:
                     newClassDefinitionEnd(yyvsp[-3].trail);
                 } else {
                     PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_unsigned, yyvsp[0].ast_position);
-                    if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
+                    if (yyval.ast_id.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
                     if (positionIsBetween(yyval.ast_id.b, cxRefPosition, yyval.ast_id.e)
-                        && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
                         parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-5].ast_position.b;
                         parsedPositions[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-5].ast_position.e;
@@ -4799,7 +4799,7 @@ case 200:
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_position, yyval.ast_id);
+                        if (yyval.ast_id.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_position, yyval.ast_id);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -5615,7 +5615,7 @@ case 330:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (options.serverOperation==OLO_EXTRACT) {
-                        addCxReference(yyvsp[-1].ast_expressionType.data.typeModifier->u.t, &yyvsp[-2].ast_id.data->position, UsageThrown, noFileIndex, noFileIndex);
+                        addCxReference(yyvsp[-1].ast_expressionType.data.typeModifier->u.t, &yyvsp[-2].ast_id.data->position, UsageThrown, NO_FILE_NUMBER, NO_FILE_NUMBER);
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-2].ast_id, yyvsp[0].ast_position);
@@ -5680,7 +5680,7 @@ case 340:
                                             UsageDefined);
                             if (options.serverOperation == OLO_EXTRACT) {
                                 assert(yyvsp[-3].ast_symbol.data->type==TypeDefault);
-                                addCxReference(yyvsp[-3].ast_symbol.data->u.typeModifier->u.t, &yyvsp[-5].ast_id.data->position, UsageCatched, noFileIndex, noFileIndex);
+                                addCxReference(yyvsp[-3].ast_symbol.data->u.typeModifier->u.t, &yyvsp[-5].ast_id.data->position, UsageCatched, NO_FILE_NUMBER, NO_FILE_NUMBER);
                             }
                         }
                     }
@@ -5706,7 +5706,7 @@ case 342:
                 if (! SyntaxPassOnly()) {
                     if (options.serverOperation == OLO_EXTRACT) {
                         assert(yyvsp[-2].ast_symbol.data->type==TypeDefault);
-                        addCxReference(yyvsp[-2].ast_symbol.data->u.typeModifier->u.t, &yyvsp[-4].ast_id.data->position, UsageCatched, noFileIndex, noFileIndex);
+                        addCxReference(yyvsp[-2].ast_symbol.data->u.typeModifier->u.t, &yyvsp[-4].ast_id.data->position, UsageCatched, NO_FILE_NUMBER, NO_FILE_NUMBER);
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
@@ -5760,7 +5760,7 @@ case 347:
                     assert(javaStat && javaStat->thisType);
 /*fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);*/
                     yyval.ast_expressionType.data.typeModifier = javaStat->thisType;
-                    addThisCxReferences(javaStat->classFileIndex, &yyvsp[0].ast_id.data->position);
+                    addThisCxReferences(javaStat->classFileNumber, &yyvsp[0].ast_id.data->position);
                     yyval.ast_expressionType.data.reference = NULL;
                 } else {
                     yyval.ast_expressionType.data.position = &yyvsp[0].ast_id.data->position;
@@ -5854,7 +5854,7 @@ case 353:
                     *yyval.ast_expressionType.data.position = yyvsp[-2].ast_position.data;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                     if (positionIsBetween(yyval.ast_expressionType.b, cxRefPosition, yyval.ast_expressionType.e)
-                        && parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = yyvsp[-2].ast_position.b;
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = yyvsp[0].ast_position.b;
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION] = yyvsp[-1].ast_expressionType.b;
@@ -5983,11 +5983,11 @@ case 365:
                             /* MARIAN(?): before it was s_javaStat->classFileIndex, but be more precise*/
                             /* in reality you should keep both to discover references*/
                             /* to original class from class nested in method.*/
-                            addThisCxReferences(ei->u.structSpec->classFileIndex, &yyvsp[-5].ast_id.data->position);
+                            addThisCxReferences(ei->u.structSpec->classFileNumber, &yyvsp[-5].ast_id.data->position);
                             /* MARIAN(?): I have removed following because it makes problems when*/
                             /* expanding to FQT names, WHY IT WAS HERE ???*/
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                                         javaStat->classFileIndex, &$1.data->position,
+                                         javaStat->classFileNumber, &$1.data->position,
                                          UsageNotFQField); &*/
                         } else {
                             /* MARIAN(?): here I should annulate class reference, as it is an error*/
@@ -6192,7 +6192,7 @@ case 381:
                 } else {
                     yyval.ast_expressionType.data.position = &yyvsp[-4].ast_id.data->position;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
-                    if (yyval.ast_expressionType.e.file == noFileIndex) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
+                    if (yyval.ast_expressionType.e.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
                 }
             }
         }
@@ -6228,7 +6228,7 @@ case 383:
                 } else {
                     yyval.ast_expressionType.data.position = &yyvsp[-4].ast_id.data->position;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
-                    if (yyval.ast_expressionType.e.file == noFileIndex) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
+                    if (yyval.ast_expressionType.e.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
                 }
             }
         }
@@ -6652,7 +6652,7 @@ case 425:
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (positionIsBetween(yyvsp[0].ast_expressionType.b, cxRefPosition, yyvsp[0].ast_expressionType.e)
-                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
                         parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbolPositionPair.b;
@@ -6675,7 +6675,7 @@ case 426:
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (positionIsBetween(yyvsp[0].ast_expressionType.b, cxRefPosition, yyvsp[0].ast_expressionType.e)
-                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
                         parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_unsignedPositionPair.b;
@@ -6698,7 +6698,7 @@ case 427:
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (positionIsBetween(yyvsp[0].ast_expressionType.b, cxRefPosition, yyvsp[0].ast_expressionType.e)
-                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
                         parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_expressionType.b;

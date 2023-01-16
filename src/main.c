@@ -152,7 +152,7 @@ static bool computeAndOpenInputFile(void) {
 static void initOptions(void) {
     deepCopyOptionsFromTo(&presetOptions, &options);
 
-    inputFileNumber   = noFileIndex;
+    inputFileNumber   = NO_FILE_NUMBER;
 }
 
 static void initStandardCxrefFileName(char *inputfile) {
@@ -581,10 +581,10 @@ static void totalTaskEntryInitialisations() {
     options.includeDirs = NULL;
 
     initFileTable(MAX_FILES);
-    initNoFileIndex();             /* Sets noFileIndex to something real */
+    initNoFileNumber();             /* Sets NO_FILE_NUMBER to something real */
 
-    noPosition = makePosition(noFileIndex, 0, 0);
-    inputFileNumber = noFileIndex;
+    noPosition = makePosition(NO_FILE_NUMBER, 0, 0);
+    inputFileNumber = NO_FILE_NUMBER;
     javaAnonymousClassName.position = noPosition;
 
     olcxInit();
@@ -595,7 +595,7 @@ static void totalTaskEntryInitialisations() {
 
 static void clearFileItem(FileItem *fileItem) {
     fileItem->inferiorClasses = fileItem->superClasses = NULL;
-    fileItem->directEnclosingInstance = noFileIndex;
+    fileItem->directEnclosingInstance = NO_FILE_NUMBER;
     fileItem->isScheduled = false;
     fileItem->scheduledToUpdate = false;
     fileItem->fullUpdateIncludesProcessed = false;
@@ -644,7 +644,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initSymbolTable(MAX_SYMBOLS);
 
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
-                  symbolTable,NULL,AccessDefault,parsedClassInfoInit,noFileIndex,NULL);
+                  symbolTable,NULL,AccessDefault,parsedClassInfoInit,NO_FILE_NUMBER,NULL);
     javaStat = StackMemoryAlloc(JavaStat);
     *javaStat = s_initJavaStat;
     javaFqtTableInit(&javaFqtTable, FQT_CLASS_TAB_SIZE);

@@ -3,14 +3,14 @@
 #include <cgreen/mocks.h>
 
 
-int noFileIndex = -1;
+int NO_FILE_NUMBER = -1;
 
 
 void initFileTable(int size) {
     mock(size);
 }
 
-void initNoFileIndex(void) {
+void initNoFileNumber(void) {
     mock();
 }
 
@@ -26,16 +26,16 @@ bool existsInFileTable(char *fileName) {
     return mock(fileName);
 }
 
-FileItem *getFileItem(int fileIndex) {
-    return (FileItem *)mock(fileIndex);
+FileItem *getFileItem(int fileNumber) {
+    return (FileItem *)mock(fileNumber);
 }
 
-int getNextExistingFileIndex(int index) {
-    return (int)mock(index);
+int getNextExistingFileNumber(int fileNumber) {
+    return (int)mock(fileNumber);
 }
 
-char *getNextScheduledFile(int *beginIndex) {
-  return (char *) mock(beginIndex);
+char *getNextScheduledFile(int *beginNumber) {
+  return (char *) mock(beginNumber);
 }
 
 char *getNextArgumentFile(int *fArgCount) {

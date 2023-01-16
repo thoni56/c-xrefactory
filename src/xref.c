@@ -66,13 +66,13 @@ static void sortFileItemList(FileItem **fileItemsP,
 
 static FileItem *createListOfInputFileItems(void) {
     FileItem *fileItems;
-    int       fileIndex;
+    int       fileNumber;
 
     fileItems  = NULL;
-    fileIndex = 0;
-    for (char *fileName = getNextScheduledFile(&fileIndex); fileName != NULL;
-         fileIndex++, fileName = getNextScheduledFile(&fileIndex)) {
-        FileItem *current = getFileItem(fileIndex);
+    fileNumber = 0;
+    for (char *fileName = getNextScheduledFile(&fileNumber); fileName != NULL;
+         fileNumber++, fileName = getNextScheduledFile(&fileNumber)) {
+        FileItem *current = getFileItem(fileNumber);
         current->next     = fileItems;
         fileItems          = current;
     }
@@ -80,10 +80,10 @@ static FileItem *createListOfInputFileItems(void) {
     return fileItems;
 }
 
-static void fillReferencesItemForIncludeFile(ReferencesItem *referencesItem, int fileIndex) {
+static void fillReferencesItemForIncludeFile(ReferencesItem *referencesItem, int fileNumber) {
     fillReferencesItem(referencesItem, LINK_NAME_INCLUDE_REFS,
                        cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
-                       fileIndex, fileIndex, TypeCppInclude, StorageExtern,
+                       fileNumber, fileNumber, TypeCppInclude, StorageExtern,
                        ScopeGlobal, AccessDefault, CategoryGlobal);
 }
 
@@ -101,7 +101,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     fileAddedFlag = true;
     while (fileAddedFlag) {
         fileAddedFlag = false;
-        for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
+        for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
             FileItem *fileItem = getFileItem(i);
             if (fileItem->scheduledToUpdate)
                 if (!fileItem->fullUpdateIncludesProcessed) {
@@ -139,7 +139,7 @@ static bool calledDuringRefactoring;
 
 /* NOTE: Map-function */
 static void schedulingToUpdate(FileItem *fileItem) {
-    if (fileItem == getFileItem(noFileIndex))
+    if (fileItem == getFileItem(NO_FILE_NUMBER))
         return;
 
     if (!editorFileExists(fileItem->name)) {
@@ -180,8 +180,8 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         if (!*firstPassP)
             deepCopyOptionsFromTo(&savedOptions, &options);
         inputOpened             = initializeFileProcessing(firstPassP, argc, argv, 0, NULL, &currentLanguage);
-        olOriginalFileIndex     = inputFileNumber;
-        olOriginalComFileNumber = olOriginalFileIndex;
+        olOriginalFileNumber     = inputFileNumber;
+        olOriginalComFileNumber = olOriginalFileNumber;
         if (inputOpened) {
             recoverFromCache();
             deactivateCaching(); /* no caching in cxref */
@@ -298,16 +298,16 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
         log_trace("inspecting include %d, fileNumber: %d", i,
                   includeStack.stack[i].characterBuffer.fileNumber);
         if (includeStack.stack[i].characterBuffer.file != stdin) {
-            int fileIndex = includeStack.stack[i].characterBuffer.fileNumber;
-            getFileItem(fileIndex)->cxLoading = false;
+            int fileNumber = includeStack.stack[i].characterBuffer.fileNumber;
+            getFileItem(fileNumber)->cxLoading = false;
             if (includeStack.stack[i].characterBuffer.file != NULL)
                 closeCharacterBuffer(&includeStack.stack[i].characterBuffer);
         }
     }
     if (currentFile.characterBuffer.file != stdin) {
         log_trace("inspecting current file, fileNumber: %d", currentFile.characterBuffer.fileNumber);
-        int fileIndex                     = currentFile.characterBuffer.fileNumber;
-        getFileItem(fileIndex)->cxLoading = false;
+        int fileNumber                     = currentFile.characterBuffer.fileNumber;
+        getFileItem(fileNumber)->cxLoading = false;
         if (currentFile.characterBuffer.file != NULL)
             closeCharacterBuffer(&currentFile.characterBuffer);
     }
@@ -317,7 +317,7 @@ static void referencesOverflowed(char *cxMemFreeBase, LongjmpReason reason) {
 
     /* ************ start with CXREFS and memories clean ************ */
     bool savingFlag = false;
-    for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
+    for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
         FileItem *fileItem = getFileItem(i);
         if (fileItem->cxLoading) {
             fileItem->cxLoading = false;

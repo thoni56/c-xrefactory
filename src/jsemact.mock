@@ -28,7 +28,7 @@ void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType,
     javaStat->lastParsedName = lastParsedName;
     javaStat->methodModifiers = methodModifiers;
     javaStat->cp = parsingPositions;
-    javaStat->classFileIndex = classFileIndex;
+    javaStat->classFileNumber = classFileIndex;
     javaStat->next = next;
 }
 

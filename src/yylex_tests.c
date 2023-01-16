@@ -50,7 +50,7 @@ BeforeEach(Yylex) {
     options.mode = ServerMode;
     allocateMacroArgumentTable(MAX_MACRO_ARGS);
     initFileTable(100);
-    initNoFileIndex();
+    initNoFileNumber();
 
     initSymbolTable(100);
 

@@ -440,14 +440,14 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
             javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currentClass, *res)) {
             minacc = javaGetMinimalAccessibility(&rfs, *res);
             fillUsage(&usage, UsageUsed, minacc);
-            ref = addNewCxReference(*res, &record->position, usage, rfs.currentClass->u.structSpec->classFileIndex,
-                                    rfs.baseClass->u.structSpec->classFileIndex);
+            ref = addNewCxReference(*res, &record->position, usage, rfs.currentClass->u.structSpec->classFileNumber,
+                                    rfs.baseClass->u.structSpec->classFileNumber);
             // this is adding reference to 'super', not to the field!
             // for pull-up/push-down
-            if (super!=NULL) addThisCxReferences(javaStat->classFileIndex,&super->position);
+            if (super!=NULL) addThisCxReferences(javaStat->classFileNumber,&super->position);
         }
     } else if (rr == RESULT_OK) {
-        ref = addCxReference(*res,&record->position,UsageUsed, noFileIndex, noFileIndex);
+        ref = addCxReference(*res,&record->position,UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
     } else {
         noSuchFieldError(record->name);
     }
@@ -477,10 +477,10 @@ void labelReference(Id *id, UsageKind usage) {
     if (LANGUAGE(LANG_JAVA)) {
         assert(javaStat&&javaStat->thisClass&&javaStat->thisClass->u.structSpec);
         if (parsedClassInfo.function!=NULL) {
-            sprintf(tempString,"%x-%s.%s",javaStat->thisClass->u.structSpec->classFileIndex,
+            sprintf(tempString,"%x-%s.%s",javaStat->thisClass->u.structSpec->classFileNumber,
                     parsedClassInfo.function->name, id->name);
         } else {
-            sprintf(tempString,"%x-.%s", javaStat->thisClass->u.structSpec->classFileIndex,
+            sprintf(tempString,"%x-.%s", javaStat->thisClass->u.structSpec->classFileNumber,
                     id->name);
         }
     } else if (parsedClassInfo.function!=NULL) {
@@ -580,7 +580,7 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage theDe
         setStaticFunctionLinkName(symbol, usage);
     }
     addSymbol(table, symbol);
-    addCxReference(symbol, &symbol->pos, usage, noFileIndex, noFileIndex);
+    addCxReference(symbol, &symbol->pos, usage, NO_FILE_NUMBER, NO_FILE_NUMBER);
     return symbol;
 }
 
@@ -641,13 +641,13 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
         if (pp != NULL && pp != parameter) {
             Symbol *foundMember;
             if (symbolTableIsMember(table, parameterCopy, NULL, &foundMember)) {
-                addCxReference(foundMember, &parameter->pos, UsageUsed, noFileIndex, noFileIndex);
+                addCxReference(foundMember, &parameter->pos, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
             }
         } else {
             addNewSymbolDefinition(table, parameterCopy, StorageAuto, UsageDefined);
         }
         if (options.serverOperation == OLO_EXTRACT) {
-            addCxReference(parameterCopy, &parameterCopy->pos, UsageLvalUsed, noFileIndex, noFileIndex);
+            addCxReference(parameterCopy, &parameterCopy->pos, UsageLvalUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
         }
     }
     if (options.serverOperation == OLO_GOTO_PARAM_NAME
@@ -861,7 +861,7 @@ static TypeModifier *createSimpleEnumType(Symbol *enumDefinition) {
 void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
     memset((void*)symStruct, 0, sizeof(*symStruct));
     symStruct->records = records;
-    symStruct->classFileIndex = -1;  /* Should be s_noFile? */
+    symStruct->classFileNumber = -1;  /* Should be s_noFile? */
 }
 
 TypeModifier *simpleStrUnionSpecifier(Id *typeName,
@@ -903,7 +903,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         setGlobalFileDepNames(id->name, member, MEMORY_XX);
         addSymbol(symbolTable, member);
     }
-    addCxReference(member, &id->position, usage,noFileIndex, noFileIndex);
+    addCxReference(member, &id->position, usage,NO_FILE_NUMBER, NO_FILE_NUMBER);
     return &member->u.structSpec->stype;
 }
 
@@ -923,17 +923,17 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
     } else if (iname[0]==0) {
         Symbol *member;
         // anonymous enum/structure/union ...
-        int fileIndex = symbol->pos.file;
+        int fileNumber = symbol->pos.file;
         symbol->name=iname;
         symbol->linkName=iname;
         order = 0;
         isMember = symbolTableIsMember(symbolTable, symbol, NULL, &member);
         while (isMember) {
-            if (member->pos.file==fileIndex)
+            if (member->pos.file==fileNumber)
                 order++;
             isMember = symbolTableNextMember(symbol, &member);
         }
-        fname = simpleFileName(getFileItem(fileIndex)->name);
+        fname = simpleFileName(getFileItem(fileNumber)->name);
         sprintf(tmp, "%s%c%d%c", fname, FILE_PATH_SEPARATOR, order, LINK_NAME_SEPARATOR);
         /*&     // macros will be identified by name only?
           } else if (symbol->type == TypeMacro) {
@@ -1002,7 +1002,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     for(dd=rec; dd!=NULL; dd=dd->next) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
-            addCxReference(dd,&dd->pos,UsageDefined,noFileIndex, noFileIndex);
+            addCxReference(dd,&dd->pos,UsageDefined,NO_FILE_NUMBER, NO_FILE_NUMBER);
         }
     }
 }
@@ -1021,7 +1021,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(symbolTable, pp);
     }
-    addCxReference(pp, &id->position, usage,noFileIndex, noFileIndex);
+    addCxReference(pp, &id->position, usage,NO_FILE_NUMBER, NO_FILE_NUMBER);
     return createSimpleEnumType(pp);
 }
 

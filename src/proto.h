@@ -376,7 +376,7 @@ typedef struct symStructSpec {
     struct nestedSpec  *nest;           /* array of nested classes		*/
     struct typeModifier stype;          /* this structure type */
     struct typeModifier sptrtype;       /* this structure pointer type */
-    int                 classFileIndex; /* in java, my class file index
+    int                 classFileNumber; /* in java, my class file index
                                            == -1 for none, TODO to change
                                            it to s_noneFileIndex !!!
                                         */
@@ -419,7 +419,7 @@ typedef struct olcxReferences {
 } OlcxReferences;
 
 typedef struct classTreeData {
-    int                 baseClassFileIndex;
+    int                 baseClassFileNumber;
     struct SymbolsMenu *treeMenu;
 } ClassTreeData;
 

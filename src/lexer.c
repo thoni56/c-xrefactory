@@ -827,7 +827,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             currentLexemOffset = lb->fileOffsetRing[pi];
             position = lb->positionRing[pi];
 
-            if (fileNumberFrom(cb) == olOriginalFileIndex && fileNumberFrom(cb) != noFileIndex
+            if (fileNumberFrom(cb) == olOriginalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
                 && fileNumberFrom(cb) != -1 && s_jsl == NULL) {
                 if (options.serverOperation == OLO_EXTRACT && lb->ringIndex>=2) { /* TODO: WTF does "lb->index >= 2" mean? */
                     ch = skipBlanks(cb, ch);

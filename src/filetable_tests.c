@@ -72,11 +72,11 @@ Ensure(FileTable, can_return_next_existing_file_index) {
     FileItem item  = {"item.c"};
     int      index = addToFileTable(&item);
 
-    assert_that(getNextExistingFileIndex(0), is_equal_to(index));
+    assert_that(getNextExistingFileNumber(0), is_equal_to(index));
 }
 
 Ensure(FileTable, will_return_error_for_no_more_next_file_item) {
-    assert_that(getNextExistingFileIndex(0), is_equal_to(-1));
+    assert_that(getNextExistingFileNumber(0), is_equal_to(-1));
 }
 
 static int  mapFunctionCalled = 0;

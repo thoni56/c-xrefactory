@@ -870,10 +870,10 @@ CompilationUnit: {
                     assert(s_jsl == NULL); // no nesting
                     jsltypeTab = StackMemoryAlloc(JslTypeTab);
                     jslTypeTabInit(jsltypeTab, MAX_JSL_SYMBOLS);
-                    javaReadSymbolFromSourceFileInit(olOriginalFileIndex,
+                    javaReadSymbolFromSourceFileInit(olOriginalFileNumber,
                                                      jsltypeTab);
 
-                    fname = getFileItem(olOriginalFileIndex)->name;
+                    fname = getFileItem(olOriginalFileNumber)->name;
                     if (options.mode == ServerMode) {
                         // this must be before reading 's_olOriginalComFile' !!!
                         if (editorFileExists(fname)) {
@@ -1190,9 +1190,9 @@ ClassDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $8);
-                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
+                        if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $$);
                         if (positionIsBetween($$.b, cxRefPosition, $$.e)
-                            && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
+                            && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == NO_FILE_NUMBER) {
                             parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                             parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                             parsedPositions[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1221,7 +1221,7 @@ ClassDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $6);
-                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $6);
+                        if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $6);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -1254,7 +1254,7 @@ FunctionInnerClassDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $8);
-                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $8);
+                        if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $8);
                         if (positionsAreEqual(cxRefPosition, $3.data->position)) {
                             parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                             parsedPositions[SPP_CLASS_DECLARATION_END_POSITION] = $$.e;
@@ -1281,7 +1281,7 @@ FunctionInnerClassDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $6);
-                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $6);
+                        if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $6);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -1485,7 +1485,7 @@ FieldDeclaration
                         if (p->type == TypeError) continue;
                         assert(p->type == TypeDefault);
                         completeDeclarator($2.data, p);
-                        vClass = javaStat->classFileIndex;
+                        vClass = javaStat->classFileNumber;
                         p->access = $1.data;
                         p->storage = StorageField;
                         if (clas->access&AccessInterface) {
@@ -1509,9 +1509,9 @@ FieldDeclaration
                     }
                 } else {
                     PropagateBoundaries($$, $1, $4);
-                    if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $4);
+                    if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $4);
                     if (positionIsBetween($$.b, cxRefPosition, $$.e)
-                        && parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==noFileIndex) {
+                        && parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==NO_FILE_NUMBER) {
                         parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION] = $$.b;
                         parsedPositions[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         parsedPositions[SPP_FIELD_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1532,7 +1532,7 @@ FieldDeclaration
                     if (p->type == TypeError) continue;
                     assert(p->type == TypeDefault);
                     assert(clas->u.structSpec);
-                    vClass = clas->u.structSpec->classFileIndex;
+                    vClass = clas->u.structSpec->classFileNumber;
                     jslCompleteDeclarator($2.data, p);
                     p->access = $1.data;
                     p->storage = StorageField;
@@ -1542,8 +1542,8 @@ FieldDeclaration
                     }
                     log_debug("[jsl] adding field %s to %s", p->name,clas->linkName);
                     LIST_APPEND(Symbol, clas->u.structSpec->records, p);
-                    assert(vClass!=noFileIndex);
-                    if (p->pos.file!=olOriginalFileIndex && options.serverOperation==OLO_PUSH) {
+                    assert(vClass!=NO_FILE_NUMBER);
+                    if (p->pos.file!=olOriginalFileNumber && options.serverOperation==OLO_PUSH) {
                         // pre load of saved file akes problem on move field/method, ...
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
@@ -1689,8 +1689,8 @@ MethodHeader
                     $$.data = javaMethodHeader($1.data,$2.data,$3.data, StorageMethod);
                 } else {
                     PropagateBoundaries($$, $1, $4);
-                    if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
-                    if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $3);
+                    if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $$);
+                    if ($$.e.file == NO_FILE_NUMBER) PropagateBoundaries($$, $$, $3);
                     if (positionIsBetween($$.b, cxRefPosition, $3.e)) {
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1707,8 +1707,8 @@ MethodHeader
                     $$.data = javaMethodHeader($1.data,&defaultVoidDefinition,$3.data,StorageMethod);
                 } else {
                     PropagateBoundaries($$, $1, $4);
-                    if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
-                    if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $3);
+                    if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $$);
+                    if ($$.e.file == NO_FILE_NUMBER) PropagateBoundaries($$, $$, $3);
                     if (positionIsBetween($$.b, cxRefPosition, $3.e)) {
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1939,7 +1939,7 @@ ConstructorDeclaration
                 if (! SyntaxPassOnly()) {
                     endBlock();
                     PropagateBoundaries($$, $1, $6);
-                    if ($$.b.file == noFileIndex)
+                    if ($$.b.file == NO_FILE_NUMBER)
                         PropagateBoundaries($$, $2, $$);
                 }
                 parsedClassInfo.function = NULL; /* added for set-target-position checks */
@@ -1954,7 +1954,7 @@ ConstructorDeclarator
                     if (! SyntaxPassOnly()) {
                         if (strcmp($1.data->name, javaStat->thisClass->name)==0) {
                             addCxReference(javaStat->thisClass, &$1.data->position,
-                                           UsageConstructorDefinition,noFileIndex, noFileIndex);
+                                           UsageConstructorDefinition,NO_FILE_NUMBER, NO_FILE_NUMBER);
                             $<symbol>$ = javaCreateNewMethod($1.data->name,//JAVA_CONSTRUCTOR_NAME1,
                                                              &($1.data->position), MEMORY_XX);
                         } else {
@@ -2099,9 +2099,9 @@ InterfaceDeclaration
                     newClassDefinitionEnd($<trail>4);
                 } else {
                     PropagateBoundaries($$, $1, $7);
-                    if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
+                    if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $$);
                     if (positionIsBetween($$.b, cxRefPosition, $$.e)
-                        && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                         parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         parsedPositions[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -2130,7 +2130,7 @@ InterfaceDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $6);
-                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
+                        if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $$);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -2853,7 +2853,7 @@ ThrowStatement
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (options.serverOperation==OLO_EXTRACT) {
-                        addCxReference($2.data.typeModifier->u.t, &$1.data->position, UsageThrown, noFileIndex, noFileIndex);
+                        addCxReference($2.data.typeModifier->u.t, &$1.data->position, UsageThrown, NO_FILE_NUMBER, NO_FILE_NUMBER);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -2919,7 +2919,7 @@ CatchClause
                                             UsageDefined);
                             if (options.serverOperation == OLO_EXTRACT) {
                                 assert($3.data->type==TypeDefault);
-                                addCxReference($3.data->u.typeModifier->u.t, &$1.data->position, UsageCatched, noFileIndex, noFileIndex);
+                                addCxReference($3.data->u.typeModifier->u.t, &$1.data->position, UsageCatched, NO_FILE_NUMBER, NO_FILE_NUMBER);
                             }
                         }
                     }
@@ -2940,7 +2940,7 @@ CatchClause
                 if (! SyntaxPassOnly()) {
                     if (options.serverOperation == OLO_EXTRACT) {
                         assert($3.data->type==TypeDefault);
-                        addCxReference($3.data->u.typeModifier->u.t, &$1.data->position, UsageCatched, noFileIndex, noFileIndex);
+                        addCxReference($3.data->u.typeModifier->u.t, &$1.data->position, UsageCatched, NO_FILE_NUMBER, NO_FILE_NUMBER);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $5);
@@ -2994,7 +2994,7 @@ PrimaryNoNewArray
                     assert(javaStat && javaStat->thisType);
 //fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);
                     $$.data.typeModifier = javaStat->thisType;
-                    addThisCxReferences(javaStat->classFileIndex, &$1.data->position);
+                    addThisCxReferences(javaStat->classFileNumber, &$1.data->position);
                     $$.data.reference = NULL;
                 } else {
                     $$.data.position = &$1.data->position;
@@ -3070,7 +3070,7 @@ PrimaryNoNewArray
                     *$$.data.position = $1.data;
                     PropagateBoundaries($$, $1, $3);
                     if (positionIsBetween($$.b, cxRefPosition, $$.e)
-                        && parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = $1.b;
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = $3.b;
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION] = $2.b;
@@ -3194,11 +3194,11 @@ ClassInstanceCreationExpression
                             // MARIAN(?): before it was s_javaStat->classFileIndex, but be more precise
                             // in reality you should keep both to discover references
                             // to original class from class nested in method.
-                            addThisCxReferences(ei->u.structSpec->classFileIndex, &$1.data->position);
+                            addThisCxReferences(ei->u.structSpec->classFileNumber, &$1.data->position);
                             // MARIAN(?): I have removed following because it makes problems when
                             // expanding to FQT names, WHY IT WAS HERE ???
                             /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                                         javaStat->classFileIndex, &$1.data->position,
+                                         javaStat->classFileNumber, &$1.data->position,
                                          UsageNotFQField); &*/
                         } else {
                             // MARIAN(?): here I should annulate class reference, as it is an error
@@ -3378,7 +3378,7 @@ ArrayCreationExpression
                 } else {
                     $$.data.position = &$1.data->position;
                     PropagateBoundaries($$, $1, $5);
-                    if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $4);
+                    if ($$.e.file == NO_FILE_NUMBER) PropagateBoundaries($$, $$, $4);
                 }
             }
         }
@@ -3408,7 +3408,7 @@ ArrayCreationExpression
                 } else {
                     $$.data.position = &$1.data->position;
                     PropagateBoundaries($$, $1, $5);
-                    if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $4);
+                    if ($$.e.file == NO_FILE_NUMBER) PropagateBoundaries($$, $$, $4);
                 }
             }
         }
@@ -3791,7 +3791,7 @@ CastExpression
                     $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsBetween($4.b, cxRefPosition, $4.e)
-                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = $1.b;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = $3.b;
                         parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = $2.b;
@@ -3811,7 +3811,7 @@ CastExpression
                     $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsBetween($4.b, cxRefPosition, $4.e)
-                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = $1.b;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = $3.b;
                         parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = $2.b;
@@ -3831,7 +3831,7 @@ CastExpression
                     $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsBetween($4.b, cxRefPosition, $4.e)
-                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
+                        && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = $1.b;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = $3.b;
                         parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = $2.b;

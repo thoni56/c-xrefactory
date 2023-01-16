@@ -29,7 +29,7 @@ typedef struct {
 
 typedef struct editorBuffer {
     char                      *name;
-    int                        fileIndex;
+    int                        fileNumber;
     char                      *fileName;
     time_t                     modificationTime;
     bool                       textLoaded : 1;

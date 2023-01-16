@@ -20,9 +20,9 @@
 Cache cache;
 
 
-bool checkFileModifiedTime(int fileIndex) {
+bool checkFileModifiedTime(int fileNumber) {
     time_t now = time(NULL);
-    FileItem *fileItem = getFileItem(fileIndex);
+    FileItem *fileItem = getFileItem(fileNumber);
 
     if (fileItem->lastInspected >= fileProcessingStartTime
         && fileItem->lastInspected <= now) {

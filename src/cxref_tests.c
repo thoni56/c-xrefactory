@@ -81,7 +81,7 @@ Ensure(CxRef, can_get_active_project) {
     communicationChannel = stdout;
     options.serverOperation = OLO_ACTIVE_PROJECT;
 
-    expect(getFileItem, when(fileIndex, is_equal_to(0)),
+    expect(getFileItem, when(fileNumber, is_equal_to(0)),
            will_return(&fileItem));
     expect(searchStandardOptionsFileAndProjectForFile, when(fileName, is_equal_to_string("file.c")));
     expect(ppcGenRecord,

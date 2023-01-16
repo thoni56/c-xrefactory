@@ -57,7 +57,7 @@ void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
 void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
                   char *namedPackagePath, SymbolTable *locals, IdList *lastParsedName,
-                  unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileIndex,
+                  unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileNumber,
                   JavaStat *next) {
 
     javaStat->className = className;
@@ -71,7 +71,7 @@ void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType,
     javaStat->lastParsedName = lastParsedName;
     javaStat->methodModifiers = methodModifiers;
     javaStat->cp = parsingPositions;
-    javaStat->classFileIndex = classFileIndex;
+    javaStat->classFileNumber = classFileNumber;
     javaStat->next = next;
 }
 
@@ -194,7 +194,7 @@ Position *javaGetNameStartingPosition(IdList *name) {
 
 static Reference *javaAddClassCxReference(Symbol *dd, Position *pos, unsigned usage) {
     Reference *res;
-    res = addCxReference(dd, pos, usage, noFileIndex, noFileIndex);
+    res = addCxReference(dd, pos, usage, NO_FILE_NUMBER, NO_FILE_NUMBER);
     return res;
 }
 
@@ -210,14 +210,14 @@ static void javaAddNameCxReference(IdList *id, unsigned usage) {
     dd.storage = StorageNone;
 
     /* if you do something else do attention on the union initialisation */
-    addCxReference(&dd, &id->id.position, usage, noFileIndex, noFileIndex);
+    addCxReference(&dd, &id->id.position, usage, NO_FILE_NUMBER, NO_FILE_NUMBER);
 }
 
 Symbol *javaAddType(IdList *class, Access access, Position *p) {
     Symbol *dd;
     dd = javaTypeSymbolDefinition(class, access, ADD_YES);
     dd->access = access;
-    addCxReference(dd, p, UsageDefined, noFileIndex, noFileIndex);
+    addCxReference(dd, p, UsageDefined, NO_FILE_NUMBER, NO_FILE_NUMBER);
     return dd;
 }
 
@@ -295,8 +295,8 @@ bool javaTypeFileExist(IdList *name) {
     fname[1] = ZIP_SEPARATOR_CHAR;
 
     if (existsInFileTable(fname+1)) {
-        int fileIndex = lookupFileTable(fname+1);
-        if (getFileItem(fileIndex)->sourceFileNumber != noFileIndex) {
+        int fileNumber = lookupFileTable(fname+1);
+        if (getFileItem(fileNumber)->sourceFileNumber != NO_FILE_NUMBER) {
             return true;
         }
     }
@@ -414,14 +414,14 @@ static FindJavaFileResult javaFindFile(Symbol *classSymbol,
         *dollarPosition = 0;
     }
     *classFileNameP = *sourceFileNameP = "";
-    log_trace("!looking for %s.classf(in %s)== %d", linkName, slname, classSymbol->u.structSpec->classFileIndex);
-    log_trace("!looking for %s %s", linkName, getFileItem(classSymbol->u.structSpec->classFileIndex)->name);
+    log_trace("!looking for %s.classf(in %s)== %d", linkName, slname, classSymbol->u.structSpec->classFileNumber);
+    log_trace("!looking for %s %s", linkName, getFileItem(classSymbol->u.structSpec->classFileNumber)->name);
     sourceFound = javaFindSourceFile(slname, sourceFileNameP);
     assert(classSymbol->u.structSpec);
-    FileItem *fileItem = getFileItem(classSymbol->u.structSpec->classFileIndex);
+    FileItem *fileItem = getFileItem(classSymbol->u.structSpec->classFileNumber);
     sourceIndex = fileItem->sourceFileNumber;
 
-    if (!sourceFound && sourceIndex!=-1 && sourceIndex!=noFileIndex) {
+    if (!sourceFound && sourceIndex!=-1 && sourceIndex!=NO_FILE_NUMBER) {
         // try the source indicated by source field of filetab
         FileItem *sourceFileItem = getFileItem(sourceIndex);
         log_trace("checking %s", sourceFileItem->name);
@@ -752,14 +752,14 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
 
 void javaReadSymbolsFromSourceFile(char *fname) {
     JslTypeTab    *typeTab;
-    int				fileIndex;
+    int				fileNumber;
     int				memBalance;
 
-    fileIndex = addFileNameToFileTable(fname);
+    fileNumber = addFileNameToFileTable(fname);
     memBalance = currentBlock->firstFreeIndex;
     beginBlock();
     typeTab = StackMemoryAlloc(JslTypeTab);
-    javaReadSymbolFromSourceFileInit(fileIndex, typeTab);
+    javaReadSymbolFromSourceFileInit(fileNumber, typeTab);
     jslTypeTabInit(typeTab, MAX_JSL_SYMBOLS);
     javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
     // there may be several unbalanced blocks
@@ -769,7 +769,7 @@ void javaReadSymbolsFromSourceFile(char *fname) {
 }
 
 static void addJavaFileDependency(int file, char *onfile) {
-    int         fileIndex;
+    int         fileNumber;
     Position	pos;
 
     // do dependencies only when doing cross reference file
@@ -778,9 +778,9 @@ static void addJavaFileDependency(int file, char *onfile) {
     // also do it only for source files
     if (!getFileItem(file)->isArgument)
         return;
-    fileIndex = addFileNameToFileTable(onfile);
+    fileNumber = addFileNameToFileTable(onfile);
     pos = makePosition(file, 0, 0);
-    addIncludeReference(fileIndex, &pos);
+    addIncludeReference(fileNumber, &pos);
 }
 
 
@@ -817,12 +817,12 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
         findResult = javaFindFile(memb, &sourceName, &className);
         if (findResult == RESULT_IS_JAVA_FILE) {
             assert(memb->u.structSpec);
-            cfi = memb->u.structSpec->classFileIndex;
+            cfi = memb->u.structSpec->classFileNumber;
             FileItem *cfiFileItem = getFileItem(cfi);
             // set it to none, if class is inside jslparsing  will re-set it
-            cfiFileItem->sourceFileNumber=noFileIndex;
+            cfiFileItem->sourceFileNumber=NO_FILE_NUMBER;
             javaReadSymbolsFromSourceFile(sourceName);
-            if (cfiFileItem->sourceFileNumber == noFileIndex) {
+            if (cfiFileItem->sourceFileNumber == NO_FILE_NUMBER) {
                 // class definition not found in the source file,
                 // (moved inner class) retry searching for class file
                 findResult = javaFindFile(memb, &sourceName, &className);
@@ -848,7 +848,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
             cl->storage = memb->storage;
         }
         if (sourceName != NULL) {
-            addJavaFileDependency(olOriginalFileIndex, sourceName);
+            addJavaFileDependency(olOriginalFileNumber, sourceName);
         }
     }
 }
@@ -1042,7 +1042,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                         name->fqtname  = mm->linkName;
                         if (cxrefFlag == ADD_CX_REFS) {
                             ipos = &member->pos; /* here MUST be memb, not mm, as it contains the import line !!*/
-                            if (ipos->file != noFileIndex && ipos->file != -1) {
+                            if (ipos->file != NO_FILE_NUMBER && ipos->file != -1) {
                                 javaAddImportConstructionReference(ipos, ipos, UsageUsed);
                             }
                         }
@@ -1060,7 +1060,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                 // during name reduction refactoring, it will not adding
                                 // such import
                                 ipos = &member->pos;
-                                if (ipos->file != noFileIndex && ipos->file != -1) {
+                                if (ipos->file != NO_FILE_NUMBER && ipos->file != -1) {
                                     javaAddImportConstructionReference(ipos, ipos, UsageUsed);
                                 }
                                 goto breakcycle;
@@ -1078,7 +1078,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                     name->fqtname  = mm->linkName;
                     if (cxrefFlag == ADD_CX_REFS) {
                         ipos = &member->pos; /* here MUST be memb, not mm, as it contains the import line !!*/
-                        if (ipos->file != noFileIndex && ipos->file != -1) {
+                        if (ipos->file != NO_FILE_NUMBER && ipos->file != -1) {
                             javaAddImportConstructionReference(ipos, ipos, UsageUsed);
                         }
                     }
@@ -1094,7 +1094,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                         name->fqtname  = mm->linkName;
                         if (cxrefFlag == ADD_CX_REFS) {
                             ipos = &member->pos; /* here MUST be memb, not mm, as it contains the import line !!*/
-                            if (ipos->file != noFileIndex && ipos->file != -1) {
+                            if (ipos->file != NO_FILE_NUMBER && ipos->file != -1) {
                                 javaAddImportConstructionReference(ipos, ipos, UsageUsed);
                             }
                         }
@@ -1123,11 +1123,11 @@ static void addAmbCxRef(int classif, Symbol *sym, Position *pos, UsageKind usage
             if (options.serverOperation != OLO_ENCAPSULATE ||
                 !javaRecordAccessible(rfs, rfs->baseClass, rfs->currentClass, sym, AccessPrivate)) {
                 fillUsage(&usage, usageKind, minacc);
-                *oref = addNewCxReference(sym, pos, usage, rfs->currentClass->u.structSpec->classFileIndex,
-                                          rfs->baseClass->u.structSpec->classFileIndex);
+                *oref = addNewCxReference(sym, pos, usage, rfs->currentClass->u.structSpec->classFileNumber,
+                                          rfs->baseClass->u.structSpec->classFileNumber);
             }
         } else {
-            *oref=addCxReference(sym, pos, usageKind, noFileIndex, noFileIndex);
+            *oref=addCxReference(sym, pos, usageKind, NO_FILE_NUMBER, NO_FILE_NUMBER);
         }
     }
 }
@@ -1148,7 +1148,7 @@ void javaAddImportConstructionReference(Position *importPos, Position *pos, int 
     isymName = javaImportSymbolName_st(importPos->file, importPos->line, importPos->col);
     log_trace("using import on %s:%d (%d) at %s:%d\n", simpleFileName(getFileItem(importPos->file)->name),
               importPos->line, importPos->col, simpleFileName(getFileItem(pos->file)->name), pos->line);
-    addSpecialFieldReference(isymName, StorageDefault, noFileIndex, pos, usage);
+    addSpecialFieldReference(isymName, StorageDefault, NO_FILE_NUMBER, pos, usage);
 }
 
 static int javaClassifySingleAmbigName(IdList *name,
@@ -1177,10 +1177,10 @@ static int javaClassifySingleAmbigName(IdList *name,
                     if ((*str)->access & AccessStatic) {
                         nfqtusage = javaNotFqtUsageCorrection(rfs->currentClass, UsageNotFQField);
                         addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM, StorageField,
-                                                 rfs->currentClass->u.structSpec->classFileIndex,
+                                                 rfs->currentClass->u.structSpec->classFileNumber,
                                                  &name->id.position, nfqtusage);
                     } else {
-                        addThisCxReferences(rfs->baseClass->u.structSpec->classFileIndex, &name->id.position);
+                        addThisCxReferences(rfs->baseClass->u.structSpec->classFileNumber, &name->id.position);
                     }
                 }
             }
@@ -1194,7 +1194,7 @@ static int javaClassifySingleAmbigName(IdList *name,
             // the problem is here when invoked as nested "new Name()"?
             nfqtusage = javaNotFqtUsageCorrection((*str), UsageNotFQType);
             addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM, StorageField,
-                                     (*str)->u.structSpec->classFileIndex,
+                                     (*str)->u.structSpec->classFileNumber,
                                      &name->id.position, nfqtusage);
         }
     } else if (res == TypePackage) {
@@ -1265,14 +1265,14 @@ static void javaCheckForUselessFqt(IdList *name, int classif, Symbol *rstr,
     if (rr==TypeStruct) {
         assert(str && rstr);
         log_trace("!checking %s == %s  (%d==%d)", str->linkName, rstr->linkName,
-                  str->u.structSpec->classFileIndex, rstr->u.structSpec->classFileIndex);
+                  str->u.structSpec->classFileNumber, rstr->u.structSpec->classFileNumber);
         // equality of pointers may be too strong ???
         // what about classfile index comparing
         //if (strcmp(str->linkName, rstr->linkName) == 0) {
         assert(str->u.structSpec!=NULL && rstr->u.structSpec!=NULL);
-        if (str->u.structSpec->classFileIndex == rstr->u.structSpec->classFileIndex) {
+        if (str->u.structSpec->classFileNumber == rstr->u.structSpec->classFileNumber) {
             assert(name && rstr->u.structSpec);
-            *oref = addUselessFQTReference(rstr->u.structSpec->classFileIndex,&name->id.position);
+            *oref = addUselessFQTReference(rstr->u.structSpec->classFileNumber,&name->id.position);
             log_trace("!adding TYPE useless reference on %d,%d", name->id.position.line, name->id.position.col);
             javaResetUselessReference(lref);
             uselessFqt = true;
@@ -1281,7 +1281,7 @@ static void javaCheckForUselessFqt(IdList *name, int classif, Symbol *rstr,
     if (!uselessFqt) {
         assert(name->next != NULL);			// it is long name
         assert(name && rstr->u.structSpec);
-        addUnimportedTypeLongReference(rstr->u.structSpec->classFileIndex,&name->id.position);
+        addUnimportedTypeLongReference(rstr->u.structSpec->classFileNumber,&name->id.position);
     }
 }
 
@@ -1317,11 +1317,11 @@ static Reference *javaCheckForUselessTypeName(IdList   *name,
     //& fprintf(dumpOut,"!checking rr == %s, %x\n", typeName[rr], localRfs.currentClass);
     if (rr == TypeExpression && localRfs.currentClass != NULL) {
         //&fprintf(dumpOut,"!checking %d(%s) ==
-        //%d(%s)\n",rfs->currentClass->u.structSpec->classFileIndex,rfs->currentClass->linkName,localRfs.currentClass->u.structSpec->classFileIndex,localRfs.currentClass->linkName);
+        //%d(%s)\n",rfs->currentClass->u.structSpec->classFileNumber,rfs->currentClass->linkName,localRfs.currentClass->u.structSpec->classFileNumber,localRfs.currentClass->linkName);
         // equality of pointers may be too strong ???
-        if (rfs->currentClass->u.structSpec->classFileIndex ==
-            localRfs.currentClass->u.structSpec->classFileIndex) {
-            *oref = addUselessFQTReference(rfs->currentClass->u.structSpec->classFileIndex, &name->id.position);
+        if (rfs->currentClass->u.structSpec->classFileNumber ==
+            localRfs.currentClass->u.structSpec->classFileNumber) {
+            *oref = addUselessFQTReference(rfs->currentClass->u.structSpec->classFileNumber, &name->id.position);
             //&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->id.position.line,
             //name->id.position.col);
             javaResetUselessReference(lref);
@@ -1536,15 +1536,15 @@ Symbol * javaQualifiedThis(IdList *tname, Id *thisid) {
     ttype = javaClassifyAmbiguousName(tname, NULL,&str,&expr,&rr,
                                       &lastUselessRef, USELESS_FQT_REFS_ALLOWED,CLASS_TO_TYPE,UsageUsed);
     if (ttype == TypeStruct) {
-        addThisCxReferences(str->u.structSpec->classFileIndex, &thisid->position);
+        addThisCxReferences(str->u.structSpec->classFileNumber, &thisid->position);
 /*&
         addSpecialFieldReference(LINK_NAME_MAYBE_THIS_ITEM,StorageField,
-                                 str->u.structSpec->classFileIndex, &thisid->position,
+                                 str->u.structSpec->classFileNumber, &thisid->position,
                                  UsageMaybeThis);
 &*/
-        if (str->u.structSpec->classFileIndex == javaStat->classFileIndex) {
+        if (str->u.structSpec->classFileNumber == javaStat->classFileNumber) {
             // redundant qualified this prefix
-            addUselessFQTReference(str->u.structSpec->classFileIndex, &thisid->position);
+            addUselessFQTReference(str->u.structSpec->classFileNumber, &thisid->position);
 //&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->idi.p.line, name->idi.p.coll);
             javaResetUselessReference(lastUselessRef);
         }
@@ -1756,7 +1756,7 @@ int javaLinkNameIsAnnonymousClass(char *linkname) {
 
 void addThisCxReferences(int classIndex, Position *pos) {
     int usage;
-    if (classIndex == javaStat->classFileIndex) {
+    if (classIndex == javaStat->classFileNumber) {
         usage = UsageMaybeThis;
     } else {
         usage = UsageMaybeQualifiedThis;
@@ -1793,8 +1793,8 @@ Symbol *javaPrependDirectEnclosingInstanceArgument(Symbol *args) {
 void addMethodCxReferences(unsigned modif, Symbol *method, Symbol *clas) {
     int clasn;
     assert(clas && clas->u.structSpec);
-    clasn = clas->u.structSpec->classFileIndex;
-    assert(clasn!=noFileIndex);
+    clasn = clas->u.structSpec->classFileNumber;
+    assert(clasn!=NO_FILE_NUMBER);
     addCxReference(method, &method->pos, UsageDefined, clasn, clasn);
     if (modif & AccessNative) {
         addNativeMethodCxReference(method, clas);
@@ -1885,7 +1885,7 @@ TypeModifier *javaNestedNewType(Symbol *sym, Id *thenew,
             assert(res->u.t && res->u.t->u.structSpec);
             if (res->u.t->access & AccessStatic) {
                 // add the prefix of new as redundant long name
-                addUselessFQTReference(res->u.t->u.structSpec->classFileIndex, &thenew->position);
+                addUselessFQTReference(res->u.t->u.structSpec->classFileNumber, &thenew->position);
             }
         } else {
             res = &errorModifier;
@@ -2112,7 +2112,7 @@ static TypeModifier *javaMethodInvocation(
 
     assert(rfs->baseClass);  // method must be inside a class
     assert(rfs->baseClass->type == TypeStruct);
-    baseCl = rfs->baseClass->u.structSpec->classFileIndex;
+    baseCl = rfs->baseClass->u.structSpec->classFileNumber;
     assert(baseCl != -1);
 
 //&sprintf(tmpBuff,"java method invocation\n"); ppcBottomInformation(tmpBuff);
@@ -2140,7 +2140,7 @@ static TypeModifier *javaMethodInvocation(
             appl[appli] = memb;
             minacc[appli] = javaGetMinimalAccessibility(rfs, memb);
             assert(rfs && rfs->currentClass && rfs->currentClass->type == TypeStruct);
-            funCl[appli] = rfs->currentClass->u.structSpec->classFileIndex;
+            funCl[appli] = rfs->currentClass->u.structSpec->classFileNumber;
             assert(funCl[appli] != -1);
             appli++;
             //&sprintf(tmpBuff,"applicable: %s of
@@ -2175,7 +2175,7 @@ static TypeModifier *javaMethodInvocation(
     vFunCl = funCl[smallesti];
     vApplCl = baseCl;
 //&	if (appl[smallesti]->access & AccessStatic) {
-//&		vFunCl = vApplCl = noFileIndex;
+//&		vFunCl = vApplCl = NO_FILE_NUMBER;
 //&	}
     usedusage = UsageUsed;
     if (invocationType == CONSTRUCTOR_INVOCATION) {
@@ -2191,7 +2191,7 @@ static TypeModifier *javaMethodInvocation(
     addNewCxReference(appl[smallesti], &name->position, usage, vFunCl, vApplCl);
     if (options.serverOperation == OLO_EXTRACT) {
         for(ee=appl[smallesti]->u.typeModifier->u.m.exceptions; ee!=NULL; ee=ee->next) {
-            addCxReference(ee->element, &name->position, UsageThrown, noFileIndex, noFileIndex);
+            addCxReference(ee->element, &name->position, UsageThrown, NO_FILE_NUMBER, NO_FILE_NUMBER);
         }
     }
     return appl[smallesti]->u.typeModifier->next;
@@ -2580,9 +2580,9 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
         parsedPositions[SPP_LAST_TOP_LEVEL_CLASS_POSITION] = name->position;
     }
     res = currentBlock->trail;
-    classf = dd->u.structSpec->classFileIndex;
+    classf = dd->u.structSpec->classFileNumber;
     if (classf == -1)
-        classf = noFileIndex;
+        classf = NO_FILE_NUMBER;
     fillJavaStat(javaStat,p,&dd->u.structSpec->stype,dd,0, oldStat->currentPackage,
                   oldStat->unnamedPackagePath, oldStat->namedPackagePath,
                   locals, oldStat->lastParsedName,AccessDefault,parsedClassInfo,classf,oldStat);
@@ -2641,7 +2641,7 @@ void javaInitArrayObject(void) {
 
     javaCreateClassFileItem(&s_javaArrayObjectSymbol);
     addSuperClassOrInterfaceByName(&s_javaArrayObjectSymbol,s_javaLangObjectLinkName,
-                                   noFileIndex, LOAD_SUPER);
+                                   NO_FILE_NUMBER, LOAD_SUPER);
 }
 
 TypeModifier *javaArrayFieldAccess(Id *id) {
@@ -2661,7 +2661,7 @@ void javaParsedSuperClass(Symbol *symbol) {
     }
     if (pp==NULL) {
         log_trace("manual super class %s of %s == %s" ,symbol->linkName, javaStat->thisClass->linkName,
-                  getFileItem(javaStat->thisClass->u.structSpec->classFileIndex)->name);
+                  getFileItem(javaStat->thisClass->u.structSpec->classFileNumber)->name);
         javaLoadClassSymbolsFromFile(symbol);
         addSuperClassOrInterface(javaStat->thisClass, symbol, currentFile.characterBuffer.fileNumber);
     }
@@ -2670,7 +2670,7 @@ void javaParsedSuperClass(Symbol *symbol) {
 void javaSetClassSourceInformation(char *package, Id *classId) {
     char    fqt[MAX_FILE_NAME_SIZE];
     char    className[2*MAX_FILE_NAME_SIZE];
-    int		fileIndex;
+    int		fileNumber;
 
     assert(classId!=NULL);
     if (*package == 0) {
@@ -2679,8 +2679,8 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
         sprintf(fqt, "%s/%s", package, classId->name);
     }
     SPRINT_FILE_TAB_CLASS_NAME(className, fqt);
-    fileIndex = addFileNameToFileTable(className);
-    getFileItem(fileIndex)->sourceFileNumber = classId->position.file;
+    fileNumber = addFileNameToFileTable(className);
+    getFileItem(fileNumber)->sourceFileNumber = classId->position.file;
 }
 
 

@@ -173,7 +173,7 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     sprintf(ppc, "%-*s:", indent+FULL_COMPLETION_INDENT_CHARS, tempString);
     cindent = strlen(ppc);
     ppc += strlen(ppc);
-    vFunCl = noFileIndex;
+    vFunCl = NO_FILE_NUMBER;
     size = COMPLETION_STRING_SIZE;
     l = 0;
     if (completions->alternatives[index].symbolType==TypeDefault) {
@@ -206,8 +206,8 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
         if (LANGUAGE(LANG_JAVA)) {
             l += printJavaModifiers(tempString+l, &size, completions->alternatives[index].symbol->access);
             if (completions->alternatives[index].vFunClass!=NULL) {
-                vFunCl = completions->alternatives[index].vFunClass->u.structSpec->classFileIndex;
-                if (vFunCl == -1) vFunCl = noFileIndex;
+                vFunCl = completions->alternatives[index].vFunClass->u.structSpec->classFileNumber;
+                if (vFunCl == -1) vFunCl = NO_FILE_NUMBER;
             }
         }
         typeSPrint(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
@@ -235,8 +235,8 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     } else if (completions->alternatives[index].symbolType == TypeInheritedFullMethod) {
         if (completions->alternatives[index].vFunClass!=NULL) {
             sprintf(tempString,"%s \t:%s", completions->alternatives[index].vFunClass->name, typeNamesTable[completions->alternatives[index].symbolType]);
-            vFunCl = completions->alternatives[index].vFunClass->u.structSpec->classFileIndex;
-            if (vFunCl == -1) vFunCl = noFileIndex;
+            vFunCl = completions->alternatives[index].vFunClass->u.structSpec->classFileNumber;
+            if (vFunCl == -1) vFunCl = NO_FILE_NUMBER;
         } else {
             sprintf(tempString,"%s", typeNamesTable[completions->alternatives[index].symbolType]);
         }
@@ -461,10 +461,10 @@ void printCompletions(Completions* c) {
         } else {
             sprintFullCompletionInfo(c, ii, indent);
         }
-        vFunCl = noFileIndex;
+        vFunCl = NO_FILE_NUMBER;
         if (LANGUAGE(LANG_JAVA)  && c->alternatives[ii].vFunClass!=NULL) {
-            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFileIndex;
-            if (vFunCl == -1) vFunCl = noFileIndex;
+            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFileNumber;
+            if (vFunCl == -1) vFunCl = NO_FILE_NUMBER;
         }
         Reference ref;
         sessionData.completionsStack.top->completions = completionListPrepend(
@@ -973,7 +973,7 @@ static void completeRecordsNames(
             assert(rfs.currentClass && rfs.currentClass->u.structSpec);
             assert(r->type == TypeDefault);
             vFunCl = rfs.currentClass;
-            if (vFunCl->u.structSpec->classFileIndex == -1) {
+            if (vFunCl->u.structSpec->classFileNumber == -1) {
                 vFunCl = NULL;
             }
             vlevel = rfs.superClassesCount + vlevelOffset;
@@ -1418,7 +1418,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
         assert(r != NULL);
         if (*actArg==0 || javaMethodApplicability(r,actArg)==PROFILE_PARTIALLY_APPLICABLE) {
             vFunCl = rfs->currentClass;
-            if (vFunCl->u.structSpec->classFileIndex == -1) {
+            if (vFunCl->u.structSpec->classFileNumber == -1) {
                 vFunCl = NULL;
             }
             vlevel = rfs->superClassesCount;
@@ -1446,7 +1446,7 @@ void javaCompleteThisPackageName(Completions *c) {
     static char cname[TMP_STRING_SIZE];
     char        *cc, *ss, *dd;
     if (c->idToProcessLen != 0) return;
-    ss = javaCutSourcePathFromFileName(getRealFileName_static(getFileItem(olOriginalFileIndex)->name));
+    ss = javaCutSourcePathFromFileName(getRealFileName_static(getFileItem(olOriginalFileNumber)->name));
     strcpy(cname, ss);
     dd = lastOccurenceInString(cname, '.');
     if (dd!=NULL) *dd=0;
@@ -1463,7 +1463,7 @@ static void javaCompleteThisClassDefinitionName(Completions*c) {
     static char cname[TMP_STRING_SIZE];
     char        *cc;
 
-    javaGetClassNameFromFileIndex(olOriginalFileIndex, cname, DOTIFY_NAME);
+    javaGetClassNameFromFileNumber(olOriginalFileNumber, cname, DOTIFY_NAME);
     cc = strchr(cname,0);
     assert(cc!=NULL);
     *cc++ = ' '; *cc=0;
@@ -1623,7 +1623,7 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
         return;
 
     // fqt from filetab
-    for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
+    for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
         completeFqtClassFileFromFileTab(getFileItem(i), &info);
     }
     if (options.fqtNameToCompletions <= 2)

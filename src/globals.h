@@ -106,7 +106,7 @@ extern Position s_olcxByPassPos;
 extern Position cxRefPosition;
 
 extern int inputFileNumber;
-extern int olOriginalFileIndex;     /* number of original file */
+extern int olOriginalFileNumber;     /* number of original file */
 extern int olOriginalComFileNumber;  /* number of original communication file */
 
 extern char *storageNamesTable[MAX_STORAGE_NAMES];

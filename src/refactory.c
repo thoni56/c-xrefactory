@@ -815,7 +815,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(TpCheck
     SymbolsMenu   **sss;
 
     rstack                = sessionData.browserStack.top;
-    rstack->hkSelectedSym = olCreateSpecialMenuItem(LINK_NAME_MOVE_CLASS_MISSED, noFileIndex, StorageDefault);
+    rstack->hkSelectedSym = olCreateSpecialMenuItem(LINK_NAME_MOVE_CLASS_MISSED, NO_FILE_NUMBER, StorageDefault);
     // push them into hkSelection,
     mapOverReferenceTableWithPointer(tpCheckMoveClassPutClassDefaultSymbols, &dd);
     // load all theirs references
@@ -866,7 +866,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(ReferencesItem *ri, void *ddd
         return;
 
     // check that it is not from moved class
-    javaGetClassNameFromFileIndex(ri->vFunClass, symclass, KEEP_SLASHES);
+    javaGetClassNameFromFileNumber(ri->vFunClass, symclass, KEEP_SLASHES);
     sclen   = strlen(dd->sclass);
     symclen = strlen(symclass);
     if (sclen <= symclen && filenameCompare(dd->sclass, symclass, sclen) == 0)
@@ -996,12 +996,12 @@ static bool checkSourceIsNotInnerClass(void) {
     assert(menu);
 
     // I can rely that it is a class
-    int index = getClassNumFromClassLinkName(menu->references.name, noFileIndex);
+    int index = getClassNumFromClassLinkName(menu->references.name, NO_FILE_NUMBER);
     //& target = options.moveTargetClass;
     //& assert(target!=NULL);
 
     int directEnclosingInstanceIndex = getFileItem(index)->directEnclosingInstance;
-    if (directEnclosingInstanceIndex != -1 && directEnclosingInstanceIndex != noFileIndex &&
+    if (directEnclosingInstanceIndex != -1 && directEnclosingInstanceIndex != NO_FILE_NUMBER &&
         (menu->references.access & AccessInterface) == 0) {
         char tmpBuff[TMP_BUFF_SIZE];
         // If there exists a direct enclosing instance, it is an inner class
@@ -1066,7 +1066,7 @@ static bool tpCheckSuperMethodReferencesInit(TpCheckSpecialReferencesData *rr) {
     ss     = rstack->hkSelectedSym;
     assert(ss);
     scl = javaGetSuperClassNumFromClassNum(ss->references.vApplClass);
-    if (scl == noFileIndex) {
+    if (scl == NO_FILE_NUMBER) {
         errorMessage(ERR_ST, "no super class, something is going wrong");
         return false;
         ;
@@ -1097,7 +1097,7 @@ static bool tpCheckSuperMethodReferencesForPullUp(void) {
     if (rr.foundRefToTestedClass != NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
         linkNamePrettyPrint(ttt, ss->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
-        javaGetClassNameFromFileIndex(rr.foundRefToTestedClass->vFunClass, tt, DOTIFY_NAME);
+        javaGetClassNameFromFileNumber(rr.foundRefToTestedClass->vFunClass, tt, DOTIFY_NAME);
         sprintf(tmpBuff,
                 "'%s' invokes another method using the keyword \"super\" and this invocation is refering to class "
                 "'%s', i.e. to the class where '%s' will be moved. In consequence, it is not possible to ensure "
@@ -1209,7 +1209,7 @@ static bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     srccn  = ss->references.vApplClass;
     target = getMoveTargetClass();
     assert(target != NULL && target->u.structSpec);
-    targetcn = target->u.structSpec->classFileIndex;
+    targetcn = target->u.structSpec->classFileNumber;
     for (mm = rstack->menuSym; mm != NULL; mm = mm->next) {
         if (isSameCxSymbol(&ss->references, &mm->references)) {
             if (javaIsSuperClass(mm->references.vApplClass, srccn)) {
@@ -1258,7 +1258,7 @@ static bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     }
 
     scanForClassHierarchy();
-    assert(target->u.structSpec != NULL && target->u.structSpec->classFileIndex != noFileIndex);
+    assert(target->u.structSpec != NULL && target->u.structSpec->classFileNumber != NO_FILE_NUMBER);
     FileItem *fileItem = getFileItem(ss->references.vApplClass);
     if (flag == REQ_SUBCLASS)
         cl = fileItem->inferiorClasses;
@@ -1266,8 +1266,8 @@ static bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
         cl = fileItem->superClasses;
     for (; cl != NULL; cl = cl->next) {
         log_trace("!checking %d(%s) <-> %d(%s)", cl->superClass, getFileItem(cl->superClass)->name,
-                  target->u.structSpec->classFileIndex, getFileItem(target->u.structSpec->classFileIndex)->name);
-        if (cl->superClass == target->u.structSpec->classFileIndex) {
+                  target->u.structSpec->classFileNumber, getFileItem(target->u.structSpec->classFileNumber)->name);
+        if (cl->superClass == target->u.structSpec->classFileNumber) {
             found = true;
             break;
         }
@@ -1275,8 +1275,8 @@ static bool tpCheckTargetToBeDirectSubOrSuperClass(int flag, char *subOrSuper) {
     if (found)
         return true;
 
-    javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, targetClassName, DOTIFY_NAME);
-    javaGetClassNameFromFileIndex(ss->references.vApplClass, ttt, DOTIFY_NAME);
+    javaGetClassNameFromFileNumber(target->u.structSpec->classFileNumber, targetClassName, DOTIFY_NAME);
+    javaGetClassNameFromFileNumber(ss->references.vApplClass, ttt, DOTIFY_NAME);
 
     char tmpBuff[TMP_BUFF_SIZE];
     sprintf(tmpBuff, "Class %s is not direct %s of %s. This refactoring provides moving to direct %ses only.",
@@ -1301,10 +1301,10 @@ static bool tpPullUpFieldLastPreconditions(void) {
     assert(ss);
     target = getMoveTargetClass();
     assert(target != NULL);
-    assert(target->u.structSpec != NULL && target->u.structSpec->classFileIndex != noFileIndex);
+    assert(target->u.structSpec != NULL && target->u.structSpec->classFileNumber != NO_FILE_NUMBER);
     for (mm = rstack->menuSym; mm != NULL; mm = mm->next) {
         if (isSameCxSymbol(&ss->references, &mm->references) &&
-            mm->references.vApplClass == target->u.structSpec->classFileIndex)
+            mm->references.vApplClass == target->u.structSpec->classFileNumber)
             goto cont2;
     }
     // it is O.K. no item found
@@ -1313,7 +1313,7 @@ cont2:
     // an item found, it must be empty
     if (mm->references.references == NULL)
         return true;
-    javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
+    javaGetClassNameFromFileNumber(target->u.structSpec->classFileNumber, ttt, DOTIFY_NAME);
     if (isDefinitionOrDeclarationUsage(mm->references.references->usage.kind) &&
         mm->references.references->next == NULL) {
         if (pcharFlag == 0) {
@@ -1356,11 +1356,11 @@ static bool tpPushDownFieldLastPreconditions(void) {
     thisclassi = ss->references.vApplClass;
     target     = getMoveTargetClass();
     assert(target != NULL);
-    assert(target->u.structSpec != NULL && target->u.structSpec->classFileIndex != noFileIndex);
+    assert(target->u.structSpec != NULL && target->u.structSpec->classFileNumber != NO_FILE_NUMBER);
     sourcesm = targetsm = NULL;
     for (SymbolsMenu *mm = rstack->menuSym; mm != NULL; mm = mm->next) {
         if (isSameCxSymbol(&ss->references, &mm->references)) {
-            if (mm->references.vApplClass == target->u.structSpec->classFileIndex)
+            if (mm->references.vApplClass == target->u.structSpec->classFileNumber)
                 targetsm = mm;
             if (mm->references.vApplClass == thisclassi)
                 sourcesm = mm;
@@ -1369,7 +1369,7 @@ static bool tpPushDownFieldLastPreconditions(void) {
     if (targetsm != NULL) {
         rr = getDefinitionRef(targetsm->references.references);
         if (rr != NULL && isDefinitionOrDeclarationUsage(rr->usage.kind)) {
-            javaGetClassNameFromFileIndex(target->u.structSpec->classFileIndex, ttt, DOTIFY_NAME);
+            javaGetClassNameFromFileNumber(target->u.structSpec->classFileNumber, ttt, DOTIFY_NAME);
             sprintf(tmpBuff, "The field %s is already defined in %s!", targetsm->references.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             errorMessage(ERR_ST, tmpBuff);
@@ -1379,7 +1379,7 @@ static bool tpPushDownFieldLastPreconditions(void) {
     if (sourcesm != NULL) {
         if (sourcesm->references.references != NULL && sourcesm->references.references->next != NULL) {
             //& if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
-            javaGetClassNameFromFileIndex(thisclassi, ttt, DOTIFY_NAME);
+            javaGetClassNameFromFileNumber(thisclassi, ttt, DOTIFY_NAME);
             sprintf(tmpBuff,
                     "There are several references of %s syntactically applied on %s. This may cause that the "
                     "refactoring will not be behaviour preserving!",
@@ -1513,7 +1513,7 @@ static EditorMarker *createNewMarkerForExpressionStart(EditorMarker *marker, int
         pos = NULL;
         assert(0);
     }
-    if (pos->file == noFileIndex) {
+    if (pos->file == NO_FILE_NUMBER) {
         if (kind == GET_STATIC_PREFIX_START) {
             fatalErrorOnPosition(marker, ERR_ST,
                                  "Can't determine static prefix. Maybe non-static reference to a static object? "
@@ -1698,7 +1698,7 @@ static EditorMarker *findModifierAndCreateMarker(EditorMarker *point, char *modi
     blen = point->buffer->allocation.bufferSize;
     mlen = strlen(modifier);
     makeSyntaxPassOnSource(point);
-    if (parsedPositions[limitIndex].file == noFileIndex) {
+    if (parsedPositions[limitIndex].file == NO_FILE_NUMBER) {
         warningMessage(ERR_INTERNAL, "cant get field declaration");
         mini = point->offset;
         while (mini > 0 && text[mini] != '\n')
@@ -1745,7 +1745,7 @@ static void addModifier(EditorMarker *point, int limit, char *modifier) {
     char          modifSpace[TMP_STRING_SIZE];
     EditorMarker *mm;
     makeSyntaxPassOnSource(point);
-    if (parsedPositions[limit].file == noFileIndex) {
+    if (parsedPositions[limit].file == NO_FILE_NUMBER) {
         errorMessage(ERR_INTERNAL, "cant find beginning of field declaration");
     }
     mm = newEditorMarkerForPosition(&parsedPositions[limit]);
@@ -1914,7 +1914,7 @@ static Result getParameterNamePosition(EditorMarker *point, char *fileName, int 
     sprintf(pushOptions, "-olcxgotoparname%d", argn);
     parseBufferUsingServer(refactoringOptions.project, point, NULL, pushOptions, NULL);
     olcxPopOnly();
-    if (parameterPosition.file != noFileIndex) {
+    if (parameterPosition.file != NO_FILE_NUMBER) {
         return RESULT_OK;
     } else {
         return RESULT_ERR;
@@ -1941,7 +1941,7 @@ static Result getParameterPosition(EditorMarker *point, char *fileName, int argn
     olcxPopOnly();
 
     Result result = RESULT_OK;
-    if (parameterBeginPosition.file == noFileIndex || parameterEndPosition.file == noFileIndex ||
+    if (parameterBeginPosition.file == NO_FILE_NUMBER || parameterEndPosition.file == NO_FILE_NUMBER ||
         parameterBeginPosition.file == -1 || parameterEndPosition.file == -1) {
         ppcGotoMarker(point);
         errorMessage(ERR_INTERNAL, "Can't get end of parameter");
@@ -1997,7 +1997,7 @@ static int addStringAsParameter(EditorMarker *point, EditorMarker *endMarkerOrMa
         beginMarker = newEditorMarkerForPosition(&parameterBeginPosition);
     } else {
         beginMarker = endMarkerOrMark;
-        assert(beginMarker->buffer->fileIndex == parameterBeginPosition.file);
+        assert(beginMarker->buffer->fileNumber == parameterBeginPosition.file);
         moveEditorMarkerToLineAndColumn(beginMarker, parameterBeginPosition.line,
                                         parameterBeginPosition.col);
     }
@@ -2310,7 +2310,7 @@ static void applyExpandShortNames(EditorMarker *point) {
     // Hmm. what if one reference will be twice ? Is it possible?
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
         if (mm->selected && mm->visible) {
-            javaGetClassNameFromFileIndex(mm->references.vApplClass, fqtName, DOTIFY_NAME);
+            javaGetClassNameFromFileNumber(mm->references.vApplClass, fqtName, DOTIFY_NAME);
             javaDotifyClassName(fqtName);
             sprintf(fqtNameDot, "%s.", fqtName);
             shortName    = javaGetShortClassName(fqtName);
@@ -2406,7 +2406,7 @@ static bool isTheImportUsed(EditorMarker *point, int line, int col) {
     char importSymbolName[TMP_STRING_SIZE];
     bool used;
 
-    strcpy(importSymbolName, javaImportSymbolName_st(point->buffer->fileIndex, line, col));
+    strcpy(importSymbolName, javaImportSymbolName_st(point->buffer->fileNumber, line, col));
     parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxpushfileunused",
                           "-olallchecks");
     pushLocalUnusedSymbolsAction();
@@ -2566,7 +2566,7 @@ static void reduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegi
     EditorBuffer   *b;
     int             action, lastImportLine;
     bool            keepAdding;
-    int             fileIndex;
+    int             fileNumber;
     char            fqtName[MAX_FILE_NAME_SIZE];
     char            starName[MAX_FILE_NAME_SIZE];
     char           *dd;
@@ -2595,16 +2595,16 @@ static void reduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegi
             markers                 = menu->markers;
             int defaultImportAction = refactoringOptions.defaultAddImportStrategy;
             while (markers != NULL && !keepAdding &&
-                   !isInDisabledList(disabled, markers->marker->buffer->fileIndex, menu->references.vApplClass)) {
-                fileIndex = markers->marker->buffer->fileIndex;
-                javaGetClassNameFromFileIndex(menu->references.vApplClass, fqtName, DOTIFY_NAME);
+                   !isInDisabledList(disabled, markers->marker->buffer->fileNumber, menu->references.vApplClass)) {
+                fileNumber = markers->marker->buffer->fileNumber;
+                javaGetClassNameFromFileNumber(menu->references.vApplClass, fqtName, DOTIFY_NAME);
                 javaDotifyClassName(fqtName);
                 if (interactive == INTERACTIVE_YES) {
                     action = interactiveAskForAddImportAction(markers, defaultImportAction, fqtName);
                 } else {
                     action = translatePassToAddImportAction(defaultImportAction);
                 }
-                //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(markers->marker->buffer->fileIndex),
+                //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(markers->marker->buffer->fileNumber),
                 // fqtName, action); ppcBottomInformation(tmpBuff);
                 switch (action) {
                 case RC_IMPORT_ON_DEMAND:
@@ -2623,7 +2623,7 @@ static void reduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegi
                     defaultImportAction = NID_SINGLE_TYPE_IMPORT;
                     break;
                 case RC_CONTINUE:
-                    dl                  = newDisabledList(menu, fileIndex, disabled);
+                    dl                  = newDisabledList(menu, fileNumber, disabled);
                     disabled            = dl;
                     defaultImportAction = NID_KEPP_FQT_NAME;
                     break;
@@ -2908,7 +2908,7 @@ static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **methodS
 
     // get method limites
     makeSyntaxPassOnSource(point);
-    if (parsedPositions[limitIndex].file == noFileIndex || parsedPositions[limitIndex + 1].file == noFileIndex) {
+    if (parsedPositions[limitIndex].file == NO_FILE_NUMBER || parsedPositions[limitIndex + 1].file == NO_FILE_NUMBER) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
     mstart = newEditorMarkerForPosition(&parsedPositions[limitIndex]);
@@ -3116,8 +3116,8 @@ static void performMoveClass(EditorMarker *point, EditorMarker *target, EditorMa
 
     // get limits
     makeSyntaxPassOnSource(point);
-    if (parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex ||
-        parsedPositions[SPP_CLASS_DECLARATION_END_POSITION].file == noFileIndex) {
+    if (parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == NO_FILE_NUMBER ||
+        parsedPositions[SPP_CLASS_DECLARATION_END_POSITION].file == NO_FILE_NUMBER) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
     mstart = newEditorMarkerForPosition(
@@ -3248,7 +3248,7 @@ static void moveClassToNewFile(EditorMarker *point) {
     npoint = newEditorMarker(buff, 0);
     // just to parse the file
     parseBufferUsingServer(refactoringOptions.project, npoint, NULL, "-olcxpushspecialname=", NULL);
-    if (parsedPositions[SPP_LAST_TOP_LEVEL_CLASS_POSITION].file == noFileIndex) {
+    if (parsedPositions[SPP_LAST_TOP_LEVEL_CLASS_POSITION].file == NO_FILE_NUMBER) {
         ppcGotoMarker(npoint);
         ppcGenRecord(PPC_KILL_BUFFER_REMOVE_FILE, "This file does not contain classes anymore, can I remove it?");
     }
@@ -3311,7 +3311,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     // Pass over all references and move primary prefix to first parameter
     // also insert new first parameter on definition
     csym = sessionData.browserStack.top->hkSelectedSym;
-    javaGetClassNameFromFileIndex(csym->references.vFunClass, fqstaticname, DOTIFY_NAME);
+    javaGetClassNameFromFileNumber(csym->references.vFunClass, fqstaticname, DOTIFY_NAME);
     javaDotifyClassName(fqstaticname);
     sprintf(pardecl, "%s %s", fqstaticname, refactoringOptions.refpar1);
     sprintf(fqstaticname + strlen(fqstaticname), ".");
@@ -3332,7 +3332,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     allrefs        = NULL;
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
         if (mm->selected && mm->visible) {
-            javaGetClassNameFromFileIndex(mm->references.vApplClass, fqthis, DOTIFY_NAME);
+            javaGetClassNameFromFileNumber(mm->references.vApplClass, fqthis, DOTIFY_NAME);
             javaDotifyClassName(fqthis);
             sprintf(fqthis + strlen(fqthis), ".this");
             for (EditorMarkerList *ll = mm->markers; ll != NULL; ll = ll->next) {
@@ -3622,8 +3622,8 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
         errorMessage(ERR_INTERNAL, "Can't get current class");
         return;
     }
-    classnum = getClassNumFromClassLinkName(parsedInfo.currentClassAnswer, noFileIndex);
-    if (classnum == noFileIndex) {
+    classnum = getClassNumFromClassLinkName(parsedInfo.currentClassAnswer, NO_FILE_NUMBER);
+    if (classnum == NO_FILE_NUMBER) {
         errorMessage(ERR_INTERNAL, "Problem when getting current class");
         return;
     }
@@ -3646,8 +3646,8 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
         errorMessage(ERR_ST, "Can't infer type for parameter/field");
         return;
     }
-    parclassnum = getClassNumFromClassLinkName(olSymbolClassType, noFileIndex);
-    if (parclassnum == noFileIndex) {
+    parclassnum = getClassNumFromClassLinkName(olSymbolClassType, NO_FILE_NUMBER);
+    if (parclassnum == NO_FILE_NUMBER) {
         errorMessage(ERR_INTERNAL, "Problem when getting parameter/field class");
         return;
     }
@@ -3955,7 +3955,7 @@ static void performEncapsulateField(EditorMarker *point, EditorRegionList **forb
     for (EditorMarkerList *ll = outsiders; ll != NULL; ll = ll->next) {
         if (ll->usage.kind == UsageLvalUsed) {
             makeSyntaxPassOnSource(ll->marker);
-            if (parsedPositions[SPP_ASSIGNMENT_OPERATOR_POSITION].file == noFileIndex) {
+            if (parsedPositions[SPP_ASSIGNMENT_OPERATOR_POSITION].file == NO_FILE_NUMBER) {
                 errorMessage(ERR_INTERNAL, "Can't get assignment coordinates");
             } else {
                 eqm = newEditorMarkerForPosition(
@@ -4014,8 +4014,8 @@ static void encapsulateField(EditorMarker *point) {
     //&editorDumpMarker(point);
     makeSyntaxPassOnSource(point);
     //&editorDumpMarker(point);
-    if (parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex ||
-        parsedPositions[SPP_CLASS_DECLARATION_END_POSITION].file == noFileIndex) {
+    if (parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == NO_FILE_NUMBER ||
+        parsedPositions[SPP_CLASS_DECLARATION_END_POSITION].file == NO_FILE_NUMBER) {
         FATAL_ERROR(ERR_INTERNAL, "can't deetrmine class coordinates", XREF_EXIT_ERR);
     }
 
@@ -4155,10 +4155,10 @@ static void reduceParenthesesAroundExpression(EditorMarker *mm, char *expression
     EditorMarker *lp, *rp, *eb, *ee;
     int           elen;
     makeSyntaxPassOnSource(mm);
-    if (parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file != noFileIndex) {
-        assert(parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION].file != noFileIndex);
-        assert(parsedPositions[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION].file != noFileIndex);
-        assert(parsedPositions[SPP_PARENTHESED_EXPRESSION_END_POSITION].file != noFileIndex);
+    if (parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file != NO_FILE_NUMBER) {
+        assert(parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION].file != NO_FILE_NUMBER);
+        assert(parsedPositions[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION].file != NO_FILE_NUMBER);
+        assert(parsedPositions[SPP_PARENTHESED_EXPRESSION_END_POSITION].file != NO_FILE_NUMBER);
         elen = strlen(expression);
         lp   = newEditorMarkerForPosition(
             &parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION]);
@@ -4197,10 +4197,10 @@ static void reduceCastedThis(EditorMarker *mm, char *superFqtName) {
     ss          = getIdentifierOnMarker_static(mm);
     if (strcmp(ss, "this") == 0) {
         makeSyntaxPassOnSource(mm);
-        if (parsedPositions[SPP_CAST_LPAR_POSITION].file != noFileIndex) {
-            assert(parsedPositions[SPP_CAST_RPAR_POSITION].file != noFileIndex);
-            assert(parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != noFileIndex);
-            assert(parsedPositions[SPP_CAST_EXPRESSION_END_POSITION].file != noFileIndex);
+        if (parsedPositions[SPP_CAST_LPAR_POSITION].file != NO_FILE_NUMBER) {
+            assert(parsedPositions[SPP_CAST_RPAR_POSITION].file != NO_FILE_NUMBER);
+            assert(parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != NO_FILE_NUMBER);
+            assert(parsedPositions[SPP_CAST_EXPRESSION_END_POSITION].file != NO_FILE_NUMBER);
             lp = newEditorMarkerForPosition(&parsedPositions[SPP_CAST_LPAR_POSITION]);
             rp = newEditorMarkerForPosition(&parsedPositions[SPP_CAST_RPAR_POSITION]);
             tb = newEditorMarkerForPosition(
@@ -4254,10 +4254,10 @@ static bool isThereACastOfThis(EditorMarker *mm) {
     ss = getIdentifierOnMarker_static(mm);
     if (strcmp(ss, "this") == 0) {
         makeSyntaxPassOnSource(mm);
-        if (parsedPositions[SPP_CAST_LPAR_POSITION].file != noFileIndex) {
-            assert(parsedPositions[SPP_CAST_RPAR_POSITION].file != noFileIndex);
-            assert(parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != noFileIndex);
-            assert(parsedPositions[SPP_CAST_EXPRESSION_END_POSITION].file != noFileIndex);
+        if (parsedPositions[SPP_CAST_LPAR_POSITION].file != NO_FILE_NUMBER) {
+            assert(parsedPositions[SPP_CAST_RPAR_POSITION].file != NO_FILE_NUMBER);
+            assert(parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != NO_FILE_NUMBER);
+            assert(parsedPositions[SPP_CAST_EXPRESSION_END_POSITION].file != NO_FILE_NUMBER);
             eb = newEditorMarkerForPosition(
                 &parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION]);
             ee = newEditorMarkerForPosition(
@@ -4470,15 +4470,15 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     storage                = csym->references.storage;
     accflags               = csym->references.access;
     if (occs == NULL) {
-        fn = noFileIndex;
+        fn = NO_FILE_NUMBER;
     } else {
         assert(occs->marker != NULL && occs->marker->buffer != NULL);
-        fn = occs->marker->buffer->fileIndex;
+        fn = occs->marker->buffer->fileNumber;
     }
     for (EditorMarkerList *o = occs; o != NULL; o = o->next) {
         assert(o->marker != NULL && o->marker->buffer != NULL);
-        FileItem *fileItem = getFileItem(o->marker->buffer->fileIndex);
-        if (fn != o->marker->buffer->fileIndex) {
+        FileItem *fileItem = getFileItem(o->marker->buffer->fileNumber);
+        if (fn != o->marker->buffer->fileNumber) {
             multiFileRefsFlag = 1;
         }
         if (!fileItem->isArgument) {

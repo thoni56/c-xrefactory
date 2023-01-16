@@ -473,13 +473,13 @@ char *getOptionVariable(char *name) {
 
 static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     ENTER();
-    int fileIndex = addFileNameToFileTable(fn);
-    FileItem *fileItem = getFileItem(fileIndex);
+    int fileNumber = addFileNameToFileTable(fn);
+    FileItem *fileItem = getFileItem(fileNumber);
     if (options.mode!=ServerMode) {
         // yes in edit server you process also headers, etc.
         fileItem->isArgument = true;
     }
-    log_trace("recursively process command line argument file #%d '%s'", fileIndex, fileItem->name);
+    log_trace("recursively process command line argument file #%d '%s'", fileNumber, fileItem->name);
     if (!options.updateOnlyModifiedFiles) {
         fileItem->isScheduled = true;
     }
@@ -2635,7 +2635,7 @@ void searchStandardOptionsFileAndProjectForFile(char *fileName, char *optionsFil
         // it may happen that after deletion of the project, the request for active
         // project will return non-existent project. And then return "not found"?
         fileno = getFileNumberFromName(fileName);
-        if (fileno != noFileIndex && getFileItem(fileno)->isFromCxfile) {
+        if (fileno != NO_FILE_NUMBER && getFileItem(fileno)->isFromCxfile) {
             strcpy(optionsFileName, previousStandardOptionsFile);
             strcpy(foundProjectName, previousStandardOptionsProject);
             return;

@@ -93,7 +93,7 @@ extern void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen);
 extern char *getRealFileName_static(char *fn);
 extern bool stringContainsSubstring(char *s, char *subs);
 extern void javaGetPackageNameFromSourceFileName(char *src, char *opack);
-extern void javaGetClassNameFromFileIndex(int nn, char *tmpOut, DotifyMode dotifyMode);
+extern void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotifyMode);
 extern void javaDotifyFileName(char *ss);
 extern char *javaGetNudePreTypeName_static(char *name, NestedClassesDisplay displayMode);
 extern char *javaGetShortClassName(char *name);

@@ -32,7 +32,7 @@
 #define CXFI_USAGE          'u'
 #define CXFI_REQUIRED_ACCESS     'A'     /* java reference required accessibility index */
 #define CXFI_SYMBOL_INDEX   's'
-#define CXFI_FILE_INDEX     'f'
+#define CXFI_FILE_NUMBER     'f'
 #define CXFI_LINE_INDEX     'l'
 #define CXFI_COLUMN_INDEX   'c'
 #define CXFI_REFERENCE      'r'     /* using 'fsulc' */
@@ -75,7 +75,7 @@ typedef enum {
 static int generatedFieldMarkersList[] = {
     CXFI_FILE_FUMTIME,
     CXFI_FILE_UMTIME,
-    CXFI_FILE_INDEX,
+    CXFI_FILE_NUMBER,
     CXFI_SOURCE_INDEX,
     CXFI_SYMBOL_TYPE,
     CXFI_USAGE,
@@ -389,7 +389,7 @@ static void writeCxReferenceBase(int symbolIndex, UsageKind usage, int requiredA
     writeOptionalCompactRecord(CXFI_USAGE, usage, "");
     writeOptionalCompactRecord(CXFI_REQUIRED_ACCESS, requiredAccess, "");
     writeOptionalCompactRecord(CXFI_SYMBOL_INDEX, symbolIndex, "");
-    writeOptionalCompactRecord(CXFI_FILE_INDEX, file, "");
+    writeOptionalCompactRecord(CXFI_FILE_NUMBER, file, "");
     writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");
     writeOptionalCompactRecord(CXFI_COLUMN_INDEX, col, "");
     writeCompactRecord(CXFI_REFERENCE, 0, "");
@@ -401,14 +401,14 @@ static void writeCxReference(Reference *reference, int symbolNum) {
 }
 
 static void writeSubClassInfo(int superior, int inferior, int origin) {
-    writeOptionalCompactRecord(CXFI_FILE_INDEX, origin, "\n");
+    writeOptionalCompactRecord(CXFI_FILE_NUMBER, origin, "\n");
     writeOptionalCompactRecord(CXFI_SUPERCLASS, superior, "");
     writeOptionalCompactRecord(CXFI_SUBCLASS, inferior, "");
     writeCompactRecord(CXFI_CLASS_EXT, 0, "");
 }
 
-static void writeFileIndexItem(FileItem *fileItem, int index) {
-    writeOptionalCompactRecord(CXFI_FILE_INDEX, index, "\n");
+static void writeFileNumberItem(FileItem *fileItem, int number) {
+    writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fileItem->lastFullUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fileItem->isArgument, "");
@@ -421,8 +421,8 @@ static void writeFileIndexItem(FileItem *fileItem, int index) {
 }
 
 static void writeFileSourceIndexItem(FileItem *fileItem, int index) {
-    if (fileItem->sourceFileNumber != noFileIndex) {
-        writeOptionalCompactRecord(CXFI_FILE_INDEX, index, "\n");
+    if (fileItem->sourceFileNumber != NO_FILE_NUMBER) {
+        writeOptionalCompactRecord(CXFI_FILE_NUMBER, index, "\n");
         writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->sourceFileNumber, " ");
     }
 }
@@ -444,7 +444,7 @@ static ClassHierarchyReference *findSuperiorInSuperClasses(int superior, FileIte
 }
 
 
-static void createSubClassInfo(int superior, int inferior, int originFileIndex, int genfl) {
+static void createSubClassInfo(int superior, int inferior, int originFileNumber, int genfl) {
     ClassHierarchyReference   *p, *pp;
 
     FileItem *inferiorFile = getFileItem(inferior);
@@ -452,21 +452,21 @@ static void createSubClassInfo(int superior, int inferior, int originFileIndex, 
 
     p = findSuperiorInSuperClasses(superior, inferiorFile);
     if (p==NULL) {
-        p = newClassHierarchyReference(originFileIndex, superior, inferiorFile->superClasses);
+        p = newClassHierarchyReference(originFileNumber, superior, inferiorFile->superClasses);
         inferiorFile->superClasses = p;
         assert(options.mode);
         if (options.mode == XrefMode) {
             if (genfl == CX_FILE_ITEM_GEN)
-                writeSubClassInfo(superior, inferior, originFileIndex);
+                writeSubClassInfo(superior, inferior, originFileNumber);
         }
-        pp = newClassHierarchyReference(originFileIndex, inferior, superiorFile->superClasses);
+        pp = newClassHierarchyReference(originFileNumber, inferior, superiorFile->superClasses);
         superiorFile->inferiorClasses = pp;
     }
 }
 
-void addSubClassItemToFileTab( int sup, int inf, int originFileIndex) {
+void addSubClassItemToFileTab( int sup, int inf, int originFileNumber) {
     if (sup >= 0 && inf >= 0) {
-        createSubClassInfo(sup, inf, originFileIndex, NO_CX_FILE_ITEM_GEN);
+        createSubClassInfo(sup, inf, originFileNumber, NO_CX_FILE_ITEM_GEN);
     }
 }
 
@@ -479,12 +479,12 @@ void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
     assert(symbol->javaClassIsLoaded);
     if (!symbol->javaClassIsLoaded)
         return;
-    int cf1 = symbol->u.structSpec->classFileIndex;
+    int cf1 = symbol->u.structSpec->classFileNumber;
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
 
     for (SymbolList *sups=symbol->u.structSpec->super; sups!=NULL; sups=sups->next) {
         assert(sups->element && sups->element->type == TypeStruct);
-        addSubClassItemToFileTab(sups->element->u.structSpec->classFileIndex, cf1, origin);
+        addSubClassItemToFileTab(sups->element->u.structSpec->classFileNumber, cf1, origin);
     }
 }
 
@@ -638,7 +638,7 @@ void writeReferenceFile(bool updating, char *filename) {
         /* single reference file */
         openInOutReferenceFile(updating, filename);
         writeCxFileHead();
-        mapOverFileTableWithIndex(writeFileIndexItem);
+        mapOverFileTableWithIndex(writeFileNumberItem);
         mapOverFileTableWithIndex(writeFileSourceIndexItem);
         mapOverFileTableWithIndex(writeClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
@@ -651,7 +651,7 @@ void writeReferenceFile(bool updating, char *filename) {
 
         createDirectory(dirname);
         writePartialReferenceFile(updating,dirname,REFERENCE_FILENAME_FILES,
-                                 writeFileIndexItem, writeFileSourceIndexItem);
+                                 writeFileNumberItem, writeFileSourceIndexItem);
         writePartialReferenceFile(updating,dirname,REFERENCE_FILENAME_CLASSES,
                                  writeClassHierarchyItems, NULL);
         for (int i=0; i<options.referenceFileCount; i++) {
@@ -771,7 +771,7 @@ static void scanFunction_ReadFileName(int fileNameLength,
 ) {
     char id[MAX_FILE_NAME_SIZE];
     FileItem *fileItem;
-    int fileIndex;
+    int fileNumber;
     bool isArgument, isInterface;
     time_t fumtime, umtime;
 
@@ -784,12 +784,12 @@ static void scanFunction_ReadFileName(int fileNameLength,
     assert(fileNameLength < MAX_FILE_NAME_SIZE);
     getString(cb, id, fileNameLength-1);
 
-    int lastIncomingFileIndex = lastIncomingInfo.values[CXFI_FILE_INDEX];
-    assert(lastIncomingFileIndex>=0 && lastIncomingFileIndex<MAX_FILES);
+    int lastIncomingFileNumber = lastIncomingInfo.values[CXFI_FILE_NUMBER];
+    assert(lastIncomingFileNumber>=0 && lastIncomingFileNumber<MAX_FILES);
 
     if (!existsInFileTable(id)) {
-        fileIndex = addFileNameToFileTable(id);
-        fileItem = getFileItem(fileIndex);
+        fileNumber = addFileNameToFileTable(id);
+        fileItem = getFileItem(fileNumber);
         fileItem->isArgument = isArgument;
         fileItem->isInterface = isInterface;
         if (fileItem->lastFullUpdateMtime == 0)
@@ -799,16 +799,16 @@ static void scanFunction_ReadFileName(int fileNameLength,
         assert(options.mode);
         if (options.mode == XrefMode) {
             if (operation == CXSF_GENERATE_OUTPUT) {
-                writeFileIndexItem(fileItem, fileIndex);
+                writeFileNumberItem(fileItem, fileNumber);
             }
         }
     } else {
-        fileIndex = lookupFileTable(id);
-        fileItem = getFileItem(fileIndex);
+        fileNumber = lookupFileTable(id);
+        fileItem = getFileItem(fileNumber);
         if (fileItemShouldBeUpdatedFromCxFile(fileItem)) {
             fileItem->isInterface = isInterface;
             // Set it to none, it will be updated by source item
-            fileItem->sourceFileNumber = noFileIndex;
+            fileItem->sourceFileNumber = NO_FILE_NUMBER;
         }
         if (options.mode == ServerMode) {
             fileItem->isArgument = isArgument;
@@ -821,8 +821,8 @@ static void scanFunction_ReadFileName(int fileNameLength,
         //&if (umtime>fileItem->lastUpdateMtime) fileItem->lastUpdateMtime=umtime;
     }
     fileItem->isFromCxfile = true;
-    decodeFileNumbers[lastIncomingFileIndex]=fileIndex;
-    log_trace("%d: '%s' scanned: added as %d", lastIncomingFileIndex, id, fileIndex);
+    decodeFileNumbers[lastIncomingFileNumber]=fileNumber;
+    log_trace("%d: '%s' scanned: added as %d", lastIncomingFileNumber, id, fileNumber);
 }
 
 static void scanFunction_SourceIndex(int size,
@@ -833,7 +833,7 @@ static void scanFunction_SourceIndex(int size,
     int file, sfile;
 
     assert(marker == CXFI_SOURCE_INDEX);
-    file = lastIncomingInfo.values[CXFI_FILE_INDEX];
+    file = lastIncomingInfo.values[CXFI_FILE_NUMBER];
     file = decodeFileNumbers[file];
     sfile = lastIncomingInfo.values[CXFI_SOURCE_INDEX];
     sfile = decodeFileNumbers[sfile];
@@ -841,7 +841,7 @@ static void scanFunction_SourceIndex(int size,
     FileItem *fileItem = getFileItem(file);
     assert(file>=0 && file<MAX_FILES && fileItem);
     // hmmm. here be more generous in getting correct source info
-    if (fileItem->sourceFileNumber == noFileIndex) {
+    if (fileItem->sourceFileNumber == NO_FILE_NUMBER) {
         // first check that it is not set directly from source
         if (!fileItem->cxLoading) {
             fileItem->sourceFileNumber = sfile;
@@ -1056,7 +1056,7 @@ static void scanFunction_ReferenceForFullUpdateSchedule(int size,
 
     symbolIndex = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
 
-    file = lastIncomingInfo.values[CXFI_FILE_INDEX];
+    file = lastIncomingInfo.values[CXFI_FILE_NUMBER];
     file = decodeFileNumbers[file];
 
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
@@ -1100,7 +1100,7 @@ static void scanFunction_Reference(int size,
 
     sym = lastIncomingInfo.values[CXFI_SYMBOL_INDEX];
 
-    file = lastIncomingInfo.values[CXFI_FILE_INDEX];
+    file = lastIncomingInfo.values[CXFI_FILE_NUMBER];
     file = decodeFileNumbers[file];
     FileItem *fileItem = getFileItem(file);
 
@@ -1161,7 +1161,7 @@ static void scanFunction_Reference(int size,
                 if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     if (operation == CXSF_MENU_CREATION) {
                         assert(lastIncomingInfo.onLineRefMenuItem);
-                        if (file != olOriginalFileIndex || !fileItem->isArgument ||
+                        if (file != olOriginalFileNumber || !fileItem->isArgument ||
                             options.serverOperation == OLO_GOTO || options.serverOperation == OLO_CGOTO ||
                             options.serverOperation == OLO_PUSH_NAME ||
                             options.serverOperation == OLO_PUSH_SPECIAL_NAME) {
@@ -1203,16 +1203,16 @@ static void scanFunction_SubClass(int size,
                          CharacterBuffer *cb,
                          CxScanFileOperation operation
 ) {
-    int fileIndex;
+    int fileNumber;
     int super_class, sub_class;
 
     assert(marker == CXFI_CLASS_EXT);
-    fileIndex = lastIncomingInfo.values[CXFI_FILE_INDEX];
+    fileNumber = lastIncomingInfo.values[CXFI_FILE_NUMBER];
     super_class = lastIncomingInfo.values[CXFI_SUPERCLASS];
     sub_class = lastIncomingInfo.values[CXFI_SUBCLASS];
 
-    fileIndex = decodeFileNumbers[fileIndex];
-    FileItem *fileItem = getFileItem(fileIndex);
+    fileNumber = decodeFileNumbers[fileNumber];
+    FileItem *fileItem = getFileItem(fileNumber);
 
     super_class = decodeFileNumbers[super_class];
     FileItem *superFileItem = getFileItem(super_class);
@@ -1225,14 +1225,14 @@ static void scanFunction_SubClass(int size,
     case XrefMode:
         if (!fileItem->cxLoading &&
             operation==CXSF_GENERATE_OUTPUT) {
-            writeSubClassInfo(super_class, sub_class, fileIndex);  // updating refs
+            writeSubClassInfo(super_class, sub_class, fileNumber);  // updating refs
         }
         break;
     case ServerMode:
-        if (fileIndex != inputFileNumber) {
+        if (fileNumber != inputFileNumber) {
             log_trace("reading %s < %s", simpleFileName(subFileItem->name),
                       simpleFileName(superFileItem->name));
-            createSubClassInfo(super_class, sub_class, fileIndex, NO_CX_FILE_ITEM_GEN);
+            createSubClassInfo(super_class, sub_class, fileNumber, NO_CX_FILE_ITEM_GEN);
         }
         break;
     default:
@@ -1270,9 +1270,9 @@ static void scanCxFile(ScanFileFunctionStep *scanFunctionTable) {
     lastIncomingInfo.onLineReferencedSym = -1;
     lastIncomingInfo.symbolToCheckForDeadness = -1;
     lastIncomingInfo.onLineRefMenuItem = NULL;
-    lastIncomingInfo.markers[CXFI_SUBCLASS] = noFileIndex;
-    lastIncomingInfo.markers[CXFI_SUPERCLASS] = noFileIndex;
-    decodeFileNumbers[noFileIndex] = noFileIndex;
+    lastIncomingInfo.markers[CXFI_SUBCLASS] = NO_FILE_NUMBER;
+    lastIncomingInfo.markers[CXFI_SUPERCLASS] = NO_FILE_NUMBER;
+    decodeFileNumbers[NO_FILE_NUMBER] = NO_FILE_NUMBER;
 
     for (int i=0; scanFunctionTable[i].recordCode>0; i++) {
         assert(scanFunctionTable[i].recordCode < MAX_CHARS);

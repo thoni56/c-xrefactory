@@ -18,7 +18,7 @@ typedef struct javaStat {
     struct idList           *lastParsedName;
     unsigned                 methodModifiers; /* currently parsed method modifs */
     struct currentlyParsedClassInfo cp;              /* some parsing positions */
-    int                      classFileIndex;  /* this file class index */
+    int                      classFileNumber;  /* this file class index */
     struct javaStat         *next;            /* outer class */
 } JavaStat;
 

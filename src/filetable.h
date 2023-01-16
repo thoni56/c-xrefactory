@@ -54,11 +54,11 @@ typedef enum {
 
 
 /* Index into file table for the "NON FILE" */
-extern int noFileIndex;
+extern int NO_FILE_NUMBER;
 
 
 extern void initFileTable(int size);
-extern void initNoFileIndex(void);
+extern void initNoFileNumber(void);
 
 extern int addToFileTable(FileItem *fileItem);
 extern int addFileNameToFileTable(char *name);
@@ -66,8 +66,8 @@ extern int addFileNameToFileTable(char *name);
 extern int  lookupFileTable(char *fileName);
 extern bool existsInFileTable(char *fileName);
 
-extern FileItem *getFileItem(int fileIndex);
-extern int getNextExistingFileIndex(int index);
+extern FileItem *getFileItem(int fileNumber);
+extern int getNextExistingFileNumber(int index);
 
 extern void mapOverFileTable(void (*fun)(FileItem *));
 extern void mapOverFileTableWithIndex(void (*fun)(FileItem *, int));

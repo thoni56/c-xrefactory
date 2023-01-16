@@ -164,7 +164,7 @@ typedef enum language {
 
 #define IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd)                                                               \
     (dm_isBetween(cxMemory, rr, (dd)->minMemi, (dd)->maxMemi) && OL_VIEWABLE_REFS(rr) &&                           \
-     rr->position.file != noFileIndex &&                                                                          \
+     rr->position.file != NO_FILE_NUMBER &&                                                                          \
      rr->position.file == inputFileNumber /* fixing bug with references coming from jsl */                        \
     )
 

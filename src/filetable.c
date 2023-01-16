@@ -33,7 +33,7 @@ static void *ftAlloc(size_t size) {
 }
 
 
-int noFileIndex;                /* Initialized to an actual index in initNoFile() which needs
+int NO_FILE_NUMBER;                /* Initialized to an actual index in initNoFile() which needs
                                    to be called early */
 
 static FileTable fileTable;
@@ -42,8 +42,8 @@ static void fillFileItem(FileItem *item, char *name) {
     memset(item, 0, sizeof(FileItem));
     item->name = name;
     item->isArgument = false;
-    item->directEnclosingInstance = noFileIndex;
-    item->sourceFileNumber = noFileIndex;
+    item->directEnclosingInstance = NO_FILE_NUMBER;
+    item->sourceFileNumber = NO_FILE_NUMBER;
 }
 
 
@@ -66,14 +66,14 @@ int addToFileTable(FileItem *fileItem) {
     return fileTableAdd(&fileTable, fileItem);
 }
 
-FileItem *getFileItem(int fileIndex) {
-    assert(fileIndex != -1);
+FileItem *getFileItem(int fileNumber) {
+    assert(fileNumber != -1);
     assert(fileTable.tab != NULL);
-    assert(fileTable.tab[fileIndex] != NULL);
-    return fileTable.tab[fileIndex];
+    assert(fileTable.tab[fileNumber] != NULL);
+    return fileTable.tab[fileNumber];
 }
 
-int getNextExistingFileIndex(int index) {
+int getNextExistingFileNumber(int index) {
     for (int i=index; i < fileTable.size; i++)
         if (fileTable.tab[i] != NULL)
             return i;
@@ -87,11 +87,11 @@ void initFileTable(int count) {
     fileTableNoAllocInit(&fileTable, count);
 }
 
-void initNoFileIndex(void) {
+void initNoFileNumber(void) {
     FileItem *fileItem = newFileItem(NO_FILE_NAME);
 
     /* Add it to the fileTab and remember its index for future use */
-    noFileIndex = fileTableAdd(&fileTable, fileItem);
+    NO_FILE_NUMBER = fileTableAdd(&fileTable, fileItem);
 }
 
 
@@ -119,7 +119,7 @@ bool existsInFileTable(char *fileName) {
 }
 
 int addFileNameToFileTable(char *name) {
-    int fileIndex;
+    int fileNumber;
     char *normalizedFileName;
     struct fileItem *createdFileItem;
 
@@ -133,10 +133,10 @@ int addFileNameToFileTable(char *name) {
     /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
     createdFileItem = newFileItem(normalizedFileName);
 
-    fileIndex = fileTableAdd(&fileTable, createdFileItem);
-    checkFileModifiedTime(fileIndex); // it was too slow on load ?
+    fileNumber = fileTableAdd(&fileTable, createdFileItem);
+    checkFileModifiedTime(fileNumber); // it was too slow on load ?
 
-    return fileIndex;
+    return fileNumber;
 }
 
 /* "Override" some hashtab functions to hide filetable variable from being global */
@@ -160,7 +160,7 @@ static char *getNextInputFileFromFileTable(int *indexP, FileSource wantedFileSou
     int         i;
     FileItem  *fileItem;
 
-    for (i = getNextExistingFileIndex(*indexP); i != -1; i = getNextExistingFileIndex(i+1)) {
+    for (i = getNextExistingFileNumber(*indexP); i != -1; i = getNextExistingFileNumber(i+1)) {
         fileItem = getFileItem(i);
         assert(fileItem!=NULL);
         if (wantedFileSource==FILE_IS_SCHEDULED && fileItem->isScheduled)

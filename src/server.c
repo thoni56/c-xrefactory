@@ -41,7 +41,7 @@ static bool requiresProcessingInputFile(ServerOperation operation) {
 }
 
 
-static bool symbolCanBeIdentifiedByPosition(int fileIndex) {
+static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
     int line,col;
 
     // there is a serious problem with options memory for options got from
@@ -65,7 +65,7 @@ static bool symbolCanBeIdentifiedByPosition(int fileIndex) {
     // and because references from currently procesed file would
     // be not loaded from the TAG file (it expects they are loaded
     // by parsing).
-    FileItem *fileItem = getFileItem(fileIndex);
+    FileItem *fileItem = getFileItem(fileNumber);
     log_trace("commandLineEntered %s == %d", fileItem->name, fileItem->isArgument);
     if (fileItem->isArgument)
         return false;
@@ -79,7 +79,7 @@ static bool symbolCanBeIdentifiedByPosition(int fileIndex) {
     // here read one reference file looking for the refs
     // assume s_opt.olcxlccursor is correctly set;
     getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
-    s_olcxByPassPos = makePosition(fileIndex, line, col);
+    s_olcxByPassPos = makePosition(fileNumber, line, col);
     olSetCallerPosition(&s_olcxByPassPos);
     scanForBypass(options.browsedSymName);
 
@@ -108,7 +108,7 @@ static int scheduleFileUsingTheMacro(void) {
     tmpc = NULL;
     fillReferencesItem(&references, olstringInMacroBody,
                        cxFileHashNumber(olstringInMacroBody),
-                       noFileIndex, noFileIndex, TypeMacro, StorageExtern,
+                       NO_FILE_NUMBER, NO_FILE_NUMBER, TypeMacro, StorageExtern,
                        ScopeGlobal, AccessDefault, CategoryGlobal);
 
     fillSymbolsMenu(&menu, references, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
@@ -119,15 +119,15 @@ static int scheduleFileUsingTheMacro(void) {
     assert(sessionData.browserStack.top);
     oldMenu = sessionData.browserStack.top->menuSym;
     sessionData.browserStack.top->menuSym = &menu;
-    s_olMacro2PassFile = noFileIndex;
+    s_olMacro2PassFile = NO_FILE_NUMBER;
     scanForMacroUsage(olstringInMacroBody);
     sessionData.browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
     log_trace(":scheduling file '%s'", getFileItem(s_olMacro2PassFile)->name);
-    if (s_olMacro2PassFile == noFileIndex)
-        return noFileIndex;
+    if (s_olMacro2PassFile == NO_FILE_NUMBER)
+        return NO_FILE_NUMBER;
     return s_olMacro2PassFile;
 }
 
@@ -140,22 +140,22 @@ static char *presetEditServerFileDependingStatics(void) {
 
     // This is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an error
-    int fileIndex = 0;
-    inputFileName = getNextScheduledFile(&fileIndex);
-    if (fileIndex == -1) { /* No more input files... */
+    int fileNumber = 0;
+    inputFileName = getNextScheduledFile(&fileNumber);
+    if (fileNumber == -1) { /* No more input files... */
         // conservative message, probably macro invoked on nonsaved file, TODO: WTF?
-        olOriginalComFileNumber = noFileIndex;
+        olOriginalComFileNumber = NO_FILE_NUMBER;
         return NULL;
     }
 
     /* TODO: This seems strange, we only assert that the first file is scheduled to process.
        Then reset all other files, why? */
-    assert(getFileItem(fileIndex)->isScheduled);
-    for (int i=getNextExistingFileIndex(fileIndex+1); i != -1; i = getNextExistingFileIndex(i+1)) {
+    assert(getFileItem(fileNumber)->isScheduled);
+    for (int i=getNextExistingFileNumber(fileNumber+1); i != -1; i = getNextExistingFileNumber(i+1)) {
         getFileItem(i)->isScheduled = false;
     }
 
-    olOriginalComFileNumber = fileIndex;
+    olOriginalComFileNumber = fileNumber;
 
     char *fileName = inputFileName;
     currentLanguage = getLanguageFor(fileName);
@@ -200,7 +200,7 @@ void singlePass(int argc, char **argv,
     inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
 
     smartReadReferences();
-    olOriginalFileIndex = inputFileNumber;
+    olOriginalFileNumber = inputFileNumber;
     if (symbolCanBeIdentifiedByPosition(inputFileNumber)) {
         if (inputOpened)
             closeInputFile();
@@ -221,7 +221,7 @@ void singlePass(int argc, char **argv,
     if (olstringFound && !olstringServed) {
         // on-line action with cursor in an un-used macro body ???
         int ol2procfile = scheduleFileUsingTheMacro();
-        if (ol2procfile!=noFileIndex) {
+        if (ol2procfile!=NO_FILE_NUMBER) {
             inputFileName = getFileItem(ol2procfile)->name;
             inputOpened = initializeFileProcessing(firstPassP, argc, argv, nargc, nargv, &currentLanguage);
             if (inputOpened) {

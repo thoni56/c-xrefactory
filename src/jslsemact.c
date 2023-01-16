@@ -280,7 +280,7 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
     decl->storage = storage;
     //& if (modif & AccessStatic) decl->storage = StorageStaticMethod;
     newFun = javaSetFunctionLinkName(s_jsl->classStat->thisClass, decl, MEMORY_CF);
-    if (decl->pos.file != olOriginalFileIndex && options.serverOperation == OLO_PUSH) {
+    if (decl->pos.file != olOriginalFileNumber && options.serverOperation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
         addMethodCxReferences(modif, decl, s_jsl->classStat->thisClass);
     }
@@ -327,7 +327,7 @@ void jslAddAllPackageClassesFromFileTab(IdList *packageId) {
     javaCreateComposedName(NULL, packageId, '/', NULL, fqtName, MAX_FILE_NAME_SIZE);
     pnlen = strlen(fqtName);
 
-    for (int i=getNextExistingFileIndex(0); i != -1; i = getNextExistingFileIndex(i+1)) {
+    for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
         FileItem *fileItem = getFileItem(i);
         if (fileItem->name[0]==ZIP_SEPARATOR_CHAR
             && strncmp(fileItem->name+1, fqtName, pnlen)==0
@@ -370,7 +370,7 @@ void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp){
 
     log_debug("loading super/interf %s of %s", supp->linkName, memb->linkName);
     javaLoadClassSymbolsFromFile(supp);
-    origin = memb->u.structSpec->classFileIndex;
+    origin = memb->u.structSpec->classFileNumber;
     addSuperClassOrInterface( memb, supp, origin);
 }
 
@@ -492,19 +492,14 @@ void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc) {
     jslAddNestedClassesToJslTypeTab(cc, ORDER_PREPEND);
 }
 
-
-void jslNewClassDefinitionBegin(Id *name,
-                                int accFlags,
-                                Symbol *anonInterf,
-                                int position
-                                ) {
-    char                ttt[TMP_STRING_SIZE];
-    char                tttn[TMP_STRING_SIZE];
-    S_jslClassStat      *nss;
-    Id           *inname;
-    IdList       *ill, mntmp;
-    Symbol            *cc;
-    int                 classFileIndex, membflag, cn;
+void jslNewClassDefinitionBegin(Id *name, int accFlags, Symbol *anonInterf, int position) {
+    char            ttt[TMP_STRING_SIZE];
+    char            tttn[TMP_STRING_SIZE];
+    S_jslClassStat *nss;
+    Id             *inname;
+    IdList         *ill, mntmp;
+    Symbol         *cc;
+    int             classFileNumber, membflag, cn;
 
     inname = name;
     if (position==CPOS_FUNCTION_INNER || anonInterf!=NULL) {
@@ -543,7 +538,7 @@ void jslNewClassDefinitionBegin(Id *name,
         membflag = (anonInterf==NULL && position!=CPOS_FUNCTION_INNER);
         if (s_jsl->pass==1) {
             jslAddNestedClass(cc, s_jsl->classStat->thisClass, membflag, accFlags);
-            cn = cc->u.structSpec->classFileIndex;
+            cn = cc->u.structSpec->classFileNumber;
             FileItem *fileItem = getFileItem(cn);
             if (! (accFlags & AccessStatic)) {
                 // note that non-static direct enclosing class exists
@@ -551,11 +546,11 @@ void jslNewClassDefinitionBegin(Id *name,
                 // freely uncoment it
                 assert(s_jsl->classStat->thisClass && s_jsl->classStat->thisClass->u.structSpec);
                 assert(s_jsl->classStat->thisClass->type==TypeStruct);
-                fileItem->directEnclosingInstance = s_jsl->classStat->thisClass->u.structSpec->classFileIndex;
-                log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.structSpec->classFileIndex,
-                          fileItem->name, noFileIndex);
+                fileItem->directEnclosingInstance = s_jsl->classStat->thisClass->u.structSpec->classFileNumber;
+                log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.structSpec->classFileNumber,
+                          fileItem->name, NO_FILE_NUMBER);
             } else {
-                fileItem->directEnclosingInstance = noFileIndex;
+                fileItem->directEnclosingInstance = NO_FILE_NUMBER;
             }
         }
     }
@@ -567,26 +562,26 @@ void jslNewClassDefinitionBegin(Id *name,
                                 ADD_YES, ORDER_PREPEND, false);
     }
 
-    assert(cc && cc->u.structSpec && getFileItem(cc->u.structSpec->classFileIndex));
-    assert(s_jsl->sourceFileNumber>=0 && s_jsl->sourceFileNumber!=noFileIndex);
-    log_trace("setting source file of %s to %s", getFileItem(cc->u.structSpec->classFileIndex)->name,
+    assert(cc && cc->u.structSpec && getFileItem(cc->u.structSpec->classFileNumber));
+    assert(s_jsl->sourceFileNumber>=0 && s_jsl->sourceFileNumber!=NO_FILE_NUMBER);
+    log_trace("setting source file of %s to %s", getFileItem(cc->u.structSpec->classFileNumber)->name,
               getFileItem(s_jsl->sourceFileNumber)->name);
 
-    classFileIndex = cc->u.structSpec->classFileIndex;
-    FileItem *classFileItem = getFileItem(classFileIndex);
+    classFileNumber = cc->u.structSpec->classFileNumber;
+    FileItem *classFileItem = getFileItem(classFileNumber);
     classFileItem->sourceFileNumber = s_jsl->sourceFileNumber;
 
     if (accFlags & AccessInterface)
         classFileItem->isInterface = true;
-    addClassTreeHierarchyReference(classFileIndex, &inname->position,UsageClassTreeDefinition);
-    if (inname->position.file != olOriginalFileIndex && options.serverOperation == OLO_PUSH) {
+    addClassTreeHierarchyReference(classFileNumber, &inname->position,UsageClassTreeDefinition);
+    if (inname->position.file != olOriginalFileNumber && options.serverOperation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
-        addCxReference(cc, &inname->position, UsageDefined,noFileIndex, noFileIndex);
+        addCxReference(cc, &inname->position, UsageDefined,NO_FILE_NUMBER, NO_FILE_NUMBER);
     }
     // this is to update references affected to class file before
     // if you remove this, then remove also at class end
     // berk, this removes all usages to be loaded !!
-    //& getFileItem(classFileIndex)->cxLoading = true;
+    //& getFileItem(classFileNumber)->cxLoading = true;
     // here reset the innerclasses number, so the next call will
     // surely allocate the table and will start from the first one
     // it is a little bit HACKED :)
@@ -623,7 +618,7 @@ void jslNewClassDefinitionEnd(void) {
     assert(s_jsl->classStat && s_jsl->classStat->next);
 
     clas = s_jsl->classStat->thisClass;
-    FileItem *fileItem = getFileItem(clas->u.structSpec->classFileIndex);
+    FileItem *fileItem = getFileItem(clas->u.structSpec->classFileNumber);
     if (fileItem->cxLoading) {
         fileItem->cxLoaded = true;
     }

@@ -405,7 +405,7 @@ static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
 /* TODO: dotify has one of the values DOTIFY_NAME, KEEP_SLASHES or 0
    Convert to enums or keep bool?
 */
-void javaGetClassNameFromFileIndex(int nn, char *tmpOut, DotifyMode dotifyMode) {
+void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotifyMode) {
     getClassFqtNameFromFileNum(nn, tmpOut);
     if (dotifyMode == DOTIFY_NAME)
         javaDotifyFileName(tmpOut);
@@ -428,7 +428,7 @@ char *javaGetShortClassName(char *inn) {
 
 char *javaGetShortClassNameFromFileNum_static(int fnum) {
     static char res[TMP_STRING_SIZE];
-    javaGetClassNameFromFileIndex(fnum, res, DOTIFY_NAME);
+    javaGetClassNameFromFileNumber(fnum, res, DOTIFY_NAME);
     return(javaGetShortClassName(res));
 }
 
@@ -1237,15 +1237,15 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
 }
 
 void jarFileParse(char *file_name) {
-    int archive, fileIndex;
+    int archive, fileNumber;
 
     archive = zipIndexArchive(file_name);
     assert(existsInFileTable(file_name)); /* Filename has to exist in the table */
-    fileIndex = addFileNameToFileTable(inputFileName);
-    checkFileModifiedTime(fileIndex);
+    fileNumber = addFileNameToFileTable(inputFileName);
+    checkFileModifiedTime(fileNumber);
     // set loading to true, no matter whether saved (by overflow) or not
     // the following may create a loop, but it is very unprobable
-    FileItem *fileItem = getFileItem(fileIndex);
+    FileItem *fileItem = getFileItem(fileNumber);
     fileItem->cxLoading = true;
     if (archive>=0 && archive<MAX_JAVA_ZIP_ARCHIVES) {
         fsRecMapOnFiles(zipArchiveTable[archive].dir, zipArchiveTable[archive].fn,
