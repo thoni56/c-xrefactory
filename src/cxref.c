@@ -64,33 +64,6 @@ static bool javaStaticallyLinked(Storage storage, Access accessFlags) {
 }
 
 
-static char *olcxStringCopy(char *string) {
-    int length;
-    char *copy;
-    length = strlen(string);
-    copy = olcxAlloc(length+1);
-    strcpy(copy, string);
-    return copy;
-}
-
-SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFunCl, Position *defpos,
-                                 int defusage, int selected, int visible, unsigned ooBits, int olusage,
-                                 int vlevel) {
-    SymbolsMenu   *symbolsMenu;
-    ReferencesItem refItem;
-    char          *allocatedNameCopy;
-
-    allocatedNameCopy = olcxStringCopy(symbol->name);
-
-    fillReferencesItem(&refItem, allocatedNameCopy, cxFileHashNumber(allocatedNameCopy), vApplClass, vFunCl,
-                       symbol->type, symbol->storage, symbol->scope, symbol->access,
-                       symbol->category);
-
-    symbolsMenu = olcxAlloc(sizeof(SymbolsMenu));
-    fillSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage, vlevel, defusage, *defpos);
-    return symbolsMenu;
-}
-
 void renameCollationSymbols(SymbolsMenu *menu) {
     int                 len,len1;
     char                *nn, *cs;

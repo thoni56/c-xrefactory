@@ -47,9 +47,6 @@ extern void addTrivialCxReference (char *name, int symType, int storage,
 extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
                               int bestMatchFlag);
 extern void olSetCallerPosition(Position *pos);
-extern SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl,
-                                        Position *defpos, int defusage, int selected, int visible,
-                                        unsigned ooBits, int olusage, int vlevel);
 extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack,
@@ -64,11 +61,11 @@ extern void olcxInit(void);
 extern Reference * getDefinitionRef(Reference *rr);
 extern bool safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);
+extern bool olcxShowSelectionMenu(void);
 extern void pushEmptySession(OlcxReferencesStack *stack);
 extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
                                Reference **diff);
-extern bool olcxShowSelectionMenu(void);
 extern int getClassNumFromClassLinkName(char *name, int defaultResult);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
 extern void changeClassReferencesUsages(char *linkName, int category, int fnum,

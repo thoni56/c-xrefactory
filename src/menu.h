@@ -29,6 +29,9 @@ extern void freeSymbolsMenuList(SymbolsMenu *menu);
 extern void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int bestFitFlag);
 extern void olcxPrintClassTree(SymbolsMenu *menu);
 extern void olcxPrintSelectionMenu(SymbolsMenu *menu);
+extern SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl,
+                                        Position *defpos, int defusage, int selected, int visible,
+                                        unsigned ooBits, int olusage, int vlevel);
 extern SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferencesItem *reference,
                                              bool selected, bool visible, unsigned ooBits,
                                              int olusage, int vlevel,
