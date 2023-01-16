@@ -118,7 +118,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl
     return (SymbolsMenu *) mock(sym, vApplClass, vFunCl, defpos, defusage, selected, visible, ooBits, olusage, vlevel);
 }
 
-SymbolsMenu *olAddBrowsedSymbolToMenu(ReferencesItem *sym, SymbolsMenu **list, bool selected, bool visible,
+SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **list, ReferencesItem *sym, bool selected, bool visible,
                                       unsigned ooBits, int olusage, int vlevel, Position *defpos, int defusage) {
     return (SymbolsMenu *) mock(sym, list, selected, visible, ooBits, olusage, vlevel, defpos, defusage);
 }

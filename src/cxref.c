@@ -125,24 +125,24 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
     return symbolsMenu;
 }
 
-SymbolsMenu *olAddBrowsedSymbolToMenu(ReferencesItem *sym, SymbolsMenu **list,
+SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menu, ReferencesItem *symbol,
                                       bool selected, bool visible, unsigned ooBits,
                                       int olusage, int vlevel,
                                       Position *defpos, int defusage) {
-    SymbolsMenu *rr, **place, ddd;
+    SymbolsMenu *new, **place, dummyMenu;
 
-    fillSymbolsMenu(&ddd, *sym, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
-    SORTED_LIST_PLACE3(place, SymbolsMenu, (&ddd), list, olSymbolMenuIsLess);
-    rr = *place;
-    if (*place==NULL || olSymbolMenuIsLess(&ddd, *place)) {
-        assert(sym);
-        rr = olCreateNewMenuItem(sym, sym->vApplClass, sym->vFunClass, defpos, defusage,
-                                 selected, visible, ooBits,
-                                 olusage, vlevel);
-        LIST_CONS(rr,(*place));
-        log_trace(":adding browsed symbol '%s'", sym->name);
+    fillSymbolsMenu(&dummyMenu, *symbol, 0, false, 0, olusage, vlevel, UsageNone, noPosition);
+    SORTED_LIST_PLACE3(place, SymbolsMenu, &dummyMenu, menu, olSymbolMenuIsLess);
+    new = *place;
+    if (*place==NULL || olSymbolMenuIsLess(&dummyMenu, *place)) {
+        assert(symbol);
+        new = olCreateNewMenuItem(symbol, symbol->vApplClass, symbol->vFunClass, defpos, defusage,
+                                selected, visible, ooBits,
+                                olusage, vlevel);
+        LIST_CONS(new, *place);
+        log_trace(":adding browsed symbol '%s'", symbol->name);
     }
-    return rr;
+    return new;
 }
 
 void renameCollationSymbols(SymbolsMenu *menu) {
@@ -604,7 +604,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             if (defaultPosition->file!=noFileIndex)
                 log_trace("getting definition position of %s at line %d", symbol->name, defaultPosition->line);
             if (! olcxOnlyParseNoPushing(options.serverOperation)) {
-                menu = olAddBrowsedSymbolToMenu(foundMember,&sessionData.browserStack.top->hkSelectedSym,
+                menu = olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, foundMember,
                                                 true, true, 0, usage.kind, 0, defaultPosition, defaultUsage);
                 // hack added for EncapsulateField
                 // to determine whether there is already definitions of getter/setter
@@ -3266,7 +3266,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
             nsym = mmFindSymWithCorrespondingRef(rr,osym,newrefs,&moveOffset);
             if (nsym==NULL || !symbolsCorrespondWrtMoving(osym, nsym, options.serverOperation)) {
                 if (diffsym == NULL) {
-                    diffsym = olAddBrowsedSymbolToMenu(&osym->references, &diffrefs->menuSym, true, true,
+                    diffsym = olAddBrowsedSymbolToMenu(&diffrefs->menuSym, &osym->references, true, true,
                                                        (OOC_PROFILE_EQUAL|OOC_VIRT_SAME_FUN_CLASS),
                                                        USAGE_ANY, 0, &noPosition, UsageNone);
                 }
@@ -3302,7 +3302,7 @@ static void olcxMMPreCheck(void) {
     if (!precheck) {
         if (diffrefs->menuSym!=NULL) {
             fillTrivialSpecialRefItem(&dri, "  references missinterpreted after refactoring");
-            olAddBrowsedSymbolToMenu(&dri, &diffrefs->hkSelectedSym, true, true, 0,
+            olAddBrowsedSymbolToMenu(&diffrefs->hkSelectedSym, &dri, true, true, 0,
                                      USAGE_ANY, 0, &noPosition, UsageNone);
             olProcessSelectedReferences(diffrefs, genOnLineReferences);
             //&olcxPrintSelectionMenu(diffrefs->menuSym);
@@ -3629,7 +3629,7 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri, void *voidDat
             vlevel = 0;
             ooBits = (OOC_PROFILE_EQUAL | OOC_VIRT_SAME_FUN_CLASS);
             log_trace("adding symbol %s", ri->name);
-            mm = olAddBrowsedSymbolToMenu(ri, &rstack->menuSym, selected, visible, ooBits, USAGE_ANY, vlevel, &defpos,
+            mm = olAddBrowsedSymbolToMenu(&rstack->menuSym, ri, selected, visible, ooBits, USAGE_ANY, vlevel, &defpos,
                                           defusage);
             assert(mm!=NULL);
             for (; rr!=NULL; rr=rr->next) {
@@ -3770,7 +3770,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferencesItem *ss) {
         }
     }
     if (!used && definitionReference!=NULL) {
-        olAddBrowsedSymbolToMenu(ss, &sessionData.browserStack.top->hkSelectedSym,
+        olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, ss,
                                  true, true, 0, UsageDefined, 0, &definitionReference->position,
                                  definitionReference->usage.kind);
     }
@@ -4370,7 +4370,7 @@ SymbolsMenu *createSelectionMenu(ReferencesItem *references) {
     }
     if (found) {
         int select = 0, visible = 0;  // for debug would be better 1 !
-        result = olAddBrowsedSymbolToMenu(references, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, defpos,
+        result = olAddBrowsedSymbolToMenu(&rstack->menuSym, references, select, visible, ooBits, USAGE_ANY, vlevel, defpos,
                                           defusage);
     }
     return result;

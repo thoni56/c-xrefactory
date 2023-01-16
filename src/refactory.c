@@ -802,7 +802,7 @@ static void tpCheckMoveClassPutClassDefaultSymbols(ReferencesItem *ri, void *ddd
             if (isDefinitionOrDeclarationUsage(rr->usage.kind)) {
                 // definition inside class, default or private acces to be checked
                 rstack = sessionData.browserStack.top;
-                olAddBrowsedSymbolToMenu(ri, &rstack->hkSelectedSym, 1, 1, 0, UsageUsed, 0, &rr->position,
+                olAddBrowsedSymbolToMenu(&rstack->hkSelectedSym, ri, 1, 1, 0, UsageUsed, 0, &rr->position,
                                          rr->usage.kind);
                 break;
             }
