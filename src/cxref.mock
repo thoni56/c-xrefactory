@@ -61,22 +61,6 @@ void gotoOnlineCxref(Position *pos, UsageKind usageKind, char *suffix) {
     mock(pos, usageKind, suffix);
 }
 
-char *getJavaDocUrl_st(ReferencesItem *rr) {
-    return (char *) mock(rr);
-}
-
-char *getLocalJavaDocFile_st(char *fileUrl) {
-    return (char *) mock(fileUrl);
-}
-
-char *getFullUrlOfJavaDoc_st(char *fileUrl) {
-    return (char *) mock(fileUrl);
-}
-
-bool htmlJdkDocAvailableForUrl(char *ss) {
-    return (bool) mock(ss);
-}
-
 Reference *addNewCxReference(Symbol *symbol, Position *pos, Usage usage_arg, int vFunClass, int vApplClass) {
     Usage *usage = &usage_arg;
     return (Reference *) mock(symbol, pos, usage, vFunClass, vApplClass);

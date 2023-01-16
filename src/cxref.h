@@ -17,7 +17,6 @@ extern char olSymbolClassType[COMPLETION_STRING_SIZE];
 
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern void printTagSearchResults(void);
-extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);
 extern bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2);
 extern bool isSameCxSymbolIncludingFunctionClass(ReferencesItem *p1, ReferencesItem *p2);
 extern bool isSameCxSymbolIncludingApplicationClass(ReferencesItem *p1, ReferencesItem *p2);
@@ -30,14 +29,10 @@ extern void olcxPopOnly(void);
 extern void olStackDeleteSymbol(OlcxReferences *refs);
 extern int getFileNumberFromName(char *name);
 extern void gotoOnlineCxref(Position *p, UsageKind usageKind, char *suffix);
-extern char *getJavaDocUrl_st(ReferencesItem *rr);
-extern char *getLocalJavaDocFile_st(char *fileUrl);
-extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
-extern bool htmlJdkDocAvailableForUrl(char *ss);
-extern Reference * addNewCxReference(Symbol *symbol, Position *pos,
-                                     Usage usage, int vFunClass, int vApplClass);
-extern Reference * addCxReference(Symbol *symbol, Position *pos, UsageKind usage,
-                                  int vFunClass,int vApplClass);
+extern Reference *addNewCxReference(Symbol *symbol, Position *pos,
+                                    Usage usage, int vFunClass, int vApplClass);
+extern Reference *addCxReference(Symbol *symbol, Position *pos, UsageKind usage,
+                                 int vFunClass,int vApplClass);
 extern Reference *addSpecialFieldReference(char *name, int storage,
                                            int fnum, Position *p, int usage);
 extern void addClassTreeHierarchyReference(int fnum, Position *p, int usage);
@@ -47,6 +42,7 @@ extern void addTrivialCxReference (char *name, int symType, int storage,
 extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
                               int bestMatchFlag);
 extern void olSetCallerPosition(Position *pos);
+extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);
 extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack,

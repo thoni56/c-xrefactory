@@ -39,7 +39,7 @@
         ENUM(OLO_CGOTO)                                                 \
         ENUM(OLO_TAGGOTO)                                               \
         ENUM(OLO_TAGSELECT)                                             \
-        ENUM(OLO_CBROWSE)                                               \
+        ENUM(OLO_BROWSE_COMPLETION)                                               \
         ENUM(OLO_REF_FILTER_SET)                                        \
         ENUM(OLO_REF_FILTER_PLUS)                                       \
         ENUM(OLO_REF_FILTER_MINUS)                                      \

@@ -759,7 +759,7 @@ void gotoOnlineCxref(Position *pos, UsageKind usageKind, char *suffix)
 static bool olcxMoveInit(SessionData *olcxuser, OlcxReferences **refs, CheckNull checkNull) {
     assert(olcxuser);
     if (options.serverOperation==OLO_COMPLETION || options.serverOperation==OLO_CSELECT
-        ||  options.serverOperation==OLO_CGOTO || options.serverOperation==OLO_CBROWSE
+        ||  options.serverOperation==OLO_CGOTO || options.serverOperation==OLO_BROWSE_COMPLETION
         ||  options.serverOperation==OLO_TAG_SEARCH) {
         *refs = olcxuser->completionsStack.top;
     } else {
@@ -867,249 +867,19 @@ static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
     }
 }
 
-char *getJavaDocUrl_st(ReferencesItem *rr) {
-    static char res[MAX_REF_LEN];
-    char *tt;
-    int len = MAX_REF_LEN;
-    res[0] = 0;
-    if (rr->type == TypeDefault) {
-        if (rr->vFunClass==NO_FILE_NUMBER) {
-            tt = strchr(rr->name, '.');
-            if (tt==NULL) {
-                sprintf(res,"packages.html#xrefproblem");
-            } else {
-                len = tt - rr->name;
-                strncpy(res, rr->name, len);
-                sprintf(res+len, ".html#");
-                len = strlen(res);
-                linkNamePrettyPrint(res+len, tt+1,
-                                    MAX_REF_LEN-len, LONG_NAME);
-            }
-        } else {
-            javaGetClassNameFromFileNumber(rr->vFunClass, res, KEEP_SLASHES);
-            for (tt=res; *tt; tt++) if (*tt=='$') *tt = '.';
-            len = strlen(res);
-            sprintf(res+len, ".html");
-            len += strlen(res+len);
-            if (strcmp(rr->name, LINK_NAME_CLASS_TREE_ITEM)!=0) {
-                sprintf(res+len, "#");
-                len += strlen(res+len);
-                linkNamePrettyPrint(res+len, rr->name,
-                                    MAX_REF_LEN-len, LONG_NAME);
-            }
-        }
-    } else if (rr->type == TypeStruct) {
-        sprintf(res,"%s.html",rr->name);
-    } else if (rr->type == TypePackage) {
-        sprintf(res,"%s/package-tree.html",rr->name);
-    }
-    assert(strlen(res)<MAX_REF_LEN-1);
-    return res;
-}
-
-bool htmlJdkDocAvailableForUrl(char *ss){
-    char        ttt[MAX_FILE_NAME_SIZE];
-    char        *cp;
-    int         ind;
-
-    cp = options.htmlJdkDocAvailable;
-    while (*cp!=0) {
-        for (ind=0;
-             cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR && cp[ind]!=':' ;
-             ind++) {
-            ttt[ind]=cp[ind];
-            if (cp[ind]=='.')
-                ttt[ind] = '/';
-        }
-        ttt[ind]=0;
-        //&fprintf(dumpOut,"testing %s <-> %s (%d)\n", ttt, ss, ind);
-        if (strncmp(ttt, ss, ind)==0)
-            return true;
-        cp += ind;
-        if (*cp == CLASS_PATH_SEPARATOR || *cp == ':')
-            cp++;
-    }
-    return false;
-}
-
-static bool olcxGenHtmlFileWithIndirectLink(char *ofname, char *url) {
-    FILE *of;
-    of = openFile(ofname, "w");
-    if (of == NULL) {
-        fprintf(communicationChannel,"* ** Can't open temporary file %s\n", ofname);
-        return false;
-    }
-    fprintf(of, "<html><head>");
-    if (options.urlAutoRedirect || strchr(url,' ')==NULL) {
-        fprintf(of, "<META http-equiv=\"refresh\" ");
-        fprintf(of, "content=\"0;URL=%s\">\n", url);
-    }
-    fprintf(of, "</head><body>\n");
-    if (! (options.urlAutoRedirect || strchr(url,' ')==NULL)) {
-        fprintf(of, "Please follow the link: ");
-    }
-    fprintf(of, "<A HREF=\"%s\">", url);
-    fprintf(of, "%s", url);
-    fprintf(of, "</A>\n");
-    fprintf(of, "</body></html>");
-    closeFile(of);
-    return true;
-}
-
-static char *getExpandedLocalJavaDocFile_st(char *expandedPath, char *prefix, char *tmpfname) {
-    static char     fullurl[11*MAX_FILE_NAME_SIZE];
-    char            fullfname[MAX_FILE_NAME_SIZE];
-    char            *s;
-    int             cplen;
-
-    MapOverPaths(expandedPath, {
-        cplen = strlen(currentPath);
-        if (cplen > 0 && currentPath[cplen - 1] == FILE_PATH_SEPARATOR) {
-            if (prefix == NULL) {
-                sprintf(fullurl, "%s%s", currentPath, tmpfname);
-            } else {
-                sprintf(fullurl, "%sapi%c%s", currentPath, FILE_PATH_SEPARATOR, tmpfname);
-            }
-        } else {
-            if (prefix == NULL) {
-                sprintf(fullurl, "%s%c%s", currentPath, FILE_PATH_SEPARATOR, tmpfname);
-            } else {
-                sprintf(fullurl, "%s%capi%c%s", currentPath, FILE_PATH_SEPARATOR, FILE_PATH_SEPARATOR, tmpfname);
-            }
-        }
-        strcpy(fullfname, fullurl);
-        if ((s = strchr(fullfname, '#')) != NULL)
-            *s = 0;
-        if (fileStatus(fullfname, NULL) == 0)
-            return fullurl;
-    });
-    return NULL;
-}
-
-char *getLocalJavaDocFile_st(char *fileUrl) {
-    char tmpfname[MAX_FILE_NAME_SIZE];
-    static char wcJavaDocPath[MAX_OPTION_LEN];
-    char *res;
-
-    if (options.javaDocPath==NULL)
-        return NULL;
-    strcpy(tmpfname, fileUrl);
-    for (char *ss=tmpfname; *ss; ss++)
-        if (*ss == '/')
-            *ss = FILE_PATH_SEPARATOR;
-    expandWildcardsInPaths(options.javaDocPath, wcJavaDocPath, MAX_OPTION_LEN);
-    res = getExpandedLocalJavaDocFile_st(wcJavaDocPath, NULL, tmpfname);
-    // O.K. try once more time with 'api' prefixed
-    if (res == NULL) {
-        res = getExpandedLocalJavaDocFile_st(wcJavaDocPath, "api", tmpfname);
-    }
-    return res;
-}
-
-static void unBackslashifyUrl(char *url) {
-#if defined (__WIN32__)
-    for (char *ss=url; *ss; ss++) {
-        if (*ss=='\\')
-            *ss='/';
-    }
-#endif
-}
-
-char *getFullUrlOfJavaDoc_st(char *fileUrl) {
-    static char fullUrl[MAX_CX_SYMBOL_SIZE];
-    char *ss;
-    ss = getLocalJavaDocFile_st(fileUrl);
-    if (ss!=NULL) {
-        sprintf(fullUrl,"file:///%s", ss);
-    } else {
-        sprintf(fullUrl, "%s/%s", options.htmlJdkDocUrl, fileUrl);
-    }
-    // replace backslashes under windows by slashes
-    // maybe this should be on option?
-    unBackslashifyUrl(fullUrl);
-    return fullUrl;
-}
-
-static bool olcxBrowseSymbolInJavaDoc(ReferencesItem *rr) {
-    char *url, *tmd, *lfn;
-    char tmpfname[MAX_FILE_NAME_SIZE];
-    char theUrl[2*MAX_FILE_NAME_SIZE];
-    int rrr;
-    url = getJavaDocUrl_st(rr);
-    lfn = getLocalJavaDocFile_st(url);
-    if (lfn==NULL && (options.htmlJdkDocUrl==NULL || ! htmlJdkDocAvailableForUrl(url)))
-        return false;
-    if (! options.urlGenTemporaryFile) {
-        if (options.xref2) {
-            ppcGenRecord(PPC_BROWSE_URL, getFullUrlOfJavaDoc_st(url));
-        } else {
-            fprintf(communicationChannel,"~%s\n", getFullUrlOfJavaDoc_st(url));
-        }
-    } else {
-#ifdef __WIN32__
-        tmd = getEnv("TEMP");
-        assert(tmd);
-        sprintf(tmpfname, "%s/xrefjdoc.html", tmd);
-        unBackslashifyUrl(tmpfname);
-#else
-        tmd = getEnv("LOGNAME");
-        assert(tmd);
-        sprintf(tmpfname, "/tmp/%sxref.html", tmd);
-#endif
-        rrr = olcxGenHtmlFileWithIndirectLink(tmpfname, getFullUrlOfJavaDoc_st(url));
-        if (rrr) {
-            sprintf(theUrl, "file:///%s", tmpfname);
-            assert(strlen(theUrl)<MAX_FILE_NAME_SIZE-1);
-            if (options.xref2) {
-                ppcGenRecord(PPC_BROWSE_URL, theUrl);
-            } else {
-                fprintf(communicationChannel,"~%s\n", theUrl);
-            }
-        }
-    }
-    return true;
-}
-
-static bool checkTheJavaDocBrowsing(OlcxReferences *refs) {
-    if (LANGUAGE(LANG_JAVA)) {
-        for (SymbolsMenu *mm=refs->menuSym; mm!=NULL; mm=mm->next) {
-            if (mm->visible && mm->selected) {
-                if (olcxBrowseSymbolInJavaDoc(&mm->references))
-                    return true;
-            }
-        }
-    }
-    return false;
-}
-
-
 static void orderRefsAndGotoDefinition(OlcxReferences *refs, PushAfterMenu pushAfterMenu) {
     olcxNaturalReorder(refs);
     if (refs->references == NULL) {
-        bool res;
         refs->actual = refs->references;
-        if (pushAfterMenu==PUSH_AFTER_MENU)
-            res=false;
-        else
-            res = checkTheJavaDocBrowsing(refs);
-        if (!res) {
-            indicateNoReference();
-        }
-    } else if (refs->references->usage.kind<=UsageDeclared) {
+        indicateNoReference();
+    } else if (refs->references->usage.kind <= UsageDeclared) {
         refs->actual = refs->references;
         gotoOnlineCxref(&refs->actual->position, refs->actual->usage.kind, "");
     } else {
-        bool res;
-        if (pushAfterMenu==PUSH_AFTER_MENU)
-            res=false;
-        else
-            res = checkTheJavaDocBrowsing(refs);
-        if (!res) {
-            if (options.xref2) {
-                ppcWarning("Definition not found");
-            } else {
-                fprintf(communicationChannel,"*** Definition reference not found **");
-            }
+        if (options.xref2) {
+            ppcWarning("Definition not found");
+        } else {
+            fprintf(communicationChannel,"*** Definition not found **");
         }
     }
 }
@@ -1505,8 +1275,7 @@ static void olcxReferenceGotoCompletion(int refn) {
                 && positionsAreNotEqual(completion->ref.position, noPosition)) {
                 gotoOnlineCxref(&completion->ref.position, UsageDefined, "");
             } else {
-                if (!olcxBrowseSymbolInJavaDoc(&completion->sym))
-                    indicateNoReference();
+                indicateNoReference();
             }
         } else {
             findAndGotoDefinition(&completion->sym);
@@ -1528,8 +1297,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
             && positionsAreNotEqual(rr->ref.position, noPosition)) {
             gotoOnlineCxref(&rr->ref.position, UsageDefined, "");
         } else {
-            if (!olcxBrowseSymbolInJavaDoc(&rr->sym))
-                indicateNoReference();
+            indicateNoReference();
         }
     } else {
         indicateNoReference();
@@ -1539,36 +1307,16 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
 static void olcxReferenceBrowseCompletion(int refn) {
     OlcxReferences    *refs;
     Completion      *rr;
-    char                *url;
 
     assert(refn > 0);
-    if (!olcxMoveInit(&sessionData, &refs,CHECK_NULL))
+    if (!olcxMoveInit(&sessionData, &refs, CHECK_NULL))
         return;
     rr = olCompletionNthLineRef(refs->completions, refn);
     if (rr != NULL) {
-        if (rr->category == CategoryLocal) {
-            if (options.xref2)
-                ppcGenRecord(PPC_ERROR, "No JavaDoc is available for local symbols.");
-            else
-                fprintf(communicationChannel,"* ** no JavaDoc is available for local symbols **");
-        } else {
-            if (!olcxBrowseSymbolInJavaDoc(&rr->sym)) {
-                char message[TMP_BUFF_SIZE];
-                int len;
-
-                sprintf(message, "*** JavaDoc for ");
-                url = getJavaDocUrl_st(&rr->sym);
-                len = strlen(message);
-                for (char *tt=url ; *tt && *tt!='#'; tt++, len++)
-                    message[len] = *tt;
-                message[len] = '\0';
-                strcat(message, " not available, (check -javadocpath) **");
-                if (options.xref2)
-                    ppcGenRecord(PPC_ERROR, message);
-                else
-                    fprintf(communicationChannel, "%s", message);
-            }
-        }
+        if (options.xref2)
+            ppcGenRecord(PPC_ERROR, "No JavaDoc is available.");
+        else
+            fprintf(communicationChannel,"* ** no JavaDoc is available **");
     } else {
         if (options.xref2)
             ppcGenRecord(PPC_ERROR, "Out of range");
@@ -1857,7 +1605,7 @@ static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
         if (inspect == INSPECT_DEF) {
             if (ss->defpos.file>=0 && ss->defpos.file!=NO_FILE_NUMBER) {
                 gotoOnlineCxref(&ss->defpos, UsageDefined, "");
-            } else if (!olcxBrowseSymbolInJavaDoc(&ss->references)) {
+            } else {
                 indicateNoReference();
             }
         } else {
@@ -1973,14 +1721,11 @@ static void olcxMenuSelectOnly(void) {
                 char ttt[MAX_CX_SYMBOL_SIZE];
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintfSymbolLinkName(selection, ttt);
-                sprintf(tmpBuff,"Class %s does not define %s", javaGetShortClassNameFromFileNum_static(selection->references.vApplClass), ttt);
+                sprintf(tmpBuff, "Class %s does not define %s",
+                        javaGetShortClassNameFromFileNum_static(selection->references.vApplClass), ttt);
                 ppcBottomWarning(tmpBuff);
             } else {
-                if (!olcxBrowseSymbolInJavaDoc(&selection->references)) {  //& checkTheJavaDocBrowsing(refs);
-                    ppcBottomWarning("Definition not found");
-                } else {
-                    ppcBottomInformation("Definition not found, loading javadoc.");
-                }
+                ppcBottomWarning("Definition not found");
             }
         } else {
             ppcGotoPosition(&refs->actual->position);
@@ -3938,7 +3683,7 @@ void answerEditAction(void) {
     case OLO_TAGSELECT:
         olcxReferenceSelectTagSearchItem(options.olcxGotoVal);
         break;
-    case OLO_CBROWSE:
+    case OLO_BROWSE_COMPLETION:
         olcxReferenceBrowseCompletion(options.olcxGotoVal);
         break;
     case OLO_REF_FILTER_SET:

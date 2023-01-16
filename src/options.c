@@ -2044,7 +2044,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+14, "%d",&options.olcxGotoVal);
     }
     else if (strncmp(argv[i], "-olcxcbrowse",12)==0) {
-        options.serverOperation = OLO_CBROWSE;
+        options.serverOperation = OLO_BROWSE_COMPLETION;
         options.olcxGotoVal = 0;
         sscanf(argv[i]+12, "%d",&options.olcxGotoVal);
     }
