@@ -24,7 +24,7 @@ void addIncludeReference(int filenum, Position *pos) {
     mock(filenum, pos);
 }
 
-void addThisFileDefineIncludeReference(int filenum) {
+void addFileAsIncludeReference(int filenum) {
     mock(filenum);
 }
 

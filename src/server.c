@@ -216,7 +216,7 @@ void singlePass(int argc, char **argv,
             Position position = makePosition(inputFileNumber, 1, 0);
             gotOnLineCxRefs(&position);
         }
-        addThisFileDefineIncludeReference(inputFileNumber);
+        addFileAsIncludeReference(inputFileNumber);
     }
     if (olstringFound && !olstringServed) {
         // on-line action with cursor in an un-used macro body ???

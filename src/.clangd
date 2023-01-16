@@ -1,3 +1,5 @@
 CompileFlags:
     Add: [-DGIT_HASH="1"]
+Diagnostics:
+    UnusedIncludes: Strict
     

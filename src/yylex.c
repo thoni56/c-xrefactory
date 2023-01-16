@@ -449,7 +449,7 @@ static void fillIncludeSymbolItem(Symbol *symbol, Position *pos){
 }
 
 
-void addThisFileDefineIncludeReference(int fileIndex) {
+void addFileAsIncludeReference(int fileIndex) {
     Position position;
     Symbol symbol;
 
@@ -469,7 +469,7 @@ void addIncludeReference(int fileIndex, Position *position) {
 
 static void addIncludeReferences(int fileIndex, Position *position) {
     addIncludeReference(fileIndex, position);
-    addThisFileDefineIncludeReference(fileIndex);
+    addFileAsIncludeReference(fileIndex);
 }
 
 void pushInclude(FILE *file, EditorBuffer *buffer, char *name, char *prepend) {
