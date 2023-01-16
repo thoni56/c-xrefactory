@@ -501,9 +501,10 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
         initTokenNamesTables();
 
-        cache.active = true;
+        activateCaching();
         placeCachePoint(false);
-        cache.active = false;
+        deactivateCaching();
+
         assert(cache.free == cache.points[0].nextLexemP);
         assert(cache.free == cache.points[1].nextLexemP);
     } else {

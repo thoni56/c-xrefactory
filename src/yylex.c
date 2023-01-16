@@ -401,7 +401,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *id, Position *pos) {
     assert(options.mode);
     if (options.mode == ServerMode) {
         if (lexem==IDENT_TO_COMPLETE) {
-            cache.active   = false;
+            deactivateCaching();
             olstringServed = true;
             if (currentLanguage == LANG_JAVA) {
                 makeJavaCompletions(id, strlen(id), pos);
@@ -881,7 +881,7 @@ protected void processDefineDirective(bool hasArguments) {
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER && positionsAreEqual(position, cxRefPosition))) {
-                    cache.active        = false;
+                    deactivateCaching();
                     olstringFound = true;
                     olstringInMacroBody = symbol->linkName;
                 }

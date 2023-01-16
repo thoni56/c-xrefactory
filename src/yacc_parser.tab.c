@@ -2961,7 +2961,7 @@ yyreduce:
 case 1:
 #line 248 "yacc_parser.y"
 {
-            cache.active = false;    /* no caching in yacc_parser */
+            deactivateCaching();    /* no caching in yacc_parser */
             /* initialize locals*/
             l_yaccUnion = NULL;
             l_currentType = NULL;

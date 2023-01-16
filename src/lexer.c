@@ -17,7 +17,7 @@
 
 void gotOnLineCxRefs(Position *position) {
     if (requiresCreatingRefs(options.serverOperation)) {
-        cache.active  = false;
+        deactivateCaching();
         cxRefPosition = *position;
     }
 }
@@ -280,7 +280,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
 
     /* first test whether the input is cached */
     /* TODO: why do we need to know this? */
-    if (cache.active && includeStack.pointer == 0 && macroStackIndex == 0) {
+    if (cachingIsActive() && includeStack.pointer == 0 && macroStackIndex == 0) {
         cacheInput(&currentInput);
         cache.nextToCache = lb->lexemStream;
     }

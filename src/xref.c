@@ -184,7 +184,7 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         olOriginalComFileNumber = olOriginalFileIndex;
         if (inputOpened) {
             recoverFromCache();
-            cache.active = false; /* no caching in cxref */
+            deactivateCaching(); /* no caching in cxref */
             parseCurrentInputFile(currentLanguage);
             closeCharacterBuffer(&currentFile.characterBuffer);
             inputOpened                       = false;

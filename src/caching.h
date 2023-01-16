@@ -36,6 +36,9 @@ typedef struct {
 extern Cache cache;
 
 extern void initCaching(void);
+extern void activateCaching(void);
+extern void deactivateCaching(void);
+extern bool cachingIsActive(void);
 extern void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive);
 extern void recoverFromCache(void);
 extern void cacheInput(LexInput *input);

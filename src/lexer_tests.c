@@ -26,6 +26,7 @@ BeforeEach(Lexer) {
     currentLanguage = LANG_C;
     log_set_level(LOG_ERROR);
     initLexemBuffer(&lexemBuffer);
+    always_expect(cachingIsActive, will_return(false));
 }
 AfterEach(Lexer) {}
 
