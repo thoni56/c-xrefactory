@@ -634,15 +634,16 @@ char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
     return res;
 }
 
-char *directoryName_st(char *fullFileName) {
-    static char res[MAX_FILE_NAME_SIZE];
+char *directoryName_static(char *fullFileName) {
+    static char path[MAX_FILE_NAME_SIZE];
     int pathLength;
 
-    pathLength = extractPathInto(fullFileName, res);
+    pathLength = extractPathInto(fullFileName, path);
     assert(pathLength < MAX_FILE_NAME_SIZE-1);
-    if (pathLength>2 && res[pathLength-1]==FILE_PATH_SEPARATOR) res[pathLength-1] = 0;
+    if (pathLength>2 && path[pathLength-1]==FILE_PATH_SEPARATOR)
+        path[pathLength-1] = '\0';
 
-    return res;
+    return path;
 }
 
 int pathncmp(char *path1, char *path2, int length, bool caseSensitive) {

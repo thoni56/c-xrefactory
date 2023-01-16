@@ -58,7 +58,7 @@ char *simpleFileName(char *fullFileName) {
   return (char *) mock(fullFileName);
 }
 
-char *directoryName_st(char *fullFileName) {
+char *directoryName_static(char *fullFileName) {
   return (char *) mock(fullFileName);
 }
 

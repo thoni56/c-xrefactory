@@ -243,10 +243,9 @@ void copyFileFromTo(char *source, char *destination) {
 
 /*  'dest' and 'source' might be the same pointer !!!!!!!!!!!!!!! */
 int extractPathInto(char *source, char *dest) {
-    int i;
     int l = 0;
 
-    for(i=0; source[i]!=0; i++) {
+    for (int i=0; source[i]!=0; i++) {
         dest[i] = source[i];
         if (source[i]=='/' || source[i]=='\\')
             l = i+1;

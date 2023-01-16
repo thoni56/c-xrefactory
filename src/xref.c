@@ -43,8 +43,8 @@ static bool isFileItemLess(FileItem *fileItem1, FileItem *fileItem2) {
     char directoryName2[MAX_FILE_NAME_SIZE];
 
     // first compare directory
-    strcpy(directoryName1, directoryName_st(fileItem1->name));
-    strcpy(directoryName2, directoryName_st(fileItem2->name));
+    strcpy(directoryName1, directoryName_static(fileItem1->name));
+    strcpy(directoryName2, directoryName_static(fileItem2->name));
     comparison = strcmp(directoryName1, directoryName2);
     if (comparison < 0)
         return true;

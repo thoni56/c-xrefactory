@@ -84,7 +84,7 @@ extern char *string3ConcatInStackMem(char *str1, char *str2, char *str3);
 extern void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle);
 extern char *strmcpy(char *dest, char *src);
 extern char *simpleFileName(char *fullFileName);
-extern char *directoryName_st(char *fullFileName);
+extern char *directoryName_static(char *fullFileName);
 extern char *simpleFileNameWithoutSuffix_st(char *fullFileName);
 extern bool containsWildcard(char *ss);
 extern bool shellMatch(char *string, int stringLen, char *pattern, bool caseSensitive);
