@@ -165,28 +165,6 @@ static void setCurrentInputConsistency(LexInput *input, FileDescriptor *file) {
                  NULL, INPUT_NORMAL);
 }
 
-char *placeIdent(void) {
-    static char tt[2*MAX_REF_LEN];
-    char fn[MAX_FILE_NAME_SIZE];
-    char mm[MAX_REF_LEN];
-    int s;
-    if (currentFile.fileName!=NULL) {
-        if (options.xref2 && options.mode!=ServerMode) {
-            strcpy(fn, getRealFileName_static(normalizeFileName(currentFile.fileName, cwd)));
-            assert(strlen(fn) < MAX_FILE_NAME_SIZE);
-            sprintf(mm, "%s:%d", simpleFileName(fn),currentFile.lineNumber);
-            assert(strlen(mm) < MAX_REF_LEN);
-            sprintf(tt, "<A HREF=\"file://%s#%d\" %s=%ld>%s</A>", fn, currentFile.lineNumber, PPCA_LEN, (unsigned long)strlen(mm), mm);
-        } else {
-            sprintf(tt,"%s:%d ",simpleFileName(getRealFileName_static(currentFile.fileName)),currentFile.lineNumber);
-        }
-        s = strlen(tt);
-        assert(s<MAX_REF_LEN);
-        return tt;
-    }
-    return "";
-}
-
 static bool isPreprocessorToken(Lexem lexem) {
     return lexem>CPP_TOKENS_START && lexem<CPP_TOKENS_END;
 }

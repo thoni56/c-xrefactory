@@ -40,10 +40,6 @@ void addMacroDefinedByOption(char *opt) {
     mock(opt);
 }
 
-char *placeIdent(void) {
-    return (char *)mock();
-}
-
 int cachedInputPass(int cpoint, char **cfromto) {
     return (int)mock(cpoint, cfromto);
 }

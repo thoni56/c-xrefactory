@@ -10,6 +10,7 @@
 #include "semact.h"             /* displayingErrorMessages() */
 
 /* These are ok to be dependent on */
+#include "filedescriptor.h"
 #include "fileio.h"
 #include "log.h"
 #include "stringlist.h"
@@ -257,9 +258,32 @@ int extractPathInto(char *source, char *dest) {
 
 /*************************************************************************/
 
+static char *identifierReference_static(void) {
+    static char tempString[2 * MAX_REF_LEN];
+    char        fileName[MAX_FILE_NAME_SIZE];
+    char        fileNameAndLineNumber[MAX_REF_LEN];
+    if (currentFile.fileName != NULL) {
+        if (options.xref2 && options.mode != ServerMode) {
+            strcpy(fileName, getRealFileName_static(normalizeFileName(currentFile.fileName, cwd)));
+            assert(strlen(fileName) < MAX_FILE_NAME_SIZE);
+            sprintf(fileNameAndLineNumber, "%s:%d", simpleFileName(fileName), currentFile.lineNumber);
+            assert(strlen(fileNameAndLineNumber) < MAX_REF_LEN);
+            sprintf(tempString, "<A HREF=\"file://%s#%d\" %s=%ld>%s</A>", fileName, currentFile.lineNumber, PPCA_LEN,
+                    (unsigned long)strlen(fileNameAndLineNumber), fileNameAndLineNumber);
+        } else {
+            sprintf(tempString, "%s:%d ", simpleFileName(getRealFileName_static(currentFile.fileName)),
+                    currentFile.lineNumber);
+        }
+        int length = strlen(tempString);
+        assert(length < MAX_REF_LEN);
+        return tempString;
+    }
+    return "";
+}
+
 static void formatMessage(char *out, int errCode, char *text) {
     if (options.mode != ServerMode) {
-        sprintf(out, "%s ", placeIdent());
+        sprintf(out, "%s ", identifierReference_static());
         out += strlen(out);
     }
     switch (errCode) {

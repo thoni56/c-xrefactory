@@ -40,7 +40,6 @@ extern void addFileAsIncludeReference(int filenum);
 extern void pushInclude(FILE *file, EditorBuffer *buff, char *name, char *prepend);
 extern void popInclude(void);
 extern void addMacroDefinedByOption(char *option);
-extern char *placeIdent(void);
 extern int cachedInputPass(int cpoint, char **cfromto);
 extern Lexem cexp_yylex(void);
 extern Lexem yylex(void);

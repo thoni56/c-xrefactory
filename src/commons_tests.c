@@ -3,6 +3,7 @@
 
 #include "commons.h"
 
+#include "filedescriptor.mock"
 #include "fileio.mock"
 #include "globals.mock"
 #include "misc.mock"
