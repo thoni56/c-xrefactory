@@ -6,7 +6,29 @@ image::embed:ContainerView[]
 
 === Components
 
-image::embed:EditorExtension[]
+At this point the internal structure of the components are
+tentative. The actual interfaces are not particularly clean, most code
+files can and do include much every other module.
+
+NOTE: One focus area for the ongoing work is to try to pry out modules
+from the code mess by moving functions around, renaming and hinding
+functions, where possible.
+
+==== CxrefCore
 
 image::embed:CxrefCore[]
 
+The `CxrefCore` component is the core component. It does all the work
+when it comes to finding and reporting references to symbols,
+communicating refactoring requests as well as storing reference
+information for longer term storage and caching.
+
+==== EditorExtension
+
+image::embed:EditorExtension[]
+
+The `EditorExtension` component is responsible for plugging into an
+editor of choice and handle the user interface, buffer management and
+executing the refactoring edit operations.
+
+Currently there is only one such extension supported, for `Emacs`.

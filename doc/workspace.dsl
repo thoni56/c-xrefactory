@@ -37,9 +37,11 @@ workspace "C-xrefactory" "A C/Java refactoring browser in C" {
 				server -> cxref "handles references using" call
 				refactory -> cxref "handles references using" call
 
+                caching = Component caching "Caching File Reading"
 				lexer = Component yylex "Lexical Analyser" C
 				parser = Component parser "Parser" C
 				parser -> lexer "reads tokenized source using" buffering
+                parser -> caching "bookmarks cachepoints using"
 
 				xref -> parser "parses source code using" call
 				server -> parser "parses source code using" call

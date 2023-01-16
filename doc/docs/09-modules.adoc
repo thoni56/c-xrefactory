@@ -39,3 +39,9 @@ The `yylex` module has the standard interface required by any
 === Main
 
 === Cxfile
+
+=== Caching
+
+=== c-xref.el
+
+=== c-xrefactory.el
