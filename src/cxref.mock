@@ -217,8 +217,8 @@ bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym, ServerOper
     return (bool) mock(osym, nsym, operation);
 }
 
-void olcxPrintPushingAction(ServerOperation operation, int afterMenu) {
-    mock(operation, afterMenu);
+void olcxPrintPushingAction(ServerOperation operation, PushAfterMenu pushAfterMenu) {
+    mock(operation, pushAfterMenu);
 }
 
 void olPushAllReferencesInBetween(int minMemi, int maxMemi) {

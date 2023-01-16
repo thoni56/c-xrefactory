@@ -101,8 +101,13 @@ typedef enum {
     DONT_PROCESS_FILE_ARGUMENTS
 } ProcessFileArguments;
 
+typedef enum {
+    DONT_PUSH_AFTER_MENU = DONT_PROCESS_FILE_ARGUMENTS + 1,
+    PUSH_AFTER_MENU
+} PushAfterMenu;
+
 enum miscellaneous { /* misc. constants */
-    DEFAULT_VALUE = DONT_PROCESS_FILE_ARGUMENTS + 1,
+    DEFAULT_VALUE = PUSH_AFTER_MENU + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
@@ -122,7 +127,6 @@ enum miscellaneous { /* misc. constants */
     FIRST_PASS,
     SECOND_PASS,
     DO_NOT_CHECK_IF_SELECTED,
-    PUSH_AFTER_MENU,
     CHECK_NULL,
     TRAILED_YES,
     TRAILED_NO,

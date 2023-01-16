@@ -20,6 +20,7 @@
 #include "menu.h"
 #include "misc.h"
 #include "options.h"
+#include "proto.h"
 #include "protocol.h"
 #include "refactory.h"
 #include "reftab.h"
@@ -828,7 +829,7 @@ static void olcxNaturalReorder(OlcxReferences *refs) {
     LIST_MERGE_SORT(Reference, refs->references, referenceIsLessThanOrderImportant);
 }
 
-static void olcxGenNoReferenceSignal(void) {
+static void indicateNoReference(void) {
     if (options.xref2) {
         ppcBottomInformation("No reference");
     } else {
@@ -845,7 +846,7 @@ static void olcxOrderRefsAndGotoFirst(void) {
     if (refs->references != NULL) {
         gotoOnlineCxref(&refs->actual->position, refs->actual->usage.kind, "");
     } else {
-        olcxGenNoReferenceSignal();
+        indicateNoReference();
     }
 }
 
@@ -1082,23 +1083,24 @@ static bool checkTheJavaDocBrowsing(OlcxReferences *refs) {
 }
 
 
-static void orderRefsAndGotoDefinition(OlcxReferences *refs, int afterMenuFlag) {
-    bool res;
+static void orderRefsAndGotoDefinition(OlcxReferences *refs, PushAfterMenu pushAfterMenu) {
     olcxNaturalReorder(refs);
     if (refs->references == NULL) {
+        bool res;
         refs->actual = refs->references;
-        if (afterMenuFlag==PUSH_AFTER_MENU)
+        if (pushAfterMenu==PUSH_AFTER_MENU)
             res=false;
         else
             res = checkTheJavaDocBrowsing(refs);
         if (!res) {
-            olcxGenNoReferenceSignal();
+            indicateNoReference();
         }
     } else if (refs->references->usage.kind<=UsageDeclared) {
         refs->actual = refs->references;
         gotoOnlineCxref(&refs->actual->position, refs->actual->usage.kind, "");
     } else {
-        if (afterMenuFlag==PUSH_AFTER_MENU)
+        bool res;
+        if (pushAfterMenu==PUSH_AFTER_MENU)
             res=false;
         else
             res = checkTheJavaDocBrowsing(refs);
@@ -1112,12 +1114,12 @@ static void orderRefsAndGotoDefinition(OlcxReferences *refs, int afterMenuFlag) 
     }
 }
 
-static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
+static void olcxOrderRefsAndGotoDefinition(PushAfterMenu pushAfterMenu) {
     OlcxReferences *refs;
 
     if (!olcx_move_init(&sessionData, &refs, CHECK_NULL))
         return;
-    orderRefsAndGotoDefinition(refs, afterMenuFlag);
+    orderRefsAndGotoDefinition(refs, pushAfterMenu);
 }
 
 static void getFileChar(int *chP, Position *position, CharacterBuffer *characterBuffer) {
@@ -1388,7 +1390,7 @@ static void olcxGenGotoActReference(OlcxReferences *refs) {
     if (refs->actual != NULL) {
         gotoOnlineCxref(&refs->actual->position, refs->actual->usage.kind, "");
     } else {
-        olcxGenNoReferenceSignal();
+        indicateNoReference();
     }
 }
 
@@ -1483,7 +1485,7 @@ static void findAndGotoDefinition(ReferencesItem *sym) {
     //&oldrefs = *refs;
     refs->menuSym = &menu;
     fullScanFor(sym->name);
-    orderRefsAndGotoDefinition(refs, DEFAULT_VALUE);
+    orderRefsAndGotoDefinition(refs, DONT_PUSH_AFTER_MENU);
     //&freeReferences(refs->references);
     //&*refs = oldrefs;
     refs->menuSym = NULL;
@@ -1507,13 +1509,13 @@ static void olcxReferenceGotoCompletion(int refn) {
                 gotoOnlineCxref(&rr->ref.position, UsageDefined, "");
             } else {
                 if (!olcxBrowseSymbolInJavaDoc(&rr->sym))
-                    olcxGenNoReferenceSignal();
+                    indicateNoReference();
             }
         } else {
             findAndGotoDefinition(&rr->sym);
         }
     } else {
-        olcxGenNoReferenceSignal();
+        indicateNoReference();
     }
 }
 
@@ -1530,10 +1532,10 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
             gotoOnlineCxref(&rr->ref.position, UsageDefined, "");
         } else {
             if (!olcxBrowseSymbolInJavaDoc(&rr->sym))
-                olcxGenNoReferenceSignal();
+                indicateNoReference();
         }
     } else {
-        olcxGenNoReferenceSignal();
+        indicateNoReference();
     }
 }
 
@@ -1675,7 +1677,7 @@ static void olcxReferenceGotoCaller(void) {
         gotoOnlineCxref(&refs->callerPosition, UsageUsed, "");
 
     } else {
-        olcxGenNoReferenceSignal();
+        indicateNoReference();
     }
 }
 
@@ -1745,7 +1747,7 @@ static void olcxShowTopApplClass(void) {
     assert(refs->actual!=NULL);
     mms = findSymbolCorrespondingToReference(refs->menuSym, refs->actual);
     if (mms==NULL) {
-        olcxGenNoReferenceSignal();
+        indicateNoReference();
     } else {
         fprintf(communicationChannel, "*");
         printClassFqtNameFromClassNum(communicationChannel, mms->references.vApplClass);
@@ -1760,7 +1762,7 @@ static void olcxShowTopType(void) {
     assert(refs->actual!=NULL);
     mms = findSymbolCorrespondingToReference(refs->menuSym, refs->actual);
     if (mms==NULL) {
-        olcxGenNoReferenceSignal();
+        indicateNoReference();
     } else {
         fprintf(communicationChannel, "*%s",typeNamesTable[mms->references.type]);
     }
@@ -1853,13 +1855,13 @@ static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
     }
  breakl:
     if (ss == NULL) {
-        olcxGenNoReferenceSignal();
+        indicateNoReference();
     } else {
         if (inspect == INSPECT_DEF) {
             if (ss->defpos.file>=0 && ss->defpos.file!=noFileIndex) {
                 gotoOnlineCxref(&ss->defpos, UsageDefined, "");
             } else if (!olcxBrowseSymbolInJavaDoc(&ss->references)) {
-                olcxGenNoReferenceSignal();
+                indicateNoReference();
             }
         } else {
             // inspect class
@@ -1927,7 +1929,7 @@ static void olcxMenuToggleSelect(void) {
         }
     } else {
         if (ss==NULL) {
-            olcxGenNoReferenceSignal();
+            indicateNoReference();
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
             FileItem *fileItem = getFileItem(ss->references.vApplClass);
@@ -2326,7 +2328,7 @@ static void olcxReferenceFilterSet(int flevel) {
         refs->refsFilterLevel = flevel;
         //&     olcxPrintRefList(";", refs);
         //& } else {
-        //&     olcxGenNoReferenceSignal();
+        //&     indicateNoReference();
     }
     if (options.xref2) {
         // move to the visible reference
@@ -2377,7 +2379,7 @@ static void olcxReferencePop(void) {
     if (refs->callerPosition.file != noFileIndex) {
         gotoOnlineCxref(&refs->callerPosition, UsageUsed, "");
     } else {
-        olcxGenNoReferenceSignal();
+        indicateNoReference();
     }
     //& olStackDeleteSymbol(refs);  // this was before non deleting pop
     sessionData.browserStack.top = refs->previous;
@@ -3354,11 +3356,11 @@ static void olcxProcessGetRequest(void) {
     }
 }
 
-void olcxPrintPushingAction(ServerOperation operation, int afterMenu) {
+void olcxPrintPushingAction(ServerOperation operation, PushAfterMenu pushAfterMenu) {
     switch (operation) {
     case OLO_PUSH:
         if (olcxCheckSymbolExists()) {
-            olcxOrderRefsAndGotoDefinition(afterMenu);
+            olcxOrderRefsAndGotoDefinition(pushAfterMenu);
         } else {
             // to auto repush symbol by name, but I do not like it.
             //& if (options.xref2) ppcGenRecord(PPC_NO_SYMBOL, "");
@@ -3369,7 +3371,7 @@ void olcxPrintPushingAction(ServerOperation operation, int afterMenu) {
         break;
     case OLO_PUSH_NAME:
         if (olcxCheckSymbolExists()) {
-            olcxOrderRefsAndGotoDefinition(afterMenu);
+            olcxOrderRefsAndGotoDefinition(pushAfterMenu);
         } else {
             olcxNoSymbolFoundErrorMessage();
             olStackDeleteSymbol(sessionData.browserStack.top);
@@ -3508,7 +3510,8 @@ static void olcxListSpecial(char *fieldName) {
     olcxPushSpecial(fieldName, options.serverOperation);
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->menuSym);
     // previous do not work, because of automatic reduction in moving
-    olcxPrintPushingAction(options.serverOperation, DEFAULT_VALUE);
+    // WTF Huh?
+    olcxPrintPushingAction(options.serverOperation, DONT_PUSH_AFTER_MENU);
 }
 
 bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
@@ -3664,7 +3667,7 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
     } else {
         assert(sessionData.browserStack.top);
         //&olProcessSelectedReferences(sessionData->browserStack.top, genOnLineReferences);
-        olcxPrintPushingAction(options.serverOperation, DEFAULT_VALUE);
+        olcxPrintPushingAction(options.serverOperation, DONT_PUSH_AFTER_MENU);
     }
 }
 
@@ -4086,7 +4089,7 @@ void answerEditAction(void) {
     case OLO_PUSH_ALL_IN_METHOD:
         log_trace(":getting all references from begin=%d to end=%d", parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
         olPushAllReferencesInBetween(parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
-        olcxPrintPushingAction(options.serverOperation, 0);
+        olcxPrintPushingAction(options.serverOperation, DONT_PUSH_AFTER_MENU);
         break;
     case OLO_TRIVIAL_PRECHECK:
         /* TODO: See comment for setMovingPrecheckStandardEnvironment */
