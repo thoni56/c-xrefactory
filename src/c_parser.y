@@ -49,7 +49,6 @@ static int savedWorkMemoryIndex = 0;
 /* START OF COMMON TOKEN DEFINITIONS */
 
 /* ************************* SPECIALS ****************************** */
-/* c+c++ */
 
 %token TYPE_NAME
 
@@ -89,8 +88,7 @@ static int savedWorkMemoryIndex = 0;
 %token STRICTFP ASSERT
 
 /* c++-special */
-%token FRIEND OPERATOR NAMESPACE TEMPLATE DELETE MUTABLE EXPLICIT
-%token WCHAR_T BOOL USING ASM_KEYWORD EXPORT VIRTUAL INLINE TYPENAME
+%token WCHAR_T BOOL USING ASM_KEYWORD EXPORT INLINE TYPENAME
 %token DYNAMIC_CAST STATIC_CAST REINTERPRET_CAST CONST_CAST TYPEID
 
 /* yacc-special */

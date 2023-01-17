@@ -69,7 +69,7 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
 #define SetPrimitiveTypePos(res, typ) {         \
         if (1 || SyntaxPassOnly()) {            \
             res = StackMemoryAlloc(Position);   \
-            *res = typ->position;                      \
+            *res = typ->position;               \
         }                                       \
         else assert(0);                         \
     }
@@ -121,7 +121,6 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 /* START OF COMMON TOKEN DEFINITIONS */
 
 /* ************************* SPECIALS ****************************** */
-/* c+c++ */
 
 %token TYPE_NAME
 
@@ -161,8 +160,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 %token STRICTFP ASSERT
 
 /* c++-special */
-%token FRIEND OPERATOR NAMESPACE TEMPLATE DELETE MUTABLE EXPLICIT
-%token WCHAR_T BOOL USING ASM_KEYWORD EXPORT VIRTUAL INLINE TYPENAME
+%token WCHAR_T BOOL USING ASM_KEYWORD EXPORT INLINE TYPENAME
 %token DYNAMIC_CAST STATIC_CAST REINTERPRET_CAST CONST_CAST TYPEID
 
 /* yacc-special */
