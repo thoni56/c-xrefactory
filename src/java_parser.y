@@ -66,14 +66,6 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
     }
 }
 
-#define SetPrimitiveTypePos(res, typ) {         \
-        if (1 || SyntaxPassOnly()) {            \
-            res = StackMemoryAlloc(Position);   \
-            *res = typ->position;               \
-        }                                       \
-        else assert(0);                         \
-    }
-
 /* NOTE: These cannot be unmacrofied since the "node" can have different types */
 #define PropagateBoundaries(node, startSymbol, endSymbol) {node.b=startSymbol.b; node.e=endSymbol.e;}
 #define PropagateBoundariesIfRegularSyntaxPass(node, startSymbol, endSymbol) {         \
@@ -85,6 +77,10 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
 
 #define NULL_POS NULL
 
+static void setPrimitiveTypePos(Position **positionP, Id *typ) {
+    *positionP = (Position *)StackMemoryAlloc(Position);
+    **positionP = typ->position;
+}
 static bool regularPass(void) { return s_jsl == NULL; }
 static bool inSecondJslPass() {
     return !regularPass() && s_jsl->pass==2;
@@ -477,7 +473,7 @@ PrimitiveType
     |	BOOLEAN			{
             $$.data.u  = TypeBoolean;
             if (regularPass()) {
-                SetPrimitiveTypePos($$.data.position, $1.data);
+                setPrimitiveTypePos(&$$.data.position, $1.data);
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
@@ -491,27 +487,27 @@ NumericType
 IntegralType
     :   BYTE			{
             $$.data.u  = TypeByte;
-            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
+            if (regularPass()) setPrimitiveTypePos(&$$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	SHORT			{
             $$.data.u  = TypeShort;
-            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
+            if (regularPass()) setPrimitiveTypePos(&$$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	INT				{
             $$.data.u  = TypeInt;
-            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
+            if (regularPass()) setPrimitiveTypePos(&$$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	LONG			{
             $$.data.u  = TypeLong;
-            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
+            if (regularPass()) setPrimitiveTypePos(&$$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	CHAR			{
             $$.data.u  = TypeChar;
-            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
+            if (regularPass()) setPrimitiveTypePos(&$$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -519,12 +515,12 @@ IntegralType
 FloatingPointType
     :   FLOAT			{
             $$.data.u  = TypeFloat;
-            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
+            if (regularPass()) setPrimitiveTypePos(&$$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	DOUBLE			{
             $$.data.u  = TypeDouble;
-            if (regularPass()) SetPrimitiveTypePos($$.data.position, $1.data);
+            if (regularPass()) setPrimitiveTypePos(&$$.data.position, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -3045,7 +3041,7 @@ PrimaryNoNewArray
                     $$.data.typeModifier = &s_javaClassModifier;
                     $$.data.reference = NULL;
                 } else {
-                    SetPrimitiveTypePos($$.data.position, $1.data);
+                    setPrimitiveTypePos(&$$.data.position, $1.data);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
