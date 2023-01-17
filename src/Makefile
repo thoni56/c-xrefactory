@@ -381,13 +381,13 @@ endif
 
 #########################################################################
 watch:
-	watchexec -e c,h,y,mock -- execnotify -t Development make -j devel
+	watchexec -i \*.tab.\[ch\] -e c,h,y,mock -- execnotify -t Development make -j devel
 
 watch-for-unittests:
-	watchexec -e c,h,y,mock -- execnotify -t Unittests make -j unit
+	watchexec -i \*.tab.\[ch\] -e c,h,y,mock -- execnotify -t Unittests make -j unit
 
 watch-for-systemtests:
-	watchexec -e .done -- execnotify -t Systemtests make -j system-tests
+	watchexec -i \*.tab.\[ch\] -e .done -- execnotify -t Systemtests make -j system-tests
 
 system-tests:
 	$(MAKE) -e build
