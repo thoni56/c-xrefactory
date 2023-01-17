@@ -144,6 +144,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 /* c-special */
 %token TYPEDEF EXTERN AUTO REGISTER SIGNED UNSIGNED STRUCT UNION ENUM
 %token SIZEOF RESTRICT _ATOMIC _BOOL _THREADLOCAL _NORETURN
+%token INLINE ASM_KEYWORD
 /* hmm */
 %token ANONYMOUS_MODIFIER
 
@@ -154,10 +155,6 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 %token SYNCHRONIZED THIS THROW THROWS TRANSIENT TRY
 %token TRUE_LITERAL FALSE_LITERAL NULL_LITERAL
 %token STRICTFP ASSERT
-
-/* c++-special */
-%token BOOL USING ASM_KEYWORD EXPORT INLINE TYPENAME
-%token DYNAMIC_CAST STATIC_CAST REINTERPRET_CAST CONST_CAST TYPEID
 
 /* yacc-special */
 %token TOKEN TYPE

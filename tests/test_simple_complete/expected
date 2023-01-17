@@ -54,9 +54,9 @@ _Atomic        :keyword
 _Bool          :keyword
 _Thread_local  :keyword
 _Noreturn      :keyword
-__stdcall      :keyword
+inline         :keyword
 asm            :keyword
-inline         :keyword</all-completions>
+__stdcall      :keyword</all-completions>
 -olcxcomplet CURDIR/test_source/single_int1.c -olcursor=161 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 

@@ -779,8 +779,7 @@ protected void processDefineDirective(bool hasArguments) {
                 } else
                     goto errorlabel;
 
-                char *name;
-                name = ppmAllocc(strlen(argumentName)+1, sizeof(char));
+                char *name = ppmAllocc(strlen(argumentName)+1, sizeof(char));
                 strcpy(name, argumentName);
 
                 char tmpBuff[TMP_BUFF_SIZE];
