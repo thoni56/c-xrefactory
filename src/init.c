@@ -96,7 +96,6 @@ static TokenNamesInitTable tokenNameInitTable1[] = {
     {"typename",    TYPENAME,		},
     {"using",       USING,			},
     {"virtual",     VIRTUAL,		},
-    {"wchar_t",     WCHAR_T,		},
 
     {"break",       BREAK,			LANG_C | LANG_YACC | LANG_JAVA},
     {"case",        CASE,			LANG_C | LANG_YACC | LANG_JAVA},
@@ -352,8 +351,6 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeBoolean,           "boolean"},
     {TypeNull,              "null"},
     {TypeOverloadedFunction,    "OverloadedFunction"},
-
-    {TypeWchar_t,           "wchar_t"},
 
     {TypeLabel,             "label"},
     {TypeKeyword,           "keyword"},

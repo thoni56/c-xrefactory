@@ -87,8 +87,6 @@
         ENUM(TypeReserve9)                                              \
         ENUM(TypeReserve10)                                             \
         ENUM(TypeReserve11)                                             \
-        ENUM(CCC_TYPES)                                                 \
-        ENUM(TypeWchar_t)                                               \
         ENUM(MAX_CTYPE)                                                 \
         ENUM(TypeCppInclude)                                            \
         ENUM(TypeMacro)                                                 \
