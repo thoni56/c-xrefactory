@@ -2,6 +2,8 @@
 
 ;; Copyright (C) 1997-2004 Marian Vittek, Xref-Tech
 ;; Put under GPL in 2009 by Marián Vittek
+;; Work resurrected and continued by Thomas Nilefalk 2015-
+;; (https://github.com/thoni56/c-xrefactory)
 
 ;; This file is part of C-xrefactory software; it implements an
 ;; interface between xref task and (X)Emacs editors.  You can
