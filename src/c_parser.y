@@ -151,7 +151,6 @@ static int savedWorkMemoryIndex = 0;
 
 /* ******************************************************************** */
 %token TMP_TOKEN1 TMP_TOKEN2
-%token CCC_OPER_PARENTHESIS CCC_OPER_BRACKETS
 
 /* ************************ MULTI TOKENS START ************************ */
 %token MULTI_TOKENS_START

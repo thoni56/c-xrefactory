@@ -223,7 +223,6 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 
 /* ******************************************************************** */
 %token TMP_TOKEN1 TMP_TOKEN2
-%token CCC_OPER_PARENTHESIS CCC_OPER_BRACKETS
 
 /* ************************ MULTI TOKENS START ************************ */
 %token MULTI_TOKENS_START
