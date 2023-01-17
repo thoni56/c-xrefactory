@@ -83,7 +83,6 @@
         ENUM(OLO_NOT_FQT_REFS)                                          \
         ENUM(OLO_NOT_FQT_REFS_IN_CLASS)                                 \
         ENUM(OLO_GET_ENV_VALUE)                                         \
-        ENUM(OLO_SET_MOVE_TARGET)                                       \
         ENUM(OLO_SET_MOVE_CLASS_TARGET)                                 \
         ENUM(OLO_SET_MOVE_METHOD_TARGET)                                \
         ENUM(OLO_GET_CURRENT_CLASS)                                     \
@@ -148,7 +147,6 @@
        OLO_NOT_FQT_REFS,        - display not fully qualified names in method
        OLO_NOT_FQT_REFS_IN_CLASS, - display not fully qualified names of class
        OLO_GET_ENV_VALUE,       - get a value set by -set
-       OLO_SET_MOVE_TARGET,     - set target place for moving action
        OLO_SET_MOVE_CLASS_TARGET,	- set target place for xref2 move class
        OLO_SET_MOVE_METHOD_TARGET,	- set target place for xref2 move method
        OLO_GET_METHOD_COORD,	- get method beginning and end lines

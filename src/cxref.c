@@ -3758,18 +3758,6 @@ void answerEditAction(void) {
     case OLO_NOT_FQT_REFS_IN_CLASS:
         olcxListSpecial(LINK_NAME_NOT_FQT_ITEM);
         break;
-    case OLO_SET_MOVE_TARGET:
-        // xref1 target setting
-        assert(!options.xref2);
-        if (*parsedInfo.setTargetAnswerClass!=0) {
-            fprintf(communicationChannel,"*");
-            //&printSymbolLinkNameString(communicationChannel, parsedInfo.setTargetAnswerClass);
-            // very risky, will need a lot of adjustements in xref.el
-            fprintf(communicationChannel, "%s", parsedInfo.setTargetAnswerClass);
-        } else {
-            errorMessage(ERR_ST, "Not a valid target position. The cursor has to be on a place where a new field/method can be inserted.");
-        }
-        break;
     case OLO_SET_MOVE_CLASS_TARGET:
     case OLO_SET_MOVE_METHOD_TARGET:
         // xref2 target

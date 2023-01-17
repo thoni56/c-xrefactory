@@ -2072,20 +2072,7 @@ static Lexem lookupJavaIdentifier(char *id, Position position) {
 
 
 static void actionOnBlockMarker(void) {
-    if (options.serverOperation == OLO_SET_MOVE_TARGET) {
-        parsedInfo.setTargetAnswerClass[0] = 0;
-        if (LANGUAGE(LANG_JAVA)) {
-            if (parsedClassInfo.function == NULL) {
-                if (javaStat!=NULL) {
-                    if (javaStat->thisClass==NULL) {
-                        sprintf(parsedInfo.setTargetAnswerClass, " %s", s_javaThisPackageName);
-                    } else {
-                        strcpy(parsedInfo.setTargetAnswerClass, javaStat->thisClass->linkName);
-                    }
-                }
-            }
-        }
-    } else if (options.serverOperation == OLO_SET_MOVE_CLASS_TARGET) {
+    if (options.serverOperation == OLO_SET_MOVE_CLASS_TARGET) {
         parsedInfo.moveTargetApproved = false;
         if (LANGUAGE(LANG_JAVA)) {
             if (parsedClassInfo.function == NULL) {
