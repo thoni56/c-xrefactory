@@ -30,8 +30,6 @@
                                           enclosing instance
     UsageMacroBaseFileUsage             - reference to input file expanding the macro
     UsageClassFileDefinition            - reference got from class file (not shown in searches)
-    UsageJavaDoc                        - reference to place javadoc link
-    UsageJavaDocFullEntry               - reference to placce full javadoc comment
     UsageClassTreeDefinition            - reference for class tree symbol
     UsageMaybeThis                      - reference where 'this' maybe inserted
     UsageMaybeQualifiedThis             - reference where qualified 'this' may be inserted
@@ -91,8 +89,6 @@
     ENUM(UsageNone)                             \
     ENUM(UsageMacroBaseFileUsage)               \
     ENUM(UsageClassFileDefinition)              \
-    ENUM(UsageJavaDoc)                          \
-    ENUM(UsageJavaDocFullEntry)                 \
     ENUM(UsageClassTreeDefinition)              \
     ENUM(UsageMaybeThis)                        \
     ENUM(UsageMaybeQualifiedThis)               \

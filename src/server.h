@@ -112,7 +112,6 @@
        OLO_CGOTO,               - goto completion item definition
        OLO_TAGGOTO,             - goto tag search result
        OLO_TAGSELECT,           - select tag search result
-       OLO_CBROWSE,             - browse javadoc of completion item
        OLO_CSELECT,             - select completion
        OLO_EXTRACT,             - extract block into separate function
        OLO_CT_INSPECT_DEF,		- inspect definition from class tree

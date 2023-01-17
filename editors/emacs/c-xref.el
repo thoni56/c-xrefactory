@@ -346,7 +346,6 @@
 (define-key c-xref-completion-mode-map "\C-w" 'c-xref-completion-auto-search-w)
 (define-key c-xref-completion-mode-map [tab] 'c-xref-completion-auto-search-s)
 (define-key c-xref-completion-mode-map "\t" 'c-xref-completion-auto-search-s)
-(define-key c-xref-completion-mode-map "\C-b" 'c-xref-interactive-completion-browse)
 (define-key c-xref-completion-mode-map [(shift left)] 'c-xref-scroll-right)
 (define-key c-xref-completion-mode-map [(shift right)] 'c-xref-scroll-left)
 (define-key c-xref-completion-mode-map "\?" 'c-xref-interactive-completion-help)
@@ -366,12 +365,10 @@
       ;; XEmacs
       (define-key c-xref-completion-mode-map 'button3 'c-xref-popup-xemacs-completion-menu)
       (define-key c-xref-completion-mode-map 'button3up 'c-xref-undefined)
-      (define-key c-xref-completion-mode-map [(control button2up)] 'c-xref-interactive-completion-mouse-browse)
       (define-key c-xref-completion-mode-map [(control button2)] 'c-xref-undefined)
       )
   ;; Emacs
   (define-key c-xref-completion-mode-map [mouse-3] 'c-xref-compl-3bmenu)
-  (define-key c-xref-completion-mode-map [S-mouse-2] 'c-xref-interactive-completion-mouse-browse)
   )
 (c-xref-bind-default-button c-xref-completion-mode-map 'c-xref-interactive-completion-mouse-select)
 (c-xref-add-bindings-for-chars
@@ -392,11 +389,9 @@
 (define-key c-xref-compl-3bmenu [c-xref-compl-3bnext] '("Forward" . c-xref-interactive-completion-mouse-next))
 (define-key c-xref-compl-3bmenu [c-xref-compl-3bprev] '("Backward" . c-xref-interactive-completion-mouse-previous))
 (define-key c-xref-compl-3bmenu [c-xref-compl-3binspect] '("Inspect Definition" . c-xref-interactive-completion-mouse-goto))
-(define-key c-xref-compl-3bmenu [c-xref-compl-3bjdoc] '("JavaDoc" . c-xref-interactive-completion-mouse-browse))
 
 (defvar c-xref-xemacs-compl-3bmenu
   '("Completions Menu"
-   ["JavaDoc"                c-xref-interactive-completion-browse t]
    ["Inspect Definition"     c-xref-interactive-completion-goto t]
    ["Complete"               c-xref-interactive-completion-select t]
    ["Backward"               c-xref-interactive-completion-previous t]
@@ -786,7 +781,6 @@ interrupted by C-g. If there are such files, delete them.
 
 \\[c-xref-interactive-completion-select] \t-- select completion
 \\[c-xref-interactive-completion-goto] \t-- inspect symbol's definition or browse JavaDoc
-\\[c-xref-interactive-completion-browse] \t-- browse JavaDoc or inspect symbol's definition
 \\[c-xref-interactive-completion-escape] \t-- close completions and return to completion position
 \\[c-xref-interactive-completion-close] \t-- close completions
 \\[c-xref-pop-and-return] \t-- previous completions
@@ -6054,30 +6048,6 @@ browser and refactorer) are updated.  The behavior of the
   (interactive "e")
   (mouse-set-point event)
   (c-xref-interactive-completion-goto event)
-  t
-)
-
-(defun c-xref-completion-browse ()
-  "Browse the reference corresponding to this line."
-  (let ((lineno))
-    (setq lineno (count-lines 1 (+ (point) 1)))
-    (c-xref-send-data-to-process-and-dispatch
-     (format "-olcxcbrowse%d %s" lineno (c-xref-html-browsing-options))
-     c-xref-completions-dispatch-data
-     nil)
-  t
-))
-
-(defun c-xref-interactive-completion-browse (event)
-  "Go to the reference corresponding to this line."
-  (interactive "i")
-  (c-xref-completion-browse)
-)
-
-(defun c-xref-interactive-completion-mouse-browse (event)
-  (interactive "e")
-  (mouse-set-point event)
-  (c-xref-completion-browse)
   t
 )
 

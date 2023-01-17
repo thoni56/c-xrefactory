@@ -101,15 +101,9 @@ typedef struct options {
     char *variableToGet;
     bool javaSlAllowed;
 
-    /* JAVADOC: */
-    char *htmlJdkDocAvailable;
-    char *htmlJdkDocUrl;
-
     /* JAVA: */
-    char *javaDocPath;
     bool allowPackagesOnCommandLine;
     char *sourcePath;
-    char *jdocTmpDir;
 
     /* MIXED THINGS... */
     bool noIncludeRefs;

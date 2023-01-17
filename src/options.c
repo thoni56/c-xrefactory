@@ -21,79 +21,71 @@
 Options options;               // current options
 Options savedOptions;
 Options presetOptions = {
-                                /* GENERAL */
-    false,                      // command log to /tmp file
-    false,                      // exit
-    "gcc",                      // path to compiler to use for auto-discovering compiler and defines
-    MULE_DEFAULT,               // encoding
-    false,                      // completeParenthesis
-    NID_IMPORT_ON_DEMAND,       // defaultAddImportStrategy
-    0,                          // referenceListWithoutSource
-    1,                          // completionOverloadWizardDeep
-    0,                          // comment moving level
-    NULL,                       // prune name
-    NULL,                       // input files
-    RC_NONE,                    // continue refactoring
-    0,                          // completion case sensitive
-    NULL,                       // xrefrc
-    NO_EOL_CONVERSION,          // crlfConversion
-    NULL,                       // checkVersion
-    DONT_DISPLAY_NESTED_CLASSES,                 // nestedClassDisplaying
-    NULL,                       // pushName
-    0,                          // parnum2
-    "",                         // refactoring parameter 1
-    "",                         // refactoring parameter 2
-    AVR_NO_REFACTORING,         // refactoring
-    false,                      // briefoutput
-    NULL,                       // renameTo
-    UndefinedMode,              // refactoringMode
-    false,                      // xrefactory-II
-    NULL,                       // moveTargetFile
+    /* GENERAL */
+    false,                       // command log to /tmp file
+    false,                       // exit
+    "gcc",                       // path to compiler to use for auto-discovering compiler and defines
+    MULE_DEFAULT,                // encoding
+    false,                       // completeParenthesis
+    NID_IMPORT_ON_DEMAND,        // defaultAddImportStrategy
+    0,                           // referenceListWithoutSource
+    1,                           // completionOverloadWizardDeep
+    0,                           // comment moving level
+    NULL,                        // prune name
+    NULL,                        // input files
+    RC_NONE,                     // continue refactoring
+    0,                           // completion case sensitive
+    NULL,                        // xrefrc
+    NO_EOL_CONVERSION,           // crlfConversion
+    NULL,                        // checkVersion
+    DONT_DISPLAY_NESTED_CLASSES, // nestedClassDisplaying
+    NULL,                        // pushName
+    0,                           // parnum2
+    "",                          // refactoring parameter 1
+    "",                          // refactoring parameter 2
+    AVR_NO_REFACTORING,          // refactoring
+    false,                       // briefoutput
+    NULL,                        // renameTo
+    UndefinedMode,               // refactoringMode
+    false,                       // xrefactory-II
+    NULL,                        // moveTargetFile
 #if defined (__WIN32__)
-    "c;C",                      // cFilesSuffixes
-    "java;JAV",                 // javaFilesSuffixes
+    "c;C",      // cFilesSuffixes
+    "java;JAV", // javaFilesSuffixes
 #else
-    "c:C",                      // cFilesSuffixes
-    "java",                     // javaFilesSuffixes
+    "c:C",  // cFilesSuffixes
+    "java", // javaFilesSuffixes
 #endif
-    true,                       // fileNamesCaseSensitive
-    TSS_FULL_SEARCH,            // search Tag file specifics
-    "",                         // windel file
-    0,                          // following is windel line:col x line-col
-    0,
-    0,
-    0,
-    false,                      // noerrors
-    0,                          // fqtNameToCompletions
-    NULL,                       // moveTargetClass
-    0,                          // TPC_NONE, trivial pre-check
-    true,                       // urlGenTemporaryFile
-    true,                       // urlautoredirect
-    false,                      // javafilesonly
-    false,                      // exact position
-    NULL,                       // -o outputFileName
-    NULL,                       // -line lineFileName
-    NULL,                       // -I include dirs
-    DEFAULT_CXREF_FILENAME,         // -refs
+    true,            // fileNamesCaseSensitive
+    TSS_FULL_SEARCH, // search Tag file specifics
+    "",              // windel file
+    0,               // following is windel line:col x line-col
+    0, 0, 0,
+    false,                  // noerrors
+    0,                      // fqtNameToCompletions
+    NULL,                   // moveTargetClass
+    0,                      // TPC_NONE, trivial pre-check
+    true,                   // urlGenTemporaryFile
+    true,                   // urlautoredirect
+    false,                  // javafilesonly
+    false,                  // exact position
+    NULL,                   // -o outputFileName
+    NULL,                   // -line lineFileName
+    NULL,                   // -I include dirs
+    DEFAULT_CXREF_FILENAME, // -refs
 
-    NULL,                       // file move for safety check
+    NULL, // file move for safety check
     NULL,
-    0,                          // first moved line
-    MAXIMAL_INT,                // safety check number of lines moved
-    0,                          // new line number of the first line
+    0,           // first moved line
+    MAXIMAL_INT, // safety check number of lines moved
+    0,           // new line number of the first line
 
-    "",                         // getValue
-    true,                       // javaSlAllowed (autoUpdateFromSrc)
-
-    /* JAVADOC: */
-    "java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming",     // -htmljavadocavailable
-    NULL,                       // htmlJdkDocUrl - "http://java.sun.com/j2se/1.3/docs/api",
+    "",   // getValue
+    true, // javaSlAllowed (autoUpdateFromSrc)
 
     /* JAVA: */
-    "",                         // javaDocPath
     false,                      // allowPackagesOnCl
     NULL,                       // sourcepath
-    "/tmp",                     // jdocTmpDir
 
     /* MIXED THINGS... */
     false,                      // noIncludeRefs
@@ -201,9 +193,6 @@ static void usage() {
     fprintf(stdout, "Usage:\n\t\tc-xref <option>+ <input files>\n\n");
 #endif
     fprintf(stdout, "options:\n");
-    fprintf(stdout, "\t-javadocurl=<http>        - url to existing Java API docs\n");
-    fprintf(stdout, "\t-javadocpath=<path>       - paths to existing Java API docs\n");
-    fprintf(stdout, "\t-javadocavailable=<packs> - packages for which javadoc is available\n");
     fprintf(stdout, "\t-p <project>              - read options from <project> section\n");
     fprintf(stdout, "\t-I <dir>                  - search for includes in <dir>\n");
     fprintf(stdout, "\t-D<macro>[=<body>]        - define macro <macro> with body <body>\n");
@@ -1669,25 +1658,6 @@ static bool processIOption(int *argi, int argc, char **argv) {
 static bool processJOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
-    else if (strncmp(argv[i], "-jdoctmpdir=",12)==0) {
-        int len = strlen(argv[i]);
-        if (len>13 && argv[i][len-1] == FILE_PATH_SEPARATOR) {
-            warningMessage(ERR_ST, "slash at the end of -jdoctmpdir path");
-        }
-        options.jdocTmpDir = allocateStringForOption(&options.jdocTmpDir, argv[i]+12);
-    }
-    else if (strncmp(argv[i], "-javadocavailable=",18)==0)   {
-        options.htmlJdkDocAvailable = allocateStringForOption(&options.htmlJdkDocAvailable, argv[i]+18);
-    }
-    else if (strncmp(argv[i], "-javadocurl=",12)==0) {
-        options.htmlJdkDocUrl = allocateStringForOption(&options.htmlJdkDocUrl, argv[i]+12);
-    }
-    else if (strncmp(argv[i], "-javadocpath=",13)==0)    {
-        options.javaDocPath = allocateStringForOption(&options.javaDocPath, argv[i]+13);
-    } else if (strcmp(argv[i], "-javadocpath")==0)   {
-        ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.javaDocPath = allocateStringForOption(&options.javaDocPath, argv[i]);
-    }
     else if (strncmp(argv[i], "-javasuffixes=",14)==0) {
         options.javaFilesSuffixes = allocateStringForOption(&options.javaFilesSuffixes, argv[i]+14);
     }

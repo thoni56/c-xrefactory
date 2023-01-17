@@ -4,9 +4,6 @@ Usage:
 		c-xref <option>+ <input files>
 
 options:
-	-javadocurl=<http>        - url to existing Java API docs
-	-javadocpath=<path>       - paths to existing Java API docs
-	-javadocavailable=<packs> - packages for which javadoc is available
 	-p <project>              - read options from <project> section
 	-I <dir>                  - search for includes in <dir>
 	-D<macro>[=<body>]        - define macro <macro> with body <body>
