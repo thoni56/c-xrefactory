@@ -5,7 +5,6 @@ COMMAND = $(CXREF)  -xrefrc $(CURDIR)/.c-xrefrc -update -p $(CURDIR)/cexercise -
 
 $(TEST): CXrefs
 	touch cexercise/*
-	echo $(COMMAND)
 	$(COMMAND) > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
