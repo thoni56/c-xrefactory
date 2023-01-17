@@ -190,11 +190,15 @@ unit: check-tokens unittests
 
 #########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
-# Note the file prefix (-b) and symbol prefix (-p)
-# Also create .rules files with only the rules in it
 
-# Makefile magic to make two targets with one recepie, thanks to
-# https://stackoverflow.com/a/10609434/204658
+.PHONY: parsers
+parsers: c_parser.tab.[ch] java_parser.tab.[ch] yacc_parser.tab.[ch] cexp_parser.tab.[ch]
+
+# Note the file prefix (-b) and symbol prefix (-p)
+# Also creates .rules files with only the rules in it
+
+# Here's some Makefile magic to make two targets with one recepie,
+# thanks to https://stackoverflow.com/a/10609434/204658
 
 .INTERMEDIATE: c_parser.tab.intermediate
 c_parser.tab.c c_parser.tab.h : c_parser.tab.intermediate ;
@@ -434,12 +438,12 @@ endif
 
 .PHONY: unittests
 ifeq ($(shell command -v cgreen-runner 2> /dev/null),)
-unittests:
+unittests: parsers
 	@echo Cgreen not available, cannot run unittests
 else
-unittests: $(UNITTESTS)
+unittests: parsers $(UNITTESTS)
 	$(MAKE) -e clean-coverage
-	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $^
+	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
 	make gcov
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
