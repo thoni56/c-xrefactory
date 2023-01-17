@@ -125,10 +125,6 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 
 %token TYPE_NAME
 
-/* c++-only */
-%token CLASS_NAME TEMPLATE_NAME
-%token CONVERSION_OP_ID_PREFIX OPERATOR_IDENT
-
 /* ************************* OPERATORS ****************************** */
 /* common */
 %token INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
@@ -144,9 +140,6 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 
 /* yacc-only */
 %token YACC_PERC YACC_DPERC
-
-/* c++-only */
-%token DPOINT POINTM_OP PTRM_OP
 
 /* ************************** KEYWORDS ******************************** */
 
@@ -247,8 +240,6 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 
 /* java-only */
 %token CHAR_LITERAL
-
-/* c++-only */
 
 /* ****************************************************************** */
 

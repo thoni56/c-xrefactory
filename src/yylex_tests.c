@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 
 #include "constants.h"
+#include "lexem.h"
 #include "lexembuffer.h"
 #include "memory.h"
 #include "yylex.h"
@@ -113,9 +114,13 @@ Ensure(Yylex, can_handle_a_line_directive_without_number) {
 
 Ensure(Yylex, can_process_include_directive) {
     Position position     = (Position){1, 2, 3};
-    char    *lexem_stream = "\303\001\"include.h";
     FILE     file;
     int      fileNumber;
+    char    lexem_stream[100];
+
+    lexem_stream[0] = (unsigned)STRING_LITERAL%256;
+    lexem_stream[1] = STRING_LITERAL/256;
+    strcpy(&lexem_stream[2], "\"include.h");
 
     strcpy(currentFile.lexemBuffer.lexemStream, lexem_stream);
     currentFile.lexemBuffer.read = currentFile.lexemBuffer.lexemStream;
@@ -146,9 +151,13 @@ Ensure(Yylex, can_process_include_directive) {
 
 Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) {
     Position position     = (Position){1, 2, 3};
-    char    *lexem_stream = "\303\001\"include.h";
     int      fileNumber   = 0;
     FILE     file;
+    char    lexem_stream[100];
+
+    lexem_stream[0] = (unsigned)STRING_LITERAL%256;
+    lexem_stream[1] = STRING_LITERAL/256;
+    strcpy(&lexem_stream[2], "\"include.h");
 
     strcpy(cwd, "cwd");
 
@@ -207,10 +216,13 @@ Ensure(Yylex, can_process_include_directive_with_include_paths_match_in_second) 
 
 Ensure(Yylex, can_process_include_next_directive_and_find_next_with_same_name) {
     Position position     = (Position){1, 2, 3};
-    char    *lexem_stream = "\303\001\"include.h";
     int      fileNumber   = 0;
     FILE     file;
+    char     lexem_stream[100];
 
+    lexem_stream[0] = (unsigned)STRING_LITERAL%256;
+    lexem_stream[1] = STRING_LITERAL/256;
+    strcpy(&lexem_stream[2], "\"include.h");
     strcpy(cwd, "cwd");
 
     strcpy(currentFile.lexemBuffer.lexemStream, lexem_stream);
