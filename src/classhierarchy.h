@@ -18,7 +18,6 @@ typedef struct classHierarchyReference {
 
 extern ClassHierarchyReference *newClassHierarchyReference(int origin, int superClass,
                                                            ClassHierarchyReference *next);
-extern void initClassHierarchyGeneration(void);
 extern void setTmpClassBackPointersToMenu(SymbolsMenu *menu);
 extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,
                                       void (*fun)(SymbolsMenu *, void *, void *),

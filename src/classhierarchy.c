@@ -146,7 +146,7 @@ static void markTransitiveRelevantSubs(int cind, int passNumber) {
     markTransitiveRelevantSubsRec(cind, passNumber);
 }
 
-void initClassHierarchyGeneration(void) {
+static void initClassHierarchyGeneration(void) {
     clearTmpChRelevant();
     clearTmpChProcessed();
 }
