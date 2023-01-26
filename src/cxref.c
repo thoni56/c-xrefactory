@@ -3760,7 +3760,6 @@ void answerEditAction(void) {
         break;
     case OLO_SET_MOVE_CLASS_TARGET:
     case OLO_SET_MOVE_METHOD_TARGET:
-        // xref2 target
         assert(options.xref2);
         if (!parsedInfo.moveTargetApproved) {
             ppcGenRecord(PPC_ERROR, "Invalid target place");

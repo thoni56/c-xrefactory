@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "globals.h"
 #include "memory.h"
+#include "menu.h"
 #include "options.h"
 #include "misc.h"
 #include "cxref.h"
@@ -351,8 +352,10 @@ static void descendTheClassHierarchy(SymbolsMenu *menu, FILE *file,
         vFunCl = itt->references.vFunClass;
     }
 
-    if (currentOutputLineInSymbolList == 1) currentOutputLineInSymbolList++; // first line irregularity
-    if (itt!=NULL && itt->outOnLine==0) itt->outOnLine = currentOutputLineInSymbolList;
+    if (currentOutputLineInSymbolList == 1)
+        currentOutputLineInSymbolList++; // first line irregularity
+    if (itt!=NULL && itt->outOnLine==0)
+        itt->outOnLine = currentOutputLineInSymbolList;
     currentOutputLineInSymbolList ++;
     printClassHierarchyLineForMenu(itt, file, vApplCl, nextbars);
 
@@ -427,24 +430,18 @@ static void olcxMenuGenGlobRefsForVirtMethod(SymbolsMenu *menu, FILE *file) {
     char ln[MAX_REF_LEN];
 
     linkNamePrettyPrint(ln,menu->references.name,MAX_REF_LEN,SHORT_NAME);
-    if (strcmp(menu->references.name, LINK_NAME_CLASS_TREE_ITEM)==0) {
-        /*&
-          fprintf(file, "\n");
-          currentOutputLineInSymbolList += 1 ;
-          &*/
-    } else {
-        if (options.xref2) ppcGenRecord(PPC_VIRTUAL_SYMBOL, ln);
-        else fprintf(file, "\n== %s\n", ln);
+    if (strcmp(menu->references.name, LINK_NAME_CLASS_TREE_ITEM)!=0) {
+        if (options.xref2)
+            ppcGenRecord(PPC_VIRTUAL_SYMBOL, ln);
+        else
+            fprintf(file, "\n== %s\n", ln);
         currentOutputLineInSymbolList += 2 ;
     }
     initClassHierarchyGeneration();
     setTmpClassBackPointersToMenu(menu);
     genClassHierarchies(menu, file, FIRST_PASS);
-    //&fprintf(file,"interfaces:\n");
     setTmpClassBackPointersToMenu(menu);
     genClassHierarchies(menu, file, SECOND_PASS);
-    //& if (! options.xref2) fprintf(file, "\n");
-    //& currentOutputLineInSymbolList ++ ;
 }
 
 static int isVirtualMenuItem(ReferencesItem *r) {
@@ -472,20 +469,23 @@ static void genVirtualsGlobRefLists(SymbolsMenu *menu, FILE *file, char *fn) {
 }
 
 static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, FILE *file, char *fn) {
-    SymbolsMenu    *s;
+    SymbolsMenu    *m;
     ReferencesItem *r;
 
-    // first count if there are some references at all
-    for (s=menu; s!=NULL && !s->visible; s=s->next) ;
-    if (s == NULL) return;
+    // Are there are any visible references at all
+    for (m=menu; m!=NULL && !m->visible; m=m->next)
+        ;
+    if (m == NULL)
+        return;
+
     assert(menu!=NULL);
     r = &menu->references;
     assert(r!=NULL);
     //&fprintf(dumpOut,"storage of %s == %s\n",r->name,storagesName[r->storage]);
     if (! isVirtualMenuItem(r)) {
-        for(s=menu; s!=NULL; s=s->next) {
-            r = &s->references;
-            olcxMenuGenNonVirtualGlobSymList( file, s);
+        for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+            r = &m->references;
+            olcxMenuGenNonVirtualGlobSymList(file, m);
         }
     }
 }
