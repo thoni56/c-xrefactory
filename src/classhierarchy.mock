@@ -6,10 +6,6 @@ ClassHierarchyReference *newClassHierarchyReference(int origin, int superClass, 
     return (ClassHierarchyReference *)mock(origin, superClass, next);
 }
 
-void setTmpClassBackPointersToMenu(SymbolsMenu *menu) {
-  mock(menu);
-}
-
 void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, void *, void *), void *p1, char *p2) {
   mock(menu, fun, p1, p2);
 }

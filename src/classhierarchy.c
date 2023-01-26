@@ -152,7 +152,7 @@ static void initClassHierarchyGeneration(void) {
     clearTmpChProcessed();
 }
 
-void setTmpClassBackPointersToMenu(SymbolsMenu *menu) {
+static void setTmpClassBackPointersToMenu(SymbolsMenu *menu) {
     SymbolsMenu *ss;
     clearTmpClassBackPointersToMenu();
     for(ss=menu; ss!=NULL; ss=ss->next) {
