@@ -116,7 +116,7 @@ static int argument_count(char **argv) {
     return count;
 }
 
-static bool filter0(Reference *reference, void *dummy) {
+static bool filterVisibleUsages(Reference *reference, void *dummy) {
     return reference->usage.kind < UsageMaxOLUsages;
 }
 
@@ -1451,7 +1451,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     safetyCheck(refactoringOptions.project, defin);
 
-    chks = convertReferencesToEditorMarkers(sessionData.browserStack.top->references, filter0,
+    chks = convertReferencesToEditorMarkers(sessionData.browserStack.top->references, filterVisibleUsages,
                                             NULL);
 
     editorMarkersDifferences(occs, &chks, &diff1, &diff2);
@@ -1676,7 +1676,7 @@ static EditorMarkerList *getReferences(EditorBuffer *buf, EditorMarker *point, c
     EditorMarkerList *occs;
     pushReferences(point, "-olcxrename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
-    occs = convertReferencesToEditorMarkers(sessionData.browserStack.top->references, filter0,
+    occs = convertReferencesToEditorMarkers(sessionData.browserStack.top->references, filterVisibleUsages,
                                             NULL);
     return occs;
 }
@@ -2245,7 +2245,7 @@ static void applyParameterManipulation(EditorBuffer *buf, EditorMarker *point, i
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     occurrences = convertReferencesToEditorMarkers(sessionData.browserStack.top->references,
-                                                   filter0, NULL);
+                                                   filterVisibleUsages, NULL);
     startPoint = editorUndo;
     // first just check that loaded files are up to date
     //& precheckThatSymbolRefsCorresponds(nameOnPoint, occurrences);
@@ -2280,7 +2280,7 @@ static int createMarkersForAllReferencesInRegions(SymbolsMenu *menu, EditorRegio
         assert(mm->markers == NULL);
         if (mm->selected && mm->visible) {
             mm->markers =
-                convertReferencesToEditorMarkers(mm->references.references, filter0, NULL);
+                convertReferencesToEditorMarkers(mm->references.references, filterVisibleUsages, NULL);
             if (regions != NULL) {
                 restrictEditorMarkersToRegions(&mm->markers, regions);
             }
@@ -3515,7 +3515,7 @@ static int isMethodPartRedundant(EditorMarker *m1, EditorMarker *m2) {
         //&symbolRefItemDump(&mm2->references); dumpReferences(mm2->references.references);
         olcxReferencesDiff(&mm1->references.references, &mm2->references.references, &diff);
         if (diff != NULL) {
-            lll = convertReferencesToEditorMarkers(diff, filter0, NULL);
+            lll = convertReferencesToEditorMarkers(diff, filterVisibleUsages, NULL);
             LIST_MERGE_SORT(EditorMarkerList, lll, editorMarkerListLess);
             for (ll = lll; ll != NULL; ll = ll->next) {
                 assert(ll->marker->buffer == m1->buffer);

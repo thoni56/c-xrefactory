@@ -1066,6 +1066,8 @@ void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col) {
     assert(marker->offset >= 0 && marker->offset <= buffer->allocation.bufferSize);
 }
 
+// TODO All calls are using filterVisibleUsages() (previously filter0()...) so that
+// generalization can be removed
 EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs,
                                                    bool (*filter)(Reference *, void *),
                                                    void *filterParam) {
