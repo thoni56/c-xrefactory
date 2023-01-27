@@ -115,9 +115,7 @@ extern EditorBuffer     *getOpenedEditorBuffer(char *name);
 extern EditorBuffer     *getOpenedAndLoadedEditorBuffer(char *name);
 extern EditorBuffer     *findEditorBufferForFile(char *name);
 extern EditorBuffer     *findEditorBufferForFileOrCreate(char *name);
-extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs,
-                                                          bool (*filter)(Reference *, void *),
-                                                          void *filterParam);
+extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs);
 extern Reference        *convertEditorMarkersToReferences(EditorMarkerList **mms);
 extern void          renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
 extern void          replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize,

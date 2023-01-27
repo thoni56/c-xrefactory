@@ -77,8 +77,8 @@ EditorMarker *newEditorMarkerForPosition(Position *pos) {
   return (EditorMarker *) mock(pos);
 }
 
-EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs, bool (*filter)(Reference *, void *), void *filterParam) {
-  return (EditorMarkerList *) mock(refs, filter, filterParam);
+EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs) {
+  return (EditorMarkerList *) mock(refs);
 }
 
 Reference *convertEditorMarkersToReferences(EditorMarkerList **mms) {

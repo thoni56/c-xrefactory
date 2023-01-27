@@ -116,10 +116,6 @@ static int argument_count(char **argv) {
     return count;
 }
 
-static bool filterVisibleUsages(Reference *reference, void *dummy) {
-    return reference->usage.kind < UsageMaxOLUsages;
-}
-
 static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
                          EditorMarker *point, EditorMarker *mark) {
     static char optPoint[TMP_STRING_SIZE];
@@ -1451,8 +1447,7 @@ static bool makeSafetyCheckAndUndo(EditorMarker *point, EditorMarkerList **occs,
     olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
     safetyCheck(refactoringOptions.project, defin);
 
-    chks = convertReferencesToEditorMarkers(sessionData.browserStack.top->references, filterVisibleUsages,
-                                            NULL);
+    chks = convertReferencesToEditorMarkers(sessionData.browserStack.top->references);
 
     editorMarkersDifferences(occs, &chks, &diff1, &diff2);
 
@@ -1676,8 +1671,7 @@ static EditorMarkerList *getReferences(EditorMarker *point, char *resolveMessage
     EditorMarkerList *occs;
     pushReferences(point, "-olcxrename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
-    occs = convertReferencesToEditorMarkers(sessionData.browserStack.top->references, filterVisibleUsages,
-                                            NULL);
+    occs = convertReferencesToEditorMarkers(sessionData.browserStack.top->references);
     return occs;
 }
 
@@ -2244,8 +2238,7 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
 
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
-    occurrences = convertReferencesToEditorMarkers(sessionData.browserStack.top->references,
-                                                   filterVisibleUsages, NULL);
+    occurrences = convertReferencesToEditorMarkers(sessionData.browserStack.top->references);
     startPoint = editorUndo;
     // first just check that loaded files are up to date
     //& precheckThatSymbolRefsCorresponds(nameOnPoint, occurrences);
@@ -2280,7 +2273,7 @@ static int createMarkersForAllReferencesInRegions(SymbolsMenu *menu, EditorRegio
         assert(mm->markers == NULL);
         if (mm->selected && mm->visible) {
             mm->markers =
-                convertReferencesToEditorMarkers(mm->references.references, filterVisibleUsages, NULL);
+                convertReferencesToEditorMarkers(mm->references.references);
             if (regions != NULL) {
                 restrictEditorMarkersToRegions(&mm->markers, regions);
             }
@@ -2381,8 +2374,7 @@ static void reduceLongReferencesInRegions(EditorMarker *point, EditorRegionList 
     parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxuselesslongnames",
                           "-olallchecks");
     olcxPushSpecial(LINK_NAME_IMPORTED_QUALIFIED_ITEM, OLO_USELESS_LONG_NAME);
-    rli = convertReferencesToEditorMarkers(sessionData.browserStack.top->references, filterVisibleUsages,
-                                           NULL);
+    rli = convertReferencesToEditorMarkers(sessionData.browserStack.top->references);
     splitEditorMarkersWithRespectToRegions(&rli, regions, &ri, &ro);
     freeEditorMarkersAndMarkerList(ro);
 
@@ -3319,7 +3311,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
         if (mm->selected && mm->visible) {
             mm->markers =
-                convertReferencesToEditorMarkers(mm->references.references, filterVisibleUsages, NULL);
+                convertReferencesToEditorMarkers(mm->references.references);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             count += progressj;
@@ -3394,7 +3386,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
         if (mm->selected && mm->visible) {
             mm->markers =
-                convertReferencesToEditorMarkers(mm->references.references, filterVisibleUsages, NULL);
+                convertReferencesToEditorMarkers(mm->references.references);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             count += progressj;
@@ -3514,7 +3506,7 @@ static int isMethodPartRedundant(EditorMarker *m1, EditorMarker *m2) {
         //&symbolRefItemDump(&mm2->references); dumpReferences(mm2->references.references);
         olcxReferencesDiff(&mm1->references.references, &mm2->references.references, &diff);
         if (diff != NULL) {
-            lll = convertReferencesToEditorMarkers(diff, filterVisibleUsages, NULL);
+            lll = convertReferencesToEditorMarkers(diff);
             LIST_MERGE_SORT(EditorMarkerList, lll, editorMarkerListLess);
             for (ll = lll; ll != NULL; ll = ll->next) {
                 assert(ll->marker->buffer == m1->buffer);

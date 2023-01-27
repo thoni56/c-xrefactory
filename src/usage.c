@@ -12,6 +12,10 @@ void fillUsage(Usage *usage, UsageKind kind, Access requiredAccess) {
 }
 
 
+bool isVisibleUsage(UsageKind usageKind) {
+    return usageKind < UsageMaxOLUsages;
+}
+
 bool isDefinitionUsage(UsageKind usageKind) {
     return usageKind == UsageDefined || usageKind == UsageOLBestFitDefined;
 }

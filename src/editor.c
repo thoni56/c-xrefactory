@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "globals.h"
 #include "options.h"
+#include "usage.h"
 #include "yylex.h"
 #include "misc.h"
 #include "cxref.h"
@@ -1066,61 +1067,65 @@ void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col) {
     assert(marker->offset >= 0 && marker->offset <= buffer->allocation.bufferSize);
 }
 
-// TODO All calls are using filterVisibleUsages() (previously filter0()...) so that
-// generalization can be removed
-EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs,
-                                                   bool (*filter)(Reference *, void *),
-                                                   void *filterParam) {
-    Reference         *r;
-    EditorMarker      *m;
-    EditorMarkerList  *res, *rrr;
-    int                 line, col, file, maxoffset;
-    char       *s, *smax;
-    int        ln, c;
-    EditorBuffer      *buff;
+EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs) {
+    Reference        *r;
+    EditorMarker     *m;
+    EditorMarkerList *res, *rrr;
+    int               line, col, file, maxoffset;
+    char             *s, *smax;
+    int               ln, c;
+    EditorBuffer     *buff;
 
     res = NULL;
-    r = refs;
-    while (r!=NULL) {
-        while (r!=NULL && !filter(r,filterParam))
+    r   = refs;
+    while (r != NULL) {
+        while (r != NULL && !isVisibleUsage(r->usage.kind))
             r = r->next;
         if (r != NULL) {
-            file = r->position.file;
-            line = r->position.line;
-            col = r->position.col;
+            file               = r->position.file;
+            line               = r->position.line;
+            col                = r->position.col;
             FileItem *fileItem = getFileItem(file);
             buff               = findEditorBufferForFile(fileItem->name);
-            if (buff==NULL) {
+            if (buff == NULL) {
                 errorMessage(ERR_CANT_OPEN, fileItem->name);
-                while (r!=NULL && file == r->position.file) r = r->next;
+                while (r != NULL && file == r->position.file)
+                    r = r->next;
             } else {
-                s = buff->allocation.text;
-                smax = s + buff->allocation.bufferSize;
+                s         = buff->allocation.text;
+                smax      = s + buff->allocation.bufferSize;
                 maxoffset = buff->allocation.bufferSize - 1;
-                if (maxoffset < 0) maxoffset = 0;
-                ln = 1; c = 0;
-                for(; s<smax; s++, c++) {
-                    if (ln==line && c==col) {
-                        m = newEditorMarker(buff, s - buff->allocation.text);
-                        rrr = editorAlloc(sizeof(EditorMarkerList));
+                if (maxoffset < 0)
+                    maxoffset = 0;
+                ln = 1;
+                c  = 0;
+                for (; s < smax; s++, c++) {
+                    if (ln == line && c == col) {
+                        m    = newEditorMarker(buff, s - buff->allocation.text);
+                        rrr  = editorAlloc(sizeof(EditorMarkerList));
                         *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
-                        res = rrr;
-                        r = r->next;
-                        while (r!=NULL && ! filter(r,filterParam)) r = r->next;
-                        if (r==NULL || file != r->position.file) break;
+                        res  = rrr;
+                        r    = r->next;
+                        while (r != NULL && !isVisibleUsage(r->usage.kind))
+                            r = r->next;
+                        if (r == NULL || file != r->position.file)
+                            break;
                         line = r->position.line;
-                        col = r->position.col;
+                        col  = r->position.col;
                     }
-                    if (*s=='\n') {ln++; c = -1;}
+                    if (*s == '\n') {
+                        ln++;
+                        c = -1;
+                    }
                 }
                 // references beyond end of buffer
-                while (r!=NULL && file == r->position.file) {
-                    m = newEditorMarker(buff, maxoffset);
-                    rrr = editorAlloc(sizeof(EditorMarkerList));
+                while (r != NULL && file == r->position.file) {
+                    m    = newEditorMarker(buff, maxoffset);
+                    rrr  = editorAlloc(sizeof(EditorMarkerList));
                     *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
-                    res = rrr;
-                    r = r->next;
-                    while (r != NULL && !filter(r, filterParam))
+                    res  = rrr;
+                    r    = r->next;
+                    while (r != NULL && !isVisibleUsage(r->usage.kind))
                         r = r->next;
                 }
             }

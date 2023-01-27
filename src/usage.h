@@ -121,6 +121,7 @@ typedef struct usage {
 extern const char *usageKindEnumName[];
 
 extern void fillUsage(Usage *usage, UsageKind kind, Access requiredAccess);
+extern bool isVisibleUsage(UsageKind usageKind);
 extern bool isDefinitionUsage(UsageKind usageKind);
 extern bool isDefinitionOrDeclarationUsage(UsageKind usage);
 
