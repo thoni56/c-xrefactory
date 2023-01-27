@@ -2045,14 +2045,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     }
     if (refs!=NULL) {
         olcxPrintSelectionMenu(refs->menuSym);
-        if (options.xref2) {
-            // auto update of references
-            // useless, should be done by user interface (because of setting
-            // of reffilter level)
-            //& olcxPrintRefList(";", refs);
-        }
-    }
-    if (refs==NULL) {
+    } else {
         if (options.xref2) {
             olcxPrintSelectionMenu(NULL);
             olcxPrintRefList(";", NULL);
