@@ -427,14 +427,14 @@ void genClassHierarchies(SymbolsMenu *menuList, FILE *file, int passNumber) {
 }
 
 static void olcxMenuGenGlobRefsForVirtMethod(SymbolsMenu *menu, FILE *file) {
-    char ln[MAX_REF_LEN];
+    char linkName[MAX_REF_LEN];
 
-    linkNamePrettyPrint(ln,menu->references.name,MAX_REF_LEN,SHORT_NAME);
+    linkNamePrettyPrint(linkName, menu->references.name, MAX_REF_LEN, SHORT_NAME);
     if (strcmp(menu->references.name, LINK_NAME_CLASS_TREE_ITEM)!=0) {
         if (options.xref2)
-            ppcGenRecord(PPC_VIRTUAL_SYMBOL, ln);
+            ppcGenRecord(PPC_VIRTUAL_SYMBOL, linkName);
         else
-            fprintf(file, "\n== %s\n", ln);
+            fprintf(file, "\n== %s\n", linkName);
         currentOutputLineInSymbolList += 2 ;
     }
     initClassHierarchyGeneration();
