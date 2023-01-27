@@ -1671,7 +1671,7 @@ static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symn
     }
 }
 
-static EditorMarkerList *getReferences(EditorBuffer *buf, EditorMarker *point, char *resolveMessage,
+static EditorMarkerList *getReferences(EditorMarker *point, char *resolveMessage,
                                        int messageType) {
     EditorMarkerList *occs;
     pushReferences(point, "-olcxrename", resolveMessage, messageType); /* TODO: WTF do we use "rename"?!? */
@@ -1681,10 +1681,10 @@ static EditorMarkerList *getReferences(EditorBuffer *buf, EditorMarker *point, c
     return occs;
 }
 
-static EditorMarkerList *pushGetAndPreCheckReferences(EditorBuffer *buf, EditorMarker *point, char *nameOnPoint,
+static EditorMarkerList *pushGetAndPreCheckReferences(EditorMarker *point, char *nameOnPoint,
                                                       char *resolveMessage, int messageType) {
     EditorMarkerList *occs;
-    occs = getReferences(buf, point, resolveMessage, messageType);
+    occs = getReferences(point, resolveMessage, messageType);
     precheckThatSymbolRefsCorresponds(nameOnPoint, occs);
     return occs;
 }
@@ -1846,7 +1846,7 @@ static void multipleOccurencesSafetyCheck(void) {
 
 // -------------------------------------------- Rename
 
-static void renameAtPoint(EditorBuffer *buf, EditorMarker *point) {
+static void renameAtPoint(EditorMarker *point) {
     char              nameOnPoint[TMP_STRING_SIZE];
     char             *symLinkName, *message;
     Type              symtype;
@@ -1868,7 +1868,7 @@ static void renameAtPoint(EditorBuffer *buf, EditorMarker *point) {
     // rename
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
-    occs           = pushGetAndPreCheckReferences(buf, point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
+    occs           = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
     csym           = sessionData.browserStack.top->hkSelectedSym;
     symtype        = csym->references.type;
     symLinkName    = csym->references.name;
@@ -2233,7 +2233,7 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
 
 // -------------------------------------- ParameterManipulations
 
-static void applyParameterManipulation(EditorBuffer *buf, EditorMarker *point, int manipulation, int argn1,
+static void applyParameterManipulation(EditorMarker *point, int manipulation, int argn1,
                                        int argn2) {
     char              nameOnPoint[TMP_STRING_SIZE];
     int               check;
@@ -2265,8 +2265,8 @@ static void applyParameterManipulation(EditorBuffer *buf, EditorMarker *point, i
     freeEditorMarkersAndMarkerList(occurrences); // O(n^2)!
 }
 
-static void parameterManipulation(EditorBuffer *buf, EditorMarker *point, int manip, int argn1, int argn2) {
-    applyParameterManipulation(buf, point, manip, argn1, argn2);
+static void parameterManipulation(EditorMarker *point, int manip, int argn1, int argn2) {
+    applyParameterManipulation(point, manip, argn1, argn2);
     // and generate output
     applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
@@ -2341,7 +2341,7 @@ static void applyExpandShortNames(EditorMarker *point) {
     }
 }
 
-static void expandShortNames(EditorBuffer *buf, EditorMarker *point) {
+static void expandShortNames(EditorMarker *point) {
     applyExpandShortNames(point);
     applyWholeRefactoringFromUndo();
     ppcGotoMarker(point);
@@ -2381,7 +2381,7 @@ static void reduceLongReferencesInRegions(EditorMarker *point, EditorRegionList 
     parseBufferUsingServer(refactoringOptions.project, point, NULL, "-olcxuselesslongnames",
                           "-olallchecks");
     olcxPushSpecial(LINK_NAME_IMPORTED_QUALIFIED_ITEM, OLO_USELESS_LONG_NAME);
-    rli = convertReferencesToEditorMarkers(sessionData.browserStack.top->references, filter0,
+    rli = convertReferencesToEditorMarkers(sessionData.browserStack.top->references, filterVisibleUsages,
                                            NULL);
     splitEditorMarkersWithRespectToRegions(&rli, regions, &ri, &ro);
     freeEditorMarkersAndMarkerList(ro);
@@ -2838,7 +2838,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     applyExpandShortNames(point);
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
-    occs = getReferences(point->buffer, point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
     if (outAccessFlags != NULL) {
         *outAccessFlags = sessionData.browserStack.top->hkSelectedSym->references.access;
@@ -3022,7 +3022,7 @@ static void moveField(EditorMarker *point) {
     applyExpandShortNames(point);
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
-    occs = getReferences(point->buffer, point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    occs = getReferences(point, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->hkSelectedSym);
     accessFlags = sessionData.browserStack.top->hkSelectedSym->references.access;
 
@@ -3293,8 +3293,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     ensureReferencesUpdated(refactoringOptions.project);
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
-    occs = pushGetAndPreCheckReferences(
-        point->buffer, point, nameOnPoint,
+    occs = pushGetAndPreCheckReferences(point, nameOnPoint,
         "If you see this message it is highly probable that turning this virtual method into static will not be "
         "behaviour preserving! This refactoring is behaviour preserving only  if the method does not use "
         "mechanism of virtual invocations. In this dialog you should select the application classes which are "
@@ -3320,7 +3319,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
         if (mm->selected && mm->visible) {
             mm->markers =
-                convertReferencesToEditorMarkers(mm->references.references, filter0, NULL);
+                convertReferencesToEditorMarkers(mm->references.references, filterVisibleUsages, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             count += progressj;
@@ -3395,7 +3394,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     for (SymbolsMenu *mm = sessionData.browserStack.top->menuSym; mm != NULL; mm = mm->next) {
         if (mm->selected && mm->visible) {
             mm->markers =
-                convertReferencesToEditorMarkers(mm->references.references, filter0, NULL);
+                convertReferencesToEditorMarkers(mm->references.references, filterVisibleUsages, NULL);
             LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             count += progressj;
@@ -3448,7 +3447,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     // safety check checking that new parameter has exactly
     // those references as expected (not hidden by a local variable and no
     // occurence of extra variable is resolved to parameter)
-    npoccs = getReferences(nparamdefpos->buffer, nparamdefpos, "Internal problem, during new parameter resolution",
+    npoccs = getReferences(nparamdefpos, "Internal problem, during new parameter resolution",
                            PPCV_BROWSER_TYPE_WARNING);
     editorMarkersDifferences(&npoccs, &npadded, &diff1, &diff2);
     LIST_APPEND(EditorMarkerList, diff1, diff2);
@@ -3664,7 +3663,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     // STEP 1) inspect all references and copy the parameter to application object
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
-    occs = pushGetAndPreCheckReferences(point->buffer, point, nameOnPoint, STANDARD_SELECT_SYMBOLS_MESSAGE,
+    occs = pushGetAndPreCheckReferences(point, nameOnPoint, STANDARD_SELECT_SYMBOLS_MESSAGE,
                                         PPCV_BROWSER_TYPE_INFO);
 
     LIST_LEN(count, EditorMarkerList, occs);
@@ -3705,7 +3704,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
 
     // STEP 2) inspect all usages of parameter and replace them by 'this',
     // remove this this if useless
-    poccs = getReferences(mm->buffer, mm, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
+    poccs = getReferences(mm, STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     for (EditorMarkerList *ll = poccs; ll != NULL; ll = ll->next) {
         if (!isDefinitionOrDeclarationUsage(ll->usage.kind)) {
             if (ll->marker->offset + plen <= ll->marker->buffer->allocation.bufferSize
@@ -3719,7 +3718,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
 
     // STEP 3) remove the parameter if not used anymore
     if (!isThisSymbolUsed(mm)) {
-        applyParameterManipulation(point->buffer, point, PPC_AVR_DEL_PARAMETER, argn, 0);
+        applyParameterManipulation(point, PPC_AVR_DEL_PARAMETER, argn, 0);
     } else {
         // at least update the progress
         writeRelativeProgress(100);
@@ -3838,7 +3837,7 @@ static void performEncapsulateField(EditorMarker *point, EditorRegionList **forb
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     nameOnPointLen = strlen(nameOnPoint);
     assert(nameOnPointLen < TMP_STRING_SIZE - 1);
-    occs = pushGetAndPreCheckReferences(point->buffer, point, nameOnPoint, ERROR_SELECT_SYMBOLS_MESSAGE,
+    occs = pushGetAndPreCheckReferences(point, nameOnPoint, ERROR_SELECT_SYMBOLS_MESSAGE,
                                         PPCV_BROWSER_TYPE_WARNING);
     for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
         if (ll->usage.kind == UsageAddrUsed) {
@@ -4462,7 +4461,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
 
     hasHeaderReferenceFlag = 0;
     multiFileRefsFlag      = 0;
-    occs                   = getReferences(point->buffer, point, NULL, PPCV_BROWSER_TYPE_WARNING);
+    occs                   = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
     csym                   = sessionData.browserStack.top->hkSelectedSym;
     scope                  = csym->references.scope;
     cat                    = csym->references.category;
@@ -4595,11 +4594,11 @@ void refactory(void) {
     case AVR_RENAME_PACKAGE:
         progressFactor = 3;
         updateOption   = computeUpdateOptionForSymbol(point);
-        renameAtPoint(buf, point);
+        renameAtPoint(point);
         break;
     case AVR_EXPAND_NAMES:
         progressFactor = 1;
-        expandShortNames(buf, point);
+        expandShortNames(point);
         break;
     case AVR_REDUCE_NAMES:
         progressFactor = 1;
@@ -4621,7 +4620,7 @@ void refactory(void) {
         currentLanguage = getLanguageFor(file);
         if (LANGUAGE(LANG_JAVA))
             progressFactor++;
-        parameterManipulation(buf, point, refactoringOptions.theRefactoring, refactoringOptions.olcxGotoVal,
+        parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.olcxGotoVal,
                               refactoringOptions.parnum2);
         break;
     case AVR_MOVE_FIELD:
