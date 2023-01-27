@@ -450,7 +450,8 @@ static int isVirtualMenuItem(ReferencesItem *r) {
             || r->storage == StorageConstructor);
 }
 
-static void genVirtualsGlobRefLists(SymbolsMenu *menu, FILE *file, char *fn) {
+static void genVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
+    FILE *file = (FILE *)p1;
     SymbolsMenu    *s;
     ReferencesItem *r;
 
@@ -468,7 +469,8 @@ static void genVirtualsGlobRefLists(SymbolsMenu *menu, FILE *file, char *fn) {
     }
 }
 
-static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, FILE *file, char *fn) {
+static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
+    FILE *file = (FILE *)p1;
     SymbolsMenu    *m;
     ReferencesItem *r;
 
@@ -490,7 +492,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, FILE *file, char *fn) 
     }
 }
 
-void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, void *, void *), void *p1,
+void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, void *, char *), void *p1,
                                char *p2) {
     SymbolsMenu    *rr, *mp, **ss, *cc, *all;
     ReferencesItem *cs;
@@ -534,8 +536,6 @@ void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file, char *fn) {
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next)
         m->outOnLine = 0;
     currentOutputLineInSymbolList = 1;
-    splitMenuPerSymbolsAndMap(menu, (void (*)(SymbolsMenu *, void *, void *))genNonVirtualsGlobRefLists,
-                              file, fn);
-    splitMenuPerSymbolsAndMap(menu, (void (*)(SymbolsMenu *, void *, void *))genVirtualsGlobRefLists,
-                              file, fn);
+    splitMenuPerSymbolsAndMap(menu, genNonVirtualsGlobRefLists, file, fn);
+    splitMenuPerSymbolsAndMap(menu, genVirtualsGlobRefLists, file, fn);
 }

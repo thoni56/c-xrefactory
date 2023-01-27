@@ -1736,11 +1736,12 @@ static void olcxMenuSelectOnly(void) {
 }
 
 
-static void selectUnusedSymbols(SymbolsMenu *menu, void *vflp, void *p2) {
+// Map function
+static void selectUnusedSymbols(SymbolsMenu *menu, void *p1, char *_unused) {
     bool atleastOneSelected;
     int filter, *flp;
 
-    flp = (int *)vflp;
+    flp = (int *)p1;
     filter = *flp;
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = true; m->selected = false;
