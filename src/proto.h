@@ -6,7 +6,6 @@
 
 #include "zlib.h"
 
-#include "head.h"
 
 typedef unsigned char uchar;
 
