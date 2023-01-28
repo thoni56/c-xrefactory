@@ -520,7 +520,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         if (recurseFlag!=NULL) {
             isTopDirectory = 0;
             nrecurseFlag = &isTopDirectory;
-            mapDirectoryFiles(dirName, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
+            mapOverDirectoryFiles(dirName, dirInputFile, DO_NOT_ALLOW_EDITOR_FILES,
                               dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);
             editorMapOnNonexistantFiles(dirName, dirInputFile, DEPTH_ANY,
                                         dirName, NULL, NULL, nrecurseFlag, &isTopDirectory);

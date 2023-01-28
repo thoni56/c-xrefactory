@@ -845,6 +845,7 @@ bool containsWildcard(char *string) {
 
 static void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *freeolen);
 
+//#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
 static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
     char path[MAX_FILE_NAME_SIZE];
     char *dir1, *pattern, *dir2, **outpath;
@@ -890,8 +891,8 @@ static void expandWildcardsInOnePathRecursiveMaybe(char *fileName, char **outpat
                 for (int i=di; i>=ldi; i--)
                     tempString[i+1] = tempString[i];
                 tempString[ldi]=0;
-                log_trace("mapdirectoryfiles(%s, %s, %s)", tempString, tempString+ldi+1, fileName+si);
-                mapDirectoryFiles(tempString, expandWildcardsMapFun, 0, tempString, tempString+ldi+1,
+                log_trace("mapOverDirectoryFiles(%s, %s, %s)", tempString, tempString+ldi+1, fileName+si);
+                mapOverDirectoryFiles(tempString, expandWildcardsMapFun, 0, tempString, tempString+ldi+1,
                                   (Completions*)(fileName+si), outpaths, availableSpace);
             } else {
                 tempString[di] = fileName[si];
@@ -1008,36 +1009,31 @@ static int mapPatternFiles(char *pattern ,
 }
 #endif
 
-
-void mapDirectoryFiles(char *dirname,
-                      void (*fun)(MAP_FUN_SIGNATURE),
-                      int allowEditorFilesFlag,
-                      char *a1,
-                      char *a2,
-                      Completions *a3,
-                      void *a4,
-                      int *a5
-){
+void mapOverDirectoryFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), int allowEditorFilesFlag, char *a1,
+                       char *a2, Completions *a3, void *a4, int *a5) {
 #ifdef __WIN32__
-    WIN32_FIND_DATA     fdata;
-    HANDLE              handle;
-    char                *d;
-    char                tempBuffer[MAX_FILE_NAME_SIZE];
+    WIN32_FIND_DATA fdata;
+    HANDLE          handle;
+    char           *d;
+    char            tempBuffer[MAX_FILE_NAME_SIZE];
 
-    for (char *s=dirname,d=tempBuffer; *s; s++,d++) {
-        if (*s=='/') *d=FILE_PATH_SEPARATOR;
-        else *d = *s;
+    for (char *s = dirname, d = tempBuffer; *s; s++, d++) {
+        if (*s == '/')
+            *d = FILE_PATH_SEPARATOR;
+        else
+            *d = *s;
     }
-    assert(d-tempBuffer < MAX_FILE_NAME_SIZE-3);
-    sprintf(d,"%c*",FILE_PATH_SEPARATOR);
+    assert(d - tempBuffer < MAX_FILE_NAME_SIZE - 3);
+    sprintf(d, "%c*", FILE_PATH_SEPARATOR);
     mapPatternFiles(tempBuffer, fun, a1, a2, a3, a4, a5);
 #else
-    DIR             *fd;
-    struct dirent   *dirbuf;
+    DIR           *fd;
+    struct dirent *dirbuf;
 
     if (isDirectory(dirname) && (fd = opendir(dirname)) != NULL) {
-        while ((dirbuf=readdir(fd)) != NULL) {
-            if (dirbuf->d_ino != 0 && strcmp(dirbuf->d_name, ".") != 0 && strcmp(dirbuf->d_name, "..") != 0) {
+        while ((dirbuf = readdir(fd)) != NULL) {
+            if (dirbuf->d_ino != 0 && strcmp(dirbuf->d_name, ".") != 0
+                && strcmp(dirbuf->d_name, "..") != 0) {
                 log_trace("mapping file %s", dirbuf->d_name);
                 (*fun)(dirbuf->d_name, a1, a2, a3, a4, a5);
             }
@@ -1047,11 +1043,10 @@ void mapDirectoryFiles(char *dirname,
 #endif
     // as special case, during refactorings you have to examine
     // also files stored in renamed buffers
-    if (allowEditorFilesFlag==ALLOW_EDITOR_FILES) {
+    if (allowEditorFilesFlag == ALLOW_EDITOR_FILES) {
         editorMapOnNonexistantFiles(dirname, fun, DEPTH_ONE, a1, a2, a3, a4, a5);
     }
 }
-
 
 /* Non-static just for unittesting */
 char *concatDirectoryWithFileName(char *output, char *directoryName, char *fileName) {
@@ -1139,7 +1134,8 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
     if (dd!=NULL) *dd=0;
 }
 
-void javaMapDirectoryFiles1(char *packageFilename,
+#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
+void javaMapOverDirectoryFiles1(char *packageFilename,
                             void (*fun)(MAP_FUN_SIGNATURE),
                             Completions *a1,
                             void *a2,
@@ -1157,7 +1153,7 @@ void javaMapDirectoryFiles1(char *packageFilename,
     MapOverPaths(javaSourcePaths, {
         char tmpString[MAX_SOURCE_PATH_SIZE];
         fname = concatDirectoryWithFileName(tmpString, currentPath, packageFilename);
-        mapDirectoryFiles(fname, fun, ALLOW_EDITOR_FILES, currentPath, packageFilename, a1, a2, a3);
+        mapOverDirectoryFiles(fname, fun, ALLOW_EDITOR_FILES, currentPath, packageFilename, a1, a2, a3);
     });
     // class paths
     for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
@@ -1166,7 +1162,7 @@ void javaMapDirectoryFiles1(char *packageFilename,
         if (!pathsStringContainsPath(javaSourcePaths, cp->string)) {
             assert(strlen(cp->string)+strlen(packageFilename)+2 < SIZE_TMP_MEM);
             fname = concatDirectoryWithFileName(tmpString, cp->string, packageFilename);
-            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->string,packageFilename,a1,a2,a3);
+            mapOverDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->string,packageFilename,a1,a2,a3);
         }
     }
     // databazes
@@ -1180,22 +1176,18 @@ void javaMapDirectoryFiles1(char *packageFilename,
             && !classPathContainsPath(javaStat->namedPackagePath)) {
             char tmpString[MAX_SOURCE_PATH_SIZE];
             fname = concatDirectoryWithFileName(tmpString, javaStat->namedPackagePath, packageFilename);
-            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,javaStat->namedPackagePath,packageFilename,a1,a2,a3);
+            mapOverDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,javaStat->namedPackagePath,packageFilename,a1,a2,a3);
         }
     }
 }
 
-void javaMapDirectoryFiles2(
-                            IdList *packid,
-                            void (*fun)(MAP_FUN_SIGNATURE),
-                            Completions *a1,
-                            void *a2,
-                            int *a3
-                            ){
-    char            *packfile;
-    char            dname[MAX_FILE_NAME_SIZE];
-    packfile=javaCreateComposedName(NULL,packid,'/',NULL,dname,MAX_FILE_NAME_SIZE);
-    javaMapDirectoryFiles1(packfile,fun,a1,a2,a3);
+//#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
+void javaMapOverDirectoryFiles2(IdList *packageId, void (*fun)(MAP_FUN_SIGNATURE), Completions *a1, void *a2,
+                            int *a3) {
+    char *packageFile;
+    char  dname[MAX_FILE_NAME_SIZE];
+    packageFile = javaCreateComposedName(NULL, packageId, '/', NULL, dname, MAX_FILE_NAME_SIZE);
+    javaMapOverDirectoryFiles1(packageFile, fun, a1, a2, a3);
 }
 
 

@@ -52,8 +52,9 @@ Position *javaGetNameStartingPosition(IdList *name) {
     return (Position *) mock(name);
 }
 
-char *javaCreateComposedName(char *prefix, IdList *className, int classNameSeparator, char *name, char *resBuff, int resBufSize) {
-    return (char *) mock(prefix, className, classNameSeparator, name, resBuff, resBufSize);
+char *javaCreateComposedName(char *prefix, IdList *className, int classNameSeparator, char *name,
+                             char *resultBuffer, int resultBufferSize) {
+    return (char *) mock(prefix, className, classNameSeparator, name, resultBuffer, resultBufferSize);
 }
 
 Result findTopLevelName(char *name, S_recFindStr *resRfs, Symbol **resMemb, int classif) {
@@ -68,8 +69,10 @@ void javaAddImportConstructionReference(Position *importPos, Position *pos, int 
     mock(importPos, pos, usage);
 }
 
-Type javaClassifyAmbiguousName(IdList *name, S_recFindStr *rfs, Symbol **str, TypeModifier **expr, Reference **oref, Reference **rdtoref, int allowUselesFqtRefs, int classif, int usage) {
-    return (Type) mock(name, rfs, str, expr, oref, rdtoref, allowUselesFqtRefs, classif, usage);
+Type javaClassifyAmbiguousName(IdList *name, S_recFindStr *rfs, Symbol **str, TypeModifier **expr,
+                               Reference **oref, Reference **rdtoref, int allowUselesFqtRefs,
+                               int classif, int usage) {
+    return (Type)mock(name, rfs, str, expr, oref, rdtoref, allowUselesFqtRefs, classif, usage);
 }
 
 Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {

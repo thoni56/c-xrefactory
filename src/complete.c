@@ -1373,7 +1373,7 @@ static void javaCompleteComposedName(Completions *c,
     /* complete packages and classes from file system */
     if (nameType==TypePackage) {
         javaCreateComposedName(NULL,javaStat->lastParsedName,'/',NULL,packageName,MAX_FILE_NAME_SIZE);
-        javaMapDirectoryFiles1(packageName, javaTypeNameCompletion,
+        javaMapOverDirectoryFiles1(packageName, javaTypeNameCompletion,
                                c,javaStat->lastParsedName, &storage);
     }
     /* complete inner classes */
@@ -1438,7 +1438,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
 
 
 void javaCompletePackageSingleName(Completions*c) {
-    javaMapDirectoryFiles2(NULL, javaPackageNameCompletion, c, NULL, NULL);
+    javaMapOverDirectoryFiles2(NULL, javaPackageNameCompletion, c, NULL, NULL);
 }
 
 void javaCompleteThisPackageName(Completions *c) {
@@ -1491,7 +1491,7 @@ void javaCompleteClassDefinitionName(Completions*c) {
 
 void javaCompletePackageCompName(Completions*c) {
     javaClassifyToPackageNameAndAddRefs(javaStat->lastParsedName, UsageUsed);
-    javaMapDirectoryFiles2(javaStat->lastParsedName,
+    javaMapOverDirectoryFiles2(javaStat->lastParsedName,
                            javaPackageNameCompletion, c, javaStat->lastParsedName, NULL);
 }
 
@@ -1499,7 +1499,7 @@ void javaCompleteTypeSingleName(Completions*c) {
     SymbolCompletionInfo ii;
     // order is important because of hack in nestedcl Access modifs
     javaCompleteNestedClSingleName(c);
-    javaMapDirectoryFiles2(NULL, javaTypeNameCompletion, c, NULL, NULL);
+    javaMapOverDirectoryFiles2(NULL, javaTypeNameCompletion, c, NULL, NULL);
     fillCompletionSymInfo(&ii, c, TypeStruct);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
 }
@@ -1577,6 +1577,8 @@ static void completeFqtClassFileFromFileTab(FileItem *fi, void *cfmpi) {
     }
 }
 
+//#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
+// Not using a3, a5
 static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
     char *fname, *dir, *path;
     char fn[MAX_FILE_NAME_SIZE];
@@ -1594,7 +1596,7 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
     sprintf(fn,"%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
 
     if (directoryExists(fn)) {
-        mapDirectoryFiles(fn, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
+        mapOverDirectoryFiles(fn, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
                           fn, path, NULL, a4, NULL);
     } else if (fileExists(fn)) {
         // O.K. cut the path
@@ -1631,7 +1633,7 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
 
     // fqt from classpath
     for (StringList *path=javaClassPaths; path!=NULL; path=path->next) {
-        mapDirectoryFiles(path->string, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
+        mapOverDirectoryFiles(path->string, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
                           path->string, path->string, NULL, &info, NULL);
     }
     if (options.fqtNameToCompletions <= 3)
@@ -1639,7 +1641,7 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
 
     // fqt from sourcepath
     MapOverPaths(javaSourcePaths, {
-        mapDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
+        mapOverDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
                           currentPath, currentPath, NULL, &info, NULL);
     });
 }
@@ -1728,7 +1730,7 @@ void javaCompleteConstructNestPrimName(Completions*c) {
 
 void javaCompleteExprSingleName(Completions*c) {
     SymbolCompletionInfo ii;
-    javaMapDirectoryFiles1(NULL, javaTypeNameCompletion, c, NULL, NULL);
+    javaMapOverDirectoryFiles1(NULL, javaTypeNameCompletion, c, NULL, NULL);
     fillCompletionSymInfo(&ii, c, TypeStruct);
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
     completeFromSymTab(c, StorageDefault);

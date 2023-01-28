@@ -126,15 +126,15 @@ int mapPatternFiles(char *pattern, void (*fun)(char *file, char *a1, char *a2, C
   return (int) mock(pattern, fun, a1, a2, a3, a4, a5);
 }
 
-void mapDirectoryFiles(char *dirname, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), int allowEditorFilesFlag, char *a1, char *a2, Completions *a3, void *a4, int *a5) {
+void mapOverDirectoryFiles(char *dirname, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), int allowEditorFilesFlag, char *a1, char *a2, Completions *a3, void *a4, int *a5) {
   mock(dirname, fun, allowEditorFilesFlag, a1, a2, a3, a4, a5);
 }
 
-void javaMapDirectoryFiles1(char *packfile, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), Completions *a1, void *a2, int *a3) {
+void javaMapOverDirectoryFiles1(char *packfile, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), Completions *a1, void *a2, int *a3) {
   mock(packfile, fun, a1, a2, a3);
 }
 
-void javaMapDirectoryFiles2(IdList *packid, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), Completions *a1, void *a2, int *a3) {
+void javaMapOverDirectoryFiles2(IdList *packid, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), Completions *a1, void *a2, int *a3) {
   mock(packid, fun, a1, a2, a3);
 }
 

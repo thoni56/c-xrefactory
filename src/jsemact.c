@@ -80,8 +80,8 @@ char *javaCreateComposedName(char *prefix,
                              IdList *className,
                              int classNameSeparator,
                              char *name,
-                             char *resBuff,
-                             int resBuffSize
+                             char *resultBuffer,
+                             int resultBufferSize
 ) {
     int len, ll;
     bool sss;
@@ -109,11 +109,11 @@ char *javaCreateComposedName(char *prefix,
     if (sss && ll!=0)
         len++;
     len += ll;
-    if (resBuff == NULL) {
+    if (resultBuffer == NULL) {
         ln = StackMemoryAllocC(len+1, char);
     } else {
-        assert(len < resBuffSize);
-        ln = resBuff;
+        assert(len < resultBufferSize);
+        ln = resultBuffer;
     }
     ll = strlen(name);
     len -= ll;

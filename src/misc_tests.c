@@ -67,7 +67,7 @@ static void mapFunction(MAP_FUN_SIGNATURE) {
 
 Ensure(Misc, can_map_over_directory_files) {
     expect(isDirectory, will_return(true));
-    mapDirectoryFiles("/", mapFunction, true, my_a1, my_a2, &completions, my_a4, &i);
+    mapOverDirectoryFiles("/", mapFunction, true, my_a1, my_a2, &completions, my_a4, &i);
     assert_that(i, is_greater_than(0));
 }
 

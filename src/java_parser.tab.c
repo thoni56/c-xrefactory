@@ -91,7 +91,7 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
         javaLoadClassSymbolsFromFile(sym);
         jslAddNestedClassesToJslTypeTab(sym, ORDER_APPEND);
     } else {
-        javaMapDirectoryFiles2(iname,jslAddMapedImportTypeName,NULL,iname,NULL);
+        javaMapOverDirectoryFiles2(iname,jslAddMapedImportTypeName,NULL,iname,NULL);
     }
 }
 
@@ -3298,14 +3298,14 @@ case 64:
                         }
                         strncpy(cdir,currentFile.fileName,j);
                         cdir[j]=0;
-                        mapDirectoryFiles(cdir, jslAddMapedImportTypeName, ALLOW_EDITOR_FILES,
+                        mapOverDirectoryFiles(cdir, jslAddMapedImportTypeName, ALLOW_EDITOR_FILES,
                                           "", "", NULL, NULL, NULL);
                         /* why this is there, it makes problem when moving a class*/
                         /* it stays in fileTab and there is a clash!*/
                         /* [2/8/2003] Maybe I should put it out*/
                         jslAddAllPackageClassesFromFileTab(NULL);
                     } else {
-                        javaMapDirectoryFiles2(yyvsp[0].ast_idList.data,jslAddMapedImportTypeName,
+                        javaMapOverDirectoryFiles2(yyvsp[0].ast_idList.data,jslAddMapedImportTypeName,
                                                 NULL,yyvsp[0].ast_idList.data,NULL);
                         /* why this is there, it makes problem when moving a class*/
                         /* it stays in fileTab and there is a clash!*/
@@ -3313,7 +3313,7 @@ case 64:
                         jslAddAllPackageClassesFromFileTab(yyvsp[0].ast_idList.data);
                     }
                     /* add java/lang package types */
-                    javaMapDirectoryFiles2(s_javaLangName,
+                    javaMapOverDirectoryFiles2(s_javaLangName,
                             jslAddMapedImportTypeName, NULL, s_javaLangName, NULL);
                 }
 /*&fprintf(dumpOut," [jsl] current package == '%s'\n", pname);&*/

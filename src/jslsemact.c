@@ -294,29 +294,27 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
     return(decl);
 }
 
-void jslAddMapedImportTypeName(
-                               char *file,
-                               char *path,
-                               char *pack,
-                               Completions *c,
-                               void *vdirid,
-                               int  *storage
-                               ) {
-    char *p;
-    char ttt2[MAX_FILE_NAME_SIZE];
-    int len2;
+#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
+void jslAddMapedImportTypeName(char *file, char *a1_unused, char *a2_unused, Completions *a3_unused,
+                               void *vdirid, int *a5_unused) {
+    char   *p;
+    char    name[MAX_FILE_NAME_SIZE];
+    int     length;
     IdList *packid;
 
     //&fprintf(communicationChannel,":jsl import type %s %s %s\n", file, path, pack);
-    packid = (IdList *) vdirid;
-    for(p=file; *p && *p!='.' && *p!='$'; p++) ;
-    if (*p != '.') return;
-    if (strcmp(p,".class")!=0 && strcmp(p,".java")!=0) return;
-    len2 = p - file;
-    strncpy(ttt2, file, len2);
-    assert(len2+1 < MAX_FILE_NAME_SIZE);
-    ttt2[len2] = 0;
-    jslTypeSymbolDefinition(ttt2, packid, ADD_YES, ORDER_APPEND, false);
+    packid = (IdList *)vdirid;
+    for (p = file; *p && *p != '.' && *p != '$'; p++)
+        ;
+    if (*p != '.')
+        return;
+    if (strcmp(p, ".class") != 0 && strcmp(p, ".java") != 0)
+        return;
+    length = p - file;
+    strncpy(name, file, length);
+    assert(length + 1 < MAX_FILE_NAME_SIZE);
+    name[length] = 0;
+    jslTypeSymbolDefinition(name, packid, ADD_YES, ORDER_APPEND, false);
 }
 
 void jslAddAllPackageClassesFromFileTab(IdList *packageId) {

@@ -100,7 +100,7 @@ extern char *javaGetShortClassName(char *name);
 extern char *javaGetShortClassNameFromFileNum_static(int fnum);
 extern int substringIndex(char *string, char *substring);
 extern bool fileNameHasOneOfSuffixes(char *fname, char *suffs);
-extern void mapDirectoryFiles(
+extern void mapOverDirectoryFiles(
         char *dirname,
         void (*fun) (MAP_FUN_SIGNATURE),
         int allowEditorFilesFlag,
@@ -110,14 +110,14 @@ extern void mapDirectoryFiles(
         void *a4,
         int *a5
     );
-extern void javaMapDirectoryFiles1(
+extern void javaMapOverDirectoryFiles1(
         char *packfile,
         void (*fun)(MAP_FUN_SIGNATURE),
         Completions *a1,
         void *a2,
         int *a3
     );
-extern void javaMapDirectoryFiles2(
+extern void javaMapOverDirectoryFiles2(
         IdList *packid,
         void (*fun)(MAP_FUN_SIGNATURE),
         Completions *a1,
