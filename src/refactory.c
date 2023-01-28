@@ -328,21 +328,21 @@ static void safetyCheck(char *project, EditorMarker *point) {
 
 static char *getIdentifierOnMarker_static(EditorMarker *marker) {
     EditorBuffer *buffer;
-    char         *start, *end, *smax, *smin;
+    char         *start, *end, *textMax, *textMin;
     static char   identifier[TMP_STRING_SIZE];
 
     buffer = marker->buffer;
     assert(buffer && buffer->allocation.text && marker->offset <= buffer->allocation.bufferSize);
     start    = buffer->allocation.text + marker->offset;
-    smin = buffer->allocation.text;
-    smax = buffer->allocation.text + buffer->allocation.bufferSize;
+    textMin = buffer->allocation.text;
+    textMax = buffer->allocation.text + buffer->allocation.bufferSize;
     // move to the beginning of identifier
-    for (; start >= smin && (isalpha(*start) || isdigit(*start) || *start == '_' || *start == '$'); start--)
+    for (; start >= textMin && (isalpha(*start) || isdigit(*start) || *start == '_' || *start == '$'); start--)
         ;
-    for (start++; start < smax && isdigit(*start); start++)
+    for (start++; start < textMax && isdigit(*start); start++)
         ;
     // now get it
-    for (end = start; end < smax && (isalpha(*end) || isdigit(*end) || *end == '_' || *end == '$'); end++)
+    for (end = start; end < textMax && (isalpha(*end) || isdigit(*end) || *end == '_' || *end == '$'); end++)
         ;
     int length = end - start;
     assert(length < TMP_STRING_SIZE - 1);

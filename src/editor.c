@@ -444,9 +444,11 @@ EditorMarker *duplicateEditorMarker(EditorMarker *marker) {
 }
 
 static void removeEditorMarkerFromBufferWithoutFreeing(EditorMarker *marker) {
-    if (marker == NULL) return;
-    if (marker->next!=NULL) marker->next->previous = marker->previous;
-    if (marker->previous==NULL) {
+    if (marker == NULL)
+        return;
+    if (marker->next != NULL)
+        marker->next->previous = marker->previous;
+    if (marker->previous == NULL) {
         marker->buffer->markers = marker->next;
     } else {
         marker->previous->next = marker->next;
@@ -1037,33 +1039,33 @@ void removeBlanksAtEditorMarker(EditorMarker *mm, int direction, EditorUndo **un
 }
 
 void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col) {
-    char           *t, *smax;
+    char           *text, *textMax;
     int    ln;
     EditorBuffer   *buffer;
     int             c;
 
     assert(marker);
     buffer = marker->buffer;
-    t      = buffer->allocation.text;
-    smax   = t + buffer->allocation.bufferSize;
+    text      = buffer->allocation.text;
+    textMax   = text + buffer->allocation.bufferSize;
     ln = 1;
     if (line > 1) {
-        for (; t < smax; t++) {
-            if (*t == '\n') {
+        for (; text < textMax; text++) {
+            if (*text == '\n') {
                 ln++;
                 if (ln == line)
                     break;
             }
         }
-        if (t < smax)
-            t++;
+        if (text < textMax)
+            text++;
     }
     c = 0;
-    for (; t < smax && c < col; t++, c++) {
-        if (*t == '\n')
+    for (; text < textMax && c < col; text++, c++) {
+        if (*text == '\n')
             break;
     }
-    marker->offset = t - buffer->allocation.text;
+    marker->offset = text - buffer->allocation.text;
     assert(marker->offset >= 0 && marker->offset <= buffer->allocation.bufferSize);
 }
 
@@ -1087,16 +1089,16 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
                 while (reference != NULL && file == reference->position.file)
                     reference = reference->next;
             } else {
-                char *s          = buff->allocation.text;
-                char *smax      = s + buff->allocation.bufferSize;
+                char *text      = buff->allocation.text;
+                char *smax      = text + buff->allocation.bufferSize;
                 int   maxoffset = buff->allocation.bufferSize - 1;
                 if (maxoffset < 0)
                     maxoffset = 0;
                 int l = 1;
                 int c  = 0;
-                for (; s < smax; s++, c++) {
+                for (; text < smax; text++, c++) {
                     if (l == line && c == col) {
-                        EditorMarker *m    = newEditorMarker(buff, s - buff->allocation.text);
+                        EditorMarker *m    = newEditorMarker(buff, text - buff->allocation.text);
                         EditorMarkerList *rrr  = editorAlloc(sizeof(EditorMarkerList));
                         *rrr = (EditorMarkerList){.marker = m, .usage = reference->usage, .next = markerList};
                         markerList  = rrr;
@@ -1108,7 +1110,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
                         line = reference->position.line;
                         col  = reference->position.col;
                     }
-                    if (*s == '\n') {
+                    if (*text == '\n') {
                         l++;
                         c = -1;
                     }
@@ -1135,7 +1137,7 @@ EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
 Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP) {
     EditorMarkerList *markers;
     EditorBuffer     *buf;
-    char             *s, *smax, *offset;
+    char             *text, *textMax, *offset;
     int               line, col;
     Reference        *reference;
 
@@ -1144,12 +1146,12 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
     markers = *editorMarkerListP;
     while (markers!=NULL) {
         buf = markers->marker->buffer;
-        s = buf->allocation.text;
-        smax = s + buf->allocation.bufferSize;
+        text = buf->allocation.text;
+        textMax = text + buf->allocation.bufferSize;
         offset = buf->allocation.text + markers->marker->offset;
         line = 1; col = 0;
-        for (; s<smax; s++, col++) {
-            if (s == offset) {
+        for (; text<textMax; text++, col++) {
+            if (text == offset) {
                 Reference *r = olcxAlloc(sizeof(Reference));
                 r->position = makePosition(buf->fileNumber, line, col);
                 fillReference(r, markers->usage, r->position, reference);
@@ -1159,7 +1161,7 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
                     break;
                 offset = buf->allocation.text + markers->marker->offset;
             }
-            if (*s=='\n') {
+            if (*text=='\n') {
                 line++;
                 col = -1;
             }
