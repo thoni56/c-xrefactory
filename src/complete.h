@@ -1,7 +1,7 @@
 #ifndef COMPLETE_H_INCLUDED
 #define COMPLETE_H_INCLUDED
 
-#include "proto.h"
+#include "completion.h"
 
 typedef struct {
     int token;

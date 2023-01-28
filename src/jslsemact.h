@@ -3,6 +3,7 @@
 
 /* JSL = Java Simple Load file... ? */
 
+#include "completion.h"
 #include "symbol.h"
 #include "jsltypetab.h"
 

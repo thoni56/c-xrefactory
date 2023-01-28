@@ -5,6 +5,9 @@
 #include "symbol.h"
 #include "type.h"
 
+
+/* ***************** COMPLETION STRUCTURES ********************** */
+
 typedef struct completion {
     char                 *name;
     char                 *fullName;
@@ -18,6 +21,29 @@ typedef struct completion {
     struct completion  *next;
 } Completion;
 
+typedef struct completionLine {
+    char          *string;
+    struct symbol *symbol;
+    Type           symbolType;
+    short int      virtLevel;
+    short int      margn;
+    char         **margs;
+    struct symbol *vFunClass;
+} CompletionLine;
+
+typedef struct completions {
+    char                  idToProcess[MAX_FUN_NAME_SIZE];
+    int                   idToProcessLen;
+    struct position       idToProcessPos;
+    bool                  fullMatchFlag;
+    bool                  isCompleteFlag;
+    bool                  noFocusOnCompletions;
+    bool                  abortFurtherCompletions;
+    char                  prefix[TMP_STRING_SIZE];
+    int                   maxLen;
+    struct completionLine alternatives[MAX_COMPLETIONS];
+    int                   alternativeIndex;
+} Completions;
 
 extern Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
                                  short int lineCount, char category, char csymType,

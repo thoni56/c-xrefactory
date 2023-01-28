@@ -1,6 +1,7 @@
 #ifndef CLASSFILEREADER_H_INCLUDED
 #define CLASSFILEREADER_H_INCLUDED
 
+#include "completion.h"
 #include "proto.h"
 #include "symbol.h"
 

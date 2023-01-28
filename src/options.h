@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #include "constants.h"
+#include "completion.h"
 #include "memory.h"
 #include "stringlist.h"
 #include "refactorings.h"

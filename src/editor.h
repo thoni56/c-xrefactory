@@ -7,7 +7,6 @@
 #include "reference.h"
 #include "completion.h"
 
-#include "proto.h"
 
 
 /* ***************** editor structures ********************** */

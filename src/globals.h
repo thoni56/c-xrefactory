@@ -2,6 +2,7 @@
 #define GLOBALS_H_INCLUDED
 
 #include "constants.h"
+#include "completion.h"
 #include "symboltable.h"
 #include "stringlist.h"
 #include "proto.h"

@@ -423,31 +423,6 @@ typedef struct OlcxReferencesStack {
     OlcxReferences *root;
 } OlcxReferencesStack;
 
-/* ***************** COMPLETION STRUCTURES ********************** */
-
-typedef struct completionLine {
-    char          *string;
-    struct symbol *symbol;
-    Type           symbolType;
-    short int      virtLevel;
-    short int      margn;
-    char         **margs;
-    struct symbol *vFunClass;
-} CompletionLine;
-
-typedef struct completions {
-    char                  idToProcess[MAX_FUN_NAME_SIZE];
-    int                   idToProcessLen;
-    struct position       idToProcessPos;
-    bool                  fullMatchFlag;
-    bool                  isCompleteFlag;
-    bool                  noFocusOnCompletions;
-    bool                  abortFurtherCompletions;
-    char                  prefix[TMP_STRING_SIZE];
-    int                   maxLen;
-    struct completionLine alternatives[MAX_COMPLETIONS];
-    int                   alternativeIndex;
-} Completions;
 
 typedef struct currentlyParsedClassInfo { // class local, nested for classes
     struct symbol        *function;
