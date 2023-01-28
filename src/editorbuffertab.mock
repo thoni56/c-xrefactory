@@ -15,8 +15,9 @@ int addEditorBuffer(EditorBufferList *bufferList) {
     return (int)mock(bufferList);
 }
 
-bool editorBufferIsMember(EditorBufferList *elementP, int *positionP, EditorBufferList **foundMemberP) {
-    return (bool)mock(elementP, positionP, foundMemberP);
+bool editorBufferIsMember(EditorBufferList *editorBuffer, int *positionP, EditorBufferList **foundMemberP) {
+    char *editorBuffer_name = editorBuffer->buffer->name;
+    return (bool)mock(editorBuffer, editorBuffer_name, positionP, foundMemberP);
 }
 
 bool deleteEditorBuffer(EditorBufferList *elementP) {

@@ -2,6 +2,7 @@
 #include <cgreen/constraint_syntax_helpers.h>
 #include <cgreen/mocks.h>
 
+#include "access.h"
 #include "editor.h"
 
 #include "memory.h"
@@ -16,7 +17,9 @@
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"
+#include "reference.h"
 #include "reference.mock"
+#include "usage.h"
 #include "yylex.mock"
 
 
@@ -133,4 +136,75 @@ Ensure(Editor, can_sort_overlapping_regions) {
     sortEditorRegionsAndRemoveOverlaps(&list);
 
     assert_that(list, is_equal_to(regionList1));
+}
+
+Ensure(Editor, can_convert_empty_list_of_references_to_editor_markers) {
+    assert_that(convertReferencesToEditorMarkers(NULL), is_null);
+}
+
+Ensure(Editor, can_convert_single_reference_to_editor_marker) {
+    Usage usage;
+    fillUsage(&usage, UsageDefined, AccessDefault);
+    Reference reference;
+    int SOME_FILE_NUMBER = 42;
+    int SOME_LINE_NUMBER = 43;
+    int SOME_COLUMN_NUMBER = 44;
+    fillReference(&reference, usage, (Position){.file = SOME_FILE_NUMBER, .line = SOME_LINE_NUMBER,
+            .col = SOME_COLUMN_NUMBER}, NULL);
+    FileItem fileItem = (FileItem){.name = "name"};
+
+    expect(getFileItem, when(fileNumber, is_equal_to(SOME_FILE_NUMBER)),
+           will_return(&fileItem));
+
+    // Expect that there is no editorbuffer for "fileNumber"
+    always_expect(editorBufferIsMember, when(editorBuffer_name, is_equal_to_string("name")),
+                  will_return(NULL));
+
+    // But there is a plain file
+    expect(fileExists, when(fullPath, is_equal_to_string("name")),
+           will_return(true));
+    expect(isDirectory, when(fullPath, is_equal_to_string("name")),
+           will_return(false));
+
+    // Now create an EditorBuffer for it
+    int SOME_FILE_MODIFICATION_TIME = 2222;
+    int SOME_FILE_SIZE = 3333;
+    expect(fileModificationTime, when(path, is_equal_to_string("name")),
+           will_return(SOME_FILE_MODIFICATION_TIME));
+    expect(fileSize, when(path, is_equal_to_string("name")),
+           will_return(SOME_FILE_SIZE));
+
+    // createNewEditorBuffer() will compare name and fileName
+    expect(normalizeFileName, when(name, is_equal_to_string("name")),
+           will_return("name"));
+    expect(normalizeFileName, when(name, is_equal_to_string("name")),
+           will_return("name"));
+
+    int SOME_EDITOR_BUFFER_INDEX = 1;
+    expect(addEditorBuffer, will_return(SOME_EDITOR_BUFFER_INDEX));
+    int SOME_FILE_TABLE_INDEX = 13;
+    expect(addFileNameToFileTable, will_return(SOME_FILE_TABLE_INDEX));
+
+    expect(isDirectory, when(fullPath, is_equal_to_string("name")),
+           will_return(false));
+    expect(fileSize, when(path, is_equal_to_string("name")),
+           will_return(SOME_FILE_SIZE));
+    expect(fileModificationTime, when(path, is_equal_to_string("name")),
+           will_return(SOME_FILE_MODIFICATION_TIME));
+    expect(fileSize, when(path, is_equal_to_string("name")),
+           will_return(SOME_FILE_SIZE));
+
+    FILE *file;
+    expect(openFile, when(fileName, is_equal_to_string("name")),
+           will_return(&file));
+    expect(readFile, when(file, is_equal_to(&file)), when(size, is_equal_to(1)), when(count, is_equal_to(SOME_FILE_SIZE)),
+           will_return(SOME_FILE_SIZE));
+    expect(readFile, when(file, is_equal_to(&file)), when(size, is_equal_to(1)), when(count, is_equal_to(0)),
+           will_return(0));
+    expect(closeFile);
+
+    EditorMarkerList *markers = convertReferencesToEditorMarkers(&reference);
+
+    assert_that(markers, is_not_null);
+    assert_that(markers->next, is_null);
 }

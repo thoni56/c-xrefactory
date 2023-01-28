@@ -562,11 +562,11 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
                                            .allocatedSize = allocSize};
 }
 
-static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int ftnum, char *fileName) {
+static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
     buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                                       .allocatedBlock = NULL, .allocatedIndex = 0,
                                                       .allocatedSize = 0};
-    *buffer = (EditorBuffer){.name = name, .fileNumber = ftnum, .fileName = fileName, .markers = NULL,
+    *buffer = (EditorBuffer){.name = name, .fileNumber = fileNumber, .fileName = fileName, .markers = NULL,
                              .allocation = buffer->allocation};
     buffer->modificationTime = 0;
     buffer->size = 0;
@@ -1067,74 +1067,69 @@ void moveEditorMarkerToLineAndColumn(EditorMarker *marker, int line, int col) {
     assert(marker->offset >= 0 && marker->offset <= buffer->allocation.bufferSize);
 }
 
-EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs) {
-    Reference        *r;
-    EditorMarker     *m;
-    EditorMarkerList *res, *rrr;
-    int               line, col, file, maxoffset;
-    char             *s, *smax;
-    int               ln, c;
-    EditorBuffer     *buff;
+EditorMarkerList *convertReferencesToEditorMarkers(Reference *references) {
+    Reference        *reference;
+    EditorMarkerList *markerList;
 
-    res = NULL;
-    r   = refs;
-    while (r != NULL) {
-        while (r != NULL && !isVisibleUsage(r->usage.kind))
-            r = r->next;
-        if (r != NULL) {
-            file               = r->position.file;
-            line               = r->position.line;
-            col                = r->position.col;
-            FileItem *fileItem = getFileItem(file);
-            buff               = findEditorBufferForFile(fileItem->name);
+    markerList = NULL;
+    reference   = references;
+    while (reference != NULL) {
+        while (reference != NULL && !isVisibleUsage(reference->usage.kind))
+            reference = reference->next;
+        if (reference != NULL) {
+            int           file     = reference->position.file;
+            int           line     = reference->position.line;
+            int           col      = reference->position.col;
+            FileItem     *fileItem = getFileItem(file);
+            EditorBuffer *buff     = findEditorBufferForFile(fileItem->name);
             if (buff == NULL) {
                 errorMessage(ERR_CANT_OPEN, fileItem->name);
-                while (r != NULL && file == r->position.file)
-                    r = r->next;
+                while (reference != NULL && file == reference->position.file)
+                    reference = reference->next;
             } else {
-                s         = buff->allocation.text;
-                smax      = s + buff->allocation.bufferSize;
-                maxoffset = buff->allocation.bufferSize - 1;
+                char *s          = buff->allocation.text;
+                char *smax      = s + buff->allocation.bufferSize;
+                int   maxoffset = buff->allocation.bufferSize - 1;
                 if (maxoffset < 0)
                     maxoffset = 0;
-                ln = 1;
-                c  = 0;
+                int l = 1;
+                int c  = 0;
                 for (; s < smax; s++, c++) {
-                    if (ln == line && c == col) {
-                        m    = newEditorMarker(buff, s - buff->allocation.text);
-                        rrr  = editorAlloc(sizeof(EditorMarkerList));
-                        *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
-                        res  = rrr;
-                        r    = r->next;
-                        while (r != NULL && !isVisibleUsage(r->usage.kind))
-                            r = r->next;
-                        if (r == NULL || file != r->position.file)
+                    if (l == line && c == col) {
+                        EditorMarker *m    = newEditorMarker(buff, s - buff->allocation.text);
+                        EditorMarkerList *rrr  = editorAlloc(sizeof(EditorMarkerList));
+                        *rrr = (EditorMarkerList){.marker = m, .usage = reference->usage, .next = markerList};
+                        markerList  = rrr;
+                        reference    = reference->next;
+                        while (reference != NULL && !isVisibleUsage(reference->usage.kind))
+                            reference = reference->next;
+                        if (reference == NULL || file != reference->position.file)
                             break;
-                        line = r->position.line;
-                        col  = r->position.col;
+                        line = reference->position.line;
+                        col  = reference->position.col;
                     }
                     if (*s == '\n') {
-                        ln++;
+                        l++;
                         c = -1;
                     }
                 }
                 // references beyond end of buffer
-                while (r != NULL && file == r->position.file) {
-                    m    = newEditorMarker(buff, maxoffset);
-                    rrr  = editorAlloc(sizeof(EditorMarkerList));
-                    *rrr = (EditorMarkerList){.marker = m, .usage = r->usage, .next = res};
-                    res  = rrr;
-                    r    = r->next;
-                    while (r != NULL && !isVisibleUsage(r->usage.kind))
-                        r = r->next;
+                while (reference != NULL && file == reference->position.file) {
+                    EditorMarker *m    = newEditorMarker(buff, maxoffset);
+                    EditorMarkerList *rrr  = editorAlloc(sizeof(EditorMarkerList));
+                    *rrr = (EditorMarkerList){.marker = m, .usage = reference->usage, .next = markerList};
+                    markerList  = rrr;
+                    reference    = reference->next;
+                    while (reference != NULL && !isVisibleUsage(reference->usage.kind))
+                        reference = reference->next;
                 }
             }
         }
     }
     // get markers in the same order as were references
     // ?? is this still needed?
-    LIST_REVERSE(EditorMarkerList, res);
-    return res;
+    LIST_REVERSE(EditorMarkerList, markerList);
+    return markerList;
 }
 
 Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP) {
