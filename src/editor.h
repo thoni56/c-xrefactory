@@ -78,11 +78,11 @@ extern size_t editorFileSize(char *path);
 extern time_t editorFileModificationTime(char *path);
 extern int    editorFileStatus(char *path, struct stat *statP);
 
-extern bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2);
-extern bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2);
-extern bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2);
-extern bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2);
-extern bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2);
+extern bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2);
+extern bool editorMarkerBeforeOrSame(EditorMarker *m1, EditorMarker *m2);
+extern bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2);
+extern bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2);
+extern bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2);
 
 extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
 extern EditorMarker     *newEditorMarkerForPosition(Position *pos);
@@ -93,14 +93,16 @@ extern EditorBuffer     *getOpenedEditorBuffer(char *name);
 extern EditorBuffer     *getOpenedAndLoadedEditorBuffer(char *name);
 extern EditorBuffer     *findEditorBufferForFile(char *name);
 extern EditorBuffer     *findEditorBufferForFileOrCreate(char *name);
-extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *refs);
-extern Reference        *convertEditorMarkersToReferences(EditorMarkerList **mms);
 extern void          renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
 extern void          replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize,
                                                  char *str, int strlength, EditorUndo **undo);
 extern void          moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size,
                                              EditorUndo **undo);
 extern void          editorDumpBuffer(EditorBuffer *buff);
+
+extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *references);
+extern Reference        *convertEditorMarkersToReferences(EditorMarkerList **markerList);
+
 extern void          editorDumpBuffers(void);
 extern void          editorDumpMarker(EditorMarker *mm);
 extern void          editorDumpMarkerList(EditorMarkerList *mml);

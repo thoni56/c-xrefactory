@@ -33,23 +33,23 @@ int editorFileStatus(char *path, struct stat *statP) {
   return (int) mock(path, statP);
 }
 
-bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerBeforeOrSame(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2) {
+bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2) {
   return (int) mock(l1, l2);
 }
 
-bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2) {
+bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2) {
   return (int) mock(l1, l2);
 }
 

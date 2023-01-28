@@ -2277,7 +2277,7 @@ static int createMarkersForAllReferencesInRegions(SymbolsMenu *menu, EditorRegio
             if (regions != NULL) {
                 restrictEditorMarkersToRegions(&mm->markers, regions);
             }
-            LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
+            LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListBefore);
             LIST_LEN(n, EditorMarkerList, mm->markers);
             res += n;
         }
@@ -2636,7 +2636,7 @@ static void reduceNamesAndAddImports(EditorRegionList **regions, int interactive
     EditorBuffer      *cb;
     EditorRegionList **cr, **cl, *ncr;
 
-    LIST_MERGE_SORT(EditorRegionList, *regions, editorRegionListLess);
+    LIST_MERGE_SORT(EditorRegionList, *regions, editorRegionListBefore);
     cr = regions;
     // split regions per files and add imports
     while (*cr != NULL) {
@@ -2837,7 +2837,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     }
     //&parseBufferUsingServer(refactoringOptions.project, point, "-olcxrename");
 
-    LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
+    LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListBefore);
     LIST_LEN(count, EditorMarkerList, occs);
     progress = 0;
     regions  = NULL;
@@ -3019,7 +3019,7 @@ static void moveField(EditorMarker *point) {
     accessFlags = sessionData.browserStack.top->hkSelectedSym->references.access;
 
     undoStartPoint = editorUndo;
-    LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListLess);
+    LIST_MERGE_SORT(EditorMarkerList, occs, editorMarkerListBefore);
     LIST_LEN(count, EditorMarkerList, occs);
     progress = 0;
     regions   = NULL;
@@ -3312,7 +3312,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
         if (mm->selected && mm->visible) {
             mm->markers =
                 convertReferencesToEditorMarkers(mm->references.references);
-            LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
+            LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListBefore);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             count += progressj;
         }
@@ -3387,7 +3387,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
         if (mm->selected && mm->visible) {
             mm->markers =
                 convertReferencesToEditorMarkers(mm->references.references);
-            LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListLess);
+            LIST_MERGE_SORT(EditorMarkerList, mm->markers, editorMarkerListBefore);
             LIST_LEN(progressj, EditorMarkerList, mm->markers);
             count += progressj;
         }
@@ -3507,12 +3507,12 @@ static int isMethodPartRedundant(EditorMarker *m1, EditorMarker *m2) {
         olcxReferencesDiff(&mm1->references.references, &mm2->references.references, &diff);
         if (diff != NULL) {
             lll = convertReferencesToEditorMarkers(diff);
-            LIST_MERGE_SORT(EditorMarkerList, lll, editorMarkerListLess);
+            LIST_MERGE_SORT(EditorMarkerList, lll, editorMarkerListBefore);
             for (ll = lll; ll != NULL; ll = ll->next) {
                 assert(ll->marker->buffer == m1->buffer);
                 //&sprintf(tmpBuff, "checking diff %d", ll->marker->offset); ppcGenRecord(PPC_INFORMATION,
                 // tmpBuff);
-                if (editorMarkerLess(ll->marker, m1) || editorMarkerLessOrEq(m2, ll->marker)) {
+                if (editorMarkerBefore(ll->marker, m1) || editorMarkerBeforeOrSame(m2, ll->marker)) {
                     res = false;
                 }
             }

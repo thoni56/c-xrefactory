@@ -408,34 +408,41 @@ static void editorError(int errCode, char *message) {
     errorMessage(errCode, message);
 }
 
-bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {
-    // m1->buffer->ftnum <> m2->buffer->ftnum;
+bool editorMarkerBefore(EditorMarker *m1, EditorMarker *m2) {
     // following is tricky as it works also for renamed buffers
-    if (m1->buffer < m2->buffer) return true;
-    if (m1->buffer > m2->buffer) return false;
-    if (m1->offset < m2->offset) return true;
-    if (m1->offset > m2->offset) return false;
+    if (m1->buffer < m2->buffer)
+        return true;
+    if (m1->buffer > m2->buffer)
+        return false;
+    if (m1->offset < m2->offset)
+        return true;
+    if (m1->offset > m2->offset)
+        return false;
     return false;
 }
 
-bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2) {
-    return !editorMarkerLess(m2, m1);
+bool editorMarkerBeforeOrSame(EditorMarker *m1, EditorMarker *m2) {
+    return !editorMarkerBefore(m2, m1);
 }
 
-bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2) {
-    return editorMarkerLess(m2, m1);
+bool editorMarkerAfter(EditorMarker *m1, EditorMarker *m2) {
+    return editorMarkerBefore(m2, m1);
 }
 
-bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2) {
-    return editorMarkerLess(l1->marker, l2->marker);
+bool editorMarkerListBefore(EditorMarkerList *l1, EditorMarkerList *l2) {
+    return editorMarkerBefore(l1->marker, l2->marker);
 }
 
-bool editorRegionListLess(EditorRegionList *l1, EditorRegionList *l2) {
-    if (editorMarkerLess(l1->region.begin, l2->region.begin)) return true;
-    if (editorMarkerLess(l2->region.begin, l1->region.begin)) return false;
+bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2) {
+    if (editorMarkerBefore(l1->region.begin, l2->region.begin))
+        return true;
+    if (editorMarkerBefore(l2->region.begin, l1->region.begin))
+        return false;
     // region beginnings are equal, check end
-    if (editorMarkerLess(l1->region.end, l2->region.end)) return true;
-    if (editorMarkerLess(l2->region.end, l1->region.end)) return false;
+    if (editorMarkerBefore(l1->region.end, l2->region.end))
+        return true;
+    if (editorMarkerBefore(l2->region.end, l1->region.end))
+        return false;
     return false;
 }
 
@@ -1141,7 +1148,7 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **editorMarkerListP
     int               line, col;
     Reference        *reference;
 
-    LIST_MERGE_SORT(EditorMarkerList, *editorMarkerListP, editorMarkerListLess);
+    LIST_MERGE_SORT(EditorMarkerList, *editorMarkerListP, editorMarkerListBefore);
     reference = NULL;
     markers = *editorMarkerListP;
     while (markers!=NULL) {
@@ -1301,18 +1308,18 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
                               EditorMarkerList **diff1, EditorMarkerList **diff2) {
     EditorMarkerList *l1, *l2;
 
-    LIST_MERGE_SORT(EditorMarkerList, *list1, editorMarkerListLess);
-    LIST_MERGE_SORT(EditorMarkerList, *list2, editorMarkerListLess);
+    LIST_MERGE_SORT(EditorMarkerList, *list1, editorMarkerListBefore);
+    LIST_MERGE_SORT(EditorMarkerList, *list2, editorMarkerListBefore);
     *diff1 = *diff2 = NULL;
     for(l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
-        if (editorMarkerListLess(l1, l2)) {
+        if (editorMarkerListBefore(l1, l2)) {
             EditorMarker *marker = newEditorMarker(l1->marker->buffer, l1->marker->offset);
             EditorMarkerList *l;
             l = editorAlloc(sizeof(EditorMarkerList)); /* TODO1 */
             *l = (EditorMarkerList){.marker = marker, .usage = l1->usage, .next = *diff1};
             *diff1 = l;
             l1 = l1->next;
-        } else if (editorMarkerListLess(l2, l1)) {
+        } else if (editorMarkerListBefore(l2, l1)) {
             l2 = combineEditorMarkerLists(diff2, l2);
         } else {
             l1 = l1->next;
@@ -1333,7 +1340,7 @@ void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2
 }
 
 void sortEditorRegionsAndRemoveOverlaps(EditorRegionList **regions) {
-    LIST_MERGE_SORT(EditorRegionList, *regions, editorRegionListLess);
+    LIST_MERGE_SORT(EditorRegionList, *regions, editorRegionListBefore);
     for (EditorRegionList *region = *regions; region != NULL; region = region->next) {
         EditorRegionList *next = region->next;
         if (next != NULL && region->region.begin->buffer == next->region.begin->buffer) {
@@ -1375,7 +1382,7 @@ void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
     *outInsiders = NULL;
     *outOutsiders = NULL;
 
-    LIST_MERGE_SORT(EditorMarkerList, *inMarkers, editorMarkerListLess);
+    LIST_MERGE_SORT(EditorMarkerList, *inMarkers, editorMarkerListBefore);
     sortEditorRegionsAndRemoveOverlaps(inRegions);
 
     LIST_REVERSE(EditorRegionList, *inRegions);
@@ -1388,9 +1395,9 @@ void splitEditorMarkersWithRespectToRegions(EditorMarkerList **inMarkers,
     markers1= *inMarkers;
     while (markers1!=NULL) {
         markers2 = markers1->next;
-        while (regions!=NULL && editorMarkerGreater(regions->region.begin, markers1->marker))
+        while (regions!=NULL && editorMarkerAfter(regions->region.begin, markers1->marker))
             regions = regions->next;
-        if (regions!=NULL && editorMarkerGreater(regions->region.end, markers1->marker)) {
+        if (regions!=NULL && editorMarkerAfter(regions->region.end, markers1->marker)) {
             // is inside
             markers1->next = *outInsiders;
             *outInsiders = markers1;
