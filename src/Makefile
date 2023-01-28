@@ -170,14 +170,14 @@ include sources.mk
 GIT_HASH = $(shell git describe --abbrev=5 --always --tags --dirty)
 $(OBJDIR)/options.o: CFLAGS += -DGIT_HASH=\"$(GIT_HASH)\"
 
-.PHONY: build
+PHONY += build
 build: CFLAGS += -DYYDEBUG
 build: build-proper
 
 build-proper: c-xref
 	$(MAKE) -C ../editors/emacs
 
-.PHONY: c-xref
+PHONY += c-xref
 c-xref: check-tokens $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
@@ -191,7 +191,7 @@ unit: check-tokens unittests
 #########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
 
-.PHONY: parsers
+PHONY += parsers
 parsers: c_parser.tab.[ch] java_parser.tab.[ch] yacc_parser.tab.[ch] cexp_parser.tab.[ch]
 
 # Note the file prefix (-b) and symbol prefix (-p)
@@ -257,7 +257,7 @@ $(OBJDIR)/yacc_parser.tab.o : yacc_parser.tokens
 $(OBJDIR)/java_parser.tab.o : java_parser.tokens
 
 # And compare the three token sections to ensure that they are exactly the same
-.PHONY: check-tokens
+PHONY += check-tokens
 check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
 	@echo Checking tokens across parsers ...
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
@@ -322,7 +322,7 @@ clean:
 
 ########################################################################
 
-.PHONY: clean-coverage
+PHONY += clean-coverage
 clean-coverage:
 	-rm ../coverage/total.info
 	-if command -v $(LCOV) > /dev/null 2>&1 ; then \
@@ -436,7 +436,7 @@ ifeq ($(OS),Darwin)
 	endif
 endif
 
-.PHONY: unittests
+PHONY += unittests
 ifeq ($(shell command -v cgreen-runner 2> /dev/null),)
 unittests: parsers
 	@echo Cgreen not available, cannot run unittests
@@ -508,3 +508,5 @@ $(eval $(call UNITTEST,symbol,memory log))
 $(eval $(call UNITTEST,symboltable,hash log memory))
 $(eval $(call UNITTEST,xref,memory log protocol))
 $(eval $(call UNITTEST,yylex,memory protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))
+
+.PHONY : $(PHONY)
