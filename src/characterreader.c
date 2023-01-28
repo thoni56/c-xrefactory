@@ -64,7 +64,7 @@ static int readFromFileToBuffer(CharacterBuffer  *buffer, char *outBuffer, int m
     int n;
 
     if (buffer->file == NULL) n = 0;
-    else n = readFile(outBuffer, 1, max_size, buffer->file);
+    else n = readFile(buffer->file, outBuffer, 1, max_size);
     return(n);
 }
 
@@ -219,7 +219,7 @@ void skipCharacters(CharacterBuffer *buffer, unsigned count) {
         if (buffer->file == NULL)
             n = 0;
         else
-            n = readFile(dd, 1, max_size, buffer->file);
+            n = readFile(buffer->file, dd, 1, max_size);
         buffer->filePos += n;
         buffer->end = dd + n;
         buffer->nextUnread = buffer->chars + MAX_UNGET_CHARS;

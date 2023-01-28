@@ -231,8 +231,8 @@ void copyFileFromTo(char *source, char *destination) {
         return;
     }
     do {
-        readBytes = readFile(tmpBuff, 1, TMP_BUFF_SIZE, sourceFile);
-        writtenBytes = writeFile(tmpBuff, 1, readBytes, destinationFile);
+        readBytes = readFile(sourceFile, tmpBuff, 1, TMP_BUFF_SIZE);
+        writtenBytes = writeFile(destinationFile, tmpBuff, 1, readBytes);
         if (readBytes != writtenBytes)
             errorMessage(ERR_ST, "problem copying file.");
     } while (readBytes > 0);

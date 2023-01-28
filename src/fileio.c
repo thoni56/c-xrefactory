@@ -114,11 +114,11 @@ bool fileExists(char *fullPath) {
     return statResult==0 && S_ISREG(st.st_mode);
 }
 
-size_t readFile(void *buffer, size_t size, size_t count, FILE *file) {
+size_t readFile(FILE *file, void *buffer, size_t size, size_t count) {
     return fread(buffer, size, count, file);
 }
 
-size_t writeFile(void *buffer, size_t size, size_t count, FILE *file) {
+size_t writeFile(FILE *file, void *buffer, size_t size, size_t count) {
     return fwrite(buffer, size, count, file);
 }
 

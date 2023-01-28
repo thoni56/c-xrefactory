@@ -515,7 +515,7 @@ static void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTi
     size = bufferSize;
     assert(text != NULL);
     do {
-        n    = readFile(text, 1, size, file);
+        n    = readFile(file, text, 1, size);
         text = text + n;
         size = size - n;
     } while (n>0);

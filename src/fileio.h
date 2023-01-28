@@ -18,8 +18,8 @@ extern void removeFile(char *dirname);
 extern bool isDirectory(char *fullPath);
 extern bool directoryExists(char *fullPath);
 extern bool fileExists(char *fullPath);
-extern size_t readFile(void *buffer, size_t size, size_t count, FILE *file);
-extern size_t writeFile(void *buffer, size_t size, size_t count, FILE *file);
+extern size_t readFile(FILE *file, void *buffer, size_t size, size_t count);
+extern size_t writeFile(FILE *file, void *buffer, size_t size, size_t count);
 extern int readChar(FILE *file);
 
 extern char *getEnv(const char *variable);

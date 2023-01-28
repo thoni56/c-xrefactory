@@ -18,10 +18,10 @@ void logCommands(int argc, char *argv[]) {
 
     for (int i=0; i<argc-1; i++) {
         if (argv[i] != NULL) {
-            writeFile(argv[i], strlen(argv[i]), 1, commandsLogfile);
-            writeFile(" ", 1, 1, commandsLogfile);
+            writeFile(commandsLogfile, argv[i], strlen(argv[i]), 1);
+            writeFile(commandsLogfile, " ", 1, 1);
         }
     }
-    writeFile(argv[argc-1], strlen(argv[argc-1]), 1, commandsLogfile);
-    writeFile("\n", 1, 1, commandsLogfile);
+    writeFile(commandsLogfile, argv[argc-1], strlen(argv[argc-1]), 1);
+    writeFile(commandsLogfile, "\n", 1, 1);
 }
