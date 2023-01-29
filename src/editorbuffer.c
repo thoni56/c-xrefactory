@@ -94,7 +94,7 @@ EditorBuffer *findEditorBufferForFile(char *name) {
     return editorBuffer;
 }
 
-EditorBuffer *findEditorBufferForFileOrCreate(char *name) {
+EditorBuffer *findEditorBufferForFileOrCreateEmpty(char *name) {
     EditorBuffer *buffer = findEditorBufferForFile(name);
     if (buffer == NULL) {
         buffer = createNewEditorBuffer(name, name, time(NULL), 0);
