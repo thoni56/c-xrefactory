@@ -477,8 +477,7 @@ void freeTextSpace(char *space, int index) {
     editorMemory[index] = sp;
 }
 
-static void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime,
-                                     size_t fileSize) {
+void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
     char *text, *fname;
     FILE *file;
     int   n, size, bufferSize;
