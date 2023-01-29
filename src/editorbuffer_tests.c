@@ -14,5 +14,6 @@ BeforeEach(EditorBuffer) {
 }
 AfterEach(EditorBuffer) {}
 
-Ensure(EditorBuffer, can_run_an_empty_test) {
+Ensure(EditorBuffer, can_free_empty_list_of_editor_buffers) {
+    freeEditorBuffer(NULL);
 }

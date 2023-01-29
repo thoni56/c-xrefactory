@@ -11,6 +11,8 @@ static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
 
 
 void freeEditorBuffer(EditorBufferList *list) {
+    if (list == NULL)
+        return;
     log_trace("freeing buffer %s==%s", list->buffer->name, list->buffer->fileName);
     if (list->buffer->fileName != list->buffer->name) {
         editorFree(list->buffer->fileName, strlen(list->buffer->fileName)+1);
