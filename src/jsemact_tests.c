@@ -7,6 +7,7 @@
 #include "commons.mock"
 #include "cxref.mock"
 #include "editor.mock"
+#include "editorbuffer.mock"
 #include "extract.mock"
 #include "filedescriptor.mock"
 #include "fileio.mock"

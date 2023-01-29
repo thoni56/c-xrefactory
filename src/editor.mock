@@ -66,10 +66,6 @@ EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
   return (EditorBuffer *) mock(name);
 }
 
-EditorBuffer *findEditorBufferForFile(char *name) {
-  return (EditorBuffer *) mock(name);
-}
-
 EditorBuffer *findEditorBufferForFileOrCreate(char *name) {
   return (EditorBuffer *) mock(name);
 }

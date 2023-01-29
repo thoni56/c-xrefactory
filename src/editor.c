@@ -690,27 +690,6 @@ EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName) {
     return buffer;
 }
 
-EditorBuffer *findEditorBufferForFile(char *name) {
-    EditorBuffer *editorBuffer = getOpenedAndLoadedEditorBuffer(name);
-
-    if (editorBuffer==NULL) {
-        editorBuffer = getOpenedEditorBuffer(name);
-        if (editorBuffer == NULL) {
-            if (fileExists(name) && !isDirectory(name)) {
-                editorBuffer = createNewEditorBuffer(name, name, fileModificationTime(name),
-                                                     fileSize(name));
-            }
-        }
-        if (editorBuffer != NULL && !isDirectory(editorBuffer->fileName)) {
-            allocNewEditorBufferTextSpace(editorBuffer, fileSize(name));
-            loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(name), fileSize(name));
-        } else {
-            return NULL;
-        }
-    }
-    return editorBuffer;
-}
-
 EditorBuffer *findEditorBufferForFileOrCreate(char *name) {
     EditorBuffer *buffer = findEditorBufferForFile(name);
     if (buffer == NULL) {

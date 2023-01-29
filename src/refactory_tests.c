@@ -11,6 +11,7 @@
 #include "cxfile.mock"
 #include "cxref.mock"
 #include "editor.mock"
+#include "editorbuffer.mock"
 #include "filetable.mock"
 #include "globals.mock"
 #include "jsemact.mock"

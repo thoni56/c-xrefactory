@@ -43,28 +43,6 @@ Ensure(Editor, can_create_new_editor_region_list) {
     assert_that(regionList->region.end->buffer, is_equal_to(&buffer));
 }
 
-Ensure(Editor, can_create_buffer_for_non_existing_file) {
-    // Given ...
-    expect(editorBufferIsMember, will_return(false));
-    expect(editorBufferIsMember, will_return(false));
-
-    // editorFindFile()
-    expect(fileExists, will_return(true));
-    expect(isDirectory, will_return(true));
-
-    // editorCreateNewBuffer()
-    EditorBuffer editorBuffer = {.name = "non-existant.c", .fileName = "non-existant.c"};
-    expect(createNewEditorBuffer, when(name, is_equal_to_string("non-existant.c")),
-           will_return(&editorBuffer));
-
-    // When...
-    EditorBuffer *buffer = findEditorBufferForFileOrCreate("non-existant.c");
-
-    // Then...
-    assert_that(buffer->name, is_equal_to_string("non-existant.c"));
-}
-
-
 Ensure(Editor, can_sort_empty_list_of_regions) {
     EditorRegionList *list = NULL;
     sortEditorRegionsAndRemoveOverlaps(&list);
@@ -155,45 +133,10 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
     expect(getFileItem, when(fileNumber, is_equal_to(SOME_FILE_NUMBER)),
            will_return(&fileItem));
 
-    // Expect that there is no editorbuffer for "fileNumber"
-    always_expect(editorBufferIsMember, when(editorBuffer_name, is_equal_to_string("name")),
-                  will_return(NULL));
-
-    // But there is a plain file
-    expect(fileExists, when(fullPath, is_equal_to_string("name")),
-           will_return(true));
-    expect(isDirectory, when(fullPath, is_equal_to_string("name")),
-           will_return(false));
-
-    // Now create an EditorBuffer for it
-    int SOME_FILE_MODIFICATION_TIME = 2222;
-    int SOME_FILE_SIZE = 3333;
-    expect(fileModificationTime, when(path, is_equal_to_string("name")),
-           will_return(SOME_FILE_MODIFICATION_TIME));
-    expect(fileSize, when(path, is_equal_to_string("name")),
-           will_return(SOME_FILE_SIZE));
-
+    // Expect that findEditoBufferForFile() finds one
     EditorBuffer editorBuffer = {.name = "name", .fileName = "name"};
-    expect(createNewEditorBuffer, when(name, is_equal_to_string("name")),
+    expect(findEditorBufferForFile, when(name, is_equal_to_string("name")),
            will_return(&editorBuffer));
-
-    expect(isDirectory, when(fullPath, is_equal_to_string("name")),
-           will_return(false));
-    expect(fileSize, when(path, is_equal_to_string("name")),
-           will_return(SOME_FILE_SIZE));
-    expect(fileModificationTime, when(path, is_equal_to_string("name")),
-           will_return(SOME_FILE_MODIFICATION_TIME));
-    expect(fileSize, when(path, is_equal_to_string("name")),
-           will_return(SOME_FILE_SIZE));
-
-    FILE *file;
-    expect(openFile, when(fileName, is_equal_to_string("name")),
-           will_return(&file));
-    expect(readFile, when(file, is_equal_to(&file)), when(size, is_equal_to(1)), when(count, is_equal_to(SOME_FILE_SIZE)),
-           will_return(SOME_FILE_SIZE));
-    expect(readFile, when(file, is_equal_to(&file)), when(size, is_equal_to(1)), when(count, is_equal_to(0)),
-           will_return(0));
-    expect(closeFile);
 
     EditorMarkerList *markers = convertReferencesToEditorMarkers(&reference);
 

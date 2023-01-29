@@ -27,6 +27,7 @@ void processIncludeNextDirective(Position *includePosition);
 #include "cxfile.mock"
 #include "cxref.mock"
 #include "editor.mock"
+#include "editorbuffer.mock"
 #include "extract.mock"
 #include "fileio.mock"
 #include "globals.mock"

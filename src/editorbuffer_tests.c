@@ -10,6 +10,7 @@
 #include "editor.mock" /* For freeTextSpace */
 #include "editorbuffertab.mock"
 #include "filetable.mock"
+#include "fileio.mock"
 
 
 Describe(EditorBuffer);

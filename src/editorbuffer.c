@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "editor.h"
 #include "editorbuffertab.h"
+#include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
 #include "log.h"
@@ -70,4 +71,25 @@ EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificat
     buffer->fileNumber = addFileNameToFileTable(allocatedName);
 
     return buffer;
+}
+
+EditorBuffer *findEditorBufferForFile(char *name) {
+    EditorBuffer *editorBuffer = getOpenedAndLoadedEditorBuffer(name);
+
+    if (editorBuffer==NULL) {
+        editorBuffer = getOpenedEditorBuffer(name);
+        if (editorBuffer == NULL) {
+            if (fileExists(name) && !isDirectory(name)) {
+                editorBuffer = createNewEditorBuffer(name, name, fileModificationTime(name),
+                                                     fileSize(name));
+            }
+        }
+        if (editorBuffer != NULL && !isDirectory(editorBuffer->fileName)) {
+            allocNewEditorBufferTextSpace(editorBuffer, fileSize(name));
+            loadFileIntoEditorBuffer(editorBuffer, fileModificationTime(name), fileSize(name));
+        } else {
+            return NULL;
+        }
+    }
+    return editorBuffer;
 }
