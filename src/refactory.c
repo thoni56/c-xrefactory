@@ -1871,7 +1871,7 @@ static void renameAtPoint(EditorMarker *point) {
         multipleOccurencesSafetyCheck();
     }
     simpleRename(occs, point, nameOnPoint, symLinkName, symtype);
-    //&editorDumpBuffers();
+    //&dumpEditorBuffers();
     redoTrack = NULL;
     if (!makeSafetyCheckAndUndo(point, &occs, undoStartPoint, &redoTrack)) {
         askForReallyContinueConfirmation();
@@ -2243,7 +2243,7 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
     // first just check that loaded files are up to date
     //& precheckThatSymbolRefsCorresponds(nameOnPoint, occurrences);
 
-    //&editorDumpBuffer(occurrences->marker->buffer);
+    //&dumpEditorBuffer(occurrences->marker->buffer);
     //&editorDumpMarkerList(occurrences);
     // for some error mesages it is more natural that cursor does not move
     ppcGotoMarker(point);

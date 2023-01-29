@@ -69,6 +69,25 @@ typedef struct editorUndo {
     struct editorUndo *next;
 } EditorUndo;
 
+// EditorBuffer functions...
+extern void renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
+extern void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str,
+                                        int strlength, EditorUndo **undo);
+extern void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size, EditorUndo **undo);
+extern void dumpEditorBuffer(EditorBuffer *buff);
+extern void dumpEditorBuffers(void);
+extern void quasiSaveModifiedEditorBuffers(void);
+extern void loadAllOpenedEditorBuffers(void);
+extern void closeEditorBufferIfClosable(char *name);
+extern void closeAllEditorBuffersIfClosable(void);
+extern void closeAllEditorBuffers(void);
+
+// Hopefully temporary for extraction of EditorBuffer
+extern void freeTextSpace(char *space, int index);
+extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize);
+extern void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size);
+
+
 extern EditorUndo *editorUndo;
 
 extern void editorInit(void);
@@ -88,22 +107,13 @@ extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
 extern EditorMarker     *newEditorMarkerForPosition(Position *pos);
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
-extern void          renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
-extern void          replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize,
-                                                 char *str, int strlength, EditorUndo **undo);
-extern void          moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size,
-                                             EditorUndo **undo);
-extern void          editorDumpBuffer(EditorBuffer *buff);
 
 extern EditorMarkerList *convertReferencesToEditorMarkers(Reference *references);
 extern Reference        *convertEditorMarkersToReferences(EditorMarkerList **markerList);
 
-extern void          editorDumpBuffers(void);
 extern void          editorDumpMarker(EditorMarker *mm);
 extern void          editorDumpMarkerList(EditorMarkerList *mml);
 extern void          editorDumpRegionList(EditorRegionList *mml);
-extern void          quasiSaveModifiedEditorBuffers(void);
-extern void          loadAllOpenedEditorBuffers(void);
 extern EditorMarker *duplicateEditorMarker(EditorMarker *mm);
 extern int           countLinesBetweenEditorMarkers(EditorMarker *m1, EditorMarker *m2);
 extern bool          runWithEditorMarkerUntil(EditorMarker *m, int (*until)(int), int step);
@@ -131,13 +141,5 @@ extern EditorRegionList *createEditorRegionForWholeBuffer(EditorBuffer *buffer);
 extern void              freeEditorMarkersAndMarkerList(EditorMarkerList *occs);
 extern int  editorMapOnNonexistantFiles(char *dirname, void (*fun)(MAP_FUN_SIGNATURE), int depth, char *a1,
                                         char *a2, Completions *a3, void *a4, int *a5);
-extern void closeEditorBufferIfClosable(char *name);
-extern void closeAllEditorBuffersIfClosable(void);
-extern void closeAllEditorBuffers(void);
-
-// For extraction of EditorBuffer
-extern void freeTextSpace(char *space, int index);
-extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize);
-extern void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size);
 
 #endif

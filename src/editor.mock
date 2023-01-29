@@ -78,11 +78,11 @@ void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size, Ed
   mock(dest, src, size, undo);
 }
 
-void editorDumpBuffer(EditorBuffer *buff) {
+void dumpEditorBuffer(EditorBuffer *buff) {
   mock(buff);
 }
 
-void editorDumpBuffers(void) {
+void dumpEditorBuffers(void) {
   mock();
 }
 
