@@ -14,3 +14,7 @@ EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificat
 EditorBuffer *findEditorBufferForFile(char *name) {
   return (EditorBuffer *) mock(name);
 }
+
+EditorBuffer *findEditorBufferForFileOrCreate(char *name) {
+  return (EditorBuffer *) mock(name);
+}

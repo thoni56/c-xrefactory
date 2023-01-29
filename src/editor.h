@@ -91,7 +91,6 @@ extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *
 extern EditorBuffer     *openEditorBufferNoFileLoad(char *name, char *fileName);
 extern EditorBuffer     *getOpenedEditorBuffer(char *name);
 extern EditorBuffer     *getOpenedAndLoadedEditorBuffer(char *name);
-extern EditorBuffer     *findEditorBufferForFileOrCreate(char *name);
 extern void          renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
 extern void          replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize,
                                                  char *str, int strlength, EditorUndo **undo);

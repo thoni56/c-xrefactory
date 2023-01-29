@@ -690,17 +690,6 @@ EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName) {
     return buffer;
 }
 
-EditorBuffer *findEditorBufferForFileOrCreate(char *name) {
-    EditorBuffer *buffer = findEditorBufferForFile(name);
-    if (buffer == NULL) {
-        buffer = createNewEditorBuffer(name, name, time(NULL), 0);
-        assert(buffer!=NULL);
-        allocNewEditorBufferTextSpace(buffer, 0);
-        buffer->textLoaded = true;
-    }
-    return buffer;
-}
-
 void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize, char *str,
                                  int strlength, EditorUndo **undo) {
     int nsize, oldsize, index, undosize, pattractor;
