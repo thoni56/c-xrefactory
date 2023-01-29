@@ -545,11 +545,6 @@ void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
                                            .allocatedSize = allocSize};
 }
 
-static void setEditorBufferModified(EditorBuffer *buffer) {
-    buffer->modified = true;
-    buffer->modifiedSinceLastQuasiSave = true;
-}
-
 static EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
                                           unsigned length, char *str, struct editorUndo *next) {
     EditorUndo *undo;
@@ -561,19 +556,6 @@ static EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, u
     undo->u.replace.size = size;
     undo->u.replace.strlen = length;
     undo->u.replace.str = str;
-    undo->next = next;
-
-    return undo;
-}
-
-static EditorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
-                                         struct editorUndo *next) {
-    EditorUndo *undo;
-
-    undo = editorAlloc(sizeof(EditorUndo));
-    undo->buffer = buffer;
-    undo->operation = UNDO_RENAME_BUFFER;
-    undo->u.rename.name = name;
     undo->next = next;
 
     return undo;
@@ -594,57 +576,6 @@ static EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsi
     undo->next = next;
 
     return undo;
-}
-
-void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
-    char newName[MAX_FILE_NAME_SIZE];
-    int fileNumber, deleted;
-    EditorBuffer dd, *removed;
-    EditorBufferList ddl, *memb, *memb2;
-    char *oldName;
-
-    strcpy(newName, normalizeFileName(nName, cwd));
-    log_trace("Renaming %s (at %d) to %s (at %d)", buffer->name, buffer->name, newName, newName);
-    fillEmptyEditorBuffer(&dd, buffer->name, 0, buffer->name);
-    ddl = (EditorBufferList){.buffer = &dd, .next = NULL};
-    if (!editorBufferIsMember(&ddl, NULL, &memb)) {
-        char tmpBuffer[TMP_BUFF_SIZE];
-        sprintf(tmpBuffer, "Trying to rename non existing buffer %s", buffer->name);
-        errorMessage(ERR_INTERNAL, tmpBuffer);
-        return;
-    }
-    assert(memb->buffer == buffer);
-    deleted = deleteEditorBuffer(memb);
-    assert(deleted);
-    oldName = buffer->name;
-    buffer->name = editorAlloc(strlen(newName)+1);
-    strcpy(buffer->name, newName);
-    // update also ftnum
-    fileNumber = addFileNameToFileTable(newName);
-    getFileItem(fileNumber)->isArgument = getFileItem(buffer->fileNumber)->isArgument;
-    buffer->fileNumber = fileNumber;
-
-    *memb = (EditorBufferList){.buffer = buffer, .next = NULL};
-    if (editorBufferIsMember(memb, NULL, &memb2)) {
-        deleteEditorBuffer(memb2);
-        freeEditorBuffer(memb2);
-    }
-    addEditorBuffer(memb);
-
-    // note undo operation
-    if (undo!=NULL) {
-        *undo = newEditorUndoRename(buffer, oldName, *undo);
-    }
-    setEditorBufferModified(buffer);
-
-    // finally create a buffer with old name and empty text in order
-    // to keep information that the file is no longer existing
-    // so old references will be removed on update (fixing problem of
-    // of moving a package into an existing package).
-    removed = createNewEditorBuffer(oldName, oldName, buffer->modificationTime, buffer->size);
-    allocNewEditorBufferTextSpace(removed, 0);
-    removed->textLoaded = true;
-    setEditorBufferModified(removed);
 }
 
 void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize, char *str,

@@ -43,4 +43,7 @@ extern EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName);
 extern EditorBuffer *getOpenedEditorBuffer(char *name);
 extern EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name);
 
+// Hopefully temporary
+void setEditorBufferModified(EditorBuffer *buffer);
+
 #endif

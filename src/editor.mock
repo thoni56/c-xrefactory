@@ -66,10 +66,6 @@ Reference *convertEditorMarkersToReferences(EditorMarkerList **mms) {
   return (Reference *) mock(mms);
 }
 
-void renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo) {
-  mock(buff, newName, undo);
-}
-
 void replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize, char *str, int strlength, EditorUndo **undo) {
   mock(buff, position, delsize, str, strlength, undo);
 }
