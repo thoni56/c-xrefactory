@@ -104,3 +104,16 @@ EditorBuffer *findEditorBufferForFileOrCreateEmpty(char *name) {
     }
     return buffer;
 }
+
+// Only used from Options for preload
+EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName) {
+    EditorBuffer  *buffer;
+
+    buffer = getOpenedEditorBuffer(name);
+    if (buffer != NULL) {
+        return buffer;
+    }
+    buffer = createNewEditorBuffer(name, fileName, fileModificationTime(fileName),
+                                   fileSize(fileName));
+    return buffer;
+}

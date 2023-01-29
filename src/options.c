@@ -2076,7 +2076,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
 }
 
 static bool processPOption(int *argi, int argc, char **argv) {
-    char    ttt[MAX_FILE_NAME_SIZE];
     int     i = *argi;
 
     if (0) {}
@@ -2098,15 +2097,13 @@ static bool processPOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-preload")==0) {
         char *file, *fromFile;
+        char normalizedFileName[MAX_FILE_NAME_SIZE];
         ensureNextArgumentIsAFileName(&i, argc, argv);
         file = argv[i];
-        strcpy(ttt, normalizeFileName(file, cwd));
+        strcpy(normalizedFileName, normalizeFileName(file, cwd));
         ensureNextArgumentIsAFileName(&i, argc, argv);
         fromFile = argv[i];
-        // TODO, maybe do this also through allocated list of options
-        // and serve them later ?
-        //&sprintf(tmpBuff, "-preload %s %s\n", ttt, fromFile); ppcGenRecord(PPC_IGNORE, tmpBuff);
-        openEditorBufferNoFileLoad(ttt, fromFile);
+        openEditorBufferNoFileLoad(normalizedFileName, fromFile);
     }
     else if (strcmp(argv[i], "-prune")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);

@@ -678,18 +678,6 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     setEditorBufferModified(removed);
 }
 
-EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName) {
-    EditorBuffer  *buffer;
-
-    buffer = getOpenedEditorBuffer(name);
-    if (buffer != NULL) {
-        return buffer;
-    }
-    buffer = createNewEditorBuffer(name, fileName, fileModificationTime(fileName),
-                                   fileSize(fileName));
-    return buffer;
-}
-
 void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize, char *str,
                                  int strlength, EditorUndo **undo) {
     int nsize, oldsize, index, undosize, pattractor;
