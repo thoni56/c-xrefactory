@@ -32,6 +32,7 @@ static EditorMemoryBlock *editorMemory[MAX_EDITOR_MEMORY_BLOCK];
 
 #include "editorbuffertab.h"
 
+
 ////////////////////////////////////////////////////////////////////
 //                      encoding stuff
 

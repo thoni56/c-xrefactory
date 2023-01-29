@@ -5,6 +5,11 @@
 
 EditorUndo *editorUndo;
 
+
+void freeTextSpace(char *space, int index) {
+    mock(space, index);
+}
+
 void editorInit(void) {
   mock();
 }
