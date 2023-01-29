@@ -520,7 +520,7 @@ void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, siz
     buffer->textLoaded = true;
 }
 
-static void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
+void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
     int minSize, allocIndex, allocSize;
     char *space;
     minSize = size + EDITOR_ALLOCATION_RESERVE + EDITOR_FREE_PREFIX_SIZE;

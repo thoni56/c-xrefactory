@@ -242,3 +242,7 @@ void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, cha
 void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
     mock(buffer, modificationTime, fileSize);
 }
+
+void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
+    mock(buffer, size);
+}
