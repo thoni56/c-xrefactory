@@ -223,10 +223,6 @@ void freeTextSpace(char *space, int index) {
     mock(space, index);
 }
 
-void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
-    mock(buffer, name, fileNumber, fileName);
-}
-
 void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTime, size_t fileSize) {
     mock(buffer, modificationTime, fileSize);
 }

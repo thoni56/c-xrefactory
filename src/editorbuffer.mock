@@ -3,6 +3,10 @@
 #include <cgreen/mocks.h>
 
 
+void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
+    mock(buffer, name, fileNumber, fileName);
+}
+
 void freeEditorBuffer(EditorBufferList *list) {
     mock(list);
 }

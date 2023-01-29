@@ -10,6 +10,16 @@
 #include "memory.h"
 
 
+void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
+    buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
+                                                      .allocatedBlock = NULL, .allocatedIndex = 0,
+                                                      .allocatedSize = 0};
+    *buffer = (EditorBuffer){.name = name, .fileNumber = fileNumber, .fileName = fileName, .markers = NULL,
+                             .allocation = buffer->allocation};
+    buffer->modificationTime = 0;
+    buffer->size = 0;
+}
+
 static void checkForMagicMarker(EditorBufferAllocationData *allocation) {
     assert(allocation->allocatedBlock[allocation->allocatedSize] == 0x3b);
 }
