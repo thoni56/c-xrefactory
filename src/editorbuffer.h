@@ -40,5 +40,6 @@ extern EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t mo
 extern EditorBuffer *findEditorBufferForFile(char *name);
 extern EditorBuffer *findEditorBufferForFileOrCreateEmpty(char *name);
 extern EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName);
+extern EditorBuffer *getOpenedEditorBuffer(char *name);
 
 #endif

@@ -88,7 +88,6 @@ extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset);
 extern EditorMarker     *newEditorMarkerForPosition(Position *pos);
 extern EditorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, EditorRegionList *next);
 
-extern EditorBuffer     *getOpenedEditorBuffer(char *name);
 extern EditorBuffer     *getOpenedAndLoadedEditorBuffer(char *name);
 extern void          renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
 extern void          replaceStringInEditorBuffer(EditorBuffer *buff, int position, int delsize,

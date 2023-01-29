@@ -83,6 +83,18 @@ EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificat
     return buffer;
 }
 
+EditorBuffer *getOpenedEditorBuffer(char *name) {
+    EditorBuffer editorBuffer;
+    EditorBufferList editorBufferList, *element;
+
+    fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
+    editorBufferList = (EditorBufferList){.buffer = &editorBuffer, .next = NULL};
+    if (editorBufferIsMember(&editorBufferList, NULL, &element)) {
+        return element->buffer;
+    }
+    return NULL;
+}
+
 EditorBuffer *findEditorBufferForFile(char *name) {
     EditorBuffer *editorBuffer = getOpenedAndLoadedEditorBuffer(name);
 

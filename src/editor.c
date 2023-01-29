@@ -550,18 +550,6 @@ static void setEditorBufferModified(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = true;
 }
 
-EditorBuffer *getOpenedEditorBuffer(char *name) {
-    EditorBuffer editorBuffer;
-    EditorBufferList editorBufferList, *element;
-
-    fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
-    editorBufferList = (EditorBufferList){.buffer = &editorBuffer, .next = NULL};
-    if (editorBufferIsMember(&editorBufferList, NULL, &element)) {
-        return element->buffer;
-    }
-    return NULL;
-}
-
 EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
     EditorBuffer *res;
     res = getOpenedEditorBuffer(name);
