@@ -32,4 +32,7 @@ typedef struct editorBufferList {
     struct editorBufferList *next;
 } EditorBufferList;
 
+
+extern void freeEditorBuffer(EditorBufferList *list);
+
 #endif

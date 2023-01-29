@@ -140,4 +140,6 @@ extern void closeEditorBufferIfClosable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
 extern void closeAllEditorBuffers(void);
 
+extern void freeTextSpace(char *space, int index);
+
 #endif

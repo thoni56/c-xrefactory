@@ -1,0 +1,8 @@
+/* -*- c -*-*/
+#include "editorbuffer.h"
+#include <cgreen/mocks.h>
+
+
+void freeEditorBuffer(EditorBufferList *list) {
+    mock(list);
+}
