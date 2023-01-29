@@ -550,14 +550,6 @@ static void setEditorBufferModified(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = true;
 }
 
-EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
-    EditorBuffer *res;
-    res = getOpenedEditorBuffer(name);
-    if (res!=NULL && res->textLoaded)
-        return res;
-    return NULL;
-}
-
 static EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
                                           unsigned length, char *str, struct editorUndo *next) {
     EditorUndo *undo;

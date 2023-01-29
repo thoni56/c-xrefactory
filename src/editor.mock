@@ -54,10 +54,6 @@ bool editorRegionListBefore(EditorRegionList *l1, EditorRegionList *l2) {
   return (int) mock(l1, l2);
 }
 
-EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
-  return (EditorBuffer *) mock(name);
-}
-
 EditorMarker *newEditorMarkerForPosition(Position *pos) {
   return (EditorMarker *) mock(pos);
 }

@@ -95,6 +95,14 @@ EditorBuffer *getOpenedEditorBuffer(char *name) {
     return NULL;
 }
 
+EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
+    EditorBuffer *res;
+    res = getOpenedEditorBuffer(name);
+    if (res!=NULL && res->textLoaded)
+        return res;
+    return NULL;
+}
+
 EditorBuffer *findEditorBufferForFile(char *name) {
     EditorBuffer *editorBuffer = getOpenedAndLoadedEditorBuffer(name);
 

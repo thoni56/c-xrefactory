@@ -30,3 +30,7 @@ EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName) {
 EditorBuffer *getOpenedEditorBuffer(char *name) {
   return (EditorBuffer *) mock(name);
 }
+
+EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name) {
+  return (EditorBuffer *) mock(name);
+}
