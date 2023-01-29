@@ -546,7 +546,7 @@ static void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
                                            .allocatedSize = allocSize};
 }
 
-static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
+void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
     buffer->allocation = (EditorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
                                                       .allocatedBlock = NULL, .allocatedIndex = 0,
                                                       .allocatedSize = 0};
@@ -556,39 +556,6 @@ static void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumb
     buffer->size = 0;
 }
 
-static EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificationTime,
-                                           size_t size) {
-    char *allocatedName, *normalizedName, *afname, *normalizedFileName;
-    EditorBuffer *buffer;
-    EditorBufferList *bufferList;
-
-    normalizedName = normalizeFileName(name, cwd);
-    allocatedName = editorAlloc(strlen(normalizedName)+1);
-    strcpy(allocatedName, normalizedName);
-    normalizedFileName = normalizeFileName(fileName, cwd);
-    if (strcmp(normalizedFileName, allocatedName)==0) {
-        afname = allocatedName;
-    } else {
-        afname = editorAlloc(strlen(normalizedFileName)+1);
-        strcpy(afname, normalizedFileName);
-    }
-    buffer = editorAlloc(sizeof(EditorBuffer));
-    fillEmptyEditorBuffer(buffer, allocatedName, 0, afname);
-    buffer->modificationTime = modificationTime;
-    buffer->size = size;
-
-    bufferList = editorAlloc(sizeof(EditorBufferList));
-    *bufferList = (EditorBufferList){.buffer = buffer, .next = NULL};
-    log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
-
-    addEditorBuffer(bufferList);
-
-    // set ftnum at the end, because, addfiletabitem calls back the statb
-    // from editor, so be tip-top at this moment!
-    buffer->fileNumber = addFileNameToFileTable(allocatedName);
-
-    return buffer;
-}
 
 static void setEditorBufferModified(EditorBuffer *buffer) {
     buffer->modified = true;

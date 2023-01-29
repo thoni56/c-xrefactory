@@ -5,7 +5,11 @@
 
 #include "log.h"
 
-#include "editor.mock"          /* For freeTextSpace */
+#include "commons.mock"
+#include "globals.mock"
+#include "editor.mock" /* For freeTextSpace */
+#include "editorbuffertab.mock"
+#include "filetable.mock"
 
 
 Describe(EditorBuffer);

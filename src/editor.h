@@ -140,6 +140,8 @@ extern void closeEditorBufferIfClosable(char *name);
 extern void closeAllEditorBuffersIfClosable(void);
 extern void closeAllEditorBuffers(void);
 
+// For extraction of EditorBuffer
+extern void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName);
 extern void freeTextSpace(char *space, int index);
 
 #endif

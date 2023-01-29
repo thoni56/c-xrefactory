@@ -6,3 +6,7 @@
 void freeEditorBuffer(EditorBufferList *list) {
     mock(list);
 }
+
+EditorBuffer *createNewEditorBuffer(char *name, char *fileName, time_t modificationTime, size_t size) {
+    return (EditorBuffer *)mock(name, fileName, modificationTime, size);
+}

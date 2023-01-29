@@ -6,10 +6,6 @@
 EditorUndo *editorUndo;
 
 
-void freeTextSpace(char *space, int index) {
-    mock(space, index);
-}
-
 void editorInit(void) {
   mock();
 }
@@ -232,4 +228,13 @@ void closeAllEditorBuffersIfClosable(void) {
 
 void closeAllEditorBuffers(void) {
   mock();
+}
+
+// Hopefully temporary while extracting EditorBuffer module
+void freeTextSpace(char *space, int index) {
+    mock(space, index);
+}
+
+void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {
+    mock(buffer, name, fileNumber, fileName);
 }

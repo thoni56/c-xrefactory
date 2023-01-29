@@ -46,7 +46,6 @@ Ensure(Editor, can_create_new_editor_region_list) {
 Ensure(Editor, can_create_buffer_for_non_existing_file) {
     // Given ...
     expect(editorBufferIsMember, will_return(false));
-
     expect(editorBufferIsMember, will_return(false));
 
     // editorFindFile()
@@ -54,10 +53,9 @@ Ensure(Editor, can_create_buffer_for_non_existing_file) {
     expect(isDirectory, will_return(true));
 
     // editorCreateNewBuffer()
-    expect(normalizeFileName, will_return("non-existant.c"));
-    expect(normalizeFileName, will_return("non-existant.c"));
-    expect(addEditorBuffer);
-    expect(addFileNameToFileTable, when(name, is_equal_to_string("non-existant.c")));
+    EditorBuffer editorBuffer = {.name = "non-existant.c", .fileName = "non-existant.c"};
+    expect(createNewEditorBuffer, when(name, is_equal_to_string("non-existant.c")),
+           will_return(&editorBuffer));
 
     // When...
     EditorBuffer *buffer = findEditorBufferForFileOrCreate("non-existant.c");
@@ -175,16 +173,9 @@ Ensure(Editor, can_convert_single_reference_to_editor_marker) {
     expect(fileSize, when(path, is_equal_to_string("name")),
            will_return(SOME_FILE_SIZE));
 
-    // createNewEditorBuffer() will compare name and fileName
-    expect(normalizeFileName, when(name, is_equal_to_string("name")),
-           will_return("name"));
-    expect(normalizeFileName, when(name, is_equal_to_string("name")),
-           will_return("name"));
-
-    int SOME_EDITOR_BUFFER_INDEX = 1;
-    expect(addEditorBuffer, will_return(SOME_EDITOR_BUFFER_INDEX));
-    int SOME_FILE_TABLE_INDEX = 13;
-    expect(addFileNameToFileTable, will_return(SOME_FILE_TABLE_INDEX));
+    EditorBuffer editorBuffer = {.name = "name", .fileName = "name"};
+    expect(createNewEditorBuffer, when(name, is_equal_to_string("name")),
+           will_return(&editorBuffer));
 
     expect(isDirectory, when(fullPath, is_equal_to_string("name")),
            will_return(false));
