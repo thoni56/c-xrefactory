@@ -1,21 +1,12 @@
 #ifndef EDITOR_H_INCLUDED
 #define EDITOR_H_INCLUDED
 
+#include "completion.h"
 #include "editorbuffer.h"
+#include "reference.h"
+#include "undo.h"
 #include "usage.h"
 
-#include "reference.h"
-#include "completion.h"
-
-
-
-/* ***************** editor structures ********************** */
-
-typedef enum editorUndoOperation {
-    UNDO_REPLACE_STRING,
-    UNDO_RENAME_BUFFER,
-    UNDO_MOVE_BLOCK,
-} EditorUndoOperation;
 
 typedef enum {
     EDITOR_UNKNOWN,
@@ -46,28 +37,6 @@ typedef struct editorRegionList {
     struct editorRegionList *next;
 } EditorRegionList;
 
-typedef struct editorUndo {
-    EditorBuffer             *buffer;
-    EditorUndoOperation operation;
-    union editorUndoUnion {
-        struct editorUndoStrReplace {
-            unsigned offset;
-            unsigned size;
-            unsigned strlen;
-            char    *str;
-        } replace;
-        struct editorUndoRenameBuff {
-            char *name;
-        } rename;
-        struct editorUndoMoveBlock {
-            unsigned      offset;
-            unsigned      size;
-            EditorBuffer *dbuffer;
-            unsigned      doffset;
-        } moveBlock;
-    } u;
-    struct editorUndo *next;
-} EditorUndo;
 
 // EditorBuffer functions...
 extern void renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
