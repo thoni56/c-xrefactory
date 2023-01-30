@@ -585,7 +585,7 @@ void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize
         undotext = editorAlloc(delsize+1);
         memcpy(undotext, buffer->allocation.text+position, delsize);
         undotext[delsize]=0;
-        uu = newEditorUndoReplace(buffer, position, undosize, delsize, undotext, *undo);
+        uu = newUndoReplace(buffer, position, undosize, delsize, undotext, *undo);
         *undo = uu;
     }
     // edit text
@@ -667,7 +667,7 @@ void moveBlockInEditorBuffer(EditorMarker *dest, EditorMarker *src, int size,
     setEditorBufferModified(db);
     // add the whole operation into undo
     if (undo!=NULL) {
-        *undo = newEditorUndoMove(db, src->offset, off2-off1, sb, undodoffset, *undo);
+        *undo = newUndoMove(db, src->offset, off2-off1, sb, undodoffset, *undo);
     }
 }
 

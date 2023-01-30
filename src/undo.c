@@ -3,7 +3,7 @@
 #include "memory.h"
 
 
-EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
+EditorUndo *newUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
                                  unsigned length, char *str, EditorUndo *next) {
     EditorUndo *undo;
 
@@ -19,7 +19,7 @@ EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned
     return undo;
 }
 
-EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsigned size,
+EditorUndo *newUndoMove(EditorBuffer *buffer, unsigned offset, unsigned size,
                               EditorBuffer *dbuffer, unsigned doffset,
                               EditorUndo *next) {
     EditorUndo *undo;
