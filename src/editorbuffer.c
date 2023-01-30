@@ -153,19 +153,6 @@ void setEditorBufferModified(EditorBuffer *buffer) {
     buffer->modifiedSinceLastQuasiSave = true;
 }
 
-static EditorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
-                                       EditorUndo *next) {
-    EditorUndo *undo;
-
-    undo = editorAlloc(sizeof(EditorUndo));
-    undo->buffer = buffer;
-    undo->operation = UNDO_RENAME_BUFFER;
-    undo->u.rename.name = name;
-    undo->next = next;
-
-    return undo;
-}
-
 void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
     int fileNumber, deleted;

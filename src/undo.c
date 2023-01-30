@@ -4,6 +4,19 @@
 
 EditorUndo *editorUndo = NULL;
 
+EditorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
+                                EditorUndo *next) {
+    EditorUndo *undo;
+
+    undo = editorAlloc(sizeof(EditorUndo));
+    undo->buffer = buffer;
+    undo->operation = UNDO_RENAME_BUFFER;
+    undo->u.rename.name = name;
+    undo->next = next;
+
+    return undo;
+}
+
 EditorUndo *newUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
                                  unsigned length, char *str, EditorUndo *next) {
     EditorUndo *undo;

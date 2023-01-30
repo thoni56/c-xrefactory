@@ -6,11 +6,12 @@
 #include "log.h"
 
 #include "commons.mock"
-#include "globals.mock"
 #include "editor.mock" /* For freeTextSpace */
 #include "editorbuffertab.mock"
-#include "filetable.mock"
 #include "fileio.mock"
+#include "filetable.mock"
+#include "globals.mock"
+#include "undo.mock"
 
 
 Describe(EditorBuffer);
