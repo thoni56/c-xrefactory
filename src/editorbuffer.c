@@ -1,13 +1,13 @@
 #include "editorbuffer.h"
 
 #include "commons.h"
-#include "editor.h"
 #include "editorbuffertab.h"
 #include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
 #include "log.h"
 #include "memory.h"
+#include "undo.h"
 
 
 void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {

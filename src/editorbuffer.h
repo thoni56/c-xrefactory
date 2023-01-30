@@ -4,6 +4,7 @@
 #include <time.h>
 #include <stdbool.h>
 
+typedef struct editorUndo EditorUndo; /* Mutual dependency... */
 
 typedef struct {
     int   bufferSize;
@@ -42,6 +43,7 @@ extern EditorBuffer *findEditorBufferForFileOrCreateEmpty(char *name);
 extern EditorBuffer *openEditorBufferNoFileLoad(char *name, char *fileName);
 extern EditorBuffer *getOpenedEditorBuffer(char *name);
 extern EditorBuffer *getOpenedAndLoadedEditorBuffer(char *name);
+extern void renameEditorBuffer(EditorBuffer *buff, char *newName, EditorUndo **undo);
 
 // Hopefully temporary
 void setEditorBufferModified(EditorBuffer *buffer);
