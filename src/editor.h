@@ -56,8 +56,6 @@ extern void loadFileIntoEditorBuffer(EditorBuffer *buffer, time_t modificationTi
 extern void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size);
 
 
-extern EditorUndo *editorUndo;
-
 extern void editorInit(void);
 
 extern bool   editorFileExists(char *path);

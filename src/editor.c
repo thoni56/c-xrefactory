@@ -21,7 +21,6 @@ typedef struct editorMemoryBlock {
     struct editorMemoryBlock *next;
 } EditorMemoryBlock;
 
-EditorUndo *editorUndo = NULL;
 
 #define MIN_EDITOR_MEMORY_BLOCK 11
 #define MAX_EDITOR_MEMORY_BLOCK 32

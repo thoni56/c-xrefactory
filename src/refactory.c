@@ -24,6 +24,7 @@
 #include "protocol.h"
 #include "reftab.h"
 #include "server.h"
+#include "undo.h"
 #include "yylex.h"
 #include "xref.h"
 

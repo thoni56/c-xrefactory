@@ -2,6 +2,7 @@
 
 #include "memory.h"
 
+EditorUndo *editorUndo = NULL;
 
 EditorUndo *newUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
                                  unsigned length, char *str, EditorUndo *next) {
