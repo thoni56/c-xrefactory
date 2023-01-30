@@ -1,19 +1,21 @@
 #include "editor.h"
 
+
 #include "commons.h"
-#include "globals.h"
-#include "options.h"
-#include "usage.h"
-#include "yylex.h"
-#include "misc.h"
 #include "cxref.h"
-#include "list.h"
-#include "log.h"
+#include "editorbuffertab.h"
 #include "fileio.h"
 #include "filetable.h"
-#include "editorbuffertab.h"
-
+#include "globals.h"
+#include "list.h"
+#include "log.h"
+#include "misc.h"
+#include "options.h"
 #include "protocol.h"
+#include "undo.h"
+#include "usage.h"
+#include "yylex.h"
+
 
 typedef struct editorMemoryBlock {
     struct editorMemoryBlock *next;
@@ -543,39 +545,6 @@ void allocNewEditorBufferTextSpace(EditorBuffer *buffer, int size) {
                                            .allocatedFreePrefixSize = EDITOR_FREE_PREFIX_SIZE,
                                            .allocatedBlock = space, .allocatedIndex = allocIndex,
                                            .allocatedSize = allocSize};
-}
-
-static EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
-                                          unsigned length, char *str, struct editorUndo *next) {
-    EditorUndo *undo;
-
-    undo = editorAlloc(sizeof(EditorUndo));
-    undo->buffer = buffer;
-    undo->operation = UNDO_REPLACE_STRING;
-    undo->u.replace.offset = offset;
-    undo->u.replace.size = size;
-    undo->u.replace.strlen = length;
-    undo->u.replace.str = str;
-    undo->next = next;
-
-    return undo;
-}
-
-static EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsigned size,
-                                     EditorBuffer *dbuffer, unsigned doffset,
-                                     struct editorUndo *next) {
-    EditorUndo *undo;
-
-    undo = editorAlloc(sizeof(EditorUndo));
-    undo->buffer = buffer;
-    undo->operation = UNDO_MOVE_BLOCK;
-    undo->u.moveBlock.offset = offset;
-    undo->u.moveBlock.size = size;
-    undo->u.moveBlock.dbuffer = dbuffer;
-    undo->u.moveBlock.doffset = doffset;
-    undo->next = next;
-
-    return undo;
 }
 
 void replaceStringInEditorBuffer(EditorBuffer *buffer, int position, int delsize, char *str,

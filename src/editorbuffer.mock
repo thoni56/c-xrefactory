@@ -1,6 +1,7 @@
 /* -*- c -*-*/
-#include "editorbuffer.h"
 #include <cgreen/mocks.h>
+
+#include "editorbuffer.h"
 
 
 void fillEmptyEditorBuffer(EditorBuffer *buffer, char *name, int fileNumber, char *fileName) {

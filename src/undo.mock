@@ -1,0 +1,15 @@
+/* -*- c -*-*/
+#include <cgreen/mocks.h>
+
+#include "undo.h"
+
+EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsigned size,
+                              EditorBuffer *dbuffer, unsigned doffset,
+                              EditorUndo *next) {
+    return (EditorUndo *)mock(buffer, offset, size, dbuffer, doffset, next);
+}
+
+EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
+                                 unsigned length, char *str, EditorUndo *next) {
+    return (EditorUndo *)mock(buffer, offset, size, length, str, next);
+}

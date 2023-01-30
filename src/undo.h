@@ -32,4 +32,10 @@ typedef struct editorUndo {
     struct editorUndo *next;
 } EditorUndo;
 
+
+EditorUndo *newEditorUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
+                                 unsigned length, char *str, EditorUndo *next);
+EditorUndo *newEditorUndoMove(EditorBuffer *buffer, unsigned offset, unsigned size,
+                              EditorBuffer *dbuffer, unsigned doffset,
+                              EditorUndo *next);
 #endif

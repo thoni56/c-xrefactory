@@ -1,11 +1,11 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/constraint_syntax_helpers.h>
-#include <cgreen/mocks.h>
 
-#include "access.h"
 #include "editor.h"
 
+#include "access.h"
 #include "memory.h"
+#include "usage.h"
 
 #include "commons.mock"
 #include "cxref.mock"
@@ -20,7 +20,7 @@
 #include "ppc.mock"
 #include "reference.h"
 #include "reference.mock"
-#include "usage.h"
+#include "undo.mock"
 #include "yylex.mock"
 
 
