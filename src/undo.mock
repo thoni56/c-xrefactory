@@ -4,8 +4,8 @@
 #include "undo.h"
 
 
-EditorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
-                                EditorUndo *next) {
+EditorUndo *newUndoRename(EditorBuffer *buffer, char *name,
+                          EditorUndo *next) {
     return (EditorUndo *)mock(buffer, name, next);
 }
 

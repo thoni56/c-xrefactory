@@ -191,7 +191,7 @@ void renameEditorBuffer(EditorBuffer *buffer, char *nName, EditorUndo **undo) {
 
     // note undo operation
     if (undo!=NULL) {
-        *undo = newEditorUndoRename(buffer, oldName, *undo);
+        *undo = newUndoRename(buffer, oldName, *undo);
     }
     setEditorBufferModified(buffer);
 

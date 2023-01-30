@@ -36,8 +36,8 @@ typedef struct editorUndo {
 extern EditorUndo *editorUndo;
 
 
-EditorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
-                                EditorUndo *next);
+EditorUndo *newUndoRename(EditorBuffer *buffer, char *name,
+                          EditorUndo *next);
 EditorUndo *newUndoReplace(EditorBuffer *buffer, unsigned offset, unsigned size,
                            unsigned length, char *str, EditorUndo *next);
 EditorUndo *newUndoMove(EditorBuffer *buffer, unsigned offset, unsigned size,

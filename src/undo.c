@@ -4,7 +4,7 @@
 
 EditorUndo *editorUndo = NULL;
 
-EditorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
+EditorUndo *newUndoRename(EditorBuffer *buffer, char *name,
                                 EditorUndo *next) {
     EditorUndo *undo;
 
