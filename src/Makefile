@@ -507,6 +507,7 @@ $(eval $(call UNITTEST,semact,memory log protocol usage hash position storage ty
 $(eval $(call UNITTEST,server,memory log session position))
 $(eval $(call UNITTEST,symbol,memory log))
 $(eval $(call UNITTEST,symboltable,hash log memory))
+$(eval $(call UNITTEST,undo,memory log))
 $(eval $(call UNITTEST,xref,memory log protocol))
 $(eval $(call UNITTEST,yylex,memory protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer stringlist))
 
