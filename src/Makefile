@@ -406,11 +406,6 @@ $(YACC): $(ROOTDIR)/byacc-1.9/*.[ch]
 	$(MAKE) -C $(ROOTDIR)/byacc-1.9
 
 
-vpath %.dll.a /usr/local:/usr/local/lib
-vpath %.so /usr/lib:/usr/local/lib
-vpath %.dylib /usr/lib:/usr/local/lib
-
-
 # Find all *_tests.c automatically
 UNITTESTS = $(patsubst %.c,%.$(EXT),$(wildcard *_tests.c))
 
@@ -423,10 +418,15 @@ endif
 
 # If you have a make >3.something (MacOS don't!) you can use vpath to locate Cgreen library
 # as a dependency which will automatically be linked
+
+# vpath %.dll.a /usr/local:/usr/local/lib
+# vpath %.so /usr/lib:/usr/local/lib
+# vpath %.dylib /usr/lib:/usr/local/lib
+
 # CGREEN_LIB = -lcgreen
 # else you have to add explicit linkage and/or include directives
-CGREEN_INCLUDE = -I/usr/local/include
-CGREEN_LIB = -L/usr/local/lib -lcgreen
+# CGREEN_INCLUDE = -I/usr/local/include
+# CGREEN_LIB = -L/usr/local/lib -lcgreen
 
 ifeq ($(OS),Darwin)
 	ifeq ($(shell arch),arm64)
