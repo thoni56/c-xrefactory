@@ -1,14 +1,8 @@
 language: c
 os:
   - linux
-#  - osx
 
-jobs:
-  allow_failures:
-    - os: osx
-
-dist: focal
-osx_image: xcode12
+dist: jammy
 
 if: NOT tag = stable
 
