@@ -16,7 +16,6 @@ all: .c-xrefrc $(TEST)
 $(TEST): .c-xrefrc
 
 # Make all testcases silent by default. Use VERBOSE=1 to revert
-# Automated tests for checking generated c-xreferences
 $(VERBOSE).SILENT:
 
 # All tests that uses a server driver should use this
