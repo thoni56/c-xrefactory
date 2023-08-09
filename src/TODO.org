@@ -17,6 +17,9 @@ Some useful commands:
 There are a *lot* of things to do to make c-xref into modern C.
 
 Current Mikado:
+* DOING Fix a test for removing last parameter of a macro (in test_delete_last_macro_arg)
+It is not working due to some strange issue with "Parameter number out
+of limits" when removing the parameter from the actual arguments list
 * DOING A switch that creates a list of commands given to c-xref so that they can be replayed exactly later
 * TRY to make LexemBuffer interface just take LexemBuffer
 ** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c

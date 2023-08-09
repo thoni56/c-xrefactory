@@ -1,0 +1,15 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-del-param" "-olcxparnum=3" "-olmark=10" "-olcursor=10" "-addimportdefault=0" "CURDIR/macroArgs.c" -o server-buffer
+<sync>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/macroArgs.c</position-off>
+</goto>
+<ask-confirmation len=<n>>parameter 'arg3' is used, delete it anyway?</ask-confirmation>
+<goto>
+ <position-off off=24 len=<n>>CURDIR/macroArgs.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>, arg3</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=10 len=<n>>CURDIR/macroArgs.c</position-off>
+</goto>
