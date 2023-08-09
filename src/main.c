@@ -809,6 +809,10 @@ static void initLogging(int argc, char *argv[]) {
 
     /* Always log errors and above to console */
     log_set_level(console_level);
+
+    /* Should we log the arguments? */
+    if (true)
+        logCommands(argc, argv);
 }
 
 /* *********************************************************************** */
@@ -816,8 +820,6 @@ static void initLogging(int argc, char *argv[]) {
 /* *********************************************************************** */
 
 int main(int argc, char *argv[]) {
-    logCommands(argc, argv);
-
     /* Options are read very late down below, so we need to setup logging before then */
     initLogging(argc, argv);
     ENTER();
