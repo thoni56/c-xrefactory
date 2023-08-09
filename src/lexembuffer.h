@@ -28,32 +28,33 @@ extern void setLexemStreamWrite(LexemBuffer *lb, void *end);
 extern void *getLexemStreamWrite(LexemBuffer *lb);
 
 /* WRITE */
-extern void putLexInt(LexemBuffer *lb, int value);
-extern void putLexChar(LexemBuffer *lb, char ch);
-extern void putLexLines(LexemBuffer *lb, int lines);
+extern void putLexemInt(LexemBuffer *lb, int value);
+extern void putLexemChar(LexemBuffer *lb, char ch);
+extern void putLexemLines(LexemBuffer *lb, int lines);
 
-extern void putLexToken(LexemBuffer *lb, Lexem lexem);
-extern void putLexTokenAtPointer(Lexem lexem, void *writePointer);
+extern void putLexemCode(LexemBuffer *lb, LexemCode lexem);
+extern void backpatchLexemCodeAt(LexemCode lexem, void *writePointer);
 
-extern void putLexPositionFields(LexemBuffer *lb, int file, int line, int col);
-extern void putLexPosition(LexemBuffer *lb, Position position);
+extern void putLexemPosition(LexemBuffer *lb, Position position);
+extern void putLexemPositionFields(LexemBuffer *lb, int file, int line, int col);
 
 /* DEPRECATED? - Writes at where writePointer points to and advances it */
-extern void putLexTokenAt(Lexem lexem, char **writePointerP);
+extern void putLexTokenAt(LexemCode lexem, char **writePointerP);
 extern void putLexPositionAt(Position position, char **writePointerP);
 extern void putLexIntAt(int integer, char **writePointerP);
 
 /* READ */
-extern Position getLexPosition(LexemBuffer *lb);
+extern Position getLexemPosition(LexemBuffer *lb);
 
-/* DEPRECATED? - Reads where a readPointer points and advances it */
-extern Lexem getLexemAt(LexemBuffer *lb, void *readPointer); /* TODO - remove readPointeP */
-extern Lexem getLexTokenAt(char **readPointerP);
+/* TODO: These should be replaced by functions only taking a LexemBuffer... */
+extern LexemCode getLexemAt(LexemBuffer *lb, void *readPointer);
+
+/* Reads where a readPointer points and advances it */
+extern LexemCode getLexTokenAt(char **readPointerP);
 extern int getLexIntAt(char **readPointerP);
-extern int getLexShortAt(char **readPointer);
 extern Position getLexPositionAt(char **readPointerP);
 
-extern Lexem peekLexTokenAt(char *readPointer);
+extern LexemCode peekLexTokenAt(char *readPointer);
 
 extern Position peekLexPositionAt(char *readPointer);
 

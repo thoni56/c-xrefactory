@@ -281,10 +281,10 @@ lexem.h: c_parser.tab.h character_lexems.txt Makefile
 	echo >> lexem.h.tmp
 	echo "/**** DO NOT EDIT - generated from c_parser.tab.h & character_lexems.txt by Makefile ****/" >> lexem.h.tmp
 	echo >> lexem.h.tmp
-	echo "typedef enum lexem {" >> lexem.h.tmp
+	echo "typedef enum LexemCode {" >> lexem.h.tmp
 	cat character_lexems.txt >> lexem.h.tmp
 	grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" >> lexem.h.tmp
-	echo "} Lexem;" >> lexem.h.tmp
+	echo "} LexemCode;" >> lexem.h.tmp
 	echo >> lexem.h.tmp
 	echo "extern char *lexemEnumNames[];" >> lexem.h.tmp
 	echo >> lexem.h.tmp

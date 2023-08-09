@@ -3,7 +3,7 @@
 
 /**** DO NOT EDIT - generated from c_parser.tab.h & character_lexems.txt by Makefile ****/
 
-typedef enum lexem {
+typedef enum LexemCode {
 LT = '<',
 GT = '>',
 LPAR = '(',
@@ -205,7 +205,7 @@ CPP_MACRO_ARGUMENT = 427,
 IDENT_NO_CPP_EXPAND = 428,
 CHAR_LITERAL = 429,
 LAST_TOKEN = 430,
-} Lexem;
+} LexemCode;
 
 extern char *lexemEnumNames[];
 

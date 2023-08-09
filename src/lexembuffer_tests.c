@@ -66,10 +66,10 @@ Ensure(LexemBuffer, can_put_and_get_a_short) {
 }
 
 Ensure(LexemBuffer, can_put_and_get_a_token) {
-    Lexem       lexem;
+    LexemCode       lexem;
     char       *expected_next_after_get;
 
-    putLexToken(&lb, DOUBLE_CONSTANT);
+    putLexemCode(&lb, DOUBLE_CONSTANT);
     expected_next_after_get = lb.write;
 
     lexem = getLexTokenAt(&lb.read);
@@ -82,7 +82,7 @@ Ensure(LexemBuffer, can_put_and_get_an_int) {
     int         integer;
     char       *expected_next_after_get;
 
-    putLexInt(&lb, 34581);
+    putLexemInt(&lb, 34581);
     expected_next_after_get = lb.write;
 
     integer     = getLexIntAt(&lb.read);
@@ -121,9 +121,9 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
 }
 
 Ensure(LexemBuffer, can_peek_next_token) {
-    Lexem any_lexem = CHAR_LITERAL;
+    LexemCode any_lexem = CHAR_LITERAL;
 
-    putLexToken(&lb, any_lexem);
+    putLexemCode(&lb, any_lexem);
 
     assert_that(peekLexTokenAt(lb.read), is_equal_to(any_lexem));
 }
@@ -131,11 +131,11 @@ Ensure(LexemBuffer, can_peek_next_token) {
 Ensure(LexemBuffer, can_put_and_get_lines) {
     char *pointer_after_put = NULL;
 
-    putLexLines(&lb, 13);
+    putLexemLines(&lb, 13); // A LexemCode and a LexemInt
     pointer_after_put = lb.write;
 
     assert_that(getLexTokenAt(&lb.read), is_equal_to(LINE_TOKEN));
-    assert_that(getLexTokenAt(&lb.read), is_equal_to(13));
+    assert_that(getLexIntAt(&lb.read), is_equal_to(13));
     assert_that(lb.read, is_equal_to(pointer_after_put));
 }
 
@@ -145,8 +145,8 @@ Ensure(LexemBuffer, can_put_and_get_position_with_pointer) {
     Position second_position  = {44, 45, 46};
     Position read_position;
 
-    putLexPositionFields(&lb, first_position.file, first_position.line, first_position.col);
-    putLexPosition(&lb, second_position);
+    putLexemPositionFields(&lb, first_position.file, first_position.line, first_position.col);
+    putLexemPosition(&lb, second_position);
     pointer_after_put = lb.write;
 
     read_position = getLexPositionAt(&lb.read);
@@ -162,11 +162,11 @@ Ensure(LexemBuffer, can_put_and_get_position) {
     Position second_position  = {44, 45, 46};
     Position read_position;
 
-    putLexPositionFields(&lb, first_position.file, first_position.line, first_position.col);
-    putLexPosition(&lb, second_position);
+    putLexemPositionFields(&lb, first_position.file, first_position.line, first_position.col);
+    putLexemPosition(&lb, second_position);
     pointer_after_put = lb.write;
 
-    read_position = getLexPosition(&lb);
+    read_position = getLexemPosition(&lb);
     assert_that(positionsAreEqual(read_position, first_position));
     read_position = getLexPositionAt(&lb.read);
     assert_that(positionsAreEqual(read_position, second_position));
@@ -174,15 +174,15 @@ Ensure(LexemBuffer, can_put_and_get_position) {
 }
 
 Ensure(LexemBuffer, can_backpatch_lexem) {
-    Lexem backpatched_lexem = STRING_LITERAL;
+    LexemCode backpatched_lexem = STRING_LITERAL;
 
     void *backpatchPointer = getLexemStreamWrite(&lb);
-    putLexChar(&lb, 'x');
+    putLexemChar(&lb, 'x');
 
     char *lb_end = lb.write;
     char *lb_next = lb.read;
 
-    putLexTokenAtPointer(backpatched_lexem, backpatchPointer);
+    backpatchLexemCodeAt(backpatched_lexem, backpatchPointer);
 
     assert_that(getLexemAt(&lb, backpatchPointer), is_equal_to(backpatched_lexem));
 
@@ -192,7 +192,7 @@ Ensure(LexemBuffer, can_backpatch_lexem) {
 }
 
 Ensure(LexemBuffer, can_set_next_write_position) {
-    putLexToken(&lb, IDENTIFIER);
+    putLexemCode(&lb, IDENTIFIER);
     assert_that(lb.write, is_not_equal_to(lb.lexemStream));
 
     setLexemStreamWrite(&lb, &lb.lexemStream);
@@ -202,7 +202,7 @@ Ensure(LexemBuffer, can_set_next_write_position) {
 Ensure(LexemBuffer, can_get_current_write_position) {
     void *previous = getLexemStreamWrite(&lb);
 
-    putLexChar(&lb, 'x');
+    putLexemChar(&lb, 'x');
 
     assert_that(getLexemStreamWrite(&lb), is_equal_to(previous+1));
 }
@@ -211,7 +211,7 @@ Ensure(LexemBuffer, can_write_lexem_at_position_without_changing_pointer) {
     void *writePointer = getLexemStreamWrite(&lb);
     void *savedWritePointer = writePointer;
 
-    putLexTokenAtPointer(IDENTIFIER, writePointer);
+    backpatchLexemCodeAt(IDENTIFIER, writePointer);
 
     assert_that(writePointer, is_equal_to(savedWritePointer));
     assert_that(getLexTokenAt(&(lb.read)), is_equal_to(IDENTIFIER));
