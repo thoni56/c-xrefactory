@@ -141,7 +141,7 @@ only adding one line of understanding in the wiki...
 There are some information about my current understanding of this
 beast in the design documentation. And there is a budding user
 manual. Those documents are continually published into the
-[C-xrefactory documentation site](https://thoni56.github.com/c-xrefactory).
+[C-xrefactory documentation site](https://thoni56.github.io/c-xrefactory).
 
 These documents are in no means complete, or perhaps not even
 readable, but are attempts to continually collect bits and pieces of
