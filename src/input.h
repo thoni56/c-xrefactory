@@ -4,9 +4,9 @@
 #include "proto.h" /* For InputType */
 
 typedef struct {
-    char *read;
-    char *begin;
-    char *write;
+    char *begin;                /* where it begins */
+    char *read;                 /* next to read */
+    char *write;                /* where to write next */
     char *macroName;
     InputType inputType;
 } LexInput;

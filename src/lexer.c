@@ -135,12 +135,11 @@ static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
     lb->ringIndex++;
 }
 
-
 static void processEmptyCompletionId(CharacterBuffer *cb, LexemBuffer *lb, int len) {
     putLexemCode(lb, IDENT_TO_COMPLETE);
     putLexemChar(lb, '\0');
     putLexemPositionFields(lb, cb->fileNumber, cb->lineNumber,
-                         columnPosition(cb) - len);
+                           columnPosition(cb) - len);
 }
 
 static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
@@ -822,7 +821,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             Position position;
             int currentLexemOffset;
 
-            /* Since lb->index is incremented *after* adding, we need to subtract 1 to get current */
+            /* Since lb->ringIndex is incremented *after* adding, we need to subtract 1 to get current */
             pi = (lb->ringIndex-1) % LEX_POSITIONS_RING_SIZE;
             currentLexemOffset = lb->fileOffsetRing[pi];
             position = lb->positionRing[pi];
