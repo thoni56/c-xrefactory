@@ -46,8 +46,8 @@ extern void putLexIntAt(int integer, char **writePointerP);
 /* READ */
 extern Position getLexemPosition(LexemBuffer *lb);
 
+
 /* TODO: These should be replaced by functions only taking a LexemBuffer... */
-extern LexemCode getLexemAt(LexemBuffer *lb, void *readPointer);
 
 /* Reads where a readPointer points and advances it */
 extern LexemCode getLexTokenAt(char **readPointerP);

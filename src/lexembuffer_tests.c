@@ -184,7 +184,7 @@ Ensure(LexemBuffer, can_backpatch_lexem) {
 
     backpatchLexemCodeAt(backpatched_lexem, backpatchPointer);
 
-    assert_that(getLexemAt(&lb, backpatchPointer), is_equal_to(backpatched_lexem));
+    assert_that(peekLexTokenAt(backpatchPointer), is_equal_to(backpatched_lexem));
 
     /* lb pointers should not have moved */
     assert_that(lb_end, is_equal_to(lb.write));

@@ -12,11 +12,6 @@ void initLexemBuffer(LexemBuffer *buffer) {
     buffer->ringIndex = 0;
 }
 
-/* Should use LexemBuffer, but doesn't yet... */
-LexemCode getLexemAt(LexemBuffer *lb, void *readPointer) {
-    return peekLexTokenAt(readPointer);
-}
-
 void setLexemStreamWrite(LexemBuffer *lb, void *write) {
     lb->write = write;
 }
