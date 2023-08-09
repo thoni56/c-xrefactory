@@ -6,32 +6,21 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "output.log" "-task_regime_server"
+COMMAND = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
 
-$(TEST): commands.input CXrefs/XFiles
-	@printf "Tests in '$@': "
-	@$(COMMAND) < commands.input > commands.output || true
-	@sed -e "s+`echo $$PWD/macroArgs.c| awk '{ print length }'`>$$PWD/macroArgs.c+66>CURDIR/macroArgs.c+g" output.log > output.tmp
-	@cat commands.output
-	@cat output.log
-	@cmp output.tmp output.expected
-	@if [ $$? -ne 0 ] ; then \
-		diff output.tmp output.expected ; \
-		echo "Failed" ; \
-		exit 1 ; \
-	else \
-		echo "Ok" ; \
-	fi
-	@exit 0
+$(TEST): .c-xrefrc
+	@-$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) > output.tmp
+	@$(NORMALIZE) output.tmp > output
+	@$(VERIFY)
 
 gdb:
 	gdb --args $(COMMAND)
 
-commands.input: commands.tpl
-	@sed -e "s+CURDIR+$(CURDIR)+g" $< > $@
-
-CXrefs/XFiles: CXrefs/XFiles.tpl
-	@sed -e "s+71:CURDIR+`echo $$PWD/macroArgs.c| awk '{ print length }'`:$(CURDIR)+g" $< > $@
-
 clean:
-	rm commands.input CXrefs/XFiles
+	rm -rf CXrefs .c-xrefrc
+
+debug:
+	@$(EDIT_SERVER_DRIVER) commands.input $(EXTRA) --delay 5 > output.tmp &
+	sleep 1
+	pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'
+	sudo gdb -pid `pgrep -a c-xref | grep -v emacs | awk '{ print $$1 }'` -ex 'br getActualMacroArguments'  -ex 'continue'
