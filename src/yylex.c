@@ -1812,10 +1812,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPo
                                         macroStackIndex == 0);
         }
     }
-    if (argumentIndex!=0) {
-        handleMacroUsageParameterPositions(argumentIndex, macroPosition, beginPosition, endPosition, true);
-    }
-    /* fill mising arguments */
+    /* fill missing arguments */
     for(;argumentIndex < macroBody->argCount; argumentIndex++) {
         fillLexInput(&actualArgs[argumentIndex], NULL, NULL, NULL, NULL,INPUT_NORMAL);
     }

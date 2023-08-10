@@ -11,5 +11,11 @@
  <str len=<n>>, arg3</str>  <str len=<n>></str>
 </replacement>
 <goto>
+ <position-off off=97 len=<n>>CURDIR/macroArgs.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>, 33</str>  <str len=<n>></str>
+</replacement>
+<goto>
  <position-off off=10 len=<n>>CURDIR/macroArgs.c</position-off>
 </goto>
