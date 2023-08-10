@@ -11,7 +11,7 @@ tentative. The actual interfaces are not particularly clean, most code
 files can and do include much every other module.
 
 NOTE: One focus area for the ongoing work is to try to pry out modules
-from the code mess by moving functions around, renaming and hinding
+from the code mess by moving functions around, renaming and hiding
 functions, where possible.
 
 ==== CxrefCore
@@ -31,4 +31,6 @@ The `EditorExtension` component is responsible for plugging into an
 editor of choice and handle the user interface, buffer management and
 executing the refactoring edit operations.
 
-Currently there is only one such extension supported, for `Emacs`.
+Currently there is only one such extension supported, for `Emacs`,
+although there is code for an extension for `jEdit` which hasn't been
+update, modified or checked for a long time.

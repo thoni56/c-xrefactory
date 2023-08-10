@@ -99,7 +99,11 @@ buffers in the file descriptor.
 
 Lexing/scanning is performed in two layers, one in `lexer.c` which
 seems to be doing the actual lexing into lexems which are put in a
-lexembuffer. The higher level "scanning" is performed, as per ususal,
+lexembuffer. This contains a sequence of encoded and compressed
+symbols which first has a `LexemCode` which is followed by extra data,
+like `Position`. These seems to always be added but not always necessary.
+
+The higher level "scanning" is performed, as per ususal,
 by `yylex.c`. `lexembuffer` defines some functions to put and get
 lexems, chars (identifiers and file names?) as well as integers and
 positions.
