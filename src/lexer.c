@@ -1,6 +1,7 @@
 #include "lexer.h"
 
 #include "globals.h"
+#include "lexem.h"
 #include "lexembuffer.h"
 #include "options.h"
 #include "commons.h"
@@ -110,7 +111,7 @@ static LexemCode floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 /* Scans an identifier from CharacterBuffer and stores it in
  * LexemBuffer. 'ch' is the first character in the identifier. Returns
  * first character not part of the identifier */
-static int processIdentifier(CharacterBuffer *characterBuffer, int ch, LexemBuffer *lexemBuffer) {
+static int putIdentifierLexem(CharacterBuffer *characterBuffer, int ch, LexemBuffer *lexemBuffer) {
     int column;
 
     column = columnPosition(characterBuffer);
@@ -135,85 +136,123 @@ static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
     lb->ringIndex++;
 }
 
-static void processEmptyCompletionId(CharacterBuffer *cb, LexemBuffer *lb, int len) {
+static void putCompletionLexem(CharacterBuffer *cb, LexemBuffer *lb, int len) {
     putLexemCode(lb, IDENT_TO_COMPLETE);
     putLexemChar(lb, '\0');
     putLexemPositionFields(lb, cb->fileNumber, cb->lineNumber,
                            columnPosition(cb) - len);
 }
 
+static void putLexemWithPosition(LexemCode lexem, CharacterBuffer *cb, LexemBuffer *lb, int column) {
+    putLexemCode(lb, lexem);
+    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
+}
+
+static int putIncludeString(CharacterBuffer *cb, LexemBuffer *lb, int ch) {
+    ch = skipBlanks(cb, ch);
+    if (ch == '\"' || ch == '<') {
+        char terminator = ch == '\"' ? '\"' : '>';
+        int  col        = columnPosition(cb);
+        putLexemCode(lb, STRING_LITERAL);
+        do {
+            putLexemChar(lb, ch);
+            ch = getChar(cb);
+        } while (ch != terminator && ch != '\n');
+        putLexemChar(lb, 0);
+        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), col);
+        if (ch == terminator)
+            ch = getChar(cb);
+    }
+
+    return ch;
+}
+
+static LexemCode preprocessorLexemFromString(const char *preprocessorWord) {
+    if (strcmp(preprocessorWord, "ifdef") == 0) {
+        return CPP_IFDEF;
+    } else if (strcmp(preprocessorWord, "ifndef") == 0) {
+        return CPP_IFNDEF;
+    } else if (strcmp(preprocessorWord, "if") == 0) {
+        return CPP_IF;
+    } else if (strcmp(preprocessorWord, "elif") == 0) {
+        return CPP_ELIF;
+    } else if (strcmp(preprocessorWord, "undef") == 0) {
+        return CPP_UNDEF;
+    } else if (strcmp(preprocessorWord, "else") == 0) {
+        return CPP_ELSE;
+    } else if (strcmp(preprocessorWord, "endif") == 0) {
+        return CPP_ENDIF;
+    } else if (strcmp(preprocessorWord, "pragma") == 0) {
+        return CPP_PRAGMA;
+    } else if (strcmp(preprocessorWord, "include") == 0) {
+        return CPP_INCLUDE;
+    } else if (strcmp(preprocessorWord, "include_next") == 0) {
+        return CPP_INCLUDE_NEXT;
+    } else if (strcmp(preprocessorWord, "define") == 0) {
+        return CPP_DEFINE0;
+    } else {
+        // Some other un-interesting preprocessor line, like #error or #message...
+        return CPP_LINE;
+    }
+}
+
+static int extractPreprocessorWord(CharacterBuffer *cb, char preprocessorWord[]) {
+    int ch;
+    ch = getChar(cb);
+    ch = skipBlanks(cb, ch);
+    for (int i = 0; isalpha(ch) || isdigit(ch) || ch == '_'; i++) {
+        preprocessorWord[i] = ch;
+        preprocessorWord[i+1] = 0;
+        ch = getChar(cb);
+    }
+    return ch;
+}
+
 static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
     int   ch;
     char  preprocessorWord[30];
-    int   i, column;
+    int   column;
 
     noteNewLexemPosition(cb, lb);
+
     column = columnPosition(cb);
-    ch     = getChar(cb);
-    ch     = skipBlanks(cb, ch);
-    for (i = 0; i < sizeof(preprocessorWord) - 1 && (isalpha(ch) || isdigit(ch) || ch == '_'); i++) {
-        preprocessorWord[i] = ch;
-        ch                  = getChar(cb);
-    }
-    preprocessorWord[i] = 0;
-    if (strcmp(preprocessorWord, "ifdef") == 0) {
-        putLexemCode(lb, CPP_IFDEF);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-    } else if (strcmp(preprocessorWord, "ifndef") == 0) {
-        putLexemCode(lb, CPP_IFNDEF);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-    } else if (strcmp(preprocessorWord, "if") == 0) {
-        putLexemCode(lb, CPP_IF);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-    } else if (strcmp(preprocessorWord, "elif") == 0) {
-        putLexemCode(lb, CPP_ELIF);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-    } else if (strcmp(preprocessorWord, "undef") == 0) {
-        putLexemCode(lb, CPP_UNDEF);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-    } else if (strcmp(preprocessorWord, "else") == 0) {
-        putLexemCode(lb, CPP_ELSE);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-    } else if (strcmp(preprocessorWord, "endif") == 0) {
-        putLexemCode(lb, CPP_ENDIF);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-    } else if (strcmp(preprocessorWord, "include") == 0 || strcmp(preprocessorWord, "include_next") == 0) {
-        if (strcmp(preprocessorWord, "include") == 0)
-            putLexemCode(lb, CPP_INCLUDE);
-        else
-            putLexemCode(lb, CPP_INCLUDE_NEXT);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-        ch = skipBlanks(cb, ch);
-        if (ch == '\"' || ch == '<') {
-            char terminator = ch == '\"'? '\"' : '>';
-            int scol = columnPosition(cb);
-            putLexemCode(lb, STRING_LITERAL);
-            do {
-                putLexemChar(lb, ch);
-                ch = getChar(cb);
-            } while (ch != terminator && ch != '\n');
-            putLexemChar(lb, 0);
-            putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), scol);
-            if (ch == terminator)
-                ch = getChar(cb);
-        }
-    } else if (strcmp(preprocessorWord, "define") == 0) {
+    ch     = extractPreprocessorWord(cb, preprocessorWord);
+
+    LexemCode lexem = preprocessorLexemFromString(preprocessorWord);
+    switch (lexem) {
+    case CPP_IFDEF:
+    case CPP_IFNDEF:
+    case CPP_IF:
+    case CPP_ELIF:
+    case CPP_UNDEF:
+    case CPP_ELSE:
+    case CPP_ENDIF:
+    case CPP_PRAGMA:
+    case CPP_LINE:
+        putLexemWithPosition(lexem, cb, lb, column);
+        break;
+    case CPP_INCLUDE:
+    case CPP_INCLUDE_NEXT:
+        putLexemWithPosition(lexem, cb, lb, column);
+        ch = putIncludeString(cb, lb, ch);
+        break;
+    case CPP_DEFINE0: {
         void *backpatchLexemP = getLexemStreamWrite(lb);
-        putLexemCode(lb, CPP_DEFINE0);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
+        putLexemWithPosition(lexem, cb, lb, column);
         ch = skipBlanks(cb, ch);
         noteNewLexemPosition(cb, lb);
-        ch = processIdentifier(cb, ch, lb);
+        ch = putIdentifierLexem(cb, ch, lb);
         if (ch == '(') {
-            /* Backpatch the current lexem code (CPP_DEFINE0) with discovered CPP_DEFINE */
+            /* Discovered parameters so backpatch the previous lexem
+             * code (CPP_DEFINE0) to indicate that this is not a text
+             * replacement but a macro "function" */
             backpatchLexemCodeAt(CPP_DEFINE, backpatchLexemP);
         }
-    } else if (strcmp(preprocessorWord, "pragma") == 0) {
-        putLexemCode(lb, CPP_PRAGMA);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-    } else {
-        putLexemCode(lb, CPP_LINE);
-        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
+        break;
+    }
+    default:
+        errorMessage(ERR_ST, "Unexpected preprocessor line");
+        break;
     }
 
     return ch;
@@ -254,7 +293,7 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
                 log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
             } else {
                 // completion after an identifier
-                processEmptyCompletionId(characterBuffer, lb, apos - options.olCursorPosition);
+                putCompletionLexem(characterBuffer, lb, apos - options.olCursorPosition);
             }
         } else if ((thisLexToken == LINE_TOKEN || thisLexToken == STRING_LITERAL)
                    && (apos != options.olCursorPosition)) {
@@ -262,7 +301,7 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
             // NO COMPLETION
         } else {
             // completion after another lexem
-            processEmptyCompletionId(characterBuffer, lb, apos - options.olCursorPosition);
+            putCompletionLexem(characterBuffer, lb, apos - options.olCursorPosition);
         }
     }
 
@@ -301,7 +340,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            ch = processIdentifier(cb, ch, lb);
+            ch = putIdentifierLexem(cb, ch, lb);
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
