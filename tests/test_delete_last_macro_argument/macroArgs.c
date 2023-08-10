@@ -3,5 +3,5 @@
 }
 
 static void f(void) {
-    macro(1, 2, 3);
+    macro(11, 22, 33);
 }

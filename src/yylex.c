@@ -656,7 +656,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
 
 static void handleMacroUsageParameterPositions(int argi, Position *macroPosition,
                                                Position *beginPosition, Position *endPosition,
-                                               int final
+                                               bool final
     ) {
     if (options.serverOperation == OLO_GET_PARAM_COORDINATES
         && positionsAreEqual(*macroPosition, cxRefPosition)) {
@@ -1758,7 +1758,7 @@ static void getActualMacroArgument(
             handleMacroUsageParameterPositions(actualArgumentIndex + offset, macroPosition,
                                                *beginPosition,
                                                *endPosition, 0);
-            //**beginPosition = **endPosition;
+            **beginPosition = **endPosition;
         }
     }
     goto end;
@@ -1798,7 +1798,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPo
                                 macroStackIndex == 0);
     if (lexem == ')') {
         *endPosition = position;
-        handleMacroUsageParameterPositions(0, macroPosition, beginPosition, endPosition, 1);
+        handleMacroUsageParameterPositions(0, macroPosition, beginPosition, endPosition, true);
     } else {
         for(;;) {
             getActualMacroArgument(previousLexem, &lexem, macroPosition, &beginPosition, &endPosition,
@@ -1813,7 +1813,7 @@ static LexInput *getActualMacroArguments(MacroBody *macroBody, Position *macroPo
         }
     }
     if (argumentIndex!=0) {
-        handleMacroUsageParameterPositions(argumentIndex, macroPosition, beginPosition, endPosition, 1);
+        handleMacroUsageParameterPositions(argumentIndex, macroPosition, beginPosition, endPosition, true);
     }
     /* fill mising arguments */
     for(;argumentIndex < macroBody->argCount; argumentIndex++) {
