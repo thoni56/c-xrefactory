@@ -216,6 +216,14 @@ void putCompletionLexem(LexemBuffer *lb, CharacterBuffer *cb, int len) {
                            columnPosition(cb) - len);
 }
 
+void putFloatingPointLexem(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int lexemStartingColumn,
+                         int lexStartFilePos) {
+    putLexemCode(lb, lexem);
+    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+    putLexemInt(lb, absoluteFilePosition(cb) - lexStartFilePos);
+}
+
+
 
 //
 // Get functions

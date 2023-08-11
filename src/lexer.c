@@ -53,7 +53,7 @@ static void passComment(CharacterBuffer *cb) {
 }
 
 
-static LexemCode constantType(CharacterBuffer *cb, int *ch) {
+static LexemCode scanConstantType(CharacterBuffer *cb, int *ch) {
     LexemCode rlex;
 
     rlex = CONSTANT;
@@ -74,7 +74,7 @@ static LexemCode constantType(CharacterBuffer *cb, int *ch) {
 }
 
 
-static LexemCode floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
+static LexemCode scanFloatingPointConstant(CharacterBuffer *cb, int *chPointer) {
     int ch = *chPointer;
     LexemCode rlex;
 
@@ -324,14 +324,12 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             if (ch == '.' || ch=='e' || ch=='E'
                 || ((ch=='d' || ch=='D'|| ch=='f' || ch=='F') && LANGUAGE(LANG_JAVA))) {
                 /* floating point */
-                lexem = floatingPointConstant(cb, &ch);
-                putLexemCode(lb, lexem);
-                putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
-                putLexemInt(lb, absoluteFilePosition(cb)-lexStartFilePos);
+                lexem = scanFloatingPointConstant(cb, &ch);
+                putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, lexStartFilePos);
                 goto nextLexem;
             }
             /* integer */
-            lexem = constantType(cb, &ch);
+            lexem = scanConstantType(cb, &ch);
             putLexemCode(lb, lexem);
             putLexemInt(lb, val);
             putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
@@ -360,10 +358,8 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     /* floating point constant */
                     ungetChar(cb, ch);
                     ch = '.';
-                    lexem = floatingPointConstant(cb, &ch);
-                    putLexemCode(lb, lexem);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
-                    putLexemInt(lb, absoluteFilePosition(cb)-lexStartFilePos);
+                    lexem = scanFloatingPointConstant(cb, &ch);
+                    putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, lexStartFilePos);
                     goto nextLexem;
                 } else {
                     putLexemCode(lb, '.');
