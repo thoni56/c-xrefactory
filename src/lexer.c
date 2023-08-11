@@ -27,7 +27,7 @@ void gotOnLineCxRefs(Position *position) {
 /*                         Lexical Analysis                          */
 /* ***************************************************************** */
 
-static void passComment(CharacterBuffer *cb) {
+static void scanComment(CharacterBuffer *cb) {
     int ch;
     char oldCh;
     /*  ******* a block comment ******* */
@@ -218,8 +218,8 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
         && (apos >= options.olCursorPosition || (ch == -1 && apos + 1 == options.olCursorPosition))) {
         log_trace("offset for current lexem, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
                   fileOffsetForCurrentLexem, options.olCursorPosition, apos, ch);
-        LexemCode thisLexToken = peekLexTokenAt(startOfCurrentLexem);
-        if (thisLexToken == IDENTIFIER) {
+        LexemCode thisLexemCode = peekLexemCodeAt(startOfCurrentLexem);
+        if (thisLexemCode == IDENTIFIER) {
             int len = options.olCursorPosition - fileOffsetForCurrentLexem;
             log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + TOKEN_SIZE, len,
                       strlen(startOfCurrentLexem + TOKEN_SIZE));
@@ -228,8 +228,8 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
                 char *backpatchP = startOfCurrentLexem;
                 /* We want to overwrite with an IDENT_TO_COMPLETE,
                  * which we don't want to know how many bytes it
-                 * takes, so we use ...WithPointer() which advances... */
-                putLexTokenAt(IDENT_TO_COMPLETE, &backpatchP);
+                 * takes, so we use ...At() which also advances... */
+                putLexemCodeAt(IDENT_TO_COMPLETE, &backpatchP);
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in already written identifier */
@@ -245,7 +245,7 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
                 // completion after an identifier
                 putCompletionLexem(lb, characterBuffer, apos - options.olCursorPosition);
             }
-        } else if ((thisLexToken == LINE_TOKEN || thisLexToken == STRING_LITERAL)
+        } else if ((thisLexemCode == LINE_TOKEN || thisLexemCode == STRING_LITERAL)
                    && (apos != options.olCursorPosition)) {
             // completion inside special lexems, do
             // NO COMPLETION
@@ -687,7 +687,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     }   /* !!! COPY BLOCK TO '/n' */
 
                     int line = lineNumberFrom(cb);
-                    passComment(cb);
+                    scanComment(cb);
                     putLexemLines(lb, lineNumberFrom(cb)-line);
                     ch = getChar(cb);
                     goto nextLexem;
@@ -758,7 +758,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                             ungetChar(cb, ch);
                             ch = '*';
                             int line = lineNumberFrom(cb);
-                            passComment(cb);
+                            scanComment(cb);
                             putLexemLines(lb, lineNumberFrom(cb)-line);
                             ch = getChar(cb);
                             ch = skipBlanks(cb, ch);
@@ -874,7 +874,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     if (currentLexemOffset <= options.olCursorPosition
                         && absoluteFilePosition(cb) >= options.olCursorPosition) {
                         gotOnLineCxRefs(&position);
-                        LexemCode lastlex = peekLexTokenAt(startOfCurrentLexem);
+                        LexemCode lastlex = peekLexemCodeAt(startOfCurrentLexem);
                         if (lastlex == IDENTIFIER) {
                             strcpy(s_olstring, startOfCurrentLexem+TOKEN_SIZE);
                         }

@@ -64,7 +64,7 @@ void backpatchLexemCodeAt(LexemCode lexem, void *writePointer) {
     putLexShortAt(lexem, &pointer);
 }
 
-LexemCode getLexTokenAt(char **readPointerP) {
+LexemCode getLexemCodeAt(char **readPointerP) {
     return (LexemCode)getLexShortAt(readPointerP);
 }
 
@@ -72,7 +72,7 @@ LexemCode getLexToken(LexemBuffer *lb) {
     return (LexemCode)getLexShortAt(&lb->read);
 }
 
-LexemCode peekLexTokenAt(char *readPointer) {
+LexemCode peekLexemCodeAt(char *readPointer) {
     char *pointer = readPointer;
     return (LexemCode)peekLexShort(&pointer);
 }
@@ -87,7 +87,7 @@ void putLexemInt(LexemBuffer *lb, int value) {
     *lb->write++ = tmp%256; tmp /= 256;
 }
 
-int getLexIntAt(char **readPointerP) {
+int getLexemIntAt(char **readPointerP) {
     unsigned int value;
     value = **(unsigned char**)readPointerP;
     (*readPointerP)++;
@@ -233,7 +233,7 @@ void putFloatingPointLexem(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb
 
 
 
-Position getLexPositionAt(char **readPointerP) {
+Position getLexemPositionAt(char **readPointerP) {
     Position pos;
     pos.file = getLexCompacted(readPointerP);
     pos.line = getLexCompacted(readPointerP);
@@ -249,24 +249,24 @@ Position getLexemPosition(LexemBuffer *lb) {
     return pos;
 }
 
-Position peekLexPositionAt(char *readPointer) {
+Position peekLexemPositionAt(char *readPointer) {
     char *pointer = readPointer;
-    return getLexPositionAt(&pointer);
+    return getLexemPositionAt(&pointer);
 }
 
 /* DEPRECATED - writing with pointer to pointer that it advances, a
  * lot of code in yylex.c still uses this bad interface */
-void putLexTokenAt(LexemCode lexem, char **writePointerP) {
+void putLexemCodeAt(LexemCode lexem, char **writePointerP) {
     putLexShortAt(lexem, writePointerP);
 }
 
-void putLexPositionAt(Position position, char **writePointerP) {
+void putLexemPositionAt(Position position, char **writePointerP) {
     putLexCompacted(position.file, writePointerP);
     putLexCompacted(position.line, writePointerP);
     putLexCompacted(position.col, writePointerP);
 }
 
-void putLexIntAt(int integer, char **writePointerP) {
+void putLexemIntAt(int integer, char **writePointerP) {
     unsigned tmp;
     tmp = integer;
     *(*writePointerP)++ = tmp%256; tmp /= 256;

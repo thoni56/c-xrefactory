@@ -43,7 +43,7 @@ Ensure(Lexer, can_scan_a_floating_point_number) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    assert_that(getLexTokenAt(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
+    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
 }
 
 Ensure(Lexer, can_scan_include_next) {
@@ -53,9 +53,9 @@ Ensure(Lexer, can_scan_include_next) {
     initCharacterBufferFromString(&characterBuffer, inputString);
 
     assert_that(buildLexemFromCharacters(&characterBuffer, &lexemBuffer), is_true);
-    getLexTokenAt(&lexemPointer);
-    getLexPositionAt(&lexemPointer);
-    assert_that(getLexTokenAt(&lexemPointer), is_equal_to(CPP_INCLUDE_NEXT));
-    getLexPositionAt(&lexemPointer);
-    assert_that(getLexTokenAt(&lexemPointer), is_equal_to(STRING_LITERAL));
+    getLexemCodeAt(&lexemPointer);
+    getLexemPositionAt(&lexemPointer);
+    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(CPP_INCLUDE_NEXT));
+    getLexemPositionAt(&lexemPointer);
+    assert_that(getLexemCodeAt(&lexemPointer), is_equal_to(STRING_LITERAL));
 }

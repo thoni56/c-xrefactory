@@ -47,9 +47,9 @@ extern void putFloatingPointLexem(LexemBuffer *lb, LexemCode lexem, CharacterBuf
                                   int lexemStartingColumn, int lexStartFilePos);
 
 /* DEPRECATED? - Writes at where writePointer points to and advances it */
-extern void putLexTokenAt(LexemCode lexem, char **writePointerP);
-extern void putLexPositionAt(Position position, char **writePointerP);
-extern void putLexIntAt(int integer, char **writePointerP);
+extern void putLexemCodeAt(LexemCode lexem, char **writePointerP);
+extern void putLexemPositionAt(Position position, char **writePointerP);
+extern void putLexemIntAt(int integer, char **writePointerP);
 
 /* Get semantically meaningful lexems */
 extern Position getLexemPosition(LexemBuffer *lb);
@@ -58,13 +58,12 @@ extern Position getLexemPosition(LexemBuffer *lb);
 /* TODO: These should be replaced by functions only taking a LexemBuffer... */
 
 /* Reads where a readPointer points and advances it */
-extern LexemCode getLexTokenAt(char **readPointerP);
-extern int getLexIntAt(char **readPointerP);
-extern Position getLexPositionAt(char **readPointerP);
+extern LexemCode getLexemCodeAt(char **readPointerP);
+extern int getLexemIntAt(char **readPointerP);
+extern Position getLexemPositionAt(char **readPointerP);
 
-extern LexemCode peekLexTokenAt(char *readPointer);
-
-extern Position peekLexPositionAt(char *readPointer);
+extern LexemCode peekLexemCodeAt(char *readPointer);
+extern Position peekLexemPositionAt(char *readPointer);
 
 extern void initLexemBuffer(LexemBuffer *buffer);
 
