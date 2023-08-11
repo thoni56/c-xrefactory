@@ -124,11 +124,6 @@ static void putCompletionLexem(LexemBuffer *lb, CharacterBuffer *cb, int len) {
                            columnPosition(cb) - len);
 }
 
-static void putLexemWithPosition(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int column) {
-    putLexemCode(lb, lexem);
-    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
-}
-
 static int putIncludeString(LexemBuffer *lb, CharacterBuffer *cb, int ch) {
     ch = skipBlanks(cb, ch);
     if (ch == '\"' || ch == '<') {

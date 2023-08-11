@@ -39,6 +39,7 @@ extern void putLexemLines(LexemBuffer *lb, int lines);
 extern int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffer, int ch);
 extern void putLexemPosition(LexemBuffer *lb, Position position);
 extern void putLexemPositionFields(LexemBuffer *lb, int file, int line, int col);
+extern void putLexemWithPosition(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int column);
 
 /* DEPRECATED? - Writes at where writePointer points to and advances it */
 extern void putLexTokenAt(LexemCode lexem, char **writePointerP);
