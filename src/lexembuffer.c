@@ -190,6 +190,32 @@ void putLexemWithPosition(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb,
     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
 }
 
+int putIncludeString(LexemBuffer *lb, CharacterBuffer *cb, int ch) {
+    ch = skipBlanks(cb, ch);
+    if (ch == '\"' || ch == '<') {
+        char terminator = ch == '\"' ? '\"' : '>';
+        int  col        = columnPosition(cb);
+        putLexemCode(lb, STRING_LITERAL);
+        do {
+            putLexemChar(lb, ch);
+            ch = getChar(cb);
+        } while (ch != terminator && ch != '\n');
+        putLexemChar(lb, 0);
+        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), col);
+        if (ch == terminator)
+            ch = getChar(cb);
+    }
+
+    return ch;
+}
+
+void putCompletionLexem(LexemBuffer *lb, CharacterBuffer *cb, int len) {
+    putLexemCode(lb, IDENT_TO_COMPLETE);
+    putLexemChar(lb, '\0');
+    putLexemPositionFields(lb, cb->fileNumber, cb->lineNumber,
+                           columnPosition(cb) - len);
+}
+
 
 //
 // Get functions
