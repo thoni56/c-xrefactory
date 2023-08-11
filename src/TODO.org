@@ -14,13 +14,10 @@ Some useful commands:
   <M-Right>     demote heading
   <M-S-Right>   demote subtree
 
+
 There are a *lot* of things to do to make c-xref into modern C.
 
 Current Mikado:
-* DOING Fix a test for removing last parameter of a macro (in test_delete_last_macro_arg)
-It is not working due to some strange issue with "Parameter number out
-of limits" when removing the parameter from the actual arguments list
-* DOING A switch that creates a list of commands given to c-xref so that they can be replayed exactly later
 * TRY to make LexemBuffer interface just take LexemBuffer
 ** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
 *** DONE to add a LexemBuffer as argument to putLexToken()
@@ -58,6 +55,7 @@ of limits" when removing the parameter from the actual arguments list
 *** DONE Use LexemBuffer as argument to putLexInt()
 **** DONE lb->end instead of local variable destination in processDefineDirective()
 ***** DONE Use putLexXXXWithPointer() for now
+** DOING Move put...() for complete Lexems (including position, string, ...) to lexembuffer.c
 ** TRY to use LexemBuffer as argument to all getLexXXX() functions
 *** TRY to use LexemBuffer in getLexInt()
 **** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer
@@ -69,6 +67,7 @@ of limits" when removing the parameter from the actual arguments list
 **** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
 *** TRY to use LexemBuffer in getLexPosition()
 ** TRY to replace putLexXXXWithPointer() in yylex.c
+* DOING A switch that creates a list of commands given to c-xref so that they can be replayed exactly later
 * DOING Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
@@ -207,6 +206,9 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
 
+* DONE Fix a test for removing last parameter of a macro (in test_delete_last_macro_arg)
+It is not working due to some strange issue with "Parameter number out
+of limits" when removing the parameter from the actual arguments list
 * DONE All fillXXX() should not be mocked but have the same body as the real one
 * DONE Modules. Better use of modules (Clean Code/Architecture/Hexagonal)
   The hash tables and lists are such candidates. If we do that it would be much

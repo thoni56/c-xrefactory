@@ -5,6 +5,7 @@
 #include "lexembuffer.h"
 #include "log.h"
 
+#include "globals.mock"
 #include "commons.mock"
 #include "fileio.mock"
 #include "zlib.mock"

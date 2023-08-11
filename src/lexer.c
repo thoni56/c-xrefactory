@@ -108,25 +108,6 @@ static LexemCode floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 }
 
 
-/* Scans an identifier from CharacterBuffer and stores it in
- * LexemBuffer. 'ch' is the first character in the identifier. Returns
- * first character not part of the identifier */
-static int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffer, int ch) {
-    int column;
-
-    column = columnPosition(characterBuffer);
-    putLexemCode(lexemBuffer, IDENTIFIER);
-    do {
-        putLexemChar(lexemBuffer, ch);
-        ch = getChar(characterBuffer);
-    } while (isalpha(ch) || isdigit(ch) || ch == '_'
-             || (ch == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
-    putLexemChar(lexemBuffer, 0);
-    putLexemPositionFields(lexemBuffer, characterBuffer->fileNumber, characterBuffer->lineNumber, column);
-
-    return ch;
-}
-
 static void noteNewLexemPosition(LexemBuffer *lb, CharacterBuffer *cb) {
     int index = lb->ringIndex % LEX_POSITIONS_RING_SIZE;
     lb->fileOffsetRing[index]    = absoluteFilePosition(cb);

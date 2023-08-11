@@ -22,19 +22,21 @@ typedef struct {
 } LexemBuffer;
 
 
+/* LexemBuffer manipulation */
 extern void shiftAnyRemainingLexems(LexemBuffer *lb);
 
 extern void setLexemStreamWrite(LexemBuffer *lb, void *end);
 extern void *getLexemStreamWrite(LexemBuffer *lb);
 
-/* WRITE */
+/* Put elementary values */
 extern void putLexemInt(LexemBuffer *lb, int value);
 extern void putLexemChar(LexemBuffer *lb, char ch);
-extern void putLexemLines(LexemBuffer *lb, int lines);
-
 extern void putLexemCode(LexemBuffer *lb, LexemCode lexem);
-extern void backpatchLexemCodeAt(LexemCode lexem, void *writePointer);
 
+/* Put semantically meaningful complete lexems including position, string, value, ... */
+extern void backpatchLexemCodeAt(LexemCode lexem, void *writePointer);
+extern void putLexemLines(LexemBuffer *lb, int lines);
+extern int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffer, int ch);
 extern void putLexemPosition(LexemBuffer *lb, Position position);
 extern void putLexemPositionFields(LexemBuffer *lb, int file, int line, int col);
 

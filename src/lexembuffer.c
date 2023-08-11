@@ -3,7 +3,12 @@
 #include "characterreader.h"
 #include "head.h"
 #include "commons.h"
+#include "globals.h"
 
+//
+// Basic manipulation, these should preferably be private in favour
+// for the functions to put complete lexems below
+//
 
 void initLexemBuffer(LexemBuffer *buffer) {
     buffer->read = buffer->lexemStream;
@@ -49,7 +54,6 @@ static int peekLexShort(char **readPointerP) {
     return first + 256*second;
 }
 
-/* Token */
 void putLexemCode(LexemBuffer *lb, LexemCode lexem) {
     putLexShortAt(lexem, &(lb->write));
 }
@@ -136,6 +140,11 @@ protected int getLexCompacted(char **readPointerP) {
     return value;
 }
 
+
+//
+// Put complete lexems (including position, string, ...)
+//
+
 /* Lines */
 void putLexemLines(LexemBuffer *lb, int lines) {
     putLexemCode(lb, LINE_TOKEN);
@@ -156,6 +165,34 @@ void putLexemPosition(LexemBuffer *lb, Position position) {
     putLexCompacted(position.line, &(lb->write));
     putLexCompacted(position.col, &(lb->write));
 }
+
+/* Scans an identifier from CharacterBuffer and stores it in
+ * LexemBuffer. 'ch' is the first character in the identifier. Returns
+ * first character not part of the identifier */
+int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffer, int ch) {
+    int column;
+
+    column = columnPosition(characterBuffer);
+    putLexemCode(lexemBuffer, IDENTIFIER);
+    do {
+        putLexemChar(lexemBuffer, ch);
+        ch = getChar(characterBuffer);
+    } while (isalpha(ch) || isdigit(ch) || ch == '_'
+             || (ch == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
+    putLexemChar(lexemBuffer, 0);
+    putLexemPositionFields(lexemBuffer, characterBuffer->fileNumber, characterBuffer->lineNumber, column);
+
+    return ch;
+}
+
+
+
+//
+// Get functions
+//
+
+
+
 
 Position getLexPositionAt(char **readPointerP) {
     Position pos;

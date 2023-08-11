@@ -89,7 +89,6 @@ typedef enum language {
 
 /* *********************************************************************** */
 
-#define LANGUAGE(langBit) ((currentLanguage & (langBit)) != 0)
 #define ABS(xxx) ((xxx>0)?(xxx):(-(xxx)))
 
 
