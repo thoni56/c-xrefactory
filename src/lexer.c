@@ -111,7 +111,7 @@ static LexemCode floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
 /* Scans an identifier from CharacterBuffer and stores it in
  * LexemBuffer. 'ch' is the first character in the identifier. Returns
  * first character not part of the identifier */
-static int putIdentifierLexem(CharacterBuffer *characterBuffer, int ch, LexemBuffer *lexemBuffer) {
+static int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffer, int ch) {
     int column;
 
     column = columnPosition(characterBuffer);
@@ -127,7 +127,7 @@ static int putIdentifierLexem(CharacterBuffer *characterBuffer, int ch, LexemBuf
     return ch;
 }
 
-static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
+static void noteNewLexemPosition(LexemBuffer *lb, CharacterBuffer *cb) {
     int index = lb->ringIndex % LEX_POSITIONS_RING_SIZE;
     lb->fileOffsetRing[index]    = absoluteFilePosition(cb);
     lb->positionRing[index].file = cb->fileNumber;
@@ -136,19 +136,19 @@ static void noteNewLexemPosition(CharacterBuffer *cb, LexemBuffer *lb) {
     lb->ringIndex++;
 }
 
-static void putCompletionLexem(CharacterBuffer *cb, LexemBuffer *lb, int len) {
+static void putCompletionLexem(LexemBuffer *lb, CharacterBuffer *cb, int len) {
     putLexemCode(lb, IDENT_TO_COMPLETE);
     putLexemChar(lb, '\0');
     putLexemPositionFields(lb, cb->fileNumber, cb->lineNumber,
                            columnPosition(cb) - len);
 }
 
-static void putLexemWithPosition(LexemCode lexem, CharacterBuffer *cb, LexemBuffer *lb, int column) {
+static void putLexemWithPosition(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int column) {
     putLexemCode(lb, lexem);
     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
 }
 
-static int putIncludeString(CharacterBuffer *cb, LexemBuffer *lb, int ch) {
+static int putIncludeString(LexemBuffer *lb, CharacterBuffer *cb, int ch) {
     ch = skipBlanks(cb, ch);
     if (ch == '\"' || ch == '<') {
         char terminator = ch == '\"' ? '\"' : '>';
@@ -213,7 +213,7 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
     char  preprocessorWord[30];
     int   column;
 
-    noteNewLexemPosition(cb, lb);
+    noteNewLexemPosition(lb, cb);
 
     column = columnPosition(cb);
     ch     = extractPreprocessorWord(cb, preprocessorWord);
@@ -229,19 +229,19 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
     case CPP_ENDIF:
     case CPP_PRAGMA:
     case CPP_LINE:
-        putLexemWithPosition(lexem, cb, lb, column);
+        putLexemWithPosition(lb, lexem, cb, column);
         break;
     case CPP_INCLUDE:
     case CPP_INCLUDE_NEXT:
-        putLexemWithPosition(lexem, cb, lb, column);
-        ch = putIncludeString(cb, lb, ch);
+        putLexemWithPosition(lb, lexem, cb, column);
+        ch = putIncludeString(lb, cb, ch);
         break;
     case CPP_DEFINE0: {
         void *backpatchLexemP = getLexemStreamWrite(lb);
-        putLexemWithPosition(lexem, cb, lb, column);
+        putLexemWithPosition(lb, lexem, cb, column);
         ch = skipBlanks(cb, ch);
-        noteNewLexemPosition(cb, lb);
-        ch = putIdentifierLexem(cb, ch, lb);
+        noteNewLexemPosition(lb, cb);
+        ch = putIdentifierLexem(lb, cb, ch);
         if (ch == '(') {
             /* Discovered parameters so backpatch the previous lexem
              * code (CPP_DEFINE0) to indicate that this is not a text
@@ -293,7 +293,7 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
                 log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
             } else {
                 // completion after an identifier
-                putCompletionLexem(characterBuffer, lb, apos - options.olCursorPosition);
+                putCompletionLexem(lb, characterBuffer, apos - options.olCursorPosition);
             }
         } else if ((thisLexToken == LINE_TOKEN || thisLexToken == STRING_LITERAL)
                    && (apos != options.olCursorPosition)) {
@@ -301,7 +301,7 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
             // NO COMPLETION
         } else {
             // completion after another lexem
-            putCompletionLexem(characterBuffer, lb, apos - options.olCursorPosition);
+            putCompletionLexem(lb, characterBuffer, apos - options.olCursorPosition);
         }
     }
 
@@ -335,12 +335,12 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             ungetChar(cb, ch);
             break;
         }
-        noteNewLexemPosition(cb, lb);
+        noteNewLexemPosition(lb, cb);
         startOfCurrentLexem = getLexemStreamWrite(lb);
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            ch = putIdentifierLexem(cb, ch, lb);
+            ch = putIdentifierLexem(lb, cb, ch);
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
