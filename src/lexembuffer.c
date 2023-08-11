@@ -185,7 +185,7 @@ int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffe
     return ch;
 }
 
-void putLexemWithPosition(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int column) {
+void putLexemWithColumn(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int column) {
     putLexemCode(lb, lexem);
     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);
 }

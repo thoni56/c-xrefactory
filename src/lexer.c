@@ -179,16 +179,16 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
     case CPP_ENDIF:
     case CPP_PRAGMA:
     case CPP_LINE:
-        putLexemWithPosition(lb, lexem, cb, column);
+        putLexemWithColumn(lb, lexem, cb, column);
         break;
     case CPP_INCLUDE:
     case CPP_INCLUDE_NEXT:
-        putLexemWithPosition(lb, lexem, cb, column);
+        putLexemWithColumn(lb, lexem, cb, column);
         ch = putIncludeString(lb, cb, ch);
         break;
     case CPP_DEFINE0: {
         void *backpatchLexemP = getLexemStreamWrite(lb);
-        putLexemWithPosition(lb, lexem, cb, column);
+        putLexemWithColumn(lb, lexem, cb, column);
         ch = skipBlanks(cb, ch);
         noteNewLexemPosition(lb, cb);
         ch = putIdentifierLexem(lb, cb, ch);
@@ -232,7 +232,7 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
                 putLexemCodeAt(IDENT_TO_COMPLETE, &backpatchP);
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
-                    /* Move to position cursor is on in already written identifier */
+                    /* Move to position cursor is on in the already written identifier */
                     /* We can use the backpatchP since it has moved to begining of string */
                     setLexemStreamWrite(lb, backpatchP + len);
                     /* Terminate identifier here */
@@ -344,15 +344,13 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     ch = getChar(cb);
                     if (ch == '.') {
                         ch = getChar(cb);
-                        putLexemCode(lb, ELLIPSIS);
-                        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                        putLexemWithColumn(lb, ELLIPSIS, cb, lexemStartingColumn);
                         goto nextLexem;
                     } else {
                         ungetChar(cb, ch);
                         ch = '.';
                     }
-                    putLexemCode(lb, '.');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '.', cb, lexemStartingColumn);
                     goto nextLexem;
                 } else if (isdigit(ch)) {
                     /* floating point constant */
@@ -362,49 +360,41 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, lexStartFilePos);
                     goto nextLexem;
                 } else {
-                    putLexemCode(lb, '.');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '.', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
 
             case '-':
                 ch = getChar(cb);
                 if (ch=='=') {
-                    putLexemCode(lb, SUB_ASSIGN);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, SUB_ASSIGN, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='-') {
-                    putLexemCode(lb, DEC_OP);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, DEC_OP, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='>' && LANGUAGE(LANG_C|LANG_YACC)) {
                     ch = getChar(cb);
-                    putLexemCode(lb, PTR_OP);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, PTR_OP, cb, lexemStartingColumn);
                     goto nextLexem;
                 } else {
-                    putLexemCode(lb, '-');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '-', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
 
             case '+':
                 ch = getChar(cb);
                 if (ch == '=') {
-                    putLexemCode(lb, ADD_ASSIGN);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, ADD_ASSIGN, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch == '+') {
-                    putLexemCode(lb, INC_OP);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, INC_OP, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
-                    putLexemCode(lb, '+');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '+', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
 
@@ -415,33 +405,27 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     if(ch=='>' && LANGUAGE(LANG_JAVA)) {
                         ch = getChar(cb);
                         if(ch=='=') {
-                            putLexemCode(lb, URIGHT_ASSIGN);
-                            putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                            putLexemWithColumn(lb, URIGHT_ASSIGN, cb, lexemStartingColumn);
                             ch = getChar(cb);
                             goto nextLexem;
                         } else {
-                            putLexemCode(lb, URIGHT_OP);
-                            putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                            putLexemWithColumn(lb, URIGHT_OP, cb, lexemStartingColumn);
                             goto nextLexem;
                         }
                     } else if(ch=='=') {
-                        putLexemCode(lb, RIGHT_ASSIGN);
-                        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                        putLexemWithColumn(lb, RIGHT_ASSIGN, cb, lexemStartingColumn);
                         ch = getChar(cb);
                         goto nextLexem;
                     } else {
-                        putLexemCode(lb, RIGHT_OP);
-                        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                        putLexemWithColumn(lb, RIGHT_OP, cb, lexemStartingColumn);
                         goto nextLexem;
                     }
                 } else if (ch == '=') {
-                    putLexemCode(lb, GE_OP);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, GE_OP, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
-                    putLexemCode(lb, '>');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '>', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
 
@@ -450,77 +434,65 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 if (ch == '<') {
                     ch = getChar(cb);
                     if(ch=='=') {
-                        putLexemCode(lb, LEFT_ASSIGN);
-                        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                        putLexemWithColumn(lb, LEFT_ASSIGN, cb, lexemStartingColumn);
                         ch = getChar(cb);
                         goto nextLexem;
                     } else {
-                        putLexemCode(lb, LEFT_OP);
-                        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                        putLexemWithColumn(lb, LEFT_OP, cb, lexemStartingColumn);
                         goto nextLexem;
                     }
                 } else if (ch == '=') {
-                    putLexemCode(lb, LE_OP);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, LE_OP, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
-                    putLexemCode(lb, '<');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '<', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
 
             case '*':
                 ch = getChar(cb);
                 if (ch == '=') {
-                    putLexemCode(lb, MUL_ASSIGN);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, MUL_ASSIGN, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
-                    putLexemCode(lb, '*');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '*', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
 
             case '%':
                 ch = getChar(cb);
                 if (ch == '=') {
-                    putLexemCode(lb, MOD_ASSIGN);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, MOD_ASSIGN, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 }
                 /*&
                   else if (LANGUAGE(LANG_YACC) && ch == '{') {
-                      putLexemCode(lb, YACC_PERC_LPAR);
-                      putLexemPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn);
+                      putLexemWithColumn(lb, YACC_PERC_LPAR, cb, lexemStartingColumn);
                       ch = getChar(cb);
                       goto nextLexem;
                   }
                   else if (LANGUAGE(LANG_YACC) && ch == '}') {
-                      putLexemCode(lb, YACC_PERC_RPAR);
-                      putLexemPositionFields(lb, fileNumberFrom(lb), lineNumberFrom(lb), lexemStartingColumn);
+                      putLexemWithColumn(lb, YACC_PERC_RPAR, cb, lexemStartingColumn);
                       ch = getChar(cb);
                       goto nextLexem;
                   }
                   &*/
                 else {
-                    putLexemCode(lb, '%');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '%', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
 
             case '&':
                 ch = getChar(cb);
                 if (ch == '=') {
-                    putLexemCode(lb, AND_ASSIGN);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, AND_ASSIGN, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch == '&') {
-                    putLexemCode(lb, AND_OP);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, AND_OP, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 }
@@ -533,72 +505,61 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     } else {
                         ungetChar(cb, ch);
                         ch = '*';
-                        putLexemCode(lb, '&');
-                        putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                        putLexemWithColumn(lb, '&', cb, lexemStartingColumn);
                         goto nextLexem;
                     }
                 } else {
-                    putLexemCode(lb, '&');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '&', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
 
             case '^':
                 ch = getChar(cb);
                 if (ch == '=') {
-                    putLexemCode(lb, XOR_ASSIGN);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, XOR_ASSIGN, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
-                    putLexemCode(lb, '^');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '^', cb, lexemStartingColumn);
                     goto nextLexem;
                 }
 
             case '|':
                 ch = getChar(cb);
                 if (ch == '=') {
-                    putLexemCode(lb, OR_ASSIGN);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, OR_ASSIGN, cb, lexemStartingColumn);
                     ch = getChar(cb);
                 } else if (ch == '|') {
-                    putLexemCode(lb, OR_OP);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, OR_OP, cb, lexemStartingColumn);
                     ch = getChar(cb);
                 } else {
-                    putLexemCode(lb, '|');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '|', cb, lexemStartingColumn);
                 }
                 goto nextLexem;
 
             case '=':
                 ch = getChar(cb);
                 if (ch == '=') {
-                    putLexemCode(lb, EQ_OP);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, EQ_OP, cb, lexemStartingColumn);
                     ch = getChar(cb);
                 } else {
-                    putLexemCode(lb, '=');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '=', cb, lexemStartingColumn);
                 }
                 goto nextLexem;
 
             case '!':
                 ch = getChar(cb);
                 if (ch == '=') {
-                    putLexemCode(lb, NE_OP);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, NE_OP, cb, lexemStartingColumn);
                     ch = getChar(cb);
-                } else {putLexemCode(lb, '!');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                } else {
+                    putLexemWithColumn(lb, '!', cb, lexemStartingColumn);
                 }
                 goto nextLexem;
 
             case ':':
                 ch = getChar(cb);
-                putLexemCode(lb, ':');
-                putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                putLexemWithColumn(lb, ':', cb, lexemStartingColumn);
                 goto nextLexem;
 
             case '\'': {
@@ -671,8 +632,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             case '/':
                 ch = getChar(cb);
                 if (ch == '=') {
-                    putLexemCode(lb, DIV_ASSIGN);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, DIV_ASSIGN, cb, lexemStartingColumn);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='*') {
@@ -715,8 +675,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     }
                     putLexemLines(lb, lineNumberFrom(cb)-line);
                 } else {
-                    putLexemCode(lb, '/');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '/', cb, lexemStartingColumn);
                 }
                 goto nextLexem;
 
@@ -729,8 +688,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     putLexemLines(lb, 1);
                     ch = getChar(cb);
                 } else {
-                    putLexemCode(lb, '\\');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '\\', cb, lexemStartingColumn);
                 }
                 goto nextLexem;
 
@@ -768,8 +726,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         ch = '/';
                     }
                 }
-                putLexemCode(lb, '\n');
-                putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                putLexemWithColumn(lb, '\n', cb, lexemStartingColumn);
                 if (ch == '#' && LANGUAGE(LANG_C | LANG_YACC)) {
                     ch = processCppToken(cb, lb);
                 }
@@ -779,11 +736,9 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '#') {
                     ch = getChar(cb);
-                    putLexemCode(lb, CPP_COLLATION);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, CPP_COLLATION, cb, lexemStartingColumn);
                 } else {
-                    putLexemCode(lb, '#');
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, '#', cb, lexemStartingColumn);
                 }
                 goto nextLexem;
 
@@ -793,8 +748,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
 
             default:
                 if (ch >= 32) {         /* small chars ignored */
-                    putLexemCode(lb, ch);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+                    putLexemWithColumn(lb, ch, cb, lexemStartingColumn);
                 }
                 ch = getChar(cb);
                 goto nextLexem;
