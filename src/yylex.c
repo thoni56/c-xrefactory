@@ -138,7 +138,6 @@ void initAllInputs(void) {
     macroStackIndex=0;
     isProcessingPreprocessorIf = false;
     resetMacroArgumentTable();
-    s_olstring[0]=0;
     olstringFound = false;
     olstringServed = false;
     olstringInMacroBody = NULL;
@@ -586,7 +585,7 @@ protected void processIncludeDirective(Position *includePosition, bool is_includ
     ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
     beginningOfLexem = currentInput.read;
-    if (lexem == STRING_LITERAL) {         /* Also bracketed "<something>" */
+    if (lexem == STRING_LITERAL) {         /* A bracketed "<something>" is also stored as a string literal */
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, NULL, NULL, true);
         processInclude2(includePosition, *beginningOfLexem, beginningOfLexem+1, is_include_next);
     } else {

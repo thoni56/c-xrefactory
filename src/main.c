@@ -174,7 +174,6 @@ static void initializationsPerInvocation(void) {
     for (int i=0; i<SPP_MAX; i++)
         parsedPositions[i] = noPosition;
     cxRefPosition = noPosition;
-    s_olstring[0]=0;
     olstringFound = false;
     olstringServed = false;
     olstringInMacroBody = NULL;

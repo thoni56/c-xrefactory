@@ -828,10 +828,6 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     if (currentLexemOffset <= options.olCursorPosition
                         && absoluteFilePosition(cb) >= options.olCursorPosition) {
                         gotOnLineCxRefs(&position);
-                        LexemCode lastlex = peekLexemCodeAt(startOfCurrentLexem);
-                        if (lastlex == IDENTIFIER) {
-                            strcpy(s_olstring, startOfCurrentLexem+TOKEN_SIZE);
-                        }
                     }
                     // TODO: Figure out what the problem was with this for C
                     if (LANGUAGE(LANG_JAVA)) {

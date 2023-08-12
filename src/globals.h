@@ -131,7 +131,6 @@ extern int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 
 /* ********* vars for on-line additions after EOF ****** */
 
-extern char s_olstring[MAX_FUN_NAME_SIZE];
 extern bool olstringFound;
 extern bool olstringServed;
 extern int olstringUsageKind;

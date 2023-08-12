@@ -134,7 +134,6 @@ char *s_javaLangObjectLinkName="java/lang/Object";
 
 /* ********* vars for on-line additions after EOF ****** */
 
-char s_olstring[MAX_FUN_NAME_SIZE];
 bool olstringFound = false;
 bool olstringServed = false;
 int olstringUsageKind = 0;
