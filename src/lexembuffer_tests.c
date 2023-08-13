@@ -215,8 +215,18 @@ Ensure(LexemBuffer, can_write_lexem_at_position_without_changing_pointer) {
     backpatchLexemCodeAt(IDENTIFIER, writePointer);
 
     assert_that(writePointer, is_equal_to(savedWritePointer));
-    assert_that(getLexemCodeAt(&(lb.read)), is_equal_to(IDENTIFIER));
+    assert_that(peekLexemCodeAt(lb.read), is_equal_to(IDENTIFIER));
 }
+
+Ensure(LexemBuffer, can_save_batchpatch_position_and_put_there) {
+    saveBackpatchPosition(&lb);
+    putLexemCode(&lb, CONSTANT);
+
+    backpatchLexemCode(&lb, IDENTIFIER);
+
+    assert_that(peekLexemCodeAt(&(lb.lexemStream[0])), is_equal_to(IDENTIFIER));
+}
+
 
 Ensure(LexemBuffer, can_write_position_with_pointer) {
     Position position = { .file = 1, .line = 2, .col = 3 };

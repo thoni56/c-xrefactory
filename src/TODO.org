@@ -19,6 +19,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 Current Mikado:
 * TRY to make LexemBuffer interface just take LexemBuffer
+** DOING Unify LexInput with LexemBuffer so we can get rid of put/get LexemAt() functions
 ** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
 *** DONE to add a LexemBuffer as argument to putLexToken()
 **** DONE LexemBuffer as argument to putLexLines()
@@ -56,6 +57,7 @@ Current Mikado:
 **** DONE lb->end instead of local variable destination in processDefineDirective()
 ***** DONE Use putLexXXXWithPointer() for now
 ** DOING Move put...() for complete Lexems (including position, string, ...) to lexembuffer.c
+*** DOING  
 ** TRY to use LexemBuffer as argument to all getLexXXX() functions
 *** TRY to use LexemBuffer in getLexInt()
 **** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer

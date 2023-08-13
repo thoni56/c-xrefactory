@@ -64,6 +64,15 @@ void backpatchLexemCodeAt(LexemCode lexem, void *writePointer) {
     putLexShortAt(lexem, &pointer);
 }
 
+void saveBackpatchPosition(LexemBuffer *lb) {
+    lb->backpatchPointer = lb->write;
+}
+
+void backpatchLexemCode(LexemBuffer *lb, LexemCode lexem) {
+    /* Write, and advance, using backpatchPointer */
+    putLexemCodeAt(lexem, &lb->backpatchPointer);
+}
+
 LexemCode getLexemCodeAt(char **readPointerP) {
     return (LexemCode)getLexShortAt(readPointerP);
 }
@@ -207,6 +216,14 @@ int putIncludeString(LexemBuffer *lb, CharacterBuffer *cb, int ch) {
     }
 
     return ch;
+}
+
+void putIntegerLexem(LexemBuffer *lb, LexemCode lexem, long unsigned value, CharacterBuffer *cb,
+                     int lexemStartingColumn, int lexStartFilePos) {
+    putLexemCode(lb, lexem);
+    putLexemInt(lb, value);
+    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+    putLexemInt(lb, absoluteFilePosition(cb) - lexStartFilePos);
 }
 
 void putCompletionLexem(LexemBuffer *lb, CharacterBuffer *cb, int len) {

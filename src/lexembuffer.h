@@ -19,6 +19,9 @@ typedef struct {
     Position positionRing[LEX_POSITIONS_RING_SIZE];
     unsigned fileOffsetRing[LEX_POSITIONS_RING_SIZE];
     int ringIndex;           /* ...Ring[ringIndex%LEX_POSITIONS_RING_SIZE] */
+    char *backpatchPointer; /* Pointer into lexemStream can be saved
+                              * and later backpatched without explicit
+                              * knowledge of buffers and indices... */
 } LexemBuffer;
 
 
@@ -30,7 +33,10 @@ extern void *getLexemStreamWrite(LexemBuffer *lb);
 
 extern void backpatchLexemCodeAt(LexemCode lexem, void *writePointer);
 
-/* Put elementary values */
+extern void saveBackpatchPosition(LexemBuffer *lb);
+extern void backpatchLexemCode(LexemBuffer *lb, LexemCode lexem);
+
+    /* Put elementary values */
 extern void putLexemInt(LexemBuffer *lb, int value);
 extern void putLexemChar(LexemBuffer *lb, char ch);
 extern void putLexemCode(LexemBuffer *lb, LexemCode lexem);
@@ -42,6 +48,8 @@ extern void putLexemPosition(LexemBuffer *lb, Position position);
 extern void putLexemPositionFields(LexemBuffer *lb, int file, int line, int col);
 extern void putLexemWithColumn(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int column);
 extern int  putIncludeString(LexemBuffer *lb, CharacterBuffer *cb, int ch);
+extern void putIntegerLexem(LexemBuffer *lb, LexemCode lexem, long unsigned value, CharacterBuffer *cb,
+                            int lexemStartingColumn, int lexStartFilePos);
 extern void putCompletionLexem(LexemBuffer *lb, CharacterBuffer *cb, int len);
 extern void putFloatingPointLexem(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb,
                                   int lexemStartingColumn, int lexStartFilePos);

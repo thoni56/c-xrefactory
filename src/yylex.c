@@ -1432,7 +1432,7 @@ static void expandMacroArgument(LexInput *argumentInput) {
             char *tmp = currentBufferP;
             assert(foundSymbol!=NULL);
             if (foundSymbol->u.mbody!=NULL && cyclicCall(foundSymbol->u.mbody)) {
-                assert(tmp == currentBufferP);
+                assert(tmp == currentBufferP); /* Is tmp ever different from currentBufferP? */
                 putLexemCodeAt(IDENT_NO_CPP_EXPAND, &tmp);
             }
         }
@@ -1651,12 +1651,12 @@ static char *replaceMacroArguments(LexInput *actualArgumentsInput, char *readBuf
 static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBody, LexInput *actualArgumentsInput,
                                       int actualArgumentCount) {
 
-    /* first make ## collations */
     char *currentBodyLexemP = macroBody->body;
     char *endOfBodyLexems   = macroBody->body + macroBody->size;
     int   bufferSize    = MACRO_BODY_BUFFER_SIZE;
-    char *currentBufferP, *lastBufferP;
     char *buffer;
+    char *currentBufferP, *lastBufferP;
+
     buffer = ppmAllocc(bufferSize + MAX_LEXEM_SIZE, sizeof(char));
     currentBufferP  = buffer;
     lastBufferP = NULL;
@@ -1664,6 +1664,8 @@ static void createMacroBodyAsNewInput(LexInput *inputToSetup, MacroBody *macroBo
         char *lexemStart   = currentBodyLexemP;
         LexemCode lexem = getLexemCodeAt(&currentBodyLexemP);
         getExtraLexemInformationFor(lexem, &currentBodyLexemP, NULL, NULL, NULL, NULL, false);
+
+        /* first make ## collations, if any */
         if (lexem == CPP_COLLATION && lastBufferP != NULL && currentBodyLexemP < endOfBodyLexems) {
             collate(&lastBufferP, &currentBufferP, buffer, &bufferSize, &currentBodyLexemP, actualArgumentsInput);
         } else {

@@ -54,23 +54,23 @@ static void scanComment(CharacterBuffer *cb) {
 
 
 static LexemCode scanConstantType(CharacterBuffer *cb, int *ch) {
-    LexemCode rlex;
+    LexemCode lexem;
 
-    rlex = CONSTANT;
+    lexem = CONSTANT;
     if (LANGUAGE(LANG_JAVA)) {
         if (*ch=='l' || *ch=='L') {
-            rlex = LONG_CONSTANT;
+            lexem = LONG_CONSTANT;
             *ch = getChar(cb);
         }
     } else {
         for(; *ch=='l'||*ch=='L'||*ch=='u'||*ch=='U'; ){
             if (*ch=='l' || *ch=='L')
-                rlex = LONG_CONSTANT;
+                lexem = LONG_CONSTANT;
             *ch = getChar(cb);
         }
     }
 
-    return rlex;
+    return lexem;
 }
 
 
@@ -294,7 +294,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
-            long unsigned val=0;
+            long unsigned integerValue=0;
             lexStartFilePos = absoluteFilePosition(cb);
             if (ch=='0') {
                 ch = getChar(cb);
@@ -302,22 +302,22 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     /* hexadecimal */
                     ch = getChar(cb);
                     while (isdigit(ch)||(ch>='a'&&ch<='f')||(ch>='A'&&ch<='F')) {
-                        if (ch>='a') val = val*16+ch-'a'+10;
-                        else if (ch>='A') val = val*16+ch-'A'+10;
-                        else val = val*16+ch-'0';
+                        if (ch>='a') integerValue = integerValue*16+ch-'a'+10;
+                        else if (ch>='A') integerValue = integerValue*16+ch-'A'+10;
+                        else integerValue = integerValue*16+ch-'0';
                         ch = getChar(cb);
                     }
                 } else {
                     /* octal */
                     while (isdigit(ch) && ch<='8') {
-                        val = val*8+ch-'0';
+                        integerValue = integerValue*8+ch-'0';
                         ch = getChar(cb);
                     }
                 }
             } else {
                 /* decimal */
                 while (isdigit(ch)) {
-                    val = val*10+ch-'0';
+                    integerValue = integerValue*10+ch-'0';
                     ch = getChar(cb);
                 }
             }
@@ -330,10 +330,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             }
             /* integer */
             lexem = scanConstantType(cb, &ch);
-            putLexemCode(lb, lexem);
-            putLexemInt(lb, val);
-            putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
-            putLexemInt(lb, absoluteFilePosition(cb)-lexStartFilePos);
+            putIntegerLexem(lb, lexem, integerValue, cb, lexemStartingColumn, lexStartFilePos);
             goto nextLexem;
         } else switch (ch) {
                 /* ************   special character *********************  */
