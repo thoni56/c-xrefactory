@@ -706,7 +706,7 @@ static EditorMarker *createMarkerAt(EditorBuffer *buf, int offset) {
 
 static EditorMarker *getPointFromOptions(EditorBuffer *buf) {
     assert(buf);
-    return createMarkerAt(buf, refactoringOptions.olCursorPosition);
+    return createMarkerAt(buf, refactoringOptions.olCursorOffset);
 }
 
 static EditorMarker *getMarkFromOptions(EditorBuffer *buf) {

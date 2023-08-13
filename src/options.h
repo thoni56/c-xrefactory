@@ -129,7 +129,7 @@ typedef struct options {
     bool create;
     char *classpath;
     int tabulator;
-    int olCursorPosition;
+    int olCursorOffset;
     int olMarkPos;
     Mode mode;
     bool debug;
