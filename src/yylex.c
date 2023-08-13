@@ -1382,64 +1382,67 @@ static void prependMacroInput(LexInput *argumentBuffer) {
 }
 
 
-static void expandMacroArgument(LexInput *argumentBuffer) {
-    Symbol sd, *memb;
-    char *previousLexem, *nextLexemP, *tbcc;
-    bool failedMacroExpansion;
-    LexemCode lexem;
-    Position position;
-    char *buf;
-    char *bcc;
+static void expandMacroArgument(LexInput *argumentInput) {
+    char *buffer;
+    char *currentBufferP;
     int bufferSize;
 
     bufferSize = MACRO_BODY_BUFFER_SIZE;
 
-    prependMacroInput(argumentBuffer);
+    prependMacroInput(argumentInput);
 
     currentInput.inputType = INPUT_MACRO_ARGUMENT;
-    buf = ppmAllocc(bufferSize+MAX_LEXEM_SIZE, sizeof(char));
-    bcc = buf;
+    buffer = ppmAllocc(bufferSize+MAX_LEXEM_SIZE, sizeof(char));
+    currentBufferP = buffer;
 
     for(;;) {
-    nextLexem:
-        lexem = getLexemAndSavePointerToPrevious(&previousLexem);
+        char *previousLexem;
+        LexemCode lexem = getLexemAndSavePointerToPrevious(&previousLexem);
         ON_LEXEM_EXCEPTION_GOTO(lexem, endOfFile, endOfMacroArgument); /* CAUTION! Contains goto:s! */
 
-        nextLexemP = currentInput.read;
+        char *nextLexemP = currentInput.read;
+
+        Position position;
         getExtraLexemInformationFor(lexem, &currentInput.read, NULL, NULL, &position, NULL,
                                     macroStackIndex == 0);
         int length = ((char*)currentInput.read) - previousLexem;
         assert(length >= 0);
-        memcpy(bcc, previousLexem, length);
-        // a hack, it is copied, but bcc will be increased only if not
-        // an expanding macro, this is because 'macroCallExpand' can
-        // read new lexbuffer and destroy cInput, so copy it now.
-        failedMacroExpansion = false;
+        memcpy(currentBufferP, previousLexem, length);
+
+        // a hack, it is copied, but currentBufferP will be increased
+        // only if not an expanding macro, this is because
+        // 'macroCallExpand' can read new lexbuffer and destroy
+        // cInput, so copy it now.
+        bool failedMacroExpansion = false;
+        Symbol *foundSymbol;
         if (lexem == IDENTIFIER) {
-            fillSymbol(&sd, nextLexemP, nextLexemP, noPosition);
-            sd.type = TypeMacro;
-            sd.storage = StorageNone;
-            if (symbolTableIsMember(symbolTable, &sd, NULL, &memb)) {
+            Symbol symbol;
+            fillSymbol(&symbol, nextLexemP, nextLexemP, noPosition);
+            symbol.type = TypeMacro;
+            symbol.storage = StorageNone;
+            if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
                 /* it is a macro, provide macro expansion */
-                if (expandMacroCall(memb,&position))
-                    goto nextLexem;
+                if (expandMacroCall(foundSymbol, &position))
+                    continue; // with next lexem
                 else
                     failedMacroExpansion = true;
             }
         }
         if (failedMacroExpansion) {
-            tbcc = bcc;
-            assert(memb!=NULL);
-            if (memb->u.mbody!=NULL && cyclicCall(memb->u.mbody))
-                putLexemCodeAt(IDENT_NO_CPP_EXPAND, &tbcc);
+            char *tmp = currentBufferP;
+            assert(foundSymbol!=NULL);
+            if (foundSymbol->u.mbody!=NULL && cyclicCall(foundSymbol->u.mbody)) {
+                assert(tmp == currentBufferP);
+                putLexemCodeAt(IDENT_NO_CPP_EXPAND, &tmp);
+            }
         }
-        bcc += length;
-        expandPreprocessorBufferIfOverflow(bcc, buf, &bufferSize);
+        currentBufferP += length;
+        expandPreprocessorBufferIfOverflow(currentBufferP, buffer, &bufferSize);
     }
 endOfMacroArgument:
     currentInput = macroInputStack[--macroStackIndex];
-    buf = ppmReallocc(buf, bcc-buf, sizeof(char), bufferSize+MAX_LEXEM_SIZE);
-    fillLexInput(argumentBuffer, buf, buf, bcc, NULL, INPUT_NORMAL);
+    buffer = ppmReallocc(buffer, currentBufferP-buffer, sizeof(char), bufferSize+MAX_LEXEM_SIZE);
+    fillLexInput(argumentInput, buffer, buffer, currentBufferP, NULL, INPUT_NORMAL);
     return;
 endOfFile:
     assert(0);

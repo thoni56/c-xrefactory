@@ -209,8 +209,8 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
 }
 
 /* Turn an identifier into a COMPLETE-lexem, return next character to process */
-static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, char *startOfCurrentLexem, Position position,
-                                     int fileOffsetForCurrentLexem, int startingCh) {
+static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, char *startOfCurrentLexem,
+                                     Position position, int fileOffsetForCurrentLexem, int startingCh) {
     int ch   = skipBlanks(characterBuffer, startingCh);
     int apos = absoluteFilePosition(characterBuffer);
 
