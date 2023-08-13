@@ -187,7 +187,7 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
         ch = putIncludeString(lb, cb, ch);
         break;
     case CPP_DEFINE0: {
-        void *backpatchLexemP = getLexemStreamWrite(lb);
+        saveBackpatchPosition(lb);
         putLexemWithColumn(lb, lexem, cb, column);
         ch = skipBlanks(cb, ch);
         noteNewLexemPosition(lb, cb);
@@ -196,7 +196,7 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
             /* Discovered parameters so backpatch the previous lexem
              * code (CPP_DEFINE0) to indicate that this is not a text
              * replacement but a macro "function" */
-            backpatchLexemCodeAt(CPP_DEFINE, backpatchLexemP);
+            backpatchLexemCode(lb, CPP_DEFINE);
         }
         break;
     }
@@ -224,17 +224,13 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
             log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + TOKEN_SIZE, len,
                       strlen(startOfCurrentLexem + TOKEN_SIZE));
             if (len <= strlen(startOfCurrentLexem + TOKEN_SIZE)) {
-                /* Need to backpatch the current lexem to a COMPLETE lexem */
-                char *backpatchP = startOfCurrentLexem;
-                /* We want to overwrite with an IDENT_TO_COMPLETE,
-                 * which we don't want to know how many bytes it
-                 * takes, so we use ...At() which also advances... */
-                putLexemCodeAt(IDENT_TO_COMPLETE, &backpatchP);
+                /* We want to overwrite with an IDENT_TO_COMPLETE, backpatch position is in lb */
+                backpatchLexemCode(lb, IDENT_TO_COMPLETE);
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in the already written identifier */
                     /* We can use the backpatchP since it has moved to begining of string */
-                    setLexemStreamWrite(lb, backpatchP + len);
+                    moveLexemStreamWriteToBackpatchPositonWithOffset(lb, len);
                     /* Terminate identifier here */
                     putLexemChar(lb, 0);
                     /* And write the position */
@@ -261,7 +257,6 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
 bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
     int ch;
     char *lexemLimit;
-    char *startOfCurrentLexem;
     LexemCode lexem;
     int line, column, size;
     int lexemStartingColumn, lexStartFilePos;
@@ -286,7 +281,8 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             break;
         }
         noteNewLexemPosition(lb, cb);
-        startOfCurrentLexem = getLexemStreamWrite(lb);
+        char *startOfCurrentLexem = getLexemStreamWrite(lb);
+        saveBackpatchPosition(lb);
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
@@ -755,11 +751,11 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         if (options.mode == ServerMode) {
             int pi, parChar;
             Position position;
-            int currentLexemOffset;
+            int currentLexemFileOffset;
 
             /* Since lb->ringIndex is incremented *after* adding, we need to subtract 1 to get current */
             pi = (lb->ringIndex-1) % LEX_POSITIONS_RING_SIZE;
-            currentLexemOffset = lb->fileOffsetRing[pi];
+            currentLexemFileOffset = lb->fileOffsetRing[pi];
             position = lb->positionRing[pi];
 
             if (fileNumberFrom(cb) == olOriginalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
@@ -820,9 +816,9 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
-                    ch = processCompletionOrSearch(cb, lb, startOfCurrentLexem, position, currentLexemOffset, ch);
+                    ch = processCompletionOrSearch(cb, lb, startOfCurrentLexem, position, currentLexemFileOffset, ch);
                 } else {
-                    if (currentLexemOffset <= options.olCursorPosition
+                    if (currentLexemFileOffset <= options.olCursorPosition
                         && absoluteFilePosition(cb) >= options.olCursorPosition) {
                         gotOnLineCxRefs(&position);
                     }

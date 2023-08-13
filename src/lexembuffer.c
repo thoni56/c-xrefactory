@@ -73,6 +73,12 @@ void backpatchLexemCode(LexemBuffer *lb, LexemCode lexem) {
     putLexemCodeAt(lexem, &lb->backpatchPointer);
 }
 
+void moveLexemStreamWriteToBackpatchPositonWithOffset(LexemBuffer *lb, int offset) {
+    lb->write = lb->backpatchPointer + offset;
+}
+
+
+
 LexemCode getLexemCodeAt(char **readPointerP) {
     return (LexemCode)getLexShortAt(readPointerP);
 }

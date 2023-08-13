@@ -36,6 +36,9 @@ extern void backpatchLexemCodeAt(LexemCode lexem, void *writePointer);
 extern void saveBackpatchPosition(LexemBuffer *lb);
 extern void backpatchLexemCode(LexemBuffer *lb, LexemCode lexem);
 
+extern void moveLexemStreamWriteToBackpatchPositonWithOffset(LexemBuffer *lb, int offset);
+
+
     /* Put elementary values */
 extern void putLexemInt(LexemBuffer *lb, int value);
 extern void putLexemChar(LexemBuffer *lb, char ch);
