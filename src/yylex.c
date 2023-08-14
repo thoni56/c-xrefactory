@@ -1512,12 +1512,12 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
         if (isIdentifierLexem(nextLexem) || isConstantLexem(nextLexem)) {
             Position position;
             /* TODO collation of all lexem pairs */
-            int len  = strlen(lastBufferP + IDENT_TOKEN_SIZE);
+            int len  = strlen(lastBufferP + LEXEMCODE_SIZE);
             LexemCode lexem = getLexemCodeAt(&currentInputLexemP);
             int value;
             char *previousInputLexemP = currentInputLexemP;
             getExtraLexemInformationFor(lexem, &currentInputLexemP, NULL, &value, &position, NULL, false);
-            currentBufferP = lastBufferP + IDENT_TOKEN_SIZE + len;
+            currentBufferP = lastBufferP + LEXEMCODE_SIZE + len;
             assert(*currentBufferP == 0);
             if (isIdentifierLexem(lexem)) {
                 /* TODO: WTF Here was a out-commented call to
@@ -1527,12 +1527,12 @@ static void collate(char **_lastBufferP, char **_currentBufferP, char *buffer, i
                 // the following is a hack as # is part of ## symbols
                 position.col--;
                 assert(position.col >= 0);
-                cxAddCollateReference(lastBufferP + IDENT_TOKEN_SIZE, currentBufferP, &position);
+                cxAddCollateReference(lastBufferP + LEXEMCODE_SIZE, currentBufferP, &position);
                 position.col++;
             } else /* isConstantLexem() */ {
                 position = peekLexemPositionAt(currentBufferP + 1); /* new identifier position */
                 sprintf(currentBufferP, "%d", value);
-                cxAddCollateReference(lastBufferP + IDENT_TOKEN_SIZE, currentBufferP, &position);
+                cxAddCollateReference(lastBufferP + LEXEMCODE_SIZE, currentBufferP, &position);
             }
             currentBufferP += strlen(currentBufferP);
             assert(*currentBufferP == 0);

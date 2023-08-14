@@ -210,20 +210,18 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
 
 /* Turn an identifier into a COMPLETE-lexem, return next character to process */
 static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, char *startOfCurrentLexem,
-                                     Position position, int fileOffsetForCurrentLexem, int startingCh) {
-    int ch   = skipBlanks(characterBuffer, startingCh);
-    int apos = absoluteFilePosition(characterBuffer);
+                                     Position position, int fileOffsetForCurrentLexem, int ch, int len) {
+    int offset = absoluteFilePosition(characterBuffer);
 
     if (fileOffsetForCurrentLexem < options.olCursorOffset
-        && (apos >= options.olCursorOffset || (ch == -1 && apos + 1 == options.olCursorOffset))) {
+        && (offset >= options.olCursorOffset || (ch == -1 && offset + 1 == options.olCursorOffset))) {
         log_trace("offset for current lexem, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
-                  fileOffsetForCurrentLexem, options.olCursorOffset, apos, ch);
+                  fileOffsetForCurrentLexem, options.olCursorOffset, offset, ch);
         LexemCode thisLexemCode = peekLexemCodeAt(startOfCurrentLexem);
         if (thisLexemCode == IDENTIFIER) {
-            int len = options.olCursorOffset - fileOffsetForCurrentLexem;
-            log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + TOKEN_SIZE, len,
-                      strlen(startOfCurrentLexem + TOKEN_SIZE));
-            if (len <= strlen(startOfCurrentLexem + TOKEN_SIZE)) {
+            log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + LEXEMCODE_SIZE, len,
+                      strlen(startOfCurrentLexem + LEXEMCODE_SIZE));
+            if (len <= strlen(startOfCurrentLexem + LEXEMCODE_SIZE)) { /* How do we get the length without startOfCurrentLexem? */
                 /* We want to overwrite with an IDENT_TO_COMPLETE, backpatch position is in lb */
                 backpatchLexemCode(lb, IDENT_TO_COMPLETE);
                 if (options.serverOperation == OLO_COMPLETION) {
@@ -236,18 +234,18 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
                     /* And write the position */
                     putLexemPosition(lb, position);
                 }
-                log_trace(":ress %s", startOfCurrentLexem + TOKEN_SIZE);
+                log_trace(":ress %s", startOfCurrentLexem + LEXEMCODE_SIZE);
             } else {
                 // completion after an identifier
-                putCompletionLexem(lb, characterBuffer, apos - options.olCursorOffset);
+                putCompletionLexem(lb, characterBuffer, offset - options.olCursorOffset);
             }
         } else if ((thisLexemCode == LINE_TOKEN || thisLexemCode == STRING_LITERAL)
-                   && (apos != options.olCursorOffset)) {
+                   && (offset != options.olCursorOffset)) {
             // completion inside special lexems, do
             // NO COMPLETION
         } else {
             // completion after another lexem
-            putCompletionLexem(lb, characterBuffer, apos - options.olCursorOffset);
+            putCompletionLexem(lb, characterBuffer, offset - options.olCursorOffset);
         }
     }
 
@@ -816,7 +814,8 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     }
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
-                    ch = processCompletionOrSearch(cb, lb, startOfCurrentLexem, position, currentLexemFileOffset, ch);
+                    ch = skipBlanks(cb, ch);
+                    ch = processCompletionOrSearch(cb, lb, startOfCurrentLexem, position, currentLexemFileOffset, ch, options.olCursorOffset - currentLexemFileOffset);
                 } else {
                     if (currentLexemFileOffset <= options.olCursorOffset
                         && absoluteFilePosition(cb) >= options.olCursorOffset) {

@@ -6,9 +6,8 @@
 #include "position.h"
 
 
-/* Sizes in bytes/chars of tokens and identifiers */
-#define TOKEN_SIZE 2
-#define IDENT_TOKEN_SIZE 2
+/* Sizes in bytes/chars of the lexem code for tokens and identifiers */
+#define LEXEMCODE_SIZE 2
 
 
 typedef struct {
