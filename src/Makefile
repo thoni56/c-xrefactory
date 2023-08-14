@@ -70,7 +70,7 @@ MAKEFLAGS += --no-print-directory
 
 WARNINGS = -Wall -Wno-char-subscripts -Werror -Wimplicit-fallthrough
 
-CFLAGS = -g -Og $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
+CFLAGS = -g -O0 $(INCLUDES) -fPIC -MMD -funsigned-char $(WARNINGS) $(COVERAGE) $(EXTRA_CFLAGS)
 
 LDFLAGS = $(COVERAGE)
 
