@@ -210,7 +210,8 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
 
 /* Turn an identifier into a COMPLETE-lexem, return next character to process */
 static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, char *startOfCurrentLexem,
-                                     Position position, int fileOffsetForCurrentLexem, int ch, int len) {
+                                     Position position, int fileOffsetForCurrentLexem, int ch, int len,
+                                     LexemCode lexem) {
     int offset = absoluteFilePosition(characterBuffer);
 
     if (fileOffsetForCurrentLexem < options.olCursorOffset
@@ -219,10 +220,11 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
                   fileOffsetForCurrentLexem, options.olCursorOffset, offset, ch);
         LexemCode thisLexemCode = peekLexemCodeAt(startOfCurrentLexem);
         if (thisLexemCode == IDENTIFIER) {
+            assert(thisLexemCode == lexem);
             log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + LEXEMCODE_SIZE, len,
                       strlen(startOfCurrentLexem + LEXEMCODE_SIZE));
             if (len <= strlen(startOfCurrentLexem + LEXEMCODE_SIZE)) { /* How do we get the length without startOfCurrentLexem? */
-                /* We want to overwrite with an IDENT_TO_COMPLETE, backpatch position is in lb */
+                /* We need to backpatch the current IDENTIFIER with an IDENT_TO_COMPLETE */
                 backpatchLexemCode(lb, IDENT_TO_COMPLETE);
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
@@ -826,7 +828,8 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
                     ch = skipBlanks(cb, ch);
-                    ch = processCompletionOrSearch(cb, lb, startOfCurrentLexem, position, currentLexemFileOffset, ch, options.olCursorOffset - currentLexemFileOffset);
+                    ch = processCompletionOrSearch(cb, lb, startOfCurrentLexem, position, currentLexemFileOffset,
+                                                   ch, options.olCursorOffset - currentLexemFileOffset, lexem);
                 } else {
                     if (currentLexemFileOffset <= options.olCursorOffset
                         && absoluteFilePosition(cb) >= options.olCursorOffset) {
