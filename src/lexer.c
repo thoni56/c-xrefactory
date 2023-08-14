@@ -252,6 +252,40 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
     return ch;
 }
 
+static int scanIntegerValue(CharacterBuffer *cb, int ch, unsigned long *valueP) {
+    unsigned long integerValue = 0;
+    if (ch == '0') {
+        ch = getChar(cb);
+        if (ch == 'x' || ch == 'X') {
+            /* hexadecimal */
+            ch = getChar(cb);
+            while (isdigit(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F')) {
+                if (ch >= 'a')
+                    integerValue = integerValue * 16 + ch - 'a' + 10;
+                else if (ch >= 'A')
+                    integerValue = integerValue * 16 + ch - 'A' + 10;
+                else
+                    integerValue = integerValue * 16 + ch - '0';
+                ch = getChar(cb);
+            }
+        } else {
+            /* octal */
+            while (isdigit(ch) && ch <= '8') {
+                integerValue = integerValue * 8 + ch - '0';
+                ch           = getChar(cb);
+            }
+        }
+    } else {
+        /* decimal */
+        while (isdigit(ch)) {
+            integerValue = integerValue * 10 + ch - '0';
+            ch           = getChar(cb);
+        }
+    }
+    *valueP = integerValue;
+    return ch;
+}
+
 bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
     int ch;
     char *lexemLimit;
@@ -285,38 +319,15 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
             ch = putIdentifierLexem(lb, cb, ch);
+            lexem = IDENTIFIER;
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
             long unsigned integerValue=0;
             lexStartFilePos = absoluteFilePosition(cb);
-            if (ch=='0') {
-                ch = getChar(cb);
-                if (ch=='x' || ch=='X') {
-                    /* hexadecimal */
-                    ch = getChar(cb);
-                    while (isdigit(ch)||(ch>='a'&&ch<='f')||(ch>='A'&&ch<='F')) {
-                        if (ch>='a') integerValue = integerValue*16+ch-'a'+10;
-                        else if (ch>='A') integerValue = integerValue*16+ch-'A'+10;
-                        else integerValue = integerValue*16+ch-'0';
-                        ch = getChar(cb);
-                    }
-                } else {
-                    /* octal */
-                    while (isdigit(ch) && ch<='8') {
-                        integerValue = integerValue*8+ch-'0';
-                        ch = getChar(cb);
-                    }
-                }
-            } else {
-                /* decimal */
-                while (isdigit(ch)) {
-                    integerValue = integerValue*10+ch-'0';
-                    ch = getChar(cb);
-                }
-            }
-            if (ch == '.' || ch=='e' || ch=='E'
-                || ((ch=='d' || ch=='D'|| ch=='f' || ch=='F') && LANGUAGE(LANG_JAVA))) {
+            ch = scanIntegerValue(cb, ch, &integerValue);
+            if (ch == '.' || ch == 'e' || ch == 'E'
+                || ((ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F') && LANGUAGE(LANG_JAVA))) {
                 /* floating point */
                 lexem = scanFloatingPointConstant(cb, &ch);
                 putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, lexStartFilePos);
