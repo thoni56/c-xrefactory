@@ -109,7 +109,7 @@ static LexemCode scanFloatingPointConstant(CharacterBuffer *cb, int *chPointer) 
 
 
 static void noteNewLexemPosition(LexemBuffer *lb, CharacterBuffer *cb) {
-    int index = lb->ringIndex % LEX_POSITIONS_RING_SIZE;
+    int index = 0; // lb->ringIndex % LEX_POSITIONS_RING_SIZE;
     lb->fileOffsetRing[index]    = absoluteFilePosition(cb);
     lb->positionRing[index].file = cb->fileNumber;
     lb->positionRing[index].line = cb->lineNumber;
@@ -765,7 +765,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             int currentLexemFileOffset;
 
             /* Since lb->ringIndex is incremented *after* adding, we need to subtract 1 to get current */
-            pi = (lb->ringIndex-1) % LEX_POSITIONS_RING_SIZE;
+            pi = 0; // (lb->ringIndex-1) % LEX_POSITIONS_RING_SIZE;
             currentLexemFileOffset = lb->fileOffsetRing[pi];
             position = lb->positionRing[pi];
 
