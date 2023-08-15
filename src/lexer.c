@@ -208,21 +208,30 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
     return ch;
 }
 
+static bool lexemStartsBeforeCursor(int fileOffsetForCurrentLexem) {
+    return fileOffsetForCurrentLexem < options.olCursorOffset;
+}
+
+static bool lexemEndsAfterCursor(int currentOffset) {
+    return currentOffset >= options.olCursorOffset;
+}
+
+static bool cursorIsAfterLastLexemInFile(int currentOffset) {
+    return currentOffset + 1 == options.olCursorOffset;
+}
+
 /* Turn an identifier into a COMPLETE-lexem, return next character to process */
-static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, Position position,
-                                     int fileOffsetForCurrentLexem, int ch, int deltaOffset,
-                                     LexemCode thisLexemCode) {
+static void processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, Position position,
+                                     int fileOffsetForCurrentLexem, int deltaOffset, LexemCode thisLexemCode) {
     int currentOffset = absoluteFilePosition(characterBuffer);
 
-    if (fileOffsetForCurrentLexem < options.olCursorOffset
-        && (currentOffset >= options.olCursorOffset || (ch == -1 && currentOffset + 1 == options.olCursorOffset))) {
-        log_trace("offset for current lexem, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
-                  fileOffsetForCurrentLexem, options.olCursorOffset, currentOffset, ch);
+    if (lexemStartsBeforeCursor(fileOffsetForCurrentLexem)
+        && (lexemEndsAfterCursor(currentOffset) || (characterBuffer->isAtEOF && cursorIsAfterLastLexemInFile(currentOffset)))) {
+        log_trace("offset for current lexem == %d", fileOffsetForCurrentLexem);
+        log_trace("options.olCursorOffset == %d", options.olCursorOffset);
+        log_trace("currentOffset == %d", currentOffset);
         if (thisLexemCode == IDENTIFIER) {
             if (deltaOffset <= strlenOfBackpatchedIdentifier(lb)) {
-                /* How do we get the length without startOfCurrentLexem? */
-                /* lengthOfBackpatchedIdentifier(lb) ? */
-
                 /* We need to backpatch the current IDENTIFIER with an IDENT_TO_COMPLETE */
                 backpatchLexemCode(lb, IDENT_TO_COMPLETE);
                 if (options.serverOperation == OLO_COMPLETION) {
@@ -248,8 +257,6 @@ static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuff
             putCompletionLexem(lb, characterBuffer, currentOffset - options.olCursorOffset);
         }
     }
-
-    return ch;
 }
 
 static int scanIntegerValue(CharacterBuffer *cb, int ch, unsigned long *valueP) {
@@ -827,8 +834,8 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                            ||  options.serverOperation == OLO_SEARCH) {
                     ch = skipBlanks(cb, ch);
                     lexem = peekLexemCodeAt(startOfCurrentLexem);
-                    ch = processCompletionOrSearch(cb, lb, position, currentLexemFileOffset,
-                                                   ch, options.olCursorOffset - currentLexemFileOffset, lexem);
+                    processCompletionOrSearch(cb, lb, position, currentLexemFileOffset,
+                                              options.olCursorOffset - currentLexemFileOffset, lexem);
                 } else {
                     if (currentLexemFileOffset <= options.olCursorOffset
                         && absoluteFilePosition(cb) >= options.olCursorOffset) {

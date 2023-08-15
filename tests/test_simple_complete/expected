@@ -18,7 +18,7 @@ end-of-options
 <position-lc line=4 col=0 len=<n>>CURDIR/test_source/single_int1.c</position-lc>
 </goto>
 <single-completion len=<n>>single_int_on_line_1_col_4</single-completion>
--olcxcomplet CURDIR/test_source/single_int1.c -olcursor=172 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet CURDIR/test_source/single_int1.c -olcursor=164 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
@@ -57,14 +57,6 @@ _Noreturn      :keyword
 inline         :keyword
 asm            :keyword
 __stdcall      :keyword</all-completions>
--olcxcomplet CURDIR/test_source/single_int1.c -olcursor=161 -xrefrc CURDIR/.c-xrefrc -p CURDIR
-end-of-options
-
-<sync>
-<goto>
-<position-lc line=9 col=0 len=<n>>CURDIR/test_source/single_int1.c</position-lc>
-</goto>
-<single-completion len=<n>>function</single-completion>
 -exit
 end-of-options
 

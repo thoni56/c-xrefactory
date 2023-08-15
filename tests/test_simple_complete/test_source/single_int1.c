@@ -6,7 +6,4 @@ single_int_on_line_1_col_4 = 3;
 
 void function(a, b) {}
 
-function(a?b:c,);               /* Attempting to trigger
-                                   COMPL_UP_FUN_PROFILE rule but it
-                                   seems that it is not used or
-                                   triggered */
+functio
