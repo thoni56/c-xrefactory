@@ -209,45 +209,43 @@ static int processCppToken(CharacterBuffer *cb, LexemBuffer *lb) {
 }
 
 /* Turn an identifier into a COMPLETE-lexem, return next character to process */
-static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, char *startOfCurrentLexem,
-                                     Position position, int fileOffsetForCurrentLexem, int ch, int len,
-                                     LexemCode lexem) {
-    int offset = absoluteFilePosition(characterBuffer);
+static int processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, Position position,
+                                     int fileOffsetForCurrentLexem, int ch, int deltaOffset,
+                                     LexemCode thisLexemCode) {
+    int currentOffset = absoluteFilePosition(characterBuffer);
 
     if (fileOffsetForCurrentLexem < options.olCursorOffset
-        && (offset >= options.olCursorOffset || (ch == -1 && offset + 1 == options.olCursorOffset))) {
+        && (currentOffset >= options.olCursorOffset || (ch == -1 && currentOffset + 1 == options.olCursorOffset))) {
         log_trace("offset for current lexem, options.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",
-                  fileOffsetForCurrentLexem, options.olCursorOffset, offset, ch);
-        LexemCode thisLexemCode = peekLexemCodeAt(startOfCurrentLexem);
+                  fileOffsetForCurrentLexem, options.olCursorOffset, currentOffset, ch);
         if (thisLexemCode == IDENTIFIER) {
-            assert(thisLexemCode == lexem);
-            log_trace(":check %s[%d] <-> %d", startOfCurrentLexem + LEXEMCODE_SIZE, len,
-                      strlen(startOfCurrentLexem + LEXEMCODE_SIZE));
-            if (len <= strlen(startOfCurrentLexem + LEXEMCODE_SIZE)) { /* How do we get the length without startOfCurrentLexem? */
+            if (deltaOffset <= strlenOfBackpatchedIdentifier(lb)) {
+                /* How do we get the length without startOfCurrentLexem? */
+                /* lengthOfBackpatchedIdentifier(lb) ? */
+
                 /* We need to backpatch the current IDENTIFIER with an IDENT_TO_COMPLETE */
                 backpatchLexemCode(lb, IDENT_TO_COMPLETE);
                 if (options.serverOperation == OLO_COMPLETION) {
                     /* And for completion we need to terminate the identifier where the cursor is */
                     /* Move to position cursor is on in the already written identifier */
                     /* We can use the backpatchP since it has moved to begining of string */
-                    moveLexemStreamWriteToBackpatchPositonWithOffset(lb, len);
+                    moveLexemStreamWriteToBackpatchPositonWithOffset(lb, deltaOffset);
                     /* Terminate identifier here */
                     putLexemChar(lb, 0);
                     /* And write the position */
                     putLexemPosition(lb, position);
                 }
-                log_trace(":ress %s", startOfCurrentLexem + LEXEMCODE_SIZE);
             } else {
                 // completion after an identifier
-                putCompletionLexem(lb, characterBuffer, offset - options.olCursorOffset);
+                putCompletionLexem(lb, characterBuffer, currentOffset - options.olCursorOffset);
             }
         } else if ((thisLexemCode == LINE_TOKEN || thisLexemCode == STRING_LITERAL)
-                   && (offset != options.olCursorOffset)) {
+                   && (currentOffset != options.olCursorOffset)) {
             // completion inside special lexems, do
             // NO COMPLETION
         } else {
             // completion after another lexem
-            putCompletionLexem(lb, characterBuffer, offset - options.olCursorOffset);
+            putCompletionLexem(lb, characterBuffer, currentOffset - options.olCursorOffset);
         }
     }
 
@@ -828,7 +826,8 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 } else if (options.serverOperation == OLO_COMPLETION
                            ||  options.serverOperation == OLO_SEARCH) {
                     ch = skipBlanks(cb, ch);
-                    ch = processCompletionOrSearch(cb, lb, startOfCurrentLexem, position, currentLexemFileOffset,
+                    lexem = peekLexemCodeAt(startOfCurrentLexem);
+                    ch = processCompletionOrSearch(cb, lb, position, currentLexemFileOffset,
                                                    ch, options.olCursorOffset - currentLexemFileOffset, lexem);
                 } else {
                     if (currentLexemFileOffset <= options.olCursorOffset

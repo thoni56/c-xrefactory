@@ -4,6 +4,7 @@
 #include "head.h"
 #include "commons.h"
 #include "globals.h"
+#include "lexem.h"
 
 //
 // Basic manipulation, these should preferably be private in favour
@@ -77,6 +78,10 @@ void moveLexemStreamWriteToBackpatchPositonWithOffset(LexemBuffer *lb, int offse
     lb->write = lb->backpatchPointer + offset;
 }
 
+int strlenOfBackpatchedIdentifier(LexemBuffer *lb) {
+    assert(peekLexemCodeAt(lb->backpatchPointer) == IDENTIFIER);
+    return strlen(lb->backpatchPointer + LEXEMCODE_SIZE);
+}
 
 
 LexemCode getLexemCodeAt(char **readPointerP) {
