@@ -442,6 +442,9 @@ ifeq ($(OS),Darwin)
 		# And for Homebrew on M1
 		CGREEN_LIB = -L/opt/homebrew/lib -lcgreen
 		DYLD_PATH = DYLD_LIBRARY_PATH=/opt/homebrew/lib
+	else
+		CGREEN_LIB = -L/usr/local/lib -lcgreen
+		DYLD_PATH = DYLD_LIBRARY_PATH=/usr/local/lib
 	endif
 endif
 
