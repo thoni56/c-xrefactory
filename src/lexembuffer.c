@@ -15,7 +15,6 @@ void initLexemBuffer(LexemBuffer *buffer) {
     buffer->read = buffer->lexemStream;
     buffer->begin = buffer->lexemStream;
     buffer->write = buffer->lexemStream;
-    buffer->ringIndex = 0;
 }
 
 void *getLexemStreamWrite(LexemBuffer *lb) {

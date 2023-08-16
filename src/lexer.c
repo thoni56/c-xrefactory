@@ -109,12 +109,10 @@ static LexemCode scanFloatingPointConstant(CharacterBuffer *cb, int *chPointer) 
 
 
 static void noteNewLexemPosition(LexemBuffer *lb, CharacterBuffer *cb) {
-    int index = 0; // lb->ringIndex % LEX_POSITIONS_RING_SIZE;
-    lb->fileOffsetRing[index]    = fileOffsetFor(cb);
-    lb->positionRing[index].file = cb->fileNumber;
-    lb->positionRing[index].line = cb->lineNumber;
-    lb->positionRing[index].col  = columnPosition(cb);
-    lb->ringIndex++;
+    lb->fileOffset    = fileOffsetFor(cb);
+    lb->position.file = cb->fileNumber;
+    lb->position.line = cb->lineNumber;
+    lb->position.col  = columnPosition(cb);
 }
 
 static LexemCode preprocessorLexemFromString(const char *preprocessorWord) {
@@ -764,18 +762,14 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         assert(0);
     nextLexem:
         if (options.mode == ServerMode) {
-            int pi, parChar;
+            int parChar;
             Position position;
-            int currentLexemFileOffset;
-
-            /* Since lb->ringIndex is incremented *after* adding, we need to subtract 1 to get current */
-            pi = 0; // (lb->ringIndex-1) % LEX_POSITIONS_RING_SIZE;
-            currentLexemFileOffset = lb->fileOffsetRing[pi];
-            position = lb->positionRing[pi];
+            int currentLexemFileOffset = lb->fileOffset;
+            position = lb->position;
 
             if (fileNumberFrom(cb) == olOriginalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
                 && fileNumberFrom(cb) != -1 && s_jsl == NULL) {
-                if (options.serverOperation == OLO_EXTRACT && lb->ringIndex>=2) { /* TODO: WTF does "lb->index >= 2" mean? */
+                if (options.serverOperation == OLO_EXTRACT) {
                     ch = skipBlanks(cb, ch);
                     int apos = fileOffsetFor(cb);
                     log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",apos,options.olCursorOffset,options.olMarkPos);

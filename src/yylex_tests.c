@@ -75,7 +75,6 @@ static void setup_lexBuffer_for_reading_identifier(void *data) {
     *strchr(&currentFile.lexemBuffer.lexemStream[2], ' ') = '\0';
     currentFile.lexemBuffer.read                          = currentFile.lexemBuffer.lexemStream;
     currentFile.lexemBuffer.write                         = strchr(currentFile.lexemBuffer.lexemStream, '\0');
-    currentFile.lexemBuffer.ringIndex                     = 2;
 }
 
 Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {

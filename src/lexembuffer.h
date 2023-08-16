@@ -15,12 +15,11 @@ typedef struct {
     char *read;                 /* next to read */
     char *write;				/* where to write next */
     char lexemStream[LEXEM_BUFFER_SIZE];
-    Position positionRing[LEX_POSITIONS_RING_SIZE];
-    unsigned fileOffsetRing[LEX_POSITIONS_RING_SIZE];
-    int ringIndex;           /* ...Ring[ringIndex%LEX_POSITIONS_RING_SIZE] */
+    Position position;
+    unsigned fileOffset;
     char *backpatchPointer; /* Pointer into lexemStream can be saved
-                              * and later backpatched without explicit
-                              * knowledge of buffers and indices... */
+                             * and later backpatched without explicit
+                             * knowledge of buffers and indices... */
 } LexemBuffer;
 
 

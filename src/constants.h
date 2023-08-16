@@ -95,17 +95,13 @@
 #define LEXEM_BUFFER_SIZE (1024 + MAX_LEXEM_SIZE) /* must be bigger than MAX_LEXEM_SIZE */
 
 #define MAX_UNGET_CHARS 20		/* reserve for ungetChar in char buffer */
-#define MAX_LEXEM_SIZE MAX_FUN_NAME_SIZE /* max size of 1 lexem (string, ident)  */
-                                         /* should be bigger, than MAX_FUN_NAME_SIZE */
+#define MAX_LEXEM_SIZE MAX_FUN_NAME_SIZE /* max size of 1 lexem
+                                            (string, ident) should be
+                                            bigger than
+                                            MAX_FUN_NAME_SIZE */
 
 #define YYIDBUFFER_SIZE 128	/* number of buffered tokens       */
-  /* for C++ has to be larger because of backtracking parser       */
-  /* it should be around 2048, but then workmemory will overflow   */
-  /* when loading lot of sourcepath jsl modules                    */
-  /* NO, it will overflow due to the whole parsing stack which is  */
-  /* stored there                                                  */
 
-#define LEX_POSITIONS_RING_SIZE 16	/* for now, just for block markers */
 
 /* ***************************** caching ******************************** */
 
