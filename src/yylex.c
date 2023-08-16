@@ -317,7 +317,7 @@ static void getExtraLexemInformationFor(LexemCode lexem, char **readPointerP, in
         }
     } else if (isPreprocessorToken(lexem)) {
         getAndSetOutPositionIfRequired(readPointerP, outPosition);
-    } else if (lexem == '\n' && (countLines)) {
+    } else if (lexem == '\n' && countLines) {
         getAndSetOutPositionIfRequired(readPointerP, outPosition);
         traceNewline(1);
         currentFile.lineNumber++;

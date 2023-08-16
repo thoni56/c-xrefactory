@@ -1,7 +1,13 @@
 #ifndef INPUT_H_INCLUDED
 #define INPUT_H_INCLUDED
 
-#include "proto.h" /* For InputType */
+
+typedef enum inputType {
+    INPUT_NORMAL,
+    INPUT_MACRO,
+    INPUT_MACRO_ARGUMENT,
+    INPUT_CACHE,
+} InputType;
 
 typedef struct {
     char *begin;                /* where it begins */

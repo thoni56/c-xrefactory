@@ -289,13 +289,6 @@ typedef enum result {
     RESULT_ERR
 } Result;
 
-typedef enum inputType {
-    INPUT_NORMAL,
-    INPUT_MACRO,
-    INPUT_MACRO_ARGUMENT,
-    INPUT_CACHE,
-} InputType;
-
 typedef enum syntaxPassParsedImportantPosition {
     SPP_LAST_TOP_LEVEL_CLASS_POSITION,
     SPP_ASSIGNMENT_OPERATOR_POSITION,
