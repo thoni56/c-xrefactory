@@ -192,14 +192,6 @@ Ensure(LexemBuffer, can_backpatch_lexem) {
     assert_that(lb_next, is_equal_to(lb.read));
 }
 
-Ensure(LexemBuffer, can_set_next_write_position) {
-    putLexemCode(&lb, IDENTIFIER);
-    assert_that(lb.write, is_not_equal_to(lb.lexemStream));
-
-    setLexemStreamWrite(&lb, &lb.lexemStream);
-    assert_that(lb.write, is_equal_to(lb.lexemStream));
-}
-
 Ensure(LexemBuffer, can_get_current_write_position) {
     void *previous = getLexemStreamWrite(&lb);
 

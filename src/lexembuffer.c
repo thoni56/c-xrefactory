@@ -18,10 +18,6 @@ void initLexemBuffer(LexemBuffer *buffer) {
     buffer->ringIndex = 0;
 }
 
-void setLexemStreamWrite(LexemBuffer *lb, void *write) {
-    lb->write = write;
-}
-
 void *getLexemStreamWrite(LexemBuffer *lb) {
     return (void *)(lb->write);
 }

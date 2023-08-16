@@ -27,7 +27,6 @@ typedef struct {
 /* LexemBuffer manipulation */
 extern void shiftAnyRemainingLexems(LexemBuffer *lb);
 
-extern void setLexemStreamWrite(LexemBuffer *lb, void *end);
 extern void *getLexemStreamWrite(LexemBuffer *lb);
 
 extern void backpatchLexemCodeAt(LexemCode lexem, void *writePointer);
