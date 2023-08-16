@@ -50,7 +50,7 @@ int columnPosition(CharacterBuffer *cb) {
     return (int)mock(cb);
 }
 
-int absoluteFilePosition(CharacterBuffer *cb) {
+int fileOffsetFor(CharacterBuffer *cb) {
     return (int)mock(cb);
 }
 

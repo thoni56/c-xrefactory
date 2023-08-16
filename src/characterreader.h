@@ -47,7 +47,7 @@ extern int fileNumberFrom(CharacterBuffer *cb);
 extern int lineNumberFrom(CharacterBuffer *cb);
 
 extern int columnPosition(CharacterBuffer *cb);
-extern int absoluteFilePosition(CharacterBuffer *cb);
+extern int fileOffsetFor(CharacterBuffer *cb);
 
 extern int skipBlanks(CharacterBuffer *cb, int ch);
 extern int skipWhiteSpace(CharacterBuffer *cb, int ch);

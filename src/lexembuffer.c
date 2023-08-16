@@ -234,7 +234,7 @@ void putIntegerLexem(LexemBuffer *lb, LexemCode lexem, long unsigned value, Char
     putLexemCode(lb, lexem);
     putLexemInt(lb, value);
     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
-    putLexemInt(lb, absoluteFilePosition(cb) - lexStartFilePos);
+    putLexemInt(lb, fileOffsetFor(cb) - lexStartFilePos);
 }
 
 void putCompletionLexem(LexemBuffer *lb, CharacterBuffer *cb, int len) {
@@ -248,7 +248,7 @@ void putFloatingPointLexem(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb
                          int lexStartFilePos) {
     putLexemCode(lb, lexem);
     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
-    putLexemInt(lb, absoluteFilePosition(cb) - lexStartFilePos);
+    putLexemInt(lb, fileOffsetFor(cb) - lexStartFilePos);
 }
 
 

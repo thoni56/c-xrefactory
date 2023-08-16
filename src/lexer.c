@@ -110,7 +110,7 @@ static LexemCode scanFloatingPointConstant(CharacterBuffer *cb, int *chPointer) 
 
 static void noteNewLexemPosition(LexemBuffer *lb, CharacterBuffer *cb) {
     int index = 0; // lb->ringIndex % LEX_POSITIONS_RING_SIZE;
-    lb->fileOffsetRing[index]    = absoluteFilePosition(cb);
+    lb->fileOffsetRing[index]    = fileOffsetFor(cb);
     lb->positionRing[index].file = cb->fileNumber;
     lb->positionRing[index].line = cb->lineNumber;
     lb->positionRing[index].col  = columnPosition(cb);
@@ -223,7 +223,7 @@ static bool cursorIsAfterLastLexemInFile(int currentOffset) {
 /* Turn an identifier into a COMPLETE-lexem, return next character to process */
 static void processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuffer *lb, Position position,
                                      int fileOffsetForCurrentLexem, int deltaOffset, LexemCode thisLexemCode) {
-    int currentOffset = absoluteFilePosition(characterBuffer);
+    int currentOffset = fileOffsetFor(characterBuffer);
 
     if (lexemStartsBeforeCursor(fileOffsetForCurrentLexem)
         && (lexemEndsAfterCursor(currentOffset) || (characterBuffer->isAtEOF && cursorIsAfterLastLexemInFile(currentOffset)))) {
@@ -294,11 +294,10 @@ static int scanIntegerValue(CharacterBuffer *cb, int ch, unsigned long *valueP) 
 }
 
 bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
-    int ch;
-    char *lexemLimit;
     LexemCode lexem;
     int line, column, size;
-    int lexemStartingColumn, lexStartFilePos;
+    int lexemStartingColumn;
+    int fileOffsetForLexemStart;
 
     /* first test whether the input is cached */
     /* TODO: why do we need to know this? */
@@ -309,9 +308,9 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
 
     shiftAnyRemainingLexems(lb);
 
-    lexemLimit = getLexemStreamWrite(lb) + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
+    char *lexemLimit = getLexemStreamWrite(lb) + LEXEM_BUFFER_SIZE - MAX_LEXEM_SIZE;
 
-    ch = getChar(cb);
+    int ch = getChar(cb);
     do {
         ch = skipBlanks(cb, ch);
         /* Space for more lexems? */
@@ -331,23 +330,23 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
             long unsigned integerValue=0;
-            lexStartFilePos = absoluteFilePosition(cb);
+            fileOffsetForLexemStart = fileOffsetFor(cb);
             ch = scanIntegerValue(cb, ch, &integerValue);
             if (ch == '.' || ch == 'e' || ch == 'E'
                 || ((ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F') && LANGUAGE(LANG_JAVA))) {
                 /* floating point */
                 lexem = scanFloatingPointConstant(cb, &ch);
-                putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, lexStartFilePos);
+                putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, fileOffsetForLexemStart);
                 goto nextLexem;
             }
             /* integer */
             lexem = scanConstantType(cb, &ch);
-            putIntegerLexem(lb, lexem, integerValue, cb, lexemStartingColumn, lexStartFilePos);
+            putIntegerLexem(lb, lexem, integerValue, cb, lexemStartingColumn, fileOffsetForLexemStart);
             goto nextLexem;
         } else switch (ch) {
                 /* ************   special character *********************  */
             case '.':
-                lexStartFilePos = absoluteFilePosition(cb);
+                fileOffsetForLexemStart = fileOffsetFor(cb);
                 ch = getChar(cb);
                 if (ch == '.' && LANGUAGE(LANG_C|LANG_YACC)) {
                     ch = getChar(cb);
@@ -366,7 +365,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     ungetChar(cb, ch);
                     ch = '.';
                     lexem = scanFloatingPointConstant(cb, &ch);
-                    putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, lexStartFilePos);
+                    putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, fileOffsetForLexemStart);
                     goto nextLexem;
                 } else {
                     putLexemWithColumn(lb, '.', cb, lexemStartingColumn);
@@ -574,7 +573,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             case '\'': {
                 unsigned chval = 0;
 
-                lexStartFilePos = absoluteFilePosition(cb);
+                fileOffsetForLexemStart = fileOffsetFor(cb);
                 do {
                     ch = getChar(cb);
                     while (ch == '\\') {
@@ -589,7 +588,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     putLexemCode(lb, CHAR_LITERAL);
                     putLexemInt(lb, chval);
                     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
-                    putLexemInt(lb, absoluteFilePosition(cb) - lexStartFilePos);
+                    putLexemInt(lb, fileOffsetFor(cb) - fileOffsetForLexemStart);
                     ch = getChar(cb);
                 }
                 goto nextLexem;
@@ -778,7 +777,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 && fileNumberFrom(cb) != -1 && s_jsl == NULL) {
                 if (options.serverOperation == OLO_EXTRACT && lb->ringIndex>=2) { /* TODO: WTF does "lb->index >= 2" mean? */
                     ch = skipBlanks(cb, ch);
-                    int apos = absoluteFilePosition(cb);
+                    int apos = fileOffsetFor(cb);
                     log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",apos,options.olCursorOffset,options.olMarkPos);
                     // all this is very, very HACK!!!
                     if (apos >= options.olCursorOffset && !parsedInfo.marker1Flag) {
@@ -838,7 +837,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                                               options.olCursorOffset - currentLexemFileOffset, lexem);
                 } else {
                     if (currentLexemFileOffset <= options.olCursorOffset
-                        && absoluteFilePosition(cb) >= options.olCursorOffset) {
+                        && fileOffsetFor(cb) >= options.olCursorOffset) {
                         gotOnLineCxRefs(&position);
                     }
                     // TODO: Figure out what the problem was with this for C
@@ -847,7 +846,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         // that is why I restrict it to Java language! It is usefull
                         // only for Java refactorings
                         ch = skipBlanks(cb, ch);
-                        int apos = absoluteFilePosition(cb);
+                        int apos = fileOffsetFor(cb);
                         if (apos >= options.olCursorOffset && !parsedInfo.marker1Flag) {
                             putLexemCode(lb, OL_MARKER_TOKEN);
                             putLexemPosition(lb, position);

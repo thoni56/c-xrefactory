@@ -232,7 +232,7 @@ int columnPosition(CharacterBuffer *cb) {
 }
 
 
-int absoluteFilePosition(CharacterBuffer *cb) {
+int fileOffsetFor(CharacterBuffer *cb) {
     return cb->filePos - (cb->end - cb->nextUnread) - 1;
 }
 
