@@ -844,10 +844,10 @@ protected void processDefineDirective(bool hasArguments) {
             char *lexemDestination = body+macroSize; /* TODO WTF Are we storing the lexems after the body?!?! */
             /* Create a MATE to be able to run ..IsMember() */
             MacroArgumentTableElement macroArgumentTableElement;
-            fillMacroArgumentTableElement(&macroArgumentTableElement,currentLexemStart,NULL,0);
+            fillMacroArgumentTableElement(&macroArgumentTableElement, currentLexemStart, NULL, 0);
 
             int foundIndex;
-            if (lexem==IDENTIFIER && isMemberInMacroArguments(&macroArgumentTableElement,&foundIndex)){
+            if (lexem==IDENTIFIER && isMemberInMacroArguments(&macroArgumentTableElement, &foundIndex)){
                 /* macro argument */
                 addTrivialCxReference(getMacroArgument(foundIndex)->linkName, TypeMacroArg, StorageDefault,
                                       position, UsageUsed);
@@ -1349,11 +1349,10 @@ static int expandPreprocessorBufferIfOverflow(char *pointer, char *buffer, int s
     return size;
 }
 
-static void expandMacroBodyBufferIfOverflow(char *bcc, int len, char *buf, int *size) {
-    while (bcc + len >= buf + *size) {
+static void expandMacroBodyBufferIfOverflow(char *pointer, int len, char *buffer, int *size) {
+    while (pointer + len >= buffer + *size) {
         *size += MACRO_BODY_BUFFER_SIZE;
-        mbmExpand(buf,
-                    *size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE, *size+MAX_LEXEM_SIZE);
+        mbmExpand(buffer, *size+MAX_LEXEM_SIZE-MACRO_BODY_BUFFER_SIZE, *size+MAX_LEXEM_SIZE);
     }
 }
 
