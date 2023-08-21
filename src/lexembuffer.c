@@ -200,6 +200,14 @@ int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffe
     return ch;
 }
 
+void putCharLiteralLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemStartingColumn,
+                         int length, unsigned chval) {
+    putLexemCode(lb, CHAR_LITERAL);
+    putLexemInt(lb, chval);
+    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+    putLexemInt(lb, length);
+}
+
 void putLexemWithColumn(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int column) {
     putLexemCode(lb, lexem);
     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);

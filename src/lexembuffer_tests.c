@@ -79,6 +79,7 @@ Ensure(LexemBuffer, can_put_and_get_a_token) {
     assert_that(lexem, is_equal_to(DOUBLE_CONSTANT));
 }
 
+extern void putLexemInt(LexemBuffer *lb, int value);
 Ensure(LexemBuffer, can_put_and_get_an_int) {
     int         integer;
     char       *expected_next_after_get;

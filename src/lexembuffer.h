@@ -37,8 +37,7 @@ extern void moveLexemStreamWriteToBackpatchPositonWithOffset(LexemBuffer *lb, in
 
 extern int strlenOfBackpatchedIdentifier(LexemBuffer *lb);
 
-    /* Put elementary values */
-extern void putLexemInt(LexemBuffer *lb, int value);
+/* Put elementary values */
 extern void putLexemChar(LexemBuffer *lb, char ch);
 extern void putLexemCode(LexemBuffer *lb, LexemCode lexem);
 
@@ -54,6 +53,8 @@ extern void putIntegerLexem(LexemBuffer *lb, LexemCode lexem, long unsigned valu
 extern void putCompletionLexem(LexemBuffer *lb, CharacterBuffer *cb, int len);
 extern void putFloatingPointLexem(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb,
                                   int lexemStartingColumn, int lexStartFilePos);
+extern void putCharLiteralLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemStartingColumn,
+                                int length, unsigned chval);
 
 /* DEPRECATED? - Writes at where writePointer points to and advances it */
 extern void putLexemCodeAt(LexemCode lexem, char **writePointerP);

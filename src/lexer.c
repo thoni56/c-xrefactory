@@ -583,10 +583,8 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         chval = chval * 256 + ch;
                 } while (ch != '\'' && ch != '\n');
                 if (ch == '\'') {
-                    putLexemCode(lb, CHAR_LITERAL);
-                    putLexemInt(lb, chval);
-                    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
-                    putLexemInt(lb, fileOffsetFor(cb) - fileOffsetForLexemStart);
+                    putCharLiteralLexem(lb, cb, lexemStartingColumn,
+                                        fileOffsetFor(cb) - fileOffsetForLexemStart, chval);
                     ch = getChar(cb);
                 }
                 goto nextLexem;
