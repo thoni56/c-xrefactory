@@ -8536,7 +8536,7 @@ refactoring.
 ))
 
 (defun c-xref-extraction-dialog (minvocation mhead mtail mline dname)
-  (let ((mbody) (name) (cfs) (mbuff) (sort) (sw)
+  (let ((mbody) (name) (cfs) (mbuff) (kind) (sw)
 	(mm) (pp) (bb) (ee) (ilen) (sr) (classextr))
     (setq sw (selected-window))
     (setq cfs case-fold-search)
@@ -8550,19 +8550,19 @@ refactoring.
     (setq classextr (string-match "class" dname))
     (setq case-fold-search cfs)
     (if (string-match "method" dname)
-	(setq sort "method")
+	(setq kind "method")
       (if (string-match "class" dname)
-	  (setq sort "class")
+	  (setq kind "class")
 	(if (string-match "macro" dname)
-	    (setq sort "macro")
-	  (setq sort "function")
+	    (setq kind "macro")
+	  (setq kind "function")
 	  )))
     (c-xref-display-and-set-new-dialog-window c-xref-extraction-buffer nil t)
     (set-buffer c-xref-extraction-buffer)
     (c-xref-erase-buffer)
     (setq truncate-lines nil)
     (insert "")
-    (insert (format "---------------   C-xrefactory suggests following new %s:\n\n" sort))
+    (insert (format "---------------   C-xrefactory suggests following new %s:\n\n" kind))
     (insert mhead)
     (insert "\t// Original code start\n")
     (setq bb (point))
@@ -8572,7 +8572,7 @@ refactoring.
 	  (newline)
 	  (setq mbody (buffer-substring bb (point)))
 	  ))
-    (if (equal sort "macro")
+    (if (equal kind "macro")
 	(progn
 	  (c-xref-add-macro-line-continuations bb (- (point) 1))
 	  (goto-char (point-max))
@@ -8587,9 +8587,9 @@ refactoring.
     (display-buffer c-xref-extraction-buffer)
     (if c-xref-renaming-default-name
 	(setq name c-xref-renaming-default-name)
-      (setq name (read-from-minibuffer (format "Enter name for the new %s (empty string cancels the extraction): " sort)))
+      (setq name (read-from-minibuffer (format "Enter name for the new %s (empty string cancels the extraction): " kind)))
       )
-    (if (equal sort "class")
+    (if (equal kind "class")
 	(progn
 	  (while (not (or (and (> (elt name 0) ?A) (< (elt name 0) ?Z))
 			  (and (> (elt name 0) ?a) (< (elt name 0) ?z))))
@@ -8633,7 +8633,7 @@ refactoring.
 	  (c-xref-server-call-refactoring-task
 	   (list "-rfct-rename" (format "-renameto=%s" name)))
 
-	  (if (equal sort "class")
+	  (if (equal kind "class")
 	      (progn
 		(c-xref-set-to-marker c-xref-extraction-marker)
 		(setq case-fold-search nil)
