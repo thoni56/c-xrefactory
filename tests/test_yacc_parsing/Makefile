@@ -1,10 +1,6 @@
 # Automated tests with the primary purpose of adding coverage
 # to the yaccparser
 #
-# Very simple verification of some symbols, actually that 'grep' trick
-# (it only looks for the same lines in the output as in the expected
-# in any order) isn't very foolproof so we should write a utility for
-# checking that a symbol reference is there
 
 include ../Makefile.boilerplate
 

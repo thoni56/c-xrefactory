@@ -1544,6 +1544,8 @@ static bool processEOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-extractAddrParPrefix=",22)==0) {
         char tmpString[TMP_STRING_SIZE];
         sprintf(tmpString, "*%s", argv[i]+22);
+        // TODO Not used from any editor client - it's initialized to "*_", replace by constant?
+        // Don't know why we should ever want to override it...
         options.olExtractAddrParPrefix = allocateStringForOption(&options.olExtractAddrParPrefix, tmpString);
     }
     else if (strcmp(argv[i], "-exactpositionresolve")==0) {
