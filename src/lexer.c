@@ -291,9 +291,167 @@ static int scanIntegerValue(CharacterBuffer *cb, int ch, unsigned long *valueP) 
     return ch;
 }
 
+static void handleStringConstant(CharacterBuffer *cb, LexemBuffer *lb, int lexemStartingColumn) {
+    int ch;
+    int line = lineNumberFrom(cb);
+    int size = 0;
+
+    putLexemCode(lb, STRING_LITERAL);
+    do {
+        ch = getChar(cb);
+        size++;
+        if (ch != '\"'
+            && size < MAX_LEXEM_SIZE - 10) /* WTF is 10? Perhaps required space for position info? */
+            putLexemChar(lb, ch);
+        if (ch == '\\') {
+            ch = getChar(cb);
+            size++;
+            if (size < MAX_LEXEM_SIZE - 10)
+                putLexemChar(lb, ch);
+            /* TODO escape sequences */
+            if (ch == '\n') {
+                cb->lineNumber++;
+                cb->lineBegin    = cb->nextUnread;
+                cb->columnOffset = 0;
+            }
+            continue;
+        }
+        if (ch == '\n') {
+            cb->lineNumber++;
+            cb->lineBegin    = cb->nextUnread;
+            cb->columnOffset = 0;
+            if (options.strictAnsi && (options.debug || options.errors)) {
+                warningMessage(ERR_ST, "string constant through end of line");
+            }
+        }
+        // in Java CR LF can't be a part of string, even there
+        // are benchmarks making Xrefactory coredump if CR or LF
+        // is a part of strings
+    } while (ch != '\"' && (ch != '\n' || !options.strictAnsi) && ch != -1);
+    if (ch == -1 && options.mode != ServerMode) {
+        warningMessage(ERR_ST, "string constant through EOF");
+    }
+    putLexemChar(lb, 0); /* Terminate string */
+    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+    putLexemLines(lb, lineNumberFrom(cb) - line);
+}
+
+static int handleCharConstant(CharacterBuffer *cb, LexemBuffer *lb, int lexemStartingColumn) {
+    int      fileOffsetForLexemStart, ch;
+    unsigned chval = 0;
+
+    fileOffsetForLexemStart = fileOffsetFor(cb);
+    do {
+        ch = getChar(cb);
+        while (ch == '\\') {
+            ch = getChar(cb);
+            /* TODO escape sequences */
+            ch = getChar(cb);
+        }
+        if (ch != '\'')
+            chval = chval * 256 + ch;
+    } while (ch != '\'' && ch != '\n');
+    if (ch == '\'') {
+        putCharLiteralLexem(lb, cb, lexemStartingColumn, fileOffsetFor(cb) - fileOffsetForLexemStart,
+                            chval);
+        ch = getChar(cb);
+    }
+
+    return ch;
+}
+
+static int handleBlockComment(CharacterBuffer *cb, LexemBuffer *lb) {
+    int ch = getChar(cb);
+    if (ch == '&') {
+        /* Block comment with a '&' is commented code that should be
+         * analysed anyway, so ignore and continue with next lexem */
+        return getChar(cb);
+    } else {
+        ungetChar(cb, ch);
+        ch = '*';
+    } /* !!! COPY BLOCK TO '/n' */
+
+    int line = lineNumberFrom(cb);
+    scanComment(cb);
+    putLexemLines(lb, lineNumberFrom(cb) - line);
+
+    return getChar(cb);
+}
+
+static int handleLineComment(CharacterBuffer *cb, LexemBuffer *lb) {
+    int ch = getChar(cb);
+    if (ch == '&') {
+        // A line comment with a '&' is commented code that should be analysed anyway, so ignore
+        ch = getChar(cb);
+        return ch;
+    }
+    int line = lineNumberFrom(cb);
+    while (ch != '\n' && ch != -1) {
+        ch = getChar(cb);
+        if (ch == '\\') {
+            ch = getChar(cb);
+            if (ch == '\n') {
+                cb->lineNumber++;
+                cb->lineBegin    = cb->nextUnread;
+                cb->columnOffset = 0;
+            }
+            ch = getChar(cb);
+        }
+    }
+    putLexemLines(lb, lineNumberFrom(cb) - line);
+
+    return ch;
+}
+
+static int handleNewline(CharacterBuffer *cb, LexemBuffer *lb, int lexemStartingColumn) {
+    int ch;
+    if (columnPosition(cb) >= MAX_REFERENCABLE_COLUMN) {
+        FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_COLUMN, read TROUBLES in README file",
+                    XREF_EXIT_ERR);
+    }
+    if (lineNumberFrom(cb) >= MAX_REFERENCABLE_LINE) {
+        FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file",
+                    XREF_EXIT_ERR);
+    }
+    cb->lineNumber++;
+    cb->lineBegin    = cb->nextUnread;
+    cb->columnOffset = 0;
+
+    ch = getChar(cb);
+    ch = skipBlanks(cb, ch);
+
+    /* And why is this here and not using the "standard" code for comment? */
+    if (ch == '/') {
+        ch = getChar(cb);
+        if (ch == '*') {
+            ch = getChar(cb);
+            if (ch == '&') {
+                /* ****** a code comment, ignore */
+                ch = getChar(cb);
+            } else {
+                ungetChar(cb, ch);
+                ch       = '*';
+                int line = lineNumberFrom(cb);
+                scanComment(cb);
+                putLexemLines(lb, lineNumberFrom(cb) - line);
+                ch = getChar(cb);
+                ch = skipBlanks(cb, ch);
+            }
+        } else {
+            ungetChar(cb, ch);
+            ch = '/';
+        }
+    }
+    putLexemWithColumn(lb, '\n', cb, lexemStartingColumn);
+    if (ch == '#' && LANGUAGE(LANG_C | LANG_YACC)) {
+        ch = processCppToken(cb, lb);
+    }
+
+    return ch;
+}
+
 bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
     LexemCode lexem;
-    int line, column, size;
     int lexemStartingColumn;
     int fileOffsetForLexemStart;
 
@@ -321,6 +479,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         saveBackpatchPosition(lb);
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexStartCol = %d", lexemStartingColumn);
+
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
             ch = putIdentifierLexem(lb, cb, ch);
             lexem = IDENTIFIER;
@@ -331,7 +490,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             fileOffsetForLexemStart = fileOffsetFor(cb);
             ch = scanIntegerValue(cb, ch, &integerValue);
             if (ch == '.' || ch == 'e' || ch == 'E'
-                || ((ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F') && LANGUAGE(LANG_JAVA))) {
+                || (LANGUAGE(LANG_JAVA) && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F'))) {
                 /* floating point */
                 lexem = scanFloatingPointConstant(cb, &ch);
                 putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, fileOffsetForLexemStart);
@@ -569,67 +728,12 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 goto nextLexem;
 
             case '\'': {
-                unsigned chval = 0;
-
-                fileOffsetForLexemStart = fileOffsetFor(cb);
-                do {
-                    ch = getChar(cb);
-                    while (ch == '\\') {
-                        ch = getChar(cb);
-                        /* TODO escape sequences */
-                        ch = getChar(cb);
-                    }
-                    if (ch != '\'')
-                        chval = chval * 256 + ch;
-                } while (ch != '\'' && ch != '\n');
-                if (ch == '\'') {
-                    putCharLiteralLexem(lb, cb, lexemStartingColumn,
-                                        fileOffsetFor(cb) - fileOffsetForLexemStart, chval);
-                    ch = getChar(cb);
-                }
+                ch = handleCharConstant(cb, lb, lexemStartingColumn);
                 goto nextLexem;
             }
 
             case '\"':
-                line = lineNumberFrom(cb);
-                size = 0;
-                putLexemCode(lb, STRING_LITERAL);
-                do {
-                    ch = getChar(cb);
-                    size ++;
-                    if (ch!='\"' && size<MAX_LEXEM_SIZE-10)
-                        putLexemChar(lb, ch);
-                    if (ch=='\\') {
-                        ch = getChar(cb);
-                        size ++;
-                        if (size < MAX_LEXEM_SIZE-10)
-                            putLexemChar(lb, ch);
-                        /* TODO escape sequences */
-                        if (ch == '\n') {
-                            cb->lineNumber++;
-                            cb->lineBegin = cb->nextUnread;
-                            cb->columnOffset = 0;
-                        }
-                        ch = 0;
-                    }
-                    if (ch == '\n') {
-                        cb->lineNumber++;
-                        cb->lineBegin = cb->nextUnread;
-                        cb->columnOffset = 0;
-                        if (options.strictAnsi && (options.debug || options.errors)) {
-                            warningMessage(ERR_ST,"string constant through end of line");
-                        }
-                    }
-                    // in Java CR LF can't be a part of string, even there
-                    // are benchmarks making Xrefactory coredump if CR or LF
-                    // is a part of strings
-                } while (ch != '\"' && (ch != '\n' || !options.strictAnsi) && ch != -1);
-                if (ch == -1 && options.mode!=ServerMode) {
-                    warningMessage(ERR_ST,"string constant through EOF");
-                }
-                putLexemChar(lb, 0);
-                putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
-                putLexemLines(lb, lineNumberFrom(cb)-line);
+                handleStringConstant(cb, lb, lexemStartingColumn);
                 ch = getChar(cb);
                 goto nextLexem;
 
@@ -640,44 +744,11 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='*') {
-                    ch = getChar(cb);
-                    if (ch == '&') {
-                        /* a program comment, ignore and continue with next lexem */
-                        ch = getChar(cb);
-                        goto nextLexem;
-                    } else {
-                        ungetChar(cb, ch);
-                        ch = '*';
-                    }   /* !!! COPY BLOCK TO '/n' */
-
-                    int line = lineNumberFrom(cb);
-                    scanComment(cb);
-                    putLexemLines(lb, lineNumberFrom(cb)-line);
-                    ch = getChar(cb);
+                    ch = handleBlockComment(cb, lb);
                     goto nextLexem;
 
                 } else if (ch=='/') {
-                    /*  ******* a // comment ******* */
-                    ch = getChar(cb);
-                    if (ch == '&') {
-                        /* ****** a program comment, ignore */
-                        ch = getChar(cb);
-                        goto nextLexem;
-                    }
-                    line = lineNumberFrom(cb);
-                    while (ch!='\n' && ch != -1) {
-                        ch = getChar(cb);
-                        if (ch == '\\') {
-                            ch = getChar(cb);
-                            if (ch=='\n') {
-                                cb->lineNumber++;
-                                cb->lineBegin = cb->nextUnread;
-                                cb->columnOffset = 0;
-                            }
-                            ch = getChar(cb);
-                        }
-                    }
-                    putLexemLines(lb, lineNumberFrom(cb)-line);
+                    ch = handleLineComment(cb, lb);
                 } else {
                     putLexemWithColumn(lb, '/', cb, lexemStartingColumn);
                 }
@@ -697,43 +768,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 goto nextLexem;
 
             case '\n':
-                column = columnPosition(cb);
-                if (column >= MAX_REFERENCABLE_COLUMN) {
-                    FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_COLUMN, read TROUBLES in README file", XREF_EXIT_ERR);
-                }
-                if (lineNumberFrom(cb) >= MAX_REFERENCABLE_LINE) {
-                    FATAL_ERROR(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file", XREF_EXIT_ERR);
-                }
-                cb->lineNumber++;
-                cb->lineBegin = cb->nextUnread;
-                cb->columnOffset = 0;
-                ch = getChar(cb);
-                ch = skipBlanks(cb, ch);
-                if (ch == '/') {
-                    ch = getChar(cb);
-                    if (ch == '*') {
-                        ch = getChar(cb);
-                        if (ch == '&') {
-                            /* ****** a code comment, ignore */
-                            ch = getChar(cb);
-                        } else {
-                            ungetChar(cb, ch);
-                            ch = '*';
-                            int line = lineNumberFrom(cb);
-                            scanComment(cb);
-                            putLexemLines(lb, lineNumberFrom(cb)-line);
-                            ch = getChar(cb);
-                            ch = skipBlanks(cb, ch);
-                        }
-                    } else {
-                        ungetChar(cb, ch);
-                        ch = '/';
-                    }
-                }
-                putLexemWithColumn(lb, '\n', cb, lexemStartingColumn);
-                if (ch == '#' && LANGUAGE(LANG_C | LANG_YACC)) {
-                    ch = processCppToken(cb, lb);
-                }
+                ch = handleNewline(cb, lb, lexemStartingColumn);
                 goto nextLexem;
 
             case '#':
