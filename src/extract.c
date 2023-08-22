@@ -448,32 +448,37 @@ static void extClassifyLocalVariables(ProgramGraphNode *program) {
 
 static void getLocalVarStringFromLinkName(char *linkName, char *dcla, char *name, char *decl, char *declStar,
                                           bool copyName) {
-    char *s,*d,*dn,*dd;
+    char *src,*dest,*dest1,*dest2;
 
-    log_trace("GetLocalVarStringFromLinkName '%s'",linkName);
-    for (    s=linkName+1,d=decl,dd=dcla;
-             *s!=0 && *s!=LINK_NAME_SEPARATOR;
-             s++,d++,dd++) {
-        *d = *dd = *s;
+    log_trace("getLocalVarStringFromLinkName '%s'", linkName);
+    for (src=linkName+1, dest1=decl, dest2=dcla;
+         *src!=0 && *src!=LINK_NAME_SEPARATOR;
+         src++, dest1++, dest2++) {
+        *dest1 = *dest2 = *src;
     }
-    *dd = 0;
-    assert(*s);
-    for (s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {
-        *d = *s;
+    *dest2 = 0;
+
+    assert(*src);
+    for (src++; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++, dest1++) {
+        *dest1 = *src;
     }
-    assert(*s);
-    d = strmcpy(d, declStar);
-    for (dn=name,s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,dn++) {
-        *dn = *s;
-        if (copyName) *d++ = *s;
+
+    assert(*src);
+    dest1 = strmcpy(dest1, declStar);
+
+    for (dest=name,src++; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++,dest++) {
+        *dest = *src;
+        if (copyName)
+            *dest1++ = *src;
     }
-    assert(*s);
-    *dn = 0;
-    assert(*s);
-    for (s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {
-        *d = *s;
+    assert(*src);
+    *dest = 0;
+
+    assert(*src);
+    for (src++; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++, dest1++) {
+        *dest1 = *src;
     }
-    *d = 0;
+    *dest1 = 0;
 }
 
 static void extReClassifyIOVars(ProgramGraphNode *program) {
