@@ -9,6 +9,7 @@
 #include "commons.mock"
 #include "fileio.mock"
 #include "zlib.mock"
+#include "options.mock"
 
 
 static LexemBuffer lb;
@@ -175,6 +176,7 @@ Ensure(LexemBuffer, can_put_and_get_position) {
     assert_that(lb.read, is_equal_to(pointer_after_put));
 }
 
+extern void putLexemChar(LexemBuffer *lb, char ch);
 Ensure(LexemBuffer, can_backpatch_lexem) {
     LexemCode backpatched_lexem = STRING_LITERAL;
 

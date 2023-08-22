@@ -5,6 +5,7 @@
 #include "commons.h"
 #include "globals.h"
 #include "lexem.h"
+#include "options.h"
 
 //
 // Basic manipulation, these should preferably be private in favour
@@ -198,6 +199,51 @@ int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffe
     putLexemPositionFields(lexemBuffer, characterBuffer->fileNumber, characterBuffer->lineNumber, column);
 
     return ch;
+}
+
+void putStringConstantLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemStartingColumn) {
+    int ch;
+    int line = lineNumberFrom(cb);
+    int size = 0;
+
+    putLexemCode(lb, STRING_LITERAL);
+    do {
+        ch = getChar(cb);
+        size++;
+        if (ch != '\"'
+            && size < MAX_LEXEM_SIZE - 10) /* WTF is 10? Perhaps required space for position info? */
+            putLexemChar(lb, ch);
+        if (ch == '\\') {
+            ch = getChar(cb);
+            size++;
+            if (size < MAX_LEXEM_SIZE - 10)
+                putLexemChar(lb, ch);
+            /* TODO escape sequences */
+            if (ch == '\n') {
+                cb->lineNumber++;
+                cb->lineBegin    = cb->nextUnread;
+                cb->columnOffset = 0;
+            }
+            continue;
+        }
+        if (ch == '\n') {
+            cb->lineNumber++;
+            cb->lineBegin    = cb->nextUnread;
+            cb->columnOffset = 0;
+            if (options.strictAnsi && (options.debug || options.errors)) {
+                warningMessage(ERR_ST, "string constant through end of line");
+            }
+        }
+        // in Java CR LF can't be a part of string, even there
+        // are benchmarks making Xrefactory coredump if CR or LF
+        // is a part of strings
+    } while (ch != '\"' && (ch != '\n' || !options.strictAnsi) && ch != -1);
+    if (ch == -1 && options.mode != ServerMode) {
+        warningMessage(ERR_ST, "string constant through EOF");
+    }
+    terminateLexemString(lb);
+    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
+    putLexemLines(lb, lineNumberFrom(cb) - line);
 }
 
 void putCharLiteralLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemStartingColumn,

@@ -290,51 +290,6 @@ static int scanIntegerValue(CharacterBuffer *cb, int ch, unsigned long *valueP) 
     return ch;
 }
 
-static void handleStringConstant(CharacterBuffer *cb, LexemBuffer *lb, int lexemStartingColumn) {
-    int ch;
-    int line = lineNumberFrom(cb);
-    int size = 0;
-
-    putLexemCode(lb, STRING_LITERAL);
-    do {
-        ch = getChar(cb);
-        size++;
-        if (ch != '\"'
-            && size < MAX_LEXEM_SIZE - 10) /* WTF is 10? Perhaps required space for position info? */
-            putLexemChar(lb, ch);
-        if (ch == '\\') {
-            ch = getChar(cb);
-            size++;
-            if (size < MAX_LEXEM_SIZE - 10)
-                putLexemChar(lb, ch);
-            /* TODO escape sequences */
-            if (ch == '\n') {
-                cb->lineNumber++;
-                cb->lineBegin    = cb->nextUnread;
-                cb->columnOffset = 0;
-            }
-            continue;
-        }
-        if (ch == '\n') {
-            cb->lineNumber++;
-            cb->lineBegin    = cb->nextUnread;
-            cb->columnOffset = 0;
-            if (options.strictAnsi && (options.debug || options.errors)) {
-                warningMessage(ERR_ST, "string constant through end of line");
-            }
-        }
-        // in Java CR LF can't be a part of string, even there
-        // are benchmarks making Xrefactory coredump if CR or LF
-        // is a part of strings
-    } while (ch != '\"' && (ch != '\n' || !options.strictAnsi) && ch != -1);
-    if (ch == -1 && options.mode != ServerMode) {
-        warningMessage(ERR_ST, "string constant through EOF");
-    }
-    putLexemChar(lb, 0); /* Terminate string */
-    putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), lexemStartingColumn);
-    putLexemLines(lb, lineNumberFrom(cb) - line);
-}
-
 static int handleCharConstant(CharacterBuffer *cb, LexemBuffer *lb, int lexemStartingColumn) {
     int      fileOffsetForLexemStart, ch;
     unsigned chval = 0;
@@ -732,7 +687,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             }
 
             case '\"':
-                handleStringConstant(cb, lb, lexemStartingColumn);
+                putStringConstantLexem(lb, cb, lexemStartingColumn);
                 ch = getChar(cb);
                 goto nextLexem;
 
