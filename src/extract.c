@@ -24,8 +24,8 @@ typedef struct programGraphNode {
     struct referencesItem  *symRef;
     struct programGraphNode		*jump;
     char posBits;		/* INSIDE/OUSIDE block */
-    char stateBits;		/* visited + where setted */
-    char classifBits;	/* resulting classification */
+    char stateBits;		/* visited + where set */
+    char classificationBits;	/* resulting classification */
     struct programGraphNode		*next;
 } ProgramGraphNode;
 
@@ -154,7 +154,7 @@ static ProgramGraphNode *newProgramGraphNode(
     programGraph->jump = jump;
     programGraph->posBits = posBits;
     programGraph->stateBits = stateBits;
-    programGraph->classifBits = classifBits;
+    programGraph->classificationBits = classifBits;
     programGraph->next = next;
 
     return programGraph;
@@ -406,7 +406,7 @@ static void extClassifyLocalVariables(ProgramGraphNode *program) {
     ProgramGraphNode *p;
     for (p=program; p!=NULL; p=p->next) {
         if (isLocalVariable(p)) {
-            p->classifBits = categorizeLocalVariableExtraction(program,p);
+            p->classificationBits = categorizeLocalVariableExtraction(program,p);
         }
     }
 }
@@ -488,15 +488,15 @@ static void extReClassifyIOVars(ProgramGraphNode *program) {
     op = NULL; uniqueOutFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
         if (options.extractMode == EXTRACT_FUNCTION_ADDRESS_ARGS) {
-            if (p->classifBits == EXTRACT_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
+            if (p->classificationBits == EXTRACT_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
                 ) {
-                p->classifBits = EXTRACT_ADDRESS_ARGUMENT;
+                p->classificationBits = EXTRACT_ADDRESS_ARGUMENT;
             }
         } else if (options.extractMode == EXTRACT_FUNCTION) {
-            if (p->classifBits == EXTRACT_OUT_ARGUMENT
-                || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
+            if (p->classificationBits == EXTRACT_OUT_ARGUMENT
+                || p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
                 if (op == NULL) op = p;
                 else uniqueOutFlag = 0;
@@ -506,10 +506,10 @@ static void extReClassifyIOVars(ProgramGraphNode *program) {
     }
 
     if (op!=NULL && uniqueOutFlag) {
-        if (op->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
-            op->classifBits = EXTRACT_LOCAL_RESULT_VALUE;
+        if (op->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
+            op->classificationBits = EXTRACT_LOCAL_RESULT_VALUE;
         } else {
-            op->classifBits = EXTRACT_RESULT_VALUE;
+            op->classificationBits = EXTRACT_RESULT_VALUE;
         }
         return;
     }
@@ -517,7 +517,7 @@ static void extReClassifyIOVars(ProgramGraphNode *program) {
     op = NULL; uniqueOutFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
         if (options.extractMode == EXTRACT_FUNCTION) {
-            if (p->classifBits == EXTRACT_IN_OUT_ARGUMENT) {
+            if (p->classificationBits == EXTRACT_IN_OUT_ARGUMENT) {
                 if (op == NULL) op = p;
                 else uniqueOutFlag = 0;
                 // re-classify to in_out
@@ -526,7 +526,7 @@ static void extReClassifyIOVars(ProgramGraphNode *program) {
     }
 
     if (op!=NULL && uniqueOutFlag) {
-        op->classifBits = EXTRACT_IN_RESULT_VALUE;
+        op->classificationBits = EXTRACT_IN_RESULT_VALUE;
         return;
     }
 
@@ -546,14 +546,14 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb),"\t%s",s_extractionName);
 
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classifBits == EXTRACT_VALUE_ARGUMENT
-                ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_ADDRESS_ARGUMENT
-                ||  p->classifBits == EXTRACT_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_RESULT_VALUE
-                ||  p->classifBits == EXTRACT_IN_RESULT_VALUE
-                ||  p->classifBits == EXTRACT_LOCAL_VAR) {
+        if (    p->classificationBits == EXTRACT_VALUE_ARGUMENT
+                ||  p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_ADDRESS_ARGUMENT
+                ||  p->classificationBits == EXTRACT_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_RESULT_VALUE
+                ||  p->classificationBits == EXTRACT_IN_RESULT_VALUE
+                ||  p->classificationBits == EXTRACT_LOCAL_VAR) {
             getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , name);
             fFlag = 0;
@@ -580,14 +580,14 @@ static void extGenNewMacroHead(ProgramGraphNode *program) {
 
     sprintf(rb+strlen(rb),"#define %s",s_extractionName);
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classifBits == EXTRACT_VALUE_ARGUMENT
-                ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_ADDRESS_ARGUMENT
-                ||  p->classifBits == EXTRACT_RESULT_VALUE
-                ||  p->classifBits == EXTRACT_IN_RESULT_VALUE
-                ||  p->classifBits == EXTRACT_LOCAL_VAR) {
+        if (    p->classificationBits == EXTRACT_VALUE_ARGUMENT
+                ||  p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_ADDRESS_ARGUMENT
+                ||  p->classificationBits == EXTRACT_RESULT_VALUE
+                ||  p->classificationBits == EXTRACT_IN_RESULT_VALUE
+                ||  p->classificationBits == EXTRACT_LOCAL_VAR) {
             getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":"," , name);
             fFlag = 0;
@@ -630,14 +630,14 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     rb[0]=0;
 
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_RESULT_VALUE
-            || p->classifBits == EXTRACT_LOCAL_RESULT_VALUE
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE
+        if (p->classificationBits == EXTRACT_RESULT_VALUE
+            || p->classificationBits == EXTRACT_LOCAL_RESULT_VALUE
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE
             ) break;
     }
     if (p!=NULL) {
         getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
-        if (p->classifBits == EXTRACT_LOCAL_RESULT_VALUE) {
+        if (p->classificationBits == EXTRACT_LOCAL_RESULT_VALUE) {
             sprintf(rb+strlen(rb),"\t%s = ", decl);
         } else {
             sprintf(rb+strlen(rb),"\t%s = ", name);
@@ -648,18 +648,18 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb),"%s",s_extractionName);
 
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_VALUE_ARGUMENT
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE) {
+        if (p->classificationBits == EXTRACT_VALUE_ARGUMENT
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE) {
             getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , name);
             fFlag = 0;
         }
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classifBits == EXTRACT_IN_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_ADDRESS_ARGUMENT
-                ||  p->classifBits == EXTRACT_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
+        if (    p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_ADDRESS_ARGUMENT
+                ||  p->classificationBits == EXTRACT_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,options.olExtractAddrParPrefix,1);
             sprintf(rb+strlen(rb), "%s&%s", fFlag?"(":", " , name);
@@ -805,8 +805,8 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     sprintf(nhead+nhi,"%s",s_extractionName);
     nhi += strlen(nhead+nhi);
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_VALUE_ARGUMENT
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE
+        if (p->classificationBits == EXTRACT_VALUE_ARGUMENT
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE
             ) {
             getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(nhead+nhi, "%s%s", fFlag?"(":", " , decl);
@@ -815,9 +815,9 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
         }
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classifBits == EXTRACT_IN_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
+        if (    p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,options.olExtractAddrParPrefix,1);
             sprintf(nhead+nhi, "%s%s", fFlag?"(":", " , decl);
@@ -826,7 +826,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
         }
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_ADDRESS_ARGUMENT) {
+        if (p->classificationBits == EXTRACT_ADDRESS_ARGUMENT) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,EXTRACT_REFERENCE_ARG_STRING,1);
             sprintf(nhead+nhi, "%s%s", fFlag?"(":", " , decl);
             nhi += strlen(nhead+nhi);
@@ -851,9 +851,9 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
         sprintf(rb+strlen(rb), "static ");
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_RESULT_VALUE
-            || p->classifBits == EXTRACT_LOCAL_RESULT_VALUE
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE) break;
+        if (p->classificationBits == EXTRACT_RESULT_VALUE
+            || p->classificationBits == EXTRACT_LOCAL_RESULT_VALUE
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE) break;
     }
     if (p==NULL) {
         sprintf(rb+strlen(rb),"void %s",nhead);
@@ -867,10 +867,10 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb), " {\n");
     ldcla[0] = 0; ldclaLen = 0; fFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
-        if (        p->classifBits == EXTRACT_IN_OUT_ARGUMENT
-                    ||  p->classifBits == EXTRACT_LOCAL_VAR
-                    ||  p->classifBits == EXTRACT_OUT_ARGUMENT
-                    ||  p->classifBits == EXTRACT_RESULT_VALUE
+        if (        p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
+                    ||  p->classificationBits == EXTRACT_LOCAL_VAR
+                    ||  p->classificationBits == EXTRACT_OUT_ARGUMENT
+                    ||  p->classificationBits == EXTRACT_RESULT_VALUE
                     ||  (   p->symRef->storage == StorageExtern
                             && p->ref->usage.kind == UsageDeclared)
                     ) {
@@ -882,7 +882,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
                 if (fFlag) sprintf(rb+strlen(rb), "\t%s",decl);
                 else sprintf(rb+strlen(rb), ";\n\t%s",decl);
             }
-            if (p->classifBits == EXTRACT_IN_OUT_ARGUMENT) {
+            if (p->classificationBits == EXTRACT_IN_OUT_ARGUMENT) {
                 sprintf(rb+strlen(rb), " = %s%s", options.olExtractAddrParPrefix, name);
             }
             fFlag = 0;
@@ -906,9 +906,9 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
     rb[0]=0;
 
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classifBits == EXTRACT_IN_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
+        if (    p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "\t%s%s = %s;\n", options.olExtractAddrParPrefix,
@@ -916,9 +916,9 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
         }
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_RESULT_VALUE
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE
-            || p->classifBits == EXTRACT_LOCAL_RESULT_VALUE
+        if (p->classificationBits == EXTRACT_RESULT_VALUE
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE
+            || p->classificationBits == EXTRACT_LOCAL_RESULT_VALUE
             ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "\n\treturn %s;\n", name);
@@ -965,7 +965,7 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb),"\t\t%s %s = new %s",classname, s_extractionName,classname);
     fFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_IN_OUT_ARGUMENT) {
+        if (p->classificationBits == EXTRACT_IN_OUT_ARGUMENT) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , name);
             fFlag = 0;
@@ -975,14 +975,14 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
 
     // "perform" invocation
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_RESULT_VALUE
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE
-            || p->classifBits == EXTRACT_LOCAL_RESULT_VALUE
+        if (p->classificationBits == EXTRACT_RESULT_VALUE
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE
+            || p->classificationBits == EXTRACT_LOCAL_RESULT_VALUE
             ) break;
     }
     if (p!=NULL) {
         GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
-        if (p->classifBits == EXTRACT_LOCAL_RESULT_VALUE) {
+        if (p->classificationBits == EXTRACT_LOCAL_RESULT_VALUE) {
             sprintf(rb+strlen(rb),"\t\t%s = ", decl);
         } else {
             sprintf(rb+strlen(rb),"\t\t%s = ", name);
@@ -994,8 +994,8 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
 
     fFlag=1;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_VALUE_ARGUMENT
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE) {
+        if (p->classificationBits == EXTRACT_VALUE_ARGUMENT
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , name);
             fFlag = 0;
@@ -1006,12 +1006,12 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb), "\t\t");
     // 'out' arguments value recovering
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classifBits == EXTRACT_IN_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_OUT_ARGUMENT
-                ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
+        if (    p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_OUT_ARGUMENT
+                ||  p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
-            if (p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
+            if (p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
                 sprintf(rb+strlen(rb), "%s=%s.%s; ", decl, s_extractionName, name);
             } else {
                 sprintf(rb+strlen(rb), "%s=%s.%s; ", name, s_extractionName, name);
@@ -1053,9 +1053,9 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb), "class %s {\n", classname);
     //sprintf(rb+strlen(rb), "\t\t// %s 'out' arguments\n", s_opt.extractName);
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_OUT_ARGUMENT
-            || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
-            || p->classifBits == EXTRACT_IN_OUT_ARGUMENT
+        if (p->classificationBits == EXTRACT_OUT_ARGUMENT
+            || p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
+            || p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
             ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "\t\t%s;\n", decl);
@@ -1067,7 +1067,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb), "\t\t%s", classname);
     fFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classifBits == EXTRACT_IN_OUT_ARGUMENT){
+        if (    p->classificationBits == EXTRACT_IN_OUT_ARGUMENT){
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , decl);
             fFlag = 0;
@@ -1076,7 +1076,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb), "%s) {", fFlag?"(":"");
     fFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classifBits == EXTRACT_IN_OUT_ARGUMENT){
+        if (    p->classificationBits == EXTRACT_IN_OUT_ARGUMENT){
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             if (fFlag) sprintf(rb+strlen(rb), "\n\t\t\t");
             sprintf(rb+strlen(rb), "this.%s = %s; ", name, name);
@@ -1092,8 +1092,8 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     sprintf(nhead+nhi,"%s", "perform");
     nhi += strlen(nhead+nhi);
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_VALUE_ARGUMENT
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE) {
+        if (p->classificationBits == EXTRACT_VALUE_ARGUMENT
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(nhead+nhi, "%s%s", fFlag?"(":", " , decl);
             nhi += strlen(nhead+nhi);
@@ -1108,8 +1108,8 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     nhi += strlen(nhead+nhi);
 
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_RESULT_VALUE
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE) break;
+        if (p->classificationBits == EXTRACT_RESULT_VALUE
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE) break;
     }
     if (p==NULL) {
         sprintf(rb+strlen(rb),"\t\tvoid %s", nhead);
@@ -1123,8 +1123,8 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb), " {\n");
     ldcla[0] = 0; ldclaLen = 0; fFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classifBits == EXTRACT_LOCAL_VAR
-                ||  p->classifBits == EXTRACT_RESULT_VALUE
+        if (    p->classificationBits == EXTRACT_LOCAL_VAR
+                ||  p->classificationBits == EXTRACT_RESULT_VALUE
                 ||  (   p->symRef->storage == StorageExtern
                         && p->ref->usage.kind == UsageDeclared)
                 ) {
@@ -1161,7 +1161,7 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
     // local 'out' arguments value setting
     fFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
+        if (p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             if (fFlag) sprintf(rb+strlen(rb), "\t\t\t");
             sprintf(rb+strlen(rb), "this.%s=%s; ", name, name);
@@ -1172,9 +1172,9 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
 
 
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_RESULT_VALUE
-            || p->classifBits == EXTRACT_LOCAL_RESULT_VALUE
-            || p->classifBits == EXTRACT_IN_RESULT_VALUE
+        if (p->classificationBits == EXTRACT_RESULT_VALUE
+            || p->classificationBits == EXTRACT_LOCAL_RESULT_VALUE
+            || p->classificationBits == EXTRACT_IN_RESULT_VALUE
             ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "\t\t\treturn(%s);\n", name);
@@ -1195,9 +1195,9 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
 static bool extractJavaIsNewClassNecessary(ProgramGraphNode *program) {
     ProgramGraphNode  *p;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_OUT_ARGUMENT
-            || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
-            || p->classifBits == EXTRACT_IN_OUT_ARGUMENT
+        if (p->classificationBits == EXTRACT_OUT_ARGUMENT
+            || p->classificationBits == EXTRACT_LOCAL_OUT_ARGUMENT
+            || p->classificationBits == EXTRACT_IN_OUT_ARGUMENT
             ) break;
     }
     if (p==NULL)
