@@ -1,0 +1,13 @@
+<extraction-dialog type=newFunction_> <str len=<n>>	newFunction_(&a, &b);
+</str>
+ <str len=<n>>static void newFunction_(int *_a, int *_b) {
+	int a, b;
+</str>
+ <str len=<n>>	*_a = a;
+	*_b = b;
+}
+
+</str>
+  <int val=1 len=<n>></int>
+</extraction-dialog>
+<sync>
