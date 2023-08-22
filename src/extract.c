@@ -417,11 +417,11 @@ static void extClassifyLocalVariables(ProgramGraphNode *program) {
     -> oDecla == declarator
     ( if cpName == 0, then do not copy the original var name )
 */
-#define GetLocalVarStringFromLinkName(linkName,oDecla,oName,oDecl,declStar,cpName) { \
+#define GetLocalVarStringFromLinkName(linkName,dcla,name,decl,declStar,copyName) { \
         char *s,*d,*dn,*dd;                                             \
                                                                         \
         log_trace("GetLocalVarStringFromLinkName '%s'",linkName);       \
-        for (    s=linkName+1,d=oDecl,dd=oDecla;                         \
+        for (    s=linkName+1,d=decl,dd=dcla;                         \
                 *s!=0 && *s!=LINK_NAME_SEPARATOR;                       \
                 s++,d++,dd++) {                                         \
             *d = *dd = *s;                                              \
@@ -433,9 +433,9 @@ static void extClassifyLocalVariables(ProgramGraphNode *program) {
         }                                                               \
         assert(*s);                                                     \
         d = strmcpy(d, declStar);                                       \
-        for (dn=oName,s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,dn++) { \
+        for (dn=name,s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,dn++) { \
             *dn = *s;                                                   \
-            if (cpName) *d++ = *s;                                      \
+            if (copyName) *d++ = *s;                                      \
         }                                                               \
         assert(*s);                                                     \
         *dn = 0;                                                        \
@@ -445,6 +445,36 @@ static void extClassifyLocalVariables(ProgramGraphNode *program) {
         }                                                               \
         *d = 0;                                                         \
     }
+
+static void getLocalVarStringFromLinkName(char *linkName, char *dcla, char *name, char *decl, char *declStar,
+                                          bool copyName) {
+    char *s,*d,*dn,*dd;
+
+    log_trace("GetLocalVarStringFromLinkName '%s'",linkName);
+    for (    s=linkName+1,d=decl,dd=dcla;
+             *s!=0 && *s!=LINK_NAME_SEPARATOR;
+             s++,d++,dd++) {
+        *d = *dd = *s;
+    }
+    *dd = 0;
+    assert(*s);
+    for (s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {
+        *d = *s;
+    }
+    assert(*s);
+    d = strmcpy(d, declStar);
+    for (dn=name,s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,dn++) {
+        *dn = *s;
+        if (copyName) *d++ = *s;
+    }
+    assert(*s);
+    *dn = 0;
+    assert(*s);
+    for (s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {
+        *d = *s;
+    }
+    *d = 0;
+}
 
 static void extReClassifyIOVars(ProgramGraphNode *program) {
     ProgramGraphNode  *p,*op;
@@ -519,7 +549,7 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
                 ||  p->classifBits == EXTRACT_RESULT_VALUE
                 ||  p->classifBits == EXTRACT_IN_RESULT_VALUE
                 ||  p->classifBits == EXTRACT_LOCAL_VAR) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
+            getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , name);
             fFlag = 0;
         }
@@ -553,7 +583,7 @@ static void extGenNewMacroHead(ProgramGraphNode *program) {
                 ||  p->classifBits == EXTRACT_RESULT_VALUE
                 ||  p->classifBits == EXTRACT_IN_RESULT_VALUE
                 ||  p->classifBits == EXTRACT_LOCAL_VAR) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
+            getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":"," , name);
             fFlag = 0;
         }
@@ -601,7 +631,7 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
             ) break;
     }
     if (p!=NULL) {
-        GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
+        getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
         if (p->classifBits == EXTRACT_LOCAL_RESULT_VALUE) {
             sprintf(rb+strlen(rb),"\t%s = ", decl);
         } else {
@@ -615,7 +645,7 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     for (p=program; p!=NULL; p=p->next) {
         if (p->classifBits == EXTRACT_VALUE_ARGUMENT
             || p->classifBits == EXTRACT_IN_RESULT_VALUE) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
+            getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , name);
             fFlag = 0;
         }
@@ -626,8 +656,7 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
                 ||  p->classifBits == EXTRACT_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          options.olExtractAddrParPrefix,1);
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,options.olExtractAddrParPrefix,1);
             sprintf(rb+strlen(rb), "%s&%s", fFlag?"(":", " , name);
             fFlag = 0;
         }
@@ -774,7 +803,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
         if (p->classifBits == EXTRACT_VALUE_ARGUMENT
             || p->classifBits == EXTRACT_IN_RESULT_VALUE
             ) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
+            getLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(nhead+nhi, "%s%s", fFlag?"(":", " , decl);
             nhi += strlen(nhead+nhi);
             fFlag = 0;
@@ -785,8 +814,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
                 ||  p->classifBits == EXTRACT_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          options.olExtractAddrParPrefix,1);
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,options.olExtractAddrParPrefix,1);
             sprintf(nhead+nhi, "%s%s", fFlag?"(":", " , decl);
             nhi += strlen(nhead+nhi);
             fFlag = 0;
@@ -794,8 +822,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     }
     for (p=program; p!=NULL; p=p->next) {
         if (p->classifBits == EXTRACT_ADDRESS_ARGUMENT) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          EXTRACT_REFERENCE_ARG_STRING, 1);
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,EXTRACT_REFERENCE_ARG_STRING,1);
             sprintf(nhead+nhi, "%s%s", fFlag?"(":", " , decl);
             nhi += strlen(nhead+nhi);
             fFlag = 0;
@@ -978,8 +1005,7 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
                 ||  p->classifBits == EXTRACT_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          "",1);
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             if (p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
                 sprintf(rb+strlen(rb), "%s=%s.%s; ", decl, s_extractionName, name);
             } else {
@@ -1026,8 +1052,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
             || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
             || p->classifBits == EXTRACT_IN_OUT_ARGUMENT
             ) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          "",1);
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "\t\t%s;\n", decl);
         }
     }
@@ -1038,8 +1063,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     fFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
         if (    p->classifBits == EXTRACT_IN_OUT_ARGUMENT){
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          "",1);
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , decl);
             fFlag = 0;
         }
@@ -1048,8 +1072,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     fFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
         if (    p->classifBits == EXTRACT_IN_OUT_ARGUMENT){
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          "",1);
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             if (fFlag) sprintf(rb+strlen(rb), "\n\t\t\t");
             sprintf(rb+strlen(rb), "this.%s = %s; ", name, name);
             fFlag = 0;
@@ -1066,8 +1089,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     for (p=program; p!=NULL; p=p->next) {
         if (p->classifBits == EXTRACT_VALUE_ARGUMENT
             || p->classifBits == EXTRACT_IN_RESULT_VALUE) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          "", 1);
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             sprintf(nhead+nhi, "%s%s", fFlag?"(":", " , decl);
             nhi += strlen(nhead+nhi);
             fFlag = 0;
@@ -1135,8 +1157,7 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
     fFlag = 1;
     for (p=program; p!=NULL; p=p->next) {
         if (p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          "",1);
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             if (fFlag) sprintf(rb+strlen(rb), "\t\t\t");
             sprintf(rb+strlen(rb), "this.%s=%s; ", name, name);
             fFlag = 0;
