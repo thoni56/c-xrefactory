@@ -208,6 +208,11 @@ void putCharLiteralLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemStarting
     putLexemInt(lb, length);
 }
 
+void terminateLexemString(LexemBuffer *lb) {
+    putLexemChar(lb, 0);
+}
+
+
 void putLexemWithColumn(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb, int column) {
     putLexemCode(lb, lexem);
     putLexemPositionFields(lb, fileNumberFrom(cb), lineNumberFrom(cb), column);

@@ -237,9 +237,8 @@ static void processCompletionOrSearch(CharacterBuffer *characterBuffer, LexemBuf
                     /* Move to position cursor is on in the already written identifier */
                     /* We can use the backpatchP since it has moved to begining of string */
                     moveLexemStreamWriteToBackpatchPositonWithOffset(lb, deltaOffset);
-                    /* Terminate identifier here */
-                    putLexemChar(lb, 0);
-                    /* And write the position */
+                    terminateLexemString(lb);
+                    /* And continue with writing the position */
                     putLexemPosition(lb, position);
                 }
             } else {

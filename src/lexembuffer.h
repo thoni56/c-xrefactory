@@ -55,6 +55,7 @@ extern void putFloatingPointLexem(LexemBuffer *lb, LexemCode lexem, CharacterBuf
                                   int lexemStartingColumn, int lexStartFilePos);
 extern void putCharLiteralLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemStartingColumn,
                                 int length, unsigned chval);
+extern void terminateLexemString(LexemBuffer *lb);
 
 /* DEPRECATED? - Writes at where writePointer points to and advances it */
 extern void putLexemCodeAt(LexemCode lexem, char **writePointerP);
