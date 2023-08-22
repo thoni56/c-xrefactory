@@ -12,15 +12,7 @@
 // for the functions to put complete lexems below
 //
 
-void initLexemBuffer(LexemBuffer *buffer) {
-    buffer->read = buffer->lexemStream;
-    buffer->begin = buffer->lexemStream;
-    buffer->write = buffer->lexemStream;
-}
-
-void *getLexemStreamWrite(LexemBuffer *lb) {
-    return (void *)(lb->write);
-}
+/* Put elementary type values */
 
 /* Char */
 void putLexemChar(LexemBuffer *lb, char ch) {
@@ -36,12 +28,21 @@ protected void putLexShortAt(int shortValue, char **writePointerP) {
     (*writePointerP)++;
 }
 
-int getLexShortAt(char **readPointerP) {
+protected int getLexShortAt(char **readPointerP) {
     int value = *(unsigned char*)(*readPointerP);
     (*readPointerP)++;
     value += 256 * *(unsigned char*)(*readPointerP);
     (*readPointerP)++;
     return value;
+}
+
+protected void putLexemInt(LexemBuffer *lb, int value) {
+    unsigned tmp;
+    tmp = value;
+    *lb->write++ = tmp%256; tmp /= 256;
+    *lb->write++ = tmp%256; tmp /= 256;
+    *lb->write++ = tmp%256; tmp /= 256;
+    *lb->write++ = tmp%256; tmp /= 256;
 }
 
 static int peekLexShort(char **readPointerP) {
@@ -51,8 +52,94 @@ static int peekLexShort(char **readPointerP) {
     return first + 256*second;
 }
 
-void putLexemCode(LexemBuffer *lb, LexemCode lexem) {
-    putLexShortAt(lexem, &(lb->write));
+LexemCode getLexemCodeAt(char **readPointerP) {
+    return (LexemCode)getLexShortAt(readPointerP);
+}
+
+LexemCode getLexemCode(LexemBuffer *lb) {
+    return (LexemCode)getLexShortAt(&lb->read);
+}
+
+LexemCode peekLexemCodeAt(char *readPointer) {
+    char *pointer = readPointer;
+    return (LexemCode)peekLexShort(&pointer);
+}
+
+int getLexemIntAt(char **readPointerP) {
+    unsigned int value;
+    value = **(unsigned char**)readPointerP;
+    (*readPointerP)++;
+    value += 256 * **(unsigned char**)readPointerP;
+    (*readPointerP)++;
+    value += 256 * 256 * **(unsigned char**)readPointerP;
+    (*readPointerP)++;
+    value += 256 * 256 * 256 * **(unsigned char**)readPointerP;
+    (*readPointerP)++;
+    return value;
+}
+
+/* Compacted */
+protected void putLexCompactedAt(int value, char **writePointerP) {
+    assert(((unsigned) value)<4194304);
+    if (((unsigned)value) < 128) {
+        **writePointerP = ((unsigned char)value);
+        (*writePointerP)++;
+    } else if (((unsigned)value) < 16384) {
+        **writePointerP = ((unsigned)value)%128+128;
+        (*writePointerP)++;
+        **writePointerP = ((unsigned)value)/128;
+        (*writePointerP)++;
+    } else {
+        **writePointerP = ((unsigned)value)%128+128;
+        (*writePointerP)++;
+        **writePointerP = ((unsigned)value)/128%128+128;
+        (*writePointerP)++;
+        **writePointerP = ((unsigned)value)/16384;
+        (*writePointerP)++;
+    }
+}
+
+protected int getLexCompactedAt(char **readPointerP) {
+    unsigned value;
+
+    value = **(unsigned char**)readPointerP;
+    (*readPointerP)++;
+    if (value >= 128) {
+        unsigned secondPart = **(unsigned char**)readPointerP;
+        (*readPointerP)++;
+        if (secondPart < 128) {
+            value = ((unsigned)value)-128 + 128 * secondPart;
+        } else {
+            unsigned thirdPart = **(unsigned char**)readPointerP;
+            (*readPointerP)++;
+            value = ((unsigned)value)-128 + 128 * (secondPart-128) + 16384 * thirdPart;
+        }
+    }
+    return value;
+}
+
+
+/* Buffer manipulation */
+void initLexemBuffer(LexemBuffer *buffer) {
+    buffer->read = buffer->lexemStream;
+    buffer->begin = buffer->lexemStream;
+    buffer->write = buffer->lexemStream;
+}
+
+void shiftAnyRemainingLexems(LexemBuffer *lb) {
+    int remaining = lb->write - lb->read;
+    char *src = lb->read;
+    char *dest = lb->lexemStream;
+
+    for (int i = 0; i < remaining; i++)
+        *dest++ = *src++;
+
+    lb->read = lb->lexemStream;
+    lb->write = &lb->lexemStream[remaining];
+}
+
+void *getLexemStreamWrite(LexemBuffer *lb) {
+    return (void *)(lb->write);
 }
 
 /* For backpatching */
@@ -80,106 +167,31 @@ int strlenOfBackpatchedIdentifier(LexemBuffer *lb) {
 }
 
 
-LexemCode getLexemCodeAt(char **readPointerP) {
-    return (LexemCode)getLexShortAt(readPointerP);
-}
-
-LexemCode getLexToken(LexemBuffer *lb) {
-    return (LexemCode)getLexShortAt(&lb->read);
-}
-
-LexemCode peekLexemCodeAt(char *readPointer) {
-    char *pointer = readPointer;
-    return (LexemCode)peekLexShort(&pointer);
-}
-
-/* Int */
-void putLexemInt(LexemBuffer *lb, int value) {
-    unsigned tmp;
-    tmp = value;
-    *lb->write++ = tmp%256; tmp /= 256;
-    *lb->write++ = tmp%256; tmp /= 256;
-    *lb->write++ = tmp%256; tmp /= 256;
-    *lb->write++ = tmp%256; tmp /= 256;
-}
-
-int getLexemIntAt(char **readPointerP) {
-    unsigned int value;
-    value = **(unsigned char**)readPointerP;
-    (*readPointerP)++;
-    value += 256 * **(unsigned char**)readPointerP;
-    (*readPointerP)++;
-    value += 256 * 256 * **(unsigned char**)readPointerP;
-    (*readPointerP)++;
-    value += 256 * 256 * 256 * **(unsigned char**)readPointerP;
-    (*readPointerP)++;
-    return value;
-}
-
-/* Compacted */
-protected void putLexCompacted(int value, char **writePointerP) {
-    assert(((unsigned) value)<4194304);
-    if (((unsigned)value) < 128) {
-        **writePointerP = ((unsigned char)value);
-        (*writePointerP)++;
-    } else if (((unsigned)value) < 16384) {
-        **writePointerP = ((unsigned)value)%128+128;
-        (*writePointerP)++;
-        **writePointerP = ((unsigned)value)/128;
-        (*writePointerP)++;
-    } else {
-        **writePointerP = ((unsigned)value)%128+128;
-        (*writePointerP)++;
-        **writePointerP = ((unsigned)value)/128%128+128;
-        (*writePointerP)++;
-        **writePointerP = ((unsigned)value)/16384;
-        (*writePointerP)++;
-    }
-}
-
-protected int getLexCompacted(char **readPointerP) {
-    unsigned value;
-
-    value = **(unsigned char**)readPointerP;
-    (*readPointerP)++;
-    if (value >= 128) {
-        unsigned secondPart = **(unsigned char**)readPointerP;
-        (*readPointerP)++;
-        if (secondPart < 128) {
-            value = ((unsigned)value)-128 + 128 * secondPart;
-        } else {
-            unsigned thirdPart = **(unsigned char**)readPointerP;
-            (*readPointerP)++;
-            value = ((unsigned)value)-128 + 128 * (secondPart-128) + 16384 * thirdPart;
-        }
-    }
-    return value;
-}
-
-
 //
 // Put complete lexems (including position, string, ...)
 //
 
-/* Lines */
+void putLexemCode(LexemBuffer *lb, LexemCode lexem) {
+    putLexShortAt(lexem, &(lb->write));
+}
+
 void putLexemLines(LexemBuffer *lb, int lines) {
     putLexemCode(lb, LINE_TOKEN);
     putLexemInt(lb, lines);
 }
 
-/* Position */
 void putLexemPositionFields(LexemBuffer *lb, int file, int line, int column) {
     assert(file>=0 && file<MAX_FILES);
-    putLexCompacted(file, &(lb->write));
-    putLexCompacted(line, &(lb->write));
-    putLexCompacted(column, &(lb->write));
+    putLexCompactedAt(file, &(lb->write));
+    putLexCompactedAt(line, &(lb->write));
+    putLexCompactedAt(column, &(lb->write));
 }
 
 void putLexemPosition(LexemBuffer *lb, Position position) {
     assert(position.file>=0 && position.file<MAX_FILES);
-    putLexCompacted(position.file, &(lb->write));
-    putLexCompacted(position.line, &(lb->write));
-    putLexCompacted(position.col, &(lb->write));
+    putLexCompactedAt(position.file, &(lb->write));
+    putLexCompactedAt(position.line, &(lb->write));
+    putLexCompactedAt(position.col, &(lb->write));
 }
 
 /* Scans an identifier from CharacterBuffer and stores it in
@@ -309,25 +321,23 @@ void putFloatingPointLexem(LexemBuffer *lb, LexemCode lexem, CharacterBuffer *cb
 
 //
 // Get functions
-// TODO: Most of these are still low-level and don't even use the lexemBuffer...
 //
-
-
-
-
-Position getLexemPositionAt(char **readPointerP) {
-    Position pos;
-    pos.file = getLexCompacted(readPointerP);
-    pos.line = getLexCompacted(readPointerP);
-    pos.col = getLexCompacted(readPointerP);
-    return pos;
-}
 
 Position getLexemPosition(LexemBuffer *lb) {
     Position pos;
-    pos.file = getLexCompacted(&lb->read);
-    pos.line = getLexCompacted(&lb->read);
-    pos.col = getLexCompacted(&lb->read);
+    pos.file = getLexCompactedAt(&lb->read);
+    pos.line = getLexCompactedAt(&lb->read);
+    pos.col = getLexCompactedAt(&lb->read);
+    return pos;
+}
+
+// TODO: Most of these are still low-level and don't even use the lexemBuffer...
+
+Position getLexemPositionAt(char **readPointerP) {
+    Position pos;
+    pos.file = getLexCompactedAt(readPointerP);
+    pos.line = getLexCompactedAt(readPointerP);
+    pos.col = getLexCompactedAt(readPointerP);
     return pos;
 }
 
@@ -343,9 +353,9 @@ void putLexemCodeAt(LexemCode lexem, char **writePointerP) {
 }
 
 void putLexemPositionAt(Position position, char **writePointerP) {
-    putLexCompacted(position.file, writePointerP);
-    putLexCompacted(position.line, writePointerP);
-    putLexCompacted(position.col, writePointerP);
+    putLexCompactedAt(position.file, writePointerP);
+    putLexCompactedAt(position.line, writePointerP);
+    putLexCompactedAt(position.col, writePointerP);
 }
 
 void putLexemIntAt(int integer, char **writePointerP) {
@@ -355,16 +365,4 @@ void putLexemIntAt(int integer, char **writePointerP) {
     *(*writePointerP)++ = tmp%256; tmp /= 256;
     *(*writePointerP)++ = tmp%256; tmp /= 256;
     *(*writePointerP)++ = tmp%256; tmp /= 256;
-}
-
-void shiftAnyRemainingLexems(LexemBuffer *lb) {
-    int remaining = lb->write - lb->read;
-    char *src = lb->read;
-    char *dest = lb->lexemStream;
-
-    for (int i = 0; i < remaining; i++)
-        *dest++ = *src++;
-
-    lb->read = lb->lexemStream;
-    lb->write = &lb->lexemStream[remaining];
 }

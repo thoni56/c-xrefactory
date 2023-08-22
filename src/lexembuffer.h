@@ -23,6 +23,8 @@ typedef struct {
 } LexemBuffer;
 
 
+extern void initLexemBuffer(LexemBuffer *buffer);
+
 /* LexemBuffer manipulation */
 extern void shiftAnyRemainingLexems(LexemBuffer *lb);
 
@@ -62,6 +64,9 @@ extern void putLexemCodeAt(LexemCode lexem, char **writePointerP);
 extern void putLexemPositionAt(Position position, char **writePointerP);
 extern void putLexemIntAt(int integer, char **writePointerP);
 
+/* Get elementary types */
+extern LexemCode getLexemCode(LexemBuffer *lb);
+
 /* Get semantically meaningful lexems */
 extern Position getLexemPosition(LexemBuffer *lb);
 
@@ -75,7 +80,5 @@ extern Position getLexemPositionAt(char **readPointerP);
 
 extern LexemCode peekLexemCodeAt(char *readPointer);
 extern Position peekLexemPositionAt(char *readPointer);
-
-extern void initLexemBuffer(LexemBuffer *buffer);
 
 #endif

@@ -52,60 +52,31 @@ Ensure(LexemBuffer, can_shift_remaining_lexems) {
     assert_that(strncmp(lb.lexemStream, test_string, strlen(test_string)), is_equal_to(0));
 }
 
-extern void putLexShortAt(int shortValue, char **writePointer);
-extern int getLexShortAt(char **readPointer);
-Ensure(LexemBuffer, can_put_and_get_a_short) {
-    int   shortValue;
-    char *expected_next_after_get;
-
-    putLexShortAt(433, &lb.write);
-    expected_next_after_get = lb.write;
-
-    shortValue  = getLexShortAt(&lb.read);
-
-    assert_that(lb.read, is_equal_to(expected_next_after_get));
-    assert_that(shortValue, is_equal_to(433));
+Ensure(LexemBuffer, can_put_and_get_lexem_code) {
+    putLexemCode(&lb, STRING_LITERAL);
+    assert_that(getLexemCode(&lb), is_equal_to(STRING_LITERAL));
 }
 
-Ensure(LexemBuffer, can_put_and_get_a_token) {
-    LexemCode       lexem;
-    char       *expected_next_after_get;
-
+Ensure(LexemBuffer, can_put_and_get_two_lexem_codes) {
     putLexemCode(&lb, DOUBLE_CONSTANT);
-    expected_next_after_get = lb.write;
+    putLexemCode(&lb, STRING_LITERAL);
 
-    lexem = getLexemCodeAt(&lb.read);
-
-    assert_that(lb.read, is_equal_to(expected_next_after_get));
-    assert_that(lexem, is_equal_to(DOUBLE_CONSTANT));
+    assert_that(getLexemCode(&lb), is_equal_to(DOUBLE_CONSTANT));
+    assert_that(getLexemCode(&lb), is_equal_to(STRING_LITERAL));
 }
 
-extern void putLexemInt(LexemBuffer *lb, int value);
-Ensure(LexemBuffer, can_put_and_get_an_int) {
-    int         integer;
-    char       *expected_next_after_get;
-
-    putLexemInt(&lb, 34581);
-    expected_next_after_get = lb.write;
-
-    integer     = getLexemIntAt(&lb.read);
-
-    assert_that(lb.read, is_equal_to(expected_next_after_get));
-    assert_that(integer, is_equal_to(34581));
-}
-
-extern void putLexCompacted(int value, char **writePointer);
-extern int getLexCompacted(char **readPointer);
+extern void putLexCompactedAt(int value, char **writePointer);
+extern int getLexCompactedAt(char **readPointer);
 Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
     int         integer;
     char       *expected_next_after_get;
 
     /* Test values across the 128 boundry, 1 or 2 "slots" */
     for (int i = 0; i < 150; i++) {
-        putLexCompacted(i, &lb.write);
+        putLexCompactedAt(i, &lb.write);
         expected_next_after_get = lb.write;
 
-        integer     = getLexCompacted(&lb.read);
+        integer     = getLexCompactedAt(&lb.read);
 
         assert_that(lb.read, is_equal_to(expected_next_after_get));
         assert_that(integer, is_equal_to(i));
@@ -113,10 +84,10 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
 
     /* Test values across the 16384 boundry, 2 or 3 "slots" */
     for (int i = 16300; i < 16500; i++) {
-        putLexCompacted(i, &lb.write);
+        putLexCompactedAt(i, &lb.write);
         expected_next_after_get = lb.write;
 
-        integer     = getLexCompacted(&lb.read);
+        integer     = getLexCompactedAt(&lb.read);
 
         assert_that(lb.read, is_equal_to(expected_next_after_get));
         assert_that(integer, is_equal_to(i));
@@ -231,14 +202,4 @@ Ensure(LexemBuffer, can_write_position_with_pointer) {
     Position expected_position = getLexemPositionAt(&(lb.read));
 
     assert_that(positionsAreEqual(position, expected_position));
-}
-
-Ensure(LexemBuffer, can_write_int_with_pointer) {
-    int integer = 144;
-
-    putLexemIntAt(integer, &(lb.write));
-
-    int expected_integer = getLexemIntAt(&(lb.read));
-
-    assert_that(expected_integer, is_equal_to(integer));
 }
