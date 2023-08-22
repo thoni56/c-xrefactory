@@ -12,5 +12,5 @@ $(TEST): clean
 clean:
 	@-rm -rf CXrefs output.log output.tmp output
 
-gdb:
+debug:
 	gdb --args $(COMMAND)
