@@ -192,14 +192,6 @@ typedef enum language {
 #define JAVA_CONSTRUCTOR_NAME1 "<init>"
 #define JAVA_CONSTRUCTOR_NAME2 "<clinit>"
 
-/* ********************** code inspection state bits ********************* */
-
-#define INSP_VISITED            1
-#define INSP_INSIDE_BLOCK       2
-#define INSP_OUTSIDE_BLOCK      4
-#define INSP_INSIDE_REENTER     8		/* value reenters the block             */
-#define INSP_INSIDE_PASSING     16		/* a non-modified values pass via block */
-
 /* *******************   Object-Oriented Resolutions   ******************* */
 
 /* visibilities for completion */
