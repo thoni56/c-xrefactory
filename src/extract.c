@@ -361,7 +361,7 @@ static ExtractClassification classifyLocalVariableExtraction0(
     }
 }
 
-static ExtractClassification categorizeLocalVariableExtraction(
+static ExtractClassification classifyLocalVariableForExtraction(
     ProgramGraphNode *program,
     ProgramGraphNode *varRef
 ) {
@@ -421,11 +421,11 @@ static bool isLocalVariable(ProgramGraphNode *node) {
         &&  node->symRef->scope==ScopeAuto;
 }
 
-static void extClassifyLocalVariables(ProgramGraphNode *program) {
+static void classifyLocalVariables(ProgramGraphNode *program) {
     ProgramGraphNode *p;
     for (p=program; p!=NULL; p=p->next) {
         if (isLocalVariable(p)) {
-            p->classification = categorizeLocalVariableExtraction(program,p);
+            p->classification = classifyLocalVariableForExtraction(program,p);
         }
     }
 }
@@ -1296,7 +1296,7 @@ static void makeExtraction(void) {
         errorMessage(ERR_ST, "There are jumps in or out of region");
         return;
     }
-    extClassifyLocalVariables(program);
+    classifyLocalVariables(program);
     extReClassifyIOVars(program);
 
     if (LANGUAGE(LANG_JAVA))
