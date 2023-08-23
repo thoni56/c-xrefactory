@@ -4727,13 +4727,13 @@ break;
 case 486:
 #line 1765 "yacc_parser.y"
 {
-        genContinueBreakReference(CONTINUE_LABEL_NAME);
+        generateContinueBreakReference(CONTINUE_LABEL_NAME);
     }
 break;
 case 487:
 #line 1768 "yacc_parser.y"
 {
-        genContinueBreakReference(BREAK_LABEL_NAME);
+        generateContinueBreakReference(BREAK_LABEL_NAME);
     }
 break;
 case 488:

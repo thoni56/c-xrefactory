@@ -125,7 +125,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
     }
 }
 
-void genContinueBreakReference(char *name) {
+void generateContinueBreakReference(char *name) {
     Symbol symbol, *foundSymbol;
 
     if (options.serverOperation != OLO_EXTRACT)

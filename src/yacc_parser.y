@@ -1763,10 +1763,10 @@ iteration_statement
 jump_statement
     : GOTO label_name ';'
     | CONTINUE ';'          {
-        genContinueBreakReference(CONTINUE_LABEL_NAME);
+        generateContinueBreakReference(CONTINUE_LABEL_NAME);
     }
     | BREAK ';'             {
-        genContinueBreakReference(BREAK_LABEL_NAME);
+        generateContinueBreakReference(BREAK_LABEL_NAME);
     }
     | RETURN ';'            {
         generateInternalLabelReference(-1, UsageUsed);

@@ -3935,13 +3935,13 @@ break;
 case 317:
 #line 1551 "c_parser.y"
 {
-        genContinueBreakReference(CONTINUE_LABEL_NAME);
+        generateContinueBreakReference(CONTINUE_LABEL_NAME);
     }
 break;
 case 318:
 #line 1554 "c_parser.y"
 {
-        genContinueBreakReference(BREAK_LABEL_NAME);
+        generateContinueBreakReference(BREAK_LABEL_NAME);
     }
 break;
 case 319:

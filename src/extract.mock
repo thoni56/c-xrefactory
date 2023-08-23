@@ -22,7 +22,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
     mock(name);
 }
 
-void genContinueBreakReference(char *name) {
+void generateContinueBreakReference(char *name) {
     mock(name);
 }
 

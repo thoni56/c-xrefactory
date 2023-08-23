@@ -2785,7 +2785,7 @@ BreakStatement
     |	BREAK ';'						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genContinueBreakReference(BREAK_LABEL_NAME);
+                    generateContinueBreakReference(BREAK_LABEL_NAME);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2800,7 +2800,7 @@ ContinueStatement
     |	CONTINUE ';'					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genContinueBreakReference(CONTINUE_LABEL_NAME);
+                    generateContinueBreakReference(CONTINUE_LABEL_NAME);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }

@@ -5444,7 +5444,7 @@ case 325:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genContinueBreakReference(BREAK_LABEL_NAME);
+                    generateContinueBreakReference(BREAK_LABEL_NAME);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
@@ -5462,7 +5462,7 @@ case 327:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genContinueBreakReference(CONTINUE_LABEL_NAME);
+                    generateContinueBreakReference(CONTINUE_LABEL_NAME);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
