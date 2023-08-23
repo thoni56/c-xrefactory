@@ -572,15 +572,16 @@ static void extGenNewMacroHead(ProgramGraphNode *program) {
 
     sprintf(resultingString+strlen(resultingString),"#define %s",s_extractionName);
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classification == EXTRACT_VALUE_ARGUMENT
-                ||  p->classification == EXTRACT_IN_OUT_ARGUMENT
-                ||  p->classification == EXTRACT_OUT_ARGUMENT
-                ||  p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
-                ||  p->classification == EXTRACT_ADDRESS_ARGUMENT
-                ||  p->classification == EXTRACT_RESULT_VALUE
-                ||  p->classification == EXTRACT_IN_RESULT_VALUE
-                ||  p->classification == EXTRACT_LOCAL_VAR) {
-            getLocalVarStringFromLinkName(p->symRef->linkName, name, /* unused */declarator, /* unused */declaration, "", true);
+        if (p->classification == EXTRACT_VALUE_ARGUMENT
+            ||  p->classification == EXTRACT_IN_OUT_ARGUMENT
+            ||  p->classification == EXTRACT_OUT_ARGUMENT
+            ||  p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
+            ||  p->classification == EXTRACT_ADDRESS_ARGUMENT
+            ||  p->classification == EXTRACT_RESULT_VALUE
+            ||  p->classification == EXTRACT_IN_RESULT_VALUE
+            ||  p->classification == EXTRACT_LOCAL_VAR
+        ) {
+            getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":"," , name);
             isFirstArgument = false;
         }
