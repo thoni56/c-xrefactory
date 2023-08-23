@@ -472,21 +472,24 @@ static void getLocalVarStringFromLinkName(char *linkName, char *name, char *decl
 }
 
 static void getLocalVariableNameFromLinkName(char *linkName, char *name) {
-    char *src, *nameP;
+    char *src;
 
     log_trace("%s '%s'", __FUNCTION__, linkName);
 
     // linkName always starts with a space? Skip first part
-    for (src=linkName+1; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++) {
-    }
-
+    src = linkName+1;
+    src = strchr(src, LINK_NAME_SEPARATOR);
+    assert(src);
     assert(*src);
+
     // skip also second part
-    for (src++; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++) {
-    }
-
+    src++;
+    src = strchr(src, LINK_NAME_SEPARATOR);
+    assert(src);
     assert(*src);
+
     // Copy the name
+    char *nameP;
     for (nameP=name, src++; *src!=0 && *src!=LINK_NAME_SEPARATOR; src++, nameP++) {
         *nameP = *src;
     }
