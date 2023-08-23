@@ -603,6 +603,9 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
 }
 
 /* ************************** macro ******************************* */
+/* Preparing for extract function or macro inside expression */
+/* But how do we know this... */
+bool isInExpression = false;
 
 static void generateNewMacroCall(ProgramGraphNode *program) {
     char name[TMP_STRING_SIZE];
@@ -611,7 +614,10 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
 
     resultingString[0]=0;
 
-    sprintf(resultingString+strlen(resultingString),"\t%s",extractionName);
+    if (isInExpression)
+        sprintf(resultingString+strlen(resultingString), "%s", extractionName);
+    else
+        sprintf(resultingString+strlen(resultingString), "\t%s", extractionName);
 
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_VALUE_ARGUMENT
@@ -628,7 +634,11 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
             isFirstArgument = false;
         }
     }
-    sprintf(resultingString+strlen(resultingString), "%s);\n", isFirstArgument?"(":"");
+
+    if (isInExpression)
+        sprintf(resultingString+strlen(resultingString), "%s)", isFirstArgument?"(":"");
+    else
+        sprintf(resultingString+strlen(resultingString), "%s);\n", isFirstArgument?"(":"");
 
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
@@ -712,9 +722,10 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
             sprintf(resultingString+strlen(resultingString),"\t%s = ", name);
         }
     } else {
-        strcat(resultingString, "\t");
+        if (!isInExpression)
+            strcat(resultingString, "\t");
     }
-    sprintf(resultingString+strlen(resultingString),"%s",extractionName);
+    sprintf(resultingString+strlen(resultingString), "%s", extractionName);
 
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_VALUE_ARGUMENT
@@ -736,8 +747,13 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
             isFirstArgument = false;
         }
     }
-    sprintf(resultingString+strlen(resultingString), "%s);\n", isFirstArgument?"(":"");
+
+    if (isInExpression)
+        sprintf(resultingString+strlen(resultingString), "%s)", isFirstArgument?"(":"");
+    else
+        sprintf(resultingString+strlen(resultingString), "%s);\n", isFirstArgument?"(":"");
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
+
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, resultingString);
     } else {
