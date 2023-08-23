@@ -1073,7 +1073,7 @@ static Symbol *getSymbolFromReference(Reference *reference) {
         if (referencesItem!=NULL) {
             for (Reference *r=referencesItem->references; r!=NULL; r=r->next) {
                 if (r == reference) {
-                    symbolLinkName = referencesItem->name;
+                    symbolLinkName = referencesItem->linkName;
                     goto found;
                 }
             }
@@ -1852,9 +1852,9 @@ static void completeFromXrefFun(ReferencesItem *s, void *c) {
     assert(s && cc);
     if (s->type != cc->type)
         return;
-    /*&fprintf(dumpOut,"testing %s\n",s->name);fflush(dumpOut);&*/
-    fillCompletionLine(&compLine, s->name, NULL, s->type,0, 0, NULL,NULL);
-    processName(s->name, &compLine, 1, cc->completions);
+    /*&fprintf(dumpOut,"testing %s\n",s->linkName);fflush(dumpOut);&*/
+    fillCompletionLine(&compLine, s->linkName, NULL, s->type,0, 0, NULL,NULL);
+    processName(s->linkName, &compLine, 1, cc->completions);
 }
 
 void completeYaccLexem(Completions *c) {

@@ -70,17 +70,17 @@ void renameCollationSymbols(SymbolsMenu *menu) {
     char                *nn, *cs;
     assert(menu);
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
-        cs = strchr(m->references.name, LINK_NAME_COLLATE_SYMBOL);
+        cs = strchr(m->references.linkName, LINK_NAME_COLLATE_SYMBOL);
         if (cs!=NULL && m->references.type==TypeCppCollate) {
-            len = strlen(m->references.name);
+            len = strlen(m->references.linkName);
             assert(len>=2);
             nn = olcxAlloc(len-1);
-            len1 = cs-m->references.name;
-            strncpy(nn, m->references.name, len1);
+            len1 = cs-m->references.linkName;
+            strncpy(nn, m->references.linkName, len1);
             strcpy(nn+len1, cs+2);
-            log_debug("renaming %s to %s", m->references.name, nn);
-            olcxFree(m->references.name, len+1);
-            m->references.name = nn;
+            log_debug("renaming %s to %s", m->references.linkName, nn);
+            olcxFree(m->references.linkName, len+1);
+            m->references.linkName = nn;
         }
     }
 }
@@ -274,8 +274,8 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
     }
     switch (symbol->type) {
     case TypePackage: {
-        char *name = cxAlloc(strlen(menu->references.name)+1);
-        strcpy(name, menu->references.name);
+        char *name = cxAlloc(strlen(menu->references.linkName)+1);
+        strcpy(name, menu->references.linkName);
         javaDotifyFileName(name);
         makeRefactoringAvailable(PPC_AVR_RENAME_PACKAGE, name);
         break;
@@ -509,7 +509,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
             }
         } else {
             /* an on - line cxref action ?*/
-            //&fprintf(dumpOut,"!got it %s !!!!!!!\n", foundMember->name);
+            //&fprintf(dumpOut,"!got it %s !!!!!!!\n", foundMember->linkName);
             olstringServed = true;       /* olstring will be served */
             olstringUsageKind = usage.kind;
             assert(sessionData.browserStack.top);
@@ -631,7 +631,7 @@ static void freePopedBrowserStackItems(OlcxReferencesStack *stack) {
     assert(stack);
     // delete all after top
     while (stack->root != stack->top) {
-        //&fprintf(dumpOut,":freeing %s\n", stack->root->hkSelectedSym->references.name);
+        //&fprintf(dumpOut,":freeing %s\n", stack->root->hkSelectedSym->references.linkName);
         deleteOlcxRefs(&stack->root, stack);
     }
 }
@@ -1253,7 +1253,7 @@ static void findAndGotoDefinition(ReferencesItem *sym) {
     refs = sessionData.browserStack.top;
     fillSymbolsMenu(&menu, *sym, 1, true, 0, UsageUsed, 0, UsageNone, noPosition);
     refs->menuSym = &menu;
-    fullScanFor(sym->name);
+    fullScanFor(sym->linkName);
     orderRefsAndGotoDefinition(refs);
     refs->menuSym = NULL;
     // recover stack
@@ -1540,7 +1540,7 @@ bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     if (p1->storage!=p2->storage)
         return false;
 
-    if (strcmp(p1->name, p2->name) != 0)
+    if (strcmp(p1->linkName, p2->linkName) != 0)
         return false;
     return true;
 }
@@ -1561,8 +1561,8 @@ bool olcxIsSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
 
-    getBareName(p1->name, &n1start, &n1len);
-    getBareName(p2->name, &n2start, &n2len);
+    getBareName(p1->linkName, &n1start, &n1len);
+    getBareName(p2->linkName, &n2start, &n2len);
     if (n1len != n2len)
         return false;
     if (strncmp(n1start, n2start, n1len))
@@ -1678,7 +1678,7 @@ static void olcxMenuToggleSelect(void) {
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
             FileItem *fileItem = getFileItem(ss->references.vApplClass);
-            linkNamePrettyPrint(ln, ss->references.name,MAX_REF_LEN,SHORT_NAME);
+            linkNamePrettyPrint(ln, ss->references.linkName,MAX_REF_LEN,SHORT_NAME);
             cname = javaGetNudePreTypeName_static(getRealFileName_static(fileItem->name),
                                                   options.displayNestedClasses);
             sprintf(tmpBuff, "%s %s refs of \"%s\"",
@@ -2546,7 +2546,7 @@ static SymbolsMenu *safetyCheck2FindCorrMenuItem(SymbolsMenu *item,
             && m->references.vApplClass == item->references.vApplClass
             && m->references.type == item->references.type
             && m->references.storage == item->references.storage
-            && refactoringLinkNameCorrespondance(m->references.name, item->references.name,
+            && refactoringLinkNameCorrespondance(m->references.linkName, item->references.linkName,
                                                  command)) {
             // here it is
             return m;
@@ -2601,8 +2601,8 @@ bool safetyCheck2ShouldWarn(void) {
 
 static bool olMenuHashFileNumLess(SymbolsMenu *s1, SymbolsMenu *s2) {
     int fi1, fi2;
-    fi1 = cxFileHashNumber(s1->references.name);
-    fi2 = cxFileHashNumber(s2->references.name);
+    fi1 = cxFileHashNumber(s1->references.linkName);
+    fi2 = cxFileHashNumber(s2->references.linkName);
     if (fi1 < fi2) return true;
     if (fi1 > fi2) return false;
     if (s1->references.category == CategoryLocal) return true;
@@ -2651,9 +2651,9 @@ static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
             ss = ss->next;
     }
     if (ss != NULL) {
-        //&fprintf(dumpOut, "sym %s of %s\n", ss->references.name, typeNamesTable[ss->references.type]);
+        //&fprintf(dumpOut, "sym %s of %s\n", ss->references.linkName, typeNamesTable[ss->references.type]);
         if (ss->references.type == TypeStruct) {
-            clii = getClassNumFromClassLinkName(ss->references.name, clii);
+            clii = getClassNumFromClassLinkName(ss->references.linkName, clii);
         } else {
             if (options.serverOperation == OLO_CLASS_TREE) {
                 assert(sessionData.classTree.baseClassFileNumber!=NO_FILE_NUMBER);
@@ -2678,12 +2678,12 @@ static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
 
     r1 = &menu1->references;
     r2 = &menu2->references;
-    getBareName(r1->name, &name1, &len1);
-    getBareName(r2->name, &name2, &len2);
+    getBareName(r1->linkName, &name1, &len1);
+    getBareName(r2->linkName, &name2, &len2);
     int cmp = strcmp(name1, name2);
     if (cmp!=0)
         return cmp<0;
-    cmp = strcmp(r1->name, r2->name);
+    cmp = strcmp(r1->linkName, r2->linkName);
     if (cmp!=0)
         return cmp<0;
     return classHierarchyClassNameLess(menu1->references.vApplClass, menu2->references.vApplClass);
@@ -2711,9 +2711,9 @@ void olCreateSelectionMenu(int command) {
     LIST_SORT(SymbolsMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
     ss = rstack->hkSelectedSym;
     while (ss!=NULL) {
-        scanReferencesToCreateMenu(ss->references.name);
-        fnum = cxFileHashNumber(ss->references.name);
-        while (ss!=NULL && fnum==cxFileHashNumber(ss->references.name))
+        scanReferencesToCreateMenu(ss->references.linkName);
+        fnum = cxFileHashNumber(ss->references.linkName);
+        while (ss!=NULL && fnum==cxFileHashNumber(ss->references.linkName))
             ss = ss->next;
     }
     mapOverReferenceTable(mapCreateSelectionMenu);
@@ -2746,7 +2746,7 @@ static void olcxSingleReferenceCheck1(ReferencesItem *referenceItem,
         }
         fprintf(communicationChannel,"%c  %s:%d reference to '", prefixchar,
                 simpleFileNameFromFileNum(reference->position.file), reference->position.line);
-        printSymbolLinkNameString(communicationChannel, referenceItem->name);
+        printSymbolLinkNameString(communicationChannel, referenceItem->linkName);
         fprintf(communicationChannel,"' lost\n");
         olcxAppendReference(reference, sessionData.browserStack.top);
     }
@@ -2780,9 +2780,9 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, Symbol
     sss = &rstack->menuSym->references;
     pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
-    //&fprintf(dumpOut,":checking %s to %s (%d)\n",p->name, sss->name, pushed);
+    //&fprintf(dumpOut,":checking %s to %s (%d)\n",p->linkName, sss->linkName, pushed);
     if (!pushed && olcxIsSameCxSymbol(p, sss)) {
-        //&fprintf(dumpOut,"checking %s references\n",p->name);
+        //&fprintf(dumpOut,"checking %s references\n",p->linkName);
         for (Reference *r=p->references; r!=NULL; r=r->next) {
             olcxSingleReferenceCheck1(p, rstack, r);
         }
@@ -2832,12 +2832,12 @@ static SymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
     for (SymbolsMenu *mm=refs->menuSym; mm!=NULL; mm=mm->next) {
         // do not check anything, but symbol type to avoid missresolution
         // of ambiguous references class <-> constructor
-        //&fprintf(dumpOut,";looking for correspondance %s <-> %s\n", osym->references.name,mm->references.name);
+        //&fprintf(dumpOut,";looking for correspondance %s <-> %s\n", osym->references.linkName,mm->references.linkName);
         if (mm->references.type != osym->references.type
             && mm->references.type != TypeInducedError) continue;
         // check also that maybe this references are not mixed with regular
-        //&if (mm->references.name[0]==' ' || osym->references.name[0]==' ') {
-        //& if (mm->references.name[0]!=' ' || osym->references.name[0]!=' ') continue;
+        //&if (mm->references.linkName[0]==' ' || osym->references.linkName[0]==' ') {
+        //& if (mm->references.linkName[0]!=' ' || osym->references.linkName[0]!=' ') continue;
         //&}
         //&fprintf(dumpOut,";looking references\n");
         SORTED_LIST_FIND2(place,Reference, sr, mm->references.references);
@@ -2906,7 +2906,7 @@ static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
     }
     //&fprintf(dumpOut,": line Offset == %d\n", lineOffset);
     for (SymbolsMenu *osym = origrefs->menuSym; osym!=NULL; osym=osym->next) {
-        //&fprintf(dumpOut,";check on %s\n", osym->references.name);
+        //&fprintf(dumpOut,";check on %s\n", osym->references.linkName);
         // do not check recursive calls
         if (osym == ofirstsym) goto cont;
         // nor local variables
@@ -3251,11 +3251,11 @@ static void olcxListSpecial(char *fieldName) {
 }
 
 bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
-    if (ri->name[0]!=' ')
+    if (ri->linkName[0]!=' ')
         return true;
     if (ri->type==TypeInducedError)
         return true;
-    //& if (strcmp(ri->name, LINK_NAME_MAYBE_THIS_ITEM)==0) return true;
+    //& if (strcmp(ri->linkName, LINK_NAME_MAYBE_THIS_ITEM)==0) return true;
     return false;
 }
 
@@ -3273,7 +3273,7 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri, void *voidDat
     rstack = sessionData.browserStack.top;
     if (!isPushAllMethodsValidRefItem(ri)) return;
     for (rr=ri->references; rr!=NULL; rr=rr->next) {
-        log_trace("checking %d.%d ref of %s", rr->position.line,rr->position.col,ri->name);
+        log_trace("checking %d.%d ref of %s", rr->position.line,rr->position.col,ri->linkName);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, pushAllData)) {
             defRef = getDefinitionRef(ri->references);
             if (defRef!=NULL && isDefinitionOrDeclarationUsage(defRef->usage.kind)) {
@@ -3286,7 +3286,7 @@ static void olPushAllReferencesInBetweenMapFun(ReferencesItem *ri, void *voidDat
             selected = visible = true;
             vlevel = 0;
             ooBits = (OOC_PROFILE_EQUAL | OOC_VIRT_SAME_FUN_CLASS);
-            log_trace("adding symbol %s", ri->name);
+            log_trace("adding symbol %s", ri->linkName);
             mm = olAddBrowsedSymbolToMenu(&rstack->menuSym, ri, selected, visible, ooBits, USAGE_ANY, vlevel, &defpos,
                                           defusage);
             assert(mm!=NULL);
@@ -3373,7 +3373,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
 #ifdef DUMP_SELECTION_MENU
 static void olcxDumpSelectionMenu(SymbolsMenu *menu) {
     for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
-        log_trace">> %d/%d %s %s %s %d", s->defRefn, s->refn, s->references.name,
+        log_trace">> %d/%d %s %s %s %d", s->defRefn, s->refn, s->references.linkName,
             simpleFileName(getFileItem(s->references.vFunClass)->name),
             simpleFileName(getFileItem(s->references.vApplClass)->name),
             s->outOnLine);
@@ -3936,7 +3936,7 @@ static unsigned olcxOoBits(SymbolsMenu *ols, ReferencesItem *p) {
         if (ols->references.storage != p->storage) goto fini;
         if (ols->references.category != p->category)  goto fini;
     }
-    if (strcmp(ols->references.name,p->name)==0) {
+    if (strcmp(ols->references.linkName,p->linkName)==0) {
         ooBits |= OOC_PROFILE_EQUAL;
     }
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)
@@ -4009,7 +4009,7 @@ SymbolsMenu *createSelectionMenu(ReferencesItem *references) {
             }
             if (vlevel==0 || ABS(vlevel)>ABS(vlev))
                 vlevel = vlev;
-            log_trace("ooBits for %s <-> %s %o %o", getFileItem(menu->references.vApplClass)->name, references->name, oo, ooBits);
+            log_trace("ooBits for %s <-> %s %o %o", getFileItem(menu->references.vApplClass)->name, references->linkName, oo, ooBits);
         }
     }
     if (found) {

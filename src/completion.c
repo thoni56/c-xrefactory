@@ -61,9 +61,9 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     }
     if (referenceItem!=NULL) {
         // probably a 'search in tag' file item
-        slen = strlen(referenceItem->name);
+        slen = strlen(referenceItem->linkName);
         ss = olcxAlloc(slen+1);
-        strcpy(ss, referenceItem->name);
+        strcpy(ss, referenceItem->linkName);
         fillReferencesItem(&sri, ss, cxFileHashNumber(ss), referenceItem->vApplClass, referenceItem->vFunClass,
                            referenceItem->type, referenceItem->storage, referenceItem->scope,
                            referenceItem->access, referenceItem->category);
@@ -106,8 +106,8 @@ void olcxFreeCompletion(Completion *r) {
     if (r->vclass!=NULL)
         olcxFree(r->vclass, strlen(r->vclass)+1);
     if (r->category == CategoryGlobal) {
-        assert(r->sym.name);
-        olcxFree(r->sym.name, strlen(r->sym.name)+1);
+        assert(r->sym.linkName);
+        olcxFree(r->sym.linkName, strlen(r->sym.linkName)+1);
     }
     olcxFree(r, sizeof(Completion));
 }

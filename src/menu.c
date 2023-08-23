@@ -30,7 +30,7 @@ void fillSymbolsMenu(SymbolsMenu *menu, ReferencesItem references, bool selected
 }
 
 SymbolsMenu *freeSymbolsMenu(SymbolsMenu *menu) {
-    olcxFree(menu->references.name, strlen(menu->references.name)+1);
+    olcxFree(menu->references.linkName, strlen(menu->references.linkName)+1);
     freeReferences(menu->references.references);
     SymbolsMenu *next = menu->next;
     olcxFree(menu, sizeof(*menu));
@@ -106,7 +106,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
     ReferencesItem refItem;
     char          *allocatedNameCopy;
 
-    allocatedNameCopy = olcxStringCopy(symbol->name);
+    allocatedNameCopy = olcxStringCopy(symbol->linkName);
 
     fillReferencesItem(&refItem, allocatedNameCopy, cxFileHashNumber(allocatedNameCopy), vApplClass, vFunCl,
                        symbol->type, symbol->storage, symbol->scope, symbol->access,
@@ -119,7 +119,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
 
 static bool olReferencesItemIsLess(ReferencesItem *s1, ReferencesItem *s2) {
     int cmp;
-    cmp = strcmp(s1->name, s2->name);
+    cmp = strcmp(s1->linkName, s2->linkName);
     if (cmp < 0)
         return true;
     else if (cmp > 0)
@@ -166,7 +166,7 @@ SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferencesItem *symbo
                                 selected, visible, ooBits,
                                 olusage, vlevel);
         LIST_CONS(new, *place);
-        log_trace(":adding browsed symbol '%s'", symbol->name);
+        log_trace(":adding browsed symbol '%s'", symbol->linkName);
     }
     return new;
 }

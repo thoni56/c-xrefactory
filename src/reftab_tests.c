@@ -21,7 +21,7 @@ Ensure(ReferenceTable, will_return_minus_one_for_no_more_entries) {
 }
 
 Ensure(ReferenceTable, will_return_index_to_next_entry) {
-    ReferencesItem r = (ReferencesItem){.name = "name"};
+    ReferencesItem r = (ReferencesItem){.linkName = "name"};
 
     int index = addToReferencesTable(&r);
     assert_that(getNextExistingReferencesItem(0), is_equal_to(index));
@@ -29,9 +29,9 @@ Ensure(ReferenceTable, will_return_index_to_next_entry) {
 }
 
 Ensure(ReferenceTable, can_retrieve_item_using_index) {
-    ReferencesItem r = (ReferencesItem){.name = "name"};
+    ReferencesItem r = (ReferencesItem){.linkName = "name"};
 
     int             index = addToReferencesTable(&r);
     ReferencesItem *item  = getReferencesItem(index);
-    assert_that(item->name, is_equal_to_string(r.name));
+    assert_that(item->linkName, is_equal_to_string(r.linkName));
 }

@@ -25,7 +25,7 @@ typedef struct reference {
 
 // !!! if you add a pointer to this structure, then update olcxCopyReference!
 typedef struct referencesItem {
-    char                     *name;
+    char                     *linkName;
     unsigned                  fileHash;
     int                       vApplClass; /* appl class for java virtuals */
     int                       vFunClass;  /* fun class for java virtuals */

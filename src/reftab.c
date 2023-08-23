@@ -18,11 +18,11 @@ static bool equalReferenceItems(ReferencesItem *e1, ReferencesItem *e2) {
         && e1->storage==e2->storage
         && e1->category==e2->category
         && e1->vApplClass==e2->vApplClass
-        && strcmp(e1->name, e2->name)==0;
+        && strcmp(e1->linkName, e2->linkName)==0;
 }
 
 
-#define HASH_FUN(elemp) (hashFun(elemp->name) + (unsigned)elemp->vFunClass)
+#define HASH_FUN(elemp) (hashFun(elemp->linkName) + (unsigned)elemp->vFunClass)
 #define HASH_ELEM_EQUAL(e1,e2) equalReferenceItems(e1, e2)
 
 #include "hashlist.tc"

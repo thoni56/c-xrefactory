@@ -62,7 +62,7 @@ void typeDump(TypeModifier *t) {
 
 void symbolRefItemDump(ReferencesItem *s) {
     log_debug("%s\t%s %s %d %d %d %d %d",
-              s->name,
+              s->linkName,
               getFileItem(s->vApplClass)->name,
               getFileItem(s->vFunClass)->name,
               s->type, s->storage, s->scope,
@@ -567,7 +567,7 @@ void sprintfSymbolLinkName(SymbolsMenu *menu, char *name) {
         sprintf(name, "%s",
                 simpleFileName(getRealFileName_static(getFileItem(menu->references.vApplClass)->name)));
     } else {
-        linkNamePrettyPrint(name, menu->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        linkNamePrettyPrint(name, menu->references.linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     }
 }
 

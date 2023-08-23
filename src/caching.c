@@ -66,7 +66,7 @@ static void cxrefTabDeleteOutOfMemory(int index) {
     while (*itemP!=NULL) {
         if (isFreedCxMemory(*itemP)) {
             /* out of memory, delete it */
-            log_trace("deleting all references on %s", (*itemP)->name);
+            log_trace("deleting all references on %s", (*itemP)->linkName);
             *itemP = (*itemP)->next;  /* Unlink it and look at next */
             continue;
         } else {

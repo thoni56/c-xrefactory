@@ -32,7 +32,7 @@ Reference *duplicateReference(Reference *original) {
 void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
                         int vFunClass, Type symType, Storage storage, ReferenceScope scope, Access accessFlags,
                         ReferenceCategory category) {
-    referencesItem->name = name;
+    referencesItem->linkName = name;
     referencesItem->fileHash = fileHash;
     referencesItem->vApplClass = vApplClass;
     referencesItem->vFunClass = vFunClass;

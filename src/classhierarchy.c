@@ -271,7 +271,7 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
         if (menu->references.type != TypeDefault) {
             fprintf(file,"\t(%s)", typeNamesTable[menu->references.type]);
         }
-        //&fprintf(file," ==%s %o (%s) at %x", menu->references.name, menu->ooBits, refCategoriesName[menu->references.category], menu);
+        //&fprintf(file," ==%s %o (%s) at %x", menu->references.linkName, menu->ooBits, refCategoriesName[menu->references.category], menu);
     }
 }
 
@@ -429,8 +429,8 @@ void genClassHierarchies(SymbolsMenu *menuList, FILE *file, int passNumber) {
 static void olcxMenuGenGlobRefsForVirtMethod(SymbolsMenu *menu, FILE *file) {
     char linkName[MAX_REF_LEN];
 
-    linkNamePrettyPrint(linkName, menu->references.name, MAX_REF_LEN, SHORT_NAME);
-    if (strcmp(menu->references.name, LINK_NAME_CLASS_TREE_ITEM)!=0) {
+    linkNamePrettyPrint(linkName, menu->references.linkName, MAX_REF_LEN, SHORT_NAME);
+    if (strcmp(menu->references.linkName, LINK_NAME_CLASS_TREE_ITEM)!=0) {
         if (options.xref2)
             ppcGenRecord(PPC_VIRTUAL_SYMBOL, linkName);
         else
@@ -463,7 +463,7 @@ static void genVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
     assert(menu != NULL);
     r = &menu->references;
     assert(r != NULL);
-    //&fprintf(dumpOut,"storage of %s == %s\n",r->name,storagesName[r->storage]);
+    //&fprintf(dumpOut,"storage of %s == %s\n",r->linkName,storagesName[r->storage]);
     if (isVirtualMenuItem(r)) {
         olcxMenuGenGlobRefsForVirtMethod(menu, file);
     }
@@ -483,7 +483,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
     assert(menu!=NULL);
     r = &menu->references;
     assert(r!=NULL);
-    //&fprintf(dumpOut,"storage of %s == %s\n",r->name,storagesName[r->storage]);
+    //&fprintf(dumpOut,"storage of %s == %s\n",r->linkName,storagesName[r->storage]);
     if (! isVirtualMenuItem(r)) {
         for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
             r = &m->references;

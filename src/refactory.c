@@ -719,7 +719,7 @@ static void pushMarkersAsReferences(EditorMarkerList **markers, OlcxReferences *
 
     rr = convertEditorMarkersToReferences(markers);
     for (SymbolsMenu *mm = refs->menuSym; mm != NULL; mm = mm->next) {
-        if (strcmp(mm->references.name, name) == 0) {
+        if (strcmp(mm->references.linkName, name) == 0) {
             for (Reference *r = rr; r != NULL; r = r->next) {
                 olcxAddReference(&mm->references.references, r, 0);
             }
@@ -761,7 +761,7 @@ static void tpCheckFutureAccOfLocalReferences(ReferencesItem *ri, void *ddd) {
     SymbolsMenu          *ss;
 
     dd = (TpCheckMoveClassData *)ddd;
-    log_trace("!mapping %s", ri->name);
+    log_trace("!mapping %s", ri->linkName);
     if (moveClassMapFunReturnOnUninterestingSymbols(ri, dd))
         return;
 
@@ -788,13 +788,13 @@ static void tpCheckMoveClassPutClassDefaultSymbols(ReferencesItem *ri, void *ddd
     TpCheckMoveClassData *dd;
 
     dd = (TpCheckMoveClassData *)ddd;
-    log_trace("!mapping %s", ri->name);
+    log_trace("!mapping %s", ri->linkName);
     if (moveClassMapFunReturnOnUninterestingSymbols(ri, dd))
         return;
 
     // fine, add it to Menu, so we will load its references
     for (Reference *rr = ri->references; rr != NULL; rr = rr->next) {
-        log_trace("Checking %d.%d ref of %s", rr->position.line, rr->position.col, ri->name);
+        log_trace("Checking %d.%d ref of %s", rr->position.line, rr->position.col, ri->linkName);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
             if (isDefinitionOrDeclarationUsage(rr->usage.kind)) {
                 // definition inside class, default or private acces to be checked
@@ -858,7 +858,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(ReferencesItem *ri, void *ddd
     int                   sclen, symclen;
 
     dd = (TpCheckMoveClassData *)ddd;
-    //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
+    //&fprintf(communicationChannel,"!mapping %s\n", ri->linkName);
     if (moveClassMapFunReturnOnUninterestingSymbols(ri, dd))
         return;
 
@@ -915,7 +915,7 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
         transPackageMove = true;
 
     fillTpCheckMoveClassData(dd, parsedInfo.cxMemoryIndexAtClassBeginning, parsedInfo.cxMemoryIndexAtClassEnd, spack, tpack,
-                             transPackageMove, sclass->references.name);
+                             transPackageMove, sclass->references.linkName);
 }
 
 static void askForReallyContinueConfirmation(void) {
@@ -993,7 +993,7 @@ static bool checkSourceIsNotInnerClass(void) {
     assert(menu);
 
     // I can rely that it is a class
-    int index = getClassNumFromClassLinkName(menu->references.name, NO_FILE_NUMBER);
+    int index = getClassNumFromClassLinkName(menu->references.linkName, NO_FILE_NUMBER);
     //& target = options.moveTargetClass;
     //& assert(target!=NULL);
 
@@ -1018,8 +1018,8 @@ static void tpCheckSpecialReferencesMapFun(ReferencesItem *ri, void *voidDataP) 
     dd = (TpCheckSpecialReferencesData *)voidDataP;
     assert(sessionData.browserStack.top);
     // todo make supermethod symbol special type
-    //&fprintf(dumpOut,"! checking %s\n", ri->name);
-    if (strcmp(ri->name, dd->symbolToTest) != 0)
+    //&fprintf(dumpOut,"! checking %s\n", ri->linkName);
+    if (strcmp(ri->linkName, dd->symbolToTest) != 0)
         return;
     for (Reference *rr = ri->references; rr != NULL; rr = rr->next) {
         if (dm_isBetween(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi)) {
@@ -1093,7 +1093,7 @@ static bool tpCheckSuperMethodReferencesForPullUp(void) {
     // synthetize an answer
     if (rr.foundRefToTestedClass != NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
-        linkNamePrettyPrint(ttt, ss->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        linkNamePrettyPrint(ttt, ss->references.linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         javaGetClassNameFromFileNumber(rr.foundRefToTestedClass->vFunClass, tt, DOTIFY_NAME);
         sprintf(tmpBuff,
                 "'%s' invokes another method using the keyword \"super\" and this invocation is refering to class "
@@ -1123,7 +1123,7 @@ static bool tpCheckSuperMethodReferencesAfterPushDown(void) {
     // synthetize an answer
     if (rr.foundRefToTestedClass != NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
-        linkNamePrettyPrint(ttt, ss->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+        linkNamePrettyPrint(ttt, ss->references.linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         sprintf(tmpBuff,
                 "'%s' invokes another method using the keyword \"super\" and the invoked method is also defined "
                 "in current class. After pushing down, the reference will be misrelated. In consequence, it is "
@@ -1218,7 +1218,7 @@ static bool tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
                         // well there is, issue warning message and finish
                         char tempName[MAX_CX_SYMBOL_SIZE];
                         char tmpBuff[TMP_BUFF_SIZE];
-                        linkNamePrettyPrint(tempName, ss->references.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+                        linkNamePrettyPrint(tempName, ss->references.linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
                         sprintf(tmpBuff,
                                 "%s is defined also in superclass and there are invocations syntactically "
                                 "refering to one of superclasses. Under some circumstances this may cause that "
@@ -1321,7 +1321,7 @@ cont2:
             tmpBuff,
             "%s is already defined in the superclass %s.  Pulling up will do nothing, but removing the definition "
             "from the subclass. You should make sure that both fields are initialized to the same value.",
-            mm->references.name, ttt);
+            mm->references.linkName, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         warningMessage(ERR_ST, tmpBuff);
         return false;
@@ -1329,7 +1329,7 @@ cont2:
     sprintf(tmpBuff,
             "There are already references of the field %s syntactically applied on the superclass %s, pulling up "
             "this field would cause confusion!",
-            mm->references.name, ttt);
+            mm->references.linkName, ttt);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
     errorMessage(ERR_ST, tmpBuff);
     return false;
@@ -1367,7 +1367,7 @@ static bool tpPushDownFieldLastPreconditions(void) {
         rr = getDefinitionRef(targetsm->references.references);
         if (rr != NULL && isDefinitionOrDeclarationUsage(rr->usage.kind)) {
             javaGetClassNameFromFileNumber(target->u.structSpec->classFileNumber, ttt, DOTIFY_NAME);
-            sprintf(tmpBuff, "The field %s is already defined in %s!", targetsm->references.name, ttt);
+            sprintf(tmpBuff, "The field %s is already defined in %s!", targetsm->references.linkName, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             errorMessage(ERR_ST, tmpBuff);
             return false;
@@ -1380,7 +1380,7 @@ static bool tpPushDownFieldLastPreconditions(void) {
             sprintf(tmpBuff,
                     "There are several references of %s syntactically applied on %s. This may cause that the "
                     "refactoring will not be behaviour preserving!",
-                    sourcesm->references.name, ttt);
+                    sourcesm->references.linkName, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             warningMessage(ERR_ST, tmpBuff);
             res = false;
@@ -1821,9 +1821,9 @@ static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, Symbol
     sss    = &rstack->menuSym->references;
     pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
-    log_trace(":checking %s to %s (%d)", p->name, sss->name, pushed);
+    log_trace(":checking %s to %s (%d)", p->linkName, sss->linkName, pushed);
     if (!pushed && olcxIsSameCxSymbol(p, sss)) {
-        log_trace("checking %s references", p->name);
+        log_trace("checking %s references", p->linkName);
         for (Reference *r = p->references; r != NULL; r = r->next) {
             if (isReferenceInList(r, rstack->references)) {
                 multipleReferencesInSamePlaceMessage(r);
@@ -1866,7 +1866,7 @@ static void renameAtPoint(EditorMarker *point) {
     occs           = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
     csym           = sessionData.browserStack.top->hkSelectedSym;
     symtype        = csym->references.type;
-    symLinkName    = csym->references.name;
+    symLinkName    = csym->references.linkName;
     undoStartPoint = editorUndo;
     if (!LANGUAGE(LANG_JAVA)) {
         multipleOccurencesSafetyCheck();
@@ -2405,7 +2405,7 @@ static bool isTheImportUsed(EditorMarker *point, int line, int col) {
     pushLocalUnusedSymbolsAction();
     used = true;
     for (SymbolsMenu *m = sessionData.browserStack.top->menuSym; m != NULL; m = m->next) {
-        if (m->visible && strcmp(m->references.name, importSymbolName) == 0) {
+        if (m->visible && strcmp(m->references.linkName, importSymbolName) == 0) {
             used = false;
             goto finish;
         }
@@ -2741,15 +2741,15 @@ static void staticMoveCheckCorrespondance(SymbolsMenu *menu1, SymbolsMenu *menu2
             goto cont;
         // (maybe I should not test any local symbols ???)
         // O.K. something to be checked, find correspondance in mm2
-        //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->references.name);
+        //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->references.linkName);
         for (mm2 = menu2; mm2 != NULL; mm2 = mm2->next) {
-            log_trace("Checking '%s'", mm2->references.name);
+            log_trace("Checking '%s'", mm2->references.linkName);
             if (isSameCxSymbolIncludingApplicationClass(&mm1->references, &mm2->references))
                 break;
         }
         if (mm2 == NULL) {
             // O(n^2) !!!
-            //&fprintf(dumpOut, "Did not find correspondance to %s\n", mm1->references.name);
+            //&fprintf(dumpOut, "Did not find correspondance to %s\n", mm1->references.linkName);
 #ifdef EACH_SYMBOL_ONCE
             // if each symbol reported only once
             moveFirstElementOfMarkerList(&mm1->markers, &totalDiff);
@@ -2764,7 +2764,7 @@ static void staticMoveCheckCorrespondance(SymbolsMenu *menu1, SymbolsMenu *menu2
             // if each symbol reported only once
             if (diff1 != NULL) {
                 moveFirstElementOfMarkerList(&diff1, &totalDiff);
-                //&fprintf(dumpOut, "problem with symbol %s corr %s\n", mm1->references.name,
+                //&fprintf(dumpOut, "problem with symbol %s corr %s\n", mm1->references.linkName,
                 // mm2->references.name);
             } else {
                 // no, do not put there new symbols, only lost are problems
@@ -3348,7 +3348,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
                     if (plen > 0) {
                         primary[plen - 1] = 0;
                     } else {
-                        if (javaLinkNameIsAnnonymousClass(mm->references.name)) {
+                        if (javaLinkNameIsAnnonymousClass(mm->references.linkName)) {
                             strcpy(primary, "this");
                         } else {
                             strcpy(primary, fqthis);
@@ -4046,7 +4046,7 @@ static SymbolsMenu *findSymbolCorrespondingToReferenceWrtPullUpPushDown(SymbolsM
         if (rr2 != NULL && symbolsCorrespondWrtMoving(mm1, mm2, OLO_PP_PRE_CHECK)) {
             goto breakmm2;
         }
-        log_trace("Checking %s", mm2->references.name);
+        log_trace("Checking %s", mm2->references.linkName);
     }
 breakmm2:
     return mm2;
@@ -4113,7 +4113,7 @@ static EditorMarkerList *pullUpPushDownDifferences(SymbolsMenu *menu1, SymbolsMe
             goto cont;
         // (maybe I should not test any local symbols ???)
         // O.K. something to be checked, find correspondance in mm2
-        //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->references.name);
+        //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->references.linkName);
         for (EditorMarkerList *rr1 = mm1->markers; rr1 != NULL; rr1 = rr1->next) {
             mm2 = findSymbolCorrespondingToReferenceWrtPullUpPushDown(menu2, mm1, rr1);
             if (mm2 == NULL) {

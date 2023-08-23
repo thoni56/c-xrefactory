@@ -275,10 +275,10 @@ void searchSymbolCheckReference(ReferencesItem  *referenceItem, Reference *refer
 
     if (referenceItem->type == TypeCppInclude)
         return;   // no %%i symbols
-    if (symbolShouldBeHiddenFromSearchResults(referenceItem->name))
+    if (symbolShouldBeHiddenFromSearchResults(referenceItem->linkName))
         return;
 
-    linkNamePrettyPrint(ssname, referenceItem->name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
+    linkNamePrettyPrint(ssname, referenceItem->linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     sname = ssname;
     slen = strlen(sname);
     // if completing without profile, cut profile
@@ -368,7 +368,7 @@ static void writeSymbolItem(int symbolIndex) {
     writeOptionalCompactRecord(CXFI_STORAGE, d->storage, "");
     lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex] = 0;
     lastOutgoingInfo.symbolIsWritten[symbolIndex] = true;
-    writeStringRecord(CXFI_SYMBOL_NAME, d->name, "\t");
+    writeStringRecord(CXFI_SYMBOL_NAME, d->linkName, "\t");
     fputc('\t', cxFile);
 }
 
@@ -493,10 +493,10 @@ void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
 static void writeReferenceItem(ReferencesItem *referenceItem) {
     int symbolIndex = 0;
 
-    log_trace("generate cxref for symbol '%s'", referenceItem->name);
-    assert(strlen(referenceItem->name)+1 < MAX_CX_SYMBOL_SIZE);
+    log_trace("generate cxref for symbol '%s'", referenceItem->linkName);
+    assert(strlen(referenceItem->linkName)+1 < MAX_CX_SYMBOL_SIZE);
 
-    strcpy(lastOutgoingInfo.cachedSymbolName[symbolIndex], referenceItem->name);
+    strcpy(lastOutgoingInfo.cachedSymbolName[symbolIndex], referenceItem->linkName);
     fillReferencesItem(&lastOutgoingInfo.cachedReferencesItem[symbolIndex],
                        lastOutgoingInfo.cachedSymbolName[symbolIndex],
                        referenceItem->fileHash, // useless put 0
@@ -924,7 +924,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
 
 
 static bool symbolIsReportableAsUnused(ReferencesItem *referenceItem) {
-    if (referenceItem==NULL || referenceItem->name[0]==' ')
+    if (referenceItem==NULL || referenceItem->linkName[0]==' ')
         return false;
 
     // you need to be strong here, in fact struct record can be used
@@ -933,7 +933,7 @@ static bool symbolIsReportableAsUnused(ReferencesItem *referenceItem) {
         return false;
 
     // maybe I should collect also all toString() references?
-    if (referenceItem->storage==StorageMethod && strcmp(referenceItem->name,"toString()")==0)
+    if (referenceItem->storage==StorageMethod && strcmp(referenceItem->linkName,"toString()")==0)
         return false;
 
     // in this first approach restrict this to variables and functions
@@ -946,7 +946,7 @@ static bool canBypassAcceptableSymbol(ReferencesItem *symbol) {
     int nlen,len;
     char *nn, *nnn;
 
-    getBareName(symbol->name, &nn, &len);
+    getBareName(symbol->linkName, &nn, &len);
     getBareName(options.browsedSymName, &nnn, &nlen);
     if (len != nlen)
         return false;
@@ -1026,7 +1026,7 @@ static void scanFunction_SymbolName(int size,
             if (ols || (operation==CXSF_BY_PASS && canBypassAcceptableSymbol(referencesItem))) {
                 lastIncomingInfo.onLineReferencedSym = symbolIndex;
                 lastIncomingInfo.onLineRefIsBestMatchFlag = (ols == 2);
-                log_trace("symbol %s is O.K. for %s (ols==%d)", referencesItem->name, options.browsedSymName, ols);
+                log_trace("symbol %s is O.K. for %s (ols==%d)", referencesItem->linkName, options.browsedSymName, ols);
             } else {
                 if (lastIncomingInfo.onLineReferencedSym == symbolIndex) {
                     lastIncomingInfo.onLineReferencedSym = -1;
@@ -1172,7 +1172,7 @@ static void scanFunction_Reference(int size,
                     } else if (operation == CXSF_BY_PASS) {
                         if (positionsAreEqual(s_olcxByPassPos,reference.position)) {
                             // got the bypass reference
-                            log_trace(":adding bypass selected symbol %s", lastIncomingInfo.symbolTab[sym]->name);
+                            log_trace(":adding bypass selected symbol %s", lastIncomingInfo.symbolTab[sym]->linkName);
                             olAddBrowsedSymbolToMenu(&sessionData.browserStack.top->hkSelectedSym, lastIncomingInfo.symbolTab[sym],
                                                true, true, 0, usageKind,0,&noPosition, UsageNone);
                         }
