@@ -56,7 +56,7 @@ typedef struct programGraphNode {
 
 static unsigned s_javaExtractFromFunctionMods=AccessDefault;
 static char *resultingString;
-static char *s_extractionName;
+static char *extractionName;
 
 static void dumpProgram(ProgramGraphNode *program) {
     log_trace("[ProgramDump begin]");
@@ -535,22 +535,22 @@ static void getLocalVariableNameFromLinkName(char *linkName, char *name) {
     *nameP = 0;
 }
 
-static void extReClassifyIOVars(ProgramGraphNode *program) {
+static void reclassifyInOutVariables(ProgramGraphNode *program) {
     ProgramGraphNode *op = NULL;
     bool uniqueOutFlag = true;
 
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         if (options.extractMode == EXTRACT_FUNCTION_ADDRESS_ARGS) {
             if (p->classification == EXTRACT_OUT_ARGUMENT
-                ||  p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
-                ||  p->classification == EXTRACT_IN_OUT_ARGUMENT
-                ) {
+                || p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
+                || p->classification == EXTRACT_IN_OUT_ARGUMENT
+            ) {
                 p->classification = EXTRACT_ADDRESS_ARGUMENT;
             }
         } else if (options.extractMode == EXTRACT_FUNCTION) {
             if (p->classification == EXTRACT_OUT_ARGUMENT
                 || p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
-                ) {
+            ) {
                 if (op == NULL)
                     op = p;
                 else
@@ -597,7 +597,7 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
 
     resultingString[0]=0;
 
-    sprintf(resultingString+strlen(resultingString),"\t%s",s_extractionName);
+    sprintf(resultingString+strlen(resultingString),"\t%s",extractionName);
 
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_VALUE_ARGUMENT
@@ -631,7 +631,7 @@ static void extGenNewMacroHead(ProgramGraphNode *program) {
 
     resultingString[0]=0;
 
-    sprintf(resultingString+strlen(resultingString),"#define %s",s_extractionName);
+    sprintf(resultingString+strlen(resultingString),"#define %s",extractionName);
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_VALUE_ARGUMENT
             ||  p->classification == EXTRACT_IN_OUT_ARGUMENT
@@ -699,7 +699,7 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     } else {
         sprintf(resultingString+strlen(resultingString),"\t");
     }
-    sprintf(resultingString+strlen(resultingString),"%s",s_extractionName);
+    sprintf(resultingString+strlen(resultingString),"%s",extractionName);
 
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_VALUE_ARGUMENT
@@ -856,7 +856,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
 
     /* function header */
     nhi = 0;
-    sprintf(nhead+nhi,"%s",s_extractionName);
+    sprintf(nhead+nhi,"%s",extractionName);
     nhi += strlen(nhead+nhi);
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_VALUE_ARGUMENT
@@ -995,19 +995,19 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
 /* ********************** java function **************************** */
 
 
-static char * makeNewClassName(void) {
+static char *makeNewClassName(void) {
     static char classname[TMP_STRING_SIZE];
-    if (s_extractionName[0]==0) {
+    if (extractionName[0]==0) {
         sprintf(classname,"NewClass");
     } else {
-        sprintf(classname, "%c%s", toupper(s_extractionName[0]),
-                s_extractionName+1);
+        sprintf(classname, "%c%s", toupper(extractionName[0]),
+                extractionName+1);
     }
     return(classname);
 }
 
 
-static void extJavaGenNewClassCall(ProgramGraphNode *program) {
+static void javaGenerateNewClassCall(ProgramGraphNode *program) {
     char declaration[TMP_STRING_SIZE];
     char name[TMP_STRING_SIZE];
     ProgramGraphNode *p;
@@ -1019,7 +1019,7 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
     classname = makeNewClassName();
 
     // constructor invocation
-    sprintf(resultingString+strlen(resultingString),"\t\t%s %s = new %s",classname, s_extractionName,classname);
+    sprintf(resultingString+strlen(resultingString),"\t\t%s %s = new %s",classname, extractionName,classname);
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_IN_OUT_ARGUMENT) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
@@ -1047,7 +1047,7 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
     } else {
         sprintf(resultingString+strlen(resultingString),"\t\t");
     }
-    sprintf(resultingString+strlen(resultingString),"%s.perform",s_extractionName);
+    sprintf(resultingString+strlen(resultingString),"%s.perform",extractionName);
 
     isFirstArgument = true;
     for (p=program; p!=NULL; p=p->next) {
@@ -1071,15 +1071,15 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
             if (p->classification == EXTRACT_LOCAL_OUT_ARGUMENT) {
-                sprintf(resultingString+strlen(resultingString), "%s=%s.%s; ", declaration, s_extractionName, name);
+                sprintf(resultingString+strlen(resultingString), "%s=%s.%s; ", declaration, extractionName, name);
             } else {
-                sprintf(resultingString+strlen(resultingString), "%s=%s.%s; ", name, s_extractionName, name);
+                sprintf(resultingString+strlen(resultingString), "%s=%s.%s; ", name, extractionName, name);
             }
             isFirstArgument = false;
         }
     }
     sprintf(resultingString+strlen(resultingString), "\n");
-    sprintf(resultingString+strlen(resultingString),"\t\t%s = null;\n", s_extractionName);
+    sprintf(resultingString+strlen(resultingString),"\t\t%s = null;\n", extractionName);
 
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
@@ -1089,7 +1089,7 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
     }
 }
 
-static void extJavaGenNewClassHead(ProgramGraphNode *program) {
+static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     char nhead[MAX_EXTRACT_FUN_HEAD_SIZE+2];
     int nhi, ldclaLen;
     char ldcla[TMP_STRING_SIZE];
@@ -1294,21 +1294,25 @@ static void makeExtraction(void) {
         return;
     }
     classifyLocalVariables(program);
-    extReClassifyIOVars(program);
+    reclassifyInOutVariables(program);
 
     if (LANGUAGE(LANG_JAVA))
         needToExtractNewClass = extractJavaIsNewClassNecessary(program);
 
     if (LANGUAGE(LANG_JAVA)) {
-        if (needToExtractNewClass) s_extractionName = "newClass_";
-        else s_extractionName = "newMethod_";
+        if (needToExtractNewClass)
+            extractionName = "newClass_";
+        else
+            extractionName = "newMethod_";
     } else {
-        if (options.extractMode==EXTRACT_MACRO) s_extractionName = "NEW_MACRO_";
-        else s_extractionName = "newFunction_";
+        if (options.extractMode==EXTRACT_MACRO)
+            extractionName = "NEW_MACRO_";
+        else
+            extractionName = "newFunction_";
     }
 
     if (options.xref2)
-        ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
+        ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, extractionName);
 
     resultingString = cxAlloc(EXTRACT_GEN_BUFFER_SIZE);
 
@@ -1319,7 +1323,7 @@ static void makeExtraction(void) {
     if (options.extractMode==EXTRACT_MACRO)
         generateNewMacroCall(program);
     else if (needToExtractNewClass)
-        extJavaGenNewClassCall(program);
+        javaGenerateNewClassCall(program);
     else
         generateNewFunctionCall(program);
 
@@ -1331,7 +1335,7 @@ static void makeExtraction(void) {
     if (options.extractMode==EXTRACT_MACRO)
         extGenNewMacroHead(program);
     else if (needToExtractNewClass)
-        extJavaGenNewClassHead(program);
+        javaGenerateNewClassHead(program);
     else
         generateNewFunctionHead(program);
 
