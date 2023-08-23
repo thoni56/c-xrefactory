@@ -1544,8 +1544,11 @@ static bool processEOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-extractAddrParPrefix=",22)==0) {
         char tmpString[TMP_STRING_SIZE];
         sprintf(tmpString, "*%s", argv[i]+22);
-        // TODO Not used from any editor client - it's initialized to "*_", replace by constant?
-        // Don't know why we should ever want to override it...
+        // TODO Not used from any editor client - it's initialized to
+        // "*_", replace by constant?  This is the prefix required
+        // when extracting a function and that requires out parameters
+        // The underscore is the prefix of the parameters so that the
+        // code *inside* the new function can use the same variable names
         options.olExtractAddrParPrefix = allocateStringForOption(&options.olExtractAddrParPrefix, tmpString);
     }
     else if (strcmp(argv[i], "-exactpositionresolve")==0) {
