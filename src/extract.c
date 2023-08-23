@@ -244,12 +244,12 @@ static int linearOrder(ProgramGraphNode *n1, ProgramGraphNode *n2) {
     return(n1->ref < n2->ref);
 }
 
-static ProgramGraphNode *extMakeProgramGraph(void) {
+static ProgramGraphNode *makeProgramGraph(void) {
     ProgramGraphNode *program, *p;
     program = NULL;
     mapOverReferenceTableWithPointer(extractFunGraphRef, ((void *) &program));
     LIST_SORT(ProgramGraphNode, program, linearOrder);
-    dumpProgram(program);
+    dumpProgramToLog(program);
     for (p=program; p!=NULL; p=p->next) {
         if (p->symRef->type==TypeLabel && p->ref->usage.kind!=UsageDefined) {
             // resolve the jump
@@ -399,7 +399,7 @@ static unsigned toogleInOutBlock(unsigned *pos) {
     return *pos;
 }
 
-static void extSetInOutBlockFields(ProgramGraphNode *program) {
+static void setInOutBlockFields(ProgramGraphNode *program) {
     ProgramGraphNode *p;
     unsigned    pos;
     pos = INSPECTION_OUTSIDE_BLOCK;
@@ -411,7 +411,7 @@ static void extSetInOutBlockFields(ProgramGraphNode *program) {
     }
 }
 
-static int extIsJumpInOutBlock(ProgramGraphNode *program) {
+static bool areThereJumpsInOrOutOfBlock(ProgramGraphNode *program) {
     ProgramGraphNode *p;
     for (p=program; p!=NULL; p=p->next) {
         assert(p->symRef!=NULL)
@@ -421,12 +421,12 @@ static int extIsJumpInOutBlock(ProgramGraphNode *program) {
                     assert(p->jump != NULL);
                     if (p->posBits != p->jump->posBits) {
                         //&fprintf(dumpOut,"jump in/out at %s : %x\n",p->symRef->linkName, p);
-                        return(1);
+                        return true;
                     }
                 }
             }
     }
-    return(0);
+    return false;
 }
 
 static bool isLocalVariable(ProgramGraphNode *node) {
@@ -673,7 +673,7 @@ static void extGenNewMacroHead(ProgramGraphNode *program) {
 static void generateNewMacroTail() {
     resultingString[0]=0;
 
-    sprintf(resultingString+strlen(resultingString),"}\n\n");
+    strcat(resultingString, "}\n\n");
 
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
@@ -700,7 +700,8 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
         if (p->classification == EXTRACT_RESULT_VALUE
             || p->classification == EXTRACT_LOCAL_RESULT_VALUE
             || p->classification == EXTRACT_IN_RESULT_VALUE
-            ) break;
+        )
+            break;
     }
     if (p!=NULL) {
         getLocalVariableNameFromLinkName(p->symRef->linkName, name);
@@ -711,13 +712,14 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
             sprintf(resultingString+strlen(resultingString),"\t%s = ", name);
         }
     } else {
-        sprintf(resultingString+strlen(resultingString),"\t");
+        strcat(resultingString, "\t");
     }
     sprintf(resultingString+strlen(resultingString),"%s",extractionName);
 
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_VALUE_ARGUMENT
-            || p->classification == EXTRACT_IN_RESULT_VALUE) {
+            || p->classification == EXTRACT_IN_RESULT_VALUE
+        ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":", " , name);
             isFirstArgument = false;
@@ -839,7 +841,7 @@ static void extractSprintThrownExceptions(char *nhead, ProgramGraphNode *program
     nhi = 0;
     exceptions = computeExceptionsThrownInBlock(program);
     if (exceptions!=NULL) {
-        sprintf(nhead+nhi, " throws");
+        strcat(nhead, " throws");
         nhi += strlen(nhead+nhi);
         for (ee=exceptions; ee!=NULL; ee=ee->next) {
             sname = lastOccurenceInString(ee->item->linkName, '$');
@@ -910,13 +912,13 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
 
     if (LANGUAGE(LANG_JAVA)) {
         // this makes renaming after extraction much faster
-        sprintf(resultingString+strlen(resultingString), "private ");
+        strcat(resultingString, "private ");
     }
 
     if (LANGUAGE(LANG_JAVA) && (s_javaExtractFromFunctionMods&AccessStatic)==0) {
         ; // sprintf(rb+strlen(rb), "");
     } else {
-        sprintf(resultingString+strlen(resultingString), "static ");
+        strcat(resultingString, "static ");
     }
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_RESULT_VALUE
@@ -932,7 +934,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     }
 
     /* function body */
-    sprintf(resultingString+strlen(resultingString), " {\n");
+    strcat(resultingString, " {\n");
     ldcla[0] = 0;
     ldclaLen = 0;
     isFirstArgument = true;
@@ -962,7 +964,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
         }
     }
     if (!isFirstArgument)
-        sprintf(resultingString+strlen(resultingString), ";\n");
+        strcat(resultingString, ";\n");
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, resultingString);
@@ -996,7 +998,7 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
             sprintf(resultingString+strlen(resultingString), "\n\treturn %s;\n", name);
         }
     }
-    sprintf(resultingString+strlen(resultingString),"}\n\n");
+    strcat(resultingString, "}\n\n");
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, resultingString);
@@ -1017,7 +1019,7 @@ static char *makeNewClassName(void) {
         sprintf(classname, "%c%s", toupper(extractionName[0]),
                 extractionName+1);
     }
-    return(classname);
+    return classname;
 }
 
 
@@ -1059,7 +1061,7 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
             sprintf(resultingString+strlen(resultingString),"\t\t%s = ", name);
         }
     } else {
-        sprintf(resultingString+strlen(resultingString),"\t\t");
+        strcat(resultingString, "\t\t");
     }
     sprintf(resultingString+strlen(resultingString),"%s.perform",extractionName);
 
@@ -1075,7 +1077,7 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
     }
     sprintf(resultingString+strlen(resultingString), "%s);\n", isFirstArgument?"(":"");
 
-    sprintf(resultingString+strlen(resultingString), "\t\t");
+    strcat(resultingString, "\t\t");
     // 'out' arguments value restoring...
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_IN_OUT_ARGUMENT
@@ -1092,7 +1094,7 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
             isFirstArgument = false;
         }
     }
-    sprintf(resultingString+strlen(resultingString), "\n");
+    strcat(resultingString, "\n");
     sprintf(resultingString+strlen(resultingString),"\t\t%s = null;\n", extractionName);
 
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
@@ -1119,9 +1121,9 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     classname = makeNewClassName();
 
     // class header
-    sprintf(resultingString+strlen(resultingString), "\t");
+    strcat(resultingString, "\t");
     if (s_javaExtractFromFunctionMods & AccessStatic){
-        sprintf(resultingString+strlen(resultingString), "static ");
+        strcat(resultingString, "static ");
     }
     sprintf(resultingString+strlen(resultingString), "class %s {\n", classname);
     //sprintf(rb+strlen(rb), "\t\t// %s 'out' arguments\n", s_opt.extractName);
@@ -1153,14 +1155,14 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
         if (p->classification == EXTRACT_IN_OUT_ARGUMENT) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             if (isFirstArgument)
-                sprintf(resultingString+strlen(resultingString), "\n\t\t\t");
+                strcat(resultingString, "\n\t\t\t");
             sprintf(resultingString+strlen(resultingString), "this.%s = %s; ", name, name);
             isFirstArgument = false;
         }
     }
     if (!isFirstArgument)
-        sprintf(resultingString+strlen(resultingString),"\n\t\t");
-    sprintf(resultingString+strlen(resultingString),"}\n");
+        strcat(resultingString, "\n\t\t");
+    strcat(resultingString, "}\n");
     //sprintf(rb+strlen(rb),"\t\t// perform with %s 'in' args\n",s_opt.extractName);
 
     // the "perform" method
@@ -1197,7 +1199,7 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     }
 
     /* function body */
-    sprintf(resultingString+strlen(resultingString), " {\n");
+    strcat(resultingString, " {\n");
     ldcla[0] = 0;
     ldclaLen = 0;
     isFirstArgument = true;
@@ -1212,14 +1214,16 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
                 sprintf(resultingString+strlen(resultingString), ",%s",declaration+ldclaLen);
             } else {
                 strcpy(ldcla,declarator); ldclaLen=strlen(ldcla);
-                if (isFirstArgument) sprintf(resultingString+strlen(resultingString), "\t\t\t%s",declaration);
-                else sprintf(resultingString+strlen(resultingString), ";\n\t\t\t%s",declaration);
+                if (isFirstArgument)
+                    sprintf(resultingString+strlen(resultingString), "\t\t\t%s",declaration);
+                else
+                    sprintf(resultingString+strlen(resultingString), ";\n\t\t\t%s",declaration);
             }
             isFirstArgument = false;
         }
     }
     if (!isFirstArgument)
-        sprintf(resultingString+strlen(resultingString), ";\n");
+        strcat(resultingString, ";\n");
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, resultingString);
@@ -1240,13 +1244,13 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
         if (p->classification == EXTRACT_LOCAL_OUT_ARGUMENT) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             if (isFirstArgument)
-                sprintf(resultingString+strlen(resultingString), "\t\t\t");
+                strcat(resultingString, "\t\t\t");
             sprintf(resultingString+strlen(resultingString), "this.%s=%s; ", name, name);
             isFirstArgument = false;
         }
     }
     if (!isFirstArgument)
-        sprintf(resultingString+strlen(resultingString), "\n");
+        strcat(resultingString, "\n");
 
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_RESULT_VALUE
@@ -1257,7 +1261,7 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
             sprintf(resultingString+strlen(resultingString), "\t\t\treturn(%s);\n", name);
         }
     }
-    sprintf(resultingString+strlen(resultingString),"\t\t}\n\t}\n\n");
+    strcat(resultingString, "\t\t}\n\t}\n\n");
 
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
@@ -1299,11 +1303,11 @@ static void makeExtraction(void) {
     assert(parsedInfo.cxMemoryIndexAtBlockEnd);
     assert(parsedClassInfo.cxMemoryIndexAtFunctionEnd);
 
-    program = extMakeProgramGraph();
-    extSetInOutBlockFields(program);
-    //&dumpProgram(program);
+    program = makeProgramGraph();
+    setInOutBlockFields(program);
+    //&dumpProgramToLog(program);
 
-    if (options.extractMode!=EXTRACT_MACRO && extIsJumpInOutBlock(program)) {
+    if (options.extractMode!=EXTRACT_MACRO && areThereJumpsInOrOutOfBlock(program)) {
         errorMessage(ERR_ST, "There are jumps in or out of region");
         return;
     }
