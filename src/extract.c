@@ -58,7 +58,7 @@ static unsigned s_javaExtractFromFunctionMods=AccessDefault;
 static char *resultingString;
 static char *extractionName;
 
-static void dumpProgram(ProgramGraphNode *program) {
+static void dumpProgramToLog(ProgramGraphNode *program) {
     log_trace("[ProgramDump begin]");
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         log_trace("%p: %2d %2d %s %s", p,
@@ -72,6 +72,20 @@ static void dumpProgram(ProgramGraphNode *program) {
     log_trace("[ProgramDump end]");
 }
 
+/* Non-static because unused - use from debugger */
+void dumpProgram(ProgramGraphNode *program) {
+    printf("[ProgramDump begin]\n");
+    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
+        printf("%p: %2d %2d %s %s\n", p,
+                p->posBits, p->stateBits,
+                p->symRef->linkName,
+                usageKindEnumName[p->ref->usage.kind]+5);
+        if (p->symRef->type==TypeLabel && p->ref->usage.kind!=UsageDefined) {
+            printf("    Jump: %p\n", p->jump);
+        }
+    }
+    printf("[ProgramDump end]\n");
+}
 
 void generateInternalLabelReference(int counter, int usage) {
     char labelName[TMP_STRING_SIZE];
@@ -306,9 +320,9 @@ static ExtractClassification classifyLocalVariableExtraction0(
     for (p=program; p!=NULL; p=p->next) {
         p->stateBits = 0;
     }
-    //&dumpProgram(program);
+    //&dumpProgramToLog(program);
     extSetSetStates(program, symRef, INSPECTION_VISITED);
-    //&dumpProgram(program);
+    //&dumpProgramToLog(program);
     inUsages = outUsages = outUsageBothExists = 0;
     for (p=program; p!=NULL; p=p->next) {
         if (p->symRef == varRef->symRef && p->ref->usage.kind != UsageNone) {
