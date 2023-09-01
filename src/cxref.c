@@ -2951,50 +2951,6 @@ static void olcxMMPreCheck(void) {
 }
 
 
-static void olcxRemoveRefWinFromRefList(Reference **r1,
-                                        int wdfile,
-                                        Position *fp,
-                                        Position *tp ) {
-    Reference **r, *cr, *nr;
-    while (*r1!=NULL) {
-        r = r1; r1 = &(*r1)->next;
-        cr = *r;
-        //&fprintf(dumpOut,"! checking %d:%d\n", cr->position.line, cr->position.col);
-        if (cr->position.file == wdfile
-            && positionIsLessThan(*fp, cr->position) && positionIsLessThan(cr->position, *tp)) {
-            // remove the reference
-            nr = *r1;
-            olcxFree(*r, sizeof(Reference));
-            *r = nr;
-            r1 = r;
-            //&fprintf(dumpOut,"! removing reference %d:%d\n", cr->position.line, cr->position.col);
-        }
-    }
-}
-
-
-static void olcxTopReferencesRemoveWindow(void) {
-    OlcxReferences    *top;
-    int                wdfile;
-    Position           fp, tp;
-
-    // in reality this is a hack, it takes references kept from
-    // last file processing
-    assert(sessionData.browserStack.top);
-    assert(sessionData.browserStack.top->previous);
-    assert(options.serverOperation == OLO_REMOVE_WIN);
-    wdfile = getFileNumberFromName(options.olcxWinDelFile);
-    fp = makePosition(wdfile, options.olcxWinDelFromLine, options.olcxWinDelFromCol);
-    tp = makePosition(wdfile, options.olcxWinDelToLine, options.olcxWinDelToCol);
-    top = sessionData.browserStack.top;
-    olcxRemoveRefWinFromRefList(&top->references, wdfile, &fp, &tp);
-    for (SymbolsMenu *mm=top->menuSym; mm!=NULL; mm=mm->next) {
-        olcxRemoveRefWinFromRefList(&mm->references.references, wdfile, &fp, &tp);
-    }
-    top->actual = top->references;
-    fprintf(communicationChannel,"*");
-}
-
 static void olcxProcessGetRequest(void) {
     char *name, *value;
 
@@ -3634,9 +3590,6 @@ void answerEditAction(void) {
     case OLO_MM_PRE_CHECK:
     case OLO_PP_PRE_CHECK:
         olcxMMPreCheck();   // the value of options.cxrefsLocation is checked inside
-        break;
-    case OLO_REMOVE_WIN:
-        olcxTopReferencesRemoveWindow();
         break;
     case OLO_MENU_GO:
         assert(sessionData.browserStack.top);

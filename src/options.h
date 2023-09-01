@@ -75,11 +75,6 @@ typedef struct options {
     char *javaFilesSuffixes;
     bool fileNamesCaseSensitive;
     int tagSearchSpecif;
-    char *olcxWinDelFile;
-    int olcxWinDelFromLine;
-    int olcxWinDelFromCol;
-    int olcxWinDelToLine;
-    int olcxWinDelToCol;
     bool noErrors;
     int fqtNameToCompletions;
     char *moveTargetClass;

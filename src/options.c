@@ -58,9 +58,6 @@ Options presetOptions = {
 #endif
     true,            // fileNamesCaseSensitive
     TSS_FULL_SEARCH, // search Tag file specifics
-    "",              // windel file
-    0,               // following is windel line:col x line-col
-    0, 0, 0,
     false,                  // noerrors
     0,                      // fqtNameToCompletions
     NULL,                   // moveTargetClass
@@ -1802,22 +1799,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_VIRTUAL2STATIC_PUSH;
     else if (strcmp(argv[i], "-olcxsafetycheck2")==0)
         options.serverOperation = OLO_SAFETY_CHECK2;
-    else if (strcmp(argv[i], "-olcxwindel")==0) {
-        options.serverOperation = OLO_REMOVE_WIN;
-    }
-    else if (strcmp(argv[i], "-olcxwindelfile")==0) {
-        ensureThereIsAnotherArgument(&i, argc, argv);
-        options.olcxWinDelFile = allocateStringForOption(&options.olcxWinDelFile, argv[i]);
-    }
-    else if (strncmp(argv[i], "-olcxwindelwin=",15)==0) {
-        options.olcxWinDelFromLine = options.olcxWinDelToLine = 0;
-        options.olcxWinDelFromCol = options.olcxWinDelToCol = 0;
-        sscanf(argv[i]+15, "%d:%dx%d:%d",
-               &options.olcxWinDelFromLine, &options.olcxWinDelFromCol,
-               &options.olcxWinDelToLine, &options.olcxWinDelToCol);
-        log_trace("; delete refs %d:%d-%d:%d", options.olcxWinDelFromLine, options.olcxWinDelFromCol,
-                  options.olcxWinDelToLine, options.olcxWinDelToCol);
-    }
     else if (strcmp(argv[i], "-olcxgotodef")==0)
         options.serverOperation = OLO_GOTO_DEF;
     else if (strcmp(argv[i], "-olcxgotocaller")==0)
