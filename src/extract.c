@@ -1289,13 +1289,14 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
 
 /* ******************************************************************* */
 
-static bool extractJavaIsNewClassNecessary(ProgramGraphNode *program) {
+static bool isNewClassNecessary(ProgramGraphNode *program) {
     ProgramGraphNode  *p;
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == EXTRACT_OUT_ARGUMENT
             || p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
             || p->classification == EXTRACT_IN_OUT_ARGUMENT
-            ) break;
+        )
+            break;
     }
     if (p==NULL)
         return false;
@@ -1331,7 +1332,7 @@ static void makeExtraction(void) {
     reclassifyInOutVariables(program);
 
     if (LANGUAGE(LANG_JAVA))
-        needToExtractNewClass = extractJavaIsNewClassNecessary(program);
+        needToExtractNewClass = isNewClassNecessary(program);
 
     if (LANGUAGE(LANG_JAVA)) {
         if (needToExtractNewClass)
