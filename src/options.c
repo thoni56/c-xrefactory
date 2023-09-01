@@ -1802,8 +1802,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_VIRTUAL2STATIC_PUSH;
     else if (strcmp(argv[i], "-olcxsafetycheck2")==0)
         options.serverOperation = OLO_SAFETY_CHECK2;
-    else if (strcmp(argv[i], "-olcxintersection")==0)
-        options.serverOperation = OLO_INTERSECTION;
     else if (strcmp(argv[i], "-olcxsafetycheckmovedfile")==0) {
         ensureThereIsAnotherArgument(&i, argc, argv);
         options.checkFileMovedFrom = allocateStringForOption(&options.checkFileMovedFrom, argv[i]);

@@ -2951,42 +2951,6 @@ static void olcxMMPreCheck(void) {
 }
 
 
-static bool refOccursInRefsCompareFileAndLineOnly(Reference *rr,
-                                                  Reference *list
-) {
-    for (Reference *r=list; r!=NULL; r=r->next) {
-        if (r->position.file==rr->position.file && r->position.line==rr->position.line)
-            return true;
-    }
-    return false;
-}
-
-static void olcxTopReferencesIntersection(void) {
-    OlcxReferences    *top1,*top2;
-    Reference         **r1,**r, *nr;
-    // in reality this is a hack, it takes references kept from
-    // last file processing
-    assert(sessionData.browserStack.top);
-    assert(sessionData.browserStack.top->previous);
-    assert(options.serverOperation == OLO_INTERSECTION);
-    top1 = sessionData.browserStack.top;
-    top2 = sessionData.browserStack.top->previous;
-    //TODO in linear time, not O(n^2) like now.
-    r1 = & top1->references;
-    while (*r1!=NULL) {
-        r = r1; r1 = &(*r1)->next;
-        if (!refOccursInRefsCompareFileAndLineOnly(*r, top2->references)) {
-            // remove the reference
-            nr = *r1;
-            olcxFree(*r, sizeof(Reference));
-            *r = nr;
-            r1 = r;
-        }
-    }
-    top1->actual = top1->references;
-    fprintf(communicationChannel,"*");
-}
-
 static void olcxRemoveRefWinFromRefList(Reference **r1,
                                         int wdfile,
                                         Position *fp,
@@ -3670,9 +3634,6 @@ void answerEditAction(void) {
     case OLO_MM_PRE_CHECK:
     case OLO_PP_PRE_CHECK:
         olcxMMPreCheck();   // the value of options.cxrefsLocation is checked inside
-        break;
-    case OLO_INTERSECTION:
-        olcxTopReferencesIntersection();
         break;
     case OLO_REMOVE_WIN:
         olcxTopReferencesRemoveWindow();
