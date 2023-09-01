@@ -54,11 +54,6 @@ static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
         return false;
     log_trace("looking for sym %s on %s", options.browsedSymName, options.olcxlccursor);
 
-    // modified file, can't identify the reference
-    log_trace(":modif flag == %d", options.modifiedFlag);
-    if (options.modifiedFlag)
-        return false;
-
     // here I will need also the symbol name
     // do not bypass commanline entered files, because of local symbols
     // and because references from currently procesed file would

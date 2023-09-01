@@ -94,7 +94,6 @@ Options presetOptions = {
     "",
     RESOLVE_DIALOG_DEFAULT,     // manual symbol resolution TODO: This is different from any of the RESOLVE values above, why?
     NULL,                       // browsed symbol name
-    true,                       // modifiedFlag
     0,
     (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_PROFILE_APPLICABLE), // ooChecksBits
     1,                          // cxMemoryFactor
@@ -1793,12 +1792,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-olexmacro")==0)
         options.extractMode=EXTRACT_MACRO;
-    else if (strcmp(argv[i], "-olcxunmodified")==0)  {
-        options.modifiedFlag = false;
-    }
-    else if (strcmp(argv[i], "-olcxmodified")==0)    {
-        options.modifiedFlag = true;
-    }
     else if (strcmp(argv[i], "-olcxrename")==0)
         options.serverOperation = OLO_RENAME;
     else if (strcmp(argv[i], "-olcxencapsulate")==0)

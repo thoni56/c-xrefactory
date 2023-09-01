@@ -113,7 +113,6 @@ typedef struct options {
     char *jdkClassPath;
     ResolveDialog manualResolve;
     char *browsedSymName;
-    bool modifiedFlag;
     int olcxMenuSelectLineNum;
     int ooChecksBits;
     int cxMemoryFactor;
