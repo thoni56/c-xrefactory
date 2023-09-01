@@ -1758,10 +1758,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
     else if (strncmp(argv[i], "-olmark=",8)==0) {
         sscanf(argv[i]+8, "%d",&options.olMarkPos);
     }
-    else if (strncmp(argv[i], "-olcheckversion=",16)==0) {
-        options.checkVersion = allocateStringForOption(&options.checkVersion, argv[i]+16);
-        options.serverOperation = OLO_CHECK_VERSION;
-    }
     else if (strcmp(argv[i], "-olcxextract")==0) {
         options.serverOperation = OLO_EXTRACT;
     }

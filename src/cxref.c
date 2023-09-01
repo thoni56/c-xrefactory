@@ -3470,12 +3470,6 @@ void answerEditAction(void) {
 
     log_trace("Server operation = %s(%d)", operationNamesTable[options.serverOperation], options.serverOperation);
     switch (options.serverOperation) {
-    case OLO_CHECK_VERSION:
-        assert(options.checkVersion!=NULL);
-        if (strcmp(options.checkVersion, C_XREF_VERSION_NUMBER)!=0) {
-            ppcGenRecord(PPC_VERSION_MISMATCH, C_XREF_VERSION_NUMBER);
-        }
-        break;
     case OLO_COMPLETION:
     case OLO_SEARCH:
         printCompletions(&collectedCompletions);

@@ -58,7 +58,6 @@
         ENUM(OLO_MENU_FILTER_PLUS)                                      \
         ENUM(OLO_MENU_FILTER_MINUS)                                     \
         ENUM(OLO_MENU_GO)                                               \
-        ENUM(OLO_CHECK_VERSION)                                         \
         ENUM(OLO_TRIVIAL_PRECHECK)                                      \
         ENUM(OLO_MM_PRE_CHECK)                                          \
         ENUM(OLO_PP_PRE_CHECK)                                          \
