@@ -1792,6 +1792,10 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_RENAME;
     else if (strcmp(argv[i], "-olcxencapsulate")==0)
         options.serverOperation = OLO_ENCAPSULATE;
+    else if (strcmp(argv[i], "-olcxencapsulatesc1")==0)
+        options.serverOperation = OLO_PUSH_ENCAPSULATE_SAFETY_CHECK;
+    else if (strcmp(argv[i], "-olcxencapsulatesc2")==0)
+        options.serverOperation = OLO_ENCAPSULATE_SAFETY_CHECK;
     else if (strcmp(argv[i], "-olcxargmanip")==0)
         options.serverOperation = OLO_ARG_MANIP;
     else if (strcmp(argv[i], "-olcxdynamictostatic1")==0)
@@ -1892,10 +1896,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_PUSH_ONLY;
     else if (strcmp(argv[i], "-olcxpushandcallmacro")==0)
         options.serverOperation = OLO_PUSH_AND_CALL_MACRO;
-    else if (strcmp(argv[i], "-olcxencapsulatesc1")==0)
-        options.serverOperation = OLO_PUSH_ENCAPSULATE_SAFETY_CHECK;
-    else if (strcmp(argv[i], "-olcxencapsulatesc2")==0)
-        options.serverOperation = OLO_ENCAPSULATE_SAFETY_CHECK;
     else if (strcmp(argv[i], "-olcxpushallinmethod")==0)
         options.serverOperation = OLO_PUSH_ALL_IN_METHOD;
     else if (strcmp(argv[i], "-olcxmmprecheck")==0)
