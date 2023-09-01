@@ -2799,13 +2799,6 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
     rstack->menuSym = olCreateSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
 }
 
-static void olcxSafetyCheckInit(void) {
-    assert(options.serverOperation == OLO_SAFETY_CHECK_INIT);
-    olcxPushSpecialCheckMenuSym(LINK_NAME_SAFETY_CHECK_MISSED);
-    fprintf(communicationChannel,"* safety checks initialized");
-    fflush(communicationChannel);
-}
-
 static SymbolsMenu *mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(
                                                                           SymbolsMenu *menuSym) {
     SymbolsMenu *res = NULL;
@@ -3712,9 +3705,6 @@ void answerEditAction(void) {
         break;
     case OLO_MENU_FILTER_SET:
         olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
-        break;
-    case OLO_SAFETY_CHECK_INIT:
-        olcxSafetyCheckInit();
         break;
     case OLO_SAFETY_CHECK1:
         olcxSafetyCheck1();

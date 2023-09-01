@@ -1807,8 +1807,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_ARG_MANIP;
     else if (strcmp(argv[i], "-olcxdynamictostatic1")==0)
         options.serverOperation = OLO_VIRTUAL2STATIC_PUSH;
-    else if (strcmp(argv[i], "-olcxsafetycheckinit")==0)
-        options.serverOperation = OLO_SAFETY_CHECK_INIT;
     else if (strcmp(argv[i], "-olcxsafetycheck1")==0)
         options.serverOperation = OLO_SAFETY_CHECK1;
     else if (strcmp(argv[i], "-olcxsafetycheck2")==0)
