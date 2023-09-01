@@ -1802,12 +1802,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_VIRTUAL2STATIC_PUSH;
     else if (strcmp(argv[i], "-olcxsafetycheck2")==0)
         options.serverOperation = OLO_SAFETY_CHECK2;
-    else if (strcmp(argv[i], "-olcxsafetycheckmovedfile")==0) {
-        ensureThereIsAnotherArgument(&i, argc, argv);
-        options.checkFileMovedFrom = allocateStringForOption(&options.checkFileMovedFrom, argv[i]);
-        ensureThereIsAnotherArgument(&i, argc, argv);
-        options.checkFileMovedTo = allocateStringForOption(&options.checkFileMovedTo, argv[i]);
-    }
     else if (strcmp(argv[i], "-olcxwindel")==0) {
         options.serverOperation = OLO_REMOVE_WIN;
     }
@@ -1823,12 +1817,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
                &options.olcxWinDelToLine, &options.olcxWinDelToCol);
         log_trace("; delete refs %d:%d-%d:%d", options.olcxWinDelFromLine, options.olcxWinDelFromCol,
                   options.olcxWinDelToLine, options.olcxWinDelToCol);
-    }
-    else if (strncmp(argv[i], "-olcxsafetycheckmovedblock=",27)==0) {
-        sscanf(argv[i]+27, "%d:%d:%d", &options.checkFirstMovedLine,
-               &options.checkLinesMoved, &options.checkNewLineNumber);
-        log_trace("safety check block moved == %d:%d:%d", options.checkFirstMovedLine, options.checkLinesMoved,
-                  options.checkNewLineNumber);
     }
     else if (strcmp(argv[i], "-olcxgotodef")==0)
         options.serverOperation = OLO_GOTO_DEF;
