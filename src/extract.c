@@ -1345,26 +1345,16 @@ static void makeExtraction(void) {
             extractionName = "newFunction_";
     }
 
-    if (options.xref2)
-        ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, extractionName);
+    ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, extractionName);
 
     resultingString = cxAlloc(EXTRACT_GEN_BUFFER_SIZE);
 
-    if (!options.xref2) {
-        fprintf(communicationChannel,
-                "%%!\n------------------------ The Invocation ------------------------\n!\n");
-    }
     if (options.extractMode==EXTRACT_MACRO)
         generateNewMacroCall(program);
     else if (needToExtractNewClass)
         javaGenerateNewClassCall(program);
     else
         generateNewFunctionCall(program);
-
-    if (!options.xref2) {
-        fprintf(communicationChannel,
-                "!\n--------------------------- The Head ---------------------------\n!\n");
-    }
 
     if (options.extractMode==EXTRACT_MACRO)
         extGenNewMacroHead(program);
@@ -1373,11 +1363,6 @@ static void makeExtraction(void) {
     else
         generateNewFunctionHead(program);
 
-    if (!options.xref2) {
-        fprintf(communicationChannel,
-                "!\n--------------------------- The Tail ---------------------------\n!\n");
-    }
-
     if (options.extractMode==EXTRACT_MACRO)
         generateNewMacroTail();
     else if (needToExtractNewClass)
@@ -1385,15 +1370,8 @@ static void makeExtraction(void) {
     else
         generateNewFunctionTail(program);
 
-    if (options.xref2) {
-        ppcValueRecord(PPC_INT_VALUE, parsedClassInfo.functionBeginPosition, "");
-    } else {
-        fprintf(communicationChannel,"!%d!\n", parsedClassInfo.functionBeginPosition);
-        fflush(communicationChannel);
-    }
-
-    if (options.xref2)
-        ppcEnd(PPC_EXTRACTION_DIALOG);
+    ppcValueRecord(PPC_INT_VALUE, parsedClassInfo.functionBeginPosition, "");
+    ppcEnd(PPC_EXTRACTION_DIALOG);
 }
 
 
