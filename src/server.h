@@ -62,7 +62,6 @@
         ENUM(OLO_TRIVIAL_PRECHECK)                                      \
         ENUM(OLO_MM_PRE_CHECK)                                          \
         ENUM(OLO_PP_PRE_CHECK)                                          \
-        ENUM(OLO_SAFETY_CHECK1)                                         \
         ENUM(OLO_SAFETY_CHECK2)                                         \
         ENUM(OLO_INTERSECTION)                                          \
         ENUM(OLO_REMOVE_WIN)                                            \

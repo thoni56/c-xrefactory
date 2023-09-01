@@ -1294,7 +1294,6 @@ bool requiresCreatingRefs(ServerOperation operation) {
             ||  options.serverOperation==OLO_ENCAPSULATE
             ||  options.serverOperation==OLO_ARG_MANIP
             ||  options.serverOperation==OLO_VIRTUAL2STATIC_PUSH
-            //&     ||  options.serverOperation==OLO_SAFETY_CHECK1
             ||  options.serverOperation==OLO_SAFETY_CHECK2
             ||  options.serverOperation==OLO_CLASS_TREE
             ||  options.serverOperation==OLO_SYNTAX_PASS_ONLY

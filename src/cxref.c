@@ -1925,7 +1925,6 @@ static bool isRenameMenuSelection(int command) {
         || command == OLO_VIRTUAL2STATIC_PUSH
         || command == OLO_ARG_MANIP
         || command == OLO_PUSH_FOR_LOCALM
-        || command == OLO_SAFETY_CHECK1
         || command == OLO_SAFETY_CHECK2
         || options.manualResolve == RESOLVE_DIALOG_NEVER
         ;
@@ -2769,26 +2768,6 @@ void olcxCheck1CxFileReference(ReferencesItem *referenceItem, Reference *referen
     }
 }
 
-static void olcxProceedSafetyCheck1OnInloadedRefs(OlcxReferences *rstack, SymbolsMenu *ccms) {
-    ReferencesItem     *p;
-    ReferencesItem     *sss;
-    SymbolsMenu     *cms;
-    bool pushed;
-
-    p = &ccms->references;
-    assert(rstack && rstack->menuSym);
-    sss = &rstack->menuSym->references;
-    pushed = itIsSymbolToPushOlReferences(p, rstack, &cms, DEFAULT_VALUE);
-    // TODO, this can be simplified, as ccms == cms.
-    //&fprintf(dumpOut,":checking %s to %s (%d)\n",p->linkName, sss->linkName, pushed);
-    if (!pushed && olcxIsSameCxSymbol(p, sss)) {
-        //&fprintf(dumpOut,"checking %s references\n",p->linkName);
-        for (Reference *r=p->references; r!=NULL; r=r->next) {
-            olcxSingleReferenceCheck1(p, rstack, r);
-        }
-    }
-}
-
 void olcxPushSpecialCheckMenuSym(char *symname) {
     OlcxReferences *rstack;
 
@@ -2965,24 +2944,6 @@ static void olcxMMPreCheck(void) {
     fflush(communicationChannel);
 }
 
-
-static void olcxSafetyCheck1(void) {
-    OlcxReferences    *rstack;
-    // in reality this is a hack, it takes references kept from
-    // last file processing
-    assert(sessionData.browserStack.top);
-    assert(sessionData.browserStack.top->previous);
-    assert(options.serverOperation == OLO_SAFETY_CHECK1);
-    rstack = sessionData.browserStack.top->previous;
-    olProcessSelectedReferences(rstack, olcxProceedSafetyCheck1OnInloadedRefs);
-    if (sessionData.browserStack.top->references == NULL) {
-        fprintf(communicationChannel,"* check1 passed");
-    } else {
-        sessionData.browserStack.top->actual = sessionData.browserStack.top->references;
-        fprintf(communicationChannel," ** Shared references lost. Please, undo last refactoring\n");
-    }
-    fflush(communicationChannel);
-}
 
 static bool refOccursInRefsCompareFileAndLineOnly(Reference *rr,
                                                   Reference *list
@@ -3705,9 +3666,6 @@ void answerEditAction(void) {
         break;
     case OLO_MENU_FILTER_SET:
         olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
-        break;
-    case OLO_SAFETY_CHECK1:
-        olcxSafetyCheck1();
         break;
     case OLO_MM_PRE_CHECK:
     case OLO_PP_PRE_CHECK:

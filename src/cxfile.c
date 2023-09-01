@@ -1152,11 +1152,6 @@ static void scanFunction_Reference(int size,
                              || reference.usage.kind==UsageClassFileDefinition))) {
                     searchSymbolCheckReference(lastIncomingInfo.symbolTab[sym],&reference);
                 }
-            } else if (options.serverOperation == OLO_SAFETY_CHECK1) {
-                if (lastIncomingInfo.onLineReferencedSym != lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
-                    olcxCheck1CxFileReference(lastIncomingInfo.symbolTab[sym],
-                                              &reference);
-                }
             } else {
                 if (lastIncomingInfo.onLineReferencedSym == lastIncomingInfo.values[CXFI_SYMBOL_INDEX]) {
                     if (operation == CXSF_MENU_CREATION) {
