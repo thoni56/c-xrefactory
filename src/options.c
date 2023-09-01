@@ -1775,9 +1775,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-olnodialog")==0) {
         options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
-    else if (strcmp(argv[i], "-olexaddress")==0) {
-        options.extractMode = EXTRACT_FUNCTION_ADDRESS_ARGS;
-    }
     else if (strcmp(argv[i], "-olchecklinkage")==0) {
         options.ooChecksBits |= OOC_LINKAGE_CHECK;
     }

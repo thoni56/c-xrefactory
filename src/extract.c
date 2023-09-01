@@ -554,14 +554,7 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
     bool uniqueOutFlag = true;
 
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
-        if (options.extractMode == EXTRACT_FUNCTION_ADDRESS_ARGS) {
-            if (p->classification == EXTRACT_OUT_ARGUMENT
-                || p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
-                || p->classification == EXTRACT_IN_OUT_ARGUMENT
-            ) {
-                p->classification = EXTRACT_ADDRESS_ARGUMENT;
-            }
-        } else if (options.extractMode == EXTRACT_FUNCTION) {
+        if (options.extractMode == EXTRACT_FUNCTION) {
             if (p->classification == EXTRACT_OUT_ARGUMENT
                 || p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
             ) {
@@ -1314,7 +1307,7 @@ static void makeExtraction(void) {
         errorMessage(ERR_ST, "Region / program structure mismatch");
         return;
     }
-    log_trace("!cxMemories: funBeg, blockBeb, blockEnd, funEnd: %x, %x, %x, %x", parsedClassInfo.cxMemoryIndexAtFunctionBegin, parsedInfo.cxMemoryIndexAtBlockBegin, parsedInfo.cxMemoryIndexAtBlockEnd, parsedClassInfo.cxMemoryIndexAtFunctionEnd);
+    log_trace("!cxMemories: funBegin, blockBegin, blockEnd, funEnd: %x, %x, %x, %x", parsedClassInfo.cxMemoryIndexAtFunctionBegin, parsedInfo.cxMemoryIndexAtBlockBegin, parsedInfo.cxMemoryIndexAtBlockEnd, parsedClassInfo.cxMemoryIndexAtFunctionEnd);
     assert(parsedClassInfo.cxMemoryIndexAtFunctionBegin);
     assert(parsedInfo.cxMemoryIndexAtBlockBegin);
     assert(parsedInfo.cxMemoryIndexAtBlockEnd);
