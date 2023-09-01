@@ -2578,18 +2578,24 @@ static bool scCompareVirtualHierarchies(SymbolsMenu *origm,
 }
 
 bool safetyCheck2ShouldWarn(void) {
-    int res,problem;
-    OlcxReferences *refs, *origrefs, *newrefs, *diffrefs;
-    problem = 0;
-    if (options.serverOperation != OLO_SAFETY_CHECK2) return false;
-    if (! LANGUAGE(LANG_JAVA)) return false;
+    if (options.serverOperation != OLO_SAFETY_CHECK2)
+        return false;
+    if (! LANGUAGE(LANG_JAVA))
+        return false;
+
     // compare hierarchies and deselect diff
+    OlcxReferences *refs, *origrefs, *newrefs, *diffrefs;
     origrefs = newrefs = diffrefs = NULL;
+    bool problem = false;
     SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs, problem);
-    if (problem) return false;
+    if (problem)
+        return false;
     assert(origrefs && newrefs && diffrefs);
-    if (staticallyLinkedSymbolMenu(origrefs->menuSym)) return false;
-    res = scCompareVirtualHierarchies(origrefs->menuSym, newrefs->menuSym,
+
+    if (staticallyLinkedSymbolMenu(origrefs->menuSym))
+        return false;
+
+    bool res = scCompareVirtualHierarchies(origrefs->menuSym, newrefs->menuSym,
                                       origrefs->command);
     if (res) {
         // hierarchy was changed, recompute refs
