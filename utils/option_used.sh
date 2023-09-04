@@ -1,1 +1,1 @@
-grep $1 -R *.c ../editors
+grep -Rl $1 *.c ../editors
