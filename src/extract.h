@@ -26,9 +26,4 @@ extern void generateContinueBreakReference(char *name);
 extern void generateSwitchCaseFork(bool isLast);
 extern void deleteContinueBreakSymbol(Symbol *symbol);
 
-extern int nextGeneratedLocalSymbol(void);
-extern int nextGeneratedLabelSymbol(void);
-extern int nextGeneratedGotoSymbol(void);
-extern int nextGeneratedForkSymbol(void);
-
 #endif

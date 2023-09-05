@@ -1,6 +1,7 @@
 #include "semact.h"
 
 #include "commons.h"
+#include "counters.h"
 #include "globals.h"
 #include "options.h"
 #include "parsers.h"

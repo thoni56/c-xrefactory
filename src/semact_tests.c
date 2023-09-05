@@ -7,6 +7,7 @@
 #include "semact.h"
 
 #include "caching.mock"
+#include "counters.mock"
 #include "classcaster.mock"
 #include "classfilereader.mock"
 #include "commons.mock"

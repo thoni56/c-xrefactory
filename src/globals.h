@@ -8,14 +8,6 @@
 #include "proto.h"
 
 
-/* ***************** unique counters  *********************** */
-typedef struct counters {
-    int localSym;
-    int localVar;
-    int anonymousClassCounter;
-} Counters;
-
-
 extern char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
@@ -25,7 +17,6 @@ extern int s_lastReturnedLexem;
 extern Position parsedPositions[SPP_MAX];
 
 extern bool cxResizingBlocked;
-extern Counters counters;
 extern unsigned s_recFindCl;
 
 extern FILE *errOut;

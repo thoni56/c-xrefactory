@@ -16,7 +16,6 @@ int s_lastReturnedLexem;
 
 Position parsedPositions[SPP_MAX];
 
-Counters counters;
 unsigned s_recFindCl = 1;
 
 CurrentlyParsedClassInfo parsedClassInfo;

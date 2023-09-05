@@ -1,0 +1,19 @@
+#ifndef COUNTERS_H_INCLUDED
+#define COUNTERS_H_INCLUDED
+
+/* ***************** unique counters  *********************** */
+typedef struct counters {
+    int localSym;
+    int localVar;
+    int anonymousClassCounter;
+} Counters;
+
+extern Counters counters;
+
+
+extern int nextGeneratedLocalSymbol(void);
+extern int nextGeneratedLabelSymbol(void);
+extern int nextGeneratedGotoSymbol(void);
+extern int nextGeneratedForkSymbol(void);
+
+#endif

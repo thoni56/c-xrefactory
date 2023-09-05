@@ -7,6 +7,7 @@
 
 #include "c_parser.mock"
 #include "caching.mock"
+#include "counters.mock"
 #include "characterreader.mock"
 #include "commandlogger.mock"
 #include "commons.mock"

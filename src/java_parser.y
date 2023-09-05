@@ -10,6 +10,7 @@
 #include "java_parser.h"
 
 #include "globals.h"
+#include "counters.h"
 #include "options.h"
 #include "jslsemact.h"
 #include "jsemact.h"

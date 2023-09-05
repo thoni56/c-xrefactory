@@ -1,7 +1,7 @@
 #ifndef CACHING_H_INCLUDED
 #define CACHING_H_INCLUDED
 
-#include "globals.h" /* For Counters */
+#include "counters.h"
 #include "memory.h"
 #include "input.h"
 
@@ -17,7 +17,7 @@ typedef struct {
     short int          ifDepth;
     struct cppIfStack *ifStack;
     struct javaStat   *javaStat;
-    struct counters    counters;
+    Counters           counters;
 } CachePoint;
 
 typedef struct {

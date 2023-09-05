@@ -3,6 +3,7 @@
 #include "caching.h"
 
 #include "commons.mock"
+#include "counters.mock"
 #include "cxref.mock" /* For freeOldestOlcx() */
 #include "editor.mock"
 #include "filedescriptor.mock"

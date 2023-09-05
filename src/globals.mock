@@ -72,7 +72,6 @@ Completions collectedCompletions;
 
 char *storageNamesTable[MAX_STORAGE_NAMES];
 
-Counters counters;
 unsigned s_recFindCl = 1;
 
 bool parameterListIsVoid;           /* Is what looks like a parameter actually "void" */

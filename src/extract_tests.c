@@ -6,6 +6,7 @@
 
 /* Dependencies: */
 #include "caching.mock"
+#include "counters.mock"
 #include "characterreader.mock"
 #include "classhierarchy.mock"
 #include "commons.mock"
