@@ -432,7 +432,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         char *startOfCurrentLexem = getLexemStreamWrite(lb);
         saveBackpatchPosition(lb);
         lexemStartingColumn = columnPosition(cb);
-        log_trace("lexStartCol = %d", lexemStartingColumn);
+        log_trace("lexemStartingColumn = %d", lexemStartingColumn);
 
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
             ch = putIdentifierLexem(lb, cb, ch);

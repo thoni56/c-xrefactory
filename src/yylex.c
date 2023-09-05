@@ -1771,7 +1771,7 @@ endOfFile:;
 endOfMacroArgument:;
     assert(options.mode);
     if (options.mode != ServerMode) {
-        warningMessage(ERR_ST, "[getActMacroArgument] unterminated macro call");
+        warningMessage(ERR_ST, "[getActualMacroArgument] unterminated macro call");
     }
 
 end:
@@ -1904,7 +1904,7 @@ static bool expandMacroCall(Symbol *macroSymbol, Position *macroPosition) {
     log_trace("create macro body '%s'", macroBody->name);
     createMacroBodyAsNewInput(&macroBodyInput,macroBody,actualArgumentsInput,macroBody->argCount);
     prependMacroInput(&macroBodyInput);
-    log_trace("expanding macro '%s'", macroBody->name);
+    log_trace("expanded macro '%s'", macroBody->name);
     ppmFreeUntil(freeBase);
     return true;
 
