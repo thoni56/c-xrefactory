@@ -1542,7 +1542,7 @@ static bool processEOption(int *argi, int argc, char **argv) {
         sprintf(tmpString, "*%s", argv[i]+22);
         // TODO Not used from any editor client - it's initialized to
         // "*_", replace by constant?  This is the prefix required
-        // when extracting a function and that requires out parameters
+        // when extracting a function which requires out parameters
         // The underscore is the prefix of the parameters so that the
         // code *inside* the new function can use the same variable names
         options.olExtractAddrParPrefix = allocateStringForOption(&options.olExtractAddrParPrefix, tmpString);
@@ -1704,7 +1704,7 @@ static bool processMOption(int *argi, int argc, char **argv) {
         }
         options.cxMemoryFactor = mf;
     }
-    else if (strncmp(argv[i], "-maxCompls=",11)==0 || strncmp(argv[i], "-maxcompls=",11)==0)  {
+    else if (strncmp(argv[i], "-maxcompls=",11)==0)  {
         sscanf(argv[i]+11, "%d", &options.maxCompletions);
     }
     else if (strncmp(argv[i], "-movetargetclass=",17)==0) {
