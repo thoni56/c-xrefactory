@@ -230,15 +230,17 @@ void putStringConstantLexem(LexemBuffer *lb, CharacterBuffer *cb, int lexemStart
             size++;
             if (size < MAX_LEXEM_SIZE - 10)
                 putLexemChar(lb, ch);
-            /* TODO escape sequences */
             if (ch == '\n') {
+                /* Escaped newline inside string */
                 cb->lineNumber++;
                 cb->lineBegin    = cb->nextUnread;
                 cb->columnOffset = 0;
             }
-            continue;
+            /* TODO other escape sequences */
+            ch = 0;             /* TODO Not sure why 0, but 'continue' does not work... */
         }
         if (ch == '\n') {
+            /* Unescaped newline inside string */
             cb->lineNumber++;
             cb->lineBegin    = cb->nextUnread;
             cb->columnOffset = 0;
