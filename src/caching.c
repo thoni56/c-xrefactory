@@ -231,11 +231,8 @@ static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int
     cache->write  = write;
 }
 
-// before allowing it, fix problem when modifying .xrefrc during run!!!!
-#define CACHING_CLASSES 1
-
 static bool canContinueCachingClasses() {
-    return CACHING_CLASSES && LANGUAGE(LANG_JAVA)
+    return LANGUAGE(LANG_JAVA)
         && options.mode == XrefMode
         && ppmMemory.index < (SIZE_ppmMemory/3)*2;
 }
@@ -269,9 +266,8 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     log_trace("recovering cache point %d", cachePointIndex);
     cachePoint = &cache.points[cachePointIndex];
     if (!canContinueCachingClasses()) {
+        log_debug("flushing classes");
         ppmMemory.index = cachePoint->ppmMemoryIndex;
-        if (CACHING_CLASSES)
-            log_debug("flushing classes");
     }
     setMacroBodyMemoryIndex(cachePoint->macroBodyMemoryIndex);
     currentBlock = cachePoint->topBlock;
