@@ -54,7 +54,7 @@ typedef struct programGraphNode {
 } ProgramGraphNode;
 
 
-static unsigned s_javaExtractFromFunctionMods=AccessDefault;
+static unsigned javaExtractFromFunctionModifiers=AccessDefault;
 static char *resultingString;
 static char *extractionName;
 
@@ -641,7 +641,7 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
     }
 }
 
-static void extGenNewMacroHead(ProgramGraphNode *program) {
+static void generateNewMacroHead(ProgramGraphNode *program) {
     char name[MAX_EXTRACT_FUN_HEAD_SIZE];
     ProgramGraphNode *p;
     bool isFirstArgument = true;
@@ -924,7 +924,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
         strcat(resultingString, "private ");
     }
 
-    if (LANGUAGE(LANG_JAVA) && (s_javaExtractFromFunctionMods&AccessStatic)==0) {
+    if (LANGUAGE(LANG_JAVA) && (javaExtractFromFunctionModifiers&AccessStatic)==0) {
         ; // sprintf(rb+strlen(rb), "");
     } else {
         strcat(resultingString, "static ");
@@ -1131,7 +1131,7 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
 
     // class header
     strcat(resultingString, "\t");
-    if (s_javaExtractFromFunctionMods & AccessStatic){
+    if (javaExtractFromFunctionModifiers & AccessStatic){
         strcat(resultingString, "static ");
     }
     sprintf(resultingString+strlen(resultingString), "class %s {\n", classname);
@@ -1241,7 +1241,7 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     }
 }
 
-static void extJavaGenNewClassTail(ProgramGraphNode *program) {
+static void javaGenerateNewClassTail(ProgramGraphNode *program) {
     char name[TMP_STRING_SIZE];
     ProgramGraphNode  *p;
     bool isFirstArgument = true;
@@ -1351,7 +1351,7 @@ static void makeExtraction(void) {
         generateNewFunctionCall(program);
 
     if (options.extractMode==EXTRACT_MACRO)
-        extGenNewMacroHead(program);
+        generateNewMacroHead(program);
     else if (needToExtractNewClass)
         javaGenerateNewClassHead(program);
     else
@@ -1360,7 +1360,7 @@ static void makeExtraction(void) {
     if (options.extractMode==EXTRACT_MACRO)
         generateNewMacroTail();
     else if (needToExtractNewClass)
-        extJavaGenNewClassTail(program);
+        javaGenerateNewClassTail(program);
     else
         generateNewFunctionTail(program);
 
@@ -1401,7 +1401,7 @@ void extractActionOnBlockMarker(void) {
         parsedInfo.cxMemoryIndexAtBlockBegin = cxMemory->index;
         parsedInfo.workMemoryIndexAtBlockBegin = currentBlock->outerBlock;
         if (LANGUAGE(LANG_JAVA)) {
-            s_javaExtractFromFunctionMods = javaStat->methodModifiers;
+            javaExtractFromFunctionModifiers = javaStat->methodModifiers;
         }
     } else {
         assert(parsedInfo.cxMemoryIndexAtBlockEnd == 0);
