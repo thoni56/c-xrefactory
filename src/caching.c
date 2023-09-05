@@ -56,7 +56,7 @@ static void deleteReferencesOutOfMemory(Reference **referenceP) {
     }
 }
 
-static void cxrefTabDeleteOutOfMemory(int index) {
+static void refTabDeleteOutOfMemory(int index) {
     ReferencesItem *item;
     ReferencesItem **itemP;
 
@@ -217,7 +217,7 @@ static bool cachedIncludedFilePass(int index) {
 static void recoverCxMemory(char *cxMemFreeBase) {
     cxFreeUntil(cxMemFreeBase);
     mapOverFileTable(fileTabDeleteOutOfMemory);
-    mapOverReferenceTableWithIndex(cxrefTabDeleteOutOfMemory);
+    mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
 }
 
 static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int includeStackTop, char *free,
@@ -280,7 +280,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
         cxMemory->index = cachePoint->cxMemoryIndex;
-        mapOverReferenceTableWithIndex(cxrefTabDeleteOutOfMemory);
+        mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
         mapOverFileTable(fileTabDeleteOutOfMemory);
     }
     log_trace("recovering 0");
