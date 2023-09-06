@@ -14,10 +14,6 @@ void extractActionOnBlockMarker(void) {
     mock();
 }
 
-void generateInternalLabelReference(int counter, int usage) {
-    mock(counter, usage);
-}
-
 void deleteContinueBreakLabelSymbol(char *name) {
     mock(name);
 }

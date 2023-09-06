@@ -3,7 +3,7 @@
 
 #include "counters.h"
 
-#include "extract.mock"
+#include "semact.mock"
 
 
 Describe(Counters);

@@ -81,6 +81,7 @@ extern void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
                                                PositionList *commas, Position *rpar);
 extern void setLocalVariableLinkName(struct symbol *p);
 extern void labelReference(Id *id, UsageKind usage);
+extern void generateInternalLabelReference(int counter, int usage);
 extern void setDirectStructureCompletionType(TypeModifier *xxx);
 extern void setIndirectStructureCompletionType(TypeModifier *xxx);
 

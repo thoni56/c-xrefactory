@@ -20,7 +20,6 @@ typedef struct referencesItemList {
 extern Symbol *addContinueBreakLabelSymbol(int labn, char *name);
 extern void actionsBeforeAfterExternalDefinition(void);
 extern void extractActionOnBlockMarker(void);
-extern void generateInternalLabelReference(int counter, int usage);
 extern void deleteContinueBreakLabelSymbol(char *name);
 extern void generateContinueBreakReference(char *name);
 extern void generateSwitchCaseFork(bool isLast);

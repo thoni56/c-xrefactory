@@ -87,26 +87,6 @@ void dumpProgram(ProgramGraphNode *program) {
     printf("[ProgramDump end]\n");
 }
 
-void generateInternalLabelReference(int counter, int usage) {
-    char labelName[TMP_STRING_SIZE];
-    Id labelId;
-    Position position;
-
-    if (options.serverOperation != OLO_EXTRACT)
-        return;
-
-    snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);
-
-    position = (Position){.file = currentFile.characterBuffer.fileNumber, .line = 0, .col = 0};
-    fillId(&labelId, labelName, NULL, position);
-
-    if (usage != UsageDefined)
-        labelId.position.line++;
-    // line == 0 or 1 , (hack to get definition first)
-    labelReference(&labelId, usage);
-}
-
-
 Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     Symbol *s;
 

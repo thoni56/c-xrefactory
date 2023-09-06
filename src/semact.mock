@@ -209,3 +209,7 @@ void setLocalVariableLinkName(struct symbol *p) {
 void labelReference(Id *id, UsageKind usage) {
     mock(id, usage);
 }
+
+void generateInternalLabelReference(int counter, int usage) {
+    mock(counter, usage);
+}
