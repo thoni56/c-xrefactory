@@ -30,17 +30,16 @@ typedef enum {
 } InspectionBits;
 
 typedef enum extractClassification {
-    EXTRACT_LOCAL_VAR,
-    EXTRACT_VALUE_ARGUMENT,
-    EXTRACT_LOCAL_OUT_ARGUMENT,
-    EXTRACT_OUT_ARGUMENT,
-    EXTRACT_IN_OUT_ARGUMENT,
-    EXTRACT_ADDRESS_ARGUMENT,
-    EXTRACT_RESULT_VALUE,
-    EXTRACT_IN_RESULT_VALUE,
-    EXTRACT_LOCAL_RESULT_VALUE,
-    EXTRACT_NONE,
-    EXTRACT_ERROR
+    CLASSIFIED_AS_LOCAL_VAR,
+    CLASSIFIED_AS_VALUE_ARGUMENT,
+    CLASSIFIED_AS_LOCAL_OUT_ARGUMENT,
+    CLASSIFIED_AS_OUT_ARGUMENT,
+    CLASSIFIED_AS_IN_OUT_ARGUMENT,
+    CLASSIFIED_AS_ADDRESS_ARGUMENT,
+    CLASSIFIED_AS_RESULT_VALUE,
+    CLASSIFIED_AS_IN_RESULT_VALUE,
+    CLASSIFIED_AS_LOCAL_RESULT_VALUE,
+    CLASSIFIED_AS_NONE
 } ExtractClassification;
 
 typedef struct programGraphNode {
@@ -181,7 +180,7 @@ static void extractFunGraphRef(ReferencesItem *rr, void *prog) {
     ap = (ProgramGraphNode **) prog;
     for (r=rr->references; r!=NULL; r=r->next) {
         if (dm_isBetween(cxMemory,r,parsedClassInfo.cxMemoryIndexAtFunctionBegin,parsedClassInfo.cxMemoryIndexAtFunctionEnd)){
-            p = newProgramGraphNode(r, rr, NULL, 0, 0, EXTRACT_NONE, *ap);
+            p = newProgramGraphNode(r, rr, NULL, 0, 0, CLASSIFIED_AS_NONE, *ap);
             *ap = p;
         }
     }
@@ -331,26 +330,26 @@ static ExtractClassification classifyLocalVariableExtraction0(
                 /*& && outUsageBothExists == 0 &*/
                 && (outUsages & INSPECTION_INSIDE_PASSING) == 0
                 ) {
-                return EXTRACT_OUT_ARGUMENT;
+                return CLASSIFIED_AS_OUT_ARGUMENT;
             } else {
-                return EXTRACT_IN_OUT_ARGUMENT;
+                return CLASSIFIED_AS_IN_OUT_ARGUMENT;
             }
         }
         if (inUsages & INSPECTION_INSIDE_REENTER)
-            return EXTRACT_IN_OUT_ARGUMENT;
+            return CLASSIFIED_AS_IN_OUT_ARGUMENT;
         if (inUsages & INSPECTION_OUTSIDE_BLOCK)
-            return EXTRACT_VALUE_ARGUMENT;
+            return CLASSIFIED_AS_VALUE_ARGUMENT;
         if (inUsages)
-            return EXTRACT_LOCAL_VAR;
-        return EXTRACT_NONE;
+            return CLASSIFIED_AS_LOCAL_VAR;
+        return CLASSIFIED_AS_NONE;
     } else {
         if (    outUsages & INSPECTION_INSIDE_BLOCK
                 ||  outUsages & INSPECTION_OUTSIDE_BLOCK) {
             // a variable defined inside the region used outside
             //&fprintf(dumpOut,"%% ** variable '%s' defined inside the region used outside", varRef->symRef->linkName);
-            return EXTRACT_LOCAL_OUT_ARGUMENT;
+            return CLASSIFIED_AS_LOCAL_OUT_ARGUMENT;
         } else {
-            return EXTRACT_NONE;
+            return CLASSIFIED_AS_NONE;
         }
     }
 }
@@ -362,8 +361,8 @@ static ExtractClassification classifyLocalVariableForExtraction(
     ExtractClassification classification;
 
     classification = classifyLocalVariableExtraction0(program, varRef);
-    if (isStructOrUnion(varRef) && classification!=EXTRACT_NONE && classification!=EXTRACT_LOCAL_VAR) {
-        return EXTRACT_ADDRESS_ARGUMENT;
+    if (isStructOrUnion(varRef) && classification!=CLASSIFIED_AS_NONE && classification!=CLASSIFIED_AS_LOCAL_VAR) {
+        return CLASSIFIED_AS_ADDRESS_ARGUMENT;
     }
     return classification;
 }
@@ -535,8 +534,8 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
 
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         if (options.extractMode == EXTRACT_FUNCTION) {
-            if (p->classification == EXTRACT_OUT_ARGUMENT
-                || p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
+            if (p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+                || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
             ) {
                 if (op == NULL)
                     op = p;
@@ -548,10 +547,10 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
     }
 
     if (op!=NULL && uniqueOutFlag) {
-        if (op->classification == EXTRACT_LOCAL_OUT_ARGUMENT) {
-            op->classification = EXTRACT_LOCAL_RESULT_VALUE;
+        if (op->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT) {
+            op->classification = CLASSIFIED_AS_LOCAL_RESULT_VALUE;
         } else {
-            op->classification = EXTRACT_RESULT_VALUE;
+            op->classification = CLASSIFIED_AS_RESULT_VALUE;
         }
         return;
     }
@@ -560,7 +559,7 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
     uniqueOutFlag = true;
     for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         if (options.extractMode == EXTRACT_FUNCTION) {
-            if (p->classification == EXTRACT_IN_OUT_ARGUMENT) {
+            if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT) {
                 if (op == NULL)
                     op = p;
                 else
@@ -571,7 +570,7 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
     }
 
     if (op!=NULL && uniqueOutFlag) {
-        op->classification = EXTRACT_IN_RESULT_VALUE;
+        op->classification = CLASSIFIED_AS_IN_RESULT_VALUE;
     }
 }
 
@@ -593,14 +592,14 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
         sprintf(resultingString+strlen(resultingString), "\t%s", extractionName);
 
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_VALUE_ARGUMENT
-            ||  p->classification == EXTRACT_IN_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_ADDRESS_ARGUMENT
-            ||  p->classification == EXTRACT_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_RESULT_VALUE
-            ||  p->classification == EXTRACT_IN_RESULT_VALUE
-            ||  p->classification == EXTRACT_LOCAL_VAR
+        if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_ADDRESS_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_RESULT_VALUE
+            ||  p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
+            ||  p->classification == CLASSIFIED_AS_LOCAL_VAR
         ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":", " , name);
@@ -630,14 +629,14 @@ static void generateNewMacroHead(ProgramGraphNode *program) {
 
     sprintf(resultingString+strlen(resultingString),"#define %s",extractionName);
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_VALUE_ARGUMENT
-            ||  p->classification == EXTRACT_IN_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_ADDRESS_ARGUMENT
-            ||  p->classification == EXTRACT_RESULT_VALUE
-            ||  p->classification == EXTRACT_IN_RESULT_VALUE
-            ||  p->classification == EXTRACT_LOCAL_VAR
+        if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_ADDRESS_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_RESULT_VALUE
+            ||  p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
+            ||  p->classification == CLASSIFIED_AS_LOCAL_VAR
         ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":"," , name);
@@ -680,16 +679,16 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     resultingString[0]=0;
 
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_RESULT_VALUE
-            || p->classification == EXTRACT_LOCAL_RESULT_VALUE
-            || p->classification == EXTRACT_IN_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         )
             break;
     }
     if (p!=NULL) {
         getLocalVariableNameFromLinkName(p->symRef->linkName, name);
         getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
-        if (p->classification == EXTRACT_LOCAL_RESULT_VALUE) {
+        if (p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE) {
             sprintf(resultingString+strlen(resultingString),"\t%s = ", declaration);
         } else {
             sprintf(resultingString+strlen(resultingString),"\t%s = ", name);
@@ -701,8 +700,8 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     sprintf(resultingString+strlen(resultingString), "%s", extractionName);
 
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_VALUE_ARGUMENT
-            || p->classification == EXTRACT_IN_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":", " , name);
@@ -710,10 +709,10 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
         }
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_IN_OUT_ARGUMENT
-            || p->classification == EXTRACT_ADDRESS_ARGUMENT
-            || p->classification == EXTRACT_OUT_ARGUMENT
-            || p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
+        if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
+            || p->classification == CLASSIFIED_AS_ADDRESS_ARGUMENT
+            || p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+            || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s&%s", isFirstArgument?"(":", " , name);
@@ -864,8 +863,8 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     sprintf(nhead+nhi,"%s",extractionName);
     nhi += strlen(nhead+nhi);
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_VALUE_ARGUMENT
-            || p->classification == EXTRACT_IN_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         ) {
             getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
@@ -874,9 +873,9 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
         }
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_IN_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
+        if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
             getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, options.olExtractAddrParPrefix, true);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
@@ -885,7 +884,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
         }
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_ADDRESS_ARGUMENT) {
+        if (p->classification == CLASSIFIED_AS_ADDRESS_ARGUMENT) {
             getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, EXTRACT_REFERENCE_ARG_STRING, true);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
             nhi += strlen(nhead+nhi);
@@ -910,9 +909,9 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
         strcat(resultingString, "static ");
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_RESULT_VALUE
-            || p->classification == EXTRACT_LOCAL_RESULT_VALUE
-            || p->classification == EXTRACT_IN_RESULT_VALUE)
+        if (p->classification == CLASSIFIED_AS_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE)
             break;
     }
     if (p==NULL) {
@@ -928,10 +927,10 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     ldclaLen = 0;
     isFirstArgument = true;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_IN_OUT_ARGUMENT
-            || p->classification == EXTRACT_LOCAL_VAR
-            || p->classification == EXTRACT_OUT_ARGUMENT
-            || p->classification == EXTRACT_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
+            || p->classification == CLASSIFIED_AS_LOCAL_VAR
+            || p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+            || p->classification == CLASSIFIED_AS_RESULT_VALUE
             || (p->symRef->storage == StorageExtern
                 && p->ref->usage.kind == UsageDeclared)
         ) {
@@ -946,7 +945,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
                 else
                     sprintf(resultingString+strlen(resultingString), ";\n\t%s",declaration);
             }
-            if (p->classification == EXTRACT_IN_OUT_ARGUMENT) {
+            if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT) {
                 sprintf(resultingString+strlen(resultingString), " = %s%s", options.olExtractAddrParPrefix, name);
             }
             isFirstArgument = false;
@@ -969,9 +968,9 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
     resultingString[0]=0;
 
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classification == EXTRACT_IN_OUT_ARGUMENT
-                ||  p->classification == EXTRACT_OUT_ARGUMENT
-                ||  p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
+        if (    p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
+                ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+                ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
                 ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "\t%s%s = %s;\n", options.olExtractAddrParPrefix,
@@ -979,9 +978,9 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
         }
     }
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_RESULT_VALUE
-            || p->classification == EXTRACT_IN_RESULT_VALUE
-            || p->classification == EXTRACT_LOCAL_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE
             ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "\n\treturn %s;\n", name);
@@ -1026,7 +1025,7 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
     // constructor invocation
     sprintf(resultingString+strlen(resultingString),"\t\t%s %s = new %s",classname, extractionName,classname);
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_IN_OUT_ARGUMENT) {
+        if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":", " , name);
             isFirstArgument = false;
@@ -1036,15 +1035,15 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
 
     // "perform" invocation
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_RESULT_VALUE
-            || p->classification == EXTRACT_IN_RESULT_VALUE
-            || p->classification == EXTRACT_LOCAL_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE
             ) break;
     }
     if (p!=NULL) {
         getLocalVariableNameFromLinkName(p->symRef->linkName, name);
         getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
-        if (p->classification == EXTRACT_LOCAL_RESULT_VALUE) {
+        if (p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE) {
             sprintf(resultingString+strlen(resultingString),"\t\t%s = ", declaration);
         } else {
             sprintf(resultingString+strlen(resultingString),"\t\t%s = ", name);
@@ -1056,8 +1055,8 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
 
     isFirstArgument = true;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_VALUE_ARGUMENT
-            || p->classification == EXTRACT_IN_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":", " , name);
@@ -1069,13 +1068,13 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
     strcat(resultingString, "\t\t");
     // 'out' arguments value restoring...
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_IN_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_OUT_ARGUMENT
-            ||  p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
+        if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
-            if (p->classification == EXTRACT_LOCAL_OUT_ARGUMENT) {
+            if (p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT) {
                 sprintf(resultingString+strlen(resultingString), "%s=%s.%s; ", declaration, extractionName, name);
             } else {
                 sprintf(resultingString+strlen(resultingString), "%s=%s.%s; ", name, extractionName, name);
@@ -1117,9 +1116,9 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     sprintf(resultingString+strlen(resultingString), "class %s {\n", classname);
     //sprintf(rb+strlen(rb), "\t\t// %s 'out' arguments\n", s_opt.extractName);
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_OUT_ARGUMENT
-            || p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
-            || p->classification == EXTRACT_IN_OUT_ARGUMENT
+        if (p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+            || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
+            || p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
             ) {
             getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
             sprintf(resultingString+strlen(resultingString), "\t\t%s;\n", declaration);
@@ -1131,7 +1130,7 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     sprintf(resultingString+strlen(resultingString), "\t\t%s", classname);
     isFirstArgument = true;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_IN_OUT_ARGUMENT) {
+        if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT) {
             getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":", " , declaration);
             isFirstArgument = false;
@@ -1141,7 +1140,7 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
 
     isFirstArgument = true;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_IN_OUT_ARGUMENT) {
+        if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             if (isFirstArgument)
                 strcat(resultingString, "\n\t\t\t");
@@ -1160,8 +1159,8 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     sprintf(nhead+nhi,"%s", "perform");
     nhi += strlen(nhead+nhi);
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_VALUE_ARGUMENT
-            || p->classification == EXTRACT_IN_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         ) {
             getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
             sprintf(nhead+nhi, "%s%s", isFirstArgument?"(":", " , declaration);
@@ -1177,8 +1176,8 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     nhi += strlen(nhead+nhi);
 
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_RESULT_VALUE
-            || p->classification == EXTRACT_IN_RESULT_VALUE) break;
+        if (p->classification == CLASSIFIED_AS_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE) break;
     }
     if (p==NULL) {
         sprintf(resultingString+strlen(resultingString),"\t\tvoid %s", nhead);
@@ -1193,8 +1192,8 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     ldclaLen = 0;
     isFirstArgument = true;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_LOCAL_VAR
-            || p->classification == EXTRACT_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_LOCAL_VAR
+            || p->classification == CLASSIFIED_AS_RESULT_VALUE
             || (p->symRef->storage == StorageExtern
                 && p->ref->usage.kind == UsageDeclared)
         ) {
@@ -1230,7 +1229,7 @@ static void javaGenerateNewClassTail(ProgramGraphNode *program) {
 
     // local 'out' arguments value setting
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_LOCAL_OUT_ARGUMENT) {
+        if (p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             if (isFirstArgument)
                 strcat(resultingString, "\t\t\t");
@@ -1242,9 +1241,9 @@ static void javaGenerateNewClassTail(ProgramGraphNode *program) {
         strcat(resultingString, "\n");
 
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_RESULT_VALUE
-            || p->classification == EXTRACT_LOCAL_RESULT_VALUE
-            || p->classification == EXTRACT_IN_RESULT_VALUE
+        if (p->classification == CLASSIFIED_AS_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE
+            || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "\t\t\treturn(%s);\n", name);
@@ -1265,9 +1264,9 @@ static void javaGenerateNewClassTail(ProgramGraphNode *program) {
 static bool isNewClassNecessary(ProgramGraphNode *program) {
     ProgramGraphNode  *p;
     for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == EXTRACT_OUT_ARGUMENT
-            || p->classification == EXTRACT_LOCAL_OUT_ARGUMENT
-            || p->classification == EXTRACT_IN_OUT_ARGUMENT
+        if (p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+            || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
+            || p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
         )
             break;
     }
