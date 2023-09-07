@@ -269,8 +269,8 @@
   )
 
 ;; by default truncation is disallowed in order to see profiles
-(if (not (boundp 'c-xref-completion-overload-wizard-deep))
-    (defvar c-xref-completion-overload-wizard-deep 1)
+(if (not (boundp 'c-xref-completion-overload-wizard-depth))
+    (defvar c-xref-completion-overload-wizard-depth 1)
   )
 
 ;; by default the automatic project selection is on.
@@ -578,8 +578,8 @@ completions.
 	:type '(integer)
 	:group 'c-xrefactory-completion)
 
-      (defcustom c-xref-completion-overload-wizard-deep 1
-	"Level of inheritance for completion of overloaded methods. When completion is invoked on an empty string at a position when a method definition can start, then all methods from the superclasses are suggested. This option specifies how deeply superclasses are scanned."
+      (defcustom c-xref-completion-overload-wizard-depth 1
+	"Level of inheritance for completion of overloaded methods. When completion is invoked on an empty string at a position when a method definition can start, then all methods from the superclasses are suggested. This option specifies how deep superclasses are scanned."
 	:type '(integer)
 	:group 'c-xrefactory-completion)
 

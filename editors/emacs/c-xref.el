@@ -6192,8 +6192,8 @@ separate window.
     (if (> c-xref-java-fqt-name-completion-level 0)
 	(setq opt (format "%s -olfqtcompletionslevel=%d" opt c-xref-java-fqt-name-completion-level))
       )
-    (if (> c-xref-completion-overload-wizard-deep 1)
-	(setq opt (format "%s -completionoverloadwizdeep=%d" opt c-xref-completion-overload-wizard-deep))
+    (if (> c-xref-completion-overload-wizard-depth 1)
+	(setq opt (format "%s -completionoverloadwizarddepth=%d" opt c-xref-completion-overload-wizard-depth))
       )
     (if c-xref-completion-case-sensitive
 	(setq opt (format "%s -completioncasesensitive" opt))

@@ -980,7 +980,7 @@ static void completeRecordsNames(
             if (completionType == TypeInheritedFullMethod) {
                 // TODO customizable completion level
                 if (vlevel > 1
-                    && vlevel <= options.completionOverloadWizardDeep+1
+                    && vlevel <= options.completionOverloadWizardDepth+1
                     &&  (r->access & AccessPrivate)==0
                     &&  (r->access & AccessStatic)==0) {
                     processSpecialInheritedFullCompletion(c,orderFlag,vlevel,

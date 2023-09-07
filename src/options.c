@@ -28,7 +28,7 @@ Options presetOptions = {
     MULE_DEFAULT,                // encoding
     false,                       // completeParenthesis
     NID_IMPORT_ON_DEMAND,        // defaultAddImportStrategy
-    0,                           // referenceListWithoutSource
+    false,                       // referenceListWithoutSource
     1,                           // completionOverloadWizardDeep
     0,                           // comment moving level
     NULL,                        // prune name
@@ -100,7 +100,7 @@ Options presetOptions = {
     "",                         /* olcxSearchString */
     79,                         /* olineLen */
     "*_",                       /* olExtractAddrParPrefix */
-    0,                          // extractMode, must be zero
+    0,                          // extractMode, must be zero TODO Why?
     MAX_COMPLETIONS,            /* maxCompletions */
     0,                          /* editor */
     0,                          /* create */
@@ -1470,8 +1470,8 @@ static bool processCOption(int *argi, int argc, char **argv) {
         options.completionCaseSensitive = true;
     else if (strcmp(argv[i], "-completeparenthesis")==0)
         options.completeParenthesis = true;
-    else if (strncmp(argv[i], "-completionoverloadwizdeep=",27)==0)  {
-        sscanf(argv[i]+27, "%d", &options.completionOverloadWizardDeep);
+    else if (strncmp(argv[i], "-completionoverloadwizarddepth=",27)==0)  {
+        sscanf(argv[i]+27, "%d", &options.completionOverloadWizardDepth);
     }
     else if (strncmp(argv[i], "-commentmovinglevel=",20)==0) {
         sscanf(argv[i]+20, "%d", (int*)&options.commentMovingMode);
@@ -2100,7 +2100,7 @@ static bool processROption(int *argi, int argc, char **argv) {
         setXrefsLocation(argv[i]+6);
     }
     else if (strcmp(argv[i], "-rlistwithoutsrc")==0) {
-        options.referenceListWithoutSource = 1;
+        options.referenceListWithoutSource = true;
     }
     else if (strcmp(argv[i], "-refactory")==0)   {
         options.mode = RefactoryMode;

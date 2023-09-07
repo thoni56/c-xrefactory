@@ -50,8 +50,8 @@ typedef struct options {
     int fileEncoding;
     bool completeParenthesis;
     int defaultAddImportStrategy;
-    char referenceListWithoutSource;
-    int completionOverloadWizardDeep;
+    bool referenceListWithoutSource;
+    int completionOverloadWizardDepth;
     CommentMovingMode commentMovingMode;
     StringList *pruneNames;
     StringList *inputFiles;
