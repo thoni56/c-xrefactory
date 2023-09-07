@@ -355,10 +355,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
 static void olGetAvailableRefactorings(void) {
     int count;
 
-    if (!options.xref2) {
-        fprintf(communicationChannel,"* refactoring list not available in C-xrefactory-I");
-        return;
-    }
+    assert(options.xref2);
 
     count = availableRefactoringsCount();
 
