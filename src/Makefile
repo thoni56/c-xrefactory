@@ -178,8 +178,11 @@ build-proper: c-xref
 	$(MAKE) -C ../editors/emacs
 
 PHONY += c-xref
-c-xref: check-tokens $(OBJS) $(OPTIONAL_ZLIB_LIB)
+c-xref: check-tokens $(OBJS) editor-defs $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
+
+editor-defs:
+	$(MAKE) -C ../editors/emacs
 
 #########################################################################
 test:
