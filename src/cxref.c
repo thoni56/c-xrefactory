@@ -306,6 +306,8 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
         makeRefactoringAvailable(PPC_AVR_DEL_PARAMETER, "macro");
         makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "macro");
         break;
+    case TypeCppInclude:
+        break;
     default:
         if (symbol->storage != StorageConstructor) {
             makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
