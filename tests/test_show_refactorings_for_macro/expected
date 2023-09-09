@@ -8,8 +8,6 @@ end-of-options
   <int val=40 len=<n>>macro</int>
   <int val=50 len=<n>>macro</int>
   <int val=60 len=<n>>macro</int>
-  <int val=230 len=<n>></int>
-  <int val=240 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
 -exit
