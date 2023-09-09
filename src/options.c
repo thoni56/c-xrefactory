@@ -1753,7 +1753,7 @@ static bool processOOption(int *argi, int argc, char **argv) {
         sscanf(argv[i]+10, "%d",&options.olCursorOffset);
     }
     else if (strncmp(argv[i], "-olmark=",8)==0) {
-        sscanf(argv[i]+8, "%d",&options.olMarkPos);
+        sscanf(argv[i]+8, "%d",&options.olMarkOffset);
     }
     else if (strcmp(argv[i], "-olcxextract")==0) {
         options.serverOperation = OLO_EXTRACT;

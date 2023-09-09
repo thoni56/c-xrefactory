@@ -759,7 +759,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 if (options.serverOperation == OLO_EXTRACT) {
                     ch = skipBlanks(cb, ch);
                     int apos = fileOffsetFor(cb);
-                    log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",apos,options.olCursorOffset,options.olMarkPos);
+                    log_trace(":pos1==%d, olCursorOffset==%d, olMarkOffset==%d",apos,options.olCursorOffset,options.olMarkOffset);
                     // all this is very, very HACK!!!
                     if (apos >= options.olCursorOffset && !parsedInfo.marker1Flag) {
                         if (LANGUAGE(LANG_JAVA))
@@ -785,7 +785,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         putLexemCode(lb, parChar);
                         putLexemPosition(lb, position);
                         parsedInfo.marker1Flag = true;
-                    } else if (apos >= options.olMarkPos && !parsedInfo.marker2Flag){
+                    } else if (apos >= options.olMarkOffset && !parsedInfo.marker2Flag){
                         if (LANGUAGE(LANG_JAVA))
                             parChar = ';';
                         else {

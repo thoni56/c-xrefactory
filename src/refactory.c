@@ -711,7 +711,7 @@ static EditorMarker *getPointFromOptions(EditorBuffer *buf) {
 
 static EditorMarker *getMarkFromOptions(EditorBuffer *buf) {
     assert(buf);
-    return createMarkerAt(buf, refactoringOptions.olMarkPos);
+    return createMarkerAt(buf, refactoringOptions.olMarkOffset);
 }
 
 static void pushMarkersAsReferences(EditorMarkerList **markers, OlcxReferences *refs, char *name) {
