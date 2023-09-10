@@ -29,6 +29,7 @@
 #include "session.h"
 #include "storage.h"
 #include "symbol.h"
+#include "type.h"
 #include "usage.h"
 #include "yylex.h"
 
@@ -308,7 +309,53 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
         break;
     case TypeCppInclude:
         break;
-    default:
+    case TypeChar:
+    case TypeUnsignedChar:
+    case TypeSignedChar:
+    case TypeInt:
+    case TypeUnsignedInt:
+    case TypeSignedInt:
+    case TypeShortInt:
+    case TypeShortUnsignedInt:
+    case TypeShortSignedInt:
+    case TypeLongInt:
+    case TypeLongUnsignedInt:
+    case TypeLongSignedInt:
+    case TypeFloat:
+    case TypeDouble:
+    case TypeUnion:
+    case TypeEnum:
+    case TypeVoid:
+    case TypePointer:
+    case TypeArray:
+    case TypeFunction:
+    case TypeAnonymousField:
+    case TypeError:
+    case TypeElipsis:
+    case TypeByte:
+    case TypeShort:
+    case TypeLong:
+    case TypeBoolean:
+    case TypeNull:
+    case TypeOverloadedFunction:
+    case TypeCppIfElse:
+    case TypeCppCollate:
+    case TypeYaccSymbol:
+    case TypeKeyword:
+    case TypeToken:
+    case TypeUndefMacro:
+    case TypeDefinedOp:
+    case TypeBlockMarker:
+    case TypeTryCatchMarker:
+    case TypeExpression:
+    case TypePackedType:
+    case TypeSpecialComplet:
+    case TypeNonImportedClass:
+    case TypeInducedError:
+    case TypeInheritedFullMethod:
+    case TypeSpecialConstructorCompletion:
+    case TypeUnknown:
+    case TypeDefault:
         if (symbol->storage != StorageConstructor) {
             makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
         }
@@ -351,6 +398,20 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
             }
         }
         break;
+    case MODIFIERS_START:
+    case TmodLong:
+    case TmodShort:
+    case TmodSigned:
+    case TmodUnsigned:
+    case TmodShortSigned:
+    case TmodShortUnsigned:
+    case TmodLongSigned:
+    case TmodLongUnsigned:
+    case TYPE_MODIFIERS_END:
+    case JAVA_TYPES:
+    case MAX_CTYPE:
+    case MAX_TYPE:
+        FATAL_ERROR(ERR_INTERNAL, "unexpected case for symbol type in setAvailableRefactoringsInMenu()", XREF_EXIT_ERR);
     }
 }
 
@@ -499,7 +560,8 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
 
     if (options.mode == ServerMode
         && positionsAreEqual(cxRefPosition, *position)
-        && usage.kind<UsageMaxOLUsages) {
+        && usage.kind<UsageMaxOLUsages
+    ) {
         if (symbol->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
