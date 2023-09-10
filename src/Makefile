@@ -181,8 +181,13 @@ PHONY += c-xref
 c-xref: check-tokens $(OBJS) editor-defs $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
-editor-defs:
-	$(MAKE) -C ../editors/emacs
+editor-defs: refactorings.def
+	$(MAKE) -C ../editors
+
+refactorings.def: refactorings.h
+	# Convert enums in refactorings.h into #defines that the editor extensions can use
+	grep AVR refactorings.h | sed -e 's/ *\(AVR.*\) =/#define \1/' -e 's/,//' > refactorings.def
+
 
 #########################################################################
 test:

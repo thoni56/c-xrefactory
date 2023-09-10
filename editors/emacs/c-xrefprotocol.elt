@@ -1,7 +1,7 @@
 #define COMMENT(xx)
 #define PROTOCOL_ITEM(type, name, val) (defvar name val)
 
-#include "refactorings.def"
+#include "../../src/refactorings.def"
 #include "../../src/protocol.tc"
 
 #undef PROTOCOL_ITEM
