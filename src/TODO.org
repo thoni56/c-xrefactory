@@ -18,7 +18,6 @@ Some useful commands:
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
 Current Mikado:
-* DOING Fix so that "extract" is not available unless an explicit region is active
 * TRY to make LexemBuffer interface just take LexemBuffer
 ** DOING Unify LexInput with LexemBuffer so we can get rid of put/get LexemAt() functions
 ** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
@@ -147,6 +146,8 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
 ** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
 ** TODO FUTURE: Use clangd as backend - is that even possible
+Well, no. I tried to get started with doing refactorings inside
+clangd, but getting started was to cumbersome...
 ** TODO FUTURE: Implement LSP (Language Server Protocol)
 ** TODO FEATURE: New refactoring: move function for C
 ** TODO FEATURE: Rename "module" in C
@@ -210,6 +211,7 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
 
+* DONE Fix so that "extract" is not available unless an explicit region is active
 * DONE Fix a test for removing last parameter of a macro (in test_delete_last_macro_arg)
 It is not working due to some strange issue with "Parameter number out
 of limits" when removing the parameter from the actual arguments list
