@@ -69,10 +69,6 @@
         ENUM(TmodShortUnsigned)                                         \
         ENUM(TmodLongSigned)                                            \
         ENUM(TmodLongUnsigned)                                          \
-        ENUM(TypeReserve1)                                              \
-        ENUM(TypeReserve2)                                              \
-        ENUM(TypeReserve3)                                              \
-        ENUM(TypeReserve4)                                              \
         ENUM(TYPE_MODIFIERS_END)                                        \
         ENUM(TypeElipsis)                                               \
         ENUM(JAVA_TYPES)                                                \
@@ -82,11 +78,6 @@
         ENUM(TypeBoolean)                                               \
         ENUM(TypeNull)                                                  \
         ENUM(TypeOverloadedFunction)                                    \
-        ENUM(TypeReserve7)                                              \
-        ENUM(TypeReserve8)                                              \
-        ENUM(TypeReserve9)                                              \
-        ENUM(TypeReserve10)                                             \
-        ENUM(TypeReserve11)                                             \
         ENUM(MAX_CTYPE)                                                 \
         ENUM(TypeCppInclude)                                            \
         ENUM(TypeMacro)                                                 \
