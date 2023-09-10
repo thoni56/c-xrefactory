@@ -441,7 +441,7 @@ static void olGetAvailableRefactorings(void) {
         }
     }
     ppcBegin(PPC_AVAILABLE_REFACTORINGS);
-    for (int i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
+    for (int i=0; i<AVR_MAX_AVAILABLE_REFACTORINGS; i++) {
         if (isRefactoringAvailable(i)) {
             ppcValueRecord(PPC_INT_VALUE, i, availableRefactoringOptionFor(i));
         }

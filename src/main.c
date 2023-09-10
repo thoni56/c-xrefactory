@@ -554,8 +554,6 @@ static void totalTaskEntryInitialisations() {
     assert(MAX_STORAGE_NAMES < power(2,STORAGES_LN));
     assert(MAX_SCOPES < power(2,SCOPES_LN));
 
-    assert(PPC_MAX_AVAILABLE_REFACTORINGS < MAX_AVAILABLE_REFACTORINGS);
-
     // Memory
 
     // TODO: this initialize cxMemory by simulating overflow for one

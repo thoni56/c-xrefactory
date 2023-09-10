@@ -3,8 +3,6 @@
 
 #include <stdbool.h>
 
-#define MAX_AVAILABLE_REFACTORINGS 500
-
 typedef enum Refactorings {
     AVR_NO_REFACTORING = 0,
     AVR_RENAME_SYMBOL = 10,

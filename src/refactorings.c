@@ -7,10 +7,10 @@ typedef struct availableRefactoring {
 } AvailableRefactoring;
 
 
-static AvailableRefactoring refactorings[MAX_AVAILABLE_REFACTORINGS];
+static AvailableRefactoring refactorings[AVR_MAX_AVAILABLE_REFACTORINGS];
 
 void clearAvailableRefactorings(void) {
-    for (int i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
+    for (int i=0; i<AVR_MAX_AVAILABLE_REFACTORINGS; i++) {
         refactorings[i].available = false;
         refactorings[i].option = "";
     }
@@ -28,7 +28,7 @@ bool isRefactoringAvailable(Refactoring refactoring) {
 int availableRefactoringsCount() {
     int count;
     count = 0;
-    for (int i = 0; i < MAX_AVAILABLE_REFACTORINGS; i++) {
+    for (int i = 0; i < AVR_MAX_AVAILABLE_REFACTORINGS; i++) {
         if (refactorings[i].available)
             count++;
     }
