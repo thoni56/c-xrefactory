@@ -20,7 +20,7 @@ parsers. There are a number of parsers
 
 - C
 - Yacc
-- Java
+- Java (will probably go away in the near future)
 - C expressions
 
 There are also small traces of calls to the C++ parser that existed
@@ -123,6 +123,19 @@ Currently most of the "normal" usages are prepared to use the LexemBuffer's poin
 But the handling of macros and defines are cases where the lexems are not put in a LexemBuffer.
 See the TODO.org for current status of this Mikado sequence.
 
+==== Semantic information
+
+As the refactoring functions need some amount of semantic information,
+in the sense of information gathered during parsing, this information
+is collected in various ways when `c-xref` calls the "sub-task" to do
+the parsing required.
+
+Two structures hold information about various things, among which are
+the memory index at certain points of the parsing. Thus it is possible
+to verify e.g. that a editor region does not cover a break in block or
+function structure. These structures are, at the point of writing,
+called `parsedInfo` and `parsedClassInfo`, and they definitely need to
+be tidied up.
 
 === Reference Database
 
