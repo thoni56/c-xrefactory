@@ -1239,17 +1239,22 @@ static bool isNewClassNecessary(ProgramGraphNode *program) {
     return true;
 }
 
+static bool programStructureMismatch() {
+    return parsedClassInfo.cxMemoryIndexAtFunctionBegin > parsedInfo.cxMemoryIndexAtBlockBegin
+        || parsedInfo.cxMemoryIndexAtBlockBegin > parsedInfo.cxMemoryIndexAtBlockEnd
+        || parsedInfo.cxMemoryIndexAtBlockEnd > parsedClassInfo.cxMemoryIndexAtFunctionEnd
+        || parsedInfo.workMemoryIndexAtBlockBegin != parsedInfo.workMemoryIndexAtBlockEnd;
+}
+
 static void makeExtraction(void) {
     ProgramGraphNode *program;
     bool needToExtractNewClass = false;
 
-    if (parsedClassInfo.cxMemoryIndexAtFunctionBegin > parsedInfo.cxMemoryIndexAtBlockBegin
-        || parsedInfo.cxMemoryIndexAtBlockBegin > parsedInfo.cxMemoryIndexAtBlockEnd
-        || parsedInfo.cxMemoryIndexAtBlockEnd > parsedClassInfo.cxMemoryIndexAtFunctionEnd
-        || parsedInfo.workMemoryIndexAtBlockBegin != parsedInfo.workMemoryIndexAtBlockEnd) {
+    if (programStructureMismatch()) {
         errorMessage(ERR_ST, "Region / program structure mismatch");
         return;
     }
+
     log_trace("!cxMemories: funBegin, blockBegin, blockEnd, funEnd: %x, %x, %x, %x", parsedClassInfo.cxMemoryIndexAtFunctionBegin, parsedInfo.cxMemoryIndexAtBlockBegin, parsedInfo.cxMemoryIndexAtBlockEnd, parsedClassInfo.cxMemoryIndexAtFunctionEnd);
     assert(parsedClassInfo.cxMemoryIndexAtFunctionBegin);
     assert(parsedInfo.cxMemoryIndexAtBlockBegin);
