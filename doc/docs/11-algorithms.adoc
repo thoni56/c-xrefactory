@@ -1,0 +1,42 @@
+== Algorithms
+
+The code does not always explain the algorithms that it
+implements. This chapter will ultimately be a description of various
+algorithms used by _c-xref_.
+
+=== How does is an extract refactoring performed?
+
+1. The region (mark and point/cursor positions) is sent to the _c-xref_ server in a `-refactory -rfct-extract` command.
+
+1. Some prechecks are performed, such as structure check, and then the server answers with
+
+```
+<extraction-dialog>
+    <str .... /str>
+    <str .... /str>
+    <str .... /str>
+</extraction-dialog>
+```
+
+The first string is the code that will replace the extracted code,
+such a call to the extracted function. The second string is the header
+part that will preceed the extracted code ("preamble"), and the third is then of
+course any code that needs to go after the extracted code ("postamble").
+
+The actual code in the region is never sent to, or returned from, the
+server. This is handled completely by the editor extension, so no
+changes to that code can be made.
+
+The pre- and post-ambles might be of varying complexity. E.g. when
+extracting a macro, the postamble can be completely empty. When
+extracting a function both may contain code to transfer and restore
+parameters into local variables to propagate in/out variables as
+required.
+
+1. The editor then requests a name from the user that it will use in a
+rename operation that renames the default named
+function/macro/variable.
+
+=== How does ...
+
+TBD.

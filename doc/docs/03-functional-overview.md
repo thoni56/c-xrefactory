@@ -48,4 +48,3 @@ NOTE: When running the edit server there seems to be no way to
 indicate a different options files for different
 projects/files. Although you can start the server with `-xrefrc` you
 will be stuck with that in the whole session and for all projects.
-

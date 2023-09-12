@@ -1,7 +1,7 @@
 == Data Structures
 
 There are a lot of different data structures used in `c-xrefactory`.
-This is a first step towards visualising them.
+This is a first step towards visualising some of them.
 
 === Symbols and References
 
