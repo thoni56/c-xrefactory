@@ -1322,26 +1322,19 @@ static void makeExtraction(void) {
 
     resultingString = cxAlloc(EXTRACT_GEN_BUFFER_SIZE);
 
-    if (options.extractMode==EXTRACT_MACRO)
+    if (options.extractMode==EXTRACT_MACRO) {
         generateNewMacroCall(program);
-    else if (needToExtractNewClass)
-        javaGenerateNewClassCall(program);
-    else
-        generateNewFunctionCall(program);
-
-    if (options.extractMode==EXTRACT_MACRO)
         generateNewMacroHead(program);
-    else if (needToExtractNewClass)
-        javaGenerateNewClassHead(program);
-    else
-        generateNewFunctionHead(program);
-
-    if (options.extractMode==EXTRACT_MACRO)
         generateNewMacroTail();
-    else if (needToExtractNewClass)
+    } else if (needToExtractNewClass) {
+        javaGenerateNewClassCall(program);
+        javaGenerateNewClassHead(program);
         javaGenerateNewClassTail(program);
-    else
+    } else {
+        generateNewFunctionCall(program);
+        generateNewFunctionHead(program);
         generateNewFunctionTail(program);
+    }
 
     ppcValueRecord(PPC_INT_VALUE, parsedClassInfo.functionBeginPosition, "");
     ppcEnd(PPC_EXTRACTION_DIALOG);
