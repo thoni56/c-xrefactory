@@ -613,11 +613,7 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
         sprintf(resultingString+strlen(resultingString), "%s);\n", isFirstArgument?"(":"");
 
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, resultingString);
-    } else {
-        fprintf(communicationChannel, "%s", resultingString);
-    }
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
 static void generateNewMacroHead(ProgramGraphNode *program) {
@@ -645,11 +641,7 @@ static void generateNewMacroHead(ProgramGraphNode *program) {
     }
     sprintf(resultingString+strlen(resultingString), "%s) {\\\n", isFirstArgument?"(":"");
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, resultingString);
-    } else {
-        fprintf(communicationChannel, "%s", resultingString);
-    }
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
 static void generateNewMacroTail() {
@@ -658,11 +650,7 @@ static void generateNewMacroTail() {
     strcat(resultingString, "}\n\n");
 
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, resultingString);
-    } else {
-        fprintf(communicationChannel, "%s", resultingString);
-    }
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
 
@@ -720,17 +708,13 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
         }
     }
 
-    if (isInExpression)
+    if (isInExpression)         /* TODO - how can we know this...? */
         sprintf(resultingString+strlen(resultingString), "%s)", isFirstArgument?"(":"");
     else
         sprintf(resultingString+strlen(resultingString), "%s);\n", isFirstArgument?"(":"");
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
 
-    if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, resultingString);
-    } else {
-        fprintf(communicationChannel, "%s", resultingString);
-    }
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
 static void removeSymbolFromSymRefList(ReferencesItemList **ll, ReferencesItem *s) {
@@ -954,11 +938,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     if (!isFirstArgument)
         strcat(resultingString, ";\n");
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, resultingString);
-    } else {
-        fprintf(communicationChannel, "%s", resultingString);
-    }
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
 static void generateNewFunctionTail(ProgramGraphNode *program) {
@@ -988,11 +968,7 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
     }
     strcat(resultingString, "}\n\n");
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, resultingString);
-    } else {
-        fprintf(communicationChannel, "%s", resultingString);
-    }
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
 
@@ -1086,11 +1062,7 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
     sprintf(resultingString+strlen(resultingString),"\t\t%s = null;\n", extractionName);
 
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, resultingString);
-    } else {
-        fprintf(communicationChannel, "%s", resultingString);
-    }
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
 static void javaGenerateNewClassHead(ProgramGraphNode *program) {
@@ -1213,11 +1185,7 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     if (!isFirstArgument)
         strcat(resultingString, ";\n");
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, resultingString);
-    } else {
-        fprintf(communicationChannel, "%s", resultingString);
-    }
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
 static void javaGenerateNewClassTail(ProgramGraphNode *program) {
@@ -1252,11 +1220,7 @@ static void javaGenerateNewClassTail(ProgramGraphNode *program) {
     strcat(resultingString, "\t\t}\n\t}\n\n");
 
     assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, resultingString);
-    } else {
-        fprintf(communicationChannel, "%s", resultingString);
-    }
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
 /* ******************************************************************* */
