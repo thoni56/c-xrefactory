@@ -4,11 +4,14 @@ The code does not always explain the algorithms that it
 implements. This chapter will ultimately be a description of various
 algorithms used by _c-xref_.
 
-=== How does is an extract refactoring performed?
+=== How is an Extract refactoring performed?
 
-1. The region (mark and point/cursor positions) is sent to the _c-xref_ server in a `-refactory -rfct-extract` command.
+The region (mark and point/cursor positions) is sent to the _c-xref_
+server in a `-refactory -rfct-extract` command.
 
-1. Some prechecks are performed, such as structure check, and then the server answers with
+The server parses the relevant file and sets some information that can
+be used in some prechecks that are then performed, such as structure
+check, and then the server answers with
 
 ```
 <extraction-dialog>
@@ -24,8 +27,10 @@ part that will preceed the extracted code ("preamble"), and the third is then of
 course any code that needs to go after the extracted code ("postamble").
 
 The actual code in the region is never sent to, or returned from, the
-server. This is handled completely by the editor extension, so no
-changes to that code can be made.
+server. This is handled completely by the editor extension, and used
+verbatim (except if it is a macro that is extracted, in which case
+each line is terminated by the backslash) so no changes to that code
+can be made.
 
 The pre- and post-ambles might be of varying complexity. E.g. when
 extracting a macro, the postamble can be completely empty. When
