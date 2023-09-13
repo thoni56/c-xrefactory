@@ -1223,20 +1223,20 @@ static void javaGenerateNewClassTail(ProgramGraphNode *program) {
     ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
+static bool isClassifiedAsAnyTypeOfOutArgument(ProgramGraphNode *p) {
+    return p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+        || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
+        || p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT;
+}
+
 /* ******************************************************************* */
 
 static bool isNewClassNecessary(ProgramGraphNode *program) {
-    ProgramGraphNode  *p;
-    for (p=program; p!=NULL; p=p->next) {
-        if (p->classification == CLASSIFIED_AS_OUT_ARGUMENT
-            || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
-            || p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
-        )
-            break;
+    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
+        if (isClassifiedAsAnyTypeOfOutArgument(p))
+            return true;
     }
-    if (p==NULL)
-        return false;
-    return true;
+    return false;
 }
 
 static bool programStructureMismatch() {
