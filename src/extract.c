@@ -54,7 +54,6 @@ typedef struct programGraphNode {
 
 
 static unsigned javaExtractFromFunctionModifiers=AccessDefault;
-static char *extractionName;
 
 static void dumpProgramToLog(ProgramGraphNode *program) {
     log_trace("[ProgramDump begin]");
@@ -577,7 +576,7 @@ static int strcatf(char *resultingString, char *format, ...) {
     return vsprintf(resultingString+strlen(resultingString), format, args);
 }
 
-static void generateNewMacroCall(ProgramGraphNode *program) {
+static void generateNewMacroCall(ProgramGraphNode *program, char *extractionName) {
     bool isFirstArgument = true;
     char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
@@ -613,7 +612,7 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
     ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
-static void generateNewMacroHead(ProgramGraphNode *program) {
+static void generateNewMacroHead(ProgramGraphNode *program, char *extractionName) {
     bool isFirstArgument = true;
     char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
@@ -639,7 +638,7 @@ static void generateNewMacroHead(ProgramGraphNode *program) {
     ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
-static void generateNewMacroTail() {
+static void generateNewMacroTail(void) {
     ppcGenRecord(PPC_STRING_VALUE, "}\n\n");
 }
 
@@ -648,7 +647,7 @@ static void generateNewMacroTail() {
 /* ********************** C function **************************** */
 
 
-static void generateNewFunctionCall(ProgramGraphNode *program) {
+static void generateNewFunctionCall(ProgramGraphNode *program, char *extractionName) {
     bool isFirstArgument = true;
     char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
@@ -821,7 +820,7 @@ static void extractSprintThrownExceptions(char *nhead, ProgramGraphNode *program
     }
 }
 
-static void generateNewFunctionHead(ProgramGraphNode *program) {
+static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionName) {
     char nhead[MAX_EXTRACT_FUN_HEAD_SIZE+2];
     int nhi, ldclaLen;
     char ldcla[TMP_STRING_SIZE];
@@ -964,7 +963,7 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
 /* ********************** java function **************************** */
 
 
-static char *makeNewClassName(void) {
+static char *makeNewClassName(char *extractionName) {
     static char classname[TMP_STRING_SIZE];
     if (extractionName[0]==0) {
         sprintf(classname,"NewClass");
@@ -976,7 +975,7 @@ static char *makeNewClassName(void) {
 }
 
 
-static void javaGenerateNewClassCall(ProgramGraphNode *program) {
+static void javaGenerateNewClassCall(ProgramGraphNode *program, char *extractionName) {
     char declaration[TMP_STRING_SIZE];
     char name[TMP_STRING_SIZE];
     ProgramGraphNode *p;
@@ -984,10 +983,10 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
     bool isFirstArgument = true;
     char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
-    classname = makeNewClassName();
+    classname = makeNewClassName(extractionName);
 
     // constructor invocation
-    strcatf(resultingString,"\t\t%s %s = new %s",classname, extractionName,classname);
+    strcatf(resultingString,"\t\t%s %s = new %s",classname, extractionName, classname);
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
@@ -1015,7 +1014,7 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
     } else {
         strcat(resultingString, "\t\t");
     }
-    strcatf(resultingString,"%s.perform",extractionName);
+    strcatf(resultingString,"%s.perform", extractionName);
 
     isFirstArgument = true;
     for (p=program; p!=NULL; p=p->next) {
@@ -1053,7 +1052,7 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
     ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
-static void javaGenerateNewClassHead(ProgramGraphNode *program) {
+static void javaGenerateNewClassHead(ProgramGraphNode *program, char *extractionName) {
     char nhead[MAX_EXTRACT_FUN_HEAD_SIZE+2];
     int nhi, ldclaLen;
     char ldcla[TMP_STRING_SIZE];
@@ -1065,7 +1064,7 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     bool isFirstArgument = true;
     char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
-    classname = makeNewClassName();
+    classname = makeNewClassName(extractionName);
 
     // class header
     strcat(resultingString, "\t");
@@ -1261,6 +1260,7 @@ static void makeExtraction(void) {
     if (LANGUAGE(LANG_JAVA))
         needToExtractNewClass = isNewClassNecessary(program);
 
+    char *extractionName;
     if (LANGUAGE(LANG_JAVA)) {
         if (needToExtractNewClass)
             extractionName = "newClass_";
@@ -1276,16 +1276,16 @@ static void makeExtraction(void) {
     ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, extractionName);
 
     if (options.extractMode==EXTRACT_MACRO) {
-        generateNewMacroCall(program);
-        generateNewMacroHead(program);
+        generateNewMacroCall(program, extractionName);
+        generateNewMacroHead(program, extractionName);
         generateNewMacroTail();
     } else if (needToExtractNewClass) {
-        javaGenerateNewClassCall(program);
-        javaGenerateNewClassHead(program);
+        javaGenerateNewClassCall(program, extractionName);
+        javaGenerateNewClassHead(program, extractionName);
         javaGenerateNewClassTail(program);
     } else {
-        generateNewFunctionCall(program);
-        generateNewFunctionHead(program);
+        generateNewFunctionCall(program, extractionName);
+        generateNewFunctionHead(program, extractionName);
         generateNewFunctionTail(program);
     }
 
