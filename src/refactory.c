@@ -22,6 +22,7 @@
 #include "progress.h"
 #include "proto.h"
 #include "protocol.h"
+#include "refactorings.h"
 #include "reftab.h"
 #include "server.h"
 #include "undo.h"
@@ -3734,6 +3735,10 @@ static void extractMacro(EditorMarker *point, EditorMarker *mark) {
     parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", "-olexmacro");
 }
 
+static void extractVariable(EditorMarker *point, EditorMarker *mark) {
+    parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", "-olexvariable");
+}
+
 // ------------------------------------------------------- Encapsulate
 
 static Reference *checkEncapsulateGetterSetterForExistingMethods(char *mname) {
@@ -4671,6 +4676,10 @@ void refactory(void) {
     case AVR_EXTRACT_MACRO:
         progressFactor = 1;
         extractMacro(point, mark);
+        break;
+    case AVR_EXTRACT_VARIABLE:
+        progressFactor = 1;
+        extractVariable(point, mark);
         break;
     case AVR_SELF_ENCAPSULATE_FIELD:
         progressFactor = 3;

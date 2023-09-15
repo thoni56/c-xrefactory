@@ -8537,6 +8537,7 @@ refactoring.
 ))
 
 (defun c-xref-extraction-dialog (minvocation mhead mtail mline dname)
+  ;; dname - name of the extracted entity, need to contain one of the strings
   (let ((mbody) (name) (cfs) (mbuff) (kind) (sw)
 	(mm) (pp) (bb) (ee) (ilen) (sr) (classextr))
     (setq sw (selected-window))
@@ -8556,8 +8557,11 @@ refactoring.
 	  (setq kind "class")
 	(if (string-match "macro" dname)
 	    (setq kind "macro")
-	  (setq kind "function")
-	  )))
+	  (if (string-match "variable" dname)
+	      (setq kind "variable")
+	    (setq kind "function")
+	    ))))
+
     (c-xref-display-and-set-new-dialog-window c-xref-extraction-buffer nil t)
     (set-buffer c-xref-extraction-buffer)
     (c-xref-erase-buffer)
@@ -8565,25 +8569,35 @@ refactoring.
     (insert "")
     (insert (format "---------------   C-xrefactory suggests following new %s:\n\n" kind))
     (insert mhead)
-    (insert "\t// Original code start\n")
+    (if (not (string= kind "variable"))
+	;; If extracting a variable we just want to show the declaration
+	(insert "\t// Original code start\n"))
     (setq bb (point))
     (insert mbody)
-    (if (not (bolp))
+    
+    ;; Ensure next output start on a new line unless we're extracting a variable
+    (if (and (not (bolp)) (not (string= kind "variable")))
 	(progn
 	  (newline)
 	  (setq mbody (buffer-substring bb (point)))
 	  ))
+
     (if (equal kind "macro")
+	;; Then we want to add the newline escapes
 	(progn
 	  (c-xref-add-macro-line-continuations bb (- (point) 1))
 	  (goto-char (point-max))
 	  (setq mbody (buffer-substring bb (point)))
 	  ))
-    (insert "\t// Original code end\n")
+    (if (not (string= kind "variable"))
+	(insert "\t// Original code end\n"))
     (insert mtail)
-    ;;(insert "\n")
-    (insert "---------------   which will be invoked by the command:\n\n")
-    (insert minvocation)
+
+    (if (not (string= kind "variable"))
+	(progn
+	  (insert "---------------   which will be invoked by the command:\n\n")
+	  (insert minvocation)))
+    
     (beginning-of-buffer)
     (display-buffer c-xref-extraction-buffer)
     (if c-xref-renaming-default-name
@@ -8667,6 +8681,12 @@ refactoring.
 (defun c-xref-extract-macro (rd)
   (c-xref-refactoring-init-actions (format "extract macro"))
   (c-xref-server-call-refactoring-task (list "-rfct-extract-macro"))
+  (c-xref-refactoring-finish-actions)
+)
+
+(defun c-xref-extract-variable (rd)
+  (c-xref-refactoring-init-actions (format "extract variable"))
+  (c-xref-server-call-refactoring-task (list "-rfct-extract-variable"))
   (c-xref-refactoring-finish-actions)
 )
 

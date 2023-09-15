@@ -1785,6 +1785,8 @@ static bool processOOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-olexmacro")==0)
         options.extractMode=EXTRACT_MACRO;
+    else if (strcmp(argv[i], "-olexvariable")==0)
+        options.extractMode=EXTRACT_VARIABLE;
     else if (strcmp(argv[i], "-olcxrename")==0)
         options.serverOperation = OLO_RENAME;
     else if (strcmp(argv[i], "-olcxencapsulate")==0)

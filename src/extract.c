@@ -12,6 +12,7 @@
 #include "misc.h"
 #include "options.h"
 #include "protocol.h"
+#include "ppc.h"
 #include "protocol.h"
 #include "reftab.h"
 #include "semact.h"
@@ -1231,6 +1232,22 @@ static bool programStructureMismatch() {
         || parsedInfo.workMemoryIndexAtBlockBegin != parsedInfo.workMemoryIndexAtBlockEnd;
 }
 
+static void generateNewVariableAccess(ProgramGraphNode *program, char *extractionName) {
+    ppcGenRecord(PPC_STRING_VALUE, extractionName);
+}
+
+static void generateNewVariableDeclaration(ProgramGraphNode *program, char *extractionName) {
+    char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
+    /* TODO: How do we generate the correct type? This must already be done when extracting function? */
+    sprintf(resultingString, "int %s = ", extractionName);
+    ppcGenRecord(PPC_STRING_VALUE, resultingString);
+}
+
+static void generateNewVariableTail(void) {
+    ppcGenRecord(PPC_STRING_VALUE, ";");
+}
+
+
 static void makeExtraction(void) {
     ProgramGraphNode *program;
     bool needToExtractNewClass = false;
@@ -1261,7 +1278,9 @@ static void makeExtraction(void) {
         needToExtractNewClass = isNewClassNecessary(program);
 
     char *extractionName;
-    if (LANGUAGE(LANG_JAVA)) {
+    if (options.extractMode == EXTRACT_VARIABLE)
+        extractionName = "newVariable_";
+    else if (LANGUAGE(LANG_JAVA)) {
         if (needToExtractNewClass)
             extractionName = "newClass_";
         else
@@ -1283,6 +1302,10 @@ static void makeExtraction(void) {
         javaGenerateNewClassCall(program, extractionName);
         javaGenerateNewClassHead(program, extractionName);
         javaGenerateNewClassTail(program);
+    } else if (options.extractMode == EXTRACT_VARIABLE) {
+        generateNewVariableAccess(program, extractionName);
+        generateNewVariableDeclaration(program, extractionName);
+        generateNewVariableTail();
     } else {
         generateNewFunctionCall(program, extractionName);
         generateNewFunctionHead(program, extractionName);

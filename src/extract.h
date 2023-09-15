@@ -2,12 +2,14 @@
 #define EXTRACT_H_INCLUDED
 
 #include "proto.h"
+#include "refactorings.h"
 #include "symbol.h"
 
 
 typedef enum extractModes {
     EXTRACT_FUNCTION,
     EXTRACT_MACRO,
+    EXTRACT_VARIABLE
 } ExtractMode;
 
 /* Revealed publicly only to allow unittesting */

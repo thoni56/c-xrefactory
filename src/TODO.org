@@ -68,6 +68,10 @@ Current Mikado:
 **** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
 *** TRY to use LexemBuffer in getLexPosition()
 ** TRY to replace putLexXXXWithPointer() in yylex.c
+* DOING Extract variable
+** DONE Basic extract variable
+** TODO Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
+** TODO Figure out variable type (hard, none of the other extracts seems to do this...)
 * DOING A switch that creates a list of commands given to c-xref so that they can be replayed exactly later
 * DOING Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?

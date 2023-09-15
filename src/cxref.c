@@ -22,6 +22,7 @@
 #include "options.h"
 #include "proto.h"
 #include "protocol.h"
+#include "refactorings.h"
 #include "refactory.h"
 #include "reftab.h"
 #include "scope.h"
@@ -431,6 +432,7 @@ static void olGetAvailableRefactorings(void) {
 
     if (options.olMarkOffset != -1 && options.olCursorOffset != options.olMarkOffset) {
         // region selected, TODO!!! some more prechecks for extract method - Duh! Which ones!?!?!?!
+        makeRefactoringAvailable(PPC_AVR_EXTRACT_VARIABLE, "");
         if (LANGUAGE(LANG_JAVA)) {
             makeRefactoringAvailable(PPC_AVR_EXTRACT_METHOD, "");
         } else {
