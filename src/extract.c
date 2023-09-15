@@ -573,18 +573,15 @@ static void reclassifyInOutVariables(ProgramGraphNode *program) {
 bool isInExpression = false;
 
 static void generateNewMacroCall(ProgramGraphNode *program) {
-    char name[TMP_STRING_SIZE];
-    ProgramGraphNode *p;
     bool isFirstArgument = true;
-
-    resultingString[0]=0;
+    char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
     if (isInExpression)
         sprintf(resultingString+strlen(resultingString), "%s", extractionName);
     else
         sprintf(resultingString+strlen(resultingString), "\t%s", extractionName);
 
-    for (p=program; p!=NULL; p=p->next) {
+    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
             ||  p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
             ||  p->classification == CLASSIFIED_AS_ADDRESS_ARGUMENT
@@ -594,6 +591,7 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
             ||  p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
             ||  p->classification == CLASSIFIED_AS_LOCAL_VAR
         ) {
+            char name[TMP_STRING_SIZE];
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":", " , name);
             isFirstArgument = false;
@@ -610,14 +608,11 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
 }
 
 static void generateNewMacroHead(ProgramGraphNode *program) {
-    char name[MAX_EXTRACT_FUN_HEAD_SIZE];
-    ProgramGraphNode *p;
     bool isFirstArgument = true;
+    char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
-    resultingString[0]=0;
-
-    sprintf(resultingString+strlen(resultingString),"#define %s",extractionName);
-    for (p=program; p!=NULL; p=p->next) {
+    sprintf(resultingString, "#define %s",extractionName);
+    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
             ||  p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
             ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
@@ -627,6 +622,7 @@ static void generateNewMacroHead(ProgramGraphNode *program) {
             ||  p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
             ||  p->classification == CLASSIFIED_AS_LOCAL_VAR
         ) {
+            char name[MAX_EXTRACT_FUN_HEAD_SIZE];
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":"," , name);
             isFirstArgument = false;
@@ -638,12 +634,7 @@ static void generateNewMacroHead(ProgramGraphNode *program) {
 }
 
 static void generateNewMacroTail() {
-    resultingString[0]=0;
-
-    strcat(resultingString, "}\n\n");
-
-    assert(strlen(resultingString)<EXTRACT_GEN_BUFFER_SIZE-1);
-    ppcGenRecord(PPC_STRING_VALUE, resultingString);
+    ppcGenRecord(PPC_STRING_VALUE, "}\n\n");
 }
 
 
@@ -652,13 +643,10 @@ static void generateNewMacroTail() {
 
 
 static void generateNewFunctionCall(ProgramGraphNode *program) {
-    char declaration[TMP_STRING_SIZE];
-    char name[TMP_STRING_SIZE];
-    ProgramGraphNode *p;
     bool isFirstArgument = true;
+    char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
-    resultingString[0]=0;
-
+    ProgramGraphNode *p;
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_RESULT_VALUE
             || p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE
@@ -667,10 +655,12 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
             break;
     }
     if (p!=NULL) {
+        char name[TMP_STRING_SIZE];
+        char declaration[TMP_STRING_SIZE];
         getLocalVariableNameFromLinkName(p->symRef->linkName, name);
         getLocalVariableDeclarationFromLinkName(p->symRef->linkName, declaration, "", true);
         if (p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE) {
-            sprintf(resultingString+strlen(resultingString),"\t%s = ", declaration);
+            sprintf(resultingString+strlen(resultingString), "\t%s = ", declaration);
         } else {
             sprintf(resultingString+strlen(resultingString),"\t%s = ", name);
         }
@@ -680,21 +670,23 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     }
     sprintf(resultingString+strlen(resultingString), "%s", extractionName);
 
-    for (p=program; p!=NULL; p=p->next) {
+    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_VALUE_ARGUMENT
             || p->classification == CLASSIFIED_AS_IN_RESULT_VALUE
         ) {
+            char name[TMP_STRING_SIZE];
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s%s", isFirstArgument?"(":", " , name);
             isFirstArgument = false;
         }
     }
-    for (p=program; p!=NULL; p=p->next) {
+    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
             || p->classification == CLASSIFIED_AS_ADDRESS_ARGUMENT
             || p->classification == CLASSIFIED_AS_OUT_ARGUMENT
             || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
         ) {
+            char name[TMP_STRING_SIZE];
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "%s&%s", isFirstArgument?"(":", " , name);
             isFirstArgument = false;
@@ -832,8 +824,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     char name[MAX_EXTRACT_FUN_HEAD_SIZE];
     ProgramGraphNode  *p;
     int isFirstArgument = true;
-
-    resultingString[0]=0;
+    char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
     /* function header */
     nhi = 0;
@@ -937,14 +928,13 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
 static void generateNewFunctionTail(ProgramGraphNode *program) {
     char                name[TMP_STRING_SIZE];
     ProgramGraphNode  *p;
-
-    resultingString[0]=0;
+    char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
     for (p=program; p!=NULL; p=p->next) {
-        if (    p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
-                ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
-                ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
-                ) {
+        if (p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_OUT_ARGUMENT
+            ||  p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
+        ) {
             getLocalVariableNameFromLinkName(p->symRef->linkName, name);
             sprintf(resultingString+strlen(resultingString), "\t%s%s = %s;\n", options.olExtractAddrParPrefix,
                     name, name);
@@ -986,8 +976,7 @@ static void javaGenerateNewClassCall(ProgramGraphNode *program) {
     ProgramGraphNode *p;
     char *classname;
     bool isFirstArgument = true;
-
-    resultingString[0]=0;
+    char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
     classname = makeNewClassName();
 
@@ -1068,8 +1057,7 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program) {
     char name[MAX_EXTRACT_FUN_HEAD_SIZE];
     ProgramGraphNode *p;
     bool isFirstArgument = true;
-
-    resultingString[0]=0;
+    char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
     classname = makeNewClassName();
 
@@ -1185,8 +1173,7 @@ static void javaGenerateNewClassTail(ProgramGraphNode *program) {
     char name[TMP_STRING_SIZE];
     ProgramGraphNode  *p;
     bool isFirstArgument = true;
-
-    resultingString[0]=0;
+    char resultingString[EXTRACT_GEN_BUFFER_SIZE+1] = "";
 
     // local 'out' arguments value setting
     for (p=program; p!=NULL; p=p->next) {
@@ -1256,7 +1243,7 @@ static void makeExtraction(void) {
 
     program = makeProgramGraph();
     setInOutBlockFields(program);
-    //&dumpProgramToLog(program);
+    dumpProgramToLog(program);
 
     if (options.extractMode!=EXTRACT_MACRO && areThereJumpsInOrOutOfBlock(program)) {
         errorMessage(ERR_ST, "There are jumps in or out of region");
