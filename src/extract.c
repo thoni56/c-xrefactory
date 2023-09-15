@@ -309,27 +309,20 @@ static ExtractClassification classifyLocalVariableExtraction0(
                 inUsages |= p->stateBits;
             } else if (p->posBits==INSPECTION_OUTSIDE_BLOCK) {
                 outUsages |= p->stateBits;
-                //&if ( (p->stateBits & INSPECTION_INSIDE_BLOCK)
-                //& &&  (p->stateBits & INSPECTION_OUTSIDE_BLOCK)) {
-                // a reference outside using values set in both in and out
-                //&     outUsageBothExists = 1;
-                //&}
             } else assert(0);
         }
     }
-    //&fprintf(dumpOut,"%% ** variable '%s' ", varRef->symRef->linkName);fprintf(dumpOut,"in, out Usages %o %o\n",inUsages,outUsages);
+
     // inUsages marks usages in the block (from inside, or from ouside)
     // outUsages marks usages out of block (from inside, or from ouside)
     if (varRef->posBits == INSPECTION_OUTSIDE_BLOCK) {
         // a variable defined outside of the block
         if (outUsages & INSPECTION_INSIDE_BLOCK) {
             // a value set in the block is used outside
-            //&sprintf(tmpBuff,"testing %s: %d %d %d\n", varRef->symRef->linkName, (inUsages & INSPECTION_INSIDE_REENTER),(inUsages & INSPECTION_OUTSIDE_BLOCK), outUsageBothExists);ppcGenRecord(PPC_INFORMATION, tmpBuff);
             if ((inUsages & INSPECTION_INSIDE_REENTER) == 0
                 && (inUsages & INSPECTION_OUTSIDE_BLOCK) == 0
-                /*& && outUsageBothExists == 0 &*/
                 && (outUsages & INSPECTION_INSIDE_PASSING) == 0
-                ) {
+            ) {
                 return CLASSIFIED_AS_OUT_ARGUMENT;
             } else {
                 return CLASSIFIED_AS_IN_OUT_ARGUMENT;
@@ -343,10 +336,10 @@ static ExtractClassification classifyLocalVariableExtraction0(
             return CLASSIFIED_AS_LOCAL_VAR;
         return CLASSIFIED_AS_NONE;
     } else {
-        if (    outUsages & INSPECTION_INSIDE_BLOCK
-                ||  outUsages & INSPECTION_OUTSIDE_BLOCK) {
+        if (outUsages & INSPECTION_INSIDE_BLOCK
+            || outUsages & INSPECTION_OUTSIDE_BLOCK
+        ) {
             // a variable defined inside the region used outside
-            //&fprintf(dumpOut,"%% ** variable '%s' defined inside the region used outside", varRef->symRef->linkName);
             return CLASSIFIED_AS_LOCAL_OUT_ARGUMENT;
         } else {
             return CLASSIFIED_AS_NONE;
