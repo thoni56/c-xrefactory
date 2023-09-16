@@ -4078,6 +4078,7 @@ Special hotkeys available:
   (let ((tlen) (minvocation) (mhead) (mtail) (mline) (dname))
     (setq dname (cdr (assoc PPCA_TYPE c-xref-server-ctag-attributes)))
 
+    ;; Invocation code string
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-ctag PPC_STRING_VALUE)
     (setq tlen (c-xref-server-dispatch-get-int-attr PPCA_LEN))
@@ -4086,6 +4087,7 @@ Special hotkeys available:
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag PPC_STRING_VALUE)
 
+    ;; Extraction header
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-ctag PPC_STRING_VALUE)
     (setq tlen (c-xref-server-dispatch-get-int-attr PPCA_LEN))
@@ -4094,6 +4096,7 @@ Special hotkeys available:
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag PPC_STRING_VALUE)
 
+    ;; Extraction tail
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-ctag PPC_STRING_VALUE)
     (setq tlen (c-xref-server-dispatch-get-int-attr PPCA_LEN))
@@ -4102,6 +4105,7 @@ Special hotkeys available:
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-end-ctag PPC_STRING_VALUE)
 
+    ;; ?????
     (setq i (c-xref-server-parse-xml-tag ss i len))
     (c-xref-server-dispatch-require-ctag PPC_INT_VALUE)
     (setq tlen (c-xref-server-dispatch-get-int-attr PPCA_LEN))
