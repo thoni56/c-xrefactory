@@ -84,6 +84,7 @@ Current Mikado:
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra needed definitions for clang
+* TODO Menu option to upgrade 'c-xrefactory' - it should, in principle, just be "git pull, kill c-xref, make prod, reload c-xref.el, c-xrefactory.el"
 * TODO Bug: test_c_extract_function_with_out_variables should actually find the declaration and handle it
 * TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?

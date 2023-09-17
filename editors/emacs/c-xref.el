@@ -7578,6 +7578,36 @@ functions.
     )
 )
 
+(defvar c-xref-elisp-directory
+  (file-name-directory (or load-file-name (buffer-file-name)))
+  "The directory where the e-listp files of c-xref are installed")
+
+(defvar c-xref-install-directory
+  (file-name-directory (file-name-directory (file-name-directory (or load-file-name (buffer-file-name)))))
+  "The directory where c-xref is installed, which is two levels above this file")
+
+(defun load-directory (dir)
+  (let ((load-it (lambda (f)
+		   (load-file (concat (file-name-as-directory dir) f)))
+		 ))
+    (mapc load-it (directory-files dir nil "\\.el$"))))
+
+(defun c-xref-upgrade (void)
+  "Upgrade the installed c-xref, if available."
+  (interactive "P")
+  (if (yes-or-no-p (format "Really upgrade c-xref installation in %s ? "
+			   c-xref-install-directory))
+      (progn
+	(cd c-xref-install-directory)
+	(shell-command "git pull")
+	(shell-command "git checkout stable")
+	(c-xref-kill-xref-process nil)
+	(shell-command "make")
+	(load-directory c-xref-elisp-directory)
+	)
+    )
+)
+
 (defun c-xref-interactive-help-escape ()
   (interactive "")
   (delete-window (selected-window))
@@ -8578,7 +8608,7 @@ refactoring.
 	(insert "\t// Original code start\n"))
     (setq bb (point))
     (insert mbody)
-    
+
     ;; Ensure next output start on a new line unless we're extracting a variable
     (if (and (not (bolp)) (not (string= kind "variable")))
 	(progn
@@ -8601,7 +8631,7 @@ refactoring.
 	(progn
 	  (insert "---------------   which will be invoked by the command:\n\n")
 	  (insert minvocation)))
-    
+
     (beginning-of-buffer)
     (display-buffer c-xref-extraction-buffer)
     (if c-xref-renaming-default-name
