@@ -3,8 +3,8 @@
 # affect the adapter, so tread carefully. PR:s are welcome.
 # For now we just ensure that the protocol bits are in sync.
 
-Xrefactory/com/xrefactory/jedit/Protocol.java: ../../src/protocol.tc ../../src/refactorings.def Protocol.template \
+Xrefactory/com/xrefactory/jedit/Protocol.java: ../../src/protocol.tc ../../src/refactorings.def \
+	Protocol.template \
 	Makefile
 	# Convert protocol.tc & refactorings.def into Java declarations
-	cpp Protocol.template | grep -v \# > Protocol.tmp
-	sed 's/String PPCV/int PPCV/' Protocol.tmp | sed 's/String PPC_AVR/int PPC_AVR/' > Xrefactory/com/xrefactory/jedit/Protocol.java
+	cpp Protocol.template | grep -v \# > Protocol.java
