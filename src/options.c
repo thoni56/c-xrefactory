@@ -152,7 +152,7 @@ static char previousStandardOptionsProject[MAX_FILE_NAME_SIZE];
 
 void aboutMessage(void) {
     char output[REFACTORING_TMP_STRING_SIZE];
-    sprintf(output, "C-xrefactory version %s\n", C_XREF_VERSION_NUMBER);
+    sprintf(output, "C-xrefactory version %s\n", VERSION);
     sprintf(output+strlen(output), "Compiled at %s on %s\n",  __TIME__, __DATE__);
     sprintf(output+strlen(output), "from git revision %s.\n", GIT_HASH);
     strcat(output,                 "(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");

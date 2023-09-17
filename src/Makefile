@@ -168,7 +168,8 @@ chcheck:
 include sources.mk
 
 GIT_HASH = $(shell git describe --abbrev=5 --always --tags --dirty)
-$(OBJDIR)/options.o: CFLAGS += -DGIT_HASH=\"$(GIT_HASH)\"
+GIT_TAG  = $(shell git describe --abbrev=0 --tags)
+$(OBJDIR)/options.o: CFLAGS += -DGIT_HASH=\"$(GIT_HASH)\" -DVERSION=\"$(GIT_TAG)\"
 
 PHONY += build
 build: CFLAGS += -DYYDEBUG
@@ -393,13 +394,13 @@ endif
 
 #########################################################################
 watch:
-	watchexec -i \*.tab.\[ch\] -e c,h,y,mock -- execnotify -t Development make -j devel
+	watchexec -i \*.tab.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Development make -j devel
 
 watch-for-unittests:
-	watchexec -i \*.tab.\[ch\] -e c,h,y,mock -- execnotify -t Unittests make -j unit
+	watchexec -i \*.tab.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j unit
 
 watch-for-systemtests:
-	watchexec -i \*.tab.\[ch\] -e .done -- execnotify -t Systemtests make -j system-tests
+	watchexec -e .done -- execnotify -t Systemtests make -j system-tests
 
 system-tests:
 	$(MAKE) -e build
