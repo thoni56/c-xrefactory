@@ -1,5 +1,5 @@
 #define COMMENT(xx)
-#define PROTOCOL_ITEM(type, name, val) public static final String name = val;
+#define PROTOCOL_ITEM(type, name, val) public static final type name = val;
 
 /* Xrefactory communication protocol constants          */
 /* Do not edit .java source file!! Those constants are 	*/

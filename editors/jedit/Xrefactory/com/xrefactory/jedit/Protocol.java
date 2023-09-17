@@ -9,7 +9,7 @@ package com.xrefactory.jedit;
 
 public class Protocol {
 
-public static final String C_XREF_VERSION_NUMBER = "1.6.20";
+public static final String C_XREF_VERSION_NUMBER = "1.6.21";
 public static final String C_XREF_FILE_VERSION_NUMBER = "1.6.0";
 
 public static final String PPC_NO_TAG = "-- no tag --";
