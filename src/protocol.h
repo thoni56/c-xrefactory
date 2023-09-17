@@ -11,7 +11,7 @@
 #define PROTOCOL_ITEM(type, name, val) extern type name;
 #endif
 
-#include "protocol.tc"
+#include "protocol.th"
 
 #undef PROTOCOL_ITEM
 #undef COMMENT

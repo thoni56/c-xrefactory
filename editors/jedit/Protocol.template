@@ -10,7 +10,7 @@ package com.xrefactory.jedit;
 public class Protocol {
 
 #include "../../src/refactorings.def"
-#include "../../src/protocol.tc"
+#include "../../src/protocol.th"
 
 }
 

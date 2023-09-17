@@ -3,8 +3,8 @@
 # affect the adapter, so tread carefully. PR:s are welcome.
 # For now we just ensure that the protocol bits are in sync.
 
-Xrefactory/com/xrefactory/jedit/Protocol.java: ../../src/protocol.tc ../../src/refactorings.def \
+Xrefactory/com/xrefactory/jedit/Protocol.java: ../../src/protocol.th ../../src/refactorings.def \
 	Protocol.template \
 	Makefile
-	# Convert protocol.tc & refactorings.def into Java declarations
-	cpp Protocol.template | grep -v \# > Protocol.java
+	# Convert protocol.th & refactorings.def into Java declarations
+	cpp Protocol.template | grep -v \# > Xrefactory/com/xrefactory/jedit/Protocol.java
