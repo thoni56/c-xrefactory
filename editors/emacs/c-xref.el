@@ -856,41 +856,12 @@ A-Za-z0-9.\t-- incremental search, insert character
 
 (defun c-xref-version-control-operation (operation file)
   (let ((assoc-list) (association))
-    (if (boundp 'c-xref-version-control)
-	(progn
-	  (cond
-	   (
-	    (eq c-xref-version-control t)
-	    (require 'vc)
-	    (require 'vc-hooks)
-	    (setq assoc-list (list (cons 'find-file 'c-xref-vc-find-file)
-				   (cons 'make-buffer-writable 'c-xref-vc-make-buffer-writable)
-				   (cons 'save-some-buffers 'c-xref-vc-save-some-buffers)
-				   (cons 'write-file 'c-xref-vc-write-file)
-				   (cons 'delete-file 'c-xref-vc-delete-file)
-				   ))
-	    )
-	   (
-	    (eq c-xref-version-control nil)
-	    (setq assoc-list (list (cons 'find-file 'c-xref-novc-find-file)
-				   (cons 'make-buffer-writable 'c-xref-novc-make-buffer-writable)
-				   (cons 'save-some-buffers 'c-xref-novc-save-some-buffers)
-				   (cons 'write-file 'c-xref-novc-write-file)
-				   (cons 'delete-file 'c-xref-novc-delete-file)
-				   ))
-	    )
-	   (
-	    t
-	    (error "Unknown version system configured: %S" c-xref-version-control)
-	   )))
-      ;; c-xref-version-control is unbound
       (setq assoc-list (list (cons 'find-file 'c-xref-novc-find-file)
 			     (cons 'make-buffer-writable 'c-xref-novc-make-buffer-writable)
 			     (cons 'save-some-buffers 'c-xref-novc-save-some-buffers)
 			     (cons 'write-file 'c-xref-novc-write-file)
 			     (cons 'delete-file 'c-xref-novc-delete-file)
 			     ))
-      )
     (setq association (assoc operation assoc-list))
     (if association
 	(apply (cdr association) file nil)
@@ -899,9 +870,9 @@ A-Za-z0-9.\t-- incremental search, insert character
 ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Implementation of file operations with NO version control system
+;; Some file operations modified for c-xref
 
-(defun c-xref-novc-find-file (file)
+(defun c-xref-find-file (file)
   (let ((buff))
     (setq buff (get-file-buffer file))
     (if buff
@@ -937,146 +908,11 @@ A-Za-z0-9.\t-- incremental search, insert character
 )
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Implementation of file operations with Emacs version control system
-
-(defun c-xref-vc-find-file (file)
-  (c-xref-novc-find-file file)
-)
-
-(defun c-xref-vc-make-buffer-writable (dummy)
-  (if (vc-backend (buffer-file-name))
-      (if (not (eq buffer-read-only nil))
-	  (progn
-	    (read-only-mode)
-	    )
-	)
-    (c-xref-novc-make-buffer-writable dummy)
-    )
-)
-
-(defun c-xref-vc-log-buffer-string ()
-  (let ((res ""))
-  (save-excursion
-    (if (buffer-live-p (get-buffer c-xref-vc-log-buffer))
-	(progn
-	  (set-buffer c-xref-vc-log-buffer)
-	  (setq res (buffer-string))
-	  )))
-  res
-))
-
-(defun c-xref-checkin-if-buffer-modified (b comment)
-  (if (and (buffer-live-p b)
-	   (buffer-modified-p b)
-	   (not (buffer-base-buffer b))
-	   (buffer-file-name b))
-      (progn
-	(set-buffer b)
-	(save-buffer)
-	;; set window buffer to avoid vc-checkin to create new window
-	(set-window-buffer (selected-window) b)
-	(if (vc-backend (buffer-file-name))
-	    (progn
-	      (vc-checkin (buffer-file-name) nil comment)
-	      )
-	  ))
-    )
-)
-
-(defun c-xref-vc-save-some-buffers (checkin)
-  (let ((bb) (b) (comm))
-    (if (and c-xref-version-control-checkin-on-auto-saved-buffers checkin)
-	(progn
-	  ;; wait 1 second, it sems that checkin within the same second
-	  ;; as checkout cause troubles to Emacs vc.
-	  (sleep-for 1)
-	  (setq bb (buffer-list))
-	  (setq comm (c-xref-vc-log-buffer-string))
-	  (while bb
-	    (setq b (car bb))
-	    (c-xref-checkin-if-buffer-modified b comm)
-	    (setq bb (cdr bb))
-	    )
-	  )
-      (c-xref-novc-save-some-buffers checkin)
-      )
-))
-
-(defun c-xref-vc-write-file (file)
-  (let ((dir) (dl) (cb) (lb))
-    (if (eq (vc-backend (buffer-file-name)) 'CVS)
-	(progn
-	  ;; CVS special care
-	  (setq lb (get-buffer-create c-xref-cvs-shell-log-buffer))
-	  (setq dir (directory-file-name (file-name-directory file)))
-	  (setq dl nil)
-	  (while (and dir (or (not (file-exists-p dir))
-			      (not (file-exists-p (concat dir "/CVS")))))
-	    (setq dl (cons dir dl))
-	    (setq dir (directory-file-name (file-name-directory dir)))
-	    )
-	  (while dl
-	    (setq dir (car dl))
-	    (if (not (file-exists-p dir)) (make-directory dir))
-	    (with-current-buffer lb (goto-char (point-max)))
-	    (call-process "cvs" nil lb nil "add" dir)
-	    (setq dl (cdr dl))
-	    )
-	  (c-xref-novc-write-file file)
-	  (with-current-buffer lb (goto-char (point-max)))
-	  (call-process "cvs" nil lb nil "add" file)
-	  ;; to fix vc bug, clear vc properties
-	  (vc-file-clearprops file)
-	  (display-buffer lb)
-	  )
-      ;; Non CVS general
-      (if (vc-backend (buffer-file-name))
-	  (progn
-	    (setq dir (file-name-directory file))
-	    (if (not (file-exists-p dir))
-		(make-directory dir t)
-	      )
-	    (set-buffer-modified-p t)
-	    (c-xref-checkin-if-buffer-modified (current-buffer) (c-xref-vc-log-buffer-string))
-	    ;; if exists, remove it first (no prompt, user has been prompted before)
-	    (if (file-exists-p file) (c-xref-vc-delete-file file))
-	    (vc-rename-file (buffer-file-name) file)
-	    )
-	(c-xref-novc-write-file file)
-	))
-))
-
-(defun c-xref-vc-delete-file (file)
-  (let ((lb))
-  (if (eq (vc-backend file) 'CVS)
-      (progn
-	;; TODO, better
-	(c-xref-novc-delete-file file)
-	(setq lb (get-buffer-create c-xref-cvs-shell-log-buffer))
-	(with-current-buffer lb (goto-char (point-max)))
-	(call-process "cvs" nil lb nil "remove" file)
-	(display-buffer lb)
-	)
-    (c-xref-novc-delete-file file)
-    )
-))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Functions manipulating source files. Those functions are here for
-;; backward compatibility only. If possible, do not use or modify them
-;; anymore.  They will be removed in some future version of
-;; C-xrefactory.
-
-(defun c-xref-find-file (file-name)
-  "C-xrefactory version of 'find-file'.
-
-With no version control this function simply calls (find-file
-FILE-NAME).  Under version control it may checkout the file from
-version control.
-"
-  (c-xref-version-control-operation 'find-file file-name)
-)
+;; Functions manipulating source files. Those functions are here as a
+;; remainder of VC-features, now removed. If possible, do not use or
+;; modify them anymore.  They will be removed in some future version
+;; of C-xrefactory.
 
 (defun c-xref-make-buffer-writable ()
   "Set `buffer-read-only' to nil.
