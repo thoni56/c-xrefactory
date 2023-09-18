@@ -90,19 +90,24 @@
 
 (defface c-xref-list-default-face
   '((t :inherit 'default))
-  "Default face in c-xref lists")
+  "Default face in c-xref lists"
+  :group 'c-xrefactory-highlighting-coloring)
 (defface c-xref-list-pilot-face
   '((t :inherit 'font-lock-string-face))
-  "Face for pilots(selection numbers?) in c-xref lists")
+  "Face for pilots(selection numbers?) in c-xref lists"
+  :group 'c-xrefactory-highlighting-coloring)
 (defface c-xref-list-symbol-face
   '((t :inherit 'font-lock-variable-name-face))
-  "Face for symbols in c-xref lists")
+  "Face for symbols in c-xref lists"
+  :group 'c-xrefactory-highlighting-coloring)
 (defface c-xref-keyword-face
   '((t :inherit 'font-lock-type-face))
-  "Face for keywords in c-xref windows")
+  "Face for keywords in c-xref windows"
+  :group 'c-xrefactory-highlighting-coloring)
 (defface c-xref-error-face
   '((t :inherit 'error))
-  "Face for errors in c-xref windows")
+  "Face for errors in c-xref windows"
+  :group 'c-xrefactory-highlighting-coloring)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -437,10 +442,12 @@
       (defgroup c-xrefactory nil
 "
 
-Here you  can set variables controlling those  behaviors of C-xrefactory
-which are not project-dependent, and its general appearance.
+Here you can set variables controlling the behaviors of C-xrefactory
+that are not project-dependent, and its general appearance.
 
-")
+"
+	 :group 'programming
+)
 
 
 ;;;;;;;;;;;;;;;; c-xrefactory-general ;;;;;;;;;
@@ -448,7 +455,7 @@ which are not project-dependent, and its general appearance.
       (defgroup c-xrefactory-general nil
 	"
 
-Here  you  can  set  variables  controlling the  general  behavior  of
+Here you can set variables controlling the general behavior of
 C-xrefactory functions.
 
 "

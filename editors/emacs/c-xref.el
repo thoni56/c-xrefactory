@@ -686,7 +686,7 @@ C-xrefactory. This  may happen if c-xref  task was killed, or  a macro was
 interrupted by C-g. If there are such files, delete them.
 "
   (interactive "")
-  (let ((fl) (flist) (ff) (ffl) (modif) (ctime) (loop))
+  (let ((fl) (flist) (ff) (ffl) (modif) (ctime) (loop) (modifcar))
     (setq ctimecar (car (current-time)))
     (setq flist (directory-files
 		 c-xref-tmp-dir t
@@ -948,7 +948,7 @@ A-Za-z0-9.\t-- incremental search, insert character
   (if (vc-backend (buffer-file-name))
       (if (not (eq buffer-read-only nil))
 	  (progn
-	    (vc-toggle-read-only)
+	    (read-only-mode)
 	    )
 	)
     (c-xref-novc-make-buffer-writable dummy)
@@ -1019,12 +1019,12 @@ A-Za-z0-9.\t-- incremental search, insert character
 	  (while dl
 	    (setq dir (car dl))
 	    (if (not (file-exists-p dir)) (make-directory dir))
-	    (save-excursion (set-buffer lb) (goto-char (point-max)))
+	    (with-current-buffer lb (goto-char (point-max)))
 	    (call-process "cvs" nil lb nil "add" dir)
 	    (setq dl (cdr dl))
 	    )
 	  (c-xref-novc-write-file file)
-	  (save-excursion (set-buffer lb) (goto-char (point-max)))
+	  (with-current-buffer lb (goto-char (point-max)))
 	  (call-process "cvs" nil lb nil "add" file)
 	  ;; to fix vc bug, clear vc properties
 	  (vc-file-clearprops file)
@@ -1054,7 +1054,7 @@ A-Za-z0-9.\t-- incremental search, insert character
 	;; TODO, better
 	(c-xref-novc-delete-file file)
 	(setq lb (get-buffer-create c-xref-cvs-shell-log-buffer))
-	(save-excursion (set-buffer lb) (goto-char (point-max)))
+	(with-current-buffer lb (goto-char (point-max)))
 	(call-process "cvs" nil lb nil "remove" file)
 	(display-buffer lb)
 	)
@@ -1742,6 +1742,12 @@ tries to delete C-xrefactory windows first.
     res
 ))
 
+(defun c-xref-goto-line (n)
+  "Go to line N in the buffer to avoid interactive `goto-line`"
+  (goto-char (point-min))
+  (forward-line (1- n))
+  )
+
 (defun c-xref-show-file-line-in-caller-window (file line)
   (let ((sw))
     (setq sw (selected-window))
@@ -1750,7 +1756,7 @@ tries to delete C-xrefactory windows first.
       )
     (find-file file)
     (if (not (equal line 0))
-	(goto-line line)
+	(c-xref-goto-line line)
       )
     (sit-for 1)
     (select-window sw)
@@ -2019,7 +2025,7 @@ tries to delete C-xrefactory windows first.
     (goto-char (point-min))
     (end-of-line)
     (while (and (<= i wsize) (< (point) (point-max)))
-      (next-line 1)
+      (forward-line)
       (end-of-line)
       (setq w (c-xref-current-column))
       (if (> w width) (setq width w))
@@ -2607,7 +2613,6 @@ tries to delete C-xrefactory windows first.
 		       (c-xref-encoding-option)
 		       c-xref-options-file
 		       c-xref-active-project
-		       frame-id
 		       ))
 
     (c-xref-send-data-to-running-process opts proc)
@@ -2742,17 +2747,6 @@ tries to delete C-xrefactory windows first.
   (c-xref-server-call-on-current-buffer-all-saves option
 					       c-xref-global-dispatch-data)
 )
-
-(defun c-xref-softly-preset-project (pname)
-  (let ((actp))
-    (setq actp c-xref-active-project)
-    (setq c-xref-active-project pname)
-    ;; this is just a hack, it may cause problems, because current buffer
-    ;; is passed to c-xref (be careful on which buffer you call it)
-    (c-xref-call-process-with-basic-file-data-no-saves "-olcxgetprojectname")
-    ;; Hmm. this is also dispatching, hope it isn't a problem.
-    (setq c-xref-active-project actp)
-))
 
 (defun c-xref-compute-simple-information (option)
   (let ((res))
@@ -3095,8 +3089,9 @@ on active project selection).
  2.) Import %s.%s
  3.) Keep it as is
 ----
-" pack cl pack pack cl cl)
-		       (+ 3 default) 0 t c-xref-add-to-imports-dialog-map dispatch-data))
+"
+pack cl pack pack cl)
+				   (+ 3 default) 0 t c-xref-add-to-imports-dialog-map dispatch-data))
     (cond
      (
       (eq sel 3)
@@ -3313,7 +3308,7 @@ No.
 	  (setq iline (cdr (assoc 'info dispatch-data)))
 	  (setq iline-val (string-to-number iline))
 	  (save-excursion
-	    (goto-line (+ iline-val 1))
+	    (c-xref-goto-line (+ iline-val 1))
 	    (beginning-of-line)
 	    ;; check if after package, insert on blank line
 	    (if (not (bobp))
@@ -3532,7 +3527,7 @@ Special hotkeys available:
       (setq col (c-xref-server-dispatch-get-int-attr PPCA_COL))
       (c-xref-select-dispach-data-caller-window dispatch-data)
       (c-xref-find-file path)
-      (goto-line line)
+      (c-xref-goto-line line)
       (beginning-of-line)
       (setq rpos (+ (point) col))
       (end-of-line)
@@ -3933,7 +3928,7 @@ Special hotkeys available:
     (c-xref-server-dispatch-require-end-ctag PPC_SYMBOL_RESOLUTION)
     (c-xref-line-hightlight 0 (point-max) nil 1 nil nil)
     (goto-char (point-min))
-    (if (> firstline 0) (goto-line firstline))
+    (if (> firstline 0) (c-xref-goto-line firstline))
     (setq buffer-read-only t)
     i
 ))
@@ -3981,7 +3976,7 @@ Special hotkeys available:
     (setq i (c-xref-server-dispatch-classh-lines ss i len dispatch-data t))
     (c-xref-server-dispatch-require-end-ctag PPC_DISPLAY_CLASS_TREE)
     (c-xref-line-hightlight 0 (point-max) nil 3 nil nil)
-    (goto-line 1)
+    (goto-char (point-min))
     (setq buffer-read-only t)
     (if (not c-xref-class-tree-splits-window-horizontally)
 	(c-xref-appropriate-window-height nil t)
@@ -4349,7 +4344,7 @@ Special hotkeys available:
     (setq win (c-xref-display-and-set-new-dialog-window title nil t))
     (insert text)
     (c-xref-use-local-map keymap)
-    (goto-line line)
+    (c-xref-goto-line line)
     (c-xref-appropriate-window-height nil t)
     (goto-char (+ (point) col))
     (setq c-xref-this-buffer-dispatch-data dispatch-data)
@@ -4391,8 +4386,8 @@ Special hotkeys available:
 
 (defun c-xref-get-project-list ()
   (let ((new-name) (loop) (mbeg) (mend) (pname "") (project-list) (i) (len) (lplist))
-    (save-excursion
-      (set-buffer (get-buffer-create " c-xref-project-list"))
+    (with-current-buffer
+	(get-buffer-create " c-xref-project-list")
       ;;(c-xref-erase-buffer)
       (insert-file-contents c-xref-options-file  nil nil nil t)
       (goto-char (point-min))
@@ -4412,7 +4407,7 @@ Special hotkeys available:
       (kill-buffer nil)
       )
     project-list
-))
+    ))
 
 (defun c-xref-prj-list-get-prj-on-line ()
   (let ((res) (ppp) (bl) (el))
@@ -4562,7 +4557,7 @@ proceed according to options corresponding to this project name.
 	  (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
 	  (message "Deletion canceled.")
 	  )
-      (next-line 1)
+      (forward-line)
       (setq eprj (c-xref-prj-list-get-prj-on-line))
       (c-xref-delete-window-in-any-frame  c-xref-project-list-buffer nil)
       (find-file c-xref-options-file)
@@ -4909,7 +4904,7 @@ will be deleted.
 
 
 (defun c-xref-infer-package-proposal ()
-  (let ((package))
+  (let ((package) (ff))
     (save-excursion
       (goto-char (point-min))
       (setq ff (search-forward-regexp "package[ \t]+\\([a-zA-Z0-9$.]*\\)" nil t))
@@ -5261,7 +5256,7 @@ read the 'c-xref' manual page.
 			  (message "Options for %s found" c-xref-active-project)
 		      ))))
 	  (beginning-of-line)
-	  (next-line 1)
+	  (forward-line)
 	  ))
 )
 
@@ -6325,11 +6320,11 @@ separate window.
     (setq buffer-read-only nil)
     (if lastref
 	(progn
-	  (delete-backward-char 1)
+	  (delete-char -1)
 	  (insert " ")
 	  )
       )
-    (goto-line lineno)
+    (c-xref-goto-line lineno)
     (beginning-of-line)
     (delete-char 1)
     (insert ">")
@@ -6355,7 +6350,7 @@ separate window.
 	(progn
 	  (setq cline (- cline 1))
 	  (if (>= cline 0)
-	      (next-line -1)
+	      (forward-line -1)
 	    (goto-char (point-max))
 	    (beginning-of-line)
 	    ;; (message "Moving to the last reference") (beep t)
@@ -6364,7 +6359,7 @@ separate window.
 	  )
       (setq cline (+ cline 1))
       (if (< cline nlines)
-	  (next-line 1)
+	  (forward-line)
 	(goto-char (point-min))
 	;; (message "Moving to the first reference") (beep t)
 	)
@@ -6532,12 +6527,12 @@ refactoring, changes made by this function can be undone with the
 ))
 
 (defun c-xref-show-browser ()
-"Display browser windows.
-"
+  "Display browser windows."
   (interactive "")
-  (c-xref-entry-point-make-initialisations)
-  (setq oldwins (c-xref-create-browser-windows nil c-xref-global-dispatch-data))
-  (c-xref-update-browser-if-displayed oldwins)
+  (let ((oldwins))
+    (c-xref-entry-point-make-initialisations)
+    (setq oldwins (c-xref-create-browser-windows nil c-xref-global-dispatch-data))
+    (c-xref-update-browser-if-displayed oldwins))
 )
 
 (defun c-xref-local-motion (opt)
@@ -7586,11 +7581,32 @@ functions.
   (file-name-directory (file-name-directory (file-name-directory (or load-file-name (buffer-file-name)))))
   "The directory where c-xref is installed, which is two levels above this file")
 
-(defun load-directory (dir)
+(defun c-xref-load-elisp-directory (dir)
   (let ((load-it (lambda (f)
 		   (load-file (concat (file-name-as-directory dir) f)))
 		 ))
     (mapc load-it (directory-files dir nil "\\.el$"))))
+
+(defun c-xref-get-modified-files ()
+  "Return a list of modified files in the current Git repository."
+  (with-temp-buffer
+    (call-process "git" nil t nil "diff" "--name-only" "HEAD")
+    (split-string (buffer-string) "\n" t)))
+
+(defun c-xref-ok-to-upgrade ()
+  "Ask for confirmation and then perform 'git reset --hard' if there are modified files.
+Returns t if there were no changes or the reset was performed, nil if the reset was cancelled."
+  (let ((modified-files (c-xref-get-modified-files)))
+    (if (and modified-files
+	     (not (null modified-files))
+	     (yes-or-no-p "There are modified files. Do you want to overwrite?"))
+	(progn
+	  (call-process "git" nil nil nil "reset" "--hard")
+	  t)  ; Indicate reset performed
+      (if modified-files
+	  (progn
+	    nil)  ; Indicate cancellation
+	t))))  ; Indicate no changes
 
 (defun c-xref-upgrade (void)
   "Upgrade the installed c-xref, if available."
@@ -7599,14 +7615,18 @@ functions.
 			   c-xref-install-directory))
       (progn
 	(cd c-xref-install-directory)
-	(shell-command "git pull")
-	(shell-command "git checkout stable")
-	(c-xref-kill-xref-process nil)
-	(shell-command "make")
-	(load-directory c-xref-elisp-directory)
+	(if (c-xref-ok-to-upgrade)
+	    (progn
+	      (shell-command "git pull")
+	      (shell-command "git checkout stable")
+	      (c-xref-kill-xref-process nil)
+	      (shell-command "make")
+	      (load-directory c-xref-elisp-directory)
+	      )
+	  )
 	)
     )
-)
+  )
 
 (defun c-xref-interactive-help-escape ()
   (interactive "")
@@ -8073,7 +8093,7 @@ between, undo will not work correctly.
 	  (setq confirmed (yes-or-no-p (format "Move directory %s to %s ? "
 					       (c-xref-file-last-name newdir)
 					       (c-xref-file-last-name olddir))
-				       t nil))
+				       ))
 	  )
       (setq confirmed t)
       )
@@ -8632,7 +8652,7 @@ refactoring.
 	  (insert "---------------   which will be invoked by the command:\n\n")
 	  (insert minvocation)))
 
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (display-buffer c-xref-extraction-buffer)
     (if c-xref-renaming-default-name
 	(setq name c-xref-renaming-default-name)
@@ -8651,7 +8671,7 @@ refactoring.
     (if (not (equal name ""))
 	(progn
 	  (set-buffer mbuff)
-	  (goto-line mline)
+	  (c-xref-goto-line mline)
 	  (set-marker c-xref-extraction-marker (point))
 	  (goto-char mm)
 	  (set-marker c-xref-extraction-marker2 (point))
