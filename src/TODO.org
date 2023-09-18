@@ -18,7 +18,6 @@ Some useful commands:
 There are a *lot* of things to do to make c-xref into modern and maintainable C.
 
 Current Mikado:
-* DOING Menu option to upgrade 'c-xrefactory' - it should, in principle, just be "git pull, kill c-xref, make prod, reload c-xref.el, c-xrefactory.el"
 * DOING Extract variable
 ** DONE Basic extract variable
 ** TODO Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
@@ -74,7 +73,7 @@ Current Mikado:
 **** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
 *** TRY to use LexemBuffer in getLexPosition()
 ** TRY to replace putLexXXXWithPointer() in yylex.c
-* DOING A switch that creates a list of commands given to c-xref so that they can be replayed exactly later
+* DOING An option that creates a list of commands given to c-xref so that they can be replayed exactly later
 * DOING Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
@@ -115,6 +114,7 @@ Current Mikado:
     those are main options, you can only have one, and selecting one
     will allow a set of separate options valid for that "mode"
 ** TODO LSP-like protocol (possibly also fulfill LSP functions)
+* TODO Add yacc parser construct for field in yystype ('$<field>$')
 * TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
   How to make this backwards compatible? We don't need to... If it is empty it will be regenerated
 * TODO Header files. There are a number of sections in the proto.h that
@@ -128,7 +128,6 @@ Current Mikado:
 * TODO Push options.xref2 into ppc...() functions or create if necessary?
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
-* TODO Add yacc parser construct for field in yystype ('$<field>$')
 * TODO Don't do any default operation (currently 'complete') if none given on command line
 * TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
 * TODO REFACTOR: Extract storage module interface and implementation
@@ -150,13 +149,13 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO Create jar reading test for unexpected end of file
 * TODO NEW FEATURES:
 ** TODO FEATURE: New refactoring: change return type of function
-** TODO FEATURE: New refactoring: Extract variable
+** DONE FEATURE: New refactoring: Extract variable
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
 ** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
-** TODO FUTURE: Use clangd as backend - is that even possible
-Well, no. I tried to get started with doing refactorings inside
-clangd, but getting started was to cumbersome...
-** TODO FUTURE: Implement LSP (Language Server Protocol)
+** FUTURE: Implement LSP (Language Server Protocol)
+This is probably not possible due to the level of integration between
+the editor adaptor and the c-xref proper. Also LSP does not have a
+protocol for many of the refactorings which are core to c-xref.
 ** TODO FEATURE: New refactoring: move function for C
 ** TODO FEATURE: Rename "module" in C
    Prompt for new "module name", rename both .c & .h if they exist, and change all includes
@@ -219,6 +218,7 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
 
+* DONE Menu option to upgrade 'c-xrefactory' - it should, in principle, just be "git pull, kill c-xref, make prod, reload c-xref.el, c-xrefactory.el"
 * DONE Fix so that "extract" is not available unless an explicit region is active
 * DONE Fix a test for removing last parameter of a macro (in test_delete_last_macro_arg)
 It is not working due to some strange issue with "Parameter number out
