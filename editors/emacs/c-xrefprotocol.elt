@@ -1,5 +1,5 @@
 #define COMMENT(xx)
-#define PROTOCOL_ITEM(type, name, val) (defconst name val)
+#define PROTOCOL_ITEM(type, name, val) (defconst c-xref_##name val)
 
 /* You can actually edit this file, if you know what you are doing,
    but we want this to end up in the generated file... */
