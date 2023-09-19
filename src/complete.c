@@ -1159,24 +1159,21 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
 }
 
 static bool isForCompletionSymbol(
-    Completions *c,
+    Completions *completions,
     ExpressionTokenType *token,
-    Symbol **sym,
-    char   **nextRecord
+    Symbol **symbolP,
+    char **nextRecord
 ) {
-    Symbol    *sy;
-
     if (options.serverOperation != OLO_COMPLETION)
         return false;
     if (token->typeModifier==NULL)
         return false;
-    if (c->idToProcessLen != 0)
+    if (completions->idToProcessLen != 0)
         return false;
     if (token->typeModifier->kind == TypePointer) {
         assert(token->typeModifier->next);
         if (token->typeModifier->next->kind == TypeStruct) {
-            *sym = sy = getSymbolFromReference(token->reference);
-            if (sy==NULL)
+            if ((*symbolP = getSymbolFromReference(token->reference)) == NULL)
                 return false;
             *nextRecord = spComplFindNextRecord(token);
             return true;
