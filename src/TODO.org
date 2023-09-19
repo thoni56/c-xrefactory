@@ -84,6 +84,12 @@ Current Mikado:
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
 ** DONE clang definition table
 ** TODO Use compiler identification to set extra needed definitions for clang
+* TODO Add yacc parser construct for field in yystype ('$<field>$' and '$<field>3')
+  This means access "field" in the YYSTYPE (semantic type) union for
+  lh non-terminal (ends with '$' as in '$$') or a numbered rh
+  non-terminal (as with '$3'). That field is defined in the YYSTYPE
+  but not used in any '%type' declaration meaning all non-terminals
+  have it.
 * TODO Remove explicit support for Xemacs
 * TODO Bug: test_c_extract_function_with_out_variables should actually find the declaration and handle it
 * TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
@@ -113,7 +119,6 @@ Current Mikado:
     those are main options, you can only have one, and selecting one
     will allow a set of separate options valid for that "mode"
 ** TODO LSP-like protocol (possibly also fulfill LSP functions)
-* TODO Add yacc parser construct for field in yystype ('$<field>$')
 * TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
   How to make this backwards compatible? We don't need to... If it is empty it will be regenerated
 * TODO Header files. There are a number of sections in the proto.h that
