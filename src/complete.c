@@ -44,6 +44,9 @@ typedef struct {
 } FqtMapCompletionInfo;
 
 
+ExpressionTokenType s_forCompletionType;
+
+
 void initCompletions(Completions *completions, int length, Position position) {
     completions->idToProcessLen = length;
     completions->idToProcessPos = position;

@@ -1,13 +1,16 @@
 #ifndef COMPLETE_H_INCLUDED
 #define COMPLETE_H_INCLUDED
 
+#include "proto.h"              /* For ExpressionTokenType */
 #include "completion.h"
+
 
 typedef struct {
     int token;
     void (*fun)(Completions*);
 } CompletionFunctionsTable;
 
+extern ExpressionTokenType s_forCompletionType;
 
 extern void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType,
                                short int virtualLevel, short int margn, char **margs,

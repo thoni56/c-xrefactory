@@ -96,7 +96,6 @@ unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 int s_lastReturnedLexem;
 
 int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
-ExpressionTokenType s_forCompletionType;
 
 TypeModifier defaultVoidModifier;
 Symbol defaultVoidDefinition;

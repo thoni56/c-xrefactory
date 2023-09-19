@@ -42,7 +42,6 @@ int yyIdBufferIndex = 0;
 
 TypeModifier *s_structRecordCompletionType;
 TypeModifier *s_upLevelFunctionCompletionType;
-ExpressionTokenType s_forCompletionType;
 TypeModifier *s_javaCompletionLastPrimary;
 
 struct yyGlobalState *s_yygstate;
