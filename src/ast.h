@@ -51,7 +51,7 @@ typedef struct {
 typedef struct {
     struct position            b, e;
     struct expressionTokenType data;
-} Ast_exprTokenType;
+} Ast_expressionTokenType;
 typedef struct {
     struct position              b, e;
     struct nestedConstrTokenType data;

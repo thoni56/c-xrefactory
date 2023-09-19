@@ -1126,7 +1126,7 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
     return true;
 }
 
-static char *spComplFindNextRecord(ExprTokenType *tok) {
+static char *spComplFindNextRecord(ExpressionTokenType *token) {
     S_recFindStr    rfs;
     Symbol        *r,*s;
     char *res;
@@ -1134,7 +1134,7 @@ static char *spComplFindNextRecord(ExprTokenType *tok) {
     static char     *cnext="next";
     static char     *cprevious="previous";
 
-    s = tok->typeModifier->next->u.t;
+    s = token->typeModifier->next->u.t;
     res = NULL;
     assert(s->u.structSpec);
     iniFind(s, &rfs);
@@ -1147,7 +1147,7 @@ static char *spComplFindNextRecord(ExprTokenType *tok) {
         if (cname!=NULL && javaLinkable(r->access)){
             assert(rfs.currentClass && rfs.currentClass->u.structSpec);
             assert(r->type == TypeDefault);
-            if (isEqualType(r->u.typeModifier, tok->typeModifier)) {
+            if (isEqualType(r->u.typeModifier, token->typeModifier)) {
                 // there is a record of the same type
                 if (res == NULL) res = cname;
                 else if (strcmp(cname,cnext)==0) res = cnext;
@@ -1160,7 +1160,7 @@ static char *spComplFindNextRecord(ExprTokenType *tok) {
 
 static bool isForCompletionSymbol(
     Completions *c,
-    ExprTokenType *token,
+    ExpressionTokenType *token,
     Symbol **sym,
     char   **nextRecord
 ) {
