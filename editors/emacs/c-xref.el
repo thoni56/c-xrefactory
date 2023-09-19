@@ -886,15 +886,15 @@ A-Za-z0-9.\t-- incremental search, insert character
 	))
 ))
 
-(defun c-xref-novc-make-buffer-writable (dummy)
+(defun c-xref-make-buffer-writable ()
   (setq buffer-read-only nil)
 )
 
-(defun c-xref-novc-save-some-buffers (checkin)
-  (save-some-buffers t)
+(defun c-xref-save-some-buffers (flag)
+  (save-some-buffers flag)
 )
 
-(defun c-xref-novc-write-file (file)
+(defun c-xref-write-file (file)
   (let ((dir))
     (setq dir (file-name-directory file))
     (if (not (file-exists-p dir))
@@ -903,60 +903,11 @@ A-Za-z0-9.\t-- incremental search, insert character
     (write-file file)
 ))
 
-(defun c-xref-novc-delete-file (file)
+(defun c-xref-delete-file (file)
   (if (file-exists-p file) (delete-file file))
 )
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Functions manipulating source files. Those functions are here as a
-;; remainder of VC-features, now removed. If possible, do not use or
-;; modify them anymore.  They will be removed in some future version
-;; of C-xrefactory.
-
-(defun c-xref-make-buffer-writable ()
-  "Set `buffer-read-only' to nil.
-
-With no version control this function simply calls (setq
-buffer-read-only nil).  Under version control it may checkout the file
-from version control.
-"
-  (c-xref-version-control-operation 'make-buffer-writable nil)
-)
-
-(defun c-xref-write-file (name confirm)
-  "C-xrefactory version of 'write-file'.
-
-With no version control this function simply calls (write-file NAME).
-Under version control it may add the new file to the version control
-system.
-"
-  (c-xref-version-control-operation 'write-file name)
-)
-
-(defun c-xref-delete-file (name)
-  "C-xrefactory version of 'delete-file'.
-
-With no version control this function simply calls (delete-file NAME).
-Under version control it may remove the file from the version control
-system.
-"
-  (c-xref-version-control-operation 'delete-file name)
-)
-
-(defun c-xref-save-some-buffers (flag)
-  "C-xrefactory version of 'save-some-buffers'.
-
-Without version control this function simply calls (save-some-buffers
-t).  If `c-xref-version-control-checkin-on-auto-saved-buffers' option is
-not nil and FLAG is not nil, then under version control it may checkin
-all modified files into the version control system.
-"
-  (c-xref-version-control-operation 'save-some-buffers flag)
-)
-
-
-;; actually this function is not used anymore by C-xrefactory 1.6
 (defun c-xref-move-directory (old-name new-name)
   ;; used only for Java rename package
   (if (eq c-xref-platform 'windows)
