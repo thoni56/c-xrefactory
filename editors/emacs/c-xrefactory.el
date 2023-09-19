@@ -186,14 +186,6 @@
 	  (setq c-xref-escape-key-sequence "\e\e")
 	)))
 
-(if (not (boundp 'c-xref-version-control))
-    (defvar c-xref-version-control nil)
-  )
-
-(if (not (boundp 'c-xref-version-control-checkin-on-auto-saved-buffers))
-    (defvar c-xref-version-control-checkin-on-auto-saved-buffers nil)
-  )
-
 (if (not (boundp 'c-xref-inspect-errors-if-compilation-window))
     (defvar c-xref-inspect-errors-if-compilation-window t)
   )
@@ -466,16 +458,6 @@ C-xrefactory functions.
 	"This option determines where the file describing C-xrefactory project-specific options (projects and their setting) is stored. You will need to kill (and restart) the c-xref process if changing this option."
 	:type '(string)
 	;; :type '(file) ;; this puts there ~, etc making problems
-	:group 'c-xrefactory-general)
-
-      (defcustom c-xref-version-control nil
-	"This variable stores identification of version control system used by C-xrefactory: nil means no VC system; t means the Emacs VC system implemented by the `vc' package; any other value is interpreted as an identification of a user-defined version system."
-	:type '(symbol)
-	:group 'c-xrefactory-general)
-
-      (defcustom c-xref-version-control-checkin-on-auto-saved-buffers nil
-	"If on and if version control is on, then automatic save after refactoring also checks in modified files. Be careful with this option as this clears undo buffers. Too frequent checkins will make undoing impossible."
-	:type '(boolean)
 	:group 'c-xrefactory-general)
 
       (defcustom c-xref-bind-left-mouse-button t

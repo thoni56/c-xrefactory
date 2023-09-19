@@ -22,7 +22,6 @@ Current Mikado:
 ** DONE Basic extract variable
 ** TODO Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
 ** TODO Figure out variable type (hard, none of the other extracts seems to do this...)
-* TODO Remove all version control cruft from editor adapter
 * TRY to make LexemBuffer interface just take LexemBuffer
 ** DOING Unify LexInput with LexemBuffer so we can get rid of put/get LexemAt() functions
 ** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
@@ -218,6 +217,7 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
 
+* DONE Remove all version control cruft from editor adapter
 * DONE Menu option to upgrade 'c-xrefactory' - it should, in principle, just be "git pull, kill c-xref, make prod, reload c-xref.el, c-xrefactory.el"
 * DONE Fix so that "extract" is not available unless an explicit region is active
 * DONE Fix a test for removing last parameter of a macro (in test_delete_last_macro_arg)

@@ -103,8 +103,6 @@
 (defvar c-xref-tag-results-buffer "*c-xref-search-results*")
 (defvar c-xref-class-tree-buffer " *class-tree*")
 (defvar c-xref-project-list-buffer " *project-list*")
-(defvar c-xref-vc-log-buffer "*VC-log*")
-(defvar c-xref-cvs-shell-log-buffer "*cvs-shell-log*")
 (defvar c-xref-extraction-buffer " *code-extraction*")
 
 (defvar c-xref-selection-modal-buffer (c-xref-modal-buffer-name " *selection"))
@@ -828,47 +826,6 @@ A-Za-z0-9.\t-- incremental search, insert character
 " nil nil)
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;; VERSION CONTROL SYSTEM SUPPORT ;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; If you wish to define your own version control system, you will
-;; need to implement functions for loading a file (and checkout);
-;; making the buffer modifiable if readonly; saving all modified
-;; buffers (and checkin); writing file under another name and deleting
-;; a file. Then add code calling your version control functions to the
-;; following function and finally set customizable variable
-;; `c-xref-version-control' to contain your system identification.
-;; For example to add version control system "my-vc", add the code:
-;;         (
-;;			(eq c-xref-version-control 'my-vc)
-;;			(setq assoc-list (list (cons 'find-file 'c-xref-my-vc-find-file)
-;;                                 (cons 'make-buffer-writable 'c-xref-my-vc-make-buffer-writable)
-;;                                 (cons 'save-some-buffers 'c-xref-my-vc-save-some-buffers)
-;;                                 (cons 'write-file 'c-xref-my-vc-write-file)
-;;                                 (cons 'delete-file 'c-xref-my-vc-delete-file)
-;;                                 ))
-;;			)
-;; into the cond statement. Then implement all functions: c-xref-my-vc-find-file,
-;; c-xref-my-vc-make-buffer-writable, c-xref-my-vc-save-some-buffers, c-xref-my-vc-write-file
-;; and c-xref-my-vc-delete-file and finally set c-xref-version-control to 'my-vc.
-
-
-(defun c-xref-version-control-operation (operation file)
-  (let ((assoc-list) (association))
-      (setq assoc-list (list (cons 'find-file 'c-xref-novc-find-file)
-			     (cons 'make-buffer-writable 'c-xref-novc-make-buffer-writable)
-			     (cons 'save-some-buffers 'c-xref-novc-save-some-buffers)
-			     (cons 'write-file 'c-xref-novc-write-file)
-			     (cons 'delete-file 'c-xref-novc-delete-file)
-			     ))
-    (setq association (assoc operation assoc-list))
-    (if association
-	(apply (cdr association) file nil)
-      (error "operation %s not found in association list %S" operation assoc-list)
-      )
-))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some file operations modified for c-xref
 
@@ -926,47 +883,6 @@ A-Za-z0-9.\t-- incremental search, insert character
     )
 )
 
-
-(defun c-xref-rename-class-and-package-cvs-warning ()
-  (if (eq c-xref-version-control t)
-      (progn
-	(require 'vc-hooks)
-	(if (eq (vc-backend (buffer-file-name)) 'CVS)
-	    (if (not (c-xref-yes-or-no-window
-"[Warning] Renaming of classes and packages under CVS requires a
-successful commit after the renaming.  Otherwise, it will be
-impossible to undo changes made in the file system.  In general,
-commits can cause troubles and it may be better to perform
-refactoring without version control (doing CVS operations
-manually after the renaming).
-
-Do you really wish to continue this refactoring under CVS ?"
-		 t nil))
-		(error "Refactoring canceled.")
-		))))
-)
-
-(defun c-xref-rcs-undo-warning (message)
-  (let ((res))
-    (setq res nil)
-    (if (eq c-xref-version-control t)
-	(progn
-	  (require 'vc-hooks)
-	  (if (eq (vc-backend (buffer-file-name)) 'RCS)
-	      (progn
-		(setq res t)
-		(if (not (c-xref-yes-or-no-window (format
-"[Warning] Undoing under RCS will probably not work correctly
-because check-outs clear undo informations.  You should use RCS
-snapshots to memorize and undo changes with this version control
-system.
-
-Do you really wish to undo %s?" message)
-		 t nil))
-		    (error "Undo canceled.")
-		)))))
-    res
-))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1132,7 +1048,6 @@ Do you really wish to undo %s?" message)
 	 (equal name c-xref-info-buffer)
 	 (equal name c-xref-run-buffer)
 	 (equal name c-xref-compilation-buffer)
-	 (equal name c-xref-cvs-shell-log-buffer)
 	 (equal name c-xref-info-modal-buffer)
 	 (equal name c-xref-error-modal-buffer)
 	 (equal name c-xref-confirmation-modal-buffer)
@@ -7787,12 +7702,10 @@ between, undo will not work correctly.
     (setq cont-undo-state nil)
     (setq cloop t)
     (setq undolist c-xref-multifile-undo-state)
-    (if (not (c-xref-rcs-undo-warning (car (car undolist))))
-	(progn
-	  (setq cloop (c-xref-yes-or-no-window
-		       (format "Really undo %s? " (car (car undolist)))
-		       t nil
-			       ))))
+    (setq cloop (c-xref-yes-or-no-window
+		 (format "Really undo %s? " (car (car undolist)))
+		 t nil
+		 ))
     (while cloop
       (c-xref-multifile-undo-set-buffer-switch-point (format "an undone refactoring (redoing %s)" (car (car undolist))))
       (setq next-ask t)
@@ -7984,18 +7897,7 @@ refactoring.
 	(c-xref-save-some-buffers nil)
 	(c-xref-update-tags "-update" nil)
 	))
-  (save-excursion
-    (get-buffer-create c-xref-vc-log-buffer)
-    (set-buffer c-xref-vc-log-buffer)
-    (goto-char (point-max))
-    (insert (format "%s: %s"
-			   (current-time-string)
-			   description))
-    (newline)
-    (get-buffer-create c-xref-cvs-shell-log-buffer)
-    (c-xref-erase-buffer)
-    )
-)
+  )
 
 (defun c-xref-refactoring-finish-actions ()
   (if c-xref-save-files-and-update-tags-after-refactoring
@@ -8003,7 +7905,6 @@ refactoring.
 	(c-xref-save-some-buffers t)
 	(c-xref-update-tags "-update" nil)
 	))
-  ;; there is problem in combination with RCS, losing the marker offset
   (if c-xref-move-point-back-after-refactoring
       (progn
 	(c-xref-switch-to-marker c-xref-refactoring-beginning-marker)
@@ -8039,12 +7940,10 @@ refactoring.
 )
 
 (defun c-xref-rename-class (rd)
-  (c-xref-rename-class-and-package-cvs-warning)
   (c-xref-renaming "-rfct-rename-class" nil)
 )
 
 (defun c-xref-rename-package (rd)
-  (c-xref-rename-class-and-package-cvs-warning)
   (c-xref-renaming "-rfct-rename-package" (elt rd 1))
 )
 
