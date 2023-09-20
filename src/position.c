@@ -6,7 +6,7 @@ Position makePosition(int file, int line, int col) {
 }
 
 PositionList *newPositionList(Position position, PositionList *next) {
-    PositionList *new = StackMemoryAlloc(PositionList);
+    PositionList *new = stackMemoryAlloc(sizeof(PositionList));
     new->position = position;
     new->next = next;
     return new;

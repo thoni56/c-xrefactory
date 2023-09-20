@@ -121,7 +121,7 @@ void addToTrail(void (*action)(void*), void *pointer, bool needTrailOnTopLevel) 
     /* no trail at level 0 in C, Yacc */
     if ((nestingLevel() == 0) && !needTrailOnTopLevel)
         return;
-    t = StackMemoryAlloc(FreeTrail);
+    t = stackMemoryAlloc(sizeof(FreeTrail));
     t->action = action;
     t->pointer = (void **) pointer;
     t->next = currentBlock->trail;

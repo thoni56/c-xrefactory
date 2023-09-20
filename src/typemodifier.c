@@ -58,9 +58,9 @@ void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *arg
 /* For typeModifiers we need to cater for two memory allocations (XX &
    CF) as well as the ancient FILL semantics... */
 
-/* The most common is to allocate in XX_memory == StackMemAlloc() */
+/* The most common is to allocate in XX_memory == stackMemAlloc(sizeof()) */
 TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *next) {
-    TypeModifier *typeModifier = StackMemoryAlloc(TypeModifier);
+    TypeModifier *typeModifier = stackMemoryAlloc(sizeof(TypeModifier));
 
     fillTypeModifier(typeModifier, kind, typedefSymbol, next);
 
@@ -102,7 +102,7 @@ TypeModifier *newEnumTypeModifier(Symbol *symbol) {
 
 S_typeModifierList *newTypeModifierList(TypeModifier *d) {
     S_typeModifierList *list;
-    list = StackMemoryAlloc(S_typeModifierList);
+    list = stackMemoryAlloc(sizeof(S_typeModifierList));
     list->d = d;
     list->next = NULL;
     return list;

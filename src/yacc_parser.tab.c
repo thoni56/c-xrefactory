@@ -2672,7 +2672,7 @@ static void addRuleLocalVariable(Id *name, int order) {
     if (l_yaccUnion!=NULL) {
         p = name->symbol;
         if (p != NULL && p->type == TypeDefault) {
-            nn = stackMemoryAlloc(10*sizeof(char));
+            nn = stackMemoryAlloc(10);
             assert(order>=0 && order < 10000);
             sprintf(nn,"$%d",order);
             if (order == 0) nn[1] = '$';
@@ -4434,7 +4434,7 @@ break;
 case 422:
 #line 1519 "yacc_parser.y"
 {
-        yyval.ast_idList.data = StackMemoryAlloc(IdList);
+        yyval.ast_idList.data = stackMemoryAlloc(sizeof(IdList));
         fillIdList(yyval.ast_idList.data, *yyvsp[-1].ast_id.data, yyvsp[-1].ast_id.data->name, TypeDefault, NULL);
     }
 break;
@@ -4453,14 +4453,14 @@ break;
 case 425:
 #line 1535 "yacc_parser.y"
 {
-        yyval.ast_id.data = StackMemoryAlloc(Id);
+        yyval.ast_id.data = stackMemoryAlloc(sizeof(Id));
         fillId(yyval.ast_id.data, "", NULL, noPosition);
     }
 break;
 case 426:
 #line 1539 "yacc_parser.y"
 {
-        yyval.ast_id.data = StackMemoryAlloc(Id);
+        yyval.ast_id.data = stackMemoryAlloc(sizeof(Id));
         *(yyval.ast_id.data) = *(yyvsp[0].ast_id.data);
     }
 break;

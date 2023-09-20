@@ -26,7 +26,7 @@ void fillfIdList(IdList *idList, char *name, Symbol *symbol, Position position, 
 }
 
 Id *newCopyOfId(Id *id) {
-    Id *copy = StackMemoryAlloc(Id);
+    Id *copy = stackMemoryAlloc(sizeof(Id));
     *(copy)  = *(id);
     return copy;
 }

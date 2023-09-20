@@ -24,7 +24,7 @@ S_jslStat *s_jsl;
 S_jslClassStat *newJslClassStat(IdList *className, Symbol *thisClass, char *thisPackage, S_jslClassStat *next) {
     S_jslClassStat *jslClassStat;
 
-    jslClassStat = StackMemoryAlloc(S_jslClassStat);
+    jslClassStat = stackMemoryAlloc(sizeof(S_jslClassStat));
     jslClassStat->className = className;
     jslClassStat->thisClass = thisClass;
     jslClassStat->thisPackage = thisPackage;
@@ -149,7 +149,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
     if (add == ADD_YES) {
         if (packid!=NULL) importPos = &packid->id.position;
         else importPos = &noPosition;
-        xss = StackMemoryAlloc(JslSymbolList); // CF_ALLOC ???
+        xss = stackMemoryAlloc(sizeof(JslSymbolList)); // CF_ALLOC ???
         fillJslSymbolList(xss, smemb, *importPos, isExplicitlyImported);
         /* TODO: Why are we using isMember() and not looking at the result? Side-effect? */
         isMember = jslTypeTabIsMember(s_jsl->typeTab, xss, &index, &memb);
@@ -587,7 +587,7 @@ void jslNewClassDefinitionBegin(Id *name, int accFlags, Symbol *anonInterf, int 
         cc->u.structSpec->nestedCount = 0;
 
     beginBlock();
-    ill = StackMemoryAlloc(IdList);
+    ill = stackMemoryAlloc(sizeof(IdList));
     fillfIdList(ill, cc->name, inname->symbol, inname->position, cc->name, TypeStruct, s_jsl->classStat->className);
     nss = newJslClassStat(ill, cc, s_jsl->classStat->thisPackage,
                           s_jsl->classStat);

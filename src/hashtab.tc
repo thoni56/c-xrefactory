@@ -77,7 +77,7 @@ void CONCAT(HASH_FUN_PREFIX,NoAllocInit)(HASH_TAB_TYPE *t, int size) {
 
 /* Allocate and initialize */
 void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
-    table->tab = StackMemoryAllocC(size, HASH_ELEM_TYPE *);
+    table->tab = stackMemoryAlloc(size*sizeof(HASH_ELEM_TYPE *));
     CONCAT(HASH_FUN_PREFIX,NoAllocInit)(table, size);
 }
 

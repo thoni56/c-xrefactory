@@ -55,14 +55,14 @@ void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position po
 
 Symbol *newSymbol(char *name, char *linkName, Position pos) {
     Symbol *s;
-    s = StackMemoryAlloc(Symbol);
+    s = stackMemoryAlloc(sizeof(Symbol));
     *s = makeSymbol(name, linkName, pos);
     return s;
 }
 
 Symbol *newSymbolAsCopyOf(Symbol *original) {
     Symbol *s;
-    s = StackMemoryAlloc(Symbol);
+    s = stackMemoryAlloc(sizeof(Symbol));
     *s = *original;
     return s;
 }

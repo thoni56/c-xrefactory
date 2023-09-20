@@ -1303,7 +1303,7 @@ designation_opt
         $$.data = NULL;
     }
     | designator_list '='       {
-        $$.data = StackMemoryAlloc(IdList);
+        $$.data = stackMemoryAlloc(sizeof(IdList));
         fillIdList($$.data, *$1.data, $1.data->name, TypeDefault, NULL);
     }
     ;
@@ -1319,11 +1319,11 @@ designator_list
 
 designator
     : '[' constant_expr ']'     {
-        $$.data = StackMemoryAlloc(Id);
+        $$.data = stackMemoryAlloc(sizeof(Id));
         fillId($$.data, "", NULL, noPosition);
     }
     | '.' str_rec_identifier    {
-        $$.data = StackMemoryAlloc(Id);
+        $$.data = stackMemoryAlloc(sizeof(Id));
         *($$.data) = *($2.data);
     }
     ;

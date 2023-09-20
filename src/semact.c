@@ -543,7 +543,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         }
     }
     len = strlen(ttt);
-    p->linkName = StackMemoryAllocC(len+1, char);
+    p->linkName = stackMemoryAlloc(len+1);
     strcpy(p->linkName,ttt);
 }
 
@@ -566,7 +566,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     sprintf(ttt,"%s!%s", simpleFileName(basefname), p->name);
     len = strlen(ttt);
     assert(len < TMP_STRING_SIZE-2);
-    ss = StackMemoryAllocC(len+1, char);
+    ss = stackMemoryAlloc(len+1);
     strcpy(ss, ttt);
     p->linkName = ss;
     //& } else {
@@ -589,7 +589,7 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage theDe
     }
     if (symbol->type == TypeDefault && symbol->storage == StorageTypedef) {
         // typedef HACK !!!
-        TypeModifier *tt       = StackMemoryAlloc(TypeModifier);
+        TypeModifier *tt       = stackMemoryAlloc(sizeof(TypeModifier));
         *tt                    = *symbol->u.typeModifier;
         symbol->u.typeModifier = tt;
         tt->typedefSymbol      = symbol;
@@ -757,7 +757,7 @@ static TypeModifier * mergeBaseModTypes(TypeModifier *t1, TypeModifier *t2) {
 Symbol *typeSpecifier2(TypeModifier *t) {
     Symbol    *r;
 
-    r = StackMemoryAlloc(Symbol);
+    r = stackMemoryAlloc(sizeof(Symbol));
     fillSymbolWithTypeModifier(r, NULL, NULL, noPosition, t);
 
     return r;
@@ -846,7 +846,7 @@ SymbolList *createDefinitionList(Symbol *symbol) {
     SymbolList *p;
 
     assert(symbol);
-    p = StackMemoryAlloc(SymbolList);
+    p = stackMemoryAlloc(sizeof(SymbolList));
     /* REPLACED: FILL_symbolList(p, symbol, NULL); with compound literal */
     *p = (SymbolList){.element = symbol, .next = NULL};
 
@@ -909,9 +909,9 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
 
     if (!symbolTableIsMember(symbolTable, &symbol, NULL, &member)
         || (isMemoryFromPreviousBlock(member) && isDefinitionOrDeclarationUsage(usage))) {
-        member = StackMemoryAlloc(Symbol);
+        member = stackMemoryAlloc(sizeof(Symbol));
         *member = symbol;
-        member->u.structSpec = StackMemoryAlloc(S_symStructSpec);
+        member->u.structSpec = stackMemoryAlloc(sizeof(S_symStructSpec));
 
         initSymStructSpec(member->u.structSpec, /*.records=*/NULL);
         TypeModifier *stype = &member->u.structSpec->stype;
@@ -967,7 +967,7 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
     len2 = len + strlen(iname);
     assert(len < MACRO_NAME_SIZE-2);
     if (memory == MEMORY_XX) {
-        mname = StackMemoryAllocC(len2+1, char);
+        mname = stackMemoryAlloc(len2+1);
     } else {
         mname = ppmAllocc(len2+1, sizeof(char));
     }
@@ -997,7 +997,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
 
     setGlobalFileDepNames("", pp, MEMORY_XX);
 
-    pp->u.structSpec = StackMemoryAlloc(S_symStructSpec);
+    pp->u.structSpec = stackMemoryAlloc(sizeof(S_symStructSpec));
 
     /* This is a recurring pattern, create a struct and the pointer type to it*/
     initSymStructSpec(pp->u.structSpec, /*.records=*/NULL);
@@ -1037,7 +1037,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
 
     if (! symbolTableIsMember(symbolTable, &p, NULL, &pp)
         || (isMemoryFromPreviousBlock(pp) && isDefinitionOrDeclarationUsage(usage))) {
-        pp = StackMemoryAlloc(Symbol);
+        pp = stackMemoryAlloc(sizeof(Symbol));
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(symbolTable, pp);

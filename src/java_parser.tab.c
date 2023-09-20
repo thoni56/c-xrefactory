@@ -108,7 +108,7 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
 #define NULL_POS NULL
 
 static void setPrimitiveTypePos(Position **positionP, Id *typ) {
-    *positionP = (Position *)StackMemoryAlloc(Position);
+    *positionP = (Position *)stackMemoryAlloc(sizeof(Position));
     **positionP = typ->position;
 }
 static bool regularPass(void) { return s_jsl == NULL; }
@@ -130,7 +130,7 @@ typedef struct whileExtractData {
 static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbol *i4) {
     S_whileExtractData *whileExtractData;
 
-    whileExtractData = StackMemoryAlloc(S_whileExtractData);
+    whileExtractData = stackMemoryAlloc(sizeof(S_whileExtractData));
     whileExtractData->i1 = i1;
     whileExtractData->i2 = i2;
     whileExtractData->i3 = i3;
@@ -2812,7 +2812,7 @@ case 9:
                     yyval.ast_expressionType.data.typeModifier = &s_javaStringModifier;
                     yyval.ast_expressionType.data.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.data.position = StackMemoryAlloc(Position);
+                    yyval.ast_expressionType.data.position = stackMemoryAlloc(sizeof(Position));
                     *yyval.ast_expressionType.data.position = yyvsp[0].ast_position.data;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
@@ -2827,7 +2827,7 @@ case 10:
                     yyval.ast_expressionType.data.typeModifier = newSimpleTypeModifier(TypeNull);
                     yyval.ast_expressionType.data.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.data.position = StackMemoryAlloc(Position);
+                    yyval.ast_expressionType.data.position = stackMemoryAlloc(sizeof(Position));
                     *yyval.ast_expressionType.data.position = yyvsp[0].ast_id.data->position;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
@@ -3137,7 +3137,7 @@ break;
 case 47:
 #line 715 "java_parser.y"
 {
-            yyval.ast_idList.data = StackMemoryAlloc(IdList);
+        yyval.ast_idList.data = stackMemoryAlloc(sizeof(IdList));
             fillIdList(yyval.ast_idList.data, *yyvsp[0].ast_id.data, yyvsp[0].ast_id.data->name, TypeDefault, NULL);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
@@ -3145,7 +3145,7 @@ break;
 case 48:
 #line 723 "java_parser.y"
 {
-            yyval.ast_idList.data = StackMemoryAlloc(IdList);
+        yyval.ast_idList.data = stackMemoryAlloc(sizeof(IdList));
             fillIdList(yyval.ast_idList.data, *yyvsp[0].ast_id.data, yyvsp[0].ast_id.data->name, TypeDefault, yyvsp[-2].ast_idList.data);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
         }
@@ -3221,7 +3221,7 @@ case 64:
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR)
                                 j=i;
                         }
-                        cdir = StackMemoryAllocC(j+1, char);
+                        cdir = stackMemoryAlloc(j+1);
                         strncpy(cdir,currentFile.fileName,j); cdir[j]=0;
                         javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
@@ -3235,7 +3235,7 @@ case 64:
                         }
                         packlen = strlen(s_javaThisPackageName);
                         if (j>packlen && filenameCompare(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
-                            cdir = StackMemoryAllocC(j-packlen, char);
+                            cdir = stackMemoryAlloc(j-packlen);
                             strncpy(cdir, currentFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
                             javaStat->namedPackagePath = cdir;
                             javaStat->currentPackage = "";
@@ -3249,7 +3249,7 @@ case 64:
                     javaParsingInitializations();
                     /* make first and second pass through file*/
                     assert(s_jsl == NULL); /* no nesting*/
-                    jsltypeTab = StackMemoryAlloc(JslTypeTab);
+                    jsltypeTab = stackMemoryAlloc(sizeof(JslTypeTab));
                     jslTypeTabInit(jsltypeTab, MAX_JSL_SYMBOLS);
                     javaReadSymbolFromSourceFileInit(olOriginalFileNumber,
                                                      jsltypeTab);
@@ -3285,7 +3285,7 @@ case 64:
                     javaClassifyToPackageName(yyvsp[0].ast_idList.data);
                 }
                 javaCreateComposedName(NULL,yyvsp[0].ast_idList.data,'/',NULL,ppp,MAX_FILE_NAME_SIZE);
-                pname = StackMemoryAllocC(strlen(ppp)+1, char);
+                pname = stackMemoryAlloc(strlen(ppp)+1);
                 strcpy(pname, ppp);
                 s_jsl->classStat = newJslClassStat(yyvsp[0].ast_idList.data, NULL, pname, NULL);
                 if (inSecondJslPass()) {
@@ -5735,7 +5735,7 @@ case 353:
             if (regularPass()) {
                 yyval.ast_expressionType.data = yyvsp[-1].ast_expressionType.data;
                 if (SyntaxPassOnly()) {
-                    yyval.ast_expressionType.data.position = StackMemoryAlloc(Position);
+                    yyval.ast_expressionType.data.position = stackMemoryAlloc(sizeof(Position));
                     *yyval.ast_expressionType.data.position = yyvsp[-2].ast_position.data;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                     if (positionIsBetween(yyval.ast_expressionType.b, cxRefPosition, yyval.ast_expressionType.e)

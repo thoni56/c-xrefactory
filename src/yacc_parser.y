@@ -1517,7 +1517,7 @@ designation_opt
         $$.data = NULL;
     }
     | designator_list '='       {
-        $$.data = StackMemoryAlloc(IdList);
+        $$.data = stackMemoryAlloc(sizeof(IdList));
         fillIdList($$.data, *$1.data, $1.data->name, TypeDefault, NULL);
     }
     ;
@@ -1533,11 +1533,11 @@ designator_list
 
 designator
     : '[' constant_expr ']'     {
-        $$.data = StackMemoryAlloc(Id);
+        $$.data = stackMemoryAlloc(sizeof(Id));
         fillId($$.data, "", NULL, noPosition);
     }
     | '.' str_rec_identifier    {
-        $$.data = StackMemoryAlloc(Id);
+        $$.data = stackMemoryAlloc(sizeof(Id));
         *($$.data) = *($2.data);
     }
     ;
@@ -1988,7 +1988,7 @@ static void addRuleLocalVariable(Id *name, int order) {
     if (l_yaccUnion!=NULL) {
         p = name->symbol;
         if (p != NULL && p->type == TypeDefault) {
-            nn = stackMemoryAlloc(10*sizeof(char));
+            nn = stackMemoryAlloc(10);
             assert(order>=0 && order < 10000);
             sprintf(nn,"$%d",order);
             if (order == 0) nn[1] = '$';

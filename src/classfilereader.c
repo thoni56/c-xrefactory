@@ -342,7 +342,7 @@ bool fsIsMember(ZipArchiveDir **dirPointer, char *filename, unsigned offset,
     if (aa==NULL) {
         res = false;
         if (addFlag == ADD_YES) {
-            p = StackMemoryAllocC(sizeof(ZipArchiveDir)+itemlen+1, ZipArchiveDir);
+            p = stackMemoryAlloc(sizeof(ZipArchiveDir)*(itemlen+1));
             initZipArchiveDir(p);
             strncpy(p->name, filename, itemlen);
             p->name[itemlen]=0;
@@ -608,7 +608,7 @@ bool zipFindFile(char *name,
     /*&fprintf(dumpOut,"looking for file %s in %s\n",fname,zipfile->fn);fflush(dumpOut);&*/
     if (fsIsMember(&zipfile->dir,fname,0,ADD_NO,&place)==0) return false;
     if (resName != NULL) {
-        *resName = StackMemoryAllocC(strlen(zipfile->fn)+strlen(fname)+2, char);
+        *resName = stackMemoryAlloc(strlen(zipfile->fn)+strlen(fname)+2);
         pp = strmcpy(*resName, zipfile->fn);
         strcpy(pp, fname);
     }

@@ -15,7 +15,7 @@ SymbolTable *symbolTable;
 
 
 void initSymbolTable(int size) {
-    symbolTable = StackMemoryAlloc(SymbolTable);
+    symbolTable = stackMemoryAlloc(sizeof(SymbolTable));
     symbolTableInit(symbolTable, size);
 }
 

@@ -79,7 +79,7 @@ static void jslImportOnDemandDeclaration(struct idList *iname) {
 #define NULL_POS NULL
 
 static void setPrimitiveTypePos(Position **positionP, Id *typ) {
-    *positionP = (Position *)StackMemoryAlloc(Position);
+    *positionP = (Position *)stackMemoryAlloc(sizeof(Position));
     **positionP = typ->position;
 }
 static bool regularPass(void) { return s_jsl == NULL; }
@@ -101,7 +101,7 @@ typedef struct whileExtractData {
 static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbol *i4) {
     S_whileExtractData *whileExtractData;
 
-    whileExtractData = StackMemoryAlloc(S_whileExtractData);
+    whileExtractData = stackMemoryAlloc(sizeof(S_whileExtractData));
     whileExtractData->i1 = i1;
     whileExtractData->i2 = i2;
     whileExtractData->i3 = i3;
@@ -424,7 +424,7 @@ Literal
                     $$.data.typeModifier = &s_javaStringModifier;
                     $$.data.reference = NULL;
                 } else {
-                    $$.data.position = StackMemoryAlloc(Position);
+                    $$.data.position = stackMemoryAlloc(sizeof(Position));
                     *$$.data.position = $1.data;
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -436,7 +436,7 @@ Literal
                     $$.data.typeModifier = newSimpleTypeModifier(TypeNull);
                     $$.data.reference = NULL;
                 } else {
-                    $$.data.position = StackMemoryAlloc(Position);
+                    $$.data.position = stackMemoryAlloc(sizeof(Position));
                     *$$.data.position = $1.data->position;
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -713,7 +713,7 @@ Name
 
 SimpleName
     :   IDENTIFIER				{
-            $$.data = StackMemoryAlloc(IdList);
+        $$.data = stackMemoryAlloc(sizeof(IdList));
             fillIdList($$.data, *$1.data, $1.data->name, TypeDefault, NULL);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
@@ -721,7 +721,7 @@ SimpleName
 
 QualifiedName
     :   Name '.' IDENTIFIER		{
-            $$.data = StackMemoryAlloc(IdList);
+        $$.data = stackMemoryAlloc(sizeof(IdList));
             fillIdList($$.data, *$3.data, $3.data->name, TypeDefault, $1.data);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
@@ -822,7 +822,7 @@ CompilationUnit: {
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR)
                                 j=i;
                         }
-                        cdir = StackMemoryAllocC(j+1, char);
+                        cdir = stackMemoryAlloc(j+1);
                         strncpy(cdir,currentFile.fileName,j); cdir[j]=0;
                         javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
@@ -836,7 +836,7 @@ CompilationUnit: {
                         }
                         packlen = strlen(s_javaThisPackageName);
                         if (j>packlen && filenameCompare(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
-                            cdir = StackMemoryAllocC(j-packlen, char);
+                            cdir = stackMemoryAlloc(j-packlen);
                             strncpy(cdir, currentFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
                             javaStat->namedPackagePath = cdir;
                             javaStat->currentPackage = "";
@@ -850,7 +850,7 @@ CompilationUnit: {
                     javaParsingInitializations();
                     // make first and second pass through file
                     assert(s_jsl == NULL); // no nesting
-                    jsltypeTab = StackMemoryAlloc(JslTypeTab);
+                    jsltypeTab = stackMemoryAlloc(sizeof(JslTypeTab));
                     jslTypeTabInit(jsltypeTab, MAX_JSL_SYMBOLS);
                     javaReadSymbolFromSourceFileInit(olOriginalFileNumber,
                                                      jsltypeTab);
@@ -886,7 +886,7 @@ CompilationUnit: {
                     javaClassifyToPackageName($2.data);
                 }
                 javaCreateComposedName(NULL,$2.data,'/',NULL,ppp,MAX_FILE_NAME_SIZE);
-                pname = StackMemoryAllocC(strlen(ppp)+1, char);
+                pname = stackMemoryAlloc(strlen(ppp)+1);
                 strcpy(pname, ppp);
                 s_jsl->classStat = newJslClassStat($2.data, NULL, pname, NULL);
                 if (inSecondJslPass()) {
@@ -3048,7 +3048,7 @@ PrimaryNoNewArray
             if (regularPass()) {
                 $$.data = $2.data;
                 if (SyntaxPassOnly()) {
-                    $$.data.position = StackMemoryAlloc(Position);
+                    $$.data.position = stackMemoryAlloc(sizeof(Position));
                     *$$.data.position = $1.data;
                     PropagateBoundaries($$, $1, $3);
                     if (positionIsBetween($$.b, cxRefPosition, $$.e)

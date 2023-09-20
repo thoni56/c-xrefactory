@@ -33,18 +33,6 @@ typedef struct codeBlock {
 /* ******************** a simple memory handler ************************ */
 
 
-/**********************************************************************
-
-    Stack memory synchronized with program block structure. New block
-    with stackMemoryBlockStart();
-
-    Convenience functions:
-*/
-#define StackMemoryAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
-#define StackMemoryAllocC(n, t) ((t*) stackMemoryAlloc((n)*sizeof(t)))
-
-
-
 /* pre-processor macro definitions allocations */
 extern void *ppmAlloc(size_t size);
 extern void *ppmAllocc(int count, size_t size);
@@ -138,6 +126,13 @@ extern void addToTrail(void (*action)(void*), void *p, bool needTrailOnTopLevel)
 extern void removeFromTrailUntil(FreeTrail *untilP);
 
 extern void initOuterCodeBlock(void);
+
+
+/**********************************************************************
+
+    Stack memory synchronized with program block structure. New block
+    with stackMemoryBlockStart();
+*/
 extern void *stackMemoryAlloc(int size);
 extern char *stackMemoryPushString(char *s);
 

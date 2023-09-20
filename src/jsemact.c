@@ -111,7 +111,7 @@ char *javaCreateComposedName(char *prefix,
         len++;
     len += ll;
     if (resultBuffer == NULL) {
-        ln = StackMemoryAllocC(len+1, char);
+        ln = stackMemoryAlloc(len+1);
     } else {
         assert(len < resultBufferSize);
         ln = resultBuffer;
@@ -239,7 +239,7 @@ static bool javaFindFile0(char *classPath, char *separator, char *name,
         found = true;
     }
     if (found && resultingName!=NULL) {
-        *resultingName = StackMemoryAllocC(strlen(normalizedFileName)+1, char);
+        *resultingName = stackMemoryAlloc(strlen(normalizedFileName)+1);
         strcpy(*resultingName, normalizedFileName);
     }
     return found;
@@ -688,13 +688,13 @@ void javaReadSymbolFromSourceFileInit(int sourceFileNum,
     S_jslStat           *njsl;
     char				*yyg;
     int					yygsize;
-    njsl = StackMemoryAlloc(S_jslStat);
+    njsl = stackMemoryAlloc(sizeof(S_jslStat));
     // very space consuming !!!, it takes about 400kb of working memory
     // TODO!!!! to allocate and save only used parts of 'gyyvs - gyyvsp'
     // and 'gyyss - gyyssp' ??? And copying twice? definitely yes!
     //yygsize = sizeof(struct yyGlobalState);
     yygsize = ((char*)(s_yygstate->gyyvsp+1)) - ((char *)s_yygstate);
-    yyg = StackMemoryAllocC(yygsize, char);
+    yyg = stackMemoryAlloc(yygsize);
     fillJslStat(njsl, 0, sourceFileNum, currentLanguage, typeTab, NULL, NULL,
                  uniyylval, (S_yyGlobalState*)yyg, yygsize, s_jsl);
     memcpy(njsl->savedYYstate, s_yygstate, yygsize);
@@ -759,7 +759,7 @@ void javaReadSymbolsFromSourceFile(char *fname) {
     fileNumber = addFileNameToFileTable(fname);
     memBalance = currentBlock->firstFreeIndex;
     beginBlock();
-    typeTab = StackMemoryAlloc(JslTypeTab);
+    typeTab = stackMemoryAlloc(sizeof(JslTypeTab));
     javaReadSymbolFromSourceFileInit(fileNumber, typeTab);
     jslTypeTabInit(typeTab, MAX_JSL_SYMBOLS);
     javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
@@ -1591,8 +1591,8 @@ Symbol *javaCreateNewMethod(char *nn, Position *p, int mem) {
         CF_ALLOC(symbol, Symbol);
     } else {
         name = nn;
-        m = StackMemoryAlloc(TypeModifier);
-        symbol = StackMemoryAlloc(Symbol);
+        m = stackMemoryAlloc(sizeof(TypeModifier));
+        symbol = stackMemoryAlloc(sizeof(Symbol));
     }
 
     initTypeModifierAsFunction(m, NULL, NULL, NULL, NULL);
@@ -1688,7 +1688,7 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
             CF_ALLOCC(ln, ppi+1, char);
         } else {
             assert(mem==MEMORY_XX);
-            ln = StackMemoryAllocC(ppi+1, char);
+            ln = stackMemoryAlloc(ppi+1);
         }
         strcpy(ln,pp);
         decl->linkName = ln;
@@ -2220,7 +2220,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationN(IdList *name) {
     TypeModifier		*expr;
     Reference			*rr;
     int					nt;
-    erfs = StackMemoryAlloc(S_extRecFindStr);
+    erfs = stackMemoryAlloc(sizeof(S_extRecFindStr));
     erfs->params = NULL;
     nt = javaClassifyAmbiguousName(name, &erfs->s,&erfs->memb,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_METHOD,UsageUsed);
     if (nt != TypeExpression) {
@@ -2255,7 +2255,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
         methodAppliedOnNonClass(name->name);
         return NULL;
     }
-    erfs = StackMemoryAlloc(S_extRecFindStr);
+    erfs = stackMemoryAlloc(sizeof(S_extRecFindStr));
     erfs->params = NULL;
     javaLoadClassSymbolsFromFile(tt->u.t);
     Result rr = findStrRecordSym(iniFind(tt->u.t,&erfs->s), name->name, &erfs->memb,
@@ -2289,7 +2289,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
         return NULL;
     assert(ss && ss->type == TypeStruct);
     assert(ss->javaClassIsLoaded);
-    erfs = StackMemoryAlloc(S_extRecFindStr);
+    erfs = stackMemoryAlloc(sizeof(S_extRecFindStr));
     erfs->params = NULL;
 /*	I do not know, once will come the day I will know
     if (s_javaStat->cpMethod != NULL) {
@@ -2326,7 +2326,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
         return NULL;
     assert(clas && clas->type == TypeStruct);
     javaLoadClassSymbolsFromFile(clas);
-    erfs = StackMemoryAlloc(S_extRecFindStr);
+    erfs = stackMemoryAlloc(sizeof(S_extRecFindStr));
     erfs->params = NULL;
     assert(clas->javaClassIsLoaded);
     Result rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
@@ -2542,10 +2542,10 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
 
     assert(javaStat);
     oldStat = javaStat;
-    javaStat = StackMemoryAlloc(JavaStat);
+    javaStat = stackMemoryAlloc(sizeof(JavaStat));
     *javaStat = *oldStat;
     javaStat->next = oldStat;
-    locals = StackMemoryAlloc(SymbolTable);
+    locals = stackMemoryAlloc(sizeof(SymbolTable));
     symbolTableInit(locals, MAX_CL_SYMBOLS);
 /*&fprintf(dumpOut,"adding new class %s\n",name->name);fflush(dumpOut);&*/
     if (oldStat->next!=NULL) {
@@ -2567,14 +2567,14 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
 //&		assert(innerNamesCorrect);
         dd = nn->cl;
         fillId(&idi,dd->linkName, NULL, name->position);
-        p = StackMemoryAlloc(IdList);
+        p = stackMemoryAlloc(sizeof(IdList));
         fillIdList(p, idi, dd->linkName, TypeStruct, NULL);
         ddd = javaAddType(p, access, &name->position);
         assert(dd==ddd);
         //&javaCreateClassFileItem(dd);
     } else {
         /* probably base class */
-        p = StackMemoryAlloc(IdList);
+        p = stackMemoryAlloc(sizeof(IdList));
         fillIdList(p,*name,name->name,TypeStruct,javaStat->className);
         dd = javaAddType(p, access, &name->position);
         assert(dd->type == TypeStruct);
@@ -2597,7 +2597,7 @@ struct freeTrail *newAnonClassDefinitionBegin(Id *interfName) {
     struct freeTrail * res;
     IdList	*ll;
     Symbol		*interf, *str;
-    ll = StackMemoryAlloc(IdList);
+    ll = stackMemoryAlloc(sizeof(IdList));
     fillIdList(ll, *interfName, interfName->name, TypeDefault, NULL);
     javaClassifyToTypeName(ll,UsageUsed,&str, USELESS_FQT_REFS_ALLOWED);
     interf = javaTypeNameDefinition(ll);

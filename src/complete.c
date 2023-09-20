@@ -842,7 +842,7 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
                 psuff = "(";
             }
         }
-        cn = StackMemoryAllocC(cnamelen+strlen(psuff)+1, char);
+        cn = stackMemoryAlloc(cnamelen+strlen(psuff)+1);
         strcpy(cn, cname);
         strcpy(cn+cnamelen, psuff);
     }
@@ -907,7 +907,7 @@ static void processSpecialInheritedFullCompletion( Completions *c, int orderFlag
         ll+=printJavaModifiers(tt+ll, &size, r->access);
     }
     typeSPrint(tt+ll, &size, r->u.typeModifier, cname, ' ', 0, 1,SHORT_NAME, NULL);
-    fcc = StackMemoryAllocC(strlen(tt)+1, char);
+    fcc = stackMemoryAlloc(strlen(tt)+1);
     strcpy(fcc,tt);
     //&fprintf(dumpOut,":adding %s\n",fcc);fflush(dumpOut);
     fillCompletionLine(&compLine, fcc, r, TypeInheritedFullMethod, vlevel,0,NULL,vFunCl);
@@ -1260,7 +1260,7 @@ static void javaPackageNameCompletion(
     char *cname;
 
     if (strchr(fname,'.')!=NULL) return;        /* not very proper */
-    cname = StackMemoryAllocC(strlen(fname)+1, char);
+    cname = stackMemoryAlloc(strlen(fname)+1);
     strcpy(cname, fname);
     fillCompletionLine(&compLine, cname, NULL, TypePackage,0, 0 , NULL,NULL);
     processName(cname, &compLine, 1, c);
@@ -1303,7 +1303,7 @@ static void javaTypeNameCompletion(
             completeConstructorsFromFile(c, cfname);
         }
     }
-    cname = StackMemoryAllocC(len+1, char);
+    cname = stackMemoryAlloc(len+1);
     strncpy(cname, fname, len);
     cname[len]=0;
     fillCompletionLine(&compLine, cname, memb, complType,0, 0 , NULL,NULL);
@@ -1530,7 +1530,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
                 && pathncmp(c->idToProcess, ttt, c->idToProcessLen, options.completionCaseSensitive)==0)) {
             memb = javaGetFieldClass(ttt, &sname);
             linkNamePrettyPrint(sss, ttt, TMP_STRING_SIZE, LONG_NAME);
-            ss = StackMemoryAllocC(strlen(sss)+1, char);
+            ss = stackMemoryAlloc(strlen(sss)+1);
             strcpy(ss, sss);
             sname = lastOccurenceInString(ss,'.');
             // do not complete names not containing dot (== not fqt)
@@ -1669,14 +1669,14 @@ void javaHintVariableName(Completions*c) {
     sprintf(ss, "%s", uniyylval->ast_id.data->name);
     //&sprintf(ss, "%s", yytext);
     if (ss[0]!=0) ss[0] = tolower(ss[0]);
-    name = StackMemoryAllocC(strlen(ss)+1, char);
+    name = stackMemoryAlloc(strlen(ss)+1);
     strcpy(name, ss);
     sprintf(ss, "%s = new %s", name, uniyylval->ast_id.data->name);
     //&sprintf(ss, "%s = new %s", name, yytext);
-    affect1 = StackMemoryAllocC(strlen(ss)+1, char);
+    affect1 = stackMemoryAlloc(strlen(ss)+1);
     strcpy(affect1, ss);
     sprintf(ss, "%s = null;", name);
-    affect2 = StackMemoryAllocC(strlen(ss)+1, char);
+    affect2 = stackMemoryAlloc(strlen(ss)+1);
     strcpy(affect2, ss);
     fillCompletionLine(&compLine, affect1, NULL, TypeSpecialComplet,0,0,NULL,NULL);
     processName(affect1, &compLine, 0, c);
