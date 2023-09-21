@@ -114,6 +114,12 @@ else
     HAVE_GCOV_TOOL=no
 endif
 
+ifneq (, $(shell lcov --version | grep 'version 2'))
+	HAVE_LCOV2=yes
+else
+	HAVE_LCOV2=no
+endif
+
 # If we don't then we can generate .gcov from the .info but we need:
 ifneq (, $(shell command -v info2gcov 2> /dev/null))
     HAVE_INFO2GCOV=yes
@@ -340,7 +346,7 @@ clean-coverage:
 
 # Create .gcov files from .gcda in $(OBJDIR)
 gcov:
-	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" | cat
+	-$(GCOV) $(OBJDIR)/*.o --object-directory $(OBJDIR) 2>&1 >/dev/null | grep -v "assuming not executed" && true
 
 coverage-report:
 # We create separate coverage files for each test to be able to run them in parallel (see ../tests/Makefile)
@@ -368,14 +374,15 @@ the-actual-coverage-report:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_GCOV_TOOL),yes)
 # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
-	$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" | cat
+	$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" && true
 else
 # The run_test script in ../tests has created a coverage.info in each test directory
 # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
 	$(LCOV) $(SYSTEM_TEST_COVERAGE_FILES) -q -o ../coverage/total.info 2>&1
 endif
 	@echo "LCOV-ing done..."
-	$(LCOV) -q --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
+	[ "$(HAVE_LCOV2)" = "yes" ] && lcovignore="--ignore-errors unused,unused" || true ; \
+	$(LCOV) -q $$lcovignore --remove ../coverage/total.info $(LCOV_IGNORE_COVERAGE_FOR) -o ../coverage/total.info
 	@echo "LCOV --remove done..."
 ifeq ($(HAVE_GCOV_TOOL),no)
 # Then we have to wait until now to generate the gcov's for Emacs cov-mode...
@@ -457,10 +464,12 @@ unittests: parsers $(UNITTESTS)
 	$(MAKE) -e clean-coverage
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
 	make gcov
+	[ "$(HAVE_LCOV2)" = "yes" ] && lcovignore1="--ignore-errors gcov,gcov" || true ; \
+	[ "$(HAVE_LCOV2)" = "yes" ] && lcovignore2="--ignore-errors unused,unused" || true ; \
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount -gt 0 ] ; then \
-		$(LCOV) -q -t unittests -d . -c -o unittests.i 2>&1 | grep -v "did not produce any data" ; \
-		$(LCOV) -q --remove unittests.i $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.i ; \
+		$(LCOV) -q $$lcovignore1  -t unittests -d . -c -o unittests.i 2>&1 | grep -v "did not produce any data" ; \
+		$(LCOV) -q $$lcovignore2 --remove unittests.i $(LCOV_IGNORE_COVERAGE_FOR) -o unittests.i ; \
 		mv unittests.i unittests.info ; \
 	fi
 	touch .unittests.done

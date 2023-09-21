@@ -23,6 +23,7 @@ else
         # We need the .gcno here
         rsync -q -acv --filter='+ */' --filter='+ *.gcno' --filter='- *' ../../src/.objects/ .coverage
         # Then we create a coverage.info for this test
-        lcov -q -c -d . -b ../../src -o .coverage/coverage.info 2>&1 | grep -v "did not produce any data" | cat
+        lcov --version | grep -qv 'version 2' || lcovignore="--ignore-errors gcov,gcov --ignore-errors empty,empty"
+        lcov -q $lcovignore -c -d . -b ../../src -o .coverage/coverage.info 2>&1 | grep -v "did not produce any data" | cat
     fi
 fi
