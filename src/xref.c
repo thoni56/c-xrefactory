@@ -429,7 +429,7 @@ finish:
 
 void xref(int argc, char **argv) {
     ENTER();
-    mainOpenOutputFile(options.outputFileName);
+    openOutputFile(options.outputFileName);
     loadAllOpenedEditorBuffers();
 
     callXref(argc, argv, false);

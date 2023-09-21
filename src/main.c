@@ -754,26 +754,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     LEAVE();
 }
 
-void mainOpenOutputFile(char *outfile) {
-    closeMainOutputFile();
-    if (outfile!=NULL) {
-        log_trace("Opening output file '%s'", options.outputFileName);
-#if defined (__WIN32__)
-        // open it as binary file, so that record lengths will be correct
-        communicationChannel = openFile(outfile, "wb");
-#else
-        communicationChannel = openFile(outfile, "w");
-#endif
-    } else {
-        communicationChannel = stdout;
-    }
-    if (communicationChannel == NULL) {
-        errorMessage(ERR_CANT_OPEN, outfile);
-        communicationChannel = stdout;
-    }
-    errOut = communicationChannel;
-}
-
 /* initLogging() is called as the first thing in main() so we look for log command line options here */
 static void initLogging(int argc, char *argv[]) {
     char fileName[MAX_FILE_NAME_SIZE+1] = "";

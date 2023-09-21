@@ -13,7 +13,3 @@ bool initializeFileProcessing(bool *firstPass,
 void mainTaskEntryInitialisations(int argc, char **argv) {
   mock(argc, argv);
 }
-
-void mainOpenOutputFile(char *ofile) {
-  mock(ofile);
-}

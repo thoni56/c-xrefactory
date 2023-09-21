@@ -284,12 +284,12 @@ void server(int argc, char **argv) {
         getPipedOptions(&nargc, &nargv);
         // O.K. -o option given on command line should catch also file not found
         // message
-        mainOpenOutputFile(options.outputFileName);
+        openOutputFile(options.outputFileName);
         //&dumpOptions(nargc, nargv);
         log_trace("Server: Getting request");
         initServer(nargc, nargv);
         if (communicationChannel==stdout && options.outputFileName!=NULL) {
-            mainOpenOutputFile(options.outputFileName);
+            openOutputFile(options.outputFileName);
         }
         callServer(argc, argv, nargc, nargv, &firstPass);
         if (options.serverOperation == OLO_ABOUT) {

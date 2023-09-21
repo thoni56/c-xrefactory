@@ -178,7 +178,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
 ** DONE Make commons.c independent of main
-** DOING Make options.c independent of main
+** DONE Make options.c independent of main
 ** TODO Make cxref.c independent of main
 ** TODO Make refactory.c independent of main
    This probably requires a lot more understanding of refactory.c and why

@@ -4,6 +4,10 @@
 #include <cgreen/mocks.h>
 #include <stdlib.h>
 
+void openOutputFile(char *outfile) {
+  mock(outfile);
+}
+
 void closeMainOutputFile(void) {
     mock();
 }

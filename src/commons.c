@@ -18,6 +18,26 @@
 #include "ppc.h"
 
 
+void openOutputFile(char *outfile) {
+    closeMainOutputFile();
+    if (outfile!=NULL) {
+        log_trace("Opening output file '%s'", options.outputFileName);
+#if defined (__WIN32__)
+        // open it as binary file, so that record lengths will be correct
+        communicationChannel = openFile(outfile, "wb");
+#else
+        communicationChannel = openFile(outfile, "w");
+#endif
+    } else {
+        communicationChannel = stdout;
+    }
+    if (communicationChannel == NULL) {
+        errorMessage(ERR_CANT_OPEN, outfile);
+        communicationChannel = stdout;
+    }
+    errOut = communicationChannel;
+}
+
 void closeMainOutputFile(void) {
     if (communicationChannel!=stdout) {
         //&fprintf(dumpOut,"CLOSING OUTPUT FILE\n");

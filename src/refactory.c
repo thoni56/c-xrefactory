@@ -252,7 +252,7 @@ static void beInteractive(void) {
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(argument_count(editServInitOptions), editServInitOptions, DONT_PROCESS_FILE_ARGUMENTS);
         getPipedOptions(&pargc, &pargv);
-        mainOpenOutputFile(refactoringOptions.outputFileName);
+        openOutputFile(refactoringOptions.outputFileName);
         if (pargc <= 1)
             break;
         initServer(pargc, pargv);
@@ -4555,7 +4555,7 @@ void refactory(void) {
     // below
     refactoringOptions.serverOperation = OLO_LIST;
 
-    mainOpenOutputFile(refactoringOptions.outputFileName);
+    openOutputFile(refactoringOptions.outputFileName);
     loadAllOpenedEditorBuffers();
     // initialise lastQuasySaveTime
     quasiSaveModifiedEditorBuffers();

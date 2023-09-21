@@ -9,9 +9,6 @@
 // xref.c, server.c
 extern bool initializeFileProcessing(bool *firstPass, int argc, char **argv, int nargc, char **nargv,
                                      Language *outLanguage);
-// xref.c, server.c and refactory.c
-extern void mainOpenOutputFile(char *ofile);
-
 
 // main.c, refactory.c
 extern void mainTaskEntryInitialisations(int argc, char **argv);

@@ -23,6 +23,8 @@ extern void copyFileFromTo(char *src, char *dest);
 extern int extractPathInto(char *source, char *dest); /* Return length of path */
 extern char *normalizeFileName(char *name, char *relativeto);
 
+
+extern void openOutputFile(char *outfile);
 extern void closeMainOutputFile(void);
 
 #endif
