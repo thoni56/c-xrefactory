@@ -1,4 +1,4 @@
-project('c-xrefactory-unittest', 'c')
+project('c-xrefactory', 'c')
 
 # We need the fs module
 fs = import('fs')
@@ -52,8 +52,8 @@ modules_with_unittest_dependencies = {
 # Unittests
 #
 cgreen = find_program('cgreen-runner')
-cgreen_inc = include_directories('/usr/include/cgreen')
-cgreen_lib = meson.get_compiler('c').find_library('cgreen', dirs:'/usr/lib/')
+cgreen_inc = include_directories('/usr/local/include/cgreen')
+cgreen_lib = meson.get_compiler('c').find_library('cgreen', dirs:'/usr/local/lib/')
 cgreen_dep = declare_dependency(include_directories: cgreen_inc, dependencies: cgreen_lib)
 
 # Compile and run tests for each module
@@ -81,6 +81,14 @@ foreach mod, _ : modules_with_unittest_dependencies
 endforeach
 
 #
+# Modules
+#
+modules = []
+foreach module, _ : modules_with_unittest_dependencies
+  modules += module + '.c'
+endforeach
+
+#
 # Compile each module
 #
 foreach mod, _ : modules_with_unittest_dependencies
@@ -89,7 +97,51 @@ foreach mod, _ : modules_with_unittest_dependencies
   # which you later link into your main executable.
 endforeach
 
-#
-# Link c-xref
-#
-executable('c-xref', sources)
+
+# Automatically find version and hash from git
+git_hash = run_command('git', 'describe', '--abbrev=5', '--always', '--tags', '--dirty', check:true).stdout().strip()
+git_tag = run_command('git', 'describe', '--abbrev=0', '--tags', check:true).stdout().strip()
+
+compiled_git_hash = '-DGIT_HASH="@0@"'.format(git_hash)
+compiled_git_tag = '-DVERSION="@0@"'.format(git_tag)
+
+# Apply the GIT flags to 'options.c'
+if 'options.c' in sources
+  c_args = [compiled_git_hash, compiled_git_tag]
+else
+  c_args = []
+endif
+
+# Generate lexem.h from the parser.tab.h and extra lexemes in character_lexems.txt
+custom_target('generate_lexem_h',
+  output: 'lexem.h',
+  input: ['character_lexems.txt', 'c_parser.tab.h'],
+  command: [
+    'sh', '-c',
+    '''
+    echo Rebuilding lexem.h...
+    echo "#ifndef LEXEM_H_INCLUDED" > @OUTPUT@.tmp
+    echo "#define LEXEM_H_INCLUDED" >> @OUTPUT@.tmp
+	echo >> @OUTPUT@.tmp
+	echo "/**** DO NOT EDIT - generated from c_parser.tab.h & character_lexems.txt by Makefile ****/" >> @OUTPUT@.tmp
+	echo >> @OUTPUT@.tmp
+    cat @0@ >> @OUTPUT@.tmp
+    grep define @1@ | sed -e "s/#define \\(.*\\) \\([0-9]*\\)/\\1 = \\2,/" >> @OUTPUT@.tmp
+	echo "typedef enum LexemCode {" >> @OUTPUT@.tmp
+    echo >> @OUTPUT@.tmp
+	echo "extern void initLexemEnumNames(void);" >> @OUTPUT@.tmp
+	echo >> @OUTPUT@.tmp
+	echo "#endif" >> @OUTPUT@.tmp
+	# Sanity check for content, otherwise yacc errored out probably
+    if grep " = " @OUTPUT@.tmp > /dev/null; then
+      mv @OUTPUT@.tmp @OUTPUT@
+    else
+      rm @OUTPUT@.tmp
+    fi
+    ''',
+    'character_lexems.txt', 'c_parser.tab.h'
+  ],
+  build_always_stale: true
+)
+
+executable('c-xref', sources, 'lexem.h', c_args: c_args, include_directories: '.')
