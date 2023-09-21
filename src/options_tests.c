@@ -19,7 +19,6 @@
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "main.mock"
 #include "misc.mock"
 #include "parsers.mock"
 #include "ppc.mock"
