@@ -14,6 +14,7 @@
 
 #include "log.h"
 
+#include "options_config.h"
 
 /* PUBLIC DATA: */
 

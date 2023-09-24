@@ -1,0 +1,2 @@
+#define GIT_HASH "@GIT_HASH@"
+#define VERSION "@VERSION@"

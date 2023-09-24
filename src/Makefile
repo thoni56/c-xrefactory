@@ -173,9 +173,10 @@ chcheck:
 #########################################################################
 include sources.mk
 
-GIT_HASH = $(shell git describe --abbrev=5 --always --tags --dirty)
-GIT_TAG  = $(shell git describe --abbrev=0 --tags)
-$(OBJDIR)/options.o: CFLAGS += -DGIT_HASH=\"$(GIT_HASH)\" -DVERSION=\"$(GIT_TAG)\"
+# Automatically generate a config header with GIT hash/tag info
+options_config.h: options_config.h.in generate_options_config.sh
+	./generate_options_config.sh
+options.c: options_config.h
 
 PHONY += build
 build: CFLAGS += -DYYDEBUG

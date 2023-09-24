@@ -17,3 +17,4 @@ c_rules*.txt
 yacc_parser.head
 yacc_parser.tail
 .unittests.done
+options_config.h
