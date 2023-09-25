@@ -11,7 +11,7 @@ all_modules = [ 'main', 'globals', 'misc', 'semact', 'commons',
   'storage', 'extract', 'classhierarchy', 'jslsemact', 'filetable',
   'macroargumenttable', 'session', 'editorbuffertab', 'symboltable',
   'javafqttab', 'jsltypetab', 'reftab', 'memory', 'characterreader',
-  'hash', 'symbol', 'c_parser.tab', 'cexp_parser.tab',
+  'hash', 'symbol', 'cexp_parser.tab',
   'java_parser.tab', 'yacc_parser.tab', 'filedescriptor',
   'typemodifier', 'position', 'id', 'parsers', 'fileio', 'stringlist',
   'ppc', 'server', 'reference', 'xref', 'refactorings', 'progress',
@@ -96,6 +96,20 @@ check_unittests_target = custom_target('check_unittests', output: '.unittests_du
                                        build_always_stale: true,
                                        depends: unittests_target)
 
+# Configure options_config.h with GIT hash/tag
+git = find_program('git', required : true)
+
+git_hash = run_command(git, 'describe', '--abbrev=5', '--always', '--tags', '--dirty', check:true).stdout().strip()
+version = run_command(git, 'describe', '--abbrev=0', '--tags', check:true).stdout().strip()
+
+conf_data = configuration_data()
+conf_data.set('GIT_HASH', git_hash)
+conf_data.set('VERSION', version)
+
+configure_file(input: 'options_config.h.in',
+               output: 'options_config.h',
+               configuration: conf_data)
+
 #
 # Sources
 #
@@ -104,27 +118,35 @@ foreach module : all_modules
   sources += module + '.c'
 endforeach
 
+# Generate parsers
+yacc = find_program('yacc')
+c_parser_target = custom_target('c_parser',
+  input: 'c_parser.y',
+  output: ['c_parser.tab.c', 'c_parser.tab.h'],
+  command: [yacc, '--defines=@OUTDIR@/c_parser.tab.h', '-o', '@OUTDIR@/c_parser.tab.c', '@INPUT@'],
+  build_always_stale: true
+)
+
 # Generate lexem.h from the parser.tab.h and extra lexemes in character_lexems.txt
-custom_target('generate_lexem_h',
-  output: 'lexem.h',
-  input: ['character_lexems.txt', 'c_parser.tab.h'],
+lexem_h = custom_target(output: 'lexem.h',
+  input: ['character_lexems.txt', c_parser_target[1]],
   command: [
     'sh', '-c',
     '''
     echo Rebuilding lexem.h...
     echo "#ifndef LEXEM_H_INCLUDED" > @OUTPUT@.tmp
     echo "#define LEXEM_H_INCLUDED" >> @OUTPUT@.tmp
-        echo >> @OUTPUT@.tmp
-        echo "/**** DO NOT EDIT - generated from c_parser.tab.h & character_lexems.txt by Makefile ****/" >> @OUTPUT@.tmp
-        echo >> @OUTPUT@.tmp
+    echo >> @OUTPUT@.tmp
+    echo "/**** DO NOT EDIT - generated from c_parser.tab.h & character_lexems.txt ****/" >> @OUTPUT@.tmp
+    echo >> @OUTPUT@.tmp
     cat @0@ >> @OUTPUT@.tmp
     grep define @1@ | sed -e "s/#define \\(.*\\) \\([0-9]*\\)/\\1 = \\2,/" >> @OUTPUT@.tmp
-        echo "typedef enum LexemCode {" >> @OUTPUT@.tmp
+    echo "typedef enum LexemCode {" >> @OUTPUT@.tmp
     echo >> @OUTPUT@.tmp
-        echo "extern void initLexemEnumNames(void);" >> @OUTPUT@.tmp
-        echo >> @OUTPUT@.tmp
-        echo "#endif" >> @OUTPUT@.tmp
-        # Sanity check for content, otherwise yacc errored out probably
+    echo "extern void initLexemEnumNames(void);" >> @OUTPUT@.tmp
+    echo >> @OUTPUT@.tmp
+    echo "#endif" >> @OUTPUT@.tmp
+    # Sanity check for content, otherwise yacc errored out probably
     if grep " = " @OUTPUT@.tmp > /dev/null; then
       mv @OUTPUT@.tmp @OUTPUT@
     else
@@ -134,6 +156,11 @@ custom_target('generate_lexem_h',
     'character_lexems.txt', 'c_parser.tab.h'
   ],
   build_always_stale: true
+                       )
+
+lexem_dep = declare_dependency(
+    sources: lexem_h  # ensure all sources consider the lexem_h as a prerequisite
 )
 
-executable('c-xref', sources, 'lexem.h', check_unittests_target)
+
+executable('c-xref', sources, c_parser_target, check_unittests_target, dependencies: lexem_dep)
