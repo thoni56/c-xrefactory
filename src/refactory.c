@@ -73,7 +73,7 @@ static char *editServInitOptions[] = {
 };
 
 // Refactory will always use xref2 protocol and inhibit a few messages when generating/updating xrefs
-static char *xrefInitOptions[] = {
+static char *initOptionsForReferencesUpdate[] = {
     "xref",
     "-xrefactory-II",
     "-briefoutput",
@@ -179,9 +179,10 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
 // be very careful when calling this function as it is messing all static variables
 // including options in s_opt, ...
 // call to this function MUST be followed by a pushing action, to refresh options
-static void ensureReferencesUpdated(char *project) {
-    int   nargc, refactoryXrefInitOptionsNum;
-    char *nargv[MAX_NARGV_OPTIONS_COUNT];
+static void ensureReferencesAreUpdated(char *project) {
+    int argumentCount;
+    char *argumentVector[MAX_NARGV_OPTIONS_COUNT];
+    int refactoryXrefInitOptionsCount;
 
     // following would be too long to be allocated on stack
     static Options savedOptions;
@@ -197,18 +198,18 @@ static void ensureReferencesUpdated(char *project) {
 
     deepCopyOptionsFromTo(&options, &savedOptions);
 
-    setArguments(nargv, project, NULL, NULL);
-    nargc                       = argument_count(nargv);
-    refactoryXrefInitOptionsNum = argument_count(xrefInitOptions);
-    for (int i = 1; i < refactoryXrefInitOptionsNum; i++) {
-        nargv[nargc++] = xrefInitOptions[i];
+    setArguments(argumentVector, project, NULL, NULL);
+    argumentCount = argument_count(argumentVector);
+    refactoryXrefInitOptionsCount = argument_count(initOptionsForReferencesUpdate);
+    for (int i = 1; i < refactoryXrefInitOptionsCount; i++) {
+        argumentVector[argumentCount++] = initOptionsForReferencesUpdate[i];
     }
-    nargv[nargc++] = updateOption;
+    argumentVector[argumentCount++] = updateOption;
 
     currentPass = ANY_PASS;
-    mainTaskEntryInitialisations(nargc, nargv);
+    mainTaskEntryInitialisations(argumentCount, argumentVector);
 
-    callXref(nargc, nargv, true);
+    callXref(argumentCount, argumentVector, true);
 
     deepCopyOptionsFromTo(&savedOptions, &options);
     ppcEnd(PPC_UPDATE_REPORT);
@@ -220,29 +221,29 @@ static void ensureReferencesUpdated(char *project) {
 
 static void parseBufferUsingServer(char *project, EditorMarker *point, EditorMarker *mark,
                                   char *pushOption, char *pushOption2) {
-    char *nargv[MAX_NARGV_OPTIONS_COUNT];
-    int   nargc;
+    int   argumentCount;
+    char *argumentVector[MAX_NARGV_OPTIONS_COUNT];
 
     currentPass = ANY_PASS;
 
     assert(options.mode == ServerMode);
 
-    setArguments(nargv, project, point, mark);
-    nargc = argument_count(nargv);
+    setArguments(argumentVector, project, point, mark);
+    argumentCount = argument_count(argumentVector);
     if (pushOption != NULL) {
-        nargv[nargc++] = pushOption;
+        argumentVector[argumentCount++] = pushOption;
     }
     if (pushOption2 != NULL) {
-        nargv[nargc++] = pushOption2;
+        argumentVector[argumentCount++] = pushOption2;
     }
-    initServer(nargc, nargv);
-    callServer(argument_count(editServInitOptions), editServInitOptions, nargc, nargv,
+    initServer(argumentCount, argumentVector);
+    callServer(argument_count(editServInitOptions), editServInitOptions, argumentCount, argumentVector,
                &editServerSubTaskFirstPass);
 }
 
 static void beInteractive(void) {
-    int    pargc;
-    char **pargv;
+    int    argumentCount;
+    char **argumentVectorP;
 
     ENTER();
     deepCopyOptionsFromTo(&options, &savedOptions);
@@ -251,14 +252,14 @@ static void beInteractive(void) {
         ppcSynchronize();
         deepCopyOptionsFromTo(&savedOptions, &options);
         processOptions(argument_count(editServInitOptions), editServInitOptions, DONT_PROCESS_FILE_ARGUMENTS);
-        getPipedOptions(&pargc, &pargv);
+        getPipedOptions(&argumentCount, &argumentVectorP);
         openOutputFile(refactoringOptions.outputFileName);
-        if (pargc <= 1)
+        if (argumentCount <= 1)
             break;
-        initServer(pargc, pargv);
+        initServer(argumentCount, argumentVectorP);
         if (options.continueRefactoring != RC_NONE)
             break;
-        callServer(argument_count(editServInitOptions), editServInitOptions, pargc, pargv,
+        callServer(argument_count(editServInitOptions), editServInitOptions, argumentCount, argumentVectorP,
                    &editServerSubTaskFirstPass);
         answerEditAction();
     }
@@ -304,7 +305,7 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
 
 static void safetyCheck(char *project, EditorMarker *point) {
     // !!!!update references MUST be followed by a pushing action, to refresh options
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
     parseBufferUsingServer(project, point, NULL, "-olcxsafetycheck2", NULL);
 
     assert(sessionData.browserStack.top != NULL);
@@ -1774,7 +1775,7 @@ static void restrictAccessibility(EditorMarker *point, int limitIndex, int minAc
     }
 
     // must update, because usualy they are out of date here
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
 
     pushReferences(point, "-olcxrename", NULL, 0);
     assert(sessionData.browserStack.top && sessionData.browserStack.top->menuSym);
@@ -1854,7 +1855,7 @@ static void renameAtPoint(EditorMarker *point) {
         errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
     }
 
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
 
     if (LANGUAGE(LANG_JAVA)) {
         message = STANDARD_SELECT_SYMBOLS_MESSAGE;
@@ -2236,7 +2237,7 @@ static void applyParameterManipulation(EditorMarker *point, int manipulation, in
     EditorMarkerList *occurrences;
     EditorUndo       *startPoint, *redoTrack;
 
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
 
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
@@ -2944,7 +2945,7 @@ static void moveStaticFieldOrMethod(EditorMarker *point, SyntaxPassParsedImporta
 
     if (!validTargetPlace(target, "-olcxmmtarget"))
         return;
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
     if (LANGUAGE(LANG_JAVA))
         getNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
     getMethodLimitsForMoving(point, &mstart, &mend, limitIndex);
@@ -2993,7 +2994,7 @@ static void moveField(EditorMarker *point) {
 
     if (!validTargetPlace(target, "-olcxmmtarget"))
         return;
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
     getNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
     getMethodLimitsForMoving(point, &mstart, &mend, SPP_FIELD_DECLARATION_BEGIN_POSITION);
     lines = countLinesBetweenEditorMarkers(mstart, mend);
@@ -3168,7 +3169,7 @@ static void moveClass(EditorMarker *point) {
     if (!validTargetPlace(target, "-olcxmctarget"))
         return;
 
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
 
     performMoveClass(point, target, &start, &end);
     linenum = countLinesBetweenEditorMarkers(start, end);
@@ -3217,7 +3218,7 @@ static void moveClassToNewFile(EditorMarker *point) {
     int           linenum;
 
     buff = point->buffer;
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
     target = getTargetFromOptions();
 
     // insert package statement
@@ -3284,7 +3285,7 @@ static void refactorVirtualToStatic(EditorMarker *point) {
     Usage             defaultUsage;
 
     nparamdefpos = NULL;
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs = pushGetAndPreCheckReferences(point, nameOnPoint,
@@ -3587,7 +3588,7 @@ static void turnStaticIntoDynamic(EditorMarker *point) {
     EditorMarkerList *occs, *poccs;
     EditorUndo       *checkPoint;
 
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
 
     argn = 0;
     sscanf(refactoringOptions.refpar1, "%d", &argn);
@@ -3998,7 +3999,7 @@ static void performEncapsulateField(EditorMarker *point, EditorRegionList **forb
 static void selfEncapsulateField(EditorMarker *point) {
     EditorRegionList *forbiddenRegions;
     forbiddenRegions = NULL;
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
     performEncapsulateField(point, &forbiddenRegions);
 }
 
@@ -4006,7 +4007,7 @@ static void encapsulateField(EditorMarker *point) {
     EditorRegionList *forbiddenRegions;
     EditorMarker     *cb, *ce;
 
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
 
     //&editorDumpMarker(point);
     makeSyntaxPassOnSource(point);
@@ -4341,7 +4342,7 @@ static void pushDownPullUp(EditorMarker *point, PushPullDirection direction, int
     if (!validTargetPlace(target, "-olcxmmtarget"))
         return;
 
-    ensureReferencesUpdated(refactoringOptions.project);
+    ensureReferencesAreUpdated(refactoringOptions.project);
 
     getNameOfTheClassAndSuperClass(point, sourceFqtName, superFqtName);
     getNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
@@ -4532,11 +4533,6 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
 // --------------------------------------------------------------------
 
 void refactory(void) {
-    int           argCount;
-    char         *file, *argumentFile;
-    char          inputFileName[MAX_FILE_NAME_SIZE];
-    EditorBuffer *buf;
-    EditorMarker *point, *mark;
 
     ENTER();
 
@@ -4560,23 +4556,20 @@ void refactory(void) {
     // initialise lastQuasySaveTime
     quasiSaveModifiedEditorBuffers();
 
-    argCount     = 0;
-    argumentFile = getNextScheduledFile(&argCount);
-    if (argumentFile == NULL) {
-        file = NULL;
-    } else {
-        strcpy(inputFileName, argumentFile);
-        file = inputFileName;
-    }
 
-    buf = NULL;
-    if (file == NULL)
+    int argCount = 0;
+    char *argumentFile = getNextScheduledFile(&argCount);
+
+    if (argumentFile == NULL)
         FATAL_ERROR(ERR_ST, "no input file", XREF_EXIT_ERR);
 
-    buf = findEditorBufferForFile(file);
+    char inputFileName[MAX_FILE_NAME_SIZE];
+    strcpy(inputFileName, argumentFile);
+    char *file = inputFileName;
+    EditorBuffer *buf = findEditorBufferForFile(file);
 
-    point = getPointFromOptions(buf);
-    mark  = getMarkFromOptions(buf);
+    EditorMarker *point = getPointFromOptions(buf);
+    EditorMarker *mark  = getMarkFromOptions(buf);
 
     refactoringStartingPoint = editorUndo;
 
