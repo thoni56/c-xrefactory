@@ -13,7 +13,7 @@
 
 static ReferenceTable referenceTable;
 
-static bool equalReferenceItems(ReferencesItem *e1, ReferencesItem *e2) {
+static bool equalReferenceItems(ReferenceItem *e1, ReferenceItem *e2) {
     return e1->type==e2->type
         && e1->storage==e2->storage
         && e1->category==e2->category
@@ -30,46 +30,46 @@ static bool equalReferenceItems(ReferencesItem *e1, ReferencesItem *e2) {
 
 void initReferenceTable(int size) {
     // We want this in cx_memory, so can't use refTabInit() b.c it allocates in StackMemory
-    referenceTable.tab = cxAlloc(size*sizeof(ReferencesItem *));
+    referenceTable.tab = cxAlloc(size*sizeof(ReferenceItem *));
     refTabNoAllocInit(&referenceTable, size);
 }
 
-ReferencesItem *getReferencesItem(int index) {
+ReferenceItem *getReferenceItem(int index) {
     assert(index < referenceTable.size);
     assert(referenceTable.tab[index]);
     return referenceTable.tab[index];
 }
 
-int getNextExistingReferencesItem(int index) {
+int getNextExistingReferenceItem(int index) {
     for (int i=index; i < referenceTable.size; i++)
         if (referenceTable.tab[i] != NULL)
             return i;
     return -1;
 }
 
-int addToReferencesTable(ReferencesItem *referencesItem) {
+int addToReferencesTable(ReferenceItem *referencesItem) {
     return refTabAdd(&referenceTable, referencesItem);
 }
 
-void pushReferencesItem(ReferencesItem *element, int position) {
+void pushReferenceItem(ReferenceItem *element, int position) {
     refTabPush(&referenceTable, element, position);
 }
 
-void setReferencesItem(int index, ReferencesItem *item) {
+void setReferenceItem(int index, ReferenceItem *item) {
     referenceTable.tab[index] = item;
 }
 
-bool isMemberInReferenceTable(ReferencesItem *element, int *position, ReferencesItem **foundMemberPointer) {
+bool isMemberInReferenceTable(ReferenceItem *element, int *position, ReferenceItem **foundMemberPointer) {
     return refTabIsMember(&referenceTable, element, position, foundMemberPointer);
 }
 
-void mapOverReferenceTable(void (*fun)(ReferencesItem *)) {
+void mapOverReferenceTable(void (*fun)(ReferenceItem *)) {
     ENTER();
     refTabMap(&referenceTable, fun);
     LEAVE();
 }
 
-void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
+void mapOverReferenceTableWithPointer(void (*fun)(ReferenceItem *, void *), void *pointer) {
     refTabMapWithPointer(&referenceTable, fun, pointer);
 }
 

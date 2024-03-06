@@ -444,7 +444,7 @@ static void olcxMenuGenGlobRefsForVirtMethod(SymbolsMenu *menu, FILE *file) {
     genClassHierarchies(menu, file, SECOND_PASS);
 }
 
-static int isVirtualMenuItem(ReferencesItem *r) {
+static int isVirtualMenuItem(ReferenceItem *r) {
     return (r->storage == StorageField
             || r->storage == StorageMethod
             || r->storage == StorageConstructor);
@@ -453,7 +453,7 @@ static int isVirtualMenuItem(ReferencesItem *r) {
 static void genVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
     FILE *file = (FILE *)p1;
     SymbolsMenu    *s;
-    ReferencesItem *r;
+    ReferenceItem *r;
 
     // first count if there are some references at all
     for (s = menu; s != NULL && !s->visible; s = s->next)
@@ -472,7 +472,7 @@ static void genVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
 static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
     FILE *file = (FILE *)p1;
     SymbolsMenu    *m;
-    ReferencesItem *r;
+    ReferenceItem *r;
 
     // Are there are any visible references at all
     for (m=menu; m!=NULL && !m->visible; m=m->next)
@@ -495,7 +495,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
 void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, void *, char *), void *p1,
                                char *p2) {
     SymbolsMenu    *rr, *mp, **ss, *cc, *all;
-    ReferencesItem *cs;
+    ReferenceItem *cs;
     all = NULL;
     rr = menu;
     while (rr!=NULL) {

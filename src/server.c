@@ -94,13 +94,13 @@ static bool symbolCanBeIdentifiedByPosition(int fileNumber) {
 }
 
 static int scheduleFileUsingTheMacro(void) {
-    ReferencesItem  references;
+    ReferenceItem  references;
     SymbolsMenu     menu, *oldMenu;
     OlcxReferences *tmpc;
 
     assert(olstringInMacroBody);
     tmpc = NULL;
-    fillReferencesItem(&references, olstringInMacroBody,
+    fillReferenceItem(&references, olstringInMacroBody,
                        cxFileHashNumber(olstringInMacroBody),
                        NO_FILE_NUMBER, NO_FILE_NUMBER, TypeMacro, StorageExtern,
                        ScopeGlobal, AccessDefault, CategoryGlobal);

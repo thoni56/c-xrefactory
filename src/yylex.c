@@ -1836,12 +1836,12 @@ endOfFile:
 
 static void addMacroBaseUsageRef(Symbol *macroSymbol) {
     bool isMember;
-    ReferencesItem ppp, *memb;
+    ReferenceItem ppp, *memb;
     Reference *r;
     Position basePos;
 
     basePos = makePosition(inputFileNumber, 0, 0);
-    fillReferencesItem(&ppp, macroSymbol->linkName,
+    fillReferenceItem(&ppp, macroSymbol->linkName,
                        cxFileHashNumber(macroSymbol->linkName), // useless, put 0
                        NO_FILE_NUMBER, NO_FILE_NUMBER, TypeMacro, StorageDefault, ScopeGlobal,
                        macroSymbol->access, CategoryGlobal);

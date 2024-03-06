@@ -10,7 +10,7 @@ void fillReference(Reference *reference, Usage usage, Position position,
     reference->next = next;
 }
 
-void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+void fillReferenceItem(ReferenceItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
                         int vFunClass, Type symType, Storage storage, ReferenceScope scope, Access accessFlags,
                         ReferenceCategory category) {
     referencesItem->linkName = name;

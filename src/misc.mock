@@ -22,7 +22,7 @@ void symDump(Symbol *symbol) {
   mock(symbol);
 }
 
-void symbolRefItemDump(ReferencesItem *ss) {
+void symbolRefItemDump(ReferenceItem *ss) {
   mock(ss);
 }
 

@@ -2,7 +2,7 @@
 #include "menu.h"
 #include <cgreen/mocks.h>
 
-void fillSymbolsMenu(SymbolsMenu *menu, ReferencesItem s, bool selected, bool visible,
+void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem s, bool selected, bool visible,
                      unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
     menu->references = s;
     menu->selected = selected;
@@ -41,13 +41,13 @@ void olcxPrintSelectionMenu(SymbolsMenu *menu) {
     mock(menu);
 }
 
-SymbolsMenu *olCreateNewMenuItem(ReferencesItem *sym, int vApplClass, int vFunCl, Position *defpos,
+SymbolsMenu *olCreateNewMenuItem(ReferenceItem *sym, int vApplClass, int vFunCl, Position *defpos,
                                      int defusage, int selected, int visible, unsigned ooBits, int olusage,
                                      int vlevel) {
     return (SymbolsMenu *) mock(sym, vApplClass, vFunCl, defpos, defusage, selected, visible, ooBits, olusage, vlevel);
 }
 
-SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferencesItem *reference,
+SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *reference,
                                       bool selected, bool visible, unsigned ooBits,
                                       int olusage, int vlevel,
                                       Position *defpos, int defusage) {

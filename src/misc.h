@@ -72,7 +72,7 @@ extern void dumpOptions(int nargc, char **nargv);
 
 extern void symDump(Symbol *symbol);
 extern void typeDump(TypeModifier *typeModifiers);
-extern void symbolRefItemDump(ReferencesItem *ss);
+extern void symbolRefItemDump(ReferenceItem *ss);
 extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos);
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
                        int dclSepChar, int maxDeep, int typedefexp,

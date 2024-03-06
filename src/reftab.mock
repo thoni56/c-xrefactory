@@ -12,28 +12,28 @@ void refTabNoAllocInit(ReferenceTable *table, int size) {
     mock(table, size);
 }
 
-bool isMemberInReferenceTable(ReferencesItem *element, int *position, ReferencesItem **foundMemberPointer
+bool isMemberInReferenceTable(ReferenceItem *element, int *position, ReferenceItem **foundMemberPointer
 ) {
     return (bool)mock(element, position, foundMemberPointer);
 }
 
-bool refTabNextMember(ReferencesItem *element, ReferencesItem **original) {
+bool refTabNextMember(ReferenceItem *element, ReferenceItem **original) {
     return (bool)mock(element, original);
 }
 
-void pushReferencesItem(ReferencesItem *element, int position) {
+void pushReferenceItem(ReferenceItem *element, int position) {
     mock(element, position);
 }
 
-int addToReferencesTable(ReferencesItem *referencesItem) {
+int addToReferencesTable(ReferenceItem *referencesItem) {
     return mock(referencesItem);
 }
 
-void mapOverReferenceTable(void (*fun)(ReferencesItem *)) {
+void mapOverReferenceTable(void (*fun)(ReferenceItem *)) {
     mock(fun);
 }
 
-void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer) {
+void mapOverReferenceTableWithPointer(void (*fun)(ReferenceItem *, void *), void *pointer) {
     mock(fun, pointer);
 }
 
@@ -41,14 +41,14 @@ void mapOverReferenceTableWithIndex(void (*fun)(int)) {
     mock(fun);
 }
 
-int getNextExistingReferencesItem(int index) {
+int getNextExistingReferenceItem(int index) {
     return (int)mock(index);
 }
 
-ReferencesItem *getReferencesItem(int index) {
-    return (ReferencesItem *)mock(index);
+ReferenceItem *getReferenceItem(int index) {
+    return (ReferenceItem *)mock(index);
 }
 
-void setReferencesItem(int index, ReferencesItem *item) {
+void setReferenceItem(int index, ReferenceItem *item) {
     mock(index, item);
 }

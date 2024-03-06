@@ -1070,9 +1070,9 @@ static Symbol *getSymbolFromReference(Reference *reference) {
     char *symbolLinkName;
 
     // first visit all references, looking for symbol link name
-    // TODO: Feels like an API function... getReferencesItemFor(Reference *r)
-    for (int i=getNextExistingReferencesItem(0); i != -1; i = getNextExistingReferencesItem(i+1)) {
-        ReferencesItem *referencesItem = getReferencesItem(i);
+    // TODO: Feels like an API function... getReferenceItemFor(Reference *r)
+    for (int i=getNextExistingReferenceItem(0); i != -1; i = getNextExistingReferenceItem(i+1)) {
+        ReferenceItem *referencesItem = getReferenceItem(i);
         if (referencesItem!=NULL) {
             for (Reference *r=referencesItem->references; r!=NULL; r=r->next) {
                 if (r == reference) {
@@ -1845,7 +1845,7 @@ void javaCompleteMethodCompName(Completions *c) {
 
 /* ************************** Yacc stuff ************************ */
 
-static void completeFromXrefFun(ReferencesItem *s, void *c) {
+static void completeFromXrefFun(ReferenceItem *s, void *c) {
     SymbolCompletionInfo *cc;
     CompletionLine compLine;
     cc = (SymbolCompletionInfo *) c;

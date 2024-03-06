@@ -29,7 +29,7 @@ Reference *duplicateReference(Reference *original) {
     return copy;
 }
 
-void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+void fillReferenceItem(ReferenceItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
                         int vFunClass, Type symType, Storage storage, ReferenceScope scope, Access accessFlags,
                         ReferenceCategory category) {
     referencesItem->linkName = name;
@@ -126,8 +126,9 @@ Reference *olcxAddReference(Reference **rlist, Reference *ref, int bestMatchFlag
 }
 
 #if 0
-void olcxCheck1CxFileReference(ReferencesItem *referenceItem, Reference *reference) {
-    ReferencesItem     *sss;
+// I don't know why this is out-pre-processed...
+void olcxCheck1CxFileReference(ReferenceItem *referenceItem, Reference *reference) {
+    ReferenceItem     *sss;
     OlcxReferences    *rstack;
     SymbolsMenu     *cms;
     int pushedKind;

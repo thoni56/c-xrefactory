@@ -18,10 +18,10 @@ extern char olSymbolClassType[COMPLETION_STRING_SIZE];
 extern void olcxInit(void);
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern void printTagSearchResults(void);
-extern bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2);
-extern bool isSameCxSymbolIncludingFunctionClass(ReferencesItem *p1, ReferencesItem *p2);
-extern bool isSameCxSymbolIncludingApplicationClass(ReferencesItem *p1, ReferencesItem *p2);
-extern bool olcxIsSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2);
+extern bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2);
+extern bool isSameCxSymbolIncludingFunctionClass(ReferenceItem *p1, ReferenceItem *p2);
+extern bool isSameCxSymbolIncludingApplicationClass(ReferenceItem *p1, ReferenceItem *p2);
+extern bool olcxIsSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2);
 extern void olcxRecomputeSelRefs(OlcxReferences *refs );
 extern void olProcessSelectedReferences(OlcxReferences *rstack,
                                         void (*referencesMapFun)(OlcxReferences *rstack,
@@ -44,12 +44,12 @@ extern void olSetCallerPosition(Position *pos);
 extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);
 extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
-extern int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack,
+extern int itIsSymbolToPushOlReferences(ReferenceItem *p, OlcxReferences *rstack,
                                       SymbolsMenu **rss, int checkSelFlag);
-extern void putOnLineLoadedReferences(ReferencesItem *p);
+extern void putOnLineLoadedReferences(ReferenceItem *p);
 extern void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms);
-extern SymbolsMenu *createSelectionMenu(ReferencesItem *dd);
-extern void mapCreateSelectionMenu(ReferencesItem *dd);
+extern SymbolsMenu *createSelectionMenu(ReferenceItem *dd);
+extern void mapCreateSelectionMenu(ReferenceItem *dd);
 extern void olcxFreeOldCompletionItems(OlcxReferencesStack *stack);
 
 extern Reference *getDefinitionRef(Reference *rr);
@@ -64,9 +64,9 @@ extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c
 extern void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                          Symbol *cclass);
 extern void olcxPushSpecialCheckMenuSym(char *symname);
-extern void olcxCheck1CxFileReference(ReferencesItem *ss, Reference *r);
+extern void olcxCheck1CxFileReference(ReferenceItem *ss, Reference *r);
 extern void olcxPushSpecial(char *fieldName, int command);
-extern bool isPushAllMethodsValidRefItem(ReferencesItem *ri);
+extern bool isPushAllMethodsValidRefItem(ReferenceItem *ri);
 extern bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
                                        ServerOperation operation);
 extern void olcxPrintPushingAction(ServerOperation operation);

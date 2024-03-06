@@ -152,7 +152,7 @@ void generateSwitchCaseFork(bool isLast) {
 }
 
 static ProgramGraphNode *newProgramGraphNode(
-    Reference *ref, ReferencesItem *symRef,
+    Reference *ref, ReferenceItem *symRef,
     ProgramGraphNode *jump, char posBits,
     char stateBits,
     char classifBits,
@@ -173,7 +173,7 @@ static ProgramGraphNode *newProgramGraphNode(
     return programGraph;
 }
 
-static void extractFunGraphRef(ReferencesItem *rr, void *prog) {
+static void extractFunGraphRef(ReferenceItem *rr, void *prog) {
     Reference *r;
     ProgramGraphNode *p,**ap;
     ap = (ProgramGraphNode **) prog;
@@ -196,7 +196,7 @@ static ProgramGraphNode *getGraphAddress( ProgramGraphNode  *program,
     return res;
 }
 
-static Reference *getDefinitionReference(ReferencesItem *lab) {
+static Reference *getDefinitionReference(ReferenceItem *lab) {
     Reference *res;
     for (res=lab->references; res!=NULL && res->usage.kind!=UsageDefined; res=res->next) ;
     if (res == NULL) {
@@ -208,7 +208,7 @@ static Reference *getDefinitionReference(ReferencesItem *lab) {
 }
 
 static ProgramGraphNode *getLabelGraphAddress(ProgramGraphNode *program,
-                                                ReferencesItem     *lab
+                                                ReferenceItem     *lab
                                                 ) {
     ProgramGraphNode  *res;
     Reference         *defref;
@@ -242,7 +242,7 @@ static bool isStructOrUnion(ProgramGraphNode *node) {
 }
 
 static void extSetSetStates(    ProgramGraphNode *p,
-                                ReferencesItem *symRef,
+                                ReferenceItem *symRef,
                                 unsigned cstate
                                 ) {
     unsigned cpos,oldStateBits;
@@ -292,7 +292,7 @@ static ExtractClassification classifyLocalVariableExtraction0(
     ProgramGraphNode *varRef
 ) {
     ProgramGraphNode *p;
-    ReferencesItem     *symRef;
+    ReferenceItem     *symRef;
     unsigned    inUsages,outUsages,outUsageBothExists;
     symRef = varRef->symRef;
     for (p=program; p!=NULL; p=p->next) {
@@ -708,8 +708,8 @@ static void generateNewFunctionCall(ProgramGraphNode *program, char *extractionN
     ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
-static void removeSymbolFromSymRefList(ReferencesItemList **ll, ReferencesItem *s) {
-    ReferencesItemList **r;
+static void removeSymbolFromSymRefList(ReferenceItemList **ll, ReferenceItem *s) {
+    ReferenceItemList **r;
     r=ll;
     while (*r!=NULL) {
         if (isSmallerOrEqClass(getClassNumFromClassLinkName((*r)->item->linkName, NO_FILE_NUMBER),
@@ -721,8 +721,8 @@ static void removeSymbolFromSymRefList(ReferencesItemList **ll, ReferencesItem *
     }
 }
 
-static ReferencesItemList *concatRefItemList(ReferencesItemList **list, ReferencesItem *items) {
-    ReferencesItemList *refItemList = cxAlloc(sizeof(ReferencesItemList));
+static ReferenceItemList *concatRefItemList(ReferenceItemList **list, ReferenceItem *items) {
+    ReferenceItemList *refItemList = cxAlloc(sizeof(ReferenceItemList));
     refItemList->item = items;
     refItemList->next = *list;
     return refItemList;
@@ -730,8 +730,8 @@ static ReferencesItemList *concatRefItemList(ReferencesItemList **list, Referenc
 
 
 /* Non-static for unittesting */
-void addSymbolToSymRefList(ReferencesItemList **list, ReferencesItem *items) {
-    ReferencesItemList *l;
+void addSymbolToSymRefList(ReferenceItemList **list, ReferenceItem *items) {
+    ReferenceItemList *l;
 
     l = *list;
     while (l!=NULL) {
@@ -747,10 +747,10 @@ void addSymbolToSymRefList(ReferencesItemList **list, ReferencesItem *items) {
     *list = concatRefItemList(list, items);
 }
 
-static ReferencesItemList *computeExceptionsThrownBetween(ProgramGraphNode *bb,
+static ReferenceItemList *computeExceptionsThrownBetween(ProgramGraphNode *bb,
                                                            ProgramGraphNode *ee
                                                            ) {
-    ReferencesItemList *res, *excs, *catched, *noncatched, **cl;
+    ReferenceItemList *res, *excs, *catched, *noncatched, **cl;
     ProgramGraphNode *p, *e;
     int depth;
 
@@ -788,7 +788,7 @@ static ReferencesItemList *computeExceptionsThrownBetween(ProgramGraphNode *bb,
     return(res);
 }
 
-static ReferencesItemList *computeExceptionsThrownInBlock(ProgramGraphNode *program) {
+static ReferenceItemList *computeExceptionsThrownInBlock(ProgramGraphNode *program) {
     ProgramGraphNode  *pp, *ee;
     for (pp=program; pp!=NULL && pp->symRef->type!=TypeBlockMarker; pp=pp->next) ;
     if (pp==NULL)
@@ -798,7 +798,7 @@ static ReferencesItemList *computeExceptionsThrownInBlock(ProgramGraphNode *prog
 }
 
 static void extractSprintThrownExceptions(char *nhead, ProgramGraphNode *program) {
-    ReferencesItemList     *exceptions, *ee;
+    ReferenceItemList     *exceptions, *ee;
     int                     nhi;
     char                    *sname;
     nhi = 0;

@@ -34,7 +34,7 @@ bool symbolShouldBeHiddenFromSearchResults(char *name) {
   return (bool) mock(name);
 }
 
-void searchSymbolCheckReference(ReferencesItem *symbolReferences, Reference *reference) {
+void searchSymbolCheckReference(ReferenceItem *symbolReferences, Reference *reference) {
   mock(symbolReferences, reference);
 }
 

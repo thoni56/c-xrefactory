@@ -16,7 +16,7 @@ typedef enum extractModes {
 typedef struct referencesItemList {
     struct referencesItem		*item;
     struct referencesItemList	*next;
-} ReferencesItemList;
+} ReferenceItemList;
 
 
 extern Symbol *addContinueBreakLabelSymbol(int labn, char *name);

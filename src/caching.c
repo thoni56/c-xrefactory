@@ -57,10 +57,10 @@ static void deleteReferencesOutOfMemory(Reference **referenceP) {
 }
 
 static void refTabDeleteOutOfMemory(int index) {
-    ReferencesItem *item;
-    ReferencesItem **itemP;
+    ReferenceItem *item;
+    ReferenceItem **itemP;
 
-    item = getReferencesItem(index);
+    item = getReferenceItem(index);
     itemP = &item;
 
     while (*itemP!=NULL) {
@@ -75,7 +75,7 @@ static void refTabDeleteOutOfMemory(int index) {
         }
         itemP = &((*itemP)->next);
     }
-    setReferencesItem(index, item);
+    setReferenceItem(index, item);
 }
 
 static void fileTabDeleteOutOfMemory(FileItem *fileItem) {

@@ -10,7 +10,7 @@
 #include "options.h"
 
 
-void fillSymbolsMenu(SymbolsMenu *menu, ReferencesItem references, bool selected, bool visible,
+void fillSymbolsMenu(SymbolsMenu *menu, ReferenceItem references, bool selected, bool visible,
                      unsigned ooBits, char olUsage, short int vlevel, char defUsage, Position defpos) {
     menu->references = references;
     menu->selected   = selected;
@@ -99,16 +99,16 @@ static char *olcxStringCopy(char *string) {
     return copy;
 }
 
-SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFunCl, Position *defpos,
+SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, int vFunCl, Position *defpos,
                                  int defusage, int selected, int visible, unsigned ooBits, int olusage,
                                  int vlevel) {
     SymbolsMenu   *symbolsMenu;
-    ReferencesItem refItem;
+    ReferenceItem refItem;
     char          *allocatedNameCopy;
 
     allocatedNameCopy = olcxStringCopy(symbol->linkName);
 
-    fillReferencesItem(&refItem, allocatedNameCopy, cxFileHashNumber(allocatedNameCopy), vApplClass, vFunCl,
+    fillReferenceItem(&refItem, allocatedNameCopy, cxFileHashNumber(allocatedNameCopy), vApplClass, vFunCl,
                        symbol->type, symbol->storage, symbol->scope, symbol->access,
                        symbol->category);
 
@@ -117,7 +117,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferencesItem *symbol, int vApplClass, int vFu
     return symbolsMenu;
 }
 
-static bool olReferencesItemIsLess(ReferencesItem *s1, ReferencesItem *s2) {
+static bool referenceItemIsLess(ReferenceItem *s1, ReferenceItem *s2) {
     int cmp;
     cmp = strcmp(s1->linkName, s2->linkName);
     if (cmp < 0)
@@ -148,10 +148,10 @@ static bool olReferencesItemIsLess(ReferencesItem *s1, ReferencesItem *s2) {
 }
 
 static bool olSymbolMenuIsLess(SymbolsMenu *s1, SymbolsMenu *s2) {
-    return olReferencesItemIsLess(&s1->references, &s2->references);
+    return referenceItemIsLess(&s1->references, &s2->references);
 }
 
-SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferencesItem *symbol,
+SymbolsMenu *olAddBrowsedSymbolToMenu(SymbolsMenu **menuP, ReferenceItem *symbol,
                                       bool selected, bool visible, unsigned ooBits,
                                       int olusage, int vlevel,
                                       Position *defpos, int defusage) {

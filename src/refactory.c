@@ -84,7 +84,7 @@ static Options refactoringOptions;
 
 static char *updateOption = "-fastupdate";
 
-static bool moveClassMapFunReturnOnUninterestingSymbols(ReferencesItem *ri, TpCheckMoveClassData *dd) {
+static bool moveClassMapFunReturnOnUninterestingSymbols(ReferenceItem *ri, TpCheckMoveClassData *dd) {
     if (!isPushAllMethodsValidRefItem(ri))
         return true;
     /* this is too strong, but check only fields and methods */
@@ -743,7 +743,7 @@ static bool validTargetPlace(EditorMarker *target, char *checkOpt) {
 
 // ------------------------- Trivial prechecks --------------------------------------
 
-static SymbolsMenu *javaGetRelevantHkSelectedItem(ReferencesItem *ri) {
+static SymbolsMenu *javaGetRelevantHkSelectedItem(ReferenceItem *ri) {
     SymbolsMenu    *ss;
     OlcxReferences *rstack;
 
@@ -757,7 +757,7 @@ static SymbolsMenu *javaGetRelevantHkSelectedItem(ReferencesItem *ri) {
     return ss;
 }
 
-static void tpCheckFutureAccOfLocalReferences(ReferencesItem *ri, void *ddd) {
+static void tpCheckFutureAccOfLocalReferences(ReferenceItem *ri, void *ddd) {
     TpCheckMoveClassData *dd;
     SymbolsMenu          *ss;
 
@@ -784,7 +784,7 @@ static void tpCheckFutureAccOfLocalReferences(ReferencesItem *ri, void *ddd) {
     }
 }
 
-static void tpCheckMoveClassPutClassDefaultSymbols(ReferencesItem *ri, void *ddd) {
+static void tpCheckMoveClassPutClassDefaultSymbols(ReferenceItem *ri, void *ddd) {
     OlcxReferences       *rstack;
     TpCheckMoveClassData *dd;
 
@@ -852,7 +852,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(TpCheck
     }
 }
 
-static void tpCheckDefaultAccessibilitiesMoveClass(ReferencesItem *ri, void *ddd) {
+static void tpCheckDefaultAccessibilitiesMoveClass(ReferenceItem *ri, void *ddd) {
     OlcxReferences       *rstack;
     TpCheckMoveClassData *dd;
     char                  symclass[MAX_FILE_NAME_SIZE];
@@ -1013,7 +1013,7 @@ static bool checkSourceIsNotInnerClass(void) {
     return true;
 }
 
-static void tpCheckSpecialReferencesMapFun(ReferencesItem *ri, void *voidDataP) {
+static void tpCheckSpecialReferencesMapFun(ReferenceItem *ri, void *voidDataP) {
     TpCheckSpecialReferencesData *dd;
 
     dd = (TpCheckSpecialReferencesData *)voidDataP;
@@ -1813,7 +1813,7 @@ static void multipleReferencesInSamePlaceMessage(Reference *r) {
 }
 
 static void checkForMultipleReferencesInSamePlace(OlcxReferences *rstack, SymbolsMenu *ccms) {
-    ReferencesItem *p, *sss;
+    ReferenceItem *p, *sss;
     SymbolsMenu    *cms;
     bool            pushed;
 
@@ -2721,7 +2721,7 @@ static void showSafetyCheckFailingDialog(EditorMarkerList **totalDiff, char *mes
 
 #define EACH_SYMBOL_ONCE 1
 
-static void staticMoveCheckCorrespondance(SymbolsMenu *menu1, SymbolsMenu *menu2, ReferencesItem *theMethod) {
+static void staticMoveCheckCorrespondance(SymbolsMenu *menu1, SymbolsMenu *menu2, ReferenceItem *theMethod) {
     SymbolsMenu      *mm1, *mm2;
     EditorMarkerList *diff1, *diff2, *totalDiff;
 
@@ -2812,7 +2812,7 @@ static void moveStaticObjectAndMakeItPublic(EditorMarker *mstart, EditorMarker *
     EditorMarker     *pp, *ppp, *movedEnd;
     EditorMarkerList *occs;
     EditorRegionList *regions;
-    ReferencesItem   *theMethod;
+    ReferenceItem   *theMethod;
     int               progress, count;
 
     movedEnd = duplicateEditorMarker(mend);
@@ -4097,7 +4097,7 @@ fini:
 }
 
 static EditorMarkerList *pullUpPushDownDifferences(SymbolsMenu *menu1, SymbolsMenu *menu2,
-                                                   ReferencesItem *theMethod) {
+                                                   ReferenceItem *theMethod) {
     SymbolsMenu      *mm1, *mm2;
     EditorMarkerList *rr, *diff;
 
@@ -4136,7 +4136,7 @@ static EditorMarkerList *pullUpPushDownDifferences(SymbolsMenu *menu1, SymbolsMe
     return diff;
 }
 
-static void pullUpPushDownCheckCorrespondance(SymbolsMenu *menu1, SymbolsMenu *menu2, ReferencesItem *theMethod) {
+static void pullUpPushDownCheckCorrespondance(SymbolsMenu *menu1, SymbolsMenu *menu2, ReferenceItem *theMethod) {
     EditorMarkerList *diff;
 
     diff = pullUpPushDownDifferences(menu1, menu2, theMethod);
@@ -4332,7 +4332,7 @@ static void pushDownPullUp(EditorMarker *point, PushPullDirection direction, int
     EditorMarker     *target, *movedStart, *mend, *movedEnd, *startMarker, *endMarker;
     EditorRegionList *methodreg;
     SymbolsMenu      *mm1, *mm2;
-    ReferencesItem   *theMethod;
+    ReferenceItem   *theMethod;
     int               size;
     int               lines;
     UNUSED            lines;

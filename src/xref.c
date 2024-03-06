@@ -80,8 +80,8 @@ static FileItem *createListOfInputFileItems(void) {
     return fileItems;
 }
 
-static void fillReferencesItemForIncludeFile(ReferencesItem *referencesItem, int fileNumber) {
-    fillReferencesItem(referencesItem, LINK_NAME_INCLUDE_REFS,
+static void fillReferenceItemForIncludeFile(ReferenceItem *referencesItem, int fileNumber) {
+    fillReferenceItem(referencesItem, LINK_NAME_INCLUDE_REFS,
                        cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
                        fileNumber, fileNumber, TypeCppInclude, StorageExtern,
                        ScopeGlobal, AccessDefault, CategoryGlobal);
@@ -106,8 +106,8 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
             if (fileItem->scheduledToUpdate)
                 if (!fileItem->fullUpdateIncludesProcessed) {
                     fileItem->fullUpdateIncludesProcessed = true;
-                    ReferencesItem referenceItem, *member;
-                    fillReferencesItemForIncludeFile(&referenceItem, i);
+                    ReferenceItem referenceItem, *member;
+                    fillReferenceItemForIncludeFile(&referenceItem, i);
                     if (isMemberInReferenceTable(&referenceItem, NULL, &member)) {
                         for (Reference *r=member->references; r!=NULL; r=r->next) {
                             FileItem *includer = getFileItem(r->position.file);

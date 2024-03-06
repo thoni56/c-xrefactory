@@ -36,7 +36,7 @@ Completion *newCompletion(char *name, char *fullName, char *vclass, short int ji
 // if s==NULL, then the pos is taken as default position of this ref !!!
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
 Completion *completionListPrepend(Completion *completions, char *name, char *fullText, char *vclass,
-                                    int jindent, Symbol *symbol, ReferencesItem *referenceItem,
+                                    int jindent, Symbol *symbol, ReferenceItem *referenceItem,
                                     Reference *reference, int cType, int vFunClass) {
     Completion    *completion;
     char *ss,*nn, *fullnn, *vclnn;
@@ -44,7 +44,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     ReferenceScope scope;
     Storage storage;
     int slen, nlen;
-    ReferencesItem sri;
+    ReferenceItem sri;
 
     nlen = strlen(name);
     nn = olcxAlloc(nlen+1);
@@ -64,7 +64,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         slen = strlen(referenceItem->linkName);
         ss = olcxAlloc(slen+1);
         strcpy(ss, referenceItem->linkName);
-        fillReferencesItem(&sri, ss, cxFileHashNumber(ss), referenceItem->vApplClass, referenceItem->vFunClass,
+        fillReferenceItem(&sri, ss, cxFileHashNumber(ss), referenceItem->vApplClass, referenceItem->vFunClass,
                            referenceItem->type, referenceItem->storage, referenceItem->scope,
                            referenceItem->access, referenceItem->category);
 
@@ -72,7 +72,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
     } else if (symbol==NULL) {
         Reference r = *reference;
         r.next = NULL;
-        fillReferencesItem(&sri, "", cxFileHashNumber(""), NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageNone,
+        fillReferenceItem(&sri, "", cxFileHashNumber(""), NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageNone,
                            ScopeAuto, AccessDefault, CategoryLocal);
         completion = newCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, r, sri);
     } else {
@@ -84,7 +84,7 @@ Completion *completionListPrepend(Completion *completions, char *name, char *ful
         strcpy(ss, symbol->linkName);
         fillUsage(&r.usage, UsageDefined, 0);
         fillReference(&r, r.usage, symbol->pos, NULL);
-        fillReferencesItem(&sri, ss, cxFileHashNumber(ss),
+        fillReferenceItem(&sri, ss, cxFileHashNumber(ss),
                            vFunClass, vFunClass, symbol->type, storage,
                            scope, symbol->access, category);
         completion = newCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, r, sri);

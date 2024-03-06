@@ -36,11 +36,11 @@ typedef struct referencesItem {
     ReferenceCategory         category : 2;     /* local/global */
     struct reference         *references;
     struct referencesItem    *next; /* TODO: Link only for hashlist? */
-} ReferencesItem;
+} ReferenceItem;
 
 
 extern void fillReference(Reference *reference, Usage usage, Position position, Reference *next);
-extern void fillReferencesItem(ReferencesItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
+extern void fillReferenceItem(ReferenceItem *referencesItem, char *name, unsigned fileHash, int vApplClass,
                                int vFunClass, Type symType, Storage storage, ReferenceScope scope,
                                Access accessFlags, ReferenceCategory category);
 extern Reference *duplicateReference(Reference *r);

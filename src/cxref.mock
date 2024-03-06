@@ -20,19 +20,19 @@ SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage) 
     return (SymbolsMenu *) mock(fieldName, cfi, storage);
 }
 
-bool isSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
+bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-bool isSameCxSymbolIncludingFunctionClass(ReferencesItem *p1, ReferencesItem *p2) {
+bool isSameCxSymbolIncludingFunctionClass(ReferenceItem *p1, ReferenceItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-bool isSameCxSymbolIncludingApplicationClass(ReferencesItem *p1, ReferencesItem *p2) {
+bool isSameCxSymbolIncludingApplicationClass(ReferenceItem *p1, ReferenceItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-bool olcxIsSameCxSymbol(ReferencesItem *p1, ReferencesItem *p2) {
+bool olcxIsSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
     return (bool) mock(p1, p2);
 }
 
@@ -104,12 +104,12 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-int itIsSymbolToPushOlReferences(ReferencesItem *p, OlcxReferences *rstack, SymbolsMenu **rss,
+int itIsSymbolToPushOlReferences(ReferenceItem *p, OlcxReferences *rstack, SymbolsMenu **rss,
                                int checkSelFlag) {
     return (int) mock(p, rstack, rss, checkSelFlag);
 }
 
-void putOnLineLoadedReferences(ReferencesItem *p) {
+void putOnLineLoadedReferences(ReferenceItem *p) {
     mock(p);
 }
 
@@ -117,11 +117,11 @@ void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
     mock(rstack, cms);
 }
 
-SymbolsMenu *createSelectionMenu(ReferencesItem *dd) {
+SymbolsMenu *createSelectionMenu(ReferenceItem *dd) {
     return (SymbolsMenu *) mock(dd);
 }
 
-void mapCreateSelectionMenu(ReferencesItem *dd) {
+void mapCreateSelectionMenu(ReferenceItem *dd) {
     mock(dd);
 }
 
@@ -185,7 +185,7 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
     mock(symname);
 }
 
-void olcxCheck1CxFileReference(ReferencesItem *ss, Reference *r) {
+void olcxCheck1CxFileReference(ReferenceItem *ss, Reference *r) {
     mock(ss, r);
 }
 
@@ -193,7 +193,7 @@ void olcxPushSpecial(char *fieldName, int command) {
     mock(fieldName, command);
 }
 
-bool isPushAllMethodsValidRefItem(ReferencesItem *ri) {
+bool isPushAllMethodsValidRefItem(ReferenceItem *ri) {
     return (bool) mock(ri);
 }
 

@@ -52,7 +52,7 @@ extern void olcxFreeCompletion(Completion *completion);
 extern void olcxFreeCompletions(Completion *completions);
 
 extern Completion  *completionListPrepend(Completion *completions, char *name, char *fullText,
-                                          char *vclass, int jindent, Symbol *s, ReferencesItem *ri,
+                                          char *vclass, int jindent, Symbol *s, ReferenceItem *ri,
                                           Reference *dfpos, int symType, int vFunClass);
 
 void tagSearchCompactShortResults(void);

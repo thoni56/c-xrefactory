@@ -60,7 +60,7 @@ void typeDump(TypeModifier *t) {
     log_debug("dumpStop");
 }
 
-void symbolRefItemDump(ReferencesItem *s) {
+void symbolRefItemDump(ReferenceItem *s) {
     log_debug("%s\t%s %s %d %d %d %d %d",
               s->linkName,
               getFileItem(s->vApplClass)->name,

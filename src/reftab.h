@@ -5,7 +5,7 @@
 
 #define HASH_TAB_NAME refTab
 #define HASH_TAB_TYPE ReferenceTable
-#define HASH_ELEM_TYPE ReferencesItem
+#define HASH_ELEM_TYPE ReferenceItem
 
 #include "hashlist.th"
 
@@ -17,15 +17,15 @@
 #endif
 
 extern void initReferenceTable(int size);
-extern int  addToReferencesTable(ReferencesItem *referencesItem);
-extern void pushReferencesItem(ReferencesItem *element, int position);
-extern ReferencesItem *getReferencesItem(int index);
-extern int getNextExistingReferencesItem(int index);
-extern void setReferencesItem(int index, ReferencesItem *item);
+extern int  addToReferencesTable(ReferenceItem *referencesItem);
+extern void pushReferenceItem(ReferenceItem *element, int position);
+extern ReferenceItem *getReferenceItem(int index);
+extern int getNextExistingReferenceItem(int index);
+extern void setReferenceItem(int index, ReferenceItem *item);
 
-extern bool isMemberInReferenceTable(ReferencesItem *item, int *indexP, ReferencesItem **originP);
-extern void mapOverReferenceTable(void (*fun)(ReferencesItem *));
+extern bool isMemberInReferenceTable(ReferenceItem *item, int *indexP, ReferenceItem **originP);
+extern void mapOverReferenceTable(void (*fun)(ReferenceItem *));
 extern void mapOverReferenceTableWithIndex(void (*fun)(int));
-extern void mapOverReferenceTableWithPointer(void (*fun)(ReferencesItem *, void *), void *pointer);
+extern void mapOverReferenceTableWithPointer(void (*fun)(ReferenceItem *, void *), void *pointer);
 
 #endif
