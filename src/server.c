@@ -136,7 +136,7 @@ static char *presetEditServerFileDependingStatics(void) {
     // in edit server, otherwise it is an error
     int fileNumber = 0;
     inputFileName = getNextScheduledFile(&fileNumber);
-    if (fileNumber == -1) { /* No more input files... */
+    if (inputFileName == NULL) { /* No more input files... */
         // conservative message, probably macro invoked on nonsaved file, TODO: WTF?
         olOriginalComFileNumber = NO_FILE_NUMBER;
         return NULL;
