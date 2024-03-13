@@ -547,10 +547,10 @@ void setLocalVariableLinkName(struct symbol *p) {
     strcpy(p->linkName,ttt);
 }
 
-static void setStaticFunctionLinkName( Symbol *p, int usage ) {
+static void setStaticFunctionLinkName(Symbol *p, char *fileName, int usage) {
     char        ttt[TMP_STRING_SIZE];
     int         len;
-    char        *ss,*basefname;
+    char        *ss, *basefname;
 
     //& if (! symbolTableIsMember(symbolTable, p, &ii, &memb)) {
     // follwing unifies static symbols taken from the same header files.
@@ -561,7 +561,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     if (usage==UsageDefined && ! options.exactPositionResolve) {
         basefname=getFileItem(p->pos.file)->name;
     } else {
-        basefname=inputFileName;
+        basefname=fileName;
     }
     sprintf(ttt,"%s!%s", simpleFileName(basefname), p->name);
     len = strlen(ttt);
@@ -575,7 +575,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
 }
 
 
-Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage theDefaultStorage, UsageKind usage) {
+Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage theDefaultStorage, UsageKind usage) {
     if (symbol == &errorSymbol || symbol->type == TypeError)
         return symbol;
     if (symbol->type == TypeError)
@@ -598,7 +598,7 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, Symbol *symbol, Storage theDe
         // local scope symbol
         setLocalVariableLinkName(symbol);
     } else if (symbol->type == TypeDefault && symbol->storage == StorageStatic) {
-        setStaticFunctionLinkName(symbol, usage);
+        setStaticFunctionLinkName(symbol, fileName, usage);
     }
     addSymbol(table, symbol);
     addCxReference(symbol, &symbol->pos, usage, NO_FILE_NUMBER, NO_FILE_NUMBER);
@@ -640,7 +640,7 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
         usageKind = UsageDeclared;
     else if (declaration->storage == StorageExtern)
         usageKind = UsageDeclared;
-    addNewSymbolDefinition(table, declaration, storage, usageKind);
+    addNewSymbolDefinition(table, inputFileName, declaration, storage, usageKind);
     addInitializerRefs(declaration, idList);
     return declaration;
 }
@@ -665,7 +665,7 @@ void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol
                 addCxReference(foundMember, &parameter->pos, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
             }
         } else {
-            addNewSymbolDefinition(table, parameterCopy, StorageAuto, UsageDefined);
+            addNewSymbolDefinition(table, inputFileName, parameterCopy, StorageAuto, UsageDefined);
         }
         if (options.serverOperation == OLO_EXTRACT) {
             addCxReference(parameterCopy, &parameterCopy->pos, UsageLvalUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);

@@ -5561,7 +5561,7 @@ case 340:
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         if (yyvsp[-3].ast_symbol.data->type != TypeError) {
-                            addNewSymbolDefinition(javaStat->locals, yyvsp[-3].ast_symbol.data, StorageAuto,
+                            addNewSymbolDefinition(javaStat->locals, inputFileName, yyvsp[-3].ast_symbol.data, StorageAuto,
                                             UsageDefined);
                             if (options.serverOperation == OLO_EXTRACT) {
                                 assert(yyvsp[-3].ast_symbol.data->type==TypeDefault);

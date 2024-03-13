@@ -3064,7 +3064,7 @@ case 170:
             newSymbol = newSymbolAsType(yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->name, yyvsp[0].ast_id.data->position, yyval.ast_expressionType.data.typeModifier);
             newSymbol->storage = StorageExtern;
 
-            definitionSymbol = addNewSymbolDefinition(symbolTable, newSymbol, StorageExtern, UsageUsed);
+            definitionSymbol = addNewSymbolDefinition(symbolTable, inputFileName, newSymbol, StorageExtern, UsageUsed);
             yyval.ast_expressionType.data.reference = addCxReference(definitionSymbol, &yyvsp[0].ast_id.data->position, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
         }
     }
@@ -3978,14 +3978,14 @@ case 356:
 #line 1170 "yacc_parser.y"
 {
         yyval.ast_symbol.data = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[0].ast_id.data);
-        addNewSymbolDefinition(symbolTable, yyval.ast_symbol.data, StorageConstant, UsageDefined);
+        addNewSymbolDefinition(symbolTable, inputFileName, yyval.ast_symbol.data, StorageConstant, UsageDefined);
     }
 break;
 case 357:
 #line 1174 "yacc_parser.y"
 {
         yyval.ast_symbol.data = createSimpleDefinition(StorageConstant,TypeInt,yyvsp[-2].ast_id.data);
-        addNewSymbolDefinition(symbolTable, yyval.ast_symbol.data, StorageConstant, UsageDefined);
+        addNewSymbolDefinition(symbolTable, inputFileName, yyval.ast_symbol.data, StorageConstant, UsageDefined);
     }
 break;
 case 358:
@@ -4793,7 +4793,7 @@ case 511:
         /*& if ($2.data->storage == StorageDefault) $2.data->storage = StorageExtern; &*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
-        addNewSymbolDefinition(symbolTable, yyvsp[0].ast_symbol.data, StorageExtern, UsageDefined);
+        addNewSymbolDefinition(symbolTable, inputFileName, yyvsp[0].ast_symbol.data, StorageExtern, UsageDefined);
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
         beginBlock();
         counters.localVar = 0;

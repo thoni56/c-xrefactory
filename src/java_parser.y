@@ -2897,7 +2897,7 @@ CatchClause
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         if ($3.data->type != TypeError) {
-                            addNewSymbolDefinition(javaStat->locals, $3.data, StorageAuto,
+                            addNewSymbolDefinition(javaStat->locals, inputFileName, $3.data, StorageAuto,
                                             UsageDefined);
                             if (options.serverOperation == OLO_EXTRACT) {
                                 assert($3.data->type==TypeDefault);
