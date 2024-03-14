@@ -6,7 +6,6 @@
  */
 #include "classhierarchy.h"
 #include "commons.h"
-#include "complete.h"
 #include "cxfile.h"
 #include "cxref.h"
 #include "editor.h"
@@ -26,7 +25,6 @@
 #include "reftab.h"
 #include "server.h"
 #include "undo.h"
-#include "yylex.h"
 #include "xref.h"
 
 #include "log.h"
@@ -37,8 +35,6 @@
 
 typedef struct tpCheckMoveClassData {
     PushAllInBetweenData mm;
-    char                       *spack;
-    char                       *tpack;
     int                         transPackageMove;
     char                       *sclass;
 } TpCheckMoveClassData;
@@ -882,12 +878,9 @@ static void tpCheckDefaultAccessibilitiesMoveClass(ReferenceItem *ri, void *ddd)
     }
 }
 
-static void fillTpCheckMoveClassData(TpCheckMoveClassData *checkMoveClassData, int minMemi, int maxMemi,
-                                     char *spack, char *tpack, bool transPackageMove, char *sclass) {
+static void fillTpCheckMoveClassData(TpCheckMoveClassData *checkMoveClassData, int minMemi, int maxMemi, bool transPackageMove, char *sclass) {
     checkMoveClassData->mm.minMemi       = minMemi;
     checkMoveClassData->mm.maxMemi       = maxMemi;
-    checkMoveClassData->spack            = spack;
-    checkMoveClassData->tpack            = tpack;
     checkMoveClassData->transPackageMove = transPackageMove;
     checkMoveClassData->sclass           = sclass;
 }
@@ -916,7 +909,7 @@ static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char
     else
         transPackageMove = true;
 
-    fillTpCheckMoveClassData(dd, parsedInfo.cxMemoryIndexAtClassBeginning, parsedInfo.cxMemoryIndexAtClassEnd, spack, tpack,
+    fillTpCheckMoveClassData(dd, parsedInfo.cxMemoryIndexAtClassBeginning, parsedInfo.cxMemoryIndexAtClassEnd,
                              transPackageMove, sclass->references.linkName);
 }
 
