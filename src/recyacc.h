@@ -1,6 +1,8 @@
 #ifndef RECYACC_H_INCLUDED
 #define RECYACC_H_INCLUDED
 
+#include "parsers.h"
+
 typedef struct yyGlobalState {
     int gyydebug;
     int gyynerrs;
