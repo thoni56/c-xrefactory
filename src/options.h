@@ -44,8 +44,8 @@ extern bool containsPointerLocation(LocationList *list, void **location);
 
 typedef struct options {
     /* GENERAL */
-    bool commandlog;
     bool exit;
+    char *commandlog;
     char *compiler;
     int fileEncoding;
     bool completeParenthesis;

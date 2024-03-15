@@ -16,7 +16,7 @@ static char *cwd = "currentdir";
 
 Describe(CommandsLogger);
 BeforeEach(CommandsLogger) {
-    options.commandlog = true;
+    options.commandlog = "command log file";
     expect(openFile);
     expect(getCwd, will_set_contents_of_parameter(buffer, cwd, strlen(cwd)+1));
 }

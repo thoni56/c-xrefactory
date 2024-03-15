@@ -1460,8 +1460,8 @@ static bool processBOption(int *argi, int argc, char **argv) {
 static bool processCOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
-    else if (strcmp(argv[i], "-commandlog")==0)
-        options.commandlog=true;
+    else if (strncmp(argv[i], "-commandlog=", 12)==0)
+        options.commandlog = allocateStringForOption(&options.commandlog, argv[i]+12);
     else if (strcmp(argv[i], "-crlfconversion")==0)
         options.eolConversion|=CR_LF_EOL_CONVERSION;
     else if (strcmp(argv[i], "-crconversion")==0)

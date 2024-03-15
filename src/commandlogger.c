@@ -27,7 +27,7 @@ void logCommands(int argc, char *argv[]) {
         return;
 
     if (commandsLogfile == NULL)
-        commandsLogfile = openFile("/tmp/c-xref-command-log", "w");
+        commandsLogfile = openFile(options.commandlog, "w");
 
     char cwd[MAX_FILE_NAME_SIZE];
     getCwd(cwd, sizeof(cwd));
