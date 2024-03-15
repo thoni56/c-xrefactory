@@ -133,6 +133,11 @@ TBD. Attachning `gdb`, `server-driver`...
 
 `yaccp` from `src/.gdbinit` can ease the printing of Yacc semantic data fields...
 
+A helpful option is the recently added `-commandlog=...` which allows
+you to capture all command arguments sent to the server/xref process
+to a file. This makes it possible to capture command sequences and
+"replay" them. Useful both for debugging and creating tests.
+
 === Testing
 
 ==== Unittests ====
