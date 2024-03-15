@@ -64,7 +64,6 @@ Options presetOptions = {
     0,                           // TPC_NONE, trivial pre-check
     true,                        // urlGenTemporaryFile
     true,                        // urlautoredirect
-    false,                       // javafilesonly
     false,                       // exact position
     NULL,                        // -o outputFileName
     NULL,                        // -line lineFileName
@@ -533,12 +532,6 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
             && !fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes)
             && !fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes)
             && compareFileNames(suff, ".y")!=0
-        ) {
-            return;
-        }
-        if (options.javaFilesOnly && options.mode != ServerMode
-            && !fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes)
-            && !fileNameHasOneOfSuffixes(fname, "jar:class")
         ) {
             return;
         }
@@ -1661,9 +1654,6 @@ static bool processJOption(int *argi, int argc, char **argv) {
     if (0) {}
     else if (strncmp(argv[i], "-javasuffixes=",14)==0) {
         options.javaFilesSuffixes = allocateStringForOption(&options.javaFilesSuffixes, argv[i]+14);
-    }
-    else if (strcmp(argv[i], "-javafilesonly")==0) {
-        options.javaFilesOnly = true;
     }
     else if (strcmp(argv[i], "-jdkclasspath")==0 || strcmp(argv[i], "-javaruntime")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);

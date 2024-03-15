@@ -81,7 +81,6 @@ typedef struct options {
     int trivialPreCheckCode;
     bool urlGenTemporaryFile;
     bool urlAutoRedirect;
-    bool javaFilesOnly;
     bool exactPositionResolve;
     char *outputFileName;
     char *lineFileName;

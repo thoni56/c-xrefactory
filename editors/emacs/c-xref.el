@@ -4390,9 +4390,6 @@ will be deleted.
     (setq comment (or (equal pcomments "y") (equal pcomments "Y")))
     (goto-char (point-max))
     (insert (concat "\n\n[" pname "]\n"))
-    (if (or (equal planguage "j") (equal planguage "J"))
-	(insert "  -javafilesonly\t// pure Java project\n")
-      )
     (if comment
 	(insert "  //  input files and directories (processed recursively)\n")
       )

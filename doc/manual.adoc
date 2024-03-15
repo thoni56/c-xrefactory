@@ -204,8 +204,6 @@ Reject keywords and types that are not part of the ANSI C standard, such as `__a
 
 ====== Java specific options
 
--javafilesonly::
-
 -javaruntime::
 
 -javasuffixes::
