@@ -10,7 +10,6 @@
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
-#include "parsers.h"
 #include "protocol.h"
 
 #include "log.h"
@@ -50,35 +49,35 @@ Options presetOptions = {
     false,                       // xrefactory-II
     NULL,                        // moveTargetFile
 #if defined (__WIN32__)
-    "c;C",      // cFilesSuffixes
-    "java;JAV", // javaFilesSuffixes
+    "c;C",                       // cFilesSuffixes
+    "java;JAV",                  // javaFilesSuffixes
 #else
-    "c:C",  // cFilesSuffixes
-    "java", // javaFilesSuffixes
+    "c:C",                       // cFilesSuffixes
+    "java",                      // javaFilesSuffixes
 #endif
-    true,            // fileNamesCaseSensitive
-    TSS_FULL_SEARCH, // search Tag file specifics
-    false,                  // noerrors
-    0,                      // fqtNameToCompletions
-    NULL,                   // moveTargetClass
-    0,                      // TPC_NONE, trivial pre-check
-    true,                   // urlGenTemporaryFile
-    true,                   // urlautoredirect
-    false,                  // javafilesonly
-    false,                  // exact position
-    NULL,                   // -o outputFileName
-    NULL,                   // -line lineFileName
-    NULL,                   // -I include dirs
-    DEFAULT_CXREF_FILENAME, // -refs
+    true,                        // fileNamesCaseSensitive
+    TSS_FULL_SEARCH,             // search Tag file specifics
+    false,                       // noerrors
+    0,                           // fqtNameToCompletions
+    NULL,                        // moveTargetClass
+    0,                           // TPC_NONE, trivial pre-check
+    true,                        // urlGenTemporaryFile
+    true,                        // urlautoredirect
+    false,                       // javafilesonly
+    false,                       // exact position
+    NULL,                        // -o outputFileName
+    NULL,                        // -line lineFileName
+    NULL,                        // -I include dirs
+    DEFAULT_CXREF_FILENAME,      // -refs
 
-    NULL, // file move for safety check
+    NULL,                       // file move for safety check
     NULL,
-    0,           // first moved line
-    MAXIMAL_INT, // safety check number of lines moved
-    0,           // new line number of the first line
+    0,                          // first moved line
+    MAXIMAL_INT,                // safety check number of lines moved
+    0,                          // new line number of the first line
 
-    "",   // getValue
-    true, // javaSlAllowed (autoUpdateFromSrc)
+    "",                         // getValue
+    true,                       // javaSlAllowed (autoUpdateFromSrc)
 
     /* JAVA: */
     false,                      // allowPackagesOnCl
