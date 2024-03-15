@@ -24,10 +24,12 @@
 #include "ast.h"
 #include "head.h"               /* For Language type */
 
+#ifndef RECURSIVE
 #include "lexem.h"
 typedef union {
 #include "yystype.h"
 } YYSTYPE;
+#endif
 
 extern YYSTYPE c_yylval;
 #ifdef YYDEBUG
