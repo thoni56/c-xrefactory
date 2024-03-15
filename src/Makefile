@@ -407,7 +407,7 @@ watch-for-unittests:
 	watchexec -i \*.tab.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j unit
 
 watch-for-systemtests:
-	watchexec -e .done -- execnotify -t Systemtests make -j system-tests
+	watchexec -e done -- execnotify -t Systemtests make -j system-tests
 
 system-tests:
 	$(MAKE) -e build
