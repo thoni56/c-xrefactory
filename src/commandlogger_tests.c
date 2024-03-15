@@ -12,9 +12,13 @@
 #endif
 
 
+static char *cwd = "currentdir";
+
 Describe(CommandsLogger);
 BeforeEach(CommandsLogger) {
     options.commandlog = true;
+    expect(openFile);
+    expect(getCwd, will_set_contents_of_parameter(buffer, cwd, strlen(cwd)+1));
 }
 AfterEach(CommandsLogger) {}
 
@@ -24,7 +28,6 @@ Ensure(CommandsLogger, can_log_a_single_argument) {
     int count;
     char *buffer;
 
-    expect(openFile);
     expect(writeFile,
            will_capture_parameter(size, size),
            will_capture_parameter(count, count),
@@ -38,18 +41,17 @@ Ensure(CommandsLogger, can_log_a_single_argument) {
 }
 
 static char buffer[1000] = "";
-static void concat_output(void *string) {
-    strcat(buffer, *(char **)string);
+static void concat_output(void *output_buffer) {
+    strcat(buffer, *(char **)output_buffer);
 }
 
-// NOTE: these two tests will fail unless Cgreen has a version below
+// NOTE: these two tests will fail if Cgreen has a version below
 // 1.6.1. In this version `with_side_effect()` executes *after* all
 // other constraints.
 Ensure(CommandsLogger, can_log_multiple_arguments) {
     char *argv[] = {"command", "arg1", "arg2"};
     char *output;
 
-    expect(openFile);
     always_expect(writeFile,
                   will_capture_parameter(buffer, output),
                   with_side_effect(&concat_output, &output));
@@ -63,7 +65,19 @@ Ensure(CommandsLogger, can_handle_null_argv0) {
     char *argv[] = {NULL, "arg1", "arg2"};
     char *output;
 
-    expect(openFile);
+    always_expect(writeFile,
+                  will_capture_parameter(buffer, output),
+                  with_side_effect(&concat_output, &output));
+
+    logCommands(3, argv);
+
+    assert_that(buffer, is_equal_to_string("arg1 arg2\n"));
+}
+
+Ensure(CommandsLogger, can_remove_current_directory_from_argument) {
+    char *argv[] = {NULL, "arg1", "currentdir/arg2"};
+    char *output;
+
     always_expect(writeFile,
                   will_capture_parameter(buffer, output),
                   with_side_effect(&concat_output, &output));
