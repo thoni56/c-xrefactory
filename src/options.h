@@ -74,7 +74,7 @@ typedef struct options {
     char *cFilesSuffixes;
     char *javaFilesSuffixes;
     bool fileNamesCaseSensitive;
-    int tagSearchSpecif;
+    SearchKind searchKind;
     bool noErrors;
     int fqtNameToCompletions;
     char *moveTargetClass;

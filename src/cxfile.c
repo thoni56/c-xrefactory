@@ -282,8 +282,8 @@ void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *refere
     sname = ssname;
     slen = strlen(sname);
     // if completing without profile, cut profile
-    if (options.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
-        || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
+    if (options.searchKind==SEARCH_DEFINITIONS_SHORT
+        || options.searchKind==SEARCH_FULL_SHORT) {
         s = strchr(sname, '(');
         if (s!=NULL) *s = 0;
     }
@@ -1146,8 +1146,8 @@ static void scanFunction_Reference(int size,
         } else {
             if (options.serverOperation == OLO_TAG_SEARCH) {
                 if (reference.usage.kind==UsageDefined
-                    || ((options.tagSearchSpecif==TSS_FULL_SEARCH
-                         || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
+                    || ((options.searchKind==SEARCH_FULL
+                         || options.searchKind==SEARCH_FULL_SHORT)
                         &&  (reference.usage.kind==UsageDeclared
                              || reference.usage.kind==UsageClassFileDefinition))) {
                     searchSymbolCheckReference(lastIncomingInfo.symbolTab[sym],&reference);

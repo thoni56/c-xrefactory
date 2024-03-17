@@ -57,7 +57,7 @@ Options presetOptions = {
     "java",                      // javaFilesSuffixes
 #endif
     true,                        // fileNamesCaseSensitive
-    TSS_FULL_SEARCH,             // search Tag file specifics
+    SEARCH_FULL,             // search Tag file specifics
     false,                       // noerrors
     0,                           // fqtNameToCompletions
     NULL,                        // moveTargetClass
@@ -2215,13 +2215,13 @@ static bool processSOption(int *argi, int argc, char **argv) {
         setOptionVariable(name, val);
     }
     else if (strcmp(argv[i], "-searchdef")==0) {
-        options.tagSearchSpecif = TSS_SEARCH_DEFS_ONLY;
+        options.searchKind = SEARCH_DEFINITIONS;
     }
     else if (strcmp(argv[i], "-searchshortlist")==0) {
-        options.tagSearchSpecif = TSS_FULL_SEARCH_SHORT;
+        options.searchKind = SEARCH_FULL_SHORT;
     }
     else if (strcmp(argv[i], "-searchdefshortlist")==0) {
-        options.tagSearchSpecif = TSS_SEARCH_DEFS_ONLY_SHORT;
+        options.searchKind = SEARCH_DEFINITIONS_SHORT;
     }
     else if (strcmp(argv[i], "-server")==0) {
         options.mode = ServerMode;

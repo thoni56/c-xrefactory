@@ -148,8 +148,8 @@ static void sortCompletionList(Completion **completions,
 void tagSearchCompactShortResults(void) {
     sortCompletionList(&sessionData.retrieverStack.top->completions,
                        completionIsLessThan);
-    if (options.tagSearchSpecif == TSS_SEARCH_DEFS_ONLY_SHORT
-        || options.tagSearchSpecif == TSS_FULL_SEARCH_SHORT) {
+    if (options.searchKind == SEARCH_DEFINITIONS_SHORT
+        || options.searchKind == SEARCH_FULL_SHORT) {
         tagSearchShortRemoveMultipleLines(sessionData.retrieverStack.top->completions);
     }
 }

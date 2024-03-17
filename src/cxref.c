@@ -529,7 +529,7 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
 
     fillReferenceItem(&referenceItem, symbol->linkName, 0, vApplCl, vFunCl, symbol->type, storage, scope,
                        symbol->access, category);
-    if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
+    if (options.mode==ServerMode && options.serverOperation==OLO_TAG_SEARCH && options.searchKind==SEARCH_FULL) {
         fillUsage(&reference.usage, usage.kind, AccessDefault);
         fillReference(&reference, reference.usage, *position, NULL);
         searchSymbolCheckReference(&referenceItem, &reference);
@@ -3471,7 +3471,7 @@ void answerEditAction(void) {
         pushEmptySession(&sessionData.retrieverStack);
         sessionData.retrieverStack.top->callerPosition = givenPosition;
 
-        if (options.tagSearchSpecif==TSS_FULL_SEARCH)
+        if (options.searchKind==SEARCH_FULL)
             scanJarFilesForTagSearch();
         scanForSearch(options.cxrefsLocation);
         printTagSearchResults();
@@ -3991,8 +3991,8 @@ static char *createTagSearchLine_static(char *name, Position *position,
     *len2 = maxOf(*len2, l2);
     *len3 = maxOf(*len3, l3);
 
-    if (options.tagSearchSpecif == TSS_SEARCH_DEFS_ONLY_SHORT
-        || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
+    if (options.searchKind == SEARCH_DEFINITIONS_SHORT
+        || options.searchKind==SEARCH_FULL_SHORT) {
         sprintf(line, "%s", name);
     } else {
         sprintf(line, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);

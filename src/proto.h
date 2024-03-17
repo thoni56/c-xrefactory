@@ -91,8 +91,15 @@ typedef enum {
     CHECK_NULL
 } CheckNull;
 
+typedef enum {
+    SEARCH_FULL = CHECK_NULL + 1,
+    SEARCH_DEFINITIONS,
+    SEARCH_FULL_SHORT,
+    SEARCH_DEFINITIONS_SHORT
+} SearchKind;
+
 enum miscellaneous { /* misc. constants */
-    DEFAULT_VALUE = CHECK_NULL + 1,
+    DEFAULT_VALUE = SEARCH_DEFINITIONS_SHORT + 1,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
@@ -141,10 +148,6 @@ enum miscellaneous { /* misc. constants */
     INSPECT_DEF,
     INSPECT_CLASS,
     ADD_MAYBE_THIS_REFERENCE,
-    TSS_FULL_SEARCH,
-    TSS_SEARCH_DEFS_ONLY,
-    TSS_FULL_SEARCH_SHORT,
-    TSS_SEARCH_DEFS_ONLY_SHORT,
     GEN_FULL_OUTPUT,
     GEN_PRECHECKS,
     GEN_NO_OUTPUT,
