@@ -27,6 +27,7 @@
 #include "options.h"
 #include "proto.h"
 #include "protocol.h"
+#include "parsers.h"            /* Required because of intricate includes in recyacc/java_parser */
 #include "recyacc.h"
 #include "refactory.h"
 #include "reftab.h"
