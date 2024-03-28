@@ -5,6 +5,8 @@
 #include "proto.h"
 #include "symbol.h"
 #include "symboltable.h"
+#include "stackmemory.h"
+
 
 typedef struct javaStat {
     struct idList           *className;          /* this class name */

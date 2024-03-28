@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "globals.h"
 #include "memory.h"
+#include "stackmemory.h"
 #include "options.h"
 #include "protocol.h"
 #include "input.h"

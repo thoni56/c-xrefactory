@@ -1,10 +1,11 @@
 #include <cgreen/cgreen.h>
 
-#include "menu.h"
-
 #include "log.h"
 
+#include "menu.h"
+
 #include "classhierarchy.mock"
+#include "commons.mock"
 #include "cxfile.mock"
 #include "cxref.mock"
 #include "globals.mock"

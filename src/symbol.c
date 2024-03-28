@@ -1,8 +1,10 @@
 #include "symbol.h"
 
+#include <stddef.h>
+
 #include "access.h"
 #include "category.h"
-#include "memory.h"
+#include "stackmemory.h"
 #include "scope.h"
 #include "storage.h"
 #include "type.h"

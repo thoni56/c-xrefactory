@@ -21,6 +21,7 @@
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
+#include "stackmemory.h"
 
 #include "log.h"
 #include "ppc.h"

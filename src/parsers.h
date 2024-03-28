@@ -24,6 +24,8 @@
 #include "ast.h"
 #include "head.h"               /* For Language type */
 
+#include "stackmemory.h"
+
 #ifndef RECURSIVE
 #include "lexem.h"
 typedef union {

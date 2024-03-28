@@ -31,6 +31,7 @@
 #include "refactory.h"
 #include "reftab.h"
 #include "server.h"
+#include "stackmemory.h"
 #include "symboltable.h"
 #include "xref.h"
 #include "yylex.h"

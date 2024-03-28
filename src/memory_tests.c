@@ -28,50 +28,10 @@ static void myInternalCheckFailed(char *expr, char *file, int line) {
 Describe(Memory);
 BeforeEach(Memory) {
     log_set_level(LOG_ERROR);
-    initOuterCodeBlock();
     setFatalErrorHandlerForMemory(myFatalError);
     setInternalCheckFailHandlerForMemory(myInternalCheckFailed);
 }
 AfterEach(Memory) {}
-
-Ensure(Memory, calls_fatalError_on_out_of_memory) {
-    void *allocatedMemory = &allocatedMemory; /* Point to something initially */
-
-    fatalErrorAllowed = true;
-    while (!fatalErrorCalled && allocatedMemory != NULL)
-        allocatedMemory = stackMemoryAlloc(5);
-
-    if (!fatalErrorCalled)
-        fail_test("fatalError() not called");
-    else
-        pass_test();
-}
-
-Ensure(Memory, can_begin_and_end_block) {
-    FreeTrail freeTrail;
-
-    initOuterCodeBlock();
-    assert_that(currentBlock->outerBlock, is_null);
-
-    currentBlock->trail = &freeTrail; /* "Random" pointer to be able to figure out what happens with it... */
-
-    beginBlock();
-    assert_that(currentBlock->outerBlock, is_equal_to(&stackMemory[sizeof(CodeBlock)]));
-    assert_that(currentBlock->outerBlock, is_not_null);
-    assert_that(currentBlock->outerBlock->outerBlock, is_null);
-    assert_that(currentBlock->trail, is_equal_to(currentBlock->outerBlock->trail));
-    assert_that(currentBlock->trail, is_equal_to(&freeTrail));
-    assert_that(currentBlock->outerBlock->trail, is_equal_to(&freeTrail));
-
-    endBlock();
-    assert_that(currentBlock->outerBlock, is_null);
-}
-
-Ensure(Memory, can_calculate_nesting_level) {
-    assert_that(nestingLevel(), is_equal_to(0));
-    beginBlock();
-    assert_that(nestingLevel(), is_equal_to(1));
-}
 
 static int  overflowRequest = 0;
 static bool overflowHandler(int n) {

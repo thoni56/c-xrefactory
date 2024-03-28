@@ -318,6 +318,8 @@ typedef enum syntaxPassParsedImportantPosition {
 #include "id.h"
 
 #include "typemodifier.h"
+#include "constants.h"
+
 
 typedef struct recFindStr {
     struct symbol     *baseClass;    /* class, application on which is looked*/
@@ -373,6 +375,7 @@ typedef struct jslSymbolList {
 
 #include "reference.h"
 #include "server.h"
+#include "head.h"
 
 
 /* ***************** on - line cross referencing ***************** */

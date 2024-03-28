@@ -16,6 +16,7 @@
 #include "protocol.h"
 #include "reftab.h"
 #include "semact.h"
+#include "stackmemory.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000

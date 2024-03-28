@@ -13,6 +13,7 @@
 #include "jsemact.h"
 #include "symbol.h"
 #include "list.h"
+#include "stackmemory.h"
 
 #include "log.h"
 #include "recyacc.h"

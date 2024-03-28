@@ -16,6 +16,7 @@
 #include "protocol.h"
 #include "reftab.h"
 #include "semact.h"
+#include "stackmemory.h"
 #include "type.h"
 #include "yylex.h"
 

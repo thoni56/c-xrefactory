@@ -2,6 +2,9 @@
 
 #include "position.h"
 
+#include "commons.mock"
+
+
 Describe(Position);
 BeforeEach(Position) {}
 AfterEach(Position) {}

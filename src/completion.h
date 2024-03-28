@@ -4,6 +4,7 @@
 #include "reference.h"
 #include "symbol.h"
 #include "type.h"
+#include "constants.h"
 
 
 /* ***************** COMPLETION STRUCTURES ********************** */

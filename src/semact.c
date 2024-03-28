@@ -16,6 +16,7 @@
 #include "symbol.h"
 #include "list.h"
 #include "filetable.h"
+#include "stackmemory.h"
 
 #include "hash.h"
 #include "log.h"

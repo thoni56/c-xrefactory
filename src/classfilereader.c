@@ -18,6 +18,7 @@
 #include "filedescriptor.h"
 #include "fileio.h"
 #include "filetable.h"
+#include "stackmemory.h"
 
 #include "log.h"
 

@@ -7,6 +7,7 @@
 #include "semact.h"
 #include "log.h"
 
+#include "stackmemory.h"
 #include "ast.h"
 
 #define YYSTYPE CEXPYYSTYPE

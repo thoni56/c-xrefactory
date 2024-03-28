@@ -1,9 +1,10 @@
 #include <cgreen/cgreen.h>
 
-#include "editor.h"
-#include "editorbuffertab.h"
-#include "hash.h"
 #include "log.h"
+
+#include "editorbuffertab.h"
+
+#include "commons.mock"
 
 Describe(EditorBufferTab);
 BeforeEach(EditorBufferTab) {

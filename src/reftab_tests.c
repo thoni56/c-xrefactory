@@ -3,9 +3,12 @@
 
 #include "log.h"
 #include "memory.h"
+
 #include "reftab.h"
 
 #include "cxref.mock"
+#include "commons.mock"
+
 
 Describe(ReferenceTable);
 BeforeEach(ReferenceTable) {

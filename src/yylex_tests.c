@@ -42,7 +42,9 @@ void processIncludeNextDirective(Position *includePosition);
 #include "parsers.mock"
 #include "reftab.mock"
 #include "semact.mock"
+#include "stackmemory.h"
 #include "yacc_parser.mock"
+
 
 Describe(Yylex);
 BeforeEach(Yylex) {

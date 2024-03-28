@@ -1,5 +1,9 @@
 #include "id.h"
 
+#include "stdinc.h"
+#include "stackmemory.h"
+
+
 void fillId(Id *id, char *name, Symbol *symbol, Position position) {
     id->name     = name;
     id->symbol   = symbol;

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "commons.h"
+#include "stackmemory.h"
 
 
 static void fillTypeModifier(TypeModifier *typeModifier, Type kind, Symbol *typedefSymbol, TypeModifier *next) {

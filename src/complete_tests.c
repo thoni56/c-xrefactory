@@ -1,10 +1,12 @@
 #include <cgreen/cgreen.h>
 
 #include "complete.h"
+
 #include "log.h"
 
 #include "classfilereader.mock"
 #include "completion.mock"
+#include "commons.mock"
 #include "cxfile.mock"
 #include "cxref.mock"
 #include "editor.mock"

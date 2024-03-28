@@ -31,6 +31,7 @@
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "typemodifier.h"
+#include "stackmemory.h"
 
 #include "ast.h"
 

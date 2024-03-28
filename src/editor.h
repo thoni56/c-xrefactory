@@ -1,6 +1,9 @@
 #ifndef EDITOR_H_INCLUDED
 #define EDITOR_H_INCLUDED
 
+#include <sys/stat.h>
+
+#include "head.h"
 #include "completion.h"
 #include "editorbuffer.h"
 #include "reference.h"

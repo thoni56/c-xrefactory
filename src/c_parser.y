@@ -29,6 +29,7 @@
 #include "semact.h"
 #include "symbol.h"
 #include "yylex.h"
+#include "stackmemory.h"
 
 #include "ast.h"
 

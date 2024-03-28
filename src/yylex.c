@@ -17,6 +17,7 @@
 #include "options.h"
 #include "reftab.h"
 #include "semact.h"
+#include "stackmemory.h"
 
 #include "c_parser.h"
 #include "cexp_parser.h"

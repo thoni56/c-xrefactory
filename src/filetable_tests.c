@@ -9,6 +9,8 @@
 #include "cxref.mock"
 #include "globals.mock"
 #include "misc.mock"
+#include "stackmemory.h"
+
 
 Describe(FileTable);
 BeforeEach(FileTable) {

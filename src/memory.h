@@ -16,19 +16,6 @@ typedef struct memory {
     double  block[SIZE_optMemory];	//  double in order to get it properly aligned
 } Memory;
 
-/* The "trail" seems to only be used for Java so ignore it for now... */
-typedef struct freeTrail {
-    void             (*action)(void*);
-    void             *pointer;
-    struct freeTrail *next;
-} FreeTrail;
-
-typedef struct codeBlock {
-    int              firstFreeIndex;
-    struct freeTrail *trail;
-    struct codeBlock *outerBlock;
-} CodeBlock;
-
 
 /* ******************** a simple memory handler ************************ */
 
@@ -69,8 +56,6 @@ extern bool smIsFreedPointer(Memory2 *memory, void *pointer);
 
 /* DM (Dynamic Memory) areas, can possibly expand using overflow handler */
 
-extern CodeBlock *currentBlock;
-
 extern jmp_buf memoryResizeJumpTarget;
 
 extern Memory *cxMemory;
@@ -79,10 +64,7 @@ extern int olcxMemoryAllocatedBytes;
 
 
 /* SM (Static memory) areas */
-extern char stackMemory[];
-
 extern Memory2 ppmMemory;
-
 
 /* Inject some error functions to remove linkage dependency */
 extern void setFatalErrorHandlerForMemory(void (*function)(int errCode, char *mess, int exitStatus,
@@ -121,26 +103,5 @@ extern void  editorFree(void *pointer, size_t size);
 extern void initMemory(Memory *memory, char *name, bool (*overflowHandler)(int n), int size);
 extern void memoryResized(void);
 extern bool cxMemoryOverflowHandler(int n);
-
-extern void addToTrail(void (*action)(void*), void *p, bool needTrailOnTopLevel);
-extern void removeFromTrailUntil(FreeTrail *untilP);
-
-extern void initOuterCodeBlock(void);
-
-
-/**********************************************************************
-
-    Stack memory synchronized with program block structure. New block
-    with stackMemoryBlockStart();
-*/
-extern void *stackMemoryAlloc(int size);
-extern char *stackMemoryPushString(char *s);
-
-extern void beginBlock(void);
-extern void endBlock(void);
-extern int nestingLevel(void);
-
-extern bool isMemoryFromPreviousBlock(void *ppp);
-extern bool isFreedPointer(void *ptr);
 
 #endif

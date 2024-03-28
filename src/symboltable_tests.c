@@ -3,11 +3,13 @@
 
 #include "symboltable.h"
 
-#include "memory.h"
-
 #include "cxref.mock" /* For freeOldestOlcx() */
 #include "globals.mock"
 #include "misc.mock"
+#include "commons.mock"
+
+#include "stackmemory.h"
+
 
 Describe(SymbolTable);
 BeforeEach(SymbolTable) {

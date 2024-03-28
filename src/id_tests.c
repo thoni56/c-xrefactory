@@ -5,6 +5,9 @@
 /* Dependencies: */
 #include "cxref.mock"
 #include "globals.mock"
+#include "commons.mock"
+#include "stackmemory.h"
+
 
 Describe(Id);
 BeforeEach(Id) {

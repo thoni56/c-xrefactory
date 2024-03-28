@@ -57,7 +57,8 @@
 
 #include <string.h>             /* For memset() */
 
-#include "misc.h"               /* For XX_ALLOCC */
+#include "misc.h" /* For XX_ALLOCC */
+#include "stackmemory.h"
 #include "log.h"
 
 #define GLUE(a,b) a ## b
