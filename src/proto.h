@@ -205,7 +205,7 @@ typedef enum commentMovingMode {
 enum addImportsDefault {
     NID_IMPORT_ON_DEMAND,
     NID_SINGLE_TYPE_IMPORT,
-    NID_KEPP_FQT_NAME,
+    IMPORT_KEEP_FQT_NAME,
 };
 
 /* *******************      refactoring continuations      *************** */

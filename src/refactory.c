@@ -2625,7 +2625,7 @@ static void reduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegi
                 case RC_CONTINUE:
                     dl                  = newDisabledList(menu, fileNumber, disabled);
                     disabled            = dl;
-                    defaultImportAction = NID_KEPP_FQT_NAME;
+                    defaultImportAction = IMPORT_KEEP_FQT_NAME;
                     break;
                 default:
                     FATAL_ERROR(ERR_INTERNAL, "wrong continuation code", XREF_EXIT_ERR);
