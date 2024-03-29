@@ -21,7 +21,6 @@
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"
-#include "stackmemory.h"
 
 #include "log.h"
 #include "ppc.h"
@@ -1206,7 +1205,6 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
         cpi          = cache.index;
 
         activateCaching();
-        log_trace("firstFreeIndex = %d", currentBlock->firstFreeIndex);
         placeCachePoint(false);
         deactivateCaching();
 
@@ -1224,7 +1222,6 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
         // following is to free CF_MEMORY taken by scan, only
         // cross references in CX_MEMORY are interesting in this case.
         recoverCachePoint(cpi - 1, cache.points[cpi - 1].nextLexemP, false);
-        log_trace("firstFreeIndex = %d", currentBlock->firstFreeIndex);
         log_trace(":ppmmem == %d/%d %x-%x", ppmMemory.index, SIZE_ppmMemory, &ppmMemory.area[0], &ppmMemory.area[SIZE_ppmMemory]);
     }
 }
