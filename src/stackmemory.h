@@ -12,7 +12,7 @@
 /* WTF is the "trail" actually? Frame pointers? */
 typedef struct freeTrail {
     void             (*action)(void*);
-    void             *pointer;
+    void             *argument;
     struct freeTrail *next;
 } FreeTrail;
 
@@ -39,7 +39,7 @@ extern bool isMemoryFromPreviousBlock(void *ppp);
 extern bool isFreedPointer(void *ptr);
 
 
-extern void addToTrail(void (*action)(void*), void *p, bool needTrailOnTopLevel);
+extern void addToTrail(void (*action)(void*), void *argument);
 extern void removeFromTrailUntil(FreeTrail *untilP);
 extern void initOuterCodeBlock(void);
 

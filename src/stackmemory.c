@@ -1,6 +1,7 @@
 #include "constants.h"
 #include "proto.h"
 #include "commons.h"
+#include "globals.h"
 
 #include "stackmemory.h"
 
@@ -31,15 +32,16 @@ static void trailDump(void) {
 }
 
 
-void addToTrail(void (*action)(void*), void *pointer, bool needTrailOnTopLevel) {
+void addToTrail(void (*action)(void*), void *argument) {
     FreeTrail *t;
 
     /* no trail at level 0 in C, Yacc */
-    if ((nestingLevel() == 0) && !needTrailOnTopLevel)
+    if ((nestingLevel() == 0) && !(LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)))
         return;
+
     t = stackMemoryAlloc(sizeof(FreeTrail));
     t->action = action;
-    t->pointer = (void **) pointer;
+    t->argument = (void **) argument;
     t->next = currentBlock->trail;
     currentBlock->trail = t;
     if (memoryTrace)
@@ -50,7 +52,7 @@ void removeFromTrailUntil(FreeTrail *untilP) {
     FreeTrail *p;
     for (p=currentBlock->trail; untilP<p; p=p->next) {
         assert(p!=NULL);
-        (*(p->action))(p->pointer);
+        (*(p->action))(p->argument);
     }
     if (p!=untilP) {
         error(ERR_INTERNAL, "block structure mismatch?");
