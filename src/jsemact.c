@@ -541,7 +541,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name, char *fqName) {
     // I think this can be there, as it is very used
     javaCreateClassFileItem(memb);
     // this would be too strong, javaLoadClassSymbolsFromFile(memb);
-    /* so, this table is not freed by Trail */
+    /* so, this table is not freed when freeing FrameAllocations */
     //&if (stringContainsSubstring(fqName, "ComboBoxTreeFilter")) {fprintf(dumpOut,"\nAAAAAAAAAAAAA : %s %s\n\n", name, fqName);} if (strcmp(fqName, "ComboBoxTreeFilter")==0) assert(0);
     return memb;
 }
@@ -608,7 +608,7 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *original, int accessFlags, Posit
 
     added = newSymbolAsCopyOf(original);
     added->pos = *importPos;
-    addSymbol(symbolTable, added);
+    addSymbolToFrame(symbolTable, added);
 
     return original;
 }
@@ -2529,12 +2529,12 @@ void javaAddSuperNestedClassToSymbolTab( Symbol *cc ) {
 }
 
 
-struct freeTrail *newClassDefinitionBegin(Id *name,
+struct stackFrame *newClassDefinitionBegin(Id *name,
                                           Access access,
                                           Symbol *anonymousInterface) {
     IdList   *p;
     Symbol        *dd,*ddd;
-    FreeTrail     *res;
+    FrameAllocation     *res;
     JavaStat      *oldStat;
     int             nnest,noff,classf;
     S_nestedSpec	*nst,*nn;
@@ -2581,7 +2581,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
         assert(dd->type == TypeStruct);
         parsedPositions[SPP_LAST_TOP_LEVEL_CLASS_POSITION] = name->position;
     }
-    res = currentBlock->trail;
+    res = currentBlock->frameAllocations;
     classf = dd->u.structSpec->classFileNumber;
     if (classf == -1)
         classf = NO_FILE_NUMBER;
@@ -2594,8 +2594,8 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
     return res;
 }
 
-struct freeTrail *newAnonClassDefinitionBegin(Id *interfName) {
-    struct freeTrail * res;
+struct stackFrame *newAnonClassDefinitionBegin(Id *interfName) {
+    struct stackFrame * res;
     IdList	*ll;
     Symbol		*interf, *str;
     ll = stackMemoryAlloc(sizeof(IdList));
@@ -2607,9 +2607,9 @@ struct freeTrail *newAnonClassDefinitionBegin(Id *interfName) {
     return res;
 }
 
-void newClassDefinitionEnd(FreeTrail *trail) {
+void newClassDefinitionEnd(FrameAllocation *allocation) {
     assert(javaStat && javaStat->next);
-    removeFromTrailUntil(trail);
+    removeFromFrameUntil(allocation);
     /* TODO: WTF?!??! */
     // the following line makes that method extraction does not work,
     // make attention with it, ? really

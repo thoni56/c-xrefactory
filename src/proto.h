@@ -119,8 +119,6 @@ enum miscellaneous { /* misc. constants */
     FIRST_PASS,
     SECOND_PASS,
     DO_NOT_CHECK_IF_SELECTED,
-    TRAILED_YES,
-    TRAILED_NO,
     CPOS_FUNCTION_INNER,
     CPOS_ST,
     DIRECT_ONLY,

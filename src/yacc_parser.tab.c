@@ -3942,7 +3942,7 @@ case 347:
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
         if (yyval.ast_typeModifiers.data->u.t->u.enums==NULL) {
             yyval.ast_typeModifiers.data->u.t->u.enums = yyvsp[-1].ast_symbolList.data;
-            addToTrail(setToNull, &(yyval.ast_typeModifiers.data->u.t->u.enums));
+            addToFrame(setToNull, &(yyval.ast_typeModifiers.data->u.t->u.enums));
         }
     }
 break;

@@ -181,9 +181,9 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
     }
 }
 
-static void trailDeleteOutOfMemory(void) {
-    FreeTrail **pp;
-    pp = &currentBlock->trail;
+static void deleteFrameAllocationsWhenOutOfMemory(void) {
+    FrameAllocation **pp;
+    pp = &currentBlock->frameAllocations;
     while (isFreedPointer(*pp)) {
         *pp = (*pp)->next;
     }
@@ -275,7 +275,7 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     *currentBlock = cachePoint->topBlockContent;
     javaStat = cachePoint->javaStat;
     counters = cachePoint->counters;
-    trailDeleteOutOfMemory();
+    deleteFrameAllocationsWhenOutOfMemory();
     assert(options.mode);
     if (options.mode==ServerMode && currentPass==1) {
         /* remove old references, only on first pass of edit server */

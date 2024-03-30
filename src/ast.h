@@ -38,8 +38,8 @@ typedef struct {
 } Ast_typeModifiersList;
 typedef struct {
     struct position   b, e;
-    struct freeTrail *data;
-} Ast_freeTrail;
+    struct stackFrame *data;
+} Ast_frameAllocation;
 typedef struct {
     struct position b, e;
     Id             *data;

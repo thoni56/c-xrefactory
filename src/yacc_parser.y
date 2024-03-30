@@ -1133,7 +1133,7 @@ enum_specifier
         $$.data = $1.data;
         if ($$.data->u.t->u.enums==NULL) {
             $$.data->u.t->u.enums = $3.data;
-            addToTrail(setToNull, &($$.data->u.t->u.enums));
+            addToFrame(setToNull, &($$.data->u.t->u.enums));
         }
     }
     | ENUM '{' enumerator_list_comma '}'                        {

@@ -1135,7 +1135,7 @@ TopLevelClassDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin($3.d, $1.d, NULL);
+                        $<frameAllocation>$ = newClassDefinitionBegin($3.d, $1.d, NULL);
                     }
                 }
             }
@@ -1152,7 +1152,7 @@ ClassDeclaration
     :   Modifiers_opt CLASS Identifier {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
+                        $<frameAllocation>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin($3.data, $1.data, NULL, CPOS_ST);
@@ -1170,7 +1170,7 @@ ClassDeclaration
                 if (regularPass()) {
                     $$.data = $3.data;
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd($<trail>4);
+                        newClassDefinitionEnd($<frameAllocation>4);
                     } else {
                         PropagateBoundaries($$, $1, $8);
                         if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $$);
@@ -1190,7 +1190,7 @@ ClassDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
+                        $<frameAllocation>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin($3.data, $1.data, NULL, CPOS_ST);
@@ -1201,7 +1201,7 @@ ClassDeclaration
                 if (regularPass()) {
                     $$.data = $3.data;
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd($<trail>4);
+                        newClassDefinitionEnd($<frameAllocation>4);
                     } else {
                         PropagateBoundaries($$, $1, $6);
                         if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $6);
@@ -1218,7 +1218,7 @@ FunctionInnerClassDeclaration
     :   Modifiers_opt CLASS Identifier {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
+                        $<frameAllocation>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin($3.data, $1.data, NULL, CPOS_FUNCTION_INNER);
@@ -1234,7 +1234,7 @@ FunctionInnerClassDeclaration
             } ClassBody {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd($<trail>4);
+                        newClassDefinitionEnd($<frameAllocation>4);
                     } else {
                         PropagateBoundaries($$, $1, $8);
                         if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $8);
@@ -1251,7 +1251,7 @@ FunctionInnerClassDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
+                        $<frameAllocation>$ = newClassDefinitionBegin($3.data, $1.data, NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin($3.data, $1.data, NULL, CPOS_FUNCTION_INNER);
@@ -1261,7 +1261,7 @@ FunctionInnerClassDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd($<trail>4);
+                        newClassDefinitionEnd($<frameAllocation>4);
                     } else {
                         PropagateBoundaries($$, $1, $6);
                         if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $6);
@@ -2062,7 +2062,7 @@ InterfaceDeclaration
     :   Modifiers_opt INTERFACE Identifier          {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<trail>$=newClassDefinitionBegin($3.data,($1.data|AccessInterface),NULL);
+                    $<frameAllocation>$=newClassDefinitionBegin($3.data,($1.data|AccessInterface),NULL);
                 }
             } else {
                 jslNewClassDefinitionBegin($3.data, ($1.data|AccessInterface), NULL, CPOS_ST);
@@ -2079,7 +2079,7 @@ InterfaceDeclaration
             if (regularPass()) {
                 $$.data = $3.data;
                 if (! SyntaxPassOnly()) {
-                    newClassDefinitionEnd($<trail>4);
+                    newClassDefinitionEnd($<frameAllocation>4);
                 } else {
                     PropagateBoundaries($$, $1, $7);
                     if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $$);
@@ -2099,7 +2099,7 @@ InterfaceDeclaration
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$=newClassDefinitionBegin($3.data,($1.data|AccessInterface),NULL);
+                        $<frameAllocation>$=newClassDefinitionBegin($3.data,($1.data|AccessInterface),NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin($3.data, ($1.data|AccessInterface), NULL, CPOS_ST);
@@ -2110,7 +2110,7 @@ InterfaceDeclaration
                 if (regularPass()) {
                     $$.data = $3.data;
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd($<trail>4);
+                        newClassDefinitionEnd($<frameAllocation>4);
                     } else {
                         PropagateBoundaries($$, $1, $6);
                         if ($$.b.file == NO_FILE_NUMBER) PropagateBoundaries($$, $2, $$);
@@ -3233,14 +3233,14 @@ ClassInstanceCreationExpression
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin(&javaAnonymousClassName,AccessDefault, $<symbol>6);
+                        $<frameAllocation>$ = newClassDefinitionBegin(&javaAnonymousClassName,AccessDefault, $<symbol>6);
                     }
                 }
             }
         ClassBody			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    newClassDefinitionEnd($<trail>8);
+                    newClassDefinitionEnd($<frameAllocation>8);
                     assert($<symbol>7 && $<symbol>7->u.typeModifier);
                     $$.data.typeModifier = $<symbol>7->u.typeModifier;
                     $$.data.reference = NULL;
@@ -3266,9 +3266,9 @@ ClassInstanceCreationExpression
                         $$.data.position = $1.data.position;
                         $$.data.reference = NULL;
                         if ($$.data.typeModifier->kind != TypeError) {
-                            $<trail>$ = newClassDefinitionBegin(&javaAnonymousClassName, AccessDefault, $$.data.typeModifier->u.t);
+                            $<frameAllocation>$ = newClassDefinitionBegin(&javaAnonymousClassName, AccessDefault, $$.data.typeModifier->u.t);
                         } else {
-                            $<trail>$ = newAnonClassDefinitionBegin(& $1.data.idList->id);
+                            $<frameAllocation>$ = newAnonClassDefinitionBegin(& $1.data.idList->id);
                         }
                     } else {
                         $$.data.position = $1.data.position;
@@ -3281,7 +3281,7 @@ ClassInstanceCreationExpression
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd($<trail>2);
+                        newClassDefinitionEnd($<frameAllocation>2);
                     } else {
                         PropagateBoundaries($$, $1, $3);
                     }

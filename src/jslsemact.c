@@ -120,7 +120,7 @@ void jslCompleteDeclarator(Symbol *t, Symbol *d) {
     d->storage = t->storage;
 }
 
-/* Used as argument to addToTrail() thus void* argument */
+/* Used as argument to addToFrame() thus void* argument */
 static void jslRemoveNestedClass(void *ddv) {
     JslSymbolList *dd;
     bool deleted;
@@ -159,11 +159,11 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
         if (order == ORDER_PREPEND) {
             log_debug("[jsl] prepending class %s to jsltab", smemb->name);
             jslTypeTabPush(s_jsl->typeTab, xss, index);
-            addToTrail(jslRemoveNestedClass, xss);
+            addToFrame(jslRemoveNestedClass, xss);
         } else {
             log_debug("[jsl] appending class %s to jsltab", smemb->name);
             jslTypeTabSetLast(s_jsl->typeTab, xss, index);
-            addToTrail(jslRemoveNestedClass, xss);
+            addToFrame(jslRemoveNestedClass, xss);
         }
     }
     return(smemb);

@@ -40,20 +40,20 @@ Ensure(StackMemory, calls_fatalError_on_out_of_memory) {
 }
 
 Ensure(StackMemory, can_begin_and_end_block) {
-    FreeTrail freeTrail;
+    FrameAllocation frameAllocation;
 
     initOuterCodeBlock();
     assert_that(currentBlock->outerBlock, is_null);
 
-    currentBlock->trail = &freeTrail; /* "Random" pointer to be able to figure out what happens with it... */
+    currentBlock->frameAllocations = &frameAllocation; /* "Random" pointer to be able to figure out what happens with it... */
 
     beginBlock();
     assert_that(currentBlock->outerBlock, is_equal_to(&stackMemory[sizeof(CodeBlock)]));
     assert_that(currentBlock->outerBlock, is_not_null);
     assert_that(currentBlock->outerBlock->outerBlock, is_null);
-    assert_that(currentBlock->trail, is_equal_to(currentBlock->outerBlock->trail));
-    assert_that(currentBlock->trail, is_equal_to(&freeTrail));
-    assert_that(currentBlock->outerBlock->trail, is_equal_to(&freeTrail));
+    assert_that(currentBlock->frameAllocations, is_equal_to(currentBlock->outerBlock->frameAllocations));
+    assert_that(currentBlock->frameAllocations, is_equal_to(&frameAllocation));
+    assert_that(currentBlock->outerBlock->frameAllocations, is_equal_to(&frameAllocation));
 
     endBlock();
     assert_that(currentBlock->outerBlock, is_null);

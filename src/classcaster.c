@@ -23,9 +23,10 @@ void cctAddSimpleValue(CctNode *cc, Symbol *symbol, int depthFactor) {
     int i,h;
 
     log_trace("adding %d == %s to casts at %d at depth %d", symbol, symbol->linkName, cc, depthFactor);
-    if (cc->node == symbol) return;
+    if (cc->node == symbol)
+        return;
     if (cc->node == NULL) {
-        cc->node = symbol;           /* should be trailed ? */
+        cc->node = symbol;
         return;
     }
     h = cctTreeHash(symbol, depthFactor);
@@ -33,7 +34,7 @@ void cctAddSimpleValue(CctNode *cc, Symbol *symbol, int depthFactor) {
         CF_ALLOCC(nn, CCT_TREE_INDEX, CctNode);
         for(i=0; i<CCT_TREE_INDEX; i++) fillCctNode(&nn[i], NULL, NULL);
         nn[h].node = symbol;
-        cc->sub = nn;           /* should be trailed ? */
+        cc->sub = nn;
         return;
     }
     cctAddSimpleValue(&cc->sub[h], symbol, depthFactor*CCT_TREE_INDEX);
@@ -58,7 +59,7 @@ void cctAddCctTree(CctNode *cc, CctNode *x, int depthFactor) {
     log_trace("adding %d tree to %d tree at depth == %d", x, cc, depthFactor);
     if (x->node == NULL) return;
     if (cc->node == NULL) {
-        *cc = *x;           /* should be trailed ? */
+        *cc = *x;
         return;
     }
     cctAddSimpleValue(cc, x->node, depthFactor);

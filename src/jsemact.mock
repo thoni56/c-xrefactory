@@ -327,19 +327,19 @@ void javaAddJslReadedTopLevelClasses(JslTypeTab *typeTab) {
     mock(typeTab);
 }
 
-struct freeTrail *newAnonClassDefinitionBegin(Id *interfName) {
-    return (struct freeTrail *) mock(interfName);
+struct stackFrame *newAnonClassDefinitionBegin(Id *interfName) {
+    return (struct stackFrame *) mock(interfName);
 }
 
 void javaAddSuperNestedClassToSymbolTab(Symbol *cc) {
     mock(cc);
 }
 
-struct freeTrail *newClassDefinitionBegin(Id *name, Access access, Symbol *anonymousInterface) {
-    return (struct freeTrail *) mock(name, access, anonymousInterface);
+struct stackFrame *newClassDefinitionBegin(Id *name, Access access, Symbol *anonymousInterface) {
+    return (struct stackFrame *) mock(name, access, anonymousInterface);
 }
 
-void newClassDefinitionEnd(FreeTrail *trail) {
+void newClassDefinitionEnd(FrameAllocation *trail) {
     mock(trail);
 }
 

@@ -155,10 +155,10 @@ extern TypeModifier *javaConditionalPromotion(TypeModifier *t1,
                                                  );
 extern int javaIsStringType(TypeModifier *tt);
 extern void javaAddJslReadedTopLevelClasses(JslTypeTab  *typeTab);
-extern struct freeTrail * newAnonClassDefinitionBegin(Id *interfName);
+extern struct stackFrame * newAnonClassDefinitionBegin(Id *interfName);
 extern void javaAddSuperNestedClassToSymbolTab( Symbol *cc);
-extern struct freeTrail *newClassDefinitionBegin(Id *name, Access access, Symbol *anonInterf);
-extern void newClassDefinitionEnd(FreeTrail *trail);
+extern struct stackFrame *newClassDefinitionBegin(Id *name, Access access, Symbol *anonInterf);
+extern void newClassDefinitionEnd(FrameAllocation *allocation);
 extern void javaInitArrayObject(void);
 extern void javaParsedSuperClass(Symbol *s);
 extern void javaSetClassSourceInformation(char *package, Id *cl);

@@ -3590,7 +3590,7 @@ case 108:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL);
+                        yyval.frameAllocation = newClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL, CPOS_ST);
@@ -3616,7 +3616,7 @@ case 110:
                 if (regularPass()) {
                     yyval.ast_id.data = yyvsp[-5].ast_id.data;
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd(yyvsp[-4].trail);
+                        newClassDefinitionEnd(yyvsp[-4].frameAllocation);
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
                         if (yyval.ast_id.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
@@ -3638,7 +3638,7 @@ case 111:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL);
+                        yyval.frameAllocation = newClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL, CPOS_ST);
@@ -3651,7 +3651,7 @@ case 112:
                 if (regularPass()) {
                     yyval.ast_id.data = yyvsp[-3].ast_id.data;
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd(yyvsp[-2].trail);
+                        newClassDefinitionEnd(yyvsp[-2].frameAllocation);
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
                         if (yyval.ast_id.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_id, yyvsp[0].ast_position);
@@ -3670,7 +3670,7 @@ case 114:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL);
+                        yyval.frameAllocation = newClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL, CPOS_FUNCTION_INNER);
@@ -3694,7 +3694,7 @@ case 116:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd(yyvsp[-4].trail);
+                        newClassDefinitionEnd(yyvsp[-4].frameAllocation);
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
                         if (yyval.ast_position.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_id, yyvsp[0].ast_position);
@@ -3713,7 +3713,7 @@ case 117:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL);
+                        yyval.frameAllocation = newClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin(yyvsp[0].ast_id.data, yyvsp[-2].ast_unsigned.data, NULL, CPOS_FUNCTION_INNER);
@@ -3725,7 +3725,7 @@ case 118:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd(yyvsp[-2].trail);
+                        newClassDefinitionEnd(yyvsp[-2].frameAllocation);
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
                         if (yyval.ast_position.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
@@ -4622,7 +4622,7 @@ case 196:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.trail=newClassDefinitionBegin(yyvsp[0].ast_id.data,(yyvsp[-2].ast_unsigned.data|AccessInterface),NULL);
+                    yyval.frameAllocation=newClassDefinitionBegin(yyvsp[0].ast_id.data,(yyvsp[-2].ast_unsigned.data|AccessInterface),NULL);
                 }
             } else {
                 jslNewClassDefinitionBegin(yyvsp[0].ast_id.data, (yyvsp[-2].ast_unsigned.data|AccessInterface), NULL, CPOS_ST);
@@ -4647,7 +4647,7 @@ case 198:
             if (regularPass()) {
                 yyval.ast_id.data = yyvsp[-4].ast_id.data;
                 if (! SyntaxPassOnly()) {
-                    newClassDefinitionEnd(yyvsp[-3].trail);
+                    newClassDefinitionEnd(yyvsp[-3].frameAllocation);
                 } else {
                     PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_unsigned, yyvsp[0].ast_position);
                     if (yyval.ast_id.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
@@ -4669,7 +4669,7 @@ case 199:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail=newClassDefinitionBegin(yyvsp[0].ast_id.data,(yyvsp[-2].ast_unsigned.data|AccessInterface),NULL);
+                        yyval.frameAllocation=newClassDefinitionBegin(yyvsp[0].ast_id.data,(yyvsp[-2].ast_unsigned.data|AccessInterface),NULL);
                     }
                 } else {
                     jslNewClassDefinitionBegin(yyvsp[0].ast_id.data, (yyvsp[-2].ast_unsigned.data|AccessInterface), NULL, CPOS_ST);
@@ -4682,7 +4682,7 @@ case 200:
                 if (regularPass()) {
                     yyval.ast_id.data = yyvsp[-3].ast_id.data;
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd(yyvsp[-2].trail);
+                        newClassDefinitionEnd(yyvsp[-2].frameAllocation);
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
                         if (yyval.ast_id.b.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_position, yyval.ast_id);
@@ -5930,7 +5930,7 @@ case 367:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(&javaAnonymousClassName,AccessDefault, yyvsp[-1].symbol);
+                        yyval.frameAllocation = newClassDefinitionBegin(&javaAnonymousClassName,AccessDefault, yyvsp[-1].symbol);
                     }
                 }
             }
@@ -5940,7 +5940,7 @@ case 368:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    newClassDefinitionEnd(yyvsp[-1].trail);
+                    newClassDefinitionEnd(yyvsp[-1].frameAllocation);
                     assert(yyvsp[-2].symbol && yyvsp[-2].symbol->u.typeModifier);
                     yyval.ast_expressionType.data.typeModifier = yyvsp[-2].symbol->u.typeModifier;
                     yyval.ast_expressionType.data.reference = NULL;
@@ -5971,9 +5971,9 @@ case 370:
                         yyval.ast_expressionType.data.position = yyvsp[0].ast_nestedConstrTokenType.data.position;
                         yyval.ast_expressionType.data.reference = NULL;
                         if (yyval.ast_expressionType.data.typeModifier->kind != TypeError) {
-                            yyval.trail = newClassDefinitionBegin(&javaAnonymousClassName, AccessDefault, yyval.ast_expressionType.data.typeModifier->u.t);
+                            yyval.frameAllocation = newClassDefinitionBegin(&javaAnonymousClassName, AccessDefault, yyval.ast_expressionType.data.typeModifier->u.t);
                         } else {
-                            yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].ast_nestedConstrTokenType.data.idList->id);
+                            yyval.frameAllocation = newAnonClassDefinitionBegin(& yyvsp[0].ast_nestedConstrTokenType.data.idList->id);
                         }
                     } else {
                         yyval.ast_expressionType.data.position = yyvsp[0].ast_nestedConstrTokenType.data.position;
@@ -5988,7 +5988,7 @@ case 371:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        newClassDefinitionEnd(yyvsp[-1].trail);
+                        newClassDefinitionEnd(yyvsp[-1].frameAllocation);
                     } else {
                         PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_nestedConstrTokenType, yyvsp[0].ast_position);
                     }

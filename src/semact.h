@@ -14,7 +14,7 @@ extern void unpackPointers(Symbol *pp);
 extern bool displayingErrorMessages(void);
 extern void noSuchFieldError(char *rec);
 extern void deleteSymDef(void *p);
-extern void addSymbol(SymbolTable *tab, Symbol *pp);
+extern void addSymbolToFrame(SymbolTable *tab, Symbol *pp);
 extern void recFindPush(Symbol *sym, S_recFindStr *rfs);
 extern S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs);
 extern bool javaOuterClassAccessible(Symbol *cl);

@@ -30,11 +30,11 @@ bool isFreedPointer(void *ptr) {
   return *(bool *) mock(ptr);
 }
 
-void addToTrail(void (*action)(void *), void *argument) {
+void addToFrame(void (*action)(void *), void *argument) {
   mock(action, argument);
 }
 
-void removeFromTrailUntil(FreeTrail *untilP) {
+void removeFromFrameUntil(FrameAllocation *untilP) {
   mock(untilP);
 }
 

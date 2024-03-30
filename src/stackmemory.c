@@ -1,5 +1,6 @@
 #include "commons.h"
-#include "globals.h"
+#include "constants.h"
+#include "proto.h"
 #include "log.h"
 
 #include "stackmemory.h"
@@ -21,47 +22,43 @@ void setErrorHandlerForMemory(void (*function)(int code, char *message)) {
 char stackMemory[SIZE_stackMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
 
-static void trailDump(void) {
-    log_trace("*** begin trailDump");
-    for (FreeTrail *t=currentBlock->trail; t!=NULL; t=t->next)
-        log_trace("%p ", t);
-    log_trace("*** end trailDump");
+static void frameDump(void) {
+    log_trace("*** begin frameDump");
+    for (FrameAllocation *f=currentBlock->frameAllocations; f!=NULL; f=f->next)
+        log_trace("%p ", f);
+    log_trace("*** end frameDump");
 }
 
 
-void addToTrail(void (*action)(void*), void *argument) {
-    FreeTrail *t;
+void addToFrame(void (*action)(void*), void *argument) {
+    FrameAllocation *f;
 
-    /* no trail at level 0 in C, Yacc */
-    if ((nestingLevel() == 0) && !(LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)))
-        return;
-
-    t = stackMemoryAlloc(sizeof(FreeTrail));
-    t->action = action;
-    t->argument = (void **) argument;
-    t->next = currentBlock->trail;
-    currentBlock->trail = t;
+    f = stackMemoryAlloc(sizeof(FrameAllocation));
+    f->action = action;
+    f->argument = (void **) argument;
+    f->next = currentBlock->frameAllocations;
+    currentBlock->frameAllocations = f;
     if (memoryTrace)
-        trailDump();
+        frameDump();
 }
 
-void removeFromTrailUntil(FreeTrail *untilP) {
-    FreeTrail *p;
-    for (p=currentBlock->trail; untilP<p; p=p->next) {
-        assert(p!=NULL);
-        (*(p->action))(p->argument);
+void removeFromFrameUntil(FrameAllocation *untilP) {
+    FrameAllocation *f;
+    for (f=currentBlock->frameAllocations; untilP<f; f=f->next) {
+        assert(f!=NULL);
+        (*(f->action))(f->argument);
     }
-    if (p!=untilP) {
+    if (f!=untilP) {
         error(ERR_INTERNAL, "block structure mismatch?");
     }
-    currentBlock->trail = p;
+    currentBlock->frameAllocations = f;
     if (memoryTrace)
-        trailDump();
+        frameDump();
 }
 
-static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, FreeTrail *trail, CodeBlock *outerBlock) {
+static void fillCodeBlock(CodeBlock *block, int firstFreeIndex, FrameAllocation *allocation, CodeBlock *outerBlock) {
     block->firstFreeIndex = firstFreeIndex;
-    block->trail = trail;
+    block->frameAllocations = allocation;
     block->outerBlock = outerBlock;
 }
 
@@ -103,16 +100,16 @@ void beginBlock(void) {
     log_trace("Begin block");
     previous = *currentBlock;
     pushed = stackMemoryPush(&previous, sizeof(CodeBlock));
-    // trail can't be reset to NULL, because in case of syntax errors
+    // allocation can't be reset to NULL, because in case of syntax errors
     // this would avoid balancing of } at the end of class
-    fillCodeBlock(currentBlock, currentBlock->firstFreeIndex, currentBlock->trail, pushed);
+    fillCodeBlock(currentBlock, currentBlock->firstFreeIndex, currentBlock->frameAllocations, pushed);
 }
 
 void endBlock(void) {
     log_trace("End block");
-    //&removeFromTrailUntil(NULL);
+    //&removeFromFrameUntil(NULL);
     assert(currentBlock && currentBlock->outerBlock);
-    removeFromTrailUntil(currentBlock->outerBlock->trail);
+    removeFromFrameUntil(currentBlock->outerBlock->frameAllocations);
     *currentBlock =  *currentBlock->outerBlock;
     assert(currentBlock != NULL);
 }

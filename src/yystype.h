@@ -8,7 +8,7 @@
 
 Symbol                                 *symbol;
 TypeModifier                           *typeModifier;
-FreeTrail                              *trail;
+FrameAllocation                        *frameAllocation;
 
 S_extRecFindStr                        *erfs;
 

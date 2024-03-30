@@ -76,7 +76,7 @@ int styyErrorRecovery(void) {
 }
 
 
-/* Used as action in addToTrail(), thus void* argument */
+/* Used as action in addToFrame(), thus void* argument */
 void setToNull(void *p) {
     void **pp;
     pp = (void **)p;
@@ -84,7 +84,7 @@ void setToNull(void *p) {
 }
 
 
-/* Used as action in addToTrail(), thus void* argument */
+/* Used as action in addToFrame(), thus void* argument */
 void deleteSymDef(void *p) {
     Symbol        *pp;
 
@@ -106,17 +106,18 @@ void unpackPointers(Symbol *symbol) {
     symbol->npointers=0;
 }
 
-void addSymbol(SymbolTable *table, Symbol *symbol) {
-    /*  a bug can produce, if you add a symbol into old table, and the same
-        symbol exists in a newer one. Then it will be deleted from the newer
-        one. All this story is about storing information in trail. It should
-        containt, both table and pointer !!!!
+void addSymbolToFrame(SymbolTable *table, Symbol *symbol) {
+    /*  A bug can happen if you add a symbol into old table, and the
+        same symbol exists in a newer one. Then it will be deleted
+        from the newer one. All this story is about storing
+        information in frameAllocations. It should contain both
+        table and pointer !!!!
     */
     log_debug("adding symbol %s: %s %s", symbol->name, typeNamesTable[symbol->type],
               storageEnumName[symbol->storage]);
     assert(symbol->npointers==0);
     addSymbolToTable(table, symbol);
-    addToTrail(deleteSymDef, symbol /* TODO? Should also include reference to table */);
+    addToFrame(deleteSymDef, symbol /* TODO? Should also include reference to table */);
 }
 
 void recFindPush(Symbol *str, S_recFindStr *rfs) {
@@ -601,7 +602,7 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbo
     } else if (symbol->type == TypeDefault && symbol->storage == StorageStatic) {
         setStaticFunctionLinkName(symbol, fileName, usage);
     }
-    addSymbol(table, symbol);
+    addSymbolToFrame(table, symbol);
     addCxReference(symbol, &symbol->pos, usage, NO_FILE_NUMBER, NO_FILE_NUMBER);
     return symbol;
 }
@@ -923,7 +924,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         initTypeModifierAsPointer(sptrtype, &member->u.structSpec->stype);
 
         setGlobalFileDepNames(id->name, member, MEMORY_XX);
-        addSymbol(symbolTable, member);
+        addSymbolToFrame(symbolTable, member);
     }
     addCxReference(member, &id->position, usage,NO_FILE_NUMBER, NO_FILE_NUMBER);
     return &member->u.structSpec->stype;
@@ -1009,7 +1010,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     TypeModifier *sptrtype = &pp->u.structSpec->sptrtype;
     initTypeModifierAsPointer(sptrtype, &pp->u.structSpec->stype);
 
-    addSymbol(symbolTable, pp);
+    addSymbolToFrame(symbolTable, pp);
 
     return &pp->u.structSpec->stype;
 }
@@ -1021,7 +1022,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
         return;
 
     sd->u.structSpec->records = rec;
-    addToTrail(setToNull, &(sd->u.structSpec->records));
+    addToFrame(setToNull, &(sd->u.structSpec->records));
     for (Symbol *symbol=rec; symbol!=NULL; symbol=symbol->next) {
         if (symbol->name != NULL) {
             symbol->linkName = string3ConcatInStackMem(sd->linkName,".",symbol->name);
@@ -1042,7 +1043,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
         pp = stackMemoryAlloc(sizeof(Symbol));
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
-        addSymbol(symbolTable, pp);
+        addSymbolToFrame(symbolTable, pp);
     }
     addCxReference(pp, &id->position, usage,NO_FILE_NUMBER, NO_FILE_NUMBER);
     return createSimpleEnumType(pp);

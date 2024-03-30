@@ -9,16 +9,16 @@
     Stack memory synchronized with program block structure.
 */
 
-/* WTF is the "trail" actually? Frame pointers? */
-typedef struct freeTrail {
+
+typedef struct stackFrame {
     void             (*action)(void*);
     void             *argument;
-    struct freeTrail *next;
-} FreeTrail;
+    struct stackFrame *next;
+} FrameAllocation;
 
 typedef struct codeBlock {
     int              firstFreeIndex;
-    struct freeTrail *trail;
+    struct stackFrame *frameAllocations;
     struct codeBlock *outerBlock;
 } CodeBlock;
 
@@ -39,8 +39,8 @@ extern bool isMemoryFromPreviousBlock(void *ppp);
 extern bool isFreedPointer(void *ptr);
 
 
-extern void addToTrail(void (*action)(void*), void *argument);
-extern void removeFromTrailUntil(FreeTrail *untilP);
+extern void addToFrame(void (*action)(void*), void *argument);
+extern void removeFromFrameUntil(FrameAllocation *untilP);
 extern void initOuterCodeBlock(void);
 
 #endif
