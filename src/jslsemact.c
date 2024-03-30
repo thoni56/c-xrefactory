@@ -120,7 +120,8 @@ void jslCompleteDeclarator(Symbol *t, Symbol *d) {
     d->storage = t->storage;
 }
 
-static void jslRemoveNestedClass(void  *ddv) {
+/* Used as argument to addToTrail() thus void* argument */
+static void jslRemoveNestedClass(void *ddv) {
     JslSymbolList *dd;
     bool deleted;
 

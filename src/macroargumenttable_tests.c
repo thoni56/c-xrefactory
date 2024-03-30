@@ -7,7 +7,7 @@
 #include "macroargumenttable.h"
 
 #include "commons.mock"
-#include "yylex.h"
+#include "stackmemory.mock"
 
 
 Describe(MacroArgumentTable);

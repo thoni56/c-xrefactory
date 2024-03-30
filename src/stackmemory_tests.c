@@ -1,12 +1,15 @@
 #include <cgreen/cgreen.h>
 #include <cgreen/mocks.h>
 
+/* Linked dependencies */
 #include "log.h"
+#include "memory.h"
 
 #include "stackmemory.h"
 
-#include "memory.h"
+/* Mocked dependencies */
 #include "commons.mock"
+#include "globals.mock"
 
 
 /* Our own fatalError that can be customized */

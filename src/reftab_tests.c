@@ -8,6 +8,7 @@
 
 #include "cxref.mock"
 #include "commons.mock"
+#include "stackmemory.mock"
 
 
 Describe(ReferenceTable);

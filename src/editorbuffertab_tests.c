@@ -5,6 +5,8 @@
 #include "editorbuffertab.h"
 
 #include "commons.mock"
+#include "stackmemory.mock"
+
 
 Describe(EditorBufferTab);
 BeforeEach(EditorBufferTab) {

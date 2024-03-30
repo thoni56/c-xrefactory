@@ -9,7 +9,7 @@
     Stack memory synchronized with program block structure.
 */
 
-/* The "trail" seems to only be used for Java so ignore it for now... */
+/* WTF is the "trail" actually? Frame pointers? */
 typedef struct freeTrail {
     void             (*action)(void*);
     void             *pointer;

@@ -3,6 +3,7 @@
 #include "position.h"
 
 #include "commons.mock"
+#include "stackmemory.mock"
 
 
 Describe(Position);

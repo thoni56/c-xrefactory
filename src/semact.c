@@ -76,7 +76,7 @@ int styyErrorRecovery(void) {
 }
 
 
-/* Used as action in addToTrail(), thus void* */
+/* Used as action in addToTrail(), thus void* argument */
 void setToNull(void *p) {
     void **pp;
     pp = (void **)p;
@@ -84,7 +84,7 @@ void setToNull(void *p) {
 }
 
 
-/* Used as action in addToTrail(), thus void* */
+/* Used as action in addToTrail(), thus void* argument */
 void deleteSymDef(void *p) {
     Symbol        *pp;
 
@@ -1020,7 +1020,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     assert(sd->u.structSpec);
     if (sd->u.structSpec->records!=NULL) return;
     sd->u.structSpec->records = rec;
-    addToTrail(setToNull, & (sd->u.structSpec->records), (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
+    addToTrail(setToNull, &(sd->u.structSpec->records), (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)));
     for(dd=rec; dd!=NULL; dd=dd->next) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
