@@ -1,0 +1,43 @@
+/* -*- c -*-*/
+#include "stackmemory.h"
+#include <cgreen/mocks.h>
+
+void *stackMemoryAlloc(int size) {
+  return (void *) mock(size);
+}
+
+char *stackMemoryPushString(char *s) {
+  return (char *) mock(s);
+}
+
+void beginBlock(void) {
+  mock();
+}
+
+void endBlock(void) {
+  mock();
+}
+
+int nestingLevel(void) {
+  return (int) mock();
+}
+
+bool isMemoryFromPreviousBlock(void *ppp) {
+  return *(bool *) mock(ppp);
+}
+
+bool isFreedPointer(void *ptr) {
+  return *(bool *) mock(ptr);
+}
+
+void addToTrail(void (*action)(void *), void *argument) {
+  mock(action, argument);
+}
+
+void removeFromTrailUntil(FreeTrail *untilP) {
+  mock(untilP);
+}
+
+void initOuterCodeBlock(void) {
+  mock();
+}
