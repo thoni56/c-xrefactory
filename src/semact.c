@@ -115,7 +115,7 @@ void addSymbol(SymbolTable *table, Symbol *symbol) {
     log_debug("adding symbol %s: %s %s", symbol->name, typeNamesTable[symbol->type],
               storageEnumName[symbol->storage]);
     assert(symbol->npointers==0);
-    addSymbolNoTrail(table, symbol);
+    addSymbolToTable(table, symbol);
     addToTrail(deleteSymDef, symbol /* TODO? Should also include reference to table */);
 }
 
@@ -1015,16 +1015,17 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
 }
 
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
-    Symbol *dd;
     assert(sd->type == TypeStruct || sd->type == TypeUnion);
     assert(sd->u.structSpec);
-    if (sd->u.structSpec->records!=NULL) return;
+    if (sd->u.structSpec->records!=NULL)
+        return;
+
     sd->u.structSpec->records = rec;
     addToTrail(setToNull, &(sd->u.structSpec->records));
-    for(dd=rec; dd!=NULL; dd=dd->next) {
-        if (dd->name!=NULL) {
-            dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
-            addCxReference(dd,&dd->pos,UsageDefined,NO_FILE_NUMBER, NO_FILE_NUMBER);
+    for (Symbol *symbol=rec; symbol!=NULL; symbol=symbol->next) {
+        if (symbol->name != NULL) {
+            symbol->linkName = string3ConcatInStackMem(sd->linkName,".",symbol->name);
+            addCxReference(symbol,&symbol->pos,UsageDefined,NO_FILE_NUMBER, NO_FILE_NUMBER);
         }
     }
 }

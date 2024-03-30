@@ -87,17 +87,18 @@ void dumpProgram(ProgramGraphNode *program) {
 }
 
 Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
-    Symbol *s;
+    Symbol *symbol;
 
     if (options.serverOperation != OLO_EXTRACT)
         return NULL;
 
-    s = newSymbolAsLabel(name, name, noPosition, labn);
-    s->type = TypeLabel;
-    s->storage = StorageAuto;
+    symbol = newSymbolAsLabel(name, name, noPosition, labn);
+    symbol->type = TypeLabel;
+    symbol->storage = StorageAuto;
 
-    addSymbolNoTrail(symbolTable, s);
-    return(s);
+
+    addSymbolToTable(symbolTable, symbol);
+    return(symbol);
 }
 
 

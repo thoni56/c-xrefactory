@@ -3,7 +3,7 @@
 
 #include "hash.h"
 
-#include "memory.h"
+#include "stackmemory.h"
 
 
 #define HASH_FUN(elemp) hashFun(elemp->name)
@@ -37,12 +37,9 @@ int getNextExistingSymbol(int index) {
     return -1;
 }
 
-/* Java uses JavaStat.locals as a symboltable ("trail"?) so must use symtab argument */
-void addSymbolNoTrail(SymbolTable *symtab, Symbol *symbol) {
+void addSymbolToTable(SymbolTable *table, Symbol *symbol) {
     int i;
-    Symbol *memb;
 
-    //assert(symtab == symbolTable);
-    symbolTableIsMember(symtab, symbol, &i, &memb);
-    symbolTablePush(symtab, symbol, i);
+    symbolTableIsMember(table, symbol, &i, NULL);
+    symbolTablePush(table, symbol, i);
 }

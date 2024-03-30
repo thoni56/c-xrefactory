@@ -1,11 +1,8 @@
-#include "constants.h"
-#include "proto.h"
 #include "commons.h"
 #include "globals.h"
+#include "log.h"
 
 #include "stackmemory.h"
-
-#include "log.h"
 
 
 CodeBlock *currentBlock;
