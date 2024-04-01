@@ -1,5 +1,6 @@
 #include "classcaster.h"
 
+#include "head.h"
 #include "memory.h"
 #include "log.h"
 
@@ -15,7 +16,7 @@ static int cctTreeHash(Symbol *symbol, int depthFactor) {
     return (((long unsigned)symbol) >> 4)/(depthFactor)%CCT_TREE_INDEX;
 }
 
-static void fillCctNode(CctNode *node, Symbol *symbol, CctNode *subtree) {
+protected void fillCctNode(CctNode *node, Symbol *symbol, CctNode *subtree) {
     node->symbol = symbol;
     node->subtree = subtree;
 }
@@ -79,51 +80,57 @@ void cctDump(CctNode *node, int depth) {
         log_trace("%*sNULL",depth,"");
         return;
     }
-    log_trace("%*s%lx",depth,"",(unsigned long)node->symbol);
+    log_trace("%*s%lx:%s",depth,"",(unsigned long)node->symbol,node->symbol->linkName);
     if (node->subtree == NULL)
         return;
     for (int i=0; i<CCT_TREE_INDEX; i++)
         cctDump(&node->subtree[i], depth+2);
 }
 
-#if 0
+#if 1
 // TODO: make these into unit tests...
 void cctTest(void) {
-    S_cctNode nn,hh;
-    fillCctNode(&nn, NULL, NULL);
-    cctDump(&nn, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
-    cctAddSimpleValue(&nn, 0x10, 1);
-    cctDump(&nn, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
-    cctAddSimpleValue(&nn, 0x20, 1);
-    cctDump(&nn, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
-    cctAddSimpleValue(&nn, 0x30, 1);
-    cctDump(&nn, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
-    cctAddSimpleValue(&nn, 0xa0, 1);
-    cctDump(&nn, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
+    CctNode node;
+    fillCctNode(&node, NULL, NULL);
+    Symbol symbol1 = {.linkName = "symbol1"};
+    cctAddSimpleValue(&node, &symbol1, 1);
+    cctDump(&node, 0);
+    log_trace("----------\n");
+    Symbol symbol2 = {.linkName = "symbol2"};
+    cctAddSimpleValue(&node, &symbol2, 1);
+    cctDump(&node, 0);
+    log_trace("----------\n");
+    Symbol symbol3 = {.linkName = "symbol3"};
+    cctAddSimpleValue(&node, &symbol3, 1);
+    cctDump(&node, 0);
+    log_trace("----------\n");
+    Symbol symbol4 = {.linkName = "symbol4"};
+    cctAddSimpleValue(&node, &symbol4, 1);
+    cctDump(&node, 0);
+    log_trace("----------\n");
 
-    fillCctNode(&hh, NULL, NULL);
-    cctDump(&hh, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
-    cctAddSimpleValue(&hh, 0x50, 1);
-    cctDump(&hh, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
-    cctAddSimpleValue(&hh, 0x20, 1);
-    cctDump(&hh, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
-    cctAddSimpleValue(&hh, 0x40, 1);
-    cctDump(&hh, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
-    cctAddSimpleValue(&hh, 0xe0, 1);
-    cctDump(&hh, 0);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
-    fprintf(dumpOut,"----------\n"); fflush(dumpOut);
+    CctNode top;
+    fillCctNode(&top, NULL, NULL);
+    cctDump(&top, 0);
+    log_trace("----------\n");
+    Symbol symbol5 = {.linkName = "symbol5"};
+    cctAddSimpleValue(&top, &symbol5, 1);
+    cctDump(&top, 0);
+    log_trace("----------\n");
+    Symbol symbol6 = {.linkName = "symbol6"};
+    cctAddSimpleValue(&top, &symbol6, 1);
+    cctDump(&top, 0);
+    log_trace("----------\n");
+    Symbol symbol7 = {.linkName = "symbol7"};
+    cctAddSimpleValue(&top, &symbol7, 1);
+    cctDump(&top, 0);
+    log_trace("----------\n");
+    Symbol symbol8 = {.linkName = "symbol8"};
+    cctAddSimpleValue(&top, &symbol8, 1);
+    cctDump(&top, 0);
+    log_trace("----------\n");
 
-    cctAddCctTree(&nn, &hh, 1);
-    cctDump(&nn, 0);
+    cctAddCctTree(&node, &top, 1);
+    cctDump(&node, 0);
 }
 #endif

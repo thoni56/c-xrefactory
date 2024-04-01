@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 
 #include "classfilereader.h"
+
 #include "log.h"
 
 #include "characterreader.mock"
