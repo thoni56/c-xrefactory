@@ -980,7 +980,7 @@ void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
 }
 
 TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
-    Symbol *pp;
+    Symbol *symbol;
     int type;
 
     assert(typeName);
@@ -993,26 +993,26 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     if (typeName->symbol->u.keyword == STRUCT) type = TypeStruct;
     else type = TypeUnion;
 
-    pp = newSymbol("", NULL, typeName->position);
-    pp->type = type;
-    pp->storage = StorageNone;
+    symbol = newSymbol("", NULL, typeName->position);
+    symbol->type = type;
+    symbol->storage = StorageNone;
 
-    setGlobalFileDepNames("", pp, MEMORY_XX);
+    setGlobalFileDepNames("", symbol, MEMORY_XX);
 
-    pp->u.structSpec = stackMemoryAlloc(sizeof(S_symStructSpec));
+    symbol->u.structSpec = stackMemoryAlloc(sizeof(S_symStructSpec));
 
     /* This is a recurring pattern, create a struct and the pointer type to it*/
-    initSymStructSpec(pp->u.structSpec, /*.records=*/NULL);
-    TypeModifier *stype = &pp->u.structSpec->stype;
+    initSymStructSpec(symbol->u.structSpec, /*.records=*/NULL);
+    TypeModifier *stype = &symbol->u.structSpec->stype;
     /* Assumed to be Struct/Union/Enum? */
-    initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/pp,
+    initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/symbol,
                                         /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-    TypeModifier *sptrtype = &pp->u.structSpec->sptrtype;
-    initTypeModifierAsPointer(sptrtype, &pp->u.structSpec->stype);
+    TypeModifier *sptrtype = &symbol->u.structSpec->sptrtype;
+    initTypeModifierAsPointer(sptrtype, &symbol->u.structSpec->stype);
 
-    addSymbolToFrame(symbolTable, pp);
+    addSymbolToFrame(symbolTable, symbol);
 
-    return &pp->u.structSpec->stype;
+    return &symbol->u.structSpec->stype;
 }
 
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
