@@ -4,7 +4,6 @@
 /* Dependencies: */
 #include "access.h"
 #include "category.h"
-#include "head.h"
 #include "position.h"
 #include "scope.h"
 #include "storage.h"

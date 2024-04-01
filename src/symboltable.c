@@ -1,10 +1,6 @@
 #define _SYMTAB_
 #include "symboltable.h"
 
-#include "hash.h"
-
-#include "stackmemory.h"
-
 
 #define HASH_FUN(elemp) hashFun(elemp->name)
 #define HASH_ELEM_EQUAL(e1,e2) (e1->type==e2->type && strcmp(e1->name,e2->name)==0)
