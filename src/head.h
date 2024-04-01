@@ -8,13 +8,6 @@
 #include "constants.h"
 
 
-/* *********************************************************************** */
-
-#define JAVA_VERSION_1_3 "1.3"
-#define JAVA_VERSION_1_4 "1.4"
-#define JAVA_VERSION_AUTO "auto"
-
-
 /* ******************** language identification ****************** */
 
 /* bitwise different */
@@ -120,8 +113,6 @@ typedef enum language {
 #define ERROR_MESSAGE_STARTING_OFFSET 10
 
 /* ********************************************************************** */
-
-#define CCT_TREE_INDEX       4	/* number of subtrees on each cct node    */
 
 #define TYPE_STR_RESERVE   100  /* reserve when sprinting type name */
                                 /* is it still actual ????????????? */

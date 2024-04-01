@@ -1,8 +1,10 @@
 #include "classcaster.h"
 
-#include "commons.h"
-#include "globals.h"
+#include "memory.h"
 #include "log.h"
+
+
+#define CCT_TREE_INDEX       4	/* number of subtrees on each cct node    */
 
 
 /* ******************** Class Cast Tree ************************ */
