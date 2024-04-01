@@ -104,13 +104,13 @@ static void structCachingFree(Symbol *symbol) {
         || ppmIsFreedPointer(symbol->u.structSpec->records)) {
         symbol->u.structSpec->records = NULL;
     }
-    if (isFreedPointer(symbol->u.structSpec->casts.node)
-        || ppmIsFreedPointer(symbol->u.structSpec->casts.node)) {
-        symbol->u.structSpec->casts.node = NULL;
+    if (isFreedPointer(symbol->u.structSpec->casts.symbol)
+        || ppmIsFreedPointer(symbol->u.structSpec->casts.symbol)) {
+        symbol->u.structSpec->casts.symbol = NULL;
     }
-    if (isFreedPointer(symbol->u.structSpec->casts.sub)
-        || ppmIsFreedPointer(symbol->u.structSpec->casts.sub)) {
-        symbol->u.structSpec->casts.sub = NULL;
+    if (isFreedPointer(symbol->u.structSpec->casts.subtree)
+        || ppmIsFreedPointer(symbol->u.structSpec->casts.subtree)) {
+        symbol->u.structSpec->casts.subtree = NULL;
     }
 
     superList = &symbol->u.structSpec->super;

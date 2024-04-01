@@ -5,14 +5,14 @@
 
 /* class cast tree */
 typedef struct cctNode {
-    struct symbol	*node;
-    struct cctNode	*sub;       /* sub[CCT_TREE_INDEX]; */
+    struct symbol	*symbol;
+    struct cctNode	*subtree;       /* sub[CCT_TREE_INDEX]; */
 } CctNode;
 
 
-extern void cctAddSimpleValue(CctNode *cc, Symbol *x, int depthFactor);
-extern bool cctIsMember(CctNode *cc, Symbol *x, int depthFactor);
-extern void cctAddCctTree(CctNode *cc, CctNode *x, int depthFactor);
-extern void cctDump(CctNode *cc, int depth);
+extern void cctAddSimpleValue(CctNode *node, Symbol *symbol, int depthFactor);
+extern bool cctIsMember(CctNode *node, Symbol *symbol, int depthFactor);
+extern void cctAddCctTree(CctNode *node, CctNode *tree, int depthFactor);
+extern void cctDump(CctNode *node, int depth);
 
 #endif

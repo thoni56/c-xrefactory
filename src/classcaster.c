@@ -15,76 +15,75 @@ static int cctTreeHash(Symbol *symbol, int depthFactor) {
     return (((long unsigned)symbol) >> 4)/(depthFactor)%CCT_TREE_INDEX;
 }
 
-static void fillCctNode(CctNode *cct, Symbol *node, CctNode *subtree) {
-    cct->node = node;
-    cct->sub = subtree;
+static void fillCctNode(CctNode *node, Symbol *symbol, CctNode *subtree) {
+    node->symbol = symbol;
+    node->subtree = subtree;
 }
 
-void cctAddSimpleValue(CctNode *cc, Symbol *symbol, int depthFactor) {
-    CctNode *nn;
-    int i,h;
-
-    log_trace("adding %d == %s to casts at %d at depth %d", symbol, symbol->linkName, cc, depthFactor);
-    if (cc->node == symbol)
+void cctAddSimpleValue(CctNode *node, Symbol *symbol, int depthFactor) {
+    log_trace("adding %d == %s to casts at %d at depth %d", symbol, symbol->linkName, node, depthFactor);
+    if (node->symbol == symbol)
         return;
-    if (cc->node == NULL) {
-        cc->node = symbol;
+    if (node->symbol == NULL) {
+        node->symbol = symbol;
         return;
     }
-    h = cctTreeHash(symbol, depthFactor);
-    if (cc->sub == NULL) {
-        CF_ALLOCC(nn, CCT_TREE_INDEX, CctNode);
-        for(i=0; i<CCT_TREE_INDEX; i++) fillCctNode(&nn[i], NULL, NULL);
-        nn[h].node = symbol;
-        cc->sub = nn;
+    int hash = cctTreeHash(symbol, depthFactor);
+    if (node->subtree == NULL) {
+        CctNode *n;
+        CF_ALLOCC(n, CCT_TREE_INDEX, CctNode);
+        for (int i=0; i<CCT_TREE_INDEX; i++)
+            fillCctNode(&n[i], NULL, NULL);
+        n[hash].symbol = symbol;
+        node->subtree = n;
         return;
     }
-    cctAddSimpleValue(&cc->sub[h], symbol, depthFactor*CCT_TREE_INDEX);
-}
-
-
-bool cctIsMember(CctNode *cc, Symbol *symbol, int depthFactor) {
-    int h,result;
-    //&if (cc->node!=NULL) fprintf(dumpOut,"checking cast %s to %d == %s\n", cc->node->linkName, symbol, symbol->linkName);
-    if (cc->node == symbol) return true;
-    if (cc->sub == NULL) return false;
-    h = cctTreeHash(symbol, depthFactor);
-    assert(h>=0 && h<CCT_TREE_INDEX);
-    result = cctIsMember(&cc->sub[h], symbol, depthFactor*CCT_TREE_INDEX);
-    return result;
+    cctAddSimpleValue(&node->subtree[hash], symbol, depthFactor*CCT_TREE_INDEX);
 }
 
 
-void cctAddCctTree(CctNode *cc, CctNode *x, int depthFactor) {
-    int i;
+bool cctIsMember(CctNode *node, Symbol *symbol, int depthFactor) {
+    if (node->symbol == symbol)
+        return true;
+    if (node->subtree == NULL)
+        return false;
+    int hash = cctTreeHash(symbol, depthFactor);
+    assert(hash>=0 && hash<CCT_TREE_INDEX);
+    return cctIsMember(&node->subtree[hash], symbol, depthFactor*CCT_TREE_INDEX);
+}
 
-    log_trace("adding %d tree to %d tree at depth == %d", x, cc, depthFactor);
-    if (x->node == NULL) return;
-    if (cc->node == NULL) {
-        *cc = *x;
+
+void cctAddCctTree(CctNode *node, CctNode *symbol, int depthFactor) {
+    log_trace("adding %d tree to %d tree at depth == %d", symbol, node, depthFactor);
+    if (symbol->symbol == NULL)
+        return;
+    if (node->symbol == NULL) {
+        *node = *symbol;
         return;
     }
-    cctAddSimpleValue(cc, x->node, depthFactor);
-    if (x->sub == NULL) return;
-    if (cc->sub == NULL) {
-        CF_ALLOCC(cc->sub, CCT_TREE_INDEX, CctNode);
-        for(i=0; i<CCT_TREE_INDEX; i++) cc->sub[i] = x->sub[i];
+    cctAddSimpleValue(node, symbol->symbol, depthFactor);
+    if (symbol->subtree == NULL)
+        return;
+    if (node->subtree == NULL) {
+        CF_ALLOCC(node->subtree, CCT_TREE_INDEX, CctNode);
+        for (int i=0; i<CCT_TREE_INDEX; i++)
+            node->subtree[i] = symbol->subtree[i];
     } else {
-        for(i=0; i<CCT_TREE_INDEX; i++) {
-            cctAddCctTree(&cc->sub[i], &x->sub[i], depthFactor*CCT_TREE_INDEX);
-        }
+        for (int i=0; i<CCT_TREE_INDEX; i++)
+            cctAddCctTree(&node->subtree[i], &symbol->subtree[i], depthFactor*CCT_TREE_INDEX);
     }
 }
 
-void cctDump(CctNode *cc, int depth) {
-    int i;
-    if (cc->node==NULL) {
+void cctDump(CctNode *node, int depth) {
+    if (node->symbol==NULL) {
         log_trace("%*sNULL",depth,"");
         return;
     }
-    log_trace("%*s%lx",depth,"",(unsigned long)cc->node);
-    if (cc->sub == NULL) return;
-    for(i=0; i<CCT_TREE_INDEX; i++) cctDump(&cc->sub[i], depth+2);
+    log_trace("%*s%lx",depth,"",(unsigned long)node->symbol);
+    if (node->subtree == NULL)
+        return;
+    for (int i=0; i<CCT_TREE_INDEX; i++)
+        cctDump(&node->subtree[i], depth+2);
 }
 
 #if 0
