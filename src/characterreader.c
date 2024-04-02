@@ -84,7 +84,7 @@ void closeCharacterBuffer(CharacterBuffer *buffer) {
    alloc_func zlibAlloc() ?
  */
 static voidpf zlibAlloc(voidpf opaque, uInt items, uInt size) {
-    return(calloc(items, size));
+    return calloc(items, size);
 }
 
 static void zlibFree(voidpf opaque, voidpf address) {
@@ -92,21 +92,20 @@ static void zlibFree(voidpf opaque, voidpf address) {
 }
 
 static int readFromUnzipFilterToBuffer(CharacterBuffer *buffer, char *outBuffer, int max_size) {
-    int n, fn, res;
-
     buffer->zipStream.next_out = (unsigned char *)outBuffer;
     buffer->zipStream.avail_out = max_size;
 #ifdef HAVE_ZLIB
+    int res = Z_DATA_ERROR;
+
     do {
         if (buffer->zipStream.avail_in == 0) {
-            fn = readFromFileToBuffer(buffer, buffer->z, CHARARACTER_BUFFER_SIZE);
+            int fn = readFromFileToBuffer(buffer, buffer->z, CHARARACTER_BUFFER_SIZE);
             buffer->zipStream.next_in = (unsigned char *)buffer->z;
             buffer->zipStream.avail_in = fn;
         }
         //&fprintf(stderr,"sending to inflate :");
         //&for(iii=0;iii<100;iii++) fprintf(stderr, " %d", buffer->zipStream.next_in[iii]);
         //&fprintf(stderr,"\n\n");
-        res = Z_DATA_ERROR;
         res = inflate(&buffer->zipStream, Z_SYNC_FLUSH);  // Z_NO_FLUSH
         //&fprintf(dumpOut,"res == %d\n", res);
         if (res==Z_OK) {
@@ -121,24 +120,20 @@ static int readFromUnzipFilterToBuffer(CharacterBuffer *buffer, char *outBuffer,
         }
     } while (((char*)buffer->zipStream.next_out)==outBuffer && res==Z_OK);
 #endif
-    n = ((char*)buffer->zipStream.next_out) - outBuffer;
-    return(n);
+    return ((char*)buffer->zipStream.next_out) - outBuffer;
 }
 
 bool refillBuffer(CharacterBuffer *buffer) {
+    char *next = buffer->nextUnread;
+    char *end = buffer->end;
+
     char *cp;
-    char *next;
-    char *end;
-    int charactersRead;
-    int max_size;
-
-    next = buffer->nextUnread;
-    end = buffer->end;
-
-    for(cp=buffer->chars+MAX_UNGET_CHARS; next<end; next++,cp++)
+    for (cp=buffer->chars+MAX_UNGET_CHARS; next<end; next++,cp++)
         *cp = *next;
 
-    max_size = CHARARACTER_BUFFER_SIZE - (cp - buffer->chars);
+    int max_size = CHARARACTER_BUFFER_SIZE - (cp - buffer->chars);
+
+    int charactersRead;
     if (buffer->inputMethod == INPUT_DIRECT) {
         charactersRead = readFromFileToBuffer(buffer, cp, max_size);
     } else {

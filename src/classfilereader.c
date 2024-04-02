@@ -588,7 +588,7 @@ static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
     seekToPosition(cb, place->u.offset);
 
     if (!zipReadLocalFileInfo(cb, fn, &fsize,
-                                &lastSig, zipArchiveTable[i].fn))
+                              &lastSig, zipArchiveTable[i].fn))
         return false;
     assert(lastSig == LOCAL_FILE_HEADER_SIGNATURE);
     assert(strcmp(fn,separatorPosition+1)==0);
