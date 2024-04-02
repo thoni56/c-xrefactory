@@ -18,8 +18,12 @@ linenumber = ":{0:>5}:".format(int(args.line))
 
 shutil.copy(os.path.join(".objects", basename+".gcda"), "/tmp")
 for d in dirs:
-    f = os.path.join(d, ".coverage", basename+".gcda")
-    shutil.copy(f, os.path.join(os.getcwd(), ".objects"))
+    try:
+        f = os.path.join(d, ".coverage", basename+".gcda")
+        shutil.copy(f, os.path.join(os.getcwd(), ".objects"))
+    except FileNotFoundError:
+        continue
+
     result = subprocess.run(["gcov", ".objects/"+basename+".o"], capture_output=True, text=True)
     result = subprocess.run(["grep", linenumber, basename+".c.gcov"], capture_output=True, text=True)
     line = result.stdout
