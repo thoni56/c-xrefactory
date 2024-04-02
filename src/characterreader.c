@@ -151,7 +151,7 @@ bool refillBuffer(CharacterBuffer *buffer) {
 }
 
 
-static void fillZipStreamFromBuffer(CharacterBuffer  *buffer, char *dd) {
+static void fillZipStreamFromBuffer(CharacterBuffer *buffer, char *dd) {
     memset(&buffer->zipStream, 0, sizeof(buffer->zipStream));
     buffer->zipStream.next_in = (Bytef*)buffer->z;
     buffer->zipStream.avail_in = dd-buffer->z;
