@@ -80,20 +80,20 @@ static Options refactoringOptions;
 
 static char *updateOption = "-fastupdate";
 
-static bool moveClassMapFunReturnOnUninterestingSymbols(ReferenceItem *ri, TpCheckMoveClassData *dd) {
-    if (!isPushAllMethodsValidRefItem(ri))
+static bool moveClassMapFunReturnOnUninterestingSymbols(ReferenceItem *referenceItem, TpCheckMoveClassData *data) {
+    if (!isPushAllMethodsValidRefItem(referenceItem))
         return true;
     /* this is too strong, but check only fields and methods */
-    if (ri->storage != StorageField && ri->storage != StorageMethod && ri->storage != StorageConstructor)
+    if (referenceItem->storage != StorageField && referenceItem->storage != StorageMethod && referenceItem->storage != StorageConstructor)
         return true;
     /* check that it has default accessibility*/
-    if (ri->access & AccessPublic)
+    if (referenceItem->access & AccessPublic)
         return true;
-    if (ri->access & AccessProtected)
+    if (referenceItem->access & AccessProtected)
         return true;
-    if (!(ri->access & AccessPrivate)) {
+    if (!(referenceItem->access & AccessPrivate)) {
         /* default accessibility, check only if transpackage move*/
-        if (!dd->transPackageMove)
+        if (!data->transPackageMove)
             return true;
     }
     return false;
@@ -173,7 +173,7 @@ static void setArguments(char *argv[MAX_NARGV_OPTIONS_COUNT], char *project,
 // ----------------------- interface to refactory sub-task --------------------------
 
 // be very careful when calling this function as it is messing all static variables
-// including options in s_opt, ...
+// including options, ...
 // call to this function MUST be followed by a pushing action, to refresh options
 static void ensureReferencesAreUpdated(char *project) {
     int argumentCount;
