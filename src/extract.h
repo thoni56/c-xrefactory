@@ -14,7 +14,7 @@ typedef enum extractModes {
 
 /* Revealed publicly only to allow unittesting */
 typedef struct referencesItemList {
-    struct referencesItem		*item;
+    struct referenceItem		*item;
     struct referencesItemList	*next;
 } ReferenceItemList;
 

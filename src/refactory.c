@@ -34,20 +34,20 @@
 
 
 typedef struct tpCheckMoveClassData {
-    PushAllInBetweenData mm;
-    int                         transPackageMove;
-    char                       *sclass;
+    PushRange pushRange;
+    bool      transPackageMove;
+    char      *sourceClass;
 } TpCheckMoveClassData;
 
 typedef struct tpCheckSpecialReferencesData {
-    PushAllInBetweenData mm;
-    char                       *symbolToTest;
-    int                         classToTest;
-    struct referencesItem      *foundSpecialRefItem;
-    struct reference           *foundSpecialR;
-    struct referencesItem      *foundRefToTestedClass;
-    struct referencesItem      *foundRefNotToTestedClass;
-    struct reference           *foundOuterScopeRef;
+    PushRange            pushRange;
+    char                 *symbolToTest;
+    int                  classToTest;
+    struct referenceItem *foundSpecialRefItem;
+    struct reference     *foundSpecialR;
+    struct referenceItem *foundRefToTestedClass;
+    struct referenceItem *foundRefNotToTestedClass;
+    struct reference     *foundOuterScopeRef;
 } TpCheckSpecialReferencesData;
 
 typedef struct disabledList {
@@ -770,7 +770,7 @@ static void tpCheckFutureAccOfLocalReferences(ReferenceItem *ri, void *ddd) {
             // I should check only references from this file
             if (rr->position.file == inputFileNumber) {
                 // check if the reference is outside moved class
-                if ((!dm_isBetween(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi)) && OL_VIEWABLE_REFS(rr)) {
+                if ((!dm_isBetween(cxMemory, rr, dd->pushRange.lowestIndex, dd->pushRange.highestIndex)) && OL_VIEWABLE_REFS(rr)) {
                     // yes there is a reference from outside to our symbol
                     ss->selected = true;
                     ss->visible  = true;
@@ -793,7 +793,7 @@ static void tpCheckMoveClassPutClassDefaultSymbols(ReferenceItem *ri, void *ddd)
     // fine, add it to Menu, so we will load its references
     for (Reference *rr = ri->references; rr != NULL; rr = rr->next) {
         log_trace("Checking %d.%d ref of %s", rr->position.line, rr->position.col, ri->linkName);
-        if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
+        if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->pushRange))) {
             if (isDefinitionOrDeclarationUsage(rr->usage.kind)) {
                 // definition inside class, default or private acces to be checked
                 rstack = sessionData.browserStack.top;
@@ -862,13 +862,13 @@ static void tpCheckDefaultAccessibilitiesMoveClass(ReferenceItem *ri, void *ddd)
 
     // check that it is not from moved class
     javaGetClassNameFromFileNumber(ri->vFunClass, symclass, KEEP_SLASHES);
-    sclen   = strlen(dd->sclass);
+    sclen   = strlen(dd->sourceClass);
     symclen = strlen(symclass);
-    if (sclen <= symclen && filenameCompare(dd->sclass, symclass, sclen) == 0)
+    if (sclen <= symclen && filenameCompare(dd->sourceClass, symclass, sclen) == 0)
         return;
     // O.K. finally check if there is a reference
     for (Reference *rr = ri->references; rr != NULL; rr = rr->next) {
-        if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
+        if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->pushRange))) {
             // O.K. there is a reference inside the moved class, add it to the list,
             assert(sessionData.browserStack.top);
             rstack = sessionData.browserStack.top;
@@ -878,38 +878,42 @@ static void tpCheckDefaultAccessibilitiesMoveClass(ReferenceItem *ri, void *ddd)
     }
 }
 
-static void fillTpCheckMoveClassData(TpCheckMoveClassData *checkMoveClassData, int minMemi, int maxMemi, bool transPackageMove, char *sclass) {
-    checkMoveClassData->mm.minMemi       = minMemi;
-    checkMoveClassData->mm.maxMemi       = maxMemi;
-    checkMoveClassData->transPackageMove = transPackageMove;
-    checkMoveClassData->sclass           = sclass;
+static void fillTpCheckMoveClassData(TpCheckMoveClassData *data, int minMemi, int maxMemi,
+                                     bool transPackageMove, char *sourceClass) {
+    data->pushRange.lowestIndex       = minMemi;
+    data->pushRange.highestIndex       = maxMemi;
+    data->transPackageMove = transPackageMove;
+    data->sourceClass      = sourceClass;
 }
 
-static void tpCheckFillMoveClassData(TpCheckMoveClassData *dd, char *spack, char *tpack) {
-    OlcxReferences *rstack;
+static void tpCheckFillMoveClassData(TpCheckMoveClassData *data, char *sourcePackageName, char *targetPackageName) {
+    OlcxReferences *referencesStack;
     SymbolsMenu    *sclass;
     char           *targetfile, *srcfile;
     bool            transPackageMove;
 
     assert(sessionData.browserStack.top);
-    rstack = sessionData.browserStack.top;
-    sclass = rstack->hkSelectedSym;
+    referencesStack = sessionData.browserStack.top;
+
+    sclass = referencesStack->hkSelectedSym;
     assert(sclass);
+
     targetfile = options.moveTargetFile;
     assert(targetfile);
+
     srcfile = inputFileName;
     assert(srcfile);
 
-    javaGetPackageNameFromSourceFileName(srcfile, spack);
-    javaGetPackageNameFromSourceFileName(targetfile, tpack);
+    javaGetPackageNameFromSourceFileName(srcfile, sourcePackageName);
+    javaGetPackageNameFromSourceFileName(targetfile, targetPackageName);
 
     // O.K. moving from package spack to package tpack
-    if (compareFileNames(spack, tpack) == 0)
+    if (compareFileNames(sourcePackageName, targetPackageName) == 0)
         transPackageMove = false;
     else
         transPackageMove = true;
 
-    fillTpCheckMoveClassData(dd, parsedInfo.cxMemoryIndexAtClassBeginning, parsedInfo.cxMemoryIndexAtClassEnd,
+    fillTpCheckMoveClassData(data, parsedInfo.cxMemoryIndexAtClassBeginning, parsedInfo.cxMemoryIndexAtClassEnd,
                              transPackageMove, sclass->references.linkName);
 }
 
@@ -931,23 +935,27 @@ static Reference * olcxCopyRefList(Reference *references) {
 }
 
 static bool checkMoveClassAccessibilities(void) {
-    OlcxReferences      *rstack;
-    SymbolsMenu         *ss;
-    TpCheckMoveClassData dd;
+    OlcxReferences      *referencesStack;
+    SymbolsMenu         *symbolsMenu;
+    TpCheckMoveClassData moveClassData;
     char                 spack[MAX_FILE_NAME_SIZE];
     char                 tpack[MAX_FILE_NAME_SIZE];
 
-    tpCheckFillMoveClassData(&dd, spack, tpack);
+    tpCheckFillMoveClassData(&moveClassData, spack, tpack);
     olcxPushSpecialCheckMenuSym(LINK_NAME_MOVE_CLASS_MISSED);
-    mapOverReferenceTableWithPointer(tpCheckDefaultAccessibilitiesMoveClass, &dd);
+    mapOverReferenceTableWithPointer(tpCheckDefaultAccessibilitiesMoveClass, &moveClassData);
 
     assert(sessionData.browserStack.top);
-    rstack = sessionData.browserStack.top;
-    if (rstack->references != NULL) {
-        ss = rstack->menuSym;
-        assert(ss);
-        ss->references.references = olcxCopyRefList(rstack->references);
-        rstack->actual            = rstack->references;
+    referencesStack = sessionData.browserStack.top;
+    if (referencesStack->references != NULL) {
+        symbolsMenu = referencesStack->menuSym;
+        assert(symbolsMenu);
+        symbolsMenu->references.references = olcxCopyRefList(referencesStack->references);
+        referencesStack->actual            = referencesStack->references;
+
+        // Asserts to explore if Options.refactoringMode is actually needed...
+        if (refactoringOptions.refactoringMode == RefactoryMode)
+            assert(refactoringOptions.mode == RefactoryMode);
         if (refactoringOptions.refactoringMode == RefactoryMode) {
             displayResolutionDialog(
                 "These references inside moved class are refering to symbols which will be inaccessible at new "
@@ -957,15 +965,20 @@ static bool checkMoveClassAccessibilities(void) {
         }
         return false;
     }
+
     olStackDeleteSymbol(sessionData.browserStack.top);
     // O.K. now check symbols defined inside the class
     pushEmptySession(&sessionData.browserStack);
-    tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(dd);
-    rstack = sessionData.browserStack.top;
-    if (rstack->menuSym != NULL) {
-        olcxRecomputeSelRefs(rstack);
+    tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(moveClassData);
+    referencesStack = sessionData.browserStack.top;
+    if (referencesStack->menuSym != NULL) {
+        olcxRecomputeSelRefs(referencesStack);
         // TODO, synchronize this with emacs, but how?
-        rstack->refsFilterLevel = RFilterDefinitions;
+        referencesStack->refsFilterLevel = RFilterDefinitions;
+
+        // Asserts to explore if Options.refactoringMode is actually needed...
+        if (refactoringOptions.refactoringMode == RefactoryMode)
+            assert(refactoringOptions.mode == RefactoryMode);
         if (refactoringOptions.refactoringMode == RefactoryMode) {
             displayResolutionDialog("These symbols defined inside moved class and used outside the class will be "
                                     "inaccessible at new class location. You should adjust their access first.",
@@ -1017,7 +1030,7 @@ static void tpCheckSpecialReferencesMapFun(ReferenceItem *ri, void *voidDataP) {
     if (strcmp(ri->linkName, dd->symbolToTest) != 0)
         return;
     for (Reference *rr = ri->references; rr != NULL; rr = rr->next) {
-        if (dm_isBetween(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi)) {
+        if (dm_isBetween(cxMemory, rr, dd->pushRange.lowestIndex, dd->pushRange.highestIndex)) {
             // a super method reference
             dd->foundSpecialRefItem = ri;
             dd->foundSpecialR       = rr;
@@ -1035,37 +1048,36 @@ static void tpCheckSpecialReferencesMapFun(ReferenceItem *ri, void *voidDataP) {
     }
 }
 
-static void initTpCheckSpecialReferencesData(TpCheckSpecialReferencesData *referencesData, int minMemi,
-                                             int maxMemi, char *symbolToTest, int classToTest) {
-    referencesData->mm.minMemi               = minMemi;
-    referencesData->mm.maxMemi               = maxMemi;
-    referencesData->symbolToTest             = symbolToTest;
-    referencesData->classToTest              = classToTest;
-    referencesData->foundSpecialRefItem      = NULL;
-    referencesData->foundSpecialR            = NULL;
-    referencesData->foundRefToTestedClass    = NULL;
-    referencesData->foundRefNotToTestedClass = NULL;
-    referencesData->foundOuterScopeRef       = NULL;
+static void initTpCheckSpecialReferencesData(TpCheckSpecialReferencesData *data, int lowestPushIndex,
+                                             int highestPushIndex, char *symbolToTest, int classToTest) {
+    data->pushRange.lowestIndex    = lowestPushIndex;
+    data->pushRange.highestIndex   = highestPushIndex;
+    data->symbolToTest             = symbolToTest;
+    data->classToTest              = classToTest;
+    data->foundSpecialRefItem      = NULL;
+    data->foundSpecialR            = NULL;
+    data->foundRefToTestedClass    = NULL;
+    data->foundRefNotToTestedClass = NULL;
+    data->foundOuterScopeRef       = NULL;
 }
 
-static bool tpCheckSuperMethodReferencesInit(TpCheckSpecialReferencesData *rr) {
+static bool tpCheckSuperMethodReferencesInit(TpCheckSpecialReferencesData *data) {
     SymbolsMenu    *ss;
-    int             scl;
-    OlcxReferences *rstack;
+    int             superClassNumber;
+    OlcxReferences *referencesStack;
 
     assert(sessionData.browserStack.top);
-    rstack = sessionData.browserStack.top;
-    ss     = rstack->hkSelectedSym;
+    referencesStack = sessionData.browserStack.top;
+    ss     = referencesStack->hkSelectedSym;
     assert(ss);
-    scl = javaGetSuperClassNumFromClassNum(ss->references.vApplClass);
-    if (scl == NO_FILE_NUMBER) {
+    superClassNumber = javaGetSuperClassNumFromClassNum(ss->references.vApplClass);
+    if (superClassNumber == NO_FILE_NUMBER) {
         errorMessage(ERR_ST, "no super class, something is going wrong");
         return false;
-        ;
     }
-    initTpCheckSpecialReferencesData(rr, parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd,
-                                     LINK_NAME_SUPER_METHOD_ITEM, scl);
-    mapOverReferenceTableWithPointer(tpCheckSpecialReferencesMapFun, rr);
+    initTpCheckSpecialReferencesData(data, parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd,
+                                     LINK_NAME_SUPER_METHOD_ITEM, superClassNumber);
+    mapOverReferenceTableWithPointer(tpCheckSpecialReferencesMapFun, data);
     return true;
 }
 

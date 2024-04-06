@@ -46,7 +46,7 @@ typedef enum extractClassification {
 
 typedef struct programGraphNode {
     struct reference *ref;		/* original reference of node */
-    struct referencesItem *symRef;
+    struct referenceItem *symRef;
     struct programGraphNode *jump;
     InspectionBits posBits;               /* INSIDE/OUSIDE block */
     InspectionBits stateBits;             /* visited + where set */

@@ -18,7 +18,7 @@ typedef struct completion {
     char                  category; /* Global/Local TODO: enum!*/
     Type                  csymType; /* symtype of completion */
     struct reference      ref;
-    struct referencesItem sym;
+    struct referenceItem sym;
     struct completion  *next;
 } Completion;
 
@@ -48,7 +48,7 @@ typedef struct completions {
 
 extern Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
                                  short int lineCount, char category, char csymType,
-                                 struct reference ref, struct referencesItem sym);
+                                 struct reference ref, struct referenceItem sym);
 extern void olcxFreeCompletion(Completion *completion);
 extern void olcxFreeCompletions(Completion *completions);
 

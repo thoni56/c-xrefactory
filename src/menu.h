@@ -4,7 +4,7 @@
 #include "reference.h"
 
 typedef struct SymbolsMenu {
-    struct referencesItem    references;
+    struct referenceItem    references;
     bool                     selected;
     bool                     visible;
     unsigned                 ooBits;
@@ -20,7 +20,7 @@ typedef struct SymbolsMenu {
 } SymbolsMenu;
 
 
-extern void fillSymbolsMenu(SymbolsMenu *menu, struct referencesItem s, bool selected, bool visible,
+extern void fillSymbolsMenu(SymbolsMenu *menu, struct referenceItem s, bool selected, bool visible,
                             unsigned ooBits, char olUsage, short int vlevel,
                             char defUsage, struct position defpos);
 

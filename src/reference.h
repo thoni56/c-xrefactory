@@ -24,7 +24,7 @@ typedef struct reference {
 } Reference;
 
 // !!! if you add a pointer to this structure, then update olcxCopyReference!
-typedef struct referencesItem {
+typedef struct referenceItem {
     char                     *linkName;
     unsigned                  fileHash;
     int                       vApplClass; /* appl class for java virtuals */
@@ -35,7 +35,7 @@ typedef struct referencesItem {
     ReferenceScope            scope : SCOPES_LN;
     ReferenceCategory         category : 2;     /* local/global */
     struct reference         *references;
-    struct referencesItem    *next; /* TODO: Link only for hashlist? */
+    struct referenceItem    *next; /* TODO: Link only for hashlist? */
 } ReferenceItem;
 
 

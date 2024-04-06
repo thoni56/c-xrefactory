@@ -5,9 +5,9 @@
 #include "proto.h"
 
 typedef struct pushAllInBetweenData {
-    int minMemi;
-    int maxMemi;
-} PushAllInBetweenData; /* WTF is this, memory indices, but why
+    int lowestIndex;
+    int highestIndex;
+} PushRange; /* WTF is this, memory indices, but why
  "pushAllInBetween"?  Shared between refactory.c and cxref.c */
 
 

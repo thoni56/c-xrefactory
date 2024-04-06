@@ -16,7 +16,7 @@
 
 Completion *newCompletion(char *name, char *fullName, char *vclass, short int jindent,
                           short int lineCount, char category, char csymType,
-                          struct reference ref, struct referencesItem sym) {
+                          struct reference ref, struct referenceItem sym) {
     Completion *completion = olcxAlloc(sizeof(Completion));
 
     completion->name = name;

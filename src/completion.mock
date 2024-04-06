@@ -3,9 +3,9 @@
 #include "completion.h"
 
 
-Completion *newCompletion(char *name, char *fullName, char *vclass, short jindent, short lineCount, char category, char csymType, struct reference ref, struct referencesItem refs) {
+Completion *newCompletion(char *name, char *fullName, char *vclass, short jindent, short lineCount, char category, char csymType, struct reference ref, struct referenceItem refs) {
     struct reference *refP = &ref;
-    struct referencesItem *refsP = &refs;
+    struct referenceItem *refsP = &refs;
     return (Completion *)mock(name, fullName, vclass, jindent, lineCount, category, csymType, refP, refsP);
 }
 

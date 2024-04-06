@@ -3207,11 +3207,11 @@ static void olPushAllReferencesInBetweenMapFun(ReferenceItem *ri, void *voidData
     Position              defpos;
     OlcxReferences       *rstack;
     SymbolsMenu          *mm;
-    PushAllInBetweenData *pushAllData;
+    PushRange *pushAllData;
     int                   defusage, ooBits, vlevel;
     bool                  selected, visible;
 
-    pushAllData = (PushAllInBetweenData *) voidDataP;
+    pushAllData = (PushRange *) voidDataP;
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
     if (!isPushAllMethodsValidRefItem(ri)) return;
@@ -3248,12 +3248,12 @@ fini:;
 }
 
 void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
-    PushAllInBetweenData  rr;
+    PushRange  rr;
     OlcxReferences        *rstack;
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
-    rr.minMemi = minMemi;
-    rr.maxMemi = maxMemi;
+    rr.lowestIndex = minMemi;
+    rr.highestIndex = maxMemi;
     mapOverReferenceTableWithPointer(olPushAllReferencesInBetweenMapFun, &rr);
     olProcessSelectedReferences(rstack, genOnLineReferences);
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->menuSym);
