@@ -1,14 +1,13 @@
 #ifndef REFACTORY_H_INCLUDED
 #define REFACTORY_H_INCLUDED
 
-#include "editor.h"
-#include "proto.h"
 
-typedef struct pushAllInBetweenData {
+/* This structure holds information about which symbols(?) to push after a refactoring.
+   Shared between refactory.c and cxref.c */
+typedef struct pushRange {
     int lowestIndex;
     int highestIndex;
-} PushRange; /* WTF is this, memory indices, but why
- "pushAllInBetween"?  Shared between refactory.c and cxref.c */
+} PushRange;
 
 
 extern void refactory(void);
