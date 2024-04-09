@@ -105,7 +105,7 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
         typedefexp = 1;                                                                                           \
     }
 
-void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepChar, int maxDeep, bool typedefexp,
+void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSepChar, int maxDeep, bool typedefexp,
                 int longOrShortName, int *oNamePos) {
     char    preString[COMPLETION_STRING_SIZE];
     char    postString[COMPLETION_STRING_SIZE];
@@ -268,91 +268,95 @@ typebreak:
     int realsize = strlen(typeString) + strlen(preString + i) + strlen(name) + strlen(postString) + 2;
     if (realsize < *size) {
         if (dclSepChar == ' ') {
-            sprintf(buff, "%s %s", typeString, preString + i);
+            sprintf(buffer, "%s %s", typeString, preString + i);
         } else {
-            sprintf(buff, "%s%c %s", typeString, dclSepChar, preString + i);
+            sprintf(buffer, "%s%c %s", typeString, dclSepChar, preString + i);
         }
-        *size = strlen(buff);
+        *size = strlen(buffer);
         if (oNamePos != NULL)
             *oNamePos = *size;
-        sprintf(buff + *size, "%s", name);
-        *size += strlen(buff + *size);
-        sprintf(buff + *size, "%s", postString);
-        *size += strlen(buff + *size);
+        sprintf(buffer + *size, "%s", name);
+        *size += strlen(buffer + *size);
+        sprintf(buffer + *size, "%s", postString);
+        *size += strlen(buffer + *size);
     } else {
         *size = 0;
         if (oNamePos != NULL)
             *oNamePos = *size;
-        buff[0] = 0;
+        buffer[0] = 0;
     }
 }
 
-void throwsSprintf(char *out, int outsize, SymbolList *exceptions) {
-    int outi,firstflag;
-    SymbolList *ee;
-    outi = 0;
-    //& sprintf(out+outi, " !!! ");
-    //& outi += strlen(out+outi);
-    if (exceptions != NULL ) {
-        sprintf(out+outi, " throws");
-        outi += strlen(out+outi);
-        firstflag = 1;
-        for(ee=exceptions; ee!=NULL; ee=ee->next) {
-            if (outi-10 > outsize) break;
-            sprintf(out+outi, "%c%s", firstflag?' ':',', ee->element->name);
-            outi += strlen(out+outi);
+void throwsSPrintf(char *buffer, int bufferSize, SymbolList *exceptions) {
+    SymbolList *e;
+
+    if (exceptions != NULL) {
+        int i = 0;
+        sprintf(buffer + i, " throws");
+        i += strlen(buffer + i);
+        bool firstflag = true;
+        for (e = exceptions; e != NULL; e = e->next) {
+            if (i - 10 > bufferSize)
+                break;
+            sprintf(buffer + i, "%c%s", firstflag ? ' ' : ',', e->element->name);
+            i += strlen(buffer + i);
         }
-        if (ee!=NULL) sprintf(out+outi, "...");
+        if (e != NULL)
+            sprintf(buffer + i, "...");
     }
 }
 
-void macDefSPrintf(char *tt, int *size, char *name1, char *name2,
-                   int argn, char **args, int *oNamePos) {
-    int ii,ll,i,brief=0;
-    ii = 0;
-    sprintf(tt,"#define ");
-    ll = strlen(tt);
-    if (oNamePos!=NULL) *oNamePos = ll;
-    sprintf(tt+ll,"%s%s",name1,name2);
-    ii = strlen(tt);
-    assert(ii< *size);
-    if (argn != -1) {
-        sprintf(tt+ii,"(");
-        ii += strlen(tt+ii);
-        for(i=0;i<argn;i++) {
-            if (args[i]!=NULL && !brief) {
-                if (strcmp(args[i], s_cppVarArgsName)==0) sprintf(tt+ii,"...");
-                else sprintf(tt+ii,"%s",args[i]);
-                ii += strlen(tt+ii);
+void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *name1, char *name2, int argc,
+                            char **argv, int *oNamePos) {
+    int ll, i, brief = 0;
+
+    int ii = 0;
+    sprintf(buffer, "#define ");
+    ll = strlen(buffer);
+    if (oNamePos != NULL)
+        *oNamePos = ll;
+    sprintf(buffer + ll, "%s%s", name1, name2);
+    ii = strlen(buffer);
+    assert(ii < *bufferSize);
+    if (argc != -1) {
+        sprintf(buffer + ii, "(");
+        ii += strlen(buffer + ii);
+        for (i = 0; i < argc; i++) {
+            if (argv[i] != NULL && !brief) {
+                if (strcmp(argv[i], s_cppVarArgsName) == 0)
+                    sprintf(buffer + ii, "...");
+                else
+                    sprintf(buffer + ii, "%s", argv[i]);
+                ii += strlen(buffer + ii);
             }
-            if (i+1<argn) {
-                sprintf(tt+ii,", ");
-                ii += strlen(tt+ii);
+            if (i + 1 < argc) {
+                sprintf(buffer + ii, ", ");
+                ii += strlen(buffer + ii);
             }
-            if (ii+TYPE_STR_RESERVE>= *size) {
-                sprintf(tt+ii,"...");
-                ii += strlen(tt+ii);
+            if (ii + TYPE_STR_RESERVE >= *bufferSize) {
+                sprintf(buffer + ii, "...");
+                ii += strlen(buffer + ii);
                 goto pbreak;
             }
         }
     pbreak:
-        sprintf(tt+ii,")");
-        ii += strlen(tt+ii);
+        sprintf(buffer + ii, ")");
+        ii += strlen(buffer + ii);
     }
-    *size = ii;
+    *bufferSize = ii;
 }
 
-char * string3ConcatInStackMem(char *str1, char *str2, char *str3) {
-    int l1,l2,l3;
-    char *s;
-    l1 = strlen(str1);
-    l2 = strlen(str2);
-    l3 = strlen(str3);
-    s = stackMemoryAlloc(l1+l2+l3+1);
-    strcpy(s,str1);
-    strcpy(s+l1,str2);
-    strcpy(s+l1+l2,str3);
-    return(s);
+char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
+    int l1 = strlen(str1);
+    int l2 = strlen(str2);
+    int l3 = strlen(str3);
+    char *s  = stackMemoryAlloc(l1 + l2 + l3 + 1);
+
+    strcpy(s, str1);
+    strcpy(s + l1, str2);
+    strcpy(s + l1 + l2, str3);
+
+    return s;
 }
 
 /* ******************************************************************* */

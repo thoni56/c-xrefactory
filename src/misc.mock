@@ -35,12 +35,12 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
   mock(buff, size, t, name, dclSepChar, maxDeep, typedefexp, longOrShortName, oNamePos);
 }
 
-void throwsSprintf(char *out, int outsize, SymbolList *exceptions) {
+void throwsSPrintf(char *out, int outsize, SymbolList *exceptions) {
   mock(out, outsize, exceptions);
 }
 
-void macDefSPrintf(char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos) {
-  mock(buff, size, name1, name2, argn, args, oNamePos);
+void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv, int *oNamePos) {
+  mock(buff, size, name1, name2, argc, argv, oNamePos);
 }
 
 char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {

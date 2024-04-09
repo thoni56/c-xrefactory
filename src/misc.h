@@ -77,8 +77,9 @@ extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oName
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
                        int dclSepChar, int maxDeep, bool typedefexp,
                        int longOrShortName, int *oNamePos);
-extern void throwsSprintf(char *out, int outsize, SymbolList *exceptions);
-extern void macDefSPrintf(char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos);
+extern void throwsSPrintf(char *out, int outsize, SymbolList *exceptions);
+extern void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv,
+                                   int *oNamePos);
 extern char *string3ConcatInStackMem(char *str1, char *str2, char *str3);
 
 extern void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle);

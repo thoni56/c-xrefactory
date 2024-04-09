@@ -219,10 +219,10 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
         if (LANGUAGE(LANG_JAVA)
             && (completions->alternatives[index].symbol->storage == StorageMethod
                 || completions->alternatives[index].symbol->storage == StorageConstructor)) {
-            throwsSprintf(tempString+l+size, COMPLETION_STRING_SIZE-l-size, completions->alternatives[index].symbol->u.typeModifier->u.m.exceptions);
+            throwsSPrintf(tempString+l+size, COMPLETION_STRING_SIZE-l-size, completions->alternatives[index].symbol->u.typeModifier->u.m.exceptions);
         }
     } else if (completions->alternatives[index].symbolType==TypeMacro) {
-        macDefSPrintf(tempString, &size, "", completions->alternatives[index].string,
+        macroDefinitionSPrintf(tempString, &size, "", completions->alternatives[index].string,
                       completions->alternatives[index].margn, completions->alternatives[index].margs, NULL);
     } else if (LANGUAGE(LANG_JAVA) && completions->alternatives[index].symbolType==TypeStruct ) {
         if (completions->alternatives[index].symbol!=NULL) {
@@ -298,10 +298,10 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
         if (LANGUAGE(LANG_JAVA)
             && (c->alternatives[ii].symbol->storage == StorageMethod
                 || c->alternatives[ii].symbol->storage == StorageConstructor)) {
-            throwsSprintf(ppcTmpBuff+ll+size, COMPLETION_STRING_SIZE-ll-size, c->alternatives[ii].symbol->u.typeModifier->u.m.exceptions);
+            throwsSPrintf(ppcTmpBuff+ll+size, COMPLETION_STRING_SIZE-ll-size, c->alternatives[ii].symbol->u.typeModifier->u.m.exceptions);
         }
     } else if (c->alternatives[ii].symbolType==TypeMacro) {
-        macDefSPrintf(ppcTmpBuff, &size, "", c->alternatives[ii].string,
+        macroDefinitionSPrintf(ppcTmpBuff, &size, "", c->alternatives[ii].string,
                       c->alternatives[ii].margn, c->alternatives[ii].margs, nindent);
     } else if (LANGUAGE(LANG_JAVA) && c->alternatives[ii].symbolType==TypeStruct ) {
         if (c->alternatives[ii].symbol!=NULL) {
