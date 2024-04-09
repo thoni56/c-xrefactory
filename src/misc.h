@@ -75,7 +75,7 @@ extern void typeDump(TypeModifier *typeModifiers);
 extern void symbolRefItemDump(ReferenceItem *ss);
 extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos);
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
-                       int dclSepChar, int maxDeep, int typedefexp,
+                       int dclSepChar, int maxDeep, bool typedefexp,
                        int longOrShortName, int *oNamePos);
 extern void throwsSprintf(char *out, int outsize, SymbolList *exceptions);
 extern void macDefSPrintf(char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos);

@@ -155,7 +155,7 @@ static char *getCompletionClassFieldString(CompletionLine *cl) {
 
 static void sprintFullCompletionInfo(Completions* completions, int index, int indent) {
     int size, l, vFunCl, cindent, tempLength;
-    bool tdexpFlag;
+    bool typeDefinitionExpressionFlag;
     char tempString[COMPLETION_STRING_SIZE];
     char *ppc;
 
@@ -199,12 +199,12 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
             sprintf(ppc,"%s", tmpBuff);
             ppc += strlen(ppc);
         }
-        tdexpFlag = 1;
+        typeDefinitionExpressionFlag = true;
         if (completions->alternatives[index].symbol->storage == StorageTypedef) {
             sprintf(tempString, "typedef ");
             l = strlen(tempString);
             size -= l;
-            tdexpFlag = 0;
+            typeDefinitionExpressionFlag = false;
         }
         char *pname = completions->alternatives[index].symbol->name;
         if (LANGUAGE(LANG_JAVA)) {
@@ -214,7 +214,8 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
                 if (vFunCl == -1) vFunCl = NO_FILE_NUMBER;
             }
         }
-        typeSPrint(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
+        typeSPrint(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname, ' ', 0,
+                   typeDefinitionExpressionFlag, SHORT_NAME, NULL);
         if (LANGUAGE(LANG_JAVA)
             && (completions->alternatives[index].symbol->storage == StorageMethod
                 || completions->alternatives[index].symbol->storage == StorageConstructor)) {
@@ -292,7 +293,7 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
         if (LANGUAGE(LANG_JAVA)) {
             ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->access);
         }
-        typeSPrint(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->u.typeModifier, pname,' ', 0, tdexpFlag,SHORT_NAME, nindent);
+        typeSPrint(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->u.typeModifier, pname,' ', 0, tdexpFlag, SHORT_NAME, nindent);
         *nindent += ll;
         if (LANGUAGE(LANG_JAVA)
             && (c->alternatives[ii].symbol->storage == StorageMethod
@@ -337,6 +338,7 @@ void olCompletionListInit(Position *originalPos) {
     sessionData.completionsStack.top->callerPosition = *originalPos;
 }
 
+
 static int completionsWillPrintEllipsis(Completion *olc) {
     int max, ellipsis;
     LIST_LEN(max, Completion, olc);
@@ -346,6 +348,7 @@ static int completionsWillPrintEllipsis(Completion *olc) {
     }
     return ellipsis;
 }
+
 
 static void printCompletionsBeginning(Completion *olc, int noFocus) {
     int                 max;
@@ -897,20 +900,19 @@ static bool javaLinkable(Access access) {
     return true;
 }
 
-static void processSpecialInheritedFullCompletion( Completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl, char *cname) {
+static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl, char *cname) {
     int     size, ll;
     char    *fcc;
-    char    tt[MAX_CX_SYMBOL_SIZE];
+    char    tmp[MAX_CX_SYMBOL_SIZE];
     CompletionLine compLine;
 
-    tt[0]=0; ll=0; size=MAX_CX_SYMBOL_SIZE;
+    tmp[0]=0; ll=0; size=MAX_CX_SYMBOL_SIZE;
     if (LANGUAGE(LANG_JAVA)) {
-        ll+=printJavaModifiers(tt+ll, &size, r->access);
+        ll+=printJavaModifiers(tmp+ll, &size, r->access);
     }
-    typeSPrint(tt+ll, &size, r->u.typeModifier, cname, ' ', 0, 1,SHORT_NAME, NULL);
-    fcc = stackMemoryAlloc(strlen(tt)+1);
-    strcpy(fcc,tt);
-    //&fprintf(dumpOut,":adding %s\n",fcc);fflush(dumpOut);
+    typeSPrint(tmp+ll, &size, r->u.typeModifier, cname, ' ', 0, true, SHORT_NAME, NULL);
+    fcc = stackMemoryAlloc(strlen(tmp)+1);
+    strcpy(fcc,tmp);
     fillCompletionLine(&compLine, fcc, r, TypeInheritedFullMethod, vlevel,0,NULL,vFunCl);
     processName(fcc, &compLine, orderFlag, c);
 }

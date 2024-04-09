@@ -524,15 +524,10 @@ void setLocalVariableLinkName(struct symbol *p) {
         // extract variable, must pass all needed informations in linkname
         sprintf(nnn, "%c%s%c", LINK_NAME_SEPARATOR, p->name, LINK_NAME_SEPARATOR);
         ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
-        // why it commented out ?
-        //& if ((!LANGUAGE(LANG_JAVA))
-        //&     && (p->u.typeModifier->type == TypeUnion || p->u.typeModifier->type == TypeStruct)) {
-        //&     ttt[0] = LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
-        //& }
         sprintf(ttt+1,"%s", storageNamesTable[p->storage]);
         tti = strlen(ttt);
         len = TMP_STRING_SIZE - tti;
-        typeSPrint(ttt+tti, &len, p->u.typeModifier, nnn, LINK_NAME_SEPARATOR, 0,1,SHORT_NAME, NULL);
+        typeSPrint(ttt+tti, &len, p->u.typeModifier, nnn, LINK_NAME_SEPARATOR, 0, true, SHORT_NAME, NULL);
         sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
                 p->pos.file,p->pos.line,p->pos.col, counters.localVar++);
     } else {

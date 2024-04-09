@@ -253,7 +253,7 @@ static void setOlSymbolTypeForPrint(Symbol *p) {
     if (p->type == TypeDefault) {
         tt = p->u.typeModifier;
         if (tt!=NULL && tt->type==TypeFunction) tt = tt->next;
-        typeSPrint(olSymbolType, &size, tt, "", ' ', 0, 1, LONG_NAME, NULL);
+        typeSPrint(olSymbolType, &size, tt, "", ' ', 0, true, LONG_NAME, NULL);
         if (tt->type == TypeStruct && tt->u.t!=NULL) {
             strcpy(olSymbolClassType, tt->u.t->linkName);
             assert(strlen(olSymbolClassType)+1 < COMPLETION_STRING_SIZE);
