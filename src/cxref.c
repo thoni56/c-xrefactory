@@ -917,7 +917,7 @@ static void olcxSetCurrentRefsOnCaller(OlcxReferences *refs) {
         if (!positionIsLessThan(rr->position, refs->callerPosition))
             break;
     }
-    // it should never be NULL, but one never knows
+    // it should never be NULL, but one never knows - DUH! We have coverage to show that you are wrong
     if (rr == NULL) {
         refs->actual = refs->references;
     } else {
@@ -1344,7 +1344,7 @@ static void olcxReferenceGotoCompletion(int refn) {
 }
 
 static void olcxReferenceGotoTagSearchItem(int refn) {
-    Completion      *rr;
+    Completion *rr;
 
     assert(refn > 0);
     assert(sessionData.retrieverStack.top);

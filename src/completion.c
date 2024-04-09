@@ -36,8 +36,8 @@ Completion *newCompletion(char *name, char *fullName, char *vclass, short int ji
 // if s==NULL, then the pos is taken as default position of this ref !!!
 /* If symbol != NULL && referenceItem != NULL then dfref can be anything... */
 Completion *completionListPrepend(Completion *completions, char *name, char *fullText, char *vclass,
-                                    int jindent, Symbol *symbol, ReferenceItem *referenceItem,
-                                    Reference *reference, int cType, int vFunClass) {
+                                  int jindent, Symbol *symbol, ReferenceItem *referenceItem,
+                                  Reference *reference, int cType, int vFunClass) {
     Completion    *completion;
     char *ss,*nn, *fullnn, *vclnn;
     ReferenceCategory category;
