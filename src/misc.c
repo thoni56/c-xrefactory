@@ -107,19 +107,18 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
 
 void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepChar, int maxDeep, bool typedefexp,
                 int longOrShortName, int *oNamePos) {
-    Symbol *dd;
-    Symbol *ddd;
     char    preString[COMPLETION_STRING_SIZE];
     char    postString[COMPLETION_STRING_SIZE];
     char    typeString[COMPLETION_STRING_SIZE];
-    char   *ttm;
-    int     i, j, realsize, r, rr, minInfi;
+    int     r;
     bool    par;
 
-    typeString[0]        = 0;
-    i              = COMPLETION_STRING_SIZE - 1;
-    preString[i]        = 0;
-    j              = 0;
+    typeString[0] = 0;
+
+    int i = COMPLETION_STRING_SIZE - 1;
+    preString[i] = 0;
+
+    int j = 0;
     for (; t != NULL; t = t->next) {
         par = false;
         for (; t != NULL && t->type == TypePointer; t = t->next) {
@@ -176,24 +175,25 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
                 javaSignatureSPrint(postString + j, &jj, t->u.m.signature, longOrShortName);
                 j += jj;
             } else {
-                for (dd = t->u.f.args; dd != NULL; dd = dd->next) {
-                    if (dd->type == TypeElipsis)
+                for (Symbol *symbol = t->u.f.args; symbol != NULL; symbol = symbol->next) {
+                    char *ttm;
+                    if (symbol->type == TypeElipsis)
                         ttm = "...";
-                    else if (dd->name == NULL)
+                    else if (symbol->name == NULL)
                         ttm = "";
                     else
-                        ttm = dd->name;
-                    if (dd->type == TypeDefault && dd->u.typeModifier != NULL) {
+                        ttm = symbol->name;
+                    if (symbol->type == TypeDefault && symbol->u.typeModifier != NULL) {
                         /* TODO ALL, for string overflow */
                         int jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                        typeSPrint(postString + j, &jj, dd->u.typeModifier, ttm, ' ', maxDeep - 1, true,
+                        typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', maxDeep - 1, true,
                                    longOrShortName, NULL);
                         j += jj;
                     } else {
                         sprintf(postString + j, "%s", ttm);
                         j += strlen(postString + j);
                     }
-                    if (dd->next != NULL && j < COMPLETION_STRING_SIZE)
+                    if (symbol->next != NULL && j < COMPLETION_STRING_SIZE)
                         sprintf(postString + j, ", ");
                     j += strlen(postString + j);
                 }
@@ -219,21 +219,22 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
                 }
             }
             if (maxDeep > 0) {
-                minInfi = r;
+                int minInfi = r;
                 sprintf(typeString + r, "{ ");
                 r += strlen(typeString + r);
                 assert(t->u.t->u.structSpec);
-                for (ddd = t->u.t->u.structSpec->records; ddd != NULL; ddd = ddd->next) {
-                    if (ddd->name == NULL)
+                for (Symbol *symbol = t->u.t->u.structSpec->records; symbol != NULL; symbol = symbol->next) {
+                    char *ttm;
+                    if (symbol->name == NULL)
                         ttm = "";
                     else
-                        ttm = ddd->name;
-                    rr = COMPLETION_STRING_SIZE - r - TYPE_STR_RESERVE;
-                    assert(ddd->u.typeModifier);
-                    typeSPrint(typeString + r, &rr, ddd->u.typeModifier, ttm, ' ', maxDeep - 1, true, longOrShortName,
+                        ttm = symbol->name;
+                    int rr = COMPLETION_STRING_SIZE - r - TYPE_STR_RESERVE;
+                    assert(symbol->u.typeModifier);
+                    typeSPrint(typeString + r, &rr, symbol->u.typeModifier, ttm, ' ', maxDeep - 1, true, longOrShortName,
                                NULL);
                     r += rr;
-                    if (ddd->next != NULL && r < COMPLETION_STRING_SIZE) {
+                    if (symbol->next != NULL && r < COMPLETION_STRING_SIZE) {
                         sprintf(typeString + r, "; ");
                         r += strlen(typeString + r);
                     }
@@ -264,7 +265,7 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
     }
 typebreak:
     postString[j]  = 0;
-    realsize = strlen(typeString) + strlen(preString + i) + strlen(name) + strlen(postString) + 2;
+    int realsize = strlen(typeString) + strlen(preString + i) + strlen(name) + strlen(postString) + 2;
     if (realsize < *size) {
         if (dclSepChar == ' ') {
             sprintf(buff, "%s %s", typeString, preString + i);
@@ -478,7 +479,7 @@ char *javaGetNudePreTypeName_static(char *name, NestedClassesDisplay displayMode
     return typeName_static;
 }
 
-void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
+void javaSignatureSPrint(char *buff, int *size, char *sig, int longOrShortName) {
     char post[COMPLETION_STRING_SIZE];
     int posti;
     char *ssig;
@@ -504,9 +505,12 @@ void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
         case 'L':
             bj = j;
             for(ssig++; *ssig && *ssig!=';'; ssig++) {
-                if (*ssig != '/' && *ssig != '$') buff[j++] = *ssig;
-                else if (classstyle==LONG_NAME) buff[j++] = '.';
-                else j=bj;
+                if (*ssig != '/' && *ssig != '$')
+                    buff[j++] = *ssig;
+                else if (longOrShortName==LONG_NAME)
+                    buff[j++] = '.';
+                else
+                    j=bj;
             }
             break;
         default:
