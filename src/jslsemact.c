@@ -87,7 +87,7 @@ static TypeModifier *jslCreateSimpleTypeModifier(Type type) {
     } else {
         p = preCreatedTypesTable[type];
     }
-    assert(p->kind == type);
+    assert(p->type == type);
 
     return p;
 }

@@ -201,13 +201,11 @@ static Reference *javaAddClassCxReference(Symbol *dd, Position *pos, unsigned us
 }
 
 static void javaAddNameCxReference(IdList *id, unsigned usage) {
-    char *cname;
-    Symbol dd;
-    char tmpString[MAX_SOURCE_PATH_SIZE];
-
     assert(id != NULL);
-    cname = javaCreateComposedName(NULL, id, '/', NULL, tmpString, sizeof(tmpString));
-    fillSymbol(&dd, id->id.name, cname, id->id.position);
+    char tmpString[MAX_SOURCE_PATH_SIZE];
+    char *cname = javaCreateComposedName(NULL, id, '/', NULL, tmpString, sizeof(tmpString));
+
+    Symbol dd = makeSymbol(id->id.name, cname, id->id.position);
     dd.type = id->nameType;
     dd.storage = StorageNone;
 
@@ -1460,12 +1458,12 @@ Type javaClassifyAmbiguousName(
             }
             break;
         case TypeExpression:
-            if (pexpr->kind == TypeArray) pexpr = &s_javaArrayObjectSymbol.u.structSpec->type;
-//&			if (pexpr->kind == TypeError) {
+            if (pexpr->type == TypeArray) pexpr = &s_javaArrayObjectSymbol.u.structSpec->type;
+//&			if (pexpr->type == TypeError) {
 //&				addTrivialCxReference(LINK_NAME_INDUCED_ERROR,TypeInducedError,StorageDefault,
 //&                                   name->id.position, UsageUsed);
 //&			}
-            if (pexpr->kind != TypeStruct) {
+            if (pexpr->type != TypeStruct) {
                 *str = &errorSymbol;
             } else {
                 javaLoadClassSymbolsFromFile(pexpr->u.t);
@@ -1499,7 +1497,7 @@ TypeModifier *javaClassifyToExpressionName(IdList *name,
     else if (atype == TypeStruct) {
         assert(str && str->u.structSpec);
         res = &str->u.structSpec->type; /* because of casts & s_errorModifier;*/
-        assert(res && res->kind == TypeStruct);
+        assert(res && res->type == TypeStruct);
     } else res = & errorModifier;
     return res;
 }
@@ -1607,16 +1605,16 @@ int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
     TypeModifier *tt;
     ppi=0;
     for (tt=type; tt!=NULL; tt=tt->next) {
-        if (tt->kind == TypeArray) {
+        if (tt->type == TypeArray) {
             sprintf(pp+ppi,"[");
             ppi += strlen(pp+ppi);
-        } else if (tt->kind == TypeStruct) {
+        } else if (tt->type == TypeStruct) {
             assert(tt->u.t);
             sprintf(pp+ppi,"L%s;",tt->u.t->linkName);
             ppi += strlen(pp+ppi);
         } else {
-            assert(javaBaseTypeCharCodes[tt->kind]!=0);
-            pp[ppi++] = javaBaseTypeCharCodes[tt->kind];
+            assert(javaBaseTypeCharCodes[tt->type]!=0);
+            pp[ppi++] = javaBaseTypeCharCodes[tt->type];
         }
         assert(ppi < ppSize);
     }
@@ -1665,7 +1663,7 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
         return res;
     assert(decl->type == TypeDefault);
     assert(decl->u.typeModifier);
-    if (decl->u.typeModifier->kind != TypeFunction)
+    if (decl->u.typeModifier->type != TypeFunction)
         return res;
     ppi=0;
     sprintf(pp+ppi,"%s", decl->name);
@@ -1827,7 +1825,7 @@ void javaAddMethodParametersToSymTable(Symbol *method) {
 }
 
 void javaMethodBodyBeginning(Symbol *method) {
-    assert(method->u.typeModifier && method->u.typeModifier->kind == TypeFunction);
+    assert(method->u.typeModifier && method->u.typeModifier->type == TypeFunction);
     parsedClassInfo.function = method;
     generateInternalLabelReference(-1, UsageDefined);
     counters.localVar = 0;
@@ -1879,7 +1877,7 @@ TypeModifier *javaNestedNewType(Symbol *sym, Id *thenew,
         javaClassifyToTypeName(idl, UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
         res = javaClassNameType(idl);
         // you may also check that idl->next == sym
-        if (res && res->kind == TypeStruct) {
+        if (res && res->type == TypeStruct) {
             assert(res->u.t && res->u.t->u.structSpec);
             if (res->u.t->access & AccessStatic) {
                 // add the prefix of new as redundant long name
@@ -1900,7 +1898,7 @@ TypeModifier *javaNewAfterName(IdList *name, Id *thenew, IdList *idl) {
 
     atype = javaClassifyAmbiguousName(name,NULL,&str,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_EXPR,UsageUsed);
     if (atype == TypeExpression) {
-        if (expr->kind != TypeStruct) res = & errorModifier;
+        if (expr->type != TypeStruct) res = & errorModifier;
         else res = javaNestedNewType(expr->u.t, thenew, idl);
     } else if (atype == TypeStruct) {
         assert(str);
@@ -2030,9 +2028,9 @@ static int javaSmallerProfile(Symbol *s1, Symbol *s2) {
     int r;
     char *p1,*p2;
     assert(s1 && s1->type==TypeDefault && s1->u.typeModifier);
-    assert(s1->u.typeModifier->kind == TypeFunction && s1->u.typeModifier->u.m.signature);
+    assert(s1->u.typeModifier->type == TypeFunction && s1->u.typeModifier->u.m.signature);
     assert(s2 && s2->type==TypeDefault && s2->u.typeModifier);
-    assert(s2->u.typeModifier->kind == TypeFunction && s2->u.typeModifier->u.m.signature);
+    assert(s2->u.typeModifier->type == TypeFunction && s2->u.typeModifier->u.m.signature);
     p1 = s1->u.typeModifier->u.m.signature;
     p2 = s2->u.typeModifier->u.m.signature;
 /*fprintf(dumpOut,"comparing %s to %s\n",p1,p2); fflush(dumpOut);*/
@@ -2052,7 +2050,7 @@ int javaMethodApplicability(Symbol *memb, char *actArgs) {
     int r;
     char *fargs;
     assert(memb && memb->type==TypeDefault && memb->u.typeModifier);
-    assert(memb->u.typeModifier->kind == TypeFunction && memb->u.typeModifier->u.m.signature);
+    assert(memb->u.typeModifier->type == TypeFunction && memb->u.typeModifier->u.m.signature);
     fargs = memb->u.typeModifier->u.m.signature;
 //&sprintf(tmpBuff,"testing applicability of %s to %s\n",fargs,actArgs);ppcBottomInformation(tmpBuff);
     assert(*fargs == '(');
@@ -2083,7 +2081,7 @@ Symbol *javaCurrentSuperClass(void) {
 
     assert(javaStat);
     tt = javaStat->thisType;
-    assert(tt->kind == TypeStruct);
+    assert(tt->type == TypeStruct);
     cc = tt->u.t;
     return javaGetSuperClass(cc);
 }
@@ -2115,9 +2113,9 @@ static TypeModifier *javaMethodInvocation(
 
 //&sprintf(tmpBuff,"java method invocation\n"); ppcBottomInformation(tmpBuff);
 //&sprintf(tmpBuff,"the method is %s == '%s'\n",memb->name,memb->linkName);ppcBottomInformation(tmpBuff);
-    assert(memb && memb->type==TypeDefault && memb->u.typeModifier->kind == TypeFunction);
+    assert(memb && memb->type==TypeDefault && memb->u.typeModifier->type == TypeFunction);
     for(aaa=args; aaa!=NULL; aaa=aaa->next) {
-        if (aaa->d->kind == TypeError) {
+        if (aaa->d->type == TypeError) {
 //&fprintf(dumpOut,"induced missinterpred at %d\n", name->position.line);
             addTrivialCxReference(LINK_NAME_INDUCED_ERROR,TypeInducedError,StorageDefault,
                                   name->position, UsageUsed);
@@ -2168,7 +2166,7 @@ static TypeModifier *javaMethodInvocation(
     }
     log_trace("the invoked method is %s of %s", appl[smallesti]->linkName, getFileItem(funCl[smallesti])->name);
     assert(appl[smallesti]->type == TypeDefault);
-    assert(appl[smallesti]->u.typeModifier->kind == TypeFunction);
+    assert(appl[smallesti]->u.typeModifier->type == TypeFunction);
     assert(funCl[smallesti] != -1);
     vFunCl = funCl[smallesti];
     vApplCl = baseCl;
@@ -2247,8 +2245,8 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
     S_extRecFindStr		*erfs;
 
     log_trace("invocation of %s", name->name);
-    if (tt->kind == TypeArray) tt = &s_javaArrayObjectSymbol.u.structSpec->type;
-    if (tt->kind != TypeStruct) {
+    if (tt->type == TypeArray) tt = &s_javaArrayObjectSymbol.u.structSpec->type;
+    if (tt->type != TypeStruct) {
         methodAppliedOnNonClass(name->name);
         return NULL;
     }
@@ -2356,7 +2354,7 @@ TypeModifier *javaConstructorInvocation(Symbol *clas,
 
 static int javaIsNumeric(TypeModifier *tt) {
     assert(tt);
-    switch (tt->kind) {
+    switch (tt->type) {
     case TypeByte: case TypeShort: case TypeChar:
     case TypeInt: case TypeLong:
     case TypeDouble: case TypeFloat:
@@ -2375,7 +2373,7 @@ TypeModifier *javaCheckNumeric(TypeModifier *tt) {
 
 TypeModifier *javaNumericPromotion(TypeModifier *tt) {
     assert(tt);
-    switch (tt->kind) {
+    switch (tt->type) {
     case TypeByte:
     case TypeShort:
     case TypeChar:
@@ -2393,8 +2391,8 @@ TypeModifier *javaNumericPromotion(TypeModifier *tt) {
 TypeModifier *javaBinaryNumericPromotion(TypeModifier *t1, TypeModifier *t2) {
     int m1,m2,resultingType;
 
-    m1 = t1->kind;
-    m2 = t2->kind;
+    m1 = t1->type;
+    m2 = t2->type;
     assert(t1 && t2);
     resultingType = TypeInt;
     if (m1 == TypeDouble || m2 == TypeDouble) resultingType = TypeDouble;
@@ -2408,13 +2406,13 @@ TypeModifier *javaBitwiseLogicalPromotion(	TypeModifier *t1,
                                                 TypeModifier *t2
                                             ) {
     assert(t1 && t2);
-    if (t1->kind == TypeBoolean && t2->kind == TypeBoolean)
+    if (t1->type == TypeBoolean && t2->type == TypeBoolean)
         return t1;
     return javaBinaryNumericPromotion(t1,t2);
 }
 
 int javaIsStringType(TypeModifier *tt) {
-    if (tt->kind != TypeStruct)
+    if (tt->type != TypeStruct)
         return false;
     return tt->u.t == s_javaStringSymbol;
 }
@@ -2422,8 +2420,8 @@ int javaIsStringType(TypeModifier *tt) {
 static int javaEqualTypes(TypeModifier *t1,TypeModifier *t2) {
     int m;
 lastRecursionLabel:
-    if (t1->kind != t2->kind) return false;
-    m = t1->kind;
+    if (t1->type != t2->type) return false;
+    m = t1->type;
     if (m == TypeStruct || m == TypeUnion)
         return t1->u.t == t2->u.t;
     if (m == TypeArray) {
@@ -2440,15 +2438,15 @@ static int javaTypeConvertible(TypeModifier *t1,
     Symbol    *s1,*s2;
 lastRecLabel:
     if (javaIsNumeric(t1) && javaIsNumeric(t2)) {
-        return javaExistBaseTypeWideningConversion(t1->kind, t2->kind);
+        return javaExistBaseTypeWideningConversion(t1->type, t2->type);
     }
-    if (t1->kind != t2->kind)
+    if (t1->type != t2->type)
         return false;
-    if (t1->kind == TypeArray) {
+    if (t1->type == TypeArray) {
         t1 = t1->next; t2 = t2->next;
         goto lastRecLabel;
     }
-    if (t1->kind == TypeStruct) {
+    if (t1->type == TypeStruct) {
         int res;
         s1 = t1->u.t; s2 = t2->u.t;
         assert(s1 && s2);
@@ -2467,18 +2465,18 @@ TypeModifier *javaConditionalPromotion(	TypeModifier *t1,
     if (javaEqualTypes(t1,t2))
         return t1;
     if (javaIsNumeric(t1) && javaIsNumeric(t2)) {
-        if (t1->kind == TypeShort && t2->kind == TypeByte)
+        if (t1->type == TypeShort && t2->type == TypeByte)
             return t1;
-        if (t1->kind == TypeByte && t2->kind == TypeShort)
+        if (t1->type == TypeByte && t2->type == TypeShort)
             return t2;
         /* TO FINISH FOR BYTE, SHORT, CHAR CONSTANT */
         return javaBinaryNumericPromotion(t1,t2);
     }
-    if (t1->kind == TypeNull && IsJavaReferenceType(t2->kind))
+    if (t1->type == TypeNull && IsJavaReferenceType(t2->type))
         return t2;
-    if (t2->kind == TypeNull && IsJavaReferenceType(t1->kind))
+    if (t2->type == TypeNull && IsJavaReferenceType(t1->type))
         return t1;
-    if (! IsJavaReferenceType(t1->kind) || ! IsJavaReferenceType(t2->kind)) {
+    if (! IsJavaReferenceType(t1->type) || ! IsJavaReferenceType(t2->type)) {
         return &errorModifier;
     }
     if (javaTypeConvertible(t1,t2))

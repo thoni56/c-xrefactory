@@ -1291,7 +1291,7 @@ Super_opt
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($2.data && $2.data->type == TypeDefault && $2.data->u.typeModifier);
-                    assert($2.data->u.typeModifier->kind == TypeStruct);
+                    assert($2.data->u.typeModifier->type == TypeStruct);
                     javaParsedSuperClass($2.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $2);
@@ -1299,7 +1299,7 @@ Super_opt
             }
             if (inSecondJslPass()) {
                 assert($2.data && $2.data->type == TypeDefault && $2.data->u.typeModifier);
-                assert($2.data->u.typeModifier->kind == TypeStruct);
+                assert($2.data->u.typeModifier->type == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $2.data->u.typeModifier->u.t);
             }
@@ -1319,7 +1319,7 @@ InterfaceTypeList
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($1.data && $1.data->type == TypeDefault && $1.data->u.typeModifier);
-                    assert($1.data->u.typeModifier->kind == TypeStruct);
+                    assert($1.data->u.typeModifier->type == TypeStruct);
                     javaParsedSuperClass($1.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $1);
@@ -1327,7 +1327,7 @@ InterfaceTypeList
             }
             if (inSecondJslPass()) {
                 assert($1.data && $1.data->type == TypeDefault && $1.data->u.typeModifier);
-                assert($1.data->u.typeModifier->kind == TypeStruct);
+                assert($1.data->u.typeModifier->type == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $1.data->u.typeModifier->u.t);
             }
@@ -1336,7 +1336,7 @@ InterfaceTypeList
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
-                    assert($3.data->u.typeModifier->kind == TypeStruct);
+                    assert($3.data->u.typeModifier->type == TypeStruct);
                     javaParsedSuperClass($3.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -1344,7 +1344,7 @@ InterfaceTypeList
             }
             if (inSecondJslPass()) {
                 assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
-                assert($3.data->u.typeModifier->kind == TypeStruct);
+                assert($3.data->u.typeModifier->type == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $3.data->u.typeModifier->u.t);
             }
@@ -1610,7 +1610,7 @@ VariableDeclaratorId
                 strcpy(name, $1.data->name);
 
                 $$.data = cfAlloc(Symbol);
-                fillSymbol($$.data, name, name, $1.data->position);
+                *$$.data = makeSymbol(name, name, $1.data->position);
             }
         }
     |	VariableDeclaratorId '[' ']'		{
@@ -1722,7 +1722,7 @@ MethodDeclarator
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         $$.data = $<symbol>2;
-                        assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
+                        assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->type == TypeFunction);
                         initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.data->position, &$3.data, $4.data.positionList, &$5.data);
@@ -1731,7 +1731,7 @@ MethodDeclarator
                 }
                 if (inSecondJslPass()) {
                     $$.data = $<symbol>2;
-                    assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
+                    assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->type == TypeFunction);
                     initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                 }
             }
@@ -1846,7 +1846,7 @@ ClassTypeList
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
                 assert($1.data && $1.data->type == TypeDefault && $1.data->u.typeModifier);
-                assert($1.data->u.typeModifier->kind == TypeStruct);
+                assert($1.data->u.typeModifier->type == TypeStruct);
 
                 $$.data = cfAlloc(SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with compound literal */
@@ -1857,7 +1857,7 @@ ClassTypeList
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
             if (inSecondJslPass()) {
                 assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
-                assert($3.data->u.typeModifier->kind == TypeStruct);
+                assert($3.data->u.typeModifier->type == TypeStruct);
                 $$.data = cfAlloc(SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with compound literal */
                 *$$.data = (SymbolList){.element = $3.data->u.typeModifier->u.t, .next = $1.data};
@@ -1899,7 +1899,7 @@ ConstructorDeclaration
                           &*/
                         mh=javaMethodHeader($1.data, &errorSymbol, args, StorageConstructor);
                         // TODO! Merge this with 'javaMethodBodyBeginning'!
-                        assert(mh->u.typeModifier && mh->u.typeModifier->kind == TypeFunction);
+                        assert(mh->u.typeModifier && mh->u.typeModifier->type == TypeFunction);
                         beginBlock();  // in order to remove arguments
                         parsedClassInfo.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
@@ -1964,7 +1964,7 @@ ConstructorDeclarator
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         $$.data = $<symbol>2;
-                        assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
+                        assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->type == TypeFunction);
                         initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.data->position, &$3.data, $4.data.positionList, &$5.data);
@@ -1973,7 +1973,7 @@ ConstructorDeclarator
                 }
                 if (inSecondJslPass()) {
                     $$.data = $<symbol>2;
-                    assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->kind == TypeFunction);
+                    assert($$.data && $$.data->u.typeModifier && $$.data->u.typeModifier->type == TypeFunction);
                     initFunctionTypeModifier(&$$.data->u.typeModifier->u.f , $4.data.symbol);
                 };
             }
@@ -2138,7 +2138,7 @@ ExtendsInterfaces
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($2.data && $2.data->type == TypeDefault && $2.data->u.typeModifier);
-                    assert($2.data->u.typeModifier->kind == TypeStruct);
+                    assert($2.data->u.typeModifier->type == TypeStruct);
                     javaParsedSuperClass($2.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $2);
@@ -2146,7 +2146,7 @@ ExtendsInterfaces
             }
             if (inSecondJslPass()) {
                 assert($2.data && $2.data->type == TypeDefault && $2.data->u.typeModifier);
-                assert($2.data->u.typeModifier->kind == TypeStruct);
+                assert($2.data->u.typeModifier->type == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $2.data->u.typeModifier->u.t);
             }
@@ -2155,7 +2155,7 @@ ExtendsInterfaces
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
-                    assert($3.data->u.typeModifier->kind == TypeStruct);
+                    assert($3.data->u.typeModifier->type == TypeStruct);
                     javaParsedSuperClass($3.data->u.typeModifier->u.t);
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -2163,7 +2163,7 @@ ExtendsInterfaces
             }
             if (inSecondJslPass()) {
                 assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
-                assert($3.data->u.typeModifier->kind == TypeStruct);
+                assert($3.data->u.typeModifier->type == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $3.data->u.typeModifier->u.t);
             }
@@ -3083,9 +3083,9 @@ NestedConstructorInvocation
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
                     parsedClassInfo.erfsForParameterCompletion = NULL;
-                    if ($1.data.typeModifier->kind == TypeStruct) {
+                    if ($1.data.typeModifier->type == TypeStruct) {
                         mm = javaNestedNewType($1.data.typeModifier->u.t, $3.data, $4.data);
-                        if (mm->kind != TypeError) {
+                        if (mm->type != TypeError) {
                             parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &($4.data->id.position));
                         }
                     }
@@ -3095,7 +3095,7 @@ NestedConstructorInvocation
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     parsedClassInfo.erfsForParameterCompletion = $5;
-                    if ($1.data.typeModifier->kind == TypeStruct) {
+                    if ($1.data.typeModifier->type == TypeStruct) {
                         $$.data.typeModifier = javaNestedNewType($1.data.typeModifier->u.t, $3.data, $4.data);
                     } else {
                         $$.data.typeModifier = &errorModifier;
@@ -3103,7 +3103,7 @@ NestedConstructorInvocation
                     javaHandleDeclaratorParamPositions(&$4.data->id.position, &$7.data, $8.data.positionList, &$9.data);
                     assert($$.data.typeModifier);
                     $$.data.idList = $4.data;
-                    if ($$.data.typeModifier->kind != TypeError) {
+                    if ($$.data.typeModifier->type != TypeError) {
                         javaConstructorInvocation($$.data.typeModifier->u.t, &($4.data->id.position), $8.data.typeModifierList);
                     }
                 } else {
@@ -3118,7 +3118,7 @@ NestedConstructorInvocation
                     TypeModifier *mm;
                     parsedClassInfo.erfsForParameterCompletion = NULL;
                     mm = javaNewAfterName($1.data, $3.data, $4.data);
-                    if (mm->kind != TypeError) {
+                    if (mm->type != TypeError) {
                         parsedClassInfo.erfsForParameterCompletion = javaCrErfsForConstructorInvocation(mm->u.t, &($4.data->id.position));
                     }
                 }
@@ -3129,7 +3129,7 @@ NestedConstructorInvocation
                     parsedClassInfo.erfsForParameterCompletion = $5;
                     $$.data.typeModifier = javaNewAfterName($1.data, $3.data, $4.data);
                     $$.data.idList = $4.data;
-                    if ($$.data.typeModifier->kind != TypeError) {
+                    if ($$.data.typeModifier->type != TypeError) {
                         javaConstructorInvocation($$.data.typeModifier->u.t, &($4.data->id.position), $8.data.typeModifierList);
                     }
                 } else {
@@ -3266,7 +3266,7 @@ ClassInstanceCreationExpression
                         $$.data.typeModifier = $1.data.typeModifier;
                         $$.data.position = $1.data.position;
                         $$.data.reference = NULL;
-                        if ($$.data.typeModifier->kind != TypeError) {
+                        if ($$.data.typeModifier->type != TypeError) {
                             $<frameAllocation>$ = newClassDefinitionBegin(&javaAnonymousClassName, AccessDefault, $$.data.typeModifier->u.t);
                         } else {
                             $<frameAllocation>$ = newAnonClassDefinitionBegin(& $1.data.idList->id);
@@ -3458,7 +3458,7 @@ FieldAccess
                     assert($1.data.typeModifier);
                     $$.data.reference = NULL;
                     $$.data.position = $1.data.position;
-                    if ($1.data.typeModifier->kind == TypeStruct) {
+                    if ($1.data.typeModifier->type == TypeStruct) {
                         javaLoadClassSymbolsFromFile($1.data.typeModifier->u.t);
                         $$.data.reference = findStructureFieldFromType($1.data.typeModifier, $3.data, &rec, CLASS_TO_EXPR);
                         assert(rec);
@@ -3606,7 +3606,7 @@ ArrayAccess
                 if (! SyntaxPassOnly()) {
                     TypeModifier *tt;
                     tt = javaClassifyToExpressionName($1.data, &($$.data.reference));
-                    if (tt->kind==TypeArray) $$.data.typeModifier = tt->next;
+                    if (tt->type==TypeArray) $$.data.typeModifier = tt->next;
                     else $$.data.typeModifier = &errorModifier;
                     assert($$.data.typeModifier);
                     $$.data.reference = NULL;
@@ -3619,7 +3619,7 @@ ArrayAccess
     |	PrimaryNoNewArray '[' Expression ']'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.data.typeModifier->kind==TypeArray) $$.data.typeModifier = $1.data.typeModifier->next;
+                    if ($1.data.typeModifier->type==TypeArray) $$.data.typeModifier = $1.data.typeModifier->next;
                     else $$.data.typeModifier = &errorModifier;
                     assert($$.data.typeModifier);
                     $$.data.reference = NULL;
@@ -3751,7 +3751,7 @@ UnaryExpressionNotPlusMinus
     |	'!' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($2.data.typeModifier->kind == TypeBoolean) $$.data.typeModifier = $2.data.typeModifier;
+                    if ($2.data.typeModifier->type == TypeBoolean) $$.data.typeModifier = $2.data.typeModifier;
                     else $$.data.typeModifier = &errorModifier;
                     $$.data.reference = NULL;
                 } else {
@@ -3770,7 +3770,7 @@ CastExpression
                     assert($2.data.symbol && $2.data.symbol->u.typeModifier);
                     $$.data.typeModifier = $2.data.symbol->u.typeModifier;
                     $$.data.reference = NULL;
-                    assert($$.data.typeModifier->kind == TypeArray);
+                    assert($$.data.typeModifier->type == TypeArray);
                 } else {
                     $$.data.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
@@ -4145,7 +4145,7 @@ Assignment
     :   LeftHandSide {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.data.typeModifier!=NULL && $1.data.typeModifier->kind == TypeStruct) {
+                    if ($1.data.typeModifier!=NULL && $1.data.typeModifier->type == TypeStruct) {
                         parsedInfo.lastAssignmentStruct = $1.data.typeModifier->u.t;
                     }
                 }

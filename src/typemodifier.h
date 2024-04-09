@@ -5,7 +5,7 @@
 #include "symbol.h"
 
 typedef struct typeModifier {
-    enum type                kind;
+    enum type                type;
     union typeModifierUnion {
         struct functionTypeModifier {           /* LAN_C/CPP Function */
             struct symbol     *args;

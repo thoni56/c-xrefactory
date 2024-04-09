@@ -2327,8 +2327,8 @@ break;
 case 14:
 #line 273 "c_parser.y"
 {
-        if (yyvsp[-3].ast_expressionType.data.typeModifier->kind==TypePointer || yyvsp[-3].ast_expressionType.data.typeModifier->kind==TypeArray) yyval.ast_expressionType.data.typeModifier=yyvsp[-3].ast_expressionType.data.typeModifier->next;
-        else if (yyvsp[-1].ast_expressionType.data.typeModifier->kind==TypePointer || yyvsp[-1].ast_expressionType.data.typeModifier->kind==TypeArray) yyval.ast_expressionType.data.typeModifier=yyvsp[-1].ast_expressionType.data.typeModifier->next;
+        if (yyvsp[-3].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[-3].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier=yyvsp[-3].ast_expressionType.data.typeModifier->next;
+        else if (yyvsp[-1].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[-1].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier=yyvsp[-1].ast_expressionType.data.typeModifier->next;
         else yyval.ast_expressionType.data.typeModifier = &errorModifier;
         yyval.ast_expressionType.data.reference = NULL;
         assert(yyval.ast_expressionType.data.typeModifier);
@@ -2345,7 +2345,7 @@ case 16:
 #line 298 "c_parser.y"
 {
         s_upLevelFunctionCompletionType = yyvsp[-3].typeModifier;
-        if (yyvsp[-4].ast_expressionType.data.typeModifier->kind==TypeFunction) {
+        if (yyvsp[-4].ast_expressionType.data.typeModifier->type==TypeFunction) {
             yyval.ast_expressionType.data.typeModifier=yyvsp[-4].ast_expressionType.data.typeModifier->next;
             if (yyvsp[-1].ast_positionList.data == NULL) {
                 handleInvocationParamPositions(yyvsp[-4].ast_expressionType.data.reference, &yyvsp[-2].ast_position.data, NULL, &yyvsp[0].ast_position.data, 0);
@@ -2382,7 +2382,7 @@ case 20:
 {
         Symbol *rec=NULL;
         yyval.ast_expressionType.data.reference = NULL;
-        if (yyvsp[-3].ast_expressionType.data.typeModifier->kind==TypePointer || yyvsp[-3].ast_expressionType.data.typeModifier->kind==TypeArray) {
+        if (yyvsp[-3].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[-3].ast_expressionType.data.typeModifier->type==TypeArray) {
             yyval.ast_expressionType.data.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.data.typeModifier->next, yyvsp[0].ast_id.data, &rec, CLASS_TO_ANY);
             assert(rec);
             yyval.ast_expressionType.data.typeModifier = rec->u.typeModifier;
@@ -2485,7 +2485,7 @@ break;
 case 40:
 #line 403 "c_parser.y"
 {
-        if (yyvsp[0].ast_expressionType.data.typeModifier->kind==TypePointer || yyvsp[0].ast_expressionType.data.typeModifier->kind==TypeArray) yyval.ast_expressionType.data.typeModifier=yyvsp[0].ast_expressionType.data.typeModifier->next;
+        if (yyvsp[0].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[0].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier=yyvsp[0].ast_expressionType.data.typeModifier->next;
         else yyval.ast_expressionType.data.typeModifier = &errorModifier;
         assert(yyval.ast_expressionType.data.typeModifier);
         yyval.ast_expressionType.data.reference = NULL;
@@ -2542,7 +2542,7 @@ break;
 case 55:
 #line 456 "c_parser.y"
 {
-        if (yyvsp[0].ast_expressionType.data.typeModifier->kind==TypePointer || yyvsp[0].ast_expressionType.data.typeModifier->kind==TypeArray) yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
+        if (yyvsp[0].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[0].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
         else yyval.ast_expressionType.data.typeModifier = yyvsp[-2].ast_expressionType.data.typeModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
@@ -2550,7 +2550,7 @@ break;
 case 56:
 #line 461 "c_parser.y"
 {
-        if (yyvsp[0].ast_expressionType.data.typeModifier->kind==TypePointer || yyvsp[0].ast_expressionType.data.typeModifier->kind==TypeArray) yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
+        if (yyvsp[0].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[0].ast_expressionType.data.typeModifier->type==TypeArray) yyval.ast_expressionType.data.typeModifier = yyvsp[0].ast_expressionType.data.typeModifier;
         else yyval.ast_expressionType.data.typeModifier = yyvsp[-2].ast_expressionType.data.typeModifier;
         yyval.ast_expressionType.data.reference = NULL;
     }
@@ -3146,7 +3146,7 @@ break;
 case 178:
 #line 917 "c_parser.y"
 {
-        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->kind == TypeEnum && yyvsp[-3].ast_typeModifiers.data->u.t);
+        assert(yyvsp[-3].ast_typeModifiers.data && yyvsp[-3].ast_typeModifiers.data->type == TypeEnum && yyvsp[-3].ast_typeModifiers.data->u.t);
         yyval.ast_typeModifiers.data = yyvsp[-3].ast_typeModifiers.data;
         if (yyval.ast_typeModifiers.data->u.t->u.enums==NULL) {
             yyval.ast_typeModifiers.data->u.t->u.enums = yyvsp[-1].ast_symbolList.data;
@@ -3268,7 +3268,7 @@ case 198:
         yyval.ast_symbol.data = yyvsp[-3].ast_symbol.data;
         modifier = addComposedTypeToSymbol(yyval.ast_symbol.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , yyvsp[-1].ast_symbolPositionListPair.data.symbol);
-        bool isVoid = yyvsp[-1].ast_symbolPositionListPair.data.symbol->u.typeModifier->kind == TypeVoid;
+        bool isVoid = yyvsp[-1].ast_symbolPositionListPair.data.symbol->u.typeModifier->type == TypeVoid;
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.data, &yyvsp[-2].ast_position.data, yyvsp[-1].ast_symbolPositionListPair.data.positionList, &yyvsp[0].ast_position.data, true, isVoid);
     }
 break;
@@ -4006,7 +4006,7 @@ case 342:
         savedWorkMemoryIndex = yyvsp[-1].ast_unsigned.data;
         beginBlock();
         counters.localVar = 0;
-        assert(yyvsp[0].ast_symbol.data->u.typeModifier && yyvsp[0].ast_symbol.data->u.typeModifier->kind == TypeFunction);
+        assert(yyvsp[0].ast_symbol.data->u.typeModifier && yyvsp[0].ast_symbol.data->u.typeModifier->type == TypeFunction);
         parsedClassInfo.function = yyvsp[0].ast_symbol.data;
         generateInternalLabelReference(-1, UsageDefined);
         for (symbol=yyvsp[0].ast_symbol.data->u.typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
@@ -4092,7 +4092,7 @@ break;
 case 355:
 #line 1698 "c_parser.y"
 {
-        assert(yyvsp[-1].ast_symbol.data->u.typeModifier && yyvsp[-1].ast_symbol.data->u.typeModifier->kind == TypeFunction);
+        assert(yyvsp[-1].ast_symbol.data->u.typeModifier && yyvsp[-1].ast_symbol.data->u.typeModifier->type == TypeFunction);
         Result r = mergeArguments(yyvsp[-1].ast_symbol.data->u.typeModifier->u.f.args, yyvsp[0].ast_symbol.data);
         if (r == RESULT_ERR) YYERROR;
         yyval.ast_symbol.data = yyvsp[-1].ast_symbol.data;
@@ -4139,7 +4139,7 @@ case 361:
 {
         completeDeclarator(&defaultIntDefinition, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->u.typeModifier);
-        if (yyvsp[0].ast_symbol.data->u.typeModifier->kind != TypeFunction) YYERROR;
+        if (yyvsp[0].ast_symbol.data->u.typeModifier->type != TypeFunction) YYERROR;
         yyval.ast_symbol.data = yyvsp[0].ast_symbol.data;
     }
 break;
@@ -4148,7 +4148,7 @@ case 362:
 {
         completeDeclarator(yyvsp[-1].ast_symbol.data, yyvsp[0].ast_symbol.data);
         assert(yyvsp[0].ast_symbol.data && yyvsp[0].ast_symbol.data->u.typeModifier);
-        if (yyvsp[0].ast_symbol.data->u.typeModifier->kind != TypeFunction) YYERROR;
+        if (yyvsp[0].ast_symbol.data->u.typeModifier->type != TypeFunction) YYERROR;
         yyval.ast_symbol.data = yyvsp[0].ast_symbol.data;
     }
 break;

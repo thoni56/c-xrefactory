@@ -100,9 +100,9 @@ static void setClassTreeBaseType(ClassTreeData *ct, Symbol *p) {
     } else if (p->type == TypeDefault && p->storage!=StorageConstructor) {
         tt = p->u.typeModifier;
         assert(tt);
-        if (tt->kind == TypeFunction) tt = tt->next;
+        if (tt->type == TypeFunction) tt = tt->next;
         assert(tt);
-        if (tt->kind == TypeStruct) {
+        if (tt->type == TypeStruct) {
             rtcls = tt->u.t;
             assert(rtcls!=NULL && rtcls->type==TypeStruct
                    && rtcls->u.structSpec!=NULL);
@@ -252,9 +252,9 @@ static void setOlSymbolTypeForPrint(Symbol *p) {
     olSymbolClassType[0]=0;
     if (p->type == TypeDefault) {
         tt = p->u.typeModifier;
-        if (tt!=NULL && tt->kind==TypeFunction) tt = tt->next;
+        if (tt!=NULL && tt->type==TypeFunction) tt = tt->next;
         typeSPrint(olSymbolType, &size, tt, "", ' ', 0, 1, LONG_NAME, NULL);
-        if (tt->kind == TypeStruct && tt->u.t!=NULL) {
+        if (tt->type == TypeStruct && tt->u.t!=NULL) {
             strcpy(olSymbolClassType, tt->u.t->linkName);
             assert(strlen(olSymbolClassType)+1 < COMPLETION_STRING_SIZE);
         }
@@ -357,7 +357,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
         if (symbol->storage != StorageConstructor) {
             makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
         }
-        if (symbol->u.typeModifier->kind == TypeFunction || symbol->u.typeModifier->kind == TypeMacro) {
+        if (symbol->u.typeModifier->type == TypeFunction || symbol->u.typeModifier->type == TypeMacro) {
             makeRefactoringAvailable(PPC_AVR_ADD_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_DEL_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "");

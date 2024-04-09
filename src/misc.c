@@ -55,7 +55,7 @@ void symDump(Symbol *s) {
 void typeDump(TypeModifier *t) {
     log_debug("dumpStart");
     for(; t!=NULL; t=t->next) {
-        log_debug(" %x",t->kind);
+        log_debug(" %x",t->type);
     }
     log_debug("dumpStop");
 }
@@ -121,7 +121,7 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
     j              = 0;
     for (; t != NULL; t = t->next) {
         par = 0;
-        for (; t != NULL && t->kind == TypePointer; t = t->next) {
+        for (; t != NULL && t->type == TypePointer; t = t->next) {
             CHECK_TYPEDEF(t, type, typedefexpFlag, typebreak);
             pref[--i] = '*';
             par       = 1;
@@ -130,7 +130,7 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
         if (t == NULL)
             goto typebreak;
         CHECK_TYPEDEF(t, type, typedefexpFlag, typebreak);
-        switch (t->kind) {
+        switch (t->type) {
         case TypeArray:
             if (par) {
                 pref[--i] = '(';
@@ -184,7 +184,7 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
         case TypeStruct:
         case TypeUnion:
             if (currentLanguage != LANG_JAVA) {
-                if (t->kind == TypeStruct)
+                if (t->type == TypeStruct)
                     sprintf(type, "struct ");
                 else
                     sprintf(type, "union ");
@@ -235,9 +235,9 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
             r = strlen(type);
             break;
         default:
-            assert(t->kind >= 0 && t->kind < MAX_TYPE);
-            assert(strlen(typeNamesTable[t->kind]) < COMPLETION_STRING_SIZE);
-            strcpy(type, typeNamesTable[t->kind]);
+            assert(t->type >= 0 && t->type < MAX_TYPE);
+            assert(strlen(typeNamesTable[t->type]) < COMPLETION_STRING_SIZE);
+            strcpy(type, typeNamesTable[t->type]);
             r = strlen(type);
             break;
         }

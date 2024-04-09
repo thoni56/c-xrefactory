@@ -157,7 +157,7 @@ void setDirectStructureCompletionType(TypeModifier *typeModifier) {
 void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     assert(options.mode);
     if (options.mode == ServerMode) {
-        if (typeModifier->kind==TypePointer || typeModifier->kind==TypeArray) {
+        if (typeModifier->type==TypePointer || typeModifier->type==TypeArray) {
             s_structRecordCompletionType = typeModifier->next;
             assert(s_structRecordCompletionType);
         } else s_structRecordCompletionType = &errorModifier;
@@ -322,8 +322,8 @@ Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recna
         for (r = ss->nextRecord; r != NULL; r = r->next) {
             // special gcc extension of anonymous struct record
             if (r->name != NULL && *r->name == 0 && r->type == TypeDefault &&
-                r->u.typeModifier->kind == TypeAnonymousField && r->u.typeModifier->next != NULL &&
-                (r->u.typeModifier->next->kind == TypeUnion || r->u.typeModifier->next->kind == TypeStruct)) {
+                r->u.typeModifier->type == TypeAnonymousField && r->u.typeModifier->next != NULL &&
+                (r->u.typeModifier->next->type == TypeUnion || r->u.typeModifier->next->type == TypeStruct)) {
                 // put the anonymous union as 'super class'
                 if (ss->anonymousUnionsCount + 1 < MAX_ANONYMOUS_FIELDS) {
                     ss->anonymousUnions[ss->anonymousUnionsCount++] = r->u.typeModifier->next->u.t;
@@ -340,7 +340,7 @@ Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recna
                 if (javaClassif != CLASS_TO_ANY) {
                     assert(r->type == TypeDefault);
                     assert(r->u.typeModifier);
-                    m = r->u.typeModifier->kind;
+                    m = r->u.typeModifier->type;
                     if (m == TypeFunction && javaClassif != CLASS_TO_METHOD)
                         goto nextRecord;
                     if (m != TypeFunction && javaClassif == CLASS_TO_METHOD)
@@ -464,7 +464,7 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
     Reference *reference = NULL;
 
     assert(structure);
-    if (structure->kind != TypeStruct && structure->kind != TypeUnion) {
+    if (structure->type != TypeStruct && structure->type != TypeUnion) {
         *resultingSymbol = &errorSymbol;
         goto fini;
     }
@@ -526,7 +526,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
         // why it commented out ?
         //& if ((!LANGUAGE(LANG_JAVA))
-        //&     && (p->u.typeModifier->kind == TypeUnion || p->u.typeModifier->kind == TypeStruct)) {
+        //&     && (p->u.typeModifier->type == TypeUnion || p->u.typeModifier->type == TypeStruct)) {
         //&     ttt[0] = LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
         //& }
         sprintf(ttt+1,"%s", storageNamesTable[p->storage]);
@@ -582,7 +582,7 @@ Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbo
     if (symbol->type == TypeError)
         return symbol;
     assert(symbol && symbol->type == TypeDefault && symbol->u.typeModifier);
-    if (symbol->u.typeModifier->kind == TypeFunction && symbol->storage == StorageDefault) {
+    if (symbol->u.typeModifier->type == TypeFunction && symbol->storage == StorageDefault) {
         symbol->storage = StorageExtern;
     }
     if (symbol->storage == StorageDefault) {
@@ -610,11 +610,11 @@ static void addInitializerRefs(Symbol *declaration, IdList *idList) {
     for (IdList *l = idList; l != NULL; l = l->next) {
         TypeModifier *typeModifierP = declaration->u.typeModifier;
         for (Id *id = &l->id; id != NULL; id = id->next) {
-            if (typeModifierP->kind == TypeArray) {
+            if (typeModifierP->type == TypeArray) {
                 typeModifierP = typeModifierP->next;
                 continue;
             }
-            if (typeModifierP->kind != TypeStruct && typeModifierP->kind != TypeUnion)
+            if (typeModifierP->type != TypeStruct && typeModifierP->type != TypeUnion)
                 return;
             Symbol *rec = NULL;
             Reference *ref = findStructureFieldFromType(typeModifierP, id, &rec, CLASS_TO_ANY);
@@ -637,7 +637,7 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
     assert(declaration->type == TypeDefault);
     completeDeclarator(baseType, declaration);
 
-    if (declaration->u.typeModifier->kind == TypeFunction)
+    if (declaration->u.typeModifier->type == TypeFunction)
         usageKind = UsageDeclared;
     else if (declaration->storage == StorageExtern)
         usageKind = UsageDeclared;
@@ -694,7 +694,7 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
                   typeNamesTable[type]);
         p = preCreatedTypesTable[type];
     }
-    assert(p->kind == type);
+    assert(p->type == type);
 
     return p;
 }
@@ -702,14 +702,14 @@ static TypeModifier *createSimpleTypeModifier(Type type) {
 static TypeModifier *mergeBaseType(TypeModifier *t1,TypeModifier *t2){
     unsigned b,r;
     unsigned modif;
-    assert(t1->kind<TYPE_MODIFIERS_END && t2->kind<TYPE_MODIFIERS_END);
-    b=t1->kind; modif=t2->kind;// just to confuse compiler warning
+    assert(t1->type<TYPE_MODIFIERS_END && t2->type<TYPE_MODIFIERS_END);
+    b=t1->type; modif=t2->type;// just to confuse compiler warning
     /* if both are types, error, return the new one only*/
-    if (t1->kind <= MODIFIERS_START && t2->kind <= MODIFIERS_START)
+    if (t1->type <= MODIFIERS_START && t2->type <= MODIFIERS_START)
         return t2;
     /* if not use tables*/
-    if (t1->kind > MODIFIERS_START) {modif = t1->kind; b = t2->kind; }
-    if (t2->kind > MODIFIERS_START) {modif = t2->kind; b = t1->kind; }
+    if (t1->type > MODIFIERS_START) {modif = t1->type; b = t2->type; }
+    if (t2->type > MODIFIERS_START) {modif = t2->type; b = t1->type; }
     switch (modif) {
     case TmodLong:
         r = typeLongChange[b];
@@ -746,12 +746,12 @@ static TypeModifier *mergeBaseType(TypeModifier *t1,TypeModifier *t2){
 
 static TypeModifier * mergeBaseModTypes(TypeModifier *t1, TypeModifier *t2) {
     assert(t1 && t2);
-    if (t1->kind == TypeDefault) return t2;
-    if (t2->kind == TypeDefault) return t1;
-    assert(t1->kind >=0 && t1->kind<MAX_TYPE);
-    assert(t2->kind >=0 && t2->kind<MAX_TYPE);
-    if (preCreatedTypesTable[t2->kind] == NULL) return t2;  /* not base type */
-    if (preCreatedTypesTable[t1->kind] == NULL) return t1;  /* not base type */
+    if (t1->type == TypeDefault) return t2;
+    if (t2->type == TypeDefault) return t1;
+    assert(t1->type >=0 && t1->type<MAX_TYPE);
+    assert(t2->type >=0 && t2->type<MAX_TYPE);
+    if (preCreatedTypesTable[t2->type] == NULL) return t2;  /* not base type */
+    if (preCreatedTypesTable[t1->type] == NULL) return t1;  /* not base type */
     return mergeBaseType(t1, t2);
 }
 
@@ -807,21 +807,21 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
     declaratorModifier = &(declarator->u.typeModifier);
     typeModifier = type->u.typeModifier;
     if (declarator->npointers) {
-        if (declarator->npointers >= 1 && (typeModifier->kind == TypeStruct || typeModifier->kind == TypeUnion)
+        if (declarator->npointers >= 1 && (typeModifier->type == TypeStruct || typeModifier->type == TypeUnion)
             && typeModifier->typedefSymbol == NULL) {
             declarator->npointers--;
-            assert(typeModifier->u.t && typeModifier->u.t->type == typeModifier->kind && typeModifier->u.t->u.structSpec);
+            assert(typeModifier->u.t && typeModifier->u.t->type == typeModifier->type && typeModifier->u.t->u.structSpec);
             typeModifier = &typeModifier->u.t->u.structSpec->ptrtype;
-        } else if (declarator->npointers >= 2 && preCreatedPtr2Ptr2TypeTable[typeModifier->kind] != NULL
+        } else if (declarator->npointers >= 2 && preCreatedPtr2Ptr2TypeTable[typeModifier->type] != NULL
                    && typeModifier->typedefSymbol == NULL) {
             assert(typeModifier->next == NULL); /* not a user defined type */
             declarator->npointers -= 2;
-            typeModifier = preCreatedPtr2Ptr2TypeTable[typeModifier->kind];
-        } else if (declarator->npointers >= 1 && preCreatedPtr2TypeTable[typeModifier->kind] != NULL
+            typeModifier = preCreatedPtr2Ptr2TypeTable[typeModifier->type];
+        } else if (declarator->npointers >= 1 && preCreatedPtr2TypeTable[typeModifier->type] != NULL
                    && typeModifier->typedefSymbol == NULL) {
             assert(typeModifier->next == NULL); /* not a user defined type */
             declarator->npointers--;
-            typeModifier = preCreatedPtr2TypeTable[typeModifier->kind];
+            typeModifier = preCreatedPtr2TypeTable[typeModifier->type];
         }
     }
     unpackPointers(declarator);
@@ -890,21 +890,22 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
                                       Id *id,
                                       UsageKind usage
 ) {
-    Symbol symbol, *member;
-    int kind;
+    Symbol *member;
 
     log_trace("new struct %s", id->name);
     assert(typeName && typeName->symbol && typeName->symbol->type == TypeKeyword);
     assert(typeName->symbol->u.keyword == STRUCT
            ||  typeName->symbol->u.keyword == CLASS
            ||  typeName->symbol->u.keyword == UNION);
-    if (typeName->symbol->u.keyword != UNION)
-        kind = TypeStruct;
-    else
-        kind = TypeUnion;
 
-    fillSymbol(&symbol, id->name, id->name, id->position);
-    symbol.type = kind;
+    Type type;
+    if (typeName->symbol->u.keyword != UNION)
+        type = TypeStruct;
+    else
+        type = TypeUnion;
+
+    Symbol symbol = makeSymbol(id->name, id->name, id->position);
+    symbol.type = type;
     symbol.storage = StorageNone;
 
     if (!symbolTableIsMember(symbolTable, &symbol, NULL, &member)
@@ -913,13 +914,14 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         *member = symbol;
         member->u.structSpec = stackMemoryAlloc(sizeof(S_symStructSpec));
 
-        initSymStructSpec(member->u.structSpec, /*.records=*/NULL);
-        TypeModifier *stype = &member->u.structSpec->type;
+        initSymStructSpec(member->u.structSpec, NULL);
+
+        TypeModifier *typeModifier = &member->u.structSpec->type;
         /* Assumed to be Struct/Union/Enum? */
-        initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/kind, /*.u.t=*/member,
-                                            /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-        TypeModifier *sptrtype = &member->u.structSpec->ptrtype;
-        initTypeModifierAsPointer(sptrtype, &member->u.structSpec->type);
+        initTypeModifierAsStructUnionOrEnum(typeModifier, type, member, NULL, NULL);
+
+        TypeModifier *ptrtypeModifier = &member->u.structSpec->ptrtype;
+        initTypeModifierAsPointer(ptrtypeModifier, &member->u.structSpec->type);
 
         setGlobalFileDepNames(id->name, member, MEMORY_XX);
         addSymbolToFrame(symbolTable, member);

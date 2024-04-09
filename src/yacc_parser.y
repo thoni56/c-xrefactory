@@ -485,8 +485,8 @@ string_literals
 postfix_expr
     : primary_expr                              /*& { $$.data = $1.data; } &*/
     | postfix_expr '[' expr ']'                 {
-        if ($1.data.typeModifier->kind==TypePointer || $1.data.typeModifier->kind==TypeArray) $$.data.typeModifier=$1.data.typeModifier->next;
-        else if ($3.data.typeModifier->kind==TypePointer || $3.data.typeModifier->kind==TypeArray) $$.data.typeModifier=$3.data.typeModifier->next;
+        if ($1.data.typeModifier->type==TypePointer || $1.data.typeModifier->type==TypeArray) $$.data.typeModifier=$1.data.typeModifier->next;
+        else if ($3.data.typeModifier->type==TypePointer || $3.data.typeModifier->type==TypeArray) $$.data.typeModifier=$3.data.typeModifier->next;
         else $$.data.typeModifier = &errorModifier;
         $$.data.reference = NULL;
         assert($$.data.typeModifier);
@@ -511,7 +511,7 @@ postfix_expr
             }
       '(' argument_expr_list_opt ')'    {
         s_upLevelFunctionCompletionType = $<typeModifier>2;
-        if ($1.data.typeModifier->kind==TypeFunction) {
+        if ($1.data.typeModifier->type==TypeFunction) {
             $$.data.typeModifier=$1.data.typeModifier->next;
             if ($4.data == NULL) {
                 handleInvocationParamPositions($1.data.reference, &$3.data, NULL, &$5.data, 0);
@@ -534,7 +534,7 @@ postfix_expr
     | postfix_expr {setIndirectStructureCompletionType($1.data.typeModifier);} PTR_OP str_rec_identifier   {
         Symbol *rec=NULL;
         $$.data.reference = NULL;
-        if ($1.data.typeModifier->kind==TypePointer || $1.data.typeModifier->kind==TypeArray) {
+        if ($1.data.typeModifier->type==TypePointer || $1.data.typeModifier->type==TypeArray) {
             $$.data.reference = findStructureFieldFromType($1.data.typeModifier->next, $4.data, &rec, CLASS_TO_ANY);
             assert(rec);
             $$.data.typeModifier = rec->u.typeModifier;
@@ -615,7 +615,7 @@ unary_expr
         $$.data.reference = NULL;
     }
     | '*' cast_expr                 {
-        if ($2.data.typeModifier->kind==TypePointer || $2.data.typeModifier->kind==TypeArray) $$.data.typeModifier=$2.data.typeModifier->next;
+        if ($2.data.typeModifier->type==TypePointer || $2.data.typeModifier->type==TypeArray) $$.data.typeModifier=$2.data.typeModifier->next;
         else $$.data.typeModifier = &errorModifier;
         assert($$.data.typeModifier);
         $$.data.reference = NULL;
@@ -668,12 +668,12 @@ multiplicative_expr
 additive_expr
     : multiplicative_expr                       /*& { $$.data = $1.data; } &*/
     | additive_expr '+' multiplicative_expr     {
-        if ($3.data.typeModifier->kind==TypePointer || $3.data.typeModifier->kind==TypeArray) $$.data.typeModifier = $3.data.typeModifier;
+        if ($3.data.typeModifier->type==TypePointer || $3.data.typeModifier->type==TypeArray) $$.data.typeModifier = $3.data.typeModifier;
         else $$.data.typeModifier = $1.data.typeModifier;
         $$.data.reference = NULL;
     }
     | additive_expr '-' multiplicative_expr     {
-        if ($3.data.typeModifier->kind==TypePointer || $3.data.typeModifier->kind==TypeArray) $$.data.typeModifier = $3.data.typeModifier;
+        if ($3.data.typeModifier->type==TypePointer || $3.data.typeModifier->type==TypeArray) $$.data.typeModifier = $3.data.typeModifier;
         else $$.data.typeModifier = $1.data.typeModifier;
         $$.data.reference = NULL;
     }
@@ -1129,7 +1129,7 @@ enum_specifier
         $$.data = simpleEnumSpecifier($2.data, usageKind);
     }
     | enum_define_specifier '{' enumerator_list_comma '}'       {
-        assert($1.data && $1.data->kind == TypeEnum && $1.data->u.t);
+        assert($1.data && $1.data->type == TypeEnum && $1.data->u.t);
         $$.data = $1.data;
         if ($$.data->u.t->u.enums==NULL) {
             $$.data->u.t->u.enums = $3.data;
@@ -1228,7 +1228,7 @@ declarator2
         $$.data = $1.data;
         modifier = addComposedTypeToSymbol($$.data, TypeFunction);
         initFunctionTypeModifier(&modifier->u.f , $3.data.symbol);
-        bool isVoid = $3.data.symbol->u.typeModifier->kind == TypeVoid;
+        bool isVoid = $3.data.symbol->u.typeModifier->type == TypeVoid;
         handleDeclaratorParamPositions($1.data, &$2.data, $3.data.positionList, &$4.data, true, isVoid);
     }
     | declarator2 '(' parameter_identifier_list ')'     {
@@ -1854,7 +1854,7 @@ external_definition
         savedWorkMemoryIndex = $1.data;
         beginBlock();
         counters.localVar = 0;
-        assert($2.data->u.typeModifier && $2.data->u.typeModifier->kind == TypeFunction);
+        assert($2.data->u.typeModifier && $2.data->u.typeModifier->type == TypeFunction);
         parsedClassInfo.function = $2.data;
         generateInternalLabelReference(-1, UsageDefined);
         for (symbol=$2.data->u.typeModifier->u.f.args, i=1; symbol!=NULL; symbol=symbol->next,i++) {
@@ -1910,7 +1910,7 @@ top_init_declarations
 function_definition_head
     : function_head_declaration                         /*& { $$.data = $1.data; } &*/
     | function_definition_head fun_arg_declaration      {
-        assert($1.data->u.typeModifier && $1.data->u.typeModifier->kind == TypeFunction);
+        assert($1.data->u.typeModifier && $1.data->u.typeModifier->type == TypeFunction);
         Result r = mergeArguments($1.data->u.typeModifier->u.f.args, $2.data);
         if (r == RESULT_ERR) YYERROR;
         $$.data = $1.data;
@@ -1948,13 +1948,13 @@ function_head_declaration
     : declarator                            {
         completeDeclarator(&defaultIntDefinition, $1.data);
         assert($1.data && $1.data->u.typeModifier);
-        if ($1.data->u.typeModifier->kind != TypeFunction) YYERROR;
+        if ($1.data->u.typeModifier->type != TypeFunction) YYERROR;
         $$.data = $1.data;
     }
     | declaration_specifiers declarator     {
         completeDeclarator($1.data, $2.data);
         assert($2.data && $2.data->u.typeModifier);
-        if ($2.data->u.typeModifier->kind != TypeFunction) YYERROR;
+        if ($2.data->u.typeModifier->type != TypeFunction) YYERROR;
         $$.data = $2.data;
     }
     ;

@@ -6,27 +6,27 @@
 #include "stackmemory.h"
 
 
-static void fillTypeModifier(TypeModifier *typeModifier, Type kind, Symbol *typedefSymbol, TypeModifier *next) {
+static void fillTypeModifier(TypeModifier *typeModifier, Type type, Symbol *typedefSymbol, TypeModifier *next) {
     memset(typeModifier, 0, sizeof(*typeModifier));
-    typeModifier->kind = kind;
+    typeModifier->type = type;
     typeModifier->typedefSymbol = typedefSymbol;
     typeModifier->next = next;
 }
 
-void initTypeModifier(TypeModifier *typeModifier, Type kind) {
-    fillTypeModifier(typeModifier, kind, NULL, NULL);
+void initTypeModifier(TypeModifier *typeModifier, Type type) {
+    fillTypeModifier(typeModifier, type, NULL, NULL);
 }
 
-void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, TypeModifier *next) {
-    assert(kind == TypeStruct || kind == TypeUnion || kind == TypeEnum);
-    typeModifier->kind = kind;
+void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type type, Symbol *symbol, Symbol *typedefSymbol, TypeModifier *next) {
+    assert(type == TypeStruct || type == TypeUnion || type == TypeEnum);
+    typeModifier->type = type;
     typeModifier->u.t = symbol;
     typeModifier->typedefSymbol = typedefSymbol;
     typeModifier->next = next;
 }
 
 void initTypeModifierAsMethod(TypeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, TypeModifier *next) {
-    typeModifier->kind = TypeFunction;
+    typeModifier->type = TypeFunction;
     typeModifier->u.m.signature = signature;
     typeModifier->u.m.exceptions = exceptions;
     typeModifier->typedefSymbol = typedefSymbol;
@@ -34,7 +34,7 @@ void initTypeModifierAsMethod(TypeModifier *typeModifier, char *signature, Symbo
 }
 
 void initTypeModifierAsFunction(TypeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, TypeModifier *next) {
-    typeModifier->kind = TypeFunction;
+    typeModifier->type = TypeFunction;
     typeModifier->u.f.args = args;
     typeModifier->u.f.thisFunList = overloadFunctionList;
     typeModifier->typedefSymbol = typedefSymbol;
@@ -59,7 +59,7 @@ void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *arg
 /* For typeModifiers we need to cater for two memory allocations (XX &
    CF) as well as the ancient FILL semantics... */
 
-/* The most common is to allocate in XX_memory == stackMemAlloc(sizeof()) */
+/* The most common is to allocate in XX_memory == stackMemAlloc(sizeof()) so this is what we do here */
 TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *next) {
     TypeModifier *typeModifier = stackMemoryAlloc(sizeof(TypeModifier));
 

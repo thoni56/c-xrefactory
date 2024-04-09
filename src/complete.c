@@ -505,11 +505,11 @@ static bool isTheSameSymbol(CompletionLine *c1, CompletionLine *c2) {
     assert(c1->symbol && c1->symbol->u.typeModifier);
     assert(c2->symbol && c2->symbol->u.typeModifier);
     /*fprintf(dumpOut,"tm %d %d\n",c1->t->u.type->m,c2->t->u.type->m);*/
-    if (c1->symbol->u.typeModifier->kind != c2->symbol->u.typeModifier->kind)
+    if (c1->symbol->u.typeModifier->type != c2->symbol->u.typeModifier->type)
         return false;
     if (c1->vFunClass != c2->vFunClass)
         return false;
-    if (c2->symbol->u.typeModifier->kind != TypeFunction)
+    if (c2->symbol->u.typeModifier->type != TypeFunction)
         return true;
     /*fprintf(dumpOut,"sigs %s %s\n",c1->t->u.type->u.sig,c2->t->u.type->u.sig);*/
     assert(c1->symbol->u.typeModifier->u.m.signature && c2->symbol->u.typeModifier->u.m.signature);
@@ -865,7 +865,7 @@ static void symbolCompletionFunction(Symbol *symbol, void *c) {
     completionName = symbol->name;
     CONST_CONSTRUCT_NAME(cc->storage, symbol->storage, &completionName);
     if (completionName!=NULL) {
-        if (symbol->type == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->kind == TypeFunction) {
+        if (symbol->type == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->type == TypeFunction) {
             completeFunctionOrMethodName(cc->res, 1, 0, symbol, NULL);
         } else {
             fillCompletionLine(&completionLine, completionName, symbol, symbol->type,0, 0, NULL,NULL);
@@ -1015,7 +1015,7 @@ void completeRecNames(Completions *c) {
     Symbol *s;
     assert(s_structRecordCompletionType);
     str = s_structRecordCompletionType;
-    if (str->kind == TypeStruct || str->kind == TypeUnion) {
+    if (str->type == TypeStruct || str->type == TypeUnion) {
         s = str->u.t;
         assert(s);
         completeRecordsNames(c, s, CLASS_TO_ANY, StorageDefault, TypeDefault, 0);
@@ -1104,17 +1104,17 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
 
     assert(t1 && t2);
     for(s1=t1,s2=t2; s1->next!=NULL&&s2->next!=NULL; s1=s1->next,s2=s2->next) {
-        if (s1->kind!=s2->kind)
+        if (s1->type!=s2->type)
             return false;
     }
     if (s1->next!=NULL || s2->next!=NULL)
         return false;
-    if (s1->kind != s2->kind)
+    if (s1->type != s2->type)
         return false;
-    if (s1->kind==TypeStruct || s1->kind==TypeUnion || s1->kind==TypeEnum) {
+    if (s1->type==TypeStruct || s1->type==TypeUnion || s1->type==TypeEnum) {
         if (s1->u.t != s2->u.t)
             return false;
-    } else if (s1->kind==TypeFunction) {
+    } else if (s1->type==TypeFunction) {
         if (LANGUAGE(LANG_JAVA)) {
             if (strcmp(s1->u.m.signature,s2->u.m.signature)!=0)
                 return false;
@@ -1176,9 +1176,9 @@ static bool isForCompletionSymbol(
         return false;
     if (completions->idToProcessLen != 0)
         return false;
-    if (token->typeModifier->kind == TypePointer) {
+    if (token->typeModifier->type == TypePointer) {
         assert(token->typeModifier->next);
-        if (token->typeModifier->next->kind == TypeStruct) {
+        if (token->typeModifier->next->type == TypeStruct) {
             if ((*symbolP = getSymbolFromReference(token->reference)) == NULL)
                 return false;
             *nextRecord = spComplFindNextRecord(token);
@@ -1368,8 +1368,8 @@ static void javaCompleteComposedName(Completions *c,
     if (innerConstruct && nameType != TypeExpression)
         return;
     if (nameType == TypeExpression) {
-        if (expr->kind == TypeArray) expr = &s_javaArrayObjectSymbol.u.structSpec->type;
-        if (expr->kind != TypeStruct)
+        if (expr->type == TypeArray) expr = &s_javaArrayObjectSymbol.u.structSpec->type;
+        if (expr->type != TypeStruct)
             return;
         str = expr->u.t;
     }
@@ -1723,7 +1723,7 @@ void javaCompleteConstructNestPrimName(Completions*c) {
     Symbol *memb;
     if (s_javaCompletionLastPrimary == NULL)
         return;
-    if (s_javaCompletionLastPrimary->kind == TypeStruct) {
+    if (s_javaCompletionLastPrimary->type == TypeStruct) {
         memb = s_javaCompletionLastPrimary->u.t;
     } else
         return;
@@ -1777,9 +1777,9 @@ void javaCompleteStrRecordPrimary(Completions *c) {
     Symbol *memb;
     if (s_javaCompletionLastPrimary == NULL)
         return;
-    if (s_javaCompletionLastPrimary->kind == TypeStruct) {
+    if (s_javaCompletionLastPrimary->type == TypeStruct) {
         memb = s_javaCompletionLastPrimary->u.t;
-    } else if (s_javaCompletionLastPrimary->kind == TypeArray) {
+    } else if (s_javaCompletionLastPrimary->type == TypeArray) {
         memb = &s_javaArrayObjectSymbol;
     } else
         return;
