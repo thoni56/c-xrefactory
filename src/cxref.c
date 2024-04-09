@@ -244,23 +244,25 @@ Reference * getDefinitionRef(Reference *reference) {
 }
 
 // used only with OLO_GET_SYMBOL_TYPE;
-static void setOlSymbolTypeForPrint(Symbol *p) {
-    int             size, len;
-    TypeModifier *tt;
-    size = COMPLETION_STRING_SIZE;
+static void setOlSymbolTypeForPrint(Symbol *symbol) {
+    int size = COMPLETION_STRING_SIZE;
+
     olSymbolType[0]=0;
     olSymbolClassType[0]=0;
-    if (p->type == TypeDefault) {
-        tt = p->u.typeModifier;
-        if (tt!=NULL && tt->type==TypeFunction) tt = tt->next;
-        typeSPrint(olSymbolType, &size, tt, "", ' ', 0, true, LONG_NAME, NULL);
-        if (tt->type == TypeStruct && tt->u.t!=NULL) {
-            strcpy(olSymbolClassType, tt->u.t->linkName);
+
+    if (symbol->type == TypeDefault) {
+        TypeModifier *t = symbol->u.typeModifier;
+        if (t != NULL && t->type==TypeFunction)
+            t = t->next;
+        typeSPrint(olSymbolType, &size, t, "", ' ', 0, true, LONG_NAME, NULL);
+        if (t->type == TypeStruct && t->u.t!=NULL) {
+            strcpy(olSymbolClassType, t->u.t->linkName);
             assert(strlen(olSymbolClassType)+1 < COMPLETION_STRING_SIZE);
         }
         // remove pending spaces
-        len = strlen(olSymbolType);
-        while (len > 0 && olSymbolType[len-1] == ' ') len--;
+        int len = strlen(olSymbolType);
+        while (len > 0 && olSymbolType[len-1] == ' ')
+            len--;
         olSymbolType[len]=0;
     }
 }
