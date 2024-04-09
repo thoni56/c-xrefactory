@@ -11,12 +11,10 @@
 #include "cxfile.h"
 #include "editor.h"
 #include "filedescriptor.h"
-#include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
 #include "jsemact.h"
 #include "list.h"
-#include "main.h" /* For searchDefaultOptionsFile() */
 #include "menu.h"
 #include "misc.h"
 #include "options.h"
@@ -32,7 +30,6 @@
 #include "symbol.h"
 #include "type.h"
 #include "usage.h"
-#include "yylex.h"
 
 #include "log.h"
 
