@@ -937,12 +937,15 @@ static void completeRecordsNames(
     S_recFindStr rfs;
     char *cname;
 
-    if (symbol==NULL) return;
+    if (symbol==NULL)
+        return;
+
     if (c->idToProcess[0] == 0 && currentLanguage!=LANG_JAVA) {
         orderFlag = 0;
     } else {
         orderFlag = 1;
     }
+
     assert(symbol->u.structSpec);
     iniFind(symbol, &rfs);
     //&fprintf(dumpOut,"checking records of %s\n", symbol->linkName);
@@ -951,17 +954,16 @@ static void completeRecordsNames(
         // not about visibility checks
         visibilityCheck = VISIBILITY_CHECK_NO;
         accessCheck = calculateAccessCheckOption();
-        //&if (options.ooChecksBits & OOC_VISIBILITY_CHECK) {
-        //& visibilityCheck = VISIBILITY_CHECK_YES;
-        //&} else {
-        //& visibilityCheck = VISIBILITY_CHECK_NO;
-        //&}
-        Result rr = findStrRecordSym(&rfs, NULL, &r, classification, accessCheck, visibilityCheck);
-        if (rr != RESULT_OK) break;
+
+        Result result = findStrRecordSym(&r, &rfs, NULL, classification, accessCheck, visibilityCheck);
+        if (result != RESULT_OK) break;
+
         if (constructorOpt == StorageConstructor && rfs.currentClass != symbol)
             break;
+
         /* because constructors are not inherited */
         assert(r);
+
         cname = r->name;
         CONST_CONSTRUCT_NAME(constructorOpt, r->storage, &cname);
         //&fprintf(dumpOut,"record %s\n", cname);
@@ -1143,7 +1145,7 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
     assert(s->u.structSpec);
     iniFind(s, &rfs);
     for(;;) {
-        Result rr = findStrRecordSym(&rfs, NULL, &r, CLASS_TO_ANY, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
+        Result rr = findStrRecordSym(&r, &rfs, NULL, CLASS_TO_ANY, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
         if (rr != RESULT_OK) break;
         assert(r);
         cname = r->name;
@@ -1326,10 +1328,10 @@ static void javaCompleteNestedClasses(  Completions *c,
         str=str->u.structSpec->super->element) {
         assert(str && str->u.structSpec);
         for(i=0; i<str->u.structSpec->nestedCount; i++) {
-            if (str->u.structSpec->nest[i].membFlag) {
-                memb = str->u.structSpec->nest[i].cl;
+            if (str->u.structSpec->nestedClasses[i].membFlag) {
+                memb = str->u.structSpec->nestedClasses[i].cl;
                 assert(memb);
-                memb->access |= str->u.structSpec->nest[i].accFlags;  // hack!!!
+                memb->access |= str->u.structSpec->nestedClasses[i].accFlags;  // hack!!!
                 fillCompletionLine(&compLine, memb->name, memb, TypeStruct,0, 0 , NULL,NULL);
                 processName(memb->name, &compLine, 1, c);
                 if (storage == StorageConstructor) {
@@ -1366,7 +1368,7 @@ static void javaCompleteComposedName(Completions *c,
     if (innerConstruct && nameType != TypeExpression)
         return;
     if (nameType == TypeExpression) {
-        if (expr->kind == TypeArray) expr = &s_javaArrayObjectSymbol.u.structSpec->stype;
+        if (expr->kind == TypeArray) expr = &s_javaArrayObjectSymbol.u.structSpec->type;
         if (expr->kind != TypeStruct)
             return;
         str = expr->u.t;
@@ -1426,7 +1428,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
             fillCompletionLine(&compLine, r->name, r, TypeDefault, vlevel,0,NULL,vFunCl);
             processName(r->name, &compLine, 0, c);
         }
-        rr = findStrRecordSym(rfs, mname, &r, CLASS_TO_METHOD, accessCheck, visibilityCheck);
+        rr = findStrRecordSym(&r, rfs, mname, CLASS_TO_METHOD, accessCheck, visibilityCheck);
     } while (rr == RESULT_OK);
     if (c->alternativeIndex != 0) {
         c->prefix[0]=0;

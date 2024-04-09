@@ -3962,7 +3962,7 @@ case 141:
                         }
                         /*& javaSetFieldLinkName(p); &*/
                         iniFind(clas, &rfs);
-                        if (findStrRecordSym(&rfs, p->name, &memb, CLASS_TO_ANY,
+                        if (findStrRecordSym(&memb, &rfs, p->name, CLASS_TO_ANY,
                                              ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO) == RESULT_NOT_FOUND) {
                             assert(clas->u.structSpec);
                             LIST_APPEND(Symbol, clas->u.structSpec->records, p);

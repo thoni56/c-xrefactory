@@ -1247,12 +1247,12 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
             if (inum >= MAX_INNER_CLASSES) {
                 FATAL_ERROR(ERR_ST,"number of nested classes overflowed over MAX_INNERS_CLASSES", XREF_EXIT_ERR);
             }
-            symbol->u.structSpec->nest = NULL;
+            symbol->u.structSpec->nestedClasses = NULL;
             if (inum > 0) {
                 // I think this should be optimized, not all mentioned here
                 // are my inners classes
-                //&             CF_ALLOCC(symbol->u.structSpec->nest, MAX_INNER_CLASSES, S_nestedSpec);
-                CF_ALLOCC(symbol->u.structSpec->nest, inum, S_nestedSpec);
+                //&             CF_ALLOCC(symbol->u.structSpec->nestedClasses, MAX_INNER_CLASSES, S_nestedSpec);
+                CF_ALLOCC(symbol->u.structSpec->nestedClasses, inum, S_nestedSpec);
             }
             for(rinners=0; rinners<inum; rinners++) {
                 GetU2(innval, cb, exception);
@@ -1277,7 +1277,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 //& inners->access |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
-                fill_nestedSpec(& symbol->u.structSpec->nest[rinners], inners, membFlag, modifs);
+                fill_nestedSpec(& symbol->u.structSpec->nestedClasses[rinners], inners, membFlag, modifs);
                 assert(inners && inners->type==TypeStruct && inners->u.structSpec);
                 int classFileNumber = inners->u.structSpec->classFileNumber;
                 FileItem *classFileItem = getFileItem(classFileNumber);

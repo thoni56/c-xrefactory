@@ -2117,20 +2117,18 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     }
 }
 
-static void olcxReferenceFilterSet(int flevel) {
-    OlcxReferences    *refs;
+static void olcxReferenceFilterSet(int filterLevel) {
+    OlcxReferences *refs;
 
     if (!olcxMoveInit(&sessionData,  &refs, DONT_CHECK_NULL))
         return;
-    if (refs!=NULL && flevel < MAX_REF_LIST_FILTER_LEVEL && flevel >= 0) {
-        refs->refsFilterLevel = flevel;
-        //&     olcxPrintRefList(";", refs);
-        //& } else {
-        //&     indicateNoReference();
+    if (refs!=NULL && filterLevel < MAX_REF_LIST_FILTER_LEVEL && filterLevel >= 0) {
+        refs->refsFilterLevel = filterLevel;
     }
     if (options.xref2) {
         // move to the visible reference
-        if (refs!=NULL) olcxSetActReferenceToFirstVisible(refs, refs->actual);
+        if (refs!=NULL)
+            olcxSetActReferenceToFirstVisible(refs, refs->actual);
         olcxPrintRefList(";", refs);
     } else {
         fprintf(communicationChannel, "*");

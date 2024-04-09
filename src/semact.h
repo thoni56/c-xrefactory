@@ -21,9 +21,8 @@ extern bool javaOuterClassAccessible(Symbol *cl);
 extern bool javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags);
 extern bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r);
 extern int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r);
-extern Result findStrRecordSym(S_recFindStr *ss,
+extern Result findStrRecordSym(Symbol **res, S_recFindStr *ss,
                             char *recname,
-                            Symbol **res,
                             int javaClassif,
                             AccessibilityCheckYesNo accessCheck,
                             VisibilityCheckYesNo visibilityCheck);

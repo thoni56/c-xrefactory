@@ -6,6 +6,7 @@
 #include "symboltable.h"
 #include "stringlist.h"
 #include "proto.h"
+#include "usage.h"
 
 
 extern char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
@@ -123,7 +124,7 @@ extern int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 
 extern bool olstringFound;
 extern bool olstringServed;
-extern int olstringUsageKind;
+extern UsageKind olstringUsageKind;
 extern char *olstringInMacroBody;
 extern int s_olMacro2PassFile;
 

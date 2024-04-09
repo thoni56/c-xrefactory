@@ -349,9 +349,9 @@ typedef struct symStructSpec {
     struct symbol      *records;        /* str. records, should be a table of   */
     struct cctNode      casts;          /* possible casts                       */
     short int           nestedCount;    /* # of java nested classes     */
-    struct nestedSpec  *nest;           /* array of nested classes		*/
-    struct typeModifier stype;          /* this structure type */
-    struct typeModifier sptrtype;       /* this structure pointer type */
+    struct nestedSpec  *nestedClasses;  /* array of nested classes		*/
+    struct typeModifier type;           /* this structure type */
+    struct typeModifier ptrtype;        /* this structure pointer type */
     int                 classFileNumber; /* in java, my class file index
                                            == -1 for none, TODO to change
                                            it to s_noneFileIndex !!!

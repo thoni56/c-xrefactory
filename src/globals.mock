@@ -2,6 +2,7 @@
 #include <cgreen/mocks.h>
 
 #include "globals.h"
+#include "usage.h"
 
 bool fileAbortEnabled;
 
@@ -55,9 +56,9 @@ char s_olstring[MAX_FUN_NAME_SIZE];
 bool olstringFound = false;
 bool olstringServed = false;
 char *olstringInMacroBody = NULL;
-int olstringUsageKind = 0;
+UsageKind olstringUsageKind = 0;
 int olOriginalFileNumber = -1;
-int olstringUsageKind;
+UsageKind olstringUsageKind;
 int olOriginalComFileNumber;
 Position s_olcxByPassPos;
 int s_olMacro2PassFile;

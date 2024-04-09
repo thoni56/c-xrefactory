@@ -120,17 +120,17 @@ void addSymbolToFrame(SymbolTable *table, Symbol *symbol) {
     addToFrame(deleteSymDef, symbol /* TODO? Should also include reference to table */);
 }
 
-void recFindPush(Symbol *str, S_recFindStr *rfs) {
+void recFindPush(Symbol *symbol, S_recFindStr *rfs) {
     S_symStructSpec *ss;
 
-    assert(str && (str->type==TypeStruct || str->type==TypeUnion));
+    assert(symbol && (symbol->type==TypeStruct || symbol->type==TypeUnion));
     if (rfs->recsClassCounter==0) {
         // this is hack to avoid problem when overloading to zero
         rfs->recsClassCounter++;
     }
-    ss = str->u.structSpec;
+    ss = symbol->u.structSpec;
     rfs->nextRecord = ss->records;
-    rfs->currentClass                         = str;
+    rfs->currentClass                         = symbol;
     rfs->superClasses[rfs->superClassesCount] = ss->super;
     assert(rfs->superClassesCount < MAX_INHERITANCE_DEEP);
     rfs->superClassesCount++;
@@ -296,10 +296,9 @@ int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     return i;
 }
 
-Result findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NULL */
-                     Symbol **res, int javaClassif,              /* classify to method/field*/
-                     AccessibilityCheckYesNo accessibilityCheck, /* java check accessibility */
-                     VisibilityCheckYesNo    visibilityCheck     /* redundant, always equal to accCheck? */
+Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname, int javaClassif,
+                        AccessibilityCheckYesNo accessibilityCheck, /* java check accessibility */
+                        VisibilityCheckYesNo    visibilityCheck     /* redundant, always equal to accCheck? */
 ) {
     Symbol     *s, *r, *cclass;
     SymbolList *sss;
@@ -333,7 +332,7 @@ Result findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NU
             //&fprintf(dumpOut,":checking %s\n",r->name); fflush(dumpOut);
             if (recname == NULL || strcmp(r->name, recname) == 0) {
                 if (!LANGUAGE(LANG_JAVA)) {
-                    *res           = r;
+                    *resultingSymbolP = r;
                     ss->nextRecord = r->next;
                     return RESULT_OK;
                 }
@@ -357,7 +356,7 @@ Result findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NU
                         // Yes, definitely correct, in the first step determining
                         // class to search
                         ss->nextRecord = NULL;
-                        *res           = &errorSymbol;
+                        *resultingSymbolP = &errorSymbol;
                         return RESULT_NOT_FOUND;
                     }
                 }
@@ -365,14 +364,14 @@ Result findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NU
                     if (!javaRecordAccessible(ss, ss->baseClass, cclass, r, r->access)) {
                         if (visibilityCheck == VISIBILITY_CHECK_YES) {
                             ss->nextRecord = NULL;
-                            *res           = &errorSymbol;
+                            *resultingSymbolP = &errorSymbol;
                             return RESULT_NOT_FOUND;
                         } else {
                             goto nextRecord;
                         }
                     }
                 }
-                *res           = r;
+                *resultingSymbolP = r;
                 ss->nextRecord = r->next;
                 return RESULT_OK;
             }
@@ -392,7 +391,7 @@ Result findStrRecordSym(S_recFindStr *ss, char *recname,            /* can be NU
                 ss->superClassesCount--;
             if (ss->superClassesCount == 0) {
                 ss->nextRecord = NULL;
-                *res           = &errorSymbol;
+                *resultingSymbolP = &errorSymbol;
                 return RESULT_NOT_FOUND;
             }
             sss                 = ss->superClasses[ss->superClassesCount - 1];
@@ -413,7 +412,7 @@ int findStrRecord(Symbol *s,
                   int javaClassif
 ) {
     S_recFindStr rfs;
-    return findStrRecordSym(iniFind(s,&rfs), recname, res, javaClassif,
+    return findStrRecordSym(res, iniFind(s,&rfs), recname, javaClassif,
                            ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
 }
 
@@ -434,7 +433,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
     ref = NULL;
     // when in java, then always in qualified name, so access and visibility checks
     // are useless.
-    Result rr = findStrRecordSym(iniFind(sym,&rfs),record->name,res,
+    Result rr = findStrRecordSym(res, iniFind(sym,&rfs),record->name,
                           javaClassif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
     if (rr == RESULT_OK && rfs.currentClass != NULL &&
         ((*res)->storage == StorageField || (*res)->storage == StorageMethod ||
@@ -812,7 +811,7 @@ void completeDeclarator(Symbol *type, Symbol *declarator) {
             && typeModifier->typedefSymbol == NULL) {
             declarator->npointers--;
             assert(typeModifier->u.t && typeModifier->u.t->type == typeModifier->kind && typeModifier->u.t->u.structSpec);
-            typeModifier = &typeModifier->u.t->u.structSpec->sptrtype;
+            typeModifier = &typeModifier->u.t->u.structSpec->ptrtype;
         } else if (declarator->npointers >= 2 && preCreatedPtr2Ptr2TypeTable[typeModifier->kind] != NULL
                    && typeModifier->typedefSymbol == NULL) {
             assert(typeModifier->next == NULL); /* not a user defined type */
@@ -916,18 +915,18 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         member->u.structSpec = stackMemoryAlloc(sizeof(S_symStructSpec));
 
         initSymStructSpec(member->u.structSpec, /*.records=*/NULL);
-        TypeModifier *stype = &member->u.structSpec->stype;
+        TypeModifier *stype = &member->u.structSpec->type;
         /* Assumed to be Struct/Union/Enum? */
         initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/kind, /*.u.t=*/member,
                                             /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-        TypeModifier *sptrtype = &member->u.structSpec->sptrtype;
-        initTypeModifierAsPointer(sptrtype, &member->u.structSpec->stype);
+        TypeModifier *sptrtype = &member->u.structSpec->ptrtype;
+        initTypeModifierAsPointer(sptrtype, &member->u.structSpec->type);
 
         setGlobalFileDepNames(id->name, member, MEMORY_XX);
         addSymbolToFrame(symbolTable, member);
     }
     addCxReference(member, &id->position, usage,NO_FILE_NUMBER, NO_FILE_NUMBER);
-    return &member->u.structSpec->stype;
+    return &member->u.structSpec->type;
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *symbol, int memory) {
@@ -1003,16 +1002,16 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
 
     /* This is a recurring pattern, create a struct and the pointer type to it*/
     initSymStructSpec(symbol->u.structSpec, /*.records=*/NULL);
-    TypeModifier *stype = &symbol->u.structSpec->stype;
+    TypeModifier *stype = &symbol->u.structSpec->type;
     /* Assumed to be Struct/Union/Enum? */
     initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/symbol,
                                         /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-    TypeModifier *sptrtype = &symbol->u.structSpec->sptrtype;
-    initTypeModifierAsPointer(sptrtype, &symbol->u.structSpec->stype);
+    TypeModifier *sptrtype = &symbol->u.structSpec->ptrtype;
+    initTypeModifierAsPointer(sptrtype, &symbol->u.structSpec->type);
 
     addSymbolToFrame(symbolTable, symbol);
 
-    return &symbol->u.structSpec->stype;
+    return &symbol->u.structSpec->type;
 }
 
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {

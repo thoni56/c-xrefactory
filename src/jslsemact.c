@@ -389,12 +389,12 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
     n = outer->u.structSpec->nestedCount;
     log_debug("adding nested %s of %s(at %lx)[%d] --> %s to %s", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
     if (n == 0) {
-        CF_ALLOCC(outer->u.structSpec->nest, MAX_INNER_CLASSES, S_nestedSpec);
+        CF_ALLOCC(outer->u.structSpec->nestedClasses, MAX_INNER_CLASSES, S_nestedSpec);
     }
     // avoid multiple occurences, rather not, as it must correspond to
     // file processing order
-    //& for(i=0; i<n; i++) if (outer->u.structSpec->nest[i].cl == inner) return;
-    fill_nestedSpec(&(outer->u.structSpec->nest[n]), inner, memb, accessFlags);
+    //& for(i=0; i<n; i++) if (outer->u.structSpec->nestedClasses[i].cl == inner) return;
+    fill_nestedSpec(&(outer->u.structSpec->nestedClasses[n]), inner, memb, accessFlags);
     outer->u.structSpec->nestedCount ++;
     if (outer->u.structSpec->nestedCount >= MAX_INNER_CLASSES) {
         FATAL_ERROR(ERR_ST,"number of nested classes overflowed MAX_INNER_CLASSES", XREF_EXIT_ERR);
@@ -472,12 +472,12 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     assert(ss);
     log_debug("appending %d nested classes of %s", ss->nestedCount, str->linkName);
     for(i=0; i<ss->nestedCount; i++) {
-        log_trace("checking %s %s %d %d", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
-        if (ss->nest[i].membFlag && jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags)) {
+        log_trace("checking %s %s %d %d", ss->nestedClasses[i].cl->name, ss->nestedClasses[i].cl->linkName,ss->nestedClasses[i].membFlag, jslRecordAccessible(str, ss->nestedClasses[i].cl, ss->nestedClasses[i].accFlags));
+        if (ss->nestedClasses[i].membFlag && jslRecordAccessible(str, ss->nestedClasses[i].cl, ss->nestedClasses[i].accFlags)) {
             fillId(&ocid, str->linkName, NULL, noPosition);
             fillIdList(&oclassid, ocid, str->linkName, TypeStruct, NULL);
-            log_trace("adding %s %s", ss->nest[i].cl->name, ss->nest[i].cl->linkName);
-            jslTypeSymbolDefinition(ss->nest[i].cl->name, &oclassid,
+            log_trace("adding %s %s", ss->nestedClasses[i].cl->name, ss->nestedClasses[i].cl->linkName);
+            jslTypeSymbolDefinition(ss->nestedClasses[i].cl->name, &oclassid,
                                     ADD_YES, order, false);
         }
     }

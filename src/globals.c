@@ -134,7 +134,7 @@ char *s_javaLangObjectLinkName="java/lang/Object";
 
 bool olstringFound = false;
 bool olstringServed = false;
-int olstringUsageKind = 0;
+UsageKind olstringUsageKind = 0;
 char *olstringInMacroBody = NULL;
 int s_olMacro2PassFile;
 

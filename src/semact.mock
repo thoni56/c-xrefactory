@@ -60,7 +60,7 @@ int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     return (int) mock(rfs, r);
 }
 
-Result findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClassif,
+Result findStrRecordSym(Symbol **res, S_recFindStr *ss, char *recname, int javaClassif,
                      AccessibilityCheckYesNo accessibilityCheck, VisibilityCheckYesNo visibilityCheck) {
     return (Result) mock(ss, recname, res, javaClassif, accessibilityCheck, visibilityCheck);
 }

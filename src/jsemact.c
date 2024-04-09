@@ -525,12 +525,12 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name, char *fqName) {
     CF_ALLOC(memb->u.structSpec, S_symStructSpec);
 
     initSymStructSpec(memb->u.structSpec, /*.records=*/NULL);
-    TypeModifier *stype = &memb->u.structSpec->stype;
+    TypeModifier *type = &memb->u.structSpec->type;
     /* Assumed to be Struct/Union/Enum? */
-    initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/TypeStruct, /*.u.t=*/memb,
+    initTypeModifierAsStructUnionOrEnum(type, /*.kind=*/TypeStruct, /*.u.t=*/memb,
                                             /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-    TypeModifier *sptrtype = &memb->u.structSpec->sptrtype;
-    initTypeModifierAsPointer(sptrtype, &memb->u.structSpec->stype);
+    TypeModifier *ptrtype = &memb->u.structSpec->ptrtype;
+    initTypeModifierAsPointer(ptrtype, &memb->u.structSpec->type);
 
     CF_ALLOC(pppl, SymbolList);
     /* REPLACED: FILL_symbolList(pppl, memb, NULL); with compound literal */
@@ -897,7 +897,7 @@ static Result findTopLevelNameInternal(char *name,
             recFindPush(cscope->thisClass, resRfs);
             *rscope = cscope;
         }
-        result = findStrRecordSym(resRfs, name, resultingMemberP, classif, accessibilityCheck, visibilityCheck);
+        result = findStrRecordSym(resultingMemberP, resRfs, name, classif, accessibilityCheck, visibilityCheck);
     }
     return result;
 }
@@ -935,7 +935,7 @@ static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
         clas=clas->u.structSpec->super->element) {
         assert(clas->type == TypeStruct && clas->u.structSpec);
         n = clas->u.structSpec->nestedCount;
-        inners = clas->u.structSpec->nest;
+        inners = clas->u.structSpec->nestedClasses;
         for(i=0; i<n; i++) {
 //& fprintf(dumpOut,"checking %s<->%s\n",inners[i].cl->name, name);fflush(dumpOut);
             if (inners[i].membFlag && strcmp(inners[i].cl->name, name)==0) {
@@ -963,7 +963,7 @@ static int javaClassIsInnerNonStaticMemberClass(Symbol *tclas, Symbol *name) {
         clas=clas->u.structSpec->super->element) {
         assert(clas->type == TypeStruct && clas->u.structSpec);
         n = clas->u.structSpec->nestedCount;
-        inners = clas->u.structSpec->nest;
+        inners = clas->u.structSpec->nestedClasses;
         for(i=0; i<n; i++) {
 //&fprintf(dumpOut,"checking %s<->%s\n",inners[i].cl->name, name);fflush(dumpOut);
             if (inners[i].membFlag && strcmp(inners[i].cl->linkName, name->linkName)==0
@@ -1434,7 +1434,7 @@ Type javaClassifyAmbiguousName(
                 }
             } else {
                 javaLoadClassSymbolsFromFile(pstr);
-                Result rf = findStrRecordSym(iniFind(pstr,rfs), name->id.name, str,
+                Result rf = findStrRecordSym(str, iniFind(pstr,rfs), name->id.name,
                                       classif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
                 *expr = (*str)->u.typeModifier;
                 if (rf == RESULT_OK) {
@@ -1459,7 +1459,7 @@ Type javaClassifyAmbiguousName(
             }
             break;
         case TypeExpression:
-            if (pexpr->kind == TypeArray) pexpr = &s_javaArrayObjectSymbol.u.structSpec->stype;
+            if (pexpr->kind == TypeArray) pexpr = &s_javaArrayObjectSymbol.u.structSpec->type;
 //&			if (pexpr->kind == TypeError) {
 //&				addTrivialCxReference(LINK_NAME_INDUCED_ERROR,TypeInducedError,StorageDefault,
 //&                                   name->id.position, UsageUsed);
@@ -1468,8 +1468,7 @@ Type javaClassifyAmbiguousName(
                 *str = &errorSymbol;
             } else {
                 javaLoadClassSymbolsFromFile(pexpr->u.t);
-                Result result = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->id.name,
-                                      str, classif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
+                Result result = findStrRecordSym(str, iniFind(pexpr->u.t,rfs), name->id.name, classif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
                 if (result == RESULT_OK) {
                     if ((options.ooChecksBits & OOC_ALL_CHECKS) == 0 ||
                         javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currentClass, *str)) {
@@ -1498,7 +1497,7 @@ TypeModifier *javaClassifyToExpressionName(IdList *name,
     if (atype == TypeExpression) res = expr;
     else if (atype == TypeStruct) {
         assert(str && str->u.structSpec);
-        res = &str->u.structSpec->stype; /* because of casts & s_errorModifier;*/
+        res = &str->u.structSpec->type; /* because of casts & s_errorModifier;*/
         assert(res && res->kind == TypeStruct);
     } else res = & errorModifier;
     return res;
@@ -2148,7 +2147,7 @@ static TypeModifier *javaMethodInvocation(
             //&sprintf(tmpBuff,"applicable: %s of
             //%s\n",memb->linkName,rfs->currentClass->linkName);ppcBottomInformation(tmpBuff);
         }
-        rr = findStrRecordSym(rfs, name->name, &memb,
+        rr = findStrRecordSym(&memb, rfs, name->name,
                               CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
         if (invocationType == CONSTRUCTOR_INVOCATION && rfs->baseClass != rfs->currentClass) {
             // constructors are not inherited
@@ -2251,7 +2250,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
     S_extRecFindStr		*erfs;
 
     log_trace("invocation of %s", name->name);
-    if (tt->kind == TypeArray) tt = &s_javaArrayObjectSymbol.u.structSpec->stype;
+    if (tt->kind == TypeArray) tt = &s_javaArrayObjectSymbol.u.structSpec->type;
     if (tt->kind != TypeStruct) {
         methodAppliedOnNonClass(name->name);
         return NULL;
@@ -2259,7 +2258,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
     erfs = stackMemoryAlloc(sizeof(S_extRecFindStr));
     erfs->params = NULL;
     javaLoadClassSymbolsFromFile(tt->u.t);
-    Result rr = findStrRecordSym(iniFind(tt->u.t,&erfs->s), name->name, &erfs->memb,
+    Result rr = findStrRecordSym(&erfs->memb, iniFind(tt->u.t,&erfs->s), name->name,
                         CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
     if (rr != RESULT_OK) {
         noSuchFieldError(name->name);
@@ -2297,7 +2296,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
         erfs->s.accessed = s_javaStat->cpMethod->b.accessFlags;
     }
 */
-    Result rr = findStrRecordSym(iniFind(ss, &erfs->s), name->name, &erfs->memb,
+    Result rr = findStrRecordSym(&erfs->memb, iniFind(ss, &erfs->s), name->name,
                         CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
     if (rr != RESULT_OK)
         return NULL;
@@ -2330,7 +2329,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     erfs = stackMemoryAlloc(sizeof(S_extRecFindStr));
     erfs->params = NULL;
     assert(clas->javaClassIsLoaded);
-    Result rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
+    Result rr = findStrRecordSym(&erfs->memb, iniFind(clas, &erfs->s), clas->name,
                         CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
     if (rr != RESULT_OK)
         return NULL;
@@ -2514,8 +2513,8 @@ static void javaAddNestedClassToSymbolTab( Symbol *str ) {
     ss = str->u.structSpec;
     assert(ss);
     for(i=0; i<ss->nestedCount; i++) {
-        if (ss->nest[i].membFlag && javaRecordAccessible(NULL,str, str, ss->nest[i].cl, ss->nest[i].accFlags)) {
-            javaAddTypeToSymbolTable(ss->nest[i].cl, ss->nest[i].cl->access, &noPosition, false);
+        if (ss->nestedClasses[i].membFlag && javaRecordAccessible(NULL,str, str, ss->nestedClasses[i].cl, ss->nestedClasses[i].accFlags)) {
+            javaAddTypeToSymbolTable(ss->nestedClasses[i].cl, ss->nestedClasses[i].cl->access, &noPosition, false);
         }
     }
 }
@@ -2555,7 +2554,7 @@ struct stackFrame *newClassDefinitionBegin(Id *name,
             access |= (AccessPublic | AccessStatic);
         }
         nnest = oldStat->thisClass->u.structSpec->nestedCount;
-        nst = oldStat->thisClass->u.structSpec->nest;
+        nst = oldStat->thisClass->u.structSpec->nestedClasses;
         noff = oldStat->currentNestedIndex;
         oldStat->currentNestedIndex ++;
 //&sprintf(tmpBuff,"checking %d of %d of %s(%d)\n", noff,nnest,oldStat->thisClass->linkName, oldStat->thisClass);ppcBottomInformation(tmpBuff);
@@ -2585,7 +2584,7 @@ struct stackFrame *newClassDefinitionBegin(Id *name,
     classf = dd->u.structSpec->classFileNumber;
     if (classf == -1)
         classf = NO_FILE_NUMBER;
-    fillJavaStat(javaStat,p,&dd->u.structSpec->stype,dd,0, oldStat->currentPackage,
+    fillJavaStat(javaStat,p,&dd->u.structSpec->type,dd,0, oldStat->currentPackage,
                   oldStat->unnamedPackagePath, oldStat->namedPackagePath,
                   locals, oldStat->lastParsedName,AccessDefault,parsedClassInfo,classf,oldStat);
     // added 8/8/2001 for clearing s_cp.function for SET_TARGET_POSITION check
@@ -2630,10 +2629,10 @@ void javaInitArrayObject(void) {
 
     initSymStructSpec(&s_arraySpec, /*.records=*/&s_lengthSymbol);
     /* Assumed to be Struct/Union/Enum? */
-    initTypeModifierAsStructUnionOrEnum(&s_arraySpec.stype, /*.kind=*/TypeStruct,
+    initTypeModifierAsStructUnionOrEnum(&s_arraySpec.type, /*.kind=*/TypeStruct,
                                         /*.u.t=*/&s_javaArrayObjectSymbol,
                                         /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-    initTypeModifierAsPointer(&s_arraySpec.sptrtype, &s_arraySpec.stype);
+    initTypeModifierAsPointer(&s_arraySpec.ptrtype, &s_arraySpec.type);
 
     fillSymbolWithStruct(&s_javaArrayObjectSymbol, "__arrayObject__", "__arrayObject__",
                          noPosition, &s_arraySpec);
@@ -2648,7 +2647,7 @@ void javaInitArrayObject(void) {
 
 TypeModifier *javaArrayFieldAccess(Id *id) {
     Symbol *rec=NULL;
-    findStructureFieldFromType(&s_javaArrayObjectSymbol.u.structSpec->stype, id, &rec, CLASS_TO_EXPR);
+    findStructureFieldFromType(&s_javaArrayObjectSymbol.u.structSpec->type, id, &rec, CLASS_TO_EXPR);
     assert(rec);
     return rec->u.typeModifier;
 }
