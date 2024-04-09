@@ -2,6 +2,7 @@
 #include "symbol.h"
 #include <cgreen/mocks.h>
 
+
 Symbol *newSymbol(char *name, char *linkName, Position pos) {
     return (Symbol*)mock(name, linkName);
 }
@@ -57,6 +58,13 @@ Symbol *newSymbolAsEnum(char *name, char *linkName, Position pos, struct symbolL
 
 Symbol *newSymbolAsLabel(char *name, char *linkName, Position pos, int labelIndex) {
     return (Symbol *)mock(name, linkName, labelIndex);
+}
+
+extern Symbol makeSymbol(char *name, char *linkName, Position pos) {
+    Symbol *symbolP = (Symbol *)mock(name, linkName, &pos);
+    Symbol symbol = *symbolP;
+    free(symbolP);
+    return symbol;
 }
 
 Symbol makeSymbolWithBits(char *name, char *linkName, Position pos,
