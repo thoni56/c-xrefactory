@@ -511,18 +511,19 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name, char *fqName) {
     SymbolList *pppl;
     char *lname1, *sname;
 
-    CF_ALLOCC(sname, strlen(name)+1, char);
+    sname = cfAllocc(strlen(name)+1, char);
     strcpy(sname, name);
 
-    CF_ALLOCC(lname1, strlen(fqName)+1, char);
+    lname1 = cfAllocc(strlen(fqName)+1, char);
     strcpy(lname1, fqName);
 
-    CF_ALLOC(memb, Symbol);
+    memb = cfAlloc(Symbol);
     fillSymbol(memb, sname, lname1, noPosition);
+
     memb->type = TypeStruct;
     memb->storage = StorageNone;
 
-    CF_ALLOC(memb->u.structSpec, S_symStructSpec);
+    memb->u.structSpec = cfAlloc(S_symStructSpec);
 
     initSymStructSpec(memb->u.structSpec, /*.records=*/NULL);
     TypeModifier *type = &memb->u.structSpec->type;
@@ -532,7 +533,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name, char *fqName) {
     TypeModifier *ptrtype = &memb->u.structSpec->ptrtype;
     initTypeModifierAsPointer(ptrtype, &memb->u.structSpec->type);
 
-    CF_ALLOC(pppl, SymbolList);
+    pppl = cfAlloc(SymbolList);
     /* REPLACED: FILL_symbolList(pppl, memb, NULL); with compound literal */
     *pppl = (SymbolList){.element = memb, .next = NULL};
 
@@ -1585,10 +1586,10 @@ Symbol *javaCreateNewMethod(char *nn, Position *p, int mem) {
     char *name;
 
     if (mem==MEMORY_CF) {
-        CF_ALLOCC(name, strlen(nn)+1, char);
+        name = cfAllocc(strlen(nn)+1, char);
         strcpy(name, nn);
-        CF_ALLOC(m, TypeModifier);
-        CF_ALLOC(symbol, Symbol);
+        m = cfAlloc(TypeModifier);
+        symbol = cfAlloc(Symbol);
     } else {
         name = nn;
         m = stackMemoryAlloc(sizeof(TypeModifier));
@@ -1667,11 +1668,7 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
     if (decl->u.typeModifier->kind != TypeFunction)
         return res;
     ppi=0;
-//&	if (decl->.access & AccessStatic) {
-//&		sprintf(pp+ppi,"%s.%s",clas->linkName, decl->name);
-//&	} else {
-        sprintf(pp+ppi,"%s", decl->name);
-//&	}
+    sprintf(pp+ppi,"%s", decl->name);
     ppi += strlen(pp+ppi);
     sprintf(pp+ppi,"(");
     ppi += strlen(pp+ppi);
@@ -1685,7 +1682,7 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
         decl->linkName = memb->linkName;
     } else {
         if (mem == MEMORY_CF) {
-            CF_ALLOCC(ln, ppi+1, char);
+            ln = cfAllocc(ppi+1, char);
         } else {
             assert(mem==MEMORY_XX);
             ln = stackMemoryAlloc(ppi+1);

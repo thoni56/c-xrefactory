@@ -31,8 +31,7 @@ void cctAddSimpleValue(CctNode *node, Symbol *symbol, int depthFactor) {
     }
     int hash = cctTreeHash(symbol, depthFactor);
     if (node->subtree == NULL) {
-        CctNode *n;
-        CF_ALLOCC(n, CCT_TREE_INDEX, CctNode);
+        CctNode *n = cfAllocc(CCT_TREE_INDEX, CctNode);
         for (int i=0; i<CCT_TREE_INDEX; i++)
             fillCctNode(&n[i], NULL, NULL);
         n[hash].symbol = symbol;
@@ -66,7 +65,7 @@ void cctAddCctTree(CctNode *node, CctNode *symbol, int depthFactor) {
     if (symbol->subtree == NULL)
         return;
     if (node->subtree == NULL) {
-        CF_ALLOCC(node->subtree, CCT_TREE_INDEX, CctNode);
+        node->subtree = cfAllocc(CCT_TREE_INDEX, CctNode);
         for (int i=0; i<CCT_TREE_INDEX; i++)
             node->subtree[i] = symbol->subtree[i];
     } else {

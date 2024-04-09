@@ -1590,7 +1590,7 @@ VariableDeclarator
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC($$.data, Symbol);
+                $$.data = cfAlloc(Symbol);
                 *$$.data = errorSymbol;
             }
         }
@@ -1606,10 +1606,10 @@ VariableDeclaratorId
                 }
             }
             if (inSecondJslPass()) {
-                char *name;
-                CF_ALLOCC(name, strlen($1.data->name)+1, char);
+                char *name = cfAllocc(strlen($1.data->name)+1, char);
                 strcpy(name, $1.data->name);
-                CF_ALLOC($$.data, Symbol);
+
+                $$.data = cfAlloc(Symbol);
                 fillSymbol($$.data, name, name, $1.data->position);
             }
         }
@@ -1825,7 +1825,7 @@ FormalParameter
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC($$.data, Symbol);
+                $$.data = cfAlloc(Symbol);
                 *$$.data = errorSymbol;
             }
         }
@@ -1847,7 +1847,8 @@ ClassTypeList
             if (inSecondJslPass()) {
                 assert($1.data && $1.data->type == TypeDefault && $1.data->u.typeModifier);
                 assert($1.data->u.typeModifier->kind == TypeStruct);
-                CF_ALLOC($$.data, SymbolList);
+
+                $$.data = cfAlloc(SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with compound literal */
                 *$$.data = (SymbolList){.element = $1.data->u.typeModifier->u.t, .next = NULL};
             }
@@ -1857,7 +1858,7 @@ ClassTypeList
             if (inSecondJslPass()) {
                 assert($3.data && $3.data->type == TypeDefault && $3.data->u.typeModifier);
                 assert($3.data->u.typeModifier->kind == TypeStruct);
-                CF_ALLOC($$.data, SymbolList);
+                $$.data = cfAlloc(SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with compound literal */
                 *$$.data = (SymbolList){.element = $3.data->u.typeModifier->u.t, .next = $1.data};
             }

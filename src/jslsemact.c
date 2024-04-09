@@ -69,9 +69,9 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
 }
 
 Symbol *jslTypeSpecifier2(TypeModifier *t) {
-   Symbol *symbol;
+    Symbol *symbol;
 
-    CF_ALLOC(symbol, Symbol);   /* Not in same memory as newSymbol() uses, why? */
+    symbol = cfAlloc(Symbol);   /* TODO: Not in same memory as newSymbol() uses, why? */
     fillSymbolWithTypeModifier(symbol, NULL, NULL, noPosition, t);
 
     return symbol;
@@ -82,7 +82,7 @@ static TypeModifier *jslCreateSimpleTypeModifier(Type type) {
 
     assert(type>=0 && type<MAX_TYPE);
     if (preCreatedTypesTable[type] == NULL) {
-        CF_ALLOC(p, TypeModifier);
+        p = cfAlloc(TypeModifier);
         initTypeModifier(p, type);
     } else {
         p = preCreatedTypesTable[type];
@@ -98,18 +98,18 @@ Symbol *jslTypeSpecifier1(Type t) {
 
 TypeModifier *jslAppendComposedType(TypeModifier **d, Type type) {
     TypeModifier *p;
-    CF_ALLOC(p, TypeModifier);
+    p = cfAlloc(TypeModifier);
     initTypeModifier(p, type);
     LIST_APPEND(TypeModifier, (*d), p);
-    return(p);
+    return p;
 }
 
 TypeModifier *jslPrependComposedType(TypeModifier *d, Type type) {
     TypeModifier *p;
-    CF_ALLOC(p, TypeModifier);
+    p = cfAlloc(TypeModifier);
     initTypeModifier(p, type);
     p->next = d;
-    return(p);
+    return p;
 }
 
 void jslCompleteDeclarator(Symbol *t, Symbol *d) {
@@ -151,7 +151,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
     if (add == ADD_YES) {
         if (packid!=NULL) importPos = &packid->id.position;
         else importPos = &noPosition;
-        xss = stackMemoryAlloc(sizeof(JslSymbolList)); // CF_ALLOC ???
+        xss = stackMemoryAlloc(sizeof(JslSymbolList)); // Or in MEMORY_CF ???
         fillJslSymbolList(xss, smemb, *importPos, isExplicitlyImported);
         /* TODO: Why are we using isMember() and not looking at the result? Side-effect? */
         isMember = jslTypeTabIsMember(s_jsl->typeTab, xss, &index, &memb);
@@ -192,10 +192,10 @@ Symbol *jslTypeNameDefinition(IdList *tname) {
     TypeModifier *td;
 
     memb = jslTypeSymbolUsage(tname->id.name, tname->next);
-    CF_ALLOC(td, TypeModifier); //XX_ALLOC?
+    td = cfAlloc(TypeModifier); //XX_ALLOC?
     initTypeModifierAsStructUnionOrEnum(td, TypeStruct, memb, NULL, NULL);
 
-    CF_ALLOC(dd, Symbol); //XX_ALLOC?
+    dd = cfAlloc(Symbol); //XX_ALLOC?
     fillSymbolWithTypeModifier(dd, memb->name, memb->linkName, tname->id.position, td);
 
     return dd;
@@ -358,9 +358,10 @@ void jslAddAllPackageClassesFromFileTab(IdList *packageId) {
 static void jslAddToLoadWaitList( Symbol *clas ) {
     SymbolList *ll;
 
-    CF_ALLOC(ll, SymbolList);
+    ll = cfAlloc(SymbolList);
     /* REPLACED: FILL_symbolList(ll, clas, s_jsl->waitList); with compound literal */
     *ll = (SymbolList){.element = clas, .next = s_jsl->waitList};
+
     s_jsl->waitList = ll;
 }
 
@@ -389,7 +390,7 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
     n = outer->u.structSpec->nestedCount;
     log_debug("adding nested %s of %s(at %lx)[%d] --> %s to %s", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
     if (n == 0) {
-        CF_ALLOCC(outer->u.structSpec->nestedClasses, MAX_INNER_CLASSES, S_nestedSpec);
+        outer->u.structSpec->nestedClasses = cfAllocc(MAX_INNER_CLASSES, S_nestedSpec);
     }
     // avoid multiple occurences, rather not, as it must correspond to
     // file processing order

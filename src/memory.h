@@ -20,7 +20,7 @@ typedef struct memory {
 /* ******************** a simple memory handler ************************ */
 
 
-/* pre-processor macro definitions allocations */
+/* pre-processor macro definitions simple memory allocations in separate PPM-memory */
 extern void *ppmAlloc(size_t size);
 extern void *ppmAllocc(int count, size_t size);
 extern void *ppmRealloc(int count, size_t newSize, size_t oldSize);
@@ -29,8 +29,8 @@ extern void  ppmFreeUntil(void *pointer);
 extern bool ppmIsFreedPointer(void *pointer);
 
 /* java class-file read allocations ( same memory as cpp !!!!!!!! ) */
-#define CF_ALLOC(pointer, type)         {pointer = smAlloc(&ppmMemory, sizeof(type));}
-#define CF_ALLOCC(pointer, count, type) {pointer = smAllocc(&ppmMemory, count, sizeof(type));}
+#define cfAlloc(type) smAlloc(&ppmMemory, sizeof(type))
+#define cfAllocc(count, type) smAllocc(&ppmMemory, count, sizeof(type))
 
 
 /* ************************************************************************** */

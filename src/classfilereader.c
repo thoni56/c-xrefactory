@@ -674,14 +674,14 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
     }
 
     GetU2(count, cb, exception);
-    CF_ALLOCC(cp, count, ConstantPoolUnion);
+    cp = cfAllocc(count, ConstantPoolUnion);
     //& memset(cp,0, count*sizeof(ConstantPoolUnion));    // if broken file
     for(index=1; index<count; index++) {
         GetU1(tag, cb, exception);
         switch (tag) {
         case CONSTANT_Utf8:
             GetU2(length, cb, exception);
-            CF_ALLOCC(string, length+1, char);
+            string = cfAllocc(length+1, char);
             for(int i=0; i<length; i++)
                 GetChar(string[i], cb, exception);
             string[length]=0;
@@ -788,7 +788,7 @@ static TypeModifier *cfUnPackResultType(char *sig, char **restype) {
     }
     assert(*ssig);
     for(; *ssig; ssig++) {
-        CF_ALLOC(tt, TypeModifier);
+        tt = cfAlloc(TypeModifier);
         *ares = tt;
         ares = &(tt->next);
         switch (*ssig) {
@@ -869,7 +869,7 @@ static void cfAddRecordToClass(char *name,
         linkName = memb->linkName;
     } else {
         len = strlen(pp);
-        CF_ALLOCC(linkName, len+1, char);
+        linkName = cfAllocc(len+1, char);
         strcpy(linkName, pp);
     }
     prof = strchr(linkName,'(');
@@ -881,8 +881,8 @@ static void cfAddRecordToClass(char *name,
     }
 
     log_trace("adding definition of %s == %s", name, linkName);
-    /* TODO If this was allocated in "normal" memory we could use newSymbol() */
-    CF_ALLOC(symbol, Symbol);
+    /* TODO If this was allocated in "normal" memory we could use newSymbol(), why isn't it??!?! */
+    symbol = cfAlloc(Symbol);
     fillSymbolWithTypeModifier(symbol, name, linkName, noPosition, tt);
     symbol->access = accessFlags;
     symbol->storage = storage;
@@ -978,7 +978,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             if (getFileItem(memb->u.structSpec->classFileNumber)->directEnclosingInstance != NO_FILE_NUMBER) {
                 // the first argument is direct enclosing instance, remove it
                 sign2 = skipFirstArgumentInDescriptorString(descriptor);
-                CF_ALLOCC(descriptor, strlen(sign2)+2, char);
+                descriptor = cfAllocc(strlen(sign2)+2, char);
                 descriptor[0] = '(';  strcpy(descriptor+1, sign2);
                 log_trace("nested constructor '%s' '%s'", name, descriptor);
             }
@@ -1001,7 +1001,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                     log_trace("throws '%s'", exname);
                     exsname = simpleClassNameFromFQTName(exname);
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
-                    CF_ALLOC(ee, SymbolList);
+                    ee = cfAlloc(SymbolList);
                     /* REPLACED: FILL_symbolList(ee, exc, exclist); with compound literal */
                     *ee = (SymbolList){.element = exc, .next = exclist};
                     exclist = ee;
@@ -1081,9 +1081,8 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int originFileNumbe
         return;
     }
     cfAddCastsToModule(member, super);
-    CF_ALLOC(symbolList, SymbolList);
 
-    /* TODO: three occurrences of CF_ALLOC(.. SymbolList) warrants 'newSymbolList()'... */
+    symbolList = cfAlloc(SymbolList);
     /* REPLACED: FILL_symbolList(ssl, supp, NULL); with compound literal */
     *symbolList = (SymbolList){.element = super, .next = NULL};
     LIST_APPEND(SymbolList, member->u.structSpec->super, symbolList);
@@ -1251,8 +1250,8 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
             if (inum > 0) {
                 // I think this should be optimized, not all mentioned here
                 // are my inners classes
-                //&             CF_ALLOCC(symbol->u.structSpec->nestedClasses, MAX_INNER_CLASSES, S_nestedSpec);
-                CF_ALLOCC(symbol->u.structSpec->nestedClasses, inum, S_nestedSpec);
+                //& symbol->u.structSpec->nestedClasses = cfAllocc(MAX_INNER_CLASSES, S_nestedSpec);
+                symbol->u.structSpec->nestedClasses = cfAllocc(inum, S_nestedSpec);
             }
             for(rinners=0; rinners<inum; rinners++) {
                 GetU2(innval, cb, exception);
