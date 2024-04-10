@@ -25,7 +25,6 @@
 #include "java_parser.h"
 
 #include "parsers.h"
-#include "protocol.h"
 
 #include "hash.h"
 
