@@ -43,23 +43,23 @@ static void setYylvalsForIdentifier(char *name, Symbol *symbol, Position positio
     yyIdBufferIndex %= (YYIDBUFFER_SIZE);
     fillId(uniyylval->ast_id.data, name, symbol, position);
     yytext              = name;
-    uniyylval->ast_id.b = position;
-    uniyylval->ast_id.e = position;
-    uniyylval->ast_id.e.col += strlen(yytext);
+    uniyylval->ast_id.begin = position;
+    uniyylval->ast_id.end = position;
+    uniyylval->ast_id.end.col += strlen(yytext);
 }
 
 static void setYylvalsForPosition(Position position, int length) {
     uniyylval->ast_position.data = position;
-    uniyylval->ast_position.b    = position;
-    uniyylval->ast_position.e    = position;
-    uniyylval->ast_position.e.col += length;
+    uniyylval->ast_position.begin    = position;
+    uniyylval->ast_position.end    = position;
+    uniyylval->ast_position.end.col += length;
 }
 
 static void setYylvalsForInteger(int val, Position position, int length) {
     uniyylval->ast_integer.data = val;
-    uniyylval->ast_integer.b    = position;
-    uniyylval->ast_integer.e    = position;
-    uniyylval->ast_integer.e.col += length;
+    uniyylval->ast_integer.begin    = position;
+    uniyylval->ast_integer.end    = position;
+    uniyylval->ast_integer.end.col += length;
 }
 
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
