@@ -75,7 +75,7 @@ Ensure(CxRef, can_parse_line_and_col_from_command_line_option) {
     assert_that(column, is_equal_to(33));
 }
 
-Ensure(CxRef, can_get_active_project) {
+Ensure(CxRef, will_return_no_active_project_if_no_optionfile_found) {
     FileItem fileItem = {.name = "file.c"};
 
     options.xref2 = true;
@@ -84,7 +84,9 @@ Ensure(CxRef, can_get_active_project) {
 
     expect(getFileItem, when(fileNumber, is_equal_to(0)),
            will_return(&fileItem));
-    expect(searchStandardOptionsFileAndProjectForFile, when(fileName, is_equal_to_string("file.c")));
+    expect(searchStandardOptionsFileAndProjectForFile, when(sourceFilename, is_equal_to_string("file.c")),
+           will_set_contents_of_parameter(foundOptionsFilename, "", 1),
+           will_set_contents_of_parameter(foundProjectName, "", 1));
     expect(ppcGenRecord,
            when(kind, is_equal_to(PPC_NO_PROJECT)),
            when(message, contains_string("file.c")));
