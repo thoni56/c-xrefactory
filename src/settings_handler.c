@@ -20,21 +20,43 @@
   make these portable?
 */
 
+#define SETTINGS_FILENAME ".c-xrefrc"
+
+static void concatToPath(char path[], char string[]) {
+    if (path[strlen(path) - 1] != '/')
+        strcat(path, "/");
+    strcat(path, string);
+}
+
+static void truncateSegmentsFromPath(char path[], int segmentCount) {
+    char *last_slash;
+
+    for (int i = segmentCount; i>0; i--) {
+        last_slash = strrchr(path, '/');
+        if (last_slash != NULL)
+            *last_slash = '\0';
+    }
+}
+
 /* Look up the directory path for a .c-xrefrc file, the directory for
  * it will be the project name. */
 int find_project_settings(char *project_name) {
-    char *cwd = getCwd(NULL, 0);
+    char path[PATH_MAX];
 
-    char cwdBuffer[PATH_MAX];
-    strcpy(cwdBuffer, cwd);
-    if (cwdBuffer[strlen(cwdBuffer)-1] != '/')
-        strcat(cwdBuffer, "/.c-xrefrc");
-    else
-        strcat(cwdBuffer, ".c-xrefrc");
+    getCwd(path, PATH_MAX);
+    do {
+        concatToPath(path, SETTINGS_FILENAME);
 
-    if (fileExists(cwdBuffer)) {
-        strcpy(project_name, cwd);
-        return RESULT_OK;
-    } else
-        return RESULT_NOT_FOUND;
+        if (fileExists(path)) {
+            truncateSegmentsFromPath(path, 1);
+            strcpy(project_name, path);
+            return RESULT_OK;
+        }
+
+        /* So, not found, go up to parent directory */
+        truncateSegmentsFromPath(path, 2);
+    } while (strlen(path) != 0);
+
+    project_name[0] = '\0';
+    return RESULT_NOT_FOUND;
 }

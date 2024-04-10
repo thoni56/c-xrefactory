@@ -19,7 +19,7 @@ AfterEach(SettingsHandler) {}
 Ensure(SettingsHandler, will_return_empty_filename_if_no_settings_file_is_found) {
     char project_name[PATH_MAX];
 
-    expect(getCwd, when(buffer, is_null), will_return("/"));
+    expect(getCwd, will_set_contents_of_parameter(buffer, "/", 2));
     expect(fileExists, when(fullPath, is_equal_to_string("/.c-xrefrc")),
            will_return(false));
 
@@ -30,10 +30,23 @@ Ensure(SettingsHandler, will_return_empty_filename_if_no_settings_file_is_found)
 Ensure(SettingsHandler, will_return_name_of_settings_file_in_current_directory) {
     char project_name[PATH_MAX];
 
-    expect(getCwd, when(buffer, is_null), will_return("/home/cxref"));
+    expect(getCwd, will_set_contents_of_parameter(buffer, "/home/cxref", 12));
     expect(fileExists, when(fullPath, is_equal_to_string("/home/cxref/.c-xrefrc")),
            will_return(true));
 
     assert_that(find_project_settings(project_name), is_equal_to(RESULT_OK));
     assert_that(project_name, is_equal_to_string("/home/cxref"));
+}
+
+Ensure(SettingsHandler, will_return_name_of_settings_file_in_parent_directory) {
+    char project_name[PATH_MAX];
+
+    expect(getCwd, will_set_contents_of_parameter(buffer, "/home/cxref", 12));
+    expect(fileExists, when(fullPath, is_equal_to_string("/home/cxref/.c-xrefrc")),
+           will_return(false));
+    expect(fileExists, when(fullPath, is_equal_to_string("/home/.c-xrefrc")),
+           will_return(true));
+
+    assert_that(find_project_settings(project_name), is_equal_to(RESULT_OK));
+    assert_that(project_name, is_equal_to_string("/home"));
 }
