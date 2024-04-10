@@ -24,42 +24,42 @@ Current Mikado:
 ** TODO Figure out variable type (hard, none of the other extracts seems to do this...)
 * TRY to make LexemBuffer interface just take LexemBuffer
 ** DOING Unify LexInput with LexemBuffer so we can get rid of put/get LexemAt() functions
-** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
-*** DONE to add a LexemBuffer as argument to putLexToken()
-**** DONE LexemBuffer as argument to putLexLines()
-**** DONE LexemBuffer as argument to processIdentifier()
-**** DONE LexemBuffer as argument to putEmptyCompletionId()
-**** DONE LexemBuffer instead of body in processDefineDirective() - yylex.c
-***** DONE Use putLexXXXWithPointer() for now
-**** DONE LexemBuffer instead of buf/bcc/tbcc in expandMacroArgument()
-***** DONE Use putLexXXXWithPointer() for now
-**** DONE LexemBuffer instead of buf/bcc in createMacroBody()
-***** DONE Use putLexXXXWithPointer() for now
-**** DONE backpatching of lexems
-***** DONE backpatch lexem token in handleCppToken()
-****** DONE functions to backpatch lexem token
-****** DONE LexemBuffer as parameter to putLexToken()
-******* DONE lb->end instead of writePositionP in handleCppToken()
-******* DONE lb->end instead of extra parameter in processIdentifier()
-******* DONE lb->end instead of extra parameter in getLexemFromLexer()
-******* DONE lb->end instead of local variable destination in processDefineDirective()
-******** DONE Use putLexTokenWithPointer() instead
-***** DONE setting next write position in lexemStream in handleCompletionOrSearch()
-****** DONE function to set lb->end (setLexemStreamEnd())
-*** DONE Use LexemBuffer as argument to putLexLine()
-*** DONE Use LexemBuffer as argument to putLexPositionFields()
-**** DONE LexemBuffer instead of local destination in processDefineDirective()
-***** DONE Use putLexXXXWithPointer() for now
-**** DONE LexemBuffer instead of local variables in collate()
-***** DONE Use putLexXXXWithPointer() for now
-**** DONE LexemBuffer instead of local variables in createMacroBody()
-***** DONE Use putLexXXXWithPointer() for now
-*** DONE Use LexemBuffer as argument to putLexPosition()
-**** DONE Use lb->end instead of writePositionP in handleCompletionOrSearch()
-*** DONE Use LexemBuffer as argument to putLexChar()
-*** DONE Use LexemBuffer as argument to putLexInt()
-**** DONE lb->end instead of local variable destination in processDefineDirective()
-***** DONE Use putLexXXXWithPointer() for now
+*** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
+**** DONE to add a LexemBuffer as argument to putLexToken()
+***** DONE LexemBuffer as argument to putLexLines()
+***** DONE LexemBuffer as argument to processIdentifier()
+***** DONE LexemBuffer as argument to putEmptyCompletionId()
+***** DONE LexemBuffer instead of body in processDefineDirective() - yylex.c
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE LexemBuffer instead of buf/bcc/tbcc in expandMacroArgument()
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE LexemBuffer instead of buf/bcc in createMacroBody()
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE backpatching of lexems
+****** DONE backpatch lexem token in handleCppToken()
+******* DONE functions to backpatch lexem token
+******* DONE LexemBuffer as parameter to putLexToken()
+******** DONE lb->end instead of writePositionP in handleCppToken()
+******** DONE lb->end instead of extra parameter in processIdentifier()
+******** DONE lb->end instead of extra parameter in getLexemFromLexer()
+******** DONE lb->end instead of local variable destination in processDefineDirective()
+********* DONE Use putLexTokenWithPointer() instead
+****** DONE setting next write position in lexemStream in handleCompletionOrSearch()
+******* DONE function to set lb->end (setLexemStreamEnd())
+**** DONE Use LexemBuffer as argument to putLexLine()
+**** DONE Use LexemBuffer as argument to putLexPositionFields()
+***** DONE LexemBuffer instead of local destination in processDefineDirective()
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE LexemBuffer instead of local variables in collate()
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE LexemBuffer instead of local variables in createMacroBody()
+****** DONE Use putLexXXXWithPointer() for now
+**** DONE Use LexemBuffer as argument to putLexPosition()
+***** DONE Use lb->end instead of writePositionP in handleCompletionOrSearch()
+**** DONE Use LexemBuffer as argument to putLexChar()
+**** DONE Use LexemBuffer as argument to putLexInt()
+***** DONE lb->end instead of local variable destination in processDefineDirective()
+****** DONE Use putLexXXXWithPointer() for now
 ** DONE Move put...() for complete Lexems (including position, string, ...) to lexembuffer.c
 ** TRY to use LexemBuffer as argument to all getLexXXX() functions
 *** TRY to use LexemBuffer in getLexInt()

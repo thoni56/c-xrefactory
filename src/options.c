@@ -1424,10 +1424,10 @@ static struct {
 
 
 static bool processAOption(int *argi, int argc, char **argv) {
-    int i = * argi;
+    int i = *argi;
     if (0) {}
     else if (strncmp(argv[i], "-addimportdefault=",18)==0) {
-        sscanf(argv[i]+18, "%d", &options.defaultAddImportStrategy);
+        sscanf(argv[i]+18, "%d", (int *)&options.defaultAddImportStrategy);
     }
     else if (strcmp(argv[i], "-about")==0) {
         options.serverOperation = OLO_ABOUT;

@@ -9,6 +9,7 @@
 #include "head.h"
 
 
+/* Do any type of file entry exist at path? */
 bool exists(char *path) {
     struct stat st;
     int rc = stat(path, &st);
