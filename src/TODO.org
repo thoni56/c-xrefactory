@@ -90,7 +90,7 @@ Current Mikado:
   non-terminal (as with '$3'). That field is defined in the YYSTYPE
   but not used in any '%type' declaration meaning all non-terminals
   have it.
-* TODO Remove explicit support for Xemacs
+* TODO Remove explicit support for Xemacs in elisp
 * TODO Bug: test_c_extract_function_with_out_variables should actually find the declaration and handle it
 * TODO Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
@@ -118,7 +118,6 @@ Current Mikado:
 *** TODO Restructure option handling into -refactory, -server, -generate(?)
     those are main options, you can only have one, and selecting one
     will allow a set of separate options valid for that "mode"
-** TODO LSP-like protocol (possibly also fulfill LSP functions)
 * TODO Store Xrefs in .c-xrefdb parallel to the .c-xrefrc used, remove possibility to define it
   How to make this backwards compatible? We don't need to... If it is empty it will be regenerated
 * TODO Header files. There are a number of sections in the proto.h that
@@ -149,20 +148,20 @@ There are both "-opt=value" and "-opt value" format options
 ** TODO Test case for dead symbol detection
 ** TODO Test case for Move Parameter
 ** TODO Test case for Push Down Method
-** TODO Test case for corruptionError() and compressionError()
+** TODO Test case for corruptionError() and compressionError() (jar/zip/class)
 ** TODO Create jar reading test for unexpected end of file
 * TODO NEW FEATURES:
 ** TODO FEATURE: New refactoring: change return type of function
-** DONE FEATURE: New refactoring: Extract variable
 ** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
 ** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
-** FUTURE: Implement LSP (Language Server Protocol)
-This is probably not possible due to the level of integration between
-the editor adaptor and the c-xref proper. Also LSP does not have a
-protocol for many of the refactorings which are core to c-xref.
 ** TODO FEATURE: New refactoring: move function for C
 ** TODO FEATURE: Rename "module" in C
    Prompt for new "module name", rename both .c & .h if they exist, and change all includes
+* TODO: FUTURE
+** Implement LSP (Language Server Protocol)
+This is probably not possible due to the level of integration between
+the editor adaptor and the c-xref proper. Also LSP does not have a
+protocol for many of the refactorings which are core to c-xref.
 * TODO BUGS:
 ** TODO Double free when swapping refs while reading jar file
 Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
