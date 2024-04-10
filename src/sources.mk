@@ -8,7 +8,7 @@ MODULES =  main globals misc semact commons \
 		symbol c_parser.tab cexp_parser.tab java_parser.tab yacc_parser.tab \
 		filedescriptor typemodifier position id parsers fileio stringlist ppc \
 		server reference xref refactorings progress input commandlogger completion \
-		menu lexem editorbuffer undo counters stackmemory
+		menu lexem editorbuffer undo counters stackmemory settings_handler
 
 modules:
 	@echo MODULES=$(MODULES)
