@@ -1,6 +1,7 @@
 #ifndef RECYACC_H_INCLUDED
 #define RECYACC_H_INCLUDED
 
+/* This file is included in the YACC skeleton file so it is included in all parsers */
 
 typedef struct yyGlobalState {
     int gyydebug;
