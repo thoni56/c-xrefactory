@@ -528,6 +528,7 @@ $(eval $(call UNITTEST,refactory,protocol usage position log memory stackmemory 
 $(eval $(call UNITTEST,reftab,log memory hash))
 $(eval $(call UNITTEST,semact,memory stackmemory log protocol usage hash position storage type id))
 $(eval $(call UNITTEST,server,memory log session position stackmemory))
+$(eval $(call UNITTEST,settings_handler,log))
 $(eval $(call UNITTEST,stackmemory,memory log))
 $(eval $(call UNITTEST,symbol,memory stackmemory log))
 $(eval $(call UNITTEST,symboltable,hash log memory stackmemory))
