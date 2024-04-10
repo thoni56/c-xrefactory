@@ -81,11 +81,11 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 # If there is no ZLIB on the system you can build it yourself, see sources.mk
 
-# On Darwin we can use gcc-11 if available
+# On Darwin we can use gcc-13 if available
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
-#	ifneq (, $(shell command -v gcc-11 2> /dev/null))
-#		CC=gcc-11
+#	ifneq (, $(shell command -v gcc-13 2> /dev/null))
+#		CC=gcc-13
 #	endif
 #	ifeq ($(shell arch),arm64)
 #		# And for Homebrew on M1
@@ -97,10 +97,10 @@ LDFLAGS += -arch arm64 -arch x86_64
 endif
 
 # We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-11 we need to use GCC:s gcov)
-ifeq ("$(CC)", "gcc-11")
-	LCOV = lcov --gcov-tool gcov-11
-	GCOV = gcov-11
-	GCOV_TOOL = gcov-tool-11
+ifeq ("$(CC)", "gcc-13")
+	LCOV = lcov --gcov-tool gcov-13
+	GCOV = gcov-13
+	GCOV_TOOL = gcov-tool-13
 else
 	LCOV = lcov
 	GCOV = gcov
