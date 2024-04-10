@@ -202,11 +202,11 @@ typedef enum commentMovingMode {
 /* *******************      generating imports defaults      *************** */
 
 // do not touch this! order is used, with arithmetics!
-enum addImportsDefault {
-    NID_IMPORT_ON_DEMAND,
-    NID_SINGLE_TYPE_IMPORT,
+typedef enum addImportsDefault {
+    IMPORT_ON_DEMAND,
+    IMPORT_SINGLE_TYPE,
     IMPORT_KEEP_FQT_NAME,
-};
+} AddImportStrategyKind;
 
 /* *******************      refactoring continuations      *************** */
 

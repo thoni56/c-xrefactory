@@ -27,7 +27,7 @@ Options presetOptions = {
     "gcc",                       // path to compiler to use for auto-discovering compiler and defines
     MULE_DEFAULT,                // encoding
     false,                       // completeParenthesis
-    NID_IMPORT_ON_DEMAND,        // defaultAddImportStrategy
+    IMPORT_ON_DEMAND,            // defaultAddImportStrategy
     false,                       // referenceListWithoutSource
     1,                           // completionOverloadWizardDeep
     0,                           // comment moving level
@@ -2509,30 +2509,30 @@ bool projectCoveringFileInOptionsFile(char *fileName, FILE *optionsFile, /* out 
     return false;
 }
 
-void searchStandardOptionsFileAndProjectForFile(char *fileName, char *optionsFileName, char *foundProjectName) {
+void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename, char *foundProjectName) {
     int    fileno;
     bool   found = false;
     FILE  *optionsFile;
 
-    optionsFileName[0] = 0;
-    foundProjectName[0]         = 0;
+    foundOptionsFilename[0] = 0;
+    foundProjectName[0] = 0;
 
-    if (fileName == NULL)
+    if (sourceFilename == NULL)
         return;
 
     /* Try to find section in HOME config. */
-    getXrefrcFileName(optionsFileName);
-    optionsFile = openFile(optionsFileName, "r");
+    getXrefrcFileName(foundOptionsFilename);
+    optionsFile = openFile(foundOptionsFilename, "r");
     if (optionsFile != NULL) {
         // TODO: This does not work since a project (section) name does not define which sources
         // are used. This is done with the '-I' option in the project/section...
         //found = projectCoveringFileInOptionsFile(fileName, optionsFile, section);
         int    nargc;
         char **nargv;
-        found = readOptionsFromFileIntoArgs(optionsFile, &nargc, &nargv, DONT_ALLOCATE, fileName,
+        found = readOptionsFromFileIntoArgs(optionsFile, &nargc, &nargv, DONT_ALLOCATE, sourceFilename,
                                             options.project, foundProjectName);
         if (found) {
-            log_debug("options file '%s', project '%s' found", optionsFileName, foundProjectName);
+            log_debug("options file '%s', project '%s' found", foundOptionsFilename, foundProjectName);
         }
         closeFile(optionsFile);
     }
@@ -2548,12 +2548,12 @@ void searchStandardOptionsFileAndProjectForFile(char *fileName, char *optionsFil
         // TODO: check whether the project still exists in the .c-xrefrc file
         // it may happen that after deletion of the project, the request for active
         // project will return non-existent project. And then return "not found"?
-        fileno = getFileNumberFromName(fileName);
+        fileno = getFileNumberFromName(sourceFilename);
         if (fileno != NO_FILE_NUMBER && getFileItem(fileno)->isFromCxfile) {
-            strcpy(optionsFileName, previousStandardOptionsFile);
+            strcpy(foundOptionsFilename, previousStandardOptionsFile);
             strcpy(foundProjectName, previousStandardOptionsProject);
             return;
         }
     }
-    optionsFileName[0] = 0;
+    foundOptionsFilename[0] = 0;
 }

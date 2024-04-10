@@ -2527,13 +2527,13 @@ static bool isInDisabledList(DisabledList *list, int file, int vApplCl) {
     return false;
 }
 
-static ContinueRefactoringKind translatePassToAddImportAction(int pass) {
-    switch (pass) {
-    case 0:
+static ContinueRefactoringKind translateAddImportStrategyToAction(AddImportStrategyKind strategy) {
+    switch (strategy) {
+    case IMPORT_ON_DEMAND:
         return RC_IMPORT_ON_DEMAND;
-    case 1:
+    case IMPORT_SINGLE_TYPE:
         return RC_IMPORT_SINGLE_TYPE;
-    case 2:
+    case IMPORT_KEEP_FQT_NAME:
         return RC_CONTINUE;
     default:
         errorMessage(ERR_INTERNAL, "wrong code for noninteractive add import");
@@ -2541,12 +2541,12 @@ static ContinueRefactoringKind translatePassToAddImportAction(int pass) {
     return 0; /* Never happens */
 }
 
-static int interactiveAskForAddImportAction(EditorMarkerList *ppp, int defaultAction, char *fqtName) {
+static int interactiveAskForAddImportAction(EditorMarkerList *ppp, AddImportStrategyKind importStrategy, char *fqtName) {
     int action;
 
     applyWholeRefactoringFromUndo(); // make current state visible
     ppcGotoMarker(ppp->marker);
-    ppcValueRecord(PPC_ADD_TO_IMPORTS_DIALOG, defaultAction, fqtName);
+    ppcValueRecord(PPC_ADD_TO_IMPORTS_DIALOG, importStrategy, fqtName);
     beInteractive();
     action = options.continueRefactoring;
     return action;
@@ -2593,16 +2593,16 @@ static void reduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegi
         for (SymbolsMenu *menu = sessionData.browserStack.top->menuSym; menu != NULL; menu = menu->next) {
             EditorMarkerList *markers;
             markers                 = menu->markers;
-            int defaultImportAction = refactoringOptions.defaultAddImportStrategy;
+            AddImportStrategyKind addImportStrategy = refactoringOptions.defaultAddImportStrategy;
             while (markers != NULL && !keepAdding &&
                    !isInDisabledList(disabled, markers->marker->buffer->fileNumber, menu->references.vApplClass)) {
                 fileNumber = markers->marker->buffer->fileNumber;
                 javaGetClassNameFromFileNumber(menu->references.vApplClass, fqtName, DOTIFY_NAME);
                 javaDotifyClassName(fqtName);
                 if (interactive == INTERACTIVE_YES) {
-                    action = interactiveAskForAddImportAction(markers, defaultImportAction, fqtName);
+                    action = interactiveAskForAddImportAction(markers, addImportStrategy, fqtName);
                 } else {
-                    action = translatePassToAddImportAction(defaultImportAction);
+                    action = translateAddImportStrategyToAction(addImportStrategy);
                 }
                 //&sprintf(tmpBuff,"%s, %s, %d", simpleFileNameFromFileNum(markers->marker->buffer->fileNumber),
                 // fqtName, action); ppcBottomInformation(tmpBuff);
@@ -2615,23 +2615,23 @@ static void reduceNamesAndAddImportsInSingleFile(EditorMarker *point, EditorRegi
                         keepAdding = addImport(point, regions, starName, lastImportLine + 1,
                                                menu->references.vApplClass, interactive);
                     }
-                    defaultImportAction = NID_IMPORT_ON_DEMAND;
+                    addImportStrategy = IMPORT_ON_DEMAND;
                     break;
                 case RC_IMPORT_SINGLE_TYPE:
                     keepAdding          = addImport(point, regions, fqtName, lastImportLine + 1,
                                                     menu->references.vApplClass, interactive);
-                    defaultImportAction = NID_SINGLE_TYPE_IMPORT;
+                    addImportStrategy = IMPORT_SINGLE_TYPE;
                     break;
                 case RC_CONTINUE:
                     dl                  = newDisabledList(menu, fileNumber, disabled);
                     disabled            = dl;
-                    defaultImportAction = IMPORT_KEEP_FQT_NAME;
+                    addImportStrategy = IMPORT_KEEP_FQT_NAME;
                     break;
                 default:
                     FATAL_ERROR(ERR_INTERNAL, "wrong continuation code", XREF_EXIT_ERR);
                 }
-                if (defaultImportAction <= 1)
-                    defaultImportAction++;
+                if (addImportStrategy <= 1)
+                    addImportStrategy++;
             }
             freeEditorMarkersAndMarkerList(menu->markers);
             menu->markers = NULL;

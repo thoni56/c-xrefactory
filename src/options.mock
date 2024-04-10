@@ -95,6 +95,6 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
   mock(outNargc, outNargv);
 }
 
-void searchStandardOptionsFileAndProjectForFile(char *fileName, char *optionsFilename, char *foundProjectName) {
-  mock(fileName, optionsFilename, foundProjectName);
+void searchStandardOptionsFileAndProjectForFile(char *sourceFilename, char *foundOptionsFilename, char *foundProjectName) {
+  mock(sourceFilename, foundOptionsFilename, foundProjectName);
 }

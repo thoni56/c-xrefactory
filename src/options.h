@@ -49,7 +49,7 @@ typedef struct options {
     char *compiler;
     int fileEncoding;
     bool completeParenthesis;
-    int defaultAddImportStrategy;
+    AddImportStrategyKind defaultAddImportStrategy;
     bool referenceListWithoutSource;
     int completionOverloadWizardDepth;
     CommentMovingMode commentMovingMode;
