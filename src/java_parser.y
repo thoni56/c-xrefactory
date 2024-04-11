@@ -3055,8 +3055,8 @@ PrimaryNoNewArray
                     PropagateBoundaries($$, $1, $3);
                     if (positionIsBetween($$.begin, cxRefPosition, $$.end)
                         && parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == NO_FILE_NUMBER) {
-                        parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = $1.b;
-                        parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = $3.b;
+                        parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = $1.begin;
+                        parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = $3.begin;
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION] = $2.begin;
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_END_POSITION] = $2.end;
                     }
@@ -3776,8 +3776,8 @@ CastExpression
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsBetween($4.begin, cxRefPosition, $4.end)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
-                        parsedPositions[SPP_CAST_LPAR_POSITION] = $1.b;
-                        parsedPositions[SPP_CAST_RPAR_POSITION] = $3.b;
+                        parsedPositions[SPP_CAST_LPAR_POSITION] = $1.begin;
+                        parsedPositions[SPP_CAST_RPAR_POSITION] = $3.begin;
                         parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = $2.begin;
                         parsedPositions[SPP_CAST_TYPE_END_POSITION] = $2.end;
                         parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION] = $4.begin;
@@ -3796,8 +3796,8 @@ CastExpression
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsBetween($4.begin, cxRefPosition, $4.end)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
-                        parsedPositions[SPP_CAST_LPAR_POSITION] = $1.b;
-                        parsedPositions[SPP_CAST_RPAR_POSITION] = $3.b;
+                        parsedPositions[SPP_CAST_LPAR_POSITION] = $1.begin;
+                        parsedPositions[SPP_CAST_RPAR_POSITION] = $3.begin;
                         parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = $2.begin;
                         parsedPositions[SPP_CAST_TYPE_END_POSITION] = $2.end;
                         parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION] = $4.begin;
@@ -3816,8 +3816,8 @@ CastExpression
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsBetween($4.begin, cxRefPosition, $4.end)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
-                        parsedPositions[SPP_CAST_LPAR_POSITION] = $1.b;
-                        parsedPositions[SPP_CAST_RPAR_POSITION] = $3.b;
+                        parsedPositions[SPP_CAST_LPAR_POSITION] = $1.begin;
+                        parsedPositions[SPP_CAST_RPAR_POSITION] = $3.begin;
                         parsedPositions[SPP_CAST_TYPE_BEGIN_POSITION] = $2.begin;
                         parsedPositions[SPP_CAST_TYPE_END_POSITION] = $2.end;
                         parsedPositions[SPP_CAST_EXPRESSION_BEGIN_POSITION] = $4.begin;
