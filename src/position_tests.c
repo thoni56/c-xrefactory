@@ -92,5 +92,5 @@ Ensure(Position, can_see_if_position_is_between) {
     Position p  = (Position){.file = 12, .line = 13, .col = 14};
     Position p2 = (Position){.file = 12, .line = 13, .col = 14};
 
-    assert_that(positionIsBetween(p1, p, p2));
+    assert_that(positionIsBetween(p, p1, p2));
 }

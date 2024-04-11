@@ -3620,7 +3620,7 @@ case 110:
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
                         if (yyval.ast_id.begin.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
-                        if (positionIsBetween(yyval.ast_id.begin, cxRefPosition, yyval.ast_id.end)
+                        if (positionIsBetween(cxRefPosition, yyval.ast_id.begin, yyval.ast_id.end)
                             && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == NO_FILE_NUMBER) {
                             parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.begin;
                             parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-6].ast_id.begin;
@@ -3978,7 +3978,7 @@ case 141:
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_position);
                     if (yyval.ast_symbol.begin.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
-                    if (positionIsBetween(yyval.ast_symbol.begin, cxRefPosition, yyval.ast_symbol.end)
+                    if (positionIsBetween(cxRefPosition, yyval.ast_symbol.begin, yyval.ast_symbol.end)
                         && parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==NO_FILE_NUMBER) {
                         parsedPositions[SPP_FIELD_DECLARATION_BEGIN_POSITION] = yyval.ast_symbol.begin;
                         parsedPositions[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.begin;
@@ -4145,7 +4145,7 @@ case 153:
                         javaMethodBodyEnding(&yyvsp[-1].ast_position.data);
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_symbol, yyvsp[-1].ast_position);
-                        if (positionIsBetween(yyvsp[-4].ast_symbol.begin, cxRefPosition, yyvsp[-4].ast_symbol.end)) {
+                        if (positionIsBetween(cxRefPosition, yyvsp[-4].ast_symbol.begin, yyvsp[-4].ast_symbol.end)) {
                             parsedPositions[SPP_METHOD_DECLARATION_BEGIN_POSITION] = yyval.ast_position.begin;
                             parsedPositions[SPP_METHOD_DECLARATION_END_POSITION] = yyval.ast_position.end;
                         }
@@ -4164,7 +4164,7 @@ case 154:
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
                     if (yyval.ast_symbol.begin.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
                     if (yyval.ast_symbol.end.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
-                    if (positionIsBetween(yyval.ast_symbol.begin, cxRefPosition, yyvsp[-1].ast_symbol.end)) {
+                    if (positionIsBetween(cxRefPosition, yyval.ast_symbol.begin, yyvsp[-1].ast_symbol.end)) {
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.begin;
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.end;
                     }
@@ -4185,7 +4185,7 @@ case 155:
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
                     if (yyval.ast_symbol.begin.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
                     if (yyval.ast_symbol.end.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
-                    if (positionIsBetween(yyval.ast_symbol.begin, cxRefPosition, yyvsp[-1].ast_symbol.end)) {
+                    if (positionIsBetween(cxRefPosition, yyval.ast_symbol.begin, yyvsp[-1].ast_symbol.end)) {
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_id.begin;
                         parsedPositions[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_id.end;
                     }
@@ -4652,7 +4652,7 @@ case 198:
                 } else {
                     PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_unsigned, yyvsp[0].ast_position);
                     if (yyval.ast_id.begin.file == NO_FILE_NUMBER) PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
-                    if (positionIsBetween(yyval.ast_id.begin, cxRefPosition, yyval.ast_id.end)
+                    if (positionIsBetween(cxRefPosition, yyval.ast_id.begin, yyval.ast_id.end)
                         && parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.begin;
                         parsedPositions[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-5].ast_position.begin;
@@ -5740,7 +5740,7 @@ case 353:
                     yyval.ast_expressionType.data.position = stackMemoryAlloc(sizeof(Position));
                     *yyval.ast_expressionType.data.position = yyvsp[-2].ast_position.data;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
-                    if (positionIsBetween(yyval.ast_expressionType.begin, cxRefPosition, yyval.ast_expressionType.end)
+                    if (positionIsBetween(cxRefPosition, yyval.ast_expressionType.begin, yyval.ast_expressionType.end)
                         && parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = yyvsp[-2].ast_position.begin;
                         parsedPositions[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = yyvsp[0].ast_position.begin;
@@ -6538,7 +6538,7 @@ case 425:
                 } else {
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
-                    if (positionIsBetween(yyvsp[0].ast_expressionType.begin, cxRefPosition, yyvsp[0].ast_expressionType.end)
+                    if (positionIsBetween(cxRefPosition, yyvsp[0].ast_expressionType.begin, yyvsp[0].ast_expressionType.end)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.begin;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.begin;
@@ -6561,7 +6561,7 @@ case 426:
                 } else {
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
-                    if (positionIsBetween(yyvsp[0].ast_expressionType.begin, cxRefPosition, yyvsp[0].ast_expressionType.end)
+                    if (positionIsBetween(cxRefPosition, yyvsp[0].ast_expressionType.begin, yyvsp[0].ast_expressionType.end)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.begin;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.begin;
@@ -6584,7 +6584,7 @@ case 427:
                 } else {
                     yyval.ast_expressionType.data.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
-                    if (positionIsBetween(yyvsp[0].ast_expressionType.begin, cxRefPosition, yyvsp[0].ast_expressionType.end)
+                    if (positionIsBetween(cxRefPosition, yyvsp[0].ast_expressionType.begin, yyvsp[0].ast_expressionType.end)
                         && parsedPositions[SPP_CAST_LPAR_POSITION].file == NO_FILE_NUMBER) {
                         parsedPositions[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.begin;
                         parsedPositions[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.begin;
@@ -6953,7 +6953,7 @@ case 463:
                 } else {
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_expressionType);
                     if (options.mode == ServerMode) {
-                        if (positionIsBetween(yyvsp[-3].ast_expressionType.begin, cxRefPosition, yyvsp[-3].ast_expressionType.end)) {
+                        if (positionIsBetween(cxRefPosition, yyvsp[-3].ast_expressionType.begin, yyvsp[-3].ast_expressionType.end)) {
                             parsedPositions[SPP_ASSIGNMENT_OPERATOR_POSITION] = yyvsp[-1].ast_unsignedPositionPair.begin;
                             parsedPositions[SPP_ASSIGNMENT_END_POSITION] = yyvsp[0].ast_expressionType.end;
                         }

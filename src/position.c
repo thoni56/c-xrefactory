@@ -45,7 +45,7 @@ bool positionIsLessOrEqualTo(Position p1, Position p2) {
     return positionIsLessThan(p1, p2) || positionsAreEqual(p1, p2);
 }
 
-bool positionIsBetween(Position before, Position thePosition, Position after) {
+bool positionIsBetween(Position thePosition, Position before, Position after) {
     return before.file == thePosition.file && thePosition.file == after.file &&
         positionIsLessOrEqualTo(before, thePosition) &&
         positionIsLessOrEqualTo(thePosition, after);
