@@ -1691,6 +1691,7 @@ static EditorMarkerList *pushGetAndPreCheckReferences(EditorMarker *point, char 
     return occs;
 }
 
+/* JAVA only */
 static EditorMarker *findModifierAndCreateMarker(EditorMarker *point, char *modifier, int limitIndex) {
     int           i, mlen, blen, mini;
     char         *text;
@@ -1743,6 +1744,7 @@ static void removeModifier(EditorMarker *point, int limitIndex, char *modifier) 
     freeEditorMarker(mm);
 }
 
+/* JAVA only */
 static void addModifier(EditorMarker *point, int limit, char *modifier) {
     char          modifSpace[TMP_STRING_SIZE];
     EditorMarker *mm;
@@ -2902,6 +2904,7 @@ static EditorMarker *getTargetFromOptions(void) {
     return target;
 }
 
+/* JAVA only */
 static void getMethodLimitsForMoving(EditorMarker *point, EditorMarker **methodStartP, EditorMarker **methodEndP,
                                      SyntaxPassParsedImportantPosition limitIndex) {
     EditorMarker *mstart, *mend;
@@ -3087,15 +3090,17 @@ static void setMovingPrecheckStandardEnvironment(EditorMarker *point, char *targ
     assert(ss);
 }
 
+
+/* JAVA only */
 static void performMoveClass(EditorMarker *point, EditorMarker *target, EditorMarker **outstart,
                              EditorMarker **outend) {
-    char                 spack[MAX_FILE_NAME_SIZE];
-    char                 tpack[MAX_FILE_NAME_SIZE];
+    char                 sourcePackage[MAX_FILE_NAME_SIZE];
+    char                 targetPackage[MAX_FILE_NAME_SIZE];
     char                 targetFqtName[MAX_FILE_NAME_SIZE];
     int                  targetIsNestedInClass;
-    EditorMarker        *mstart, *mend;
-    SymbolsMenu         *ss;
-    TpCheckMoveClassData dd;
+    EditorMarker        *startMarker, *endMarker;
+    SymbolsMenu         *symbolsMenu;
+    TpCheckMoveClassData moveClassData;
 
     *outstart = *outend = NULL;
 
@@ -3120,35 +3125,35 @@ static void performMoveClass(EditorMarker *point, EditorMarker *target, EditorMa
         parsedPositions[SPP_CLASS_DECLARATION_END_POSITION].file == NO_FILE_NUMBER) {
         FATAL_ERROR(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
-    mstart = newEditorMarkerForPosition(
+    startMarker = newEditorMarkerForPosition(
         &parsedPositions[SPP_CLASS_DECLARATION_BEGIN_POSITION]);
-    mend =
+    endMarker =
         newEditorMarkerForPosition(&parsedPositions[SPP_CLASS_DECLARATION_END_POSITION]);
-    moveMarkerToTheBeginOfDefinitionScope(mstart);
-    moveMarkerToTheEndOfDefinitionScope(mend);
+    moveMarkerToTheBeginOfDefinitionScope(startMarker);
+    moveMarkerToTheEndOfDefinitionScope(endMarker);
 
-    assert(mstart->buffer == mend->buffer);
+    assert(startMarker->buffer == endMarker->buffer);
 
-    *outstart = mstart;
+    *outstart = startMarker;
     // put outend -1 to be updated during moving
-    *outend = newEditorMarker(mend->buffer, mend->offset - 1);
+    *outend = newEditorMarker(endMarker->buffer, endMarker->offset - 1);
 
     // prechecks
     setMovingPrecheckStandardEnvironment(point, targetFqtName);
-    ss = sessionData.browserStack.top->hkSelectedSym;
-    tpCheckFillMoveClassData(&dd, spack, tpack);
+    symbolsMenu = sessionData.browserStack.top->hkSelectedSym;
+    tpCheckFillMoveClassData(&moveClassData, sourcePackage, targetPackage);
     checkSourceIsNotInnerClass();
     checkMoveClassAccessibilities();
 
     // O.K. Now STARTING!
-    moveStaticObjectAndMakeItPublic(mstart, point, mend, target, targetFqtName, NULL, NO_CHECKS,
+    moveStaticObjectAndMakeItPublic(startMarker, point, endMarker, target, targetFqtName, NULL, NO_CHECKS,
                                     SPP_CLASS_DECLARATION_BEGIN_POSITION);
 
     // recover end marker
     (*outend)->offset++;
 
     // finally fiddle modifiers
-    if (ss->references.access & AccessStatic) {
+    if (symbolsMenu->references.access & AccessStatic) {
         if (!targetIsNestedInClass) {
             // nested -> top level
             //&sprintf(tmpBuff,"removing modifier"); ppcBottomInformation(tmpBuff);
@@ -3160,7 +3165,7 @@ static void performMoveClass(EditorMarker *point, EditorMarker *target, EditorMa
             addModifier(point, SPP_CLASS_DECLARATION_BEGIN_POSITION, "static");
         }
     }
-    if (dd.transPackageMove) {
+    if (moveClassData.transPackageMove) {
         // add public
         changeAccessModifier(point, SPP_CLASS_DECLARATION_BEGIN_POSITION, "public");
     }
