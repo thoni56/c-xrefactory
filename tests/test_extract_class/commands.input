@@ -1,1 +1,0 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-extract-method" "-olmark=403" "-olcursor=374" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/ExtractMethod.java"

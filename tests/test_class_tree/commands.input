@@ -1,4 +1,0 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -server
--olcxclasstree -olinelen=174 -olcursor=496 -xrefrc CURDIR/.c-xrefrc -p CURDIR CURDIR/jexercise/Index.java 
-<sync>
-<exit>

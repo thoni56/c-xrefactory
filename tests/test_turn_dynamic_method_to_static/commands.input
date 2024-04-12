@@ -1,2 +1,0 @@
-../../src/c-xref -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-dynamic-to-static -rfct-param1=person -olcursor=864 -addimportdefault=0 CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java -log=log
-

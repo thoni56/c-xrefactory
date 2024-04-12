@@ -1,9 +1,0 @@
-../../src/c-xref -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -server -o server-buffer
--olcxgetlastimportline source.java
-end-of-options
-
-<sync>
-<set-info len=<n>>4</set-info>
--exit
-end-of-options
-

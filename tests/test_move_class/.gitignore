@@ -1,8 +1,0 @@
-output
-output.tmp
-log
-*buffer
-CXrefs
-*.output
-.c-xrefrc
-*.class

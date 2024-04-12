@@ -1,1 +1,0 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-dynamic-to-static" "-rfct-param1=person" "-olmark=868" "-olcursor=870" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java"
