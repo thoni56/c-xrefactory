@@ -5,7 +5,6 @@
 
 #include "log.h"
 
-#include "c_parser.mock"
 #include "caching.mock"
 #include "counters.mock"
 #include "characterreader.mock"
@@ -21,7 +20,6 @@
 #include "filetable.mock"
 #include "globals.mock"
 #include "init.mock"
-#include "java_parser.mock"
 #include "javafqttab.mock"
 #include "jsemact.mock"
 #include "jslsemact.mock"
@@ -39,7 +37,6 @@
 #include "settings_handler.mock"
 #include "symboltable.mock"
 #include "type.mock"
-#include "yacc_parser.mock"
 #include "xref.mock"
 #include "yylex.mock"
 

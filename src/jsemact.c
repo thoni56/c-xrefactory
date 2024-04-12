@@ -22,8 +22,6 @@
 #include "filetable.h"
 #include "stackmemory.h"
 
-#include "java_parser.h"
-
 #include "parsers.h"
 #include "recyacc.h"
 #include "jslsemact.h"
@@ -739,7 +737,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
         pushInclude(file, buffer, asfname, "\n");
         cfilenum    = currentFile.characterBuffer.fileNumber;
         s_jsl->pass = pass;
-        java_yyparse();
+        //java_yyparse();
         popInclude();      // this will close the file
         log_debug("[jsl] CLOSE file %s level %d", fname, nestingDepth);
     }

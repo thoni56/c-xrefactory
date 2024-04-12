@@ -2,10 +2,16 @@
 #include "yacc_parser.h"
 #include <cgreen/mocks.h>
 
+#include "parsers.h"
+
+
+YYSTYPE yacc_yylval;
+
+
 int yacc_yyparse() {
   return (int)mock();
 }
 
 void makeYaccCompletions(char *s, int len, Position *pos) {
-     (void)mock(s, len, pos);
+    (void)mock(s, len, pos);
 }

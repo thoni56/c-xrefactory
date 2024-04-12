@@ -14,7 +14,6 @@
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "java_parser.mock"
 #include "javafqttab.mock"
 #include "jslsemact.mock"
 #include "jsltypetab.mock"

@@ -22,7 +22,6 @@
 #include "c_parser.h"
 #include "cexp_parser.h"
 #include "yacc_parser.h"
-#include "java_parser.h"
 
 #include "parsers.h"
 
@@ -381,7 +380,7 @@ static void testCxrefCompletionId(LexemCode *out_lexem, char *id, Position *pos)
             deactivateCaching();
             olstringServed = true;
             if (currentLanguage == LANG_JAVA) {
-                makeJavaCompletions(id, strlen(id), pos);
+                //makeJavaCompletions(id, strlen(id), pos);
             } else if (currentLanguage == LANG_YACC) {
                 makeYaccCompletions(id, strlen(id), pos);
             } else {

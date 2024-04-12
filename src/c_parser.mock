@@ -2,6 +2,12 @@
 #include "c_parser.h"
 #include <cgreen/mocks.h>
 
+#include "parsers.h"
+
+
+YYSTYPE c_yylval;
+
+
 int c_yyparse() {
   return (int) mock();
 }

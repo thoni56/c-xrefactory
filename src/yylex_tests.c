@@ -32,7 +32,6 @@ void processIncludeNextDirective(Position *includePosition);
 #include "fileio.mock"
 #include "globals.mock"
 #include "input.mock"
-#include "java_parser.mock"
 #include "jsemact.mock"
 #include "jslsemact.mock"
 #include "lexer.mock"

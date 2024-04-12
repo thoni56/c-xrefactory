@@ -204,10 +204,10 @@ test:
 unit: check-tokens unittests
 
 #########################################################################
-# We generate parsers for C, Yacc, Java and C expressions
+# We generate parsers for C, Yacc and C expressions
 
 PHONY += parsers
-parsers: c_parser.tab.[ch] java_parser.tab.[ch] yacc_parser.tab.[ch] cexp_parser.tab.[ch]
+parsers: c_parser.tab.[ch] yacc_parser.tab.[ch] cexp_parser.tab.[ch]
 
 # Note the file prefix (-b) and symbol prefix (-p)
 # Also creates .rules files with only the rules in it
@@ -246,12 +246,6 @@ yacc_parser.tab.intermediate : yacc_parser.y $(YACC)
 	awk '{$$1=""; print}' yacc_parser.rules > yacc_parser.tmp
 	sed -n '/primary_expr/,$$p' yacc_parser.tmp > c_rules_from_yacc_parser.txt
 
-.INTERMEDIATE: java_parser.tab.intermediate
-java_parser.tab.c java_parser.tab.h : java_parser.tab.intermediate ;
-java_parser.tab.intermediate : java_parser.y $(YACC)
-	$(YACC) -v -b java_parser -p java_yy java_parser.y
-	sed -E '/^$$/q' java_parser.output > java_parser.rules
-
 
 # There is no include feature in grammars so we need to duplicate
 # token definitons. Here we ensure they are in sync
@@ -263,29 +257,17 @@ c_parser.tokens: c_parser.y
 yacc_parser.tokens: yacc_parser.y
 	cat yacc_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > yacc_parser.tokens
 
-java_parser.tokens: java_parser.y
-	cat java_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > java_parser.tokens
-
 # Ensure they are extracted by making the parser object files dependent on them
 $(OBJDIR)/c_parser.tab.o : c_parser.tokens
 $(OBJDIR)/yacc_parser.tab.o : yacc_parser.tokens
-$(OBJDIR)/java_parser.tab.o : java_parser.tokens
 
 # And compare the three token sections to ensure that they are exactly the same
 PHONY += check-tokens
-check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
+check-tokens: c_parser.tokens yacc_parser.tokens
 	@echo Checking tokens across parsers ...
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
 		echo "ERROR: Parser token section must be identical:" ; \
 		diff -c c_parser.tokens yacc_parser.tokens ; \
-	fi
-	@if ! diff -q yacc_parser.tokens java_parser.tokens ; then \
-		echo "ERROR: Parser token section must be identical:" ; \
-		diff -c yacc_parser.tokens java_parser.tokens ; \
-	fi
-	@if ! diff -q java_parser.tokens c_parser.tokens ; then \
-		echo "ERROR: Parser token section must be identical:" ; \
-		diff -c java_parser.tokens c_parser.tokens ; \
 	fi
 
 # Create an enum of the %token define's in c_parser.tab.h so that
@@ -521,6 +503,7 @@ $(eval $(call UNITTEST,memory,log))
 $(eval $(call UNITTEST,menu,log protocol position memory stackmemory usage))
 $(eval $(call UNITTEST,misc,protocol log type memory stackmemory))
 $(eval $(call UNITTEST,options,protocol log position memory stackmemory))
+$(eval $(call UNITTEST,parsers,log))
 $(eval $(call UNITTEST,position,log))
 $(eval $(call UNITTEST,progress,protocol log))
 $(eval $(call UNITTEST,refactorings,log))
