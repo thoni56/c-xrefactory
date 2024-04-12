@@ -1,12 +1,6 @@
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-server"
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/refactorings/Index.java"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/index.c"
 <sync>
--olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=483" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
-<sync>
--olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=640" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
-<sync>
--olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=1031" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
-<sync>
--olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=1191" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=292" "CURDIR/cexercise/refactorings/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 <sync>
 <exit>
