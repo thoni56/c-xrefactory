@@ -356,7 +356,7 @@ the-actual-coverage-report:
 	@mkdir -p ../coverage
 ifeq ($(HAVE_GCOV_TOOL),yes)
 # Then we have already merged all test .gcda into OBJDIR and can just generate the total.info from .
-	$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data" && true
+	-$(LCOV) -d . -c -q -o ../coverage/total.info 2>&1 | grep -v "did not produce any data"
 else
 # The run_test script in ../tests has created a coverage.info in each test directory
 # So we can add each of the tests coverage.info to ../coverage/total.info using '-a ...'
