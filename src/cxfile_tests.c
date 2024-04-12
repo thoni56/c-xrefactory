@@ -75,7 +75,7 @@ Ensure(CxFile, can_do_normal_scan_with_only_a_single_file) {
     options.cxrefsLocation     = "./CXrefs";
     options.referenceFileCount = 1;
 
-    expect(referenceFileCountMatches, will_return(true));
+    expect(currentReferenceFileCountMatches, will_return(true));
 
     expect(openFile, when(fileName, is_equal_to_string("./CXrefs/XFiles")), will_return(xfilesFilePointer));
 

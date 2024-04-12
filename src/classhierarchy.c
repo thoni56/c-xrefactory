@@ -143,7 +143,9 @@ static int markTransitiveRelevantSubsRec(int fileNumber, int passNumber) {
 
 static void markTransitiveRelevantSubs(int cind, int passNumber) {
     log_trace("PRE checking %s relevant", getFileItem(cind)->name);
-    if (THEBIT(tmpChRelevant,cind)==0) return;
+    if (THEBIT(tmpChRelevant,cind)==0)
+        return;
+
     markTransitiveRelevantSubsRec(cind, passNumber);
 }
 
@@ -153,10 +155,9 @@ static void initClassHierarchyGeneration(void) {
 }
 
 static void setTmpClassBackPointersToMenu(SymbolsMenu *menu) {
-    SymbolsMenu *ss;
     clearTmpClassBackPointersToMenu();
-    for(ss=menu; ss!=NULL; ss=ss->next) {
-        tmpVApplClassBackPointersToMenu[ss->references.vApplClass] = ss;
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        tmpVApplClassBackPointersToMenu[m->references.vApplClass] = m;
     }
 }
 
@@ -331,12 +332,13 @@ static void descendTheClassHierarchy(SymbolsMenu *menu, FILE *file,
 ) {
     IntegerList snextbar;
     ClassHierarchyReference *snext;
-    SymbolsMenu *itt;
     int vFunCl;
 
     FileItem *fileItem = getFileItem(vApplCl);
-    if (THEBIT(tmpChRelevant,vApplCl)==0) return;
-    itt = itemInOriginalList(vApplCl);
+    if (THEBIT(tmpChRelevant,vApplCl)==0)
+        return;
+
+    SymbolsMenu *itt = itemInOriginalList(vApplCl);
 
     if (itt == NULL) {
         assert(menu);

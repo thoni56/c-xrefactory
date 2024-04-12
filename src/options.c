@@ -1330,16 +1330,16 @@ void getJavaClassAndSourcePath(void) {
     }
 }
 
-bool referenceFileCountMatches(int newReferenceFileCount) {
+bool currentReferenceFileCountMatches(int foundReferenceFileCount) {
     bool check;
 
     if (options.referenceFileCount == 0)
         check = true;
     else if (options.referenceFileCount == 1)
-        check = (newReferenceFileCount <= 1);
+        check = (foundReferenceFileCount <= 1);
     else
-        check = (newReferenceFileCount == options.referenceFileCount);
-    options.referenceFileCount = newReferenceFileCount;
+        check = (foundReferenceFileCount == options.referenceFileCount);
+    options.referenceFileCount = foundReferenceFileCount;
     return check;
 }
 

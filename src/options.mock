@@ -79,8 +79,8 @@ void javaSetSourcePath(bool defaultClassPathAllowed) {
   mock(defaultClassPathAllowed);
 }
 
-bool referenceFileCountMatches(int newRefNum) {
-  return (int) mock(newRefNum);
+bool currentReferenceFileCountMatches(int foundReferenceFileCount) {
+  return (bool)mock(foundReferenceFileCount);
 }
 
 char *findConfigFile(char *cwd) {

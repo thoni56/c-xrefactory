@@ -1182,12 +1182,12 @@ static void scanFunction_Reference(int size,
 }
 
 
-static void scanFunction_ReferenceFileCountCheck(int referenceFileCount,
+static void scanFunction_ReferenceFileCountCheck(int fileCountInReferenceFile,
                                                  int marker,
                                                  CharacterBuffer *cb,
                                                  CxScanFileOperation operation
 ) {
-    if (!referenceFileCountMatches(referenceFileCount)) {
+    if (!currentReferenceFileCountMatches(fileCountInReferenceFile)) {
         assert(options.mode);
         FATAL_ERROR(ERR_ST,"Tag file was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
     }

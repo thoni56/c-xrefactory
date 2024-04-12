@@ -181,7 +181,7 @@ extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *pro
 extern void readOptionsFromCommand(char *command, int *nargc, char ***nargv, char *sectionFile);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
 extern void javaSetSourcePath(bool defaultClassPathAllowed);
-extern bool referenceFileCountMatches(int newRefNum);
+extern bool currentReferenceFileCountMatches(int newRefNum);
 
 extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *optionsFilename,
                                char *foundProjectName);
