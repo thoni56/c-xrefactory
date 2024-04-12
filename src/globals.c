@@ -1,6 +1,5 @@
 #include "globals.h"
 
-#include "stdinc.h"
 #include "head.h"
 #include "proto.h"
 #include "parsers.h"

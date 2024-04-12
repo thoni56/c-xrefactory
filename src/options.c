@@ -1343,7 +1343,7 @@ bool referenceFileCountMatches(int newReferenceFileCount) {
     return check;
 }
 
-void getXrefrcFileName(char *fileName) {
+static void getXrefrcFileName(char *fileName) {
     int hlen;
     char *home;
 

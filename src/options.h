@@ -171,8 +171,6 @@ extern char *allocateStringForOption(char **pointerToOption, char *string);
 extern void addToStringListOption(StringList **pointerToOption, char *string);
 extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
-
-extern void getXrefrcFileName(char *ttt);
 extern char *getJavaHome(void);
 extern void getJavaClassAndSourcePath(void);
 extern bool packageOnCommandLine(char *packageName);
