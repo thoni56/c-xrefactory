@@ -1378,12 +1378,8 @@ Language getLanguageFor(char *fileName) {
     char *suffix;
     Language language;
 
-    if (fileName == NULL
-        || fileNameHasOneOfSuffixes(fileName, options.javaFilesSuffixes)
-        || (filenameCompare(simpleFileName(fileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
-    ) {
-        language = LANG_JAVA;
-        typeNamesTable[TypeStruct] = "class";
+    if (fileNameHasOneOfSuffixes(fileName, "java;class")) {
+        FATAL_ERROR(ERR_ST, "Java is no longer supported", -1);
     } else {
         suffix = getFileSuffix(fileName);
         if (compareFileNames(suffix, ".zip")==0 || compareFileNames(suffix, ".jar")==0) {
