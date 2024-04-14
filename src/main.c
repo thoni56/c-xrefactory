@@ -491,7 +491,6 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
         }
         deepCopyOptionsFromTo(&options, &savedOptions);  // before getJavaClassPath, it modifies ???
         processOptions(nargc, nargv, DONT_PROCESS_FILE_ARGUMENTS);
-        getJavaClassAndSourcePath();
         inputOpened = computeAndOpenInputFile();
         strcpy(previousStandardOptionsFile,standardOptionsFileName);
         strcpy(previousStandardOptionsSection,standardOptionsSectionName);

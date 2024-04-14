@@ -50,10 +50,6 @@ char *getJavaHome(void) {
   return (char *) mock();
 }
 
-void getJavaClassAndSourcePath(void) {
-  mock();
-}
-
 bool packageOnCommandLine(char *packageName) {
   return (bool) mock(packageName);
 }

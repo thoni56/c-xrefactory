@@ -72,29 +72,6 @@ void symbolRefItemDump(ReferenceItem *s) {
 /* *********************************************************************** */
 
 
-int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
-    int i;
-    char *pp;
-    i = 0;
-    if (oNamePos!=NULL) *oNamePos = i;
-    for(pp=str; *pp; pp++) {
-        if (    currentLanguage == LANG_JAVA &&
-                *pp == '.' &&
-                *(pp+1) == '<') {
-            /* java constructor */
-            while (*pp && *pp!='>') pp++;
-        } else if (*pp == '/' || *pp == '$') {
-            if (nameStyle == SHORT_NAME) i=0;
-            else buff[i++] = '.';
-            if (oNamePos!=NULL) *oNamePos = i;
-        } else {
-            buff[i++] = *pp;
-        }
-    }
-    buff[i] = 0;
-    return(i);
-}
-
 #define CHECK_TYPEDEF(t, type, typedefexp, typebreak)                                                             \
     {                                                                                                             \
         if (t->typedefSymbol != NULL && typedefexp) {                                                             \
@@ -154,14 +131,8 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
                 preString[--i] = '(';
                 postString[j++] = ')';
             }
-            if (LANGUAGE(LANG_JAVA)) {
-                preString[--i] = ' ';
-                preString[--i] = ']';
-                preString[--i] = '[';
-            } else {
-                postString[j++] = '[';
-                postString[j++] = ']';
-            }
+            postString[j++] = '[';
+            postString[j++] = ']';
             break;
         case TypeFunction:
             if (par) {
@@ -170,53 +141,41 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
             }
             sprintf(postString + j, "(");
             j += strlen(postString + j);
-            if (currentLanguage == LANG_JAVA) {
-                int jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                javaSignatureSPrint(postString + j, &jj, t->u.m.signature, longOrShortName);
-                j += jj;
-            } else {
-                for (Symbol *symbol = t->u.f.args; symbol != NULL; symbol = symbol->next) {
-                    char *ttm;
-                    if (symbol->type == TypeElipsis)
-                        ttm = "...";
-                    else if (symbol->name == NULL)
-                        ttm = "";
-                    else
-                        ttm = symbol->name;
-                    if (symbol->type == TypeDefault && symbol->u.typeModifier != NULL) {
-                        /* TODO ALL, for string overflow */
-                        int jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                        typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', maxDeep - 1, true,
-                                   longOrShortName, NULL);
-                        j += jj;
-                    } else {
-                        sprintf(postString + j, "%s", ttm);
-                        j += strlen(postString + j);
-                    }
-                    if (symbol->next != NULL && j < COMPLETION_STRING_SIZE)
-                        sprintf(postString + j, ", ");
+            for (Symbol *symbol = t->u.f.args; symbol != NULL; symbol = symbol->next) {
+                char *ttm;
+                if (symbol->type == TypeElipsis)
+                    ttm = "...";
+                else if (symbol->name == NULL)
+                    ttm = "";
+                else
+                    ttm = symbol->name;
+                if (symbol->type == TypeDefault && symbol->u.typeModifier != NULL) {
+                    /* TODO ALL, for string overflow */
+                    int jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
+                    typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', maxDeep - 1, true,
+                               longOrShortName, NULL);
+                    j += jj;
+                } else {
+                    sprintf(postString + j, "%s", ttm);
                     j += strlen(postString + j);
                 }
+                if (symbol->next != NULL && j < COMPLETION_STRING_SIZE)
+                    sprintf(postString + j, ", ");
+                j += strlen(postString + j);
             }
             postString[j++] = ')';
             break;
         case TypeStruct:
         case TypeUnion:
-            if (currentLanguage != LANG_JAVA) {
-                if (t->type == TypeStruct)
-                    sprintf(typeString, "struct ");
-                else
-                    sprintf(typeString, "union ");
-                r = strlen(typeString);
-            } else
-                r = 0;
+            if (t->type == TypeStruct)
+                sprintf(typeString, "struct ");
+            else
+                sprintf(typeString, "union ");
+            r = strlen(typeString);
+
             if (t->u.t->name != NULL) {
-                if (currentLanguage == LANG_JAVA) {
-                    r += javaTypeStringSPrint(typeString + r, t->u.t->linkName, longOrShortName, NULL);
-                } else {
-                    sprintf(typeString + r, "%s ", t->u.t->name);
-                    r += strlen(typeString + r);
-                }
+                sprintf(typeString + r, "%s ", t->u.t->name);
+                r += strlen(typeString + r);
             }
             if (maxDeep > 0) {
                 int minInfi = r;

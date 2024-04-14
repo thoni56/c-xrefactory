@@ -26,10 +26,6 @@ void symbolRefItemDump(ReferenceItem *ss) {
   mock(ss);
 }
 
-int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
-  return (int) mock(buff, str, nameStyle, oNamePos);
-}
-
 void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepChar, int maxDeep, bool typedefexp,
                 int longOrShortName, int *oNamePos) {
   mock(buff, size, t, name, dclSepChar, maxDeep, typedefexp, longOrShortName, oNamePos);

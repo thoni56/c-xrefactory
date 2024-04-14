@@ -133,7 +133,6 @@ Options presetOptions = {
 static Memory2 optMemory;
 
 static char javaSourcePathExpanded[MAX_OPTION_LEN];
-static char javaClassPathExpanded[MAX_OPTION_LEN];
 
 static char base[MAX_FILE_NAME_SIZE];
 
@@ -1045,40 +1044,6 @@ void javaSetSourcePath(bool defaultClassPathAllowed) {
 }
 
 
-static void processClassPathString(char *cp) {
-    char            *nn, *np, *sfp;
-    char            ttt[MAX_FILE_NAME_SIZE];
-    StringList    **ll;
-    int             ind, nlen;
-
-    for (ll = &javaClassPaths; *ll != NULL; ll = &(*ll)->next) ;
-
-    while (*cp!=0) {
-        for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
-            ttt[ind]=cp[ind];
-        }
-        ttt[ind]=0;
-        np = normalizeFileName(ttt,cwd);
-        nlen = strlen(np); sfp = np+nlen-4;
-        if (nlen>=4 && (strcmp(sfp,".zip")==0 || strcmp(sfp,".jar")==0)){
-            // probably zip archive
-            log_debug("Indexing '%s'", np);
-            zipIndexArchive(np);
-            log_debug("Done.");
-        } else {
-            // just path
-            nn = ppmAllocc(strlen(np)+1, sizeof(char));
-            strcpy(nn,np);
-            *ll = ppmAlloc(sizeof(StringList));
-            **ll = (StringList){.string = nn, .next = NULL};
-            ll = &(*ll)->next;
-        }
-        cp += ind;
-        if (*cp == CLASS_PATH_SEPARATOR) cp++;
-    }
-}
-
-
 static void convertPackageNameToPath(char *name, char *path) {
     char *np, *pp;
 
@@ -1267,67 +1232,6 @@ char *getJavaHome(void) {
         return res;
     }
     return NULL;
-}
-
-void getJavaClassAndSourcePath(void) {
-    char *cp, *jdkcp;
-    int i;
-
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {
-        if (zipArchiveTable[i].fn[0] == 0) break;
-        zipArchiveTable[i].fn[0]=0;
-    }
-
-    // Keeping this comment as a historical artefact:
-    // optimize wild char expand and getEnv [5.2.2003]
-    javaClassPaths = NULL;
-
-    if (LANGUAGE(LANG_JAVA)) {
-        javaSetSourcePath(0);
-
-        if (javaSourcePaths==NULL) {
-            if (LANGUAGE(LANG_JAVA)) {
-                errorMessage(ERR_ST, "no classpath or sourcepath specified");
-            }
-            javaSourcePaths = defaultClassPath;
-        }
-
-        cp = getClassPath(true);
-        expandWildcardsInPaths(cp, javaClassPathExpanded, MAX_OPTION_LEN);
-        cp = javaClassPathExpanded;
-
-        options.classpath = allocateStringForOption(&options.classpath, cp);  //??? why is this, only optimisation of getEnv?
-        processClassPathString(cp);
-        jdkcp = getJdkClassPathQuickly();
-        if (jdkcp != NULL && *jdkcp!=0) {
-            options.jdkClassPath = allocateStringForOption(&options.jdkClassPath, jdkcp);  //only optimisation of getEnv?
-            processClassPathString(jdkcp);
-        }
-
-        if (LANGUAGE(LANG_JAVA) && options.mode != ServerMode) {
-            static bool messageFlag=false;
-            if (messageFlag && ! options.briefoutput) {
-                if (options.xref2) {
-                    char tmpBuff[TMP_BUFF_SIZE];
-                    if (jdkcp!=NULL && *jdkcp!=0) {
-                        sprintf(tmpBuff,"java runtime == %s", jdkcp);
-                        ppcGenRecord(PPC_INFORMATION, tmpBuff);
-                    }
-                    sprintf(tmpBuff,"classpath == %s", cp);
-                    ppcGenRecord(PPC_INFORMATION, tmpBuff);
-                    sprintf(tmpBuff,"sourcepath == %s", javaSourcePaths);
-                    ppcGenRecord(PPC_INFORMATION, tmpBuff);
-                } else {
-                    if (jdkcp!=NULL && *jdkcp!=0) {
-                        log_debug("java runtime == %s", jdkcp);
-                    }
-                    log_debug("classpath == %s", cp);
-                    log_debug("sourcepath == %s", javaSourcePaths);
-                }
-                messageFlag = true;
-            }
-        }
-    }
 }
 
 bool currentReferenceFileCountMatches(int foundReferenceFileCount) {

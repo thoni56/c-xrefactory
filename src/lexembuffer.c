@@ -206,7 +206,7 @@ int putIdentifierLexem(LexemBuffer *lexemBuffer, CharacterBuffer *characterBuffe
         putLexemChar(lexemBuffer, ch);
         ch = getChar(characterBuffer);
     } while (isalpha(ch) || isdigit(ch) || ch == '_'
-             || (ch == '$' && (LANGUAGE(LANG_YACC) || LANGUAGE(LANG_JAVA))));
+             || (ch == '$' && LANGUAGE(LANG_YACC)));
     putLexemChar(lexemBuffer, 0);
     putLexemPositionFields(lexemBuffer, characterBuffer->fileNumber, characterBuffer->lineNumber, column);
 
