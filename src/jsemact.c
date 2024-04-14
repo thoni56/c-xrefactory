@@ -152,13 +152,6 @@ char *javaCreateComposedName(char *prefix,
     return ln;
 }
 
-void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
-    if (options.mode != ServerMode) return;
-    if (positionsAreEqual(cxRefPosition, *cpos)) {
-        s_primaryStartPosition = *bpos;
-    }
-}
-
 static Reference *javaAddClassCxReference(Symbol *dd, Position *pos, unsigned usage) {
     Reference *res;
     res = addCxReference(dd, pos, usage, NO_FILE_NUMBER, NO_FILE_NUMBER);
@@ -1347,47 +1340,6 @@ Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **st
     return lastUselessRef;
 }
 
-Reference *javaClassifyToTypeName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
-    Reference *res;
-
-    res = javaClassifyToTypeOrPackageName(tname, usage, str, allowUselesFqtRefs);
-    if (tname->nameType != TypeStruct) {
-        // there is probably a problem with class or source path
-        tname->nameType = TypeStruct;
-        // but following will create double reference, prefer to not add
-        //ss = javaTypeSymbolUsage(tname, ACC_DEFAULT);
-        //addCxReference(ss, &tname->idi.p, usage, s_noneFileIndex, s_noneFileIndex);
-    }
-    return res;
-}
-
-void javaClassifyToPackageName( IdList *id ) {
-    IdList *ii;
-    for (ii=id; ii!=NULL; ii=ii->next) ii->nameType = TypePackage;
-}
-
-int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
-    int ppi;
-    TypeModifier *tt;
-    ppi=0;
-    for (tt=type; tt!=NULL; tt=tt->next) {
-        if (tt->type == TypeArray) {
-            sprintf(pp+ppi,"[");
-            ppi += strlen(pp+ppi);
-        } else if (tt->type == TypeStruct) {
-            assert(tt->u.t);
-            sprintf(pp+ppi,"L%s;",tt->u.t->linkName);
-            ppi += strlen(pp+ppi);
-        } else {
-            assert(javaBaseTypeCharCodes[tt->type]!=0);
-            pp[ppi++] = javaBaseTypeCharCodes[tt->type];
-        }
-        assert(ppi < ppSize);
-    }
-    pp[ppi]=0;
-    return ppi;
-}
-
 int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
     Symbol        *r;
     assert(clas && clas->u.structSpec);
@@ -1437,62 +1389,4 @@ Reference *addUnimportedTypeLongReference(int classIndex, Position *pos) {
     res = addSpecialFieldReference(LINK_NAME_UNIMPORTED_QUALIFIED_ITEM, StorageField,
                                    classIndex, pos, UsageUsed);
     return res;
-}
-
-/* ********************* method invocations ************************** */
-
-static void methodAppliedOnNonClass(char *rec) {
-    char message[TMP_BUFF_SIZE];
-    if (options.debug || options.errors) {
-        sprintf(message, "'%s' not applied on a class", rec);
-        errorMessage(ERR_ST, message);
-    }
-}
-
-static void methodNameNotRecognized(char *rec) {
-    char message[TMP_BUFF_SIZE];
-    if (options.debug || options.errors) {
-        sprintf(message, "'%s' not recognized as method name", rec);
-        errorMessage(ERR_ST, message);
-    }
-}
-
-S_extRecFindStr *javaCrErfsForMethodInvocationN(IdList *name) {
-    S_extRecFindStr		*erfs;
-    TypeModifier		*expr;
-    Reference			*rr;
-    int					nt;
-    erfs = stackMemoryAlloc(sizeof(S_extRecFindStr));
-    erfs->params = NULL;
-    nt = javaClassifyAmbiguousName(name, &erfs->s,&erfs->memb,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_METHOD,UsageUsed);
-    if (nt != TypeExpression) {
-        methodNameNotRecognized(name->id.name);
-        return NULL;
-    }
-    if (expr == &errorModifier)
-        return NULL;
-    return erfs;
-}
-
-S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
-                                                Id *name
-    ) {
-    S_extRecFindStr		*erfs;
-
-    log_trace("invocation of %s", name->name);
-    if (tt->type == TypeArray) tt = &s_javaArrayObjectSymbol.u.structSpec->type;
-    if (tt->type != TypeStruct) {
-        methodAppliedOnNonClass(name->name);
-        return NULL;
-    }
-    erfs = stackMemoryAlloc(sizeof(S_extRecFindStr));
-    erfs->params = NULL;
-    javaLoadClassSymbolsFromFile(tt->u.t);
-    Result rr = findStrRecordSym(&erfs->memb, iniFind(tt->u.t,&erfs->s), name->name,
-                        CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
-    if (rr != RESULT_OK) {
-        noSuchFieldError(name->name);
-        return NULL;
-    }
-    return erfs;
 }

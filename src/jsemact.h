@@ -35,7 +35,6 @@ extern void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *th
                          char *namedPackageDir, SymbolTable *locals, IdList *lastParsedName,
                          unsigned methodModifiers, CurrentlyParsedClassInfo parsingPositions, int classFileIndex,
                          JavaStat *next);
-extern void javaCheckForPrimaryStart(Position *cpos, Position *pp);
 extern void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp);
 extern void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp);
 extern char *javaCreateComposedName(
@@ -68,9 +67,7 @@ extern Type javaClassifyAmbiguousName(
                                      int usage
                                      );
 extern Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs);
-extern void javaClassifyToPackageName( IdList *id );
 extern char *javaImportSymbolName_st(int file, int line, int coll);
-extern int javaTypeToString(TypeModifier *type, char *pp, int ppSize);
 extern int javaIsYetInTheClass(
                                Symbol	*clas,
                                char		*lname,

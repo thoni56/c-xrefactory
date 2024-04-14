@@ -32,10 +32,6 @@ void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType,
     javaStat->next = next;
 }
 
-void javaCheckForPrimaryStart(Position *cpos, Position *pp) {
-    mock(cpos, pp);
-}
-
 void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp) {
     mock(name, pp);
 }
@@ -67,16 +63,8 @@ Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **st
     return (Reference *) mock(tname, usage, str, allowUselesFqtRefs);
 }
 
-void javaClassifyToPackageName(IdList *id) {
-    mock(id);
-}
-
 char *javaImportSymbolName_st(int file, int line, int coll) {
     return (char *) mock(file, line, coll);
-}
-
-int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
-    return (int) mock(type, pp, ppSize);
 }
 
 int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
