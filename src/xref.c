@@ -203,8 +203,6 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
         // no multiple passes for java programs
         *firstPassP                          = false;
         currentFile.characterBuffer.isAtEOF = false;
-        if (LANGUAGE(LANG_JAVA))
-            break;
     }
 }
 
@@ -272,7 +270,7 @@ void scheduleModifiedFilesToUpdate(bool isRefactoring) {
     calledDuringRefactoring = isRefactoring;
     mapOverFileTable(schedulingToUpdate);
 
-    if (options.update==UPDATE_FULL /*& && !LANGUAGE(LANG_JAVA) &*/) {
+    if (options.update==UPDATE_FULL) {
         makeIncludeClosureOfFilesToUpdate();
     }
     mapOverFileTable(schedulingUpdateToProcess);
@@ -373,11 +371,6 @@ void callXref(int argc, char **argv, bool isRefactoring) {
                     messagePrinted = true;
                 }
                 currentLanguage = getLanguageFor(pffc->name);
-                if (LANGUAGE(LANG_JAVA)) {
-                    /* TODO: problematic if a single file generates overflow, e.g. a JAR
-                       Can we just reread from the last class file? */
-                    oneWholeFileProcessing(argc, argv, pffc, &firstPass, &atLeastOneProcessed, isRefactoring);
-                }
                 if (options.xref2)
                     writeRelativeProgress((10*inputCounter) / numberOfInputs);
                 inputCounter++;

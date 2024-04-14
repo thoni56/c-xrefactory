@@ -432,16 +432,7 @@ void labelReference(Id *id, UsageKind usage) {
     char tempString[TMP_STRING_SIZE];
     char *t;
     assert(id);
-    if (LANGUAGE(LANG_JAVA)) {
-        assert(javaStat&&javaStat->thisClass&&javaStat->thisClass->u.structSpec);
-        if (parsedClassInfo.function!=NULL) {
-            sprintf(tempString,"%x-%s.%s",javaStat->thisClass->u.structSpec->classFileNumber,
-                    parsedClassInfo.function->name, id->name);
-        } else {
-            sprintf(tempString,"%x-.%s", javaStat->thisClass->u.structSpec->classFileNumber,
-                    id->name);
-        }
-    } else if (parsedClassInfo.function!=NULL) {
+    if (parsedClassInfo.function!=NULL) {
         t = strmcpy(tempString, parsedClassInfo.function->name);
         *t = '.';
         t = strcpy(t+1,id->name);

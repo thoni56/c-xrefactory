@@ -204,7 +204,7 @@ void singlePass(int argc, char **argv,
         parseInputFile();
         *firstPassP = false;
     }
-    if (options.olCursorOffset==0 && !LANGUAGE(LANG_JAVA)) {
+    if (options.olCursorOffset==0) {
         // special case, push the file as include reference
         if (requiresCreatingRefs(options.serverOperation)) {
             Position position = makePosition(inputFileNumber, 1, 0);
@@ -239,8 +239,6 @@ static void processFile(int argc, char **argv,
         assert(inputFileName!=NULL);
         singlePass(argc, argv, nargc, nargv, firstPassP);
         if (options.serverOperation==OLO_EXTRACT || (olstringServed && !requiresCreatingRefs(options.serverOperation)))
-            break;
-        if (LANGUAGE(LANG_JAVA))
             break;
     }
     fileItem->isScheduled = false;

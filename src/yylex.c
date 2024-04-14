@@ -204,13 +204,6 @@ static void setCurrentFileInfoFor(char *fileName) {
         if (fileItem->cxSaved) {
             cxloading = false;
         }
-        if (LANGUAGE(LANG_JAVA)) {
-            if (s_jsl!=NULL || javaPreScanOnly) {
-                // do not load (and save) references from jsl loaded files
-                // nor during prescanning
-                cxloading = fileItem->cxLoading;
-            }
-        }
         fileItem->cxLoading = cxloading;
     }
     currentFile.characterBuffer.fileNumber = number;
@@ -379,9 +372,7 @@ static void testCxrefCompletionId(LexemCode *out_lexem, char *id, Position *pos)
         if (lexem==IDENT_TO_COMPLETE) {
             deactivateCaching();
             olstringServed = true;
-            if (currentLanguage == LANG_JAVA) {
-                //makeJavaCompletions(id, strlen(id), pos);
-            } else if (currentLanguage == LANG_YACC) {
+            if (currentLanguage == LANG_YACC) {
                 makeYaccCompletions(id, strlen(id), pos);
             } else {
                 makeCCompletions(id, strlen(id), pos);
@@ -2045,53 +2036,12 @@ static LexemCode lookupCIdentifier(char *id, Position position) {
 }
 
 
-static LexemCode lookupJavaIdentifier(char *id, Position position) {
-    Symbol *symbol = NULL;
-    unsigned hash = hashFun(id) % symbolTable->size;
-
-    log_trace("looking for Java id '%s' in symbol table %p", id, symbolTable);
-    for (Symbol *s=symbolTable->tab[hash]; s!=NULL; s=s->next) {
-        if (strcmp(s->name, id) == 0) {
-            if (symbol == NULL)
-                symbol = s;
-            if (isIdAKeyword(s, position))
-                return s->u.keyword;
-            if (s->type == TypeDefault) {
-                setYylvalsForIdentifier(s->name, s, position);
-                return IDENTIFIER;
-            }
-        }
-    }
-    if (symbol == NULL)
-        id = stackMemoryPushString(id);
-    else
-        id = symbol->name;
-    setYylvalsForIdentifier(id, symbol, position);
-    return IDENTIFIER;
-}
-
-
 static void actionOnBlockMarker(void) {
     if (options.serverOperation == OLO_SET_MOVE_CLASS_TARGET) {
         parsedInfo.moveTargetApproved = false;
-        if (LANGUAGE(LANG_JAVA)) {
-            if (parsedClassInfo.function == NULL) {
-                if (javaStat!=NULL) {
-                    parsedInfo.moveTargetApproved = true;
-                }
-            }
-        }
     } else if (options.serverOperation == OLO_SET_MOVE_METHOD_TARGET) {
         parsedInfo.moveTargetApproved = false;
-        if (LANGUAGE(LANG_JAVA)) {
-            if (parsedClassInfo.function == NULL) {
-                if (javaStat!=NULL) {
-                    if (javaStat->thisClass!=NULL) {
-                        parsedInfo.moveTargetApproved = true;
-                    }
-                }
-            }
-        } else if (LANGUAGE(LANG_C)) {
+        if (LANGUAGE(LANG_C)) {
             if (parsedClassInfo.function == NULL) {
                 parsedInfo.moveTargetApproved = true;
             }
@@ -2102,32 +2052,12 @@ static void actionOnBlockMarker(void) {
         parsedInfo.currentPackageAnswer[0] = 0;
         parsedInfo.currentClassAnswer[0] = 0;
         parsedInfo.currentSuperClassAnswer[0] = 0;
-        if (LANGUAGE(LANG_JAVA)) {
-            if (javaStat!=NULL) {
-                strcpy(parsedInfo.currentPackageAnswer, s_javaThisPackageName);
-                if (javaStat->thisClass!=NULL) {
-                    assert(javaStat->thisClass->u.structSpec);
-                    strcpy(parsedInfo.currentClassAnswer, javaStat->thisClass->linkName);
-                    if (javaStat->thisClass->u.structSpec->super!=NULL) {
-                        assert(javaStat->thisClass->u.structSpec->super->element);
-                        strcpy(parsedInfo.currentSuperClassAnswer, javaStat->thisClass->u.structSpec->super->element->linkName);
-                    }
-                }
-            }
-        }
         parsedClassInfo.parserPassedMarker = 1;
     }
 }
 
 static LexemCode lookupIdentifier(char *id, Position position) {
-    if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC))
-        return lookupCIdentifier(id, position);
-    else if (LANGUAGE(LANG_JAVA))
-        return lookupJavaIdentifier(id, position);
-    else {
-        assert(0);
-        return -1;              /* Will never happen */
-    }
+    return lookupCIdentifier(id, position);
 }
 
 LexemCode yylex(void) {
@@ -2184,9 +2114,7 @@ LexemCode yylex(void) {
         symbol.type = TypeMacro;
         symbol.storage = StorageNone;
 
-        if ((!LANGUAGE(LANG_JAVA))
-            && lexem!=IDENT_NO_CPP_EXPAND
-            && symbolTableIsMember(symbolTable, &symbol, NULL, &memberP)) {
+        if (lexem!=IDENT_NO_CPP_EXPAND && symbolTableIsMember(symbolTable, &symbol, NULL, &memberP)) {
             // following is because the macro check can read new lexBuf,
             // so id would be destroyed
             //&assert(strcmp(id,memberP->name)==0);
@@ -2280,7 +2208,7 @@ LexemCode yylex(void) {
     assert(0);
 
  endOfFile:
-    if ((!LANGUAGE(LANG_JAVA)) && includeStack.pointer != 0) {
+    if (includeStack.pointer != 0) {
         popInclude();
         placeCachePoint(true);
         goto nextYylex;

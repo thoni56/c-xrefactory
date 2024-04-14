@@ -474,7 +474,6 @@ static void javaReadSymbolFromSourceFileInit(int sourceFileNum,
     memcpy(njsl->yyIdentBuf, yyIdBuffer,
            sizeof(Id[YYIDBUFFER_SIZE]));
     s_jsl = njsl;
-    currentLanguage = LANG_JAVA;
 }
 
 static void javaReadSymbolFromSourceFileEnd(void) {
@@ -641,8 +640,7 @@ static Result findTopLevelNameInternal(char *name,
     Symbol symbol;
     JavaStat *cscope;
 
-    assert((!LANGUAGE(LANG_JAVA)) ||
-        (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD));
+    assert(classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD);
     assert(accessibilityCheck==ACCESSIBILITY_CHECK_YES || accessibilityCheck==ACCESSIBILITY_CHECK_NO);
     assert(visibilityCheck==VISIBILITY_CHECK_YES || visibilityCheck==VISIBILITY_CHECK_NO);
 
