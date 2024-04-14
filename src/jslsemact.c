@@ -21,21 +21,6 @@
 S_jslStat *s_jsl;
 
 
-
-S_jslClassStat *newJslClassStat(IdList *className, Symbol *thisClass, char *thisPackage, S_jslClassStat *next) {
-    S_jslClassStat *jslClassStat;
-
-    jslClassStat = stackMemoryAlloc(sizeof(S_jslClassStat));
-    jslClassStat->className = className;
-    jslClassStat->thisClass = thisClass;
-    jslClassStat->thisPackage = thisPackage;
-    jslClassStat->annonInnerCounter = 0;
-    jslClassStat->functionInnerCounter = 0;
-    jslClassStat->next = next;
-
-    return jslClassStat;
-}
-
 void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, JslTypeTab *typeTab,
                  S_jslClassStat *classStat, SymbolList *waitList, void /*YYSTYPE*/ *savedyylval,
                  void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next) {
@@ -117,83 +102,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
     return(smemb);
 }
 
-static Symbol *jslTypeSymbolUsage(char *ttt2, IdList *packid) {
-    char fqtName[MAX_FILE_NAME_SIZE];
-    IdList dd2;
-    Symbol *smemb;
-    JslSymbolList ss, *memb;
-
-    jslCreateTypeSymbolInList(&ss, ttt2);
-    if (packid==NULL && jslTypeTabIsMember(s_jsl->typeTab, &ss, NULL, &memb)) {
-        smemb = memb->d;
-        return(smemb);
-    }
-    fillfIdList(&dd2, ttt2, NULL, noPosition, ttt2, TypeStruct, packid);
-    javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
-    smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
-    return(smemb);
-}
-
-Symbol *jslTypeNameDefinition(IdList *tname) {
-    Symbol *memb;
-    Symbol *dd;
-    TypeModifier *td;
-
-    memb = jslTypeSymbolUsage(tname->id.name, tname->next);
-    td = cfAlloc(TypeModifier); //XX_ALLOC?
-    initTypeModifierAsStructUnionOrEnum(td, TypeStruct, memb, NULL, NULL);
-
-    dd = cfAlloc(Symbol); //XX_ALLOC?
-    fillSymbolWithTypeModifier(dd, memb->name, memb->linkName, tname->id.position, td);
-
-    return dd;
-}
-
-Symbol *jslMethodHeader(unsigned modif, Symbol *type,
-                          Symbol *decl, int storage, SymbolList *throws) {
-    int newFun;
-
-    completeDeclarator(type,decl);
-    decl->access = modif;
-    assert(s_jsl && s_jsl->classStat && s_jsl->classStat->thisClass);
-    if (s_jsl->classStat->thisClass->access & AccessInterface) {
-        // set interface default access flags
-        decl->access |= (AccessPublic | AccessAbstract);
-    }
-    decl->storage = storage;
-    //& if (modif & AccessStatic) decl->storage = StorageStaticMethod;
-    newFun = javaSetFunctionLinkName(s_jsl->classStat->thisClass, decl, MEMORY_CF);
-    if (decl->pos.file != olOriginalFileNumber && options.serverOperation == OLO_PUSH) {
-        // pre load of saved file akes problem on move field/method, ...
-        addMethodCxReferences(modif, decl, s_jsl->classStat->thisClass);
-    }
-    if (newFun) {
-        log_debug("[jsl] adding method %s==%s to %s (at %lx)", decl->name,
-                  decl->linkName, s_jsl->classStat->thisClass->linkName, (unsigned long)decl);
-        LIST_APPEND(Symbol, s_jsl->classStat->thisClass->u.structSpec->records, decl);
-    }
-    decl->u.typeModifier->u.m.signature = strchr(decl->linkName, '(');
-    decl->u.typeModifier->u.m.exceptions = throws;
-    return(decl);
-}
-
 #define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
-
-void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp){
-    int origin;
-
-    log_debug("loading super/interf %s of %s", supp->linkName, memb->linkName);
-    javaLoadClassSymbolsFromFile(supp);
-    origin = memb->u.structSpec->classFileNumber;
-    addSuperClassOrInterface( memb, supp, origin);
-}
-
-
-void jslAddSuperClassOrInterfaceByName(Symbol *memb,char *super){
-    Symbol        *supp;
-    supp = javaGetFieldClass(super,NULL);
-    jslAddSuperClassOrInterface( memb, supp);
-}
 
 // BERK, there is a copy of this function in semact.c (javaRecordAccessible)
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -39,22 +39,12 @@ typedef struct jslStat {
 extern S_jslStat *s_jsl;
 
 
-extern S_jslClassStat *newJslClassStat(IdList *className, Symbol *thisClass, char *thisPackage,
-                                       S_jslClassStat *next);
 extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, JslTypeTab *typeTab,
                         S_jslClassStat *classStat, SymbolList *waitList, void *savedyylval,
                         void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next);
 
-extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
-extern Symbol *jslTypeNameDefinition(IdList *tname);
 extern Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
                                        AddYesNo add, int order, bool isExplicitlyImported);
 extern void jslAddSuperClassOrInterfaceByName(Symbol *memb,char *super);
-extern void jslNewClassDefinitionBegin(Id *name,
-                                       int accessFlags,
-                                       Symbol *anonInterf,
-                                       int position);
-
-extern void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp);
 
 #endif
