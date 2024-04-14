@@ -140,17 +140,7 @@ extern int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2);
 extern int javaMethodApplicability(Symbol *memb, char *actArgs);
 extern Symbol *javaGetSuperClass(Symbol *cc);
 extern Symbol *javaCurrentSuperClass(void);
-extern TypeModifier *javaCheckNumeric(TypeModifier *tt);
-extern TypeModifier *javaNumericPromotion(TypeModifier *tt);
 extern TypeModifier *javaBinaryNumericPromotion(TypeModifier *t1,
                                                    TypeModifier *t2
                                                    );
-extern TypeModifier *javaBitwiseLogicalPromotion(TypeModifier *t1,
-                                                    TypeModifier *t2
-                                                    );
-extern TypeModifier *javaConditionalPromotion(TypeModifier *t1,
-                                                 TypeModifier *t2
-                                                 );
-extern int javaIsStringType(TypeModifier *tt);
-
 #endif

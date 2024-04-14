@@ -287,26 +287,6 @@ Symbol *javaCurrentSuperClass(void) {
     return (Symbol *) mock();
 }
 
-TypeModifier *javaCheckNumeric(TypeModifier *tt) {
-    return (TypeModifier *) mock(tt);
-}
-
-TypeModifier *javaNumericPromotion(TypeModifier *tt) {
-    return (TypeModifier *) mock(tt);
-}
-
 TypeModifier *javaBinaryNumericPromotion(TypeModifier *t1, TypeModifier *t2) {
     return (TypeModifier *) mock(t1, t2);
-}
-
-TypeModifier *javaBitwiseLogicalPromotion(TypeModifier *t1, TypeModifier *t2) {
-    return (TypeModifier *) mock(t1, t2);
-}
-
-TypeModifier *javaConditionalPromotion(TypeModifier *t1, TypeModifier *t2) {
-    return (TypeModifier *) mock(t1, t2);
-}
-
-int javaIsStringType(TypeModifier *tt) {
-    return (int) mock(tt);
 }
