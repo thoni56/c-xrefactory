@@ -47,9 +47,6 @@ extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int 
 extern Symbol *jslTypeSpecifier1(Type t);
 extern Symbol *jslTypeSpecifier2(TypeModifier *t);
 
-extern void jslCompleteDeclarator(Symbol *t, Symbol *d);
-extern TypeModifier *jslPrependComposedType(TypeModifier *d, Type type);
-extern TypeModifier *jslAppendComposedType(TypeModifier **d, Type type);
 extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
 extern Symbol *jslTypeNameDefinition(IdList *tname);
 extern Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
@@ -63,17 +60,7 @@ extern void jslNewClassDefinitionBegin(Id *name,
                                        int accessFlags,
                                        Symbol *anonInterf,
                                        int position);
-extern void jslAddDefaultConstructor(Symbol *cl);
-extern void jslNewClassDefinitionEnd(void);
-extern void jslNewAnonClassDefinitionBegin(Id *interfName);
 
 extern void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp);
-extern void jslAddMapedImportTypeName(char *file,
-                                      char *path,
-                                      char *pack,
-                                      Completions *c,
-                                      void *vdirid,
-                                      int  *storage);
-extern void jslAddAllPackageClassesFromFileTab(IdList *pack);
 
 #endif

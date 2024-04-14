@@ -17,7 +17,3 @@ void cctAddCctTree(CctNode *cc, CctNode *x, int depthFactor) {
 void cctDump(CctNode *cc, int depth) {
   mock(cc, depth);
 }
-
-void cctTest(void) {
-  mock();
-}

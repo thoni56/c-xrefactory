@@ -96,30 +96,6 @@ Symbol *jslTypeSpecifier1(Type t) {
     return jslTypeSpecifier2(jslCreateSimpleTypeModifier(t));
 }
 
-TypeModifier *jslAppendComposedType(TypeModifier **d, Type type) {
-    TypeModifier *p;
-    p = cfAlloc(TypeModifier);
-    initTypeModifier(p, type);
-    LIST_APPEND(TypeModifier, (*d), p);
-    return p;
-}
-
-TypeModifier *jslPrependComposedType(TypeModifier *d, Type type) {
-    TypeModifier *p;
-    p = cfAlloc(TypeModifier);
-    initTypeModifier(p, type);
-    p->next = d;
-    return p;
-}
-
-void jslCompleteDeclarator(Symbol *t, Symbol *d) {
-    assert(t && d);
-    if (t == &errorSymbol || d == &errorSymbol
-        || t->type==TypeError || d->type==TypeError) return;
-    LIST_APPEND(TypeModifier, d->u.typeModifier, t->u.typeModifier);
-    d->storage = t->storage;
-}
-
 /* Used as argument to addToFrame() thus void* argument */
 static void jslRemoveNestedClass(void *ddv) {
     JslSymbolList *dd;
@@ -297,63 +273,6 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
 }
 
 #define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
-void jslAddMapedImportTypeName(char *file, char *a1_unused, char *a2_unused, Completions *a3_unused,
-                               void *vdirid, int *a5_unused) {
-    char   *p;
-    char    name[MAX_FILE_NAME_SIZE];
-    int     length;
-    IdList *packid;
-
-    //&fprintf(communicationChannel,":jsl import type %s %s %s\n", file, path, pack);
-    packid = (IdList *)vdirid;
-    for (p = file; *p && *p != '.' && *p != '$'; p++)
-        ;
-    if (*p != '.')
-        return;
-    if (strcmp(p, ".class") != 0 && strcmp(p, ".java") != 0)
-        return;
-    length = p - file;
-    strncpy(name, file, length);
-    assert(length + 1 < MAX_FILE_NAME_SIZE);
-    name[length] = 0;
-    jslTypeSymbolDefinition(name, packid, ADD_YES, ORDER_APPEND, false);
-}
-
-void jslAddAllPackageClassesFromFileTab(IdList *packageId) {
-    int pnlen;
-    char fqtName[MAX_FILE_NAME_SIZE];
-    char tempString[MAX_FILE_NAME_SIZE];
-
-    javaCreateComposedName(NULL, packageId, '/', NULL, fqtName, MAX_FILE_NAME_SIZE);
-    pnlen = strlen(fqtName);
-
-    for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
-        FileItem *fileItem = getFileItem(i);
-        if (fileItem->name[0]==ZIP_SEPARATOR_CHAR
-            && strncmp(fileItem->name+1, fqtName, pnlen)==0
-            && (packageId==NULL || fileItem->name[pnlen+1] == '/'))
-        {
-            char *bb;
-            if (packageId==NULL)
-                bb = fileItem->name+pnlen+1;
-            else
-                bb = fileItem->name+pnlen+2;
-            int ch = 0;
-            for (char *ee=bb, *dd=tempString; *ee; ee++,dd++) {
-                ch = *ee;
-                if (ch=='.' || ch=='/' || ch=='$') {
-                    *dd = 0;
-                    break;
-                } else {
-                    *dd = ch;
-                }
-            }
-            if (ch=='.') {
-                jslTypeSymbolDefinition(tempString, packageId, ADD_YES, ORDER_APPEND, false);
-            }
-        }
-    }
-}
 
 static void jslAddToLoadWaitList( Symbol *clas ) {
     SymbolList *ll;
@@ -611,36 +530,4 @@ void jslNewClassDefinitionBegin(Id *name, int accFlags, Symbol *anonInterf, int 
         jslAddToLoadWaitList(cc);
         jslAddSuperNestedClassesToJslTypeTab(cc);
     }
-}
-
-void jslNewClassDefinitionEnd(void) {
-    Symbol *clas;
-
-    assert(s_jsl->classStat && s_jsl->classStat->next);
-
-    clas = s_jsl->classStat->thisClass;
-    FileItem *fileItem = getFileItem(clas->u.structSpec->classFileNumber);
-    if (fileItem->cxLoading) {
-        fileItem->cxLoaded = true;
-    }
-
-    s_jsl->classStat = s_jsl->classStat->next;
-    endBlock();
-}
-
-void jslAddDefaultConstructor(Symbol *clas) {
-    Symbol *method = javaCreateNewMethod(clas->name, &noPosition, MEMORY_CF);
-    jslMethodHeader(clas->access, &defaultVoidDefinition, method,
-                    StorageConstructor, NULL);
-}
-
-void jslNewAnonClassDefinitionBegin(Id *interface) {
-    IdList   l;
-    Symbol   *interfaceSymbol, *str;
-
-    fillIdList(&l, *interface, interface->name, TypeDefault, NULL);
-    jslClassifyAmbiguousTypeName(&l, &str);
-    interfaceSymbol = jslTypeNameDefinition(&l);
-    jslNewClassDefinitionBegin(&javaAnonymousClassName, AccessDefault,
-                               interfaceSymbol, CPOS_ST);
 }
