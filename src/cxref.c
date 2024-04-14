@@ -2481,42 +2481,12 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
 
 static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
     OlcxReferences    *rstack;
-    SymbolsMenu     *ss;
-    int                 clii;
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
-    if (!LANGUAGE(LANG_JAVA)) {
-        rstack->hkSelectedSym = NULL;
-        errorMessage(ERR_ST,"This function is available only in Java language");
-        return NO_FILE_NUMBER;
-    }
-    assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
-    clii = s_javaObjectSymbol->u.structSpec->classFileNumber;
-    log_trace("class clii==%d==%s", clii, getFileItem(clii)->name);
-    ss = rstack->hkSelectedSym;
-    if (ss!=NULL && ss->next!=NULL) {
-        // several cursor selected fields
-        // probably constructor, look for a class type
-        if (ss->next->references.type == TypeStruct)
-            ss = ss->next;
-    }
-    if (ss != NULL) {
-        //&fprintf(dumpOut, "sym %s of %s\n", ss->references.linkName, typeNamesTable[ss->references.type]);
-        if (ss->references.type == TypeStruct) {
-            clii = getClassNumFromClassLinkName(ss->references.linkName, clii);
-        } else {
-            if (options.serverOperation == OLO_CLASS_TREE) {
-                assert(sessionData.classTree.baseClassFileNumber!=NO_FILE_NUMBER);
-                clii = sessionData.classTree.baseClassFileNumber;
-            } else {
-                if (ss->references.vApplClass!=NO_FILE_NUMBER) clii = ss->references.vApplClass;
-            }
-        }
-    }
 
-    freeSymbolsMenuList(ss);
-    rstack->hkSelectedSym = olCreateSpecialMenuItem(fieldName, clii, storage);
-    return clii;
+    rstack->hkSelectedSym = NULL;
+    errorMessage(ERR_ST,"This function is available only in Java language");
+    return NO_FILE_NUMBER;
 }
 
 
@@ -3546,10 +3516,7 @@ void answerEditAction(void) {
     case OLO_ARG_MANIP:
         rstack = sessionData.browserStack.top;
         assert(rstack!=NULL);
-        if (rstack->hkSelectedSym == NULL ||
-            (LANGUAGE(LANG_JAVA) &&
-             rstack->hkSelectedSym->references.storage!=StorageMethod &&
-             rstack->hkSelectedSym->references.storage!=StorageConstructor)) {
+        if (rstack->hkSelectedSym == NULL) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or constructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (constructor) name and reinvoke the refactoring.");
             errorMessage(ERR_ST, tmpBuff);
@@ -3708,11 +3675,7 @@ SymbolsMenu *createSelectionMenu(ReferenceItem *references) {
                 defusage = menu->defUsage;
                 log_trace(": propagating defpos (line %d) to menusym", defpos->line);
             }
-            if (LANGUAGE(LANG_JAVA)) {
-                vlev = classCmp(menu->references.vApplClass, references->vApplClass);
-            } else {
-                vlev = 0;
-            }
+            vlev = 0;
             if (vlevel==0 || ABS(vlevel)>ABS(vlev))
                 vlevel = vlev;
             log_trace("ooBits for %s <-> %s %o %o", getFileItem(menu->references.vApplClass)->name, references->linkName, oo, ooBits);

@@ -874,16 +874,8 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
     extractSprintThrownExceptions(nhead+nhi, program);
     nhi += strlen(nhead+nhi);
 
-    if (LANGUAGE(LANG_JAVA)) {
-        // this makes renaming after extraction much faster
-        strcat(resultingString, "private ");
-    }
+    strcat(resultingString, "static ");
 
-    if (LANGUAGE(LANG_JAVA) && (javaExtractFromFunctionModifiers&AccessStatic)==0) {
-        ; // sprintf(rb+strlen(rb), "");
-    } else {
-        strcat(resultingString, "static ");
-    }
     for (p=program; p!=NULL; p=p->next) {
         if (p->classification == CLASSIFIED_AS_RESULT_VALUE
             || p->classification == CLASSIFIED_AS_LOCAL_RESULT_VALUE
@@ -1211,21 +1203,8 @@ static void javaGenerateNewClassTail(ProgramGraphNode *program) {
     ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
-static bool isClassifiedAsAnyTypeOfOutArgument(ProgramGraphNode *p) {
-    return p->classification == CLASSIFIED_AS_OUT_ARGUMENT
-        || p->classification == CLASSIFIED_AS_LOCAL_OUT_ARGUMENT
-        || p->classification == CLASSIFIED_AS_IN_OUT_ARGUMENT;
-}
 
 /* ******************************************************************* */
-
-static bool isNewClassNecessary(ProgramGraphNode *program) {
-    for (ProgramGraphNode *p=program; p!=NULL; p=p->next) {
-        if (isClassifiedAsAnyTypeOfOutArgument(p))
-            return true;
-    }
-    return false;
-}
 
 static bool programStructureMismatch() {
     return parsedClassInfo.cxMemoryIndexAtFunctionBegin > parsedInfo.cxMemoryIndexAtBlockBegin
@@ -1276,23 +1255,13 @@ static void makeExtraction(void) {
     classifyLocalVariables(program);
     reclassifyInOutVariables(program);
 
-    if (LANGUAGE(LANG_JAVA))
-        needToExtractNewClass = isNewClassNecessary(program);
-
     char *extractionName;
     if (options.extractMode == EXTRACT_VARIABLE)
         extractionName = "newVariable_";
-    else if (LANGUAGE(LANG_JAVA)) {
-        if (needToExtractNewClass)
-            extractionName = "newClass_";
-        else
-            extractionName = "newMethod_";
-    } else {
-        if (options.extractMode==EXTRACT_MACRO)
-            extractionName = "NEW_MACRO_";
-        else
-            extractionName = "newFunction_";
-    }
+    else if (options.extractMode==EXTRACT_MACRO) {
+        extractionName = "NEW_MACRO_";
+    } else
+        extractionName = "newFunction_";
 
     ppcBeginWithStringAttribute(PPC_EXTRACTION_DIALOG, PPCA_TYPE, extractionName);
 
@@ -1350,9 +1319,6 @@ void extractActionOnBlockMarker(void) {
     if (parsedInfo.cxMemoryIndexAtBlockBegin == 0) {
         parsedInfo.cxMemoryIndexAtBlockBegin = cxMemory->index;
         parsedInfo.workMemoryIndexAtBlockBegin = currentBlock->outerBlock;
-        if (LANGUAGE(LANG_JAVA)) {
-            javaExtractFromFunctionModifiers = javaStat->methodModifiers;
-        }
     } else {
         assert(parsedInfo.cxMemoryIndexAtBlockEnd == 0);
         parsedInfo.cxMemoryIndexAtBlockEnd = cxMemory->index;
