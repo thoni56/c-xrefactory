@@ -115,10 +115,6 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     return (Symbol *) mock(name, fqName);
 }
 
-TypeModifier *javaNewAfterName(IdList *name, Id *id, IdList *idl) {
-    return (TypeModifier *) mock(name, id, idl);
-}
-
 TypeModifier *javaMethodInvocationT(TypeModifier *tt, Id *name, S_typeModifierList *args) {
     return (TypeModifier *) mock(tt, name, args);
 }

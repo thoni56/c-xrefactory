@@ -43,7 +43,6 @@ extern Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr);
 extern int javaLinkNameIsAnnonymousClass(char *linkname);
 extern void addThisCxReferences(int classIndex, Position *pos);
 extern Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);
-extern TypeModifier *javaNewAfterName(IdList *name, Id *id, IdList *idl);
 extern TypeModifier *javaMethodInvocationT(	TypeModifier *tt,
                                                 Id *name,
                                                 S_typeModifierList *args

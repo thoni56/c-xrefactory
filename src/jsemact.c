@@ -683,6 +683,24 @@ static Result findTopLevelName(char *name, S_recFindStr *resRfs,
 
 static void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage);
 
+static bool javaOuterClassAccessible(Symbol *cl) {
+    log_trace("testing class accessibility of %s",cl->linkName);
+    if (cl->access & AccessPublic) {
+        log_trace("return true for public access");
+        return true;
+    }
+    /* default access, check whether it is in current package */
+    assert(javaStat);
+    if (javaClassIsInCurrentPackage(cl)) {
+        log_trace("return true for default protection in current package");
+        return true;
+    }
+    log_trace("return false on default");
+    return false;
+
+}
+
+
 static int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                             Symbol **str,
                                             IncludeCxrefs cxrefFlag

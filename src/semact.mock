@@ -52,10 +52,6 @@ bool javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symb
     return (bool) mock(rfs, applcl, funcl, rec, recAccessFlags);
 }
 
-bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
-    return (bool) mock(rfs, applCl, funCl, r);
-}
-
 int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     return (int) mock(rfs, r);
 }

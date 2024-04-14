@@ -162,23 +162,6 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     }
 }
 
-bool javaOuterClassAccessible(Symbol *cl) {
-    log_trace("testing class accessibility of %s",cl->linkName);
-    if (cl->access & AccessPublic) {
-        log_trace("return true for public access");
-        return true;
-    }
-    /* default access, check whether it is in current package */
-    assert(javaStat);
-    if (javaClassIsInCurrentPackage(cl)) {
-        log_trace("return true for default protection in current package");
-        return true;
-    }
-    log_trace("return false on default");
-    return false;
-
-}
-
 static bool javaRecordVisible(Symbol *appcl, Symbol *funcl, unsigned accessFlags) {
     // there is special case to check! Private symbols are not inherited!
     if (accessFlags & AccessPrivate) {
@@ -277,7 +260,7 @@ bool javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbo
     return false;
 }
 
-bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
+static bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
     return javaRecordVisible(rfs->baseClass, rfs->currentClass, r->access) &&
            javaRecordAccessible(rfs, rfs->baseClass, rfs->currentClass, r, r->access);
 }
