@@ -309,20 +309,6 @@ static void safetyCheck(char *project, EditorMarker *point) {
         errorMessage(ERR_ST, "No symbol found for refactoring safety check");
     }
     olCreateSelectionMenu(sessionData.browserStack.top->command);
-    if (safetyCheck2ShouldWarn()) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        if (LANGUAGE(LANG_JAVA)) {
-            sprintf(tmpBuff, "This is class hierarchy of given symbol as it will appear after the refactoring. It "
-                             "does not correspond to the hierarchy before the refactoring. It is probable that "
-                             "the refactoring will not be behaviour preserving. If you are not sure about your "
-                             "action, you should abandon this refactoring!");
-        } else {
-            sprintf(tmpBuff, "These symbols will be refererred at this place after the refactoring. It is "
-                             "probable that the refactoring will not be behaviour preserving. If you are not sure "
-                             "about your action, you should abandon this refactoring!");
-        }
-        displayResolutionDialog(tmpBuff, PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
-    }
 }
 
 static char *getIdentifierOnMarker_static(EditorMarker *marker) {

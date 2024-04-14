@@ -53,7 +53,6 @@ extern void mapCreateSelectionMenu(ReferenceItem *dd);
 extern void olcxFreeOldCompletionItems(OlcxReferencesStack *stack);
 
 extern Reference *getDefinitionRef(Reference *rr);
-extern bool safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);
 extern bool olcxShowSelectionMenu(void);
 extern void pushEmptySession(OlcxReferencesStack *stack);

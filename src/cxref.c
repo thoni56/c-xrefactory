@@ -87,31 +87,6 @@ void renameCollationSymbols(SymbolsMenu *menu) {
 
 /* *********************************************************************** */
 
-static void setClassTreeBaseType(ClassTreeData *ct, Symbol *p) {
-    Symbol        *rtcls;
-    TypeModifier *tt;
-    assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
-    assert(ct);
-    //&fprintf(dumpOut,"!looking for result of %s\n",p->linkName);fflush(dumpOut);
-    ct->baseClassFileNumber = s_javaObjectSymbol->u.structSpec->classFileNumber;
-    if (p->type == TypeStruct) {
-        assert(p->u.structSpec);
-        ct->baseClassFileNumber = p->u.structSpec->classFileNumber;
-    } else if (p->type == TypeDefault && p->storage!=StorageConstructor) {
-        tt = p->u.typeModifier;
-        assert(tt);
-        if (tt->type == TypeFunction) tt = tt->next;
-        assert(tt);
-        if (tt->type == TypeStruct) {
-            rtcls = tt->u.t;
-            assert(rtcls!=NULL && rtcls->type==TypeStruct
-                   && rtcls->u.structSpec!=NULL);
-            //&fprintf(dumpOut,"!resulting class is %s\n",rtcls->linkName);fflush(dumpOut);
-            ct->baseClassFileNumber = rtcls->u.structSpec->classFileNumber;
-        }
-    }
-}
-
 Reference *addSpecialFieldReference(char *name,int storage, int fnum,
                                     Position *p, int usage){
     Symbol        ss;
@@ -282,18 +257,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
         break;
     }
     case TypeStruct:
-        if (LANGUAGE(LANG_JAVA)) {
-            if (isDefinitionUsage(usage)) {
-                makeRefactoringAvailable(PPC_AVR_RENAME_CLASS, "");
-                makeRefactoringAvailable(PPC_AVR_MOVE_CLASS, "");
-                makeRefactoringAvailable(PPC_AVR_MOVE_CLASS_TO_NEW_FILE, "");
-                //& refactorings[PPC_AVR_MOVE_ALL_CLASSES_TO_NEW_FILE, "");
-                makeRefactoringAvailable(PPC_AVR_EXPAND_NAMES, "");
-                makeRefactoringAvailable(PPC_AVR_REDUCE_NAMES, "");
-            }
-        } else {
-            makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
-        }
+        makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
         break;
     case TypeMacroArg:
         makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
@@ -430,16 +394,10 @@ static void olGetAvailableRefactorings(void) {
     }
 
     if (options.olMarkOffset != -1 && options.olCursorOffset != options.olMarkOffset) {
-        // region selected, TODO!!! some more prechecks for extract method - Duh! Which ones!?!?!?!
+        // region selected, TODO!!! some more prechecks for extract - Duh! Which ones!?!?!?!
         makeRefactoringAvailable(PPC_AVR_EXTRACT_VARIABLE, "");
-        if (LANGUAGE(LANG_JAVA)) {
-            makeRefactoringAvailable(PPC_AVR_EXTRACT_METHOD, "");
-        } else {
-            makeRefactoringAvailable(PPC_AVR_EXTRACT_FUNCTION, "");
-        }
-        if (!LANGUAGE(LANG_JAVA)) {
-            makeRefactoringAvailable(PPC_AVR_EXTRACT_MACRO, "");
-        }
+        makeRefactoringAvailable(PPC_AVR_EXTRACT_FUNCTION, "");
+        makeRefactoringAvailable(PPC_AVR_EXTRACT_MACRO, "");
     }
     ppcBegin(PPC_AVAILABLE_REFACTORINGS);
     for (int i=0; i<AVR_MAX_AVAILABLE_REFACTORINGS; i++) {
@@ -593,10 +551,6 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                 if (isDefinitionUsage(usage.kind)) {
                     menu->defpos = *position;
                     menu->defUsage = usage.kind;
-                }
-                if (options.serverOperation == OLO_CLASS_TREE
-                    && LANGUAGE(LANG_JAVA)) {
-                    setClassTreeBaseType(&sessionData.classTree, symbol);
                 }
                 if (options.serverOperation == OLO_GET_SYMBOL_TYPE) {
                     setOlSymbolTypeForPrint(symbol);
@@ -1914,71 +1868,6 @@ static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
     }
 }
 
-static bool isSpecialConstructorOnlySelectionCase(int command) {
-    if (command == OLO_PUSH) return true;
-    if (command == OLO_PUSH_ONLY) return true;
-    if (command == OLO_PUSH_AND_CALL_MACRO) return true;
-    if (command == OLO_ARG_MANIP) return true;
-    if (command == OLO_SAFETY_CHECK2) {
-        // here check if origin was an argument manipulation
-        OlcxReferences *refs, *origrefs, *newrefs, *diffrefs;
-        int pbflag=0;
-        origrefs = newrefs = diffrefs = NULL;
-        SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs, pbflag);
-        assert(origrefs && newrefs && diffrefs);
-        if (pbflag)
-            return false;
-        if (origrefs->command == OLO_ARG_MANIP)
-            return true;
-    }
-    return false;
-}
-
-static void handleConstructorSpecialsInSelectingSymbolInMenu(SymbolsMenu *menu, int command) {
-    SymbolsMenu *m1, *m2;
-    int ccc, selectedCount, lll, vn;
-
-    if (!LANGUAGE(LANG_JAVA))
-        return;
-    if (!isSpecialConstructorOnlySelectionCase(command))
-        return;
-    m1 = NULL; m2 = NULL;
-    vn = 0;
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
-        if (m->visible) {
-            if (vn==0) m1 = m;
-            else if (vn==1) m2 = m;
-            vn ++;
-        }
-    }
-    if (vn == 2) {
-        // exactly two visible items
-        assert(m1 && m2);
-        selectedCount = (m1->selected?1:0) + (m2->selected?1:0);
-        ccc = (m1->references.storage==StorageConstructor) + (m2->references.storage==StorageConstructor);
-        lll = (m1->references.type==TypeStruct) + (m2->references.type==TypeStruct);
-        //&fprintf(dumpOut," sss,ccc,lll == %d %d %d\n",selectedCount,ccc,lll);
-        if (selectedCount==2 && ccc==1 && lll==1) {
-            //dr1 = getDefinitionRef(s1->s.refs);
-            //dr2 = getDefinitionRef(s2->s.refs);
-            // deselect class references, but only if constructor definition exists
-            // it was not a good idea with def refs, because of browsing of
-            // javadoc for standard constructors
-            if (m1->references.type==TypeStruct /*& && dr2!=NULL &*/) {
-                m1->selected = false;
-                if (command == OLO_ARG_MANIP)
-                    m1->visible = false;
-            } else if (m2->references.type==TypeStruct /*& && dr1!=NULL &*/) {
-                m2->selected = false;
-                if (command == OLO_ARG_MANIP)
-                    m2->visible = false;
-            }
-        }
-    }
-
-}
-
-
 static bool isRenameMenuSelection(int command) {
     return command == OLO_RENAME
         || command == OLO_ENCAPSULATE
@@ -2083,10 +1972,7 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
         }
     }
     setDefaultSelectedVisibleItems(menu, oovisible, ooselected);
-    // for local motion a class browsing would make strange effect
-    // if class is deselected on constructors
-    handleConstructorSpecialsInSelectingSymbolInMenu(menu, command);
- sfini:
+sfini:
     return;
 }
 
@@ -2505,15 +2391,6 @@ static SymbolsMenu *firstVisibleSymbol(SymbolsMenu *first) {
     return fvisible;
 }
 
-static bool staticallyLinkedSymbolMenu(SymbolsMenu *menu) {
-    SymbolsMenu *fv;
-    fv = firstVisibleSymbol(menu);
-    if (javaStaticallyLinked(fv->references.storage,fv->references.access)) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 bool olcxShowSelectionMenu(void) {
     SymbolsMenu *first, *fvisible;
@@ -2570,96 +2447,6 @@ bool olcxShowSelectionMenu(void) {
         }
     }
     return false;
-}
-
-static int countSelectedItems(SymbolsMenu *menu) {
-    int count = 0;
-    for (SymbolsMenu *ss=menu; ss!=NULL; ss=ss->next) {
-        if (ss->selected)
-            count++;
-    }
-    return count;
-}
-
-static bool refactoringLinkNameCorrespondance(char *n1, char *n2, int command) {
-    // this should say if there is refactoring link names correspondance
-    // between n1 and n2
-    //&fprintf(dumpOut,"checking lnc between %s %s on %s\n", n1, n2, olcxOptionsName[command]);
-    //& if (command == OLO_RENAME) return linkNamesHaveSameProfile(n1, n2);
-    //& if (command == OLO_ENCAPSULATE) return linkNamesHaveSameProfile(n1, n2);
-    //& if (command == OLO_ARG_MANIP) return linkNamesHaveSameProfile(n1, n2);
-    //& if (command == OLO_VIRTUAL2STATIC_PUSH) return linkNamesHaveSameProfile(n1, n2);
-    // TODO!! other cases (argument manipulations) not yet implemented
-    // they are all as OLO_RENAME for now !!!
-    return true;
-}
-
-static SymbolsMenu *safetyCheck2FindCorrMenuItem(SymbolsMenu *item,
-                                                 SymbolsMenu *menu,
-                                                 int command
-) {
-    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
-        if (m->selected
-            && m->references.vApplClass == item->references.vApplClass
-            && m->references.type == item->references.type
-            && m->references.storage == item->references.storage
-            && refactoringLinkNameCorrespondance(m->references.linkName, item->references.linkName,
-                                                 command)) {
-            // here it is
-            return m;
-        }
-    }
-    return NULL;
-}
-
-static bool scCompareVirtualHierarchies(SymbolsMenu *origm,
-                                        SymbolsMenu *newm,
-                                        int command) {
-    int count1, count2;
-    int res = false;
-
-    count1 = countSelectedItems(origm);
-    count2 = countSelectedItems(newm);
-    //&fprintf(dumpOut,":COMPARING\n");olcxPrintSelectionMenu(origm);fprintf(dumpOut,":TO\n");olcxPrintSelectionMenu(newm);fprintf(dumpOut,":END\n");
-    if (count1 != count2)
-        res = true;
-    for (SymbolsMenu *m=newm; m!=NULL; m=m->next) {
-        if (m->selected) {
-            SymbolsMenu *oss = safetyCheck2FindCorrMenuItem(m, origm, command);
-            if (oss==NULL || !oss->selected) {
-                res = true;
-                m->selected = false;
-            }
-        }
-    }
-    return res;
-}
-
-bool safetyCheck2ShouldWarn(void) {
-    if (options.serverOperation != OLO_SAFETY_CHECK2)
-        return false;
-    if (! LANGUAGE(LANG_JAVA))
-        return false;
-
-    // compare hierarchies and deselect diff
-    OlcxReferences *refs, *origrefs, *newrefs, *diffrefs;
-    origrefs = newrefs = diffrefs = NULL;
-    bool problem = false;
-    SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs, problem);
-    if (problem)
-        return false;
-    assert(origrefs && newrefs && diffrefs);
-
-    if (staticallyLinkedSymbolMenu(origrefs->menuSym))
-        return false;
-
-    bool res = scCompareVirtualHierarchies(origrefs->menuSym, newrefs->menuSym,
-                                      origrefs->command);
-    if (res) {
-        // hierarchy was changed, recompute refs
-        olcxRecomputeSelRefs(newrefs);
-    }
-    return res;
 }
 
 static bool olMenuHashFileNumLess(SymbolsMenu *s1, SymbolsMenu *s2) {
@@ -3330,7 +3117,6 @@ static void mainAnswerReferencePushingAction(ServerOperation operation) {
     olcxDumpSelectionMenu(sessionData->browserStack.top->menuSym);
 #endif
     if (options.manualResolve == RESOLVE_DIALOG_ALWAYS
-        || safetyCheck2ShouldWarn()
         || (olcxShowSelectionMenu()
             && options.manualResolve != RESOLVE_DIALOG_NEVER)) {
         if (options.xref2) {

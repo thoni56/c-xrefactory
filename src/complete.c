@@ -140,19 +140,6 @@ int printJavaModifiers(char *buf, int *size, Access access) {
     return i;
 }
 
-static char *getCompletionClassFieldString(CompletionLine *cl) {
-    char *cname;
-
-    if (cl->vFunClass!=NULL) {
-        cname = javaGetShortClassName(cl->vFunClass->linkName);
-    } else {
-        assert(cl->symbol);
-        cname = javaGetNudePreTypeName_static(cl->symbol->linkName, DONT_DISPLAY_NESTED_CLASSES);
-    }
-    return cname;
-}
-
-
 static void sprintFullCompletionInfo(Completions* completions, int index, int indent) {
     int size, l, vFunCl, cindent, tempLength;
     bool typeDefinitionExpressionFlag;
@@ -410,136 +397,30 @@ void printCompletions(Completions* c) {
 static bool isTheSameSymbol(CompletionLine *c1, CompletionLine *c2) {
     if (strcmp(c1->string, c2->string) != 0)
         return false;
-    /*fprintf(dumpOut,"st %d %d\n",c1->symType,c2->symType);*/
     if (c1->symbolType != c2->symbolType)
-        return false;
-    if (currentLanguage != LANG_JAVA)
-        return true;
-    if (c1->symbolType == TypeStruct) {
-        if (c1->symbol!=NULL && c2->symbol!=NULL) {
-            return strcmp(c1->symbol->linkName, c2->symbol->linkName)==0;
-        }
-    }
-    if (c1->symbolType != TypeDefault)
-        return true;
-    assert(c1->symbol && c1->symbol->u.typeModifier);
-    assert(c2->symbol && c2->symbol->u.typeModifier);
-    /*fprintf(dumpOut,"tm %d %d\n",c1->t->u.type->m,c2->t->u.type->m);*/
-    if (c1->symbol->u.typeModifier->type != c2->symbol->u.typeModifier->type)
-        return false;
-    if (c1->vFunClass != c2->vFunClass)
-        return false;
-    if (c2->symbol->u.typeModifier->type != TypeFunction)
-        return true;
-    /*fprintf(dumpOut,"sigs %s %s\n",c1->t->u.type->u.sig,c2->t->u.type->u.sig);*/
-    assert(c1->symbol->u.typeModifier->u.m.signature && c2->symbol->u.typeModifier->u.m.signature);
-    if (strcmp(c1->symbol->u.typeModifier->u.m.signature,c2->symbol->u.typeModifier->u.m.signature))
         return false;
     return true;
 }
 
-static bool symbolIsInTab(CompletionLine *a, int ai, int *ii, char *s, CompletionLine *t) {
-    int i,j;
-    for(i= *ii-1; i>=0 && strcmp(a[i].string,s)==0; i--) ;
-    for(j= *ii+1; j<ai && strcmp(a[j].string,s)==0; j++) ;
-    /* from a[i] to a[j] symbols have the same names */
-    for (i++; i<j; i++)
-        if (isTheSameSymbol(&a[i],t))
-            return true;
-    return false;
-}
-
-static int compareCompletionClassName(CompletionLine *c1, CompletionLine *c2) {
-    char    n1[TMP_STRING_SIZE];
-    int     c;
-    char    *n2;
-    strcpy(n1, getCompletionClassFieldString(c1));
-    n2 = getCompletionClassFieldString(c2);
-    c = strcmp(n1, n2);
-    if (c<0) return -1;
-    if (c>0) return 1;
-    return 0;
-}
-
 static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
-    int     c, l1, l2;
+    int     l1, l2;
     char    *s1, *s2;
-    if (! LANGUAGE(LANG_JAVA)) {
-        // exact matches goes first
-        s1 = strchr(c1->string, '(');
-        if (s1 == NULL) l1 = strlen(c1->string);
-        else l1 = s1 - c1->string;
-        s2 = strchr(c2->string, '(');
-        if (s2 == NULL) l2 = strlen(c2->string);
-        else l2 = s2 - c2->string;
-        if (l1 == collectedCompletions.idToProcessLen && l2 != collectedCompletions.idToProcessLen)
-            return -1;
-        if (l1 != collectedCompletions.idToProcessLen && l2 == collectedCompletions.idToProcessLen)
-            return 1;
-        return strcmp(c1->string, c2->string);
-    } else {
-        if (c1->symbolType==TypeKeyword && c2->symbolType!=TypeKeyword)
-            return 1;
-        if (c1->symbolType!=TypeKeyword && c2->symbolType==TypeKeyword)
-            return -1;
-        if (c1->symbolType==TypeNonImportedClass && c2->symbolType!=TypeNonImportedClass)
-            return 1;
-        if (c1->symbolType!=TypeNonImportedClass && c2->symbolType==TypeNonImportedClass)
-            return -1;
-        if (c1->symbolType!=TypeInheritedFullMethod && c2->symbolType==TypeInheritedFullMethod)
-            return 1;
-        if (c1->symbolType==TypeInheritedFullMethod && c2->symbolType!=TypeInheritedFullMethod)
-            return -1;
-        if (c1->symbolType==TypeInheritedFullMethod && c2->symbolType==TypeInheritedFullMethod) {
-            if (c1->symbol == NULL)
-                return 1;    // "main"
-            if (c2->symbol == NULL)
-                return -1;
-            c = compareCompletionClassName(c1, c2);
-            if (c!=0)
-                return c;
-        }
-        if (c1->symbolType!=TypeDefault && c2->symbolType==TypeDefault)
-            return 1;
-        if (c1->symbolType==TypeDefault && c2->symbolType!=TypeDefault)
-            return -1;
-        // exact matches goes first
-        l1 = strlen(c1->string);
-        l2 = strlen(c2->string);
-        if (l1 == collectedCompletions.idToProcessLen && l2 != collectedCompletions.idToProcessLen)
-            return -1;
-        if (l1 != collectedCompletions.idToProcessLen && l2 == collectedCompletions.idToProcessLen)
-            return 1;
-        if (c1->symbolType==TypeDefault && c2->symbolType==TypeDefault) {
-            c = c1->virtLevel - c2->virtLevel;
-            if (c<0)
-                return -1;
-            if (c>0)
-                return 1;
-            c = compareCompletionClassName(c1, c2);
-            if (c!=0)
-                return c;
-            // compare storages, fields goes first, then methods
-            if (c1->symbol!=NULL && c2->symbol!=NULL) {
-                if (c1->symbol->storage==StorageField && c2->symbol->storage==StorageMethod)
-                    return -1;
-                if (c1->symbol->storage==StorageMethod && c2->symbol->storage==StorageField)
-                    return 1;
-            }
-        }
-        if (c1->symbolType==TypeNonImportedClass && c2->symbolType==TypeNonImportedClass) {
-            // order by class name, not package
-            s1 = lastOccurenceInString(c1->string, '.');
-            if (s1 == NULL) s1 = c1->string;
-            s2 = lastOccurenceInString(c2->string, '.');
-            if (s2 == NULL) s2 = c2->string;
-            return strcmp(s1, s2);
-        }
-        return strcmp(c1->string, c2->string);
-    }
+
+    // exact matches goes first
+    s1 = strchr(c1->string, '(');
+    if (s1 == NULL) l1 = strlen(c1->string);
+    else l1 = s1 - c1->string;
+    s2 = strchr(c2->string, '(');
+    if (s2 == NULL) l2 = strlen(c2->string);
+    else l2 = s2 - c2->string;
+    if (l1 == collectedCompletions.idToProcessLen && l2 != collectedCompletions.idToProcessLen)
+        return -1;
+    if (l1 != collectedCompletions.idToProcessLen && l2 == collectedCompletions.idToProcessLen)
+        return 1;
+    return strcmp(c1->string, c2->string);
 }
 
-static bool reallyInsert(CompletionLine *a, int *aip, char *s, CompletionLine *t, int orderFlag) {
+static bool reallyInsert(CompletionLine *a, int *aip, char *s, CompletionLine *t, bool orderFlag) {
     int ai;
     int l, r, x, c;
 
@@ -552,15 +433,8 @@ static bool reallyInsert(CompletionLine *a, int *aip, char *s, CompletionLine *t
         while (l <= r) {
             x = (l + r) / 2;
             c = completionOrderCmp(t, &a[x]);
-            //&     c = strcmp(s, a[x].string);
             if (c == 0) { /* identifier still in completions */
-                if (currentLanguage != LANG_JAVA)
-                    return false; /* no overloading, so ... */
-                if (symbolIsInTab(a, ai, &x, s, t))
-                    return false;
-                r = x;
-                l = x + 1;
-                break;
+                return false; /* no overloading, so ... */
             }
             if (c < 0)
                 r = x - 1;
@@ -625,7 +499,7 @@ static bool stringContainsCaseInsensitive(char *s1, char *s2) {
     return false;
 }
 
-static void completionInsertName(char *name, CompletionLine *completionLine, int orderFlag,
+static void completionInsertName(char *name, CompletionLine *completionLine, bool orderFlag,
                                  Completions *ci) {
     int len,l;
     //&completionLine->string  = name;
@@ -651,8 +525,8 @@ static void completionInsertName(char *name, CompletionLine *completionLine, int
     }
 }
 
-static void completeName(char *name, CompletionLine *compLine, int orderFlag,
-                  Completions *ci) {
+static void completeName(char *name, CompletionLine *compLine, bool orderFlag,
+                         Completions *ci) {
     if (name == NULL)
         return;
     if (completionTestPrefix(ci, name))
@@ -696,7 +570,7 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
     }
 }
 
-void processName(char *name, CompletionLine *line, int orderFlag, Completions *c) {
+void processName(char *name, CompletionLine *line, bool orderFlag, Completions *c) {
     Completions *ci = (Completions *) c;
     if (options.serverOperation == OLO_SEARCH) {
         searchName(name, line, orderFlag, ci);
@@ -724,7 +598,7 @@ static void completeFun(Symbol *symbol, void *c) {
                                symbol->u.mbody->argumentNames, NULL);
         }
     }
-    processName(symbol->name, &compLine, 1, completionInfo->completions);
+    processName(symbol->name, &compLine, true, completionInfo->completions);
 }
 
 /* TODO: Meaning? Something about constructor... If either then clear completionN */
@@ -737,10 +611,10 @@ static void CONST_CONSTRUCT_NAME(Storage ccstorage, Storage sstorage, char **com
     }
 }
 
-static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl) {
-    CompletionLine         compLine;
-    int             cnamelen;
-    char            *cn, *cname, *psuff, *msig;
+static void completeFunctionOrMethodName(Completions *c, bool orderFlag, int vlevel, Symbol *r, Symbol *vFunCl) {
+    CompletionLine compLine;
+    int cnamelen;
+    char *cn, *cname, *psuff;
 
     cname = r->name;
     cnamelen = strlen(cname);
@@ -748,20 +622,10 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
         cn = cname;
     } else {
         assert(r->u.typeModifier!=NULL);
-        if (LANGUAGE(LANG_JAVA)) {
-            msig = r->u.typeModifier->u.m.signature;
-            assert(msig!=NULL);
-            if (msig[0]=='(' && msig[1]==')') {
-                psuff = "()";
-            } else {
-                psuff = "(";
-            }
+        if (r->u.typeModifier!=NULL && r->u.typeModifier->u.f.args == NULL) {
+            psuff = "()";
         } else {
-            if (r->u.typeModifier!=NULL && r->u.typeModifier->u.f.args == NULL) {
-                psuff = "()";
-            } else {
-                psuff = "(";
-            }
+            psuff = "(";
         }
         cn = stackMemoryAlloc(cnamelen+strlen(psuff)+1);
         strcpy(cn, cname);
@@ -786,7 +650,7 @@ static void symbolCompletionFunction(Symbol *symbol, void *c) {
     CONST_CONSTRUCT_NAME(cc->storage, symbol->storage, &completionName);
     if (completionName!=NULL) {
         if (symbol->type == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->type == TypeFunction) {
-            completeFunctionOrMethodName(cc->res, 1, 0, symbol, NULL);
+            completeFunctionOrMethodName(cc->res, true, 0, symbol, NULL);
         } else {
             fillCompletionLine(&completionLine, completionName, symbol, symbol->type,0, 0, NULL,NULL);
             processName(completionName, &completionLine, 1, cc->res);
@@ -803,20 +667,6 @@ void completeStructs(Completions *c) {
     symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
 }
 
-static bool javaLinkable(Access access) {
-
-    log_trace("testing linkability %x", access);
-    if (currentLanguage != LANG_JAVA)
-        return true;
-    if (access == AccessAll)
-        return true;
-    if ((options.ooChecksBits & OOC_LINKAGE_CHECK) == 0)
-        return true;
-    if (access & AccessStatic)
-        return (access & AccessStatic) != 0;
-    return true;
-}
-
 static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl, char *cname) {
     int     size, ll;
     char    *fcc;
@@ -824,9 +674,6 @@ static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag,
     CompletionLine compLine;
 
     tmp[0]=0; ll=0; size=MAX_CX_SYMBOL_SIZE;
-    if (LANGUAGE(LANG_JAVA)) {
-        ll+=printJavaModifiers(tmp+ll, &size, r->access);
-    }
     typeSPrint(tmp+ll, &size, r->u.typeModifier, cname, ' ', 0, true, SHORT_NAME, NULL);
     fcc = stackMemoryAlloc(strlen(tmp)+1);
     strcpy(fcc,tmp);
@@ -851,7 +698,7 @@ static void completeRecordsNames(
     int vlevelOffset
 ) {
     CompletionLine completionLine;
-    int orderFlag, vlevel, accessCheck, visibilityCheck;
+    int vlevel, accessCheck, visibilityCheck;
     Symbol *r, *vFunCl;
     S_recFindStr rfs;
     char *cname;
@@ -859,11 +706,7 @@ static void completeRecordsNames(
     if (symbol==NULL)
         return;
 
-    if (c->idToProcess[0] == 0 && currentLanguage!=LANG_JAVA) {
-        orderFlag = 0;
-    } else {
-        orderFlag = 1;
-    }
+    bool orderFlag = c->idToProcess[0] != 0;
 
     assert(symbol->u.structSpec);
     iniFind(symbol, &rfs);
@@ -885,16 +728,10 @@ static void completeRecordsNames(
 
         cname = r->name;
         CONST_CONSTRUCT_NAME(constructorOpt, r->storage, &cname);
-        //&fprintf(dumpOut,"record %s\n", cname);
-        if (    cname!=NULL
-                && *cname != 0
-                && r->type != TypeError
-                // Hmm. I hope it will not filter out something important
-                && (! symbolShouldBeHiddenFromSearchResults(r->linkName))
-                //  I do not know whether to check linkability or not
-                //  What is more natural ???
-                && javaLinkable(r->access)) {
-            //&fprintf(dumpOut,"passed\n", cname);
+        if (cname!=NULL && *cname != 0 && r->type != TypeError
+            // Hmm. I hope it will not filter out something important
+            && (! symbolShouldBeHiddenFromSearchResults(r->linkName))
+        ) {
             assert(rfs.currentClass && rfs.currentClass->u.structSpec);
             assert(r->type == TypeDefault);
             vFunCl = rfs.currentClass;
@@ -924,7 +761,7 @@ static void completeRecordsNames(
             }
         }
     }
-    if (c->idToProcess[0] == 0 && currentLanguage!=LANG_JAVA)
+    if (c->idToProcess[0] == 0)
         c->prefix[0] = 0; // no common prefix completed
 }
 
@@ -944,20 +781,9 @@ void completeRecNames(Completions *c) {
 
 static void completeFromSymTab(Completions*c, unsigned storage){
     SymbolCompletionFunctionInfo  info;
-    JavaStat              *cs;
-    int                     vlevelOffset;
 
     fillCompletionSymFunInfo(&info, c, storage);
-    if (currentLanguage == LANG_JAVA) {
-        vlevelOffset = 0;
-        for(cs=javaStat; cs!=NULL && cs->thisClass!=NULL ;cs=cs->next) {
-            symbolTableMapWithPointer(cs->locals, symbolCompletionFunction, (void*) &info);
-            completeRecordsNames(c, cs->thisClass, CLASS_TO_ANY, storage, TypeDefault, vlevelOffset);
-            vlevelOffset += NEST_VIRT_COMPL_OFFSET;
-        }
-    } else {
-        symbolTableMapWithPointer(symbolTable, symbolCompletionFunction, (void*) &info);
-    }
+    symbolTableMapWithPointer(symbolTable, symbolCompletionFunction, (void*) &info);
 }
 
 void completeEnums(Completions *c) {
@@ -1019,10 +845,9 @@ static Symbol *getSymbolFromReference(Reference *reference) {
 
 static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
     TypeModifier *s1,*s2;
-    Symbol        *ss1,*ss2;
 
     assert(t1 && t2);
-    for(s1=t1,s2=t2; s1->next!=NULL&&s2->next!=NULL; s1=s1->next,s2=s2->next) {
+    for (s1=t1,s2=t2; s1->next!=NULL && s2->next!=NULL; s1=s1->next,s2=s2->next) {
         if (s1->type!=s2->type)
             return false;
     }
@@ -1034,19 +859,15 @@ static bool isEqualType(TypeModifier *t1, TypeModifier *t2) {
         if (s1->u.t != s2->u.t)
             return false;
     } else if (s1->type==TypeFunction) {
-        if (LANGUAGE(LANG_JAVA)) {
-            if (strcmp(s1->u.m.signature,s2->u.m.signature)!=0)
-                return false;
-        } else {
-            for(ss1=s1->u.f.args, ss2=s2->u.f.args;
-                ss1!=NULL&&ss2!=NULL;
-                ss1=ss1->next, ss2=ss2->next) {
-                if (!isEqualType(ss1->u.typeModifier, ss2->u.typeModifier))
-                    return false;
-            }
-            if (ss1!=NULL||ss2!=NULL)
+        Symbol *ss1, *ss2;
+        for (ss1=s1->u.f.args, ss2=s2->u.f.args;
+             ss1!=NULL && ss2!=NULL;
+             ss1=ss1->next, ss2=ss2->next) {
+            if (!isEqualType(ss1->u.typeModifier, ss2->u.typeModifier))
                 return false;
         }
+        if (ss1!=NULL||ss2!=NULL)
+            return false;
     }
     return true;
 }
@@ -1069,7 +890,7 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
         assert(r);
         cname = r->name;
         CONST_CONSTRUCT_NAME(StorageDefault, r->storage, &cname);
-        if (cname!=NULL && javaLinkable(r->access)){
+        if (cname!=NULL) {
             assert(rfs.currentClass && rfs.currentClass->u.structSpec);
             assert(r->type == TypeDefault);
             if (isEqualType(r->u.typeModifier, token->typeModifier)) {
@@ -1570,43 +1391,6 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
 
 void javaHintCompleteNonImportedTypes(Completions*c) {
     javaFqtCompletions(c, FQT_COMPLETE_DEFAULT);
-}
-
-void javaHintImportFqt(Completions*c) {
-    javaFqtCompletions(c, FQT_COMPLETE_ALSO_ON_PACKAGE);
-}
-
-void javaHintVariableName(Completions*c) {
-    CompletionLine compLine;
-    char ss[TMP_STRING_SIZE];
-    char *name, *affect1, *affect2;
-
-    if (! LANGUAGE(LANG_JAVA))
-        return;
-    if (c->idToProcessLen != 0)
-        return;
-    if (s_lastReturnedLexem != IDENTIFIER)
-        return;
-
-    sprintf(ss, "%s", uniyylval->ast_id.data->name);
-    //&sprintf(ss, "%s", yytext);
-    if (ss[0]!=0) ss[0] = tolower(ss[0]);
-    name = stackMemoryAlloc(strlen(ss)+1);
-    strcpy(name, ss);
-    sprintf(ss, "%s = new %s", name, uniyylval->ast_id.data->name);
-    //&sprintf(ss, "%s = new %s", name, yytext);
-    affect1 = stackMemoryAlloc(strlen(ss)+1);
-    strcpy(affect1, ss);
-    sprintf(ss, "%s = null;", name);
-    affect2 = stackMemoryAlloc(strlen(ss)+1);
-    strcpy(affect2, ss);
-    fillCompletionLine(&compLine, affect1, NULL, TypeSpecialComplet,0,0,NULL,NULL);
-    processName(affect1, &compLine, 0, c);
-    fillCompletionLine(&compLine, affect2, NULL, TypeSpecialComplet,0,0,NULL,NULL);
-    processName(affect2, &compLine, 0, c);
-    fillCompletionLine(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
-    processName(name, &compLine, 0, c);
-    c->prefix[0] = 0;
 }
 
 void javaCompleteTypeCompName(Completions *c) {

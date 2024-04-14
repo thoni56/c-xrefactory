@@ -16,7 +16,7 @@ extern void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symb
                                short int virtualLevel, short int margn, char **margs,
                                Symbol *vFunClass);
 extern void initCompletions(Completions *completions, int length, Position position);
-extern void processName(char *name, CompletionLine *t, int orderFlag, Completions *c);
+extern void processName(char *name, CompletionLine *t, bool orderFlag, Completions *c);
 extern void completeForSpecial1(Completions *c);
 extern void completeForSpecial2(Completions *c);
 extern void completeUpFunProfile(Completions *c);
@@ -29,7 +29,6 @@ extern void completeMacros(Completions *c);
 extern void completeOthers(Completions *c);
 extern void javaCompleteTypeSingleName(Completions *c);
 extern void javaHintImportFqt(Completions *c);
-extern void javaHintVariableName(Completions *c);
 extern void javaHintCompleteNonImportedTypes(Completions *c);
 extern void javaHintCompleteMethodParameters(Completions *c);
 extern void javaCompleteTypeCompName(Completions *c);

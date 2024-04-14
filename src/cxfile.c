@@ -237,34 +237,9 @@ bool searchStringMatch(char *cxtag, int len) {
 
 // Filter out symbols which pollute search results
 bool symbolShouldBeHiddenFromSearchResults(char *name) {
-    char *s;
-
     // internal xref symbol?
     if (name[0] == ' ')
         return true;
-
-    // Only Java specific pollution below
-    if (! LANGUAGE(LANG_JAVA))
-        return false;
-
-    // Hide class$ fields
-    if (strncmp(name, "class$", 6)==0)
-        return true;
-
-    // Hide anonymous classes
-    if (isdigit(name[0]))
-        return true;
-
-    // And what is this?
-    s = name;
-    while ((s=strchr(s, '$'))!=NULL) {
-        s++;
-        while (isdigit(*s))
-            s++;
-        if (*s == '.' || *s=='(' || *s=='$' || *s==0)
-            return true;
-    }
-
     return false;
 }
 

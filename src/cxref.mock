@@ -137,10 +137,6 @@ Reference *getDefinitionRef(Reference *rr) {
     return (Reference *) mock(rr);
 }
 
-bool safetyCheck2ShouldWarn(void) {
-    return (bool) mock();
-}
-
 void olCreateSelectionMenu(int command) {
     mock(command);
 }

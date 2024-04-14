@@ -2108,7 +2108,7 @@ void makeCCompletions(char *string, int len, Position *pos) {
                     fillCompletionLine(&compLine, tokenNamesTable[token], NULL, TypeToken, 0, 0, NULL, NULL);
                 }
                 log_trace("completing %d==%s(%s) in state %d", token, tokenNamesTable[token], tokenNamesTable[token], lastyystate);
-                processName(tokenNamesTable[token], &compLine, 0, &collectedCompletions);
+                processName(tokenNamesTable[token], &compLine, false, &collectedCompletions);
             }
         }
     }
