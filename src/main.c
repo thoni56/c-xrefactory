@@ -643,7 +643,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
                   symbolTable,NULL,AccessDefault,parsedClassInfoInit,NO_FILE_NUMBER,NULL);
     javaStat = stackMemoryAlloc(sizeof(JavaStat));
     *javaStat = s_initJavaStat;
-    javaFqtTableInit(&javaFqtTable, FQT_CLASS_TAB_SIZE);
 
     // initialize recursive java parsing
     s_yygstate = stackMemoryAlloc(sizeof(struct yyGlobalState));

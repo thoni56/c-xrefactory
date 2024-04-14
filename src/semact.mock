@@ -113,8 +113,8 @@ Symbol *createSimpleDefinition(unsigned storage, unsigned t, Id *id) {
     return (Symbol *) mock(storage, t, id);
 }
 
-int findStrRecord(Symbol *s, char *recname, Symbol **res, int javaClassif) {
-    return (int) mock(s, recname, res, javaClassif);
+int findStrRecord(Symbol *symbol, char *recname, Symbol **res) {
+    return (int) mock(symbol, recname, res);
 }
 
 Reference *findStrRecordFromSymbol(Symbol *str, Id *record, Symbol **res, Id *super) {

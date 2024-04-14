@@ -231,13 +231,11 @@ Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recna
     }
 }
 
-int findStrRecord(Symbol *s,
+int findStrRecord(Symbol *symbol,
                   char *recname,   /* can be NULL */
-                  Symbol **res,
-                  int javaClassif
-) {
+                  Symbol **res) {
     S_recFindStr rfs;
-    return findStrRecordSym(res, iniFind(s,&rfs), recname,
+    return findStrRecordSym(res, iniFind(symbol,&rfs), recname,
                            ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
 }
 

@@ -2929,7 +2929,7 @@ case 10:
             int rr;
             l_currentType = NULL;
             if (l_yaccUnion!=NULL) {
-                rr = findStrRecord(l_yaccUnion, yyvsp[-1].ast_id.data->name, &res, CLASS_TO_ANY);
+                rr = findStrRecord(l_yaccUnion, yyvsp[-1].ast_id.data->name, &res);
                 if (rr == RESULT_OK) {
                     l_currentType = res;
                 }

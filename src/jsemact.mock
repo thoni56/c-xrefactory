@@ -85,10 +85,6 @@ Reference *addUnimportedTypeLongReference(int classIndex, Position *pos) {
     return (Reference *) mock(classIndex, pos);
 }
 
-void addThisCxReferences(int classIndex, Position *pos) {
-    mock(classIndex, pos);
-}
-
 void javaLoadClassSymbolsFromFile(Symbol *memb) {
     mock(memb);
 }
@@ -103,10 +99,6 @@ TypeModifier *javaMethodInvocationT(TypeModifier *tt, Id *name, S_typeModifierLi
 
 TypeModifier *javaMethodInvocationS(Id *super, Id *name, S_typeModifierList *args) {
     return (TypeModifier *) mock(super, name, args);
-}
-
-int javaClassIsInCurrentPackage(Symbol *cl) {
-    return (int) mock(cl);
 }
 
 int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2) {

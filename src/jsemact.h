@@ -36,7 +36,6 @@ extern void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *th
 extern void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp);
 extern void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp);
 
-extern void addThisCxReferences(int classIndex, Position *pos);
 extern TypeModifier *javaMethodInvocationT(	TypeModifier *tt,
                                                 Id *name,
                                                 S_typeModifierList *args
@@ -45,6 +44,5 @@ extern TypeModifier *javaMethodInvocationS(	Id *super,
                                                 Id *name,
                                                 S_typeModifierList *args
                                                 );
-extern int javaClassIsInCurrentPackage(Symbol *cl);
 
 #endif

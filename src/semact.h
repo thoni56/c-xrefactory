@@ -39,8 +39,7 @@ extern SymbolList *createDefinitionList(Symbol *symbol);
 extern Symbol *createSimpleDefinition(unsigned storage, unsigned t, Id *id);
 extern int findStrRecord(Symbol	*s,
                          char   *recname,	/* can be NULL */
-                         Symbol	**res,
-                         int    javaClassif);
+                         Symbol	**res);
 extern Reference *findStrRecordFromSymbol(Symbol *str,
                                           Id *record,
                                           Symbol **res,
