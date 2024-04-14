@@ -28,8 +28,6 @@ extern JavaStat *javaStat;
 extern JavaStat s_initJavaStat;
 
 
-extern void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
-                            char membFlag, short unsigned  accFlags);
 extern void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                          int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
                          char *namedPackageDir, SymbolTable *locals, IdList *lastParsedName,

@@ -5,12 +5,6 @@
 JavaStat *javaStat;
 JavaStat s_initJavaStat;
 
-void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
-                     char membFlag, short unsigned  accFlags) {
-    nestedSpec->cl = cl;
-    nestedSpec->membFlag = membFlag;
-    nestedSpec->accFlags = accFlags;
-}
 
 void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
