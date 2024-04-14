@@ -94,11 +94,6 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int b
     if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
         rr = olcxAlloc(sizeof(Reference));
         *rr = *ref;
-        if (LANGUAGE(LANG_JAVA)) {
-            if (ref->usage.kind==UsageDefined &&  bestMatchFlag) {
-                rr->usage.kind = UsageOLBestFitDefined;
-            }
-        }
         LIST_CONS(rr,(*place));
         log_trace("olcx adding %s %s:%d:%d", usageKindEnumName[ref->usage.kind],
                   getFileItem(ref->position.file)->name, ref->position.line,ref->position.col);

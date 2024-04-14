@@ -1626,13 +1626,6 @@ static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symn
     char  nfile[MAX_FILE_NAME_SIZE];
     char *ss;
 
-    if (symtype == TypeStruct && LANGUAGE(LANG_JAVA) && refactoringOptions.theRefactoring != AVR_RENAME_CLASS) {
-        errorMessage(ERR_INTERNAL, "Use Rename Class to rename classes");
-    }
-    if (symtype == TypePackage && LANGUAGE(LANG_JAVA) && refactoringOptions.theRefactoring != AVR_RENAME_PACKAGE) {
-        errorMessage(ERR_INTERNAL, "Use Rename Package to rename packages");
-    }
-
     if (refactoringOptions.theRefactoring == AVR_RENAME_PACKAGE) {
         simplePackageRename(occs, symname, symLinkName);
     } else {
@@ -1850,11 +1843,8 @@ static void renameAtPoint(EditorMarker *point) {
 
     ensureReferencesAreUpdated(refactoringOptions.project);
 
-    if (LANGUAGE(LANG_JAVA)) {
-        message = STANDARD_SELECT_SYMBOLS_MESSAGE;
-    } else {
-        message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
-    }
+    message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
+
     // rename
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
@@ -1863,9 +1853,9 @@ static void renameAtPoint(EditorMarker *point) {
     symtype        = csym->references.type;
     symLinkName    = csym->references.linkName;
     undoStartPoint = editorUndo;
-    if (!LANGUAGE(LANG_JAVA)) {
-        multipleOccurencesSafetyCheck();
-    }
+
+    multipleOccurencesSafetyCheck();
+
     simpleRename(occs, point, nameOnPoint, symLinkName, symtype);
     //&dumpEditorBuffers();
     redoTrack = NULL;
@@ -1949,14 +1939,7 @@ static Result getParameterPosition(EditorMarker *point, char *functionOrMacroNam
         errorMessage(ERR_ST, tmpBuff);
         result = RESULT_ERR;
     }
-    if (!LANGUAGE(LANG_JAVA)) {
-        // check preconditions to avoid cases like
-        // #define PAR1 toto,
-        // ... lot of text
-        // #define PAR2 tutu,
-        //    function(PAR1 PAR2 0);
-        // Hmmm, but how to do it? TODO!!!!
-    }
+
     return result;
 }
 
@@ -2226,31 +2209,17 @@ static void applyParameterManipulationToFunction(char *functionName, EditorMarke
 static void applyParameterManipulation(EditorMarker *point, int manipulation, int argn1,
                                        int argn2) {
     char              nameOnPoint[TMP_STRING_SIZE];
-    int               check;
     EditorMarkerList *occurrences;
-    EditorUndo       *startPoint, *redoTrack;
 
     ensureReferencesAreUpdated(refactoringOptions.project);
 
     strcpy(nameOnPoint, getIdentifierOnMarker_static(point));
     pushReferences(point, "-olcxargmanip", STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO);
     occurrences = convertReferencesToEditorMarkers(sessionData.browserStack.top->references);
-    startPoint = editorUndo;
-    // first just check that loaded files are up to date
-    //& precheckThatSymbolRefsCorresponds(nameOnPoint, occurrences);
 
-    //&dumpEditorBuffer(occurrences->marker->buffer);
-    //&editorDumpMarkerList(occurrences);
-    // for some error mesages it is more natural that cursor does not move
     ppcGotoMarker(point);
-    redoTrack = NULL;
+
     applyParameterManipulationToFunction(nameOnPoint, occurrences, manipulation, argn1, argn2);
-    if (LANGUAGE(LANG_JAVA)) {
-        check = makeSafetyCheckAndUndo(point, &occurrences, startPoint, &redoTrack);
-        if (!check)
-            askForReallyContinueConfirmation();
-        editorApplyUndos(redoTrack, NULL, &editorUndo, GEN_NO_OUTPUT);
-    }
     freeEditorMarkersAndMarkerList(occurrences); // O(n^2)!
 }
 
@@ -2940,8 +2909,6 @@ static void moveStaticFieldOrMethod(EditorMarker *point, SyntaxPassParsedImporta
     if (!validTargetPlace(target, "-olcxmmtarget"))
         return;
     ensureReferencesAreUpdated(refactoringOptions.project);
-    if (LANGUAGE(LANG_JAVA))
-        getNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
     getMethodLimitsForMoving(point, &mstart, &mend, limitIndex);
     lines = countLinesBetweenEditorMarkers(mstart, mend);
 
@@ -4448,7 +4415,6 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     EditorMarkerList *occs;
     SymbolsMenu      *csym;
     int               hasHeaderReferenceFlag, scope, cat, multiFileRefsFlag, fn;
-    int               symtype, storage, accflags;
     char             *selectedUpdateOption;
 
     assert(point != NULL && point->buffer != NULL);
@@ -4460,9 +4426,7 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
     csym                   = sessionData.browserStack.top->hkSelectedSym;
     scope                  = csym->references.scope;
     cat                    = csym->references.category;
-    symtype                = csym->references.type;
-    storage                = csym->references.storage;
-    accflags               = csym->references.access;
+
     if (occs == NULL) {
         fn = NO_FILE_NUMBER;
     } else {
@@ -4480,43 +4444,29 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
         }
     }
 
-    if (LANGUAGE(LANG_JAVA)) {
-        if (cat == CategoryLocal) {
-            // useless to update when there is nothing about the symbol in Tags
-            selectedUpdateOption = "";
-        } else if (symtype == TypeDefault && (storage == StorageMethod || storage == StorageField) &&
-                   ((accflags & AccessPrivate) != 0)) {
-            // private field or method,
-            // no update makes renaming after extract method much faster
-            selectedUpdateOption = "";
-        } else {
-            selectedUpdateOption = "-fastupdate";
-        }
-    } else {
-        if (cat == CategoryLocal) {
-            // useless to update when there is nothing about the symbol in Tags
-            selectedUpdateOption = "";
-        } else if (hasHeaderReferenceFlag) {
-            // once it is in a header, full update is required
+    if (cat == CategoryLocal) {
+        // useless to update when there is nothing about the symbol in Tags
+        selectedUpdateOption = "";
+    } else if (hasHeaderReferenceFlag) {
+        // once it is in a header, full update is required
+        selectedUpdateOption = "-update";
+    } else if (scope == ScopeAuto || scope == ScopeFile) {
+        // for example a local var or a static function not used in any header
+        if (multiFileRefsFlag) {
+            errorMessage(ERR_INTERNAL, "something goes wrong, a local symbol is used in several files");
             selectedUpdateOption = "-update";
-        } else if (scope == ScopeAuto || scope == ScopeFile) {
-            // for example a local var or a static function not used in any header
-            if (multiFileRefsFlag) {
-                errorMessage(ERR_INTERNAL, "something goes wrong, a local symbol is used in several files");
-                selectedUpdateOption = "-update";
-            } else {
-                selectedUpdateOption = "";
-            }
-        } else if (!multiFileRefsFlag) {
-            // this is a little bit tricky. It may provoke a bug when
-            // a new external function is not yet indexed, but used in another file.
-            // But it is so practical, so take the risk.
-            selectedUpdateOption = "";
         } else {
-            // may seems too strong, but implicitly linked global functions
-            // requires this (for example).
-            selectedUpdateOption = "-fastupdate";
+            selectedUpdateOption = "";
         }
+    } else if (!multiFileRefsFlag) {
+        // this is a little bit tricky. It may provoke a bug when
+        // a new external function is not yet indexed, but used in another file.
+        // But it is so practical, so take the risk.
+        selectedUpdateOption = "";
+    } else {
+        // may seems too strong, but implicitly linked global functions
+        // requires this (for example).
+        selectedUpdateOption = "-fastupdate";
     }
 
     freeEditorMarkersAndMarkerList(occs);
@@ -4605,8 +4555,6 @@ void refactory(void) {
         progressFactor = 3;
         updateOption   = computeUpdateOptionForSymbol(point);
         currentLanguage = getLanguageFor(file);
-        if (LANGUAGE(LANG_JAVA))
-            progressFactor++;
         parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.olcxGotoVal,
                               refactoringOptions.parnum2);
         break;

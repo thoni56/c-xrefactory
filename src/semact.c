@@ -33,9 +33,6 @@ void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *current
 }
 
 bool displayingErrorMessages(void) {
-    // no error messages for Java file preloaded for symbols
-    if (LANGUAGE(LANG_JAVA) && s_jsl!=NULL)
-        return false;
     if (options.debug || options.errors)
         return true;
     return false;
@@ -302,7 +299,6 @@ Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recna
 ) {
     Symbol     *s, *r, *cclass;
     SymbolList *sss;
-    int         m;
 
     assert(accessibilityCheck == ACCESSIBILITY_CHECK_YES || accessibilityCheck == ACCESSIBILITY_CHECK_NO);
     assert(visibilityCheck == VISIBILITY_CHECK_YES || visibilityCheck == VISIBILITY_CHECK_NO);
@@ -331,51 +327,10 @@ Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recna
             }
             //&fprintf(dumpOut,":checking %s\n",r->name); fflush(dumpOut);
             if (recname == NULL || strcmp(r->name, recname) == 0) {
-                if (!LANGUAGE(LANG_JAVA)) {
-                    *resultingSymbolP = r;
-                    ss->nextRecord = r->next;
-                    return RESULT_OK;
-                }
-                //&fprintf(dumpOut,"acc O.K., checking classif %d\n",javaClassif);fflush(dumpOut);
-                if (javaClassif != CLASS_TO_ANY) {
-                    assert(r->type == TypeDefault);
-                    assert(r->u.typeModifier);
-                    m = r->u.typeModifier->type;
-                    if (m == TypeFunction && javaClassif != CLASS_TO_METHOD)
-                        goto nextRecord;
-                    if (m != TypeFunction && javaClassif == CLASS_TO_METHOD)
-                        goto nextRecord;
-                }
-                //&if(cclass!=NULL)fprintf(dumpOut,"name O.K., checking accesibility %xd
-                //%xd\n",cclass->access,r->access); fflush(dumpOut);
-                // I have it, check visibility and accessibility
-                assert(r);
-                if (visibilityCheck == VISIBILITY_CHECK_YES) {
-                    if (!javaRecordVisible(ss->baseClass, cclass, r->access)) {
-                        // WRONG? return, Doesn't it iverrides any other of this name
-                        // Yes, definitely correct, in the first step determining
-                        // class to search
-                        ss->nextRecord = NULL;
-                        *resultingSymbolP = &errorSymbol;
-                        return RESULT_NOT_FOUND;
-                    }
-                }
-                if (accessibilityCheck == ACCESSIBILITY_CHECK_YES) {
-                    if (!javaRecordAccessible(ss, ss->baseClass, cclass, r, r->access)) {
-                        if (visibilityCheck == VISIBILITY_CHECK_YES) {
-                            ss->nextRecord = NULL;
-                            *resultingSymbolP = &errorSymbol;
-                            return RESULT_NOT_FOUND;
-                        } else {
-                            goto nextRecord;
-                        }
-                    }
-                }
                 *resultingSymbolP = r;
                 ss->nextRecord = r->next;
                 return RESULT_OK;
             }
-        nextRecord:;
         }
     nextClass:
         if (ss->anonymousUnionsCount != 0) {
