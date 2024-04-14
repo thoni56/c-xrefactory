@@ -184,7 +184,6 @@ static bool javaFindFile0(char *classPath, char *separator, char *name,
 }
 
 static bool javaFindClassFile(char *name, char **resultingName, time_t *modifiedTimeP) {
-    struct stat stat;
     if (javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
         if (javaFindFile0(javaStat->unnamedPackagePath, "/", name, ".class", resultingName)) {
             *modifiedTimeP = editorFileModificationTime(*resultingName);
@@ -195,16 +194,6 @@ static bool javaFindClassFile(char *name, char **resultingName, time_t *modified
     for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         if (javaFindFile0(cp->string, "/", name, ".class", resultingName)) {
             *modifiedTimeP = editorFileModificationTime(*resultingName);
-            return true;
-        }
-    }
-    // finally look into java archives
-    /* TODO: if it were not for this, we could skip the stat return value */
-    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
-        log_trace("Looking in '%s'", zipArchiveTable[i].fn);
-        if (zipFindFile(name,resultingName,&zipArchiveTable[i])) {
-            stat = zipArchiveTable[i].stat;
-            *modifiedTimeP = stat.st_mtime;
             return true;
         }
     }

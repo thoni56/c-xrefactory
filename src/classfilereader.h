@@ -26,12 +26,5 @@ extern Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup);
 extern void addSuperClassOrInterface(Symbol *memb, Symbol *supp, int origin );
 extern int javaCreateClassFileItem(Symbol *memb);
 extern void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, LoadSuperOrNot loadSuper);
-extern void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path,
-                            void (*fun)(char *zip, char *file, void *arg),
-                            void *arg);
-extern bool fsIsMember(ZipArchiveDir **dir, char *fn, unsigned offset,
-                       AddYesNo addFlag, ZipArchiveDir **place);
-extern bool zipFindFile(char *name, char **resName, ZipFileTableItem *zipfile);
-extern void javaReadClassFile(char *name, Symbol *cdef, LoadSuperOrNot loadSuper);
 
 #endif

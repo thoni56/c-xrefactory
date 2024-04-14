@@ -31,11 +31,3 @@ void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path, void (*fun)(char
 bool fsIsMember(ZipArchiveDir **dir, char *fn, unsigned offset, AddYesNo addFlag, ZipArchiveDir **place) {
     return (int) mock(dir, fn, offset, addFlag, place);
 }
-
-bool zipFindFile(char *name, char **resName, ZipFileTableItem *zipfile) {
-    return (bool) mock(name, resName, zipfile);
-}
-
-void javaReadClassFile(char *name, Symbol *cdef, LoadSuperOrNot loadSuper) {
-    mock(name, cdef, loadSuper);
-}

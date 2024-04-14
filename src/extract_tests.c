@@ -53,26 +53,5 @@ BeforeEach(Extract) {
 AfterEach(Extract) {}
 
 
-void addSymbolToSymRefList(ReferenceItemList **ll, ReferenceItem *s);
-
-Ensure(Extract, can_concat_symRefItemList_when_null) {
-    ReferenceItemList *lp = NULL;
-    ReferenceItem      s  = {"s", 0, 0, 0, .references = NULL, NULL};
-
-    addSymbolToSymRefList(&lp, &s);
-    assert_that(lp->item, is_equal_to(&s));
-}
-
-Ensure(Extract, can_concat_symRefItemList_before_existing) {
-    ReferenceItem      s1 = {"s1", 0, 0, 0, .references = NULL, NULL};
-    ReferenceItem      s2 = {"s2", 0, 0, 0, .references = NULL, NULL};
-    ReferenceItemList  l  = {&s1, NULL};
-    ReferenceItemList *lp = &l;
-
-    expect(getClassNumFromClassLinkName, times(4));
-    expect(isSmallerOrEqClass, will_return(false), times(2));
-
-    addSymbolToSymRefList(&lp, &s2);
-    assert_that(lp->item, is_equal_to(&s2));
-    assert_that(lp->next->item, is_equal_to(&s1));
+Ensure(Extract, can_run_empty_unittest) {
 }
