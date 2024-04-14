@@ -47,7 +47,6 @@ extern IdList *s_javaIoSerializableName;
 extern IdList *s_javaLangClassName;
 extern IdList *s_javaLangObjectName;
 
-extern Symbol s_javaArrayObjectSymbol;
 extern Symbol *s_javaObjectSymbol;
 
 extern FILE *communicationChannel;

@@ -1043,17 +1043,6 @@ static bool pathsStringContainsPath(char *paths, char *path) {
     return false;
 }
 
-static bool classPathContainsPath(char *path) {
-    for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        //&fprintf(dumpOut,"[cp]checking %s<->%s\n", cp->string, path);
-        if (compareFileNames(cp->string, path)==0) {
-            //&fprintf(dumpOut,"[cp] saving of mapping %s\n", path);
-            return true;
-        }
-    }
-    return false;
-}
-
 bool fileNameHasOneOfSuffixes(char *fname, char *suffs) {
     char *suff;
     suff = getFileSuffix(fname);
@@ -1101,52 +1090,6 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
     if (dd!=NULL) *dd=0;
 }
 
-#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
-void javaMapOverDirectoryFiles1(char *packageFilename,
-                            void (*fun)(MAP_FUN_SIGNATURE),
-                            Completions *a1,
-                            void *a2,
-                            int *a3
-){
-    char            *fname;
-
-    // Following can make that classes are added several times
-    // makes things slow and memory consuming
-    // TODO! optimize this - do we know that it matters?
-    if (packageFilename == NULL)
-        packageFilename = "";
-
-    // source paths
-    MapOverPaths(javaSourcePaths, {
-        char tmpString[MAX_SOURCE_PATH_SIZE];
-        fname = concatDirectoryWithFileName(tmpString, currentPath, packageFilename);
-        mapOverDirectoryFiles(fname, fun, ALLOW_EDITOR_FILES, currentPath, packageFilename, a1, a2, a3);
-    });
-    // class paths
-    for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        char tmpString[MAX_SOURCE_PATH_SIZE];
-        // avoid double mappings
-        if (!pathsStringContainsPath(javaSourcePaths, cp->string)) {
-            assert(strlen(cp->string)+strlen(packageFilename)+2 < SIZE_TMP_MEM);
-            fname = concatDirectoryWithFileName(tmpString, cp->string, packageFilename);
-            mapOverDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->string,packageFilename,a1,a2,a3);
-        }
-    }
-    // databazes
-    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
-        javaMapZipDirFile(&zipArchiveTable[i],packageFilename,a1,a2,a3,fun,
-                          zipArchiveTable[i].fn,packageFilename);
-    }
-    // auto-inferred source path
-    if (javaStat->namedPackagePath != NULL) {
-        if (!pathsStringContainsPath(javaSourcePaths, javaStat->namedPackagePath)
-            && !classPathContainsPath(javaStat->namedPackagePath)) {
-            char tmpString[MAX_SOURCE_PATH_SIZE];
-            fname = concatDirectoryWithFileName(tmpString, javaStat->namedPackagePath, packageFilename);
-            mapOverDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,javaStat->namedPackagePath,packageFilename,a1,a2,a3);
-        }
-    }
-}
 
 /* ************************************************************* */
 
@@ -1312,16 +1255,10 @@ Language getLanguageFor(char *fileName) {
         FATAL_ERROR(ERR_ST, "Java is no longer supported", -1);
     } else {
         suffix = getFileSuffix(fileName);
-        if (compareFileNames(suffix, ".zip")==0 || compareFileNames(suffix, ".jar")==0) {
-            language = LANG_JAR;
-        } else if (compareFileNames(suffix, ".class")==0) {
-            language = LANG_CLASS;
-        } else if (compareFileNames(suffix, ".y")==0) {
+        if (compareFileNames(suffix, ".y")==0) {
             language = LANG_YACC;
-            typeNamesTable[TypeStruct] = "struct";
         } else {
             language = LANG_C;
-            typeNamesTable[TypeStruct] = "struct";
         }
     }
     return language;

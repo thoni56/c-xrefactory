@@ -109,13 +109,6 @@ extern void mapOverDirectoryFiles(
         void *a4,
         int *a5
     );
-extern void javaMapOverDirectoryFiles1(
-        char *packfile,
-        void (*fun)(MAP_FUN_SIGNATURE),
-        Completions *a1,
-        void *a2,
-        int *a3
-    );
 extern char *lastOccurenceInString(char *ss, int ch);
 extern char *lastOccurenceOfSlashOrBackslash(char *ss);
 extern char *getFileSuffix(char *fn);
