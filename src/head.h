@@ -18,9 +18,7 @@
 typedef enum language {
     LANG_NONE  = 0,
     LANG_C     = 1<<1,
-    LANG_YACC  = 1<<3,
-    LANG_JAR   = 1<<4,
-    LANG_CLASS = 1<<5
+    LANG_YACC  = 1<<2
 } Language;
 
 /* ****************** end of line conversions ***************************** */

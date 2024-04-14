@@ -190,12 +190,6 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
             inputOpened                       = false;
             currentFile.characterBuffer.file = stdin;
             *atLeastOneProcessedP             = true;
-        } else if (LANGUAGE(LANG_JAR)) {
-            jarFileParse(inputFileName);
-            *atLeastOneProcessedP = true;
-        } else if (LANGUAGE(LANG_CLASS)) {
-            classFileParse();
-            *atLeastOneProcessedP = true;
         } else {
             errorMessage(ERR_CANT_OPEN, inputFileName);
             fprintf(errOut, "\tmaybe forgotten -p option?\n");

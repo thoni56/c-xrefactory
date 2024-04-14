@@ -605,9 +605,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
                 javaHackCopySourceLoadedCopyPars(memb);
             }
         }
-        if (findResult == RESULT_IS_CLASS_FILE) {
-            javaReadClassFile(className,memb, LOAD_SUPER);
-        } else if (findResult == RESULT_NO_FILE_FOUND) {
+        if (findResult == RESULT_NO_FILE_FOUND) {
             if (displayingErrorMessages()) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff, "class %s not found", memb->name);

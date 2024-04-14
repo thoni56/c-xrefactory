@@ -128,9 +128,6 @@ static bool computeAndOpenInputFile(void) {
 
     assert(currentLanguage);
     inputBuffer = NULL;
-    //!!!! hack for .jar files !!!
-    if (LANGUAGE(LANG_JAR) || LANGUAGE(LANG_CLASS))
-        return false;
 
     inputFile = NULL;
     inputBuffer = findEditorBufferForFile(inputFileName);
