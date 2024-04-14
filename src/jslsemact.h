@@ -51,8 +51,6 @@ extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int s
 extern Symbol *jslTypeNameDefinition(IdList *tname);
 extern Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
                                        AddYesNo add, int order, bool isExplicitlyImported);
-extern int jslClassifyAmbiguousTypeName(IdList *name, Symbol **str);
-extern void jslAddNestedClassesToJslTypeTab( Symbol *cc, int order);
 extern void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc);
 
 extern void jslAddSuperClassOrInterfaceByName(Symbol *memb,char *super);
