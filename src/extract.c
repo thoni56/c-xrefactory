@@ -710,119 +710,6 @@ static void generateNewFunctionCall(ProgramGraphNode *program, char *extractionN
     ppcGenRecord(PPC_STRING_VALUE, resultingString);
 }
 
-static void removeSymbolFromSymRefList(ReferenceItemList **ll, ReferenceItem *s) {
-    ReferenceItemList **r;
-    r=ll;
-    while (*r!=NULL) {
-        if (isSmallerOrEqClass(getClassNumFromClassLinkName((*r)->item->linkName, NO_FILE_NUMBER),
-                               getClassNumFromClassLinkName(s->linkName, NO_FILE_NUMBER))) {
-            *r = (*r)->next;
-        } else {
-            r= &(*r)->next;
-        }
-    }
-}
-
-static ReferenceItemList *concatRefItemList(ReferenceItemList **list, ReferenceItem *items) {
-    ReferenceItemList *refItemList = cxAlloc(sizeof(ReferenceItemList));
-    refItemList->item = items;
-    refItemList->next = *list;
-    return refItemList;
-}
-
-
-/* Non-static for unittesting */
-void addSymbolToSymRefList(ReferenceItemList **list, ReferenceItem *items) {
-    ReferenceItemList *l;
-
-    l = *list;
-    while (l!=NULL) {
-        if (isSmallerOrEqClass(getClassNumFromClassLinkName(items->linkName, NO_FILE_NUMBER),
-                               getClassNumFromClassLinkName(l->item->linkName, NO_FILE_NUMBER))) {
-            return;
-        }
-        l= l->next;
-    }
-    // first remove all superceeded by this one
-    /* TODO: WTF, what does superceed mean here and why should we remove them? */
-    removeSymbolFromSymRefList(list, items);
-    *list = concatRefItemList(list, items);
-}
-
-static ReferenceItemList *computeExceptionsThrownBetween(ProgramGraphNode *bb,
-                                                           ProgramGraphNode *ee
-                                                           ) {
-    ReferenceItemList *res, *excs, *catched, *noncatched, **cl;
-    ProgramGraphNode *p, *e;
-    int depth;
-
-    catched = NULL; noncatched = NULL; cl = &catched;
-    for (p=bb; p!=NULL && p!=ee; p=p->next) {
-        if (p->symRef->type == TypeTryCatchMarker && p->ref->usage.kind == UsageTryCatchBegin) {
-            depth = 0;
-            for (e=p; e!=NULL && e!=ee; e=e->next) {
-                if (e->symRef->type == TypeTryCatchMarker) {
-                    if (e->ref->usage.kind == UsageTryCatchBegin) depth++;
-                    else depth --;
-                    if (depth == 0) break;
-                }
-            }
-            if (depth==0) {
-                // add exceptions thrown in block
-                for (excs=computeExceptionsThrownBetween(p->next,e); excs!=NULL; excs=excs->next){
-                    addSymbolToSymRefList(cl, excs->item);
-                }
-            }
-        }
-        if (p->ref->usage.kind == UsageThrown) {
-            // thrown exception add it to list
-            addSymbolToSymRefList(cl, p->symRef);
-        } else if (p->ref->usage.kind == UsageCatched) {
-            // catched, remove it from list
-            removeSymbolFromSymRefList(&catched, p->symRef);
-            cl = &noncatched;
-        }
-    }
-    res = catched;
-    for (excs=noncatched; excs!=NULL; excs=excs->next) {
-        addSymbolToSymRefList(&res, excs->item);
-    }
-    return(res);
-}
-
-static ReferenceItemList *computeExceptionsThrownInBlock(ProgramGraphNode *program) {
-    ProgramGraphNode  *pp, *ee;
-    for (pp=program; pp!=NULL && pp->symRef->type!=TypeBlockMarker; pp=pp->next) ;
-    if (pp==NULL)
-        return(NULL);
-    for (ee=pp->next; ee!=NULL && ee->symRef->type!=TypeBlockMarker; ee=ee->next) ;
-    return(computeExceptionsThrownBetween(pp, ee));
-}
-
-static void extractSprintThrownExceptions(char *nhead, ProgramGraphNode *program) {
-    ReferenceItemList     *exceptions, *ee;
-    int                     nhi;
-    char                    *sname;
-    nhi = 0;
-    exceptions = computeExceptionsThrownInBlock(program);
-    if (exceptions!=NULL) {
-        strcat(nhead, " throws");
-        nhi += strlen(nhead+nhi);
-        for (ee=exceptions; ee!=NULL; ee=ee->next) {
-            sname = lastOccurenceInString(ee->item->linkName, '$');
-            if (sname==NULL)
-                sname = lastOccurenceInString(ee->item->linkName, '/');
-            if (sname==NULL) {
-                sname = ee->item->linkName;
-            } else {
-                sname ++;
-            }
-            sprintf(nhead+nhi, "%s%s", ee==exceptions?" ":", ", sname);
-            nhi += strlen(nhead+nhi);
-        }
-    }
-}
-
 static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionName) {
     char nhead[MAX_EXTRACT_FUN_HEAD_SIZE+2];
     int nhi, ldclaLen;
@@ -868,10 +755,6 @@ static void generateNewFunctionHead(ProgramGraphNode *program, char *extractionN
         }
     }
     sprintf(nhead+nhi, "%s)", isFirstArgument?"(":"");
-    nhi += strlen(nhead+nhi);
-
-    //throws
-    extractSprintThrownExceptions(nhead+nhi, program);
     nhi += strlen(nhead+nhi);
 
     strcat(resultingString, "static ");
@@ -1122,10 +1005,6 @@ static void javaGenerateNewClassHead(ProgramGraphNode *program, char *extraction
         }
     }
     sprintf(nhead+nhi, "%s)", isFirstArgument?"(":"");
-    nhi += strlen(nhead+nhi);
-
-    // throws
-    extractSprintThrownExceptions(nhead+nhi, program);
     nhi += strlen(nhead+nhi);
 
     for (p=program; p!=NULL; p=p->next) {

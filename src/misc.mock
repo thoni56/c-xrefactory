@@ -75,10 +75,6 @@ bool stringContainsSubstring(char *s, char *subs) {
   return (bool) mock(s, subs);
 }
 
-void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
-  mock(src, opack);
-}
-
 void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotify) {
   mock(nn, tmpOut, dotify);
 }
@@ -125,14 +121,6 @@ char *lastOccurenceOfSlashOrBackslash(char *string) {
 
 char *getFileSuffix(char *fn) {
   return (char *) mock(fn);
-}
-
-char *javaCutClassPathFromFileName(char *fname) {
-  return (char *) mock(fname);
-}
-
-char *javaCutSourcePathFromFileName(char *fname) {
-  return (char *) mock(fname);
 }
 
 int pathncmp(char *path1, char *path2, int length, bool caseSensitive) {

@@ -61,7 +61,6 @@ extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
                                Reference **diff);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
 extern void olcxPushSpecialCheckMenuSym(char *symname);
-extern void olcxPushSpecial(char *fieldName, int command);
 extern bool isPushAllMethodsValidRefItem(ReferenceItem *ri);
 extern bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
                                        ServerOperation operation);
@@ -70,7 +69,6 @@ extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
 
 extern void addClassTreeHierarchyReference(int fnum, Position *p, int usage);
 extern void addCfClassTreeHierarchyRef(int fnum, int usage);
-extern int getClassNumFromClassLinkName(char *name, int defaultResult);
 extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                         Symbol *cclass);
 extern bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);

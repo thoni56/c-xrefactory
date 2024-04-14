@@ -157,10 +157,6 @@ bool olcxShowSelectionMenu(void) {
     return (int) mock();
 }
 
-int getClassNumFromClassLinkName(char *name, int defaultResult) {
-    return (int) mock(name, defaultResult);
-}
-
 void getLineAndColumnCursorPositionFromCommandLineOptions(int *lineP, int *colP) {
     mock(lineP, colP);
 }

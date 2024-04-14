@@ -301,7 +301,7 @@ char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
 
 /* ******************************************************************* */
 
-char *javaCutClassPathFromFileName(char *fname) {
+static char *javaCutClassPathFromFileName(char *fname) {
     StringList    *cp;
     int             len;
     char            *res,*ss;
@@ -314,32 +314,6 @@ char *javaCutClassPathFromFileName(char *fname) {
     for(cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         len = strlen(cp->string);
         if (filenameCompare(cp->string, fname, len) == 0) {
-            res = fname+len;
-            goto fini;
-        }
-    }
- fini:
-    if (*res=='/' || *res=='\\') res++;
-    return(res);
-}
-
-char *javaCutSourcePathFromFileName(char *fname) {
-    int             len;
-    char            *res,*ss;
-    res = fname;
-    ss = strchr(fname, ZIP_SEPARATOR_CHAR);
-    if (ss!=NULL) return(ss+1);         // .zip archive symbol
-    MapOverPaths(javaSourcePaths, {
-        len = strlen(currentPath);
-        if (filenameCompare(currentPath, fname, len) == 0) {
-            res = fname + len;
-            goto fini;
-        }
-    });
-    // cut auto-detected source-path
-    if (javaStat!=NULL && javaStat->namedPackagePath != NULL) {
-        len = strlen(javaStat->namedPackagePath);
-        if (filenameCompare(javaStat->namedPackagePath, fname, len) == 0) {
             res = fname+len;
             goto fini;
         }
@@ -1077,19 +1051,6 @@ int substringIndex(char *s, char *subs) {
     }
     return(-1);
 }
-
-void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
-    char *sss, *dd;
-    sss = javaCutSourcePathFromFileName(src);
-    strcpy(opack, sss);
-    assert(strlen(opack)+1 < MAX_FILE_NAME_SIZE);
-    dd = lastOccurenceInString(opack, '.');
-    if (dd!=NULL) *dd=0;
-    javaDotifyFileName(opack);
-    dd = lastOccurenceInString(opack, '.');
-    if (dd!=NULL) *dd=0;
-}
-
 
 /* ************************************************************* */
 

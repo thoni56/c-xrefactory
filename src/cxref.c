@@ -158,13 +158,6 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
         return;
     }
     switch (symbol->type) {
-    case TypePackage: {
-        char *name = cxAlloc(strlen(menu->references.linkName)+1);
-        strcpy(name, menu->references.linkName);
-        javaDotifyFileName(name);
-        makeRefactoringAvailable(PPC_AVR_RENAME_PACKAGE, name);
-        break;
-    }
     case TypeStruct:
         makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
         break;
@@ -271,6 +264,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
             }
         }
         break;
+    case TypePackage:
     case MODIFIERS_START:
     case TmodLong:
     case TmodShort:
@@ -1436,10 +1430,6 @@ static void olcxShowTopType(void) {
     }
 }
 
-static void olcxShowClassTree(void) {
-    olcxPrintClassTree(sessionData.classTree.treeMenu);
-}
-
 SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     SymbolsMenu     *res;
     ReferenceItem     ss;
@@ -1538,22 +1528,11 @@ static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
     }
 }
 
-static void olcxSymbolMenuInspectClass(void) {
-    OlcxReferences    *refs;
-    if (!olcxMoveInit(&sessionData, &refs,CHECK_NULL))
-        return;
-    olcxMenuInspectDef(refs->menuSym, INSPECT_CLASS);
-}
-
 static void olcxSymbolMenuInspectDef(void) {
     OlcxReferences    *refs;
     if (!olcxMoveInit(&sessionData, &refs,CHECK_NULL))
         return;
     olcxMenuInspectDef(refs->menuSym, INSPECT_DEF);
-}
-
-static void olcxClassTreeInspectDef(void) {
-    olcxMenuInspectDef(sessionData.classTree.treeMenu, INSPECT_CLASS);
 }
 
 void olProcessSelectedReferences(OlcxReferences *rstack,
@@ -2375,30 +2354,6 @@ void getLineAndColumnCursorPositionFromCommandLineOptions(int *l, int *c) {
     sscanf(options.olcxlccursor,"%d:%d", l, c);
 }
 
-int getClassNumFromClassLinkName(char *name, int defaultResult) {
-    int fileNumber;
-    char classFileName[MAX_FILE_NAME_SIZE];
-
-    fileNumber = defaultResult;
-    convertLinkNameToClassFileName(classFileName, name);
-    log_trace("Looking for class file '%s'", classFileName);
-    if (existsInFileTable(classFileName))
-        fileNumber = lookupFileTable(classFileName);
-
-    return fileNumber;
-}
-
-static int olSpecialFieldCreateSelection(char *fieldName, Storage storage) {
-    OlcxReferences    *rstack;
-    assert(sessionData.browserStack.top);
-    rstack = sessionData.browserStack.top;
-
-    rstack->hkSelectedSym = NULL;
-    errorMessage(ERR_ST,"This function is available only in Java language");
-    return NO_FILE_NUMBER;
-}
-
-
 static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
     ReferenceItem *r1, *r2;
     char *name1, *name2;
@@ -2703,8 +2658,6 @@ void olcxPrintPushingAction(ServerOperation operation) {
             olStackDeleteSymbol(sessionData.browserStack.top);
         }
         break;
-    case OLO_USELESS_LONG_NAME:
-    case OLO_USELESS_LONG_NAME_IN_CLASS:
     case OLO_PUSH_ENCAPSULATE_SAFETY_CHECK:
         olcxPushOnly();
         break;
@@ -2757,64 +2710,6 @@ void olcxPrintPushingAction(ServerOperation operation) {
     default:
         assert(0);
     }
-}
-
-static void olcxCreateClassTree(void) {
-    OlcxReferences    *rstack;
-
-    freeSymbolsMenuList(sessionData.classTree.treeMenu);
-    sessionData.classTree.treeMenu = NULL;
-    olSpecialFieldCreateSelection(LINK_NAME_CLASS_TREE_ITEM, StorageMethod);
-    options.ooChecksBits = (options.ooChecksBits & ~OOC_VIRTUAL_MASK);
-    options.ooChecksBits |= OOC_VIRT_RELATED;
-    assert(sessionData.browserStack.top);
-    rstack = sessionData.browserStack.top;
-    olCreateSelectionMenu(rstack->command);
-    sessionData.classTree.treeMenu = rstack->menuSym;
-    rstack->menuSym = NULL;
-    olcxPrintClassTree(sessionData.classTree.treeMenu);
-
-    // now free special references, which will never be used
-    for (SymbolsMenu *menu=sessionData.classTree.treeMenu; menu!=NULL; menu=menu->next) {
-        freeReferences(menu->references.references);
-        menu->references.references = NULL;
-    }
-    // delete it as last command, because the top command is tested
-    // everywhere.
-    olStackDeleteSymbol(rstack);
-}
-
-void olcxPushSpecial(char *fieldName, int command) {
-    int                 clii, line, col;
-    OlcxReferences    *refs;
-    Position          callerPos;
-
-    clii = olSpecialFieldCreateSelection(fieldName, StorageField);
-    olCreateSelectionMenu(sessionData.browserStack.top->command);
-    assert(s_javaObjectSymbol && s_javaObjectSymbol->u.structSpec);
-    if (clii == s_javaObjectSymbol->u.structSpec->classFileNumber
-        || command == OLO_MAYBE_THIS
-        || command == OLO_NOT_FQT_REFS
-        || command == OLO_NOT_FQT_REFS_IN_CLASS
-        ) {
-        // object, so you have to select all
-        refs = sessionData.browserStack.top;
-        for (SymbolsMenu *ss=refs->menuSym; ss!=NULL; ss=ss->next) {
-            ss->visible = true; ss->selected = true;
-        }
-        olProcessSelectedReferences(refs, genOnLineReferences);
-        getLineAndColumnCursorPositionFromCommandLineOptions(&line, &col);
-        callerPos = makePosition(inputFileNumber, line, col);
-        olSetCallerPosition(&callerPos);
-    }
-}
-
-static void olcxListSpecial(char *fieldName) {
-    olcxPushSpecial(fieldName, options.serverOperation);
-    //&olcxPrintSelectionMenu(sessionData->browserStack.top->menuSym);
-    // previous do not work, because of automatic reduction in moving
-    // WTF Huh?
-    olcxPrintPushingAction(options.serverOperation);
 }
 
 bool isPushAllMethodsValidRefItem(ReferenceItem *ri) {
@@ -3001,20 +2896,6 @@ static void getCallerPositionFromCommandLineOption(Position *opos) {
     *opos = makePosition(file, line, col);
 }
 
-static void answerClassName(char *name) {
-    char tempString[MAX_CX_SYMBOL_SIZE];
-    if (*name!=0) {
-        linkNamePrettyPrint(tempString, name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
-        if (options.xref2) {
-            ppcGenRecord(PPC_SET_INFO, tempString);
-        } else {
-            fprintf(communicationChannel,"*%s", tempString);
-        }
-    } else {
-        errorMessage(ERR_ST, "Not inside a class. Can't get current class.");
-    }
-}
-
 static void pushSymbolByName(char *name) {
     OlcxReferences *rstack;
     if (cache.index > 0) {
@@ -3171,9 +3052,6 @@ void answerEditAction(void) {
     case OLO_SHOW_TOP_TYPE:
         olcxShowTopType();
         break;
-    case OLO_SHOW_CLASS_TREE:
-        olcxShowClassTree();
-        break;
     case OLO_CSELECT:
         olCompletionSelect();
         break;
@@ -3213,9 +3091,6 @@ void answerEditAction(void) {
     case OLO_MENU_INSPECT_DEF:
         olcxSymbolMenuInspectDef();
         break;
-    case OLO_MENU_INSPECT_CLASS:
-        olcxSymbolMenuInspectClass();
-        break;
     case OLO_MENU_SELECT:
         olcxMenuToggleSelect();
         break;
@@ -3241,48 +3116,17 @@ void answerEditAction(void) {
         //&olProcessSelectedReferences(rstack, genOnLineReferences);
         olcxPrintPushingAction(sessionData.browserStack.top->command);
         break;
-    case OLO_CT_INSPECT_DEF:
-        olcxClassTreeInspectDef();
-        break;
-    case OLO_CLASS_TREE:
-        olcxCreateClassTree();
-        break;
-    case OLO_USELESS_LONG_NAME:
-    case OLO_USELESS_LONG_NAME_IN_CLASS:
-        olcxListSpecial(LINK_NAME_IMPORTED_QUALIFIED_ITEM);
-        break;
-    case OLO_MAYBE_THIS:
-        olcxListSpecial(LINK_NAME_MAYBE_THIS_ITEM);
-        break;
-    case OLO_NOT_FQT_REFS:
-    case OLO_NOT_FQT_REFS_IN_CLASS:
-        olcxListSpecial(LINK_NAME_NOT_FQT_ITEM);
-        break;
-    case OLO_SET_MOVE_CLASS_TARGET:
     case OLO_SET_MOVE_METHOD_TARGET:
         assert(options.xref2);
         if (!parsedInfo.moveTargetApproved) {
             ppcGenRecord(PPC_ERROR, "Invalid target place");
         }
         break;
-    case OLO_GET_CURRENT_CLASS:
-        answerClassName(parsedInfo.currentClassAnswer);
-        break;
-    case OLO_GET_CURRENT_SUPER_CLASS:
-        answerClassName(parsedInfo.setTargetAnswerClass);
-        break;
     case OLO_GET_METHOD_COORD:
         if (parsedInfo.methodCoordEndLine!=0) {
             fprintf(communicationChannel,"*%d", parsedInfo.methodCoordEndLine);
         } else {
             errorMessage(ERR_ST, "No method found.");
-        }
-        break;
-    case OLO_GET_CLASS_COORD:
-        if (parsedInfo.classCoordEndLine!=0) {
-            fprintf(communicationChannel,"*%d", parsedInfo.classCoordEndLine);
-        } else {
-            errorMessage(ERR_ST, "No class found.");
         }
         break;
     case OLO_GET_SYMBOL_TYPE:
