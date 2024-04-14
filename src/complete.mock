@@ -50,66 +50,6 @@ void completeOthers(Completions *c) {
   mock(c);
 }
 
-void javaCompleteExprCompName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteMethodCompName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteHintForConstructSingleName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteConstructSingleName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteConstructCompName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteConstructNestNameName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteConstructNestPrimName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteStrRecordPrimary(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteStrRecordSuper(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteStrRecordQualifiedSuper(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteClassDefinitionNameSpecial(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteClassDefinitionName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteThisConstructor(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteSuperConstructor(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteSuperNestedConstructor(Completions *c) {
-  mock(c);
-}
-
 void completeYaccLexem(Completions *c) {
   mock(c);
 }
