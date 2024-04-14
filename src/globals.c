@@ -86,8 +86,6 @@ char *javaSourcePaths;
 
 Id javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
 
-char *s_javaLangObjectLinkName="java/lang/Object";
-
 
 /* ********* vars for on-line additions after EOF ****** */
 

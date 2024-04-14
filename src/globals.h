@@ -46,7 +46,6 @@ extern IdList *s_javaLangCloneableName;
 extern IdList *s_javaIoSerializableName;
 extern IdList *s_javaLangClassName;
 extern IdList *s_javaLangObjectName;
-extern char *s_javaLangObjectLinkName;
 
 extern Symbol s_javaArrayObjectSymbol;
 extern Symbol *s_javaStringSymbol;

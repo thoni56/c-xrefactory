@@ -315,22 +315,6 @@ void javaAddJslReadedTopLevelClasses(JslTypeTab *typeTab) {
     mock(typeTab);
 }
 
-struct stackFrame *newAnonClassDefinitionBegin(Id *interfName) {
-    return (struct stackFrame *) mock(interfName);
-}
-
-void javaAddSuperNestedClassToSymbolTab(Symbol *cc) {
-    mock(cc);
-}
-
-struct stackFrame *newClassDefinitionBegin(Id *name, Access access, Symbol *anonymousInterface) {
-    return (struct stackFrame *) mock(name, access, anonymousInterface);
-}
-
-void newClassDefinitionEnd(FrameAllocation *trail) {
-    mock(trail);
-}
-
 void javaParsedSuperClass(Symbol *s) {
     mock(s);
 }
