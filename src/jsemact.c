@@ -2618,21 +2618,3 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
     fileNumber = addFileNameToFileTable(className);
     getFileItem(fileNumber)->sourceFileNumber = classId->position.file;
 }
-
-
-void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
-    char tmpBuff[TMP_BUFF_SIZE];
-
-    if (options.mode == ServerMode)
-        return;
-    for (StringList *pp=javaClassPaths; pp!=NULL; pp=pp->next) {
-        if (compareFileNames(dir, pp->string)==0)
-            return;
-    }
-    MapOverPaths(javaSourcePaths, {
-        if (compareFileNames(dir, currentPath) == 0)
-            return;
-    });
-    sprintf(tmpBuff, "Directory %s is not listed in paths", dir);
-    warningMessage(ERR_ST, tmpBuff);
-}

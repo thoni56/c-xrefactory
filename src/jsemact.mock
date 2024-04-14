@@ -338,7 +338,3 @@ void javaParsedSuperClass(Symbol *s) {
 void javaSetClassSourceInformation(char *package, Id *cl) {
     mock(package, cl);
 }
-
-void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
-    mock(dir);
-}

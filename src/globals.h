@@ -53,9 +53,6 @@ extern Symbol *s_javaStringSymbol;
 extern Symbol *s_javaObjectSymbol;
 extern Symbol *s_javaCloneableSymbol;
 extern Symbol *s_javaIoSerializableSymbol;
-extern TypeModifier s_javaStringModifier;
-extern TypeModifier s_javaClassModifier;
-extern TypeModifier s_javaObjectModifier;
 
 extern FILE *communicationChannel;
 

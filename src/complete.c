@@ -81,12 +81,6 @@ static void fillCompletionSymFunInfo(SymbolCompletionFunctionInfo *completionSym
     completionSymFunInfo->storage = storage;
 }
 
-static void fillCompletionFqtMapInfo(FqtMapCompletionInfo *completionFqtMapInfo, Completions *completions,
-                                     enum fqtCompletion completionType) {
-    completionFqtMapInfo->res = completions;
-    completionFqtMapInfo->completionType = completionType;
-}
-
 static void formatFullCompletions(char *tt, int indent, int inipos) {
     int pos;
     char *nlpos, *p;
@@ -1151,11 +1145,6 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
     }
 }
 
-/* NOTE: Map-function */
-static void completeFqtClassFileFromZipArchiv(char *zip, char *file, void *cfmpi) {
-    completeFqtFromFileName(file, cfmpi);
-}
-
 static bool isCurrentPackageName(char *fn) {
     int plen;
     if (s_javaThisPackageName!=NULL && s_javaThisPackageName[0]!=0) {
@@ -1164,18 +1153,6 @@ static bool isCurrentPackageName(char *fn) {
             return true;
     }
     return false;
-}
-
-static void completeFqtClassFileFromFileTab(FileItem *fi, void *cfmpi) {
-    char    *fn;
-    assert(fi!=NULL);
-    if (fi->name[0] == ZIP_SEPARATOR_CHAR) {
-        // remove current package
-        fn = fi->name+1;
-        if (!isCurrentPackageName(fn)) {
-            completeFqtFromFileName(fn, cfmpi);
-        }
-    }
 }
 
 //#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
@@ -1208,47 +1185,6 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
             completeFqtFromFileName(fn+pathLength+1, a4);
         }
     }
-}
-
-static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType) {
-    FqtMapCompletionInfo  info;
-
-    fillCompletionFqtMapInfo(&info, c, completionType);
-    if (options.fqtNameToCompletions == 0)
-        return;
-
-    // fqt from .jars
-    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
-        fsRecMapOnFiles(zipArchiveTable[i].dir, zipArchiveTable[i].fn,
-                        "", completeFqtClassFileFromZipArchiv, &info);
-    }
-    if (options.fqtNameToCompletions <= 1)
-        return;
-
-    // fqt from filetab
-    for (int i=getNextExistingFileNumber(0); i != -1; i = getNextExistingFileNumber(i+1)) {
-        completeFqtClassFileFromFileTab(getFileItem(i), &info);
-    }
-    if (options.fqtNameToCompletions <= 2)
-        return;
-
-    // fqt from classpath
-    for (StringList *path=javaClassPaths; path!=NULL; path=path->next) {
-        mapOverDirectoryFiles(path->string, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
-                          path->string, path->string, NULL, &info, NULL);
-    }
-    if (options.fqtNameToCompletions <= 3)
-        return;
-
-    // fqt from sourcepath
-    MapOverPaths(javaSourcePaths, {
-        mapOverDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
-                          currentPath, currentPath, NULL, &info, NULL);
-    });
-}
-
-void javaHintCompleteNonImportedTypes(Completions*c) {
-    javaFqtCompletions(c, FQT_COMPLETE_DEFAULT);
 }
 
 void javaCompleteTypeCompName(Completions *c) {

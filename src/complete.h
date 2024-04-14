@@ -29,7 +29,6 @@ extern void completeMacros(Completions *c);
 extern void completeOthers(Completions *c);
 extern void javaCompleteTypeSingleName(Completions *c);
 extern void javaHintImportFqt(Completions *c);
-extern void javaHintCompleteNonImportedTypes(Completions *c);
 extern void javaHintCompleteMethodParameters(Completions *c);
 extern void javaCompleteTypeCompName(Completions *c);
 extern void javaCompleteThisPackageName(Completions *c);

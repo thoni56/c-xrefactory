@@ -159,6 +159,5 @@ extern struct stackFrame *newClassDefinitionBegin(Id *name, Access access, Symbo
 extern void newClassDefinitionEnd(FrameAllocation *allocation);
 extern void javaParsedSuperClass(Symbol *s);
 extern void javaSetClassSourceInformation(char *package, Id *cl);
-extern void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir);
 
 #endif
