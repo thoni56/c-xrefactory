@@ -231,36 +231,12 @@ int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi) {
     return (int) mock(name, outEi);
 }
 
-TypeModifier *javaNestedNewType(Symbol *expr, Id *thenew, IdList *idl) {
-    return (TypeModifier *) mock(expr, thenew, idl);
-}
-
-TypeModifier *javaMethodInvocationN(IdList *name, S_typeModifierList *args) {
-    return (TypeModifier *) mock(name, args);
-}
-
 TypeModifier *javaMethodInvocationT(TypeModifier *tt, Id *name, S_typeModifierList *args) {
     return (TypeModifier *) mock(tt, name, args);
 }
 
 TypeModifier *javaMethodInvocationS(Id *super, Id *name, S_typeModifierList *args) {
     return (TypeModifier *) mock(super, name, args);
-}
-
-TypeModifier *javaConstructorInvocation(Symbol *class, Position *pos, S_typeModifierList *args) {
-    return (TypeModifier *) mock(class, pos, args);
-}
-
-S_extRecFindStr *javaCrErfsForMethodInvocationN(IdList *name) {
-    return (S_extRecFindStr *) mock(name);
-}
-
-S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt, Id *name) {
-    return (S_extRecFindStr *) mock(tt, name);
-}
-
-S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
-    return (S_extRecFindStr *) mock(super, name);
 }
 
 S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas, Position *pos) {

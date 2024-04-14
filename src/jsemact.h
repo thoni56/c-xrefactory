@@ -114,11 +114,6 @@ extern Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);
 extern TypeModifier *javaClassNameType(IdList *typeName);
 extern TypeModifier *javaNewAfterName(IdList *name, Id *id, IdList *idl);
 extern int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi);
-extern TypeModifier *javaNestedNewType(Symbol *expr, Id *thenew, IdList *idl);
-extern TypeModifier *javaMethodInvocationN(
-                                              IdList *name,
-                                              S_typeModifierList *args
-                                              );
 extern TypeModifier *javaMethodInvocationT(	TypeModifier *tt,
                                                 Id *name,
                                                 S_typeModifierList *args
@@ -127,13 +122,6 @@ extern TypeModifier *javaMethodInvocationS(	Id *super,
                                                 Id *name,
                                                 S_typeModifierList *args
                                                 );
-extern TypeModifier *javaConstructorInvocation(Symbol *class,
-                                                  Position *pos,
-                                                  S_typeModifierList *args
-                                                  );
-extern S_extRecFindStr *javaCrErfsForMethodInvocationN(IdList *name);
-extern S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,Id *name);
-extern S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super,Id *name);
 extern S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas, Position *pos);
 extern int javaClassIsInCurrentPackage(Symbol *cl);
 extern int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2);

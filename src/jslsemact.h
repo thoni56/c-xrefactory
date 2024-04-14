@@ -43,8 +43,6 @@ extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int 
                         S_jslClassStat *classStat, SymbolList *waitList, void *savedyylval,
                         void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next);
 
-extern Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
-                                       AddYesNo add, int order, bool isExplicitlyImported);
 extern void jslAddSuperClassOrInterfaceByName(Symbol *memb,char *super);
 
 #endif

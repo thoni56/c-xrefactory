@@ -1830,58 +1830,6 @@ TypeModifier *javaClassNameType(IdList *typeName) {
     return newStructTypeModifier(st);
 }
 
-TypeModifier *javaNestedNewType(Symbol *sym, Id *thenew,
-                                IdList *idl) {
-    IdList       d1,d2;
-    TypeModifier     *res;
-    char                *id2;
-    Id			*id;
-    Symbol			*str;
-    Reference			*rr;
-    if (idl->next == NULL) {
-        // standard nested new
-        id = &idl->id;
-        assert(sym && sym->linkName);
-        id2 = sym->linkName;
-        fillfIdList(&d2, id2, sym, noPosition, id2, TypeStruct, NULL);
-        fillIdList(&d1, *id, id->name, TypeStruct, &d2);
-        javaClassifyNameToNestedType(&d1, sym, UsageUsed, &str, &rr);
-        res = javaClassNameType(&d1);
-    } else {
-        // O.K. extended case, usually syntax error, but ...
-        javaClassifyToTypeName(idl, UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
-        res = javaClassNameType(idl);
-        // you may also check that idl->next == sym
-        if (res && res->type == TypeStruct) {
-            assert(res->u.t && res->u.t->u.structSpec);
-            if (res->u.t->access & AccessStatic) {
-                // add the prefix of new as redundant long name
-                addUselessFQTReference(res->u.t->u.structSpec->classFileNumber, &thenew->position);
-            }
-        } else {
-            res = &errorModifier;
-        }
-    }
-    return res;
-}
-
-TypeModifier *javaNewAfterName(IdList *name, Id *thenew, IdList *idl) {
-    Symbol *str;
-    TypeModifier *expr, *res;
-    int atype;
-    Reference *rr;
-
-    atype = javaClassifyAmbiguousName(name,NULL,&str,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_EXPR,UsageUsed);
-    if (atype == TypeExpression) {
-        if (expr->type != TypeStruct) res = & errorModifier;
-        else res = javaNestedNewType(expr->u.t, thenew, idl);
-    } else if (atype == TypeStruct) {
-        assert(str);
-        assert(str->type == TypeStruct);
-        res = javaNestedNewType(str, thenew, idl);
-    } else res = & errorModifier;
-    return res;
-}
 
 static int javaExistBaseTypeWideningConversion(int t1, int t2) {
     int i1,i2,res;
@@ -1999,28 +1947,6 @@ finish:
 }
 
 
-static int javaSmallerProfile(Symbol *s1, Symbol *s2) {
-    int r;
-    char *p1,*p2;
-    assert(s1 && s1->type==TypeDefault && s1->u.typeModifier);
-    assert(s1->u.typeModifier->type == TypeFunction && s1->u.typeModifier->u.m.signature);
-    assert(s2 && s2->type==TypeDefault && s2->u.typeModifier);
-    assert(s2->u.typeModifier->type == TypeFunction && s2->u.typeModifier->u.m.signature);
-    p1 = s1->u.typeModifier->u.m.signature;
-    p2 = s2->u.typeModifier->u.m.signature;
-/*fprintf(dumpOut,"comparing %s to %s\n",p1,p2); fflush(dumpOut);*/
-    assert(*p1 == '(');
-    assert(*p2 == '(');
-    p1 ++; p2++;
-    while (*p1 != ')' && *p2 != ')') {
-        r = javaExistWideningConversion(&p1, &p2);
-        if (r == 0) return false;
-    }
-    if (*p1 != ')' || *p2 != ')') return false;
-/*fprintf(dumpOut,"the result is 1\n"); fflush(dumpOut);*/
-    return true;
-}
-
 int javaMethodApplicability(Symbol *memb, char *actArgs) {
     int r;
     char *fargs;
@@ -2063,112 +1989,6 @@ Symbol *javaCurrentSuperClass(void) {
 
 /* ********************* method invocations ************************** */
 
-static TypeModifier *javaMethodInvocation(
-                                        S_recFindStr *rfs,
-                                        Symbol *memb,
-                                        Id *name,
-                                        S_typeModifierList *args,
-                                        int invocationType,
-                                        Position *superPos) {
-    char				actArg[MAX_PROFILE_SIZE];
-    Symbol            * appl[MAX_APPL_OVERLOAD_FUNS];
-    int                 funCl[MAX_APPL_OVERLOAD_FUNS];
-    unsigned			minacc[MAX_APPL_OVERLOAD_FUNS];
-    SymbolList		*ee;
-    S_typeModifierList *aaa;
-    Usage			usage;
-    int					smallesti, baseCl, vApplCl, vFunCl, usedusage;
-    int					i,appli,actArgi;
-    Result rr;
-
-    assert(rfs->baseClass);  // method must be inside a class
-    assert(rfs->baseClass->type == TypeStruct);
-    baseCl = rfs->baseClass->u.structSpec->classFileNumber;
-    assert(baseCl != -1);
-
-//&sprintf(tmpBuff,"java method invocation\n"); ppcBottomInformation(tmpBuff);
-//&sprintf(tmpBuff,"the method is %s == '%s'\n",memb->name,memb->linkName);ppcBottomInformation(tmpBuff);
-    assert(memb && memb->type==TypeDefault && memb->u.typeModifier->type == TypeFunction);
-    for(aaa=args; aaa!=NULL; aaa=aaa->next) {
-        if (aaa->d->type == TypeError) {
-//&fprintf(dumpOut,"induced missinterpred at %d\n", name->position.line);
-            addTrivialCxReference(LINK_NAME_INDUCED_ERROR,TypeInducedError,StorageDefault,
-                                  name->position, UsageUsed);
-            return &errorModifier;
-        }
-    }
-    *actArg = 0; actArgi = 0;
-    for(aaa=args; aaa!=NULL; aaa=aaa->next) {
-        actArgi += javaTypeToString(aaa->d,actArg+actArgi,MAX_PROFILE_SIZE-actArgi);
-    }
-//&sprintf(tmpBuff,"arguments types == %s\n",actArg);ppcBottomInformation(tmpBuff);
-    appli = 0;
-    do {
-        assert(memb != NULL);
-//&sprintf(tmpBuff,"testing: %s\n",memb->linkName);ppcBottomInformation(tmpBuff);
-        if (javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currentClass, memb) &&
-            javaMethodApplicability(memb, actArg) == PROFILE_APPLICABLE) {
-            appl[appli] = memb;
-            minacc[appli] = javaGetMinimalAccessibility(rfs, memb);
-            assert(rfs && rfs->currentClass && rfs->currentClass->type == TypeStruct);
-            funCl[appli] = rfs->currentClass->u.structSpec->classFileNumber;
-            assert(funCl[appli] != -1);
-            appli++;
-            //&sprintf(tmpBuff,"applicable: %s of
-            //%s\n",memb->linkName,rfs->currentClass->linkName);ppcBottomInformation(tmpBuff);
-        }
-        rr = findStrRecordSym(&memb, rfs, name->name,
-                              CLASS_TO_METHOD, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
-        if (invocationType == CONSTRUCTOR_INVOCATION && rfs->baseClass != rfs->currentClass) {
-            // constructors are not inherited
-            rr = RESULT_NOT_FOUND;
-        }
-    } while (rr==RESULT_OK);
-    if (appli == 0)
-        return &errorModifier;
-//&sprintf(tmpBuff,"looking for smallest\n");ppcBottomInformation(tmpBuff);
-    smallesti = 0;
-    for (i=1; i<appli; i++) {
-        if (! javaSmallerProfile(appl[smallesti], appl[i])) smallesti = i;
-/*&		if (strcmp(appl[smallesti]->u.typeModifier->u.m.signature, appl[i]->u.typeModifier->u.m.signature)==0) {&*/
-            /* virtual application, take one from the super-class */
-/*&			smallesti = i;&*/
-/*&		}&*/
-    }
-    for (i=0; i<appli; i++) {
-        if (! javaSmallerProfile(appl[smallesti], appl[i]))
-            return &errorModifier;
-    }
-    log_trace("the invoked method is %s of %s", appl[smallesti]->linkName, getFileItem(funCl[smallesti])->name);
-    assert(appl[smallesti]->type == TypeDefault);
-    assert(appl[smallesti]->u.typeModifier->type == TypeFunction);
-    assert(funCl[smallesti] != -1);
-    vFunCl = funCl[smallesti];
-    vApplCl = baseCl;
-//&	if (appl[smallesti]->access & AccessStatic) {
-//&		vFunCl = vApplCl = NO_FILE_NUMBER;
-//&	}
-    usedusage = UsageUsed;
-    if (invocationType == CONSTRUCTOR_INVOCATION) {
-        // this is just because java2html, so that constructors invocations
-        // are linked to constructors rather than classes
-        usedusage = UsageConstructorUsed;
-    }
-    if (invocationType == SUPER_METHOD_INVOCATION) {
-        usedusage = UsageMethodInvokedViaSuper;
-        addSuperMethodCxReferences(vFunCl, superPos);
-    }
-    fillUsage(&usage, usedusage, minacc[smallesti]);
-    addNewCxReference(appl[smallesti], &name->position, usage, vFunCl, vApplCl);
-    if (options.serverOperation == OLO_EXTRACT) {
-        for(ee=appl[smallesti]->u.typeModifier->u.m.exceptions; ee!=NULL; ee=ee->next) {
-            addCxReference(ee->element, &name->position, UsageThrown, NO_FILE_NUMBER, NO_FILE_NUMBER);
-        }
-    }
-    return appl[smallesti]->u.typeModifier->next;
-}
-
-
 static void methodAppliedOnNonClass(char *rec) {
     char message[TMP_BUFF_SIZE];
     if (options.debug || options.errors) {
@@ -2202,18 +2022,6 @@ S_extRecFindStr *javaCrErfsForMethodInvocationN(IdList *name) {
     return erfs;
 }
 
-TypeModifier *javaMethodInvocationN(	IdList *name,
-                                        S_typeModifierList *args
-                                    ) {
-    S_extRecFindStr		*erfs;
-    TypeModifier		*res;
-    erfs = javaCrErfsForMethodInvocationN(name);
-    if (erfs == NULL)
-        return &errorModifier;
-    res = javaMethodInvocation(&erfs->s, erfs->memb, &name->id, args,REGULAR_METHOD,&noPosition);
-    return res;
-}
-
 S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
                                                 Id *name
     ) {
@@ -2237,56 +2045,6 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
     return erfs;
 }
 
-TypeModifier *javaMethodInvocationT(TypeModifier *tt,
-                                       Id *name,
-                                       S_typeModifierList *args
-                                       ) {
-    S_extRecFindStr		*erfs;
-    TypeModifier		*res;
-    erfs = javaCrErfsForMethodInvocationT(tt, name);
-    if (erfs == NULL)
-        return &errorModifier;
-    res = javaMethodInvocation(&erfs->s, erfs->memb, name, args,REGULAR_METHOD,&noPosition);
-    return res;
-}
-
-S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
-    Symbol            *ss;
-    S_extRecFindStr		*erfs;
-
-    ss = javaCurrentSuperClass();
-    if (ss == &errorSymbol || ss->type==TypeError)
-        return NULL;
-    assert(ss && ss->type == TypeStruct);
-    assert(ss->javaClassIsLoaded);
-    erfs = stackMemoryAlloc(sizeof(S_extRecFindStr));
-    erfs->params = NULL;
-/*	I do not know, once will come the day I will know
-    if (s_javaStat->cpMethod != NULL) {
-        erfs->s.accessed = s_javaStat->cpMethod->b.accessFlags;
-    }
-*/
-    Result rr = findStrRecordSym(&erfs->memb, iniFind(ss, &erfs->s), name->name,
-                        CLASS_TO_METHOD,ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO);
-    if (rr != RESULT_OK)
-        return NULL;
-    return erfs;
-}
-
-TypeModifier *javaMethodInvocationS(Id *super,
-                                       Id *name,
-                                       S_typeModifierList *args
-    ) {
-    S_extRecFindStr		*erfs;
-    TypeModifier		*res;
-    erfs = javaCrErfsForMethodInvocationS(super, name);
-    if (erfs==NULL)
-        return &errorModifier;
-    res = javaMethodInvocation(&erfs->s, erfs->memb, name, args, SUPER_METHOD_INVOCATION,&super->position);
-    assert(erfs->s.currentClass && erfs->s.currentClass->u.structSpec);
-    return res;
-}
-
 S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
                                                     Position *pos
     ) {
@@ -2305,24 +2063,6 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
         return NULL;
     return erfs;
 }
-
-TypeModifier *javaConstructorInvocation(Symbol *clas,
-                                           Position *pos,
-                                           S_typeModifierList *args
-    ) {
-    S_extRecFindStr		*erfs;
-    TypeModifier		*res;
-    Id			name;
-    erfs = javaCrErfsForConstructorInvocation(clas, pos);
-    if (erfs == NULL)
-        return &errorModifier;
-    if (erfs->s.baseClass != erfs->s.currentClass)
-        return &errorModifier;
-    fillId(&name, clas->name, NULL, *pos);
-    res = javaMethodInvocation(&erfs->s, erfs->memb, &name, args,CONSTRUCTOR_INVOCATION,&noPosition);
-    return res;
-}
-
 
 /* ************************ expression evaluations ********************* */
 
