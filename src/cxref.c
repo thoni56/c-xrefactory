@@ -34,17 +34,6 @@
 #include "log.h"
 
 
-typedef struct ReferencesChangeData {
-    char   *linkName;
-    int     fnum;
-    Symbol *cclass;
-    int     category;
-    int     cxMemBegin;
-    int     cxMemEnd;
-} ReferencesChangeData;
-
-
-
 /* *********** symbols excluded from cache ************** */
 
 char olSymbolType[COMPLETION_STRING_SIZE];
@@ -123,86 +112,6 @@ bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
     if (enclosedClass == enclosingClass)
         return false;
     return isEnclosingClass(enclosedClass, enclosingClass);
-}
-
-// TODO, all this stuff should be done differently! Why?
-// NOTE This is a mapOverReferencesTableWithPointer()-function
-static void changeFieldRefUsages(ReferenceItem *ri, void *rrcd) {
-    ReferencesChangeData *changeData;
-    ReferenceItem ddd;
-
-    changeData = (ReferencesChangeData*) rrcd;
-    fillReferenceItem(&ddd, changeData->linkName, cxFileHashNumber(changeData->linkName), NO_FILE_NUMBER, NO_FILE_NUMBER,
-                       TypeDefault, StorageField, ScopeFile, AccessDefault, changeData->category);
-    if (isSameCxSymbol(ri, &ddd)) {
-        for (Reference *r = ri->references; r!=NULL; r=r->next) {
-            if (r->position.file == changeData->fnum &&  /* I think it is used only for Java */
-                dm_isBetween(cxMemory,r,changeData->cxMemBegin,changeData->cxMemEnd)) {
-                switch(r->usage.kind) {
-                case UsageMaybeThis:
-                    assert(changeData->cclass->u.structSpec);
-                    if (isEnclosingClass(changeData->cclass->u.structSpec->classFileNumber, ri->vFunClass)) {
-                        r->usage.kind = UsageMaybeThisInClassOrMethod;
-                    }
-                    break;
-                case UsageMaybeQualifiedThis:
-                    assert(changeData->cclass->u.structSpec);
-                    if (isEnclosingClass(changeData->cclass->u.structSpec->classFileNumber, ri->vFunClass)) {
-                        r->usage.kind = UsageMaybeQualifThisInClassOrMethod;
-                    }
-                    break;
-                case UsageNotFQType: r->usage.kind = UsageNotFQTypeInClassOrMethod;
-                    break;
-                case UsageNotFQField: r->usage.kind = UsageNotFQFieldInClassOrMethod;
-                    break;
-                case UsageNonExpandableNotFQTName: r->usage.kind = UsageNonExpandableNotFQTNameInClassOrMethod;
-                    break;
-                case UsageLastUseless: r->usage.kind = UsageLastUselessInClassOrMethod;
-                    break;
-                case UsageOtherUseless:
-                    //& r->usage.kind = UsageOtherUselessInMethod;
-                    break;
-                case UsageLastUselessInClassOrMethod:
-                case UsageNotFQFieldInClassOrMethod:
-                case UsageNotFQTypeInClassOrMethod:
-                case UsageMaybeQualifThisInClassOrMethod:
-                case UsageMaybeThisInClassOrMethod:
-                    // do not care if it is yet requalified
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-    }
-}
-
-static void fillReferencesChangeData(ReferencesChangeData *referencesChangeData, char *linkName, int fnum,
-                                      Symbol *cclass, int category, int memBegin, int memEnd) {
-    referencesChangeData->linkName = linkName;
-    referencesChangeData->fnum = fnum;
-    referencesChangeData->cclass = cclass;
-    referencesChangeData->category = category;
-    referencesChangeData->cxMemBegin = memBegin;
-    referencesChangeData->cxMemEnd = memEnd;
-}
-
-void changeMethodReferencesUsages(char *linkName, int category, int fnum,
-                                  Symbol *cclass){
-    ReferencesChangeData changeData;
-    fillReferencesChangeData(&changeData, linkName, fnum, cclass, category,
-                              parsedInfo.cxMemoryIndexAtMethodBegin,
-                              parsedInfo.cxMemoryIndexAtMethodEnd);
-    mapOverReferenceTableWithPointer(changeFieldRefUsages, &changeData);
-}
-
-void changeClassReferencesUsages(char *linkName, int category, int fnum,
-                                 Symbol *cclass){
-    ReferencesChangeData changeData;
-    fillReferencesChangeData(&changeData, linkName, fnum, cclass, category,
-                              parsedInfo.cxMemoryIndexAtClassBeginning,
-                              parsedInfo.cxMemoryIndexAtClassEnd);
-    mapOverReferenceTableWithPointer(changeFieldRefUsages, &changeData);
 }
 
 Reference * getDefinitionRef(Reference *reference) {
@@ -2550,43 +2459,6 @@ void olCreateSelectionMenu(int command) {
     LIST_MERGE_SORT(SymbolsMenu,
                     sessionData.browserStack.top->menuSym,
                     refItemsOrderLess);
-}
-
-static void olcxSingleReferenceCheck1(ReferenceItem *referenceItem,
-                                      OlcxReferences *rstack,
-                                      Reference *reference
-) {
-    int prefixchar;
-
-    if (isReferenceInList(reference, rstack->references)) {
-        prefixchar = ' ';
-        if (sessionData.browserStack.top->references == NULL) {
-            fprintf(communicationChannel,"%s",COLCX_LIST);
-            prefixchar = '>';
-        }
-        fprintf(communicationChannel,"%c  %s:%d reference to '", prefixchar,
-                simpleFileNameFromFileNum(reference->position.file), reference->position.line);
-        printSymbolLinkNameString(communicationChannel, referenceItem->linkName);
-        fprintf(communicationChannel,"' lost\n");
-        olcxAppendReference(reference, sessionData.browserStack.top);
-    }
-}
-
-void olcxCheck1CxFileReference(ReferenceItem *referenceItem, Reference *reference) {
-    ReferenceItem     *sss;
-    OlcxReferences    *rstack;
-    SymbolsMenu     *cms;
-    int pushedKind;
-
-    assert(sessionData.browserStack.top);
-    rstack = sessionData.browserStack.top->previous;
-    assert(rstack && rstack->menuSym);
-    sss = &rstack->menuSym->references;
-    pushedKind = itIsSymbolToPushOlReferences(referenceItem, rstack, &cms, DEFAULT_VALUE);
-    // this is very slow to check the symbol name for each reference
-    if (pushedKind == 0 && olcxIsSameCxSymbol(referenceItem, sss)) {
-        olcxSingleReferenceCheck1(referenceItem, rstack, reference);
-    }
 }
 
 void olcxPushSpecialCheckMenuSym(char *symname) {

@@ -173,16 +173,8 @@ bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
     return (bool) mock(enclosedClass, enclosingClass);
 }
 
-void changeMethodReferencesUsages(char *linkName, int category, int fnum, Symbol *cclass) {
-    mock(linkName, category, fnum, cclass);
-}
-
 void olcxPushSpecialCheckMenuSym(char *symname) {
     mock(symname);
-}
-
-void olcxCheck1CxFileReference(ReferenceItem *ss, Reference *r) {
-    mock(ss, r);
 }
 
 void olcxPushSpecial(char *fieldName, int command) {

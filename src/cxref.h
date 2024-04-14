@@ -60,10 +60,7 @@ extern bool ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
                                Reference **diff);
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
-extern void changeMethodReferencesUsages(char *linkName, int category, int fnum,
-                                         Symbol *cclass);
 extern void olcxPushSpecialCheckMenuSym(char *symname);
-extern void olcxCheck1CxFileReference(ReferenceItem *ss, Reference *r);
 extern void olcxPushSpecial(char *fieldName, int command);
 extern bool isPushAllMethodsValidRefItem(ReferenceItem *ri);
 extern bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
