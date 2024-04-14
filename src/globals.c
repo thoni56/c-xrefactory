@@ -123,8 +123,6 @@ Symbol errorSymbol;
 Position noPosition = {-1, 0, 0};
 
 Symbol s_javaArrayObjectSymbol;
-Symbol *s_javaCloneableSymbol;
-Symbol *s_javaIoSerializableSymbol;
 Symbol *s_javaObjectSymbol;
 
 char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */

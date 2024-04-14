@@ -69,17 +69,9 @@ extern Type javaClassifyAmbiguousName(
                                      int usage
                                      );
 extern Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs);
-extern Reference *javaClassifyToTypeName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs);
-extern Symbol * javaQualifiedThis(IdList *tname, Id *thisid);
 extern void javaClassifyToPackageName( IdList *id );
 extern void javaClassifyToPackageNameAndAddRefs(IdList *id, int usage);
 extern char *javaImportSymbolName_st(int file, int line, int coll);
-extern TypeModifier *javaClassifyToExpressionName(IdList *name,Reference **oref);
-extern Symbol *javaTypeNameDefinition(IdList *tname);
-extern void javaSetFieldLinkName(Symbol *d);
-extern void javaAddPackageDefinition(IdList *id);
-extern Symbol *javaAddType(IdList *class, Access access, Position *p);
-extern Symbol *javaCreateNewMethod(char *name, Position *pos, int mem);
 extern int javaTypeToString(TypeModifier *type, char *pp, int ppSize);
 extern int javaIsYetInTheClass(
                                Symbol	*clas,
@@ -98,22 +90,14 @@ extern void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname);
 extern void javaReadSymbolsFromSourceFile(char *fname);
 extern int javaLinkNameIsAnnonymousClass(char *linkname);
 extern int javaLinkNameIsANestedClass(char *cname);
-extern int isANestedClass(Symbol *ss);
-extern void addSuperMethodCxReferences(int classIndex, Position *pos);
 extern Reference * addUselessFQTReference(int classIndex, Position *pos);
 extern Reference *addUnimportedTypeLongReference(int classIndex, Position *pos);
 extern void addThisCxReferences(int classIndex, Position *pos);
 extern void javaLoadClassSymbolsFromFile(Symbol *memb);
-extern Symbol *javaPrependDirectEnclosingInstanceArgument(Symbol *args);
 extern void addMethodCxReferences(unsigned modif, Symbol *method, Symbol *clas);
-extern Symbol *javaMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage);
 extern void javaAddMethodParametersToSymTable(Symbol *method);
-extern void javaMethodBodyBeginning(Symbol *method);
-extern void javaMethodBodyEnding(Position *pos);
 extern Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);
-extern TypeModifier *javaClassNameType(IdList *typeName);
 extern TypeModifier *javaNewAfterName(IdList *name, Id *id, IdList *idl);
-extern int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi);
 extern TypeModifier *javaMethodInvocationT(	TypeModifier *tt,
                                                 Id *name,
                                                 S_typeModifierList *args
@@ -122,7 +106,6 @@ extern TypeModifier *javaMethodInvocationS(	Id *super,
                                                 Id *name,
                                                 S_typeModifierList *args
                                                 );
-extern S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas, Position *pos);
 extern int javaClassIsInCurrentPackage(Symbol *cl);
 extern int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2);
 

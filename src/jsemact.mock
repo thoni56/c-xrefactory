@@ -71,14 +71,6 @@ Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **st
     return (Reference *) mock(tname, usage, str, allowUselesFqtRefs);
 }
 
-Reference *javaClassifyToTypeName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
-    return (Reference *) mock(tname, usage, str, allowUselesFqtRefs);
-}
-
-Symbol *javaQualifiedThis(IdList *tname, Id *thisid) {
-    return (Symbol *) mock(tname, thisid);
-}
-
 void javaClassifyToPackageName(IdList *id) {
     mock(id);
 }
@@ -89,30 +81,6 @@ void javaClassifyToPackageNameAndAddRefs(IdList *id, int usage) {
 
 char *javaImportSymbolName_st(int file, int line, int coll) {
     return (char *) mock(file, line, coll);
-}
-
-TypeModifier *javaClassifyToExpressionName(IdList *name, Reference **oref) {
-    return (TypeModifier *) mock(name, oref);
-}
-
-Symbol *javaTypeNameDefinition(IdList *tname) {
-    return (Symbol *) mock(tname);
-}
-
-void javaSetFieldLinkName(Symbol *d) {
-    mock(d);
-}
-
-void javaAddPackageDefinition(IdList *id) {
-    mock(id);
-}
-
-Symbol *javaAddType(IdList *class, Access access, Position *p) {
-    return (Symbol *) mock(class, access, p);
-}
-
-Symbol *javaCreateNewMethod(char *name, Position *pos, int mem) {
-    return (Symbol *) mock(name, pos, mem);
 }
 
 int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
@@ -167,14 +135,6 @@ int javaLinkNameIsANestedClass(char *cname) {
     return (int) mock(cname);
 }
 
-int isANestedClass(Symbol *ss) {
-    return (int) mock(ss);
-}
-
-void addSuperMethodCxReferences(int classIndex, Position *pos) {
-    mock(classIndex, pos);
-}
-
 Reference *addUselessFQTReference(int classIndex, Position *pos) {
     return (Reference *) mock(classIndex, pos);
 }
@@ -191,44 +151,20 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
     mock(memb);
 }
 
-Symbol *javaPrependDirectEnclosingInstanceArgument(Symbol *args) {
-    return (Symbol *) mock(args);
-}
-
 void addMethodCxReferences(unsigned modif, Symbol *method, Symbol *clas) {
     mock(modif, method, clas);
-}
-
-Symbol *javaMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage) {
-    return (Symbol *) mock(modif, type, decl, storage);
 }
 
 void javaAddMethodParametersToSymTable(Symbol *method) {
     mock(method);
 }
 
-void javaMethodBodyBeginning(Symbol *method) {
-    mock(method);
-}
-
-void javaMethodBodyEnding(Position *pos) {
-    mock(pos);
-}
-
 Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     return (Symbol *) mock(name, fqName);
 }
 
-TypeModifier *javaClassNameType(IdList *typeName) {
-    return (TypeModifier *) mock(typeName);
-}
-
 TypeModifier *javaNewAfterName(IdList *name, Id *id, IdList *idl) {
     return (TypeModifier *) mock(name, id, idl);
-}
-
-int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi) {
-    return (int) mock(name, outEi);
 }
 
 TypeModifier *javaMethodInvocationT(TypeModifier *tt, Id *name, S_typeModifierList *args) {
@@ -237,10 +173,6 @@ TypeModifier *javaMethodInvocationT(TypeModifier *tt, Id *name, S_typeModifierLi
 
 TypeModifier *javaMethodInvocationS(Id *super, Id *name, S_typeModifierList *args) {
     return (TypeModifier *) mock(super, name, args);
-}
-
-S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas, Position *pos) {
-    return (S_extRecFindStr *) mock(clas, pos);
 }
 
 int javaClassIsInCurrentPackage(Symbol *cl) {
