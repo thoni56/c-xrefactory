@@ -12,7 +12,6 @@
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "jsemact.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "parsers.mock"

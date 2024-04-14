@@ -17,7 +17,6 @@
 #include "filedescriptor.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "jsemact.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "ppc.mock"

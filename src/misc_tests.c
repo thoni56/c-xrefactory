@@ -15,7 +15,6 @@
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "jsemact.mock"
 #include "options.mock"
 #include "ppc.mock"
 #include "yylex.mock"

@@ -6,7 +6,6 @@
 #include "commons.mock"
 #include "cxref.mock"
 #include "globals.mock"
-#include "jsemact.mock"
 #include "jsltypetab.mock"
 #include "misc.mock"
 #include "options.mock"

@@ -12,7 +12,6 @@
 #include "filetable.h"
 #include "globals.h"
 #include "head.h"
-#include "jsemact.h"
 #include "list.h"
 #include "main.h"
 #include "misc.h"

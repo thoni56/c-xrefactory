@@ -21,7 +21,6 @@
 #include "globals.mock"
 #include "init.mock"
 #include "javafqttab.mock"
-#include "jsemact.mock"
 #include "jslsemact.mock"
 #include "lexem.mock"
 #include "lexer.mock"

@@ -8,7 +8,6 @@
 #include "semact.h"
 #include "cxref.h"
 #include "filetable.h"
-#include "jsemact.h"
 #include "symbol.h"
 #include "list.h"
 #include "stackmemory.h"

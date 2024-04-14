@@ -12,7 +12,6 @@
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
-#include "jsemact.h"
 #include "list.h"
 #include "menu.h"
 #include "misc.h"

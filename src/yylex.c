@@ -8,7 +8,6 @@
 #include "extract.h"
 #include "globals.h"
 #include "input.h"
-#include "jsemact.h"   /* For s_javaStat */
 #include "jslsemact.h" /* For s_jsl */
 #include "lexem.h"
 #include "lexembuffer.h"

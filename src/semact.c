@@ -5,14 +5,11 @@
 #include "globals.h"
 #include "filedescriptor.h"
 #include "options.h"
-#include "parsers.h"
 #include "misc.h"
 #include "proto.h"
 #include "usage.h"
 #include "yylex.h"
 #include "cxref.h"
-#include "jsemact.h"
-#include "jslsemact.h"          /*& s_jsl &*/
 #include "symbol.h"
 #include "list.h"
 #include "filetable.h"
@@ -88,7 +85,6 @@ void deleteSymDef(void *p) {
 
     pp = (Symbol *) p;
     log_debug("deleting %s %s", pp->name, pp->linkName);
-    if (symbolTableDelete(javaStat->locals,pp)) return;
     if (symbolTableDelete(symbolTable,pp)==0) {
         assert(options.mode);
         if (options.mode != ServerMode) {

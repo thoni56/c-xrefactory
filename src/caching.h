@@ -18,7 +18,6 @@ typedef struct {
     short int          lineNumber;
     short int          ifDepth;
     struct cppIfStack *ifStack;
-    struct javaStat   *javaStat;
     Counters           counters;
 } CachePoint;
 

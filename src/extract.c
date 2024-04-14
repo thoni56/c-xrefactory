@@ -6,7 +6,6 @@
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
-#include "jsemact.h"
 #include "list.h"
 #include "log.h"
 #include "misc.h"

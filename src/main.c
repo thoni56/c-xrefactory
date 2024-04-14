@@ -16,7 +16,6 @@
 #include "globals.h"
 #include "init.h"
 #include "javafqttab.h"
-#include "jsemact.h"
 #include "jslsemact.h"
 #include "lexem.h"
 #include "list.h"
@@ -638,11 +637,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initOptions();
 
     initSymbolTable(MAX_SYMBOLS);
-
-    fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
-                  symbolTable,NULL,AccessDefault,parsedClassInfoInit,NO_FILE_NUMBER,NULL);
-    javaStat = stackMemoryAlloc(sizeof(JavaStat));
-    *javaStat = s_initJavaStat;
 
     // initialize recursive java parsing
     s_yygstate = stackMemoryAlloc(sizeof(struct yyGlobalState));

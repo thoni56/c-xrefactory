@@ -14,7 +14,6 @@
 #include "editorbuffer.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "jsemact.mock"
 #include "main.mock"
 #include "menu.mock"
 #include "misc.mock"

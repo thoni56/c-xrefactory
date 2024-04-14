@@ -10,7 +10,6 @@
 
 #include "globals.h"
 #include "options.h"
-#include "jsemact.h"
 #include "commons.h"
 #include "caching.h"
 #include "protocol.h"

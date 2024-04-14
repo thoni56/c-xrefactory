@@ -12,7 +12,6 @@
 #include "reftab.h"
 #include "javafqttab.h"
 #include "classhierarchy.h"
-#include "jsemact.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 
@@ -264,7 +263,6 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
     setMacroBodyMemoryIndex(cachePoint->macroBodyMemoryIndex);
     currentBlock = cachePoint->topBlock;
     *currentBlock = cachePoint->topBlockContent;
-    javaStat = cachePoint->javaStat;
     counters = cachePoint->counters;
     deleteFrameAllocationsWhenOutOfMemory();
     assert(options.mode);
@@ -376,8 +374,7 @@ void cacheInclude(int fileNum) {
 
 static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmMemoryIndex,
                            int cxMemoryIndex, int macroBodyMemoryIndex, char *lbcc, short int includeStackTop,
-                           short int lineNumber, short int ifDepth, CppIfStack *ifStack,
-                           JavaStat *javaCached, Counters counters) {
+                           short int lineNumber, short int ifDepth, CppIfStack *ifStack, Counters counters) {
     cachePoint->topBlock = topBlock;
     cachePoint->topBlockContent = *topBlock;
     cachePoint->ppmMemoryIndex = ppmMemoryIndex;
@@ -388,7 +385,6 @@ static void fillCachePoint(CachePoint *cachePoint, CodeBlock *topBlock, int ppmM
     cachePoint->lineNumber = lineNumber;
     cachePoint->ifDepth = ifDepth;
     cachePoint->ifStack = ifStack;
-    cachePoint->javaStat = javaCached;
     cachePoint->counters = counters;
 }
 
@@ -409,7 +405,6 @@ void placeCachePoint(bool inputCaching) {
     cachePoint = &cache.points[cache.index];
     log_debug("placing cache point %d", cache.index);
     fillCachePoint(cachePoint, currentBlock, ppmMemory.index, cxMemory->index, getMacroBodyMemoryIndex(), cache.free,
-                   cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack,
-                   javaStat, counters);
+                   cache.includeStackTop, currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack, counters);
     cache.index++;
 }

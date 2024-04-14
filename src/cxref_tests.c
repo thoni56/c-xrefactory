@@ -21,7 +21,6 @@
 #include "fileio.mock"
 #include "filetable.mock"
 #include "globals.mock"
-#include "jsemact.mock"
 #include "lexer.mock"
 #include "main.mock"
 #include "menu.mock"
