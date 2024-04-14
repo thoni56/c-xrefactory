@@ -990,24 +990,6 @@ static void completeJavaConstructors(Symbol *s, void *c) {
     completeConstructorsFromFile((Completions *)c, s->linkName);
 }
 
-/* NOTE: Map-function */
-static void javaPackageNameCompletion(
-    char        *fname,
-    char        *path,
-    char        *pack,
-    Completions *c,
-    void        *idp,
-    int         *pstorage
-) {
-    CompletionLine compLine;
-    char *cname;
-
-    if (strchr(fname,'.')!=NULL) return;        /* not very proper */
-    cname = stackMemoryAlloc(strlen(fname)+1);
-    strcpy(cname, fname);
-    fillCompletionLine(&compLine, cname, NULL, TypePackage,0, 0 , NULL,NULL);
-    processName(cname, &compLine, 1, c);
-}
 
 /* NOTE: Map-function */
 static void javaTypeNameCompletion(
@@ -1083,15 +1065,6 @@ static void javaCompleteNestedClasses(  Completions *c,
     }
 }
 
-static void javaCompleteNestedClSingleName(Completions *cc) {
-    JavaStat  *cs;
-
-    for(cs=javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
-        javaCompleteNestedClasses(cc, cs->thisClass, StorageDefault);
-    }
-}
-
-
 static void javaCompleteComposedName(Completions *c,
                                      int classif,
                                      int storage,
@@ -1130,121 +1103,6 @@ static void javaCompleteComposedName(Completions *c,
         javaLoadClassSymbolsFromFile(str);
         completeRecordsNames(c, str, CLASS_TO_ANY, storage, TypeDefault, 0);
     }
-}
-
-void javaHintCompleteMethodParameters(Completions *c) {
-    CompletionLine     compLine;
-    Symbol             *r, *vFunCl;
-    S_recFindStr       *rfs;
-    S_typeModifierList *aaa;
-    int                visibilityCheck, accessCheck, vlevel, actArgi;
-    Result rr;
-    char               *mname;
-    char               actArg[MAX_PROFILE_SIZE];
-
-    if (c->idToProcessLen != 0)
-        return;
-    if (parsedClassInfo.erfsForParameterCompletion==NULL)
-        return;
-    r = parsedClassInfo.erfsForParameterCompletion->memb;
-    rfs = &parsedClassInfo.erfsForParameterCompletion->s;
-    mname = r->name;
-    visibilityCheck = VISIBILITY_CHECK_NO;
-    accessCheck = calculateAccessCheckOption();
-    // partial actual parameters
-
-    *actArg = 0; actArgi = 0;
-    for(aaa=parsedClassInfo.erfsForParameterCompletion->params; aaa!=NULL; aaa=aaa->next) {
-        actArgi += javaTypeToString(aaa->d,actArg+actArgi,MAX_PROFILE_SIZE-actArgi);
-    }
-    do {
-        assert(r != NULL);
-        if (*actArg==0 || javaMethodApplicability(r,actArg)==PROFILE_PARTIALLY_APPLICABLE) {
-            vFunCl = rfs->currentClass;
-            if (vFunCl->u.structSpec->classFileNumber == -1) {
-                vFunCl = NULL;
-            }
-            vlevel = rfs->superClassesCount;
-            fillCompletionLine(&compLine, r->name, r, TypeDefault, vlevel,0,NULL,vFunCl);
-            processName(r->name, &compLine, 0, c);
-        }
-        rr = findStrRecordSym(&r, rfs, mname, CLASS_TO_METHOD, accessCheck, visibilityCheck);
-    } while (rr == RESULT_OK);
-    if (c->alternativeIndex != 0) {
-        c->prefix[0]=0;
-        c->fullMatchFlag = true;
-        c->noFocusOnCompletions = true;
-    }
-    if (options.serverOperation != OLO_SEARCH)
-        collectedCompletions.abortFurtherCompletions = true;
-}
-
-
-void javaCompletePackageSingleName(Completions*c) {
-    javaMapOverDirectoryFiles2(NULL, javaPackageNameCompletion, c, NULL, NULL);
-}
-
-void javaCompleteThisPackageName(Completions *c) {
-    CompletionLine     compLine;
-    static char cname[TMP_STRING_SIZE];
-    char        *cc, *ss, *dd;
-    if (c->idToProcessLen != 0) return;
-    ss = javaCutSourcePathFromFileName(getRealFileName_static(getFileItem(olOriginalFileNumber)->name));
-    strcpy(cname, ss);
-    dd = lastOccurenceInString(cname, '.');
-    if (dd!=NULL) *dd=0;
-    javaDotifyFileName(cname);
-    cc = lastOccurenceInString(cname, '.');
-    if (cc==NULL) return;
-    *cc++ = ';'; *cc = 0;
-    fillCompletionLine(&compLine,cname,NULL,TypeSpecialComplet,0,0,NULL,NULL);
-    completeName(cname, &compLine, 0, c);
-}
-
-static void javaCompleteThisClassDefinitionName(Completions*c) {
-    CompletionLine     compLine;
-    static char cname[TMP_STRING_SIZE];
-    char        *cc;
-
-    javaGetClassNameFromFileNumber(olOriginalFileNumber, cname, DOTIFY_NAME);
-    cc = strchr(cname,0);
-    assert(cc!=NULL);
-    *cc++ = ' '; *cc=0;
-    cc = lastOccurenceInString(cname, '.');
-    if (cc==NULL)
-        return;
-    cc++;
-    fillCompletionLine(&compLine,cc,NULL,TypeSpecialComplet,0,0,NULL,NULL);
-    completeName(cc, &compLine, 0, c);
-}
-
-void javaCompleteClassDefinitionNameSpecial(Completions*c) {
-    if (c->idToProcessLen != 0) return;
-    javaCompleteThisClassDefinitionName(c);
-}
-
-void javaCompleteClassDefinitionName(Completions*c) {
-    SymbolCompletionInfo ii;
-    javaCompleteThisClassDefinitionName(c);
-    // order is important because of hack in nestedcl Access modifs
-    javaCompleteNestedClSingleName(c);
-    fillCompletionSymInfo(&ii, c, TypeStruct);
-    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
-}
-
-void javaCompletePackageCompName(Completions*c) {
-    javaClassifyToPackageNameAndAddRefs(javaStat->lastParsedName, UsageUsed);
-    javaMapOverDirectoryFiles2(javaStat->lastParsedName,
-                           javaPackageNameCompletion, c, javaStat->lastParsedName, NULL);
-}
-
-void javaCompleteTypeSingleName(Completions*c) {
-    SymbolCompletionInfo ii;
-    // order is important because of hack in nestedcl Access modifs
-    javaCompleteNestedClSingleName(c);
-    javaMapOverDirectoryFiles2(NULL, javaTypeNameCompletion, c, NULL, NULL);
-    fillCompletionSymInfo(&ii, c, TypeStruct);
-    symbolTableMapWithPointer(symbolTable, completeFun, (void*) &ii);
 }
 
 static void completeFqtFromFileName(char *file, void *cfmpi) {

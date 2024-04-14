@@ -50,46 +50,6 @@ void completeOthers(Completions *c) {
   mock(c);
 }
 
-void javaCompleteTypeSingleName(Completions *c) {
-  mock(c);
-}
-
-void javaHintCompleteNonImportedTypes(Completions *c) {
-  mock(c);
-}
-
-void javaHintCompleteMethodParameters(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteTypeCompName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteThisPackageName(Completions *c) {
-  mock(c);
-}
-
-void javaCompletePackageSingleName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteExprSingleName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteUpMethodSingleName(Completions *c) {
-  mock(c);
-}
-
-void javaCompleteFullInheritedMethodHeader(Completions *c) {
-  mock(c);
-}
-
-void javaCompletePackageCompName(Completions *c) {
-  mock(c);
-}
-
 void javaCompleteExprCompName(Completions *c) {
   mock(c);
 }
