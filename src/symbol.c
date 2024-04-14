@@ -45,11 +45,6 @@ void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName, Posi
     symbol->u.typeModifier = typeModifier;
 }
 
-void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, Position pos, struct symStructSpec *structSpec) {
-    fillSymbol(symbol, name, linkName, pos);
-    symbol->u.structSpec = structSpec;
-}
-
 void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position pos, int labelIndex) {
     fillSymbol(symbol, name, linkName, pos);
     symbol->u.labelIndex = labelIndex;

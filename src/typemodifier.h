@@ -40,7 +40,6 @@ extern S_typeModifierList *newTypeModifierList(TypeModifier *d);
 /* And here are some fill/init functions if you need them, e.g. if you allocate elsewhere */
 extern void initTypeModifier(TypeModifier *typeModifier, Type kind);
 extern void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, TypeModifier *next);
-extern void initTypeModifierAsFunction(TypeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, TypeModifier *next);
 extern void initTypeModifierAsMethod(TypeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, TypeModifier *next);
 extern void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next);
 extern void initTypeModifierAsArray(TypeModifier *typeModifier,Symbol *typedefSymbol, TypeModifier *next);

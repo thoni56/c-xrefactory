@@ -33,14 +33,6 @@ void initTypeModifierAsMethod(TypeModifier *typeModifier, char *signature, Symbo
     typeModifier->next = next;
 }
 
-void initTypeModifierAsFunction(TypeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, TypeModifier *next) {
-    typeModifier->type = TypeFunction;
-    typeModifier->u.f.args = args;
-    typeModifier->u.f.thisFunList = overloadFunctionList;
-    typeModifier->typedefSymbol = typedefSymbol;
-    typeModifier->next = next;
-}
-
 void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next) {
     fillTypeModifier(typeModifier, TypePointer, NULL, next);
 }

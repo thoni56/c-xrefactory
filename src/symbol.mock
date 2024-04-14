@@ -37,13 +37,6 @@ void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, Position po
     symbol->u.labelIndex = labelIndex;
 }
 
-void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, Position pos,
-                          struct symStructSpec *structSpec)
-{
-    fillSymbol(symbol, name, linkName, pos);
-    symbol->u.structSpec = structSpec;
-}
-
 Symbol *newSymbolAsKeyword(char *name, char *linkName, Position pos, int keyWordVal) {
     return (Symbol *)mock(name, linkName, keyWordVal);
 }

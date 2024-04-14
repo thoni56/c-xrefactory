@@ -42,10 +42,6 @@ void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type kind, 
   mock(typeModifier, kind, symbol, typedefSymbol, next);
 }
 
-void initTypeModifierAsFunction(TypeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, TypeModifier *next) {
-  mock(typeModifier, args, overloadFunctionList, typedefSymbol, next);
-}
-
 void initTypeModifierAsMethod(TypeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, TypeModifier *next) {
   mock(typeModifier, signature, exceptions, typedefSymbol, next);
 }

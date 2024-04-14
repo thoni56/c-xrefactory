@@ -62,8 +62,6 @@ extern void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkNam
                                Position pos, struct typeModifier *typeModifier);
 extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
                                 Position pos, int labelIndex);
-extern void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName,
-                                 Position pos, struct symStructSpec *structSpec);
 
 /* Create and return a symbol structure... */
 extern Symbol makeSymbol(char *name, char *linkName, Position pos);

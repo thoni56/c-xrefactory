@@ -2,15 +2,7 @@
 #include "misc.h"
 #include <cgreen/mocks.h>
 
-void jarFileParse(char *file_name) {
-  mock(file_name);
-}
-
 void scanJarFilesForTagSearch(void) {
-  mock();
-}
-
-void classFileParse(void) {
   mock();
 }
 

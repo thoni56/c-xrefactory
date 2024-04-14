@@ -40,10 +40,6 @@ bool zipFindFile(char *name, char **resName, ZipFileTableItem *zipfile) {
     return (bool) mock(name, resName, zipfile);
 }
 
-void javaMapZipDirFile(ZipFileTableItem *zipfile, char *packfile, Completions *a1, void *a2, int *a3, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), char *classPath, char *dirname) {
-    mock(zipfile, packfile, a1, a2, a3, fun, classPath, dirname);
-}
-
 void javaReadClassFile(char *name, Symbol *cdef, LoadSuperOrNot loadSuper) {
     mock(name, cdef, loadSuper);
 }

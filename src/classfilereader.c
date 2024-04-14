@@ -617,46 +617,6 @@ bool zipFindFile(char *name,
 }
 
 
-void javaMapZipDirFile(
-    ZipFileTableItem *zipfile,
-    char *packfile,
-    Completions *a1,
-    void *a2,
-    int *a3,
-    void (*fun)(MAP_FUN_SIGNATURE),
-    char *classPath,
-    char *dirname
-) {
-    char fn[MAX_FILE_NAME_SIZE];
-    char dirn[MAX_FILE_NAME_SIZE];
-    ZipArchiveDir *place, *aa;
-    char *ss;
-    int dirlen;
-
-    dirlen = strlen(dirname);
-    strcpy(dirn,dirname);
-    dirn[dirlen]='/';   dirn[dirlen+1]=0;
-    /*&fprintf(dumpOut,":mapping dir, class, pack == %s,%s,%s\n",dirname,classPath,packfile);fflush(dumpOut);&*/
-    if (dirlen == 0) {
-        aa = zipfile->dir;
-    } else if (fsIsMember(&zipfile->dir, dirn, 0, ADD_NO, &place)==1) {
-        aa=place->u.sub;
-    } else {
-        return;
-    }
-    for(; aa!=NULL; aa=aa->next) {
-        ss = strmcpy(fn, aa->name);
-        if (fn[0]==0) {
-            errorMessage(ERR_INTERNAL,"empty name in .zip directory structure");
-            continue;
-        }
-        if (*(ss-1) == '/') *(ss-1) = 0;
-        /*&fprintf(dumpOut,":mapping %s of %s pack %s\n",fn,dirname,packfile);fflush(dumpOut);&*/
-        (*fun)(fn, classPath, packfile, a1, a2, a3);
-    }
-}
-
-
 /* **************************************************************** */
 
 static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,

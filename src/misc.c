@@ -1126,47 +1126,11 @@ static void scanClassFile(char *zip, char *file, void *dummy) {
     }
 }
 
-void jarFileParse(char *file_name) {
-    int archive, fileNumber;
-
-    archive = zipIndexArchive(file_name);
-    assert(existsInFileTable(file_name)); /* Filename has to exist in the table */
-    fileNumber = addFileNameToFileTable(inputFileName);
-    checkFileModifiedTime(fileNumber);
-    // set loading to true, no matter whether saved (by overflow) or not
-    // the following may create a loop, but it is very unprobable
-    FileItem *fileItem = getFileItem(fileNumber);
-    fileItem->cxLoading = true;
-    if (archive>=0 && archive<MAX_JAVA_ZIP_ARCHIVES) {
-        fsRecMapOnFiles(zipArchiveTable[archive].dir, zipArchiveTable[archive].fn,
-                        "", scanClassFile, NULL);
-    }
-    fileItem->cxLoaded = true;
-}
-
 void scanJarFilesForTagSearch(void) {
     for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {
         fsRecMapOnFiles(zipArchiveTable[i].dir, zipArchiveTable[i].fn,
                         "", scanClassFile, NULL);
     }
-}
-
-void classFileParse(void) {
-    char    temp[MAX_FILE_NAME_SIZE];
-    char    *t,*tt;
-    assert(strlen(inputFileName) < MAX_FILE_NAME_SIZE-1);
-    strcpy(temp, inputFileName);
-    tt = strchr(temp, ';');
-    if (tt==NULL) {
-        temp[0]=0;
-        t = inputFileName;
-    } else {
-        *(tt+1) = 0;
-        t = strchr(inputFileName, ';');
-        assert(t!=NULL);
-        t ++;
-    }
-    scanClassFile(temp, t, NULL);
 }
 
 bool requiresCreatingRefs(ServerOperation operation) {

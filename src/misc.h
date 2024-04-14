@@ -64,9 +64,7 @@ typedef unsigned bitArray;
     }
 
 
-extern void jarFileParse(char *file_name);
 extern void scanJarFilesForTagSearch(void);
-extern void classFileParse(void);
 
 extern void dumpOptions(int nargc, char **nargv);
 

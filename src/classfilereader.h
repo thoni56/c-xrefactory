@@ -34,15 +34,6 @@ extern bool fsIsMember(ZipArchiveDir **dir, char *fn, unsigned offset,
                        AddYesNo addFlag, ZipArchiveDir **place);
 extern int zipIndexArchive(char *name);
 extern bool zipFindFile(char *name, char **resName, ZipFileTableItem *zipfile);
-extern void javaMapZipDirFile(ZipFileTableItem *zipfile,
-                              char *packfile,
-                              Completions *a1,
-                              void *a2,
-                              int *a3,
-                              void (*fun)(MAP_FUN_SIGNATURE),
-                              char *classPath,
-                              char *dirname
-);
 extern void javaReadClassFile(char *name, Symbol *cdef, LoadSuperOrNot loadSuper);
 
 #endif
