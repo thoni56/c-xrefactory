@@ -53,16 +53,6 @@ extern Result findTopLevelName(
                             );
 
 extern void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage);
-extern Type javaClassifyAmbiguousName(
-                                     IdList *name,
-                                     S_recFindStr *rfs,
-                                     Symbol **str,
-                                     TypeModifier **expr,
-                                     Reference **oref,
-                                     Reference **rdtoref, int allowUselesFqtRefs,
-                                     int classif,
-                                     int usage
-                                     );
 extern char *javaImportSymbolName_st(int file, int line, int coll);
 extern int javaIsYetInTheClass(
                                Symbol	*clas,
