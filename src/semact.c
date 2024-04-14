@@ -26,6 +26,7 @@
 void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord,
                     unsigned recsClassCounter) {
     recFindStr->baseClass            = baseClass;
+    assert(currentClass == NULL); /* Current class == NULL for C/Yacc */
     recFindStr->currentClass         = currentClass;
     recFindStr->nextRecord           = nextRecord;
     recFindStr->recsClassCounter     = recsClassCounter;
@@ -162,16 +163,6 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     }
 }
 
-static bool javaRecordVisible(Symbol *appcl, Symbol *funcl, unsigned accessFlags) {
-    // there is special case to check! Private symbols are not inherited!
-    if (accessFlags & AccessPrivate) {
-        // check classes to string equality, just to be sure
-        if (appcl!=funcl && strcmp(appcl->linkName, funcl->linkName)!=0)
-            return false;
-    }
-    return true;
-}
-
 static bool accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
     int             i;
     Symbol        *cc;
@@ -258,23 +249,6 @@ bool javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbo
     }
     log_trace("return false for default");
     return false;
-}
-
-static bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
-    return javaRecordVisible(rfs->baseClass, rfs->currentClass, r->access) &&
-           javaRecordAccessible(rfs, rfs->baseClass, rfs->currentClass, r, r->access);
-}
-
-int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
-    int acc, i;
-    for (i=MAX_REQUIRED_ACCESS; i>0; i--) {
-        acc = javaRequiredAccessibilityTable[i];
-        if (javaRecordVisible(rfs->baseClass, rfs->currentClass, acc) &&
-            javaRecordAccessible(rfs, rfs->baseClass, rfs->currentClass, r, acc)) {
-            return i;
-        }
-    }
-    return i;
 }
 
 Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname,
@@ -365,29 +339,12 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
 ) {
     S_recFindStr    rfs;
     Reference     *ref;
-    Usage     usage;
-    int minacc;
 
     ref = NULL;
     // when in java, then always in qualified name, so access and visibility checks
     // are useless.
     Result rr = findStrRecordSym(res, iniFind(sym,&rfs),record->name, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
-    if (rr == RESULT_OK && rfs.currentClass != NULL &&
-        ((*res)->storage == StorageField || (*res)->storage == StorageMethod ||
-         (*res)->storage == StorageConstructor)) {
-        assert(rfs.currentClass->u.structSpec && rfs.baseClass && rfs.baseClass->u.structSpec);
-        if ((options.ooChecksBits & OOC_ALL_CHECKS) == 0 ||
-            javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currentClass, *res)) {
-            minacc = javaGetMinimalAccessibility(&rfs, *res);
-            fillUsage(&usage, UsageUsed, minacc);
-            ref = addNewCxReference(*res, &record->position, usage, rfs.currentClass->u.structSpec->classFileNumber,
-                                    rfs.baseClass->u.structSpec->classFileNumber);
-            // this is adding reference to 'super', not to the field!
-            // for pull-up/push-down
-            if (super!=NULL)
-                addThisCxReferences(javaStat->classFileNumber,&super->position);
-        }
-    } else if (rr == RESULT_OK) {
+    if (rr == RESULT_OK) {
         ref = addCxReference(*res,&record->position,UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
     } else {
         noSuchFieldError(record->name);
@@ -573,7 +530,6 @@ Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declarat
 
 void addFunctionParameterToSymTable(SymbolTable *table, Symbol *function, Symbol *parameter, int position) {
     if (parameter->name != NULL && parameter->type!=TypeError) {
-        assert(javaStat->locals!=NULL);
         Symbol *parameterCopy = newSymbolAsCopyOf(parameter);
         Symbol *pp;
 

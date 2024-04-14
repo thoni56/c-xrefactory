@@ -2883,46 +2883,6 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->menuSym);
 }
 
-static Symbol *javaGetClassSymbolFromClassDotName(char *fqName) {
-    char *delimiter, *lastComponent;
-    char slashDelimitedFQT[MAX_CX_SYMBOL_SIZE];
-
-    strcpy(slashDelimitedFQT, fqName);
-    delimiter = lastComponent = slashDelimitedFQT;
-    while ((delimiter=strchr(delimiter,'.'))!=NULL) {
-        *delimiter = '/';
-        lastComponent = delimiter+1;
-    }
-    return javaFQTypeSymbolDefinition(lastComponent, slashDelimitedFQT);
-}
-
-Symbol *getMoveTargetClass(void) {
-    if (options.moveTargetClass == NULL) {
-        errorMessage(ERR_INTERNAL,"pull up/push down pre-check without setting target class");
-        return NULL;
-    }
-    return javaGetClassSymbolFromClassDotName(options.moveTargetClass);
-}
-
-int javaGetSuperClassNumFromClassNum(int cn) {
-    for (ClassHierarchyReference *cl = getFileItem(cn)->superClasses; cl!=NULL; cl=cl->next) {
-        int superClass = cl->superClass;
-        if (!getFileItem(superClass)->isInterface)
-            return superClass;
-    }
-    return NO_FILE_NUMBER;
-}
-
-bool javaIsSuperClass(int superclas, int clas) {
-    int ss;
-    for (ss=javaGetSuperClassNumFromClassNum(clas);
-         ss!=NO_FILE_NUMBER && ss!=superclas;
-         ss=javaGetSuperClassNumFromClassNum(ss))
-        ;
-    if (ss == superclas) return true;
-    return false;
-}
-
 /* TODO: See comment for setMovingPrecheckStandardEnvironment */
 static void olTrivialRefactoringPreCheck(int refcode) {
     OlcxReferences *tpchsymbol;

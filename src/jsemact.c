@@ -170,37 +170,6 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     return member;
 }
 
-Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
-    /* also .class suffix can be considered as field !!!!!!!!!!! */
-    /* also ; is considered as the end of class fq name */
-    /* so, this function is used to determine class file name also */
-    /* if not, change '.' to appropriate char */
-    /* But this function is very time expensive */
-    char sbuf[MAX_FILE_NAME_SIZE];
-    char fqbuf[MAX_FILE_NAME_SIZE];
-    char *p,*lp,*lpp;
-    Symbol        *memb;
-    int fqlen,slen;
-    lp = fieldLinkName;
-    lpp = NULL;
-    for(p=fieldLinkName; *p && *p!=';'; p++) {
-        if (*p == '/' || *p == '$') lp = p+1;
-        if (*p == '.') lpp = p;
-    }
-    if (lpp != NULL && lpp>lp) p = lpp;
-    if (fieldAdr != NULL) *fieldAdr = p;
-    fqlen = p-fieldLinkName;
-    assert(fqlen+1 < MAX_FILE_NAME_SIZE);
-    strncpy(fqbuf,fieldLinkName, fqlen);
-    fqbuf[fqlen]=0;
-    slen = p-lp;
-    strncpy(sbuf,lp,slen);
-    sbuf[slen]=0;
-    memb = javaFQTypeSymbolDefinition(sbuf, fqbuf);
-    return memb;
-}
-
-
 char *javaImportSymbolName_st(int file, int line, int coll) {
     static char res[MAX_CX_SYMBOL_SIZE];
     sprintf(res, "%s:%x:%x:%x%cimport on line %3d", LINK_NAME_IMPORT_STATEMENT,

@@ -73,9 +73,6 @@ extern void addCfClassTreeHierarchyRef(int fnum, int usage);
 extern int getClassNumFromClassLinkName(char *name, int defaultResult);
 extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                         Symbol *cclass);
-extern Symbol *getMoveTargetClass(void);
-extern int javaGetSuperClassNumFromClassNum(int cn);
-extern bool javaIsSuperClass(int superclas, int clas);
 extern bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
 
 extern void pushLocalUnusedSymbolsAction(void);

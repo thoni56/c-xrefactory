@@ -57,10 +57,6 @@ int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
     return (int) mock(clas, lname, eq);
 }
 
-Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
-    return (Symbol *) mock(fieldLinkName, fieldAdr);
-}
-
 bool javaTypeFileExist(IdList *name) {
     return (int) mock(name);
 }

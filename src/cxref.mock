@@ -197,18 +197,6 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     mock(minMemi, maxMemi);
 }
 
-Symbol *getMoveTargetClass(void) {
-    return (Symbol *) mock();
-}
-
-int javaGetSuperClassNumFromClassNum(int cn) {
-    return (int) mock(cn);
-}
-
-bool javaIsSuperClass(int superclas, int clas) {
-    return (bool) mock(superclas, clas);
-}
-
 void pushLocalUnusedSymbolsAction(void) {
     mock();
 }

@@ -37,7 +37,6 @@ extern void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp);
 extern void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp);
 
 extern char *javaImportSymbolName_st(int file, int line, int coll);
-extern Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr);
 extern int javaLinkNameIsAnnonymousClass(char *linkname);
 extern void addThisCxReferences(int classIndex, Position *pos);
 extern Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);

@@ -4,6 +4,7 @@
 #include "proto.h"
 #include "symbol.h"
 
+
 typedef struct zipArchiveDir {
     union {
         struct zipArchiveDir *sub;
