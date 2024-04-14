@@ -159,29 +159,6 @@ void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
     }
 }
 
-void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp) {
-    IdList *ll;
-    if (options.mode != ServerMode) return;
-    for(ll=name; ll!=NULL; ll=ll->next) {
-        javaCheckForPrimaryStart(&ll->id.position, pp);
-    }
-}
-
-void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos) {
-    if (options.mode != ServerMode) return;
-    if (positionsAreEqual(cxRefPosition, *cpos)) {
-        s_staticPrefixStartPosition = *bpos;
-    }
-}
-
-void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp) {
-    IdList *ll;
-    if (options.mode != ServerMode) return;
-    for(ll=name; ll!=NULL; ll=ll->next) {
-        javaCheckForStaticPrefixStart(&ll->id.position, pp);
-    }
-}
-
 Position *javaGetNameStartingPosition(IdList *name) {
     IdList *ll;
     Position *res;
@@ -2608,41 +2585,6 @@ void newClassDefinitionEnd(FrameAllocation *allocation) {
     parsedClassInfo = javaStat->cp;
     javaStat = javaStat->next;
     log_trace("recovering s_cp to %d", parsedClassInfo.cxMemoryIndexdiAtClassBegin);
-}
-
-void javaInitArrayObject(void) {
-    static Symbol s_lengthSymbol;
-    static S_symStructSpec s_arraySpec;
-
-    assert(s_javaObjectSymbol != NULL);
-    javaLoadClassSymbolsFromFile(s_javaObjectSymbol);
-
-    fillSymbolWithTypeModifier(&s_lengthSymbol, "length", "java/lang/array.length",
-                       noPosition, &defaultIntModifier);
-
-    initSymStructSpec(&s_arraySpec, /*.records=*/&s_lengthSymbol);
-    /* Assumed to be Struct/Union/Enum? */
-    initTypeModifierAsStructUnionOrEnum(&s_arraySpec.type, /*.kind=*/TypeStruct,
-                                        /*.u.t=*/&s_javaArrayObjectSymbol,
-                                        /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-    initTypeModifierAsPointer(&s_arraySpec.ptrtype, &s_arraySpec.type);
-
-    fillSymbolWithStruct(&s_javaArrayObjectSymbol, "__arrayObject__", "__arrayObject__",
-                         noPosition, &s_arraySpec);
-    s_javaArrayObjectSymbol.access = AccessPublic;
-    s_javaArrayObjectSymbol.type = TypeStruct;
-    s_javaArrayObjectSymbol.u.structSpec = &s_arraySpec;
-
-    javaCreateClassFileItem(&s_javaArrayObjectSymbol);
-    addSuperClassOrInterfaceByName(&s_javaArrayObjectSymbol,s_javaLangObjectLinkName,
-                                   NO_FILE_NUMBER, LOAD_SUPER);
-}
-
-TypeModifier *javaArrayFieldAccess(Id *id) {
-    Symbol *rec=NULL;
-    findStructureFieldFromType(&s_javaArrayObjectSymbol.u.structSpec->type, id, &rec, CLASS_TO_EXPR);
-    assert(rec);
-    return rec->u.typeModifier;
 }
 
 void javaParsedSuperClass(Symbol *symbol) {

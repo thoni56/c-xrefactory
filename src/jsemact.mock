@@ -36,14 +36,6 @@ void javaCheckForPrimaryStart(Position *cpos, Position *pp) {
     mock(cpos, pp);
 }
 
-void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp) {
-    mock(name, pp);
-}
-
-void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos) {
-    mock(cpos, bpos);
-}
-
 void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp) {
     mock(name, pp);
 }
@@ -243,10 +235,6 @@ TypeModifier *javaNestedNewType(Symbol *expr, Id *thenew, IdList *idl) {
     return (TypeModifier *) mock(expr, thenew, idl);
 }
 
-TypeModifier *javaArrayFieldAccess(Id *id) {
-    return (TypeModifier *) mock(id);
-}
-
 TypeModifier *javaMethodInvocationN(IdList *name, S_typeModifierList *args) {
     return (TypeModifier *) mock(name, args);
 }
@@ -341,10 +329,6 @@ struct stackFrame *newClassDefinitionBegin(Id *name, Access access, Symbol *anon
 
 void newClassDefinitionEnd(FrameAllocation *trail) {
     mock(trail);
-}
-
-void javaInitArrayObject(void) {
-    mock();
 }
 
 void javaParsedSuperClass(Symbol *s) {

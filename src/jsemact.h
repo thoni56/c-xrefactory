@@ -37,7 +37,6 @@ extern void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *th
                          JavaStat *next);
 extern void javaCheckForPrimaryStart(Position *cpos, Position *pp);
 extern void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp);
-extern void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos);
 extern void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp);
 extern Position *javaGetNameStartingPosition(IdList *name);
 extern char *javaCreateComposedName(
@@ -116,7 +115,6 @@ extern TypeModifier *javaClassNameType(IdList *typeName);
 extern TypeModifier *javaNewAfterName(IdList *name, Id *id, IdList *idl);
 extern int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi);
 extern TypeModifier *javaNestedNewType(Symbol *expr, Id *thenew, IdList *idl);
-extern TypeModifier *javaArrayFieldAccess(Id *id);
 extern TypeModifier *javaMethodInvocationN(
                                               IdList *name,
                                               S_typeModifierList *args
@@ -159,7 +157,6 @@ extern struct stackFrame * newAnonClassDefinitionBegin(Id *interfName);
 extern void javaAddSuperNestedClassToSymbolTab( Symbol *cc);
 extern struct stackFrame *newClassDefinitionBegin(Id *name, Access access, Symbol *anonInterf);
 extern void newClassDefinitionEnd(FrameAllocation *allocation);
-extern void javaInitArrayObject(void);
 extern void javaParsedSuperClass(Symbol *s);
 extern void javaSetClassSourceInformation(char *package, Id *cl);
 extern void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir);
