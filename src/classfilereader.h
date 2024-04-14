@@ -1,7 +1,6 @@
 #ifndef CLASSFILEREADER_H_INCLUDED
 #define CLASSFILEREADER_H_INCLUDED
 
-#include "completion.h"
 #include "proto.h"
 #include "symbol.h"
 
@@ -32,7 +31,6 @@ extern void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path,
                             void *arg);
 extern bool fsIsMember(ZipArchiveDir **dir, char *fn, unsigned offset,
                        AddYesNo addFlag, ZipArchiveDir **place);
-extern int zipIndexArchive(char *name);
 extern bool zipFindFile(char *name, char **resName, ZipFileTableItem *zipfile);
 extern void javaReadClassFile(char *name, Symbol *cdef, LoadSuperOrNot loadSuper);
 

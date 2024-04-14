@@ -1093,46 +1093,6 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
 
 /* ************************************************************* */
 
-static void scanClassFile(char *zip, char *file, void *dummy) {
-    char name[MAX_FILE_NAME_SIZE];
-    char *tt, *suff;
-    Symbol *memb;
-    int cpi;
-
-    log_trace("scanning %s ; %s", zip, file);
-    suff = getFileSuffix(file);
-    if (compareFileNames(suff, ".class")==0) {
-        cpi          = cache.index;
-
-        activateCaching();
-        placeCachePoint(false);
-        deactivateCaching();
-
-        memb = javaGetFieldClass(file, &tt);
-        FileItem *fileItem = getFileItem(javaCreateClassFileItem(memb));
-        if (!fileItem->cxSaved) {
-            // read only if not saved (and returned through overflow)
-            sprintf(name, "%s%s", zip, file);
-            assert(strlen(name) < MAX_FILE_NAME_SIZE-1);
-            // recover memories, only cxrefs are interesting
-            assert(memb->u.structSpec);
-            log_trace("adding %s %s", memb->name, fileItem->name);
-            javaReadClassFile(name, memb, DO_NOT_LOAD_SUPER);
-        }
-        // following is to free CF_MEMORY taken by scan, only
-        // cross references in CX_MEMORY are interesting in this case.
-        recoverCachePoint(cpi - 1, cache.points[cpi - 1].nextLexemP, false);
-        log_trace(":ppmmem == %d/%d %x-%x", ppmMemory.index, SIZE_ppmMemory, &ppmMemory.area[0], &ppmMemory.area[SIZE_ppmMemory]);
-    }
-}
-
-void scanJarFilesForTagSearch(void) {
-    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {
-        fsRecMapOnFiles(zipArchiveTable[i].dir, zipArchiveTable[i].fn,
-                        "", scanClassFile, NULL);
-    }
-}
-
 bool requiresCreatingRefs(ServerOperation operation) {
     return
             options.serverOperation==OLO_PUSH

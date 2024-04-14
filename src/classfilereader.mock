@@ -32,10 +32,6 @@ bool fsIsMember(ZipArchiveDir **dir, char *fn, unsigned offset, AddYesNo addFlag
     return (int) mock(dir, fn, offset, addFlag, place);
 }
 
-int zipIndexArchive(char *name) {
-    return (int) mock(name);
-}
-
 bool zipFindFile(char *name, char **resName, ZipFileTableItem *zipfile) {
     return (bool) mock(name, resName, zipfile);
 }

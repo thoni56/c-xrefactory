@@ -3094,8 +3094,6 @@ void answerEditAction(void) {
         pushEmptySession(&sessionData.retrieverStack);
         sessionData.retrieverStack.top->callerPosition = givenPosition;
 
-        if (options.searchKind==SEARCH_FULL)
-            scanJarFilesForTagSearch();
         scanForSearch(options.cxrefsLocation);
         printTagSearchResults();
         break;

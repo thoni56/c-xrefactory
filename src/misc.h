@@ -64,8 +64,6 @@ typedef unsigned bitArray;
     }
 
 
-extern void scanJarFilesForTagSearch(void);
-
 extern void dumpOptions(int nargc, char **nargv);
 
 extern void symDump(Symbol *symbol);
