@@ -37,22 +37,7 @@ extern void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *th
                          JavaStat *next);
 extern void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp);
 extern void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp);
-extern char *javaCreateComposedName(
-                                    char			*prefix,
-                                    IdList   *className,
-                                    int             classNameSeparator,
-                                    char            *name,
-                                    char			*resBuff,
-                                    int				resBufSize
-                                    );
-extern Result findTopLevelName(
-                            char                *name,
-                            S_recFindStr        *resRfs,
-                            Symbol			**resMemb,
-                            int                 classif
-                            );
 
-extern void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage);
 extern char *javaImportSymbolName_st(int file, int line, int coll);
 extern int javaIsYetInTheClass(
                                Symbol	*clas,
@@ -60,16 +45,7 @@ extern int javaIsYetInTheClass(
                                Symbol	**eq
                                );
 extern Symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr);
-extern bool javaTypeFileExist(IdList *name);
-extern Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags);
-extern void javaReadSymbolFromSourceFileEnd(void);
-extern void javaReadSymbolFromSourceFileInit( int sourceFileNum,
-                                              JslTypeTab *typeTab );
-extern void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname);
-extern void javaReadSymbolsFromSourceFile(char *fname);
 extern int javaLinkNameIsAnnonymousClass(char *linkname);
-extern Reference * addUselessFQTReference(int classIndex, Position *pos);
-extern Reference *addUnimportedTypeLongReference(int classIndex, Position *pos);
 extern void addThisCxReferences(int classIndex, Position *pos);
 extern void javaLoadClassSymbolsFromFile(Symbol *memb);
 extern Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);
@@ -83,6 +59,5 @@ extern TypeModifier *javaMethodInvocationS(	Id *super,
                                                 S_typeModifierList *args
                                                 );
 extern int javaClassIsInCurrentPackage(Symbol *cl);
-extern int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2);
 
 #endif

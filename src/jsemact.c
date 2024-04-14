@@ -71,7 +71,7 @@ void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *thisType,
 }
 
 
-char *javaCreateComposedName(char *prefix,
+static char *javaCreateComposedName(char *prefix,
                              IdList *className,
                              int classNameSeparator,
                              char *name,
@@ -181,100 +181,6 @@ static bool javaFindFile0(char *classPath, char *separator, char *name,
         strcpy(*resultingName, normalizedFileName);
     }
     return found;
-}
-
-static int specialFileNameCasesCheck(char *fname) {
-#ifdef __WIN32__
-    WIN32_FIND_DATA		fdata;
-    HANDLE				handle;
-    int					dif;
-    char				*ss;
-    EditorBuffer		*buff;
-    // first check if the file is from editor
-    buff = getOpenedEditorBuffer(fname);
-    if (buff != NULL)
-        return true;
-    // there is only drive name before the first slash, copy it.
-    ss = lastOccurenceInString(fname, '/');
-    if (ss==NULL)
-        ss = lastOccurenceInString(fname, '\\');
-    if (ss==NULL)
-        return true;
-    log_trace("translating %s", ttt);
-    handle = FindFirstFile(fname, &fdata);
-    if (handle == INVALID_HANDLE_VALUE)
-        return true;
-    dif = strcmp(ss+1, fdata.cFileName);
-    FindClose(handle);
-    log_trace("result %s", ttt);
-    return dif==0;
-#else
-    return true;
-#endif
-}
-
-/* TODO this function strangely ressembles to javaFindFile, join them ????*/
-bool javaTypeFileExist(IdList *name) {
-    char *fname;
-    IdList tname;
-    char tmpString[MAX_SOURCE_PATH_SIZE];
-
-    if (name==NULL)
-        return false;
-    tname = *name;
-    tname.nameType = TypeStruct;
-
-    // first check if I have its class in file table
-    // hmm this is causing problems in on-line editing when some misspelled
-    // completion strings were added as types, then a package is resolved
-    // as a type and a File from inside directory is not completed.
-    // I try to solve it by requiring sourcefile index
-    fname = javaCreateComposedName(":", &tname, '/', "class",
-                                   tmpString, sizeof(tmpString));
-    fname[1] = ZIP_SEPARATOR_CHAR;
-
-    if (existsInFileTable(fname+1)) {
-        int fileNumber = lookupFileTable(fname+1);
-        if (getFileItem(fileNumber)->sourceFileNumber != NO_FILE_NUMBER) {
-            return true;
-        }
-    }
-
-    if (javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
-        fname = javaCreateComposedName(NULL, &tname, FILE_PATH_SEPARATOR, "java",
-                                       tmpString, sizeof(tmpString));
-        log_trace("testing existence of file '%s'", fname);
-        if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
-            return true;
-    }
-    MapOverPaths(javaSourcePaths, {
-        fname =
-            javaCreateComposedName(currentPath, &tname, FILE_PATH_SEPARATOR, "java", tmpString, sizeof(tmpString));
-        log_trace("testing existence of file '%s'", fname);
-        if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
-            return true;
-    });
-    for (StringList *cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        fname = javaCreateComposedName(cp->string, &tname, FILE_PATH_SEPARATOR, "class",
-                                       tmpString, sizeof(tmpString));
-        // hmm. do not need to check statb for .class files
-        if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
-            return true;
-    }
-    // Archives...
-    fname=javaCreateComposedName(NULL, &tname, '/', "class", tmpString, sizeof(tmpString));
-    for (int i=0; i<MAX_JAVA_ZIP_ARCHIVES && zipArchiveTable[i].fn[0]!=0; i++) {
-        if (fsIsMember(&zipArchiveTable[i].dir,fname,0,ADD_NO,NULL))
-            return true;
-    }
-    // auto-inferred source-path
-    if (javaStat->namedPackagePath != NULL) {
-        fname = javaCreateComposedName(javaStat->namedPackagePath, &tname, FILE_PATH_SEPARATOR, "java",
-                                       tmpString, sizeof(tmpString));
-        if (editorFileExists(fname) && specialFileNameCasesCheck(fname))
-            return true;
-    }
-    return false;
 }
 
 static bool javaFindClassFile(char *name, char **resultingName, time_t *modifiedTimeP) {
@@ -409,7 +315,7 @@ static int javaFqtNameIsFromThePackage(char *cpack, char *classFqName) {
     return true;
 }
 
-int javaFqtNamesAreFromTheSamePackage(char *nn1, char *nn2) {
+static int javaFqtNamesAreFromTheSamePackage(char *nn1, char *nn2) {
     char   *p1,*p2;
 
     if (nn1==NULL || nn2==NULL) return false;
@@ -536,28 +442,6 @@ Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
 }
 
 
-Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
-    Symbol symbol, *member;
-    char fqtName[MAX_FILE_NAME_SIZE];
-
-    assert(tname);
-    assert(tname->nameType == TypeStruct);
-
-    fillSymbol(&symbol, tname->id.name, tname->id.name, noPosition);
-    symbol.access = accessFlags;
-    symbol.type = TypeStruct;
-    symbol.storage = StorageNone;
-
-    if (tname->next==NULL && symbolTableIsMember(symbolTable, &symbol, NULL, &member)) {
-        // get canonical copy
-        member = javaFQTypeSymbolDefinition(member->name, member->linkName);
-        return member;
-    }
-    javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
-    member = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
-    return member;
-}
-
 static void javaJslLoadSuperClasses(Symbol *cc, int currentParsedFile) {
     SymbolList *ss;
     static int nestingCount = 0;
@@ -572,7 +456,7 @@ static void javaJslLoadSuperClasses(Symbol *cc, int currentParsedFile) {
     nestingCount --;
 }
 
-void javaReadSymbolFromSourceFileInit(int sourceFileNum,
+static void javaReadSymbolFromSourceFileInit(int sourceFileNum,
                                       JslTypeTab *typeTab ) {
     S_jslStat           *njsl;
     char				*yyg;
@@ -593,7 +477,7 @@ void javaReadSymbolFromSourceFileInit(int sourceFileNum,
     currentLanguage = LANG_JAVA;
 }
 
-void javaReadSymbolFromSourceFileEnd(void) {
+static void javaReadSymbolFromSourceFileEnd(void) {
     currentLanguage = s_jsl->language;
     uniyylval = s_jsl->savedyylval;
     memcpy(s_yygstate, s_jsl->savedYYstate, s_jsl->yyStateSize);
@@ -602,7 +486,7 @@ void javaReadSymbolFromSourceFileEnd(void) {
     s_jsl = s_jsl->next;
 }
 
-void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
+static void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     FILE *file;
     EditorBuffer *buffer;
     int cfilenum;
@@ -640,7 +524,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     nestingDepth--;
 }
 
-void javaReadSymbolsFromSourceFile(char *fname) {
+static void javaReadSymbolsFromSourceFile(char *fname) {
     JslTypeTab    *typeTab;
     int				fileNumber;
     int				memBalance;
@@ -790,7 +674,7 @@ static Result findTopLevelNameInternal(char *name,
     return result;
 }
 
-Result findTopLevelName(char *name, S_recFindStr *resRfs,
+static Result findTopLevelName(char *name, S_recFindStr *resRfs,
                      Symbol **resMemb, int classif) {
     Result result;
     JavaStat *scopeToSearch, *resultScope;
@@ -811,6 +695,8 @@ Result findTopLevelName(char *name, S_recFindStr *resRfs,
     }
     return result;
 }
+
+static void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage);
 
 static int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                             Symbol **str,
@@ -947,7 +833,7 @@ char *javaImportSymbolName_st(int file, int line, int coll) {
     return res;
 }
 
-void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage) {
+static void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage) {
     char *isymName;
 
     isymName = javaImportSymbolName_st(importPos->file, importPos->line, importPos->col);
@@ -1073,18 +959,4 @@ void addThisCxReferences(int classIndex, Position *pos) {
     }
     addSpecialFieldReference(LINK_NAME_MAYBE_THIS_ITEM,StorageField,
                              classIndex, pos, usage);
-}
-
-Reference *addUselessFQTReference(int classIndex, Position *pos) {
-    Reference *res;
-    res = addSpecialFieldReference(LINK_NAME_IMPORTED_QUALIFIED_ITEM,StorageField,
-                                   classIndex, pos, UsageLastUseless);
-    return res;
-}
-
-Reference *addUnimportedTypeLongReference(int classIndex, Position *pos) {
-    Reference *res;
-    res = addSpecialFieldReference(LINK_NAME_UNIMPORTED_QUALIFIED_ITEM, StorageField,
-                                   classIndex, pos, UsageUsed);
-    return res;
 }
