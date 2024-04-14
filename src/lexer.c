@@ -54,20 +54,11 @@ static void scanComment(CharacterBuffer *cb) {
 
 
 static LexemCode scanConstantType(CharacterBuffer *cb, int *ch) {
-    LexemCode lexem;
-
-    lexem = CONSTANT;
-    if (LANGUAGE(LANG_JAVA)) {
-        if (*ch=='l' || *ch=='L') {
+    LexemCode lexem = CONSTANT;
+    for(; *ch=='l'||*ch=='L'||*ch=='u'||*ch=='U'; ){
+        if (*ch=='l' || *ch=='L')
             lexem = LONG_CONSTANT;
-            *ch = getChar(cb);
-        }
-    } else {
-        for(; *ch=='l'||*ch=='L'||*ch=='u'||*ch=='U'; ){
-            if (*ch=='l' || *ch=='L')
-                lexem = LONG_CONSTANT;
-            *ch = getChar(cb);
-        }
+        *ch = getChar(cb);
     }
 
     return lexem;
@@ -91,16 +82,8 @@ static LexemCode scanFloatingPointConstant(CharacterBuffer *cb, int *chPointer) 
         while (isdigit(ch))
             ch = getChar(cb);
     }
-    if (LANGUAGE(LANG_JAVA)) {
-        if (ch == 'f' || ch == 'F' || ch == 'd' || ch == 'D') {
-            if (ch == 'f' || ch == 'F')
-                rlex = FLOAT_CONSTANT;
-            ch = getChar(cb);
-        }
-    } else {
-        if (ch == 'f' || ch == 'F' || ch == 'l' || ch == 'L') {
-            ch = getChar(cb);
-        }
+    if (ch == 'f' || ch == 'F' || ch == 'l' || ch == 'L') {
+        ch = getChar(cb);
     }
     *chPointer = ch;
 
@@ -434,7 +417,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
         lexemStartingColumn = columnPosition(cb);
         log_trace("lexemStartingColumn = %d", lexemStartingColumn);
 
-        if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
+        if (ch == '_' || isalpha(ch) || (ch=='$' && LANGUAGE(LANG_YACC))) {
             ch = putIdentifierLexem(lb, cb, ch);
             lexem = IDENTIFIER;
             goto nextLexem;
@@ -443,8 +426,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             long unsigned integerValue=0;
             fileOffsetForLexemStart = fileOffsetFor(cb);
             ch = scanIntegerValue(cb, ch, &integerValue);
-            if (ch == '.' || ch == 'e' || ch == 'E'
-                || (LANGUAGE(LANG_JAVA) && (ch == 'd' || ch == 'D' || ch == 'f' || ch == 'F'))) {
+            if (ch == '.' || ch == 'e' || ch == 'E') {
                 /* floating point */
                 lexem = scanFloatingPointConstant(cb, &ch);
                 putFloatingPointLexem(lb, lexem, cb, lexemStartingColumn, fileOffsetForLexemStart);
@@ -521,17 +503,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '>') {
                     ch = getChar(cb);
-                    if(ch=='>' && LANGUAGE(LANG_JAVA)) {
-                        ch = getChar(cb);
-                        if(ch=='=') {
-                            putLexemWithColumn(lb, URIGHT_ASSIGN, cb, lexemStartingColumn);
-                            ch = getChar(cb);
-                            goto nextLexem;
-                        } else {
-                            putLexemWithColumn(lb, URIGHT_OP, cb, lexemStartingColumn);
-                            goto nextLexem;
-                        }
-                    } else if(ch=='=') {
+                    if(ch=='=') {
                         putLexemWithColumn(lb, RIGHT_ASSIGN, cb, lexemStartingColumn);
                         ch = getChar(cb);
                         goto nextLexem;
@@ -762,14 +734,10 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     log_trace(":pos1==%d, olCursorOffset==%d, olMarkOffset==%d",apos,options.olCursorOffset,options.olMarkOffset);
                     // all this is very, very HACK!!!
                     if (apos >= options.olCursorOffset && !parsedInfo.marker1Flag) {
-                        if (LANGUAGE(LANG_JAVA))
-                            parChar = ';';
-                        else {
-                            if (parsedInfo.marker2Flag)
-                                parChar='}';
-                            else
-                                parChar = '{';
-                        }
+                        if (parsedInfo.marker2Flag)
+                            parChar='}';
+                        else
+                            parChar = '{';
                         putLexemCode(lb, parChar);
                         putLexemPosition(lb, position);
                         putLexemCode(lb, parChar);
@@ -786,14 +754,10 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                         putLexemPosition(lb, position);
                         parsedInfo.marker1Flag = true;
                     } else if (apos >= options.olMarkOffset && !parsedInfo.marker2Flag){
-                        if (LANGUAGE(LANG_JAVA))
-                            parChar = ';';
-                        else {
-                            if (parsedInfo.marker1Flag)
-                                parChar='}';
-                            else
-                                parChar = '{';
-                        }
+                        if (parsedInfo.marker1Flag)
+                            parChar='}';
+                        else
+                            parChar = '{';
                         putLexemCode(lb, parChar);
                         putLexemPosition(lb, position);
                         putLexemCode(lb, parChar);
@@ -820,19 +784,6 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
                     if (currentLexemFileOffset <= options.olCursorOffset
                         && fileOffsetFor(cb) >= options.olCursorOffset) {
                         gotOnLineCxRefs(&position);
-                    }
-                    // TODO: Figure out what the problem was with this for C
-                    if (LANGUAGE(LANG_JAVA)) {
-                        // there is a problem with this, when browsing at CPP construction
-                        // that is why I restrict it to Java language! It is usefull
-                        // only for Java refactorings
-                        ch = skipBlanks(cb, ch);
-                        int apos = fileOffsetFor(cb);
-                        if (apos >= options.olCursorOffset && !parsedInfo.marker1Flag) {
-                            putLexemCode(lb, OL_MARKER_TOKEN);
-                            putLexemPosition(lb, position);
-                            parsedInfo.marker1Flag = true;
-                        }
                     }
                 }
             }
