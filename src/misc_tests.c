@@ -8,7 +8,6 @@
 #include "memory.h"
 
 #include "caching.mock"
-#include "classfilereader.mock"
 #include "commons.mock"
 #include "cxfile.mock"
 #include "cxref.mock"

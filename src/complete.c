@@ -1,6 +1,5 @@
 #include "complete.h"
 
-#include "classfilereader.h"
 #include "completion.h"
 #include "cxfile.h"
 #include "cxref.h"

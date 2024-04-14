@@ -9,7 +9,6 @@
 #include "yylex.h"
 #include "semact.h"
 #include "cxref.h"
-#include "classfilereader.h"
 #include "filedescriptor.h"
 #include "editor.h"
 #include "symbol.h"

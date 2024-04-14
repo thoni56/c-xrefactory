@@ -4,7 +4,6 @@
 #include "caching.h"
 #include "category.h"
 #include "characterreader.h"
-#include "classfilereader.h"
 #include "classhierarchy.h"
 #include "commons.h"
 #include "complete.h"

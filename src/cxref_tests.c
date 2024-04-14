@@ -10,7 +10,6 @@
 
 #include "caching.mock"
 #include "characterreader.mock"
-#include "classfilereader.mock"
 #include "classhierarchy.mock"
 #include "commons.mock"
 #include "complete.mock"

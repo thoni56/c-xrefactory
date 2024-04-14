@@ -4,7 +4,6 @@
 
 #include "log.h"
 
-#include "classfilereader.mock"
 #include "commons.mock"
 #include "globals.mock"
 #include "misc.mock"

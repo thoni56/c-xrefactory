@@ -9,7 +9,6 @@
 #include "caching.mock"
 #include "counters.mock"
 #include "classcaster.mock"
-#include "classfilereader.mock"
 #include "commons.mock"
 #include "cxfile.mock"
 #include "cxref.mock"

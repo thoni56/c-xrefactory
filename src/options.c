@@ -6,7 +6,6 @@
 #include "misc.h"
 #include "cxref.h"
 #include "yylex.h"
-#include "classfilereader.h"
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"

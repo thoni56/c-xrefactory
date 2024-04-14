@@ -4,7 +4,6 @@
 
 /* Mocks: */
 #include "classcaster.mock"
-#include "classfilereader.mock"
 #include "commons.mock"
 #include "cxref.mock"
 #include "globals.mock"

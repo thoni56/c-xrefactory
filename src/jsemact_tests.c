@@ -4,7 +4,6 @@
 
 #include "classcaster.mock"
 #include "counters.mock"
-#include "classfilereader.mock"
 #include "commons.mock"
 #include "cxref.mock"
 #include "editor.mock"

@@ -4,7 +4,6 @@
 
 #include "log.h"
 
-#include "classfilereader.mock"
 #include "completion.mock"
 #include "commons.mock"
 #include "cxfile.mock"

@@ -17,7 +17,6 @@
 #include "yylex.h"
 #include "cxfile.h"
 #include "cxref.h"
-#include "classfilereader.h"
 #include "editor.h"
 #include "fileio.h"
 #include "filetable.h"

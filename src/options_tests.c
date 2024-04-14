@@ -10,7 +10,6 @@
 #include "memory.h"
 #include "options.h"
 
-#include "classfilereader.mock"
 #include "commandlogger.mock"
 #include "commons.mock"
 #include "cxref.mock"

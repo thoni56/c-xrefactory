@@ -3,7 +3,6 @@
 #include "globals.h"
 #include "options.h"
 #include "parsers.h"
-#include "classfilereader.h"
 
 #include "misc.h"               /* For stringContainsSubstring() */
 #include "commons.h"            /* For infoMessage() */
