@@ -233,8 +233,7 @@ static void fillCache(Cache *cache, bool cachingActive, int cachePointIndex, int
 }
 
 static bool canContinueCachingClasses() {
-    return LANGUAGE(LANG_JAVA)
-        && options.mode == XrefMode
+    return options.mode == XrefMode
         && ppmMemory.index < (SIZE_ppmMemory/3)*2;
 }
 

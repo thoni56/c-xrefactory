@@ -182,23 +182,6 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     l = 0;
     if (completions->alternatives[index].symbolType==TypeDefault) {
         assert(completions->alternatives[index].symbol && completions->alternatives[index].symbol->u.typeModifier);
-        if (LANGUAGE(LANG_JAVA)) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            char *cname = getCompletionClassFieldString(&completions->alternatives[index]);
-            if (completions->alternatives[index].virtLevel>NEST_VIRT_COMPL_OFFSET) {
-                sprintf(tmpBuff,"(%d.%d)%s: ",
-                        completions->alternatives[index].virtLevel/NEST_VIRT_COMPL_OFFSET,
-                        completions->alternatives[index].virtLevel%NEST_VIRT_COMPL_OFFSET,
-                        cname);
-            } else if (completions->alternatives[index].virtLevel>0) {
-                sprintf(tmpBuff,"(%d)%s: ", completions->alternatives[index].virtLevel, cname);
-            } else {
-                sprintf(tmpBuff,"   : ");
-            }
-            cindent += strlen(tmpBuff);
-            sprintf(ppc,"%s", tmpBuff);
-            ppc += strlen(ppc);
-        }
         typeDefinitionExpressionFlag = true;
         if (completions->alternatives[index].symbol->storage == StorageTypedef) {
             sprintf(tempString, "typedef ");
@@ -207,36 +190,11 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
             typeDefinitionExpressionFlag = false;
         }
         char *pname = completions->alternatives[index].symbol->name;
-        if (LANGUAGE(LANG_JAVA)) {
-            l += printJavaModifiers(tempString+l, &size, completions->alternatives[index].symbol->access);
-            if (completions->alternatives[index].vFunClass!=NULL) {
-                vFunCl = completions->alternatives[index].vFunClass->u.structSpec->classFileNumber;
-                if (vFunCl == -1) vFunCl = NO_FILE_NUMBER;
-            }
-        }
         typeSPrint(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname, ' ', 0,
                    typeDefinitionExpressionFlag, SHORT_NAME, NULL);
-        if (LANGUAGE(LANG_JAVA)
-            && (completions->alternatives[index].symbol->storage == StorageMethod
-                || completions->alternatives[index].symbol->storage == StorageConstructor)) {
-            throwsSPrintf(tempString+l+size, COMPLETION_STRING_SIZE-l-size, completions->alternatives[index].symbol->u.typeModifier->u.m.exceptions);
-        }
     } else if (completions->alternatives[index].symbolType==TypeMacro) {
         macroDefinitionSPrintf(tempString, &size, "", completions->alternatives[index].string,
                       completions->alternatives[index].margn, completions->alternatives[index].margs, NULL);
-    } else if (LANGUAGE(LANG_JAVA) && completions->alternatives[index].symbolType==TypeStruct ) {
-        if (completions->alternatives[index].symbol!=NULL) {
-            l += printJavaModifiers(tempString+l, &size, completions->alternatives[index].symbol->access);
-            if (completions->alternatives[index].symbol->access & AccessInterface) {
-                sprintf(tempString+l,"interface ");
-            } else {
-                sprintf(tempString+l,"class ");
-            }
-            l = strlen(tempString);
-            javaTypeStringSPrint(tempString+l, completions->alternatives[index].symbol->linkName,LONG_NAME, NULL);
-        } else {
-            sprintf(tempString,"class ");
-        }
     } else if (completions->alternatives[index].symbolType == TypeInheritedFullMethod) {
         if (completions->alternatives[index].vFunClass!=NULL) {
             sprintf(tempString,"%s \t:%s", completions->alternatives[index].vFunClass->name, typeNamesTable[completions->alternatives[index].symbolType]);
@@ -263,7 +221,7 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
 
 static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, char **vclass) {
     int size,ll,tdexpFlag;
-    char *pname,*cname;
+    char *pname;
     static char vlevelBuff[TMP_STRING_SIZE];
     size = COMPLETION_STRING_SIZE;
     ll = 0;
@@ -271,17 +229,6 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
     if (vclass != NULL) *vclass = vlevelBuff;
     if (c->alternatives[ii].symbolType==TypeDefault) {
         assert(c->alternatives[ii].symbol && c->alternatives[ii].symbol->u.typeModifier);
-        if (LANGUAGE(LANG_JAVA)) {
-            cname = getCompletionClassFieldString(&c->alternatives[ii]);
-            if (c->alternatives[ii].virtLevel>NEST_VIRT_COMPL_OFFSET) {
-                sprintf(vlevelBuff,"  : (%d.%d) %s ",
-                        c->alternatives[ii].virtLevel/NEST_VIRT_COMPL_OFFSET,
-                        c->alternatives[ii].virtLevel%NEST_VIRT_COMPL_OFFSET,
-                        cname);
-            } else if (c->alternatives[ii].virtLevel>0) {
-                sprintf(vlevelBuff,"  : (%d) %s ", c->alternatives[ii].virtLevel, cname);
-            }
-        }
         tdexpFlag = 1;
         if (c->alternatives[ii].symbol->storage == StorageTypedef) {
             sprintf(ppcTmpBuff,"typedef ");
@@ -290,36 +237,11 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
             tdexpFlag = 0;
         }
         pname = c->alternatives[ii].symbol->name;
-        if (LANGUAGE(LANG_JAVA)) {
-            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->access);
-        }
         typeSPrint(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->u.typeModifier, pname,' ', 0, tdexpFlag, SHORT_NAME, nindent);
         *nindent += ll;
-        if (LANGUAGE(LANG_JAVA)
-            && (c->alternatives[ii].symbol->storage == StorageMethod
-                || c->alternatives[ii].symbol->storage == StorageConstructor)) {
-            throwsSPrintf(ppcTmpBuff+ll+size, COMPLETION_STRING_SIZE-ll-size, c->alternatives[ii].symbol->u.typeModifier->u.m.exceptions);
-        }
     } else if (c->alternatives[ii].symbolType==TypeMacro) {
         macroDefinitionSPrintf(ppcTmpBuff, &size, "", c->alternatives[ii].string,
                       c->alternatives[ii].margn, c->alternatives[ii].margs, nindent);
-    } else if (LANGUAGE(LANG_JAVA) && c->alternatives[ii].symbolType==TypeStruct ) {
-        if (c->alternatives[ii].symbol!=NULL) {
-            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->access);
-            if (c->alternatives[ii].symbol->access & AccessInterface) {
-                sprintf(ppcTmpBuff+ll,"interface ");
-            } else {
-                sprintf(ppcTmpBuff+ll,"class ");
-            }
-            ll = strlen(ppcTmpBuff);
-            javaTypeStringSPrint(ppcTmpBuff+ll, c->alternatives[ii].symbol->linkName, LONG_NAME, nindent);
-            *nindent += ll;
-        } else {
-            sprintf(ppcTmpBuff,"class ");
-            ll = strlen(ppcTmpBuff);
-            *nindent = ll;
-            sprintf(ppcTmpBuff+ll,"%s", c->alternatives[ii].string);
-        }
     } else if (c->alternatives[ii].symbolType == TypeInheritedFullMethod) {
         sprintf(ppcTmpBuff,"%s", c->alternatives[ii].string);
         if (c->alternatives[ii].vFunClass!=NULL) {
@@ -452,8 +374,7 @@ void printCompletions(Completions* c) {
         }
         goto finishWithoutMenu;
     }
-    // this can't be ordered directly, because of overloading
-    //&     if (LANGUAGE(LANG_JAVA)) reorderCompletionArray(c);
+
     indent = c->maxLen;
     if (options.olineLen - indent < MIN_COMPLETION_INDENT_REST) {
         indent = options.olineLen - MIN_COMPLETION_INDENT_REST;
@@ -469,10 +390,6 @@ void printCompletions(Completions* c) {
             sprintFullCompletionInfo(c, ii, indent);
         }
         vFunCl = NO_FILE_NUMBER;
-        if (LANGUAGE(LANG_JAVA)  && c->alternatives[ii].vFunClass!=NULL) {
-            vFunCl = c->alternatives[ii].vFunClass->u.structSpec->classFileNumber;
-            if (vFunCl == -1) vFunCl = NO_FILE_NUMBER;
-        }
         Reference ref;
         sessionData.completionsStack.top->completions = completionListPrepend(
             sessionData.completionsStack.top->completions, c->alternatives[ii].string, ppcTmpBuff,

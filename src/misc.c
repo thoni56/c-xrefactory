@@ -1376,9 +1376,9 @@ void getBareName(char *name, char **start, int *len) {
 
 Language getLanguageFor(char *fileName) {
     char *suffix;
-    Language language;
+    Language language = LANG_C;
 
-    if (fileNameHasOneOfSuffixes(fileName, "java;class")) {
+    if (fileNameHasOneOfSuffixes(fileName, options.javaFilesSuffixes)) {
         FATAL_ERROR(ERR_ST, "Java is no longer supported", -1);
     } else {
         suffix = getFileSuffix(fileName);
