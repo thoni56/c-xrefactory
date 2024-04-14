@@ -909,21 +909,6 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     return usage;
 }
 
-int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
-    Symbol        *r;
-    assert(clas && clas->u.structSpec);
-    for (r=clas->u.structSpec->records; r!=NULL; r=r->next) {
-    //&fprintf(dumpOut, "[javaIsYetInTheClass] checking %s <-> %s\n",r->linkName, lname);fflush(dumpOut);
-        if (strcmp(r->linkName, lname)==0) {
-            *eq = r;
-            return true;
-        }
-    }
-    *eq = NULL;
-    return false;
-}
-
-
 int javaLinkNameIsAnnonymousClass(char *linkname) {
     char *ss;
     // this is a very hack too!!   TODO do this seriously

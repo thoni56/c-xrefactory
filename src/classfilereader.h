@@ -25,6 +25,5 @@ extern void convertLinkNameToClassFileName(char classFileName[], char *linkName)
 extern Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup);
 extern void addSuperClassOrInterface(Symbol *memb, Symbol *supp, int origin );
 extern int javaCreateClassFileItem(Symbol *memb);
-extern void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, LoadSuperOrNot loadSuper);
 
 #endif
