@@ -51,10 +51,7 @@ extern Result findTopLevelName(
                             Symbol			**resMemb,
                             int                 classif
                             );
-extern int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
-                                                   Symbol **str,
-                                                   IncludeCxrefs cxrefFlag
-                                                   );
+
 extern void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage);
 extern Type javaClassifyAmbiguousName(
                                      IdList *name,
@@ -66,7 +63,6 @@ extern Type javaClassifyAmbiguousName(
                                      int classif,
                                      int usage
                                      );
-extern Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs);
 extern char *javaImportSymbolName_st(int file, int line, int coll);
 extern int javaIsYetInTheClass(
                                Symbol	*clas,

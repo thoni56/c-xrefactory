@@ -152,17 +152,6 @@ int javaCharCodeBaseTypes[MAX_CHARS];
 
 char javaTypePCTIConvert[MAX_TYPE];
 
-char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
-    /* Byte,Short,Char,Int,Long,Float,Double */
-    {1,     1,    0,   1,  1,   1,    1},   /* Byte, */
-    {0,     1,    0,   1,  1,   1,    1},   /* Short, */
-    {0,     0,    1,   1,  1,   1,    1},   /* Char, */
-    {0,     0,    0,   1,  1,   1,    1},   /* Int, */
-    {0,     0,    0,   0,  1,   1,    1},   /* Long, */
-    {0,     0,    0,   0,  0,   1,    1},   /* Float, */
-    {0,     0,    0,   0,  0,   0,    1},   /* Double, */
-};
-
 /* These should go together in a struct. Also the lengths are not just
  * the lengths of the names, some slots do not have names, so they are
  * NULL and the length is zero. */

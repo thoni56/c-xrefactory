@@ -2,11 +2,8 @@
 
 #include "commons.h"
 #include "globals.h"
-#include "counters.h"
 #include "options.h"
-#include "classcaster.h"
 #include "misc.h"
-#include "extract.h"
 #include "proto.h"
 #include "usage.h"
 #include "yylex.h"
@@ -25,8 +22,6 @@
 #include "parsers.h"
 #include "recyacc.h"
 #include "jslsemact.h"
-
-#include "protocol.h"
 
 #include "log.h"
 
@@ -851,7 +846,7 @@ static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
     return false;
 }
 
-int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
+static int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                             Symbol **str,
                                             IncludeCxrefs cxrefFlag
 ){
@@ -1328,16 +1323,6 @@ Type javaClassifyAmbiguousName(
         }
     }
     return name->nameType;
-}
-
-// returns last useless reference (if any)
-Reference *javaClassifyToTypeOrPackageName(IdList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
-    TypeModifier		*expr;
-    Reference			*rr, *lastUselessRef;
-    lastUselessRef = NULL;
-    javaClassifyAmbiguousName(tname, NULL, str, &expr, &rr, &lastUselessRef, allowUselesFqtRefs,
-                              CLASS_TO_TYPE, usage);
-    return lastUselessRef;
 }
 
 int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
