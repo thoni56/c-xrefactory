@@ -152,8 +152,5 @@ extern TypeModifier *javaConditionalPromotion(TypeModifier *t1,
                                                  TypeModifier *t2
                                                  );
 extern int javaIsStringType(TypeModifier *tt);
-extern void javaAddJslReadedTopLevelClasses(JslTypeTab  *typeTab);
-extern void javaParsedSuperClass(Symbol *s);
-extern void javaSetClassSourceInformation(char *package, Id *cl);
 
 #endif

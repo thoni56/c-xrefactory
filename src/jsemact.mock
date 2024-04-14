@@ -310,15 +310,3 @@ TypeModifier *javaConditionalPromotion(TypeModifier *t1, TypeModifier *t2) {
 int javaIsStringType(TypeModifier *tt) {
     return (int) mock(tt);
 }
-
-void javaAddJslReadedTopLevelClasses(JslTypeTab *typeTab) {
-    mock(typeTab);
-}
-
-void javaParsedSuperClass(Symbol *s) {
-    mock(s);
-}
-
-void javaSetClassSourceInformation(char *package, Id *cl) {
-    mock(package, cl);
-}
