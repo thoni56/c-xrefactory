@@ -16,7 +16,7 @@
 #include "misc.mock"
 #include "options.mock"
 #include "yylex.mock"
-#include "zlib.mock"
+
 
 static CharacterBuffer characterBuffer;
 static LexemBuffer     lexemBuffer;

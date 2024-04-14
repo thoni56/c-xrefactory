@@ -2,7 +2,7 @@
 [![Coverage Status][coveralls badge]][coveralls link]&nbsp;
 [![codecov][codecov badge]][codecov link]
 
-# C-xrefactory — A refactoring tool for C/Java and Emacs
+# C-xrefactory — A refactoring tool for C/Yacc and Emacs
 
 ## TL;DR
 
@@ -55,11 +55,6 @@ Then just follow the instructions for a quick walk-through of what
 If your Emacs runs in a "standard" *ix-like environment with `bash`,
 `make`, `cc` etc. you probably don't need anything in particular.
 
-Just make sure that you have a `zlib-devel` installed because the
-current `c-xrefactory` install (using `el-get`) does not automatically
-compile its own. You can re-compile it with "local" zlib if you really
-need to.
-
 `c-xrefactory` works with recent Emacsen on Linux, including WSL,
 Cygwin, Msys2-MSYS (but not Msys2-MingW*) and MacOS/Darwin.
 
@@ -102,6 +97,9 @@ A lot of refactoring needs to be done to clean up the current modules
 and protocol to get closer to that point.
 
 ### Java notes
+
+> **NOTE**: Java support has been removed since there are far better
+> options now.
 
 The current Java grammar has not been updated from Java 1.4, but since
 `c-xrefactory` recovers gracefully that is not a major problem except

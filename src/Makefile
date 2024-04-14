@@ -79,7 +79,6 @@ ROOTDIR=..
 # We need our own patched yacc
 YACC=$(ROOTDIR)/byacc-1.9/yacc
 
-# If there is no ZLIB on the system you can build it yourself, see sources.mk
 
 # On Darwin we can use gcc-13 if available
 OS := $(shell uname)
@@ -185,7 +184,7 @@ build-proper: c-xref
 	$(MAKE) -C ../editors/emacs
 
 PHONY += c-xref
-c-xref: check-tokens $(OBJS) editor-defs $(OPTIONAL_ZLIB_LIB)
+c-xref: check-tokens $(OBJS) editor-defs
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
 editor-defs: refactorings.def

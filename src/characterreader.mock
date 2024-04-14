@@ -1,8 +1,8 @@
 /* -*- c -*-*/
 #include "characterreader.h"
+
 #include <cgreen/mocks.h>
 
-static z_stream emptyZStream = {NULL,};
 
 /* We never want to mock init-functions... */
 /* NB: copies of the actual functions... */
@@ -22,8 +22,6 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
     characterBuffer->lineBegin = lineBegin;
     characterBuffer->columnOffset = 0;
     characterBuffer->isAtEOF = false;
-    characterBuffer->inputMethod = INPUT_DIRECT;
-    characterBuffer->zipStream = emptyZStream;
 }
 
 void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file) {

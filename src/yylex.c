@@ -231,7 +231,7 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
         assert(bufferStart > editorBuffer->allocation.allocatedBlock);
     } else {
         // Reading from file or just a prefix
-        assert(prefixLength < CHARARACTER_BUFFER_SIZE);
+        assert(prefixLength < CHARACTER_BUFFER_SIZE);
         strcpy(currentFile.characterBuffer.chars, prefix);
         bufferStart = currentFile.characterBuffer.chars;
         bufferSize = prefixLength;

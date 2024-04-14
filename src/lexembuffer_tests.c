@@ -8,7 +8,6 @@
 #include "globals.mock"
 #include "commons.mock"
 #include "fileio.mock"
-#include "zlib.mock"
 #include "options.mock"
 
 

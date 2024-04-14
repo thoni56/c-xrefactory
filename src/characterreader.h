@@ -1,22 +1,15 @@
 #ifndef CHARACTERBUFFER_H_INCLUDED
 #define CHARACTERBUFFER_H_INCLUDED
 
-#include <zlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "constants.h"
 
 
-typedef enum {
-    INPUT_DIRECT,
-    INPUT_VIA_UNZIP,
-    INPUT_VIA_EDITOR
-} InputMethod;
-
 typedef struct {
     char       *nextUnread; /* first unread */
     char       *end;        /* pointing after valid characters */
-    char        chars[CHARARACTER_BUFFER_SIZE];
+    char        chars[CHARACTER_BUFFER_SIZE];
     FILE       *file;
     unsigned    filePos; /* how many chars was read from file */
     int         fileNumber;
@@ -24,9 +17,6 @@ typedef struct {
     char       *lineBegin;
     int         columnOffset; /* column == cc-lineBegin + columnOffset */
     bool        isAtEOF;
-    InputMethod inputMethod;       /* unzip/direct */
-    char        z[CHARARACTER_BUFFER_SIZE]; /* zip input buffer */
-    z_stream    zipStream;
 } CharacterBuffer;
 
 extern void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file);
@@ -40,7 +30,6 @@ extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                                 char *lineBegin);
 
 extern bool refillBuffer(CharacterBuffer *buffer);
-extern void switchToZippedCharBuff(CharacterBuffer *buffer);
 
 /* Lexer functions for passing compressed tokens to the parser */
 extern int fileNumberFrom(CharacterBuffer *cb);

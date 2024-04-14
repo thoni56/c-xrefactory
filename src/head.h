@@ -7,10 +7,6 @@
 
 #include "constants.h"
 
-#ifndef HAVE_ZLIB
-#define HAVE_ZLIB
-#endif
-
 
 /* ******************** language identification ****************** */
 
