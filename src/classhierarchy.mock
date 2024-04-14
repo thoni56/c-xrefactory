@@ -22,10 +22,6 @@ bool isSmallerOrEqClass(int inferior, int superior) {
     return (bool) mock(inferior, superior);
 }
 
-int classCmp(int class1, int class2) {
-    return (int)mock(class1, class2);
-}
-
 bool classHierarchyClassNameLess(int classname1, int classname2) {
   return (int) mock(classname1, classname2);
 }

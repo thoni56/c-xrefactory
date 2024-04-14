@@ -90,42 +90,36 @@ static IdList s_javaLangNameBody[] = {
     {{"lang", NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangNameBody[1]},
     {{"java", NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-IdList *s_javaLangName = s_javaLangNameBody;
 
 static IdList s_javaLangStringNameBody[] = {
     {{"String", NULL, {-1,0,0}, NULL}, "String", TypeStruct, &s_javaLangStringNameBody[1]},
     {{"lang",   NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangStringNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-IdList *s_javaLangStringName = s_javaLangStringNameBody;
 
 static IdList s_javaLangCloneableNameBody[] = {
     {{"Cloneable", NULL, {-1,0,0}, NULL}, "Cloneable", TypeStruct, &s_javaLangCloneableNameBody[1]},
     {{"lang",   NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangCloneableNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-IdList *s_javaLangCloneableName = s_javaLangCloneableNameBody;
 
 static IdList s_javaIoSerializableNameBody[] = {
     {{"Serializable", NULL, {-1,0,0}, NULL}, "Serializable", TypeStruct, &s_javaIoSerializableNameBody[1]},
     {{"io",   NULL, {-1,0,0}, NULL}, "io", TypePackage, &s_javaIoSerializableNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-IdList *s_javaIoSerializableName = s_javaIoSerializableNameBody;
 
 static IdList s_javaLangClassNameBody[] = {
     {{"Class", NULL, {-1,0,0}, NULL}, "Class", TypeStruct, &s_javaLangClassNameBody[1]},
     {{"lang",   NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangClassNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-IdList *s_javaLangClassName = s_javaLangClassNameBody;
 
 static IdList s_javaLangObjectNameBody[] = {
     {{"Object", NULL, {-1,0,0}, NULL}, "Object", TypeStruct, &s_javaLangObjectNameBody[1]},
     {{"lang",   NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangObjectNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-IdList *s_javaLangObjectName = s_javaLangObjectNameBody;
 char *s_javaLangObjectLinkName="java/lang/Object";
 
 

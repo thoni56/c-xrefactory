@@ -81,17 +81,6 @@ bool isSmallerOrEqClass(int inf, int sup) {
     return isSmallerOrEqClassR(inf, sup, 1) != 0;
 }
 
-int classCmp(int class1, int class2) {
-    int res;
-
-    log_trace("classCMP %s <-> %s", getFileItem(class1)->name, getFileItem(class2)->name);
-    res = isSmallerOrEqClassR(class2, class1, 1);
-    if (res == 0) {
-        res = -isSmallerOrEqClassR(class1, class2, 1);
-    }
-    return res;
-}
-
 bool classHierarchyClassNameLess(int classFileNumber1, int classFileNumber2) {
     char *name;
     int comparison;
