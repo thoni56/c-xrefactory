@@ -2,18 +2,12 @@
 #include "classfilereader.h"
 #include <cgreen/mocks.h>
 
-ZipFileTableItem zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
-
 void convertLinkNameToClassFileName(char *classFileName, char linkName[]) {
     mock(classFileName, linkName);
 }
 
 Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
     return (Symbol *) mock(memb, sup);
-}
-
-void addSuperClassOrInterface(Symbol *memb, Symbol *supp, int origin) {
-    mock(memb, supp, origin);
 }
 
 int javaCreateClassFileItem(Symbol *memb) {

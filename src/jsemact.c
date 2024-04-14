@@ -557,7 +557,7 @@ static void javaHackCopySourceLoadedCopyPars(Symbol *memb) {
     }
 }
 
-void javaLoadClassSymbolsFromFile(Symbol *memb) {
+static void javaLoadClassSymbolsFromFile(Symbol *memb) {
     char *sourceName, *className;
     Symbol *cl;
     int cfi, cInd;
@@ -654,7 +654,7 @@ static Result findTopLevelNameInternal(char *name,
             recFindPush(cscope->thisClass, resRfs);
             *rscope = cscope;
         }
-        result = findStrRecordSym(resultingMemberP, resRfs, name, classif, accessibilityCheck, visibilityCheck);
+        result = findStrRecordSym(resultingMemberP, resRfs, name, accessibilityCheck, visibilityCheck);
     }
     return result;
 }

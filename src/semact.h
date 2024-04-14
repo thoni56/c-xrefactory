@@ -23,7 +23,6 @@ extern bool javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Sy
 extern int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r);
 extern Result findStrRecordSym(Symbol **res, S_recFindStr *ss,
                             char *recname,
-                            int javaClassif,
                             AccessibilityCheckYesNo accessCheck,
                             VisibilityCheckYesNo visibilityCheck);
 extern Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage storage, UsageKind usage);
@@ -49,7 +48,6 @@ extern int findStrRecord(Symbol	*s,
 extern Reference *findStrRecordFromSymbol(Symbol *str,
                                           Id *record,
                                           Symbol **res,
-                                          int javaClassif,
                                           Id *super);
 extern Reference *findStructureFieldFromType(TypeModifier *structure,
                                              Id *field,

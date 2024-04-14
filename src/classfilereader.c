@@ -88,8 +88,6 @@ typedef union constantPoolUnion {
     struct CONSTANT_Dynamic_info dynamic;
 } ConstantPoolUnion;
 
-ZipFileTableItem zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
-
 typedef enum exception {
     NO_EXCEPTION,
     END_OF_FILE_EXCEPTION
@@ -189,34 +187,6 @@ Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
     assert(sup->u.structSpec);
     cctAddCctTree(&memb->u.structSpec->casts, &sup->u.structSpec->casts, 1);
     return(sup);
-}
-
-
-void addSuperClassOrInterface(Symbol *member, Symbol *super, int originFileNumber) {
-    SymbolList *symbolList, *s;
-    char tmpBuff[TMP_BUFF_SIZE];
-
-    super = javaFQTypeSymbolDefinition(super->name, super->linkName);
-    for(s = member->u.structSpec->super; s != NULL && s->element != super; s = s->next)
-        ;
-    if (s != NULL && s->element == super)
-        return; // avoid multiple occurrences
-    log_debug("adding superclass %s to %s", super->linkName, member->linkName);
-    if (cctIsMember(&super->u.structSpec->casts, member, 1) || member == super) {
-        sprintf(tmpBuff, "detected cycle in super classes of %s",
-                member->linkName);
-        errorMessage(ERR_ST, tmpBuff);
-        return;
-    }
-    cfAddCastsToModule(member, super);
-
-    symbolList = cfAlloc(SymbolList);
-    /* REPLACED: FILL_symbolList(ssl, supp, NULL); with compound literal */
-    *symbolList = (SymbolList){.element = super, .next = NULL};
-    LIST_APPEND(SymbolList, member->u.structSpec->super, symbolList);
-    addSubClassItemToFileTab(super->u.structSpec->classFileNumber,
-                             member->u.structSpec->classFileNumber,
-                             originFileNumber);
 }
 
 

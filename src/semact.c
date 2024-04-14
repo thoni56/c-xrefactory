@@ -8,6 +8,7 @@
 #include "parsers.h"
 #include "misc.h"
 #include "classcaster.h"
+#include "proto.h"
 #include "usage.h"
 #include "yylex.h"
 #include "cxref.h"
@@ -293,7 +294,7 @@ int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     return i;
 }
 
-Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname, int javaClassif,
+Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname,
                         AccessibilityCheckYesNo accessibilityCheck, /* java check accessibility */
                         VisibilityCheckYesNo    visibilityCheck     /* redundant, always equal to accCheck? */
 ) {
@@ -367,7 +368,7 @@ int findStrRecord(Symbol *s,
                   int javaClassif
 ) {
     S_recFindStr rfs;
-    return findStrRecordSym(res, iniFind(s,&rfs), recname, javaClassif,
+    return findStrRecordSym(res, iniFind(s,&rfs), recname,
                            ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
 }
 
@@ -376,7 +377,6 @@ int findStrRecord(Symbol *s,
 Reference *findStrRecordFromSymbol(Symbol *sym,
                                    Id *record,
                                    Symbol **res,
-                                   int javaClassif,
                                    Id *super /* covering special case when invoked
                                                 as SUPER.sym, berk */
 ) {
@@ -388,8 +388,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
     ref = NULL;
     // when in java, then always in qualified name, so access and visibility checks
     // are useless.
-    Result rr = findStrRecordSym(res, iniFind(sym,&rfs),record->name,
-                          javaClassif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
+    Result rr = findStrRecordSym(res, iniFind(sym,&rfs),record->name, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
     if (rr == RESULT_OK && rfs.currentClass != NULL &&
         ((*res)->storage == StorageField || (*res)->storage == StorageMethod ||
          (*res)->storage == StorageConstructor)) {
@@ -402,7 +401,8 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
                                     rfs.baseClass->u.structSpec->classFileNumber);
             // this is adding reference to 'super', not to the field!
             // for pull-up/push-down
-            if (super!=NULL) addThisCxReferences(javaStat->classFileNumber,&super->position);
+            if (super!=NULL)
+                addThisCxReferences(javaStat->classFileNumber,&super->position);
         }
     } else if (rr == RESULT_OK) {
         ref = addCxReference(*res,&record->position,UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
@@ -418,12 +418,13 @@ Reference *findStructureFieldFromType(TypeModifier *structure,
                                         int javaClassifier) {
     Reference *reference = NULL;
 
+    assert(javaClassifier == CLASS_TO_ANY);
     assert(structure);
     if (structure->type != TypeStruct && structure->type != TypeUnion) {
         *resultingSymbol = &errorSymbol;
         goto fini;
     }
-    reference = findStrRecordFromSymbol(structure->u.t, field, resultingSymbol, javaClassifier, NULL);
+    reference = findStrRecordFromSymbol(structure->u.t, field, resultingSymbol, NULL);
  fini:
     return reference;
 }

@@ -711,7 +711,7 @@ static void completeRecordsNames(
         visibilityCheck = VISIBILITY_CHECK_NO;
         accessCheck = calculateAccessCheckOption();
 
-        Result result = findStrRecordSym(&r, &rfs, NULL, classification, accessCheck, visibilityCheck);
+        Result result = findStrRecordSym(&r, &rfs, NULL, accessCheck, visibilityCheck);
         if (result != RESULT_OK) break;
 
         if (constructorOpt == StorageConstructor && rfs.currentClass != symbol)
@@ -879,7 +879,7 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
     assert(s->u.structSpec);
     iniFind(s, &rfs);
     for(;;) {
-        Result rr = findStrRecordSym(&r, &rfs, NULL, CLASS_TO_ANY, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
+        Result rr = findStrRecordSym(&r, &rfs, NULL, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
         if (rr != RESULT_OK) break;
         assert(r);
         cname = r->name;
