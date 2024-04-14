@@ -8,7 +8,6 @@
 
 #include "caching.mock"
 #include "counters.mock"
-#include "classcaster.mock"
 #include "commons.mock"
 #include "cxfile.mock"
 #include "cxref.mock"
@@ -25,6 +24,7 @@
 #include "symboltable.mock"
 #include "typemodifier.mock"
 #include "yylex.mock"
+
 
 Describe(Semact);
 BeforeEach(Semact) {}

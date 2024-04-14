@@ -7,7 +7,6 @@
 #include "options.h"
 #include "parsers.h"
 #include "misc.h"
-#include "classcaster.h"
 #include "proto.h"
 #include "usage.h"
 #include "yylex.h"

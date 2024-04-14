@@ -342,12 +342,10 @@ typedef struct nestedSpec {
     short unsigned accFlags;
 } S_nestedSpec;
 
-#include "classcaster.h"
 
 typedef struct symStructSpec {
     struct symbolList  *super;          /* list of super classes & interfaces */
     struct symbol      *records;        /* str. records, should be a table of   */
-    struct cctNode      casts;          /* possible casts                       */
     short int           nestedCount;    /* # of java nested classes     */
     struct nestedSpec  *nestedClasses;  /* array of nested classes		*/
     struct typeModifier type;           /* this structure type */

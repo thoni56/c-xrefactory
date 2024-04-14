@@ -475,7 +475,6 @@ endef
 
 $(eval $(call UNITTEST,caching,log memory stackmemory))
 $(eval $(call UNITTEST,characterreader,log))
-$(eval $(call UNITTEST,classcaster,memory log))
 $(eval $(call UNITTEST,classhierarchy,log memory protocol))
 $(eval $(call UNITTEST,commandlogger))
 $(eval $(call UNITTEST,commons,log protocol stringlist))

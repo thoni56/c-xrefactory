@@ -3,7 +3,6 @@
 #include "filetable.mock"
 
 /* Mocks: */
-#include "classcaster.mock"
 #include "commons.mock"
 #include "cxref.mock"
 #include "globals.mock"

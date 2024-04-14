@@ -1,6 +1,6 @@
 MODULES =  main globals misc semact commons \
 		complete cxref cxfile lexer lexembuffer yylex options \
-		caching jsemact classcaster init \
+		caching jsemact init \
 		editor refactory protocol log type usage storage \
 		extract classhierarchy jslsemact \
 		filetable macroargumenttable session editorbuffertab symboltable \

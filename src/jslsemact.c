@@ -5,7 +5,6 @@
 #include "options.h"
 #include "misc.h"
 #include "parsers.h"
-#include "classcaster.h"
 #include "semact.h"
 #include "cxref.h"
 #include "filetable.h"
