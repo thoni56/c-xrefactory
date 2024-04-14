@@ -287,25 +287,6 @@ typebreak:
     }
 }
 
-void throwsSPrintf(char *buffer, int bufferSize, SymbolList *exceptions) {
-    SymbolList *e;
-
-    if (exceptions != NULL) {
-        int i = 0;
-        sprintf(buffer + i, " throws");
-        i += strlen(buffer + i);
-        bool firstflag = true;
-        for (e = exceptions; e != NULL; e = e->next) {
-            if (i - 10 > bufferSize)
-                break;
-            sprintf(buffer + i, "%c%s", firstflag ? ' ' : ',', e->element->name);
-            i += strlen(buffer + i);
-        }
-        if (e != NULL)
-            sprintf(buffer + i, "...");
-    }
-}
-
 void macroDefinitionSPrintf(char *buffer, int *bufferSize, char *name1, char *name2, int argc,
                             char **argv, int *oNamePos) {
     int ll, i, brief = 0;
@@ -1207,16 +1188,6 @@ void javaMapOverDirectoryFiles1(char *packageFilename,
         }
     }
 }
-
-//#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5
-void javaMapOverDirectoryFiles2(IdList *packageId, void (*fun)(MAP_FUN_SIGNATURE), Completions *a1, void *a2,
-                            int *a3) {
-    char *packageFile;
-    char  dname[MAX_FILE_NAME_SIZE];
-    packageFile = javaCreateComposedName(NULL, packageId, '/', NULL, dname, MAX_FILE_NAME_SIZE);
-    javaMapOverDirectoryFiles1(packageFile, fun, a1, a2, a3);
-}
-
 
 /* ************************************************************* */
 

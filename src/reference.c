@@ -79,16 +79,6 @@ Reference **addToReferenceList(Reference **list,
     return place;
 }
 
-/*&
-void deleteFromRefList(void *p) {
-  Reference **pp, *ff;
-  pp = (S_reference **) p;
-  ff = *pp;
-  *pp = (*pp)->next;
-  CX_FREE(ff);
-}
-&*/
-
 bool isReferenceInList(Reference *reference, Reference *list) {
     Reference *place;
     SORTED_LIST_FIND2(place,Reference, (*reference),list);

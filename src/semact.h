@@ -38,7 +38,6 @@ extern Symbol *typeSpecifier2(TypeModifier *t);
 extern void declTypeSpecifier2(Symbol *d, TypeModifier *t);
 extern TypeModifier *addComposedTypeToSymbol(Symbol *symbol, Type type);
 extern TypeModifier *appendComposedType(TypeModifier **d, unsigned t);
-extern TypeModifier *prependComposedType(TypeModifier *d, unsigned t);
 extern void completeDeclarator(Symbol *t, Symbol *d);
 extern void addFunctionParameterToSymTable(SymbolTable *tab, Symbol *function, Symbol *p, int i);
 extern SymbolList *createDefinitionList(Symbol *symbol);
@@ -76,8 +75,6 @@ extern void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
 extern void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                            PositionList *commas, Position *rpar,
                                            bool hasParam);
-extern void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
-                                               PositionList *commas, Position *rpar);
 extern void setLocalVariableLinkName(struct symbol *p);
 extern void labelReference(Id *id, UsageKind usage);
 extern void generateInternalLabelReference(int counter, int usage);

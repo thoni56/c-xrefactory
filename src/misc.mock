@@ -35,10 +35,6 @@ void typeSPrint(char *buff, int *size, TypeModifier *t, char *name, int dclSepCh
   mock(buff, size, t, name, dclSepChar, maxDeep, typedefexp, longOrShortName, oNamePos);
 }
 
-void throwsSPrintf(char *out, int outsize, SymbolList *exceptions) {
-  mock(out, outsize, exceptions);
-}
-
 void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv, int *oNamePos) {
   mock(buff, size, name1, name2, argc, argv, oNamePos);
 }
@@ -133,10 +129,6 @@ void mapOverDirectoryFiles(char *dirname, void (*fun)(char *file, char *a1, char
 
 void javaMapOverDirectoryFiles1(char *packfile, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), Completions *a1, void *a2, int *a3) {
   mock(packfile, fun, a1, a2, a3);
-}
-
-void javaMapOverDirectoryFiles2(IdList *packid, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), Completions *a1, void *a2, int *a3) {
-  mock(packid, fun, a1, a2, a3);
 }
 
 char *lastOccurenceInString(char *string, int ch) {

@@ -44,15 +44,11 @@ extern S_jslClassStat *newJslClassStat(IdList *className, Symbol *thisClass, cha
 extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, JslTypeTab *typeTab,
                         S_jslClassStat *classStat, SymbolList *waitList, void *savedyylval,
                         void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next);
-extern Symbol *jslTypeSpecifier1(Type t);
-extern Symbol *jslTypeSpecifier2(TypeModifier *t);
 
 extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
 extern Symbol *jslTypeNameDefinition(IdList *tname);
 extern Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
                                        AddYesNo add, int order, bool isExplicitlyImported);
-extern void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc);
-
 extern void jslAddSuperClassOrInterfaceByName(Symbol *memb,char *super);
 extern void jslNewClassDefinitionBegin(Id *name,
                                        int accessFlags,

@@ -109,10 +109,6 @@ TypeModifier *appendComposedType(TypeModifier **d, unsigned t) {
     return (TypeModifier *) mock(d, t);
 }
 
-TypeModifier *prependComposedType(TypeModifier *d, unsigned t) {
-    return (TypeModifier *) mock(d, t);
-}
-
 void completeDeclarator(Symbol *t, Symbol *d) {
     mock(t, d);
 }
@@ -196,10 +192,6 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar, PositionList *
 
 void handleInvocationParamPositions(Reference *ref, Position *lpar, PositionList *commas, Position *rpar, bool hasParam) {
     mock(ref, lpar, commas, rpar, hasParam);
-}
-
-void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar, PositionList *commas, Position *rpar) {
-    mock(sym, lpar, commas, rpar);
 }
 
 void setLocalVariableLinkName(struct symbol *p) {

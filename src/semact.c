@@ -786,10 +786,6 @@ TypeModifier *appendComposedType(TypeModifier **d, Type type) {
     return p;
 }
 
-TypeModifier *prependComposedType(TypeModifier *d, Type type) {
-    return newTypeModifier(type, NULL, d);
-}
-
 void completeDeclarator(Symbol *type, Symbol *declarator) {
     TypeModifier *typeModifier, **declaratorModifier;
 
@@ -1161,20 +1157,4 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
     if (ref==NULL || positionsAreNotEqual(ref->position, cxRefPosition))
         return;
     handleParameterPositions(lpar, commas, rpar, hasParam, false);
-}
-
-void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
-                                        PositionList *commas, Position *rpar
-                                        ) {
-    if (options.mode != ServerMode)
-        return;
-    if (options.serverOperation != OLO_GOTO_PARAM_NAME && options.serverOperation != OLO_GET_PARAM_COORDINATES)
-        return;
-    if (positionsAreNotEqual(*sym, cxRefPosition))
-        return;
-    if (commas==NULL) {
-        handleParameterPositions(lpar, NULL, rpar, false, false);
-    } else {
-        handleParameterPositions(lpar, commas->next, rpar, true, false);
-    }
 }

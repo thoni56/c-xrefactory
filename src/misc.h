@@ -77,7 +77,6 @@ extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oName
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
                        int dclSepChar, int maxDeep, bool typedefexp,
                        int longOrShortName, int *oNamePos);
-extern void throwsSPrintf(char *out, int outsize, SymbolList *exceptions);
 extern void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv,
                                    int *oNamePos);
 extern char *string3ConcatInStackMem(char *str1, char *str2, char *str3);
@@ -113,13 +112,6 @@ extern void mapOverDirectoryFiles(
     );
 extern void javaMapOverDirectoryFiles1(
         char *packfile,
-        void (*fun)(MAP_FUN_SIGNATURE),
-        Completions *a1,
-        void *a2,
-        int *a3
-    );
-extern void javaMapOverDirectoryFiles2(
-        IdList *packid,
         void (*fun)(MAP_FUN_SIGNATURE),
         Completions *a1,
         void *a2,

@@ -68,15 +68,6 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
     fillJslSymbolList(ss, s, noPosition, false);
 }
 
-Symbol *jslTypeSpecifier2(TypeModifier *t) {
-    Symbol *symbol;
-
-    symbol = cfAlloc(Symbol);   /* TODO: Not in same memory as newSymbol() uses, why? */
-    fillSymbolWithTypeModifier(symbol, NULL, NULL, noPosition, t);
-
-    return symbol;
-}
-
 /* Used as argument to addToFrame() thus void* argument */
 static void jslRemoveNestedClass(void *ddv) {
     JslSymbolList *dd;
@@ -284,13 +275,4 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
                                     ADD_YES, order, false);
         }
     }
-}
-
-
-void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc) {
-    SymbolList *ss;
-    for(ss=cc->u.structSpec->super; ss!=NULL; ss=ss->next) {
-        jslAddSuperNestedClassesToJslTypeTab(ss->element);
-    }
-    jslAddNestedClassesToJslTypeTab(cc, ORDER_PREPEND);
 }
