@@ -49,10 +49,6 @@ Type javaClassifyAmbiguousName(IdList *name, S_recFindStr *rfs, Symbol **str, Ty
     return (Type)mock(name, rfs, str, expr, oref, rdtoref, allowUselesFqtRefs, classif, usage);
 }
 
-char *javaImportSymbolName_st(int file, int line, int coll) {
-    return (char *) mock(file, line, coll);
-}
-
 int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
     return (int) mock(clas, lname, eq);
 }
@@ -79,10 +75,6 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
 
 void javaReadSymbolsFromSourceFile(char *fname) {
     mock(fname);
-}
-
-int javaLinkNameIsAnnonymousClass(char *linkname) {
-    return (int) mock(linkname);
 }
 
 Reference *addUselessFQTReference(int classIndex, Position *pos) {

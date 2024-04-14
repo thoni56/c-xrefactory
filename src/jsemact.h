@@ -36,10 +36,7 @@ extern void fillJavaStat(JavaStat *javaStat, IdList *className, TypeModifier *th
 extern void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp);
 extern void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp);
 
-extern char *javaImportSymbolName_st(int file, int line, int coll);
-extern int javaLinkNameIsAnnonymousClass(char *linkname);
 extern void addThisCxReferences(int classIndex, Position *pos);
-extern Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);
 extern TypeModifier *javaMethodInvocationT(	TypeModifier *tt,
                                                 Id *name,
                                                 S_typeModifierList *args

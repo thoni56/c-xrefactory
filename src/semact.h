@@ -17,7 +17,6 @@ extern void deleteSymDef(void *p);
 extern void addSymbolToFrame(SymbolTable *tab, Symbol *pp);
 extern void recFindPush(Symbol *sym, S_recFindStr *rfs);
 extern S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs);
-extern bool javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags);
 extern Result findStrRecordSym(Symbol **res, S_recFindStr *ss,
                             char *recname,
                             AccessibilityCheckYesNo accessCheck,
