@@ -40,10 +40,6 @@ void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp) {
     mock(name, pp);
 }
 
-Position *javaGetNameStartingPosition(IdList *name) {
-    return (Position *) mock(name);
-}
-
 char *javaCreateComposedName(char *prefix, IdList *className, int classNameSeparator, char *name,
                              char *resultBuffer, int resultBufferSize) {
     return (char *) mock(prefix, className, classNameSeparator, name, resultBuffer, resultBufferSize);
@@ -75,10 +71,6 @@ void javaClassifyToPackageName(IdList *id) {
     mock(id);
 }
 
-void javaClassifyToPackageNameAndAddRefs(IdList *id, int usage) {
-    mock(id, usage);
-}
-
 char *javaImportSymbolName_st(int file, int line, int coll) {
     return (char *) mock(file, line, coll);
 }
@@ -91,20 +83,12 @@ int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
     return (int) mock(clas, lname, eq);
 }
 
-int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
-    return (int) mock(clas, decl, mem);
-}
-
 Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
     return (Symbol *) mock(fieldLinkName, fieldAdr);
 }
 
 bool javaTypeFileExist(IdList *name) {
     return (int) mock(name);
-}
-
-Symbol *javaTypeSymbolDefinition(IdList *tname, int accessFlags, int addType) {
-    return (Symbol *) mock(tname, accessFlags, addType);
 }
 
 Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
@@ -131,10 +115,6 @@ int javaLinkNameIsAnnonymousClass(char *linkname) {
     return (int) mock(linkname);
 }
 
-int javaLinkNameIsANestedClass(char *cname) {
-    return (int) mock(cname);
-}
-
 Reference *addUselessFQTReference(int classIndex, Position *pos) {
     return (Reference *) mock(classIndex, pos);
 }
@@ -149,14 +129,6 @@ void addThisCxReferences(int classIndex, Position *pos) {
 
 void javaLoadClassSymbolsFromFile(Symbol *memb) {
     mock(memb);
-}
-
-void addMethodCxReferences(unsigned modif, Symbol *method, Symbol *clas) {
-    mock(modif, method, clas);
-}
-
-void javaAddMethodParametersToSymTable(Symbol *method) {
-    mock(method);
 }
 
 Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {

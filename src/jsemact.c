@@ -159,16 +159,6 @@ void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
     }
 }
 
-Position *javaGetNameStartingPosition(IdList *name) {
-    IdList *ll;
-    Position *res;
-    res = &noPosition;
-    for(ll=name; ll!=NULL; ll=ll->next) {
-        res = &ll->id.position;
-    }
-    return res;
-}
-
 static Reference *javaAddClassCxReference(Symbol *dd, Position *pos, unsigned usage) {
     Reference *res;
     res = addCxReference(dd, pos, usage, NO_FILE_NUMBER, NO_FILE_NUMBER);
@@ -563,44 +553,6 @@ Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
     return memb;
 }
 
-
-static Symbol *javaAddTypeToSymbolTable(Symbol *original, int accessFlags, Position *importPos,
-                                        bool isExplicitlyImported
-) {
-    Symbol *added;
-
-    original->access = accessFlags;
-    original->isExplicitlyImported = isExplicitlyImported;
-
-    added = newSymbolAsCopyOf(original);
-    added->pos = *importPos;
-    addSymbolToFrame(symbolTable, added);
-
-    return original;
-}
-
-Symbol *javaTypeSymbolDefinition(IdList *tname,
-                                 int accessFlags,
-                                 int addType
-){
-    Symbol symbol, *typeSymbol;
-    char fqtName[MAX_FILE_NAME_SIZE];
-
-    assert(tname);
-    assert(tname->nameType == TypeStruct);
-
-    fillSymbol(&symbol, tname->id.name, tname->id.name, noPosition);
-    symbol.access = accessFlags;
-    symbol.type = TypeStruct;
-    symbol.storage = StorageNone;
-
-    javaCreateComposedName(NULL, tname, '/', NULL, fqtName, MAX_FILE_NAME_SIZE);
-    typeSymbol = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
-    if (addType == ADD_YES) {
-        typeSymbol = javaAddTypeToSymbolTable(typeSymbol, accessFlags, &noPosition, false);
-    }
-    return typeSymbol;
-}
 
 Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags) {
     Symbol symbol, *member;
@@ -1414,12 +1366,6 @@ void javaClassifyToPackageName( IdList *id ) {
     for (ii=id; ii!=NULL; ii=ii->next) ii->nameType = TypePackage;
 }
 
-void javaClassifyToPackageNameAndAddRefs(IdList *id, int usage) {
-    IdList *ii;
-    javaClassifyToPackageName( id);
-    for (ii=id; ii!=NULL; ii=ii->next) javaAddNameCxReference(ii, usage);
-}
-
 int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
     int ppi;
     TypeModifier *tt;
@@ -1457,104 +1403,6 @@ int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
 }
 
 
-static int javaNumberOfNativeMethodsWithThisName(Symbol *clas, char *name) {
-    Symbol        *r;
-    int				res;
-    res = 0;
-    assert(clas && clas->type==TypeStruct && clas->u.structSpec);
-    for (r=clas->u.structSpec->records; r!=NULL; r=r->next) {
-        if (strcmp(r->name, name)==0 && (r->access&AccessNative)) {
-            res++;
-        }
-    }
-    return res;
-}
-
-
-int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
-    static char pp[MAX_PROFILE_SIZE];
-    char *ln;
-    int ppi, res;
-    Symbol *args;
-    Symbol *memb;
-
-    res = 0;
-    if (decl == &errorSymbol || decl->type==TypeError)
-        return res;
-    assert(decl->type == TypeDefault);
-    assert(decl->u.typeModifier);
-    if (decl->u.typeModifier->type != TypeFunction)
-        return res;
-    ppi=0;
-    sprintf(pp+ppi,"%s", decl->name);
-    ppi += strlen(pp+ppi);
-    sprintf(pp+ppi,"(");
-    ppi += strlen(pp+ppi);
-    for(args=decl->u.typeModifier->u.f.args; args!=NULL; args=args->next) {
-        ppi += javaTypeToString(args->u.typeModifier, pp+ppi, MAX_PROFILE_SIZE-ppi);
-    }
-    sprintf(pp+ppi,")");
-    ppi += strlen(pp+ppi);
-    assert(ppi<MAX_PROFILE_SIZE);
-    if (javaIsYetInTheClass(clas, pp, &memb)) {
-        decl->linkName = memb->linkName;
-    } else {
-        if (mem == MEMORY_CF) {
-            ln = cfAllocc(ppi+1, char);
-        } else {
-            assert(mem==MEMORY_XX);
-            ln = stackMemoryAlloc(ppi+1);
-        }
-        strcpy(ln,pp);
-        decl->linkName = ln;
-        res = 1;
-    }
-    return res;
-}
-
-static void addNativeMethodCxReference(Symbol *decl, Symbol *clas) {
-    char nlname[MAX_CX_SYMBOL_SIZE];
-    char *s, *d;
-
-    sprintf(nlname, "Java_");
-    s = clas->linkName;
-    d = nlname + strlen(nlname);
-    for(; *s; s++,d++) {
-        if (*s=='/' || *s=='\\' || *s=='.') *d = '_';
-        else if (*s=='_') {*d++ = '_'; *d = '1';}
-        else if (*s=='$') {*d++ = '_'; *d++='0'; *d++='0'; *d++='0'; *d++='2'; *d='4';}
-        else *d = *s;
-    }
-    *d++ = '_';
-    if (javaNumberOfNativeMethodsWithThisName(clas, decl->name) > 1) {
-        s = decl->linkName;
-    } else {
-        s = decl->name;
-    }
-    for(; *s; s++,d++) {
-        if (*s=='/' || *s=='\\' || *s=='.') *d = '_';
-        else if (*s=='_') {*d++ = '_'; *d = '1';}
-        else if (*s==';') {*d++ = '_'; *d = '2';}
-        else if (*s=='[') {*d++ = '_'; *d = '3';}
-        else if (*s=='$') {*d++ = '_'; *d++='0'; *d++='0'; *d++='0'; *d++='2'; *d='4';}
-        else if (*s=='(') {*d++ = '_'; *d = '_';}
-        else if (*s==')') *d=0;
-        else *d = *s;
-    }
-    *d = 0;
-    assert(d-nlname < MAX_CX_SYMBOL_SIZE-1);
-    addTrivialCxReference(nlname, TypeDefault,StorageExtern, decl->pos,
-                          UsageJavaNativeDeclared);
-}
-
-int javaLinkNameIsANestedClass(char *cname) {
-    // this is a very hack!!   TODO do this seriously
-    // an alternative can be 'javaSimpleNameIsInnerMemberClass', but it seems
-    // to be even worst
-    if (strchr(cname, '$') != NULL) return true;
-    return false;
-}
-
 int javaLinkNameIsAnnonymousClass(char *linkname) {
     char *ss;
     // this is a very hack too!!   TODO do this seriously
@@ -1590,26 +1438,6 @@ Reference *addUnimportedTypeLongReference(int classIndex, Position *pos) {
                                    classIndex, pos, UsageUsed);
     return res;
 }
-
-void addMethodCxReferences(unsigned modif, Symbol *method, Symbol *clas) {
-    int clasn;
-    assert(clas && clas->u.structSpec);
-    clasn = clas->u.structSpec->classFileNumber;
-    assert(clasn!=NO_FILE_NUMBER);
-    addCxReference(method, &method->pos, UsageDefined, clasn, clasn);
-    if (modif & AccessNative) {
-        addNativeMethodCxReference(method, clas);
-    }
-}
-
-void javaAddMethodParametersToSymTable(Symbol *method) {
-    Symbol *p;
-    int i;
-    for(p=method->u.typeModifier->u.f.args,i=1; p!=NULL; p=p->next,i++) {
-        addFunctionParameterToSymTable(javaStat->locals, method, p, i);
-    }
-}
-
 
 /* ********************* method invocations ************************** */
 
