@@ -41,7 +41,6 @@ int yyIdBufferIndex = 0;
 
 TypeModifier *s_structRecordCompletionType;
 TypeModifier *s_upLevelFunctionCompletionType;
-TypeModifier *s_javaCompletionLastPrimary;
 
 struct yyGlobalState *s_yygstate;
 struct yyGlobalState *s_initYygstate;
@@ -124,7 +123,6 @@ Symbol errorSymbol;
 Position noPosition = {-1, 0, 0};
 
 Symbol s_javaArrayObjectSymbol;
-Symbol *s_javaStringSymbol;
 Symbol *s_javaCloneableSymbol;
 Symbol *s_javaIoSerializableSymbol;
 Symbol *s_javaObjectSymbol;

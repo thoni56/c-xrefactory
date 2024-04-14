@@ -250,19 +250,3 @@ int javaClassIsInCurrentPackage(Symbol *cl) {
 int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2) {
     return (int) mock(classFqName, fqname2);
 }
-
-int javaMethodApplicability(Symbol *memb, char *actArgs) {
-    return (int) mock(memb, actArgs);
-}
-
-Symbol *javaGetSuperClass(Symbol *cc) {
-    return (Symbol *) mock(cc);
-}
-
-Symbol *javaCurrentSuperClass(void) {
-    return (Symbol *) mock();
-}
-
-TypeModifier *javaBinaryNumericPromotion(TypeModifier *t1, TypeModifier *t2) {
-    return (TypeModifier *) mock(t1, t2);
-}

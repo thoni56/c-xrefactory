@@ -125,10 +125,5 @@ extern TypeModifier *javaMethodInvocationS(	Id *super,
 extern S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas, Position *pos);
 extern int javaClassIsInCurrentPackage(Symbol *cl);
 extern int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2);
-extern int javaMethodApplicability(Symbol *memb, char *actArgs);
-extern Symbol *javaGetSuperClass(Symbol *cc);
-extern Symbol *javaCurrentSuperClass(void);
-extern TypeModifier *javaBinaryNumericPromotion(TypeModifier *t1,
-                                                   TypeModifier *t2
-                                                   );
+
 #endif
