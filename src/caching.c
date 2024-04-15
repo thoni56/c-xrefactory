@@ -5,12 +5,10 @@
 #include "memory.h"
 #include "stackmemory.h"
 #include "options.h"
-#include "protocol.h"
 #include "input.h"
 #include "yylex.h"
 #include "editor.h"
 #include "reftab.h"
-#include "javafqttab.h"
 #include "classhierarchy.h"
 #include "filedescriptor.h"
 #include "filetable.h"
@@ -155,23 +153,6 @@ static void symbolTableDeleteOutOfMemory(int i) {
     }
 }
 
-static void javaFqtTabDeleteOutOfMemory(int i) {
-    SymbolList **symbolListP;
-    symbolListP = &javaFqtTable.tab[i];
-    while (*symbolListP != NULL) {
-        if (ppmIsFreedPointer(*symbolListP)) {
-            *symbolListP = (*symbolListP)->next;
-            continue;
-        } else if (isFreedPointer((*symbolListP)->element) || ppmIsFreedPointer((*symbolListP)->element)) {
-            *symbolListP = (*symbolListP)->next;
-            continue;
-        } else {
-            structCachingFree((*symbolListP)->element);
-        }
-        symbolListP = &(*symbolListP)->next;
-    }
-}
-
 static void deleteFrameAllocationsWhenOutOfMemory(void) {
     FrameAllocation **pp;
     pp = &currentBlock->frameAllocations;
@@ -273,11 +254,10 @@ void recoverCachePoint(int cachePointIndex, char *readUntil, bool cachingActive)
         mapOverReferenceTableWithIndex(refTabDeleteOutOfMemory);
         mapOverFileTable(fileTabDeleteOutOfMemory);
     }
-    log_trace("recovering 0");
+    log_trace("recovering symbolTable");
     symbolTableMapWithIndex(symbolTable, symbolTableDeleteOutOfMemory);
-    log_trace("recovering 1");
-    javaFqtTableMapWithIndex(&javaFqtTable, javaFqtTabDeleteOutOfMemory);
-    log_trace("recovering 2");
+
+    log_trace("recovering finished");
 
     // do not forget that includes are listed in PP_MEMORY too.
     includeListDeleteOutOfMemory();

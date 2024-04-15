@@ -20,7 +20,6 @@
 #include "filetable.mock"
 #include "globals.mock"
 #include "init.mock"
-#include "javafqttab.mock"
 #include "jslsemact.mock"
 #include "lexem.mock"
 #include "lexer.mock"
@@ -47,4 +46,5 @@ BeforeEach(Main) {
 AfterEach(Main) {}
 
 Ensure(Main, can_run_empty_test) {
+    pass_test();
 }

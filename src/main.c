@@ -15,7 +15,6 @@
 #include "filetable.h"
 #include "globals.h"
 #include "init.h"
-#include "javafqttab.h"
 #include "jslsemact.h"
 #include "lexem.h"
 #include "list.h"

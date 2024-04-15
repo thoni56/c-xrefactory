@@ -10,7 +10,6 @@
 #include "filetable.mock"
 #include "globals.mock"
 #include "input.mock"
-#include "javafqttab.mock"
 #include "options.mock"
 #include "reftab.mock"
 #include "symboltable.mock"
