@@ -7,7 +7,7 @@
 ## TL;DR
 
 `c-xrefactory` is a free Emacs refactoring tool and code browser for
-_C_ (& _Yacc_ and _Java_).
+_C_ & _Yacc_.
 
 > **BEWARE**: As `c-xrefactory` is undergoing radical refactorings and
 > changes and doesn't have tests for all features occasional hiccups
