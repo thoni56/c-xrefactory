@@ -677,7 +677,6 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     log_trace("new struct %s", id->name);
     assert(typeName && typeName->symbol && typeName->symbol->type == TypeKeyword);
     assert(typeName->symbol->u.keyword == STRUCT
-           ||  typeName->symbol->u.keyword == CLASS
            ||  typeName->symbol->u.keyword == UNION);
 
     Type type;
@@ -769,7 +768,6 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     assert(typeName->symbol);
     assert(typeName->symbol->type == TypeKeyword);
     assert(typeName->symbol->u.keyword == STRUCT
-           ||  typeName->symbol->u.keyword == CLASS
            ||  typeName->symbol->u.keyword == UNION
            );
     if (typeName->symbol->u.keyword == STRUCT) type = TypeStruct;
