@@ -697,11 +697,9 @@ static void completeRecordsNames(
     //&fprintf(dumpOut,"checking records of %s\n", symbol->linkName);
     for(;;) {
         // this is in fact about not cutting all records of the class,
-        // not about visibility checks
-        visibilityCheck = VISIBILITY_CHECK_NO;
-
-        Result result = findStrRecordSym(&r, &rfs, NULL, visibilityCheck);
-        if (result != RESULT_OK) break;
+        Result result = findStrRecordSym(&r, &rfs, NULL);
+        if (result != RESULT_OK)
+            break;
 
         if (constructorOpt == StorageConstructor && rfs.currentClass != symbol)
             break;
@@ -868,7 +866,7 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
     assert(s->u.structSpec);
     iniFind(s, &rfs);
     for(;;) {
-        Result rr = findStrRecordSym(&r, &rfs, NULL, VISIBILITY_CHECK_YES);
+        Result rr = findStrRecordSym(&r, &rfs, NULL);
         if (rr != RESULT_OK) break;
         assert(r);
         cname = r->name;

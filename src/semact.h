@@ -18,8 +18,7 @@ extern void addSymbolToFrame(SymbolTable *tab, Symbol *pp);
 extern void recFindPush(Symbol *sym, S_recFindStr *rfs);
 extern S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs);
 extern Result findStrRecordSym(Symbol **res, S_recFindStr *ss,
-                            char *recname,
-                            VisibilityCheckYesNo visibilityCheck);
+                            char *recname);
 extern Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage storage, UsageKind usage);
 extern Symbol *addNewDeclaration(SymbolTable *table, Symbol *baseType, Symbol *declaration, IdList *idList,
                                  unsigned storage);

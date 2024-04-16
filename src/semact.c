@@ -158,11 +158,9 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     }
 }
 
-Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname, /* java check accessibility */
-                        VisibilityCheckYesNo    visibilityCheck     /* redundant, always equal to accCheck? */
-) {
     Symbol     *s, *r, *cclass;
     SymbolList *sss;
+Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname) {
 
     for (;;) {
         assert(ss);
@@ -225,7 +223,7 @@ int findStrRecord(Symbol *symbol,
                   char *recname,   /* can be NULL */
                   Symbol **res) {
     S_recFindStr rfs;
-    return findStrRecordSym(res, iniFind(symbol,&rfs), recname, VISIBILITY_CHECK_YES);
+    return findStrRecordSym(res, iniFind(symbol,&rfs), recname);
 }
 
 /* and push reference */
@@ -242,7 +240,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
     ref = NULL;
     // when in java, then always in qualified name, so access and visibility checks
     // are useless.
-    Result rr = findStrRecordSym(res, iniFind(sym,&rfs),record->name, VISIBILITY_CHECK_NO);
+    Result rr = findStrRecordSym(res, iniFind(sym,&rfs),record->name);
     if (rr == RESULT_OK) {
         ref = addCxReference(*res,&record->position,UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
     } else {
