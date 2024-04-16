@@ -7,7 +7,6 @@
 
    StorageConstant       - enumerator definition
    // some "artificial" Java storages
-   StorageField          - storage for class fields
    StorageMethod         - storage for class methods
 
 */
@@ -24,7 +23,6 @@
     ENUM(StorageTypedef)                    \
     ENUM(StorageMutable)                    \
     ENUM(StorageRegister)                   \
-    ENUM(StorageField)                      \
     ENUM(StorageMethod)                     \
     ENUM(StorageNone)                       \
     ENUM(MAX_STORAGE_NAMES)                       \

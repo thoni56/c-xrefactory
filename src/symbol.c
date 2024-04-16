@@ -98,7 +98,6 @@ void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, Refe
         if (    symbol->storage==StorageExtern
                 ||  symbol->storage==StorageDefault
                 ||  symbol->storage==StorageTypedef
-                ||  symbol->storage==StorageField
                 ||  symbol->storage==StorageMethod
                 ||  symbol->storage==StorageStatic
                 ||  symbol->storage==StorageThreadLocal

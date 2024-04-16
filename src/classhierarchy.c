@@ -407,8 +407,7 @@ static void olcxMenuGenGlobRefsForVirtMethod(SymbolsMenu *menu, FILE *file) {
 }
 
 static int isVirtualMenuItem(ReferenceItem *r) {
-    return r->storage == StorageField
-        || r->storage == StorageMethod;
+    return r->storage == StorageMethod;
 }
 
 static void genVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {

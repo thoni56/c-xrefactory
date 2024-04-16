@@ -858,9 +858,12 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
             assert(r->type == TypeDefault);
             if (isEqualType(r->u.typeModifier, token->typeModifier)) {
                 // there is a record of the same type
-                if (res == NULL) res = cname;
-                else if (strcmp(cname,cnext)==0) res = cnext;
-                else if (res!=cnext&&strcmp(cname,"previous")==0) res=cprevious;
+                if (res == NULL)
+                    res = cname;
+                else if (strcmp(cname,cnext)==0)
+                    res = cnext;
+                else if (res!=cnext&&strcmp(cname,"previous")==0)
+                    res=cprevious;
             }
         }
     }

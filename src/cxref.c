@@ -45,8 +45,7 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
 }
 
 static bool javaStaticallyLinked(Storage storage, Access accessFlags) {
-    return storage==StorageField || (storage==StorageMethod
-                                     && (accessFlags & AccessStatic));
+    return storage==StorageMethod && (accessFlags & AccessStatic);
 }
 
 
@@ -227,20 +226,6 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
             makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "");
         }
 
-        if (symbol->storage == StorageField) {
-            if (isDefinitionUsage(usage)) {
-                if (symbol->access & AccessStatic) {
-                    makeRefactoringAvailable(PPC_AVR_MOVE_STATIC_FIELD, "");
-                } else {
-                    // TODO! restrict this better
-                    makeRefactoringAvailable(PPC_AVR_PULL_UP_FIELD, "");
-                    makeRefactoringAvailable(PPC_AVR_PUSH_DOWN_FIELD, "");
-                }
-                makeRefactoringAvailable(PPC_AVR_MOVE_FIELD, "");
-                makeRefactoringAvailable(PPC_AVR_ENCAPSULATE_FIELD, "");
-                makeRefactoringAvailable(PPC_AVR_SELF_ENCAPSULATE_FIELD, "");
-            }
-        }
         if (symbol->storage == StorageMethod) {
             if (isDefinitionUsage(usage)) {
                 //& makeRefactoringAvailable(PPC_AVR_EXPAND_NAMES, "");
@@ -1645,7 +1630,7 @@ static void selectUnusedSymbols(SymbolsMenu *menu, void *p1, char *_unused) {
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = true; m->selected = false;
     }
-    if (menu->references.storage != StorageField && menu->references.storage != StorageMethod) {
+    if (menu->references.storage != StorageMethod) {
         for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
             if (m->defRefn!=0 && m->refn==0)
                 m->selected = true;
@@ -2482,10 +2467,6 @@ bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
     case OLO_PP_PRE_CHECK:
         if (isSameCxSymbol(&osym->references, &nsym->references)) {
             if (osym->references.vApplClass == nsym->references.vApplClass) {
-                res = true;
-            }
-            if (osym->references.storage == StorageField
-                && osym->references.vFunClass == nsym->references.vFunClass) {
                 res = true;
             }
             if (osym->references.storage == StorageMethod) {
