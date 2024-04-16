@@ -674,15 +674,14 @@ static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag,
 }
 
 static void completeRecordsNames(
-    Completions *c,
+    Completions *completions,
     Symbol *symbol,
-    int classification,
     int constructorOpt,
     int completionType,
     int vlevelOffset
 ) {
     CompletionLine completionLine;
-    int vlevel, visibilityCheck;
+    int vlevel;
     Symbol *r, *vFunCl;
     S_recFindStr rfs;
     char *cname;
@@ -690,11 +689,11 @@ static void completeRecordsNames(
     if (symbol==NULL)
         return;
 
-    bool orderFlag = c->idToProcess[0] != 0;
+    bool orderFlag = completions->idToProcess[0] != 0;
 
     assert(symbol->u.structSpec);
     iniFind(symbol, &rfs);
-    //&fprintf(dumpOut,"checking records of %s\n", symbol->linkName);
+
     for(;;) {
         // this is in fact about not cutting all records of the class,
         Result result = findStrRecordSym(&r, &rfs, NULL);
@@ -726,24 +725,24 @@ static void completeRecordsNames(
                     && vlevel <= options.completionOverloadWizardDepth+1
                     &&  (r->access & AccessPrivate)==0
                     &&  (r->access & AccessStatic)==0) {
-                    processSpecialInheritedFullCompletion(c,orderFlag,vlevel,
+                    processSpecialInheritedFullCompletion(completions,orderFlag,vlevel,
                                                           r, vFunCl, cname);
                 }
-                c->prefix[0] = 0;
+                completions->prefix[0] = 0;
             } else if (completionType == TypeSpecialConstructorCompletion) {
-                fillCompletionLine(&completionLine, c->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
-                completionInsertName(c->idToProcess, &completionLine, orderFlag, (void*) c);
+                fillCompletionLine(&completionLine, completions->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
+                completionInsertName(completions->idToProcess, &completionLine, orderFlag, (void*) completions);
             } else if (options.completeParenthesis
                        && (r->storage==StorageMethod || r->storage==StorageConstructor)) {
-                completeFunctionOrMethodName(c, orderFlag, vlevel, r, vFunCl);
+                completeFunctionOrMethodName(completions, orderFlag, vlevel, r, vFunCl);
             } else {
                 fillCompletionLine(&completionLine, cname, r, TypeDefault, vlevel, 0, NULL, vFunCl);
-                processName(cname, &completionLine, orderFlag, c);
+                processName(cname, &completionLine, orderFlag, completions);
             }
         }
     }
-    if (c->idToProcess[0] == 0)
-        c->prefix[0] = 0; // no common prefix completed
+    if (completions->idToProcess[0] == 0)
+        completions->prefix[0] = 0; // no common prefix completed
 }
 
 
@@ -755,7 +754,7 @@ void completeRecNames(Completions *c) {
     if (str->type == TypeStruct || str->type == TypeUnion) {
         s = str->u.t;
         assert(s);
-        completeRecordsNames(c, s, CLASS_TO_ANY, StorageDefault, TypeDefault, 0);
+        completeRecordsNames(c, s, StorageDefault, TypeDefault, 0);
     }
     s_structRecordCompletionType = &errorModifier;
 }

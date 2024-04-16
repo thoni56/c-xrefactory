@@ -158,9 +158,9 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     }
 }
 
-    Symbol     *s, *r, *cclass;
-    SymbolList *sss;
 Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname) {
+    Symbol     *symbol, *cclass;
+    SymbolList *list;
 
     for (;;) {
         assert(ss);
@@ -173,7 +173,7 @@ Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recna
         }
         if (cclass != NULL)
             log_trace(":looking in class %s(%d)", cclass->linkName, ss->superClassesCount);
-        for (r = ss->nextRecord; r != NULL; r = r->next) {
+        for (Symbol *r = ss->nextRecord; r != NULL; r = r->next) {
             // special gcc extension of anonymous struct record
             if (r->name != NULL && *r->name == 0 && r->type == TypeDefault &&
                 r->u.typeModifier->type == TypeAnonymousField && r->u.typeModifier->next != NULL &&
@@ -193,7 +193,7 @@ Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recna
     nextClass:
         if (ss->anonymousUnionsCount != 0) {
             // O.K. try first to pas to anonymous record
-            s = ss->anonymousUnions[--ss->anonymousUnionsCount];
+            symbol = ss->anonymousUnions[--ss->anonymousUnionsCount];
         } else {
             // mark the class as processed
             if (cclass != NULL) {
@@ -207,15 +207,15 @@ Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recna
                 *resultingSymbolP = &errorSymbol;
                 return RESULT_NOT_FOUND;
             }
-            sss                 = ss->superClasses[ss->superClassesCount - 1];
-            s                   = sss->element;
+            list                 = ss->superClasses[ss->superClassesCount - 1];
+            symbol                   = list->element;
 
-            ss->superClasses[ss->superClassesCount - 1] = sss->next;
-            assert(s && (s->type == TypeStruct || s->type == TypeUnion));
-            //& fprintf(dumpOut,":pass to super class %s(%d)\n",s->linkName,ss->superClassesCount);
+            ss->superClasses[ss->superClassesCount - 1] = list->next;
+            assert(symbol && (symbol->type == TypeStruct || symbol->type == TypeUnion));
+            //& fprintf(dumpOut,":pass to super class %s(%d)\n",symbol->linkName,ss->superClassesCount);
             //fflush(dumpOut);
         }
-        recFindPush(s, ss);
+        recFindPush(symbol, ss);
     }
 }
 
