@@ -178,63 +178,34 @@ static SymbolsMenu *itemInOriginalList(int fileNumber) {
     return tmpVApplClassBackPointersToMenu[fileNumber];
 }
 
-static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, int selectable) {
+static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectable) {
     if (options.serverOperation==OLO_CLASS_TREE || options.serverOperation==OLO_SHOW_CLASS_TREE) {
         ; // fprintf(file,"");
     } else if (! selectable) {
-        if (options.xref2)
-            fprintf(file, " %s=2", PPCA_SELECTED);
-        else
-            fprintf(file,"- ");
+        fprintf(file, " %s=2", PPCA_SELECTED);
     } else if (menu!=NULL && menu->selected) {
-        if (options.xref2)
-            fprintf(file, " %s=1", PPCA_SELECTED);
-        else
-            fprintf(file,"+ ");
+        fprintf(file, " %s=1", PPCA_SELECTED);
     } else {
-        if (options.xref2)
-            fprintf(file, " %s=0", PPCA_SELECTED);
-        else
-            fprintf(file,"  ");
+        fprintf(file, " %s=0", PPCA_SELECTED);
     }
+
     if (menu != NULL && menu->vlevel==1 && ooBitsGreaterOrEqual(menu->ooBits, OOC_PROFILE_APPLICABLE)) {
-        if (options.xref2)
-            fprintf(file, " %s=1", PPCA_BASE);
-        else
-            fprintf(file,">>");
+        fprintf(file, " %s=1", PPCA_BASE);
     } else {
-        if (options.xref2)
-            fprintf(file, " %s=0", PPCA_BASE);
-        else
-            fprintf(file,"  ");
+        fprintf(file, " %s=0", PPCA_BASE);
     }
-    if (!options.xref2)
-        fprintf(file," ");
+
     if (options.serverOperation==OLO_CLASS_TREE || options.serverOperation==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff, "");
     } else if (menu==NULL || (menu->defRefn==0 && menu->refn==0) || !selectable) {
-        if (options.xref2)
-            fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
-        else
-            fprintf(file, "  -/-  ");
+        fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
     } else if (menu->defRefn==0) {
-        if (options.xref2)
-            fprintf(file, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, menu->refn);
-        else
-            fprintf(file, "  -/%-3d", menu->refn);
+        fprintf(file, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, menu->refn);
     } else if (menu->refn==0) {
-        if (options.xref2)
-            fprintf(file, " %s=%d %s=0", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN);
-        else
-            fprintf(file, "%3d/-  ", menu->defRefn);
+        fprintf(file, " %s=%d %s=0", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN);
     } else {
-        if (options.xref2)
-            fprintf(file, " %s=%d %s=%d", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN, menu->refn);
-        else
-            fprintf(file, "%3d/%-3d", menu->defRefn, menu->refn);
+        fprintf(file, " %s=%d %s=%d", PPCA_DEF_REFN, menu->defRefn, PPCA_REFN, menu->refn);
     }
-    if (!options.xref2)
-        fprintf(file,"    ");
 }
 
 static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
@@ -249,14 +220,14 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
         if (menu->references.type!=TypeDefault) {
             fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->references.type]);
         }
-        olcxPrintMenuItemPrefix(file, menu, 1);
+        olcxPrintMenuItemPrefix(file, menu, true);
 
         char tempString[MAX_CX_SYMBOL_SIZE];
         sprintfSymbolLinkName(menu, tempString);
         fprintf(file," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(tempString), tempString, PPC_SYMBOL);
     } else {
         fprintf(file,"\n");
-        olcxPrintMenuItemPrefix(file, menu, 1);
+        olcxPrintMenuItemPrefix(file, menu, true);
         printSymbolLinkName(menu, file);
         if (menu->references.type != TypeDefault) {
             fprintf(file,"\t(%s)", typeNamesTable[menu->references.type]);
