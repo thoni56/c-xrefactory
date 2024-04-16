@@ -673,14 +673,6 @@ static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag,
     processName(fcc, &compLine, orderFlag, c);
 }
 
-static AccessibilityCheckYesNo calculateAccessCheckOption(void) {
-    if (options.ooChecksBits & OOC_ACCESS_CHECK) {
-        return ACCESSIBILITY_CHECK_YES;
-    } else {
-        return ACCESSIBILITY_CHECK_NO;
-    }
-}
-
 static void completeRecordsNames(
     Completions *c,
     Symbol *symbol,
@@ -690,7 +682,7 @@ static void completeRecordsNames(
     int vlevelOffset
 ) {
     CompletionLine completionLine;
-    int vlevel, accessCheck, visibilityCheck;
+    int vlevel, visibilityCheck;
     Symbol *r, *vFunCl;
     S_recFindStr rfs;
     char *cname;
@@ -707,9 +699,8 @@ static void completeRecordsNames(
         // this is in fact about not cutting all records of the class,
         // not about visibility checks
         visibilityCheck = VISIBILITY_CHECK_NO;
-        accessCheck = calculateAccessCheckOption();
 
-        Result result = findStrRecordSym(&r, &rfs, NULL, accessCheck, visibilityCheck);
+        Result result = findStrRecordSym(&r, &rfs, NULL, visibilityCheck);
         if (result != RESULT_OK) break;
 
         if (constructorOpt == StorageConstructor && rfs.currentClass != symbol)
@@ -877,7 +868,7 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
     assert(s->u.structSpec);
     iniFind(s, &rfs);
     for(;;) {
-        Result rr = findStrRecordSym(&r, &rfs, NULL, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
+        Result rr = findStrRecordSym(&r, &rfs, NULL, VISIBILITY_CHECK_YES);
         if (rr != RESULT_OK) break;
         assert(r);
         cname = r->name;

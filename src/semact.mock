@@ -48,9 +48,8 @@ bool javaOuterClassAccessible(Symbol *cl) {
     return (int) mock(cl);
 }
 
-Result findStrRecordSym(Symbol **res, S_recFindStr *ss, char *recname,
-                        AccessibilityCheckYesNo accessibilityCheck, VisibilityCheckYesNo visibilityCheck) {
-    return (Result) mock(ss, recname, res, accessibilityCheck, visibilityCheck);
+Result findStrRecordSym(Symbol **res, S_recFindStr *ss, char *recname, VisibilityCheckYesNo visibilityCheck) {
+    return (Result) mock(ss, recname, res, visibilityCheck);
 }
 
 Symbol *addNewSymbolDefinition(SymbolTable *table, char *fileName, Symbol *symbol, Storage storage, UsageKind usage) {

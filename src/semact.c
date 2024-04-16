@@ -158,17 +158,12 @@ void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
     }
 }
 
-Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname,
-                        AccessibilityCheckYesNo accessibilityCheck, /* java check accessibility */
+Result findStrRecordSym(Symbol **resultingSymbolP, S_recFindStr *ss, char *recname, /* java check accessibility */
                         VisibilityCheckYesNo    visibilityCheck     /* redundant, always equal to accCheck? */
 ) {
     Symbol     *s, *r, *cclass;
     SymbolList *sss;
 
-    assert(accessibilityCheck == ACCESSIBILITY_CHECK_YES || accessibilityCheck == ACCESSIBILITY_CHECK_NO);
-    assert(visibilityCheck == VISIBILITY_CHECK_YES || visibilityCheck == VISIBILITY_CHECK_NO);
-
-    //&fprintf(dumpOut,":\nNEW SEARCH\n"); fflush(dumpOut);
     for (;;) {
         assert(ss);
         cclass = ss->currentClass;
@@ -230,8 +225,7 @@ int findStrRecord(Symbol *symbol,
                   char *recname,   /* can be NULL */
                   Symbol **res) {
     S_recFindStr rfs;
-    return findStrRecordSym(res, iniFind(symbol,&rfs), recname,
-                           ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
+    return findStrRecordSym(res, iniFind(symbol,&rfs), recname, VISIBILITY_CHECK_YES);
 }
 
 /* and push reference */
@@ -248,7 +242,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
     ref = NULL;
     // when in java, then always in qualified name, so access and visibility checks
     // are useless.
-    Result rr = findStrRecordSym(res, iniFind(sym,&rfs),record->name, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
+    Result rr = findStrRecordSym(res, iniFind(sym,&rfs),record->name, VISIBILITY_CHECK_NO);
     if (rr == RESULT_OK) {
         ref = addCxReference(*res,&record->position,UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
     } else {
