@@ -20,6 +20,7 @@
 
 #include "c_parser.h"
 #include "cexp_parser.h"
+#include "storage.h"
 #include "yacc_parser.h"
 
 #include "parsers.h"
@@ -550,7 +551,7 @@ static void processInclude2(Position *includePosition, char includeType, char *i
 
     fillSymbol(&symbol, tmpBuff, tmpBuff, noPosition);
     symbol.type = TypeMacro;
-    symbol.storage = StorageNone;
+    symbol.storage = StorageDefault;
 
     if (symbolTableIsMember(symbolTable, &symbol, NULL, NULL))
         return;
@@ -728,7 +729,7 @@ protected void processDefineDirective(bool hasArguments) {
     symbol = ppmAlloc(sizeof(Symbol));
     fillSymbol(symbol, NULL, NULL, macroPosition);
     symbol->type = TypeMacro;
-    symbol->storage = StorageNone;
+    symbol->storage = StorageDefault;
 
     /* TODO: this is the only call to setGlobalFileDepNames() that doesn't do it in XX memory, why?
        PPM == PreProcessor, but it's still a symbol... */
@@ -944,7 +945,7 @@ static void processUndefineDirective(void) {
 
         fillSymbol(&symbol, cc, cc, position);
         symbol.type = TypeMacro;
-        symbol.storage = StorageNone;
+        symbol.storage = StorageDefault;
 
         assert(options.mode);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
@@ -956,7 +957,7 @@ static void processUndefineDirective(void) {
             pp = ppmAlloc(sizeof(Symbol));
             fillSymbol(pp, member->name, member->linkName, position);
             pp->type = TypeMacro;
-            pp->storage = StorageNone;
+            pp->storage = StorageDefault;
 
             addMacroToTabs(pp, member->name);
         }
@@ -1079,7 +1080,7 @@ static void processIfdefDirective(bool isIfdef) {
     Symbol symbol;
     fillSymbol(&symbol, cp, cp, noPosition);
     symbol.type = TypeMacro;
-    symbol.storage = StorageNone;
+    symbol.storage = StorageDefault;
 
     Symbol *member;
     bool isMember = symbolTableIsMember(symbolTable, &symbol, NULL, &member);
@@ -1148,7 +1149,7 @@ LexemCode cexp_yylex(void) {
 
         fillSymbol(&symbol, cc, cc, noPosition);
         symbol.type = TypeMacro;
-        symbol.storage = StorageNone;
+        symbol.storage = StorageDefault;
 
         log_debug("(%s)", symbol.name);
 
@@ -1213,7 +1214,7 @@ static void processPragmaDirective(void) {
         pp = ppmAlloc(sizeof(Symbol));
         fillSymbol(pp, mname, mname, position);
         pp->type = TypeMacro;
-        pp->storage = StorageNone;
+        pp->storage = StorageDefault;
 
         symbolTableAdd(symbolTable, pp);
     }
@@ -1408,7 +1409,7 @@ static void expandMacroArgument(LexInput *argumentInput) {
             Symbol symbol;
             fillSymbol(&symbol, nextLexemP, nextLexemP, noPosition);
             symbol.type = TypeMacro;
-            symbol.storage = StorageNone;
+            symbol.storage = StorageDefault;
             if (symbolTableIsMember(symbolTable, &symbol, NULL, &foundSymbol)) {
                 /* it is a macro, provide macro expansion */
                 if (expandMacroCall(foundSymbol, &position))
@@ -2111,7 +2112,7 @@ LexemCode yylex(void) {
         log_trace("id '%s' position %d, %d, %d", yytext, position.file, position.line, position.col);
         fillSymbol(&symbol, yytext, yytext, noPosition);
         symbol.type = TypeMacro;
-        symbol.storage = StorageNone;
+        symbol.storage = StorageDefault;
 
         if (lexem!=IDENT_NO_CPP_EXPAND && symbolTableIsMember(symbolTable, &symbol, NULL, &memberP)) {
             // following is because the macro check can read new lexBuf,

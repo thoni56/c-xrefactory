@@ -2544,7 +2544,7 @@ static void addYaccSymbolReference(Id *name, int usage) {
 
     fillSymbol(&sss, name->name, name->name, name->position);
     sss.type = TypeYaccSymbol;
-    sss.storage = StorageNone;
+    sss.storage = StorageDefault;
     addCxReference(&sss, &name->position, usage, NO_FILE_NUMBER, NO_FILE_NUMBER);
 }
 

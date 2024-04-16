@@ -7,6 +7,7 @@
 #include "options.h"
 #include "misc.h"
 #include "proto.h"
+#include "storage.h"
 #include "usage.h"
 #include "yylex.h"
 #include "cxref.h"
@@ -679,7 +680,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
 
     Symbol symbol = makeSymbol(id->name, id->name, id->position);
     symbol.type = type;
-    symbol.storage = StorageNone;
+    symbol.storage = StorageDefault;
 
     if (!symbolTableIsMember(symbolTable, &symbol, NULL, &member)
         || (isMemoryFromPreviousBlock(member) && isDefinitionOrDeclarationUsage(usage))) {
@@ -767,7 +768,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
 
     symbol = newSymbol("", NULL, typeName->position);
     symbol->type = type;
-    symbol->storage = StorageNone;
+    symbol->storage = StorageDefault;
 
     setGlobalFileDepNames("", symbol, MEMORY_XX);
 
@@ -808,7 +809,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
 
     fillSymbol(&p, id->name, id->name, id->position);
     p.type = TypeEnum;
-    p.storage = StorageNone;
+    p.storage = StorageDefault;
 
     if (! symbolTableIsMember(symbolTable, &p, NULL, &pp)
         || (isMemoryFromPreviousBlock(pp) && isDefinitionOrDeclarationUsage(usage))) {
@@ -826,7 +827,7 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
 
     symbol = newSymbolAsEnum("", "", noPosition, enums);
     symbol->type = TypeEnum;
-    symbol->storage = StorageNone;
+    symbol->storage = StorageDefault;
 
     setGlobalFileDepNames("", symbol, MEMORY_XX);
     symbol->u.enums = enums;

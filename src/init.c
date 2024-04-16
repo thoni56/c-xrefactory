@@ -8,6 +8,7 @@
 #include "commons.h"            /* For infoMessage() */
 #include "log.h"
 #include "commons.h"
+#include "storage.h"
 
 
 /* *********************************************************************** */
@@ -342,7 +343,7 @@ static void initTokensFromTable(TokenNamesInitTable *tokenNamesInitTable) {
             log_trace("adding keyword '%s' to symbol table", name);
             symbol = newSymbolAsKeyword(name, name, noPosition, token);
             symbol->type = TypeKeyword;
-            symbol->storage = StorageNone;
+            symbol->storage = StorageDefault;
             symbolTableAdd(symbolTable, symbol);
         }
     }
@@ -362,7 +363,7 @@ void initTokenNamesTables(void) {
     /* and add the 'defined' keyword for #if */
     symbolP = newSymbol("defined", "defined", noPosition);
     symbolP->type = TypeDefinedOp;
-    symbolP->storage = StorageNone;
+    symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);
 }
 
@@ -419,7 +420,7 @@ void initArchaicTypes(void) {
     initTypeModifier(&errorModifier, TypeError);
     fillSymbolWithTypeModifier(&errorSymbol, "__ERROR__", "__ERROR__", noPosition, &errorModifier);
     errorSymbol.type = TypeError;
-    errorSymbol.storage = StorageNone;
+    errorSymbol.storage = StorageDefault;
 }
 
 void initPreCreatedTypes(void) {
