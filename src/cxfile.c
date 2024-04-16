@@ -145,7 +145,6 @@ static ScanFileFunctionStep fullUpdateFunctionSequence[];
 static ScanFileFunctionStep byPassFunctionSequence[];
 static ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
 static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
-static ScanFileFunctionStep classHierarchyFunctionSequence[];
 static ScanFileFunctionStep globalUnusedDetectionFunctionSequence[];
 static ScanFileFunctionStep symbolSearchFunctionSequence[];
 
@@ -436,30 +435,6 @@ static void createSubClassInfo(int superior, int inferior, int originFileNumber,
         }
         pp = newClassHierarchyReference(originFileNumber, inferior, superiorFile->superClasses);
         superiorFile->inferiorClasses = pp;
-    }
-}
-
-void addSubClassItemToFileTab( int sup, int inf, int originFileNumber) {
-    if (sup >= 0 && inf >= 0) {
-        createSubClassInfo(sup, inf, originFileNumber, NO_CX_FILE_ITEM_GEN);
-    }
-}
-
-
-void addSubClassesItemsToFileTab(Symbol *symbol, int origin) {
-    if (symbol->type != TypeStruct)
-        return;
-
-    log_trace("testing %s", symbol->name);
-    assert(symbol->javaClassIsLoaded);
-    if (!symbol->javaClassIsLoaded)
-        return;
-    int cf1 = symbol->u.structSpec->classFileNumber;
-    assert(cf1 >= 0 &&  cf1 < MAX_FILES);
-
-    for (SymbolList *sups=symbol->u.structSpec->super; sups!=NULL; sups=sups->next) {
-        assert(sups->element && sups->element->type == TypeStruct);
-        addSubClassItemToFileTab(sups->element->u.structSpec->classFileNumber, cf1, origin);
     }
 }
 
@@ -1386,10 +1361,6 @@ void normalScanReferenceFile(char *name) {
     scanReferenceFile(options.cxrefsLocation, name, "", normalScanFunctionSequence);
 }
 
-void scanForClassHierarchy(void) {
-    readOneAppropiateReferenceFile(NULL, classHierarchyFunctionSequence);
-}
-
 void fullScanFor(char *symbolName) {
     readOneAppropiateReferenceFile(symbolName, fullUpdateFunctionSequence);
 }
@@ -1482,14 +1453,6 @@ static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_PASS_MACRO_USAGE},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_PASS_MACRO_USAGE},
-    {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_JUST_READ},
-    {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
-    {-1,NULL, 0},
-};
-
-static ScanFileFunctionStep classHierarchyFunctionSequence[]={
-    {CXFI_MARKER_LIST, scanFunction_ReadRecordMarkers, CXSF_NOP},
-    {CXFI_FILE_NAME, scanFunction_ReadFileName, CXSF_JUST_READ},
     {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_JUST_READ},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},

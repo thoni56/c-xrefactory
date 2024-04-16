@@ -67,24 +67,11 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int 
     }
 }
 
-void olcxPrintClassTree(SymbolsMenu *menu) {
-    if (options.xref2) {
-        ppcBegin(PPC_DISPLAY_CLASS_TREE);
-    } else {
-        fprintf(communicationChannel, "<");
-    }
-    scanForClassHierarchy();
-    generateGlobalReferenceLists(menu, communicationChannel, "__NO_HTML_FILE_NAME!__");
-    if (options.xref2)
-        ppcEnd(PPC_DISPLAY_CLASS_TREE);
-}
-
 void olcxPrintSelectionMenu(SymbolsMenu *menu) {
     assert(options.xref2);
 
     ppcBegin(PPC_SYMBOL_RESOLUTION);
     if (menu!=NULL) {
-        scanForClassHierarchy();
         generateGlobalReferenceLists(menu, communicationChannel, "__NO_HTML_FILE_NAME!__");
     }
     ppcEnd(PPC_SYMBOL_RESOLUTION);

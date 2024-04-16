@@ -33,10 +33,6 @@ void olcxAddReferenceToSymbolsMenu(SymbolsMenu *menu, Reference *reference, int 
     mock(menu, reference, bestFitFlag);
 }
 
-void olcxPrintClassTree(SymbolsMenu *menu) {
-    mock(menu);
-}
-
 void olcxPrintSelectionMenu(SymbolsMenu *menu) {
     mock(menu);
 }

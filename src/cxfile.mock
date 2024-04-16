@@ -6,8 +6,6 @@ void normalScanReferenceFile(char *name) {
     mock(name);
 }
 
-void scanForClassHierarchy(void) { mock(); }
-
 void fullScanFor(char *symbolName) { mock(symbolName); }
 
 void scanForBypass(char *symbolName) {
