@@ -593,16 +593,6 @@ static void completeFun(Symbol *symbol, void *c) {
     processName(symbol->name, &compLine, true, completionInfo->completions);
 }
 
-/* TODO: Meaning? Something about constructor... If either then clear completionN */
-static void CONST_CONSTRUCT_NAME(Storage ccstorage, Storage sstorage, char **completionName) {
-    if (ccstorage!=StorageConstructor && sstorage==StorageConstructor) {
-        *completionName = NULL;
-    }
-    if (ccstorage==StorageConstructor && sstorage!=StorageConstructor) {
-        *completionName = NULL;
-    }
-}
-
 static void completeFunctionOrMethodName(Completions *c, bool orderFlag, int vlevel, Symbol *r, Symbol *vFunCl) {
     CompletionLine compLine;
     int cnamelen;
@@ -639,7 +629,6 @@ static void symbolCompletionFunction(Symbol *symbol, void *c) {
     if (cc->storage==StorageTypedef && symbol->storage!=StorageTypedef)
         return;
     completionName = symbol->name;
-    CONST_CONSTRUCT_NAME(cc->storage, symbol->storage, &completionName);
     if (completionName!=NULL) {
         if (symbol->type == TypeDefault && symbol->u.typeModifier!=NULL && symbol->u.typeModifier->type == TypeFunction) {
             completeFunctionOrMethodName(cc->res, true, 0, symbol, NULL);
@@ -700,14 +689,10 @@ static void completeRecordsNames(
         if (result != RESULT_OK)
             break;
 
-        if (constructorOpt == StorageConstructor && rfs.currentClass != symbol)
-            break;
-
         /* because constructors are not inherited */
         assert(r);
 
         cname = r->name;
-        CONST_CONSTRUCT_NAME(constructorOpt, r->storage, &cname);
         if (cname!=NULL && *cname != 0 && r->type != TypeError
             // Hmm. I hope it will not filter out something important
             && (! symbolShouldBeHiddenFromSearchResults(r->linkName))
@@ -732,8 +717,7 @@ static void completeRecordsNames(
             } else if (completionType == TypeSpecialConstructorCompletion) {
                 fillCompletionLine(&completionLine, completions->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
                 completionInsertName(completions->idToProcess, &completionLine, orderFlag, (void*) completions);
-            } else if (options.completeParenthesis
-                       && (r->storage==StorageMethod || r->storage==StorageConstructor)) {
+            } else if (options.completeParenthesis && r->storage==StorageMethod) {
                 completeFunctionOrMethodName(completions, orderFlag, vlevel, r, vFunCl);
             } else {
                 fillCompletionLine(&completionLine, cname, r, TypeDefault, vlevel, 0, NULL, vFunCl);
@@ -869,7 +853,6 @@ static char *spComplFindNextRecord(ExpressionTokenType *token) {
         if (rr != RESULT_OK) break;
         assert(r);
         cname = r->name;
-        CONST_CONSTRUCT_NAME(StorageDefault, r->storage, &cname);
         if (cname!=NULL) {
             assert(rfs.currentClass && rfs.currentClass->u.structSpec);
             assert(r->type == TypeDefault);

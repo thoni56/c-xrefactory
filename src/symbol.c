@@ -100,7 +100,6 @@ void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, Refe
                 ||  symbol->storage==StorageTypedef
                 ||  symbol->storage==StorageField
                 ||  symbol->storage==StorageMethod
-                ||  symbol->storage==StorageConstructor
                 ||  symbol->storage==StorageStatic
                 ||  symbol->storage==StorageThreadLocal
                 ) {

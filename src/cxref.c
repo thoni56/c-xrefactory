@@ -45,9 +45,8 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
 }
 
 static bool javaStaticallyLinked(Storage storage, Access accessFlags) {
-    return storage==StorageField ||
-        ((storage==StorageMethod || storage==StorageConstructor)
-         && (accessFlags & AccessStatic));
+    return storage==StorageField || (storage==StorageMethod
+                                     && (accessFlags & AccessStatic));
 }
 
 
@@ -220,14 +219,14 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
     case TypeSpecialConstructorCompletion:
     case TypeUnknown:
     case TypeDefault:
-        if (symbol->storage != StorageConstructor) {
-            makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
-        }
+        makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
+
         if (symbol->u.typeModifier->type == TypeFunction || symbol->u.typeModifier->type == TypeMacro) {
             makeRefactoringAvailable(PPC_AVR_ADD_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_DEL_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "");
         }
+
         if (symbol->storage == StorageField) {
             if (isDefinitionUsage(usage)) {
                 if (symbol->access & AccessStatic) {
@@ -242,7 +241,7 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
                 makeRefactoringAvailable(PPC_AVR_SELF_ENCAPSULATE_FIELD, "");
             }
         }
-        if (symbol->storage == StorageMethod || symbol->storage == StorageConstructor) {
+        if (symbol->storage == StorageMethod) {
             if (isDefinitionUsage(usage)) {
                 //& makeRefactoringAvailable(PPC_AVR_EXPAND_NAMES, "");
                 //& makeRefactoringAvailabld(PPC_AVR_REDUCE_NAMES, "");
