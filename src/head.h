@@ -171,7 +171,6 @@ typedef enum language {
 #define CHAR_ON_MARKER(marker) (*MARKER_TO_POINTER(marker))
 #define CHAR_AFTER_MARKER(marker) (*POINTER_AFTER_MARKER(marker))
 
-#include "access.h"
 
 /* *********************************************************************** */
 
@@ -180,15 +179,6 @@ typedef enum language {
 #define JAVA_CONSTRUCTOR_NAME2 "<clinit>"
 
 /* *******************   Object-Oriented Resolutions   ******************* */
-
-/* visibilities for completion */
-
-#define OOC_LINKAGE_CHECK			00001 /* static / nostatic    */
-#define OOC_ACCESS_CHECK			00002 /* private/public/auto  */
-#define OOC_VISIBILITY_CHECK		00004 /* private inheritance  */
-
-#define OOC_ALL_CHECKS				00010 /* accessibility in fqt names  */
-
 
 /* virtual resolution */
 
