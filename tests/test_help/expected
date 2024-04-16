@@ -1,4 +1,4 @@
-c-xref - a C/Yacc/Java cross-referencer and refactoring tool
+c-xref - a C/Yacc refactoring tool
 
 Usage:
 		c-xref <option>+ <input files>

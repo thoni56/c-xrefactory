@@ -173,7 +173,7 @@ void aboutMessage(void) {
 /*                                      OPTIONS                                */
 
 static void usage() {
-    fprintf(stdout, "c-xref - a C/Yacc/Java cross-referencer and refactoring tool\n\n");
+    fprintf(stdout, "c-xref - a C/Yacc refactoring tool\n\n");
 #if 0
     fprintf(stdout, "Usage:\n\tc-xref <mode> <option>+ <input files>\n\n");
     fprintf(stdout, "mode (one of):\n");
@@ -199,7 +199,6 @@ static void usage() {
     fprintf(stdout, "\t-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc\n");
 #if 0
     fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
-    fprintf(stdout, "\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
     fprintf(stdout, "\t-olcxsearch               - search info about identifier\n");
     fprintf(stdout, "\t-olcxpush                 - generate and push on-line cxrefs\n");
     fprintf(stdout, "\t-olcxrename               - generate and push xrfs for rename\n");
@@ -1633,9 +1632,6 @@ static bool processNOption(int *argi, int argc, char **argv) {
 static bool processOOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
-    else if (strncmp(argv[i], "-oocheckbits=",13)==0)    {
-        sscanf(argv[i]+13, "%o", &options.ooChecksBits);
-    }
     else if (strncmp(argv[i], "-olinelen=",10)==0) {
         sscanf(argv[i]+10, "%d",&options.olineLen);
         if (options.olineLen == 0)
@@ -1659,18 +1655,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-olnodialog")==0) {
         options.manualResolve = RESOLVE_DIALOG_NEVER;
-    }
-    else if (strcmp(argv[i], "-olchecklinkage")==0) {
-        options.ooChecksBits |= OOC_LINKAGE_CHECK;
-    }
-    else if (strcmp(argv[i], "-olcheckaccess")==0) {
-        options.ooChecksBits |= OOC_ACCESS_CHECK;
-    }
-    else if (strcmp(argv[i], "-olnocheckaccess")==0) {
-        options.ooChecksBits &= ~OOC_ACCESS_CHECK;
-    }
-    else if (strcmp(argv[i], "-olallchecks")==0) {
-        options.ooChecksBits |= OOC_ALL_CHECKS;
     }
     else if (strncmp(argv[i], "-olfqtcompletionslevel=",23)==0) {
         options.fqtNameToCompletions = 1;

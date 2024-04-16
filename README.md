@@ -98,8 +98,8 @@ and protocol to get closer to that point.
 
 ### Java notes
 
-> **NOTE**: Java support has been removed since there are far better
-> options now.
+> **NOTE**: Java support has now been removed since there are far
+> better options now.
 
 The current Java grammar has not been updated from Java 1.4, but since
 `c-xrefactory` recovers gracefully that is not a major problem except
