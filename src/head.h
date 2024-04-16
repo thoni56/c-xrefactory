@@ -154,12 +154,6 @@ typedef enum language {
      rr->position.file == inputFileNumber /* fixing bug with references coming from jsl */                        \
     )
 
-#define SPRINT_FILE_TAB_CLASS_NAME(ftname, linkName) {\
-    sprintf(ftname, "%c%s.class", ZIP_SEPARATOR_CHAR, linkName);\
-    assert(strlen(ftname)+1 < MAX_FILE_NAME_SIZE);\
-}
-
-
 #define SYMBOL_MENU_FIRST_LINE 0
 #define MAX_ASCII_CHAR 256
 
@@ -175,8 +169,6 @@ typedef enum language {
 /* *********************************************************************** */
 
 #define JAVA_NULL_CODE 'N'
-#define JAVA_CONSTRUCTOR_NAME1 "<init>"
-#define JAVA_CONSTRUCTOR_NAME2 "<clinit>"
 
 /* *******************   Object-Oriented Resolutions   ******************* */
 
