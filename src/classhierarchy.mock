@@ -14,10 +14,6 @@ void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file, char *fn) {
   mock(menu, file, fn);
 }
 
-void genClassHierarchies(SymbolsMenu *menu, FILE *file, int pass) {
-  mock(file, menu, pass);
-}
-
 bool isSmallerOrEqClass(int inferior, int superior) {
     return (bool) mock(inferior, superior);
 }

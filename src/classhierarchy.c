@@ -365,7 +365,7 @@ static bool genThisClassHierarchy(SymbolsMenu *menu, int vApplCl, int oldvFunCl,
     return true;
 }
 
-void genClassHierarchies(SymbolsMenu *menuList, FILE *file, int passNumber) {
+static void genClassHierarchies(SymbolsMenu *menuList, FILE *file, int passNumber) {
     // mark the classes where the method is defined and used
     clearTmpChRelevant();
     for (SymbolsMenu *menu=menuList; menu!=NULL; menu=menu->next) {
