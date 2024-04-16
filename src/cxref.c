@@ -1711,7 +1711,7 @@ static void selectUnusedSymbols(SymbolsMenu *menu, void *p1, char *_unused) {
 }
 
 
-static void olcxMenuSelectAll(int val) {
+static void olcxMenuSelectAll(bool selected) {
     OlcxReferences *refs;
 
     if (!olcxMoveInit(&sessionData, &refs, CHECK_NULL))
@@ -1721,9 +1721,9 @@ static void olcxMenuSelectAll(int val) {
             ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
         }
     }
-    for (SymbolsMenu *ss=refs->menuSym; ss!=NULL; ss=ss->next) {
-        if (ss->visible)
-            ss->selected = val;
+    for (SymbolsMenu *menu=refs->menuSym; menu!=NULL; menu=menu->next) {
+        if (menu->visible)
+            menu->selected = selected;
     }
     olcxRecomputeSelRefs(refs);
     if (options.xref2) {
@@ -1737,20 +1737,17 @@ static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
                                            unsigned ooVisible,
                                            unsigned ooSelected
 ) {
-    bool select, visible;
-    unsigned ooBits;
-
-    for (SymbolsMenu *ss=menu; ss!=NULL; ss=ss->next) {
-        ooBits = ss->ooBits;
-        visible = ooBitsGreaterOrEqual(ooBits, ooVisible);
-        select = false;
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        unsigned ooBits = m->ooBits;
+        bool visible = ooBitsGreaterOrEqual(ooBits, ooVisible);
+        bool select = false;
         if (visible) {
             select=ooBitsGreaterOrEqual(ooBits, ooSelected);
-            if (ss->references.type==TypeCppCollate)
+            if (m->references.type==TypeCppCollate)
                 select=false;
         }
-        ss->selected = select;
-        ss->visible = visible;
+        m->selected = select;
+        m->visible = visible;
     }
 }
 
@@ -1767,31 +1764,31 @@ static bool isRenameMenuSelection(int command) {
 
 
 static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
-    unsigned oov;
-    int st, change;
-
     if (isRenameMenuSelection(command)) {
         // even worse than O(n^2), hmm.
-        change = 1;
+        bool change = true;
         while (change) {
-            change = 0;
+            change = false;
             for (SymbolsMenu *s1=menu; s1!=NULL; s1=s1->next) {
-                if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_SUBCLASS_OF_RELATED) goto nextrs1;
+                if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_SUBCLASS_OF_RELATED)
+                    goto nextrs1;
                 for (SymbolsMenu *s2=menu; s2!=NULL; s2=s2->next) {
                     // do it only for virtuals
-                    st = javaStaticallyLinked(s2->references.storage, s2->references.access);
-                    if (st) goto nextrs2;
-                    oov = (s2->ooBits & OOC_VIRTUAL_MASK);
-                    if(oov >= OOC_VIRT_SUBCLASS_OF_RELATED) goto nextrs2;
+                    bool st = javaStaticallyLinked(s2->references.storage, s2->references.access);
+                    if (st)
+                        goto nextrs2;
+                    unsigned oov = (s2->ooBits & OOC_VIRTUAL_MASK);
+                    if (oov >= OOC_VIRT_SUBCLASS_OF_RELATED)
+                        goto nextrs2;
                     if (isSmallerOrEqClass(s2->references.vApplClass, s1->references.vApplClass)) {
                         s2->ooBits = ((s2->ooBits & ~OOC_VIRTUAL_MASK)
                                       | OOC_VIRT_SUBCLASS_OF_RELATED);
-                        change = 1;
+                        change = true;
                     }
                     if (isSmallerOrEqClass(s1->references.vApplClass, s2->references.vApplClass)) {
                         s2->ooBits = ((s2->ooBits & ~OOC_VIRTUAL_MASK)
                                       | OOC_VIRT_SUBCLASS_OF_RELATED);
-                        change = 1;
+                        change = true;
                     }
                 nextrs2:;
                 }
@@ -1801,13 +1798,16 @@ static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
     } else {
         // O(n^2), someone should do this better !!!
         for (SymbolsMenu *s1=menu; s1!=NULL; s1=s1->next) {
-            if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_RELATED) goto nexts1;
+            if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_RELATED)
+                goto nexts1;
             for (SymbolsMenu *s2=menu; s2!=NULL; s2=s2->next) {
                 // do it only for virtuals
-                st = javaStaticallyLinked(s2->references.storage, s2->references.access);
-                if (st) goto nexts2;
-                oov = (s2->ooBits & OOC_VIRTUAL_MASK);
-                if(oov >= OOC_VIRT_SUBCLASS_OF_RELATED) goto nexts2;
+                bool st = javaStaticallyLinked(s2->references.storage, s2->references.access);
+                if (st)
+                    goto nexts2;
+                unsigned oov = (s2->ooBits & OOC_VIRTUAL_MASK);
+                if (oov >= OOC_VIRT_SUBCLASS_OF_RELATED)
+                    goto nexts2;
                 if (isSmallerOrEqClass(s2->references.vApplClass, s1->references.vApplClass)) {
                     s2->ooBits = ((s2->ooBits & ~OOC_VIRTUAL_MASK)
                                   | OOC_VIRT_SUBCLASS_OF_RELATED);
@@ -3096,10 +3096,10 @@ void answerEditAction(void) {
         olcxMenuSelectOnly();
         break;
     case OLO_MENU_SELECT_ALL:
-        olcxMenuSelectAll(1);
+        olcxMenuSelectAll(true);
         break;
     case OLO_MENU_SELECT_NONE:
-        olcxMenuSelectAll(0);
+        olcxMenuSelectAll(false);
         break;
     case OLO_MENU_FILTER_SET:
         olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
@@ -3265,27 +3265,27 @@ void genOnLineReferences(OlcxReferences *rstack, SymbolsMenu *cms) {
     }
 }
 
-static unsigned olcxOoBits(SymbolsMenu *ols, ReferenceItem *p) {
+static unsigned olcxOoBits(SymbolsMenu *menu, ReferenceItem *referenceItem) {
     unsigned ooBits;
     int olusage,vFunCl,olvFunCl,vApplCl,olvApplCl;
 
     ooBits = 0;
-    assert(olcxIsSameCxSymbol(&ols->references, p));
-    olvFunCl = ols->references.vFunClass;
-    olvApplCl = ols->references.vApplClass;
-    olusage = ols->olUsage;
-    vFunCl = p->vFunClass;
-    vApplCl = p->vApplClass;
-    if (ols->references.type!=TypeCppCollate) {
-        if (ols->references.type != p->type) goto fini;
-        if (ols->references.storage != p->storage) goto fini;
-        if (ols->references.category != p->category)  goto fini;
+    assert(olcxIsSameCxSymbol(&menu->references, referenceItem));
+    olvFunCl = menu->references.vFunClass;
+    olvApplCl = menu->references.vApplClass;
+    olusage = menu->olUsage;
+    vFunCl = referenceItem->vFunClass;
+    vApplCl = referenceItem->vApplClass;
+    if (menu->references.type!=TypeCppCollate) {
+        if (menu->references.type != referenceItem->type) goto fini;
+        if (menu->references.storage != referenceItem->storage) goto fini;
+        if (menu->references.category != referenceItem->category)  goto fini;
     }
-    if (strcmp(ols->references.linkName,p->linkName)==0) {
+    if (strcmp(menu->references.linkName,referenceItem->linkName)==0) {
         ooBits |= OOC_PROFILE_EQUAL;
     }
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)
-        || javaStaticallyLinked(ols->references.storage, ols->references.access)) {
+        || javaStaticallyLinked(menu->references.storage, menu->references.access)) {
         if (vFunCl == olvFunCl) ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
     } else {
         // the following may be too strong, maybe only test FunCl ???
