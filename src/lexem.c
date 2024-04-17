@@ -140,9 +140,9 @@ void initLexemEnumNames(void) {
     lexemEnumNames[364] = "FLOAT_CONSTANT";
     lexemEnumNames[365] = "DOUBLE_CONSTANT";
     lexemEnumNames[366] = "STRING_LITERAL";
-    lexemEnumNames[367] = "LINE_TOKEN";
-    lexemEnumNames[368] = "IDENT_TO_COMPLETE";
-    lexemEnumNames[369] = "CPP_MACRO_ARGUMENT";
-    lexemEnumNames[370] = "IDENT_NO_CPP_EXPAND";
-    lexemEnumNames[372] = "CHAR_LITERAL";
+    lexemEnumNames[367] = "CHAR_LITERAL";
+    lexemEnumNames[368] = "LINE_TOKEN";
+    lexemEnumNames[369] = "IDENT_TO_COMPLETE";
+    lexemEnumNames[370] = "CPP_MACRO_ARGUMENT";
+    lexemEnumNames[371] = "IDENT_NO_CPP_EXPAND";
 }

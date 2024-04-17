@@ -139,14 +139,17 @@ static int savedWorkMemoryIndex = 0;
 /* commons */
 %token IDENTIFIER CONSTANT LONG_CONSTANT
 %token FLOAT_CONSTANT DOUBLE_CONSTANT
-%token STRING_LITERAL
+%token STRING_LITERAL CHAR_LITERAL
 %token LINE_TOKEN
 %token IDENT_TO_COMPLETE        /* identifier under cursor */
 
 /* c-only */
 %token CPP_MACRO_ARGUMENT IDENT_NO_CPP_EXPAND
 
-/* ****************************************************************** */
+/* ******************************************************************
+ * LAST_TOKEN is to dimension the lexemEnum arrays, should always be
+ * the last token, duh! If not there is a token that is not explicitly
+ * declared above. */
 
 %token LAST_TOKEN
 
