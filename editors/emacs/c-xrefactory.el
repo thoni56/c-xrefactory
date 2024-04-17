@@ -241,10 +241,6 @@
     (defvar c-xref-java-fqt-name-completion-level 2)
   )
 
-(if (not (boundp 'c-xref-highlight-java-keywords))
-    (defvar c-xref-highlight-java-keywords t)
-  )
-
 ;;--------------------------------------------------
 
 (defvar c-xref-coloring (fboundp 'make-face))
@@ -683,11 +679,6 @@ faces and highlighting in buffers created by C-xrefactory.
 
       (defcustom c-xref-coloring c-xref-coloring
 	"If on, C-xrefactory will color symbols in completion and reference list buffers. This may be slow for large projects."
-	:type '(boolean)
-	:group 'c-xrefactory-highlighting-coloring)
-
-      (defcustom c-xref-highlight-java-keywords nil
-	"If on, C-xrefactory will color Java keywords in completion and reference list buffers. Otherwise it will color C keywords."
 	:type '(boolean)
 	:group 'c-xrefactory-highlighting-coloring)
 

@@ -157,49 +157,9 @@
 "\\b\\(auto\\|break\\|c\\(ase\\|har\\|on\\(st\\|tinue\\)\\)\\|d\\(efault\\|o\\(uble\\)?\\)\\|e\\(lse\\|num\\|xtern\\)\\|f\\(loat\\|or\\)\\|goto\\|i\\(f\\|nt\\)\\|long\\|re\\(gister\\|turn\\)\\|s\\(hort\\|i\\(gned\\|zeof\\)\\|t\\(atic\\|ruct\\)\\|witch\\)\\|typedef\\|un\\(ion\\|signed\\)\\|vo\\(id\\|latile\\)\\|while\\)\\b"
 )
 
-(defvar c-xref-java-keywords-regexp
-"\\b\\(?:abstract\\|b\\(?:oolean\\|reak\\|yte\\)\\|c\\(?:a\\(?:se\\|tch\\)\\|har\\|lass\\|on\\(?:st\\|tinue\\)\\)\\|d\\(?:efault\\|o\\(?:uble\\)?\\)\\|e\\(?:lse\\|xtends\\)\\|f\\(?:inal\\(?:ly\\)?\\|loat\\|or\\)\\|goto\\|i\\(?:f\\|mp\\(?:lements\\|ort\\)\\|n\\(?:stanceof\\|t\\(?:erface\\)?\\)\\)\\|long\\|n\\(?:ative\\|ew\\)\\|p\\(?:ackage\\|r\\(?:ivate\\|otected\\)\\|ublic\\)\\|return\\|s\\(?:hort\\|tatic\\|uper\\|witch\\|ynchronized\\)\\|t\\(?:h\\(?:is\\|rows?\\)\\|r\\(?:ansient\\|y\\)\\)\\|vo\\(?:id\\|latile\\)\\|while\\)\\b"
-)
-
 (defun c-xref-keywords-regexp ()
-  (let ((res))
-  (if c-xref-highlight-java-keywords
-      (setq res c-xref-java-keywords-regexp)
-    (setq res c-xref-c-keywords-regexp)
-    )
-  res
-))
-
-;; somewhere they don't have the 'regexp-opt' function ...
-;;
-;;(defvar c-xref-c-keywords-regexp
-;;  (eval-when-compile
-;;	(concat "\\b"
-;;			(regexp-opt
-;;           '("auto" "extern" "register" "static" "typedef" "struct"
-;;             "union" "enum" "signed" "unsigned" "short" "long"
-;;             "int" "char" "float" "double" "void" "volatile" "const"
-;;             "break" "continue" "do" "else" "for" "if" "return"
-;;             "switch" "while" "goto" "case" "default" "sizeof"
-;;             ) t )
-;;			"\\b")
-;;	))
-;;(defvar c-xref-java-keywords-regexp
-;;  (eval-when-compile
-;;	(concat "\\b"
-;;			(regexp-opt
-;;           '("abstract" "boolean" "break" "byte" "case" "catch"
-;;             "char" "class" "const" "continue"
-;;             "default" "do" "double" "else" "extends" "final"
-;;             "finally" "float" "for" "goto"
-;;             "if" "implements" "import" "instanceof" "int" "interface"
-;;             "long" "native" "new" "package"
-;;             "private" "protected" "public" "return" "short" "static"
-;;             "super" "switch" "synchronized" "this"
-;;             "throw" "throws" "transient" "try" "void" "volatile" "while"
-;;             ) t )
-;;			"\\b")
-;;	))
+  (setq res c-xref-c-keywords-regexp)
+  )
 
 (defvar c-xref-font-lock-compl-keywords
     (cons (cons (c-xref-keywords-regexp) '(c-xref-keyword-face))
@@ -1857,7 +1817,7 @@ tries to delete C-xrefactory windows first.
 		    ))))))
 ))
 
-(defun c-xref-hightlight-keywords (begpos endpos keywords-regexp keyword-face)
+(defun c-xref-highlight-keywords (begpos endpos keywords-regexp keyword-face)
   (let ((buff) (bpos) (loop-flag) (mbeg) (mend)
 	(ocfs))
 ;;(message "highlighting keywords %d %d" begpos endpos)
@@ -1886,7 +1846,7 @@ tries to delete C-xrefactory windows first.
     (setq kwl kw-font-list)
     (while kwl
       (setq kw (car kwl))
-      (c-xref-hightlight-keywords begpos endpos (car kw) (car (cdr kw)))
+      (c-xref-highlight-keywords begpos endpos (car kw) (car (cdr kw)))
       (setq kwl (cdr kwl))
       )
 ))
