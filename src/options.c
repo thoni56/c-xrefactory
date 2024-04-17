@@ -1268,7 +1268,7 @@ static void getXrefrcFileName(char *fileName) {
     assert(strlen(fileName) < MAX_FILE_NAME_SIZE-1);
 }
 
-/* Config file handling */
+/* Experimental: Auto-finding config file in a source tree */
 char *findConfigFile(char *start) {
     char currentDir[strlen(start)+1];
     char *normalizedFileName = normalizeFileName(".c-xrefrc", start);

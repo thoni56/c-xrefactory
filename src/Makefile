@@ -95,7 +95,7 @@ CFLAGS += -arch arm64 -arch x86_64
 LDFLAGS += -arch arm64 -arch x86_64
 endif
 
-# We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-11 we need to use GCC:s gcov)
+# We need to use compatible gcov (for Darwin/Brew with Homebrew gcc-13 we need to use GCC:s gcov)
 ifeq ("$(CC)", "gcc-13")
 	LCOV = lcov --gcov-tool gcov-13
 	GCOV = gcov-13
@@ -382,13 +382,13 @@ endif
 
 #########################################################################
 watch:
-	watchexec -i \*.tab.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Development make -j devel
+	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Development make -j devel
 
 watch-for-unittests:
-	watchexec -i \*.tab.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j unit
+	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j unit
 
 watch-for-systemtests:
-	watchexec -e done --no-vcs-ignore -- execnotify -t Systemtests make -j system-tests
+	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j system-tests
 
 system-tests:
 	$(MAKE) -e build
