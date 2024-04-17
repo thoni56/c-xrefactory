@@ -15,8 +15,6 @@
 ;; content of this file is copyrighted by Xref-Tech. This file does
 ;; not contain any code written by independent developers.
 
-(provide 'c-xrefdoc)
-
 (defun c-xref-refactoring-documentation ()
   (let ((res))
     (setq res "
@@ -789,3 +787,5 @@ Mechanics:  Undo  all changes  made  in  buffers  up to  and
 ")
     res
 ))
+
+(provide 'c-xrefdoc)

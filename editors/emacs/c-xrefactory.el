@@ -15,9 +15,6 @@
 ;; content of this file is copyrighted by Xref-Tech. This file does
 ;; not contain any code written by independent developers.
 
-(provide 'c-xrefactory)
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; You can edit the following in order to change the default key-bindings
 
@@ -70,17 +67,15 @@
 ;; recorded.  C-xrefactory  undo will operate  only on files  with those
 ;; suffixes
 
-(defvar c-xref-undo-allowed-suffixes '(".java" ".c" ".h" ".tc" ".th"
-				     ".tcc" ".thh" ".y"))
+(defvar c-xref-undo-allowed-suffixes '(".c" ".h" ".tc" ".th" ".y"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; current platform identification (will be used in default settings)
-
+(defvar c-xref-platform 'unix)
 (if (or (string-match "-nt" system-configuration)
 	(string-match "-win" system-configuration))
-    (defvar c-xref-platform 'windows)
-  (defvar c-xref-platform 'unix)
+    (setq c-xref-platform 'windows)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -133,9 +128,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; following code adds standard c-xrefactory keybinding for current session
 
-(if (not (boundp 'c-xref-key-binding))
-    (defvar c-xref-key-binding 'global)
-  )
+(defvar c-xref-key-binding 'global)
 
 (if (eq c-xref-key-binding 'global)
     (progn
@@ -177,51 +170,34 @@
 ;; usually on simple Escape, but on alphanumerical consoles, where
 ;; special keys are coded via Escape prefix, close window on escape-escape
 ;; sequence
-(if (not (boundp 'c-xref-escape-key-sequence))
-    (progn
-      (defvar c-xref-escape-key-sequence "\e")
-      (if (not window-system)
-	  (setq c-xref-escape-key-sequence "\e\e")
-	)))
-
-(if (not (boundp 'c-xref-inspect-errors-if-compilation-window))
-    (defvar c-xref-inspect-errors-if-compilation-window t)
+(defvar c-xref-escape-key-sequence "\e")
+(if (not window-system)
+    (setq c-xref-escape-key-sequence "\e\e")
   )
+
+(defvar c-xref-inspect-errors-if-compilation-window t)
 
 ;; by default xrefactory does binds left button to its functions
-(if (not (boundp 'c-xref-bind-left-mouse-button))
-    (defvar c-xref-bind-left-mouse-button t)
-  )
+(defvar c-xref-bind-left-mouse-button t)
 
 ;; when displaying browser, default filter level will be 2
-(if (not (boundp 'c-xref-default-symbols-filter))
-    (defvar c-xref-default-symbols-filter 2)
-  )
+(defvar c-xref-default-symbols-filter 2)
 
-(if (not (boundp 'c-xref-default-references-filter))
-    (defvar c-xref-default-references-filter 0)
-  )
+(defvar c-xref-default-references-filter 0)
 
 ;; when updating browser, keep lastly set filter level
-(if (not (boundp 'c-xref-keep-last-symbols-filter))
-    (defvar c-xref-keep-last-symbols-filter t)
-  )
+(defvar c-xref-keep-last-symbols-filter t)
 
-(if (not (boundp 'c-xref-commentary-moving-level))
-    (defvar c-xref-commentary-moving-level 0)
-  )
+(defvar c-xref-commentary-moving-level 0)
 
-(if (not (boundp 'c-xref-prefer-import-on-demand))
-    (defvar c-xref-prefer-import-on-demand t)
-  )
+(defvar c-xref-prefer-import-on-demand t)
 
-(if (not (boundp 'c-xref-save-files-and-update-tags-after-refactoring))
-    (defvar c-xref-save-files-and-update-tags-after-refactoring nil)
-  )
+(defvar c-xref-save-files-and-update-tags-after-refactoring nil)
 
-(if (not (boundp 'c-xref-save-files-and-update-tags-before-refactoring))
-    (defvar c-xref-save-files-and-update-tags-before-refactoring nil)
-  )
+(defvar c-xref-save-files-and-update-tags-before-refactoring nil)
+
+;; ----------------------------------------------------------------
+;; TODO Java-related stuff that needs to go away !!!
 
 ;; by default c-xref asks before starting to browse a javadoc URL
 (if (not (boundp 'c-xref-ask-before-browse-javadoc))
@@ -250,30 +226,6 @@
     (defvar c-xref-allow-multibyte t)
   )
 
-(if (not (boundp 'c-xref-files-encoding))
-    (defvar c-xref-files-encoding 'generic)
-  )
-
-;; by default truncation is disallowed in order to see profiles
-(if (not (boundp 'c-xref-completion-truncate-lines))
-    (defvar c-xref-completion-truncate-lines nil)
-  )
-
-(if (not (boundp 'c-xref-completion-inserts-parenthesis))
-    (defvar c-xref-completion-inserts-parenthesis nil)
-  )
-
-;; by default truncation is disallowed in order to see profiles
-(if (not (boundp 'c-xref-completion-overload-wizard-depth))
-    (defvar c-xref-completion-overload-wizard-depth 1)
-  )
-
-;; by default the automatic project selection is on.
-(if (not (boundp 'c-xref-current-project))
-    (defvar c-xref-current-project nil)
-  )
-
-
 ;; by default  the accessibility and linkage checks  are not performed
 ;; on proposed completions
 (if (not (boundp 'c-xref-java-completion-access-check))
@@ -289,138 +241,98 @@
     (defvar c-xref-java-fqt-name-completion-level 2)
   )
 
-(if (not (boundp 'c-xref-coloring))
-    (defvar c-xref-coloring (fboundp 'make-face))
-  )
-
 (if (not (boundp 'c-xref-highlight-java-keywords))
     (defvar c-xref-highlight-java-keywords t)
   )
 
-(if (not (boundp 'c-xref-mouse-highlight))
-    (defvar c-xref-mouse-highlight t)
-  )
+;;--------------------------------------------------
 
-(if (not (boundp 'c-xref-multifile-undo-deep))
-    (defvar c-xref-multifile-undo-deep 50)
-  )
+(defvar c-xref-coloring (fboundp 'make-face))
 
-(if (not (boundp 'c-xref-ide-last-run-command))
-    (defvar c-xref-ide-last-run-command "run")
-)
+(defvar c-xref-files-encoding 'generic)
+
+;; by default truncation is disallowed in order to see profiles
+(defvar c-xref-completion-truncate-lines nil)
+
+(defvar c-xref-completion-inserts-parenthesis nil)
+
+;; by default truncation is disallowed in order to see profiles
+(defvar c-xref-completion-overload-wizard-depth 1)
+
+;; by default the automatic project selection is on.
+(defvar c-xref-current-project nil)
+
+(defvar c-xref-coloring (fboundp 'make-face))
+
+(defvar c-xref-mouse-highlight t)
+
+(defvar c-xref-multifile-undo-deep 50)
+
+(defvar c-xref-ide-last-run-command "run")
 
 ;; the default variable executed by first c-xref-ide-compile command
-(if (not (boundp 'c-xref-ide-last-compile-command))
-    (defvar c-xref-ide-last-compile-command 'compiledir)
-)
+(defvar c-xref-ide-last-compile-command 'compiledir)
+
 ;; can be also 'compilefile or 'compileproject
 
 ;; the default limit for number of completions
-(if (not (boundp 'c-xref-max-completions))
-    (defvar c-xref-max-completions 500)
-)
+(defvar c-xref-max-completions 500)
 
 ;; shell to interpret multi-line compile and run commands
-(if (not (boundp 'c-xref-shell))
-    (defvar c-xref-shell "sh")
-)
+(defvar c-xref-shell "sh")
 
 ;; generate batch file also when compiling with single line command
-(if (not (boundp 'c-xref-always-batch-file))
-    (defvar c-xref-always-batch-file t)
-)
+(defvar c-xref-always-batch-file t)
 
-(if (not (boundp 'c-xref-move-point-back-after-refactoring))
-    (defvar c-xref-move-point-back-after-refactoring nil)
-)
+(defvar c-xref-move-point-back-after-refactoring nil)
 
-(if (not (boundp 'c-xref-detailed-refactoring-confirmations))
-    (defvar c-xref-detailed-refactoring-confirmations nil)
-)
+(defvar c-xref-detailed-refactoring-confirmations nil)
 
-(if (not (boundp 'c-xref-auto-update-tags-before-push))
-    (defvar c-xref-auto-update-tags-before-push nil)
-)
+(defvar c-xref-auto-update-tags-before-push nil)
 
-(if (not (boundp 'c-xref-browser-lists-source-lines))
-    (defvar c-xref-browser-lists-source-lines t)
-)
+(defvar c-xref-browser-lists-source-lines t)
 
-(if (not (boundp 'c-xref-close-windows-on-pop))
-    (defvar c-xref-close-windows-on-pop nil)
-)
+(defvar c-xref-close-windows-on-pop nil)
 
-(if (not (boundp 'c-xref-completion-case-sensitive))
-    (defvar c-xref-completion-case-sensitive nil)
-)
+(defvar c-xref-completion-case-sensitive nil)
 
-(if (not (boundp 'c-xref-completion-quit-on-q))
-    (defvar c-xref-completion-quit-on-q t)
-)
+(defvar c-xref-completion-quit-on-q t)
 
-(if (not (boundp 'c-xref-completion-delete-pending-identifier))
-    (defvar c-xref-completion-delete-pending-identifier t)
-)
+(defvar c-xref-completion-delete-pending-identifier t)
 
-(if (not (boundp 'c-xref-completion-auto-focus))
-    (defvar c-xref-completion-auto-focus t)
-)
+(defvar c-xref-completion-auto-focus t)
 
-(if (not (boundp 'c-xref-browse-url-focus-delay))
-    (defvar c-xref-browse-url-focus-delay 0)
-)
+(defvar c-xref-browse-url-focus-delay 0)
 
-(if (not (boundp 'c-xref-window-minimal-size))
-    (defvar c-xref-window-minimal-size 4)
-)
+(defvar c-xref-window-minimal-size 4)
 
-(if (not (boundp 'c-xref-browser-splits-window-horizontally))
-    (defvar c-xref-browser-splits-window-horizontally nil)
-)
+(defvar c-xref-browser-splits-window-horizontally nil)
 
-(if (not (boundp 'c-xref-class-tree-splits-window-horizontally))
-    (defvar c-xref-class-tree-splits-window-horizontally t)
-)
+(defvar c-xref-class-tree-splits-window-horizontally t)
 
-(if (not (boundp 'c-xref-browser-position-left-or-top))
-    (defvar c-xref-browser-position-left-or-top nil)
-)
+(defvar c-xref-browser-position-left-or-top nil)
 
-(if (not (boundp 'c-xref-class-tree-position-left-or-top))
-    (defvar c-xref-class-tree-position-left-or-top t)
-)
+(defvar c-xref-class-tree-position-left-or-top t)
 
-(if (not (boundp 'c-xref-class-tree-window-width))
-    (defvar c-xref-class-tree-window-width 30)
-)
+(defvar c-xref-class-tree-window-width 30)
 
-(if (not (boundp 'c-xref-symbol-selection-window-width))
-    (defvar c-xref-symbol-selection-window-width 30)
-)
+(defvar c-xref-symbol-selection-window-width 30)
 
-(if (not (boundp 'c-xref-symbol-selection-window-height))
-    (defvar c-xref-symbol-selection-window-height 10)
-)
+(defvar c-xref-symbol-selection-window-height 10)
 
-(if (not (boundp 'c-xref-browser-windows-auto-resizing))
-    (defvar c-xref-browser-windows-auto-resizing t)
-)
+(defvar c-xref-browser-windows-auto-resizing t)
 
-(if (not (boundp 'c-xref-display-active-project-in-minibuffer))
-    (defvar c-xref-display-active-project-in-minibuffer t)
-)
+(defvar c-xref-display-active-project-in-minibuffer t)
 
-(if (not (boundp 'c-xref-run-find-file-hooks))
-    (defvar c-xref-run-find-file-hooks t)
-)
+(defvar c-xref-run-find-file-hooks t)
 
+(defvar c-xref-options-file (concat (getenv "HOME") "/.c-xrefrc"))
 (if (not (boundp 'c-xref-options-file))
     (if (eq c-xref-platform 'windows)
 	(if (getenv "HOME")
-	    (defvar c-xref-options-file (concat (getenv "HOME") "/_c-xrefrc"))
-	  (defvar c-xref-options-file "c:/_c-xrefrc")
+	    (setq c-xref-options-file (concat (getenv "HOME") "/_c-xrefrc"))
+	  (setq c-xref-options-file "c:/_c-xrefrc")
 	  )
-      (defvar c-xref-options-file (concat (getenv "HOME") "/.c-xrefrc"))
       )
 )
 
@@ -1162,6 +1074,7 @@ your .c-xrefrc file.
 ;; this has to be kept, because of options
 (autoload 'c-xref-soft-select-dispach-data-caller-window "c-xref" c-xref-default-documentation-string t)
 
+(provide 'c-xrefactory)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; examples on how to use 'c-xref-add-custom-menu-item function

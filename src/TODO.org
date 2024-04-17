@@ -104,7 +104,7 @@ Current Mikado:
   non-terminal (as with '$3'). That field is defined in the YYSTYPE
   but not used in any '%type' declaration meaning all non-terminals
   have it.
-* TRY Remove explicit support for Xemacs in elisp
+* TODO Remove explicit support for Xemacs in elisp
 * TRY Bug: test_c_extract_function_with_out_variables should actually find the declaration and handle it
 * TODO Available refactorings should not show Delete Parameter if there are none
 * TODO Available refactorings should not show Move Parameter if there are less than two

@@ -15,40 +15,46 @@
 ;; content of this file is copyrighted by Xref-Tech. This file does
 ;; not contain any code written by independent developers.
 
-(provide 'c-xref)
-
-(load "c-xrefprotocol")
-
+(require 'c-xrefprotocol)
+(require 'c-xrefactory)
 (autoload 'c-xref-refactoring-documentation "c-xrefdoc" "Not documented" t)
+
 
 (defvar c-xref-debug-mode nil)          ;; Set to t to debug communication
 (defvar c-xref-debug-preserve-tmp-files nil)
 
 ;;(toggle-debug-on-error)
 
+(defvar c-xref-tmp-dir nil "Temporary directory for c-xref.")
+(defvar c-xref-slash nil "Directory separator for c-xref.")
+(defvar c-xref-user-identification nil "User identification for c-xref.")
+(defvar c-xref-run-batch-file nil "Batch file for c-xref.")
+(defvar c-xref-find-file-on-mouse-delimit nil "Regex for file delimitation in c-xref.")
+(defvar c-xref-path-separator nil "Path separator for c-xref.")
+
 (if (eq c-xref-platform 'windows)
     (progn
-      (defvar c-xref-slash ?\\)
-      (defvar c-xref-tmp-dir (getenv "TEMP"))
-      (defvar c-xref-user-identification "user")
-      (defvar c-xref-run-batch-file (concat (getenv "TEMP") "/c-xrefrun.bat"))
-      (defvar c-xref-find-file-on-mouse-delimit "[^A-Za-z0-9_\\.~-]")
-      (defvar c-xref-path-separator ?\;)
+      (setq c-xref-slash ?\\)
+      (setq c-xref-tmp-dir (getenv "TEMP"))
+      (setq c-xref-user-identification "user")
+      (setq c-xref-run-batch-file (concat (getenv "TEMP") "/c-xrefrun.bat"))
+      (setq c-xref-find-file-on-mouse-delimit "[^A-Za-z0-9_\\.~-]")
+      (setq c-xref-path-separator ?\;)
       )
-
   ;; a linux/unix platform
-  (defvar c-xref-slash ?/)
-  (defvar c-xref-tmp-dir "/tmp")
-  (defvar c-xref-user-identification (getenv "LOGNAME"))
-  (defvar c-xref-run-batch-file (format "%s/c-xref-%s-%d.sh" c-xref-tmp-dir c-xref-user-identification (emacs-pid)))
-  (defvar c-xref-find-file-on-mouse-delimit "[^A-Za-z0-9_/.~-]")
-  (defvar c-xref-path-separator ?\:)
-)
+  (progn
+    (setq c-xref-slash ?/)
+    (setq c-xref-tmp-dir "/tmp")
+    (setq c-xref-user-identification (getenv "LOGNAME"))
+    (setq c-xref-run-batch-file (format "%s/c-xref-%s-%d.sh" c-xref-tmp-dir c-xref-user-identification (emacs-pid)))
+    (setq c-xref-find-file-on-mouse-delimit "[^A-Za-z0-9_/.~-]")
+    (setq c-xref-path-separator ?:)
+    )
+  )
 
+(defvar c-xref-running-under 'emacs)
 (if (string-match "XEmacs" emacs-version)
-    (defvar c-xref-running-under 'xemacs)
-  (defvar c-xref-running-under 'emacs)
-)
+    (setq c-xref-running-under 'xemacs))
 
 (defvar c-xref-directory-dep-prj-name "++ Automatic (directory dependent) ++")
 (defvar c-xref-abandon-deletion "++ Cancel (no deletion) ++")
@@ -8452,3 +8458,5 @@ each important refactoring.
 ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(provide 'c-xref)
