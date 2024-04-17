@@ -118,8 +118,6 @@
 (defvar c-xref-symbol-resolution-buffer " *symbols/classes*")
 (defvar c-xref-references-buffer " *references*")
 
-(defvar c-xref-registration-url "http://www.c-xref-tech.com/license.html")
-
 (defvar c-xref-completions-windows-counter 0)
 (defvar c-xref-completions-dispatch-data nil)
 (defvar c-xref-class-tree-dispatch-data nil)
@@ -2705,32 +2703,6 @@ on active project selection).
     i
 ))
 
-(defvar c-xref-license-error-dialog-map (make-sparse-keymap "C-xref license error"))
-(c-xref-add-basic-modal-keybindings c-xref-license-error-dialog-map)
-
-(defun c-xref-server-dispatch-license-error (ss i len dispatch-data)
-  (let ((tlen) (cc) (cw) (sel) (ln))
-    (setq cw (selected-window))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_LICENSE_ERROR)
-    (setq ln (1+ (c-xref-char-count ?\n cc)))
-    (c-xref-select-dispach-data-caller-window dispatch-data)
-    (setq sel (c-xref-modal-dialog c-xref-selection-modal-buffer (format
-"%s
-----
- 1.) Exit
- 2.) Browse URL
-----
-" cc)
-		       (+ ln 2) 0 t c-xref-license-error-dialog-map dispatch-data))
-    (if (eq sel (+ ln 3))
-	(c-xref-browse-url c-xref-registration-url)
-	)
-    i
-))
 
 (defvar c-xref-add-to-imports-dialog-map (make-sparse-keymap "C-xref fqt completion"))
 (c-xref-add-basic-modal-keybindings c-xref-add-to-imports-dialog-map)
@@ -3868,7 +3840,6 @@ Special hotkeys available:
        (
 	(equal c-xref-server-ctag c-xref_PPC_NO_PROJECT)
 	(setq i (c-xref-server-dispatch-no-project ss i len dispatch-data)))
-
        (
 	(equal c-xref-server-ctag c-xref_PPC_ASK_CONFIRMATION)
 	(setq i (c-xref-server-dispatch-ask-confirmation ss i len dispatch-data c-xref-server-ctag)))
@@ -3890,9 +3861,6 @@ Special hotkeys available:
        (
 	(equal c-xref-server-ctag c-xref_PPC_FATAL_ERROR)
 	(setq i (c-xref-server-dispatch-error ss i len dispatch-data c-xref-server-ctag)))
-       (
-	(equal c-xref-server-ctag c-xref_PPC_LICENSE_ERROR)
-	(setq i (c-xref-server-dispatch-license-error ss i len dispatch-data)))
        (
 	(equal c-xref-server-ctag c-xref_PPC_DEBUG_INFORMATION)
 	(setq i (c-xref-server-dispatch-information ss i len dispatch-data c-xref-server-ctag)))
@@ -5415,9 +5383,6 @@ compilation is successful.  See also `c-xref-ide-compile' and
 	(setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
        (
 	(equal c-xref-server-ctag c-xref_PPC_FATAL_ERROR)
-	(setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
-       (
-	(equal c-xref-server-ctag c-xref_PPC_LICENSE_ERROR)
 	(setq i (c-xref-tags-dispatch-error ss i len c-xref-server-ctag)))
        (
 	t

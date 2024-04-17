@@ -51,7 +51,6 @@
 (defconst c-xref_PPC_WARNING "warning")
 (defconst c-xref_PPC_BOTTOM_WARNING "bottom-warning")
 (defconst c-xref_PPC_ERROR "error")
-(defconst c-xref_PPC_LICENSE_ERROR "license-error")
 (defconst c-xref_PPC_FATAL_ERROR "fatalError")
 (defconst c-xref_PPC_INFORMATION "information")
 (defconst c-xref_PPC_BOTTOM_INFORMATION "bottom-information")
