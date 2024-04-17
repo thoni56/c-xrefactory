@@ -30,7 +30,6 @@
 #include "refactory.h"
 #include "reftab.h"
 #include "server.h"
-#include "settings_handler.h"
 #include "stackmemory.h"
 #include "symboltable.h"
 #include "xref.h"
@@ -798,9 +797,6 @@ int main(int argc, char *argv[]) {
     initLogging(argc, argv);
     ENTER();
 
-    /* EXPERIMENTAL: find project settings file */
-    char project_name[PATH_MAX];
-    find_project_settings(project_name);
     /* TODO: Ensure there are no sections in that file */
     /* TODO: Move this to get_project? */
 

@@ -32,7 +32,6 @@
 #include "refactory.mock"
 #include "reftab.mock"
 #include "server.mock"
-#include "settings_handler.mock"
 #include "symboltable.mock"
 #include "type.mock"
 #include "xref.mock"

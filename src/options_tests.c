@@ -176,6 +176,7 @@ Ensure(Options, can_allocate_a_string) {
     assert_that(options.memory.index, is_greater_than(0));
 }
 
+/* EXPERIMENTAL: auto-find config file in tree */
 Ensure(Options, will_not_find_config_file_in_empty_current_directory_with_no_parents) {
     strcpy(cwd, "/");
     expect(normalizeFileName, will_return("/.c-xrefrc"));

@@ -1,5 +1,0 @@
-#include <cgreen/mocks.h>
-
-int find_project_settings(char *project_name) {
-    return (int)mock(project_name);
-}
