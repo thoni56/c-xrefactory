@@ -46,10 +46,6 @@ void dirInputFile(char *file, char *a1, char *a2, Completions *a3, void *a4, int
   mock(file, a1, a2, a3, a4, a5);
 }
 
-char *getJavaHome(void) {
-  return (char *) mock();
-}
-
 bool packageOnCommandLine(char *packageName) {
   return (bool) mock(packageName);
 }

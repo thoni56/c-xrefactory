@@ -2974,29 +2974,6 @@ void answerEditAction(void) {
             }
         }
         break;
-    case OLO_JAVA_HOME: {
-        char *jdkcp = getJavaHome();
-        if (options.xref2) {
-            if (jdkcp==NULL) {
-                if (!options.noErrors) {
-                    ppcGenRecord(PPC_ERROR, "Can't infer Java home");
-                }
-            } else {
-                ppcGenRecord(PPC_SET_INFO, jdkcp);
-            }
-        } else {
-            if (jdkcp==NULL) {
-                if (options.noErrors) {
-                    fprintf(communicationChannel,"^");
-                } else {
-                    fprintf(communicationChannel,"!* Can't find Java runtime library rt.jar"); // TODO: was "..., ifname);"
-                }
-            } else {
-                fprintf(communicationChannel,"*%s", jdkcp);
-            }
-        }
-        break;
-    }
     case OLO_GET_ENV_VALUE:
         olcxProcessGetRequest();
         break;

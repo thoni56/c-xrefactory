@@ -171,7 +171,6 @@ extern char *allocateStringForOption(char **pointerToOption, char *string);
 extern void addToStringListOption(StringList **pointerToOption, char *string);
 extern void deepCopyOptionsFromTo(Options *src, Options *dest);
 
-extern char *getJavaHome(void);
 extern bool packageOnCommandLine(char *packageName);
 extern char *expandPredefinedSpecialVariables_static(char *output, char *inputFilename);
 extern bool readOptionsFromFileIntoArgs(FILE *ff, int *nargc, char ***nargv,

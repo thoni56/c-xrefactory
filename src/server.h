@@ -69,7 +69,6 @@
         ENUM(OLO_SHOW_TOP_TYPE)                                         \
         ENUM(OLO_SHOW_CLASS_TREE)                                       \
         ENUM(OLO_ACTIVE_PROJECT)                                        \
-        ENUM(OLO_JAVA_HOME)                                             \
         ENUM(OLO_REPUSH)                                                \
         ENUM(OLO_CLASS_TREE)                                            \
         ENUM(OLO_USELESS_LONG_NAME)                                     \

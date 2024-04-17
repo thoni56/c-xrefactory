@@ -1787,9 +1787,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-olcxgetprojectname")==0) {
         options.serverOperation=OLO_ACTIVE_PROJECT;
     }
-    else if (strcmp(argv[i], "-olcxgetjavahome")==0) {
-        options.serverOperation=OLO_JAVA_HOME;
-    }
     else if (strncmp(argv[i], "-olcxlccursor=",14)==0) {
         // position of the cursor in line:column format
         options.olcxlccursor = allocateStringForOption(&options.olcxlccursor, argv[i]+14);
