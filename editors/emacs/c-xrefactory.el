@@ -146,10 +146,6 @@
 		  (c-xref-add-key-bindings-to-local-keymap c-mode-map)
 		(message "[C-xrefactory] c-mode-map not found, skipping keymap setting")
 		)
-	      (if (boundp 'java-mode-map)
-		  (c-xref-add-key-bindings-to-local-keymap java-mode-map)
-		(message "[C-xrefactory] java-mode-map not found, skipping keymap setting")
-		)
 	      )
 	  (message "[C-xrefactory] cc-mode file not found, cannot setup local key binding, making it global.")
 	  (c-xref-add-bindings-to-keymap global-map)
@@ -159,7 +155,7 @@
 	;; if you are using some binding for S-mouse-2, put it in comment
 	(global-set-key [(shift mouse-2)] 'c-xref-find-file-on-mouse)
 	))
-)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C-xrefactory configuration  variables setting. Majority  of variables
