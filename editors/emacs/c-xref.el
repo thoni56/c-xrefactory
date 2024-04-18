@@ -4257,10 +4257,7 @@ will be deleted.
 
 
 (defun c-xref-append-new-project-section (pname pcomments
-			                                    pfiles classpath
-			                                    sourcepath
-			                                    classdir
-			                                    apfiles ifiles
+			                                    pfiles apfiles ifiles
 			                                    rest refs exactp)
   (let ((comment) (dlen) (cldopt) (tdq))
     (setq comment (or (equal pcomments "y") (equal pcomments "Y")))
@@ -4446,8 +4443,7 @@ part belonging to this project.
   (interactive "")
   (let ((pname) (checked) (tname) (breakcheck) (pcomments)
 	    (pact) (pedit) (sfiles) (pfiles) (system-class-path) (refs)
-	    (classpath) (sourcepath) (classdir nil) (spcp) (ljd)
-	    (inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat) (jdkcp nil)
+	    (inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat)
 	    (ptdef) (if) (ifiles "") (ifloop) (iff) (ifmess) (rest "")
 	    (aaa) (rrr) (pasi) (pasn) (hom) (exactp))
     (c-xref-soft-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data)
@@ -4610,9 +4606,7 @@ part belonging to this project.
     ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; all questions done
     (find-file c-xref-options-file)
     (c-xref-append-new-project-section pname "y" ;; pcomments
-				                       pfiles
-				                       classpath sourcepath
-				                       classdir apfiles ifiles
+				                       pfiles apfiles ifiles
 				                       rest refs exactp)
     ;;
     (save-buffer)
