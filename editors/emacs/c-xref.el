@@ -156,7 +156,7 @@
 )
 
 (defun c-xref-keywords-regexp ()
-  (setq res c-xref-c-keywords-regexp)
+  c-xref-c-keywords-regexp
   )
 
 (defvar c-xref-font-lock-compl-keywords
