@@ -217,12 +217,6 @@
     (defvar c-xref-allow-multibyte t)
   )
 
-;; by default  fully qualified type names are proposed when completing
-; Java type name
-(if (not (boundp 'c-xref-java-fqt-name-completion-level))
-    (defvar c-xref-java-fqt-name-completion-level 2)
-  )
-
 ;;--------------------------------------------------
 
 (defvar c-xref-coloring (fboundp 'make-face))
@@ -437,12 +431,6 @@ completions.
       (defcustom c-xref-completion-auto-focus t
 	"If on, window with multiple completions get the focus automatically after being displayed. Otherwise the window with source code keeps the focus."
 	:type '(boolean)
-	:group 'c-xrefactory-completion)
-
-      (defcustom c-xref-java-fqt-name-completion-level 2
-	"Level of completion for fully qualified type names.
-'0' means that no fully qualified names are suggested. '1' causes classes read from .jar archives to be suggested. For for 'LinkedLi', 'java.util.LinkedList' is suggested. '2' adds classes from the active project. '3' adds classes stored in classpath directories; finally '4' adds classes stored in sourcepath directories."
-	:type '(integer)
 	:group 'c-xrefactory-completion)
 
       (defcustom c-xref-completion-overload-wizard-depth 1
