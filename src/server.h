@@ -69,7 +69,6 @@
         ENUM(OLO_SHOW_TOP_TYPE)                                         \
         ENUM(OLO_ACTIVE_PROJECT)                                        \
         ENUM(OLO_REPUSH)                                                \
-        ENUM(OLO_CLASS_TREE)                                            \
         ENUM(OLO_USELESS_LONG_NAME)                                     \
         ENUM(OLO_USELESS_LONG_NAME_IN_CLASS)                            \
         ENUM(OLO_MAYBE_THIS)                                            \
@@ -128,12 +127,10 @@
        OLO_SHOW_TOP,            - show top symbol
        OLO_SHOW_TOP_APPL_CLASS, - show current reference appl class
        OLO_SHOW_TOP_TYPE,       - show current symbol type
-       OLO_SHOW_CLASS_TREE,     - show current class tree
        OLO_TOP_SYMBOL_RES,      - show top symbols resolution
        OLO_ACTIVE_PROJECT,      - show active project name
        OLO_JAVA_HOME,           - show inferred jdkclasspath
        OLO_REPUSH,              - re-push pop-ed top
-       OLO_CLASS_TREE,          - display class tree
        OLO_USELESS_LONG_NAME,   - display useless long class names
        OLO_USELESS_LONG_NAME_IN_CLASS, - display useless long class names
        OLO_MAYBE_THIS,          - display 'this' class dependencies

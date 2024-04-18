@@ -1,7 +1,7 @@
 ((c-xrefactory status "installed" recipe
-	       (:name c-xrefactory :description "c-xrefactory - a refactoring browser for C and Java." :type github :website "https://github.com/thoni56/c-xrefactory" :pkgname "thoni56/c-xrefactory" :load-path "env/emacs" :build
+	       (:name c-xrefactory :description "c-xrefactory - a refactoring browser for C and Java." :type github :branch "stable" :website "https://github.com/thoni56/c-xrefactory" :pkgname "thoni56/c-xrefactory" :load-path "editors/emacs" :build
 		      (("make"))
-		      :load "env/emacs/c-xrefactory.el" :post-init
+		      :load "editors/emacs/c-xrefactory.el" :post-init
 		      (progn
 			(add-to-list 'exec-path
 				     (concat default-directory "src"))

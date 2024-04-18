@@ -142,4 +142,3 @@
 (defconst c-xref_PPC_AVR_UNDO 300)
 
 
-(provide 'c-xrefprotocol)

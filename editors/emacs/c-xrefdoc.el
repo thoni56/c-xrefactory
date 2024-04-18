@@ -22,8 +22,6 @@
 
 ----------------------------------------------------------
 * Rename Symbol:
-* Rename Class:
-* Rename Package:
 ----------------------------------------------------------
 
 
@@ -34,7 +32,7 @@ Example:
   Before refactoring:
 
 	public static void main(String[] args) {
-	       for(int a=0; a<args.length; a++) {
+	       for (int a=0; a<args.length; a++) {
 		       action(args[a]);
 	       }
 	}
@@ -42,7 +40,7 @@ Example:
   After refactoring:
 
 	public static void main(String[] args) {
-	       for(int i=0; i<args.length; i++) {
+	       for (int i=0; i<args.length; i++) {
 		       action(args[i]);
 	       }
 	}
@@ -52,13 +50,7 @@ Refactoring Context: Cursor has to be on the symbol.
 Input parameters: New name of the symbol (for example: 'i')
 
 Mechanics:  Rename  all occurrences  of  the  symbol in  the
-      project.   When the  symbol is  the name  of  a public
-      class stored in  a file of the same  name, the file is
-      also  renamed.   When the  symbol  is  the  name of  a
-      package, the package directory is also renamed.
-
-
-
+      project.
 
 
 
@@ -73,15 +65,17 @@ Example:
 	Before refactoring:
 
 	    public int method(int x) {
-		   if (x<=1) return(1);
-		   return(method(x-1)+method(x-2));
+		if (x<=1)
+		   return 1;
+		return method(x-1)+method(x-2);
 	    }
 
 	After refactoring:
 
 	    public int method(int x, int y) {
-		   if (x<=1) return(1);
-		   return(method(x-1, 0)+method(x-2, 0));
+		if (x<=1)
+		   return 1;
+		return method(x-1, 0)+method(x-2, 0);
 	    }
 
 
@@ -99,42 +93,39 @@ Mechanics: Inspect all references to the method (function or
 
 
 
-
-
-
 ----------------------------------------------------------
 * Delete Parameter:
 ----------------------------------------------------------
 
-Description: Delete parameter of a method, function or macro.
+Description: Delete parameter of a function or macro.
 
 Example:
 
 	Before refactoring:
 
 	    public int method(int x, int y) {
-		   if (x<=1) return(1);
-		   return(method(x-1, 0)+method(x-2, 0));
+		if (x<=1)
+		    return 1;
+		return method(x-1, 0)+method(x-2, 0);
 	    }
 
 	After refactoring:
 
 	    public int method(int x) {
-		   if (x<=1) return(1);
-		   return(method(x-1)+method(x-2));
+	       if (x<=1)
+		   return 1;
+	       return method(x-1)+method(x-2);
 	    }
 
 
-Refactoring  Context:  Cursor  has  to be  on  the  method's
-      (function's or macro's) name.
+Refactoring  Context:  Cursor  has  to be  on  the  name of
+      the function or macro.
 
 Input parameters:  Position of the parameter  to delete (for
       example: '2').
 
-Mechanics: Inspect all references to the method (function or
-      macro) and remove the parameter.
-
-
+Mechanics: Inspect all references to the function or macro
+      and remove the parameter.
 
 
 
@@ -149,22 +140,24 @@ Example:
 	Before refactoring:
 
 	    public int method(int x, int y) {
-		   if (x<=1) return(1);
-		   return(method(x-1, 0)+method(x-2, 0));
+		if (x<=1)
+		    return 1;
+		return method(x-1, 0)+method(x-2, 0);
 	    }
 
 	After refactoring:
 
 	    public int method(int y, int x) {
-		   if (x<=1) return(1);
-		   return(method(0, x-1)+method(0, x-2));
+	       if (x<=1)
+		   return 1;
+	       return method(0, x-1)+method(0, x-2);
 	    }
 
 
-Refactoring  Context:  Cursor  has  to be  on  the  method's
-      (function's or macro's) name.
+Refactoring Context: Cursor has to be on the name of the function
+      or macro.
 
-Input  parameters: Old  and new  positions of  the parameter
+Input parameters: Old  and new  positions of the parameter
       (for example: '1' and '2').
 
 Mechanics: Inspect all references to the method and move the
@@ -178,24 +171,23 @@ Mechanics: Inspect all references to the method and move the
 
 
 ----------------------------------------------------------
-* Extract Method:
 * Extract Function:
 * Extract Macro:
 ----------------------------------------------------------
 
-Description: Extract region into new method (function or macro).
+Description: Extract region into new function or macro.
 Example:
 
 	Before refactoring:
 
-	    public static void main(String[] args) {
-		   int i,n,x,y,t;
-		   n = Integer.parseInt(args[0]);
-		   x=0; y=1;
-		   for(i=0; i<n; i++) {
-			    t=x+y; x=y; y=t;
-		   }
-		   System.out.println(\"\" + n + \"-th fib == \" + x);
+	    int main(int argc, char *argv[]) {
+		int i,n,x,y,t;
+		n = atoi(args[1]);
+		x=0; y=1;
+		for (int i=0; i<n; i++) {
+		    t=x+y; x=y; y=t;
+		}
+		System.out.println(\"\" + n + \"-th fib == \" + x);
 	    }
 
 	After refactoring:

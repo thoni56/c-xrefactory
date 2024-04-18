@@ -1811,9 +1811,8 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
     }
     // do not compute subclasses of related for class tree, it is too slow
     // and useless in this context
-    if (command != OLO_CLASS_TREE) {
-        computeSubClassOfRelatedItemsOOBit(menu, command);
-    }
+    computeSubClassOfRelatedItemsOOBit(menu, command);
+
     if (command == OLO_MAYBE_THIS
         || command == OLO_NOT_FQT_REFS
         || command == OLO_NOT_FQT_REFS_IN_CLASS

@@ -250,7 +250,7 @@ static void printClassHierarchyLineForMenu(SymbolsMenu *menu, FILE *file, int fi
 
     FileItem *fileItem = getFileItem(fileNumber);
     if (menu != NULL) {
-        if (menu->references.vApplClass == menu->references.vFunClass && options.serverOperation!=OLO_CLASS_TREE) {
+        if (menu->references.vApplClass == menu->references.vFunClass) {
             if (options.xref2)
                 fprintf(file, " %s=1", PPCA_DEFINITION);
             else

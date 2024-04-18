@@ -141,12 +141,12 @@
   (if (eq c-xref-key-binding 'local)
       (progn
 	    (if (load "cc-mode" t)
-	        (progn
-	          (if (boundp 'c-mode-map)
-		          (c-xref-add-key-bindings-to-local-keymap c-mode-map)
-		        (message "[C-xrefactory] c-mode-map not found, skipping keymap setting")
-		        )
-	          )
+		(progn
+		  (if (boundp 'c-mode-map)
+			  (c-xref-add-key-bindings-to-local-keymap c-mode-map)
+			(message "[C-xrefactory] c-mode-map not found, skipping keymap setting")
+			)
+		  )
 	      (message "[C-xrefactory] cc-mode file not found, cannot setup local key binding, making it global.")
 	      (c-xref-add-bindings-to-keymap global-map)
 	      )
@@ -282,7 +282,7 @@
 (if (not (boundp 'c-xref-options-file))
     (if (eq c-xref-platform 'windows)
 	    (if (getenv "HOME")
-	        (setq c-xref-options-file (concat (getenv "HOME") "/_c-xrefrc"))
+		(setq c-xref-options-file (concat (getenv "HOME") "/_c-xrefrc"))
 	      (setq c-xref-options-file "c:/_c-xrefrc")
 	      )
       )
@@ -294,14 +294,14 @@
 (if (commandp 'customize)
     (progn
       (defgroup c-xrefactory nil
-        "
+	"
 
 Here you can set variables controlling the behaviors of C-xrefactory
 that are not project-dependent, and its general appearance.
 
 "
 	    :group 'programming
-        )
+	)
 
 
 ;;;;;;;;;;;;;;;; c-xrefactory-general ;;;;;;;;;
@@ -314,7 +314,7 @@ C-xrefactory functions.
 
 "
 	    :group 'c-xrefactory
-        )
+	)
 
       (defcustom c-xref-options-file c-xref-options-file
 	    "This option determines where the file describing C-xrefactory project-specific options (projects and their setting) is stored. You will need to kill (and restart) the c-xref process if changing this option."
@@ -353,7 +353,7 @@ Here you can set variables controlling the Emacs IDE interface.
 
 "
 	    :group 'c-xrefactory
-        )
+	)
 
       (defcustom c-xref-ide-last-compile-command 'compiledir
 	    "Can be either 'compilefile, 'compiledir or 'compileproject. This variable indicates which compilations will be invoked by 'Emacs IDE -> Last Compile' command. You can preset it to your preferred default value."
@@ -381,7 +381,7 @@ completions.
 
 "
 	    :group 'c-xrefactory
-        )
+	)
 
       (defcustom c-xref-completion-case-sensitive nil
 	    "If on, then completion is case-sensitive and does not suggest completions differing in cases from the prefix. Keeping this option off is a good idea for lazy users who don't type case correctly."
@@ -434,7 +434,7 @@ C-xrefactory's source browsing functions.
 
 "
 	    :group 'c-xrefactory
-        )
+	)
 
       (defcustom c-xref-browser-lists-source-lines t
 	    "If on, the C-xrefactory browser will display one line of source code for each reference in the browser window. This may slow down the display when there are large numbers of references."
@@ -629,15 +629,15 @@ faces and highlighting in buffers created by C-xrefactory.
       (defvar c-xref-project-menu (make-sparse-keymap "Project"))
       (fset 'c-xref-project-menu (symbol-value 'c-xref-project-menu))
       (define-key c-xref-project-menu [c-xref-prj-edit] '("Edit Options" .
-							                              c-xref-project-edit-options))
+										      c-xref-project-edit-options))
       (define-key c-xref-project-menu [c-xref-prj-show-active] '("Show Active" .
-								                                 c-xref-project-active))
+												 c-xref-project-active))
       (define-key c-xref-project-menu [c-xref-prj-set-active] '("Set Active" .
-								                                c-xref-project-set-active))
+												c-xref-project-set-active))
       (define-key c-xref-project-menu [c-xref-prj-del] '("Delete" .
-							                             c-xref-project-delete))
+										     c-xref-project-delete))
       (define-key c-xref-project-menu [c-xref-prj-new] '("New" .
-							                             c-xref-project-new))
+										     c-xref-project-new))
 
       (defvar c-xref-unused-menu (make-sparse-keymap "Unused Symbols Detection"))
       (fset 'c-xref-unused-menu (symbol-value 'c-xref-unused-menu))
@@ -693,7 +693,7 @@ faces and highlighting in buffers created by C-xrefactory.
 	      ["(Last) Compile" c-xref-ide-compile t]
 	      "-----"
 	      ["Previous Error (or Alternative Reference)" c-xref-alternative-previous-reference t]
-	      ["Next Error (or Alternative Reference)"		c-xref-alternative-next-reference t]
+	      ["Next Error (or Alternative Reference)"          c-xref-alternative-next-reference t]
 	      ;;["Next Error" c-xref-ide-next-error t]
 	      ;;["Previous Error" c-xref-ide-previous-error t]
 	      "-----"
@@ -712,7 +712,7 @@ faces and highlighting in buffers created by C-xrefactory.
       (defvar c-xref-xemacs-lm-menu
 	    '("Local Motion"
 	      ["Previous Usage of This Symbol (or Alternatives)" c-xref-alternative-previous-reference t]
-	      ["Next Usage of This Symbol (or Alternatives)"		c-xref-alternative-next-reference t]
+	      ["Next Usage of This Symbol (or Alternatives)"            c-xref-alternative-next-reference t]
 	      ) "C-xref local motion menu for XEmacs"
 	    )
 
@@ -739,15 +739,15 @@ faces and highlighting in buffers created by C-xrefactory.
 	    '("Project"
 	      ["New"                c-xref-project-new t]
 	      ["Delete"         c-xref-project-delete t]
-	      ["Set Active"		c-xref-project-set-active t]
-	      ["Show Active"		c-xref-project-active t]
-	      ["Edit Options"		c-xref-project-edit-options t]
+	      ["Set Active"             c-xref-project-set-active t]
+	      ["Show Active"            c-xref-project-active t]
+	      ["Edit Options"           c-xref-project-edit-options t]
 	      ) "C-xref Project menu for XEmacs"
 	    )
 
       (defvar c-xref-dead-code-menu
 	    '("Unused Symbols Detection"
-	      ["Browse File Unused Symbols"	  c-xref-push-this-file-unused-symbols t]
+	      ["Browse File Unused Symbols"       c-xref-push-this-file-unused-symbols t]
 	      ["Browse Project Unused Symbols"      c-xref-push-global-unused-symbols t]
 	      ) "C-xref Unused Symbols Detection"
 	    )
@@ -763,15 +763,15 @@ faces and highlighting in buffers created by C-xrefactory.
 
       (defvar c-xref-xemacs-menu
 	    '("C-xref"
-	      ["Complete identifier"			c-xref-completion t]
+	      ["Complete identifier"                    c-xref-completion t]
 	      "------"
 	      ["Create C-xref Tags"             c-xref-create-refs t]
 	      ["Full Update of Tags"            c-xref-update-refs t]
 	      ["Fast Update of Tags"            c-xref-fast-update-refs t]
 	      "--"
 	      ;; browsing menus will come here
-	      ["Search Definition in Tags"	c-xref-search-definition-in-tag-file t]
-	      ["Search Symbol"		c-xref-search-in-tag-file t]
+	      ["Search Definition in Tags"      c-xref-search-definition-in-tag-file t]
+	      ["Search Symbol"          c-xref-search-in-tag-file t]
 	      "-----"
 	      ["Refactor"                       c-xref-refactor t]
 	      ;;   ["Set Target for Next Move"    c-xref-set-moving-target-position t]
@@ -790,20 +790,20 @@ faces and highlighting in buffers created by C-xrefactory.
 	  (defun c-xref-read-key-sequence (prompt) (read-key-sequence nil prompt))
 	  (if window-system
 	      (progn
-	        (set-buffer (get-buffer-create " *dummytogetglobalmap*"))
-	        (add-submenu nil c-xref-xemacs-menu)
-	        (add-submenu '("C-xref") c-xref-xemacs-project-menu "Complete identifier")
-	        (add-submenu '("C-xref") c-xref-xemacs-ide-menu     "Complete identifier")
-	        (add-submenu '("C-xref") c-xref-xemacs-lm-menu      "Search Definition in Tags")
-	        (add-submenu '("C-xref") c-xref-xemacs-sb-menu      "Search Definition in Tags")
-	        (add-submenu '("C-xref") c-xref-dead-code-menu      "Search Definition in Tags")
-	        (add-submenu '("C-xref") c-xref-xemacs-misc-menu nil)
-	        (if (commandp 'customize)
-		        (add-menu-button '("C-xref")
-				                 ["Options" c-xref-global-options t]
-				                 ))
-	        (kill-buffer " *dummytogetglobalmap*")
-	        )
+		(set-buffer (get-buffer-create " *dummytogetglobalmap*"))
+		(add-submenu nil c-xref-xemacs-menu)
+		(add-submenu '("C-xref") c-xref-xemacs-project-menu "Complete identifier")
+		(add-submenu '("C-xref") c-xref-xemacs-ide-menu     "Complete identifier")
+		(add-submenu '("C-xref") c-xref-xemacs-lm-menu      "Search Definition in Tags")
+		(add-submenu '("C-xref") c-xref-xemacs-sb-menu      "Search Definition in Tags")
+		(add-submenu '("C-xref") c-xref-dead-code-menu      "Search Definition in Tags")
+		(add-submenu '("C-xref") c-xref-xemacs-misc-menu nil)
+		(if (commandp 'customize)
+			(add-menu-button '("C-xref")
+						 ["Options" c-xref-global-options t]
+						 ))
+		(kill-buffer " *dummytogetglobalmap*")
+		)
 	    )
 	  )
   ;; Emacs
@@ -829,8 +829,8 @@ faces and highlighting in buffers created by C-xrefactory.
 
   ;; now put new menu item for this function
   (define-key menu
-              (vector (make-symbol (format "c-xref-custom-menu-sym-%d" c-xref-custom-menu-symbol-count)))
-              (cons text (intern (format "c-xref-custom-menu-fun-%d" c-xref-custom-menu-symbol-count))))
+	      (vector (make-symbol (format "c-xref-custom-menu-sym-%d" c-xref-custom-menu-symbol-count)))
+	      (cons text (intern (format "c-xref-custom-menu-fun-%d" c-xref-custom-menu-symbol-count))))
 
   ;; increment counter
   (setq c-xref-custom-menu-symbol-count (1+ c-xref-custom-menu-symbol-count))
@@ -856,15 +856,15 @@ your .c-xrefrc file.
       (progn
 	    (add-submenu '("C-xref") '("Custom") "------")
 	    (c-xref-xemacs-add-menu-item '("C-xref" "Custom") text expression
-				                     "XEmacs IDE")
+						     "XEmacs IDE")
 	    )
     (if (not (boundp 'c-xref-custom-menu))
 	    (progn
 	      (defvar c-xref-custom-menu (make-sparse-keymap "C-xref Custom Menu"))
 	      (fset 'c-xref-custom-menu (symbol-value 'c-xref-custom-menu))
 	      (define-key-after c-xref-menu [c-xref-custom-menu]
-	        (cons "Custom" c-xref-custom-menu)
-	        (car (nth 3 c-xref-menu)))
+		(cons "Custom" c-xref-custom-menu)
+		(car (nth 3 c-xref-menu)))
 	      ))
     (c-xref-emacs-add-menu-item c-xref-custom-menu text expression)
     )
@@ -873,6 +873,8 @@ your .c-xrefrc file.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  autoloads ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar c-xref-default-documentation-string "Documentation not yet available, please invoke an C-xrefactory function first.")
 
+
+(autoload 'c-xref-refactoring-documentation "c-xrefdoc" "Not documented" t)
 
 (autoload 'c-xref-global-options "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-project-new "c-xref" c-xref-default-documentation-string t)
@@ -951,5 +953,5 @@ your .c-xrefrc file.
 ;;(c-xref-add-custom-menu-item
 ;; "Gen HTML Documentation"
 ;; '(c-xref-call-non-interactive-process c-xref-current-project "-html" 'assynchronized
-;;									 'newwin "Generating HTML. ")
+;;                                                                       'newwin "Generating HTML. ")
 ;;)

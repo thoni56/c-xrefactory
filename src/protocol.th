@@ -23,7 +23,6 @@ PROTOCOL_ITEM(String, PPC_REFACTORING_PASTE_BLOCK,      "paste-block")
 PROTOCOL_ITEM(String, PPC_ASK_CONFIRMATION,             "ask-confirmation")
 PROTOCOL_ITEM(String, PPC_ADD_TO_IMPORTS_DIALOG,        "add-to-imports-dialog")
 PROTOCOL_ITEM(String, PPC_EXTRACTION_DIALOG,            "extraction-dialog")
-PROTOCOL_ITEM(String, PPC_DISPLAY_CLASS_TREE,           "display-class-tree")
 
 PROTOCOL_ITEM(String, PPC_DISPLAY_RESOLUTION,           "display-resolution")
 PROTOCOL_ITEM(String, PPC_DISPLAY_OR_UPDATE_BROWSER,    "display-or-update-browser")
