@@ -195,13 +195,6 @@
 ;; ----------------------------------------------------------------
 ;; TODO Java-related stuff that needs to go away !!!
 
-(if (not (boundp 'c-xref-browse-url-directly))
-    (if (eq c-xref-platform 'windows)
-	(defvar c-xref-browse-url-directly nil)
-      (defvar c-xref-browse-url-directly t)
-      )
-  )
-
 ;; autoredirect is turn off on windows because of some problems
 (if (not (boundp 'c-xref-browse-url-manual-redirect))
     (if (eq c-xref-platform 'windows)
@@ -556,11 +549,6 @@ by C-xrefactory.
       (defcustom c-xref-browse-url-focus-delay 0
 	"This variable specifies for how long the web browser window displaying JavaDoc will be raised before Emacs regains the focus. The value is a floating point number of seconds. If it is less than zero, then Emacs will not regain the focus."
 	:type '(number)
-	:group 'c-xrefactory-extern-html-browser)
-
-      (defcustom c-xref-browse-url-directly c-xref-browse-url-directly
-	"If off, then instead of browsing a URL directly, C-xrefactory will browse a temporary file containing an auto-redirection to browsed URL. This option is used to cope with a problem with browse-url under Windows."
-	:type '(boolean)
 	:group 'c-xrefactory-extern-html-browser)
 
       (defcustom c-xref-browse-url-manual-redirect c-xref-browse-url-manual-redirect

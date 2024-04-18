@@ -871,17 +871,6 @@ A-Za-z0-9.\t-- incremental search, insert character
     )
   )
 
-(defun c-xref-html-browsing-options ()
-  (let ((res))
-    (setq res "")
-    (if c-xref-browse-url-directly
-	    (setq res " -urldirect")
-      (if c-xref-browse-url-manual-redirect
-	      (setq res " -urlmanualredirect")
-	    ))
-    res
-    ))
-
 (defun c-xref-cut-too-long-questions (qq offset space)
   (let ((ww) (ll) (res))
     (setq res qq)
@@ -5520,7 +5509,7 @@ browser and refactorer) are updated.  The behavior of the
     (setq lineno (count-lines 1 (+ (point) 1)))
     (setq cw (selected-window))
     (c-xref-send-data-to-process-and-dispatch
-     (format "-olcxcgoto%d %s" lineno (c-xref-html-browsing-options))
+     (format "-olcxcgoto%d %s" lineno)
      c-xref-completions-dispatch-data
      nil)
     (sit-for 1)
@@ -5884,7 +5873,7 @@ definition.
     (c-xref-before-push-optional-update)
     (setq oldwins (c-xref-is-browser-window-displayed))
     (c-xref-call-process-with-basic-file-data-all-saves
-     (concat "-olcxpush" (c-xref-html-browsing-options)))
+     (concat "-olcxpush"))
     (c-xref-update-browser-if-displayed oldwins)
     ))
 
@@ -6170,9 +6159,7 @@ This function also moves to the current reference.
   (let ((sw) (dispatch-data))
     (setq dispatch-data c-xref-this-buffer-dispatch-data)
     (setq sw (selected-window))
-    (c-xref-call-task-on-line
-     (concat (c-xref-html-browsing-options) " " option)
-     offset)
+    (c-xref-call-task-on-line option offset)
     (c-xref-select-dispach-data-caller-window dispatch-data)
     (sit-for .5)
     (select-window sw)
@@ -6466,9 +6453,8 @@ given string(s).
     (setq dispatch-data c-xref-this-buffer-dispatch-data)
     (setq sw (selected-window))
     (setq cline (count-lines (point-min) (if (eobp) (point) (+ (point) 1))))
-    ;; put there html browsing options, it is usefull here
     (c-xref-send-data-to-process-and-dispatch
-     (format "%s%d %s" opt (+ cline offset) (c-xref-html-browsing-options))
+     (format "%s%d %s" opt (+ cline offset))
      dispatch-data
      nil)
     (select-window sw)
