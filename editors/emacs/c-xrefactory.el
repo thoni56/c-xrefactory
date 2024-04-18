@@ -195,11 +195,6 @@
 ;; ----------------------------------------------------------------
 ;; TODO Java-related stuff that needs to go away !!!
 
-;; by default c-xref asks before starting to browse a javadoc URL
-(if (not (boundp 'c-xref-ask-before-browse-javadoc))
-    (defvar c-xref-ask-before-browse-javadoc t)
-  )
-
 (if (not (boundp 'c-xref-browse-url-directly))
     (if (eq c-xref-platform 'windows)
 	(defvar c-xref-browse-url-directly nil)
@@ -588,11 +583,6 @@ by C-xrefactory.
 "
 	:group 'c-xrefactory
 )
-
-      (defcustom c-xref-ask-before-browse-javadoc t
-	"If on, C-xrefactory asks for confirmation before launching the JavaDoc browser when trying to move to a definition of symbol without available source code."
-	:type '(boolean)
-	:group 'c-xrefactory-extern-html-browser)
 
       (defcustom c-xref-browse-url-focus-delay 0
 	"This variable specifies for how long the web browser window displaying JavaDoc will be raised before Emacs regains the focus. The value is a floating point number of seconds. If it is less than zero, then Emacs will not regain the focus."

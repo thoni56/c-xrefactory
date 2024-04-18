@@ -742,7 +742,7 @@ interrupted by C-g. If there are such files, delete them.
 "Special hotkeys available:
 
 \\[c-xref-interactive-completion-select] \t-- select completion
-\\[c-xref-interactive-completion-goto] \t-- inspect symbol's definition or browse JavaDoc
+\\[c-xref-interactive-completion-goto] \t-- inspect symbol's definition
 \\[c-xref-interactive-completion-escape] \t-- close completions and return to completion position
 \\[c-xref-interactive-completion-close] \t-- close completions
 \\[c-xref-pop-and-return] \t-- previous completions
@@ -899,16 +899,6 @@ A-Za-z0-9.\t-- incremental search, insert character
 (defun c-xref-browse-url (url)
   (let ((cc) (ff) (sw) (confirm))
     (setq confirm 'answer-yes)
-    (if c-xref-ask-before-browse-javadoc
-	(progn
-	  (setq confirm (c-xref-get-single-yes-no-event t (c-xref-cut-too-long-questions (format "browse URL: %s " url) 11 10)))
-	  (if (eq confirm 'answer-all)
-	      (progn
-		(setq c-xref-ask-before-browse-javadoc nil)
-		(setq confirm 'answer-yes)
-		))
-	  (message "")
-	  ))
     (if (eq confirm 'answer-yes)
 	(progn
 	  (setq ff (selected-frame))
