@@ -5800,9 +5800,6 @@ separate window.
     (if c-xref-java-completion-linkage-check
 	(setq opt (format "%s -olchecklinkage" opt))
       )
-    (if c-xref-java-completion-access-check
-	(setq opt (format "%s -olcheckaccess" opt))
-      )
     (if (> c-xref-java-fqt-name-completion-level 0)
 	(setq opt (format "%s -olfqtcompletionslevel=%d" opt c-xref-java-fqt-name-completion-level))
       )

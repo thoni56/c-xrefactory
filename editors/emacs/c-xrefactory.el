@@ -217,11 +217,6 @@
     (defvar c-xref-allow-multibyte t)
   )
 
-;; by default  the accessibility and linkage checks  are not performed
-;; on proposed completions
-(if (not (boundp 'c-xref-java-completion-access-check))
-    (defvar c-xref-java-completion-access-check nil)
-  )
 (if (not (boundp 'c-xref-java-completion-linkage-check))
     (defvar c-xref-java-completion-linkage-check nil)
   )
@@ -440,11 +435,6 @@ completions.
 
       (defcustom c-xref-completion-truncate-lines nil
 	"If on, C-xrefactory will truncate lines in buffers containing completions. Also default formatting of completions will be turned off, so exactly one completion will appear per line. Truncated parts of lines can be viewed by scrolling left and right (Shift-Left and Shift-Right)."
-	:type '(boolean)
-	:group 'c-xrefactory-completion)
-
-      (defcustom c-xref-java-completion-access-check nil
-	"If on, then when completing a Java attribute, C-xrefactory will suggest only accessible symbols checking protected/public/private attributes."
 	:type '(boolean)
 	:group 'c-xrefactory-completion)
 
