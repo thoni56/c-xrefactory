@@ -4576,118 +4576,79 @@ part belonging to this project.
     (setq refs (c-xref-remove-dangerous-fname-chars refs))
     (setq refs (c-xref-read-path-from-minibuffer
 		        "Directory to store tag files in:  " refs))
-    (if (or (equal planguage "j") (equal planguage "J")
-	        (equal planguage "b") (equal planguage "B"))
-	    (progn
-	      ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Java project specifics
-	      (setq javahome (c-xref-compute-simple-information "-olcxgetjavahome -no-errors"))
-	      (setq javahome (c-xref-read-path-from-minibuffer
-			              "Java home directory (containing jre, lib, bin...): " javahome))
-	      (if (not (equal javahome ""))
-	          (setq javahome (c-xref-backslashify-name (concat (c-xref-remove-pending-slash javahome) "/")))
-	        )
 
-	      (setq classpath (getenv "CLASSPATH"))
-	      (if classpath
-	          (progn
-		        (setq system-class-path (read-from-minibuffer
-			                             "Your system CLASSPATH is set, use it for this project [yn]? " "n"))
-		        (if (or (equal system-class-path "n") (equal system-class-path "N"))
-		            (setq classpath (c-xref-read-path-from-minibuffer "Enter classpath for this project: " (c-xref-infer-classpath-proposal)))
-		          (setq classpath "${CLASSPATH}")
-		          ))
-	        (setq classpath (c-xref-read-path-from-minibuffer "Enter classpath for this project: " (c-xref-infer-classpath-proposal)))
-	        )
-	      (setq classpath (c-xref-remove-pending-slash classpath))
-	      (setq spcp (read-from-minibuffer
-		              "Are your source files stored in the same directories as the classes [yn]? " "y"))
-	      (if (or (equal spcp "n") (equal spcp "N"))
-	          (progn
-		        (setq sourcepath (c-xref-remove-pending-slash (c-xref-read-path-from-minibuffer "Enter sourcepath for this project: " pfiles)))
-		        (setq classdir (c-xref-remove-pending-slash (c-xref-read-path-from-minibuffer "Directory to generate .class files (-d javac option): " classpath)))
+    (setq ifiles "")
+    (setq ifmess "Do you use some ")
+    (if (eq c-xref-platform 'windows)
+	    (progn
+	      (setq iff (c-xref-read-path-from-minibuffer "Directory containing standard headers (stdio.h, stdlib.h, ...): " inidir))
+	      (setq ifiles (format "%s\n  -I %s" ifiles
+				               (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
+	      (setq ifmess "Add any ")
+	      ))
+    (setq ifloop t)
+    (while ifloop
+	  (progn
+	    (setq if (read-from-minibuffer
+		          (concat ifmess "nonstandard include directory (-I option) [yn]? ") "n"))
+	    (if (or (equal if "y") (equal if "Y"))
+	        (progn
+		      (setq iff (c-xref-read-path-from-minibuffer
+			             "Additional include directory:  " inidir))
+		      (setq ifiles (format "%s\n  -I %s" ifiles
+				                   (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
+		      )
+	      (setq ifloop nil)
+	      )
+	    (setq ifmess "Add another ")
+	    ))
+    (if (not (equal ifiles ""))
+	    (setq ifiles (concat "  //  include directories" ifiles))
+	  )
+    ;;
+    (setq exactp (read-from-minibuffer
+		          "Is this a huge project with numerous name conflicts [yn]? " "n"))
+    ;;
+    (setq rest "")
+    (setq c-xref-foo-macros-counter 1)
+    (setq aaa (read-from-minibuffer
+		       "Do you compile sources with command line macro definitions (-D option) [yn]? " "n"))
+    (if (or (equal aaa "y") (equal aaa "Y"))
+	    (progn
+	      (setq aaa (read-from-minibuffer
+		             "Do you compile sources several times with different macro settings [yn]? " "n"))
+	      (if (or (equal aaa "y") (equal aaa "Y"))
+		      (progn
+		        (setq pasn (string-to-number
+			                (read-from-minibuffer
+			                 "How many compilations with different initial macro settings: " "2")))
+		        (setq aaa (read-from-minibuffer
+			               "Are there macros common to all compilations [yn]? " "n"))
+		        (if (or (equal aaa "y") (equal aaa "Y"))
+		            (progn
+			          (setq rest (concat rest
+					                     (c-xref-collect-macros-for-new-project ""
+					                                                            "A common macro to be defined in all compilations: "
+					                                                            "Add another common macro definition")))
+			          ))
+		        (setq pasi 1)
+		        (while (<= pasi pasn)
+		          (progn
+		            (setq rest (format "%s\n  -pass%d" rest pasi))
+		            (setq rest (concat rest
+					                   (c-xref-collect-macros-for-new-project "  "
+					                                                          (format "A macro specific to compilation #%d: " pasi)
+					                                                          (format "Add another macro definition for compilation #%d"pasi))))
+		            (setq pasi (+ pasi 1))
+		            ))
 		        )
-	        (setq sourcepath "${cp}")
-	        )
-	      (setq ljd (read-from-minibuffer
-		             "Do you have a local copy of JavaDoc documentation on your computer [yn]? " "y"))
-	      (if (or (equal ljd "n") (equal ljd "N"))
-	          (setq javadocpath nil)
-	        (setq javadocpath (c-xref-read-path-from-minibuffer "Enter javadocpath: " (concat javahome (c-xref-backslashify-name "docs/api"))))
+	        ;; a single pass macros
+	        (setq rest (concat rest
+				               (c-xref-collect-macros-for-new-project ""
+				                                                      "A macro defined during compilation: "
+				                                                      "Add another macro definition")))
 	        )
 	      )
-      ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; C project specifics
-      (setq ifiles "")
-      (setq ifmess "Do you use some ")
-      (if (eq c-xref-platform 'windows)
-	      (progn
-	        (setq iff (c-xref-read-path-from-minibuffer "Directory containing standard headers (stdio.h, stdlib.h, ...): " inidir))
-	        (setq ifiles (format "%s\n  -I %s" ifiles
-				                 (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
-	        (setq ifmess "Add any ")
-	        ))
-      (setq ifloop t)
-      (while ifloop
-	    (progn
-	      (setq if (read-from-minibuffer
-		            (concat ifmess "nonstandard include directory (-I option) [yn]? ") "n"))
-	      (if (or (equal if "y") (equal if "Y"))
-	          (progn
-		        (setq iff (c-xref-read-path-from-minibuffer
-			               "Additional include directory:  " inidir))
-		        (setq ifiles (format "%s\n  -I %s" ifiles
-				                     (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
-		        )
-	        (setq ifloop nil)
-	        )
-	      (setq ifmess "Add another ")
-	      ))
-      (if (not (equal ifiles ""))
-	      (setq ifiles (concat "  //  include directories" ifiles))
-	    )
-      ;;
-      (setq exactp (read-from-minibuffer
-		            "Is this a huge project with numerous name conflicts [yn]? " "n"))
-      ;;
-      (setq rest "")
-      (setq c-xref-foo-macros-counter 1)
-      (setq aaa (read-from-minibuffer
-		         "Do you compile sources with command line macro definitions (-D option) [yn]? " "n"))
-      (if (or (equal aaa "y") (equal aaa "Y"))
-	      (progn
-	        (setq aaa (read-from-minibuffer
-		               "Do you compile sources several times with different macro settings [yn]? " "n"))
-	        (if (or (equal aaa "y") (equal aaa "Y"))
-		        (progn
-		          (setq pasn (string-to-number
-			                  (read-from-minibuffer
-			                   "How many compilations with different initial macro settings: " "2")))
-		          (setq aaa (read-from-minibuffer
-			                 "Are there macros common to all compilations [yn]? " "n"))
-		          (if (or (equal aaa "y") (equal aaa "Y"))
-		              (progn
-			            (setq rest (concat rest
-					                       (c-xref-collect-macros-for-new-project ""
-					                                                              "A common macro to be defined in all compilations: "
-					                                                              "Add another common macro definition")))
-			            ))
-		          (setq pasi 1)
-		          (while (<= pasi pasn)
-		            (progn
-		              (setq rest (format "%s\n  -pass%d" rest pasi))
-		              (setq rest (concat rest
-					                     (c-xref-collect-macros-for-new-project "  "
-					                                                            (format "A macro specific to compilation #%d: " pasi)
-					                                                            (format "Add another macro definition for compilation #%d"pasi))))
-		              (setq pasi (+ pasi 1))
-		              ))
-		          )
-	          ;; a single pass macros
-	          (setq rest (concat rest
-				                 (c-xref-collect-macros-for-new-project ""
-				                                                        "A macro defined during compilation: "
-				                                                        "Add another macro definition")))
-	          )
-	        ))
       (if (not (equal rest ""))
 	      (setq rest (concat "  //  pre-processor macros and passes specification"
 			                 rest))
@@ -7945,7 +7906,7 @@ each important refactoring.
   (let ((fname) (cname) (buff) (cb))
     (setq cname (c-xref-get-identifier-on-point))
     (setq fname (c-xref-read-path-from-minibuffer "Enter new file name: "
-						                           (concat default-directory cname ".java")))
+						                          (concat default-directory cname ".java")))
     (setq cb (current-buffer))
     (setq buff (get-file-buffer fname))
     (if buff
