@@ -885,28 +885,6 @@ A-Za-z0-9.\t-- incremental search, insert character
     res
     ))
 
-(defun c-xref-browse-url (url)
-  (let ((cc) (ff) (sw) (confirm))
-    (setq confirm 'answer-yes)
-    (if (eq confirm 'answer-yes)
-	    (progn
-	      (setq ff (selected-frame))
-	      (setq sw (selected-window))
-	      (c-xref-soft-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data)
-	      (browse-url url)
-	      ;; try to get focus as soon as possible
-	      (if (> c-xref-browse-url-focus-delay 0)
-	          (progn
-		        ;; first sleep and discard windows generated events
-		        (sleep-for .05)
-		        (discard-input)
-		        (c-xref-sit-for-no-redisplay c-xref-browse-url-focus-delay)
-		        (select-window sw)
-		        (raise-frame ff)
-		        ))
-	      ))
-    ))
-
 (defun c-xref-upcase-first-letter (name)
   (let ((res))
     (setq res name)
@@ -2902,17 +2880,6 @@ No.
     i
     ))
 
-(defun c-xref-server-dispatch-browse-url (ss i len dispatch-data)
-  (let ((tlen) (url))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq url (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_BROWSE_URL)
-    (c-xref-browse-url url)
-    i
-    ))
-
 (defun c-xref-server-dispatch-fqt-complete (import cc dispatch-data)
   (let ((iline-val) (iline))
     (if import
@@ -3759,9 +3726,6 @@ Special hotkeys available:
        (
 	    (equal c-xref-server-ctag c-xref_PPC_GOTO)
 	    (setq i (c-xref-server-dispatch-goto ss i len dispatch-data)))
-       (
-	    (equal c-xref-server-ctag c-xref_PPC_BROWSE_URL)
-	    (setq i (c-xref-server-dispatch-browse-url ss i len dispatch-data)))
        (
 	    (equal c-xref-server-ctag c-xref_PPC_AVAILABLE_REFACTORINGS)
 	    (setq i (c-xref-server-dispatch-available-refactorings ss i len dispatch-data)))
