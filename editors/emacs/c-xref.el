@@ -4259,8 +4259,8 @@ will be deleted.
 (defun c-xref-append-new-project-section (pname planguage pcomments
 			                                    pfiles classpath
 			                                    sourcepath
-			                                    javadocpath classdir
-			                                    apfiles javahome ifiles
+			                                    classdir
+			                                    apfiles ifiles
 			                                    rest refs exactp)
   (let ((comment) (dlen) (cldopt) (tdq))
     (setq comment (or (equal pcomments "y") (equal pcomments "Y")))
@@ -4446,9 +4446,9 @@ part belonging to this project.
   (interactive "")
   (let ((pname) (checked) (tname) (breakcheck) (planguage) (pcomments)
 	    (pact) (pedit) (sfiles) (pfiles) (system-class-path) (refs)
-	    (classpath) (sourcepath) (classdir nil) (spcp) (ljd) (javadocpath)
+	    (classpath) (sourcepath) (classdir nil) (spcp) (ljd)
 	    (inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat) (jdkcp nil)
-	    (javahome) (ptdef) (if) (ifiles "") (ifloop) (iff) (ifmess) (rest "")
+	    (ptdef) (if) (ifiles "") (ifloop) (iff) (ifmess) (rest "")
 	    (aaa) (rrr) (pasi) (pasn) (hom) (exactp))
     (c-xref-soft-select-dispach-data-caller-window c-xref-this-buffer-dispatch-data)
     ;; no entry point initialisations, it calls get-active-project
@@ -4612,8 +4612,8 @@ part belonging to this project.
     (find-file c-xref-options-file)
     (c-xref-append-new-project-section pname planguage "y" ;; pcomments
 				                       pfiles
-				                       classpath sourcepath javadocpath
-				                       classdir apfiles javahome ifiles
+				                       classpath sourcepath
+				                       classdir apfiles ifiles
 				                       rest refs exactp)
     ;;
     (save-buffer)
