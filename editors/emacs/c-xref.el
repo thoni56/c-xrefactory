@@ -104,7 +104,6 @@
 (defvar c-xref-server-answer-buffer "*c-xref-server-answer*")
 (defvar c-xref-completions-buffer "*completions*")
 (defvar c-xref-tag-results-buffer "*c-xref-search-results*")
-(defvar c-xref-class-tree-buffer " *class-tree*")
 (defvar c-xref-project-list-buffer " *project-list*")
 (defvar c-xref-extraction-buffer " *code-extraction*")
 
@@ -3159,7 +3158,7 @@ Special hotkeys available:
 	      ;; exchange caller window in dispatch-data
 	      (c-xref-reset-cdr 'caller-window sw nw dispatch-data)
 	      (c-xref-reset-all-windows-caller-window sw nw)
-	      (c-xref-set-window-width c-xref-class-tree-window-width)
+	      (c-xref-set-window-width c-xref-window-width)
 	      (setq res sw)
 	      )
       (setq nw (c-xref-display-and-set-new-dialog-window buff split-horizontal t))

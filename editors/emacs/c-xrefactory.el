@@ -266,7 +266,7 @@
 
 (defvar c-xref-browser-position-left-or-top nil)
 
-(defvar c-xref-class-tree-window-width 30)
+(defvar c-xref-window-width 30)
 
 (defvar c-xref-symbol-selection-window-width 30)
 
