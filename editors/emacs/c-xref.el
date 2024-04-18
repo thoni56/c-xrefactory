@@ -4351,7 +4351,7 @@ will be deleted.
     ))
 
 
-(defun c-xref-java-path-completionfun (cstr filter type)
+(defun c-xref-path-completionfun (cstr filter type)
   (let ((res) (cc) (fname) (dir) (sep) (str) (prefix))
     (setq str cstr)
     (setq sep (string-match (format "\\%c" c-xref-path-separator) str))
@@ -4380,7 +4380,7 @@ will be deleted.
 
 (defun c-xref-read-path-from-minibuffer (prompt default)
   (let ((res))
-    (setq res (completing-read prompt 'c-xref-java-path-completionfun nil nil default))
+    (setq res (completing-read prompt 'c-xref-path-completionfun nil nil default))
     res
     ))
 
