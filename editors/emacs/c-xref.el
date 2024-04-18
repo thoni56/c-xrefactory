@@ -4378,7 +4378,7 @@ will be deleted.
     res
     ))
 
-(defun c-xref-read-jpath-from-minibuffer (prompt default)
+(defun c-xref-read-path-from-minibuffer (prompt default)
   (let ((res))
     (setq res (completing-read prompt 'c-xref-java-path-completionfun nil nil default))
     res
@@ -4511,19 +4511,19 @@ part belonging to this project.
     ;;
     (setq pname (c-xref-backslashify-name (c-xref-file-directory-name (buffer-file-name))))
     (setq sfiles pname)
-    (setq pname (c-xref-read-jpath-from-minibuffer "Enter new project name: " pname))
+    (setq pname (c-xref-read-path-from-minibuffer "Enter new project name: " pname))
     (find-file c-xref-options-file)
     (setq checked nil)
     (while (not checked)
       (setq pname (c-xref-remove-pending-slash pname))
       (goto-char (point-min))
       (if (search-forward (concat "[" pname "]") nil t)
-	      (setq pname (c-xref-read-jpath-from-minibuffer
+	      (setq pname (c-xref-read-path-from-minibuffer
 		               "** Name already used, new name: " pname))
 	    (goto-char (point-min))
 	    (if (or (search-forward (concat "[" pname "/") nil t)
 		        (search-forward (concat "[" pname "\\") nil t))
-	        (setq pname (c-xref-read-jpath-from-minibuffer
+	        (setq pname (c-xref-read-path-from-minibuffer
 			             "** Name overlaps an existing project, enter new name: " pname))
 	      (setq tname pname)
 	      (setq breakcheck nil)
@@ -4533,7 +4533,7 @@ part belonging to this project.
 	        (if (and tname
 		             (search-forward (concat "[" tname "]") nil t))
 		        (progn
-		          (setq pname (c-xref-read-jpath-from-minibuffer
+		          (setq pname (c-xref-read-path-from-minibuffer
 			                   "** This name is covered, enter new name: " pname))
 		          (setq breakcheck t)
 		          )))
@@ -4545,7 +4545,7 @@ part belonging to this project.
     (save-buffer)
     (kill-buffer nil)
     (setq planguage "c")
-    (setq pfiles (c-xref-read-jpath-from-minibuffer
+    (setq pfiles (c-xref-read-path-from-minibuffer
 		          "Directory containing project sources: " sfiles))
     (setq mifloop t)
     (setq apfiles (c-xref-optionify-string pfiles "\""))
@@ -4555,7 +4555,7 @@ part belonging to this project.
 		           "Add another source directory [yn]? " "n"))
 	    (if (or (equal mif "y") (equal mif "Y"))
 	        (progn
-	          (setq miff (c-xref-read-jpath-from-minibuffer
+	          (setq miff (c-xref-read-path-from-minibuffer
 			              "Additional source:  " sfiles))
 	          (setq apfiles (format "%s\n  %s" apfiles (c-xref-optionify-string miff "\"")))
 	          )
@@ -4574,14 +4574,14 @@ part belonging to this project.
       (setq refs (format "%s%cCXrefs" pfiles c-xref-slash))
       )
     (setq refs (c-xref-remove-dangerous-fname-chars refs))
-    (setq refs (c-xref-read-jpath-from-minibuffer
+    (setq refs (c-xref-read-path-from-minibuffer
 		        "Directory to store tag files in:  " refs))
     (if (or (equal planguage "j") (equal planguage "J")
 	        (equal planguage "b") (equal planguage "B"))
 	    (progn
 	      ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Java project specifics
 	      (setq javahome (c-xref-compute-simple-information "-olcxgetjavahome -no-errors"))
-	      (setq javahome (c-xref-read-jpath-from-minibuffer
+	      (setq javahome (c-xref-read-path-from-minibuffer
 			              "Java home directory (containing jre, lib, bin...): " javahome))
 	      (if (not (equal javahome ""))
 	          (setq javahome (c-xref-backslashify-name (concat (c-xref-remove-pending-slash javahome) "/")))
@@ -4593,18 +4593,18 @@ part belonging to this project.
 		        (setq system-class-path (read-from-minibuffer
 			                             "Your system CLASSPATH is set, use it for this project [yn]? " "n"))
 		        (if (or (equal system-class-path "n") (equal system-class-path "N"))
-		            (setq classpath (c-xref-read-jpath-from-minibuffer "Enter classpath for this project: " (c-xref-infer-classpath-proposal)))
+		            (setq classpath (c-xref-read-path-from-minibuffer "Enter classpath for this project: " (c-xref-infer-classpath-proposal)))
 		          (setq classpath "${CLASSPATH}")
 		          ))
-	        (setq classpath (c-xref-read-jpath-from-minibuffer "Enter classpath for this project: " (c-xref-infer-classpath-proposal)))
+	        (setq classpath (c-xref-read-path-from-minibuffer "Enter classpath for this project: " (c-xref-infer-classpath-proposal)))
 	        )
 	      (setq classpath (c-xref-remove-pending-slash classpath))
 	      (setq spcp (read-from-minibuffer
 		              "Are your source files stored in the same directories as the classes [yn]? " "y"))
 	      (if (or (equal spcp "n") (equal spcp "N"))
 	          (progn
-		        (setq sourcepath (c-xref-remove-pending-slash (c-xref-read-jpath-from-minibuffer "Enter sourcepath for this project: " pfiles)))
-		        (setq classdir (c-xref-remove-pending-slash (c-xref-read-jpath-from-minibuffer "Directory to generate .class files (-d javac option): " classpath)))
+		        (setq sourcepath (c-xref-remove-pending-slash (c-xref-read-path-from-minibuffer "Enter sourcepath for this project: " pfiles)))
+		        (setq classdir (c-xref-remove-pending-slash (c-xref-read-path-from-minibuffer "Directory to generate .class files (-d javac option): " classpath)))
 		        )
 	        (setq sourcepath "${cp}")
 	        )
@@ -4612,7 +4612,7 @@ part belonging to this project.
 		             "Do you have a local copy of JavaDoc documentation on your computer [yn]? " "y"))
 	      (if (or (equal ljd "n") (equal ljd "N"))
 	          (setq javadocpath nil)
-	        (setq javadocpath (c-xref-read-jpath-from-minibuffer "Enter javadocpath: " (concat javahome (c-xref-backslashify-name "docs/api"))))
+	        (setq javadocpath (c-xref-read-path-from-minibuffer "Enter javadocpath: " (concat javahome (c-xref-backslashify-name "docs/api"))))
 	        )
 	      )
       ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; C project specifics
@@ -4620,7 +4620,7 @@ part belonging to this project.
       (setq ifmess "Do you use some ")
       (if (eq c-xref-platform 'windows)
 	      (progn
-	        (setq iff (c-xref-read-jpath-from-minibuffer "Directory containing standard headers (stdio.h, stdlib.h, ...): " inidir))
+	        (setq iff (c-xref-read-path-from-minibuffer "Directory containing standard headers (stdio.h, stdlib.h, ...): " inidir))
 	        (setq ifiles (format "%s\n  -I %s" ifiles
 				                 (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
 	        (setq ifmess "Add any ")
@@ -4632,7 +4632,7 @@ part belonging to this project.
 		            (concat ifmess "nonstandard include directory (-I option) [yn]? ") "n"))
 	      (if (or (equal if "y") (equal if "Y"))
 	          (progn
-		        (setq iff (c-xref-read-jpath-from-minibuffer
+		        (setq iff (c-xref-read-path-from-minibuffer
 			               "Additional include directory:  " inidir))
 		        (setq ifiles (format "%s\n  -I %s" ifiles
 				                     (c-xref-optionify-string (c-xref-remove-pending-slash iff) "\"")))
@@ -7944,7 +7944,7 @@ each important refactoring.
 (defun c-xref-class-to-new-file-moving (option)
   (let ((fname) (cname) (buff) (cb))
     (setq cname (c-xref-get-identifier-on-point))
-    (setq fname (c-xref-read-jpath-from-minibuffer "Enter new file name: "
+    (setq fname (c-xref-read-path-from-minibuffer "Enter new file name: "
 						                           (concat default-directory cname ".java")))
     (setq cb (current-buffer))
     (setq buff (get-file-buffer fname))
