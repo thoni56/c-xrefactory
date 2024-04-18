@@ -314,7 +314,7 @@
 (define-key c-xref-completion-mode-map c-xref-escape-key-sequence 'c-xref-interactive-completion-escape)
 (define-key c-xref-completion-mode-map "\C-g" 'c-xref-interactive-completion-close)
 (define-key c-xref-completion-mode-map "\C-q" 'c-xref-interactive-completion-escape)
-;; can't bind, anything to Alt-xx because escape is bind to single key!
+;; can't bind anything to Alt-xx because escape is bound to single key!
 ;;(define-key c-xref-completion-mode-map "\M-q" 'c-xref-interactive-completion-escape)
 ;;(define-key c-xref-completion-mode-map [(control return)] 'c-xref-interactive-completion-goto)
 ;;(define-key c-xref-completion-mode-map [(control space)] 'c-xref-interactive-completion-goto)
@@ -4381,16 +4381,6 @@ will be deleted.
 (defun c-xref-read-jpath-from-minibuffer (prompt default)
   (let ((res))
     (setq res (completing-read prompt 'c-xref-java-path-completionfun nil nil default))
-    res
-    ))
-
-(defun c-xref-read-jpath-from-minibuffer-xx (prompt)
-  (let ((res) (ini))
-    (if (eq c-xref-platform 'windows)
-	    (setq ini "c:\\")
-      (setq ini "/")
-      )
-    (setq res (completing-read prompt 'c-xref-java-path-completionfun nil nil ini))
     res
     ))
 
