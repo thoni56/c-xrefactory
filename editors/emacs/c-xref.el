@@ -114,7 +114,7 @@
 
 (defvar c-xref-info-buffer " *info*")
 (defvar c-xref-browser-info-buffer " *browser-info*")
-(defvar c-xref-symbol-resolution-buffer " *symbols/classes*")
+(defvar c-xref-symbol-resolution-buffer " *symbols*")
 (defvar c-xref-references-buffer " *references*")
 
 (defvar c-xref-completions-windows-counter 0)
@@ -378,10 +378,10 @@
     (define-key map "\C-m" 'c-xref-interactive-tag-search-inspect)
     ;;(define-key map "\C-m" 'c-xref-interactive-tag-search-select)
     (define-key map " " 'c-xref-interactive-tag-search-inspect)
-    (define-key map "?" 'c-xref-interactive-class-tag-search-help)
+    (define-key map "?" 'c-xref-interactive-tag-search-help)
     (c-xref-bind-default-button map 'c-xref-interactive-tag-search-mouse-inspect)
     map)
-  "Keymap for c-xref class tree."
+  "Keymap for c-xref search results mode."
   )
 (if (eq c-xref-running-under 'xemacs)
     (progn
@@ -700,7 +700,7 @@ A-Za-z0-9.\t-- incremental search, insert character
 " nil nil)
   )
 
-(defun c-xref-interactive-class-tag-search-help (event)
+(defun c-xref-interactive-tag-search-help (event)
   (interactive "i")
   (c-xref-interactive-help
    "Special hotkeys available:
@@ -712,7 +712,7 @@ A-Za-z0-9.\t-- incremental search, insert character
 \\[c-xref-re-push] \t-- next search results
 \\[c-xref-scroll-left] \t-- scroll left
 \\[c-xref-scroll-right] \t-- scroll right
-\\[c-xref-interactive-class-tag-search-help] \t-- toggle this help page
+\\[c-xref-interactive-tag-search-help] \t-- toggle this help page
 " nil nil)
   )
 
