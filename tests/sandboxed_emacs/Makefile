@@ -42,3 +42,8 @@ pure: .emacs.d/el-get/c-xrefactory
 	@-rm bin/c-xref
 	@ln -s $(CURDIR)/../../src/c-xref bin/c-xref
 	@$(ENV) emacs -l $(PWD)/.emacs.d/init.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
+
+debug: .emacs.d/el-get/c-xrefactory
+	@-rm bin/c-xref
+	@ln -s $(CURDIR)/../../src/c-xref bin/c-xref
+	@$(ENV) emacs --debug-init -l $(PWD)/.emacs.d/init.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
