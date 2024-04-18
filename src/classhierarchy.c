@@ -179,9 +179,7 @@ static SymbolsMenu *itemInOriginalList(int fileNumber) {
 }
 
 static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectable) {
-    if (options.serverOperation==OLO_CLASS_TREE || options.serverOperation==OLO_SHOW_CLASS_TREE) {
-        ; // fprintf(file,"");
-    } else if (! selectable) {
+    if (! selectable) {
         fprintf(file, " %s=2", PPCA_SELECTED);
     } else if (menu!=NULL && menu->selected) {
         fprintf(file, " %s=1", PPCA_SELECTED);
@@ -195,9 +193,7 @@ static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectab
         fprintf(file, " %s=0", PPCA_BASE);
     }
 
-    if (options.serverOperation==OLO_CLASS_TREE || options.serverOperation==OLO_SHOW_CLASS_TREE) {
-        ; //fprintf(ff, "");
-    } else if (menu==NULL || (menu->defRefn==0 && menu->refn==0) || !selectable) {
+    if (menu==NULL || (menu->defRefn==0 && menu->refn==0) || !selectable) {
         fprintf(file, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
     } else if (menu->defRefn==0) {
         fprintf(file, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, menu->refn);

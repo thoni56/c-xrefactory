@@ -1712,10 +1712,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_SHOW_TOP_TYPE;
     else if (strcmp(argv[i], "-olcxtopapplcl")==0)
         options.serverOperation = OLO_SHOW_TOP_APPL_CLASS;
-    else if (strcmp(argv[i], "-olcxshowctree")==0)
-        options.serverOperation = OLO_SHOW_CLASS_TREE;
-    else if (strcmp(argv[i], "-olcxclasstree")==0)
-        options.serverOperation = OLO_CLASS_TREE;
     else if (strcmp(argv[i], "-olcxsyntaxpass")==0)
         options.serverOperation = OLO_SYNTAX_PASS_ONLY;
     else if (strcmp(argv[i], "-olcxprimarystart")==0) {
@@ -1874,11 +1870,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_MENU_INSPECT_CLASS;
         options.olcxMenuSelectLineNum = 0;
         sscanf(argv[i]+21, "%d",&options.olcxMenuSelectLineNum);
-    }
-    else if (strncmp(argv[i], "-olcxctinspectdef",17)==0) {
-        options.serverOperation = OLO_CT_INSPECT_DEF;
-        options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+17, "%d",&options.olcxMenuSelectLineNum);
     }
     else if (strcmp(argv[i], "-olcxmenuall")==0) {
         options.serverOperation = OLO_MENU_SELECT_ALL;

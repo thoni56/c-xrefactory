@@ -32,7 +32,6 @@
 (defconst c-xref_PPC_ASK_CONFIRMATION "ask-confirmation")
 (defconst c-xref_PPC_ADD_TO_IMPORTS_DIALOG "add-to-imports-dialog")
 (defconst c-xref_PPC_EXTRACTION_DIALOG "extraction-dialog")
-(defconst c-xref_PPC_DISPLAY_CLASS_TREE "display-class-tree")
 
 (defconst c-xref_PPC_DISPLAY_RESOLUTION "display-resolution")
 (defconst c-xref_PPC_DISPLAY_OR_UPDATE_BROWSER "display-or-update-browser")

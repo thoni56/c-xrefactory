@@ -120,7 +120,6 @@
 
 (defvar c-xref-completions-windows-counter 0)
 (defvar c-xref-completions-dispatch-data nil)
-(defvar c-xref-class-tree-dispatch-data nil)
 (defvar c-xref-refactorer-dispatch-data nil)
 (defvar c-xref-global-dispatch-data nil)
 (defvar c-xref-active-project nil)
@@ -363,51 +362,6 @@
     ) "C-Xref button3 popup menu for completions"
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                   Class (sub)tree result local keymap
-;; This is keymap for window resulting from 'View class tree' function, not
-;; for the class tree resulting from pushing actions.
-
-(defvar c-xref-class-tree-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map c-xref-escape-key-sequence 'c-xref-interactive-class-tree-escape)
-    (define-key map "q" 'c-xref-interactive-class-tree-escape)
-    ;;(define-key map [left] 'c-xref-scroll-right)
-    ;;(define-key map [right] 'c-xref-scroll-left)
-    (define-key map [(shift left)] 'c-xref-scroll-right)
-    (define-key map [(shift right)] 'c-xref-scroll-left)
-    (define-key map [(control left)] 'c-xref-resize-left)
-    (define-key map [(control right)] 'c-xref-resize-right)
-    (define-key map "\C-m" 'c-xref-interactive-class-tree-inspect)
-    (define-key map " " 'c-xref-interactive-class-tree-inspect)
-    (define-key map "?" 'c-xref-interactive-class-tree-help)
-    (c-xref-bind-default-button map 'c-xref-interactive-class-tree-mouse-inspect)
-    map)
-  "Keymap for c-xref class tree."
-  )
-(if (eq c-xref-running-under 'xemacs)
-    (progn
-      ;; XEmacs
-      (define-key c-xref-class-tree-mode-map 'button3 'c-xref-popup-xemacs-class-tree-menu)
-      )
-  ;; Emacs
-  (define-key c-xref-class-tree-mode-map [mouse-3] 'c-xref-class-tree-3bmenu)
-  )
-(c-xref-add-bindings-to-keymap c-xref-class-tree-mode-map)
-
-;;;;;;;;;;;;;;;;;;;;; mouse3 menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defvar c-xref-xemacs-popup-class-tree-menu
-  '("Class Tree Menu"
-    ["Inspect Class"           c-xref-interactive-class-tree-inspect t]
-    ["Close Window"            c-xref-interactive-class-tree-escape t]
-    ) "C-Xref button3 popup menu for class-trees"
-  )
-
-(defvar c-xref-class-tree-3bmenu (make-sparse-keymap "Class Tree Menu"))
-(fset 'c-xref-class-tree-3bmenu (symbol-value 'c-xref-class-tree-3bmenu))
-(define-key c-xref-class-tree-3bmenu [c-xref-ct-3bclose] '("Close Window" . c-xref-interactive-class-tree-escape))
-(define-key c-xref-class-tree-3bmenu [c-xref-ct-3binspect] '("Inspect Class" . c-xref-interactive-class-tree-mouse-inspect))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                      tag search results keymap
@@ -692,15 +646,6 @@ interrupted by C-g. If there are such files, delete them.
   (popup-menu c-xref-xemacs-compl-3bmenu)
   )
 
-(defun c-xref-popup-xemacs-class-tree-menu (event)
-  (interactive "e")
-  (select-window (event-window event))
-  (goto-char (event-closest-point event))
-  (beginning-of-line)
-  (popup-menu c-xref-xemacs-popup-class-tree-menu)
-  )
-
-
 (defun c-xref-help-highlight-expr (expr)
   (c-xref-fontify-region (point-min) (point-max) expr)
   ;;  (let ((pos) (mb) (me))
@@ -753,21 +698,6 @@ A-Za-z0-9.\t-- incremental search, insert character
 \\[c-xref-completion-auto-search-s] \t-- incremental search next match
 \\[c-xref-completion-auto-search-back] \t-- incremental search return to last match
 \\[c-xref-interactive-completion-help] \t-- toggle this help page
-" nil nil)
-  )
-
-(defun c-xref-interactive-class-tree-help (event)
-  (interactive "i")
-  (c-xref-interactive-help
-   "Special hotkeys available:
-
-\\[c-xref-interactive-class-tree-inspect] \t-- inspect class
-\\[c-xref-interactive-class-tree-escape] \t-- close window
-\\[c-xref-resize-right] \t-- resize left
-\\[c-xref-resize-left] \t-- resize right
-\\[c-xref-scroll-left] \t-- scroll left
-\\[c-xref-scroll-right] \t-- scroll right
-\\[c-xref-interactive-class-tree-help] \t-- toggle this help page
 " nil nil)
   )
 
@@ -962,7 +892,6 @@ A-Za-z0-9.\t-- incremental search, insert character
 	     (equal name c-xref-tag-results-buffer)
 	     (equal name c-xref-browser-info-buffer)
 	     (equal name c-xref-project-list-buffer)
-	     (equal name c-xref-class-tree-buffer)
 	     (equal name c-xref-info-buffer)
 	     (equal name c-xref-run-buffer)
 	     (equal name c-xref-compilation-buffer)
@@ -3546,29 +3475,6 @@ Special hotkeys available:
       )
     ))
 
-(defun c-xref-server-dispatch-display-class-tree (ss i len dispatch-data)
-  (let ((nw) (sw))
-    (c-xref-delete-class-tree-window)
-    (c-xref-select-dispach-data-caller-window dispatch-data)
-    (c-xref-create-browser-main-window c-xref-class-tree-buffer
-				                       c-xref-class-tree-splits-window-horizontally
-				                       c-xref-class-tree-position-left-or-top
-				                       dispatch-data)
-    (setq buffer-read-only nil)
-    (c-xref-erase-buffer)
-    (setq i (c-xref-server-dispatch-classh-lines ss i len dispatch-data t))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_DISPLAY_CLASS_TREE)
-    (c-xref-line-hightlight 0 (point-max) nil 3 nil nil)
-    (goto-char (point-min))
-    (setq buffer-read-only t)
-    (if (not c-xref-class-tree-splits-window-horizontally)
-	    (c-xref-appropriate-window-height nil t)
-      )
-    (setq c-xref-this-buffer-dispatch-data dispatch-data)
-    (c-xref-use-local-map c-xref-class-tree-mode-map)
-    i
-    ))
-
 (defun c-xref-server-dispatch-reference-list (ss i len dispatch-data)
   (let ((tlen) (srcline) (n) (divnewline) (aline) (line) (j) (pointer)
 	    (listed-symbol))
@@ -3762,9 +3668,6 @@ Special hotkeys available:
        (
 	    (equal c-xref-server-ctag c-xref_PPC_SYMBOL_LIST)
 	    (setq i (c-xref-server-dispatch-symbol-list ss i len dispatch-data)))
-       (
-	    (equal c-xref-server-ctag c-xref_PPC_DISPLAY_CLASS_TREE)
-	    (setq i (c-xref-server-dispatch-display-class-tree ss i len dispatch-data)))
        (
 	    (equal c-xref-server-ctag c-xref_PPC_MOVE_FILE_AS)
 	    (setq i (c-xref-server-dispatch-move-file-as ss i len dispatch-data)))
@@ -6132,39 +6035,6 @@ This function also moves to the current reference.
     (c-xref-modal-dialog-maybe-return-to-caller-window sw)
     ))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;; CLASS TREE VIEW  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defvar c-xref-class-tree-line-offset 0)
-
-(defun c-xref-delete-class-tree-window ()
-  (c-xref-delete-window-in-any-frame c-xref-class-tree-buffer 'c-xref-class-tree-window-width)
-  )
-
-(defun c-xref-interactive-class-tree-escape (event)
-  (interactive "i")
-  (c-xref-delete-class-tree-window)
-  (c-xref-select-dispach-data-caller-window c-xref-class-tree-dispatch-data)
-  )
-
-(defun c-xref-interactive-class-tree-inspect (event)
-  (interactive "i")
-  (c-xref-interactive-selectable-line-inspect event "-olcxctinspectdef" c-xref-class-tree-line-offset)
-  )
-
-(defun c-xref-interactive-class-tree-mouse-inspect (event)
-  (interactive "e")
-  (c-xref-interactive-selectable-line-mouse-inspect event "-olcxctinspectdef" c-xref-class-tree-line-offset)
-  )
-
-(defun c-xref-class-tree-show ()
-  (interactive "")
-  (c-xref-entry-point-make-initialisations)
-  (c-xref-call-process-with-basic-file-data-no-saves "-olcxclasstree")
-  (setq c-xref-class-tree-dispatch-data c-xref-global-dispatch-data)
-  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;; SYMBOL RETRIEVING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;

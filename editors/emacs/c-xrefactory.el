@@ -264,11 +264,7 @@
 
 (defvar c-xref-browser-splits-window-horizontally nil)
 
-(defvar c-xref-class-tree-splits-window-horizontally t)
-
 (defvar c-xref-browser-position-left-or-top nil)
-
-(defvar c-xref-class-tree-position-left-or-top t)
 
 (defvar c-xref-class-tree-window-width 30)
 
@@ -426,33 +422,6 @@ completions.
 	"Maximum number of suggested completions. If there are more available, an ellipsis (...) is shown."
 	:type '(integer)
 	:group 'c-xrefactory-completion)
-
-
-;;;;;;;;;;;;;;;; class tree ;;;;;;;;;
-
-      (defgroup c-xrefactory-class-tree nil
-	"
-
-Here you can set variables controlling C-xrefactory's class-tree viewer.
-
-"
-	:group 'c-xrefactory
-)
-
-      (defcustom c-xref-class-tree-splits-window-horizontally t
-	"If on, C-xrefactory displays the class tree in a horizontally split window. Otherwise it splits the window vertically."
-	:type '(boolean)
-	:group 'c-xrefactory-class-tree)
-
-      (defcustom c-xref-class-tree-position-left-or-top nil
-	"If on, the class tree is displayed at the left or top of the frame (depending on whether the window is split vertically or not). Otherwise, the class tree is displayed at the right or bottom."
-	:type '(boolean)
-	:group 'c-xrefactory-class-tree)
-
-      (defcustom c-xref-class-tree-window-width 30
-	"Default width of class tree window."
-	:type '(integer)
-	:group 'c-xrefactory-class-tree)
 
 
 ;;;;;;;;;;;;;;;; xrefactory-browsing-configuration ;;;;;;;;;
@@ -696,7 +665,6 @@ faces and highlighting in buffers created by C-xrefactory.
       ;;(define-key c-xref-menu [c-xref-set-target] '("Set Target for Next Move" . c-xref-set-moving-target-position))
       (define-key c-xref-menu [c-xref-refactor] '("Refactor" . c-xref-refactor))
       (define-key c-xref-menu [separator-buffers4] '("--"))
-      (define-key c-xref-menu [c-xref-class-tree] '("View Class (Sub)tree" . c-xref-class-tree-show))
       (define-key c-xref-menu [c-xref-search-tag] '("Search Symbol" . c-xref-search-in-tag-file))
       (define-key c-xref-menu [c-xref-search-def] '("Search Definition in Tags" . c-xref-search-definition-in-tag-file))
       (define-key c-xref-menu [c-xref-dm-menu] '("Unused Symbols Detection" . c-xref-unused-menu))
@@ -804,7 +772,6 @@ faces and highlighting in buffers created by C-xrefactory.
 	  ;; browsing menus will come here
 	  ["Search Definition in Tags"	c-xref-search-definition-in-tag-file t]
 	  ["Search Symbol"		c-xref-search-in-tag-file t]
-	  ["View Class (Sub)tree"           c-xref-class-tree-show t]
 	  "-----"
 	  ["Refactor"                       c-xref-refactor t]
 	  ;;   ["Set Target for Next Move"    c-xref-set-moving-target-position t]
@@ -960,8 +927,6 @@ your .c-xrefrc file.
 (autoload 'c-xref-undo-last-refactoring "c-xref" c-xref-default-documentation-string t)
 
 (autoload 'c-xref-completion "c-xref" c-xref-default-documentation-string t)
-
-(autoload 'c-xref-class-tree-show "c-xref" c-xref-default-documentation-string t)
 
 (autoload 'c-xref-help "c-xref" c-xref-default-documentation-string t)
 (autoload 'c-xref-about "c-xref" c-xref-default-documentation-string t)
