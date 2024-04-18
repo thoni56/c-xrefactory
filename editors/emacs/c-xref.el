@@ -6244,11 +6244,9 @@ characters.  Ranges of characters can be included between [ and
 digit, as in shell expressions. If the first character following
 the [ is a ^ then the sense of expansion is inverted, for example
 [^0-9] expands to any non-digit character.  A symbol is reported
-only if its name completely matches the searched string.  Java
-method profile is considered as part of the name of the method,
-for example, the expression *(*int*) will report all methods
-taking at least one parameter of type int.  Letters are matched
-case insensitively except when enclosed between [ and ].
+only if its name completely matches the searched string.  Letters
+are matched case insensitively except when enclosed between [ and
+].
 
 For example the expression '*get*' will report all symbols
 containing the string 'get'.  Expression 'get*' will report all
@@ -6359,11 +6357,7 @@ expression is equivalent to entering *get*.
 This function asks for strings to search, then it inspects the tags of
 active project looking for symbols containing the given string(s). For
 each  such  symbol it  displays  the  symbol  name together  with  its
-definition location.  Strings are matched against the full symbol name
-(including profile for Java methods).  For Java projects .jar
-archives mentioned in classpath are scanned and matching symbols
-are reported.
-
+definition location.  Strings are matched against the full symbol name.
 "
   (interactive "")
   (let ((sym) (syms) (line) (col))
@@ -7066,8 +7060,8 @@ the reset was performed, nil if the reset was cancelled."
     (setq iw (c-xref-display-and-set-new-dialog-window c-xref-info-buffer nil t))
     (insert " C-xref Help.
 
-C-xrefactory is a refactoring development environment for C and
-Java.  Its functions can be accessed via the `c-xref' menu.
+C-xrefactory is a refactoring development environment for C (and
+Yacc).  Its functions can be accessed via the `c-xref' menu.
 Optionally the most frequently used functions are accessible via
 hot-keys.  Documentation of a particular function is available
 through the \"C-h k\" key combination (i.e.  the `control' key

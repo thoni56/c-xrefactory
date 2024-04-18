@@ -193,19 +193,10 @@
 (defvar c-xref-save-files-and-update-tags-before-refactoring nil)
 
 ;; ----------------------------------------------------------------
-;; TODO Java-related stuff that needs to go away !!!
 
-;; autoredirect is turn off on windows because of some problems
-(if (not (boundp 'c-xref-browse-url-manual-redirect))
-    (if (eq c-xref-platform 'windows)
-	(defvar c-xref-browse-url-manual-redirect t)
-      (defvar c-xref-browse-url-manual-redirect nil)
-      )
-  )
-
-;; by  default multibyte  buffer representation  is allowed in order
-;; NOT USED ANYMORE, it is here for backward compatibility only,
-;; use 'c-xref-files-encoding now.
+;; By default multibyte buffer representation is allowed in order NOT
+;; USED ANYMORE, it is here for backward compatibility only, use
+;; 'c-xref-files-encoding now.
 (if (not (boundp 'c-xref-allow-multibyte))
     (defvar c-xref-allow-multibyte t)
   )
@@ -531,31 +522,7 @@ C-xrefactory's source browsing functions.
 	:type '(boolean)
 	:group 'c-xrefactory-source-browser)
 
-
-
-
-;;;;;;;;;;;;;;;; xrefactory-extern-html-browser ;;;;;;;;;
-
-      (defgroup c-xrefactory-extern-html-browser nil
-	"
-
-Here you can set variables  controlling the external HTML browser used
-by C-xrefactory.
-
-"
-	:group 'c-xrefactory
-)
-
-      (defcustom c-xref-browse-url-focus-delay 0
-	"This variable specifies for how long the web browser window displaying JavaDoc will be raised before Emacs regains the focus. The value is a floating point number of seconds. If it is less than zero, then Emacs will not regain the focus."
-	:type '(number)
-	:group 'c-xrefactory-extern-html-browser)
-
-      (defcustom c-xref-browse-url-manual-redirect c-xref-browse-url-manual-redirect
-	"If both 'c-xref-browse-url-directly' and 'c-xref-browse-url-manual-redirect' are on, then C-xrefactory will generate and browse temporary files with links to JavaDoc when browsing the JavaDoc for a method having more than one parameter. The user has to click on the link manually in order to move to the JavaDoc documentation. This option is used to cope with a problem with auto-redirection in Internet Explorer."
-	:type '(boolean)
-	:group 'c-xrefactory-extern-html-browser)
-
+      )
 
 
 ;;;;;;;;;;;;;;;; c-xrefactory-refactoring ;;;;;;;;;
@@ -630,8 +597,7 @@ faces and highlighting in buffers created by C-xrefactory.
 	:type '(boolean)
 	:group 'c-xrefactory-highlighting-coloring)
 
-
-))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
