@@ -4304,7 +4304,7 @@ will be deleted.
 
 
 (defun c-xref-append-new-project-section (pname planguage pcomments
-			                                    pfiles mclass classpath
+			                                    pfiles classpath
 			                                    sourcepath
 			                                    javadocpath classdir
 			                                    apfiles javahome ifiles
@@ -4502,7 +4502,7 @@ part belonging to this project.
 "
   (interactive "")
   (let ((pname) (checked) (tname) (breakcheck) (planguage) (pcomments)
-	    (pact) (pedit) (sfiles) (pfiles) (mclass) (system-class-path) (refs)
+	    (pact) (pedit) (sfiles) (pfiles) (system-class-path) (refs)
 	    (classpath) (sourcepath) (classdir nil) (spcp) (ljd) (javadocpath)
 	    (inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat) (jdkcp nil)
 	    (javahome) (ptdef) (if) (ifiles "") (ifloop) (iff) (ifmess) (rest "")
@@ -4597,9 +4597,6 @@ part belonging to this project.
 	          (setq javahome (c-xref-backslashify-name (concat (c-xref-remove-pending-slash javahome) "/")))
 	        )
 
-	      (setq mclass (c-xref-infer-main-class-proposal))
-	      (setq mclass (c-xref-read-jpath-from-minibuffer
-			            "Main class for 'run' commands? " mclass))
 	      (setq classpath (getenv "CLASSPATH"))
 	      (if classpath
 	          (progn
@@ -4710,7 +4707,7 @@ part belonging to this project.
     ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; all questions done
     (find-file c-xref-options-file)
     (c-xref-append-new-project-section pname planguage "y" ;; pcomments
-				                       pfiles mclass
+				                       pfiles
 				                       classpath sourcepath javadocpath
 				                       classdir apfiles javahome ifiles
 				                       rest refs exactp)
