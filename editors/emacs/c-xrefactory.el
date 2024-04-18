@@ -217,10 +217,6 @@
     (defvar c-xref-allow-multibyte t)
   )
 
-(if (not (boundp 'c-xref-java-completion-linkage-check))
-    (defvar c-xref-java-completion-linkage-check nil)
-  )
-
 ;; by default  fully qualified type names are proposed when completing
 ; Java type name
 (if (not (boundp 'c-xref-java-fqt-name-completion-level))
@@ -435,11 +431,6 @@ completions.
 
       (defcustom c-xref-completion-truncate-lines nil
 	"If on, C-xrefactory will truncate lines in buffers containing completions. Also default formatting of completions will be turned off, so exactly one completion will appear per line. Truncated parts of lines can be viewed by scrolling left and right (Shift-Left and Shift-Right)."
-	:type '(boolean)
-	:group 'c-xrefactory-completion)
-
-      (defcustom c-xref-java-completion-linkage-check nil
-	"If on, then when completing a Java attribute in a static context, C-xrefactory will suggest only static fields/methods."
 	:type '(boolean)
 	:group 'c-xrefactory-completion)
 

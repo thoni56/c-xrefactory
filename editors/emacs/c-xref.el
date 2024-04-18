@@ -5797,9 +5797,6 @@ separate window.
   (let ((opt))
     (c-xref-entry-point-make-initialisations)
     (setq opt (format "-olcxcomplet -maxcompls=%d" c-xref-max-completions))
-    (if c-xref-java-completion-linkage-check
-	(setq opt (format "%s -olchecklinkage" opt))
-      )
     (if (> c-xref-java-fqt-name-completion-level 0)
 	(setq opt (format "%s -olfqtcompletionslevel=%d" opt c-xref-java-fqt-name-completion-level))
       )
