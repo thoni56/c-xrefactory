@@ -598,7 +598,7 @@ C-xrefactory. This  may happen if c-xref  task was killed, or  a macro was
 interrupted by C-g. If there are such files, delete them.
 "
   (interactive "")
-  (let ((fl) (flist) (ff) (ffl) (modif) (ctime) (loop) (modifcar))
+  (let ((fl) (flist) (ff) (ffl) (modif) (ctime) (ctimecar) (loop) (modifcar))
     (setq ctimecar (car (current-time)))
     (setq flist (directory-files
 		         c-xref-tmp-dir t
@@ -5368,7 +5368,7 @@ browser and refactorer) are updated.  The behavior of the
     (setq lineno (count-lines 1 (+ (point) 1)))
     (setq cw (selected-window))
     (c-xref-send-data-to-process-and-dispatch
-     (format "-olcxcgoto%d %s" lineno)
+     (format "-olcxcgoto%d" lineno)
      c-xref-completions-dispatch-data
      nil)
     (sit-for 1)
@@ -6274,7 +6274,7 @@ given string(s).
     (setq sw (selected-window))
     (setq cline (count-lines (point-min) (if (eobp) (point) (+ (point) 1))))
     (c-xref-send-data-to-process-and-dispatch
-     (format "%s%d %s" opt (+ cline offset))
+     (format "%s%d" opt (+ cline offset))
      dispatch-data
      nil)
     (select-window sw)
