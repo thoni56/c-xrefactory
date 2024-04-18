@@ -4256,7 +4256,7 @@ will be deleted.
     ))
 
 
-(defun c-xref-append-new-project-section (pname planguage pcomments
+(defun c-xref-append-new-project-section (pname pcomments
 			                                    pfiles classpath
 			                                    sourcepath
 			                                    classdir
@@ -4444,7 +4444,7 @@ To delete a project, just edit the .c-xrefrc file and delete the
 part belonging to this project.
 "
   (interactive "")
-  (let ((pname) (checked) (tname) (breakcheck) (planguage) (pcomments)
+  (let ((pname) (checked) (tname) (breakcheck) (pcomments)
 	    (pact) (pedit) (sfiles) (pfiles) (system-class-path) (refs)
 	    (classpath) (sourcepath) (classdir nil) (spcp) (ljd)
 	    (inidir) (mif) (miff) (mifloop) (apfiles) (crtag) (stat) (jdkcp nil)
@@ -4497,7 +4497,6 @@ part belonging to this project.
     ;; The name is checked
     (save-buffer)
     (kill-buffer nil)
-    (setq planguage "c")
     (setq pfiles (c-xref-read-path-from-minibuffer
 		          "Directory containing project sources: " sfiles))
     (setq mifloop t)
@@ -4610,7 +4609,7 @@ part belonging to this project.
 
     ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; all questions done
     (find-file c-xref-options-file)
-    (c-xref-append-new-project-section pname planguage "y" ;; pcomments
+    (c-xref-append-new-project-section pname "y" ;; pcomments
 				                       pfiles
 				                       classpath sourcepath
 				                       classdir apfiles ifiles
