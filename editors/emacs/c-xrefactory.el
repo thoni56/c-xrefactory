@@ -212,9 +212,6 @@
 
 (defvar c-xref-completion-inserts-parenthesis nil)
 
-;; by default truncation is disallowed in order to see profiles
-(defvar c-xref-completion-overload-wizard-depth 1)
-
 ;; by default the automatic project selection is on.
 (defvar c-xref-current-project nil)
 
@@ -261,8 +258,6 @@
 (defvar c-xref-browse-url-focus-delay 0)
 
 (defvar c-xref-window-minimal-size 4)
-
-(defvar c-xref-browser-splits-window-horizontally nil)
 
 (defvar c-xref-browser-position-left-or-top nil)
 
@@ -413,11 +408,6 @@ completions.
 	    :type '(boolean)
 	    :group 'c-xrefactory-completion)
 
-      (defcustom c-xref-completion-overload-wizard-depth 1
-	    "Level of inheritance for completion of overloaded methods. When completion is invoked on an empty string at a position when a method definition can start, then all methods from the superclasses are suggested. This option specifies how deep superclasses are scanned."
-	    :type '(integer)
-	    :group 'c-xrefactory-completion)
-
       (defcustom c-xref-max-completions 500
 	    "Maximum number of suggested completions. If there are more available, an ellipsis (...) is shown."
 	    :type '(integer)
@@ -447,7 +437,7 @@ C-xrefactory's source browsing functions.
 	    :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-browser-splits-window-horizontally nil
-	    "If on, C-xrefactory displays class tree in a horizontally split window. Otherwise it splits the window vertically."
+	    "If on, C-xrefactory splits windows horizontally if needed. Otherwise it splits the window vertically."
 	    :type '(boolean)
 	    :group 'c-xrefactory-source-browser)
 
@@ -457,17 +447,17 @@ C-xrefactory's source browsing functions.
 	    :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-default-symbols-filter 2
-	    "Controls which symbols/classes are shown when displaying a new browser window. '2': only symbols with the same name and profile as the browsed symbol, in a class related (via inheritance) to that of the browsed symbol; '1': all symbols with the same profile; '0': all symbols of the same name."
+	    "Controls which symbols are shown when displaying a new browser window. '2': only symbols with the same name and profile as the browsed symbol, in a class related (via inheritance) to that of the browsed symbol; '1': all symbols with the same profile; '0': all symbols of the same name."
 	    :type '(integer)
 	    :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-default-references-filter 0
-	    "Controls which references are shown. References to a variable work differently from references to other symbols. For variables: '3': only definition and declarations; '2': also l-value usages; Level 1: also usages where the address of the variable is taken; Level 0: all references. For other symbols: Level 3: only definitions and declarations; Level 2: also usages in EXTENDS and IMPLEMENTS clauses (meaningful only for Java); Level 1: also usages in the top level scope (global variable and function definitions; this can be used to see all the functions of a particular type); Level 0: all references."
+	    "Controls which references are shown. References to a variable work differently from references to other symbols. For variables: '3': only definition and declarations; '2': also l-value usages; '1': also usages where the address of the variable is taken; '0': all references. For other symbols: '3': only definitions and declarations; '2': not used; '1': also usages in the top level scope (global variable and function definitions; this can be used to see all the functions of a particular type); '0': all references."
 	    :type '(integer)
 	    :group 'c-xrefactory-source-browser)
 
       (defcustom c-xref-keep-last-symbols-filter t
-	    "If on, then C-xrefactory remembers the last filter level when pushing and popping in symbols/classes window. Otherwise the default filter level is used."
+	    "If on, then C-xrefactory remembers the last filter level when pushing and popping in symbols window. Otherwise the default filter level is used."
 	    :type '(boolean)
 	    :group 'c-xrefactory-source-browser)
 
@@ -523,7 +513,7 @@ C-xrefactory refactoring functions.
 	:group 'c-xrefactory-refactoring)
 
   (defcustom c-xref-commentary-moving-level 0
-	"The value of this variable determines how much commenting preceding a field, method or class definition is moved together with the field, method or class when a moving refactoring is applied. '0' moves no comments at all. '1' moves one doubleslashed comments (// ...). '2' moves one standard comment (/* ... */). '3' moves one doubleslashed and one standard comment. '4' moves all doubleslashed comments. '5' moves all standard comments. Finally, '6' moves all doubleslashed and all standard comments."
+	"The value of this variable determines how much commenting preceding a function, variable or field is moved together with it when a moving refactoring is applied. '0' moves no comments at all. '1' moves one doubleslashed comments (// ...). '2' moves one standard comment (/* ... */). '3' moves one doubleslashed and one standard comment. '4' moves all doubleslashed comments. '5' moves all standard comments. Finally, '6' moves all doubleslashed and all standard comments."
 	:type '(integer)
 	:group 'c-xrefactory-refactoring)
 

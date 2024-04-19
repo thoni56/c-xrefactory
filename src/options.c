@@ -1365,9 +1365,6 @@ static bool processCOption(int *argi, int argc, char **argv) {
         options.completionCaseSensitive = true;
     else if (strcmp(argv[i], "-completeparenthesis")==0)
         options.completeParenthesis = true;
-    else if (strncmp(argv[i], "-completionoverloadwizarddepth=",27)==0)  {
-        sscanf(argv[i]+27, "%d", &options.completionOverloadWizardDepth);
-    }
     else if (strncmp(argv[i], "-commentmovinglevel=",20)==0) {
         sscanf(argv[i]+20, "%d", (int*)&options.commentMovingMode);
     }
@@ -1975,12 +1972,6 @@ static bool processROption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-rfct-rename")==0) {
         options.theRefactoring = AVR_RENAME_SYMBOL;
-    }
-    else if (strcmp(argv[i], "-rfct-rename-class")==0)   {
-        options.theRefactoring = AVR_RENAME_CLASS;
-    }
-    else if (strcmp(argv[i], "-rfct-rename-package")==0) {
-        options.theRefactoring = AVR_RENAME_PACKAGE;
     }
     else if (strcmp(argv[i], "-rfct-expand")==0) {
         options.theRefactoring = AVR_EXPAND_NAMES;

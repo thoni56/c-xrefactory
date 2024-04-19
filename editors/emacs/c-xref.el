@@ -168,33 +168,13 @@
   (list
    (list c-xref_PPC_AVR_NO_REFACTORING "No refactoring" 'c-xref-no-refactoring nil)
    (list c-xref_PPC_AVR_RENAME_SYMBOL "Rename Symbol" 'c-xref-rename-symbol nil)
-   (list c-xref_PPC_AVR_RENAME_CLASS "Rename Class" 'c-xref-rename-class nil)
-   (list c-xref_PPC_AVR_RENAME_PACKAGE "Rename Package" 'c-xref-rename-package nil)
    (list c-xref_PPC_AVR_ADD_PARAMETER "Add Parameter" 'c-xref-add-parameter nil)
    (list c-xref_PPC_AVR_DEL_PARAMETER "Delete Parameter" 'c-xref-del-parameter nil)
    (list c-xref_PPC_AVR_MOVE_PARAMETER "Move Parameter" 'c-xref-move-parameter nil)
-   (list c-xref_PPC_AVR_EXTRACT_METHOD "Extract Method" 'c-xref-extract-method nil)
    (list c-xref_PPC_AVR_EXTRACT_FUNCTION "Extract Function" 'c-xref-extract-function nil)
    (list c-xref_PPC_AVR_EXTRACT_MACRO "Extract Macro" 'c-xref-extract-macro nil)
    (list c-xref_PPC_AVR_EXTRACT_VARIABLE "Extract Variable" 'c-xref-extract-variable nil)
-   (list c-xref_PPC_AVR_MOVE_STATIC_FIELD "Move Static Field" 'c-xref-move-static-field nil)
-   (list c-xref_PPC_AVR_MOVE_STATIC_METHOD "Move Static Method" 'c-xref-move-static-method nil)
-   (list c-xref_PPC_AVR_MOVE_FIELD "Move Field" 'c-xref-move-field nil)
-   (list c-xref_PPC_AVR_PULL_UP_FIELD "Pull Up Field" 'c-xref-pull-up-field nil)
-   (list c-xref_PPC_AVR_PULL_UP_METHOD "Pull Up Method" 'c-xref-pull-up-method nil)
-   (list c-xref_PPC_AVR_PUSH_DOWN_FIELD "Push Down Field" 'c-xref-push-down-field nil)
-   (list c-xref_PPC_AVR_PUSH_DOWN_METHOD "Push Down Method" 'c-xref-push-down-method nil)
-   (list c-xref_PPC_AVR_MOVE_CLASS "Move Class" 'c-xref-move-class nil)
-   (list c-xref_PPC_AVR_MOVE_CLASS_TO_NEW_FILE "Move Class to New File" 'c-xref-move-class-to-new-file nil)
-   (list c-xref_PPC_AVR_MOVE_ALL_CLASSES_TO_NEW_FILE "Move file" 'c-xref-move-file nil)
-   (list c-xref_PPC_AVR_ENCAPSULATE_FIELD "Encapsulate Field" 'c-xref-encapsulate-field nil)
-   (list c-xref_PPC_AVR_SELF_ENCAPSULATE_FIELD "Self Encapsulate Field" 'c-xref-self-encapsulate-field nil)
-   (list c-xref_PPC_AVR_TURN_DYNAMIC_METHOD_TO_STATIC "Turn Virtual Method to Static" 'c-xref-turn-dynamic-method-to-static nil)
-   (list c-xref_PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC "Turn Static Method to Virtual" 'c-xref-turn-static-method-to-dynamic nil)
    (list c-xref_PPC_AVR_ADD_TO_IMPORT "Add import" 'c-xref-add-to-imports nil)
-   (list c-xref_PPC_AVR_REDUCE_NAMES "Reduce names" 'c-xref-reduce-names nil)
-   (list c-xref_PPC_AVR_EXPAND_NAMES "Expand names" 'c-xref-expand-names nil)
-   (list c-xref_PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS "Add all used imports" 'c-xref-reduce-long-names-in-the-file nil)
    (list c-xref_PPC_AVR_SET_MOVE_TARGET "Set Target for Next Moving Refactoring" 'c-xref-set-moving-target-position nil)
    (list c-xref_PPC_AVR_UNDO "Undo Last Refactoring" 'c-xref-undo-last-refactoring nil)
    ))
@@ -5510,9 +5490,6 @@ separate window.
   (let ((opt))
     (c-xref-entry-point-make-initialisations)
     (setq opt (format "-olcxcomplet -maxcompls=%d" c-xref-max-completions))
-    (if (> c-xref-completion-overload-wizard-depth 1)
-	    (setq opt (format "%s -completionoverloadwizarddepth=%d" opt c-xref-completion-overload-wizard-depth))
-      )
     (if c-xref-completion-case-sensitive
 	    (setq opt (format "%s -completioncasesensitive" opt))
       )
@@ -5796,8 +5773,7 @@ all its references.
 
 If there are several symbols of the same name the user is asked
 for manual selection.  The selection menu is the same as for
-other browsing functions, including class hierarchies for
-inherited symbols.
+other browsing functions.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -7447,8 +7423,8 @@ symbols or something similar, your source code should not be
 modified at all.
 
 Refactoring does not affect other files than source code. Hence,
-it's a good idea to clean (and recreate) all class files after
-each important refactoring.
+it's a good idea to clean and rebuild after each important
+refactoring.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -7509,14 +7485,6 @@ each important refactoring.
 
 (defun c-xref-rename-symbol (rd)
   (c-xref-renaming "-rfct-rename" nil)
-  )
-
-(defun c-xref-rename-class (rd)
-  (c-xref-renaming "-rfct-rename-class" nil)
-  )
-
-(defun c-xref-rename-package (rd)
-  (c-xref-renaming "-rfct-rename-package" (elt rd 1))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PARAMETER MANIPULATIONS  ;;;;;;;;;;;;;;;;;;;;
@@ -7697,142 +7665,6 @@ each important refactoring.
     (c-xref-refactoring-finish-actions)
     ))
 
-(defun c-xref-move-class (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "moving %s" name))
-    (c-xref-moving '("-rfct-move-class"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-(defun c-xref-class-to-new-file-moving (option)
-  (let ((fname) (cname) (buff) (cb))
-    (setq cname (c-xref-get-identifier-on-point))
-    (setq fname (c-xref-read-path-from-minibuffer "Enter new file name: "
-									  (concat default-directory cname ".java")))
-    (setq cb (current-buffer))
-    (setq buff (get-file-buffer fname))
-    (if buff
-	    (progn
-	      (if (not (c-xref-yes-or-no-window (format "Buffer %s exists, erase it first? "
-									(file-name-nondirectory fname))
-							    t nil))
-		  (error "O.K. Use 'Move Class' instead.")
-		(set-buffer buff)
-		(erase-buffer)
-		))
-      ;; else
-      (if (file-attributes fname)
-	      (progn
-		(if (not (c-xref-yes-or-no-window (format "File %s exists, erase it first? "
-									  (file-name-nondirectory fname))
-								  t nil))
-			(error "O.K. Use 'Move Class' instead.")
-		  (find-file fname)
-		  (erase-buffer)
-		  ))))
-    (set-buffer cb)
-    ;; move
-    (c-xref-server-call-refactoring-task
-     (append option (list
-			     (format "-commentmovinglevel=%d" c-xref-commentary-moving-level)
-			     (format "-movetargetfile=%s" fname)
-			     (format "-rfct-param1=%s" 1))))
-    ))
-
-(defun c-xref-move-class-to-new-file (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "moving %s" name))
-    (c-xref-class-to-new-file-moving '("-rfct-move-class-to-new-file"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-(defun c-xref-move-file (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "moving %s" name))
-    (c-xref-class-to-new-file-moving '("-rfct-move-all-classes-to-new-file"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun c-xref-pull-up-method (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "pulling up %s" name))
-    (c-xref-moving '("-rfct-pull-up-method"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-
-(defun c-xref-pull-up-field (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "pulling up %s" name))
-    (c-xref-moving '("-rfct-pull-up-field"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-
-(defun c-xref-push-down-method (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "pushing down %s" name))
-    (c-xref-moving '("-rfct-push-down-method"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-
-(defun c-xref-push-down-field (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "pushing down %s" name))
-    (c-xref-moving '("-rfct-push-down-field"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;; TURN STATIC - VIRTUAL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun c-xref-turn-static-method-to-dynamic (rd)
-  (let ((argns) (arg) (name) (field))
-    (setq name (c-xref-get-identifier-on-point))
-    (setq argns (read-from-minibuffer
-			 (format
-			  "Argument to use to determine method's object [ 1 - arity('%s') ]? " name)
-			 "1"
-			 ))
-    (setq field (read-from-minibuffer
-			 "Optionally the field getting method's object from the argument [\"\"] "))
-    (setq arg (string-to-number argns))
-    (c-xref-refactoring-init-actions (format "making %s virtual" name))
-    (c-xref-server-call-refactoring-task
-     (list
-      "-rfct-static-to-dynamic"
-      (format "-rfct-param1=%d" arg)
-      (format "-rfct-param2=%s" field)))
-
-    (c-xref-refactoring-finish-actions)
-    ))
-
-(defun c-xref-turn-dynamic-method-to-static (rd)
-  (let ((class-name) (new-par-name) (name))
-    (setq name (c-xref-get-identifier-on-point))
-    (setq class-name (c-xref-compute-simple-information "-olcxcurrentclass"))
-    (setq new-par-name
-	      (read-from-minibuffer "Name of the new parameter: "
-						(c-xref-param-from-class-name class-name)))
-    (c-xref-refactoring-init-actions (format "making %s static" name))
-
-    (c-xref-server-call-refactoring-task
-     (list
-      "-rfct-dynamic-to-static"
-      (format "-rfct-param1=%s" new-par-name)))
-
-    (c-xref-refactoring-finish-actions)
-    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; EXTRACT METHOD ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -7978,12 +7810,6 @@ each important refactoring.
 	      ))
     ))
 
-(defun c-xref-extract-method (rd)
-  (c-xref-refactoring-init-actions (format "extract method"))
-  (c-xref-server-call-refactoring-task (list "-rfct-extract-method"))
-  (c-xref-refactoring-finish-actions)
-  )
-
 (defun c-xref-extract-function (rd)
   (c-xref-refactoring-init-actions (format "extract function"))
   (c-xref-server-call-refactoring-task (list "-rfct-extract-method"))
@@ -8001,37 +7827,5 @@ each important refactoring.
   (c-xref-server-call-refactoring-task (list "-rfct-extract-variable"))
   (c-xref-refactoring-finish-actions)
   )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun c-xref-reduce-long-names-in-the-file (rd)
-  (c-xref-refactoring-init-actions (format "reduction of long names"))
-  (c-xref-server-call-refactoring-task (list "-rfct-reduce-long-names-in-the-file"))
-  (c-xref-refactoring-finish-actions)
-  )
-
-(defun c-xref-add-to-imports (rd)
-  (c-xref-refactoring-init-actions (format "adding import"))
-  (c-xref-server-call-refactoring-task (list "-rfct-add-to-imports"))
-  (c-xref-refactoring-finish-actions)
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun c-xref-self-encapsulate-field (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "self encapsulation of %s" name))
-    (c-xref-server-call-refactoring-task (list "-rfct-self-encapsulate-field"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-(defun c-xref-encapsulate-field (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "encapsulation of %s" name))
-    (c-xref-server-call-refactoring-task (list "-rfct-encapsulate-field"))
-    (c-xref-refactoring-finish-actions)
-    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
