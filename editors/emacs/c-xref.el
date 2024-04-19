@@ -6462,7 +6462,7 @@ given string(s).
 (defun c-xref-interactive-browser-dialog-set-filter (event)
   (interactive "i")
   (let ((level))
-    (setq level (string-to-number (char-to-string last-input-char)))
+    (setq level (string-to-number (char-to-string last-command-event)))
     (c-xref-browser-or-refs-set-filter level)
     ))
 
