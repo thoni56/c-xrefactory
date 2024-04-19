@@ -653,10 +653,6 @@ A-Za-z0-9.\t-- incremental search, insert character
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defun c-xref-sit-for-no-redisplay (delay)
-  (sit-for delay nil t)
-  )
-
 (defun c-xref-cut-too-long-questions (qq offset space)
   (let ((ww) (ll) (res))
     (setq res qq)
