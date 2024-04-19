@@ -403,18 +403,18 @@ static void olcxMenuGenGlobRefsForVirtMethod(SymbolsMenu *menu, FILE *file) {
 }
 
 static int isVirtualMenuItem(ReferenceItem *r) {
-    return r->storage == StorageMethod;
+    return false;
 }
 
 static void genVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
     FILE *file = (FILE *)p1;
-    SymbolsMenu    *s;
+    SymbolsMenu    *m;
     ReferenceItem *r;
 
     // first count if there are some references at all
-    for (s = menu; s != NULL && !s->visible; s = s->next)
+    for (m = menu; m != NULL && !m->visible; m = m->next)
         ;
-    if (s == NULL)
+    if (m == NULL)
         return;
     assert(menu != NULL);
     r = &menu->references;

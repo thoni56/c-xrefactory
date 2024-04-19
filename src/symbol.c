@@ -95,13 +95,12 @@ void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, Refe
     /* default */
     if (symbol->type==TypeDefault) {
         storage = symbol->storage;
-        if (    symbol->storage==StorageExtern
-                ||  symbol->storage==StorageDefault
-                ||  symbol->storage==StorageTypedef
-                ||  symbol->storage==StorageMethod
-                ||  symbol->storage==StorageStatic
-                ||  symbol->storage==StorageThreadLocal
-                ) {
+        if (symbol->storage==StorageExtern
+            || symbol->storage==StorageDefault
+            || symbol->storage==StorageTypedef
+            || symbol->storage==StorageStatic
+            || symbol->storage==StorageThreadLocal
+        ) {
             if (symbol->linkName[0]==' ' && symbol->linkName[1]==' ') {
                 // a special symbol local linkname
                 category = CategoryLocal;

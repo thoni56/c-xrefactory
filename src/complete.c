@@ -717,8 +717,6 @@ static void completeRecordsNames(
             } else if (completionType == TypeSpecialConstructorCompletion) {
                 fillCompletionLine(&completionLine, completions->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
                 completionInsertName(completions->idToProcess, &completionLine, orderFlag, (void*) completions);
-            } else if (options.completeParenthesis && r->storage==StorageMethod) {
-                completeFunctionOrMethodName(completions, orderFlag, vlevel, r, vFunCl);
             } else {
                 fillCompletionLine(&completionLine, cname, r, TypeDefault, vlevel, 0, NULL, vFunCl);
                 processName(cname, &completionLine, orderFlag, completions);

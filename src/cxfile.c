@@ -882,10 +882,6 @@ static bool symbolIsReportableAsUnused(ReferenceItem *referenceItem) {
     if (referenceItem->type == TypeStruct)
         return false;
 
-    // maybe I should collect also all toString() references?
-    if (referenceItem->storage==StorageMethod && strcmp(referenceItem->linkName,"toString()")==0)
-        return false;
-
     // in this first approach restrict this to variables and functions
     if (referenceItem->type == TypeMacro)
         return false;

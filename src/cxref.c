@@ -45,7 +45,7 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
 }
 
 static bool javaStaticallyLinked(Storage storage, Access accessFlags) {
-    return storage==StorageMethod && (accessFlags & AccessStatic);
+    return false;
 }
 
 
@@ -224,26 +224,6 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
             makeRefactoringAvailable(PPC_AVR_ADD_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_DEL_PARAMETER, "");
             makeRefactoringAvailable(PPC_AVR_MOVE_PARAMETER, "");
-        }
-
-        if (symbol->storage == StorageMethod) {
-            if (isDefinitionUsage(usage)) {
-                //& makeRefactoringAvailable(PPC_AVR_EXPAND_NAMES, "");
-                //& makeRefactoringAvailabld(PPC_AVR_REDUCE_NAMES, "");
-                if (symbol->access & AccessStatic) {
-                    makeRefactoringAvailable(PPC_AVR_MOVE_STATIC_METHOD, "");
-                    if (symbol->storage == StorageMethod) {
-                        makeRefactoringAvailable(PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC, "");
-                    }
-                } else {
-                    if (symbol->storage == StorageMethod) {
-                        // TODO! some restrictions
-                        makeRefactoringAvailable(PPC_AVR_PULL_UP_METHOD, "");
-                        makeRefactoringAvailable(PPC_AVR_PUSH_DOWN_METHOD, "");
-                        makeRefactoringAvailable(PPC_AVR_TURN_DYNAMIC_METHOD_TO_STATIC, "");
-                    }
-                }
-            }
         }
         break;
     case TypePackage:
@@ -1622,7 +1602,6 @@ static void olcxMenuSelectOnly(void) {
 
 // Map function
 static void selectUnusedSymbols(SymbolsMenu *menu, void *p1, char *_unused) {
-    bool atleastOneSelected;
     int filter, *flp;
 
     flp = (int *)p1;
@@ -1630,51 +1609,10 @@ static void selectUnusedSymbols(SymbolsMenu *menu, void *p1, char *_unused) {
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
         m->visible = true; m->selected = false;
     }
-    if (menu->references.storage != StorageMethod) {
-        for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
-            if (m->defRefn!=0 && m->refn==0)
-                m->selected = true;
-        }
-        goto fini;
+    for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
+        if (m->defRefn!=0 && m->refn==0)
+            m->selected = true;
     }
-    atleastOneSelected = true;
-    while (atleastOneSelected) {
-        atleastOneSelected = false;
-        // O.K. find definition
-        for (SymbolsMenu *thisMenu=menu; thisMenu!=NULL; thisMenu=thisMenu->next) {
-            if (!thisMenu->selected && thisMenu->defRefn!=0) {
-                assert(thisMenu->references.vFunClass == thisMenu->references.vApplClass);
-                // O.K. is it potentially used?
-                bool used = false;
-                for (SymbolsMenu *otherMenu=menu; otherMenu!=NULL; otherMenu=otherMenu->next) {
-                    if (thisMenu->references.vFunClass == otherMenu->references.vFunClass) {
-                        if (otherMenu->refn != 0) {
-                            used = true;
-                            goto checked;
-                        }
-                    }
-                }
-                // for method, check if can be used in a superclass
-                if (thisMenu->references.storage == StorageMethod) {
-                    for (SymbolsMenu *otherMenu=menu; otherMenu!=NULL; otherMenu=otherMenu->next) {
-                        if (otherMenu->references.vFunClass == otherMenu->references.vApplClass       // it is a definition
-                            && thisMenu->references.vApplClass != otherMenu->references.vApplClass  // not this one
-                            && !otherMenu->selected                         // used
-                            && isSmallerOrEqClass(thisMenu->references.vApplClass, otherMenu->references.vApplClass)) {
-                            used = true;
-                            goto checked;
-                        }
-                    }
-                }
-            checked:
-                if (!used) {
-                    atleastOneSelected = true;
-                    thisMenu->selected = true;
-                }
-            }
-        }
-    }
- fini:
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
         if (m->selected)
             goto fini2;
@@ -2466,9 +2404,6 @@ bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
     case OLO_PP_PRE_CHECK:
         if (isSameCxSymbol(&osym->references, &nsym->references)) {
             if (osym->references.vApplClass == nsym->references.vApplClass) {
-                res = true;
-            }
-            if (osym->references.storage == StorageMethod) {
                 res = true;
             }
         }
