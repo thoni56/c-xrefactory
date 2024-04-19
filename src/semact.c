@@ -805,21 +805,21 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
 }
 
 TypeModifier *simpleEnumSpecifier(Id *id, UsageKind usage) {
-    Symbol p, *pp;
+    Symbol symbol, *symbolP;
 
-    fillSymbol(&p, id->name, id->name, id->position);
-    p.type = TypeEnum;
-    p.storage = StorageDefault;
+    fillSymbol(&symbol, id->name, id->name, id->position);
+    symbol.type = TypeEnum;
+    symbol.storage = StorageDefault;
 
-    if (! symbolTableIsMember(symbolTable, &p, NULL, &pp)
-        || (isMemoryFromPreviousBlock(pp) && isDefinitionOrDeclarationUsage(usage))) {
-        pp = stackMemoryAlloc(sizeof(Symbol));
-        *pp = p;
-        setGlobalFileDepNames(id->name, pp, MEMORY_XX);
-        addSymbolToFrame(symbolTable, pp);
+    if (! symbolTableIsMember(symbolTable, &symbol, NULL, &symbolP)
+        || (isMemoryFromPreviousBlock(symbolP) && isDefinitionOrDeclarationUsage(usage))) {
+        symbolP = stackMemoryAlloc(sizeof(Symbol));
+        *symbolP = symbol;
+        setGlobalFileDepNames(id->name, symbolP, MEMORY_XX);
+        addSymbolToFrame(symbolTable, symbolP);
     }
-    addCxReference(pp, &id->position, usage,NO_FILE_NUMBER, NO_FILE_NUMBER);
-    return createSimpleEnumType(pp);
+    addCxReference(symbolP, &id->position, usage,NO_FILE_NUMBER, NO_FILE_NUMBER);
+    return createSimpleEnumType(symbolP);
 }
 
 TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
