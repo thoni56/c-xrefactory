@@ -50,8 +50,6 @@
   )
 
 (defvar c-xref-running-under 'emacs)
-(if (string-match "XEmacs" emacs-version)
-    (setq c-xref-running-under 'xemacs))
 
 (defvar c-xref-directory-dep-prj-name "++ Automatic (directory dependent) ++")
 (defvar c-xref-abandon-deletion "++ Cancel (no deletion) ++")
@@ -248,22 +246,11 @@
 (define-key c-xref-query-replace-map "C" 'answer-confirmed)
 
 (defun c-xref-bind-default-button (map fun)
-  (if (eq c-xref-running-under 'xemacs)
-      (progn
-	    (define-key map 'button2 'c-xref-undefined)
-	    (define-key map 'button2up fun)
-	    (if c-xref-bind-left-mouse-button
-		(progn
-		  (define-key map 'button1 'c-xref-undefined)
-		  (define-key map 'button1up fun)
-		  )))
-    ;; emacs
     (define-key map [mouse-2] fun)
     (if c-xref-bind-left-mouse-button
 	    (progn
 	      (define-key map [mouse-1] fun)
 	      )))
-  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                         Completion local keymap
@@ -279,7 +266,6 @@
 (define-key c-xref-completion-mode-map "\b" 'c-xref-completion-auto-search-back)
 (define-key c-xref-completion-mode-map [(delete)] 'c-xref-completion-auto-search-back)
 (define-key c-xref-completion-mode-map [iso-lefttab] 'c-xref-completion-auto-search-back) ; Emacs
-(define-key c-xref-completion-mode-map [iso-left-tab] 'c-xref-completion-auto-search-back) ; XEmacs
 (define-key c-xref-completion-mode-map "\C-w" 'c-xref-completion-auto-search-w)
 (define-key c-xref-completion-mode-map [tab] 'c-xref-completion-auto-search-s)
 (define-key c-xref-completion-mode-map "\t" 'c-xref-completion-auto-search-s)
@@ -297,16 +283,7 @@
 (define-key c-xref-completion-mode-map "\C-m" 'c-xref-interactive-completion-select)
 (define-key c-xref-completion-mode-map "\C-p" 'c-xref-interactive-completion-previous)
 (define-key c-xref-completion-mode-map "\C-n" 'c-xref-interactive-completion-next)
-(if (eq c-xref-running-under 'xemacs)
-    (progn
-      ;; XEmacs
-      (define-key c-xref-completion-mode-map 'button3 'c-xref-popup-xemacs-completion-menu)
-      (define-key c-xref-completion-mode-map 'button3up 'c-xref-undefined)
-      (define-key c-xref-completion-mode-map [(control button2)] 'c-xref-undefined)
-      )
-  ;; Emacs
-  (define-key c-xref-completion-mode-map [mouse-3] 'c-xref-compl-3bmenu)
-  )
+(define-key c-xref-completion-mode-map [mouse-3] 'c-xref-compl-3bmenu)
 (c-xref-bind-default-button c-xref-completion-mode-map 'c-xref-interactive-completion-mouse-select)
 (c-xref-add-bindings-for-chars
  c-xref-completion-mode-map
@@ -326,17 +303,6 @@
 (define-key c-xref-compl-3bmenu [c-xref-compl-3bnext] '("Forward" . c-xref-interactive-completion-mouse-next))
 (define-key c-xref-compl-3bmenu [c-xref-compl-3bprev] '("Backward" . c-xref-interactive-completion-mouse-previous))
 (define-key c-xref-compl-3bmenu [c-xref-compl-3binspect] '("Inspect Definition" . c-xref-interactive-completion-mouse-goto))
-
-(defvar c-xref-xemacs-compl-3bmenu
-  '("Completions Menu"
-    ["Inspect Definition"     c-xref-interactive-completion-goto t]
-    ["Complete"               c-xref-interactive-completion-select t]
-    ["Backward"               c-xref-interactive-completion-previous t]
-    ["Forward"                c-xref-interactive-completion-next t]
-    ["Close and Return"       c-xref-interactive-completion-escape t]
-    ["Close"                  c-xref-interactive-completion-close t]
-    ) "C-Xref button3 popup menu for completions"
-  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -360,37 +326,11 @@
     map)
   "Keymap for c-xref search results mode."
   )
-(if (eq c-xref-running-under 'xemacs)
-    (progn
-      ;; XEmacs
-      (define-key c-xref-tag-search-mode-map 'button3 'c-xref-popup-xemacs-tag-search-menu)
-      )
-  ;; Emacs
-  (define-key c-xref-tag-search-mode-map [mouse-3] 'c-xref-tag-search-3bmenu)
-  )
+(define-key c-xref-tag-search-mode-map [mouse-3] 'c-xref-tag-search-3bmenu)
 (c-xref-add-bindings-to-keymap c-xref-tag-search-mode-map)
 
 
 ;;;;;;;;;;;;;;;;;;;;; mouse3 menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defvar c-xref-xemacs-popup-tag-search-menu
-  '("Search Results Menu"
-    ["Inspect Symbol"          c-xref-interactive-tag-search-inspect t]
-    ["Insert Symbol"           c-xref-interactive-tag-search-select t]
-    ["Backward"                c-xref-interactive-tag-search-previous t]
-    ["Forward"                 c-xref-interactive-tag-search-next t]
-    ["Close Window"            c-xref-interactive-tag-search-escape t]
-    ) "C-Xref button3 popup menu for tag-searchs"
-  )
-
-(defun c-xref-popup-xemacs-tag-search-menu (event)
-  (interactive "e")
-  (select-window (event-window event))
-  (goto-char (event-closest-point event))
-  (beginning-of-line)
-  (popup-menu c-xref-xemacs-popup-tag-search-menu)
-  )
-
 
 (defvar c-xref-tag-search-3bmenu (make-sparse-keymap "Search Results Menu"))
 (fset 'c-xref-tag-search-3bmenu (symbol-value 'c-xref-tag-search-3bmenu))
@@ -457,7 +397,6 @@
 (define-key c-xref-browser-dialog-key-map "a" 'c-xref-browser-dialog-select-all)
 (define-key c-xref-browser-dialog-key-map "n" 'c-xref-browser-dialog-select-none)
 (define-key c-xref-browser-dialog-key-map c-xref-escape-key-sequence 'c-xref-browser-dialog-exit)
-(define-key c-xref-browser-dialog-key-map "\C-g" 'c-xref-cancel-with-error)                 ; XEmacs only
 (define-key c-xref-browser-dialog-key-map "q" 'c-xref-browser-dialog-break)
 (define-key c-xref-browser-dialog-key-map [f3] 'c-xref-browser-dialog-previous-reference)
 (define-key c-xref-browser-dialog-key-map [f4] 'c-xref-browser-dialog-next-reference)
@@ -485,27 +424,11 @@
 (define-key c-xref-browser-dialog-key-map "?" 'c-xref-interactive-browser-dialog-help)
 (c-xref-bind-default-button c-xref-browser-dialog-key-map 'c-xref-modal-dialog-mouse-button1)
 
-(if (eq c-xref-running-under 'xemacs)
-    (progn
-      ;; XEmacs
-      (if c-xref-bind-left-mouse-button
-	      (progn
-		(define-key c-xref-browser-dialog-key-map [(control button1)] 'c-xref-undefined)
-		(define-key c-xref-browser-dialog-key-map [(control button1up)] 'c-xref-modal-dialog-mouse-button2)
-		))
-      (define-key c-xref-browser-dialog-key-map [(control button2)] 'c-xref-undefined)
-      (define-key c-xref-browser-dialog-key-map [(control button2up)] 'c-xref-modal-dialog-mouse-button2)
-      (define-key c-xref-browser-dialog-key-map 'button3 'c-xref-popup-xemacs-browser-menu)
-      (define-key c-xref-browser-dialog-key-map 'button3up 'c-xref-undefined)
-      )
-  ;; Emacs
-  (if c-xref-bind-left-mouse-button
-      (progn
-	    (define-key c-xref-browser-dialog-key-map [(control mouse-1)] 'c-xref-modal-dialog-mouse-button2)
-	    ))
-  (define-key c-xref-browser-dialog-key-map [(control mouse-2)] 'c-xref-modal-dialog-mouse-button2)
-  (define-key c-xref-browser-dialog-key-map [mouse-3] 'c-xref-browser-menu-3bmenu)
+(if c-xref-bind-left-mouse-button
+	(define-key c-xref-browser-dialog-key-map [(control mouse-1)] 'c-xref-modal-dialog-mouse-button2)
   )
+(define-key c-xref-browser-dialog-key-map [(control mouse-2)] 'c-xref-modal-dialog-mouse-button2)
+(define-key c-xref-browser-dialog-key-map [mouse-3] 'c-xref-browser-menu-3bmenu)
 
 
 
@@ -517,18 +440,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;; mouse3 menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar c-xref-xemacs-popup-browser-refs-menu
-  '("Search Results Menu"
-    ["Inspect"                    c-xref-browser-dialog-select-one t]
-    ["Filter 0"                   c-xref-interactive-browser-dialog-set-filter0 t]
-    ["Filter 1"                   c-xref-interactive-browser-dialog-set-filter1 t]
-    ["Filter 2"                   c-xref-interactive-browser-dialog-set-filter2 t]
-    ["Filter 3"                   c-xref-interactive-browser-dialog-set-filter3 t]
-    ["Close"               c-xref-browser-dialog-exit t]
-    ["Continue"                   c-xref-modal-dialog-continue t]
-    ) "C-xref button3 popup menu for browser-menus"
-  )
-
 (defvar c-xref-browser-refs-3bmenu (make-sparse-keymap "Search Results Menu"))
 (fset 'c-xref-browser-refs-3bmenu (symbol-value 'c-xref-browser-refs-3bmenu))
 (define-key c-xref-browser-refs-3bmenu [c-xref-bm-3b-cont] '("Continue" . c-xref-browser-3b-mouse-selected))
@@ -538,20 +449,6 @@
 (define-key c-xref-browser-refs-3bmenu [c-xref-bm-3b-filt1] '("Filter 1" . c-xref-browser-3b-mouse-selected))
 (define-key c-xref-browser-refs-3bmenu [c-xref-bm-3b-filt0] '("Filter 0" . c-xref-browser-3b-mouse-selected))
 (define-key c-xref-browser-refs-3bmenu [c-xref-bm-3b-sel-one] '("Inspect" . c-xref-browser-3b-mouse-selected))
-
-(defvar c-xref-xemacs-popup-browser-menu-menu
-  '("Search Results Menu"
-    ["Select One and Inspect"     c-xref-browser-dialog-select-one t]
-    ["Toggle Selection"           c-xref-browser-dialog-toggle t]
-    ["Select All"                 c-xref-browser-dialog-select-all t]
-    ["Unselect All"               c-xref-browser-dialog-select-none t]
-    ["Filter 0"                   c-xref-interactive-browser-dialog-set-filter0 t]
-    ["Filter 1"                   c-xref-interactive-browser-dialog-set-filter1 t]
-    ["Filter 2"                   c-xref-interactive-browser-dialog-set-filter2 t]
-    ["Close Window"               c-xref-browser-dialog-exit t]
-    ["Continue"                   c-xref-modal-dialog-continue t]
-    ) "C-xref button3 popup menu for browser-menus"
-  )
 
 (defvar c-xref-browser-menu-3bmenu (make-sparse-keymap "Search Results Menu"))
 (fset 'c-xref-browser-menu-3bmenu (symbol-value 'c-xref-browser-menu-3bmenu))
@@ -613,14 +510,6 @@ interrupted by C-g. If there are such files, delete them.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-(defun c-xref-popup-xemacs-completion-menu (event)
-  (interactive "e")
-  (select-window (event-window event))
-  (goto-char (event-closest-point event))
-  (beginning-of-line)
-  (popup-menu c-xref-xemacs-compl-3bmenu)
-  )
 
 (defun c-xref-help-highlight-expr (expr)
   (c-xref-fontify-region (point-min) (point-max) expr)
@@ -763,18 +652,9 @@ A-Za-z0-9.\t-- incremental search, insert character
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; MISC ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; xemacs with mule contains in standard distributions debug checks
-;; making elt and aref take time proportional to string
-;; size, so convert c-xref answer to list of chars.
-(defvar c-xref-xemacs-mule-problem (and (eq c-xref-running-under 'xemacs)
-							(fboundp 'init-mule)))
-
 
 (defun c-xref-sit-for-no-redisplay (delay)
-  (if (eq c-xref-running-under 'xemacs)
-      (sit-for delay t)
-    (sit-for delay nil t)
-    )
+  (sit-for delay nil t)
   )
 
 (defun c-xref-cut-too-long-questions (qq offset space)
@@ -942,10 +822,7 @@ tries to delete C-xrefactory windows first.
     ))
 
 (defun c-xref-write-tmp-buff (tmpFile from-p to-p coding-system)
-  (if (eq c-xref-running-under 'xemacs)
-      (write-region from-p to-p tmpFile nil 'no-message nil coding-system)
-    (write-region from-p to-p tmpFile nil 'no-message)
-    )
+  (write-region from-p to-p tmpFile nil 'no-message nil coding-system)
   )
 
 (defun c-xref-get-identifier-after (poin)
@@ -1362,11 +1239,7 @@ tries to delete C-xrefactory windows first.
     (if (>= width window-min-width)
 	    (progn
 	      (setq rightmost-win nil)
-	      (if (eq c-xref-running-under 'emacs)
 		  (setq rightmost-win (>= (elt (window-edges (selected-window)) 2) (frame-width)))
-		;; xemacs
-		(setq rightmost-win (>= (+ (elt (c-xref-window-edges) 2) 20) (frame-pixel-width)))
-		)
 	      (if rightmost-win
 		  (progn
 			(if (> enlarge 0)
@@ -1412,11 +1285,7 @@ tries to delete C-xrefactory windows first.
 (defun c-xref-resize-window-width (val)
   (let ((rightmost-win))
     (setq rightmost-win nil)
-    (if (eq c-xref-running-under 'emacs)
-	    (setq rightmost-win (>= (elt (window-edges (selected-window)) 2) (frame-width)))
-      ;; xemacs
-      (setq rightmost-win (>= (+ (elt (c-xref-window-edges) 2) 20) (frame-pixel-width)))
-      )
+	(setq rightmost-win (>= (elt (window-edges (selected-window)) 2) (frame-width)))
     (if rightmost-win
 	    (progn
 ;;;                             (set-frame-width (selected-frame) (+ (frame-width) val))
@@ -2025,14 +1894,6 @@ tries to delete C-xrefactory windows first.
 	      (setq eolc inhibit-eol-conversion)
 	      (setq inhibit-eol-conversion t)
 	      ))
-    (if (and (eq c-xref-running-under 'xemacs)
-		 (fboundp 'coding-system-eol-type)
-		 (boundp 'buffer-file-coding-system)
-		 (fboundp 'coding-system-base))
-	    (progn
-	      (if (eq (coding-system-eol-type buffer-file-coding-system) 'crlf)
-		  (setq coding (coding-system-base buffer-file-coding-system))
-		)))
     (setq tmpFile (format "%s/c-xref%s.tmp" c-xref-tmp-dir c-xref-user-identification))
     (setq res nil)
     (if (>= (point) 1)
@@ -2111,12 +1972,10 @@ tries to delete C-xrefactory windows first.
     (set-buffer c-xref-server-answer-buffer)
     ;;(c-xref-erase-buffer)
     (insert-file-contents c-xref-server-tasks-ofile nil nil nil t)
-    (if c-xref-xemacs-mule-problem
-	    (setq res (c-xref-buffer-char-list))
-      (if (fboundp 'buffer-substring-no-properties)
-	      (setq res (buffer-substring-no-properties 1 (point-max)))
-	    (setq res (buffer-substring 1 (point-max)))
-	    ))
+    (if (fboundp 'buffer-substring-no-properties)
+	    (setq res (buffer-substring-no-properties 1 (point-max)))
+	  (setq res (buffer-substring 1 (point-max)))
+	  )
     (setq i 0)
     (if c-xref-debug-mode
 	    (write-region (point-min) (point-max) (c-xref-server-get-new-tmp-file-name))
@@ -3167,7 +3026,7 @@ Special hotkeys available:
 										      (not c-xref-browser-splits-window-horizontally)
 										      t))
       )
-    ;; scrolling in Emacs/XEmacs is mysterious. Set up some values
+    ;; scrolling in Emacs is mysterious. Set up some values
 					; (setq sw (selected-window))
 					; (select-window res)
 					; (setq scroll-margin 2)
@@ -3484,7 +3343,6 @@ Special hotkeys available:
 	      ))
       (setq i (c-xref-server-parse-xml-tag ss i len))
       (c-xref-server-dispatch-require-end-ctag c-xref_PPC_SRC_LINE)
-      (if c-xref-xemacs-mule-problem (progn (setq len (- len i)) (setq ss (nthcdr i ss)) (setq j (+ j i)) (setq i 0)))
       (setq i (c-xref-server-parse-xml-tag ss i len))
       )
     (c-xref-server-dispatch-require-end-ctag c-xref_PPC_REFERENCE_LIST)
@@ -3511,7 +3369,6 @@ Special hotkeys available:
       (setq i (c-xref-server-parse-xml-tag ss i len))
       (c-xref-server-dispatch-require-end-ctag c-xref_PPC_STRING_VALUE)
       (setq i (c-xref-server-parse-xml-tag ss i len))
-      (if c-xref-xemacs-mule-problem (progn (setq len (- len i)) (setq ss (nthcdr i ss)) (setq j (+ j i)) (setq i 0)))
       )
     ;;(message "stop %S" (current-time))
     (c-xref-server-dispatch-require-end-ctag c-xref_PPC_SYMBOL_LIST)
@@ -3691,7 +3548,6 @@ Special hotkeys available:
 	    (error "unknown tag: %s" c-xref-server-ctag))
 	   ;;(message "unknown tag: %s" c-xref-server-ctag))
        )
-      (if c-xref-xemacs-mule-problem (progn (setq len (- len i)) (setq ss (nthcdr i ss)) (setq j (+ j i)) (setq i 0)))
       (setq i (c-xref-server-dispatch-skip-blank ss i len))
       )
     (+ i j)
@@ -5072,7 +4928,6 @@ compilation is successful.  See also `c-xref-ide-compile' and
 	    ;;    (error "unexpected tag in log file: %s" c-xref-server-ctag))
 	    (message "unexpected tag in log file: %s" c-xref-server-ctag))
        )
-      (if c-xref-xemacs-mule-problem (progn (setq len (- len i)) (setq ss (nthcdr i ss)) (setq j (+ j i)) (setq i 0)))
       (setq i (c-xref-server-dispatch-skip-blank ss i len))
       )
     (+ i j)
@@ -5142,10 +4997,7 @@ compilation is successful.  See also `c-xref-ide-compile' and
     (setq buffer-read-only nil)
     ;; (c-xref-erase-buffer)
     (insert-file-contents c-xref-tags-tasks-ofile  nil nil nil t)
-    (if c-xref-xemacs-mule-problem
-	    (setq ss (c-xref-buffer-char-list))
-      (setq ss (buffer-string))
-      )
+    (setq ss (buffer-string))
     (setq len (length ss))
     (kill-buffer c-xref-server-answer-buffer)
     (if (> len 0)
@@ -6485,10 +6337,7 @@ given string(s).
   (let ((sw) (ew) (res))
     (setq res nil)
     (setq sw (selected-window))
-    (if (eq c-xref-running-under 'xemacs)
-	    (setq ew (event-window event))
-      (setq ew (posn-window (event-end event)))
-      )
+    (setq ew (posn-window (event-end event)))
     (if (windowp ew)
 	    (progn
 	      (select-window ew)
@@ -6531,12 +6380,7 @@ given string(s).
 		)
 	    ))
     (if (eq dir 'up)
-	    (progn
-	      ;; XEmacs magic
-	      (forward-line -1)
-	      (scroll-up 1)
-	      (forward-line 1)
-	      )
+	    (scroll-up 1)
       (if (eq dir 'down)
 	      (scroll-down 1)
 	    ))
@@ -6548,7 +6392,7 @@ given string(s).
     (setq sw (selected-window))
     (c-xref-mouse-set-point event)
     (beginning-of-line)
-    ;; scrolling in Emacs/XEmacs is mysterious:
+    ;; scrolling in Emacs is mysterious:
     ;; sometimes it goes automatically, sometimes not
     (if (eq c-xref-this-buffer-type 'reference-list)
 	    (c-xref-scroll-if-on-first-or-last-line)
@@ -6700,17 +6544,6 @@ given string(s).
   )
 
 ;;;;;;;;;;;;;;;;;;;;; mouse3 menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun c-xref-popup-xemacs-browser-menu (event)
-  (interactive "e")
-  (select-window (event-window event))
-  (goto-char (event-closest-point event))
-  (beginning-of-line)
-  (if (eq c-xref-this-buffer-type 'reference-list)
-      (popup-menu c-xref-xemacs-popup-browser-refs-menu)
-    (popup-menu c-xref-xemacs-popup-browser-menu-menu)
-    )
-  )
 
 (defun c-xref-browser-3b-mouse-selected (event)
   (interactive "e")

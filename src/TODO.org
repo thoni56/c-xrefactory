@@ -105,7 +105,6 @@ or ask...
   non-terminal (as with '$3'). That field is defined in the YYSTYPE
   but not used in any '%type' declaration meaning all non-terminals
   have it.
-* TODO Remove explicit support for Xemacs in elisp
 * TRY Bug: test_c_extract_function_with_out_variables should actually find the declaration and handle it
 * TODO Available refactorings should not show Delete Parameter if there are none
 * TODO Available refactorings should not show Move Parameter if there are less than two
@@ -223,6 +222,7 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Macros. There are many things that might need the magic of macros, but we
   should watch out for "macro for optimisation" and remove that.
 
+* DONE Remove explicit support for Xemacs in elisp
 * DONE Remove all version control cruft from editor adapter
 * DONE Menu option to upgrade 'c-xrefactory' - it should, in principle, just be "git pull, kill c-xref, make prod, reload c-xref.el, c-xrefactory.el"
 * DONE Fix so that "extract" is not available unless an explicit region is active
