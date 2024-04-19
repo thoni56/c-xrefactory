@@ -142,7 +142,6 @@ Current Mikado:
 * TODO Don't do any default operation (currently 'complete') if none given on command line
 * TODO How is -olcxcplsearch and -olcxsearch supposed to work? (test_search...)
 * TODO REFACTOR: Extract storage module interface and implementation
-* TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
 * TODO Better, and unified, options handling
 There are both "-opt=value" and "-opt value" format options
@@ -152,21 +151,14 @@ There are both "-opt=value" and "-opt value" format options
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO MISSING TEST CASES:
-** DONE Test case for Move Method
 ** TODO Test case for Move Parameter
 ** TODO Test case for dead symbol detection
-** TODO Test case for Push Down Method
-** TODO Test case for corruptionError() and compressionError() (jar/zip/class)
-** TODO Create jar reading test for unexpected end of file
 * TODO: FUTURE
 ** Implement LSP (Language Server Protocol)
 This is probably not possible due to the level of integration between
 the editor adaptor and the c-xref proper. Also LSP does not have a
 protocol for many of the refactorings which are core to c-xref.
 * TODO BUGS:
-** TODO Double free when swapping refs while reading jar file
-Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
-** TODO bug_add_to_constructor_missinterpreted_if_not_int_arg_0
 ** TODO Bug: when extracting C function including declarations that are required
    by code left outside the extraction, that declaration is moved to the
    extracted function. This should probably trigger "structure error".
@@ -202,8 +194,6 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   prevent reading explicit -xrefrc options?
 * TODO Cannot mock structs as arguments like in symbol.mock
   We need to change pos to *pos if that's gonna work
-* TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
-and you can also get java.class.version=55 => java version without decoding directory names
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
