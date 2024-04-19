@@ -195,22 +195,13 @@
 ;;
 
 (defun c-xref-get-this-frame-dispatch-data ()
-  (let ((res))
-    (if (eq c-xref-running-under 'emacs)
-	    (setq res (cdr (assoc 'c-xref-this-frame-dispatch-data (frame-parameters (selected-frame)))))
-      (setq res (frame-property (selected-frame) 'c-xref-this-frame-dispatch-data nil))
-      )
-    res
-    ))
+  "Retrieve custom dispatch data set for the current frame in Emacs."
+  (cdr (assoc 'c-xref-this-frame-dispatch-data (frame-parameters (selected-frame))))
+  )
 
 (defun c-xref-set-this-frame-dispatch-data (dispatch-data)
-  (if (eq c-xref-running-under 'emacs)
-      (modify-frame-parameters (selected-frame)
-					   (list (cons 'c-xref-this-frame-dispatch-data dispatch-data)))
-    (set-frame-property (selected-frame)
-				    'c-xref-this-frame-dispatch-data
-				    dispatch-data)
-    )
+  (modify-frame-parameters (selected-frame)
+                           `((c-xref-this-frame-dispatch-data . ,dispatch-data)))
   )
 
 
@@ -989,23 +980,11 @@ tries to delete C-xrefactory windows first.
 	    ))
     res
     ))
-
 (defun c-xref-backslashify-name (fname)
-  (let ((spos) (len) (res))
-    (setq res fname)
-    (if (or (eq c-xref-platform 'unix) (eq (length fname) 0))
-	    (setq res fname)
-      (setq len (length fname))
-      (setq spos 0)
-      (while (< spos len)
-	    (if (or (eq (elt fname spos) ?/) (eq (elt fname spos) ?\\))
-		(store-substring fname spos c-xref-slash)
-	      )
-	    (setq spos (+ spos 1))
-	    )
-      )
-    res
-    ))
+  "Convert all directory separators in FNAME based on `c-xref-platform`."
+  (if (or (eq c-xref-platform 'unix) (zerop (length fname)))
+      fname
+    (replace-regexp-in-string "[/\\]" (char-to-string c-xref-slash) fname)))
 
 (defun c-xref-optionify-string (ss qt)
   (let ((res))
@@ -3784,32 +3763,6 @@ Special hotkeys available:
 \\[c-xref-interactive-project-selection-help] \t-- toggle this help page
 " nil nil)
   )
-
-
-(defun c-xref-project-set-active-new ()
-  "Set  active  project.
-
-This function  is meaningful  only if your  '.c-xrefrc' file  contains a
-section defining options for your  project. After setting a project to
-be active  all C-xrefactory functions will proceed  according to options
-corresponding to this project name.
-"
-  (interactive "")
-  (c-xref-entry-point-make-initialisations-no-project-required)
-  (let ((prj) (cpl))
-    (setq cpl (append
-		   (cons (cons c-xref-directory-dep-prj-name nil) nil)
-		   (c-xref-get-project-list-completions)
-		   ))
-    (setq prj (completing-read "Activate project: " cpl))
-    (if prj
-	    (progn
-	      (if (string-equal prj c-xref-directory-dep-prj-name)
-		  (setq c-xref-current-project nil)
-		(setq c-xref-current-project prj)
-		)))
-    (c-xref-project-active)
-    ))
 
 (defun c-xref-display-project-list (last-project local-keymap)
   (let ((c-xref-project-list) (dd))
@@ -6690,9 +6643,14 @@ the reset was performed, nil if the reset was cancelled."
 		nil)  ; Indicate cancellation
 	    t))))  ; Indicate no changes
 
-(defun c-xref-upgrade (void)
+(defun c-xref-load-directory (dir)
+  "Load all Emacs Lisp files in DIR."
+  (dolist (file (directory-files dir t "\\.elc?$"))
+    (load file nil t)))
+
+(defun c-xref-upgrade ()
   "Upgrade the installed c-xref, if available."
-  (interactive "P")
+  (interactive)
   (if (yes-or-no-p (format "Really upgrade c-xref installation in %s ? "
 				       c-xref-install-directory))
       (progn
@@ -6703,7 +6661,7 @@ the reset was performed, nil if the reset was cancelled."
 		  (shell-command "git checkout stable")
 		  (c-xref-kill-xref-process nil)
 		  (shell-command "make")
-		  (load-directory c-xref-elisp-directory)
+		  (c-xref-load-directory c-xref-elisp-directory)
 		  )
 	      )
 	    )
@@ -6870,10 +6828,10 @@ You can invoke a tutorial from the menu, `C-xref -> Misc -> Tutorial'.
   (let ((bb) (cb) (fn) (nfn) (res))
     (setq bb (buffer-list))
     (setq res nil)
-    (setq olddir (backslashify-name olddir))
+    (setq olddir (c-xref-backslashify-name olddir))
     (while bb
       (setq cb (car bb))
-      (setq fn (backslashify-name (buffer-file-name cb)))
+      (setq fn (c-xref-backslashify-name (buffer-file-name cb)))
       (if (c-xref-string-has-prefix fn olddir (eq c-xref-platform 'windows))
 	      (progn
 		(set-buffer cb)
