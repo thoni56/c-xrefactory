@@ -695,6 +695,8 @@ faces and highlighting in buffers created by C-xrefactory.
   (setq c-xref-custom-menu-symbol-count (1+ c-xref-custom-menu-symbol-count))
   )
 
+(defvar c-xref-custom-menu nil "C-xrefactory Custom Menu keymap.")
+
 (defun c-xref-add-custom-menu-item (text expression)
   "Add an item to C-xrefactory's `Custom' submenu. If the `Custom'
 submenu does not exist, create it. TEXT is the name of the
@@ -708,14 +710,13 @@ variable should be set by a `-set java2html <command>' option in
 your .c-xrefrc file.
 "
 
-  (if (not (boundp 'c-xref-custom-menu))
-	  (progn
-	    (defvar c-xref-custom-menu (make-sparse-keymap "C-xref Custom Menu"))
-	    (fset 'c-xref-custom-menu (symbol-value 'c-xref-custom-menu))
-	    (define-key-after c-xref-menu [c-xref-custom-menu]
-		  (cons "Custom" c-xref-custom-menu)
-		  (car (nth 3 c-xref-menu)))
-	    ))
+  (unless c-xref-custom-menu
+    (setq c-xref-custom-menu (make-sparse-keymap "C-xref Custom Menu"))
+	(fset 'c-xref-custom-menu (symbol-value 'c-xref-custom-menu))
+	(define-key-after c-xref-menu [c-xref-custom-menu]
+	  (cons "Custom" c-xref-custom-menu)
+	  (car (nth 3 c-xref-menu)))
+	)
   (c-xref-emacs-add-menu-item c-xref-custom-menu text expression)
   )
 
