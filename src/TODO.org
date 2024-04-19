@@ -20,72 +20,73 @@ There are a *lot* of things to do to make c-xref into modern and maintainable C.
 Current Mikado:
 * TRY Project local .c-xrefrc with relative file paths so it can be checked in to a repo
    We could start with having same format but how to handle project names?
-** DONE Lookup the closest .c-xrefrc and potentially use it directory path as project name
-** TODO Make "get project" lookup the directory tree for closest .c-xrefrc that covers the file
-   Maybe it could return the path to the project file as the name of the project? Yes.
-   NOTE: any -prune should be considered too, how? why? example?
-** TODO Make all filenames relative in the options file
-** TODO A "-p" should first look at the path of the "project name" to see if there is a .c-xrefrc there
 ** TODO Change to having reference file in the project tree?
    This needs some thinking. Find it by looking upwards in the dir, on
    create we need to ask where to store it starting with current
    directory. This could enable storing non-absolute filenames in the
    xrefs, they should be relative to where the db is.
+** TODO Make "get project" lookup the directory tree for closest .c-xrefrc that covers the file
+   Maybe it could return the path to the project file as the name of the project? Yes.
+   NOTE: any -prune should be considered too, how? why? example?
+** TODO Make all filenames relative in the options file
+** TODO A "-p" should first look at the path of the "project name" to see if there is a .c-xrefrc there
 ** TODO Do we even need the db? Probably, for very large projects it's too slow to always generate
+** DONE Function to lookup the closest .c-xrefrc and potentially use its directory path as project name
 * DOING Extract variable
-** Basic extract variable
 ** TRY Place the variable declaration in the closest block (need to figure out how ProgramGraphs work...)
 ** TRY Figure out variable type (hard, none of the other extracts seems to do this...)
-* REQUIRES to make LexemBuffer interface just take LexemBuffer
-** DONE Unify LexInput with LexemBuffer so we can get rid of put/get LexemAt() functions
-*** to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
-**** to add a LexemBuffer as argument to putLexToken()
-***** LexemBuffer as argument to putLexLines()
-***** LexemBuffer as argument to processIdentifier()
-***** LexemBuffer as argument to putEmptyCompletionId()
-***** LexemBuffer instead of body in processDefineDirective() - yylex.c
-****** Use putLexXXXWithPointer() for now
-***** LexemBuffer instead of buf/bcc/tbcc in expandMacroArgument()
-****** Use putLexXXXWithPointer() for now
-***** LexemBuffer instead of buf/bcc in createMacroBody()
-****** Use putLexXXXWithPointer() for now
-***** backpatching of lexems
-****** backpatch lexem token in handleCppToken()
-******* functions to backpatch lexem token
-******* LexemBuffer as parameter to putLexToken()
-******** lb->end instead of writePositionP in handleCppToken()
-******** lb->end instead of extra parameter in processIdentifier()
-******** lb->end instead of extra parameter in getLexemFromLexer()
-******** lb->end instead of local variable destination in processDefineDirective()
-********* Use putLexTokenWithPointer() instead
-****** setting next write position in lexemStream in handleCompletionOrSearch()
-******* function to set lb->end (setLexemStreamEnd())
-**** Use LexemBuffer as argument to putLexLine()
-**** Use LexemBuffer as argument to putLexPositionFields()
-***** LexemBuffer instead of local destination in processDefineDirective()
-****** Use putLexXXXWithPointer() for now
-***** LexemBuffer instead of local variables in collate()
-****** Use putLexXXXWithPointer() for now
-***** LexemBuffer instead of local variables in createMacroBody()
-****** Use putLexXXXWithPointer() for now
-**** Use LexemBuffer as argument to putLexPosition()
-***** Use lb->end instead of writePositionP in handleCompletionOrSearch()
-**** Use LexemBuffer as argument to putLexChar()
-**** Use LexemBuffer as argument to putLexInt()
-***** lb->end instead of local variable destination in processDefineDirective()
-****** Use putLexXXXWithPointer() for now
-** Move put...() for complete Lexems (including position, string, ...) to lexembuffer.c
-** REQUIRES to use LexemBuffer as argument to all getLexXXX() functions
-*** REQUIRES to use LexemBuffer in getLexInt()
-**** DOING getExtraLexemInformationFor() to send LexemBuffer instead of pointer
-***** DOING currentInput to contain LexemBuffer instead of currentLexemP
-*** REQUIRES to use LexemBuffer in getLexToken()
-**** DOING getExtraLexemInformationFor() to send LexemBuffer instead of pointer
-**** DOING getLexem() and getLexemSavePrevious() to use LexemBuffer instead of pointer
-**** DOING collate() to work with LexemBuffer instead of pointers
-**** DOING macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
-*** REQUIRES to use LexemBuffer in getLexPosition()
-** REQUIRES to replace putLexXXXWithPointer() in yylex.c
+or ask...
+** DONE Basic extract variable
+* TRY to make LexemBuffer interface just take LexemBuffer
+** DOING Unify LexInput with LexemBuffer so we can get rid of put/get LexemAt() functions
+*** DONE to use LexemBuffer as argument to all putLexXXX() functions except in yylex.c
+**** DONE to add a LexemBuffer as argument to putLexToken()
+***** DONE LexemBuffer as argument to putLexLines()
+***** DONE LexemBuffer as argument to processIdentifier()
+***** DONE LexemBuffer as argument to putEmptyCompletionId()
+***** DONE LexemBuffer instead of body in processDefineDirective() - yylex.c
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE LexemBuffer instead of buf/bcc/tbcc in expandMacroArgument()
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE LexemBuffer instead of buf/bcc in createMacroBody()
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE backpatching of lexems
+****** DONE backpatch lexem token in handleCppToken()
+******* DONE functions to backpatch lexem token
+******* DONE LexemBuffer as parameter to putLexToken()
+******** DONE lb->end instead of writePositionP in handleCppToken()
+******** DONE lb->end instead of extra parameter in processIdentifier()
+******** DONE lb->end instead of extra parameter in getLexemFromLexer()
+******** DONE lb->end instead of local variable destination in processDefineDirective()
+********* DONE Use putLexTokenWithPointer() instead
+****** DONE setting next write position in lexemStream in handleCompletionOrSearch()
+******* DONE function to set lb->end (setLexemStreamEnd())
+**** DONE Use LexemBuffer as argument to putLexLine()
+**** DONE Use LexemBuffer as argument to putLexPositionFields()
+***** DONE LexemBuffer instead of local destination in processDefineDirective()
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE LexemBuffer instead of local variables in collate()
+****** DONE Use putLexXXXWithPointer() for now
+***** DONE LexemBuffer instead of local variables in createMacroBody()
+****** DONE Use putLexXXXWithPointer() for now
+**** DONE Use LexemBuffer as argument to putLexPosition()
+***** DONE Use lb->end instead of writePositionP in handleCompletionOrSearch()
+**** DONE Use LexemBuffer as argument to putLexChar()
+**** DONE Use LexemBuffer as argument to putLexInt()
+***** DONE lb->end instead of local variable destination in processDefineDirective()
+****** DONE Use putLexXXXWithPointer() for now
+** DONE Move put...() for complete Lexems (including position, string, ...) to lexembuffer.c
+** TRY to use LexemBuffer as argument to all getLexXXX() functions
+*** TRY to use LexemBuffer in getLexInt()
+**** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer
+***** REQUIRES currentInput to contain LexemBuffer instead of currentLexemP
+*** TRY to use LexemBuffer in getLexToken()
+**** REQUIRES getExtraLexemInformationFor() to send LexemBuffer instead of pointer
+**** REQUIRES getLexem() and getLexemSavePrevious() to use LexemBuffer instead of pointer
+**** REQUIRES collate() to work with LexemBuffer instead of pointers
+**** REQUIRES macroArgumentsToString() to work with LexemBuffer instead of LexInput's pointers
+*** TRY to use LexemBuffer in getLexPosition()
+** TRY to replace putLexXXXWithPointer() in yylex.c
 * DONE An option that creates a list of commands given to c-xref so that they can be replayed exactly later
 * DONE Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
@@ -96,7 +97,7 @@ Current Mikado:
 * DONE Turn uint32-test into a test for all C99 predefined symbols to ensure every compiler/environment gets them defined
   https://en.cppreference.com/w/c/types/integer
 * DOING Select extra defines as necessary depending on compiler discovered as a sideeffect of discoverStandardIncludes()
-** clang definition table
+** DONE clang definition table
 ** TRY Use compiler identification to set extra needed definitions for clang
 * TRY Add yacc parser construct for field in yystype ('$<field>$' and '$<field>3')
   This means access "field" in the YYSTYPE (semantic type) union for
@@ -129,6 +130,13 @@ Current Mikado:
 * TODO BUG: an unterminated "assert(" (with the c-xref def of it: MACRO) breaks
   with error message "size of #macro_argument exceeded MACRO_UNIT_SIZE"
 * TODO Cleanup generateOnlineCxref() which only generates a GOTO
+* TODO NEW FEATURES:
+** TODO FEATURE: New refactoring: change return type of function
+** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
+** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
+** TODO FEATURE: New refactoring: move function for C
+** TODO FEATURE: Rename "module" in C
+   Prompt for new "module name", rename both .c & .h if they exist, and change all includes
 * TODO Push options.xref2 into ppc...() functions or create if necessary?
 * TODO displayingErrorMessages() seems to be duplicated functionality
   Change to preventErrorMessage() and let logger handle actual prevention?
@@ -146,18 +154,11 @@ There are both "-opt=value" and "-opt value" format options
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO MISSING TEST CASES:
 ** DONE Test case for Move Method
-** TODO Test case for dead symbol detection
 ** TODO Test case for Move Parameter
+** TODO Test case for dead symbol detection
 ** TODO Test case for Push Down Method
 ** TODO Test case for corruptionError() and compressionError() (jar/zip/class)
 ** TODO Create jar reading test for unexpected end of file
-* TODO NEW FEATURES:
-** TODO FEATURE: New refactoring: change return type of function
-** TODO FEATURE: Extract function should extract a boolean function inside an if() correctly
-** TODO FEATURE: New refactoring: Inline variable ("a=f(); b(a);" => "b(f());")
-** TODO FEATURE: New refactoring: move function for C
-** TODO FEATURE: Rename "module" in C
-   Prompt for new "module name", rename both .c & .h if they exist, and change all includes
 * TODO: FUTURE
 ** Implement LSP (Language Server Protocol)
 This is probably not possible due to the level of integration between
