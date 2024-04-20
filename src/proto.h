@@ -44,16 +44,6 @@ typedef enum longjmpReason {
     LONGJMP_REASON_FILE_ABORT
 } LongjmpReason;
 
-typedef enum pushPullDirection {
-    PULLING_UP = LONGJMP_REASON_FILE_ABORT + 1,
-    PUSHING_DOWN
-} PushPullDirection;
-
-typedef enum loadSuperOrNot {
-    LOAD_SUPER = PUSHING_DOWN + 1,
-    DO_NOT_LOAD_SUPER
-} LoadSuperOrNot;
-
 typedef enum resolveDialog {
     RESOLVE_DIALOG_DEFAULT = LONGJMP_REASON_FILE_ABORT + 1,
     RESOLVE_DIALOG_ALWAYS,
