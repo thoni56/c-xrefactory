@@ -7418,24 +7418,6 @@ refactoring.
     (c-xref-refactoring-finish-actions)
     ))
 
-(defun c-xref-move-static-field (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "moving %s" name))
-    (c-xref-moving '("-rfct-move-static-field"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-(defun c-xref-move-field (rd)
-  (let ((name) (prefix))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "moving %s" name))
-    (setq prefix (read-from-minibuffer
-			  (format "Field (string) to get target object from source object: ") ""))
-    (c-xref-moving (list "-rfct-move-field" (format "-rfct-param2=%s" prefix)))
-    (c-xref-refactoring-finish-actions)
-    ))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; EXTRACT METHOD ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
