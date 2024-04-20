@@ -206,15 +206,10 @@ if __name__ == "__main__":
     lines = lines[6:]  # Skip header
     files = unpack_files(lines)
 
-    # Get all classes
-    vprint("Unpacking", "XClasses")
-    lines = read_lines_from(directory_name, "XClasses")
-    #classes = unpack(lines)
-
     symbols = []
     # Read all CXref-files and list identifiers
     for cxfilename in sorted(os.listdir(directory_name)):
-        if cxfilename != "XFiles" and cxfilename != "XClasses":
+        if cxfilename != "XFiles" :
             vprint("Unpacking", cxfilename)
             lines = read_lines_from(directory_name, cxfilename)
             lines = read_header(lines)

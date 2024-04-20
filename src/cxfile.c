@@ -374,13 +374,6 @@ static void writeCxReference(Reference *reference, int symbolNum) {
                          reference->position.file, reference->position.line, reference->position.col);
 }
 
-static void writeSubClassInfo(int superior, int inferior, int origin) {
-    writeOptionalCompactRecord(CXFI_FILE_NUMBER, origin, "\n");
-    writeOptionalCompactRecord(CXFI_SUPERCLASS, superior, "");
-    writeOptionalCompactRecord(CXFI_SUBCLASS, inferior, "");
-    writeCompactRecord(CXFI_CLASS_EXT, 0, "");
-}
-
 static void writeFileNumberItem(FileItem *fileItem, int number) {
     writeOptionalCompactRecord(CXFI_FILE_NUMBER, number, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fileItem->lastUpdateMtime, " ");
@@ -398,43 +391,6 @@ static void writeFileSourceIndexItem(FileItem *fileItem, int index) {
     if (fileItem->sourceFileNumber != NO_FILE_NUMBER) {
         writeOptionalCompactRecord(CXFI_FILE_NUMBER, index, "\n");
         writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->sourceFileNumber, " ");
-    }
-}
-
-static void writeClassHierarchyItems(FileItem *fileItem, int index) {
-    ClassHierarchyReference *p;
-    for (p=fileItem->superClasses; p!=NULL; p=p->next) {
-        writeSubClassInfo(p->superClass, index, p->ofile);
-    }
-}
-
-
-static ClassHierarchyReference *findSuperiorInSuperClasses(int superior, FileItem *iFile) {
-    ClassHierarchyReference *p;
-    for (p=iFile->superClasses; p!=NULL && p->superClass!=superior; p=p->next)
-        ;
-
-    return p;
-}
-
-
-static void createSubClassInfo(int superior, int inferior, int originFileNumber, int genfl) {
-    ClassHierarchyReference   *p, *pp;
-
-    FileItem *inferiorFile = getFileItem(inferior);
-    FileItem *superiorFile = getFileItem(superior);
-
-    p = findSuperiorInSuperClasses(superior, inferiorFile);
-    if (p==NULL) {
-        p = newClassHierarchyReference(originFileNumber, superior, inferiorFile->superClasses);
-        inferiorFile->superClasses = p;
-        assert(options.mode);
-        if (options.mode == XrefMode) {
-            if (genfl == CX_FILE_ITEM_GEN)
-                writeSubClassInfo(superior, inferior, originFileNumber);
-        }
-        pp = newClassHierarchyReference(originFileNumber, inferior, superiorFile->superClasses);
-        superiorFile->inferiorClasses = pp;
     }
 }
 
@@ -590,7 +546,6 @@ void writeReferenceFile(bool updating, char *filename) {
         writeCxFileHead();
         mapOverFileTableWithIndex(writeFileNumberItem);
         mapOverFileTableWithIndex(writeFileSourceIndexItem);
-        mapOverFileTableWithIndex(writeClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
         mapOverReferenceTable(writeReferenceItem);
         closeReferenceFile(filename);
@@ -602,8 +557,6 @@ void writeReferenceFile(bool updating, char *filename) {
         createDirectory(dirname);
         writePartialReferenceFile(updating,dirname,REFERENCE_FILENAME_FILES,
                                  writeFileNumberItem, writeFileSourceIndexItem);
-        writePartialReferenceFile(updating,dirname,REFERENCE_FILENAME_CLASSES,
-                                 writeClassHierarchyItems, NULL);
         for (int i=0; i<options.referenceFileCount; i++) {
             sprintf(referenceFileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
             assert(strlen(referenceFileName) < MAX_FILE_NAME_SIZE-1);
@@ -1139,49 +1092,6 @@ static void scanFunction_ReferenceFileCountCheck(int fileCountInReferenceFile,
     }
 }
 
-static void scanFunction_SubClass(int size,
-                         int marker,
-                         CharacterBuffer *cb,
-                         CxScanFileOperation operation
-) {
-    int fileNumber;
-    int super_class, sub_class;
-
-    assert(marker == CXFI_CLASS_EXT);
-    fileNumber = lastIncomingInfo.values[CXFI_FILE_NUMBER];
-    super_class = lastIncomingInfo.values[CXFI_SUPERCLASS];
-    sub_class = lastIncomingInfo.values[CXFI_SUBCLASS];
-
-    fileNumber = decodeFileNumbers[fileNumber];
-    FileItem *fileItem = getFileItem(fileNumber);
-
-    super_class = decodeFileNumbers[super_class];
-    FileItem *superFileItem = getFileItem(super_class);
-
-    sub_class = decodeFileNumbers[sub_class];
-    FileItem *subFileItem = getFileItem(sub_class);
-
-    assert(options.mode);
-    switch (options.mode) {
-    case XrefMode:
-        if (!fileItem->cxLoading &&
-            operation==CXSF_GENERATE_OUTPUT) {
-            writeSubClassInfo(super_class, sub_class, fileNumber);  // updating refs
-        }
-        break;
-    case ServerMode:
-        if (fileNumber != inputFileNumber) {
-            log_trace("reading %s < %s", simpleFileName(subFileItem->name),
-                      simpleFileName(superFileItem->name));
-            createSubClassInfo(super_class, sub_class, fileNumber, NO_CX_FILE_ITEM_GEN);
-        }
-        break;
-    default:
-        assert(0);              /* Undefined & Refactory should not happen? */
-    }
-}
-
-
 static int scanInteger(CharacterBuffer *cb, int *_ch) {
     int scannedInt, ch = *_ch;
     ch = skipWhiteSpace(cb, ch);
@@ -1401,7 +1311,6 @@ static ScanFileFunctionStep fullScanFunctionSequence[]={
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_GENERATE_OUTPUT},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_DEFAULT},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_FIRST_PASS},
-    {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_GENERATE_OUTPUT},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
@@ -1413,7 +1322,6 @@ static ScanFileFunctionStep byPassFunctionSequence[]={
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_BY_PASS},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_BY_PASS},
-    {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_JUST_READ},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
@@ -1426,7 +1334,6 @@ static ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_MENU_CREATION},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_MENU_CREATION},
-    {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_JUST_READ},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
@@ -1449,7 +1356,6 @@ static ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
     {CXFI_SOURCE_INDEX, scanFunction_SourceIndex, CXSF_JUST_READ},
     {CXFI_SYMBOL_NAME, scanFunction_SymbolName, CXSF_PASS_MACRO_USAGE},
     {CXFI_REFERENCE, scanFunction_Reference, CXSF_PASS_MACRO_USAGE},
-    {CXFI_CLASS_EXT, scanFunction_SubClass, CXSF_JUST_READ},
     {CXFI_REFNUM, scanFunction_ReferenceFileCountCheck, CXSF_NOP},
     {-1,NULL, 0},
 };
