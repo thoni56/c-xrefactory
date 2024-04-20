@@ -7410,15 +7410,6 @@ refactoring.
     ))
 
 
-(defun c-xref-move-static-method (rd)
-  (let ((name))
-    (setq name (c-xref-get-identifier-on-point))
-    (c-xref-refactoring-init-actions (format "moving %s" name))
-    (c-xref-moving '("-rfct-move-static-method"))
-    (c-xref-refactoring-finish-actions)
-    ))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; EXTRACT METHOD ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun c-xref-add-macro-line-continuations (reg-beg-pos reg-end-pos)

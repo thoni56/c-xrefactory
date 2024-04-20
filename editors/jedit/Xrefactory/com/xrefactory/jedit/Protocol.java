@@ -118,7 +118,6 @@ public static final int PPC_AVR_RENAME_PACKAGE = 30;
 public static final int PPC_AVR_ADD_PARAMETER = 40;
 public static final int PPC_AVR_DEL_PARAMETER = 50;
 public static final int PPC_AVR_MOVE_PARAMETER = 60;
-public static final int PPC_AVR_MOVE_STATIC_METHOD = 80;
 public static final int PPC_AVR_TURN_DYNAMIC_METHOD_TO_STATIC = 100;
 public static final int PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC = 110;
 public static final int PPC_AVR_PULL_UP_FIELD = 120;
