@@ -21,11 +21,6 @@
 
 #define FULL_COMPLETION_INDENT_CHARS 2
 
-enum fqtCompletion {
-    FQT_COMPLETE_DEFAULT,
-    FQT_COMPLETE_ALSO_ON_PACKAGE
-};
-
 
 typedef struct {
     struct completions *completions;
@@ -426,7 +421,7 @@ static bool reallyInsert(CompletionLine *a, int *aip, char *s, CompletionLine *t
             x = (l + r) / 2;
             c = completionOrderCmp(t, &a[x]);
             if (c == 0) { /* identifier still in completions */
-                return false; /* no overloading, so ... */
+                return false;
             }
             if (c < 0)
                 r = x - 1;

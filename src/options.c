@@ -58,7 +58,6 @@ Options presetOptions = {
     true,                        // fileNamesCaseSensitive
     SEARCH_FULL,             // search Tag file specifics
     false,                       // noerrors
-    0,                           // fqtNameToCompletions
     NULL,                        // moveTargetClass
     0,                           // TPC_NONE, trivial pre-check
     true,                        // urlGenTemporaryFile
@@ -1652,10 +1651,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-olnodialog")==0) {
         options.manualResolve = RESOLVE_DIALOG_NEVER;
-    }
-    else if (strncmp(argv[i], "-olfqtcompletionslevel=",23)==0) {
-        options.fqtNameToCompletions = 1;
-        sscanf(argv[i]+23, "%d",&options.fqtNameToCompletions);
     }
     else if (strcmp(argv[i], "-olexmacro")==0)
         options.extractMode=EXTRACT_MACRO;

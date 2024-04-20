@@ -1,25 +1,25 @@
 ../../src/c-xref -xrefactory-II -log=log -server
 -xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxpush -olmark=623 -olcursor=623 CURDIR/cexercise/index.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=927 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=927 CURDIR/cexercise/completions.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1014 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1014 CURDIR/cexercise/completions.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1050 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1050 CURDIR/cexercise/completions.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1689 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1689 CURDIR/cexercise/completions.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1730 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1730 CURDIR/cexercise/completions.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1816 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1816 CURDIR/cexercise/completions.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1862 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1862 CURDIR/cexercise/completions.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1936 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=1936 CURDIR/cexercise/completions.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=2019 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=2019 CURDIR/cexercise/completions.c
 <sync>
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=2053 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olinelen=236 -olmark=0 -olcursor=2053 CURDIR/cexercise/completions.c
 <sync>
 -xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxpop -olmark=0 -olcursor=1362 CURDIR/cexercise/completions.c
 <sync>
