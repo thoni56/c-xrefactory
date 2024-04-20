@@ -267,6 +267,18 @@ Synopsis:
 
     covers.py <file> <line>
 
+==== Sandboxed
+
+`utils/sandboxed` starts a sandboxed Emacs that uses the current elisp code and the `c-xref` from src.
+This allows you to run a test changes without having to polute your own setup.
+
+This actually runs the `tests/sandboxed_emacs` pure version, which also sets up a completely isolated Emacs environment with its own packages loaded, configuration etc.
+See below.
+
+Synopsis:
+
+    sandboxed
+    
 === Debugging the protocol
 
 There is a "pipe spy" in `tests/sandboxed_emacs`. You can build the

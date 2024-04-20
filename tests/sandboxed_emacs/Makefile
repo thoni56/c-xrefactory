@@ -17,8 +17,7 @@ ENV=HOME="$(PWD)" PATH="$(PWD)/bin:$(PATH)"
 TARGET=TARGET=$(TARGET_PATH)
 LOG=LOGFILE=$(CURDIR)/$(LOGFILE)
 
-all:
-	@echo "Make 'spy' or 'pure'"
+all: pure
 
 # Run a sandboxed emacs using the spy to log interaction
 spy: clean bin/c-xref .emacs.d/el-get/c-xrefactory
