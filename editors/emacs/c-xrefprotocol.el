@@ -127,7 +127,6 @@
 (defconst c-xref_PPC_AVR_EXTRACT_FUNCTION 230)
 (defconst c-xref_PPC_AVR_EXTRACT_MACRO 240)
 (defconst c-xref_PPC_AVR_EXTRACT_VARIABLE 250)
-(defconst c-xref_PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS 280)
 (defconst c-xref_PPC_AVR_SET_MOVE_TARGET 290)
 (defconst c-xref_PPC_AVR_UNDO 300)
 

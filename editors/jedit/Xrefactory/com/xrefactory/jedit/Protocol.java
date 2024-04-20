@@ -129,7 +129,6 @@ public static final int PPC_AVR_EXTRACT_METHOD = 220;
 public static final int PPC_AVR_EXTRACT_FUNCTION = 230;
 public static final int PPC_AVR_EXTRACT_MACRO = 240;
 public static final int PPC_AVR_EXTRACT_VARIABLE = 250;
-public static final int PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS = 280;
 public static final int PPC_AVR_SET_MOVE_TARGET = 290;
 public static final int PPC_AVR_UNDO = 300;
 
