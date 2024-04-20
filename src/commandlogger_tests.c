@@ -46,8 +46,8 @@ static void concat_output(void *output_buffer) {
 }
 
 // NOTE: these two tests will fail if Cgreen has a version below
-// 1.6.1. In this version `with_side_effect()` executes *after* all
-// other constraints.
+// 1.6.1. This versions ensures that `with_side_effect()` executes
+// *after* all other constraints.
 Ensure(CommandsLogger, can_log_multiple_arguments) {
     char *argv[] = {"command", "arg1", "arg2"};
     char *output;
