@@ -1964,12 +1964,6 @@ static bool processROption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-rfct-move-param")==0) {
         options.theRefactoring = AVR_MOVE_PARAMETER;
     }
-    else if (strcmp(argv[i], "-rfct-move-class-to-new-file")==0) {
-        options.theRefactoring = AVR_MOVE_CLASS_TO_NEW_FILE;
-    }
-    else if (strcmp(argv[i], "-rfct-move-all-classes-to-new-file")==0)   {
-        options.theRefactoring = AVR_MOVE_ALL_CLASSES_TO_NEW_FILE;
-    }
     else if (strcmp(argv[i], "-rfct-static-to-dynamic")==0)  {
         options.theRefactoring = AVR_TURN_STATIC_METHOD_TO_DYNAMIC;
     }
