@@ -1643,9 +1643,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-olcxextract")==0) {
         options.serverOperation = OLO_EXTRACT;
     }
-    else if (strcmp(argv[i], "-olcxtrivialprecheck")==0) {
-        options.serverOperation = OLO_TRIVIAL_PRECHECK;
-    }
     else if (strcmp(argv[i], "-olmanualresolve")==0) {
         options.manualResolve = RESOLVE_DIALOG_ALWAYS;
     }
@@ -1732,10 +1729,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_PUSH_AND_CALL_MACRO;
     else if (strcmp(argv[i], "-olcxpushallinmethod")==0)
         options.serverOperation = OLO_PUSH_ALL_IN_METHOD;
-    else if (strcmp(argv[i], "-olcxmmprecheck")==0)
-        options.serverOperation = OLO_MM_PRE_CHECK;
-    else if (strcmp(argv[i], "-olcxppprecheck")==0)
-        options.serverOperation = OLO_PP_PRE_CHECK;
     else if (strcmp(argv[i], "-olcxpushforlm")==0) {
         options.serverOperation = OLO_PUSH_FOR_LOCALM;
         options.manualResolve = RESOLVE_DIALOG_NEVER;

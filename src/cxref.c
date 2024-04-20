@@ -2345,166 +2345,6 @@ void olcxPushSpecialCheckMenuSym(char *symname) {
     rstack->menuSym = olCreateSpecialMenuItem(symname, NO_FILE_NUMBER, StorageDefault);
 }
 
-static SymbolsMenu *mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(
-                                                                          SymbolsMenu *menuSym) {
-    SymbolsMenu *res = NULL;
-
-    for (SymbolsMenu *mm=menuSym; mm!=NULL; mm=mm->next) {
-        if (mm->references.references!=NULL && isDefinitionOrDeclarationUsage(mm->references.references->usage.kind) &&
-            (res==NULL || positionIsLessThan(mm->references.references->position, res->references.references->position))) {
-            res = mm;
-        }
-    }
-    return res;
-}
-
-static SymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
-                                                      SymbolsMenu *osym,
-                                                      OlcxReferences *refs,
-                                                      Position *moveOffset
-) {
-    Reference sr, *place;
-
-    sr = *ref;
-    sr.position = addPositions(ref->position, *moveOffset);
-    // now looks for the reference 'r'
-    for (SymbolsMenu *mm=refs->menuSym; mm!=NULL; mm=mm->next) {
-        // do not check anything, but symbol type to avoid missresolution
-        // of ambiguous references class <-> constructor
-        //&fprintf(dumpOut,";looking for correspondance %s <-> %s\n", osym->references.linkName,mm->references.linkName);
-        if (mm->references.type != osym->references.type
-            && mm->references.type != TypeInducedError) continue;
-        // check also that maybe this references are not mixed with regular
-        //&if (mm->references.linkName[0]==' ' || osym->references.linkName[0]==' ') {
-        //& if (mm->references.linkName[0]!=' ' || osym->references.linkName[0]!=' ') continue;
-        //&}
-        //&fprintf(dumpOut,";looking references\n");
-        SORTED_LIST_FIND2(place,Reference, sr, mm->references.references);
-        if (place!=NULL && ! SORTED_LIST_NEQ(place, sr)) {
-            // I have got it
-            //&fprintf(dumpOut,";I have got it!\n");
-            return mm;
-        }
-    }
-    return NULL;
-}
-
-bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
-                                ServerOperation operation
-) {
-    bool res = false;
-
-    switch (operation) {
-    case OLO_MM_PRE_CHECK:
-        if (isSameCxSymbol(&osym->references, &nsym->references)
-            && osym->references.vApplClass == nsym->references.vApplClass) {
-            res = true;
-        }
-        break;
-    case OLO_PP_PRE_CHECK:
-        if (isSameCxSymbol(&osym->references, &nsym->references)) {
-            if (osym->references.vApplClass == nsym->references.vApplClass) {
-                res = true;
-            }
-        }
-        break;
-    default:
-        assert(0);
-    }
-    // do not report misinterpretations induced by previous errors
-    if (nsym->references.type == TypeInducedError)
-        res = true;
-    return res;
-}
-
-static bool mmPreCheckMakeDifference(OlcxReferences *origrefs,
-                                     OlcxReferences *newrefs,
-                                     OlcxReferences *diffrefs
-) {
-    SymbolsMenu *nsym, *diffsym, *ofirstsym, *nfirstsym;
-    Position moveOffset;
-
-    moveOffset = makePosition(0, 0, 0);
-    ofirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(origrefs->menuSym);
-    nfirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(newrefs->menuSym);
-    if (ofirstsym!=NULL && nfirstsym!=NULL) {
-        // TODO! Check here rather symbol name, than just column offsets
-        assert(ofirstsym->references.references && nfirstsym->references.references);
-        moveOffset = subtractPositions(nfirstsym->references.references->position, ofirstsym->references.references->position);
-        if (moveOffset.col!=0) {
-            errorMessage(ERR_ST, "method has to be moved into an empty line");
-            return true;
-        }
-    }
-    //&fprintf(dumpOut,": line Offset == %d\n", lineOffset);
-    for (SymbolsMenu *osym = origrefs->menuSym; osym!=NULL; osym=osym->next) {
-        //&fprintf(dumpOut,";check on %s\n", osym->references.linkName);
-        // do not check recursive calls
-        if (osym == ofirstsym) goto cont;
-        // nor local variables
-        if (osym->references.storage == StorageAuto) goto cont;
-        // nor labels
-        if (osym->references.type == TypeLabel) goto cont;
-        // do not check also any symbols from classes defined in inner scope
-        if (isStrictlyEnclosingClass(osym->references.vFunClass, ofirstsym->references.vFunClass)) goto cont;
-        // (maybe I should not test any local symbols ???)
-
-        // check the symbol
-        diffsym = NULL;
-        for (Reference *rr=osym->references.references; rr!=NULL; rr=rr->next) {
-            nsym = mmFindSymWithCorrespondingRef(rr,osym,newrefs,&moveOffset);
-            if (nsym==NULL || !symbolsCorrespondWrtMoving(osym, nsym, options.serverOperation)) {
-                if (diffsym == NULL) {
-                    diffsym = olAddBrowsedSymbolToMenu(&diffrefs->menuSym, &osym->references, true, true,
-                                                       (OOC_PROFILE_EQUAL|OOC_VIRT_SAME_FUN_CLASS),
-                                                       USAGE_ANY, 0, &noPosition, UsageNone);
-                }
-                olcxAddReferenceToSymbolsMenu(diffsym, rr, 0);
-            }
-        }
-    cont:;
-    }
-    return false;
-}
-
-static void fillTrivialSpecialRefItem(ReferenceItem *ddd , char *name) {
-    fillReferenceItem(ddd, name, cxFileHashNumber(name),
-                       NO_FILE_NUMBER, NO_FILE_NUMBER, TypeUnknown, StorageAuto,
-                       ScopeAuto, AccessDefault, CategoryLocal);
-}
-
-static void olcxMMPreCheck(void) {
-    OlcxReferences    *diffrefs, *origrefs, *newrefs;
-    ReferenceItem     dri;
-    bool precheck;
-
-    pushEmptySession(&sessionData.browserStack);
-    assert(sessionData.browserStack.top);
-    assert(options.serverOperation == OLO_MM_PRE_CHECK || options.serverOperation == OLO_PP_PRE_CHECK);
-    diffrefs = sessionData.browserStack.top;
-    assert(diffrefs && diffrefs->previous && diffrefs->previous->previous);
-    newrefs = diffrefs->previous;
-    origrefs = newrefs->previous;
-    precheck = mmPreCheckMakeDifference(origrefs, newrefs, diffrefs);
-    olStackDeleteSymbol(origrefs);
-    olStackDeleteSymbol(newrefs);
-    if (!precheck) {
-        if (diffrefs->menuSym!=NULL) {
-            fillTrivialSpecialRefItem(&dri, "  references missinterpreted after refactoring");
-            olAddBrowsedSymbolToMenu(&diffrefs->hkSelectedSym, &dri, true, true, 0,
-                                     USAGE_ANY, 0, &noPosition, UsageNone);
-            olProcessSelectedReferences(diffrefs, genOnLineReferences);
-            //&olcxPrintSelectionMenu(diffrefs->menuSym);
-            olcxPrintRefList(";", diffrefs);
-        } else {
-            olStackDeleteSymbol(diffrefs);
-            fprintf(communicationChannel,"* Method moving pre-check passed.");
-        }
-    }
-    fflush(communicationChannel);
-}
-
-
 static void olcxProcessGetRequest(void) {
     char *name, *value;
 
@@ -2688,20 +2528,6 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     mapOverReferenceTableWithPointer(olPushAllReferencesInBetweenMapFun, &rr);
     olProcessSelectedReferences(rstack, genOnLineReferences);
     //&olcxPrintSelectionMenu(sessionData->browserStack.top->menuSym);
-}
-
-/* TODO: See comment for setMovingPrecheckStandardEnvironment */
-static void olTrivialRefactoringPreCheck(int refcode) {
-    OlcxReferences *tpchsymbol;
-
-    olCreateSelectionMenu(sessionData.browserStack.top->command);
-    tpchsymbol = sessionData.browserStack.top;
-    switch (refcode) {
-    default:
-        errorMessage(ERR_INTERNAL,"trivial precheck called with no valid check code");
-    }
-    // remove the checked symbol from stack
-    olStackDeleteSymbol(tpchsymbol);
 }
 
 #ifdef DUMP_SELECTION_MENU
@@ -2995,10 +2821,6 @@ void answerEditAction(void) {
     case OLO_MENU_FILTER_SET:
         olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
         break;
-    case OLO_MM_PRE_CHECK:
-    case OLO_PP_PRE_CHECK:
-        olcxMMPreCheck();   // the value of options.cxrefsLocation is checked inside
-        break;
     case OLO_MENU_GO:
         assert(sessionData.browserStack.top);
         rstack = sessionData.browserStack.top;
@@ -3051,10 +2873,6 @@ void answerEditAction(void) {
         log_trace(":getting all references from begin=%d to end=%d", parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
         olPushAllReferencesInBetween(parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
         olcxPrintPushingAction(options.serverOperation);
-        break;
-    case OLO_TRIVIAL_PRECHECK:
-        /* TODO: See comment for setMovingPrecheckStandardEnvironment */
-        olTrivialRefactoringPreCheck(options.trivialPreCheckCode);
         break;
     case OLO_ENCAPSULATE_SAFETY_CHECK:
         olEncapsulationSafetyCheck();

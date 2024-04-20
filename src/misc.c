@@ -1065,7 +1065,6 @@ bool requiresCreatingRefs(ServerOperation operation) {
             ||  options.serverOperation==OLO_PUSH_SPECIAL_NAME
             ||  options.serverOperation==OLO_PUSH_ALL_IN_METHOD
             ||  options.serverOperation==OLO_PUSH_FOR_LOCALM
-            ||  options.serverOperation==OLO_TRIVIAL_PRECHECK
             ||  options.serverOperation==OLO_GET_SYMBOL_TYPE
             ||  options.serverOperation==OLO_GET_LAST_IMPORT_LINE
             ||  options.serverOperation==OLO_GLOBAL_UNUSED

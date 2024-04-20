@@ -181,10 +181,6 @@ bool isPushAllMethodsValidRefItem(ReferenceItem *ri) {
     return (bool) mock(ri);
 }
 
-bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym, ServerOperation operation) {
-    return (bool) mock(osym, nsym, operation);
-}
-
 void olcxPrintPushingAction(ServerOperation operation) {
     mock(operation);
 }

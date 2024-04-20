@@ -264,10 +264,6 @@ NOTE: This should probably be in the design document instead.
 The refactorer internally calls the main c-xref indexing function and controls it by passing "command line options".
 Here is a list of those "options", which shall not be used from the command line.
 
--olcxtrivialprecheck::
-Used to trigger some trivial(?) prechecks by refactorer when moving a class.
-Although it doesn't seem to actually trigger any...
-
 -exactpositionresolve::
 If a symbol is defined in multiple places, like it can be in C, using this flag will consider those instances different based on them being in different locations.
 
@@ -419,8 +415,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olcxmethodlines::
 
--olcxmmprecheck::
-
 -olcxmmtarget::
 
 -olcxmodified::
@@ -438,8 +432,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 -olcxpop::
 
 -olcxpoponly::
-
--olcxppprecheck::
 
 -olcxprevious::
 

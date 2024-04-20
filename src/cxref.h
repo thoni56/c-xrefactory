@@ -62,8 +62,6 @@ extern void olcxReferencesDiff(Reference **anr1, Reference **aor2,
 extern void getLineAndColumnCursorPositionFromCommandLineOptions( int *l, int *c );
 extern void olcxPushSpecialCheckMenuSym(char *symname);
 extern bool isPushAllMethodsValidRefItem(ReferenceItem *ri);
-extern bool symbolsCorrespondWrtMoving(SymbolsMenu *osym, SymbolsMenu *nsym,
-                                       ServerOperation operation);
 extern void olcxPrintPushingAction(ServerOperation operation);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
 
