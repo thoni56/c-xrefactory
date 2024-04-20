@@ -172,7 +172,6 @@
    (list c-xref_PPC_AVR_EXTRACT_FUNCTION "Extract Function" 'c-xref-extract-function nil)
    (list c-xref_PPC_AVR_EXTRACT_MACRO "Extract Macro" 'c-xref-extract-macro nil)
    (list c-xref_PPC_AVR_EXTRACT_VARIABLE "Extract Variable" 'c-xref-extract-variable nil)
-   (list c-xref_PPC_AVR_ADD_TO_IMPORT "Add import" 'c-xref-add-to-imports nil)
    (list c-xref_PPC_AVR_SET_MOVE_TARGET "Set Target for Next Moving Refactoring" 'c-xref-set-moving-target-position nil)
    (list c-xref_PPC_AVR_UNDO "Undo Last Refactoring" 'c-xref-undo-last-refactoring nil)
    ))
@@ -2399,50 +2398,6 @@ on active project selection).
     i
     ))
 
-
-(defvar c-xref-add-to-imports-dialog-map (make-sparse-keymap "C-xref fqt completion"))
-(c-xref-add-basic-modal-keybindings c-xref-add-to-imports-dialog-map)
-
-(defun c-xref-server-dispatch-add-to-imports-dialog (ss i len dispatch-data)
-  (let ((tlen) (cc) (cw) (dw) (cl) (pack) (copt) (default) (sel))
-    (setq cw (selected-window))
-    (setq default (c-xref-server-dispatch-get-int-attr c-xref_PPCA_VALUE))
-    (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
-    (setq cc (c-xref-char-list-substring ss i (+ i tlen)))
-    (setq i (+ i tlen))
-    (setq i (c-xref-server-parse-xml-tag ss i len))
-    (c-xref-server-dispatch-require-end-ctag c-xref_PPC_ADD_TO_IMPORTS_DIALOG)
-    (c-xref-select-dispach-data-caller-window dispatch-data)
-    (setq cl (c-xref-file-name-extension cc))
-    (setq pack (c-xref-file-name-without-suffix cc))
-    (setq sel (c-xref-modal-dialog c-xref-selection-modal-buffer (format
-								  "Class %s.%s is used but not imported, should I:
-----
- 1.) Import %s.*
- 2.) Import %s.%s
- 3.) Keep it as is
-----
-"
-								  pack cl pack pack cl)
-						   (+ 3 default) 0 t c-xref-add-to-imports-dialog-map dispatch-data))
-    (cond
-     (
-      (eq sel 3)
-      (setq copt "-continuerefactoring=importOnDemand")
-      )
-     (
-      (eq sel 4)
-      (setq copt "-continuerefactoring=importSingle")
-      )
-     (
-      t
-      (setq copt "-continuerefactoring")
-      )
-     )
-    (c-xref-send-data-to-process-and-dispatch copt dispatch-data nil)
-    i
-    ))
-
 (defun c-xref-server-dispatch-call-macro (ss i len dispatch-data)
   (let ((tlen) (cc))
     (setq tlen (c-xref-server-dispatch-get-int-attr c-xref_PPCA_LEN))
@@ -3482,9 +3437,6 @@ Special hotkeys available:
        (
 	    (equal c-xref-server-ctag c-xref_PPC_EXTRACTION_DIALOG)
 	    (setq i (c-xref-server-dispatch-extraction-dialog ss i len dispatch-data)))
-       (
-	    (equal c-xref-server-ctag c-xref_PPC_ADD_TO_IMPORTS_DIALOG)
-	    (setq i (c-xref-server-dispatch-add-to-imports-dialog ss i len dispatch-data)))
        (
 	    (equal c-xref-server-ctag c-xref_PPC_CALL_MACRO)
 	    (setq i (c-xref-server-dispatch-call-macro ss i len dispatch-data)))
@@ -7426,19 +7378,19 @@ refactoring.
 
 (defun c-xref-extraction-dialog (minvocation mhead mtail mline dname)
   ;; dname - name of the extracted entity, need to contain one of the strings
-  (let ((mbody) (name) (cfs) (mbuff) (kind) (sw)
-	    (mm) (pp) (bb) (ee) (ilen) (sr) (classextr))
+  (let ((mbody) (name) (saved-case-fold-search-mode) (mbuff) (kind) (sw)
+	    (mm) (pp) (bb) (ee) (ilen) (sr))
     (setq sw (selected-window))
-    (setq cfs case-fold-search)
     (setq mbuff (current-buffer))
     (setq mm (min (mark) (point)))
     (setq pp (max (mark) (point)))
     (setq mbody (buffer-substring mm pp))
     (c-xref-delete-window-in-any-frame c-xref-extraction-buffer nil)
 
-    (setq case-fold-search nil)
-    (setq classextr (string-match "class" dname))
-    (setq case-fold-search cfs)
+    (setq saved-case-fold-search-mode case-fold-search)
+    (setq case-fold-search nil) ;; Ensure case-insensitive search
+
+    (setq case-fold-search saved-case-fold-search-mode)
     (if (string-match "method" dname)
 	    (setq kind "method")
       (if (string-match "class" dname)
@@ -7471,7 +7423,7 @@ refactoring.
 	      ))
 
     (if (equal kind "macro")
-	    ;; Then we want to add the newline escapes
+	    ;; For macros we want to add the newline escapes
 	    (progn
 	      (c-xref-add-macro-line-continuations bb (- (point) 1))
 	      (goto-char (point-max))
@@ -7528,7 +7480,7 @@ refactoring.
 	      (c-xref-set-to-marker c-xref-extraction-marker2)
 	      (setq case-fold-search nil)
 	      (setq sr (search-forward dname (+ (point) ilen) t))
-	      (setq case-fold-search cfs)
+	      (setq case-fold-search saved-case-fold-search-mode)
 	      (if (not sr)
 		  (error "[c-xref] internal error, can't find method")
 		)
@@ -7542,7 +7494,7 @@ refactoring.
 			(setq case-fold-search nil)
 			(setq sr (search-forward (c-xref-upcase-first-letter dname)
 							     (+ (point) (length mhead)) t))
-			(setq case-fold-search cfs)
+			(setq case-fold-search saved-case-fold-search-mode)
 			(if (not sr)
 			    (error "[c-xref] internal error, can't find the class")
 			  )

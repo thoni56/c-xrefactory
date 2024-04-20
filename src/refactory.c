@@ -783,9 +783,6 @@ static void simplePackageRename(EditorMarkerList *occs, char *symname, char *sym
 
 static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symname, char *symLinkName,
                          int symtype) {
-    char  nfile[MAX_FILE_NAME_SIZE];
-    char *ss;
-
     if (refactoringOptions.theRefactoring == AVR_RENAME_PACKAGE) {
         simplePackageRename(occs, symname, symLinkName);
     } else {
@@ -793,23 +790,6 @@ static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symn
             renameFromTo(ll->marker, symname, refactoringOptions.renameTo);
         }
         ppcGotoMarker(point);
-        if (refactoringOptions.theRefactoring == AVR_RENAME_CLASS) {
-            if (strcmp(simpleFileNameWithoutSuffix_st(point->buffer->name), symname) == 0) {
-                // O.K. file name equals to class name, rename file
-                strcpy(nfile, point->buffer->name);
-                ss = lastOccurenceOfSlashOrBackslash(nfile);
-                if (ss == NULL)
-                    ss = nfile;
-                else
-                    ss++;
-                sprintf(ss, "%s.java", refactoringOptions.renameTo);
-                assert(strlen(nfile) < MAX_FILE_NAME_SIZE - 1);
-                if (strcmp(nfile, point->buffer->name) != 0) {
-                    // O.K. I should move file
-                    checkedRenameBuffer(point->buffer, nfile, &editorUndo);
-                }
-            }
-        }
     }
 }
 
@@ -913,9 +893,6 @@ static void renameAtPoint(EditorMarker *point) {
 
     if (refactoringOptions.theRefactoring == AVR_RENAME_PACKAGE) {
         ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former package");
-    } else if (refactoringOptions.theRefactoring == AVR_RENAME_CLASS &&
-               strcmp(simpleFileNameWithoutSuffix_st(point->buffer->name), refactoringOptions.renameTo) == 0) {
-        ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class file of former class");
     }
 }
 

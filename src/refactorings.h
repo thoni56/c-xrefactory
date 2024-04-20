@@ -6,7 +6,6 @@
 typedef enum Refactorings {
     AVR_NO_REFACTORING = 0,
     AVR_RENAME_SYMBOL = 10,
-    AVR_RENAME_CLASS = 20,
     AVR_RENAME_PACKAGE = 30,
     AVR_ADD_PARAMETER = 40,
     AVR_DEL_PARAMETER = 50,
