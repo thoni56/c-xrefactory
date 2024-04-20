@@ -660,7 +660,6 @@ static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag,
 static void completeRecordsNames(
     Completions *completions,
     Symbol *symbol,
-    int constructorOpt,
     int completionType,
     int vlevelOffset
 ) {
@@ -731,7 +730,7 @@ void completeRecNames(Completions *c) {
     if (str->type == TypeStruct || str->type == TypeUnion) {
         s = str->u.t;
         assert(s);
-        completeRecordsNames(c, s, StorageDefault, TypeDefault, 0);
+        completeRecordsNames(c, s, TypeDefault, 0);
     }
     s_structRecordCompletionType = &errorModifier;
 }
