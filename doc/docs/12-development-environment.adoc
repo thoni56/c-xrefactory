@@ -27,8 +27,9 @@ you need:
 
 Helpful would be:
 
-- Compiler building knowledge (in the general sense, Yacc, but AST:s and symbol table stuff are heavily used)
-- Java knowledge to be able to bring the Java support up to modern versions (probably not going to happen...)
+- Compiler building knowledge (in the general sense, Yacc, but AST:s
+  and symbol table stuff are heavily used)
+
 
 === Setup
 
@@ -97,9 +98,9 @@ made the default and the 'non-xrefactory-II' communication removed.
 _C-xref_ started (probably) as a cross-referencer for the languages
 supported (C, Java, C++), orginally had the name "xref" which became
 "xrefactory" when refactoring support was added. And when Mariàn
-released a "C only" version in 2009 some of all "xref" references was
-changed to "c-xref". So, as most software, there is a history and a
-naming legacy to remember.
+released a "C only" version in 2009 most of all the "xref" references
+and names was changed to "c-xref". So, as most software, there is a
+history and a naming legacy to remember.
 
 Here are some of the conventions in naming that are being used:
 

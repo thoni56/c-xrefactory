@@ -20,7 +20,6 @@ parsers. There are a number of parsers
 
 - C
 - Yacc
-- Java (will probably go away in the near future)
 - C expressions
 
 There are also small traces of calls to the C++ parser that existed
@@ -28,16 +27,13 @@ but was proprietary.
 
 The patch to byacc is mainly to the skeleton and seems to relate
 mostly to handling of errors and adding a recursive parsing feature
-that is required for Java. It is not impossible that the change can be
-adapted to other versions of yacc, but this has not be tried.
+that is required for Java, which was supported previously. It is not
+possible that this patch might not be necessary now that Java parsing
+is not necessary, but this has not been tried.
 
 Some changes are also made to be able to accomodate multiple parsers
 in the same executable. The Makefile generates the parsers and renames
 them as appropriate.
-
-NOTE: Should we just scrap the Java support and focus on C since a)
-the Java support is for ancient Java versions and b) there are more
-mature Java refactoring support available?
 
 === Refactoring and the parsers
 
@@ -400,7 +396,7 @@ I haven't investigated the internal flow of such a sequence, but it is starting 
 
 ==== Extraction
 
-Each type of refactoring has it's own little "language". E.g. extracting a method/function using `-refactory -rfct-extract-method` will return something like
+Each type of refactoring has it's own little "language". E.g. extracting a method/function using `-refactory -rfct-extract-function` will return something like
 
 ```
 <extraction-dialog type=newFunction_> <str len=20>	newFunction_(str);
