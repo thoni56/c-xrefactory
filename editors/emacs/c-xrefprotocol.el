@@ -122,7 +122,6 @@
 (defconst c-xref_PPC_AVR_PULL_UP_METHOD 130)
 (defconst c-xref_PPC_AVR_PUSH_DOWN_FIELD 140)
 (defconst c-xref_PPC_AVR_PUSH_DOWN_METHOD 150)
-(defconst c-xref_PPC_AVR_ADD_TO_IMPORT 210)
 (defconst c-xref_PPC_AVR_EXTRACT_METHOD 220)
 (defconst c-xref_PPC_AVR_EXTRACT_FUNCTION 230)
 (defconst c-xref_PPC_AVR_EXTRACT_MACRO 240)

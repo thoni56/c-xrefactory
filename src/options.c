@@ -1979,9 +1979,6 @@ static bool processROption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-rfct-extract-variable")==0)  {
         options.theRefactoring = AVR_EXTRACT_VARIABLE;
     }
-    else if (strcmp(argv[i], "-rfct-add-to-imports")==0) {
-        options.theRefactoring = AVR_ADD_TO_IMPORT;
-    }
     else if (strcmp(argv[i], "-rfct-push-down-field")==0)    {
         options.theRefactoring = AVR_PUSH_DOWN_FIELD;
     }

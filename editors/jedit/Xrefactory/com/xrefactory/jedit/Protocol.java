@@ -124,7 +124,6 @@ public static final int PPC_AVR_PULL_UP_FIELD = 120;
 public static final int PPC_AVR_PULL_UP_METHOD = 130;
 public static final int PPC_AVR_PUSH_DOWN_FIELD = 140;
 public static final int PPC_AVR_PUSH_DOWN_METHOD = 150;
-public static final int PPC_AVR_ADD_TO_IMPORT = 210;
 public static final int PPC_AVR_EXTRACT_METHOD = 220;
 public static final int PPC_AVR_EXTRACT_FUNCTION = 230;
 public static final int PPC_AVR_EXTRACT_MACRO = 240;

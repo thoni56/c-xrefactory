@@ -144,10 +144,6 @@ static void setOlSymbolTypeForPrint(Symbol *symbol) {
 
 
 static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, UsageKind usage) {
-    if (strcmp(symbol->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
-        makeRefactoringAvailable(PPC_AVR_ADD_TO_IMPORT, "");
-        return;
-    }
     switch (symbol->type) {
     case TypeStruct:
         makeRefactoringAvailable(PPC_AVR_RENAME_SYMBOL, "");
