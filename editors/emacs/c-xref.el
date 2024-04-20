@@ -7361,22 +7361,6 @@ refactoring.
     ))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;; EXPAND - REDUCE NAMES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun c-xref-simplest-refactoring (opt message)
-  (c-xref-refactoring-init-actions message)
-  (c-xref-server-call-refactoring-task (list opt))
-  (c-xref-refactoring-finish-actions)
-  )
-
-(defun c-xref-reduce-names (rd)
-  (c-xref-simplest-refactoring "-rfct-reduce" "reduction of long names")
-  )
-
-(defun c-xref-expand-names (rd)
-  (c-xref-simplest-refactoring "-rfct-expand" "expansion of short names")
-  )
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; MOVING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun c-xref-set-moving-target-position (rd)
