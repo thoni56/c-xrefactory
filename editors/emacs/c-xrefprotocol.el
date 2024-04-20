@@ -128,8 +128,6 @@
 (defconst c-xref_PPC_AVR_MOVE_CLASS 160)
 (defconst c-xref_PPC_AVR_MOVE_CLASS_TO_NEW_FILE 170)
 (defconst c-xref_PPC_AVR_MOVE_ALL_CLASSES_TO_NEW_FILE 180)
-(defconst c-xref_PPC_AVR_ENCAPSULATE_FIELD 190)
-(defconst c-xref_PPC_AVR_SELF_ENCAPSULATE_FIELD 200)
 (defconst c-xref_PPC_AVR_ADD_TO_IMPORT 210)
 (defconst c-xref_PPC_AVR_EXTRACT_METHOD 220)
 (defconst c-xref_PPC_AVR_EXTRACT_FUNCTION 230)

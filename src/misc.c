@@ -1060,7 +1060,6 @@ bool requiresCreatingRefs(ServerOperation operation) {
             ||  options.serverOperation==OLO_GOTO_PARAM_NAME
             ||  options.serverOperation==OLO_GET_PARAM_COORDINATES
             ||  options.serverOperation==OLO_GET_AVAILABLE_REFACTORINGS
-            ||  options.serverOperation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK
             ||  options.serverOperation==OLO_PUSH_NAME
             ||  options.serverOperation==OLO_PUSH_SPECIAL_NAME
             ||  options.serverOperation==OLO_PUSH_ALL_IN_METHOD

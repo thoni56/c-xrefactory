@@ -1655,12 +1655,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.extractMode=EXTRACT_VARIABLE;
     else if (strcmp(argv[i], "-olcxrename")==0)
         options.serverOperation = OLO_RENAME;
-    else if (strcmp(argv[i], "-olcxencapsulate")==0)
-        options.serverOperation = OLO_ENCAPSULATE;
-    else if (strcmp(argv[i], "-olcxencapsulatesc1")==0)
-        options.serverOperation = OLO_PUSH_ENCAPSULATE_SAFETY_CHECK;
-    else if (strcmp(argv[i], "-olcxencapsulatesc2")==0)
-        options.serverOperation = OLO_ENCAPSULATE_SAFETY_CHECK;
     else if (strcmp(argv[i], "-olcxargmanip")==0)
         options.serverOperation = OLO_ARG_MANIP;
     else if (strcmp(argv[i], "-olcxdynamictostatic1")==0)
@@ -2014,12 +2008,6 @@ static bool processROption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-rfct-add-to-imports")==0) {
         options.theRefactoring = AVR_ADD_TO_IMPORT;
-    }
-    else if (strcmp(argv[i], "-rfct-self-encapsulate-field")==0) {
-        options.theRefactoring = AVR_SELF_ENCAPSULATE_FIELD;
-    }
-    else if (strcmp(argv[i], "-rfct-encapsulate-field")==0)  {
-        options.theRefactoring = AVR_ENCAPSULATE_FIELD;
     }
     else if (strcmp(argv[i], "-rfct-push-down-field")==0)    {
         options.theRefactoring = AVR_PUSH_DOWN_FIELD;

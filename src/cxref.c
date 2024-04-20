@@ -2055,48 +2055,6 @@ static void olcxSafetyCheck2(void) {
     fflush(communicationChannel);
 }
 
-static bool olRemoveCallerReference(OlcxReferences *refs) {
-    Reference *rr, **rrr;
-    LIST_MERGE_SORT(Reference, refs->references, olcxReferenceInternalLessFunction);
-    for (rrr= &refs->references, rr=refs->references; rr!=NULL; rrr= &rr->next, rr=rr->next){
-        log_trace("checking %d %d %d to %d %d %d", rr->position.file, rr->position.line, rr->position.col,
-                  refs->callerPosition.file, refs->callerPosition.line, refs->callerPosition.col);
-        if (!positionIsLessThan(rr->position, refs->callerPosition))
-            break;
-    }
-    if (rr == NULL)
-        return false;
-    if (!isDefinitionOrDeclarationUsage(rr->usage.kind))
-        return false;
-    log_trace("!removing reference on %d", rr->position.line);
-    *rrr = rr->next;
-    olcxFree(rr, sizeof(Reference));
-
-    return true;
-}
-
-static void olEncapsulationSafetyCheck(void) {
-    OlcxReferences *refs;
-
-    refs = sessionData.browserStack.top;
-    if (refs==NULL || refs->previous==NULL){
-        errorMessage(ERR_INTERNAL,"something goes wrong at encapsulate safety check");
-        return;
-    }
-    // remove definition reference, so they do not interfere
-    assert(sessionData.browserStack.top!=NULL && sessionData.browserStack.top->previous!=NULL
-           && sessionData.browserStack.top->previous->previous!=NULL
-           && sessionData.browserStack.top->previous->previous->previous!=NULL);
-    olRemoveCallerReference(sessionData.browserStack.top);
-    olRemoveCallerReference(sessionData.browserStack.top->previous);
-    olRemoveCallerReference(sessionData.browserStack.top->previous->previous->previous);
-    // join references from getter and setter and make regular safety check
-    olcxAddReferences(refs->references, &sessionData.browserStack.top->previous->references,
-                      ANY_FILE, 0);
-    sessionData.browserStack.top = sessionData.browserStack.top->previous;
-    olcxSafetyCheck2();
-}
-
 static void olCompletionSelect(void) {
     OlcxReferences    *refs;
     Completion      *rr;
@@ -2118,7 +2076,6 @@ static void olCompletionSelect(void) {
     } else {
         gotoOnlineCxref(&refs->callerPosition, UsageUsed, rr->name);
     }
-    //& olStackDeleteSymbol(refs);
 }
 
 static void olcxReferenceSelectTagSearchItem(int refn) {
@@ -2229,7 +2186,6 @@ bool olcxShowSelectionMenu(void) {
         || options.serverOperation==OLO_PUSH_AND_CALL_MACRO
         || options.serverOperation==OLO_RENAME
         || options.serverOperation==OLO_ARG_MANIP
-        || options.serverOperation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK
         || javaStaticallyLinked(fvisible->references.storage,
                                   fvisible->references.access)) {
         // manually only if different
@@ -2409,9 +2365,6 @@ void olcxPrintPushingAction(ServerOperation operation) {
             olcxNoSymbolFoundErrorMessage();
             olStackDeleteSymbol(sessionData.browserStack.top);
         }
-        break;
-    case OLO_PUSH_ENCAPSULATE_SAFETY_CHECK:
-        olcxPushOnly();
         break;
     case OLO_PUSH_ONLY:
         if (olcxCheckSymbolExists()) {
@@ -2873,9 +2826,6 @@ void answerEditAction(void) {
         log_trace(":getting all references from begin=%d to end=%d", parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
         olPushAllReferencesInBetween(parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
         olcxPrintPushingAction(options.serverOperation);
-        break;
-    case OLO_ENCAPSULATE_SAFETY_CHECK:
-        olEncapsulationSafetyCheck();
         break;
     case OLO_GET_AVAILABLE_REFACTORINGS:
         olGetAvailableRefactorings();

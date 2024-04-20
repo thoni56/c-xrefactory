@@ -82,8 +82,6 @@
         ENUM(OLO_GET_LAST_IMPORT_LINE)                                  \
         ENUM(OLO_TAG_SEARCH_FORWARD)                                    \
         ENUM(OLO_TAG_SEARCH_BACK)                                       \
-        ENUM(OLO_PUSH_ENCAPSULATE_SAFETY_CHECK)                         \
-        ENUM(OLO_ENCAPSULATE_SAFETY_CHECK)                              \
         ENUM(OLO_SYNTAX_PASS_ONLY)                                      \
         ENUM(OLO_GET_PRIMARY_START)                                     \
         ENUM(OLO_GET_PARAM_COORDINATES)                                 \
@@ -93,9 +91,7 @@
 #if 0
    Here are comments about some of the operation enums:
        OLO_RENAME,              - same as push, just another ordering
-       OLO_ENCAPSULATE,         - same as rename, remove private references
        OLO_ARG_MANIP,           - as rename, constructors resolved as functions
-       OLO_VIRTUAL2STATIC_PUSH, - same as rename, another message on virtuals
        OLO_PUSH_SPECIAL_NAME,	- also reparsing current file
        OLO_CGOTO,               - goto completion item definition
        OLO_TAGGOTO,             - goto tag search result
@@ -114,30 +110,17 @@
        OLO_MENU_FILTER_MINUS,	- smaller filtering
        OLO_MENU_GO,             - push references from selected menu items
        OLO_CHECK_VERSION,       - check version correspondance
-       OLO_TRIVIAL_PRECHECK,	- trivial pre-refactoring checks
-       OLO_MM_PRE_CHECK,		- move method pre check
-       OLO_PP_PRE_CHECK,		- push-down/pull-up method pre check
        OLO_INTERSECTION,        - just provide intersection of top references
        OLO_REMOVE_WIN,          - just remove window of top references
        OLO_GOTO_DEF,            - goto definition reference
        OLO_GOTO_CALLER,         - goto caller reference
        OLO_SHOW_TOP,            - show top symbol
-       OLO_SHOW_TOP_APPL_CLASS, - show current reference appl class
        OLO_SHOW_TOP_TYPE,       - show current symbol type
        OLO_TOP_SYMBOL_RES,      - show top symbols resolution
        OLO_ACTIVE_PROJECT,      - show active project name
-       OLO_JAVA_HOME,           - show inferred jdkclasspath
        OLO_REPUSH,              - re-push pop-ed top
-       OLO_USELESS_LONG_NAME,   - display useless long class names
-       OLO_USELESS_LONG_NAME_IN_CLASS, - display useless long class names
-       OLO_MAYBE_THIS,          - display 'this' class dependencies
-       OLO_NOT_FQT_REFS,        - display not fully qualified names in method
-       OLO_NOT_FQT_REFS_IN_CLASS, - display not fully qualified names of class
        OLO_GET_ENV_VALUE,       - get a value set by -set
-       OLO_SET_MOVE_CLASS_TARGET,	- set target place for xref2 move class
-       OLO_SET_MOVE_METHOD_TARGET,	- set target place for xref2 move method
        OLO_GET_METHOD_COORD,	- get method beginning and end lines
-       OLO_GET_CLASS_COORD,     - get class beginning and end lines
        OLO_GET_SYMBOL_TYPE,     - get type of a symbol
        OLO_SYNTAX_PASS_ONLY,    - should replace OLO_GET_PRIMARY_START && OLO_GET_PARAM_COORDINATES
        OLO_GET_PRIMARY_START,    - get start position of primary expression
