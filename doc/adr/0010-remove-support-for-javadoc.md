@@ -4,7 +4,7 @@ Date: 2023-01-16
 
 ## Status
 
-Accepted
+Superseded by [Remove support for Java](0011-remove-support-for-java.md)
 
 ## Deciders
 

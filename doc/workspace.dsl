@@ -107,5 +107,8 @@ workspace "C-xrefactory" "A C/Java refactoring browser in C" {
 				background #686868
 	    }
 		}
+    }
+  configuration {
+      scope softwaresystem
   }
 }
