@@ -201,7 +201,7 @@
 
 (defun c-xref-set-this-frame-dispatch-data (dispatch-data)
   (modify-frame-parameters (selected-frame)
-                           `((c-xref-this-frame-dispatch-data . ,dispatch-data)))
+			   `((c-xref-this-frame-dispatch-data . ,dispatch-data)))
   )
 
 
@@ -613,7 +613,7 @@ A-Za-z0-9.\t-- incremental search, insert character
 
 
 (defun c-xref-move-directory (old-name new-name)
-  ;; used only for Java rename package
+  ;; used only for Java rename package - but could be used for future move/rename C "module"
   (if (eq c-xref-platform 'windows)
       (progn
 	    ;; MS-Windows
