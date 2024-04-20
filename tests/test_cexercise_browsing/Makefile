@@ -14,7 +14,7 @@ CXREF = ../../src/c-xref
 COMMAND = $(CXREF) -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR) -create
 
 CXrefs: .c-xrefrc
-	@# Sources in subdir
+	@# Sources are not here but in subdir
 	@sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
 	@mv .c-xrefrc.tmp .c-xrefrc
 	@$(COMMAND) -o $(TEST).log
