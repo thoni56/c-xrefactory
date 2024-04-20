@@ -124,7 +124,6 @@ public static final int PPC_AVR_PULL_UP_FIELD = 120;
 public static final int PPC_AVR_PULL_UP_METHOD = 130;
 public static final int PPC_AVR_PUSH_DOWN_FIELD = 140;
 public static final int PPC_AVR_PUSH_DOWN_METHOD = 150;
-public static final int PPC_AVR_MOVE_CLASS = 160;
 public static final int PPC_AVR_MOVE_CLASS_TO_NEW_FILE = 170;
 public static final int PPC_AVR_MOVE_ALL_CLASSES_TO_NEW_FILE = 180;
 public static final int PPC_AVR_ADD_TO_IMPORT = 210;
