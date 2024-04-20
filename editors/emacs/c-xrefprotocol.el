@@ -116,8 +116,6 @@
 (defconst c-xref_PPC_AVR_ADD_PARAMETER 40)
 (defconst c-xref_PPC_AVR_DEL_PARAMETER 50)
 (defconst c-xref_PPC_AVR_MOVE_PARAMETER 60)
-(defconst c-xref_PPC_AVR_TURN_DYNAMIC_METHOD_TO_STATIC 100)
-(defconst c-xref_PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC 110)
 (defconst c-xref_PPC_AVR_PULL_UP_FIELD 120)
 (defconst c-xref_PPC_AVR_PULL_UP_METHOD 130)
 (defconst c-xref_PPC_AVR_PUSH_DOWN_FIELD 140)

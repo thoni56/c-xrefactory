@@ -1964,12 +1964,6 @@ static bool processROption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-rfct-move-param")==0) {
         options.theRefactoring = AVR_MOVE_PARAMETER;
     }
-    else if (strcmp(argv[i], "-rfct-static-to-dynamic")==0)  {
-        options.theRefactoring = AVR_TURN_STATIC_METHOD_TO_DYNAMIC;
-    }
-    else if (strcmp(argv[i], "-rfct-dynamic-to-static")==0)  {
-        options.theRefactoring = AVR_TURN_DYNAMIC_METHOD_TO_STATIC;
-    }
     else if (strcmp(argv[i], "-rfct-extract-method")==0) {
         options.theRefactoring = AVR_EXTRACT_METHOD;
     }
