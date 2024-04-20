@@ -563,7 +563,7 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 
 -rfct-extract-macro::
 
--rfct-extract-method::
+-rfct-extract-function::
 
 -rfct-move-all-classes-to-new-file::
 

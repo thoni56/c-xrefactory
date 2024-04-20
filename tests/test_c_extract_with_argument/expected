@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-method -olmark=73 -olcursor=107 CURDIR/test_source/hello.c -log=log -o server-buffer
+../../src/c-xref -xrefactory-II -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -rfct-extract-function -olmark=73 -olcursor=107 CURDIR/test_source/hello.c -log=log -o server-buffer
 <sync>
 <extraction-dialog type=newFunction_> <str len=<n>>	newFunction_(str);
 </str>

@@ -7556,7 +7556,7 @@ refactoring.
 
 (defun c-xref-extract-function (rd)
   (c-xref-refactoring-init-actions (format "extract function"))
-  (c-xref-server-call-refactoring-task (list "-rfct-extract-method"))
+  (c-xref-server-call-refactoring-task (list "-rfct-extract-function"))
   (c-xref-refactoring-finish-actions)
   )
 

@@ -1964,8 +1964,8 @@ static bool processROption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-rfct-move-param")==0) {
         options.theRefactoring = AVR_MOVE_PARAMETER;
     }
-    else if (strcmp(argv[i], "-rfct-extract-method")==0) {
-        options.theRefactoring = AVR_EXTRACT_METHOD;
+    else if (strcmp(argv[i], "-rfct-extract-function")==0) {
+        options.theRefactoring = AVR_EXTRACT_FUNCTION;
     }
     else if (strcmp(argv[i], "-rfct-extract-macro")==0)  {
         options.theRefactoring = AVR_EXTRACT_MACRO;

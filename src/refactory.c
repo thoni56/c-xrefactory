@@ -1273,7 +1273,7 @@ static void parameterManipulation(EditorMarker *point, int manip, int argn1, int
 
 // ------------------------------------------------------ ExtractMethod
 
-static void extractMethod(EditorMarker *point, EditorMarker *mark) {
+static void extractFunction(EditorMarker *point, EditorMarker *mark) {
     parseBufferUsingServer(refactoringOptions.project, point, mark, "-olcxextract", NULL);
 }
 
@@ -1414,9 +1414,9 @@ void refactory(void) {
         parameterManipulation(point, refactoringOptions.theRefactoring, refactoringOptions.olcxGotoVal,
                               refactoringOptions.parnum2);
         break;
-    case AVR_EXTRACT_METHOD:    /* AVR_EXTRACT_FUNCTION ? */
+    case AVR_EXTRACT_FUNCTION:
         progressFactor = 1;
-        extractMethod(point, mark);
+        extractFunction(point, mark);
         break;
     case AVR_EXTRACT_MACRO:
         progressFactor = 1;
