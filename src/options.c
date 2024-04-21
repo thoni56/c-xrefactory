@@ -1973,18 +1973,6 @@ static bool processROption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-rfct-extract-variable")==0)  {
         options.theRefactoring = AVR_EXTRACT_VARIABLE;
     }
-    else if (strcmp(argv[i], "-rfct-push-down-field")==0)    {
-        options.theRefactoring = AVR_PUSH_DOWN_FIELD;
-    }
-    else if (strcmp(argv[i], "-rfct-push-down-method")==0)   {
-        options.theRefactoring = AVR_PUSH_DOWN_METHOD;
-    }
-    else if (strcmp(argv[i], "-rfct-pull-up-field")==0)  {
-        options.theRefactoring = AVR_PULL_UP_FIELD;
-    }
-    else if (strcmp(argv[i], "-rfct-pull-up-method")==0) {
-        options.theRefactoring = AVR_PULL_UP_METHOD;
-    }
     else if (strncmp(argv[i], "-rfct-param1=", 13)==0)  {
         options.refpar1 = allocateStringForOption(&options.refpar1, argv[i]+13);
     }
