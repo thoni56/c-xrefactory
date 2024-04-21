@@ -33,8 +33,8 @@
 %left ANDAND
 %left '|' '^'
 %left '&'
-%binary EQ NE
-%binary '<' '>' LE GE
+%left EQ NE
+%left '<' '>' LE GE
 %left LS RS
 %left '+' '-'
 %left '*' '/' '%'
