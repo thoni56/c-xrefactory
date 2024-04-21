@@ -1,7 +1,7 @@
 .\" Copyright (c) 1997-2004 Marian Vittek, Bratislava.
 .TH C-XREF 1 \" -*- nroff -*-
 .SH NAME
-c-xref \- A cross referencing tool for C and Java.
+c-xref \- A cross referencing tool for C/Yacc.
 .SH SYNOPSIS
 .hy 0
 .na
@@ -25,7 +25,7 @@ c-xref \- A cross referencing tool for C and Java.
 .B c-xref
 <srcdir>
 .SH DESCRIPTION
-C-xref is a C and Java cross-referencing tool.
+C-xref is a C/Yacc refactoring tool.
 It parses input files noting all symbol's
 definitions and usages. Its output is a list of symbols, together
 with positions of declarations, definition and all usages.
@@ -35,9 +35,8 @@ option. C-xref's cross references are destinated to be read by
 .I c-xref
 itself or by on-line editing functions. The programming language in which an
 input file is written is inferred
-from file suffix as follows: .java for a Java language file, .y
-for a YACC (and C) input file, .jar for a Java archive file and finally
-all other suffixes are interpreted as C input files.
+from file suffix as follows: .y
+for a YACC (and C) input file, all other suffixes are interpreted as C input files.
 
 .SH WILDCARDS
 
@@ -49,8 +48,8 @@ for example [a-z] matches any lower case letter, [0-9] matches any
 digit, as it is usual in standard shell expressions. If the first
 character following the [ is a ^ then the sense of expansion is
 inversed, for example [^0-9] expands to any non-digit
-character. Options -I, -classpath, -sourcepath and -javadocpath also
-accept wild characters. Be carefull when using wild characters in those options
+character. Option -I  also
+accept wildcard characters. Be careful when using wildcard characters in those options
 as they can considerably slow down the task.
 
 .SH NOTE
@@ -84,13 +83,12 @@ IDEs.
 For more info, see the .c-xrefrc file documentation.
 .TP
 .B \-r
-This option is default now, so you do not need to enter it.
-It causes that if a directory is entered as
+The default if a directory is entered as
 .I infile
-then all files from the directory having the suffix '.c' or '.java'
-are processed (note that it is useless to process the '.h' suffixes as
+all files from the directory having the suffix '.c' or '.y'
+are processed recursively. (Note that it is useless to process the '.h' suffixes as
 they are processed when included by a '.c' file).
-Subdirectories are recursively searched. This option is obsolete now.
+This option is obsolete now.
 .TP
 .B \-\-r
 Do not process directories recursively. This is inverse option to -r option.
@@ -141,46 +139,6 @@ This can improve time performance when many source files are using
 common header files. Especially if those header files are read
 over network or from a slow drive. It will increase space requirements,
 however.
-.TP
-.B \-jdkclasspath paths
-This option defines path to standard runtime library (rt.jar) of your Java
-installation. If you are using JDK from Sun Microsystems, then
-c-xref task should be able to infer this path from PATH and JAVA_HOME environment
-variables. Otherwise you will need to specify it explicitly using
--jdkclasspath option.
-The syntax of paths is the same as for the -classpath option.
-For example you can use the '-jdkclasspath /usr/local/jdk1.2.2/jre/lib/rt.jar'
-settting for most Java 1.2 installations.
-.TP
-.B \-classpath paths
-This option specifies the classpath used for finding Java .class files.
-This option overrides the value of the environment variable CLASSPATH.
-See also the '-jdkclasspath' and '-sourcepath' option.
-.TP
-.B \-sourcepath paths
-This option specifies paths where sources of Java packages and classes
-are searched. This option overrides the value of the environment
-variable SOURCEPATH.
-If not present the current classpath is used as default. The 'sourcepath'
-value is used for finding source files in the
-same way as 'classpath' is used for finding .class compiled files.
-When loading a class having both source and class available then the
-time of last modification of both files is examined and the class is
-loaded from the newer file.
-.TP
-.B \-javadocpath=<path>
-Specifies paths where Javadoc documentation is stored in
-local file system. Several paths can be specified,
-the syntax is the same as for classpath value. When looking for a
-javadoc documentation, c-xref will first search files on paths
-specified by -javadocpath, if not found and the package documentation
-is available (-javadocavailable option) the URL specified
-by -javadocurl is taken.
-See also -javadocurl, -javadocavailable and -htmlgenjavadoclink options.
-.TP
-.B \-packages
-This option allows to enter package names instead of input file
-names on command line.
 .TP
 .B \-refs file
 This option specifies the file where the cross-references
@@ -315,24 +273,6 @@ and 'utf-16be'. The 'default' value results in standard ASCII (and 'utf-8')
 characters. If your files contain, for example, 8-bit european characters, then you
 should include -encoding=european into your project setting.
 .TP
-.B \-javadocurl=<url> \-htmljavadocpath=<url>
-Specifies URL where existing non-local Javadoc documentation is stored.
-Both options are equivalent, the -htmljavadocpath is obsolete.
-The default
-is "-javadocurl=http://java.sun.com/j2se/1.3/docs/api".
-It is supposed to contain Javadoc documentation of packages
-for which you do not have source code nor local Javadoc
-documentation, but the documentation is available on the Internet.
-See also -javadocpath, -javadocavailable and -htmlgenjavadoclink options.
-.TP
-.B \-javadocavailable=<packs> \-htmljavadocavailable=<packs>
-Both options are equivalent, the -htmljavadocavailable is obsolete.
-The option specifies packages having Javadoc documentation placed
-on the URL specified by the -javadocurl option.
-The <packs> string is a list of packages separated by ':' sign. For example
-correct setting for standard jdk is: "-javadocavailable=java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming".
-See also -javadocpath, -javadocurl and -htmlgenjavadoclink options.
-.TP
 .B \-optinclude file (or \-stdop file)
 This option causes that the file `\|\c
 .I file\c
@@ -344,10 +284,6 @@ then c-xref is unable to automatically reload new options.
 If you use -optinclude
 (-stdop) option, and you modify included file, you will need to kill
 and restart c-xref server task in order that changes take effect.
-.TP
-.B \-no-stdoptions
-This option prevents
-searching for standard option files '.c-xrefrc' and 'C-xref.opt'.
 .TP
 .B -mf=<n>
 This option sets the memory factor for cross-references. The larger is the
@@ -379,13 +315,6 @@ into Tag file and parsed with C-xrefactory's C parser. Suffixes should not start
 dot character which is considered as suffix separator automatically. For example
 suffixes "c:tc" mean that files ending by ".c" or ".tc" strings are considered as C input
 files.
-.TP
-.B "\-javasuffixes=<suffixes>"
-This option defines list of suffixes (separated by ':' character under Unix and ';' under MS-Windows)
-for Java source files. Files with those suffixes will be inserted
-into Tag file and parsed with C-xrefactory's Java parser. Suffixes should not start by the '.'
-dot character which is consider as suffix separator automatically.
-For example, the default value under MS-Windows is -javasuffixes=java;JAV.
 .TP
 .B "\-filescasesensitive" "\-filescaseunsensitive"
 This option controls whether c-xref is considering two file names differing only

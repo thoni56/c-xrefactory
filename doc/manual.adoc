@@ -12,7 +12,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-= C-xrefactory - a C/Yacc/Java refactoring and code browsing tool - User Manual
+= C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual
 v{VERSION} - Generated {localdate}
 
 
@@ -22,14 +22,14 @@ WARNING: This document is very much a work in progress.
 
 === What is C-xrefactory?
 
-`C-xrefactory` is a development tool for C (and Java) developers that
+`C-xrefactory` is a development tool for C developers that
 allows browsing variables and functions, as well as refactoring, in C
-and Java code.
+and Yacc code.
 
 Here is a list of features
 
 - Full integration with Emacs
-- Browsing source code in C and Java supporting multiple pre-processing passes, resolving scope, accessibility, overloading and polymorphism
+- Browsing source code in C supporting multiple pre-processing passes
 - Designed to work with large projects (> millions of lines)
 - Update using only modified files
 - First tool to https://www.martinfowler.com/articles/refactoringRubicon.html[Crossing Refactoring's Rubicon] as described by Martin Fowler
@@ -160,7 +160,7 @@ Select level of information to print.
 
 -yydebug::
 
-Enable debugging of the C, Yacc or Java parsers according to the Yacc manual.
+Enable debugging of the C and Yacc parsers according to the Yacc manual.
 
 -briefoutput::
 
@@ -201,27 +201,6 @@ Multiple suffixes should be separated by `:`.
 -strict::
 
 Reject keywords and types that are not part of the ANSI C standard, such as `__asm__`, `_near` and `__const__`.
-
-====== Java specific options
-
--javaruntime::
-
--javasuffixes::
-
--no-classfiles::
-Don't look for information in java `.class` files, including `.jar`.
-
--sourcepath <path>::
--classpath <path>::
-Look for source/class files in the directories indicated by `path`, which may contain multiple directories separated by `:`.
-
-====== JavaDoc configuration
-
--javadoc::
--javadocavailable::
--javadocpath::
--javadocurl::
--jdoctmpdir::
 
 ====== Editor adapter/server configuration
 
@@ -365,7 +344,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -olcxgetcurrentrefn::
 
--olcxgetjavahome::
 
 -olcxgetparamcoord::
 

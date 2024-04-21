@@ -1,5 +1,5 @@
 /* -*- mode: text -*- */
-workspace "C-xrefactory" "A C/Java refactoring browser in C" {
+workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 	!adrs adr
 	!docs docs
 	model {

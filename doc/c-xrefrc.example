@@ -49,26 +49,6 @@ an example project configuration, but it needs to be adjusted.
 
 
 // -----------------------------------------------------------------
-//                        Java specific options
-//
-// The following option specifies where to search Java classes.
-// This option overrides the %CLASSPATH% environment value.
-// If your %CLASSPATH% variable is not set, uncomment and adjust this!
-
-// -classpath c:\myjava
-
-// If you browse a standard JDK symbol, you may wish to see
-// its javadoc documentation. In order to allow this adjust
-// following two options. However, you will also need to have an Internet
-// browser installed as well as working 'browse-url' package in 
-// your (X)Emacs.
-
--htmljavadocpath=http://java.sun.com/j2se/1.3/docs/api
--htmljavadocavailable=java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming
-
-
-
-// -----------------------------------------------------------------
 //                        C specific options
 //
 // Following options specify default macros for source pre-processing

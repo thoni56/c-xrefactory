@@ -26,20 +26,17 @@ comments starting by two slashes
 followed by at least one blank character and ending by end of the line.
 
 C-xrefrc file can also contain specification of input source files via
-execution of an external command. A command enclosed inside two `` signs is
-executed and the result of execution (from command's standard output)
-is interpreted as a blank separated list of input files. For example,
-if you wish to process  all files
-with .java suffix (not those with .c suffix) under a given
-directory (say /usr/src/myproject), you can specify (under a Unix system)
-input files as: `find /usr/src/myproject -name \\*.java -print`
+execution of an external command. A command enclosed inside two ``
+signs is executed and the result of execution (from command's standard
+output) is interpreted as a blank separated list of input files. For
+example: `find /usr/src/myproject -name \\*.C -print`
 
 The c-xrefrc file can also refer to environment variables by enclosing variable name
 into ${ and } signs (or between two % % signs). For example, you can specify
 the position of a file 'toto' in your home directory by the
 string "${HOME}/toto". The variable can either be an internal c-xref variable (which
 must be set by the '-set <name> <value>' option), or any regular
-(shell) environment variable, such as USER, HOME, CLASSPATH, etc. Also
+(shell) environment variable, such as USER, HOME, etc. Also
 the following predefined variables can be used in order to introduce problematic
 characters into options: 'pc' for percent; 'dl' for dollar, 'dq' for
 double-quotes and 'nl' for newline (even if newline is not really problematic as
@@ -52,7 +49,7 @@ file  is  composed  from  separate
 sections. Each section starts with a  section  marker  stating  the
 project  name.  Options defined inside a section are read when 'c-xref' is invoked with the '-p'
 option followed by the name of the section.
-In order to pass '-p' option to c-xref from Emacs/XEmacs
+In order to pass '-p' option to c-xref from Emacs
 editors, you have to set current project name with
 the 'M-x c-xref-project-set-active' function or by selecting it through
 the 'C-xref->Project->Set Active' menu item.
@@ -78,18 +75,13 @@ Lets take for example the '.c-xrefrc' file defining two projects
 .br
 -refs /home/marian/XSrefs
 .br
--htmlroot=/home/marian/HTML
-.br
 
 [player]          // second section
 .br
 -r /home/marian/player
 .br
--classpath /usr/share/jdk/classes.zip:/java
-.br
 -refs /home/marian/Xplay
-.br
--htmlroot=/home/marian/HTML
+
 
 ---------------------------------------------------------
 
@@ -100,16 +92,9 @@ be defined having the value 'linux'. The resulting cross-references
 will be stored into the '/home/marian/XSrefs' file.
 
 An invocation with the 'c-xref -p player' command will make c-xref
-read the source files from the '/home/marian/player' directory with
-the classpath set to '/usr/share/jdk/classes.zip:/java' and the
+read the source files from the '/home/marian/player' and the
 resulting cross-references will be stored in the '/home/marian/Xplay'
 file.
-
-An invocation with the 'c-xref -html -p player' will process all files
-from the '/home/marian/player' directory with the classpath set
-to '/usr/share/jdk/classes.zip:/java', the input files will be
-converted to HTML format and the resulting HTML files will be stored
-in a file hierarchy under the '/home/marian/HTML' directory.
 
 NOTE: If the '.c-xrefrc' file contains input file names, they are
 processed only when invoked with '-p' or '-create' options on
@@ -122,7 +107,7 @@ the '.c-xrefrc' file with their full absolute paths.
 .I AUTOMATIC PROJECT DETECTION
 
 C-xrefactory contains support for automatic project detection.  If you
-select under (X)Emacs 'C-xref->Project->Set Active' and then you chose
+select under Emacs 'C-xref->Project->Set Active' and then you chose
 "++ Automatic (directory dependent) ++" item, then C-xrefactory tries
 to detect active project automatically inferring it from the place
 where the currently edited file is stored, i.e. from its absolute path.
