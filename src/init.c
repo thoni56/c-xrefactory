@@ -46,6 +46,8 @@ static TokenNamesInitTable tokenNameInitTable1[] = {
     {"union",       UNION,			LANG_C | LANG_YACC},
     {"unsigned",    UNSIGNED,		LANG_C | LANG_YACC},
 
+    {"true",        TRUE_LITERAL,	LANG_C | LANG_YACC},
+    {"false",       FALSE_LITERAL,	LANG_C | LANG_YACC},
     {"break",       BREAK,			LANG_C | LANG_YACC},
     {"case",        CASE,			LANG_C | LANG_YACC},
     {"char",        CHAR,			LANG_C | LANG_YACC},

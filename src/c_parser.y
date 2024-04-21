@@ -78,6 +78,8 @@ static int savedWorkMemoryIndex = 0;
 /* hmm */
 %token ANONYMOUS_MODIFIER
 
+%token TRUE_LITERAL FALSE_LITERAL
+
 /* yacc-special */
 %token TOKEN TYPE
 
