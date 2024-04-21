@@ -15,7 +15,6 @@
 #include "filetable.h"
 #include "globals.h"
 #include "init.h"
-#include "jslsemact.h"
 #include "lexem.h"
 #include "list.h"
 #include "log.h"
@@ -172,7 +171,6 @@ static void initializationsPerInvocation(void) {
     olstringFound = false;
     olstringServed = false;
     olstringInMacroBody = NULL;
-    s_jsl = NULL;
     s_javaObjectSymbol = NULL;
 }
 

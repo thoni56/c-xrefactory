@@ -10,7 +10,6 @@
 #include "filetable.h"
 
 #include "caching.h"            /* cache && cacheInput() */
-#include "jslsemact.h"          /* s_jsl */
 
 #include "log.h"
 #include "misc.h"              /* requiresCreatingRefs() */
@@ -727,7 +726,7 @@ bool buildLexemFromCharacters(CharacterBuffer *cb, LexemBuffer *lb) {
             position = lb->position;
 
             if (fileNumberFrom(cb) == olOriginalFileNumber && fileNumberFrom(cb) != NO_FILE_NUMBER
-                && fileNumberFrom(cb) != -1 && s_jsl == NULL) {
+                && fileNumberFrom(cb) != -1) {
                 if (options.serverOperation == OLO_EXTRACT) {
                     ch = skipBlanks(cb, ch);
                     int apos = fileOffsetFor(cb);

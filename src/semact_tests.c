@@ -15,7 +15,6 @@
 #include "filetable.mock"
 #include "filedescriptor.mock"
 #include "globals.mock"
-#include "jslsemact.mock"
 #include "misc.mock"
 #include "options.mock"
 #include "server.h"

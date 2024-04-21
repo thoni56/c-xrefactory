@@ -20,7 +20,6 @@
 #include "filetable.mock"
 #include "globals.mock"
 #include "init.mock"
-#include "jslsemact.mock"
 #include "lexem.mock"
 #include "lexer.mock"
 #include "macroargumenttable.mock"
