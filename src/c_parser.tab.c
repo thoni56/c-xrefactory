@@ -1887,7 +1887,6 @@ char *c_yyrule[] = {
 #define YYMAXDEPTH 500
 #endif
 #endif
-#ifndef RECURSIVE
 int yydebug;
 int yynerrs;
 int yyerrflag;
@@ -1899,9 +1898,6 @@ YYSTYPE yyval;
 YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
-#else
-#include "recyacc.h"
-#endif
 #define yystacksize YYSTACKSIZE
 #line 1736 "c_parser.y"
 
@@ -1990,7 +1986,7 @@ void makeCCompletions(char *string, int len, Position *pos) {
         }
     }
 }
-#line 1994 "c_parser.tab.c"
+#line 1990 "c_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4037,7 +4033,7 @@ case 364:
 #line 1727 "c_parser.y"
 { endBlock(); }
 break;
-#line 4041 "c_parser.tab.c"
+#line 4037 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

@@ -28,7 +28,6 @@
 #include "options.mock"
 #include "parsers.mock"
 #include "ppc.mock"
-#include "recyacc.mock"
 #include "refactory.mock"
 #include "reftab.mock"
 #include "server.mock"

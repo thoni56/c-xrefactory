@@ -323,7 +323,6 @@ typedef int YYSTYPE;
 #define YYMAXDEPTH 500
 #endif
 #endif
-#ifndef RECURSIVE
 int yydebug;
 int yynerrs;
 int yyerrflag;
@@ -335,9 +334,6 @@ YYSTYPE yyval;
 YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
-#else
-#include "recyacc.h"
-#endif
 #define yystacksize YYSTACKSIZE
 #line 83 "cexp_parser.y"
 
@@ -364,7 +360,7 @@ int cexpTranslateToken(int tok, int val) {
     return(number);
     return(UNKNOWN);
 }
-#line 368 "cexp_parser.tab.c"
+#line 364 "cexp_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -617,7 +613,7 @@ case 27:
 #line 80 "cexp_parser.y"
 {yyval= yyvsp[0];}
 break;
-#line 621 "cexp_parser.tab.c"
+#line 617 "cexp_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

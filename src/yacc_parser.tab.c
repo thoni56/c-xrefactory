@@ -2521,7 +2521,6 @@ char *yacc_yyrule[] = {
 #define YYMAXDEPTH 500
 #endif
 #endif
-#ifndef RECURSIVE
 int yydebug;
 int yynerrs;
 int yyerrflag;
@@ -2533,9 +2532,6 @@ YYSTYPE yyval;
 YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
-#else
-#include "recyacc.h"
-#endif
 #define yystacksize YYSTACKSIZE
 #line 1950 "yacc_parser.y"
 
@@ -2632,7 +2628,7 @@ void makeYaccCompletions(char *string, int len, Position *pos) {
         }
     }
 }
-#line 2636 "yacc_parser.tab.c"
+#line 2632 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4834,7 +4830,7 @@ case 533:
 #line 1941 "yacc_parser.y"
 { endBlock(); }
 break;
-#line 4838 "yacc_parser.tab.c"
+#line 4834 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

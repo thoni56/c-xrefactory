@@ -42,9 +42,6 @@ int yyIdBufferIndex = 0;
 TypeModifier *s_structRecordCompletionType;
 TypeModifier *s_upLevelFunctionCompletionType;
 
-struct yyGlobalState *s_yygstate;
-struct yyGlobalState *s_initYygstate;
-
 char *inputFileName="";
 Completions collectedCompletions;
 

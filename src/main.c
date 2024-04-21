@@ -25,8 +25,6 @@
 #include "options.h"
 #include "proto.h"
 #include "protocol.h"
-#include "parsers.h"            /* Required because of intricate includes in recyacc/java_parser */
-#include "recyacc.h"
 #include "refactory.h"
 #include "reftab.h"
 #include "server.h"
@@ -174,7 +172,6 @@ static void initializationsPerInvocation(void) {
     olstringFound = false;
     olstringServed = false;
     olstringInMacroBody = NULL;
-    s_yygstate = s_initYygstate;
     s_jsl = NULL;
     s_javaObjectSymbol = NULL;
 }
@@ -635,11 +632,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initOptions();
 
     initSymbolTable(MAX_SYMBOLS);
-
-    // initialize recursive java parsing
-    s_yygstate = stackMemoryAlloc(sizeof(struct yyGlobalState));
-    memset(s_yygstate, 0, sizeof(struct yyGlobalState));
-    s_initYygstate = s_yygstate;
 
     initAllInputs();
     initCwd();

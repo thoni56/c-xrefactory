@@ -58,7 +58,6 @@ char *header[] =
     "#define YYMAXDEPTH 500",
     "#endif",
     "#endif",
-    "#ifndef RECURSIVE",
     "int yydebug;",
     "int yynerrs;",
     "int yyerrflag;",
@@ -70,9 +69,6 @@ char *header[] =
     "YYSTYPE yylval;",
     "short yyss[YYSTACKSIZE];",
     "YYSTYPE yyvs[YYSTACKSIZE];",
-    "#else",
-    "#include \"recyacc.h\"",
-    "#endif",
     "#define yystacksize YYSTACKSIZE",
     0
 };

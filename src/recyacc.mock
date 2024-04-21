@@ -1,4 +1,0 @@
-#include "recyacc.h"
-
-struct yyGlobalState *s_yygstate;
-struct yyGlobalState *s_initYygstate;
