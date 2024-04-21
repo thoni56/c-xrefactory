@@ -175,6 +175,7 @@ static void initializationsPerInvocation(void) {
 }
 
 
+// Read from file into *line if max length, put actual length in outLength, return EOF if at EOF
 static int getLineFromFile(FILE *file, char *line, int max, int *outLength) {
     int i = 0;
     int ch;
