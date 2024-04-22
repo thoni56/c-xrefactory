@@ -57,8 +57,6 @@ Options presetOptions = {
     true,                        // fileNamesCaseSensitive
     SEARCH_FULL,                 // search Tag file specifics
     false,                       // noerrors
-    true,                        // urlGenTemporaryFile
-    true,                        // urlautoredirect
     false,                       // exact position
     NULL,                        // -o outputFileName
     NULL,                        // -line lineFileName
@@ -1974,12 +1972,6 @@ static bool processTOption(int *argi, int argc, char **argv) {
 static bool processUOption(int *argIndexP, int argc, char **argv) {
     int i = *argIndexP;
     if (0) {}
-    else if (strcmp(argv[i], "-urlmanualredirect")==0)   {
-        options.urlAutoRedirect = false;
-    }
-    else if (strcmp(argv[i], "-urldirect")==0)   {
-        options.urlGenTemporaryFile = false;
-    }
     else if (strcmp(argv[i], "-update")==0)  {
         options.update = UPDATE_FULL;
         options.updateOnlyModifiedFiles = true;
