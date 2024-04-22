@@ -75,7 +75,6 @@ typedef struct options {
     bool fileNamesCaseSensitive;
     SearchKind searchKind;
     bool noErrors;
-    char *moveTargetClass;
     int trivialPreCheckCode;
     bool urlGenTemporaryFile;
     bool urlAutoRedirect;

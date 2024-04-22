@@ -55,9 +55,8 @@ Options presetOptions = {
     "java",                      // javaFilesSuffixes
 #endif
     true,                        // fileNamesCaseSensitive
-    SEARCH_FULL,             // search Tag file specifics
+    SEARCH_FULL,                 // search Tag file specifics
     false,                       // noerrors
-    NULL,                        // moveTargetClass
     0,                           // TPC_NONE, trivial pre-check
     true,                        // urlGenTemporaryFile
     true,                        // urlautoredirect
@@ -1544,9 +1543,6 @@ static bool processMOption(int *argi, int argc, char **argv) {
     }
     else if (strncmp(argv[i], "-maxcompls=",11)==0)  {
         sscanf(argv[i]+11, "%d", &options.maxCompletions);
-    }
-    else if (strncmp(argv[i], "-movetargetclass=",17)==0) {
-        options.moveTargetClass = allocateStringForOption(&options.moveTargetClass, argv[i]+17);
     }
     else if (strncmp(argv[i], "-movetargetfile=",16)==0) {
         options.moveTargetFile = allocateStringForOption(&options.moveTargetFile, argv[i]+16);
