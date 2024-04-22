@@ -51,7 +51,6 @@ typedef struct options {
     bool completeParenthesis;
     AddImportStrategyKind defaultAddImportStrategy;
     bool referenceListWithoutSource;
-    int completionOverloadWizardDepth;
     CommentMovingMode commentMovingMode;
     StringList *pruneNames;
     StringList *inputFiles;

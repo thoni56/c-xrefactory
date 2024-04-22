@@ -28,7 +28,6 @@ Options presetOptions = {
     false,                       // completeParenthesis
     IMPORT_ON_DEMAND,            // defaultAddImportStrategy
     false,                       // referenceListWithoutSource
-    1,                           // completionOverloadWizardDeep
     0,                           // comment moving level
     NULL,                        // prune name
     NULL,                        // input files
