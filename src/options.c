@@ -57,7 +57,6 @@ Options presetOptions = {
     true,                        // fileNamesCaseSensitive
     SEARCH_FULL,                 // search Tag file specifics
     false,                       // noerrors
-    0,                           // TPC_NONE, trivial pre-check
     true,                        // urlGenTemporaryFile
     true,                        // urlautoredirect
     false,                       // exact position
