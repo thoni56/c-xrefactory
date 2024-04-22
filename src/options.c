@@ -75,9 +75,6 @@ Options presetOptions = {
 
     "",                         // getValue
 
-    /* JAVA: */
-    NULL,                       // sourcepath
-
     /* MIXED THINGS... */
     false,                      // noIncludeRefs
     true,                       // allowClassFileRefs
@@ -126,8 +123,6 @@ Options presetOptions = {
 
 /* memory where on-line given options are stored */
 static Memory2 optMemory;
-
-static char javaSourcePathExpanded[MAX_OPTION_LEN];
 
 static char base[MAX_FILE_NAME_SIZE];
 
@@ -1002,36 +997,6 @@ void getPipedOptions(int *outNargc, char ***outNargv) {
         }
     }
 }
-
-static char *getClassPath(bool defaultClassPathAllowed) {
-    char *cp;
-    cp = options.classpath;
-    if (cp == NULL || *cp==0)
-        cp = getEnv("CLASSPATH");
-    if (cp == NULL || *cp==0) {
-        if (defaultClassPathAllowed)
-            cp = defaultClassPath;
-        else
-            cp = NULL;
-    }
-    return cp;
-}
-
-void javaSetSourcePath(bool defaultClassPathAllowed) {
-    char *cp;
-    cp = options.sourcePath;
-    if (cp == NULL || *cp==0)
-        cp = getEnv("SOURCEPATH");
-    if (cp == NULL || *cp==0)
-        cp = getClassPath(defaultClassPathAllowed);
-    if (cp == NULL) {
-        javaSourcePaths = NULL;
-    } else {
-        expandWildcardsInPaths(cp, javaSourcePathExpanded, MAX_OPTION_LEN);
-        javaSourcePaths = javaSourcePathExpanded;
-    }
-}
-
 
 static void convertPackageNameToPath(char *name, char *path) {
     char *np, *pp;
@@ -1971,11 +1936,6 @@ static bool processSOption(int *argi, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i], "-strict")==0)
         options.strictAnsi = true;
-    else if (strcmp(argv[i], "-sourcepath")==0) {
-        ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.sourcePath = allocateStringForOption(&options.sourcePath, argv[i]);
-        setOptionVariable("-sourcepath", options.sourcePath);
-    }
     else if (strcmp(argv[i], "-stdop")==0) {
         i = handleIncludeOption(argc, argv, i);
     }
@@ -2214,7 +2174,6 @@ static void scheduleFileArgumentToFileTable(char *infile) {
     int   topCallFlag;
     void *recurseFlag;
 
-    javaSetSourcePath(true); // for case of packages on command line
     topCallFlag = 1;
     recurseFlag = &topCallFlag;
     MapOverPaths(infile, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &topCallFlag); });

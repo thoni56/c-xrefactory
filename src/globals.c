@@ -76,7 +76,6 @@ int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL] = {
 };
 
 char *s_cppVarArgsName = "__VA_ARGS__";
-char defaultClassPath[] = ".";
 StringList *javaClassPaths;
 char *javaSourcePaths;
 

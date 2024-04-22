@@ -26,7 +26,6 @@ CurrentlyParsedClassInfo parsedClassInfoInit;
 CurrentlyParsedInfo parsedInfo;
 int currentPass;
 int maxPasses;
-char defaultClassPath[] = ".";
 
 FILE *communicationChannel;
 FILE *errOut=NULL;

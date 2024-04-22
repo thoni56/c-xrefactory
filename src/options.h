@@ -93,9 +93,6 @@ typedef struct options {
 
     char *variableToGet;
 
-    /* JAVA: */
-    char *sourcePath;
-
     /* MIXED THINGS... */
     bool noIncludeRefs;
     bool allowClassFileRefs;
@@ -174,7 +171,6 @@ extern bool readOptionsFromFileIntoArgs(FILE *ff, int *nargc, char ***nargv,
 extern void readOptionsFromFile(char *name, int *nargc, char ***nargv, char *project, char *foundProjectName);
 extern void readOptionsFromCommand(char *command, int *nargc, char ***nargv, char *sectionFile);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
-extern void javaSetSourcePath(bool defaultClassPathAllowed);
 extern bool currentReferenceFileCountMatches(int newRefNum);
 
 extern void searchStandardOptionsFileAndProjectForFile(char *filename, char *optionsFilename,

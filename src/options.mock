@@ -67,10 +67,6 @@ void readOptionsFromCommand(char *command, int *outArgc, char ***outArgv, char *
   mock(command, outArgc, outArgv, sectionFile);
 }
 
-void javaSetSourcePath(bool defaultClassPathAllowed) {
-  mock(defaultClassPathAllowed);
-}
-
 bool currentReferenceFileCountMatches(int foundReferenceFileCount) {
   return (bool)mock(foundReferenceFileCount);
 }
