@@ -640,15 +640,15 @@ int filenameCompare(char *ss1, char *ss2, int n) {
     return pathncmp(ss1, ss2, n, options.fileNamesCaseSensitive);
 }
 
-/* Handle mixed case file names */
-int compareFileNames(char *ss1, char *ss2) {
+/* Compare mixed case file names -  */
+int compareFileNames(char *name1, char *name2) {
     int n;
 #if (!defined (__WIN32__))
     if (options.fileNamesCaseSensitive)
-        return strcmp(ss1, ss2);
+        return strcmp(name1, name2);
 #endif
-    n = strlen(ss1);
-    return filenameCompare(ss1, ss2, n+1);
+    n = strlen(name1);
+    return filenameCompare(name1, name2, n+1);
 }
 
 // ------------------------------------------- SHELL (SUB)EXPRESSIONS ---
