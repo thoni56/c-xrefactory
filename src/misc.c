@@ -302,13 +302,9 @@ char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
 static char *javaCutClassPathFromFileName(char *fname) {
     StringList    *cp;
     int             len;
-    char            *res,*ss;
+    char            *res;
+
     res = fname;
-    ss = strchr(fname, ZIP_SEPARATOR_CHAR);
-    if (ss!=NULL) {         // .zip archive symbol
-        res = ss+1;
-        goto fini;
-    }
     for(cp=javaClassPaths; cp!=NULL; cp=cp->next) {
         len = strlen(cp->string);
         if (filenameCompare(cp->string, fname, len) == 0) {
@@ -380,7 +376,7 @@ char *javaGetNudePreTypeName_static(char *name, NestedClassesDisplay displayMode
         cut++;
     res = res2 = cut;
     for (i = 0; cut[i]; i++) {
-        if (cut[i] == '.' || cut[i] == '/' || cut[i] == '\\' || cut[i] == ZIP_SEPARATOR_CHAR
+        if (cut[i] == '.' || cut[i] == '/' || cut[i] == '\\'
             || (cut[i] == '$' && displayMode == DONT_DISPLAY_NESTED_CLASSES)) {
             res  = res2;
             res2 = cut + i + 1;

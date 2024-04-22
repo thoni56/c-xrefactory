@@ -97,19 +97,15 @@ void reInitCwd(char *dffname, char *dffsect) {
 /* Returns: a pointer to a static area! */
 char *normalizeFileName(char *name, char *relative_to) {
     static char normalizedFileName[MAX_FILE_NAME_SIZE];
-    int l1,l2,i,j,s1,inzip=0;
+    int l1,l2,i,j,s1;
     char *ss;
 
     log_trace("normalizing %s relative to %s (cwd=%s)", name, relative_to, cwd);
     l1 = strlen(relative_to);
     l2 = strlen(name);
     s1 = 0;
-    if (name[0] == ZIP_SEPARATOR_CHAR) {
-        // special case a class name
-        l1 = -1;
-        inzip = 1;
 #ifdef __WIN32__
-    } else if (name[0]=='\\' || name[0]=='/') {
+    if (name[0]=='\\' || name[0]=='/') {
         normalizedFileName[0] = relative_to[0];
         normalizedFileName[1] = ':';
         l1 = 1;
@@ -119,7 +115,7 @@ char *normalizeFileName(char *name, char *relative_to) {
         l1 = 1;
         s1 = 2;
 #else
-    } else if (name[0] == FILE_PATH_SEPARATOR) {
+    if (name[0] == FILE_PATH_SEPARATOR) {
         l1 = -1;
 #endif
     } else {
@@ -148,23 +144,21 @@ char *normalizeFileName(char *name, char *relative_to) {
         } else {
             for(; name[i]!=0 && name[i]!=FILE_PATH_SEPARATOR && name[i]!='/'; i++,j++) {
                 normalizedFileName[j]=name[i];
-                if (normalizedFileName[j]==ZIP_SEPARATOR_CHAR)
-                    inzip=1;
-                if (!inzip && !options.fileNamesCaseSensitive) {
+                if (!options.fileNamesCaseSensitive) {
                     normalizedFileName[j]=tolower(normalizedFileName[j]);
                 }
             }
             normalizedFileName[j]=name[i];
-            if (normalizedFileName[j]=='/' && !inzip)
+            if (normalizedFileName[j]=='/')
                 normalizedFileName[j]=FILE_PATH_SEPARATOR;
             i++;
             j++;
-            if (i<l2+1 && (name[i]=='/' || name[i]==FILE_PATH_SEPARATOR) && !inzip)
+            if (i<l2+1 && (name[i]=='/' || name[i]==FILE_PATH_SEPARATOR))
                 i++;
         }
     }
     log_trace("returning %s", normalizedFileName);
-    if (j>=2 && normalizedFileName[j-2]==FILE_PATH_SEPARATOR && !inzip)
+    if (j>=2 && normalizedFileName[j-2]==FILE_PATH_SEPARATOR)
         normalizedFileName[j-2]=0;
     if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
         char tmpBuff[TMP_BUFF_SIZE];

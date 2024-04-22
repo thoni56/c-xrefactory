@@ -101,10 +101,6 @@ typedef enum language {
 #define COLCX_GOTO_REFERENCE_LIST   "@"
 #define COLCX_LIST					";"
 
-/* ************ char to separate archive from file name ********** */
-
-#define ZIP_SEPARATOR_CHAR ';'
-
 /* *************************************************************** */
 
 #define ERROR_MESSAGE_STARTING_OFFSET 10

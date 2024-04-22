@@ -157,9 +157,7 @@ static void schedulingToUpdate(FileItem *fileItem) {
         // (missing of following if) has caused that all class hierarchy items
         // as well as all cxreferences based in .class files were lost
         // on -update, a very serious bug !!!!
-        if (fileItem->name[0] != ZIP_SEPARATOR_CHAR) {
-            fileItem->cxLoading = true;     /* Hack, to remove references from file */
-        }
+        fileItem->cxLoading = true;
     } else if (options.update == UPDATE_FULL) {
         if (editorFileModificationTime(fileItem->name) != fileItem->lastFullUpdateMtime) {
             fileItem->scheduledToUpdate = true;
