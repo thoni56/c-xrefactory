@@ -71,7 +71,7 @@ typedef struct options {
     bool xref2;
     char *moveTargetFile;
     char *cFilesSuffixes;
-    char *javaFilesSuffixes;
+    char *javaFilesSuffixes;    /* Keep this for warnings about Java not being supported... */
     bool fileNamesCaseSensitive;
     SearchKind searchKind;
     bool noErrors;
@@ -92,7 +92,6 @@ typedef struct options {
     int checkNewLineNumber;
 
     char *variableToGet;
-    bool javaSlAllowed;
 
     /* JAVA: */
     bool allowPackagesOnCommandLine;

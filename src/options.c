@@ -74,7 +74,6 @@ Options presetOptions = {
     0,                          // new line number of the first line
 
     "",                         // getValue
-    true,                       // javaSlAllowed (autoUpdateFromSrc)
 
     /* JAVA: */
     false,                      // allowPackagesOnCl
@@ -188,12 +187,9 @@ static void usage() {
     fprintf(stdout, "\t-I <dir>                  - search for includes in <dir>\n");
     fprintf(stdout, "\t-D<macro>[=<body>]        - define macro <macro> with body <body>\n");
     fprintf(stdout, "\t-packages                 - allow packages as input files\n");
-    fprintf(stdout, "\t-sourcepath <path>        - set java sources paths\n");
-    fprintf(stdout, "\t-classpath <path>         - set java class path\n");
     fprintf(stdout, "\t-filescasesensitive       - file names are case sensitive\n");
     fprintf(stdout, "\t-filescaseunsensitive     - file names are case unsensitive\n");
     fprintf(stdout, "\t-csuffixes=<suffixes>     - list of C files suffixes separated by ':' (or ';')\n");
-    fprintf(stdout, "\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by ':' (or ';')\n");
     fprintf(stdout, "\t-xrefrc <file>            - read options from <file> instead of ~/.c-xrefrc\n");
 #if 0
     fprintf(stdout, "\t-olinelen=<n>             - length of lines for on-line output\n");
@@ -525,7 +521,6 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         // recursive read of a directory, it attempts to read .class
         if (isTopDirectory==0
             && !fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes)
-            && !fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes)
             && compareFileNames(suff, ".y")!=0
         ) {
             return;
@@ -1549,13 +1544,6 @@ static bool processIOption(int *argi, int argc, char **argv) {
 static bool processJOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
-    else if (strncmp(argv[i], "-javasuffixes=",14)==0) {
-        options.javaFilesSuffixes = allocateStringForOption(&options.javaFilesSuffixes, argv[i]+14);
-    }
-    else if (strcmp(argv[i], "-jdkclasspath")==0 || strcmp(argv[i], "-javaruntime")==0) {
-        ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.jdkClassPath = allocateStringForOption(&options.jdkClassPath, argv[i]);
-    }
     else return false;
     *argi = i;
     return true;
@@ -1614,8 +1602,6 @@ static bool processNOption(int *argi, int argc, char **argv) {
         options.noIncludeRefs=true;
     else if (strcmp(argv[i], "-no-classfiles")==0)
         options.allowClassFileRefs = false;
-    else if (strcmp(argv[i], "-no-autoupdatefromsrc")==0)
-        options.javaSlAllowed = false;
     else if (strcmp(argv[i], "-no-errors")==0)
         options.noErrors = true;
     else
