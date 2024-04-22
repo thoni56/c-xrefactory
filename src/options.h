@@ -94,7 +94,6 @@ typedef struct options {
     char *variableToGet;
 
     /* JAVA: */
-    bool allowPackagesOnCommandLine;
     char *sourcePath;
 
     /* MIXED THINGS... */

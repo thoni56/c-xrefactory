@@ -76,7 +76,6 @@ Options presetOptions = {
     "",                         // getValue
 
     /* JAVA: */
-    false,                      // allowPackagesOnCl
     NULL,                       // sourcepath
 
     /* MIXED THINGS... */
@@ -530,12 +529,11 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
         char wildcardPath[MAX_OPTION_LEN];
         expandWildcardsInOnePath(dirName, wildcardPath, MAX_OPTION_LEN);
         MapOverPaths(wildcardPath, { dirInputFile(currentPath, "", NULL, NULL, recurseFlag, &isTopDirectory); });
-    } else if (isTopDirectory && (!options.allowPackagesOnCommandLine || !packageOnCommandLine(fname))) {
+    } else if (isTopDirectory) {
         if (options.mode!=ServerMode) {
             errorMessage(ERR_CANT_OPEN, dirName);
         } else {
-            // hacked 16.4.2003 in order to can complete in buffers
-            // without existing file
+            // Needed to be able to complete in buffer without existing file
             scheduleCommandLineEnteredFileToProcess(dirName);
         }
     }
@@ -1871,9 +1869,6 @@ static bool processPOption(int *argi, int argc, char **argv) {
     }
     else if (strncmp(argv[i], "-pass",5)==0) {
         errorMessage(ERR_ST, "'-pass' option can't be entered from command line");
-    }
-    else if (strcmp(argv[i], "-packages")==0) {
-        options.allowPackagesOnCommandLine = true;
     }
     else if (strcmp(argv[i], "-p")==0) {
         ensureNextArgumentIsAFileName(&i, argc, argv);

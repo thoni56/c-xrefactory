@@ -503,8 +503,6 @@ If `-exactpositionresolve` is used then the actual function and its mock version
 
 -optinclude::
 
--packages::
-
 -pass::
 
 -pause <n>::
