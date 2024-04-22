@@ -1,0 +1,14 @@
+#!/bin/bash
+if [ "$#" -ne 1 ]; then
+    echo
+    echo "Usage: $0 <test_name>"
+    echo 
+    echo "       test_name = directory name without leading 'test_'"
+    echo
+    exit 1
+fi
+
+# Navigate to the test directory relative to the script location
+cd $(dirname "$0")/../tests/test_$1
+meld output expected
+

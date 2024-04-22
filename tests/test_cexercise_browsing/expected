@@ -9,7 +9,7 @@ end-of-options
 
 <sync>
 <goto>
- <position-lc line=21 col=5 len=<n>>CURDIR/cexercise/index.c</position-lc>
+ <position-lc line=9 col=5 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/cexercise/browsing.c
 end-of-options
