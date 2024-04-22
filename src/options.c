@@ -73,7 +73,6 @@ Options presetOptions = {
 
     /* MIXED THINGS... */
     false,                      // noIncludeRefs
-    true,                       // allowClassFileRefs
     0,
     "",
     RESOLVE_DIALOG_DEFAULT,     // manual symbol resolution TODO: This is different from any of the RESOLVE values above, why?
@@ -1556,8 +1555,6 @@ static bool processNOption(int *argi, int argc, char **argv) {
         options.noIncludeRefs = true;
     else if (strcmp(argv[i], "-no-includerefresh")==0)
         options.noIncludeRefs=true;
-    else if (strcmp(argv[i], "-no-classfiles")==0)
-        options.allowClassFileRefs = false;
     else if (strcmp(argv[i], "-no-errors")==0)
         options.noErrors = true;
     else

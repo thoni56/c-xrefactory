@@ -91,7 +91,6 @@ typedef struct options {
 
     /* MIXED THINGS... */
     bool noIncludeRefs;
-    bool allowClassFileRefs;
     int filterValue;
     char *jdkClassPath;
     ResolveDialog manualResolve;
