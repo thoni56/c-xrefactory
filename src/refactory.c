@@ -250,9 +250,6 @@ static void displayResolutionDialog(char *message, int messageType, int continua
 #define STANDARD_C_SELECT_SYMBOLS_MESSAGE                                                                         \
     "There are several symbols referred from this place. Continuing this refactoring will process the selected "  \
     "symbols all at once."
-#define ERROR_SELECT_SYMBOLS_MESSAGE                                                                              \
-    "If you see this message, then probably something is going wrong. You are refactoring a virtual method when " \
-    "only statically linked symbol is required. It is strongly recommended to cancel the refactoring."
 
 static void pushReferences(EditorMarker *point, char *pushOption, char *resolveMessage,
                            int messageType) {
