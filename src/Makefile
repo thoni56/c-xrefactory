@@ -76,8 +76,9 @@ LDFLAGS = $(COVERAGE)
 
 ROOTDIR=..
 
-# We need our own yacc - although it is not patched for recursive parsing
-# for Java, the grammars are not adapted to modern byacc and yacc/bison
+# We need our own yacc - although it is no longer patched for
+# recursive parsing for Java, the grammars are not adapted to modern
+# byacc and yacc/bison
 YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 # On Darwin we can use gcc-13 if available
@@ -279,7 +280,7 @@ lexem.h: c_parser.tab.h character_lexems.txt Makefile
 	echo >> lexem.h.tmp
 	echo "typedef enum LexemCode {" >> lexem.h.tmp
 	cat character_lexems.txt >> lexem.h.tmp
-	# Standard BYACC defines YYSTYPE_IS_DECLARED in .tab.h which we don't want
+	# Standard BYACC (which does not work yet) defines YYSTYPE_IS_DECLARED in .tab.h which we don't want
 	grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\1 = \2,/" | grep -v YYSTYPE_IS_DECLARED >> lexem.h.tmp
 	echo "} LexemCode;" >> lexem.h.tmp
 	echo >> lexem.h.tmp
@@ -383,13 +384,13 @@ endif
 
 #########################################################################
 watch:
-	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Development make -j devel
+	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j devel
 
 watch-for-unittests:
-	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j unit
+	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j unit
 
 watch-for-systemtests:
-	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j system-tests
+	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j8 system-tests
 
 system-tests:
 	$(MAKE) -e build
