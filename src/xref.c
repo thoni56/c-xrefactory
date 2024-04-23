@@ -87,10 +87,6 @@ static void fillReferenceItemForIncludeFile(ReferenceItem *referencesItem, int f
                        ScopeGlobal, AccessDefault, CategoryGlobal);
 }
 
-static bool isJavaFile(FileItem *fileItem) {
-    return fileNameHasOneOfSuffixes(fileItem->name, options.javaFilesSuffixes);
-}
-
 static void makeIncludeClosureOfFilesToUpdate(void) {
     char *cxFreeBase;
     bool  fileAddedFlag;
@@ -114,10 +110,6 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                             if (!includer->scheduledToUpdate) {
                                 includer->scheduledToUpdate = true;
                                 fileAddedFlag = true;
-                                if (isJavaFile(fileItem)) {
-                                    // no transitive closure for Java
-                                    includer->fullUpdateIncludesProcessed = true;
-                                }
                             }
                         }
                     }
