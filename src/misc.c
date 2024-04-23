@@ -343,7 +343,7 @@ void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotifyMode)
         javaDotifyFileName(tmpOut);
 }
 
-char *javaGetShortClassName(char *inn) {
+static char *javaGetShortClassName(char *inn) {
     int     i;
     char    *cut,*res;
     cut = strchr(inn, LINK_NAME_SEPARATOR);

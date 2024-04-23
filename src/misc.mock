@@ -83,10 +83,6 @@ char *javaGetNudePreTypeName_static(char *name, NestedClassesDisplay displayMode
   return (char *) mock(name, displayMode);
 }
 
-char *javaGetShortClassName(char *inn) {
-  return (char *) mock(inn);
-}
-
 char *javaGetShortClassNameFromFileNum_static(int fnum) {
   return (char *) mock(fnum);
 }
