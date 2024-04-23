@@ -61,9 +61,6 @@
         ENUM(OLO_SAFETY_CHECK2)                                         \
         ENUM(OLO_GOTO_DEF)                                              \
         ENUM(OLO_GOTO_CALLER)                                           \
-        ENUM(OLO_SHOW_TOP)                                              \
-        ENUM(OLO_SHOW_TOP_APPL_CLASS)                                   \
-        ENUM(OLO_SHOW_TOP_TYPE)                                         \
         ENUM(OLO_ACTIVE_PROJECT)                                        \
         ENUM(OLO_REPUSH)                                                \
         ENUM(OLO_USELESS_LONG_NAME)                                     \

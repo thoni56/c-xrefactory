@@ -1437,12 +1437,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.parnum2 = 0;
         sscanf(argv[i]+13, "%d", &options.parnum2);
     }
-    else if (strcmp(argv[i], "-olcxtops")==0)
-        options.serverOperation = OLO_SHOW_TOP;
-    else if (strcmp(argv[i], "-olcxtoptype")==0)
-        options.serverOperation = OLO_SHOW_TOP_TYPE;
-    else if (strcmp(argv[i], "-olcxtopapplcl")==0)
-        options.serverOperation = OLO_SHOW_TOP_APPL_CLASS;
     else if (strcmp(argv[i], "-olcxsyntaxpass")==0)
         options.serverOperation = OLO_SYNTAX_PASS_ONLY;
     else if (strcmp(argv[i], "-olcxprimarystart")==0) {

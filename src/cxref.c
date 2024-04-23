@@ -1306,60 +1306,6 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
 }
 
 
-static void olcxShowTopSymbol(void) {
-    OlcxReferences    *refs;
-
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, DONT_CHECK_NULL))
-        return;
-    olcxPrintSymbolName(refs);
-}
-
-static bool referenceIsLess(Reference *r1, Reference *r2) {
-    return positionIsLessThan(r1->position, r2->position);
-}
-
-static SymbolsMenu *findSymbolCorrespondingToReference(SymbolsMenu *menu,
-                                                       Reference *reference
-) {
-    for (SymbolsMenu *s=menu; s!=NULL; s=s->next) {
-        Reference *r;
-        SORTED_LIST_FIND3(r, Reference, reference, s->references.references, referenceIsLess);
-        if (r!=NULL && positionsAreEqual(r->position, reference->position)) {
-            return s;
-        }
-    }
-    return NULL;
-}
-
-static void olcxShowTopApplClass(void) {
-    OlcxReferences    *refs;
-    SymbolsMenu     *mms;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
-        return;
-    assert(refs->actual!=NULL);
-    mms = findSymbolCorrespondingToReference(refs->menuSym, refs->actual);
-    if (mms==NULL) {
-        indicateNoReference();
-    } else {
-        fprintf(communicationChannel, "*");
-        printClassFqtNameFromClassNum(communicationChannel, mms->references.vApplClass);
-    }
-}
-
-static void olcxShowTopType(void) {
-    OlcxReferences    *refs;
-    SymbolsMenu     *mms;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
-        return;
-    assert(refs->actual!=NULL);
-    mms = findSymbolCorrespondingToReference(refs->menuSym, refs->actual);
-    if (mms==NULL) {
-        indicateNoReference();
-    } else {
-        fprintf(communicationChannel, "*%s",typeNamesTable[mms->references.type]);
-    }
-}
-
 SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage){
     SymbolsMenu     *res;
     ReferenceItem     ss;
@@ -2636,15 +2582,6 @@ void answerEditAction(void) {
         break;
     case OLO_LIST_TOP:
         olcxListTopReferences(";");
-        break;
-    case OLO_SHOW_TOP:
-        olcxShowTopSymbol();
-        break;
-    case OLO_SHOW_TOP_APPL_CLASS:
-        olcxShowTopApplClass();
-        break;
-    case OLO_SHOW_TOP_TYPE:
-        olcxShowTopType();
         break;
     case OLO_CSELECT:
         olCompletionSelect();
