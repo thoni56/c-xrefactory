@@ -71,14 +71,6 @@ Reference *addSpecialFieldReference(char *name, int storage, int fnum, Position 
     return (Reference *) mock(name, storage, fnum, p, usage);
 }
 
-void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {
-    mock(fnum, p, usage);
-}
-
-void addCfClassTreeHierarchyRef(int fnum, int usage) {
-    mock(fnum, usage);
-}
-
 void addTrivialCxReference(char *name, int symType, int storage, Position pos, UsageKind usageKind) {
     Position *position = &pos;
     mock(name, symType, storage, position, usageKind);
@@ -155,10 +147,6 @@ bool olcxShowSelectionMenu(void) {
 
 void getLineAndColumnCursorPositionFromCommandLineOptions(int *lineP, int *colP) {
     mock(lineP, colP);
-}
-
-void changeClassReferencesUsages(char *linkName, int category, int fnum, Symbol *cclass) {
-    mock(linkName, category, fnum, cclass);
 }
 
 void olcxPushSpecialCheckMenuSym(char *symname) {

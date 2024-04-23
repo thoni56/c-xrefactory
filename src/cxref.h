@@ -63,10 +63,6 @@ extern bool isPushAllMethodsValidRefItem(ReferenceItem *ri);
 extern void olcxPrintPushingAction(ServerOperation operation);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
 
-extern void addClassTreeHierarchyReference(int fnum, Position *p, int usage);
-extern void addCfClassTreeHierarchyRef(int fnum, int usage);
-extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
-                                        Symbol *cclass);
 extern void pushLocalUnusedSymbolsAction(void);
 extern void answerEditAction(void);
 

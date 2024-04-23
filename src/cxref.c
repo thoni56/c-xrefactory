@@ -390,15 +390,6 @@ void addTrivialCxReference(char *name, int symType, int storage, Position positi
     addCxReference(&symbol, &position, usageKind, NO_FILE_NUMBER, NO_FILE_NUMBER);
 }
 
-void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {
-    addSpecialFieldReference(LINK_NAME_CLASS_TREE_ITEM, StorageMethod,
-                             fnum, p, usage);
-}
-
-void addCfClassTreeHierarchyRef(int fnum, int usage) {
-    Position p = makePosition(fnum, 0, 0);
-    addClassTreeHierarchyReference(fnum, &p, usage);
-}
 
 /* ***************************************************************** */
 
