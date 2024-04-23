@@ -1405,8 +1405,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_RENAME;
     else if (strcmp(argv[i], "-olcxargmanip")==0)
         options.serverOperation = OLO_ARG_MANIP;
-    else if (strcmp(argv[i], "-olcxdynamictostatic1")==0)
-        options.serverOperation = OLO_VIRTUAL2STATIC_PUSH;
     else if (strcmp(argv[i], "-olcxsafetycheck2")==0)
         options.serverOperation = OLO_SAFETY_CHECK2;
     else if (strcmp(argv[i], "-olcxgotodef")==0)
@@ -1437,21 +1435,9 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.parnum2 = 0;
         sscanf(argv[i]+13, "%d", &options.parnum2);
     }
-    else if (strcmp(argv[i], "-olcxsyntaxpass")==0)
-        options.serverOperation = OLO_SYNTAX_PASS_ONLY;
     else if (strcmp(argv[i], "-olcxprimarystart")==0) {
         options.serverOperation = OLO_GET_PRIMARY_START;
     }
-    else if (strcmp(argv[i], "-olcxuselesslongnames")==0)
-        options.serverOperation = OLO_USELESS_LONG_NAME;
-    else if (strcmp(argv[i], "-olcxuselesslongnamesinclass")==0)
-        options.serverOperation = OLO_USELESS_LONG_NAME_IN_CLASS;
-    else if (strcmp(argv[i], "-olcxmaybethis")==0)
-        options.serverOperation = OLO_MAYBE_THIS;
-    else if (strcmp(argv[i], "-olcxnotfqt")==0)
-        options.serverOperation = OLO_NOT_FQT_REFS;
-    else if (strcmp(argv[i], "-olcxnotfqtinclass")==0)
-        options.serverOperation = OLO_NOT_FQT_REFS_IN_CLASS;
     else if (strcmp(argv[i], "-olcxgetrefactorings")==0)     {
         options.serverOperation = OLO_GET_AVAILABLE_REFACTORINGS;
     }
@@ -1463,8 +1449,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_PUSH_ONLY;
     else if (strcmp(argv[i], "-olcxpushandcallmacro")==0)
         options.serverOperation = OLO_PUSH_AND_CALL_MACRO;
-    else if (strcmp(argv[i], "-olcxpushallinmethod")==0)
-        options.serverOperation = OLO_PUSH_ALL_IN_METHOD;
     else if (strcmp(argv[i], "-olcxpushforlm")==0) {
         options.serverOperation = OLO_PUSH_FOR_LOCALM;
         options.manualResolve = RESOLVE_DIALOG_NEVER;
@@ -1475,8 +1459,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_LOCAL_UNUSED;
     else if (strcmp(argv[i], "-olcxlist")==0)
         options.serverOperation = OLO_LIST;
-    else if (strcmp(argv[i], "-olcxlisttop")==0)
-        options.serverOperation=OLO_LIST_TOP;
     else if (strcmp(argv[i], "-olcxpop")==0)
         options.serverOperation = OLO_POP;
     else if (strcmp(argv[i], "-olcxpoponly")==0)
@@ -1491,16 +1473,8 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation=OLO_SET_MOVE_CLASS_TARGET;
     else if (strcmp(argv[i], "-olcxmmtarget")==0)
         options.serverOperation=OLO_SET_MOVE_METHOD_TARGET;
-    else if (strcmp(argv[i], "-olcxcurrentclass")==0)
-        options.serverOperation=OLO_GET_CURRENT_CLASS;
-    else if (strcmp(argv[i], "-olcxcurrentsuperclass")==0)
-        options.serverOperation=OLO_GET_CURRENT_SUPER_CLASS;
     else if (strcmp(argv[i], "-olcxmethodlines")==0)
         options.serverOperation=OLO_GET_METHOD_COORD;
-    else if (strcmp(argv[i], "-olcxclasslines")==0)
-        options.serverOperation=OLO_GET_CLASS_COORD;
-    else if (strcmp(argv[i], "-olcxgetsymboltype")==0)
-        options.serverOperation=OLO_GET_SYMBOL_TYPE;
     else if (strcmp(argv[i], "-olcxgetprojectname")==0) {
         options.serverOperation=OLO_ACTIVE_PROJECT;
     }
@@ -1528,10 +1502,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.serverOperation = OLO_PUSH_NAME;
         options.pushName = allocateStringForOption(&options.pushName, argv[i]+14);
     }
-    else if (strncmp(argv[i], "-olcxpushspecialname=",21)==0)    {
-        options.serverOperation = OLO_PUSH_SPECIAL_NAME;
-        options.pushName = allocateStringForOption(&options.pushName, argv[i]+21);
-    }
     else if (strncmp(argv[i], "-olcomplselect",14)==0) {
         options.serverOperation=OLO_CSELECT;
         options.olcxGotoVal = 0;
@@ -1558,11 +1528,6 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.olcxGotoVal = 0;
         sscanf(argv[i]+14, "%d",&options.olcxGotoVal);
     }
-    else if (strncmp(argv[i], "-olcxcbrowse",12)==0) {
-        options.serverOperation = OLO_BROWSE_COMPLETION;
-        options.olcxGotoVal = 0;
-        sscanf(argv[i]+12, "%d",&options.olcxGotoVal);
-    }
     else if (strncmp(argv[i], "-olcxgoto",9)==0) {
         options.serverOperation = OLO_GOTO;
         options.olcxGotoVal = 0;
@@ -1587,19 +1552,11 @@ static bool processOOption(int *argi, int argc, char **argv) {
         options.olcxMenuSelectLineNum = 0;
         sscanf(argv[i]+19, "%d",&options.olcxMenuSelectLineNum);
     }
-    else if (strncmp(argv[i], "-olcxmenuinspectclass",21)==0) {
-        options.serverOperation = OLO_MENU_INSPECT_CLASS;
-        options.olcxMenuSelectLineNum = 0;
-        sscanf(argv[i]+21, "%d",&options.olcxMenuSelectLineNum);
-    }
     else if (strcmp(argv[i], "-olcxmenuall")==0) {
         options.serverOperation = OLO_MENU_SELECT_ALL;
     }
     else if (strcmp(argv[i], "-olcxmenunone")==0) {
         options.serverOperation = OLO_MENU_SELECT_NONE;
-    }
-    else if (strcmp(argv[i], "-olcxmenugo")==0) {
-        options.serverOperation = OLO_MENU_GO;
     }
     else if (strncmp(argv[i], "-olcxmenufilter=",16)==0) {
         options.serverOperation = OLO_MENU_FILTER_SET;

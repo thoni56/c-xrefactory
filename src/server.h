@@ -15,11 +15,9 @@
         ENUM(OLO_RENAME)                                                \
         ENUM(OLO_ENCAPSULATE)                                           \
         ENUM(OLO_ARG_MANIP)                                             \
-        ENUM(OLO_VIRTUAL2STATIC_PUSH)                                   \
         ENUM(OLO_GET_AVAILABLE_REFACTORINGS)                            \
         ENUM(OLO_PUSH)                                                  \
         ENUM(OLO_PUSH_NAME)                                             \
-        ENUM(OLO_PUSH_SPECIAL_NAME)                                     \
         ENUM(OLO_POP)                                                   \
         ENUM(OLO_POP_ONLY)                                              \
         ENUM(OLO_NEXT)                                                  \
@@ -30,16 +28,13 @@
         ENUM(OLO_GLOBAL_UNUSED)                                         \
         ENUM(OLO_LOCAL_UNUSED)                                          \
         ENUM(OLO_LIST)                                                  \
-        ENUM(OLO_LIST_TOP)                                              \
         ENUM(OLO_PUSH_ONLY)                                             \
         ENUM(OLO_PUSH_AND_CALL_MACRO)                                   \
-        ENUM(OLO_PUSH_ALL_IN_METHOD)                                    \
         ENUM(OLO_PUSH_FOR_LOCALM)                                       \
         ENUM(OLO_GOTO)                                                  \
         ENUM(OLO_CGOTO)                                                 \
         ENUM(OLO_TAGGOTO)                                               \
         ENUM(OLO_TAGSELECT)                                             \
-        ENUM(OLO_BROWSE_COMPLETION)                                               \
         ENUM(OLO_REF_FILTER_SET)                                        \
         ENUM(OLO_REF_FILTER_PLUS)                                       \
         ENUM(OLO_REF_FILTER_MINUS)                                      \
@@ -49,7 +44,6 @@
         ENUM(OLO_EXTRACT)                                               \
         ENUM(OLO_CT_INSPECT_DEF)                                        \
         ENUM(OLO_MENU_INSPECT_DEF)                                      \
-        ENUM(OLO_MENU_INSPECT_CLASS)                                    \
         ENUM(OLO_MENU_SELECT)                                           \
         ENUM(OLO_MENU_SELECT_ONLY)                                      \
         ENUM(OLO_MENU_SELECT_ALL)                                       \
@@ -57,29 +51,18 @@
         ENUM(OLO_MENU_FILTER_SET)                                       \
         ENUM(OLO_MENU_FILTER_PLUS)                                      \
         ENUM(OLO_MENU_FILTER_MINUS)                                     \
-        ENUM(OLO_MENU_GO)                                               \
         ENUM(OLO_SAFETY_CHECK2)                                         \
         ENUM(OLO_GOTO_DEF)                                              \
         ENUM(OLO_GOTO_CALLER)                                           \
         ENUM(OLO_ACTIVE_PROJECT)                                        \
         ENUM(OLO_REPUSH)                                                \
-        ENUM(OLO_USELESS_LONG_NAME)                                     \
-        ENUM(OLO_USELESS_LONG_NAME_IN_CLASS)                            \
-        ENUM(OLO_MAYBE_THIS)                                            \
-        ENUM(OLO_NOT_FQT_REFS)                                          \
-        ENUM(OLO_NOT_FQT_REFS_IN_CLASS)                                 \
         ENUM(OLO_GET_ENV_VALUE)                                         \
         ENUM(OLO_SET_MOVE_CLASS_TARGET)                                 \
         ENUM(OLO_SET_MOVE_METHOD_TARGET)                                \
-        ENUM(OLO_GET_CURRENT_CLASS)                                     \
-        ENUM(OLO_GET_CURRENT_SUPER_CLASS)                               \
         ENUM(OLO_GET_METHOD_COORD)                                      \
-        ENUM(OLO_GET_CLASS_COORD)                                       \
-        ENUM(OLO_GET_SYMBOL_TYPE)                                       \
         ENUM(OLO_GET_LAST_IMPORT_LINE)                                  \
         ENUM(OLO_TAG_SEARCH_FORWARD)                                    \
         ENUM(OLO_TAG_SEARCH_BACK)                                       \
-        ENUM(OLO_SYNTAX_PASS_ONLY)                                      \
         ENUM(OLO_GET_PRIMARY_START)                                     \
         ENUM(OLO_GET_PARAM_COORDINATES)                                 \
         ENUM(OLO_ABOUT)                                                 \

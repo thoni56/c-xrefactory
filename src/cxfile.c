@@ -1057,8 +1057,7 @@ static void scanFunction_Reference(int size,
                         assert(lastIncomingInfo.onLineRefMenuItem);
                         if (file != olOriginalFileNumber || !fileItem->isArgument ||
                             options.serverOperation == OLO_GOTO || options.serverOperation == OLO_CGOTO ||
-                            options.serverOperation == OLO_PUSH_NAME ||
-                            options.serverOperation == OLO_PUSH_SPECIAL_NAME) {
+                            options.serverOperation == OLO_PUSH_NAME) {
                             log_trace (":adding reference %s:%d", referenceFileItem->name, reference.position.line);
                             olcxAddReferenceToSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &reference,
                                                           lastIncomingInfo.onLineRefIsBestMatchFlag);

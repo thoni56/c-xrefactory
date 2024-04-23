@@ -118,31 +118,6 @@ Reference * getDefinitionRef(Reference *reference) {
     return definitionReference;
 }
 
-// used only with OLO_GET_SYMBOL_TYPE;
-static void setOlSymbolTypeForPrint(Symbol *symbol) {
-    int size = COMPLETION_STRING_SIZE;
-
-    olSymbolType[0]=0;
-    olSymbolClassType[0]=0;
-
-    if (symbol->type == TypeDefault) {
-        TypeModifier *t = symbol->u.typeModifier;
-        if (t != NULL && t->type==TypeFunction)
-            t = t->next;
-        typeSPrint(olSymbolType, &size, t, "", ' ', 0, true, LONG_NAME, NULL);
-        if (t->type == TypeStruct && t->u.t!=NULL) {
-            strcpy(olSymbolClassType, t->u.t->linkName);
-            assert(strlen(olSymbolClassType)+1 < COMPLETION_STRING_SIZE);
-        }
-        // remove pending spaces
-        int len = strlen(olSymbolType);
-        while (len > 0 && olSymbolType[len-1] == ' ')
-            len--;
-        olSymbolType[len]=0;
-    }
-}
-
-
 static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, UsageKind usage) {
     switch (symbol->type) {
     case TypeStruct:
@@ -408,9 +383,6 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
                     menu->defpos = *position;
                     menu->defUsage = usage.kind;
                 }
-                if (options.serverOperation == OLO_GET_SYMBOL_TYPE) {
-                    setOlSymbolTypeForPrint(symbol);
-                }
                 if (options.serverOperation == OLO_GET_AVAILABLE_REFACTORINGS) {
                     setAvailableRefactoringsInMenu(menu, symbol, usage.kind);
                 }
@@ -606,8 +578,7 @@ void gotoOnlineCxref(Position *pos, UsageKind usageKind, char *suffix)
 static bool sessionHasReferencesValidForOperation(SessionData *session, OlcxReferences **refs, CheckNull checkNull) {
     assert(session);
     if (options.serverOperation==OLO_COMPLETION || options.serverOperation==OLO_CSELECT
-        ||  options.serverOperation==OLO_CGOTO || options.serverOperation==OLO_BROWSE_COMPLETION
-        ||  options.serverOperation==OLO_TAG_SEARCH) {
+        ||  options.serverOperation==OLO_CGOTO || options.serverOperation==OLO_TAG_SEARCH) {
         *refs = session->completionsStack.top;
     } else {
         *refs = session->browserStack.top;
@@ -681,19 +652,6 @@ static void indicateNoReference(void) {
         ppcBottomInformation("No reference");
     } else {
         fprintf(communicationChannel, "_");
-    }
-}
-
-static void olcxOrderRefsAndGotoFirst(void) {
-    OlcxReferences *refs;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
-        return;
-    LIST_MERGE_SORT(Reference, refs->references, referenceIsLessThan);
-    refs->actual = refs->references;
-    if (refs->references != NULL) {
-        gotoOnlineCxref(&refs->actual->position, refs->actual->usage.kind, "");
-    } else {
-        indicateNoReference();
     }
 }
 
@@ -996,13 +954,6 @@ static void olcxReferenceList(char *commandString) {
     olcxPrintRefList(commandString, refs);
 }
 
-static void olcxListTopReferences(char *commandString) {
-    OlcxReferences    *refs;
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, DONT_CHECK_NULL))
-        return;
-    olcxPrintRefList(commandString, refs);
-}
-
 static void olcxGenGotoActReference(OlcxReferences *refs) {
     if (refs->actual != NULL) {
         gotoOnlineCxref(&refs->actual->position, refs->actual->usage.kind, "");
@@ -1148,27 +1099,6 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
         }
     } else {
         indicateNoReference();
-    }
-}
-
-static void olcxReferenceBrowseCompletion(int refn) {
-    OlcxReferences    *refs;
-    Completion      *rr;
-
-    assert(refn > 0);
-    if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
-        return;
-    rr = olCompletionNthLineRef(refs->completions, refn);
-    if (rr != NULL) {
-        if (options.xref2)
-            ppcGenRecord(PPC_ERROR, "No JavaDoc is available.");
-        else
-            fprintf(communicationChannel,"* ** no JavaDoc is available **");
-    } else {
-        if (options.xref2)
-            ppcGenRecord(PPC_ERROR, "Out of range");
-        else
-            fprintf(communicationChannel, "* ** out of range **");
     }
 }
 
@@ -1578,7 +1508,6 @@ static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
 static bool isRenameMenuSelection(int command) {
     return command == OLO_RENAME
         || command == OLO_ENCAPSULATE
-        || command == OLO_VIRTUAL2STATIC_PUSH
         || command == OLO_ARG_MANIP
         || command == OLO_PUSH_FOR_LOCALM
         || command == OLO_SAFETY_CHECK2
@@ -1645,17 +1574,7 @@ static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLe
     // and useless in this context
     computeSubClassOfRelatedItemsOOBit(menu, command);
 
-    if (command == OLO_MAYBE_THIS
-        || command == OLO_NOT_FQT_REFS
-        || command == OLO_NOT_FQT_REFS_IN_CLASS
-        || command == OLO_USELESS_LONG_NAME
-        || command == OLO_USELESS_LONG_NAME_IN_CLASS
-        || command == OLO_PUSH_ALL_IN_METHOD
-        || command == OLO_PUSH_NAME
-        || command == OLO_PUSH_SPECIAL_NAME
-        ) {
-        // handle those very special cases first
-        // set it to select and show all symbols
+    if (command == OLO_PUSH_NAME) {
         oovisible = 0;
         ooselected = 0;
     } else if (isRenameMenuSelection(command)) {
@@ -2013,18 +1932,10 @@ static void olCompletionForward(void) {
 }
 
 static void olcxNoSymbolFoundErrorMessage(void) {
-    if (options.serverOperation == OLO_PUSH_NAME || options.serverOperation == OLO_PUSH_SPECIAL_NAME) {
-        if (options.xref2) {
-            ppcGenRecord(PPC_ERROR,"No symbol found.");
-        } else {
-            fprintf(communicationChannel,"*** No symbol found.");
-        }
+    if (options.serverOperation == OLO_PUSH_NAME) {
+        ppcGenRecord(PPC_ERROR,"No symbol found.");
     } else {
-        if (options.xref2) {
-            ppcGenRecord(PPC_ERROR,"No symbol found, please position the cursor on a program symbol.");
-        } else {
-            fprintf(communicationChannel,"*** No symbol found, please position the cursor on a program symbol.");
-        }
+        ppcGenRecord(PPC_ERROR,"No symbol found, please position the cursor on a program symbol.");
     }
 }
 
@@ -2234,17 +2145,6 @@ void olcxPrintPushingAction(ServerOperation operation) {
             olStackDeleteSymbol(sessionData.browserStack.top);
         }
         break;
-    case OLO_PUSH_SPECIAL_NAME:
-        assert(0); // called only from refactory
-        break;
-    case OLO_MENU_GO:
-        if (olcxCheckSymbolExists()) {
-            olcxOrderRefsAndGotoFirst();
-        } else {
-            olcxNoSymbolFoundErrorMessage();
-            olStackDeleteSymbol(sessionData.browserStack.top);
-        }
-        break;
     case OLO_GLOBAL_UNUSED:
     case OLO_LOCAL_UNUSED:
         // no output for dead code detection ???
@@ -2279,17 +2179,7 @@ void olcxPrintPushingAction(ServerOperation operation) {
         else
             olcxNoSymbolFoundErrorMessage();
         break;
-    case OLO_MAYBE_THIS:
-    case OLO_NOT_FQT_REFS:
-    case OLO_NOT_FQT_REFS_IN_CLASS:
-    case OLO_PUSH_ALL_IN_METHOD:
-        if (olcxCheckSymbolExists())
-            olcxPushOnly();
-        else
-            olcxNoSymbolFoundErrorMessage();
-        break;
     case OLO_RENAME:
-    case OLO_VIRTUAL2STATIC_PUSH:
     case OLO_ARG_MANIP:
     case OLO_ENCAPSULATE:
         if (olcxCheckSymbolExists())
@@ -2580,9 +2470,6 @@ void answerEditAction(void) {
     case OLO_GET_CURRENT_REFNUM:
         olcxReferenceGetCurrentRefn();
         break;
-    case OLO_LIST_TOP:
-        olcxListTopReferences(";");
-        break;
     case OLO_CSELECT:
         olCompletionSelect();
         break;
@@ -2603,9 +2490,6 @@ void answerEditAction(void) {
         break;
     case OLO_TAGSELECT:
         olcxReferenceSelectTagSearchItem(options.olcxGotoVal);
-        break;
-    case OLO_BROWSE_COMPLETION:
-        olcxReferenceBrowseCompletion(options.olcxGotoVal);
         break;
     case OLO_REF_FILTER_SET:
         olcxReferenceFilterSet(options.filterValue);
@@ -2637,12 +2521,6 @@ void answerEditAction(void) {
     case OLO_MENU_FILTER_SET:
         olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
         break;
-    case OLO_MENU_GO:
-        assert(sessionData.browserStack.top);
-        rstack = sessionData.browserStack.top;
-        //&olProcessSelectedReferences(rstack, genOnLineReferences);
-        olcxPrintPushingAction(sessionData.browserStack.top->command);
-        break;
     case OLO_SET_MOVE_METHOD_TARGET:
         assert(options.xref2);
         if (!parsedInfo.moveTargetApproved) {
@@ -2656,18 +2534,10 @@ void answerEditAction(void) {
             errorMessage(ERR_ST, "No method found.");
         }
         break;
-    case OLO_GET_SYMBOL_TYPE:
-        if (olstringServed) {
-            fprintf(communicationChannel,"*%s", olSymbolType);
-        } else if (options.noErrors) {
-            fprintf(communicationChannel,"*");
-        } else {
-            errorMessage(ERR_ST, "No symbol found.");
-        }
-        olStackDeleteSymbol(sessionData.browserStack.top);
-        break;
     case OLO_GOTO_PARAM_NAME:
-        // I hope this is not used anymore, put there assert(0);
+        // I hope this is not used anymore, put there assert(0); Well,
+        // it is used from refactory, but that probably only executes
+        // the parsers and server and not cxref...
         if (olstringServed && parameterPosition.file != NO_FILE_NUMBER) {
             gotoOnlineCxref(&parameterPosition, UsageDefined, "");
             olStackDeleteSymbol(sessionData.browserStack.top);
@@ -2685,11 +2555,6 @@ void answerEditAction(void) {
             errorMessage(ERR_ST, "Begin of primary expression not found.");
         }
         break;
-    case OLO_PUSH_ALL_IN_METHOD:
-        log_trace(":getting all references from begin=%d to end=%d", parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
-        olPushAllReferencesInBetween(parsedInfo.cxMemoryIndexAtMethodBegin, parsedInfo.cxMemoryIndexAtMethodEnd);
-        olcxPrintPushingAction(options.serverOperation);
-        break;
     case OLO_GET_AVAILABLE_REFACTORINGS:
         olGetAvailableRefactorings();
         olStackDeleteSymbol(sessionData.browserStack.top);
@@ -2703,9 +2568,6 @@ void answerEditAction(void) {
         break;
     case OLO_LOCAL_UNUSED:
         answerPushLocalUnusedSymbolsAction();
-        break;
-    case OLO_PUSH_SPECIAL_NAME:
-        assert(0);  // only refactory
         break;
     case OLO_ARG_MANIP:
         rstack = sessionData.browserStack.top;
