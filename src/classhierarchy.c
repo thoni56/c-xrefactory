@@ -118,26 +118,16 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
         currentOutputLineInSymbolList++; // first line irregularity
     menu->outOnLine = currentOutputLineInSymbolList;
     currentOutputLineInSymbolList++ ;
-    if (options.xref2) {
-        ppcIndent();
-        fprintf(file,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, menu->outOnLine+SYMBOL_MENU_FIRST_LINE);
-        if (menu->references.type!=TypeDefault) {
-            fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->references.type]);
-        }
-        olcxPrintMenuItemPrefix(file, menu, true);
-
-        char tempString[MAX_CX_SYMBOL_SIZE];
-        sprintfSymbolLinkName(menu, tempString);
-        fprintf(file," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(tempString), tempString, PPC_SYMBOL);
-    } else {
-        fprintf(file,"\n");
-        olcxPrintMenuItemPrefix(file, menu, true);
-        printSymbolLinkName(menu, file);
-        if (menu->references.type != TypeDefault) {
-            fprintf(file,"\t(%s)", typeNamesTable[menu->references.type]);
-        }
-        //&fprintf(file," ==%s %o (%s) at %x", menu->references.linkName, menu->ooBits, refCategoriesName[menu->references.category], menu);
+    ppcIndent();
+    fprintf(file,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, menu->outOnLine+SYMBOL_MENU_FIRST_LINE);
+    if (menu->references.type!=TypeDefault) {
+        fprintf(file," %s=%s", PPCA_TYPE, typeNamesTable[menu->references.type]);
     }
+    olcxPrintMenuItemPrefix(file, menu, true);
+
+    char tempString[MAX_CX_SYMBOL_SIZE];
+    sprintfSymbolLinkName(menu, tempString);
+    fprintf(file," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(tempString), tempString, PPC_SYMBOL);
 }
 
 static void genVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
