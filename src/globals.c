@@ -79,8 +79,6 @@ char *s_cppVarArgsName = "__VA_ARGS__";
 StringList *javaClassPaths;
 char *javaSourcePaths;
 
-Id javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
-
 
 /* ********* vars for on-line additions after EOF ****** */
 

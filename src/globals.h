@@ -36,7 +36,6 @@ extern Id yyIdBuffer[YYIDBUFFER_SIZE];
 extern int yyIdBufferIndex;
 
 extern char *s_cppVarArgsName;
-extern Id javaAnonymousClassName;
 extern StringList *javaClassPaths;
 extern char *javaSourcePaths;
 extern IdList *s_javaLangName;
