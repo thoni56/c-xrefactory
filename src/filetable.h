@@ -38,8 +38,6 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     bool isInterface : 1;       // class/interface for .class
     bool isFromCxfile : 1;      // is this file indexed in XFiles
     unsigned sourceFileNumber : 20; // file number containing the class definition
-    struct classHierarchyReference	*superClasses; /* super-classes references */
-    struct classHierarchyReference	*inferiorClasses; /* sub-classes references   */
     int directEnclosingInstance;  /* for Java Only  */
     struct fileItem *next;
 } FileItem;

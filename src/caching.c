@@ -77,21 +77,6 @@ static void refTabDeleteOutOfMemory(int index) {
 }
 
 static void fileTabDeleteOutOfMemory(FileItem *fileItem) {
-    ClassHierarchyReference **h;
-    h = &fileItem->superClasses;
-    while (*h!=NULL) {
-        if (isFreedCxMemory(*h))
-            *h = (*h)->next;
-        else
-            h = &(*h)->next;
-    }
-    h = &fileItem->inferiorClasses;
-    while (*h!=NULL) {
-        if (isFreedCxMemory(*h))
-            *h = (*h)->next;
-        else
-            h= &(*h)->next;
-    }
 }
 
 static void structCachingFree(Symbol *symbol) {

@@ -4,7 +4,6 @@
 #include "misc.h"
 #include "cxref.h"
 #include "list.h"
-#include "filetable.h"
 
 #include "protocol.h"
 
@@ -18,28 +17,8 @@ typedef struct integerList {
 static int currentOutputLineInSymbolList =0;
 
 
-static int isSmallerOrEqClassR(int inferior, int superior, int level) {
-    assert(level>0);
-    if (inferior == superior)
-        return level;
-
-    FileItem *fileItem = getFileItem(inferior);
-    for (ClassHierarchyReference *s=fileItem->superClasses; s!=NULL; s=s->next) {
-        if (s->superClass == superior) {
-            return level+1;
-        }
-    }
-    for (ClassHierarchyReference *s=fileItem->superClasses; s!=NULL; s=s->next) {
-        int smallerLevel = isSmallerOrEqClassR(s->superClass, superior, level+1);
-        if (smallerLevel) {
-            return smallerLevel;
-        }
-    }
-    return 0;
-}
-
 bool isSmallerOrEqClass(int inf, int sup) {
-    return isSmallerOrEqClassR(inf, sup, 1) != 0;
+    return false;               /* Dummy replacement */
 }
 
 static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectable) {
