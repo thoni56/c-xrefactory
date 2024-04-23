@@ -161,10 +161,6 @@ void changeClassReferencesUsages(char *linkName, int category, int fnum, Symbol 
     mock(linkName, category, fnum, cclass);
 }
 
-bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
-    return (bool) mock(enclosedClass, enclosingClass);
-}
-
 void olcxPushSpecialCheckMenuSym(char *symname) {
     mock(symname);
 }

@@ -67,8 +67,6 @@ extern void addClassTreeHierarchyReference(int fnum, Position *p, int usage);
 extern void addCfClassTreeHierarchyRef(int fnum, int usage);
 extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                         Symbol *cclass);
-extern bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
-
 extern void pushLocalUnusedSymbolsAction(void);
 extern void answerEditAction(void);
 

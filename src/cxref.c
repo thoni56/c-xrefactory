@@ -78,33 +78,6 @@ Reference *addSpecialFieldReference(char *name,int storage, int fnum,
     return res;
 }
 
-static bool isEnclosingClass(int enclosedClass, int enclosingClass) {
-    int slow;
-    int cc = 0;
-
-    /* TODO: Yes, this is very strange, what is "slow"? Maybe s-low?*/
-    for (int currentClass = slow = enclosedClass; currentClass!=NO_FILE_NUMBER && currentClass!=-1;
-         currentClass=getFileItem(currentClass)->directEnclosingInstance) {
-        if (currentClass == enclosingClass)
-            return true;
-        // this loop looks very suspect, I prefer to put here a loop check
-        // TODO: This really didn't explain much...
-        if (cc==0) {
-            cc = !cc;
-        } else {
-            assert(slow != currentClass);
-            slow = getFileItem(slow)->directEnclosingInstance;
-        }
-    }
-    return false;
-}
-
-bool isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
-    if (enclosedClass == enclosingClass)
-        return false;
-    return isEnclosingClass(enclosedClass, enclosingClass);
-}
-
 Reference * getDefinitionRef(Reference *reference) {
     Reference *definitionReference = NULL;
 
