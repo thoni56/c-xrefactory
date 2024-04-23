@@ -14,8 +14,26 @@ endif
 .PHONY: void
 void:
 	@echo "'make quick' for only fast tests"
+	@echo "'make verbose' for each test separately with results"
 	@echo "'make slow' for only slow tests"
 	@echo "'make all' for both fast and slow tests"
+
+
+#-------------------------------------------------------------------
+# Here follows some GNU magic to automatically discover tests
+# It will assume that if there is a directory starting with "test_"
+# it is a directory where you can run tests using "make"
+
+# Discover all test directories and a target rule to run all we found
+TESTS = $(patsubst %/.,%,$(wildcard test_*/.))
+
+.PHONY: verbose
+verbose:
+	$(foreach dir,$(TESTS),\
+        /bin/echo -n "$(dir): "; \
+        ./run_test $(dir); \
+		/bin/echo; \
+    )
 
 .PHONY: all
 all: quick slow
@@ -50,13 +68,7 @@ ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
 
-#-------------------------------------------------------------------
-# Here follows some GNU magic to automatically discover tests
-# It will assume that if there is a directory starting with "test_"
-# it is a directory where you can run tests using "make"
 
-# Discover all test directories and a target rule to run all we found
-TESTS = $(patsubst %/.,%,$(wildcard test_*/.))
 .PHONY: autodiscovered_tests
 autodiscovered_tests: $(TESTS)
 	echo
