@@ -763,6 +763,7 @@ bool containsWildcard(char *string) {
     return false;
 }
 
+/* Forward */
 static void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *freeolen);
 
 //#define MAP_FUN_SIGNATURE char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5

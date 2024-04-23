@@ -19,8 +19,6 @@ extern void olcxInit(void);
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);
 extern void printTagSearchResults(void);
 extern bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2);
-extern bool isSameCxSymbolIncludingFunctionClass(ReferenceItem *p1, ReferenceItem *p2);
-extern bool isSameCxSymbolIncludingApplicationClass(ReferenceItem *p1, ReferenceItem *p2);
 extern bool olcxIsSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2);
 extern void olcxRecomputeSelRefs(OlcxReferences *refs );
 extern void olProcessSelectedReferences(OlcxReferences *rstack,

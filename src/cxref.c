@@ -1388,18 +1388,6 @@ bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
     return true;
 }
 
-bool isSameCxSymbolIncludingFunctionClass(ReferenceItem *p1, ReferenceItem *p2) {
-    if (p1->vFunClass != p2->vFunClass)
-        return false;
-    return isSameCxSymbol(p1, p2);
-}
-
-bool isSameCxSymbolIncludingApplicationClass(ReferenceItem *p1, ReferenceItem *p2) {
-    if (p1->vApplClass != p2->vApplClass)
-        return false;
-    return isSameCxSymbol(p1, p2);
-}
-
 bool olcxIsSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;

@@ -24,10 +24,6 @@ bool isSameCxSymbol(ReferenceItem *p1, ReferenceItem *p2) {
     return (bool) mock(p1, p2);
 }
 
-bool isSameCxSymbolIncludingFunctionClass(ReferenceItem *p1, ReferenceItem *p2) {
-    return (bool) mock(p1, p2);
-}
-
 bool isSameCxSymbolIncludingApplicationClass(ReferenceItem *p1, ReferenceItem *p2) {
     return (bool) mock(p1, p2);
 }
