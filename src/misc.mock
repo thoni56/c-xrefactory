@@ -31,10 +31,6 @@ char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
   return (char *) mock(str1, str2, str3);
 }
 
-void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
-  mock(buff, size, sig, classstyle);
-}
-
 char *strmcpy(char *dest, char *src) {
   return (char *) mock(dest, src);
 }
@@ -141,14 +137,6 @@ void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen, int argsStyle
 
 char *simpleFileNameFromFileNum(int fnum) {
   return (char *) mock(fnum);
-}
-
-char *getShortClassNameFromClassNum_st(int fnum) {
-  return (char *) mock(fnum);
-}
-
-void printSymbolLinkNameString(FILE *ff, char *linkName) {
-  mock(ff, linkName);
 }
 
 void printClassFqtNameFromClassNum(FILE *ff, int fnum) {

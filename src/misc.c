@@ -391,7 +391,7 @@ char *javaGetNudePreTypeName_static(char *name, NestedClassesDisplay displayMode
     return typeName_static;
 }
 
-void javaSignatureSPrint(char *buff, int *size, char *sig, int longOrShortName) {
+static void javaSignatureSPrint(char *buff, int *size, char *sig, int longOrShortName) {
     char post[COMPLETION_STRING_SIZE];
     int posti;
     char *ssig;
@@ -480,12 +480,7 @@ char *simpleFileNameFromFileNum(int fnum) {
     return(simpleFileName(getRealFileName_static(getFileItem(fnum)->name)));
 }
 
-char *getShortClassNameFromClassNum_st(int fnum) {
-    return(javaGetNudePreTypeName_static(getRealFileName_static(getFileItem(fnum)->name),
-                                         options.displayNestedClasses));
-}
-
-void printSymbolLinkNameString(FILE *file, char *linkName) {
+static void printSymbolLinkNameString(FILE *file, char *linkName) {
     char temp[MAX_CX_SYMBOL_SIZE];
     linkNamePrettyPrint(temp, linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     fprintf(file, "%s", temp);
@@ -526,16 +521,6 @@ char *strmcpy(char *dest, char *src) {
 
 char *lastOccurenceInString(char *string, int ch) {
     return strrchr(string, ch);
-}
-
-char *lastOccurenceOfSlashOrBackslash(char *string) {
-    char *result;
-    result = NULL;
-    for (char *s=string; *s; s++) {
-        if (*s == '/' || *s == '\\')
-            result=s;
-    }
-    return result;
 }
 
 char *getFileSuffix(char *fn) {

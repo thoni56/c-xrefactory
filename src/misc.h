@@ -76,7 +76,6 @@ extern void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *nam
                                    int *oNamePos);
 extern char *string3ConcatInStackMem(char *str1, char *str2, char *str3);
 
-extern void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle);
 extern char *strmcpy(char *dest, char *src);
 extern char *simpleFileName(char *fullFileName);
 extern char *directoryName_static(char *fullFileName);
@@ -105,15 +104,12 @@ extern void mapOverDirectoryFiles(
         int *a5
     );
 extern char *lastOccurenceInString(char *ss, int ch);
-extern char *lastOccurenceOfSlashOrBackslash(char *ss);
 extern char *getFileSuffix(char *fn);
 extern int pathncmp(char *ss1, char *ss2, int n, bool caseSensitive);
 extern int compareFileNames(char *ss1, char *ss2);
 extern int filenameCompare(char *ss1, char *ss2, int n);
 extern void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,int argsStyle);
 extern char *simpleFileNameFromFileNum(int fnum);
-extern char *getShortClassNameFromClassNum_st(int fnum);
-extern void printSymbolLinkNameString( FILE *ff, char *linkName);
 extern void printClassFqtNameFromClassNum(FILE *ff, int fnum);
 extern void sprintfSymbolLinkName(SymbolsMenu *ss, char *ttt);
 extern void printSymbolLinkName(SymbolsMenu *ss, FILE *ff);
