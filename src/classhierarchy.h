@@ -25,6 +25,5 @@ extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,
                                       );
 extern void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file, char *fn);
 extern bool isSmallerOrEqClass(int inferior, int superior);
-extern bool classHierarchyClassNameLess(int c1, int c2);
 
 #endif

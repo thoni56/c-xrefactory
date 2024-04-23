@@ -1,17 +1,13 @@
 #include "classhierarchy.h"
 
-#include "commons.h"
-#include "globals.h"
 #include "memory.h"
 #include "menu.h"
-#include "options.h"
 #include "misc.h"
 #include "cxref.h"
 #include "list.h"
 #include "filetable.h"
 
 #include "protocol.h"
-#include "log.h"
 
 
 typedef struct integerList {
@@ -58,32 +54,6 @@ static int isSmallerOrEqClassR(int inferior, int superior, int level) {
 
 bool isSmallerOrEqClass(int inf, int sup) {
     return isSmallerOrEqClassR(inf, sup, 1) != 0;
-}
-
-bool classHierarchyClassNameLess(int classFileNumber1, int classFileNumber2) {
-    char *name;
-    int comparison;
-    char name1[MAX_FILE_NAME_SIZE];
-
-    FileItem *fileItem1 = getFileItem(classFileNumber1);
-    FileItem *fileItem2 = getFileItem(classFileNumber2);
-
-    // SMART, put interface as largest, so they will be at the end
-    if (fileItem2->isInterface && ! fileItem1->isInterface)
-        return true;
-    if (fileItem1->isInterface && ! fileItem2->isInterface)
-        return false;
-    name = fileItem1->name;
-    name = javaGetNudePreTypeName_static(getRealFileName_static(name), options.displayNestedClasses);
-    strcpy(name1, name);
-    name = fileItem2->name;
-    name = javaGetNudePreTypeName_static(getRealFileName_static(name), options.displayNestedClasses);
-    comparison = strcmp(name1, name);
-    if (comparison!=0)
-        return comparison<0;
-    comparison = strcmp(fileItem1->name, fileItem2->name);
-
-    return comparison<0;
 }
 
 static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectable) {

@@ -2190,9 +2190,7 @@ static bool refItemsOrderLess(SymbolsMenu *menu1, SymbolsMenu *menu2) {
     if (cmp!=0)
         return cmp<0;
     cmp = strcmp(r1->linkName, r2->linkName);
-    if (cmp!=0)
-        return cmp<0;
-    return classHierarchyClassNameLess(menu1->references.vApplClass, menu2->references.vApplClass);
+    return cmp<0;
 }
 
 void olCreateSelectionMenu(int command) {
