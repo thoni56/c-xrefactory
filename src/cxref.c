@@ -2593,18 +2593,10 @@ void answerEditAction(void) {
         break;
     case OLO_ACTIVE_PROJECT:
         if (options.project != NULL) {
-            if (options.xref2) {
-                ppcGenRecord(PPC_SET_INFO, options.project);
-            } else {
-                fprintf(communicationChannel,"*%s", options.project);
-            }
+            ppcGenRecord(PPC_SET_INFO, options.project);
         } else {
             if (olOriginalComFileNumber == NO_FILE_NUMBER) {
-                if (options.xref2) {
-                    ppcGenRecord(PPC_ERROR, "No source file to identify project");
-                } else {
-                    fprintf(communicationChannel,"!** No source file to identify project");
-                }
+                ppcGenRecord(PPC_ERROR, "No source file to identify project");
             } else {
                 char standardOptionsFileName[MAX_FILE_NAME_SIZE];
                 char standardOptionsSectionName[MAX_FILE_NAME_SIZE];
@@ -2612,22 +2604,11 @@ void answerEditAction(void) {
                 log_trace("inputFileName = %s", inputFileName);
                 searchStandardOptionsFileAndProjectForFile(inputFileName, standardOptionsFileName, standardOptionsSectionName);
                 if (standardOptionsFileName[0]==0 || standardOptionsSectionName[0]==0) {
-                    if (options.noErrors) {
-                        if (!options.xref2)
-                            fprintf(communicationChannel,"^"); // WTF: was "fprintf(ccOut,"^", ifname);"
-                    } else {
-                        if (options.xref2) {
-                            ppcGenRecord(PPC_NO_PROJECT, inputFileName);
-                        } else {
-                            fprintf(communicationChannel,"!** No project name matches %s", inputFileName);
-                        }
+                    if (!options.noErrors) {
+                        ppcGenRecord(PPC_NO_PROJECT, inputFileName);
                     }
                 } else {
-                    if (options.xref2) {
-                        ppcGenRecord(PPC_SET_INFO, standardOptionsSectionName);
-                    } else {
-                        fprintf(communicationChannel,"*%s", standardOptionsSectionName);
-                    }
+                    ppcGenRecord(PPC_SET_INFO, standardOptionsSectionName);
                 }
             }
         }
