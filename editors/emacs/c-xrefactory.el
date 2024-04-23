@@ -15,6 +15,13 @@
 ;; content of this file is copyrighted by Xref-Tech. This file does
 ;; not contain any code written by independent developers.
 
+
+;; Add this directory to the load path so we always load c-xref files from it
+(let ((my-dir (file-name-directory (or load-file-name buffer-file-name))))
+  (add-to-list 'load-path my-dir))
+(load "c-xrefprotocol")
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; You can edit the following in order to change the default key-bindings
 
