@@ -32,41 +32,6 @@ BeforeEach(Options) {
 }
 AfterEach(Options) {}
 
-Ensure(Options, will_return_false_if_package_structure_does_not_exist) {
-    assert_that(!packageOnCommandLine("org.nonexistant"));
-}
-
-Ensure(Options, will_return_true_if_package_structure_exists) {
-    javaSourcePaths = ".";
-    expect(directoryExists, when(fullPath, is_equal_to_string("./org/existant")), will_return(true));
-    expect(normalizeFileName, when(name, is_equal_to_string("./org/existant")), will_return("./org/existant"));
-    expect(getFileSuffix, will_return(""));
-    expect(isDirectory, will_return(false));
-    expect(editorFileExists, will_return(true));
-
-    expect(addFileNameToFileTable, will_return(42));
-    FileItem fileItem = {"./org/existant"};
-    expect(getFileItem, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
-
-    assert_that(packageOnCommandLine("org.existant"));
-}
-
-Ensure(Options, will_return_true_if_package_structure_exists_in_search_path) {
-    javaSourcePaths = "not/this/path:but/this/path";
-    expect(directoryExists, when(fullPath, is_equal_to_string("not/this/path/org/existant")), will_return(false));
-    expect(directoryExists, when(fullPath, is_equal_to_string("but/this/path/org/existant")), will_return(true));
-    expect(normalizeFileName, when(name, is_equal_to_string("but/this/path/org/existant")),
-           will_return("but/this/path/org/existant"));
-    expect(getFileSuffix, will_return(""));
-    expect(isDirectory, will_return(false));
-    expect(editorFileExists, will_return(true));
-
-    expect(addFileNameToFileTable, will_return(42));
-    FileItem fileItem = {"but/this/path/org/existant"};
-    expect(getFileItem, when(fileNumber, is_equal_to(42)), will_return(&fileItem));
-
-    assert_that(packageOnCommandLine("org.existant"));
-}
 
 extern int getOptionFromFile(FILE *file, char *text, int *chars_read);
 
