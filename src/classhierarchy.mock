@@ -2,10 +2,6 @@
 #include "classhierarchy.h"
 #include <cgreen/mocks.h>
 
-ClassHierarchyReference *newClassHierarchyReference(int origin, int superClass, ClassHierarchyReference *next) {
-    return (ClassHierarchyReference *)mock(origin, superClass, next);
-}
-
 void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, void *, char *), void *p1, char *p2) {
   mock(menu, fun, p1, p2);
 }

@@ -1,6 +1,5 @@
 #include "classhierarchy.h"
 
-#include "memory.h"
 #include "menu.h"
 #include "misc.h"
 #include "cxref.h"
@@ -17,19 +16,6 @@ typedef struct integerList {
 
 
 static int currentOutputLineInSymbolList =0;
-
-
-ClassHierarchyReference *newClassHierarchyReference(int originFileNumber, int superClass,
-                                                    ClassHierarchyReference *next) {
-    ClassHierarchyReference *p;
-
-    p = cxAlloc(sizeof(ClassHierarchyReference));
-    p->ofile = originFileNumber;
-    p->superClass = superClass;
-    p->next = next;
-
-    return p;
-}
 
 
 static int isSmallerOrEqClassR(int inferior, int superior, int level) {
