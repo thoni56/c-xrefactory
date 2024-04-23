@@ -130,20 +130,6 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
     fprintf(file," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(tempString), tempString, PPC_SYMBOL);
 }
 
-static void genVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
-    SymbolsMenu    *m;
-    ReferenceItem *r;
-
-    // first count if there are some references at all
-    for (m = menu; m != NULL && !m->visible; m = m->next)
-        ;
-    if (m == NULL)
-        return;
-    assert(menu != NULL);
-    r = &menu->references;
-    assert(r != NULL);
-}
-
 static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
     FILE *file = (FILE *)p1;
     SymbolsMenu    *m;
@@ -210,5 +196,4 @@ void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file, char *fn) {
         m->outOnLine = 0;
     currentOutputLineInSymbolList = 1;
     splitMenuPerSymbolsAndMap(menu, genNonVirtualsGlobRefLists, file, fn);
-    splitMenuPerSymbolsAndMap(menu, genVirtualsGlobRefLists, file, fn);
 }
