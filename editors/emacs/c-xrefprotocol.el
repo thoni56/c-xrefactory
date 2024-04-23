@@ -111,7 +111,7 @@
 
 (defconst c-xref_PPC_AVR_NO_REFACTORING 0)
 (defconst c-xref_PPC_AVR_RENAME_SYMBOL 10)
-(defconst c-xref_PPC_AVR_RENAME_PACKAGE 30)
+(defconst c-xref_PPC_AVR_RENAME_MODULE 30)
 (defconst c-xref_PPC_AVR_ADD_PARAMETER 40)
 (defconst c-xref_PPC_AVR_DEL_PARAMETER 50)
 (defconst c-xref_PPC_AVR_MOVE_PARAMETER 60)

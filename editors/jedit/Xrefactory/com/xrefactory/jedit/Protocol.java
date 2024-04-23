@@ -113,7 +113,7 @@ public static final int PPCV_BROWSER_TYPE_WARNING = 1;
 
 public static final int PPC_AVR_NO_REFACTORING = 0;
 public static final int PPC_AVR_RENAME_SYMBOL = 10;
-public static final int PPC_AVR_RENAME_PACKAGE = 30;
+public static final int PPC_AVR_RENAME_MODULE = 30;
 public static final int PPC_AVR_ADD_PARAMETER = 40;
 public static final int PPC_AVR_DEL_PARAMETER = 50;
 public static final int PPC_AVR_MOVE_PARAMETER = 60;

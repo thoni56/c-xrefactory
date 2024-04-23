@@ -153,6 +153,8 @@ There are both "-opt=value" and "-opt value" format options
 * TODO MISSING TEST CASES:
 ** TODO Test case for Move Parameter
 ** TODO Test case for dead symbol detection
+** TODO Test case for extract variable
+** TODO Test case for filtering menues
 * TODO: FUTURE
 ** Implement LSP (Language Server Protocol)
 This is probably not possible due to the level of integration between
@@ -171,7 +173,7 @@ protocol for many of the refactorings which are core to c-xref.
 ** DONE Document why main.h is needed
 ** DONE Make commons.c independent of main
 ** DONE Make options.c independent of main
-** TODO Make cxref.c independent of main
+** DONE Make cxref.c independent of main
 ** TODO Make refactory.c independent of main
    This probably requires a lot more understanding of refactory.c and why
    it is structured the way it is, it seems to be calling on itself and

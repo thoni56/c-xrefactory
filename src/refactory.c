@@ -4,9 +4,7 @@
    mainTaskEntryInitialisations
    mainOpenOutputFile
  */
-#include "classhierarchy.h"
 #include "commons.h"
-#include "cxfile.h"
 #include "cxref.h"
 #include "editor.h"
 #include "filetable.h"
@@ -21,7 +19,6 @@
 #include "proto.h"
 #include "protocol.h"
 #include "refactorings.h"
-#include "reftab.h"
 #include "server.h"
 #include "undo.h"
 #include "xref.h"
@@ -571,9 +568,11 @@ static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMark
         freeEditorMarkerListButNotMarkers(diff1);
         freeEditorMarkerListButNotMarkers(diff2);
         olcxPopOnly();
-        if (refactoringOptions.theRefactoring == AVR_RENAME_PACKAGE) {
-            displayResolutionDialog("The package exists and is referenced in the original project. Renaming will "
-                                    "join two packages without possibility of inverse refactoring",
+        if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
+            /* TODO: Handle whatever this for C! Does it even happen!?!? */
+            displayResolutionDialog("The module already exists and is referenced in the original"
+                                    "project. Renaming will join two modules without possibility"
+                                    "of inverse refactoring",
                                     PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
         } else {
             displayResolutionDialog("These references may be misinterpreted after refactoring",
@@ -736,13 +735,15 @@ fini:
     return res;
 }
 
-static void simplePackageRename(EditorMarkerList *occs, char *symname, char *symLinkName) {
+static void simpleModuleRename(EditorMarkerList *occs, char *symname, char *symLinkName) {
     char          rtpack[MAX_FILE_NAME_SIZE];
     char          rtprefix[MAX_FILE_NAME_SIZE];
     char         *ss;
     int           snlen, slnlen;
     bool          mvfile;
     EditorMarker *pp;
+
+    /* THIS IS THE OLD JAVA VERSION, NEED TO ADAPT TO MOVE C MODULE!!! */
 
     // get original and new directory, but how?
     snlen  = strlen(symname);
@@ -783,8 +784,8 @@ static void simplePackageRename(EditorMarkerList *occs, char *symname, char *sym
 
 static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symname, char *symLinkName,
                          int symtype) {
-    if (refactoringOptions.theRefactoring == AVR_RENAME_PACKAGE) {
-        simplePackageRename(occs, symname, symLinkName);
+    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
+        simpleModuleRename(occs, symname, symLinkName);
     } else {
         for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
             renameFromTo(ll->marker, symname, refactoringOptions.renameTo);
@@ -891,7 +892,7 @@ static void renameAtPoint(EditorMarker *point) {
 
     freeEditorMarkersAndMarkerList(occs); // O(n^2)!
 
-    if (refactoringOptions.theRefactoring == AVR_RENAME_PACKAGE) {
+    if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
         ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former package");
     }
 }
