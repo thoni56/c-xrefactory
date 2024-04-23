@@ -1630,13 +1630,13 @@ static void setDefaultSelectedVisibleItems(SymbolsMenu *menu,
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next) {
         unsigned ooBits = m->ooBits;
         bool visible = ooBitsGreaterOrEqual(ooBits, ooVisible);
-        bool select = false;
+        bool selected = false;
         if (visible) {
-            select=ooBitsGreaterOrEqual(ooBits, ooSelected);
+            selected=ooBitsGreaterOrEqual(ooBits, ooSelected);
             if (m->references.type==TypeCppCollate)
-                select=false;
+                selected=false;
         }
-        m->selected = select;
+        m->selected = selected;
         m->visible = visible;
     }
 }
