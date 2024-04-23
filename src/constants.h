@@ -22,7 +22,7 @@
 #define SIZE_tmpWorkMemory       400000	/* additional tmp parsing stack memory */
 #define FileTableMemorySize     8000000	/* memory for file (and class) table */
 
-#define SIZE_ppmMemory         15000000	/* macro definitions or java class files */
+#define SIZE_ppmMemory         15000000	/* macro definitions */
 #define SIZE_olcxMemory        50000000	/* memory for browsing symbol stack */
 #define CX_MEMORY_CHUNK_SIZE	2000000
 
@@ -36,21 +36,13 @@
 
 /* ************************** symbol table sizes ************************ */
 
-#define MAX_FILES              50000	/* file and class table size, if you
+#define MAX_FILES              50000	/* file table size, if you
                                            change this, RECREATE Tag file */
-#define MAX_JAVA_ZIP_ARCHIVES    200	/* max .jar archives in CLASSPATH */
-
 #define MAX_CXREF_ENTRIES      65536	/* just hash table size, not limit */
 
-#define FQT_CLASS_TAB_SIZE     10000	/* just hash list table size */
 #define MAX_SYMBOLS             5000	/* just hash list table size */
-#define MAX_JSL_SYMBOLS			5000	/* just hash list table size
-                                           size of types for java simple load
-                                         */
-#define MAX_CL_SYMBOLS           50		/* hash list table size for class locals */
 #define OLCX_TAB_SIZE            1000	/* total num of frames */
 
-#define MAX_CLASSES              (MAX_FILES/2)
 
 /* ***************** several (mainly string size) bornes *************** */
 
@@ -64,14 +56,12 @@
 #define MAX_FILE_NAME_SIZE		1000
 #define MAX_FUN_NAME_SIZE		1000
 #define MAX_REF_LEN             3000
-#define MAX_PROFILE_SIZE        3000	/* max size of java profile string */
 #define MAX_CX_SYMBOL_SIZE		3000
 #define MAX_INHERITANCE_DEEP     200
 #define MAX_ANONYMOUS_FIELDS     200
 #define MAX_APPL_OVERLOAD_FUNS	1000	/* max applicable overloaded funs */
 #define MAX_OPTION_LEN         10000
 #define MAX_COMPLETIONS        10002	/* max items in completion list */
-#define MAX_INNER_CLASSES        200	/* max number of inner classes */
 
 #define MAX_SOURCE_PATH_SIZE	MAX_OPTION_LEN
 

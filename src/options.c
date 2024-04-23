@@ -1836,7 +1836,6 @@ static bool processYOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-yydebug") == 0) {
         c_yydebug = 1;
         yacc_yydebug = 1;
-        java_yydebug = 1;
     }
 #endif
     else return false;
