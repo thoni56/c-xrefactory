@@ -1193,7 +1193,6 @@ static void scanReferenceFiles(char *cxrefLocation, ScanFileFunctionStep *scanFu
         scanReferenceFile(cxrefLocation,"","",scanFunctionTable);
     } else {
         scanReferenceFile(cxrefLocation,REFERENCE_FILENAME_FILES,"",scanFunctionTable);
-        scanReferenceFile(cxrefLocation,REFERENCE_FILENAME_CLASSES,"",scanFunctionTable);
         for (i=0; i<options.referenceFileCount; i++) {
             sprintf(nn,"%04d",i);
             scanReferenceFile(cxrefLocation,REFERENCE_FILENAME_PREFIX,nn,scanFunctionTable);
@@ -1244,9 +1243,6 @@ static void readOneAppropiateReferenceFile(char *symbolName,
         scanReferenceFile(options.cxrefsLocation, "", "", scanFileFunctionTable);
     } else {
         if (!smartReadReferences())
-            return;
-        if (!scanReferenceFile(options.cxrefsLocation, REFERENCE_FILENAME_CLASSES, "",
-                               scanFileFunctionTable))
             return;
         if (symbolName == NULL)
             return;
