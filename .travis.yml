@@ -4,6 +4,8 @@ os:
 
 dist: jammy
 
+repo_token: GcYQvf8SnOg78vWiMOMMSFrgoXkRLuENC
+
 if: NOT tag = stable
 
 addons:
