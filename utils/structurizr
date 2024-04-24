@@ -1,1 +1,9 @@
-docker run -it --rm -p 8080:8080 -v $PWD:/usr/local/structurizr structurizr/lite
+#!/bin/bash
+
+# Navigate to the directory relative to the script location
+cd $(dirname "$0")/../doc
+
+# Execute the command
+docker run -d -it --rm -p 8080:8080 -v $PWD:/usr/local/structurizr structurizr/lite
+open http://localhost:8080
+

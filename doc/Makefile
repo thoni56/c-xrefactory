@@ -16,4 +16,5 @@ guidebook.html: guidebook.adoc
 # The guidebook is the one and only document in docs b.c. Structurizr likes it that way
 # But to publicise it using GitHub action we need to concat them all into one document
 guidebook.adoc: docs/*.adoc docs/*.md 00-guidebook.header
-	ls 00-guidebook.header docs/*.adoc docs/*.md | sort | xargs cat > guidebook.adoc
+	ls 00-guidebook.header docs/*.adoc docs/*.md | sort | xargs -I {} sh -c 'cat {}; echo ""' > guidebook.adoc
+	sed -i '' 's|image::embed:\(.*\)\[\]|image::\.structurizr/images/\1-thumbnail.png[]|g' guidebook.adoc
