@@ -9,10 +9,11 @@
 `c-xrefactory` is a free Emacs refactoring tool and code browser for
 _C_ & _Yacc_.
 
-> **BEWARE**: As `c-xrefactory` is undergoing radical refactorings and
-> changes and doesn't have tests for all features occasional hiccups
-> are likely. I use it almost everyday and the stable version, which you
-> get if you install as per below, has passed all tests. But YMMV.
+> [!CAUTION]
+> As `c-xrefactory` is undergoing radical refactorings and
+> changes, and doesn't have tests for all features, occasional hiccups
+> are possible. I use it almost everyday and the stable version, which
+> you get if you install as per below, has passed all tests. But YMMV.
 
 ## Install
 
@@ -21,7 +22,8 @@ The easiest, and currently only supported, way to install is using
 
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
 
-> **NOTE**: You can easily install `el-get` in your running emacs using
+> [!TIP]
+> You can easily install `el-get` in your running emacs using
 > a snippet from [`el-get`'s GitHub repo][el-get repo], but don't forget
 > to add the `el-get` pieces to your emacs init.
 
@@ -72,9 +74,8 @@ to [these instructions][X11 WSL2].
 
 _WORK IN PROGRESS!_
 
-Some documentation can be found [here][our docs]. You can also access
-the design documentation directly in
-[Structurizr](https://structurizr.com/share/51829).
+Whatever documentation there is can be found [here][our docs]. We are
+using C4 and Structurizr to document the architecture as best we can.
 
 ### Yacc special features
 
@@ -100,7 +101,8 @@ and protocol to get closer to that point.
 
 ### Java notes
 
-> **NOTE**: Java support has now been removed since there are far
+> [!IMPORTANT]
+> Java support has now been removed since there are far
 > better options now.
 
 The current Java grammar has not been updated from Java 1.4, but since
