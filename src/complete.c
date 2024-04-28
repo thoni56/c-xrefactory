@@ -14,6 +14,7 @@
 #include "semact.h"
 #include "stackmemory.h"
 #include "type.h"
+#include "session.h"
 #include "yylex.h"
 
 

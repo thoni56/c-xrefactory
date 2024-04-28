@@ -20,6 +20,7 @@
 #include "protocol.h"
 #include "refactorings.h"
 #include "server.h"
+#include "session.h"
 #include "undo.h"
 #include "xref.h"
 

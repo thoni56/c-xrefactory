@@ -1,12 +1,11 @@
 #ifndef CXREF_H_INCLUDED
 #define CXREF_H_INCLUDED
 
-#include "completion.h"
+
 #include "menu.h"
 #include "ppc.h"
 #include "proto.h"
 #include "server.h"
-#include "session.h"
 #include "symbol.h"
 #include "usage.h"
 
