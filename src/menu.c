@@ -72,7 +72,7 @@ void olcxPrintSelectionMenu(SymbolsMenu *menu) {
 
     ppcBegin(PPC_SYMBOL_RESOLUTION);
     if (menu!=NULL) {
-        generateGlobalReferenceLists(menu, communicationChannel, "__NO_HTML_FILE_NAME!__");
+        generateGlobalReferenceLists(menu, communicationChannel);
     }
     ppcEnd(PPC_SYMBOL_RESOLUTION);
 }

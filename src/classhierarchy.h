@@ -19,6 +19,6 @@ typedef struct classHierarchyReference {
 extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,
                                       void (*fun)(SymbolsMenu *, void *),
                                       void *p1);
-extern void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file, char *fn);
+extern void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file);
 
 #endif
