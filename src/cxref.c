@@ -1479,49 +1479,12 @@ static bool isRenameMenuSelection(int command) {
         ;
 }
 
-static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
-    if (isRenameMenuSelection(command)) {
-        // even worse than O(n^2), hmm.
-        bool change = true;
-        while (change) {
-            change = false;
-            for (SymbolsMenu *s1=menu; s1!=NULL; s1=s1->next) {
-                if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_SUBCLASS_OF_RELATED)
-                    goto nextrs1;
-                for (SymbolsMenu *s2=menu; s2!=NULL; s2=s2->next) {
-                    unsigned oov = (s2->ooBits & OOC_VIRTUAL_MASK);
-                    if (oov >= OOC_VIRT_SUBCLASS_OF_RELATED)
-                        goto nextrs2;
-                nextrs2:;
-                }
-            nextrs1:;
-            }
-        }
-    } else {
-        // O(n^2), someone should do this better !!!
-        for (SymbolsMenu *s1=menu; s1!=NULL; s1=s1->next) {
-            if ((s1->ooBits&OOC_VIRTUAL_MASK) < OOC_VIRT_RELATED)
-                goto nexts1;
-            for (SymbolsMenu *s2=menu; s2!=NULL; s2=s2->next) {
-                unsigned oov = (s2->ooBits & OOC_VIRTUAL_MASK);
-                if (oov >= OOC_VIRT_SUBCLASS_OF_RELATED)
-                    goto nexts2;
-            nexts2:;
-            }
-        nexts1:;
-        }
-    }
-}
-
 static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLevel) {
     unsigned ooselected, oovisible;
     if (command == OLO_GLOBAL_UNUSED) {
         splitMenuPerSymbolsAndMap(menu, selectUnusedSymbols, &filterLevel);
         goto sfini;
     }
-    // do not compute subclasses of related for class tree, it is too slow
-    // and useless in this context
-    computeSubClassOfRelatedItemsOOBit(menu, command);
 
     if (command == OLO_PUSH_NAME) {
         oovisible = 0;
