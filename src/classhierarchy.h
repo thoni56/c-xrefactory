@@ -17,7 +17,7 @@ typedef struct classHierarchyReference {
 
 
 extern void splitMenuPerSymbolsAndMap(SymbolsMenu *menu,
-                                      void (*fun)(SymbolsMenu *, void *, char *),
+                                      void (*fun)(SymbolsMenu *, void *),
                                       void *p1,
                                       char *p2
                                       );

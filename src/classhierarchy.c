@@ -65,7 +65,7 @@ static void olcxMenuGenNonVirtualGlobSymList(FILE *file, SymbolsMenu *menu) {
     fprintf(file," %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(tempString), tempString, PPC_SYMBOL);
 }
 
-static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
+static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1) {
     FILE *file = (FILE *)p1;
     SymbolsMenu    *m;
     ReferenceItem *r;
@@ -86,7 +86,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1, char *fn) {
     }
 }
 
-void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, void *, char *), void *p1,
+void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *menu, void *p1), void *p1,
                                char *p2) {
     SymbolsMenu    *rr, *mp, **ss, *cc, *all;
     ReferenceItem *cs;
@@ -107,7 +107,7 @@ void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *, voi
             ss= &(*ss)->next;
         contlab:;
         }
-        (*fun)(mp, p1, p2);
+        (*fun)(mp, p1);
         // reconstruct the list in all
         LIST_APPEND(SymbolsMenu, mp, all);
         all = mp;

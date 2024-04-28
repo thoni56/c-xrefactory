@@ -1397,7 +1397,7 @@ static void olcxMenuSelectOnly(void) {
 
 
 // Map function
-static void selectUnusedSymbols(SymbolsMenu *menu, void *p1, char *_unused) {
+static void selectUnusedSymbols(SymbolsMenu *menu, void *p1) {
     int filter, *flp;
 
     flp = (int *)p1;
