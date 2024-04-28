@@ -3,14 +3,12 @@
 #include "completion.h"
 #include "cxfile.h"
 #include "cxref.h"
-#include "fileio.h"
 #include "filetable.h"
 #include "globals.h"
 #include "list.h"
 #include "log.h"
 #include "misc.h"
 #include "options.h"
-#include "parsers.h"
 #include "protocol.h"
 #include "reftab.h"
 #include "semact.h"
@@ -31,12 +29,6 @@ typedef struct {
     struct completions *res;
     Storage storage;
 } SymbolCompletionFunctionInfo;
-
-typedef struct {
-    struct completions *res;
-    int completionType;
-} FqtMapCompletionInfo;
-
 
 ExpressionTokenType s_forCompletionType;
 
