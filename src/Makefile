@@ -58,6 +58,22 @@
 #	make watch-for-systemtests
 #
 #########################################################################
+
+OS := $(shell uname)
+
+# Figure out reasonable number of parallel jobs
+# Set number of jobs based on operating system
+ifeq ($(OS),Linux)
+    JOBS := $(shell nproc)
+endif
+ifeq ($(OS),Darwin)
+    JOBS := $(shell sysctl -n hw.physicalcpu)
+endif
+# Fallback if number of jobs is not set
+ifeq ($(JOBS),)
+    JOBS := 1
+endif
+
 # Always export following variables to environment of sub-makes (to use you need "-e")
 
 # Build with coverage for all cases except "prod"
@@ -82,7 +98,6 @@ ROOTDIR=..
 YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 # On Darwin we can use gcc-13 if available
-OS := $(shell uname)
 ifeq ($(OS),Darwin)
 #	ifneq (, $(shell command -v gcc-13 2> /dev/null))
 #		CC=gcc-13
@@ -384,13 +399,13 @@ endif
 
 #########################################################################
 watch:
-	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j devel
+	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
 
 watch-for-unittests:
-	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j unit
+	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j$(JOBS) unit
 
 watch-for-systemtests:
-	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j8 system-tests
+	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j$(JOBS) system-tests
 
 system-tests:
 	$(MAKE) -e build
