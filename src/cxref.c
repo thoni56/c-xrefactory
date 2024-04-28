@@ -32,12 +32,6 @@
 #include "log.h"
 
 
-/* *********** symbols excluded from cache ************** */
-
-char olSymbolType[COMPLETION_STRING_SIZE];
-char olSymbolClassType[COMPLETION_STRING_SIZE];
-
-
 /* *********************************************************************** */
 
 int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {

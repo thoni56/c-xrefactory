@@ -11,9 +11,6 @@
 #include "usage.h"
 
 
-extern char olSymbolType[COMPLETION_STRING_SIZE];
-extern char olSymbolClassType[COMPLETION_STRING_SIZE];
-
 
 extern void olcxInit(void);
 extern int  olcxReferenceInternalLessFunction(Reference *r1, Reference *r2);

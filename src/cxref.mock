@@ -4,10 +4,6 @@
 #include "cxref.h"
 
 
-char olSymbolType[COMPLETION_STRING_SIZE];
-char olSymbolClassType[COMPLETION_STRING_SIZE];
-
-
 int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
 }
