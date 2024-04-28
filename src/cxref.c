@@ -1479,7 +1479,6 @@ static bool isRenameMenuSelection(int command) {
         ;
 }
 
-
 static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
     if (isRenameMenuSelection(command)) {
         // even worse than O(n^2), hmm.
@@ -1493,16 +1492,6 @@ static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
                     unsigned oov = (s2->ooBits & OOC_VIRTUAL_MASK);
                     if (oov >= OOC_VIRT_SUBCLASS_OF_RELATED)
                         goto nextrs2;
-                    if (isSmallerOrEqClass(s2->references.vApplClass, s1->references.vApplClass)) {
-                        s2->ooBits = ((s2->ooBits & ~OOC_VIRTUAL_MASK)
-                                      | OOC_VIRT_SUBCLASS_OF_RELATED);
-                        change = true;
-                    }
-                    if (isSmallerOrEqClass(s1->references.vApplClass, s2->references.vApplClass)) {
-                        s2->ooBits = ((s2->ooBits & ~OOC_VIRTUAL_MASK)
-                                      | OOC_VIRT_SUBCLASS_OF_RELATED);
-                        change = true;
-                    }
                 nextrs2:;
                 }
             nextrs1:;
@@ -1517,10 +1506,6 @@ static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
                 unsigned oov = (s2->ooBits & OOC_VIRTUAL_MASK);
                 if (oov >= OOC_VIRT_SUBCLASS_OF_RELATED)
                     goto nexts2;
-                if (isSmallerOrEqClass(s2->references.vApplClass, s1->references.vApplClass)) {
-                    s2->ooBits = ((s2->ooBits & ~OOC_VIRTUAL_MASK)
-                                  | OOC_VIRT_SUBCLASS_OF_RELATED);
-                }
             nexts2:;
             }
         nexts1:;

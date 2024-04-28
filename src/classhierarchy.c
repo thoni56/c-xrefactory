@@ -17,10 +17,6 @@ typedef struct integerList {
 static int currentOutputLineInSymbolList =0;
 
 
-bool isSmallerOrEqClass(int inf, int sup) {
-    return false;               /* Dummy replacement */
-}
-
 static void olcxPrintMenuItemPrefix(FILE *file, SymbolsMenu *menu, bool selectable) {
     if (! selectable) {
         fprintf(file, " %s=2", PPCA_SELECTED);
