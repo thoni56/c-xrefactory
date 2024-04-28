@@ -150,8 +150,8 @@ devel-proper: unit build
 	$(MAKE) -e test
 
 slow:
-	make -C ../tests slow
-	make gcov
+	$(MAKE) -C ../tests slow
+	$(MAKE) gcov
 
 ci:
 	$(MAKE) -e -j unit
@@ -337,7 +337,7 @@ ifeq ($(HAVE_GCOV_TOOL),yes)
 # Then we can merge all .gcda for all tests into the .gcda in OBJDIR using it, which is very fast!
 	-for tc in ../tests/*/.coverage ; do $(GCOV_TOOL) merge $$tc $(OBJDIR) -o $(OBJDIR) ; done
 # And then create .gcov for Emacs cov-mode
-	make gcov
+	$(MAKE) gcov
 else
 # We need to collect all coverage before we can generate gcov...
 endif
@@ -446,7 +446,7 @@ else
 unittests: parsers $(UNITTESTS)
 	$(MAKE) -e clean-coverage
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
-	make gcov
+	$(MAKE) gcov
 	[ "$(HAVE_LCOV2)" = "yes" ] && lcovignore1="--ignore-errors gcov,gcov" || true ; \
 	[ "$(HAVE_LCOV2)" = "yes" ] && lcovignore2="--ignore-errors unused,unused" || true ; \
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
