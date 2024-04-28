@@ -92,7 +92,6 @@
         ENUM(TypeMacroArg)                                              \
         ENUM(TypeDefinedOp)                                             \
         ENUM(TypeBlockMarker)                                           \
-        ENUM(TypeTryCatchMarker)                                        \
         ENUM(TypeExpression)                                            \
         ENUM(TypePackedType)                                            \
         ENUM(TypeSpecialComplet)                                        \

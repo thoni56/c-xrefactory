@@ -141,7 +141,6 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
     case TypeUndefMacro:
     case TypeDefinedOp:
     case TypeBlockMarker:
-    case TypeTryCatchMarker:
     case TypeExpression:
     case TypePackedType:
     case TypeSpecialComplet:

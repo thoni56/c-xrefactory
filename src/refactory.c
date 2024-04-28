@@ -1051,7 +1051,7 @@ static int isThisSymbolUsed(EditorMarker *marker) {
 }
 
 static int isParameterUsedExceptRecursiveCalls(EditorMarker *pmarker, EditorMarker *fmarker) {
-    // for the moment
+    // TODO: simplification for now - is it used at all?
     return isThisSymbolUsed(pmarker);
 }
 
