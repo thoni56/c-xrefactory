@@ -780,8 +780,7 @@ static void simpleModuleRename(EditorMarkerList *occs, char *symname, char *symL
     }
 }
 
-static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symname, char *symLinkName,
-                         int symtype) {
+static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symname, char *symLinkName) {
     if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
         simpleModuleRename(occs, symname, symLinkName);
     } else {
@@ -852,7 +851,6 @@ static void multipleOccurencesSafetyCheck(void) {
 static void renameAtPoint(EditorMarker *point) {
     char              nameOnPoint[TMP_STRING_SIZE];
     char             *symLinkName, *message;
-    Type              symtype;
     EditorMarkerList *occs;
     EditorUndo       *undoStartPoint, *redoTrack;
     SymbolsMenu      *csym;
@@ -870,13 +868,12 @@ static void renameAtPoint(EditorMarker *point) {
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE - 1);
     occs           = pushGetAndPreCheckReferences(point, nameOnPoint, message, PPCV_BROWSER_TYPE_INFO);
     csym           = sessionData.browserStack.top->hkSelectedSym;
-    symtype        = csym->references.type;
     symLinkName    = csym->references.linkName;
     undoStartPoint = editorUndo;
 
     multipleOccurencesSafetyCheck();
 
-    simpleRename(occs, point, nameOnPoint, symLinkName, symtype);
+    simpleRename(occs, point, nameOnPoint, symLinkName);
     //&dumpEditorBuffers();
     redoTrack = NULL;
     if (!makeSafetyCheckAndUndo(point, &occs, undoStartPoint, &redoTrack)) {
