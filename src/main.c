@@ -634,7 +634,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initCwd();
 
     initTypeCharCodeTab();
-    initJavaTypePCTIConvertIniTab();
     initTypeNames();
     initStorageNames();
 

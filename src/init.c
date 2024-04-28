@@ -185,17 +185,6 @@ static TokenNamesInitTable tokenNameInitTableNonAnsi[] = {
 };
 
 
-static JavaTypePCTIConvertIni s_javaTypePCTIConvertIniTab[] = {
-    {TypeByte,      PCTIndexByte},
-    {TypeShort,     PCTIndexShort},
-    {TypeChar,      PCTIndexChar},
-    {TypeInt,       PCTIndexInt},
-    {TypeLong,      PCTIndexLong},
-    {TypeFloat,     PCTIndexFloat},
-    {TypeDouble,    PCTIndexDouble},
-    {-1,			-1},
-};
-
 static int preCreatedTypesInitTable[] = {
     TypeDefault,
     TypeChar,
@@ -367,14 +356,6 @@ void initTokenNamesTables(void) {
     symbolP->type = TypeDefinedOp;
     symbolP->storage = StorageDefault;
     symbolTableAdd(symbolTable, symbolP);
-}
-
-void initJavaTypePCTIConvertIniTab(void) {
-    for (int i=0; s_javaTypePCTIConvertIniTab[i].symType != -1; i++) {
-        JavaTypePCTIConvertIni *s = &s_javaTypePCTIConvertIniTab[i];
-        assert(s->symType >= 0 && s->symType < MAX_TYPE);
-        javaTypePCTIConvert[s->symType] = s->PCTIndex;
-    }
 }
 
 void initTypeCharCodeTab(void) {

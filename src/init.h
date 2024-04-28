@@ -2,7 +2,6 @@
 #define INIT_H_INCLUDED
 
 extern void initTokenNamesTables(void);
-extern void initJavaTypePCTIConvertIniTab(void);
 extern void initTypeCharCodeTab(void);
 extern void initArchaicTypes(void);
 extern void initPreCreatedTypes(void);

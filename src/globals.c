@@ -143,7 +143,6 @@ uchar typeUnsignedChange[MAX_TYPE];
 char javaBaseTypeCharCodes[MAX_TYPE];
 int javaCharCodeBaseTypes[MAX_CHARS];
 
-char javaTypePCTIConvert[MAX_TYPE];
 
 /* These should go together in a struct. Also the lengths are not just
  * the lengths of the names, some slots do not have names, so they are

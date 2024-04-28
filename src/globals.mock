@@ -102,7 +102,6 @@ Symbol defaultIntDefinition;
 TypeModifier defaultPackedTypeModifier;
 
 Symbol *s_javaStringSymbol;
-char javaTypePCTIConvert[MAX_TYPE];
 char *s_javaThisPackageName = "";
 bool javaPreScanOnly;
 char *javaSourcePaths;
