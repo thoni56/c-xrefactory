@@ -86,8 +86,7 @@ static void genNonVirtualsGlobRefLists(SymbolsMenu *menu, void *p1) {
     }
 }
 
-void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *menu, void *p1), void *p1,
-                               char *p2) {
+void splitMenuPerSymbolsAndMap(SymbolsMenu *menu, void (*fun)(SymbolsMenu *menu, void *p1), void *p1) {
     SymbolsMenu    *rr, *mp, **ss, *cc, *all;
     ReferenceItem *cs;
     all = NULL;
@@ -130,5 +129,5 @@ void generateGlobalReferenceLists(SymbolsMenu *menu, FILE *file, char *fn) {
     for (SymbolsMenu *m=menu; m!=NULL; m=m->next)
         m->outOnLine = 0;
     currentOutputLineInSymbolList = 1;
-    splitMenuPerSymbolsAndMap(menu, genNonVirtualsGlobRefLists, file, fn);
+    splitMenuPerSymbolsAndMap(menu, genNonVirtualsGlobRefLists, file);
 }

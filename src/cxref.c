@@ -1531,7 +1531,7 @@ static void computeSubClassOfRelatedItemsOOBit(SymbolsMenu *menu, int command) {
 static void setSelectedVisibleItems(SymbolsMenu *menu, int command, int filterLevel) {
     unsigned ooselected, oovisible;
     if (command == OLO_GLOBAL_UNUSED) {
-        splitMenuPerSymbolsAndMap(menu, selectUnusedSymbols, &filterLevel, NULL);
+        splitMenuPerSymbolsAndMap(menu, selectUnusedSymbols, &filterLevel);
         goto sfini;
     }
     // do not compute subclasses of related for class tree, it is too slow
