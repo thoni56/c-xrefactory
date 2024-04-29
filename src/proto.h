@@ -243,18 +243,6 @@ enum refsFilterLevels {
     MAX_REF_LIST_FILTER_LEVEL,
 };
 
-enum javaPCTIndex { /* java Primitive Conversion Table Indexes */
-    PCTIndexError = 0,
-    PCTIndexByte,
-    PCTIndexShort,
-    PCTIndexChar,
-    PCTIndexInt,
-    PCTIndexLong,
-    PCTIndexFloat,
-    PCTIndexDouble,
-    MAX_PCTIndex
-};
-
 typedef enum result {
     RESULT_OK,
     RESULT_NOT_FOUND,

@@ -21,11 +21,6 @@ typedef struct tokenNameIni {
     unsigned    languages;
 } TokenNamesInitTable;
 
-typedef struct javaTypePCTIConvertIni {
-    int		symType;
-    int		PCTIndex;
-} JavaTypePCTIConvertIni;
-
 typedef struct typeCharCodeIni {
     int         symType;
     char		code;
