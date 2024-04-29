@@ -19,6 +19,7 @@
 #include "proto.h"
 #include "protocol.h"
 #include "refactorings.h"
+#include "scope.h"
 #include "server.h"
 #include "session.h"
 #include "undo.h"
@@ -780,14 +781,16 @@ static void simpleModuleRename(EditorMarkerList *occs, char *symname, char *symL
     }
 }
 
-static void simpleRename(EditorMarkerList *occs, EditorMarker *point, char *symname, char *symLinkName) {
+static void simpleRename(EditorMarkerList *markerList, EditorMarker *marker, char *symbolName,
+                         char *symbolLinkName
+) {
     if (refactoringOptions.theRefactoring == AVR_RENAME_MODULE) {
-        simpleModuleRename(occs, symname, symLinkName);
+        simpleModuleRename(markerList, symbolName, symbolLinkName);
     } else {
-        for (EditorMarkerList *ll = occs; ll != NULL; ll = ll->next) {
-            renameFromTo(ll->marker, symname, refactoringOptions.renameTo);
+        for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
+            renameFromTo(l->marker, symbolName, refactoringOptions.renameTo);
         }
-        ppcGotoMarker(point);
+        ppcGotoMarker(marker);
     }
 }
 
@@ -1259,53 +1262,51 @@ static void extractVariable(EditorMarker *point, EditorMarker *mark) {
 }
 
 static char *computeUpdateOptionForSymbol(EditorMarker *point) {
-    EditorMarkerList *occs;
-    SymbolsMenu      *csym;
-    int               hasHeaderReferenceFlag, scope, cat, multiFileRefsFlag, fn;
+    int               fileNumber;
     char             *selectedUpdateOption;
 
     assert(point != NULL && point->buffer != NULL);
     currentLanguage = getLanguageFor(point->buffer->name);
 
-    hasHeaderReferenceFlag = 0;
-    multiFileRefsFlag      = 0;
-    occs                   = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
-    csym                   = sessionData.browserStack.top->hkSelectedSym;
-    scope                  = csym->references.scope;
-    cat                    = csym->references.category;
+    bool hasHeaderReferences = false;
+    bool isMultiFileReferences = false;
+    EditorMarkerList *markerList = getReferences(point, NULL, PPCV_BROWSER_TYPE_WARNING);
+    SymbolsMenu *menu = sessionData.browserStack.top->hkSelectedSym;
+    ReferenceScope scope = menu->references.scope;
+    ReferenceCategory cat = menu->references.category;
 
-    if (occs == NULL) {
-        fn = NO_FILE_NUMBER;
+    if (markerList == NULL) {
+        fileNumber = NO_FILE_NUMBER;
     } else {
-        assert(occs->marker != NULL && occs->marker->buffer != NULL);
-        fn = occs->marker->buffer->fileNumber;
+        assert(markerList->marker != NULL && markerList->marker->buffer != NULL);
+        fileNumber = markerList->marker->buffer->fileNumber;
     }
-    for (EditorMarkerList *o = occs; o != NULL; o = o->next) {
-        assert(o->marker != NULL && o->marker->buffer != NULL);
-        FileItem *fileItem = getFileItem(o->marker->buffer->fileNumber);
-        if (fn != o->marker->buffer->fileNumber) {
-            multiFileRefsFlag = 1;
+    for (EditorMarkerList *l = markerList; l != NULL; l = l->next) {
+        assert(l->marker != NULL && l->marker->buffer != NULL);
+        FileItem *fileItem = getFileItem(l->marker->buffer->fileNumber);
+        if (fileNumber != l->marker->buffer->fileNumber) {
+            isMultiFileReferences = true;
         }
         if (!fileItem->isArgument) {
-            hasHeaderReferenceFlag = 1;
+            hasHeaderReferences = true;
         }
     }
 
     if (cat == CategoryLocal) {
         // useless to update when there is nothing about the symbol in Tags
         selectedUpdateOption = "";
-    } else if (hasHeaderReferenceFlag) {
+    } else if (hasHeaderReferences) {
         // once it is in a header, full update is required
         selectedUpdateOption = "-update";
     } else if (scope == ScopeAuto || scope == ScopeFile) {
         // for example a local var or a static function not used in any header
-        if (multiFileRefsFlag) {
+        if (isMultiFileReferences) {
             errorMessage(ERR_INTERNAL, "something goes wrong, a local symbol is used in several files");
             selectedUpdateOption = "-update";
         } else {
             selectedUpdateOption = "";
         }
-    } else if (!multiFileRefsFlag) {
+    } else if (!isMultiFileReferences) {
         // this is a little bit tricky. It may provoke a bug when
         // a new external function is not yet indexed, but used in another file.
         // But it is so practical, so take the risk.
@@ -1316,8 +1317,8 @@ static char *computeUpdateOptionForSymbol(EditorMarker *point) {
         selectedUpdateOption = "-fastupdate";
     }
 
-    freeEditorMarkersAndMarkerList(occs);
-    occs = NULL;
+    freeEditorMarkersAndMarkerList(markerList);
+    markerList = NULL;
     olcxPopOnly();
 
     return selectedUpdateOption;
