@@ -78,8 +78,8 @@ static TokenNamesInitTable tokenNameInitTable1[] = {
     {"_Thread_local", _THREADLOCAL,	LANG_C},
 
     /*
-      {"token",       TOKEN,		LAN_YACC},
-      {"type",        TYPE,			LAN_YACC},
+      {"token",       TOKEN,		LANG_YACC},
+      {"type",        TYPE,			LANG_YACC},
     */
 
     {"...",         ELLIPSIS,		LANG_C},

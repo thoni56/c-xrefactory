@@ -112,11 +112,4 @@ TypeModifier *s_javaCompletionLastPrimary;
 Symbol s_javaArrayObjectSymbol;
 char javaBaseTypeCharCodes[MAX_TYPE];
 
-Access javaRequiredAccessibilityTable[MAX_REQUIRED_ACCESS+1] = {
-    AccessPublic,
-    AccessProtected,
-    AccessDefault,
-    AccessPrivate,
-};
-
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];

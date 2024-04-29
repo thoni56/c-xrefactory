@@ -128,13 +128,6 @@ jmp_buf cxmemOverflow;
 /*                            real constants                              */
 /* ********************************************************************** */
 
-Access javaRequiredAccessibilityTable[MAX_REQUIRED_ACCESS+1] = {
-    AccessPublic,
-    AccessProtected,
-    AccessDefault,
-    AccessPrivate,
-};
-
 uchar typeShortChange[MAX_TYPE];
 uchar typeLongChange[MAX_TYPE];
 uchar typeSignedChange[MAX_TYPE];
