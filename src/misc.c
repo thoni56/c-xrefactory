@@ -1035,25 +1035,24 @@ int substringIndex(char *s, char *subs) {
 /* ************************************************************* */
 
 bool requiresCreatingRefs(ServerOperation operation) {
-    return
-            options.serverOperation==OLO_PUSH
-            ||  options.serverOperation==OLO_PUSH_ONLY
-            ||  options.serverOperation==OLO_PUSH_AND_CALL_MACRO
-            ||  options.serverOperation==OLO_GOTO_PARAM_NAME
-            ||  options.serverOperation==OLO_GET_PARAM_COORDINATES
-            ||  options.serverOperation==OLO_GET_AVAILABLE_REFACTORINGS
-            ||  options.serverOperation==OLO_PUSH_NAME
-            ||  options.serverOperation==OLO_PUSH_FOR_LOCALM
-            ||  options.serverOperation==OLO_GET_LAST_IMPORT_LINE
-            ||  options.serverOperation==OLO_GLOBAL_UNUSED
-            ||  options.serverOperation==OLO_LOCAL_UNUSED
-            ||  options.serverOperation==OLO_LIST
-            ||  options.serverOperation==OLO_RENAME
-            ||  options.serverOperation==OLO_ENCAPSULATE
-            ||  options.serverOperation==OLO_ARG_MANIP
-            ||  options.serverOperation==OLO_SAFETY_CHECK2
-            ||  options.serverOperation==OLO_GET_PRIMARY_START
-           ;
+    return operation==OLO_PUSH
+        ||  operation==OLO_PUSH_ONLY
+        ||  operation==OLO_PUSH_AND_CALL_MACRO
+        ||  operation==OLO_GOTO_PARAM_NAME
+        ||  operation==OLO_GET_PARAM_COORDINATES
+        ||  operation==OLO_GET_AVAILABLE_REFACTORINGS
+        ||  operation==OLO_PUSH_NAME
+        ||  operation==OLO_PUSH_FOR_LOCALM
+        ||  operation==OLO_GET_LAST_IMPORT_LINE
+        ||  operation==OLO_GLOBAL_UNUSED
+        ||  operation==OLO_LOCAL_UNUSED
+        ||  operation==OLO_LIST
+        ||  operation==OLO_RENAME
+        ||  operation==OLO_ENCAPSULATE
+        ||  operation==OLO_ARG_MANIP
+        ||  operation==OLO_SAFETY_CHECK2
+        ||  operation==OLO_GET_PRIMARY_START
+        ;
 }
 
 void formatOutputLine(char *line, int startingColumn) {
