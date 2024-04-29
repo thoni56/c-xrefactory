@@ -1241,18 +1241,7 @@ void olStackDeleteSymbol(OlcxReferences *refs) {
     deleteOlcxRefs(rr, &sessionData.browserStack);
 }
 
-static void olcxGenInspectClassDefinitionRef(int classnum) {
-    ReferenceItem references;
-    char className[MAX_CX_SYMBOL_SIZE];
-
-    javaGetClassNameFromFileNumber(classnum, className, KEEP_SLASHES);
-    fillReferenceItem(&references, className, cxFileHashNumber(className),
-                       NO_FILE_NUMBER, NO_FILE_NUMBER, TypeStruct, StorageExtern, ScopeGlobal,
-                       AccessDefault, CategoryGlobal);
-    findAndGotoDefinition(&references);
-}
-
-static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
+static void olcxMenuInspectDef(SymbolsMenu *menu) {
     SymbolsMenu *ss;
 
     for (ss=menu; ss!=NULL; ss=ss->next) {
@@ -1265,15 +1254,10 @@ static void olcxMenuInspectDef(SymbolsMenu *menu, int inspect) {
     if (ss == NULL) {
         indicateNoReference();
     } else {
-        if (inspect == INSPECT_DEF) {
-            if (ss->defpos.file>=0 && ss->defpos.file!=NO_FILE_NUMBER) {
-                gotoOnlineCxref(&ss->defpos, UsageDefined, "");
-            } else {
-                indicateNoReference();
-            }
+        if (ss->defpos.file>=0 && ss->defpos.file!=NO_FILE_NUMBER) {
+            gotoOnlineCxref(&ss->defpos, UsageDefined, "");
         } else {
-            // inspect class
-            olcxGenInspectClassDefinitionRef(ss->references.vApplClass);
+            indicateNoReference();
         }
     }
 }
@@ -1282,7 +1266,7 @@ static void olcxSymbolMenuInspectDef(void) {
     OlcxReferences    *refs;
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs,CHECK_NULL))
         return;
-    olcxMenuInspectDef(refs->menuSym, INSPECT_DEF);
+    olcxMenuInspectDef(refs->menuSym);
 }
 
 void olProcessSelectedReferences(OlcxReferences *rstack,

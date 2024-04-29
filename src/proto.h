@@ -133,8 +133,6 @@ enum miscellaneous { /* misc. constants */
     REQ_SUBCLASS,
     REQ_CLASS,
     REQ_PACKAGE,
-    INSPECT_DEF,
-    INSPECT_CLASS,
     ADD_MAYBE_THIS_REFERENCE,
     GEN_FULL_OUTPUT,
     GEN_PRECHECKS,
