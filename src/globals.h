@@ -45,8 +45,6 @@ extern IdList *s_javaIoSerializableName;
 extern IdList *s_javaLangClassName;
 extern IdList *s_javaLangObjectName;
 
-extern Symbol *s_javaObjectSymbol;
-
 extern FILE *communicationChannel;
 
 extern bool javaPreScanOnly;
@@ -71,7 +69,6 @@ extern uchar typeUnsignedChange[MAX_TYPE];
 
 extern TypeModifier *s_structRecordCompletionType;
 extern TypeModifier *s_upLevelFunctionCompletionType;
-extern TypeModifier *s_javaCompletionLastPrimary;
 extern char *tokenNamesTable[];
 extern int tokenNameLengthsTable[];
 
@@ -79,7 +76,6 @@ extern TypeModifier *preCreatedTypesTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2TypeTable[MAX_TYPE];
 extern TypeModifier *preCreatedPtr2Ptr2TypeTable[MAX_TYPE];
 
-extern char javaBaseTypeCharCodes[MAX_TYPE];
 extern int javaCharCodeBaseTypes[MAX_CHARS];
 
 extern Position s_olcxByPassPos;

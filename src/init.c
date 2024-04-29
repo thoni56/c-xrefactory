@@ -363,7 +363,6 @@ void initTypeCharCodeTab(void) {
     for (int i=0; baseTypeCharCodesInitTable[i].symType != -1; i++) {
         s = &baseTypeCharCodesInitTable[i];
         assert(s->symType >= 0 && s->symType < MAX_TYPE);
-        javaBaseTypeCharCodes[s->symType] = s->code;
         assert(s->code >= 0 && s->code < MAX_CHARS);
         javaCharCodeBaseTypes[s->code] = s->symType;
     }

@@ -106,10 +106,6 @@ char *s_javaThisPackageName = "";
 bool javaPreScanOnly;
 char *javaSourcePaths;
 StringList *javaClassPaths;
-Symbol *s_javaObjectSymbol;
 int javaCharCodeBaseTypes[MAX_CHARS];
-TypeModifier *s_javaCompletionLastPrimary;
-Symbol s_javaArrayObjectSymbol;
-char javaBaseTypeCharCodes[MAX_TYPE];
 
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];

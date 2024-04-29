@@ -116,7 +116,6 @@ TypeModifier errorModifier;
 Symbol errorSymbol;
 Position noPosition = {-1, 0, 0};
 
-Symbol *s_javaObjectSymbol;
 
 char cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 
@@ -133,7 +132,6 @@ uchar typeLongChange[MAX_TYPE];
 uchar typeSignedChange[MAX_TYPE];
 uchar typeUnsignedChange[MAX_TYPE];
 
-char javaBaseTypeCharCodes[MAX_TYPE];
 int javaCharCodeBaseTypes[MAX_CHARS];
 
 
