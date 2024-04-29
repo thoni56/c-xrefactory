@@ -1,4 +1,4 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-add-param" "-olcxparnum=1" "-rfct-param1=int arg" "-rfct-param2=c" "-olcursor=632" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -o server-buffer
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-add-param" "-olcxparnum=1" "-rfct-param1=int arg" "-rfct-param2=c" "-olcursor=632" "CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java" -o server-buffer
 <sync>
 <update-report>
 </update-report>

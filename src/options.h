@@ -49,7 +49,6 @@ typedef struct options {
     char *compiler;
     int fileEncoding;
     bool completeParenthesis;
-    AddImportStrategyKind defaultAddImportStrategy;
     bool referenceListWithoutSource;
     CommentMovingMode commentMovingMode;
     StringList *pruneNames;

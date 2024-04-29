@@ -1,1 +1,1 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-extract-function" "-olmark=315" "-olcursor=423" "-addimportdefault=0" "CURDIR/cexercise/refactorings/extract.c"
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-extract-function" "-olmark=315" "-olcursor=423" "CURDIR/cexercise/refactorings/extract.c"

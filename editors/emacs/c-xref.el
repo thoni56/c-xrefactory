@@ -2038,13 +2038,9 @@ tries to delete C-xrefactory windows first.
     (if (not (equal enc ""))
 	    (setq opts (append (list enc) opts))
       )
-    (if c-xref-prefer-import-on-demand
-	    (setq opts (append opts '("-addimportdefault=0")))
-      (setq opts (append opts '("-addimportdefault=1")))
-      )
     (setq opts (append opts (cons
-					 (format "%s" (buffer-file-name))
-					 nil)))
+			     (format "%s" (buffer-file-name))
+			     nil)))
 
     (c-xref-start-server-process opts c-xref-server-tasks-ofile 'c-xref-refactorer-process 'c-xref-refactorer-filter)
     (c-xref-wait-until-task-sync 'c-xref-refactorer-process bl)

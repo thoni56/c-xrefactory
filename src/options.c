@@ -26,7 +26,6 @@ Options presetOptions = {
     "gcc",                       // path to compiler to use for auto-discovering compiler and defines
     MULE_DEFAULT,                // encoding
     false,                       // completeParenthesis
-    IMPORT_ON_DEMAND,            // defaultAddImportStrategy
     false,                       // referenceListWithoutSource
     0,                           // comment moving level
     NULL,                        // prune name
@@ -1089,9 +1088,6 @@ static struct {
 static bool processAOption(int *argi, int argc, char **argv) {
     int i = *argi;
     if (0) {}
-    else if (strncmp(argv[i], "-addimportdefault=",18)==0) {
-        sscanf(argv[i]+18, "%d", (int *)&options.defaultAddImportStrategy);
-    }
     else if (strcmp(argv[i], "-about")==0) {
         options.serverOperation = OLO_ABOUT;
     }
