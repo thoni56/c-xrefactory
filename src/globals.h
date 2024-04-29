@@ -37,16 +37,8 @@ extern int yyIdBufferIndex;
 extern char *s_cppVarArgsName;
 extern StringList *javaClassPaths;
 extern char *javaSourcePaths;
-extern IdList *s_javaLangName;
-extern IdList *s_javaLangStringName;
-extern IdList *s_javaLangCloneableName;
-extern IdList *s_javaIoSerializableName;
-extern IdList *s_javaLangClassName;
-extern IdList *s_javaLangObjectName;
 
 extern FILE *communicationChannel;
-
-extern bool javaPreScanOnly;
 
 extern CurrentlyParsedClassInfo parsedClassInfo;
 extern CurrentlyParsedClassInfo parsedClassInfoInit;
@@ -110,9 +102,5 @@ extern bool olstringServed;
 extern UsageKind olstringUsageKind;
 extern char *olstringInMacroBody;
 extern int s_olMacro2PassFile;
-
-/* **************** variables due to cpp **************** */
-
-extern char *s_javaThisPackageName;
 
 #endif

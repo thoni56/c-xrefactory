@@ -348,7 +348,6 @@ void callXref(int argc, char **argv, bool isRefactoring) {
             int inputCounter = 0;
             static bool messagePrinted = false;
 
-            javaPreScanOnly = true;
             for (; pffc != NULL; pffc = pffc->next) {
                 if (!messagePrinted) {
                     printPrescanningMessage();
@@ -360,7 +359,6 @@ void callXref(int argc, char **argv, bool isRefactoring) {
                 inputCounter++;
             }
 
-            javaPreScanOnly  = false;
             fileAbortEnabled = true;
 
             inputCounter = 0;

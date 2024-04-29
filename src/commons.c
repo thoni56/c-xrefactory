@@ -331,7 +331,7 @@ static void formatMessage(char *out, int errCode, char *text) {
 void warningMessage(int errCode, char *message) {
     char buffer[MAX_PPC_RECORD_SIZE];
 
-    if (!options.noErrors && !javaPreScanOnly) {
+    if (!options.noErrors) {
         formatMessage(buffer, errCode, message);
         if (options.xref2) {
             strcat(buffer, "\n");
@@ -366,7 +366,7 @@ static void writeErrorMessage(int errorCode, char *message) {
 }
 
 void errorMessage(int errCode, char *mess) {
-    if (!options.noErrors && !javaPreScanOnly) {
+    if (!options.noErrors) {
         writeErrorMessage(errCode, mess);
     }
 }

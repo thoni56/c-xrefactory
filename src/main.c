@@ -504,7 +504,7 @@ bool initializeFileProcessing(bool *firstPass, int argc, char **argv, // command
     *outLanguage = getLanguageFor(fileName);
     inputFileNumber = currentFile.characterBuffer.fileNumber;
     assert(options.mode);
-    if (options.mode==XrefMode && !javaPreScanOnly) {
+    if (options.mode==XrefMode) {
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION, getRealFileName_static(inputFileName));
         } else {

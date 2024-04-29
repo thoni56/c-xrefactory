@@ -20,8 +20,6 @@ CurrentlyParsedClassInfo parsedClassInfoInit = {0,};
 
 CurrentlyParsedInfo parsedInfo;
 
-bool javaPreScanOnly = false;
-
 
 /* Variables for capturing parameter positions */
 bool parameterListIsVoid; /* Is what looks like a parameter declaration actually "void" */
@@ -89,7 +87,6 @@ int s_olMacro2PassFile;
 /* ******************* yytext for yacc ****************** */
 char *yytext;
 
-char *s_javaThisPackageName = "";
 
 /* ************************************************************* */
 /* ************* constant during the program ******************* */

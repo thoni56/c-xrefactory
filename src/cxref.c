@@ -228,8 +228,6 @@ Reference *addNewCxReference(Symbol *symbol, Position *position, Usage usage,
     // do not record references during prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
     // TODO: So is this relevant now that HTML is gone?
-    if (javaPreScanOnly)
-        return NULL;
     if (symbol->linkName == NULL)
         return NULL;
     if (* symbol->linkName == 0)

@@ -99,9 +99,6 @@ TypeModifier defaultIntModifier;
 Symbol defaultIntDefinition;
 TypeModifier defaultPackedTypeModifier;
 
-Symbol *s_javaStringSymbol;
-char *s_javaThisPackageName = "";
-bool javaPreScanOnly;
 char *javaSourcePaths;
 StringList *javaClassPaths;
 int javaCharCodeBaseTypes[MAX_CHARS];
