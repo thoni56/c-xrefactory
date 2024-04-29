@@ -3,9 +3,7 @@
 
 #include "stdinc.h"
 #include <stdbool.h>
-
-#include "zlib.h"
-
+#include <unistd.h>
 
 typedef unsigned char uchar;
 
