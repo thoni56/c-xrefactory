@@ -25,8 +25,6 @@ typedef unsigned bitArray;
 
 /* auxiliary macros */
 #define BIT_ARR_NBITS1 (BIT_ARR_NBITS-1)        /* BIT_ARR_NBITS-1 */
-#define MODMSK (BIT_ARR_NBITS1)
-#define DIVMSK ~(MODMSK)
 
 #define BIT_ARR_DIVNBITS(n) (((n) & DIVMSK)>> BIT_ARR_NBITSLOG)
 #define BIT_ARR_N_TH_BIT(n) (1<<((n) & MODMSK))
