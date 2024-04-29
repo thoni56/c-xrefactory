@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 
 #include "log.h"
-#include "head.h"
+#include "constants.h"
 
 
 /* Do any type of file entry exist at path? */

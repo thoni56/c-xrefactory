@@ -2,10 +2,11 @@
 #define MISC_H_INCLUDED
 
 #include "proto.h"
+#include "constants.h"
 #include "symbol.h"
-#include "editor.h"
 #include "server.h"
 #include "menu.h"
+#include "completion.h"
 
 
 /*  some constants depending on architercture	*/

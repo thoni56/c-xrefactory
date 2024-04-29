@@ -2089,7 +2089,6 @@ bool isPushAllMethodsValidRefItem(ReferenceItem *ri) {
         return true;
     if (ri->type==TypeInducedError)
         return true;
-    //& if (strcmp(ri->linkName, LINK_NAME_MAYBE_THIS_ITEM)==0) return true;
     return false;
 }
 

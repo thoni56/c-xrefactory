@@ -5,9 +5,6 @@
 #define protected
 
 
-#include "constants.h"
-
-
 /* ******************** language identification ****************** */
 
 /* bitwise different */
