@@ -15,7 +15,6 @@ extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 extern bool fileAbortEnabled;
 
 extern int s_lastReturnedLexem;
-extern Position parsedPositions[SPP_MAX];
 
 extern bool cxResizingBlocked;
 extern unsigned s_recFindCl;

@@ -13,8 +13,6 @@ bool fileAbortEnabled;
 
 int s_lastReturnedLexem;
 
-Position parsedPositions[SPP_MAX];
-
 unsigned s_recFindCl = 1;
 
 CurrentlyParsedClassInfo parsedClassInfo;

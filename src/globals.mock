@@ -14,8 +14,6 @@ Symbol errorSymbol;
 bool olStringSecondProcessing;
 bool cxResizingBlocked;
 
-Position parsedPositions[SPP_MAX];
-
 Position s_staticPrefixStartPosition;
 
 jmp_buf cxmemOverflow;

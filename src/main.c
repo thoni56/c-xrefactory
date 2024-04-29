@@ -165,8 +165,6 @@ static void initStandardCxrefFileName(char *inputfile) {
 static void initializationsPerInvocation(void) {
     parsedClassInfo = parsedClassInfoInit;
     parsedInfo = (CurrentlyParsedInfo){0,};
-    for (int i=0; i<SPP_MAX; i++)
-        parsedPositions[i] = noPosition;
     cxRefPosition = noPosition;
     olstringFound = false;
     olstringServed = false;
