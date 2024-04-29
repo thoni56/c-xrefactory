@@ -126,10 +126,6 @@ static int savedWorkMemoryIndex = 0;
 %token EOI_TOKEN
 
 /* ******************************************************************** */
-/* special tokens used for nontrivial caching !!!! not used */
-%token CACHING1_TOKEN
-
-/* ******************************************************************** */
 %token OL_MARKER_TOKEN OL_MARKER_TOKEN1 OL_MARKER_TOKEN2
 
 /* ******************************************************************** */
@@ -150,7 +146,7 @@ static int savedWorkMemoryIndex = 0;
 
 /* ******************************************************************
  * LAST_TOKEN is to dimension the lexemEnum arrays, should always be
- * the last token, duh! If not there is a token that is not explicitly
+ * the last token, duh! If not, there is a token that is not explicitly
  * declared above. */
 
 %token LAST_TOKEN
