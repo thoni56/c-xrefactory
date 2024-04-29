@@ -288,7 +288,6 @@ static Int2StringDictionary typeNamesInitTable[] = {
     {TypeLong,              "long"},
     {TypeBoolean,           "boolean"},
     {TypeNull,              "null"},
-    {TypeOverloadedFunction,    "OverloadedFunction"},
 
     {TypeLabel,             "label"},
     {TypeKeyword,           "keyword"},

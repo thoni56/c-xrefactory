@@ -77,7 +77,6 @@
         ENUM(TypeLong)                                                  \
         ENUM(TypeBoolean)                                               \
         ENUM(TypeNull)                                                  \
-        ENUM(TypeOverloadedFunction)                                    \
         ENUM(MAX_CTYPE)                                                 \
         ENUM(TypeCppInclude)                                            \
         ENUM(TypeMacro)                                                 \

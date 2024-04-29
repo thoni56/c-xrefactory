@@ -132,7 +132,6 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
     case TypeLong:
     case TypeBoolean:
     case TypeNull:
-    case TypeOverloadedFunction:
     case TypeCppIfElse:
     case TypeCppCollate:
     case TypeYaccSymbol:
