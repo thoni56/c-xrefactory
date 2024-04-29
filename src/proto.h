@@ -243,9 +243,6 @@ enum refsFilterLevels {
     MAX_REF_LIST_FILTER_LEVEL,
 };
 
-#include "storage.h"
-#include "type.h"
-
 enum javaPCTIndex { /* java Primitive Conversion Table Indexes */
     PCTIndexError = 0,
     PCTIndexByte,
