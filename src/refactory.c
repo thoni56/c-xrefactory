@@ -548,8 +548,6 @@ static void askForReallyContinueConfirmation(void) {
 static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMarkerList *diff2,
                                              OlcxReferences *diffrefs) {
     if (diff1 != NULL || diff2 != NULL) {
-        //&editorDumpMarkerList(diff1);
-        //&editorDumpMarkerList(diff2);
         for (SymbolsMenu *mm = diffrefs->menuSym; mm != NULL; mm = mm->next) {
             mm->selected = true;
             mm->visible  = true;
@@ -558,10 +556,6 @@ static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMark
             freeReferences(mm->references.references);
             mm->references.references = NULL;
         }
-        //&editorDumpMarkerList(diff1);
-        //& safetyCheckFailPrepareRefStack();
-        //& pushMarkersAsReferences(&diff1, diffrefs, LINK_NAME_SAFETY_CHECK_LOST);
-        //& pushMarkersAsReferences(&diff2, diffrefs, LINK_NAME_SAFETY_CHECK_FOUND);
         pushMarkersAsReferences(&diff1, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
         pushMarkersAsReferences(&diff2, diffrefs, LINK_NAME_SAFETY_CHECK_MISSED);
         freeEditorMarkerListButNotMarkers(diff1);

@@ -55,19 +55,10 @@ typedef enum language {
 
 // special link names starts by one space character
 // special local link names starts by two spaces
-#define LINK_NAME_CLASS_TREE_ITEM               " [classTree]"
-#define LINK_NAME_IMPORTED_QUALIFIED_ITEM       " redundant long names of the project"
-#define LINK_NAME_IMPORT_STATEMENT              "  import statement"
 #define LINK_NAME_UNIMPORTED_QUALIFIED_ITEM     "  unimported type"
-#define LINK_NAME_MAYBE_THIS_ITEM               "  method's \"maybe this\" dependencies"
-#define LINK_NAME_SUPER_METHOD_ITEM             "  \"super\" dot method references"
-#define LINK_NAME_NOT_FQT_ITEM                  "  not fully qualified names"
 #define LINK_NAME_FUNCTION_SEPARATOR            "  fun separator"
 #define LINK_NAME_SAFETY_CHECK_MISSED           "  Conflicting References"
-#define LINK_NAME_SAFETY_CHECK_LOST             "  References lost by refactoring"
-#define LINK_NAME_SAFETY_CHECK_FOUND            "  Unexpected new references"
 #define LINK_NAME_INDUCED_ERROR                 "  References Misinterpreted due to previous Errors"
-#define LINK_NAME_MOVE_CLASS_MISSED             "  Symbols Inaccessible After Class Moving"
 
 #define LINK_NAME_SEPARATOR '!'
 #define LINK_NAME_COLLATE_SYMBOL '#'
@@ -90,10 +81,6 @@ typedef enum language {
 // because if not, YACC will put there defaults !!!!!!
 #define YYSTACKSIZE 5000
 
-/* **************  edit communication constants  ***************** */
-
-#define CC_COMPLETION   'c'
-#define CC_CXREF        'x'
 
 /* ***************** OLCX COMMUNICATION CHARS ******************** */
 
@@ -108,8 +95,6 @@ typedef enum language {
 /* ********************************************************************** */
 
 #define TYPE_STR_RESERVE   100  /* reserve when sprinting type name */
-                                /* is it still actual ????????????? */
-#define NEST_VIRT_COMPL_OFFSET 1000
 
 #define MAXIMAL_INT             ((int) (((unsigned) -2)>>1))
 
