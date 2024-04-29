@@ -1,0 +1,119 @@
+PROTOCOL_ITEM(String, C_XREF_FILE_VERSION_NUMBER,       "1.6.0")
+
+PROTOCOL_ITEM(String, PPC_NO_TAG,                       "-- no tag --")
+
+PROTOCOL_ITEM(String, PPC_VERSION_MISMATCH,             "version-mismatch")
+
+PROTOCOL_ITEM(String, PPC_FULL_MULTIPLE_COMPLETIONS,    "full-completions")
+PROTOCOL_ITEM(String, PPC_ALL_COMPLETIONS,              "all-completions")
+PROTOCOL_ITEM(String, PPC_MULTIPLE_COMPLETION_LINE,     "cl")
+PROTOCOL_ITEM(String, PPC_SINGLE_COMPLETION,            "single-completion")
+PROTOCOL_ITEM(String, PPC_FQT_COMPLETION,               "fqt-completion")
+PROTOCOL_ITEM(String, PPC_SYMBOL_LIST,                  "symbol-list")
+
+PROTOCOL_ITEM(String, PPC_CALL_MACRO,                   "macro")
+PROTOCOL_ITEM(String, PPC_REFACTORING_PRECHECK,         "precheck")
+
+PROTOCOL_ITEM(String, PPC_REFACTORING_REPLACEMENT,      "replacement")
+PROTOCOL_ITEM(String, PPC_REFACTORING_CUT_BLOCK,        "cut-block")
+PROTOCOL_ITEM(String, PPC_REFACTORING_COPY_BLOCK,       "copy-block")
+PROTOCOL_ITEM(String, PPC_REFACTORING_PASTE_BLOCK,      "paste-block")
+
+
+PROTOCOL_ITEM(String, PPC_ASK_CONFIRMATION,             "ask-confirmation")
+PROTOCOL_ITEM(String, PPC_ADD_TO_IMPORTS_DIALOG,        "add-to-imports-dialog")
+PROTOCOL_ITEM(String, PPC_EXTRACTION_DIALOG,            "extraction-dialog")
+
+PROTOCOL_ITEM(String, PPC_DISPLAY_RESOLUTION,           "display-resolution")
+PROTOCOL_ITEM(String, PPC_DISPLAY_OR_UPDATE_BROWSER,    "display-or-update-browser")
+PROTOCOL_ITEM(String, PPC_SYMBOL_RESOLUTION,            "resolution")
+PROTOCOL_ITEM(String, PPC_SYMBOL,                       "symbol")
+PROTOCOL_ITEM(String, PPC_VIRTUAL_SYMBOL,               "virtual-symbol")
+PROTOCOL_ITEM(String, PPC_CLASS,                        "class")
+
+PROTOCOL_ITEM(String, PPC_REFERENCE_LIST,               "reference-list")
+PROTOCOL_ITEM(String, PPC_SRC_LINE,                     "src-line")
+PROTOCOL_ITEM(String, PPC_UPDATE_CURRENT_REFERENCE,     "update-current-refn")
+
+PROTOCOL_ITEM(String, PPC_NO_PROJECT,                   "no-project-found")
+PROTOCOL_ITEM(String, PPC_NO_SYMBOL,                    "no-symbol-found")
+PROTOCOL_ITEM(String, PPC_SET_INFO,                     "set-info")
+PROTOCOL_ITEM(String, PPC_WARNING,                      "warning")
+PROTOCOL_ITEM(String, PPC_BOTTOM_WARNING,               "bottom-warning")
+PROTOCOL_ITEM(String, PPC_ERROR,                        "error")
+PROTOCOL_ITEM(String, PPC_FATAL_ERROR,                  "fatalError")
+PROTOCOL_ITEM(String, PPC_INFORMATION,                  "information")
+PROTOCOL_ITEM(String, PPC_BOTTOM_INFORMATION,           "bottom-information")
+PROTOCOL_ITEM(String, PPC_DEBUG_INFORMATION,            "debug-information")
+
+PROTOCOL_ITEM(String, PPC_GOTO,                         "goto")
+PROTOCOL_ITEM(String, PPC_BROWSE_URL,                   "browse-url")
+PROTOCOL_ITEM(String, PPC_FILE_SAVE_AS,                 "file-save-as")
+PROTOCOL_ITEM(String, PPC_MOVE_FILE_AS,                 "file-move-as")
+PROTOCOL_ITEM(String, PPC_KILL_BUFFER_REMOVE_FILE,      "kill-buffer-remove-file")
+PROTOCOL_ITEM(String, PPC_MOVE_DIRECTORY,               "move-directory")
+PROTOCOL_ITEM(String, PPC_INDENT,                       "indent-block")
+
+PROTOCOL_ITEM(String, PPC_IGNORE,                       "ignore")
+PROTOCOL_ITEM(String, PPC_PROGRESS,                     "progress")
+
+PROTOCOL_ITEM(String, PPC_UPDATE_REPORT,                "update-report")
+
+PROTOCOL_ITEM(String, PPC_AVAILABLE_REFACTORINGS,       "available-refactorings")
+
+PROTOCOL_ITEM(String, PPC_SYNCHRO_RECORD,               "sync")
+
+
+PROTOCOL_ITEM(String, PPC_LC_POSITION,                  "position-lc")
+PROTOCOL_ITEM(String, PPC_OFFSET_POSITION,              "position-off")
+PROTOCOL_ITEM(String, PPC_STRING_VALUE,                 "str")
+PROTOCOL_ITEM(String, PPC_INT_VALUE,                    "int")
+
+
+PROTOCOL_ITEM(String, PPCA_LEN,                 "len")
+PROTOCOL_ITEM(String, PPCA_LINE,                "line")
+PROTOCOL_ITEM(String, PPCA_COL,                 "col")
+PROTOCOL_ITEM(String, PPCA_OFFSET,              "off")
+PROTOCOL_ITEM(String, PPCA_VALUE,               "val")
+PROTOCOL_ITEM(String, PPCA_LEVEL,               "lev")
+PROTOCOL_ITEM(String, PPCA_VCLASS,              "vcl")
+PROTOCOL_ITEM(String, PPCA_SELECTED,            "selected")
+PROTOCOL_ITEM(String, PPCA_BASE,                "base")
+PROTOCOL_ITEM(String, PPCA_DEF_REFN,            "drefn")
+PROTOCOL_ITEM(String, PPCA_REFN,                "refn")
+PROTOCOL_ITEM(String, PPCA_TYPE,                "type")
+PROTOCOL_ITEM(String, PPCA_MTYPE,               "mtype")
+PROTOCOL_ITEM(String, PPCA_CONTINUE,            "continue")
+PROTOCOL_ITEM(String, PPCA_INTERFACE,           "interface")
+PROTOCOL_ITEM(String, PPCA_INDENT,              "indent")
+PROTOCOL_ITEM(String, PPCA_TREE_DEPS,           "deps")
+PROTOCOL_ITEM(String, PPCA_TREE_UP,             "up")
+PROTOCOL_ITEM(String, PPCA_DEFINITION,          "definition")
+PROTOCOL_ITEM(String, PPCA_SYMBOL,              "symbol")
+PROTOCOL_ITEM(String, PPCA_BEEP,                "beep")
+PROTOCOL_ITEM(String, PPCA_NUMBER,              "number")
+PROTOCOL_ITEM(String, PPCA_NO_FOCUS,            "nofocus")
+
+
+PROTOCOL_ITEM(int, PPCV_BROWSER_TYPE_INFO,      0)
+PROTOCOL_ITEM(int, PPCV_BROWSER_TYPE_WARNING,   1)
+
+
+COMMENT("The constants for available refactorings are defined in refactorings.h")
+PROTOCOL_ITEM(int, PPC_AVR_NO_REFACTORING,                AVR_NO_REFACTORING)
+PROTOCOL_ITEM(int, PPC_AVR_RENAME_SYMBOL,                 AVR_RENAME_SYMBOL)
+PROTOCOL_ITEM(int, PPC_AVR_RENAME_MODULE,                 AVR_RENAME_MODULE)
+PROTOCOL_ITEM(int, PPC_AVR_ADD_PARAMETER,                 AVR_ADD_PARAMETER)
+PROTOCOL_ITEM(int, PPC_AVR_DEL_PARAMETER,                 AVR_DEL_PARAMETER)
+PROTOCOL_ITEM(int, PPC_AVR_MOVE_PARAMETER,                AVR_MOVE_PARAMETER)
+PROTOCOL_ITEM(int, PPC_AVR_PULL_UP_FIELD,                 AVR_PULL_UP_FIELD)
+PROTOCOL_ITEM(int, PPC_AVR_PULL_UP_METHOD,                AVR_PULL_UP_METHOD)
+PROTOCOL_ITEM(int, PPC_AVR_PUSH_DOWN_FIELD,               AVR_PUSH_DOWN_FIELD)
+PROTOCOL_ITEM(int, PPC_AVR_PUSH_DOWN_METHOD,              AVR_PUSH_DOWN_METHOD)
+PROTOCOL_ITEM(int, PPC_AVR_EXTRACT_FUNCTION,              AVR_EXTRACT_FUNCTION)
+PROTOCOL_ITEM(int, PPC_AVR_EXTRACT_MACRO,                 AVR_EXTRACT_MACRO)
+PROTOCOL_ITEM(int, PPC_AVR_EXTRACT_VARIABLE,              AVR_EXTRACT_VARIABLE)
+PROTOCOL_ITEM(int, PPC_AVR_SET_MOVE_TARGET,               AVR_SET_MOVE_TARGET)
+PROTOCOL_ITEM(int, PPC_AVR_UNDO,                          AVR_UNDO)
+
+COMMENT("There HAS to be an end of line at the end of the file")

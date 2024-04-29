@@ -1,0 +1,20 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-rfct-del-param" "-olcxparnum=3" "-olcursor=2196" "-addimportdefault=0" "CURDIR/src/classhierarchy.c" -o server-buffer
+<sync>
+<goto>
+ <position-off off=2196 len=<n>>CURDIR/src/classhierarchy.c</position-off>
+</goto>
+<goto>
+ <position-off off=4146 len=<n>>CURDIR/src/classhierarchy.c</position-off>
+</goto>
+<goto>
+ <position-off off=2227 len=<n>>CURDIR/src/classhierarchy.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>, char *fn</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=2196 len=<n>>CURDIR/src/classhierarchy.c</position-off>
+</goto>
+-exit
+end-of-options
+
