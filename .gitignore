@@ -1,0 +1,14 @@
+*.o
+*.so
+*.dll
+*.dylib
+*.d
+*.gcov
+*~
+src/structs-example.c
+src/tmp-*.g
+.vscode
+\#*\#
+coverage
+*.info
+.tup

@@ -1,0 +1,20 @@
+:source-highlighter: highlightjs
+:icons: font
+:numbered:
+:toc: left
+:pp: ++
+:title-page:
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= C-xrefactory - a C/Yacc refactoring and code browsing tool - Design Documentation
+v{VERSION} - Generated {localdate}
+
+WARNING: This document is very much a work in progress.
+
+

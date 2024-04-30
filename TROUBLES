@@ -1,0 +1,112 @@
+**********************************************************************
+*                               TROUBLES                             *
+**********************************************************************
+NOTE: These are old instructions and might not be appropriate any more.
+----------------------------------------------------------------------
+You see a message of form:
+
+:[warning] main.c:160, can't open file tin.h
+
+This  means that  the directory  containing  the 'tin.h'  file is  not
+specified  in  your include  paths.   You  should  edit your  personal
+'~/.c-xrefrc' file and add there the
+
+    -I directory
+
+option, where directory is the directory containing the 'tin.h' file.
+
+----------------------------------------------------------------------
+While creating cross references of a file 'myfile.c' you see a message
+like:
+
+'myfile.c':[warning] stdlib.h:32, can't open file stddef.h
+
+meaning that the file 'stddef.h', included from the standard header
+'stdlib.h', was not found. This can occur when your compiler is using
+non standard include directories. In this case you have to determine
+which directory contains 'stdlib.h' and add this directory, using the
+'-I' option, into your '~/.c-xrefrc' file.  In order to determine the
+include directory of your compiler, you can pre-process your input
+file with your compiler and look for the place where the searched file
+was included, i.e. (following our example) type:
+
+    gcc -E myfile.c | grep "stddef.h"
+
+and you will obtain an output in the form:
+
+ #line 1 "/usr/lib/gcc-lib/i386-redhat-linux/2.7.2.3/include/stddef.h" 1 3
+
+Here you see the directory containing the file in question and you can
+now add the line:
+
+    -I /usr/lib/gcc-lib/i386-redhat-linux/2.7.2.3/include
+
+to your '.c-xrefrc' file.
+
+----------------------------------------------------------------------
+While calling code completion you receive the error message:
+
+    '[error] sorry, memory mbMemory overflowed over borne'
+
+The macro-body memory overflowed. This probably means that you have
+invoked the completion inside a macro invocation with no closing
+parentheses. Just put a closing parenthesis after the macro argument
+and call the completion again.  If this does not work, read the
+following item.
+
+----------------------------------------------------------------------
+You receive an error message of the form :
+
+    '[error] sorry, memory XXX overflowed over borne'
+
+This means that some internal memory table overflowed.  This problem
+occurs when your files are bigger than expected.  In the
+'src/constants.h' file find the corresponding constant, which should
+be something like SIZE_XXX, adjust it to fit your application size,
+and re-compile C-xrefactory.
+
+
+----------------------------------------------------------------------
+You see a message like:
+
+    "[error] position over MAX_REFERENCABLE_LINE"
+or
+    "[error] position over MAX_REFERENCABLE_COLUMN"
+
+
+It means that your program is too long. There are either too many
+lines in a single file, or a line which is too long.
+
+C-xrefactory only supports files below ~4 million lines (and
+columns). If you encounter this you should really rewrite your
+application and report the case on
+https://github.com/thoni56/c-xrefactory.
+
+----------------------------------------------------------------------
+You see a message like:
+
+    "[warning] cx_memory resizing required"
+
+This happens when the memory which stores cross references overflows
+and cannot be resized anymore.  If this happens when calling an
+editing macro you should probably put the "-noincluderefs" option in
+your .c-xrefrc option file.  If this does not help edit the
+'src/constants.h' file and increase the CX_MEMORY_CHUNK_SIZE constant
+value and recompile.  If the message appears while creating cross
+references you will need to either use the "-mf<n>" command line
+option, or increase the CX_MEMORY_CHUNK_SIZE constant as in the
+previous case.
+
+
+----------------------------------------------------------------------
+
+
+**********************************************************************
+*                           ACKNOWLEDGMENTS                          *
+**********************************************************************
+
+Many thanks to Ed Soniat, Paul Ruben and Reuben Thomas for their help
+with Xrefactory documentation. Thanks to Dmitry Kuminov for OS/2 port.
+Thanks also to Jean-loup Gailly and Mark Adler for their generous
+license to use zlib library, allowing us to read compressed .jar
+archives.
