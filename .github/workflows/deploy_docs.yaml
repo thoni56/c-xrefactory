@@ -21,20 +21,15 @@ jobs:
 
       - name: Install Asciidoctor and Asciidoctor-Diagram
         run: |
-          gem install asciidoctor asciidoctor-diagram asciidoctor-pdf
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y make  # Install make if not available
+          gem install asciidoctor asciidoctor-diagram asciidoctor-pdf --user-install
+          echo "PATH=$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH" >> $GITHUB_ENV
 
       - name: Run Make
         run: |
-          cd docs  # Changes directory to where the Makefile is located
-          make ci  # Executes your Make target that builds docs
+          make -C doc ci
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/doc/dist  # Adjusts the path to the build output directory
+          publish_dir: ./doc/dist  # Adjusts the path to the build output directory
