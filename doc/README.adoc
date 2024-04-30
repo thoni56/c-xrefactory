@@ -1,6 +1,6 @@
 # c-xrefactory Documentation
 
-- https://thoni56.github.io/c-xrefactory/c-xrefactory.html[Quick User Guide]
-- https://thoni56.github.io/c-xrefactory/manual.html[User Manual] WORK IN PROGRESS!
-- https://thoni56.github.io/c-xrefactory/guidebook.html[Software Guidebook] WORK IN PROGRESS!
+- c-xrefactory.html[Quick User Guide]
+- manual.html[User Manual] WORK IN PROGRESS!
+- guidebook.html[Software Guidebook] WORK IN PROGRESS!
 

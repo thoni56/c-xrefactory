@@ -1,4 +1,4 @@
-## Functional Overview
+== Functional Overview
 
 The _c-xref_ program is actually a mish-mash of a multitude of
 features baked into one program. This is the major cause of the mess
@@ -30,7 +30,7 @@ each having a clear usage.
 The following sections are aimed at describing various features of
 `c-xrefactory`.
 
-### Options, option files and configuration
+=== Options, option files and configuration
 
 The current version of C-xrefactory allows only two possible sets of
 configuration/options.

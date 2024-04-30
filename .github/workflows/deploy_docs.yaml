@@ -1,0 +1,40 @@
+name: Build and Deploy Documentation
+
+# Defines when the action will run. 
+on:
+  push:
+    branches:
+      - main  # Trigger the action on pushes to the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest  # Specifies the runner environment
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3  # Checks out your repository under $GITHUB_WORKSPACE
+
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Ensures Python 3.x is installed, adjust as needed for your project
+
+      - name: Install Asciidoctor and Asciidoctor-Diagram
+        run: |
+          gem install asciidoctor asciidoctor-diagram asciidoctor-pdf
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make  # Install make if not available
+
+      - name: Run Make
+        run: |
+          cd docs  # Changes directory to where the Makefile is located
+          make ci  # Executes your Make target that builds docs
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/doc/dist  # Adjusts the path to the build output directory

@@ -1,4 +1,4 @@
-## Quality Attributes
+== Quality Attributes
 
 The most important quality attributes are
 
