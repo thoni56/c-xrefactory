@@ -263,7 +263,8 @@ void searchSymbolCheckReference(ReferenceItem  *referenceItem, Reference *refere
     // cut package name for checking
     do {
         s = strchr(sname, '.');
-        if (s!=NULL) sname = s+1;
+        if (s!=NULL)
+            sname = s+1;
     } while (s!=NULL);
     slen = strlen(sname);
     if (searchStringMatch(sname, slen)) {

@@ -805,7 +805,6 @@ static EditorMarkerList *pushGetAndPreCheckReferences(EditorMarker *point, char 
     return occs;
 }
 
-/* JAVA only */
 static void multipleReferencesInSamePlaceMessage(Reference *r) {
     char tmpBuff[TMP_BUFF_SIZE];
     ppcGotoPosition(&r->position);

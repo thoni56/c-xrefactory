@@ -136,7 +136,7 @@ S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
     assert(s->type == TypeStruct || s->type == TypeUnion);
     assert(s->u.structSpec);
     assert(rfs);
-    fillRecFindStr(rfs, s, NULL, NULL,s_recFindCl++);
+    fillRecFindStr(rfs, s, NULL, NULL, s_recFindCl++);
     recFindPush(s, rfs);
     return rfs;
 }
@@ -224,7 +224,7 @@ int findStrRecord(Symbol *symbol,
                   char *recname,   /* can be NULL */
                   Symbol **res) {
     S_recFindStr rfs;
-    return findStrRecordSym(res, iniFind(symbol,&rfs), recname);
+    return findStrRecordSym(res, iniFind(symbol, &rfs), recname);
 }
 
 /* and push reference */
@@ -235,15 +235,12 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
                                    Id *super /* covering special case when invoked
                                                 as SUPER.sym, berk */
 ) {
-    S_recFindStr    rfs;
-    Reference     *ref;
+    S_recFindStr rfs;
+    Reference *ref = NULL;
+    Result rr = findStrRecordSym(res, iniFind(sym, &rfs), record->name);
 
-    ref = NULL;
-    // when in java, then always in qualified name, so access and visibility checks
-    // are useless.
-    Result rr = findStrRecordSym(res, iniFind(sym,&rfs),record->name);
     if (rr == RESULT_OK) {
-        ref = addCxReference(*res,&record->position,UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
+        ref = addCxReference(*res, &record->position, UsageUsed, NO_FILE_NUMBER, NO_FILE_NUMBER);
     } else {
         noSuchFieldError(record->name);
     }

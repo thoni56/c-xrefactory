@@ -368,24 +368,33 @@ static void javaSignatureSPrint(char *buff, int *size, char *sig, int longOrShor
 void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
                          int argsStyle) {
     int tlen;
-    char *tt;
+    char *l;
 
-    tt = strchr(javaLinkName, LINK_NAME_SEPARATOR);
-    if (tt==NULL) tt = javaLinkName;
-    else tt ++;
-    for(; *tt && *tt!='('; tt++) {
-        if (*tt == '/' || *tt=='\\' || *tt=='$') *ff++ = '.';
-        else *ff++ = *tt;
+    l = strchr(javaLinkName, LINK_NAME_SEPARATOR);
+    if (l==NULL)
+        l = javaLinkName;
+    else
+        l ++;
+
+    for(; *l && *l!='('; l++) {
+        if (*l == '/' || *l=='\\' || *l=='$')
+            *ff++ = '.';
+        else
+            *ff++ = *l;
         maxlen--;
-        if (maxlen <=0) goto fini;
+        if (maxlen <=0)
+            goto fini;
     }
-    if (*tt == '(') {
+
+    if (*l == '(') {
+        /* TODO: This looks like it is related to Java, why? */
         tlen = maxlen + TYPE_STR_RESERVE;
-        if (tlen <= TYPE_STR_RESERVE) goto fini;
-        *ff ++ = '('; tlen--;
-        javaSignatureSPrint(ff, &tlen, tt, argsStyle);
+        if (tlen <= TYPE_STR_RESERVE)
+            goto fini;
+        *ff++ = '('; tlen--;
+        javaSignatureSPrint(ff, &tlen, l, argsStyle);
         ff += tlen;
-        *ff ++ = ')';
+        *ff++ = ')';
     }
  fini:
     *ff = 0;
