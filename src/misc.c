@@ -337,7 +337,7 @@ static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
 /* TODO: dotify has one of the values DOTIFY_NAME, KEEP_SLASHES or 0
    Convert to enums or keep bool?
 */
-void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotifyMode) {
+static void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotifyMode) {
     getClassFqtNameFromFileNum(nn, tmpOut);
     if (dotifyMode == DOTIFY_NAME)
         javaDotifyFileName(tmpOut);
@@ -361,7 +361,7 @@ static char *javaGetShortClassName(char *inn) {
 char *javaGetShortClassNameFromFileNum_static(int fnum) {
     static char res[TMP_STRING_SIZE];
     javaGetClassNameFromFileNumber(fnum, res, DOTIFY_NAME);
-    return(javaGetShortClassName(res));
+    return javaGetShortClassName(res);
 }
 
 static void javaSignatureSPrint(char *buff, int *size, char *sig, int longOrShortName) {

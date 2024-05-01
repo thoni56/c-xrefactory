@@ -85,7 +85,6 @@ extern void expandWildcardsInOnePath(char *fn, char *outpaths, int olen);
 extern void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen);
 extern char *getRealFileName_static(char *fn);
 extern bool stringContainsSubstring(char *s, char *subs);
-extern void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotifyMode);
 extern void javaDotifyFileName(char *ss);
 extern char *javaGetShortClassNameFromFileNum_static(int fnum);
 extern int substringIndex(char *string, char *substring);

@@ -71,10 +71,6 @@ bool stringContainsSubstring(char *s, char *subs) {
   return (bool) mock(s, subs);
 }
 
-void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotify) {
-  mock(nn, tmpOut, dotify);
-}
-
 void javaDotifyFileName(char *ss) {
   mock(ss);
 }
