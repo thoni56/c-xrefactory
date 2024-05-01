@@ -98,8 +98,6 @@ enum miscellaneous { /* misc. constants */
     GEN_NO_OUTPUT,
     GET_PRIMARY_START,
     GET_STATIC_PREFIX_START,
-    NO_OVERWRITE_CHECK,
-    CHECK_OVERWRITE,
     ALLOW_EDITOR_FILES,
     DO_NOT_ALLOW_EDITOR_FILES,
     DEPTH_ONE,
