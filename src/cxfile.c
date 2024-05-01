@@ -7,7 +7,6 @@
 
 
 #include "characterreader.h"
-#include "classhierarchy.h"
 #include "completion.h"
 #include "cxref.h"
 #include "fileio.h"

@@ -299,24 +299,6 @@ char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
 
 /* ******************************************************************* */
 
-static char *javaCutClassPathFromFileName(char *fname) {
-    StringList    *cp;
-    int             len;
-    char            *res;
-
-    res = fname;
-    for(cp=javaClassPaths; cp!=NULL; cp=cp->next) {
-        len = strlen(cp->string);
-        if (filenameCompare(cp->string, fname, len) == 0) {
-            res = fname+len;
-            goto fini;
-        }
-    }
- fini:
-    if (*res=='/' || *res=='\\') res++;
-    return(res);
-}
-
 void javaDotifyFileName(char *ss) {
     char *s;
     for (s=ss; *s; s++) {
@@ -327,7 +309,7 @@ void javaDotifyFileName(char *ss) {
 // file num is not neccessary a class item !
 static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
     char *dd, *ss;
-    ss = javaCutClassPathFromFileName(getRealFileName_static(getFileItem(fnum)->name));
+    ss = getRealFileName_static(getFileItem(fnum)->name);
     strcpy(ttt, ss);
     dd = lastOccurenceInString(ttt, '.');
     if (dd!=NULL) *dd=0;
