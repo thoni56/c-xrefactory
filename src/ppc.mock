@@ -63,8 +63,8 @@ void ppcBottomInformation(char *string) {
   mock(string);
 }
 
-void ppcDisplaySelection(char *message, int messageType, int continuation) {
-  mock(message, messageType, continuation);
+void ppcDisplaySelection(char *message, int messageType) {
+  mock(message, messageType);
 }
 
 void ppcGotoMarker(EditorMarker *pos) {

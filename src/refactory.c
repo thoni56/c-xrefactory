@@ -237,11 +237,11 @@ static void beInteractive(void) {
 // -------------------- end of interface to edit server sub-task ----------------------
 ////////////////////////////////////////////////////////////////////////////////////////
 
-static void displayResolutionDialog(char *message, int messageType, int continuation) {
+static void displayResolutionDialog(char *message, int messageType) {
     char buf[TMP_BUFF_SIZE];
     strcpy(buf, message);
     formatOutputLine(buf, ERROR_MESSAGE_STARTING_OFFSET);
-    ppcDisplaySelection(buf, messageType, continuation);
+    ppcDisplaySelection(buf, messageType);
     beInteractive();
 }
 
@@ -264,7 +264,7 @@ static void pushReferences(EditorMarker *point, char *pushOption, char *resolveM
     }
     olCreateSelectionMenu(sessionData.browserStack.top->command);
     if (resolveMessage != NULL && olcxShowSelectionMenu()) {
-        displayResolutionDialog(resolveMessage, messageType, CONTINUATION_ENABLED);
+        displayResolutionDialog(resolveMessage, messageType);
     }
 }
 
@@ -566,10 +566,10 @@ static bool handleSafetyCheckDifferenceLists(EditorMarkerList *diff1, EditorMark
             displayResolutionDialog("The module already exists and is referenced in the original"
                                     "project. Renaming will join two modules without possibility"
                                     "of inverse refactoring",
-                                    PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
+                                    PPCV_BROWSER_TYPE_WARNING);
         } else {
             displayResolutionDialog("These references may be misinterpreted after refactoring",
-                                    PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
+                                    PPCV_BROWSER_TYPE_WARNING);
         }
         return false;
     } else

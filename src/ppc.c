@@ -118,12 +118,12 @@ void ppcGenRecord(char *kind, char *message) {
             message, kind);
 }
 
-void ppcDisplaySelection(char *message, int messageType, int continuation) {
+void ppcDisplaySelection(char *message, int messageType) {
     ppcIndent();
     fprintf(communicationChannel, "<%s %s=%ld %s=%d %s=%d>%s</%s>\n", PPC_DISPLAY_RESOLUTION,
             PPCA_LEN, (unsigned long)strlen(message),
             PPCA_MTYPE, messageType,
-            PPCA_CONTINUE, (continuation==CONTINUATION_ENABLED) ? 1 : 0,
+            PPCA_CONTINUE, 1,
             message, PPC_DISPLAY_RESOLUTION);
 }
 
