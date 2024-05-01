@@ -5,7 +5,7 @@ all:
 
 start:
 	docker pull structurizr/lite
-	docker run -it --rm -p 8080:8080 -v $(PWD):/usr/local/structurizr structurizr/lite
+	docker run --rm -p 8080:8080 -v $(PWD):/usr/local/structurizr structurizr/lite
 
 ci html: dist/index.html dist/manual.html dist/guidebook.html
 
@@ -28,4 +28,4 @@ guidebook.adoc: docs/*.adoc 00-guidebook.header
 # And the diagrams we can export as PUML using Structurizr CLI
 exported_images:
 	docker pull structurizr/cli:latest
-	docker run -it --rm -v $$PWD:/usr/local/structurizr structurizr/cli export -workspace workspace.dsl -format plantuml -output diagrams
+	docker run --rm -v $$PWD:/usr/local/structurizr structurizr/cli export -workspace workspace.dsl -format plantuml -output diagrams
