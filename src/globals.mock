@@ -100,7 +100,6 @@ Symbol defaultIntDefinition;
 TypeModifier defaultPackedTypeModifier;
 
 char *javaSourcePaths;
-StringList *javaClassPaths;
 int javaCharCodeBaseTypes[MAX_CHARS];
 
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];

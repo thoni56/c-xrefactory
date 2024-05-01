@@ -3,8 +3,6 @@
 
 #include "constants.h"
 #include "completion.h"
-#include "symboltable.h"
-#include "stringlist.h"
 #include "proto.h"
 #include "usage.h"
 
@@ -35,7 +33,6 @@ extern Id yyIdBuffer[YYIDBUFFER_SIZE];
 extern int yyIdBufferIndex;
 
 extern char *s_cppVarArgsName;
-extern StringList *javaClassPaths;
 extern char *javaSourcePaths;
 
 extern FILE *communicationChannel;
