@@ -120,6 +120,8 @@ enum fileEncodings {
 
 /* *******************      comment moving levels for refactoring      *************** */
 
+/* Not used, but was probably used by move class/method/field, let's keep it for now */
+
 typedef enum commentMovingMode {
     CM_NO_COMMENT,
     CM_SINGLE_SLASHED,
@@ -129,15 +131,6 @@ typedef enum commentMovingMode {
     CM_ALL_STARRED,
     CM_ALL_SLASHED_AND_STARRED,
 } CommentMovingMode;
-
-/* *******************      generating imports defaults      *************** */
-
-// do not touch this! order is used, with arithmetics!
-typedef enum addImportsDefault {
-    IMPORT_ON_DEMAND,
-    IMPORT_SINGLE_TYPE,
-    IMPORT_KEEP_FQT_NAME,
-} AddImportStrategyKind;
 
 /* *******************      refactoring continuations      *************** */
 
@@ -173,8 +166,6 @@ enum menuFilterLevels {
     FilterAllOfSameName,
     FilterSameProfile,
     FilterSameProfileRelatedClass,
-    //&	FilterVirtualAdequate,
-    //&	FilterVirtualSameAppl,
     MAX_MENU_FILTER_LEVEL,
 };
 
