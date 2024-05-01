@@ -7346,7 +7346,7 @@ refactoring.
     ;; move
     (c-xref-server-call-refactoring-task
      (append moveopt (list
-			      (format "-commentmovinglevel=%d" c-xref-commentary-moving-level)
+			      (format "-commentmovinglevel=%d" c-xref-comments-moving-level)
 			      (format "-movetargetfile=%s" tf)
 			      (format "-rfct-param1=%s" c-xref-moving-refactoring-line))))
 

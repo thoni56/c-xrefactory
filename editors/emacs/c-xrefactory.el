@@ -191,7 +191,7 @@
 ;; when updating browser, keep lastly set filter level
 (defvar c-xref-keep-last-symbols-filter t)
 
-(defvar c-xref-commentary-moving-level 0)
+(defvar c-xref-comments-moving-level 0)
 
 (defvar c-xref-prefer-import-on-demand t)
 
@@ -519,7 +519,7 @@ C-xrefactory refactoring functions.
 	:type '(boolean)
 	:group 'c-xrefactory-refactoring)
 
-  (defcustom c-xref-commentary-moving-level 0
+  (defcustom c-xref-comments-moving-level 0
 	"The value of this variable determines how much commenting preceding a function, variable or field is moved together with it when a moving refactoring is applied. '0' moves no comments at all. '1' moves one doubleslashed comments (// ...). '2' moves one standard comment (/* ... */). '3' moves one doubleslashed and one standard comment. '4' moves all doubleslashed comments. '5' moves all standard comments. Finally, '6' moves all doubleslashed and all standard comments."
 	:type '(integer)
 	:group 'c-xrefactory-refactoring)
@@ -623,15 +623,15 @@ faces and highlighting in buffers created by C-xrefactory.
 (defvar c-xref-project-menu (make-sparse-keymap "Project"))
 (fset 'c-xref-project-menu (symbol-value 'c-xref-project-menu))
 (define-key c-xref-project-menu [c-xref-prj-edit] '("Edit Options" .
-										            c-xref-project-edit-options))
+											    c-xref-project-edit-options))
 (define-key c-xref-project-menu [c-xref-prj-show-active] '("Show Active" .
-												           c-xref-project-active))
+													   c-xref-project-active))
 (define-key c-xref-project-menu [c-xref-prj-set-active] '("Set Active" .
-												          c-xref-project-set-active))
+													  c-xref-project-set-active))
 (define-key c-xref-project-menu [c-xref-prj-del] '("Delete" .
-										           c-xref-project-delete))
+											   c-xref-project-delete))
 (define-key c-xref-project-menu [c-xref-prj-new] '("New" .
-										           c-xref-project-new))
+											   c-xref-project-new))
 
 (defvar c-xref-unused-menu (make-sparse-keymap "Unused Symbols Detection"))
 (fset 'c-xref-unused-menu (symbol-value 'c-xref-unused-menu))

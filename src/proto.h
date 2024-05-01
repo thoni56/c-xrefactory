@@ -102,16 +102,6 @@ enum miscellaneous { /* misc. constants */
     DO_NOT_ALLOW_EDITOR_FILES,
     DEPTH_ONE,
     DEPTH_ANY,
-    INTERACTIVE_YES,
-    INTERACTIVE_NO,
-    MARKER_IS_IN_CODE,
-    MARKER_IS_IN_SLASH_COMMENT,
-    MARKER_IS_IN_STAR_COMMENT,
-    PROFILE_NOT_APPLICABLE,
-    PROFILE_APPLICABLE,
-    PROFILE_PARTIALLY_APPLICABLE,
-    USELESS_FQT_REFS_ALLOWED,
-    USELESS_FQT_REFS_DISALLOWED,
 };
 
 /* *******************      encodings      *************** */
