@@ -1706,6 +1706,7 @@ static bool processSOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-server")==0) {
         options.mode = ServerMode;
+        options.xref2 = true;
     }
     else return false;
     *argi = i;
