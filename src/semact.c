@@ -249,11 +249,9 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
 
 Reference *findStructureFieldFromType(TypeModifier *structure,
                                         Id *field,
-                                        Symbol **resultingSymbol,
-                                        int javaClassifier) {
+                                        Symbol **resultingSymbol) {
     Reference *reference = NULL;
 
-    assert(javaClassifier == CLASS_TO_ANY);
     assert(structure);
     if (structure->type != TypeStruct && structure->type != TypeUnion) {
         *resultingSymbol = &errorSymbol;
@@ -394,7 +392,7 @@ static void addInitializerRefs(Symbol *declaration, IdList *idList) {
             if (typeModifierP->type != TypeStruct && typeModifierP->type != TypeUnion)
                 return;
             Symbol *rec = NULL;
-            Reference *ref = findStructureFieldFromType(typeModifierP, id, &rec, CLASS_TO_ANY);
+            Reference *ref = findStructureFieldFromType(typeModifierP, id, &rec);
             if (ref == NULL)
                 return;
             assert(rec);

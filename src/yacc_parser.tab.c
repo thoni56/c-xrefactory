@@ -2930,7 +2930,7 @@ case 162:
 #line 496 "yacc_parser.y"
 {
         Symbol *rec=NULL;
-        yyval.ast_expressionType.data.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.data.typeModifier, yyvsp[0].ast_id.data, &rec, CLASS_TO_ANY);
+        yyval.ast_expressionType.data.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.data.typeModifier, yyvsp[0].ast_id.data, &rec);
         assert(rec);
         yyval.ast_expressionType.data.typeModifier = rec->u.typeModifier;
         assert(yyval.ast_expressionType.data.typeModifier);
@@ -2946,7 +2946,7 @@ case 164:
         Symbol *rec=NULL;
         yyval.ast_expressionType.data.reference = NULL;
         if (yyvsp[-3].ast_expressionType.data.typeModifier->type==TypePointer || yyvsp[-3].ast_expressionType.data.typeModifier->type==TypeArray) {
-            yyval.ast_expressionType.data.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.data.typeModifier->next, yyvsp[0].ast_id.data, &rec, CLASS_TO_ANY);
+            yyval.ast_expressionType.data.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.data.typeModifier->next, yyvsp[0].ast_id.data, &rec);
             assert(rec);
             yyval.ast_expressionType.data.typeModifier = rec->u.typeModifier;
         } else yyval.ast_expressionType.data.typeModifier = &errorModifier;
@@ -2973,7 +2973,7 @@ case 168:
         IdList *idList;
         for (idList = yyvsp[-2].ast_idList.data; idList != NULL; idList = idList->next) {
             Symbol *rec=NULL;
-            (void) findStructureFieldFromType(yyvsp[-5].ast_typeModifiers.data, &idList->id, &rec, CLASS_TO_ANY);
+            (void) findStructureFieldFromType(yyvsp[-5].ast_typeModifiers.data, &idList->id, &rec);
         }
         yyval.ast_expressionType.data.typeModifier = yyvsp[-5].ast_typeModifiers.data;
         yyval.ast_expressionType.data.reference = NULL;

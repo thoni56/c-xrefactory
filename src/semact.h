@@ -44,8 +44,7 @@ extern Reference *findStrRecordFromSymbol(Symbol *str,
                                           Id *super);
 extern Reference *findStructureFieldFromType(TypeModifier *structure,
                                              Id *field,
-                                             Symbol **resultingSymbol,
-                                             int javaClassifier);
+                                             Symbol **resultingSymbol);
 extern Result mergeArguments(Symbol *id, Symbol *ty);
 extern TypeModifier *simpleStrUnionSpecifier(Id *typeName,
                                              Id *id,

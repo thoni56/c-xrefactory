@@ -120,8 +120,8 @@ Reference *findStrRecordFromSymbol(Symbol *str, Id *record, Symbol **res, Id *su
     return (Reference *) mock(str, record, res, super);
 }
 
-Reference *findStructureFieldFromType(TypeModifier *structure, Id *field, Symbol **resultingSymbol, int javaClassifier) {
-    return (Reference *) mock(structure, field, resultingSymbol, javaClassifier);
+Reference *findStructureFieldFromType(TypeModifier *structure, Id *field, Symbol **resultingSymbol) {
+    return (Reference *) mock(structure, field, resultingSymbol);
 }
 
 Result mergeArguments(Symbol *id, Symbol *ty) {

@@ -88,10 +88,6 @@ typedef enum {
 
 enum miscellaneous { /* misc. constants */
     DEFAULT_VALUE = SEARCH_DEFINITIONS_SHORT + 1,
-    CLASS_TO_TYPE,
-    CLASS_TO_EXPR,
-    CLASS_TO_METHOD,
-    CLASS_TO_ANY,
     CX_FILE_ITEM_GEN,
     NO_CX_FILE_ITEM_GEN,
     LOADING_SYMBOL,

@@ -495,7 +495,7 @@ postfix_expr
     }
     | postfix_expr {setDirectStructureCompletionType($1.data.typeModifier);} '.' str_rec_identifier        {
         Symbol *rec=NULL;
-        $$.data.reference = findStructureFieldFromType($1.data.typeModifier, $4.data, &rec, CLASS_TO_ANY);
+        $$.data.reference = findStructureFieldFromType($1.data.typeModifier, $4.data, &rec);
         assert(rec);
         $$.data.typeModifier = rec->u.typeModifier;
         assert($$.data.typeModifier);
@@ -504,7 +504,7 @@ postfix_expr
         Symbol *rec=NULL;
         $$.data.reference = NULL;
         if ($1.data.typeModifier->type==TypePointer || $1.data.typeModifier->type==TypeArray) {
-            $$.data.reference = findStructureFieldFromType($1.data.typeModifier->next, $4.data, &rec, CLASS_TO_ANY);
+            $$.data.reference = findStructureFieldFromType($1.data.typeModifier->next, $4.data, &rec);
             assert(rec);
             $$.data.typeModifier = rec->u.typeModifier;
         } else $$.data.typeModifier = &errorModifier;
@@ -526,7 +526,7 @@ compound_literal                /* Added in C99 */
         IdList *idList;
         for (idList = $5.data; idList != NULL; idList = idList->next) {
             Symbol *rec=NULL;
-            (void) findStructureFieldFromType($2.data, &idList->id, &rec, CLASS_TO_ANY);
+            (void) findStructureFieldFromType($2.data, &idList->id, &rec);
         }
         $$.data.typeModifier = $2.data;
         $$.data.reference = NULL;
