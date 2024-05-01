@@ -168,7 +168,6 @@ static void setAvailableRefactoringsInMenu(SymbolsMenu *menu, Symbol *symbol, Us
     case TmodLongSigned:
     case TmodLongUnsigned:
     case TYPE_MODIFIERS_END:
-    case JAVA_TYPES:
     case MAX_CTYPE:
     case MAX_TYPE:
         FATAL_ERROR(ERR_INTERNAL, "unexpected case for symbol type in setAvailableRefactoringsInMenu()", XREF_EXIT_ERR);

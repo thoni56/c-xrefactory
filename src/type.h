@@ -71,7 +71,6 @@
         ENUM(TmodLongUnsigned)                                          \
         ENUM(TYPE_MODIFIERS_END)                                        \
         ENUM(TypeElipsis)                                               \
-        ENUM(JAVA_TYPES)                                                \
         ENUM(TypeByte)                                                  \
         ENUM(TypeShort)                                                 \
         ENUM(TypeLong)                                                  \
