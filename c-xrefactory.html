@@ -5,8 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
-<meta name="author" content="v{VERSION} - Generated 2024-05-01">
-<title>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</title>
+<title>C-xrefactory for Emacs</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -434,645 +433,153 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css">
 </head>
-<body class="article toc2 toc-left">
+<body class="article">
 <div id="header">
-<h1>C-xrefactory - a C/Yacc refactoring and code browsing tool - User Manual</h1>
-<div class="details">
-<span id="author" class="author">v{VERSION} - Generated 2024-05-01</span><br>
-</div>
-<div id="toc" class="toc2">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_c_xrefactory_intro">1. C-xrefactory Intro</a>
-<ul class="sectlevel2">
-<li><a href="#_what_is_c_xrefactory">1.1. What is C-xrefactory?</a></li>
-<li><a href="#_about_this_document">1.2. About this document</a></li>
-<li><a href="#_history">1.3. History</a></li>
-<li><a href="#_installing">1.4. Installing</a></li>
-<li><a href="#_usage">1.5. Usage</a></li>
-<li><a href="#_the_configuration_file">1.6. The configuration file</a></li>
-</ul>
-</li>
-<li><a href="#_release_history">Appendix A: Release History</a>
-<ul class="sectlevel2">
-<li><a href="#_1_6_15">A.1. 1.6.15</a></li>
-<li><a href="#_1_6_13">A.2. 1.6.13</a></li>
-<li><a href="#_1_6_11">A.3. 1.6.11</a></li>
-<li><a href="#_1_6_10">A.4. 1.6.10</a></li>
-</ul>
-</li>
-<li><a href="#_acknowledgements">2. Acknowledgements</a></li>
-</ul>
-</div>
+<h1>C-xrefactory for Emacs</h1>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_c_xrefactory_intro">1. C-xrefactory Intro</h2>
+<div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-This document is very much a work in progress.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_what_is_c_xrefactory">1.1. What is C-xrefactory?</h3>
-<div class="paragraph">
-<p><code>C-xrefactory</code> is a development tool for C developers that
-allows browsing variables and functions, as well as refactoring, in C
-and Yacc code.</p>
-</div>
-<div class="paragraph">
-<p>Here is a list of features</p>
-</div>
 <div class="ulist">
 <ul>
 <li>
-<p>Full integration with Emacs</p>
+<p>[General]</p>
 </li>
 <li>
-<p>Browsing source code in C supporting multiple pre-processing passes</p>
+<p>[Completion]</p>
 </li>
 <li>
-<p>Designed to work with large projects (&gt; millions of lines)</p>
+<p>[Browser]</p>
 </li>
 <li>
-<p>Update using only modified files</p>
+<p>[Symbol Retriever]</p>
 </li>
 <li>
-<p>First tool to <a href="https://www.martinfowler.com/articles/refactoringRubicon.html">Crossing Refactoring&#8217;s Rubicon</a> as described by Martin Fowler</p>
+<p>[Refactorer]</p>
 </li>
 <li>
-<p>Safe refactorings to</p>
+<p>[Refactorings]</p>
 </li>
 <li>
-<p>rename variables, functions etc.</p>
+<p>[Feedback]</p>
 </li>
 <li>
-<p>extract function/method</p>
-</li>
-<li>
-<p>delete, add, move parameters</p>
-</li>
-<li>
-<p>move field and method</p>
-</li>
-<li>
-<p>push down/pull up fields and methods</p>
-</li>
-<li>
-<p>Solid code completion, recognizing upto 15 different contexts</p>
-</li>
-<li>
-<p>Search for symbols using wildcards</p>
-</li>
-<li>
-<p>Find unused variables and functions, globally as well as locally</p>
-</li>
-<li>
-<p>Auto-detection of project</p>
-</li>
-<li>
-<p>Full undo in Emacs</p>
+<p>[License]</p>
 </li>
 </ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_about_this_document">1.2. About this document</h3>
-<div class="paragraph">
-<p>This document is a Work In Progress, as most things in this project at
-this stage.</p>
-</div>
-<div class="paragraph">
-<p>Things in this document might be out-dated, old, wrong or actually
-valid. Hopefully this will improve over time.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_history">1.3. History</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_installing">1.4. Installing</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_usage">1.5. Usage</h3>
-<div class="sect3">
-<h4 id="_emacs">1.5.1. Emacs</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_command_line_usage">1.5.2. Command line usage</h4>
-<div class="sect4">
-<h5 id="_use_case">Use case</h5>
-<div class="paragraph">
-<p>Normally the <code>c-xref</code> program is controlled from an editor adapter.
-But sometimes running it from the command line, e.g. as part setting
-up a project, investigating problems with <code>c-xref</code> or as a part of the
-<code>c-xrefactory</code> test suite, can be useful.</p>
-</div>
-<div class="paragraph">
-<p>Most options can be set in a configuration file to be effective for
-every execution of <code>c-xref</code> in a project.</p>
-</div>
-<div class="paragraph">
-<p>Here follows a description of the various available command line options.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_command_line_options">Command line options</h5>
-<div class="paragraph">
-<p>There is a large number of command line options.  Some of them might
-seem very obscure since they are only intended for use by the editor
-server protocol.  Below is a list of all of them grouped after their
-usage (grouping and descriptions is a Work In Progress).</p>
-</div>
-<div class="sect5">
-<h6 id="_operating_modes">Operating modes</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-refactory</dt>
-<dt class="hdlist1">-server</dt>
-<dd>
-<p><code>c-xrefactory</code> can operate in three different modes:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>xref - the cross-referencer (default)</p>
-</li>
-<li>
-<p>server - editor server, started by editor adapters</p>
-</li>
-<li>
-<p>refactory - refactoring editor, normally called by editor adapters</p>
-</li>
-</ul>
-</div>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_cross_referencing_options">Cross-referencing options</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-create</dt>
-<dd>
-<p>Overwrite any existing crossreference data with a completely new set.</p>
-</dd>
-<dt class="hdlist1">-fastupdate</dt>
-<dt class="hdlist1">-fullupdate, -update</dt>
-<dd>
-<p>"Fast update" ignores updated header files.
-NOTE: This option might be removed in the future.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_selecting_configuration_information">Selecting configuration information</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-p &lt;project&gt;</dt>
-<dd>
-<p><code>c-xrefactory</code> has project-based configurations. The <code>-p</code> selects
-which of the projects available in the selected configuration file
-(see <code>-xrefrc</code> option) that should be applied.</p>
-</dd>
-<dt class="hdlist1">-stdop &lt;file&gt;</dt>
-<dd>
-<p>Read <code>file</code> as a configuration file containing options, as if it was included from the selected configuration file.
-This makes it possible to share certain configuration options between multiple configuration files/projects.</p>
-</dd>
-<dt class="hdlist1">-xrefrc=&lt;file&gt;</dt>
-<dt class="hdlist1">-xrefrc &lt;file&gt;</dt>
-<dd>
-<p>Read the indicated <code>file</code> instead of the default <code>~/.c-xrefrc</code> for configuration information.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_variables_etc">Variables etc.</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-set &lt;variable&gt; &lt;value&gt;</dt>
-<dd>
-<p>Set <code>variable</code> to 'value' in the same fashion as environment variables.
-Variables set in this way can be used in configuration files and queried using the command line option <code>-get</code>.</p>
-</dd>
-<dt class="hdlist1">-get &lt;variable&gt;</dt>
-<dd>
-<p>Get the value of a previously set "environment variable".
-The value will be transfered over the edit server protocol as a <code>PPC_SET_INFO</code> record.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_character_encoding_etc">Character encoding etc.</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-crconversion</dt>
-<dt class="hdlist1">-crlfconversion</dt>
-<dd>
-<p>Convert various line-ending conventions to LF.</p>
-</dd>
-<dt class="hdlist1">-encoding=&lt;encoding&gt;</dt>
-<dd>
-<p>Consider source files to use the indicated text encoding (<code>default</code>, <code>european</code>, <code>euc</code>, <code>sjis</code>, <code>utf</code>, <code>utf-8</code>, <code>utf-16</code>, <code>utf-16le</code>, <code>utf-16be</code>).</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_error_reporting_and_output">Error reporting and output</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-errors, -no-errors</dt>
-<dt class="hdlist1">-warnings</dt>
-<dt class="hdlist1">-infos</dt>
-<dt class="hdlist1">-debug</dt>
-<dt class="hdlist1">-trace</dt>
-<dd>
-<p>Select level of information to print.</p>
-</dd>
-<dt class="hdlist1">-yydebug</dt>
-<dd>
-<p>Enable debugging of the C and Yacc parsers according to the Yacc manual.</p>
-</dd>
-<dt class="hdlist1">-briefoutput</dt>
-<dd>
-<p>This option inhibits a few messages related to Java runtime, class and source paths.
-Note: Currently used from the <code>refactory</code> mode.</p>
-</dd>
-<dt class="hdlist1">-o &lt;file&gt;</dt>
-<dd>
-<p>Redirect all output to <code>file</code> rather than to standard output.</p>
-</dd>
-<dt class="hdlist1">-log=&lt;file&gt;</dt>
-<dd>
-<p>Place all log output in <code>file</code>.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_c_specific_options">C specific options</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-D&lt;macro&gt;[=&lt;body&gt;]</dt>
-<dd>
-<p>Define a preprocessor macro or variable with name <code>macro</code> in the same fashion as for the C/C++ pre-processor.
-This is typically used to set variables differently for different passes (see <code>-pass</code>).</p>
-</dd>
-<dt class="hdlist1">-I &lt;directory&gt;</dt>
-<dd>
-<p>Look for included C header files also in <code>directory</code>.
-If used multiple times the order of search will be the same as the order of the occurence of the <code>-I</code> options.</p>
-</dd>
-<dt class="hdlist1">-compiler &lt;path&gt;</dt>
-<dd>
-<p>Sets the path of the C compiler to use.
-<code>c-xrefactory</code> tries to setup pre-defined types, pre-processor variables, include paths etc. so that the parsing of the C source will be as close to what the compiler the project is using does.
-If the project is not using the default C compiler, <code>cc</code>, then this option allows <code>c-xrefactory</code> to inquire some compilers for their settings and apply them automatically.</p>
-</dd>
-<dt class="hdlist1">-csuffixes=&lt;suffixes&gt;</dt>
-<dd>
-<p>This option indicates which file suffixes to consider being a C file.
-Multiple suffixes should be separated by <code>:</code>.</p>
-</dd>
-<dt class="hdlist1">-strict</dt>
-<dd>
-<p>Reject keywords and types that are not part of the ANSI C standard, such as <code><em>asm</em></code>, <code>_near</code> and <code><em>const</em></code>.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_editor_adapterserver_configuration">Editor adapter/server configuration</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-editor=&lt;editor&gt;</dt>
-<dd>
-<p>As there are minor differences between the editor adaptors for <code>emacs</code> and <code>jedit</code> the editor adapter uses this option to select the correct one.
-Default is <code>emacs</code>.</p>
-</dd>
-<dt class="hdlist1">-xrefactory-II</dt>
-<dd>
-<p>Applicable only to <code>server</code> mode.
-Will use a second generation protocol between the edit server and the editor adapter.
-Using the edit server/refactorer without activating <code>-xrefactory-II</code> is deprecated.
-Will be deprecated and removed in the future when legacy protocol is removed.</p>
-</dd>
-<dt class="hdlist1">-urldirect</dt>
-<dd>
-<p>Let editor navigate directly to URLs instead of creating a temporary file which is to be loaded.
-Default is to generate a temporary file.
-NOTE: This option might be removed in the future.</p>
-</dd>
-<dt class="hdlist1">-urlmanualredirect</dt>
-<dd>
-<p>If a temporary HTML file is generated to let the editor navigate to a URL (JavaDoc) then this option will override the default to automatically redirect to that URL.
-Instead the user wil have to press the link manually in the editor.
-NOTE: This option might be removed in the future.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_miscellaneous">Miscellaneous</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-about</dt>
-<dt class="hdlist1">-help</dt>
-<dt class="hdlist1">-version</dt>
-<dd>
-<p>Print short or long help text or version information.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_internal_options">Internal options</h6>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This should probably be in the design document instead.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The refactorer internally calls the main c-xref indexing function and controls it by passing "command line options".
-Here is a list of those "options", which shall not be used from the command line.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-exactpositionresolve</dt>
-<dd>
-<p>If a symbol is defined in multiple places, like it can be in C, using this flag will consider those instances different based on them being in different locations.</p>
-</dd>
-</dl>
-</div>
-<div class="paragraph">
-<p>What you want or need is unfortunately depending on your situation.
-If you don&#8217;t use this option then navigation and refactorings will affect all occurrences.</p>
-</div>
-<div class="paragraph">
-<p>One particular scenario is if you have mocked some functions (like with Cgreen) then you have at least two symbols with the same name and parameter lists.
-In this case you really want refactorings like renames and parameter changes to also affect the mocks, although they are not actually the "same" symbol.
-If <code>-exactpositionresolve</code> is used then the actual function and its mock version would be considered different symbols and a refactoring would only affect the selected one, leaving you to sync up the other manually.</p>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_as_yet_unsorted_options">As yet unsorted options</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">-addimportdefault</dt>
-<dt class="hdlist1">-browsedsym</dt>
-<dt class="hdlist1">-commentmovinglevel</dt>
-<dt class="hdlist1">-completeparenthesis</dt>
-<dt class="hdlist1">-completioncasesensitive</dt>
-<dt class="hdlist1">-completionoverloadwizdeep</dt>
-<dt class="hdlist1">-continuerefactoring</dt>
-<dt class="hdlist1">-displaynestedwithouters</dt>
-<dt class="hdlist1">-exit</dt>
-<dt class="hdlist1">-extractAddrParPrefix</dt>
-<dt class="hdlist1">-filescasesensitive</dt>
-<dt class="hdlist1">-filescaseunsensitive</dt>
-<dt class="hdlist1">-maxcompls</dt>
-<dt class="hdlist1">-mf</dt>
-<dt class="hdlist1">-movetargetclass</dt>
-<dt class="hdlist1">-movetargetfile</dt>
-<dt class="hdlist1">-no-autoupdatefromsrc</dt>
-<dt class="hdlist1">-no-includerefresh</dt>
-<dt class="hdlist1">-no-includerefs</dt>
-<dt class="hdlist1">-olallchecks</dt>
-<dt class="hdlist1">-olcheckaccess</dt>
-<dt class="hdlist1">-olchecklinkage</dt>
-<dt class="hdlist1">-olcheckversion</dt>
-<dt class="hdlist1">-olcomplback</dt>
-<dt class="hdlist1">-olcomplforward</dt>
-<dt class="hdlist1">-olcomplselect</dt>
-<dt class="hdlist1">-olcursor</dt>
-<dt class="hdlist1">-olcxargmanip</dt>
-<dt class="hdlist1">-olcxcbrowse</dt>
-<dt class="hdlist1">-olcxcgoto</dt>
-<dt class="hdlist1">-olcxclasslines</dt>
-<dt class="hdlist1">-olcxclasstree</dt>
-<dt class="hdlist1">-olcxcomplet</dt>
-<dt class="hdlist1">-olcxcplsearch</dt>
-<dt class="hdlist1">-olcxctinspectdef</dt>
-<dt class="hdlist1">-olcxcurrentclass</dt>
-<dt class="hdlist1">-olcxcurrentsuperclass</dt>
-<dt class="hdlist1">-olcxdynamictostatic1</dt>
-<dt class="hdlist1">-olcxencapsulate</dt>
-<dt class="hdlist1">-olcxencapsulatesc1</dt>
-<dt class="hdlist1">-olcxencapsulatesc2</dt>
-<dt class="hdlist1">-olcxextract</dt>
-<dt class="hdlist1">-olcxfilter</dt>
-<dt class="hdlist1">-olcxgetcurrentrefn</dt>
-<dt class="hdlist1">-olcxgetparamcoord</dt>
-<dt class="hdlist1">-olcxgetprojectname</dt>
-<dt class="hdlist1">-olcxgetrefactorings</dt>
-<dt class="hdlist1">-olcxgetsymboltype</dt>
-<dt class="hdlist1">-olcxgoto</dt>
-<dt class="hdlist1">-olcxgotocaller</dt>
-<dt class="hdlist1">-olcxgotocurrent</dt>
-<dt class="hdlist1">-olcxgotodef</dt>
-<dt class="hdlist1">-olcxgotoparname</dt>
-<dt class="hdlist1">-olcxintersection</dt>
-<dt class="hdlist1">-olcxlccursor</dt>
-<dt class="hdlist1">-olcxlist</dt>
-<dt class="hdlist1">-olcxlisttop</dt>
-<dt class="hdlist1">-olcxmaybethis</dt>
-<dt class="hdlist1">-olcxmctarget</dt>
-<dt class="hdlist1">-olcxmenuall</dt>
-<dt class="hdlist1">-olcxmenufilter</dt>
-<dt class="hdlist1">-olcxmenugo</dt>
-<dt class="hdlist1">-olcxmenuinspectclass</dt>
-<dt class="hdlist1">-olcxmenuinspectdef</dt>
-<dt class="hdlist1">-olcxmenunone</dt>
-<dt class="hdlist1">-olcxmenuselect</dt>
-<dt class="hdlist1">-olcxmenusingleselect</dt>
-<dt class="hdlist1">-olcxmethodlines</dt>
-<dt class="hdlist1">-olcxmmtarget</dt>
-<dt class="hdlist1">-olcxmodified</dt>
-<dt class="hdlist1">-olcxnext</dt>
-<dt class="hdlist1">-olcxnotfqt</dt>
-<dt class="hdlist1">-olcxnotfqtinclass</dt>
-<dt class="hdlist1">-olcxparnum</dt>
-<dt class="hdlist1">-olcxparnum2</dt>
-<dt class="hdlist1">-olcxpop</dt>
-<dt class="hdlist1">-olcxpoponly</dt>
-<dt class="hdlist1">-olcxprevious</dt>
-<dt class="hdlist1">-olcxprimarystart</dt>
-<dt class="hdlist1">-olcxpush</dt>
-<dt class="hdlist1">-olcxpushallinmethod</dt>
-<dt class="hdlist1">-olcxpushandcallmacro</dt>
-<dt class="hdlist1">-olcxpushfileunused</dt>
-<dt class="hdlist1">-olcxpushforlm</dt>
-<dt class="hdlist1">-olcxpushglobalunused</dt>
-<dt class="hdlist1">-olcxpushname</dt>
-<dt class="hdlist1">-olcxpushonly</dt>
-<dt class="hdlist1">-olcxpushspecialname</dt>
-<dt class="hdlist1">-olcxrename</dt>
-<dt class="hdlist1">-olcxrepush</dt>
-<dt class="hdlist1">-olcxsafetycheck1</dt>
-<dt class="hdlist1">-olcxsafetycheck2</dt>
-<dt class="hdlist1">-olcxsafetycheckinit</dt>
-<dt class="hdlist1">-olcxsafetycheckmovedblock</dt>
-<dt class="hdlist1">-olcxsafetycheckmovedfile</dt>
-<dt class="hdlist1">-olcxsearch</dt>
-<dt class="hdlist1">-olcxshowctree</dt>
-<dt class="hdlist1">-olcxsyntaxpass</dt>
-<dt class="hdlist1">-olcxtaggoto</dt>
-<dt class="hdlist1">-olcxtagsearch</dt>
-<dt class="hdlist1">-olcxtagsearchback</dt>
-<dt class="hdlist1">-olcxtagsearchforward</dt>
-<dt class="hdlist1">-olcxtagselect</dt>
-<dt class="hdlist1">-olcxtarget</dt>
-<dt class="hdlist1">-olcxtopapplcl</dt>
-<dt class="hdlist1">-olcxtops</dt>
-<dt class="hdlist1">-olcxtoptype</dt>
-<dt class="hdlist1">-olcxunmodified</dt>
-<dt class="hdlist1">-olcxuselesslongnames</dt>
-<dt class="hdlist1">-olcxuselesslongnamesinclass</dt>
-<dt class="hdlist1">-olcxwindel</dt>
-<dt class="hdlist1">-olcxwindelfile</dt>
-<dt class="hdlist1">-olcxwindelwin</dt>
-<dt class="hdlist1">-olexaddress</dt>
-<dt class="hdlist1">-olexmacro</dt>
-<dt class="hdlist1">-olfqtcompletionslevel</dt>
-<dt class="hdlist1">-olinelen</dt>
-<dt class="hdlist1">-olmanualresolve</dt>
-<dt class="hdlist1">-olmark</dt>
-<dt class="hdlist1">-olnocheckaccess</dt>
-<dt class="hdlist1">-olnodialog</dt>
-<dt class="hdlist1">-oocheckbits</dt>
-<dt class="hdlist1">-optinclude</dt>
-<dt class="hdlist1">-pass</dt>
-<dt class="hdlist1">-pause &lt;n&gt;</dt>
-<dd>
-<p>Will sleep <code>n</code> seconds before proceeding with next argument or processing.
-Useful when attaching a debugger to an edit server process.</p>
-</dd>
-<dt class="hdlist1">-preload &lt;file1&gt; &lt;file2&gt;</dt>
-<dd>
-<p>Indicates that the current content of the editor copy of <code>file1</code> is available in <code>file2</code>.
-If an editor has an edited, non-saved, buffer holding a relevant <code>file1</code> it is supposed that the editor adaptor saves the content into a file and indicates this to the edit server using this option.</p>
-</dd>
-<dt class="hdlist1">-prune</dt>
-<dt class="hdlist1">-refnum</dt>
-<dt class="hdlist1">-refs</dt>
-<dt class="hdlist1">-renameto</dt>
-<dt class="hdlist1">-resetIncludeDirs</dt>
-<dt class="hdlist1">-rfct-add-param</dt>
-<dt class="hdlist1">-rfct-add-to-imports</dt>
-<dt class="hdlist1">-rfct-del-param</dt>
-<dt class="hdlist1">-rfct-dynamic-to-static</dt>
-<dt class="hdlist1">-rfct-encapsulate-field</dt>
-<dt class="hdlist1">-rfct-expand</dt>
-<dt class="hdlist1">-rfct-extract-macro</dt>
-<dt class="hdlist1">-rfct-extract-function</dt>
-<dt class="hdlist1">-rfct-move-all-classes-to-new-file</dt>
-<dt class="hdlist1">-rfct-move-class</dt>
-<dt class="hdlist1">-rfct-move-class-to-new-file</dt>
-<dt class="hdlist1">-rfct-move-field</dt>
-<dt class="hdlist1">-rfct-move-param</dt>
-<dt class="hdlist1">-rfct-move-static-field</dt>
-<dt class="hdlist1">-rfct-move-static-method</dt>
-<dt class="hdlist1">-rfct-param1</dt>
-<dt class="hdlist1">-rfct-param2</dt>
-<dt class="hdlist1">-rfct-pull-up-field</dt>
-<dt class="hdlist1">-rfct-pull-up-method</dt>
-<dt class="hdlist1">-rfct-push-down-field</dt>
-<dt class="hdlist1">-rfct-push-down-method</dt>
-<dt class="hdlist1">-rfct-reduce</dt>
-<dt class="hdlist1">-rfct-reduce-long-names-in-the-file</dt>
-<dt class="hdlist1">-rfct-rename</dt>
-<dt class="hdlist1">-rfct-rename-class</dt>
-<dt class="hdlist1">-rfct-rename-package</dt>
-<dt class="hdlist1">-rfct-self-encapsulate-field</dt>
-<dt class="hdlist1">-rfct-static-to-dynamic</dt>
-<dt class="hdlist1">-rlistwithoutsrc</dt>
-<dt class="hdlist1">-searchdef</dt>
-<dt class="hdlist1">-searchdefshortlist</dt>
-<dt class="hdlist1">-searchshortlist</dt>
-<dd>
-<p>&#8230;&#8203;</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_the_configuration_file">1.6. The configuration file</h3>
-
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_release_history">Appendix A: Release History</h2>
+<h2 id="_general">General</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In this section only the introduction or changes of major user level features are listed, and thus only MINOR versions.
-For a detailed log of features, enhancements and bug fixes visit the projects repository on GitHub, <a href="https://github.com/thoni56/c-xrefactory" class="bare">https://github.com/thoni56/c-xrefactory</a>.</p>
+<p>C-xrefactory is a refactoring development environment for C/Yacc.  Its
+functions can be accessed via the 'c-xref' menu in Emacs.  Optionally
+the most frequent functions can be bound to shortcuts.  C-xrefactory
+can also be customized via standard Emacs customization dialog.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><strong>NOTE</strong> — Some of these descriptions refers to the jEdit plugin (not
+supported and may or may not work).</p>
+</div>
+</blockquote>
 </div>
 <div class="sect2">
-<h3 id="_1_6_15">A.1. 1.6.15</h3>
+<h3 id="_quick_start">Quick start</h3>
+<div class="paragraph">
+<p>To quickly start working with C-xrefactory just invoke any of its
+functions.  You will be asked for creation of a project.  Then
+C-xrefactory will create its database for the project and is ready for
+use.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_projects">Projects</h3>
+<div class="paragraph">
+<p>C-xrefactory is project based, you will need to create and maintain
+description of your projects. C-xrefactory projects can be
+autodetected.  C-xrefactory detects the 'active project' from the path
+of currently edited file.  Each project contains list of
+'autodetection directories' specifying when the project should be
+triggered 'active'.  Only one project at the time can be active.  In
+consequence 'autodetection directories' have to be distinct for all
+projects.  Information about the selected 'active project' is
+displayed after each browsing action in the bottom information line of
+the editor.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><strong>NOTE</strong> — Project autodetection directories are (in general) not the
+same as directories containing project files.  Project files can contain
+common libraries used in many projects, while project detection
+directory should be the directory which is project specific,
+i.e. directory containing project specific files not shared with other
+projects.</p>
+</div>
+</blockquote>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_referencedb">ReferenceDB</h3>
+<div class="paragraph">
+<p>The main part of C-xrefactory are the 'ReferenceDB'.  Each project has
+its references stored in special files specified by options.  They
+contain information about your project sources.  In particular,
+information about all symbols, their linking properties, place(s) of
+definition and all usages.  The ReferenceDB can be split into any
+number of files.  The number of files is specified by user.  A larger
+number of files makes browsing faster, but makes creation and update
+slower.  The maintenance of the ReferenceDB is to a large extent part
+automatic.  However they may become inconsistent, and when it does it
+is recommended to re-create the ReferenceDB manually.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c_xref_task">C-xref task</h3>
+<div class="paragraph">
+<p>C-xrefactory cooperates with an external task 'c-xref'.  If you feel
+that the task has run into an inconsistent state, you can invoke the
+'Kill c-xref task' function.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_completion">Completion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Completion is implemented with the function 'Complete', in Emacs
+usually bound to the the &lt;kbd&gt;F8&lt;/kbd&gt; key.  Completion tries to
+complete identifier before the caret by contextually appropriate
+strings.  C-xrefactory is recognizing different context among them,
+completion of function parameters, variable definitions, etc.  When
+several possibilities are available a completion dialog appears.</p>
+</div>
+<div class="sect2">
+<h3 id="_completion_dialog">Completion Dialog</h3>
+<div class="paragraph">
+<p>Each line of the dialog contains following informations: the
+identifier to insert and the full definition of the symbol.</p>
+</div>
+<div class="paragraph">
+<p>Symbol can be selected using standard motion keys.  The following
+special keys are available:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p>Add support for for-loop initializers in C</p>
+<p>&lt;kbd&gt;return&lt;/kbd&gt; — close dialog and insert completion.</p>
 </li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_1_6_13">A.2. 1.6.13</h3>
-<div class="ulist">
-<ul>
 <li>
-<p>Add support for C compound literals</p>
+<p>&lt;kbd&gt;space&lt;/kbd&gt; — inspect definition of the symbol.</p>
 </li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_1_6_11">A.3. 1.6.11</h3>
-<div class="ulist">
-<ul>
 <li>
-<p>First version in github based of Sourceforge GPL&#8217;d source</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_1_6_10">A.4. 1.6.10</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Latest version from <a href="https://xrefactory.com" class="bare">https://xrefactory.com</a></p>
+<p>&lt;kbd&gt;escape&lt;/kbd&gt; — return to invocation place and close dialog.</p>
 </li>
 </ul>
 </div>
@@ -1080,18 +587,612 @@ For a detailed log of features, enhancements and bug fixes visit the projects re
 </div>
 </div>
 <div class="sect1">
-<h2 id="_acknowledgements">2. Acknowledgements</h2>
+<h2 id="_browser">Browser</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Thanks to</p>
+<p>C-xrefactory browser allows resolving any symbol in source file,
+inspect its definition and all usages.  Following four basic functions
+are available for browsing and it is usual to bind them to hot-keys:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Marián Vittek, Bratislawa University, and his helpers that created
-this tool over many years.</p>
+<p>Browser &gt; Push Symbol and Goto Definition</p>
+</li>
+<li>
+<p>Browser &gt; Pop Symbol</p>
+</li>
+<li>
+<p>Browser &gt; Previous Reference</p>
+</li>
+<li>
+<p>Browser &gt; Next Reference.</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>When browsing a symbol, you first need to activate it by moving the
+caret on an occurrence of the symbol and invoke 'Push Symbol and Goto
+Definition' function.  In the case of success the caret is moved to
+the definition of the symbol. This is because inspecting definition is
+the most usual browsing function and it is performed together with the
+resolution. In case you are trying to browse a virtual method and the
+unique definition can not be determined by static analysis, the
+[Browser Dialog] is opened for manual resolution.
+After successful resolution you can inspect all usages of the symbol
+using 'Previous' and 'Next Reference' functions.</p>
+</div>
+<div class="paragraph">
+<p>Browser allows simultaneous browsing of multiple symbols. For example,
+let&#8217;s imagine you are browsing all usages of a variable 'variable' and
+you see that it is used as a parameter of a method 'method'.  So, you
+wish to find the definition of the 'method'. In this situation simply
+put caret on the 'method' and invoke 'Push Symbol and Goto Definition'
+once more time. You will be moved to the definition of the 'method'
+and you can inspect its code. After this you wish to continue browsing
+remaining usages of the 'variable'. But when you try to use 'Previous'
+and 'Next Reference' you see that those functions are now inspecting
+all usages of the 'method' (not 'variable' as you wish).  In this
+situation you first need to invoke the function 'Backward'. After
+this, the 'Previous' and 'Next Reference' functions works with usages
+of the 'variable'.</p>
+</div>
+<div class="paragraph">
+<p>As illustrated by this example, C-xrefactory browser is based on
+browser stack. Newly browsed symbols are pushed on the top of the
+stack by the function 'Push Symbol and Goto Definition'. Functions
+'Previous' and 'Next Reference' are inspecting previous and next usage
+of the symbol placed on the top of the stack. Function 'Backward' is
+removing one element from the top of the stack.</p>
+</div>
+<div class="paragraph">
+<p>It is possible to push back an element which was popped from the stack
+by error. This is done with the function 'Browser &gt; Forward'.  This
+function is particularly useful when using visualization of the
+browser stack in the Browser Dialog.</p>
+</div>
+<div class="paragraph">
+<p>Another way how to push references onto browser stack is the function:
+'Browser &gt; Push Name and Goto Definition'. This function takes a
+string pointed by the caret, scans the ReferenceDB and pushes ALL symbols
+having this name. No semantic information such as scopes or
+overloading resolution is taken into account. This is why this
+function is useful to find definition of a known symbol rather than to
+browse an existing code.  Also this function does not permit browsing
+of local symbols, such as local variables, parameters and labels, as
+they are not recorded in global ReferenceDB.</p>
+</div>
+<div class="sect2">
+<h3 id="_browser_dialog">Browser Dialog</h3>
+<div class="paragraph">
+<p>Browser dialog allows visualization of C-xrefactory browser stack by
+displaying its top element.  It contains two major information panes.
+Information displayed in information panes can be filtered by
+selecting filter from combo boxes placed above.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_toolbar">Toolbar</h3>
+<div class="paragraph">
+<p>Browser toolbar contains four buttons putting new symbol(s) onto browser
+stack.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Push Symbol and Goto Definition</strong>. This function parses the
+buffer opened in the editor pane and resolves the symbol pointed
+by the caret. This symbol is then pushed onto the browser
+stack. Then the caret is moved to the definition of the
+symbol. This is the most used browsing function.  If you want to
+browse a symbol from your program, this is the function to be
+used. Other functions are used for few specific cases when this
+function can not do the job.</p>
+</li>
+<li>
+<p><strong>Push Name and Goto Definition</strong>. This function takes the
+identifier pointed by the caret in the editor pane of jEdit and
+pushes onto the stack all global symbols having this name. No
+semantic information is examined, no overload or other resolution
+is made. This function allows to browse only references of global
+project symbols, it does not allow to browse local variables,
+method parameters and other local symbols.</p>
+</li>
+<li>
+<p><strong>Browse File Local Unused Symbols</strong>. This function parses the
+buffer opened in the editor pane and pushes onto browser stack all
+unused symbols with local scope. Those are local variables, method
+parameters, but also labels and import statements, so this
+function can be used to purge imports.</p>
+</li>
+<li>
+<p><strong>Browse Global Unused Symbols</strong>. This functions scans references and
+pushes them onto the browser stack.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Four other functions are accessible from the Toolbar:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Backward</strong>. Go back to the previously browsed symbol.</p>
+</li>
+<li>
+<p><strong>Forward</strong>. Go forward to the symbol (if any) from where you went back.</p>
+</li>
+<li>
+<p><strong>Previous Reference</strong>. Move to the previous reference of currently browsed symbol.</p>
+</li>
+<li>
+<p><strong>Next Reference</strong>. Move to the next reference of currently browsed symbol.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_browse_name">Browse name</h3>
+<div class="paragraph">
+<p>The browse name text field can be used to enter manually a name to be
+pushed onto the browser stack. This may be used when you wish to
+browse a symbol which you do not see in your source code. Otherwise,
+it is more natural to use either "Push Name and Goto Definition" or
+"Push Symbol and Goto Definition" function.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_symbol_pane">Symbol Pane</h3>
+<div class="paragraph">
+<p>The symbol information pane contains symbol names, profile
+informations and where those symbols are defined. Window is organized
+as tree. The tree shows the location of the symbols definition
+followed the number of references.</p>
+</div>
+<div class="paragraph">
+<p>|   |   |
+|---|---|
+| &lt;mouse-left-button&gt;              | select only one reference and inspect definition.  |
+| &lt;mouse-right-button&gt;             | toggle select/unselect.  |
+| &lt;SHIFT&gt;&lt;mouse-left-button&gt; | toggle select/unselect. |</p>
+</div>
+<div class="paragraph">
+<p><strong>Available filters</strong>:</p>
+</div>
+<div class="paragraph">
+<p>|   |   |
+|---|---|
+| Equal name    | all symbols of given name are displayed. Tree is not restricted. |
+| Equal&nbsp;profile | the browsed symbol is displayed. Tree is not restricted.  |
+| Relevant      | the browsed symbol is displayed. Tree does not display references not related to the browsed symbol.  |</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_references_pane">References Pane</h3>
+<div class="paragraph">
+<p>The references pane contains list of references. Each reference is
+listed together with corresponding line of source code. The list is
+selectable and selected reference is automatically opened in editor.</p>
+</div>
+<div class="paragraph">
+<p>Meaning of <strong>filters for classes</strong>:</p>
+</div>
+<div class="paragraph">
+<p>|   |   |
+|---|---|
+| Level&nbsp;3 | Only definitions and declarations are shown.  |
+| Level&nbsp;2 | As level 3 plus usages in the EXTENDS and IMPLEMENTS clauses  |
+| Level&nbsp;1 | As level 2  plus all usages  in the top level  scope (in global vars and method definitions). This can be used  to see all the methods working with a particular type. |
+| Level&nbsp;0 | All references are shown. |</p>
+</div>
+<div class="paragraph">
+<p>Meaning of <strong>filters for variables</strong>:</p>
+</div>
+<div class="paragraph">
+<p>|   |   |
+|---|---|
+| Level&nbsp;3 | Only definitions and declarations are shown.  |
+| Level&nbsp;2 | As level 3 plus l-value usages. |
+| Level&nbsp;1 | Not used. |
+| Level&nbsp;0 | All references are shown. |</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_symbol_retriever">Symbol Retriever</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>C-xrefactory symbol retriever is useful for finding forgotten symbol
+names and for finding symbols from third parties libraries.  You enter
+a string to search and C-xrefactory scans the references for
+matches. All symbols matching entered string are reported.</p>
+</div>
+<div class="paragraph">
+<p>Entered strings are interpreted as shell expressions and are composed
+from a sequence of characters possibly containing wildcard
+characters. The following wildcard characters can be used:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>*</code> expands to any (possibly empty) string</p>
+</li>
+<li>
+<p><code>?</code> expands to any single character</p>
+</li>
+<li>
+<p><code>[&#8230;&#8203;]</code> expands to one of the enclosed characters</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Ranges of characters can be included between <code>[</code> and <code>]</code>,
+so for example <code>[a-zA-Z]</code> matches any letter, <code>[0-9]</code> matches any
+digit, as per usual in shell expressions. If the first character
+following the <code>[</code> is a <code>^</code> then the meaning of the expansion is
+inverted, for example <code>[^0-9]</code> expands to any non-digit character.  A
+symbol is reported only if it completely matches the searched string.
+Method profile is considered as part of the name of the method, for
+example, the expression <code><strong>(*int</strong>)</code> will report all methods taking at
+least one parameter of type int.  Letters are considered case
+insensitive except letters enclosed between <code>[</code> and <code>]</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example the expression <code><strong>get</strong></code> will report all symbols containing
+the string 'get', for example symbols <code>getField</code> and <code>Target</code> will match.
+Expression <code>get*</code> will report all symbols starting by the string
+'get'. Expression <code><strong class="A-Z"></code> will report all symbols starting by an upper
+case letter. Expression <code>get[abc0-2]</strong></code> will report all symbols starting
+by the string 'get' followed by one of characters a,b,c,0,1,2 followed
+by any (possibly empty) string, so for example <code>getact</code> will match, but
+<code>getAccount</code> will not.</p>
+</div>
+<div class="paragraph">
+<p>If you enter an expression which does not contain any of the wildcard
+characters <code><strong></code>, <code>?</code> or <code>[</code> then C-xrefactory reports all symbols
+containing the entered string.  For example, entering <code>get</code> as the
+expression is equivalent to entering <code>*get</strong></code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_refactorer">Refactorer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Refactoring is a software development and maintenance process where
+the source code is changed in such a way that it does not alter the
+external behaviour. C-xrefactory offers automatic support for several
+general refactoring patterns available via refactorer function.
+Whenever it is possible it also checks that performed modifications do
+not change program behaviour. For example, in case of symbol renaming,
+C-xrefactory checks whether renamed symbol does not clash with an
+existing one, etc.</p>
+</div>
+<div class="paragraph">
+<p>Invocation of refactorings will display a pop up menu with
+refactorings available for symbol pointed by the caret. Selection of
+one of items will perform the refactoring.</p>
+</div>
+<div class="paragraph">
+<p>Here follows the list of refactorings implemented by C-xrefactory:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>[Rename Symbol]</p>
+</li>
+<li>
+<p>[Add Parameter]</p>
+</li>
+<li>
+<p>[Delete Parameter]</p>
+</li>
+<li>
+<p>[Move Parameter]</p>
+</li>
+<li>
+<p>[Extract Function/Macro]</p>
+</li>
+<li>
+<p>[Set Target for Next Moving Refactoring]</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_refactorings">Refactorings</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_rename_symbol">Rename Symbol</h3>
+<div class="paragraph">
+<p><strong>Description</strong>: Change the name of a program symbol</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong>:</p>
+</div>
+<div class="paragraph">
+<p><em>Before refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">for (int a=0; a&lt;args.length; a++) {
+    action(args[a]);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>After refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">for (int i=0; i&lt;args.length; i++) {
+    action(args[i]);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Refactoring Context</strong>: Cursor has to be on the symbol.</p>
+</div>
+<div class="paragraph">
+<p><strong>Input parameters</strong>: New name of the symbol (for example: 'i')</p>
+</div>
+<div class="paragraph">
+<p><strong>Mechanics</strong>:  Replace  old  symbol name  by  the  new  name on  all  its
+        occurrences in the project.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_add_parameter">Add Parameter</h3>
+<div class="paragraph">
+<p><strong>Description</strong>: Add parameter to a method, function or macro.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong>:</p>
+</div>
+<div class="paragraph">
+<p><em>Before refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">public int method(int x) {
+    if (x&lt;=1)
+	    return 1;
+    return method(x-1)+method(x-2);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>After refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">public int method(int x, int y) {
+    if (x&lt;=1)
+	    return 1;
+    return method(x-1, 0)+method(x-2, 0);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Refactoring Context</strong>: Cursor  has to be on the  method&#8217;s (function&#8217;s or
+        macro&#8217;s) name.</p>
+</div>
+<div class="paragraph">
+<p><strong>Input parameters</strong>:  Position of the new parameter,  its declaration and
+        default value.  (for example: '2', 'int y' and '0').</p>
+</div>
+<div class="paragraph">
+<p><strong>Mechanics</strong>: Inspect  all references of  the method (function  or macro)
+        and add  declaration of the  new parameter to  each definition
+        and default value to each invocation of the method.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_parameter">Delete Parameter</h3>
+<div class="paragraph">
+<p><strong>Description</strong>: Delete parameter of a method, function or macro.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong>:</p>
+</div>
+<div class="paragraph">
+<p><em>Before refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">public int method(int x, int y) {
+    if (x&lt;=1)
+	    return 1;
+    return method(x-1, 0)+method(x-2, 0);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>After refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">public int method(int x) {
+    if (x&lt;=1)
+	    return 1;
+    return method(x-1)+method(x-2);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Refactoring Context</strong>: Cursor  has to be on the  method&#8217;s (function&#8217;s or
+        macro&#8217;s) name.</p>
+</div>
+<div class="paragraph">
+<p><strong>Input parameters</strong>:  Position of the  parameter to delete  (for example:
+      '2').</p>
+</div>
+<div class="paragraph">
+<p><strong>Mechanics</strong>: Inspect  all references of  the method (function  or macro)
+        and remove the parameter.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_move_parameter">Move Parameter</h3>
+<div class="paragraph">
+<p><strong>Description</strong>: Reorder parameter of a method, function or macro.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong>:</p>
+</div>
+<div class="paragraph">
+<p><em>Before refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">public int method(int x, int y) {
+    if (x&lt;=1)
+		return 1;
+    return method(x-1, 0)+method(x-2, 0);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>After refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">public int method(int y, int x) {
+    if (x&lt;=1)
+	    return 1;
+    return method(0, x-1)+method(0, x-2);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Refactoring Context</strong>: Cursor  has to be on the  method&#8217;s (function&#8217;s or
+        macro&#8217;s) name.</p>
+</div>
+<div class="paragraph">
+<p><strong>Input parameters</strong>: Old and new positions of the parameter (for example:
+      '1' and '2').</p>
+</div>
+<div class="paragraph">
+<p><strong>Mechanics</strong>: Inspect all references of  the method and move the parameter
+        from its original to its new position.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_extract_functionmacro">Extract Function/Macro</h3>
+<div class="paragraph">
+<p><strong>Description</strong>: Extract region into a new function or macro.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong>:</p>
+</div>
+<div class="paragraph">
+<p><em>Before refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">int main(int argc, char *argv[]) {
+    int n,x,y,t;
+    n = atoi(argv[1]);
+    x=0; y=1;
+    for (int i=0; i&lt;n; i++) {
+        t=x+y; x=y; y=t;
+    }
+    sprintf("%d-th fib == %d", n, x);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>After refactoring</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c" data-lang="c">static int fib(int n) {
+    int x, y, t;
+    x=0; y=1;
+    for (int i=0; i&lt;n; i++) {
+        t=x+y; x=y; y=t;
+    }
+    return x;
+}
+
+int main(int argc, char *argv[]) {
+    int n,x,y,t;
+    n = atoi(argv[1]);
+    x = fib(n);
+    sprintf("%d-th fib == %d", n, x);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Refactoring Context</strong>: The code for extraction has to be selected within
+            the editor.</p>
+</div>
+<div class="paragraph">
+<p><strong>Input Parameters</strong>: Name of the new function or macro.</p>
+</div>
+<div class="paragraph">
+<p><strong>Mechanics</strong>: Copy the region  before the function, generate new
+           header  and footer  based on  static analysis  of  code and
+           generate call to the new method at the original place.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_target_for_next_moving_refactoring">Set Target for Next Moving Refactoring</h3>
+<div class="paragraph">
+<p><strong>Description</strong>: Set target position for moving refactorings</p>
+</div>
+<div class="paragraph">
+<p><strong>Refactoring Context</strong>: Cursor has to be on the position where the functio,
+        or variable will be moved.</p>
+</div>
+<div class="paragraph">
+<p><strong>Input Parameters</strong>: None.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_feedback">Feedback</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Any feedback is welcome at the [c-xrefactory GitHub repo].</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_license">License</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can read the license at the [c-xrefactory GitHub repo][repo license].</p>
+</div>
+<div class="paragraph">
+<p>&lt;!----------------------------- REFERENCE LINKS -----------------------------&#8594;</p>
+</div>
+<div class="paragraph">
+<p>[c-xrefactory GitHub repo]: <a href="https://github.com/thoni56/c-xrefactory" class="bare">https://github.com/thoni56/c-xrefactory</a> "Visit the c-xrefactory repository at GitHub"
+[repo license]: <a href="https://github.com/thoni56/c-xrefactory/blob/main/LICENSE" class="bare">https://github.com/thoni56/c-xrefactory/blob/main/LICENSE</a> "View c-xrefactory license file"</p>
+</div>
+<div class="paragraph">
+<p>&lt;!-- in-doc x-refs -&#8594;</p>
+</div>
+<div class="paragraph">
+<p>[Add Parameter]: #add-parameter
+[Browser Dialog]: #browser-dialog
+[Browser]: #browser
+[Completion]: #completion
+[Delete Parameter]: #delete-parameter
+[Extract Function/Macro]: #extract-methodfunctionmacro
+[Feedback]: #feedback
+[General]: #general
+[License]: #license
+[Move Parameter]: #move-parameter
+[Refactorer]: #refactorer
+[Refactorings]: #refactorings
+[Rename Symbol]: #rename-symbol
+[Set Target for Next Moving Refactoring]: #set-target-for-next-moving-refactoring
+[Symbol Retriever]: #symbol-retriever</p>
 </div>
 </div>
 </div>
@@ -1101,12 +1202,5 @@ this tool over many years.</p>
 Last updated 2024-05-01 07:02:00 UTC
 </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
-<script>
-if (!hljs.initHighlighting.called) {
-  hljs.initHighlighting.called = true
-  ;[].slice.call(document.querySelectorAll('pre.highlight > code[data-lang]')).forEach(function (el) { hljs.highlightBlock(el) })
-}
-</script>
 </body>
 </html>
