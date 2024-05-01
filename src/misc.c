@@ -453,18 +453,6 @@ char *simpleFileNameFromFileNum(int fnum) {
     return(simpleFileName(getRealFileName_static(getFileItem(fnum)->name)));
 }
 
-static void printSymbolLinkNameString(FILE *file, char *linkName) {
-    char temp[MAX_CX_SYMBOL_SIZE];
-    linkNamePrettyPrint(temp, linkName, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
-    fprintf(file, "%s", temp);
-}
-
-void printClassFqtNameFromClassNum(FILE *file, int fnum) {
-    char temp[MAX_CX_SYMBOL_SIZE];
-    getClassFqtNameFromFileNum(fnum, temp);
-    printSymbolLinkNameString(file, temp);
-}
-
 void sprintfSymbolLinkName(SymbolsMenu *menu, char *name) {
     if (menu->references.type == TypeCppInclude) {
         sprintf(name, "%s",

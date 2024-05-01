@@ -106,7 +106,6 @@ extern int compareFileNames(char *ss1, char *ss2);
 extern int filenameCompare(char *ss1, char *ss2, int n);
 extern void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,int argsStyle);
 extern char *simpleFileNameFromFileNum(int fnum);
-extern void printClassFqtNameFromClassNum(FILE *ff, int fnum);
 extern void sprintfSymbolLinkName(SymbolsMenu *ss, char *ttt);
 extern void printSymbolLinkName(SymbolsMenu *ss, FILE *ff);
 

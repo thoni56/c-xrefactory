@@ -127,10 +127,6 @@ char *simpleFileNameFromFileNum(int fnum) {
   return (char *) mock(fnum);
 }
 
-void printClassFqtNameFromClassNum(FILE *ff, int fnum) {
-  mock(ff, fnum);
-}
-
 void sprintfSymbolLinkName(SymbolsMenu *ss, char *ttt) {
   mock(ttt, ss);
 }
