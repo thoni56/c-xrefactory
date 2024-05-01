@@ -106,6 +106,7 @@ SymbolsMenu *olCreateNewMenuItem(ReferenceItem *symbol, int vApplClass, int vFun
 
 static bool referenceItemIsLess(ReferenceItem *s1, ReferenceItem *s2) {
     int cmp;
+
     cmp = strcmp(s1->linkName, s2->linkName);
     if (cmp < 0)
         return true;

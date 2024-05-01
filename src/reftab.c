@@ -1,11 +1,7 @@
-#include "proto.h"
 #include "head.h"
 
 #define IN_REFTAB_C
 #include "reftab.h"
-
-
-#include "hash.h"
 
 #include "memory.h"               /* For XX_ALLOCC */
 #include "log.h"
@@ -47,8 +43,8 @@ int getNextExistingReferenceItem(int index) {
     return -1;
 }
 
-int addToReferencesTable(ReferenceItem *referencesItem) {
-    return refTabAdd(&referenceTable, referencesItem);
+int addToReferencesTable(ReferenceItem *referenceItem) {
+    return refTabAdd(&referenceTable, referenceItem);
 }
 
 void pushReferenceItem(ReferenceItem *element, int position) {

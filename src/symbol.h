@@ -19,9 +19,6 @@ typedef struct symbol {
     Position pos;      /* definition position for most syms;
                           import position for imported classes! */
     unsigned npointers : 4; /* tmp. stored #of dcl. ptrs */
-    bool     isExplicitlyImported : 1; /* whether not imported by * import */
-    bool     javaSourceIsLoaded : 1;   /* is jsl source file loaded ? */
-    bool     javaClassIsLoaded : 1;    /* is class file loaded ? */
     Access   access : 12;              /* java access bits */
     Storage  storage : STORAGES_LN;
     Type     type : SYMTYPES_LN;

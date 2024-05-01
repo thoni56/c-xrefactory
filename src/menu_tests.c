@@ -12,6 +12,7 @@
 #include "options.mock"
 #include "ppc.mock"
 #include "reference.mock"
+#include "filetable.mock"
 
 
 Describe(Menu);

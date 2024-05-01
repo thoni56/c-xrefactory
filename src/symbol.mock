@@ -17,9 +17,6 @@ void fillSymbol(Symbol *symbol, char *name, char *linkName, Position pos) {
     symbol->pos = pos;
     symbol->u.typeModifier = NULL;
     symbol->next = NULL;
-    symbol->isExplicitlyImported = false;
-    symbol->javaSourceIsLoaded = false;
-    symbol->javaClassIsLoaded = false;
     symbol->access = AccessDefault;
     symbol->type = TypeDefault;
     symbol->storage = StorageDefault;
