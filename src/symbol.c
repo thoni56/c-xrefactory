@@ -28,16 +28,8 @@ Symbol makeSymbol(char *name, char *linkName, Position pos) {
     return symbol;
 }
 
-Symbol makeSymbolWithBits(char *name, char *linkName, Position pos, Access access, Type type, Storage storage) {
-    Symbol symbol;
-    fillSymbol(&symbol, name, linkName, pos);
-    symbol.access = access;
-    symbol.type = type;
-    symbol.storage = storage;
-    return symbol;
-}
-
-void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName, Position pos, struct typeModifier *typeModifier) {
+void fillSymbolWithTypeModifier(Symbol *symbol, char *name, char *linkName, Position pos,
+                                struct typeModifier *typeModifier) {
     fillSymbol(symbol, name, linkName, pos);
     symbol->u.typeModifier = typeModifier;
 }

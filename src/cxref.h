@@ -28,8 +28,6 @@ extern Reference *addNewCxReference(Symbol *symbol, Position *pos,
                                     Usage usage, int vFunClass, int vApplClass);
 extern Reference *addCxReference(Symbol *symbol, Position *pos, UsageKind usage,
                                  int vFunClass,int vApplClass);
-extern Reference *addSpecialFieldReference(char *name, int storage,
-                                           int fnum, Position *p, int usage);
 extern void addTrivialCxReference (char *name, int symType, int storage,
                                    Position position, UsageKind usageKind);
 extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,

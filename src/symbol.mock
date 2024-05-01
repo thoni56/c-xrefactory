@@ -57,14 +57,6 @@ extern Symbol makeSymbol(char *name, char *linkName, Position pos) {
     return symbol;
 }
 
-Symbol makeSymbolWithBits(char *name, char *linkName, Position pos,
-                          Access access, Type type, Storage storage) {
-    Symbol *symbolP = (Symbol *)mock(name, linkName, &pos, access, type, storage);
-    Symbol symbol = *symbolP;
-    free(symbolP);
-    return symbol;
-}
-
 void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, ReferenceScope *scopeP, Storage *storageP) {
     mock(symbol, categoryP, scopeP, storageP);
 }

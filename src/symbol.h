@@ -62,8 +62,6 @@ extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName,
 
 /* Create and return a symbol structure... */
 extern Symbol makeSymbol(char *name, char *linkName, Position pos);
-extern Symbol makeSymbolWithBits(char *name, char *linkName, Position pos, Access access, Type type,
-                                 Storage storage);
 
 extern void getSymbolCxrefProperties(Symbol *symbol, ReferenceCategory *categoryP, ReferenceScope *scopeP, Storage *storageP);
 

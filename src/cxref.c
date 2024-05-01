@@ -61,17 +61,6 @@ void renameCollationSymbols(SymbolsMenu *menu) {
 
 /* *********************************************************************** */
 
-Reference *addSpecialFieldReference(char *name,int storage, int fnum,
-                                    Position *p, int usage){
-    Symbol        ss;
-    Reference     *res;
-
-    ss = makeSymbolWithBits(name, name, *p, AccessDefault, TypeDefault, storage);
-    res = addCxReference(&ss, p, usage, fnum, fnum);
-
-    return res;
-}
-
 Reference * getDefinitionRef(Reference *reference) {
     Reference *definitionReference = NULL;
 

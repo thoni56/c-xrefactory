@@ -63,10 +63,6 @@ Reference *addCxReference(Symbol *symbol, Position *pos, UsageKind usage, int vF
     return (Reference *) mock(symbol, symbol_name, pos, usage, vFunClass, vApplClass);
 }
 
-Reference *addSpecialFieldReference(char *name, int storage, int fnum, Position *p, int usage) {
-    return (Reference *) mock(name, storage, fnum, p, usage);
-}
-
 void addTrivialCxReference(char *name, int symType, int storage, Position pos, UsageKind usageKind) {
     Position *position = &pos;
     mock(name, symType, storage, position, usageKind);
