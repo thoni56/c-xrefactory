@@ -364,33 +364,6 @@ char *javaGetShortClassNameFromFileNum_static(int fnum) {
     return(javaGetShortClassName(res));
 }
 
-char *javaGetNudePreTypeName_static(char *name, NestedClassesDisplay displayMode) {
-    int         i, len;
-    char       *cut, *res, *res2;
-    static char typeName_static[TMP_STRING_SIZE];
-
-    cut = strchr(name, LINK_NAME_SEPARATOR);
-    if (cut == NULL)
-        cut = name;
-    else
-        cut++;
-    res = res2 = cut;
-    for (i = 0; cut[i]; i++) {
-        if (cut[i] == '.' || cut[i] == '/' || cut[i] == '\\'
-            || (cut[i] == '$' && displayMode == DONT_DISPLAY_NESTED_CLASSES)) {
-            res  = res2;
-            res2 = cut + i + 1;
-        }
-    }
-    len = res2 - res - 1;
-    if (len < 0)
-        len = 0;
-    strncpy(typeName_static, res, len);
-    typeName_static[len] = 0;
-
-    return typeName_static;
-}
-
 static void javaSignatureSPrint(char *buff, int *size, char *sig, int longOrShortName) {
     char post[COMPLETION_STRING_SIZE];
     int posti;

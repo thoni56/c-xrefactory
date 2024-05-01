@@ -1288,8 +1288,6 @@ static void olcxMenuToggleSelect(void) {
     OlcxReferences    *refs;
     SymbolsMenu     *ss;
     int                 line;
-    char                ln[MAX_REF_LEN];
-    char                *cname;
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
@@ -1301,23 +1299,8 @@ static void olcxMenuToggleSelect(void) {
             break;
         }
     }
-    if (options.xref2) {
-        if (ss!=NULL) {
-            olcxPrintRefList(";", refs);
-        }
-    } else {
-        if (ss==NULL) {
-            indicateNoReference();
-        } else {
-            char tmpBuff[TMP_BUFF_SIZE];
-            FileItem *fileItem = getFileItem(ss->references.vApplClass);
-            linkNamePrettyPrint(ln, ss->references.linkName,MAX_REF_LEN,SHORT_NAME);
-            cname = javaGetNudePreTypeName_static(getRealFileName_static(fileItem->name),
-                                                  options.displayNestedClasses);
-            sprintf(tmpBuff, "%s %s refs of \"%s\"",
-                    (ss->selected?"inserting":"removing"), cname, ln);
-            fprintf(communicationChannel,"*%s", tmpBuff);
-        }
+    if (ss!=NULL) {
+        olcxPrintRefList(";", refs);
     }
 }
 

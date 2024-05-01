@@ -87,7 +87,6 @@ extern char *getRealFileName_static(char *fn);
 extern bool stringContainsSubstring(char *s, char *subs);
 extern void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotifyMode);
 extern void javaDotifyFileName(char *ss);
-extern char *javaGetNudePreTypeName_static(char *name, NestedClassesDisplay displayMode);
 extern char *javaGetShortClassNameFromFileNum_static(int fnum);
 extern int substringIndex(char *string, char *substring);
 extern bool fileNameHasOneOfSuffixes(char *fname, char *suffs);
