@@ -1176,15 +1176,10 @@ static void olcxPrintSymbolName(OlcxReferences *refs) {
         }
     } else {
         ss = refs->hkSelectedSym;
-        if (options.xref2) {
-            sprintf(ttt, "Current top symbol: ");
-            assert(strlen(ttt) < MAX_SYMBOL_MESSAGE_LEN);
-            sprintfSymbolLinkName(ss, ttt+strlen(ttt));
-            ppcBottomInformation(ttt);
-        } else {
-            fprintf(communicationChannel, "*Current top symbol: ");
-            printSymbolLinkName(ss, communicationChannel);
-        }
+        sprintf(ttt, "Current top symbol: ");
+        assert(strlen(ttt) < MAX_SYMBOL_MESSAGE_LEN);
+        sprintfSymbolLinkName(ss, ttt+strlen(ttt));
+        ppcBottomInformation(ttt);
     }
 }
 

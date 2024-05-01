@@ -131,10 +131,6 @@ void sprintfSymbolLinkName(SymbolsMenu *ss, char *ttt) {
   mock(ttt, ss);
 }
 
-void printSymbolLinkName(SymbolsMenu *ss, FILE *ff) {
-  mock(ff, ss);
-}
-
 bool requiresCreatingRefs(ServerOperation operation) {
   return (bool) mock(operation);
 }

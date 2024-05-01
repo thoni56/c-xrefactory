@@ -462,12 +462,6 @@ void sprintfSymbolLinkName(SymbolsMenu *menu, char *name) {
     }
 }
 
-// this is just to print to file, make any change into sprint...
-void printSymbolLinkName(SymbolsMenu *ss, FILE *ff) {
-    char ttt[MAX_CX_SYMBOL_SIZE];
-    sprintfSymbolLinkName(ss, ttt);
-    fprintf(ff, "%s", ttt);
-}
 
 /* ***************************************************************** */
 
