@@ -75,10 +75,6 @@ void javaDotifyFileName(char *ss) {
   mock(ss);
 }
 
-char *javaGetShortClassNameFromFileNum_static(int fnum) {
-  return (char *) mock(fnum);
-}
-
 int substringIndex(char *s, char *subs) {
   return (int) mock(s, subs);
 }

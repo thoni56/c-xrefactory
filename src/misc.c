@@ -306,46 +306,6 @@ void javaDotifyFileName(char *ss) {
     }
 }
 
-// file num is not neccessary a class item !
-static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
-    char *dd, *ss;
-    ss = getRealFileName_static(getFileItem(fnum)->name);
-    strcpy(ttt, ss);
-    dd = lastOccurenceInString(ttt, '.');
-    if (dd!=NULL) *dd=0;
-}
-
-// file num is not neccessarily a class item !
-/* TODO: dotify has one of the values DOTIFY_NAME, KEEP_SLASHES or 0
-   Convert to enums or keep bool?
-*/
-static void javaGetClassNameFromFileNumber(int nn, char *tmpOut, DotifyMode dotifyMode) {
-    getClassFqtNameFromFileNum(nn, tmpOut);
-    if (dotifyMode == DOTIFY_NAME)
-        javaDotifyFileName(tmpOut);
-}
-
-static char *javaGetShortClassName(char *inn) {
-    int     i;
-    char    *cut,*res;
-    cut = strchr(inn, LINK_NAME_SEPARATOR);
-    if (cut==NULL) cut = inn;
-    else cut ++;
-    res = cut;
-    for(i=0; cut[i]; i++) {
-        if (cut[i]=='.' || cut[i]=='/' || cut[i]=='\\' || cut[i]=='$') {
-            res = cut+i+1;
-        }
-    }
-    return(res);
-}
-
-char *javaGetShortClassNameFromFileNum_static(int fnum) {
-    static char res[TMP_STRING_SIZE];
-    javaGetClassNameFromFileNumber(fnum, res, DOTIFY_NAME);
-    return javaGetShortClassName(res);
-}
-
 static void javaSignatureSPrint(char *buff, int *size, char *sig, int longOrShortName) {
     char post[COMPLETION_STRING_SIZE];
     int posti;

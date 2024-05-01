@@ -1305,6 +1305,7 @@ static void olcxMenuSelectOnly(void) {
 
     if (!sessionHasReferencesValidForOperation(&sessionData, &refs, CHECK_NULL))
         return;
+
     selection = NULL;
     for (SymbolsMenu *menu=refs->menuSym; menu!=NULL; menu=menu->next) {
         menu->selected = false;
@@ -1314,36 +1315,20 @@ static void olcxMenuSelectOnly(void) {
             selection = menu;
         }
     }
+
     if (selection==NULL) {
-        if (options.xref2) {
-            ppcBottomWarning("No Symbol");
-        } else {
-            fprintf(communicationChannel,"*No symbol");
-        }
+        ppcBottomWarning("No Symbol");
         return;
     }
     olcxRecomputeSelRefs(refs);
-    if (options.xref2) {
-        Reference *dref = getDefinitionRef(refs->references);
-        if (dref != NULL) refs->actual = dref;
+
+    Reference *definition = getDefinitionRef(refs->references);
+    if (definition != NULL) {
+        refs->actual = definition;
         olcxPrintRefList(";", refs);
-        if (dref == NULL) {
-            if (selection!=NULL && selection->references.vApplClass!=selection->references.vFunClass) {
-                char ttt[MAX_CX_SYMBOL_SIZE];
-                char tmpBuff[TMP_BUFF_SIZE];
-                sprintfSymbolLinkName(selection, ttt);
-                sprintf(tmpBuff, "Class %s does not define %s",
-                        javaGetShortClassNameFromFileNum_static(selection->references.vApplClass), ttt);
-                ppcBottomWarning(tmpBuff);
-            } else {
-                ppcBottomWarning("Definition not found");
-            }
-        } else {
-            ppcGotoPosition(&refs->actual->position);
-        }
-    } else {
-        fprintf(communicationChannel, "*");
-    }
+        ppcGotoPosition(&refs->actual->position);
+    } else
+        ppcBottomWarning("Definition not found");
 }
 
 
