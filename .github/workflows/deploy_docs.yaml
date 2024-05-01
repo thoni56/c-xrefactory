@@ -20,7 +20,9 @@ jobs:
           python-version: '3.x'  # Ensures Python 3.x is installed, adjust as needed for your project
 
       - name: Install Graphviz
-        run: sudo apt-get update && sudo apt-get install -y graphviz
+        run: |
+          sudo apt-get update && sudo apt-get install -y graphviz
+          java -jar plantuml.jar -testdot
         
       - name: Install Asciidoctor and Asciidoctor-Diagram
         run: |

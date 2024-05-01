@@ -1,6 +1,5 @@
-# c-xrefactory Documentation
+= c-xrefactory Documentation
 
-- c-xrefactory.html[Quick User Guide]
-- manual.html[User Manual] WORK IN PROGRESS!
-- guidebook.html[Software Guidebook] WORK IN PROGRESS!
-
+* link:c-xrefactory.html[Quick User Guide]
+* link:manual.html[User Manual] WORK IN PROGRESS!
+* link:guidebook.html[Software Guidebook] WORK IN PROGRESS!
