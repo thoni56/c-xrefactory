@@ -1960,11 +1960,7 @@ static void olcxProcessGetRequest(void) {
     if (value != NULL) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
-        if (options.xref2) {
-            ppcGenRecord(PPC_SET_INFO, expandPredefinedSpecialVariables_static(value, inputFileName));
-        } else {
-            fprintf(communicationChannel,"*%s", expandPredefinedSpecialVariables_static(value, inputFileName));
-        }
+        ppcGenRecord(PPC_SET_INFO, expandPredefinedSpecialVariables_static(value, inputFileName));
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"No \"-set %s <command>\" option specified for active project", name);

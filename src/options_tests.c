@@ -112,7 +112,6 @@ Ensure(Options, will_not_expand_special_file_variable_when_no_value) {
     expect(simpleFileNameWithoutSuffix_st, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
            will_return("options"));
     expect(lastOccurenceInString, when(string, is_equal_to_string("/some/path/to/options.c")), will_return(".c"));
-    expect(javaDotifyFileName, times(2));
 
     char *expanded = expandPredefinedSpecialVariables_static("cp", "options.c");
     assert_that(expanded, is_equal_to_string("cp"));
@@ -126,7 +125,6 @@ Ensure(Options, can_expand_special_variable_file) {
     expect(simpleFileNameWithoutSuffix_st, when(fullFileName, is_equal_to_string("/some/path/to/options.c")),
            will_return("options"));
     expect(lastOccurenceInString, when(string, is_equal_to_string("/some/path/to/options.c")), will_return(".c"));
-    expect(javaDotifyFileName, times(2));
 
     char *expanded = expandPredefinedSpecialVariables_static("${__file}", "options.c");
     assert_that(expanded, is_equal_to_string("/some/path/to/options.c"));

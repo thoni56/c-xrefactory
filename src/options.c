@@ -535,8 +535,6 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
     char        filename[MAX_FILE_NAME_SIZE];
     char        path[MAX_FILE_NAME_SIZE];
     char        name[MAX_FILE_NAME_SIZE];
-    char        thisclass[MAX_FILE_NAME_SIZE];
-    char        superclass[MAX_FILE_NAME_SIZE];
 
     strcpy(filename, getRealFileName_static(inputFilename));
     assert(strlen(filename) < MAX_FILE_NAME_SIZE - 1);
@@ -547,10 +545,6 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
         suffix = "";
     else
         suffix++;
-    strcpy(thisclass, parsedInfo.currentClassAnswer);
-    strcpy(superclass, parsedInfo.currentSuperClassAnswer);
-    javaDotifyFileName(thisclass);
-    javaDotifyFileName(superclass);
 
     i = j = 0;
     //& fprintf(dumpOut,"path, name, suff == %s %s %s\n", path, name, suffix);
@@ -570,14 +564,6 @@ char *expandPredefinedSpecialVariables_static(char *variable, char *inputFilenam
         } else if (strncmp(&variable[i], ENV_DEFAULT_VAR_SUFFIX, strlen(ENV_DEFAULT_VAR_SUFFIX))==0) {
             sprintf(&expanded[j], "%s", suffix);
             i += strlen(ENV_DEFAULT_VAR_SUFFIX);
-            j += strlen(&expanded[j]);
-        } else if (strncmp(&variable[i], ENV_DEFAULT_VAR_THIS_CLASS, strlen(ENV_DEFAULT_VAR_THIS_CLASS))==0) {
-            sprintf(&expanded[j], "%s", thisclass);
-            i += strlen(ENV_DEFAULT_VAR_THIS_CLASS);
-            j += strlen(&expanded[j]);
-        } else if (strncmp(&variable[i], ENV_DEFAULT_VAR_SUPER_CLASS, strlen(ENV_DEFAULT_VAR_SUPER_CLASS))==0) {
-            sprintf(&expanded[j], "%s", superclass);
-            i += strlen(ENV_DEFAULT_VAR_SUPER_CLASS);
             j += strlen(&expanded[j]);
         } else {
             expanded[j++] = variable[i++];
