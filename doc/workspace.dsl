@@ -14,9 +14,10 @@ workspace "C-xrefactory" "A C/Yacc refactoring browser" {
 			editorExtension = container editorExtension "Extends the Editor with c-xref operations and interfaces to the c-xrefactory API" "Plugin" {
 				cxref_el = Component cxref.el "" elisp
 				cxrefactory_el = Component cxrefactory.el "" elisp
+				cxrefprotocol_el = Component cxrefprotocol.el "" elisp
 			}
 
-			editor -> cxref_el "extends functionality using" plugin
+			editor -> cxrefactory_el "extends functionality using" plugin
 
 			cxrefCore = container cxrefCore "C Language program" "Refactoring Browser core" {
 				main = Component main "Main program" C
