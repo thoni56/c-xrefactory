@@ -19,14 +19,16 @@ jobs:
         with:
           python-version: '3.x'  # Ensures Python 3.x is installed, adjust as needed for your project
 
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+        
       - name: Install Asciidoctor and Asciidoctor-Diagram
         run: |
           gem install asciidoctor asciidoctor-diagram asciidoctor-pdf --user-install
           echo "PATH=$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH" >> $GITHUB_ENV
 
       - name: Run Make
-        run: |
-          make -C doc ci
+        run: make -C doc ci
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
