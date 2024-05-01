@@ -402,7 +402,7 @@ watch:
 	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Development make -j$(JOBS) devel
 
 watch-for-unittests:
-	watchexec --no-vcs-ignore -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j$(JOBS) unit
+	watchexec -i yacc_parser.y -i \*.tab.\[ch\] -i lexem.h -e c,h,y,mock,tc,th -- execnotify -t Unittests make -j$(JOBS) unit
 
 watch-for-systemtests:
 	watchexec --no-vcs-ignore -e done -- execnotify -t Systemtests make -j$(JOBS) system-tests
@@ -458,7 +458,7 @@ ifeq ($(shell command -v cgreen-runner 2> /dev/null),)
 unittests: parsers
 	@echo Cgreen not available, cannot run unittests
 else
-unittests: parsers $(UNITTESTS)
+unittests: parsers $(OBJS) $(UNITTESTS)
 	$(MAKE) -e clean-coverage
 	$(DYLD_PATH) cgreen-runner -q $(CGREEN_OUTPUT) --suite unittests $(UNITTESTS)
 	$(MAKE) gcov
