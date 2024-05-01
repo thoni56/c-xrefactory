@@ -1,4 +1,4 @@
-# C-xrefactory for Emacs and jEdit
+# C-xrefactory for Emacs
 
 - [General]
 - [Completion]
@@ -10,20 +10,18 @@
 - [License]
 
 
-# General
+## General
 
-C-xrefactory is a refactoring development environment for C/Yacc.
-Its functions can be accessed via the 'c-xref' menu in Emacs and the
-'Plugins &gt; C-xrefactory' submenu of the main menu bar in jEdit.
-Optionally the most frequent functions can be bound to shortcuts.
-C-xrefactory can also be customized via standard Emacs and jEdit
-customization dialog.
+C-xrefactory is a refactoring development environment for C/Yacc.  Its
+functions can be accessed via the 'c-xref' menu in Emacs.  Optionally
+the most frequent functions can be bound to shortcuts.  C-xrefactory
+can also be customized via standard Emacs customization dialog.
 
 > **NOTE** — Some of these descriptions refers to the jEdit plugin (not
 > supported and may or may not work).
 
 
-## Quick start
+### Quick start
 
 To quickly start working with C-xrefactory just invoke any of its
 functions.  You will be asked for creation of a project.  Then
@@ -31,18 +29,18 @@ C-xrefactory will create its database for the project and is ready for
 use.
 
 
-## Projects
+### Projects
 
 C-xrefactory is project based, you will need to create and maintain
-description of your projects. Particularity of C-xrefactory projects
-is possibility of autodetection.  C-xrefactory detects the 'active
-project' from the path of currently edited file.  Each project
-contains list of 'autodetection directories' specifying when the
-project should be triggered 'active'.  Only one project at the time
-can be active.  In consequence 'autodetection directories' have to be
-distinct for all projects.  Information about the selected 'active
-project' is displayed after each browsing action in the bottom
-information line of the editor.
+description of your projects. C-xrefactory projects can be
+autodetected.  C-xrefactory detects the 'active project' from the path
+of currently edited file.  Each project contains list of
+'autodetection directories' specifying when the project should be
+triggered 'active'.  Only one project at the time can be active.  In
+consequence 'autodetection directories' have to be distinct for all
+projects.  Information about the selected 'active project' is
+displayed after each browsing action in the bottom information line of
+the editor.
 
 > **NOTE** — Project autodetection directories are (in general) not the
 > same as directories containing project files.  Project files can contain
@@ -52,10 +50,10 @@ information line of the editor.
 > projects.
 
 
-## ReferenceDB
+### ReferenceDB
 
 The main part of C-xrefactory are the 'ReferenceDB'.  Each project has
-its references stored in special files specified by the user.  They
+its references stored in special files specified by options.  They
 contain information about your project sources.  In particular,
 information about all symbols, their linking properties, place(s) of
 definition and all usages.  The ReferenceDB can be split into any
@@ -66,14 +64,14 @@ automatic.  However they may become inconsistent, and when it does it
 is recommended to re-create the ReferenceDB manually.
 
 
-## C-xref task
+### C-xref task
 
 C-xrefactory cooperates with an external task 'c-xref'.  If you feel
 that the task has run into an inconsistent state, you can invoke the
 'Kill c-xref task' function.
 
 
-# Completion
+## Completion
 
 Completion is implemented with the function 'Complete', in Emacs
 usually bound to the the <kbd>F8</kbd> key.  Completion tries to
@@ -83,7 +81,7 @@ completion of function parameters, variable definitions, etc.  When
 several possibilities are available a completion dialog appears.
 
 
-## Completion Dialog
+### Completion Dialog
 
 Each line of the dialog contains following informations: the
 identifier to insert and the full definition of the symbol.
@@ -96,7 +94,7 @@ special keys are available:
 - <kbd>escape</kbd> — return to invocation place and close dialog.
 
 
-# Browser
+## Browser
 
 C-xrefactory browser allows resolving any symbol in source file,
 inspect its definition and all usages.  Following four basic functions
@@ -154,7 +152,7 @@ browse an existing code.  Also this function does not permit browsing
 of local symbols, such as local variables, parameters and labels, as
 they are not recorded in global ReferenceDB.
 
-## Browser Dialog
+### Browser Dialog
 
 Browser dialog allows visualization of C-xrefactory browser stack by
 displaying its top element.  It contains two major information panes.
@@ -260,7 +258,7 @@ Meaning of **filters for variables**:
 | Level&nbsp;0 | All references are shown. |
 
 
-# Symbol Retriever
+## Symbol Retriever
 
 C-xrefactory symbol retriever is useful for finding forgotten symbol
 names and for finding symbols from third parties libraries.  You enter
@@ -304,7 +302,7 @@ containing the entered string.  For example, entering `get` as the
 expression is equivalent to entering `*get*`.
 
 
-# Refactorer
+## Refactorer
 
 Refactoring is a software development and maintenance process where
 the source code is changed in such a way that it does not alter the
@@ -329,9 +327,9 @@ Here follows the list of refactorings implemented by C-xrefactory:
 - [Set Target for Next Moving Refactoring]
 
 
-# Refactorings
+## Refactorings
 
-## Rename Symbol
+### Rename Symbol
 
 **Description**: Change the name of a program symbol
 
@@ -360,7 +358,7 @@ for (int i=0; i<args.length; i++) {
 **Mechanics**:  Replace  old  symbol name  by  the  new  name on  all  its
         occurrences in the project.
 
-## Add Parameter
+### Add Parameter
 
 **Description**: Add parameter to a method, function or macro.
 
@@ -396,7 +394,7 @@ public int method(int x, int y) {
         and add  declaration of the  new parameter to  each definition
         and default value to each invocation of the method.
 
-## Delete Parameter
+### Delete Parameter
 
 **Description**: Delete parameter of a method, function or macro.
 
@@ -431,7 +429,7 @@ public int method(int x) {
 **Mechanics**: Inspect  all references of  the method (function  or macro)
         and remove the parameter.
 
-## Move Parameter
+### Move Parameter
 
 **Description**: Reorder parameter of a method, function or macro.
 
@@ -466,9 +464,9 @@ public int method(int y, int x) {
 **Mechanics**: Inspect all references of  the method and move the parameter
         from its original to its new position.
 
-## Extract Method/Function/Macro
+### Extract Function/Macro
 
-**Description**: Extract region into new method (function or macro).
+**Description**: Extract region into a new function or macro.
 
 **Example**:
 
@@ -515,7 +513,7 @@ int main(int argc, char *argv[]) {
            header  and footer  based on  static analysis  of  code and
            generate call to the new method at the original place.
 
-## Set Target for Next Moving Refactoring
+### Set Target for Next Moving Refactoring
 
 **Description**: Set target position for moving refactorings
 
@@ -525,12 +523,12 @@ int main(int argc, char *argv[]) {
 **Input Parameters**: None.
 
 
-# Feedback
+## Feedback
 
 Any feedback is welcome at the [c-xrefactory GitHub repo].
 
 
-# License
+## License
 
 You can read the license at the [c-xrefactory GitHub repo][repo license].
 
