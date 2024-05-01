@@ -21,8 +21,6 @@
 #include "symbol.mock"
 #include "symboltable.mock"
 
-/* Private method: */
-int printJavaModifiers(char *buf, int *size, Access access);
 
 Describe(Complete);
 BeforeEach(Complete) {
@@ -30,10 +28,5 @@ BeforeEach(Complete) {
 }
 AfterEach(Complete) {}
 
-Ensure(Complete, can_print_java_modifiers) {
-    char buf[100];
-    int  size = 100;
-
-    printJavaModifiers(buf, &size, AccessPublic + AccessFinal);
-    assert_that(buf, is_equal_to_string("public final "));
+Ensure(Complete, can_run_an_empty_test) {
 }

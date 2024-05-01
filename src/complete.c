@@ -92,34 +92,6 @@ static void formatFullCompletions(char *tt, int indent, int inipos) {
     return;
 }
 
-/* STATIC except for unittests */
-int printJavaModifiers(char *buf, int *size, Access access) {
-    int i = 0;
-
-    if (access & AccessPublic) {
-        sprintf(buf+i,"public "); i+=strlen(buf+i);
-        assert(i< *size);
-    }
-    if (access & AccessPrivate) {
-        sprintf(buf+i,"private "); i+=strlen(buf+i);
-        assert(i< *size);
-    }
-    if (access & AccessProtected) {
-        sprintf(buf+i,"protected "); i+=strlen(buf+i);
-        assert(i< *size);
-    }
-    if (access & AccessStatic) {
-        sprintf(buf+i,"static "); i+=strlen(buf+i);
-        assert(i< *size);
-    }
-    if (access & AccessFinal) {
-        sprintf(buf+i,"final "); i+=strlen(buf+i);
-        assert(i< *size);
-    }
-    *size -= i;
-    return i;
-}
-
 static void sprintFullCompletionInfo(Completions* completions, int index, int indent) {
     int size, l, vFunCl, cindent, tempLength;
     bool typeDefinitionExpressionFlag;
