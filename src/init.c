@@ -2,14 +2,13 @@
 
 #include "globals.h"
 #include "options.h"
-#include "parsers.h"
+#include "lexem.h"
 
-#include "misc.h"               /* For stringContainsSubstring() */
 #include "commons.h"            /* For infoMessage() */
 #include "log.h"
 #include "commons.h"
 #include "storage.h"
-
+#include "symboltable.h"
 
 /* *********************************************************************** */
 /* ********************* TABLES TO INIT TABLES *************************** */

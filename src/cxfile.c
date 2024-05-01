@@ -23,7 +23,7 @@
 
 /* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
-#define CXFI_FILE_FUMTIME   'm'     /* last full update mtime for file item */
+#define CXFI_FILE_FUMTIME   'm'     /* last full update kmtime for file item */
 #define CXFI_FILE_UMTIME    'p'     /* last update mtime for file item */
 #define CXFI_SOURCE_INDEX   'o'     /* source index for java classes */
 #define CXFI_INPUT_FROM_COMMAND_LINE  'i'     /* file was introduced from command line */

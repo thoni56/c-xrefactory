@@ -9,7 +9,7 @@
 #include "yylex.h"
 #include "editor.h"
 #include "reftab.h"
-#include "classhierarchy.h"
+#include "symboltable.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 
