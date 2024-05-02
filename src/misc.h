@@ -63,9 +63,8 @@ typedef unsigned bitArray;
     }
 
 
-extern void dumpOptions(int nargc, char **nargv);
+extern void dumpArguments(int nargc, char **nargv);
 
-extern void symDump(Symbol *symbol);
 extern void typeDump(TypeModifier *typeModifiers);
 extern void symbolRefItemDump(ReferenceItem *ss);
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,

@@ -30,7 +30,7 @@ typedef struct integerList {
 /* ***********************************************************
  */
 
-void dumpOptions(int nargc, char **nargv) {
+void dumpArguments(int nargc, char **nargv) {
     char tmpBuff[TMP_BUFF_SIZE] = "";
 
     for (int i=0; i<nargc; i++) {
@@ -42,10 +42,6 @@ void dumpOptions(int nargc, char **nargv) {
 
 /* *************************************************************************
  */
-
-void symDump(Symbol *s) {
-    log_debug("[symbol] %s",s->name);
-}
 
 void typeDump(TypeModifier *t) {
     log_debug("dumpStart");

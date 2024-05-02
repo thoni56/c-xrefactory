@@ -6,12 +6,8 @@ void scanJarFilesForTagSearch(void) {
   mock();
 }
 
-void dumpOptions(int nargc, char **nargv) {
+void dumpArguments(int nargc, char **nargv) {
   mock(nargc, nargv);
-}
-
-void symDump(Symbol *symbol) {
-  mock(symbol);
 }
 
 void symbolRefItemDump(ReferenceItem *ss) {
