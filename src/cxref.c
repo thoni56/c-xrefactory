@@ -8,7 +8,6 @@
 #include "commons.h"
 #include "complete.h"
 #include "cxfile.h"
-#include "editor.h"
 #include "filedescriptor.h"
 #include "filetable.h"
 #include "globals.h"
@@ -38,7 +37,7 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return SORTED_LIST_LESS(r1, (*r2));
 }
 
-void renameCollationSymbols(SymbolsMenu *menu) {
+static void renameCollationSymbols(SymbolsMenu *menu) {
     int                 len,len1;
     char                *nn, *cs;
     assert(menu);
@@ -61,7 +60,7 @@ void renameCollationSymbols(SymbolsMenu *menu) {
 
 /* *********************************************************************** */
 
-Reference * getDefinitionRef(Reference *reference) {
+static Reference *getDefinitionRef(Reference *reference) {
     Reference *definitionReference = NULL;
 
     for (Reference *r=reference; r!=NULL; r=r->next) {
@@ -2157,7 +2156,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(ReferenceItem *ss) {
     }
 }
 
-void pushLocalUnusedSymbolsAction(void) {
+static void pushLocalUnusedSymbolsAction(void) {
     OlcxReferences    *rstack;
     SymbolsMenu     *ss;
 

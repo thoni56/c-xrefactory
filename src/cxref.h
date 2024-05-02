@@ -34,7 +34,6 @@ extern void olcxAddReferences(Reference *list, Reference **dlist, int fnum,
                               int bestMatchFlag);
 extern void olSetCallerPosition(Position *pos);
 extern SymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, Storage storage);
-extern void renameCollationSymbols(SymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern int itIsSymbolToPushOlReferences(ReferenceItem *p, OlcxReferences *rstack,
                                       SymbolsMenu **rss, int checkSelFlag);
@@ -44,7 +43,6 @@ extern SymbolsMenu *createSelectionMenu(ReferenceItem *dd);
 extern void mapCreateSelectionMenu(ReferenceItem *dd);
 extern void olcxFreeOldCompletionItems(OlcxReferencesStack *stack);
 
-extern Reference *getDefinitionRef(Reference *rr);
 extern void olCreateSelectionMenu(int command);
 extern bool olcxShowSelectionMenu(void);
 extern void pushEmptySession(OlcxReferencesStack *stack);
@@ -57,7 +55,6 @@ extern bool isPushAllMethodsValidRefItem(ReferenceItem *ri);
 extern void olcxPrintPushingAction(ServerOperation operation);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
 
-extern void pushLocalUnusedSymbolsAction(void);
 extern void answerEditAction(void);
 
 extern void generateReferences(void);

@@ -76,10 +76,6 @@ void olSetCallerPosition(Position *pos) {
     mock(pos);
 }
 
-void renameCollationSymbols(SymbolsMenu *sss) {
-    mock(sss);
-}
-
 void olCompletionListReverse(void) {
     mock();
 }
@@ -111,10 +107,6 @@ void olcxFreeOldCompletionItems(OlcxReferencesStack *stack) {
 
 void olcxInit(void) {
     mock();
-}
-
-Reference *getDefinitionRef(Reference *rr) {
-    return (Reference *) mock(rr);
 }
 
 void olCreateSelectionMenu(int command) {
@@ -159,10 +151,6 @@ void olcxPrintPushingAction(ServerOperation operation) {
 
 void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     mock(minMemi, maxMemi);
-}
-
-void pushLocalUnusedSymbolsAction(void) {
-    mock();
 }
 
 void answerEditAction(void) {
