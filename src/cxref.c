@@ -1901,9 +1901,12 @@ void olCreateSelectionMenu(int command) {
     assert(sessionData.browserStack.top);
     rstack = sessionData.browserStack.top;
     ss = rstack->hkSelectedSym;
-    if (ss == NULL) return;
+    if (ss == NULL)
+        return;
+
     renameCollationSymbols(ss);
     LIST_SORT(SymbolsMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
+
     ss = rstack->hkSelectedSym;
     while (ss!=NULL) {
         scanReferencesToCreateMenu(ss->references.linkName);
@@ -1911,6 +1914,7 @@ void olCreateSelectionMenu(int command) {
         while (ss!=NULL && fnum==cxFileHashNumber(ss->references.linkName))
             ss = ss->next;
     }
+
     mapOverReferenceTable(mapCreateSelectionMenu);
     mapOverReferenceTable(putOnLineLoadedReferences);
     setSelectedVisibleItems(rstack->menuSym, command, rstack->menuFilterLevel);
