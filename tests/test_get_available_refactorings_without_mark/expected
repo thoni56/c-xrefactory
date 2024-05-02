@@ -4,7 +4,7 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
--olcxgetrefactorings -editor=emacs "-olcursor=217" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxgetrefactorings "-olcursor=217" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
@@ -12,7 +12,7 @@ end-of-options
   <int val=290 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -editor=emacs "-olcursor=294" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxgetrefactorings "-olcursor=294" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
@@ -23,7 +23,7 @@ end-of-options
   <int val=60 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -editor=emacs "-olcursor=382" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxgetrefactorings "-olcursor=382" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
@@ -34,7 +34,7 @@ end-of-options
   <int val=60 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -editor=emacs "-olcursor=612" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxgetrefactorings "-olcursor=612" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>
@@ -45,7 +45,7 @@ end-of-options
   <int val=60 len=<n>></int>
   <int val=300 len=<n>></int>
 </available-refactorings>
--olcxgetrefactorings -editor=emacs "-olcursor=665" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxgetrefactorings "-olcursor=665" "CURDIR/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 end-of-options
 
 <sync>

@@ -173,9 +173,7 @@ static void olGetAvailableRefactorings(void) {
     if (count==0)
         makeRefactoringAvailable(PPC_AVR_SET_MOVE_TARGET, "");
 
-    if (options.editor == EDITOR_EMACS) {
-        makeRefactoringAvailable(PPC_AVR_UNDO, "");
-    }
+    makeRefactoringAvailable(PPC_AVR_UNDO, "");
 
     if (options.olMarkOffset != -1 && options.olCursorOffset != options.olMarkOffset) {
         // region selected, TODO!!! some more prechecks for extract - Duh! Which ones!?!?!?!

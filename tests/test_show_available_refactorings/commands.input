@@ -1,6 +1,6 @@
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-server"
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/index.c"
 <sync>
--olcxgetrefactorings -editor=emacs "-olmark=0" "-olcursor=292" "CURDIR/cexercise/refactorings/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
+-olcxgetrefactorings "-olmark=0" "-olcursor=292" "CURDIR/cexercise/refactorings/parameter.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR"
 <sync>
 <exit>

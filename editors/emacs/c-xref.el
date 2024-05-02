@@ -7165,7 +7165,7 @@ refactoring.
   (c-xref-entry-point-make-initialisations)
   (setq c-xref-global-dispatch-data (c-xref-get-basic-server-dispatch-data 'c-xref-server-process))
   (c-xref-server-call-on-current-buffer-no-saves
-   "-olcxgetrefactorings -editor=emacs"
+   "-olcxgetrefactorings"
    c-xref-global-dispatch-data)
   )
 

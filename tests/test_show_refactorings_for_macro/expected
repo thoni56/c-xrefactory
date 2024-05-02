@@ -1,5 +1,5 @@
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-server" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" -o server-buffer
-"-olcursor=696" "CURDIR/cexercise/refactorings/rename.c" -olcxgetrefactorings -editor=emacs
+"-olcursor=696" "CURDIR/cexercise/refactorings/rename.c" -olcxgetrefactorings
 end-of-options
 
 <sync>

@@ -1166,12 +1166,6 @@ static bool processEOption(int *argi, int argc, char **argv) {
         log_debug("Exiting");
         exit(XREF_EXIT_BASE);
     }
-    else if (strcmp(argv[i], "-editor=emacs")==0) {
-        options.editor = EDITOR_EMACS;
-    }
-    else if (strcmp(argv[i], "-editor=jedit")==0) {
-        options.editor = EDITOR_JEDIT;
-    }
     else if (strncmp(argv[i], "-extractAddrParPrefix=",22)==0) {
         char tmpString[TMP_STRING_SIZE];
         sprintf(tmpString, "*%s", argv[i]+22);

@@ -158,41 +158,6 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
     }
 }
 
-static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, char **vclass) {
-    int size,ll,tdexpFlag;
-    char *pname;
-    static char vlevelBuff[TMP_STRING_SIZE];
-    size = COMPLETION_STRING_SIZE;
-    ll = 0;
-    sprintf(vlevelBuff," ");
-    if (vclass != NULL) *vclass = vlevelBuff;
-    if (c->alternatives[ii].symbolType==TypeDefault) {
-        assert(c->alternatives[ii].symbol && c->alternatives[ii].symbol->u.typeModifier);
-        tdexpFlag = 1;
-        if (c->alternatives[ii].symbol->storage == StorageTypedef) {
-            sprintf(ppcTmpBuff,"typedef ");
-            ll = strlen(ppcTmpBuff);
-            size -= ll;
-            tdexpFlag = 0;
-        }
-        pname = c->alternatives[ii].symbol->name;
-        typeSPrint(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->u.typeModifier, pname,' ', 0, tdexpFlag, SHORT_NAME, nindent);
-        *nindent += ll;
-    } else if (c->alternatives[ii].symbolType==TypeMacro) {
-        macroDefinitionSPrintf(ppcTmpBuff, &size, "", c->alternatives[ii].string,
-                      c->alternatives[ii].margn, c->alternatives[ii].margs, nindent);
-    } else if (c->alternatives[ii].symbolType == TypeInheritedFullMethod) {
-        sprintf(ppcTmpBuff,"%s", c->alternatives[ii].string);
-        if (c->alternatives[ii].vFunClass!=NULL) {
-            sprintf(vlevelBuff,"  : %s ", c->alternatives[ii].vFunClass->name);
-        }
-        *nindent = 0;
-    } else {
-        sprintf(ppcTmpBuff,"%s", c->alternatives[ii].string);
-        *nindent = 0;
-    }
-}
-
 void olCompletionListInit(Position *originalPos) {
     olcxFreeOldCompletionItems(&sessionData.completionsStack);
     pushEmptySession(&sessionData.completionsStack);
@@ -217,51 +182,29 @@ static void printCompletionsBeginning(Completion *olc, int noFocus) {
 
     LIST_LEN(max, Completion, olc);
     if (options.xref2) {
-        if (options.editor == EDITOR_JEDIT) {
-            ppcBeginWithTwoNumericAttributes(PPC_FULL_MULTIPLE_COMPLETIONS,
-                                           PPCA_NUMBER, max,
-                                           PPCA_NO_FOCUS, noFocus);
-        } else {
-            tlen = 0;
-            for (Completion *cc=olc; cc!=NULL; cc=cc->next) {
-                tlen += strlen(cc->fullName);
-                if (cc->next!=NULL) tlen++;
-            }
-            if (completionsWillPrintEllipsis(olc))
-                tlen += 4;
-            ppcBeginAllCompletions(noFocus, tlen);
+        tlen = 0;
+        for (Completion *cc=olc; cc!=NULL; cc=cc->next) {
+            tlen += strlen(cc->fullName);
+            if (cc->next!=NULL) tlen++;
         }
+        if (completionsWillPrintEllipsis(olc))
+            tlen += 4;
+        ppcBeginAllCompletions(noFocus, tlen);
     } else {
         fprintf(communicationChannel,";");
     }
 }
 
 static void printOneCompletion(Completion *olc) {
-    if (options.editor == EDITOR_JEDIT) {
-        fprintf(communicationChannel,"<%s %s=\"%s\" %s=%d %s=%ld>", PPC_MULTIPLE_COMPLETION_LINE,
-                PPCA_VCLASS, olc->vclass,
-                PPCA_VALUE, olc->jindent,
-                PPCA_LEN, (unsigned long)strlen(olc->fullName));
-        fprintf(communicationChannel, "%s", olc->fullName);
-        fprintf(communicationChannel, "</%s>\n", PPC_MULTIPLE_COMPLETION_LINE);
-    } else {
-        fprintf(communicationChannel, "%s", olc->fullName);
-    }
+    fprintf(communicationChannel, "%s", olc->fullName);
 }
 
 static void printCompletionsEnding(Completion *olc) {
     if (completionsWillPrintEllipsis(olc)) {
-        if (options.editor == EDITOR_JEDIT) {
-        } else {
-            fprintf(communicationChannel,"\n...");
-        }
+        fprintf(communicationChannel,"\n...");
     }
     if (options.xref2) {
-        if (options.editor == EDITOR_JEDIT) {
-            ppcEnd(PPC_FULL_MULTIPLE_COMPLETIONS);
-        } else {
-            ppcEnd(PPC_ALL_COMPLETIONS);
-        }
+        ppcEnd(PPC_ALL_COMPLETIONS);
     }
 }
 
@@ -323,11 +266,7 @@ void printCompletions(Completions* c) {
     if (c->alternativeIndex > options.maxCompletions) max = options.maxCompletions;
     else max = c->alternativeIndex;
     for(int ii=0; ii<max; ii++) {
-        if (options.editor == EDITOR_JEDIT) {
-            sprintFullJeditCompletionInfo(c, ii, &jindent, &vclass);
-        } else {
-            sprintFullCompletionInfo(c, ii, indent);
-        }
+        sprintFullCompletionInfo(c, ii, indent);
         vFunCl = NO_FILE_NUMBER;
         Reference ref;
         sessionData.completionsStack.top->completions = completionListPrepend(

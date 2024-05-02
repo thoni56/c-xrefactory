@@ -11,12 +11,6 @@
 #include "usage.h"
 
 
-typedef enum {
-    EDITOR_UNKNOWN,
-    EDITOR_EMACS,
-    EDITOR_JEDIT,
-} Editors;
-
 typedef struct editorMarker {
     EditorBuffer        *buffer;
     unsigned             offset;
