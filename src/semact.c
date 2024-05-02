@@ -783,6 +783,19 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     return &symbol->u.structSpec->type;
 }
 
+static char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
+    int l1 = strlen(str1);
+    int l2 = strlen(str2);
+    int l3 = strlen(str3);
+    char *s  = stackMemoryAlloc(l1 + l2 + l3 + 1);
+
+    strcpy(s, str1);
+    strcpy(s + l1, str2);
+    strcpy(s + l1 + l2, str3);
+
+    return s;
+}
+
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     assert(sd->type == TypeStruct || sd->type == TypeUnion);
     assert(sd->u.structSpec);
