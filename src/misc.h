@@ -68,11 +68,10 @@ extern void dumpArguments(int nargc, char **nargv);
 extern void typeDump(TypeModifier *typeModifiers);
 extern void symbolRefItemDump(ReferenceItem *ss);
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
-                       int dclSepChar, int maxDeep, bool typedefexp,
+                       int dclSepChar, bool typedefexp,
                        int longOrShortName, int *oNamePos);
 extern void macroDefinitionSPrintf(char *buff, int *size, char *name1, char *name2, int argc, char **argv,
                                    int *oNamePos);
-extern char *string3ConcatInStackMem(char *str1, char *str2, char *str3);
 
 extern char *strmcpy(char *dest, char *src);
 extern char *simpleFileName(char *fullFileName);

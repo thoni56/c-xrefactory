@@ -129,7 +129,7 @@ static void sprintFullCompletionInfo(Completions* completions, int index, int in
             typeDefinitionExpressionFlag = false;
         }
         char *pname = completions->alternatives[index].symbol->name;
-        typeSPrint(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname, ' ', 0,
+        typeSPrint(tempString+l, &size, completions->alternatives[index].symbol->u.typeModifier, pname, ' ',
                    typeDefinitionExpressionFlag, SHORT_NAME, NULL);
     } else if (completions->alternatives[index].symbolType==TypeMacro) {
         macroDefinitionSPrintf(tempString, &size, "", completions->alternatives[index].string,
@@ -554,7 +554,7 @@ static void processSpecialInheritedFullCompletion(Completions *c, int orderFlag,
     CompletionLine compLine;
 
     tmp[0]=0; ll=0; size=MAX_CX_SYMBOL_SIZE;
-    typeSPrint(tmp+ll, &size, r->u.typeModifier, cname, ' ', 0, true, SHORT_NAME, NULL);
+    typeSPrint(tmp+ll, &size, r->u.typeModifier, cname, ' ', true, SHORT_NAME, NULL);
     fcc = stackMemoryAlloc(strlen(tmp)+1);
     strcpy(fcc,tmp);
     fillCompletionLine(&compLine, fcc, r, TypeInheritedFullMethod, vlevel,0,NULL,vFunCl);

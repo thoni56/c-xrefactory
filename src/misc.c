@@ -62,7 +62,7 @@ void symbolRefItemDump(ReferenceItem *s) {
 
 /* *********************************************************************** */
 
-void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSepChar, int maxDeep, bool typedefexp,
+void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSepChar, bool typedefexp,
                 int longOrShortName, int *oNamePos) {
     char    preString[COMPLETION_STRING_SIZE];
     char    postString[COMPLETION_STRING_SIZE];
@@ -127,7 +127,7 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
                 if (symbol->type == TypeDefault && symbol->u.typeModifier != NULL) {
                     /* TODO ALL, for string overflow */
                     int jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                    typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', maxDeep - 1, true,
+                    typeSPrint(postString + j, &jj, symbol->u.typeModifier, ttm, ' ', true,
                                longOrShortName, NULL);
                     j += jj;
                 } else {
@@ -151,34 +151,6 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
             if (t->u.t->name != NULL) {
                 sprintf(typeString + r, "%s ", t->u.t->name);
                 r += strlen(typeString + r);
-            }
-            if (maxDeep > 0) {
-                int minInfi = r;
-                sprintf(typeString + r, "{ ");
-                r += strlen(typeString + r);
-                assert(t->u.t->u.structSpec);
-                for (Symbol *symbol = t->u.t->u.structSpec->records; symbol != NULL; symbol = symbol->next) {
-                    char *ttm;
-                    if (symbol->name == NULL)
-                        ttm = "";
-                    else
-                        ttm = symbol->name;
-                    int rr = COMPLETION_STRING_SIZE - r - TYPE_STR_RESERVE;
-                    assert(symbol->u.typeModifier);
-                    typeSPrint(typeString + r, &rr, symbol->u.typeModifier, ttm, ' ', maxDeep - 1, true, longOrShortName,
-                               NULL);
-                    r += rr;
-                    if (symbol->next != NULL && r < COMPLETION_STRING_SIZE) {
-                        sprintf(typeString + r, "; ");
-                        r += strlen(typeString + r);
-                    }
-                }
-                sprintf(typeString + r, "}");
-                r += strlen(typeString + r);
-                if (r > *size - TYPE_STR_RESERVE) {
-                    r       = minInfi;
-                    typeString[r] = 0;
-                }
             }
             break;
         case TypeEnum:
