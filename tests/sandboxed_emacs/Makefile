@@ -19,30 +19,28 @@ LOG=LOGFILE=$(CURDIR)/$(LOGFILE)
 
 all: pure
 
+EMACS_COMMAND = emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)'
+
 # Run a sandboxed emacs using the spy to log interaction
-spy: clean bin/c-xref .emacs.d/el-get/c-xrefactory
-	$(ENV) $(TARGET) $(LOG) emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
+spy: .emacs.d/c-xrefactory pipe-spy
+	$(ENV) $(TARGET) $(LOG) $(EMACS_COMMAND) ../../src/cxref.c
 	@echo Interaction saved in $(CURDIR)/$(LOGFILE)
-
-bin/c-xref: pipe-spy
-	-rm bin/c-xref
-	ln -s $(CURDIR)/pipe-spy bin/c-xref
-
-.emacs.d/el-get/c-xrefactory:
-	ln -s $(CURDIR)/../../ .emacs.d/el-get/c-xrefactory ; \
 
 pipe-spy: pipe-spy.c Makefile
 	$(CC) -o pipe-spy -g -Wall -DTARGET=\"$(TARGET_PATH)\" pipe-spy.c
+	cp pipe-spy bin/c-xref
+
+.emacs.d/c-xrefactory:
+	ln -s $(CURDIR)/../../editors/emacs .emacs.d/c-xrefactory
 
 clean:
 	-rm $(LOGFILE)* /tmp/c-xref*.log
 
-pure: .emacs.d/el-get/c-xrefactory
-	@-rm bin/c-xref
-	@ln -s $(CURDIR)/../../src/c-xref bin/c-xref
-	@$(ENV) emacs -l $(PWD)/.emacs.d/init.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
+# Run a pure sandboxed Emacs which should use the latest elisp and c-xref
+pure: .emacs.d/c-xrefactory
+	cp $(CURDIR)/../../src/c-xref bin/c-xref
+	@$(ENV) $(EMACS_COMMAND)
 
-debug: .emacs.d/el-get/c-xrefactory
-	@-rm bin/c-xref
-	@ln -s $(CURDIR)/../../src/c-xref bin/c-xref
-	@$(ENV) emacs --debug-init -l $(PWD)/.emacs.d/init.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
+debug: .emacs.d/c-xrefactory
+	cp $(CURDIR)/../../src/c-xref bin/c-xref
+	@$(ENV) $(EMACS_COMMAND)
