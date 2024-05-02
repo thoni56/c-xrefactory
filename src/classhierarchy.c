@@ -8,12 +8,6 @@
 #include "protocol.h"
 
 
-typedef struct integerList {
-    int                integer;
-    struct integerList *next;
-} IntegerList;
-
-
 static int currentOutputLineInSymbolList =0;
 
 

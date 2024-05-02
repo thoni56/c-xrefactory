@@ -281,7 +281,7 @@ void server(int argc, char **argv) {
         // O.K. -o option given on command line should catch also file not found
         // message
         openOutputFile(options.outputFileName);
-        //&dumpOptions(nargc, nargv);
+        //&dumpArguments(nargc, nargv);
         log_trace("Server: Getting request");
         initServer(nargc, nargv);
         if (communicationChannel==stdout && options.outputFileName!=NULL) {
