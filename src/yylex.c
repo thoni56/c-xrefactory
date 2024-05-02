@@ -2000,8 +2000,7 @@ static bool isIdAKeyword(Symbol *symbol, Position position) {
     return false;
 }
 
-/* TODO: Lookup for C and Java are similar, C has check for CPP and Typedef. Merge? */
-/* And probably move to symboltable.c... */
+/* TODO: probably move to symboltable.c... */
 static LexemCode lookupCIdentifier(char *id, Position position) {
     Symbol *symbol = NULL;
     unsigned hash = hashFun(id) % symbolTable->size;

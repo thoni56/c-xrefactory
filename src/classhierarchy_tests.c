@@ -2,7 +2,6 @@
 
 #include "classhierarchy.h"
 #include "log.h"
-#include "protocol.h"
 
 #include "commons.mock"
 #include "cxref.mock"

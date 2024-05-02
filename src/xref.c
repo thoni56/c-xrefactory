@@ -184,7 +184,6 @@ static void processInputFile(int argc, char **argv, bool *firstPassP, bool *atLe
             errorMessage(ERR_CANT_OPEN, inputFileName);
             fprintf(errOut, "\tmaybe forgotten -p option?\n");
         }
-        // no multiple passes for java programs
         *firstPassP                          = false;
         currentFile.characterBuffer.isAtEOF = false;
     }
