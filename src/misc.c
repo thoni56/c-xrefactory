@@ -62,17 +62,6 @@ void symbolRefItemDump(ReferenceItem *s) {
 
 /* *********************************************************************** */
 
-
-#define CHECK_TYPEDEF(t, type, typedefexp, typebreak)                                                             \
-    {                                                                                                             \
-        if (t->typedefSymbol != NULL && typedefexp) {                                                             \
-            assert(t->typedefSymbol->name);                                                                       \
-            strcpy(type, t->typedefSymbol->name);                                                                 \
-            goto typebreak;                                                                                       \
-        }                                                                                                         \
-        typedefexp = 1;                                                                                           \
-    }
-
 void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSepChar, int maxDeep, bool typedefexp,
                 int longOrShortName, int *oNamePos) {
     char    preString[COMPLETION_STRING_SIZE];
@@ -90,15 +79,12 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
     for (; t != NULL; t = t->next) {
         par = false;
         for (; t != NULL && t->type == TypePointer; t = t->next) {
-
-            //CHECK_TYPEDEF(t, type, typedefexpFlag, typebreak);
             if (t->typedefSymbol != NULL && typedefexp) {
                 assert(t->typedefSymbol->name);
                 strcpy(typeString, t->typedefSymbol->name);
                 goto typebreak;
             }
             typedefexp = true;
-            //CHECK_TYPEDEF
 
             preString[--i] = '*';
             par       = true;
@@ -107,14 +93,12 @@ void typeSPrint(char *buffer, int *size, TypeModifier *t, char *name, int dclSep
         if (t == NULL)
             goto typebreak;
 
-        //CHECK_TYPEDEF(t, type, typedefexpFlag, typebreak);
         if (t->typedefSymbol != NULL && typedefexp) {
             assert(t->typedefSymbol->name);
             strcpy(typeString, t->typedefSymbol->name);
             goto typebreak;
         }
         typedefexp = true;
-        //CHECK_TYPEDEF
 
         switch (t->type) {
         case TypeArray:
