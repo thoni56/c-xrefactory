@@ -2,6 +2,7 @@
 
 int main(int argc, char **argv) {
     char str[50];
+    int i;
     sprintf(str, "Hello");
-    strcat(str, "World");
+    i = 2;
 }
