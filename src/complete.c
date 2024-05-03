@@ -177,22 +177,14 @@ static int completionsWillPrintEllipsis(Completion *olc) {
 
 
 static void printCompletionsBeginning(Completion *olc, int noFocus) {
-    int                 max;
-    int                 tlen;
-
-    LIST_LEN(max, Completion, olc);
-    if (options.xref2) {
-        tlen = 0;
-        for (Completion *cc=olc; cc!=NULL; cc=cc->next) {
-            tlen += strlen(cc->fullName);
-            if (cc->next!=NULL) tlen++;
-        }
-        if (completionsWillPrintEllipsis(olc))
-            tlen += 4;
-        ppcBeginAllCompletions(noFocus, tlen);
-    } else {
-        fprintf(communicationChannel,";");
+    int tlen = 0;
+    for (Completion *cc=olc; cc!=NULL; cc=cc->next) {
+        tlen += strlen(cc->fullName);
+        if (cc->next!=NULL) tlen++;
     }
+    if (completionsWillPrintEllipsis(olc))
+        tlen += 4;
+    ppcBeginAllCompletions(noFocus, tlen);
 }
 
 static void printOneCompletion(Completion *olc) {
@@ -203,9 +195,7 @@ static void printCompletionsEnding(Completion *olc) {
     if (completionsWillPrintEllipsis(olc)) {
         fprintf(communicationChannel,"\n...");
     }
-    if (options.xref2) {
-        ppcEnd(PPC_ALL_COMPLETIONS);
-    }
+    ppcEnd(PPC_ALL_COMPLETIONS);
 }
 
 void printCompletionsList(int noFocus) {
@@ -220,40 +210,26 @@ void printCompletionsList(int noFocus) {
 }
 
 void printCompletions(Completions* c) {
-    int indent, jindent, max, vFunCl;
-    char *vclass;
+    int indent, max;
 
-    jindent = 0; vclass = NULL;
     // O.K. there will be a menu diplayed, clear the old one
     olCompletionListInit(&c->idToProcessPos);
     if (c->alternativeIndex == 0) {
-        if (options.xref2) {
-            if (options.serverOperation == OLO_SEARCH)
-                ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No matches **");
-            else
-                ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
-        } else {
-            fprintf(communicationChannel, "-");
-        }
+        if (options.serverOperation == OLO_SEARCH)
+            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No matches **");
+        else
+            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
         goto finishWithoutMenu;
     }
     if (!c->fullMatchFlag && c->alternativeIndex==1) {
-        if (options.xref2) {
-            ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
-            ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
-        } else {
-            fprintf(communicationChannel, ".%s", c->prefix + c->idToProcessLen);
-        }
+        ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
+        ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
         goto finishWithoutMenu;
     }
     if (!c->fullMatchFlag && strlen(c->prefix) > c->idToProcessLen) {
-        if (options.xref2) {
-            ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
-            ppcGenRecord(PPC_SINGLE_COMPLETION, c->prefix);
-            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
-        } else {
-            fprintf(communicationChannel, ",%s", c->prefix + c->idToProcessLen);
-        }
+        ppcGotoPosition(&sessionData.completionsStack.top->callerPosition);
+        ppcGenRecord(PPC_SINGLE_COMPLETION, c->prefix);
+        ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         goto finishWithoutMenu;
     }
 
@@ -262,17 +238,19 @@ void printCompletions(Completions* c) {
         indent = options.olineLen - MIN_COMPLETION_INDENT_REST;
         if (indent < MIN_COMPLETION_INDENT) indent = MIN_COMPLETION_INDENT;
     }
-    if (indent > MAX_COMPLETION_INDENT) indent = MAX_COMPLETION_INDENT;
-    if (c->alternativeIndex > options.maxCompletions) max = options.maxCompletions;
-    else max = c->alternativeIndex;
+    if (indent > MAX_COMPLETION_INDENT)
+        indent = MAX_COMPLETION_INDENT;
+    if (c->alternativeIndex > options.maxCompletions)
+        max = options.maxCompletions;
+    else
+        max = c->alternativeIndex;
     for(int ii=0; ii<max; ii++) {
         sprintFullCompletionInfo(c, ii, indent);
-        vFunCl = NO_FILE_NUMBER;
         Reference ref;
         sessionData.completionsStack.top->completions = completionListPrepend(
             sessionData.completionsStack.top->completions, c->alternatives[ii].string, ppcTmpBuff,
-            vclass, jindent, c->alternatives[ii].symbol, NULL, &ref, c->alternatives[ii].symbolType,
-            vFunCl);
+            NULL, 0, c->alternatives[ii].symbol, NULL, &ref, c->alternatives[ii].symbolType,
+            NO_FILE_NUMBER);
     }
     olCompletionListReverse();
     printCompletionsList(c->noFocusOnCompletions);
