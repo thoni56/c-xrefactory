@@ -11,18 +11,18 @@ MAKEFLAGS+=--no-print-directory
 endif
 
 all:
-	make -C src prod
+	$(MAKE) -C src prod
 
 test: all
-	make -C tests all
+	$(MAKE) -C tests all
 
 quick: all
-	make -C tests quick
+	$(MAKE) -C tests quick
 
 .PHONY: doc
 doc:
-	make -C doc
+	$(MAKE) -C doc
 
 clean:
-	make -C src clean
-	make -C byacc-1.9 clean
+	$(MAKE) -C src clean
+	$(MAKE) -C byacc-1.9 clean
