@@ -17,9 +17,6 @@ functions can be accessed via the 'c-xref' menu in Emacs.  Optionally
 the most frequent functions can be bound to shortcuts.  C-xrefactory
 can also be customized via standard Emacs customization dialog.
 
-> **NOTE** — Some of these descriptions refers to the jEdit plugin (not
-> supported and may or may not work).
-
 
 ### Quick start
 
@@ -173,14 +170,6 @@ stack.
     browse a symbol from your program, this is the function to be
     used. Other functions are used for few specific cases when this
     function can not do the job.
-
-- **Push Name and Goto Definition**. This function takes the
-    identifier pointed by the caret in the editor pane of jEdit and
-    pushes onto the stack all global symbols having this name. No
-    semantic information is examined, no overload or other resolution
-    is made. This function allows to browse only references of global
-    project symbols, it does not allow to browse local variables,
-    method parameters and other local symbols.
 
 - **Browse File Local Unused Symbols**. This function parses the
     buffer opened in the editor pane and pushes onto browser stack all

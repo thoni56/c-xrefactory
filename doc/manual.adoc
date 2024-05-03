@@ -162,11 +162,6 @@ Select level of information to print.
 
 Enable debugging of the C and Yacc parsers according to the Yacc manual.
 
--briefoutput::
-
-This option inhibits a few messages related to Java runtime, class and source paths.
-Note: Currently used from the `refactory` mode.
-
 -o <file>::
 
 Redirect all output to `file` rather than to standard output.
@@ -204,29 +199,12 @@ Reject keywords and types that are not part of the ANSI C standard, such as `__a
 
 ====== Editor adapter/server configuration
 
--editor=<editor>::
-
-As there are minor differences between the editor adaptors for `emacs` and `jedit` the editor adapter uses this option to select the correct one.
-Default is `emacs`.
-
 -xrefactory-II::
 
 Applicable only to `server` mode.
 Will use a second generation protocol between the edit server and the editor adapter.
 Using the edit server/refactorer without activating `-xrefactory-II` is deprecated.
 Will be deprecated and removed in the future when legacy protocol is removed.
-
--urldirect::
-
-Let editor navigate directly to URLs instead of creating a temporary file which is to be loaded.
-Default is to generate a temporary file.
-NOTE: This option might be removed in the future.
-
--urlmanualredirect::
-
-If a temporary HTML file is generated to let the editor navigate to a URL (JavaDoc) then this option will override the default to automatically redirect to that URL.
-Instead the user wil have to press the link manually in the editor.
-NOTE: This option might be removed in the future.
 
 
 ====== Miscellaneous
@@ -541,31 +519,11 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 
 -rfct-extract-function::
 
--rfct-move-all-classes-to-new-file::
-
--rfct-move-class::
-
--rfct-move-class-to-new-file::
-
--rfct-move-field::
-
 -rfct-move-param::
-
--rfct-move-static-field::
-
--rfct-move-static-method::
 
 -rfct-param1::
 
 -rfct-param2::
-
--rfct-pull-up-field::
-
--rfct-pull-up-method::
-
--rfct-push-down-field::
-
--rfct-push-down-method::
 
 -rfct-reduce::
 
@@ -576,10 +534,6 @@ If an editor has an edited, non-saved, buffer holding a relevant `file1` it is s
 -rfct-rename-class::
 
 -rfct-rename-package::
-
--rfct-self-encapsulate-field::
-
--rfct-static-to-dynamic::
 
 -rlistwithoutsrc::
 

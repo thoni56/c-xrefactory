@@ -64,7 +64,6 @@ typedef struct options {
     char *refpar1;
     char *refpar2;
     Refactoring theRefactoring;
-    bool briefoutput;
     char *renameTo;
     Mode refactoringMode;
     bool xref2;

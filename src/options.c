@@ -41,7 +41,6 @@ Options presetOptions = {
     "",                          // refactoring parameter 1
     "",                          // refactoring parameter 2
     AVR_NO_REFACTORING,          // refactoring
-    false,                       // briefoutput
     NULL,                        // renameTo
     UndefinedMode,               // refactoringMode
     false,                       // xrefactory-II
@@ -1085,8 +1084,6 @@ static bool processAOption(int *argi, int argc, char **argv) {
 static bool processBOption(int *argi, int argc, char **argv) {
     int i = * argi;
     if (0) {}
-    else if (strcmp(argv[i], "-briefoutput")==0)
-        options.briefoutput = true;
     else if (strncmp(argv[i], "-browsedsym=",12)==0)     {
         options.browsedSymName = allocateStringForOption(&options.browsedSymName, argv[i]+12);
     }
