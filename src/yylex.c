@@ -730,8 +730,10 @@ protected void processDefineDirective(bool hasArguments) {
     symbol->type = TypeMacro;
     symbol->storage = StorageDefault;
 
-    /* TODO: this is the only call to setGlobalFileDepNames() that doesn't do it in XX memory, why?
-       PPM == PreProcessor, but it's still a symbol... */
+    /* TODO: this is the only call to setGlobalFileDepNames() that
+       doesn't do it in XX memory, why?  PPM == PreProcessor, but it's
+       still a symbol... Changing this to XX makes the slow tests
+       fail... */
     setGlobalFileDepNames(currentLexemStart, symbol, MEMORY_PPM);
     macroName = symbol->name;
 
