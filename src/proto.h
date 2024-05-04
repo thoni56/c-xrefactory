@@ -132,8 +132,6 @@ typedef enum commentMovingMode {
 typedef enum {
     RC_NONE,     // do not continue, keep interactive
     RC_CONTINUE, // continue, no special info
-    RC_IMPORT_SINGLE_TYPE,
-    RC_IMPORT_ON_DEMAND,
 } ContinueRefactoringKind;
 
 /* *******************      error messages type      *************** */

@@ -1106,12 +1106,6 @@ static bool processCOption(int *argi, int argc, char **argv) {
     else if (strcmp(argv[i], "-continuerefactoring")==0) {
         options.continueRefactoring = RC_CONTINUE;
     }
-    else if (strcmp(argv[i], "-continuerefactoring=importSingle")==0)    {
-        options.continueRefactoring = RC_IMPORT_SINGLE_TYPE;
-    }
-    else if (strcmp(argv[i], "-continuerefactoring=importOnDemand")==0)  {
-        options.continueRefactoring = RC_IMPORT_ON_DEMAND;
-    }
     else if (strncmp(argv[i], "-csuffixes=",11)==0) {
         options.cFilesSuffixes = allocateStringForOption(&options.cFilesSuffixes, argv[i]+11);
     }
@@ -1119,7 +1113,8 @@ static bool processCOption(int *argi, int argc, char **argv) {
         options.create = true;
     else if (strncmp(argv[i], "-compiler=", 10)==0) {
         options.compiler = allocateStringForOption(&options.compiler, &argv[i][10]);
-    } else return false;
+    } else
+        return false;
     *argi = i;
     return true;
 }
