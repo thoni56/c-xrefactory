@@ -4036,26 +4036,6 @@ will be deleted.
     package
     ))
 
-(defun c-xref-infer-main-class-proposal ()
-  (let ((package) (res) (cl))
-    (setq package (c-xref-infer-package-proposal))
-    (setq cl (c-xref-file-name-without-suffix (buffer-name)))
-    (if (equal package "")
-	    (setq res cl)
-      (setq res (format "%s.%s" package cl))
-      )
-    res
-    ))
-
-(defun c-xref-infer-classpath-proposal ()
-  (let ((package) (ff) (bcp) (dn) (res))
-    (setq package (c-xref-infer-package-proposal))
-    (setq bcp (c-xref-get-dir-from-path-and-package "" package))
-    (setq dn (c-xref-file-directory-name (buffer-file-name)))
-    (setq res (c-xref-cut-string-suffix dn bcp (eq c-xref-platform 'windows)))
-    res
-    ))
-
 (defun c-xref-project-new ()
   "Create new project in  the .c-xrefrc C-xrefactory option file.
 

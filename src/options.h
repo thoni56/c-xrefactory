@@ -74,7 +74,6 @@ typedef struct options {
     bool noErrors;
     bool exactPositionResolve;
     char *outputFileName;
-    char *lineFileName;
     StringList *includeDirs;
     char *cxrefsLocation;
 
@@ -89,7 +88,6 @@ typedef struct options {
     /* MIXED THINGS... */
     bool noIncludeRefs;
     int filterValue;
-    char *jdkClassPath;
     ResolveDialog manualResolve;
     char *browsedSymName;
     int olcxMenuSelectLineNum;
@@ -103,9 +101,7 @@ typedef struct options {
     char *olExtractAddrParPrefix; /* Prefix for parameter names when extraction requires out arguments */
     ExtractMode extractMode;
     int maxCompletions;
-    int editor;
     bool create;
-    char *classpath;
     int tabulator;
     int olCursorOffset;
     int olMarkOffset;

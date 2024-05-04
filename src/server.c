@@ -175,7 +175,6 @@ static void parseInputFile(void) {
 
 void initServer(int nargc, char **nargv) {
     clearAvailableRefactorings();
-    options.classpath = allocateStringForOption(&options.classpath, "");
     processOptions(nargc, nargv, PROCESS_FILE_ARGUMENTS); /* no include or define options */
     processFileArguments();
     if (options.serverOperation == OLO_EXTRACT)

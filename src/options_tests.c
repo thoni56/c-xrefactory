@@ -394,11 +394,11 @@ Ensure(Options, can_return_standard_options_filename_and_section_as_for_ffmpeg) 
  * allocated and not a part of the options structure at some point
  * when we move to Memory2 for options.memory) */
 Ensure(Options, collects_option_field_that_allocate_a_string_in_options_space) {
-    allocateStringForOption(&options.classpath, "classpath");
+    allocateStringForOption(&options.pushName, "pushName");
 
-    assert_that(containsPointerLocation(options.allUsedStringOptions, (void **)&options.classpath));
-    assert_that(options.classpath, is_equal_to_string("classpath"));
-    assert_that(smIsBetween(&options.memory, options.classpath, 0, options.memory.index));
+    assert_that(containsPointerLocation(options.allUsedStringOptions, (void **)&options.pushName));
+    assert_that(options.pushName, is_equal_to_string("pushName"));
+    assert_that(smIsBetween(&options.memory, options.pushName, 0, options.memory.index));
 
     /* Add another option and ensure that the string is allocated in option memory... */
     allocateStringForOption(&options.compiler, "compiler");
@@ -452,14 +452,14 @@ Ensure(Options, can_deep_copy_options_with_one_string_option) {
 
 Ensure(Options, can_deep_copy_options_with_two_string_options) {
     allocateStringForOption(&options.compiler, "compiler");
-    allocateStringForOption(&options.classpath, "classpath");
+    allocateStringForOption(&options.pushName, "pushName");
 
     Options copy = {.memory = {.area = NULL, .size = 0}};
     deepCopyOptionsFromTo(&options, &copy);
 
-    assert_that(options.classpath, is_equal_to_string(copy.classpath)); /* Strings are the same */
-    assert_that(options.classpath, is_not_equal_to(copy.classpath)); /* But they are stored in different locations... */
-    assert_that(smIsBetween(&copy.memory, copy.classpath, 0, copy.memory.index)); /* ... in the copy's memory */
+    assert_that(options.pushName, is_equal_to_string(copy.pushName)); /* Strings are the same */
+    assert_that(options.pushName, is_not_equal_to(copy.pushName)); /* But they are stored in different locations... */
+    assert_that(smIsBetween(&copy.memory, copy.pushName, 0, copy.memory.index)); /* ... in the copy's memory */
 }
 
 Ensure(Options, can_deep_copy_options_with_one_stringlist_option_with_one_string) {

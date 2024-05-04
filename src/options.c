@@ -56,7 +56,6 @@ Options presetOptions = {
     false,                       // noerrors
     false,                       // exact position
     NULL,                        // -o outputFileName
-    NULL,                        // -line lineFileName
     NULL,                        // -I include dirs
     DEFAULT_CXREF_FILENAME,      // -refs
 
@@ -71,7 +70,6 @@ Options presetOptions = {
     /* MIXED THINGS... */
     false,                      // noIncludeRefs
     0,
-    "",
     RESOLVE_DIALOG_DEFAULT,     // manual symbol resolution TODO: This is different from any of the RESOLVE values above, why?
     NULL,                       // browsed symbol name
     0,
@@ -85,9 +83,7 @@ Options presetOptions = {
     "*_",                       /* olExtractAddrParPrefix */
     0,                          // extractMode, must be zero TODO Why?
     MAX_COMPLETIONS,            /* maxCompletions */
-    0,                          /* editor */
     0,                          /* create */
-    "",                         // default classpath
     8,                          /* tabulator */
     -1,                         /* olCursorPos */
     -1,                         /* olMarkPos */
@@ -1115,10 +1111,6 @@ static bool processCOption(int *argi, int argc, char **argv) {
     }
     else if (strcmp(argv[i], "-continuerefactoring=importOnDemand")==0)  {
         options.continueRefactoring = RC_IMPORT_ON_DEMAND;
-    }
-    else if (strcmp(argv[i], "-classpath")==0) {
-        ensureNextArgumentIsAFileName(&i, argc, argv);
-        options.classpath = allocateStringForOption(&options.classpath, argv[i]);
     }
     else if (strncmp(argv[i], "-csuffixes=",11)==0) {
         options.cFilesSuffixes = allocateStringForOption(&options.cFilesSuffixes, argv[i]+11);
