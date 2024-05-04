@@ -7,7 +7,7 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 
-(add-to-list 'load-path "~/.emacs.d/c-xrefactory")
+(add-to-list 'load-path "~/.emacs.d/c-xrefactory/editors/emacs")
 (load "c-xrefactory.el")
 
 (custom-set-variables

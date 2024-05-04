@@ -1643,9 +1643,9 @@ tries to delete C-xrefactory windows first.
     (if c-xref-debug-mode (message "calling: %S" opts))
     (set proc (cons
 		   (apply 'start-process
-			      (concat c-xref-home-directory "c-xref")
+			      (concat c-xref-exec-directory "c-xref")
 			      nil
-			      (concat c-xref-home-directory "c-xref")
+			      (concat c-xref-exec-directory "c-xref")
 			      opts
 			      )
 		   (cons "" nil)))

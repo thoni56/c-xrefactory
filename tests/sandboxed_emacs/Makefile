@@ -4,6 +4,28 @@
 # NOTE: uses a copy of pipe-spy (https://github.com/thoni56/pipe-spy) and compiles
 # that to a c-xref spy
 
+# Environment variables for the pipe-spy/c-xref-spy to pick them up
+ENV=HOME="$(PWD)" PATH="$(PWD)/bin:$(PATH)"
+TARGET=TARGET=$(TARGET_PATH)
+LOG=LOGFILE=$(CURDIR)/$(LOGFILE)
+
+all: pure
+
+EMACS_COMMAND = emacs -l $(PWD)/.emacs.d/init.el --eval '(setq c-xref-exec-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)'
+
+# Run a pure sandboxed Emacs which should use the latest elisp and c-xref
+pure: .emacs.d/c-xrefactory/src .emacs.d/c-xrefactory/editors
+	make -C .emacs.d/c-xrefactory/src
+	cp .emacs.d/c-xrefactory/src/c-xref $(CURDIR)/bin/
+	-rm -r .emacs.d/c-xrefactory/editors/emacs/*.elc
+	@$(ENV) $(EMACS_COMMAND)
+
+debug: .emacs.d/c-xrefactory
+	@$(ENV) $(EMACS_COMMAND)
+
+
+# Run a sandboxed emacs using the spy to log interaction
+
 # This is the target to exec...
 TARGET_FILE=../../src/c-xref
 # ... with the full path...
@@ -12,16 +34,6 @@ TARGET_PATH=`python -c "import os,sys; print(os.path.realpath(os.path.expanduser
 # Where to log interaction (pipe-spy adds its PID to the filename to avoid clashes)
 LOGFILE=logfile
 
-# Environment variables for the pipe-spy/c-xref-spy to pick them up
-ENV=HOME="$(PWD)" PATH="$(PWD)/bin:$(PATH)"
-TARGET=TARGET=$(TARGET_PATH)
-LOG=LOGFILE=$(CURDIR)/$(LOGFILE)
-
-all: pure
-
-EMACS_COMMAND = emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)'
-
-# Run a sandboxed emacs using the spy to log interaction
 spy: .emacs.d/c-xrefactory pipe-spy
 	$(ENV) $(TARGET) $(LOG) $(EMACS_COMMAND) ../../src/cxref.c
 	@echo Interaction saved in $(CURDIR)/$(LOGFILE)
@@ -30,17 +42,14 @@ pipe-spy: pipe-spy.c Makefile
 	$(CC) -o pipe-spy -g -Wall -DTARGET=\"$(TARGET_PATH)\" pipe-spy.c
 	cp pipe-spy bin/c-xref
 
+.emacs.d/c-xrefactory/editors : .emacs.d/c-xrefactory
+	ln -s $(CURDIR)/../../editors .emacs.d/c-xrefactory/editors
+
+.emacs.d/c-xrefactory/src : .emacs.d/c-xrefactory
+	ln -s $(CURDIR)/../../src .emacs.d/c-xrefactory/src
+
 .emacs.d/c-xrefactory:
-	ln -s $(CURDIR)/../../editors/emacs .emacs.d/c-xrefactory
+	ln -s $(CURDIR)/../../src .emacs.d/c-xrefactory/src
 
 clean:
 	-rm $(LOGFILE)* /tmp/c-xref*.log
-
-# Run a pure sandboxed Emacs which should use the latest elisp and c-xref
-pure: .emacs.d/c-xrefactory
-	cp $(CURDIR)/../../src/c-xref bin/c-xref
-	@$(ENV) $(EMACS_COMMAND)
-
-debug: .emacs.d/c-xrefactory
-	cp $(CURDIR)/../../src/c-xref bin/c-xref
-	@$(ENV) $(EMACS_COMMAND)
