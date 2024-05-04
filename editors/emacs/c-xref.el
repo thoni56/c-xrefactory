@@ -6560,13 +6560,19 @@ functions.
   "The directory where the e-listp files of c-xref are installed")
 
 (defvar c-xref-install-directory
-  (file-name-directory (file-name-directory (file-name-directory (or load-file-name (buffer-file-name)))))
-  "The directory where c-xref is installed, which is two levels above this file")
+  (directory-file-name
+   (file-name-directory
+    (directory-file-name
+     (file-name-directory
+      (directory-file-name
+       (file-name-directory
+	(or load-file-name (buffer-file-name))))))))
+  "The directory where c-xref is installed, which is two levels above this file.")
 
 (defun c-xref-load-elisp-directory (dir)
   (let ((load-it (lambda (f)
-			   (load-file (concat (file-name-as-directory dir) f)))
-			 ))
+		   (load-file (concat (file-name-as-directory dir) f)))
+		 ))
     (mapc load-it (directory-files dir nil "\\.el$"))))
 
 (defun c-xref-get-modified-files ()
@@ -6607,8 +6613,10 @@ the reset was performed, nil if the reset was cancelled."
 		(progn
 		  (shell-command "git pull")
 		  (shell-command "git checkout stable")
+		  (message "Pulled latest stable")
 		  (c-xref-kill-xref-process nil)
 		  (shell-command "make")
+		  (message "Built 'c-xref' in %s" c-xref-install-directory)
 		  (c-xref-load-directory c-xref-elisp-directory)
 		  )
 	      )
