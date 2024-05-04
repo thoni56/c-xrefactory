@@ -28,16 +28,16 @@ and Yacc code.
 
 Here is a list of features
 
-- Full integration with Emacs
+* Full integration with Emacs
 * Browsing source code in C supporting multiple pre-processing passes
 * Designed to work with large projects (> millions of lines)
-* Update using only modified files
-* First tool to https://www.martinfowler.com/articles/refactoringRubicon.html[Crossing Refactoring's Rubicon] as described by Martin Fowler
+* Fast update using only modified files
+* First tool to https://www.martinfowler.com/articles/refactoringRubicon.html[Cross Refactoring's Rubicon] as described by Martin Fowler
 * Safe refactorings to
   ** rename variables, functions etc.
   ** extract function/method
   ** delete, add, move parameters
-* Solid code completion, recognizing upto 15 different contexts
+* Solid code completion
 * Search for symbols using wildcards
 * Find unused variables and functions, globally as well as locally
 * Auto-detection of project
