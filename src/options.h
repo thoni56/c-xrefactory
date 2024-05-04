@@ -58,7 +58,6 @@ typedef struct options {
     char *xrefrc;
     int eolConversion;
     char *checkVersion;
-    NestedClassesDisplay displayNestedClasses;
     char *pushName;
     int parnum2;
     char *refpar1;

@@ -35,7 +35,6 @@ Options presetOptions = {
     NULL,                        // xrefrc
     NO_EOL_CONVERSION,           // crlfConversion
     NULL,                        // checkVersion
-    DONT_DISPLAY_NESTED_CLASSES, // nestedClassDisplaying
     NULL,                        // pushName
     0,                           // parnum2
     "",                          // refactoring parameter 1
@@ -1143,9 +1142,6 @@ static bool processDOption(int *argi, int argc, char **argv) {
     // just store macros in options and later add them into pp_memory
     else if (strncmp(argv[i], "-D",2)==0)
         addMacroDefinedByOption(argv[i]+2);
-    else if (strcmp(argv[i], "-displaynestedwithouters")==0) {
-        options.displayNestedClasses = DISPLAY_NESTED_CLASSES;
-    }
     else return false;
 
     *argi = i;

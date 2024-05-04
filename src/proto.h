@@ -48,13 +48,8 @@ typedef enum resolveDialog {
     RESOLVE_DIALOG_NEVER,
 } ResolveDialog;
 
-typedef enum cutOuters {
-    DONT_DISPLAY_NESTED_CLASSES = RESOLVE_DIALOG_NEVER + 1,
-    DISPLAY_NESTED_CLASSES,
-} NestedClassesDisplay;
-
 typedef enum dotifyMode {
-    DOTIFY_NAME = DISPLAY_NESTED_CLASSES + 1,
+    DOTIFY_NAME = RESOLVE_DIALOG_NEVER + 1,
     KEEP_SLASHES,
 } DotifyMode;
 
